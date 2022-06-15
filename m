@@ -2,60 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A7454C186
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 08:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8787D54C171
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 08:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242571AbiFOF6S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 01:58:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
+        id S237371AbiFOF6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 01:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231657AbiFOF6P (ORCPT
+        with ESMTP id S245729AbiFOF6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 01:58:15 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDFB2B263
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:14 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 31so8814945pgv.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:14 -0700 (PDT)
+        Wed, 15 Jun 2022 01:58:23 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD8102B263
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:22 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id e11so10498274pfj.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oKivPnUDV0RH/3at3XRIS7bnNh4XH34G9qda9gPGH/M=;
-        b=SXum5tLB9BjjmoKd4xrDm30WFHuOqQo7W3kqV/ka1eQEHVRsImuJ2hODRlICaUpYH+
-         kWXyXviNBKSrkS2t/w6QZbdoRNiNqiizRFKAyGwFeIdTInCkinVnq1i0+yxjLSHgNSfM
-         cbYPxSxpmOW5a8b07jiUSEWV7OSkGBMl0kTZz2LkuXYDnhdWLMzEZhL7IK/QqVmReVg3
-         kVXSG3fb27pvBaKOLMSEkBwcSBwrMxDf2b0Pf94G3ya73q3NOZLD4Rr5sNoyn7U/WnSe
-         wgsD/teprSD2IlgerkdioO9Ojny0kLei+6OvImu09XSyKwMXn1C7Z0xAH6JkT3L2BQEa
-         XLIA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tPn/OX+JIs9R97iZ60NxPN/VK7IIuBnd/MtJJuDV6Lk=;
+        b=Aj1TV0XyYYp4eoe68JfisVh3+RUfmS6CHqpCb9YrQ4KGKQoVIujwyd3Ozd7gZnZZmD
+         k7b4yGKZYgFrlI0j5kjcm9HqTqp3lEyh7u/0rtLoO5SiRfWEW0Bg9xJapSuDfN3Usnun
+         BdkKODFv1F58tYZ4p10f6Le1EtNa7cQvCMoALPwHElKP2Drw313m1+//wXs+UVQbnQT3
+         Wxn/9FfX7q+LiVrcUpKjI08SseccOEHVMNibZD8Zg/DGdVFKBKf6XagiuZJQX+zciuUM
+         2DrBq0FmkJYoKkPl345eO3pHO3+t0pkFRZsfYMV66WimA1kayJ9MF317VTaVVsdKtuEG
+         DvWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oKivPnUDV0RH/3at3XRIS7bnNh4XH34G9qda9gPGH/M=;
-        b=gHtgZ6tSogIzMm+Q71Z6a2q7TcIeuC9TbnGJ55OJQjmex4Ae2b80+0aNhoFuViGDww
-         WOtLDACs8z0p9mIbf3ctq6n7QEyCEGFRL1WsR4nZ6ebhwlr/BbqyvGW3sLDeU8twfRwM
-         x21mPgjyYfXzNH5VvKtVPiGAgvUrhGJtXlJt0U/nsxm9p8qQ6MBzzoiKssvcTAcjCmmE
-         T6qTZYwPX6kznDGfSaPbxmzmIs13di7T2bm8Yk51Rs90vDLfWBY3DJBO2apnOMXk8XUI
-         rdtibaaUFhWmxcNhLXjbpAhagEeHH1XXDHZECh0fiP0L6VlnfY7BEXyd8HltRZ9oyvHX
-         HdsA==
-X-Gm-Message-State: AOAM532QV/b1lPoUpJGJ+83CeI1TbJodKwkRUEfrCyVNafS8VqlB9W1l
-        eYS7astUdlfjbShg8RZQ5Xz5SYByDrCSxjk=
-X-Google-Smtp-Source: ABdhPJzPD+gNFPqEJCnchPWWal4tYztbd+XVgCprF4xb4bvgtfkh4HXrp7kMfZ1KyHtgTn5kVFLIJw==
-X-Received: by 2002:a63:5522:0:b0:405:1ff7:33dd with SMTP id j34-20020a635522000000b004051ff733ddmr7667470pgb.86.1655272693595;
-        Tue, 14 Jun 2022 22:58:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tPn/OX+JIs9R97iZ60NxPN/VK7IIuBnd/MtJJuDV6Lk=;
+        b=eUypkPrhOry5zdNhGgJ4kesI5RaU57QnywiFTi+bCZZ8MhJSt9fN3EgV3O1VAXi++V
+         mSWfGzrYTcvxiECJBgHxPM21dymAvLJEqiVY3kEvAEUI115KVcDYaXk7M6hDFwotd1Vv
+         /5GGXTqZLL0cvtjQJicOPCi9axuBTWzUpfpUZznSNxXqDKkYWjp/lVPW86xUBFoRdmGT
+         edx9XNRhjna/fB4n5ePGIDaFIwVbR/N7DdP4+tADGEvsC3wDS9PWshdv/Ug7A3rjAjja
+         TXzd79hYLnB0ABqs2CMvkamyAmdPCJD4gFhkvRzwne81fliGnkqT06mUXGWBn6hoH4zG
+         cHyw==
+X-Gm-Message-State: AOAM532CSelrH9rsOgIeKG1DZy1BPtRLlBT+l0KQmjOI4gS+zUPyzvgT
+        XMHzfdWUO6nJsAlBIlBSB2xw
+X-Google-Smtp-Source: ABdhPJwW3AK6JhouZ9PDoNa3SHDDblP7i9g2ZGdZrbRU/wzbFvVHRolpzZ6pfubk1rCuY4EfDyiPew==
+X-Received: by 2002:a05:6a00:842:b0:51b:f289:7354 with SMTP id q2-20020a056a00084200b0051bf2897354mr8282253pfk.75.1655272702157;
+        Tue, 14 Jun 2022 22:58:22 -0700 (PDT)
 Received: from localhost ([139.177.225.246])
-        by smtp.gmail.com with ESMTPSA id s13-20020aa78d4d000000b0051c70fd5263sm8673339pfe.169.2022.06.14.22.58.08
+        by smtp.gmail.com with ESMTPSA id x29-20020aa79add000000b0051b9912889csm8657827pfp.101.2022.06.14.22.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 22:58:11 -0700 (PDT)
+        Tue, 14 Jun 2022 22:58:20 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     miklos@szeredi.hu, vgoyal@redhat.com, stefanha@redhat.com
 Cc:     zhangjiachen.jaycee@bytedance.com, linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH v2 0/2] Allow skipping abort interface for virtiofs
-Date:   Wed, 15 Jun 2022 13:57:53 +0800
-Message-Id: <20220615055755.197-1-xieyongji@bytedance.com>
+Subject: [PATCH v2 1/2] fuse: Remove unused "no_control" related code
+Date:   Wed, 15 Jun 2022 13:57:54 +0800
+Message-Id: <20220615055755.197-2-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220615055755.197-1-xieyongji@bytedance.com>
+References: <20220615055755.197-1-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -67,27 +69,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The commit 15c8e72e88e0 ("fuse: allow skipping control
-interface and forced unmount") tries to remove the control
-interface for virtio-fs since it does not support aborting
-requests which are being processed. But it doesn't work now.
+This gets rid of "no_control" related code since
+nobody uses it.
 
-This series fixes the bug, but only remove the abort interface
-instead since other interfaces should be useful.
+Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+---
+ fs/fuse/fuse_i.h    | 4 ----
+ fs/fuse/inode.c     | 1 -
+ fs/fuse/virtio_fs.c | 1 -
+ 3 files changed, 6 deletions(-)
 
-V1 to V2:
-- Split the patch into two part [Vivek]
-
-Xie Yongji (2):
-  fuse: Remove unused "no_control" related code
-  virtiofs: allow skipping abort interface
-
- fs/fuse/control.c   | 4 ++--
- fs/fuse/fuse_i.h    | 6 +++---
- fs/fuse/inode.c     | 2 +-
- fs/fuse/virtio_fs.c | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 488b460e046f..a47f14d0ee3f 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -507,7 +507,6 @@ struct fuse_fs_context {
+ 	bool default_permissions:1;
+ 	bool allow_other:1;
+ 	bool destroy:1;
+-	bool no_control:1;
+ 	bool no_force_umount:1;
+ 	bool legacy_opts_show:1;
+ 	enum fuse_dax_mode dax_mode;
+@@ -766,9 +765,6 @@ struct fuse_conn {
+ 	/* Delete dentries that have gone stale */
+ 	unsigned int delete_stale:1;
+ 
+-	/** Do not create entry in fusectl fs */
+-	unsigned int no_control:1;
+-
+ 	/** Do not allow MNT_FORCE umount */
+ 	unsigned int no_force_umount:1;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 8c0665c5dff8..4059c6898e08 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1564,7 +1564,6 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 	fc->legacy_opts_show = ctx->legacy_opts_show;
+ 	fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
+ 	fc->destroy = ctx->destroy;
+-	fc->no_control = ctx->no_control;
+ 	fc->no_force_umount = ctx->no_force_umount;
+ 
+ 	err = -ENOMEM;
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 8db53fa67359..24bcf4dbca2a 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -1287,7 +1287,6 @@ static inline void virtio_fs_ctx_set_defaults(struct fuse_fs_context *ctx)
+ 	ctx->max_read = UINT_MAX;
+ 	ctx->blksize = 512;
+ 	ctx->destroy = true;
+-	ctx->no_control = true;
+ 	ctx->no_force_umount = true;
+ }
+ 
 -- 
 2.20.1
 
