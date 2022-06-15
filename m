@@ -2,52 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D2A54CEBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 18:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FC154CEDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 18:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244297AbiFOQeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 12:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36310 "EHLO
+        id S1356774AbiFOQj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 12:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356805AbiFOQeJ (ORCPT
+        with ESMTP id S241710AbiFOQj6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 12:34:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CFEF42493;
-        Wed, 15 Jun 2022 09:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=P4MHruGmnbA6Jn0OquDK2ACzLuYqJeOxxgaQ5SdZNUg=; b=pPAKbYPBjgVuJce4Vq+NYJTymk
-        j8l+LEu+yKXIAJl6fPzsfvEAm31gB6FJPIRsCqHwgTW5DHglfX+rSGGuvv/5e3qQXohZGMDqqZnA9
-        1krkk5Aa/EAex301pp6gvza4ioSixZV3GUtx3G/efIHs3dg9pwMyB7yC35yJ5C4ywg/ZlBg4nu8c5
-        xGmEHRT1Ple6riZ4sf2cBGLmLRFrIKkxnYkjuiDoFQcZJi2DwyaTQroG7NJuMzgSgQof/yB7iRuW7
-        VS+9j1joJULkw08wQ67ff4YWA8XGoafobPpS+Te8YNP81shXpQ0gXbULLTrhZjJxPadazpY6szLRd
-        2SZPD9VA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o1Vxy-001CEP-74; Wed, 15 Jun 2022 16:34:02 +0000
-Date:   Wed, 15 Jun 2022 17:34:02 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        Wed, 15 Jun 2022 12:39:58 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B014BB90;
+        Wed, 15 Jun 2022 09:39:57 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 0B2621F963;
+        Wed, 15 Jun 2022 16:39:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1655311196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TVxUPTfO0hu4AGabf4c0ym38vWrRw1TSRFIcByfylSk=;
+        b=Qgr2omByqxvkI9MmyIwGTpWrpq6ocW18Hhtf6rwr0nFGrcOyzWH9GjC/F0xLdx+jaEtjoo
+        YFdxFuL0yfnjhzGisYgIxMVyL+tn7ZIBI0H4Q2H/xkJ23PichcvgmSkmbr1ZgbAt2dEAQT
+        jGNsQzVpHFlaoDhGAu+DeY4r9KjxTgY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1655311196;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TVxUPTfO0hu4AGabf4c0ym38vWrRw1TSRFIcByfylSk=;
+        b=M/VYh5tM+kZEYsijqThrHs/SGSJ8RVv2zieejoHwwyAxBZEO5v/pzySncZUp64Wnp5Rz7P
+        ymZz65DaMYPCkXCw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id AD85B2C141;
+        Wed, 15 Jun 2022 16:39:55 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id ED3C3A062E; Wed, 15 Jun 2022 18:39:49 +0200 (CEST)
+Date:   Wed, 15 Jun 2022 18:39:49 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Alexandru Elisei <alexandru.elisei@arm.com>
+Cc:     Petr Mladek <pmladek@suse.com>, jack@suse.cz,
+        sunjunchao2870@gmail.com, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ikent@redhat.com, onestero@redhat.com
-Subject: Re: [PATCH 1/3] radix-tree: propagate all tags in idr tree
-Message-ID: <YqoJ+p83dLOcGfwX@casper.infradead.org>
-References: <20220614180949.102914-1-bfoster@redhat.com>
- <20220614180949.102914-2-bfoster@redhat.com>
- <Yqm+jmkDA+um2+hd@infradead.org>
- <YqnXVMtBkS2nbx70@bfoster>
- <YqnhW2CI1kbJ3NqR@casper.infradead.org>
- <YqnwFZxmiekL5ZOC@bfoster>
+        senozhatsky@chromium.org, rostedt@goodmis.org,
+        john.ogness@linutronix.de, keescook@chromium.org, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, maco@android.com, hch@lst.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org
+Subject: Re: [BUG] rockpro64 board hangs in console_init() after commit
+ 10e14073107d
+Message-ID: <20220615163949.z22puioui322ktla@quack3.lan>
+References: <Yqdry+IghSWnJ6pe@monolith.localdoman>
+ <Yqh9xIwBVcabpSLe@alley>
+ <YqiJH1phG/LWu9bs@monolith.localdoman>
+ <YqiidNPMUZQPRIvy@alley>
+ <YqnVWCYx0L2RlckB@monolith.localdoman>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YqnwFZxmiekL5ZOC@bfoster>
+In-Reply-To: <YqnVWCYx0L2RlckB@monolith.localdoman>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,448 +75,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 10:43:33AM -0400, Brian Foster wrote:
-> Interesting, thanks. I'll have to dig more into this to grok the current
-> state of the radix-tree interface vs. the underlying data structure. If
-> I follow correctly, you're saying the radix-tree api is essentially
-> already a translation layer to the xarray these days, and we just need
-> to move legacy users off the radix-tree api so we can eventually kill it
-> off...
+Hi Alexandru!
 
-If only it were that easy ... the XArray has a whole bunch of debugging
-asserts to make sure the users are actually using it correctly, and a
-lot of radix tree users don't (they're probably not buggy, but they
-don't use the XArray's embedded lock).
+On Wed 15-06-22 13:50:24, Alexandru Elisei wrote:
+> On Tue, Jun 14, 2022 at 05:00:04PM +0200, Petr Mladek wrote:
+> > > > > I've booted a kernel compiled with CONFIG_PROVE_LOCKING=y, as the offending
+> > > > > commit fiddles with locks, but no splat was produced that would explain the
+> > > > > hang. I've also tried to boot a v5,19-rc2 kernel on my odroid-c4, the board
+> > > > > is booting just fine, so I'm guessing it only affects of subset of arm64
+> > > > > boards.
+> > > > 
+> > > > You might try to switch the order of console_init() and lockdep_init()
+> > > > in start_kernel() in init/main.c
+> > > 
+> > > Did so above.
+> > 
+> > Unfortunately, it did not print anything :-(
+> 
+> With this patch [1] I was able to succefully boot the board. So I guess
+> problem should be fixed.
+> 
+> [1] https://lore.kernel.org/all/20220614124618.2830569-1-suzuki.poulose@arm.com/
 
-Anyway, here's a first cut at converting the PID allocator from the IDR
-to the XArray API.  It boots, but I haven't tried to do anything tricky
-with PID namespaces or CRIU.
+Can you please try booting with the patch I've posted at [2]? After some
+discussion with Linus that would be a preferable fix... Thanks!
 
+[2] https://lore.kernel.org/all/20220615133845.o2lzfe5s4dzdfvtg@quack3.lan
 
-diff --git a/fs/proc/loadavg.c b/fs/proc/loadavg.c
-index f32878d9a39f..cec85a07184a 100644
---- a/fs/proc/loadavg.c
-+++ b/fs/proc/loadavg.c
-@@ -21,7 +21,7 @@ static int loadavg_proc_show(struct seq_file *m, void *v)
- 		LOAD_INT(avnrun[1]), LOAD_FRAC(avnrun[1]),
- 		LOAD_INT(avnrun[2]), LOAD_FRAC(avnrun[2]),
- 		nr_running(), nr_threads,
--		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
-+		task_active_pid_ns(current)->cursor - 1);
- 	return 0;
- }
- 
-diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-index 07481bb87d4e..68aaaf78491b 100644
---- a/include/linux/pid_namespace.h
-+++ b/include/linux/pid_namespace.h
-@@ -9,7 +9,7 @@
- #include <linux/threads.h>
- #include <linux/nsproxy.h>
- #include <linux/ns_common.h>
--#include <linux/idr.h>
-+#include <linux/xarray.h>
- 
- /* MAX_PID_NS_LEVEL is needed for limiting size of 'struct pid' */
- #define MAX_PID_NS_LEVEL 32
-@@ -17,8 +17,9 @@
- struct fs_pin;
- 
- struct pid_namespace {
--	struct idr idr;
-+	struct xarray xa;
- 	struct rcu_head rcu;
-+	unsigned int cursor;
- 	unsigned int pid_allocated;
- 	struct task_struct *child_reaper;
- 	struct kmem_cache *pid_cachep;
-@@ -37,6 +38,20 @@ extern struct pid_namespace init_pid_ns;
- 
- #define PIDNS_ADDING (1U << 31)
- 
-+/*
-+ * Note: disable interrupts while the xarray lock is held as an
-+ * interrupt might come in and do read_lock(&tasklist_lock).
-+ *
-+ * If we don't disable interrupts there is a nasty deadlock between
-+ * detach_pid()->free_pid() and another cpu that locks the PIDs
-+ * followed by an interrupt routine that does read_lock(&tasklist_lock);
-+ *
-+ * After we clean up the tasklist_lock and know there are no
-+ * irq handlers that take it we can leave the interrupts enabled.
-+ * For now it is easier to be safe than to prove it can't happen.
-+ */
-+#define PID_XA_FLAGS	(XA_FLAGS_TRACK_FREE | XA_FLAGS_LOCK_IRQ)
-+
- #ifdef CONFIG_PID_NS
- static inline struct pid_namespace *get_pid_ns(struct pid_namespace *ns)
- {
-@@ -84,7 +99,7 @@ static inline int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
- 
- extern struct pid_namespace *task_active_pid_ns(struct task_struct *tsk);
- void pidhash_init(void);
--void pid_idr_init(void);
-+void pid_init(void);
- 
- static inline bool task_is_in_init_pid_ns(struct task_struct *tsk)
- {
-diff --git a/include/linux/threads.h b/include/linux/threads.h
-index c34173e6c5f1..37e4391ee89f 100644
---- a/include/linux/threads.h
-+++ b/include/linux/threads.h
-@@ -38,7 +38,7 @@
-  * Define a minimum number of pids per cpu.  Heuristically based
-  * on original pid max of 32k for 32 cpus.  Also, increase the
-  * minimum settable value for pid_max on the running system based
-- * on similar defaults.  See kernel/pid.c:pid_idr_init() for details.
-+ * on similar defaults.  See kernel/pid.c:pid_init() for details.
-  */
- #define PIDS_PER_CPU_DEFAULT	1024
- #define PIDS_PER_CPU_MIN	8
-diff --git a/init/main.c b/init/main.c
-index 0ee39cdcfcac..3944dcd10c09 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -73,7 +73,6 @@
- #include <linux/sched.h>
- #include <linux/sched/init.h>
- #include <linux/signal.h>
--#include <linux/idr.h>
- #include <linux/kgdb.h>
- #include <linux/ftrace.h>
- #include <linux/async.h>
-@@ -1100,7 +1099,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
- 		late_time_init();
- 	sched_clock_init();
- 	calibrate_delay();
--	pid_idr_init();
-+	pid_init();
- 	anon_vma_init();
- #ifdef CONFIG_X86
- 	if (efi_enabled(EFI_RUNTIME_SERVICES))
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 2fc0a16ec77b..de0b4614bdb8 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -41,7 +41,7 @@
- #include <linux/anon_inodes.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/task.h>
--#include <linux/idr.h>
-+#include <linux/xarray.h>
- #include <net/sock.h>
- #include <uapi/linux/pidfd.h>
- 
-@@ -66,15 +66,10 @@ int pid_max = PID_MAX_DEFAULT;
- int pid_max_min = RESERVED_PIDS + 1;
- int pid_max_max = PID_MAX_LIMIT;
- 
--/*
-- * PID-map pages start out as NULL, they get allocated upon
-- * first use and are never deallocated. This way a low pid_max
-- * value does not cause lots of bitmaps to be allocated, but
-- * the scheme scales to up to 4 million PIDs, runtime.
-- */
- struct pid_namespace init_pid_ns = {
- 	.ns.count = REFCOUNT_INIT(2),
--	.idr = IDR_INIT(init_pid_ns.idr),
-+	.xa = XARRAY_INIT(init_pid_ns.xa, PID_XA_FLAGS),
-+	.cursor = 1,
- 	.pid_allocated = PIDNS_ADDING,
- 	.level = 0,
- 	.child_reaper = &init_task,
-@@ -86,22 +81,6 @@ struct pid_namespace init_pid_ns = {
- };
- EXPORT_SYMBOL_GPL(init_pid_ns);
- 
--/*
-- * Note: disable interrupts while the pidmap_lock is held as an
-- * interrupt might come in and do read_lock(&tasklist_lock).
-- *
-- * If we don't disable interrupts there is a nasty deadlock between
-- * detach_pid()->free_pid() and another cpu that does
-- * spin_lock(&pidmap_lock) followed by an interrupt routine that does
-- * read_lock(&tasklist_lock);
-- *
-- * After we clean up the tasklist_lock and know there are no
-- * irq handlers that take it we can leave the interrupts enabled.
-- * For now it is easier to be safe than to prove it can't happen.
-- */
--
--static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
--
- void put_pid(struct pid *pid)
- {
- 	struct pid_namespace *ns;
-@@ -129,10 +108,11 @@ void free_pid(struct pid *pid)
- 	int i;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pidmap_lock, flags);
- 	for (i = 0; i <= pid->level; i++) {
- 		struct upid *upid = pid->numbers + i;
- 		struct pid_namespace *ns = upid->ns;
-+
-+		xa_lock_irqsave(&ns->xa, flags);
- 		switch (--ns->pid_allocated) {
- 		case 2:
- 		case 1:
-@@ -149,9 +129,9 @@ void free_pid(struct pid *pid)
- 			break;
- 		}
- 
--		idr_remove(&ns->idr, upid->nr);
-+		__xa_erase(&ns->xa, upid->nr);
-+		xa_unlock_irqrestore(&ns->xa, flags);
- 	}
--	spin_unlock_irqrestore(&pidmap_lock, flags);
- 
- 	call_rcu(&pid->rcu, delayed_put_pid);
- }
-@@ -161,7 +141,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- {
- 	struct pid *pid;
- 	enum pid_type type;
--	int i, nr;
-+	int i;
- 	struct pid_namespace *tmp;
- 	struct upid *upid;
- 	int retval = -ENOMEM;
-@@ -205,43 +185,42 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 			set_tid_size--;
- 		}
- 
--		idr_preload(GFP_KERNEL);
--		spin_lock_irq(&pidmap_lock);
--
- 		if (tid) {
--			nr = idr_alloc(&tmp->idr, NULL, tid,
--				       tid + 1, GFP_ATOMIC);
-+			retval = xa_insert_irq(&tmp->xa, tid, NULL, GFP_KERNEL);
-+
- 			/*
--			 * If ENOSPC is returned it means that the PID is
-+			 * If EBUSY is returned it means that the PID is
- 			 * alreay in use. Return EEXIST in that case.
- 			 */
--			if (nr == -ENOSPC)
--				nr = -EEXIST;
-+			if (retval == -EBUSY)
-+				retval = -EEXIST;
- 		} else {
- 			int pid_min = 1;
-+
-+			xa_lock_irq(&tmp->xa);
- 			/*
- 			 * init really needs pid 1, but after reaching the
- 			 * maximum wrap back to RESERVED_PIDS
- 			 */
--			if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
-+			if (tmp->cursor > RESERVED_PIDS)
- 				pid_min = RESERVED_PIDS;
- 
- 			/*
- 			 * Store a null pointer so find_pid_ns does not find
- 			 * a partially initialized PID (see below).
- 			 */
--			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
--					      pid_max, GFP_ATOMIC);
-+			retval = __xa_alloc_cyclic(&tmp->xa, &tid, NULL,
-+					XA_LIMIT(pid_min, pid_max),
-+					&tmp->cursor, GFP_KERNEL);
-+			xa_unlock_irq(&tmp->xa);
-+			if (retval == -EBUSY)
-+				retval = -EAGAIN;
- 		}
--		spin_unlock_irq(&pidmap_lock);
--		idr_preload_end();
- 
--		if (nr < 0) {
--			retval = (nr == -ENOSPC) ? -EAGAIN : nr;
-+		if (retval < 0)
- 			goto out_free;
--		}
- 
--		pid->numbers[i].nr = nr;
-+		pid->numbers[i].nr = tid;
- 		pid->numbers[i].ns = tmp;
- 		tmp = tmp->parent;
- 	}
-@@ -266,34 +245,35 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 	INIT_HLIST_HEAD(&pid->inodes);
- 
- 	upid = pid->numbers + ns->level;
--	spin_lock_irq(&pidmap_lock);
-+	xa_lock_irq(&ns->xa);
- 	if (!(ns->pid_allocated & PIDNS_ADDING))
- 		goto out_unlock;
- 	for ( ; upid >= pid->numbers; --upid) {
- 		/* Make the PID visible to find_pid_ns. */
--		idr_replace(&upid->ns->idr, pid, upid->nr);
-+		if (upid->ns != ns)
-+			xa_lock_irq(&ns->xa);
-+		__xa_store(&upid->ns->xa, upid->nr, pid, 0);
- 		upid->ns->pid_allocated++;
-+		xa_unlock_irq(&ns->xa);
- 	}
--	spin_unlock_irq(&pidmap_lock);
- 
- 	return pid;
- 
- out_unlock:
--	spin_unlock_irq(&pidmap_lock);
-+	xa_unlock_irq(&ns->xa);
- 	put_pid_ns(ns);
- 
- out_free:
--	spin_lock_irq(&pidmap_lock);
- 	while (++i <= ns->level) {
- 		upid = pid->numbers + i;
--		idr_remove(&upid->ns->idr, upid->nr);
-+		xa_erase_irq(&upid->ns->xa, upid->nr);
- 	}
- 
-+	xa_lock_irq(&ns->xa);
- 	/* On failure to allocate the first pid, reset the state */
- 	if (ns->pid_allocated == PIDNS_ADDING)
--		idr_set_cursor(&ns->idr, 0);
--
--	spin_unlock_irq(&pidmap_lock);
-+		ns->cursor = 0;
-+	xa_unlock_irq(&ns->xa);
- 
- 	kmem_cache_free(ns->pid_cachep, pid);
- 	return ERR_PTR(retval);
-@@ -301,14 +281,14 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 
- void disable_pid_allocation(struct pid_namespace *ns)
- {
--	spin_lock_irq(&pidmap_lock);
-+	xa_lock_irq(&ns->xa);
- 	ns->pid_allocated &= ~PIDNS_ADDING;
--	spin_unlock_irq(&pidmap_lock);
-+	xa_unlock_irq(&ns->xa);
- }
- 
- struct pid *find_pid_ns(int nr, struct pid_namespace *ns)
- {
--	return idr_find(&ns->idr, nr);
-+	return xa_load(&ns->xa, nr);
- }
- EXPORT_SYMBOL_GPL(find_pid_ns);
- 
-@@ -517,7 +497,9 @@ EXPORT_SYMBOL_GPL(task_active_pid_ns);
-  */
- struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
- {
--	return idr_get_next(&ns->idr, &nr);
-+	unsigned long index = nr;
-+
-+	return xa_find(&ns->xa, &index, ULONG_MAX, XA_PRESENT);
- }
- 
- struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
-@@ -646,7 +628,7 @@ SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
- 	return fd;
- }
- 
--void __init pid_idr_init(void)
-+void __init pid_init(void)
- {
- 	/* Verify no one has done anything silly: */
- 	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
-@@ -658,8 +640,6 @@ void __init pid_idr_init(void)
- 				PIDS_PER_CPU_MIN * num_possible_cpus());
- 	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
- 
--	idr_init(&init_pid_ns.idr);
--
- 	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
- 			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
- }
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index f4f8cb0435b4..947e25fb8546 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -22,7 +22,7 @@
- #include <linux/export.h>
- #include <linux/sched/task.h>
- #include <linux/sched/signal.h>
--#include <linux/idr.h>
-+#include <linux/xarray.h>
- 
- static DEFINE_MUTEX(pid_caches_mutex);
- static struct kmem_cache *pid_ns_cachep;
-@@ -92,15 +92,15 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 	if (ns == NULL)
- 		goto out_dec;
- 
--	idr_init(&ns->idr);
-+	xa_init_flags(&ns->xa, PID_XA_FLAGS);
- 
- 	ns->pid_cachep = create_pid_cachep(level);
- 	if (ns->pid_cachep == NULL)
--		goto out_free_idr;
-+		goto out_free_xa;
- 
- 	err = ns_alloc_inum(&ns->ns);
- 	if (err)
--		goto out_free_idr;
-+		goto out_free_xa;
- 	ns->ns.ops = &pidns_operations;
- 
- 	refcount_set(&ns->ns.count, 1);
-@@ -112,8 +112,8 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
- 
- 	return ns;
- 
--out_free_idr:
--	idr_destroy(&ns->idr);
-+out_free_xa:
-+	xa_destroy(&ns->xa);
- 	kmem_cache_free(pid_ns_cachep, ns);
- out_dec:
- 	dec_pid_namespaces(ucounts);
-@@ -135,7 +135,7 @@ static void destroy_pid_namespace(struct pid_namespace *ns)
- {
- 	ns_free_inum(&ns->ns);
- 
--	idr_destroy(&ns->idr);
-+	xa_destroy(&ns->xa);
- 	call_rcu(&ns->rcu, delayed_free_pidns);
- }
- 
-@@ -165,7 +165,7 @@ EXPORT_SYMBOL_GPL(put_pid_ns);
- 
- void zap_pid_ns_processes(struct pid_namespace *pid_ns)
- {
--	int nr;
-+	long nr;
- 	int rc;
- 	struct task_struct *task, *me = current;
- 	int init_pids = thread_group_leader(me) ? 1 : 2;
-@@ -198,8 +198,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
- 	 */
- 	rcu_read_lock();
- 	read_lock(&tasklist_lock);
--	nr = 2;
--	idr_for_each_entry_continue(&pid_ns->idr, pid, nr) {
-+	xa_for_each_range(&pid_ns->xa, nr, pid, 2, ULONG_MAX) {
- 		task = pid_task(pid, PIDTYPE_PID);
- 		if (task && !__fatal_signal_pending(task))
- 			group_send_sig_info(SIGKILL, SEND_SIG_PRIV, task, PIDTYPE_MAX);
-@@ -272,12 +271,12 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
- 	 * it should synchronize its usage with external means.
- 	 */
- 
--	next = idr_get_cursor(&pid_ns->idr) - 1;
-+	next = pid_ns->cursor - 1;
- 
- 	tmp.data = &next;
- 	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
- 	if (!ret && write)
--		idr_set_cursor(&pid_ns->idr, next + 1);
-+		pid_ns->cursor = next + 1;
- 
- 	return ret;
- }
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
