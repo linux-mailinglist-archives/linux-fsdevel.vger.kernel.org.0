@@ -2,77 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7255354C979
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 15:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB8B454C98B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 15:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347103AbiFONMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 09:12:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48624 "EHLO
+        id S1348703AbiFONP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 09:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233309AbiFONMI (ORCPT
+        with ESMTP id S1348422AbiFONP1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 09:12:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B528A24581;
-        Wed, 15 Jun 2022 06:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FHOVdTg6NKnoEjJkArBOs1GnjsYN72M8SV5hUzpqtrM=; b=2XD3XMBMNnkMfNTbWofuI16L1y
-        ibePJHi5dvh74MnJpzG/u7S4aY3orURjcbZttxdDGEus2CPnup5s5KOGh1tezdDut2pv1x+NGhPuQ
-        X+3q7hkUy7zDSvVK2F4TppQrdIPlffoCN0T5tf11PK7u3/D8dclNIN8z91X7ihwHu8RuY3cc7wDnT
-        d43ZIT49HPtGxdcjxsIboQvMIdqXM3LrRBtzzeyXMjMyX991d/c4srAjBj5WAi/1DhB92Ucde0Xdx
-        naUR1vNfJj/V/p7q3PNpvUcCQ6o6WE2NrGm2l1MnAHXJhZcTWN19ICW2w0WfNwRcn01j35hhvNYIv
-        H6BuzbSQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o1SoW-00EdqR-Tk; Wed, 15 Jun 2022 13:12:04 +0000
-Date:   Wed, 15 Jun 2022 06:12:04 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [RFC PATCH v2 1/7] statx: add I/O alignment information
-Message-ID: <YqnapOLvHDmX/3py@infradead.org>
-References: <20220518235011.153058-1-ebiggers@kernel.org>
- <20220518235011.153058-2-ebiggers@kernel.org>
- <YobNXbYnhBiqniTH@magnolia>
- <20220520032739.GB1098723@dread.disaster.area>
- <YqgbuDbdH2OLcbC7@sol.localdomain>
+        Wed, 15 Jun 2022 09:15:27 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2312A27B;
+        Wed, 15 Jun 2022 06:15:26 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id BF13A21BB9;
+        Wed, 15 Jun 2022 13:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1655298924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=17VEqNPV/TBk73G7tKfWD0AkIggznFYMqcz7zsD4S9c=;
+        b=c5CplPzuxQh5gnp4bD34uWkKLEOaOc1Tpwslt5ARBi5fVdHjWZ4prxmWoQqcdCpqAG1Yor
+        xmQuGVnUEOpCEt1XYqn7LUtFrFvMKUMl0YDT2F/jRq/vq+FW+bBxji/zHIwKJ8jaI2QMZs
+        rqLOKCpvqZTZhxAjHRYVGQZVY5XNs10=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 66BBD2C141;
+        Wed, 15 Jun 2022 13:15:24 +0000 (UTC)
+Date:   Wed, 15 Jun 2022 15:15:23 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Message-ID: <Yqnba1E2FSRVUATY@dhcp22.suse.cz>
+References: <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
+ <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
+ <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+ <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+ <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
+ <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
+ <YqcpZY3Xx7Mk2ROH@dhcp22.suse.cz>
+ <34daa8ab-a9f4-8f7b-0ea7-821bc36b9497@gmail.com>
+ <YqdFkfLVFUD5K6EK@dhcp22.suse.cz>
+ <9e170201-35df-cfcc-8d07-2f9693278829@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YqgbuDbdH2OLcbC7@sol.localdomain>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e170201-35df-cfcc-8d07-2f9693278829@amd.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 10:25:12PM -0700, Eric Biggers wrote:
-> While working on the man-pages update, I'm having second thoughts about the
-> stx_offset_align_optimal field.  Does any filesystem other than XFS actually
-> want stx_offset_align_optimal, when st[x]_blksize already exists?  Many network
-> filesystems, as well as tmpfs when hugepages are enabled, already report large
-> (megabytes) sizes in st[x]_blksize.  And all documentation I looked at (man
-> pages for Linux, POSIX, FreeBSD, NetBSD, macOS) documents st_blksize as
-> something like "the preferred blocksize for efficient I/O".  It's never
-> documented as being limited to PAGE_SIZE, which makes sense because it's not.
+On Wed 15-06-22 14:35:22, Christian König wrote:
+[...]
+> Even the classic mm_struct based accounting includes MM_SHMEMPAGES into the
+> badness. So accounting shared resources as badness to make a decision is
+> nothing new here.
 
-Yes.  While st_blksize is utterly misnamed, it has always aways been
-the optimal I/O size.
+Yeah, it is nothing really new but it also doesn't mean it is an example
+worth following as this doesn't really work currently. Also please note
+that MM_SHMEMPAGES is counting at least something process specific as
+those pages are mapped in to the process (and with enough of wishful
+thinking unmapping can drop the last reference and free something up
+actually) . With generic per-file memory this is even more detached from
+process.
 
-> Perhaps for now we should just add STATX_DIOALIGN instead of STATX_IOALIGN,
-> leaving out the stx_offset_align_optimal field?  What do people think?
+> The difference is that this time the badness doesn't come from the memory
+> management subsystem, but rather from the I/O subsystem.
+> 
+> > This is also the reason why I am not really fan of the per file
+> > badness because it adds a notion of resource that is not process bound
+> > in general so it will add all sorts of weird runtime corner cases which
+> > are impossible to anticipate [*]. Maybe that will work in some scenarios
+> > but definitely not something to be done by default without users opting
+> > into that and being aware of consequences.
+> 
+> Would a kernel command line option to control the behavior be helpful here?
 
-Yes, this sounds like a good plan.
+I am not sure what would be the proper way to control that that would be
+future extensible. Kernel command line is certainly and option but if we
+want to extend that to module like or eBPF interface then it wouldn't
+stand a future test very quickly.
+
+-- 
+Michal Hocko
+SUSE Labs
