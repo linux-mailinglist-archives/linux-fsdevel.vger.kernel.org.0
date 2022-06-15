@@ -2,48 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB4554C91C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 14:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B7D54C93A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 14:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349254AbiFOMvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 08:51:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
+        id S1351137AbiFOMyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 08:54:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349295AbiFOMuw (ORCPT
+        with ESMTP id S1349376AbiFOMyH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 08:50:52 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44B6853E28;
-        Wed, 15 Jun 2022 05:50:05 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44F1B152B;
-        Wed, 15 Jun 2022 05:50:05 -0700 (PDT)
-Received: from monolith.localdoman (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B163D3F73B;
-        Wed, 15 Jun 2022 05:50:01 -0700 (PDT)
-Date:   Wed, 15 Jun 2022 13:50:24 +0100
-From:   Alexandru Elisei <alexandru.elisei@arm.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     jack@suse.cz, sunjunchao2870@gmail.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        senozhatsky@chromium.org, rostedt@goodmis.org,
-        john.ogness@linutronix.de, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, maco@android.com, hch@lst.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org
-Subject: Re: [BUG] rockpro64 board hangs in console_init() after commit
- 10e14073107d
-Message-ID: <YqnVWCYx0L2RlckB@monolith.localdoman>
-References: <Yqdry+IghSWnJ6pe@monolith.localdoman>
- <Yqh9xIwBVcabpSLe@alley>
- <YqiJH1phG/LWu9bs@monolith.localdoman>
- <YqiidNPMUZQPRIvy@alley>
+        Wed, 15 Jun 2022 08:54:07 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD04C2DD5F;
+        Wed, 15 Jun 2022 05:54:04 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3A7AsUtKId1AvLrT49FE+RupQlxSXFcZb7ZxGrkP8?=
+ =?us-ascii?q?bfHDo0Dkr02BTnWVNUWrQaPqNYWqjKNoib4u3pE4Gv8fVmoNqS1BcGVNFFSwT8?=
+ =?us-ascii?q?ZWfbTi6wuYcBwvLd4ubChsPA/w2MrEsF+hpCC+MzvuRGuK59yMkj/nRHuOU5NP?=
+ =?us-ascii?q?sYUideyc1EU/Ntjozw4bVsqYw6TSIK1vlVeHa+qUzC3f5s9JACV/43orYwP9ZU?=
+ =?us-ascii?q?FsejxtD1rA2TagjUFYzDBD5BrpHTU26ByOQroW5goeHq+j/ILGRpgs1/j8mDJW?=
+ =?us-ascii?q?rj7T6blYXBLXVOGBiiFIPA+773EcE/Xd0j87XN9JFAatToy+UltZq2ZNDs4esY?=
+ =?us-ascii?q?Qk0PKzQg/lbWB5de817FfQcpO6YcCnl4KR/yGWDKRMA2c5GAEgoPIEw9PxwBGZ?=
+ =?us-ascii?q?U//0EbjsKa3irh+m26LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtOOpgGTvNjhdgFGLrKE0pW/Jw2R?=
+ =?us-ascii?q?Z1qbhMd/QUtiLXtlO2EKZoH/WuWj0HHkyNtWZxHyO8m+EgfXGlif2HokVEdWQ8?=
+ =?us-ascii?q?v9snU3WyHcfBQMbUXOlrvSjzE2zQdRSLwoT4CVGhawz8lG7C9rwRRu1pFaasRM?=
+ =?us-ascii?q?GHdldCes37EeK0KW8ywKYAHUUCy5Pc/Q4u8IsAz8nzFmEm5XuHzMHjVE/YRpx7?=
+ =?us-ascii?q?Z/N9XXrZ3dTdjREOEc5ocI+y4GLiOkOYtjnFL6PyJKIs+A=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AMlXlkql4KcWskQNZcoFR3X7Hn73pDfIQ3DAb?=
+ =?us-ascii?q?v31ZSRFFG/Fw9vre+MjzsCWYtN9/Yh8dcK+7UpVoLUm8yXcX2/h1AV7BZniEhI?=
+ =?us-ascii?q?LAFugLgrcKqAeQeREWmNQ86Y5QN4B6CPDVSWNxlNvG5mCDeOoI8Z2q97+JiI7l?=
+ =?us-ascii?q?o0tQcQ=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="124979929"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 15 Jun 2022 20:54:03 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id D8E334D1719F;
+        Wed, 15 Jun 2022 20:54:02 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Wed, 15 Jun 2022 20:54:04 +0800
+Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Wed, 15 Jun 2022 20:54:02 +0800
+Received: from irides.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Wed, 15 Jun 2022 20:54:02 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
+Subject: [RFC PATCH v3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+Date:   Wed, 15 Jun 2022 20:54:00 +0800
+Message-ID: <20220615125400.880067-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
+References: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YqiidNPMUZQPRIvy@alley>
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: D8E334D1719F.A2FA5
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -52,189 +75,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Petr,
+This patch is inspired by Dan's "mm, dax, pmem: Introduce
+dev_pagemap_failure()"[1].  With the help of dax_holder and
+->notify_failure() mechanism, the pmem driver is able to ask filesystem
+(or mapped device) on it to unmap all files in use and notify processes
+who are using those files.
 
-On Tue, Jun 14, 2022 at 05:00:04PM +0200, Petr Mladek wrote:
-> On Tue 2022-06-14 14:23:42, Alexandru Elisei wrote:
-> > With this change:
-> > 
-> > diff --git a/init/main.c b/init/main.c
-> > index 0ee39cdcfcac..a245982eb8a2 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -1057,6 +1057,8 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
-> > 
-> >         kmem_cache_init_late();
-> > 
-> > +       lockdep_init();
-> > +
-> >         /*
-> >          * HACK ALERT! This is early. We're enabling the console before
-> >          * we've done PCI setups etc, and console_init() must be aware of
-> > @@ -1067,8 +1069,6 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
-> >                 panic("Too many boot %s vars at `%s'", panic_later,
-> >                       panic_param);
-> > 
-> > -       lockdep_init();
-> > -
-> >         /*
-> >          * Need to run this when irqs are enabled, because it wants
-> >          * to self-test [hard/soft]-irqs on/off lock inversion bugs
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index ea3dd55709e7..aa7684c6745d 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -2705,7 +2705,10 @@ static int console_cpu_notify(unsigned int cpu)
-> >   */
-> >  void console_lock(void)
-> >  {
-> > +       pr_info("before might_sleep()");
-> >         might_sleep();
-> > +       pr_info("before down_console_sem()");
-> > +       pr_info("before down_console_sem()");
-> > 
-> >         down_console_sem();
-> >         if (console_suspended)
-> > @@ -3508,12 +3511,18 @@ int unregister_console(struct console *console)
-> >         if (console->exit)
-> >                 res = console->exit(console);
-> > 
-> > +       pr_info("Exiting from unregister_console(), res = %d", res);
-> > +       pr_info("Exiting from unregister_console(), res = %d", res);
-> > +
-> >         return res;
-> > 
-> >  out_disable_unlock:
-> >         console->flags &= ~CON_ENABLED;
-> >         console_unlock();
-> > 
-> > +       pr_info("Exiting from unregister_console(), res = %d", res);
-> > +       pr_info("Exiting from unregister_console(), res = %d", res);
-> > +
-> >         return res;
-> >  }
-> >  EXPORT_SYMBOL(unregister_console);
-> > 
-> > Some of the pr_info statements are duplicated to see the output just before
-> > the console hangs (I assume they're needed to force a buffer flush).
-> > 
-> > This is what I got:
-> > 
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
-> > [    0.000000] Linux version 5.19.0-rc2-dirty (alex@monolith) (aarch64-linux-gnu-gcc (GCC) 12.1.0, GNU ld (GNU Binutils) 2.38) #106 SMP PREEMPT Tue Jun 14 14:03:30 BST 2022
-> > [    0.000000] Machine model: Pine64 RockPro64 v2.0
-> > [    0.000000] efi: UEFI not found.
-> > [    0.000000] earlycon: uart0 at MMIO32 0x00000000ff1a0000 (options '1500000n8')
-> > [    0.000000] printk: before might_sleep()
-> > [    0.000000] printk: before down_console_sem()
-> > [    0.000000] printk: before down_console_sem()
-> > [    0.000000] printk: bootconsole [uart0] enabled
-> > [    0.000000] NUMA: No NUMA configuration found
-> > [    0.000000] NUMA: Faking a node at [mem 0x0000000000200000-0x00000000f7ffffff]
-> > [    0.000000] NUMA: NODE_DATA [mem 0xf77cef40-0xf77d0fff]
-> [...]
-> > [    0.000001] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps every 4398046511097ns
-> > [    0.005602] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-> > [    0.006373] ... MAX_LOCKDEP_SUBCLASSES:  8
-> > [    0.006789] ... MAX_LOCK_DEPTH:          48
-> > [    0.007212] ... MAX_LOCKDEP_KEYS:        8192
-> > [    0.007651] ... CLASSHASH_SIZE:          4096
-> > [    0.008088] ... MAX_LOCKDEP_ENTRIES:     32768
-> > [    0.008535] ... MAX_LOCKDEP_CHAINS:      65536
-> > [    0.008981] ... CHAINHASH_SIZE:          32768
-> > [    0.009428]  memory used by lock dependency info: 6365 kB
-> > [    0.010018]  memory used for stack traces: 4224 kB
-> > [    0.010500]  per task-struct memory footprint: 1920 bytes
-> > [    0.011059] printk: before might_sleep()
-> > [    0.011079] printk: before down_console_sem()
-> > [    0.011477] printk: before down_console_sem()
-> > [    0.012112] Console: colour dummy device 80x25
-> > [    0.012984] printk: before might_sleep()
-> > [    0.013003] printk: before down_console_sem()
-> > [    0.013399] printk: before down_console_sem()
-> > [    0.013860] printk: console [tty0] enabled
-> > [    0.014986] printk: bootconsole [uart0] disabled
-> > [    0.015564] printk: before might_sleep()
-> > [    0.015582] printk: before down_console_sem()
-> 
-> I think that it did not print the 2nd "printk: before
-> down_console_sem()" because there was missing newline "\n".
+Call trace:
+trigger unbind
+ -> unbind_store()
+  -> ... (skip)
+   -> devres_release_all()   # was pmem driver ->remove() in v1
+    -> kill_dax()
+     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_REMOVE)
+      -> xfs_dax_notify_failure()
 
-You're right, tried it with appending the newline character and it worked.
+Introduce MF_MEM_REMOVE to let filesystem know this is a remove event.
+So do not shutdown filesystem directly if something not supported, or if
+failure range includes metadata area.  Make sure all files and processes
+are handled correctly.
 
-> 
-> printk() keeps such a line open because pr_cont() might append
-> to it. The message will get printed to the console only when
-> pr_cont("bla bla \n") is called or when another non-continuous
-> printk() is called.
+[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-Thank you for the explanation!
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 
-> 
-> > > Does the system boot when you avoid "earlycon" parameter?
-> > 
-> > It doesn't boot, it hangs and I don't get any output.
-> 
-> The difference might be that earlycon uses the serial port.
-> While the normal console is terminal "tty0".
-> 
-> Does it help to configure also the normal serial console.
-> I mean booting with something like:
-> 
-> earlycon console=uart,mmio32,0x00000000ff1a0000,1500000n8 console=tty0
-> 
-> I am not completely sure about the console=uart parameter. It is a
-> shame but I have never used it. I took the format from
-> Documentation/admin-guide/kernel-parameters.txt and the values
-> from your boot log:
-> 
-> [    0.000000] earlycon: uart0 at MMIO32 0x00000000ff1a0000 (options '1500000n8')
+==
+Changes since v2:
+  1. Rebased on next-20220615
 
-According to the devicetree, earlycon should be serial2:1500000n8 (the
-"stdout-path" property of the "chosen" node), which is an alias for the
-node /serial@ff1a0000. That serial console has the compatible property
-"rockchip,rk3399-uart", "snps,dw-apb-uart". The uart8250 early console
-driver binds to that device.
+Changes since v1:
+  1. Drop the needless change of moving {kill,put}_dax()
+  2. Rebased on '[PATCHSETS] v14 fsdax-rmap + v11 fsdax-reflink'[2]
 
-Putting the kernel output and the information from the devicetree together,
-the earlycon parameter should be:
+---
+ drivers/dax/super.c         | 2 +-
+ fs/xfs/xfs_notify_failure.c | 6 +++++-
+ include/linux/mm.h          | 1 +
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
-earlycon=uart8250,mmio32,0xff1a0000,1500000n8
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 9b5e2a5eb0ae..d4bc83159d46 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -323,7 +323,7 @@ void kill_dax(struct dax_device *dax_dev)
+ 		return;
+ 
+ 	if (dax_dev->holder_data != NULL)
+-		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
++		dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_REMOVE);
+ 
+ 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+ 	synchronize_srcu(&dax_srcu);
+diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+index aa8dc27c599c..91d3f05d4241 100644
+--- a/fs/xfs/xfs_notify_failure.c
++++ b/fs/xfs/xfs_notify_failure.c
+@@ -73,7 +73,9 @@ xfs_dax_failure_fn(
+ 	struct failure_info		*notify = data;
+ 	int				error = 0;
+ 
+-	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
++	/* Do not shutdown so early when device is to be removed */
++	if (!(notify->mf_flags & MF_MEM_REMOVE) ||
++	    XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+ 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		return -EFSCORRUPTED;
+@@ -182,6 +184,8 @@ xfs_dax_notify_failure(
+ 
+ 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+ 	    mp->m_logdev_targp != mp->m_ddev_targp) {
++		if (mf_flags & MF_MEM_REMOVE)
++			return -EOPNOTSUPP;
+ 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		return -EFSCORRUPTED;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 623c2ee8330a..bbeb31883362 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3249,6 +3249,7 @@ enum mf_flags {
+ 	MF_SOFT_OFFLINE = 1 << 3,
+ 	MF_UNPOISON = 1 << 4,
+ 	MF_NO_RETRY = 1 << 5,
++	MF_MEM_REMOVE = 1 << 6,
+ };
+ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 		      unsigned long count, int mf_flags);
+-- 
+2.36.1
 
-But when I use that, I don't get any output and the kernel hangs on v5.18
-and v5.17 too.
 
-It turns out that leaving the baudrate out of the earlycon parameter:
 
-earlycon=uart8250,mmio32,0xff1a0000
-
-or specifying a baudrate of 115200:
-
-earlycon=uart8250,mmio32,0xff1a0000,115200n8
-
-makes it work again, and the board can boot. I assume that because a bogus
-baud rate makes earlycon work, there is something off with how the 8250
-earlycon driver gets the UART clock frequency (credits to Andre Przywara
-for helping me with the UART debugging and discovering this).
-
-> 
-> > > > I've booted a kernel compiled with CONFIG_PROVE_LOCKING=y, as the offending
-> > > > commit fiddles with locks, but no splat was produced that would explain the
-> > > > hang. I've also tried to boot a v5,19-rc2 kernel on my odroid-c4, the board
-> > > > is booting just fine, so I'm guessing it only affects of subset of arm64
-> > > > boards.
-> > > 
-> > > You might try to switch the order of console_init() and lockdep_init()
-> > > in start_kernel() in init/main.c
-> > 
-> > Did so above.
-> 
-> Unfortunately, it did not print anything :-(
-
-With this patch [1] I was able to succefully boot the board. So I guess
-problem should be fixed.
-
-[1] https://lore.kernel.org/all/20220614124618.2830569-1-suzuki.poulose@arm.com/
-
-Thanks,
-Alex
