@@ -2,168 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBFD654D486
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 00:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A372054D565
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 01:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349547AbiFOWZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 18:25:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44508 "EHLO
+        id S1344835AbiFOXgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 19:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347056AbiFOWZP (ORCPT
+        with ESMTP id S241580AbiFOXgt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 18:25:15 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2059.outbound.protection.outlook.com [40.107.93.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB05A2F027;
-        Wed, 15 Jun 2022 15:25:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I5dUgL904Awaf5GB87Ph+XT8l2I9ZlaqfbLcLK7VqN0jRVaEvJJehcmFQ7ogj3nvgWWxrzhiYn3cP4gYOh6M5YnMWKTGVxwHceTn08W+M2+IoEJKdrGcmmefE2fq5VMyN3zksnzrBvZi7cXEwBMA84XAyzdAC9bG2SuadVvt1R2gCpaP+SquUisWaJ184JK+J0ipd9A40ofQaOLfIUKx/9XIlTW2uGztSg+p2hyw1XqyBz4XSRdknbRHuItgMjXswqTK/myguyCdMvxilzcLIx0r6/xeiobx1+JQAjNXjwTq5no1Ot1igvsddGbBACpDKyLQwxnJZI7ecbjdd1QPmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=one2GZ2Kga2hjrWKebUneYR1HHafhg8oBuExZHY7A6Y=;
- b=iJbgsbWgxH70dh5c/GulvbEKc42rvCfDl95GkVDTIYCz/9fDqtke13y2H0u3IuvbRnDPcGfv4U+3w6WgIkMPbAJ1p8YNu6Xqwjt2hCpqDgMPdD7l6KtINaCZFALPnQ4wuxuEhATkNPmE8atQZ+gD+tXJUYSAVevSUJ3j9KiOqQIorXuakFuQXA2pNzCmkUOD4kh43mStkg8T+b+Le3if8WHiEs0oItOwV8fDGytKoqNCZFxYIOyHaJcFnajl0/P0VpiTsSrEn/Sfs0atOvvSCx0TkzL/WTgCXzy5NoSsMsjQFaL/jplI8SXs5Ym7SESb2u21fa3jIzNhMHkveZn1nQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=one2GZ2Kga2hjrWKebUneYR1HHafhg8oBuExZHY7A6Y=;
- b=x9TJpMbbZYFWYYDJLj6sUFSOrM4V1qBvYQqMAcdIOVtz1VuHUIMOU11X7UtyVZfkjV+uaLbgH9Y8sgBxs7YLhEPnFkFBmo5DCDLywgCOfs8dNtmxpAJFIm4zHLKl44903tDx+INGA0KcbbFq37+KGBs94H86Ol3NjYZaVa/uKi8=
-Received: from BY3PR05MB8531.namprd05.prod.outlook.com (2603:10b6:a03:3ce::6)
- by DM6PR05MB6538.namprd05.prod.outlook.com (2603:10b6:5:130::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14; Wed, 15 Jun
- 2022 22:25:12 +0000
-Received: from BY3PR05MB8531.namprd05.prod.outlook.com
- ([fe80::a4f8:718a:b2a0:977f]) by BY3PR05MB8531.namprd05.prod.outlook.com
- ([fe80::a4f8:718a:b2a0:977f%5]) with mapi id 15.20.5353.013; Wed, 15 Jun 2022
- 22:25:11 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v3 5/6] userfaultfd: selftests: make /dev/userfaultfd
- testing configurable
-Thread-Topic: [PATCH v3 5/6] userfaultfd: selftests: make /dev/userfaultfd
- testing configurable
-Thread-Index: AQHYdfv6fDyMczipnEG9l81JJqWcj61RIZWA
-Date:   Wed, 15 Jun 2022 22:25:11 +0000
-Message-ID: <7665FE27-EB0C-4FCA-ACAA-B4B37F87CB19@vmware.com>
-References: <20220601210951.3916598-1-axelrasmussen@google.com>
- <20220601210951.3916598-6-axelrasmussen@google.com>
-In-Reply-To: <20220601210951.3916598-6-axelrasmussen@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.100.31)
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vmware.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8aec645d-7a29-4aa5-f066-08da4f1de99a
-x-ms-traffictypediagnostic: DM6PR05MB6538:EE_
-x-microsoft-antispam-prvs: <DM6PR05MB65389BF7A0851F540E1C7972D0AD9@DM6PR05MB6538.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qdyyNUdH/MnrZLe1WxnN9kYcMZEaCKdj41OEzS+JM+xxPqPwwbLxv4UScrvR/dThmdvkyvxKDZhNkKMooAeudFZIzMhC5FE2qzSjoG3S3KHgHC5wQRWfE26u5uZrKjycCoOkMQhmS1QxXwDn/dLXwLSiC8CHnEJqM3aUIdy8CBmD3942c8Wsb7mtlj+GXr1nQ4V0eybKt488vphfsSuiolHCv+NL4fc0cBSkfx6x5ZGun6YDHCGBTcmbKwOxtuS8SfvxEL69ee1O2r+dc03UFI1wK7rK5MPbzo/x2OGNrmZQaNC2ftO+c02jZf/pEpQop8XyIg2+BKpetFzPe+p4F4/s0TlWjjn5dA1Fj/yNoce+7/5cy1q9THuuEbLXD5CraOYqsmgsxcoGr2ew/D2QW+BT8XyvvTyXiT7g8SYRXTwU2oI3odsUNv1UrNhwCwOgQfsJHtFKN2g/66utKpC7Us/9fY2i/IZlOEyxcSvLoc4Whgwe+6ZJbO5UQV+CejeBvdjzPrsgesVJaDGWL8MXEoa8lNEjkSVbKwjBhYwLYKpsuE8EkWZ99Vj+vrmHVNM+RBdQ63+8MV/SXs6/0zC1MyyOSqj74cl4z2sIxPwjar59b5FPrJ6SDvNsEORLkctxJLxZL9/c4HcW9tsNHNCX5ah7e84vVkBGFhhr7yOuWI/0+jtph77ZZecso0td/vDlAoZFoCPs5Zvz6h1mNkqimXaKwghbwAO2iHIkGzqyzLoeJMihnBXpFdRWlrtTfR+tL1hbx1eJwxYpNHLwI/MIhP79F+T3EnpjGtzuXsp7d1b/L5qjMzLdHhOrYjwULTdZJGxH2Tv49+I0+ZsnAKl9oA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR05MB8531.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(6916009)(71200400001)(33656002)(54906003)(38070700005)(5660300002)(186003)(2906002)(7416002)(36756003)(4744005)(76116006)(8676002)(66946007)(66556008)(66476007)(316002)(53546011)(4326008)(66446008)(8936002)(86362001)(6486002)(966005)(122000001)(38100700002)(508600001)(6506007)(2616005)(26005)(64756008)(6512007)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xvni0SIxgt6F/3CDT1ezacdC0bbUZk8L0yyphz7O0Cs3x4OhEJ9tteXDE0qv?=
- =?us-ascii?Q?9IIVD8xz2WwkKOBGD2kxR58fgDA85OVjxLJGoAPo1cBeKaFVfyDYyAAZlgjV?=
- =?us-ascii?Q?/6lC8fmGqRONLz4UWbhNxzflBa2IGckzE7Cr0YkrZnH118d8HI/5CsJX+Xr+?=
- =?us-ascii?Q?Ry/2DPuESJpSo+bXGGt5DARXT1nA3IBeoKHE36HJXBbgv65+74UufT4i6k4n?=
- =?us-ascii?Q?FeBq4nXhlK4cNm2UzT3+zeX5S8GMVuGpPNWE+13fpPR4/MpdKhtXo5N4HTOj?=
- =?us-ascii?Q?cAZ4wufOINFRI723Zn9llKXql2kGUs1BI7SqPoZaz6sjn4DJsahbRT4Cmum3?=
- =?us-ascii?Q?F3jWkdu9IiswB2LzAaj6987R4OJ9XRhFh+J6a/ztvtHsKVOhxm9vxfWD3x22?=
- =?us-ascii?Q?k8H2Dw1/zFlFzJvGVvJQFNYufZPMdEEZifocZTJ6B0Hb6LB5VIW/lkV+ZPtm?=
- =?us-ascii?Q?7EfUzebASUeumrx/ynQCwKBXEIPWaZkDn+L3jHoe7Wz/rgdHzVn4dJG1WPwD?=
- =?us-ascii?Q?ofY3stBxd0y5qDDvS/zn8P7YYDwcSKdTj+7oHL2DgFuGGXLchEwibGZn5sMu?=
- =?us-ascii?Q?2kxF5nR38vc5I9woMBHFQqhf9PZHAQsqvwvVyVgQVB8hcDVI3zGFEh5bYdDm?=
- =?us-ascii?Q?7YI68TUl3bYgM5Lbcwhr4qW93JDj2qST1Ny/2cTU9QzPbfaacKLgfUdSei2S?=
- =?us-ascii?Q?QTQmvExSj0ff70hqEcfnoL0zpDsOHGWiswb39aupywH54msWsqZLV53u8EAs?=
- =?us-ascii?Q?roNcUel++mr6mFY/B9TY96ZjjIxY6HMdfFlkPtiGpiMiAt1+QgKXSIFcMb5u?=
- =?us-ascii?Q?+C6U3GWUOpw0Xz+rXapp/HWom1udJ2ZndZwn96gn0nbjWJZ+dJsyNWWcWXVZ?=
- =?us-ascii?Q?6iq16ILavkyj+XdO2VkUNyIOcQuBdW8XmMlQK7Kw9nt9RLtvsmt7sirgQXoM?=
- =?us-ascii?Q?e26X1jnNe6OcAPNYe+5O98MepsNqTBLUfzDHuiyfBj2BsUBbFMEkascUuv6z?=
- =?us-ascii?Q?Qzf4abHuB9uB5bPjcizQCHqBm9ecUrIrOTh/HLo/kzUeDcvy8BkcF2q4GscO?=
- =?us-ascii?Q?Ry5lV5LASM22YZ5tTi2MiLCJhxWN0OXBQapZqmfiKQhxzITHko5iZB3n5Azk?=
- =?us-ascii?Q?n+gl7paSOZ+jiDVfYCP0f5F8H573Gp1BUFjj/avA0ixanU7PiyI9YopBLAHL?=
- =?us-ascii?Q?kBlHIKipo6huAYf5OkSUgzD/n8X7IN838Y7MRhs9ivpY5TVD5gWF15U5dXP7?=
- =?us-ascii?Q?UufKvjwTwS8rlin+FnCU3k5pOzi6aJIbsbLI6e+nbPZo3QDi4hziztMzbf/v?=
- =?us-ascii?Q?oFKp/5erV/pPxEPCVu7M40x3311Btd6Tr8cBFEhv6md2u+sSarE4dyP42fZK?=
- =?us-ascii?Q?L7iCyc15Ht5CUta7yM26zwDbkWAKpytHC9ThW/3TfDykXJ+RYToeIVN5XhJV?=
- =?us-ascii?Q?A31DCjq+jpJQlDQ28aaJFF5CcJX2KPBhEd/qWL8Dk1Za10UQlkzkawH3Tq23?=
- =?us-ascii?Q?PtIZC7n6Iq/93b6cQ11FIgvSe3wwDg9b6a6KM59hwWLyMutLa1A92Ye69KhH?=
- =?us-ascii?Q?wyBhaTclDJS4vNlBrSA8Oc8muecBOKuDXcGbBkxbeOjBxriexlvaqMt3DYOD?=
- =?us-ascii?Q?zE+HwrdGxDJeTtZbBbEcwxvDz8imS6Cr2q3Ho4bBSB8xW7JcB/k8RoIlEyBB?=
- =?us-ascii?Q?4gK1uUAPVNwheMkUEFpNC+kxkYdjz3slstxwoVBPPIjvRrQ5LrVCOZcsr6pz?=
- =?us-ascii?Q?EeJ+IkdP3g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <78A305CC8349C94FAD25ABBFD1E25239@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 15 Jun 2022 19:36:49 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA271EAE7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 16:36:48 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id c2so18335647edf.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 16:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gc42wmtkWH3TS+0/P5gDmgnWLisg02oY8Wq1RsLAMws=;
+        b=CNFYsGfMs3GdPbQ0JDVygUeivv6oJlhiKuZCDxOaYNlF/jGu40MxFEbYVDQRqCEiQ/
+         PT3KhII4UQpFzK45EXpA1MZH96VGQEGk4dOPChCIKwjcguW/B8RDXgyI+JutcEdxQXr0
+         Attqq1a4pWPgMqPVmPsQZCr12mN1PYd9pFhhtpNL9cncoXPLh0aubuwg4qlNqh8/yN1k
+         Ae4kK0M8gLHjQRXuRkIVudVxsaL4HkYvVH/948tbkbdZO9m3pCXDmRFw+1uWtajxsLd7
+         qLHznYoWYxTyIZspHxVKeOGp0qismoAzhBDpb0+EJljF6PqWgaxf6oaDoZX8YGh5J7J4
+         9zxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gc42wmtkWH3TS+0/P5gDmgnWLisg02oY8Wq1RsLAMws=;
+        b=47BuxSOzMcSSp6BaQEZuhp0XZmPhEjBg8n3ye2+H7Vv4ohz3Md5Iawfff1Hy+04if8
+         HLiAzdYhCQcqeaoR2zfeZmZJ99TdJILW5d5BBe/KlUMhDzxRuLDJWIGnpnCpM2qvMC7J
+         idV9gWnUn10HQXs9uuVqrQ/tegpOkKkE1OgMX5TrumdSzmoLJgrHLJCN+zLnv+Mb99z0
+         4OiCcpcqAIRy9pvsMno5pYUFFFjwwBNOxO3MWGER3Bhz+ViIMdsUL0neWXN3CCutKAX0
+         +1OoYlskcmWE2B/A6NOrNzftRCn+8a5YBWnRZhyPPPUv8kH5SzmPDPiTkzsdnrfs+jNK
+         +wZw==
+X-Gm-Message-State: AJIora9xR1yinaOKuJFcsSiSx/3LKCcMC1U4qgR6bH5cMzWN9VeI+CoV
+        W/uN0yk5pBjrC2k7TGvF14Ls0pw/L564KrO6SNA=
+X-Google-Smtp-Source: AGRyM1uq6qB9NHJ3VR0pKB+aoXk3U2jfW8h8+ZHi9+gw4/NJI895CO2LWWzCx060b/Agq0bFBX1EOHzmtvwN/ouz4Xo=
+X-Received: by 2002:a05:6402:27cf:b0:431:54d9:28ed with SMTP id
+ c15-20020a05640227cf00b0043154d928edmr2852870ede.81.1655336206768; Wed, 15
+ Jun 2022 16:36:46 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR05MB8531.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aec645d-7a29-4aa5-f066-08da4f1de99a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2022 22:25:11.8081
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: igsPpQUdj//u5SDQzz9K0Mk33jqv/ZiZw8T66luGJwhiVLs7F5vBzU76Exw/Xv/L+pLlRyQX/2eS2RFZ+/ZyxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR05MB6538
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220601184407.2086986-1-davemarchevsky@fb.com>
+ <20220607084724.7gseviks4h2seeza@wittgenstein> <e933791c-21d1-18f9-de91-b194728432b8@fb.com>
+ <CAJfpegssrypgpDDheiYJS13=_p14sN4BK+bZShPG4VZu=WpSaA@mail.gmail.com>
+ <20220613093745.4szlhoutyqpizyys@wittgenstein> <CAJfpegu0Aj65rrPN_TtN8ugQNCP2d2LEB47zSDLy7H6aqd-HuA@mail.gmail.com>
+ <CAEf4BzaqfkfTgjbE2bEzELsTRpofv1Bstz2cPL8bGKS7jXvYTg@mail.gmail.com> <20220614143344.wxh2rmwz3gikhzga@wittgenstein>
+In-Reply-To: <20220614143344.wxh2rmwz3gikhzga@wittgenstein>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 15 Jun 2022 16:36:35 -0700
+Message-ID: <CAEf4BzZFy2amO9jYLnhTCSA7sac85xWxFH_EH58T7eSKacG9Pg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Add module param for non-descendant userns
+ access to allow_other
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>,
+        linux-fsdevel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        kernel-team <kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Chris Mason <clm@fb.com>, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Jun 1, 2022, at 2:09 PM, Axel Rasmussen <axelrasmussen@google.com> wrote=
-:
+On Tue, Jun 14, 2022 at 7:33 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Mon, Jun 13, 2022 at 11:21:24AM -0700, Andrii Nakryiko wrote:
+> > On Mon, Jun 13, 2022 at 3:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Mon, 13 Jun 2022 at 11:37, Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Mon, Jun 13, 2022 at 10:23:47AM +0200, Miklos Szeredi wrote:
+> > > > > On Fri, 10 Jun 2022 at 23:39, Andrii Nakryiko <andriin@fb.com> wrote:
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > On 6/7/22 1:47 AM, Christian Brauner wrote:
+> > > > > > > On Wed, Jun 01, 2022 at 11:44:07AM -0700, Dave Marchevsky wrote:
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > >> +static bool __read_mostly allow_other_parent_userns;
+> > > > > > >> +module_param(allow_other_parent_userns, bool, 0644);
+> > > > > > >> +MODULE_PARM_DESC(allow_other_parent_userns,
+> > > > > > >> + "Allow users not in mounting or descendant userns "
+> > > > > > >> + "to access FUSE with allow_other set");
+> > > > > > >
+> > > > > > > The name of the parameter also suggests that access is granted to parent
+> > > > > > > userns tasks whereas the change seems to me to allows every task access
+> > > > > > > to that fuse filesystem independent of what userns they are in.
+> > > > > > >
+> > > > > > > So even a task in a sibling userns could - probably with rather
+> > > > > > > elaborate mount propagation trickery - access that fuse filesystem.
+> > > > > > >
+> > > > > > > AFaict, either the module parameter is misnamed or the patch doesn't
+> > > > > > > implement the behavior expressed in the name.
+> > > > > > >
+> > > > > > > The original patch restricted access to a CAP_SYS_ADMIN capable task.
+> > > > > > > Did we agree that it was a good idea to weaken it to all tasks?
+> > > > > > > Shouldn't we still just restrict this to CAP_SYS_ADMIN capable tasks in
+> > > > > > > the initial userns?
+> > > > > >
+> > > > > > I think it's fine to allow for CAP_SYS_ADMIN only, but can we then
+> > > > > > ignore the allow_other mount option in such case? The idea is that
+> > > > > > CAP_SYS_ADMIN allows you to read FUSE-backed contents no matter what, so
+> > > > > > user not mounting with allow_other preventing root from reading contents
+> > > > > > defeats the purpose at least partially.
+> > > > >
+> > > > > If we want to be compatible with "user_allow_other", then it should be
+> > > > > checking if the uid/gid of the current task is mapped in the
+> > > > > filesystems user_ns (fsuidgid_has_mapping()).  Right?
+> > > >
+> > > > I think that's doable. So assuming we're still talking about requiring
+> > > > cap_sys_admin then we'd roughly have sm like:
+> > > >
+> > > >         if (fc->allow_other)
+> > > >                 return current_in_userns(fc->user_ns) ||
+> > > >                         (capable(CAP_SYS_ADMIN) &&
+> > > >                         fsuidgid_has_mapping(..., &init_user_ns));
+> > >
+> > > No, I meant this:
+> > >
+> > >         if (fc->allow_other)
+> > >                 return current_in_userns(fc->user_ns) ||
+> > >                         (userns_allow_other &&
+> > >                         fsuidgid_has_mapping(..., &init_user_ns));
+> > >
+> > > But I think the OP wanted to allow real root to access the fs, which
+> > > this doesn't allow (since 0 will have no mapping in the user ns), so
+> > > I'm not sure what's the right solution...
+> >
+> > Right, so I was basically asking why not do something like this:
+> >
+> > $ git diff
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index 74303d6e987b..8c04955eb26e 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -1224,6 +1224,9 @@ int fuse_allow_current_process(struct fuse_conn *fc)
+> >  {
+> >         const struct cred *cred;
+> >
+> > +       if (fuse_allow_sys_admin_access && capable(CAP_SYS_ADMIN))
+> > +               return 1;
+> > +
+> >         if (fc->allow_other)
+> >                 return current_in_userns(fc->user_ns);
+> >
+> >
+> > where fuse_allow_sys_admin_access is module param which has to be
+> > opted into through sysfs?
+>
+> You can either do this or do what I suggested in:
+> https://lore.kernel.org/linux-fsdevel/20220613104604.t5ptuhrl2d4l7kbl@wittgenstein
+> which is a bit more lax.
 
-> Instead of always testing both userfaultfd(2) and /dev/userfaultfd,
-> let the user choose which to test.
->=20
-> As with other test features, change the behavior based on a new
-> command line flag. Introduce the idea of "test mods", which are
-> generic (not specific to a test type) modifications to the behavior of
-> the test. This is sort of borrowed from this RFC patch series [1], but
-> simplified a bit.
->=20
-> The benefit is, in "typical" configurations this test is somewhat slow
-> (say, 30sec or something). Testing both clearly doubles it, so it may
-> not always be desirable, as users are likely to use one or the other,
-> but never both, in the "real world".
->=20
-> [1]: https://patchwork.kernel.org/project/linux-mm/patch/20201129004548.1=
-619714-14-namit@vmware.com/
+My logic was that given we require opt-in and we are root, we
+shouldn't be prevented from reading contents just because someone
+didn't know about allow_other mount option. So I'd go with a simple
+check before we even check fc-allow_other.
 
-Thanks for pushing this change! Your code is better.
+>
+> If you make it module load parameter only it has the advantage that it
+> can't be changed after fuse has been loaded which in this case might be
+> an advantage. It's likely that users might not be too happy if module
+> semantics can be changed that drastically at runtime. But I have no
+> strong opinions here.
+>
 
+I'm not too familiar with this, whatever Dave was doing with
+MODULE_PARM_DESC seems to be working fine? Did you have some other
+preference for a specific param mechanism?
 
-
+> Christian
