@@ -2,64 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D4354D39C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 23:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F11B454D3B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 23:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350066AbiFOVYa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 17:24:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48404 "EHLO
+        id S1349740AbiFOV1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 17:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347077AbiFOVY3 (ORCPT
+        with ESMTP id S1349710AbiFOV1l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 17:24:29 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA82A554B8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 14:24:27 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id i15so11479598plr.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 14:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=from:to:subject:date:message-id:user-agent:mime-version;
-        bh=TeO0t0DJhH40WIl7Vbgx7DQrmpnWJwpLVnwQgvva4x4=;
-        b=rBu1FtRQTEZQUNIgcpXPBVuLI3SY0y6CqfB3zHhUYwKTvw4xR2t+OcGeh1VLHgsxEO
-         MWIggtMEqvr1L15IKXPmTiOdX8DlvonktIcIQ6cDsHCxB9K61ZXwMj+MRVHlAxmMl1YL
-         j2KvZ5OWD0MDZ4zQJupT9DfEXDcw5lPVp2TSsWHXQ3rZK7QjyftYzqWwGNaMvdClPRJr
-         X7ISXc2MlKNUEfLv2VaxwA6TMLt9mjJnBQD99doJ0Q8AhfY6LGG7M/P/qfySH3x7j9ai
-         VMzqeiv6FSqvLtJfh1/GjyzveZq0kbKvo2z0iOLxTpFw7PlNIR0f1aL2k/mCmCyLW7u6
-         IuJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:user-agent
-         :mime-version;
-        bh=TeO0t0DJhH40WIl7Vbgx7DQrmpnWJwpLVnwQgvva4x4=;
-        b=dIdj4no1Hqi17XHLk3yaYArGeK2Gkdq8fqIJiNdx+6PIiPwkGz4ebwsu6cRwYprtce
-         4qinFmy/Vjxsu/LEndLtLmkfHBgA1a5Rbb+qdWnH7E0Bu0qp0DnlJDXdaVLFy0LgdrCs
-         T+2teL0jzbG7ocn8nRkiN0wfd/adi+OKlcTBqKxWKTlUefiZDe6fFmd9y7n6W/Ncip/p
-         +Z8AF1PC9UrWkVGl76XS7NhwhndqkvqajW8t/hGTu26j+YMcyIxI0/Kztk4Ij6BfWJSq
-         A3QWBOYkkSQI5a1iKFkF3ObQUgFKpWNPNVDjGfp6BJfdbKN8MXClZq7mx3fI7pVB4Z7X
-         IPQA==
-X-Gm-Message-State: AJIora+jmbOFHKPVi6qG/6UCVy6qhdN5D6Me6eXbvaT6EVnRQNVAi+LR
-        3f6JcgsWNjZlMpcJDcopZ7YfOrlT8yA+rg==
-X-Google-Smtp-Source: AGRyM1sNGPf07ULqZrM5SwuGWCXQmHDsE9gSwLpND+kDkzt2keMd7H9OuWgAXQYw3ogbvzvEikbJnQ==
-X-Received: by 2002:a17:90b:4c4c:b0:1e8:6f9a:b642 with SMTP id np12-20020a17090b4c4c00b001e86f9ab642mr12358376pjb.21.1655328267113;
-        Wed, 15 Jun 2022 14:24:27 -0700 (PDT)
-Received: from bsegall-glaptop.localhost (c-73-71-82-80.hsd1.ca.comcast.net. [73.71.82.80])
-        by smtp.gmail.com with ESMTPSA id n23-20020a056a00213700b0051e7b6e8b12sm117984pfj.11.2022.06.15.14.24.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 14:24:25 -0700 (PDT)
-From:   Benjamin Segall <bsegall@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] epoll: autoremove wakers even more aggressively
-Date:   Wed, 15 Jun 2022 14:24:23 -0700
-Message-ID: <xm26k09htybc.fsf@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        Wed, 15 Jun 2022 17:27:41 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65BFC167C7;
+        Wed, 15 Jun 2022 14:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1655328434;
+        bh=sewS1k19E5zNFt7guGx8ADD0uovsZroqX/MykOeNoAw=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=ZaY29LgSeKsC0VKC0SfEO8gCT/mbD6Qy/5eG//rKUlfwQK32wCZyAB8p4+MeiczAs
+         wEnfd+sTmcT94yqzlRVJePYywnp5EvPECoxAhy5pRe56snX/8JFtBBgpCsKSUAfHNV
+         jL/7QpKzQmAvk0RCH/rLb4FqlMv8n1jXIqjxFB38=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MsHru-1nhIVP2ZLu-00tnF1; Wed, 15
+ Jun 2022 23:27:14 +0200
+Message-ID: <00bbda63-dc00-05c0-4244-343352591d98@gmx.com>
+Date:   Thu, 16 Jun 2022 05:27:04 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [syzbot] KASAN: use-after-free Read in copy_page_from_iter_atomic
+ (2)
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dsterba@suse.cz,
+        syzbot <syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+References: <0000000000003ce9d105e0db53c8@google.com>
+ <00000000000085068105e112a117@google.com>
+ <20220613193912.GI20633@twin.jikos.cz> <20220614071757.GA1207@lst.de>
+ <2cc67037-cf90-cca2-1655-46b92b43eba8@gmx.com>
+ <20220615132147.GA18252@lst.de>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <20220615132147.GA18252@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GzvWUv7j+dS6fGBh0O76pQHRuv0QctvPBDKfUco4+Y/GlL/5y5g
+ BXHYTJT9fnyYxlKhn1+btWdWvWOiF9BDnLfCq+EChmasKSAq6b9B1pCQq6ZQASuejlOodGV
+ HN32edj0jLN7bwq3m5m0D0pObpIh6RNHWquJ644IBNrDdnIdMTXGq0sbFfGfNtFwiDuTyIw
+ bbtKn1jfl54A+36cVRM4w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lmKkDBBaQN4=:jf9gSILfZGEkHNseXPaNRe
+ PvP7u+k40FY2CY2c0qVJJZBB/SSwTJDnZaUJ+SDpqeZrdOVsk4C8rtHyoZ8VARRoOxw5VTHmO
+ Ccz1d/+zDolUMSDJN/JxkTSUDCi2OKfQeM8YN7zQyU1v+Pg8h/hVzRfH+sXiLqZHpm7yImcXe
+ Zns22cRY5ahuRaE2oWaY1UC1+UNPve57Dv7F1pFGJQVGEqTOvkI1xzJuM8qT/ieBd55fD/oAs
+ +55imKkenFxKoBNFuRBqJtrb98zaAbF0NbNBl5pktTcEOsz1cjYh4KKWMFNa5qnu3lHRVjFW3
+ ONRUrJDpOunQSHpCP8sruk9PrSwAmxUHeIWZdGTY7XIfJUMs/ISyhdsYDW1cMmK2JGnUtyp0q
+ /5fzm0FFf6xdr6G9q4cwF1q2jsuHIV+y7uKkqGyNicAXak9LPk7aXkU6Mnw0WYUKFdBmMPYTJ
+ 8TvJRrLCXnJB4RQGlAe2KNe3jelUpxv0Ei6DJqn7gTb5tiESBPwTu7NHZ7EcZ+io2rjhfrJ7y
+ Y/FP/JpHG1b//XFXHUbQTCvbMJ/43T/wrLGtw3wwa2RDgtWGdP+XwIGL5sAlQODdEKXMR2hxa
+ L6yL2jOirN64cSOHfNuQ5aHJ9fhfqmezh1imJwI7+nWdkjiKYZMgucyVWFqTwZAyclAj4jLka
+ eSVL2A07OUVdeB6IDpq4LW4KFqX+HFtZD566Dw61X8vjl4W2kSyTdZknPV/eatpzAEQKJ+YA3
+ +wvPTCK/09H35naTvpU8cdM9FDkWK2rEQHZZpBSlCC0D6F+x3GT0XL2fj+v9j+51RUk2Q4Hbc
+ ByLPN/HiArHr1xbq6ktyJEjpMmjMQMv30Vq/4BM6ZqJty8OHCs7dnwqBo1RxgcaDcglFBAy6r
+ Wwsy3UqRjM3N3/IsstSmsF1f112zJKzsOYGBVU4n+YxJgSKiRC7yDB2VPVt3e6jdeK3Y8m5gg
+ qq53Pz/u7c4wKhvf5ASPAnB2ygA748E+2SLwxVHmnm0UFKhZJCJA+GnZsL21qOCyZ6N0bei8M
+ QRln+yhh05sPLbVNlsPEmewJAHICI57FsNDrKog79AJsQEEtviKYHZqb1O8GsrBevAn4KBoZi
+ Xr+vzv/l0huLKyq0FCz7buQROHIxWvDxZDm22i6sWCwe/AwVl79didzmQ==
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,77 +82,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a process is killed or otherwise exits while having active network
-connections and many threads waiting on epoll_wait, the threads will all
-be woken immediately, but not removed from ep->wq. Then when network
-traffic scans ep->wq in wake_up, every wakeup attempt will fail, and
-will not remove the entries from the list.
 
-This means that the cost of the wakeup attempt is far higher than usual,
-does not decrease, and this also competes with the dying threads trying
-to actually make progress and remove themselves from the wq.
 
-Handle this by removing visited epoll wq entries unconditionally, rather
-than only when the wakeup succeeds - the structure of ep_poll means that
-the only potential loss is the timed_out->eavail heuristic, which now
-can race and result in a redundant ep_send_events attempt. (But only
-when incoming data and a timeout actually race, not on every timeout)
+On 2022/6/15 21:21, Christoph Hellwig wrote:
+> On Tue, Jun 14, 2022 at 04:50:22PM +0800, Qu Wenruo wrote:
+>> The same way as data?
+>>
+>> map-logical to find the location of a mirror, write 4 bytes of zero int=
+o
+>> the location, then call it a day.
+>>
+>> Although for metadata, you may want to choose a metadata that would
+>> definitely get read.
+>> Thus tree root is a good candidate.
+>
+> And how do I find out the logic address of the tree root?
 
-Signed-off-by: Ben Segall <bsegall@google.com>
----
- fs/eventpoll.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+For tree root, "btrfs ins dump-super <dev> | grep '^root\s'.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index e2daa940ebce..8b56b94e2f56 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1745,10 +1745,25 @@ static struct timespec64 *ep_timeout_to_timespec(struct timespec64 *to, long ms)
- 	ktime_get_ts64(&now);
- 	*to = timespec64_add_safe(now, *to);
- 	return to;
- }
- 
-+/*
-+ * autoremove_wake_function, but remove even on failure to wake up, because we
-+ * know that default_wake_function/ttwu will only fail if the thread is already
-+ * woken, and in that case the ep_poll loop will remove the entry anyways, not
-+ * try to reuse it.
-+ */
-+static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
-+				       unsigned int mode, int sync, void *key)
-+{
-+	int ret = default_wake_function(wq_entry, mode, sync, key);
-+
-+	list_del_init(&wq_entry->entry);
-+	return ret;
-+}
-+
- /**
-  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
-  *           event buffer.
-  *
-  * @ep: Pointer to the eventpoll context.
-@@ -1826,12 +1841,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		 * chance to harvest new event. Otherwise wakeup can be
- 		 * lost. This is also good performance-wise, because on
- 		 * normal wakeup path no need to call __remove_wait_queue()
- 		 * explicitly, thus ep->lock is not taken, which halts the
- 		 * event delivery.
-+		 *
-+		 * In fact, we now use an even more aggressive function that
-+		 * unconditionally removes, because we don't reuse the wait
-+		 * entry between loop iterations. This lets us also avoid the
-+		 * performance issue if a process is killed, causing all of its
-+		 * threads to wake up without being removed normally.
- 		 */
- 		init_wait(&wait);
-+		wait.func = ep_autoremove_wake_function;
- 
- 		write_lock_irq(&ep->lock);
- 		/*
- 		 * Barrierless variant, waitqueue_active() is called under
- 		 * the same lock on wakeup ep_poll_callback() side, so it
--- 
-2.36.1.476.g0c4daa206d-goog
+For other tree blocks, "btrfs ins dump-tree <dev>" then with other other
+keywords to grab.
 
+Thanks,
+Qu
