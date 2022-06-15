@@ -2,46 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D443454C09B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 06:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A7454C186
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 08:06:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbiFOEWp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 00:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58232 "EHLO
+        id S242571AbiFOF6S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 01:58:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234067AbiFOEWl (ORCPT
+        with ESMTP id S231657AbiFOF6P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 00:22:41 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B9E410FF5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 21:22:38 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-118-63.bstnma.fios.verizon.net [173.48.118.63])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 25F4MYrF014225
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jun 2022 00:22:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1655266955; bh=GaCulJnfo5iXBqtblbk9G1Lk4SsnNzEvugTOCcxnIdQ=;
-        h=Date:From:To:Subject;
-        b=b2j9CnFafC/KNrTWMuGLecm/3KIjPMlxU2R9y9v9yAhsBmd4HqS3uAXCrKqHRY7g8
-         3qWD2lz0MDp/4usg3HKfM9a98B5iNSITkzs0IcKyDVfSopPX2MPWCbdHwz3Bvjndr8
-         JWV36lLOo5c7L8yBroLkg5MLXztxL3fSdyajWgKd9bBfSCyLmRFLFeUiK9aVMj08e1
-         0Wuv5N348eodhtPWonDHHhmeiNIowg3zCUjlvn3OkmAXebnlWX6ztF7AqTGfCm5uJ6
-         ZdeEsTUMgjAv2Ml1MBKdVzvIHHaH4STHYb2DnnIeQRe8lj1yeliu+jIWhdfjeYS4s0
-         /VpiEm8AuMvwg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 2FB2415C42F8; Wed, 15 Jun 2022 00:22:34 -0400 (EDT)
-Date:   Wed, 15 Jun 2022 00:22:34 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     linux-fsdevel@vger.kernel.org
-Subject: Maintainer's / Kernel Summit 2022 CFP
-Message-ID: <YqleiqjGkeMHOawl@mit.edu>
+        Wed, 15 Jun 2022 01:58:15 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDFB2B263
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:14 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id 31so8814945pgv.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 22:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oKivPnUDV0RH/3at3XRIS7bnNh4XH34G9qda9gPGH/M=;
+        b=SXum5tLB9BjjmoKd4xrDm30WFHuOqQo7W3kqV/ka1eQEHVRsImuJ2hODRlICaUpYH+
+         kWXyXviNBKSrkS2t/w6QZbdoRNiNqiizRFKAyGwFeIdTInCkinVnq1i0+yxjLSHgNSfM
+         cbYPxSxpmOW5a8b07jiUSEWV7OSkGBMl0kTZz2LkuXYDnhdWLMzEZhL7IK/QqVmReVg3
+         kVXSG3fb27pvBaKOLMSEkBwcSBwrMxDf2b0Pf94G3ya73q3NOZLD4Rr5sNoyn7U/WnSe
+         wgsD/teprSD2IlgerkdioO9Ojny0kLei+6OvImu09XSyKwMXn1C7Z0xAH6JkT3L2BQEa
+         XLIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oKivPnUDV0RH/3at3XRIS7bnNh4XH34G9qda9gPGH/M=;
+        b=gHtgZ6tSogIzMm+Q71Z6a2q7TcIeuC9TbnGJ55OJQjmex4Ae2b80+0aNhoFuViGDww
+         WOtLDACs8z0p9mIbf3ctq6n7QEyCEGFRL1WsR4nZ6ebhwlr/BbqyvGW3sLDeU8twfRwM
+         x21mPgjyYfXzNH5VvKtVPiGAgvUrhGJtXlJt0U/nsxm9p8qQ6MBzzoiKssvcTAcjCmmE
+         T6qTZYwPX6kznDGfSaPbxmzmIs13di7T2bm8Yk51Rs90vDLfWBY3DJBO2apnOMXk8XUI
+         rdtibaaUFhWmxcNhLXjbpAhagEeHH1XXDHZECh0fiP0L6VlnfY7BEXyd8HltRZ9oyvHX
+         HdsA==
+X-Gm-Message-State: AOAM532QV/b1lPoUpJGJ+83CeI1TbJodKwkRUEfrCyVNafS8VqlB9W1l
+        eYS7astUdlfjbShg8RZQ5Xz5SYByDrCSxjk=
+X-Google-Smtp-Source: ABdhPJzPD+gNFPqEJCnchPWWal4tYztbd+XVgCprF4xb4bvgtfkh4HXrp7kMfZ1KyHtgTn5kVFLIJw==
+X-Received: by 2002:a63:5522:0:b0:405:1ff7:33dd with SMTP id j34-20020a635522000000b004051ff733ddmr7667470pgb.86.1655272693595;
+        Tue, 14 Jun 2022 22:58:13 -0700 (PDT)
+Received: from localhost ([139.177.225.246])
+        by smtp.gmail.com with ESMTPSA id s13-20020aa78d4d000000b0051c70fd5263sm8673339pfe.169.2022.06.14.22.58.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 22:58:11 -0700 (PDT)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     miklos@szeredi.hu, vgoyal@redhat.com, stefanha@redhat.com
+Cc:     zhangjiachen.jaycee@bytedance.com, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH v2 0/2] Allow skipping abort interface for virtiofs
+Date:   Wed, 15 Jun 2022 13:57:53 +0800
+Message-Id: <20220615055755.197-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,61 +67,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This year, the Maintainer's Summit will be held in Dublin on September
-15th, 2022, just after the Linux Plumber's Conference (September
-12-14).
+The commit 15c8e72e88e0 ("fuse: allow skipping control
+interface and forced unmount") tries to remove the control
+interface for virtio-fs since it does not support aborting
+requests which are being processed. But it doesn't work now.
 
-As in previous years, the Maintainers Summit is invite-only, where the
-primary focus will be process issues around Linux Kernel Development.
-It will be limited to 30 invitees and a handful of sponsored
-attendees.
+This series fixes the bug, but only remove the abort interface
+instead since other interfaces should be useful.
 
-Linus will be generating a core list of people to be invited to the
-Maintainers Summit.  The top ten people from that list will receive
-invites, and then program committee will use the rest of Linus's list
-as a starting point of people to be considered.  People who suggest
-topics that should be discussed at the Maintainers Summit will also
-be added to the list for consideration.  To make topic suggestions for
-the Maintainers Summit, please send e-mail to the
-ksummit-discuss@lists.linuxfoundation.org list with a subject prefix
-of [MAINTAINERS SUMMIT].
+V1 to V2:
+- Split the patch into two part [Vivek]
 
-The Kernel Summit is organized as a track which is run in parallel
-with the other tracks at the Linux Plumbers Conference (LPC), and is
-open to all registered attendees of LPC.  The goal of the Kernel
-Summit track will be to provide a forum to discuss specific technical
-issues that would be easier to resolve in person than over e-mail.
-The program committee will also consider "information sharing" topics
-if they are clearly of interest to the wider development community
-(i.e., advanced training in topics that would be useful to kernel
-developers).
+Xie Yongji (2):
+  fuse: Remove unused "no_control" related code
+  virtiofs: allow skipping abort interface
 
-To suggest a topic for the Kernel Summit, please do two things. by
-June 19th, 2022.  First, please tag your e-mail with [TECH TOPIC].  As
-before, please use a separate e-mail for each topic, and send the
-topic suggestions to the ksummit-discuss list.
+ fs/fuse/control.c   | 4 ++--
+ fs/fuse/fuse_i.h    | 6 +++---
+ fs/fuse/inode.c     | 2 +-
+ fs/fuse/virtio_fs.c | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-Secondly, please create a topic at the Linux Plumbers Conference
-proposal submission site and target it to the Kernel Summit track:
-
-	https://lpc.events/event/16/abstracts/
-
-Please do both steps.  I'll try to notice if someone forgets one or
-the other, but your chances of making sure your proposal gets the
-necessary attention and consideration are maximized by submitting both
-to the mailing list and the web site.
-
-If you were not subscribed on to the kernel-discuss mailing list from
-last year (or if you had removed yourself after the kernel summit),
-you can subscribe to the discuss list using mailman:
-
-   https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
-
-The program committee this year is composed of the following people:
-
-Greg KH
-Jens Axboe
-Ted Ts'o
-Arnd Bergmann
-Jon Corbet
+-- 
+2.20.1
 
