@@ -2,136 +2,334 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E56554EC42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 23:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD8554EC81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 23:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379091AbiFPVKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 17:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
+        id S1378784AbiFPVZY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 17:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379086AbiFPVKg (ORCPT
+        with ESMTP id S1378961AbiFPVZX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 17:10:36 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA8560B97
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 14:10:34 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-2dc7bdd666fso22257097b3.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 14:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=KURsuV8TI+ATVlfiPoD0dDzYcHxpBF6tQO88IJ4dTj0=;
-        b=NPwKpqicoiF3JrI3nvAy2wavL/qdxmApmwUODLbg9kllBq3O7YIU7scvwDOn25KzpP
-         jC0cGPcobMV2UjA/u/07U8UO5etg6EO+lETP0sa7aPA+g02oqAT2q4Zct/xj0RbRQss4
-         0AgamnAU0JkWNr0r8gkXn5MTJtB0HBGC+WiYaoC841iycAdEdrtgE2TPt2nKA6MK9gVw
-         ennDDk0WH1D9+ls4IAUfpDluG86Tyb5bV8IececwSKnTYyU42AMNcWhNMjFH/a6hN3iN
-         /AIxCU6fkESR39R5t5poGacKGtADiZlwtEGJQmfePUEkviQSC9rObt9j2eCwa9UV+Az9
-         zIpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=KURsuV8TI+ATVlfiPoD0dDzYcHxpBF6tQO88IJ4dTj0=;
-        b=ct3nWbZDL6E6dK9S4vXbQv/vkhxPEejyRijtOsqfhexSLI9QRzd0Iu69ZhCFnOFdQq
-         gCdkBqg0UbwLUAHmJ3AD+ErRKIEhhjPLzHD2I62JlwIEX6kTeHcYe+XzbfNlB3W0wfW3
-         LPvepKYeJ9rhkNjCYGtIZxGhOeJv1iB7GfDpVFIGsOkEfsR4DcZAXSniXMr4xZP8u3t1
-         7BGIWAaC4VxD9JJea+PkoPwKjYQzLHZK57QSZrBzBZKJ9FOVPqYcvbTLpPgpmDHKPCal
-         E2Rj2VjuDx65VFybqBtI2Gn3la4fraqJX++EZsciN6BgrG9wQTPjbbzvaPmCj2kq67Sk
-         HZBQ==
-X-Gm-Message-State: AJIora9SkwYdeYwIRCefstvZRPISfn+MeSZQUDmOkZVoEBLUSDD0fYqP
-        3uJp8RcGKZUOjdkUY40B2mMQWEINMDXq2bKG0Q==
-X-Google-Smtp-Source: AGRyM1uyocs/VCv/SSpacc2XdE8qNYAeZuQBDEG16K8OvRmn50r0ngLRzhMzRvrsEd2ZP4RW/0B+YqsFlSSJK1o7sA==
-X-Received: from pickles.svl.corp.google.com ([2620:15c:2cd:202:784d:8898:15c0:fd93])
- (user=dylanbhatch job=sendgmr) by 2002:a25:504d:0:b0:668:b120:6d0a with SMTP
- id e74-20020a25504d000000b00668b1206d0amr1304727ybb.584.1655413834064; Thu,
- 16 Jun 2022 14:10:34 -0700 (PDT)
-Date:   Thu, 16 Jun 2022 14:10:16 -0700
-Message-Id: <20220616211016.4037482-1-dylanbhatch@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.36.1.476.g0c4daa206d-goog
-Subject: [PATCH] selftests/proc: Fix proc-pid-vm for vsyscall=xonly.
-From:   Dylan Hatch <dylanbhatch@google.com>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Dylan Hatch <dylanbhatch@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Thu, 16 Jun 2022 17:25:23 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C64E60DBC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 14:25:21 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25GKPV1o002153
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 14:25:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=mrK1N+iE3UoucFk1Lj8uK/1AvZKX0T3dZ5BX5CtEQmA=;
+ b=Pa6nmDwSqzfBWPR/Km1a1oPM8cj3fnmMcPE94LA/4OM13GD66liVnTxzdYm8WekM7A2p
+ M1MgvlerTHI8L+1/ulXH1GJzSgK/NZNAvsqHphjPcazoSgo+znHAmDI/DFipBEVcCFxG
+ LJPnLvrxMJ5eQwOh7ngqGjYPxkWYteO/QJA= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gp8ax3mkh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 14:25:20 -0700
+Received: from twshared17349.03.ash7.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Thu, 16 Jun 2022 14:25:19 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 85AAC108B7091; Thu, 16 Jun 2022 14:22:23 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
+        <hch@infradead.org>, <axboe@kernel.dk>, <willy@infradead.org>
+Subject: [PATCH v9 00/14] io-uring/xfs: support async buffered writes
+Date:   Thu, 16 Jun 2022 14:22:07 -0700
+Message-ID: <20220616212221.2024518-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: r_nEmRY-XBg2kCgDsGw_PA26ksYQ5ijm
+X-Proofpoint-ORIG-GUID: r_nEmRY-XBg2kCgDsGw_PA26ksYQ5ijm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-16_18,2022-06-16_01,2022-02-23_01
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This test would erroneously fail the /proc/$PID/maps case if
-vsyscall=xonly since the existing probe of the vsyscall page only
-succeeds if the process has read permissions. Fix this by checking for
-either no vsyscall mapping OR an execute-only vsyscall mapping in the
-case were probing the vsyscall page segfaults.
+This patch series adds support for async buffered writes when using both
+xfs and io-uring. Currently io-uring only supports buffered writes in the
+slow path, by processing them in the io workers. With this patch series i=
+t is
+now possible to support buffered writes in the fast path. To be able to u=
+se
+the fast path the required pages must be in the page cache, the required =
+locks
+in xfs can be granted immediately and no additional blocks need to be rea=
+d
+form disk.
 
-Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
----
- tools/testing/selftests/proc/proc-pid-vm.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+Updating the inode can take time. An optimization has been implemented fo=
+r
+the time update. Time updates will be processed in the slow path. While t=
+here
+is already a time update in process, other write requests for the same fi=
+le,
+can skip the update of the modification time.
+ =20
 
-diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
-index 28604c9f805c..5ca85520131f 100644
---- a/tools/testing/selftests/proc/proc-pid-vm.c
-+++ b/tools/testing/selftests/proc/proc-pid-vm.c
-@@ -213,9 +213,12 @@ static int make_exe(const uint8_t *payload, size_t len)
- 
- static bool g_vsyscall = false;
- 
--static const char str_vsyscall[] =
-+static const char str_vsyscall_rx[] =
- "ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
- 
-+static const char str_vsyscall_x[] =
-+"ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
-+
- #ifdef __x86_64__
- static void sigaction_SIGSEGV(int _, siginfo_t *__, void *___)
- {
-@@ -261,6 +264,7 @@ int main(void)
- 	int exec_fd;
- 
- 	vsyscall();
-+	const char *str_vsyscall = g_vsyscall ? str_vsyscall_rx : str_vsyscall_x;
- 
- 	atexit(ate);
- 
-@@ -314,7 +318,8 @@ int main(void)
- 
- 	/* Test /proc/$PID/maps */
- 	{
--		const size_t len = strlen(buf0) + (g_vsyscall ? strlen(str_vsyscall) : 0);
-+		const size_t len_buf0 = strlen(buf0);
-+		const size_t len_vsys = strlen(str_vsyscall);
- 		char buf[256];
- 		ssize_t rv;
- 		int fd;
-@@ -325,11 +330,16 @@ int main(void)
- 			return 1;
- 		}
- 		rv = read(fd, buf, sizeof(buf));
--		assert(rv == len);
--		assert(memcmp(buf, buf0, strlen(buf0)) == 0);
- 		if (g_vsyscall) {
--			assert(memcmp(buf + strlen(buf0), str_vsyscall, strlen(str_vsyscall)) == 0);
-+			assert(rv == len_buf0 + len_vsys);
-+		} else {
-+			/* If vsyscall isn't readable, it's either x-only or not mapped at all */
-+			assert(rv == len_buf0 + len_vsys || rv == len_buf0);
- 		}
-+		assert(memcmp(buf, buf0, len_buf0) == 0);
-+		/* Check for vsyscall mapping if buf is long enough */
-+		if (rv == len_buf0 + len_vsys)
-+			assert(memcmp(buf + len_buf0, str_vsyscall, len_vsys) == 0);
- 	}
- 
- 	/* Test /proc/$PID/smaps */
--- 
-2.36.1.476.g0c4daa206d-goog
+Performance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
+
+                 sequential writes:
+                 without patch           with patch      libaio     psync
+  iops:              77k                    209k          195K       233K
+  bw:               314MB/s                 854MB/s       790MB/s    953M=
+B/s
+  clat:            9600ns                   120ns         540ns     3000n=
+s
+
+
+For an io depth of 1, the new patch improves throughput by over three tim=
+es
+(compared to the exiting behavior, where buffered writes are processed by=
+ an
+io-worker process) and also the latency is considerably reduced. To achie=
+ve the
+same or better performance with the exisiting code an io depth of 4 is re=
+quired.
+Increasing the iodepth further does not lead to improvements.
+
+In addition the latency of buffered write operations is reduced considera=
+bly.
+
+
+
+Support for async buffered writes:
+
+  To support async buffered writes the flag FMODE_BUF_WASYNC is introduce=
+d. In
+  addition the check in generic_write_checks is modified to allow for asy=
+nc
+  buffered writes that have this flag set.
+
+  Changes to the iomap page create function to allow the caller to specif=
+y
+  the gfp flags. Sets the IOMAP_NOWAIT flag in iomap if IOCB_NOWAIT has b=
+een set
+  and specifies the requested gfp flags.
+
+  Adds the iomap async buffered write support to the xfs iomap layer.
+  Adds async buffered write support to the xfs iomap layer.
+
+Support for async buffered write support and inode time modification
+
+  Splits the functions for checking if the file privileges need to be rem=
+oved in
+  two functions: check function and a function for the removal of file pr=
+ivileges.
+  The same split is also done for the function to update the file modific=
+ation time.
+
+  Implement an optimization that while a file modification time is pendin=
+g other
+  requests for the same file don't need to wait for the file modification=
+ update.=20
+  This avoids that a considerable number of buffered async write requests=
+ get
+  punted.
+
+  Take the ilock in nowait mode if async buffered writes are enabled and =
+enable
+  the async buffered writes optimization in io_uring.
+
+Support for write throttling of async buffered writes:
+
+  Add a no_wait parameter to the exisiting balance_dirty_pages() function=
+. The
+  function will return -EAGAIN if the parameter is true and write throttl=
+ing is
+  required.
+
+  Add a new function called balance_dirty_pages_ratelimited_async() that =
+will be
+  invoked from iomap_write_iter() if an async buffered write is requested=
+.
+ =20
+Enable async buffered write support in xfs
+   This enables async buffered writes for xfs.
+
+
+Testing:
+  This patch has been tested with xfstests, fsx, fio and individual test =
+programs.
+
+
+Changes:
+  V9:
+  - Added comment for function balance_dirty_pages_ratelimited_flags()
+  - checking return code for iop allocation in iomap_page_create()
+ =20
+  V8:
+  - Reverted back changes to iomap_write_iter and used Mathew Wilcox code=
+ review
+    recommendation with an additional change to revert the iterator.
+  - Removed patch "fs: Optimization for concurrent file time updates"=20
+  - Setting flag value in file_modified_flags()
+  - Removed additional spaces in comment in file_update_time()
+  - Run fsx with 1 billion ops against the changes (Run passed)
+
+  V7:
+  - Change definition and if clause in " iomap: Add flags parameter to
+    iomap_page_create()"
+  - Added patch "iomap: Return error code from iomap_write_iter()" to add=
+ress
+    the problem Dave Chinner brought up: retrying memory allocation a sec=
+ond
+    time when we are under memory pressure.=20
+  - Removed patch "xfs: Change function signature of xfs_ilock_iocb()"
+  - Merged patch "xfs: Enable async buffered write support" with previous
+    patch
+
+  V6:
+  - Pass in iter->flags to calls in iomap_page_create()
+ =20
+  V5:
+  - Refreshed to 5.19-rc1
+  - Merged patch 3 and patch 4
+    "mm: Prepare balance_dirty_pages() for async buffered writes" and
+    "mm: Add balance_dirty_pages_ratelimited_flags() function"
+  - Reformatting long file in iomap_page_create()
+  - Replacing gfp parameter with flags parameter in iomap_page_create()
+    This makes sure that the gfp setting is done in one location.
+  - Moved variable definition outside of loop in iomap_write_iter()
+  - Merged patch 7 with patch 6.
+  - Introduced __file_remove_privs() that get the iocb_flags passed in
+    as an additional parameter
+  - Removed file_needs_remove_privs() function
+  - Renamed file_needs_update_time() inode_needs_update_time()
+  - inode_needs_update_time() no longer passes the file pointer
+  - Renamed file_modified_async() to file_modified_flags()
+  - Made file_modified_flags() an internal function
+  - Removed extern keyword in file_modified_async definition
+  - Added kiocb_modified function.
+  - Separate patch for changes to xfs_ilock_for_iomap()
+  - Separate patch for changes to xfs_ilock_inode()
+  - Renamed xfs_ilock_xfs_inode()n back to xfs_ilock_iocb()
+  - Renamed flags parameter to iocb_flags in function xfs_ilock_iocb()
+  - Used inode_set_flags() to manipulate inode flags in the function
+    file_modified_flags()
+
+  V4:
+  - Reformat new code in generic_write_checks_count().
+  - Removed patch that introduced new function iomap_page_create_gfp().
+  - Add gfp parameter to iomap_page_create() and change all callers
+    All users will enforce the number of blocks check
+  - Removed confusing statement in iomap async buffer support patch
+  - Replace no_wait variable in __iomap_write_begin with check of
+    IOMAP_NOWAIT for easier readability.
+  - Moved else if clause in __iomap_write_begin into else clause for
+    easier readability
+  - Removed the balance_dirty_pages_ratelimited_async() function and
+    reverted back to the earlier version that used the function
+    balance_dirty_pages_ratelimited_flags()
+  - Introduced the flag BDP_ASYNC.
+  - Renamed variable in iomap_write_iter from i_mapping to mapping.
+  - Directly call balance_dirty_pages_ratelimited_flags() in the function
+    iomap_write_iter().
+  - Re-ordered the patches.
+ =20
+  V3:
+  - Reformat new code in generic_write_checks_count() to line lengthof 80=
+.
+  - Remove if condition in __iomap_write_begin to maintain current behavi=
+or.
+  - use GFP_NOWAIT flag in __iomap_write_begin
+  - rename need_file_remove_privs() function to file_needs_remove_privs()
+  - rename do_file_remove_privs to __file_remove_privs()
+  - add kernel documentation to file_remove_privs() function
+  - rework else if branch in file_remove_privs() function
+  - add kernel documentation to file_modified() function
+  - add kernel documentation to file_modified_async() function
+  - rename err variable in file_update_time to ret
+  - rename function need_file_update_time() to file_needs_update_time()
+  - rename function do_file_update_time() to __file_update_time()
+  - don't move check for FMODE_NOCMTIME in generic helper
+  - reformat __file_update_time for easier reading
+  - add kernel documentation to file_update_time() function
+  - fix if in file_update_time from < to <=3D
+  - move modification of inode flags from do_file_update_time to file_mod=
+ified()
+    When this function is called, the caller must hold the inode lock.
+  - 3 new patches from Jan to add new no_wait flag to balance_dirty_pages=
+(),
+    remove patch 12 from previous series
+  - Make balance_dirty_pages_ratelimited_flags() a static function
+  - Add new balance_dirty_pages_ratelimited_async() function
+ =20
+  V2:
+  - Remove atomic allocation
+  - Use direct write in xfs_buffered_write_iomap_begin()
+  - Use xfs_ilock_for_iomap() in xfs_buffered_write_iomap_begin()
+  - Remove no_wait check at the end of xfs_buffered_write_iomap_begin() f=
+or
+    the COW path.
+  - Pass xfs_inode pointer to xfs_ilock_iocb and rename function to
+    xfs_lock_xfs_inode
+  - Replace existing uses of xfs_ilock_iocb with xfs_ilock_xfs_inode
+  - Use xfs_ilock_xfs_inode in xfs_file_buffered_write()
+  - Callers of xfs_ilock_for_iomap need to initialize lock mode. This is
+    required so writes use an exclusive lock
+  - Split of _balance_dirty_pages() from balance_dirty_pages() and return
+    sleep time
+  - Call _balance_dirty_pages() in balance_dirty_pages_ratelimited_flags(=
+)
+  - Move call to balance_dirty_pages_ratelimited_flags() in iomap_write_i=
+ter()
+    to the beginning of the loop
+
+
+
+Jan Kara (3):
+  mm: Move starting of background writeback into the main balancing loop
+  mm: Move updates of dirty_exceeded into one place
+  mm: Add balance_dirty_pages_ratelimited_flags() function
+
+Stefan Roesch (11):
+  iomap: Add flags parameter to iomap_page_create()
+  iomap: Add async buffered write support
+  iomap: Return -EAGAIN from iomap_write_iter()
+  fs: Add check for async buffered writes to generic_write_checks
+  fs: add __remove_file_privs() with flags parameter
+  fs: Split off inode_needs_update_time and __file_update_time
+  fs: Add async write file modification handling.
+  io_uring: Add support for async buffered writes
+  io_uring: Add tracepoint for short writes
+  xfs: Specify lockmode when calling xfs_ilock_for_iomap()
+  xfs: Add async buffered write support
+
+ fs/inode.c                      | 168 +++++++++++++++++++++++---------
+ fs/io_uring.c                   |  32 +++++-
+ fs/iomap/buffered-io.c          |  71 +++++++++++---
+ fs/read_write.c                 |   4 +-
+ fs/xfs/xfs_file.c               |  11 +--
+ fs/xfs/xfs_iomap.c              |  11 ++-
+ include/linux/fs.h              |   4 +
+ include/linux/writeback.h       |   7 ++
+ include/trace/events/io_uring.h |  25 +++++
+ mm/page-writeback.c             |  89 +++++++++++------
+ 10 files changed, 314 insertions(+), 108 deletions(-)
+
+
+base-commit: b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3
+--=20
+2.30.2
 
