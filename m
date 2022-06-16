@@ -2,102 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E92E054E27F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 15:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8D054E28D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 15:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377060AbiFPNwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 09:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56826 "EHLO
+        id S1377309AbiFPNzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 09:55:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377279AbiFPNv7 (ORCPT
+        with ESMTP id S233436AbiFPNy7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 09:51:59 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C93E41608
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 06:51:58 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 1CED5C01D; Thu, 16 Jun 2022 15:51:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655387513; bh=2Hb1WIC7htcZUnTVocd9sTq0i8DWUd+UIspEOkNnz10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rdxn534uKTaSDTnJiKZKi3gw63uExrASQ8SFeMr3Ze1hbArPYP1vZ4blzabc8AMAA
-         tRTYSmBpprD6zoelusqs7oaZOgz8lZxCCmEPCSeh8nw109GGqJjdPFP8MV7ieaslqq
-         JRO90MUCrLC2rGp3Cv2VCAgZt0mOYsNk5nDBgmu+y/SWxFNyVLRpoypJz/NS71r/S3
-         mFQWkcluCHS0ml4fH0tpAbVHkTZvpIyXRtsxdV2B4VSGPbKf5K9NGCgsJ0KtkNZPgN
-         iKjIitmiBo1KOxxv7lmA/O6fk0ZCseUFiLa0Tqh0sT8Zc7D0pPrfl8T0S9XYeXltUH
-         HQad/TpMqM7WA==
+        Thu, 16 Jun 2022 09:54:59 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B73A39B99;
+        Thu, 16 Jun 2022 06:54:59 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id t2so1341736pld.4;
+        Thu, 16 Jun 2022 06:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=cPFlSvliADEIal5C4DWr8yJhVynNr5MmS8oBFg1ewCs=;
+        b=Q09o6LBE5QO7S/7bmTUNL3MxsvaLnF4ak7XRqDKRcqRtHJFjubxZOLv8WZsYrNWKZd
+         5KxbkNY2l2e/xD+DbUDvT+4uJ+oDGqsu3B3BSQIlz3vT1epwMyVR6Cr0aeccXiK7AvUF
+         ODJYwnUxgw/WwSh3YLj+e217a5PVJqhHbd5JYKg5A1mXvsVj5YmMmma602Dg/BE3uyHA
+         S65/iUNxt507YUecKShi3sjo3BnpLD0hnHu3KWWh+DoTor770auEjs2EdhZ+t+EgGnEg
+         gTzfkOl8Viw0halexeS/zTvtkveABSM5hkOsfIG0FvVOLbIp4DJV23QrNF8d6+DOZCHr
+         /WQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cPFlSvliADEIal5C4DWr8yJhVynNr5MmS8oBFg1ewCs=;
+        b=iO4nIETZbyN8ucCeYssWClUG5ZLw9g4u2ptHUQataUDyMxajtzkSSrgB9SXaaeV2dm
+         szsE2jaalue0zvL0xW/0DIht66OwY5nuHxal+RgNJnnJYW6eNbJQOd/lvxA2XMsrghIe
+         Oz8t0JgMA3pMDAAzdo4hvIgznfEF0ZiLjaDibWRhtBQL8SfWw4cFdcS4PfBYKzU5y2zL
+         Rko5XodxfCAyLgN8ff9rNo881a+ARLFIxe0P3FPxyAYXO5AfZhmhoJdtCLlLuD7BiVO/
+         PPeyoYH2H/2Cxia5Rl7joSEiNWJgY9VX+uEqjxR4r27TEkT3QYhL6KEC/CjYSchfzSBV
+         8a6w==
+X-Gm-Message-State: AJIora9oxcqfZLwDy0310cuj3dYsNcU3hjVAaYRne6xuUm1s+xgS4nLY
+        9YM7aGjhzU8uGl/x084yWCN27e3TTA==
+X-Google-Smtp-Source: AGRyM1v+ZGD9SzKmpsEuYBugVc0H6ImzbWa2dks+j2Ljxs0lyMg9mhisnjHi9XbWpp+uI30qMQ2kXQ==
+X-Received: by 2002:a17:902:b949:b0:167:6548:2d93 with SMTP id h9-20020a170902b94900b0016765482d93mr4797205pls.131.1655387698531;
+        Thu, 16 Jun 2022 06:54:58 -0700 (PDT)
+Received: from localhost.localdomain ([43.132.141.8])
+        by smtp.gmail.com with ESMTPSA id z21-20020a17090a8b9500b001e8520b211bsm1565149pjn.53.2022.06.16.06.54.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Jun 2022 06:54:58 -0700 (PDT)
+From:   xiakaixu1987@gmail.com
+X-Google-Original-From: kaixuxia@tencent.com
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     hch@infradead.org, djwong@kernel.org, dan.j.williams@intel.com,
+        Kaixu Xia <kaixuxia@tencent.com>
+Subject: [PATCH v2 0/2] fix the improper assignment for did_zero
+Date:   Thu, 16 Jun 2022 21:54:38 +0800
+Message-Id: <1655387680-28058-1-git-send-email-kaixuxia@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 319D6C009;
-        Thu, 16 Jun 2022 15:51:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655387512; bh=2Hb1WIC7htcZUnTVocd9sTq0i8DWUd+UIspEOkNnz10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QTlFwM8XKRVvm2Y//7ChStOXQIIwD2Lu4eHvWvT2h0qHXFRtDtdO1mT0YWLnSyG6X
-         nYBJiK36PBA9rueqp54TNCCcrmJzMC4GMxd0km7GjC3PuSd1Y+/vvfTGBpSjtIvY1w
-         XcprBK83g+J5v1zhy32WW0zgbl0TyxGpZF7uvVDkYsz33vcbYKCz5N/BKodb5eKryM
-         0nM/nilLra97HaoleGvFSO77l8v/5n96g0BDhPA5TjLwjIblOO3u1rmzjSvBt06t5c
-         IqKmEZySzErOC20CfAPn7X3N7ApmdVnIgR3qFJs5AKe3++/Dzh/HzTTeoDFqHemJlH
-         N0JIVIUu35rIw==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id c6d6cc5f;
-        Thu, 16 Jun 2022 13:51:46 +0000 (UTC)
-Date:   Thu, 16 Jun 2022 22:51:31 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
-Message-ID: <Yqs1Y8G/Emi/q+S2@codewreck.org>
-References: <YqW5s+GQZwZ/DP5q@codewreck.org>
- <YqiC8luskkxUftQl@codewreck.org>
- <1796737.mFSqR1lx0c@silver>
- <22073313.PYDa2UxuuP@silver>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <22073313.PYDa2UxuuP@silver>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Schoenebeck wrote on Thu, Jun 16, 2022 at 03:35:59PM +0200:
-> 2. I fixed the conflict and gave your patch a test spin, and it triggers
-> the BUG_ON(!fid); that you added with that patch. Backtrace based on
-> 30306f6194ca ("Merge tag 'hardening-v5.19-rc3' ..."):
+From: Kaixu Xia <kaixuxia@tencent.com>
 
-hm, that's probably the version I sent without the fallback to
-private_data fid if writeback fid was sent (I've only commented without
-sending a v2)
+Hi,
 
-> 1. your EBADF patch is based on you recent get/put refactoring patch, so it won't apply on stable.
+This patchset fix the improper assignment for did_zero in
+iomap_zero_iter() and dax_zero_iter().
 
-ugh, you are correct, that was wrong as well in the version I sent by
-mail... I've hurried that way too much.
+Changelog:
+V1 -> V2:
+ 1. split it into two patches for dax and iomap.
 
-The patch that's currently on the tip of my 9p-next branch should be
-alright though, I'll resend it now so you can apply cleanly if you don't
-want to fetch https://github.com/martinetd/linux/commits/9p-next
+Kaixu Xia (2):
+  iomap: set did_zero to true when zeroing successfully
+  dax: set did_zero to true when zeroing successfully
 
-> Did your patch work there for you? I mean I have not applied the other pending
-> 9p patches, but they should not really make difference, right? I won't have
-> time today, but I will continue to look at it tomorrow. If you already had
-> some thoughts on this, that would be great of course.
+ fs/dax.c               | 4 ++--
+ fs/iomap/buffered-io.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Yes, my version passes basic tests at least, and I could no longer
-reproduce the problem.
+-- 
+2.27.0
 
-Without the if (!fid) fid = file->private_data though it does fail
-horribly like you've found out.
-
---
-Dominique
