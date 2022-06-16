@@ -2,124 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFCD54E1D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 15:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEFBA54E214
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 15:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232908AbiFPNYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 09:24:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58576 "EHLO
+        id S1377090AbiFPNgU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 09:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbiFPNYR (ORCPT
+        with ESMTP id S1376839AbiFPNgT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 09:24:17 -0400
-Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F8033EB6;
-        Thu, 16 Jun 2022 06:24:15 -0700 (PDT)
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id 56957520290;
-        Thu, 16 Jun 2022 15:24:13 +0200 (CEST)
-Received: from lxhi-065 (10.72.94.14) by hi2exch02.adit-jv.com (10.72.92.28)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Thu, 16 Jun
- 2022 15:24:12 +0200
-Date:   Thu, 16 Jun 2022 15:24:08 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
-        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Message-ID: <20220616132408.GA4018@lxhi-065>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+        Thu, 16 Jun 2022 09:36:19 -0400
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F2724096;
+        Thu, 16 Jun 2022 06:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=cyWgBVSU437H0cH5AK9e5im0OrC0JXMOv/o9/Fwf120=; b=mMacv3x8e2S6aOvOI07Vr6PyY5
+        Lg1CSP9y4voZOzwtdgVox3avr1sLZ4CKtGFNcLLC2LOHiBxDVB1j8YcER+ZjKs7/PD8MEdgTG2xYF
+        1QolQ9/oFemDvDYxDseqySgxCz7b+FVKLSAudaxQokiGtXSZwvZ/4+S4a7svr1ggfQolceWdCgnus
+        vWTSaswjJCAEgCfpls5Su27yzQfNZNzP3RHc05EDrh+gBBsBLqN+IcQWV/eXx7SqViyXNuO5lFlXY
+        x8nPQr0id7E4lifrISpPz9iEdJAEqRePkJ0P14YKzn0BRwb6jJ4mHn9qiBBocLaOltYHlN7s2kbZG
+        dMkVjdyZVoxbyRFrCNiADOluiG6LaWIri3vWAgb6JpVTNOkJ9muM3Q/G7rTLnBZWcsrA1o5Jt5v03
+        mK01tooy//VW/wEWrHWIZLjPNmhPdJWNKgCHMqa/zTdJSkmLelZxkU6HYgn+vhHHSFaH9+O/IZfLX
+        C7/ApVrcuxhZtjNN89VKruFtROCKmbtqs1QutQry1vUyW4j1R3l+Gf9a3LJqmo8dxWK4NWJpFBaJ7
+        8tdiO5RO9bdgejZ6Ywyj75a6+EoZvwLcG0TFTW6TL1x2vmPsmxn/9kO1VTKIHuuQIUNDQ+oIwqp8u
+        8yjVwUdA7To1kCuieodJv6yWkPXXA87IhDv+Te1To=;
+From:   Christian Schoenebeck <linux_oss@crudebyte.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
+Date:   Thu, 16 Jun 2022 15:35:59 +0200
+Message-ID: <22073313.PYDa2UxuuP@silver>
+In-Reply-To: <1796737.mFSqR1lx0c@silver>
+References: <YqW5s+GQZwZ/DP5q@codewreck.org> <YqiC8luskkxUftQl@codewreck.org>
+ <1796737.mFSqR1lx0c@silver>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190523121803.21638-1-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.94.14]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Yamada-san,
+On Dienstag, 14. Juni 2022 16:11:35 CEST Christian Schoenebeck wrote:
+> On Dienstag, 14. Juni 2022 14:45:38 CEST Dominique Martinet wrote:
+[...]
+> > Please let me know how that works out, I'd be happy to use either of
+> > your versions instead of mine.
+> > If I can be greedy though I'd like to post it together with the other
+> > couple of fixes next week, so having something before the end of the
+> > week would be great -- I think even my first overkill version early and
+> > building on it would make sense at this point.
+> > 
+> > But I think you've got the right end, so hopefully won't be needing to
+> > delay
+> 
+> I need a day or two for testing, then I will report back for sure. So it
+> should perfectly fit into your intended schedule.
 
-On Do, Mai 23, 2019 at 02:18:00 +0200, Roberto Sassu wrote:
-> This patch set aims at solving the following use case: appraise files from
-> the initial ram disk. To do that, IMA checks the signature/hash from the
-> security.ima xattr. Unfortunately, this use case cannot be implemented
-> currently, as the CPIO format does not support xattrs.
-> 
-> This proposal consists in including file metadata as additional files named
-> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
-> kernel recognizes these special files from the file name, and calls the
-> appropriate parser to add metadata to the previously extracted file. It has
-> been proposed to use bit 17:16 of the file mode as a way to recognize files
-> with metadata, but both the kernel and the cpio tool declare the file mode
-> as unsigned short.
-> 
-> The difference from v2, v3 (https://lkml.org/lkml/2019/5/9/230,
-> https://lkml.org/lkml/2019/5/17/466) is that file metadata are stored in
-> separate files instead of a single file. Given that files with metadata
-> must immediately follow the files metadata will be added to, image
-> generators have to be modified in this version.
-> 
-> The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that
-> all files have the same name. The file metadata are added to is always the
-> previous one, and the image generator in user space will make sure that
-> files are in the correct sequence.
-> 
-> The difference with another proposal
-> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
-> included in an image without changing the image format. Files with metadata
-> will appear as regular files. It will be task of the parser in the kernel
-> to process them.
-> 
-> This patch set extends the format of data defined in patch 9/15 of the last
-> proposal. It adds header version and type, so that new formats can be
-> defined and arbitrary metadata types can be processed.
-> 
-> The changes introduced by this patch set don't cause any compatibility
-> issue: kernels without the metadata parser simply extract the special files
-> and don't process metadata; kernels with the metadata parser don't process
-> metadata if the special files are not included in the image.
-> 
-> >From the kernel space perspective, backporting this functionality to older
-> kernels should be very easy. It is sufficient to add two calls to the new
-> function do_process_metadata() in do_copy(), and to check the file name in
-> do_name(). From the user space perspective, unlike the previous version of
-> the patch set, it is required to modify the image generators in order to
-> include metadata as separate files.
+Two things:
 
-Since this patch series most likely falls under your jurisdiction and
-also given your recent commits [*] in the same area, I am curious if
-there are any early signs which would prevent your final acceptance
-and would potentially result in a no-Go?
+1. your EBADF patch is based on you recent get/put refactoring patch, so it won't apply on stable.
 
-Can we have an early confirmation that, upon rebasing and handling of
-all the review comments, you would be willing to accept the patches?
+2. I fixed the conflict and gave your patch a test spin, and it triggers
+the BUG_ON(!fid); that you added with that patch. Backtrace based on
+30306f6194ca ("Merge tag 'hardening-v5.19-rc3' ..."):
 
-[*] Most recent commits touching usr/gen_initramfs.sh
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7168965ec7b10b8a2c7dea1f82f1ebadf44d64ba
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=65e00e04e5aea34b256814cfa21b32e3b94a2402
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=469e87e89fd61de804bd29f6dd0380a399b567a7
+[    2.211473] kernel BUG at fs/9p/vfs_addr.c:65!
+...
+[    2.244415] netfs_alloc_request (fs/netfs/objects.c:42) netfs
+[    2.245438] netfs_readahead (fs/netfs/buffered_read.c:166) netfs
+[    2.246392] read_pages (./include/linux/pagemap.h:1264 ./include/linux/pagemap.h:1306 mm/readahead.c:164) 
+[    2.247120] ? folio_add_lru (./arch/x86/include/asm/preempt.h:103 mm/swap.c:468) 
+[    2.247911] page_cache_ra_unbounded (./include/linux/fs.h:808 mm/readahead.c:264) 
+[    2.248875] filemap_get_pages (mm/filemap.c:2594) 
+[    2.249723] filemap_read (mm/filemap.c:2679) 
+[    2.250478] ? ptep_set_access_flags (./arch/x86/include/asm/paravirt.h:441 arch/x86/mm/pgtable.c:493) 
+[    2.251417] ? _raw_spin_unlock (./arch/x86/include/asm/preempt.h:103 ./include/linux/spinlock_api_smp.h:143 kernel/locking/spinlock.c:186) 
+[    2.252253] ? do_wp_page (mm/memory.c:3293 mm/memory.c:3393) 
+[    2.253012] ? aa_file_perm (security/apparmor/file.c:604) 
+[    2.253824] new_sync_read (fs/read_write.c:402 (discriminator 1)) 
+[    2.254616] vfs_read (fs/read_write.c:482) 
+[    2.255313] ksys_read (fs/read_write.c:620) 
+[    2.256000] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80) 
+[    2.256764] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:115)
 
-Thanks,
-Eugeniu.
+Did your patch work there for you? I mean I have not applied the other pending
+9p patches, but they should not really make difference, right? I won't have
+time today, but I will continue to look at it tomorrow. If you already had
+some thoughts on this, that would be great of course.
+
+Best regards,
+Christian Schoenebeck
+
+
