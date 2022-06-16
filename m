@@ -2,162 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B2054E2AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 15:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB07654E30F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 16:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbiFPN5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 09:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34638 "EHLO
+        id S1377564AbiFPOLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 10:11:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233111AbiFPN5f (ORCPT
+        with ESMTP id S1377558AbiFPOLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 09:57:35 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F0F109B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 06:57:33 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id q4-20020a5ea604000000b0066a486a98d9so913189ioi.20
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 06:57:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TyPOt0yJwwiVzwhZL6932xCsniSIc1nJmBUoZIQlk3U=;
-        b=zprq2Rn+hkgu7PTbUvwHO7nX+EaF0XE5KydNS7trcj43iZdMNWGy/PI5o+5J5OF0Ue
-         vqibVkMgP69jkTFdC+m3Qgq/W31T0EEQxgo2UfEcAdenb61TAMEDnY5+Qa7339eIs7Qb
-         nam2oamh9fCww2x2TfkU9WjoSZ/zGJeacWuTt3pOvlAnU84Rsh9eO52cPnFZv2GyBXC5
-         QT9kRrwjtLbA0f/FX0usbYocwz8AwtS0oUE5/Y35RYd/Esy6XGBDVkunpzx9dKUZfFTD
-         Vk71XqPxWYuEWe1AzFtXVqnw7TPuw5jL3ROOoZlvQ1gspYmeCCsOj70S0g5wzLibRbH0
-         eXGA==
-X-Gm-Message-State: AJIora+AsgVoJU4OD6pOffJVNPDFSqh/4a8yA5D5RBR5WUJq6vILizBJ
-        y5AnTq7XmrGiheHAc0EfmGGlG+ksaFVQacs31ThVlyhjJS8F
-X-Google-Smtp-Source: AGRyM1sg3smBqvQULwfGQDJAxwblcUgJun7P/SxhjIWWg9NygJSkcHJwZbL2XOyt74isJ16ZElXQBUhJuDJVwnXuu5tXrRAmLPm7
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ce:b0:2d3:de67:9f96 with SMTP id
- i14-20020a056e0212ce00b002d3de679f96mr3018159ilm.261.1655387852665; Thu, 16
- Jun 2022 06:57:32 -0700 (PDT)
-Date:   Thu, 16 Jun 2022 06:57:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ec7b7d05e1910402@google.com>
-Subject: [syzbot] memory leak in __register_sysctl_table
-From:   syzbot <syzbot+9f160a43b2cf201cbe65@syzkaller.appspotmail.com>
-To:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, john.fastabend@gmail.com, kafai@fb.com,
-        keescook@chromium.org, kpsingh@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org, netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com, yzaikin@google.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+        Thu, 16 Jun 2022 10:11:39 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5365149928;
+        Thu, 16 Jun 2022 07:11:38 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 0B084C01E; Thu, 16 Jun 2022 16:11:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1655388697; bh=6fLEu8wAlSIhYMNp84lmaEuPjTbe/YpTHYdRdU5qRks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t6uTnZ/bhgyYCOwpTf0dxtMmGQuPxvV2LhTjL8VpZ2Qd1bEDnLnRqxVQ9arzZjg3G
+         jZTbPNQBThVvlK2+UksBw2JVgaT5WcPkoxvQB70wz8pIBhLFBZsmqcFenUkkmm0vf9
+         ETZIuVs/JtzHvCBiSmI01weqKzDAI8H0VzASWhMr9Eu4k0McdMFhFZIYl2badc9fYp
+         vGB8BVa5nP7wTRmEgY8urlofplOhceUlPCIx5ZiI71AKr9K9wjaQfrXVOkGbVjSqnE
+         mOqEDfu1eacpwbMelldreAnV5jxeHvbF/zujCZ8nXigTT0AaoulF4GF6AxcqONlG9l
+         JDWEoU8SL4wnw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id DD91BC009;
+        Thu, 16 Jun 2022 16:11:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1655388696; bh=6fLEu8wAlSIhYMNp84lmaEuPjTbe/YpTHYdRdU5qRks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WQLfbC1cYoX14kKZ3N5dB9eRYeWQUnIS8zXTCcPAcfIlZA1HuLsqHZaobqOoRfgtb
+         4jh/0vpIJb3xMrkKUR5EP9ozmJgdKkscRFg9VeNVig5d0hIoGAMav0FZ7burj/mw/V
+         eOT2o2qDglyUTveKwfwQZ6CICIWNX3VDUK3z7JcoCT34Kri1HL1PPuaXqAwnRVtCIg
+         fk45DkIeIZJo77r02GpIfD+ndUQli8+avOcOMIhUAp7HG3L59uoMkGGS28KZqoZX+R
+         ejJN8yMpxR3lnXFZVfo8r970t19z5MohR4waRc7Zfe9lVyzkxmY8gHQWTgLk9FqSxX
+         ombdi8OZY+KyA==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 6e9c3609;
+        Thu, 16 Jun 2022 14:11:31 +0000 (UTC)
+Date:   Thu, 16 Jun 2022 23:11:16 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
+Message-ID: <Yqs6BPVc3rNZ9byJ@codewreck.org>
+References: <YqW5s+GQZwZ/DP5q@codewreck.org>
+ <YqiC8luskkxUftQl@codewreck.org>
+ <1796737.mFSqR1lx0c@silver>
+ <22073313.PYDa2UxuuP@silver>
+ <Yqs1Y8G/Emi/q+S2@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Yqs1Y8G/Emi/q+S2@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Dominique Martinet wrote on Thu, Jun 16, 2022 at 10:51:31PM +0900:
+> > Did your patch work there for you? I mean I have not applied the other pending
+> > 9p patches, but they should not really make difference, right? I won't have
+> > time today, but I will continue to look at it tomorrow. If you already had
+> > some thoughts on this, that would be great of course.
+> 
+> Yes, my version passes basic tests at least, and I could no longer
+> reproduce the problem.
 
-syzbot found the following issue on:
+For what it's worth I've also tested a version of your patch:
 
-HEAD commit:    7a68065eb9cd Merge tag 'gpio-fixes-for-v5.19-rc2' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1432d953f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8e07e4ed17ee546
-dashboard link: https://syzkaller.appspot.com/bug?extid=9f160a43b2cf201cbe65
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1297ba43f00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14bf34a7f00000
+-----
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a8f512b44a85..d0833fa69faf 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -58,8 +58,21 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
+  */
+ static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
+ {
++	struct inode *inode = file_inode(file);
++	struct v9fs_inode *v9inode = V9FS_I(inode);
+ 	struct p9_fid *fid = file->private_data;
+ 
++	BUG_ON(!fid);
++
++	/* we might need to read from a fid that was opened write-only
++	 * for read-modify-write of page cache, use the writeback fid
++	 * for that */
++	if (rreq->origin == NETFS_READ_FOR_WRITE &&
++			(fid->mode & O_ACCMODE) == O_WRONLY) {
++		fid = v9inode->writeback_fid;
++		BUG_ON(!fid);
++	}
++
+ 	refcount_inc(&fid->count);
+ 	rreq->netfs_priv = fid;
+ 	return 0;
+-----
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9f160a43b2cf201cbe65@syzkaller.appspotmail.com
+And this also seems to work alright.
 
-BUG: memory leak
-unreferenced object 0xffff8881016dfa00 (size 256):
-  comm "syz-executor201", pid 3662, jiffies 4294969093 (age 12.970s)
-  hex dump (first 32 bytes):
-    00 90 da 0d 81 88 ff ff 00 00 00 00 01 00 00 00  ................
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816fe96b>] kmalloc include/linux/slab.h:605 [inline]
-    [<ffffffff816fe96b>] kzalloc include/linux/slab.h:733 [inline]
-    [<ffffffff816fe96b>] __register_sysctl_table+0x7b/0x7f0 fs/proc/proc_sysctl.c:1344
-    [<ffffffff82219a5a>] setup_mq_sysctls+0x12a/0x1c0 ipc/mq_sysctl.c:112
-    [<ffffffff822196d2>] create_ipc_ns ipc/namespace.c:63 [inline]
-    [<ffffffff822196d2>] copy_ipcs+0x292/0x390 ipc/namespace.c:91
-    [<ffffffff8127de6c>] create_new_namespaces+0xdc/0x4f0 kernel/nsproxy.c:90
-    [<ffffffff8127e88b>] unshare_nsproxy_namespaces+0x9b/0x120 kernel/nsproxy.c:226
-    [<ffffffff8123f92e>] ksys_unshare+0x2fe/0x600 kernel/fork.c:3165
-    [<ffffffff8123fc42>] __do_sys_unshare kernel/fork.c:3236 [inline]
-    [<ffffffff8123fc42>] __se_sys_unshare kernel/fork.c:3234 [inline]
-    [<ffffffff8123fc42>] __x64_sys_unshare+0x12/0x20 kernel/fork.c:3234
-    [<ffffffff845abc55>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff845abc55>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff8460006a>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+I was about to ask why the original code did writes with the writeback
+fid, but I'm noticing now the current code still does (through
+v9fs_vfs_write_folio_locked()), so that part hasn't changed from the old
+code, and init_request will only be getting reads? Which actually makes
+sense now I'm thinking about it because I recall David saying he's
+working on netfs writes now...
 
-BUG: memory leak
-unreferenced object 0xffff88810edf7b00 (size 256):
-  comm "syz-executor201", pid 3662, jiffies 4294969093 (age 12.970s)
-  hex dump (first 32 bytes):
-    78 7b df 0e 81 88 ff ff 00 00 00 00 01 00 00 00  x{..............
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816fee99>] kmalloc include/linux/slab.h:605 [inline]
-    [<ffffffff816fee99>] kzalloc include/linux/slab.h:733 [inline]
-    [<ffffffff816fee99>] new_dir fs/proc/proc_sysctl.c:978 [inline]
-    [<ffffffff816fee99>] get_subdir fs/proc/proc_sysctl.c:1022 [inline]
-    [<ffffffff816fee99>] __register_sysctl_table+0x5a9/0x7f0 fs/proc/proc_sysctl.c:1373
-    [<ffffffff82219a5a>] setup_mq_sysctls+0x12a/0x1c0 ipc/mq_sysctl.c:112
-    [<ffffffff822196d2>] create_ipc_ns ipc/namespace.c:63 [inline]
-    [<ffffffff822196d2>] copy_ipcs+0x292/0x390 ipc/namespace.c:91
-    [<ffffffff8127de6c>] create_new_namespaces+0xdc/0x4f0 kernel/nsproxy.c:90
-    [<ffffffff8127e88b>] unshare_nsproxy_namespaces+0x9b/0x120 kernel/nsproxy.c:226
-    [<ffffffff8123f92e>] ksys_unshare+0x2fe/0x600 kernel/fork.c:3165
-    [<ffffffff8123fc42>] __do_sys_unshare kernel/fork.c:3236 [inline]
-    [<ffffffff8123fc42>] __se_sys_unshare kernel/fork.c:3234 [inline]
-    [<ffffffff8123fc42>] __x64_sys_unshare+0x12/0x20 kernel/fork.c:3234
-    [<ffffffff845abc55>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff845abc55>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff8460006a>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-BUG: memory leak
-unreferenced object 0xffff888101926f00 (size 256):
-  comm "syz-executor201", pid 3662, jiffies 4294969093 (age 12.970s)
-  hex dump (first 32 bytes):
-    78 6f 92 01 81 88 ff ff 00 00 00 00 01 00 00 00  xo..............
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816fee99>] kmalloc include/linux/slab.h:605 [inline]
-    [<ffffffff816fee99>] kzalloc include/linux/slab.h:733 [inline]
-    [<ffffffff816fee99>] new_dir fs/proc/proc_sysctl.c:978 [inline]
-    [<ffffffff816fee99>] get_subdir fs/proc/proc_sysctl.c:1022 [inline]
-    [<ffffffff816fee99>] __register_sysctl_table+0x5a9/0x7f0 fs/proc/proc_sysctl.c:1373
-    [<ffffffff82219a5a>] setup_mq_sysctls+0x12a/0x1c0 ipc/mq_sysctl.c:112
-    [<ffffffff822196d2>] create_ipc_ns ipc/namespace.c:63 [inline]
-    [<ffffffff822196d2>] copy_ipcs+0x292/0x390 ipc/namespace.c:91
-    [<ffffffff8127de6c>] create_new_namespaces+0xdc/0x4f0 kernel/nsproxy.c:90
-    [<ffffffff8127e88b>] unshare_nsproxy_namespaces+0x9b/0x120 kernel/nsproxy.c:226
-    [<ffffffff8123f92e>] ksys_unshare+0x2fe/0x600 kernel/fork.c:3165
-    [<ffffffff8123fc42>] __do_sys_unshare kernel/fork.c:3236 [inline]
-    [<ffffffff8123fc42>] __se_sys_unshare kernel/fork.c:3234 [inline]
-    [<ffffffff8123fc42>] __x64_sys_unshare+0x12/0x20 kernel/fork.c:3234
-    [<ffffffff845abc55>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff845abc55>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff8460006a>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
-write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
-write to /proc/sys/kernel/hung_task_check_interval_secs failed: No such file or directory
-write to /proc/sys/kernel/softlockup_all_cpu_backtrace failed: No such file or directory
+So that minimal version is probably what we want, give or take style
+adjustments (only initializing inode/v9inode in the if case or not) -- I
+sure hope compilers optimizes it away when not needed.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I'll let you test one or both versions and will fixup the commit message
+again/credit you/resend if we go with this version, unless you want to
+send it.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+--
+Dominique
