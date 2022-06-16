@@ -2,151 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB41654EA95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 22:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AD754EAAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 22:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238989AbiFPUO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 16:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57222 "EHLO
+        id S1378323AbiFPUSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 16:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231383AbiFPUOZ (ORCPT
+        with ESMTP id S1378308AbiFPUSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 16:14:25 -0400
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A675A5B6;
-        Thu, 16 Jun 2022 13:14:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=INFQxQGyDwYY69qxQzPfv36btcGaXW+MSiAs6Ux+E6s=; b=NR8T64pEbjb9gC9oGxieK4GKzh
-        Ta32023+iPCIyOCG8I5qwwngxe2sZSPVJDqPSftqj/ngwk+7BfHFTLzHJlFt3oI4lJzfv6KLLgoR4
-        oL2OFdOP6bDTC+MT+UmDjsHPmvGifYkbDsjPWUetbqGfeCez6pNdIGFBWkSknI48fsNqyYdy1XUjF
-        Es7viVRkpv8BqHB+XHc9YSVZqT5wNrA3xagp9t/TC+gAyPYKLES1QFGbq9J47ny7KJXurPsb7J/N7
-        BafpkXCsFK4+b3o7L6pwR+PmuqGrgj5O4foWNUpWCUoNkIPFm2zDQ9Zbi1qMc+At7lA2g2eaAKZU+
-        hTJUuliUr0bgO5iX2DGCqs9XWrt0qeK2BYmmfnyvBS0nUONCMurnjFakMb95w3dyJM8jzgbvgad4A
-        mm4m3czzW2sVnLwX6fArQOFTkxMJysEz3wnth4wEAe5D30m+UFJNDECHp7coxImDcTkSzXaHp7wme
-        cTB5/lX/wijvQil7KAw6c94m6vn0jDkBcbEAMx8lj/7gDQ9PIUaveWTSjpv5Yf98oZJas2ZjokHfl
-        PEpRQqgueQtViRwSvsrm7y0rc1U3tVCLskJLhd+imAXqy5OSmpCpZOrXpj8ulcs2zyzCtEX7/ghCK
-        Ypfv6X8aMEc19qqQpSv2G2noX1SvCQNSU2qzyzjGc=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
-Date:   Thu, 16 Jun 2022 22:14:16 +0200
-Message-ID: <15767273.MGizftpLG7@silver>
-In-Reply-To: <Yqs6BPVc3rNZ9byJ@codewreck.org>
-References: <YqW5s+GQZwZ/DP5q@codewreck.org> <Yqs1Y8G/Emi/q+S2@codewreck.org>
- <Yqs6BPVc3rNZ9byJ@codewreck.org>
+        Thu, 16 Jun 2022 16:18:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B678B34BBD;
+        Thu, 16 Jun 2022 13:18:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 70E69B8241A;
+        Thu, 16 Jun 2022 20:18:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B59C34114;
+        Thu, 16 Jun 2022 20:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655410695;
+        bh=uHvrE+2KCGPR9N5AeXBgCBnYJvNxKl74BJyMaayUJlE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FE409cquZhNFTvUkhTz7aypxXcp8WVokxBhnOgrLH7rlE98ZDV8l1GdGcslnY0oFx
+         ByeEMsNBaXb9VYG8LFVjl1S+79f5i0YjMkfvsUE9Wj3myE3PSK8zfRz0/EtowyYHBO
+         iOw2iLltOMlau7xeqpRv3LdCm6DGDeTZUolKc2IzonnbO9+6YbZOwCNo8qGlEkRTWs
+         hqpSWrzTz01/8v2Q3ZThHothFD/mn5Nhs+a+vL4u/yf4s+PM80d04AO9bKkU0tNZug
+         OemXtvGjdbXjqfvdtyPIPCgcGjA799xlqEljsmrYSlYgC4GqLRYODBx4O/scdI2HT6
+         b92/3YjwKg2Ow==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH v3 0/8] make statx() return DIO alignment information
+Date:   Thu, 16 Jun 2022 13:14:58 -0700
+Message-Id: <20220616201506.124209-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Donnerstag, 16. Juni 2022 15:51:31 CEST Dominique Martinet wrote:
-> Christian Schoenebeck wrote on Thu, Jun 16, 2022 at 03:35:59PM +0200:
-> > 2. I fixed the conflict and gave your patch a test spin, and it triggers
-> > the BUG_ON(!fid); that you added with that patch. Backtrace based on
-> 
-> > 30306f6194ca ("Merge tag 'hardening-v5.19-rc3' ..."):
-> hm, that's probably the version I sent without the fallback to
-> private_data fid if writeback fid was sent (I've only commented without
-> sending a v2)
+This patchset makes the statx() system call return direct I/O (DIO)
+alignment information.  This allows userspace to easily determine
+whether a file supports DIO, and if so with what alignment restrictions.
 
-Right, I forgot that you queued another version, sorry. With your already 
-queued patch (today's v2) that's fine now.
+Patch 1 adds the basic VFS support for STATX_DIOALIGN.  Patch 2 wires it
+up for all block device files.  The remaining patches wire it up for
+regular files on ext4 and f2fs.  Support for regular files on other
+filesystems can be added later.
 
-On Donnerstag, 16. Juni 2022 16:11:16 CEST Dominique Martinet wrote:
-> Dominique Martinet wrote on Thu, Jun 16, 2022 at 10:51:31PM +0900:
-> > > Did your patch work there for you? I mean I have not applied the other
-> > > pending 9p patches, but they should not really make difference, right?
-> > > I won't have time today, but I will continue to look at it tomorrow. If
-> > > you already had some thoughts on this, that would be great of course.
-> > 
-> > Yes, my version passes basic tests at least, and I could no longer
-> > reproduce the problem.
-> 
-> For what it's worth I've also tested a version of your patch:
-> 
-> -----
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index a8f512b44a85..d0833fa69faf 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -58,8 +58,21 @@ static void v9fs_issue_read(struct netfs_io_subrequest
-> *subreq) */
->  static int v9fs_init_request(struct netfs_io_request *rreq, struct file
-> *file) {
-> +	struct inode *inode = file_inode(file);
-> +	struct v9fs_inode *v9inode = V9FS_I(inode);
->  	struct p9_fid *fid = file->private_data;
-> 
-> +	BUG_ON(!fid);
-> +
-> +	/* we might need to read from a fid that was opened write-only
-> +	 * for read-modify-write of page cache, use the writeback fid
-> +	 * for that */
-> +	if (rreq->origin == NETFS_READ_FOR_WRITE &&
-> +			(fid->mode & O_ACCMODE) == O_WRONLY) {
-> +		fid = v9inode->writeback_fid;
-> +		BUG_ON(!fid);
-> +	}
-> +
->  	refcount_inc(&fid->count);
->  	rreq->netfs_priv = fid;
->  	return 0;
-> -----
-> 
-> And this also seems to work alright.
-> 
-> I was about to ask why the original code did writes with the writeback
-> fid, but I'm noticing now the current code still does (through
-> v9fs_vfs_write_folio_locked()), so that part hasn't changed from the old
-> code, and init_request will only be getting reads? Which actually makes
-> sense now I'm thinking about it because I recall David saying he's
-> working on netfs writes now...
-> 
-> So that minimal version is probably what we want, give or take style
-> adjustments (only initializing inode/v9inode in the if case or not) -- I
-> sure hope compilers optimizes it away when not needed.
-> 
-> 
-> I'll let you test one or both versions and will fixup the commit message
-> again/credit you/resend if we go with this version, unless you want to
-> send it.
-> 
-> --
-> Dominique
+I've also written a man-pages patch, which I'm sending separately.
 
-I tested all 3 variants today, and they were all behaving correctly (no EBADF 
-errors anymore, no other side effects observed).
+Note, f2fs has one corner case where DIO reads are allowed but not DIO
+writes.  The proposed statx fields can't represent this.  My proposal
+(patch 6) is to just eliminate this case, as it seems much too weird.
+But I'd appreciate any feedback on that part.
 
-The minimalistic version (i.e. your initial suggestion) performed 20% slower 
-in my tests, but that could be due to the fact that it was simply the 1st 
-version I tested, so caching on host side might be the reason. If necessary I 
-can check the performance aspect more thoroughly.
+This patchset applies to v5.19-rc2.
 
-Personally I would at least use the NETFS_READ_FOR_WRITE version, but that's 
-up to you. On doubt, clarify with David's plans.
+Changed v2 => v3:
+   - Dropped the stx_offset_align_optimal field, since its purpose
+     wasn't clearly distinguished from the existing stx_blksize.
 
-Feel free to add my RB and TB tags to any of the 3 version(s) you end up 
-queuing:
+   - Renamed STATX_IOALIGN to STATX_DIOALIGN, to reflect the new focus
+     on DIO only.
 
-Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
-Tested-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+   - Similarly, renamed stx_{mem,offset}_align_dio to
+     stx_dio_{mem,offset}_align, to reflect the new focus on DIO only.
 
-Best regards,
-Christian Schoenebeck
+   - Wired up STATX_DIOALIGN on block device files.
 
+Changed v1 => v2:
+   - No changes.
 
+Eric Biggers (8):
+  statx: add direct I/O alignment information
+  vfs: support STATX_DIOALIGN on block devices
+  fscrypt: change fscrypt_dio_supported() to prepare for STATX_DIOALIGN
+  ext4: support STATX_DIOALIGN
+  f2fs: move f2fs_force_buffered_io() into file.c
+  f2fs: don't allow DIO reads but not DIO writes
+  f2fs: simplify f2fs_force_buffered_io()
+  f2fs: support STATX_DIOALIGN
+
+ fs/crypto/inline_crypt.c  | 48 ++++++++++++++++++++-------------------
+ fs/ext4/ext4.h            |  1 +
+ fs/ext4/file.c            | 10 ++++----
+ fs/ext4/inode.c           | 29 +++++++++++++++++++++++
+ fs/f2fs/f2fs.h            | 45 ------------------------------------
+ fs/f2fs/file.c            | 45 +++++++++++++++++++++++++++++++++++-
+ fs/stat.c                 | 37 ++++++++++++++++++++++++++++++
+ include/linux/fscrypt.h   |  7 ++----
+ include/linux/stat.h      |  2 ++
+ include/uapi/linux/stat.h |  4 +++-
+ 10 files changed, 147 insertions(+), 81 deletions(-)
+
+-- 
+2.36.1
+
+base-commit: b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3
