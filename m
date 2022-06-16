@@ -2,109 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9814754DDC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 11:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5CF54DEE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 12:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232156AbiFPJCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 05:02:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57028 "EHLO
+        id S1345993AbiFPKZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 06:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231838AbiFPJCT (ORCPT
+        with ESMTP id S1359495AbiFPKZT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 05:02:19 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528B02D1E0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 02:02:12 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id m20so1512723ejj.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 02:02:12 -0700 (PDT)
+        Thu, 16 Jun 2022 06:25:19 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266085D5F6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 03:25:18 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id h36so1503857lfv.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 03:25:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pc5Amsn8TgDKhR/5plxMGf5bc0SbsnTaDD4PIb/Yu5w=;
-        b=UXL5I2ysh9P8L6Oo8E2wnIxMZ60LLgOVT2jV9ZytcZfsqDdOP5nX9tjZkutipW1NyM
-         Qttk6WOE1hInbn4Lm+SpGlypygKTWfQYsjM4t7T15ZzIPDaUD+/ZvG7C9UE9cAkyljXS
-         cEEY44p6T1VkjiNRqDpJG67fqs7FXJEqJSyuE=
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=lLG88JCPgF7Yhflf4FNi4GQedsSNMbwmPtgneUr9Mu0=;
+        b=W910NhxhsjMJh8xmTqiBb+n/d8vNhkQvEK3uQsx019H/NVF/HsRkR91Mwgf5NoOA2o
+         +G9NG8HKS3dufLn4HoWATUwViMwR/sm7gdhYVGjSBp65IoH9/VzeePSRwsxtnWyD2IYd
+         /P+anhEIznyuyfYSv0fd8QvDY0LuzCx2TbyvmZF5dM2Nj4uA7+9FyoHxvD1xuHmQyiMU
+         TCzjnL3q1oIV583xyWy0s+D4KRyb2LgtwArAnNeV+m1AO8ORaxA26nm4VB9kA/9NXW1T
+         yHcu0NzK0YGRQb2+53awbQan+6daAbhIX2qCkYqY9Qavm2WmKJIEIH3npl/ZhVNAwvQV
+         qPgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pc5Amsn8TgDKhR/5plxMGf5bc0SbsnTaDD4PIb/Yu5w=;
-        b=nSY3KtMaw8RWxQ+9ikyQin0xDTMRGxMk43yYHYPdfnkR2Bsp8sOTO3uBeiEYYFtdDU
-         DghLqEm7M+nnW2yJ2CvZSzohjznlZMBG+6tecw6DrUpCHQ0SaoHaSHm1EhZjwLHsJXIr
-         Y+tB3VmQNWjypbjzrx9qKlfb5YSx13ARz0SJr8ZyAbiRNLligIiUiD+t75+RGksOzbNY
-         17dZZ5OGgto6cvR0WYybxjH6F1opLR4oJ7ipNI3Hdm4ijrc+GvKB8PQdgPknFmSISUF2
-         qjRWFoSOr+hOK/oRwqZb9fT43KSKJSrdHx5yoN4J24zy98zLktRnhNiaGkBbBx8ILVxS
-         0obw==
-X-Gm-Message-State: AJIora8Ma8gKEOwBVO/7MXD9A0ydTsPEq0Xi12hEsi7Z2D6/S05Zxbem
-        sWTzLrvqL77rBERXUdRd1WunIDelUaSr0sau1RXbPw==
-X-Google-Smtp-Source: AGRyM1u4KXzIo3qgzwa+diwcwq4iTbdaCf5r9GEZ/ERy8CWzUrD1uf6bG/vHa4WfMNeiKpRfcpdG+J6Dgg41ne51m/M=
-X-Received: by 2002:a17:907:3f92:b0:706:db40:a0ef with SMTP id
- hr18-20020a1709073f9200b00706db40a0efmr3487509ejc.524.1655370130911; Thu, 16
- Jun 2022 02:02:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=lLG88JCPgF7Yhflf4FNi4GQedsSNMbwmPtgneUr9Mu0=;
+        b=JSTKYvOXTUIQ5KdqXqmOXPtuYuZpuLwNEvthzmfFqo9bjCnfnLOpsHSZhGZWKO03Ph
+         Z7b1ayc5BoOkispFblbUU1eybeaFRd1mNwYtjXUIV+TIx3fi2lixtn8V7ee8XOGMqvfi
+         ZZhhLrWPJtWFVXNZAFEnYhGVGODwzO7F1UV3ZYQIZipE87GRmx4j1m0e4OqME7hf3kUm
+         Ev0d+8DwLJPZ2YvJIeORD0KwTtT6RDMUf/efJG4WdlWsgQ+gHciMsNFUFj3FRg7H7rmd
+         Hzh5faUWeeKrzrNnM6+AHl25s34fT7DJOU6L5vjt/QOWhmTgcYeHkoHSRggidSNm9X06
+         P/HA==
+X-Gm-Message-State: AJIora9VlYL1pbstQ1Nu4ndk5H3FNnyNbCbm2csrZ50XZ9pRF3Azf+tm
+        35TtK40F4CJsBPuPCJ57TZRuMjORT0o2cczLG9k=
+X-Google-Smtp-Source: AGRyM1v2MTXGyROmKEYPPr3IJqOTubJyWU9u6UFQYhvDngD40bhPycsNsVME02FGDV5945mXaS61m+8B4cqbLiC7v1U=
+X-Received: by 2002:a05:6512:3448:b0:479:10f0:11c7 with SMTP id
+ j8-20020a056512344800b0047910f011c7mr2248569lfr.521.1655375117521; Thu, 16
+ Jun 2022 03:25:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220605072201.9237-1-dharamhans87@gmail.com> <20220605072201.9237-2-dharamhans87@gmail.com>
- <Yp/CYjONZHoekSVA@redhat.com> <34dd96b3-e253-de4e-d5d3-a49bc1990e6f@ddn.com>
- <Yp/KnF0oSIsk0SYd@redhat.com> <3d189ccc-437e-d9c0-e9f1-b4e0d2012e3c@ddn.com> <YqH7PO7KtoiXkmVH@redhat.com>
-In-Reply-To: <YqH7PO7KtoiXkmVH@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 16 Jun 2022 11:01:59 +0200
-Message-ID: <CAJfpegsbNPuy3YmGZ1prUyir_h_5noGZLN8R__o0=iz8n4Y9og@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] Allow non-extending parallel direct writes on the
- same file.
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dharamhans87@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
+Received: by 2002:a05:6520:28c2:b0:1f3:cf5:e20d with HTTP; Thu, 16 Jun 2022
+ 03:25:16 -0700 (PDT)
+Reply-To: clmloans9@gmail.com
+From:   MR ANTHONY EDWARD <bashirusman02021@gmail.com>
+Date:   Thu, 16 Jun 2022 11:25:16 +0100
+Message-ID: <CAGOBX5aJ01nW_foH2aLY6UF6s28QePJ4_J3aCt=hjQSuJNsdog@mail.gmail.com>
+Subject: DARLEHENSANGEBOT
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 9 Jun 2022 at 15:53, Vivek Goyal <vgoyal@redhat.com> wrote:
+--=20
+Ben=C3=B6tigen Sie ein Gesch=C3=A4ftsdarlehen oder ein Darlehen jeglicher A=
+rt?
+Wenn ja, kontaktieren Sie uns
 
-> Right. If user space is relying on kernel lock for thread synchronization,
-> it can not enable parallel writes.
->
-> But if it is not relying on this, it should be able to enable parallel
-> writes. Just keep in mind that ->i_size check is not sufficient to
-> guarantee that you will not get "two extnding parallel writes". If
-> another client on a different machine truncated the file, it is
-> possible this client has old cached ->i_size and it will can
-> get multiple file extending parallel writes.
-
-There are two cases:
-
-1. the filesystem can be changed only through a single fuse instance
-
-2. the filesystem can be changed externally.
-
-In case 1 the fuse client must ensure that data is updated
-consistently (as defined by e.g. POSIX).  This is what I'm mostly
-worried about.
-
-Case 2 is much more difficult in the general case, and network
-filesystems often have a relaxed consistency model.
-
-
-> So if fuse daemon enables parallel extending writes, it should be
-> prepared to deal with multiple extending parallel writes.
->
-> And if this is correct assumption, I am wondering why to even try
-> to do ->i_size check and try to avoid parallel extending writes
-> in fuse kernel. May be there is something I am not aware of. And
-> that's why I am just raising questions.
-
-We can probably do that, but it needs careful review of where i_size
-is changed and where i_size is used so we can never get into an
-inconsistent state.
-
-Thanks,
-Miklos
+*Vollst=C3=A4ndiger Name:
+* Ben=C3=B6tigte Menge:
+*Leihdauer:
+*Mobiltelefon:
+*Land:
