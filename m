@@ -2,55 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3432D54DABE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 08:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BED54DB85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jun 2022 09:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359144AbiFPGfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 02:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
+        id S230237AbiFPH2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 03:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344922AbiFPGfP (ORCPT
+        with ESMTP id S229714AbiFPH2i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 02:35:15 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0729F56770;
-        Wed, 15 Jun 2022 23:35:15 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id CDB3E68AA6; Thu, 16 Jun 2022 08:35:10 +0200 (CEST)
-Date:   Thu, 16 Jun 2022 08:35:10 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     Christoph Hellwig <hch@lst.de>, dsterba@suse.cz,
-        syzbot <syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        willy@infradead.org
-Subject: Re: [syzbot] KASAN: use-after-free Read in
- copy_page_from_iter_atomic (2)
-Message-ID: <20220616063510.GA5608@lst.de>
-References: <0000000000003ce9d105e0db53c8@google.com> <00000000000085068105e112a117@google.com> <20220613193912.GI20633@twin.jikos.cz> <20220614071757.GA1207@lst.de> <2cc67037-cf90-cca2-1655-46b92b43eba8@gmx.com> <20220615132147.GA18252@lst.de> <00bbda63-dc00-05c0-4244-343352591d98@gmx.com>
+        Thu, 16 Jun 2022 03:28:38 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E214F47F;
+        Thu, 16 Jun 2022 00:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qyudK9RHzHd0FIczh0aVX4a/5A3C+DJ8JynCKqV8fww=; b=11ryEfpGZsM2WSo4FIu09RIUfh
+        iFdyiaA5LbnWO1SMdODF8+EI4N+WTm4MhDL+l6ovDkAsCKdLf3CayceRpZo6D161YBAy2/BUyxhVW
+        0vdmwAoJ4VHRmsqSofX008uOoCFvuoB5TWMoWd6Z6ULNAD6XL8MSQhzhWnc+yTX/ND1iAT2IF1DwB
+        OADPBraaAPB5xGosAdPXJR0wOPRZwsVZhijLPjt11JfOWG2/h3Y6q0VaFAGscTLizTiiZ/8mlEWoX
+        ORgTJ/5D9t9KJuHxfoJuxccK7GEYiX9b8JhpQWkOtrdCm2yoJ7NhEe4WKOGS4NDP/SyiL6zlF95Ze
+        7RlWxbJA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o1jvW-0012yz-PZ; Thu, 16 Jun 2022 07:28:26 +0000
+Date:   Thu, 16 Jun 2022 00:28:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     xiakaixu1987@gmail.com
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        djwong@kernel.org, hch@infradead.org,
+        Kaixu Xia <kaixuxia@tencent.com>
+Subject: Re: [PATCH] iomap: set did_zero to true when zeroing successfully
+Message-ID: <YqrbmiZ4HMiuvl17@infradead.org>
+References: <1655198062-13288-1-git-send-email-kaixuxia@tencent.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00bbda63-dc00-05c0-4244-343352591d98@gmx.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <1655198062-13288-1-git-send-email-kaixuxia@tencent.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 16, 2022 at 05:27:04AM +0800, Qu Wenruo wrote:
->> And how do I find out the logic address of the tree root?
->
-> For tree root, "btrfs ins dump-super <dev> | grep '^root\s'.
->
-> For other tree blocks, "btrfs ins dump-tree <dev>" then with other other
-> keywords to grab.
+On Tue, Jun 14, 2022 at 05:14:22PM +0800, xiakaixu1987@gmail.com wrote:
+> From: Kaixu Xia <kaixuxia@tencent.com>
+> 
+> It is unnecessary to check and set did_zero value in while() loop,
+> we can set did_zero to true only when zeroing successfully at last.
 
-Thanks a lot !
+Looks good, but this really should be separate patches for dax and
+iomap.
