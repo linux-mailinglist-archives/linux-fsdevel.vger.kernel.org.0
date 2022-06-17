@@ -2,151 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7411354EDBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 01:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D95D54EE8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 02:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379313AbiFPXBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jun 2022 19:01:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37426 "EHLO
+        id S232733AbiFQAre (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jun 2022 20:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231792AbiFPXBv (ORCPT
+        with ESMTP id S229734AbiFQArd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jun 2022 19:01:51 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282FB62A1E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 16:01:50 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id m16so401464ilf.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 16:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dxYlFYa08li+b2bH2lpzssUgCCuwu/1aYyeRjozsoxA=;
-        b=WI575e9Yb3UURQikbwMwnVlY7aFjJ5HZCCsnkaOWrdzEauSAVut+sqOcHZgLf0S7xa
-         zqp6pmpRe8FHVecMzWb/PTiZZfyk5w2koS6iDe4Vg1KswQd3pBxNC++CyRGIgIveOAOf
-         EDkFaZlrYPNMKdPMa8l9eLQGJYIp65QDsGwnE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dxYlFYa08li+b2bH2lpzssUgCCuwu/1aYyeRjozsoxA=;
-        b=XwJDC5l07axSBX3ZT/vYxclKhuiul0U5SwYXMZJHyUc3wjI/Cmemm2c1476vDotB2b
-         nRz3PDfP0HfAsE/k39kWws0KlG76zFKkvAfhCqFAKRUus/5+k9RjECqz+1pXavSuoJdz
-         KDEDpEVJLS7wKqRZY/enbmrdk3SFAgqDkdGRbVzP/MXoBEaM7tYwMtXKbukh5N179rSQ
-         7xUbsUzYCE4nh73RUgazgfBEvNW7YMJrURzjadUKWo22hmaGoUQuTcMviZK11/ruiFMl
-         VogQZCGBOXp3KXwDqM+Nkoher+gHMBHtJEK89PgQDEaMO11UsWjvZNCLKftn7K+CI63k
-         e59Q==
-X-Gm-Message-State: AJIora+j1KxfLO5XxUW0QzYZ51+Ow1g8XOYkOmB3Prq2sB8tSuV7Ebsw
-        AYOTv/8O2EfDwjb/+1sKmzXW0A==
-X-Google-Smtp-Source: AGRyM1s7LIyJLY6T2Uw2EEkj6wJqA6dr2rUEctCYF7at0sSK8+Zh7zsCGDCfSXKU0oW2S2jL2LftaQ==
-X-Received: by 2002:a05:6e02:152f:b0:2d4:980:a529 with SMTP id i15-20020a056e02152f00b002d40980a529mr4197820ilu.72.1655420509530;
-        Thu, 16 Jun 2022 16:01:49 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id s71-20020a02514a000000b0033171dafaa0sm1414627jaa.178.2022.06.16.16.01.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jun 2022 16:01:49 -0700 (PDT)
-Subject: Re: [PATCH] selftests/proc: Fix proc-pid-vm for vsyscall=xonly.
-To:     Dylan Hatch <dylanbhatch@google.com>, Shuah Khan <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20220616211016.4037482-1-dylanbhatch@google.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <941e0991-eb3e-f988-8262-3d51ff8badad@linuxfoundation.org>
-Date:   Thu, 16 Jun 2022 17:01:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 16 Jun 2022 20:47:33 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02CB9593
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 17:47:32 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25GMYmKb009739
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 17:47:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=xTZqJ4Z7K2t4sqnu1/hxGjmYFxrQTiFAqdK+3RkT36o=;
+ b=LmH1iJLHY0+n2wNslAW+xJrZ093W2z5RIPkWGN26Xt7ntCpRFXHUFmwzFev/YVndZJLN
+ sxWcHJ0WlCgBSyGYO6fbBb5iF2Uv6FxH/EJAs5vimOP2bglk081VtaGUTVUB8m4uY+wO
+ pWDoHbS/H8b5FmhP5fp2vkxBvwM7MNAntyY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gqd2c0sdj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jun 2022 17:47:32 -0700
+Received: from twshared22934.08.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Thu, 16 Jun 2022 17:47:30 -0700
+Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
+        id 041E89147AC8; Thu, 16 Jun 2022 17:47:11 -0700 (PDT)
+From:   Dave Marchevsky <davemarchevsky@fb.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        kernel-team <kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>, <clm@fb.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>
+Subject: [PATCH v3] fuse: Add module param for CAP_SYS_ADMIN access bypassing allow_other
+Date:   Thu, 16 Jun 2022 17:47:10 -0700
+Message-ID: <20220617004710.621301-1-davemarchevsky@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20220616211016.4037482-1-dylanbhatch@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: rh_qSvJ-5vprwrxyZfanziH1yfD_LBne
+X-Proofpoint-ORIG-GUID: rh_qSvJ-5vprwrxyZfanziH1yfD_LBne
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-16_20,2022-06-16_01,2022-02-23_01
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/16/22 3:10 PM, Dylan Hatch wrote:
-> This test would erroneously fail the /proc/$PID/maps case if
-> vsyscall=xonly since the existing probe of the vsyscall page only
-> succeeds if the process has read permissions. Fix this by checking for
-> either no vsyscall mapping OR an execute-only vsyscall mapping in the
-> case were probing the vsyscall page segfaults.
-> 
+Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
+superblock's namespace or a descendant"), access to allow_other FUSE
+filesystems has been limited to users in the mounting user namespace or
+descendants. This prevents a process that is privileged in its userns -
+but not its parent namespaces - from mounting a FUSE fs w/ allow_other
+that is accessible to processes in parent namespaces.
 
-Does this fix include skipping the test with a clear message that
-says why test is skipped?
+While this restriction makes sense overall it breaks a legitimate
+usecase: I have a tracing daemon which needs to peek into
+process' open files in order to symbolicate - similar to 'perf'. The
+daemon is a privileged process in the root userns, but is unable to peek
+into FUSE filesystems mounted by processes in child namespaces.
 
-> Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
-> ---
->   tools/testing/selftests/proc/proc-pid-vm.c | 20 +++++++++++++++-----
->   1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
-> index 28604c9f805c..5ca85520131f 100644
-> --- a/tools/testing/selftests/proc/proc-pid-vm.c
-> +++ b/tools/testing/selftests/proc/proc-pid-vm.c
-> @@ -213,9 +213,12 @@ static int make_exe(const uint8_t *payload, size_t len)
->   
->   static bool g_vsyscall = false;
->   
-> -static const char str_vsyscall[] =
-> +static const char str_vsyscall_rx[] =
->   "ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
->   
-> +static const char str_vsyscall_x[] =
-> +"ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
-> +
->   #ifdef __x86_64__
->   static void sigaction_SIGSEGV(int _, siginfo_t *__, void *___)
->   {
-> @@ -261,6 +264,7 @@ int main(void)
->   	int exec_fd;
->   
->   	vsyscall();
-> +	const char *str_vsyscall = g_vsyscall ? str_vsyscall_rx : str_vsyscall_x;
->   
->   	atexit(ate);
->   
-> @@ -314,7 +318,8 @@ int main(void)
->   
->   	/* Test /proc/$PID/maps */
->   	{
-> -		const size_t len = strlen(buf0) + (g_vsyscall ? strlen(str_vsyscall) : 0);
-> +		const size_t len_buf0 = strlen(buf0);
-> +		const size_t len_vsys = strlen(str_vsyscall);
->   		char buf[256];
->   		ssize_t rv;
->   		int fd;
-> @@ -325,11 +330,16 @@ int main(void)
->   			return 1;
->   		}
->   		rv = read(fd, buf, sizeof(buf));
-> -		assert(rv == len);
-> -		assert(memcmp(buf, buf0, strlen(buf0)) == 0);
->   		if (g_vsyscall) {
-> -			assert(memcmp(buf + strlen(buf0), str_vsyscall, strlen(str_vsyscall)) == 0);
-> +			assert(rv == len_buf0 + len_vsys);
-> +		} else {
-> +			/* If vsyscall isn't readable, it's either x-only or not mapped at all */
-> +			assert(rv == len_buf0 + len_vsys || rv == len_buf0);
->   		}
-> +		assert(memcmp(buf, buf0, len_buf0) == 0);
-> +		/* Check for vsyscall mapping if buf is long enough */
-> +		if (rv == len_buf0 + len_vsys)
-> +			assert(memcmp(buf + len_buf0, str_vsyscall, len_vsys) == 0);
->   	}
->   
->   	/* Test /proc/$PID/smaps */
-> 
+This patch adds a module param, allow_sys_admin_access, to act as an
+escape hatch for this descendant userns logic and for the allow_other
+mount option in general. Setting allow_sys_admin_access allows
+processes with CAP_SYS_ADMIN in the initial userns to access FUSE
+filesystems irrespective of the mounting userns or whether allow_other
+was set. A sysadmin setting this param must trust FUSEs on the host to
+not DoS processes as described in 73f03c2b4b52.
 
-The change looks good to me. Doesn't look like it skips the test though?
+Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+---
 
-thanks,
--- Shuah
+v2 -> v3: lore.kernel.org/linux-fsdevel/20220601184407.2086986-1-davemarc=
+hevsky@fb.com
+  * Module param now allows initial userns CAP_SYS_ADMIN to bypass allow_=
+other
+    check entirely
+
+v1 -> v2: lore.kernel.org/linux-fsdevel/20211111221142.4096653-1-davemarc=
+hevsky@fb.com
+  * Use module param instead of capability check
+
+ fs/fuse/dir.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 9dfee44e97ad..d325d2387615 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -11,6 +11,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/file.h>
+ #include <linux/fs_context.h>
++#include <linux/moduleparam.h>
+ #include <linux/sched.h>
+ #include <linux/namei.h>
+ #include <linux/slab.h>
+@@ -21,6 +22,12 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+=20
++static bool __read_mostly allow_sys_admin_access;
++module_param(allow_sys_admin_access, bool, 0644);
++MODULE_PARM_DESC(allow_sys_admin_access,
++ "Allow users with CAP_SYS_ADMIN in initial userns "
++ "to bypass allow_other access check");
++
+ static void fuse_advise_use_readdirplus(struct inode *dir)
+ {
+ 	struct fuse_inode *fi =3D get_fuse_inode(dir);
+@@ -1229,6 +1236,9 @@ int fuse_allow_current_process(struct fuse_conn *fc=
+)
+ {
+ 	const struct cred *cred;
+=20
++	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
++		return 1;
++
+ 	if (fc->allow_other)
+ 		return current_in_userns(fc->user_ns);
+=20
+--=20
+2.30.2
+
