@@ -2,81 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC43C54F20B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 09:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE2EE54F23C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 09:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380571AbiFQHg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jun 2022 03:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48074 "EHLO
+        id S1378259AbiFQHxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jun 2022 03:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380468AbiFQHgZ (ORCPT
+        with ESMTP id S1380502AbiFQHxh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jun 2022 03:36:25 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E0366FAB
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 00:36:22 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id y19so7149961ejq.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 00:36:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lFSvXWnMhV0ta+uOardT419nO7q6Hq5t2QYuh46TUv4=;
-        b=Qhai7TiOMAImwxaojs6g3DzfizpP400kQjj8YnEIFYKPoCiq9tH26r2InFHJYazbAe
-         2oUD5p1gCgYD90nQMBltPqFO8vSZJpa0QS8TdcCLl5gCsPhDyIliBidIxA4v+yMC7nDa
-         omc1Sj/QY/mrcAB6OAcCPHxzhRX76dsnKSbRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lFSvXWnMhV0ta+uOardT419nO7q6Hq5t2QYuh46TUv4=;
-        b=1fp0P7ARQjXl4kv0aNiQeDolI7f2kqZcAEuET9me3Z9YuMzPkZ2numLTYc7TzmdVXP
-         i6C+niojvtZTbxsJYVB6iuJbfG7HlizW9Oav2PwjAdFna3LnJS2WRZfEL0QTzTUAG2oY
-         GOMGFkGdmyMRCTf0BPzTiFuCHB4SbqaGdRStfQlJEGoBWFunkUITipR74oz2/OibvOxf
-         lDLlCqMiruPWtfc84SlwnaQwwzXDNNCqsxwsh0FaQmabi0viwANkU05yGgUa/1KRWknh
-         I6D3JkNQqppnjMZYkhnyxxkPj/oC/7yr1GHx+qn7cWD20axMvcVD6tFT+QWon9fLb6XM
-         f98w==
-X-Gm-Message-State: AJIora+OsUNoVZIuemL6uSMjDFQayY1lMpA1yh4EjPr4mVwQaYunpWoe
-        14YPdXCPW/9quwWT0UGKeNAeMphmN12bzWhHMyHl1A==
-X-Google-Smtp-Source: AGRyM1sERXFFpBnekMT3mnfespNrQpWUCBUpQ9UlcR5Dk5VAfBFoM/6wYxONe8v6LCIYyG2jO7xBoNvAEx0S9+oPo5s=
-X-Received: by 2002:a17:906:b788:b0:711:fc54:e55e with SMTP id
- dt8-20020a170906b78800b00711fc54e55emr7843526ejb.270.1655451381149; Fri, 17
- Jun 2022 00:36:21 -0700 (PDT)
+        Fri, 17 Jun 2022 03:53:37 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1271DA62
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 00:53:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id D24EFCE277E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 07:53:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12F1C3411B;
+        Fri, 17 Jun 2022 07:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655452413;
+        bh=msF7BLkqYnLnOu+Q3/vtObqxNvEZEsiIeafcXFVJ2o0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k2F891Ipep5+JTbXXliitR2ujqRHu9IH5gqolWLjTWWyLrHhnhMn2+iN9lkcsDBo2
+         9ah3dP56dhNBsQuYuBZtpJdZCKMht77iDAgHX3JeIEcrGaiW6PpAubKYAKNl+f4r65
+         ETedOJ9VQ3iLZ8Yj+xhc5fF8gAznf6u3aLKVaX82rTQpbvohbFnhwjUrQoueCKngSE
+         iHsnfQQPUsEZB6FekcFELt3fUo9KQjmpGSA5fRzoWOuxqlQNXISZLM5cy5jDbt1Da9
+         fmYbkty/ABxERizdj8EIiUHq3BNsqJAnFPs0vHlmlX4fpqWqTKSv6PCVYmyUC1JCfk
+         NJvPo9Qzk3UEg==
+Date:   Fri, 17 Jun 2022 09:53:27 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Dave Marchevsky <davemarchevsky@fb.com>
+Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Rik van Riel <riel@surriel.com>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        kernel-team <kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>, clm@fb.com
+Subject: Re: [PATCH v3] fuse: Add module param for CAP_SYS_ADMIN access
+ bypassing allow_other
+Message-ID: <20220617075327.s6dbqqrjbgotioq5@wittgenstein>
+References: <20220617004710.621301-1-davemarchevsky@fb.com>
 MIME-Version: 1.0
-References: <20220617071027.6569-1-dharamhans87@gmail.com> <20220617071027.6569-2-dharamhans87@gmail.com>
-In-Reply-To: <20220617071027.6569-2-dharamhans87@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 17 Jun 2022 09:36:10 +0200
-Message-ID: <CAJfpegtRzDbcayn7MYKpgO1MBFeBihyfRB402JHtJkbXg1dvLg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] Allow non-extending parallel direct writes on the
- same file.
-To:     Dharmendra Singh <dharamhans87@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220617004710.621301-1-davemarchevsky@fb.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 17 Jun 2022 at 09:10, Dharmendra Singh <dharamhans87@gmail.com> wrote:
+On Thu, Jun 16, 2022 at 05:47:10PM -0700, Dave Marchevsky wrote:
+> Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
+> superblock's namespace or a descendant"), access to allow_other FUSE
+> filesystems has been limited to users in the mounting user namespace or
+> descendants. This prevents a process that is privileged in its userns -
+> but not its parent namespaces - from mounting a FUSE fs w/ allow_other
+> that is accessible to processes in parent namespaces.
+> 
+> While this restriction makes sense overall it breaks a legitimate
+> usecase: I have a tracing daemon which needs to peek into
+> process' open files in order to symbolicate - similar to 'perf'. The
+> daemon is a privileged process in the root userns, but is unable to peek
+> into FUSE filesystems mounted by processes in child namespaces.
+> 
+> This patch adds a module param, allow_sys_admin_access, to act as an
+> escape hatch for this descendant userns logic and for the allow_other
+> mount option in general. Setting allow_sys_admin_access allows
+> processes with CAP_SYS_ADMIN in the initial userns to access FUSE
+> filesystems irrespective of the mounting userns or whether allow_other
+> was set. A sysadmin setting this param must trust FUSEs on the host to
+> not DoS processes as described in 73f03c2b4b52.
+> 
+> Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+> ---
 
-> This patch relaxes the exclusive lock for direct non-extending writes
-> only. File size extending writes might not need the lock either,
-> but we are not entirely sure if there is a risk to introduce any
-> kind of regression. Furthermore, benchmarking with fio does not
-> show a difference between patch versions that take on file size
-> extension a) an exclusive lock and b) a shared lock.
-
-I'm okay with this, but ISTR Bernd noted a real-life scenario where
-this is not sufficient.  Maybe that should be mentioned in the patch
-header?
-
-Thanks,
-Miklos
+Could you please add a patch to Documentation/filesystems/fuse.rst and
+add the module option somwhere in there?
+There should also be a comment added how this relates to points 2/i and
+2/ii in section "How are requirements fulfilled?".
