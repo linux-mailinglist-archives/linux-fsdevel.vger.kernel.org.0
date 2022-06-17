@@ -2,37 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EBEB54F074
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 07:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CA3754F076
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 07:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379829AbiFQFPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jun 2022 01:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46958 "EHLO
+        id S1379952AbiFQFPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jun 2022 01:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379711AbiFQFPF (ORCPT
+        with ESMTP id S1379854AbiFQFPG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jun 2022 01:15:05 -0400
-Received: from smtp03.aussiebb.com.au (2403-5800-3-25--1003.ip6.aussiebb.net [IPv6:2403:5800:3:25::1003])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9630063BE8;
+        Fri, 17 Jun 2022 01:15:06 -0400
+X-Greylist: delayed 357 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 16 Jun 2022 22:15:04 PDT
+Received: from smtp03.aussiebb.com.au (smtp03.aussiebb.com.au [121.200.0.94])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C9A63BEE;
         Thu, 16 Jun 2022 22:15:03 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by smtp03.aussiebb.com.au (Postfix) with ESMTP id CC5211A0081;
-        Fri, 17 Jun 2022 15:09:04 +1000 (AEST)
+        by smtp03.aussiebb.com.au (Postfix) with ESMTP id 945521A00A3;
+        Fri, 17 Jun 2022 15:09:10 +1000 (AEST)
 X-Virus-Scanned: Debian amavisd-new at smtp03.aussiebb.com.au
 Received: from smtp03.aussiebb.com.au ([127.0.0.1])
         by localhost (smtp03.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bDvF_O3hSklq; Fri, 17 Jun 2022 15:09:04 +1000 (AEST)
+        with ESMTP id kGe32BYKn8Wr; Fri, 17 Jun 2022 15:09:10 +1000 (AEST)
 Received: by smtp03.aussiebb.com.au (Postfix, from userid 119)
-        id C349D1A009C; Fri, 17 Jun 2022 15:09:04 +1000 (AEST)
+        id 86B8C1A00A1; Fri, 17 Jun 2022 15:09:10 +1000 (AEST)
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        RDNS_DYNAMIC,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,
+        RCVD_IN_VALIDITY_RPBL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 Received: from donald.themaw.net (180-150-90-198.b4965a.per.nbn.aussiebb.net [180.150.90.198])
-        by smtp03.aussiebb.com.au (Postfix) with ESMTP id 30AAF1A0081;
-        Fri, 17 Jun 2022 15:09:04 +1000 (AEST)
-Subject: [PATCH 1/2] vfs: parse: deal with zero length string value
+        by smtp03.aussiebb.com.au (Postfix) with ESMTP id D31E01A0074;
+        Fri, 17 Jun 2022 15:09:09 +1000 (AEST)
+Subject: [PATCH 2/2] vfs: escape hash as well
 From:   Ian Kent <raven@themaw.net>
 To:     Al Viro <viro@ZenIV.linux.org.uk>
 Cc:     Siddhesh Poyarekar <siddhesh@gotplt.org>,
@@ -41,8 +42,8 @@ Cc:     Siddhesh Poyarekar <siddhesh@gotplt.org>,
         Carlos Maiolino <cmaiolino@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 17 Jun 2022 13:09:03 +0800
-Message-ID: <165544254397.247784.17488951418549565189.stgit@donald.themaw.net>
+Date:   Fri, 17 Jun 2022 13:09:09 +0800
+Message-ID: <165544254964.247784.15840426718395834690.stgit@donald.themaw.net>
 In-Reply-To: <165544249242.247784.13096425754908440867.stgit@donald.themaw.net>
 References: <165544249242.247784.13096425754908440867.stgit@donald.themaw.net>
 User-Agent: StGit/1.1
@@ -53,37 +54,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Parsing an fs string that has zero length should result in the parameter
-being set to NULL so that downstream processing handles it correctly.
-For example, the proc mount table processing should print "(none)" in
-this case to preserve mount record field count, but if the value points
-to the NULL string this doesn't happen.
+From: Siddhesh Poyarekar <siddhesh@gotplt.org>
 
+When a filesystem is mounted with a name that starts with a #:
+
+ # mount '#name' /mnt/bad -t tmpfs
+
+this will cause the entry to look like this (leading space added so
+that git does not strip it out):
+
+ #name /mnt/bad tmpfs rw,seclabel,relatime,inode64 0 0
+
+This breaks getmntent and any code that aims to parse fstab as well as
+/proc/mounts with the same logic since they need to strip leading spaces
+or skip over comment lines, due to which they report incorrect output or
+skip over the line respectively.
+
+Solve this by translating the hash character into its octal encoding
+equivalent so that applications can decode the name correctly.
+
+Signed-off-by: Siddhesh Poyarekar <siddhesh@gotplt.org>
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/fs_context.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/proc_namespace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 24ce12f0db32..4c735d0ce3cb 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -175,9 +175,13 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
- 	};
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 49650e54d2f8..846f9455ae22 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -86,7 +86,7 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
  
- 	if (value) {
--		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
--		if (!param.string)
--			return -ENOMEM;
-+		if (!v_size)
-+			param.string = NULL;
-+		else {
-+			param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-+			if (!param.string)
-+				return -ENOMEM;
-+		}
- 		param.type = fs_value_is_string;
- 	}
+ static inline void mangle(struct seq_file *m, const char *s)
+ {
+-	seq_escape(m, s, " \t\n\\");
++	seq_escape(m, s, " \t\n\\#");
+ }
  
+ static void show_type(struct seq_file *m, struct super_block *sb)
 
 
