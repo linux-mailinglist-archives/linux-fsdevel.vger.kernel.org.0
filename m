@@ -2,110 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF29854FA43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 17:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7804A54FBD6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jun 2022 19:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382870AbiFQP2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jun 2022 11:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56272 "EHLO
+        id S231784AbiFQREK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jun 2022 13:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382875AbiFQP2b (ORCPT
+        with ESMTP id S229794AbiFQREJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jun 2022 11:28:31 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD48137BEC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 08:28:29 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id ej4so2688659edb.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 08:28:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dneg.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WPVSEvTCvflFVWW5j2J0ixJtMAaP9wSf1jUduymLlc0=;
-        b=v7RXMWZyuWDlLd2v5s/ooA/1Btk4V0x78HXw7Xm7i33Wi4KPyENUDcJieRtSDHdqXF
-         y0CguHXlfnWbXj9NHraQ6rewV/+kAKdVxVFcsWohBz4cMSu/XJIxbWcQgFbjOEonH3m9
-         x0hV49Il2On30MIL5DdT4BGZWralIS3PVPDN2i9lIVxw1wD8EcFvpyfh6Cl/cm6vZzJ6
-         PL9+Opn3M4m129911zb6XlvplLpltIWORVUm8OXUH2JZIdv6k51S4jV3FKqR0udjmP8z
-         EUCtnQ5UquCW9dfEm1dEWgXhrSK9gx16akUcJ0URmOTwbS6E87UTFqfUUq9H3KW4bcKl
-         wXPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WPVSEvTCvflFVWW5j2J0ixJtMAaP9wSf1jUduymLlc0=;
-        b=V+sq6sLPh9u8Ghr1vrZwgXk+rSQiLs+pLmSIaA+ejuCSqlDzuakrDSpuJeVKZiYLMX
-         8PemaWRmtvm7fsKVQUFrZPOPnOFELeQ/5ghdnQVrntqCL6ZxbeLjmn4kwDkMsvPx6PS5
-         fMbTWxl9VTGPhvYDqdmNqL+8fBXeJSlKicxtWSLwgIArpLLdD7Y6unPw8eRENYELja2s
-         kjfRdDPGcfl5Y8VNVNs5ig1r37FQaO3cUD58gKaSpWg9vU64rxKxtUYDdcuh3QLB7h86
-         UYhQjEsmhuwA2k9mreGxAcreMPFtPB2iHNxE+0bYVFRHHjYtYoxvTci/GPcsjDHJr12m
-         ytBg==
-X-Gm-Message-State: AJIora9pifyUDNrw5qCqrmr+055ZsKZ+Zrwnvrq+5Je/iJoLFUNMCny7
-        4Wl2f2o7t7OICDcqr8LMHRUVMXNqLRTxMwIjaNP58A==
-X-Google-Smtp-Source: AGRyM1vEi6r6fYhd5rEyG/Oo+64RdkJiqOkUizhd0wgddNSc0WlzPxLW8/Jzu4daDxPaJij9IyK5BeX6kcGkf4WPg5E=
-X-Received: by 2002:aa7:cf01:0:b0:435:5ace:69cc with SMTP id
- a1-20020aa7cf01000000b004355ace69ccmr6151037edy.251.1655479708477; Fri, 17
- Jun 2022 08:28:28 -0700 (PDT)
+        Fri, 17 Jun 2022 13:04:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF1820BF6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 10:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FvuDBSJ8CzZ3D7vF9k2T7ak6AXfXFftSU2v+MXgoclc=; b=gGhL724LMwyZOP1RBmL5n8beBH
+        Si4SvaYPFERsxPECe6dr/0EvYTBLcE1mKWkX5XBRM2cRivCAUlA+wDAwcTafm3LoCK7SFVmcU1uht
+        shtDwUXDsiWa3xPW02p6GNEnLRIR3NhXitYMSuZUuHlRqVhhjzBIGwL4MSLGeRMCd8cMal0c9kV4x
+        IQfkC2OXcFtcb66hZpaRSsyTmQ0YbUOm/B/3KeOHpwYpsep07ekD4Xwx3VSTCUzdQva1nyowILh5+
+        7U0JZOZ3ekpUduwfMuIvvlBXOXK9JIi08Bm/GpoWoxlbEKGcUaQwYeGnEhM7V1gA42XNAEmoS5YFj
+        6HWY6j6A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o2FO8-002yv3-FZ; Fri, 17 Jun 2022 17:04:04 +0000
+Date:   Fri, 17 Jun 2022 18:04:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [BUG] filemap_get_read_batch()
+Message-ID: <Yqy0BBtA72WVgJtS@casper.infradead.org>
+References: <YqyZ0gsIqiAzJfeU@bfoster>
 MIME-Version: 1.0
-References: <165516173293.21248.14587048046993234326.stgit@noble.brown>
- <CAPt2mGNjWXad6e7nSUTu=0ez1qU1wBNegrntgHKm5hOeBs5gQA@mail.gmail.com>
- <165534094600.26404.4349155093299535793@noble.neil.brown.name>
- <CAPt2mGOw_PS-5KY-9WFzGOT=ax6PFhVYSTQG-dpXzV5MeGieYg@mail.gmail.com> <165544498126.26404.7712330810213588882@noble.neil.brown.name>
-In-Reply-To: <165544498126.26404.7712330810213588882@noble.neil.brown.name>
-From:   Daire Byrne <daire@dneg.com>
-Date:   Fri, 17 Jun 2022 16:27:52 +0100
-Message-ID: <CAPt2mGNJYJ=pTmRRseJdeyvTDw9am6uNUaiZysDvU2bNcNJLQw@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/12] Allow concurrent directory updates.
-To:     NeilBrown <neilb@suse.de>
-Cc:     Anna Schumaker <schumaker.anna@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqyZ0gsIqiAzJfeU@bfoster>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 17 Jun 2022 at 06:49, NeilBrown <neilb@suse.de> wrote:
->
-> On Thu, 16 Jun 2022, Daire Byrne wrote:
-> >
-> > I double checked that the patch had been applied and I hadn't made a
-> > mistake with installation.
->
-> :-) always worth double checking...
->
-> >
-> > I could perhaps try running with just the VFS patches to see if I can
-> > still reproduce the "local" VFS hang without the nfsd patches? Your
-> > previous VFS only patchset was stable for me.
->
-> I've made quite a few changes since that VFS-only patches.  Almost
-> certainly the problem is not in the nfsd code.
->
-> I think that following has a reasonable chance of making things better,
-> both for the problem you hit and the problem Anna hit.  I haven't tested
-> it at all yet so no promises - up to you if you try it.
->
-> Thanks to both of you for the help with testing.
->
-> NeilBrown
+On Fri, Jun 17, 2022 at 11:12:18AM -0400, Brian Foster wrote:
+> Hi,
+> 
+> I've hit the filemap_get_read_batch() BUG [1] that I think I saw Dave
+> had also recently reported. It looks like the problem is essentially a
+> race between reads, pagecache removal and folio reinsertion that leads
+> to an invalid folio pointer. E.g., what I observe is the following
+> (ordered) sequence of events:
 
-This patch does the job for me - no more stack traces and things have
-been stable all day. I'm going to run some production loads over the
-weekend and then I'll do some more artificial scale testing next week.
+Oh, this is fantastic.  Thank you for explaining my bug to me!  I've been
+racking my brains for weeks trying to figure out what it is.
 
-Thanks again for this work! Improving the parallelism anywhere we can
-for single clients and then nfsd is great for reexport servers
-(especially once you add some "cloud" latency).
+> Task A:
+> - Lands in filemap_get_read_batch() looking for a couple folio indexes,
+>   currently both populated by single page folios.
+> - Grabs the folio at the first index and starts to process it.
+> 
+> Task B:
+> - Invalidates several folios from the mapping, including both the
+>   aforementioned folios task A is after.
+> 
+> Task C: 
+> - Instantiates a compound (order 2) folio that covers both indexes being
+>   processed by task A.
+> 
+> Task A:
+> - Iterates to the next xarray index based on the (now already removed)
+>   non-compound folio via xas_advance()/xas_next().
+> - BUG splat down in folio_try_get_rcu() on the folio pointer..
+> 
+> I'm not quite sure what is being returned from the xarray here. It
+> doesn't appear to be another page or anything (i.e. a tail page of a
+> different folio sort of like we saw with the iomap writeback completion
+> issue). I just get more splats if I try to access it purely as a page,
+> so I'm not sure it's a pointer at all. I don't have enough context on
+> the xarray bits to intuit on whether it might be internal data or just
+> garbage if the node happened to be reformatted, etc. If you have any
+> thoughts on extra things to check around that I can try to dig further
+> into it..
 
-Cheers,
+It's a sibling entry (you can tell because bit 1 is set and it's less
+than 256).  It tells you where the real entry actually is.  See below
+for an explanation.
 
-Daire
+> In any event, it sort of feels like somehow or another this folio order
+> change peturbs the xarray iteration since IIUC the non-compound page
+> variant has been in place for a while, but that could just be wrong or
+> circumstance. I'm not sure if it's possible to check the xarray node for
+> such changes or whatever before attempting to process the returned entry
+> (and to preserve the lockless algorithm). FWIW wrapping the whole lookup
+> around an xa_lock_irq(&mapping->i_pages) lock cycle does make the
+> problem disappear.
+
+Heh, yes, it would because you wouldn't be able to change the array
+while the batch lookup was running.
+
+I think there are four possible ways to proceed.  Let's say we're
+looking up the range from 0x35-0x36, we get the single-page-folio at 0x35,
+they're both truncated and replaced with an order-2 folio at 0x34.
+
+Option one is that we could return the newly-added folio, so the
+folio_batch would contain the old folio at index 0x35, then the new folio
+at index 0x34.  Looking at the loop in filemap_read(), I think that would
+work; it doesn't make assumptions that the folios are actually contiguous,
+just that there's no gaps between folios.  This feels a bit weird though.
+
+Option two is that we could notice we got a folio which overlaps some
+earlier folios, go back and delete them from the batch.  So we'd return
+only the new folio at 0x34.  This code is going to be moderately complex
+to write.
+
+Option three is that we abandon all work we've done to this point and
+start the lookup from the beginning of the batch.
+
+Option four is that we just return the batch so far.  So we return the
+(now-truncated) folio at 0x35, then on the next call we return the
+new folio at 0x34.  This is functionally the same at option one, but
+doesn't have the weird feeling.  It's also the simplest to implement,
+and for this kind of race, maybe simple is better.
+
++++ b/mm/filemap.c
+@@ -2357,6 +2357,8 @@ static void filemap_get_read_batch(struct address_space *mapping,
+                        continue;
+                if (xas.xa_index > max || xa_is_value(folio))
+                        break;
++               if (xa_is_sibling(folio))
++                       break;
+                if (!folio_try_get_rcu(folio))
+                        goto retry;
+
+
+
+> Brian
+> 
+> [1]
+> 
+> BUG: kernel NULL pointer dereference, address: 0000000000000106
+> #PF: supervisor read access in kernel mode
+> #PF: error_code(0x0000) - not-present page
+> PGD 0 P4D 0
+> Oops: 0000 [#1] PREEMPT SMP PTI
+> CPU: 72 PID: 297881 Comm: xfs_io Tainted: G          I       5.19.0-rc2+ #160
+> Hardware name: Dell Inc. PowerEdge R740/01KPX8, BIOS 1.6.11 11/20/2018
+> RIP: 0010:filemap_get_read_batch+0x8e/0x240
+> Code: 81 ff 06 04 00 00 0f 84 f7 00 00 00 48 81 ff 02 04 00 00 0f 84 c4 00 00 00 48 39 6c 24 08 0f 87 84 00 00 00 40 f6 c7 01 75 7e <8b> 47 34 85 c0 0f 84 a8 00 00 00 8d 50 01 48 8d 77 34 f0 0f b1 57
+
+The faulting instruction is "mov    0x34(%rdi),%eax",
+
+> RSP: 0018:ffffacdf200d7c28 EFLAGS: 00010246
+> RAX: 0000000000000039 RBX: ffffacdf200d7d68 RCX: 0000000000000034
+> RDX: ffff9b2aa6805220 RSI: 0000000000000074 RDI: 00000000000000d2
+
+RDI is 0xd2.  Shift it by 2 and you get offset 52 (0x34).  So you're
+proabbly looking up one of the indices 53-55 (0x35-0x37).
+
