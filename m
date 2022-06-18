@@ -2,50 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D60AC5503BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 11:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C021550407
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 12:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232747AbiFRJfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 05:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
+        id S230369AbiFRKes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 06:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229811AbiFRJfm (ORCPT
+        with ESMTP id S229721AbiFRKes (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jun 2022 05:35:42 -0400
-Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F0F19C2C;
-        Sat, 18 Jun 2022 02:35:40 -0700 (PDT)
-Date:   Sat, 18 Jun 2022 17:35:34 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1655544939;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jRqSy6SjNdTOFK38p5f7a9N5x5zhkPypJUAO4+ClytQ=;
-        b=vUoX+QYUXkK9pwFrFax8w6XHxvLcbLSNAeAr4U5qlG2daEyqUd/pzIOvxwwVHSEaEH1XBT
-        07xOGGHzGhHLS5XAdfLIlfRFNWTIGqUM6LO+8wdi9G7DmgmjMK6oQSGtgvPPvPI3b5XkYR
-        O1ooDhGGkCDSQFX/iN5+zjseYFYbxPE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Fanjun Kong <fanjun.kong@linux.dev>
-To:     songmuchun@bytedance.com, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, bh1scw@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/sysctl.c: Clean up indentation, replace spaces
- with tab.
-Message-ID: <20220618093534.fjbjtlbn3eqztphu@kong-Standard-PC-i440FX-PIIX-1996>
-References: <20220522052933.829296-1-bh1scw@gmail.com>
- <20220618091519.bfjbm4ifxpbx7yep@kong-Standard-PC-i440FX-PIIX-1996>
+        Sat, 18 Jun 2022 06:34:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D5B8DFE4;
+        Sat, 18 Jun 2022 03:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XDQYopvY+n0JyKPmW0NgGxfaIg7ptxNKbg5tiL90yf4=; b=f52cnHOzcNZsJ0dPtfJpa6RtMC
+        6cP9oGvpz505NKdQXmMUHHLJ5qHC+ZAmqtqiD5S65X3Kzi3/mNGc/vFA25eufTyu5/lbr8/mnhuAG
+        8h3kNgjkFHZLHFKCfYqXcuErKGMyyWJHdusPX6hD2v+ByRt0wAjOK+wnTIseQ1AniycFdoVOt5KmH
+        +0PcfgAQH5upv5nR+RmIKc9fTZR5QdFEjagK/l15tLu4Oo5mzHyt8253KvcK0M+c7Cun96AnmW/4S
+        HKOQWIlNWJpyr05ItQjfOxN7CAeEAM6ekhpvt8qa977OjiJ+ab+1NsKEehjbHHfnfsGRT6Zw21LWx
+        rFAKvIog==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o2Vmr-003d2E-4c; Sat, 18 Jun 2022 10:34:41 +0000
+Date:   Sat, 18 Jun 2022 11:34:41 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miaohe Lin <linmiaohe@huawei.com>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] filemap: obey mapping->invalidate_lock lock/unlock order
+Message-ID: <Yq2qQcHUZ2UjPk/M@casper.infradead.org>
+References: <20220618083820.35626-1-linmiaohe@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220618091519.bfjbm4ifxpbx7yep@kong-Standard-PC-i440FX-PIIX-1996>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <20220618083820.35626-1-linmiaohe@huawei.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,45 +49,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18 6月 22 ◦ 17:15, Fanjun Kong wrote:
-> Hi maintainer,
-> 
-> Could you help to review this patch? 
-I am so sorry for my last email, I have not noticed Luis has already helped
-me because I just switch my email from gmail to linux.dev.
+On Sat, Jun 18, 2022 at 04:38:20PM +0800, Miaohe Lin wrote:
+> The invalidate_locks of two mappings should be unlocked in reverse order
+> relative to the locking order in filemap_invalidate_lock_two(). Modifying
 
-Best wishes.
-
-> 
-> Thanks so much.
-> 
-> On 22 May 22 ◦ 13:29, bh1scw@gmail.com wrote:
-> > From: Fanjun Kong <bh1scw@gmail.com>
-> > 
-> > This patch fixes two coding style issues:
-> > 1. Clean up indentation, replace spaces with tab
-> > 2. Add space after ','
-> > 
-> > Signed-off-by: Fanjun Kong <bh1scw@gmail.com>
-> > ---
-> >  kernel/sysctl.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index e52b6e372c60..de8da34e02a5 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -1277,8 +1277,8 @@ int proc_dointvec_jiffies(struct ctl_table *table, int write,
-> >  int proc_dointvec_userhz_jiffies(struct ctl_table *table, int write,
-> >  				 void *buffer, size_t *lenp, loff_t *ppos)
-> >  {
-> > -    return do_proc_dointvec(table,write,buffer,lenp,ppos,
-> > -		    	    do_proc_dointvec_userhz_jiffies_conv,NULL);
-> > +	return do_proc_dointvec(table, write, buffer, lenp, ppos,
-> > +				do_proc_dointvec_userhz_jiffies_conv, NULL);
-> >  }
-> >  
-> >  /**
-> > -- 
-> > 2.36.0
-> > 
+Why?  It's perfectly valid to lock(A) lock(B) unlock(A) unlock(B).
+If it weren't we'd have lockdep check it and complain.
