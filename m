@@ -2,68 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E40550384
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 10:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1FE45503B4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 11:52:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231840AbiFRIip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 04:38:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60134 "EHLO
+        id S233074AbiFRJLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 05:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiFRIio (ORCPT
+        with ESMTP id S229505AbiFRJLW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jun 2022 04:38:44 -0400
-Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADEB2251B;
-        Sat, 18 Jun 2022 01:38:43 -0700 (PDT)
-Received: by mail-vk1-xa36.google.com with SMTP id m30so2957395vkf.11;
-        Sat, 18 Jun 2022 01:38:43 -0700 (PDT)
+        Sat, 18 Jun 2022 05:11:22 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 463F8369D2;
+        Sat, 18 Jun 2022 02:11:21 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id m10so2316346uao.11;
+        Sat, 18 Jun 2022 02:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uY0TpH6fhXPpvM9WbmSUlK+90F2lBqCcQkVTKLAuqF8=;
-        b=DAoztmmFdBXZFL3yc0Hmfj7YDQBMJqpxMbcvvG+7J4Vsu3f7oCtkK2H/8QqoK91r5p
-         ZYIVPPC8JWQvBZZKtW0JCJiXKop5psLuykTOyOzWhJxVglKBienlXdMqnLYuTBV8QezG
-         lcUlT88q3BL4JtD3JWXECZUBsYa+e6ToLfD2TfosIqGduaw064bZz6CTCOwGaHCooZc8
-         MJZUZ/w7yzlRyaTrZG5eVWGOkxbOBdtzQlfD3te1CfcqH6hV14W8cQbA4VEcgdTO+I5u
-         Yg40EQCWEKI+wwJWVROZK5Cp/6Z+fIf+gfK+EdLCsrgxOOwY0OSHLmcoYW3GujSABViN
-         igaA==
+         :cc:content-transfer-encoding;
+        bh=T27n52o5oNu11ktCmO2xx7oDuKYN4gENGGqgyY2+GNI=;
+        b=jHKFb+fkXyYLqOT5yfBzcDxh65H50LcHcCb+EGHEa6XKquaYyxK5jKcGZc3qQJRXrV
+         YvsfNZmLDYJ5VK/64BuysWxYe1Xst0ZldKhJIpOMys5Cq+XsUYqbkmt5a89wBoaQ4kph
+         OMPzTnn70PIo6S4RMxAWlFK20B0oEAolkPci/e4fYDphIkC6DNeCV3qKEA47XSmt/2By
+         0425/QgLbsLy0f+S1CKkQbwqolGfXFLw39lU309WgHnQu85IJtKYo6JsHJ7SJYl/Q9iH
+         r3VonLe/Jhr/VVdWf3j1viaVOpLuvPZjDvRGi3vRWxKFLG7L3OTRMtE/2HotErWJEjv5
+         JdCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uY0TpH6fhXPpvM9WbmSUlK+90F2lBqCcQkVTKLAuqF8=;
-        b=SaFnzRpmLGSzcF59ichYiK5TcS4Nxjz2cEO+19Ms3AePefOZ24m0ZMSqteFJbuCCVS
-         YYV9+c1ZtjvEIFccIG4K/DUVwEUFnv0tDJF0iDI7xP6pQUP7JcKEuEDI/wXpur+i2745
-         fcOvXA4iEZW6hjldGW+SYJd1sQ3VXrRXGqxafI9Lxe/qTIJaTwRQGt09rJrY5XHyhTSR
-         FF7pLjELuRa2MuPTvQHdU9aRWcCvqwz7zfiIYvDkgz8IRlGtKHuoFXHMGkp5fmRfFWYj
-         oHoXesFl984nEZJWjeEeIROJGyd5QOU3u0Vg9FkWIODXwqknbGrlOfFBrCgd54A8fk/z
-         88cg==
-X-Gm-Message-State: AJIora/5dxjwaLexoONt3sCYHmXsMlanmpTScp6xfmb47yVptGtRHEjQ
-        M8YFLi6tPODnOB1umCuRoS7RmUk+z2Qz0sNczl0=
-X-Google-Smtp-Source: AGRyM1sWnR2nroXroTyTRQrujcDU4cOBvdAnbB8/E0FI42lW7c5wI8sG7+bWTg8Nkarc6LdYBeUgBVilbnv++SDezM0=
-X-Received: by 2002:a1f:e044:0:b0:36b:e8e4:176f with SMTP id
- x65-20020a1fe044000000b0036be8e4176fmr824111vkg.11.1655541521607; Sat, 18 Jun
- 2022 01:38:41 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=T27n52o5oNu11ktCmO2xx7oDuKYN4gENGGqgyY2+GNI=;
+        b=ll2N/SDq/Ki6AMKM+FUT6qMCvFlhNlHayRx0kA3mAfcj5XOa3D94XNcYhCqqhLRVu2
+         j8Rl7IQZ1R1xJGOJXji9H+AlvOrhnISZ91VVwiYI9xgjaWUiAwQI6IelqTvoZ8vQTyRY
+         K4HBolDeslzPYoPsU3+bMHcZ6Ul8L+CO4dqiCOEGF9fmjnfuYIHHFczwW83NYvwUCQgc
+         3Gq7L6jC8B6IVjAQ1p5D6lx2DKiR28no3uHaDST1Qz1f0ugoZfcuIVscS/JNCLrUSi1x
+         SWGZbZeOwgVlOSG1o51Fprj4f/uf1o4nWNuk3ycfoT7m9nmheVCsEMU1YwVzLnwrx2Jm
+         DvtQ==
+X-Gm-Message-State: AJIora9JgzoLn3h9+uxolMlXVcIrQloNbM62Oe8JhfxANlza7SDyVOx4
+        J4xMs3LXojPo/384TOwMXfoEWK9ZzAYUCxgTRus=
+X-Google-Smtp-Source: AGRyM1tB49ibfiXPNIEjj7VPRHTK5Fza2eL7VggKag9bPrK3MP00mZwTZrfgJXhgVKA1gDKzm+pgznHlK5h2AiVw+BQ=
+X-Received: by 2002:ab0:2c09:0:b0:379:a983:96fe with SMTP id
+ l9-20020ab02c09000000b00379a98396femr5691723uar.102.1655543480323; Sat, 18
+ Jun 2022 02:11:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190404165737.30889-1-amir73il@gmail.com> <20190404211730.GD26298@dastard>
- <CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com>
- <20190407232728.GF26298@dastard> <CAOQ4uxgD4ErSUtbu0xqb5dSm_tM4J92qt6=hGH8GRc5KNGqP9A@mail.gmail.com>
- <20190408141114.GC15023@quack2.suse.cz> <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
- <20190409082605.GA8107@quack2.suse.cz> <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
- <20220617151135.yc6vytge6hjabsuz@quack3>
-In-Reply-To: <20220617151135.yc6vytge6hjabsuz@quack3>
+References: <20220607153139.35588-1-cgzones@googlemail.com>
+ <20220608112728.b4xrdppxqmyqmtwf@wittgenstein> <CAOQ4uxipD6khNUYuZT80WUa0KOMdyyP0ia55uhmeRCLj4NBicg@mail.gmail.com>
+ <20220608124808.uylo5lntzfgxxmns@wittgenstein> <CAOQ4uxjP7kC95ou56wabVhQcc2vkNcD-8usYhLhbLOoJZ-jkOw@mail.gmail.com>
+ <20220618031805.nmgiuapuqeblm3ba@senku>
+In-Reply-To: <20220618031805.nmgiuapuqeblm3ba@senku>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 18 Jun 2022 11:38:30 +0300
-Message-ID: <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw workload
-To:     Jan Kara <jack@suse.cz>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Sat, 18 Jun 2022 12:11:08 +0300
+Message-ID: <CAOQ4uxg6QLJ26pX8emXmUvq6jDDEH_Qq=Z4RPUK-jGLsZpHzfg@mail.gmail.com>
+Subject: Re: [RFC PATCH] f*xattr: allow O_PATH descriptors
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        selinux@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -74,152 +76,203 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 17, 2022 at 6:11 PM Jan Kara <jack@suse.cz> wrote:
+On Sat, Jun 18, 2022 at 6:18 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
 >
-> On Fri 17-06-22 17:48:08, Amir Goldstein wrote:
-> > On Tue, Apr 9, 2019 at 11:26 AM Jan Kara <jack@suse.cz> wrote:
+> On 2022-06-08, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Wed, Jun 8, 2022 at 3:48 PM Christian Brauner <brauner@kernel.org> w=
+rote:
 > > >
-> > > On Mon 08-04-19 20:41:09, Amir Goldstein wrote:
-> > > > On Mon, Apr 8, 2019 at 5:11 PM Jan Kara <jack@suse.cz> wrote:
+> > > On Wed, Jun 08, 2022 at 03:28:52PM +0300, Amir Goldstein wrote:
+> > > > On Wed, Jun 8, 2022 at 2:57 PM Christian Brauner <brauner@kernel.or=
+g> wrote:
 > > > > >
-> > > > > On Mon 08-04-19 12:02:34, Amir Goldstein wrote:
-> > > > > > On Mon, Apr 8, 2019 at 2:27 AM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Apr 05, 2019 at 05:02:33PM +0300, Amir Goldstein wrote:
-> > > > > > > > On Fri, Apr 5, 2019 at 12:17 AM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Thu, Apr 04, 2019 at 07:57:37PM +0300, Amir Goldstein wrote:
-> > > > > > > > > > This patch improves performance of mixed random rw workload
-> > > > > > > > > > on xfs without relaxing the atomic buffered read/write guaranty
-> > > > > > > > > > that xfs has always provided.
-> > > > > > > > > >
-> > > > > > > > > > We achieve that by calling generic_file_read_iter() twice.
-> > > > > > > > > > Once with a discard iterator to warm up page cache before taking
-> > > > > > > > > > the shared ilock and once again under shared ilock.
-> > > > > > > > >
-> > > > > > > > > This will race with thing like truncate, hole punching, etc that
-> > > > > > > > > serialise IO and invalidate the page cache for data integrity
-> > > > > > > > > reasons under the IOLOCK. These rely on there being no IO to the
-> > > > > > > > > inode in progress at all to work correctly, which this patch
-> > > > > > > > > violates. IOWs, while this is fast, it is not safe and so not a
-> > > > > > > > > viable approach to solving the problem.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > This statement leaves me wondering, if ext4 does not takes
-> > > > > > > > i_rwsem on generic_file_read_iter(), how does ext4 (or any other
-> > > > > > > > fs for that matter) guaranty buffered read synchronization with
-> > > > > > > > truncate, hole punching etc?
-> > > > > > > > The answer in ext4 case is i_mmap_sem, which is read locked
-> > > > > > > > in the page fault handler.
-> > > > > > >
-> > > > > > > Nope, the  i_mmap_sem is for serialisation of /page faults/ against
-> > > > > > > truncate, holepunching, etc. Completely irrelevant to the read()
-> > > > > > > path.
-> > > > > > >
+> > > > > On Tue, Jun 07, 2022 at 05:31:39PM +0200, Christian G=C3=B6ttsche=
+ wrote:
+> > > > > > From: Miklos Szeredi <mszeredi@redhat.com>
 > > > > > >
-> > > > > > I'm at lost here. Why are page faults completely irrelevant to read()
-> > > > > > path? Aren't full pages supposed to be faulted in on read() after
-> > > > > > truncate_pagecache_range()?
+> > > > > > Support file descriptors obtained via O_PATH for extended attri=
+bute
+> > > > > > operations.
+> > > > > >
+> > > > > > Extended attributes are for example used by SELinux for the sec=
+urity
+> > > > > > context of file objects. To avoid time-of-check-time-of-use iss=
+ues while
+> > > > > > setting those contexts it is advisable to pin the file in quest=
+ion and
+> > > > > > operate on a file descriptor instead of the path name. This can=
+ be
+> > > > > > emulated in userspace via /proc/self/fd/NN [1] but requires a p=
+rocfs,
+> > > > > > which might not be mounted e.g. inside of chroots, see[2].
+> > > > > >
+> > > > > > [1]: https://github.com/SELinuxProject/selinux/commit/7e979b56f=
+d2cee28f647376a7233d2ac2d12ca50
+> > > > > > [2]: https://github.com/SELinuxProject/selinux/commit/de285252a=
+1801397306032e070793889c9466845
+> > > > > >
+> > > > > > Original patch by Miklos Szeredi <mszeredi@redhat.com>
+> > > > > > https://patchwork.kernel.org/project/linux-fsdevel/patch/202005=
+05095915.11275-6-mszeredi@redhat.com/
+> > > > > >
+> > > > > > > While this carries a minute risk of someone relying on the pr=
+operty of
+> > > > > > > xattr syscalls rejecting O_PATH descriptors, it saves the tro=
+uble of
+> > > > > > > introducing another set of syscalls.
+> > > > > > >
+> > > > > > > Only file->f_path and file->f_inode are accessed in these fun=
+ctions.
+> > > > > > >
+> > > > > > > Current versions return EBADF, hence easy to detect the prese=
+nse of
+> > > > > > > this feature and fall back in case it's missing.
+> > > > > >
+> > > > > > CC: linux-api@vger.kernel.org
+> > > > > > CC: linux-man@vger.kernel.org
+> > > > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > > > > > ---
 > > > > >
-> > > > > During read(2), pages are not "faulted in". Just look at
-> > > > > what generic_file_buffered_read() does. It uses completely separate code to
-> > > > > add page to page cache, trigger readahead, and possibly call ->readpage() to
-> > > > > fill the page with data. "fault" path (handled by filemap_fault()) applies
-> > > > > only to accesses from userspace to mmaps.
-> > > > >
+> > > > > I'd be somewhat fine with getxattr and listxattr but I'm worried =
+that
+> > > > > setxattr/removexattr waters down O_PATH semantics even more. I do=
+n't
+> > > > > want O_PATH fds to be useable for operations which are semantical=
+ly
+> > > > > equivalent to a write.
 > > > >
-> > > > Oh! thanks for fixing my blind spot.
-> > > > So if you agree with Dave that ext4, and who knows what other fs,
-> > > > are vulnerable to populating page cache with stale "uptodate" data,
+> > > > It is not really semantically equivalent to a write if it works on =
+a
+> > > > O_RDONLY fd already.
 > > >
-> > > Not that many filesystems support punching holes but you're right.
-> > >
-> > > > then it seems to me that also xfs is vulnerable via readahead(2) and
-> > > > posix_fadvise().
-> > >
-> > > Yes, this is correct AFAICT.
-> > >
-> > > > Mind you, I recently added an fadvise f_op, so it could be used by
-> > > > xfs to synchronize with IOLOCK.
-> > >
-> > > And yes, this should work.
-> > >
-> > > > Perhaps a better solution would be for truncate_pagecache_range()
-> > > > to leave zeroed or Unwritten (i.e. lazy zeroed by read) pages in page
-> > > > cache. When we have shared pages for files, these pages could be
-> > > > deduped.
-> > >
-> > > No, I wouldn't really mess with sharing pages due to this. It would be hard
-> > > to make that scale resonably and would be rather complex. We really need a
-> > > proper and reasonably simple synchronization mechanism between operations
-> > > removing blocks from inode and operations filling in page cache of the
-> > > inode. Page lock was supposed to provide this but doesn't quite work
-> > > because hole punching first remove pagecache pages and then go removing all
-> > > blocks.
-> > >
-> > > So I agree with Dave that going for range lock is really the cleanest way
-> > > forward here without causing big regressions for mixed rw workloads. I'm
-> > > just thinking how to best do that without introducing lot of boilerplate
-> > > code into each filesystem.
+> > > The fact that it works on a O_RDONLY fd has always been weird. And is
+> > > probably a bug. If you look at xattr_permission() you can see that it
 > >
-> > Hi Jan, Dave,
+> > Bug or no bug, this is the UAPI. It is not fixable anymore.
 > >
-> > Trying to circle back to this after 3 years!
-> > Seeing that there is no progress with range locks and
-> > that the mixed rw workloads performance issue still very much exists.
+> > > checks for MAY_WRITE for set operations... setxattr() writes to disk =
+for
+> > > real filesystems. I don't know how much closer to a write this can ge=
+t.
+> > >
+> > > In general, one semantic aberration doesn't justify piling another on=
+e
+> > > on top.
+> > >
+> > > (And one thing that speaks for O_RDONLY is at least that it actually
+> > > opens the file wheres O_PATH doesn't.)
 > >
-> > Is the situation now different than 3 years ago with invalidate_lock?
+> > Ok. I care mostly about consistent UAPI, so if you want to set the
+> > rule that modify f*() operations are not allowed to use O_PATH fd,
+> > I can live with that, although fcntl(2) may be breaking that rule, but
+> > fine by me.
+> > It's good to have consistent rules and it's good to add a new UAPI for
+> > new behavior.
+> >
+> > However...
+> >
+> > >
+> > > >
+> > > > >
+> > > > > In sensitive environments such as service management/container ru=
+ntimes
+> > > > > we often send O_PATH fds around precisely because it is restricte=
+d what
+> > > > > they can be used for. I'd prefer to not to plug at this string.
+> > > >
+> > > > But unless I am mistaken, path_setxattr() and syscall_fsetxattr()
+> > > > are almost identical w.r.t permission checks and everything else.
+> > > >
+> > > > So this change introduces nothing new that a user in said environme=
+nt
+> > > > cannot already accomplish with setxattr().
+> > > >
+> > > > Besides, as the commit message said, doing setxattr() on an O_PATH
+> > > > fd is already possible with setxattr("/proc/self/$fd"), so whatever=
+ security
+> > > > hole you are trying to prevent is already wide open.
+> > >
+> > > That is very much a something that we're trying to restrict for this
+> > > exact reason and is one of the main motivator for upgrade mask in
+> > > openat2(). If I want to send a O_PATH around I want it to not be
+> > > upgradable. Aleksa is working on upgrade masks with openat2() (see [1=
+]
+> > > and part of the original patchset in [2]. O_PATH semantics don't need=
+ to
+> > > become weird.
+> > >
+> > > [1]: https://lore.kernel.org/all/20220526130355.fo6gzbst455fxywy@senk=
+u
+> > > [2]: https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20190728=
+010207.9781-8-cyphar@cyphar.com
+> >
+> > ... thinking forward, if this patch is going to be rejected, the patch =
+that
+> > will follow is *xattrat() syscalls.
+> >
+> > What will you be able to argue then?
+> >
+> > There are several *at() syscalls that modify metadata.
+> > fchownat(.., AT_EMPTY_PATH) is intentionally designed for this.
+> >
+> > Do you intend to try and block setxattrat()?
+> > Just try and block setxattrat(.., AT_EMPTY_PATH)?
+> > those *at() syscalls have real use cases to avoid TOCTOU races.
+> > Do you propose that applications will have to use fsetxattr() on an ope=
+n
+> > file to avert races?
+> >
+> > I completely understand the idea behind upgrade masks
+> > for limiting f_mode, but I don't know if trying to retroactively
+> > change semantics of setxattr() in the move to setxattrat()
+> > is going to be a good idea.
 >
-> Yes, I've implemented invalidate_lock exactly to fix the issues you've
-> pointed out without regressing the mixed rw workloads (because
-> invalidate_lock is taken in shared mode only for reads and usually not at
-> all for writes).
+> The goal would be that the semantics of fooat(<fd>, AT_EMPTY_PATH) and
+> foo(/proc/self/fd/<fd>) should always be identical, and the current
+> semantics of /proc/self/fd/<fd> are too leaky so we shouldn't always
+> assume that keeping them makes sense (the most obvious example is being
+> able to do tricks to open /proc/$pid/exe as O_RDWR).
+
+Please make a note that I have applications relying on current magic symlin=
+k
+semantics w.r.t setxattr() and other metadata operations, and the libselinu=
+x
+commit linked from the patch commit message proves that magic symlink
+semantics are used in the wild, so it is not likely that those semantics co=
+uld
+be changed, unless userspace breakage could be justified by fixing a seriou=
+s
+security issue (i.e. open /proc/$pid/exe as O_RDWR).
+
 >
-> > Would my approach of pre-warm page cache before taking IOLOCK
-> > be safe if page cache is pre-warmed with invalidate_lock held?
+> I suspect that the long-term solution would be to have more upgrade
+> masks so that userspace can opt-in to not allowing any kind of
+> (metadata) write access through a particular file descriptor. You're
+> quite right that we have several metadata write AT_EMPTY_PATH APIs, and
+> so we can't retroactively block /everything/ but we should try to come
+> up with less leaky rules by default if it won't break userspace.
 >
-> Why would it be needed? But yes, with invalidate_lock you could presumably
-> make that idea safe...
 
-To remind you, the context in which I pointed you to the punch hole race issue
-in "other file systems" was a discussion about trying to relax the
-"atomic write"
-POSIX semantics [1] of xfs.
+Ok, let me try to say this in my own words using an example to see that
+we are all on the same page:
 
-There was a lot of discussions around range locks and changing the fairness
-of rwsem readers and writer, but none of this changes the fact that as long as
-the lock is file wide (and it does not look like that is going to
-change in the near
-future), it is better for lock contention to perform the serialization
-on page cache
-read/write and not on disk read/write.
+- lsetxattr(PATH_TO_FILE,..) has inherent TOCTOU races
+- fsetxattr(fd,...) is not applicable for symbolic links
+- setxattr("/proc/self/fd/<fd>",...) is the current API to avoid TOCTOU rac=
+es
+  when setting xattr on symbolic links
+- setxattrat(o_path_fd, "", ..., AT_EMPTY_PATH) is proposed as a the
+  "new API" for setting xattr on symlinks (and special files)
+- The new API is going to be more strict than the old magic symlink API
+- *If* it turns out to not break user applications, old API can also become
+  more strict to align with new API (unlikely the case for setxattr())
+- This will allow sandboxed containers to opt-out of the "old API", by
+  restricting access to /proc/self/fd and to implement more fine grained
+  control over which metadata operations are allowed on an O_PATH fd
 
-Therefore, *if* it is acceptable to pre-warn page cache for buffered read
-under invalidate_lock, that is a simple way to bring the xfs performance with
-random rw mix workload on par with ext4 performance without losing the
-atomic write POSIX semantics. So everyone can be happy?
-
-In addition to Dave's concerns about stale page cache races with hole punch,
-I found in the original discussion these concern from Darrick:
-
-> Reads and writes are not the only thing xfs uses i_rwsem to synchronise.
-> Reflink remap uses it to make sure everything's flushed to disk and that
-> page cache contents remain clean while the remap is ongoing. I'm pretty
-> sure pnfs uses it for similar reasons when granting and committing write
-> leases.
-
-To reiterate, pNFS leases are not the common case. To address this issue,
-I intend to opt-out of pre-warm optimization when pNFS leases are present,
-either globally, or per file, whatever xfs developers tell me to do.
-
-From my understanding of the code, xfs_reflink_remap_prep() takes care
-of taking invalidate_lock(s), so populating page cache under invalidate_lock
-should be safe also w.r.t reflink/dedupe.
-
-Darrick, am I missing anything?
+Did I understand the plan correctly?
+Do you agree with me that the plan to keep AT_EMPTY_PATH and
+magic symlink semantics may not be realistic?
 
 Thanks,
 Amir.
-
-[1] https://lore.kernel.org/all/CAOQ4uxgSc7hK1=GuUajzG1Z+ks6gzFFX+EtuBMULOk0s85zi3A@mail.gmail.com/
-[2] https://lore.kernel.org/linux-xfs/20190325154731.GT1183@magnolia/
