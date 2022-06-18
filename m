@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A1A550528
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 15:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F24355056C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 16:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233888AbiFRNkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 09:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41802 "EHLO
+        id S239043AbiFROJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 10:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbiFRNkj (ORCPT
+        with ESMTP id S236608AbiFROIM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jun 2022 09:40:39 -0400
+        Sat, 18 Jun 2022 10:08:12 -0400
 Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435EE1A81F
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 06:40:38 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id k12-20020a17090a404c00b001eaabc1fe5dso6872472pjg.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 06:40:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45D317A8E
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 07:08:10 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id x1-20020a17090abc8100b001ec7f8a51f5so2888667pjr.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 07:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:content-language:to:cc:from
          :subject:content-transfer-encoding;
-        bh=GdSotkFN7xY3H7yLa8iAdQvEWwbU2aQlVUpsAnr2Raw=;
-        b=Wn2f8SpBFOlOS3n7pJXCp2sl/67ky5Av1UvjzsFgckxwqLdlivyVWbmrobeQdE83UP
-         0PRfm+t6SDWh1IYN8VK5U//PWWXtqXZRc8SV3KI1t7/7eaqVRzHYKs/eFJNG01gQyJYW
-         dpB0CY/JDKYP/bCE1HLFG0EVRcla9te5yCPD6BR8EIEk0pAwQiYwNuNcUhF7TLOa/ocq
-         fLg7+nH5r+rfAwh6H4DhzAvBFhGX87FY3LpD8x5jVp1EupANL0w0+L3VpxvA+VWLIjwA
-         oavZIYtStOnGcdsqpNkPYWTfESTI4gCi2BuszsJtEGhrMoCFqkoSbVHxCJf4mqL8vHL7
-         8vBA==
+        bh=XbVFDWoGMjB7BQRSkULxQAI98FA/9YBNynz4n5L/nZw=;
+        b=7zNujocLE0E+/rwoirwcLkYYsCM9RshilDFVk0N90L6cgE1T2lDmsNtspod3te9mhr
+         uVYU/peSEwa8c2dLqV+b6dbhkdQmqvuB0NU7K5bHSWsTkuLs/mi9J2jaCk2SzvTLNWTv
+         v35fxu4/mFjebUCTyBp2sAJgLrsSAUipJM7LV43zzp0KxSi7tDjAcPRHDP0EmvU+VQgv
+         AdCkg6PPlBtYnVWWeXWGiKJL7AKEeF9eTv6sJ4DlJ/Huf0sT8xedJz279FT1zDvyrZnj
+         kdGa0akG70CbkG4KA2ch6l6V1Fmrp5svYbvTDibrNKlsUBUDaD/9C2N5qBCaIraJwgNq
+         2vZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent
          :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=GdSotkFN7xY3H7yLa8iAdQvEWwbU2aQlVUpsAnr2Raw=;
-        b=6cfcaoQYUE76TxxRMS/GZyK3Pjypj9qFyD6I8p4O9973lhEcbZ1tAU2hfi7130YyxU
-         VF419I2l/sAZ/yK71hS9Ijfmhdz51u6/B9lL1Ezf/QeJPoUqqYeNuvYJL9sVIOUD39Wv
-         TnHoZLLA+i4W2wbAAZS6XwVjkkcbLgwrwKF6E+Q00QVBvKdeU0+Ow8rcajhgHFou569i
-         iCYtgCBu88iDk3Nla7zZ1wLmQcB62qrGuyrYojzOUORwyIALubOmj6MZzwj/l5+LakIu
-         9EM75I8yYDgWbJXuzUmds7F/DVxPai8CJrANsP0mEpVtPEaDBW0Wo6UoH841vKQzuWQN
-         iFAQ==
-X-Gm-Message-State: AJIora/oDCtSPzjoufiFz5K8WX6MLVJSBVOuiNyguCrKFlF8J2//ymG3
-        h5cbnGqNiZyM9JkH/hthBenujWToR1FSsg==
-X-Google-Smtp-Source: AGRyM1shuNAwmh2QwAZydZ/xxpoJgAmLyQYb5MQ2Q2MVRWquAn0PW3xhdqrvHlrp1dZlXVg+h69cHA==
-X-Received: by 2002:a17:90b:464b:b0:1e8:7881:b238 with SMTP id jw11-20020a17090b464b00b001e87881b238mr27299567pjb.166.1655559637716;
-        Sat, 18 Jun 2022 06:40:37 -0700 (PDT)
+        bh=XbVFDWoGMjB7BQRSkULxQAI98FA/9YBNynz4n5L/nZw=;
+        b=rcIV53Yv+cmVMbYM1k2/3qNhXkFjpx33QrtJFNDM6K7Ujv/n8f290mTR3MJL3hjNGb
+         NT/ak0jWm0scEXUcr3YKuIFIsHeitQEY26MuIWTG5oZfckZNjBYBC9xw3IGzc9qpw+cz
+         qEjIsn5YWLJYsmbViSlkN9tV8DFIkrUi84pYo1BJlM5dmsdfkDNTzblPieAX3IsATi0J
+         wFXzTVPsOQ1BoafyU8ATYoxmp6+EgyNNKHE+OdNgWbQD1l+Z8J/WCA0HoOmwxM7Q9JtS
+         xpdf0Z+33G+AKCmTnhd8nOKOKrDEQDjj0X/hwJ1qgMqGGsMx8KyqF84h7Z1wIUtCWIqs
+         zRhQ==
+X-Gm-Message-State: AJIora/RSHDSMBxBVNjKgLivaF0C3mpSU3HDfg4+q/xItg0LiTU2VGNj
+        b1AzDl6kFYKqIxKxO/iYfOtSA3spxFcLRQ==
+X-Google-Smtp-Source: AGRyM1tsWVqmbVKr2IfnEu0Jx3FwAet0GJ43WxJFa30IyJOIrXgJrYjfXlx+tmtpgRlw/8juHg6bKA==
+X-Received: by 2002:a17:90a:31cf:b0:1c9:f9b8:68c7 with SMTP id j15-20020a17090a31cf00b001c9f9b868c7mr27489974pjf.34.1655561290154;
+        Sat, 18 Jun 2022 07:08:10 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d15-20020a621d0f000000b0052513b5d078sm204197pfd.31.2022.06.18.06.40.36
+        by smtp.gmail.com with ESMTPSA id s10-20020a170902ea0a00b00163f2fe1e64sm5407485plg.255.2022.06.18.07.08.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jun 2022 06:40:37 -0700 (PDT)
-Message-ID: <9d3418e3-7674-e9e6-0518-dbb4a6c921cc@kernel.dk>
-Date:   Sat, 18 Jun 2022 07:40:36 -0600
+        Sat, 18 Jun 2022 07:08:09 -0700 (PDT)
+Message-ID: <b3e19eb1-18c4-8599-b68d-bf28673237d1@kernel.dk>
+Date:   Sat, 18 Jun 2022 08:08:08 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
@@ -57,7 +57,7 @@ Content-Language: en-US
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] iov_iter: fix bad parenthesis placement for iter_type check
+Subject: [PATCH RFC] iov_iter: import single segments iovecs as ITER_UBUF
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -69,43 +69,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Due to some unfortunate placement of the parenthesis for the iter_type
-check in iov_iter_restore(), we can generate spurious triggers of the
-type WARN_ON_ONCE() even if the iter is of the correct type.
+Using an ITER_UBUF is more efficient than an ITER_IOV, and for the single
+segment case, there's no reason to use an ITER_IOV when an ITER_UBUF will
+do. Experimental data collected shows that ~2/3rds of iovec imports are
+single segments, from applications using readv/writev or recvmsg/sendmsg
+that are iovec based.
 
-While in there, correct the comment on what types can be used with the
-save/restore helpers, and fix an extra word in the function description.
+Explicitly check for nr_segs == 1 and import those as ubuf rather than
+iovec based iterators.
 
-Fixes: 6696361cc3d8 ("new iov_iter flavour - ITER_UBUF")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
+Lightly tested - boots and works just fine, and I ran this through the
+liburing test suite which does plenty of single segment readv/writev
+as well.
+
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 0973c622d3c0..f569190f8685 100644
+index 6b2bf6f6f374..0973c622d3c0 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1925,15 +1925,15 @@ int import_ubuf(int rw, void __user *buf, size_t len, struct iov_iter *i)
-  * @i: &struct iov_iter to restore
-  * @state: state to restore from
-  *
-- * Used after iov_iter_save_state() to bring restore @i, if operations may
-- * have advanced it.
-+ * Used after iov_iter_save_state() to restore @i, if operations may have
-+ * advanced it.
-  *
-- * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
-+ * Note: only works on ITER_IOVEC, ITER_BVEC, ITER_KVEC, and ITER_UBUF.
-  */
- void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
- {
--	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
--			 !iov_iter_is_kvec(i) && !iter_is_ubuf(i))
-+	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i) &&
-+			 !iov_iter_is_kvec(i) && !iter_is_ubuf(i)))
- 		return;
- 	i->iov_offset = state->iov_offset;
- 	i->count = state->count;
+@@ -1813,6 +1813,21 @@ ssize_t __import_iovec(int type, const struct iovec __user *uvec,
+ 		return PTR_ERR(iov);
+ 	}
+ 
++	/*
++	 * Fast path - single segment import. Use UBUF for these, rather
++	 * than setup an ITER_IOV.
++	 */
++	if (nr_segs == 1) {
++		ssize_t ret;
++
++		total_len = iovp[0]->iov_len;
++		ret = import_ubuf(type, iovp[0]->iov_base, total_len, i);
++		*iovp = NULL;
++		if (unlikely(ret < 0))
++			return ret;
++		return total_len;
++	}
++
+ 	/*
+ 	 * According to the Single Unix Specification we should return EINVAL if
+ 	 * an element length is < 0 when cast to ssize_t or if the total length
 
 -- 
 Jens Axboe
