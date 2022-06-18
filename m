@@ -2,85 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AAB055044D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 13:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A1A550528
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 15:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbiFRLtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 07:49:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57942 "EHLO
+        id S233888AbiFRNkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 09:40:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234011AbiFRLsb (ORCPT
+        with ESMTP id S230229AbiFRNkj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jun 2022 07:48:31 -0400
-X-Greylist: delayed 437 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 18 Jun 2022 04:48:30 PDT
-Received: from relay05.pair.com (relay05.pair.com [216.92.24.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C0E31C135;
-        Sat, 18 Jun 2022 04:48:30 -0700 (PDT)
-Received: from orac.inputplus.co.uk (unknown [84.51.159.244])
-        by relay05.pair.com (Postfix) with ESMTP id 84EB51A2879;
-        Sat, 18 Jun 2022 07:41:12 -0400 (EDT)
-Received: from orac.inputplus.co.uk (orac.inputplus.co.uk [IPv6:::1])
-        by orac.inputplus.co.uk (Postfix) with ESMTP id 61EC71F981;
-        Sat, 18 Jun 2022 12:41:11 +0100 (BST)
-To:     Nate Karstens <nate.karstens@garmin.com>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-parisc@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
-Subject: Re: [PATCH v2] Implement close-on-fork
-From:   Ralph Corderoy <ralph@inputplus.co.uk>
+        Sat, 18 Jun 2022 09:40:39 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435EE1A81F
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 06:40:38 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id k12-20020a17090a404c00b001eaabc1fe5dso6872472pjg.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jun 2022 06:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
+         :subject:content-transfer-encoding;
+        bh=GdSotkFN7xY3H7yLa8iAdQvEWwbU2aQlVUpsAnr2Raw=;
+        b=Wn2f8SpBFOlOS3n7pJXCp2sl/67ky5Av1UvjzsFgckxwqLdlivyVWbmrobeQdE83UP
+         0PRfm+t6SDWh1IYN8VK5U//PWWXtqXZRc8SV3KI1t7/7eaqVRzHYKs/eFJNG01gQyJYW
+         dpB0CY/JDKYP/bCE1HLFG0EVRcla9te5yCPD6BR8EIEk0pAwQiYwNuNcUhF7TLOa/ocq
+         fLg7+nH5r+rfAwh6H4DhzAvBFhGX87FY3LpD8x5jVp1EupANL0w0+L3VpxvA+VWLIjwA
+         oavZIYtStOnGcdsqpNkPYWTfESTI4gCi2BuszsJtEGhrMoCFqkoSbVHxCJf4mqL8vHL7
+         8vBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:from:subject:content-transfer-encoding;
+        bh=GdSotkFN7xY3H7yLa8iAdQvEWwbU2aQlVUpsAnr2Raw=;
+        b=6cfcaoQYUE76TxxRMS/GZyK3Pjypj9qFyD6I8p4O9973lhEcbZ1tAU2hfi7130YyxU
+         VF419I2l/sAZ/yK71hS9Ijfmhdz51u6/B9lL1Ezf/QeJPoUqqYeNuvYJL9sVIOUD39Wv
+         TnHoZLLA+i4W2wbAAZS6XwVjkkcbLgwrwKF6E+Q00QVBvKdeU0+Ow8rcajhgHFou569i
+         iCYtgCBu88iDk3Nla7zZ1wLmQcB62qrGuyrYojzOUORwyIALubOmj6MZzwj/l5+LakIu
+         9EM75I8yYDgWbJXuzUmds7F/DVxPai8CJrANsP0mEpVtPEaDBW0Wo6UoH841vKQzuWQN
+         iFAQ==
+X-Gm-Message-State: AJIora/oDCtSPzjoufiFz5K8WX6MLVJSBVOuiNyguCrKFlF8J2//ymG3
+        h5cbnGqNiZyM9JkH/hthBenujWToR1FSsg==
+X-Google-Smtp-Source: AGRyM1shuNAwmh2QwAZydZ/xxpoJgAmLyQYb5MQ2Q2MVRWquAn0PW3xhdqrvHlrp1dZlXVg+h69cHA==
+X-Received: by 2002:a17:90b:464b:b0:1e8:7881:b238 with SMTP id jw11-20020a17090b464b00b001e87881b238mr27299567pjb.166.1655559637716;
+        Sat, 18 Jun 2022 06:40:37 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d15-20020a621d0f000000b0052513b5d078sm204197pfd.31.2022.06.18.06.40.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jun 2022 06:40:37 -0700 (PDT)
+Message-ID: <9d3418e3-7674-e9e6-0518-dbb4a6c921cc@kernel.dk>
+Date:   Sat, 18 Jun 2022 07:40:36 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-In-reply-to: <20200515152321.9280-1-nate.karstens@garmin.com>
-References: <20200515152321.9280-1-nate.karstens@garmin.com>
-Date:   Sat, 18 Jun 2022 12:41:11 +0100
-Message-Id: <20220618114111.61EC71F981@orac.inputplus.co.uk>
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Content-Language: en-US
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] iov_iter: fix bad parenthesis placement for iter_type check
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nate,
+Due to some unfortunate placement of the parenthesis for the iter_type
+check in iov_iter_restore(), we can generate spurious triggers of the
+type WARN_ON_ONCE() even if the iter is of the correct type.
 
-> One manifestation of this is a race conditions in system(), which
-> (depending on the implementation) is non-atomic in that it first calls
-> a fork() and then an exec().
+While in there, correct the comment on what types can be used with the
+save/restore helpers, and fix an extra word in the function description.
 
-The need for O_CLOFORK might be made more clear by looking at a
-long-standing Go issue, i.e. unrelated to system(3), which was started
-in 2017 by Russ Cox when he summed up the current race-condition
-behaviour of trying to execve(2) a newly created file:
-https://github.com/golang/go/issues/22315.  I raised it on linux-kernel
-in 2017, https://marc.info/?l=linux-kernel&m=150834137201488, and linked
-to a proposed patch from 2011, ‘[PATCH] fs: add FD_CLOFORK and
-O_CLOFORK’ by Changli Gao.  As I said, long-standing.
+Fixes: 6696361cc3d8 ("new iov_iter flavour - ITER_UBUF")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-The Go issue is worth a read.  Russ wondered ‘What would Java do’ only
-to find that Java already had an issue open for the same problem since
-2014.
+---
 
-I think the kernel is the place to fix the problem, just as with
-FD_CLOEXEC/O_CLOEXEC.  Ian Lance Taylor says on the Go issue that it
-looks like ‘Solaris and macOS and OpenBSD have O_CLOFORK already.
-Hopefully it will catch on further’.
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 0973c622d3c0..f569190f8685 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1925,15 +1925,15 @@ int import_ubuf(int rw, void __user *buf, size_t len, struct iov_iter *i)
+  * @i: &struct iov_iter to restore
+  * @state: state to restore from
+  *
+- * Used after iov_iter_save_state() to bring restore @i, if operations may
+- * have advanced it.
++ * Used after iov_iter_save_state() to restore @i, if operations may have
++ * advanced it.
+  *
+- * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
++ * Note: only works on ITER_IOVEC, ITER_BVEC, ITER_KVEC, and ITER_UBUF.
+  */
+ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+ {
+-	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
+-			 !iov_iter_is_kvec(i) && !iter_is_ubuf(i))
++	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i) &&
++			 !iov_iter_is_kvec(i) && !iter_is_ubuf(i)))
+ 		return;
+ 	i->iov_offset = state->iov_offset;
+ 	i->count = state->count;
 
 -- 
-Cheers, Ralph.
+Jens Axboe
+
