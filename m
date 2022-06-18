@@ -2,89 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A66550303
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 07:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F106550385
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 10:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236815AbiFRFgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 01:36:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41998 "EHLO
+        id S229514AbiFRIij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 04:38:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235048AbiFRFgC (ORCPT
+        with ESMTP id S229437AbiFRIiY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jun 2022 01:36:02 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CCB69285
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 22:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=KualK0se6TDI6VtHVUIPNHUiIRtKxDg34aQFE49/BSc=; b=PszVe/UnvCDALqYXyyGzHEP/fS
-        Fjq8Jqe33XLGFIhP0HxdLJLVM6GFdYpZ665UQdG4i9j0XHbI1l/9b9WzBj5IIWCGZ6rQdZT7pHAF0
-        +7We0wPkQ/D2pAHPd8pcGU+vFXe82zTP65GnODnTEtUJ3j+xTQ8bNwJmfzuTprcwJm6zjR+yjIGhk
-        MEjDka8HfXoLH9f4iQsExcF4OznToa9jSoTuhAVC4IPsgadcEA+GX/OCKYWP79XEL7B4qd7Q4mrsE
-        5vEN6XEfowtG/MMfH00pEC2hT9YYTXWhFviT2G4cYTKV0HZKq4BDsuxj1HLTRSdRoMfoQNh3q128S
-        hXVNlftg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o2R7Y-001VSH-2x;
-        Sat, 18 Jun 2022 05:35:44 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 31/31] expand those iov_iter_advance()...
-Date:   Sat, 18 Jun 2022 06:35:38 +0100
-Message-Id: <20220618053538.359065-32-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220618053538.359065-1-viro@zeniv.linux.org.uk>
-References: <Yq1iNHboD+9fz60M@ZenIV>
- <20220618053538.359065-1-viro@zeniv.linux.org.uk>
+        Sat, 18 Jun 2022 04:38:24 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C367D1F2C9;
+        Sat, 18 Jun 2022 01:38:21 -0700 (PDT)
+Received: from canpemm500002.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4LQ8Q922J8zhXYF;
+        Sat, 18 Jun 2022 16:36:17 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by canpemm500002.china.huawei.com
+ (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 18 Jun
+ 2022 16:38:19 +0800
+From:   Miaohe Lin <linmiaohe@huawei.com>
+To:     <akpm@linux-foundation.org>, <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>
+Subject: [PATCH] filemap: obey mapping->invalidate_lock lock/unlock order
+Date:   Sat, 18 Jun 2022 16:38:20 +0800
+Message-ID: <20220618083820.35626-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.124.27]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500002.china.huawei.com (7.192.104.244)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- lib/iov_iter.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+The invalidate_locks of two mappings should be unlocked in reverse order
+relative to the locking order in filemap_invalidate_lock_two(). Modifying
+the code to obey it.
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 3306072c7b73..b50e264a14bf 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1279,7 +1279,8 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 		return 0;
- 
- 	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
--	iov_iter_advance(i, maxsize);
-+	i->iov_offset += maxsize;
-+	i->count -= maxsize;
- 	return maxsize;
- }
- 
-@@ -1368,7 +1369,13 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		for (int k = 0; k < n; k++)
- 			get_page(p[k] = page + k);
- 		len = min_t(size_t, len, n * PAGE_SIZE - *start);
--		iov_iter_advance(i, len);
-+		i->count -= len;
-+		i->iov_offset += len;
-+		if (i->iov_offset == i->bvec->bv_len) {
-+			i->iov_offset = 0;
-+			i->bvec++;
-+			i->nr_segs--;
-+		}
- 		return len;
- 	}
- 	if (iov_iter_is_pipe(i))
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ mm/filemap.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 8ef861297ffb..9948b26e6400 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1009,6 +1009,8 @@ EXPORT_SYMBOL(filemap_invalidate_lock_two);
+ void filemap_invalidate_unlock_two(struct address_space *mapping1,
+ 				   struct address_space *mapping2)
+ {
++	if (mapping1 < mapping2)
++		swap(mapping1, mapping2);
+ 	if (mapping1)
+ 		up_write(&mapping1->invalidate_lock);
+ 	if (mapping2 && mapping1 != mapping2)
 -- 
-2.30.2
+2.23.0
 
