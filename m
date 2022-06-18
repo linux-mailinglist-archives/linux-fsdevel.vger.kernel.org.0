@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA8D5502F2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 07:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A345502E9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jun 2022 07:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbiFRFfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jun 2022 01:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41620 "EHLO
+        id S230448AbiFRFfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jun 2022 01:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiFRFfm (ORCPT
+        with ESMTP id S229461AbiFRFfm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 18 Jun 2022 01:35:42 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FA9663D2
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C650966228
         for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jun 2022 22:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=oWGScIUb1EoaRdhEi06bRMjVnArb0zdP4434VU2a+/c=; b=OWQBhuNtiDHJnJG/E18lchfSmZ
-        BNY10FyIkBbsCkEQuYl1cABW5CjKbDEOGTcpjzMicMEwDrVZIjT2zpkyOxTMok6N4Ov3mPIuhPFGa
-        JM0OiF7/Tvt7mEg+mDvf0+ptYAkP1zl6hFNHLl1ttPF6ZlqdIOn5H1Q5m71IoJNByXM61eqRT48cA
-        HJfxJgKwMbhDv507ClSy1u04fv3l/2ygBiD9D7Fd0FWoGvK/obQ30i5ZJKRfuvzEEwiey7v/cj7Ru
-        WLjmh8jZlY8Y4s0DGIGR/8TRtgvJgQmxSWyju85QDRkq8F+wGoHXUckxmZ2iqbovTK6G6mgx2/BGA
-        NFiNvfuA==;
+        bh=mLj5PkxHc90os+7X5POLttjxS5yvU/rKhJBnE9f5AP0=; b=B1M/RRI3bz/4rCfS7vA2fXqpm4
+        Gbfdso9ZresD3KGT49Y0S2iX9iigYpGwOLV5wPbqS7VtWapGglstBZ8uVZ+g2ixfqpHRTp3+a2vMQ
+        ImXYTbyj0OQseF3TTzSDfR+tuLsD44dD/ZW6mPYhEZdPByVg6GRpiuTrf86rWM0IvYOhxnQk2N9Ud
+        eXbHr+FowlZXd+SGFarcSj1CDb9juRKPgN6NoKMLsrqZYnGEZGtjuTbWdQhpapy9fLvgXgRnRz9Xy
+        TRv275EBJbAxML0bHZs8XH3AOYs7dyPaos4N7kgL4dU4Z0xgs6vCl+kefBLgggRCp2me/FAoHc67Q
+        IrYiwChA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o2R7T-001VPW-2R;
+        id 1o2R7T-001VPY-7r;
         Sat, 18 Jun 2022 05:35:39 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 02/31] ITER_PIPE: helper for getting pipe buffer by index
-Date:   Sat, 18 Jun 2022 06:35:08 +0100
-Message-Id: <20220618053538.359065-2-viro@zeniv.linux.org.uk>
+Subject: [PATCH 03/31] ITER_PIPE: helpers for adding pipe buffers
+Date:   Sat, 18 Jun 2022 06:35:09 +0100
+Message-Id: <20220618053538.359065-3-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220618053538.359065-1-viro@zeniv.linux.org.uk>
 References: <Yq1iNHboD+9fz60M@ZenIV>
@@ -51,85 +51,165 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pipe_buffer instances of a pipe are organized as a ring buffer,
-with power-of-2 size.  Indices are kept *not* reduced modulo ring
-size, so the buffer refered to by index N is
-	pipe->bufs[N & (pipe->ring_size - 1)].
+There are only two kinds of pipe_buffer in the area used by ITER_PIPE.
 
-Ring size can change over the lifetime of a pipe, but not while
-the pipe is locked.  So for any iov_iter primitives it's a constant.
-Original conversion of pipes to this layout went overboard trying
-to microoptimize that - calculating pipe->ring_size - 1, storing
-it in a local variable and using through the function.  In some
-cases it might be warranted, but most of the times it only
-obfuscates what's going on in there.
+1) anonymous - copy_to_iter() et.al. end up creating those and copying
+data there.  They have zero ->offset, and their ->ops points to
+default_pipe_page_ops.
 
-Introduce a helper (pipe_buf(pipe, N)) that would encapsulate
-that and use it in the obvious cases.  More will follow...
+2) zero-copy ones - those come from copy_page_to_iter(), and page
+comes from caller.  ->offset is also caller-supplied - it might be
+non-zero.  ->ops points to page_cache_pipe_buf_ops.
+
+Move creation and insertion of those into helpers - push_anon(pipe, size)
+and push_page(pipe, page, offset, size) resp., separating them from
+the "could we avoid creating a new buffer by merging with the current
+head?" logics.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- lib/iov_iter.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ lib/iov_iter.c | 88 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 46 insertions(+), 42 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index d00cc8971b5b..08bb393da677 100644
+index 08bb393da677..924854c2a7ce 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -183,13 +183,18 @@ static int copyin(void *to, const void __user *from, size_t n)
- 	return n;
- }
+@@ -231,15 +231,39 @@ static bool sanity(const struct iov_iter *i)
+ #define sanity(i) true
+ #endif
  
-+static inline struct pipe_buffer *pipe_buf(const struct pipe_inode_info *pipe,
-+					   unsigned int slot)
++static struct page *push_anon(struct pipe_inode_info *pipe, unsigned size)
 +{
-+	return &pipe->bufs[slot & (pipe->ring_size - 1)];
++	struct page *page = alloc_page(GFP_USER);
++	if (page) {
++		struct pipe_buffer *buf = pipe_buf(pipe, pipe->head++);
++		*buf = (struct pipe_buffer) {
++			.ops = &default_pipe_buf_ops,
++			.page = page,
++			.offset = 0,
++			.len = size
++		};
++	}
++	return page;
 +}
 +
- #ifdef PIPE_PARANOIA
- static bool sanity(const struct iov_iter *i)
++static void push_page(struct pipe_inode_info *pipe, struct page *page,
++			unsigned int offset, unsigned int size)
++{
++	struct pipe_buffer *buf = pipe_buf(pipe, pipe->head++);
++	*buf = (struct pipe_buffer) {
++		.ops = &page_cache_pipe_buf_ops,
++		.page = page,
++		.offset = offset,
++		.len = size
++	};
++	get_page(page);
++}
++
+ static size_t copy_page_to_iter_pipe(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i)
  {
  	struct pipe_inode_info *pipe = i->pipe;
- 	unsigned int p_head = pipe->head;
- 	unsigned int p_tail = pipe->tail;
+-	struct pipe_buffer *buf;
+-	unsigned int p_tail = pipe->tail;
 -	unsigned int p_mask = pipe->ring_size - 1;
- 	unsigned int p_occupancy = pipe_occupancy(p_head, p_tail);
- 	unsigned int i_head = i->head;
- 	unsigned int idx;
-@@ -201,7 +206,7 @@ static bool sanity(const struct iov_iter *i)
- 		if (unlikely(i_head != p_head - 1))
- 			goto Bad;	// must be at the last buffer...
+-	unsigned int i_head = i->head;
+-	size_t off;
++	unsigned int head = pipe->head;
  
--		p = &pipe->bufs[i_head & p_mask];
-+		p = pipe_buf(pipe, i_head);
- 		if (unlikely(p->offset + p->len != i->iov_offset))
- 			goto Bad;	// ... at the end of segment
- 	} else {
-@@ -386,11 +391,10 @@ static inline bool allocated(struct pipe_buffer *buf)
- static inline void data_start(const struct iov_iter *i,
- 			      unsigned int *iter_headp, size_t *offp)
- {
--	unsigned int p_mask = i->pipe->ring_size - 1;
- 	unsigned int iter_head = i->head;
- 	size_t off = i->iov_offset;
+ 	if (unlikely(bytes > i->count))
+ 		bytes = i->count;
+@@ -250,32 +274,21 @@ static size_t copy_page_to_iter_pipe(struct page *page, size_t offset, size_t by
+ 	if (!sanity(i))
+ 		return 0;
  
--	if (off && (!allocated(&i->pipe->bufs[iter_head & p_mask]) ||
-+	if (off && (!allocated(pipe_buf(i->pipe, iter_head)) ||
- 		    off == PAGE_SIZE)) {
- 		iter_head++;
- 		off = 0;
-@@ -1180,10 +1184,9 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
- 		return iov_iter_alignment_bvec(i);
- 
- 	if (iov_iter_is_pipe(i)) {
--		unsigned int p_mask = i->pipe->ring_size - 1;
- 		size_t size = i->count;
- 
--		if (size && i->iov_offset && allocated(&i->pipe->bufs[i->head & p_mask]))
-+		if (size && i->iov_offset && allocated(pipe_buf(i->pipe, i->head)))
- 			return size | i->iov_offset;
- 		return size;
+-	off = i->iov_offset;
+-	buf = &pipe->bufs[i_head & p_mask];
+-	if (off) {
+-		if (offset == off && buf->page == page) {
+-			/* merge with the last one */
++	if (offset && i->iov_offset == offset) { // could we merge it?
++		struct pipe_buffer *buf = pipe_buf(pipe, head - 1);
++		if (buf->page == page) {
+ 			buf->len += bytes;
+ 			i->iov_offset += bytes;
+-			goto out;
++			i->count -= bytes;
++			return bytes;
+ 		}
+-		i_head++;
+-		buf = &pipe->bufs[i_head & p_mask];
  	}
+-	if (pipe_full(i_head, p_tail, pipe->max_usage))
++	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+ 		return 0;
+ 
+-	buf->ops = &page_cache_pipe_buf_ops;
+-	buf->flags = 0;
+-	get_page(page);
+-	buf->page = page;
+-	buf->offset = offset;
+-	buf->len = bytes;
+-
+-	pipe->head = i_head + 1;
++	push_page(pipe, page, offset, bytes);
+ 	i->iov_offset = offset + bytes;
+-	i->head = i_head;
+-out:
++	i->head = head;
+ 	i->count -= bytes;
+ 	return bytes;
+ }
+@@ -407,8 +420,6 @@ static size_t push_pipe(struct iov_iter *i, size_t size,
+ 			int *iter_headp, size_t *offp)
+ {
+ 	struct pipe_inode_info *pipe = i->pipe;
+-	unsigned int p_tail = pipe->tail;
+-	unsigned int p_mask = pipe->ring_size - 1;
+ 	unsigned int iter_head;
+ 	size_t off;
+ 	ssize_t left;
+@@ -423,30 +434,23 @@ static size_t push_pipe(struct iov_iter *i, size_t size,
+ 	*iter_headp = iter_head;
+ 	*offp = off;
+ 	if (off) {
++		struct pipe_buffer *buf = pipe_buf(pipe, iter_head);
++
+ 		left -= PAGE_SIZE - off;
+ 		if (left <= 0) {
+-			pipe->bufs[iter_head & p_mask].len += size;
++			buf->len += size;
+ 			return size;
+ 		}
+-		pipe->bufs[iter_head & p_mask].len = PAGE_SIZE;
+-		iter_head++;
++		buf->len = PAGE_SIZE;
+ 	}
+-	while (!pipe_full(iter_head, p_tail, pipe->max_usage)) {
+-		struct pipe_buffer *buf = &pipe->bufs[iter_head & p_mask];
+-		struct page *page = alloc_page(GFP_USER);
++	while (!pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
++		struct page *page = push_anon(pipe,
++					      min_t(ssize_t, left, PAGE_SIZE));
+ 		if (!page)
+ 			break;
+ 
+-		buf->ops = &default_pipe_buf_ops;
+-		buf->flags = 0;
+-		buf->page = page;
+-		buf->offset = 0;
+-		buf->len = min_t(ssize_t, left, PAGE_SIZE);
+-		left -= buf->len;
+-		iter_head++;
+-		pipe->head = iter_head;
+-
+-		if (left == 0)
++		left -= PAGE_SIZE;
++		if (left <= 0)
+ 			return size;
+ 	}
+ 	return size - left;
 -- 
 2.30.2
 
