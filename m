@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6E8550B6A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCE4550B6C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232346AbiFSPL5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jun 2022 11:11:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        id S232153AbiFSPL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jun 2022 11:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbiFSPLv (ORCPT
+        with ESMTP id S231346AbiFSPLv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 19 Jun 2022 11:11:51 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E86B6AE56;
-        Sun, 19 Jun 2022 08:11:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7F3AE53;
+        Sun, 19 Jun 2022 08:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=bindIO2lTFDesoOeQ2oViKfEfCZlyJ8TfNVBigsijEU=; b=LFYmATCu1fX3l78jDNbK+xhNAo
-        DcgucQf7ONWKGyPqRpVHlCUmhmynjxiGS9VGyA6neq2L8jTOMjkb8NmhEArLoabLJyWsGC/xSVtED
-        xy+pBQ314fj/6ws20wk/YlffE786PNkPua4pe8DEjyJZ9tnsH9+7u7aeI5n/RU5fi3XX14U8m8nm4
-        vEZTIuOjcuFbBJ2gYgAGkq0Z7nv2OnusSgNwE5KLogbSvK26zxBKPyr7N+Gi29o2dOlu+YI9Wh+da
-        umaqTxE5cd3nfTrioNl1gqhwSBpRuJQ/I1gnYIgkaB6BL0re7iafEHA8ZSMPizsETgpK4pM3L2LJz
-        W5Bd5m+w==;
+        bh=HEdDzWGE0/UHZ2jiI+06ZjvEQpyio5BCGMu+xcj8GF0=; b=sZmaruFh2/gF/L/HuQXhGK6qZb
+        eTdqebfkQ7+xES9EIjJjUsRQ52aTC7z4Y4sZtIWXSUFhBfZ01esJ1pdMxtGgxPhdUKxQGTNJ1/TVN
+        gL1525wV6ogGepJWkseXjFu3pBixV56lh1VRFx94jSN7Y32FQwrARLA0Rn0u8Z3fZ77zbHJeIJBeh
+        OFPCrvTO+HA4Qth8rF7ewBPjeI5uHbaYh6MxARGxO2MOEyY2iFyPK0kRWD4dhYUy/8Q3heargL3Z0
+        qCVn7BDm/o3v0koG61EZFrqWTBtXIh61XPKfbsUWMc7LKaCUgpyJtvABSQ2q0E6gMrtplQz5oratY
+        cG//Gk2g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o2waZ-004QOq-3d; Sun, 19 Jun 2022 15:11:47 +0000
+        id 1o2waZ-004QOs-5Y; Sun, 19 Jun 2022 15:11:47 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, Yu Kuai <yukuai3@huawei.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 1/3] filemap: Correct the conditions for marking a folio as accessed
-Date:   Sun, 19 Jun 2022 16:11:41 +0100
-Message-Id: <20220619151143.1054746-2-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH 2/3] filemap: Handle sibling entries in filemap_get_read_batch()
+Date:   Sun, 19 Jun 2022 16:11:42 +0100
+Message-Id: <20220619151143.1054746-3-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220619151143.1054746-1-willy@infradead.org>
 References: <20220619151143.1054746-1-willy@infradead.org>
@@ -50,56 +50,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We had an off-by-one error which meant that we never marked the first page
-in a read as accessed.  This was visible as a slowdown when re-reading
-a file as pages were being evicted from cache too soon.  In reviewing
-this code, we noticed a second bug where a multi-page folio would be
-marked as accessed multiple times when doing reads that were less than
-the size of the folio.
+If a read races with an invalidation followed by another read, it is
+possible for a folio to be replaced with a higher-order folio.  If that
+happens, we'll see a sibling entry for the new folio in the next iteration
+of the loop.  This manifests as a NULL pointer dereference while holding
+the RCU read lock.
 
-Abstract the comparison of whether two file positions are in the same
-folio into a new function, fixing both of these bugs.
+Handle this by simply returning.  The next call will find the new folio
+and handle it correctly.  The other ways of handling this rare race are
+more complex and it's just not worth it.
 
-Reported-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
+Reported-by: Dave Chinner <david@fromorbit.com>
+Reported-by: Brian Foster <bfoster@redhat.com>
+Debugged-by: Brian Foster <bfoster@redhat.com>
+Tested-by: Brian Foster <bfoster@redhat.com>
+Fixes: cbd59c48ae2b ("mm/filemap: use head pages in generic_file_buffered_read")
+Cc: stable@vger.kernel.org
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/filemap.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ mm/filemap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index ac3775c1ce4c..577068868449 100644
+index 577068868449..ffdfbc8b0e3c 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2629,6 +2629,13 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
- 	return err;
- }
+@@ -2385,6 +2385,8 @@ static void filemap_get_read_batch(struct address_space *mapping,
+ 			continue;
+ 		if (xas.xa_index > max || xa_is_value(folio))
+ 			break;
++		if (xa_is_sibling(folio))
++			break;
+ 		if (!folio_try_get_rcu(folio))
+ 			goto retry;
  
-+static inline bool pos_same_folio(loff_t pos1, loff_t pos2, struct folio *folio)
-+{
-+	unsigned int shift = folio_shift(folio);
-+
-+	return (pos1 >> shift == pos2 >> shift);
-+}
-+
- /**
-  * filemap_read - Read data from the page cache.
-  * @iocb: The iocb to read.
-@@ -2700,11 +2707,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 		writably_mapped = mapping_writably_mapped(mapping);
- 
- 		/*
--		 * When a sequential read accesses a page several times, only
-+		 * When a read accesses the same folio several times, only
- 		 * mark it as accessed the first time.
- 		 */
--		if (iocb->ki_pos >> PAGE_SHIFT !=
--		    ra->prev_pos >> PAGE_SHIFT)
-+		if (!pos_same_folio(iocb->ki_pos, ra->prev_pos - 1,
-+							fbatch.folios[0]))
- 			folio_mark_accessed(fbatch.folios[0]);
- 
- 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
 -- 
 2.35.1
 
