@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FCE4550B6C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FB7550B6E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232153AbiFSPL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jun 2022 11:11:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        id S231715AbiFSPLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jun 2022 11:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbiFSPLv (ORCPT
+        with ESMTP id S231159AbiFSPLv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 19 Jun 2022 11:11:51 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7F3AE53;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34352AE52;
         Sun, 19 Jun 2022 08:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=HEdDzWGE0/UHZ2jiI+06ZjvEQpyio5BCGMu+xcj8GF0=; b=sZmaruFh2/gF/L/HuQXhGK6qZb
-        eTdqebfkQ7+xES9EIjJjUsRQ52aTC7z4Y4sZtIWXSUFhBfZ01esJ1pdMxtGgxPhdUKxQGTNJ1/TVN
-        gL1525wV6ogGepJWkseXjFu3pBixV56lh1VRFx94jSN7Y32FQwrARLA0Rn0u8Z3fZ77zbHJeIJBeh
-        OFPCrvTO+HA4Qth8rF7ewBPjeI5uHbaYh6MxARGxO2MOEyY2iFyPK0kRWD4dhYUy/8Q3heargL3Z0
-        qCVn7BDm/o3v0koG61EZFrqWTBtXIh61XPKfbsUWMc7LKaCUgpyJtvABSQ2q0E6gMrtplQz5oratY
-        cG//Gk2g==;
+        bh=rkDLWdA9qK6dJptJf/M5HrXtYhb5ttvBn9HErKKNMDI=; b=tmmoPedVacsHoBJuv77FbS1OIE
+        7SC30HkfVjoJBDeZpX3j7OGOSuyv1LGvOS/awWV3auug2b3c7I/ens/EYBToPmtCdz0zIoLOHXJ39
+        IiuJtdrJGFnx+KkF5jQywbM61r/8FFO2ymoz76cwqrNek1jICCAwHYhdwMnftyKJIx6WhCWFXO6X4
+        UPqS0jgn1qeU7fRXgM4aAHBpgepX3EKHVoptrxqr2klZDX2Kb23EgkmjmnC1f5JOkXehYnd5JqR/U
+        HvvcFM5kV8inFsizinujjrGoSQKLwq8X5M6qOWFW7PT2j3uJI6D7kHzUvq6OtHqlfo271eisrXDZI
+        sYqmpVPQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o2waZ-004QOs-5Y; Sun, 19 Jun 2022 15:11:47 +0000
+        id 1o2waZ-004QOu-7l; Sun, 19 Jun 2022 15:11:47 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH 2/3] filemap: Handle sibling entries in filemap_get_read_batch()
-Date:   Sun, 19 Jun 2022 16:11:42 +0100
-Message-Id: <20220619151143.1054746-3-willy@infradead.org>
+        linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 3/3] mm: Clear page->private when splitting or migrating a page
+Date:   Sun, 19 Jun 2022 16:11:43 +0100
+Message-Id: <20220619151143.1054746-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220619151143.1054746-1-willy@infradead.org>
 References: <20220619151143.1054746-1-willy@infradead.org>
@@ -50,40 +49,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a read races with an invalidation followed by another read, it is
-possible for a folio to be replaced with a higher-order folio.  If that
-happens, we'll see a sibling entry for the new folio in the next iteration
-of the loop.  This manifests as a NULL pointer dereference while holding
-the RCU read lock.
+In our efforts to remove uses of PG_private, we have found folios with
+the private flag clear and folio->private not-NULL.  That is the root
+cause behind 642d51fb0775 ("ceph: check folio PG_private bit instead
+of folio->private").  It can also affect a few other filesystems that
+haven't yet reported a problem.
 
-Handle this by simply returning.  The next call will find the new folio
-and handle it correctly.  The other ways of handling this rare race are
-more complex and it's just not worth it.
+compaction_alloc() can return a page with uninitialised page->private,
+and rather than checking all the callers of migrate_pages(), just zero
+page->private after calling get_new_page().  Similarly, the tail pages
+from split_huge_page() may also have an uninitialised page->private.
 
-Reported-by: Dave Chinner <david@fromorbit.com>
-Reported-by: Brian Foster <bfoster@redhat.com>
-Debugged-by: Brian Foster <bfoster@redhat.com>
-Tested-by: Brian Foster <bfoster@redhat.com>
-Fixes: cbd59c48ae2b ("mm/filemap: use head pages in generic_file_buffered_read")
-Cc: stable@vger.kernel.org
+Reported-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/filemap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/huge_memory.c | 1 +
+ mm/migrate.c     | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 577068868449..ffdfbc8b0e3c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2385,6 +2385,8 @@ static void filemap_get_read_batch(struct address_space *mapping,
- 			continue;
- 		if (xas.xa_index > max || xa_is_value(folio))
- 			break;
-+		if (xa_is_sibling(folio))
-+			break;
- 		if (!folio_try_get_rcu(folio))
- 			goto retry;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index f7248002dad9..9b31a50217b5 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2377,6 +2377,7 @@ static void __split_huge_page_tail(struct page *head, int tail,
+ 			page_tail);
+ 	page_tail->mapping = head->mapping;
+ 	page_tail->index = head->index + tail;
++	page_tail->private = NULL;
  
+ 	/* Page flags must be visible before we make the page non-compound. */
+ 	smp_wmb();
+diff --git a/mm/migrate.c b/mm/migrate.c
+index e51588e95f57..6c1ea61f39d8 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1106,6 +1106,7 @@ static int unmap_and_move(new_page_t get_new_page,
+ 	if (!newpage)
+ 		return -ENOMEM;
+ 
++	newpage->private = 0;
+ 	rc = __unmap_and_move(page, newpage, force, mode);
+ 	if (rc == MIGRATEPAGE_SUCCESS)
+ 		set_page_owner_migrate_reason(newpage, reason);
 -- 
 2.35.1
 
