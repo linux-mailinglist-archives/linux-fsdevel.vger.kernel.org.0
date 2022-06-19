@@ -2,91 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D251550BD6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B051550BD7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbiFSPRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jun 2022 11:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57722 "EHLO
+        id S231754AbiFSPWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jun 2022 11:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233997AbiFSPRf (ORCPT
+        with ESMTP id S231438AbiFSPWr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jun 2022 11:17:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A654DF11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2x/zSDPmY8eu/0JXJSbRzotLa/HtxeAbFm0NQLhOEiI=; b=URwVEv1m47uCJ+BCp+pcQu+Ha9
-        lYj3M999sozCxG1jzUDwF9kvqa3T1MAd4ti1+v9ZUkgTQI7z+dOVXX2ncRuCG3LUG5a5w+FnZxzJG
-        t8jnGBekLNTBJ1KdzGNxa1LzvEolZQ2X167A8QYJqA6PKBU9rd4ARAuX+xJS8N4PgwD57vZgAZXwo
-        /m3XdhpojrCJ+BSbDI/jjCJl1PFWzTHq7+6C92ZEP9HbxwHb3XB5/mCRkUtfJS6zPs0HHpjoqfimP
-        9jxZl9NP/bZaA+0MTYiMQkaH1z6VxTx/EfX8HTMbRei13jnj4Z4OA16SKuX1OVAmZ4zyjAhdqPJLe
-        G2rQj8bg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o2wg3-004Qdu-2d; Sun, 19 Jun 2022 15:17:27 +0000
-Date:   Sun, 19 Jun 2022 16:17:27 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Li Chen <me@linux.beauty>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH] fs: use call_read_iter(file, &kiocb, &iter); for
- __kernel_{read|write}
-Message-ID: <Yq8+Bya1HMJ+KtNC@casper.infradead.org>
-References: <18179f8b59d.b7fe20f5281387.193977444358758943@linux.beauty>
+        Sun, 19 Jun 2022 11:22:47 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD8BE6C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:22:47 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id p5so2350133pjt.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
+        b=m2mUyoaor2hptOGubBROFIl8t6yI7iMfoaIaDNittBM4FpDDH5RLJV+KfcHLwAy5bM
+         djERaBOEczeEYnflwP5BnR3k7ckpTJxh5oAJ5RFu4bylKkyKo7IJcVajkuedc41mz6GU
+         RKE4qZprlRmbVrphK+etE1b+0mJNIKM72Woz+eLLCyE27I7V3ZCzV18csJO9tkYX3Ynm
+         5L6EfkCQ8FoXQSAKul6wYe9yXGDDIf8SO1A8iclASHSFGIpeIQBbip+j1TMEieO60+oH
+         gQUIqh72w/A5CHcgGvtqHlDKRPoWOmpnR83wUjnlukNoLSOa06Iec6YfiQdj16qNzepr
+         nb5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
+        b=SlXHnyu/LqbwOmH4Ml15QfZo7U5luK4CO3rMYFB1C7ulVGmdp1rxVicrIf+uoQ+Wto
+         lGT5J9siilzFebC1V11/bImvsAJ6j84Lik4arT3VYd7P1003ZmfuoE8LF58wztmFtlmo
+         zlC2qGjbJw9LSmOdPb0ttRs+2NCLO337rsx8n/hhifFd72iZQPyQrf/VDLAwIHOoBPa0
+         Kt+aDLHGOX7u8T3NuQVKtYK8qugBvDcK6R0FjLMl/aycPFBUbaqUjF2Fr8RrIbj5dFBz
+         fl0Abl60nyO+M1Z2bw+w5qdrBnc1Qx8+FKTyduAyhN05u6IgyOZc/XgwuAxCR/qmQEYZ
+         YATw==
+X-Gm-Message-State: AJIora+a9aV5wxgdhGGdnB5V3nC6eSJy3pKFthsQ4HXHVa7jopVZOmNa
+        bHVeeRjEA1UnjnKOwpkKBWGOsZVke+wjORZv640=
+X-Google-Smtp-Source: AGRyM1ud0cPbsSJ7VM6+2QJav3qlyR0w/UYmiGF8lwbVjco5znUWfFcXgHLTOT34ufPMuzIGPs0NbFb1r16wyszXwQ8=
+X-Received: by 2002:a17:90a:4544:b0:1ec:8065:b77f with SMTP id
+ r4-20020a17090a454400b001ec8065b77fmr12049627pjm.164.1655652166604; Sun, 19
+ Jun 2022 08:22:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18179f8b59d.b7fe20f5281387.193977444358758943@linux.beauty>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Reply-To: drtracywilliams89@gmail.com
+Sender: tw390032@gmail.com
+Received: by 2002:a17:90b:1a90:0:0:0:0 with HTTP; Sun, 19 Jun 2022 08:22:46
+ -0700 (PDT)
+From:   "Dr. Tracy Williams." <drtracywilliams12@gmail.com>
+Date:   Sun, 19 Jun 2022 08:22:46 -0700
+X-Google-Sender-Auth: 1KjXF-hYwo69sSSo83QosOiv8Xo
+Message-ID: <CAH-phouv83nxQLN7bjJDf0OtjMVeRZrYvQNP6B+8cPWCU92H3Q@mail.gmail.com>
+Subject: From Dr. Tracy Williams.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 18, 2022 at 08:19:11PM -0700, Li Chen wrote:
-> From: Li Chen <lchen@ambarella.com>
-> 
-> Just use these helper functions to replace f_op->{read,write}_iter()
+Hello Dear,
 
-... why?  You've saved a massive two bytes of kernel source.
-What is the point of these functions?  I'd rather just get rid of them.
+how are you today,I hope you are doing great. It is my great pleasure
+to contact you,I want to make a new and special friend,I hope you
+don't mind. My name is Tracy Williams
 
-> Signed-off-by: Li Chen <lchen@ambarella.com>
-> ---
->  fs/read_write.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index b1b1cdfee9d3..9518aeca0273 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -437,7 +437,7 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
->  	init_sync_kiocb(&kiocb, file);
->  	kiocb.ki_pos = pos ? *pos : 0;
->  	iov_iter_kvec(&iter, READ, &iov, 1, iov.iov_len);
-> -	ret = file->f_op->read_iter(&kiocb, &iter);
-> +	ret = call_read_iter(file, &kiocb, &iter);
->  	if (ret > 0) {
->  		if (pos)
->  			*pos = kiocb.ki_pos;
-> @@ -533,7 +533,7 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
->  	init_sync_kiocb(&kiocb, file);
->  	kiocb.ki_pos = pos ? *pos : 0;
->  	iov_iter_kvec(&iter, WRITE, &iov, 1, iov.iov_len);
-> -	ret = file->f_op->write_iter(&kiocb, &iter);
-> +	ret = call_write_iter(file, &kiocb, &iter);
->  	if (ret > 0) {
->  		if (pos)
->  			*pos = kiocb.ki_pos;
-> -- 
-> 2.36.1
-> 
-> 
+from the United States, Am a french and English nationality. I will
+give you pictures and more details about my self as soon as i hear
+from you in my email account bellow,
+Here is my email address; drtracywilliams89@gmail.com
+
+
+Please send your reply to my PRIVATE  mail box.
+Thanks,
+
+Tracy Williams.
