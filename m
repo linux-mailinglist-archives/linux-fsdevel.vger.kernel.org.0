@@ -2,85 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B051550BD7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D584550BE0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 17:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbiFSPWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jun 2022 11:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
+        id S229883AbiFSPlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jun 2022 11:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbiFSPWr (ORCPT
+        with ESMTP id S229757AbiFSPlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jun 2022 11:22:47 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD8BE6C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:22:47 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id p5so2350133pjt.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
-        b=m2mUyoaor2hptOGubBROFIl8t6yI7iMfoaIaDNittBM4FpDDH5RLJV+KfcHLwAy5bM
-         djERaBOEczeEYnflwP5BnR3k7ckpTJxh5oAJ5RFu4bylKkyKo7IJcVajkuedc41mz6GU
-         RKE4qZprlRmbVrphK+etE1b+0mJNIKM72Woz+eLLCyE27I7V3ZCzV18csJO9tkYX3Ynm
-         5L6EfkCQ8FoXQSAKul6wYe9yXGDDIf8SO1A8iclASHSFGIpeIQBbip+j1TMEieO60+oH
-         gQUIqh72w/A5CHcgGvtqHlDKRPoWOmpnR83wUjnlukNoLSOa06Iec6YfiQdj16qNzepr
-         nb5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=y/WwzOufdV8bFjC2XhKxeIddPBCZMNKZVHLfMOMvj6I=;
-        b=SlXHnyu/LqbwOmH4Ml15QfZo7U5luK4CO3rMYFB1C7ulVGmdp1rxVicrIf+uoQ+Wto
-         lGT5J9siilzFebC1V11/bImvsAJ6j84Lik4arT3VYd7P1003ZmfuoE8LF58wztmFtlmo
-         zlC2qGjbJw9LSmOdPb0ttRs+2NCLO337rsx8n/hhifFd72iZQPyQrf/VDLAwIHOoBPa0
-         Kt+aDLHGOX7u8T3NuQVKtYK8qugBvDcK6R0FjLMl/aycPFBUbaqUjF2Fr8RrIbj5dFBz
-         fl0Abl60nyO+M1Z2bw+w5qdrBnc1Qx8+FKTyduAyhN05u6IgyOZc/XgwuAxCR/qmQEYZ
-         YATw==
-X-Gm-Message-State: AJIora+a9aV5wxgdhGGdnB5V3nC6eSJy3pKFthsQ4HXHVa7jopVZOmNa
-        bHVeeRjEA1UnjnKOwpkKBWGOsZVke+wjORZv640=
-X-Google-Smtp-Source: AGRyM1ud0cPbsSJ7VM6+2QJav3qlyR0w/UYmiGF8lwbVjco5znUWfFcXgHLTOT34ufPMuzIGPs0NbFb1r16wyszXwQ8=
-X-Received: by 2002:a17:90a:4544:b0:1ec:8065:b77f with SMTP id
- r4-20020a17090a454400b001ec8065b77fmr12049627pjm.164.1655652166604; Sun, 19
- Jun 2022 08:22:46 -0700 (PDT)
+        Sun, 19 Jun 2022 11:41:06 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6D8646B
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 08:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655653264; x=1687189264;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3GlXH9S57pJp/FopHhsW1mIroyEXCZdMt+bxMrlaxrU=;
+  b=i3DLdBamwsBtEAupkEJv5/b49ywjbu94Erj+8JpSrIL01jBIWO3q2zU8
+   v+6Cnt3avfsgCh5EmYr+TtGo7+qqmmW/Uaja12y4Vue9cUc8sctUIK5vd
+   v5czA2U67gtTl/mxl9XHSW/aIupN3LTwRi0NFZ+1lvXdVPggr0ayCr5hM
+   6lITDfwgNDD6W98Y3pfVk5+BqUff1VfeRbE3B+06QmUgdy8h+YCtsVA/Z
+   o0Nic92BSlcsPUTo4vDzuh3A8tcgCWR31OUoRXff8nHaKq8Hwo8YZpfww
+   vLKlIiuCtSVgM1jqbzLJFZcSkH5q3DDUAkeTMH5drec7ErjkJvB14Z4SA
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10380"; a="305174310"
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="305174310"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2022 08:41:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="832762665"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2022 08:41:02 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o2x2r-000RKR-Rm;
+        Sun, 19 Jun 2022 15:41:01 +0000
+Date:   Sun, 19 Jun 2022 23:40:37 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.iov_iter_get_pages 24/33] lib/iov_iter.c:1295
+ iter_xarray_get_pages() warn: unsigned 'count' is never less than zero.
+Message-ID: <202206192306.POJg04ej-lkp@intel.com>
 MIME-Version: 1.0
-Reply-To: drtracywilliams89@gmail.com
-Sender: tw390032@gmail.com
-Received: by 2002:a17:90b:1a90:0:0:0:0 with HTTP; Sun, 19 Jun 2022 08:22:46
- -0700 (PDT)
-From:   "Dr. Tracy Williams." <drtracywilliams12@gmail.com>
-Date:   Sun, 19 Jun 2022 08:22:46 -0700
-X-Google-Sender-Auth: 1KjXF-hYwo69sSSo83QosOiv8Xo
-Message-ID: <CAH-phouv83nxQLN7bjJDf0OtjMVeRZrYvQNP6B+8cPWCU92H3Q@mail.gmail.com>
-Subject: From Dr. Tracy Williams.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Dear,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.iov_iter_get_pages
+head:   fe8e2809c7db0ec65403b31b50906f3f481a9b10
+commit: e64d637d648390e4ac0643747ae174c3be15f243 [24/33] iov_iter: saner helper for page array allocation
+config: mips-randconfig-m031-20220619 (https://download.01.org/0day-ci/archive/20220619/202206192306.POJg04ej-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 11.3.0
 
-how are you today,I hope you are doing great. It is my great pleasure
-to contact you,I want to make a new and special friend,I hope you
-don't mind. My name is Tracy Williams
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
 
-from the United States, Am a french and English nationality. I will
-give you pictures and more details about my self as soon as i hear
-from you in my email account bellow,
-Here is my email address; drtracywilliams89@gmail.com
+smatch warnings:
+lib/iov_iter.c:1295 iter_xarray_get_pages() warn: unsigned 'count' is never less than zero.
 
+vim +/count +1295 lib/iov_iter.c
 
-Please send your reply to my PRIVATE  mail box.
-Thanks,
+  1280	
+  1281	static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+  1282					     struct page ***pages, size_t maxsize,
+  1283					     unsigned maxpages, size_t *_start_offset)
+  1284	{
+  1285		unsigned nr, offset;
+  1286		pgoff_t index, count;
+  1287		loff_t pos;
+  1288	
+  1289		pos = i->xarray_start + i->iov_offset;
+  1290		index = pos >> PAGE_SHIFT;
+  1291		offset = pos & ~PAGE_MASK;
+  1292		*_start_offset = offset;
+  1293	
+  1294		count = want_pages_array(pages, maxsize, offset, maxpages);
+> 1295		if (count < 0)
+  1296			return count;
+  1297		nr = iter_xarray_populate_pages(*pages, i->xarray, index, count);
+  1298		if (nr == 0)
+  1299			return 0;
+  1300	
+  1301		return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
+  1302	}
+  1303	
 
-Tracy Williams.
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
