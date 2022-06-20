@@ -2,70 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACD8D552423
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 20:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F8155243F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 20:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245045AbiFTSko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jun 2022 14:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49724 "EHLO
+        id S242554AbiFTSxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jun 2022 14:53:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244220AbiFTSkk (ORCPT
+        with ESMTP id S1343631AbiFTSxB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jun 2022 14:40:40 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C9431FA7B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 11:40:38 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id j22so6241501ljg.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 11:40:38 -0700 (PDT)
+        Mon, 20 Jun 2022 14:53:01 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C9886341
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 11:52:59 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id fu3so22855960ejc.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 11:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=LY3wR+woW8P5Zqd1/UrCTP+p/ZV+/ddNZWD8k3q15qs=;
-        b=mQPDmMxSTCqHY3EFcL184zIl0qhPza4CR21jHa2Ci+wlbHhx8xUdWoqC85MFrpuLG3
-         ixkcTqs9qaNtE1k1PJEyBSE5RDKYjMVBwvzu5RioTgx6Tpqo4H0ShwuBw4jLxAthsdbM
-         hvLVXe723UhDUZkk+SgRbS/3XG3evLGMRjMOLBZNIqbIIwTXDVXXgsZMC8T19HO+C+tG
-         FYfcAnjnrj/EH5ZZOAf6LY26yibwtGHaz4G86RfDgICsb5zS9OLgI6POvT/h1lLWIRdU
-         dOz72qoGeeZI4lvKS7F+CfHY8te/pDh0gcx46AQaZ97nYwWUIv2gvuAIi72ZXxY8SHYo
-         vSHQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6BY+l3/iWa7w1itjUvaWxkXywRqC5+ZWN90+wmo8mRc=;
+        b=MTHy/MIVd4Lv76xkjaJ5Pqvm9BzLO3/CezQNQZ1bD+H54NQEoEIgfcaHrz45v3z7+B
+         ssM8VOxX0rXHZXbU3ddShrmSpkB4VzvQmBq8oBEYO4GR2goc00qYw64FZIlfWgtLMzw9
+         Y3td9y7q0x/lZx4omcxKY2Y9EImXTIJy9yNSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=LY3wR+woW8P5Zqd1/UrCTP+p/ZV+/ddNZWD8k3q15qs=;
-        b=7t8h6ImHirVQwrnt6/eZKrTuH70uVmbPSsEnB3ilHFYtStrvjGZj9ntpPI4fWxXGz7
-         QoFX6oqilfRy6Y2cf/3RqQArEixY+/8OQ2/4ocn8dy3ttlpsQPSfFF1SyuSspKXRpHUI
-         03t6WENhJbJwanMqJ1KLuNrBueZlq/182ch1ArYUvtpuUSgjE/Sf2/iGxNOxOQKVPe5b
-         Fjxe8gy71THFdWQurgdtwUzPZC4MFT/TqReIT+yMKq87Wm+jxqhnq7OKmTeyF1hNaMqw
-         HckFl4QoBVHVNwmU3GCwArd44TbZWNCB6gPI3/cYyp69cqOaR+aG/0EpjI4CVtheJAcD
-         LvmQ==
-X-Gm-Message-State: AJIora80Q8oQ2/agbe9imW9+dR+wMjWGFThVDQTEWUxc35W8YgY/NUf/
-        jaXqjZa5qNvLN6ugPzhssJwSK5XNkN77WEqWA5Y=
-X-Google-Smtp-Source: AGRyM1uR+y0Lzj39+K90ZVVE1d4sVKQQtkhwRO9u5/Xaftm90oyA0onFMqxRsjYfeVnOBnD/DtivaTO8TGfbHnQ2glE=
-X-Received: by 2002:a2e:8349:0:b0:254:224a:3c8 with SMTP id
- l9-20020a2e8349000000b00254224a03c8mr12495983ljh.406.1655750436891; Mon, 20
- Jun 2022 11:40:36 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6BY+l3/iWa7w1itjUvaWxkXywRqC5+ZWN90+wmo8mRc=;
+        b=Ok8xyyMyOT43MPxfXy/02IM2xAa0mAq5igcov+8G/PgqmDnS4OQivHmjObTywRpKic
+         DYBXgr6AwVH9X60x/28677MUkZd/kJB60bHvd2iv5Db61T+XeIqZ+2qJMhBtzHYpLDG2
+         ClaJXGhk0f5DzTZyXHb2NvUMeXCLPRe64L+2ektjyFBpzGlDIA7NWdIoVm5EuNtntkiX
+         bVF18O5pCLCKjnajJwsaWmmSWxAWiIrzvzXldLo7S3iw28k7rW3jJepJhxH0LV//jK9g
+         iDxhTeDVs5FJdJr+UPnfeKtY5z5MXxuyC45a/mRwOhHKKVOqkmXBdW2op8q6h5xIcEJ7
+         +WSw==
+X-Gm-Message-State: AJIora/iH3/17CLDEbwaT6xxIEUyTLFJEvbFRESPJs/D6Qls8nhI7V11
+        Lq4mTUXYZEG8QK43JGA4IXltgqJa+413yRWr
+X-Google-Smtp-Source: AGRyM1tt1C1Q+z0TZ0KJcss66ONlKshCsi0xZ21nJOf7sfju4HwmDQTkS30quiwvLIOfDw+rRW1q2Q==
+X-Received: by 2002:a17:906:5789:b0:70d:20cc:fc73 with SMTP id k9-20020a170906578900b0070d20ccfc73mr21927631ejq.473.1655751177708;
+        Mon, 20 Jun 2022 11:52:57 -0700 (PDT)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id w13-20020a056402268d00b004359202969esm463666edd.4.2022.06.20.11.52.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 11:52:56 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso6119779wmc.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 11:52:56 -0700 (PDT)
+X-Received: by 2002:a05:600c:4982:b0:39c:3c0d:437c with SMTP id
+ h2-20020a05600c498200b0039c3c0d437cmr25790980wmp.38.1655751176442; Mon, 20
+ Jun 2022 11:52:56 -0700 (PDT)
 MIME-Version: 1.0
-Sender: hannajustin101@gmail.com
-Received: by 2002:a05:6512:b8b:0:0:0:0 with HTTP; Mon, 20 Jun 2022 11:40:36
- -0700 (PDT)
-From:   Mira Thompson <mirathompson1010@gmail.com>
-Date:   Mon, 20 Jun 2022 18:40:36 +0000
-X-Google-Sender-Auth: BU18GOH9IIkC5PefeOO46Yq7C1c
-Message-ID: <CAGNcapMk9NPVGHBCLqjXq3aAV1kB489BqQD=tbL2kDxqbQa=rw@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
+References: <20220620134947.2772863-1-brauner@kernel.org> <20220620134947.2772863-2-brauner@kernel.org>
+ <CAHk-=wjapw1A3qmuCPsCVCi4dynbDxb9ocjzs2EF=EDufe8y8Q@mail.gmail.com> <20220620152514.wqf5itczv6xtsa3u@wittgenstein>
+In-Reply-To: <20220620152514.wqf5itczv6xtsa3u@wittgenstein>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 20 Jun 2022 13:52:39 -0500
+X-Gmail-Original-Message-ID: <CAHk-=wi1LrCrMrryuSXfom=Tye-wD5_P1anyakY5tCfHhwHPUg@mail.gmail.com>
+Message-ID: <CAHk-=wi1LrCrMrryuSXfom=Tye-wD5_P1anyakY5tCfHhwHPUg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] mnt_idmapping: add kmnt{g,u}id_t
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello sir,
-Please i want to know if you receive the previous message i sent to
-you, please reply to me if you get my message, thanks.
+On Mon, Jun 20, 2022 at 10:25 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> Originally I called that kfs{g,u}id_t but I was never happy with that
+> either... I think either vfs{g,u}id_t or fs_{g,u}id_t makes sense.
+
+vfs[gu]id sounds good to me. That way we avoid the confusion with our
+current "cred->fsuid" thing due to the access() system call.
+
+               Linus
