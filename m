@@ -2,101 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CF2550F7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 06:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13F27550FE3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 07:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237851AbiFTErp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jun 2022 00:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
+        id S238387AbiFTF7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jun 2022 01:59:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiFTEro (ORCPT
+        with ESMTP id S238399AbiFTF7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jun 2022 00:47:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F1DDE8B;
-        Sun, 19 Jun 2022 21:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fCr5yst88e9lOqfCL8d20AyDjixx1Tg4bKOmHaG5Jow=; b=CB7fZ7AWdEHyso1o/f+KTAvtct
-        LpAuZ/vJN2PAKslW7c3JjUGbQZ0LDPxG4H/stpmRgfBfT5Jcf4B+pauHkDfLKtEoJB8zfxGyl3YlT
-        WTW5R0VFufpOc8LsIN/XeVRUbzS2ThaEd6C1eZJvqjvZwk8X5sCORVr9UPyykDWItfvmRPQUluwzO
-        gPMT+VPfarZYzTMA7AYFoGif0o9iV8ohWa6cYmtrxKRHmtblzYaIojoRc2FZ1ip98xax7GxHU9GyU
-        wzyA5m2106PS6Ey5nYh8h5MJMRIIX49Xev2nT2tDv+tKn5EAU4+8ESZtOMq6O5YB5g+48y8xcn+Me
-        oygBbQmg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o39K4-004s1L-KZ; Mon, 20 Jun 2022 04:47:36 +0000
-Date:   Mon, 20 Jun 2022 05:47:36 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] filemap: obey mapping->invalidate_lock lock/unlock order
-Message-ID: <Yq/76OJgZ2GgRReN@casper.infradead.org>
-References: <20220618083820.35626-1-linmiaohe@huawei.com>
- <Yq2qQcHUZ2UjPk/M@casper.infradead.org>
- <364c8981-95c4-4bf8-cfbf-688c621db5b5@huawei.com>
+        Mon, 20 Jun 2022 01:59:15 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59315DFB4;
+        Sun, 19 Jun 2022 22:59:14 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id k7so8814550plg.7;
+        Sun, 19 Jun 2022 22:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9EOYYx+p+RkPqrNIib5wPOSg2AyVrOrZK8ANlVZ/2C0=;
+        b=Sd9h/IxsghHxFtpRXyO2j23oep6jTeY+ddHz8f4QSTM8ND9/3XbxUbbJALbA2lw9xL
+         haE6vxGnUwsLOCdyJoKetcwNsK6RQlyuPVA477gFFw+CrTUkNtUI2znIqE6O4c3yaOsA
+         Jjhj+mOldDeb8YVdOK3YvfNnXvadl2i8u00OqRtKRc0BEWPqm7HKq8UfXWih6ro/DHKR
+         leoebCQJRCpN21odrBHY0J52k5OL0/2sUVTBuRWDmUzpW8so7TGO4KeLqkEPdNNaB8b/
+         ovsN5iZEXzRC9XA5HIz6Wc5a9NayCUuq6rnztSa6r5/mGyMr/YHT+FbxwjS7mQ+QUkel
+         RBEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9EOYYx+p+RkPqrNIib5wPOSg2AyVrOrZK8ANlVZ/2C0=;
+        b=4/MglQra9dpfQR4fTVbeaeTkSaOLdzRf6QMPk69lsQ5wRuhtguWw7fEKwuprpczMY+
+         5Tjx2AM84nGcR2atAMcJPFWXIR620krLtOzdO3IIjfChvUSE6jUKPWC1r8s9sHxq2wQY
+         1hZdLPaEHWKjKSV9cQ8IPE3SmDQRJW6bZ6toM7A1+Gz+OjytaXgy0J6uF5KOuO8ydawQ
+         KFbNIft+5+yQoni+MPAmT2ltmsUf69pnd9dD6pQ4nx1nCdLQLkM/s0v6rxIn/wiYJOqq
+         42KxfDeFNMXr8yXPgOFlor8LgqX7sHvUmhwJEzPIPStuYWJ59EMpn3hFSH23qqAKwhAZ
+         xyCQ==
+X-Gm-Message-State: AJIora8fO9L2RB+Hwwob4w4IdvKTjm0SS26DyDVXVaKwe5C22a5Ivnh9
+        ruhY6AH1BDkH+MhgmHN6VOzB9MqzCQ8=
+X-Google-Smtp-Source: AGRyM1tmBLsWuVyHtNwc9UPinh5fFkr/4F4/DoTe6qbVaJR3XpgRHdxj539xS9GoC+uIOiwROB76dw==
+X-Received: by 2002:a17:903:1c2:b0:163:ef7b:e10f with SMTP id e2-20020a17090301c200b00163ef7be10fmr21847526plh.158.1655704749223;
+        Sun, 19 Jun 2022 22:59:09 -0700 (PDT)
+Received: from localhost ([2406:7400:63:5d34:e6c2:4c64:12ae:aa11])
+        by smtp.gmail.com with ESMTPSA id l4-20020a170903120400b001678ce9080dsm7724191plh.258.2022.06.19.22.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jun 2022 22:59:08 -0700 (PDT)
+From:   Ritesh Harjani <ritesh.list@gmail.com>
+To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Jan Kara <jack@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: [RFC 0/3] submit_bh: Drop unnecessary return values and API users
+Date:   Mon, 20 Jun 2022 11:28:39 +0530
+Message-Id: <cover.1655703466.git.ritesh.list@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <364c8981-95c4-4bf8-cfbf-688c621db5b5@huawei.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 20, 2022 at 09:56:06AM +0800, Miaohe Lin wrote:
-> On 2022/6/18 18:34, Matthew Wilcox wrote:
-> > On Sat, Jun 18, 2022 at 04:38:20PM +0800, Miaohe Lin wrote:
-> >> The invalidate_locks of two mappings should be unlocked in reverse order
-> >> relative to the locking order in filemap_invalidate_lock_two(). Modifying
-> > 
-> > Why?  It's perfectly valid to lock(A) lock(B) unlock(A) unlock(B).
-> > If it weren't we'd have lockdep check it and complain.
-> 
-> For spin_lock, they are lock(A) lock(B) unlock(B) unlock(A) e.g. in copy_huge_pud,
+submit_bh/submit_bh_wbc are non-blocking functions which just submits
+the bio and returns. The caller of submit_bh/submit_bh_wbc needs to wait
+on buffer till I/O completion and then check buffer head's b_state field
+to know if there was any I/O error.
 
-I think you need to spend some time thinking about the semantics of
-locks and try to figure out why it would make any difference at all
-which order locks (of any type) are _unlocked_ in,
+Hence there is no need for these functions to have any return type.
+Even now they always returns 0. Hence drop the return value and make
+their return type as void to avoid any confusion.
 
-> copy_huge_pmd, move_huge_pmd and so on:
-> 	dst_ptl = pmd_lock(dst_mm, dst_pmd);
-> 	src_ptl = pmd_lockptr(src_mm, src_pmd);
-> 	spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
-> 	...
-> 	spin_unlock(src_ptl);
-> 	spin_unlock(dst_ptl);
-> 
-> For rw_semaphore, they are also lock(A) lock(B) unlock(B) unlock(A) e.g. in dup_mmap():
-> 	mmap_write_lock_killable(oldmm)
-> 	mmap_write_lock_nested(mm, SINGLE_DEPTH_NESTING);
-> 	...
-> 	mmap_write_unlock(mm);
-> 	mmap_write_unlock(oldmm);
-> 
-> and ntfs_extend_mft():
-> 	down_write(&ni->file.run_lock);
-> 	down_write_nested(&sbi->used.bitmap.rw_lock, BITMAP_MUTEX_CLUSTERS);
-> 	...
-> 	up_write(&sbi->used.bitmap.rw_lock);
-> 	up_write(&ni->file.run_lock);
-> 
-> But I see some lock(A) lock(B) unlock(A) unlock(B) examples in some fs codes. Could you
-> please tell me the right lock/unlock order? I'm somewhat confused now...
-> 
-> BTW: If lock(A) lock(B) unlock(A) unlock(B) is requested, filemap_invalidate_lock_two might
-> still need to be changed to respect that order?
-> 
-> Thanks!
-> 
-> > 
-> > .
-> > 
-> 
+
+Ritesh Harjani (3):
+  jbd2: Drop useless return value of submit_bh
+  fs/buffer: Drop useless return value of submit_bh
+  fs/buffer: Make submit_bh & submit_bh_wbc return type as void
+
+ fs/buffer.c                 | 19 ++++++++-----------
+ fs/jbd2/commit.c            | 11 +++++------
+ fs/jbd2/journal.c           |  6 ++----
+ include/linux/buffer_head.h |  2 +-
+ 4 files changed, 16 insertions(+), 22 deletions(-)
+
+--
+2.35.3
+
