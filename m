@@ -2,77 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E79C5550C0A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jun 2022 18:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D8A550E32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 02:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233763AbiFSQUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jun 2022 12:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53972 "EHLO
+        id S238803AbiFTAyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jun 2022 20:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbiFSQUP (ORCPT
+        with ESMTP id S238037AbiFTAyX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jun 2022 12:20:15 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836559FEC
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jun 2022 09:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GN+vC8Toz1SOOOzidLEHmGs77EZL5qSlfIhSbbTGiag=; b=fGYg23wcEeSkqCtD97UH4pUX4w
-        gzdae3u1Nhy0aXZ6LWixLu9a9YIXtJ8t7ord/gI1g20Qj2MNirobohFCN+3YfMqiRB/I40d5oXyCm
-        UY2DPsRh7Zhkj12WBwSIjEwSMIGrM8IQhXls5sqqGyo7xyxvkgyczKShxnKOASqlg2egIQ/JyW3dd
-        iP/pDqsarbomav/7O0invC8O++MBSPodvYJQCfJeFEmd/kXpnfVdqElAMqrqHOn4HAtbx8XVjiHPi
-        fcT8StaGAUZKsXgkRvV3WvPJYUOhv89PXjy5pKK0O8R/EXbTNcOu/tT+KK7lbB1wonPrYoCQTk9/D
-        zrQXkilQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o2xeZ-0026f4-SY;
-        Sun, 19 Jun 2022 16:20:00 +0000
-Date:   Sun, 19 Jun 2022 17:19:59 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        Sun, 19 Jun 2022 20:54:23 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7795E6563;
+        Sun, 19 Jun 2022 17:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655686459; x=1687222459;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wBwCFUA6Q64fHaprgGzpO55tKWN6E6OjOh5MnrN96K8=;
+  b=nQHQEvacjc8Wbz7/mrAmFFH9U0T1fmWgNgDyBrtuK0qOHZIihGeVYx8S
+   5RxjIAb4GNRUkOxY5W2SPnnwvdQvHnNKMNIhjxBJsCGI3Ed++tMrwa288
+   bMNkRrHYpXBBfFAC2vZmi6FILg5XSURwTstjFMMRdIM0z3qWN8iRNcDR+
+   nrRz+SgJzZAHFH5p4ICxVojRy59Kqkwjk7haaUOdlUweqsVSnxs8/yC2U
+   FtevTcQ0G+qQ62wSYJm7+WwsgrxYpVb8B93VbQLvhtoy8MHZlDPjnwWuA
+   VEWzIGMeGw37QTFRylYgZD8obHeCVgqsShu4SSAVS5I8HCSSzu2IoXL+3
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10380"; a="262810907"
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="262810907"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2022 17:54:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
+   d="scan'208";a="832871961"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2022 17:54:16 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o35gF-000Riq-FN;
+        Mon, 20 Jun 2022 00:54:15 +0000
+Date:   Mon, 20 Jun 2022 08:53:15 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [viro-vfs:work.iov_iter_get_pages 24/33] lib/iov_iter.c:1295
- iter_xarray_get_pages() warn: unsigned 'count' is never less than zero.
-Message-ID: <Yq9Mrw8tTKrKgqPd@ZenIV>
-References: <202206192306.POJg04ej-lkp@intel.com>
- <Yq9FZnyna9BiwzDK@ZenIV>
- <Yq9G0ROCWfCg+Don@casper.infradead.org>
+Cc:     kbuild-all@lists.01.org, shr@fb.com, david@fromorbit.com,
+        jack@suse.cz, hch@infradead.org, axboe@kernel.dk,
+        willy@infradead.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v9 03/14] mm: Add balance_dirty_pages_ratelimited_flags()
+ function
+Message-ID: <202206200844.loRI4cvL-lkp@intel.com>
+References: <20220616212221.2024518-4-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yq9G0ROCWfCg+Don@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220616212221.2024518-4-shr@fb.com>
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 19, 2022 at 04:54:57PM +0100, Matthew Wilcox wrote:
-> On Sun, Jun 19, 2022 at 04:48:54PM +0100, Al Viro wrote:
-> > On Sun, Jun 19, 2022 at 11:40:37PM +0800, kernel test robot wrote:
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.iov_iter_get_pages
-> > > head:   fe8e2809c7db0ec65403b31b50906f3f481a9b10
-> > > commit: e64d637d648390e4ac0643747ae174c3be15f243 [24/33] iov_iter: saner helper for page array allocation
-> > > config: mips-randconfig-m031-20220619 (https://download.01.org/0day-ci/archive/20220619/202206192306.POJg04ej-lkp@intel.com/config)
-> > > compiler: mips-linux-gcc (GCC) 11.3.0
-> > > 
-> > > If you fix the issue, kindly add following tag where applicable
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > 
-> > > smatch warnings:
-> > > lib/iov_iter.c:1295 iter_xarray_get_pages() warn: unsigned 'count' is never less than zero.
-> > 
-> > Joy...  Should've been int all along, obviously (pgoff_t for number of array
-> > elements?)
-> 
-> I've been using 'long' for that just because I don't want the drama of
-> "we need to support 16GB pages" to have anything to do with me.
+Hi Stefan,
 
-That's "kvmalloc a flat array with that many pointers to pages in it and
-and pin those suckers"...
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Roesch/io-uring-xfs-support-async-buffered-writes/20220617-060910
+base:   b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3
+config: i386-randconfig-c021 (https://download.01.org/0day-ci/archive/20220620/202206200844.loRI4cvL-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+cocci warnings: (new ones prefixed by >>)
+>> mm/page-writeback.c:1887:5-8: Unneeded variable: "ret". Return "0" on line 1891
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
