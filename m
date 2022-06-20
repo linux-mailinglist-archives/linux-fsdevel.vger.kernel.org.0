@@ -2,112 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E58725514BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 11:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E407B551590
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 12:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238709AbiFTJtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jun 2022 05:49:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52138 "EHLO
+        id S240869AbiFTKPy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jun 2022 06:15:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233824AbiFTJtN (ORCPT
+        with ESMTP id S240910AbiFTKPx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jun 2022 05:49:13 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A136385;
-        Mon, 20 Jun 2022 02:49:12 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 762C021B84;
-        Mon, 20 Jun 2022 09:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1655718551; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 20 Jun 2022 06:15:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 19CC213F55
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 03:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655720151;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=dgfjp60L1bs7Br5fWh3tJQLPmYj3G4xjjz2aFNrlkoU=;
-        b=U63xSbF9iLinG/iLWbFKBIx7VWeBHPZ7s85fGYfdhqRGhDIubP2CXuzGZ1I7nJarE1rLyh
-        SKUmRE5AKhdw7lTPHsT7MAlU+PQdpGNmB86AW63PbTx82rcE8/xgi8SyZWyXQfGFUp07ot
-        QrirbnwByg2T4TWyc4mUoQYlQ4yQJlw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1655718551;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dgfjp60L1bs7Br5fWh3tJQLPmYj3G4xjjz2aFNrlkoU=;
-        b=BFX7lmCvCLuzCUv8K7elDrz+MACcC0nswWXi8BbaxmQoeKwQwblMPmIUr/FPn4Khrzgeb+
-        6E6YAjeMbdHuTxCg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 585092C142;
-        Mon, 20 Jun 2022 09:49:10 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id BC1AFA0636; Mon, 20 Jun 2022 11:49:09 +0200 (CEST)
-Date:   Mon, 20 Jun 2022 11:49:09 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCHv2 2/4] fs/ntfs: Drop useless return value of submit_bh
- from ntfs_submit_bh_for_read
-Message-ID: <20220620094909.rksiex5yv3xnrsf4@quack3.lan>
-References: <cover.1655715329.git.ritesh.list@gmail.com>
- <f53e945837f78c042bee5337352e2fa216d71a5a.1655715329.git.ritesh.list@gmail.com>
+        bh=17O633cxkzhtVlsw20bhFnYAwMJzxi4yxd1FxbpHmHk=;
+        b=KxDTHlZgmAr40jCFsE1HUT4TB2QGQVaPEf8NzUkAJhS9GNeqSWMitOzrxlZbwlgcIh/ZsJ
+        EYoP/sJ0YFRKNiPiAeKw1F93cc0Tr2GbjCHOldXy8GAkh6epfIIYaf6bv6sAa/ZAB8Ab1/
+        FIR8QUJNN53Lvi1apXJRZNyGPpNYpf4=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-593-kJpfZ-W_M8eTnogBKPiAAg-1; Mon, 20 Jun 2022 06:15:49 -0400
+X-MC-Unique: kJpfZ-W_M8eTnogBKPiAAg-1
+Received: by mail-qk1-f200.google.com with SMTP id t15-20020a05620a450f00b006a75bf35680so12617780qkp.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 03:15:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=17O633cxkzhtVlsw20bhFnYAwMJzxi4yxd1FxbpHmHk=;
+        b=Q2nuz5VRs4gl531hr36Txvf1BJZzn2ubxx3y5tzFSw6NW76Ht+IYz11T1xctdOxTAi
+         BqAFhkH+blN19qwkmOBrMq8/lrh+yihxtrnIWOF4olAnCz7AVHcQN+hLZfizbICH0rp9
+         dR5p6erZmBKGBemJBiZcu8W3X+JaafBT7B/fvIoa9Vg6LDW8vXNdXOBuM/6ucSaa9JgG
+         S97zUK6l2mFkgxNOxnh2G8rmpvaksHi+2dL8oO9danMJ1TrJ48MYOixbMhZCxwOkM70e
+         Yy4NstveUfYoZUecGQaVqHbgIHH6nKaAo/31XpLwelS1f+Tqf8HEENP2jlTeqxmdjgm1
+         ljuQ==
+X-Gm-Message-State: AJIora8hfWD0Lhy/CQKrnnCfjgO3MyOKfl9avqGTtqvYiA9MhbwdzIWW
+        6XsybohT4dOrWp93b+6z9/DsvI23VTkQHETuIcDcMCh6DcjgEPMiKmMN7nYIjkaRbs9fz+FjeAm
+        cCNnCKnm8NiGA1vCQRve7vBLA+g==
+X-Received: by 2002:ac8:5dce:0:b0:305:300e:146d with SMTP id e14-20020ac85dce000000b00305300e146dmr19314582qtx.546.1655720149401;
+        Mon, 20 Jun 2022 03:15:49 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1v/cEaNjKfBuKp+ZYEkUM0VlKRqhV9w3cgTc7c6P2YubjKi1eY5Etkh4aXJe37nZysORywQIw==
+X-Received: by 2002:ac8:5dce:0:b0:305:300e:146d with SMTP id e14-20020ac85dce000000b00305300e146dmr19314558qtx.546.1655720149125;
+        Mon, 20 Jun 2022 03:15:49 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id bm12-20020a05620a198c00b006a7284e5741sm12065536qkb.54.2022.06.20.03.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 03:15:48 -0700 (PDT)
+Date:   Mon, 20 Jun 2022 06:15:46 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] filemap: Handle sibling entries in
+ filemap_get_read_batch()
+Message-ID: <YrBI0jIzeyksEVyp@bfoster>
+References: <20220619151143.1054746-1-willy@infradead.org>
+ <20220619151143.1054746-3-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f53e945837f78c042bee5337352e2fa216d71a5a.1655715329.git.ritesh.list@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220619151143.1054746-3-willy@infradead.org>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 20-06-22 14:34:35, Ritesh Harjani wrote:
-> submit_bh always returns 0. This patch drops the useless return value of
-> submit_bh from ntfs_submit_bh_for_read(). Once all of submit_bh callers are
-> cleaned up, we can make it's return type as void.
+On Sun, Jun 19, 2022 at 04:11:42PM +0100, Matthew Wilcox (Oracle) wrote:
+> If a read races with an invalidation followed by another read, it is
+> possible for a folio to be replaced with a higher-order folio.  If that
+> happens, we'll see a sibling entry for the new folio in the next iteration
+> of the loop.  This manifests as a NULL pointer dereference while holding
+> the RCU read lock.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Ritesh Harjani <ritesh.list@gmail.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Handle this by simply returning.  The next call will find the new folio
+> and handle it correctly.  The other ways of handling this rare race are
+> more complex and it's just not worth it.
+> 
+> Reported-by: Dave Chinner <david@fromorbit.com>
+> Reported-by: Brian Foster <bfoster@redhat.com>
+> Debugged-by: Brian Foster <bfoster@redhat.com>
+> Tested-by: Brian Foster <bfoster@redhat.com>
+> Fixes: cbd59c48ae2b ("mm/filemap: use head pages in generic_file_buffered_read")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  fs/ntfs/file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+
+This has survived my testing for several days now. I think I grok the
+fix and analysis that lead to it, so FWIW:
+
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+>  mm/filemap.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-> index a8abe2296514..2389bfa654a2 100644
-> --- a/fs/ntfs/file.c
-> +++ b/fs/ntfs/file.c
-> @@ -532,12 +532,12 @@ static inline int __ntfs_grab_cache_pages(struct address_space *mapping,
->  	goto out;
->  }
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 577068868449..ffdfbc8b0e3c 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2385,6 +2385,8 @@ static void filemap_get_read_batch(struct address_space *mapping,
+>  			continue;
+>  		if (xas.xa_index > max || xa_is_value(folio))
+>  			break;
+> +		if (xa_is_sibling(folio))
+> +			break;
+>  		if (!folio_try_get_rcu(folio))
+>  			goto retry;
+>  
+> -- 
+> 2.35.1
 > 
-> -static inline int ntfs_submit_bh_for_read(struct buffer_head *bh)
-> +static inline void ntfs_submit_bh_for_read(struct buffer_head *bh)
->  {
->  	lock_buffer(bh);
->  	get_bh(bh);
->  	bh->b_end_io = end_buffer_read_sync;
-> -	return submit_bh(REQ_OP_READ, 0, bh);
-> +	submit_bh(REQ_OP_READ, 0, bh);
->  }
-> 
->  /**
-> --
-> 2.35.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
