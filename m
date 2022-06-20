@@ -2,308 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06267551F7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 16:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44919551F97
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jun 2022 17:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236870AbiFTO64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jun 2022 10:58:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53416 "EHLO
+        id S229690AbiFTPBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jun 2022 11:01:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241961AbiFTO5p (ORCPT
+        with ESMTP id S241570AbiFTPBd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jun 2022 10:57:45 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF70117AA9;
-        Mon, 20 Jun 2022 07:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655734832; x=1687270832;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=j5dmRBX11KpQ0doZYX6GRPhSnkODpaL7Hahti3PPX3U=;
-  b=KPAoYHU/m5CdBpYQZk5adX3KdDSMzWSrHRplWbhQRpS+VED981e9orUF
-   pYzaQkQInSxXRmqQW9xrvlcjfcYBce5sP1YyVZ/OnHUKN9RAyht8xSdIX
-   xyo3iV8qsg/ZuCNvJfPVTLr642cJ3v1qYqYiOpoZ/IS27PQ2XLkGLQsHr
-   J3T9Y5hASV/BwW2RocCaSAOCABADnGl3bJ48UOWggD1lCP916Ue0mSCCw
-   rinKuNTj/gEzhg5JxQts4mefQLTCEx+jMsljqMA8Cfl0bSkjSgSBIPw+A
-   wJ/wfOKXfyNz+J6l+OXOp/3bZzNtNpoFa2hBKbfCdMBeS3S4jMgfpKCGG
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10380"; a="268626429"
-X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
-   d="scan'208";a="268626429"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2022 07:20:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
-   d="scan'208";a="584914017"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 20 Jun 2022 07:20:09 -0700
-Date:   Mon, 20 Jun 2022 22:16:47 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>,
-        kirill.shutemov@linux.intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
-Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
-Message-ID: <20220620141647.GC2016793@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-7-chao.p.peng@linux.intel.com>
- <YqzyjZnflCMPo8b/@google.com>
+        Mon, 20 Jun 2022 11:01:33 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC9B20BD0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 07:28:19 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id u12so21471100eja.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 07:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pil7tKVsdF88YiSTYvAmIS8siU4AYztEaIhmLusf/GY=;
+        b=L9pDxGW7dLxdqFS02Dwyg/tLCZlw+KHTBVjrBubXeLpZSMthr4prHV8fFfO+3ZjH5c
+         LMoVe2Ida86H5VB0nA25dgSiC479aaTL7ykxNW6OeO9IAap6Aig4zF/GXZLCuz5KayS/
+         L2JRfKhdayKg/Qc+XGOGZygg+Z/GIMLghIv3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pil7tKVsdF88YiSTYvAmIS8siU4AYztEaIhmLusf/GY=;
+        b=KBq6O3tRtvseT+miyrbxwqycFJf2aw3zHqrmjLEnM03XmJaYATq94oXxqcm8OmFAOs
+         6xxLcxvXe1Sn9D2FiAZrE2KSfiYgE2G9QlrYUtkWVP/meks+cYgzhLBvO4p+qod8DdH+
+         eCDAzr2vjF/PSowYYQn1iZ7yjBrVsLO9oBRnoFTz6I+RTh4dqgd/ZyI4eW2OW6aetLgM
+         LLI0ehXXatC7nO/dDT+cNA9v/4m6U1VL9nk2O0Qsbs2rg8IBK3wvxvBpOblXjwxsjlyP
+         o1PetZEopZqIyP98TLnTVyB1brAEz8CVReL95sDqFuDo99PkVb/x7bc6zrjs+AiyOkAe
+         OkvA==
+X-Gm-Message-State: AJIora9Y88Y2Hu1hPm9UfqIOLca0PR/epSUgzV3imKHVH5ht05cPMb1p
+        W5+8osoRtznXZx0NXF++fwUEZ38qGZkU+AYG
+X-Google-Smtp-Source: AGRyM1uaNVtS3ZxYZ8ClCFdIrUEPrint9SydKTqDnuaS9zVJ5q39PMZa//q5HVeh7BNgkf4Hph1TWQ==
+X-Received: by 2002:a17:907:7f1c:b0:711:f3b4:da5 with SMTP id qf28-20020a1709077f1c00b00711f3b40da5mr20648935ejc.508.1655735298198;
+        Mon, 20 Jun 2022 07:28:18 -0700 (PDT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id eg40-20020a05640228a800b004356d82b129sm6240564edb.80.2022.06.20.07.28.16
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 07:28:17 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id q15so5920804wmj.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jun 2022 07:28:16 -0700 (PDT)
+X-Received: by 2002:a1c:5418:0:b0:39c:3552:c85e with SMTP id
+ i24-20020a1c5418000000b0039c3552c85emr35780628wmb.68.1655735296313; Mon, 20
+ Jun 2022 07:28:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YqzyjZnflCMPo8b/@google.com>
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220620134947.2772863-1-brauner@kernel.org> <20220620134947.2772863-2-brauner@kernel.org>
+In-Reply-To: <20220620134947.2772863-2-brauner@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 20 Jun 2022 09:28:00 -0500
+X-Gmail-Original-Message-ID: <CAHk-=wjapw1A3qmuCPsCVCi4dynbDxb9ocjzs2EF=EDufe8y8Q@mail.gmail.com>
+Message-ID: <CAHk-=wjapw1A3qmuCPsCVCi4dynbDxb9ocjzs2EF=EDufe8y8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/8] mnt_idmapping: add kmnt{g,u}id_t
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 17, 2022 at 09:30:53PM +0000, Sean Christopherson wrote:
-> On Thu, May 19, 2022, Chao Peng wrote:
-> > @@ -4028,8 +4081,11 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
-> >  	if (!sp && kvm_test_request(KVM_REQ_MMU_FREE_OBSOLETE_ROOTS, vcpu))
-> >  		return true;
-> >  
-> > -	return fault->slot &&
-> > -	       mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
-> > +	if (fault->is_private)
-> > +		return mmu_notifier_retry(vcpu->kvm, mmu_seq);
-> 
-> Hmm, this is somewhat undesirable, because faulting in private pfns will be blocked
-> by unrelated mmu_notifier updates.  The issue is mitigated to some degree by bumping
-> the sequence count if and only if overlap with a memslot is detected, e.g. mapping
-> changes that affects only userspace won't block the guest.
-> 
-> It probably won't be an issue, but at the same time it's easy to solve, and I don't
-> like piggybacking mmu_notifier_seq as private mappings shouldn't be subject to the
-> mmu_notifier.
-> 
-> That would also fix a theoretical bug in this patch where mmu_notifier_retry()
-> wouldn't be defined if CONFIG_MEMFILE_NOTIFIER=y && CONFIG_MMU_NOTIFIER=n.a
+On Mon, Jun 20, 2022 at 8:50 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> Introduces new kmnt{g,u}id_t types. Similar to k{g,u}id_t the new types
+> are just simple wrapper structs around regular {g,u}id_t types.
 
-Agreed, Thanks.
+Thanks for working on this.,
 
-> 
-> ---
->  arch/x86/kvm/mmu/mmu.c   | 11 ++++++-----
->  include/linux/kvm_host.h | 16 +++++++++++-----
->  virt/kvm/kvm_main.c      |  2 +-
->  3 files changed, 18 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 0b455c16ec64..a4cbd29433e7 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4100,10 +4100,10 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
->  		return true;
-> 
->  	if (fault->is_private)
-> -		return mmu_notifier_retry(vcpu->kvm, mmu_seq);
-> -	else
-> -		return fault->slot &&
-> -			mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
-> +		return memfile_notifier_retry(vcpu->kvm, mmu_seq);
-> +
-> +	return fault->slot &&
-> +	       mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
->  }
-> 
->  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-> @@ -4127,7 +4127,8 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
->  	if (r)
->  		return r;
-> 
-> -	mmu_seq = vcpu->kvm->mmu_notifier_seq;
-> +	mmu_seq = fault->is_private ? vcpu->kvm->memfile_notifier_seq :
-> +				      vcpu->kvm->mmu_notifier_seq;
->  	smp_rmb();
-> 
->  	r = kvm_faultin_pfn(vcpu, fault);
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 92afa5bddbc5..31f704c83099 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -773,16 +773,15 @@ struct kvm {
->  	struct hlist_head irq_ack_notifier_list;
->  #endif
-> 
-> -#if (defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)) ||\
-> -	defined(CONFIG_MEMFILE_NOTIFIER)
-> +#if (defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER))
->  	unsigned long mmu_notifier_seq;
-> -#endif
-> -
-> -#if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
->  	struct mmu_notifier mmu_notifier;
->  	long mmu_notifier_count;
->  	unsigned long mmu_notifier_range_start;
->  	unsigned long mmu_notifier_range_end;
-> +#endif
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +	unsigned long memfile_notifier_seq;
->  #endif
->  	struct list_head devices;
->  	u64 manual_dirty_log_protect;
-> @@ -1964,6 +1963,13 @@ static inline int mmu_notifier_retry_hva(struct kvm *kvm,
->  }
->  #endif
-> 
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +static inline bool memfile_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
-> +{
-> +	return kvm->memfile_notifier_seq != mmu_seq;
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
-> 
->  #define KVM_MAX_IRQ_ROUTES 4096 /* might need extension/rework in the future */
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 2b416d3bd60e..e6d34c964d51 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -898,7 +898,7 @@ static void kvm_private_mem_notifier_handler(struct memfile_notifier *notifier,
->  	KVM_MMU_LOCK(kvm);
->  	if (kvm_unmap_gfn_range(kvm, &gfn_range))
->  		kvm_flush_remote_tlbs(kvm);
-> -	kvm->mmu_notifier_seq++;
-> +	kvm->memfile_notifier_seq++;
->  	KVM_MMU_UNLOCK(kvm);
->  	srcu_read_unlock(&kvm->srcu, idx);
->  }
-> 
-> base-commit: 333ef501c7f6c6d4ef2b7678905cad0f8ef3e271
-> --
-> 
-> > +	else
-> > +		return fault->slot &&
-> > +			mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
-> >  }
-> >  
-> >  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-> > @@ -4088,7 +4144,12 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
-> >  		read_unlock(&vcpu->kvm->mmu_lock);
-> >  	else
-> >  		write_unlock(&vcpu->kvm->mmu_lock);
-> > -	kvm_release_pfn_clean(fault->pfn);
-> > +
-> > +	if (fault->is_private)
-> > +		kvm_private_mem_put_pfn(fault->slot, fault->pfn);
-> 
-> Why does the shmem path lock the page, and then unlock it here?
+I haven't actually perused the series yet, but wanted to just
+immediately react to "please don't make random-letter type names".
 
-Initially this is to prevent race between SLPT population and
-truncate/punch on the fd. Without this, a gfn may become stale before
-the page is populated in SLPT. However, with memfile_notifier_retry
-mechanism, this sounds not needed.
+"gid" is something people understand. It's a thing.
 
-> 
-> Same question for why this path marks it dirty?  The guest has the page mapped
-> so the dirty flag is immediately stale.
+"kgid" kind of made sense, in that it's the "kernel view of the gid",
+and it was still short and fairly legible.
 
-I believe so.
+"kmntgid" is neither short, legible, or makes sense.
 
-> 
-> In other words, why does KVM need to do something different for private pfns?
+For one thing, the "k" part no longer makes any sense. It's not about
+the "kernel view of the gid" any more. Sure, it's "kernel" in the
+sense that any kernel code is "kernel", but it's no longer some kind
+of "unified kernel view of a user-namespace gid".
 
-These two are inherited from Kirill's previous code. See if he has any
-comment.
+So the "k" in "kgid" doesn't make sense because it's a kernel thing,
+but more as a negative: "it is *not* the user visible gid".
 
-> 
-> > +	else
-> > +		kvm_release_pfn_clean(fault->pfn);
-> > +
-> >  	return r;
-> >  }
-> >  
-> 
-> ...
-> 
-> > diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-> > index 7f8f1c8dbed2..1d857919a947 100644
-> > --- a/arch/x86/kvm/mmu/paging_tmpl.h
-> > +++ b/arch/x86/kvm/mmu/paging_tmpl.h
-> > @@ -878,7 +878,10 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
-> >  
-> >  out_unlock:
-> >  	write_unlock(&vcpu->kvm->mmu_lock);
-> > -	kvm_release_pfn_clean(fault->pfn);
-> > +	if (fault->is_private)
-> 
-> Indirect MMUs can't support private faults, i.e. this is unnecessary.
+So instead of changing all our old "git_t" definitions to be "ugid_t"
+(for "user visible gid") the "kgid_t" thing was done.
 
-Okay.
+As a result: when you translate it to the mount namespace, I do not
+believe that the "k" makes sense any more, because now the point to
+distinguish it from "user gids" no longer exists. So it's just one
+random letter. In a long jumble of letters that isn't really very
+legible or pronounceable.
 
-> 
-> > +		kvm_private_mem_put_pfn(fault->slot, fault->pfn);
-> > +	else
-> > +		kvm_release_pfn_clean(fault->pfn);
-> >  	return r;
-> >  }
-> >  
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 3fd168972ecd..b0a7910505ed 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -2241,4 +2241,26 @@ static inline void kvm_handle_signal_exit(struct kvm_vcpu *vcpu)
-> >  /* Max number of entries allowed for each kvm dirty ring */
-> >  #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
-> >  
-> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > +static inline int kvm_private_mem_get_pfn(struct kvm_memory_slot *slot,
-> > +					  gfn_t gfn, kvm_pfn_t *pfn, int *order)
-> > +{
-> > +	int ret;
-> > +	pfn_t pfnt;
-> > +	pgoff_t index = gfn - slot->base_gfn +
-> > +			(slot->private_offset >> PAGE_SHIFT);
-> > +
-> > +	ret = slot->notifier.bs->get_lock_pfn(slot->private_file, index, &pfnt,
-> > +						order);
-> > +	*pfn = pfn_t_to_pfn(pfnt);
-> > +	return ret;
-> > +}
-> > +
-> > +static inline void kvm_private_mem_put_pfn(struct kvm_memory_slot *slot,
-> > +					   kvm_pfn_t pfn)
-> > +{
-> > +	slot->notifier.bs->put_unlock_pfn(pfn_to_pfn_t(pfn));
-> > +}
-> > +#endif /* CONFIG_HAVE_KVM_PRIVATE_MEM */
-> > +
-> >  #endif
-> > -- 
-> > 2.25.1
-> > 
+If it didn't have that 'i' in it, I would think it's a IBM mnemonic
+(and I use the word "mnemonic" ironically) for some random assembler
+instruction. They used up all the vowels they were willing to use for
+the "eieio" instructions, and all other instruction names are a jumble
+of random consonants.
+
+So please try to make the type names less of a random jumble of
+letters picked from a bag.
+
+That "kmnt[gu]id" pattern exists elsewhere too, in the conversion
+functions etc, so it's not just the type name, but more of a generic
+"please don't use letter-jumble names".
+
+Maybe just "mnt_[gu]id"" instead of "kmnt[gu]id" would be better.
+
+But even that smells wrong to me. Isn't it really "the guid/uid seen
+by the filesystem after the mount mapping"? Wouldn't it be nice to
+name by the same "seen by users" and "seen by kernel" to be "seen by
+filesystrem"? So wouln't a name like "fs_[gu]id_t" make even more
+sense?
+
+I dunno. Maybe I'm thinking about this the wrong way, but I wish the
+names would be more explanatory. My personal mental image is that the
+user namespaces map a traditional uid into the "kernel id space", and
+then the mount id mappings map into the "filesystem id space". Which
+is why to me that "k" doesn't make sense, and the "mnt" doesn't really
+make tons of sense either (the mount is the thing that _maps_ the id
+spaces, but it's not the end result of said mapping).
+
+IOW, I get the feeling that you've named the result with the mapping,
+not with the end use. That would be like naming "kuid" by the mapping
+(usernamespace), not the end result (the kernel namespace).
+
+But maybe it's just me that is confused here. Particularly since I
+didn't really more than *very* superficially and quickly scan the
+patches.
+
+                Linus
