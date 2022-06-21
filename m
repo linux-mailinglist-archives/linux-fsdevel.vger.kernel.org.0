@@ -2,108 +2,331 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 394D7552E9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 11:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 949D6552F93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 12:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349398AbiFUJk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 05:40:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52000 "EHLO
+        id S1344495AbiFUKUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 06:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349412AbiFUJkL (ORCPT
+        with ESMTP id S235564AbiFUKUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 05:40:11 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604B027B13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 02:39:59 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id u13so4871529uaq.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 02:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=/0bRExIb6Mv4sy5raFRmeQINC+UUx7zEZcUUOWWOPJg=;
-        b=NKhg6kSkfnglJlsPDVUWhCY3Iibudx7OhZC5CePFgeNekYJKNrcmU8wB8gkktmjPqY
-         f0o4DET3nwW7oGb1WQAmWVCm6yLISrVrQXMY/9qoCppMNLX7K/jA/JZ+JMs1mNT38j+N
-         qSlM2vTiSOIkQo5cZ6oY4dkMVda7fWn0vzKRT295Q67AStI8u0BTanvw38uSxo4IMvFm
-         mtbeFJOQugEk6bmbrSLJZHxNWvSEoU0AT9TQz59V3jAGDZbWiI6U0Fx8UlroTYMr9wGQ
-         +xC78kHT5AZK7k/f6wmWhdDj3ThC5Cy20ctCKCcYvb/idPExEpgvQXB/UX/ziCu3vO07
-         Q2/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=/0bRExIb6Mv4sy5raFRmeQINC+UUx7zEZcUUOWWOPJg=;
-        b=6ulePuAbTnEHOU32P3VqxwKV54/bKCc8pvDLIIRj4KppDbWPff5IKxpHwTI1eG4ZT8
-         gztA9+lXDC7i6JfONCiBPozwgY+R9cHymiFnhJ4Q2VHRJwn2u2s8+3gQTqGzeikkjYoS
-         ylCvwj1zLFQwzdHUp+fcl9Vh7sIITp/6TOF9vXvyHYlJbw/VQbYdM7qcRB7UNun6wxG7
-         Lopi0hi8N85cNSC9GKnsS21rRkrg+UFQWe5o8PaWLkkN4bfEzY4dsbuxjnQz1bqjoe09
-         0GSMQiYHsYq4uWX0Tgr15K6iTPkL2Hzf1UxBoLu/iO1KIvcT1my4P2MTQ6Z9xaR4LEcH
-         z9oA==
-X-Gm-Message-State: AJIora8c2g2A4EpQ4qTmQmTaRO446AOKSKcnbUoX6l4DpN/OrvN7ws4I
-        97cJrq1HGzXkG9Q47eO5kd5eqnIZWm1qsD4zS82u1qTdWDpiolqg
-X-Google-Smtp-Source: AGRyM1sTF/SvvxCyraPE52znD36ZX02jNmxmam87lP8bWzXT3yTfChS1a9JgJI9LjBXh9tpS4qLO5E/t+5efudcEruY=
-X-Received: by 2002:a0d:d7c7:0:b0:317:bfe8:4f2 with SMTP id
- z190-20020a0dd7c7000000b00317bfe804f2mr12417910ywd.276.1655804384555; Tue, 21
- Jun 2022 02:39:44 -0700 (PDT)
+        Tue, 21 Jun 2022 06:20:31 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E34B28712
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 03:20:30 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C914E21C4B;
+        Tue, 21 Jun 2022 10:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1655806828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=I6r4e52RQP0Q1y6nki9OqLdXE7jND5ciqzenalCNd0c=;
+        b=qnuyGsW3MkjNjRm7hNdHMdpRzJlTKIgvqk3ki+jDkivVdBWDZhJhhIBZ+MfgqRmzsZxUuU
+        8fQKeHiyH0Jmqf1A4ID1+WMzi/r2STAWfar/GuBsYZfb0elL3I7Z+uN7lehkE20EqolnDT
+        4HoJy3a6N0C4aanm054LKUd9ptp2zuQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1655806828;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=I6r4e52RQP0Q1y6nki9OqLdXE7jND5ciqzenalCNd0c=;
+        b=FUVk7Px7qeZN06ZWC47/AB1vBNewqVxK4HCWd0k6kAkzuMoBcUh2PD+tN67MpKmMF48Bno
+        FCJ08vkeTRjW3KDw==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 862F42C141;
+        Tue, 21 Jun 2022 10:20:28 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E2DDAA062B; Tue, 21 Jun 2022 12:20:27 +0200 (CEST)
+Date:   Tue, 21 Jun 2022 12:20:27 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@digitalocean.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 6/8] quota: port quota helpers mount ids
+Message-ID: <20220621102027.iw6yoo5lrr4oe3m6@quack3.lan>
+References: <20220620134947.2772863-1-brauner@kernel.org>
+ <20220620134947.2772863-7-brauner@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a05:7010:e10a:b0:2d9:e631:94d0 with HTTP; Tue, 21 Jun 2022
- 02:39:44 -0700 (PDT)
-Reply-To: dimitryedik@gmail.com
-From:   Dimitry Edik <lsbthdwrds@gmail.com>
-Date:   Tue, 21 Jun 2022 02:39:44 -0700
-Message-ID: <CAGrL05aBO8rbFuij24J-APa+Luis69gEjhj35iv_GZfkHCVYDQ@mail.gmail.com>
-Subject: Dear Partner,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=7.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_MONEY_PERCENT,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM,
-        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:935 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [lsbthdwrds[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  2.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  2.0 MONEY_FREEMAIL_REPTO Lots of money from someone using free
-        *      email?
-        *  0.0 T_MONEY_PERCENT X% of a lot of money for you
-        *  2.0 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: *******
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220620134947.2772863-7-brauner@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Dear,
+On Mon 20-06-22 15:49:45, Christian Brauner wrote:
+> Port the is_quota_modification() and dqout_transfer() helper to type
+> safe kmnt{g,u}id_t. Since these helpers are only called by a few
+> filesystems don't introduce a new helper but simply extend the existing
+> helpers to pass down the mount's idmapping.
+> 
+> Note, that this is a non-functional change, i.e. nothing will have
+> happened here or at the end of this series to how quota are done! This
+> a change necessary because we will at the end of this series make
+> ownership changes easier to reason about by keeping the original value
+> in struct iattr for both non-idmapped and idmapped mounts.
+> 
+> For now we always pass the initial idmapping which makes the idmapping
+> functions these helpers call nops.
+> 
+> This is done because we currently always pass the actual value to be
+> written to i_{g,u}id via struct iattr. While this allowed us to treat
+> the {g,u}id values in struct iattr as values that can be directly
+> written to inode->i_{g,u}id it also increases the potential for
+> confusion for filesystems.
+> 
+> Now that we are about to introduce dedicated types to prevent this
+> confusion we will ultimately only map the value from the idmapped mount
+> into a filesystem value that can be written to inode->i_{g,u}id when the
+> filesystem actually updates the inode. So pass down the initial
+> idmapping until we finished that conversion.
+> 
+> Since struct iattr uses an anonymous union with overlapping types as
+> supported by the C filesystems that haven't converted to ia_mnt{g,u}id
+> won't see any difference and things will continue to work as before.
+> In other words, no functional changes intended with this change.
+> 
+> Cc: Seth Forshee <sforshee@digitalocean.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> CC: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-My Name is Dimitry Edik from Russia A special assistance to my Russia
-boss who deals in oil import and export He was killed by the Ukraine
-soldiers at the border side. He supplied
-oil to the Philippines company and he was paid over 90 per cent of the
-transaction and the remaining $18.6 Million dollars have been paid into a
-Taiwan bank in the Philippines..i want a partner that will assist me
-with the claims. Is a (DEAL ) 40% for you and 60% for me
-I have all information for the claims.
-Kindly read and reply to me back is 100 per cent risk-free
+Yeah, this looks fairly innocent. Feel free to add:
 
-Yours Sincerely
-Dimitry Edik
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+Just when do you plan to make changes actually using the passed namespace?
+
+								Honza
+
+> ---
+>  fs/ext2/inode.c          | 4 ++--
+>  fs/ext4/inode.c          | 4 ++--
+>  fs/f2fs/file.c           | 4 ++--
+>  fs/f2fs/recovery.c       | 2 +-
+>  fs/jfs/file.c            | 4 ++--
+>  fs/ocfs2/file.c          | 2 +-
+>  fs/quota/dquot.c         | 3 ++-
+>  fs/reiserfs/inode.c      | 4 ++--
+>  fs/zonefs/super.c        | 2 +-
+>  include/linux/quotaops.h | 9 ++++++---
+>  10 files changed, 21 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index 6dc66ab97d20..593b79416e0e 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -1679,14 +1679,14 @@ int ext2_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (error)
+>  		return error;
+>  
+> -	if (is_quota_modification(inode, iattr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, iattr)) {
+>  		error = dquot_initialize(inode);
+>  		if (error)
+>  			return error;
+>  	}
+>  	if (i_uid_needs_update(&init_user_ns, iattr, inode) ||
+>  	    i_gid_needs_update(&init_user_ns, iattr, inode)) {
+> -		error = dquot_transfer(inode, iattr);
+> +		error = dquot_transfer(&init_user_ns, inode, iattr);
+>  		if (error)
+>  			return error;
+>  	}
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 05d932f81c53..72f08c184768 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5350,7 +5350,7 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (error)
+>  		return error;
+>  
+> -	if (is_quota_modification(inode, attr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, attr)) {
+>  		error = dquot_initialize(inode);
+>  		if (error)
+>  			return error;
+> @@ -5374,7 +5374,7 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  		 * counts xattr inode references.
+>  		 */
+>  		down_read(&EXT4_I(inode)->xattr_sem);
+> -		error = dquot_transfer(inode, attr);
+> +		error = dquot_transfer(&init_user_ns, inode, attr);
+>  		up_read(&EXT4_I(inode)->xattr_sem);
+>  
+>  		if (error) {
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index a35d6b12bd63..02b2d56d4edc 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -915,7 +915,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (err)
+>  		return err;
+>  
+> -	if (is_quota_modification(inode, attr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, attr)) {
+>  		err = f2fs_dquot_initialize(inode);
+>  		if (err)
+>  			return err;
+> @@ -923,7 +923,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (i_uid_needs_update(&init_user_ns, attr, inode) ||
+>  	    i_gid_needs_update(&init_user_ns, attr, inode)) {
+>  		f2fs_lock_op(F2FS_I_SB(inode));
+> -		err = dquot_transfer(inode, attr);
+> +		err = dquot_transfer(&init_user_ns, inode, attr);
+>  		if (err) {
+>  			set_sbi_flag(F2FS_I_SB(inode),
+>  					SBI_QUOTA_NEED_REPAIR);
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 3cb7f8a43b4d..8e5a089f1ac8 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -266,7 +266,7 @@ static int recover_quota_data(struct inode *inode, struct page *page)
+>  	if (!attr.ia_valid)
+>  		return 0;
+>  
+> -	err = dquot_transfer(inode, &attr);
+> +	err = dquot_transfer(&init_user_ns, inode, &attr);
+>  	if (err)
+>  		set_sbi_flag(F2FS_I_SB(inode), SBI_QUOTA_NEED_REPAIR);
+>  	return err;
+> diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+> index 1d732fd223d4..c18569b9895d 100644
+> --- a/fs/jfs/file.c
+> +++ b/fs/jfs/file.c
+> @@ -95,14 +95,14 @@ int jfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (rc)
+>  		return rc;
+>  
+> -	if (is_quota_modification(inode, iattr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, iattr)) {
+>  		rc = dquot_initialize(inode);
+>  		if (rc)
+>  			return rc;
+>  	}
+>  	if ((iattr->ia_valid & ATTR_UID && !uid_eq(iattr->ia_uid, inode->i_uid)) ||
+>  	    (iattr->ia_valid & ATTR_GID && !gid_eq(iattr->ia_gid, inode->i_gid))) {
+> -		rc = dquot_transfer(inode, iattr);
+> +		rc = dquot_transfer(&init_user_ns, inode, iattr);
+>  		if (rc)
+>  			return rc;
+>  	}
+> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> index 7497cd592258..0e09cd8911da 100644
+> --- a/fs/ocfs2/file.c
+> +++ b/fs/ocfs2/file.c
+> @@ -1146,7 +1146,7 @@ int ocfs2_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	if (status)
+>  		return status;
+>  
+> -	if (is_quota_modification(inode, attr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, attr)) {
+>  		status = dquot_initialize(inode);
+>  		if (status)
+>  			return status;
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 6cec2bfbf51b..df9af1ce2851 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -2085,7 +2085,8 @@ EXPORT_SYMBOL(__dquot_transfer);
+>  /* Wrapper for transferring ownership of an inode for uid/gid only
+>   * Called from FSXXX_setattr()
+>   */
+> -int dquot_transfer(struct inode *inode, struct iattr *iattr)
+> +int dquot_transfer(struct user_namespace *mnt_userns, struct inode *inode,
+> +		   struct iattr *iattr)
+>  {
+>  	struct dquot *transfer_to[MAXQUOTAS] = {};
+>  	struct dquot *dquot;
+> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+> index 0cffe054b78e..1e89e76972a0 100644
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -3284,7 +3284,7 @@ int reiserfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  	/* must be turned off for recursive notify_change calls */
+>  	ia_valid = attr->ia_valid &= ~(ATTR_KILL_SUID|ATTR_KILL_SGID);
+>  
+> -	if (is_quota_modification(inode, attr)) {
+> +	if (is_quota_modification(&init_user_ns, inode, attr)) {
+>  		error = dquot_initialize(inode);
+>  		if (error)
+>  			return error;
+> @@ -3367,7 +3367,7 @@ int reiserfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>  		reiserfs_write_unlock(inode->i_sb);
+>  		if (error)
+>  			goto out;
+> -		error = dquot_transfer(inode, attr);
+> +		error = dquot_transfer(&init_user_ns, inode, attr);
+>  		reiserfs_write_lock(inode->i_sb);
+>  		if (error) {
+>  			journal_end(&th);
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index 053299758deb..dd422b1d7320 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -616,7 +616,7 @@ static int zonefs_inode_setattr(struct user_namespace *mnt_userns,
+>  	     !uid_eq(iattr->ia_uid, inode->i_uid)) ||
+>  	    ((iattr->ia_valid & ATTR_GID) &&
+>  	     !gid_eq(iattr->ia_gid, inode->i_gid))) {
+> -		ret = dquot_transfer(inode, iattr);
+> +		ret = dquot_transfer(&init_user_ns, inode, iattr);
+>  		if (ret)
+>  			return ret;
+>  	}
+> diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+> index 61ee34861ca2..0342ff6584fd 100644
+> --- a/include/linux/quotaops.h
+> +++ b/include/linux/quotaops.h
+> @@ -20,7 +20,8 @@ static inline struct quota_info *sb_dqopt(struct super_block *sb)
+>  }
+>  
+>  /* i_mutex must being held */
+> -static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+> +static inline bool is_quota_modification(struct user_namespace *mnt_userns,
+> +					 struct inode *inode, struct iattr *ia)
+>  {
+>  	return ((ia->ia_valid & ATTR_SIZE) ||
+>  		i_uid_needs_update(&init_user_ns, ia, inode) ||
+> @@ -115,7 +116,8 @@ int dquot_set_dqblk(struct super_block *sb, struct kqid id,
+>  		struct qc_dqblk *di);
+>  
+>  int __dquot_transfer(struct inode *inode, struct dquot **transfer_to);
+> -int dquot_transfer(struct inode *inode, struct iattr *iattr);
+> +int dquot_transfer(struct user_namespace *mnt_userns, struct inode *inode,
+> +		   struct iattr *iattr);
+>  
+>  static inline struct mem_dqinfo *sb_dqinfo(struct super_block *sb, int type)
+>  {
+> @@ -234,7 +236,8 @@ static inline void dquot_free_inode(struct inode *inode)
+>  {
+>  }
+>  
+> -static inline int dquot_transfer(struct inode *inode, struct iattr *iattr)
+> +static inline int dquot_transfer(struct user_namespace *mnt_userns,
+> +				 struct inode *inode, struct iattr *iattr)
+>  {
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
