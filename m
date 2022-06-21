@@ -2,257 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8BE553148
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 13:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D04553293
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 14:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349091AbiFULqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 07:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58604 "EHLO
+        id S1350635AbiFUMxv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 08:53:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiFULqA (ORCPT
+        with ESMTP id S1350629AbiFUMxs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 07:46:00 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38D12A40D;
-        Tue, 21 Jun 2022 04:45:59 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 08A901D4B;
-        Tue, 21 Jun 2022 11:45:09 +0000 (UTC)
+        Tue, 21 Jun 2022 08:53:48 -0400
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE5313DF1;
+        Tue, 21 Jun 2022 05:53:46 -0700 (PDT)
+Received: by mail-vk1-xa35.google.com with SMTP id c11so6610459vkn.5;
+        Tue, 21 Jun 2022 05:53:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1655811909;
-        bh=RXUlCLC0RWJq8YLAPCBfAJBKfeRdqiLy5wUHx9yv11k=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=Yiegb2w+TBKoW1FBrs4NLYltTdPZDLhNyBZFUZ8icMMpWYqnsaJBN68VZQAYCmmOx
-         UcW0bk59jeoTB8QZpLdOoE0pgM9inOva99gBZQUa898G/suBPbBAq7Zd3g0A5qXaUV
-         XuYVMGGkUB/+73OXYgQxMrOiek8dkRu2yin/TTec=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 21 Jun 2022 14:45:57 +0300
-Message-ID: <4fc73e0d-3987-1c2c-5ec7-6b3a94d18f63@paragon-software.com>
-Date:   Tue, 21 Jun 2022 14:45:57 +0300
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yb9vkEUpdbTV1Sj8CeuQZ8eYu7ZKL4jHVAmR222mLRA=;
+        b=e/vY6Jpj/+z+4jNBXG61wwIMnsqvGO+n+pNeqKSTwqu+tDMflnMXwjBXtwgV0wSkEg
+         qrNHW56HSFEHobAQiV5ckj8MymDaFvHx97dgwBxX9SBL0f4lsjYo//O5RO78rza7tTCF
+         RrJBGxFYdPEkC1Q8e0q8AnSsXdDBE3HNHqKpozyDcSoJ8bp5IVilDPtNLTnSRbQRIh3k
+         hGLaUqE2sOZCRXMiOUdKbOsgWvqCuhMPW2LL0Eiw7Ct1TBSJNbLzFAHoRNgzMC+VXU/W
+         lH+Wfuqz91X2/iKgSR9/bMvzj+qT8Oq/iB1cbEj6HL7Q8ma4e+qRAXNiU79m7sgDN3wi
+         1pcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yb9vkEUpdbTV1Sj8CeuQZ8eYu7ZKL4jHVAmR222mLRA=;
+        b=QTYyt6JPiaiT5JDBeGEANt/us/cfUPYi7vsh07LurwEK0W0fm0YiH3uyWAD+NEKNAk
+         aZHp4oTLrGg1qOWxFOhJ/9aCBpbOkd8Eoz5LkGLj47bcD4kIraFxMoUiZ7KPw1DxprMV
+         Z0CNPw57WwbyMCU7P+Z3P8PJav1p0jlHcL1coMn+M5NxKGX27r+TGBkim8K33rTlck59
+         0SVF3c00d6QtkM6y3lscZYptFUEB7Gvuz71BFdPoqw/i75JcXvXv+A3X9y2F22N8YKma
+         Ea/cX8pi2UA4t9hQaYNx22+W4Nq1Oqp6HmRWNdE35VLi+cGUPvUh3hsZsEpJE/3umnGK
+         GoWA==
+X-Gm-Message-State: AJIora+15SwMcSQPuohWSr3PZFbuc031/S9nz9JVfUYKcp8QhJqV1Dtc
+        2b+IE+zLew2aMILYwr9roRMmg+0adijGx5L1gQ0=
+X-Google-Smtp-Source: AGRyM1vFzT4bTXaOSPFTRT4YwVmNjSD0GSGvkvoWAOfpVMB4xTGm94sXUrMMBEZN6PZSeEBHeHaR+QPptQqJebDVhXw=
+X-Received: by 2002:a1f:73c1:0:b0:35c:cb95:832 with SMTP id
+ o184-20020a1f73c1000000b0035ccb950832mr10743117vkc.15.1655816025521; Tue, 21
+ Jun 2022 05:53:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: [PATCH 2/2] fs/ntfs3: Enable FALLOC_FL_INSERT_RANGE
-Content-Language: en-US
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <ab1c8348-acde-114f-eb66-0074045731a4@paragon-software.com>
-In-Reply-To: <ab1c8348-acde-114f-eb66-0074045731a4@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+References: <20190407232728.GF26298@dastard> <CAOQ4uxgD4ErSUtbu0xqb5dSm_tM4J92qt6=hGH8GRc5KNGqP9A@mail.gmail.com>
+ <20190408141114.GC15023@quack2.suse.cz> <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
+ <20190409082605.GA8107@quack2.suse.cz> <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
+ <20220617151135.yc6vytge6hjabsuz@quack3> <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
+ <20220620091136.4uosazpwkmt65a5d@quack3.lan> <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
+ <20220621085956.y5wyopfgzmqkaeiw@quack3.lan>
+In-Reply-To: <20220621085956.y5wyopfgzmqkaeiw@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 21 Jun 2022 15:53:33 +0300
+Message-ID: <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
+Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw workload
+To:     Jan Kara <jack@suse.cz>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changed logic in ntfs_fallocate - more clear checks in beginning
-instead of the middle of function and added FALLOC_FL_INSERT_RANGE.
-Fixes xfstest generic/064
-Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+On Tue, Jun 21, 2022 at 11:59 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 21-06-22 10:49:48, Amir Goldstein wrote:
+> > > How exactly do you imagine the synchronization of buffered read against
+> > > buffered write would work? Lock all pages for the read range in the page
+> > > cache? You'd need to be careful to not bring the machine OOM when someone
+> > > asks to read a huge range...
+> >
+> > I imagine that the atomic r/w synchronisation will remain *exactly* as it is
+> > today by taking XFS_IOLOCK_SHARED around generic_file_read_iter(),
+> > when reading data into user buffer, but before that, I would like to issue
+> > and wait for read of the pages in the range to reduce the probability
+> > of doing the read I/O under XFS_IOLOCK_SHARED.
+> >
+> > The pre-warm of page cache does not need to abide to the atomic read
+> > semantics and it is also tolerable if some pages are evicted in between
+> > pre-warn and read to user buffer - in the worst case this will result in
+> > I/O amplification, but for the common case, it will be a big win for the
+> > mixed random r/w performance on xfs.
+> >
+> > To reduce risk of page cache thrashing we can limit this optimization
+> > to a maximum number of page cache pre-warm.
+> >
+> > The questions are:
+> > 1. Does this plan sound reasonable?
+>
+> Ah, I see now. So essentially the idea is to pull the readahead (which is
+> currently happening from filemap_read() -> filemap_get_pages()) out from under
+> the i_rwsem. It looks like a fine idea to me.
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/file.c | 97 ++++++++++++++++++++++++++++---------------------
-  1 file changed, 55 insertions(+), 42 deletions(-)
+Great!
+Anyone doesn't like the idea or has another suggestion?
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 27c32692513c..bdffe4b8554b 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -533,21 +533,35 @@ static int ntfs_truncate(struct inode *inode, loff_t new_size)
-  static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  {
-  	struct inode *inode = file->f_mapping->host;
-+	struct address_space *mapping = inode->i_mapping;
-  	struct super_block *sb = inode->i_sb;
-  	struct ntfs_sb_info *sbi = sb->s_fs_info;
-  	struct ntfs_inode *ni = ntfs_i(inode);
-  	loff_t end = vbo + len;
-  	loff_t vbo_down = round_down(vbo, PAGE_SIZE);
--	loff_t i_size;
-+	bool is_supported_holes = is_sparsed(ni) || is_compressed(ni);
-+	loff_t i_size, new_size;
-+	bool map_locked;
-  	int err;
-  
-  	/* No support for dir. */
-  	if (!S_ISREG(inode->i_mode))
-  		return -EOPNOTSUPP;
-  
--	/* Return error if mode is not supported. */
--	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_COLLAPSE_RANGE)) {
-+	/*
-+	 * vfs_fallocate checks all possible combinations of mode.
-+	 * Do additional checks here before ntfs_set_state(dirty).
-+	 */
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		if (!is_supported_holes)
-+			return -EOPNOTSUPP;
-+	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
-+	} else if (mode & FALLOC_FL_INSERT_RANGE) {
-+		if (!is_supported_holes)
-+			return -EOPNOTSUPP;
-+	} else if (mode &
-+		   ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
-+		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_INSERT_RANGE)) {
-  		ntfs_inode_warn(inode, "fallocate(0x%x) is not supported",
-  				mode);
-  		return -EOPNOTSUPP;
-@@ -557,6 +571,8 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  
-  	inode_lock(inode);
-  	i_size = inode->i_size;
-+	new_size = max(end, i_size);
-+	map_locked = false;
-  
-  	if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
-  		/* Should never be here, see ntfs_file_open. */
-@@ -564,38 +580,27 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  		goto out;
-  	}
-  
-+	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
-+		    FALLOC_FL_INSERT_RANGE)) {
-+		inode_dio_wait(inode);
-+		filemap_invalidate_lock(mapping);
-+		map_locked = true;
-+	}
-+
-  	if (mode & FALLOC_FL_PUNCH_HOLE) {
-  		u32 frame_size;
-  		loff_t mask, vbo_a, end_a, tmp;
-  
--		if (!(mode & FALLOC_FL_KEEP_SIZE)) {
--			err = -EINVAL;
--			goto out;
--		}
--
--		err = filemap_write_and_wait_range(inode->i_mapping, vbo,
--						   end - 1);
-+		err = filemap_write_and_wait_range(mapping, vbo, end - 1);
-  		if (err)
-  			goto out;
-  
--		err = filemap_write_and_wait_range(inode->i_mapping, end,
--						   LLONG_MAX);
-+		err = filemap_write_and_wait_range(mapping, end, LLONG_MAX);
-  		if (err)
-  			goto out;
-  
--		inode_dio_wait(inode);
--
-  		truncate_pagecache(inode, vbo_down);
-  
--		if (!is_sparsed(ni) && !is_compressed(ni)) {
--			/*
--			 * Normal file, can't make hole.
--			 * TODO: Try to find way to save info about hole.
--			 */
--			err = -EOPNOTSUPP;
--			goto out;
--		}
--
-  		ni_lock(ni);
-  		err = attr_punch_hole(ni, vbo, len, &frame_size);
-  		ni_unlock(ni);
-@@ -627,17 +632,11 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  			ni_unlock(ni);
-  		}
-  	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
--		if (mode & ~FALLOC_FL_COLLAPSE_RANGE) {
--			err = -EINVAL;
--			goto out;
--		}
--
-  		/*
-  		 * Write tail of the last page before removed range since
-  		 * it will get removed from the page cache below.
-  		 */
--		err = filemap_write_and_wait_range(inode->i_mapping, vbo_down,
--						   vbo);
-+		err = filemap_write_and_wait_range(mapping, vbo_down, vbo);
-  		if (err)
-  			goto out;
-  
-@@ -645,34 +644,45 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  		 * Write data that will be shifted to preserve them
-  		 * when discarding page cache below.
-  		 */
--		err = filemap_write_and_wait_range(inode->i_mapping, end,
--						   LLONG_MAX);
-+		err = filemap_write_and_wait_range(mapping, end, LLONG_MAX);
-  		if (err)
-  			goto out;
-  
--		/* Wait for existing dio to complete. */
--		inode_dio_wait(inode);
--
-  		truncate_pagecache(inode, vbo_down);
-  
-  		ni_lock(ni);
-  		err = attr_collapse_range(ni, vbo, len);
-  		ni_unlock(ni);
--	} else {
--		/*
--		 * Normal file: Allocate clusters, do not change 'valid' size.
--		 */
--		loff_t new_size = max(end, i_size);
-+	} else if (mode & FALLOC_FL_INSERT_RANGE) {
-+		/* Check new size. */
-+		err = inode_newsize_ok(inode, new_size);
-+		if (err)
-+			goto out;
-+
-+		/* Write out all dirty pages. */
-+		err = filemap_write_and_wait_range(mapping, vbo_down,
-+						   LLONG_MAX);
-+		if (err)
-+			goto out;
-+		truncate_pagecache(inode, vbo_down);
-  
-+		ni_lock(ni);
-+		err = attr_insert_range(ni, vbo, len);
-+		ni_unlock(ni);
-+	} else {
-+		/* Check new size. */
-  		err = inode_newsize_ok(inode, new_size);
-  		if (err)
-  			goto out;
-  
-+		/*
-+		 * Allocate clusters, do not change 'valid' size.
-+		 */
-  		err = ntfs_set_size(inode, new_size);
-  		if (err)
-  			goto out;
-  
--		if (is_sparsed(ni) || is_compressed(ni)) {
-+		if (is_supported_holes) {
-  			CLST vcn_v = ni->i_valid >> sbi->cluster_bits;
-  			CLST vcn = vbo >> sbi->cluster_bits;
-  			CLST cend = bytes_to_cluster(sbi, end);
-@@ -720,6 +730,9 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
-  	}
-  
-  out:
-+	if (map_locked)
-+		filemap_invalidate_unlock(mapping);
-+
-  	if (err == -EFBIG)
-  		err = -ENOSPC;
-  
--- 
-2.36.1
+>
+> > 2. Is there a ready helper (force_page_cache_readahead?) that
+> >     I can use which takes the required page/invalidate locks?
+>
+> page_cache_sync_readahead() should be the function you need. It does take
+> care to lock invalidate_lock internally when creating & reading pages. I
 
+Thanks, I'll try that.
 
+> just cannot comment on whether calling this without i_rwsem does not break
+> some internal XFS expectations for stuff like reflink etc.
+
+relink is done under xfs_ilock2_io_mmap => filemap_invalidate_lock_two
+so it should not be a problem.
+
+pNFS leases I need to look into.
+
+Thanks,
+Amir.
