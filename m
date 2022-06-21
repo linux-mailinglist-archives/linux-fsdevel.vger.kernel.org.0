@@ -2,119 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF2BE552DC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 11:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 394D7552E9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 11:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231570AbiFUJAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 05:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45094 "EHLO
+        id S1349398AbiFUJk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 05:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiFUJAA (ORCPT
+        with ESMTP id S1349412AbiFUJkL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 05:00:00 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE1F362F6;
-        Tue, 21 Jun 2022 01:59:58 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 6E59621EFE;
-        Tue, 21 Jun 2022 08:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1655801997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eUEOchQkf9x5e/yDFu3Cw69RvWgl2OREI1612saaUJc=;
-        b=hhB3bGID15ObSnv+vpj4tfA3asH5XkoQyw1JwyYueuxBwfItcIepMAsHjsVSyVQHFTtoMo
-        dLDoaMHYTcgWzmxCn1w4/HNJ5nc/HrxtXvWP3lCtyyK2bEi5MalqE93seFoBsZtruh+dlg
-        RFssgRFtP8MqEzYiltByvy/fLi4Pb7k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1655801997;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eUEOchQkf9x5e/yDFu3Cw69RvWgl2OREI1612saaUJc=;
-        b=66wSKJj2EmFckhAw3sknT4WwhCws68vrJiDXAfC64IjSHgJZ7KdIcsASPJf3c6Hpb+ozqr
-        j4hi66SXh5PqgUCg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 5806B2C141;
-        Tue, 21 Jun 2022 08:59:57 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id ED477A062B; Tue, 21 Jun 2022 10:59:56 +0200 (CEST)
-Date:   Tue, 21 Jun 2022 10:59:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw
- workload
-Message-ID: <20220621085956.y5wyopfgzmqkaeiw@quack3.lan>
-References: <20190407232728.GF26298@dastard>
- <CAOQ4uxgD4ErSUtbu0xqb5dSm_tM4J92qt6=hGH8GRc5KNGqP9A@mail.gmail.com>
- <20190408141114.GC15023@quack2.suse.cz>
- <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
- <20190409082605.GA8107@quack2.suse.cz>
- <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
- <20220617151135.yc6vytge6hjabsuz@quack3>
- <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
- <20220620091136.4uosazpwkmt65a5d@quack3.lan>
- <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
+        Tue, 21 Jun 2022 05:40:11 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604B027B13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 02:39:59 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id u13so4871529uaq.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 02:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=/0bRExIb6Mv4sy5raFRmeQINC+UUx7zEZcUUOWWOPJg=;
+        b=NKhg6kSkfnglJlsPDVUWhCY3Iibudx7OhZC5CePFgeNekYJKNrcmU8wB8gkktmjPqY
+         f0o4DET3nwW7oGb1WQAmWVCm6yLISrVrQXMY/9qoCppMNLX7K/jA/JZ+JMs1mNT38j+N
+         qSlM2vTiSOIkQo5cZ6oY4dkMVda7fWn0vzKRT295Q67AStI8u0BTanvw38uSxo4IMvFm
+         mtbeFJOQugEk6bmbrSLJZHxNWvSEoU0AT9TQz59V3jAGDZbWiI6U0Fx8UlroTYMr9wGQ
+         +xC78kHT5AZK7k/f6wmWhdDj3ThC5Cy20ctCKCcYvb/idPExEpgvQXB/UX/ziCu3vO07
+         Q2/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=/0bRExIb6Mv4sy5raFRmeQINC+UUx7zEZcUUOWWOPJg=;
+        b=6ulePuAbTnEHOU32P3VqxwKV54/bKCc8pvDLIIRj4KppDbWPff5IKxpHwTI1eG4ZT8
+         gztA9+lXDC7i6JfONCiBPozwgY+R9cHymiFnhJ4Q2VHRJwn2u2s8+3gQTqGzeikkjYoS
+         ylCvwj1zLFQwzdHUp+fcl9Vh7sIITp/6TOF9vXvyHYlJbw/VQbYdM7qcRB7UNun6wxG7
+         Lopi0hi8N85cNSC9GKnsS21rRkrg+UFQWe5o8PaWLkkN4bfEzY4dsbuxjnQz1bqjoe09
+         0GSMQiYHsYq4uWX0Tgr15K6iTPkL2Hzf1UxBoLu/iO1KIvcT1my4P2MTQ6Z9xaR4LEcH
+         z9oA==
+X-Gm-Message-State: AJIora8c2g2A4EpQ4qTmQmTaRO446AOKSKcnbUoX6l4DpN/OrvN7ws4I
+        97cJrq1HGzXkG9Q47eO5kd5eqnIZWm1qsD4zS82u1qTdWDpiolqg
+X-Google-Smtp-Source: AGRyM1sTF/SvvxCyraPE52znD36ZX02jNmxmam87lP8bWzXT3yTfChS1a9JgJI9LjBXh9tpS4qLO5E/t+5efudcEruY=
+X-Received: by 2002:a0d:d7c7:0:b0:317:bfe8:4f2 with SMTP id
+ z190-20020a0dd7c7000000b00317bfe804f2mr12417910ywd.276.1655804384555; Tue, 21
+ Jun 2022 02:39:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a05:7010:e10a:b0:2d9:e631:94d0 with HTTP; Tue, 21 Jun 2022
+ 02:39:44 -0700 (PDT)
+Reply-To: dimitryedik@gmail.com
+From:   Dimitry Edik <lsbthdwrds@gmail.com>
+Date:   Tue, 21 Jun 2022 02:39:44 -0700
+Message-ID: <CAGrL05aBO8rbFuij24J-APa+Luis69gEjhj35iv_GZfkHCVYDQ@mail.gmail.com>
+Subject: Dear Partner,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=7.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_MONEY_PERCENT,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM,
+        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:935 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [lsbthdwrds[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  2.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+        *  2.0 MONEY_FREEMAIL_REPTO Lots of money from someone using free
+        *      email?
+        *  0.0 T_MONEY_PERCENT X% of a lot of money for you
+        *  2.0 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 21-06-22 10:49:48, Amir Goldstein wrote:
-> > How exactly do you imagine the synchronization of buffered read against
-> > buffered write would work? Lock all pages for the read range in the page
-> > cache? You'd need to be careful to not bring the machine OOM when someone
-> > asks to read a huge range...
-> 
-> I imagine that the atomic r/w synchronisation will remain *exactly* as it is
-> today by taking XFS_IOLOCK_SHARED around generic_file_read_iter(),
-> when reading data into user buffer, but before that, I would like to issue
-> and wait for read of the pages in the range to reduce the probability
-> of doing the read I/O under XFS_IOLOCK_SHARED.
-> 
-> The pre-warm of page cache does not need to abide to the atomic read
-> semantics and it is also tolerable if some pages are evicted in between
-> pre-warn and read to user buffer - in the worst case this will result in
-> I/O amplification, but for the common case, it will be a big win for the
-> mixed random r/w performance on xfs.
-> 
-> To reduce risk of page cache thrashing we can limit this optimization
-> to a maximum number of page cache pre-warm.
-> 
-> The questions are:
-> 1. Does this plan sound reasonable?
+Hello Dear,
 
-Ah, I see now. So essentially the idea is to pull the readahead (which is
-currently happening from filemap_read() -> filemap_get_pages()) out from under
-the i_rwsem. It looks like a fine idea to me.
+My Name is Dimitry Edik from Russia A special assistance to my Russia
+boss who deals in oil import and export He was killed by the Ukraine
+soldiers at the border side. He supplied
+oil to the Philippines company and he was paid over 90 per cent of the
+transaction and the remaining $18.6 Million dollars have been paid into a
+Taiwan bank in the Philippines..i want a partner that will assist me
+with the claims. Is a (DEAL ) 40% for you and 60% for me
+I have all information for the claims.
+Kindly read and reply to me back is 100 per cent risk-free
 
-> 2. Is there a ready helper (force_page_cache_readahead?) that
->     I can use which takes the required page/invalidate locks?
-
-page_cache_sync_readahead() should be the function you need. It does take
-care to lock invalidate_lock internally when creating & reading pages. I
-just cannot comment on whether calling this without i_rwsem does not break
-some internal XFS expectations for stuff like reflink etc.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yours Sincerely
+Dimitry Edik
