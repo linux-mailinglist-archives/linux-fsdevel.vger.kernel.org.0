@@ -2,156 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 935E7553D6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jun 2022 23:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A06553F63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 02:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355830AbiFUVTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 17:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34086 "EHLO
+        id S230182AbiFVASa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 20:18:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355818AbiFUVTC (ORCPT
+        with ESMTP id S230342AbiFVAS3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 17:19:02 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180322F659
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 14:04:35 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id b11-20020a92340b000000b002d3dbbc7b15so9929919ila.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 14:04:35 -0700 (PDT)
+        Tue, 21 Jun 2022 20:18:29 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0E8824BD8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 17:18:26 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-31780ad7535so120950397b3.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 17:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7oGTotRq4WT1s39cOcG1SCSH+1obZhPZeWPvkH3sdIY=;
+        b=pRiRdRZvjWOHeq131C46xsgsl6zJcY8C05hCjZzCa9c5mI+uxZS+aWO42sFaDVcz0b
+         nZ6JYvtfY+Dyq2C3cKgNrJEzQb345RwaajVb7ThwG5hC4/DO+seCNsOY5IrbWmSj93x2
+         odlhjOIH9KnXoJQSU0k/qCogGY7lOn36CEKee3zO/Hjmxp94lYh4Dbu3OZ2pdCN470GB
+         +pFf6fL2HolqA61KHmkwKp5hmNh6RdX/SFg+piwu9viA8TJy2VVclhV5fTeHJgt9D5mU
+         YbHFvldnFR/xTL31nImBrcfsqLyAFoBI+mjOIE5RD2EhoaF6AlCw0MOPtH1rTD4uNfEc
+         xIkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=C+3Mp5eGJJIAr0nNvTRNoEHotNhZy1SzSYyrJ1qhGOM=;
-        b=qEFTlILK60hoCJanIvMY36opLc9p7Xx61xD9z39dC7ajTjV0AIaaK+ft9PZmmobUGQ
-         BPLiA7rBBJ06zThGh+r9qdtOnLFOqeBbSrhQJ68dH6PPojOU3e60epMiZ5mKnJN3oxrX
-         ndsHxVoB6B18/wlAbdgHeuw66pDeTGQJbWjmB17hbW8pHcoEYCdlg/Mmqar/qbaUVNF7
-         qGKrZTWKxiyC7muhQsUZrCvjuyv7fpoOFssvjZWWuKDqtUi6SomUVoKlprMrQl4qe+0P
-         c3EoOi93uX81XfIubR5/Zwf5E84AoORtNGo44wuKxm8KQ+wm+8GbFMTe2z8ICGrE+zIQ
-         COcA==
-X-Gm-Message-State: AJIora84FD2A5izw1qrvvCa8Bn9lR+pneJcd71szPScDwWwMxbG0/Bw8
-        e75c43BhU9/KFLr2G0icQpdd7xidU2SiOnnROYvppYp34f7Y
-X-Google-Smtp-Source: AGRyM1sSwSuEpD8CazXxC+Sjb+PX5IKY/ITJdC4XGJ7MaOqbylO8rX/M02XfpKscvH+Ko7Rjsw61gFt0SfI94zSwPOQcVzbrjudm
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7oGTotRq4WT1s39cOcG1SCSH+1obZhPZeWPvkH3sdIY=;
+        b=MxxA5mrjZH456GhPKLuzN7PHWZV5uP17Bma19VKRVOFAoPGkQVzn4nRCFT6SD+k5M4
+         Ik8roY0LsyvL6TX79Z7TieIjJxCxAiROogFdJlS/mxpjiTlvLHLfpeZlB+ZolGTJUA5w
+         Mva8FiAZnuGr21OwqssMGlakDNZKi6/j9LRa7zD3ZUP++5Nu8paVyRSM4Cvn8J1Fw7bD
+         3b+SHM+5cvBKtcBP33C6Sfy1Gj6VPRqk58bXJFsT4/reA3pkdl+AVxxKWbyn9DIEZ/aR
+         d2AoW2GBKYsOk4qegX6xtrjkPxYqmTXzPxl4PcQOmbX1HFl+kespydDZEFKSlCH3Fu4E
+         vrNg==
+X-Gm-Message-State: AJIora+kzvO5lAijs9ErQSTkuJHuEqzyoOuhMDuJzYtbBxA5C0m+fWVj
+        1ORMYjjjVT2+vRfxsAGXOqjJuUMcKny7HYADfqPNZQ==
+X-Google-Smtp-Source: AGRyM1uZMeYsz5mgtXqZFmpIy7OI6WlLsf1bMvgdPOTGVewZvG7oLbOCHMIQXhvHTWsNX+x8sktVDLoJVaFNzPzXsDo=
+X-Received: by 2002:a0d:cd81:0:b0:2ff:aa45:4238 with SMTP id
+ p123-20020a0dcd81000000b002ffaa454238mr984226ywd.155.1655857105884; Tue, 21
+ Jun 2022 17:18:25 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:78a:b0:2d3:af3f:a9e2 with SMTP id
- q10-20020a056e02078a00b002d3af3fa9e2mr115686ils.96.1655845474431; Tue, 21 Jun
- 2022 14:04:34 -0700 (PDT)
-Date:   Tue, 21 Jun 2022 14:04:34 -0700
-In-Reply-To: <00000000000073aa8605e1df6ab9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004e7a7505e1fb919f@google.com>
-Subject: Re: [syzbot] general protection fault in do_mpage_readpage
-From:   syzbot <syzbot+dbbd022e608bb122cf4e@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20220616211016.4037482-1-dylanbhatch@google.com>
+ <941e0991-eb3e-f988-8262-3d51ff8badad@linuxfoundation.org>
+ <CADBMgpwt2ALzBTtEm7v6DLL_9pjUhVLDpBLHXn1b0bvVf2BSvg@mail.gmail.com>
+ <47312e8a-87fe-c7dc-d354-74e81482bc1e@linuxfoundation.org>
+ <CADBMgpx9hwHaWe=m2kQhKOJFWnLSejoWa6wz1VECEkLhWq4qog@mail.gmail.com> <a5f46e4e-a472-77ce-f61e-b2f9922bdd50@linuxfoundation.org>
+In-Reply-To: <a5f46e4e-a472-77ce-f61e-b2f9922bdd50@linuxfoundation.org>
+From:   Dylan Hatch <dylanbhatch@google.com>
+Date:   Tue, 21 Jun 2022 17:18:14 -0700
+Message-ID: <CADBMgpzyOKVO1ju_WkxYLhXGvwJjHoL6V-+Nw49UdTFoPY7NvQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests/proc: Fix proc-pid-vm for vsyscall=xonly.
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Jun 17, 2022 at 3:27 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> On 6/17/22 4:05 PM, Dylan Hatch wrote:
+> > On Fri, Jun 17, 2022 at 12:38 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+> >>
+> >> On 6/17/22 12:45 PM, Dylan Hatch wrote:
+> >>> On Thu, Jun 16, 2022 at 4:01 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+> >>>>
+> >
+> >>
+> >> It depends on the goal of the test. Is the test looking to see if the
+> >> probe fails with insufficient permissions, then you are changing the
+> >> test to not check for that condition.
+> >
+> > The goal of the test is to validate the output of /proc/$PID/maps, and
+> > the memory probe is only needed as setup to determine what the
+> > expected output should be. This used to be sufficient, but now it can
+> > no longer fully disambiguate it with the introduction of
+> > vsyscall=xonly. The solution proposed here is to disambiguate it by
+> > also checking the length read from /proc/$PID/maps.
+> >
+> >>
+>
+> Makes sense. However the question is does this test need to be enhanced
+> with the addition of vsyscall=xonly?
+>
+> >> I would say in this case, the right approach would be to leave the test
+> >> as is and report expected fail and add other cases.
+> >>
+> >> The goal being adding more coverage and not necessarily opt for a simple
+> >> solution.
+> >
+> > What does it mean to report a test as expected fail? Is this a
+> > mechanism unique to kselftest? I agree adding another test case would
+> > work, but I'm unsure how to do it within the framework of kselftest.
+> > Ideally, there would be separate test cases for vsyscall=none,
+> > vsyscall=emulate, and vsyscall=xonly, but these options can be toggled
+> > both in the kernel config and on the kernel command line, meaning (to
+> > the best of my knowledge) these test cases would have to be built
+> > conditionally against the conflig options and also parse the command
+> > line for the 'vsyscall' option.
+> >
+>
+> Expected fail isn't unique kselftest. It is a testing criteria where
+> a test is expected to fail. For example if a file can only be opened
+> with privileged user a test that runs and looks for failure is an
+> expected to fail case - we are looking for a failure.
+>
+> A complete battery of tests for vsyscall=none, vsyscall=emulate,
+> vsyscall=xonly would test for conditions that are expected to pass
+> and fail based on the config.
+>
+> tools/testing/selftests/proc/config doesn't have any config options
+> that are relevant to VSYSCALL
+>
+> Can you please send me the how you are running the test and what the
+> failure output looks like?
 
-HEAD commit:    34d1d36073ea Add linux-next specific files for 20220621
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11eeec3ff00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b24b62d1c051cfc8
-dashboard link: https://syzkaller.appspot.com/bug?extid=dbbd022e608bb122cf4e
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1216c174080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14362fd8080000
+I'm building a kernel with the following relevant configurations:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dbbd022e608bb122cf4e@syzkaller.appspotmail.com
+$ cat .config | grep VSYSCALL
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_X86_VSYSCALL_EMULATION=y
+CONFIG_LEGACY_VSYSCALL_XONLY=y
+# CONFIG_LEGACY_VSYSCALL_NONE is not set
 
-loop0: detected capacity change from 0 to 8191
-ntfs3: loop0: Mark volume as dirty due to NTFS errors
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 3604 Comm: syz-executor200 Not tainted 5.19.0-rc3-next-20220621-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:map_buffer_to_folio fs/mpage.c:107 [inline]
-RIP: 0010:do_mpage_readpage+0xfe8/0x19f0 fs/mpage.c:228
-Code: 85 ed 0f 84 98 01 00 00 49 be 00 00 00 00 00 fc ff df 4c 89 ed 45 31 e4 eb 2c e8 73 8f 93 ff 48 8d 7d 08 48 89 f8 48 c1 e8 03 <42> 80 3c 30 00 0f 85 53 08 00 00 48 8b 6d 08 41 83 c4 01 49 39 ed
-RSP: 0018:ffffc90002f9f7c0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000002 RCX: 0000000000000000
-RDX: ffff8880206957c0 RSI: ffffffff81e72ddd RDI: 0000000000000008
-RBP: 0000000000000000 R08: 0000000000000004 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffffc90002f9f960
-FS:  000055555626d300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000005d84c8 CR3: 000000007e93c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- mpage_read_folio+0xa5/0x140 fs/mpage.c:378
- ntfs_read_folio+0x148/0x1e0 fs/ntfs3/inode.c:706
- filemap_read_folio+0x3c/0x1d0 mm/filemap.c:2396
- do_read_cache_folio+0x251/0x5b0 mm/filemap.c:3521
- do_read_cache_page mm/filemap.c:3563 [inline]
- read_cache_page+0x59/0x2a0 mm/filemap.c:3572
- read_mapping_page include/linux/pagemap.h:756 [inline]
- ntfs_map_page fs/ntfs3/ntfs_fs.h:897 [inline]
- ntfs_fill_super+0x27e9/0x3730 fs/ntfs3/super.c:1145
- get_tree_bdev+0x4a2/0x7e0 fs/super.c:1294
- vfs_get_tree+0x89/0x2f0 fs/super.c:1501
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1320/0x1fa0 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f240cf2feaa
-Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffefafe8648 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffefafe86a0 RCX: 00007f240cf2feaa
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffefafe8660
-RBP: 00007ffefafe8660 R08: 00007ffefafe86a0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000286 R12: 00000000200034e8
-R13: 0000000000000003 R14: 0000000000000004 R15: 000000000000021f
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:map_buffer_to_folio fs/mpage.c:107 [inline]
-RIP: 0010:do_mpage_readpage+0xfe8/0x19f0 fs/mpage.c:228
-Code: 85 ed 0f 84 98 01 00 00 49 be 00 00 00 00 00 fc ff df 4c 89 ed 45 31 e4 eb 2c e8 73 8f 93 ff 48 8d 7d 08 48 89 f8 48 c1 e8 03 <42> 80 3c 30 00 0f 85 53 08 00 00 48 8b 6d 08 41 83 c4 01 49 39 ed
-RSP: 0018:ffffc90002f9f7c0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000002 RCX: 0000000000000000
-RDX: ffff8880206957c0 RSI: ffffffff81e72ddd RDI: 0000000000000008
-RBP: 0000000000000000 R08: 0000000000000004 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffffc90002f9f960
-FS:  000055555626d300(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f240cf1fd20 CR3: 000000007e93c000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	85 ed                	test   %ebp,%ebp
-   2:	0f 84 98 01 00 00    	je     0x1a0
-   8:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
-   f:	fc ff df
-  12:	4c 89 ed             	mov    %r13,%rbp
-  15:	45 31 e4             	xor    %r12d,%r12d
-  18:	eb 2c                	jmp    0x46
-  1a:	e8 73 8f 93 ff       	callq  0xff938f92
-  1f:	48 8d 7d 08          	lea    0x8(%rbp),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	0f 85 53 08 00 00    	jne    0x888
-  35:	48 8b 6d 08          	mov    0x8(%rbp),%rbp
-  39:	41 83 c4 01          	add    $0x1,%r12d
-  3d:	49 39 ed             	cmp    %rbp,%r13
+Running the test without this change both in virtme and on real
+hardware gives the following error:
 
+# ./tools/testing/selftests/proc/proc-pid-vm
+proc-pid-vm: proc-pid-vm.c:328: int main(void): Assertion `rv == len' failed.
+Aborted
+
+This is because when CONFIG_LEGACY_VSYSCALL_XONLY=y a probe of the
+vsyscall page results in a segfault. This test was originally written
+before this option existed so it incorrectly assumes the vsyscall page
+isn't mapped at all, and the expected buffer length doesn't match the
+result.
+
+An alternate method of fixing this test could involve setting the
+expected result based on the config with #ifdef blocks, but I wasn't
+sure if that could be done for kernel config options in kselftest
+code. There's also the matter of checking the kernel command line for
+a `vsyscall=` arg, is parsing /proc/cmdline the best way to do this?
+
+>
+> thanks,
+> -- Shuah
+
+Thanks,
+Dylan
