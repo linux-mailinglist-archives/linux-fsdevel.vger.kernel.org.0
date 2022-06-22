@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4328B553FA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 02:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A976553FD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 03:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbiFVAu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 20:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
+        id S1355328AbiFVBBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 21:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbiFVAuZ (ORCPT
+        with ESMTP id S231727AbiFVBBZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 20:50:25 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81352F640
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 17:50:24 -0700 (PDT)
+        Tue, 21 Jun 2022 21:01:25 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B90031903
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 18:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655859024; x=1687395024;
+  t=1655859684; x=1687395684;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=HYRjYJoxMg6c6cOtfOUTqLoFZMzyocZwiWmootbhLaE=;
-  b=JB3dmakIPndIJPXNTzohYOvYxxG96bo9wG6cJcnSjV+HcH10OOAxtBJu
-   bH+Qe/PVFz4u+DU7UfIcCWeX/cYy1kcGF07cBuruHh6UUHMBWWWN1kntQ
-   t31LWD6dbj7ms8QjXzapO/p1G/o0LnTlpW7RXwirVZHjGOEs5vXHF58WF
-   yMQQEt0r8+KrS5O6JFmtqi8J6iF+K4HRtmeGmm5L408+rWwWNqZCFHoC1
-   ZphzQYv1CmnCdufHi1PqUZTRTKEQBEOLmm8+v7arAXSPwuX7Gokx6fvhm
-   yy1sigGyOQiLcqwcEp9dZtXMp8P7lBICsQbYHd/3GBIPOe0rcwh9N1X+z
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="260098092"
+  bh=/8Ay8SE6vdamgHyU3COJjdiwNfO/DBJ5aQMwG+8gXBw=;
+  b=LVcKDCwynsfkbJcwbsX9kkBpI2bu4Xl2B2mwPLRL23iY8b6Je5c2OUMU
+   gWTtPnn19/udhcwtXyf3YORjB5Qapl0OqBkl6gK9nriNUlRGayVqstrbl
+   IFOMXwXnr3pUURdPnQ4jqNECjI1ZTFhuTVcmQSd0T/JpZjRnfe8PtuA0z
+   wUvAuIhKFsJkKHSJVKHO8fFxG2onW0hwNr9A+Q8I9cY6sadHMTtAc/824
+   IFMWBXopNkiB8IL5KVB/o3nSCAvZHGT5ZTI92E6elmWioVEFA5gLUAi7z
+   Zr/HtiSM2fNy48V78IZVJ3y/YCwWKfFv8R0lDy3YYUvt50lFyvi9wFNH8
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="263312559"
 X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="260098092"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2022 17:50:23 -0700
+   d="scan'208";a="263312559"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2022 18:01:23 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="690215258"
+   d="scan'208";a="585501515"
 Received: from lkp-server02.sh.intel.com (HELO a67cc04a5eeb) ([10.239.97.151])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Jun 2022 17:50:22 -0700
+  by orsmga007.jf.intel.com with ESMTP; 21 Jun 2022 18:01:22 -0700
 Received: from kbuild by a67cc04a5eeb with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1o3oZZ-0000dA-Dl;
-        Wed, 22 Jun 2022 00:50:21 +0000
-Date:   Wed, 22 Jun 2022 08:50:11 +0800
+        id 1o3okD-0000e0-TQ;
+        Wed, 22 Jun 2022 01:01:21 +0000
+Date:   Wed, 22 Jun 2022 09:00:29 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.iov_iter_get_pages 33/34] lib/iov_iter.c:1225:58:
- error: passing argument 3 of 'append_pipe' from incompatible pointer type
-Message-ID: <202206220821.geOiztBp-lkp@intel.com>
+Subject: [viro-vfs:work.iov_iter_get_pages 32/34] fs/splice.c:1170:24: error:
+ implicit declaration of function 'iov_iter_get_pages'; did you mean
+ 'iov_iter_get_pages2'?
+Message-ID: <202206220856.nKdUIClR-lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -63,70 +64,87 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.iov_iter_get_pages
 head:   a2a7ea71b10083f1b6250f653c448f863d9212c6
-commit: d8115c2f911696d202ba377c54421dc7c055de56 [33/34] pipe_get_pages(): switch to append_pipe()
-config: um-x86_64_defconfig (https://download.01.org/0day-ci/archive/20220622/202206220821.geOiztBp-lkp@intel.com/config)
+commit: 221976dde0b1cce11d9f8af3148ba147ec859c5f [32/34] get rid of non-advancing variants
+config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20220622/202206220856.nKdUIClR-lkp@intel.com/config)
 compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
 reproduce (this is a W=1 build):
-        # https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?id=d8115c2f911696d202ba377c54421dc7c055de56
+        # https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?id=221976dde0b1cce11d9f8af3148ba147ec859c5f
         git remote add viro-vfs https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
         git fetch --no-tags viro-vfs work.iov_iter_get_pages
-        git checkout d8115c2f911696d202ba377c54421dc7c055de56
+        git checkout 221976dde0b1cce11d9f8af3148ba147ec859c5f
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=um SUBARCH=x86_64 SHELL=/bin/bash
+        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag where applicable
 Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
-   lib/iov_iter.c: In function 'pipe_get_pages':
->> lib/iov_iter.c:1225:58: error: passing argument 3 of 'append_pipe' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    1225 |                 struct page *page = append_pipe(i, left, &off);
-         |                                                          ^~~~
-         |                                                          |
-         |                                                          unsigned int *
-   lib/iov_iter.c:270:74: note: expected 'size_t *' {aka 'long unsigned int *'} but argument is of type 'unsigned int *'
-     270 | static struct page *append_pipe(struct iov_iter *i, size_t size, size_t *off)
-         |                                                                  ~~~~~~~~^~~
+   fs/splice.c: In function 'iter_to_pipe':
+>> fs/splice.c:1170:24: error: implicit declaration of function 'iov_iter_get_pages'; did you mean 'iov_iter_get_pages2'? [-Werror=implicit-function-declaration]
+    1170 |                 left = iov_iter_get_pages(from, pages, ~0UL, 16, &start);
+         |                        ^~~~~~~~~~~~~~~~~~
+         |                        iov_iter_get_pages2
    cc1: some warnings being treated as errors
 
 
-vim +/append_pipe +1225 lib/iov_iter.c
+vim +1170 fs/splice.c
 
-  1205	
-  1206	static ssize_t pipe_get_pages(struct iov_iter *i,
-  1207			   struct page ***pages, size_t maxsize, unsigned maxpages,
-  1208			   size_t *start)
-  1209	{
-  1210		unsigned int npages, off, count;
-  1211		struct page **p;
-  1212		ssize_t left;
-  1213	
-  1214		if (!sanity(i))
-  1215			return -EFAULT;
-  1216	
-  1217		*start = off = pipe_npages(i, &npages);
-  1218		if (!npages)
-  1219			return -EFAULT;
-  1220		count = want_pages_array(pages, maxsize, off, min(npages, maxpages));
-  1221		if (!count)
-  1222			return -ENOMEM;
-  1223		p = *pages;
-  1224		for (npages = 0, left = maxsize ; npages < count; npages++) {
-> 1225			struct page *page = append_pipe(i, left, &off);
-  1226			if (!page)
-  1227				break;
-  1228			get_page(*p++ = page);
-  1229			if (left <= PAGE_SIZE - off)
-  1230				return maxsize;
-  1231			left -= PAGE_SIZE - off;
-  1232		}
-  1233		if (!npages)
-  1234			return -EFAULT;
-  1235		return maxsize - left;
-  1236	}
-  1237	
+ee6e00c868221f5 Jens Axboe 2020-10-22  1152  
+79fddc4efd5d4de Al Viro    2016-09-17  1153  static int iter_to_pipe(struct iov_iter *from,
+79fddc4efd5d4de Al Viro    2016-09-17  1154  			struct pipe_inode_info *pipe,
+79fddc4efd5d4de Al Viro    2016-09-17  1155  			unsigned flags)
+912d35f86781e64 Jens Axboe 2006-04-26  1156  {
+79fddc4efd5d4de Al Viro    2016-09-17  1157  	struct pipe_buffer buf = {
+79fddc4efd5d4de Al Viro    2016-09-17  1158  		.ops = &user_page_pipe_buf_ops,
+79fddc4efd5d4de Al Viro    2016-09-17  1159  		.flags = flags
+79fddc4efd5d4de Al Viro    2016-09-17  1160  	};
+79fddc4efd5d4de Al Viro    2016-09-17  1161  	size_t total = 0;
+79fddc4efd5d4de Al Viro    2016-09-17  1162  	int ret = 0;
+79fddc4efd5d4de Al Viro    2016-09-17  1163  
+8db7e158dc8b1b2 Al Viro    2022-06-09  1164  	while (iov_iter_count(from)) {
+79fddc4efd5d4de Al Viro    2016-09-17  1165  		struct page *pages[16];
+8db7e158dc8b1b2 Al Viro    2022-06-09  1166  		ssize_t left;
+db85a9eb2e364e2 Al Viro    2016-09-17  1167  		size_t start;
+8db7e158dc8b1b2 Al Viro    2022-06-09  1168  		int i, n;
+db85a9eb2e364e2 Al Viro    2016-09-17  1169  
+8db7e158dc8b1b2 Al Viro    2022-06-09 @1170  		left = iov_iter_get_pages(from, pages, ~0UL, 16, &start);
+8db7e158dc8b1b2 Al Viro    2022-06-09  1171  		if (left <= 0) {
+8db7e158dc8b1b2 Al Viro    2022-06-09  1172  			ret = left;
+79fddc4efd5d4de Al Viro    2016-09-17  1173  			break;
+79fddc4efd5d4de Al Viro    2016-09-17  1174  		}
+db85a9eb2e364e2 Al Viro    2016-09-17  1175  
+8db7e158dc8b1b2 Al Viro    2022-06-09  1176  		n = DIV_ROUND_UP(left + start, PAGE_SIZE);
+8db7e158dc8b1b2 Al Viro    2022-06-09  1177  		for (i = 0; i < n; i++) {
+8db7e158dc8b1b2 Al Viro    2022-06-09  1178  			int size = min_t(int, left, PAGE_SIZE - start);
+8db7e158dc8b1b2 Al Viro    2022-06-09  1179  
+8db7e158dc8b1b2 Al Viro    2022-06-09  1180  			buf.page = pages[i];
+79fddc4efd5d4de Al Viro    2016-09-17  1181  			buf.offset = start;
+79fddc4efd5d4de Al Viro    2016-09-17  1182  			buf.len = size;
+79fddc4efd5d4de Al Viro    2016-09-17  1183  			ret = add_to_pipe(pipe, &buf);
+79fddc4efd5d4de Al Viro    2016-09-17  1184  			if (unlikely(ret < 0)) {
+8db7e158dc8b1b2 Al Viro    2022-06-09  1185  				iov_iter_revert(from, left);
+8db7e158dc8b1b2 Al Viro    2022-06-09  1186  				// this one got dropped by add_to_pipe()
+8db7e158dc8b1b2 Al Viro    2022-06-09  1187  				while (++i < n)
+8db7e158dc8b1b2 Al Viro    2022-06-09  1188  					put_page(pages[i]);
+8db7e158dc8b1b2 Al Viro    2022-06-09  1189  				goto out;
+79fddc4efd5d4de Al Viro    2016-09-17  1190  			}
+8db7e158dc8b1b2 Al Viro    2022-06-09  1191  			total += ret;
+8db7e158dc8b1b2 Al Viro    2022-06-09  1192  			left -= size;
+8db7e158dc8b1b2 Al Viro    2022-06-09  1193  			start = 0;
+912d35f86781e64 Jens Axboe 2006-04-26  1194  		}
+912d35f86781e64 Jens Axboe 2006-04-26  1195  	}
+8db7e158dc8b1b2 Al Viro    2022-06-09  1196  out:
+79fddc4efd5d4de Al Viro    2016-09-17  1197  	return total ? total : ret;
+912d35f86781e64 Jens Axboe 2006-04-26  1198  }
+912d35f86781e64 Jens Axboe 2006-04-26  1199  
+
+:::::: The code at line 1170 was first introduced by commit
+:::::: 8db7e158dc8b1b2aca1a1b33cda0ac91b12b29c5 iter_to_pipe(): switch to advancing variant of iov_iter_get_pages()
+
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
 
 -- 
 0-DAY CI Kernel Test Service
