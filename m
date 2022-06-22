@@ -2,67 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2DC556E64
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 00:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A94556E70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 00:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357371AbiFVW1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 18:27:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        id S237384AbiFVW3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 18:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357800AbiFVW1K (ORCPT
+        with ESMTP id S230245AbiFVW3K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 18:27:10 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B4D3EBB6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jun 2022 15:27:09 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id d129so17362390pgc.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jun 2022 15:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=F4+5u3XcEw77N1ZRzFWpa5aMMjR09CqNAjzWGInUL04=;
-        b=Z6Ch6AFfVYy1aSRHJED6pPk640NCFpxAbmLjHfYo7zsgSTe4c/5JjJ2aV14GtUg36s
-         ADCU0WovOe1gRKm6zwVk+dL9L9uefYyLwXK6dPi19UkqZjLBFkOWupqgwZ/ybtgGZX7o
-         UYSQ18jslLn/N1epH2N/IyI/O58LBFCQb31RwxUrpK2o55LnWcnrfTxvs6ffP36MUnF5
-         Ye5MPb1Es0Qxa/45vBtmJWGf/xLJhA1ONUWU28A69pO6gMWdqL+t9YEG0q6y+bh3Y10+
-         N0eCsAGFoqeqqe224VTUWYnB5erbSxBz35j8oK38abWd8BD/IFUP4xuWsB7vXiUfOipU
-         sV1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=F4+5u3XcEw77N1ZRzFWpa5aMMjR09CqNAjzWGInUL04=;
-        b=yg4CftD+sYtRk7jOV+tE47GUc1sTja+1XhWfcui8Lj1eGQqsU674RbxVG7rafl/lql
-         mB0+J6Cq6WW2q1hFqCCNoWN0r0LbH4aolHPHZJbj20CU3GlEbq6lv1LyIXU5dmu9rOk4
-         9TmF6DZ0T9OHFZ4YkjnVwbubkVzxyUEm0KWQWa7Kjr8rlkTM27q2hC3YHUfEjggfS1kL
-         9XnmMpjTqF++JJTWnzguqzlQqvD2IkhbQ+T3o7iNYi9/95RN0D/1SJ6g5McnqUJQgY/J
-         g9Bb9UfEq8WufPUaCSvPxZXJdlMCic2V5Qf9G+wcf77cSdQLqmVMJb2zEXZyz4i+NmSu
-         qS7g==
-X-Gm-Message-State: AJIora+tConqv54lSBr2JX0ZUimhb446FQLZNVZ25cgW2vW1iPThahJi
-        9oIKJkH968GeK3WNZNLoR6v7VA==
-X-Google-Smtp-Source: AGRyM1uw3cY6oXk6i4t5/0Q3RYLhfkSCHBum7pvSV2jFkIkoO4LfbPCTyOMv8Jl4i5urU0xJPHcr/Q==
-X-Received: by 2002:a63:7b18:0:b0:40c:9f14:981 with SMTP id w24-20020a637b18000000b0040c9f140981mr4882657pgc.176.1655936829281;
-        Wed, 22 Jun 2022 15:27:09 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id mt9-20020a17090b230900b001e0c1044ceasm271352pjb.43.2022.06.22.15.27.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 15:27:08 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-mm@kvack.org, kernel-team@fb.com, linux-xfs@vger.kernel.org,
-        io-uring@vger.kernel.org, shr@fb.com, linux-fsdevel@vger.kernel.org
-Cc:     david@fromorbit.com, hch@infradead.org, jack@suse.cz,
-        willy@infradead.org
-In-Reply-To: <20220616212221.2024518-1-shr@fb.com>
-References: <20220616212221.2024518-1-shr@fb.com>
-Subject: Re: [PATCH v9 00/14] io-uring/xfs: support async buffered writes
-Message-Id: <165593682792.161026.12974983413174964699.b4-ty@kernel.dk>
-Date:   Wed, 22 Jun 2022 16:27:07 -0600
+        Wed, 22 Jun 2022 18:29:10 -0400
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED942F023
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jun 2022 15:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655936948; bh=dZC6eUKWDJPOTz/ILqg/qfRTRRpuLgPdjkd8hAWc1/Q=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gmA5qq8KBrWCdVlEiApeNXxhc7d26NhcZizNy2hTxaXzMAdBF7Pm+zzwAd+J04rb7xiUsRQuggGNLlQdBsYFth7QVxfZ1cvk9zlBrWgafE55gQgKuVqdapm3eqHpuVuuDA4Keir38vy16T5roVbsgMgVeVtIU9WgLzGa8k/sfNCcO+jmGwdGHTcIMzx4m4D6Fx8sQY0u4nzRdihhAlgKZ5MPUy57Gvrp83z0oD+S16u6zK78CA0Sx0yRoIYoASRhUQPMpUsYReJTwObuduZQjXMcxhp+5dKt71MCeKy6ZJHWTiOHXA9DKUa4lzXW3gBV83yhIeFvQMkFUdcVLzUzJA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655936948; bh=eWvgXRw/NN9Soa6GuLG55pF5QCgnCTIj2Opi7yZiQ9H=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VawDe6+LVHybt/oRwkcXYQviRKqUlss8RY/YPnDkrsXC54hKT2oo7lUamyL6z+91wRQcU5dsXLelKFJn0yODLt6BO+fRBmAvEsK0JzSkULmhVi6l+0cSx29AmQ8bVhpcv/b9qO8Hxg15n4thxyv1CwW71GTAl2eC9rg6kWLTHF+HtsNRxwv3FKmS1LqSVjV3yyTri1CxkWffPlwvRKjCQ5aZN16HkI6k2wqvuPJVo4MVP1Op2eOAHDSd+RRyFVL/v7eOZb4hLRRrjBfm7MJ6pZk0O9uYLu8WJBr9Gcyul9/Cwda1quYO8jvqltiPRzq34/U1bAtCQlTm2Upc8JmAaQ==
+X-YMail-OSG: x72rNU0VM1nEYZaFdpF0mO.I7gF2rRQ4WqrLnJClgRUeN7S5lpig9biLmMI1dqM
+ xx2i1dL5JGPVyEOqLlfgaEVf0JNMh5gtoHY3AtVJBfZ3wvhmQXMGNKC1wGSjElot2LDaX1reSvrG
+ Nc8Ntl8MfqSP5PwJCQbA2SCaN62cKdboWAgzYuo7Jp0KK_fuCoWu1LSFRVPBgMRApIWRtbqXapNi
+ hm1PFMO8x3JK.t40V8ZL9Fb9ZtQdE0soRWMsfgLhyehdcinj1SNFjKEAoDuV4Ku4Z94tjnc29UJH
+ sjycwX0zheeUaJGWsIZiuERfBBhpRyxXhlCS1zvjwaKz5bKWQFgL6BxA9_7ne.4ukC_Ty3_.ZepB
+ CUHPYAWaKiYJhW9fLlOU3Rxw3ksXccsi_r1YophLPv.oxGA2GoMO7WGT1yovCFrIDPlW.XXjuB17
+ YM1HeiNcLTBV4T2hZxNQWQmMd8TfFAFfjQrbqe37XztM8yx4BSe8tIdorgZAKQlBNmMWd4USPlYI
+ VPe4wZFDzsWCPgFKpdlXB4dxEw3mp_uu6Wx.s_4DPszkQ_VOLTcZfRNWHLhtAyxFyHeTFntdJSyg
+ jYCz8.XeW.Ve.fosLlu6InV1uLkEvQRVwuIjN7Q5AIQrh5ZcVuSX2_fnEnTo6A4G6W4BVhbD1ex2
+ f0rhxp27pDz.m5rvYbH8WRUPX2mgI5mU5eSsRCSlS5EUxULLgoTMMpcY0Ut9Phlla3Ibdd6r1CB1
+ DfoZXIfSl1IQJKTVGd5mjwJ_Owrv8bTSz5Y4K7qQwCiGHw9FtjM4JogXIm4sKXtr8fpPRhLyfut0
+ eAxQv9HDr1MJIjbhoAUTGLG2dxIxEb7z5iTVE42i9_3ke2E5f1Lbk8tlCjdKZeV959XXIVgl2W8l
+ OWDpey49qZTW.iHRVbx4bv1OBxaMpaFR56Ymczk04TaDJNx1Bz7woC2AbgqS4xvufzSpJtKFyGFz
+ yLwNHPOO3kk1N6dihGoA3wreDDJ0gpFi.AiOlgFPQsCbFpUTOAvw3x16g1tIocaIfmDNwLJnXjEj
+ 8i2LxaUrRh6_96mOS1ki9bXIqZpIUas3kWR68dJUDB0tmIwOYG8XOD3EKGjFW1LVsqXCbDAToxoR
+ JvCPWGUwfTWaSZp4Ge_AvY8Xff9wP7OyuFaoFZ2agwlKOcXyQJR5mbxhNP5PrGg.1Wep3g1tv5AW
+ Vr87U2MmeFoL4zF.mgJoMCYjk1fwwJH15.9sqjXmluUUq9MKq0EOEZgt6z8Y4O7C6YydjILezgcE
+ VB426gpMht7VeA0Dy1_c_FME3mOhIfWkemP65OJDnRkY1bDTBgdkqEfzzjGgoDvdCKNR40J2QuJ5
+ As83a6J4fK9z_eJzu18MQaiEPbBbtB0YqkCMPJKrnFLnu1g4wEUwS_div48o0Lz_fYhfwQ_gccjQ
+ XwrYWPYHTzbUr54Knfyv59VTdeDfLIYpy9vWVtaD4Kghc67.8uyMa8YSB62A9xYe0ifVh2Vn3lUc
+ rhVPJhz5b94tE3lHGDNWMTTjdYXkAVhfEoX0OH8kFBew74IOVTlSV6bIlP_ILHEQMHJr8FRiiBIr
+ dHVxlTTY07kxaZUjf7Xk1.gOfRCcte4ynMEEQhHBYQ9Ru3z6rjOSKa8fk9cUs4sR3QWwbx6dAtZJ
+ vpTKeKpyS3LSDenPo.YYGH.ZllD.T4kj2i_aHIYbx.9HQwvZ1dUebYTNN50XazgnQp1a4k1F3hRU
+ zQU_qkp25XKFzgBehVSrA16kRsBEbZvbmNpNW78AIW1wxERQxC4Dsjx0Gem5SU4k1Wi3.5WqSonX
+ S2tY1ckr5sJw44WgBtO4GH3B2krIO_KOAJYAC425FY6iJCF03.TI2jxr5ZGzFf4xDfcac4n.uXxG
+ uU0X49ThlUAwj3vT5vMkZiNcKgv.xpa1Oq_q5RYZ63dv5p_lX2VHPsu8zm_It2pCIg9TY4LhdcnZ
+ DIeSXwHeAKdESrASswRNTGY2irc.RGq0ZA.OKD.A4M0HDXMeo1u5JDtlIVMw9zMFzmtIBkv2f.12
+ SyDk0wFRY81wdx9mdPFdj5GsyC040eMEEKeqce5aRkFhpHNAGe_mEZD0dcParvZNnlZpZ5s1P5Mu
+ 79uGXcrBVPN4Twq5E51IibEZgxWZ.u01LmjIwZzl8of4UlLLa0j0yePwwxBfOOHle5K7dM1bzdJF
+ q8cpzfyobvhkq8qDvwKXU3isaaWRErmryWIWpZqYrEG_Aj.qthdDgZadVLUBG7_spxZutDMSMQiT
+ Qo0pb.AzxdbOh1ExfblvSmmboJBPHHKSabQ2AR9lZ75Csbo0qcWQJ7Lz2b91mQHUgTd4-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 22 Jun 2022 22:29:08 +0000
+Received: by hermes--canary-production-bf1-8bb76d6cf-xkxwt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4ef53ffbd9b7aee469fc3bb4f33f3a85;
+          Wed, 22 Jun 2022 22:29:03 +0000 (UTC)
+Message-ID: <e5399b47-5382-99e6-9a79-c0947a696917@schaufler-ca.com>
+Date:   Wed, 22 Jun 2022 15:29:01 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
+ named fwsecurityfs
+Content-Language: en-US
+To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20220622215648.96723-1-nayna@linux.ibm.com>
+ <20220622215648.96723-3-nayna@linux.ibm.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220622215648.96723-3-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -71,50 +91,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 16 Jun 2022 14:22:07 -0700, Stefan Roesch wrote:
-> This patch series adds support for async buffered writes when using both
-> xfs and io-uring. Currently io-uring only supports buffered writes in the
-> slow path, by processing them in the io workers. With this patch series it is
-> now possible to support buffered writes in the fast path. To be able to use
-> the fast path the required pages must be in the page cache, the required locks
-> in xfs can be granted immediately and no additional blocks need to be read
-> form disk.
-> 
-> [...]
+On 6/22/2022 2:56 PM, Nayna Jain wrote:
+> securityfs is meant for linux security subsystems to expose policies/logs
+> or any other information. However, there are various firmware security
+> features which expose their variables for user management via kernel.
+> There is currently no single place to expose these variables. Different
+> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+> interface as find appropriate. Thus, there is a gap in kernel interfaces
+> to expose variables for security features.
 
-Applied, thanks!
-
-[01/14] mm: Move starting of background writeback into the main balancing loop
-        commit: 29c36351d61fd08a2ed50a8028a7f752401dc88a
-[02/14] mm: Move updates of dirty_exceeded into one place
-        commit: a3fa4409eec3c094ad632ac1029094e061daf152
-[03/14] mm: Add balance_dirty_pages_ratelimited_flags() function
-        commit: 407619d2cef3b4d74565999a255a17cf5d559fa4
-[04/14] iomap: Add flags parameter to iomap_page_create()
-        commit: 49b5cd0830c1e9aa0f9a3717ac11a74ef23b9d4e
-[05/14] iomap: Add async buffered write support
-        commit: ccb885b4392143cea1bdbd8a0f35f0e6d909b114
-[06/14] iomap: Return -EAGAIN from iomap_write_iter()
-        commit: f0f9828d64393ea2ce87bd97f033051c8d7a337f
-[07/14] fs: Add check for async buffered writes to generic_write_checks
-        commit: cba06e23bc664ef419d389f1ed4cee523f468f8f
-[08/14] fs: add __remove_file_privs() with flags parameter
-        commit: 79d8ac83d6305fd8e996f720f955191e0d8c63b9
-[09/14] fs: Split off inode_needs_update_time and __file_update_time
-        commit: 1899b196859bac61ad71c3b3916e06de4b65246c
-[10/14] fs: Add async write file modification handling.
-        commit: 4705f225a56f216a59e09f7c2df16daabb7b4f76
-[11/14] io_uring: Add support for async buffered writes
-        commit: 6c8bbd82a43a0c7937e3e8e38cf46fcd90e15e68
-[12/14] io_uring: Add tracepoint for short writes
-        commit: 6c33dae4526ad079af6432aaf76827d0a27a9690
-[13/14] xfs: Specify lockmode when calling xfs_ilock_for_iomap()
-        commit: ddda2d473df70607bb456c515d984d05bf689790
-[14/14] xfs: Add async buffered write support
-        commit: e9cfc64a27f7a581b8c5d14da4efccfeae9c63bd
-
-Best regards,
--- 
-Jens Axboe
-
+Why not put the firmware entries under /sys/kernel/security/firmware?
 
