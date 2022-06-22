@@ -2,49 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5CD5546BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 14:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18567554674
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 14:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355460AbiFVIv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 04:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
+        id S1355872AbiFVIxq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 04:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348196AbiFVIvz (ORCPT
+        with ESMTP id S1355561AbiFVIx1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 04:51:55 -0400
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0254F393EC;
-        Wed, 22 Jun 2022 01:51:55 -0700 (PDT)
-Received: by mail-pg1-f195.google.com with SMTP id l4so15493622pgh.13;
-        Wed, 22 Jun 2022 01:51:54 -0700 (PDT)
+        Wed, 22 Jun 2022 04:53:27 -0400
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7985C31340;
+        Wed, 22 Jun 2022 01:53:27 -0700 (PDT)
+Received: by mail-pj1-f66.google.com with SMTP id go6so10592760pjb.0;
+        Wed, 22 Jun 2022 01:53:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=2r2ZFcponVjH8EtFELgTwaVJcACpqBslCVvaRP6ArR8=;
-        b=F+G0dbJ4luLldMZ3Fx1J44PKquRoH/S/MQ5dcBY1wueT+2ihRjGLm8r54lXnof/Nyx
-         6tJSkO08q96coGQxsQDtd5ZFX+cL33LUrTMFbqodDR2dzn5QpR+VU7c43SbRUHKGue93
-         HarBcUPyZ5vqfFSgBXq/fItMcVp4IJpEMfk4/zpZpJM0/xAIKIkHlF1YAZm+ifbV7M9O
-         axh/b/fZEDy0gYt44acdZQimrJOcPOl2xtzD54CoEtdyovowK391RTPjGHLuL6G+cxaj
-         Cej5H/gCc8VmDB9O7ZJWdj9XZVIchHH2j8Vz9TpJQ5S3yy/RVnhmImHYte14lUeuANeQ
-         MFeQ==
-X-Gm-Message-State: AJIora/VwAZJKssDePIszblydEhsgvyQyRSHNjwGDEo3r9elQcu6f1FW
-        oPAaGUtIrOPEkevnPMlw7A==
-X-Google-Smtp-Source: AGRyM1vcGO7Nd9ID30vVjt7tcTVKOCn34TCI2kKGbaDAlTiQFevnbJF6F1HPZcF7YsCsNFPM9VWxfg==
-X-Received: by 2002:a63:158:0:b0:40c:f753:d227 with SMTP id 85-20020a630158000000b0040cf753d227mr2054462pgb.550.1655887914573;
-        Wed, 22 Jun 2022 01:51:54 -0700 (PDT)
+        b=c0buO3tXw2JqV+1jcfSMpcVFhozul/2CDEilKuO7vk+H4SENOSVqx7x3MQwBh1sYig
+         ayNyzbENvoO4sQVr6OXr5ia+KVR940+Rn7kGwjoRbsFvVhTocML/lNqoe80bkwacipOw
+         moT47KUKPSkajxdGJQSAi+PMN8g3HA4YLwHnQwnC2KH+ADut4qr1gk2yDTtDUOKmguVU
+         V4BMFyiVPBoZTJF1S+DzXtb/hMWWLiZsr/JUjmPzIyA8dEY/x1Ow/fSayWJkbROLLZjt
+         sEyF4+ER4FiKU1wN2b35BE+EPiiq/NcFWpZObmLcIrgAs+7GhYWdGNNfFdvIEPl2SKLC
+         DzXw==
+X-Gm-Message-State: AJIora9TGAno3UaEn9riyNo7+7hGLrS1Ag22g7ZlC3rnfl5LdVy4Zyk5
+        MaXwS5ZoWPDRcMHGoVdaqim68FrNjsGDcnI=
+X-Google-Smtp-Source: AGRyM1sAtgNHod1ODfWmeutcYo0td+h6hnidzgu+xq3pV8y4rST6tRmK0NBoNbncbyu7lFc4Q8U0dw==
+X-Received: by 2002:a17:902:d542:b0:16a:5016:7a18 with SMTP id z2-20020a170902d54200b0016a50167a18mr389410plf.94.1655888007025;
+        Wed, 22 Jun 2022 01:53:27 -0700 (PDT)
 Received: from localhost.localdomain ([156.146.53.107])
-        by smtp.gmail.com with ESMTPSA id c3-20020a17090a8d0300b001ec84049064sm8176780pjo.41.2022.06.22.01.51.51
+        by smtp.gmail.com with ESMTPSA id p6-20020a62d006000000b0051b9a2d639dsm3464820pfg.43.2022.06.22.01.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 01:51:54 -0700 (PDT)
+        Wed, 22 Jun 2022 01:53:26 -0700 (PDT)
 From:   sunliming <sunliming@kylinos.cn>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sunliming@kylino.cn, kelulanainsley@gmail.com,
-        sunliming <sunliming@kylinos.cn>
+        sunliming@kylinos.cn, kelulanainsley@gmail.com
 Subject: [PATCH] walk_component(): get inode in lookup_slow branch statement block
-Date:   Wed, 22 Jun 2022 16:51:46 +0800
-Message-Id: <20220622085146.444516-1-sunliming@kylinos.cn>
+Date:   Wed, 22 Jun 2022 16:53:17 +0800
+Message-Id: <20220622085317.444720-1-sunliming@kylinos.cn>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
