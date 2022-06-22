@@ -2,93 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEC6554180
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFAC85541D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356907AbiFVERH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 00:17:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48640 "EHLO
+        id S1347603AbiFVEoh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 00:44:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356851AbiFVEQK (ORCPT
+        with ESMTP id S229644AbiFVEog (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 00:16:10 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4556165A8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=U4EtewnBFbTPEF12aprvcdvs76IRTF0XhXYK8SHtVQg=; b=gGubJ94ov4565wjcpkPfTWqPrq
-        a0WAgUADlYT0dPHu+OUelNyZSQ1qwKMqhx4FlhlFPkyeqfYd8UrVbLmacxkuGqs0wGh48wq0PAry7
-        LohvWnBzODELjclGsHNtKK9Nv5J7bOGbJU5PZ/J06/Ar1pwbmYZ50bU0uS7zkqONYFah0+pZFuX+T
-        UfhuS5sc79oit78p27R9Fw/7mVg/c6SnYHSs6deN1Jo1A6hzDrooIhcCIc/O6zlSNHpXtUlaDuPxY
-        +HQzrurMm/0HNdKkiGbA7H93wZAPkF3tb44APaMpfLwcPgnBdtg3vkYudK0S0jpqU78wA1fAtQZNU
-        AK3FM9vg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o3rma-00360c-Qr;
-        Wed, 22 Jun 2022 04:16:00 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 44/44] expand those iov_iter_advance()...
-Date:   Wed, 22 Jun 2022 05:15:52 +0100
-Message-Id: <20220622041552.737754-44-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
-References: <YrKWRCOOWXPHRCKg@ZenIV>
- <20220622041552.737754-1-viro@zeniv.linux.org.uk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 22 Jun 2022 00:44:36 -0400
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5813333E17;
+        Tue, 21 Jun 2022 21:44:35 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 16CF8C01E; Wed, 22 Jun 2022 06:44:33 +0200 (CEST)
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id C1B91C009;
+        Wed, 22 Jun 2022 06:44:30 +0200 (CEST)
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id da68f758;
+        Wed, 22 Jun 2022 04:44:27 +0000 (UTC)
+Date:   Wed, 22 Jun 2022 13:44:12 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
+Subject: [GIT PULL] 9p fixes for 5.19-rc4
+Message-ID: <YrKeHMRfXTNw3vTE@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- lib/iov_iter.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index a8045c97b975..79c86add8dea 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1284,7 +1284,8 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 		return 0;
- 
- 	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
--	iov_iter_advance(i, maxsize);
-+	i->iov_offset += maxsize;
-+	i->count -= maxsize;
- 	return maxsize;
- }
- 
-@@ -1373,7 +1374,13 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		for (int k = 0; k < n; k++)
- 			get_page(p[k] = page + k);
- 		maxsize = min_t(size_t, maxsize, n * PAGE_SIZE - *start);
--		iov_iter_advance(i, maxsize);
-+		i->count -= maxsize;
-+		i->iov_offset += maxsize;
-+		if (i->iov_offset == i->bvec->bv_len) {
-+			i->iov_offset = 0;
-+			i->bvec++;
-+			i->nr_segs--;
-+		}
- 		return maxsize;
- 	}
- 	if (iov_iter_is_pipe(i))
--- 
-2.30.2
+Thanks to Tyler and Christian for the patch/reviews/tests!
 
+
+The following changes since commit b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3:
+
+  Linux 5.19-rc2 (2022-06-12 16:11:37 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/martinetd/linux tags/9p-for-5.19-rc4
+
+for you to fetch changes up to b0017602fdf6bd3f344dd49eaee8b6ffeed6dbac:
+
+  9p: fix EBADF errors in cached mode (2022-06-17 06:03:30 +0900)
+
+----------------------------------------------------------------
+9p-for-5.19-rc4: fid refcount and fscache fixes
+
+This contains a couple of fixes:
+ - fid refcounting was incorrect in some corner cases and would
+leak resources, only freed at umount time. The first three commits
+fix three such cases
+ - cache=loose or fscache was broken when trying to write a partial
+page to a file with no read permission since the rework a few releases
+ago. The fix taken here is just to restore old behavior of using the
+special 'writeback_fid' for such reads, which is open as root/RDWR
+and such not get complains that we try to read on a WRONLY fid.
+Long-term it'd be nice to get rid of this and not issue the read at
+all (skip cache?) in such cases, but that direction hasn't progressed
+
+----------------------------------------------------------------
+Dominique Martinet (3):
+      9p: fix fid refcount leak in v9fs_vfs_atomic_open_dotl
+      9p: fix fid refcount leak in v9fs_vfs_get_link
+      9p: fix EBADF errors in cached mode
+
+Tyler Hicks (1):
+      9p: Fix refcounting during full path walks for fid lookups
+
+ fs/9p/fid.c            | 22 +++++++++-------------
+ fs/9p/vfs_addr.c       | 13 +++++++++++++
+ fs/9p/vfs_inode.c      |  8 ++++----
+ fs/9p/vfs_inode_dotl.c |  3 +++
+ 4 files changed, 29 insertions(+), 17 deletions(-)
+
+--
+Dominique
