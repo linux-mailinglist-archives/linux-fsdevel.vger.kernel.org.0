@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 442FE554175
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F29554177
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356916AbiFVEQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 00:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48538 "EHLO
+        id S1356975AbiFVEQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 00:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356799AbiFVEQI (ORCPT
+        with ESMTP id S1356822AbiFVEQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 22 Jun 2022 00:16:08 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784AA65B7
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC769FEC
         for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:15:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=YOpUgORcpbiNEH9/73ZqIGTUJ1PVoFu8RHS9BVtmW1Y=; b=rdI5/mfYCInMp+FFE6D9DAmAFW
-        d/2Lp7JQgJMS5j1lBWE7kxUXqY7Fy0kmwV1l51rVWxG0br6e2yA2NlGmNwT2ACsxhrqx/F1yZ6CJ5
-        9Ny4nXo2y0xJOsSwmmNxUDL6r16lcd82GN7LAtz9bh1TyZ8t9gYj0+wiQWOPkS9OBv9F/NVxpDDjP
-        hvPVTMU4E/DynGQNgTz7HNTqYHBmqMHQcZItbZzaX/Gy6cJyL+JF2H0z54SHPNLrZJsdypuIQGv8l
-        D3qiDY7NNTNA5NbHA9xgZPGcmj5yh2dGH/YVVE7uR/pJqS4ecmFgJJVwuWNe9VaRKPLWOdP+Y/BM1
-        aCozWJlA==;
+        bh=7IzDSm8tRO3+5esG+C7nReWEXcnk7GKepoB+cwWuyTE=; b=gIU4wl2LI7qwYqjplX6Bb+hzdE
+        jctKsyyl9M4lzRd8Qr8sucsJswj/aQqLK6sGOWFuJnhqZMXK7Sa8GWreIXEH3k78vx5ny8+M8Ju5N
+        Ie5f+U0x+MU/oixRKpjgLE2mgBOMlEFidZ3aix6VCEv8releOJEYL1DIw+GR/yUCsMsCTTwl0ONTP
+        Kdhadpx2+CiC2+xUBpWvZXKNNbr7H9I9htS+8GOipwWaeBc0CPngJh5cpMI9AkF9u+FEVxv9bLIxV
+        7tc4MzkzSAJvO1ZlKPFCoPDq/0mpbXNLd/d30RoR8MKEcY5e7Tlj7f3pFdL2Rkys8GXxrJABvbfzP
+        gvVZbsbw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o3rmX-0035yX-Lw;
-        Wed, 22 Jun 2022 04:15:57 +0000
+        id 1o3rmX-0035yg-Vj;
+        Wed, 22 Jun 2022 04:15:58 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -36,9 +36,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 30/44] iov_iter: lift dealing with maxpages out of first_{iovec,bvec}_segment()
-Date:   Wed, 22 Jun 2022 05:15:38 +0100
-Message-Id: <20220622041552.737754-30-viro@zeniv.linux.org.uk>
+Subject: [PATCH 31/44] iov_iter: first_{iovec,bvec}_segment() - simplify a bit
+Date:   Wed, 22 Jun 2022 05:15:39 +0100
+Message-Id: <20220622041552.737754-31-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
@@ -55,95 +55,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+We return length + offset in page via *size.  Don't bother - the caller
+can do that arithmetics just as well; just report the length to it.
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- lib/iov_iter.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ lib/iov_iter.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 92a566f839f9..9ef671b101dc 100644
+index 9ef671b101dc..0bed684d91d0 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1308,12 +1308,9 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 
- static unsigned long found_ubuf_segment(unsigned long addr,
+@@ -1310,7 +1310,7 @@ static unsigned long found_ubuf_segment(unsigned long addr,
  					size_t len,
--					size_t *size, size_t *start,
--					unsigned maxpages)
-+					size_t *size, size_t *start)
+ 					size_t *size, size_t *start)
  {
- 	len += (*start = addr % PAGE_SIZE);
--	if (len > maxpages * PAGE_SIZE)
--		len = maxpages * PAGE_SIZE;
+-	len += (*start = addr % PAGE_SIZE);
++	*start = addr % PAGE_SIZE;
  	*size = len;
  	return addr & PAGE_MASK;
  }
-@@ -1321,14 +1318,14 @@ static unsigned long found_ubuf_segment(unsigned long addr,
- /* must be done on non-empty ITER_UBUF or ITER_IOVEC one */
- static unsigned long first_iovec_segment(const struct iov_iter *i,
- 					 size_t *size, size_t *start,
--					 size_t maxsize, unsigned maxpages)
-+					 size_t maxsize)
- {
- 	size_t skip;
- 	long k;
- 
- 	if (iter_is_ubuf(i)) {
- 		unsigned long addr = (unsigned long)i->ubuf + i->iov_offset;
--		return found_ubuf_segment(addr, maxsize, size, start, maxpages);
-+		return found_ubuf_segment(addr, maxsize, size, start);
- 	}
- 
- 	for (k = 0, skip = i->iov_offset; k < i->nr_segs; k++, skip = 0) {
-@@ -1339,7 +1336,7 @@ static unsigned long first_iovec_segment(const struct iov_iter *i,
- 			continue;
- 		if (len > maxsize)
- 			len = maxsize;
--		return found_ubuf_segment(addr, len, size, start, maxpages);
-+		return found_ubuf_segment(addr, len, size, start);
- 	}
- 	BUG(); // if it had been empty, we wouldn't get called
- }
-@@ -1347,7 +1344,7 @@ static unsigned long first_iovec_segment(const struct iov_iter *i,
- /* must be done on non-empty ITER_BVEC one */
- static struct page *first_bvec_segment(const struct iov_iter *i,
- 				       size_t *size, size_t *start,
--				       size_t maxsize, unsigned maxpages)
-+				       size_t maxsize)
- {
- 	struct page *page;
- 	size_t skip = i->iov_offset, len;
-@@ -1358,8 +1355,6 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
+@@ -1354,7 +1354,7 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
+ 		len = maxsize;
  	skip += i->bvec->bv_offset;
  	page = i->bvec->bv_page + skip / PAGE_SIZE;
- 	len += (*start = skip % PAGE_SIZE);
--	if (len > maxpages * PAGE_SIZE)
--		len = maxpages * PAGE_SIZE;
+-	len += (*start = skip % PAGE_SIZE);
++	*start = skip % PAGE_SIZE;
  	*size = len;
  	return page;
  }
-@@ -1387,7 +1382,9 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		if (i->nofault)
+@@ -1383,9 +1383,9 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
  			gup_flags |= FOLL_NOFAULT;
  
--		addr = first_iovec_segment(i, &len, start, maxsize, maxpages);
-+		addr = first_iovec_segment(i, &len, start, maxsize);
-+		if (len > maxpages * PAGE_SIZE)
-+			len = maxpages * PAGE_SIZE;
- 		n = DIV_ROUND_UP(len, PAGE_SIZE);
+ 		addr = first_iovec_segment(i, &len, start, maxsize);
+-		if (len > maxpages * PAGE_SIZE)
+-			len = maxpages * PAGE_SIZE;
+-		n = DIV_ROUND_UP(len, PAGE_SIZE);
++		n = DIV_ROUND_UP(len + *start, PAGE_SIZE);
++		if (n > maxpages)
++			n = maxpages;
  		if (!*pages) {
  			*pages = get_pages_array(n);
-@@ -1403,7 +1400,9 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 			if (!*pages)
+@@ -1394,25 +1394,25 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		res = get_user_pages_fast(addr, n, gup_flags, *pages);
+ 		if (unlikely(res <= 0))
+ 			return res;
+-		return (res == n ? len : res * PAGE_SIZE) - *start;
++		return min_t(size_t, len, res * PAGE_SIZE - *start);
+ 	}
+ 	if (iov_iter_is_bvec(i)) {
  		struct page **p;
  		struct page *page;
  
--		page = first_bvec_segment(i, &len, start, maxsize, maxpages);
-+		page = first_bvec_segment(i, &len, start, maxsize);
-+		if (len > maxpages * PAGE_SIZE)
-+			len = maxpages * PAGE_SIZE;
- 		n = DIV_ROUND_UP(len, PAGE_SIZE);
+ 		page = first_bvec_segment(i, &len, start, maxsize);
+-		if (len > maxpages * PAGE_SIZE)
+-			len = maxpages * PAGE_SIZE;
+-		n = DIV_ROUND_UP(len, PAGE_SIZE);
++		n = DIV_ROUND_UP(len + *start, PAGE_SIZE);
++		if (n > maxpages)
++			n = maxpages;
  		p = *pages;
  		if (!p) {
+ 			*pages = p = get_pages_array(n);
+ 			if (!p)
+ 				return -ENOMEM;
+ 		}
+-		while (n--)
++		for (int k = 0; k < n; k++)
+ 			get_page(*p++ = page++);
+-		return len - *start;
++		return min_t(size_t, len, n * PAGE_SIZE - *start);
+ 	}
+ 	if (iov_iter_is_pipe(i))
+ 		return pipe_get_pages(i, pages, maxsize, maxpages, start);
 -- 
 2.30.2
 
