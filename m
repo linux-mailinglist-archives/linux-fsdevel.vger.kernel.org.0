@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED456554174
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 964A355417C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357004AbiFVERO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 00:17:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48648 "EHLO
+        id S1356915AbiFVERE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 00:17:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356864AbiFVEQK (ORCPT
+        with ESMTP id S1356847AbiFVEQK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 22 Jun 2022 00:16:10 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A840BC86
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:16:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE9513EB8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=BeoB4cjTFciz31d7M7XFM7Xq9Q0tWo2tlx8HPa0iYL0=; b=eJSQcJkjXQqcnY8UPd1OT3g4Mc
-        XJFbZ6NV10qiSLGyQ7LYViPBYpVwWRut5xT+BM2LzUf7JE64qxwg4HXqFpkN+e7u6kh3N9N3AvkjL
-        DMIftoW3CerUK+24zHqTOSvEYQYSwDRiRWd2WQ3IYUl9YxDC4NQDxTqcJ6sCkHUtbaBAzaNpFlOz9
-        0g/sC9DTy0PlJrqxRSnwSpNJ6uSIZgz4GPDbIPzqvRusj3DmTRuqjfYJXySGC+3ll1OVI8ePR91vn
-        eO1sTPGM7K8K/66s6GfYb8dvBKd4DZWPPNcspNnFs6GKg3VEVV25P8njA7AHAqaf2cKA2/mOoG20C
-        rRFPa7OA==;
+        bh=TvO9AxhuUqm3giUpUDkx42XZvSxm/hz1ZoCEeXDw8Tc=; b=v4gH8oftfVeyxzNlzbN6Til65f
+        qg28Qi1O6esKO+eFE/HAXleLj4fO+MlWlEYk/OFraRsr7KGOE+s1eBd57Zthuf5IW6CGcLNN4Juz6
+        uNHxf+LmrXDEGut9VQf8veBjp/kEcKEu+pm+tJe2icDth6uItihMgR3SUclevO2Pqrw7VIV4w/2UP
+        8BthXSZgTW93km5A2CL0hXY4uf740KjJRz7KK7vMoHlkzSX3uliIBs/jSfdA31Q2sehwviCRc3AR7
+        HB7WqRCvVUOXo5ZSy+nUi6sjMv+0AI7TM3+tMOkL0tlbQL/yL5PMRp2oon1vQ3fM4ZnWxPFcGcVzo
+        AXnQCvfA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o3rma-00360C-7n;
+        id 1o3rma-00360L-HZ;
         Wed, 22 Jun 2022 04:16:00 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
@@ -36,9 +36,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 42/44] get rid of non-advancing variants
-Date:   Wed, 22 Jun 2022 05:15:50 +0100
-Message-Id: <20220622041552.737754-42-viro@zeniv.linux.org.uk>
+Subject: [PATCH 43/44] pipe_get_pages(): switch to append_pipe()
+Date:   Wed, 22 Jun 2022 05:15:51 +0100
+Message-Id: <20220622041552.737754-43-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
@@ -55,143 +55,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mechanical change; will be further massaged in subsequent commits
+now that we are advancing the iterator, there's no need to
+treat the first page separately - just call append_pipe()
+in a loop.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/uio.h | 24 ++----------------------
- lib/iov_iter.c      | 27 ++++++++++++++++++---------
- 2 files changed, 20 insertions(+), 31 deletions(-)
+ lib/iov_iter.c | 36 ++++++++----------------------------
+ 1 file changed, 8 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index ab1cc218b9de..f2fc55f88e45 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -245,9 +245,9 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pipe_inode
- void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
- void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *xarray,
- 		     loff_t start, size_t count);
--ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
-+ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
- 			size_t maxsize, unsigned maxpages, size_t *start);
--ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
-+ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
- 			size_t maxsize, size_t *start);
- int iov_iter_npages(const struct iov_iter *i, int maxpages);
- void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state);
-@@ -349,24 +349,4 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
- 	};
- }
- 
--static inline ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
--			size_t maxsize, unsigned maxpages, size_t *start)
--{
--	ssize_t res = iov_iter_get_pages(i, pages, maxsize, maxpages, start);
--
--	if (res >= 0)
--		iov_iter_advance(i, res);
--	return res;
--}
--
--static inline ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
--			size_t maxsize, size_t *start)
--{
--	ssize_t res = iov_iter_get_pages_alloc(i, pages, maxsize, start);
--
--	if (res >= 0)
--		iov_iter_advance(i, res);
--	return res;
--}
--
- #endif
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 1c744f0c0b2c..70736b3e07c5 100644
+index 70736b3e07c5..a8045c97b975 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1231,6 +1231,7 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
- 		left -= PAGE_SIZE - off;
- 		if (left <= 0) {
- 			buf->len += maxsize;
-+			iov_iter_advance(i, maxsize);
- 			return maxsize;
- 		}
- 		buf->len = PAGE_SIZE;
-@@ -1250,7 +1251,9 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+@@ -1207,10 +1207,10 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize, unsigned maxpages,
+ 		   size_t *start)
+ {
+-	struct pipe_inode_info *pipe = i->pipe;
+-	unsigned int npages, off, count;
++	unsigned int npages, count;
+ 	struct page **p;
+ 	ssize_t left;
++	size_t off;
+ 
+ 	if (!sanity(i))
+ 		return -EFAULT;
+@@ -1222,38 +1222,18 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 	if (!count)
+ 		return -ENOMEM;
+ 	p = *pages;
+-	left = maxsize;
+-	npages = 0;
+-	if (off) {
+-		struct pipe_buffer *buf = pipe_buf(pipe, pipe->head - 1);
+-
+-		get_page(*p++ = buf->page);
+-		left -= PAGE_SIZE - off;
+-		if (left <= 0) {
+-			buf->len += maxsize;
+-			iov_iter_advance(i, maxsize);
+-			return maxsize;
+-		}
+-		buf->len = PAGE_SIZE;
+-		npages = 1;
+-	}
+-	for ( ; npages < count; npages++) {
+-		struct page *page;
+-		unsigned int size = min_t(ssize_t, left, PAGE_SIZE);
+-
+-		if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+-			break;
+-		page = push_anon(pipe, size);
++	for (npages = 0, left = maxsize ; npages < count; npages++) {
++		struct page *page = append_pipe(i, left, &off);
+ 		if (!page)
+ 			break;
+ 		get_page(*p++ = page);
+-		left -= size;
++		if (left <= PAGE_SIZE - off)
++			return maxsize;
++		left -= PAGE_SIZE - off;
  	}
  	if (!npages)
  		return -EFAULT;
--	return maxsize - left;
-+	maxsize -= left;
-+	iov_iter_advance(i, maxsize);
-+	return maxsize;
+-	maxsize -= left;
+-	iov_iter_advance(i, maxsize);
+-	return maxsize;
++	return maxsize - left;
  }
  
  static ssize_t iter_xarray_populate_pages(struct page **pages, struct xarray *xa,
-@@ -1300,7 +1303,9 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 	if (nr == 0)
- 		return 0;
- 
--	return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
-+	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
-+	iov_iter_advance(i, maxsize);
-+	return maxsize;
- }
- 
- /* must be done on non-empty ITER_UBUF or ITER_IOVEC one */
-@@ -1372,7 +1377,9 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		res = get_user_pages_fast(addr, n, gup_flags, *pages);
- 		if (unlikely(res <= 0))
- 			return res;
--		return min_t(size_t, maxsize, res * PAGE_SIZE - *start);
-+		maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - *start);
-+		iov_iter_advance(i, maxsize);
-+		return maxsize;
- 	}
- 	if (iov_iter_is_bvec(i)) {
- 		struct page **p;
-@@ -1384,8 +1391,10 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 			return -ENOMEM;
- 		p = *pages;
- 		for (int k = 0; k < n; k++)
--			get_page(*p++ = page++);
--		return min_t(size_t, maxsize, n * PAGE_SIZE - *start);
-+			get_page(p[k] = page + k);
-+		maxsize = min_t(size_t, maxsize, n * PAGE_SIZE - *start);
-+		iov_iter_advance(i, maxsize);
-+		return maxsize;
- 	}
- 	if (iov_iter_is_pipe(i))
- 		return pipe_get_pages(i, pages, maxsize, maxpages, start);
-@@ -1395,7 +1404,7 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 	return -EFAULT;
- }
- 
--ssize_t iov_iter_get_pages(struct iov_iter *i,
-+ssize_t iov_iter_get_pages2(struct iov_iter *i,
- 		   struct page **pages, size_t maxsize, unsigned maxpages,
- 		   size_t *start)
- {
-@@ -1405,9 +1414,9 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
- 
- 	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start);
- }
--EXPORT_SYMBOL(iov_iter_get_pages);
-+EXPORT_SYMBOL(iov_iter_get_pages2);
- 
--ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
-+ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
- 		   size_t *start)
- {
-@@ -1422,7 +1431,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 	}
- 	return len;
- }
--EXPORT_SYMBOL(iov_iter_get_pages_alloc);
-+EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
- 
- size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
- 			       struct iov_iter *i)
 -- 
 2.30.2
 
