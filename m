@@ -2,59 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A976553FD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 03:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 785805540AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 04:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355328AbiFVBBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jun 2022 21:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
+        id S1356120AbiFVC5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jun 2022 22:57:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbiFVBBZ (ORCPT
+        with ESMTP id S232424AbiFVC5e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jun 2022 21:01:25 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B90031903
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 18:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655859684; x=1687395684;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/8Ay8SE6vdamgHyU3COJjdiwNfO/DBJ5aQMwG+8gXBw=;
-  b=LVcKDCwynsfkbJcwbsX9kkBpI2bu4Xl2B2mwPLRL23iY8b6Je5c2OUMU
-   gWTtPnn19/udhcwtXyf3YORjB5Qapl0OqBkl6gK9nriNUlRGayVqstrbl
-   IFOMXwXnr3pUURdPnQ4jqNECjI1ZTFhuTVcmQSd0T/JpZjRnfe8PtuA0z
-   wUvAuIhKFsJkKHSJVKHO8fFxG2onW0hwNr9A+Q8I9cY6sadHMTtAc/824
-   IFMWBXopNkiB8IL5KVB/o3nSCAvZHGT5ZTI92E6elmWioVEFA5gLUAi7z
-   Zr/HtiSM2fNy48V78IZVJ3y/YCwWKfFv8R0lDy3YYUvt50lFyvi9wFNH8
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10385"; a="263312559"
-X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="263312559"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2022 18:01:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,211,1650956400"; 
-   d="scan'208";a="585501515"
-Received: from lkp-server02.sh.intel.com (HELO a67cc04a5eeb) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 21 Jun 2022 18:01:22 -0700
-Received: from kbuild by a67cc04a5eeb with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o3okD-0000e0-TQ;
-        Wed, 22 Jun 2022 01:01:21 +0000
-Date:   Wed, 22 Jun 2022 09:00:29 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.iov_iter_get_pages 32/34] fs/splice.c:1170:24: error:
- implicit declaration of function 'iov_iter_get_pages'; did you mean
- 'iov_iter_get_pages2'?
-Message-ID: <202206220856.nKdUIClR-lkp@intel.com>
+        Tue, 21 Jun 2022 22:57:34 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C927731340;
+        Tue, 21 Jun 2022 19:57:32 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4LSSjK3s6tz9sSl;
+        Wed, 22 Jun 2022 04:57:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+        t=1655866645;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gN8TCIVEGUrtLmOK4r2NY1SONlCas7fWKHtUkH7eQEo=;
+        b=AO2ygye5tn7a1ew/el2eVI94NEpUVIew/Jln7IoLM8Aj6gmzpe7jdMCD+JhobMU2NoARxo
+        vOghCDAPNFinOsf4X4OdOj248pjwWoCPxigaIqg32VVfy816J5onRYWuzaNs/3Qt8jRfHU
+        Fm+ujbgnxYvBvatExgqFzb4XK3NEzY3sF/YHwcC3/IZaIXcZNth5dquVC3T5MnQU6gbncR
+        k5OUNN+xt06fE0j/9mf/yEQFnJZiAF4DIGMD1jK+F3mopkggcuIQ+gn2ys5PsZ9nTE3XBc
+        CIkReBzYEEwPqB2RMetxkImAqy2ZFBH6BjtUAqGQcWbrS9PU/4oGLU8ZuzYo4g==
+Date:   Wed, 22 Jun 2022 12:57:15 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] f*xattr: allow O_PATH descriptors
+Message-ID: <20220622025715.upflevvao3ttaekj@senku>
+References: <20220607153139.35588-1-cgzones@googlemail.com>
+ <20220608112728.b4xrdppxqmyqmtwf@wittgenstein>
+ <CAOQ4uxipD6khNUYuZT80WUa0KOMdyyP0ia55uhmeRCLj4NBicg@mail.gmail.com>
+ <20220608124808.uylo5lntzfgxxmns@wittgenstein>
+ <CAOQ4uxjP7kC95ou56wabVhQcc2vkNcD-8usYhLhbLOoJZ-jkOw@mail.gmail.com>
+ <20220618031805.nmgiuapuqeblm3ba@senku>
+ <CAOQ4uxg6QLJ26pX8emXmUvq6jDDEH_Qq=Z4RPUK-jGLsZpHzfg@mail.gmail.com>
+ <20220620060741.3clikqadotq2p5ja@senku>
+ <CAOQ4uxhq8HVoM=6O_H-uowv65m6tLAPUj2a_r3-CWpiX-48MoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3qxnax3ppvxdjkcd"
 Content-Disposition: inline
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <CAOQ4uxhq8HVoM=6O_H-uowv65m6tLAPUj2a_r3-CWpiX-48MoQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,90 +70,174 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.iov_iter_get_pages
-head:   a2a7ea71b10083f1b6250f653c448f863d9212c6
-commit: 221976dde0b1cce11d9f8af3148ba147ec859c5f [32/34] get rid of non-advancing variants
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20220622/202206220856.nKdUIClR-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
-reproduce (this is a W=1 build):
-        # https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?id=221976dde0b1cce11d9f8af3148ba147ec859c5f
-        git remote add viro-vfs https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
-        git fetch --no-tags viro-vfs work.iov_iter_get_pages
-        git checkout 221976dde0b1cce11d9f8af3148ba147ec859c5f
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+--3qxnax3ppvxdjkcd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All errors (new ones prefixed by >>):
+On 2022-06-20, Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > The goal would be that the semantics of fooat(<fd>, AT_EMPTY_PATH) =
+and
+> > > > foo(/proc/self/fd/<fd>) should always be identical, and the current
+> > > > semantics of /proc/self/fd/<fd> are too leaky so we shouldn't always
+> > > > assume that keeping them makes sense (the most obvious example is b=
+eing
+> > > > able to do tricks to open /proc/$pid/exe as O_RDWR).
+> > >
+> > > Please make a note that I have applications relying on current magic =
+symlink
+> > > semantics w.r.t setxattr() and other metadata operations, and the lib=
+selinux
+> > > commit linked from the patch commit message proves that magic symlink
+> > > semantics are used in the wild, so it is not likely that those semant=
+ics could
+> > > be changed, unless userspace breakage could be justified by fixing a =
+serious
+> > > security issue (i.e. open /proc/$pid/exe as O_RDWR).
+> >
+> > Agreed. We also use magiclinks for similar TOCTOU-protection purposes in
+> > runc (as does lxc) as well as in libpathrs so I'm aware we need to be
+> > careful about changing existing behaviours. I would prefer to have the
+> > default be as restrictive as possible, but naturally back-compat is
+> > more important.
+> >
+> > > > I suspect that the long-term solution would be to have more upgrade
+> > > > masks so that userspace can opt-in to not allowing any kind of
+> > > > (metadata) write access through a particular file descriptor. You're
+> > > > quite right that we have several metadata write AT_EMPTY_PATH APIs,=
+ and
+> > > > so we can't retroactively block /everything/ but we should try to c=
+ome
+> > > > up with less leaky rules by default if it won't break userspace.
+> > >
+> > > Ok, let me try to say this in my own words using an example to see th=
+at
+> > > we are all on the same page:
+> > >
+> > > - lsetxattr(PATH_TO_FILE,..) has inherent TOCTOU races
+> > > - fsetxattr(fd,...) is not applicable for symbolic links
+> >
+> > While I agree with Christian's concerns about making O_PATH descriptors
+> > more leaky, if userspace already relies on this through /proc/self/fd/$x
+> > then there's not much we can do about it other than having an opt-out
+> > available in openat2(2). Having the option to disable this stuff to
+> > avoid making O_PATH descriptors less safe as a mechanism for passing
+> > around "capability-less" file handles should make most people happy
+> > (with the note that ideally we would not be *adding* capabilities to
+> > O_PATH we don't need to).
+> >
+> > > - setxattr("/proc/self/fd/<fd>",...) is the current API to avoid TOCT=
+OU races
+> > >   when setting xattr on symbolic links
+> > > - setxattrat(o_path_fd, "", ..., AT_EMPTY_PATH) is proposed as a the
+> > >   "new API" for setting xattr on symlinks (and special files)
+> >
+> > If this is a usecase we need to support then we may as well just re-use
+> > fsetxattr() since it's basically an *at(2) syscall already (and I don't
+> > see why we'd want to split up the capabilities between two similar
+> > *at(2)-like syscalls). Though this does come with the above caveats that
+> > we need to have the opt-outs available if we're going to enshrine this
+> > as intentional part of the ABI.
+>=20
+>=20
+> Christian preferred that new functionality be added with a new API
+> and I agree that this is nicer and more explicit.
 
-   fs/splice.c: In function 'iter_to_pipe':
->> fs/splice.c:1170:24: error: implicit declaration of function 'iov_iter_get_pages'; did you mean 'iov_iter_get_pages2'? [-Werror=implicit-function-declaration]
-    1170 |                 left = iov_iter_get_pages(from, pages, ~0UL, 16, &start);
-         |                        ^~~~~~~~~~~~~~~~~~
-         |                        iov_iter_get_pages2
-   cc1: some warnings being treated as errors
+Fair enough -- I misread the man page, setxattrat(2) makes more sense.
 
+> The bigger question IMO is, whether fsomething() should stay identical
+> to somethingat(,,,AT_EMPTY_PATH). I don't think that it should.
+>=20
+> To me, open(path,O_PATH)+somethingat(,,,AT_EMPTY_PATH) is identical
+> to something(path) - it just breaks the path resolution and operation to =
+two
+> distinguished steps.
+>=20
+> fsomething() was traditionally used for "really" open fds, so if we don't=
+ need
+> to, we better not relax it further by allowing O_PATH, but that's just one
+> opinion.
 
-vim +1170 fs/splice.c
+Yeah, you're right -- it would be better to not muddle the two (even
+though they are conceptually very similar).
 
-ee6e00c868221f5 Jens Axboe 2020-10-22  1152  
-79fddc4efd5d4de Al Viro    2016-09-17  1153  static int iter_to_pipe(struct iov_iter *from,
-79fddc4efd5d4de Al Viro    2016-09-17  1154  			struct pipe_inode_info *pipe,
-79fddc4efd5d4de Al Viro    2016-09-17  1155  			unsigned flags)
-912d35f86781e64 Jens Axboe 2006-04-26  1156  {
-79fddc4efd5d4de Al Viro    2016-09-17  1157  	struct pipe_buffer buf = {
-79fddc4efd5d4de Al Viro    2016-09-17  1158  		.ops = &user_page_pipe_buf_ops,
-79fddc4efd5d4de Al Viro    2016-09-17  1159  		.flags = flags
-79fddc4efd5d4de Al Viro    2016-09-17  1160  	};
-79fddc4efd5d4de Al Viro    2016-09-17  1161  	size_t total = 0;
-79fddc4efd5d4de Al Viro    2016-09-17  1162  	int ret = 0;
-79fddc4efd5d4de Al Viro    2016-09-17  1163  
-8db7e158dc8b1b2 Al Viro    2022-06-09  1164  	while (iov_iter_count(from)) {
-79fddc4efd5d4de Al Viro    2016-09-17  1165  		struct page *pages[16];
-8db7e158dc8b1b2 Al Viro    2022-06-09  1166  		ssize_t left;
-db85a9eb2e364e2 Al Viro    2016-09-17  1167  		size_t start;
-8db7e158dc8b1b2 Al Viro    2022-06-09  1168  		int i, n;
-db85a9eb2e364e2 Al Viro    2016-09-17  1169  
-8db7e158dc8b1b2 Al Viro    2022-06-09 @1170  		left = iov_iter_get_pages(from, pages, ~0UL, 16, &start);
-8db7e158dc8b1b2 Al Viro    2022-06-09  1171  		if (left <= 0) {
-8db7e158dc8b1b2 Al Viro    2022-06-09  1172  			ret = left;
-79fddc4efd5d4de Al Viro    2016-09-17  1173  			break;
-79fddc4efd5d4de Al Viro    2016-09-17  1174  		}
-db85a9eb2e364e2 Al Viro    2016-09-17  1175  
-8db7e158dc8b1b2 Al Viro    2022-06-09  1176  		n = DIV_ROUND_UP(left + start, PAGE_SIZE);
-8db7e158dc8b1b2 Al Viro    2022-06-09  1177  		for (i = 0; i < n; i++) {
-8db7e158dc8b1b2 Al Viro    2022-06-09  1178  			int size = min_t(int, left, PAGE_SIZE - start);
-8db7e158dc8b1b2 Al Viro    2022-06-09  1179  
-8db7e158dc8b1b2 Al Viro    2022-06-09  1180  			buf.page = pages[i];
-79fddc4efd5d4de Al Viro    2016-09-17  1181  			buf.offset = start;
-79fddc4efd5d4de Al Viro    2016-09-17  1182  			buf.len = size;
-79fddc4efd5d4de Al Viro    2016-09-17  1183  			ret = add_to_pipe(pipe, &buf);
-79fddc4efd5d4de Al Viro    2016-09-17  1184  			if (unlikely(ret < 0)) {
-8db7e158dc8b1b2 Al Viro    2022-06-09  1185  				iov_iter_revert(from, left);
-8db7e158dc8b1b2 Al Viro    2022-06-09  1186  				// this one got dropped by add_to_pipe()
-8db7e158dc8b1b2 Al Viro    2022-06-09  1187  				while (++i < n)
-8db7e158dc8b1b2 Al Viro    2022-06-09  1188  					put_page(pages[i]);
-8db7e158dc8b1b2 Al Viro    2022-06-09  1189  				goto out;
-79fddc4efd5d4de Al Viro    2016-09-17  1190  			}
-8db7e158dc8b1b2 Al Viro    2022-06-09  1191  			total += ret;
-8db7e158dc8b1b2 Al Viro    2022-06-09  1192  			left -= size;
-8db7e158dc8b1b2 Al Viro    2022-06-09  1193  			start = 0;
-912d35f86781e64 Jens Axboe 2006-04-26  1194  		}
-912d35f86781e64 Jens Axboe 2006-04-26  1195  	}
-8db7e158dc8b1b2 Al Viro    2022-06-09  1196  out:
-79fddc4efd5d4de Al Viro    2016-09-17  1197  	return total ? total : ret;
-912d35f86781e64 Jens Axboe 2006-04-26  1198  }
-912d35f86781e64 Jens Axboe 2006-04-26  1199  
+> > > - The new API is going to be more strict than the old magic symlink A=
+PI
+> > > - *If* it turns out to not break user applications, old API can also =
+become
+> > >   more strict to align with new API (unlikely the case for setxattr())
+> > > - This will allow sandboxed containers to opt-out of the "old API", by
+> > >   restricting access to /proc/self/fd and to implement more fine grai=
+ned
+> > >   control over which metadata operations are allowed on an O_PATH fd
+> > >
+> > > Did I understand the plan correctly?
+> >
+> > Yup, except I don't think we need setxattrat(2).
+> >
+> > > Do you agree with me that the plan to keep AT_EMPTY_PATH and magic
+> > > symlink semantics may not be realistic?
+> >
+> > To clarify -- my view is that if any current /proc/self/fd/$n semantic
+> > needs to be maintained then I would prefer that the proc-less method of
+> > doing it (such as through AT_EMPTY_PATH et al) would have the same
+> > capability and semantics. There are some cases where the current
+> > /proc/self/fd/$n semantics need to be fixed (such as the /proc/$pid/exe
+> > example) and in that case the proc-less semantics also need to be made
+> > safe.
+> >
+> > While I would like us to restrict O_PATH as much as possible, if
+> > userspace already depends on certain behaviour then we may not be able
+> > to do much about it. Having an opt-out would be very important since
+> > enshrining these leaky behaviours (which seem to have been overlooked)
+> > means we need to consider how userspace can opt out of them.
+> >
+> > Unfortunately, it should be noted that due to the "magical" nature of
+> > nd_jump_link(), I'm not sure how happy Al Viro will be with the kinds of
+> > restrictions necessary. Even my current (quite limited) upgrade-mask
+> > patchset has to do a fair bit of work to unify the semantics of
+> > magic-links and openat(O_EMPTYPATH) -- expanding this to all *at(2)
+> > syscalls might be quite painful. (There are also several handfuls of
+> > semantic questions which need to be answered about magic-link modes and
+> > whether for other *at(2) operations we may need even more complicated
+> > rules or even a re-thinking of my current approach.)
+>=20
+> The question remains, regarding the $SUBJECT patch,
+> is it fair to block it and deprive libselinux of a non buggy API
+> until such time that all the details around masking O_PATH fds
+> will be made clear and the new API implemented?
+>=20
+> There is no guarantee this will ever happen, so it does not seem
+> reasonable to me.
+>=20
+> To be a reasonable reaction to the currently broken API is
+> to either accept the patch as is or request that setxattrat()
+> will be added to provide the new functionality.
 
-:::::: The code at line 1170 was first introduced by commit
-:::::: 8db7e158dc8b1b2aca1a1b33cda0ac91b12b29c5 iter_to_pipe(): switch to advancing variant of iov_iter_get_pages()
+Since the current functionality cannot be retroactively disabled as it
+is being used already through /proc/self/fd/$n, adding
+*xattrat(AT_EMPTY_PATH) doesn't really change what is currently possible
+by userspace.
 
-:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
-:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
+I would say we should add *xattrat(2) and then we can add an upgrade
+mask blocking it (and other operations) later.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--3qxnax3ppvxdjkcd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYrKFCwAKCRCdlLljIbnQ
+EkHDAQDcWDPHXJjqAjGAzNYq6SVS0yjL41QqWacGXvPb66FPFAEAusaYO6iZOP4M
+oEYAPDOwguXO7T12FYXSzG8yX6V54QE=
+=QX0d
+-----END PGP SIGNATURE-----
+
+--3qxnax3ppvxdjkcd--
