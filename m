@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9E555415E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54702554161
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356795AbiFVEQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 00:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
+        id S1354898AbiFVEQK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 00:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356687AbiFVEP5 (ORCPT
+        with ESMTP id S1356697AbiFVEP6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 00:15:57 -0400
+        Wed, 22 Jun 2022 00:15:58 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4BC10C4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:15:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8854060E4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=vdv7Cdl9g3PWc0MQ6kvQ7n5Wg7qYgCGxU/vxDuMwimQ=; b=djIZSTqwcTeVmoa2aTIxgDePT/
-        Fy5v49/IXTUxbC7yudp3/5OutsW9yvGrA1PMTNL/fiiBe1XeRQ+Vd9114VOCNOptrWXwl/UqifMdc
-        VA5DrmnWJHXBnvhLlUrpOBtAiMn7UuU4l4r2nH9J3Vrz9WjnJCo2cjZg+XD2PrSn9AfENsSNs8bkQ
-        5ZZIE5eSUWrsC232Ut1U1uzoFrrkDxVfCJu+SDa0hvZYkciyFMYUyb1llveNE5MeZ/7/5yFVRFfCp
-        mU4TBr7UltqwRu9qSIAQVyguNTfG+N2eQa0pM/D8iu4/cb/LBzypO/HlD/JXadq5xKAqhs8v78WcH
-        77M78qLg==;
+        bh=uRY2CcDaI7j2Qa7squjvpnb9XeTEMfUPt3NGdMa0Dmo=; b=hiUAldtQ8O9ijynsdZsiY3JhLU
+        W0mTz2ReZeFzHKmznesp0JytEaobOsaGeS4prFW64MGq46k85T16otaTTMs9YYYJoE4+bmO6en7Vg
+        PLqZWIPqFihhxgor5wEdYV7pTBBMUtKFV/P5Ux9Ba3HY3wsVTA3I2MssYXHPXmltQ4droozOUBim0
+        2/Go1MwVpvpUZOqTrwUH9Sem94p6TD9tMdgwH14mNGwnFPn7uDofgXdq3WaPJiD/0A6jilx1AoPFB
+        qmBsfjCCU5vlwZetyasxl7Rwl5R85W3n+sjE9H9aBQflC1owPhaTUXWGytzKOPtfIwmGNz4yF+KzP
+        dWPWoNPg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o3rmT-0035vf-CE;
+        id 1o3rmT-0035vj-IO;
         Wed, 22 Jun 2022 04:15:53 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
@@ -36,9 +36,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 06/44] iocb: delay evaluation of IS_SYNC(...) until we want to check IOCB_DSYNC
-Date:   Wed, 22 Jun 2022 05:15:14 +0100
-Message-Id: <20220622041552.737754-6-viro@zeniv.linux.org.uk>
+Subject: [PATCH 07/44] keep iocb_flags() result cached in struct file
+Date:   Wed, 22 Jun 2022 05:15:15 +0100
+Message-Id: <20220622041552.737754-7-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
@@ -55,137 +55,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-New helper to be used instead of direct checks for IOCB_DSYNC:
-iocb_is_dsync(iocb).  Checks converted, which allows to avoid
-the IS_SYNC(iocb->ki_filp->f_mapping->host) part (4 cache lines)
-from iocb_flags() - it's checked in iocb_is_dsync() instead
+* calculate at the time we set FMODE_OPENED (do_dentry_open() for normal
+opens, alloc_file() for pipe()/socket()/etc.)
+* update when handling F_SETFL
+* keep in a new field - file->f_iocb_flags; since that thing is needed only
+before the refcount reaches zero, we can put it into the same anon union
+where ->f_rcuhead and ->f_llist live - those are used only after refcount
+reaches zero.
 
 Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- block/fops.c         |  2 +-
- fs/btrfs/file.c      |  2 +-
- fs/direct-io.c       |  2 +-
- fs/fuse/file.c       |  2 +-
- fs/iomap/direct-io.c |  3 +--
- fs/zonefs/super.c    |  2 +-
- include/linux/fs.h   | 10 ++++++++--
- 7 files changed, 14 insertions(+), 9 deletions(-)
+ drivers/nvme/target/io-cmd-file.c | 2 +-
+ fs/aio.c                          | 2 +-
+ fs/fcntl.c                        | 1 +
+ fs/file_table.c                   | 1 +
+ fs/io_uring.c                     | 2 +-
+ fs/open.c                         | 1 +
+ include/linux/fs.h                | 5 ++---
+ 7 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index d6b3276a6c68..6e86931ab847 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -37,7 +37,7 @@ static unsigned int dio_bio_write_op(struct kiocb *iocb)
- 	unsigned int op = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index f3d58abf11e0..64b47e2a4633 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -112,7 +112,7 @@ static ssize_t nvmet_file_submit_bvec(struct nvmet_req *req, loff_t pos,
  
- 	/* avoid the need for a I/O completion work item */
--	if (iocb->ki_flags & IOCB_DSYNC)
-+	if (iocb_is_dsync(iocb))
- 		op |= REQ_FUA;
- 	return op;
+ 	iocb->ki_pos = pos;
+ 	iocb->ki_filp = req->ns->file;
+-	iocb->ki_flags = ki_flags | iocb_flags(req->ns->file);
++	iocb->ki_flags = ki_flags | iocb->ki_filp->f_iocb_flags;
+ 
+ 	return call_iter(iocb, &iter);
  }
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 98f81e304eb1..54358a5c9d56 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -2021,7 +2021,7 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	struct file *file = iocb->ki_filp;
- 	struct btrfs_inode *inode = BTRFS_I(file_inode(file));
- 	ssize_t num_written, num_sync;
--	const bool sync = iocb->ki_flags & IOCB_DSYNC;
-+	const bool sync = iocb_is_dsync(iocb);
+diff --git a/fs/aio.c b/fs/aio.c
+index 3c249b938632..2bdd444d408b 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1475,7 +1475,7 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
+ 	req->ki_complete = aio_complete_rw;
+ 	req->private = NULL;
+ 	req->ki_pos = iocb->aio_offset;
+-	req->ki_flags = iocb_flags(req->ki_filp);
++	req->ki_flags = req->ki_filp->f_iocb_flags;
+ 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
+ 		req->ki_flags |= IOCB_EVENTFD;
+ 	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 34a3faa4886d..146c9ab0cd4b 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -78,6 +78,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+ 	}
+ 	spin_lock(&filp->f_lock);
+ 	filp->f_flags = (arg & SETFL_MASK) | (filp->f_flags & ~SETFL_MASK);
++	filp->f_iocb_flags = iocb_flags(filp);
+ 	spin_unlock(&filp->f_lock);
  
- 	/*
- 	 * If the fs flips readonly due to some impossible error, although we
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 840752006f60..39647eb56904 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1210,7 +1210,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 */
- 	if (dio->is_async && iov_iter_rw(iter) == WRITE) {
- 		retval = 0;
--		if (iocb->ki_flags & IOCB_DSYNC)
-+		if (iocb_is_dsync(iocb))
- 			retval = dio_set_defer_completion(dio);
- 		else if (!dio->inode->i_sb->s_dio_done_wq) {
- 			/*
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 05caa2b9272e..00fa861aeead 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1042,7 +1042,7 @@ static unsigned int fuse_write_flags(struct kiocb *iocb)
- {
- 	unsigned int flags = iocb->ki_filp->f_flags;
+  out:
+diff --git a/fs/file_table.c b/fs/file_table.c
+index b989e33aacda..905792b0521c 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -241,6 +241,7 @@ static struct file *alloc_file(const struct path *path, int flags,
+ 	if ((file->f_mode & FMODE_WRITE) &&
+ 	     likely(fop->write || fop->write_iter))
+ 		file->f_mode |= FMODE_CAN_WRITE;
++	file->f_iocb_flags = iocb_flags(file);
+ 	file->f_mode |= FMODE_OPENED;
+ 	file->f_op = fop;
+ 	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 3aab4182fd89..53424b1f019f 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4330,7 +4330,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ 	if (!io_req_ffs_set(req))
+ 		req->flags |= io_file_get_flags(file) << REQ_F_SUPPORT_NOWAIT_BIT;
  
--	if (iocb->ki_flags & IOCB_DSYNC)
-+	if (iocb_is_dsync(iocb))
- 		flags |= O_DSYNC;
- 	if (iocb->ki_flags & IOCB_SYNC)
- 		flags |= O_SYNC;
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index c10c69e2de24..31c7f1035b20 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -548,8 +548,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		}
+-	kiocb->ki_flags = iocb_flags(file);
++	kiocb->ki_flags = file->f_iocb_flags;
+ 	ret = kiocb_set_rw_flags(kiocb, req->rw.flags);
+ 	if (unlikely(ret))
+ 		return ret;
+diff --git a/fs/open.c b/fs/open.c
+index 1d57fbde2feb..d80441a0bf17 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -862,6 +862,7 @@ static int do_dentry_open(struct file *f,
+ 		f->f_mode |= FMODE_CAN_ODIRECT;
  
- 		/* for data sync or sync, we need sync completion processing */
--		if (iocb->ki_flags & IOCB_DSYNC &&
--		    !(dio_flags & IOMAP_DIO_NOSYNC)) {
-+		if (iocb_is_dsync(iocb) && !(dio_flags & IOMAP_DIO_NOSYNC)) {
- 			dio->flags |= IOMAP_DIO_NEED_SYNC;
+ 	f->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
++	f->f_iocb_flags = iocb_flags(f);
  
- 		       /*
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index bcb21aea990a..04a98b4cd7ee 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -746,7 +746,7 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- 			REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE, GFP_NOFS);
- 	bio->bi_iter.bi_sector = zi->i_zsector;
- 	bio->bi_ioprio = iocb->ki_ioprio;
--	if (iocb->ki_flags & IOCB_DSYNC)
-+	if (iocb_is_dsync(iocb))
- 		bio->bi_opf |= REQ_FUA;
+ 	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
  
- 	ret = bio_iov_iter_get_pages(bio, from);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6a2a4906041f..380a1292f4f9 100644
+index 380a1292f4f9..c82b9d442f56 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2720,6 +2720,12 @@ extern int vfs_fsync(struct file *file, int datasync);
- extern int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
- 				unsigned int flags);
+@@ -926,6 +926,7 @@ struct file {
+ 	union {
+ 		struct llist_node	f_llist;
+ 		struct rcu_head 	f_rcuhead;
++		unsigned int 		f_iocb_flags;
+ 	};
+ 	struct path		f_path;
+ 	struct inode		*f_inode;	/* cached value */
+@@ -2199,13 +2200,11 @@ static inline bool HAS_UNMAPPED_ID(struct user_namespace *mnt_userns,
+ 	       !gid_valid(i_gid_into_mnt(mnt_userns, inode));
+ }
  
-+static inline bool iocb_is_dsync(const struct kiocb *iocb)
-+{
-+	return (iocb->ki_flags & IOCB_DSYNC) ||
-+		IS_SYNC(iocb->ki_filp->f_mapping->host);
-+}
-+
- /*
-  * Sync the bytes written if this was a synchronous write.  Expect ki_pos
-  * to already be updated for the write, and will return either the amount
-@@ -2727,7 +2733,7 @@ extern int sync_file_range(struct file *file, loff_t offset, loff_t nbytes,
-  */
- static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
+-static inline int iocb_flags(struct file *file);
+-
+ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
  {
--	if (iocb->ki_flags & IOCB_DSYNC) {
-+	if (iocb_is_dsync(iocb)) {
- 		int ret = vfs_fsync_range(iocb->ki_filp,
- 				iocb->ki_pos - count, iocb->ki_pos - 1,
- 				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
-@@ -3262,7 +3268,7 @@ static inline int iocb_flags(struct file *file)
- 		res |= IOCB_APPEND;
- 	if (file->f_flags & O_DIRECT)
- 		res |= IOCB_DIRECT;
--	if ((file->f_flags & O_DSYNC) || IS_SYNC(file->f_mapping->host))
-+	if (file->f_flags & O_DSYNC)
- 		res |= IOCB_DSYNC;
- 	if (file->f_flags & __O_SYNC)
- 		res |= IOCB_SYNC;
+ 	*kiocb = (struct kiocb) {
+ 		.ki_filp = filp,
+-		.ki_flags = iocb_flags(filp),
++		.ki_flags = filp->f_iocb_flags,
+ 		.ki_ioprio = get_current_ioprio(),
+ 	};
+ }
 -- 
 2.30.2
 
