@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EED8554182
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E6B55417F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 06:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356922AbiFVEQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 00:16:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48786 "EHLO
+        id S1356934AbiFVEQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 00:16:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356835AbiFVEQI (ORCPT
+        with ESMTP id S1356818AbiFVEQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 22 Jun 2022 00:16:08 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B78EB1C0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:15:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B609AE75
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jun 2022 21:16:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=6mqxTMoe5FWZMpdVAJw5cA30N8xjSVczJ7xJ4VOscU0=; b=Gckg4A67efp2WoqiO4wz7Ms6iy
-        OCXLWHqB20bX3j3YH8TkiHwOVHadQ5MY5Yg67fHGKQhghX11RfZaGOUJS7v7ut2p1mQUoW5X2t65Q
-        txuO3mtELr1Wsyo15MsrAUm9kNYvjcfE8zL2XQKxnBO5eRf38EVRRadCK4AlmSK4laRo6xjuaVy4j
-        0npBIJExuLp1zQPst6GxK4yKiqPAubAIVMZwuf7dQ2Cyybx/N2ZEma03vr0C9oJT23jxB+EHakMW3
-        Ylw0ljHApntfVWjOJc5S6MjgwGSjuiRojKUtZptlCvo7+pQugJk/ukdF1V/gYwqjo2jdj7kNBtHr2
-        Inv4jBiQ==;
+        bh=OEd90yREgJWELU2w7cWXJBVJE39zUZSsOryGxe4Q4OQ=; b=ibihlEmo6jUNN/KlWvPzuNjBhs
+        hwbAvzzPlOIAdoKxWkkMlkdlkyHMnspJibZkLOThwWKh4pz9YEbhjSbRjOODT3tYk17Q9j43EG91n
+        BwuUXbjoZ4Lgkd2U+XFNOeuzz2RxplTJDZOfirW8z6HCDeUftyBab51d3vXrweGMuDY2ZY8IYdDFV
+        /bPsn2NFtlhNKBkv7LWUH9rKvwiJSuiuvgiKKSPSArREz0n05auOTLD2VWCnbDCMxIPJ9sqb4BNyA
+        th0wuJhTgE2StZaOZARUrfWZNpaZwVqkKW5FbkZl6Mg4oHewY/EFx0ZZuuFeVETIzRRgv3l3F2jXv
+        0ZRqjBNQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o3rmY-0035yz-BN;
+        id 1o3rmY-0035z3-FY;
         Wed, 22 Jun 2022 04:15:58 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
@@ -36,9 +36,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 33/44] found_iovec_segment(): just return address
-Date:   Wed, 22 Jun 2022 05:15:41 +0100
-Message-Id: <20220622041552.737754-33-viro@zeniv.linux.org.uk>
+Subject: [PATCH 34/44] fold __pipe_get_pages() into pipe_get_pages()
+Date:   Wed, 22 Jun 2022 05:15:42 +0100
+Message-Id: <20220622041552.737754-34-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
@@ -55,66 +55,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-... and calculate the offset in the caller
+... and don't mangle maxsize there - turn the loop into counting
+one instead.  Easier to see that we won't run out of array that
+way.  Note that special treatment of the partial buffer in that
+thing is an artifact of the non-advancing semantics of
+iov_iter_get_pages() - if not for that, it would be append_pipe(),
+same as the body of the loop that follows it.  IOW, once we make
+iov_iter_get_pages() advancing, the whole thing will turn into
+	calculate how many pages do we want
+	allocate an array (if needed)
+	call append_pipe() that many times.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- lib/iov_iter.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ lib/iov_iter.c | 75 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 38 insertions(+), 37 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index fca66ecce7a0..f455b8ee0d76 100644
+index f455b8ee0d76..9280f865fd6a 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1306,33 +1306,23 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 	return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
+@@ -1192,60 +1192,61 @@ static struct page **get_pages_array(size_t n)
+ 	return kvmalloc_array(n, sizeof(struct page *), GFP_KERNEL);
  }
  
--static unsigned long found_ubuf_segment(unsigned long addr, size_t *start)
+-static inline ssize_t __pipe_get_pages(struct iov_iter *i,
+-				size_t maxsize,
+-				struct page **pages,
+-				size_t off)
 -{
--	*start = addr % PAGE_SIZE;
--	return addr & PAGE_MASK;
+-	struct pipe_inode_info *pipe = i->pipe;
+-	ssize_t left = maxsize;
+-
+-	if (off) {
+-		struct pipe_buffer *buf = pipe_buf(pipe, pipe->head - 1);
+-
+-		get_page(*pages++ = buf->page);
+-		left -= PAGE_SIZE - off;
+-		if (left <= 0) {
+-			buf->len += maxsize;
+-			return maxsize;
+-		}
+-		buf->len = PAGE_SIZE;
+-	}
+-	while (!pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
+-		struct page *page = push_anon(pipe,
+-					      min_t(ssize_t, left, PAGE_SIZE));
+-		if (!page)
+-			break;
+-		get_page(*pages++ = page);
+-		left -= PAGE_SIZE;
+-		if (left <= 0)
+-			return maxsize;
+-	}
+-	return maxsize - left ? : -EFAULT;
 -}
 -
- /* must be done on non-empty ITER_UBUF or ITER_IOVEC one */
- static unsigned long first_iovec_segment(const struct iov_iter *i,
--					 size_t *size, size_t *start)
-+					 size_t *size)
+ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize, unsigned maxpages,
+ 		   size_t *start)
  {
- 	size_t skip;
- 	long k;
++	struct pipe_inode_info *pipe = i->pipe;
+ 	unsigned int npages, off;
+ 	struct page **p;
+-	size_t capacity;
++	ssize_t left;
++	int count;
  
--	if (iter_is_ubuf(i)) {
--		unsigned long addr = (unsigned long)i->ubuf + i->iov_offset;
--		return found_ubuf_segment(addr, start);
--	}
-+	if (iter_is_ubuf(i))
-+		return (unsigned long)i->ubuf + i->iov_offset;
+ 	if (!sanity(i))
+ 		return -EFAULT;
  
- 	for (k = 0, skip = i->iov_offset; k < i->nr_segs; k++, skip = 0) {
--		unsigned long addr = (unsigned long)i->iov[k].iov_base + skip;
- 		size_t len = i->iov[k].iov_len - skip;
--
- 		if (unlikely(!len))
- 			continue;
- 		if (*size > len)
- 			*size = len;
--		return found_ubuf_segment(addr, start);
-+		return (unsigned long)i->iov[k].iov_base + skip;
+ 	*start = off = pipe_npages(i, &npages);
+-	capacity = min(npages, maxpages) * PAGE_SIZE - off;
+-	maxsize = min(maxsize, capacity);
++	count = DIV_ROUND_UP(maxsize + off, PAGE_SIZE);
++	if (count > npages)
++		count = npages;
++	if (count > maxpages)
++		count = maxpages;
+ 	p = *pages;
+ 	if (!p) {
+-		*pages = p = get_pages_array(DIV_ROUND_UP(maxsize + off, PAGE_SIZE));
++		*pages = p = get_pages_array(count);
+ 		if (!p)
+ 			return -ENOMEM;
  	}
- 	BUG(); // if it had been empty, we wouldn't get called
- }
-@@ -1375,7 +1365,9 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		if (i->nofault)
- 			gup_flags |= FOLL_NOFAULT;
  
--		addr = first_iovec_segment(i, &maxsize, start);
-+		addr = first_iovec_segment(i, &maxsize);
-+		*start = addr % PAGE_SIZE;
-+		addr &= PAGE_MASK;
- 		n = DIV_ROUND_UP(maxsize + *start, PAGE_SIZE);
- 		if (n > maxpages)
- 			n = maxpages;
+-	return __pipe_get_pages(i, maxsize, p, off);
++	left = maxsize;
++	npages = 0;
++	if (off) {
++		struct pipe_buffer *buf = pipe_buf(pipe, pipe->head - 1);
++
++		get_page(*p++ = buf->page);
++		left -= PAGE_SIZE - off;
++		if (left <= 0) {
++			buf->len += maxsize;
++			return maxsize;
++		}
++		buf->len = PAGE_SIZE;
++		npages = 1;
++	}
++	for ( ; npages < count; npages++) {
++		struct page *page;
++		unsigned int size = min_t(ssize_t, left, PAGE_SIZE);
++
++		if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
++			break;
++		page = push_anon(pipe, size);
++		if (!page)
++			break;
++		get_page(*p++ = page);
++		left -= size;
++	}
++	if (!npages)
++		return -EFAULT;
++	return maxsize - left;
+ }
+ 
+ static ssize_t iter_xarray_populate_pages(struct page **pages, struct xarray *xa,
 -- 
 2.30.2
 
