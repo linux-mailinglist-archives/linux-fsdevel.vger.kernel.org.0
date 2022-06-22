@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13697556E10
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 23:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44410556E13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 23:57:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235975AbiFVV5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 17:57:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
+        id S233640AbiFVV5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 17:57:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbiFVV5m (ORCPT
+        with ESMTP id S234525AbiFVV5n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 17:57:42 -0400
+        Wed, 22 Jun 2022 17:57:43 -0400
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38AD40A03;
-        Wed, 22 Jun 2022 14:57:40 -0700 (PDT)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25MLPvdY013862;
-        Wed, 22 Jun 2022 21:57:11 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3D44091F;
+        Wed, 22 Jun 2022 14:57:42 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25MKPnKh000352;
+        Wed, 22 Jun 2022 21:57:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=6wrzb3Wml9nwKk3+3wz6vxVRKieUWEM5Z/GzPN94F2k=;
- b=RTJc5wTv/q92yOOjL7reTiu/Lsi77j8vpOtKtISz+9G+p06Z+C6RFjKuZ/1wpxMRBggN
- J6PKxbvbFe9tBYvnU+0ndyZCXEsYbxg48GYvT5Y4LuTXbpB4qLF07Sq1RqH7epfTEzuW
- LrdbYWzPgpDyswxBS6/W4YZBnLN1VVoLwB83CDNfLq7M1pBNRB1S0zQ+kD1umSHkPc5D
- bJCWNSG5UwIMRo5ejX8wW0Fo058UXsEXJVb10J4//ZIFbfIhbtOXeChtDIiXirfjxJ7J
- 8e/AualR9P4Nrqx20JyQYmmAFsYR0TRLLRAFI0nkil3IYl3k97opJMqp776tUMy7/1Hd tw== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gvb08gseh-1
+ bh=yO69ITjOfpZ5Nfv0+ek3fE3ZRMt15oT6xMQwVNQEC6A=;
+ b=tiK+9gTtrLH4YNGlXPAythyCJZ2kpjw1NkIx1Q4TFdgF2J59hjgneM0TBr0X/Yt0q27b
+ rXJpRRtLGcc3dPvLZCLYr3BzusHLTNwexW+Vm16M8z15sJechKQUeVQ1CBqESIBXR9xQ
+ TegGprBBs7Sp1YeNhSZmXv+XUMMt2UWcZ5OnMSZbFQr8p74/omcLBL9x93KzeOQSxE4g
+ +xNn2zEaEeOs2FN9Nd+c50t3UeS/Ihz7cpYEfhAnpFcqG8cpfdE66jHsZenJZd2XOM5w
+ 5a5bFPuZlOVSYtgd1N58OHodKmLPQ7neVOUXwpTAtzPOIeSxR6sMlksbbL8rloPPT1Lh Yg== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gva3y2mx8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Jun 2022 21:57:11 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25MLodXX028393;
-        Wed, 22 Jun 2022 21:57:09 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3gv9r7030s-1
+        Wed, 22 Jun 2022 21:57:14 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25MLqDDf007944;
+        Wed, 22 Jun 2022 21:57:12 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 3gs6b9682k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Jun 2022 21:57:08 +0000
+        Wed, 22 Jun 2022 21:57:12 +0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25MLv5g317695110
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25MLv9aK21102944
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jun 2022 21:57:05 GMT
+        Wed, 22 Jun 2022 21:57:09 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CD1CA404D;
-        Wed, 22 Jun 2022 21:57:05 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 4769CA4051;
+        Wed, 22 Jun 2022 21:57:09 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 206ACA4040;
-        Wed, 22 Jun 2022 21:57:02 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0BA2DA4040;
+        Wed, 22 Jun 2022 21:57:06 +0000 (GMT)
 Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.125.38])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Jun 2022 21:57:01 +0000 (GMT)
+        Wed, 22 Jun 2022 21:57:05 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
 Cc:     linux-efi@vger.kernel.org,
@@ -65,25 +65,25 @@ Cc:     linux-efi@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Nayna Jain <nayna@linux.ibm.com>
-Subject: [RFC PATCH v2 1/3] powerpc/pseries: define driver for Platform KeyStore
-Date:   Wed, 22 Jun 2022 17:56:46 -0400
-Message-Id: <20220622215648.96723-2-nayna@linux.ibm.com>
+Subject: [RFC PATCH v2 2/3] fs: define a firmware security filesystem named fwsecurityfs
+Date:   Wed, 22 Jun 2022 17:56:47 -0400
+Message-Id: <20220622215648.96723-3-nayna@linux.ibm.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220622215648.96723-1-nayna@linux.ibm.com>
 References: <20220622215648.96723-1-nayna@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EJ1qoo2YSAaDtyH9_JrEi_nHpCSmh-jX
-X-Proofpoint-GUID: EJ1qoo2YSAaDtyH9_JrEi_nHpCSmh-jX
+X-Proofpoint-ORIG-GUID: YA5a0H2NLYPnmgTKDUfzyKHq307nadwo
+X-Proofpoint-GUID: YA5a0H2NLYPnmgTKDUfzyKHq307nadwo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-06-22_08,2022-06-22_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- phishscore=0 clxscore=1015 mlxlogscore=999 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
- definitions=main-2206220097
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 bulkscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206220097
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -93,724 +93,500 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PowerVM provides an isolated Platform Keystore(PKS) storage allocation
-for each LPAR with individually managed access controls to store
-sensitive information securely. It provides a new set of hypervisor
-calls for Linux kernel to access PKS storage.
+securityfs is meant for linux security subsystems to expose policies/logs
+or any other information. However, there are various firmware security
+features which expose their variables for user management via kernel.
+There is currently no single place to expose these variables. Different
+platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+interface as find appropriate. Thus, there is a gap in kernel interfaces
+to expose variables for security features.
 
-Define PLPKS driver using H_CALL interface to access PKS storage.
+Define a firmware security filesystem (fwsecurityfs) to be used for
+exposing variables managed by firmware and to be used by firmware
+enabled security features. These variables are platform specific.
+Filesystem provides platforms to implement their own underlying
+semantics by defining own inode and file operations.
+
+Similar to securityfs, the firmware security filesystem is recommended
+to be exposed on a well known mount point /sys/firmware/security.
+Platforms can define their own directory or file structure under this path.
+
+Example:
+
+# mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+
+# cd /sys/firmware/security/
 
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 ---
- arch/powerpc/include/asm/hvcall.h             |  12 +-
- arch/powerpc/include/asm/plpks.h              |  92 ++++
- arch/powerpc/platforms/pseries/Kconfig        |  10 +
- arch/powerpc/platforms/pseries/Makefile       |   2 +
- arch/powerpc/platforms/pseries/plpks/Makefile |   7 +
- arch/powerpc/platforms/pseries/plpks/plpks.c  | 517 ++++++++++++++++++
- 6 files changed, 639 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/include/asm/plpks.h
- create mode 100644 arch/powerpc/platforms/pseries/plpks/Makefile
- create mode 100644 arch/powerpc/platforms/pseries/plpks/plpks.c
+ fs/Kconfig                   |   1 +
+ fs/Makefile                  |   1 +
+ fs/fwsecurityfs/Kconfig      |  14 +++
+ fs/fwsecurityfs/Makefile     |  10 +++
+ fs/fwsecurityfs/inode.c      | 159 +++++++++++++++++++++++++++++++++++
+ fs/fwsecurityfs/internal.h   |  13 +++
+ fs/fwsecurityfs/super.c      | 154 +++++++++++++++++++++++++++++++++
+ include/linux/fwsecurityfs.h |  29 +++++++
+ include/uapi/linux/magic.h   |   1 +
+ 9 files changed, 382 insertions(+)
+ create mode 100644 fs/fwsecurityfs/Kconfig
+ create mode 100644 fs/fwsecurityfs/Makefile
+ create mode 100644 fs/fwsecurityfs/inode.c
+ create mode 100644 fs/fwsecurityfs/internal.h
+ create mode 100644 fs/fwsecurityfs/super.c
+ create mode 100644 include/linux/fwsecurityfs.h
 
-diff --git a/arch/powerpc/include/asm/hvcall.h b/arch/powerpc/include/asm/hvcall.h
-index d92a20a85395..1da429235632 100644
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@ -97,6 +97,7 @@
- #define H_OP_MODE	-73
- #define H_COP_HW	-74
- #define H_STATE		-75
-+#define H_IN_USE	-77
- #define H_UNSUPPORTED_FLAG_START	-256
- #define H_UNSUPPORTED_FLAG_END		-511
- #define H_MULTI_THREADS_ACTIVE	-9005
-@@ -321,10 +322,19 @@
- #define H_SCM_UNBIND_ALL        0x3FC
- #define H_SCM_HEALTH            0x400
- #define H_SCM_PERFORMANCE_STATS 0x418
-+#define H_PKS_GET_CONFIG	0x41C
-+#define H_PKS_SET_PASSWORD	0x420
-+#define H_PKS_GEN_PASSWORD	0x424
-+#define H_PKS_WRITE_OBJECT	0x42C
-+#define H_PKS_GEN_KEY		0x430
-+#define H_PKS_READ_OBJECT	0x434
-+#define H_PKS_REMOVE_OBJECT	0x438
-+#define H_PKS_CONFIRM_OBJECT_FLUSHED	0x43C
- #define H_RPT_INVALIDATE	0x448
- #define H_SCM_FLUSH		0x44C
- #define H_GET_ENERGY_SCALE_INFO	0x450
--#define MAX_HCALL_OPCODE	H_GET_ENERGY_SCALE_INFO
-+#define H_PKS_SIGNED_UPDATE	0x454
-+#define MAX_HCALL_OPCODE	H_PKS_SIGNED_UPDATE
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 5976eb33535f..19ea28143428 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -276,6 +276,7 @@ config ARCH_HAS_GIGANTIC_PAGE
  
- /* Scope args for H_SCM_UNBIND_ALL */
- #define H_UNBIND_SCOPE_ALL (0x1)
-diff --git a/arch/powerpc/include/asm/plpks.h b/arch/powerpc/include/asm/plpks.h
-new file mode 100644
-index 000000000000..c3b544bdbcb6
---- /dev/null
-+++ b/arch/powerpc/include/asm/plpks.h
-@@ -0,0 +1,92 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022 IBM Corporation
-+ * Author: Nayna Jain <nayna@linux.ibm.com>
-+ *
-+ * Platform keystore for pseries LPAR(PLPKS).
-+ */
-+
-+#ifndef _PSERIES_PLPKS_H
-+#define _PSERIES_PLPKS_H
-+
-+
-+#include <linux/types.h>
-+#include <linux/list.h>
-+
-+
-+#define OSSECBOOTAUDIT 0x40000000
-+#define OSSECBOOTENFORCE 0x20000000
-+#define WORLDREADABLE 0x08000000
-+#define SIGNEDUPDATE 0x01000000
-+
-+struct plpks_var {
-+	char *component;
-+	u8 *name;
-+	u16 namelen;
-+	u32 policy;
-+	u16 datalen;
-+	u8 *data;
-+};
-+
-+struct plpks_var_name {
-+	u16 namelen;
-+	u8  *name;
-+};
-+
-+struct plpks_var_name_list {
-+	u32 varcount;
-+	struct plpks_var_name varlist[];
-+};
-+
-+struct plpks_config {
-+	u8 version;
-+	u8 flags;
-+	u32 rsvd0;
-+	u16 maxpwsize;
-+	u16 maxobjlabelsize;
-+	u16 maxobjsize;
-+	u32 totalsize;
-+	u32 usedspace;
-+	u32 supportedpolicies;
-+	u64 rsvd1;
-+} __packed;
-+
-+/**
-+ * Successful return from this API  implies PKS is available.
-+ * This is used to initialize kernel driver and user interfaces.
-+ */
-+extern struct plpks_config *plpks_get_config(void);
-+
-+/**
-+ * Updates the authenticated variable. It expects NULL as the component.
-+ */
-+extern int plpks_signed_update_var(struct plpks_var var);
-+
-+/**
-+ * Writes the specified var and its data to PKS.
-+ * Any caller of PKS driver should present a valid component type for
-+ * their variable.
-+ */
-+extern int plpks_write_var(struct plpks_var var);
-+
-+/**
-+ * Removes the specified var and its data from PKS.
-+ */
-+extern int plpks_remove_var(char *component, struct plpks_var_name vname);
-+
-+/**
-+ * Returns the data for the specified os variable.
-+ */
-+extern int plpks_read_os_var(struct plpks_var *var);
-+
-+/**
-+ * Returns the data for the specified firmware variable.
-+ */
-+extern int plpks_read_fw_var(struct plpks_var *var);
-+
-+/**
-+ * Returns the data for the specified bootloader variable.
-+ */
-+extern int plpks_read_bootloader_var(struct plpks_var *var);
-+
-+#endif
-diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platforms/pseries/Kconfig
-index f7fd91d153a4..6c1ca487103f 100644
---- a/arch/powerpc/platforms/pseries/Kconfig
-+++ b/arch/powerpc/platforms/pseries/Kconfig
-@@ -142,6 +142,16 @@ config IBMEBUS
- 	help
- 	  Bus device driver for GX bus based adapters.
+ source "fs/configfs/Kconfig"
+ source "fs/efivarfs/Kconfig"
++source "fs/fwsecurityfs/Kconfig"
  
-+config PSERIES_PLPKS
-+	depends on PPC_PSERIES
-+	tristate "Support for the Platform Key Storage"
-+	help
-+	  PowerVM provides an isolated Platform Keystore(PKS) storage
-+	  allocation for each LPAR with individually managed access
-+	  controls to store sensitive information securely. Select this
-+	  config to enable operating system interface to hypervisor to
-+	  access this space.
-+
- config PAPR_SCM
- 	depends on PPC_PSERIES && MEMORY_HOTPLUG && LIBNVDIMM
- 	tristate "Support for the PAPR Storage Class Memory interface"
-diff --git a/arch/powerpc/platforms/pseries/Makefile b/arch/powerpc/platforms/pseries/Makefile
-index 7aaff5323544..d6a9209e08c0 100644
---- a/arch/powerpc/platforms/pseries/Makefile
-+++ b/arch/powerpc/platforms/pseries/Makefile
-@@ -37,3 +37,5 @@ obj-$(CONFIG_ARCH_HAS_CC_PLATFORM)	+= cc_platform.o
- # nothing that operates in real mode is safe for KASAN
- KASAN_SANITIZE_ras.o := n
- KASAN_SANITIZE_kexec.o := n
-+
-+obj-$(CONFIG_PSERIES_PLPKS)      += plpks/
-diff --git a/arch/powerpc/platforms/pseries/plpks/Makefile b/arch/powerpc/platforms/pseries/plpks/Makefile
+ endmenu
+ 
+diff --git a/fs/Makefile b/fs/Makefile
+index 208a74e0b00e..5792cd0443cb 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -137,6 +137,7 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
+ obj-$(CONFIG_CEPH_FS)		+= ceph/
+ obj-$(CONFIG_PSTORE)		+= pstore/
+ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
++obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs/
+ obj-$(CONFIG_EROFS_FS)		+= erofs/
+ obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
+ obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
+diff --git a/fs/fwsecurityfs/Kconfig b/fs/fwsecurityfs/Kconfig
 new file mode 100644
-index 000000000000..e651ace920db
+index 000000000000..f1665511eeb9
 --- /dev/null
-+++ b/arch/powerpc/platforms/pseries/plpks/Makefile
-@@ -0,0 +1,7 @@
++++ b/fs/fwsecurityfs/Kconfig
+@@ -0,0 +1,14 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
 +# Copyright (C) 2022 IBM Corporation
 +# Author: Nayna Jain <nayna@linux.ibm.com>
 +#
 +
-+obj-$(CONFIG_PSERIES_PLPKS)  += plpks.o
-diff --git a/arch/powerpc/platforms/pseries/plpks/plpks.c b/arch/powerpc/platforms/pseries/plpks/plpks.c
++config FWSECURITYFS
++	bool "Enable the fwsecurityfs filesystem"
++	help
++	  This will build the fwsecurityfs file system which is recommended
++	  to be mounted on /sys/firmware/security. This can be used by
++	  platforms to expose their variables which are managed by firmware.
++
++	  If you are unsure how to answer this question, answer N.
+diff --git a/fs/fwsecurityfs/Makefile b/fs/fwsecurityfs/Makefile
 new file mode 100644
-index 000000000000..1edb5905bbef
+index 000000000000..b9931d180178
 --- /dev/null
-+++ b/arch/powerpc/platforms/pseries/plpks/plpks.c
-@@ -0,0 +1,517 @@
++++ b/fs/fwsecurityfs/Makefile
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Copyright (C) 2022 IBM Corporation
++# Author: Nayna Jain <nayna@linux.ibm.com>
++#
++# Makefile for the firmware security filesystem
++
++obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs.o
++
++fwsecurityfs-objs			:= inode.o super.o
+diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
+new file mode 100644
+index 000000000000..5d06dc0de059
+--- /dev/null
++++ b/fs/fwsecurityfs/inode.c
+@@ -0,0 +1,159 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * POWER LPAR Platform KeyStore (PLPKS)
 + * Copyright (C) 2022 IBM Corporation
 + * Author: Nayna Jain <nayna@linux.ibm.com>
-+ *
-+ * Provides access to variables stored in Power LPAR Platform KeyStore(PLPKS).
 + */
 +
-+#include <linux/module.h>
-+#include <linux/types.h>
-+#include <linux/errno.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <asm/hvcall.h>
-+#include <asm/plpks.h>
-+#include <asm/unaligned.h>
-+#include <asm/machdep.h>
++#include <linux/sysfs.h>
++#include <linux/kobject.h>
++#include <linux/fs.h>
++#include <linux/fs_context.h>
++#include <linux/mount.h>
++#include <linux/pagemap.h>
++#include <linux/init.h>
++#include <linux/namei.h>
++#include <linux/security.h>
++#include <linux/lsm_hooks.h>
++#include <linux/magic.h>
++#include <linux/ctype.h>
++#include <linux/fwsecurityfs.h>
 +
-+#define MODULE_VERS "1.0"
-+#define MODULE_NAME "pseries-plpks"
++#include "internal.h"
 +
-+#define PKS_FW_OWNER   0x1
-+#define PKS_BOOTLOADER_OWNER   0x2
-+#define PKS_OS_OWNER   0x3
-+
-+#define PKS_VAR_LINUX	0x01
-+#define PKS_VAR_COMMON	0x04
-+
-+#define MAX_LABEL_ATTR_SIZE 16
-+#define MAX_NAME_SIZE 240
-+#define MAX_DATA_SIZE 4000
-+
-+static bool configset;
-+static struct plpks_config *config;
-+static u8 *ospassword;
-+static u16 ospasswordlength;
-+
-+struct plpks_auth {
-+	u8 version;
-+	u8 consumer;
-+	__be64 rsvd0;
-+	__be32 rsvd1;
-+	__be16 passwordlength;
-+	u8 password[];
-+} __attribute__ ((packed, aligned(16)));
-+
-+struct label_attr {
-+	u8 prefix[8];
-+	u8 version;
-+	u8 os;
-+	u8 length;
-+	u8 reserved[5];
-+};
-+
-+struct label {
-+	struct label_attr attr;
-+	u8 name[MAX_NAME_SIZE];
-+};
-+
-+static int pseries_status_to_err(int rc)
++int fwsecurityfs_remove_file(struct dentry *dentry)
 +{
-+	int err;
-+
-+	switch (rc) {
-+	case H_SUCCESS:
-+		err = 0;
-+		break;
-+	case H_FUNCTION:
-+		err = -ENXIO;
-+		break;
-+	case H_P2:
-+	case H_P3:
-+	case H_P4:
-+	case H_P5:
-+	case H_P6:
-+		err = -EINVAL;
-+		break;
-+	case H_NOT_FOUND:
-+		err = -ENOENT;
-+		break;
-+	case H_BUSY:
-+		err = -EBUSY;
-+		break;
-+	case H_AUTHORITY:
-+		err = -EPERM;
-+		break;
-+	case H_NO_MEM:
-+		err = -ENOMEM;
-+		break;
-+	case H_RESOURCE:
-+		err = -EEXIST;
-+		break;
-+	case H_TOO_BIG:
-+		err = -EFBIG;
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
-+}
-+
-+static int plpks_gen_password(void)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	u8 consumer = PKS_OS_OWNER;
-+	int rc;
-+
-+	ospassword = kzalloc(config->maxpwsize, GFP_KERNEL);
-+	if (!ospassword)
-+		return -ENOMEM;
-+
-+	ospasswordlength = config->maxpwsize;
-+	rc = plpar_hcall(H_PKS_GEN_PASSWORD,
-+			retbuf,
-+			consumer,
-+			0,
-+			virt_to_phys(ospassword),
-+			config->maxpwsize);
-+
-+	return pseries_status_to_err(rc);
-+}
-+
-+static int construct_auth(u8 consumer, struct plpks_auth **auth)
-+{
-+	pr_debug("max password size is %u\n", config->maxpwsize);
-+
-+	if (!auth || (consumer > 3))
-+		return -EINVAL;
-+
-+	*auth = kmalloc(struct_size(*auth, password, config->maxpwsize),
-+			GFP_KERNEL);
-+	if (!*auth)
-+		return -ENOMEM;
-+
-+	(*auth)->version = 1;
-+	(*auth)->consumer = consumer;
-+	(*auth)->rsvd0 = 0;
-+	(*auth)->rsvd1 = 0;
-+	if ((consumer == PKS_FW_OWNER) || (consumer == PKS_BOOTLOADER_OWNER)) {
-+		pr_debug("consumer is bootloader or firmware\n");
-+		(*auth)->passwordlength = 0;
-+		return 0;
-+	}
-+
-+	(*auth)->passwordlength = ospasswordlength;
-+
-+	memcpy((*auth)->password, ospassword, flex_array_size(*auth, password,
-+					      (*auth)->passwordlength));
-+	(*auth)->passwordlength = cpu_to_be16((*auth)->passwordlength);
-+
++	drop_nlink(d_inode(dentry));
++	dput(dentry);
 +	return 0;
-+}
++};
++EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
 +
-+/**
-+ * Label is combination of label attributes + name.
-+ * Label attributes are used internally by kernel and not exposed to the user.
-+ */
-+static int construct_label(char *component, u8 *name, u16 namelen, u8 **label)
++int fwsecurityfs_create_file(const char *name, umode_t mode,
++					u16 filesize, struct dentry *parent,
++					struct dentry *dentry,
++					const struct file_operations *fops)
 +{
-+	int varlen;
-+	int len = 0;
-+	int llen = 0;
-+	u8 anyos;
-+	int i;
-+	int rc = 0;
-+	u8 labellength = MAX_LABEL_ATTR_SIZE;
++	struct inode *inode;
++	int error;
++	struct inode *dir;
 +
-+	if (!label)
++	if (!parent)
 +		return -EINVAL;
 +
-+	varlen = namelen + sizeof(struct label_attr);
-+	*label = kzalloc(varlen, GFP_KERNEL);
++	dir = d_inode(parent);
++	pr_debug("securityfs: creating file '%s'\n", name);
 +
-+	if (!*label)
-+		return -ENOMEM;
-+
-+	if (component) {
-+		len = strlen(component);
-+		memcpy(*label, component, len);
-+	}
-+	llen = len;
-+
-+	if (component)
-+		len = 8 - strlen(component);
-+	else
-+		len = 8;
-+
-+	memset(*label + llen, 0, len);
-+	llen = llen + len;
-+
-+	((*label)[llen]) = 0;
-+	llen = llen + 1;
-+
-+	if (component)
-+		if (memcmp(component, "sed-opal", 8) == 0)
-+			anyos = PKS_VAR_COMMON;
-+		else
-+			anyos = PKS_VAR_LINUX;
-+	else
-+		anyos = PKS_VAR_LINUX;
-+	memcpy(*label + llen, &anyos, 1);
-+	llen = llen + 1;
-+
-+	memcpy(*label + llen, &labellength, 1);
-+	llen = llen + 1;
-+
-+	memset(*label + llen, 0, 5);
-+	llen = llen + 5;
-+
-+	memcpy(*label + llen, name, namelen);
-+	llen = llen + namelen;
-+
-+	for (i = 0; i < llen; i++)
-+		pr_debug("%c", (*label)[i]);
-+
-+	rc = llen;
-+	return rc;
-+}
-+
-+static int _plpks_get_config(void)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	int rc;
-+	size_t size = sizeof(struct plpks_config);
-+
-+	config = kzalloc(size, GFP_KERNEL);
-+	if (!config)
-+		return -ENOMEM;
-+
-+	rc = plpar_hcall(H_PKS_GET_CONFIG,
-+			retbuf,
-+			virt_to_phys(config),
-+			size);
-+
-+	if (rc != H_SUCCESS)
-+		return pseries_status_to_err(rc);
-+
-+	config->rsvd0 = be32_to_cpu(config->rsvd0);
-+	config->maxpwsize = be16_to_cpu(config->maxpwsize);
-+	config->maxobjlabelsize = be16_to_cpu(config->maxobjlabelsize);
-+	config->maxobjsize = be16_to_cpu(config->maxobjsize);
-+	config->totalsize = be32_to_cpu(config->totalsize);
-+	config->usedspace = be32_to_cpu(config->usedspace);
-+	config->supportedpolicies = be32_to_cpu(config->supportedpolicies);
-+	config->rsvd1 = be64_to_cpu(config->rsvd1);
-+
-+	configset = true;
-+
-+	return 0;
-+}
-+
-+int plpks_signed_update_var(struct plpks_var var)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	int rc;
-+	u8 *label;
-+	u16 varlen;
-+	u8 *data;
-+	struct plpks_auth *auth;
-+	u64 flags;
-+	u64 continuetoken;
-+
-+	if (!var.data || (var.datalen <= 0)
-+		  || (var.namelen > MAX_NAME_SIZE)
-+		  || (var.datalen > MAX_DATA_SIZE))
-+		return -EINVAL;
-+
-+	if (!(var.policy & SIGNEDUPDATE))
-+		return -EINVAL;
-+
-+	rc = construct_auth(PKS_OS_OWNER, &auth);
-+	if (rc)
-+		return rc;
-+
-+	rc = construct_label(var.component, var.name, var.namelen, &label);
-+	if (rc <= 0)
-+		goto out;
-+
-+	varlen =  rc;
-+	pr_debug("Name to be written is %s of label size %d\n", label, varlen);
-+
-+	memcpy(&flags, var.data, sizeof(u64));
-+	data = kzalloc(var.datalen - sizeof(u64), GFP_KERNEL);
-+	memcpy(data, var.data + sizeof(u64), var.datalen - sizeof(u64));
-+
-+	do {
-+		rc = plpar_hcall(H_PKS_SIGNED_UPDATE,
-+				retbuf,
-+				virt_to_phys(auth),
-+				virt_to_phys(label),
-+				varlen,
-+				var.policy,
-+				flags,
-+				virt_to_phys(data),
-+				var.datalen);
-+
-+		continuetoken = retbuf[0];
-+
-+	} while (rc == H_BUSY);
-+
-+	rc = pseries_status_to_err(rc);
-+
-+	kfree(label);
-+	kfree(data);
-+
-+out:
-+	kfree(auth);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(plpks_signed_update_var);
-+
-+int plpks_write_var(struct plpks_var var)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	int rc;
-+	u8 *label;
-+	u16 varlen;
-+	u8 *data = var.data;
-+	struct plpks_auth *auth;
-+
-+	if (!var.component || !data || (var.datalen <= 0)
-+			   || (var.namelen > MAX_NAME_SIZE)
-+			   || (var.datalen > MAX_DATA_SIZE))
-+		return -EINVAL;
-+
-+	if (var.policy & SIGNEDUPDATE)
-+		return -EINVAL;
-+
-+	rc = construct_auth(PKS_OS_OWNER, &auth);
-+	if (rc)
-+		return rc;
-+
-+	rc = construct_label(var.component, var.name, var.namelen, &label);
-+	if (rc <= 0)
-+		goto out;
-+
-+	varlen =  rc;
-+	pr_debug("Name to be written is %s of label size %d\n", label, varlen);
-+	rc = plpar_hcall(H_PKS_WRITE_OBJECT,
-+			retbuf,
-+			virt_to_phys(auth),
-+			virt_to_phys(label),
-+			varlen,
-+			var.policy,
-+			virt_to_phys(data),
-+			var.datalen);
-+
-+	rc = pseries_status_to_err(rc);
-+	kfree(label);
-+
-+out:
-+	kfree(auth);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(plpks_write_var);
-+
-+int plpks_remove_var(char *component, struct plpks_var_name vname)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	int rc;
-+	u8 *label;
-+	u16 varlen;
-+	struct plpks_auth *auth;
-+
-+	if (!component || vname.namelen > MAX_NAME_SIZE)
-+		return -EINVAL;
-+
-+	rc = construct_auth(PKS_OS_OWNER, &auth);
-+	if (rc)
-+		return rc;
-+
-+	rc = construct_label(component, vname.name, vname.namelen, &label);
-+	if (rc <= 0)
-+		goto out;
-+
-+	varlen = rc;
-+	pr_debug("Name to be written is %s of label size %d\n", label, varlen);
-+	rc = plpar_hcall(H_PKS_REMOVE_OBJECT,
-+			retbuf,
-+			virt_to_phys(auth),
-+			virt_to_phys(label),
-+			varlen);
-+
-+	rc = pseries_status_to_err(rc);
-+	kfree(label);
-+
-+out:
-+	kfree(auth);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(plpks_remove_var);
-+
-+static int plpks_read_var(u8 consumer, struct plpks_var *var)
-+{
-+	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = {0};
-+	int rc;
-+	u16 outlen = config->maxobjsize;
-+	u8 *label;
-+	u8 *out;
-+	u16 varlen;
-+	struct plpks_auth *auth;
-+
-+	if (var->namelen > MAX_NAME_SIZE)
-+		return -EINVAL;
-+
-+	rc = construct_auth(PKS_OS_OWNER, &auth);
-+	if (rc)
-+		return rc;
-+
-+	rc = construct_label(var->component, var->name, var->namelen, &label);
-+	if (rc <= 0)
-+		goto out;
-+
-+	varlen = rc;
-+	pr_debug("Name to be written is %s of label size %d\n", label, varlen);
-+	out = kzalloc(outlen, GFP_KERNEL);
-+	if (!out)
++	inode = new_inode(dir->i_sb);
++	if (!inode) {
++		error = -ENOMEM;
 +		goto out1;
-+
-+	rc = plpar_hcall(H_PKS_READ_OBJECT,
-+			retbuf,
-+			virt_to_phys(auth),
-+			virt_to_phys(label),
-+			varlen,
-+			virt_to_phys(out),
-+			outlen);
-+
-+	if (rc != H_SUCCESS) {
-+		pr_err("Failed to read %d\n", rc);
-+		rc = pseries_status_to_err(rc);
-+		goto out2;
 +	}
 +
-+	if ((var->datalen == 0) || (var->datalen > retbuf[0]))
-+		var->datalen = retbuf[0];
++	inode->i_ino = get_next_ino();
++	inode->i_mode = mode;
++	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
 +
-+	var->data = kzalloc(var->datalen, GFP_KERNEL);
-+	if (!var->data) {
-+		rc = -ENOMEM;
-+		goto out2;
-+	}
-+	var->policy = retbuf[1];
++	if (fops)
++		inode->i_fop = fops;
++	else
++		inode->i_fop = &simple_dir_operations;
 +
-+	memcpy(var->data, out, var->datalen);
-+
-+out2:
-+	kfree(out);
-+
-+out1:
-+	kfree(label);
-+
-+out:
-+	kfree(auth);
-+
-+	return rc;
-+}
-+
-+int plpks_read_os_var(struct plpks_var *var)
-+{
-+	return plpks_read_var(PKS_OS_OWNER, var);
-+}
-+EXPORT_SYMBOL(plpks_read_os_var);
-+
-+int plpks_read_fw_var(struct plpks_var *var)
-+{
-+	return plpks_read_var(PKS_FW_OWNER, var);
-+}
-+EXPORT_SYMBOL(plpks_read_fw_var);
-+
-+int plpks_read_bootloader_var(struct plpks_var *var)
-+{
-+	return plpks_read_var(PKS_BOOTLOADER_OWNER, var);
-+}
-+EXPORT_SYMBOL(plpks_read_bootloader_var);
-+
-+struct plpks_config *plpks_get_config(void)
-+{
-+
-+	if (!configset) {
-+		if (_plpks_get_config())
-+			return NULL;
-+	}
-+
-+	return config;
-+}
-+EXPORT_SYMBOL(plpks_get_config);
-+
-+int __init pseries_plpks_init(void)
-+{
-+	int rc = 0;
-+
-+	rc = _plpks_get_config();
-+
-+	if (rc) {
-+		pr_err("Error initializing plpks\n");
-+		return rc;
-+	}
-+
-+	rc = plpks_gen_password();
-+	if (rc) {
-+		if (rc == H_IN_USE) {
-+			rc = 0;
-+		} else {
-+			pr_err("Failed setting password %d\n", rc);
-+			rc = pseries_status_to_err(rc);
-+			return rc;
++	if (!dentry) {
++		dentry = fwsecurityfs_alloc_dentry(parent, name);
++		if (IS_ERR(dentry)) {
++			error = PTR_ERR(dentry);
++			goto out;
 +		}
 +	}
 +
-+	return rc;
++	inode_lock(inode);
++	i_size_write(inode, filesize);
++	d_instantiate(dentry, inode);
++	dget(dentry);
++	d_add(dentry, inode);
++	inode_unlock(inode);
++	return 0;
++
++out1:
++	if (dentry)
++		dput(dentry);
++out:
++	return error;
 +}
-+arch_initcall(pseries_plpks_init);
++EXPORT_SYMBOL_GPL(fwsecurityfs_create_file);
++
++struct dentry *fwsecurityfs_create_dir(const char *name, umode_t mode,
++				       struct dentry *parent,
++				       const struct inode_operations *iops)
++{
++	struct dentry *dentry;
++	struct inode *inode;
++	int error;
++	struct inode *dir;
++	struct super_block *fwsecsb;
++
++	if (!parent) {
++		fwsecsb = fwsecurityfs_get_superblock();
++		if (!fwsecsb)
++			return ERR_PTR(-EIO);
++		parent = fwsecsb->s_root;
++	}
++
++	dir = d_inode(parent);
++
++	inode_lock(dir);
++	dentry = lookup_one_len(name, parent, strlen(name));
++	if (IS_ERR(dentry))
++		goto out;
++
++	inode = new_inode(dir->i_sb);
++	if (!inode) {
++		error = -ENOMEM;
++		goto out1;
++	}
++
++	inode->i_ino = get_next_ino();
++	inode->i_mode = mode;
++	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
++	if (iops)
++		inode->i_op = iops;
++	else
++		inode->i_op = &simple_dir_inode_operations;
++	inode->i_fop = &simple_dir_operations;
++	inc_nlink(inode);
++	inc_nlink(dir);
++	d_instantiate(dentry, inode);
++	dget(dentry);
++	inode_unlock(dir);
++	return dentry;
++
++out1:
++	dput(dentry);
++	dentry = ERR_PTR(error);
++out:
++	inode_unlock(dir);
++	return dentry;
++}
++EXPORT_SYMBOL_GPL(fwsecurityfs_create_dir);
++
++int fwsecurityfs_remove_dir(struct dentry *dentry)
++{
++	struct inode *dir;
++
++	if (!dentry || IS_ERR(dentry))
++		return -EINVAL;
++
++	if (!d_is_dir(dentry))
++		return -EPERM;
++
++	dir = d_inode(dentry->d_parent);
++	inode_lock(dir);
++	if (simple_positive(dentry)) {
++		simple_rmdir(dir, dentry);
++		dput(dentry);
++	}
++	inode_unlock(dir);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(fwsecurityfs_remove_dir);
+diff --git a/fs/fwsecurityfs/internal.h b/fs/fwsecurityfs/internal.h
+new file mode 100644
+index 000000000000..b73f6d4b9504
+--- /dev/null
++++ b/fs/fwsecurityfs/internal.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2022 IBM Corporation
++ * Author: Nayna Jain <nayna@linux.ibm.com>
++ */
++
++#ifndef __FWSECURITYFS_INTERNAL_H
++#define __FWSECURITYFS_INTERNAL_H
++
++struct dentry *fwsecurityfs_alloc_dentry(struct dentry *parent,
++					 const char *name);
++
++#endif
+diff --git a/fs/fwsecurityfs/super.c b/fs/fwsecurityfs/super.c
+new file mode 100644
+index 000000000000..9930889c22a5
+--- /dev/null
++++ b/fs/fwsecurityfs/super.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2022 IBM Corporation
++ * Author: Nayna Jain <nayna@linux.ibm.com>
++ */
++
++#include <linux/sysfs.h>
++#include <linux/kobject.h>
++#include <linux/fs.h>
++#include <linux/fs_context.h>
++#include <linux/mount.h>
++#include <linux/pagemap.h>
++#include <linux/init.h>
++#include <linux/namei.h>
++#include <linux/security.h>
++#include <linux/lsm_hooks.h>
++#include <linux/magic.h>
++#include <linux/ctype.h>
++#include <linux/fwsecurityfs.h>
++
++#include "internal.h"
++
++static struct super_block *fwsecsb;
++
++struct super_block *fwsecurityfs_get_superblock(void)
++{
++	return fwsecsb;
++}
++
++static int fwsecurityfs_d_hash(const struct dentry *dir, struct qstr *this)
++{
++	unsigned long hash;
++	int i;
++
++	hash = init_name_hash(dir);
++	for (i = 0; i < this->len; i++)
++		hash = partial_name_hash(tolower(this->name[i]), hash);
++	this->hash = end_name_hash(hash);
++
++	return 0;
++}
++
++static int fwsecurityfs_d_compare(const struct dentry *dentry,
++				  unsigned int len, const char *str,
++				  const struct qstr *name)
++{
++	int i;
++	int result = 1;
++
++	if (len != name->len)
++		goto out;
++	for (i = 0; i < len; i++) {
++		if (tolower(str[i]) != tolower(name->name[i]))
++			goto out;
++	}
++	result = 0;
++out:
++	return result;
++}
++
++struct dentry *fwsecurityfs_alloc_dentry(struct dentry *parent, const char *name)
++{
++	struct dentry *d;
++	struct qstr q;
++	int err;
++
++	q.name = name;
++	q.len = strlen(name);
++
++	err = fwsecurityfs_d_hash(parent, &q);
++	if (err)
++		return ERR_PTR(err);
++
++	d = d_alloc(parent, &q);
++	if (d)
++		return d;
++
++	return ERR_PTR(-ENOMEM);
++}
++
++static const struct dentry_operations fwsecurityfs_d_ops = {
++	.d_compare = fwsecurityfs_d_compare,
++	.d_hash = fwsecurityfs_d_hash,
++	.d_delete = always_delete_dentry,
++};
++
++static const struct super_operations securityfs_super_operations = {
++	.statfs = simple_statfs,
++	.drop_inode = generic_delete_inode,
++};
++
++static int fwsecurityfs_fill_super(struct super_block *sb,
++				   struct fs_context *fc)
++{
++	static const struct tree_descr files[] = {{""}};
++	int error;
++
++	error = simple_fill_super(sb, FWSECURITYFS_MAGIC, files);
++	if (error)
++		return error;
++
++	sb->s_d_op = &fwsecurityfs_d_ops;
++
++	fwsecsb = sb;
++
++	error = arch_fwsecurity_init();
++	if (error)
++		pr_err("arch specific firmware initialization failed\n");
++
++	return 0;
++}
++
++static int fwsecurityfs_get_tree(struct fs_context *fc)
++{
++	return get_tree_single(fc, fwsecurityfs_fill_super);
++}
++
++static const struct fs_context_operations fwsecurityfs_context_ops = {
++	.get_tree	= fwsecurityfs_get_tree,
++};
++
++static int fwsecurityfs_init_fs_context(struct fs_context *fc)
++{
++	fc->ops = &fwsecurityfs_context_ops;
++	return 0;
++}
++
++static struct file_system_type fs_type = {
++	.owner =	THIS_MODULE,
++	.name =		"fwsecurityfs",
++	.init_fs_context = fwsecurityfs_init_fs_context,
++	.kill_sb =	kill_litter_super,
++};
++
++static int __init fwsecurityfs_init(void)
++{
++	int retval;
++
++	retval = sysfs_create_mount_point(firmware_kobj, "security");
++	if (retval)
++		return retval;
++
++	retval = register_filesystem(&fs_type);
++	if (retval) {
++		sysfs_remove_mount_point(firmware_kobj, "security");
++		return retval;
++	}
++
++	return 0;
++}
++core_initcall(fwsecurityfs_init);
++MODULE_DESCRIPTION("Firmware Security Filesystem");
++MODULE_AUTHOR("Nayna Jain");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/fwsecurityfs.h b/include/linux/fwsecurityfs.h
+new file mode 100644
+index 000000000000..c079ce939f42
+--- /dev/null
++++ b/include/linux/fwsecurityfs.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2022 IBM Corporation
++ * Author: Nayna Jain <nayna@linux.ibm.com>
++ */
++
++#ifndef _FWSECURITYFS_H_
++#define _FWSECURITYFS_H_
++
++#include <linux/ctype.h>
++#include <linux/fs.h>
++
++struct super_block *fwsecurityfs_get_superblock(void);
++int fwsecurityfs_create_file(const char *name, umode_t mode,
++					u16 filesize, struct dentry *parent,
++					struct dentry *dentry,
++					const struct file_operations *fops);
++int fwsecurityfs_remove_file(struct dentry *dentry);
++struct dentry *fwsecurityfs_create_dir(const char *name, umode_t mode,
++				       struct dentry *parent,
++				       const struct inode_operations *iops);
++int fwsecurityfs_remove_dir(struct dentry *dentry);
++
++static int arch_fwsecurity_init(void)
++{
++	return 0;
++}
++
++#endif /* _FWSECURITYFS_H_ */
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index f724129c0425..3c6754937e15 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -53,6 +53,7 @@
+ #define QNX4_SUPER_MAGIC	0x002f		/* qnx4 fs detection */
+ #define QNX6_SUPER_MAGIC	0x68191122	/* qnx6 fs detection */
+ #define AFS_FS_MAGIC		0x6B414653
++#define FWSECURITYFS_MAGIC         0x5345434e      /* "SECM" */
+ 
+ 
+ #define REISERFS_SUPER_MAGIC	0x52654973	/* used by gcc */
 -- 
 2.27.0
 
