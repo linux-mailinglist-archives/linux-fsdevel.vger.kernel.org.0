@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBDF5554E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 21:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DA65554EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 21:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376505AbiFVTq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 15:46:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55964 "EHLO
+        id S1354197AbiFVTq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 15:46:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbiFVTqR (ORCPT
+        with ESMTP id S1352333AbiFVTqW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 15:46:17 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16B218E1F;
-        Wed, 22 Jun 2022 12:46:16 -0700 (PDT)
+        Wed, 22 Jun 2022 15:46:22 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5A522B0B;
+        Wed, 22 Jun 2022 12:46:20 -0700 (PDT)
 Received: from localhost (mtl.collabora.ca [66.171.169.34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 52BC96601727;
-        Wed, 22 Jun 2022 20:46:15 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4DE9C66016F7;
+        Wed, 22 Jun 2022 20:46:19 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1655927175;
-        bh=NBFXfLeg9oVFYPL3ddlpdKorQw8KYIW24skamYJMZeI=;
+        s=mail; t=1655927179;
+        bh=HAicmnDTWWajqPFt32opP8XSXWOdsqjYOr5lPMSjCC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QqPdGpvOeML+wkrUYSNqEee8ywN88D9xXhPRxxzyG2mPumQrN4FPn2cH6BJph3foC
-         IPoeeVsK9WXD1tTEmkPXk+XAsx8Qen5OXHPFOUvSlqk8EZTS5igWwMUtM6JRWFBe6u
-         zyfiUH9VsBbAhGMj6kP6GUPhIRzPkWDlk1Zdrb7O76/bwYPrDavVSFpKFYp5SDouAa
-         j0O68MVkhF979tsyoUbi2/EET7AuWDIcTUFF30Z0SPAN877ZUZNrLw9ShRMLXQUmyg
-         UOpK2E+Bw9Gq5AjoWFQsPAL3C6tAeq0SPTRSwbczVi1R4hLuVMGStPzYUhVt/3Yz5U
-         BS/pOTD+pz9mw==
+        b=Bjq2bJZFyDgthN8mhd3Gfuxf+h9t36pUy7vflqdPWhhUWe19PkfnPzQooeqVa8Y6D
+         vQF2dEmDaCoxSB8EhamHfXjlp2zb6wyiOVr2XEwACiKI2TFLIzglSxhlgwrDmDeu8v
+         FwlCzV4v44eC/7r5ZM0oBd0H4lSY38azEDOgv4RV7TCEUWn3dvKPXXV3ld+05qeuXz
+         7eIC+yc69Unwxo+oBg0tnkEXiM5JHTI3E8GEdbHX/gh9uGTMgqTzuOQP9/KrqaskOr
+         kAyeiuN5uAvq2PmCXw0lXcMGdCXoXfBlcGQO6qlG+ty+7bnCuC2rr/RwS2klIAc2oW
+         w7L/3SSFPQ1dw==
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org
 Cc:     ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 1/7] fs: Expose name under lookup to d_revalidate hook
-Date:   Wed, 22 Jun 2022 15:45:57 -0400
-Message-Id: <20220622194603.102655-2-krisman@collabora.com>
+Subject: [PATCH 2/7] fs: Add DCACHE_CASEFOLD_LOOKUP flag
+Date:   Wed, 22 Jun 2022 15:45:58 -0400
+Message-Id: <20220622194603.102655-3-krisman@collabora.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622194603.102655-1-krisman@collabora.com>
 References: <20220622194603.102655-1-krisman@collabora.com>
@@ -55,121 +55,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Negative dentries support on case-insensitive ext4/f2fs will require
-access to the name under lookup to ensure it matches the dentry.  This
-adds an optional new flavor of cached dentry revalidation hook to expose
-this extra parameter.
-
-I'm fine with extending d_revalidate instead of adding a new hook, if
-it is considered cleaner and the approach is accepted.  I wrote a new
-hook to simplify reviewing.
+This flag marks a negative or positive dentry as being created after a
+case-insensitive lookup operation.  It is useful to differentiate
+dentries this way to detect whether the negative dentry can be trusted
+during a case-insensitive lookup.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/dcache.c            |  2 +-
- fs/namei.c             | 23 ++++++++++++++---------
- include/linux/dcache.h |  1 +
- 3 files changed, 16 insertions(+), 10 deletions(-)
+ fs/dcache.c            | 7 +++++++
+ include/linux/dcache.h | 8 ++++++++
+ 2 files changed, 15 insertions(+)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 93f4f5ee07bf..a0fe9e3676fb 100644
+index a0fe9e3676fb..518ddb7fbe0c 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -1928,7 +1928,7 @@ void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
- 		dentry->d_flags |= DCACHE_OP_HASH;
- 	if (op->d_compare)
- 		dentry->d_flags |= DCACHE_OP_COMPARE;
--	if (op->d_revalidate)
-+	if (op->d_revalidate || op->d_revalidate_name)
- 		dentry->d_flags |= DCACHE_OP_REVALIDATE;
- 	if (op->d_weak_revalidate)
- 		dentry->d_flags |= DCACHE_OP_WEAK_REVALIDATE;
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f28d3f463c3..c01bb19723db 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -842,11 +842,16 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry, unsi
- 	return false;
+@@ -1958,6 +1958,13 @@ void d_set_fallthru(struct dentry *dentry)
  }
+ EXPORT_SYMBOL(d_set_fallthru);
  
--static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
-+static inline int d_revalidate(struct dentry *dentry,
-+			       const struct qstr *name,
-+			       unsigned int flags)
- {
--	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
++void d_set_casefold_lookup(struct dentry *dentry)
++{
++	spin_lock(&dentry->d_lock);
++	dentry->d_flags |= DCACHE_CASEFOLD_LOOKUP;
++	spin_unlock(&dentry->d_lock);
++}
 +
-+	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE)) {
-+		if (dentry->d_op->d_revalidate_name)
-+			return dentry->d_op->d_revalidate_name(dentry, name, flags);
- 		return dentry->d_op->d_revalidate(dentry, flags);
--	else
-+	} else
- 		return 1;
- }
- 
-@@ -1563,7 +1568,7 @@ static struct dentry *lookup_dcache(const struct qstr *name,
+ static unsigned d_flags_for_inode(struct inode *inode)
  {
- 	struct dentry *dentry = d_lookup(dir, name);
- 	if (dentry) {
--		int error = d_revalidate(dentry, flags);
-+		int error = d_revalidate(dentry, name, flags);
- 		if (unlikely(error <= 0)) {
- 			if (!error)
- 				d_invalidate(dentry);
-@@ -1647,19 +1652,19 @@ static struct dentry *lookup_fast(struct nameidata *nd,
- 			return ERR_PTR(-ECHILD);
- 
- 		*seqp = seq;
--		status = d_revalidate(dentry, nd->flags);
-+		status = d_revalidate(dentry, &nd->last, nd->flags);
- 		if (likely(status > 0))
- 			return dentry;
- 		if (!try_to_unlazy_next(nd, dentry, seq))
- 			return ERR_PTR(-ECHILD);
- 		if (status == -ECHILD)
- 			/* we'd been told to redo it in non-rcu mode */
--			status = d_revalidate(dentry, nd->flags);
-+			status = d_revalidate(dentry, &nd->last, nd->flags);
- 	} else {
- 		dentry = __d_lookup(parent, &nd->last);
- 		if (unlikely(!dentry))
- 			return NULL;
--		status = d_revalidate(dentry, nd->flags);
-+		status = d_revalidate(dentry, &nd->last, nd->flags);
- 	}
- 	if (unlikely(status <= 0)) {
- 		if (!status)
-@@ -1687,7 +1692,7 @@ static struct dentry *__lookup_slow(const struct qstr *name,
- 	if (IS_ERR(dentry))
- 		return dentry;
- 	if (unlikely(!d_in_lookup(dentry))) {
--		int error = d_revalidate(dentry, flags);
-+		int error = d_revalidate(dentry, name, flags);
- 		if (unlikely(error <= 0)) {
- 			if (!error) {
- 				d_invalidate(dentry);
-@@ -3302,7 +3307,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 		if (d_in_lookup(dentry))
- 			break;
- 
--		error = d_revalidate(dentry, nd->flags);
-+		error = d_revalidate(dentry, &nd->last, nd->flags);
- 		if (likely(error > 0))
- 			break;
- 		if (error)
+ 	unsigned add_flags = DCACHE_REGULAR_TYPE;
 diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index f5bba51480b2..871f65c8ef7f 100644
+index 871f65c8ef7f..8b71c5e418c2 100644
 --- a/include/linux/dcache.h
 +++ b/include/linux/dcache.h
-@@ -126,6 +126,7 @@ enum dentry_d_lock_class
+@@ -208,6 +208,7 @@ struct dentry_operations {
+ #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
+ #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
+ #define DCACHE_OP_REAL			0x04000000
++#define DCACHE_CASEFOLD_LOOKUP		0x08000000 /* Dentry comes from a casefold directory */
  
- struct dentry_operations {
- 	int (*d_revalidate)(struct dentry *, unsigned int);
-+	int (*d_revalidate_name)(struct dentry *, const struct qstr *, unsigned int);
- 	int (*d_weak_revalidate)(struct dentry *, unsigned int);
- 	int (*d_hash)(const struct dentry *, struct qstr *);
- 	int (*d_compare)(const struct dentry *,
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
+@@ -497,6 +498,13 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
+ 	return dentry->d_flags & DCACHE_FALLTHRU;
+ }
+ 
++extern void d_set_casefold_lookup(struct dentry *dentry);
++
++static inline bool d_is_casefold_lookup(const struct dentry *dentry)
++{
++	return dentry->d_flags & DCACHE_CASEFOLD_LOOKUP;
++}
++
+ 
+ extern int sysctl_vfs_cache_pressure;
+ 
 -- 
 2.36.1
 
