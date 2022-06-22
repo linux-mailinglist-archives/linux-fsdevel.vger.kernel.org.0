@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C62ED555343
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 20:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72ABC555349
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jun 2022 20:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357635AbiFVS2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 14:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
+        id S229485AbiFVSbY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 14:31:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356636AbiFVS2g (ORCPT
+        with ESMTP id S1359273AbiFVSbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 14:28:36 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E493E30576;
-        Wed, 22 Jun 2022 11:28:35 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id 184so2842824vsz.2;
-        Wed, 22 Jun 2022 11:28:35 -0700 (PDT)
+        Wed, 22 Jun 2022 14:31:21 -0400
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528CB3B2BF;
+        Wed, 22 Jun 2022 11:31:18 -0700 (PDT)
+Received: by mail-vk1-xa29.google.com with SMTP id b81so8744867vkf.1;
+        Wed, 22 Jun 2022 11:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dI7/D7f9EgO7+izfcBoxTP/wyucrZR4DpWnBmVtnhZw=;
-        b=RaeSkMNFIDlGtxga6Y1yft0yXVRJMaWv3hzGqSkpVi6z9+7Zbu3TCSjhW6T2Xj9Ffi
-         2+uaFdvUwuNoCKk32HxET2JKkoxde/yBEJX4d+3ULB3qMejfHImD2534RqHdBG1Xxm1S
-         Jp72Mf8/3A13mfvhi2O1T/Xc8CVtRerZrCU7bdB3prNaL6+bg37t+s2TfYAVTQcctfEh
-         tdVFnWJjlhCzOPXLx8C5BB5M+ck9sZ42czw4vXzKAOJzAQWDGBO0frae+lSy4px60svI
-         nBUa8hgxmRWM+MypfAFc4qz8bUGZyP5FjzO6aDvFE0RrGE947+yO6+kZlNVaaeG8r0a9
-         pLYw==
+        bh=DRjJ1rSC0xlHCXZ2VwDKfLap9+4Ib3wKG/Ud565cchk=;
+        b=mpWbw4byrr3CUUSq1sKiIklXXmE3IYkz2L9gQJRnbmMWLhVU+/57NoIaaokR0cVlgJ
+         HHCl3qySffM3I77Iu0mJtOBR1c4RaGwz05ZnKr2zgXRale/5wsM4hDwn0IW2UQq8HzTp
+         UKRl1QDiHopOgXOOJKZWztmQWhQQq+u7/80YnfeztWIBHmppLTN0sEBfaE5/z+doR6i5
+         A5Kpc76ecx4A7xZ8K7uh4vlElTuY5NpJw2vDY311fTZ/ejI0iCCZrqJWJHzp5uvtFGE+
+         K7BgK9maK0lkeI1of9EIEomgGXiSmP1U0DSFF1MEEtGyZG82BqaBgncxbBSu7abotZ4m
+         4x9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dI7/D7f9EgO7+izfcBoxTP/wyucrZR4DpWnBmVtnhZw=;
-        b=2AZhgfCblIOU/2l10NJSf9hgq8NXy8wFGxsGUy+0hBHO0RonzfVTZOtU6/WLzvVJh8
-         5W6cI+uIcWvnR4FUToHKz8+K3H5l+85R4kywNCwHGPWbtDfdvEUqYBQ3KnRYzhavcQE6
-         fiBUZu19QDtwdy3LbF5ODPMOd5OMqg4Nk21iF07KtpGj9Jmekb/hd4BaCJa9CH85H8xC
-         bLvkPLw2SKPt7eGm75Mb3FtV3F3v9J1BO79Hmh1AZ62XdKheFQxywcdmE3X7E/4TPnXk
-         cqdq+jil8LIuC30e7M5sM3eVn0zAr1oVNR2oz3IlWRGmj0cFb6y6odoE70c/y6kCGbWk
-         7QLw==
-X-Gm-Message-State: AJIora/jyyp0v2NhfaW864ZXXmgPX9/g893y35ZklQfBfD9Y/Aroq3Ly
-        wqbqOjNzXCI7vFqqpeQf1IlKfhx5QeVc+RkGUllKXRSaOcSKkg==
-X-Google-Smtp-Source: AGRyM1u+ppgcSZAFILUKJ0UqfJNw76+eMuJ/aPugbMMFRbSFjD+EtMovHRGY8NnP4SA66xWhkv17DARCRXI+dwKPlBQ=
-X-Received: by 2002:a05:6102:5dc:b0:354:63f1:df8d with SMTP id
- v28-20020a05610205dc00b0035463f1df8dmr2054898vsf.72.1655922514823; Wed, 22
- Jun 2022 11:28:34 -0700 (PDT)
+        bh=DRjJ1rSC0xlHCXZ2VwDKfLap9+4Ib3wKG/Ud565cchk=;
+        b=vUphG9ZqqWr/n9gA4WaG2vynfRmcDynItO9L9n1m5mD71ZK6Xy6BToH+52BYV0MTm8
+         AVTLmgmkISePBz83E1uhscyIbuVGsqKdhvdRQ45+zlN07kg+ATu9wr8fxo6Pc0tM7Dzp
+         aG2/5Zt0iVjLBmpps9sa2BfB44lZZVT/4BvtcuI2h2zgIRhPyUUSpJiKojGZTa9yrOAj
+         +I1vanAIQk1/p1fLNystcfQVi8yjeapMRDGSDD+IxIDREERhj7tFR9VZYWwYvrr4Oj25
+         ie3pzs5M404sci+G0kEIl8nBhaV42W6vuLBU9d3k6/SgJByxtaF03ciP2pzIpl6wPDHj
+         KJZQ==
+X-Gm-Message-State: AJIora+4H02tsFSRxRZNnv7cq4RdgkKMA8DeThhC0eJKSys0nb7vauks
+        8qE5AkAqdxmZ7Cu62b+ENvbwLcZ5VFccn56uqOomZmXXYRc=
+X-Google-Smtp-Source: AGRyM1vcrBIwqupsNIJhbyovfM6u9AZ3mXidoDVOlqf4cCcdiJfStQ4p3q1HWyXU2lqIxZpgLf8+4LpgBPFFJo89ezY=
+X-Received: by 2002:a1f:168d:0:b0:36c:86b6:7883 with SMTP id
+ 135-20020a1f168d000000b0036c86b67883mr2553105vkw.15.1655922676799; Wed, 22
+ Jun 2022 11:31:16 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220620134551.2066847-1-amir73il@gmail.com> <20220620134551.2066847-2-amir73il@gmail.com>
- <20220622160049.koda4uazle7i2735@quack3.lan>
-In-Reply-To: <20220622160049.koda4uazle7i2735@quack3.lan>
+ <20220622155248.d6oywn3rkurbijs6@quack3.lan>
+In-Reply-To: <20220622155248.d6oywn3rkurbijs6@quack3.lan>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 22 Jun 2022 21:28:23 +0300
-Message-ID: <CAOQ4uxg6-hzNTaXRdhC7RPZFfDJiNwbSEdj4yq40GZZQP7gC_A@mail.gmail.com>
+Date:   Wed, 22 Jun 2022 21:31:05 +0300
+Message-ID: <CAOQ4uxjZ84qY4OgJFCnxf1KT1_d013k0+XmU8iwiJVOSJSVMhQ@mail.gmail.com>
 Subject: Re: [PATCH 1/2] fanotify: prepare for setting event flags in ignore mask
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <repnop@google.com>,
@@ -68,7 +68,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 22, 2022 at 7:00 PM Jan Kara <jack@suse.cz> wrote:
+On Wed, Jun 22, 2022 at 6:52 PM Jan Kara <jack@suse.cz> wrote:
 >
 > On Mon 20-06-22 16:45:50, Amir Goldstein wrote:
 > > Setting flags FAN_ONDIR FAN_EVENT_ON_CHILD in ignore mask has no effect.
@@ -91,39 +91,79 @@ On Wed, Jun 22, 2022 at 7:00 PM Jan Kara <jack@suse.cz> wrote:
 > >
 > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 >
-> ..
+> Looks mostly good to me. Just one question / suggestion: You are
+> introducing helpers fsnotify_ignore_mask() and fsnotify_ignored_events().
+> So shouldn't we be using these helpers as much as possible throughout the
+> code? Because in several places I had to check the code around whether
+> using mark->ignore_mask directly is actually fine. In particular:
 >
-> > @@ -423,7 +425,8 @@ static bool fsnotify_iter_select_report_types(
-> >                        * But is *this mark* watching children?
-> >                        */
-> >                       if (type == FSNOTIFY_ITER_TYPE_PARENT &&
-> > -                         !(mark->mask & FS_EVENT_ON_CHILD))
-> > +                         !(mark->mask & FS_EVENT_ON_CHILD) &&
-> > +                         !(fsnotify_ignore_mask(mark) & FS_EVENT_ON_CHILD))
-> >                               continue;
+> > @@ -315,19 +316,23 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+> >                       return 0;
+> >       } else if (!(fid_mode & FAN_REPORT_FID)) {
+> >               /* Do we have a directory inode to report? */
+> > -             if (!dir && !(event_mask & FS_ISDIR))
+> > +             if (!dir && !ondir)
+> >                       return 0;
+> >       }
+> >
+> >       fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
+> > -             /* Apply ignore mask regardless of mark's ISDIR flag */
+> > -             marks_ignored_mask |= mark->ignored_mask;
+> > +             /*
+> > +              * Apply ignore mask depending on whether FAN_ONDIR flag in
+> > +              * ignore mask should be checked to ignore events on dirs.
+> > +              */
+> > +             if (!ondir || fsnotify_ignore_mask(mark) & FAN_ONDIR)
+> > +                     marks_ignore_mask |= mark->ignore_mask;
+> >
+> >               /*
+> >                * If the event is on dir and this mark doesn't care about
+> >                * events on dir, don't send it!
+> >                */
+> > -             if (event_mask & FS_ISDIR && !(mark->mask & FS_ISDIR))
+> > +             if (ondir && !(mark->mask & FAN_ONDIR))
+> >                       continue;
+> >
+> >               marks_mask |= mark->mask;
 >
-> So now we have in ->report_mask the FSNOTIFY_ITER_TYPE_PARENT if either
-> ->mask or ->ignore_mask have FS_EVENT_ON_CHILD set. But I see nothing that
-> would stop us from applying say ->mask to the set of events we are
-> interested in if FS_EVENT_ON_CHILD is set only in ->ignore_mask? And
+> So for example here I'm wondering whether a helper should not be used...
+>
+> > @@ -336,7 +341,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+> >               *match_mask |= 1U << type;
+> >       }
+> >
+> > -     test_mask = event_mask & marks_mask & ~marks_ignored_mask;
+> > +     test_mask = event_mask & marks_mask & ~marks_ignore_mask;
+>
+> Especially because here if say FAN_EVENT_ON_CHILD becomes a part of
+> marks_ignore_mask it can result in clearing this flag in the returned
+> 'mask' which is likely not what we want if there are some events left
+> unignored in the 'mask'?
+>
+> > @@ -344,14 +344,16 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+> >       fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
+> >               group = mark->group;
+> >               marks_mask |= mark->mask;
+> > -             marks_ignored_mask |= mark->ignored_mask;
+> > +             if (!(mask & FS_ISDIR) ||
+> > +                 (fsnotify_ignore_mask(mark) & FS_ISDIR))
+> > +                     marks_ignore_mask |= mark->ignore_mask;
+> >       }
+> >
+> > -     pr_debug("%s: group=%p mask=%x marks_mask=%x marks_ignored_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
+> > -              __func__, group, mask, marks_mask, marks_ignored_mask,
+> > +     pr_debug("%s: group=%p mask=%x marks_mask=%x marks_ignore_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
+> > +              __func__, group, mask, marks_mask, marks_ignore_mask,
+> >                data, data_type, dir, cookie);
+> >
+> > -     if (!(test_mask & marks_mask & ~marks_ignored_mask))
+> > +     if (!(test_mask & marks_mask & ~marks_ignore_mask))
+> >               return 0;
+>
+> And I'm wondering about similar things here...
+>
 
-I think I spent some time thinking about this and came to a conclusion that
-1. It is hard to get all the cases right
-2. It is a micro optimization
+I can't remember if I left those cases on purpose.
+I will check if it makes sense to use a macro here.
 
-The implication is that the user can set an ignore mask of an object, get no
-events but still cause performance penalty. Right?
-So just don't do that...
-
-It is easier to maintain the code with the rule that an "interest" in the object
-is either positive (I want this event) or negative (I don't want this event).
-If the user has no interest, the user should set nothing in the mark.
-
-Do you agree with me that the added complexity would not be worth it?
-
-> there's the same problem in the other direction as well. Am I missing
-
-Other direction?
-
-Thanks,
 Amir.
