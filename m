@@ -2,119 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A02558A1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 22:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17730558A1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 22:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbiFWUcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 16:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58760 "EHLO
+        id S229828AbiFWUcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 16:32:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiFWUcM (ORCPT
+        with ESMTP id S229760AbiFWUcP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 16:32:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0565954BFE;
-        Thu, 23 Jun 2022 13:32:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B0141B82524;
-        Thu, 23 Jun 2022 20:32:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1DFC341C0;
-        Thu, 23 Jun 2022 20:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656016329;
-        bh=Clr2VKSEJiMP39AvV+ufw35sqUO2mGVCAlbFyCZMF84=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cAV4S2Ey/Bb99XrMESIg7GqUjLxCEVunSVQ/EpY7iMGhE5pLQ8qqdsGpH/Y0GXk9Q
-         MrlG8X8VYEp1GVmihq6kQGdPl/Xj6nClTXc1fTLzM/UcDH1KmujuDcXqsKwQQ6NShD
-         f8/T6A00hHgGAk0phcB+iS3IBbRsc36iMjTV9ILXpFooO8P3+Gkk4yENJC62pfpane
-         fN33EjeOjA2NOloy6gxYHk2Emsa6tBsYU0cD8lXAuXHibAK2KjJAiR9NN45kFrIVSD
-         AnoxC7QgA34ouBbdbi1zR3qWiU8XOvlc42YVkUy7w5bjtHEgVmJ8NohNxK/9EVANOY
-         NPl3mCNbxillw==
-Date:   Thu, 23 Jun 2022 13:32:08 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        axboe@kernel.dk, willy@infradead.org
-Subject: Re: [RESEND PATCH v9 06/14] iomap: Return -EAGAIN from
- iomap_write_iter()
-Message-ID: <YrTNyJDBmb9kfvSd@magnolia>
-References: <20220623175157.1715274-1-shr@fb.com>
- <20220623175157.1715274-7-shr@fb.com>
- <YrTKnzpfaaExxXAS@magnolia>
- <1f121d1e-8a50-5152-d984-c9299ced1491@fb.com>
+        Thu, 23 Jun 2022 16:32:15 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD38A54BFE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 13:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FRpDpScrAooxEPpGhidPa25jURO54INRK8x2ThhAwSc=; b=Lm6sXjbBXY0Dp6vadWroncbSw3
+        Q31PLZYgYDpmH/4OCR80hNmDarVYvP4w9DAnTK5viqXC7ayIX2AFYnu+PgZniyZFSY+Ojr7GCxAJN
+        6yO16teyW0kHHP5Izv93YQnQ9fe7E7UJMIO91wApKFpEgkk03N2E/8DepO1MR3LNHcjIDfpGx1v1d
+        Ob4joEiMhSVmSC21x4AdmMA9/5wjdhZ+2tdlO1foL9H9aUN/CmWBWwOMvM/f1uPC9jBmOZ5gj0jB1
+        GV3Vlgjv4si3t3KloBhgaj7ALr7ICChU37tElokY6o2jY0vIZmF7eNcnNJ7SfMeWoYt4D8cB1pGOp
+        pRCGhzbQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o4TUo-003fJk-Mm;
+        Thu, 23 Jun 2022 20:32:10 +0000
+Date:   Thu, 23 Jun 2022 21:32:10 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC][CFT][PATCHSET] iov_iter stuff
+Message-ID: <YrTNyvGZhXZEULA0@ZenIV>
+References: <YrKWRCOOWXPHRCKg@ZenIV>
+ <1937818.1655997712@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1f121d1e-8a50-5152-d984-c9299ced1491@fb.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1937818.1655997712@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 01:23:02PM -0700, Stefan Roesch wrote:
+On Thu, Jun 23, 2022 at 04:21:52PM +0100, David Howells wrote:
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
 > 
-> 
-> On 6/23/22 1:18 PM, Darrick J. Wong wrote:
-> > On Thu, Jun 23, 2022 at 10:51:49AM -0700, Stefan Roesch wrote:
-> >> If iomap_write_iter() encounters -EAGAIN, return -EAGAIN to the caller.
-> >>
-> >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >> ---
-> >>  fs/iomap/buffered-io.c | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> >> index 83cf093fcb92..f2e36240079f 100644
-> >> --- a/fs/iomap/buffered-io.c
-> >> +++ b/fs/iomap/buffered-io.c
-> >> @@ -830,7 +830,13 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-> >>  		length -= status;
-> >>  	} while (iov_iter_count(i) && length);
-> >>  
-> >> -	return written ? written : status;
-> >> +	if (status == -EAGAIN) {
-> >> +		iov_iter_revert(i, written);
-> >> +		return -EAGAIN;
-> >> +	}
-> >> +	if (written)
-> >> +		return written;
-> >> +	return status;
 > > 
-> > Any particular reason for decomposing the ternary into this?  It still
-> > looks correct, but it doesn't seem totally necessary...
-> >
+> > 13/44: splice: stop abusing iov_iter_advance() to flush a pipe
+> > 	A really odd (ab)use of iov_iter_advance() - in case of error
+> > generic_file_splice_read() wants to free all pipe buffers ->read_iter()
+> > has produced.  Yes, forcibly resetting ->head and ->iov_offset to
+> > original values and calling iov_iter_advance(i, 0) will trigger
+> > pipe_advance(), which will trigger pipe_truncate(), which will free
+> > buffers.  Or we could just go ahead and free the same buffers;
+> > pipe_discard_from() does exactly that, no iov_iter stuff needs to
+> > be involved.
 > 
-> Do you prefer this version?
-> 
-> +	if (status == -EAGAIN) {
-> +		iov_iter_revert(i, written);
-> +		return -EAGAIN;
-> +	}
-> 	return written ? written : status;
+> Can ->splice_read() and ->splice_write() be given pipe-class iov_iters rather
+> than pipe_inode_info structs?
 
-Yes, because it /does/ make it a lot more obvious that the only change
-is intercepting EAGAIN to rewind the iov_iter. :)
+Huh?
 
---D
+First of all, ->splice_write() is given a pipe as data _source_, which makes
+ITER_PIPE completely irrelevant - those suckers are data destinations.
+What's more, it will unlock the pipe, wait and relock once somebody writes
+to that pipe.  And ITER_PIPE very much relies upon the pipe being locked
+and staying locked.
 
-> 
->  
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > --D
-> > 
-> >>  }
-> >>  
-> >>  ssize_t
-> >> -- 
-> >> 2.30.2
-> >>
+As for ->splice_read()...  We could create the iov_iter in the caller, but...
+Look at those callers:
+        pipe_lock(opipe);
+	ret = wait_for_space(opipe, flags);
+	if (!ret)
+		ret = do_splice_to(in, offset, opipe, len, flags);
+	pipe_unlock(opipe);
+
+You can't set it up before wait_for_pace(), obviously - if there's no
+empty slots, what would that sucker work with?  And you can't keep
+it past pipe_unlock().  So it's limited to do_splice_to(), which
+is a very thin wrapper for ->splice_read().  So what's the point?
