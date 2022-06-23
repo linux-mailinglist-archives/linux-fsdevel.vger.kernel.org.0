@@ -2,45 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA352557136
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 04:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A488355711E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 04:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbiFWCzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jun 2022 22:55:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
+        id S233367AbiFWCg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jun 2022 22:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236612AbiFWCyM (ORCPT
+        with ESMTP id S229615AbiFWCg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jun 2022 22:54:12 -0400
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0532C43491;
-        Wed, 22 Jun 2022 19:53:56 -0700 (PDT)
-Received: from ([60.208.111.195])
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id RYY00152;
-        Thu, 23 Jun 2022 10:53:52 +0800
-Received: from localhost.localdomain (10.200.104.82) by
- jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
- 15.1.2308.27; Thu, 23 Jun 2022 10:53:53 +0800
-From:   Deming Wang <wangdeming@inspur.com>
-To:     <vgoyal@redhat.com>, <stefanha@redhat.com>, <miklos@szeredi.hu>
-CC:     <virtualization@lists.linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Deming Wang <wangdeming@inspur.com>
-Subject: [PATCH] virtio_fs: Modify format for virtio_fs_direct_access
-Date:   Wed, 22 Jun 2022 17:17:58 -0400
-Message-ID: <20220622211758.4728-1-wangdeming@inspur.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 22 Jun 2022 22:36:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AED3C722;
+        Wed, 22 Jun 2022 19:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=db7NnTeCjfS9BKlQ0hulk5gOY3mV9QEguoXPLgKe2zw=; b=qaKWc0IcE5h2mxvXPnQZRK30zN
+        wx/5x3BCCv1RW+DT/F+qaQExUVIZzt9lq1t5f8yhmO/Qc2smO4fvI1zOtXDJvtNLDNNK0Kx+ZfxUi
+        ggZXoGIGZ08R+0+isyhtks8bLUmm6gEZQUOVB19SMxmOaHjHaHmJNt987S+pVdj7Msi3rSC2b5FJB
+        E/NTG/RPjNKiqXv0VpgDjUNJ2LZcAe7ByLQt0qsQmQK8VMEOWVfTJv83DUcWoBmf5kBJwBo6iBfiO
+        k4Vdz0PMWoXkc9mw67p7y+eA/kNZoUTiI+r57Yzop572GZ7qBvUq3RpgitNrPKe61BpPZl5YndSmO
+        f5t0Db0A==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o4Ci2-007XGJ-Sd; Thu, 23 Jun 2022 02:36:43 +0000
+Message-ID: <b769c0f6-76a8-2e80-f68b-4ada036c789a@infradead.org>
+Date:   Wed, 22 Jun 2022 19:36:36 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.200.104.82]
-tUid:   202262310535293590e0ae65060e827a8cf915736874a
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
-X-Spam-Status: No, score=-0.3 required=5.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [RFC PATCH v2 3/3] powerpc/pseries: expose authenticated
+ variables stored in LPAR PKS
+Content-Language: en-US
+To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+References: <20220622215648.96723-1-nayna@linux.ibm.com>
+ <20220622215648.96723-4-nayna@linux.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20220622215648.96723-4-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,26 +65,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We should isolate operators with spaces.
 
-Signed-off-by: Deming Wang <wangdeming@inspur.com>
----
- fs/fuse/virtio_fs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 8db53fa67359..e962c29967eb 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -757,7 +757,7 @@ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
- {
- 	struct virtio_fs *fs = dax_get_private(dax_dev);
- 	phys_addr_t offset = PFN_PHYS(pgoff);
--	size_t max_nr_pages = fs->window_len/PAGE_SIZE - pgoff;
-+	size_t max_nr_pages = fs->window_len / PAGE_SIZE - pgoff;
- 
- 	if (kaddr)
- 		*kaddr = fs->window_kaddr + offset;
+On 6/22/22 14:56, Nayna Jain wrote:
+> diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platforms/pseries/Kconfig
+> index 6c1ca487103f..9c52095e20c4 100644
+> --- a/arch/powerpc/platforms/pseries/Kconfig
+> +++ b/arch/powerpc/platforms/pseries/Kconfig
+> @@ -152,6 +152,23 @@ config PSERIES_PLPKS
+>  	  config to enable operating system interface to hypervisor to
+>  	  access this space.
+>  
+> +config PSERIES_FWSECURITYFS_ARCH
+> +	depends on FWSECURITYFS
+> +	bool "Support fwsecurityfs for pseries"
+> +	help
+> +	  Enable fwsecuirtyfs arch specific code. This would initialize
+
+	         fwsecurityfs                   . This initializes
+
+> +	  the firmware security filesystem with initial platform specific
+> +	  structure.
+> +
+> +config PSERIES_PLPKS_SECVARS
+> +	depends on PSERIES_PLPKS
+> +	select PSERIES_FWSECURITYFS_ARCH
+> +	tristate "Support for secvars"
+> +	help
+> +	  This interface exposes authenticated variables stored in the LPAR
+> +	  Platform KeyStore using fwsecurityfs interface.
+> +	  If you are unsure how to use it, say N.
+
 -- 
-2.27.0
-
+~Randy
