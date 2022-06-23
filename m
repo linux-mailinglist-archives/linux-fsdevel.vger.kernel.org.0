@@ -2,151 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E80557A23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 14:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E12557A93
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 14:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbiFWMRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 08:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34938 "EHLO
+        id S231750AbiFWMon (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 08:44:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231688AbiFWMRQ (ORCPT
+        with ESMTP id S231598AbiFWMom (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 08:17:16 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F3534B9D;
-        Thu, 23 Jun 2022 05:17:15 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id j1so10339229vsj.12;
-        Thu, 23 Jun 2022 05:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sb/jwSe5HoSp8kH02mtcD5nKWDYLNYBGBBdjWlW/hgg=;
-        b=ZlmQm6ttq+q+bJ+WYsd41EU3h2wV5pgrNq2/DrRfhd/JyS57UFJ+5TfMWbF3Ym1MUS
-         H/WLtqVAE41Cjs1vtaK7sLiCJH31l5AU6g00Jf88bro/8h3LsSILn9M4iwXOmWqrYuvc
-         7oAbC8TXl2IMsPHAthS/rI8C1kMXHyWgGp1fDKk2f69FxO7y44cQRcu/tXScxKjbXC2V
-         rMbq8amryhi3I+0gkIOzVF20lxZ1CFEQGaIDzWpdy8xIEqgwirTxKkIj5xDAIovkjjpf
-         o0YWSOZdwZs+SifuWYCznBAUKdFdfzIEkqMTwKOjxSYNksaNE7a69+TGZ/aIIC1W8ew7
-         ZNkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sb/jwSe5HoSp8kH02mtcD5nKWDYLNYBGBBdjWlW/hgg=;
-        b=zFHw3/GZvr5wNPabEF7QGtT3DJBbaF3FF7SWHC8mlj4bRH9BKVFA0bByTqmRyM70I+
-         KMkXW5+ySkcJ3zJ/YImTfcADkGXDlalgtYkrJ/fNKlY4BKFBg8P9z2KK7so5oSgBng3s
-         cO8/GNqv+wsojuvoZVZe8zdTp0BsJ+vPm88D6fmSawZ4Vixv4oRpZMsTwm2VNjXHSsye
-         YBQs6R/39n/MuyHuHSmK9shPQOTqIaVQmfVyS9GDvO8wBVREqp8VbGghQhrvhQqE2WpX
-         3XZ6PpxDRJMuINrGgQfqJVpkaXH9Ys5Pb1rv/gWWBDcyQyH1uKGH/A5t7QDGPn4AHlh+
-         iIvQ==
-X-Gm-Message-State: AJIora9VfK/NH6TXczLJ3Whdp/wx74c9zpJtgt0vSvTPbw8Xfo4VuoKQ
-        eovd2UkiylyKx20w7fYRFh5Eutda2Xf1DsF1uVY=
-X-Google-Smtp-Source: AGRyM1uWKMbJWyZkYE4XFBOdesa+iiLiSyyUdSsPZESGKXZ3H6l+T6qAr07jRPujOEDinYnjWJAmWHYMKWi9MyF7IvU=
-X-Received: by 2002:a67:fa01:0:b0:354:3136:c62e with SMTP id
- i1-20020a67fa01000000b003543136c62emr10134728vsq.2.1655986631710; Thu, 23 Jun
- 2022 05:17:11 -0700 (PDT)
+        Thu, 23 Jun 2022 08:44:42 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7DE03F8BA;
+        Thu, 23 Jun 2022 05:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655988281; x=1687524281;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h3Ef2jQOmoumcBkWtU8Mn8h6evOutjsIpL0wWbQpFd0=;
+  b=TH4+6LaFUkoKBP5tlmYKMjyzClceWJietKz8YgljYudkQj4s14vhHLSk
+   cBFfaV+XH0HBa+w30D8J9neoBiYKLyBgVOi70UavQKDW3EtaORdaS2aL1
+   GeqKiexMmnDVvD+DsX+BOnA0koSD0GyNictd5hqy7cyJk8KNtBzGGsHBU
+   svzvULXR2FuKlqhUnb/dbQ1stjdoyKSyyWEAcFIYVLSQg5JmmPBP4IoLv
+   VcBt9tFRmLFfcG7qb/7LHOQRByBIVWXRowbz3BOonTUQcxc/G7GrFd/C8
+   m9QdWob7yIQbb7sxyBRDBVpZEZ+M2nMvX4vQfKdxAFKOoDqYz2SUdE9I4
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10386"; a="367025957"
+X-IronPort-AV: E=Sophos;i="5.92,216,1650956400"; 
+   d="scan'208";a="367025957"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 05:44:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,216,1650956400"; 
+   d="scan'208";a="621303381"
+Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 23 Jun 2022 05:44:38 -0700
+Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o4MCM-0001Gd-Ab;
+        Thu, 23 Jun 2022 12:44:38 +0000
+Date:   Thu, 23 Jun 2022 20:44:22 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org
+Cc:     kbuild-all@lists.01.org, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: Re: [PATCH 7/7] f2fs: Enable negative dentries on case-insensitive
+ lookup
+Message-ID: <202206231838.E75vWtY3-lkp@intel.com>
+References: <20220622194603.102655-8-krisman@collabora.com>
 MIME-Version: 1.0
-References: <20220620134551.2066847-1-amir73il@gmail.com> <20220620134551.2066847-3-amir73il@gmail.com>
- <20220623101408.ejmqpp7xw6f67me7@quack3.lan>
-In-Reply-To: <20220623101408.ejmqpp7xw6f67me7@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 23 Jun 2022 15:17:00 +0300
-Message-ID: <CAOQ4uxiy7WkzhUO6o4ZgpNH2rrca5iXwTFujw=rJNWosVaK8zA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fanotify: introduce FAN_MARK_IGNORE
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220622194603.102655-8-krisman@collabora.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 1:14 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 20-06-22 16:45:51, Amir Goldstein wrote:
-> > This flag is a new way to configure ignore mask which allows adding and
-> > removing the event flags FAN_ONDIR and FAN_EVENT_ON_CHILD in ignore mask.
-> >
-> > The legacy FAN_MARK_IGNORED_MASK flag would always ignore events on
-> > directories and would ignore events on children depending on whether
-> > the FAN_EVENT_ON_CHILD flag was set in the (non ignored) mask.
-> >
-> > FAN_MARK_IGNORE can be used to ignore events on children without setting
-> > FAN_EVENT_ON_CHILD in the mark's mask and will not ignore events on
-> > directories unconditionally, only when FAN_ONDIR is set in ignore mask.
-> >
-> > The new behavior is sticky.  After calling fanotify_mark() with
-> > FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
-> > will update the ignore mask, but will not change the event flags in
-> > ignore mask nor how these flags are treated.
->
-> IMHO this stickyness is not very obvious. Wouldn't it be less error-prone
-> for users to say that once FAN_MARK_IGNORE is used for a mark, all
-> subsequent modifications of ignore mask have to use FAN_MARK_IGNORE? I mean
-> if some program bothers with FAN_MARK_IGNORE, I'd expect it to use it for
-> all its calls as otherwise the mixup is kind of difficult to reason
-> about...
+Hi Gabriel,
 
-I like that.
+I love your patch! Yet something to improve:
 
->
-> Also it follows the behavior we have picked for FAN_MARK_EVICTABLE AFAIR
-> but that's not really important to me.
+[auto build test ERROR on tytso-ext4/dev]
+[also build test ERROR on jaegeuk-f2fs/dev-test linus/master v5.19-rc3 next-20220623]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-It's kind of the opposite in the case of FAN_MARK_EVICTABLE.
-FAN_MARK_EVICTABLE can be "upgraded" no non-evictable
-but not the other way around.
-And also with FAN_MARK_EVICTABLE we do not deprecate the
-old API...
+url:    https://github.com/intel-lab-lkp/linux/commits/Gabriel-Krisman-Bertazi/Support-negative-dentries-on-case-insensitive-directories/20220623-034942
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+config: x86_64-randconfig-a006 (https://download.01.org/0day-ci/archive/20220623/202206231838.E75vWtY3-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/ab740b793e65b54ce8f48c693b86761f5bcaa911
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/Support-negative-dentries-on-case-insensitive-directories/20220623-034942
+        git checkout ab740b793e65b54ce8f48c693b86761f5bcaa911
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
-See man page draft:
-https://github.com/amir73il/man-pages/commit/58851140bbc08b9ab9c7edd8830f37cf883d8d2a#diff-7a4387558a34e18ed6fb13d31933b2e4506496f8b3dd55df700f62b258e6f004R165
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
 
->
-> > @@ -1591,10 +1601,20 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
-> >
-> >       /*
-> >        * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
-> > -      * FAN_MARK_IGNORED_MASK.
-> > +      * FAN_MARK_IGNORED_MASK.  They can be updated in ignore mask with
-> > +      * FAN_MARK_IGNORE and then they do take effect.
-> >        */
-> > -     if (ignore)
-> > +     switch (ignore) {
-> > +     case 0:
-> > +     case FAN_MARK_IGNORE:
-> > +             break;
-> > +     case FAN_MARK_IGNORED_MASK:
-> >               mask &= ~FANOTIFY_EVENT_FLAGS;
-> > +             umask = FANOTIFY_EVENT_FLAGS;
-> > +             break;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
->
-> I think this would be easier to follow as two ifs:
->
->         /* We don't allow FAN_MARK_IGNORE & FAN_MARK_IGNORED_MASK together */
->         if (ignore == FAN_MARK_IGNORE | FAN_MARK_IGNORED_MASK)
->                 return -EINVAL;
->         /*
->          * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
->          * FAN_MARK_IGNORED_MASK.
->          */
->         if (ignore == FAN_MARK_IGNORED_MASK) {
->                 mask &= ~FANOTIFY_EVENT_FLAGS;
->                 umask = FANOTIFY_EVENT_FLAGS;
->         }
->
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-Yeh that looks better.
+ERROR: modpost: "d_set_casefold_lookup" [fs/ext4/ext4.ko] undefined!
+>> ERROR: modpost: "d_set_casefold_lookup" [fs/f2fs/f2fs.ko] undefined!
 
-Thanks,
-Amir.
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
