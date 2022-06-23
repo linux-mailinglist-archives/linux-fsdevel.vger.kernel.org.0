@@ -2,290 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE7C558B00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 23:56:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E61F558B11
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 00:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbiFWVz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 17:55:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37196 "EHLO
+        id S229808AbiFWWG3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 18:06:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbiFWVz2 (ORCPT
+        with ESMTP id S229449AbiFWWG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 17:55:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE25D62717
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 14:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656021326;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WjISEGr+F5OTigLplgN4yLThM5YoZQeV/BJM6J7yR6U=;
-        b=BmydsBaBhPwB4m7SpLYTuzqxpYt1o8qnCHbdaakKOCc7fXGl3mkSyCe3CRaJIqKVhaz6Fd
-        vM7K1LoXRf9aCq5VjaJwxgnQJv3Dj5OPQgLmdBpv0ZRT45fchU+XYYJ3i6Yz4CAIj8uS/1
-        g9qXSyJlXL6tPloc9FV5ZPgCz7MiXIE=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-517-kb7whQ3BNziCvJghUI0Qwg-1; Thu, 23 Jun 2022 17:55:21 -0400
-X-MC-Unique: kb7whQ3BNziCvJghUI0Qwg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D525829AA3B0;
-        Thu, 23 Jun 2022 21:55:20 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.18.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8643240C141F;
-        Thu, 23 Jun 2022 21:55:20 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 419C62209F9; Thu, 23 Jun 2022 17:55:20 -0400 (EDT)
-Date:   Thu, 23 Jun 2022 17:55:20 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: strange interaction between fuse + pidns
-Message-ID: <YrThSLvG8JSLHG4j@redhat.com>
-References: <YrShFXRLtRt6T/j+@risky>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrShFXRLtRt6T/j+@risky>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Thu, 23 Jun 2022 18:06:28 -0400
+Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15953563B5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 15:06:24 -0700 (PDT)
+Received: by mail-pf1-x449.google.com with SMTP id bq15-20020a056a000e0f00b00524c3c1a3cdso348719pfb.17
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 15:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=KwqDl7Ku0++kd3bGbvwgzs1gT1laIcj9GIfwKObRL9E=;
+        b=f8U/4xKGanNwrOdn737tuWhSmnZoG61m1qxfjiv5VkQ8UPtSqaWeibB404rrX79rJX
+         Sr8EwtDegZkmDOiQT1PYLi73vlNuyK3MEO3CteMf7qrTyzJdkDqEDsqiRCNCHSPQ5OpW
+         eesWhWqiGdmVom/8h4KWFRd14AnohMl03xMmbV6Ab1oeKOXQCzTP9OQoqz1l8U2F6/ec
+         VlqIw1iK8+IqtbCAOHrXtiW4tOefdgMl+CoajfkyUTpBuZ8kM+4EuI/xDArQ35ySZCKy
+         wRv8WwozJNFIjWw3i7yzruaQIY9s/ub55YNu2bl9iMISFr3cyMkNMY6hYWwYFcZJ8fYO
+         pNYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=KwqDl7Ku0++kd3bGbvwgzs1gT1laIcj9GIfwKObRL9E=;
+        b=R5k7EB70Vtn95Xmwq0JKnVWzD3MEcS6qG/4oC9hinb2iZ3fhpiKPMX5vZICFW75MiZ
+         0XwUwiB631KHF8B07jBvTV0SMsyFdXcBCB9mDxdzuI4zZoFuntU+DawcUTuZ0JZdN/gn
+         UKQFPS654AqAiklmoUbQgGZPBqANI+OmxECbWFbJ4MRY/CddmGxYHdmRhxuimyE+xxTt
+         hjLVsLxehBecGymgBb0iNJYVEfdLy5JQTkvjn8sLLZDedylTw7IlN//ZC/9dP3xT/StZ
+         A+c09qS0A79Ow2OlVDq9DrL73KcD6UjswfZh2ENakXmC20G8lhT09TK+0DCFfcjgkkgs
+         EszQ==
+X-Gm-Message-State: AJIora+P9eD8f+gOoXqrt28OWyDDiFJgI3VmsYaiJN8Sk/C2RU0aaOa/
+        LHKQy0lZRuiiOWg+gWE/iNjIPducVV9tVJaXdg==
+X-Google-Smtp-Source: AGRyM1sO9ieUDBnlX+/hb6X4MjMKGW7axAjbZt6eLMihv8A9ry56mIpW47+iL+E9JFdzcNk6h+YievpjxofEabG5Zw==
+X-Received: from kaleshsingh.mtv.corp.google.com ([2620:15c:211:200:ac62:20a7:e3c5:c221])
+ (user=kaleshsingh job=sendgmr) by 2002:a05:6a00:885:b0:510:950f:f787 with
+ SMTP id q5-20020a056a00088500b00510950ff787mr42464806pfj.83.1656021983532;
+ Thu, 23 Jun 2022 15:06:23 -0700 (PDT)
+Date:   Thu, 23 Jun 2022 15:06:05 -0700
+Message-Id: <20220623220613.3014268-1-kaleshsingh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH v2 0/2] procfs: Add file path and size to /proc/<pid>/fdinfo
+From:   Kalesh Singh <kaleshsingh@google.com>
+To:     ckoenig.leichtzumerken@gmail.com, christian.koenig@amd.com,
+        viro@zeniv.linux.org.uk, hch@infradead.org,
+        stephen.s.brennan@oracle.com, David.Laight@ACULAB.COM
+Cc:     ilkos@google.com, tjmercier@google.com, surenb@google.com,
+        kernel-team@android.com, Kalesh Singh <kaleshsingh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Colin Cross <ccross@google.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 11:21:25AM -0600, Tycho Andersen wrote:
-> Hi all,
-> 
-> I'm seeing some weird interactions with fuse and the pid namespace. I have a
-> small reproducer here: https://github.com/tych0/kernel-utils/tree/master/fuse2
-> 
-> fuse has the concept of "forcing" a request, which means (among other
-> things) that it does an unkillable wait in request_wait_answer(). fuse
-> flushes files when they are closed with this unkillable wait:
-> 
-> $ sudo cat /proc/1544574/stack
-> [<0>] request_wait_answer+0x12f/0x210
-> [<0>] fuse_simple_request+0x109/0x2c0
-> [<0>] fuse_flush+0x16f/0x1b0
-> [<0>] filp_close+0x27/0x70
-> [<0>] put_files_struct+0x6b/0xc0
-> [<0>] do_exit+0x360/0xb80
-> [<0>] do_group_exit+0x3a/0xa0
-> [<0>] get_signal+0x140/0x870
-> [<0>] arch_do_signal_or_restart+0xae/0x7c0
-> [<0>] exit_to_user_mode_prepare+0x10f/0x1c0
-> [<0>] syscall_exit_to_user_mode+0x26/0x40
-> [<0>] do_syscall_64+0x46/0xb0
-> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> Generally, this is OK, since the fuse_dev_release() -> fuse_abort_conn()
-> wakes up this code when a fuse dev goes away (i.e. a fuse daemon is killed
-> or unmounted or whatever). However, there's a problem when the fuse daemon
-> itself spawns a thread that does a flush:
+Hi all,
 
-So in this case single process is client as well as server. IOW, one
-thread is fuse server servicing fuse requests and other thread is fuse
-client accessing fuse filesystem?
+This is v2 of the fdinfo patches. The main update is adding path
+field only for files with anon inodes. Rebased on 5.19-rc3.
 
-> since the thread has a copy of
-> the fd table with an fd pointing to the same fuse device, the reference
-> count isn't decremented to zero in fuse_dev_release(), and the task hangs
-> forever.
+The previous cover letter is copied below for convenience.
 
-So why did fuse server thread stop responding to fuse messages. Why
-did it not complete flush.
+Thanks,
+Kalesh
 
-Is it something to do with this init process dying in pid namespace
-and it killed that fuse server thread. But it could not kill another
-thread because it is in unkillable wait.
+-----------
 
-> 
-> Tasks can be aborted via fusectl's abort file, so all is not lost. However,
-> this does wreak havoc in containers which mounted a fuse filesystem with
-> this state. If the init pid exits (or crashes), the kernel tries to clean
-> up the pidns:
-> 
-> $ sudo cat /proc/1528591/stack
-> [<0>] do_wait+0x156/0x2f0
-> [<0>] kernel_wait4+0x8d/0x140
-> [<0>] zap_pid_ns_processes+0x104/0x180
-> [<0>] do_exit+0xa41/0xb80
-> [<0>] do_group_exit+0x3a/0xa0
-> [<0>] __x64_sys_exit_group+0x14/0x20
-> [<0>] do_syscall_64+0x37/0xb0
-> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> but hangs forever. This unkillable wait seems unfortunate, so I tried the
-> obvious thing of changing it to a killable wait:
+Processes can pin shared memory by keeping a handle to it through a
+file descriptor; for instance dmabufs, memfd, and ashmem (in Android).
 
-BTW, unkillable wait happens on ly fc->no_interrupt = 1. And this seems
-to be set only if server probably some previous interrupt request
-returned -ENOSYS.
+In the case of a memory leak, to identify the process pinning the
+memory, userspace needs to:
+  - Iterate the /proc/<pid>/fd/* for each process
+  - Do a readlink on each entry to identify the type of memory from
+    the file path.
+  - stat() each entry to get the size of the memory.
 
-fuse_dev_do_write() {
-                else if (oh.error == -ENOSYS)
-                        fc->no_interrupt = 1;
-}
+The file permissions on /proc/<pid>/fd/* only allows for the owner
+or root to perform the operations above; and so is not suitable for
+capturing the system-wide state in a production environment.
 
-So a simple workaround might be for server to implement support for
-interrupting requests.
+This issue was addressed for dmabufs by making /proc/*/fdinfo/*
+accessible to a process with PTRACE_MODE_READ_FSCREDS credentials[1]
+To allow the same kind of tracking for other types of shared memory,
+add the following fields to /proc/<pid>/fdinfo/<fd>:
 
-Having said that, this does sounds like a problem and probably should
-be fixed at kernel level.
+path - This allows identifying the type of memory based on common
+       prefixes: e.g. "/memfd...", "/dmabuf...", "/dev/ashmem..."
 
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 0e537e580dc1..c604dfcaec26 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -297,7 +297,6 @@ void fuse_request_end(struct fuse_req *req)
->  		spin_unlock(&fiq->lock);
->  	}
->  	WARN_ON(test_bit(FR_PENDING, &req->flags));
-> -	WARN_ON(test_bit(FR_SENT, &req->flags));
->  	if (test_bit(FR_BACKGROUND, &req->flags)) {
->  		spin_lock(&fc->bg_lock);
->  		clear_bit(FR_BACKGROUND, &req->flags);
-> @@ -381,30 +380,33 @@ static void request_wait_answer(struct fuse_req *req)
->  			queue_interrupt(req);
->  	}
->  
-> -	if (!test_bit(FR_FORCE, &req->flags)) {
-> -		/* Only fatal signals may interrupt this */
-> -		err = wait_event_killable(req->waitq,
-> -					test_bit(FR_FINISHED, &req->flags));
-> -		if (!err)
-> -			return;
-> +	/* Only fatal signals may interrupt this */
-> +	err = wait_event_killable(req->waitq,
-> +				test_bit(FR_FINISHED, &req->flags));
+       This was not an issued when dmabuf tracking was introduced
+       because the exp_name field of dmabuf fdinfo could be used
+       to distinguish dmabuf fds from other types.
 
-Trying to do a fatal signal killable wait sounds reasonable. But I am
-not sure about the history.
+size - To track the amount of memory that is being pinned.
 
-- Why FORCE requests can't do killable wait.
-- Why flush needs to have FORCE flag set.
+       dmabufs expose size as an additional field in fdinfo. Remove
+       this and make it a common field for all fds.
 
-> +	if (!err)
-> +		return;
->  
-> -		spin_lock(&fiq->lock);
-> -		/* Request is not yet in userspace, bail out */
-> -		if (test_bit(FR_PENDING, &req->flags)) {
-> -			list_del(&req->list);
-> -			spin_unlock(&fiq->lock);
-> -			__fuse_put_request(req);
-> -			req->out.h.error = -EINTR;
-> -			return;
-> -		}
-> +	spin_lock(&fiq->lock);
-> +	/* Request is not yet in userspace, bail out */
-> +	if (test_bit(FR_PENDING, &req->flags)) {
-> +		list_del(&req->list);
->  		spin_unlock(&fiq->lock);
-> +		__fuse_put_request(req);
-> +		req->out.h.error = -EINTR;
-> +		return;
->  	}
-> +	spin_unlock(&fiq->lock);
->  
->  	/*
-> -	 * Either request is already in userspace, or it was forced.
-> -	 * Wait it out.
-> +	 * Womp womp. We sent a request to userspace and now we're getting
-> +	 * killed.
->  	 */
-> -	wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
-> +	set_bit(FR_INTERRUPTED, &req->flags);
-> +	/* matches barrier in fuse_dev_do_read() */
-> +	smp_mb__after_atomic();
-> +	/* request *must* be FR_SENT here, because we ignored FR_PENDING before */
-> +	WARN_ON(!test_bit(FR_SENT, &req->flags));
-> +	queue_interrupt(req);
->  }
->  
->  static void __fuse_request_send(struct fuse_req *req)
-> 
-> avaialble as a full patch here:
-> https://github.com/tych0/linux/commit/81b9ff4c8c1af24f6544945da808dbf69a1293f7
-> 
-> but now things are even weirder. Tasks are stuck at the killable wait, but with
-> a SIGKILL pending for the thread group.
+Access to /proc/<pid>/fdinfo is governed by PTRACE_MODE_READ_FSCREDS
+-- the same as for /proc/<pid>/maps which also exposes the path and
+size for mapped memory regions.
 
-That's strange. No idea what's going on.
+This allows for a system process with PTRACE_MODE_READ_FSCREDS to
+account the pinned per-process memory via fdinfo.
 
-Thanks
-Vivek
-> 
-> root@(none):/# cat /proc/187/stack
-> [<0>] fuse_simple_request+0x8d9/0x10f0 [fuse]
-> [<0>] fuse_flush+0x42f/0x630 [fuse]
-> [<0>] filp_close+0x96/0x120
-> [<0>] put_files_struct+0x15c/0x2c0
-> [<0>] do_exit+0xa00/0x2450
-> [<0>] do_group_exit+0xb2/0x2a0
-> [<0>] __x64_sys_exit_group+0x35/0x40
-> [<0>] do_syscall_64+0x40/0x90
-> [<0>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> root@(none):/# cat /proc/187/status
-> Name:   main
-> Umask:  0022
-> State:  S (sleeping)
-> Tgid:   187
-> Ngid:   0
-> Pid:    187
-> PPid:   185
-> TracerPid:      0
-> Uid:    0       0       0       0
-> Gid:    0       0       0       0
-> FDSize: 0
-> Groups:
-> NStgid: 187     3
-> NSpid:  187     3
-> NSpgid: 171     0
-> NSsid:  160     0
-> Threads:        1
-> SigQ:   0/6706
-> SigPnd: 0000000000000000
-> ShdPnd: 0000000000000100
-> SigBlk: 0000000000000000
-> SigIgn: 0000000180004002
-> SigCgt: 0000000000000000
-> CapInh: 0000000000000000
-> CapPrm: 000001ffffffffff
-> CapEff: 000001ffffffffff
-> CapBnd: 000001ffffffffff
-> CapAmb: 0000000000000000
-> NoNewPrivs:     0
-> Seccomp:        0
-> Seccomp_filters:        0
-> Speculation_Store_Bypass:       thread vulnerable
-> SpeculationIndirectBranch:      conditional enabled
-> Cpus_allowed:   f
-> Cpus_allowed_list:      0-3
-> Mems_allowed:   00000000,00000001
-> Mems_allowed_list:      0
-> voluntary_ctxt_switches:        6
-> nonvoluntary_ctxt_switches:     1
-> 
-> Any ideas what's going on here? It also seems I'm not the first person to
-> wonder about this:
-> https://sourceforge.net/p/fuse/mailman/fuse-devel/thread/CAMp4zn9zTA_A2GJiYo5AD9V5HpeXbzzMP%3DnF0WtwbxRbV3koNA%40mail.gmail.com/#msg36598753
-> 
-> Thanks,
-> 
-> Tycho
-> 
+
+Kalesh Singh (2):
+  procfs: Add 'size' to /proc/<pid>/fdinfo/
+  procfs: Add 'path' to /proc/<pid>/fdinfo/
+
+ Documentation/filesystems/proc.rst | 22 ++++++++++++++++++++--
+ drivers/dma-buf/dma-buf.c          |  1 -
+ fs/libfs.c                         |  9 +++++++++
+ fs/proc/fd.c                       | 18 ++++++++++++++----
+ include/linux/fs.h                 |  1 +
+ 5 files changed, 44 insertions(+), 7 deletions(-)
+
+
+base-commit: a111daf0c53ae91e71fd2bfe7497862d14132e3e
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
 
