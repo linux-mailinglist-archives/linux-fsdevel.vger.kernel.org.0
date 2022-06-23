@@ -2,103 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2BD557743
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 11:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4050855779A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 12:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230300AbiFWJ6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 05:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
+        id S230459AbiFWKOM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 06:14:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiFWJ6K (ORCPT
+        with ESMTP id S229704AbiFWKOL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 05:58:10 -0400
-Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF885F54;
-        Thu, 23 Jun 2022 02:58:07 -0700 (PDT)
-Received: by mail-yb1-xb43.google.com with SMTP id u9so24761399ybq.3;
-        Thu, 23 Jun 2022 02:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZeGspWw1vye6pac9s6w/497q8ma6W6rlqTLSFeJT8gs=;
-        b=grzSBAhI0jduNUJ9+2cpo7BJRoLi94CoDBjPQMBoU6GTYtG+lguB6B9m8ibDpLS9WN
-         1+na+djFc5Pgv85PGvcVltvtA7WEHSZcBy5j6uSyMl4djKY7E/pGSn6VmHffPHHjlC5E
-         OzJBEDB/+M3wi4E33UyKUVOSeCTDiukjbIWLh1b3fdh/keCZ8nPZiZDr29MELzQ2Gi5z
-         1rp482ZtekzQ0GuoQjSQps41hCgMXImuXttWtxwevTzTVTHV68tSv0z6LpN/SI8Yl7vT
-         Up18u6N5dpjNlurzt1Bbm0l/e4EPbd9vJ6McpAptJFi5hRJRmRQWfT6N2LcBJTVBqWRm
-         WXvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZeGspWw1vye6pac9s6w/497q8ma6W6rlqTLSFeJT8gs=;
-        b=2dOLx06PAXNNMriGWCkflDorRhuK8RhkM341JtR1Ed6YVrnTkuamjovjIK+9/GuLHj
-         O8LROH7BUn45bGDGt/k2wiRkaebCmoO+/txpFMmNcTVIjyKbFWe8MteWzsE/N3gWljJh
-         AGOdwXnNhF9OgLjARWhEJ/vYNYmLiLwVUn05W8SQvGFBQfTD65gGk7pv1epNBo1pex3x
-         sqLwnBsX+jy+RyK9BlSXO2G6fnPCbcz5+zsHE0RumKso3RyOmhqImsuIrMh4da2WkxjB
-         xCUBEvYfgOlV7xAtA5W8eOU9Q/vKxYvBWGkIlcSL4t/2qt2Nn47PUxmOsus2dfSBQQDp
-         Irqg==
-X-Gm-Message-State: AJIora/Ms4lBqShuAvw/gQmiEFqOsWwqZOCxBIqV9cPXk7oi2Vwxn/HQ
-        wr+vtI5LhIpoADSnx48s8YpFYzq49qnI6+5OkGRgOvMrOqY5
-X-Google-Smtp-Source: AGRyM1sz6gRPcCXM02hk0EqlRMXw+uAPQphLu6qe68SYbq4vpjnAI69MEKDfRrgpmGQop2LZI+rHzoCJf2v4/Eyh0rw=
-X-Received: by 2002:a05:6902:124a:b0:669:2154:aa15 with SMTP id
- t10-20020a056902124a00b006692154aa15mr8569924ybu.53.1655978287152; Thu, 23
- Jun 2022 02:58:07 -0700 (PDT)
+        Thu, 23 Jun 2022 06:14:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A5E49F17;
+        Thu, 23 Jun 2022 03:14:10 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 5898A21DCF;
+        Thu, 23 Jun 2022 10:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1655979249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W5T2qmd5H7dxbiKDFmJzp0jMdrslZSbenmGTQN/sETw=;
+        b=np4WzaTmnvcEUlROnXi1tfV0CpeG6ACx7cZWnUWiyjRMIjS8dN4nBDufnHFfPBpPOPeCjN
+        HxFdbYrl1IvEgh8/AsojJWDI9EUXDNBhd8TIHmobFQxPNTmfSDSwNuxcP5OtzQCeUZEplJ
+        pS99pvn2i7isIe2w+2NsPu73t4MVg+4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1655979249;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W5T2qmd5H7dxbiKDFmJzp0jMdrslZSbenmGTQN/sETw=;
+        b=n2yPE75NkcmvIcmj+/harY362JUkj0HP9CHcmfPJbpnedSPf7A7xWzciXALaK5ADVrOWA1
+        CyHEemdmmK4smzAw==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 846862C142;
+        Thu, 23 Jun 2022 10:14:03 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E6AFCA062B; Thu, 23 Jun 2022 12:14:08 +0200 (CEST)
+Date:   Thu, 23 Jun 2022 12:14:08 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 2/2] fanotify: introduce FAN_MARK_IGNORE
+Message-ID: <20220623101408.ejmqpp7xw6f67me7@quack3.lan>
+References: <20220620134551.2066847-1-amir73il@gmail.com>
+ <20220620134551.2066847-3-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20220622085146.444516-1-sunliming@kylinos.cn> <YrLwU27DNm0YWOvB@ZenIV>
- <CAJncD7RuTTLoRS_pzvn729_SX5Xsv6Pub44eCD_RbbANjn9joA@mail.gmail.com> <YrPinPcHHNfv3E3B@ZenIV>
-In-Reply-To: <YrPinPcHHNfv3E3B@ZenIV>
-From:   sunliming <kelulanainsley@gmail.com>
-Date:   Thu, 23 Jun 2022 17:57:56 +0800
-Message-ID: <CAJncD7SiqoXEKhT8D8OivNz96M4h=0NTs+jZtKF00gnFnrVxsw@mail.gmail.com>
-Subject: Re: [PATCH] walk_component(): get inode in lookup_slow branch
- statement block
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sunliming@kylino.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220620134551.2066847-3-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> =E4=BA=8E2022=E5=B9=B46=E6=9C=8823=E6=97=
-=A5=E5=91=A8=E5=9B=9B 11:48=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Jun 23, 2022 at 11:44:29AM +0800, sunliming wrote:
-> > Al Viro <viro@zeniv.linux.org.uk> =E4=BA=8E2022=E5=B9=B46=E6=9C=8822=E6=
-=97=A5=E5=91=A8=E4=B8=89 18:35=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Wed, Jun 22, 2022 at 04:51:46PM +0800, sunliming wrote:
-> > > > The inode variable is used as a parameter by the step_into function=
-,
-> > > > but is not assigned a value in the sub-lookup_slow branch path. So
-> > > > get the inode in the sub-lookup_slow branch path.
-> > >
-> > > Take a good look at handle_mounts() and the things it does when
-> > > *not* in RCU mode (i.e. LOOKUP_RCU is not set).  Specifically,
-> > >                 *inode =3D d_backing_inode(path->dentry);
-> > >                 *seqp =3D 0; /* out of RCU mode, so the value doesn't=
- matter */
-> > > this part.
-> > >
-> > > IOW, the values passed to step_into() in inode/seq are overridden unl=
-ess
-> > > we stay in RCU mode.  And if we'd been through lookup_slow(), we'd be=
-en
-> > > out of RCU mode since before we called step_into().
-> >
-> > It might be more appropriate and easier to understand to do this
-> > before parameter passing in the top-level  walk_component function=EF=
-=BC=9F
->
-> It's possible to fall out of RCU mode *inside* step_into(), so we need
-> it done there anyway.  Unfortunately ;-/
-Thanks for your explanation
+On Mon 20-06-22 16:45:51, Amir Goldstein wrote:
+> This flag is a new way to configure ignore mask which allows adding and
+> removing the event flags FAN_ONDIR and FAN_EVENT_ON_CHILD in ignore mask.
+> 
+> The legacy FAN_MARK_IGNORED_MASK flag would always ignore events on
+> directories and would ignore events on children depending on whether
+> the FAN_EVENT_ON_CHILD flag was set in the (non ignored) mask.
+> 
+> FAN_MARK_IGNORE can be used to ignore events on children without setting
+> FAN_EVENT_ON_CHILD in the mark's mask and will not ignore events on
+> directories unconditionally, only when FAN_ONDIR is set in ignore mask.
+> 
+> The new behavior is sticky.  After calling fanotify_mark() with
+> FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
+> will update the ignore mask, but will not change the event flags in
+> ignore mask nor how these flags are treated.
+
+IMHO this stickyness is not very obvious. Wouldn't it be less error-prone
+for users to say that once FAN_MARK_IGNORE is used for a mark, all
+subsequent modifications of ignore mask have to use FAN_MARK_IGNORE? I mean
+if some program bothers with FAN_MARK_IGNORE, I'd expect it to use it for
+all its calls as otherwise the mixup is kind of difficult to reason
+about...
+
+Also it follows the behavior we have picked for FAN_MARK_EVICTABLE AFAIR
+but that's not really important to me.
+
+> @@ -1591,10 +1601,20 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  
+>  	/*
+>  	 * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
+> -	 * FAN_MARK_IGNORED_MASK.
+> +	 * FAN_MARK_IGNORED_MASK.  They can be updated in ignore mask with
+> +	 * FAN_MARK_IGNORE and then they do take effect.
+>  	 */
+> -	if (ignore)
+> +	switch (ignore) {
+> +	case 0:
+> +	case FAN_MARK_IGNORE:
+> +		break;
+> +	case FAN_MARK_IGNORED_MASK:
+>  		mask &= ~FANOTIFY_EVENT_FLAGS;
+> +		umask = FANOTIFY_EVENT_FLAGS;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+
+I think this would be easier to follow as two ifs:
+
+	/* We don't allow FAN_MARK_IGNORE & FAN_MARK_IGNORED_MASK together */
+	if (ignore == FAN_MARK_IGNORE | FAN_MARK_IGNORED_MASK)
+		return -EINVAL;
+	/*
+	 * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
+	 * FAN_MARK_IGNORED_MASK.
+	 */
+	if (ignore == FAN_MARK_IGNORED_MASK) {
+  		mask &= ~FANOTIFY_EVENT_FLAGS;
+		umask = FANOTIFY_EVENT_FLAGS;
+	}
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
