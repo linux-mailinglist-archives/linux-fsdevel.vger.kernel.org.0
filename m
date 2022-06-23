@@ -2,109 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF04558B22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 00:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72F7D558B7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 01:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbiFWWGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 18:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44504 "EHLO
+        id S230109AbiFWXAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 19:00:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbiFWWGr (ORCPT
+        with ESMTP id S229437AbiFWXAL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 18:06:47 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6107A5DF30
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 15:06:45 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id e63so684105pgc.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 15:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=UaUehcOEJlieX7AdhP4I9Jsvj6qc9iCnwLhOMGIL2t4=;
-        b=AAD1zvllcD75BocFjPCJUqeTneVE7WIl2b1W8J0n+BlJPOemn9V25qBLIYFGwQA6zs
-         4D3tjIaVIxcRF6Hfu547JBxmMiYZ0Nn9u8BOdxjl4KxPJfEGNCbE5kt/b/8YhNe35f6s
-         DAgZYiorNdWRJEllT48vccNIw/UL/rxLTX4/O5/riC+ri0ZR/I5mwP+3DhOEYytIkXxS
-         f9wKfEosHHXh9+KEllttfDvYH4we5tzD9WVKbByRDmLdBmW76Hq13h2Z7eLlCGVMdUEM
-         zeb0ZphNfmf6+EwaBhkALPNdCccpHgWfusDR5BlPx7z3dJrxRBNwIBNaGsaifEZkcSyS
-         dgBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UaUehcOEJlieX7AdhP4I9Jsvj6qc9iCnwLhOMGIL2t4=;
-        b=0/e2UJ3cD6dfUBYwCVAkJCNdiqPRYEnyJ/Ldcf1ALp6yGyiaoiQ+/H6TCSAusp5ObT
-         YQ821mPcYFzV6dOifMt7HhWghVMlBomrJqZ68UaX4cTDrYMu5uC6AhzTL8Euezq/o0N7
-         AcilxXcIFwThAoVWN7A/O5hYclQrhClLMxuNvGT/cx+5WNGaNr32h5KvMHqzrF8T7k2p
-         bjw3k0mD+zSdERW8dn2w878uWU//ZAsFCn+XhuxGxEsl8OFX/IpOdeuF/Fd0JKD8/jC4
-         l4AO1qUxILuh9UEP4r/HBc6YqdI4D8tM5lS5dmzf36gEv3iNJbQXm6GRoNSoEmCtJP+G
-         z2ww==
-X-Gm-Message-State: AJIora97eXZYPQ7OTe/vQmDcTUG0fx7z1YCuNFl3cvIXrcp9cTZ4wNFl
-        iOa+S3s9qXrXyeqPbnEikpJVag==
-X-Google-Smtp-Source: AGRyM1uokjQTXRa12oJij4piLPo65ZKMu3Yjr8zsrNU49agTg/vR0L0cLUBgMVAK7LRXwIvUs1sXRw==
-X-Received: by 2002:a62:ee07:0:b0:525:1a3e:bebb with SMTP id e7-20020a62ee07000000b005251a3ebebbmr27036034pfi.77.1656022004538;
-        Thu, 23 Jun 2022 15:06:44 -0700 (PDT)
-Received: from ?IPV6:2600:380:766e:a8be:8c24:9e35:f20a:acfb? ([2600:380:766e:a8be:8c24:9e35:f20a:acfb])
-        by smtp.gmail.com with ESMTPSA id s42-20020a056a0017aa00b0052553215444sm134272pfg.101.2022.06.23.15.06.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jun 2022 15:06:44 -0700 (PDT)
-Message-ID: <c829173f-ceff-b29b-e491-1e04332cdf94@kernel.dk>
-Date:   Thu, 23 Jun 2022 16:06:41 -0600
+        Thu, 23 Jun 2022 19:00:11 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B5A5D112;
+        Thu, 23 Jun 2022 16:00:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DoGy3AGFwHC0+NnXOYj8CmJzqTU3hR9GQS1tYL1sSrOPtnLJKr3sKlMmjDFQKlfVIM31FQvb8pPN81GOY8fPB1Q/kNtd9+uw5JjOdfjWunulgjUJxZRDju5zX2GJp9wChMKUTE6ZMMilDXmEQe/3OkBZXI/zt61cEOv30x1KPOjvr2f0+vHGtHu2HmEQJNEN0ufAMEn/zdjQARX8mmrEMu/MVBAJmNytNDbrii26tQQrIlvt6lCDD+8O9rRog5dhzvniIAM+jjkfcvd9X3QdWYtALi62uuyZzcoJYvINS4epMlPuTyMD/gFfHu2fV0Es4TzE2BmAboPqjqtlDz6gcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iyamViTq1nBVi9xIjb/e7PY0gptonM7vBa3se7GZiFw=;
+ b=CFLJNDLBu/E2TYT6VYoqW+81mxIGkIV3mq/kTYoSjr+uq84FXUpoMPdF9LZYF43jZQtuzASzYT0V4qWFlMRHnCOFLY3lR8Sy+2i2ezYN7VSbmm7CEBLrzqtWBCO/gM9HtC5hm8+VJ56hlWnmJqBN0ScpJB4UpwFQ/40i3AdreFtc9Pkg1iTio2hdPyBRXhoXjnmTPfsLNhmfLURfjFK35+yiwvt1boPl6McXyn3aso013Qs3GkmM67vA9NG+HnDTgaQ4PnIomf9CX+XeWRMS7Nb88WZFsJ4mESqw2poEeq8SDg7inWShtiWnn1g69mQLZtwXdhi1H2/DQ1Dwr6s/5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iyamViTq1nBVi9xIjb/e7PY0gptonM7vBa3se7GZiFw=;
+ b=atgzjGE3jRVBW7/o7bDUJl/ee5/S6Gu+XZzlD+iAUAljqzH9CrYpsQJ83OKnrx69hJiVHmsc5rX1kkaAphTM9HM6lD/5G8B8hZbtLLCnNsQb7XBpss6iVqSlx2/NsSXcswy3mBvTl3iZdVAc/v9kcjF0OlbAaQ37ewXPU6XGHfI=
+Received: from BN6PR12CA0043.namprd12.prod.outlook.com (2603:10b6:405:70::29)
+ by DS7PR12MB5815.namprd12.prod.outlook.com (2603:10b6:8:77::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.15; Thu, 23 Jun
+ 2022 23:00:07 +0000
+Received: from BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:70:cafe::82) by BN6PR12CA0043.outlook.office365.com
+ (2603:10b6:405:70::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.17 via Frontend
+ Transport; Thu, 23 Jun 2022 23:00:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN8NAM11FT013.mail.protection.outlook.com (10.13.176.182) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5373.15 via Frontend Transport; Thu, 23 Jun 2022 23:00:07 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 23 Jun
+ 2022 18:00:06 -0500
+Date:   Thu, 23 Jun 2022 17:07:51 -0500
+From:   Michael Roth <michael.roth@amd.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <qemu-devel@nongnu.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        <luto@kernel.org>, <jun.nakajima@intel.com>,
+        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
+        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
+        Quentin Perret <qperret@google.com>, <mhocko@suse.com>
+Subject: Re: [PATCH v6 7/8] KVM: Enable and expose KVM_MEM_PRIVATE
+Message-ID: <20220623220751.emt3iqq77faxfzzy@amd.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-8-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RESEND PATCH v9 00/14] io-uring/xfs: support async buffered
- writes
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>, Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        willy@infradead.org
-References: <20220623175157.1715274-1-shr@fb.com> <YrTNku0AC80eheSP@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YrTNku0AC80eheSP@magnolia>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220519153713.819591-8-chao.p.peng@linux.intel.com>
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 41f2cc68-07a1-439c-c99c-08da556c1df8
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5815:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MMQER8qa581Q0yKLb6m725j+nrTlmsVafu9Jmrkl4r1diWywwDCPswbB9hT/dLvDJF76DL6h/PZUjKcQD/Saw9KuV+o29w/CWT/wABmDG7PsaH6GRo/c/OQc2uVUUFp3R2mAvYRfsR+d+j74AC3inUipssISlM9I/FLqz2+tDypSM7A7Hw7WY7q2zbvIw7BrP5dzJddnOhwEpR3vxX75aWwR6OIa7sG8xlEGalVE3wwVerDWuTAcPxc9z7CDD0kYB+uxgzuGGcnOlTnaMUM89dynoTM/6AvoqT2h6d3oqMlYEkeudT6O8smJTpMxuMuor2la0BfpfU05gB+ZgaTXuwTwx1LxMB72WOBJ7GO1ZlBHltu1Rw6y/NYH+H6D18YpojVm+DxToENfXJ9WS1v4e4gHuwmb12T5n0Hy4w0yKhy2vzjXNwC62m4MxqrMuvcxFJLGI1SO8DU2f0UFy4uFIgimjRvvC+10tQ6nVi0v69iw9vWaA56tHEiTrHWlIE2S65cobqYdXeMVcvJ6KTSXD0q4uJ4P0syAQxBsvzHREvUINFu/+A5CekZ27JjNIXBwtXLRw6DdqAXBwUDRejJnjY2hvAsJCKZCUElYSR3VLYiO518M1spMecqiMHNjfh5aVOBIs3MNqqFi8PzHUlmuWmbrs7KCb00p6Lm5CoAOoTvoyxHftkRCwN3Abs00FsyAMC10NKN28QInCpZ8a23iKAno0pLxuGPFhXpxdHXq34t/P7JNNLuHEVj0pEbHeUvaXXxPjUpRyJPYOkL4UyGb7sP9SIFaVF9XgK5cqaXAaIhRpJAIGd+7ySOtFRgjgd2SpZE1/OYJ8xkjaxj6dStNYg==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(376002)(346002)(39860400002)(36840700001)(40470700004)(46966006)(26005)(83380400001)(426003)(186003)(6916009)(36860700001)(82740400003)(5660300002)(40460700003)(6666004)(47076005)(2906002)(336012)(36756003)(82310400005)(70206006)(356005)(8676002)(7416002)(40480700001)(4326008)(70586007)(16526019)(54906003)(44832011)(86362001)(7406005)(316002)(2616005)(8936002)(1076003)(81166007)(41300700001)(478600001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2022 23:00:07.3238
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f2cc68-07a1-439c-c99c-08da556c1df8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5815
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/23/22 2:31 PM, Darrick J. Wong wrote:
->> Testing:
->>   This patch has been tested with xfstests, fsx, fio and individual test programs.
+On Thu, May 19, 2022 at 11:37:12PM +0800, Chao Peng wrote:
+> Register private memslot to fd-based memory backing store and handle the
+> memfile notifiers to zap the existing mappings.
 > 
-> Good to hear.  Will there be some new fstest coming/already merged?
-
-It should not really require any new tests, as anything buffered +
-io_uring on xfs will now use this code. But Stefan has run a bunch of
-things on the side too, some of those synthetic (like ensure that
-various parts of a buffered write range isn't cached, etc) and some more
-generic (fsx). There might be some that could be turned into xfstests,
-I'll let him answer that one.
-
-> Hmm, well, vger and lore are still having stomach problems, so even the
-> resend didn't result in #5 ending up in my mailbox. :(
+> Currently the register is happened at memslot creating time and the
+> initial support does not include page migration/swap.
 > 
-> For the patches I haven't received, I'll just attach my replies as
-> comments /after/ each patch subject line.  What a way to review code!
+> KVM_MEM_PRIVATE is not exposed by default, architecture code can turn
+> on it by implementing kvm_arch_private_mem_supported().
+> 
+> A 'kvm' reference is added in memslot structure since in
+> memfile_notifier callbacks we can only obtain a memslot reference while
+> kvm is need to do the zapping. The zapping itself reuses code from
+> existing mmu notifier handling.
+> 
+> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  include/linux/kvm_host.h |  10 ++-
+>  virt/kvm/kvm_main.c      | 132 ++++++++++++++++++++++++++++++++++++---
+>  2 files changed, 131 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index b0a7910505ed..00efb4b96bc7 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -246,7 +246,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+>  #endif
+>  
+> -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> +#if defined(KVM_ARCH_WANT_MMU_NOTIFIER) || defined(CONFIG_MEMFILE_NOTIFIER)
+>  struct kvm_gfn_range {
+>  	struct kvm_memory_slot *slot;
+>  	gfn_t start;
+> @@ -577,6 +577,7 @@ struct kvm_memory_slot {
+>  	struct file *private_file;
+>  	loff_t private_offset;
+>  	struct memfile_notifier notifier;
+> +	struct kvm *kvm;
+>  };
+>  
+>  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
+> @@ -769,9 +770,13 @@ struct kvm {
+>  	struct hlist_head irq_ack_notifier_list;
+>  #endif
+>  
+> +#if (defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)) ||\
+> +	defined(CONFIG_MEMFILE_NOTIFIER)
+> +	unsigned long mmu_notifier_seq;
+> +#endif
+> +
+>  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+>  	struct mmu_notifier mmu_notifier;
+> -	unsigned long mmu_notifier_seq;
+>  	long mmu_notifier_count;
+>  	unsigned long mmu_notifier_range_start;
+>  	unsigned long mmu_notifier_range_end;
+> @@ -1438,6 +1443,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
+>  int kvm_arch_post_init_vm(struct kvm *kvm);
+>  void kvm_arch_pre_destroy_vm(struct kvm *kvm);
+>  int kvm_arch_create_vm_debugfs(struct kvm *kvm);
+> +bool kvm_arch_private_mem_supported(struct kvm *kvm);
+>  
+>  #ifndef __KVM_HAVE_ARCH_VM_ALLOC
+>  /*
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index db9d39a2d3a6..f93ac7cdfb53 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -843,6 +843,73 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+>  
+>  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+>  
+> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> +static void kvm_private_mem_notifier_handler(struct memfile_notifier *notifier,
+> +					     pgoff_t start, pgoff_t end)
+> +{
+> +	int idx;
+> +	struct kvm_memory_slot *slot = container_of(notifier,
+> +						    struct kvm_memory_slot,
+> +						    notifier);
+> +	struct kvm_gfn_range gfn_range = {
+> +		.slot		= slot,
+> +		.start		= start - (slot->private_offset >> PAGE_SHIFT),
+> +		.end		= end - (slot->private_offset >> PAGE_SHIFT),
 
-Really not sure what's going on with email these days, it's quite a
-pain... Thanks for taking a look so quickly!
+This code assumes that 'end' is greater than slot->private_offset, but
+even if slot->private_offset is non-zero, nothing stops userspace from
+allocating pages in the range of 0 through slot->private_offset, which
+will still end up triggering this notifier. In that case gfn_range.end
+will end up going negative, and the below code will limit that to
+slot->npages and do a populate/invalidate for the entire range.
 
-I've added your reviewed-bys and also made that ternary change you
-suggested. Only other change is addressing a kernelbot noticing that one
-ret in the mm side was being set to zero only, so we could kill it. End
-result:
+Not sure if this covers all the cases, but this fixes the issue for me:
 
-https://git.kernel.dk/cgit/linux-block/log/?h=for-5.20/io_uring-buffered-writes
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 903ffdb5f01c..4c744d8f7527 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -872,6 +872,19 @@ static void kvm_private_mem_notifier_handler(struct memfile_notifier *notifier,
+                .may_block      = true,
+        };
 
--- 
-Jens Axboe
+        struct kvm *kvm = slot->kvm;
++
++       if (slot->private_offset > end)
++               return;
++
 
