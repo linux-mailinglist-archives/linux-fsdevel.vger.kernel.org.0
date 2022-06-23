@@ -2,148 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E138B557FB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 18:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A74557FF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 18:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbiFWQZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 12:25:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
+        id S232075AbiFWQgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 12:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231851AbiFWQY7 (ORCPT
+        with ESMTP id S231407AbiFWQgW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 12:24:59 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C0F39166
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 09:24:57 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id cv13so51091pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 09:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=bcyfxdYDvwFKE4FcRkASoG03KisaDjvMQmq4ODLZY6Y=;
-        b=Q6EkS8J9o1kRFWTS1Sz7yUZQrVb9iZj6pO/U9kzzfvvlgRxFnL50FsOu6QYctzx4Zj
-         4AFwrrYShyaBMbMo/S//DCItdhB6Xhidd85LbLLCxhVPWdWfApQ8g/jLGL/zYxjMnhmB
-         xugmETGHUFP/NTpUaNxC3LJ8uNd1GAVXJfdx/0rp85cdY7Ghk6qITrxSFopDdfiLvenO
-         RRWQfBglfzjZeMXnkcJFN4vOV1vf6TcRPzixwqDrnxZlAnKBAJNAfji+cLcxuPTwVecy
-         yQOMeWEt/s2lxyaOoO1+OBzNWKgwuofTfgyeF7a8/TNbKiIEVB21YyJebVkm9tDvvBw2
-         jkgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=bcyfxdYDvwFKE4FcRkASoG03KisaDjvMQmq4ODLZY6Y=;
-        b=GBf1Shd+tVOVCx0z2AYr4QEJAFMiFVQtXekP0Y17q6rAYrmeX7ZKtAoKUcoODh7+kn
-         tTxk+FJYDX8un3K13nhMrNJT0AH53K5ONalwBWjQbh9V2tFoXy3qbLc/tge27UDNTN+2
-         eo1biRpjncLAQmkMl85hTnSmJ/fOSMJj93qNUl/V/I3spjolyPvs7uMJaLXG/RuIzdPL
-         KoK63N2R1HRIg6dV2i7/7OT+k0PogP7gOkdlxCxEJc3/nDfDVuxuH9cld2jRVBe0A9CN
-         /Sm7ALNuxZpf55LXbluNrDlsCQ4jAjWj9hLtb0Rfw8hb+sfyCpyGVoGgWqcfDc9w6UDT
-         0qfQ==
-X-Gm-Message-State: AJIora/Z24KKnoeExKacbjXpuRwtNgHSBFeSkF6+cYQ0HLBQg3PJuqIR
-        mpBKs22WbezMh+qcewGtv6hfPQ==
-X-Google-Smtp-Source: AGRyM1ukROTsV74eiDORs7U9DuEV5/TMYhdqOiMfNTcV5f2UeXO0T5u5WYzf57Iazk83XTH31glX2g==
-X-Received: by 2002:a17:90b:3b81:b0:1ec:e852:22db with SMTP id pc1-20020a17090b3b8100b001ece85222dbmr4865881pjb.77.1656001497135;
-        Thu, 23 Jun 2022 09:24:57 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id jh21-20020a170903329500b0016a109c7606sm11075493plb.259.2022.06.23.09.24.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Jun 2022 09:24:56 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <622BA3BB-03EA-4271-8A2E-2ADAFB574155@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_1B6FC5B2-556F-4A2D-9F1C-A60D36468C15";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [man-pages RFC PATCH] statx.2, open.2: document STATX_DIOALIGN
-Date:   Thu, 23 Jun 2022 10:27:19 -0600
-In-Reply-To: <YrSOm2murB4Bc1RQ@magnolia>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-References: <20220616202141.125079-1-ebiggers@kernel.org>
- <YrSOm2murB4Bc1RQ@magnolia>
-X-Mailer: Apple Mail (2.3273)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Thu, 23 Jun 2022 12:36:22 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F72C42A1D;
+        Thu, 23 Jun 2022 09:36:21 -0700 (PDT)
+Received: from localhost (modemcable141.102-20-96.mc.videotron.ca [96.20.102.141])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: krisman)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8888066017DF;
+        Thu, 23 Jun 2022 17:36:19 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656002179;
+        bh=xBl8A27Ms8S+5lzaIzajGkuNErZevkNTF10THb9C3M0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=G3xyWOp1DA3bCpt0o339Cuq7jQstFFo+ddrZn4agrJrh/RHmxxyGzPqEZsgRw7DEb
+         lzyw80VcZ5txS+ka5g+VuLOz0fAL2mdPORc7tg5Uy0Yzgn8knfZEGFW4dPy4mbtnrX
+         MVQb1C0C6LDhDlyBBa7mtUgjyQRfmBMysO2ug4p+Oc8cTykyCOG0rz0v+Qbiuvhl3a
+         NxpD17y570G38p9Xf8iMTQMGY1bePhas7Sd5NNLKG1vLGAaKuAtbijkKAnhcL49EEy
+         y7mQqqIYQ9mvd/skaUkR8cxmTSSFP8mZs7frOmFzp6120DMVXoWkzFLKVbugb8y3Ec
+         bUXX+Xaag5rMw==
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     kernel test robot <lkp@intel.com>
+Cc:     viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
+        kbuild-all@lists.01.org, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, kernel@collabora.com
+Subject: Re: [PATCH 6/7] ext4: Enable negative dentries on case-insensitive
+ lookup
+Organization: Collabora
+References: <20220622194603.102655-7-krisman@collabora.com>
+        <202206231550.0JrilBjp-lkp@intel.com>
+Date:   Thu, 23 Jun 2022 12:36:15 -0400
+In-Reply-To: <202206231550.0JrilBjp-lkp@intel.com> (kernel test robot's
+        message of "Thu, 23 Jun 2022 15:29:07 +0800")
+Message-ID: <875ykr2v7k.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+kernel test robot <lkp@intel.com> writes:
 
---Apple-Mail=_1B6FC5B2-556F-4A2D-9F1C-A60D36468C15
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+> Hi Gabriel,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on tytso-ext4/dev]
+> [also build test ERROR on jaegeuk-f2fs/dev-test linus/master v5.19-rc3 next-20220622]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Gabriel-Krisman-Bertazi/Support-negative-dentries-on-case-insensitive-directories/20220623-034942
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+> config: x86_64-randconfig-a006 (https://download.01.org/0day-ci/archive/20220623/202206231550.0JrilBjp-lkp@intel.com/config)
+> compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+> reproduce (this is a W=1 build):
+>         # https://github.com/intel-lab-lkp/linux/commit/69488ccc517a48af2f1cec0efb84651397edf6f6
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Gabriel-Krisman-Bertazi/Support-negative-dentries-on-case-insensitive-directories/20220623-034942
+>         git checkout 69488ccc517a48af2f1cec0efb84651397edf6f6
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+>
+> If you fix the issue, kindly add following tag where applicable
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>, old ones prefixed by <<):
+>
+>>> ERROR: modpost: "d_set_casefold_lookup" [fs/ext4/ext4.ko] undefined!
 
-On Jun 23, 2022, at 10:02 AM, Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> On Thu, Jun 16, 2022 at 01:21:41PM -0700, Eric Biggers wrote:
->> From: Eric Biggers <ebiggers@google.com>
->> 
->> @@ -244,8 +249,11 @@ STATX_SIZE	Want stx_size
->> STATX_BLOCKS	Want stx_blocks
->> STATX_BASIC_STATS	[All of the above]
->> STATX_BTIME	Want stx_btime
->> +STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
->> +         	This is deprecated and should not be used.
-> 
-> STATX_ALL is deprecated??  I was under the impression that _ALL meant
-> all the known bits for that kernel release, but...
+Hm, missing the EXPORT_SYMBOL() since this is called from filesystems.
+I will add it for v2.
 
-For userspace STATX_ALL doesn't make sense, and it isn't used by the kernel.
-
-Firstly, that would be a compile-time value for an application, so it
-may be incorrect for the kernel the code is actually run on (either too
-many or too few bits could be set).
-
-Secondly, it isn't really useful for an app to request "all attributes"
-if it doesn't know what they all mean, as that potentially adds useless
-overhead.  Better for it to explicitly request the attributes that it
-needs.  If that is fewer than the kernel could return it is irrelevant,
-since the app would ignore them anyway.
-
-The kernel will already ignore and mask attributes that *it* doesn't
-understand, so requesting more is fine and STATX_ALL doesn't help this.
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_1B6FC5B2-556F-4A2D-9F1C-A60D36468C15
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmK0lGcACgkQcqXauRfM
-H+CkuA//avp4Tuh55VpE8yHOQ8z64y5vrwNesx7bZ8atQCuwyhbJlvdTGn27SVv1
-4j1+/hWy3q+Jsot1ja0njROgu9KlOetTJ7qK4tlq4buIjBuB1izLfyGtSUtRezui
-Z93g7NQEpOSFyNwknXMz2vTB4gOxgMd0V9jCkElXXC+EClReBJq/Jts+/qNH8cnU
-j2kdedwlaAg3zMbSWbygM0DxumX1YB0dCYuK/SyyAyjWr4I5mHFqHeyZf3ej2fVB
-g/wUfgv7Ku50XluSp4/deoA8R/TJbCkQikvKS4S9pI/LqMeOEZ6moyIJ8KRyWKSs
-wbSn8e2E49hUrxKO15kQx2vIs1BS1WLN1PWmv4TVnkTmfkuf7iUVVMxlU3Jfifcx
-qZXhYvTv7UvL/oV12MJHzQiYR/YUytHzdeliMC+sDa/tCyWE0UZMAZaKFgO9vV9h
-gdHfsvdNabGbFBE8ul5auWUT6QaqmytVQOk6239FD/gHD3Vw4ZVptZKDziYfwULV
-JgVDmWSi8RzmV3F+g3Lr9oGWqFbErsl+QWm80wXaC7yxHm3C2wKKqwPx6bfFbucT
-PuSiilxCV7qDXmDRISKNt/JMaLsxh8w+15v92wWhacEtgMzIyVsjudfePb2wiUtw
-bLbXOh9Pj4DCci4an5lxVhj8jEYThvOPq1FlB6e7qhrXwoGwugE=
-=83Nf
------END PGP SIGNATURE-----
-
---Apple-Mail=_1B6FC5B2-556F-4A2D-9F1C-A60D36468C15--
+-- 
+Gabriel Krisman Bertazi
