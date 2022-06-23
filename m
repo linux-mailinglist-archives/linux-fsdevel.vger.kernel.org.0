@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2CF558510
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 19:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12CC055864B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 20:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235270AbiFWRyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 13:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
+        id S236054AbiFWSKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 14:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235511AbiFWRws (ORCPT
+        with ESMTP id S236000AbiFWSIw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 13:52:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A95156C00;
-        Thu, 23 Jun 2022 10:13:37 -0700 (PDT)
+        Thu, 23 Jun 2022 14:08:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A3ACBC26C;
+        Thu, 23 Jun 2022 10:19:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 20AA061DB9;
-        Thu, 23 Jun 2022 17:13:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00482C3411B;
-        Thu, 23 Jun 2022 17:13:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE21A61E69;
+        Thu, 23 Jun 2022 17:19:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03F98C341C5;
+        Thu, 23 Jun 2022 17:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656004416;
-        bh=rMClqc3zvDXfYMCOvdBp6CeRJmIcRkGT8/7yt5f5Kj4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hy8Xfb3CaW83gPTXBez87TKF6HsLY6Vgm+L3dfAfuvodGOX+OUOmbQ/Ghk1w6n2+M
-         2DV+2gMkStrDZHG0tUAgHCir1JmtSae//xHrbJSV2gG+wwa4uN1WE2Ew04+yShP6x+
-         Wo8Q7FH6WA50N/wiz6O1C6ye8ptPWUlTYD6uObRVS2xQ/Ze/MF5VWCHOxq6jfKo6l0
-         mCqmrUBFwatWgjD3iv0rzwXH1Z/HLaoZYGH27u8U6kOqNS9YP0NtGaBshrq51xY8/4
-         F7Nj+Vat3OIy1SzwGsAmMrhnN50t3L35HZyEIHe3J5ItFl3WXqp5QqxgJxdZ26l/2R
-         70TYqohWcia9w==
-Date:   Thu, 23 Jun 2022 10:13:34 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Subject: Re: [man-pages RFC PATCH] statx.2, open.2: document STATX_DIOALIGN
-Message-ID: <YrSfPmaWCTOfmQ8H@sol.localdomain>
-References: <20220616202141.125079-1-ebiggers@kernel.org>
- <YrSOm2murB4Bc1RQ@magnolia>
- <622BA3BB-03EA-4271-8A2E-2ADAFB574155@dilger.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <622BA3BB-03EA-4271-8A2E-2ADAFB574155@dilger.ca>
+        s=k20201202; t=1656004797;
+        bh=4Vug+DV/xgpRkey0OOqNkk9nVBq+acJ5RMT6SPuvoV0=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=HDvUqirTlnIfUavyR/dfeLrrJW68kNSzhaAR8FPWvmqMTJ8IJVgaRxx0tOUCe2oW6
+         wsJK7DyqSNwZG6OjZFqySX2SUxGzCw5FRtZ/0zwd7M6MwdJ5zRJlkgNFGeYTxQT9G6
+         mblWwNKWPmIq7CswSkjvDqFqyo03Lx9xwmBv8/f3r0RHlrHzHtE4InVP7uvvfm7Wqn
+         tN1Lw67qe3mtNSyqqDONL6ou/YK+/Kt5Rl1KUm8jxMXhMTfwmeaSLqgpAHUOgAmpG3
+         f5jwhfrgKSJjiSptVPtlLg2m2Q/mCnbyODqtebzyqp413vqt/7NkaTcC0ltT65l/wr
+         P56gdts7//5IQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DFAE2E7BA3C;
+        Thu, 23 Jun 2022 17:19:56 +0000 (UTC)
+Subject: Re: [GIT PULL] Pagecache fixes for 5.19-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YrSYAKtoRrrgayrZ@casper.infradead.org>
+References: <YrSYAKtoRrrgayrZ@casper.infradead.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YrSYAKtoRrrgayrZ@casper.infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/willy/pagecache.git tags/folio-5.19b
+X-PR-Tracked-Commit-Id: 00fa15e0d56482e32d8ca1f51d76b0ee00afb16b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 16e4bce6de64c8f6a0f2f221154ffa8c5fe9cdd0
+Message-Id: <165600479691.24638.8339551731180467148.pr-tracker-bot@kernel.org>
+Date:   Thu, 23 Jun 2022 17:19:56 +0000
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,41 +61,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 10:27:19AM -0600, Andreas Dilger wrote:
-> On Jun 23, 2022, at 10:02 AM, Darrick J. Wong <djwong@kernel.org> wrote:
-> > 
-> > On Thu, Jun 16, 2022 at 01:21:41PM -0700, Eric Biggers wrote:
-> >> From: Eric Biggers <ebiggers@google.com>
-> >> 
-> >> @@ -244,8 +249,11 @@ STATX_SIZE	Want stx_size
-> >> STATX_BLOCKS	Want stx_blocks
-> >> STATX_BASIC_STATS	[All of the above]
-> >> STATX_BTIME	Want stx_btime
-> >> +STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
-> >> +         	This is deprecated and should not be used.
-> > 
-> > STATX_ALL is deprecated??  I was under the impression that _ALL meant
-> > all the known bits for that kernel release, but...
-> 
-> For userspace STATX_ALL doesn't make sense, and it isn't used by the kernel.
-> 
-> Firstly, that would be a compile-time value for an application, so it
-> may be incorrect for the kernel the code is actually run on (either too
-> many or too few bits could be set).
-> 
-> Secondly, it isn't really useful for an app to request "all attributes"
-> if it doesn't know what they all mean, as that potentially adds useless
-> overhead.  Better for it to explicitly request the attributes that it
-> needs.  If that is fewer than the kernel could return it is irrelevant,
-> since the app would ignore them anyway.
-> 
-> The kernel will already ignore and mask attributes that *it* doesn't
-> understand, so requesting more is fine and STATX_ALL doesn't help this.
-> 
+The pull request you sent on Thu, 23 Jun 2022 17:42:40 +0100:
 
-What Andreas said.  Note, this discussion really should be happening on my
-standalone patch that fixes the documentation for STATX_ALL:
-https://lore.kernel.org/r/20220614034459.79889-1-ebiggers@kernel.org.  I folded
-it into this RFC one only so that it applies cleanly without a prerequisite.
+> git://git.infradead.org/users/willy/pagecache.git tags/folio-5.19b
 
-- Eric
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/16e4bce6de64c8f6a0f2f221154ffa8c5fe9cdd0
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
