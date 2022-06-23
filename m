@@ -2,56 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C45D1558410
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 19:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2CF558510
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 19:54:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234415AbiFWRj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 13:39:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
+        id S235270AbiFWRyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 13:54:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234814AbiFWRiT (ORCPT
+        with ESMTP id S235511AbiFWRws (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 13:38:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A4E27B3A;
-        Thu, 23 Jun 2022 10:08:21 -0700 (PDT)
+        Thu, 23 Jun 2022 13:52:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A95156C00;
+        Thu, 23 Jun 2022 10:13:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0012B82498;
-        Thu, 23 Jun 2022 17:08:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E6AC3411B;
-        Thu, 23 Jun 2022 17:08:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 20AA061DB9;
+        Thu, 23 Jun 2022 17:13:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00482C3411B;
+        Thu, 23 Jun 2022 17:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656004098;
-        bh=de72aEPmiWhk8gVfT3liqSSGHCaeRekm8u+9NQohaUw=;
+        s=k20201202; t=1656004416;
+        bh=rMClqc3zvDXfYMCOvdBp6CeRJmIcRkGT8/7yt5f5Kj4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fC2Hq0DsqYZk/Y/la3E9ChzRyhRvqK+C14cG9rRPKOo9XW3VxNyRyY+XJxtAI2J6V
-         zjV4944fzCDsPaH9u7MapC0CIl0k8ALlcDcCZwUWPPH6yy/rXPiS/Faknap7CnvLdw
-         /nwfIAaUZwX/KMRb4ITCw6xaHcHmliPDGYH4+85FZON/Uq5VpzpOWMfo31/lqA6dy4
-         WYZ6nUJkWmHIvwqwYI5CkwPi7p1tW5oYyQoNrKfGSkZL0QE7CPl1Iu1RRVkg/iSVpZ
-         QI5mm3aq6RqcpPogcGc9neDOQyjHy81EM6Z52gdIzvtBtZvjPmt4is2FwXCbotvwcl
-         8nlpcKIw2sJfQ==
-Date:   Thu, 23 Jun 2022 10:08:16 -0700
+        b=hy8Xfb3CaW83gPTXBez87TKF6HsLY6Vgm+L3dfAfuvodGOX+OUOmbQ/Ghk1w6n2+M
+         2DV+2gMkStrDZHG0tUAgHCir1JmtSae//xHrbJSV2gG+wwa4uN1WE2Ew04+yShP6x+
+         Wo8Q7FH6WA50N/wiz6O1C6ye8ptPWUlTYD6uObRVS2xQ/Ze/MF5VWCHOxq6jfKo6l0
+         mCqmrUBFwatWgjD3iv0rzwXH1Z/HLaoZYGH27u8U6kOqNS9YP0NtGaBshrq51xY8/4
+         F7Nj+Vat3OIy1SzwGsAmMrhnN50t3L35HZyEIHe3J5ItFl3WXqp5QqxgJxdZ26l/2R
+         70TYqohWcia9w==
+Date:   Thu, 23 Jun 2022 10:13:34 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     cgel.zte@gmail.com
-Cc:     anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xu.xin16@zte.com.cn, linux-fsdevel@vger.kernel.org,
-        Zeal Robot <zealci@zte.com.cn>,
-        syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com,
-        Songyi Zhang <zhang.songyi@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Jiang Xuexin <jiang.xuexin@zte.com.cn>,
-        Zhang wenya <zhang.wenya1@zte.com.cn>
-Subject: Re: [PATCH v2] fs/ntfs: fix BUG_ON of ntfs_read_block()
-Message-ID: <YrSeAGmk4GZndtdn@sol.localdomain>
-References: <20220623033635.973929-1-xu.xin16@zte.com.cn>
- <20220623094956.977053-1-xu.xin16@zte.com.cn>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [man-pages RFC PATCH] statx.2, open.2: document STATX_DIOALIGN
+Message-ID: <YrSfPmaWCTOfmQ8H@sol.localdomain>
+References: <20220616202141.125079-1-ebiggers@kernel.org>
+ <YrSOm2murB4Bc1RQ@magnolia>
+ <622BA3BB-03EA-4271-8A2E-2ADAFB574155@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220623094956.977053-1-xu.xin16@zte.com.cn>
+In-Reply-To: <622BA3BB-03EA-4271-8A2E-2ADAFB574155@dilger.ca>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -62,53 +60,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 09:49:56AM +0000, cgel.zte@gmail.com wrote:
-> From: xu xin <xu.xin16@zte.com.cn>
+On Thu, Jun 23, 2022 at 10:27:19AM -0600, Andreas Dilger wrote:
+> On Jun 23, 2022, at 10:02 AM, Darrick J. Wong <djwong@kernel.org> wrote:
+> > 
+> > On Thu, Jun 16, 2022 at 01:21:41PM -0700, Eric Biggers wrote:
+> >> From: Eric Biggers <ebiggers@google.com>
+> >> 
+> >> @@ -244,8 +249,11 @@ STATX_SIZE	Want stx_size
+> >> STATX_BLOCKS	Want stx_blocks
+> >> STATX_BASIC_STATS	[All of the above]
+> >> STATX_BTIME	Want stx_btime
+> >> +STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+> >> +         	This is deprecated and should not be used.
+> > 
+> > STATX_ALL is deprecated??  I was under the impression that _ALL meant
+> > all the known bits for that kernel release, but...
 > 
-> As the bug description at
-> https://lore.kernel.org/lkml/20220623033635.973929-1-xu.xin16@zte.com.cn/
-> attckers can use this bug to crash the system.
+> For userspace STATX_ALL doesn't make sense, and it isn't used by the kernel.
 > 
-> So to avoid panic, remove the BUG_ON, and use ntfs_warning to output a
-> warning to the syslog and return instead until someone really solve
-> the problem.
+> Firstly, that would be a compile-time value for an application, so it
+> may be incorrect for the kernel the code is actually run on (either too
+> many or too few bits could be set).
 > 
-> Cc: stable@vger.kernel.org
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Reported-by: syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com
-> Reviewed-by: Songyi Zhang <zhang.songyi@zte.com.cn>
-> Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
-> Reviewed-by: Jiang Xuexin<jiang.xuexin@zte.com.cn>
-> Reviewed-by: Zhang wenya<zhang.wenya1@zte.com.cn>
-> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-> ---
+> Secondly, it isn't really useful for an app to request "all attributes"
+> if it doesn't know what they all mean, as that potentially adds useless
+> overhead.  Better for it to explicitly request the attributes that it
+> needs.  If that is fewer than the kernel could return it is irrelevant,
+> since the app would ignore them anyway.
 > 
-> Change for v2:
->  - Use ntfs_warning instead of WARN().
->  - Add the tag Cc: stable@vger.kernel.org.
-> ---
->  fs/ntfs/aops.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> The kernel will already ignore and mask attributes that *it* doesn't
+> understand, so requesting more is fine and STATX_ALL doesn't help this.
 > 
-> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-> index 5f4fb6ca6f2e..84d68efb4ace 100644
-> --- a/fs/ntfs/aops.c
-> +++ b/fs/ntfs/aops.c
-> @@ -183,7 +183,12 @@ static int ntfs_read_block(struct page *page)
->  	vol = ni->vol;
->  
->  	/* $MFT/$DATA must have its complete runlist in memory at all times. */
-> -	BUG_ON(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni));
-> +	if (unlikely(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni))) {
-> +		ntfs_warning(vi->i_sb, "Error because ni->runlist.rl, ni->mft_no, "
-> +				"and NInoAttr(ni) is null.");
-> +		unlock_page(page);
-> +		return -EINVAL;
-> +	}
 
-A better warning message that doesn't rely on implementation details (struct
-field and macro names) would be "Runlist of $MFT/$DATA is not cached".  Also,
-why does this situation happen in the first place?  Is there a way to prevent
-this situation in the first place?
+What Andreas said.  Note, this discussion really should be happening on my
+standalone patch that fixes the documentation for STATX_ALL:
+https://lore.kernel.org/r/20220614034459.79889-1-ebiggers@kernel.org.  I folded
+it into this RFC one only so that it applies cleanly without a prerequisite.
 
 - Eric
