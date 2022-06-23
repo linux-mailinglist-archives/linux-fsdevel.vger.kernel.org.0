@@ -2,53 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7DFA5574A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 09:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A0D5575F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 10:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbiFWH5r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 03:57:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
+        id S229987AbiFWIy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 04:54:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230520AbiFWH5p (ORCPT
+        with ESMTP id S229790AbiFWIy1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 03:57:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1B5247389;
-        Thu, 23 Jun 2022 00:57:44 -0700 (PDT)
+        Thu, 23 Jun 2022 04:54:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A012B20F73;
+        Thu, 23 Jun 2022 01:54:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A6544B82200;
-        Thu, 23 Jun 2022 07:57:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF56C3411B;
-        Thu, 23 Jun 2022 07:57:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BBCD61CB0;
+        Thu, 23 Jun 2022 08:54:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8843C3411B;
+        Thu, 23 Jun 2022 08:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1655971062;
-        bh=ANhwfxxjIa4IJy2tXFg8crRrfMzdxUvybqtIlxYXVwM=;
+        s=korg; t=1655974465;
+        bh=53VjtG3sK4phU2SMSC2bl9AUDChPlVTKSBbfz22Eeto=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r5AREGxzJQcgEIjMRRPm7K6wf+HwUCOn5ip1jxvDeXOZcamO9qg02tG+BjFZ7A2SL
-         pMcZ0S0GdZXhtXiKtUSqhKHhy1jKlQtHLjA2bjqfWfKPL+ZMcGYeakJm2SBqhG8UDf
-         xnLvtFw7b0GXVSB/MJuwgcIhDsVdb+m7PzpDVfq0=
-Date:   Thu, 23 Jun 2022 09:57:39 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     cgel.zte@gmail.com
-Cc:     anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xu.xin16@zte.com.cn, linux-fsdevel@vger.kernel.org,
-        Zeal Robot <zealci@zte.com.cn>,
-        syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com,
-        Songyi Zhang <zhang.songyi@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Jiang Xuexin <jiang.xuexin@zte.com.cn>,
-        Zhang wenya <zhang.wenya1@zte.com.cn>
-Subject: Re: [PATCH] fs/ntfs: fix BUG_ON of ntfs_read_block()
-Message-ID: <YrQc8xq+QezRcLi7@kroah.com>
-References: <20220623033635.973929-1-xu.xin16@zte.com.cn>
- <20220623035131.974098-1-xu.xin16@zte.com.cn>
+        b=V5FagiNQRRaGwBs5DXgIDrEytvCZ2Un/5qZYyH3is021RS5vAFJEe3cabYAaRjaYJ
+         PL6OXNhhhGeQRwOcjSDwN4X+9c5MiYG+Rdh1us1qSEsNuEMzwDIwHQN4WS7lxKuCKn
+         USd+DvTpWc3hb++hC/pMpNfzXusSKVKRQ9SVmUxM=
+Date:   Thu, 23 Jun 2022 10:54:22 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
+ named fwsecurityfs
+Message-ID: <YrQqPhi4+jHZ1WJc@kroah.com>
+References: <20220622215648.96723-1-nayna@linux.ibm.com>
+ <20220622215648.96723-3-nayna@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220623035131.974098-1-xu.xin16@zte.com.cn>
+In-Reply-To: <20220622215648.96723-3-nayna@linux.ibm.com>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,52 +62,172 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 03:51:31AM +0000, cgel.zte@gmail.com wrote:
-> From: xu xin <xu.xin16@zte.com.cn>
+On Wed, Jun 22, 2022 at 05:56:47PM -0400, Nayna Jain wrote:
+> securityfs is meant for linux security subsystems to expose policies/logs
+> or any other information. However, there are various firmware security
+> features which expose their variables for user management via kernel.
+> There is currently no single place to expose these variables. Different
+> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+> interface as find appropriate. Thus, there is a gap in kernel interfaces
+> to expose variables for security features.
 > 
-> As the bug description, attckers can use this bug to crash the system
-> When CONFIG_NTFS_FS is set.
+> Define a firmware security filesystem (fwsecurityfs) to be used for
+> exposing variables managed by firmware and to be used by firmware
+> enabled security features. These variables are platform specific.
+> Filesystem provides platforms to implement their own underlying
+> semantics by defining own inode and file operations.
 > 
-> So remove the BUG_ON, and use WARN and return instead until someone
-> really solve the bug.
+> Similar to securityfs, the firmware security filesystem is recommended
+> to be exposed on a well known mount point /sys/firmware/security.
+> Platforms can define their own directory or file structure under this path.
 > 
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Reported-by: syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com
-> Reviewed-by: Songyi Zhang <zhang.songyi@zte.com.cn>
-> Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
-> Reviewed-by: Jiang Xuexin<jiang.xuexin@zte.com.cn>
-> Reviewed-by: Zhang wenya<zhang.wenya1@zte.com.cn>
-> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+> Example:
+> 
+> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+> 
+> # cd /sys/firmware/security/
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 > ---
->  fs/ntfs/aops.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/Kconfig                   |   1 +
+>  fs/Makefile                  |   1 +
+>  fs/fwsecurityfs/Kconfig      |  14 +++
+>  fs/fwsecurityfs/Makefile     |  10 +++
+>  fs/fwsecurityfs/inode.c      | 159 +++++++++++++++++++++++++++++++++++
+>  fs/fwsecurityfs/internal.h   |  13 +++
+>  fs/fwsecurityfs/super.c      | 154 +++++++++++++++++++++++++++++++++
+>  include/linux/fwsecurityfs.h |  29 +++++++
+>  include/uapi/linux/magic.h   |   1 +
+>  9 files changed, 382 insertions(+)
+>  create mode 100644 fs/fwsecurityfs/Kconfig
+>  create mode 100644 fs/fwsecurityfs/Makefile
+>  create mode 100644 fs/fwsecurityfs/inode.c
+>  create mode 100644 fs/fwsecurityfs/internal.h
+>  create mode 100644 fs/fwsecurityfs/super.c
+>  create mode 100644 include/linux/fwsecurityfs.h
 > 
-> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-> index 5f4fb6ca6f2e..b6fd7e711420 100644
-> --- a/fs/ntfs/aops.c
-> +++ b/fs/ntfs/aops.c
-> @@ -183,7 +183,11 @@ static int ntfs_read_block(struct page *page)
->  	vol = ni->vol;
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 5976eb33535f..19ea28143428 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -276,6 +276,7 @@ config ARCH_HAS_GIGANTIC_PAGE
 >  
->  	/* $MFT/$DATA must have its complete runlist in memory at all times. */
-> -	BUG_ON(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni));
-> +	if (unlikely(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni))) {
-> +		WARN(1, "NTFS: ni->runlist.rl, ni->mft_no, and NInoAttr(ni) is null!\n");
-> +		unlock_page(page);
+>  source "fs/configfs/Kconfig"
+>  source "fs/efivarfs/Kconfig"
+> +source "fs/fwsecurityfs/Kconfig"
+>  
+>  endmenu
+>  
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 208a74e0b00e..5792cd0443cb 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -137,6 +137,7 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
+>  obj-$(CONFIG_CEPH_FS)		+= ceph/
+>  obj-$(CONFIG_PSTORE)		+= pstore/
+>  obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
+> +obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs/
+>  obj-$(CONFIG_EROFS_FS)		+= erofs/
+>  obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
+>  obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
+> diff --git a/fs/fwsecurityfs/Kconfig b/fs/fwsecurityfs/Kconfig
+> new file mode 100644
+> index 000000000000..f1665511eeb9
+> --- /dev/null
+> +++ b/fs/fwsecurityfs/Kconfig
+> @@ -0,0 +1,14 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Copyright (C) 2022 IBM Corporation
+> +# Author: Nayna Jain <nayna@linux.ibm.com>
+> +#
+> +
+> +config FWSECURITYFS
+> +	bool "Enable the fwsecurityfs filesystem"
+> +	help
+> +	  This will build the fwsecurityfs file system which is recommended
+> +	  to be mounted on /sys/firmware/security. This can be used by
+> +	  platforms to expose their variables which are managed by firmware.
+> +
+> +	  If you are unsure how to answer this question, answer N.
+> diff --git a/fs/fwsecurityfs/Makefile b/fs/fwsecurityfs/Makefile
+> new file mode 100644
+> index 000000000000..b9931d180178
+> --- /dev/null
+> +++ b/fs/fwsecurityfs/Makefile
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Copyright (C) 2022 IBM Corporation
+> +# Author: Nayna Jain <nayna@linux.ibm.com>
+> +#
+> +# Makefile for the firmware security filesystem
+> +
+> +obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs.o
+> +
+> +fwsecurityfs-objs			:= inode.o super.o
+> diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
+> new file mode 100644
+> index 000000000000..5d06dc0de059
+> --- /dev/null
+> +++ b/fs/fwsecurityfs/inode.c
+> @@ -0,0 +1,159 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2022 IBM Corporation
+> + * Author: Nayna Jain <nayna@linux.ibm.com>
+> + */
+> +
+> +#include <linux/sysfs.h>
+> +#include <linux/kobject.h>
+> +#include <linux/fs.h>
+> +#include <linux/fs_context.h>
+> +#include <linux/mount.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/init.h>
+> +#include <linux/namei.h>
+> +#include <linux/security.h>
+> +#include <linux/lsm_hooks.h>
+> +#include <linux/magic.h>
+> +#include <linux/ctype.h>
+> +#include <linux/fwsecurityfs.h>
+> +
+> +#include "internal.h"
+> +
+> +int fwsecurityfs_remove_file(struct dentry *dentry)
+> +{
+> +	drop_nlink(d_inode(dentry));
+> +	dput(dentry);
+> +	return 0;
+> +};
+> +EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
+> +
+> +int fwsecurityfs_create_file(const char *name, umode_t mode,
+> +					u16 filesize, struct dentry *parent,
+> +					struct dentry *dentry,
+> +					const struct file_operations *fops)
+> +{
+> +	struct inode *inode;
+> +	int error;
+> +	struct inode *dir;
+> +
+> +	if (!parent)
 > +		return -EINVAL;
-> +	}
->  
->  	blocksize = vol->sb->s_blocksize;
->  	blocksize_bits = vol->sb->s_blocksize_bits;
-> -- 
-> 2.25.1
-> 
+> +
+> +	dir = d_inode(parent);
+> +	pr_debug("securityfs: creating file '%s'\n", name);
 
-<formletter>
+Did you forget to call simple_pin_fs() here or anywhere else?
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+And this can be just one function with the directory creation file, just
+check the mode and you will be fine.  Look at securityfs as an example
+of how to make this simpler.
 
-</formletter>
+> diff --git a/fs/fwsecurityfs/super.c b/fs/fwsecurityfs/super.c
+
+super.c and inode.c can be in the same file, these are tiny, just make
+one file for the filesystem logic.
+
+thanks,
+
+greg k-h
