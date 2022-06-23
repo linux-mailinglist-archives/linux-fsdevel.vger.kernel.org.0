@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B0D558A56
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 22:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0468558A73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jun 2022 23:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229659AbiFWUsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jun 2022 16:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46764 "EHLO
+        id S229743AbiFWVBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jun 2022 17:01:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiFWUsl (ORCPT
+        with ESMTP id S229493AbiFWVBG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jun 2022 16:48:41 -0400
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F76A4D628
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 13:48:40 -0700 (PDT)
-Received: by mail-ot1-x32c.google.com with SMTP id h15-20020a9d600f000000b0060c02d737ecso404824otj.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 13:48:40 -0700 (PDT)
+        Thu, 23 Jun 2022 17:01:06 -0400
+Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 530FF54BD3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 14:01:05 -0700 (PDT)
+Received: by mail-oo1-xc32.google.com with SMTP id v33-20020a4a9764000000b0035f814bb06eso90939ooi.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jun 2022 14:01:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=reQ2HvYtI6xRF83J9Es5xByV5D7GFf0S7klhjOiAjMc=;
-        b=dvZNfwG4SHZnoFiKYLx2GcW0ehFwjmxcUkKxLjQzxmtr55IkCCIFM4GmcPFryAro2e
-         VJyaYO3PciQK69zAiFYyELQ9R8qHjYWxKHm35JFz+npiI7DLnaoBT3o9NUjbAuVhlDy2
-         FBSmkK8euYt3R+g7U4xhVGRuJcK/DSjv9m3Vs=
+        bh=F89yAMjXepvjkRuQ7cF+LnWImZXVbWprCZTwSVgbFyY=;
+        b=WDGblmiqwtm20dLva67uSF2XaQP2c6p74PqSPYNWpf4YJWHQRTgwwvDXcoWKgGilrr
+         HvKljx57hDHcA8WTgjTTBlzRG/fJDltyCSKqLsqnQuct8Y3JHP7PD6gImIp8VN2aeI5f
+         4QEQUNoXlzCbVUlaEuik2j2ROAwr+0GgTbc3c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=reQ2HvYtI6xRF83J9Es5xByV5D7GFf0S7klhjOiAjMc=;
-        b=Z4ya+nASYi7kiAub2X1gdkrPkQPw34e3O6hjo9gsJbtVuhfZuhKgq2TGFsc+iFuG/T
-         DfDc/nA9Qo+pOys9aN7nL244OHVNr+PhRvBdXK7VWGybpZkwKbLs5rvXA1/wqms6ZBsK
-         YXQW1YMsMiyKwMvt7hT+UyxcGcN3Ls/GwjczW8OWDWZG2ycVhTSrOCbCrGlsOpiU5yBc
-         uW+iVcBxJ4bJ5fjE79bVUOaxWOjgN97RSsOD3OX9qsatrZ7oV84uTgiDQBzrZYhz+MNB
-         oYvfqXtz2AWF/CQlv7KVEbxs6AGj5OHm/LueC9s7KD7ehjTEin3oIhJy50bUupbe/n8e
-         PjaA==
-X-Gm-Message-State: AJIora+Lk/d2WTa+jabz8PjNAGuEYAUnWxBx/pwNzVP5RVeIFKRqK16i
-        /Jpl8qaIo/PBr6jx7UQfhnqKJA==
-X-Google-Smtp-Source: AGRyM1vDZzS9tzC9RRo5Om+Rnyxzo8UbOujmWUviMyNqfteo5lHLJDn2ss243NcBjDIV4gW0LPolRQ==
-X-Received: by 2002:a05:6830:310b:b0:60c:66c8:3776 with SMTP id b11-20020a056830310b00b0060c66c83776mr4700172ots.335.1656017319818;
-        Thu, 23 Jun 2022 13:48:39 -0700 (PDT)
+        bh=F89yAMjXepvjkRuQ7cF+LnWImZXVbWprCZTwSVgbFyY=;
+        b=RcHMPQYRNhuYUUSTZWNd+b4hjgq+FM74iI5dz4lbQ7JqqqmyNTL9ZXYV/vciWAaC/w
+         7O4LoL/aLJzYp8wEGcZ85plWISOr3REI1ewNIlQHPbt7nTpZuImxS3YJokurCNMXmFUp
+         iZFoVMpRl0AoGh3JTFaTodWdUBrK2H8/W9u3AvxB2dmc4rU7uxrfTt5ZccctXA47Lz0g
+         v/7an2JL1k+J9Ed5/T+DZG9E7+0C8rpasvXkAijuNGBYF5PpvncxcdbVak2jTQh0JLox
+         TFOjQc8s/ioH/oxc4giHrQaop1LK1wZhjZ1VQFmukJAg8lJIaBnU2mtebr8UxSWd3LRh
+         TSGA==
+X-Gm-Message-State: AJIora/2FC400hVEyFqngqQo4F/+uoEzNAsgXsbcCzptiU5dVG3PVFr8
+        twdmGETDTAybSVzyhAV084481Q==
+X-Google-Smtp-Source: AGRyM1s2JS1YuAC8wDHM0cQ0Jop8OYQI3UBzlJHesUup5RIXlp7/ul7Kvro7khS0nQccCnQwLWVGzQ==
+X-Received: by 2002:a05:6820:1606:b0:41b:c35f:999a with SMTP id bb6-20020a056820160600b0041bc35f999amr4579602oob.43.1656018064667;
+        Thu, 23 Jun 2022 14:01:04 -0700 (PDT)
 Received: from localhost ([2605:a601:ac0f:820:9794:3c64:a9f9:ef76])
-        by smtp.gmail.com with ESMTPSA id m8-20020a4aab88000000b0041ea640396csm180322oon.41.2022.06.23.13.48.39
+        by smtp.gmail.com with ESMTPSA id kv9-20020a056870fb8900b000f39f0816bbsm484667oab.40.2022.06.23.14.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 13:48:39 -0700 (PDT)
-Date:   Thu, 23 Jun 2022 15:48:38 -0500
+        Thu, 23 Jun 2022 14:01:04 -0700 (PDT)
+Date:   Thu, 23 Jun 2022 16:01:03 -0500
 From:   Seth Forshee <sforshee@digitalocean.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
         Aleksa Sarai <cyphar@cyphar.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 8/8] attr: port attribute changes to new types
-Message-ID: <YrTRpsZuOnjFUObl@do-x1extreme>
+Subject: Re: [PATCH v2 0/8] introduce dedicated type for idmapped mounts
+Message-ID: <YrTUj0skph2MYTHH@do-x1extreme>
 References: <20220621141454.2914719-1-brauner@kernel.org>
- <20220621141454.2914719-9-brauner@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220621141454.2914719-9-brauner@kernel.org>
+In-Reply-To: <20220621141454.2914719-1-brauner@kernel.org>
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -70,62 +69,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 21, 2022 at 04:14:54PM +0200, Christian Brauner wrote:
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 88e2ca30d42e..22e310dd483f 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -31,15 +31,15 @@
->   * performed on the raw inode simply passs init_user_ns.
->   */
->  static bool chown_ok(struct user_namespace *mnt_userns,
-> -		     const struct inode *inode,
-> -		     kuid_t uid)
-> +		     const struct inode *inode, vfsuid_t ia_vfsuid)
->  {
-> -	kuid_t kuid = i_uid_into_mnt(mnt_userns, inode);
-> -	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, inode->i_uid))
-> +	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-> +	if (kuid_eq_vfsuid(current_fsuid(), vfsuid) &&
-> +	    vfsuid_eq(ia_vfsuid, vfsuid))
->  		return true;
->  	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
->  		return true;
-> -	if (uid_eq(kuid, INVALID_UID) &&
-> +	if (vfsuid_eq(vfsuid, INVALID_VFSUID) &&
+On Tue, Jun 21, 2022 at 04:14:46PM +0200, Christian Brauner wrote:
+> From: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> 
+> Hey everyone,
+> 
+> /* v2 */
+> No major changes. The type got renamed since we agreed that the initial
+> name wasn't great. There are some typo fixes in the commit messages and
+> a few tweaks to the last commit and added Jan's rvb.
+> 
+> This series starts to introduce a new vfs{g,u}id_t type. It allows to
+> distinguish {g,u}ids on idmapped mounts from filesystem k{g,u}ids.
+> 
+> We leverage the type framework to increase the safety for filesystems
+> and the vfs when dealing with idmapped mounts.
+> 
+> The series introduces the type and converts the setattr codepaths to
+> use the new type and associated helpers.
+> 
+> Currently these codepaths place the value that will ultimately be
+> written to inode->i_{g,u}id into attr->ia_{g,u}id which allows to avoid
+> changing a few callsites. But there are drawbacks to this approach.
+> 
+> As Linus rightly points out it makes some of the permission checks in
+> the attribute code harder to understand than they need and should be and
+> increases the probability for further issues.
+> 
+> This series makes it so that the values will always be treated as being
+> mapped into the idmapped mount. Only when the filesystem object is
+> actually updated will the value be mapped into the filesystem idmapping.
+> 
+> I first looked into this about ~7 months ago but put it on hold to focus
+> on the testsuite. Linus expressed the desire for something like this
+> last week so I got back to working on this.
+> 
+> I'd like to get at least this first series in for v5.20. The conversion
+> can the continue until we can remove all the regular non-type safe
+> helpers and will only be left with the type safe helpers.
+> 
+> Thanks!
+> Christian
 
-If you use my suggestion that comparison to invalid ids should always be
-false, this check will need to change to !vfsuid_valid(vfsuid). I'd
-argue that this makes the code clearer regardless.
+As I mentioned in my other responses I prefer to see comparisons with
+invalid ids always evaluate as not equal. You can take or leave that
+suggestion, but even without it this looks correct, and I think a
+separate type is a good change to avoid confusion. For all the patches,
+feel free to add:
 
->  	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
->  		return true;
->  	return false;
-> @@ -58,21 +58,19 @@ static bool chown_ok(struct user_namespace *mnt_userns,
->   * performed on the raw inode simply passs init_user_ns.
->   */
->  static bool chgrp_ok(struct user_namespace *mnt_userns,
-> -		     const struct inode *inode, kgid_t gid)
-> +		     const struct inode *inode, vfsgid_t ia_vfsgid)
->  {
-> -	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
-> -	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
-> -		kgid_t mapped_gid;
-> -
-> -		if (gid_eq(gid, inode->i_gid))
-> +	vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
-> +	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-> +	if (kuid_eq_vfsuid(current_fsuid(), vfsuid)) {
-> +		if (vfsgid_eq(ia_vfsgid, vfsgid))
->  			return true;
-> -		mapped_gid = mapped_kgid_fs(mnt_userns, i_user_ns(inode), gid);
-> -		if (in_group_p(mapped_gid))
-> +		if (vfsgid_in_group_p(ia_vfsgid))
->  			return true;
->  	}
->  	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
->  		return true;
-> -	if (gid_eq(kgid, INVALID_GID) &&
-> +	if (vfsgid_eq(ia_vfsgid, INVALID_VFSGID) &&
+Reviewed-by: Seth Forshee <sforshee@digitalocean.com>
 
-Likewise here.
+Seth
