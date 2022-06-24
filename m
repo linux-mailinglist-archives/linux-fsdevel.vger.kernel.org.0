@@ -2,264 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8907F559BD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 16:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 026FA559BF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 16:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232982AbiFXOhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 10:37:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        id S232855AbiFXOiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 10:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232681AbiFXOgl (ORCPT
+        with ESMTP id S232866AbiFXOht (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 10:36:41 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3B960E36;
-        Fri, 24 Jun 2022 07:35:47 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id e7so3356283wrc.13;
-        Fri, 24 Jun 2022 07:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=w6oFXPONWcD9zTLXE6cye4cgQbH9nS+s1vOtNjudXMY=;
-        b=lvfo9ZecnzNLnov7BNt/6atj2n7Hk+bmrDouT0jG4DJ+daqRxL+raXkbW/0zsdGvhF
-         Xw1tJjEDCAyPYNdqXbLTbXlKQPEcnXrzrwPYWlLAjCME2w6pjBVse6aNz2tHRDNWNKYU
-         kkvmq4npYlL7Dn4h/6AsbUsmHZ7ndSZ16G6ApYTz7PDxIqw1uonCSs2tqAYZw4EQhsDY
-         aH92rOy/n05hC5NkWnyEXIFCiVlrHGKvIKvyVBg5ogJy/ZV6yY0AWwCfJbgRmTHtjm0k
-         p4BtbrvVj4gEieY8ObEm5kgMuFNedjrExCkeTeFoOCEMHpYdI6/s0L6deq81gqkxptEl
-         jHhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=w6oFXPONWcD9zTLXE6cye4cgQbH9nS+s1vOtNjudXMY=;
-        b=rT646Qq7ST8bqC7Fjpq98oFhuzvhWrrPzbfLZmxHTliBITZhDA0ckNzaJynXHL7nU8
-         0fdihzakZLF/3tRF6YY9nXKw02wj60Edv7o6q2c5tPvW+9DoQrs/wSaRYAmwWQinAPfM
-         U+llS/StkFjxad1M1kmH+tsCiiOzC2Mqgm50yziiLgeHqNpxVz8GR9kwVvWRLEMMMu20
-         TR66JHWSpdBL6R4UmA9ncxBeGm9tjGnI39++MdCtYhM9x7+6IheMNRtHXHBmoxChSCi9
-         LxNGjGIHYyKpUXCBLdgqqV7K/nLOqNP3f0ul+Ey0KSnvvpUEnXbJKWpYrMW5+5X5EBok
-         ArJA==
-X-Gm-Message-State: AJIora/nB4RsfmxPY99etFFXFxwSi8YOY/t7yRr5KabbeRkqOtsFhJNg
-        2FxjOOxJqfAs+RmbhEuWL2g=
-X-Google-Smtp-Source: AGRyM1vdmq4ogh8x1ho5oNj7Sur1VBXUuNj4VsygMkNa5emDAEiyIsA8yI2Um+/YDs5kv6jaHLA2uw==
-X-Received: by 2002:a5d:4589:0:b0:21b:8568:f38e with SMTP id p9-20020a5d4589000000b0021b8568f38emr13522540wrq.165.1656081345830;
-        Fri, 24 Jun 2022 07:35:45 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.8.191])
-        by smtp.gmail.com with ESMTPSA id k22-20020a05600c0b5600b003a02cbf862esm3116732wmr.13.2022.06.24.07.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 07:35:45 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v2 2/2] fanotify: introduce FAN_MARK_IGNORE
-Date:   Fri, 24 Jun 2022 17:35:38 +0300
-Message-Id: <20220624143538.2500990-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220624143538.2500990-1-amir73il@gmail.com>
-References: <20220624143538.2500990-1-amir73il@gmail.com>
+        Fri, 24 Jun 2022 10:37:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FB64FC7D;
+        Fri, 24 Jun 2022 07:37:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EF4262081;
+        Fri, 24 Jun 2022 14:37:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E64C385A5;
+        Fri, 24 Jun 2022 14:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656081448;
+        bh=CNBkSrLCaZGfawQUgSak+d02ko5fad5AVz/rJLSEs3U=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=u1hxhEbObejGel9t79BV/XwqoWz5imnrFY0iPN//c9MgONvFIMic89mLI2bdGFDcT
+         FTMlW0y1eJFjPyNvQYvgHcz8+jAW+nf1zLoUP8x3afs6//woYRkXofQq2aaUabp2Nd
+         ZPlIgDiNAc83gK3srvt+LEUSRvMbK1Lprsk/dr+uxFVok+GpQ0XZXSz6SuLNGMj0UP
+         S48581ihx8iZeGuWVEvhHstN1tS2hIkTwAAB1IzViYHqD5R0EARapGuQh3pXChAyDb
+         ED8nBsoY8f8x0X46cTzCxEuKv4qAxcyW+V+/WNk7LYhAdNfqofEyHuMrjmRr2K3y4O
+         jGwRfq9yOTpbA==
+Received: by mail-wm1-f49.google.com with SMTP id o16-20020a05600c379000b003a02eaea815so2415202wmr.0;
+        Fri, 24 Jun 2022 07:37:28 -0700 (PDT)
+X-Gm-Message-State: AJIora8xU/FbnJkE48PoeRZnFzkzXuqNIvlyu9lQdl1K1yD3ns4mmrlo
+        33o3j3MCvEJh8hSudskpnUPtpu5N26kB+AHLyhU=
+X-Google-Smtp-Source: AGRyM1toUIbPlNjeQV682apKJ2r7rupV5vchoSK9VTn7DESCMrOJKPYh0D/0cNa/9BwCGy8G4rV6ZJP6dP7UEjeL3O0=
+X-Received: by 2002:a05:600c:4e0c:b0:39c:519f:9f35 with SMTP id
+ b12-20020a05600c4e0c00b0039c519f9f35mr4276665wmq.153.1656081446878; Fri, 24
+ Jun 2022 07:37:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:adf:f805:0:0:0:0:0 with HTTP; Fri, 24 Jun 2022 07:37:26
+ -0700 (PDT)
+In-Reply-To: <7FBC6FD2-5D60-4EB8-96D5-A6014D271950@tuxera.com>
+References: <20220623033635.973929-1-xu.xin16@zte.com.cn> <20220623094956.977053-1-xu.xin16@zte.com.cn>
+ <YrSeAGmk4GZndtdn@sol.localdomain> <CAKYAXd8qoLKbWGX7omYUfarSugRnose8X8o3Zhb1XctiUtamQg@mail.gmail.com>
+ <7FBC6FD2-5D60-4EB8-96D5-A6014D271950@tuxera.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 24 Jun 2022 23:37:26 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-cg5rvXo-MYZ29+wiE3BYbg4vqDHrOHtu77ox-+7dPBw@mail.gmail.com>
+Message-ID: <CAKYAXd-cg5rvXo-MYZ29+wiE3BYbg4vqDHrOHtu77ox-+7dPBw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/ntfs: fix BUG_ON of ntfs_read_block()
+To:     Anton Altaparmakov <anton@tuxera.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        "xu.xin16@zte.com.cn" <xu.xin16@zte.com.cn>,
+        "cgel.zte@gmail.com" <cgel.zte@gmail.com>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Zeal Robot <zealci@zte.com.cn>,
+        "syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com" 
+        <syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com>,
+        Songyi Zhang <zhang.songyi@zte.com.cn>,
+        Yang Yang <yang.yang29@zte.com.cn>,
+        Jiang Xuexin <jiang.xuexin@zte.com.cn>,
+        Zhang wenya <zhang.wenya1@zte.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This flag is a new way to configure ignore mask which allows adding and
-removing the event flags FAN_ONDIR and FAN_EVENT_ON_CHILD in ignore mask.
+2022-06-24 21:19 GMT+09:00, Anton Altaparmakov <anton@tuxera.com>:
+> Hi,
+>
+> On 24 Jun 2022, at 03:33, Namjae Jeon
+> <linkinjeon@kernel.org<mailto:linkinjeon@kernel.org>> wrote:
+>
+> 2022-06-24 2:08 GMT+09:00, Eric Biggers
+> <ebiggers@kernel.org<mailto:ebiggers@kernel.org>>:
+> On Thu, Jun 23, 2022 at 09:49:56AM +0000,
+> cgel.zte@gmail.com<mailto:cgel.zte@gmail.com> wrote:
+> From: xu xin <xu.xin16@zte.com.cn<mailto:xu.xin16@zte.com.cn>>
+>
+> As the bug description at
+> https://lore.kernel.org/lkml/20220623033635.973929-1-xu.xin16@zte.com.cn/
+> attckers can use this bug to crash the system.
+>
+> So to avoid panic, remove the BUG_ON, and use ntfs_warning to output a
+> warning to the syslog and return instead until someone really solve
+> the problem.
+>
+> Cc: stable@vger.kernel.org
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Reported-by: syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com
+> Reviewed-by: Songyi Zhang <zhang.songyi@zte.com.cn>
+> Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
+> Reviewed-by: Jiang Xuexin<jiang.xuexin@zte.com.cn>
+> Reviewed-by: Zhang wenya<zhang.wenya1@zte.com.cn>
+> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+> ---
+>
+> Change for v2:
+> - Use ntfs_warning instead of WARN().
+> - Add the tag Cc: stable@vger.kernel.org.
+> ---
+> fs/ntfs/aops.c | 7 ++++++-
+> 1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+> index 5f4fb6ca6f2e..84d68efb4ace 100644
+> --- a/fs/ntfs/aops.c
+> +++ b/fs/ntfs/aops.c
+> @@ -183,7 +183,12 @@ static int ntfs_read_block(struct page *page)
+> vol =3D ni->vol;
+>
+> /* $MFT/$DATA must have its complete runlist in memory at all times. */
+> - BUG_ON(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni));
+> + if (unlikely(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni))) {
+> + ntfs_warning(vi->i_sb, "Error because ni->runlist.rl, ni->mft_no, "
+> + "and NInoAttr(ni) is null.");
+> + unlock_page(page);
+> + return -EINVAL;
+> + }
+>
+> A better warning message that doesn't rely on implementation details
+> (struct
+> field and macro names) would be "Runlist of $MFT/$DATA is not cached".
+> Also,
+> why does this situation happen in the first place? Is there a way to
+> prevent
+> this situation in the first place?
+>
+> ntfs_mapping_pairs_decompress() should return error pointer instead of
+> NULL.
+>
+> Callers is checking error value using IS_ERR(). and the mapping pairs
+> array of @MFT entry is empty, I think it's corrupted, it should cause
+> mount failure.
+>
+> NAK
+>
+> Sorry but this patch is incorrect.  It is perfectly valid to have an empt=
+y
+> non-resident attribute.  E.g. if you truncate a file to zero size this is
+> exactly what you will get on-disk and when you then unmount and mount nex=
+t
+> time and try to access that file with your patch you will now get an -EIO
+> error trying to access the file and you will not be able to write to the
+> file nor truncate it as you will keep getting the i/o error.
+Sorry, I can't reproduce the issue you described?
 
-The legacy FAN_MARK_IGNORED_MASK flag would always ignore events on
-directories and would ignore events on children depending on whether
-the FAN_EVENT_ON_CHILD flag was set in the (non ignored) mask.
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# ls -al
+total 5928
+drwx------ 1 root root    4096  6=EC=9B=94 24 23:01  .
+drwxr-xr-x 7 root root    4096  5=EC=9B=94 29 12:47  ..
+-rw------- 1 root root 6059409  9=EC=9B=94 22  2020  foo
+drwx------ 1 root root       0  6=EC=9B=94 24 22:30 'System Volume Informat=
+ion'
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# truncate -s 0 foo
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# ls -al
+total 8
+drwx------ 1 root root 4096  6=EC=9B=94 24 23:01  .
+drwxr-xr-x 7 root root 4096  5=EC=9B=94 29 12:47  ..
+-rw------- 1 root root    0  6=EC=9B=94 24 23:11  foo
+drwx------ 1 root root    0  6=EC=9B=94 24 22:30 'System Volume Information=
+'
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# cd ..
+root@linkinjeon-Z10PA-D8-Series:/mnt# sudo umount /mnt/test
+root@linkinjeon-Z10PA-D8-Series:/mnt# sudo mount -t ntfs /dev/sde2 /mnt/tes=
+t/
+root@linkinjeon-Z10PA-D8-Series:/mnt# cd /mnt/test/
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# cat foo
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# truncate -s 1048576 foo
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# ls -al
+total 1032
+drwx------ 1 root root    4096  6=EC=9B=94 24 23:01  .
+drwxr-xr-x 7 root root    4096  5=EC=9B=94 29 12:47  ..
+-rw------- 1 root root 1048576  6=EC=9B=94 24 23:12  foo
+drwx------ 1 root root       0  6=EC=9B=94 24 22:30 'System Volume Informat=
+ion'
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# echo "hello world" > foo
+root@linkinjeon-Z10PA-D8-Series:/mnt/test# cat foo
+hello world
 
-FAN_MARK_IGNORE can be used to ignore events on children without setting
-FAN_EVENT_ON_CHILD in the mark's mask and will not ignore events on
-directories unconditionally, only when FAN_ONDIR is set in ignore mask.
+>
+> The correct solution is to use IS_ERR_OR_NULL() in places where an empty
+> attribute is not acceptable.  Such a case is for example when mounting th=
+e
+> $MFT::$DATA::unnamed attribute cannot be empty which should then be
+> addressed inside in fs/ntfs/inode.c::ntfs_read_inode_mount().  There may =
+be
+> more call sites to ntfs_mapping_pairs_decompress() which require similar
+> treatment.  Need to go through the code to see...
+I think that it is needed everywhere that calls it. Am I missing something =
+?
 
-The new behavior is non-downgradable.  After calling fanotify_mark() with
-FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
-on the same object will return EEXIST error.
+I can not understand why the below code is needed in
+ntfs_mapping_pairs_decompress().
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.h      |  2 ++
- fs/notify/fanotify/fanotify_user.c | 44 ++++++++++++++++++++++++------
- include/linux/fanotify.h           |  5 +++-
- include/uapi/linux/fanotify.h      |  2 ++
- 4 files changed, 43 insertions(+), 10 deletions(-)
+/* If the mapping pairs array is valid but empty, nothing to do. */
+        if (!vcn && !*buf) {
+                return old_rl;
+        }
 
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index 80e0ec95b113..c54d0b404373 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -499,6 +499,8 @@ static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
- 		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
- 	if (mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF)
- 		mflags |= FAN_MARK_EVICTABLE;
-+	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORE_FLAGS)
-+		mflags |= FAN_MARK_IGNORE;
- 
- 	return mflags;
- }
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index b718df84bd56..0a657ded48e4 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1009,7 +1009,7 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
- 	mask &= ~umask;
- 	spin_lock(&fsn_mark->lock);
- 	oldmask = fsnotify_calc_mask(fsn_mark);
--	if (!(flags & FAN_MARK_IGNORED_MASK)) {
-+	if (!(flags & FANOTIFY_MARK_IGNORE_BITS)) {
- 		fsn_mark->mask &= ~mask;
- 	} else {
- 		fsn_mark->ignore_mask &= ~mask;
-@@ -1085,15 +1085,24 @@ static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
- 				       unsigned int fan_flags)
- {
- 	bool want_iref = !(fan_flags & FAN_MARK_EVICTABLE);
-+	unsigned int ignore = fan_flags & FANOTIFY_MARK_IGNORE_BITS;
- 	bool recalc = false;
- 
-+	/*
-+	 * When using FAN_MARK_IGNORE for the first time, mark starts using
-+	 * independent event flags in ignore mask.  After that, trying to
-+	 * update the ignore mask with the old FAN_MARK_IGNORED_MASK API
-+	 * will result in EEXIST error.
-+	 */
-+	if (ignore == FAN_MARK_IGNORE)
-+		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORE_FLAGS;
-+
- 	/*
- 	 * Setting FAN_MARK_IGNORED_SURV_MODIFY for the first time may lead to
- 	 * the removal of the FS_MODIFY bit in calculated mask if it was set
- 	 * because of an ignore mask that is now going to survive FS_MODIFY.
- 	 */
--	if ((fan_flags & FAN_MARK_IGNORED_MASK) &&
--	    (fan_flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
-+	if (ignore && (fan_flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
- 	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)) {
- 		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY;
- 		if (!(fsn_mark->mask & FS_MODIFY))
-@@ -1120,7 +1129,7 @@ static bool fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
- 	bool recalc;
- 
- 	spin_lock(&fsn_mark->lock);
--	if (!(fan_flags & FAN_MARK_IGNORED_MASK))
-+	if (!(fan_flags & FANOTIFY_MARK_IGNORE_BITS))
- 		fsn_mark->mask |= mask;
- 	else
- 		fsn_mark->ignore_mask |= mask;
-@@ -1216,11 +1225,21 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 		goto out;
- 	}
- 
-+	/*
-+	 * New ignore mask semantics cannot be downgraded to old semantics.
-+	 */
-+	if (fan_flags & FAN_MARK_IGNORED_MASK &&
-+	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORE_FLAGS) {
-+		ret = -EEXIST;
-+		goto out;
-+	}
-+
- 	/*
- 	 * Error events are pre-allocated per group, only if strictly
- 	 * needed (i.e. FAN_FS_ERROR was requested).
- 	 */
--	if (!(fan_flags & FAN_MARK_IGNORED_MASK) && (mask & FAN_FS_ERROR)) {
-+	if (!(fan_flags & FANOTIFY_MARK_IGNORE_BITS) &&
-+	    (mask & FAN_FS_ERROR)) {
- 		ret = fanotify_group_init_error_pool(group);
- 		if (ret)
- 			goto out;
-@@ -1264,7 +1283,7 @@ static int fanotify_add_inode_mark(struct fsnotify_group *group,
- 	 * an ignore mask, unless that ignore mask is supposed to survive
- 	 * modification changes anyway.
- 	 */
--	if ((flags & FAN_MARK_IGNORED_MASK) &&
-+	if ((flags & FANOTIFY_MARK_IGNORE_BITS) &&
- 	    !(flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
- 	    inode_is_open_for_write(inode))
- 		return 0;
-@@ -1540,7 +1559,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	__kernel_fsid_t __fsid, *fsid = NULL;
- 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
--	bool ignore = flags & FAN_MARK_IGNORED_MASK;
-+	unsigned int ignore = flags & FANOTIFY_MARK_IGNORE_BITS;
- 	unsigned int obj_type, fid_mode;
- 	u32 umask = 0;
- 	int ret;
-@@ -1589,12 +1608,19 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	if (mask & ~valid_mask)
- 		return -EINVAL;
- 
-+
-+	/* We don't allow FAN_MARK_IGNORE & FAN_MARK_IGNORED_MASK together */
-+	if (ignore == (FAN_MARK_IGNORE | FAN_MARK_IGNORED_MASK))
-+		return -EINVAL;
-+
- 	/*
- 	 * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
- 	 * FAN_MARK_IGNORED_MASK.
- 	 */
--	if (ignore)
-+	if (ignore == FAN_MARK_IGNORED_MASK) {
- 		mask &= ~FANOTIFY_EVENT_FLAGS;
-+		umask = FANOTIFY_EVENT_FLAGS;
-+	}
- 
- 	f = fdget(fanotify_fd);
- 	if (unlikely(!f.file))
-@@ -1803,7 +1829,7 @@ static int __init fanotify_user_setup(void)
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index edc28555814c..f32893942fd7 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -59,12 +59,15 @@
- #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
- 				 FAN_MARK_FILESYSTEM)
- 
-+#define FANOTIFY_MARK_IGNORE_BITS (FAN_MARK_IGNORED_MASK | \
-+				   FAN_MARK_IGNORE)
-+
- #define FANOTIFY_MARK_FLAGS	(FANOTIFY_MARK_TYPE_BITS | \
-+				 FANOTIFY_MARK_IGNORE_BITS | \
- 				 FAN_MARK_ADD | \
- 				 FAN_MARK_REMOVE | \
- 				 FAN_MARK_DONT_FOLLOW | \
- 				 FAN_MARK_ONLYDIR | \
--				 FAN_MARK_IGNORED_MASK | \
- 				 FAN_MARK_IGNORED_SURV_MODIFY | \
- 				 FAN_MARK_EVICTABLE | \
- 				 FAN_MARK_FLUSH)
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index f1f89132d60e..3efe417f2282 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -83,6 +83,8 @@
- #define FAN_MARK_FLUSH		0x00000080
- /* FAN_MARK_FILESYSTEM is	0x00000100 */
- #define FAN_MARK_EVICTABLE	0x00000200
-+/* This bit is mutually exclusive with FAN_MARK_IGNORED_MASK bit */
-+#define FAN_MARK_IGNORE		0x00000400
- 
- /* These are NOT bitwise flags.  Both bits can be used togther.  */
- #define FAN_MARK_INODE		0x00000000
--- 
-2.25.1
+There is no description in patch. and this code is not in
+ntfs_mapping_pairs_decompress() in ntfs-3g. Is there any case the
+caller get NULL runlist pointer from ntfs_mapping_pairs_decompress()
+in current ntfs code?
 
+NTFS: Fix handling of valid but empty mapping pairs array in
+      fs/ntfs/runlist.c::ntfs_mapping_pairs_decompress().
+
+Signed-off-by: Anton Altaparmakov <aia21@cantab.net>
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/f=
+s/ntfs/runlist.c?h=3Dv5.19-rc3&id=3D2b0ada2b8e086c267dd116a39ad41ff0a717b66=
+5
+>
+> Best regards,
+>
+> Anton
+>
+>
+> I haven't checked if this patch fix the problem. Xu, Can you check it ?
+>
+> diff --git a/fs/ntfs/runlist.c b/fs/ntfs/runlist.c
+> index 97932fb5179c..31263fe0772f 100644
+> --- a/fs/ntfs/runlist.c
+> +++ b/fs/ntfs/runlist.c
+> @@ -766,8 +766,11 @@ runlist_element
+> *ntfs_mapping_pairs_decompress(const ntfs_volume *vol,
+> return ERR_PTR(-EIO);
+> }
+> /* If the mapping pairs array is valid but empty, nothing to do. */
+> - if (!vcn && !*buf)
+> + if (!vcn && !*buf) {
+> + if (!old_rl)
+> + return ERR_PTR(-EIO);
+> return old_rl;
+> + }
+> /* Current position in runlist array. */
+> rlpos =3D 0;
+> /* Allocate first page and set current runlist size to one page. */
+>
+>
+> - Eric
+>
+>
