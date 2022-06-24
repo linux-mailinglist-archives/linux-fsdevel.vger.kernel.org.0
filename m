@@ -2,160 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F15755959A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 10:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46A1B5595A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 10:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbiFXIl6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 04:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59356 "EHLO
+        id S229911AbiFXIrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 04:47:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbiFXIl5 (ORCPT
+        with ESMTP id S229683AbiFXIrM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 04:41:57 -0400
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C097274E71;
-        Fri, 24 Jun 2022 01:41:53 -0700 (PDT)
-Received: by mail-vs1-xe2d.google.com with SMTP id j1so1656982vsj.12;
-        Fri, 24 Jun 2022 01:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kh+bFKsPLC0kKcHvhl4no8XlenbVdD8SO39vxR1+nvU=;
-        b=DZx0FBj7P2HcyjZmxPMi6ZXowsNytgZNWIzZGFgv+Pc7iKiLK2TcBi3BgS33Wnw59E
-         A+93o9ZvfqleoowuV7aV1bCLvQP9ksjVf1aI1vVmh3CoTk9KuiphihSSiVN782y6TBAq
-         +diSy2hNqzrzQCPUDIgOAhSXax/yRnZLMe+eNyXyqWdfVd/C3TXwjGIkdgECfgMvwHRc
-         4/JIEw9f81eb02w6eIGiK5eFfmv971SjeUbq5a1tD3xQuVrZKYYJzs57U3EXJLBYuQOZ
-         0QtM7VOOvGtAGvV4h7WDjEQ+8a0BoLZn8Ropu1vyru94VSt86CxxW7gwP05NfUrm9pTg
-         0Jsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kh+bFKsPLC0kKcHvhl4no8XlenbVdD8SO39vxR1+nvU=;
-        b=0AgY2KUTbo/Oo++c224iiy3VEV/sThDgqMMxZZAbREXdZ8eU+RQRSxIUxttfNEhfUj
-         elbwOhfFT4WtrhSf9Zhww+vu9RiBQ2eUTZvLPYM3CZ7mxp534K5ZQhR/kRs18pvFyMUe
-         OgDhJEPF32sNfwJfF6tI3IIYF80cCyS/tRE6EDwausfYIq8xdJUB493cPncFAQQs7c/S
-         /707IeJ8deF0iWkxUrPVTW/FWvU3mFBssm/AZ/4nRL+8TDxxyHmBcFMvt2WPydGyEutx
-         PI4EOqvoBmZPfUMPUX1ddmMPIGnEA2BX6fI0vAVEj2OTv1X1EqSEXF+7uz3GfY4kyKgf
-         tszA==
-X-Gm-Message-State: AJIora+vGCqCnj3K76lQGDGMekJi56JjkjLxusOGp6VGLFpeDT8HOcQs
-        4iIkxZl74LzdmsT2eZyKWn5md6IewojibRHkCaY=
-X-Google-Smtp-Source: AGRyM1u+z1hQZlCGZ38cicK8zZVrL70TOXyAEqbhAYoL+uS+zcg6utSbniBKWXU9nbVIcM34CJ2Vv6fw3AKQxKxdfxk=
-X-Received: by 2002:a67:fa01:0:b0:354:3136:c62e with SMTP id
- i1-20020a67fa01000000b003543136c62emr13008834vsq.2.1656060112873; Fri, 24 Jun
- 2022 01:41:52 -0700 (PDT)
+        Fri, 24 Jun 2022 04:47:12 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00D94F1EF;
+        Fri, 24 Jun 2022 01:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656060431; x=1687596431;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=Jc8yORiINhpFzMTo8QL55TU28YhiMcNQ45ukyK/l2T4=;
+  b=J+itO333pEe0lD7h4UCLylQhKjz/cC3Brz7o4DZu/mugC8zlX8EbPHjn
+   ESycCCZwvltZvaqp5pqbDoM1z3qdOb8z35PGhrqUOOglEYDs0yosBmUS9
+   /V6eJIZGKveyH46orbbj5xCUPs766GPOvIWUp06GDAGW/NikMdaN/VOEx
+   +KC7TAO9+bvvHUNtiZv3XR+PuMGBoIGnsDnFk2YJFWhMuDu3feYhk6nAF
+   3iTWySQ6hzxNjncDHn2vU/7MGdVxRPRattnmk4VagUgTrTlUx0iWsr2U5
+   AWbQYQ1VDo50CTR5iuJcDTDiJiX09DoXOGCZ+trvy5fqXiUMdEUIGqYT1
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10387"; a="261382642"
+X-IronPort-AV: E=Sophos;i="5.92,218,1650956400"; 
+   d="scan'208";a="261382642"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2022 01:47:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,218,1650956400"; 
+   d="scan'208";a="586508201"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 24 Jun 2022 01:47:01 -0700
+Date:   Fri, 24 Jun 2022 16:43:41 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 7/8] KVM: Enable and expose KVM_MEM_PRIVATE
+Message-ID: <20220624084341.GA2178308@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-8-chao.p.peng@linux.intel.com>
+ <20220623220751.emt3iqq77faxfzzy@amd.com>
 MIME-Version: 1.0
-References: <20220511190213.831646-1-amir73il@gmail.com> <20220511190213.831646-3-amir73il@gmail.com>
- <CAOQ4uxj6wdsoVf7pyJWhoJ9mcNWf0eU_ARsXf6rH_nwpG1DJDg@mail.gmail.com>
- <YrDZ2YOeHkneW8+9@kroah.com> <CAOQ4uxiBHzFExCZowFNggn+woOz8vfwK=PZvAnVVBYHvjG-udQ@mail.gmail.com>
- <YrSQScmJ5C28cSt2@kroah.com>
-In-Reply-To: <YrSQScmJ5C28cSt2@kroah.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 24 Jun 2022 11:41:41 +0300
-Message-ID: <CAOQ4uxiOPVetJySp9=KTVOVy6ugbpNTgZ9zd6s9TX6BF-_EaAA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fsnotify: consistent behavior for parent not
- watching children
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220623220751.emt3iqq77faxfzzy@amd.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 7:09 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Jun 21, 2022 at 06:04:33AM +0300, Amir Goldstein wrote:
-> > On Mon, Jun 20, 2022 at 11:34 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Mon, Jun 20, 2022 at 05:16:16PM +0300, Amir Goldstein wrote:
-> > > > On Wed, May 11, 2022 at 10:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > >
-> > > > > The logic for handling events on child in groups that have a mark on
-> > > > > the parent inode, but without FS_EVENT_ON_CHILD flag in the mask is
-> > > > > duplicated in several places and inconsistent.
-> > > > >
-> > > > > Move the logic into the preparation of mark type iterator, so that the
-> > > > > parent mark type will be excluded from all mark type iterations in that
-> > > > > case.
-> > > > >
-> > > > > This results in several subtle changes of behavior, hopefully all
-> > > > > desired changes of behavior, for example:
-> > > > >
-> > > > > - Group A has a mount mark with FS_MODIFY in mask
-> > > > > - Group A has a mark with ignore mask that does not survive FS_MODIFY
-> > > > >   and does not watch children on directory D.
-> > > > > - Group B has a mark with FS_MODIFY in mask that does watch children
-> > > > >   on directory D.
-> > > > > - FS_MODIFY event on file D/foo should not clear the ignore mask of
-> > > > >   group A, but before this change it does
-> > > > >
-> > > > > And if group A ignore mask was set to survive FS_MODIFY:
-> > > > > - FS_MODIFY event on file D/foo should be reported to group A on account
-> > > > >   of the mount mark, but before this change it is wrongly ignored
-> > > > >
-> > > > > Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events on child and on dir")
-> > > > > Reported-by: Jan Kara <jack@suse.com>
-> > > > > Link: https://lore.kernel.org/linux-fsdevel/20220314113337.j7slrb5srxukztje@quack3.lan/
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > >
-> > > > Greg,
-> > > >
-> > > > FYI, this needs the previous commit to apply to 5.18.y:
-> > >
-> > > What is "this" here?  What git id?
-> >
-> > Sorry, this commit:
-> >
-> > > > e730558adffb fsnotify: consistent behavior for parent not watching children
-> >
-> > Needs this previous commit:
-> >
-> > > > 14362a254179 fsnotify: introduce mark type iterator
-> >
-> > > > They won't apply to earlier versions and this is a fix for a very minor bug
-> > > > that existed forever, so no need to bother.
-> > >
-> > > So what exactly needs to be applied in what order and to what trees?
-> > >
-> >
-> > To apply to 5.18.y.
->
-> Now queued up, thanks.
->
-> > Don't bother trying to apply either to earlier trees.
->
-> So the Fixes: tag lied?  No wonder I was confused :)
+On Thu, Jun 23, 2022 at 05:07:51PM -0500, Michael Roth wrote:
+...
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index db9d39a2d3a6..f93ac7cdfb53 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -843,6 +843,73 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+> >  
+> >  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+> >  
+> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > +static void kvm_private_mem_notifier_handler(struct memfile_notifier *notifier,
+> > +					     pgoff_t start, pgoff_t end)
+> > +{
+> > +	int idx;
+> > +	struct kvm_memory_slot *slot = container_of(notifier,
+> > +						    struct kvm_memory_slot,
+> > +						    notifier);
+> > +	struct kvm_gfn_range gfn_range = {
+> > +		.slot		= slot,
+> > +		.start		= start - (slot->private_offset >> PAGE_SHIFT),
+> > +		.end		= end - (slot->private_offset >> PAGE_SHIFT),
+> 
+> This code assumes that 'end' is greater than slot->private_offset, but
+> even if slot->private_offset is non-zero, nothing stops userspace from
+> allocating pages in the range of 0 through slot->private_offset, which
+> will still end up triggering this notifier. In that case gfn_range.end
+> will end up going negative, and the below code will limit that to
+> slot->npages and do a populate/invalidate for the entire range.
+> 
+> Not sure if this covers all the cases, but this fixes the issue for me:
 
-No it hasn't lied.
+Right, already noticed this issue, will fix in next version. Thanks.
 
-The fix could be backported to an earlier kernel, but it is not trivial
-and I don't think it is worth the effort, because the behavior of this
-corner case was undefined for the entire lifetime of fanotify.
-
-IOW, if stable scripts send me the message that the patch
-does not apply cleanly, I won't be doing anything about it.
-
-Furthermore, I instrumented the LTP regression test for this
-bug with:
-
-        if (tc->ignore && tst_kvercmp(5, 19, 0) < 0) {
-                tst_res(TCONF, "ignored mask on parent dir has undefined "
-                                "behavior on kernel < 5.19");
-                return;
-        }
-
-So no one is going to be asking for this backport, unless they really
-encounter the problem in real world use cases.
-
-Thanks,
-Amir.
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 903ffdb5f01c..4c744d8f7527 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -872,6 +872,19 @@ static void kvm_private_mem_notifier_handler(struct memfile_notifier *notifier,
+>                 .may_block      = true,
+>         };
+> 
+>         struct kvm *kvm = slot->kvm;
+> +
+> +       if (slot->private_offset > end)
+> +               return;
+> +
+> 
