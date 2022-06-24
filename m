@@ -2,49 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D60775598A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 13:41:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D01F55598AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 13:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbiFXLk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 07:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32930 "EHLO
+        id S231154AbiFXLlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 07:41:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbiFXLk5 (ORCPT
+        with ESMTP id S231157AbiFXLl2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 07:40:57 -0400
+        Fri, 24 Jun 2022 07:41:28 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63D8680A7;
-        Fri, 24 Jun 2022 04:40:56 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 88D4C1D74;
-        Fri, 24 Jun 2022 11:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1656070803;
-        bh=3Mkqb1PWuU0xIeT72wwiSaW/DavCpeTw5fGLN/P1VQc=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=QdTf2H871h2QnnqOsrvFnsrrRAqRAmzhcM5EVdkt2w+7SmIkPp//N+MPFcUNhY23L
-         7XhfgW3cEl7Fr/1zlFC6jsYP3EtKUnO3hXODEIEenlvbxUyNb9fMzJQvmDqjPFMMVc
-         m/RrnjMWDa9pgRK1qnegZ9Ncgg3RmxaX9lGiIsXs=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE907946B;
+        Fri, 24 Jun 2022 04:41:25 -0700 (PDT)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id CF2B321AE;
-        Fri, 24 Jun 2022 11:40:54 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id A0C5A1D74;
+        Fri, 24 Jun 2022 11:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1656070854;
-        bh=3Mkqb1PWuU0xIeT72wwiSaW/DavCpeTw5fGLN/P1VQc=;
+        d=paragon-software.com; s=mail; t=1656070832;
+        bh=wsI+VTIYH+j37kEK0piYgrtJJa0d/rvQA7XicNxJ+L4=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=tIKtuYDRhff+4vCu0zOMkGRP3foRNjv4lcGXrl2UmALCXSGATWlxM4IZMcK/2pMj8
-         kDqXevtqpF2UAPvHlszMSBACPja77tcN6XAL0DNuYMPwA9pBzf1WfEFtq84nCKqkgJ
-         dh/XGKKagWx5C+9iJHnZ/8kIl+bsGbRBmAjsKPWM=
+        b=bzSGPQvPb2+lJosI+YVjCM3AAPt9mWiSgN+DQeyiM49ESMT2kYeyrkfBKKA6My6AP
+         n6y5v92brwcyD2K3CWL9cD0ooDf/IC11Y3KJ5itkAGiV0jbO6rhsrvr9idfm9fFhuw
+         kf5M+ORyzgzZ1emK7Mm1BWxqtv7zwjogQzcWnUW0=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 24 Jun 2022 14:40:54 +0300
-Message-ID: <71c6964a-bcab-0c53-931a-6e41b2637ff0@paragon-software.com>
-Date:   Fri, 24 Jun 2022 14:40:54 +0300
+ 15.1.2375.7; Fri, 24 Jun 2022 14:41:23 +0300
+Message-ID: <8cb6d3fe-22ed-4166-c047-de0da97c4a11@paragon-software.com>
+Date:   Fri, 24 Jun 2022 14:41:23 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: [PATCH 1/3] fs/ntfs3: Do not change mode if ntfs_set_ea failed
+Subject: [PATCH 2/3] fs/ntfs3: Check reserved size for maximum allowed
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -65,68 +55,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ntfs_set_ea can fail with NOSPC, so we don't need to
-change mode in this situation.
-Fixes xfstest generic/449
-Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
+Also don't mask EFBIG
+Fixes xfstest generic/485
+Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/xattr.c | 20 ++++++++++----------
-  1 file changed, 10 insertions(+), 10 deletions(-)
+  fs/ntfs3/attrib.c | 11 ++++++++++-
+  fs/ntfs3/file.c   |  3 ---
+  2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 5e0e0280e70d..1e849428bbc8 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -547,28 +547,23 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
-  {
-  	const char *name;
-  	size_t size, name_len;
--	void *value = NULL;
--	int err = 0;
-+	void *value;
-+	int err;
-  	int flags;
-+	umode_t mode;
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index bea0e70e974a..3bd51cf4d8bd 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -2114,9 +2114,11 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
   
-  	if (S_ISLNK(inode->i_mode))
-  		return -EOPNOTSUPP;
+  	if (!attr_b->non_res) {
+  		data_size = le32_to_cpu(attr_b->res.data_size);
++		alloc_size = data_size;
+  		mask = sbi->cluster_mask; /* cluster_size - 1 */
+  	} else {
+  		data_size = le64_to_cpu(attr_b->nres.data_size);
++		alloc_size = le64_to_cpu(attr_b->nres.alloc_size);
+  		mask = (sbi->cluster_size << attr_b->nres.c_unit) - 1;
+  	}
   
-+	mode = inode->i_mode;
-  	switch (type) {
-  	case ACL_TYPE_ACCESS:
-  		/* Do not change i_mode if we are in init_acl */
-  		if (acl && !init_acl) {
--			umode_t mode;
+@@ -2130,6 +2132,13 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
+  		return -EINVAL;
+  	}
+  
++	/*
++	 * valid_size <= data_size <= alloc_size
++	 * Check alloc_size for maximum possible.
++	 */
++	if (bytes > sbi->maxbytes_sparse - alloc_size)
++		return -EFBIG;
++
+  	vcn = vbo >> sbi->cluster_bits;
+  	len = bytes >> sbi->cluster_bits;
+  
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 5ee035e42c21..de37d5c1d60b 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -732,9 +732,6 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+  	if (map_locked)
+  		filemap_invalidate_unlock(mapping);
+  
+-	if (err == -EFBIG)
+-		err = -ENOSPC;
 -
-  			err = posix_acl_update_mode(mnt_userns, inode, &mode,
-  						    &acl);
-  			if (err)
-  				goto out;
--
--			if (inode->i_mode != mode) {
--				inode->i_mode = mode;
--				mark_inode_dirty(inode);
--			}
-  		}
-  		name = XATTR_NAME_POSIX_ACL_ACCESS;
-  		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
-@@ -604,8 +599,13 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
-  	err = ntfs_set_ea(inode, name, name_len, value, size, flags, 0);
-  	if (err == -ENODATA && !size)
-  		err = 0; /* Removing non existed xattr. */
--	if (!err)
-+	if (!err) {
-  		set_cached_acl(inode, type, acl);
-+		if (inode->i_mode != mode) {
-+			inode->i_mode = mode;
-+			mark_inode_dirty(inode);
-+		}
-+	}
-  
-  out:
-  	kfree(value);
+  	if (!err) {
+  		inode->i_ctime = inode->i_mtime = current_time(inode);
+  		mark_inode_dirty(inode);
 -- 
 2.36.1
 
