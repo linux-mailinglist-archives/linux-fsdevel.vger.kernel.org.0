@@ -2,56 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA57559EF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 19:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0749A559EF9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 19:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbiFXQ5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 12:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
+        id S231196AbiFXREY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 13:04:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231526AbiFXQ5V (ORCPT
+        with ESMTP id S229552AbiFXREX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 12:57:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1604755A;
-        Fri, 24 Jun 2022 09:57:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CEC41B82AC2;
-        Fri, 24 Jun 2022 16:57:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C0EC34114;
-        Fri, 24 Jun 2022 16:57:16 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ii/t9VVT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1656089836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FIjn5iV3Bi5t5Qq6rqpqsdlzBuYh8dn6H7cyAt8zXHg=;
-        b=Ii/t9VVTon2KjniVjG7mzemPtgF+7QKF8k8vjTXbnmD8feAavwX2YiPhIzZlzZWmX22QkY
-        BovRL+fMSsIReNmKuxYr9BUJkjRc9PXLmuEG8iO+irgQvFflTKiOQYzUltZgEOTO4Y17xH
-        TC62Ch92DoaRWM3L8ELI4n7b9IN3xt8=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9dbbde04 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
-        Fri, 24 Jun 2022 16:57:15 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org
-Subject: [PATCH 6/6] vfio: do not set FMODE_LSEEK flag
-Date:   Fri, 24 Jun 2022 18:56:31 +0200
-Message-Id: <20220624165631.2124632-7-Jason@zx2c4.com>
-In-Reply-To: <20220624165631.2124632-1-Jason@zx2c4.com>
+        Fri, 24 Jun 2022 13:04:23 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB2F496A8;
+        Fri, 24 Jun 2022 10:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+JlPblHj298RSV4RwpXuBx3bs2gJY9n03Wq3MnP3sxo=; b=Glcc6QI4RTFVLChQBAzIwvxaga
+        8IcvcO23VhrBLWdVIIx3PNc/u+fImaWogffg4r1sGEQ3TlqQSJ5LM4TU6ncGQCHLSiyaT5zA66jSf
+        MM3L3V2jZiHZBL9BhZBM5kyy13IBQaqwVXBStTFdyDmUq3fDE8Fqx8WFoYRvsWRc6UdOSLdUVPcD8
+        rYutEHaIEYDzdK0UhHMSg12C8fiR9NKWGunpRqk+rnvfv49luzUzym/CK9ad4F37Vf2EUSXOdsafU
+        iN9TkqMCtfrmOQHYbK6Ssa69qa4BIzbouCZyZ4Ylbx9MZy47LrY6k5ydTNc+VJIxJ8yx6UbU6n3w0
+        0zRy4iRw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o4mjD-0040SU-Mh;
+        Fri, 24 Jun 2022 17:04:19 +0000
+Date:   Fri, 24 Jun 2022 18:04:19 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/6] fs: clear FMODE_LSEEK if no llseek function
+Message-ID: <YrXuk+zOt4xFRDMI@ZenIV>
 References: <20220624165631.2124632-1-Jason@zx2c4.com>
+ <20220624165631.2124632-4-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220624165631.2124632-4-Jason@zx2c4.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,29 +51,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This file does not support llseek, so don't set the flag advertising it.
+On Fri, Jun 24, 2022 at 06:56:28PM +0200, Jason A. Donenfeld wrote:
+> This helps unify a longstanding wart where FMODE_LSEEK hasn't been
+> uniformly unset when it should be.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  fs/file_table.c | 2 ++
+>  fs/open.c       | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 5424e3a8df5f..15700b2e1b53 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -241,6 +241,8 @@ static struct file *alloc_file(const struct path *path, int flags,
+>  	if ((file->f_mode & FMODE_WRITE) &&
+>  	     likely(fop->write || fop->write_iter))
+>  		file->f_mode |= FMODE_CAN_WRITE;
+> +	if ((file->f_mode & FMODE_LSEEK) && !file->f_op->llseek)
+> +		file->f_mode &= ~FMODE_LSEEK;
 
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
-Cc: kvm@vger.kernel.org
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- drivers/vfio/vfio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-index 61e71c1154be..d194dda89542 100644
---- a/drivers/vfio/vfio.c
-+++ b/drivers/vfio/vfio.c
-@@ -1129,7 +1129,7 @@ static struct file *vfio_device_open(struct vfio_device *device)
- 	 * Appears to be missing by lack of need rather than
- 	 * explicitly prevented.  Now there's need.
- 	 */
--	filep->f_mode |= (FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE);
-+	filep->f_mode |= (FMODE_PREAD | FMODE_PWRITE);
- 
- 	if (device->group->type == VFIO_NO_IOMMU)
- 		dev_warn(device->dev, "vfio-noiommu device opened by user "
--- 
-2.35.1
-
+	Where would FMODE_LSEEK come from in this one?  ->f_mode is set
+(in __alloc_file()) to OPEN_FMODE(flags); that does deal with FMODE_READ
+and FMODE_WRITE, but FMODE_LSEEK will be clear...
