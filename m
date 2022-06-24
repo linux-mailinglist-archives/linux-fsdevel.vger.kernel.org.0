@@ -2,121 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88314559729
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 11:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1393559891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 13:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbiFXJ7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 05:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        id S229587AbiFXLcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 07:32:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbiFXJ7O (ORCPT
+        with ESMTP id S229446AbiFXLcj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 05:59:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7096256F84;
-        Fri, 24 Jun 2022 02:59:12 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 29BB821A74;
-        Fri, 24 Jun 2022 09:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1656064751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YRx5MsPC3bOKBussEAACbRbCrT13pUlZg+D3y9hzeFQ=;
-        b=k1jLteFpvAGft+ORFG/tzqlURXKLRNicj7+oUgUIuX8osjH4+RjNVm62/jfqHf/FKhN7zD
-        JkM1/iDo+UtWtCT89LSvKZPXJRE/SPVqpxUdXuUhXgeFakRbgDUpIRPPRwwC/o9HRxOK/+
-        gqzcjpY9QSRIzgUY++eA0/TlwRk7dss=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id D56122C1E2;
-        Fri, 24 Jun 2022 09:59:10 +0000 (UTC)
-Date:   Fri, 24 Jun 2022 11:59:10 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [RFC] Per file OOM-badness / RSS once more
-Message-ID: <YrWK7pwZP3K2vbye@dhcp22.suse.cz>
-References: <20220624080444.7619-1-christian.koenig@amd.com>
+        Fri, 24 Jun 2022 07:32:39 -0400
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A217056756;
+        Fri, 24 Jun 2022 04:32:37 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id q42so773714uac.0;
+        Fri, 24 Jun 2022 04:32:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a2D9L8EqqgfA5GdFAq09NImYP+99NLl6cCeM4bsTTWE=;
+        b=Hnm/jPGcSLmnlTbSYvuii1hh6j/y3YVm7+hznjrT5s1FycVnASrEkfhggoUyPeO8xc
+         2SkkrXnQR8ESL9bUD6FvZ4kWP077gtAaQUpmagBmZa6aphkMK4xlBdutYkZAf9P9kjyk
+         V0sH0UKSRf3ajBFsF+sRfVAus0pSo+XGd0hTRVCuQqK3OOCKP+ov6FxZP4qjr69CTic5
+         d/FmvTBctFufVajeViYh2vAJQzk/5tZCi9V2p2f/Ee24L/hKy2enf9AH8ZcQzwrq4+BM
+         ZK3AiJ3mLj5/su1t9ulERTHxNM6T0VZJPWLUl/UiqIVs+8XXk4JOdtj9s0AeG6F0O3mJ
+         Vw0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a2D9L8EqqgfA5GdFAq09NImYP+99NLl6cCeM4bsTTWE=;
+        b=4/eSgHr6bEgImCGV+m71CJumAg8PFWK7cqPDZUPT6VX4DlDV6+9cRtUTKnF+GxJLYl
+         2Jf9FixR0ZAPQHob70A3YHOrzrMIiEXIKfZp+I8Cd/epoH4FpLSiEvAhuE8xZ2eKxJUg
+         fthv0t/ebDVUhwXOUhDes/Vb0lDGrY07XFDu6LiPbI4HkIayBNiNUxh5aX8u/RAK2CiM
+         zFPDynFW8oKOH2ctpfXwoi9PJlKeftRs1q9tbvQlOEw4pNV4sr+TgpspYs+2U9mzJdkZ
+         k/jXftxa3hiXQ+SUwlTY2UiKSfNNrR3KQLIVAGjNmd7PF3NUc16wEGTxsrbndHsa3WDI
+         wy+w==
+X-Gm-Message-State: AJIora+UWb2zl8XmK7lb0N3rLU/8qKFqG1d5G60JEd31+0/0aU6bfWeJ
+        //fVhAv7XeCP3knRksu7tUHIKbgHyZcL5kKfX0Q=
+X-Google-Smtp-Source: AGRyM1vv5/THzI9I3kXPhMbf5hSu7lCxjos2xf+ShWK671l7mWhcjxkPw7WX41RG4/b3XtKL284BlGxAcVxKjBUvJRI=
+X-Received: by 2002:ab0:67d2:0:b0:37f:d4b:f9c2 with SMTP id
+ w18-20020ab067d2000000b0037f0d4bf9c2mr7226731uar.60.1656070356492; Fri, 24
+ Jun 2022 04:32:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220624080444.7619-1-christian.koenig@amd.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20220620134551.2066847-1-amir73il@gmail.com> <20220620134551.2066847-2-amir73il@gmail.com>
+ <20220622155248.d6oywn3rkurbijs6@quack3.lan>
+In-Reply-To: <20220622155248.d6oywn3rkurbijs6@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 24 Jun 2022 14:32:24 +0300
+Message-ID: <CAOQ4uxitaemN+jfx+ZZ2jn4Z1a_bOj2k8mwOn60vnM-EWDw40g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fanotify: prepare for setting event flags in ignore mask
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 24-06-22 10:04:30, Christian König wrote:
-> Hello everyone,
-> 
-> To summarize the issue I'm trying to address here: Processes can allocate
-> resources through a file descriptor without being held responsible for it.
-> 
-> I'm not explaining all the details again. See here for a more deeply
-> description of the problem: https://lwn.net/ml/linux-kernel/20220531100007.174649-1-christian.koenig@amd.com/
-> 
-> With this iteration I'm trying to address a bunch of the comments Michal Hocko
-> (thanks a lot for that) gave as well as giving some new ideas.
-> 
-> Changes made so far:
-> 1. Renamed the callback into file_rss(). This is at least a start to better
->    describe what this is all about. I've been going back and forth over the
->    naming here, if you have any better idea please speak up.
-> 
-> 2. Cleanups, e.g. now providing a helper function in the fs layer to sum up
->    all the pages allocated by the files in a file descriptor table.
-> 
-> 3. Using the actual number of allocated pages for the shmem implementation
->    instead of just the size. I also tried to ignore shmem files which are part
->    of tmpfs, cause that has a separate accounting/limitation approach.
+On Wed, Jun 22, 2022 at 6:52 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 20-06-22 16:45:50, Amir Goldstein wrote:
+> > Setting flags FAN_ONDIR FAN_EVENT_ON_CHILD in ignore mask has no effect.
+> > The FAN_EVENT_ON_CHILD flag in mask implicitly applies to ignore mask and
+> > ignore mask is always implicitly applied to events on directories.
+> >
+> > Define a mark flag that replaces this legacy behavior with logic of
+> > applying the ignore mask according to event flags in ignore mask.
+> >
+> > Implement the new logic to prepare for supporting an ignore mask that
+> > ignores events on children and ignore mask that does not ignore events
+> > on directories.
+> >
+> > To emphasize the change in terminology, also rename ignored_mask mark
+> > member to ignore_mask and use accessor to get only ignored events or
+> > events and flags.
+> >
+> > This change in terminology finally aligns with the "ignore mask"
+> > language in man pages and in most of the comments.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> Looks mostly good to me. Just one question / suggestion: You are
+> introducing helpers fsnotify_ignore_mask() and fsnotify_ignored_events().
+> So shouldn't we be using these helpers as much as possible throughout the
+> code? Because in several places I had to check the code around whether
+> using mark->ignore_mask directly is actually fine. In particular:
 
-OK, this is better than the original approach there are still holes
-there though I am afraid. I am not sure your i_count hack is correct
-but that would be mostly an implementation detail.  The scheme will
-over-account memory mapped files (including memfd).  How much that
-matters will really differ.
+I looked at the code and the only two cases I found were the two cases
+that you pointed out that needed to use fsnotify_ignored_events().
 
-For the global OOM situations it is very likely that there will be
-barely any disk based page cache as it would be reclaimed by the time
-the oom killer is invoked. So this should be OK. Swap backed page cache
-(shmem and its users) is more tricky. It is swap bound and processes
-which map it will get "charged" in the form of swap entries while those
-which rely on read/write will just escape from the sight of the oom
-killer no matter how much memory they own via their shmem backed fd.
-This sounds rather serious to me and I hope I haven't missed anything
-subtle here that would keep those pages somehow visible. Anyway
-something to very carefully document.
+>
+> > @@ -315,19 +316,23 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+> >                       return 0;
+> >       } else if (!(fid_mode & FAN_REPORT_FID)) {
+> >               /* Do we have a directory inode to report? */
+> > -             if (!dir && !(event_mask & FS_ISDIR))
+> > +             if (!dir && !ondir)
+> >                       return 0;
+> >       }
+> >
+> >       fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
+> > -             /* Apply ignore mask regardless of mark's ISDIR flag */
+> > -             marks_ignored_mask |= mark->ignored_mask;
+> > +             /*
+> > +              * Apply ignore mask depending on whether FAN_ONDIR flag in
+> > +              * ignore mask should be checked to ignore events on dirs.
+> > +              */
+> > +             if (!ondir || fsnotify_ignore_mask(mark) & FAN_ONDIR)
+> > +                     marks_ignore_mask |= mark->ignore_mask;
+> >
+> >               /*
+> >                * If the event is on dir and this mark doesn't care about
+> >                * events on dir, don't send it!
+> >                */
+> > -             if (event_mask & FS_ISDIR && !(mark->mask & FS_ISDIR))
+> > +             if (ondir && !(mark->mask & FAN_ONDIR))
+> >                       continue;
+> >
+> >               marks_mask |= mark->mask;
+>
+> So for example here I'm wondering whether a helper should not be used...
 
-For the memcg OOM this gets even more tricky. Files can be shared among
-tasks accross memcgs. Something that is not really straightforward from
-the userspace POV because this is not strictly deterministic as
-first-one-first-charged logic is applied so a lot might depend on timing.
-This could also easily mean that a large part of the in memory state of
-the file is outside of the reclaim and therefore OOM scope of the memcg
-which is hitting the hard limit. This could result in tasks being killed
-just because they (co)operate on a large file outside of their memcg
-domain. To be honest I am not sure how big of a problem this would be in
-practice and the existing behavior has its own cons so to me it sounds
-like changing one set of deficiency with other.
+fixed.
 
-As we have discussed previously, there is unlikely a great solution but
-you a) need to document most prominent downsides so that people can at
-least see this is understood and documented behavior and b) think of the
-runaway situation wrt non mapped shmems memtioned above and see whether
-there is something we can do about that.
--- 
-Michal Hocko
-SUSE Labs
+>
+> > @@ -336,7 +341,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+> >               *match_mask |= 1U << type;
+> >       }
+> >
+> > -     test_mask = event_mask & marks_mask & ~marks_ignored_mask;
+> > +     test_mask = event_mask & marks_mask & ~marks_ignore_mask;
+>
+> Especially because here if say FAN_EVENT_ON_CHILD becomes a part of
+> marks_ignore_mask it can result in clearing this flag in the returned
+> 'mask' which is likely not what we want if there are some events left
+> unignored in the 'mask'?
+
+You are right.
+This can end up clearing FAN_ONDIR and then we won't report it.
+However, take a look at this:
+
+commit 0badfa029e5fd6d5462adb767937319335637c83
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Thu Jul 16 11:42:09 2020 +0300
+
+    fanotify: generalize the handling of extra event flags
+
+    In fanotify_group_event_mask() there is logic in place to make sure we
+    are not going to handle an event with no type and just FAN_ONDIR flag.
+    Generalize this logic to any FANOTIFY_EVENT_FLAGS.
+
+    There is only one more flag in this group at the moment -
+    FAN_EVENT_ON_CHILD. We never report it to user, but we do pass it in to
+    fanotify_alloc_event() when group is reporting fid as indication that
+    event happened on child. We will have use for this indication later on.
+
+What the hell did I mean by "We will have use for this indication later on"?
+fanotify_alloc_event() does not look at the FAN_EVENT_ON_CHILD flag.
+I think I had the idea that events reported in a group with FAN_REPORT_NAME
+on an inode mark should not report its parent fid+name to be compatible with
+inotify behavior and I think you shot this idea down, but it is only a guess.
+
+>
+> > @@ -344,14 +344,16 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+> >       fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
+> >               group = mark->group;
+> >               marks_mask |= mark->mask;
+> > -             marks_ignored_mask |= mark->ignored_mask;
+> > +             if (!(mask & FS_ISDIR) ||
+> > +                 (fsnotify_ignore_mask(mark) & FS_ISDIR))
+> > +                     marks_ignore_mask |= mark->ignore_mask;
+> >       }
+> >
+> > -     pr_debug("%s: group=%p mask=%x marks_mask=%x marks_ignored_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
+> > -              __func__, group, mask, marks_mask, marks_ignored_mask,
+> > +     pr_debug("%s: group=%p mask=%x marks_mask=%x marks_ignore_mask=%x data=%p data_type=%d dir=%p cookie=%d\n",
+> > +              __func__, group, mask, marks_mask, marks_ignore_mask,
+> >                data, data_type, dir, cookie);
+> >
+> > -     if (!(test_mask & marks_mask & ~marks_ignored_mask))
+> > +     if (!(test_mask & marks_mask & ~marks_ignore_mask))
+> >               return 0;
+>
+> And I'm wondering about similar things here...
+
+Fixed here too, but here there is no meaning to the event flags,
+because test_mask masks them out.
+
+Thanks,
+Amir.
