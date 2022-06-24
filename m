@@ -2,60 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6119C55A09E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 20:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD08D55A27C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jun 2022 22:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbiFXS3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 14:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
+        id S231132AbiFXUU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 16:20:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbiFXS3G (ORCPT
+        with ESMTP id S229912AbiFXUU1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 14:29:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4D633680A5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jun 2022 11:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656095343;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/o8gNpT/V36LEU1Sox1kL31jOutjVqalMZmiUTyd3eg=;
-        b=blbpY3SN/Ka0fYkCT2kB7uQvje91Cwo3vQbvLZQ9u9Z+SZxEbBbO2Ro4PBeW0f+xNa+s2d
-        py37XtbMvkQKx7fKFlgPc5vnixeVEPUrrCJAZNydyLLjBNBZY7vkLydnBgIjBMvmscyAOw
-        1ljvgxQpHdBlna4BL76VO4gRI72VvWk=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-240-R6mPA38KPk2OIKPE8OGnnQ-1; Fri, 24 Jun 2022 14:29:00 -0400
-X-MC-Unique: R6mPA38KPk2OIKPE8OGnnQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1892B384F804;
-        Fri, 24 Jun 2022 18:29:00 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F2B98C15D40;
-        Fri, 24 Jun 2022 18:28:59 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 880F62209F9; Fri, 24 Jun 2022 14:28:59 -0400 (EDT)
-Date:   Fri, 24 Jun 2022 14:28:59 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xieyongji@bytedance.com,
-        fam.zheng@bytedance.com, Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH] fuse: writeback_cache consistency enhancement
- (writeback_cache_v2)
-Message-ID: <YrYCa4nT0nX11nTO@redhat.com>
-References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
+        Fri, 24 Jun 2022 16:20:27 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71548171B;
+        Fri, 24 Jun 2022 13:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656102026; x=1687638026;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5yir5qsDWmJvpcLu8qopoQ2H2wrhCorETTzmzNRdNeU=;
+  b=LVTFEiZhjCz62p2xITy5LstJYDbkrfopj3EfBVjZ0PZqjHw6PdAx8OD5
+   LgmN8slsUKkA+zQ+fX0/FEpWLFzpbFWefXTVhtd/ukjLn12ojA3Y9f9ZX
+   yDhZldWVpoLYt+imLklpL2W2CZ5aSWSIFeISXcMJdyE9uIUzjTKFcqjtK
+   wrFFjjHK7GmAeF6Ly54aOall3tOuAZFXS9sCMDClFj5X2ZK1SiUUTLWiW
+   d1rrTuPIOfETzqi/zEHSnHGl2EvkCxrf/Hc4HeI/oPMbWxUUYyLe1TDsr
+   PyWIBsTeUD+QvXgwa22pyVO6m36wuCboeOJIPXeSB2S1f68xTcUW+7+Jk
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10388"; a="282172736"
+X-IronPort-AV: E=Sophos;i="5.92,220,1650956400"; 
+   d="scan'208";a="282172736"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2022 13:20:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,220,1650956400"; 
+   d="scan'208";a="589124453"
+Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 24 Jun 2022 13:20:23 -0700
+Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o4pmw-0004ff-Tx;
+        Fri, 24 Jun 2022 20:20:22 +0000
+Date:   Sat, 25 Jun 2022 04:20:04 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     ntb@lists.linux.dev, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-staging@lists.linux.dev,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 2f9cb3d3bd73fc2225d66aa8fcffb632ed3eb235
+Message-ID: <62b61c74.3Kp+9QDweGyj9KVR%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -64,250 +67,211 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 01:58:25PM +0800, Jiachen Zhang wrote:
-> Some users may want both the high performance of the writeback_cahe mode and
-> a little bit more consistency among FUSE mounts. In the current writeback
-> mode implementation, users of one FUSE mount can never see the file
-> expansion done by other FUSE mounts.
-> 
-> Based on the suggested writeback V2 patch in the upstream mailing-list [1],
-> this commit allows the cmtime and size to be updated from server in
-> writeback mode. Compared with the writeback V2 patch in [1], this commit has
-> several differences:
-> 
->     1. Ensure c/mtime are not updated from kernel to server. IOW, the cmtime
->     generated by kernel are just temporary values that are never flushed to
->     server, and they can also be updated by the official server cmtime when
->     the writeback cache is clean.
-> 
->     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
->     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
->     are likely not equal to the offical server cmtime.
-> 
->     3. If any page is ever flushed to the server during FUSE_GETATTR
->     handling on fuse server, even if the cache is clean when
->     fuse_change_attributes() checks, we should not update the i_size. This
->     is because the FUSE_GETATTR may get a staled size before the FUSE_WRITE
->     request changes server inode size. This commit ensures this by
->     increasing attr_version after writeback for writeback_cache_v2. In that
->     case, we should also ensure the ordering of the attr_version updating
->     and the fi->writepages RB-tree updating. So that if a fuse page
->     writeback ever happens during fuse_change_attributes(), either the
->     fi->writepages is not empty, or the attr_version is increased. So we
->     never mistakenly update a stale file size from server to kernel.
-> 
-> With this patch, writeback mode can consider the server c/mtime as the
-> official one. When inode attr is timeout or invalidated, kernel has chance
-> to see size and c/mtime modified by others.
-> 
-> Together with another patch [2], a FUSE daemon is able to implement
-> close-to-open (CTO) consistency like what is done in NFS clients.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
-> [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
-> 
-> Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-> ---
->  fs/fuse/file.c            | 17 +++++++++++++++
->  fs/fuse/fuse_i.h          |  3 +++
->  fs/fuse/inode.c           | 44 +++++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/fuse.h |  5 +++++
->  4 files changed, 67 insertions(+), 2 deletions(-)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 2f9cb3d3bd73fc2225d66aa8fcffb632ed3eb235  Add linux-next specific files for 20220624
 
-A quick comment without reading this patch, please do add some
-documentation which explains what's the existing behavior and what
-the new behavior. 
+Error/Warning reports:
 
-Probably Documentation/filesystem/fuse.rst is right place. We have
-so many fine knobs w.r.t attr caching and data caching and what kind
-of cache consistency to expect but there is no documentation. So
-very hard to figure out what to expect in different scenarios for
-a user. 
+https://lore.kernel.org/llvm/202206221813.Dn1s6uuh-lkp@intel.com
 
-I think this patch series probably a good time to start some cache
-coherency related documentation in fuse and that will help users
-as well as will provide context for future changes.
+Error/Warning: (recently discovered and may have been fixed)
 
-Thanks
-Vivek
+arch/powerpc/kernel/interrupt.c:542:55: error: suggest braces around empty body in an 'if' statement [-Werror=empty-body]
+arch/powerpc/kernel/interrupt.c:542:55: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link.c:1025:33: warning: variable 'pre_connection_type' set but not used [-Wunused-but-set-variable]
+drivers/ntb/test/ntb_perf.c:1145: undefined reference to `__umoddi3'
+drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for function 'pci_read' [-Wmissing-prototypes]
+drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for function 'pci_write' [-Wmissing-prototypes]
+include/linux/fs.h:1656: warning: expecting prototype for i_gid_into_mnt(). Prototype was for i_gid_into_vfsgid() instead
 
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 9b64e2ff1c96..35bdc7af8468 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1829,6 +1829,15 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
->  		 */
->  		fuse_send_writepage(fm, next, inarg->offset + inarg->size);
->  	}
-> +
-> +	if (fc->writeback_cache_v2)
-> +		fi->attr_version = atomic64_inc_return(&fc->attr_version);
-> +	/*
-> +	 * Ensure attr_version increases before the page is move out of the
-> +	 * writepages rb-tree.
-> +	 */
-> +	smp_mb();
-> +
->  	fi->writectr--;
->  	fuse_writepage_finish(fm, wpa);
->  	spin_unlock(&fi->lock);
-> @@ -1858,10 +1867,18 @@ static struct fuse_file *fuse_write_file_get(struct fuse_inode *fi)
->  
->  int fuse_write_inode(struct inode *inode, struct writeback_control *wbc)
->  {
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  	struct fuse_file *ff;
->  	int err;
->  
-> +	/*
-> +	 * Kernel c/mtime should not be updated to the server in the
-> +	 * writeback_cache_v2 mode as server c/mtime are official.
-> +	 */
-> +	if (fc->writeback_cache_v2)
-> +		return 0;
-> +
->  	/*
->  	 * Inode is always written before the last reference is dropped and
->  	 * hence this should not be reached from reclaim.
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 488b460e046f..47de36146fb8 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -654,6 +654,9 @@ struct fuse_conn {
->  	/* show legacy mount options */
->  	unsigned int legacy_opts_show:1;
->  
-> +	/* Improved writeback cache policy */
-> +	unsigned writeback_cache_v2:1;
-> +
->  	/*
->  	 * fs kills suid/sgid/cap on write/chown/trunc. suid is killed on
->  	 * write/trunc only if caller did not have CAP_FSETID.  sgid is killed
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 8c0665c5dff8..2d5fa82b08b6 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -237,14 +237,41 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
->  	u32 cache_mask;
->  	loff_t oldsize;
->  	struct timespec64 old_mtime;
-> +	bool try_wb_update = false;
-> +
-> +	if (fc->writeback_cache_v2 && S_ISREG(inode->i_mode)) {
-> +		inode_lock(inode);
-> +		try_wb_update = true;
-> +	}
->  
->  	spin_lock(&fi->lock);
->  	/*
->  	 * In case of writeback_cache enabled, writes update mtime, ctime and
->  	 * may update i_size.  In these cases trust the cached value in the
->  	 * inode.
-> +	 *
-> +	 * In writeback_cache_v2 mode, if all the following conditions are met,
-> +	 * then we allow the attributes to be refreshed:
-> +	 *
-> +	 * - inode is not in the process of being written (I_SYNC)
-> +	 * - inode has no dirty pages (I_DIRTY_PAGES)
-> +	 * - inode data-related attributes are clean (I_DIRTY_DATASYNC)
-> +	 * - inode does not have any page writeback in progress
-> +	 *
-> +	 * Note: checking PAGECACHE_TAG_WRITEBACK is not sufficient in fuse,
-> +	 * since inode can appear to have no PageWriteback pages, yet still have
-> +	 * outstanding write request.
->  	 */
->  	cache_mask = fuse_get_cache_mask(inode);
-> +	if (try_wb_update && !(inode->i_state & (I_DIRTY_PAGES | I_SYNC |
-> +	    I_DIRTY_DATASYNC)) && RB_EMPTY_ROOT(&fi->writepages))
-> +		cache_mask &= ~(STATX_MTIME | STATX_CTIME | STATX_SIZE);
-> +	/*
-> +	 * Ensure the ordering of cleanness checking and following attr_version
-> +	 * comparison.
-> +	 */
-> +	smp_mb();
-> +
->  	if (cache_mask & STATX_SIZE)
->  		attr->size = i_size_read(inode);
->  
-> @@ -283,7 +310,13 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
->  			truncate_pagecache(inode, attr->size);
->  			if (!fc->explicit_inval_data)
->  				inval = true;
-> -		} else if (fc->auto_inval_data) {
-> +		} else if (!fc->writeback_cache_v2 && fc->auto_inval_data) {
-> +			/*
-> +			 * When fc->writeback_cache_v2 is set, the old_mtime
-> +			 * can be generated by kernel and must not equal to
-> +			 * new_mtime generated by server. So skip in such
-> +			 * case.
-> +			 */
->  			struct timespec64 new_mtime = {
->  				.tv_sec = attr->mtime,
->  				.tv_nsec = attr->mtimensec,
-> @@ -303,6 +336,9 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
->  
->  	if (IS_ENABLED(CONFIG_FUSE_DAX))
->  		fuse_dax_dontcache(inode, attr->flags);
-> +
-> +	if (try_wb_update)
-> +		inode_unlock(inode);
->  }
->  
->  static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
-> @@ -1153,6 +1189,10 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  				fc->async_dio = 1;
->  			if (flags & FUSE_WRITEBACK_CACHE)
->  				fc->writeback_cache = 1;
-> +			if (flags & FUSE_WRITEBACK_CACHE_V2) {
-> +				fc->writeback_cache = 1;
-> +				fc->writeback_cache_v2 = 1;
-> +			}
->  			if (flags & FUSE_PARALLEL_DIROPS)
->  				fc->parallel_dirops = 1;
->  			if (flags & FUSE_HANDLE_KILLPRIV)
-> @@ -1234,7 +1274,7 @@ void fuse_send_init(struct fuse_mount *fm)
->  		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
->  		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
->  		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
-> -		FUSE_SECURITY_CTX;
-> +		FUSE_SECURITY_CTX | FUSE_WRITEBACK_CACHE_V2;
->  #ifdef CONFIG_FUSE_DAX
->  	if (fm->fc->dax)
->  		flags |= FUSE_MAP_ALIGNMENT;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index d6ccee961891..b474763bcf59 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -194,6 +194,7 @@
->   *  - add FUSE_SECURITY_CTX init flag
->   *  - add security context to create, mkdir, symlink, and mknod requests
->   *  - add FUSE_HAS_INODE_DAX, FUSE_ATTR_DAX
-> + *  - add FUSE_WRITEBACK_CACHE_V2 init flag
->   */
->  
->  #ifndef _LINUX_FUSE_H
-> @@ -353,6 +354,9 @@ struct fuse_file_lock {
->   * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
->   *			mknod
->   * FUSE_HAS_INODE_DAX:  use per inode DAX
-> + * FUSE_WRITEBACK_CACHE_V2:
-> + *			allow time/size to be refreshed if no pending write
-> + *			c/mtime not updated from kernel to server
->   */
->  #define FUSE_ASYNC_READ		(1 << 0)
->  #define FUSE_POSIX_LOCKS	(1 << 1)
-> @@ -389,6 +393,7 @@ struct fuse_file_lock {
->  /* bits 32..63 get shifted down 32 bits into the flags2 field */
->  #define FUSE_SECURITY_CTX	(1ULL << 32)
->  #define FUSE_HAS_INODE_DAX	(1ULL << 33)
-> +#define FUSE_WRITEBACK_CACHE_V2	(1ULL << 34)
->  
->  /**
->   * CUSE INIT request/reply flags
-> -- 
-> 2.20.1
-> 
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
+drivers/net/pcs/pcs-xpcs.c:1031: undefined reference to `phylink_mii_c22_pcs_decode_state'
+drivers/net/pcs/pcs-xpcs.c:832: undefined reference to `phylink_mii_c22_pcs_encode_advertisement'
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- arc-randconfig-m031-20220624
+|   |-- drivers-gpu-drm-vc4-vc4_perfmon.c-vc4_perfmon_get()-warn:variable-dereferenced-before-check-perfmon-(see-line-)
+|   `-- drivers-gpu-drm-vc4-vc4_perfmon.c-vc4_perfmon_get_values_ioctl()-warn:variable-dereferenced-before-check-perfmon-(see-line-)
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- arm64-buildonly-randconfig-r004-20220624
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|-- i386-allnoconfig
+|   `-- include-linux-fs.h:warning:expecting-prototype-for-i_gid_into_mnt().-Prototype-was-for-i_gid_into_vfsgid()-instead
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   |-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|   `-- ntb_perf.c:(.text):undefined-reference-to-__umoddi3
+|-- i386-randconfig-a001
+|   `-- ntb_perf.c:(.text):undefined-reference-to-__umoddi3
+|-- i386-randconfig-a005
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- i386-randconfig-m021
+|   `-- arch-x86-events-core.c-init_hw_perf_events()-warn:missing-error-code-err
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- m68k-allmodconfig
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- m68k-allyesconfig
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- microblaze-randconfig-r006-20220624
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-ntb-test-ntb_perf.c:undefined-reference-to-__umoddi3
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- nios2-randconfig-r016-20220624
+|   |-- drivers-net-pcs-pcs-xpcs.c:undefined-reference-to-phylink_mii_c22_pcs_decode_state
+|   `-- drivers-net-pcs-pcs-xpcs.c:undefined-reference-to-phylink_mii_c22_pcs_encode_advertisement
+|-- powerpc-allmodconfig
+|   |-- ERROR:__umoddi3-drivers-ntb-test-ntb_perf.ko-undefined
+|   |-- arch-powerpc-kernel-interrupt.c:warning:suggest-braces-around-empty-body-in-an-if-statement
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- powerpc-allnoconfig
+|   `-- arch-powerpc-kernel-interrupt.c:error:suggest-braces-around-empty-body-in-an-if-statement
+|-- powerpc-asp8347_defconfig
+|   `-- arch-powerpc-kernel-interrupt.c:error:suggest-braces-around-empty-body-in-an-if-statement
+|-- powerpc-mpc834x_mds_defconfig
+|   `-- arch-powerpc-kernel-interrupt.c:error:suggest-braces-around-empty-body-in-an-if-statement
+|-- powerpc-randconfig-r002-20220624
+|   `-- arch-powerpc-kernel-interrupt.c:warning:suggest-braces-around-empty-body-in-an-if-statement
+|-- powerpc-randconfig-r032-20220624
+|   `-- arch-powerpc-kernel-interrupt.c:warning:suggest-braces-around-empty-body-in-an-if-statement
+|-- sh-allmodconfig
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- sparc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- sparc-randconfig-r011-20220624
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|-- x86_64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+|   `-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+|-- x86_64-randconfig-a002
+|   |-- pcs-xpcs.c:(.text):undefined-reference-to-phylink_mii_c22_pcs_decode_state
+|   `-- pcs-xpcs.c:(.text):undefined-reference-to-phylink_mii_c22_pcs_encode_advertisement
+`-- xtensa-allyesconfig
+    |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link.c:warning:variable-pre_connection_type-set-but-not-used
+    |-- drivers-staging-rtl8723bs-hal-hal_btcoex.c:warning:variable-pHalData-set-but-not-used
+    `-- ntb_perf.c:(.text):undefined-reference-to-__umoddi3
+
+clang_recent_errors
+|-- hexagon-randconfig-r001-20220624
+|   `-- drivers-ufs-host-tc-dwc-g210-pltfrm.c:warning:unused-variable-tc_dwc_g210_pltfm_match
+`-- x86_64-allyesconfig
+    |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-function-pci_read
+    `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-function-pci_write
+
+elapsed time: 728m
+
+configs tested: 84
+configs skipped: 3
+
+gcc tested configs:
+arm                                 defconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+powerpc                     asp8347_defconfig
+mips                           ip32_defconfig
+s390                          debug_defconfig
+sparc                            allyesconfig
+openrisc                  or1klitex_defconfig
+sh                                  defconfig
+m68k                          multi_defconfig
+sh                      rts7751r2d1_defconfig
+xtensa                       common_defconfig
+microblaze                          defconfig
+arm                          iop32x_defconfig
+arm                        realview_defconfig
+arm                        keystone_defconfig
+m68k                         apollo_defconfig
+parisc64                            defconfig
+arm                       aspeed_g5_defconfig
+powerpc                 mpc834x_mds_defconfig
+riscv                             allnoconfig
+riscv                    nommu_k210_defconfig
+i386                   debian-10.3-kselftests
+riscv                          rv32_defconfig
+riscv                    nommu_virt_defconfig
+i386                              debian-10.3
+ia64                             allmodconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+sh                               allmodconfig
+powerpc                           allnoconfig
+m68k                             allyesconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+m68k                             allmodconfig
+i386                                defconfig
+i386                             allyesconfig
+i386                          randconfig-a001
+i386                          randconfig-a003
+i386                          randconfig-a005
+x86_64                        randconfig-a013
+x86_64                        randconfig-a011
+x86_64                        randconfig-a015
+i386                          randconfig-a014
+i386                          randconfig-a012
+i386                          randconfig-a016
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+x86_64                        randconfig-a006
+arc                  randconfig-r043-20220624
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                          rhel-8.3-func
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
+x86_64                           rhel-8.3-syz
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+
+clang tested configs:
+arm                                 defconfig
+powerpc                     ksi8560_defconfig
+powerpc                       ebony_defconfig
+powerpc                     kilauea_defconfig
+powerpc                     kmeter1_defconfig
+x86_64                           allyesconfig
+arm                           omap1_defconfig
+arm                         s3c2410_defconfig
+powerpc                      walnut_defconfig
+mips                   sb1250_swarm_defconfig
+powerpc                      pmac32_defconfig
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a014
+x86_64                        randconfig-a012
+x86_64                        randconfig-a016
+i386                          randconfig-a013
+i386                          randconfig-a011
+i386                          randconfig-a015
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+x86_64                        randconfig-a005
+hexagon              randconfig-r045-20220624
+riscv                randconfig-r042-20220624
+hexagon              randconfig-r041-20220624
+s390                 randconfig-r044-20220624
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
