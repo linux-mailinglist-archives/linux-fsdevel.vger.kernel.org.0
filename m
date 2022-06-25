@@ -2,79 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14A5855AA7F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 15:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BE4755AA7D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 15:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233102AbiFYN3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jun 2022 09:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S233115AbiFYN3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jun 2022 09:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233097AbiFYN3J (ORCPT
+        with ESMTP id S233112AbiFYN3P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jun 2022 09:29:09 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FEFEE01
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jun 2022 06:29:08 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id j17-20020a056e02219100b002d955e89a54so3359091ila.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jun 2022 06:29:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=x+Epx1coOg/vJnEueBwxobePEmc4y9ljKo+ccErekWo=;
-        b=6wOCDy7mcnQRDn4BUTrWq+kCiGdxRsv3iOCwTH4pqnqC6g+mNSCH3eylo7b8uL63AY
-         am3V17eJQdFkpmf2GL9h6VlDtrZ20WiSgqgUrtyjqhNvAcakEqJV9PPDgAX8Wq7jJvX7
-         xdwd1blVSU+4F2BbxJytA2rekwkHLnvBt7gzfEnPVEFbzMadl7erLELcTXeDtYSayY1n
-         qT1Y1VcQdaRpbH+hAGmLqsfYBoq3YzYTj+WwvrurJPxFM8S2jafO3HkUWqujtBeWmwDI
-         lORUpxCt+zqQFlfXhK2LADBWFaH2RFTMcc3HZuMCZ54lHDLT/GAPzH/6Z6zKBi0I5CDx
-         i3vA==
-X-Gm-Message-State: AJIora/TsC1a+85OpzH9lNDCMaEAMQsB0f7EN7aM0Vam8qH8yNASRMdW
-        dnipLN7gtUGWLzN4ceBeJNAiKvTqw/stS6qQu9SIhmui4LPX
-X-Google-Smtp-Source: AGRyM1sTmCr+DrWgD/fOg8RTQ/5jBSZ7rWCNzVIBGQoba1+RjWtnF9B0vPl7lMHktjSrviXDU8gtxiPgjs1RJk7g+EiJRRyAROd6
+        Sat, 25 Jun 2022 09:29:15 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED92111C0E;
+        Sat, 25 Jun 2022 06:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VMebA8yQeVZMRzdvMUNABTQuSHPkN19xCjkasWh2T7k=; b=qt2Yb1342EoIxvnP4N/gNFPjwM
+        OtBV4RKU8ehY9J0ju8f2CPM9ijg6TaJJxlVBSs6mAnx+SJ5uHavxkDLA0Fm0WmU0BrV9W8tg9e3kk
+        WTT5DxC4zR1PUfzXXnENYo9IPaQQAEh5KvuD/gB2R1edFEeN+VbmQIcfhRCbWV3QGIkYZHS9Zbav1
+        BXQDpEikupoaKMNlKDBvc7b8hPR3x3EZSjjGNclHgI03YGbR20haDmDrzlYXXlYPzj9qfm0GkUBWg
+        EYjy1ef6Q6vwvYzQ26EpXKxt5OhUWI9YNINbOXQFwp7f8EGotCTNSUXMvXXNVEF9YiCumSQfj6AIA
+        HqrEtv8w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o55qX-004Kaw-Mg;
+        Sat, 25 Jun 2022 13:29:09 +0000
+Date:   Sat, 25 Jun 2022 14:29:09 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/8] fs: clear or set FMODE_LSEEK based on llseek
+ function
+Message-ID: <YrcNpdJmyFU+Up1n@ZenIV>
+References: <20220625110115.39956-1-Jason@zx2c4.com>
+ <20220625110115.39956-4-Jason@zx2c4.com>
+ <YrcIoaluGx+2TzfM@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24c7:b0:331:f0ae:3a17 with SMTP id
- y7-20020a05663824c700b00331f0ae3a17mr2521427jat.238.1656163747376; Sat, 25
- Jun 2022 06:29:07 -0700 (PDT)
-Date:   Sat, 25 Jun 2022 06:29:07 -0700
-In-Reply-To: <00000000000073aa8605e1df6ab9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000da315705e245abfa@google.com>
-Subject: Re: [syzbot] general protection fault in do_mpage_readpage
-From:   syzbot <syzbot+dbbd022e608bb122cf4e@syzkaller.appspotmail.com>
-To:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YrcIoaluGx+2TzfM@infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Sat, Jun 25, 2022 at 06:07:45AM -0700, Christoph Hellwig wrote:
+> On Sat, Jun 25, 2022 at 01:01:10PM +0200, Jason A. Donenfeld wrote:
+> > This helps unify a longstanding wart where FMODE_LSEEK hasn't been
+> > uniformly unset when it should be.
+> 
+> I think we could just remove FMODE_LSEEK after the previous patch
+> as we can just check for the presence of a ->llseek method instead.
 
-commit 4c27dc762d7b60fa23c6eab2309ca6fc625588dd
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Sat Jun 11 02:58:24 2022 +0000
-
-    mpage: Convert do_mpage_readpage() to use a folio
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16d2a888080000
-start commit:   34d1d36073ea Add linux-next specific files for 20220621
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15d2a888080000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d2a888080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b24b62d1c051cfc8
-dashboard link: https://syzkaller.appspot.com/bug?extid=dbbd022e608bb122cf4e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1216c174080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14362fd8080000
-
-Reported-by: syzbot+dbbd022e608bb122cf4e@syzkaller.appspotmail.com
-Fixes: 4c27dc762d7b ("mpage: Convert do_mpage_readpage() to use a folio")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I wouldn't bet on that - as it is, an ->open() instance can decide
+in some cases to clear FMODE_LSEEK, despite having file_operations
+with non-NULL ->llseek.
