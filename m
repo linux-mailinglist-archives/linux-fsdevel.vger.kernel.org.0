@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF1D55A929
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 13:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AF855A92A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 13:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232705AbiFYLBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jun 2022 07:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33920 "EHLO
+        id S232708AbiFYLBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jun 2022 07:01:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbiFYLBl (ORCPT
+        with ESMTP id S232539AbiFYLBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jun 2022 07:01:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C9233E3C;
-        Sat, 25 Jun 2022 04:01:39 -0700 (PDT)
+        Sat, 25 Jun 2022 07:01:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A7533E9A;
+        Sat, 25 Jun 2022 04:01:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63BE7B80813;
-        Sat, 25 Jun 2022 11:01:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F18C3411C;
-        Sat, 25 Jun 2022 11:01:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D8DD6115D;
+        Sat, 25 Jun 2022 11:01:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71245C3411C;
+        Sat, 25 Jun 2022 11:01:39 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="k9rAARxa"
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="K6s2gBOo"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1656154896;
+        t=1656154898;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+cNHKtE95GsFoHDL/3ALQ8YKwfdHzX/1d4YROHsMAlI=;
-        b=k9rAARxajcZIvLi0y0ATSswbnRVwSp0pTuV6nJSIHtuOc8Lt+5GEf3+Ujzf1HeBRKW1E7R
-        +vETWoYEBtNuUEuroW0ue84N2/HSfCN6df7aM8pylcrcTKlcu3l8i+DDbKxRhc+30FIesp
-        +sswK9/vwFiPYBATVwpSoCs1VFcGm3c=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 010d61fa (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
-        Sat, 25 Jun 2022 11:01:36 +0000 (UTC)
+        bh=tpxB37bu5WqdF11Jy/CFE5HTN7ST9k5G7HR0wTYcqm0=;
+        b=K6s2gBOo/W3UbjJiSgX01jXqc74nz06L7YAU5m4lkP8io0FRa3RhPm2oRr3GEo165devAU
+        NnDkvC0nh47Wuj2TcJSnSvK6Bv69h9JeVPxiiVKPTvrGQMM4VWe+KXXamZ7a92/enD13TX
+        NuFlGQ2NkStBLSnmjhULIA+lywN5/Fw=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id bbc5b776 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
+        Sat, 25 Jun 2022 11:01:38 +0000 (UTC)
 From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
 Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH v2 5/8] fs: do not compare against ->llseek
-Date:   Sat, 25 Jun 2022 13:01:12 +0200
-Message-Id: <20220625110115.39956-6-Jason@zx2c4.com>
+Subject: [PATCH v2 6/8] fs: remove no_llseek
+Date:   Sat, 25 Jun 2022 13:01:13 +0200
+Message-Id: <20220625110115.39956-7-Jason@zx2c4.com>
 In-Reply-To: <20220625110115.39956-1-Jason@zx2c4.com>
 References: <20220625110115.39956-1-Jason@zx2c4.com>
 MIME-Version: 1.0
@@ -57,45 +57,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we can rely on llseek being functional (via vfs_llseek) if
-FMODE_LSEEK is set, so remove the old broken comparisons.
+Now that all callers of ->llseek are going through vfs_llseek(), we
+don't gain anything by keeping no_llseek around. Nothing compares it or
+calls it.
 
 Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- fs/coredump.c          | 4 ++--
- fs/overlayfs/copy_up.c | 3 +--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ fs/read_write.c    | 16 +++-------------
+ include/linux/fs.h |  1 -
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index ebc43f960b64..9f4aae202109 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -816,9 +816,9 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index b1b1cdfee9d3..f0ecfd0fb843 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -227,12 +227,6 @@ loff_t noop_llseek(struct file *file, loff_t offset, int whence)
+ }
+ EXPORT_SYMBOL(noop_llseek);
+ 
+-loff_t no_llseek(struct file *file, loff_t offset, int whence)
+-{
+-	return -ESPIPE;
+-}
+-EXPORT_SYMBOL(no_llseek);
+-
+ loff_t default_llseek(struct file *file, loff_t offset, int whence)
  {
- 	static char zeroes[PAGE_SIZE];
- 	struct file *file = cprm->file;
--	if (file->f_op->llseek && file->f_op->llseek != no_llseek) {
-+	if (file->f_mode & FMODE_LSEEK) {
- 		if (dump_interrupted() ||
--		    file->f_op->llseek(file, nr, SEEK_CUR) < 0)
-+		    vfs_llseek(file, nr, SEEK_CUR) < 0)
- 			return 0;
- 		cprm->pos += nr;
- 		return 1;
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 714ec569d25b..022606c9703b 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -226,8 +226,7 @@ static int ovl_copy_up_data(struct ovl_fs *ofs, struct path *old,
- 	/* Couldn't clone, so now we try to copy the data */
+ 	struct inode *inode = file_inode(file);
+@@ -290,14 +284,10 @@ EXPORT_SYMBOL(default_llseek);
  
- 	/* Check if lower fs supports seek operation */
--	if (old_file->f_mode & FMODE_LSEEK &&
--	    old_file->f_op->llseek)
-+	if (old_file->f_mode & FMODE_LSEEK)
- 		skip_hole = true;
+ loff_t vfs_llseek(struct file *file, loff_t offset, int whence)
+ {
+-	loff_t (*fn)(struct file *, loff_t, int);
++	if ((file->f_mode & FMODE_LSEEK) && file->f_op->llseek)
++		return file->f_op->llseek(file, offset, whence);
++	return -ESPIPE;
  
- 	while (len) {
+-	fn = no_llseek;
+-	if (file->f_mode & FMODE_LSEEK) {
+-		if (file->f_op->llseek)
+-			fn = file->f_op->llseek;
+-	}
+-	return fn(file, offset, whence);
+ }
+ EXPORT_SYMBOL(vfs_llseek);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9ad5e3520fae..0cb5a1706e1f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3022,7 +3022,6 @@ extern long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
+ extern void
+ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping);
+ extern loff_t noop_llseek(struct file *file, loff_t offset, int whence);
+-extern loff_t no_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t vfs_setpos(struct file *file, loff_t offset, loff_t maxsize);
+ extern loff_t generic_file_llseek(struct file *file, loff_t offset, int whence);
+ extern loff_t generic_file_llseek_size(struct file *file, loff_t offset,
 -- 
 2.35.1
 
