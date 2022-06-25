@@ -2,51 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7655455A4BA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 01:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F203C55A677
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jun 2022 05:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbiFXXR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jun 2022 19:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48120 "EHLO
+        id S231865AbiFYDLI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jun 2022 23:11:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbiFXXRZ (ORCPT
+        with ESMTP id S231220AbiFYDLH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jun 2022 19:17:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EEB488B3B;
-        Fri, 24 Jun 2022 16:17:25 -0700 (PDT)
+        Fri, 24 Jun 2022 23:11:07 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7481369988;
+        Fri, 24 Jun 2022 20:11:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E9682B82C96;
-        Fri, 24 Jun 2022 23:17:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D5F4C34114;
-        Fri, 24 Jun 2022 23:17:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2E6B4B8216B;
+        Sat, 25 Jun 2022 03:11:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D834CC34114;
+        Sat, 25 Jun 2022 03:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656112642;
-        bh=SRbeoCVoiP6sAFPfqupaswhL4ShhqUzJCFcbcVdT1ws=;
+        s=k20201202; t=1656126663;
+        bh=kVaUrRS0BBe7WiOdmUXAm8KCrP62LmXzg0L4lJ0jQSk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WasipiMD3gyvv8IhJSrx1zqYqylQVtMNii+iyRVfl/rJC9Q+8LGcF3wvYtYneavOB
-         esoo5iPRq1xTCGkgbKkETprVcICaaACnkkLB6rY6EQ5zdn+fjcvSEwGMzn8qWG2fzm
-         sVrHZISZSeo+DgynPlJ3YuKMNRzO6TPlFaPaO3d1L22HuOr4Q4BT2t50h5nPOaA8d9
-         +s3LEW6ofy8z9jNyNXcV10qtKwUi6a9cHzkbwwajvVQwpwup3UMtMPdIA6mSfg+L9G
-         m7UXT840HdH3MXqH/pcQMKF3prpUJl5AAKEox9pZ1APA0KADGeM8cIhQq3wcRDd+Fx
-         oWUgUTqYmwB+A==
-Date:   Fri, 24 Jun 2022 16:17:20 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org
-Subject: Re: Triggered assertion from "mm: Add an assertion that PG_private
- and folio->private are in sync"
-Message-ID: <YrZGAOxqHwwunFtK@dev-arch.thelio-3990X>
-References: <YrYzhB7aDNIBz/uV@dev-arch.thelio-3990X>
- <YrZEmsorZ/g+Os9+@casper.infradead.org>
+        b=r/++7NbtvvX7um9vYzK00E7pGt2oSlb6nZwKcjujY7mGjKRnfbEXuDlMR/1sHvzS7
+         BUn2Me247rRoMqLLQ+ncIZuaEpMTbyQU96AzqVB4HDXYV83hKeIfECkRAp0rYnIbIa
+         nAmVo5Z1JDepeA2yerW6XojpT4S2lkx2hdSHlk4lDPlq8JkbzzwgJgncN6pHbgPmd2
+         wedhaH+71IpJS0F/cNUw0pvTgAyEymPScDRU4vzQYn8CHcyj7Z8dopGRGHAXZwtn2R
+         pttyP0Za08RwwzVA5A+7c8jNodcLLUJv14XTXgOVH/L2muIzgnUEvEoIbrOF23KQGb
+         qobCR8UmXhyzw==
+Date:   Fri, 24 Jun 2022 20:11:03 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Zorro Lang <zlang@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        fstests <fstests@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Tso <tytso@mit.edu>, Chris Mason <clm@fb.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Delegating fstests maintenance work (Was: Re: [PATCH 3/4]
+ xfs/{422,517}: add missing killall to _cleanup())
+Message-ID: <YrZ8x9/PUpBe9mtX@magnolia>
+References: <20220619134657.1846292-1-amir73il@gmail.com>
+ <20220619134657.1846292-4-amir73il@gmail.com>
+ <CAOQ4uxj350-k2bzCSD_j35XCH5E-VcdtfHmW3d_ZrSzHxWA5CQ@mail.gmail.com>
+ <YrSrLgU1OIgaaxiB@magnolia>
+ <CAOQ4uxjCUdzVdMUR9gj4xHfS-wHo5HsJnkTAAWjKeEwdVvX5iQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YrZEmsorZ/g+Os9+@casper.infradead.org>
+In-Reply-To: <CAOQ4uxjCUdzVdMUR9gj4xHfS-wHo5HsJnkTAAWjKeEwdVvX5iQ@mail.gmail.com>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,22 +64,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 25, 2022 at 12:11:22AM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 24, 2022 at 02:58:28PM -0700, Nathan Chancellor wrote:
-> > Hi Matthew,
-> > 
-> > I bisected a boot failure on one of my test machines to your commit
-> > c462f63731e0 ("mm: Add an assertion that PG_private and folio->private
-> > are in sync"), which landed in next-20220624. I didn't see this patch
-> > posted to any mailing list on lore, hence this separate thread;
-> > apologies if it was and I missed it. I didn't see this reported yet but
-> > I see the assertion triggered when systemd-zram-setup@zram0 runs:
+On Fri, Jun 24, 2022 at 07:49:29AM +0300, Amir Goldstein wrote:
+> [+fsdevel]
 > 
-> urgh, sorry about that.  i really need to wean zsmalloc off using struct
-> page.  i'll drop this patch; feel free to just revert it, there's nothing
-> that will depend on it.
+> >
+> > I swear I'll send all these some day, if I ever get caught up...
+> > Delegating LTS maintenance is a big help, but as it is I still can't
+> > stay abreast of all the mainline patchsets /and/ send my own stuff. :(
+> 
+> I have to repeat what I said in LSFMM about the LTP project and
+> what fstests could be like.
+> 
+> Companies put dedicated engineers to work as proactive LTP
+> maintainers. There is absolutely no reason that companies won't
+> do the same for fstests.
+> 
+> If only every large corp. that employs >10 fs developers will assign
+> a halftime engineer for fstests maintenance, their fs developer's
+> work would become so much more productive and their fs product
+> will become more reliable.
+> 
+> I think the fact that this is not happening is a failure on our part to
+> communicate that to our managers.
 
-Ack, I'll do just that, thanks a lot for the quick reply!
+I'd enjoy that too; I'll bring it up the next time they start asking
+about budgeting here (which means in 2 weeks).
 
-Cheers,
-Nathan
+> From my experience, if you had sent stuff like your fstests cleanups
+> to the LTP maintainers and ask for their help to land it, they would
+> thank you for the work you did and take care of all the testing
+> on all platforms and fixing all the code style and framework issues.
+
+Though to be fair -- a lot of the fstests changes backing up in
+djwong-dev exist to enable testing of the online fsck feature.  This
+whole year I've deprioritized sending any of those patches to
+concentrate on writing the design documentation for online fsck[1].  Now
+that I've submitted *that*, I'm hoping to start code review once I
+convince a few people to grok the design doc.
+
+So perhaps next week I'll resume the patchbombing that I've become
+infamous for doing.
+
+In the mean time, no objections to merging /this/ series.  The group
+labelling is a little odd and I think that should be separate fix from
+adding _require_freeze), but if zorro's ok with its present form then so
+be it.
+
+--D
+
+[1] https://lore.kernel.org/linux-xfs/165456652256.167418.912764930038710353.stgit@magnolia/
+
+> LTP maintainers constantly work on improving the framework and
+> providing more features to test writers as well as on converting old
+> tests to use new infrastructure.
+> 
+> Stuff like Dave's work on sorting up the cleanup mess or the groups
+> cleanup and groups speedup - all of those do not have to add load
+> to busy maintainers - life can be different!
+> 
+> Taking responsibility away from developers to deliver their own tests
+> is a slippery slope, but getting help and working together is essential
+> for offloading work from busy maintainers.
+> 
+> Thanks,
+> Amir.
