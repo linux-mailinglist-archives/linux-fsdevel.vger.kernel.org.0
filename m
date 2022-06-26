@@ -2,189 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 203E555B2B3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jun 2022 17:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37C1655B2BA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jun 2022 17:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbiFZPsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jun 2022 11:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56810 "EHLO
+        id S230287AbiFZP5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jun 2022 11:57:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiFZPsx (ORCPT
+        with ESMTP id S229468AbiFZP5O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jun 2022 11:48:53 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D956BC0E;
-        Sun, 26 Jun 2022 08:48:52 -0700 (PDT)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25QEC3hk026475;
-        Sun, 26 Jun 2022 15:48:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Vx8qhw9gsD0GT+n5MLIi+2BfObnIPd+FACJyCWPp8I8=;
- b=a1+0w5V9zR4fLwolFFcdgiYDd9Z0TtUsQm43h6ECifBvltnDtebBIT74AiGh/hV8cI9s
- xmAQQRRJvkrnXzWr9BmuRdKgmf6quhX+c4Xwtxy2PNLTw9yHax1iwKVJYlJDB0hV7D+z
- U77yZiNCQKeCLF6jkr1Rn0wQLWbVR6IpO3SPGolpog30oQfs14cGd0RpJv8mcE7jrHsD
- gaqjXphF1jwO4d4OzrefKH2MDlvtb075DKJZ6ZI3elO8wW1eGkSZQg9IUzEYDNLu0Y0O
- YdEVAsWKg9ahk/obUuQ5nnz8yCXrIMcL+tHfVVsRRfQVMkthfR6LI1X9vHrvbuvJxjSj Yg== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gxs0hs6vy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 26 Jun 2022 15:48:17 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25QFlSel001778;
-        Sun, 26 Jun 2022 15:48:14 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3gwsmj1qn0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 26 Jun 2022 15:48:14 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25QFmBZt14221784
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 26 Jun 2022 15:48:11 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A40C11C050;
-        Sun, 26 Jun 2022 15:48:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDA1811C04A;
-        Sun, 26 Jun 2022 15:48:07 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.95.64])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 26 Jun 2022 15:48:07 +0000 (GMT)
-Message-ID: <54af4a92356090d88639531413ea8cb46837bd18.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
- named fwsecurityfs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Date:   Sun, 26 Jun 2022 11:48:06 -0400
-In-Reply-To: <41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com>
-References: <20220622215648.96723-1-nayna@linux.ibm.com>
-         <20220622215648.96723-3-nayna@linux.ibm.com> <YrQqPhi4+jHZ1WJc@kroah.com>
-         <41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9AuopBc9nCHv2PWc6MREZAyjLibJAqd-
-X-Proofpoint-ORIG-GUID: 9AuopBc9nCHv2PWc6MREZAyjLibJAqd-
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Sun, 26 Jun 2022 11:57:14 -0400
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FABCCE24;
+        Sun, 26 Jun 2022 08:57:13 -0700 (PDT)
+Received: by mail-ua1-x931.google.com with SMTP id x21so2644944uat.2;
+        Sun, 26 Jun 2022 08:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ru8S1AO6bDBYdJVooFARcAR7lADQiG7CRLPBFOToc3Q=;
+        b=bOThzj3P+GnaLEYcfbhAuHnTSM/DLtZeOo7iXx9TCX71UC1k6g3AtTNGd75iPYW8BO
+         1inwM2doFEdK4ZbFwsZzK2fPmFqBeppg5ZSklLfGou3KTTIaqu6YB1v5nxBqYaQ2hncn
+         zO0Xw5/qXMQ2DeK8ZNQRcPjB9CkMs+Tj+AwtGWOc4F51r38h+KoQWWYuhlNCNFW57IV2
+         feb5FEt95+CoYkEeFYiKZc5g7bfPGhcLqpfPgM4R1zSNoew3jTR7f/QHOxx4aTdlea8o
+         EaOtUGVAZFoH5orcGMjuSPSo28ncdwCUvrcs/9LoXj0pSmRAnlruNl2ZemGgIerrkPbM
+         u0+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ru8S1AO6bDBYdJVooFARcAR7lADQiG7CRLPBFOToc3Q=;
+        b=nFUNSAQflO41xhhkNEpC4WbjSLLqWAz5NTRyjUFop6DWMMCTmPidhbcK2e99NmP1fv
+         wHAb1Jl9WeahxhWs14DMOxj4qQXR0IuBUGWoKPbI86nYD+cc/jpp6tKP6MoL0JARxMAI
+         T+/tb5/Vod3bW/Bats4dRHadQOTd4jlPJDWsVOCY3W1s73Av40BwIkW3R3DU5Imzwpn+
+         A+ZMHzVWDscanJdiSQfr/X3WEZ8lbKXX7g8JliLMsJeCpKLkEkkwNtFfo6Injtjg6nzM
+         5nWvXlm3qkbb+w2g69RgXc1LPG4gWXCL4ci10/INSdzEAvAxjO0gWFAQiv3VsS9sDcsf
+         L0RA==
+X-Gm-Message-State: AJIora8fsA6Vz6402m75SEXc2iM5tuEAA7EK+yRtvrTKNhUka5pWQn+J
+        V1ik+lDwDKoPEczRQNoXuPJ9XmdIB3WxXrzs3WjiAA44Pp++Tg==
+X-Google-Smtp-Source: AGRyM1tmiXJohlxVh3s42y0kiTjHO4IkXPlBFJrOCYgCzPbLRG3yUtbuDWgt2dYkiN71OjswS4HNxor7TjWLREZR3ZU=
+X-Received: by 2002:a9f:23c2:0:b0:365:958:e807 with SMTP id
+ 60-20020a9f23c2000000b003650958e807mr3111764uao.114.1656259032521; Sun, 26
+ Jun 2022 08:57:12 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-06-26_03,2022-06-24_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- mlxscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 phishscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
- definitions=main-2206260064
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220624143538.2500990-1-amir73il@gmail.com>
+In-Reply-To: <20220624143538.2500990-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 26 Jun 2022 18:57:01 +0300
+Message-ID: <CAOQ4uxj8CLbiOjwxZOK9jGM69suakdJtNp9=0b7W=ie4jGp3Sg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] New fanotify API for ignoring events
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-06-23 at 09:23 -0400, James Bottomley wrote:
-> On Thu, 2022-06-23 at 10:54 +0200, Greg Kroah-Hartman wrote:
-> [...]
-> > > diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
-> > > new file mode 100644
-> > > index 000000000000..5d06dc0de059
-> > > --- /dev/null
-> > > +++ b/fs/fwsecurityfs/inode.c
-> > > @@ -0,0 +1,159 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright (C) 2022 IBM Corporation
-> > > + * Author: Nayna Jain <nayna@linux.ibm.com>
-> > > + */
-> > > +
-> > > +#include <linux/sysfs.h>
-> > > +#include <linux/kobject.h>
-> > > +#include <linux/fs.h>
-> > > +#include <linux/fs_context.h>
-> > > +#include <linux/mount.h>
-> > > +#include <linux/pagemap.h>
-> > > +#include <linux/init.h>
-> > > +#include <linux/namei.h>
-> > > +#include <linux/security.h>
-> > > +#include <linux/lsm_hooks.h>
-> > > +#include <linux/magic.h>
-> > > +#include <linux/ctype.h>
-> > > +#include <linux/fwsecurityfs.h>
-> > > +
-> > > +#include "internal.h"
-> > > +
-> > > +int fwsecurityfs_remove_file(struct dentry *dentry)
-> > > +{
-> > > +	drop_nlink(d_inode(dentry));
-> > > +	dput(dentry);
-> > > +	return 0;
-> > > +};
-> > > +EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
-> > > +
-> > > +int fwsecurityfs_create_file(const char *name, umode_t mode,
-> > > +					u16 filesize, struct dentry
-> > > *parent,
-> > > +					struct dentry *dentry,
-> > > +					const struct file_operations
-> > > *fops)
-> > > +{
-> > > +	struct inode *inode;
-> > > +	int error;
-> > > +	struct inode *dir;
-> > > +
-> > > +	if (!parent)
-> > > +		return -EINVAL;
-> > > +
-> > > +	dir = d_inode(parent);
-> > > +	pr_debug("securityfs: creating file '%s'\n", name);
-> > 
-> > Did you forget to call simple_pin_fs() here or anywhere else?
-> > 
-> > And this can be just one function with the directory creation file,
-> > just check the mode and you will be fine.  Look at securityfs as an
-> > example of how to make this simpler.
-> 
-> Actually, before you go down this route can you consider the namespace
-> ramifications.  In fact we're just having to rework securityfs to pull
-> out all the simple_pin_... calls because simple_pin_... is completely
-> inimical to namespaces.
-> 
-> The first thing to consider is if you simply use securityfs you'll
-> inherit all the simple_pin_... removal work and be namespace ready.  It
-> could be that creating a new filesystem that can't be namespaced is the
-> right thing to do here, but at least ask the question: would we ever
-> want any of these files to be presented selectively inside containers? 
-> If the answer is "yes" then simple_pin_... is the wrong interface.
+On Fri, Jun 24, 2022 at 5:35 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Hi Jan,
+>
+> As we discussed [1], here is the implementation of the new
+> FAN_MARK_IGNORE API, to try and sort the historic mess of
+> FAN_MARK_IGNORED_MASK.
+>
 
-Greg, the securityfs changes James is referring to are part of the IMA
-namespacing patch set:
-https://lore.kernel.org/linux-integrity/20220420140633.753772-1-stefanb@linux.ibm.com/
+Jan,
 
-I'd really appreciate your reviewing the first two patches:
-[PATCH v12 01/26] securityfs: rework dentry creation
-[PATCH v12 02/26] securityfs: Extend securityfs with namespacing
-support
+When we started talking about adding FAN_MARK_IGNORE
+it was to address one specific flaw of FAN_MARK_IGNORED_MASK,
+but after staring at the API for some time, I realized there are other
+wrinkles with FAN_MARK_IGNORED_MASK that could be addressed
+by a fresh new API.
 
-thanks,
+I added more input validations following the EEXIST that you requested.
+The new errors can be seen in the ERRORS section of the man page [3].
+The new restrictions will reduce the size of the test matrix, but I did not
+update the LTP tests [2] to check the new restrictions yet.
 
-Mimi
+I do not plan to post v3 patches before improving the LTP tests,
+but I wanted to send this heads up as an API proposal review.
+The kernel commit that adds FAN_MARK_IGNORE [1] summarize the
+new API restrictions as follows:
 
+    The new behavior is non-downgradable.  After calling fanotify_mark() with
+    FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
+    on the same object will return EEXIST error.
 
+    Setting the event flags with FAN_MARK_IGNORE on a non-dir inode mark
+    has no meaning and will return ENOTDIR error.
 
+    The meaning of FAN_MARK_IGNORED_SURV_MODIFY is preserved with the new
+    FAN_MARK_IGNORE flag, but with a few semantic differences:
+
+    1. FAN_MARK_IGNORED_SURV_MODIFY is required for filesystem and mount
+       marks and on an inode mark on a directory. Omitting this flag
+       will return EINVAL or EISDIR error.
+
+    2. An ignore mask on a non-directory inode that survives modify could
+       never be downgraded to an ignore mask that does not survive modify.
+       With new FAN_MARK_IGNORE semantics we make that rule explicit -
+       trying to update a surviving ignore mask without the flag
+       FAN_MARK_IGNORED_SURV_MODIFY will return EEXIST error.
+
+    The conveniene macro FAN_MARK_IGNORE_SURV is added for
+    (FAN_MARK_IGNORE | FAN_MARK_IGNORED_SURV_MODIFY), because the
+    common case should use short constant names.
+
+Comments and questions on the API changes are most welcome.
+Suggestion for more restrictions as well.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/fan_mark_ignore
+[2] https://github.com/amir73il/ltp/commits/fan_mark_ignore
+[3] https://github.com/amir73il/man-pages/commits/fan_mark_ignore
