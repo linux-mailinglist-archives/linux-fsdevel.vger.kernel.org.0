@@ -2,111 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37FFB55ADDA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jun 2022 02:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5191355B000
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jun 2022 09:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233595AbiFZAzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jun 2022 20:55:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33636 "EHLO
+        id S233941AbiFZHo0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jun 2022 03:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233524AbiFZAzI (ORCPT
+        with ESMTP id S232160AbiFZHoZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jun 2022 20:55:08 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178D113F5D;
-        Sat, 25 Jun 2022 17:55:08 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id e7so5741785vsp.13;
-        Sat, 25 Jun 2022 17:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C7i2SuC8HvNtahBs650x0F3fQo07SPvotbyo5SUsyEo=;
-        b=j4hwxhBRkaYlDGySlH1XIgFQNXIK9ATmdGShdYo70CMyTQnTpuIK6AaffgHi0G1WrS
-         yspw0QmAkmZ+iT/Nub2aifqTd4dOAiH7Zrkyz18m+TOJlcJ85Ghitwt3fmbszBv/5dv3
-         Nf0gAoWEmgph1ZDEtglkh3fkTU+oa1kCE2ohk9yzbmUVabXa4mrtk+F7c3JxxpcR2xrZ
-         DsUBBz5u6n7VFxCYdh1Iq0IFrNMur9GFNvcAes4cBOBps/KxbmXD6bHGHP5skNXm8hno
-         UpS9/rL0oAG8itWHNbeFGk1qiZhYUx52WO0ixtR0WATnm6VM7Dq2qJ1o29zn65PN9xFv
-         ++Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C7i2SuC8HvNtahBs650x0F3fQo07SPvotbyo5SUsyEo=;
-        b=OpsTIVpjCgSYG/i+ED5Esw/Tfgh7R/oBuXJtfX0QlrayCgbRy+XI4rAJGSlqyzP3Ej
-         2/0XPVKo9D+aWfp6AdaU+Xm068nN7YXMklTwanAkACCS0xdeCnLF0Qp12S+wWz1lZ+Jx
-         7cyNKfJIbeBz7li3i2rlcTgDU2SOYkLsdYJ4HB4G2wxqYFznmyy6ewiG5zPZI0X3YthE
-         1sDddd27lRsfMW4kwOlSSpK7ncwMVWAPCFObRZREHnEdnJ4ASvAg44JyyOCtl0hiEx3s
-         m+dQN8gasIZ0n0hMAtO0Jgauu3g7ds1ZoalQz+YCiDLqLDlyM0MKd9YydqwzdsND58ZK
-         4A9A==
-X-Gm-Message-State: AJIora/frAiki0I63rBim2WTqkEQvuzECjCkdAyaI22bMiAn6Kb9elax
-        WTTURy1Ks0sWsAlAekV85z8w+1oEUgS7cu3AVcw=
-X-Google-Smtp-Source: AGRyM1sx07oRPPmVD6FBxstCQUdbIJr5W1yPGVjkxJvEzPIyyaUN8U+dd9tpRk7sIYCyobHgA77nN1ZqRIQMrLqTsIw=
-X-Received: by 2002:a67:cb88:0:b0:354:432f:1258 with SMTP id
- h8-20020a67cb88000000b00354432f1258mr2473730vsl.17.1656204906624; Sat, 25 Jun
- 2022 17:55:06 -0700 (PDT)
+        Sun, 26 Jun 2022 03:44:25 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACE311A2D;
+        Sun, 26 Jun 2022 00:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZYf9S+9v8SssB2f7SI0aLipRvyLjpdyjZAR4xNwIlyA=; b=ku+r4DqZkB95/Xfmh9ue6cm+09
+        CyOJKQrOsW5u38sU/yT0ordtzA+/36HzICae4wQDfFz2S+Hbn5laa+W58cHSq5nsw9ipLZBhM3hNJ
+        mXF+/5KDpW3EpisCVvR/XT04v0kdwEIr/NbG8Gznzxnrgcre+KeUy/4U2wO3EW4cPCpzcGr7sZHu4
+        G5qwtDrH1THEWNH3Y/cvkvBxQihfsVriRfNB5vflSLMXblFCTZcFF8+Yvxqhcd26i6lzK4QaFpaDi
+        Bn+3NT5N/eBtb5v+o6f9b2xcqVfF+oWNL2sc+ddYWmhqUodeV8wXtxU1nuUXbY0dI+3z1TddPdJIk
+        AQTuUgeQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o5MwN-00ARUE-Bk; Sun, 26 Jun 2022 07:44:19 +0000
+Date:   Sun, 26 Jun 2022 00:44:19 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Avi Kivity <avi@scylladb.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v3 1/8] statx: add direct I/O alignment information
+Message-ID: <YrgOUw6YM2c6k59U@infradead.org>
+References: <20220616201506.124209-1-ebiggers@kernel.org>
+ <20220616201506.124209-2-ebiggers@kernel.org>
+ <6c06b2d4-2d96-c4a6-7aca-5147a91e7cf2@scylladb.com>
 MIME-Version: 1.0
-References: <20220625110115.39956-1-Jason@zx2c4.com> <20220625110115.39956-2-Jason@zx2c4.com>
- <YreI9h957ZWv99OR@zx2c4.com>
-In-Reply-To: <YreI9h957ZWv99OR@zx2c4.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 25 Jun 2022 19:54:55 -0500
-Message-ID: <CAH2r5mt1LSaRSSPx6xUxC=S4tATFNqdxmS-yWmfcPp+vibVRxg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] ksmbd: use vfs_llseek instead of dereferencing NULL
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Steve French <stfrench@microsoft.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c06b2d4-2d96-c4a6-7aca-5147a91e7cf2@scylladb.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I just added it to ksmbd-for-next
+On Sun, Jun 19, 2022 at 02:30:47PM +0300, Avi Kivity wrote:
+> > * stx_dio_offset_align: the alignment (in bytes) required for file
+> >    offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
+> >    on the file.  This will only be nonzero if stx_dio_mem_align is
+> >    nonzero, and vice versa.
+> 
+> 
+> If you consider AIO, this is actually three alignments:
+> 
+> 1. offset alignment for reads (sector size in XFS)
+> 
+> 2. offset alignment for overwrites (sector size in XFS since ed1128c2d0c87e,
+> block size earlier)
+> 
+> 3. offset alignment for appending writes (block size)
+> 
+> 
+> This is critical for linux-aio since violation of these alignments will
+> stall the io_submit system call. Perhaps io_uring handles it better by
+> bouncing to a workqueue, but there is a significant performance and latency
+> penalty for that.
 
-Thx.
+I think you are mixing things up here.  We actually have two limits that
+matter:
 
-On Sat, Jun 25, 2022 at 5:20 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hi Steve,
->
-> On Sat, Jun 25, 2022 at 01:01:08PM +0200, Jason A. Donenfeld wrote:
-> > By not checking whether llseek is NULL, this might jump to NULL. Also,
-> > it doesn't check FMODE_LSEEK. Fix this by using vfs_llseek(), which
-> > always does the right thing.
-> >
-> > Fixes: f44158485826 ("cifsd: add file operations")
-> > Cc: stable@vger.kernel.org
-> > Cc: linux-cifs@vger.kernel.org
-> > Cc: Steve French <stfrench@microsoft.com>
-> > Cc: Ronnie Sahlberg <lsahlber@redhat.com>
-> > Cc: Hyunchul Lee <hyc.lee@gmail.com>
-> > Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
-> > Acked-by: Al Viro <viro@zeniv.linux.org.uk>
-> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
->
-> This commit has been reviewed by Namjae and acked by Al. The rest of the
-> commits in this series are likely -next material for Al to take in his
-> vfs tree, but this first one here is something you might consider taking
-> as a somewhat important bug fix for 5.19. I marked it for stable@ and
-> such as well. Your call -- you can punt it to Al's -next branch with the
-> rest of the series if you want -- but I think this patch is a bit unlike
-> the others. This occurred to me when I saw you sent some cifs fixes in
-> earlier this evening.
->
-> Jason
+ a) the hard limit, which if violated will return an error.
+    This has been sector size for all common file systems for years,
+    but can be bigger than that with fscrypt in the game (which
+    triggered this series)
+ b) an optimal write size, which can be done asynchronous and
+    without exclusive locking.
+    This is what your cases 2) and 3) above refer to.
 
-
-
--- 
-Thanks,
-
-Steve
+Exposting this additional optimal performance size might be a good idea
+in addition to what is proposed here, even if matters a little less
+with io_uring.  But I'm not sure I'd additional split it into append
+vs overwrite vs hole filling but just round up to the maximum of those.
