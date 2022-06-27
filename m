@@ -2,247 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3B955D8BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380F955DA3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242536AbiF0WQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 18:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49662 "EHLO
+        id S242657AbiF0Wb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 18:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240919AbiF0WQY (ORCPT
+        with ESMTP id S242644AbiF0Wby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 18:16:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC6B62F3;
-        Mon, 27 Jun 2022 15:16:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 26E5EB81B86;
-        Mon, 27 Jun 2022 22:16:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC717C34115;
-        Mon, 27 Jun 2022 22:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656368179;
-        bh=vJwHxqkzHsri3TlaberBK2ZN0BXvdFVaOZsJ9yRubNY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OyxFNkjp5WSmeT2Blz4ib76F/90I7Ewl/4obuWeAoZ9qtYYMT5gyNYSItcnpEhW2s
-         FEVYjwoOX0MgyGEh9/5ocdWNkyCeefsik5rez0Vj7CAQMWlCq2aa3KxixlBjzXkyPK
-         lp7KpIjDTTxPTYIX8eBqMr5DrJ3SuY/3WG3wNsnKdENF3DJhO5sWsl+9o8buIxeECx
-         /Hk7pDnnMQeXcYCuIkklScb7tTBR1pzLVw0BLOv75eIfr7OaYpOUZm57BguZeaEMNb
-         DMZZVY1WRLfJwQNFMSOHguaDvWqe6eoVVpxCOkO7/IEI3vUwuanZUvNd9FCxsO9ISV
-         crRLRpwjZFXCg==
-Date:   Mon, 27 Jun 2022 15:16:19 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 25/25] xfs: Support large folios
-Message-ID: <YrosM1+yvMYliw2l@magnolia>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-26-willy@infradead.org>
- <YrO243DkbckLTfP7@magnolia>
- <Yrku31ws6OCxRGSQ@magnolia>
- <Yrm6YM2uS+qOoPcn@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Mon, 27 Jun 2022 18:31:54 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B592B1FCCA;
+        Mon, 27 Jun 2022 15:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656369110; x=1687905110;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=cFfs79so5bDyszYGeV34Sx13DSMu8p5hKhG+YTrPg6I=;
+  b=DbS6Fgbxmvyv+I85OGq4Ii9xtDeApCr6hH2Jc+ivTd8eRRaCyUqNTFTp
+   vSqvPxM7gUvWSmkLjPpzuFCwhNrNRZkU17E/qmLm9VG46T5r5z4hcuSMR
+   88QgdHJWOsBJ1AxjPunwZgo0UR1BeIWksgICRd98chF6W0tnLts+beWra
+   YQCe2HAtg9hW6Ocn65oxLhnVPfMCxQ3VnUonU4AOrkQMr+F7jDR9Ac3zO
+   I/zwRj8IxYTlNtUJzWFH8Go/M4CQc4rwxbY5c8uyfoMtjEfdsij9PLUAj
+   RYv/Hk9tSZSwdm5x+8wGQm3+02NJs+7uZrljA6QRXKuNMaDISOHrg5qUg
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="307054827"
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="307054827"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2022 15:31:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="594502569"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Jun 2022 15:31:49 -0700
+Received: from orsmsx605.amr.corp.intel.com (10.22.229.18) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Mon, 27 Jun 2022 15:31:48 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx605.amr.corp.intel.com (10.22.229.18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Mon, 27 Jun 2022 15:31:48 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.27; Mon, 27 Jun 2022 15:31:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bgbRU5ZSJ+1Njs1Ls5+mrC2TiMXDi6j+q1nXEW35T0vgGO9W6aK0KqFw8sLIpVNW5OEYewvET37n7OLnzZJzrdoAPvuBbKl2gKhhbMESYILsmLYunOjlbKIBJepwvrBGTXlteBN4XqKcJA3F5ktTDOcARc7D/BEWm1ouxrRANeHu7u58sV/HAAoNgfi/egYKuQLeez6w+8vyf6/t3bVzALpXu4HHE9Zu0zqEJk2ju0blX3YtecrfUxzHj/CVnr40PS3z1w1ZMy8GJZzHL7fpiQznoZJDug/Y+NOh43a03VPTMQQvWz4AoCcRi+x91siT0uSwWDqDOh7397up6lUgLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fk+tjoSHkPKT19HAXvoo/zCR1SLEsyiUuNU6CruvzGM=;
+ b=QI0iafA/bjqr3Gx/f278cS7Oe2x/WkoQMqIGtb6F5Dxfd8KGUdN0WY+LZsBdW5DuG/IkEiGDaJLunvc+wYSbILqxZb12Aer3pTYr7w8s46PErQpET6TL3qYW29h2Ov9/EnK7F8GH22u1w5GbZgtfq5oQQYIpUatlbQe4GzlKUmVSPR6hRnIesSOW9Vyo4AYmxRthVk7LvEDo8N/e0qC5Yke05/8T1b32FiLPtXodGmdngB9bhvjeeKmMTiW3Gs6/1vEACeKhtxeUnT3KCN0/cetAqByvXQUerrK00rSjds9UgCkj018UeCPxBTH+mSq7QbJmqLlZKctqU5S1D0VuOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20) by MN2PR11MB3615.namprd11.prod.outlook.com
+ (2603:10b6:208:ec::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.16; Mon, 27 Jun
+ 2022 22:31:46 +0000
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::f50c:6e72:c8aa:8dbf]) by MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::f50c:6e72:c8aa:8dbf%7]) with mapi id 15.20.5373.018; Mon, 27 Jun 2022
+ 22:31:46 +0000
+Date:   Mon, 27 Jun 2022 15:31:42 -0700
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <x86@kernel.org>, <dm-devel@redhat.com>,
+        <linux-m68k@lists.linux-m68k.org>, <linux-mips@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-can@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux1394-devel@lists.sourceforge.net>,
+        <io-uring@vger.kernel.org>, <lvs-devel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <kasan-dev@googlegroups.com>,
+        <linux-mmc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+        <linux-perf-users@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <linux-sctp@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <target-devel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        <linux-rdma@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        <linux-hardening@vger.kernel.org>
+Subject: RE: [PATCH][next] treewide: uapi: Replace zero-length arrays with
+ flexible-array members
+Message-ID: <62ba2fced98ed_103a0e29448@dwillia2-xfh.notmuch>
+References: <20220627180432.GA136081@embeddedor>
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <Yrm6YM2uS+qOoPcn@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220627180432.GA136081@embeddedor>
+X-ClientProxiedBy: MW4PR03CA0348.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::23) To MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 09857533-95a6-4ce5-821a-08da588cd147
+X-MS-TrafficTypeDiagnostic: MN2PR11MB3615:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: I8QxY2dRCssS1nOBaKo6XXukRWcQnmTJH2CTvS1oBWI5m88TdZyePC8+8Y0lOy5CTi+gHMca0W8aiZ/N99wYfzWDT4IwVc4nlPrt+m+R4p2eDFjRwAp5zJ0VpYLntAd+8A00LZQoJik2rjbu5yVMxLfzdAE/sViq6QR/ukrAYU6UH00hT/qjTfq5KJ6RNmBJjkE9wR8YlchdCVQfclNLDMwBRKAceVhlApanN3Kun5MvZcVR3nAEDzee42+78vAUhiTD75bcuXHURf9mM6NWettdBNB+fgoFRuSIfNbpFulswaXgt+/W3zFI5GI6s+IO6P7PaIkaHL5ETfxVXF7R5o8CyVUDydZpe+Wo6FiGJLus4dot7TeZ2i7BumDmuP2aPbFZpX0GbQZu4hursUXqRwE2dMGw5Mf+B4E0s5mE8SNKEUgUaTQbQGCJ+39EGCF8oMg/hVKoYY9RhxhEhjLKAozVDeQ4YIGG0uJOByhFexDi/CUzss4zWm3FPSVVNx4WelTO8Eiasy/iNjTp8PznOSLGYIo42iw/Hjo++nvz4kH45aIuzAYBtK24nNuwNzMbw4sZoThoJKGKwgdXb5MUKX0VZNuO4cSKb3qG94N5aRCJ56Wdc/+RlFCaggvApnHVcVb8WZ2tBa7ELxVh5io/heAz/fk/UX+HQSPPeKz2L/y2wd5VLtSoLAK+t2RnWXIknFIHsQEtJpjJCc3Z5XS3bsdpx9Mhe7/ar6cHw6C6qj10wOiolEM6AzvfHFUUlo6+4Fm/bKWXrtwiCf23irh7lEh8H2PSKKbYuEuqvEmBbfU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(136003)(376002)(396003)(346002)(39860400002)(366004)(6666004)(7416002)(6506007)(41300700001)(38100700002)(8936002)(83380400001)(66946007)(66476007)(7406005)(66556008)(82960400001)(9686003)(26005)(6512007)(5660300002)(6486002)(110136005)(478600001)(8676002)(966005)(2906002)(316002)(4326008)(186003)(86362001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TG81TEp2bjd5Ui8vcXRBOE1oT2o4aFh0aE1Ma1hEaHNzOWFKMEpVOEdjc0I3?=
+ =?utf-8?B?SWNnYkVSZ2gxcDgwU2twTjF4ZW5PbFcwZHpEZlc3WnBtOXhsVUNMcVhTb2hw?=
+ =?utf-8?B?Z1UvTFZkSXdjc3lZU1JpbGhXSDExS2RTcUhFanJHbitxYk5nSzB2TitnUTB1?=
+ =?utf-8?B?d3Npa2lreGhFanpCS2Z6WGhuaWtsYldmWXB4eVAyaE9lSG5JNHV0SG9FTG40?=
+ =?utf-8?B?elVLZEpIUWZ0K0ZFamlxcHU1Qmw3T1J1VU9CK29Ib0VzanNEK0xad2VyeFM5?=
+ =?utf-8?B?c1dUZzh5RE9UR0Y3Wk1mOHpMdS9FUjRTU0VKT0ErU0tGd1pvdng5Wk92WmVP?=
+ =?utf-8?B?aGhLVHE5QitoeUVFSmRYd3I1UEJVckw5SXNobnQ3VkNFYzFGM0VWMjR6NHZE?=
+ =?utf-8?B?MW5hbUVZR3Q1TGRXQnRIbEYyU3BuRHRzbjFoN25iQ3ZsRkRwTUNiZWpLRGwy?=
+ =?utf-8?B?dUlDcnNJZlRWNjZqYzNJY1RPQnhEWTJMN056dkJtK3FMS3NNL1paZ1dtQXQ2?=
+ =?utf-8?B?c2toU3JpelZQMm1yVkNiTnZReUROU2thMlN0K3ptc3lqSFpGQTc5dFZ5ZkZH?=
+ =?utf-8?B?M1dRNjhzT1NSOHFBRm9lV01xSExNeWJmM0d3L3hoVXNZSVc0N0dTZ1RKSnBZ?=
+ =?utf-8?B?T3l5WDhrTlVZTWNYZHI3U2V3TFFTc1hKUGxZTXFNVm1Ga2hFYTNnZmZCcWZV?=
+ =?utf-8?B?d29rZjJmN2NUbGh0Y29KR2hBUkdIRHpJc2FCRHkzZjZiMkJMRExhRGtPOWZK?=
+ =?utf-8?B?N3VjaFU3aEpNZHFnUC9qY0RJZGwwcUgzT2crTlVnWHI3NEdGanZPVTlna1NY?=
+ =?utf-8?B?ZWdsU200UjJWTVBSWW1ENTRUWTFVMmFSbDliV0FTVlJQRCs3UFI2L0JRK2pH?=
+ =?utf-8?B?Z1NWQjZGdFh2aGg0ay9FV1paWmtram9tK1M4ZzgwN3h5TThkNis1bHVXTDVP?=
+ =?utf-8?B?czlJK1NnR0tNcDQvOXJrdnN6YnEyRHkyNzdiMzA5SWhGV0J0a1h2Q2poc2F3?=
+ =?utf-8?B?Ri9DYkJjVm9nQWVjME1ndnFtT3Q3RjFyVEVDM0U1VFd0elBCRnlXUHJWR3Zx?=
+ =?utf-8?B?S3kzV3dOM0NqSjRnOUVWdGhTN0hnbTRBOUpnT3cwc3hhTkZEMzBNbkpzbEtJ?=
+ =?utf-8?B?Vm5lVE0wbUN4UEdlTHBVWG9QdzRobWdCWStjb2QvcGlPd1JhUnY1UUtHcUUx?=
+ =?utf-8?B?blp4NGRWbE5SYTRrRjN1Uy80ZWJoZXBvdnRDWFpMNTZBU2NCci9McTlMelJC?=
+ =?utf-8?B?VTlHaGR3cGF5UlEzR3BrSVdRalM3TnJtMXhaQnBnSXNISE9aL1lHS29qQ3RV?=
+ =?utf-8?B?dFd6TytkMkVUNmNMa0Z5eHBOSGJ2UXVoZFR1dHdXemhDK29MWXBBQkowaUta?=
+ =?utf-8?B?NGVZZnZmOVBaK000TUQzWXk0eG1SazBONFVrYjBuVWcrdmJtK0lQSU80RGpD?=
+ =?utf-8?B?YlIwdFZvcTZIMmdyK3diQ25wRWgvV1kzZkZ4U2VyYS84eDBhZHlCYkVPbngx?=
+ =?utf-8?B?VUt1WHc0NjNqR0dWM0dEbnZ4cXVscHVlOEF2V2w5Vkw0UnVrNzVjL0h0a1oz?=
+ =?utf-8?B?TFlFWWhIWEI3eXFVczlqa2Juc3JZVUZ0ZUtIbHhXWGV6bkloMmw4TXVXK2hm?=
+ =?utf-8?B?UDBYQjI4TVB4QlVlcDRQclZ3OFBoeDVPTTNGQnVIZ2VmZE9zcXA0M3M0cHVv?=
+ =?utf-8?B?dHRETGgzWFRSQTd1ZHVkRnJiOER6WWFMb2RJbWF1T2RzYXQ1YVd4Zmh3RkFZ?=
+ =?utf-8?B?M0NTTVlTdEZmT1FDUm1KRzMwZFh1SWJGMlF2SXpJUmFCTmpEN21jWU90TTNO?=
+ =?utf-8?B?OEVTa29FempFTmpYeFdFMTkxa2hrL3hSWUtrUldHZUhxVTRIZVQ4WlhwUUtn?=
+ =?utf-8?B?YS92UWZzL21Fc09vRE81TXZaUngzTm93L2tqOENTdHUybUtLYzlPSFozR0NG?=
+ =?utf-8?B?VkJZeTlQMHQ2MnVqUEJneFVaNDFEQ3VCdXIvb0dhYnVNcmx4Z2I3dWR2ZWFr?=
+ =?utf-8?B?U3FFVHNwb3VmbWxUMUY4TFFCTURWcE1hQmxVUlZzNkJaT241OEJ3Zk5vS2tw?=
+ =?utf-8?B?ZlZEU1FmY3BiaG9iUDZIS0lPK1FVTnZOSVU4L2h5bE1qaXZ3ZWYrdXBtMFVw?=
+ =?utf-8?B?N2RnT3VrY0Rkc1VYM3BIamw2bDJ1TnRabHlKcXdORXhocDlnWWhBdlBuc0FJ?=
+ =?utf-8?B?VFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09857533-95a6-4ce5-821a-08da588cd147
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2022 22:31:45.8792
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tff1Ajm5j5IjP8nC+pmHruh1VBM1HYz+iFkTnXnCZrfcWvUa1L/3YXcaJpJFmczORKhoOnLDiSvurI/2Snl4amoFHffRXHppNmqfZrAlNU4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3615
+X-OriginatorOrg: intel.com
 X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 03:10:40PM +0100, Matthew Wilcox wrote:
-> On Sun, Jun 26, 2022 at 09:15:27PM -0700, Darrick J. Wong wrote:
-> > On Wed, Jun 22, 2022 at 05:42:11PM -0700, Darrick J. Wong wrote:
-> > > [resend with shorter 522.out file to keep us under the 300k maximum]
-> > > 
-> > > On Thu, Dec 16, 2021 at 09:07:15PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > > Now that iomap has been converted, XFS is large folio safe.
-> > > > Indicate to the VFS that it can now create large folios for XFS.
-> > > > 
-> > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > ---
-> > > >  fs/xfs/xfs_icache.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > > 
-> > > > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > > > index da4af2142a2b..cdc39f576ca1 100644
-> > > > --- a/fs/xfs/xfs_icache.c
-> > > > +++ b/fs/xfs/xfs_icache.c
-> > > > @@ -87,6 +87,7 @@ xfs_inode_alloc(
-> > > >  	/* VFS doesn't initialise i_mode or i_state! */
-> > > >  	VFS_I(ip)->i_mode = 0;
-> > > >  	VFS_I(ip)->i_state = 0;
-> > > > +	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> > > >  
-> > > >  	XFS_STATS_INC(mp, vn_active);
-> > > >  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> > > > @@ -320,6 +321,7 @@ xfs_reinit_inode(
-> > > >  	inode->i_rdev = dev;
-> > > >  	inode->i_uid = uid;
-> > > >  	inode->i_gid = gid;
-> > > > +	mapping_set_large_folios(inode->i_mapping);
-> > > 
-> > > Hmm.  Ever since 5.19-rc1, I've noticed that fsx in generic/522 now
-> > > reports file corruption after 20 minutes of runtime.  The corruption is
-> > > surprisingly reproducible (522.out.bad attached below) in that I ran it
-> > > three times and always got the same bad offset (0x6e000) and always the
-> > > same opcode (6213798(166 mod 256) MAPREAD).
-> > > 
-> > > I turned off multipage folios and now 522 has run for over an hour
-> > > without problems, so before I go do more debugging, does this ring a
-> > > bell to anyone?
-> > 
-> > I tried bisecting, but that didn't yield anything productive and
-> > 5.19-rc4 still fails after 25 minutes; however, it seems that g/522 will
-> > run without problems for at least 3-4 days after reverting this patch
-> > from -rc3.
-> > 
-> > So I guess I have a blunt force fix if we can't figure this one out
-> > before 5.19 final, but I'd really rather not.  Will keep trying this
-> > week.
+Gustavo A. R. Silva wrote:
+> There is a regular need in the kernel to provide a way to declare
+> having a dynamically sized set of trailing elements in a structure.
+> Kernel code should always use “flexible array members”[1] for these
+> cases. The older style of one-element or zero-length arrays should
+> no longer be used[2].
 > 
-> I'm on holiday for the next week, so I'm not going to be able to spend
-> any time on this until then.  I have a suspicion that this may be the
-> same bug Zorro is seeing here:
+> This code was transformed with the help of Coccinelle:
+> (linux-5.19-rc2$ spatch --jobs $(getconf _NPROCESSORS_ONLN) --sp-file script.cocci --include-headers --dir . > output.patch)
 > 
-> https://lore.kernel.org/linux-mm/20220613010850.6kmpenitmuct2osb@zlang-mailbox/
+> @@
+> identifier S, member, array;
+> type T1, T2;
+> @@
 > 
-> At least I hope it is, and finding a folio that has been freed would
-> explain (apparent) file corruption.
+> struct S {
+>   ...
+>   T1 member;
+>   T2 array[
+> - 0
+>   ];
+> };
+> 
+> -fstrict-flex-arrays=3 is coming and we need to land these changes
+> to prevent issues like these in the short future:
+> 
+> ../fs/minix/dir.c:337:3: warning: 'strcpy' will always overflow; destination buffer has size 0,
+> but the source string has length 2 (including NUL byte) [-Wfortify-source]
+> 		strcpy(de3->name, ".");
+> 		^
+> 
+> Since these are all [0] to [] changes, the risk to UAPI is nearly zero. If
+> this breaks anything, we can use a union with a new member name.
+> 
+> [1] https://en.wikipedia.org/wiki/Flexible_array_member
+> [2] https://www.kernel.org/doc/html/v5.16/process/deprecated.html#zero-length-and-one-element-arrays
+> 
+> Link: https://github.com/KSPP/linux/issues/78
+> Build-tested-by: https://lore.kernel.org/lkml/62b675ec.wKX6AOZ6cbE71vtF%25lkp@intel.com/
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Hi all!
+> 
+> JFYI: I'm adding this to my -next tree. :)
+> 
+[..]
+>  include/uapi/linux/ndctl.h                    | 10 +--
 
-Hm.  I suppose it /could/ be a lost folio getting into the works
-somewhere.
+For ndctl.h
 
-Today I remembered fsx -X, which makes this reproduce a bit faster (~3-8
-minutes instead of 20-25).  That has helped me to narrow things down a
-little more:
-
-- Turning off INSERT/COLLAPSE_RANGE doesn't make the problem go away,
-  but it does make reading the fsx log much easier.
-
-- Turning off clone/dedupe (either via -J -B or formatting with -m
-  reflink=0) makes the problem go away completely.  If you define
-  letting fsx run for 90 minutes as "completely".
-
-- Neutering vfs_dedupe_file_range_compare by replacing it with an -EBADE
-  return doesn't affect the reproducibility, so it's not the comparison
-  function misbehaving.
-
-- I modified fsx.c so that when there's file corruption, it'll report
-  both the first 16 bytes of corruption as well as every corruption that
-  happens on a page boundary.
-
-- I also modified run_fsx() to diff the good and junk files, and
-  complain about any corruption happening on a page boundary.  Now I see
-  things like this:
-
-2153984(  0 mod 256): SKIPPED (no operation)
-2153985(  1 mod 256): DEDUPE 0xf000 thru 0x23fff        (0x15000 bytes) to 0x2a000 thru 0x3efff ******BBBB
-2153986(  2 mod 256): COPY 0xe794 thru 0x2ae41  (0x1c6ae bytes) to 0x60ac4 thru 0x7d171
-2153987(  3 mod 256): TRUNCATE DOWN     from 0x7d172 to 0x535da
-2153988(  4 mod 256): SKIPPED (no operation)
-2153989(  5 mod 256): MAPREAD  0x40b93 thru 0x535d9     (0x12a47 bytes)
-2153990(  6 mod 256): COPY 0x5edd thru 0x20282  (0x1a3a6 bytes) to 0x3a9aa thru 0x54d4f
-2153991(  7 mod 256): SKIPPED (no operation)
-2153992(  8 mod 256): SKIPPED (no operation)
-2153993(  9 mod 256): ZERO     0x542d3 thru 0x67006     (0x12d34 bytes)
-2153994( 10 mod 256): COPY 0x42cf6 thru 0x538a7 (0x10bb2 bytes) to 0x23fe7 thru 0x34b98 ******EEEE
-2153995( 11 mod 256): MAPWRITE 0x5a1fc thru 0x6b067     (0x10e6c bytes)
-2153996( 12 mod 256): SKIPPED (no operation)
-2153997( 13 mod 256): CLONE 0x38000 thru 0x38fff        (0x1000 bytes) to 0x77000 thru 0x77fff
-2153998( 14 mod 256): FALLOC   0x49bdd thru 0x62a55     (0x18e78 bytes) INTERIOR
-2153999( 15 mod 256): CLONE 0xf000 thru 0x1bfff (0xd000 bytes) to 0x2c000 thru 0x38fff  ******JJJJ
-Log of operations saved to "/mnt/junk.fsxops"; replay with --replay-ops
-Correct content saved for comparison
-(maybe hexdump "/mnt/junk" vs "/mnt/junk.fsxgood")
-junk file 177
--02e000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
--02f000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
--030000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-+02e000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-+02f000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-+030000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-
-When I remount the test filesystem, I see further corruption:
-
-$ diff -Naurp <(od -tx1 -Ax -c $TEST_DIR/junk.fsxgood) <(od -tx1 -Ax -c $TEST_DIR/junk) | grep '^[+-]0..000'
--011000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
--012000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
--013000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-+011000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-+012000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-+013000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
--02e000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
--02f000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
--030000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-+02e000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-+02f000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-+030000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-
-This is really quite strange!  The same corruption patterns we saw at
-pages 0x2e - 0x30 now appear at 0x11-0x13 after the remount!
-
-By comparison, the junk.fsxgood file only contains this 77/db/f1
-sequence at:
-
-$ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep '77  db  f1'
-008530  db  34  db  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d
-03d000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-
-Curiously, the same byte trios at 0x2f000 and 0x30000 have similar
-repetitions at similar looking offsets:
-
-$ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep 'b3  d8  35'
-009530  d8  bb  d8  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b
-03e000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-$ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep '23  d8  c8'
-00a530  d8  f5  d8  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e
-03f000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-
-Though the only pattern that happens consistently is that garbage bytes
-end up at the reflink dest, and later at the reflink source.  I never
-see any VM_BUG_ON_FOLIO asserts, nor does KASAN report anything.
-
-I also added a debug function to dump the folios it finds in the
-pagecache for the fsx junk file, but nothing looks odd:
-
-     522-5099  [001]   491.954659: console:              [U] FSX FAILURE
-  xfs_io-5125  [002]   491.961232: console:              XFS (sda): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-  xfs_io-5125  [002]   491.961238: bprint:               filemap_dump: ino 0xb1 pos 0x0 pfn 0x515cc order 0
-  xfs_io-5125  [002]   491.961238: bprint:               filemap_dump: ino 0xb1 pos 0x1000 pfn 0x515cd order 0
-  xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x2000 pfn 0x515ce order 0
-  xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x3000 pfn 0x515cf order 0
-  xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x4000 pfn 0x50c48 order 0
-  xfs_io-5125  [002]   491.961240: bprint:               filemap_dump: ino 0xb1 pos 0x5000 pfn 0x50c49 order 0
-  xfs_io-5125  [002]   491.961240: bprint:               filemap_dump: ino 0xb1 pos 0x6000 pfn 0x50c4a order 0
-  xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0x7000 pfn 0xc8a8 order 0
-  xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0x8000 pfn 0x50988 order 2
-  xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0xc000 pfn 0x509e0 order 2
-  xfs_io-5125  [002]   491.961242: bprint:               filemap_dump: ino 0xb1 pos 0x10000 pfn 0x4db64 order 2
-
-  xfs_io-5125  [002]   491.961242: bprint:               filemap_dump: ino 0xb1 pos 0x14000 pfn 0x50c4c order 0
-  xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x15000 pfn 0x12485 order 0
-  xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x16000 pfn 0x50c4d order 0
-  xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x17000 pfn 0x50c4e order 0
-  xfs_io-5125  [002]   491.961244: bprint:               filemap_dump: ino 0xb1 pos 0x18000 pfn 0x4eef8 order 2
-  xfs_io-5125  [002]   491.961244: bprint:               filemap_dump: ino 0xb1 pos 0x1c000 pfn 0x4eefc order 2
-  xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x20000 pfn 0x4eef0 order 2
-  xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x24000 pfn 0x50f2c order 2
-  xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x28000 pfn 0x50f28 order 2
-  xfs_io-5125  [002]   491.961246: bprint:               filemap_dump: ino 0xb1 pos 0x2c000 pfn 0x50f24 order 2
-
-  xfs_io-5125  [002]   491.961246: bprint:               filemap_dump: ino 0xb1 pos 0x30000 pfn 0x50f20 order 2
-
-I'll keep digging...
-
---D
+Acked-by: Dan Williams <dan.j.williams@intel.com>
