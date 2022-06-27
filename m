@@ -2,64 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A58B55D956
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30BE55D551
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232999AbiF0Hhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 03:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        id S233054AbiF0JIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 05:08:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232965AbiF0Hhe (ORCPT
+        with ESMTP id S233729AbiF0JIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 03:37:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5A760D5;
-        Mon, 27 Jun 2022 00:37:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EA81561369;
-        Mon, 27 Jun 2022 07:37:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45D7C341C8;
-        Mon, 27 Jun 2022 07:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1656315451;
-        bh=DsZDqRgytXwZKzppv5E+EkTb1K4NGGC2jAstmBQ31VE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i3ldFsiGRWyUL2/7EHUzj3ADKKVrTcF+8yJXjybLKY3QJPs/zZsAplrMS1PPI5PYs
-         4Q5txUsaV5n7fPa9vtZErhohoGy5ahsFShlfNq5dXajY7pEAtLxWvu5a2waWGEX43C
-         Whe69Fv6I/yDBYJrkHxRnOpS0OVtoN/TI1fMRHN0=
-Date:   Mon, 27 Jun 2022 09:37:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
- named fwsecurityfs
-Message-ID: <YrleOHmEbpLPZ1n8@kroah.com>
-References: <20220622215648.96723-1-nayna@linux.ibm.com>
- <20220622215648.96723-3-nayna@linux.ibm.com>
- <YrQqPhi4+jHZ1WJc@kroah.com>
- <41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com>
- <54af4a92356090d88639531413ea8cb46837bd18.camel@linux.ibm.com>
+        Mon, 27 Jun 2022 05:08:37 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461ECBA4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jun 2022 02:08:35 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id ge10so17712747ejb.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jun 2022 02:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=k1e7Wwe1AjCbXe7sromgO+mILN6P9Y2vdSpGp2oCkCk=;
+        b=b8qCSWEOKka9s84N0wcEJ/GTZwusewGy5IsaK2F9Q4UFzB6+y+8ozRjXh89hAvLlMU
+         K12dt4t2k478igf5w1imCsx/nqsNQMxOs1sQIJ30nQnGe+id+s6HkddlqiCTvSHJSysA
+         9g99nL0Wk1M/DhvRrpm4pO91F74cEKsE6GmoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=k1e7Wwe1AjCbXe7sromgO+mILN6P9Y2vdSpGp2oCkCk=;
+        b=CbXo+N7uflE771+VbLGmts10ARjaa5oYybELQwBK0xFSLI9W+mgipIFIKLOimdW15L
+         fWMr5UTTgQ6AQaZ7MEhmTcB8nshjnSkVdyG5ENW0CB8zLDyUR8/4NUDTK6NYx/ZLk4Ei
+         r+uCnNBW3TP6RonViqvoM2HIeHHZ/SRd1aDQA82L9B/+OKQco13ZInvv6GlQogOonKsL
+         Sa6S6s8GUKjz59rm3cjqDlz65XNurkBetPvT0UKbOgjZd2c40mI31JjelVZPzrsABD8u
+         +pTjMpmI7xXd/Js5LolBeldMjVY+P2LDIhM0paAF6d5LCOcW2LZN40ocWUyVIqEE/1a5
+         q7Ew==
+X-Gm-Message-State: AJIora/GgDWayglUAaD+/BxWLo02Fhy3P8WpLy82qMwqI8AvXjlSwVaC
+        0iSsfaOytalaypDXaYeODHTlwQ==
+X-Google-Smtp-Source: AGRyM1vFhPN1meHKKImI2keGZpwl6qEWNsZwQgQPLYnEouybFA2jLTjk/b7ksAjiA+H1CLyv+UeX1w==
+X-Received: by 2002:a17:907:7811:b0:6ef:a896:b407 with SMTP id la17-20020a170907781100b006efa896b407mr11583984ejc.645.1656320914396;
+        Mon, 27 Jun 2022 02:08:34 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id b7-20020a50e787000000b0042ab4e20543sm7225848edn.48.2022.06.27.02.08.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jun 2022 02:08:33 -0700 (PDT)
+Date:   Mon, 27 Jun 2022 11:08:32 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 7/8] dma-buf: remove useless FMODE_LSEEK flag
+Message-ID: <YrlzkAlheCR0ZMuO@phenom.ffwll.local>
+Mail-Followup-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+References: <20220625110115.39956-1-Jason@zx2c4.com>
+ <20220625110115.39956-8-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <54af4a92356090d88639531413ea8cb46837bd18.camel@linux.ibm.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220625110115.39956-8-Jason@zx2c4.com>
+X-Operating-System: Linux phenom 5.10.0-8-amd64 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,93 +81,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 26, 2022 at 11:48:06AM -0400, Mimi Zohar wrote:
-> On Thu, 2022-06-23 at 09:23 -0400, James Bottomley wrote:
-> > On Thu, 2022-06-23 at 10:54 +0200, Greg Kroah-Hartman wrote:
-> > [...]
-> > > > diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
-> > > > new file mode 100644
-> > > > index 000000000000..5d06dc0de059
-> > > > --- /dev/null
-> > > > +++ b/fs/fwsecurityfs/inode.c
-> > > > @@ -0,0 +1,159 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > +/*
-> > > > + * Copyright (C) 2022 IBM Corporation
-> > > > + * Author: Nayna Jain <nayna@linux.ibm.com>
-> > > > + */
-> > > > +
-> > > > +#include <linux/sysfs.h>
-> > > > +#include <linux/kobject.h>
-> > > > +#include <linux/fs.h>
-> > > > +#include <linux/fs_context.h>
-> > > > +#include <linux/mount.h>
-> > > > +#include <linux/pagemap.h>
-> > > > +#include <linux/init.h>
-> > > > +#include <linux/namei.h>
-> > > > +#include <linux/security.h>
-> > > > +#include <linux/lsm_hooks.h>
-> > > > +#include <linux/magic.h>
-> > > > +#include <linux/ctype.h>
-> > > > +#include <linux/fwsecurityfs.h>
-> > > > +
-> > > > +#include "internal.h"
-> > > > +
-> > > > +int fwsecurityfs_remove_file(struct dentry *dentry)
-> > > > +{
-> > > > +	drop_nlink(d_inode(dentry));
-> > > > +	dput(dentry);
-> > > > +	return 0;
-> > > > +};
-> > > > +EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
-> > > > +
-> > > > +int fwsecurityfs_create_file(const char *name, umode_t mode,
-> > > > +					u16 filesize, struct dentry
-> > > > *parent,
-> > > > +					struct dentry *dentry,
-> > > > +					const struct file_operations
-> > > > *fops)
-> > > > +{
-> > > > +	struct inode *inode;
-> > > > +	int error;
-> > > > +	struct inode *dir;
-> > > > +
-> > > > +	if (!parent)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	dir = d_inode(parent);
-> > > > +	pr_debug("securityfs: creating file '%s'\n", name);
-> > > 
-> > > Did you forget to call simple_pin_fs() here or anywhere else?
-> > > 
-> > > And this can be just one function with the directory creation file,
-> > > just check the mode and you will be fine.  Look at securityfs as an
-> > > example of how to make this simpler.
-> > 
-> > Actually, before you go down this route can you consider the namespace
-> > ramifications.  In fact we're just having to rework securityfs to pull
-> > out all the simple_pin_... calls because simple_pin_... is completely
-> > inimical to namespaces.
-> > 
-> > The first thing to consider is if you simply use securityfs you'll
-> > inherit all the simple_pin_... removal work and be namespace ready.  It
-> > could be that creating a new filesystem that can't be namespaced is the
-> > right thing to do here, but at least ask the question: would we ever
-> > want any of these files to be presented selectively inside containers? 
-> > If the answer is "yes" then simple_pin_... is the wrong interface.
+On Sat, Jun 25, 2022 at 01:01:14PM +0200, Jason A. Donenfeld wrote:
+> This is already set by anon_inode_getfile(), since dma_buf_fops has
+> non-NULL ->llseek, so we don't need to set it here too.
 > 
-> Greg, the securityfs changes James is referring to are part of the IMA
-> namespacing patch set:
-> https://lore.kernel.org/linux-integrity/20220420140633.753772-1-stefanb@linux.ibm.com/
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> Cc: Christian König <christian.koenig@amd.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+
+I'm assuming this is part of a vfs cleanup and lands through that tree?
+For that:
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> ---
+>  drivers/dma-buf/dma-buf.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> I'd really appreciate your reviewing the first two patches:
-> [PATCH v12 01/26] securityfs: rework dentry creation
-> [PATCH v12 02/26] securityfs: Extend securityfs with namespacing
-> support
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 32f55640890c..3f08e0b960ec 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -549,7 +549,6 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+>  		goto err_dmabuf;
+>  	}
+>  
+> -	file->f_mode |= FMODE_LSEEK;
+>  	dmabuf->file = file;
+>  
+>  	mutex_init(&dmabuf->lock);
+> -- 
+> 2.35.1
+> 
 
-Looks like others have already reviewed them, they seem sane to me if
-they past testing.
-
-thanks,
-
-greg k-h
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
