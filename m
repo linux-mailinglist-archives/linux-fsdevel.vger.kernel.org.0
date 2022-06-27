@@ -2,192 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B98255DD8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEEF55E0D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239917AbiF0RQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 13:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36816 "EHLO
+        id S239004AbiF0Rrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 13:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239911AbiF0RQ0 (ORCPT
+        with ESMTP id S239132AbiF0RrZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 13:16:26 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713A56390
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jun 2022 10:16:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1C39FB810FA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jun 2022 17:16:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 863BAC3411D;
-        Mon, 27 Jun 2022 17:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656350182;
-        bh=lsYrEOvS+z6tfV9fHH9LsrqQOjwnmHU2brHTgMpzBcs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DxDmjTuYZSktghf6FYng/MW+8aP8yW1ldGOE6u6D1s4gmweo0yX2cdmv32f1vS4kf
-         vHTrrxAK2r0xOXLDlCl57ZOR5RRki9XSY1hLPhucNtvJqAnG0RWuF0G7Yxpb4WENNh
-         ixQOjbgVyIpzp62p+VISDEFhlRH3c0ZKQj0yJzfwOioumLjsC7y3VWSANP0fYD5Zn8
-         zMYoaerURtuiiRYKoyeSX2+oSQOWbral4EvMG1mF1EOxwz3ylo16tBIcWDrghfXptR
-         YSt765QhB8A1Duug+xcCwsObQ6Ycz8x6Fx3jxWE2CEgV3hhM1yj1SPhDy+tbvUAx+x
-         j5LhjyLAO2aQw==
-Date:   Mon, 27 Jun 2022 19:16:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Marchevsky <davemarchevsky@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Rik van Riel <riel@surriel.com>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        kernel-team <kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, clm@fb.com,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: Re: [PATCH v4] fuse: Add module param for CAP_SYS_ADMIN access
- bypassing allow_other
-Message-ID: <20220627171617.77epjb3lppofqwg4@wittgenstein>
-References: <20220617204821.1821592-1-davemarchevsky@fb.com>
+        Mon, 27 Jun 2022 13:47:25 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A95D111;
+        Mon, 27 Jun 2022 10:47:24 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id n1so14091374wrg.12;
+        Mon, 27 Jun 2022 10:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kOCbRiGco+YfRqC1w9613TFGz7Y3t1xnJZfGUpwKtA4=;
+        b=pR8VovPaQp9kJM+hngqNGLnYCASmzmW+Xhz0gY6EhAlKS2dY96uYFYIQfl4xx9HQT1
+         QE6ClMjLH1liPn0Nt8SIB9eE4Zhn0Z3PZKt3zcKe4mqE6swUeOY8Vop7THqgv+AKneWM
+         w3t1ixPpVCpriUNpCCNkiEOWCyZsOpikY19EpGtz+2oQAwPEUqkrekI6xZnJxQbdpYOa
+         z1O2OqiJEQIBky5mNuXigYZmPbvFwuJhGpaoaQzVCAUymDh7FaiJsHH4VLj+dTiEFg64
+         75B2Y9Dzn/BSsSmn7fU/rKIBFRYIIYNHSvGwlUygF3HqzMIlLCPkKBL6Q4WysYTuxzf6
+         gWPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kOCbRiGco+YfRqC1w9613TFGz7Y3t1xnJZfGUpwKtA4=;
+        b=mu9MPhsBBKUtSVqW5gXILlARUFAWrcJrbbbhAAosl0OYfSPSLP3nAsGvg2usn7IyeS
+         F8zwlEpcXzCCOOqmuGMWKy8JJILkqz/BEArvOBxsSdmZoiA/lOiOy9asRIqKiJmSDwwL
+         vl/CKtiE9b7i0I150q2lfydOkmSwxed0htR7awc9CcgmHM7lsFdrUmZKETL3bOHwC8hx
+         yBPGEKtj5KASQWdNz7tropQT7Nugoza0+9mKDfodjFXa3BM0k4y0XHIwkgrMrfrcCC38
+         i0MloxbsXRWZxhd9DYPekBZ+sshlRiUoA/jF7qNFK0In+HH2S/b4szyQJrpsjczkKPPO
+         rkgw==
+X-Gm-Message-State: AJIora+MEuotmKAM1hYTRLWfzHc9FUuEZc9SbfR7pzoJPk2wWodHduVG
+        iO1nvT7l9xYKfzkFGaOVtzc=
+X-Google-Smtp-Source: AGRyM1vHfCaH8R2gCzYxurXJlR9USnPS5EC5blYHQgEIHpULF9sa2va4Za8Tj39yZC+BdnxW4oLRRA==
+X-Received: by 2002:adf:dbcd:0:b0:21b:868a:4cbe with SMTP id e13-20020adfdbcd000000b0021b868a4cbemr13078118wrj.522.1656352042687;
+        Mon, 27 Jun 2022 10:47:22 -0700 (PDT)
+Received: from localhost.localdomain ([77.137.66.49])
+        by smtp.gmail.com with ESMTPSA id y21-20020a05600c365500b003a0426fae52sm9593003wmq.24.2022.06.27.10.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jun 2022 10:47:22 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [PATCH] fanotify: refine the validation checks on non-dir inode mask
+Date:   Mon, 27 Jun 2022 20:47:19 +0300
+Message-Id: <20220627174719.2838175-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220617204821.1821592-1-davemarchevsky@fb.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 17, 2022 at 01:48:21PM -0700, Dave Marchevsky wrote:
-> Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
-> superblock's namespace or a descendant"), access to allow_other FUSE
-> filesystems has been limited to users in the mounting user namespace or
-> descendants. This prevents a process that is privileged in its userns -
-> but not its parent namespaces - from mounting a FUSE fs w/ allow_other
-> that is accessible to processes in parent namespaces.
-> 
-> While this restriction makes sense overall it breaks a legitimate
-> usecase: I have a tracing daemon which needs to peek into
-> process' open files in order to symbolicate - similar to 'perf'. The
-> daemon is a privileged process in the root userns, but is unable to peek
-> into FUSE filesystems mounted by processes in child namespaces.
-> 
-> This patch adds a module param, allow_sys_admin_access, to act as an
-> escape hatch for this descendant userns logic and for the allow_other
-> mount option in general. Setting allow_sys_admin_access allows
-> processes with CAP_SYS_ADMIN in the initial userns to access FUSE
-> filesystems irrespective of the mounting userns or whether allow_other
-> was set. A sysadmin setting this param must trust FUSEs on the host to
-> not DoS processes as described in 73f03c2b4b52.
-> 
-> Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
-> ---
+Commit ceaf69f8eadc ("fanotify: do not allow setting dirent events in
+mask of non-dir") added restrictions about setting dirent events in the
+mask of a non-dir inode mark, which does not make any sense.
 
-Fine by me,
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+For backward compatibility, these restictions were added only to new
+(v5.17+) APIs.
 
-Now that documentation clearly reflects the semantics and possible
-dangers I think this is ok to do.
+It also does not make any sense to set the flags FAN_EVENT_ON_CHILD or
+FAN_ONDIR in the mask of a non-dir inode.  Add these flags to the
+dir-only restriction of the new APIs as well.
 
-> 
-> v3 -> v4: lore.kernel.org/linux-fsdevel/20220617004710.621301-1-davemarchevsky@fb.com
->   * Add discussion of new module option and allow_other userns
->     interaction in docs (Christian)
-> 
-> v2 -> v3: lore.kernel.org/linux-fsdevel/20220601184407.2086986-1-davemarchevsky@fb.com
->   * Module param now allows initial userns CAP_SYS_ADMIN to bypass allow_other
->     check entirely
-> 
-> v1 -> v2: lore.kernel.org/linux-fsdevel/20211111221142.4096653-1-davemarchevsky@fb.com
->   * Use module param instead of capability check
-> 
->  Documentation/filesystems/fuse.rst | 29 ++++++++++++++++++++++++-----
->  fs/fuse/dir.c                      | 10 ++++++++++
->  2 files changed, 34 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/fuse.rst b/Documentation/filesystems/fuse.rst
-> index 8120c3c0cb4e..1e31e87aee68 100644
-> --- a/Documentation/filesystems/fuse.rst
-> +++ b/Documentation/filesystems/fuse.rst
-> @@ -279,7 +279,7 @@ How are requirements fulfilled?
->  	the filesystem or not.
->  
->  	Note that the *ptrace* check is not strictly necessary to
-> -	prevent B/2/i, it is enough to check if mount owner has enough
-> +	prevent C/2/i, it is enough to check if mount owner has enough
->  	privilege to send signal to the process accessing the
->  	filesystem, since *SIGSTOP* can be used to get a similar effect.
->  
-> @@ -288,10 +288,29 @@ I think these limitations are unacceptable?
->  
->  If a sysadmin trusts the users enough, or can ensure through other
->  measures, that system processes will never enter non-privileged
-> -mounts, it can relax the last limitation with a 'user_allow_other'
-> -config option.  If this config option is set, the mounting user can
-> -add the 'allow_other' mount option which disables the check for other
-> -users' processes.
-> +mounts, it can relax the last limitation in several ways:
-> +
-> +  - With the 'user_allow_other' config option. If this config option is
-> +    set, the mounting user can add the 'allow_other' mount option which
-> +    disables the check for other users' processes.
-> +
-> +    User namespaces have an unintuitive interaction with 'allow_other':
-> +    an unprivileged user - normally restricted from mounting with
-> +    'allow_other' - could do so in a user namespace where they're
-> +    privileged. If any process could access such an 'allow_other' mount
-> +    this would give the mounting user the ability to manipulate
-> +    processes in user namespaces where they're unprivileged. For this
-> +    reason 'allow_other' restricts access to users in the same userns
-> +    or a descendant.
-> +
-> +  - With the 'allow_sys_admin_access' module option. If this option is
-> +    set, super user's processes have unrestricted access to mounts
-> +    irrespective of allow_other setting or user namespace of the
-> +    mounting user.
-> +
-> +Note that both of these relaxations expose the system to potential
-> +information leak or *DoS* as described in points B and C/2/i-ii in the
-> +preceding section.
->  
->  Kernel - userspace interface
->  ============================
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 9dfee44e97ad..d325d2387615 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -11,6 +11,7 @@
->  #include <linux/pagemap.h>
->  #include <linux/file.h>
->  #include <linux/fs_context.h>
-> +#include <linux/moduleparam.h>
->  #include <linux/sched.h>
->  #include <linux/namei.h>
->  #include <linux/slab.h>
-> @@ -21,6 +22,12 @@
->  #include <linux/types.h>
->  #include <linux/kernel.h>
->  
-> +static bool __read_mostly allow_sys_admin_access;
-> +module_param(allow_sys_admin_access, bool, 0644);
-> +MODULE_PARM_DESC(allow_sys_admin_access,
-> + "Allow users with CAP_SYS_ADMIN in initial userns "
-> + "to bypass allow_other access check");
-> +
->  static void fuse_advise_use_readdirplus(struct inode *dir)
->  {
->  	struct fuse_inode *fi = get_fuse_inode(dir);
-> @@ -1229,6 +1236,9 @@ int fuse_allow_current_process(struct fuse_conn *fc)
->  {
->  	const struct cred *cred;
->  
-> +	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
-> +		return 1;
-> +
->  	if (fc->allow_other)
->  		return current_in_userns(fc->user_ns);
->  
-> -- 
-> 2.30.2
-> 
+Move the check of the dir-only flags for new APIs into the helper
+fanotify_events_supported(), which is only called for FAN_MARK_ADD,
+because there is no need to error on an attempt to remove the dir-only
+flags from non-dir inode.
+
+Fixes: ceaf69f8eadc ("fanotify: do not allow setting dirent events in mask of non-dir")
+Link: https://lore.kernel.org/linux-fsdevel/20220627113224.kr2725conevh53u4@quack3.lan/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+
+Hi Jan,
+
+Here is the retroactive API fix that we dicussed merging to v5.19.
+
+There is an LTP test [1] and an update for the man page patch of
+FAN_REPORT_TARGET_FID [2], which is still in review.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/ltp/commits/fan_enotdir
+[2] https://github.com/amir73il/man-pages/commits/fanotify_target_fid
+
+
+ fs/notify/fanotify/fanotify_user.c | 34 +++++++++++++++++-------------
+ include/linux/fanotify.h           |  4 ++++
+ 2 files changed, 23 insertions(+), 15 deletions(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index c2255b440df9..b08ce0d821a7 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1513,8 +1513,15 @@ static int fanotify_test_fid(struct dentry *dentry)
+ 	return 0;
+ }
+ 
+-static int fanotify_events_supported(struct path *path, __u64 mask)
++static int fanotify_events_supported(struct fsnotify_group *group,
++				     struct path *path, __u64 mask,
++				     unsigned int flags)
+ {
++	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
++	/* Strict validation of events in non-dir inode mask with v5.17+ APIs */
++	bool strict_dir_events = FAN_GROUP_FLAG(group, FAN_REPORT_TARGET_FID) ||
++				 (mask & FAN_RENAME);
++
+ 	/*
+ 	 * Some filesystems such as 'proc' acquire unusual locks when opening
+ 	 * files. For them fanotify permission events have high chances of
+@@ -1526,6 +1533,16 @@ static int fanotify_events_supported(struct path *path, __u64 mask)
+ 	if (mask & FANOTIFY_PERM_EVENTS &&
+ 	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
+ 		return -EINVAL;
++
++	/*
++	 * We shouldn't have allowed setting dirent events and the directory
++	 * flags FAN_ONDIR and FAN_EVENT_ON_CHILD in mask of non-dir inode,
++	 * but because we always allowed it, error only when using new APIs.
++	 */
++	if (strict_dir_events && mark_type == FAN_MARK_INODE &&
++	    !d_is_dir(path->dentry) && (mask & FANOTIFY_DIRONLY_EVENT_BITS))
++		return -ENOTDIR;
++
+ 	return 0;
+ }
+ 
+@@ -1672,7 +1689,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
+ 
+ 	if (flags & FAN_MARK_ADD) {
+-		ret = fanotify_events_supported(&path, mask);
++		ret = fanotify_events_supported(group, &path, mask, flags);
+ 		if (ret)
+ 			goto path_put_and_out;
+ 	}
+@@ -1695,19 +1712,6 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	else
+ 		mnt = path.mnt;
+ 
+-	/*
+-	 * FAN_RENAME is not allowed on non-dir (for now).
+-	 * We shouldn't have allowed setting any dirent events in mask of
+-	 * non-dir, but because we always allowed it, error only if group
+-	 * was initialized with the new flag FAN_REPORT_TARGET_FID.
+-	 */
+-	ret = -ENOTDIR;
+-	if (inode && !S_ISDIR(inode->i_mode) &&
+-	    ((mask & FAN_RENAME) ||
+-	     ((mask & FANOTIFY_DIRENT_EVENTS) &&
+-	      FAN_GROUP_FLAG(group, FAN_REPORT_TARGET_FID))))
+-		goto path_put_and_out;
+-
+ 	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
+ 	if (mnt || !S_ISDIR(inode->i_mode)) {
+ 		mask &= ~FAN_EVENT_ON_CHILD;
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index edc28555814c..e517dbcf74ed 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -111,6 +111,10 @@
+ 					 FANOTIFY_PERM_EVENTS | \
+ 					 FAN_Q_OVERFLOW | FAN_ONDIR)
+ 
++/* Events and flags relevant only for directories */
++#define FANOTIFY_DIRONLY_EVENT_BITS	(FANOTIFY_DIRENT_EVENTS | \
++					 FAN_EVENT_ON_CHILD | FAN_ONDIR)
++
+ #define ALL_FANOTIFY_EVENT_BITS		(FANOTIFY_OUTGOING_EVENTS | \
+ 					 FANOTIFY_EVENT_FLAGS)
+ 
+-- 
+2.25.1
+
