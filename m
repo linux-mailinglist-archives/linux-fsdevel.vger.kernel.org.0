@@ -2,113 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4A955D9B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A354955DA6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236786AbiF0OKp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 10:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52708 "EHLO
+        id S236854AbiF0OpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 10:45:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236782AbiF0OKo (ORCPT
+        with ESMTP id S236155AbiF0OpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 10:10:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C6D13E15;
-        Mon, 27 Jun 2022 07:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LzAnuHwwUJ6LdcbOlmZ//SGplp0xj1L9V6mRYE0195Q=; b=nqb88zVq/RA6sKlL8JH9plcQD8
-        ocDWm8M2RNyZRk783mEuQcIt1qqvjDAdnlrsnZHAJiwJwcvAvGIoRS1tF6TOXUEMI4beDEtAjTQ60
-        bV8iUHmwq+YPuwoXGFW+9wjZBk8QxwncrlmeiHQqxwEkuy3EdlwU8Wuni51Td3Vyo0K6UepEO5dRr
-        wtm9u1jMF8DCS9/XgQ9B1q+60S4yc9IiGJu6OGzbBGjJsEdqk9uTVpgA8I5i1BDq+DYrgEAivY/48
-        MdNLjiDiB6cir4SQeVor8b+zKpY2LkNH/a/g3wHnJIO+L+g9svP+NrN3Nc/mscTZRXZynQqX3yw58
-        NayyVyfQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o5pRo-00BQ2y-Vw; Mon, 27 Jun 2022 14:10:41 +0000
-Date:   Mon, 27 Jun 2022 15:10:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 25/25] xfs: Support large folios
-Message-ID: <Yrm6YM2uS+qOoPcn@casper.infradead.org>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-26-willy@infradead.org>
- <YrO243DkbckLTfP7@magnolia>
- <Yrku31ws6OCxRGSQ@magnolia>
+        Mon, 27 Jun 2022 10:45:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 28778DEF4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jun 2022 07:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656341121;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yyYHa7y7EUCo9FXbppA7Bdwl7O2prZRvBIG44/C0Bxw=;
+        b=HmgfQJJcf3tN1lvtUn2+E+YoSOCViAPhDPcpkYp8PlylGwCV/FQNJnMl8VkefC87TMNjWL
+        9FHQrw/nAi8FuHGsvPeQbBJz1DottkyMeWZ1ZcRf8XGc2EphU+G4Y/o9c4woo/dD0EB9fj
+        nSOvJZGsFt+LtR983CG9W5N394SYbLo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-218-CNTJjapDMpuv8IMhdLFhYg-1; Mon, 27 Jun 2022 10:45:17 -0400
+X-MC-Unique: CNTJjapDMpuv8IMhdLFhYg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8EBB938149C4;
+        Mon, 27 Jun 2022 14:45:17 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1473740C1289;
+        Mon, 27 Jun 2022 14:45:17 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id E1EFA220463; Mon, 27 Jun 2022 10:45:16 -0400 (EDT)
+Date:   Mon, 27 Jun 2022 10:45:16 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@bytedance.com>
+Subject: Re: Re: Re: [RFC PATCH] fuse: support cache revalidation in
+ writeback_cache mode
+Message-ID: <YrnCfISl7Nl8Wk52@redhat.com>
+References: <20220325132126.61949-1-zhangjiachen.jaycee@bytedance.com>
+ <CAJfpeguESQm1KsQLyoMRTevLttV8N8NTGsb2tRbNS1AQ_pNAww@mail.gmail.com>
+ <CAFQAk7ibzCn8OD84-nfg6_AePsKFTu9m7pXuQwcQP5OBp7ZCag@mail.gmail.com>
+ <CAJfpegsbaz+RRcukJEOw+H=G3ft43vjDMnJ8A24JiuZFQ24eHA@mail.gmail.com>
+ <CAFQAk7hakYNfBaOeMKRmMPTyxFb2xcyUTdugQG1D6uZB_U1zBg@mail.gmail.com>
+ <Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yrku31ws6OCxRGSQ@magnolia>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 26, 2022 at 09:15:27PM -0700, Darrick J. Wong wrote:
-> On Wed, Jun 22, 2022 at 05:42:11PM -0700, Darrick J. Wong wrote:
-> > [resend with shorter 522.out file to keep us under the 300k maximum]
-> > 
-> > On Thu, Dec 16, 2021 at 09:07:15PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > Now that iomap has been converted, XFS is large folio safe.
-> > > Indicate to the VFS that it can now create large folios for XFS.
-> > > 
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > ---
-> > >  fs/xfs/xfs_icache.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > > index da4af2142a2b..cdc39f576ca1 100644
-> > > --- a/fs/xfs/xfs_icache.c
-> > > +++ b/fs/xfs/xfs_icache.c
-> > > @@ -87,6 +87,7 @@ xfs_inode_alloc(
-> > >  	/* VFS doesn't initialise i_mode or i_state! */
-> > >  	VFS_I(ip)->i_mode = 0;
-> > >  	VFS_I(ip)->i_state = 0;
-> > > +	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> > >  
-> > >  	XFS_STATS_INC(mp, vn_active);
-> > >  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> > > @@ -320,6 +321,7 @@ xfs_reinit_inode(
-> > >  	inode->i_rdev = dev;
-> > >  	inode->i_uid = uid;
-> > >  	inode->i_gid = gid;
-> > > +	mapping_set_large_folios(inode->i_mapping);
-> > 
-> > Hmm.  Ever since 5.19-rc1, I've noticed that fsx in generic/522 now
-> > reports file corruption after 20 minutes of runtime.  The corruption is
-> > surprisingly reproducible (522.out.bad attached below) in that I ran it
-> > three times and always got the same bad offset (0x6e000) and always the
-> > same opcode (6213798(166 mod 256) MAPREAD).
-> > 
-> > I turned off multipage folios and now 522 has run for over an hour
-> > without problems, so before I go do more debugging, does this ring a
-> > bell to anyone?
+On Tue, Apr 26, 2022 at 03:09:05PM +0200, Miklos Szeredi wrote:
+> On Mon, Apr 25, 2022 at 09:52:44PM +0800, Jiachen Zhang wrote:
 > 
-> I tried bisecting, but that didn't yield anything productive and
-> 5.19-rc4 still fails after 25 minutes; however, it seems that g/522 will
-> run without problems for at least 3-4 days after reverting this patch
-> from -rc3.
+> > Some users may want both the high performance of writeback mode and a
+> > little bit more consistency among FUSE mounts. In the current
+> > writeback mode implementation, users of one FUSE mount can never see
+> > the file expansion done by other FUSE mounts.
 > 
-> So I guess I have a blunt force fix if we can't figure this one out
-> before 5.19 final, but I'd really rather not.  Will keep trying this
-> week.
+> Okay.
+> 
+> Here's a preliminary patch that you could try.
+> 
+> Thanks,
+> Miklos
+> 
+> ---
+>  fs/fuse/dir.c             |   35 ++++++++++++++++++++++-------------
+>  fs/fuse/file.c            |   17 +++++++++++++++--
+>  fs/fuse/fuse_i.h          |   14 +++++++++++++-
+>  fs/fuse/inode.c           |   32 +++++++++++++++++++++++++++-----
+>  include/uapi/linux/fuse.h |    5 +++++
+>  5 files changed, 82 insertions(+), 21 deletions(-)
+> 
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -194,6 +194,7 @@
+>   *  - add FUSE_SECURITY_CTX init flag
+>   *  - add security context to create, mkdir, symlink, and mknod requests
+>   *  - add FUSE_HAS_INODE_DAX, FUSE_ATTR_DAX
+> + *  - add FUSE_WRITEBACK_CACHE_V2 init flag
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -353,6 +354,9 @@ struct fuse_file_lock {
+>   * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
+>   *			mknod
+>   * FUSE_HAS_INODE_DAX:  use per inode DAX
+> + * FUSE_WRITEBACK_CACHE_V2:
+> + *			- allow time/size to be refreshed if no pending write
+> + * 			- time/size not cached for falocate/copy_file_range
+>   */
+>  #define FUSE_ASYNC_READ		(1 << 0)
+>  #define FUSE_POSIX_LOCKS	(1 << 1)
+> @@ -389,6 +393,7 @@ struct fuse_file_lock {
+>  /* bits 32..63 get shifted down 32 bits into the flags2 field */
+>  #define FUSE_SECURITY_CTX	(1ULL << 32)
+>  #define FUSE_HAS_INODE_DAX	(1ULL << 33)
+> +#define FUSE_WRITEBACK_CACHE_V2	(1ULL << 34)
+>  
+>  /**
+>   * CUSE INIT request/reply flags
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -222,19 +222,37 @@ void fuse_change_attributes_common(struc
+>  u32 fuse_get_cache_mask(struct inode *inode)
+>  {
+>  	struct fuse_conn *fc = get_fuse_conn(inode);
+> +	struct fuse_inode *fi = get_fuse_inode(inode);
+>  
+>  	if (!fc->writeback_cache || !S_ISREG(inode->i_mode))
+>  		return 0;
+>  
+> +	/*
+> +	 * In writeback_cache_v2 mode if all the following conditions are met,
+> +	 * then allow the attributes to be refreshed:
+> +	 *
+> +	 * - inode is not dirty (I_DIRTY_INODE)
+> +	 * - inode is not in the process of being written (I_SYNC)
+> +	 * - inode has no dirty pages (I_DIRTY_PAGES)
+> +	 * - inode does not have any page writeback in progress
+> +	 *
+> +	 * Note: checking PAGECACHE_TAG_WRITEBACK is not sufficient in fuse,
+> +	 * since inode can appear to have no PageWriteback pages, yet still have
+> +	 * outstanding write request.
+> +	 */
 
-I'm on holiday for the next week, so I'm not going to be able to spend
-any time on this until then.  I have a suspicion that this may be the
-same bug Zorro is seeing here:
+Hi,
 
-https://lore.kernel.org/linux-mm/20220613010850.6kmpenitmuct2osb@zlang-mailbox/
+I started following this thread just now after Jiachen pointed me to
+previous conversations. Without going into too much details.
 
-At least I hope it is, and finding a folio that has been freed would
-explain (apparent) file corruption.
+Based on above description, so we will update mtime/ctime/i_size only
+if inode does not have dirty pages or nothing is in progress. So that
+means sometime we will update it and other times we will ignore it. 
+
+Do I understand it correctly. I am wondering how that is useful to
+applications. 
+
+I thought that other remote filesystems might have leasing for this so
+that one client can acquire the lease and cache changes and when lease
+is broken, this client pushes out all the changes and other client gets
+the lease.
+
+Given we don't have any lease mechanism, we probably need to define the
+semantics more clearly and we should probably document it as well.
+
+Thanks
+Vivek
+
