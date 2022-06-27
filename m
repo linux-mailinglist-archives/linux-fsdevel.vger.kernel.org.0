@@ -2,155 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F320F55C7E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A97C255DAF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234306AbiF0LPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 07:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
+        id S234897AbiF0LZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 07:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234024AbiF0LPe (ORCPT
+        with ESMTP id S234823AbiF0LY4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 07:15:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97BF64F2;
-        Mon, 27 Jun 2022 04:15:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 27 Jun 2022 07:24:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FE3657B;
+        Mon, 27 Jun 2022 04:24:55 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id AECD41F8F7;
+        Mon, 27 Jun 2022 11:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1656329093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YzTGenBrm+OiqMfJMDo9wynrPSJr5F5WAn1j6mWdRpA=;
+        b=ZR3mW9WgOKx14/FW2Gk6L1u36VpV5n02zjYSdeg80IWzH0h7z2UJlmAOjRm30Ml42jCYpB
+        ZOqYgKOtncp9bWNp2SUwdTgTtQWpZXAPmYUB9Y/YEO8En/lDIPyi+/jejnlNxhJzIc3Q0w
+        clUPq2n5S/DGAWaA55xqxfPlUuFSUco=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1656329093;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YzTGenBrm+OiqMfJMDo9wynrPSJr5F5WAn1j6mWdRpA=;
+        b=HcLaP7bxwQRymyB4zUptqugyU7pKF+CgDlAcmGqrrtfjbJrYW+6K/Njrbv42mmGp/OUxCn
+        PE+xocAiSHVJiTDw==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B856B810F6;
-        Mon, 27 Jun 2022 11:15:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E43C3411D;
-        Mon, 27 Jun 2022 11:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656328531;
-        bh=v0C1Bhc6W2F6JTcpNNosxXWGfS9mKrwIaMiSVXlBkhA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OgAx3RYBgM+Y24MuFUogwrPf3ElcAPlNE/CaoFVw0flcvXe6r+wTLIDqSEKHOhRWh
-         DCi9l3rEV93GhWfkMi9M046ZDGnDLdkoT4Yqe29PiDTJROsul8shM+fKVbHASZUB9a
-         xXJZqMY0m05DbBjLLTpHkfbp1/v2upXL4gt8kJ8aPdh1bDs8on6ZzT91Bj9jWBSrMa
-         PNnZdv4NE+n1zN1jjruHbwnPphWRAZbeuKki0MdG9wDGWMgrtAmSvdp1tPqdb7px++
-         QguHJWVsZEQg/wZt3MgqC8BsETs+x9OWFOsjfmEh3yDfpt6hLbTrHnMZ6rJaiv4idt
-         dz3Hvcrig3Ktg==
-Message-ID: <d11ba652ff681a01a51d547d96ee4bfefabb1869.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: change test in inode_insert5 for adding to the
- sb list
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, xiubli@redhat.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>
-Date:   Mon, 27 Jun 2022 07:15:29 -0400
-In-Reply-To: <20220511165339.85614-1-jlayton@kernel.org>
-References: <20220511165339.85614-1-jlayton@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        by relay2.suse.de (Postfix) with ESMTPS id 9D4A32C141;
+        Mon, 27 Jun 2022 11:24:53 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 4E458A062F; Mon, 27 Jun 2022 13:24:53 +0200 (CEST)
+Date:   Mon, 27 Jun 2022 13:24:53 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] New fanotify API for ignoring events
+Message-ID: <20220627112453.t733ysdrpd3iri5i@quack3.lan>
+References: <20220624143538.2500990-1-amir73il@gmail.com>
+ <CAOQ4uxj8CLbiOjwxZOK9jGM69suakdJtNp9=0b7W=ie4jGp3Sg@mail.gmail.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxj8CLbiOjwxZOK9jGM69suakdJtNp9=0b7W=ie4jGp3Sg@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-05-11 at 12:53 -0400, Jeff Layton wrote:
-> The inode_insert5 currently looks at I_CREATING to decide whether to
-> insert the inode into the sb list. This test is a bit ambiguous though
-> as I_CREATING state is not directly related to that list.
->=20
-> This test is also problematic for some upcoming ceph changes to add
-> fscrypt support. We need to be able to allocate an inode using new_inode
-> and insert it into the hash later if we end up using it, and doing that
-> now means that we double add it and corrupt the list.
->=20
-> What we really want to know in this test is whether the inode is already
-> in its superblock list, and then add it if it isn't. Have it test for
-> list_empty instead and ensure that we always initialize the list by
-> doing it in inode_init_once. It's only ever removed from the list with
-> list_del_init, so that should be sufficient.
->=20
-> There doesn't seem to be any need to hold the inode_hash_lock for this
-> operation either, so drop that before adding to to the list.
->=20
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> ---
->  fs/inode.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->=20
-> A small revision to the patch that I sent as part of the ceph+fscrypt
-> series. I didn't see any need to hold the inode_hash_lock when adding
-> the inode to the sb list, so do that outside the lock. I also revised
-> the comment to be more clear.
->=20
-> Al, I'm planning to merge this via the ceph tree since I have other
-> patches that depend on it. Let me know if you'd rather take this via
-> your tree instead.
->=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9d9b422504d1..9d429247a4f0 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -422,6 +422,7 @@ void inode_init_once(struct inode *inode)
->  	INIT_LIST_HEAD(&inode->i_io_list);
->  	INIT_LIST_HEAD(&inode->i_wb_list);
->  	INIT_LIST_HEAD(&inode->i_lru);
-> +	INIT_LIST_HEAD(&inode->i_sb_list);
->  	__address_space_init_once(&inode->i_data);
->  	i_size_ordered_init(inode);
->  }
-> @@ -1021,7 +1022,6 @@ struct inode *new_inode_pseudo(struct super_block *=
-sb)
->  		spin_lock(&inode->i_lock);
->  		inode->i_state =3D 0;
->  		spin_unlock(&inode->i_lock);
-> -		INIT_LIST_HEAD(&inode->i_sb_list);
->  	}
->  	return inode;
->  }
-> @@ -1165,7 +1165,6 @@ struct inode *inode_insert5(struct inode *inode, un=
-signed long hashval,
->  {
->  	struct hlist_head *head =3D inode_hashtable + hash(inode->i_sb, hashval=
-);
->  	struct inode *old;
-> -	bool creating =3D inode->i_state & I_CREATING;
-> =20
->  again:
->  	spin_lock(&inode_hash_lock);
-> @@ -1199,11 +1198,17 @@ struct inode *inode_insert5(struct inode *inode, =
-unsigned long hashval,
->  	inode->i_state |=3D I_NEW;
->  	hlist_add_head_rcu(&inode->i_hash, head);
->  	spin_unlock(&inode->i_lock);
-> -	if (!creating)
-> -		inode_sb_list_add(inode);
->  unlock:
->  	spin_unlock(&inode_hash_lock);
-> =20
-> +	/*
-> +	 * Add it to the sb list if it's not already. If there is an inode,
-> +	 * then it has I_NEW at this point, so it should be safe to test
-> +	 * i_sb_list locklessly.
-> +	 */
-> +	if (inode && list_empty(&inode->i_sb_list))
-> +		inode_sb_list_add(inode);
-> +
->  	return inode;
->  }
->  EXPORT_SYMBOL(inode_insert5);
+Hi Amir!
 
-Hi Al,
+On Sun 26-06-22 18:57:01, Amir Goldstein wrote:
+> On Fri, Jun 24, 2022 at 5:35 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > As we discussed [1], here is the implementation of the new
+> > FAN_MARK_IGNORE API, to try and sort the historic mess of
+> > FAN_MARK_IGNORED_MASK.
+> 
+> When we started talking about adding FAN_MARK_IGNORE
+> it was to address one specific flaw of FAN_MARK_IGNORED_MASK,
+> but after staring at the API for some time, I realized there are other
+> wrinkles with FAN_MARK_IGNORED_MASK that could be addressed
+> by a fresh new API.
+> 
+> I added more input validations following the EEXIST that you requested.
+> The new errors can be seen in the ERRORS section of the man page [3].
+> The new restrictions will reduce the size of the test matrix, but I did not
+> update the LTP tests [2] to check the new restrictions yet.
+> 
+> I do not plan to post v3 patches before improving the LTP tests,
+> but I wanted to send this heads up as an API proposal review.
+> The kernel commit that adds FAN_MARK_IGNORE [1] summarize the
+> new API restrictions as follows:
+> 
+>     The new behavior is non-downgradable.  After calling fanotify_mark() with
+>     FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
+>     on the same object will return EEXIST error.
+> 
+>     Setting the event flags with FAN_MARK_IGNORE on a non-dir inode mark
+>     has no meaning and will return ENOTDIR error.
+> 
+>     The meaning of FAN_MARK_IGNORED_SURV_MODIFY is preserved with the new
+>     FAN_MARK_IGNORE flag, but with a few semantic differences:
+> 
+>     1. FAN_MARK_IGNORED_SURV_MODIFY is required for filesystem and mount
+>        marks and on an inode mark on a directory. Omitting this flag
+>        will return EINVAL or EISDIR error.
+> 
+>     2. An ignore mask on a non-directory inode that survives modify could
+>        never be downgraded to an ignore mask that does not survive modify.
+>        With new FAN_MARK_IGNORE semantics we make that rule explicit -
+>        trying to update a surviving ignore mask without the flag
+>        FAN_MARK_IGNORED_SURV_MODIFY will return EEXIST error.
+> 
+>     The conveniene macro FAN_MARK_IGNORE_SURV is added for
+>     (FAN_MARK_IGNORE | FAN_MARK_IGNORED_SURV_MODIFY), because the
+>     common case should use short constant names.
 
-Could I get your Acked-by or R-b on this patch? I'd like to take this in
-via the ceph tree, and I'd prefer an explicit ack on this if possible.
+This looks good to me. Thanks for working on this. The only additional
+thing that occurred to me is that we might want to restrict events usable
+with FAN_MARK_IGNORE similarly as we did restrict non-sensical events with
+FAN_REPORT_TARGET_FID but after putting more thought into it I'm not sure
+it is such a great idea because it is not so obvious which events may
+be valid to ignore for a particular object and how is it with backward
+compatibility when a new type of event becomes possible for an object.
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+								Honza
+ 
+> [1] https://github.com/amir73il/linux/commits/fan_mark_ignore
+> [2] https://github.com/amir73il/ltp/commits/fan_mark_ignore
+> [3] https://github.com/amir73il/man-pages/commits/fan_mark_ignore
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
