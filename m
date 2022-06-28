@@ -2,127 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8722455D38D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61BC55DEF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244332AbiF1IT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 04:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
+        id S243506AbiF1JBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 05:01:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242560AbiF1ITD (ORCPT
+        with ESMTP id S244927AbiF1JBK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 04:19:03 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D45F2DAA8;
-        Tue, 28 Jun 2022 01:17:41 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id a11-20020a17090acb8b00b001eca0041455so11620966pju.1;
-        Tue, 28 Jun 2022 01:17:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NhvXMK8bFw6njNlQyliLjVolxFmrQvweDYEjgua0NV8=;
-        b=bkcBTv8p4RsYt48WZxvsE/a/MiJmHGufkP3vhXuXj8VBihMxjuYzO5rkby9KeGzYt9
-         qLug/u/yvmZRqarN/DvBMqWAAIS9C2JJGUXwJDFwUDtXcdGnHYJEm0wFo1g8yPBrM1u8
-         g/YFOw5rgpDwAxOwroSVhx83U4BXiizfQ7n7I11Q/aEoEH7oSVJFsBbzbW6jflsKMp6w
-         LHBIsaWTE8RqVUpjeJ3CW6QrqmjT2VYEK0ZDvBupmDwjUrbU//VNYqiYiDDTpf6Drml1
-         qoh71ZSfuO5Sf8TIdUzp8O8/T7aUe1DZOA/i56kSU3AD/vWhyRGhTrv7Yiku+Xg1CgAP
-         mm/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NhvXMK8bFw6njNlQyliLjVolxFmrQvweDYEjgua0NV8=;
-        b=rcyGnATCt26aiyrqVWIBz76T0I3a7ToZ3Brfz6DAu5ZN8w0NbKkKApve0kfZRM1tou
-         Fx3P0qIyMI07qIW/IezroyYsHD4H35NlfE4rxy4q3Az0hIL5tzE0TpOYfs2S7mbriYJJ
-         Fd4IzFNqhjmOd7kNGywCHVz5TpH3Rab1rWG8sJ6LvDR7Kga4NAC6YycAeudl7HcpDNDf
-         q0q1qW5m1SC7deA1Q6ARMF8l3U9VT14TR6q+gprjHS3cqBPmkY8JQfzeMdGegxm2In+H
-         31V1uk3NxRDMTndNJIcO/ZIyHasNrxRLHq1bdZ/pFIdZr+JmmVjfjt+glLQn9uOr6MrP
-         B8xA==
-X-Gm-Message-State: AJIora82XOQieSAIIh4yVT0WlVfn1D0r+vmtij8K7Slu9nK7i+P8e9Zw
-        ROyHLvsZG7q9jyhMV2OmiKA=
-X-Google-Smtp-Source: AGRyM1sgluu4OgUva5oJgOl67WyN5tOvnNzOIRJ2llMgHgHZDuxJBd4ZUr9XiqURhNHTsyxo8Ik/sA==
-X-Received: by 2002:a17:903:32c4:b0:16a:4227:cd68 with SMTP id i4-20020a17090332c400b0016a4227cd68mr3722753plr.173.1656404260702;
-        Tue, 28 Jun 2022 01:17:40 -0700 (PDT)
-Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.232])
-        by smtp.gmail.com with ESMTPSA id b16-20020a17090a101000b001eeeb40092fsm2931223pja.21.2022.06.28.01.17.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 01:17:40 -0700 (PDT)
-From:   Guowei Du <duguoweisz@gmail.com>
-To:     jack@suse.cz, amir73il@gmail.com, repnop@google.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        duguowei <duguowei@xiaomi.com>
-Subject: [PATCH 5/5] fanotify: add inline modifier
-Date:   Tue, 28 Jun 2022 16:17:31 +0800
-Message-Id: <20220628081731.22411-1-duguoweisz@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        Tue, 28 Jun 2022 05:01:10 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A1DEB3;
+        Tue, 28 Jun 2022 02:01:08 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25S8B0lt026386;
+        Tue, 28 Jun 2022 09:00:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=u42EH2xjEJ6rwUJKlk/H8Z6cxIiCb9tJ4OBHylA1C/U=;
+ b=d2Ky6hFvuyAoSFbOrAk2p+TtE0jzeXdl6RdVCwXMP5OJzIl0y4czCMbbg5aSu6igLnGF
+ 2bVe7YmEvoA9FJsOOg+2KeXotweBnWpnWk15RvLFhsvsYwhmUF8j6siuICK5lb7n/WBV
+ 2KpCVHq4UCoz0OpAENOl0hPgYl9oquwa/1wD6PY1B3MDKyf6yeElBfjRgcje6b03dysX
+ HNoY8i3J6/P4wRq39Pl0SmicUrMOiXRj1yftwyxFZac0vlm21Xqj7qmWV+baGuAx8p6h
+ e47ZMPv0jHeLRXCh+CaoGn/zXYrjFP9XL/LowuBp10+35vJR6nUEstOpL0FqW5QHfyrb Sg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gywknhhre-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 09:00:36 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25S8Hew9027550;
+        Tue, 28 Jun 2022 09:00:36 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gywknhhq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 09:00:36 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25S8o3uw031460;
+        Tue, 28 Jun 2022 09:00:33 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 3gwt093c82-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 09:00:33 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25S8xV6o23789828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 08:59:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 701E911C052;
+        Tue, 28 Jun 2022 09:00:30 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF97811C054;
+        Tue, 28 Jun 2022 09:00:29 +0000 (GMT)
+Received: from li-e979b1cc-23ba-11b2-a85c-dfd230f6cf82 (unknown [9.152.224.212])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Jun 2022 09:00:29 +0000 (GMT)
+Date:   Tue, 28 Jun 2022 11:00:24 +0200
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Eric Farman <farman@linux.ibm.com>, Keith Busch <kbusch@fb.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        ebiggers@kernel.org, pankydev8@gmail.com,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
+Message-ID: <20220628110024.01fcf84f.pasic@linux.ibm.com>
+In-Reply-To: <YrnOmOUPukGe8xCq@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220610195830.3574005-1-kbusch@fb.com>
+        <20220610195830.3574005-12-kbusch@fb.com>
+        <ab1bc062b4a1d0ad7f974b6068dc3a6dbf624820.camel@linux.ibm.com>
+        <YrS2HLsYOe7vnbPG@kbusch-mbp>
+        <YrS6/chZXbHsrAS8@kbusch-mbp>
+        <e2b08a5c452d4b8322566cba4ed33b58080f03fa.camel@linux.ibm.com>
+        <e0038866ac54176beeac944c9116f7a9bdec7019.camel@linux.ibm.com>
+        <c5affe3096fd7b7996cb5fbcb0c41bbf3dde028e.camel@linux.ibm.com>
+        <YrnOmOUPukGe8xCq@kbusch-mbp.dhcp.thefacebook.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Q539bD5qlxHp31I-mVP_n6Bd_mL0VhZm
+X-Proofpoint-ORIG-GUID: yci596-An6ilTeIcr4O5QXtwHd8zo27z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-27_09,2022-06-24_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1011 priorityscore=1501 mlxscore=0 adultscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206280035
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: duguowei <duguowei@xiaomi.com>
+On Mon, 27 Jun 2022 09:36:56 -0600
+Keith Busch <kbusch@kernel.org> wrote:
 
-No functional change.
-This patch only makes a little change for compiling.
+> On Mon, Jun 27, 2022 at 11:21:20AM -0400, Eric Farman wrote:
+> > 
+> > Apologies, it took me an extra day to get back to this, but it is
+> > indeed this pass through that's causing our boot failures. I note that
+> > the old code (in iomap_dio_bio_iter), did:
+> > 
+> >         if ((pos | length | align) & ((1 << blkbits) - 1))
+> >                 return -EINVAL;
+> > 
+> > With blkbits equal to 12, the resulting mask was 0x0fff against an
+> > align value (from iov_iter_alignment) of x200 kicks us out.
+> > 
+> > The new code (in iov_iter_aligned_iovec), meanwhile, compares this:
+> > 
+> >                 if ((unsigned long)(i->iov[k].iov_base + skip) &
+> > addr_mask)
+> >                         return false;
+> > 
+> > iov_base (and the output of the old iov_iter_aligned_iovec() routine)
+> > is x200, but since addr_mask is x1ff this check provides a different
+> > response than it used to.
+> > 
+> > To check this, I changed the comparator to len_mask (almost certainly
+> > not the right answer since addr_mask is then unused, but it was good
+> > for a quick test), and our PV guests are able to boot again with -next
+> > running in the host.  
+> 
+> This raises more questions for me. It sounds like your process used to get an
+> EINVAL error, and it wants to continue getting an EINVAL error instead of
+> letting the direct-io request proceed. Is that correct? 
 
-Signed-off-by: duguowei <duguowei@xiaomi.com>
----
- fs/notify/fanotify/fanotify.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Is my understanding as well. But I'm not familiar enough with the code to
+tell where and how that -EINVAL gets handled.
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 4f897e109547..a32752350e0e 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -18,12 +18,12 @@
- 
- #include "fanotify.h"
- 
--static bool fanotify_path_equal(struct path *p1, struct path *p2)
-+static inline bool fanotify_path_equal(struct path *p1, struct path *p2)
- {
- 	return p1->mnt == p2->mnt && p1->dentry == p2->dentry;
- }
- 
--static unsigned int fanotify_hash_path(const struct path *path)
-+static inline unsigned int fanotify_hash_path(const struct path *path)
- {
- 	return hash_ptr(path->dentry, FANOTIFY_EVENT_HASH_BITS) ^
- 		hash_ptr(path->mnt, FANOTIFY_EVENT_HASH_BITS);
-@@ -35,20 +35,18 @@ static inline bool fanotify_fsid_equal(__kernel_fsid_t *fsid1,
- 	return fsid1->val[0] == fsid2->val[0] && fsid1->val[1] == fsid2->val[1];
- }
- 
--static unsigned int fanotify_hash_fsid(__kernel_fsid_t *fsid)
-+static inline unsigned int fanotify_hash_fsid(__kernel_fsid_t *fsid)
- {
- 	return hash_32(fsid->val[0], FANOTIFY_EVENT_HASH_BITS) ^
- 		hash_32(fsid->val[1], FANOTIFY_EVENT_HASH_BITS);
- }
- 
--static bool fanotify_fh_equal(struct fanotify_fh *fh1,
-+static inline bool fanotify_fh_equal(struct fanotify_fh *fh1,
- 			      struct fanotify_fh *fh2)
- {
--	if (fh1->type != fh2->type || fh1->len != fh2->len)
--		return false;
--
--	return !fh1->len ||
--		!memcmp(fanotify_fh_buf(fh1), fanotify_fh_buf(fh2), fh1->len);
-+	return fh1->type == fh2->type && fh1->len == fh2->len &&
-+		(!fh1->len ||
-+		 !memcmp(fanotify_fh_buf(fh1), fanotify_fh_buf(fh2), fh1->len));
- }
- 
- static unsigned int fanotify_hash_fh(struct fanotify_fh *fh)
--- 
-2.36.1
+BTW let me just point out that the bounce buffering via swiotlb needed
+for PV is not unlikely to mess up the alignment of things. But I'm not
+sure if that is relevant here.
+
+Regards,
+Halil
+
+> If so, could you
+> provide more details on what issue occurs with dispatching this request?
+> 
+> If you really need to restrict address' alignment to the storage's logical
+> block size, I think your storage driver needs to set the dma_alignment queue
+> limit to that value.
 
