@@ -2,168 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B251655D903
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 038BE55C616
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbiF1LyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 07:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52504 "EHLO
+        id S1344057AbiF1L6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 07:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344821AbiF1Lx7 (ORCPT
+        with ESMTP id S1344832AbiF1L6l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 07:53:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DE2413120F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 04:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656417236;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 28 Jun 2022 07:58:41 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0E56337;
+        Tue, 28 Jun 2022 04:58:39 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E741B21E69;
+        Tue, 28 Jun 2022 11:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1656417517;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9DZIBhwK0nu+d+e5Dn67t8pp9MEtfy3sJMXiRir3HYs=;
-        b=LNu9OM9cAYgxrfyZeRwLmHBS7TAL0IaUoHUvTrzQ2mE1PK/LeF3yJx2YR+vIcXkeIwejV/
-        ENAnqxoT2xF+d9rBpu46AxwrezwYDpLgAgh6duPHXQUMf36T2LZw2+XmOcnLANfqi/j07p
-        cXDROtm2cLFqP4OB3XaRwbC+/pvfrjo=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-402-uYGINdKtPtG-p63hpveP0Q-1; Tue, 28 Jun 2022 07:53:55 -0400
-X-MC-Unique: uYGINdKtPtG-p63hpveP0Q-1
-Received: by mail-qv1-f70.google.com with SMTP id g29-20020a0caadd000000b004702ed3c3f5so11997949qvb.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 04:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9DZIBhwK0nu+d+e5Dn67t8pp9MEtfy3sJMXiRir3HYs=;
-        b=v9HTE7LOiU1vf7fYtyzaUkgkDyv6di+7XR3rJ+mhPUx5Erf6lw/k5apeSLd7f6fgV3
-         4jp2EdId43Xil8x6tShKptIXTLElB21W6yntHp8YoC2s8mHUeXuaDwJzgLMC7UHsMuHs
-         VCK4sv3Y5rgNkjim1gEOg4smLdg7qqyixZXdXZ6mkzV5N9auraX8g17ecHjEdcITDhD+
-         ut3TcPzhZEgDaUDRo7eqQFCzVW0JcKV046HvH24iz523Nw1B7PRu1vsAPMGlsJFohGkQ
-         BkAMShzRQB0dn7BWBSrXBHxgpcTR++994x/5Ph3Uo0JRYUTRL1PvDOd+eMGRSq7AhinV
-         eJcA==
-X-Gm-Message-State: AJIora9C0fds54Tw1UvyPRr2tsNL0m1jZxcJz8O7cMlImvOYv0ob5IYj
-        qU8VK3DY3Vxw4nIpetAOQ43Jt/NEsfktJSreOu25mb1LFI8v1ckCYxzsvlcQJqztJL7OYf/fYJB
-        GcwuMFegnOam4xRJXf/q//D5ERQ==
-X-Received: by 2002:a37:a9d0:0:b0:6af:1ba4:c3e5 with SMTP id s199-20020a37a9d0000000b006af1ba4c3e5mr8500850qke.167.1656417234892;
-        Tue, 28 Jun 2022 04:53:54 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tsML0jjLfuArn0V98uqgHi7yCfymN14awwvePjx5qt4Ac2aBE1EXWTFaiUYpN07axMfRvatg==
-X-Received: by 2002:a37:a9d0:0:b0:6af:1ba4:c3e5 with SMTP id s199-20020a37a9d0000000b006af1ba4c3e5mr8500833qke.167.1656417234666;
-        Tue, 28 Jun 2022 04:53:54 -0700 (PDT)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id bw20-20020a05622a099400b00304bc2acc25sm8851128qtb.6.2022.06.28.04.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 04:53:54 -0700 (PDT)
-Date:   Tue, 28 Jun 2022 07:53:51 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Kalesh Singh <kaleshsingh@google.com>
-Cc:     ckoenig.leichtzumerken@gmail.com, christian.koenig@amd.com,
-        viro@zeniv.linux.org.uk, hch@infradead.org,
-        stephen.s.brennan@oracle.com, David.Laight@aculab.com,
-        ilkos@google.com, tjmercier@google.com, surenb@google.com,
-        kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 1/2] procfs: Add 'size' to /proc/<pid>/fdinfo/
-Message-ID: <Yrrrz7MxMu8OoEPU@bfoster>
-References: <20220623220613.3014268-1-kaleshsingh@google.com>
- <20220623220613.3014268-2-kaleshsingh@google.com>
+        bh=0uGu7K4Rqu3ezVw8tmoJpMFQURgPc1ipNiiYFEj1I2A=;
+        b=yxFOQEWFLpu/oNZdG0wx7s21jDqiwHhxlL25m7DHpY8fTiAlCVmGs/AovRoPrW+e5lAv4b
+        ULaGR7D/E3II/YFDbIXrg1VQZ15wYFSt/o9LqL54P+UIimZUKMQVrpQPC5sRtoInScVibP
+        OVtJdVVEA2CoDAK8uxX7gYwcIOI6jTM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1656417517;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0uGu7K4Rqu3ezVw8tmoJpMFQURgPc1ipNiiYFEj1I2A=;
+        b=Q1AnzTXaVXg/QjyyepPg5mfbFyEBOp+DIpo/N9gLOFTOSL1X9AqbyFiTaOJnQR3bOdsoGU
+        a+uGd0tNIU2PQVCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B34A4139E9;
+        Tue, 28 Jun 2022 11:58:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id fT/XKu3sumIvEgAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Tue, 28 Jun 2022 11:58:37 +0000
+Date:   Tue, 28 Jun 2022 13:53:56 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: remove btrfs_writepage_cow_fixup
+Message-ID: <20220628115356.GB20633@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20220624122334.80603-1-hch@lst.de>
+ <7c30b6a4-e628-baea-be83-6557750f995a@gmx.com>
+ <20220624125118.GA789@lst.de>
+ <20220624130750.cu26nnm6hjrru4zd@quack3.lan>
+ <20220625091143.GA23118@lst.de>
+ <20220627101914.gpoz7f6riezkolad@quack3.lan>
+ <e73be42e-fce5-733a-310d-db9dc5011796@gmx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220623220613.3014268-2-kaleshsingh@google.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <e73be42e-fce5-733a-310d-db9dc5011796@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 03:06:06PM -0700, Kalesh Singh wrote:
-> To be able to account the amount of memory a process is keeping pinned
-> by open file descriptors add a 'size' field to fdinfo output.
+On Tue, Jun 28, 2022 at 08:24:07AM +0800, Qu Wenruo wrote:
+> On 2022/6/27 18:19, Jan Kara wrote:
+> > On Sat 25-06-22 11:11:43, Christoph Hellwig wrote:
+> >> On Fri, Jun 24, 2022 at 03:07:50PM +0200, Jan Kara wrote:
+> >>> I'm not sure I get the context 100% right but pages getting randomly dirty
+> >>> behind filesystem's back can still happen - most commonly with RDMA and
+> >>> similar stuff which calls set_page_dirty() on pages it has got from
+> >>> pin_user_pages() once the transfer is done. page_maybe_dma_pinned() should
+> >>> be usable within filesystems to detect such cases and protect the
+> >>> filesystem but so far neither me nor John Hubbart has got to implement this
+> >>> in the generic writeback infrastructure + some filesystem as a sample case
+> >>> others could copy...
+> >>
+> >> Well, so far the strategy elsewhere seems to be to just ignore pages
+> >> only dirtied through get_user_pages.  E.g. iomap skips over pages
+> >> reported as holes, and ext4_writepage complains about pages without
+> >> buffers and then clears the dirty bit and continues.
+> >>
+> >> I'm kinda surprised that btrfs wants to treat this so special
+> >> especially as more of the btrfs page and sub-page status will be out
+> >> of date as well.
+> >
+> > I agree btrfs probably needs a different solution than what it is currently
+> > doing if they want to get things right. I just wanted to make it clear that
+> > the code you are ripping out may be a wrong solution but to a real problem.
 > 
-> dmabufs fds already expose a 'size' field for this reason, remove this
-> and make it a common field for all fds. This allows tracking of
-> other types of memory (e.g. memfd and ashmem in Android).
+> IHMO I believe btrfs should also ignore such dirty but not managed by fs
+> pages.
 > 
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> Reviewed-by: Christian König <christian.koenig@amd.com>
-> ---
+> But I still have a small concern here.
 > 
-> Changes in v2:
->   - Add Christian's Reviewed-by
+> Is it ensured that, after RDMA dirtying the pages, would we finally got
+> a proper notification to fs that those pages are marked written?
 > 
-> Changes from rfc:
->   - Split adding 'size' and 'path' into a separate patches, per Christian
->   - Split fdinfo seq_printf into separate lines, per Christian
->   - Fix indentation (use tabs) in documentaion, per Randy
+> If not, I would guess those pages would never got a chance to be written
+> back.
 > 
->  Documentation/filesystems/proc.rst | 12 ++++++++++--
->  drivers/dma-buf/dma-buf.c          |  1 -
->  fs/proc/fd.c                       |  9 +++++----
->  3 files changed, 15 insertions(+), 7 deletions(-)
-> 
-...
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 913bef0d2a36..464bc3f55759 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -54,10 +54,11 @@ static int seq_show(struct seq_file *m, void *v)
->  	if (ret)
->  		return ret;
->  
-> -	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%lu\n",
-> -		   (long long)file->f_pos, f_flags,
-> -		   real_mount(file->f_path.mnt)->mnt_id,
-> -		   file_inode(file)->i_ino);
-> +	seq_printf(m, "pos:\t%lli\n", (long long)file->f_pos);
-> +	seq_printf(m, "flags:\t0%o\n", f_flags);
-> +	seq_printf(m, "mnt_id:\t%i\n", real_mount(file->f_path.mnt)->mnt_id);
-> +	seq_printf(m, "ino:\t%lu\n", file_inode(file)->i_ino);
-> +	seq_printf(m, "size:\t%lli\n", (long long)file_inode(file)->i_size);
+> If yes, then I'm totally fine to go the ignoring path.
 
-Hi Kalesh,
-
-Any reason not to use i_size_read() here?
-
-Also not sure if it matters that much for your use case, but something
-worth noting at least with shmem is that one can do something like:
-
-# cat /proc/meminfo | grep Shmem:
-Shmem:               764 kB
-# xfs_io -fc "falloc -k 0 10m" ./file
-# ls -alh file 
--rw-------. 1 root root 0 Jun 28 07:22 file
-# stat file 
-  File: file
-  Size: 0               Blocks: 20480      IO Block: 4096   regular empty file
-# cat /proc/meminfo | grep Shmem:
-Shmem:             11004 kB
-
-... where the resulting memory usage isn't reflected in i_size (but is
-is in i_blocks/bytes).
-
-Brian
-
->  
->  	/* show_fd_locks() never deferences files so a stale value is safe */
->  	show_fd_locks(m, file, files);
-> -- 
-> 2.37.0.rc0.161.g10f37bed90-goog
-> 
-
+This would work only for the higher level API where eg. RDMA notifies
+the filesystem, but there's still the s390 case that is part of the
+hardware architecture. The fixup worker is there as a safety for all
+other cases, I'm not fine removing or ignoring it.
