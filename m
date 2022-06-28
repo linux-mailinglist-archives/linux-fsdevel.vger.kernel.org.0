@@ -2,125 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4502055F1C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 01:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 687E155F1D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 01:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbiF1XJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 19:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34338 "EHLO
+        id S230233AbiF1XTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 19:19:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231949AbiF1XJ6 (ORCPT
+        with ESMTP id S229772AbiF1XTP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 19:09:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F432CC89;
-        Tue, 28 Jun 2022 16:09:57 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 28 Jun 2022 19:19:15 -0400
+Received: from mail.yonan.net (mail.yonan.net [54.244.116.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF492FE74
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 16:19:14 -0700 (PDT)
+Received: from [10.10.0.40] (unknown [76.130.91.106])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0E8151FD8B;
-        Tue, 28 Jun 2022 23:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1656457796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z3EDuY+Ya/PyFfjJ28NCPihRwor6RW8Z8zdG/gLgK3Q=;
-        b=Sv4Z/Ucqnzxl9V2xY3v4TjVTDL8wkk7iSPL5afSMenPwWpDR7POZyGarhs2fXPNhsQeqpm
-        zDkbN8MGW5V5Di8+n+a064ETw+AytqpYlziiNOz7eSFn2y0AqN28Hw5eP26y0fn6JkFSyj
-        jJzG0KCLtjt+aG8F/C/TZIWrVaLMUAw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1656457796;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z3EDuY+Ya/PyFfjJ28NCPihRwor6RW8Z8zdG/gLgK3Q=;
-        b=GO9X1yOdSv5OwL9cdYiokZIrPweeF5p+CR/f+Pb49OnwqA0q5O/dAcmfxYsoJCnkjt9YdZ
-        WHVQvfSTvSDl0YDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CC530139E9;
-        Tue, 28 Jun 2022 23:09:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PYCQIUGKu2KUJAAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 28 Jun 2022 23:09:53 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        by mail.yonan.net (Postfix) with ESMTPSA id 75B0A3E947;
+        Tue, 28 Jun 2022 23:19:13 +0000 (UTC)
+Message-ID: <03ee39fa-7cfd-5155-3559-99ec8c8a2d32@openvpn.net>
+Date:   Tue, 28 Jun 2022 17:19:12 -0600
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Chuck Lever III" <chuck.lever@oracle.com>
-Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Daire Byrne" <daire@dneg.com>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "LKML" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/12] nfsd: allow parallel creates from nfsd
-In-reply-to: <CF45DA56-C7C7-434C-A985-A0FE08703F8D@oracle.com>
-References: <165516173293.21248.14587048046993234326.stgit@noble.brown>,
- <165516230200.21248.15108802355330895562.stgit@noble.brown>,
- <CF45DA56-C7C7-434C-A985-A0FE08703F8D@oracle.com>
-Date:   Wed, 29 Jun 2022 09:09:50 +1000
-Message-id: <165645779028.15378.2009203210771986783@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] namei: implemented RENAME_NEWER flag for renameat2()
+ conditional replace
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20220627221107.176495-1-james@openvpn.net>
+ <Yrs7lh6hG44ERoiM@ZenIV>
+ <CAOQ4uxgoZe8UUftRKf=b--YmrKJ4wdDX99y7G8U2WTuuVsyvdA@mail.gmail.com>
+From:   James Yonan <james@openvpn.net>
+In-Reply-To: <CAOQ4uxgoZe8UUftRKf=b--YmrKJ4wdDX99y7G8U2WTuuVsyvdA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 29 Jun 2022, Chuck Lever III wrote:
->=20
-> > On Jun 13, 2022, at 7:18 PM, NeilBrown <neilb@suse.de> wrote:
-> > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> > index c29baa03dfaf..a50db688c60d 100644
-> > --- a/fs/nfsd/nfsfh.c
-> > +++ b/fs/nfsd/nfsfh.c
-> > @@ -616,7 +616,7 @@ fh_update(struct svc_fh *fhp)
-> >  * @fhp: file handle to be updated
-> >  *
-> >  */
-> > -void fh_fill_pre_attrs(struct svc_fh *fhp)
-> > +void fh_fill_pre_attrs(struct svc_fh *fhp, bool atomic)
->=20
-> Hi Neil, just noticed this:
->=20
->   CC [M]  fs/nfsd/nfsfh.o
->   CHECK   /home/cel/src/linux/linux/fs/nfsd/nfsfh.c
-> /home/cel/src/linux/linux/fs/nfsd/nfsfh.c:621: warning: Function parameter =
-or member 'atomic' not described in 'fh_fill_pre_attrs'
+On 6/28/22 12:34, Amir Goldstein wrote:
+> On Tue, Jun 28, 2022 at 8:44 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> On Mon, Jun 27, 2022 at 04:11:07PM -0600, James Yonan wrote:
+>>
+>>>            && d_is_positive(new_dentry)
+>>>            && timespec64_compare(&d_backing_inode(old_dentry)->i_mtime,
+>>>                                  &d_backing_inode(new_dentry)->i_mtime) <= 0)
+>>>                goto exit5;
+>>>
+>>> It's pretty cool in a way that a new atomic file operation can even be
+>>> implemented in just 5 lines of code, and it's thanks to the existing
+>>> locking infrastructure around file rename/move that these operations
+>>> become almost trivial.  Unfortunately, every fs must approve a new
+>>> renameat2() flag, so it bloats the patch a bit.
+>> How is it atomic and what's to stabilize ->i_mtime in that test?
+>> Confused...
+> Good point.
+> RENAME_EXCHANGE_WITH_NEWER would have been better
+> in that regard.
+>
+> And you'd have to check in vfs_rename() after lock_two_nondirectories()
 
-Thanks.  I"ll address that, and also the other issues that you raised in
-your patch-by-patch review.  Thanks for those.
+So I mean atomic in the sense that you are comparing the old and new 
+mtimes inside the lock_rename/unlock_rename critical section in 
+do_renameat2(), so the basic guarantees of rename still hold, i.e. that 
+readers see an atomic transition from old to new files, or no transition 
+(where mtime comparison results in -EEXIST return).  I understand that 
+it doesn't guarantee i_mtime stability, but the application layer may 
+not need that guarantee. In our case, mtime is immutable after local 
+file creation and before do_renameat2() is used to move the file into place.
 
->=20
-> And... do you intend to repost this series with the supplemental
-> fixes applied?
+Re: RENAME_EXCHANGE_WITH_NEWER, that's an interesting idea.  You could 
+actually implement it with minor changes in the patch, by simply 
+combining RENAME_EXCHANGE|RENAME_NEWER.  Because fundamentally, all 
+RENAME_NEWER does is compare mtimes and possibly return early with 
+-EEXIST.  If the early return is not taken, then it becomes a plain 
+rename or RENAME_EXCHANGE if that flag is also specified.
 
-I've been a bit distracted this week, but my current plan is to
-reorganise the patches to put as many of the NFS and NFSD patches as
-possible before the VFS patches.  There should then just be one each for
-NFS and NFSD after the VFS changes.  I hope to post that series early
-next week.
+James
 
->=20
-> Should we come up with a plan to merge these during the next
-> window, or do you feel more work is needed?
 
-I think it would be reasonable to merge the preliminary NFS and NFSD
-patches in the next window.  I'd really like to hear from Al before
-pushing the rest too hard.  Probably after rc1 I'll post the remainder
-of the series and include Linus if we haven't heard from Al.  I'd be
-perfectly happy if the main content of the series landed in the
-subsequent merge window.
-
-Thanks,
-NeilBrown
