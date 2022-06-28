@@ -2,69 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C28255E479
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B48855E4F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231273AbiF1N2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 09:28:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57034 "EHLO
+        id S1346625AbiF1NhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 09:37:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346439AbiF1N13 (ORCPT
+        with ESMTP id S1346601AbiF1NhA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 09:27:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9769433354;
-        Tue, 28 Jun 2022 06:26:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 33C43617C5;
-        Tue, 28 Jun 2022 13:26:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94BAC3411D;
-        Tue, 28 Jun 2022 13:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656422759;
-        bh=zWipI4/HuL6mWJ9CnZHWaGr7nNngJkU/KjLz7LVeqGc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LyA4r1T6XCkyVvzyhKhyQMp7L5HID1ud7C12uE5pFDCd96vOprVyNXKl5FyR600E5
-         eswmsaZ1tY1GFkcMyaGqPnoXa6Rn7o1iU/4pnlRAdUZ2GwwBliWT00an7Yfy1tO0qb
-         TlE1Dy5EVSW6hmqCGiMg5+hldWvAlmMUI1E8xcBYt5XpQpTu2x3osanq1HzPrzl7gy
-         YlaJDQTOV5qASJUR2ySS9rEL/TuWKeof3HP4eqCQMayUDLwxwy26PEgNPId7Dquqm1
-         lkr9NFgj7OdCWAb7uIOiqxvoLiqBz6sirG1ckL1m971PqsAe3eS+JUZp3fVRfwb6sR
-         ZyCQ0PBQmMf3g==
-Date:   Tue, 28 Jun 2022 15:25:52 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>, gjoyce@ibm.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [RFC PATCH v2 2/3] fs: define a firmware security filesystem
- named fwsecurityfs
-Message-ID: <20220628132552.ryjlz2dou52sghhr@wittgenstein>
-References: <20220622215648.96723-1-nayna@linux.ibm.com>
- <20220622215648.96723-3-nayna@linux.ibm.com>
- <YrQqPhi4+jHZ1WJc@kroah.com>
- <41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com>
- <54af4a92356090d88639531413ea8cb46837bd18.camel@linux.ibm.com>
- <YrleOHmEbpLPZ1n8@kroah.com>
+        Tue, 28 Jun 2022 09:37:00 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A307E2A27D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 06:36:54 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id i17so19855441qvo.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 06:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=gN4ZNyT9GRZ46Vwx3CUzNgwGxKE3ptwelsb3O/2waMc=;
+        b=SRPS2zIET11DP06FAnMANUW30rX+F+KLnmvgpItTZuHDiHMYbx191l+udZ0BIKVo+p
+         DUqKNFcRnPxEdciA9v/rjMoUuUABeinU5a59o91m7mO0ei+LjGwfeqP1sFK6bST4r2Sc
+         +kwNrequilw+r3whlSvEqjUrw7uEou8aBEv26lUqmckZs7QEO1gxqNAIdKmR6ixdoBBW
+         VwXL+VitONeiHER4+6czyOuvux/gSa01CsajOGl6xQeKgTZdOU9/PF5ai6yeP3/8Na6A
+         VkyCaiWAoLiX3IML+rZ/qAH9obhof6Stg3VEpk4n7D6sOfmWV6A4zI2itZ9nI+NyrBEn
+         GAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gN4ZNyT9GRZ46Vwx3CUzNgwGxKE3ptwelsb3O/2waMc=;
+        b=2Xt7LGcJnt228a0Kz8Z4sHO+EuATLJIr1PVCZ5jow5fB1VEn8AUZOAMqROGQWUuKQq
+         TIAKDoi9dZatCgx1/evzVa6470IpfoSaTCdjKgtwk8Idf/sq3xOsGVp+PlLOOE7MKE25
+         ok2bZ11eKbMyt7LsFiAXTc/8YOarxALeKpYzRt58yftpgqmEPk6bjkuLR+N98fFMdNP9
+         5dCLEmkytes1lOZYUMo6q6pZCjGF8ZYE/xnJ7BYAMBQ2DxE6+PkcGqHXcKSkq9JWlaCG
+         szwxt/y8eqayQDQcy3RSGYd03O4y76xBwHRu8a8ijDbMsNq9EzfoSHADga236EPUY/++
+         jTZQ==
+X-Gm-Message-State: AJIora+BlRGCS/e+L31EcodYwk/XjJ+J7vMxhB9x6j8gUNZz9c9MA+VY
+        7hRtjnBegUwVsXRXaJGOocjkKQ==
+X-Google-Smtp-Source: AGRyM1uooXTVlKXYemR9EvbrrQp4i2XA4BpQT09bjvN7I6xIwm3cKCnpXCNHNGqwd+HxVz52pv3Omw==
+X-Received: by 2002:ac8:5b0d:0:b0:31b:f519:4107 with SMTP id m13-20020ac85b0d000000b0031bf5194107mr1237416qtw.331.1656423413317;
+        Tue, 28 Jun 2022 06:36:53 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
+        by smtp.gmail.com with ESMTPSA id s10-20020a05620a29ca00b006a79479657fsm708363qkp.108.2022.06.28.06.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 06:36:52 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1o6BOd-002vAA-VA; Tue, 28 Jun 2022 10:36:51 -0300
+Date:   Tue, 28 Jun 2022 10:36:51 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, dm-devel@redhat.com,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, io-uring@vger.kernel.org,
+        lvs-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        kasan-dev@googlegroups.com, linux-mmc@vger.kernel.org,
+        nvdimm@lists.linux.dev, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-perf-users@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        v9fs-developer@lists.sourceforge.net, linux-rdma@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] treewide: uapi: Replace zero-length arrays with
+ flexible-array members
+Message-ID: <20220628133651.GO23621@ziepe.ca>
+References: <20220627180432.GA136081@embeddedor>
+ <6bc1e94c-ce1d-a074-7d0c-8dbe6ce22637@iogearbox.net>
+ <20220628004052.GM23621@ziepe.ca>
+ <20220628005825.GA161566@embeddedor>
+ <20220628022129.GA8452@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YrleOHmEbpLPZ1n8@kroah.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220628022129.GA8452@embeddedor>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,99 +97,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 09:37:28AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Jun 26, 2022 at 11:48:06AM -0400, Mimi Zohar wrote:
-> > On Thu, 2022-06-23 at 09:23 -0400, James Bottomley wrote:
-> > > On Thu, 2022-06-23 at 10:54 +0200, Greg Kroah-Hartman wrote:
-> > > [...]
-> > > > > diff --git a/fs/fwsecurityfs/inode.c b/fs/fwsecurityfs/inode.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..5d06dc0de059
-> > > > > --- /dev/null
-> > > > > +++ b/fs/fwsecurityfs/inode.c
-> > > > > @@ -0,0 +1,159 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > > +/*
-> > > > > + * Copyright (C) 2022 IBM Corporation
-> > > > > + * Author: Nayna Jain <nayna@linux.ibm.com>
-> > > > > + */
-> > > > > +
-> > > > > +#include <linux/sysfs.h>
-> > > > > +#include <linux/kobject.h>
-> > > > > +#include <linux/fs.h>
-> > > > > +#include <linux/fs_context.h>
-> > > > > +#include <linux/mount.h>
-> > > > > +#include <linux/pagemap.h>
-> > > > > +#include <linux/init.h>
-> > > > > +#include <linux/namei.h>
-> > > > > +#include <linux/security.h>
-> > > > > +#include <linux/lsm_hooks.h>
-> > > > > +#include <linux/magic.h>
-> > > > > +#include <linux/ctype.h>
-> > > > > +#include <linux/fwsecurityfs.h>
-> > > > > +
-> > > > > +#include "internal.h"
-> > > > > +
-> > > > > +int fwsecurityfs_remove_file(struct dentry *dentry)
-> > > > > +{
-> > > > > +	drop_nlink(d_inode(dentry));
-> > > > > +	dput(dentry);
-> > > > > +	return 0;
-> > > > > +};
-> > > > > +EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
-> > > > > +
-> > > > > +int fwsecurityfs_create_file(const char *name, umode_t mode,
-> > > > > +					u16 filesize, struct dentry
-> > > > > *parent,
-> > > > > +					struct dentry *dentry,
-> > > > > +					const struct file_operations
-> > > > > *fops)
-> > > > > +{
-> > > > > +	struct inode *inode;
-> > > > > +	int error;
-> > > > > +	struct inode *dir;
-> > > > > +
-> > > > > +	if (!parent)
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > > +	dir = d_inode(parent);
-> > > > > +	pr_debug("securityfs: creating file '%s'\n", name);
-> > > > 
-> > > > Did you forget to call simple_pin_fs() here or anywhere else?
-> > > > 
-> > > > And this can be just one function with the directory creation file,
-> > > > just check the mode and you will be fine.  Look at securityfs as an
-> > > > example of how to make this simpler.
-> > > 
-> > > Actually, before you go down this route can you consider the namespace
-> > > ramifications.  In fact we're just having to rework securityfs to pull
-> > > out all the simple_pin_... calls because simple_pin_... is completely
-> > > inimical to namespaces.
+On Tue, Jun 28, 2022 at 04:21:29AM +0200, Gustavo A. R. Silva wrote:
 
-I described this at length in the securityfs namespacing thread at
-various points. simple_pin_*() should be avoided if possible. Ideally
-the filesystem will just be cleaned up on umount. There might be a
-reason to make it survive umounts if you have state that stays around
-and somehow is intimately tied to that filesystem.
+> > > Though maybe we could just switch off -Wgnu-variable-sized-type-not-at-end  during configuration ?
 
-> > > 
-> > > The first thing to consider is if you simply use securityfs you'll
-> > > inherit all the simple_pin_... removal work and be namespace ready.  It
-> > > could be that creating a new filesystem that can't be namespaced is the
-> > > right thing to do here, but at least ask the question: would we ever
-> > > want any of these files to be presented selectively inside containers? 
-> > > If the answer is "yes" then simple_pin_... is the wrong interface.
-> > 
-> > Greg, the securityfs changes James is referring to are part of the IMA
-> > namespacing patch set:
-> > https://lore.kernel.org/linux-integrity/20220420140633.753772-1-stefanb@linux.ibm.com/
-> > 
-> > I'd really appreciate your reviewing the first two patches:
-> > [PATCH v12 01/26] securityfs: rework dentry creation
-> > [PATCH v12 02/26] securityfs: Extend securityfs with namespacing
-> > support
-> 
-> Looks like others have already reviewed them, they seem sane to me if
-> they past testing.
+> We need to think in a different strategy.
 
-Thanks for taking a look.
+I think we will need to switch off the warning in userspace - this is
+doable for rdma-core.
+
+On the other hand, if the goal is to enable the array size check
+compiler warning I would suggest focusing only on those structs that
+actually hit that warning in the kernel. IIRC infiniband doesn't
+trigger it because it just pointer casts the flex array to some other
+struct.
+
+It isn't actually an array it is a placeholder for a trailing
+structure, so it is never indexed.
+
+This is also why we hit the warning because the convient way for
+userspace to compose the message is to squash the header and trailer
+structs together in a super struct on the stack, then invoke the
+ioctl.
+
+Jason 
