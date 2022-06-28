@@ -2,206 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7218C55F178
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 00:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B33E55F1B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 01:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbiF1WiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 18:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41660 "EHLO
+        id S230405AbiF1W73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 18:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiF1WiQ (ORCPT
+        with ESMTP id S229829AbiF1W71 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 18:38:16 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC35ADEAE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 15:38:14 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id bi22-20020a05600c3d9600b003a04de22ab6so3526367wmb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 15:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=D2xQiDloUPECELWlq78dtMk8sQX4Mz7K0pGe9yPKMGc=;
-        b=OpP84mIDDpru5A5sd+m/hLg4LXMxv18S6LfalFgSCro5gC5aX2kJrOAVb3syqigguo
-         8oGL+WAA+7jBv1o2/kR/eJA+AwAJU5BdoIB3/ql4h6SqIRiHHBNgyTqGnuc41dZcOgpS
-         8GODFCQAa+sX8LrqL8JWzP/PgAY/8ZBMz/OK9842UPNrneHpiHczXl7ZTRIwNXE7qo5L
-         1jhrX7WbggTT1LtgYqfgNI4KrXkFmpLJYyRoy8MnLmZ0UM6rNqKs1IJ0phUZcbz9D+o3
-         xbgEc1QeVYLnS15fY8Z2rTrrNwShaQD1Dt6SQf/tzey/enOHsHzoUrOi7sT+lSLcKgVg
-         gnKQ==
+        Tue, 28 Jun 2022 18:59:27 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3BE91EC56
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 15:59:26 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id h73-20020a6bb74c000000b0067275998ba8so7838303iof.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 15:59:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=D2xQiDloUPECELWlq78dtMk8sQX4Mz7K0pGe9yPKMGc=;
-        b=CuNUqipWBinp3XQ5x71MZLCekytvB91WLL5XEacBu7An9GIRKzb5xjBGmGt7p9p1Q4
-         x5sVVQSFdjJVMGbrNxKPmWqHnlwZ7P+FwVhsG7nK5V17RE3dAYxrjl37oVnMTnnHmbpq
-         wLEnxa2XPY9Z/44AGGrUArHEw3JiyEhgSH/isICyVoj4QWoCLIyqQY+6lrXIk9KscdqP
-         jFJ7espQ1io8ks0Wybb6D9T0UB50uLek5a1j3hYgYLSqzUglmUoZUW23W2iLi/plokVZ
-         l5o2ma+xMA/lgGwQ67pHBWL0i/WgFrdgr/ogPr+KUdyvEP4UpEeKcAaNJZVOSfHcDVPX
-         flyA==
-X-Gm-Message-State: AJIora8GtNa1eQNpyo08hGKrlzstZuGtWAWV902RQc9VR9xAd282MilL
-        unW/HI8oZsm+hqBNnVVhPv+jZXyBjXHIt6rxo5LRtw==
-X-Google-Smtp-Source: AGRyM1tXi+AtbN0W0GHt4S5SYwxRiDa2yaE7kTT3Z77WdS2mulzizwZgd2HMwe6MD30K5Tf3EqxcjladfBlTrx+MSF0=
-X-Received: by 2002:a05:600c:4f84:b0:39c:9897:5295 with SMTP id
- n4-20020a05600c4f8400b0039c98975295mr172377wmq.158.1656455893181; Tue, 28 Jun
- 2022 15:38:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=rzdTqI/xXB1Renj0b/qWiIJWiHq9oMlR5fhU+0ALxts=;
+        b=M1zh0o9S3JLwkdk+HlihBfm/i/Rh50UQ6v2Ii5/6wmTTsGtZkShl3+l0g+gQcwnQyG
+         EeV9QVHq93MNzhKqr5a7SZdMsi0cPMCN0e5gegOwFeedCitqk9eZYpEmAECfVcyCDPFZ
+         swoddGIzCQOItKHClRxLTVs2Tdp567+/T7y7J6+2Yy+J6wj1fSUyJmNsv5TOkuIu7++Z
+         j9o7/InGC2qRMUL74TmxNsz1Rjo0pqbrfOz11GdC61zbfKnIgmhlIurBcvX7KAGmQ++r
+         iYW7QJMxuxBDOScsGSEJVgUz8ENBcs07AcZBrsaPdX1ZMqln9Ap7mknUQSy/s0AU9a67
+         +IKA==
+X-Gm-Message-State: AJIora/mHkdFWUA8cD6gOmAaIpdW1Yplo9svp/k/vrd1QDGTAcVizx0F
+        EvUFn7RQERbj39t6dB+QhILrNzwfPDeMbe+/6w4jZOuK/2KC
+X-Google-Smtp-Source: AGRyM1vU9YUt/wPxpu6ITCx4zJxRL00VP5btHOhzsm6VfD7PQXPmQAOgnNPJc0H3r191rJNHtKF6pO+6q5akz1BqZ+Sg4pnPMUBr
 MIME-Version: 1.0
-References: <20220623220613.3014268-1-kaleshsingh@google.com>
- <20220623220613.3014268-2-kaleshsingh@google.com> <Yrrrz7MxMu8OoEPU@bfoster>
-In-Reply-To: <Yrrrz7MxMu8OoEPU@bfoster>
-From:   Kalesh Singh <kaleshsingh@google.com>
-Date:   Tue, 28 Jun 2022 15:38:02 -0700
-Message-ID: <CAC_TJvejs5gbggC1hekyjUNctC_8+3FmVn0B7zAZox2+MkEjaA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] procfs: Add 'size' to /proc/<pid>/fdinfo/
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        David.Laight@aculab.com, Ioannis Ilkos <ilkos@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>
+X-Received: by 2002:a05:6638:4813:b0:33c:8b87:3175 with SMTP id
+ cp19-20020a056638481300b0033c8b873175mr285374jab.182.1656457166145; Tue, 28
+ Jun 2022 15:59:26 -0700 (PDT)
+Date:   Tue, 28 Jun 2022 15:59:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f94c4805e289fc47@google.com>
+Subject: [syzbot] BUG: unable to handle kernel paging request in truncate_inode_partial_folio
+From:   syzbot <syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 4:54 AM Brian Foster <bfoster@redhat.com> wrote:
->
-> On Thu, Jun 23, 2022 at 03:06:06PM -0700, Kalesh Singh wrote:
-> > To be able to account the amount of memory a process is keeping pinned
-> > by open file descriptors add a 'size' field to fdinfo output.
-> >
-> > dmabufs fds already expose a 'size' field for this reason, remove this
-> > and make it a common field for all fds. This allows tracking of
-> > other types of memory (e.g. memfd and ashmem in Android).
-> >
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > ---
-> >
-> > Changes in v2:
-> >   - Add Christian's Reviewed-by
-> >
-> > Changes from rfc:
-> >   - Split adding 'size' and 'path' into a separate patches, per Christi=
-an
-> >   - Split fdinfo seq_printf into separate lines, per Christian
-> >   - Fix indentation (use tabs) in documentaion, per Randy
-> >
-> >  Documentation/filesystems/proc.rst | 12 ++++++++++--
-> >  drivers/dma-buf/dma-buf.c          |  1 -
-> >  fs/proc/fd.c                       |  9 +++++----
-> >  3 files changed, 15 insertions(+), 7 deletions(-)
-> >
-> ...
-> > diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> > index 913bef0d2a36..464bc3f55759 100644
-> > --- a/fs/proc/fd.c
-> > +++ b/fs/proc/fd.c
-> > @@ -54,10 +54,11 @@ static int seq_show(struct seq_file *m, void *v)
-> >       if (ret)
-> >               return ret;
-> >
-> > -     seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%lu\n"=
-,
-> > -                (long long)file->f_pos, f_flags,
-> > -                real_mount(file->f_path.mnt)->mnt_id,
-> > -                file_inode(file)->i_ino);
-> > +     seq_printf(m, "pos:\t%lli\n", (long long)file->f_pos);
-> > +     seq_printf(m, "flags:\t0%o\n", f_flags);
-> > +     seq_printf(m, "mnt_id:\t%i\n", real_mount(file->f_path.mnt)->mnt_=
-id);
-> > +     seq_printf(m, "ino:\t%lu\n", file_inode(file)->i_ino);
-> > +     seq_printf(m, "size:\t%lli\n", (long long)file_inode(file)->i_siz=
-e);
->
-> Hi Kalesh,
->
-> Any reason not to use i_size_read() here?
+Hello,
 
-Hi Brian.
+syzbot found the following issue on:
 
-Thanks for pointing this out. You are right, we should use
-i_size_read() here. I'll update in the next version.
+HEAD commit:    941e3e791269 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1670ded4080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=833001d0819ddbc9
+dashboard link: https://syzkaller.appspot.com/bug?extid=9bd2b7adbd34b30b87e4
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140f9ba8080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15495188080000
 
->
-> Also not sure if it matters that much for your use case, but something
-> worth noting at least with shmem is that one can do something like:
->
-> # cat /proc/meminfo | grep Shmem:
-> Shmem:               764 kB
-> # xfs_io -fc "falloc -k 0 10m" ./file
-> # ls -alh file
-> -rw-------. 1 root root 0 Jun 28 07:22 file
-> # stat file
->   File: file
->   Size: 0               Blocks: 20480      IO Block: 4096   regular empty=
- file
-> # cat /proc/meminfo | grep Shmem:
-> Shmem:             11004 kB
->
-> ... where the resulting memory usage isn't reflected in i_size (but is
-> is in i_blocks/bytes).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
 
-I tried a similar experiment a few times, but I don't see the same
-results. In my case, there is not any change in shmem. IIUC the
-fallocate is allocating the disk space not shared memory.
+BUG: unable to handle page fault for address: ffff888021f7e005
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
+Oops: 0002 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
+Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
+RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
+RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
+RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
+R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
+R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
+FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ zero_user_segments include/linux/highmem.h:272 [inline]
+ folio_zero_range include/linux/highmem.h:428 [inline]
+ truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
+ truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
+ truncate_inode_pages mm/truncate.c:452 [inline]
+ truncate_pagecache+0x63/0x90 mm/truncate.c:753
+ simple_setattr+0xed/0x110 fs/libfs.c:535
+ secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
+ notify_change+0xb8c/0x12b0 fs/attr.c:424
+ do_truncate+0x13c/0x200 fs/open.c:65
+ do_sys_ftruncate+0x536/0x730 fs/open.c:193
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7fb29d900899
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
+RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
+RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
+R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
+ </TASK>
+Modules linked in:
+CR2: ffff888021f7e005
+---[ end trace 0000000000000000 ]---
+RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
+Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
+RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
+RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
+RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
+R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
+R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
+FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	c1 e9 03             	shr    $0x3,%ecx
+   3:	40 0f b6 f6          	movzbl %sil,%esi
+   7:	48 b8 01 01 01 01 01 	movabs $0x101010101010101,%rax
+   e:	01 01 01
+  11:	48 0f af c6          	imul   %rsi,%rax
+  15:	f3 48 ab             	rep stos %rax,%es:(%rdi)
+  18:	89 d1                	mov    %edx,%ecx
+  1a:	f3 aa                	rep stos %al,%es:(%rdi)
+  1c:	4c 89 c8             	mov    %r9,%rax
+  1f:	c3                   	retq
+  20:	90                   	nop
+  21:	49 89 f9             	mov    %rdi,%r9
+  24:	40 88 f0             	mov    %sil,%al
+  27:	48 89 d1             	mov    %rdx,%rcx
+* 2a:	f3 aa                	rep stos %al,%es:(%rdi) <-- trapping instruction
+  2c:	4c 89 c8             	mov    %r9,%rax
+  2f:	c3                   	retq
+  30:	90                   	nop
+  31:	49 89 fa             	mov    %rdi,%r10
+  34:	40 0f b6 ce          	movzbl %sil,%ecx
+  38:	48                   	rex.W
+  39:	b8 01 01 01 01       	mov    $0x1010101,%eax
+  3e:	01 01                	add    %eax,(%rcx)
 
-cat /proc/meminfo > meminfo.start
-xfs_io -fc "falloc -k 0 50m" ./xfs_file
-cat /proc/meminfo > meminfo.stop
-tail -n +1 meminfo.st* | grep -i '=3D=3D\|Shmem:'
 
-=3D=3D> meminfo.start <=3D=3D
-Shmem:               484 kB
-=3D=3D> meminfo.stop <=3D=3D
-Shmem:               484 kB
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-ls -lh xfs_file
--rw------- 1 root root 0 Jun 28 15:12 xfs_file
-
-stat xfs_file
-  File: xfs_file
-  Size: 0               Blocks: 102400     IO Block: 4096   regular empty f=
-ile
-
-Thanks,
-Kalesh
-
->
-> Brian
->
-> >
-> >       /* show_fd_locks() never deferences files so a stale value is saf=
-e */
-> >       show_fd_locks(m, file, files);
-> > --
-> > 2.37.0.rc0.161.g10f37bed90-goog
-> >
->
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
