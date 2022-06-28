@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 963EE55EFC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 22:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 891DE55EFC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 22:46:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbiF1UqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 16:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
+        id S231172AbiF1UqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 16:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230194AbiF1UqS (ORCPT
+        with ESMTP id S229501AbiF1UqV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 16:46:18 -0400
+        Tue, 28 Jun 2022 16:46:21 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0494426540
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 13:46:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1EFFB2A41D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 13:46:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656449176;
+        s=mimecast20190719; t=1656449180;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3UnwOLd+3RtI858ogHbbAwRvYSEQdRCv3KJ1ACMKljA=;
-        b=A8dVpeHONBDNp5BhUhx9qhbiO411PVoeUG2WKhMaAwge6uDPXXhAVD0sT9yuI015OBS2xn
-        L7Vp6Y/t2ATwm8gC9EOmBvGd5NbAUsN8V+rczRTwEq4zN6bTP0xy6XAF73HU0t1GAsgnXY
-        u6pmMpwElRcOLQ7KooHAGULj5HhWBZQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=UJ28lpHMxANwjsFwVo8SWCUkkqxHqZ8kRWKJwGe1CCM=;
+        b=I2N6IO10wjCODPoUKAcxqJMdRDJcUh8m7Z0u5u/YMZuOC6Bv4KF9Q+KHWF0H8WW8bTUFdl
+        Dvs2gwGRfkV4YRSo5iJZG2asU2QPqWEznKYnX3xy2gNIpKO669HWuVbP/aqUDIcKknBDXS
+        jrTORpcsoT3yz4VIToiL7ICHflWsHog=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-665-KDy9fWrnP-m8W5GnpFIHkQ-1; Tue, 28 Jun 2022 16:46:14 -0400
-X-MC-Unique: KDy9fWrnP-m8W5GnpFIHkQ-1
+ us-mta-607-xDX8Q9XTOxSiFDluEQg8EA-1; Tue, 28 Jun 2022 16:46:16 -0400
+X-MC-Unique: xDX8Q9XTOxSiFDluEQg8EA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7EABC85A581;
-        Tue, 28 Jun 2022 20:46:14 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ACC54398CA67;
+        Tue, 28 Jun 2022 20:46:15 +0000 (UTC)
 Received: from max.localdomain (unknown [10.40.193.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EC9540D282F;
-        Tue, 28 Jun 2022 20:46:13 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE9B440C1240;
+        Tue, 28 Jun 2022 20:46:14 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     cluster-devel@redhat.com
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 1/5] gfs2: Add glockfd debugfs file
-Date:   Tue, 28 Jun 2022 22:46:07 +0200
-Message-Id: <20220628204611.651126-2-agruenba@redhat.com>
+Subject: [PATCH 2/5] gfs2: Add flocks to glockfd debugfs file
+Date:   Tue, 28 Jun 2022 22:46:08 +0200
+Message-Id: <20220628204611.651126-3-agruenba@redhat.com>
 In-Reply-To: <20220628204611.651126-1-agruenba@redhat.com>
 References: <20220628204611.651126-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -53,7 +53,7 @@ Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
 X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,227 +61,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a process has a gfs2 file open, the file is keeping a reference on the
-underlying gfs2 inode, and the inode is keeping the inode's iopen glock held in
-shared mode.  In other words, the process depends on the iopen glock of each
-open gfs2 file.  Expose those dependencies in a new "glockfd" debugfs file.
+Include flock glocks in the "glockfd" debugfs file.  Those are similar to the
+iopen glocks; while an open file is holding an flock, it is holding the file's
+flock glock.
 
-The new debugfs file contains one line for each gfs2 file descriptor,
-specifying the tgid, file descriptor number, and glock name, e.g.,
-
-  1601 6 5/816d
-
-This list is compiled by iterating all tasks on the system using find_ge_pid(),
-and all file descriptors of each task using task_lookup_next_fd_rcu().  To make
-that work from gfs2, export those two functions.
+We cannot take f_fl_mutex in gfs2_glockfd_seq_show_flock() or else dumping the
+"glockfd" file would block on flock operations.  Instead, use the file->f_lock
+spin lock to protect the f_fl_gh.gh_gl glock pointer.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: cluster-devel@redhat.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/file.c       |   1 +
- fs/gfs2/glock.c | 147 ++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/pid.c    |   1 +
- 3 files changed, 149 insertions(+)
+ fs/gfs2/file.c  | 22 ++++++++++++++++++++--
+ fs/gfs2/glock.c | 23 +++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 2 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 3bcc1ecc314a..5f9c802a5d8d 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -980,6 +980,7 @@ struct file *task_lookup_next_fd_rcu(struct task_struct *task, unsigned int *ret
- 	*ret_fd = fd;
- 	return file;
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 2cceb193dcd8..25f4080bc973 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1444,6 +1444,22 @@ static int gfs2_lock(struct file *file, int cmd, struct file_lock *fl)
+ 		return dlm_posix_lock(ls->ls_dlm, ip->i_no_addr, file, cmd, fl);
  }
-+EXPORT_SYMBOL(task_lookup_next_fd_rcu);
  
- /*
-  * Lightweight file lookup - no refcnt increment if fd table isn't shared.
++static void __flock_holder_uninit(struct file *file, struct gfs2_holder *fl_gh)
++{
++	struct gfs2_glock *gl = fl_gh->gh_gl;
++
++	/*
++	 * Make sure gfs2_glock_put() won't sleep under the file->f_lock
++	 * spinlock.
++	 */
++
++	gfs2_glock_hold(gl);
++	spin_lock(&file->f_lock);
++	gfs2_holder_uninit(fl_gh);
++	spin_unlock(&file->f_lock);
++	gfs2_glock_put(gl);
++}
++
+ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
+ {
+ 	struct gfs2_file *fp = file->private_data;
+@@ -1475,7 +1491,9 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
+ 				       &gfs2_flock_glops, CREATE, &gl);
+ 		if (error)
+ 			goto out;
++		spin_lock(&file->f_lock);
+ 		gfs2_holder_init(gl, state, flags, fl_gh);
++		spin_unlock(&file->f_lock);
+ 		gfs2_glock_put(gl);
+ 	}
+ 	for (sleeptime = 1; sleeptime <= 4; sleeptime <<= 1) {
+@@ -1486,7 +1504,7 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
+ 		msleep(sleeptime);
+ 	}
+ 	if (error) {
+-		gfs2_holder_uninit(fl_gh);
++		__flock_holder_uninit(file, fl_gh);
+ 		if (error == GLR_TRYFAILED)
+ 			error = -EAGAIN;
+ 	} else {
+@@ -1508,7 +1526,7 @@ static void do_unflock(struct file *file, struct file_lock *fl)
+ 	locks_lock_file_wait(file, fl);
+ 	if (gfs2_holder_initialized(fl_gh)) {
+ 		gfs2_glock_dq(fl_gh);
+-		gfs2_holder_uninit(fl_gh);
++		__flock_holder_uninit(file, fl_gh);
+ 	}
+ 	mutex_unlock(&fp->f_fl_mutex);
+ }
 diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index c992d53013d3..63dbab6fa242 100644
+index 63dbab6fa242..aa35f5d4eb54 100644
 --- a/fs/gfs2/glock.c
 +++ b/fs/gfs2/glock.c
-@@ -33,6 +33,7 @@
- #include <linux/list_sort.h>
- #include <linux/lockref.h>
- #include <linux/rhashtable.h>
-+#include <linux/fdtable.h>
- 
- #include "gfs2.h"
- #include "incore.h"
-@@ -2745,6 +2746,149 @@ static const struct file_operations gfs2_glstats_fops = {
- 	.release = gfs2_glocks_release,
- };
- 
-+struct gfs2_glockfd_iter {
-+	struct super_block *sb;
-+	unsigned int tgid;
-+	struct task_struct *task;
-+	unsigned int fd;
-+	struct file *file;
-+};
-+
-+static struct task_struct *gfs2_glockfd_next_task(struct gfs2_glockfd_iter *i)
-+{
-+	struct pid_namespace *ns = task_active_pid_ns(current);
-+	struct pid *pid;
-+
-+	if (i->task)
-+		put_task_struct(i->task);
-+
-+	rcu_read_lock();
-+retry:
-+	i->task = NULL;
-+	pid = find_ge_pid(i->tgid, ns);
-+	if (pid) {
-+		i->tgid = pid_nr_ns(pid, ns);
-+		i->task = pid_task(pid, PIDTYPE_TGID);
-+		if (!i->task) {
-+			i->tgid++;
-+			goto retry;
-+		}
-+		get_task_struct(i->task);
-+	}
-+	rcu_read_unlock();
-+	return i->task;
-+}
-+
-+static struct file *gfs2_glockfd_next_file(struct gfs2_glockfd_iter *i)
-+{
-+	if (i->file) {
-+		fput(i->file);
-+		i->file = NULL;
-+	}
-+
-+	rcu_read_lock();
-+	for(;; i->fd++) {
-+		struct inode *inode;
-+
-+		i->file = task_lookup_next_fd_rcu(i->task, &i->fd);
-+		if (!i->file) {
-+			i->fd = 0;
-+			break;
-+		}
-+		inode = file_inode(i->file);
-+		if (inode->i_sb != i->sb)
-+			continue;
-+		if (get_file_rcu(i->file))
-+			break;
-+	}
-+	rcu_read_unlock();
-+	return i->file;
-+}
-+
-+static void *gfs2_glockfd_seq_start(struct seq_file *seq, loff_t *pos)
-+{
-+	struct gfs2_glockfd_iter *i = seq->private;
-+
-+	if (*pos)
-+		return NULL;
-+	while (gfs2_glockfd_next_task(i)) {
-+		if (gfs2_glockfd_next_file(i))
-+			return i;
-+		i->tgid++;
-+	}
-+	return NULL;
-+}
-+
-+static void *gfs2_glockfd_seq_next(struct seq_file *seq, void *iter_ptr,
-+				   loff_t *pos)
-+{
-+	struct gfs2_glockfd_iter *i = seq->private;
-+
-+	(*pos)++;
-+	i->fd++;
-+	do {
-+		if (gfs2_glockfd_next_file(i))
-+			return i;
-+		i->tgid++;
-+	} while (gfs2_glockfd_next_task(i));
-+	return NULL;
-+}
-+
-+static void gfs2_glockfd_seq_stop(struct seq_file *seq, void *iter_ptr)
-+{
-+	struct gfs2_glockfd_iter *i = seq->private;
-+
-+	if (i->file)
-+		fput(i->file);
-+	if (i->task)
-+		put_task_struct(i->task);
-+}
-+
-+static int gfs2_glockfd_seq_show(struct seq_file *seq, void *iter_ptr)
-+{
-+	struct gfs2_glockfd_iter *i = seq->private;
-+	struct inode *inode = file_inode(i->file);
-+	struct gfs2_glock *gl;
-+
-+	inode_lock_shared(inode);
-+	gl = GFS2_I(inode)->i_iopen_gh.gh_gl;
-+	if (gl) {
-+		seq_printf(seq, "%d %u %u/%llx\n",
-+			   i->tgid, i->fd, gl->gl_name.ln_type,
-+			   (unsigned long long)gl->gl_name.ln_number);
-+	}
-+	inode_unlock_shared(inode);
-+	return 0;
-+}
-+
-+static const struct seq_operations gfs2_glockfd_seq_ops = {
-+	.start = gfs2_glockfd_seq_start,
-+	.next  = gfs2_glockfd_seq_next,
-+	.stop  = gfs2_glockfd_seq_stop,
-+	.show  = gfs2_glockfd_seq_show,
-+};
-+
-+static int gfs2_glockfd_open(struct inode *inode, struct file *file)
-+{
-+	struct gfs2_glockfd_iter *i;
-+	struct gfs2_sbd *sdp = inode->i_private;
-+
-+	i = __seq_open_private(file, &gfs2_glockfd_seq_ops,
-+			       sizeof(struct gfs2_glockfd_iter));
-+	if (!i)
-+		return -ENOMEM;
-+	i->sb = sdp->sd_vfs;
-+	return 0;
-+}
-+
-+static const struct file_operations gfs2_glockfd_fops = {
-+	.owner   = THIS_MODULE,
-+	.open    = gfs2_glockfd_open,
-+	.read    = seq_read,
-+	.llseek  = seq_lseek,
-+	.release = seq_release_private,
-+};
-+
- DEFINE_SEQ_ATTRIBUTE(gfs2_sbstats);
- 
- void gfs2_create_debugfs_file(struct gfs2_sbd *sdp)
-@@ -2754,6 +2898,9 @@ void gfs2_create_debugfs_file(struct gfs2_sbd *sdp)
- 	debugfs_create_file("glocks", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
- 			    &gfs2_glocks_fops);
- 
-+	debugfs_create_file("glockfd", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
-+			    &gfs2_glockfd_fops);
-+
- 	debugfs_create_file("glstats", S_IFREG | S_IRUGO, sdp->debugfs_dir, sdp,
- 			    &gfs2_glstats_fops);
- 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 2fc0a16ec77b..3fbc5e46b721 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -519,6 +519,7 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
- {
- 	return idr_get_next(&ns->idr, &nr);
+@@ -2844,6 +2844,28 @@ static void gfs2_glockfd_seq_stop(struct seq_file *seq, void *iter_ptr)
+ 		put_task_struct(i->task);
  }
-+EXPORT_SYMBOL_GPL(find_ge_pid);
  
- struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
++static void gfs2_glockfd_seq_show_flock(struct seq_file *seq,
++					struct gfs2_glockfd_iter *i)
++{
++	struct gfs2_file *fp = i->file->private_data;
++	struct gfs2_holder *fl_gh = &fp->f_fl_gh;
++	struct lm_lockname gl_name = { .ln_type = LM_TYPE_RESERVED };
++
++	if (!READ_ONCE(fl_gh->gh_gl))
++		return;
++
++	spin_lock(&i->file->f_lock);
++	if (gfs2_holder_initialized(fl_gh))
++		gl_name = fl_gh->gh_gl->gl_name;
++	spin_unlock(&i->file->f_lock);
++
++	if (gl_name.ln_type != LM_TYPE_RESERVED) {
++		seq_printf(seq, "%d %u %u/%llx\n",
++			   i->tgid, i->fd, gl_name.ln_type,
++			   (unsigned long long)gl_name.ln_number);
++	}
++}
++
+ static int gfs2_glockfd_seq_show(struct seq_file *seq, void *iter_ptr)
  {
+ 	struct gfs2_glockfd_iter *i = seq->private;
+@@ -2857,6 +2879,7 @@ static int gfs2_glockfd_seq_show(struct seq_file *seq, void *iter_ptr)
+ 			   i->tgid, i->fd, gl->gl_name.ln_type,
+ 			   (unsigned long long)gl->gl_name.ln_number);
+ 	}
++	gfs2_glockfd_seq_show_flock(seq, i);
+ 	inode_unlock_shared(inode);
+ 	return 0;
+ }
 -- 
 2.35.1
 
