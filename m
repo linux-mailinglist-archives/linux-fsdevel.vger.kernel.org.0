@@ -2,119 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4677155E3E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BC4155E3EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345392AbiF1M4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 08:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49680 "EHLO
+        id S231623AbiF1M5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 08:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231640AbiF1M4U (ORCPT
+        with ESMTP id S230079AbiF1M5F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 08:56:20 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66BA72F660;
-        Tue, 28 Jun 2022 05:56:19 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 0EBF221D92;
-        Tue, 28 Jun 2022 12:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1656420978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HQpmIWQFU9OmoJCom9hzgNgWeE9U0h1oakBUN2acOpQ=;
-        b=YM3Tsk3hYjZADSgcEQ9J/eR8a4jN2gluFHTrBdZH1YwLaFMqQibtqGUO3McbcB+FR/l9Er
-        NLWOGJGgQ0JnliGGZbdfpr/91wxrNa2Th+0sJeN9XzniRI2e8Rk5o1y7nq1TUQRb7LdsWu
-        LN8Md1yfkZf6q5WjHgnJsknkDRCfkJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1656420978;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HQpmIWQFU9OmoJCom9hzgNgWeE9U0h1oakBUN2acOpQ=;
-        b=Yq5DlDoB7FEPF2YfF4UKA1Nf/y+8pTrwo2zJ05NTIKzh26KtihHDpS30D3QvkIn+wI4a6g
-        Vev6cdl3p7U/vcCA==
-Received: from quack3.suse.cz (dhcp194.suse.cz [10.100.51.194])
+        Tue, 28 Jun 2022 08:57:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45732FE6F;
+        Tue, 28 Jun 2022 05:57:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id BDC522C141;
-        Tue, 28 Jun 2022 12:56:17 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 96B44A062F; Tue, 28 Jun 2022 14:56:17 +0200 (CEST)
-Date:   Tue, 28 Jun 2022 14:56:17 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     guowei du <duguoweisz@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        duguowei <duguowei@xiaomi.com>
-Subject: Re: [PATCH 6/6] fanotify: add current_user_instances node
-Message-ID: <20220628125617.pljcpsr2xkzrrpxr@quack3>
-References: <20220628101413.10432-1-duguoweisz@gmail.com>
- <20220628104528.no4jarh2ihm5gxau@quack3>
- <20220628104853.c3gcsvabqv2zzckd@wittgenstein>
- <CAC+1NxtAfbKOcW1hykyygScJgN7DsPKxLeuqNNZXLqekHgsG=Q@mail.gmail.com>
- <CAOQ4uxgtZDihnydqZ04wjm2XCYjui0nnkO0VGzyq-+ERW20pJw@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8097F60F43;
+        Tue, 28 Jun 2022 12:57:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3BCC3411D;
+        Tue, 28 Jun 2022 12:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656421023;
+        bh=NV1nc+PhAL8+uxW888wxL8Bu7nqpR4cXRNoKsXAqrj4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O3Wlfm471hyojpg/8aHEVI1XlA6decDKQZp+bF99F3RVMeGKT8uTbRJLCJtiE+h3l
+         uKMNsP25iTuA5ruLdPK46Xd65f5Irakde6nuLk3v03PG9IpvhesSdhiiQJ4DY1ga5R
+         uiDQfDNEtl9ciQZb8meWZTa67xG3lu0ml/ZyH4hwCTllkAcPSM1ANOKiujK7VZYvs9
+         zIescM5OSt8kkCDjrhJYGk9iTMM5XkaE9BaUnpOZ8n1TMjOGHx2VBBJ0aC/CdWQgK2
+         TeJBNjgC/Ri4bmzhoHXPA3PqpLuUtMTNDlqp+NvsvjfQ4dGndj3SedF025e6etE8uF
+         6T1gHEkwYHPQw==
+Date:   Tue, 28 Jun 2022 14:56:59 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Serge Hallyn <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] fs: use new capable_any functionality
+Message-ID: <20220628125659.l6irgn6ryoseojv3@wittgenstein>
+References: <20220502160030.131168-8-cgzones@googlemail.com>
+ <20220615152623.311223-1-cgzones@googlemail.com>
+ <20220615152623.311223-4-cgzones@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgtZDihnydqZ04wjm2XCYjui0nnkO0VGzyq-+ERW20pJw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220615152623.311223-4-cgzones@googlemail.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 28-06-22 15:29:08, Amir Goldstein wrote:
-> On Tue, Jun 28, 2022 at 2:50 PM guowei du <duguoweisz@gmail.com> wrote:
-> >
-> > hi, Mr Kara, Mr Brauner,
-> >
-> > I want to know how many fanotify readers are monitoring the fs event.
-> > If userspace daemons monitoring all file system events are too many, maybe there will be an impact on performance.
+On Wed, Jun 15, 2022 at 05:26:19PM +0200, Christian Göttsche wrote:
+> Use the new added capable_any function in appropriate cases, where a
+> task is required to have any of two capabilities.
 > 
-> I want something else which is more than just the number of groups.
-> 
-> I want to provide the admin the option to enumerate over all groups and
-> list their marks and blocked events.
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
 
-Listing all groups and marks makes sense to me. Often enough I was
-extracting this information from a crashdump :).
+Not seeing the whole patch series so it's a bit difficult to judge but
+in general we've needed something like this for quite some time.
 
-Dumping of events may be a bit more challenging (especially as we'd need to
-format the events which has some non-trivial implications) so I'm not 100%
-convinced about that. I agree it might be useful but I'd have to see the
-implementation...
-
-> This would be similar to listing all the fdinfo of anon_inode:[fanotify] fds
-> of processes that initialised fanotify groups.
+> v3:
+>    rename to capable_any()
+> ---
+>  fs/pipe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This enumeration could be done for example in /sys/fs/fanotify/groups/
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 74ae9fafd25a..18ab3baeec44 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -776,7 +776,7 @@ bool too_many_pipe_buffers_hard(unsigned long user_bufs)
+>  
+>  bool pipe_is_unprivileged_user(void)
+>  {
+> -	return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
+> +	return !capable_any(CAP_SYS_RESOURCE, CAP_SYS_ADMIN);
+>  }
+>  
+>  struct pipe_inode_info *alloc_pipe_info(void)
+> -- 
+> 2.36.1
 > 
-> My main incentive is not only the enumeration.
-> My main incentive is to provide an administrative interface to
-> check for any fs operations that are currently blocked by a rogue
-> fanotify permission events reader and an easy way for administrators
-> to kill those rogue processes (i.e. buggy anti-malware).
-> 
-> This interface is inspired by the ability to enumerate and abort
-> fuse connections for rogue fuse servers.
-> 
-> I want to do that for the existing permission events as a prerequisite
-> to adding new blocking events to be used for implementation of
-> hierarchical storage managers, similar the Windows ProjFs [1].
-> This was allegedly the intended use case for group class
-> FAN_CLASS_PRE_CONTENT (see man page).
-
-Yes, that was the original intent of FAN_CLASS_PRE_CONTENT AFAIK.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
