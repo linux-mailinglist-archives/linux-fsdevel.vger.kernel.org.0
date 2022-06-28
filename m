@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2396355E9B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 18:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D05EC55EABA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 19:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232062AbiF1QaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 12:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
+        id S230487AbiF1RNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 13:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347724AbiF1Q3O (ORCPT
+        with ESMTP id S229808AbiF1RNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:29:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3E23A1A0;
-        Tue, 28 Jun 2022 09:20:06 -0700 (PDT)
+        Tue, 28 Jun 2022 13:13:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1111CB03;
+        Tue, 28 Jun 2022 10:13:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7BAF7B81EF1;
-        Tue, 28 Jun 2022 16:20:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF58C385A5;
-        Tue, 28 Jun 2022 16:20:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B61F6191F;
+        Tue, 28 Jun 2022 17:13:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DE4C3411D;
+        Tue, 28 Jun 2022 17:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656433204;
-        bh=9pchgL8YFP3Hx5Q02p0k2JNpsUBkX+zukfrJ3q2OcKI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5fRq5RidSwRGjSy3tClru4NFzOywFU0UFX7DH9LUOrUQsivUbrDr2uT4moov+Kkx
-         KWZvUES4e4R03/T5Uy4dCylqjBtpiBzNRvEuK3KI8e9039f9K97/lLdPsSTtbqexx/
-         4+vPwqQ8gSnHBApZIsgu3qVvau8NRIi9Dn5/9x1L2cqqh/+N5OzZ4MnZe/hvKo5Jv9
-         qJfFZPtGkGKXjZTtjlGTgGxgS2at0UEhleWIItaps/NFm4ZKWBpkMWJkh6ILYBQKj1
-         cj1c//KDlTwBWma3mZ1YGIZK2Z4YMIh+TGEvzh4Fm6w8CWj5s1amo8A1Wtt0Rdx8yb
-         4oJYwcD/CGTTA==
-From:   KP Singh <kpsingh@kernel.org>
-To:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     KP Singh <kpsingh@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        s=k20201202; t=1656436411;
+        bh=++wCdFsjucGtnkuq8Yhv5raDPHMLZWqKu4ZBbkVtXjY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K4pqYPuNz2m41jfd4MnVRHF6LCmNfQL1aF6rVgm/g8u8u4MvjKLSt5yVU7RncX4BS
+         6Cjb2lbSKFXYCDVvFhYku/4vUEgIXxGQkE/033KgI+9ArowJfLylafgynDnjM5wHGV
+         ODJ7Eeu1eU0kAPrmuSutO8NFAzSQx5h7jEzaCMhbNPeWjPDxgu4w6jeH1VHahhJSJB
+         u6eLHuw0LJAqj6GmZl4ZAuUFAyj5DDkhtjKDs3Vo9XsY+2H03pDNDHr9g+3cAyepAA
+         Ib8KyWAB6/2/wcEkVB0AuBwvZ5YTiFhuFXs8ei6J+zjkJPeMf4wRV/w3rTI+wVH4tz
+         esltsbhxGf8VA==
+Date:   Tue, 28 Jun 2022 19:13:25 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Andrii Nakryiko <andrii@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Yosry Ahmed <yosryahmed@google.com>
-Subject: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-Date:   Tue, 28 Jun 2022 16:19:48 +0000
-Message-Id: <20220628161948.475097-6-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
-In-Reply-To: <20220628161948.475097-1-kpsingh@kernel.org>
+Subject: Re: [PATCH v5 bpf-next 0/5] Add bpf_getxattr
+Message-ID: <20220628171325.ccbylrqhygtf2dlx@wittgenstein>
 References: <20220628161948.475097-1-kpsingh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220628161948.475097-1-kpsingh@kernel.org>
 X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,120 +58,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A simple test that adds an xattr on a copied /bin/ls and reads it back
-when the copied ls is executed.
+On Tue, Jun 28, 2022 at 04:19:43PM +0000, KP Singh wrote:
+> v4 -> v5
+> 
+> - Fixes suggested by Andrii
+> 
+> v3 -> v4
+> 
+> - Fixed issue incorrect increment of arg counter
+> - Removed __weak and noinline from kfunc definiton
+> - Some other minor fixes.
+> 
+> v2 -> v3
+> 
+> - Fixed missing prototype error
+> - Fixes suggested by other Joanne and Kumar.
+> 
+> v1 -> v2
+> 
+> - Used kfuncs as suggested by Alexei
+> - Used Benjamin Tissoires' patch from the HID v4 series to add a
+>   sleepable kfunc set (I sent the patch as a part of this series as it
+>   seems to have been dropped from v5) and acked it. Hope this is okay.
+> - Added support for verifying string constants to kfuncs
 
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
- tools/testing/selftests/bpf/progs/xattr.c     | 37 +++++++++++++
- 2 files changed, 91 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/xattr.c
+Hm, I mean this isn't really giving any explanation as to why you are
+doing this. There's literally not a single sentence about the rationale?
+Did you accidently forget to put that into the cover letter? :)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/xattr.c b/tools/testing/selftests/bpf/prog_tests/xattr.c
-new file mode 100644
-index 000000000000..ef07fa8a1763
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/xattr.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2022 Google LLC.
-+ */
-+
-+#include <test_progs.h>
-+#include <sys/xattr.h>
-+#include "xattr.skel.h"
-+
-+#define XATTR_NAME "security.bpf"
-+#define XATTR_VALUE "test_progs"
-+
-+void test_xattr(void)
-+{
-+	struct xattr *skel = NULL;
-+	char tmp_dir_path[] = "/tmp/xattrXXXXXX";
-+	char tmp_exec_path[64];
-+	char cmd[256];
-+	int err;
-+
-+	if (CHECK_FAIL(!mkdtemp(tmp_dir_path)))
-+		goto close_prog;
-+
-+	snprintf(tmp_exec_path, sizeof(tmp_exec_path), "%s/copy_of_ls",
-+		 tmp_dir_path);
-+	snprintf(cmd, sizeof(cmd), "cp /bin/ls %s", tmp_exec_path);
-+	if (CHECK_FAIL(system(cmd)))
-+		goto close_prog_rmdir;
-+
-+	if (CHECK_FAIL(setxattr(tmp_exec_path, XATTR_NAME, XATTR_VALUE,
-+			   sizeof(XATTR_VALUE), 0)))
-+		goto close_prog_rmdir;
-+
-+	skel = xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_load"))
-+		goto close_prog_rmdir;
-+
-+	err = xattr__attach(skel);
-+	if (!ASSERT_OK(err, "xattr__attach failed"))
-+		goto close_prog_rmdir;
-+
-+	snprintf(cmd, sizeof(cmd), "%s -l", tmp_exec_path);
-+	if (CHECK_FAIL(system(cmd)))
-+		goto close_prog_rmdir;
-+
-+	ASSERT_EQ(skel->bss->result, 1, "xattr result");
-+
-+close_prog_rmdir:
-+	snprintf(cmd, sizeof(cmd), "rm -rf %s", tmp_dir_path);
-+	system(cmd);
-+close_prog:
-+	xattr__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/xattr.c b/tools/testing/selftests/bpf/progs/xattr.c
-new file mode 100644
-index 000000000000..ccc078fb8ebd
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/xattr.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2022 Google LLC.
-+ */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define XATTR_NAME "security.bpf"
-+#define XATTR_VALUE "test_progs"
-+
-+__u64 result = 0;
-+
-+extern ssize_t bpf_getxattr(struct dentry *dentry, struct inode *inode,
-+			    const char *name, void *value, int size) __ksym;
-+
-+SEC("lsm.s/bprm_committed_creds")
-+void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-+{
-+	struct task_struct *current = bpf_get_current_task_btf();
-+	char dir_xattr_value[64] = {0};
-+	int xattr_sz = 0;
-+
-+	xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-+				bprm->file->f_path.dentry->d_inode, XATTR_NAME,
-+				dir_xattr_value, 64);
-+
-+	if (xattr_sz <= 0)
-+		return;
-+
-+	if (!bpf_strncmp(dir_xattr_value, sizeof(XATTR_VALUE), XATTR_VALUE))
-+		result = 1;
-+}
--- 
-2.37.0.rc0.161.g10f37bed90-goog
-
+> 
+> 
+> 
+> Benjamin Tissoires (1):
+>   btf: Add a new kfunc set which allows to mark a function to be
+>     sleepable
+> 
+> KP Singh (4):
+>   bpf: kfunc support for ARG_PTR_TO_CONST_STR
+>   bpf: Allow kfuncs to be used in LSM programs
+>   bpf: Add a bpf_getxattr kfunc
+>   bpf/selftests: Add a selftest for bpf_getxattr
+> 
+>  include/linux/bpf_verifier.h                  |  2 +
+>  include/linux/btf.h                           |  2 +
+>  kernel/bpf/btf.c                              | 43 ++++++++-
+>  kernel/bpf/verifier.c                         | 89 +++++++++++--------
+>  kernel/trace/bpf_trace.c                      | 42 +++++++++
+>  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++
+>  tools/testing/selftests/bpf/progs/xattr.c     | 37 ++++++++
+>  7 files changed, 229 insertions(+), 40 deletions(-)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/xattr.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/xattr.c
+> 
+> -- 
+> 2.37.0.rc0.161.g10f37bed90-goog
+> 
