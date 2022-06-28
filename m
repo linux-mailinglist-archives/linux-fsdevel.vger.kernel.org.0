@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5508A55D91E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399FD55DFF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345383AbiF1MQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 08:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
+        id S1345567AbiF1MSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 08:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345407AbiF1MQj (ORCPT
+        with ESMTP id S1345486AbiF1MSF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 08:16:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AE925C7A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 05:16:38 -0700 (PDT)
+        Tue, 28 Jun 2022 08:18:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D68CDA4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 05:18:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 61F6B6116A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 12:16:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D64C341CD;
-        Tue, 28 Jun 2022 12:16:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 395DD60FE3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 12:18:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B848CC3411D;
+        Tue, 28 Jun 2022 12:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656418597;
-        bh=lhgIrqK4S3VXO4TRgYn+80Xr6QMfm3SipDieKo0f3Z4=;
+        s=k20201202; t=1656418683;
+        bh=E22kElzzTi7SU4N6Uu/FwOHA+7JgvENzgDCAC3snu4o=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BekQ8XLulNL95BrMUTLNyDGNEih/crPM63Rr0DTeZ7nRe2dOlbhgFHUlOoolck+T+
-         SBjvqc+hXD/bihFPSg1mER1MWPRYS0G/x3RHA2PgKnUnSt8Y3TfiodoZO6SYb6YzBo
-         2CddEN1YVhkz3ioTsFHUNKhg0Puvo4c5QYG+lJNiIkxENICFcHRrgox1Y9FDnnqGq4
-         HNvp95Zq7LbgHpHdFDoJFc3lU4+B3iQ1R4YfSjmk57aPD39kiSTvaDwObokIsEqZs9
-         VMUA7cZyJ0mSQSbdm0i5WixvkxYAxPR9NA38a6EYQhoXQr5hH9cwx0ZHwJ900YcF1I
-         5fNO/Bl6oMXaw==
-Message-ID: <05afca3b521ee492f9f9d30751f622c1c1c15746.camel@kernel.org>
-Subject: Re: [PATCH 37/44] block: convert to advancing variants of
- iov_iter_get_pages{,_alloc}()
+        b=NZN5yd+S/RAq15xAK149Kob/DgG9QVbx1q+M3XK9RJHjmaQiZumSJZJccD5WtCrm5
+         vC18YluZup9ZLbzmQYm9Ruel7eJJ/Aq4O2OgYmExgjNhdF+hhXK2C1PtdS+CEx7mxf
+         b5XKbyHF6xgIwImSQGp77LgwFXEjzIUa2XKrjCx3QBZrWnuQq7JsaYwWpETZUROFAF
+         kRF1jruSBY1Hb+5gGeWIjmGcYT6BpWOtx21G7KQsXa4vT/bIStZ2NeUiWREzLWUA4J
+         d/Qmt022qfPfvS+z7ARmRDu73uKHkdKxKBrBGgW1XN/XDliV5S98x+3in0pRHYgNgi
+         VKFvCBMnW4e5w==
+Message-ID: <db21875791433ed37cedc116123b1ded636fe61f.camel@kernel.org>
+Subject: Re: [PATCH 38/44] iter_to_pipe(): switch to advancing variant of
+ iov_iter_get_pages()
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -43,11 +43,11 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Christian Brauner <brauner@kernel.org>
-Date:   Tue, 28 Jun 2022 08:16:35 -0400
-In-Reply-To: <20220622041552.737754-37-viro@zeniv.linux.org.uk>
+Date:   Tue, 28 Jun 2022 08:18:01 -0400
+In-Reply-To: <20220622041552.737754-38-viro@zeniv.linux.org.uk>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
          <20220622041552.737754-1-viro@zeniv.linux.org.uk>
-         <20220622041552.737754-37-viro@zeniv.linux.org.uk>
+         <20220622041552.737754-38-viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
@@ -63,121 +63,80 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Wed, 2022-06-22 at 05:15 +0100, Al Viro wrote:
-> ... doing revert if we end up not using some pages
+> ... and untangle the cleanup on failure to add into pipe.
 >=20
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  block/bio.c     | 15 ++++++---------
->  block/blk-map.c |  7 ++++---
->  2 files changed, 10 insertions(+), 12 deletions(-)
+>  fs/splice.c | 47 ++++++++++++++++++++++++-----------------------
+>  1 file changed, 24 insertions(+), 23 deletions(-)
 >=20
-> diff --git a/block/bio.c b/block/bio.c
-> index 51c99f2c5c90..01ab683e67be 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1190,7 +1190,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
->  	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
->  	pages +=3D entries_left * (PAGE_PTRS_PER_BVEC - 1);
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 6645b30ec990..9f84bd21f64c 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -1160,39 +1160,40 @@ static int iter_to_pipe(struct iov_iter *from,
+>  	};
+>  	size_t total =3D 0;
+>  	int ret =3D 0;
+> -	bool failed =3D false;
 > =20
-> -	size =3D iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-> +	size =3D iov_iter_get_pages2(iter, pages, LONG_MAX, nr_pages, &offset);
->  	if (unlikely(size <=3D 0))
->  		return size ? size : -EFAULT;
+> -	while (iov_iter_count(from) && !failed) {
+> +	while (iov_iter_count(from)) {
+>  		struct page *pages[16];
+> -		ssize_t copied;
+> +		ssize_t left;
+>  		size_t start;
+> -		int n;
+> +		int i, n;
 > =20
-> @@ -1205,6 +1205,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
->  		} else {
->  			if (WARN_ON_ONCE(bio_full(bio, len))) {
->  				bio_put_pages(pages + i, left, offset);
-> +				iov_iter_revert(iter, left);
->  				return -EINVAL;
->  			}
->  			__bio_add_page(bio, page, len, offset);
-> @@ -1212,7 +1213,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
->  		offset =3D 0;
->  	}
-> =20
-> -	iov_iter_advance(iter, size);
->  	return 0;
->  }
-> =20
-> @@ -1227,7 +1227,6 @@ static int __bio_iov_append_get_pages(struct bio *b=
-io, struct iov_iter *iter)
->  	ssize_t size, left;
->  	unsigned len, i;
->  	size_t offset;
-> -	int ret =3D 0;
-> =20
->  	if (WARN_ON_ONCE(!max_append_sectors))
->  		return 0;
-> @@ -1240,7 +1239,7 @@ static int __bio_iov_append_get_pages(struct bio *b=
-io, struct iov_iter *iter)
->  	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
->  	pages +=3D entries_left * (PAGE_PTRS_PER_BVEC - 1);
-> =20
-> -	size =3D iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-> +	size =3D iov_iter_get_pages2(iter, pages, LONG_MAX, nr_pages, &offset);
->  	if (unlikely(size <=3D 0))
->  		return size ? size : -EFAULT;
-> =20
-> @@ -1252,16 +1251,14 @@ static int __bio_iov_append_get_pages(struct bio =
-*bio, struct iov_iter *iter)
->  		if (bio_add_hw_page(q, bio, page, len, offset,
->  				max_append_sectors, &same_page) !=3D len) {
->  			bio_put_pages(pages + i, left, offset);
-> -			ret =3D -EINVAL;
-> -			break;
-> +			iov_iter_revert(iter, left);
-> +			return -EINVAL;
->  		}
->  		if (same_page)
->  			put_page(page);
->  		offset =3D 0;
->  	}
-> -
-> -	iov_iter_advance(iter, size - left);
-> -	return ret;
-> +	return 0;
->  }
-> =20
->  /**
-> diff --git a/block/blk-map.c b/block/blk-map.c
-> index df8b066cd548..7196a6b64c80 100644
-> --- a/block/blk-map.c
-> +++ b/block/blk-map.c
-> @@ -254,7 +254,7 @@ static int bio_map_user_iov(struct request *rq, struc=
-t iov_iter *iter,
->  		size_t offs, added =3D 0;
->  		int npages;
-> =20
-> -		bytes =3D iov_iter_get_pages_alloc(iter, &pages, LONG_MAX, &offs);
-> +		bytes =3D iov_iter_get_pages_alloc2(iter, &pages, LONG_MAX, &offs);
->  		if (unlikely(bytes <=3D 0)) {
->  			ret =3D bytes ? bytes : -EFAULT;
->  			goto out_unmap;
-> @@ -284,7 +284,6 @@ static int bio_map_user_iov(struct request *rq, struc=
-t iov_iter *iter,
->  				bytes -=3D n;
->  				offs =3D 0;
->  			}
-> -			iov_iter_advance(iter, added);
->  		}
->  		/*
->  		 * release the pages we didn't map into the bio, if any
-> @@ -293,8 +292,10 @@ static int bio_map_user_iov(struct request *rq, stru=
-ct iov_iter *iter,
->  			put_page(pages[j++]);
->  		kvfree(pages);
->  		/* couldn't stuff something into bio? */
-> -		if (bytes)
-> +		if (bytes) {
-> +			iov_iter_revert(iter, bytes);
+> -		copied =3D iov_iter_get_pages(from, pages, ~0UL, 16, &start);
+> -		if (copied <=3D 0) {
+> -			ret =3D copied;
+> +		left =3D iov_iter_get_pages2(from, pages, ~0UL, 16, &start);
+> +		if (left <=3D 0) {
+> +			ret =3D left;
 >  			break;
-> +		}
->  	}
+>  		}
 > =20
->  	ret =3D blk_rq_append_bio(rq, bio);
+> -		for (n =3D 0; copied; n++, start =3D 0) {
+> -			int size =3D min_t(int, copied, PAGE_SIZE - start);
+> -			if (!failed) {
+> -				buf.page =3D pages[n];
+> -				buf.offset =3D start;
+> -				buf.len =3D size;
+> -				ret =3D add_to_pipe(pipe, &buf);
+> -				if (unlikely(ret < 0)) {
+> -					failed =3D true;
+> -				} else {
+> -					iov_iter_advance(from, ret);
+> -					total +=3D ret;
+> -				}
+> -			} else {
+> -				put_page(pages[n]);
+> +		n =3D DIV_ROUND_UP(left + start, PAGE_SIZE);
+> +		for (i =3D 0; i < n; i++) {
+> +			int size =3D min_t(int, left, PAGE_SIZE - start);
+> +
+> +			buf.page =3D pages[i];
+> +			buf.offset =3D start;
+> +			buf.len =3D size;
+> +			ret =3D add_to_pipe(pipe, &buf);
+> +			if (unlikely(ret < 0)) {
+> +				iov_iter_revert(from, left);
+> +				// this one got dropped by add_to_pipe()
+> +				while (++i < n)
+> +					put_page(pages[i]);
+> +				goto out;
+>  			}
+> -			copied -=3D size;
+> +			total +=3D ret;
+> +			left -=3D size;
+> +			start =3D 0;
+>  		}
+>  	}
+> +out:
+>  	return total ? total : ret;
+>  }
+> =20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
