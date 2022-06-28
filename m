@@ -2,117 +2,304 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA0955C959
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03AD455E249
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345782AbiF1M3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 08:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58308 "EHLO
+        id S1345685AbiF1McQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 08:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345652AbiF1M3W (ORCPT
+        with ESMTP id S1345614AbiF1McN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 08:29:22 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798862BB01;
-        Tue, 28 Jun 2022 05:29:21 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id e7so11803515vsp.13;
-        Tue, 28 Jun 2022 05:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wimQzapjci/tNxsMqKMeMRkF2V9K297VGlo0W1Odw0s=;
-        b=oe7PRKI+nQfRiq+ebO3duN2nfZrftuLlTCjr6lgBSjNSQaS8h/+cHLJc+TejnTrwsq
-         8+IuZ2Kq8RHtyxHK11Ti1kCjFw5ZIsZMpHLZeZpCuUggAoRe99pLnYVlOp1wkEkttjMD
-         xUSsugX5IfO55tkNgQKz+/fio58csK+A9FjJBTDJvgKeoLGtiRyXzcuc0oTfQsFty1C4
-         FzwGK12J1XoZfww3GjIYaMqNral9EsLeVXzCIRmD22ck5nwYKQSz/7kfx5/SpYEj99V8
-         r+lwb5fR2ikDxoAG4j1u2nvLU7WySbqqjIei+FoYDev3tImvStK4/QJPiAWy2BdcFMPJ
-         opFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wimQzapjci/tNxsMqKMeMRkF2V9K297VGlo0W1Odw0s=;
-        b=p9igo+rW+6nPCa9F/XS8CRJB/eZuBjgQyYR2K3cka13qOidQohwUWFPt6QkHf3gU0o
-         PZM9dxpJT8aUY5ZKEuM7wHFMI7UdrsrvsmI3BGo1U6pBELlE3ftFSnCnapkFuA2x0eNa
-         QSy2ozgEm8ScKhXOWlfQmDd43bjWcMoJ68uRYafgvw0CYPsjcO2KTIbNqbQvgm6PeKZ/
-         hql7rLQcFSMgFA9xeQgyrsiQZm3cLb+08RSyTOXhEnWVeDrgwwXUCAmu0Bc4JHDPx6eW
-         6DjRBc3H2B+WVZh540aQvWx3QehZfX1SxB8fefqAnd1PTtv4kHg+KHvb/puadErLI8CU
-         NKPw==
-X-Gm-Message-State: AJIora8VDxfGEsbLX5XaEAXGFcPSVMLN2CEarshv1vaTCZJr6pWDiXKT
-        Xz59vU+bi/A5hvo4I+hzc0SMZYf7bHcloHToWe8=
-X-Google-Smtp-Source: AGRyM1vB3d3ZrWgSprpNG3I5cuSOeNUxmBxLHGr/5XtKkN9fVaBUCWi4tJp+VHZMvI6FTS++Pq+lvWHba4Lsjm/u63E=
-X-Received: by 2002:a05:6102:38c7:b0:356:4e2f:ae5b with SMTP id
- k7-20020a05610238c700b003564e2fae5bmr1622701vst.71.1656419360645; Tue, 28 Jun
- 2022 05:29:20 -0700 (PDT)
+        Tue, 28 Jun 2022 08:32:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8552E9C3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 05:32:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A0AF61555
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 12:32:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71880C3411D;
+        Tue, 28 Jun 2022 12:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656419531;
+        bh=BrXJpFc5SPKHipNl4Z7WHwqqttui7QNUe7n/T6riw/Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j3UL7oXu5quaiLQhwOC+U6KNWt3xtdC44G+kl9JpGhx4q6b2Ec/pNwBgOqZmraUOf
+         ojRRfYqAI/8CMoVfw1GGbG135Lc+GDhJJdKhLqoWyQvhKQadXXHaiTC1mT44bhgb9j
+         o8GLw+aDaZMlz6cNdEDzsSyPCGGs1sxCEUrcyryj/WPOATSGO0DzSucHqmN/84lpgU
+         MIRbublsbwV44UFODPfFVFqOfGH50X4iRWMh/UjlycVMB6mkCJiLoX25DKAupBLpbI
+         mM3rHbsjOfJzJJq/B19FPoUYz7NiGkutASfUVi/MSz/iwe3KTKBNw4M53pC9rPAjYn
+         VZn0w18ooUjXg==
+Date:   Tue, 28 Jun 2022 14:32:05 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Subject: Re: [PATCH 08/44] copy_page_{to,from}_iter(): switch iovec variants
+ to generic
+Message-ID: <20220628123205.4mh7luq5lha2c2qe@wittgenstein>
+References: <YrKWRCOOWXPHRCKg@ZenIV>
+ <20220622041552.737754-1-viro@zeniv.linux.org.uk>
+ <20220622041552.737754-8-viro@zeniv.linux.org.uk>
 MIME-Version: 1.0
-References: <20220628101413.10432-1-duguoweisz@gmail.com> <20220628104528.no4jarh2ihm5gxau@quack3>
- <20220628104853.c3gcsvabqv2zzckd@wittgenstein> <CAC+1NxtAfbKOcW1hykyygScJgN7DsPKxLeuqNNZXLqekHgsG=Q@mail.gmail.com>
-In-Reply-To: <CAC+1NxtAfbKOcW1hykyygScJgN7DsPKxLeuqNNZXLqekHgsG=Q@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 28 Jun 2022 15:29:08 +0300
-Message-ID: <CAOQ4uxgtZDihnydqZ04wjm2XCYjui0nnkO0VGzyq-+ERW20pJw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] fanotify: add current_user_instances node
-To:     guowei du <duguoweisz@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        duguowei <duguowei@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220622041552.737754-8-viro@zeniv.linux.org.uk>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 2:50 PM guowei du <duguoweisz@gmail.com> wrote:
->
-> hi, Mr Kara, Mr Brauner,
->
-> I want to know how many fanotify readers are monitoring the fs event.
-> If userspace daemons monitoring all file system events are too many, maybe there will be an impact on performance.
->
+On Wed, Jun 22, 2022 at 05:15:16AM +0100, Al Viro wrote:
+> we can do copyin/copyout under kmap_local_page(); it shouldn't overflow
+> the kmap stack - the maximal footprint increase only by one here.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-I want something else which is more than just the number of groups.
+Assuming the WARN_ON(1) removals are intentional,
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-I want to provide the admin the option to enumerate over all groups and
-list their marks and blocked events.
-
-This would be similar to listing all the fdinfo of anon_inode:[fanotify] fds
-of processes that initialised fanotify groups.
-
-This enumeration could be done for example in /sys/fs/fanotify/groups/
-
-My main incentive is not only the enumeration.
-My main incentive is to provide an administrative interface to
-check for any fs operations that are currently blocked by a rogue
-fanotify permission events reader and an easy way for administrators
-to kill those rogue processes (i.e. buggy anti-malware).
-
-This interface is inspired by the ability to enumerate and abort
-fuse connections for rogue fuse servers.
-
-I want to do that for the existing permission events as a prerequisite
-to adding new blocking events to be used for implementation of
-hierarchical storage managers, similar the Windows ProjFs [1].
-This was allegedly the intended use case for group class
-FAN_CLASS_PRE_CONTENT (see man page).
-
-Do you want to implement the first step of enumerating fdinfo
-of all groups via /sys/fs/fanotify/groups/?
-
-Jan,
-
-If you have objections to any of the ideas above please shout.
-I was going to prepare a roadmap for blocking events and post it
-for comments, but this patch triggered a heads up.
-
-Thanks,
-Amir.
-
-[1] https://docs.microsoft.com/en-us/windows/win32/projfs/projected-file-system
+>  lib/iov_iter.c | 191 ++-----------------------------------------------
+>  1 file changed, 4 insertions(+), 187 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 6dd5330f7a99..4c658a25e29c 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -168,174 +168,6 @@ static int copyin(void *to, const void __user *from, size_t n)
+>  	return n;
+>  }
+>  
+> -static size_t copy_page_to_iter_iovec(struct page *page, size_t offset, size_t bytes,
+> -			 struct iov_iter *i)
+> -{
+> -	size_t skip, copy, left, wanted;
+> -	const struct iovec *iov;
+> -	char __user *buf;
+> -	void *kaddr, *from;
+> -
+> -	if (unlikely(bytes > i->count))
+> -		bytes = i->count;
+> -
+> -	if (unlikely(!bytes))
+> -		return 0;
+> -
+> -	might_fault();
+> -	wanted = bytes;
+> -	iov = i->iov;
+> -	skip = i->iov_offset;
+> -	buf = iov->iov_base + skip;
+> -	copy = min(bytes, iov->iov_len - skip);
+> -
+> -	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_writeable(buf, copy)) {
+> -		kaddr = kmap_atomic(page);
+> -		from = kaddr + offset;
+> -
+> -		/* first chunk, usually the only one */
+> -		left = copyout(buf, from, copy);
+> -		copy -= left;
+> -		skip += copy;
+> -		from += copy;
+> -		bytes -= copy;
+> -
+> -		while (unlikely(!left && bytes)) {
+> -			iov++;
+> -			buf = iov->iov_base;
+> -			copy = min(bytes, iov->iov_len);
+> -			left = copyout(buf, from, copy);
+> -			copy -= left;
+> -			skip = copy;
+> -			from += copy;
+> -			bytes -= copy;
+> -		}
+> -		if (likely(!bytes)) {
+> -			kunmap_atomic(kaddr);
+> -			goto done;
+> -		}
+> -		offset = from - kaddr;
+> -		buf += copy;
+> -		kunmap_atomic(kaddr);
+> -		copy = min(bytes, iov->iov_len - skip);
+> -	}
+> -	/* Too bad - revert to non-atomic kmap */
+> -
+> -	kaddr = kmap(page);
+> -	from = kaddr + offset;
+> -	left = copyout(buf, from, copy);
+> -	copy -= left;
+> -	skip += copy;
+> -	from += copy;
+> -	bytes -= copy;
+> -	while (unlikely(!left && bytes)) {
+> -		iov++;
+> -		buf = iov->iov_base;
+> -		copy = min(bytes, iov->iov_len);
+> -		left = copyout(buf, from, copy);
+> -		copy -= left;
+> -		skip = copy;
+> -		from += copy;
+> -		bytes -= copy;
+> -	}
+> -	kunmap(page);
+> -
+> -done:
+> -	if (skip == iov->iov_len) {
+> -		iov++;
+> -		skip = 0;
+> -	}
+> -	i->count -= wanted - bytes;
+> -	i->nr_segs -= iov - i->iov;
+> -	i->iov = iov;
+> -	i->iov_offset = skip;
+> -	return wanted - bytes;
+> -}
+> -
+> -static size_t copy_page_from_iter_iovec(struct page *page, size_t offset, size_t bytes,
+> -			 struct iov_iter *i)
+> -{
+> -	size_t skip, copy, left, wanted;
+> -	const struct iovec *iov;
+> -	char __user *buf;
+> -	void *kaddr, *to;
+> -
+> -	if (unlikely(bytes > i->count))
+> -		bytes = i->count;
+> -
+> -	if (unlikely(!bytes))
+> -		return 0;
+> -
+> -	might_fault();
+> -	wanted = bytes;
+> -	iov = i->iov;
+> -	skip = i->iov_offset;
+> -	buf = iov->iov_base + skip;
+> -	copy = min(bytes, iov->iov_len - skip);
+> -
+> -	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_readable(buf, copy)) {
+> -		kaddr = kmap_atomic(page);
+> -		to = kaddr + offset;
+> -
+> -		/* first chunk, usually the only one */
+> -		left = copyin(to, buf, copy);
+> -		copy -= left;
+> -		skip += copy;
+> -		to += copy;
+> -		bytes -= copy;
+> -
+> -		while (unlikely(!left && bytes)) {
+> -			iov++;
+> -			buf = iov->iov_base;
+> -			copy = min(bytes, iov->iov_len);
+> -			left = copyin(to, buf, copy);
+> -			copy -= left;
+> -			skip = copy;
+> -			to += copy;
+> -			bytes -= copy;
+> -		}
+> -		if (likely(!bytes)) {
+> -			kunmap_atomic(kaddr);
+> -			goto done;
+> -		}
+> -		offset = to - kaddr;
+> -		buf += copy;
+> -		kunmap_atomic(kaddr);
+> -		copy = min(bytes, iov->iov_len - skip);
+> -	}
+> -	/* Too bad - revert to non-atomic kmap */
+> -
+> -	kaddr = kmap(page);
+> -	to = kaddr + offset;
+> -	left = copyin(to, buf, copy);
+> -	copy -= left;
+> -	skip += copy;
+> -	to += copy;
+> -	bytes -= copy;
+> -	while (unlikely(!left && bytes)) {
+> -		iov++;
+> -		buf = iov->iov_base;
+> -		copy = min(bytes, iov->iov_len);
+> -		left = copyin(to, buf, copy);
+> -		copy -= left;
+> -		skip = copy;
+> -		to += copy;
+> -		bytes -= copy;
+> -	}
+> -	kunmap(page);
+> -
+> -done:
+> -	if (skip == iov->iov_len) {
+> -		iov++;
+> -		skip = 0;
+> -	}
+> -	i->count -= wanted - bytes;
+> -	i->nr_segs -= iov - i->iov;
+> -	i->iov = iov;
+> -	i->iov_offset = skip;
+> -	return wanted - bytes;
+> -}
+> -
+>  #ifdef PIPE_PARANOIA
+>  static bool sanity(const struct iov_iter *i)
+>  {
+> @@ -848,24 +680,14 @@ static inline bool page_copy_sane(struct page *page, size_t offset, size_t n)
+>  static size_t __copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+>  			 struct iov_iter *i)
+>  {
+> -	if (likely(iter_is_iovec(i)))
+> -		return copy_page_to_iter_iovec(page, offset, bytes, i);
+> -	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) || iov_iter_is_xarray(i)) {
+> +	if (unlikely(iov_iter_is_pipe(i))) {
+> +		return copy_page_to_iter_pipe(page, offset, bytes, i);
+> +	} else {
+>  		void *kaddr = kmap_local_page(page);
+>  		size_t wanted = _copy_to_iter(kaddr + offset, bytes, i);
+>  		kunmap_local(kaddr);
+>  		return wanted;
+>  	}
+> -	if (iov_iter_is_pipe(i))
+> -		return copy_page_to_iter_pipe(page, offset, bytes, i);
+> -	if (unlikely(iov_iter_is_discard(i))) {
+> -		if (unlikely(i->count < bytes))
+> -			bytes = i->count;
+> -		i->count -= bytes;
+> -		return bytes;
+> -	}
+> -	WARN_ON(1);
+> -	return 0;
+>  }
+>  
+>  size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+> @@ -896,17 +718,12 @@ EXPORT_SYMBOL(copy_page_to_iter);
+>  size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+>  			 struct iov_iter *i)
+>  {
+> -	if (unlikely(!page_copy_sane(page, offset, bytes)))
+> -		return 0;
+> -	if (likely(iter_is_iovec(i)))
+> -		return copy_page_from_iter_iovec(page, offset, bytes, i);
+> -	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) || iov_iter_is_xarray(i)) {
+> +	if (page_copy_sane(page, offset, bytes)) {
+>  		void *kaddr = kmap_local_page(page);
+>  		size_t wanted = _copy_from_iter(kaddr + offset, bytes, i);
+>  		kunmap_local(kaddr);
+>  		return wanted;
+>  	}
+> -	WARN_ON(1);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(copy_page_from_iter);
+> -- 
+> 2.30.2
+> 
