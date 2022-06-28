@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FB2855DDAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D33D55CA2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242783AbiF1A6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 20:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
+        id S243693AbiF1CWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 22:22:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242060AbiF1A6e (ORCPT
+        with ESMTP id S243804AbiF1CWB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 20:58:34 -0400
+        Mon, 27 Jun 2022 22:22:01 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34AA01CFE5;
-        Mon, 27 Jun 2022 17:58:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B476248F4;
+        Mon, 27 Jun 2022 19:21:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CD4F7B81C0A;
-        Tue, 28 Jun 2022 00:58:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEABC341C8;
-        Tue, 28 Jun 2022 00:58:27 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 26F64B818E4;
+        Tue, 28 Jun 2022 02:21:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3298C341CB;
+        Tue, 28 Jun 2022 02:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656377910;
-        bh=x4KMhmowxPAczUMJ6x4nBeCjlIDio89Zlndd34Eza5Q=;
+        s=k20201202; t=1656382894;
+        bh=pqPD6qoEi8JT199in7jg5DAol4iF8DjKFPgIGYlvQoc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rmtqPrxs/EakAnLyUZ+T1Y6Y2PuUVWE1p/lPmqQBXiapPC1WBd92tcHfgEnTJibSz
-         8Cqh6wp+mGRPQenFwVH/ncudi5b7Tg0x4DYK6LYwUDkNgU3v8Yk/6Or0HzPxa5QXgF
-         OYkHqjzJwOTAIzA6m0DkNzWrhG6StDZ8wiRdHVw+Wnp/Deq+bcAy4GlTPygKnkBgqV
-         sUW1DRx9UPn831OT0MRefhs1kf7ZlvXFnW9s3XTKUzsS60aUSNGKPAXfxyQi7QqZvQ
-         a8VxNxF80uRWuCVjsLU3WaCLAUnTapHIuQJvInOf0IrcXvC7dKlHhnQt1FhIxUdbDj
-         Qy7qblTn3AnuA==
-Date:   Tue, 28 Jun 2022 02:58:25 +0200
+        b=GyqsByaDXQg5yOq6smuSw5cw5zuxTHl+rHrYo/OlHMZ1OuAvd9ONI8/jqrzLdImbD
+         VTWK7UP5itlkHBzyKuMpIHQb6qIkgBzcX3Jxv+GaaOi42Ij7zVfd0aNVRCj/2kEQLZ
+         O6R0SdzzjedD8BThjNur1AhOSXcjIOf8wUfiJdziqd597shekW5NqBhdePKYvvXsYS
+         oJiSFkiCFnaZl7loW+605mJuFv8NTwWJO3O6z94S5MRsftmK5FPbSEThNMZ5b+uoVL
+         ifMihZ1oD6Ug5EuhwczB9HuCayJu7LpnnMklqlMLvNn/Nf3BKVwwKkKVP3/5TDDlCW
+         d3gJG/ZMvv/2g==
+Date:   Tue, 28 Jun 2022 04:21:29 +0200
 From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
 To:     Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     Daniel Borkmann <daniel@iogearbox.net>,
@@ -58,15 +58,16 @@ Cc:     Daniel Borkmann <daniel@iogearbox.net>,
         alsa-devel@alsa-project.org, linux-hardening@vger.kernel.org
 Subject: Re: [PATCH][next] treewide: uapi: Replace zero-length arrays with
  flexible-array members
-Message-ID: <20220628005825.GA161566@embeddedor>
+Message-ID: <20220628022129.GA8452@embeddedor>
 References: <20220627180432.GA136081@embeddedor>
  <6bc1e94c-ce1d-a074-7d0c-8dbe6ce22637@iogearbox.net>
  <20220628004052.GM23621@ziepe.ca>
+ <20220628005825.GA161566@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220628004052.GM23621@ziepe.ca>
+In-Reply-To: <20220628005825.GA161566@embeddedor>
 X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -77,108 +78,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 09:40:52PM -0300, Jason Gunthorpe wrote:
-> On Mon, Jun 27, 2022 at 08:27:37PM +0200, Daniel Borkmann wrote:
-> > On 6/27/22 8:04 PM, Gustavo A. R. Silva wrote:
-> > > There is a regular need in the kernel to provide a way to declare
-> > > having a dynamically sized set of trailing elements in a structure.
-> > > Kernel code should always use “flexible array members”[1] for these
-> > > cases. The older style of one-element or zero-length arrays should
-> > > no longer be used[2].
+On Tue, Jun 28, 2022 at 02:58:25AM +0200, Gustavo A. R. Silva wrote:
+> On Mon, Jun 27, 2022 at 09:40:52PM -0300, Jason Gunthorpe wrote:
+> > On Mon, Jun 27, 2022 at 08:27:37PM +0200, Daniel Borkmann wrote:
+> > > On 6/27/22 8:04 PM, Gustavo A. R. Silva wrote:
+> > > > There is a regular need in the kernel to provide a way to declare
+> > > > having a dynamically sized set of trailing elements in a structure.
+> > > > Kernel code should always use “flexible array members”[1] for these
+> > > > cases. The older style of one-element or zero-length arrays should
+> > > > no longer be used[2].
+> > > > 
+> > > > This code was transformed with the help of Coccinelle:
+> > > > (linux-5.19-rc2$ spatch --jobs $(getconf _NPROCESSORS_ONLN) --sp-file script.cocci --include-headers --dir . > output.patch)
+> > > > 
+> > > > @@
+> > > > identifier S, member, array;
+> > > > type T1, T2;
+> > > > @@
+> > > > 
+> > > > struct S {
+> > > >    ...
+> > > >    T1 member;
+> > > >    T2 array[
+> > > > - 0
+> > > >    ];
+> > > > };
+> > > > 
+> > > > -fstrict-flex-arrays=3 is coming and we need to land these changes
+> > > > to prevent issues like these in the short future:
+> > > > 
+> > > > ../fs/minix/dir.c:337:3: warning: 'strcpy' will always overflow; destination buffer has size 0,
+> > > > but the source string has length 2 (including NUL byte) [-Wfortify-source]
+> > > > 		strcpy(de3->name, ".");
+> > > > 		^
+> > > > 
+> > > > Since these are all [0] to [] changes, the risk to UAPI is nearly zero. If
+> > > > this breaks anything, we can use a union with a new member name.
+> > > > 
+> > > > [1] https://en.wikipedia.org/wiki/Flexible_array_member
+> > > > [2] https://www.kernel.org/doc/html/v5.16/process/deprecated.html#zero-length-and-one-element-arrays
+> > > > 
+> > > > Link: https://github.com/KSPP/linux/issues/78
+> > > > Build-tested-by: https://lore.kernel.org/lkml/62b675ec.wKX6AOZ6cbE71vtF%25lkp@intel.com/
+> > > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> > > > ---
+> > > > Hi all!
+> > > > 
+> > > > JFYI: I'm adding this to my -next tree. :)
 > > > 
-> > > This code was transformed with the help of Coccinelle:
-> > > (linux-5.19-rc2$ spatch --jobs $(getconf _NPROCESSORS_ONLN) --sp-file script.cocci --include-headers --dir . > output.patch)
+> > > Fyi, this breaks BPF CI:
 > > > 
-> > > @@
-> > > identifier S, member, array;
-> > > type T1, T2;
-> > > @@
+> > > https://github.com/kernel-patches/bpf/runs/7078719372?check_suite_focus=true
 > > > 
-> > > struct S {
-> > >    ...
-> > >    T1 member;
-> > >    T2 array[
-> > > - 0
-> > >    ];
-> > > };
-> > > 
-> > > -fstrict-flex-arrays=3 is coming and we need to land these changes
-> > > to prevent issues like these in the short future:
-> > > 
-> > > ../fs/minix/dir.c:337:3: warning: 'strcpy' will always overflow; destination buffer has size 0,
-> > > but the source string has length 2 (including NUL byte) [-Wfortify-source]
-> > > 		strcpy(de3->name, ".");
-> > > 		^
-> > > 
-> > > Since these are all [0] to [] changes, the risk to UAPI is nearly zero. If
-> > > this breaks anything, we can use a union with a new member name.
-> > > 
-> > > [1] https://en.wikipedia.org/wiki/Flexible_array_member
-> > > [2] https://www.kernel.org/doc/html/v5.16/process/deprecated.html#zero-length-and-one-element-arrays
-> > > 
-> > > Link: https://github.com/KSPP/linux/issues/78
-> > > Build-tested-by: https://lore.kernel.org/lkml/62b675ec.wKX6AOZ6cbE71vtF%25lkp@intel.com/
-> > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> > > ---
-> > > Hi all!
-> > > 
-> > > JFYI: I'm adding this to my -next tree. :)
+> > >   [...]
+> > >   progs/map_ptr_kern.c:314:26: error: field 'trie_key' with variable sized type 'struct bpf_lpm_trie_key' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
+> > >           struct bpf_lpm_trie_key trie_key;
+> > >                                   ^
 > > 
-> > Fyi, this breaks BPF CI:
+> > This will break the rdma-core userspace as well, with a similar
+> > error:
 > > 
-> > https://github.com/kernel-patches/bpf/runs/7078719372?check_suite_focus=true
+> > /usr/bin/clang-13 -DVERBS_DEBUG -Dibverbs_EXPORTS -Iinclude -I/usr/include/libnl3 -I/usr/include/drm -g -O2 -fdebug-prefix-map=/__w/1/s=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -Wmissing-prototypes -Wmissing-declarations -Wwrite-strings -Wformat=2 -Wcast-function-type -Wformat-nonliteral -Wdate-time -Wnested-externs -Wshadow -Wstrict-prototypes -Wold-style-definition -Werror -Wredundant-decls -g -fPIC   -std=gnu11 -MD -MT libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o -MF libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o.d -o libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o   -c ../libibverbs/cmd_flow.c
+> > In file included from ../libibverbs/cmd_flow.c:33:
+> > In file included from include/infiniband/cmd_write.h:36:
+> > In file included from include/infiniband/cmd_ioctl.h:41:
+> > In file included from include/infiniband/verbs.h:48:
+> > In file included from include/infiniband/verbs_api.h:66:
+> > In file included from include/infiniband/ib_user_ioctl_verbs.h:38:
+> > include/rdma/ib_user_verbs.h:436:34: error: field 'base' with variable sized type 'struct ib_uverbs_create_cq_resp' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
+> >         struct ib_uverbs_create_cq_resp base;
+> >                                         ^
+> > include/rdma/ib_user_verbs.h:644:34: error: field 'base' with variable sized type 'struct ib_uverbs_create_qp_resp' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
+> >         struct ib_uverbs_create_qp_resp base;
 > > 
-> >   [...]
-> >   progs/map_ptr_kern.c:314:26: error: field 'trie_key' with variable sized type 'struct bpf_lpm_trie_key' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
-> >           struct bpf_lpm_trie_key trie_key;
-> >                                   ^
+> > Which is why I gave up trying to change these..
+> > 
+> > Though maybe we could just switch off -Wgnu-variable-sized-type-not-at-end  during configuration ?
 > 
-> This will break the rdma-core userspace as well, with a similar
-> error:
+> No. I think now we can easily workaround these sorts of problems with
+> something like this:
 > 
-> /usr/bin/clang-13 -DVERBS_DEBUG -Dibverbs_EXPORTS -Iinclude -I/usr/include/libnl3 -I/usr/include/drm -g -O2 -fdebug-prefix-map=/__w/1/s=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -Wmissing-prototypes -Wmissing-declarations -Wwrite-strings -Wformat=2 -Wcast-function-type -Wformat-nonliteral -Wdate-time -Wnested-externs -Wshadow -Wstrict-prototypes -Wold-style-definition -Werror -Wredundant-decls -g -fPIC   -std=gnu11 -MD -MT libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o -MF libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o.d -o libibverbs/CMakeFiles/ibverbs.dir/cmd_flow.c.o   -c ../libibverbs/cmd_flow.c
-> In file included from ../libibverbs/cmd_flow.c:33:
-> In file included from include/infiniband/cmd_write.h:36:
-> In file included from include/infiniband/cmd_ioctl.h:41:
-> In file included from include/infiniband/verbs.h:48:
-> In file included from include/infiniband/verbs_api.h:66:
-> In file included from include/infiniband/ib_user_ioctl_verbs.h:38:
-> include/rdma/ib_user_verbs.h:436:34: error: field 'base' with variable sized type 'struct ib_uverbs_create_cq_resp' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
->         struct ib_uverbs_create_cq_resp base;
->                                         ^
-> include/rdma/ib_user_verbs.h:644:34: error: field 'base' with variable sized type 'struct ib_uverbs_create_qp_resp' not at the end of a struct or class is a GNU extension [-Werror,-Wgnu-variable-sized-type-not-at-end]
->         struct ib_uverbs_create_qp_resp base;
-> 
-> Which is why I gave up trying to change these..
-> 
-> Though maybe we could just switch off -Wgnu-variable-sized-type-not-at-end  during configuration ?
+> 	struct flex {
+> 		any_type any_member;
+> 		union {
+> 			type array[0];
+> 			__DECLARE_FLEX_ARRAY(type, array_flex);
+> 		};
+> 	};
 
-No. I think now we can easily workaround these sorts of problems with
-something like this:
+Mmmh... nope; this doesn't work[1].
 
-	struct flex {
-		any_type any_member;
-		union {
-			type array[0];
-			__DECLARE_FLEX_ARRAY(type, array_flex);
-		};
-	};
+We need to think in a different strategy.
 
-and use array_flex in kernel-space.
-
-The same for the one-elment arrays in UAPI:
-
-        struct flex {
-                any_type any_member;
-                union {
-                        type array[1];
-                        __DECLARE_FLEX_ARRAY(type, array_flex);
-                };
-        };
-
-I'll use the idiom above to resolve all these warnings in a follow-up
-patch. :)
-
-Thanks
 --
 Gustavo
+
+[1] https://godbolt.org/z/av79Pqbfz
