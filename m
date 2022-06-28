@@ -2,103 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DE855CDC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E7F55C945
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344393AbiF1JrG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 05:47:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39318 "EHLO
+        id S1344699AbiF1KKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 06:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344311AbiF1Jqg (ORCPT
+        with ESMTP id S245559AbiF1KKJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 05:46:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8029325C6D;
-        Tue, 28 Jun 2022 02:46:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1C534B81D92;
-        Tue, 28 Jun 2022 09:46:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC66C341D1;
-        Tue, 28 Jun 2022 09:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656409590;
-        bh=Ms5JmO/YVveA71jHzxf9CpKV8ph43B9gY0cCetOz/GQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lGbAXWP1HHRzM4gQTAP86HupxxsnRqE9d3ydeGxprJnSkY/sSmWQgtQ8sEycyHc0H
-         uRiYeU5QlC8R+gAGkTcRt8n2AfW+U6aqcWbHihVnlqmxT+zMP2o3AmOwwtH+lFKNxi
-         LJ2u8Ur9VNgD4FO60fsoBnS5HCZUQIzJuuTJSA/y8ZdAnmmWYtMqZ0Cyic7wfN2RDM
-         nOckaHhh6deQxudn90MfQIE2onYO9nWcgnUuYAe2hkVnQ6jumUX94cOUjNKDCuBjxN
-         eKEIIAaiiGW2ddu4nxHB1oW7a2W/43mlgn48DCri+kOE6KsB53TwSoGW3UBo/vCJK/
-         dGqAnm+qHEwHA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.95)
-        (envelope-from <mchehab@kernel.org>)
-        id 1o67nf-005HF4-Oc;
-        Tue, 28 Jun 2022 10:46:27 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/22] fs: namei: address some kernel-doc issues
-Date:   Tue, 28 Jun 2022 10:46:11 +0100
-Message-Id: <4a1bbfb71afc91ab643a74c5d3b16c4f506b35a1.1656409369.git.mchehab@kernel.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1656409369.git.mchehab@kernel.org>
-References: <cover.1656409369.git.mchehab@kernel.org>
+        Tue, 28 Jun 2022 06:10:09 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506B62F660;
+        Tue, 28 Jun 2022 03:10:08 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id o13so11507471vsn.4;
+        Tue, 28 Jun 2022 03:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ypk5X9iRroizin43rs7DNbFL/AnWU24H75cu00VME9k=;
+        b=Wje4NHFuGZH3pz9ZFs+rI/F44mxP2RoPSyakvvN9H1ZiHT3vb0sBYbbIGx81YTwDel
+         bVZTBIdbdnQ7uicPr8dOx9Rbeb8Axp4DjlVyKIFiZ4wRJEyTy8NdBtzrWhmEYdxAd5xn
+         bz1RLNp8UMDM2ptVovogr840EobwedQkiqiyMVosPsMEbJZUbYIM1Z9OY9FGZpr+WmEN
+         xDpwSZEoBwtX6y3Gkow3hJg3VtQ3Jbxtbc7W8zDfSraHgXE5/t2a5t1gworUCtHkr6yx
+         4an/dDv21h7mwiUkhMwQSANt1uEPpWH6S735au+OmgrV31ue1Zet58zinQzqJj4VyEBT
+         vwog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ypk5X9iRroizin43rs7DNbFL/AnWU24H75cu00VME9k=;
+        b=UZhrvt1gXB9/T/iaCQuq6ffyxJxcaKXeJwc/LfHyRewoRZt33RNfkMjU6zKsXhNCDX
+         QdKBzpFWJ/TEqB7plpBBCofOO8APS7vvt9oweB+Mvpm7cyhmRlAKf1JVXGmDPuYAOwzL
+         pGYgxHAvRcY3IZIkcUSjxc7yazOUEutNjXMeT+IWCEj4UnOt0tObaSY1yjuZ6BPfl2uC
+         38aq+Mr7zvXjUtkRq0BVRjHsT7MotYYJUJCCa42WV+ZW6T7Bbe9ZkaYQlLSVyPlMLYSM
+         l11KKM5lwPkKxhIEI7uN1R+SBE8ey7JquAqfhiuxmJ5SDLOjq401WBVio51/3sctWOic
+         mA0Q==
+X-Gm-Message-State: AJIora9WVH/UBeCppHIETgviVTlZ6h9cIOoCPxz13Dzp9U+XDJaZjqLB
+        PoaMjaCfbxhJ2/EpRodTHEcyULsM9CXfucvSWVKBK+iS+Qhw6g==
+X-Google-Smtp-Source: AGRyM1vKw0prL7Zci9bmPwVpDE/JzxuZ9tfTV+MZALrqBSUijAHZqkZyJJHh+i5SwqLQhwIuDCFstSgMtV8X77ktbr8=
+X-Received: by 2002:a05:6102:5dc:b0:354:63f1:df8d with SMTP id
+ v28-20020a05610205dc00b0035463f1df8dmr1312490vsf.72.1656411007415; Tue, 28
+ Jun 2022 03:10:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 28 Jun 2022 13:09:56 +0300
+Message-ID: <CAOQ4uxjbU27gSbhndxA_ABchfv1X7Steoggto_o-Wc=5shfS7Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: writeback_cache consistency enhancement (writeback_cache_v2)
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        xieyongji@bytedance.com, fam.zheng@bytedance.com,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are couple of symbols missing documentation:
+On Fri, Jun 24, 2022 at 9:03 AM Jiachen Zhang
+<zhangjiachen.jaycee@bytedance.com> wrote:
+>
+> Some users may want both the high performance of the writeback_cahe mode and
+> a little bit more consistency among FUSE mounts. In the current writeback
+> mode implementation, users of one FUSE mount can never see the file
+> expansion done by other FUSE mounts.
+>
+> Based on the suggested writeback V2 patch in the upstream mailing-list [1],
+> this commit allows the cmtime and size to be updated from server in
+> writeback mode. Compared with the writeback V2 patch in [1], this commit has
+> several differences:
+>
+>     1. Ensure c/mtime are not updated from kernel to server. IOW, the cmtime
+>     generated by kernel are just temporary values that are never flushed to
+>     server, and they can also be updated by the official server cmtime when
+>     the writeback cache is clean.
+>
+>     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
+>     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
+>     are likely not equal to the offical server cmtime.
+>
+>     3. If any page is ever flushed to the server during FUSE_GETATTR
+>     handling on fuse server, even if the cache is clean when
+>     fuse_change_attributes() checks, we should not update the i_size. This
+>     is because the FUSE_GETATTR may get a staled size before the FUSE_WRITE
+>     request changes server inode size. This commit ensures this by
+>     increasing attr_version after writeback for writeback_cache_v2. In that
+>     case, we should also ensure the ordering of the attr_version updating
+>     and the fi->writepages RB-tree updating. So that if a fuse page
+>     writeback ever happens during fuse_change_attributes(), either the
+>     fi->writepages is not empty, or the attr_version is increased. So we
+>     never mistakenly update a stale file size from server to kernel.
+>
+> With this patch, writeback mode can consider the server c/mtime as the
+> official one. When inode attr is timeout or invalidated, kernel has chance
+> to see size and c/mtime modified by others.
+>
+> Together with another patch [2], a FUSE daemon is able to implement
+> close-to-open (CTO) consistency like what is done in NFS clients.
+>
+> [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
+> [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
+>
+> Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
+> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> ---
+>  fs/fuse/file.c            | 17 +++++++++++++++
+>  fs/fuse/fuse_i.h          |  3 +++
+>  fs/fuse/inode.c           | 44 +++++++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/fuse.h |  5 +++++
+>  4 files changed, 67 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 9b64e2ff1c96..35bdc7af8468 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1829,6 +1829,15 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+>                  */
+>                 fuse_send_writepage(fm, next, inarg->offset + inarg->size);
+>         }
+> +
+> +       if (fc->writeback_cache_v2)
+> +               fi->attr_version = atomic64_inc_return(&fc->attr_version);
+> +       /*
+> +        * Ensure attr_version increases before the page is move out of the
+> +        * writepages rb-tree.
+> +        */
+> +       smp_mb();
+> +
+>         fi->writectr--;
+>         fuse_writepage_finish(fm, wpa);
+>         spin_unlock(&fi->lock);
+> @@ -1858,10 +1867,18 @@ static struct fuse_file *fuse_write_file_get(struct fuse_inode *fi)
+>
+>  int fuse_write_inode(struct inode *inode, struct writeback_control *wbc)
+>  {
+> +       struct fuse_conn *fc = get_fuse_conn(inode);
+>         struct fuse_inode *fi = get_fuse_inode(inode);
+>         struct fuse_file *ff;
+>         int err;
+>
+> +       /*
+> +        * Kernel c/mtime should not be updated to the server in the
+> +        * writeback_cache_v2 mode as server c/mtime are official.
+> +        */
+> +       if (fc->writeback_cache_v2)
+> +               return 0;
+> +
+>         /*
+>          * Inode is always written before the last reference is dropped and
+>          * hence this should not be reached from reclaim.
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 488b460e046f..47de36146fb8 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -654,6 +654,9 @@ struct fuse_conn {
+>         /* show legacy mount options */
+>         unsigned int legacy_opts_show:1;
+>
+> +       /* Improved writeback cache policy */
+> +       unsigned writeback_cache_v2:1;
+> +
 
-	fs/namei.c:649: warning: Function parameter or member 'mnt' not described in 'path_connected'
-	fs/namei.c:649: warning: Function parameter or member 'dentry' not described in 'path_connected'
-	fs/namei.c:1089: warning: Function parameter or member 'inode' not described in 'may_follow_link'
+Seeing that writeback_cache_v2 depends on writeback_cache
+I wonder whether that will not be better represented as:
 
-Document them.
+        /** write-back cache policy (default is write-through) */
+-       unsigned writeback_cache:1;
++      unsigned writeback_cache:2;
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
 
-To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH 00/22] at: https://lore.kernel.org/all/cover.1656409369.git.mchehab@kernel.org/
+Looking at the recently added handle_killpriv_v2, I also wonder
+if that would not have been better.
 
- fs/namei.c | 3 +++
- 1 file changed, 3 insertions(+)
+Vivek,
+is handle_killpriv_v2 really independent of handle_killpriv?
+Seeing test like these worry me as they are inviting bugs:
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f28d3f463c3..a8079d6250bc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -640,6 +640,8 @@ static bool nd_alloc_stack(struct nameidata *nd)
- 
- /**
-  * path_connected - Verify that a dentry is below mnt.mnt_root
-+ * @mnt: pointer to vfs mount
-+ * @dentry:  pointer to dentry to verify
-  *
-  * Rename can sometimes move a file or directory outside of a bind
-  * mount, path_connected allows those cases to be detected.
-@@ -1072,6 +1074,7 @@ fs_initcall(init_fs_namei_sysctls);
- /**
-  * may_follow_link - Check symlink following for unsafe situations
-  * @nd: nameidata pathwalk data
-+ * @inode: inode to check
-  *
-  * In the case of the sysctl_protected_symlinks sysctl being enabled,
-  * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
--- 
-2.36.1
+                if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
 
+Thanks,
+Amir.
