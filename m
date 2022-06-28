@@ -2,58 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4729055EFD0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 22:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0DC855F008
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 22:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbiF1Uqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 16:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
+        id S230089AbiF1U5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 16:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbiF1Uq0 (ORCPT
+        with ESMTP id S229733AbiF1U5M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 16:46:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ADE6C2A97C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 13:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656449184;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AxAXLtt/qHvFpa3MozdupVmWHjm0h9gbo/SJ35DEqEU=;
-        b=H9fzeCJsOUvfqZkVUjaJgi4GGNJybM0X2d89DR3bgVJzJqtct7VzjcIEdgdR3Edzc+NZHl
-        BKR37vSTgruC4h+HAD6mJZym7Hw95R3mFL2Y7c6sqEsvaJvv0aptwSmoiu+kWDiGeI1a4O
-        j07UrP/Onwimm5W8jRXvteq4KWOgaZ0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-479-Jj1d7vLEMh2BLGWcJF-AOw-1; Tue, 28 Jun 2022 16:46:20 -0400
-X-MC-Unique: Jj1d7vLEMh2BLGWcJF-AOw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 28 Jun 2022 16:57:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1724838DA8;
+        Tue, 28 Jun 2022 13:57:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E737818A6584;
-        Tue, 28 Jun 2022 20:46:19 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.193.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0026C40D282F;
-        Tue, 28 Jun 2022 20:46:18 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     cluster-devel@redhat.com
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 5/5] gfs2: Mark the remaining process-independent glock holders as GL_NOPID
-Date:   Tue, 28 Jun 2022 22:46:11 +0200
-Message-Id: <20220628204611.651126-6-agruenba@redhat.com>
-In-Reply-To: <20220628204611.651126-1-agruenba@redhat.com>
-References: <20220628204611.651126-1-agruenba@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id CD56DB81F8C;
+        Tue, 28 Jun 2022 20:57:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F0DC341C8;
+        Tue, 28 Jun 2022 20:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656449829;
+        bh=JYjpGNT6iEQTqD1KKuuhn/8Y9wh6ZQGSQyJkPuIoo+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZvOztGuB2lWfBDSlogHmcoiTa/KqdhlmdFnYHIGLR/JnJA89NgtoYgugSdXnJzAYy
+         xs4vORpyPVQqXK63ZGVHbgXzSnZ8lDPULFeXe2t9hIrQTOp5ZSEU/lh7t+M+mQKJQr
+         7OO8yBZEr1tgdZcLSEfDDnJVPR1BVRHvssPcSLJ5TmRF89QdniFCZO12YAhFFQD3LN
+         a1uc5cO/+uXCRpjkv8EXGyF0Am+kHLfyj9r6gVPCXhJZV/vekNCssNF8CHgZDXPhij
+         VWjyOD5cpcC+KSQLJHCwyHl6XALIgaf5Yz0X6Wl8aZkeSQCeUyYNsYHKLdPusdl6qK
+         ktmiW5J2fPNwQ==
+Date:   Tue, 28 Jun 2022 13:57:09 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org
+Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
+ Support large folios)
+Message-ID: <YrtrJRxg8ZoSr3kr@magnolia>
+References: <20211216210715.3801857-1-willy@infradead.org>
+ <20211216210715.3801857-26-willy@infradead.org>
+ <YrO243DkbckLTfP7@magnolia>
+ <Yrku31ws6OCxRGSQ@magnolia>
+ <Yrm6YM2uS+qOoPcn@casper.infradead.org>
+ <YrosM1+yvMYliw2l@magnolia>
+ <20220628073120.GI227878@dread.disaster.area>
+ <YrrlrMK/7pyZwZj2@casper.infradead.org>
+ <Yrrmq4hmJPkf5V7s@casper.infradead.org>
+ <Yrr/oBlf1Eig8uKS@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yrr/oBlf1Eig8uKS@casper.infradead.org>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,139 +65,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the GL_NOPID flag for the remaining glock holders which are not
-associated with the current process.
+On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
+> On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
+> > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
+> > > > So using this technique, I've discovered that there's a dirty page
+> > > > accounting leak that eventually results in fsx hanging in
+> > > > balance_dirty_pages().
+> > > 
+> > > Alas, I think this is only an accounting error, and not related to
+> > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
+> > > seeing is dirty pages being dropped at truncation without the
+> > > appropriate accounting.  ie this should be the fix:
+> > 
+> > Argh, try one that actually compiles.
+> 
+> ... that one's going to underflow the accounting.  Maybe I shouldn't
+> be writing code at 6am?
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/inode.c      |  6 ++++--
- fs/gfs2/ops_fstype.c | 14 ++++++++------
- fs/gfs2/super.c      |  3 ++-
- fs/gfs2/util.c       |  6 ++++--
- 4 files changed, 18 insertions(+), 11 deletions(-)
+I dunno, it's been running on my test VMs for 160 minutes (same debug
+setup as yesterday) and 100 minutes (regular g/522, no -C/-I flags to
+fsx, no debugging junk) and neither have reported corruptions.
 
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index c8ec876f33ea..e211ed8636b5 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -143,7 +143,8 @@ struct inode *gfs2_inode_lookup(struct super_block *sb, unsigned int type,
- 
- 		if (blktype != GFS2_BLKST_UNLINKED)
- 			gfs2_cancel_delete_work(io_gl);
--		error = gfs2_glock_nq_init(io_gl, LM_ST_SHARED, GL_EXACT,
-+		error = gfs2_glock_nq_init(io_gl, LM_ST_SHARED,
-+					   GL_EXACT | GL_NOPID,
- 					   &ip->i_iopen_gh);
- 		gfs2_glock_put(io_gl);
- 		if (unlikely(error))
-@@ -720,7 +721,8 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
- 	error = insert_inode_locked4(inode, ip->i_no_addr, iget_test, &ip->i_no_addr);
- 	BUG_ON(error);
- 
--	error = gfs2_glock_nq_init(io_gl, LM_ST_SHARED, GL_EXACT, &ip->i_iopen_gh);
-+	error = gfs2_glock_nq_init(io_gl, LM_ST_SHARED, GL_EXACT | GL_NOPID,
-+				   &ip->i_iopen_gh);
- 	if (error)
- 		goto fail_gunlock2;
- 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index c9b423c874a3..904a2d47c4b3 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -403,7 +403,8 @@ static int init_locking(struct gfs2_sbd *sdp, struct gfs2_holder *mount_gh,
- 
- 	error = gfs2_glock_nq_num(sdp,
- 				  GFS2_MOUNT_LOCK, &gfs2_nondisk_glops,
--				  LM_ST_EXCLUSIVE, LM_FLAG_NOEXP | GL_NOCACHE,
-+				  LM_ST_EXCLUSIVE,
-+				  LM_FLAG_NOEXP | GL_NOCACHE | GL_NOPID,
- 				  mount_gh);
- 	if (error) {
- 		fs_err(sdp, "can't acquire mount glock: %d\n", error);
-@@ -413,7 +414,7 @@ static int init_locking(struct gfs2_sbd *sdp, struct gfs2_holder *mount_gh,
- 	error = gfs2_glock_nq_num(sdp,
- 				  GFS2_LIVE_LOCK, &gfs2_nondisk_glops,
- 				  LM_ST_SHARED,
--				  LM_FLAG_NOEXP | GL_EXACT,
-+				  LM_FLAG_NOEXP | GL_EXACT | GL_NOPID,
- 				  &sdp->sd_live_gh);
- 	if (error) {
- 		fs_err(sdp, "can't acquire live glock: %d\n", error);
-@@ -689,7 +690,7 @@ static int init_statfs(struct gfs2_sbd *sdp)
- 	iput(pn);
- 	pn = NULL;
- 	ip = GFS2_I(sdp->sd_sc_inode);
--	error = gfs2_glock_nq_init(ip->i_gl, LM_ST_EXCLUSIVE, 0,
-+	error = gfs2_glock_nq_init(ip->i_gl, LM_ST_EXCLUSIVE, GL_NOPID,
- 				   &sdp->sd_sc_gh);
- 	if (error) {
- 		fs_err(sdp, "can't lock local \"sc\" file: %d\n", error);
-@@ -778,7 +779,7 @@ static int init_journal(struct gfs2_sbd *sdp, int undo)
- 		error = gfs2_glock_nq_num(sdp, sdp->sd_lockstruct.ls_jid,
- 					  &gfs2_journal_glops,
- 					  LM_ST_EXCLUSIVE,
--					  LM_FLAG_NOEXP | GL_NOCACHE,
-+					  LM_FLAG_NOEXP | GL_NOCACHE | GL_NOPID,
- 					  &sdp->sd_journal_gh);
- 		if (error) {
- 			fs_err(sdp, "can't acquire journal glock: %d\n", error);
-@@ -788,7 +789,8 @@ static int init_journal(struct gfs2_sbd *sdp, int undo)
- 		ip = GFS2_I(sdp->sd_jdesc->jd_inode);
- 		sdp->sd_jinode_gl = ip->i_gl;
- 		error = gfs2_glock_nq_init(ip->i_gl, LM_ST_SHARED,
--					   LM_FLAG_NOEXP | GL_EXACT | GL_NOCACHE,
-+					   LM_FLAG_NOEXP | GL_EXACT |
-+					   GL_NOCACHE | GL_NOPID,
- 					   &sdp->sd_jinode_gh);
- 		if (error) {
- 			fs_err(sdp, "can't acquire journal inode glock: %d\n",
-@@ -959,7 +961,7 @@ static int init_per_node(struct gfs2_sbd *sdp, int undo)
- 	pn = NULL;
- 
- 	ip = GFS2_I(sdp->sd_qc_inode);
--	error = gfs2_glock_nq_init(ip->i_gl, LM_ST_EXCLUSIVE, 0,
-+	error = gfs2_glock_nq_init(ip->i_gl, LM_ST_EXCLUSIVE, GL_NOPID,
- 				   &sdp->sd_qc_gh);
- 	if (error) {
- 		fs_err(sdp, "can't lock local \"qc\" file: %d\n", error);
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index bdb773e5c88f..90db4a289269 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -346,7 +346,8 @@ static int gfs2_lock_fs_check_clean(struct gfs2_sbd *sdp)
- 	}
- 
- 	error = gfs2_glock_nq_init(sdp->sd_freeze_gl, LM_ST_EXCLUSIVE,
--				   LM_FLAG_NOEXP, &sdp->sd_freeze_gh);
-+				   LM_FLAG_NOEXP | GL_NOPID,
-+				   &sdp->sd_freeze_gh);
- 	if (error)
- 		goto out;
- 
-diff --git a/fs/gfs2/util.c b/fs/gfs2/util.c
-index 8241029a2a5d..95d733dd3c25 100644
---- a/fs/gfs2/util.c
-+++ b/fs/gfs2/util.c
-@@ -226,7 +226,8 @@ static void signal_our_withdraw(struct gfs2_sbd *sdp)
- 	 */
- 	fs_warn(sdp, "Requesting recovery of jid %d.\n",
- 		sdp->sd_lockstruct.ls_jid);
--	gfs2_holder_reinit(LM_ST_EXCLUSIVE, LM_FLAG_TRY_1CB | LM_FLAG_NOEXP,
-+	gfs2_holder_reinit(LM_ST_EXCLUSIVE,
-+			   LM_FLAG_TRY_1CB | LM_FLAG_NOEXP | GL_NOPID,
- 			   &sdp->sd_live_gh);
- 	msleep(GL_GLOCK_MAX_HOLD);
- 	/*
-@@ -251,7 +252,8 @@ static void signal_our_withdraw(struct gfs2_sbd *sdp)
- 			fs_warn(sdp, "Unable to recover our journal jid %d.\n",
- 				sdp->sd_lockstruct.ls_jid);
- 		gfs2_glock_dq_wait(&sdp->sd_live_gh);
--		gfs2_holder_reinit(LM_ST_SHARED, LM_FLAG_NOEXP | GL_EXACT,
-+		gfs2_holder_reinit(LM_ST_SHARED,
-+				   LM_FLAG_NOEXP | GL_EXACT | GL_NOPID,
- 				   &sdp->sd_live_gh);
- 		gfs2_glock_nq(&sdp->sd_live_gh);
- 	}
--- 
-2.35.1
+$ grep Dirty /proc/meminfo
+Dirty:               100 kB
 
+So, pretty good for writing code at 6am while on holiday.  I'll let this
+run overnight, but I think you've fixed the problem, at least for me...
+
+--D
+
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f7248002dad9..4eec6ee83e44 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/shrinker.h>
+>  #include <linux/mm_inline.h>
+>  #include <linux/swapops.h>
+> +#include <linux/backing-dev.h>
+>  #include <linux/dax.h>
+>  #include <linux/khugepaged.h>
+>  #include <linux/freezer.h>
+> @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>  		__split_huge_page_tail(head, i, lruvec, list);
+>  		/* Some pages can be beyond EOF: drop them from page cache */
+>  		if (head[i].index >= end) {
+> -			ClearPageDirty(head + i);
+> -			__delete_from_page_cache(head + i, NULL);
+> +			struct folio *tail = page_folio(head + i);
+> +
+>  			if (shmem_mapping(head->mapping))
+>  				shmem_uncharge(head->mapping->host, 1);
+> -			put_page(head + i);
+> +			else if (folio_test_clear_dirty(tail))
+> +				folio_account_cleaned(tail,
+> +					inode_to_wb(folio->mapping->host));
+> +			__filemap_remove_folio(tail, NULL);
+> +			folio_put(tail);
+>  		} else if (!PageAnon(page)) {
+>  			__xa_store(&head->mapping->i_pages, head[i].index,
+>  					head + i, 0);
