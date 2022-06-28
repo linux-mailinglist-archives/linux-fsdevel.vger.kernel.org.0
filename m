@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E7F55C945
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3919255D910
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 15:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344699AbiF1KKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 06:10:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40874 "EHLO
+        id S1344105AbiF1KO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 06:14:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245559AbiF1KKJ (ORCPT
+        with ESMTP id S245559AbiF1KOZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 06:10:09 -0400
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506B62F660;
-        Tue, 28 Jun 2022 03:10:08 -0700 (PDT)
-Received: by mail-vs1-xe2c.google.com with SMTP id o13so11507471vsn.4;
-        Tue, 28 Jun 2022 03:10:08 -0700 (PDT)
+        Tue, 28 Jun 2022 06:14:25 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BADA11823;
+        Tue, 28 Jun 2022 03:14:24 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 9so11741362pgd.7;
+        Tue, 28 Jun 2022 03:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ypk5X9iRroizin43rs7DNbFL/AnWU24H75cu00VME9k=;
-        b=Wje4NHFuGZH3pz9ZFs+rI/F44mxP2RoPSyakvvN9H1ZiHT3vb0sBYbbIGx81YTwDel
-         bVZTBIdbdnQ7uicPr8dOx9Rbeb8Axp4DjlVyKIFiZ4wRJEyTy8NdBtzrWhmEYdxAd5xn
-         bz1RLNp8UMDM2ptVovogr840EobwedQkiqiyMVosPsMEbJZUbYIM1Z9OY9FGZpr+WmEN
-         xDpwSZEoBwtX6y3Gkow3hJg3VtQ3Jbxtbc7W8zDfSraHgXE5/t2a5t1gworUCtHkr6yx
-         4an/dDv21h7mwiUkhMwQSANt1uEPpWH6S735au+OmgrV31ue1Zet58zinQzqJj4VyEBT
-         vwog==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NE608PFRqILqnXG38pNU+ErLdjvxNJ1H7ziYliYZy30=;
+        b=ey1r16TEJvqhT+OBlAkqFMMCKk6sqkRnafipi1kDG1s/Xt9rxwnJJnZDnOx5OYQ3Ki
+         B3sqnwH/Lua6v6KwVxgbxoIODlSf+UUCcqNzzZMlXJpW7etXr+t6hCePViCUn1n5UjeX
+         cJDEwhmhm4mgyrJ5mHHlHbxp9LZWgsbEUeji+XEb3xbf7fK6OfhwVKrUKLG1mkGDZ8j8
+         o2duNF4x0OHFShBo9Agi+7APFkl3q+AJilLvUfQa33T9vYTid12E3qv7JIqNhx1i45vc
+         HYDGqJJptpu/VgZUs+b2RXKCZOgIGRPVNKAgcpFdOCt58+GfVv3iYiIzHVrWEhBpYaae
+         TWKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ypk5X9iRroizin43rs7DNbFL/AnWU24H75cu00VME9k=;
-        b=UZhrvt1gXB9/T/iaCQuq6ffyxJxcaKXeJwc/LfHyRewoRZt33RNfkMjU6zKsXhNCDX
-         QdKBzpFWJ/TEqB7plpBBCofOO8APS7vvt9oweB+Mvpm7cyhmRlAKf1JVXGmDPuYAOwzL
-         pGYgxHAvRcY3IZIkcUSjxc7yazOUEutNjXMeT+IWCEj4UnOt0tObaSY1yjuZ6BPfl2uC
-         38aq+Mr7zvXjUtkRq0BVRjHsT7MotYYJUJCCa42WV+ZW6T7Bbe9ZkaYQlLSVyPlMLYSM
-         l11KKM5lwPkKxhIEI7uN1R+SBE8ey7JquAqfhiuxmJ5SDLOjq401WBVio51/3sctWOic
-         mA0Q==
-X-Gm-Message-State: AJIora9WVH/UBeCppHIETgviVTlZ6h9cIOoCPxz13Dzp9U+XDJaZjqLB
-        PoaMjaCfbxhJ2/EpRodTHEcyULsM9CXfucvSWVKBK+iS+Qhw6g==
-X-Google-Smtp-Source: AGRyM1vKw0prL7Zci9bmPwVpDE/JzxuZ9tfTV+MZALrqBSUijAHZqkZyJJHh+i5SwqLQhwIuDCFstSgMtV8X77ktbr8=
-X-Received: by 2002:a05:6102:5dc:b0:354:63f1:df8d with SMTP id
- v28-20020a05610205dc00b0035463f1df8dmr1312490vsf.72.1656411007415; Tue, 28
- Jun 2022 03:10:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NE608PFRqILqnXG38pNU+ErLdjvxNJ1H7ziYliYZy30=;
+        b=mZOMLy9qCIO/UkGs2GEm9aRuatZgAbag6w9pmuZgckoU5fxWAe3h+Zr+B4rhwv+JsG
+         IrvQ7uHcDVv1a++D2fprsqmsy6PwWwPGBWAnoaBIb8ZSVFbBxnfjvCEpRIg2COA2p94x
+         WO4DFUrVBUyy8XtPc4Y8dudakktsk4o4+JEZRJj2w9WCJLxH3A1Y2dm8gYeGgR655ciB
+         sauxbXUmClpXDGOKHuYIm6wP6vw+GoydLpavi8ZUScWvks9ZJk88+hn58qhXJ2HtlCKT
+         Z/OPM+YND030Sgk7p4X3CrhcvLkvUvzO/+CL4BfQjf5xxUO1ufqarct5qj9mTlU7bpq/
+         kiAA==
+X-Gm-Message-State: AJIora9llB9VTL8dNAizfR3YM0Jy7eEO9DdjpZHMaY4sgQGBsP8bEV9f
+        +4hrZqzHUZ7bWzbLYPk4Z54=
+X-Google-Smtp-Source: AGRyM1uI4MLDZQfYaCHV4jPt4mYNUz2wxqGb1G96X+jR3z+y3WBlBt7oASCmkq03eWuOAQLK19klQQ==
+X-Received: by 2002:a63:2254:0:b0:40d:d291:7710 with SMTP id t20-20020a632254000000b0040dd2917710mr12841095pgm.269.1656411264021;
+        Tue, 28 Jun 2022 03:14:24 -0700 (PDT)
+Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.232])
+        by smtp.gmail.com with ESMTPSA id c16-20020a170902b69000b001678dcb4c5asm8890437pls.100.2022.06.28.03.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 03:14:23 -0700 (PDT)
+From:   Guowei Du <duguoweisz@gmail.com>
+To:     jack@suse.cz, amir73il@gmail.com, repnop@google.com,
+        brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        duguowei <duguowei@xiaomi.com>
+Subject: [PATCH 6/6] fanotify: add current_user_instances node
+Date:   Tue, 28 Jun 2022 18:14:13 +0800
+Message-Id: <20220628101413.10432-1-duguoweisz@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
-In-Reply-To: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 28 Jun 2022 13:09:56 +0300
-Message-ID: <CAOQ4uxjbU27gSbhndxA_ABchfv1X7Steoggto_o-Wc=5shfS7Q@mail.gmail.com>
-Subject: Re: [PATCH] fuse: writeback_cache consistency enhancement (writeback_cache_v2)
-To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        xieyongji@bytedance.com, fam.zheng@bytedance.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -70,126 +69,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 9:03 AM Jiachen Zhang
-<zhangjiachen.jaycee@bytedance.com> wrote:
->
-> Some users may want both the high performance of the writeback_cahe mode and
-> a little bit more consistency among FUSE mounts. In the current writeback
-> mode implementation, users of one FUSE mount can never see the file
-> expansion done by other FUSE mounts.
->
-> Based on the suggested writeback V2 patch in the upstream mailing-list [1],
-> this commit allows the cmtime and size to be updated from server in
-> writeback mode. Compared with the writeback V2 patch in [1], this commit has
-> several differences:
->
->     1. Ensure c/mtime are not updated from kernel to server. IOW, the cmtime
->     generated by kernel are just temporary values that are never flushed to
->     server, and they can also be updated by the official server cmtime when
->     the writeback cache is clean.
->
->     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
->     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
->     are likely not equal to the offical server cmtime.
->
->     3. If any page is ever flushed to the server during FUSE_GETATTR
->     handling on fuse server, even if the cache is clean when
->     fuse_change_attributes() checks, we should not update the i_size. This
->     is because the FUSE_GETATTR may get a staled size before the FUSE_WRITE
->     request changes server inode size. This commit ensures this by
->     increasing attr_version after writeback for writeback_cache_v2. In that
->     case, we should also ensure the ordering of the attr_version updating
->     and the fi->writepages RB-tree updating. So that if a fuse page
->     writeback ever happens during fuse_change_attributes(), either the
->     fi->writepages is not empty, or the attr_version is increased. So we
->     never mistakenly update a stale file size from server to kernel.
->
-> With this patch, writeback mode can consider the server c/mtime as the
-> official one. When inode attr is timeout or invalidated, kernel has chance
-> to see size and c/mtime modified by others.
->
-> Together with another patch [2], a FUSE daemon is able to implement
-> close-to-open (CTO) consistency like what is done in NFS clients.
->
-> [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
-> [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
->
-> Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-> ---
->  fs/fuse/file.c            | 17 +++++++++++++++
->  fs/fuse/fuse_i.h          |  3 +++
->  fs/fuse/inode.c           | 44 +++++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/fuse.h |  5 +++++
->  4 files changed, 67 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 9b64e2ff1c96..35bdc7af8468 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1829,6 +1829,15 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
->                  */
->                 fuse_send_writepage(fm, next, inarg->offset + inarg->size);
->         }
-> +
-> +       if (fc->writeback_cache_v2)
-> +               fi->attr_version = atomic64_inc_return(&fc->attr_version);
-> +       /*
-> +        * Ensure attr_version increases before the page is move out of the
-> +        * writepages rb-tree.
-> +        */
-> +       smp_mb();
-> +
->         fi->writectr--;
->         fuse_writepage_finish(fm, wpa);
->         spin_unlock(&fi->lock);
-> @@ -1858,10 +1867,18 @@ static struct fuse_file *fuse_write_file_get(struct fuse_inode *fi)
->
->  int fuse_write_inode(struct inode *inode, struct writeback_control *wbc)
->  {
-> +       struct fuse_conn *fc = get_fuse_conn(inode);
->         struct fuse_inode *fi = get_fuse_inode(inode);
->         struct fuse_file *ff;
->         int err;
->
-> +       /*
-> +        * Kernel c/mtime should not be updated to the server in the
-> +        * writeback_cache_v2 mode as server c/mtime are official.
-> +        */
-> +       if (fc->writeback_cache_v2)
-> +               return 0;
-> +
->         /*
->          * Inode is always written before the last reference is dropped and
->          * hence this should not be reached from reclaim.
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 488b460e046f..47de36146fb8 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -654,6 +654,9 @@ struct fuse_conn {
->         /* show legacy mount options */
->         unsigned int legacy_opts_show:1;
->
-> +       /* Improved writeback cache policy */
-> +       unsigned writeback_cache_v2:1;
-> +
+From: duguowei <duguowei@xiaomi.com>
 
-Seeing that writeback_cache_v2 depends on writeback_cache
-I wonder whether that will not be better represented as:
+Add a node of sysctl, which is current_user_instances.
+It shows current initialized group counts of system.
 
-        /** write-back cache policy (default is write-through) */
--       unsigned writeback_cache:1;
-+      unsigned writeback_cache:2;
+Signed-off-by: duguowei <duguowei@xiaomi.com>
+---
+ fs/notify/fanotify/fanotify_user.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index c2255b440df9..39674fbffc4f 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -51,6 +51,8 @@
+ 
+ /* configurable via /proc/sys/fs/fanotify/ */
+ static int fanotify_max_queued_events __read_mostly;
++/* current initialized group count */
++static int fanotify_user_instances __read_mostly;
+ 
+ #ifdef CONFIG_SYSCTL
+ 
+@@ -86,6 +88,14 @@ static struct ctl_table fanotify_table[] = {
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO
+ 	},
++	{
++		.procname	= "current_user_instances",
++		.data		= &fanotify_user_instances,
++		.maxlen		= sizeof(int),
++		.mode		= 0444,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO
++	},
+ 	{ }
+ };
+ 
+@@ -905,6 +915,8 @@ static int fanotify_release(struct inode *ignored, struct file *file)
+ 	/* matches the fanotify_init->fsnotify_alloc_group */
+ 	fsnotify_destroy_group(group);
+ 
++	fanotify_user_instances--;
++
+ 	return 0;
+ }
+ 
+@@ -1459,6 +1471,8 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	if (fd < 0)
+ 		goto out_destroy_group;
+ 
++	fanotify_user_instances++;
++
+ 	return fd;
+ 
+ out_destroy_group:
+-- 
+2.36.1
 
-Looking at the recently added handle_killpriv_v2, I also wonder
-if that would not have been better.
-
-Vivek,
-is handle_killpriv_v2 really independent of handle_killpriv?
-Seeing test like these worry me as they are inviting bugs:
-
-                if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
-
-Thanks,
-Amir.
