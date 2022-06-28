@@ -2,267 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4652655C4C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB5055CAA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 14:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241352AbiF0XfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 19:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48326 "EHLO
+        id S242583AbiF1AYc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jun 2022 20:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236667AbiF0XfT (ORCPT
+        with ESMTP id S242526AbiF1AY0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 19:35:19 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 07DFADF8B;
-        Mon, 27 Jun 2022 16:35:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3767D5ED512;
-        Tue, 28 Jun 2022 09:35:17 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1o5yGB-00BrO7-Sf; Tue, 28 Jun 2022 09:35:15 +1000
-Date:   Tue, 28 Jun 2022 09:35:15 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 25/25] xfs: Support large folios
-Message-ID: <20220627233515.GG227878@dread.disaster.area>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-26-willy@infradead.org>
- <YrO243DkbckLTfP7@magnolia>
- <Yrku31ws6OCxRGSQ@magnolia>
- <Yrm6YM2uS+qOoPcn@casper.infradead.org>
- <YrosM1+yvMYliw2l@magnolia>
+        Mon, 27 Jun 2022 20:24:26 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273E41C113;
+        Mon, 27 Jun 2022 17:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1656375853;
+        bh=eg0Ld1dIzdoptyJh2iXj5oMIQgq7oAxqfrx2L8T1HJQ=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=gX4rzrbSog0rNGFR+T9YRkAS5tw0fhxLMCB0Z2NAUAGXZBPErJslacP9LPvfisb4A
+         PQ9BJO71cgTLl/krDi2W9do9WE6c9kxc9nD9w1+DpvHOum0+UPTy/eF5naHpzhh2LQ
+         4C3p/gciOYsP00tdDdCPhhq/xVXpgKXyUilOEohE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M6Udt-1nzfV726Cf-006yib; Tue, 28
+ Jun 2022 02:24:13 +0200
+Message-ID: <e73be42e-fce5-733a-310d-db9dc5011796@gmx.com>
+Date:   Tue, 28 Jun 2022 08:24:07 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrosM1+yvMYliw2l@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62ba3eb5
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=JPEYwPQDsx4A:10 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8
-        a=7-415B0cAAAA:8 a=Tx_KuMWrBpQ_Xf1fj60A:9 a=CjuIK1q_8ugA:10
-        a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] btrfs: remove btrfs_writepage_cow_fixup
+Content-Language: en-US
+To:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220624122334.80603-1-hch@lst.de>
+ <7c30b6a4-e628-baea-be83-6557750f995a@gmx.com> <20220624125118.GA789@lst.de>
+ <20220624130750.cu26nnm6hjrru4zd@quack3.lan> <20220625091143.GA23118@lst.de>
+ <20220627101914.gpoz7f6riezkolad@quack3.lan>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <20220627101914.gpoz7f6riezkolad@quack3.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TUDXYOguBdFc8szg6s33DZegG88/C2dSpWWfTYkLuX+c99FdYCK
+ Vy6e4moT6QGELL2/V/Rh3pbIlPHrkDi6kLA7hF+FaQ0hdYLQr1gA1zAVrJvpXgloxXsojmD
+ Gd0zRuoa6JX7rKcEqfERap8OuNS9yLsdji02zGTl1hUBGXCiuQA+DW1+H+aIZFojs8ozOdp
+ 8sZzJckpycFxb/gbYSBDA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:XN8zdhvGw94=:1+LQDVtrC4prmgl7Bx6lP8
+ kIYj7ADpVy9l8Nbz9aoCdM/gBPAyB0dZwYJU3oxVgmRQH75Q6ligndn1Xq+cHkgf2Iqhqepfw
+ wb0fVnRx5FBQ44oMyRZlkU/lkP815YpLATlPSqF+hi3o+GbMYot1yxtlsFsHmHuilSyzTyWqQ
+ HQaZrh29DmAqWtJfS4okjy1omELzQC7hgCNVOXodtDnrXUOWR4/Fs2q3YqXSa7pO+4Utsa1yX
+ Gx26ymmDqGGlRDzAqm2JACe8TpRMivou62hbdd34Pe8CyZ8XuvnAQRtlpamPcZMOg4/XS04VO
+ WeDA0QCe3Y+lfAwHeWCOWC1c/73fjjZcz+7zvh18Z01UsMqSUcAz18nBt11CGo4YrX5GEKkX2
+ 2eKHSAS/IrBqUOMCxypkRbpS7Eua37HhkCqBA/e2MuLgPhXFCMkVv+4n1PHadQPJnIkifm5XA
+ +XQt7oPzbSzhXOrOT/FJdVjJt40nZ3Q9Gzt0iZlm2MQgiJ6/f39ktroCIBd8OXR5mjhjil/mp
+ Mf1Klifea/PPF2z4bzfWuSZUJ0gOCwrXWMljHx4W376xwgmVeAw8nth3bkqHF9H5PFfiVDTa2
+ HvgnTSZylVz+yzCSRCvh1NU70JEb3MPrn9zlSmdpyI5H0UVceC4J7hX8UfGppNFsROXF8eVI2
+ bTpXmiEs16wQWBex+5Rs269kB4cA74DY4K/Ya/zkLPcWMQJxa6eAex48zWC/w0jN2XkxBWApN
+ 1zCM0BDVee2OPemKN/FK6gQlMIwSnob6aNhf3lok7lqOJZ6+Ig+XHdo7M8lXm2mUGP2xN4QqZ
+ fh6WfCxVcYeW4kIrgczDuMDTtrN+Vdg4SOLGbqIx2nOkgiD2sRUuagQz2SRwdEJhFfVN6hRZb
+ Fab480NxssJwh/uyRiac3ehz2ltJ/z8OBp5C5tXouum+Mrk72zGCKAuULUuZmniUElIP0D/hI
+ ER/LnHqO5knB4rLXYMy3ZeJN7YWHuEOdF0fP4dB8VoGXXl/2vCJD/SjG7bRuSrtuCSjWhxj4i
+ mPAWkzJ89mo9d/Km37GbQTk9qwtvUdc0S/ZtRUp9vwg1lV2rULPcaFl4ZICLQPIte/iafP35r
+ 4McGk+d1wcyjYdV1FBqnRs3Y36U9qp8uSIv6+ZhR2eoOHNdZ5Ww8/5FjA==
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 03:16:19PM -0700, Darrick J. Wong wrote:
-> On Mon, Jun 27, 2022 at 03:10:40PM +0100, Matthew Wilcox wrote:
-> > On Sun, Jun 26, 2022 at 09:15:27PM -0700, Darrick J. Wong wrote:
-> > > On Wed, Jun 22, 2022 at 05:42:11PM -0700, Darrick J. Wong wrote:
-> > > > [resend with shorter 522.out file to keep us under the 300k maximum]
-> > > > 
-> > > > On Thu, Dec 16, 2021 at 09:07:15PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > > > Now that iomap has been converted, XFS is large folio safe.
-> > > > > Indicate to the VFS that it can now create large folios for XFS.
-> > > > > 
-> > > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > > ---
-> > > > >  fs/xfs/xfs_icache.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > > > > index da4af2142a2b..cdc39f576ca1 100644
-> > > > > --- a/fs/xfs/xfs_icache.c
-> > > > > +++ b/fs/xfs/xfs_icache.c
-> > > > > @@ -87,6 +87,7 @@ xfs_inode_alloc(
-> > > > >  	/* VFS doesn't initialise i_mode or i_state! */
-> > > > >  	VFS_I(ip)->i_mode = 0;
-> > > > >  	VFS_I(ip)->i_state = 0;
-> > > > > +	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> > > > >  
-> > > > >  	XFS_STATS_INC(mp, vn_active);
-> > > > >  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> > > > > @@ -320,6 +321,7 @@ xfs_reinit_inode(
-> > > > >  	inode->i_rdev = dev;
-> > > > >  	inode->i_uid = uid;
-> > > > >  	inode->i_gid = gid;
-> > > > > +	mapping_set_large_folios(inode->i_mapping);
-> > > > 
-> > > > Hmm.  Ever since 5.19-rc1, I've noticed that fsx in generic/522 now
-> > > > reports file corruption after 20 minutes of runtime.  The corruption is
-> > > > surprisingly reproducible (522.out.bad attached below) in that I ran it
-> > > > three times and always got the same bad offset (0x6e000) and always the
-> > > > same opcode (6213798(166 mod 256) MAPREAD).
-> > > > 
-> > > > I turned off multipage folios and now 522 has run for over an hour
-> > > > without problems, so before I go do more debugging, does this ring a
-> > > > bell to anyone?
-> > > 
-> > > I tried bisecting, but that didn't yield anything productive and
-> > > 5.19-rc4 still fails after 25 minutes; however, it seems that g/522 will
-> > > run without problems for at least 3-4 days after reverting this patch
-> > > from -rc3.
-> > > 
-> > > So I guess I have a blunt force fix if we can't figure this one out
-> > > before 5.19 final, but I'd really rather not.  Will keep trying this
-> > > week.
-> > 
-> > I'm on holiday for the next week, so I'm not going to be able to spend
-> > any time on this until then.  I have a suspicion that this may be the
-> > same bug Zorro is seeing here:
-> > 
-> > https://lore.kernel.org/linux-mm/20220613010850.6kmpenitmuct2osb@zlang-mailbox/
-> > 
-> > At least I hope it is, and finding a folio that has been freed would
-> > explain (apparent) file corruption.
-> 
-> Hm.  I suppose it /could/ be a lost folio getting into the works
-> somewhere.
-> 
-> Today I remembered fsx -X, which makes this reproduce a bit faster (~3-8
-> minutes instead of 20-25).  That has helped me to narrow things down a
-> little more:
-> 
-> - Turning off INSERT/COLLAPSE_RANGE doesn't make the problem go away,
->   but it does make reading the fsx log much easier.
-> 
-> - Turning off clone/dedupe (either via -J -B or formatting with -m
->   reflink=0) makes the problem go away completely.  If you define
->   letting fsx run for 90 minutes as "completely".
-> 
-> - Neutering vfs_dedupe_file_range_compare by replacing it with an -EBADE
->   return doesn't affect the reproducibility, so it's not the comparison
->   function misbehaving.
-> - I modified fsx.c so that when there's file corruption, it'll report
->   both the first 16 bytes of corruption as well as every corruption that
->   happens on a page boundary.
-> 
-> - I also modified run_fsx() to diff the good and junk files, and
->   complain about any corruption happening on a page boundary.  Now I see
->   things like this:
-> 
-> 2153984(  0 mod 256): SKIPPED (no operation)
-> 2153985(  1 mod 256): DEDUPE 0xf000 thru 0x23fff        (0x15000 bytes) to 0x2a000 thru 0x3efff ******BBBB
-> 2153986(  2 mod 256): COPY 0xe794 thru 0x2ae41  (0x1c6ae bytes) to 0x60ac4 thru 0x7d171
-> 2153987(  3 mod 256): TRUNCATE DOWN     from 0x7d172 to 0x535da
-> 2153988(  4 mod 256): SKIPPED (no operation)
-> 2153989(  5 mod 256): MAPREAD  0x40b93 thru 0x535d9     (0x12a47 bytes)
-> 2153990(  6 mod 256): COPY 0x5edd thru 0x20282  (0x1a3a6 bytes) to 0x3a9aa thru 0x54d4f
-> 2153991(  7 mod 256): SKIPPED (no operation)
-> 2153992(  8 mod 256): SKIPPED (no operation)
-> 2153993(  9 mod 256): ZERO     0x542d3 thru 0x67006     (0x12d34 bytes)
-> 2153994( 10 mod 256): COPY 0x42cf6 thru 0x538a7 (0x10bb2 bytes) to 0x23fe7 thru 0x34b98 ******EEEE
-> 2153995( 11 mod 256): MAPWRITE 0x5a1fc thru 0x6b067     (0x10e6c bytes)
-> 2153996( 12 mod 256): SKIPPED (no operation)
-> 2153997( 13 mod 256): CLONE 0x38000 thru 0x38fff        (0x1000 bytes) to 0x77000 thru 0x77fff
-> 2153998( 14 mod 256): FALLOC   0x49bdd thru 0x62a55     (0x18e78 bytes) INTERIOR
-> 2153999( 15 mod 256): CLONE 0xf000 thru 0x1bfff (0xd000 bytes) to 0x2c000 thru 0x38fff  ******JJJJ
-> Log of operations saved to "/mnt/junk.fsxops"; replay with --replay-ops
-> Correct content saved for comparison
-> (maybe hexdump "/mnt/junk" vs "/mnt/junk.fsxgood")
-> junk file 177
-> -02e000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
-> -02f000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
-> -030000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-> +02e000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-> +02f000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-> +030000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-> 
-> When I remount the test filesystem, I see further corruption:
-> 
-> $ diff -Naurp <(od -tx1 -Ax -c $TEST_DIR/junk.fsxgood) <(od -tx1 -Ax -c $TEST_DIR/junk) | grep '^[+-]0..000'
-> -011000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
-> -012000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
-> -013000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-> +011000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-> +012000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-> +013000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-> -02e000  ec  20  ec  5a  ec  78  ec  b2  ec  e6  ec  1e  ec  43  ec  0f
-> -02f000  ec  30  ec  32  ec  4c  ec  ac  ec  5c  ec  d2  ec  62  ec  d3
-> -030000  ec  73  ec  ce  ec  8c  ec  cb  ec  94  ec  59  ec  81  ec  34
-> +02e000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-> +02f000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-> +030000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-> 
-> This is really quite strange!  The same corruption patterns we saw at
-> pages 0x2e - 0x30 now appear at 0x11-0x13 after the remount!
 
-Hmmmm - look at what the last operation before failure
-does - it clones 0xf000-0x1bfff to 0x2c000-0x38fff. IOWs, those
-ranges *should* be identical and the the corruption is actually
-occuring at 0x11000-0x13fff. It's not until that range gets cloned
-to 0x2e000-0x30fff that the corruption is detected.
 
-So we're looking in the wrong spot for the page cache corruption -
-we need to be looking at operations over the range 0x11000-0x13fff
-for misbehaviour, not where fsx detected the corrupt data.
+On 2022/6/27 18:19, Jan Kara wrote:
+> On Sat 25-06-22 11:11:43, Christoph Hellwig wrote:
+>> On Fri, Jun 24, 2022 at 03:07:50PM +0200, Jan Kara wrote:
+>>> I'm not sure I get the context 100% right but pages getting randomly d=
+irty
+>>> behind filesystem's back can still happen - most commonly with RDMA an=
+d
+>>> similar stuff which calls set_page_dirty() on pages it has got from
+>>> pin_user_pages() once the transfer is done. page_maybe_dma_pinned() sh=
+ould
+>>> be usable within filesystems to detect such cases and protect the
+>>> filesystem but so far neither me nor John Hubbart has got to implement=
+ this
+>>> in the generic writeback infrastructure + some filesystem as a sample =
+case
+>>> others could copy...
+>>
+>> Well, so far the strategy elsewhere seems to be to just ignore pages
+>> only dirtied through get_user_pages.  E.g. iomap skips over pages
+>> reported as holes, and ext4_writepage complains about pages without
+>> buffers and then clears the dirty bit and continues.
+>>
+>> I'm kinda surprised that btrfs wants to treat this so special
+>> especially as more of the btrfs page and sub-page status will be out
+>> of date as well.
+>
+> I agree btrfs probably needs a different solution than what it is curren=
+tly
+> doing if they want to get things right. I just wanted to make it clear t=
+hat
+> the code you are ripping out may be a wrong solution but to a real probl=
+em.
 
-> By comparison, the junk.fsxgood file only contains this 77/db/f1
-> sequence at:
-> 
-> $ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep '77  db  f1'
-> 008530  db  34  db  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d
-> 03d000  77  db  f1  db  ba  db  01  db  d5  db  9c  db  4d  db  de  db
-> 
-> Curiously, the same byte trios at 0x2f000 and 0x30000 have similar
-> repetitions at similar looking offsets:
-> 
-> $ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep 'b3  d8  35'
-> 009530  d8  bb  d8  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b
-> 03e000  b3  d8  35  d8  e2  d8  bb  d8  a4  d8  c8  d8  5b  d8  83  d8
-> $ od -tx1 -Ax -c $TEST_DIR/junk.fsxgood | grep '23  d8  c8'
-> 00a530  d8  f5  d8  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e
-> 03f000  23  d8  c8  d8  22  d8  da  d8  97  d8  e0  d8  7e  d8  61  d8
-> 
-> Though the only pattern that happens consistently is that garbage bytes
-> end up at the reflink dest, and later at the reflink source.  I never
-> see any VM_BUG_ON_FOLIO asserts, nor does KASAN report anything.
+IHMO I believe btrfs should also ignore such dirty but not managed by fs
+pages.
 
-Smells like the page cache over the clone source is not getting
-marked dirty and/or flushed to disk correctly before the clone is
-run. It then shares the extent with stale data to the new location
-(the destination) which then fails the contents validation.
+But I still have a small concern here.
 
-Do we have a case where we are only writing back the head page of
-the multipage folio?
+Is it ensured that, after RDMA dirtying the pages, would we finally got
+a proper notification to fs that those pages are marked written?
 
-> I also added a debug function to dump the folios it finds in the
-> pagecache for the fsx junk file, but nothing looks odd:
-> 
->      522-5099  [001]   491.954659: console:              [U] FSX FAILURE
->   xfs_io-5125  [002]   491.961232: console:              XFS (sda): EXPERIMENTAL online scrub feature in use. Use at your own risk!
->   xfs_io-5125  [002]   491.961238: bprint:               filemap_dump: ino 0xb1 pos 0x0 pfn 0x515cc order 0
->   xfs_io-5125  [002]   491.961238: bprint:               filemap_dump: ino 0xb1 pos 0x1000 pfn 0x515cd order 0
->   xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x2000 pfn 0x515ce order 0
->   xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x3000 pfn 0x515cf order 0
->   xfs_io-5125  [002]   491.961239: bprint:               filemap_dump: ino 0xb1 pos 0x4000 pfn 0x50c48 order 0
->   xfs_io-5125  [002]   491.961240: bprint:               filemap_dump: ino 0xb1 pos 0x5000 pfn 0x50c49 order 0
->   xfs_io-5125  [002]   491.961240: bprint:               filemap_dump: ino 0xb1 pos 0x6000 pfn 0x50c4a order 0
->   xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0x7000 pfn 0xc8a8 order 0
->   xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0x8000 pfn 0x50988 order 2
->   xfs_io-5125  [002]   491.961241: bprint:               filemap_dump: ino 0xb1 pos 0xc000 pfn 0x509e0 order 2
->   xfs_io-5125  [002]   491.961242: bprint:               filemap_dump: ino 0xb1 pos 0x10000 pfn 0x4db64 order 2
+If not, I would guess those pages would never got a chance to be written
+back.
 
-So this is the folio that likely has the problem (the source)...
+If yes, then I'm totally fine to go the ignoring path.
 
->   xfs_io-5125  [002]   491.961242: bprint:               filemap_dump: ino 0xb1 pos 0x14000 pfn 0x50c4c order 0
->   xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x15000 pfn 0x12485 order 0
->   xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x16000 pfn 0x50c4d order 0
->   xfs_io-5125  [002]   491.961243: bprint:               filemap_dump: ino 0xb1 pos 0x17000 pfn 0x50c4e order 0
->   xfs_io-5125  [002]   491.961244: bprint:               filemap_dump: ino 0xb1 pos 0x18000 pfn 0x4eef8 order 2
->   xfs_io-5125  [002]   491.961244: bprint:               filemap_dump: ino 0xb1 pos 0x1c000 pfn 0x4eefc order 2
->   xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x20000 pfn 0x4eef0 order 2
->   xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x24000 pfn 0x50f2c order 2
->   xfs_io-5125  [002]   491.961245: bprint:               filemap_dump: ino 0xb1 pos 0x28000 pfn 0x50f28 order 2
->   xfs_io-5125  [002]   491.961246: bprint:               filemap_dump: ino 0xb1 pos 0x2c000 pfn 0x50f24 order 2
-
-... not the one at the destination here.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Qu
+>
+> 								Honza
