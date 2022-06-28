@@ -2,44 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 687E155F1D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 01:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E66055F1DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 01:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbiF1XTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 19:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
+        id S229868AbiF1XWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 19:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiF1XTP (ORCPT
+        with ESMTP id S229772AbiF1XV6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 19:19:15 -0400
-Received: from mail.yonan.net (mail.yonan.net [54.244.116.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF492FE74
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 16:19:14 -0700 (PDT)
-Received: from [10.10.0.40] (unknown [76.130.91.106])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 28 Jun 2022 19:21:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF6931232;
+        Tue, 28 Jun 2022 16:21:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.yonan.net (Postfix) with ESMTPSA id 75B0A3E947;
-        Tue, 28 Jun 2022 23:19:13 +0000 (UTC)
-Message-ID: <03ee39fa-7cfd-5155-3559-99ec8c8a2d32@openvpn.net>
-Date:   Tue, 28 Jun 2022 17:19:12 -0600
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B793D61B48;
+        Tue, 28 Jun 2022 23:21:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB57C341C8;
+        Tue, 28 Jun 2022 23:21:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656458516;
+        bh=mvd108VoYWDpztrLlNxd/Ocw8JptaMrNIfozkzNfEyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pm5TaYlbrZy4ar+PW/ZRulRugpktmXUTZggQFy5cFGcWRiZCHgd/ZVhusgmkiqwbp
+         rvp/NWy3soV23NmZzKhhtBV6wEuDl4O9at1/7oROEgWyovUduFB5Wp47gjBc8tyHTz
+         JH7XBKheqgh+dp2DipEHKADDxDIaBYa8UDIF5HyMZMqtVlnLJF/AkviXVVG6nYiS9i
+         4TAu+NcV+zjVyTWo+ohlW8zzCYNm7iJb+/oxDCUIpVzU+K/DfXocoLFagDVaydCFC+
+         RKLyaQeG5qnTvh9dpE9+hg4IArGHoJwzMG0VLrQGqAlpvCYeGaHNmplkaQwqfriTW/
+         H0tmEYzsPzE4w==
+Date:   Tue, 28 Jun 2022 16:21:55 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org
+Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
+ Support large folios)
+Message-ID: <YruNE72sW4Aizq8U@magnolia>
+References: <20211216210715.3801857-26-willy@infradead.org>
+ <YrO243DkbckLTfP7@magnolia>
+ <Yrku31ws6OCxRGSQ@magnolia>
+ <Yrm6YM2uS+qOoPcn@casper.infradead.org>
+ <YrosM1+yvMYliw2l@magnolia>
+ <20220628073120.GI227878@dread.disaster.area>
+ <YrrlrMK/7pyZwZj2@casper.infradead.org>
+ <Yrrmq4hmJPkf5V7s@casper.infradead.org>
+ <Yrr/oBlf1Eig8uKS@casper.infradead.org>
+ <20220628221757.GJ227878@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] namei: implemented RENAME_NEWER flag for renameat2()
- conditional replace
-Content-Language: en-US
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20220627221107.176495-1-james@openvpn.net>
- <Yrs7lh6hG44ERoiM@ZenIV>
- <CAOQ4uxgoZe8UUftRKf=b--YmrKJ4wdDX99y7G8U2WTuuVsyvdA@mail.gmail.com>
-From:   James Yonan <james@openvpn.net>
-In-Reply-To: <CAOQ4uxgoZe8UUftRKf=b--YmrKJ4wdDX99y7G8U2WTuuVsyvdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220628221757.GJ227878@dread.disaster.area>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -48,44 +65,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/28/22 12:34, Amir Goldstein wrote:
-> On Tue, Jun 28, 2022 at 8:44 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->> On Mon, Jun 27, 2022 at 04:11:07PM -0600, James Yonan wrote:
->>
->>>            && d_is_positive(new_dentry)
->>>            && timespec64_compare(&d_backing_inode(old_dentry)->i_mtime,
->>>                                  &d_backing_inode(new_dentry)->i_mtime) <= 0)
->>>                goto exit5;
->>>
->>> It's pretty cool in a way that a new atomic file operation can even be
->>> implemented in just 5 lines of code, and it's thanks to the existing
->>> locking infrastructure around file rename/move that these operations
->>> become almost trivial.  Unfortunately, every fs must approve a new
->>> renameat2() flag, so it bloats the patch a bit.
->> How is it atomic and what's to stabilize ->i_mtime in that test?
->> Confused...
-> Good point.
-> RENAME_EXCHANGE_WITH_NEWER would have been better
-> in that regard.
->
-> And you'd have to check in vfs_rename() after lock_two_nondirectories()
+On Wed, Jun 29, 2022 at 08:17:57AM +1000, Dave Chinner wrote:
+> On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
+> > > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
+> > > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
+> > > > > So using this technique, I've discovered that there's a dirty page
+> > > > > accounting leak that eventually results in fsx hanging in
+> > > > > balance_dirty_pages().
+> > > > 
+> > > > Alas, I think this is only an accounting error, and not related to
+> > > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
+> > > > seeing is dirty pages being dropped at truncation without the
+> > > > appropriate accounting.  ie this should be the fix:
+> > > 
+> > > Argh, try one that actually compiles.
+> > 
+> > ... that one's going to underflow the accounting.  Maybe I shouldn't
+> > be writing code at 6am?
+> > 
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index f7248002dad9..4eec6ee83e44 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/shrinker.h>
+> >  #include <linux/mm_inline.h>
+> >  #include <linux/swapops.h>
+> > +#include <linux/backing-dev.h>
+> >  #include <linux/dax.h>
+> >  #include <linux/khugepaged.h>
+> >  #include <linux/freezer.h>
+> > @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+> >  		__split_huge_page_tail(head, i, lruvec, list);
+> >  		/* Some pages can be beyond EOF: drop them from page cache */
+> >  		if (head[i].index >= end) {
+> > -			ClearPageDirty(head + i);
+> > -			__delete_from_page_cache(head + i, NULL);
+> > +			struct folio *tail = page_folio(head + i);
+> > +
+> >  			if (shmem_mapping(head->mapping))
+> >  				shmem_uncharge(head->mapping->host, 1);
+> > -			put_page(head + i);
+> > +			else if (folio_test_clear_dirty(tail))
+> > +				folio_account_cleaned(tail,
+> > +					inode_to_wb(folio->mapping->host));
+> > +			__filemap_remove_folio(tail, NULL);
+> > +			folio_put(tail);
+> >  		} else if (!PageAnon(page)) {
+> >  			__xa_store(&head->mapping->i_pages, head[i].index,
+> >  					head + i, 0);
+> > 
+> 
+> Yup, that fixes the leak.
+> 
+> Tested-by: Dave Chinner <dchinner@redhat.com>
 
-So I mean atomic in the sense that you are comparing the old and new 
-mtimes inside the lock_rename/unlock_rename critical section in 
-do_renameat2(), so the basic guarantees of rename still hold, i.e. that 
-readers see an atomic transition from old to new files, or no transition 
-(where mtime comparison results in -EEXIST return).  I understand that 
-it doesn't guarantee i_mtime stability, but the application layer may 
-not need that guarantee. In our case, mtime is immutable after local 
-file creation and before do_renameat2() is used to move the file into place.
+Four hours of generic/522 running is long enough to conclude that this
+is likely the fix for my problem and migrate long soak testing to my
+main g/522 rig and:
 
-Re: RENAME_EXCHANGE_WITH_NEWER, that's an interesting idea.  You could 
-actually implement it with minor changes in the patch, by simply 
-combining RENAME_EXCHANGE|RENAME_NEWER.  Because fundamentally, all 
-RENAME_NEWER does is compare mtimes and possibly return early with 
--EEXIST.  If the early return is not taken, then it becomes a plain 
-rename or RENAME_EXCHANGE if that flag is also specified.
+Tested-by: Darrick J. Wong <djwong@kernel.org>
 
-James
+--D
 
-
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
