@@ -2,120 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E31855F19A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 00:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAB155F10F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 00:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230439AbiF1Wu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 18:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
+        id S232518AbiF1W27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 18:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230396AbiF1Wu2 (ORCPT
+        with ESMTP id S231256AbiF1W26 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 18:50:28 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 954DF39833;
-        Tue, 28 Jun 2022 15:50:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 092A910E7862;
-        Wed, 29 Jun 2022 08:17:58 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1o6JWv-00CEcF-Ry; Wed, 29 Jun 2022 08:17:57 +1000
-Date:   Wed, 29 Jun 2022 08:17:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org
-Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
- Support large folios)
-Message-ID: <20220628221757.GJ227878@dread.disaster.area>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-26-willy@infradead.org>
- <YrO243DkbckLTfP7@magnolia>
- <Yrku31ws6OCxRGSQ@magnolia>
- <Yrm6YM2uS+qOoPcn@casper.infradead.org>
- <YrosM1+yvMYliw2l@magnolia>
- <20220628073120.GI227878@dread.disaster.area>
- <YrrlrMK/7pyZwZj2@casper.infradead.org>
- <Yrrmq4hmJPkf5V7s@casper.infradead.org>
- <Yrr/oBlf1Eig8uKS@casper.infradead.org>
+        Tue, 28 Jun 2022 18:28:58 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5C35326F4;
+        Tue, 28 Jun 2022 15:28:55 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id ge10so28653459ejb.7;
+        Tue, 28 Jun 2022 15:28:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/p+VBJHi7cSugXFzDfkbh/toN1rTiOXrhRk0iFHxs+w=;
+        b=L2hTwYVED6MA41WA6gbymxFKubwf1toua3N2XTav+vNkwVUbHqK8CHQ0fVv5fb+UwO
+         q1Qk/cpgUb+fYyMIWMUC69Khuo0hfg4SgaiVhO7Pfccn/1WIiReGI0c3E0hVW+Ownq8x
+         q0TEbShWi8T8CVy4sF0TvXiJXWzo3zMYS2O9dpbGIAiyTnugcFT6AumFnS2sntayxLQH
+         09QzHQ5NEM1DGizZJzKs3gqw7rcnlxU5W/TKkHK+0ERh2i6RB+TNYjJmiaGb4ks/sQ7v
+         yZypTe3uO6d3tGeCOUf7MnHXCGwlLjDan4F1fq450PwxWQe+UkEIYqDIk3Aj4VjzQjUD
+         GjFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/p+VBJHi7cSugXFzDfkbh/toN1rTiOXrhRk0iFHxs+w=;
+        b=YTBjC+AP2KSrM6RNIbwJ9UhSNQfZrCULfTxOz29EA5t8uSfhevddAeAh4qCLbmpOGK
+         DMcnKqwdr4G0h3ppfM34mK2hHOqKQWKa5SUXn3WZBlcofrnQw/o+fdPUuH8CAr30SXl4
+         Ojo75Q9fmaCdi+no1TFAkEFMZZcP5WrIvC9T8QTiR+N2FhqDmAuAXeNOGUrn/jbe2fPh
+         uT+koBRQnEMS1Upje4VhjAEUrbTbwjPHlxANNadQZJoGj95ZgcCFmsE+60oxHOmivM5t
+         4QBgnvFcSGtyQR0XpAlWklV9nke062Nel3NGaIQH8aRQ9bgUfV46RhOm+otaFwPsnTgq
+         38Vg==
+X-Gm-Message-State: AJIora8Gjxt7bNLAESnnqXnHYJAm2ZPCB2N9Vo/u4K90gkBcU5HNaRHx
+        dUTKK3pZE56uYtHblalbc3fZSM3HgU/4vXFPT5nmofstSv4=
+X-Google-Smtp-Source: AGRyM1v1p1Kn3v/cTgLk0NVTh9TAohxGe0CcC7eKkBrms2nF0ev42HUXkW129A7zcpUM82FYs5reNB421pMvN7d89N0=
+X-Received: by 2002:a17:906:6146:b0:722:f8c4:ec9b with SMTP id
+ p6-20020a170906614600b00722f8c4ec9bmr358606ejl.708.1656455334132; Tue, 28 Jun
+ 2022 15:28:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yrr/oBlf1Eig8uKS@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62bb7e19
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=JPEYwPQDsx4A:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=I0e5OopBZKVaJ7lt07gA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
+ <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+In-Reply-To: <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 28 Jun 2022 15:28:42 -0700
+Message-ID: <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
-> > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
-> > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
-> > > > So using this technique, I've discovered that there's a dirty page
-> > > > accounting leak that eventually results in fsx hanging in
-> > > > balance_dirty_pages().
-> > > 
-> > > Alas, I think this is only an accounting error, and not related to
-> > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
-> > > seeing is dirty pages being dropped at truncation without the
-> > > appropriate accounting.  ie this should be the fix:
-> > 
-> > Argh, try one that actually compiles.
-> 
-> ... that one's going to underflow the accounting.  Maybe I shouldn't
-> be writing code at 6am?
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f7248002dad9..4eec6ee83e44 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -18,6 +18,7 @@
->  #include <linux/shrinker.h>
->  #include <linux/mm_inline.h>
->  #include <linux/swapops.h>
-> +#include <linux/backing-dev.h>
->  #include <linux/dax.h>
->  #include <linux/khugepaged.h>
->  #include <linux/freezer.h>
-> @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->  		__split_huge_page_tail(head, i, lruvec, list);
->  		/* Some pages can be beyond EOF: drop them from page cache */
->  		if (head[i].index >= end) {
-> -			ClearPageDirty(head + i);
-> -			__delete_from_page_cache(head + i, NULL);
-> +			struct folio *tail = page_folio(head + i);
-> +
->  			if (shmem_mapping(head->mapping))
->  				shmem_uncharge(head->mapping->host, 1);
-> -			put_page(head + i);
-> +			else if (folio_test_clear_dirty(tail))
-> +				folio_account_cleaned(tail,
-> +					inode_to_wb(folio->mapping->host));
-> +			__filemap_remove_folio(tail, NULL);
-> +			folio_put(tail);
->  		} else if (!PageAnon(page)) {
->  			__xa_store(&head->mapping->i_pages, head[i].index,
->  					head + i, 0);
-> 
+On Tue, Jun 28, 2022 at 10:52 AM KP Singh <kpsingh@kernel.org> wrote:
+>
+> On Tue, Jun 28, 2022 at 7:33 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, Jun 28, 2022 at 04:19:48PM +0000, KP Singh wrote:
+> > > A simple test that adds an xattr on a copied /bin/ls and reads it back
+> > > when the copied ls is executed.
+> > >
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
+>
+> [...]
+>
+> > > +SEC("lsm.s/bprm_committed_creds")
+> > > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> > > +{
+> > > +     struct task_struct *current = bpf_get_current_task_btf();
+> > > +     char dir_xattr_value[64] = {0};
+> > > +     int xattr_sz = 0;
+> > > +
+> > > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
+> > > +                             dir_xattr_value, 64);
+> >
+> > Yeah, this isn't right. You're not accounting for the caller's userns
+> > nor for the idmapped mount. If this is supposed to work you will need a
+> > variant of vfs_getxattr() that takes the mount's idmapping into account
+> > afaict. See what needs to happen after do_getxattr().
+>
+> Thanks for taking a look.
+>
+> So, If I understand correctly, we don't need xattr_permission (and
+> other checks in
+> vfs_getxattr) here as the BPF programs run as CAP_SYS_ADMIN.
+>
+> but...
+>
+> So, Is this bit what's missing then?
+>
+> error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
+> if (error > 0) {
+>     if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+> (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+>         posix_acl_fix_xattr_to_user(mnt_userns, d_inode(d),
+>             ctx->kvalue, error);
 
-Yup, that fixes the leak.
+That will not be correct.
+posix_acl_fix_xattr_to_user checking current_user_ns()
+is checking random tasks that happen to be running
+when lsm hook got invoked.
 
-Tested-by: Dave Chinner <dchinner@redhat.com>
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+KP,
+we probably have to document clearly that neither 'current*'
+should not be used here.
+xattr_permission also makes little sense in this context.
+If anything it can be a different kfunc if there is a use case,
+but I don't see it yet.
+bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
+call it directly. It's the kernel that is doing its security thing.
