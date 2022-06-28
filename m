@@ -2,134 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E847B55E873
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 18:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 358D355E841
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 18:35:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346852AbiF1Nne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 09:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
+        id S1346982AbiF1Nzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 09:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346848AbiF1Nnd (ORCPT
+        with ESMTP id S245534AbiF1Nzi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 09:43:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC1151CB09;
-        Tue, 28 Jun 2022 06:43:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7B55DB81E16;
-        Tue, 28 Jun 2022 13:43:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93634C3411D;
-        Tue, 28 Jun 2022 13:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656423806;
-        bh=Mu07+NkAeIWQxqDrSfWHBkagAH3qiS5hRkhUS/KEB+8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J26wAUkMEANntFYIvZPSyjRIRDBcF+0CYhgasflX/sFmF3R2jSZgCYNFz3Ynufqqz
-         nzeG/jqshDGe3knqrMZ6LXcKAICeN8pbhTN0uX0rgz8dRC1YlEMk7ISAYbSEGNsozr
-         vMxbVtI/cVWlsFmtm6PBsVByLIwnivkOj1AJrkxj/wXQRhS/ln9VsFhQnbbn/n2PIn
-         QzAw/V4dQkJ41Sn1oOGwbBEr5dwHr6L6ETynGtdZIr8NvIdrA2IOpy2Ggx+LW85NkG
-         M7m209vEq9dxSuBiAncmEIgn4Mvu51957qmvXRBAQRo+OwPw3t5gNRgFO+Buf2FD6s
-         0aBj8RlvROlWA==
-Date:   Tue, 28 Jun 2022 15:43:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Ralph Corderoy <ralph@inputplus.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nate Karstens <nate.karstens@garmin.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Changli Gao <xiaosuo@gmail.com>
-Subject: Re: [PATCH v2] Implement close-on-fork
-Message-ID: <20220628134317.heagqm6dplf5vk7u@wittgenstein>
-References: <20200515152321.9280-1-nate.karstens@garmin.com>
- <20220618114111.61EC71F981@orac.inputplus.co.uk>
- <Yq4qIxh5QnhQZ0SJ@casper.infradead.org>
- <20220619104228.A9789201F7@orac.inputplus.co.uk>
- <20220628131304.gbiqqxamg6pmvsxf@wittgenstein>
- <35d0facc934748f995c2e7ab695301f7@AcuMS.aculab.com>
+        Tue, 28 Jun 2022 09:55:38 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 956CB30F7B;
+        Tue, 28 Jun 2022 06:55:37 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id h38so12075171vsv.7;
+        Tue, 28 Jun 2022 06:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0PZRrLa/gPwlZue+iihv4jMpTjI+TnuHIQB9q2n8QmY=;
+        b=M+buCNLkWBrtxZEBQcc3rM6oR4zXWbbDMmtzldqzYX8LfPZMw1gnPvDSDLkNBUZS7u
+         rIuLEubKZ2QIULizoJmhFLGWfZh+HXp7LBuWsGLqycaX0DnNYuen6F9WDmjhTgpYwgQd
+         gn+EdE4s/ggUl8LZ54UD8DNnfkbsGvoZdHoP7lm4OHG1AHAydfiLJrIOxDi0J7acoYn4
+         BDeZFSPhKvbkxW7+2rVloPMTPR6kcjecs9iJmAqXnfqx7BeX1jl3RepzJE6xScgGeh2a
+         w3ez5StsjqPwWtiMPtzKYGBp+DM7QyX07UpNop2jxXnSLnQo4/G4s+GTZpew5XR6vr19
+         /vuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0PZRrLa/gPwlZue+iihv4jMpTjI+TnuHIQB9q2n8QmY=;
+        b=uBkVJ0XPdpIiMnXAjVFlWz/FISZwTUt2A7gDao2TgEiLmFeK5eLLMpkEqArLIKAX35
+         sbOc9bM6AEtSvH93MQa3FLt4A0QqIAyDc0swSqZARK8i7h8YY//5Kc8MEOzScvx10a66
+         1d5hvrjsvl4GzsqKZIDMW0v5TFvMYp9e+aTP0rDd+kTIb+N5nsYXaPUvr7hd8tek1Cg3
+         oPHMjTkXXD/U1ChIUzhp5sJ0/552x3lKYrPyV7Ox7o0iAeSt2BsEUlUNe4Ar223uXo9y
+         AUamx+pn2+GfvCmp/IGwEP2kvEPYiZZX6W6a97zvm+XlvVsu8Kj+T7xqspM++EAKPIVJ
+         ndwA==
+X-Gm-Message-State: AJIora+RizbABiD9sG6M68eqeOYrD4qWlqDdYuntoGlXQjeGJpOZDH+2
+        8IksIxAKi2VxagYbxb9U/8i8Wd+G7Ez5kuctdEY=
+X-Google-Smtp-Source: AGRyM1shfa4wR7pziBusGHpnivBMbEG4eycmH+FjbLVz10Q0BEXDpZPb9janCInlZsR4yjIK9V/POOrH1fVkUvZ+J+8=
+X-Received: by 2002:a67:c113:0:b0:354:3ef9:3f79 with SMTP id
+ d19-20020a67c113000000b003543ef93f79mr2050138vsj.3.1656424536522; Tue, 28 Jun
+ 2022 06:55:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35d0facc934748f995c2e7ab695301f7@AcuMS.aculab.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220628101413.10432-1-duguoweisz@gmail.com> <20220628104528.no4jarh2ihm5gxau@quack3>
+ <20220628104853.c3gcsvabqv2zzckd@wittgenstein> <CAC+1NxtAfbKOcW1hykyygScJgN7DsPKxLeuqNNZXLqekHgsG=Q@mail.gmail.com>
+ <CAOQ4uxgtZDihnydqZ04wjm2XCYjui0nnkO0VGzyq-+ERW20pJw@mail.gmail.com> <20220628125617.pljcpsr2xkzrrpxr@quack3>
+In-Reply-To: <20220628125617.pljcpsr2xkzrrpxr@quack3>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 28 Jun 2022 16:55:25 +0300
+Message-ID: <CAOQ4uxjbKgEoRM4DXBq0T3-jP96FCHjUY0PLsqVE0_s-hS3xLg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] fanotify: add current_user_instances node
+To:     Jan Kara <jack@suse.cz>
+Cc:     guowei du <duguoweisz@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        duguowei <duguowei@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 01:38:07PM +0000, David Laight wrote:
-> From: Christian Brauner
-> > Sent: 28 June 2022 14:13
-> > 
-> > On Sun, Jun 19, 2022 at 11:42:28AM +0100, Ralph Corderoy wrote:
-> > > Hi Matthew, thanks for replying.
+On Tue, Jun 28, 2022 at 3:56 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 28-06-22 15:29:08, Amir Goldstein wrote:
+> > On Tue, Jun 28, 2022 at 2:50 PM guowei du <duguoweisz@gmail.com> wrote:
 > > >
-> > > > > The need for O_CLOFORK might be made more clear by looking at a
-> > > > > long-standing Go issue, i.e. unrelated to system(3), which was started
-> > > > > in 2017 by Russ Cox when he summed up the current race-condition
-> > > > > behaviour of trying to execve(2) a newly created file:
-> > > > > https://github.com/golang/go/issues/22315.
-> > > >
-> > > > The problem is that people advocating for O_CLOFORK understand its
-> > > > value, but not its cost.  Other google employees have a system which
-> > > > has literally millions of file descriptors in a single process.
-> > > > Having to maintain this extra state per-fd is a cost they don't want
-> > > > to pay (and have been quite vocal about earlier in this thread).
+> > > hi, Mr Kara, Mr Brauner,
 > > >
-> > > So do you agree the userspace issue is best solved by *_CLOFORK and the
-> > > problem is how to implement *_CLOFORK at an acceptable cost?
-> > >
-> > > OTOH David Laight was making suggestions on moving the load to the
-> > > fork/exec path earlier in the thread, but OTOH Al Viro mentioned a
-> > > ‘portable solution’, though that could have been to a specific issue
-> > > rather than the more general case.
-> > >
-> > > How would you recommend approaching an acceptable cost is progressed?
-> > > Iterate on patch versions?  Open a bugzilla.kernel.org for central
-> > > tracking and linking from the other projects?  ..?
-> > 
-> > Quoting from that go thread
-> > 
-> > "If the OS had a "close all fds above x", we could use that. (I don't know of any that do, but it sure
-> > would help.)"
-> > 
-> > So why can't this be solved with:
-> > close_range(fd_first, fd_last, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
-> > e.g.
-> > close_range(100, ~0U, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
-> 
-> That is a relatively recent linux system call.
-> Although it can be (mostly) emulated by reading /proc/fd
-> - but that may not be mounted.
-> 
-> In any case another thread can open an fd between the close_range()
-> and fork() calls.
+> > > I want to know how many fanotify readers are monitoring the fs event.
+> > > If userspace daemons monitoring all file system events are too many, maybe there will be an impact on performance.
+> >
+> > I want something else which is more than just the number of groups.
+> >
+> > I want to provide the admin the option to enumerate over all groups and
+> > list their marks and blocked events.
+>
+> Listing all groups and marks makes sense to me. Often enough I was
+> extracting this information from a crashdump :).
+>
+> Dumping of events may be a bit more challenging (especially as we'd need to
+> format the events which has some non-trivial implications) so I'm not 100%
+> convinced about that. I agree it might be useful but I'd have to see the
+> implementation...
+>
 
-The CLOSE_RANGE_UNSHARE gives the calling thread a private file
-descriptor table before marking fs close-on-exec.
+I don't really care about the events.
+I would like to list the tasks that are blocked on permission events
+and the fanotify reader process that blocks them, so that it could be killed.
 
-close_range(100, ~0U, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
+Technically, it is enough to list the blocked task pids in fanotify_fdinfo().
+But it is also low hanging to print the number of queued events
+in fanotify_fdinfo() and inotify_fdinfo().
+
+Thanks,
+Amir.
