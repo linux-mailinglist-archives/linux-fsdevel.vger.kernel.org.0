@@ -2,41 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0377355E5F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 18:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E847B55E873
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 18:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346686AbiF1Nk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 09:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44392 "EHLO
+        id S1346852AbiF1Nne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 09:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346687AbiF1Nkz (ORCPT
+        with ESMTP id S1346848AbiF1Nnd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 09:40:55 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8ACC025E9B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 06:40:53 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-50-YWi63-uoNrW8kmPB3ciyCQ-1; Tue, 28 Jun 2022 14:40:35 +0100
-X-MC-Unique: YWi63-uoNrW8kmPB3ciyCQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.36; Tue, 28 Jun 2022 14:38:07 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.036; Tue, 28 Jun 2022 14:38:07 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christian Brauner' <brauner@kernel.org>,
-        Ralph Corderoy <ralph@inputplus.co.uk>
-CC:     Matthew Wilcox <willy@infradead.org>,
+        Tue, 28 Jun 2022 09:43:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC1151CB09;
+        Tue, 28 Jun 2022 06:43:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7B55DB81E16;
+        Tue, 28 Jun 2022 13:43:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93634C3411D;
+        Tue, 28 Jun 2022 13:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656423806;
+        bh=Mu07+NkAeIWQxqDrSfWHBkagAH3qiS5hRkhUS/KEB+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J26wAUkMEANntFYIvZPSyjRIRDBcF+0CYhgasflX/sFmF3R2jSZgCYNFz3Ynufqqz
+         nzeG/jqshDGe3knqrMZ6LXcKAICeN8pbhTN0uX0rgz8dRC1YlEMk7ISAYbSEGNsozr
+         vMxbVtI/cVWlsFmtm6PBsVByLIwnivkOj1AJrkxj/wXQRhS/ln9VsFhQnbbn/n2PIn
+         QzAw/V4dQkJ41Sn1oOGwbBEr5dwHr6L6ETynGtdZIr8NvIdrA2IOpy2Ggx+LW85NkG
+         M7m209vEq9dxSuBiAncmEIgn4Mvu51957qmvXRBAQRo+OwPw3t5gNRgFO+Buf2FD6s
+         0aBj8RlvROlWA==
+Date:   Tue, 28 Jun 2022 15:43:17 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Ralph Corderoy <ralph@inputplus.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
         Nate Karstens <nate.karstens@garmin.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Jeff Layton" <jlayton@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
-        "Arnd Bergmann" <arnd@arndb.de>,
+        Arnd Bergmann <arnd@arndb.de>,
         Richard Henderson <rth@twiddle.net>,
-        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
         Matt Turner <mattst88@gmail.com>,
         "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
         Helge Deller <deller@gmx.de>,
@@ -51,32 +58,22 @@ CC:     Matthew Wilcox <willy@infradead.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Changli Gao <xiaosuo@gmail.com>
-Subject: RE: [PATCH v2] Implement close-on-fork
-Thread-Topic: [PATCH v2] Implement close-on-fork
-Thread-Index: AQHYivDThpuxuu360k2l3JKLwphwnK1k0dbQ
-Date:   Tue, 28 Jun 2022 13:38:07 +0000
-Message-ID: <35d0facc934748f995c2e7ab695301f7@AcuMS.aculab.com>
+Subject: Re: [PATCH v2] Implement close-on-fork
+Message-ID: <20220628134317.heagqm6dplf5vk7u@wittgenstein>
 References: <20200515152321.9280-1-nate.karstens@garmin.com>
  <20220618114111.61EC71F981@orac.inputplus.co.uk>
  <Yq4qIxh5QnhQZ0SJ@casper.infradead.org>
  <20220619104228.A9789201F7@orac.inputplus.co.uk>
  <20220628131304.gbiqqxamg6pmvsxf@wittgenstein>
-In-Reply-To: <20220628131304.gbiqqxamg6pmvsxf@wittgenstein>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <35d0facc934748f995c2e7ab695301f7@AcuMS.aculab.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35d0facc934748f995c2e7ab695301f7@AcuMS.aculab.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,44 +81,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMjggSnVuZSAyMDIyIDE0OjEzDQo+IA0K
-PiBPbiBTdW4sIEp1biAxOSwgMjAyMiBhdCAxMTo0MjoyOEFNICswMTAwLCBSYWxwaCBDb3JkZXJv
-eSB3cm90ZToNCj4gPiBIaSBNYXR0aGV3LCB0aGFua3MgZm9yIHJlcGx5aW5nLg0KPiA+DQo+ID4g
-PiA+IFRoZSBuZWVkIGZvciBPX0NMT0ZPUksgbWlnaHQgYmUgbWFkZSBtb3JlIGNsZWFyIGJ5IGxv
-b2tpbmcgYXQgYQ0KPiA+ID4gPiBsb25nLXN0YW5kaW5nIEdvIGlzc3VlLCBpLmUuIHVucmVsYXRl
-ZCB0byBzeXN0ZW0oMyksIHdoaWNoIHdhcyBzdGFydGVkDQo+ID4gPiA+IGluIDIwMTcgYnkgUnVz
-cyBDb3ggd2hlbiBoZSBzdW1tZWQgdXAgdGhlIGN1cnJlbnQgcmFjZS1jb25kaXRpb24NCj4gPiA+
-ID4gYmVoYXZpb3VyIG9mIHRyeWluZyB0byBleGVjdmUoMikgYSBuZXdseSBjcmVhdGVkIGZpbGU6
-DQo+ID4gPiA+IGh0dHBzOi8vZ2l0aHViLmNvbS9nb2xhbmcvZ28vaXNzdWVzLzIyMzE1Lg0KPiA+
-ID4NCj4gPiA+IFRoZSBwcm9ibGVtIGlzIHRoYXQgcGVvcGxlIGFkdm9jYXRpbmcgZm9yIE9fQ0xP
-Rk9SSyB1bmRlcnN0YW5kIGl0cw0KPiA+ID4gdmFsdWUsIGJ1dCBub3QgaXRzIGNvc3QuICBPdGhl
-ciBnb29nbGUgZW1wbG95ZWVzIGhhdmUgYSBzeXN0ZW0gd2hpY2gNCj4gPiA+IGhhcyBsaXRlcmFs
-bHkgbWlsbGlvbnMgb2YgZmlsZSBkZXNjcmlwdG9ycyBpbiBhIHNpbmdsZSBwcm9jZXNzLg0KPiA+
-ID4gSGF2aW5nIHRvIG1haW50YWluIHRoaXMgZXh0cmEgc3RhdGUgcGVyLWZkIGlzIGEgY29zdCB0
-aGV5IGRvbid0IHdhbnQNCj4gPiA+IHRvIHBheSAoYW5kIGhhdmUgYmVlbiBxdWl0ZSB2b2NhbCBh
-Ym91dCBlYXJsaWVyIGluIHRoaXMgdGhyZWFkKS4NCj4gPg0KPiA+IFNvIGRvIHlvdSBhZ3JlZSB0
-aGUgdXNlcnNwYWNlIGlzc3VlIGlzIGJlc3Qgc29sdmVkIGJ5ICpfQ0xPRk9SSyBhbmQgdGhlDQo+
-ID4gcHJvYmxlbSBpcyBob3cgdG8gaW1wbGVtZW50ICpfQ0xPRk9SSyBhdCBhbiBhY2NlcHRhYmxl
-IGNvc3Q/DQo+ID4NCj4gPiBPVE9IIERhdmlkIExhaWdodCB3YXMgbWFraW5nIHN1Z2dlc3Rpb25z
-IG9uIG1vdmluZyB0aGUgbG9hZCB0byB0aGUNCj4gPiBmb3JrL2V4ZWMgcGF0aCBlYXJsaWVyIGlu
-IHRoZSB0aHJlYWQsIGJ1dCBPVE9IIEFsIFZpcm8gbWVudGlvbmVkIGENCj4gPiDigJhwb3J0YWJs
-ZSBzb2x1dGlvbuKAmSwgdGhvdWdoIHRoYXQgY291bGQgaGF2ZSBiZWVuIHRvIGEgc3BlY2lmaWMg
-aXNzdWUNCj4gPiByYXRoZXIgdGhhbiB0aGUgbW9yZSBnZW5lcmFsIGNhc2UuDQo+ID4NCj4gPiBI
-b3cgd291bGQgeW91IHJlY29tbWVuZCBhcHByb2FjaGluZyBhbiBhY2NlcHRhYmxlIGNvc3QgaXMg
-cHJvZ3Jlc3NlZD8NCj4gPiBJdGVyYXRlIG9uIHBhdGNoIHZlcnNpb25zPyAgT3BlbiBhIGJ1Z3pp
-bGxhLmtlcm5lbC5vcmcgZm9yIGNlbnRyYWwNCj4gPiB0cmFja2luZyBhbmQgbGlua2luZyBmcm9t
-IHRoZSBvdGhlciBwcm9qZWN0cz8gIC4uPw0KPiANCj4gUXVvdGluZyBmcm9tIHRoYXQgZ28gdGhy
-ZWFkDQo+IA0KPiAiSWYgdGhlIE9TIGhhZCBhICJjbG9zZSBhbGwgZmRzIGFib3ZlIHgiLCB3ZSBj
-b3VsZCB1c2UgdGhhdC4gKEkgZG9uJ3Qga25vdyBvZiBhbnkgdGhhdCBkbywgYnV0IGl0IHN1cmUN
-Cj4gd291bGQgaGVscC4pIg0KPiANCj4gU28gd2h5IGNhbid0IHRoaXMgYmUgc29sdmVkIHdpdGg6
-DQo+IGNsb3NlX3JhbmdlKGZkX2ZpcnN0LCBmZF9sYXN0LCBDTE9TRV9SQU5HRV9DTE9FWEVDIHwg
-Q0xPU0VfUkFOR0VfVU5TSEFSRSk/DQo+IGUuZy4NCj4gY2xvc2VfcmFuZ2UoMTAwLCB+MFUsIENM
-T1NFX1JBTkdFX0NMT0VYRUMgfCBDTE9TRV9SQU5HRV9VTlNIQVJFKT8NCg0KVGhhdCBpcyBhIHJl
-bGF0aXZlbHkgcmVjZW50IGxpbnV4IHN5c3RlbSBjYWxsLg0KQWx0aG91Z2ggaXQgY2FuIGJlICht
-b3N0bHkpIGVtdWxhdGVkIGJ5IHJlYWRpbmcgL3Byb2MvZmQNCi0gYnV0IHRoYXQgbWF5IG5vdCBi
-ZSBtb3VudGVkLg0KDQpJbiBhbnkgY2FzZSBhbm90aGVyIHRocmVhZCBjYW4gb3BlbiBhbiBmZCBi
-ZXR3ZWVuIHRoZSBjbG9zZV9yYW5nZSgpDQphbmQgZm9yaygpIGNhbGxzLg0KDQooSSBjYW4ndCBy
-ZW1lbWJlciB3aGF0IEkgc2FpZCBiZWZvcmUgOi0pDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVk
-IEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5l
-cywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On Tue, Jun 28, 2022 at 01:38:07PM +0000, David Laight wrote:
+> From: Christian Brauner
+> > Sent: 28 June 2022 14:13
+> > 
+> > On Sun, Jun 19, 2022 at 11:42:28AM +0100, Ralph Corderoy wrote:
+> > > Hi Matthew, thanks for replying.
+> > >
+> > > > > The need for O_CLOFORK might be made more clear by looking at a
+> > > > > long-standing Go issue, i.e. unrelated to system(3), which was started
+> > > > > in 2017 by Russ Cox when he summed up the current race-condition
+> > > > > behaviour of trying to execve(2) a newly created file:
+> > > > > https://github.com/golang/go/issues/22315.
+> > > >
+> > > > The problem is that people advocating for O_CLOFORK understand its
+> > > > value, but not its cost.  Other google employees have a system which
+> > > > has literally millions of file descriptors in a single process.
+> > > > Having to maintain this extra state per-fd is a cost they don't want
+> > > > to pay (and have been quite vocal about earlier in this thread).
+> > >
+> > > So do you agree the userspace issue is best solved by *_CLOFORK and the
+> > > problem is how to implement *_CLOFORK at an acceptable cost?
+> > >
+> > > OTOH David Laight was making suggestions on moving the load to the
+> > > fork/exec path earlier in the thread, but OTOH Al Viro mentioned a
+> > > ‘portable solution’, though that could have been to a specific issue
+> > > rather than the more general case.
+> > >
+> > > How would you recommend approaching an acceptable cost is progressed?
+> > > Iterate on patch versions?  Open a bugzilla.kernel.org for central
+> > > tracking and linking from the other projects?  ..?
+> > 
+> > Quoting from that go thread
+> > 
+> > "If the OS had a "close all fds above x", we could use that. (I don't know of any that do, but it sure
+> > would help.)"
+> > 
+> > So why can't this be solved with:
+> > close_range(fd_first, fd_last, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
+> > e.g.
+> > close_range(100, ~0U, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
+> 
+> That is a relatively recent linux system call.
+> Although it can be (mostly) emulated by reading /proc/fd
+> - but that may not be mounted.
+> 
+> In any case another thread can open an fd between the close_range()
+> and fork() calls.
 
+The CLOSE_RANGE_UNSHARE gives the calling thread a private file
+descriptor table before marking fs close-on-exec.
+
+close_range(100, ~0U, CLOSE_RANGE_CLOEXEC | CLOSE_RANGE_UNSHARE)?
