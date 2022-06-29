@@ -2,70 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E3355F2BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 03:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0179255F2CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 03:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbiF2BVR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 21:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
+        id S229770AbiF2Bdk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 21:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiF2BVP (ORCPT
+        with ESMTP id S229477AbiF2Bdi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 21:21:15 -0400
+        Tue, 28 Jun 2022 21:33:38 -0400
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F21429C8C;
-        Tue, 28 Jun 2022 18:21:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A352201AB;
+        Tue, 28 Jun 2022 18:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1656465666;
-        bh=HlwfelIiPKIBiEcWQxU9BqTY8RRlQ2xySX28D3PtxwA=;
+        s=badeba3b8450; t=1656466408;
+        bh=pqxwvO1CJPahX0Vb7Uruphb3bKG+1p11HHH06KyuhDg=;
         h=X-UI-Sender-Class:Date:To:Cc:References:From:Subject:In-Reply-To;
-        b=G7K2o+hQ2NpF2BsXOpVfAsdGX5PAfENS3TTzH3lmZtsOgL9YD3QpVfTOttbsqQxqz
-         V41iQJ8haPPejjE0LPKzbzFq2+r/DZoXotMpvley6VXk5RHxvZ5dhc390xX/s51RFF
-         G6ya4y6NV4w4izR4P/e5Xh0kWGfQa0wVy1hNWyTo=
+        b=eoiwbJpt9hnO0/8cLaxhg1Gjs1b5lcZNs/jfbAsd67yz9OsDfGFZvTCA5cNLR+jcw
+         Bysl20MA42mHsKDS+NO01/GW5r+VzqH0hfijzd/tjYJU3Xp76Loq8pfs2+27M7BqBj
+         YDk1EpAhHftaGzrKRAlMZeqPd/lm+LNgbmKqEidU=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M42nY-1o6MO92Ka8-0001bA; Wed, 29
- Jun 2022 03:21:06 +0200
-Message-ID: <b29ee79c-e0d9-7ebe-a563-ca7f33130fc9@gmx.com>
-Date:   Wed, 29 Jun 2022 09:20:59 +0800
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N3siG-1nfrR20BFI-00zrch; Wed, 29
+ Jun 2022 03:33:28 +0200
+Message-ID: <77cb547c-a4d8-cca9-3889-872ebfed2859@gmx.com>
+Date:   Wed, 29 Jun 2022 09:33:23 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
 Content-Language: en-US
-To:     Chris Mason <clm@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Jan Kara <jack@suse.cz>
-Cc:     josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
 References: <20220624122334.80603-1-hch@lst.de>
  <7c30b6a4-e628-baea-be83-6557750f995a@gmx.com> <20220624125118.GA789@lst.de>
  <20220624130750.cu26nnm6hjrru4zd@quack3.lan> <20220625091143.GA23118@lst.de>
- <c4af4c49-c537-bd6d-c27e-fe9ed71b9a8e@fb.com>
+ <20220627101914.gpoz7f6riezkolad@quack3.lan>
+ <e73be42e-fce5-733a-310d-db9dc5011796@gmx.com>
+ <20220628080035.qlbdib7zh3zd2zfq@quack3>
 From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
 Subject: Re: [PATCH] btrfs: remove btrfs_writepage_cow_fixup
-In-Reply-To: <c4af4c49-c537-bd6d-c27e-fe9ed71b9a8e@fb.com>
+In-Reply-To: <20220628080035.qlbdib7zh3zd2zfq@quack3>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:v7U5ikYaLCMfqFx6UzqJJcwW0pIuHKeGjFIDxIIlhiVcsCz3MKP
- wZqNlqCEcjATdGrUemWyZIb5kGG5XkkvpL2k3LWOCkJ/X8AHzbJBEY1JLgp9KzTKpBoOAHx
- fPqKsMSDuS3u15Hnmk1n4QIuF36h4FF2bdq/RSQbkbS8jRYRVyJWCOnUHhuTQoI0Hf11Hb5
- 2sumzilR8AwqkpggHnpmg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WBSOXf+nqUM=:xN8Y+rrwaHQld8lB4B2BjY
- zgyr8D8sJaEQAXjUS+rx2J1WPSV5AabP+ufS/l+tDohzNUj/OTccLrPuAyKyQJWGeHTUi5sFI
- KKB5TapSkMMbRqohKEDARil4HP55CHa1LMuUhKhinq+EuT3qVEVy3CkjUgNc4fTEqAK82d62c
- fArhEsYE1yXyW+HfAV1g2zdsv1zylxFvmY+2ngw8jlZEHWR0kAZfX+antIgn+ayhglP5D3OIQ
- jbM876O6n/okMKV5vy/Lszi2QBOrY/Va0SIWwuaKdks+8ftWBoXlM8VQKqgq3qPG2DgT208dJ
- wyA9fUjjzsmXsPL5r2SUcInS8Q534ETNE06aLx4QfmZtHqKXX+zVTsNb8+yKi1uN/8cADIQYM
- OVVMv8e+HbVYiGocP+n3I+y9rcKEpQCbFUWXMeMUHNzcpTAien9IDw8hyK0jpko3jTLL4c7jj
- 9ojzeM7jZ9cC+MZlLpzBfgSza5SNTKxyD6gIR0otVH4DStFbT/bEEb3bxooYFIQCnXigUHUEl
- 5kmd/1UlFuL2pn5efUfrC/cYKU1lnkIxMnxrEu+L8nFEBLM5L+a9pAkZVawd3EP/0PioFPaMF
- tngrOl2YCqfOB5O0elVaO2SeqWC095CJ1uWEDlhYvsiVsWm5sc551zMPyPfP+CVWx+Jufite8
- jAjPkR1CuB77DMdlbHvm5RSziOQel2ETceTMD9iqDOO41SlJJOhNSxPBz/hMLljqYrMlln0ui
- yWivkKVJGgNjJR7SNszabkHnmERgd67kxvck02EhQPrVJGaM96fAeoltLAFCvo6XK6KAlO8A9
- KJV9077gAUs8wFZT/JXIaJuWN0J1x+ftuDt+KJJVC/1nJbsEDHj785/6Vu0RClDSJvm1VEe97
- /srQQ+xA7l2+3d9MIar6BPyTGt2ZON5kL+HDXsTjFbfyaDHM2xcPHOXMJYtmIOegENgIsjxow
- M6qfHdH6aKG3tiG2dcC98k173Ouc7RSoKJqvBU1ZZ4wjc3rvk7D5SyhsObV3KBZGixFIu+kWg
- toDLexMbyffGrQjW8ngP1skPT6YGLaWu078zk8ek0s0hbjUHeJfI1zUGqxzPuqKu9UHoaS6uE
- J+n66Rr3coOOoSqma9wh95jNHN4ppaCq7UyHDt5smWSvx6g/kbgqADUOQ==
+X-Provags-ID: V03:K1:JxU8fmzPSOWo3S5klMCQWSzucckjFzmRRBgFQIBdlJy82yvmg+4
+ Uk5NODhtl5p9QwM3ja0xSnfu0I9i7UP7MrmCeIhScsRbFwf1IvGVL5cFum/rLwvZ+GUGk42
+ 9ghHw55RPYGXu/HYjIKU9MH5bXnHcpGpaRNtq2eUy/cTE3o84nR+/0N+VVH6mEQ8NgM71LS
+ JYR/xMnNYguQMXeC28ajA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ygxSUem6qzI=:G34aUae/gTEEUg0+3uQWaH
+ cBcsvgnnkpb9SDbpxLO2Ilkh2QdjWxm8XtQWleCQxZHfPxR5TegwWDPEqn3v+wcXhryz8H4/y
+ 29EH/hpPH0eiApUIxM27VXbSnkZsOEFzc8KYK26+HVrpih9puDsCXeJW6eDbzo3eFTTqKo2yC
+ bes5wTqJSV9DjDfV5NIJ0xslhlty83tgMkk3KJluz7xQH7IZwdd6o8JA6Zim7aWTn4et50pKm
+ F2j16Jy50WtRVzakko1DGckpuSNNm0QPze4YDvo+9mc2l+WlNmSoWEE8Y4h/WFJquPXBLEU/a
+ NYR190wYIHCrzrYf5SjKnJMkdvIqGOHzg1Q1MWFFXTfrWZbaS486IV2EkA2EDRIF2YfVAmb2h
+ 0nH4jbZQFCIX4Q0UT6VbTQ4EPla+eNnsmr2o7t4IywU1LF9MhQBM8IIqXtiR7ComhLuPdTqdP
+ TNtmMoX4hClhkQvk2urM8foNbSJWYmy6+cJKjix271UFymCueTBJ9WLQcsppOLhbY0Xmxf6kf
+ Qs3CFjjJFSpf8Qxs1DVArXEJ1OnpZcSFZW/vF6Ww5K1XiAEWQ/7Zi6M18R3V5Q1IddRiZs4AZ
+ J9xyWLfevCCk4BCFCa59Zd29KzbRBBVWAyvRPjqY1AkLlD4+idQaeZtPGxS6+l1M76wJ0HHFJ
+ zcimfLGkzxgD3/vABKD1fKuhjF/pm10HXQk+iHtSxybIKdoB8HFoA81nf5+s5NdcUuEnsec/a
+ A6vzcgM1osJgApehrlBD40SSUhnqnIttvb5x6PwLdTsUj91AM67Iwz2DlvvtjpVRCwjvU+o6D
+ pj6dShQNa1GSfppT1XoBF6ogS/a+MluFdUp+1s2kb+b+w4CbfDb3s2+dNxQ9a/pGuoph1WSYd
+ SBHVPzFY5hQK3gKftuPJt8obM42P6WbIVZJPYptXPivT1+hygsXCOAnmQd+zigSORARIWVAL1
+ /PApt0tXaXcfYm7jHWbuC4m7MtMpdD4oBZMyr/oeUyQBUBevR0XNEQXQ1xIvw8EQLox4DD3gy
+ dFJs6RVtCIkDTQvRh+MeWspqZLpn6hYMVQtFFNSapW82P8I1ojYRETunCEnybQhSBNFex7Qkw
+ g6frbE9WDDkxCAbjABcGr2UdjLmEMbEoxyEcfD4VyU0qaVkWRCgNJDzBA==
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -78,67 +80,94 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2022/6/28 22:29, Chris Mason wrote:
-> On 6/25/22 5:11 AM, Christoph Hellwig wrote:
->> On Fri, Jun 24, 2022 at 03:07:50PM +0200, Jan Kara wrote:
->>> I'm not sure I get the context 100% right but pages getting randomly
->>> dirty
->>> behind filesystem's back can still happen - most commonly with RDMA an=
-d
->>> similar stuff which calls set_page_dirty() on pages it has got from
->>> pin_user_pages() once the transfer is done. page_maybe_dma_pinned()
->>> should
->>> be usable within filesystems to detect such cases and protect the
->>> filesystem but so far neither me nor John Hubbart has got to
->>> implement this
->>> in the generic writeback infrastructure + some filesystem as a sample
->>> case
->>> others could copy...
+On 2022/6/28 16:00, Jan Kara wrote:
+> On Tue 28-06-22 08:24:07, Qu Wenruo wrote:
+>> On 2022/6/27 18:19, Jan Kara wrote:
+>>> On Sat 25-06-22 11:11:43, Christoph Hellwig wrote:
+>>>> On Fri, Jun 24, 2022 at 03:07:50PM +0200, Jan Kara wrote:
+>>>>> I'm not sure I get the context 100% right but pages getting randomly=
+ dirty
+>>>>> behind filesystem's back can still happen - most commonly with RDMA =
+and
+>>>>> similar stuff which calls set_page_dirty() on pages it has got from
+>>>>> pin_user_pages() once the transfer is done. page_maybe_dma_pinned() =
+should
+>>>>> be usable within filesystems to detect such cases and protect the
+>>>>> filesystem but so far neither me nor John Hubbart has got to impleme=
+nt this
+>>>>> in the generic writeback infrastructure + some filesystem as a sampl=
+e case
+>>>>> others could copy...
+>>>>
+>>>> Well, so far the strategy elsewhere seems to be to just ignore pages
+>>>> only dirtied through get_user_pages.  E.g. iomap skips over pages
+>>>> reported as holes, and ext4_writepage complains about pages without
+>>>> buffers and then clears the dirty bit and continues.
+>>>>
+>>>> I'm kinda surprised that btrfs wants to treat this so special
+>>>> especially as more of the btrfs page and sub-page status will be out
+>>>> of date as well.
+>>>
+>>> I agree btrfs probably needs a different solution than what it is curr=
+ently
+>>> doing if they want to get things right. I just wanted to make it clear=
+ that
+>>> the code you are ripping out may be a wrong solution but to a real pro=
+blem.
 >>
->> Well, so far the strategy elsewhere seems to be to just ignore pages
->> only dirtied through get_user_pages.=C2=A0 E.g. iomap skips over pages
->> reported as holes, and ext4_writepage complains about pages without
->> buffers and then clears the dirty bit and continues.
+>> IHMO I believe btrfs should also ignore such dirty but not managed by f=
+s
+>> pages.
 >>
->> I'm kinda surprised that btrfs wants to treat this so special
->> especially as more of the btrfs page and sub-page status will be out
->> of date as well.
+>> But I still have a small concern here.
+>>
+>> Is it ensured that, after RDMA dirtying the pages, would we finally got
+>> a proper notification to fs that those pages are marked written?
 >
-> As Sterba points out later in the thread, btrfs cares more because of
-> stable page requirements to protect data during COW and to make sure the
-> crcs we write to disk are correct.
+> So there is ->page_mkwrite() notification happening when RDMA code calls
+> pin_user_pages() when preparing buffers.
 
-In fact, COW is not that special, even before btrfs or all the other
-fses supporting COW, all those old fses has to do something like COW,
-when they are writing into holes.
+I'm wondering why page_mkwrite() is only called when preparing the buffer?
 
-What makes btrfs special is its csum, and in fact csum requires more
-stable page status.
+Wouldn't it make more sense to call page_mkwrite() when the buffered is
+released from RDMA?
 
-If someone can modify a page without waiting for its writeback to
-finish, btrfs csum can easily be stale and cause -EIO for future read.
+Sorry for all these dumb questions, as the core-api/pin_user_pages.rst
+still doesn't explain thing to my dumb brain...
 
-Thus unless we can ensure the procedure marking page dirty to respect
-page writeback, going fixup path would be more dangerous than ignoring it.
 
->
-> The fixup worker path is pretty easy to trigger if you O_DIRECT reads
-> into mmap'd pages.=C2=A0 You need some memory pressure to power through
-> get_user_pages trying to do the right thing, but it does happen.
->
-> I'd love a proper fix for this on the *_user_pages() side where
-> page_mkwrite() style notifications are used all the time.=C2=A0 It's jus=
-t a
-> huge change, and my answer so far has always been that using btrfs
-> mmap'd memory for this kind of thing isn't a great choice either way.
 
-The same here.
+Another thing is, RDMA doesn't really need to respect things like page
+locked/writeback, right?
+As to RDMA calls, all pages should be pinned and seemingly exclusive to
+them.
 
-But for now I'm still wondering if the fixup is really the correct
-workaround other than ignoring.
+And in that case, I think btrfs should ignore writing back those pages,
+other than doing fixing ups.
+
+As the btrfs csum requires everyone modifying the page to wait for
+writeback, or the written data will be out-of-sync with the calculated
+csum and cause future -EIO when reading it from disk.
+
+
+> The trouble is that although later
+> page_mkclean() makes page not writeable from page tables, it may be stil=
+l
+> written by RDMA code (even hours after ->page_mkwrite() notification, RD=
+MA
+> buffers are really long-lived) and that's what eventually confuses the
+> filesystem.  Otherwise set_page_dirty() is the notification that page
+> contents was changed and needs writing out...
+
+Another thing I still didn't get is, is there any explicit
+mkwrite()/set_page_dirty() calls when those page are unpinned.
+
+If no such explicit calls, these dirty pages caused by RDMA would always
+be ignored by fses (except btrfs), and would never got proper written back=
+.
 
 Thanks,
 Qu
 
 >
-> -chris
+> 								Honza
