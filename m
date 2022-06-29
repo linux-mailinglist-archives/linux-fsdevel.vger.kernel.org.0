@@ -2,67 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE25D560371
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 16:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 201A25604B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 17:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233609AbiF2Om1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 10:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47854 "EHLO
+        id S233525AbiF2Pds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 11:33:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233632AbiF2OmW (ORCPT
+        with ESMTP id S232098AbiF2Pdr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 10:42:22 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689DF38190;
-        Wed, 29 Jun 2022 07:42:21 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id o19-20020a05600c4fd300b003a0489f414cso6200855wmq.4;
-        Wed, 29 Jun 2022 07:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IG8l5XqsblqCtDe1AQxpeaU2s01EyDafscahOiuPeoE=;
-        b=SkpW5am6z6TVyyIph7DFhEzVSD3L+QYaqR0AlPGJt2yhhWW6jfCqYEgpTI3WcgA/he
-         U5HE+jZsZTuYKWyTiyd5PZMKxY8vOGtC3MDW6QVfVJ1UhLQSYucNfR5rL1xt7JtlYHvY
-         pt+DXUxoX8NjbiHzsJxgLCwFRM5l3IP2fNvZiDvK9uV7+jxqrTMvzwb7fJBIuIXIA2E7
-         /9dLg9QtF5ysyqQQthvLmwX8QMgH35UbcJXSMikzVPtUb8zUJwOSX9q92WsG8LJHu3Rk
-         0BgmrIbWGa3k5M4+vdlQqA1LsoWFsTwNAkOqZgnexMfzaW7iTlHK10FNH9BFtISrficu
-         TTiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IG8l5XqsblqCtDe1AQxpeaU2s01EyDafscahOiuPeoE=;
-        b=Yi0sFb2Z2mrzZdTf+of9Do2fIATqXefdCS0cEIuwPIfC6Z/+UvHyasW2oXLDotwIDV
-         1QdZ8+86BVO7s3RGDJXIN/cmQAgJn7iedAI+pHARWRI8UAGnG27PDee+aeGsfTe0rvCY
-         +fXF3nLkxdso3GZ2hRxndVywIIlws8vqOdzprg3eBGxNVk1aRJXKjXI3BlNNW2HmCrRK
-         18CuPKYStN1LGF9QqYbXv0sceDjb54j/ReWNDiltl/rgYd+fi565661xKlQDSMNpp6Fg
-         Kcne8hhkNirXn081HeNRnNWN3NrXJxnZrBUrOU/9AKCtf5QaQOhPCu3Qp2DWiGe1GE32
-         dl7Q==
-X-Gm-Message-State: AJIora+1WQhLBk5f9LzV6qxwjdqTDi7/9pXWqhpfnbxoJ3zQs4WV2xij
-        UoD+UGooKytSycY8LVpP+QU=
-X-Google-Smtp-Source: AGRyM1tIXAVTzJDt9psAdKiybZ3eaU90zfvYkAd35J4OudWLtxLNi6GLeMMlCmZC01jHR9aofp/2LQ==
-X-Received: by 2002:a05:600c:274b:b0:3a0:47e8:ca85 with SMTP id 11-20020a05600c274b00b003a047e8ca85mr6235914wmw.156.1656513739936;
-        Wed, 29 Jun 2022 07:42:19 -0700 (PDT)
-Received: from localhost.localdomain ([77.137.66.49])
-        by smtp.gmail.com with ESMTPSA id e17-20020a05600c4e5100b0039c747a1e8fsm3562085wmq.7.2022.06.29.07.42.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jun 2022 07:42:19 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v3 3/3] fanotify: introduce FAN_MARK_IGNORE
-Date:   Wed, 29 Jun 2022 17:42:10 +0300
-Message-Id: <20220629144210.2983229-4-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220629144210.2983229-1-amir73il@gmail.com>
-References: <20220629144210.2983229-1-amir73il@gmail.com>
+        Wed, 29 Jun 2022 11:33:47 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2123.outbound.protection.outlook.com [40.107.244.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA1F22B07;
+        Wed, 29 Jun 2022 08:33:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nz06FJw+pjZcsmR9+fcRRfUlZhw8wv5rkvb+eY3aRX2gCt/z19qMjJ+kqaJnj4Da3i85ramlAFWwrhlm7zwfIIhza9xnVDJYCQ/OJZCi2ONYbU3OOfF77rYEF8MKKrUhv5R50EJTFyhmzBZlYFQ0s6BAPxPBUmo9e8PDwDZSimp6Z/LIYoqLp1oW58sBNMRJ61AkHr0xskrmb3JSp7i6uZ8dA+gFeId6pqFPM/Es7bo1tZkHASzINEpXF00MALQLDwA2IzEuq7IYY4NJEB411/rP7muIkT2nztqEpNB5sFFLiyjP7pHGL/f6fj7EoXcXRfwrFrWenWHinMatG43zSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YpmRcnI+H6TnFLa/w/IFvITrxdDnaHa7iH8zElg6/HQ=;
+ b=TuFEVGn5lCyV81ODbt0GaYf368plneyVk4rDvXcO510zWyiHvXR6xqbVZhO0CaZj0tY0UvMdt76ddFvYInNJ9mlVizFLgIgUUQZCItt1UHJHyiBmwx2RmSBQAYTfb3V6UtZbwd79TG79pXOKQilb8Q/OfhL2yizT0BcjDnkpoWRPvJUU32/p9t1DQR3WhXsHjsGU+Xh2g5cqd/MG4O+TBkRHKupUz0D3xt1dNip1YoH0QhwOm9r0hB3wuekfMJ3Ny2mTrfbxDWVUGbqbx+jSKfXQOf8H59ENKsybNpXYIqJeXIQFIGS1PXzphHoo2aTYIiaT85/IJCkBpfmrqyfRXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YpmRcnI+H6TnFLa/w/IFvITrxdDnaHa7iH8zElg6/HQ=;
+ b=BMKEh5R/9WlhZrdZQDr5B8PDkBaO2swjDSkpGp7xA3A1vdiHW+iVzWrVtckTixN4Xbs+uPkzHsordeNDbeyq1lxGoXJrd4cRXLbYibX7sWTlzjEK5juGy8z18Hr81l+A6rQStlCaWcb9Yp+W9v2CBSQtEBwToC/l54iOHo7bYi8=
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
+ by DM5PR13MB1225.namprd13.prod.outlook.com (2603:10b6:3:2b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Wed, 29 Jun
+ 2022 15:33:42 +0000
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::28a1:bc39:bd83:9f7]) by CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::28a1:bc39:bd83:9f7%9]) with mapi id 15.20.5395.014; Wed, 29 Jun 2022
+ 15:33:41 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "Anna.Schumaker@Netapp.com" <Anna.Schumaker@Netapp.com>,
+        "raven@themaw.net" <raven@themaw.net>
+CC:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "SteveD@redhat.com" <SteveD@redhat.com>,
+        "bcodding@redhat.com" <bcodding@redhat.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+Subject: Re: [REPOST PATCH] nfs: fix port value parsing
+Thread-Topic: [REPOST PATCH] nfs: fix port value parsing
+Thread-Index: AQHYioWJZklspGquU0m3p/tguyzN061k40UAgACvlQCAAPNRAA==
+Date:   Wed, 29 Jun 2022 15:33:41 +0000
+Message-ID: <891563475afc32c49fab757b8b56ecdc45b30641.camel@hammerspace.com>
+References: <165637590710.37553.7481596265813355098.stgit@donald.themaw.net>
+         <cadcb382d47ef037c5b713b099ae46640dfea37d.camel@hammerspace.com>
+         <ccd23a54-27b5-e65c-4a97-b169676c23bc@themaw.net>
+In-Reply-To: <ccd23a54-27b5-e65c-4a97-b169676c23bc@themaw.net>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c8b1768f-351c-457a-d139-08da59e4bf06
+x-ms-traffictypediagnostic: DM5PR13MB1225:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: cxUKiWB+cO2FzTmTs5vp0AZWRN3tqkbXcgmcr+8QmKnjHbSJpy4w2j5Dk5fBuBpqaRUfWBx8CRoyPrEIXo2g1a7OAyQXTqo02QDHqjcN+/MI7MtB+Q/ZAE40J5VeSJYAOGgBQKq41gE5al+oghaUqkMWSiAdjAK5WgeDkiQ8FG/IU/UDtL8mptITKmTTSicqHRC/phVTdWG2n2MEn/JEoIWIVtPTfvT89txLQgtR+1Ye4vI+KTi4yumAU8NWw2PTU/HX5kDzg4dsHsDH3SKDMnA5ZUVp1VdhSvTGFSCB1DNyhNJSPHjP7o9/Z7XOokqTdb+bmCD7tTPrWNDBzuExoxZZ4p+ttaCFbx8HjpA9LF+JQpdaC6fHaSwKhVqR+VvxGenKdgiZCNoNtQgpQtmqPCRtzeFpRfyMvKNADWn6r4k6d08H0ojODuaB5nzprimEiwjChMe5jQymLF58InaPw4ZNKfDrvGdmzqaArIazMoRyxe4zVyVabVwjtxu1WoMAJILHu9mGRRT3ophGagZqO56LU7SNKb/VY62RwXI6NOD5YMv1H8mJk76DIcPchBusClO8odOA5WseVf+lygm+/iLeW0T6BJO8q1QDET4py4yGWgxO7cpYjkUd2/y6WTB6BSGYz13m/ee+HSbtz7PGxKpsm3Mzz6zykCakdA/aDOgZirlCyDIaH+sWWOWEn8z6akm+XLNAWrroxrTeFIrrtWWoMqztqRDuk8dPGO2Y3Lz1qrQQJqmI/F+tESNVyGGorcxAbGdE/jcQaVrzaIBMK+lCnkKT+ZX1c9knvsfioDI=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(366004)(136003)(39840400004)(346002)(376002)(396003)(38070700005)(6506007)(53546011)(8936002)(5660300002)(110136005)(54906003)(6512007)(76116006)(36756003)(6486002)(478600001)(2616005)(41300700001)(186003)(86362001)(2906002)(8676002)(66946007)(83380400001)(4326008)(122000001)(66476007)(71200400001)(38100700002)(26005)(316002)(66556008)(66446008)(64756008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?T3ZpdnJsS2VIaytaVDJHVUtrcHY2NWYrQUk5MHgxcFFsa3lPUjlDTURNQnFu?=
+ =?utf-8?B?eGg4bWdGUTQxaDdXaGdKVnR1WlVVNDhSdGlsaFFyY01RcEs1N0dUL3Z5TzE2?=
+ =?utf-8?B?bzhZdXJ3SjBld0lvR0ozbnhxQWg3SjZubFVnOUNuSWVOYTU1VDUyRUpzY1R0?=
+ =?utf-8?B?MTczOUR4ei9sdmxWaUp2Nmo3amZDV05NZ09LVEsrd0hBT1pKRjlNOXFvMVV5?=
+ =?utf-8?B?NnVXV2pia2FHL2N0UC9oL1lzdFVDN2xnMkVoU0xkd0ZWM3JxYzR1WGpMcStv?=
+ =?utf-8?B?V1I4elNObVR4MG1vVU5lajZOMVZuUjg5RHNGaHloYzZ4YkdiQkhzRDd5V3hz?=
+ =?utf-8?B?ZDJuNE9OVXZXcWxZcFBISXIyZjk1bVU4Wmp1cmdOak9DcktOVmUzblRTWmN0?=
+ =?utf-8?B?clZNb2J4aFZnT3JxRWc1VEM0SzhGMnpPNW5adTNGUjNtRm9uNGNNbG5URUdp?=
+ =?utf-8?B?T3JXK2JXVElhU0ZRUVFXT2twZ1RWV3E0eHVWd1lMRzRjR2h1SStaSmVxU0FH?=
+ =?utf-8?B?SmFtTWErOCs4VEI0Z3Z3alp0SUhXc2RtbWUxbnlvdG5Pc2FMcDljeUJaem1y?=
+ =?utf-8?B?a1Bsa3puc3ZIbFBCSlBndXhnVUQ1Rmw5UWpnV1FyVjB3eE9Db2o3K0NZZEtr?=
+ =?utf-8?B?RjVvRFh0WmYyb1dRUVpSdUFvM2tvcWdHanUyTzQzK1ZzQytpeDZpNzZZMzAx?=
+ =?utf-8?B?VFBxTXlDeDlBTHpMVkUvL2Y3T0Y5dXBxNURvU1Z4VGo0Z3JoRTdFdEdveGsx?=
+ =?utf-8?B?aGlPWWpmTjhFYTlOZHk1cXpOYVhvWEJZaGZMbHFIaUpiamJmVDV0TDBzZVZs?=
+ =?utf-8?B?bGNMVERRSm9kdDIwa2Z4R0I1RUk5UGhNTkx4WjFYYTBTcG8zbyt3MUVrRG1C?=
+ =?utf-8?B?TDdvQUU1dEVTdS96Mm1wWTlURUJmTTJ6L0p2K3FGc3hiTTdpZCtHdXZPaWRK?=
+ =?utf-8?B?ZVQyYStrUC94THV2d0l0N09Ba3NUK3BiU2pGZEd4blQ1RG0rRDhuN3MxaHdG?=
+ =?utf-8?B?SmxKU3I2MHRJYlhuQ0EyKzN6WUs0dGxIMHNyWUVkU1ZBeG0vMzU4R3JRYTFy?=
+ =?utf-8?B?WXhnR1RyNmdQYThIT2d0TmN3eHNvY1ZKREh3dHNpQU5kL2VKN0x1R1l1R2lj?=
+ =?utf-8?B?S1lUR0tNQWNlbGhCZjFTaE9jQ1JJaDhnSGJOTTdDekRuUy8vYmRlM0JrM29L?=
+ =?utf-8?B?aGZwQmVjd080dytpaVBjekZUZzRpMU8rbDBhemppaWk0OURhczRsZzgrRmc3?=
+ =?utf-8?B?eTk2cUYvbEluYmNuNDlFaUFZMVFDMFpRN0g1MFdxR282UnNZV2hSOEZybVkz?=
+ =?utf-8?B?Ky9VT2liRHE0QWZHeFBCZWIwampVNm5mL2tyV3lzaStPZDVXZXdqM3ExVWw2?=
+ =?utf-8?B?SStPRTlETlpGRXZGMzIwbHhMRHUwNFpTa2s2ckhYZmlBTzR4L0Zjd3V0MVY4?=
+ =?utf-8?B?emtBTkZuelpDR3czY0RlemJsVCt0WjlpYzdkNEpDS3BFcGVqcVVvZHRCL1dG?=
+ =?utf-8?B?ZWh0VlFabWd5NlNXUzVJWU1jSHkzTDc3U1kxUDhJRU1VT3ExYUlQYWhQdXpO?=
+ =?utf-8?B?NFFzQVpsbWQ2NWgvaWJqWDJDbEoxYUVvRnAxL2RTNjZWbEhnczFMaDRvT1JZ?=
+ =?utf-8?B?V1RhN1lmYmtjS3duRDNwdkJPUVlUL0syWmdwbGFZNGRudFpVVVJYekdSbkhP?=
+ =?utf-8?B?ZGFDOUlza0lQMzY1ekQ4cnBsRnNXZlRsVlU0OGthSXRJTkhPMEVkNXdWZDBt?=
+ =?utf-8?B?cFV4aitydzlVZXVha0FtaHB6MFNUUVdNWFZVRVd0U25YNjR2U21WTnpzNDZs?=
+ =?utf-8?B?UWlNdXBOYVdwWjhQb25ZNUZzdXEwdjVHam5LOTlQdzhBcWFQZUl4ekt2bFVI?=
+ =?utf-8?B?U2Q3QUloNjFLV0dBbUhIcWpUVVJCN0JaRVAwcVllTlIyVEEyZk9jY1JEZDBF?=
+ =?utf-8?B?ZXcxaWNqWVRQUVlheGlqSi9yamRIRWltaUtVK1NHREdOc1MvSnNBTy9Va2c4?=
+ =?utf-8?B?V3g2ZzRCMGN1NGdxV3FxTGN0a1ZyMm9FVmoxNzVMaGx2Wk14WjYzNUZNaS8y?=
+ =?utf-8?B?T29xaVg1Z1BiK2l2Q1BTZFhxSHlid1BubXFnOUtlaFhDMktGZlYycmlCN25L?=
+ =?utf-8?B?N3lLTFQ5dzJuaGFmZU5vbmY1SjMxM1ExN21pQk5BZDBWYnlkTVJTREtsd1dP?=
+ =?utf-8?B?N1E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EB49766FB9FD1C479248BBE40703A0E4@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8b1768f-351c-457a-d139-08da59e4bf06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2022 15:33:41.8500
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v1ZtuWaqLVwtknGV40SOfuh2jD0TsBixIe+UgsvxaNdPB+4gUu/3+w4gSS2yRxLhsHJHkiRzltcwl6MH5N9xTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1225
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,263 +133,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This flag is a new way to configure ignore mask which allows adding and
-removing the event flags FAN_ONDIR and FAN_EVENT_ON_CHILD in ignore mask.
-
-The legacy FAN_MARK_IGNORED_MASK flag would always ignore events on
-directories and would ignore events on children depending on whether
-the FAN_EVENT_ON_CHILD flag was set in the (non ignored) mask.
-
-FAN_MARK_IGNORE can be used to ignore events on children without setting
-FAN_EVENT_ON_CHILD in the mark's mask and will not ignore events on
-directories unconditionally, only when FAN_ONDIR is set in ignore mask.
-
-The new behavior is non-downgradable.  After calling fanotify_mark() with
-FAN_MARK_IGNORE once, calling fanotify_mark() with FAN_MARK_IGNORED_MASK
-on the same object will return EEXIST error.
-
-Setting the event flags with FAN_MARK_IGNORE on a non-dir inode mark
-has no meaning and will return ENOTDIR error.
-
-The meaning of FAN_MARK_IGNORED_SURV_MODIFY is preserved with the new
-FAN_MARK_IGNORE flag, but with a few semantic differences:
-
-1. FAN_MARK_IGNORED_SURV_MODIFY is required for filesystem and mount
-   marks and on an inode mark on a directory. Omitting this flag
-   will return EINVAL or EISDIR error.
-
-2. An ignore mask on a non-directory inode that survives modify could
-   never be downgraded to an ignore mask that does not survive modify.
-   With new FAN_MARK_IGNORE semantics we make that rule explicit -
-   trying to update a surviving ignore mask without the flag
-   FAN_MARK_IGNORED_SURV_MODIFY will return EEXIST error.
-
-The conveniene macro FAN_MARK_IGNORE_SURV is added for
-(FAN_MARK_IGNORE | FAN_MARK_IGNORED_SURV_MODIFY), because the
-common case should use short constant names.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.h      |  2 +
- fs/notify/fanotify/fanotify_user.c | 63 +++++++++++++++++++++++++-----
- include/linux/fanotify.h           |  5 ++-
- include/uapi/linux/fanotify.h      |  8 ++++
- 4 files changed, 67 insertions(+), 11 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index 80e0ec95b113..c54d0b404373 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -499,6 +499,8 @@ static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
- 		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
- 	if (mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF)
- 		mflags |= FAN_MARK_EVICTABLE;
-+	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORE_FLAGS)
-+		mflags |= FAN_MARK_IGNORE;
- 
- 	return mflags;
- }
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 6781d46cd37c..006be1ca048a 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1009,7 +1009,7 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
- 	mask &= ~umask;
- 	spin_lock(&fsn_mark->lock);
- 	oldmask = fsnotify_calc_mask(fsn_mark);
--	if (!(flags & FAN_MARK_IGNORED_MASK)) {
-+	if (!(flags & FANOTIFY_MARK_IGNORE_BITS)) {
- 		fsn_mark->mask &= ~mask;
- 	} else {
- 		fsn_mark->ignore_mask &= ~mask;
-@@ -1085,15 +1085,24 @@ static bool fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
- 				       unsigned int fan_flags)
- {
- 	bool want_iref = !(fan_flags & FAN_MARK_EVICTABLE);
-+	unsigned int ignore = fan_flags & FANOTIFY_MARK_IGNORE_BITS;
- 	bool recalc = false;
- 
-+	/*
-+	 * When using FAN_MARK_IGNORE for the first time, mark starts using
-+	 * independent event flags in ignore mask.  After that, trying to
-+	 * update the ignore mask with the old FAN_MARK_IGNORED_MASK API
-+	 * will result in EEXIST error.
-+	 */
-+	if (ignore == FAN_MARK_IGNORE)
-+		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORE_FLAGS;
-+
- 	/*
- 	 * Setting FAN_MARK_IGNORED_SURV_MODIFY for the first time may lead to
- 	 * the removal of the FS_MODIFY bit in calculated mask if it was set
- 	 * because of an ignore mask that is now going to survive FS_MODIFY.
- 	 */
--	if ((fan_flags & FAN_MARK_IGNORED_MASK) &&
--	    (fan_flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
-+	if (ignore && (fan_flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
- 	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)) {
- 		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY;
- 		if (!(fsn_mark->mask & FS_MODIFY))
-@@ -1120,7 +1129,7 @@ static bool fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
- 	bool recalc;
- 
- 	spin_lock(&fsn_mark->lock);
--	if (!(fan_flags & FAN_MARK_IGNORED_MASK))
-+	if (!(fan_flags & FANOTIFY_MARK_IGNORE_BITS))
- 		fsn_mark->mask |= mask;
- 	else
- 		fsn_mark->ignore_mask |= mask;
-@@ -1197,6 +1206,24 @@ static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_mark,
- 	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
- 		return -EEXIST;
- 
-+	/*
-+	 * New ignore mask semantics cannot be downgraded to old semantics.
-+	 */
-+	if (fan_flags & FAN_MARK_IGNORED_MASK &&
-+	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORE_FLAGS)
-+		return -EEXIST;
-+
-+	/*
-+	 * An ignore mask that survives modify could never be downgraded to not
-+	 * survive modify.  With new FAN_MARK_IGNORE semantics we make that rule
-+	 * explicit and return an error when trying to update the ignore mask
-+	 * without the original FAN_MARK_IGNORED_SURV_MODIFY value.
-+	 */
-+	if (fan_flags & FAN_MARK_IGNORE &&
-+	    !(fan_flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
-+	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
-+		return -EEXIST;
-+
- 	return 0;
- }
- 
-@@ -1231,7 +1258,8 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 	 * Error events are pre-allocated per group, only if strictly
- 	 * needed (i.e. FAN_FS_ERROR was requested).
- 	 */
--	if (!(fan_flags & FAN_MARK_IGNORED_MASK) && (mask & FAN_FS_ERROR)) {
-+	if (!(fan_flags & FANOTIFY_MARK_IGNORE_BITS) &&
-+	    (mask & FAN_FS_ERROR)) {
- 		ret = fanotify_group_init_error_pool(group);
- 		if (ret)
- 			goto out;
-@@ -1275,7 +1303,7 @@ static int fanotify_add_inode_mark(struct fsnotify_group *group,
- 	 * an ignore mask, unless that ignore mask is supposed to survive
- 	 * modification changes anyway.
- 	 */
--	if ((flags & FAN_MARK_IGNORED_MASK) &&
-+	if ((flags & FANOTIFY_MARK_IGNORE_BITS) &&
- 	    !(flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
- 	    inode_is_open_for_write(inode))
- 		return 0;
-@@ -1531,7 +1559,8 @@ static int fanotify_events_supported(struct fsnotify_group *group,
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
- 	/* Strict validation of events in non-dir inode mask with v5.17+ APIs */
- 	bool strict_dir_events = FAN_GROUP_FLAG(group, FAN_REPORT_TARGET_FID) ||
--				 (mask & FAN_RENAME);
-+				 (mask & FAN_RENAME) ||
-+				 (flags & FAN_MARK_IGNORE);
- 
- 	/*
- 	 * Some filesystems such as 'proc' acquire unusual locks when opening
-@@ -1569,7 +1598,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
- 	unsigned int mark_cmd = flags & FANOTIFY_MARK_CMD_BITS;
--	bool ignore = flags & FAN_MARK_IGNORED_MASK;
-+	unsigned int ignore = flags & FANOTIFY_MARK_IGNORE_BITS;
- 	unsigned int obj_type, fid_mode;
- 	u32 umask = 0;
- 	int ret;
-@@ -1618,12 +1647,19 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	if (mask & ~valid_mask)
- 		return -EINVAL;
- 
-+
-+	/* We don't allow FAN_MARK_IGNORE & FAN_MARK_IGNORED_MASK together */
-+	if (ignore == (FAN_MARK_IGNORE | FAN_MARK_IGNORED_MASK))
-+		return -EINVAL;
-+
- 	/*
- 	 * Event flags (FAN_ONDIR, FAN_EVENT_ON_CHILD) have no effect with
- 	 * FAN_MARK_IGNORED_MASK.
- 	 */
--	if (ignore)
-+	if (ignore == FAN_MARK_IGNORED_MASK) {
- 		mask &= ~FANOTIFY_EVENT_FLAGS;
-+		umask = FANOTIFY_EVENT_FLAGS;
-+	}
- 
- 	f = fdget(fanotify_fd);
- 	if (unlikely(!f.file))
-@@ -1727,6 +1763,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	else
- 		mnt = path.mnt;
- 
-+	ret = mnt ? -EINVAL : -EISDIR;
-+	/* FAN_MARK_IGNORE requires SURV_MODIFY for sb/mount/dir marks */
-+	if (mark_cmd == FAN_MARK_ADD && ignore == FAN_MARK_IGNORE &&
-+	    (mnt || S_ISDIR(inode->i_mode)) &&
-+	    !(flags & FAN_MARK_IGNORED_SURV_MODIFY))
-+		goto path_put_and_out;
-+
- 	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
- 	if (mnt || !S_ISDIR(inode->i_mode)) {
- 		mask &= ~FAN_EVENT_ON_CHILD;
-@@ -1819,7 +1862,7 @@ static int __init fanotify_user_setup(void)
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 11);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index a7207f092fd1..8ad743def6f3 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -62,11 +62,14 @@
- #define FANOTIFY_MARK_CMD_BITS	(FAN_MARK_ADD | FAN_MARK_REMOVE | \
- 				 FAN_MARK_FLUSH)
- 
-+#define FANOTIFY_MARK_IGNORE_BITS (FAN_MARK_IGNORED_MASK | \
-+				   FAN_MARK_IGNORE)
-+
- #define FANOTIFY_MARK_FLAGS	(FANOTIFY_MARK_TYPE_BITS | \
- 				 FANOTIFY_MARK_CMD_BITS | \
-+				 FANOTIFY_MARK_IGNORE_BITS | \
- 				 FAN_MARK_DONT_FOLLOW | \
- 				 FAN_MARK_ONLYDIR | \
--				 FAN_MARK_IGNORED_MASK | \
- 				 FAN_MARK_IGNORED_SURV_MODIFY | \
- 				 FAN_MARK_EVICTABLE)
- 
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index f1f89132d60e..d8536d77fea1 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -83,12 +83,20 @@
- #define FAN_MARK_FLUSH		0x00000080
- /* FAN_MARK_FILESYSTEM is	0x00000100 */
- #define FAN_MARK_EVICTABLE	0x00000200
-+/* This bit is mutually exclusive with FAN_MARK_IGNORED_MASK bit */
-+#define FAN_MARK_IGNORE		0x00000400
- 
- /* These are NOT bitwise flags.  Both bits can be used togther.  */
- #define FAN_MARK_INODE		0x00000000
- #define FAN_MARK_MOUNT		0x00000010
- #define FAN_MARK_FILESYSTEM	0x00000100
- 
-+/*
-+ * Convenience macro - FAN_MARK_IGNORE requires FAN_MARK_IGNORED_SURV_MODIFY
-+ * for non-inode mark types.
-+ */
-+#define FAN_MARK_IGNORE_SURV	(FAN_MARK_IGNORE | FAN_MARK_IGNORED_SURV_MODIFY)
-+
- /* Deprecated - do not use this in programs and do not add new flags here! */
- #define FAN_ALL_MARK_FLAGS	(FAN_MARK_ADD |\
- 				 FAN_MARK_REMOVE |\
--- 
-2.25.1
-
+T24gV2VkLCAyMDIyLTA2LTI5IGF0IDA5OjAyICswODAwLCBJYW4gS2VudCB3cm90ZToNCj4gDQo+
+IE9uIDI4LzYvMjIgMjI6MzQsIFRyb25kIE15a2xlYnVzdCB3cm90ZToNCj4gPiBPbiBUdWUsIDIw
+MjItMDYtMjggYXQgMDg6MjUgKzA4MDAsIElhbiBLZW50IHdyb3RlOg0KPiA+ID4gVGhlIHZhbGlk
+IHZhbHVlcyBvZiBuZnMgb3B0aW9ucyBwb3J0IGFuZCBtb3VudHBvcnQgYXJlIDAgdG8NCj4gPiA+
+IFVTSFJUX01BWC4NCj4gPiA+IA0KPiA+ID4gVGhlIGZzIHBhcnNlciB3aWxsIHJldHVybiBhIGZh
+aWwgZm9yIHBvcnQgdmFsdWVzIHRoYXQgYXJlDQo+ID4gPiBuZWdhdGl2ZQ0KPiA+ID4gYW5kIHRo
+ZSBzbG9wcHkgb3B0aW9uIGhhbmRsaW5nIHRoZW4gcmV0dXJucyBzdWNjZXNzLg0KPiA+ID4gDQo+
+ID4gPiBCdXQgdGhlIHNsb3BweSBvcHRpb24gaGFuZGxpbmcgaXMgbWVhbnQgdG8gcmV0dXJuIHN1
+Y2Nlc3MgZm9yDQo+ID4gPiBpbnZhbGlkDQo+ID4gPiBvcHRpb25zIG5vdCB2YWxpZCBvcHRpb25z
+IHdpdGggaW52YWxpZCB2YWx1ZXMuDQo+ID4gPiANCj4gPiA+IFBhcnNpbmcgdGhlc2UgdmFsdWVz
+IGFzIHMzMiByYXRoZXIgdGhhbiB1MzIgcHJldmVudHMgdGhlIHBhcnNlcg0KPiA+ID4gZnJvbQ0K
+PiA+ID4gcmV0dXJuaW5nIGEgcGFyc2UgZmFpbCBhbGxvd2luZyB0aGUgbGF0ZXIgVVNIUlRfTUFY
+IG9wdGlvbiBjaGVjaw0KPiA+ID4gdG8NCj4gPiA+IGNvcnJlY3RseSByZXR1cm4gYSBmYWlsIGlu
+IHRoaXMgY2FzZS4gVGhlIHJlc3VsdCBjaGVjayBjb3VsZCBiZQ0KPiA+ID4gY2hhbmdlZA0KPiA+
+ID4gdG8gdXNlIHRoZSBpbnRfMzIgdW5pb24gdmFyaWFudCBhcyB3ZWxsIGJ1dCBsZWF2aW5nIGl0
+IGFzIGENCj4gPiA+IHVpbnRfMzINCj4gPiA+IGNoZWNrIGF2b2lkcyB1c2luZyB0d28gbG9naWNh
+bCBjb21wYXJlcyBpbnN0ZWFkIG9mIG9uZS4NCj4gPiA+IA0KPiA+ID4gU2lnbmVkLW9mZi1ieTog
+SWFuIEtlbnQgPHJhdmVuQHRoZW1hdy5uZXQ+DQo+ID4gPiAtLS0NCj4gPiA+IMKgwqBmcy9uZnMv
+ZnNfY29udGV4dC5jIHzCoMKgwqAgNCArKy0tDQo+ID4gPiDCoMKgMSBmaWxlIGNoYW5nZWQsIDIg
+aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBh
+L2ZzL25mcy9mc19jb250ZXh0LmMgYi9mcy9uZnMvZnNfY29udGV4dC5jDQo+ID4gPiBpbmRleCA5
+YTE2ODk3ZThkYzYuLmY0ZGExZDJiZTYxNiAxMDA2NDQNCj4gPiA+IC0tLSBhL2ZzL25mcy9mc19j
+b250ZXh0LmMNCj4gPiA+ICsrKyBiL2ZzL25mcy9mc19jb250ZXh0LmMNCj4gPiA+IEBAIC0xNTYs
+MTQgKzE1NiwxNCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZzX3BhcmFtZXRlcl9zcGVjDQo+ID4g
+PiBuZnNfZnNfcGFyYW1ldGVyc1tdID0gew0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgZnNwYXJh
+bV91MzLCoMKgICgibWlub3J2ZXJzaW9uIizCoMKgT3B0X21pbm9ydmVyc2lvbiksDQo+ID4gPiDC
+oMKgwqDCoMKgwqDCoMKgwqBmc3BhcmFtX3N0cmluZygibW91bnRhZGRyIizCoMKgwqDCoMKgT3B0
+X21vdW50YWRkciksDQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqBmc3BhcmFtX3N0cmluZygibW91
+bnRob3N0IizCoMKgwqDCoMKgT3B0X21vdW50aG9zdCksDQo+ID4gPiAtwqDCoMKgwqDCoMKgwqBm
+c3BhcmFtX3UzMsKgwqAgKCJtb3VudHBvcnQiLMKgwqDCoMKgwqBPcHRfbW91bnRwb3J0KSwNCj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoGZzcGFyYW1fczMywqDCoCAoIm1vdW50cG9ydCIswqDCoMKgwqDC
+oE9wdF9tb3VudHBvcnQpLA0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgZnNwYXJhbV9zdHJpbmco
+Im1vdW50cHJvdG8iLMKgwqDCoMKgT3B0X21vdW50cHJvdG8pLA0KPiA+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgZnNwYXJhbV91MzLCoMKgICgibW91bnR2ZXJzIizCoMKgwqDCoMKgT3B0X21vdW50dmVy
+cyksDQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqBmc3BhcmFtX3UzMsKgwqAgKCJuYW1sZW4iLMKg
+wqDCoMKgwqDCoMKgwqBPcHRfbmFtZWxlbiksDQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqBmc3Bh
+cmFtX3UzMsKgwqAgKCJuY29ubmVjdCIswqDCoMKgwqDCoMKgT3B0X25jb25uZWN0KSwNCj4gPiA+
+IMKgwqDCoMKgwqDCoMKgwqDCoGZzcGFyYW1fdTMywqDCoCAoIm1heF9jb25uZWN0IizCoMKgwqBP
+cHRfbWF4X2Nvbm5lY3QpLA0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgZnNwYXJhbV9zdHJpbmco
+Im5mc3ZlcnMiLMKgwqDCoMKgwqDCoMKgT3B0X3ZlcnMpLA0KPiA+ID4gLcKgwqDCoMKgwqDCoMKg
+ZnNwYXJhbV91MzLCoMKgICgicG9ydCIswqDCoMKgwqDCoMKgwqDCoMKgwqBPcHRfcG9ydCksDQo+
+ID4gPiArwqDCoMKgwqDCoMKgwqBmc3BhcmFtX3MzMsKgwqAgKCJwb3J0IizCoMKgwqDCoMKgwqDC
+oMKgwqDCoE9wdF9wb3J0KSwNCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoGZzcGFyYW1fZmxhZ19u
+bygicG9zaXgiLMKgwqDCoMKgwqDCoMKgwqBPcHRfcG9zaXgpLA0KPiA+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgZnNwYXJhbV9zdHJpbmcoInByb3RvIizCoMKgwqDCoMKgwqDCoMKgwqBPcHRfcHJvdG8p
+LA0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgZnNwYXJhbV9mbGFnX25vKCJyZGlycGx1cyIswqDC
+oMKgwqDCoE9wdF9yZGlycGx1cyksDQo+ID4gPiANCj4gPiA+IA0KPiA+IFdoeSBkb24ndCB3ZSBq
+dXN0IGNoZWNrIGZvciB0aGUgRU5PUEFSQU0gcmV0dXJuIHZhbHVlIGZyb20NCj4gPiBmc19wYXJz
+ZSgpPw0KPiANCj4gSW4gdGhpcyBjYXNlIEkgdGhpbmsgdGhlIHJldHVybiB3aWxsIGJlIEVJTlZB
+TC4NCg0KTXkgcG9pbnQgaXMgdGhhdCAnc2xvcHB5JyBpcyBvbmx5IHN1cHBvc2VkIHRvIHdvcmsg
+dG8gc3VwcHJlc3MgdGhlDQplcnJvciBpbiB0aGUgY2FzZSB3aGVyZSBhbiBvcHRpb24gaXMgbm90
+IGZvdW5kIGJ5IHRoZSBwYXJzZXIuIFRoYXQNCmNvcnJlc3BvbmRzIHRvIHRoZSBlcnJvciBFTk9Q
+QVJBTS4NCg0KPiANCj4gSSB0aGluayB0aGF0J3MgYSBiaXQgdG8gZ2VuZXJhbCBmb3IgdGhpcyBj
+YXNlLg0KPiANCj4gVGhpcyBzZWVtZWQgbGlrZSB0aGUgbW9zdCBzZW5zaWJsZSB3YXkgdG8gZml4
+IGl0Lg0KPiANCg0KWW91ciBwYXRjaCB3b3JrcyBhcm91bmQganVzdCBvbmUgc3ltcHRvbSBvZiB0
+aGUgcHJvYmxlbSBpbnN0ZWFkIG9mDQphZGRyZXNzaW5nIHRoZSByb290IGNhdXNlLg0KDQotLSAN
+ClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFj
+ZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
