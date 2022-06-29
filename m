@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8EA560947
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 20:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC94C5609F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 21:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbiF2SiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 14:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50760 "EHLO
+        id S229925AbiF2THh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 15:07:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbiF2SiA (ORCPT
+        with ESMTP id S229476AbiF2THh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 14:38:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A35E63B57D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jun 2022 11:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656527878;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=laiHwYBOCth2i0A5JbbncZyIzYtItqNL4bYMuFHKB3Y=;
-        b=GERtJl/ZImT86pOfRIbJQHYnS+CIrg/CAyIhQ8/TtfJRYjkCueS/Zr6LPYWo+e+JXZWvJB
-        tYwbUjho3W9VeMJYAApQgJPf85nMjk0p4AkMk44sXc+yapoa+k3RQJZ86+hh++38BYjFbc
-        noheNvUH1O/COpE58/G/tz2kgnlHsB0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-487-R1ZtqqtHPwOJWrgVlCmmKA-1; Wed, 29 Jun 2022 14:37:57 -0400
-X-MC-Unique: R1ZtqqtHPwOJWrgVlCmmKA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 29 Jun 2022 15:07:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8031120F4E;
+        Wed, 29 Jun 2022 12:07:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 20E8089C7DC;
-        Wed, 29 Jun 2022 18:37:57 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 097662166B26;
-        Wed, 29 Jun 2022 18:37:57 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BB9B4220463; Wed, 29 Jun 2022 14:37:56 -0400 (EDT)
-Date:   Wed, 29 Jun 2022 14:37:56 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        xieyongji@bytedance.com, fam.zheng@bytedance.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH] fuse: writeback_cache consistency enhancement
- (writeback_cache_v2)
-Message-ID: <YrycBC8Kn3S/kxQP@redhat.com>
-References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
- <CAOQ4uxjbU27gSbhndxA_ABchfv1X7Steoggto_o-Wc=5shfS7Q@mail.gmail.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 38BC8B8269C;
+        Wed, 29 Jun 2022 19:07:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAEFDC34114;
+        Wed, 29 Jun 2022 19:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656529653;
+        bh=EVmLGcSOMyZbJn3lQsCEI4tWG6G9CP45lANhPiqexIs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PN6IwkILdE9D4b5rfCd7+sPyp0Te5/snCHxkYWv+hJFmplxBfAX+PfE92bYs46yAQ
+         gaoRaAvCpWV8JtAaKNZTZsNzq/k4jd8J6o3/4xo2ERaZ5l1PX+nkUHzCdblOBMVMDd
+         c9RyY0gNeEwls191RJ+jrcetBkRZig8C5wePqwVqZWelDnx1ObJCeFiJGia/Yh6WeB
+         mrQldL5FrKr3ObgBdQ6YifTxSXbOSx8+8ZOCF9Lha8uCT0d+GWYoqvKlktX5z+eXsX
+         RYTHp0916zcCHIizfEVWz3KuDszxoEyteSHIgJ3P4J1qrvKtbnGxhblawsULLLD6Wp
+         czhA15HzymxGw==
+Date:   Wed, 29 Jun 2022 13:07:29 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Eric Farman <farman@linux.ibm.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>, Keith Busch <kbusch@fb.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        ebiggers@kernel.org, pankydev8@gmail.com
+Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
+Message-ID: <Yryi8VXTjDu1R1Zc@kbusch-mbp>
+References: <YrS6/chZXbHsrAS8@kbusch-mbp>
+ <e2b08a5c452d4b8322566cba4ed33b58080f03fa.camel@linux.ibm.com>
+ <e0038866ac54176beeac944c9116f7a9bdec7019.camel@linux.ibm.com>
+ <c5affe3096fd7b7996cb5fbcb0c41bbf3dde028e.camel@linux.ibm.com>
+ <YrnOmOUPukGe8xCq@kbusch-mbp.dhcp.thefacebook.com>
+ <20220628110024.01fcf84f.pasic@linux.ibm.com>
+ <83e65083890a7ac9c581c5aee0361d1b49e6abd9.camel@linux.ibm.com>
+ <a765fff67679155b749aafa90439b46ab1269a64.camel@linux.ibm.com>
+ <YrvMY7oPnhIka4IF@kbusch-mbp.dhcp.thefacebook.com>
+ <f723b1c013d78cae2f3236eba0d14129837dc7b0.camel@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjbU27gSbhndxA_ABchfv1X7Steoggto_o-Wc=5shfS7Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <f723b1c013d78cae2f3236eba0d14129837dc7b0.camel@linux.ibm.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,151 +68,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 01:09:56PM +0300, Amir Goldstein wrote:
-> On Fri, Jun 24, 2022 at 9:03 AM Jiachen Zhang
-> <zhangjiachen.jaycee@bytedance.com> wrote:
-> >
-> > Some users may want both the high performance of the writeback_cahe mode and
-> > a little bit more consistency among FUSE mounts. In the current writeback
-> > mode implementation, users of one FUSE mount can never see the file
-> > expansion done by other FUSE mounts.
-> >
-> > Based on the suggested writeback V2 patch in the upstream mailing-list [1],
-> > this commit allows the cmtime and size to be updated from server in
-> > writeback mode. Compared with the writeback V2 patch in [1], this commit has
-> > several differences:
-> >
-> >     1. Ensure c/mtime are not updated from kernel to server. IOW, the cmtime
-> >     generated by kernel are just temporary values that are never flushed to
-> >     server, and they can also be updated by the official server cmtime when
-> >     the writeback cache is clean.
-> >
-> >     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
-> >     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
-> >     are likely not equal to the offical server cmtime.
-> >
-> >     3. If any page is ever flushed to the server during FUSE_GETATTR
-> >     handling on fuse server, even if the cache is clean when
-> >     fuse_change_attributes() checks, we should not update the i_size. This
-> >     is because the FUSE_GETATTR may get a staled size before the FUSE_WRITE
-> >     request changes server inode size. This commit ensures this by
-> >     increasing attr_version after writeback for writeback_cache_v2. In that
-> >     case, we should also ensure the ordering of the attr_version updating
-> >     and the fi->writepages RB-tree updating. So that if a fuse page
-> >     writeback ever happens during fuse_change_attributes(), either the
-> >     fi->writepages is not empty, or the attr_version is increased. So we
-> >     never mistakenly update a stale file size from server to kernel.
-> >
-> > With this patch, writeback mode can consider the server c/mtime as the
-> > official one. When inode attr is timeout or invalidated, kernel has chance
-> > to see size and c/mtime modified by others.
-> >
-> > Together with another patch [2], a FUSE daemon is able to implement
-> > close-to-open (CTO) consistency like what is done in NFS clients.
-> >
-> > [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
-> > [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
-> >
-> > Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
-> > Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-> > ---
-> >  fs/fuse/file.c            | 17 +++++++++++++++
-> >  fs/fuse/fuse_i.h          |  3 +++
-> >  fs/fuse/inode.c           | 44 +++++++++++++++++++++++++++++++++++++--
-> >  include/uapi/linux/fuse.h |  5 +++++
-> >  4 files changed, 67 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index 9b64e2ff1c96..35bdc7af8468 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -1829,6 +1829,15 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
-> >                  */
-> >                 fuse_send_writepage(fm, next, inarg->offset + inarg->size);
-> >         }
-> > +
-> > +       if (fc->writeback_cache_v2)
-> > +               fi->attr_version = atomic64_inc_return(&fc->attr_version);
-> > +       /*
-> > +        * Ensure attr_version increases before the page is move out of the
-> > +        * writepages rb-tree.
-> > +        */
-> > +       smp_mb();
-> > +
-> >         fi->writectr--;
-> >         fuse_writepage_finish(fm, wpa);
-> >         spin_unlock(&fi->lock);
-> > @@ -1858,10 +1867,18 @@ static struct fuse_file *fuse_write_file_get(struct fuse_inode *fi)
-> >
-> >  int fuse_write_inode(struct inode *inode, struct writeback_control *wbc)
-> >  {
-> > +       struct fuse_conn *fc = get_fuse_conn(inode);
-> >         struct fuse_inode *fi = get_fuse_inode(inode);
-> >         struct fuse_file *ff;
-> >         int err;
-> >
-> > +       /*
-> > +        * Kernel c/mtime should not be updated to the server in the
-> > +        * writeback_cache_v2 mode as server c/mtime are official.
-> > +        */
-> > +       if (fc->writeback_cache_v2)
-> > +               return 0;
-> > +
-> >         /*
-> >          * Inode is always written before the last reference is dropped and
-> >          * hence this should not be reached from reclaim.
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 488b460e046f..47de36146fb8 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -654,6 +654,9 @@ struct fuse_conn {
-> >         /* show legacy mount options */
-> >         unsigned int legacy_opts_show:1;
-> >
-> > +       /* Improved writeback cache policy */
-> > +       unsigned writeback_cache_v2:1;
-> > +
+On Wed, Jun 29, 2022 at 02:04:47PM -0400, Eric Farman wrote:
+> s390 dasd
 > 
-> Seeing that writeback_cache_v2 depends on writeback_cache
-> I wonder whether that will not be better represented as:
+> This made me think to change my rootfs, and of course the problem goes
+> away once on something like a SCSI volume.
 > 
->         /** write-back cache policy (default is write-through) */
-> -       unsigned writeback_cache:1;
-> +      unsigned writeback_cache:2;
+> So crawling through the dasd (instead of virtio) driver and I finally
+> find the point where a change to dma_alignment (which you mentioned
+> earlier) would actually fit.
 > 
-> 
-> Looking at the recently added handle_killpriv_v2, I also wonder
-> if that would not have been better.
-> 
-> Vivek,
-> is handle_killpriv_v2 really independent of handle_killpriv?
-> Seeing test like these worry me as they are inviting bugs:
-> 
->                 if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
+> Such a change fixes this for me, so I'll run it by our DASD guys.
+> Thanks for your help and patience.
 
-Hi Amir,
+I'm assuming there's some driver or device requirement that's making this
+necessary. Is the below driver change what you're looking for? If so, I think
+you might want this regardless of this direct-io patch just because other
+interfaces like blk_rq_map_user_iov() and blk_rq_aligned() align to it.
 
-IIRC, yes, handle_killpriv_v2 and handle_killpriv are independent.
-
-Above check is doing a GETATTR request to server to get latest mode,
-only if none of handle_killpriv and and handle_killpriv_v2 are enabled.
-If any one of these is enabled, we skip fuse_do_getattr() and reset
-ATTR_MODE and expect server to clear suid/sgid bits.
-
-handle_killpriv was not enough, so I added handle_killpriv_v2 and
-even enabled it by default in virtiofsd. Later there came reports that
-some of the xfstests failed where suid/sgid was not cleared on server.
-I had tried to debug it and it was some issue in underlying ext4/xfs
-filesystem. I could not pursue it further at the time. I should probably
-get back to it. My temporary solution was to disable killpriv_v2 in
-virtiofsd.
-
-Havind said that, I feel there are too many corner cases w.r.t suid/sgid
-clearing. And it probably is a good idea that client sends a setattr
-request with ATTR_MODE set. While it is racy but it can be more correct.
-Otherwise it is easy to miss some code path somewhere where assumptions
-are not correct and we did not clear suid/sgid as expected.
-
-Thanks
-Vivek
-
+---
+diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
+index 60be7f7bf2d1..5c79fb02cded 100644
+--- a/drivers/s390/block/dasd_fba.c
++++ b/drivers/s390/block/dasd_fba.c
+@@ -780,6 +780,7 @@ static void dasd_fba_setup_blk_queue(struct dasd_block *block)
+ 	/* With page sized segments each segment can be translated into one idaw/tidaw */
+ 	blk_queue_max_segment_size(q, PAGE_SIZE);
+ 	blk_queue_segment_boundary(q, PAGE_SIZE - 1);
++	blk_queue_dma_alignment(q, PAGE_SIZE - 1);
+ 
+ 	q->limits.discard_granularity = logical_block_size;
+ 
+--
