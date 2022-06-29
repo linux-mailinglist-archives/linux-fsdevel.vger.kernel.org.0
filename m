@@ -2,192 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3243E55F55D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 06:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCDE55F59D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 07:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbiF2El5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 00:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
+        id S229804AbiF2FPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 01:15:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbiF2El5 (ORCPT
+        with ESMTP id S229576AbiF2FPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 00:41:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0487E2DD41;
-        Tue, 28 Jun 2022 21:41:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9533F614AB;
-        Wed, 29 Jun 2022 04:41:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5B2EC341D6;
-        Wed, 29 Jun 2022 04:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656477715;
-        bh=SKheZhOtanqimoodeIxEPN/eASL6ywrxq9K+7ilwvjM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EE2kabxz7MN3nGdI8d36x98bJEZKQj9JPmFDtWuY+LBCRmp697lMY87WR7mg7GtDA
-         0BBqpt8CeXgsDTycW6UtJeph1zUtVBsiNgi1tyNRn5j+asLCA/zkKDLke5qlgVKPCq
-         MZiNWLwAZ97+6YJtYnmd+znX8SzT8dlHE57k5ixZthyqK8DpXbMgDxx2MBDOIhFgUT
-         pNDsUSVFgTrigkFIpC/X/f6Z/V8R1kNdpofkHDp3FuMzmYq6UtGauj4S196pcMiZzU
-         3Pvtm17zGOst3t/wCJ87VKgQCQDZUE6zn0jjbxCsxFGhWGI2xCYDLZeFwUFc76OMFo
-         rTG1hlmPaYaug==
-Date:   Tue, 28 Jun 2022 21:41:53 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mike Rapoport <rppt@kernel.org>,
-        Axel Rasmussen <axelrasmussen@google.com>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com>,
-        willy@infradead.org
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
- truncate_inode_partial_folio
-Message-ID: <YrvYEdTNWcvhIE7U@sol.localdomain>
-References: <000000000000f94c4805e289fc47@google.com>
+        Wed, 29 Jun 2022 01:15:35 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADE030566;
+        Tue, 28 Jun 2022 22:15:33 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id o13so14071275vsn.4;
+        Tue, 28 Jun 2022 22:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zjkjIkj9ZiSRACS0jsL7ordUSEz8lIKXMdA+/FnCisI=;
+        b=JcnQtrWpIZXYoSUD3UrPjOwANquc6AsLrcIv7rKY+7RMZSeLYR1JSvkmc1dlUV2Iww
+         l/spIxA3dbMuMWgqIEdtV0fby5aNBZQB8iqEwVeERDzV9URsKM915sqhAPMsfTPLD9Vs
+         +VHhTsM6g2PvJ1lotU3Zvh3hN1yBdQ2LsaeCs191VhtU/NJxh9OrH7/JTlm/17Rr0iYs
+         pLo2vHzhSVXEclBTn7XGWcvWznU5snFUW1Altc3FqZelEGgNM5osaWOFjSHLb4ZPSPst
+         jzWH59CBLh4wZG5G47c1Hl88J/npM+DmvrxXxv+WW630Swxx7dS0rBZooQ2o25nreIp2
+         ap9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zjkjIkj9ZiSRACS0jsL7ordUSEz8lIKXMdA+/FnCisI=;
+        b=nfXr76EeZa+O+ABlhXxhfVFFIY38hsT7nxgDwIIfuhXdMYcj/xfOdzQAq+VVdrbIqZ
+         +aamSTKFFZRA8xTzQLUPz9d7acyLFk3MJzB0GOmoBaGo0u5Nl6Ybh9dg53TxkzaF+/vY
+         6Vbe3yoBW29iHfbQ+b3EI85P2VAgFTLkKWiH6twVNU9js7qJJYBmU3X/ht6ry8UbE8ti
+         PPP3wHhx4QN3SqxT8Smb4ONEplKMgAMf7r4K/gK71qdzU8Oa2fVyFPZc5qScA1B75bwM
+         ztytUDLXsobDDUczSMR2mbfFWIhA0x4fn/O9Z+nbx9Bj1m2plMEjIDSW2gFrNfCsAgiM
+         rosw==
+X-Gm-Message-State: AJIora9ES4ywbwHe+ayZBUDZn2yRhB0jrlmBVosREOUXSOjjEcdtHu91
+        MTuwuNUfvqluJJtetvMJcqfp+Dy/SCH/i88fbv8=
+X-Google-Smtp-Source: AGRyM1vb2QbAzUKziQm50a3/lamxeOP3Uhr8uToiNPGO1yqXLKlYqOfmD+5Asd1+r0SV44z2cM9JyAyaq5v6Rlcvcyc=
+X-Received: by 2002:a05:6102:5dc:b0:354:63f1:df8d with SMTP id
+ v28-20020a05610205dc00b0035463f1df8dmr3385291vsf.72.1656479732495; Tue, 28
+ Jun 2022 22:15:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000f94c4805e289fc47@google.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220627221107.176495-1-james@openvpn.net> <CAOQ4uxi5mKd1OuAcdFemx=h+1Ay-Ka4F6ddO5_fjk7m6G88MuQ@mail.gmail.com>
+ <3062694c-8725-3653-a8e6-de2942aed1c2@openvpn.net>
+In-Reply-To: <3062694c-8725-3653-a8e6-de2942aed1c2@openvpn.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 Jun 2022 08:15:20 +0300
+Message-ID: <CAOQ4uxjfZ=c4Orm2VcbsOuqEkdsXViZhxLN55CN5-5ZtSqj4Sg@mail.gmail.com>
+Subject: Re: [PATCH] namei: implemented RENAME_NEWER flag for renameat2()
+ conditional replace
+To:     James Yonan <james@openvpn.net>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 03:59:26PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    941e3e791269 Merge tag 'for_linus' of git://git.kernel.org..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1670ded4080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=833001d0819ddbc9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9bd2b7adbd34b30b87e4
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140f9ba8080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15495188080000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-> 
-> BUG: unable to handle page fault for address: ffff888021f7e005
-> #PF: supervisor write access in kernel mode
-> #PF: error_code(0x0002) - not-present page
-> PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
-> Oops: 0002 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
-> Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-> RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
-> RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
-> RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
-> R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
-> R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
-> FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  zero_user_segments include/linux/highmem.h:272 [inline]
->  folio_zero_range include/linux/highmem.h:428 [inline]
->  truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
->  truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
->  truncate_inode_pages mm/truncate.c:452 [inline]
->  truncate_pagecache+0x63/0x90 mm/truncate.c:753
->  simple_setattr+0xed/0x110 fs/libfs.c:535
->  secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
->  notify_change+0xb8c/0x12b0 fs/attr.c:424
->  do_truncate+0x13c/0x200 fs/open.c:65
->  do_sys_ftruncate+0x536/0x730 fs/open.c:193
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> RIP: 0033:0x7fb29d900899
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-> RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
-> RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
-> RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
-> R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
->  </TASK>
-> Modules linked in:
-> CR2: ffff888021f7e005
-> ---[ end trace 0000000000000000 ]---
+On Wed, Jun 29, 2022 at 12:56 AM James Yonan <james@openvpn.net> wrote:
+>
+> On 6/28/22 03:46, Amir Goldstein wrote:
+> > [+linux-api]
+> >
+> > On Tue, Jun 28, 2022 at 1:58 AM James Yonan <james@openvpn.net> wrote:
+> >> RENAME_NEWER is a new userspace-visible flag for renameat2(), and
+> >> stands alongside existing flags such as RENAME_NOREPLACE,
+> >> RENAME_EXCHANGE, and RENAME_WHITEOUT.
+> >>
+> >> RENAME_NEWER is a conditional variation on RENAME_NOREPLACE, and
+> >> indicates that if the target of the rename exists, the rename will
+> >> only succeed if the source file is newer than the target (i.e. source
+> >> mtime > target mtime).  Otherwise, the rename will fail with -EEXIST
+> >> instead of replacing the target.  When the target doesn't exist,
+> >> RENAME_NEWER does a plain rename like RENAME_NOREPLACE.
+> >>
+> >> RENAME_NEWER is very useful in distributed systems that mirror a
+> >> directory structure, or use a directory as a key/value store, and need
+> >> to guarantee that files will only be overwritten by newer files, and
+> >> that all updates are atomic.
+> > This feature sounds very cool.
+> > For adding a new API it is always useful if you bring forward a userland
+> > tool (rsync?) that intend to use it, preferably with a POC patch.
+> > A concrete prospective user is always better than a hypothetical one.
+> > Some people hold the opinion that only new APIs with real prospective
+> > users should be merged.
+>
+> Not sure that rsync would be the canonical user, though it might be a
+> reasonable POC.  The problem that we are solving is essentially
+> near-real-time directory mirroring or replication of one source
+> directory to many target directories on follower nodes.  Many writers,
+> many readers, filesystem-based, strong guarantees of eventual
+> convergence, infinitely scalable.  You have a source directory that
+> could be an AWS S3 bucket.  You have potentially thousands of follower
+> nodes that want to replicate the source directory on a local
+> filesystem.  You have messages flying around the network (Kafka, AWS
+> SQS, etc.) representing file updates.  These messages might be reordered
+> or duplicated but each contains the file content and a unique
+> nanosecond-scale timestamp.  Because the file update throughput can be
+> in the thousands of files per second, you might have multiple threads on
+> each node, receiving updates, and moving them into the target
+> directory.  The only way to guarantee that the state of the mirror
+> target directory on all nodes converges to the state of the source
+> directory is to have the last-step move operation be atomic and
+> conditional to the modification time (so that an earlier version of the
+> file doesn't overwrite a later version).
+>
+> So I understand that there needs to be a strong case to extend the Linux
+> API, and I think the argument is that conditional atomic file operations
+> enable entirely new classes of applications.  The fact that this can be
 
-I think this is a bug in memfd_secret.  secretmem_setattr() can race with a page
-being faulted in by secretmem_fault().  Specifically, a page can be faulted in
-after secretmem_setattr() has set i_size but before it zeroes out the partial
-page past i_size.  memfd_secret pages aren't mapped in the kernel direct map, so
-the crash occurs when the kernel tries to zero out the partial page.
+Sure it does, but is the condition that you propose going to serve all
+the prospect applications or just your application?
+You may add to your arguments in favor of mtime that 'mv --update'
+and 'rsync --update' could use the new flag.
 
-I don't know what the best solution is -- maybe a rw_semaphore protecting
-secretmem_fault() and secretmem_setattr()?  Or perhaps secretmem_setattr()
-should avoid the call to truncate_setsize() by not using simple_setattr(), given
-that secretmem_setattr() only supports the size going from zero to nonzero.
+> facilitated by essentially 5 lines of kernel code is remarkable.
+>
+> >
+> >> While this patch may appear large at first glance, most of the changes
+> >> deal with renameat2() flags validation, and the core logic is only
+> >> 5 lines in the do_renameat2() function in fs/namei.c:
+> >>
+> >>          if ((flags & RENAME_NEWER)
+> >>              && d_is_positive(new_dentry)
+> >>              && timespec64_compare(&d_backing_inode(old_dentry)->i_mtime,
+> >>                                    &d_backing_inode(new_dentry)->i_mtime) <= 0)
+> >>                  goto exit5;
+> >>
+> > I have a few questions:
+> > - Why mtime?
+> > - Why not ctime?
+> > - Shouldn't a feature like that protect from overwriting metadata changes
+> >    to the destination file?
+> >
+> > In any case, I would be much more comfortable with comparing ctime
+> > because when it comes to user settable times, what if rsync *wants*
+> > to update the destination file's mtime to an earlier time that was set in
+> > the rsync source?
+> >
+> > If comparing ctime does not fit your use case and you can convince
+> > the community that comparing mtime is a justified use case, we would
+> > need to use a flag name to reflect that like RENAME_NEWER_MTIME
+> > so we don't block future use case of RENAME_NEWER_CTIME.
+> > I hope that we can agree that ctime is enough and that mtime will not
+> > make sense so we can settle with RENAME_NEWER that means ctime.
+>
+> So I actually think that mtime is the better timestamp to use because
+> ctime is modified by the rename operation itself, while mtime measures
+> the last modification time of the file content, which is what we care about.
 
-The following commit tried to fix a similar bug, but it wasn't enough:
+That is fine. I am saying there are other use cases that replicate not
+only data, but metadata too. Even Cloud files have metadata attached,
+so one day, someone else may want to compare ctime, which makes
+the work NEWER ambiguous and you need to disambiguate it with
+something like RENAME_EXCHANGE_NEWER_MTIME.
 
-	commit f9b141f93659e09a52e28791ccbaf69c273b8e92
-	Author: Axel Rasmussen <axelrasmussen@google.com>
-	Date:   Thu Apr 14 19:13:31 2022 -0700
+>
+> >
+> >> It's pretty cool in a way that a new atomic file operation can even be
+> >> implemented in just 5 lines of code, and it's thanks to the existing
+> >> locking infrastructure around file rename/move that these operations
+> >> become almost trivial.  Unfortunately, every fs must approve a new
+> >> renameat2() flag, so it bloats the patch a bit.
+> >>
+> >> So one question to ask is could this functionality be implemented
+> >> in userspace without adding a new renameat2() flag?  I think you
+> >> could attempt it with iterative RENAME_EXCHANGE, but it's hackish,
+> >> inefficient, and not atomic, because races could cause temporary
+> >> mtime backtracks.  How about using file locking?  Probably not,
+> >> because the problem we want to solve is maintaining file/directory
+> >> atomicity for readers by creating files out-of-directory, setting
+> >> their mtime, and atomically moving them into place.  The strategy
+> >> to lock such an operation really requires more complex locking methods
+> >> than are generally exposed to userspace.  And if you are using inotify
+> >> on the directory to notify readers of changes, it certainly makes
+> >> sense to reduce unnecessary churn by preventing a move operation
+> >> based on the mtime check.
+> >>
+> >> While some people might question the utility of adding features to
+> >> filesystems to make them more like databases, there is real value
+> >> in the performance, atomicity, consistent VFS interface, multi-thread
+> >> safety, and async-notify capabilities of modern filesystems that
+> >> starts to blur the line, and actually make filesystem-based key-value
+> >> stores a win for many applications.
+> >>
+> >> Like RENAME_NOREPLACE, the RENAME_NEWER implementation lives in
+> >> the VFS, however the individual fs implementations do strict flags
+> >> checking and will return -EINVAL for any flag they don't recognize.
+> >> For this reason, my general approach with flags is to accept
+> >> RENAME_NEWER wherever RENAME_NOREPLACE is also accepted, since
+> >> RENAME_NEWER is simply a conditional variant of RENAME_NOREPLACE.
+> > You are not taking into account that mtime may be cached attribute that is not
+> > uptodate in network filesystems (fuse too) so behavior can be a bit
+> > unpredictable,
+> > unless filesystem code compares also the cache coherency of the attributes
+> > on both files and even then, without extending the network protocol this is
+> > questionable behavior for client side.
+> > So I think your filter of which filesystems to enable is way too wide.
+>
+> So I'm new to the filesystem code, but my reading of do_renameat2() in
+> fs/namei.c seems to indicate that if d_is_positive(dentry) is true, it's
+> safe to access the inode struct via d_backing_inode(dentry) and
+> dereference mtime.  But what you're saying is that the mtime value
+> cached in the inode struct might not be up-to-date for network filesystems?
+>
 
-	    mm/secretmem: fix panic when growing a memfd_secret
+In the client's cache A may be newer than B, while on the server B is actually
+newer, but that doesn't matter because...
 
 
-Here's a simplified reproducer.  Note, for memfd_secret to be supported, the
-kernel config must contain CONFIG_SECRETMEM=y and the kernel command line must
-contain secretmem.enable=1.
+> >
+> > How many of them did you test, I'll take a wild guess that not all of them.
+> >
+> > Please do not enable RENAME_NEWER is any filesystem that you did
+> > not test or that was not tested by some other fs developer using the
+> > tests that you write.
+>
+> So I'm mostly interested in implementing this on local filesystems,
 
-#include <pthread.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <sys/mman.h>
-#include <sys/syscall.h>
-#include <unistd.h>
+... so don't add the functionality to filesystems that you don't need to add to
+and you do not test.
 
-static volatile int fd;
-static jmp_buf jump_buf;
+LTP all_filesystems will give you coverage for all the local fs that you should
+care about. Other fs could add support for the new flag themselves if the
+developers care and test it - that's not your job when adding a new API.
 
-static void *truncate_thread(void *arg)
-{
-	for (;;)
-		ftruncate(fd, 1000);
-}
+> because the application layer has already done the heavy lifting on the
+> networking side so that the filesystem layer can be local, fast, and
+> atomic.  So yes, I haven't tested this yet on networked filesystems.
+> But I'm thinking that because all functionality is implemented at the
+> VFS layer, it should be portable to any fs that also supports
+> RENAME_NOREPLACE, with the caveat that it depends on the ability of the
+> VFS to get a current and accurate mtime attribute inside the critical
+> section between lock_rename() and unlock_rename().
+>
 
-static void handle_sigbus(int sig)
-{
-	longjmp(jump_buf, 1);
-}
+The implementation is generic. You just implement the logic in the vfs and
+enable it for a few tested filesystems and whoever wants to join the party
+is welcome to test their own filesystems and opt-in to the new flag whether
+they like. Nothing wrong with that.
 
-int main(void)
-{
-	struct sigaction act = {
-		.sa_handler = handle_sigbus,
-		.sa_flags = SA_NODEFER,
-	};
-	pthread_t t;
-	void *addr;
+w.r.t stability of i_mtime, if I am not mistaken i_mtime itself is
+stable with inode
+lock held (i.e. after lock_two_nondirectories()), however, as Dave pointed out,
+the file's data can be modified in page cache, so as long as the file is open
+for write or mmaped writable, the check of mtime is not atomic.
 
-	sigaction(SIGBUS, &act, NULL);
+Neil's suggestion to deny the operation on open files makes sense.
+You can use a variant of deny_write_access() that takes inode
+which implies the error  ETXTBSY for an attempt to exchange newer
+with a file that is open for write.
 
-	pthread_create(&t, NULL, truncate_thread, NULL);
-	for (;;) {
-		fd = syscall(__NR_memfd_secret, 0);
-		addr = mmap(NULL, 8192, PROT_WRITE, MAP_SHARED, fd, 0);
-		if (setjmp(jump_buf) == 0)
-			*(unsigned int *)addr = 0;
-		munmap(addr, 8192);
-		close(fd);
-	}
-}
+Thanks,
+Amir.
