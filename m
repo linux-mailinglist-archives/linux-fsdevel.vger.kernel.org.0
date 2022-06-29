@@ -2,95 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B11C455FC7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 11:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B625755FCB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 11:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233195AbiF2JqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 05:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
+        id S233085AbiF2J4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 05:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233141AbiF2Jp6 (ORCPT
+        with ESMTP id S231424AbiF2J4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 05:45:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CCF3CFE2;
-        Wed, 29 Jun 2022 02:45:49 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 399A51F8B2;
-        Wed, 29 Jun 2022 09:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1656495948; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OJoGQTsPE+Dxaf6jvW0uc7P3npJ++wfiOu4E3cT9rBQ=;
-        b=SVl3S5CxwLaEZCJ3dbGDXESeEuFbr2T3EY1ZOOca71E5obHmemd7VPpmaOpxaQOfZv5LV6
-        yVMI7K+2EH/3Z6zy7VmOKzeWnmrD4UF96AvUzA0R27Qa9KkXXiBtZaN8h5Hken4YaqI/om
-        D2Ig0+uUOWSXqmbumK65/pH6lRM9eI0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1656495948;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OJoGQTsPE+Dxaf6jvW0uc7P3npJ++wfiOu4E3cT9rBQ=;
-        b=7MjcfhQ95VyrzC6rxwh5V6aBGEQ3JlWc3W+GmzkA9Zh2ltGjMCZAxK7xxjRk8dReKSs5UK
-        KvZltUG3E1BEKqDQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
+        Wed, 29 Jun 2022 05:56:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC963DA60;
+        Wed, 29 Jun 2022 02:56:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0DAAA2C141;
-        Wed, 29 Jun 2022 09:45:48 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id BA394A062F; Wed, 29 Jun 2022 11:45:47 +0200 (CEST)
-Date:   Wed, 29 Jun 2022 11:45:47 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chris Mason <clm@fb.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>, josef@toxicpanda.com,
-        dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: remove btrfs_writepage_cow_fixup
-Message-ID: <20220629094547.xa27x7oiuhasglzl@quack3>
-References: <20220624122334.80603-1-hch@lst.de>
- <7c30b6a4-e628-baea-be83-6557750f995a@gmx.com>
- <20220624125118.GA789@lst.de>
- <20220624130750.cu26nnm6hjrru4zd@quack3.lan>
- <20220625091143.GA23118@lst.de>
- <c4af4c49-c537-bd6d-c27e-fe9ed71b9a8e@fb.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 802B0B8222A;
+        Wed, 29 Jun 2022 09:56:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B24BC34114;
+        Wed, 29 Jun 2022 09:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656496563;
+        bh=nyfiUFC0mX4TRqlbWUJcO+cLpI5YzdFGwSqbxo8eGiU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q2kGArmCv+g7TA8BtsyZizJFsRnfx0mWrI9St1tO1mGmgj7YanJncRnnjsarTeBPE
+         K8xqv5C5UDjToR7aoPiMHQ2SMsAucqX9k6u+ukFjXTXxQbFJ6Odn9TEEZscnJZxaJy
+         y1Vub8AM5ZF04+kr7TQ521RC/TODKQGETgAfAhwOjdOl4ah7efG2tEte5VGiXw1wnd
+         LH2j5Fz4DYwaO5sBgQBQWxkkgNq7TskOXhZItKRyfUmZHRaDmS5UmSYy+yrw1ODLHi
+         atGs6iafQAvdOyMo0ZnPLHnpqQcOl8rubcmRw2uhv6fvSuKelPtTqye+DHUOx4AoJ2
+         FXnIzz7/wnRJw==
+Date:   Wed, 29 Jun 2022 11:55:57 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Yosry Ahmed <yosryahmed@google.com>
+Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for
+ bpf_getxattr
+Message-ID: <20220629095557.oet6u2hi7msit6ff@wittgenstein>
+References: <20220628161948.475097-1-kpsingh@kernel.org>
+ <20220628161948.475097-6-kpsingh@kernel.org>
+ <20220628173344.h7ihvyl6vuky5xus@wittgenstein>
+ <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+ <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
+ <20220629081119.ddqvfn3al36fl27q@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c4af4c49-c537-bd6d-c27e-fe9ed71b9a8e@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220629081119.ddqvfn3al36fl27q@wittgenstein>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 28-06-22 10:29:00, Chris Mason wrote:
-> I'd love a proper fix for this on the *_user_pages() side where
-> page_mkwrite() style notifications are used all the time.  It's just a huge
-> change, and my answer so far has always been that using btrfs mmap'd memory
-> for this kind of thing isn't a great choice either way.
+On Wed, Jun 29, 2022 at 10:11:19AM +0200, Christian Brauner wrote:
+> On Tue, Jun 28, 2022 at 03:28:42PM -0700, Alexei Starovoitov wrote:
+> > On Tue, Jun 28, 2022 at 10:52 AM KP Singh <kpsingh@kernel.org> wrote:
+> > >
+> > > On Tue, Jun 28, 2022 at 7:33 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Tue, Jun 28, 2022 at 04:19:48PM +0000, KP Singh wrote:
+> > > > > A simple test that adds an xattr on a copied /bin/ls and reads it back
+> > > > > when the copied ls is executed.
+> > > > >
+> > > > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > > > ---
+> > > > >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
+> > >
+> > > [...]
+> > >
+> > > > > +SEC("lsm.s/bprm_committed_creds")
+> > > > > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> > > > > +{
+> > > > > +     struct task_struct *current = bpf_get_current_task_btf();
+> > > > > +     char dir_xattr_value[64] = {0};
+> > > > > +     int xattr_sz = 0;
+> > > > > +
+> > > > > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > > > > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
+> > > > > +                             dir_xattr_value, 64);
+> > > >
+> > > > Yeah, this isn't right. You're not accounting for the caller's userns
+> > > > nor for the idmapped mount. If this is supposed to work you will need a
+> > > > variant of vfs_getxattr() that takes the mount's idmapping into account
+> > > > afaict. See what needs to happen after do_getxattr().
+> > >
+> > > Thanks for taking a look.
+> > >
+> > > So, If I understand correctly, we don't need xattr_permission (and
+> > > other checks in
+> > > vfs_getxattr) here as the BPF programs run as CAP_SYS_ADMIN.
+> > >
+> > > but...
+> > >
+> > > So, Is this bit what's missing then?
+> > >
+> > > error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
+> > > if (error > 0) {
+> > >     if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+> > > (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+> > >         posix_acl_fix_xattr_to_user(mnt_userns, d_inode(d),
+> > >             ctx->kvalue, error);
+> > 
+> > That will not be correct.
+> > posix_acl_fix_xattr_to_user checking current_user_ns()
+> > is checking random tasks that happen to be running
+> > when lsm hook got invoked.
+> > 
+> > KP,
+> > we probably have to document clearly that neither 'current*'
+> > should not be used here.
+> > xattr_permission also makes little sense in this context.
+> > If anything it can be a different kfunc if there is a use case,
+> > but I don't see it yet.
+> > bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
+> > call it directly. It's the kernel that is doing its security thing.
+> 
+> Right, but LSMs usually only retrieve their own xattr namespace (ima,
+> selinux, smack) or they calculate hashes for xattrs based on the raw
+> filesystem xattr values (evm).
+> 
+> But this new bpf_getxattr() is different. It allows to retrieve _any_
+> xattr in any security hook it can be attached to. So someone can write a
+> bpf program that retrieves filesystem capabilites or posix acls. And
+> these are xattrs that require higher-level vfs involvement to be
+> sensible in most contexts.
+> 
+> So looking at:
+> 
+> SEC("lsm.s/bprm_committed_creds")
+> void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> {
+> 	struct task_struct *current = bpf_get_current_task_btf();
+> 	char dir_xattr_value[64] = {0};
+> 	int xattr_sz = 0;
+> 
+> 	xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> 				bprm->file->f_path.dentry->d_inode, XATTR_NAME,
+> 				dir_xattr_value, 64);
+> 
+> 	if (xattr_sz <= 0)
+> 		return;
+> 
+> 	if (!bpf_strncmp(dir_xattr_value, sizeof(XATTR_VALUE), XATTR_VALUE))
+> 		result = 1;
+> }
+> 
+> This hooks a bpf-lsm program to the security_bprm_committed_creds()
+> hook. It then retrieves the extended attributes of the file to be
+> executed. The hook currently always retrieves the raw filesystem values.
+> 
+> But for example any XATTR_NAME_CAPS filesystem capabilities that
+> might've been stored will be taken into account during exec. And both
+> the idmapping of the mount and the caller matter when determing whether
+> they are used or not.
+> 
+> But the current implementation of bpf_getxattr() just ignores both. It
+> will always retrieve the raw filesystem values. So if one invokes this
+> hook they're not actually retrieving the values as they are seen by
+> fs/exec.c. And I'm wondering why that is ok? And even if this is ok for
+> some use-cases it might very well become a security issue in others if
+> access decisions are always based on the raw values.
+> 
+> I'm not well-versed in this so bear with me, please.
 
-As Christoph wrote, it isn't a problem that you would not get a
-page_mkwrite() notification. That happens just fine. But the problem is
-that after that, the page can still get modified after you've removed all
-writeable mappings of the page (e.g. by calling page_mkclean() in
-clear_page_dirty_for_io()). And there's no way a kernel can provide further
-notification for such writes because we've simply handed of the page
-physical address to the HW to DMA into.
-
-So the only viable solution is really for the filesystem to detect such
-unprotectable pages if it cares and somehow deal with them (skip writeback,
-use bounce pages, ...). The good news is that we already have
-page_maybe_dma_pinned() call that at least allows detection of such
-unprotectable pages.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If this is really just about retrieving the "security.bpf" xattr and no
+other xattr then the bpf_getxattr() variant should somehow hard-code
+that to ensure that no other xattrs can be retrieved, imho.
