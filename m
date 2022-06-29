@@ -2,187 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D982055F31A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 04:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93BBA55F320
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 04:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbiF2CGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jun 2022 22:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
+        id S230387AbiF2CHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 22:07:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiF2CGC (ORCPT
+        with ESMTP id S229623AbiF2CHO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jun 2022 22:06:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D00313B9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 19:06:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 28 Jun 2022 22:07:14 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6293131506
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 19:07:13 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2DD161CD5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jun 2022 02:06:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B467C341CD
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jun 2022 02:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656468360;
-        bh=yeRtEYj3O6KnXD0oglwNrZqwWft8eIsSOQWcZxB/5ao=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oK5jp22sauBVcqNhrqG7+re6dBSIv4AKrO9uYD8pI+3VE/ymxH7lqG0js6oMSVTuv
-         b3b2JaXdlwQn2rDvMB/ekT+4h6EivlgxoNuf4q4JPDH8S3qsbCaG9K5Qw9BRAgWnGS
-         TREc/CHbkAaAPRSi5tm1nm5q+4BNR+QqYsl8u//dqm1tGDHn3CTnZ8Rkj/5DdhTQ9V
-         tXBmH2vPBaEtHxl0kxgvu0a7Sl4ohZLT6V6xJzq1tTC9EbeC//wsX+HygWWkXD1aX7
-         ElcxihsGYypnDykWZQCTSU4X+iq+NwvWnmF7INiHGU7TuN99Ds7W42Dof2d3Wg9R3n
-         +Lc1nuUwOVz6A==
-Received: by mail-yb1-f182.google.com with SMTP id i15so25462140ybp.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 19:06:00 -0700 (PDT)
-X-Gm-Message-State: AJIora9e/+DNw5iGTfm1d4SmebxNaVahlIbm5mjwGfb5PB11b8KLs5//
-        Xd4u28X370AuhxkXvYA10hqLIkMWAAj0bsDeJm3qww==
-X-Google-Smtp-Source: AGRyM1uRfCuPyw11G+Dcn5pqeNsBDEc9dA7sdA6DFOimt5cYndumgW/+XXAbWVSQCf3vPHyES5JZbJ47zzVFgAU7grU=
-X-Received: by 2002:a25:e056:0:b0:66c:9462:c9b1 with SMTP id
- x83-20020a25e056000000b0066c9462c9b1mr931215ybg.65.1656468359356; Tue, 28 Jun
- 2022 19:05:59 -0700 (PDT)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 71C1C21EAF;
+        Wed, 29 Jun 2022 02:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1656468431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YM5kdckk31CXnoyZKaHPmyyZLTRX7jHEzJAKxKUQzso=;
+        b=hdl3GMPYQzIxAnvZmNnD0UwCRNISLZ7Eu+CHloXNC/rqXQTMg9Ux+PaK0JW4F8d16B1Z4g
+        9aNKbKxpZ9z2DpsFwdPGmU7gDZfK1oCa3BTXgUzQP/WX8dI7FUXHDy4C+ncXhKr2wn0RE2
+        PY2s8EcosmGqZqrS+iTxsU5eU0CHcdY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1656468431;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YM5kdckk31CXnoyZKaHPmyyZLTRX7jHEzJAKxKUQzso=;
+        b=44V6cMqEU1SHgndsw4lsZ+zW22IxW0/o6ffSJeZKDzEWC3GAENYIisOc65sId755NvtWY5
+        mSZVaauImWy2mLBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BFD5C13322;
+        Wed, 29 Jun 2022 02:07:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 3axXHs2zu2IJXgAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 29 Jun 2022 02:07:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628171325.ccbylrqhygtf2dlx@wittgenstein>
- <CACYkzJ4kWFwC82EAhtEYcMBPNe49zXd+uPBt1i09mVwLnoh0Bw@mail.gmail.com>
- <CACYkzJ766xv-9+jLg9mNZtdbLN3n=J+Y5ep4BjpS+vzv2B2auQ@mail.gmail.com>
- <20220629013636.GL1098723@dread.disaster.area> <CACYkzJ7dyY7m8gmHkhWQ0CCLLbq9BaYBzMnjV2eWADYoys9T8w@mail.gmail.com>
-In-Reply-To: <CACYkzJ7dyY7m8gmHkhWQ0CCLLbq9BaYBzMnjV2eWADYoys9T8w@mail.gmail.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Wed, 29 Jun 2022 04:05:48 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ70uqVJr5EnM0i03Lu+zkuSsXOXcOLQoUS6HZPqH=skpQ@mail.gmail.com>
-Message-ID: <CACYkzJ70uqVJr5EnM0i03Lu+zkuSsXOXcOLQoUS6HZPqH=skpQ@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] Add bpf_getxattr
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christian Brauner <brauner@kernel.org>, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dave Chinner" <david@fromorbit.com>
+Cc:     "James Yonan" <james@openvpn.net>,
+        "Amir Goldstein" <amir73il@gmail.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] namei: implemented RENAME_NEWER flag for renameat2()
+ conditional replace
+In-reply-to: <20220629014323.GM1098723@dread.disaster.area>
+References: <20220627221107.176495-1-james@openvpn.net>,
+ <Yrs7lh6hG44ERoiM@ZenIV>,
+ <CAOQ4uxgoZe8UUftRKf=b--YmrKJ4wdDX99y7G8U2WTuuVsyvdA@mail.gmail.com>,
+ <03ee39fa-7cfd-5155-3559-99ec8c8a2d32@openvpn.net>,
+ <20220629014323.GM1098723@dread.disaster.area>
+Date:   Wed, 29 Jun 2022 12:07:04 +1000
+Message-id: <165646842481.15378.14054777682756518611@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 4:00 AM KP Singh <kpsingh@kernel.org> wrote:
->
-> On Wed, Jun 29, 2022 at 3:36 AM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > On Tue, Jun 28, 2022 at 07:21:42PM +0200, KP Singh wrote:
-> > > On Tue, Jun 28, 2022 at 7:20 PM KP Singh <kpsingh@kernel.org> wrote:
-> > > > On Tue, Jun 28, 2022 at 7:13 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > On Tue, Jun 28, 2022 at 04:19:43PM +0000, KP Singh wrote:
-> > > > > > v4 -> v5
-> > > > > >
-> > > > > > - Fixes suggested by Andrii
-> > > > > >
-> > > > > > v3 -> v4
-> > > > > >
-> > > > > > - Fixed issue incorrect increment of arg counter
-> > > > > > - Removed __weak and noinline from kfunc definiton
-> > > > > > - Some other minor fixes.
-> > > > > >
-> > > > > > v2 -> v3
-> > > > > >
-> > > > > > - Fixed missing prototype error
-> > > > > > - Fixes suggested by other Joanne and Kumar.
-> > > > > >
-> > > > > > v1 -> v2
-> > > > > >
-> > > > > > - Used kfuncs as suggested by Alexei
-> > > > > > - Used Benjamin Tissoires' patch from the HID v4 series to add a
-> > > > > >   sleepable kfunc set (I sent the patch as a part of this series as it
-> > > > > >   seems to have been dropped from v5) and acked it. Hope this is okay.
-> > > > > > - Added support for verifying string constants to kfuncs
-> > > > >
-> > > > > Hm, I mean this isn't really giving any explanation as to why you are
-> > > > > doing this. There's literally not a single sentence about the rationale?
-> > > > > Did you accidently forget to put that into the cover letter? :)
-> > > >
-> > > >
-> > > > Yes, actually I did forget to copy paste :)
-> > > >
-> > > > Foundation for building more complex security policies using the
-> > > > BPF LSM as presented in LSF/MM/BPF:
-> > > >
-> > > > http://vger.kernel.org/bpfconf2022_material/lsfmmbpf2022-xattr.pdf\
-> > >
-> > > And my copy paste skills are getting worse (with the back-slash removed):
-> > >
-> > > http://vger.kernel.org/bpfconf2022_material/lsfmmbpf2022-xattr.pdf
-> >
-> > There's literally zero information in that link, so I still have no
-> > clue on what this does and how it interacts with filesystem xattr
-> > code.
->
-> This is literally a wrapper around __vfs_getxattr which is an exported
-> symbol. So, the interaction with the xattr code is the same as
-> __vfs_getxattr interacts currently.
->
-> ssize_t bpf_getxattr(struct dentry *dentry, struct inode *inode,
-> const char *name, void *value, int value__sz)
-> {
-> return __vfs_getxattr(dentry, inode, name, value, value__sz);
-> }
->
-> The reason for the wrapper is that the BPF verifier offers
-> extra checks on the arguments passed.
->
-> https://lore.kernel.org/bpf/20210325015240.1550074-1-kafai@fb.com/T/
->
-> has more information on the kfunc support.
->
-> >
-> > So for those of us who have zero clue as to what you are trying to
-> > do, please write a cover letter containing a non-zero amount of
-> > information.  i.e.  a description of the problem, the threat model
-> > being addressed, the design of the infrastructure that needs this
-> > hook, document assumptions that have been made (e.g. for
-> > accessing inode metadata atomically from random bpf contexts), what
->
-> The intention is to use this in BPF programs which can only be loaded
-> with CAP_SYS_ADMIN.
-> We are currently planning on limiting the usage of this kfunc
-> to the sleepable LSM hooks listed here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/kernel/bpf/bpf_lsm.c#n169
->
-> > xattr namespace(s) this hook should belong/be constrained to,
-> > whether you're going to ask for a setxattr hook next, etc.
->
-> Fair point, I will resend the series with the details.
->
-> >
-> > At minimum this is going to need a bunch of documentation for people
-> > to understand how to use this - where can I find that?
->
-> There are a bunch of examples in selftests on how to use kfuncs in BPF
-> and we added a selftests (there is a simple selftests added with this patch
-> too).
->
-> As to how we will use xattrs to create security policies or use this
-> functionality for
-> logging, this is work in progress.
+On Wed, 29 Jun 2022, Dave Chinner wrote:
+> On Tue, Jun 28, 2022 at 05:19:12PM -0600, James Yonan wrote:
+> > On 6/28/22 12:34, Amir Goldstein wrote:
+> > > On Tue, Jun 28, 2022 at 8:44 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > > On Mon, Jun 27, 2022 at 04:11:07PM -0600, James Yonan wrote:
+> > > >=20
+> > > > >            && d_is_positive(new_dentry)
+> > > > >            && timespec64_compare(&d_backing_inode(old_dentry)->i_mt=
+ime,
+> > > > >                                  &d_backing_inode(new_dentry)->i_mt=
+ime) <=3D 0)
+> > > > >                goto exit5;
+> > > > >=20
+> > > > > It's pretty cool in a way that a new atomic file operation can even=
+ be
+> > > > > implemented in just 5 lines of code, and it's thanks to the existing
+> > > > > locking infrastructure around file rename/move that these operations
+> > > > > become almost trivial.  Unfortunately, every fs must approve a new
+> > > > > renameat2() flag, so it bloats the patch a bit.
+> > > > How is it atomic and what's to stabilize ->i_mtime in that test?
+> > > > Confused...
+> > > Good point.
+> > > RENAME_EXCHANGE_WITH_NEWER would have been better
+> > > in that regard.
+> > >=20
+> > > And you'd have to check in vfs_rename() after lock_two_nondirectories()
+> >=20
+> > So I mean atomic in the sense that you are comparing the old and new mtim=
+es
+> > inside the lock_rename/unlock_rename critical section in do_renameat2(), =
+so
+>=20
+> mtime is not stable during rename, even with the inode locked. e.g. a
+> write page fault occurring concurrently with rename will change
+> mtime, and so which inode is "newer" can change during the rename
+> syscall...
 
-In any case, I will update the cover letter with some use-cases
-we ideated over in LSF/MM/BPF in the next version.
+I don't think that is really important for the proposed use case.
+In any case where you might be using this new rename flag, the target
+file wouldn't be open for write, so the mtime wouldn't change.
+The atomicity is really wanted to make sure the file at the destination
+name is still the one that was expected (I think).
 
-- KP
+So I think it would be reasonable for the rename to fail if the target
+file (or even "either file") is open for write.  Can that change while
+the inode is locked?
 
->
-> Cheers,
-> - KP
->
-> >
-> > Cheers,
-> >
-> > Dave.
-> > --
-> > Dave Chinner
-> > david@fromorbit.com
+It would be nice if renameat2 took a third fd so we could say "only
+rename if <this> is the target file", but it doesn't.
+
+NeilBrown
