@@ -2,195 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 311E8560AFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 22:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B24560B3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 22:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbiF2UWN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 16:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49414 "EHLO
+        id S230441AbiF2Un1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 16:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbiF2UWK (ORCPT
+        with ESMTP id S231134AbiF2UnZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 16:22:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777232F39D;
-        Wed, 29 Jun 2022 13:22:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3CE74B82701;
-        Wed, 29 Jun 2022 20:22:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BDEC34114;
-        Wed, 29 Jun 2022 20:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656534127;
-        bh=fvM7ZMw2Riiyy+rC8yD5Hs0887tFPszfGYW0/LXaWfA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F5xyov45v0ccCJ1IxlXGAtOz0PLoK/zebDjvrlZx9wn+a2UJEu8uwQ1j2Lr0kmqxN
-         Tnw9Np6W699I9p5LTM5u6FD1UMEpV1gRiDRSn2T/CyhnDy9vBruEH6y7E3i8M0xP6t
-         C5t3O6eWH7ETdiiSIbiO5OrCLtbGq6IBsUskxEPzZN8NyZnJ1A6pPH++fBkS2uAn8F
-         0rpdHSluLb+ddTvJk4blbbN25jH7s9JekC00yHjBPs1NkhBJByQRbiIgE+Uu3wFHQb
-         GQsxdAmCDxXn5FI8ZOQreulWGtoPBroIArSqS2EEq4x17z6xZA8p9onh/VKK+v5whL
-         iL1StzTNq7nOA==
-Date:   Wed, 29 Jun 2022 13:22:06 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-mm@kvack.org
-Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
- Support large folios)
-Message-ID: <Yry0bkQRN4sGgTbf@magnolia>
-References: <Yrku31ws6OCxRGSQ@magnolia>
- <Yrm6YM2uS+qOoPcn@casper.infradead.org>
- <YrosM1+yvMYliw2l@magnolia>
- <20220628073120.GI227878@dread.disaster.area>
- <YrrlrMK/7pyZwZj2@casper.infradead.org>
- <Yrrmq4hmJPkf5V7s@casper.infradead.org>
- <Yrr/oBlf1Eig8uKS@casper.infradead.org>
- <20220628221757.GJ227878@dread.disaster.area>
- <YruNE72sW4Aizq8U@magnolia>
- <YrxMOgIvKVe6u/uR@bfoster>
+        Wed, 29 Jun 2022 16:43:25 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789A02182E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jun 2022 13:43:24 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id cl1so472831wrb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jun 2022 13:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jK9//luGxpfbLffwOAXZvUD0KZmVzGC+4VJ1Mf8Ewyg=;
+        b=k5WSowoVnLxuxKjSPP3cp1XzTEAHY3y45UhQuF8UEDAyCTaVCqG/CT+GI0HDpCJiRr
+         qY92QFJIvnA+icgYFsho+2NHk8VIu8knAAsA4n5acDav+H8Bx/JChuc9/xU2pHxunkqn
+         Xa7V6+8eHKvHEzuihehfP5VnTNMUxG2sVEkn+lldtmnf/cCTkXjtmmUEqEhHB1ghA1+P
+         XiNUznA+U4VlknZfH43Wecpj/M1WX+pi8c7VlQcttS6Tn+4WR79rWAWtr3AWhjkWvAlB
+         8c14CN87gcOsljgVtquohoB6BqLa9yxRumbngWbW4Zv5Aafipq5gZb9HHF5pygsGcTHe
+         sV5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jK9//luGxpfbLffwOAXZvUD0KZmVzGC+4VJ1Mf8Ewyg=;
+        b=lSn0SDYBOWYbG9C1cZTf8jc1f9qYAZdULJVbgBGPONPgmA5fkBIt06O0L4YipR19hZ
+         aF3CI+mZcB/MYZHli/bmcb3pPibujSiI5gYKF0AhU1IuF1P/zVtcI2QUZSB8gaWkTn3Q
+         Ifg+5ysgzN2C2ydWbEff0xKkWDtpw4AD6zaRuE14/Elq8s6wQohtUoX9LpsvLSmOrAjh
+         s+S7m1mHzHyETT683GGTfknOi9npZNl2kuEcIgdx+WX+1PVtpb1BQnQy8SKOBcigYq1C
+         IlhChuCXPggsLT2AUFVeOXrKKGKPGMujm21PSHw+gYaIUX2d47uBmUSFy+1gvqwrcBAa
+         LEjg==
+X-Gm-Message-State: AJIora/Xi9D6CuKjZy2QhsLloZ9L/0VH3wxfTYGGn/vWjf8t6fXgGear
+        VDLpPCMANTdsO+pz6gLhESuTy7PL2u078kUAVJGjqQ==
+X-Google-Smtp-Source: AGRyM1sdZpRIIt8pzdPqsysENF0+n2K+v1kR9bTNvP8/I1WmweNa1mfdcg2Fg6hW5XcLplZP4kyRd9qLNe68d2DEstQ=
+X-Received: by 2002:a5d:52c6:0:b0:21b:9f39:78de with SMTP id
+ r6-20020a5d52c6000000b0021b9f3978demr5179522wrv.699.1656535402268; Wed, 29
+ Jun 2022 13:43:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrxMOgIvKVe6u/uR@bfoster>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220623220613.3014268-1-kaleshsingh@google.com>
+ <20220623220613.3014268-2-kaleshsingh@google.com> <Yrrrz7MxMu8OoEPU@bfoster>
+ <CAC_TJvejs5gbggC1hekyjUNctC_8+3FmVn0B7zAZox2+MkEjaA@mail.gmail.com> <YrxEUbDkYLE6XF6x@bfoster>
+In-Reply-To: <YrxEUbDkYLE6XF6x@bfoster>
+From:   Kalesh Singh <kaleshsingh@google.com>
+Date:   Wed, 29 Jun 2022 13:43:11 -0700
+Message-ID: <CAC_TJvcRd7=9xGXP5-t8v3g5iFWtYANpGA-nTqaGZBVTwa=07w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] procfs: Add 'size' to /proc/<pid>/fdinfo/
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        David.Laight@aculab.com, Ioannis Ilkos <ilkos@google.com>,
+        "T.J. Mercier" <tjmercier@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 08:57:30AM -0400, Brian Foster wrote:
-> On Tue, Jun 28, 2022 at 04:21:55PM -0700, Darrick J. Wong wrote:
-> > On Wed, Jun 29, 2022 at 08:17:57AM +1000, Dave Chinner wrote:
-> > > On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
-> > > > On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
-> > > > > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
-> > > > > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
-> > > > > > > So using this technique, I've discovered that there's a dirty page
-> > > > > > > accounting leak that eventually results in fsx hanging in
-> > > > > > > balance_dirty_pages().
-> > > > > > 
-> > > > > > Alas, I think this is only an accounting error, and not related to
-> > > > > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
-> > > > > > seeing is dirty pages being dropped at truncation without the
-> > > > > > appropriate accounting.  ie this should be the fix:
-> > > > > 
-> > > > > Argh, try one that actually compiles.
-> > > > 
-> > > > ... that one's going to underflow the accounting.  Maybe I shouldn't
-> > > > be writing code at 6am?
-> > > > 
-> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > > index f7248002dad9..4eec6ee83e44 100644
-> > > > --- a/mm/huge_memory.c
-> > > > +++ b/mm/huge_memory.c
-> > > > @@ -18,6 +18,7 @@
-> > > >  #include <linux/shrinker.h>
-> > > >  #include <linux/mm_inline.h>
-> > > >  #include <linux/swapops.h>
-> > > > +#include <linux/backing-dev.h>
-> > > >  #include <linux/dax.h>
-> > > >  #include <linux/khugepaged.h>
-> > > >  #include <linux/freezer.h>
-> > > > @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> > > >  		__split_huge_page_tail(head, i, lruvec, list);
-> > > >  		/* Some pages can be beyond EOF: drop them from page cache */
-> > > >  		if (head[i].index >= end) {
-> > > > -			ClearPageDirty(head + i);
-> > > > -			__delete_from_page_cache(head + i, NULL);
-> > > > +			struct folio *tail = page_folio(head + i);
-> > > > +
-> > > >  			if (shmem_mapping(head->mapping))
-> > > >  				shmem_uncharge(head->mapping->host, 1);
-> > > > -			put_page(head + i);
-> > > > +			else if (folio_test_clear_dirty(tail))
-> > > > +				folio_account_cleaned(tail,
-> > > > +					inode_to_wb(folio->mapping->host));
-> > > > +			__filemap_remove_folio(tail, NULL);
-> > > > +			folio_put(tail);
-> > > >  		} else if (!PageAnon(page)) {
-> > > >  			__xa_store(&head->mapping->i_pages, head[i].index,
-> > > >  					head + i, 0);
-> > > > 
-> > > 
-> > > Yup, that fixes the leak.
-> > > 
-> > > Tested-by: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Four hours of generic/522 running is long enough to conclude that this
-> > is likely the fix for my problem and migrate long soak testing to my
-> > main g/522 rig and:
-> > 
-> > Tested-by: Darrick J. Wong <djwong@kernel.org>
-> > 
-> 
-> Just based on Willy's earlier comment.. what I would probably be a
-> little careful/curious about here is whether the accounting fix leads to
-> an indirect behavior change that does impact reproducibility of the
-> corruption problem. For example, does artificially escalated dirty page
-> tracking lead to increased reclaim/writeback activity than might
-> otherwise occur, and thus contend with the fs workload? Clearly it has
-> some impact based on Dave's balance_dirty_pages() problem reproducer,
-> but I don't know if it extends beyond that off the top of my head. That
-> might make some sense if the workload is fsx, since that doesn't
-> typically stress cache/memory usage the way a large fsstress workload or
-> something might.
-> 
-> So for example, interesting questions might be... Do your corruption
-> events happen to correspond with dirty page accounting crossing some
-> threshold based on available memory in your test environment? Does
-> reducing available memory affect reproducibility? Etc.
+On Wed, Jun 29, 2022 at 5:23 AM Brian Foster <bfoster@redhat.com> wrote:
+>
+> On Tue, Jun 28, 2022 at 03:38:02PM -0700, Kalesh Singh wrote:
+> > On Tue, Jun 28, 2022 at 4:54 AM Brian Foster <bfoster@redhat.com> wrote=
+:
+> > >
+> > > On Thu, Jun 23, 2022 at 03:06:06PM -0700, Kalesh Singh wrote:
+> > > > To be able to account the amount of memory a process is keeping pin=
+ned
+> > > > by open file descriptors add a 'size' field to fdinfo output.
+> > > >
+> > > > dmabufs fds already expose a 'size' field for this reason, remove t=
+his
+> > > > and make it a common field for all fds. This allows tracking of
+> > > > other types of memory (e.g. memfd and ashmem in Android).
+> > > >
+> > > > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> > > > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > > ---
+> > > >
+> > > > Changes in v2:
+> > > >   - Add Christian's Reviewed-by
+> > > >
+> > > > Changes from rfc:
+> > > >   - Split adding 'size' and 'path' into a separate patches, per Chr=
+istian
+> > > >   - Split fdinfo seq_printf into separate lines, per Christian
+> > > >   - Fix indentation (use tabs) in documentaion, per Randy
+> > > >
+> > > >  Documentation/filesystems/proc.rst | 12 ++++++++++--
+> > > >  drivers/dma-buf/dma-buf.c          |  1 -
+> > > >  fs/proc/fd.c                       |  9 +++++----
+> > > >  3 files changed, 15 insertions(+), 7 deletions(-)
+> > > >
+> ...
+> > >
+> > > Also not sure if it matters that much for your use case, but somethin=
+g
+> > > worth noting at least with shmem is that one can do something like:
+> > >
+> > > # cat /proc/meminfo | grep Shmem:
+> > > Shmem:               764 kB
+> > > # xfs_io -fc "falloc -k 0 10m" ./file
+> > > # ls -alh file
+> > > -rw-------. 1 root root 0 Jun 28 07:22 file
+> > > # stat file
+> > >   File: file
+> > >   Size: 0               Blocks: 20480      IO Block: 4096   regular e=
+mpty file
+> > > # cat /proc/meminfo | grep Shmem:
+> > > Shmem:             11004 kB
+> > >
+> > > ... where the resulting memory usage isn't reflected in i_size (but i=
+s
+> > > is in i_blocks/bytes).
+> >
+> > I tried a similar experiment a few times, but I don't see the same
+> > results. In my case, there is not any change in shmem. IIUC the
+> > fallocate is allocating the disk space not shared memory.
+> >
+>
+> Sorry, it was implied in my previous test was that I was running against
+> tmpfs. So regardless of fs, the fallocate keep_size semantics shown in
+> both cases is as expected: the underlying blocks are allocated and the
+> inode size is unchanged.
+>
+> What wasn't totally clear to me when I read this patch was 1. whether
+> tmpfs refers to Shmem and 2. whether tmpfs allowed this sort of
+> operation. The test above seems to confirm both, however, right? E.g., a
+> more detailed example:
+>
+> # mount | grep /tmp
+> tmpfs on /tmp type tmpfs (rw,nosuid,nodev,seclabel,nr_inodes=3D1048576,in=
+ode64)
+> # cat /proc/meminfo | grep Shmem:
+> Shmem:              5300 kB
+> # xfs_io -fc "falloc -k 0 1g" /tmp/file
+> # stat /tmp/file
+>   File: /tmp/file
+>   Size: 0               Blocks: 2097152    IO Block: 4096   regular empty=
+ file
+> Device: 22h/34d Inode: 45          Links: 1
+> Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+> Context: unconfined_u:object_r:user_tmp_t:s0
+> Access: 2022-06-29 08:04:01.301307154 -0400
+> Modify: 2022-06-29 08:04:01.301307154 -0400
+> Change: 2022-06-29 08:04:01.451312834 -0400
+>  Birth: 2022-06-29 08:04:01.301307154 -0400
+> # cat /proc/meminfo | grep Shmem:
+> Shmem:           1053876 kB
+> # rm -f /tmp/file
+> # cat /proc/meminfo | grep Shmem:
+> Shmem:              5300 kB
+>
+> So clearly this impacts Shmem.. was your test run against tmpfs or some
+> other (disk based) fs?
 
-Yeah, I wonder that too now.  I managed to trace generic/522 a couple of
-times before willy's patch dropped.  From what I could tell, a large
-folio X would get page P assigned to the fsx file's page cache to cover
-range R, dirtied, and written to disk.  At some point later, we'd
-reflink into part of the file range adjacent to P, but not P itself.
-I /think/ that should have caused the whole folio to get invalidated?
+Hi Brian,
 
-Then some more things happened (none of which dirtied R, according to
-fsx) and then suddenly writeback would trigger on some page (don't know
-which) that would write to the disk blocks backing R.  I'm fairly sure
-that's where the incorrect disk contents came from.
+Thanks for clarifying. My issue was tmpfs not mounted at /tmp in my system:
 
-Next, we'd reflink part of the file range including R into a different
-part of the file (call it R2).  fsx would read R2, bringing a new page
-into cache, and it wouldn't match the fsxgood buffer, leading to fsx
-aborting.
+=3D=3D> meminfo.start <=3D=3D
+Shmem:               572 kB
+=3D=3D> meminfo.stop <=3D=3D
+Shmem:             51688 kB
 
-After a umount/mount cycle, reading R and R2 would both reveal the
-incorrect contents that had caused fsx to abort.
+>
+> FWIW, I don't have any objection to exposing inode size if it's commonly
+> useful information. My feedback was more just an fyi that i_size doesn't
+> necessarily reflect underlying space consumption (whether it's memory or
+> disk space) in more generic cases, because it sounds like that is really
+> what you're after here. The opposite example to the above would be
+> something like an 'xfs_io -fc "truncate 1t" /tmp/file', which shows a
+> 1TB inode size with zero additional shmem usage.
 
-Unfortunately the second ftrace attempt ate some trace data, so I was
-unable to figure out if the same thing happened again.
+From these cases, it seems the more generic way to do this is by
+calculating the actual size consumed using the blocks. (i_blocks *
+512). So in the latter example  'xfs_io -fc "truncate 1t" /tmp/file'
+the size consumed would be zero. Let me know if it sounds ok to you
+and I can repost the updated version.
 
-At this point I really need to get on reviewing patches for 5.20, so
-I'll try to keep poking at this (examining the trace data requires a lot
-of concentration which isn't really possible while sawzall construction
-is going on at home) but at worst I can ask Linus to merge a patch for
-5.19 final that makes setting mapping_set_large_folio a
-Kconfig/CONFIG_XFS_DEBUG option.
+Thanks,
+Kalesh
 
---D
-
-> 
+>
 > Brian
-> 
-> > --D
-> > 
-> > > Cheers,
-> > > 
-> > > Dave.
-> > > -- 
-> > > Dave Chinner
-> > > david@fromorbit.com
-> > 
-> 
+>
+> > cat /proc/meminfo > meminfo.start
+> > xfs_io -fc "falloc -k 0 50m" ./xfs_file
+> > cat /proc/meminfo > meminfo.stop
+> > tail -n +1 meminfo.st* | grep -i '=3D=3D\|Shmem:'
+> >
+> > =3D=3D> meminfo.start <=3D=3D
+> > Shmem:               484 kB
+> > =3D=3D> meminfo.stop <=3D=3D
+> > Shmem:               484 kB
+> >
+> > ls -lh xfs_file
+> > -rw------- 1 root root 0 Jun 28 15:12 xfs_file
+> >
+> > stat xfs_file
+> >   File: xfs_file
+> >   Size: 0               Blocks: 102400     IO Block: 4096   regular emp=
+ty file
+> >
+> > Thanks,
+> > Kalesh
+> >
+> > >
+> > > Brian
+> > >
+> > > >
+> > > >       /* show_fd_locks() never deferences files so a stale value is=
+ safe */
+> > > >       show_fd_locks(m, file, files);
+> > > > --
+> > > > 2.37.0.rc0.161.g10f37bed90-goog
+> > > >
+> > >
+> >
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
