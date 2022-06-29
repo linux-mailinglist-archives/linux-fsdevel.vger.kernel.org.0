@@ -2,92 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E46560D94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 01:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E364560DC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 01:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232078AbiF2XfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 19:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43106 "EHLO
+        id S231929AbiF2Xzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 19:55:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbiF2Xe0 (ORCPT
+        with ESMTP id S231699AbiF2Xzp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 19:34:26 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02C440E72;
-        Wed, 29 Jun 2022 16:33:59 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1CAF65C0470;
-        Wed, 29 Jun 2022 19:33:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 29 Jun 2022 19:33:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1656545634; x=
-        1656632034; bh=noYt84Jd7q+oGWxeTJZpYrHP+Dz1u6A7BigbFhMFB70=; b=I
-        kXy/+6mJ2h5+DucoiNAslvxJxcREuKufNf1U1j0pEO7i9kuZhXO5K2y+zPMSTFX0
-        Jixh3/L1i+xewqfUbZ2jzwQV+qslQlj/2K4DzbymDwFXziCNzXCw7AH40Lca0ZMf
-        RF3FJW5pNlIaegjH5SAVwkfNl8ZGEG6gUZrFuoZwCS90uSk8jKXcQWIeV9cEd8dZ
-        wgQDvcMBvTQ2rr3HtINkoA/sSYcN9E3fxMcHZVXOHOGxbTgh6aVDuWO2lYvZNbsf
-        lRLuHB2uh3I6ayQQAH9NWHdvw+z5ZqsXmmGoE44eoiOyBMmegntESitYSZajiIlQ
-        REUQG00fFoN0x8qAEggmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656545634; x=
-        1656632034; bh=noYt84Jd7q+oGWxeTJZpYrHP+Dz1u6A7BigbFhMFB70=; b=P
-        ULmk/1CXKH55EQzWRlHgJK9ReLtP2S7b4pRk6gbh0N++p2dc9/VM4603EJyX9AJH
-        n1VWOMju2YxmXCEKn5HFsm4LU3tR2ahalwZat1fz2T7fTQid0rX6vVl/ZT9g3hc/
-        mTCTOmawy2sizw5y4NCa7fDcPGfbSnj5q58dhmgQ5HPZoau5DVG5J5CFmM2o4NWo
-        hBDHlZspW/FIcbjLioei0TQFkqIeBdmcF8RCRY3saSnGffB5732rGQk3GsdzcE82
-        BWhOGaOJCVOJvEi0h4SU75KRVQ0r2gRkJPQTZlT1rbt7eRq6vq3s4hvxUMktMvo3
-        gl2A2u7VXbxZ0UDOwo21g==
-X-ME-Sender: <xms:YeG8YnrxczlyRNl54X7pwndpFllgY9kNhnOLq-DvhWfnURTAVjj64A>
-    <xme:YeG8YhqJv1ELvYcSfACWm6be4AlQ7aVzFmjjZSLszIJ5ot_v6m3n4ATQnVvWnjOB2
-    MK1cFIOtxHM>
-X-ME-Received: <xmr:YeG8YkMUE8s5tq-lE4e4Kv474VXRfGRnp2lnTWGo7_4uFKQcuMHJoEL7Y1Y0FXT9oqxTz23G6qZL1pS6CvX1hM6L_Crg8wsru4LpCsTPxwbOeVWM1FG7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehtddgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:YeG8Yq4--6fj5ekZt52MPnhR_DHIwSIL-nvcVC43bmalgezrbVuy7g>
-    <xmx:YeG8Ym7I9SgcWyiECk8pEGHukhno07XtfLDKhMiRkUTD1HXI3jUK3g>
-    <xmx:YeG8YijHB-3MsxIv41zMcJInhf9oYIbGdYSfrntCtkJpnr5mewylgw>
-    <xmx:YuG8Yh3Ax02EXlti0dlr-QS5x9azTKR3z_ATdIs_2r-gRj5eRu0dNg>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Jun 2022 19:33:50 -0400 (EDT)
-Message-ID: <fd23da3f-e242-da15-ab1c-3e53490a8577@themaw.net>
-Date:   Thu, 30 Jun 2022 07:33:46 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [REPOST PATCH] nfs: fix port value parsing
-Content-Language: en-US
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "Anna.Schumaker@Netapp.com" <Anna.Schumaker@Netapp.com>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "SteveD@redhat.com" <SteveD@redhat.com>,
-        "bcodding@redhat.com" <bcodding@redhat.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-References: <165637590710.37553.7481596265813355098.stgit@donald.themaw.net>
- <cadcb382d47ef037c5b713b099ae46640dfea37d.camel@hammerspace.com>
- <ccd23a54-27b5-e65c-4a97-b169676c23bc@themaw.net>
- <891563475afc32c49fab757b8b56ecdc45b30641.camel@hammerspace.com>
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <891563475afc32c49fab757b8b56ecdc45b30641.camel@hammerspace.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Wed, 29 Jun 2022 19:55:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA26926AC3;
+        Wed, 29 Jun 2022 16:55:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D74D61E8B;
+        Wed, 29 Jun 2022 23:55:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7924DC34114;
+        Wed, 29 Jun 2022 23:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1656546943;
+        bh=GKhkxjzbryUn63yqgSQ8KNnNHPo39huHp9zEOfZ06is=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mz1a22WOM7p6N+j2hEd3epdHXmPpLzn3TocOBeWOGuw/Osl2pXsqRzPKBGHaA5hLE
+         T+/m7W9E5L02k/Bmn/YXgQuZXnU9vyWb6zRekxdDyaWNFdikbG+ynX5FxmfZhjFh61
+         2P5fBAuYO25TCDAniyBuv7dra8nngX8V8lggyKLs=
+Date:   Wed, 29 Jun 2022 16:55:42 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Benjamin Segall <bsegall@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Roman Penyaev <rpenyaev@suse.de>,
+        Jason Baron <jbaron@akamai.com>,
+        Khazhismel Kumykov <khazhy@google.com>, Heiher <r@hev.cc>
+Subject: Re: [RESEND RFC PATCH] epoll: autoremove wakers even more
+ aggressively
+Message-Id: <20220629165542.da7fc8a2a5dbd53cf99572aa@linux-foundation.org>
+In-Reply-To: <xm26fsjotqda.fsf@google.com>
+References: <xm26fsjotqda.fsf@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,85 +59,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 15 Jun 2022 14:24:23 -0700 Benjamin Segall <bsegall@google.com> wrote:
 
-On 29/6/22 23:33, Trond Myklebust wrote:
-> On Wed, 2022-06-29 at 09:02 +0800, Ian Kent wrote:
->> On 28/6/22 22:34, Trond Myklebust wrote:
->>> On Tue, 2022-06-28 at 08:25 +0800, Ian Kent wrote:
->>>> The valid values of nfs options port and mountport are 0 to
->>>> USHRT_MAX.
->>>>
->>>> The fs parser will return a fail for port values that are
->>>> negative
->>>> and the sloppy option handling then returns success.
->>>>
->>>> But the sloppy option handling is meant to return success for
->>>> invalid
->>>> options not valid options with invalid values.
->>>>
->>>> Parsing these values as s32 rather than u32 prevents the parser
->>>> from
->>>> returning a parse fail allowing the later USHRT_MAX option check
->>>> to
->>>> correctly return a fail in this case. The result check could be
->>>> changed
->>>> to use the int_32 union variant as well but leaving it as a
->>>> uint_32
->>>> check avoids using two logical compares instead of one.
->>>>
->>>> Signed-off-by: Ian Kent <raven@themaw.net>
->>>> ---
->>>>    fs/nfs/fs_context.c |    4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
->>>> index 9a16897e8dc6..f4da1d2be616 100644
->>>> --- a/fs/nfs/fs_context.c
->>>> +++ b/fs/nfs/fs_context.c
->>>> @@ -156,14 +156,14 @@ static const struct fs_parameter_spec
->>>> nfs_fs_parameters[] = {
->>>>           fsparam_u32   ("minorversion",  Opt_minorversion),
->>>>           fsparam_string("mountaddr",     Opt_mountaddr),
->>>>           fsparam_string("mounthost",     Opt_mounthost),
->>>> -       fsparam_u32   ("mountport",     Opt_mountport),
->>>> +       fsparam_s32   ("mountport",     Opt_mountport),
->>>>           fsparam_string("mountproto",    Opt_mountproto),
->>>>           fsparam_u32   ("mountvers",     Opt_mountvers),
->>>>           fsparam_u32   ("namlen",        Opt_namelen),
->>>>           fsparam_u32   ("nconnect",      Opt_nconnect),
->>>>           fsparam_u32   ("max_connect",   Opt_max_connect),
->>>>           fsparam_string("nfsvers",       Opt_vers),
->>>> -       fsparam_u32   ("port",          Opt_port),
->>>> +       fsparam_s32   ("port",          Opt_port),
->>>>           fsparam_flag_no("posix",        Opt_posix),
->>>>           fsparam_string("proto",         Opt_proto),
->>>>           fsparam_flag_no("rdirplus",     Opt_rdirplus),
->>>>
->>>>
->>> Why don't we just check for the ENOPARAM return value from
->>> fs_parse()?
->> In this case I think the return will be EINVAL.
-> My point is that 'sloppy' is only supposed to work to suppress the
-> error in the case where an option is not found by the parser. That
-> corresponds to the error ENOPARAM.
-
-Well, yes, and that's why ENOPARAM isn't returned and shouldn't be.
-
-And if the sloppy option is given it doesn't get to check the value
-
-of the option, it just returns success which isn't right.
-
-
+> If a process is killed or otherwise exits while having active network
+> connections and many threads waiting on epoll_wait, the threads will all
+> be woken immediately, but not removed from ep->wq. Then when network
+> traffic scans ep->wq in wake_up, every wakeup attempt will fail, and
+> will not remove the entries from the list.
+> 
+> This means that the cost of the wakeup attempt is far higher than usual,
+> does not decrease, and this also competes with the dying threads trying
+> to actually make progress and remove themselves from the wq.
+> 
+> Handle this by removing visited epoll wq entries unconditionally, rather
+> than only when the wakeup succeeds - the structure of ep_poll means that
+> the only potential loss is the timed_out->eavail heuristic, which now
+> can race and result in a redundant ep_send_events attempt. (But only
+> when incoming data and a timeout actually race, not on every timeout)
 >
->> I think that's a bit to general for this case.
->>
->> This seemed like the most sensible way to fix it.
->>
-> Your patch works around just one symptom of the problem instead of
-> addressing the root cause.
->
-Ok, how do you recommend I fix this?
+
+Thanks.  I added people from 412895f03cbf96 ("epoll: atomically remove
+wait entry on wake up") to cc.  Hopefully someone there can help review
+and maybe test this.
 
 
-Ian
-
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index e2daa940ebce..8b56b94e2f56 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1745,10 +1745,25 @@ static struct timespec64 *ep_timeout_to_timespec(struct timespec64 *to, long ms)
+>  	ktime_get_ts64(&now);
+>  	*to = timespec64_add_safe(now, *to);
+>  	return to;
+>  }
+>  
+> +/*
+> + * autoremove_wake_function, but remove even on failure to wake up, because we
+> + * know that default_wake_function/ttwu will only fail if the thread is already
+> + * woken, and in that case the ep_poll loop will remove the entry anyways, not
+> + * try to reuse it.
+> + */
+> +static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
+> +				       unsigned int mode, int sync, void *key)
+> +{
+> +	int ret = default_wake_function(wq_entry, mode, sync, key);
+> +
+> +	list_del_init(&wq_entry->entry);
+> +	return ret;
+> +}
+> +
+>  /**
+>   * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
+>   *           event buffer.
+>   *
+>   * @ep: Pointer to the eventpoll context.
+> @@ -1826,12 +1841,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  		 * chance to harvest new event. Otherwise wakeup can be
+>  		 * lost. This is also good performance-wise, because on
+>  		 * normal wakeup path no need to call __remove_wait_queue()
+>  		 * explicitly, thus ep->lock is not taken, which halts the
+>  		 * event delivery.
+> +		 *
+> +		 * In fact, we now use an even more aggressive function that
+> +		 * unconditionally removes, because we don't reuse the wait
+> +		 * entry between loop iterations. This lets us also avoid the
+> +		 * performance issue if a process is killed, causing all of its
+> +		 * threads to wake up without being removed normally.
+>  		 */
+>  		init_wait(&wait);
+> +		wait.func = ep_autoremove_wake_function;
+>  
+>  		write_lock_irq(&ep->lock);
+>  		/*
+>  		 * Barrierless variant, waitqueue_active() is called under
+>  		 * the same lock on wakeup ep_poll_callback() side, so it
+> -- 
+> 2.36.1.476.g0c4daa206d-goog
