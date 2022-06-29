@@ -2,158 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6803560A4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 21:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 311E8560AFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jun 2022 22:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbiF2T3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 15:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40230 "EHLO
+        id S230042AbiF2UWN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 16:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230224AbiF2T3Q (ORCPT
+        with ESMTP id S229948AbiF2UWK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 15:29:16 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A68838A5;
-        Wed, 29 Jun 2022 12:29:15 -0700 (PDT)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25TJ3BXS032642;
-        Wed, 29 Jun 2022 19:28:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=g/a4Jgmw6y+Ay8b4bW+6mG3vLSHmUMX3S3jDXTVXAVs=;
- b=UqUmsWyGBBBPA4GPf5EXNgwnKp3uqlTJCAVsa1Gbv8z5Ywzjws86zkHyPSyg73a+oJlA
- kmdnKWw22v7EcYBYsT+3Tj/MytnLXXQkFtHzcPR16lOuUjjBwtOd2nosU4MzX/7Lb72G
- pNvBFF2a1iWXle7hJ7ff2I2+SVNrDMXsipeNCa5m4ciiZCPSy0SnxQ2BOt95TQll1fa0
- 2ZnUPhx/L0oiW4vZGG+81tEqAzA23ziMaV7SaoWGCYh3jnL2CQlZ91QzT6aPRkbfrt8v
- Fj79PTsy1gNFhYKZvy6IJLJ45r2oIJqlGHUYEK2equbgRNKRfNAHAvZROypRNX/CqDfh 6Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h0vjb8r4q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Jun 2022 19:28:59 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25TJ3Tp2033450;
-        Wed, 29 Jun 2022 19:28:58 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h0vjb8r4f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Jun 2022 19:28:58 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25TJKp6c010666;
-        Wed, 29 Jun 2022 19:28:57 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma02wdc.us.ibm.com with ESMTP id 3gwt0a2pcm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 Jun 2022 19:28:57 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25TJSuh320054424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jun 2022 19:28:56 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9A3B6A054;
-        Wed, 29 Jun 2022 19:28:56 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46E186A047;
-        Wed, 29 Jun 2022 19:28:55 +0000 (GMT)
-Received: from farman-thinkpad-t470p (unknown [9.163.2.135])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Jun 2022 19:28:55 +0000 (GMT)
-Message-ID: <f8c22cd08f8507ae6797edcccd51f902f2bd39df.camel@linux.ibm.com>
-Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
-From:   Eric Farman <farman@linux.ibm.com>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Halil Pasic <pasic@linux.ibm.com>, Keith Busch <kbusch@fb.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
-        ebiggers@kernel.org, pankydev8@gmail.com
-Date:   Wed, 29 Jun 2022 15:28:54 -0400
-In-Reply-To: <Yryi8VXTjDu1R1Zc@kbusch-mbp>
-References: <YrS6/chZXbHsrAS8@kbusch-mbp>
-         <e2b08a5c452d4b8322566cba4ed33b58080f03fa.camel@linux.ibm.com>
-         <e0038866ac54176beeac944c9116f7a9bdec7019.camel@linux.ibm.com>
-         <c5affe3096fd7b7996cb5fbcb0c41bbf3dde028e.camel@linux.ibm.com>
-         <YrnOmOUPukGe8xCq@kbusch-mbp.dhcp.thefacebook.com>
-         <20220628110024.01fcf84f.pasic@linux.ibm.com>
-         <83e65083890a7ac9c581c5aee0361d1b49e6abd9.camel@linux.ibm.com>
-         <a765fff67679155b749aafa90439b46ab1269a64.camel@linux.ibm.com>
-         <YrvMY7oPnhIka4IF@kbusch-mbp.dhcp.thefacebook.com>
-         <f723b1c013d78cae2f3236eba0d14129837dc7b0.camel@linux.ibm.com>
-         <Yryi8VXTjDu1R1Zc@kbusch-mbp>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: S9nhS05_P_KNA8R7JJlY8krihqwJKS9c
-X-Proofpoint-ORIG-GUID: UD6TsGL3vpI9DihHEkoPXdY6nP4YukbZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-06-29_20,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2206290067
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 29 Jun 2022 16:22:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777232F39D;
+        Wed, 29 Jun 2022 13:22:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3CE74B82701;
+        Wed, 29 Jun 2022 20:22:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BDEC34114;
+        Wed, 29 Jun 2022 20:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656534127;
+        bh=fvM7ZMw2Riiyy+rC8yD5Hs0887tFPszfGYW0/LXaWfA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F5xyov45v0ccCJ1IxlXGAtOz0PLoK/zebDjvrlZx9wn+a2UJEu8uwQ1j2Lr0kmqxN
+         Tnw9Np6W699I9p5LTM5u6FD1UMEpV1gRiDRSn2T/CyhnDy9vBruEH6y7E3i8M0xP6t
+         C5t3O6eWH7ETdiiSIbiO5OrCLtbGq6IBsUskxEPzZN8NyZnJ1A6pPH++fBkS2uAn8F
+         0rpdHSluLb+ddTvJk4blbbN25jH7s9JekC00yHjBPs1NkhBJByQRbiIgE+Uu3wFHQb
+         GQsxdAmCDxXn5FI8ZOQreulWGtoPBroIArSqS2EEq4x17z6xZA8p9onh/VKK+v5whL
+         iL1StzTNq7nOA==
+Date:   Wed, 29 Jun 2022 13:22:06 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
+ Support large folios)
+Message-ID: <Yry0bkQRN4sGgTbf@magnolia>
+References: <Yrku31ws6OCxRGSQ@magnolia>
+ <Yrm6YM2uS+qOoPcn@casper.infradead.org>
+ <YrosM1+yvMYliw2l@magnolia>
+ <20220628073120.GI227878@dread.disaster.area>
+ <YrrlrMK/7pyZwZj2@casper.infradead.org>
+ <Yrrmq4hmJPkf5V7s@casper.infradead.org>
+ <Yrr/oBlf1Eig8uKS@casper.infradead.org>
+ <20220628221757.GJ227878@dread.disaster.area>
+ <YruNE72sW4Aizq8U@magnolia>
+ <YrxMOgIvKVe6u/uR@bfoster>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YrxMOgIvKVe6u/uR@bfoster>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-06-29 at 13:07 -0600, Keith Busch wrote:
-> On Wed, Jun 29, 2022 at 02:04:47PM -0400, Eric Farman wrote:
-> > s390 dasd
+On Wed, Jun 29, 2022 at 08:57:30AM -0400, Brian Foster wrote:
+> On Tue, Jun 28, 2022 at 04:21:55PM -0700, Darrick J. Wong wrote:
+> > On Wed, Jun 29, 2022 at 08:17:57AM +1000, Dave Chinner wrote:
+> > > On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
+> > > > On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
+> > > > > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
+> > > > > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
+> > > > > > > So using this technique, I've discovered that there's a dirty page
+> > > > > > > accounting leak that eventually results in fsx hanging in
+> > > > > > > balance_dirty_pages().
+> > > > > > 
+> > > > > > Alas, I think this is only an accounting error, and not related to
+> > > > > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
+> > > > > > seeing is dirty pages being dropped at truncation without the
+> > > > > > appropriate accounting.  ie this should be the fix:
+> > > > > 
+> > > > > Argh, try one that actually compiles.
+> > > > 
+> > > > ... that one's going to underflow the accounting.  Maybe I shouldn't
+> > > > be writing code at 6am?
+> > > > 
+> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > index f7248002dad9..4eec6ee83e44 100644
+> > > > --- a/mm/huge_memory.c
+> > > > +++ b/mm/huge_memory.c
+> > > > @@ -18,6 +18,7 @@
+> > > >  #include <linux/shrinker.h>
+> > > >  #include <linux/mm_inline.h>
+> > > >  #include <linux/swapops.h>
+> > > > +#include <linux/backing-dev.h>
+> > > >  #include <linux/dax.h>
+> > > >  #include <linux/khugepaged.h>
+> > > >  #include <linux/freezer.h>
+> > > > @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+> > > >  		__split_huge_page_tail(head, i, lruvec, list);
+> > > >  		/* Some pages can be beyond EOF: drop them from page cache */
+> > > >  		if (head[i].index >= end) {
+> > > > -			ClearPageDirty(head + i);
+> > > > -			__delete_from_page_cache(head + i, NULL);
+> > > > +			struct folio *tail = page_folio(head + i);
+> > > > +
+> > > >  			if (shmem_mapping(head->mapping))
+> > > >  				shmem_uncharge(head->mapping->host, 1);
+> > > > -			put_page(head + i);
+> > > > +			else if (folio_test_clear_dirty(tail))
+> > > > +				folio_account_cleaned(tail,
+> > > > +					inode_to_wb(folio->mapping->host));
+> > > > +			__filemap_remove_folio(tail, NULL);
+> > > > +			folio_put(tail);
+> > > >  		} else if (!PageAnon(page)) {
+> > > >  			__xa_store(&head->mapping->i_pages, head[i].index,
+> > > >  					head + i, 0);
+> > > > 
+> > > 
+> > > Yup, that fixes the leak.
+> > > 
+> > > Tested-by: Dave Chinner <dchinner@redhat.com>
 > > 
-> > This made me think to change my rootfs, and of course the problem
-> > goes
-> > away once on something like a SCSI volume.
+> > Four hours of generic/522 running is long enough to conclude that this
+> > is likely the fix for my problem and migrate long soak testing to my
+> > main g/522 rig and:
 > > 
-> > So crawling through the dasd (instead of virtio) driver and I
-> > finally
-> > find the point where a change to dma_alignment (which you mentioned
-> > earlier) would actually fit.
+> > Tested-by: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Such a change fixes this for me, so I'll run it by our DASD guys.
-> > Thanks for your help and patience.
 > 
-> I'm assuming there's some driver or device requirement that's making
-> this
-> necessary. Is the below driver change what you're looking for? 
+> Just based on Willy's earlier comment.. what I would probably be a
+> little careful/curious about here is whether the accounting fix leads to
+> an indirect behavior change that does impact reproducibility of the
+> corruption problem. For example, does artificially escalated dirty page
+> tracking lead to increased reclaim/writeback activity than might
+> otherwise occur, and thus contend with the fs workload? Clearly it has
+> some impact based on Dave's balance_dirty_pages() problem reproducer,
+> but I don't know if it extends beyond that off the top of my head. That
+> might make some sense if the workload is fsx, since that doesn't
+> typically stress cache/memory usage the way a large fsstress workload or
+> something might.
+> 
+> So for example, interesting questions might be... Do your corruption
+> events happen to correspond with dirty page accounting crossing some
+> threshold based on available memory in your test environment? Does
+> reducing available memory affect reproducibility? Etc.
 
-Yup, that's exactly what I have (in dasd_eckd.c) and indeed gets things
-working again. Need to scrounge up some FBA volumes to test that
-configuration and the change there.
+Yeah, I wonder that too now.  I managed to trace generic/522 a couple of
+times before willy's patch dropped.  From what I could tell, a large
+folio X would get page P assigned to the fsx file's page cache to cover
+range R, dirtied, and written to disk.  At some point later, we'd
+reflink into part of the file range adjacent to P, but not P itself.
+I /think/ that should have caused the whole folio to get invalidated?
 
-> If so, I think
-> you might want this regardless of this direct-io patch just because
-> other
-> interfaces like blk_rq_map_user_iov() and blk_rq_aligned() align to
-> it.
+Then some more things happened (none of which dirtied R, according to
+fsx) and then suddenly writeback would trigger on some page (don't know
+which) that would write to the disk blocks backing R.  I'm fairly sure
+that's where the incorrect disk contents came from.
 
-Good point.
+Next, we'd reflink part of the file range including R into a different
+part of the file (call it R2).  fsx would read R2, bringing a new page
+into cache, and it wouldn't match the fsxgood buffer, leading to fsx
+aborting.
+
+After a umount/mount cycle, reading R and R2 would both reveal the
+incorrect contents that had caused fsx to abort.
+
+Unfortunately the second ftrace attempt ate some trace data, so I was
+unable to figure out if the same thing happened again.
+
+At this point I really need to get on reviewing patches for 5.20, so
+I'll try to keep poking at this (examining the trace data requires a lot
+of concentration which isn't really possible while sawzall construction
+is going on at home) but at worst I can ask Linus to merge a patch for
+5.19 final that makes setting mapping_set_large_folio a
+Kconfig/CONFIG_XFS_DEBUG option.
+
+--D
 
 > 
-> ---
-> diff --git a/drivers/s390/block/dasd_fba.c
-> b/drivers/s390/block/dasd_fba.c
-> index 60be7f7bf2d1..5c79fb02cded 100644
-> --- a/drivers/s390/block/dasd_fba.c
-> +++ b/drivers/s390/block/dasd_fba.c
-> @@ -780,6 +780,7 @@ static void dasd_fba_setup_blk_queue(struct
-> dasd_block *block)
->  	/* With page sized segments each segment can be translated into
-> one idaw/tidaw */
->  	blk_queue_max_segment_size(q, PAGE_SIZE);
->  	blk_queue_segment_boundary(q, PAGE_SIZE - 1);
-> +	blk_queue_dma_alignment(q, PAGE_SIZE - 1);
->  
->  	q->limits.discard_granularity = logical_block_size;
->  
-> --
-
+> Brian
+> 
+> > --D
+> > 
+> > > Cheers,
+> > > 
+> > > Dave.
+> > > -- 
+> > > Dave Chinner
+> > > david@fromorbit.com
+> > 
+> 
