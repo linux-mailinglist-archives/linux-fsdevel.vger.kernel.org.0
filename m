@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CF3560CC7
+	by mail.lfdr.de (Postfix) with ESMTP id 12A71560CC5
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 00:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231491AbiF2W4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 18:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37428 "EHLO
+        id S231355AbiF2W4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jun 2022 18:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbiF2Wzs (ORCPT
+        with ESMTP id S230497AbiF2Wzs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 29 Jun 2022 18:55:48 -0400
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31DA40E79;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C331540E7A;
         Wed, 29 Jun 2022 15:55:06 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25TM4BP3014778;
-        Wed, 29 Jun 2022 22:54:26 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25TM4BJX014124;
+        Wed, 29 Jun 2022 22:54:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references :
  content-transfer-encoding : content-type : mime-version;
- s=corp-2021-07-09; bh=JN30TwFDewr2QAMMiNpOmoO5DRJLIhD0oG0NfTQac2M=;
- b=xiGIYd9f/xMCs857XSbx8dCz5b+Vws1vO6yQuZsYbPgjDVbC0Qyji5o8yui2IdtV/g6O
- 2+tYZwvuE6rezXusIXumyEyn2vusLBlG6Tdghe0gPZ0QsVxtYDU8pqTlknZRHHr/EEVZ
- k3xcTIr0NRPizkaGj88D3NvAPJgN3uPFUm4GL39kcj/+cUAKMV8f4edohxv1xQ0IDUet
- pB+3OiR3s3PkAAKzF6VkvqfJpJFADOpu2JoLj4QS70wlw84Mh1wzltwfmZK1TdtPkba+
- 9mHZUrUk61BGf1bhNCDabJwdWb9DLCzQ5PDW/wsuOPmDzvmmda6nfm5wS/T1xFzmSfYp lQ== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwrscjfdf-1
+ s=corp-2021-07-09; bh=bu6Kg8V6EURiP43d9/pn7l+bO/MiGGXeBd3HJz6VVj8=;
+ b=D3/4oE1ECUbV+38oNcl25j+PmHel0RLAtMJLl542NeziuvLC3X8vtq263kX2AOVXTHkf
+ DHjc6+HFDReojXyQC72NXEPjw5UbXZBQ4LtK+JjTPLvAMva1mwzIceUOf1LB6qzWXMS5
+ DTlCRbAYgo+Yf+DHzx+fbO1uhTBV+PcF/WoAaAdVH+tGslDmGWcvLc0B2LcbvIqVjO0O
+ 3c5o52CiRcMu3r9+dr0waoT0PFiLMYY61jvQErvuZdFDrU7j+IA9fIFlXfc4CT5GynMJ
+ Rhh6ZZ1stndSuaeQ1AF7/xE4t54J6sPOxt/R2geXbnkn6RwV9gtBzZo8jJyFAQpUeFzI bg== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwsysjgue-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Jun 2022 22:54:27 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25TMf8oU003611;
+        Wed, 29 Jun 2022 22:54:26 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gwrt98nsb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 29 Jun 2022 22:54:26 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25TMexTD033601;
-        Wed, 29 Jun 2022 22:54:25 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gwrt3wyx0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jun 2022 22:54:25 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kxqPys6XKCVxMmJox4iFmWF9QVLBovqYrvkkmYc3Fa+eLvkXPBFGEnU8+8SJk085+tGJlKaMD7zEM1DuSVc7ekRS8kTY9hZ3u7Aa4tz/OIR0ywfdyr8UVxa0xDclLBju1k+m8BNhBMatHbW3lgd/RaItaPv3XMMRc46B418QE/wW3dEEkiVGU2QKMDTHDsCPMdZgtU8GFEpL2AD/rc261MFY4NhOnJvnbSHYIkCCQJ6Q4pgPH97MJY4QkhWuYSJF7WBHORktF9zwjWvQ+lDcrz4qffAw06lElaGlwjG1dr0Prj8agJeA3UYWie9JMtG16wwdn81HkJ6SFdoXuIyOVQ==
+ b=mKwXqWZiZpZKbJ370CH/kqhj+/3jey5EtrdJfrFSTKM+fACjbD31ZU776Mb/mMZ3/GNkFv3bq8ZdFXou3CqmkwnaSIx+U7i++gYYnGqz/crS0bxeBxj/Y4lAy59wtTIxTUjySctaOlHsqVeweQqgYtGogtCJhU9CfCTiPFxdK6v8PRPP5qB59nwDCoIxO0lJce4D0i8fj6kCJTGgt/tBSvP3r/syis6w14gv4n7Eq0TsDkynFZxQRd4iBFWCuGDa8Ja1m5l8YxmTNrvDt99GXiyrz6AxuazViFrvsIS2N4xjds0Q4Evdpzhvb2wExkKhtRNu1mi+SQFyIwdZ1IHi2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JN30TwFDewr2QAMMiNpOmoO5DRJLIhD0oG0NfTQac2M=;
- b=GVGx2jmBQizH6ryje/CWBXM+k3qdddt9RSv0cO0BnvRUpudZb3hI4kPmuCWWCb0Fq4eHjB7ZXjbioY7UtvKBTqg9pjb0Lf0zEN37hfApVd2G5yHQB0XE65P+N+482RGZ/nI/YzP5e4kz9Rtx90C3S8ftiXSFxUMJ1c9Y1KPw6nVlzqf36a50TyUt3SvsjoRgXCmbXeO6HCK949uinfXTWOX4dINqcvM46f2Gq6m3ilV2jZlsNt8yoxmqX0QQy6JiZLhC/sUruogb8zAXn4EnpZ2swgAKNlR/XtqCZA+DM/aRfQ3ezLgsGCMicBD5DXPdDXuDq9p+VLb5Msfv9iHj5w==
+ bh=bu6Kg8V6EURiP43d9/pn7l+bO/MiGGXeBd3HJz6VVj8=;
+ b=XvuUy4i692zqDxNtpVl9tXde9R+yqJOnu3Zof2oXjADhMJ72MNcUXZ87GFvVSx/7qznZeH3iOxV970p/Oh66CCZrAiLT78ZqYHvV1Kn4tJPMw3b5SSCvZDI1dIzRWHl3AtioBPfR61F+bpum0aSGsXLzIZkLdE9kw5GyqdTzaptYMKrs1Hnm3HLoP0j3IQ+snQJJFiB2GyTSXXHKSM/f9DhTjCBjp3qA02kgf8uCMXqxRpHbkMHb7cRm5/apsHTFXZ+V6DVGuN9OmxGY9p/Bp7NZA/aub7PNsH1z7AQFoDwK9Fu12vlHOrsJhtAT75JLgEZov7NiUEflVKxG4BI7eA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JN30TwFDewr2QAMMiNpOmoO5DRJLIhD0oG0NfTQac2M=;
- b=y9ni/9qg4P9YfPCtz/x+B1laUaMR57EdQbrUqh9y4NY5CgUWc6qGAs8eZM7loDdqtdVNLPb/OQDxgnQsqPstQ/bMcdODK++fO80qF+oQ4viq3VCFqqsaCd/j3L5aze5bBl/ikhmpQlPuoVkFZuR7ZwX++wJNACgfMspIntj3sEI=
+ bh=bu6Kg8V6EURiP43d9/pn7l+bO/MiGGXeBd3HJz6VVj8=;
+ b=wjQIutiE6xIYA5qB7y1slmX77AVTExZOSOowTTHxvv5N8DEuaAdxORSmo7Mg8xOKVjuVBovpQFz3mRahzI9k+Ap1pHX3XIUA3usg8fxZ+0UU7hx8M0NQ3fec6NYujIN8uFvFTUfoX6e2QR09aYI8YHyrbA74ZF9l9Om0QzDNbf0=
 Received: from BN8PR10MB3220.namprd10.prod.outlook.com (2603:10b6:408:c8::18)
  by DM5PR10MB1834.namprd10.prod.outlook.com (2603:10b6:3:10b::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Wed, 29 Jun
- 2022 22:54:22 +0000
+ 2022 22:54:24 +0000
 Received: from BN8PR10MB3220.namprd10.prod.outlook.com
  ([fe80::28d2:e82b:afa1:bbc2]) by BN8PR10MB3220.namprd10.prod.outlook.com
  ([fe80::28d2:e82b:afa1:bbc2%3]) with mapi id 15.20.5373.018; Wed, 29 Jun 2022
- 22:54:22 +0000
+ 22:54:24 +0000
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 To:     akpm@linux-foundation.org, willy@infradead.org
 Cc:     Khalid Aziz <khalid.aziz@oracle.com>, aneesh.kumar@linux.ibm.com,
@@ -75,9 +75,9 @@ Cc:     Khalid Aziz <khalid.aziz@oracle.com>, aneesh.kumar@linux.ibm.com,
         pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
         sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
         yzaikin@google.com
-Subject: [PATCH v2 3/9] mm/mshare: make msharefs writable and support directories
-Date:   Wed, 29 Jun 2022 16:53:54 -0600
-Message-Id: <397ad80630444b90877625a1e94dd81392fc678e.1656531090.git.khalid.aziz@oracle.com>
+Subject: [PATCH v2 4/9] mm/mshare: Add a read operation for msharefs files
+Date:   Wed, 29 Jun 2022 16:53:55 -0600
+Message-Id: <05649b455e2191642e85cc5522ef39ad49fdeca3.1656531090.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1656531090.git.khalid.aziz@oracle.com>
 References: <cover.1656531090.git.khalid.aziz@oracle.com>
@@ -88,61 +88,61 @@ X-ClientProxiedBy: SN7P222CA0021.NAMP222.PROD.OUTLOOK.COM
  (2603:10b6:408:c8::18)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 89f1ae8c-776c-42ab-6d3e-08da5a224ec1
+X-MS-Office365-Filtering-Correlation-Id: bcbe23e5-7238-42f1-45d4-08da5a225003
 X-MS-TrafficTypeDiagnostic: DM5PR10MB1834:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TvOMdoY9lU2Z3Vt5i+ht6x2LKUG5MUaV6G5akCXAtdMBxbXrHL+Z54ol1Qr1g9cnP5eeDRnzFh45kJu/bj73G39d/GV8XAlmPV2JKwT2caKjLtZblblRRaO7uCheTnf8Dz7ne/14Gyn+TNJiPsmR4lFATAJDYQhBilTpKPVUeK1PFY3BW3GikBXfDozNq4ofMciBwSIMjXTNstBV5rj7eFeZBUrq1QbTGRnr/j8mK44lihEDRTVc8zv+C04lKApt5X9Un8TwKGVw8eritl3A9Cn8bfXRMl0b+HZhItxYvhmCJmKJLAbf9NVNecl8zGmWZ284NP+U67ZssmqpEF4p9ImaDNTC16R7a/xkXoSF+8wATb6vCncCvA2QWmjlNXg74nPB5xMqgjkayilb1i0gWBi0Mq3u5a5/odtbKBTUgWFJsIPItTfuUiuuj89EurRiyDl+l7Xz1eqXL53wRcrs35sbicXphZfskYyj5+KJiBgnQlNd9GaafHVf+mnAuIz/xXnODwDr07+enmFwjUZXgCvsoLaTTsik/MaqW1q3GRjVZuRoxawZGOYsZ1DOrAI7J235XYqXDIu2tzjBki4M6/+P89C4W2aXrRXlq0CaysRYWhlM0vEYO2KUaA0puu/0hEfjbvRnao8uUfJKiXvXkTc9zRmKQZthe9Q/d+47fERUpofs9GHozc+hBkOBGiaku/3Y7nXtp+1ub4KEaCFyhO9KhSrQruLAYfPmDMlbb/I=
+X-Microsoft-Antispam-Message-Info: aBMZGCd+K87z5P82rBeTvjdKzQmPVb6EGxZKAktrda2E1pBCVVykrTsEm1BjqY73i4xb0T7JySkF9PQyqFTDVjHoG4J+/xFurwBv/YNXs1LcQeqZkVdH1CU0NbAnWcpgsTVuUhr5opIjPJoEGOBqCYN9a0joziJDdzq5kqoAzxVzDtHi9dDGTJ6N1FmPcwBeRhHy7tGW2FqsONdmoSBplmykJIhZMp1l8SiqgvY9la3NcSTCp9pKKwAexYaQxADRauRkxxlA1rI4GNwuo5fbdKX+ZT2wAou/VQ1WHBVkO9QmgpT0S+C8Ji1K5AOBzQrCkhl7IDH6GTT3MUDpFHcDcTXYn+YASltk+m6GI+w77QIA1usAM3tvHgg3AKc0wNHzmSVammQ57OHokVRtYDkz6SUaCT8LmctP0mSpVdYgTr9vmXwpBYvufVjLZRej54WR4BrP7Klc8DOyuCxU4WHU5pLaZSM+m/NEPEckJ5AJZOOB2dt4BqJJsajz0WGNt/tprLZs657WbyD3AeQnbZag1yLWc3SfI69bWeiaKvWcpWR+45L6XEgPSbI/wAQ5VqiRf+Csy7p1gqIoiki7Zu1RdyP1lLeespRe8MoLBBdzkV5cnO0NVeUHbFVOBxCv2Sgys/d5ixw8QywaMuaE8jR0PeUI39LDhjJ99wLudNxxVsrQkh3WVXxA/E02nFbXx0YCgpBlLDMYQC0DHiA2+ntpYc2sKgNE8n9k/065frkpBQQ=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB3220.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(376002)(346002)(136003)(39860400002)(366004)(396003)(6666004)(52116002)(41300700001)(186003)(6506007)(8676002)(66556008)(2616005)(6512007)(66476007)(38100700002)(83380400001)(44832011)(7416002)(8936002)(316002)(36756003)(2906002)(86362001)(66946007)(6486002)(5660300002)(478600001)(4326008);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5LOwC7whcotThAtb98K2b0DZ1yWE2VQcudoZffMdPnBHSzMC+XXNj45ai+pD?=
- =?us-ascii?Q?Fsapu6QJPJiWuUDzN5biiMxsX9XvQra97QUPoAkFiftpJZOjIrRjFckmwbhG?=
- =?us-ascii?Q?y8sbpfXI/+GFTmBcUETc00r+qxqFKh3IDvsnJXX+SJxEKDp2PJxwoaZWiC+R?=
- =?us-ascii?Q?WjyctgMO7ERwJeM+ZYrd4aNDh66sViPZAV583KNYFLjSKq/zwVAdv440TfaM?=
- =?us-ascii?Q?dI8LAEIDCR7tuDYG6UDP1XhtRWG1psiRs+LSzniHE5ZaAXfDZcopEV9bZd01?=
- =?us-ascii?Q?TxHQ12T0/XmCNXHUNyzA+HCDFCD4Gr2OMgRLZ3gfAtc0IeW/ie38f8QOUia8?=
- =?us-ascii?Q?kQPLKNnlVDVVrPghbd1noItf3D1Ql/RadzfP3CU5/+N9MQayJVWP/b9o0jLt?=
- =?us-ascii?Q?aJcm2sARgpjxp2MKRh9m8K9fdtJPdf0x0JFQHdtoEF8RjCw9vQfPb0pdrLDJ?=
- =?us-ascii?Q?Fdcf4v7h9tmHkBlzTz877UUEXKfKHydNg/pKPXOjmIeww3eUEpDOR06KJvEf?=
- =?us-ascii?Q?kIY4Wh+RRmj2VkaMFdFCRJIpX7NglTdxF8rvpnL246jJb2BuRe2+d5HYYUkQ?=
- =?us-ascii?Q?elcmcD/GhNUTflkagxsFjAo3vVR2+C8nhKvbeftpIPbSk9jBaT2/zKYHlvPc?=
- =?us-ascii?Q?t19nTsHOVZAhrJ6xWs0wsjmYr3vrNPF8lSFl0IVa6MOhosxoYisUx35xGAM/?=
- =?us-ascii?Q?SSSa0MMeraYbfTm3RbtOZQKWGoD5JL/kMMLAGHh9k4lW8yxH3TTK/YZY148s?=
- =?us-ascii?Q?JWBhndGybxbaPZd8r/mKKPd9cH2R//wch5VLBdZmbf+eeZDvzCIYsphm0trH?=
- =?us-ascii?Q?FNX2jeWpv0wOeF4YruFqfw5645VkdaYeRzet00mf0Ewwx20jVEIN0LtxjkAP?=
- =?us-ascii?Q?Yi/MgIiKYK5vDWiC9sPlUfgCpWt1ryb+aBj5KDYWvpzWLoMVuU7cQeUrk9li?=
- =?us-ascii?Q?68MJEWFntZMeoE+z9wZ+daM1Dyu2z94ZPCVJck0LbZh7e1xiQWsyRiWdt5K1?=
- =?us-ascii?Q?mA4K97nRbZGDIqYgwmMfIhfXH7eUmQ66P4pu4qrQaewpPmkFMp0Wiw6cOvcu?=
- =?us-ascii?Q?DzHZkX9nY3KxO2nqi1EgQfqhSiA3OcwBcPi81L+oH3I6nz/1awyr9EheC8jh?=
- =?us-ascii?Q?BMVlprIPRs5fEkSX2aAsN+Qy1wxvOmcYZc9m//XZjrUl7LvWo9EE08jLjCr0?=
- =?us-ascii?Q?snrKkcxY99/q+dgYto6do/3E9fCLvU0MhKWLitAH2tDjHlm79X0O/KNpcBhw?=
- =?us-ascii?Q?BvhcJjvn5j/m9wP8XpVVARMUlz3NIW2SUcpfJvI+LuDgxTvOX+wS9ACnCiXE?=
- =?us-ascii?Q?/gq+IFk/i2LRSwbuflBg36//PgBx6P/onNkib18CuJtOPkqALVuwUxkrGOW2?=
- =?us-ascii?Q?WNjTUYd7ahKMk70njMTOQN0I2rL6DeaaBPLLMAcrR3VKdF4y3ZG4pmPLVPPP?=
- =?us-ascii?Q?Foa7Jt3gZieQkY3PhPIGhePSEk1KZzUMLMgdHWENuG8BCcO2ZArAXZjQ8dEe?=
- =?us-ascii?Q?cSt030/gC9ZxirBdt/iJN0TmqhpjamPM7kNMgk30zcJdqHvq0Kp3Rbp+yn4E?=
- =?us-ascii?Q?yWqad5dcciCmaEW1j3QhG2a3k8gbGIN7dgcUYHBTsuqcg85hTcu9JBCdfJyz?=
- =?us-ascii?Q?o/0pj+vj2u5wY2Ie+o3WlX6aKQ/aqBPgduEDJeLMhGiv?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ArbjledstvDtFehzXPhh1DPhMbcACud7ChR6p3vfIWCgqA79YIsiAOsWANBf?=
+ =?us-ascii?Q?os/XNzuTOx3rGS/ZCRrjybjrGIcRj+RXHwKDeFHaFcz5N1VV0VffQyDUKesf?=
+ =?us-ascii?Q?r7vFJF1afLvdKBLOe7JV/XWWwo2aB609TmuggZKbCeZt1ZSivoeRlB43N4nC?=
+ =?us-ascii?Q?jRV2uLr5VV+lAeFcO9ZW9qMIIC3lXpoqly1+sJ+d5fsY0UkWdkSlmqlyu6Ms?=
+ =?us-ascii?Q?/9sqRrYPUakQGasksARcCjLxmgm0BYUx6sba+TTnPF5zbOt3sPFylr43a/Gb?=
+ =?us-ascii?Q?22LxeA8iLUCZFATsRVzx4rL+l4n/wy/oNwK+DnFNvp0uV4CtqT03K7hjDhh2?=
+ =?us-ascii?Q?60tiKyw5rn6WnsAxeDv9OnCMY6zSEJceUVVq8lFquClQtCmhVNRXGb30BXCY?=
+ =?us-ascii?Q?wfK5peTy0PvrCLtMF9gVE2wTEltJVoFr8Kn+858h+lVv6vdIg2F/bMjvlpij?=
+ =?us-ascii?Q?PqvGxGXVsFh94cfNlINriiGgVd/wsUvztefQTnrMMYCoNdEduIK/8Qg+v368?=
+ =?us-ascii?Q?H9atrbgky0k7cGDWU7Rpd0DVeKc1He9zTMeB0/S2Sd1UodUb2CJokvcfqkHr?=
+ =?us-ascii?Q?m62SJOdom5n5Z1EUIxEgek5i6j6IC2CwYxY7hwRqSJl690+srnPfSHi86BCm?=
+ =?us-ascii?Q?l4/D5/wc0RRIVj2sVFYJs665Puu9vbgpIDe2rmfjTekXnOhtu92Xmn1QPzi/?=
+ =?us-ascii?Q?Qq1yms0WNafDp9nyn/kXaHMatpv3GnMNAgfL57o/m4mpsH1ScpKnihPQ20y9?=
+ =?us-ascii?Q?NgC2puU7svz92HT6qOUrN3zR4KMXWmbV/R9/i7VyGPw7BEYo49qF3MTbGmWB?=
+ =?us-ascii?Q?plJdVcrWREoHOpPutu4gA9R0BZO7ZHLOPc3Q0zX7BNTikSOP8+Z6sRuZC7H0?=
+ =?us-ascii?Q?Uh9w7QbtoHxQR/4KMIyrkgHCVc8wdcMHzksFxnt9N9+JIyauVN96TSeLxsjA?=
+ =?us-ascii?Q?9H/tssams01o66e4xdhtM2j2DGvj3URXnt9Z2yx/P17lcDF9cAwwVy+gxqKi?=
+ =?us-ascii?Q?FsM4Fl5Y2rNP+2/J7d7o95cckmwyvPnb0tFfK6Voan9syxQ0UFmvIekka9mZ?=
+ =?us-ascii?Q?lXOvdDeoK240Qdjrl8O9Q6zJh6cZaYptDy009CcA5Wdo8Zp62aJJ6rQqnblc?=
+ =?us-ascii?Q?zLw23OlQHOf0bfd2z2v/1a94XWknLEgzepi/CHp722rretbtk9Vty1aLSJkM?=
+ =?us-ascii?Q?DNwtxPku8kL2gySP3IempCYgkZNKFwBxUhOzIPU91IubSBlSiZg13XYw0R4H?=
+ =?us-ascii?Q?kfOzUoGIsojtkmvn0fuJYvj/29kzEFGa0HSI133SewqTySjS9z8vX6oPMS6g?=
+ =?us-ascii?Q?PxyF3bIjcqQ2rfAohIVUTBHcLco+6UUulmKecc7YFop7FtPnNGycVOpGLC7A?=
+ =?us-ascii?Q?ONN2wQeCKzlH3x483gPYtja//Dw2oDP8dHsvOFjRBCNdjHDthKfTdSsJZv0S?=
+ =?us-ascii?Q?AgiM4x/TGZD38LCrkA2N2La+TLDiCGKqW16vCaaQPRxdhCAJLjMn8o1XkjP9?=
+ =?us-ascii?Q?p0Jb0Tn0ZujnSYV4Vy/qyaPruTQbkCjfYkR6bSvD6cKzHDFEWy5J29fXiYog?=
+ =?us-ascii?Q?0n5Mgo7PlHpsAXyQhEklTKoexCI0PNG9ZqPVat1C8ISbWdbGmOhqL68gSqlp?=
+ =?us-ascii?Q?pIINKoAqoFxso4ch9efh8FUCwcvrYEOAa7eNxF6oRUmh?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89f1ae8c-776c-42ab-6d3e-08da5a224ec1
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcbe23e5-7238-42f1-45d4-08da5a225003
 X-MS-Exchange-CrossTenant-AuthSource: BN8PR10MB3220.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2022 22:54:22.5377
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2022 22:54:24.6782
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HPzZC3+RaheVNwclfPK7IFrZrq1zwAGHEuPc1KQG3y6jlw4+XdrWHq246lVOmec19E543aO1RpBWfePmuUmhQg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: iwa8HiflhXN1KEHupPOMSacFWcbUa4rbemKDZTEbY4PGl5AIQ8hrx0CFiFnpLRcQY/wDYZ04zeHNl7K2hew2fQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR10MB1834
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
  definitions=2022-06-29_22:2022-06-28,2022-06-29 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=807 suspectscore=0
- phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ mlxscore=0 phishscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2204290000 definitions=main-2206290078
-X-Proofpoint-ORIG-GUID: cttYVK8PRrb9YnjQKWbem_T-if2Bz2V9
-X-Proofpoint-GUID: cttYVK8PRrb9YnjQKWbem_T-if2Bz2V9
+X-Proofpoint-ORIG-GUID: HCWQgYS3MvfQ3Qyt-YqwE_W-PqeTDxR3
+X-Proofpoint-GUID: HCWQgYS3MvfQ3Qyt-YqwE_W-PqeTDxR3
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -153,261 +153,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make msharefs filesystem writable and allow creating directories
-to support better access control to mshare'd regions defined in
-msharefs.
+When a new file is created under msharefs, allocate a new mm_struct
+that will hold the VMAs for mshare region. Also allocate structure
+to defines the mshare region and add a read operation to the file
+that returns this information about the mshare region. Currently
+this information is returned as a struct:
+
+struct mshare_info {
+	unsigned long start;
+	unsigned long size;
+};
+
+This gives the start address for mshare region and its size.
 
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 ---
- mm/mshare.c | 195 +++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 186 insertions(+), 9 deletions(-)
+ include/uapi/linux/mman.h |  5 +++
+ mm/mshare.c               | 64 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 68 insertions(+), 1 deletion(-)
 
+diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
+index f55bc680b5b0..56fe446e24b1 100644
+--- a/include/uapi/linux/mman.h
++++ b/include/uapi/linux/mman.h
+@@ -41,4 +41,9 @@
+ #define MAP_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
+ #define MAP_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
+ 
++struct mshare_info {
++	unsigned long start;
++	unsigned long size;
++};
++
+ #endif /* _UAPI_LINUX_MMAN_H */
 diff --git a/mm/mshare.c b/mm/mshare.c
-index 3e448e11c742..2d5924d39221 100644
+index 2d5924d39221..d238b68b0576 100644
 --- a/mm/mshare.c
 +++ b/mm/mshare.c
-@@ -21,11 +21,21 @@
- #include <linux/fileattr.h>
+@@ -22,8 +22,14 @@
  #include <uapi/linux/magic.h>
  #include <uapi/linux/limits.h>
-+#include <uapi/linux/mman.h>
+ #include <uapi/linux/mman.h>
++#include <linux/sched/mm.h>
  
  static struct super_block *msharefs_sb;
++struct mshare_data {
++	struct mm_struct *mm;
++	refcount_t refcnt;
++	struct mshare_info *minfo;
++};
  
-+static const struct inode_operations msharefs_dir_inode_ops;
-+static const struct inode_operations msharefs_file_inode_ops;
-+
-+static int
-+msharefs_open(struct inode *inode, struct file *file)
-+{
-+	return simple_open(inode, file);
-+}
-+
- static const struct file_operations msharefs_file_operations = {
--	.open		= simple_open,
-+	.open		= msharefs_open,
- 	.llseek		= no_llseek,
- };
- 
-@@ -42,6 +52,113 @@ msharefs_d_hash(const struct dentry *dentry, struct qstr *qstr)
- 	return 0;
+ static const struct inode_operations msharefs_dir_inode_ops;
+ static const struct inode_operations msharefs_file_inode_ops;
+@@ -34,8 +40,29 @@ msharefs_open(struct inode *inode, struct file *file)
+ 	return simple_open(inode, file);
  }
  
-+static struct dentry
-+*msharefs_alloc_dentry(struct dentry *parent, const char *name)
++static ssize_t
++msharefs_read(struct kiocb *iocb, struct iov_iter *iov)
 +{
-+	struct dentry *d;
-+	struct qstr q;
-+	int err;
++	struct mshare_data *info = iocb->ki_filp->private_data;
++	size_t ret;
++	struct mshare_info m_info;
 +
-+	q.name = name;
-+	q.len = strlen(name);
-+
-+	err = msharefs_d_hash(parent, &q);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	d = d_alloc(parent, &q);
-+	if (d)
-+		return d;
-+
-+	return ERR_PTR(-ENOMEM);
-+}
-+
-+static struct inode
-+*msharefs_get_inode(struct super_block *sb, const struct inode *dir,
-+			umode_t mode)
-+{
-+	struct inode *inode = new_inode(sb);
-+
-+	if (inode) {
-+		inode->i_ino = get_next_ino();
-+		inode_init_owner(&init_user_ns, inode, dir, mode);
-+
-+		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-+
-+		switch (mode & S_IFMT) {
-+		case S_IFREG:
-+			inode->i_op = &msharefs_file_inode_ops;
-+			inode->i_fop = &msharefs_file_operations;
-+			break;
-+		case S_IFDIR:
-+			inode->i_op = &msharefs_dir_inode_ops;
-+			inode->i_fop = &simple_dir_operations;
-+			inc_nlink(inode);
-+			break;
-+		case S_IFLNK:
-+			inode->i_op = &page_symlink_inode_operations;
-+			break;
-+		default:
-+			discard_new_inode(inode);
-+			inode = NULL;
-+			break;
-+		}
++	if (info->minfo != NULL) {
++		m_info.start = info->minfo->start;
++		m_info.size = info->minfo->size;
++	} else {
++		m_info.start = 0;
++		m_info.size = 0;
 +	}
-+
-+	return inode;
-+}
-+
-+static int
-+msharefs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
-+		struct dentry *dentry, umode_t mode, dev_t dev)
-+{
-+	struct inode *inode;
-+	int err = 0;
-+
-+	inode = msharefs_get_inode(dir->i_sb, dir, mode);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+
-+	d_instantiate(dentry, inode);
-+	dget(dentry);
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
-+
-+	return err;
-+}
-+
-+static int
-+msharefs_create(struct user_namespace *mnt_userns, struct inode *dir,
-+		struct dentry *dentry, umode_t mode, bool excl)
-+{
-+	return msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFREG, 0);
-+}
-+
-+static int
-+msharefs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
-+		struct dentry *dentry, umode_t mode)
-+{
-+	int ret = msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFDIR, 0);
-+
++	ret = copy_to_iter(&m_info, sizeof(m_info), iov);
 +	if (!ret)
-+		inc_nlink(dir);
++		return -EFAULT;
 +	return ret;
 +}
 +
-+static const struct inode_operations msharefs_file_inode_ops = {
-+	.setattr	= simple_setattr,
-+	.getattr	= simple_getattr,
-+};
-+static const struct inode_operations msharefs_dir_inode_ops = {
-+	.create		= msharefs_create,
-+	.lookup		= simple_lookup,
-+	.link		= simple_link,
-+	.unlink		= simple_unlink,
-+	.mkdir		= msharefs_mkdir,
-+	.rmdir		= simple_rmdir,
-+	.mknod		= msharefs_mknod,
-+	.rename		= simple_rename,
-+};
-+
- static void
- mshare_evict_inode(struct inode *inode)
- {
-@@ -58,7 +175,7 @@ mshare_info_read(struct file *file, char __user *buf, size_t nbytes,
- {
- 	char s[80];
- 
--	sprintf(s, "%ld", PGDIR_SIZE);
-+	sprintf(s, "%ld\n", PGDIR_SIZE);
- 	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
- }
- 
-@@ -72,6 +189,38 @@ static const struct super_operations mshare_s_ops = {
- 	.evict_inode = mshare_evict_inode,
+ static const struct file_operations msharefs_file_operations = {
+ 	.open		= msharefs_open,
++	.read_iter	= msharefs_read,
+ 	.llseek		= no_llseek,
  };
  
+@@ -73,12 +100,43 @@ static struct dentry
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
 +static int
-+prepopulate_files(struct super_block *s, struct inode *dir,
-+			struct dentry *root, const struct tree_descr *files)
++msharefs_fill_mm(struct inode *inode)
 +{
-+	int i;
-+	struct inode *inode;
-+	struct dentry *dentry;
++	struct mm_struct *mm;
++	struct mshare_data *info = NULL;
++	int retval = 0;
 +
-+	for (i = 0; !files->name || files->name[0]; i++, files++) {
-+		if (!files->name)
-+			continue;
-+
-+		dentry = msharefs_alloc_dentry(root, files->name);
-+		if (!dentry)
-+			return -ENOMEM;
-+
-+		inode = msharefs_get_inode(s, dir, S_IFREG | files->mode);
-+		if (!inode) {
-+			dput(dentry);
-+			return -ENOMEM;
-+		}
-+		inode->i_mode = S_IFREG | files->mode;
-+		inode->i_atime = inode->i_mtime = inode->i_ctime
-+			= current_time(inode);
-+		inode->i_fop = files->ops;
-+		inode->i_ino = i;
-+		d_add(dentry, inode);
++	mm = mm_alloc();
++	if (!mm) {
++		retval = -ENOMEM;
++		goto err_free;
 +	}
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info) {
++		retval = -ENOMEM;
++		goto err_free;
++	}
++	info->mm = mm;
++	info->minfo = NULL;
++	refcount_set(&info->refcnt, 1);
++	inode->i_private = info;
 +
 +	return 0;
++
++err_free:
++	if (mm)
++		mmput(mm);
++	kfree(info);
++	return retval;
 +}
 +
- static int
- msharefs_fill_super(struct super_block *sb, struct fs_context *fc)
+ static struct inode
+ *msharefs_get_inode(struct super_block *sb, const struct inode *dir,
+ 			umode_t mode)
  {
-@@ -79,21 +228,49 @@ msharefs_fill_super(struct super_block *sb, struct fs_context *fc)
- 		[2] = { "mshare_info", &mshare_info_ops, 0444},
- 		{""},
- 	};
--	int err;
-+	struct inode *inode;
-+	struct dentry *root;
-+	int err = 0;
- 
--	err = simple_fill_super(sb, MSHARE_MAGIC, mshare_files);
--	if (!err) {
--		msharefs_sb = sb;
--		sb->s_d_op = &msharefs_d_ops;
--		sb->s_op = &mshare_s_ops;
-+	sb->s_blocksize		= PAGE_SIZE;
-+	sb->s_blocksize_bits	= PAGE_SHIFT;
-+	sb->s_magic		= MSHARE_MAGIC;
-+	sb->s_op		= &mshare_s_ops;
-+	sb->s_d_op		= &msharefs_d_ops;
-+	sb->s_time_gran		= 1;
-+
-+	inode = msharefs_get_inode(sb, NULL, S_IFDIR | 0777);
-+	if (!inode) {
-+		err = -ENOMEM;
-+		goto out;
- 	}
-+	inode->i_ino = 1;
-+	root = d_make_root(inode);
-+	if (!root) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	err = prepopulate_files(sb, inode, root, mshare_files);
-+	if (err < 0)
-+		goto clean_root;
-+
-+	sb->s_root = root;
-+	msharefs_sb = sb;
-+	return err;
-+
-+clean_root:
-+	d_genocide(root);
-+	shrink_dcache_parent(root);
-+	dput(root);
-+out:
- 	return err;
- }
- 
- static int
- msharefs_get_tree(struct fs_context *fc)
- {
--	return get_tree_single(fc, msharefs_fill_super);
-+	return get_tree_nodev(fc, msharefs_fill_super);
- }
- 
- static const struct fs_context_operations msharefs_context_ops = {
+ 	struct inode *inode = new_inode(sb);
+-
+ 	if (inode) {
+ 		inode->i_ino = get_next_ino();
+ 		inode_init_owner(&init_user_ns, inode, dir, mode);
+@@ -89,6 +147,10 @@ static struct inode
+ 		case S_IFREG:
+ 			inode->i_op = &msharefs_file_inode_ops;
+ 			inode->i_fop = &msharefs_file_operations;
++			if (msharefs_fill_mm(inode) != 0) {
++				discard_new_inode(inode);
++				inode = ERR_PTR(-ENOMEM);
++			}
+ 			break;
+ 		case S_IFDIR:
+ 			inode->i_op = &msharefs_dir_inode_ops;
 -- 
 2.32.0
 
