@@ -2,329 +2,349 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB8A562545
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 23:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81BF3562552
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 23:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237559AbiF3Vaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 17:30:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52036 "EHLO
+        id S237103AbiF3Vej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 17:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237469AbiF3Va3 (ORCPT
+        with ESMTP id S230392AbiF3Vei (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 17:30:29 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DED51B28
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 14:30:26 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id d17so390331wrc.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 14:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TK13O2fc2Qey/nv0w8Yb46V++JBjODuVf0Eb/jbY6Gc=;
-        b=H3MitQaRwHJtdIHW7Q0yV8AMtLIJ5fN2TAYTsv8ANTQdrxHy1APK5cKBkHMrH66THT
-         tM2gjSeVpOVxY+zTrqNGHXsHf1u3Uk6g5l6nlUhuuRnKOft2rpFffn9ceeL8/E+UC4Ws
-         8hF3stIJ3SQefsOUmMOuM2rzkm+pxUlRB5E6VM0Vpkq3roiIB4foy/0ueECQqIv1pvKd
-         IuEXSkf5AkU+H5FM5qTVp2egIr/K2VwXMsSXHkq26joE6ICs7u1LXBw4IlsBez7roZlc
-         qDA8FHIJWouhvuF6XU8Rr4URUmIOVx7N7MO9jyPBVDpEEstOvNpZsGaBoNycLzZMbIvr
-         2OvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TK13O2fc2Qey/nv0w8Yb46V++JBjODuVf0Eb/jbY6Gc=;
-        b=HYaH49DXULKu43FhYSmouQfOtcgVjulHZzfevOivPpmU+R3mNlDx7qeDKg3rkNqpQM
-         Njnui93bldyaCCCoghoZIcTe6kgfhBGgrKiXUigW1AnFX7EHp6MtXqvgtRyCUYZ5SEFP
-         YU9brYNZ32CxniGHJOwW0UJ4wUPK/jZS0Kc1XS8eUGn5lSO/3L7ktSjlKlIUeeCZsLqH
-         5IVivDCc5pBunT86Dfdl96pH5DNB1eDC+WZPy0Is10WGMqVsSbWDzC0Gm5YgLLHg9xQb
-         TWP88/6ULoYuNeId3yZCQaLLVbyqqYh9PEWZTIILT+n4YPV3io/nH3clB1kDmzEZa/UK
-         +b+g==
-X-Gm-Message-State: AJIora8Mk+5KnOi651eEy4Bv1Ebmc6EsddiVu0YEPjr/BVg9tmIBlQhF
-        Ktu7bpW220WL7LG5WADlbB+8q2PQFBZHr8sqM9yGTQ==
-X-Google-Smtp-Source: AGRyM1sBdFPDTyGDxyCVLXM2YiEFLpMYmDgVyNGLTnahTzUn7DUvqpAjuY+EarzFOF5+Fb7jlTi5g474LC3KMTnGpJg=
-X-Received: by 2002:a5d:4304:0:b0:21b:9b2c:be34 with SMTP id
- h4-20020a5d4304000000b0021b9b2cbe34mr11026223wrq.577.1656624625307; Thu, 30
- Jun 2022 14:30:25 -0700 (PDT)
+        Thu, 30 Jun 2022 17:34:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D2D4475B;
+        Thu, 30 Jun 2022 14:34:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C4E02B82D5A;
+        Thu, 30 Jun 2022 21:34:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FEAC34115;
+        Thu, 30 Jun 2022 21:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656624874;
+        bh=QUYChKIH5jkJFejFJhzaJZW9GlRUXUy7m5NnF5YR/lg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QwitmLFyVG60TsbdfkulminJEZ5nwrrVqfhExwyOd1V/eLDLP47GZgDwPDeM+/ecX
+         eNLwcJOjpCL69OuFrCkZqHOt2OeRonCXj6FXZNjcP9Ul1sbHMZ5XC9ZVXz21HyFpl2
+         q0K/kQiTaCtKMJ7ET3Ig85OfB55/wiwm/wXtCOl8ZJuGxVu5RKyZ+Yjj5HOfCJ012t
+         PA8x9pKw9HK6MD9BrAGD5eQKHY6qQspVCA+jZl1/p5TX+pROVwKdzavdOJ4tlICE1R
+         I8kIVcE9EITqs6NBdLwO59vF2OEtGHmkb7B+dWSFzu++FPZrLKUZC2H2P8CgXxSR6v
+         aIv/cqvlbR93Q==
+Date:   Thu, 30 Jun 2022 14:34:33 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org,
+        aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+Subject: Re: [PATCH v2 3/9] mm/mshare: make msharefs writable and support
+ directories
+Message-ID: <Yr4W6W1i0WOY6zag@magnolia>
+References: <cover.1656531090.git.khalid.aziz@oracle.com>
+ <397ad80630444b90877625a1e94dd81392fc678e.1656531090.git.khalid.aziz@oracle.com>
 MIME-Version: 1.0
-References: <20220623220613.3014268-1-kaleshsingh@google.com>
- <20220623220613.3014268-2-kaleshsingh@google.com> <Yrrrz7MxMu8OoEPU@bfoster>
- <CAC_TJvejs5gbggC1hekyjUNctC_8+3FmVn0B7zAZox2+MkEjaA@mail.gmail.com>
- <YrxEUbDkYLE6XF6x@bfoster> <CAC_TJvcRd7=9xGXP5-t8v3g5iFWtYANpGA-nTqaGZBVTwa=07w@mail.gmail.com>
- <Yr2NngYE2qX8WzPV@bfoster> <Yr2RI3dJ0B4TALE5@bfoster>
-In-Reply-To: <Yr2RI3dJ0B4TALE5@bfoster>
-From:   Kalesh Singh <kaleshsingh@google.com>
-Date:   Thu, 30 Jun 2022 14:30:14 -0700
-Message-ID: <CAC_TJvfpVR1ioD=S11XV4dqM0PvDBXB+CpgCwDp5RoB=BVYOKg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] procfs: Add 'size' to /proc/<pid>/fdinfo/
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        David.Laight@aculab.com, Ioannis Ilkos <ilkos@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <397ad80630444b90877625a1e94dd81392fc678e.1656531090.git.khalid.aziz@oracle.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 5:03 AM Brian Foster <bfoster@redhat.com> wrote:
->
-> On Thu, Jun 30, 2022 at 07:48:46AM -0400, Brian Foster wrote:
-> > On Wed, Jun 29, 2022 at 01:43:11PM -0700, Kalesh Singh wrote:
-> > > On Wed, Jun 29, 2022 at 5:23 AM Brian Foster <bfoster@redhat.com> wro=
-te:
-> > > >
-> > > > On Tue, Jun 28, 2022 at 03:38:02PM -0700, Kalesh Singh wrote:
-> > > > > On Tue, Jun 28, 2022 at 4:54 AM Brian Foster <bfoster@redhat.com>=
- wrote:
-> > > > > >
-> > > > > > On Thu, Jun 23, 2022 at 03:06:06PM -0700, Kalesh Singh wrote:
-> > > > > > > To be able to account the amount of memory a process is keepi=
-ng pinned
-> > > > > > > by open file descriptors add a 'size' field to fdinfo output.
-> > > > > > >
-> > > > > > > dmabufs fds already expose a 'size' field for this reason, re=
-move this
-> > > > > > > and make it a common field for all fds. This allows tracking =
-of
-> > > > > > > other types of memory (e.g. memfd and ashmem in Android).
-> > > > > > >
-> > > > > > > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > > > > > > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > > > > > ---
-> > > > > > >
-> > > > > > > Changes in v2:
-> > > > > > >   - Add Christian's Reviewed-by
-> > > > > > >
-> > > > > > > Changes from rfc:
-> > > > > > >   - Split adding 'size' and 'path' into a separate patches, p=
-er Christian
-> > > > > > >   - Split fdinfo seq_printf into separate lines, per Christia=
-n
-> > > > > > >   - Fix indentation (use tabs) in documentaion, per Randy
-> > > > > > >
-> > > > > > >  Documentation/filesystems/proc.rst | 12 ++++++++++--
-> > > > > > >  drivers/dma-buf/dma-buf.c          |  1 -
-> > > > > > >  fs/proc/fd.c                       |  9 +++++----
-> > > > > > >  3 files changed, 15 insertions(+), 7 deletions(-)
-> > > > > > >
-> > > > ...
-> > > > > >
-> > > > > > Also not sure if it matters that much for your use case, but so=
-mething
-> > > > > > worth noting at least with shmem is that one can do something l=
-ike:
-> > > > > >
-> > > > > > # cat /proc/meminfo | grep Shmem:
-> > > > > > Shmem:               764 kB
-> > > > > > # xfs_io -fc "falloc -k 0 10m" ./file
-> > > > > > # ls -alh file
-> > > > > > -rw-------. 1 root root 0 Jun 28 07:22 file
-> > > > > > # stat file
-> > > > > >   File: file
-> > > > > >   Size: 0               Blocks: 20480      IO Block: 4096   reg=
-ular empty file
-> > > > > > # cat /proc/meminfo | grep Shmem:
-> > > > > > Shmem:             11004 kB
-> > > > > >
-> > > > > > ... where the resulting memory usage isn't reflected in i_size =
-(but is
-> > > > > > is in i_blocks/bytes).
-> > > > >
-> > > > > I tried a similar experiment a few times, but I don't see the sam=
-e
-> > > > > results. In my case, there is not any change in shmem. IIUC the
-> > > > > fallocate is allocating the disk space not shared memory.
-> > > > >
-> > > >
-> > > > Sorry, it was implied in my previous test was that I was running ag=
-ainst
-> > > > tmpfs. So regardless of fs, the fallocate keep_size semantics shown=
- in
-> > > > both cases is as expected: the underlying blocks are allocated and =
-the
-> > > > inode size is unchanged.
-> > > >
-> > > > What wasn't totally clear to me when I read this patch was 1. wheth=
-er
-> > > > tmpfs refers to Shmem and 2. whether tmpfs allowed this sort of
-> > > > operation. The test above seems to confirm both, however, right? E.=
-g., a
-> > > > more detailed example:
-> > > >
-> > > > # mount | grep /tmp
-> > > > tmpfs on /tmp type tmpfs (rw,nosuid,nodev,seclabel,nr_inodes=3D1048=
-576,inode64)
-> > > > # cat /proc/meminfo | grep Shmem:
-> > > > Shmem:              5300 kB
-> > > > # xfs_io -fc "falloc -k 0 1g" /tmp/file
-> > > > # stat /tmp/file
-> > > >   File: /tmp/file
-> > > >   Size: 0               Blocks: 2097152    IO Block: 4096   regular=
- empty file
-> > > > Device: 22h/34d Inode: 45          Links: 1
-> > > > Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    =
-root)
-> > > > Context: unconfined_u:object_r:user_tmp_t:s0
-> > > > Access: 2022-06-29 08:04:01.301307154 -0400
-> > > > Modify: 2022-06-29 08:04:01.301307154 -0400
-> > > > Change: 2022-06-29 08:04:01.451312834 -0400
-> > > >  Birth: 2022-06-29 08:04:01.301307154 -0400
-> > > > # cat /proc/meminfo | grep Shmem:
-> > > > Shmem:           1053876 kB
-> > > > # rm -f /tmp/file
-> > > > # cat /proc/meminfo | grep Shmem:
-> > > > Shmem:              5300 kB
-> > > >
-> > > > So clearly this impacts Shmem.. was your test run against tmpfs or =
-some
-> > > > other (disk based) fs?
-> > >
-> > > Hi Brian,
-> > >
-> > > Thanks for clarifying. My issue was tmpfs not mounted at /tmp in my s=
-ystem:
-> > >
-> > > =3D=3D> meminfo.start <=3D=3D
-> > > Shmem:               572 kB
-> > > =3D=3D> meminfo.stop <=3D=3D
-> > > Shmem:             51688 kB
-> > >
-> >
-> > Ok, makes sense.
-> >
-> > > >
-> > > > FWIW, I don't have any objection to exposing inode size if it's com=
-monly
-> > > > useful information. My feedback was more just an fyi that i_size do=
-esn't
-> > > > necessarily reflect underlying space consumption (whether it's memo=
-ry or
-> > > > disk space) in more generic cases, because it sounds like that is r=
-eally
-> > > > what you're after here. The opposite example to the above would be
-> > > > something like an 'xfs_io -fc "truncate 1t" /tmp/file', which shows=
- a
-> > > > 1TB inode size with zero additional shmem usage.
-> > >
-> > > From these cases, it seems the more generic way to do this is by
-> > > calculating the actual size consumed using the blocks. (i_blocks *
-> > > 512). So in the latter example  'xfs_io -fc "truncate 1t" /tmp/file'
-> > > the size consumed would be zero. Let me know if it sounds ok to you
-> > > and I can repost the updated version.
-> > >
-> >
-> > That sounds a bit more useful to me if you're interested in space usage=
-,
-> > or at least I don't have a better idea for you. ;)
-> >
-> > One thing to note is that I'm not sure whether all fs' use i_blocks
-> > reliably. E.g., XFS populates stat->blocks via a separate block counter
-> > in the XFS specific inode structure (see xfs_vn_getattr()). A bunch of
-> > other fs' seem to touch it so perhaps that is just an outlier. You coul=
-d
-> > consider fixing that up, perhaps make a ->getattr() call to avoid it, o=
-r
-> > just use the field directly if it's useful enough as is and there are n=
-o
-> > other objections. Something to think about anyways..
-> >
+On Wed, Jun 29, 2022 at 04:53:54PM -0600, Khalid Aziz wrote:
+> Make msharefs filesystem writable and allow creating directories
+> to support better access control to mshare'd regions defined in
+> msharefs.
+> 
+> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+> ---
+>  mm/mshare.c | 195 +++++++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 186 insertions(+), 9 deletions(-)
+> 
+> diff --git a/mm/mshare.c b/mm/mshare.c
+> index 3e448e11c742..2d5924d39221 100644
+> --- a/mm/mshare.c
+> +++ b/mm/mshare.c
+> @@ -21,11 +21,21 @@
+>  #include <linux/fileattr.h>
+>  #include <uapi/linux/magic.h>
+>  #include <uapi/linux/limits.h>
+> +#include <uapi/linux/mman.h>
+>  
+>  static struct super_block *msharefs_sb;
+>  
+> +static const struct inode_operations msharefs_dir_inode_ops;
+> +static const struct inode_operations msharefs_file_inode_ops;
+> +
+> +static int
+> +msharefs_open(struct inode *inode, struct file *file)
+> +{
+> +	return simple_open(inode, file);
+> +}
+> +
+>  static const struct file_operations msharefs_file_operations = {
+> -	.open		= simple_open,
+> +	.open		= msharefs_open,
+>  	.llseek		= no_llseek,
+>  };
+>  
+> @@ -42,6 +52,113 @@ msharefs_d_hash(const struct dentry *dentry, struct qstr *qstr)
+>  	return 0;
+>  }
+>  
+> +static struct dentry
+> +*msharefs_alloc_dentry(struct dentry *parent, const char *name)
+> +{
+> +	struct dentry *d;
+> +	struct qstr q;
+> +	int err;
+> +
+> +	q.name = name;
+> +	q.len = strlen(name);
+> +
+> +	err = msharefs_d_hash(parent, &q);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	d = d_alloc(parent, &q);
+> +	if (d)
+> +		return d;
+> +
+> +	return ERR_PTR(-ENOMEM);
+> +}
+> +
+> +static struct inode
+> +*msharefs_get_inode(struct super_block *sb, const struct inode *dir,
+> +			umode_t mode)
+> +{
+> +	struct inode *inode = new_inode(sb);
+> +
+> +	if (inode) {
 
-Hi Brian,
+Not sure why you wouldn't go with the less-indently version:
 
-Thanks for pointing it out. Let me take a look into the xfs case.
+	if (!inode)
+		return ERR_PTR(-ENOMEM);
 
->
-> Oh, I wonder if you're looking for similar "file rss" information this
-> series wants to collect/expose..?
->
-> https://lore.kernel.org/linux-fsdevel/20220624080444.7619-1-christian.koe=
-nig@amd.com/#r
+	inode->i_ino = get_next_ino();
+	<etc>
 
-Christian's series seems to have some overlap with what we want to
-achieve here. IIUC it exposes the information on the per process
-granularity. Perhaps if that approach is agreed on, I think we can use
-the file_rss() f_op to expose the  per file size in the fdinfo for the
-cases where the i_blocks are unreliable.
+> +		inode->i_ino = get_next_ino();
+> +		inode_init_owner(&init_user_ns, inode, dir, mode);
+> +
+> +		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+> +
+> +		switch (mode & S_IFMT) {
 
-Thanks,
-Kalesh
+Shouldn't we set the mode somewhere?
 
->
-> Brian
->
-> > Brian
-> >
-> > > Thanks,
-> > > Kalesh
-> > >
-> > > >
-> > > > Brian
-> > > >
-> > > > > cat /proc/meminfo > meminfo.start
-> > > > > xfs_io -fc "falloc -k 0 50m" ./xfs_file
-> > > > > cat /proc/meminfo > meminfo.stop
-> > > > > tail -n +1 meminfo.st* | grep -i '=3D=3D\|Shmem:'
-> > > > >
-> > > > > =3D=3D> meminfo.start <=3D=3D
-> > > > > Shmem:               484 kB
-> > > > > =3D=3D> meminfo.stop <=3D=3D
-> > > > > Shmem:               484 kB
-> > > > >
-> > > > > ls -lh xfs_file
-> > > > > -rw------- 1 root root 0 Jun 28 15:12 xfs_file
-> > > > >
-> > > > > stat xfs_file
-> > > > >   File: xfs_file
-> > > > >   Size: 0               Blocks: 102400     IO Block: 4096   regul=
-ar empty file
-> > > > >
-> > > > > Thanks,
-> > > > > Kalesh
-> > > > >
-> > > > > >
-> > > > > > Brian
-> > > > > >
-> > > > > > >
-> > > > > > >       /* show_fd_locks() never deferences files so a stale va=
-lue is safe */
-> > > > > > >       show_fd_locks(m, file, files);
-> > > > > > > --
-> > > > > > > 2.37.0.rc0.161.g10f37bed90-goog
-> > > > > > >
-> > > > > >
-> > > > >
-> > > >
-> > > > --
-> > > > To unsubscribe from this group and stop receiving emails from it, s=
-end an email to kernel-team+unsubscribe@android.com.
-> > > >
-> > >
->
+> +		case S_IFREG:
+> +			inode->i_op = &msharefs_file_inode_ops;
+> +			inode->i_fop = &msharefs_file_operations;
+> +			break;
+> +		case S_IFDIR:
+> +			inode->i_op = &msharefs_dir_inode_ops;
+> +			inode->i_fop = &simple_dir_operations;
+> +			inc_nlink(inode);
+> +			break;
+> +		case S_IFLNK:
+> +			inode->i_op = &page_symlink_inode_operations;
+> +			break;
+> +		default:
+> +			discard_new_inode(inode);
+> +			inode = NULL;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return inode;
+> +}
+> +
+> +static int
+> +msharefs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode, dev_t dev)
+> +{
+> +	struct inode *inode;
+> +	int err = 0;
+> +
+> +	inode = msharefs_get_inode(dir->i_sb, dir, mode);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+
+...and if @inode is NULL?
+
+> +
+> +	d_instantiate(dentry, inode);
+> +	dget(dentry);
+> +	dir->i_mtime = dir->i_ctime = current_time(dir);
+> +
+> +	return err;
+> +}
+> +
+> +static int
+> +msharefs_create(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode, bool excl)
+> +{
+> +	return msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFREG, 0);
+> +}
+> +
+> +static int
+> +msharefs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode)
+> +{
+> +	int ret = msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFDIR, 0);
+> +
+> +	if (!ret)
+> +		inc_nlink(dir);
+> +	return ret;
+> +}
+> +
+> +static const struct inode_operations msharefs_file_inode_ops = {
+> +	.setattr	= simple_setattr,
+> +	.getattr	= simple_getattr,
+> +};
+> +static const struct inode_operations msharefs_dir_inode_ops = {
+> +	.create		= msharefs_create,
+> +	.lookup		= simple_lookup,
+> +	.link		= simple_link,
+> +	.unlink		= simple_unlink,
+> +	.mkdir		= msharefs_mkdir,
+> +	.rmdir		= simple_rmdir,
+> +	.mknod		= msharefs_mknod,
+> +	.rename		= simple_rename,
+> +};
+> +
+>  static void
+>  mshare_evict_inode(struct inode *inode)
+>  {
+> @@ -58,7 +175,7 @@ mshare_info_read(struct file *file, char __user *buf, size_t nbytes,
+>  {
+>  	char s[80];
+>  
+> -	sprintf(s, "%ld", PGDIR_SIZE);
+> +	sprintf(s, "%ld\n", PGDIR_SIZE);
+
+Changing this already?
+
+>  	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
+>  }
+>  
+> @@ -72,6 +189,38 @@ static const struct super_operations mshare_s_ops = {
+>  	.evict_inode = mshare_evict_inode,
+>  };
+>  
+> +static int
+> +prepopulate_files(struct super_block *s, struct inode *dir,
+> +			struct dentry *root, const struct tree_descr *files)
+> +{
+> +	int i;
+> +	struct inode *inode;
+> +	struct dentry *dentry;
+> +
+> +	for (i = 0; !files->name || files->name[0]; i++, files++) {
+> +		if (!files->name)
+> +			continue;
+
+What ends the array?  NULL name or empty name?
+Do we have to erase all of these when the fs gets unmounted?
+
+--D
+
+> +
+> +		dentry = msharefs_alloc_dentry(root, files->name);
+> +		if (!dentry)
+> +			return -ENOMEM;
+> +
+> +		inode = msharefs_get_inode(s, dir, S_IFREG | files->mode);
+> +		if (!inode) {
+> +			dput(dentry);
+> +			return -ENOMEM;
+> +		}
+> +		inode->i_mode = S_IFREG | files->mode;
+> +		inode->i_atime = inode->i_mtime = inode->i_ctime
+> +			= current_time(inode);
+> +		inode->i_fop = files->ops;
+> +		inode->i_ino = i;
+> +		d_add(dentry, inode);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int
+>  msharefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+> @@ -79,21 +228,49 @@ msharefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		[2] = { "mshare_info", &mshare_info_ops, 0444},
+>  		{""},
+>  	};
+> -	int err;
+> +	struct inode *inode;
+> +	struct dentry *root;
+> +	int err = 0;
+>  
+> -	err = simple_fill_super(sb, MSHARE_MAGIC, mshare_files);
+> -	if (!err) {
+> -		msharefs_sb = sb;
+> -		sb->s_d_op = &msharefs_d_ops;
+> -		sb->s_op = &mshare_s_ops;
+> +	sb->s_blocksize		= PAGE_SIZE;
+> +	sb->s_blocksize_bits	= PAGE_SHIFT;
+> +	sb->s_magic		= MSHARE_MAGIC;
+> +	sb->s_op		= &mshare_s_ops;
+> +	sb->s_d_op		= &msharefs_d_ops;
+> +	sb->s_time_gran		= 1;
+> +
+> +	inode = msharefs_get_inode(sb, NULL, S_IFDIR | 0777);
+> +	if (!inode) {
+> +		err = -ENOMEM;
+> +		goto out;
+>  	}
+> +	inode->i_ino = 1;
+> +	root = d_make_root(inode);
+> +	if (!root) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	err = prepopulate_files(sb, inode, root, mshare_files);
+> +	if (err < 0)
+> +		goto clean_root;
+> +
+> +	sb->s_root = root;
+> +	msharefs_sb = sb;
+> +	return err;
+> +
+> +clean_root:
+> +	d_genocide(root);
+> +	shrink_dcache_parent(root);
+> +	dput(root);
+> +out:
+>  	return err;
+>  }
+>  
+>  static int
+>  msharefs_get_tree(struct fs_context *fc)
+>  {
+> -	return get_tree_single(fc, msharefs_fill_super);
+> +	return get_tree_nodev(fc, msharefs_fill_super);
+>  }
+>  
+>  static const struct fs_context_operations msharefs_context_ops = {
+> -- 
+> 2.32.0
+> 
