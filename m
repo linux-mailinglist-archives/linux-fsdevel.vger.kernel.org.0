@@ -2,127 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0018856266E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 01:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9A85626C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 01:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbiF3XHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 19:07:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
+        id S231704AbiF3XKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 19:10:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbiF3XHV (ORCPT
+        with ESMTP id S231678AbiF3XKe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 19:07:21 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B95E58FF2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 16:07:19 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d17so781635pfq.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 16:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=IzpHwFgvoVMHsmNDV3HQvMQ7xQrAh7FjeXWydwsIu7E=;
-        b=jmjNcTL3G7zifdsOnW6lZRRYwOpziyO7wOpP6s6zHb7o2Q7wJOEbDJn7tROJmgP0l9
-         KWp+ZMGhBXHsfNResw8WiOb7dr67d47pYTFtcf2Y+WZGIsYY9FV31tmZHWMnRgkc8G5z
-         5buaV8JYTt9IhdMtpCxYTisaOxZEr1nRJB6PIvhJ8suVsAuoBN3zDhBKateK2zNs4Jua
-         8/5/2OAa1pcsoZQ9ZBwQmx+rSA/6q3DnHC18SIBhVL2Trl27wPqAlGNO/FA157lSgxOY
-         0snAw2XqcTCQiOTCPhgUTw1d6XWMe3Mfi9sXIBKz9PPY4zbEu15V7aI2eWqIlfL+76Ip
-         ho/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=IzpHwFgvoVMHsmNDV3HQvMQ7xQrAh7FjeXWydwsIu7E=;
-        b=pyzldRTE4BdwrC9kzR0I5wLn2xw7gaagw4w9YM98kkA7yLfFHrRFYbs33VL2Aqx4mC
-         1GLcGzZiqCdQHqh/tAtUvfoxZUIqz8YyVpuWBj1SosvHhpSWnYPgVeXUW9qipRqAUL4j
-         xBCffEvC0AHNiHT46w76EbwB1SxsJPS+pY5wUW2G9mdwSYvSPQhWro4cpuKdl9LkY0hH
-         mfmPJO+p8iC6//Oqs6enAFHFjfFhLoNlqYcEkEwmxPrzSm5EQTX9TtpRoAXCgLAXZOM3
-         gelY37CvSmyQ4Kw2Dxg91MLT2hPYveFseq0hVsCTZHCtbUNi3S9D8EvwY59HBsL4AM+E
-         5zhA==
-X-Gm-Message-State: AJIora8ZA9mPymxIKuEcBED3iaUVE/OnWLMM8W2vl4h+lCUJ4+DaXTxo
-        y0UffBRiWgDCt81bskvpXUB4Uw==
-X-Google-Smtp-Source: AGRyM1sRf/TyO65O4RWwmFVPttFV3KeOdpL9UHdP+5g07KKtSEnouWeX1dC42+6Hx2+k3wUjHGLPFg==
-X-Received: by 2002:a63:4654:0:b0:405:e571:90b with SMTP id v20-20020a634654000000b00405e571090bmr9538365pgk.120.1656630438896;
-        Thu, 30 Jun 2022 16:07:18 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 132-20020a62198a000000b005256c9c3957sm14100638pfz.108.2022.06.30.16.07.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 16:07:18 -0700 (PDT)
-Message-ID: <52c4db18-ef4a-9896-3dfa-9db2e0e3d07d@kernel.dk>
-Date:   Thu, 30 Jun 2022 17:07:17 -0600
+        Thu, 30 Jun 2022 19:10:34 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3371058FEC;
+        Thu, 30 Jun 2022 16:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PLnX+GdiFq0h5m7XxJGkEoRQcXwyc8nFGHPUn3RIA68=; b=DONAnasQ0yvPgsBJkOz9zo+fop
+        6HB95NCmxtbegAsvEMNEF/V90e76fDOkTxUK9lwlhAMa395kOpj33EYQqt3LVUiMdgebzjU8V3IfT
+        kZD469AenC21vxxaaes2+2vhbayHa2Fq6Yuh3V1rS6GO0QdOvYc/SsGHHrDMsfxsTEScwXTDD3Epj
+        rAL8mIesWjBOzYo5IF6JzwznaT4wqiNo0lRD3qYwYzrwUMiKLcOoc51vkCmo4sD2hteg7k9rqa3XI
+        l3V8DefBid9ZOHUMLCllhBcb7pAycMYEXUOb+Ll5xs1q1AoMwx5VXgoO9AO+wHNaBKZU42Y7BmQYT
+        dkdQB6rQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o73I3-006iv9-RN;
+        Thu, 30 Jun 2022 23:09:40 +0000
+Date:   Fri, 1 Jul 2022 00:09:39 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org,
+        aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+Subject: Re: [PATCH v2 3/9] mm/mshare: make msharefs writable and support
+ directories
+Message-ID: <Yr4tM2oOF9rlwWdV@ZenIV>
+References: <cover.1656531090.git.khalid.aziz@oracle.com>
+ <397ad80630444b90877625a1e94dd81392fc678e.1656531090.git.khalid.aziz@oracle.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [block.git conflicts] Re: [PATCH 37/44] block: convert to
- advancing variants of iov_iter_get_pages{,_alloc}()
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Keith Busch <kbusch@kernel.org>
-References: <YrKWRCOOWXPHRCKg@ZenIV>
- <20220622041552.737754-1-viro@zeniv.linux.org.uk>
- <20220622041552.737754-37-viro@zeniv.linux.org.uk> <Yr4fj0uGfjX5ZvDI@ZenIV>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Yr4fj0uGfjX5ZvDI@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <397ad80630444b90877625a1e94dd81392fc678e.1656531090.git.khalid.aziz@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/30/22 4:11 PM, Al Viro wrote:
-> On Wed, Jun 22, 2022 at 05:15:45AM +0100, Al Viro wrote:
->> ... doing revert if we end up not using some pages
->>
->> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> ... and the first half of that thing conflicts with "block: relax direct
-> io memory alignment" in -next...
-> 
-> Joy.  It's not hard to redo on top of the commit in there; the
-> question is, how to deal with conflicts?
-> 
-> I can do a backmerge, provided that there's a sane tag or branch to
-> backmerge from.  Another fun (if trivial) issue in the same series
-> is around "iov: introduce iov_iter_aligned" (two commits prior).
-> 
-> Jens, Keith, do you have any suggestions?  AFAICS, variants include
-> 	* tag or branch covering b1a000d3b8ec582da64bb644be633e5a0beffcbf
-> (I'd rather not grab the entire for-5.20/block for obvious reasons)
-> It sits in the beginning of for-5.20/block, so that should be fairly
-> straightforward, provided that you are not going to do rebases there.
-> If you are, could you put that stuff into an invariant branch, so
-> I'd just pull it?
-> 	* feeding the entire iov_iter pile through block.git;
-> bad idea, IMO, seeing that it contains a lot of stuff far from
-> anything block-related. 
-> 	* doing a manual conflict resolution on top of my branch
-> and pushing that out.  Would get rid of the problem from -next, but
-> Linus hates that kind of stuff, AFAIK, and with good reasons.
-> 
-> 	I would prefer the first variant (and that's what I'm
-> going to do locally for now - just
-> git tag keith_stuff bf8d08532bc19a14cfb54ae61099dccadefca446
-> and backmerge from it), but if you would prefer to deal with that
-> differently - please tell.
+On Wed, Jun 29, 2022 at 04:53:54PM -0600, Khalid Aziz wrote:
 
-I'm not going to rebase it, and I can create a tag for that commit for
-you. Done, it's block-5.20-al. I did the former commit, or we can move
-the tag so it includes bf8d08532bc19a14cfb54ae61099dccadefca446? That'd
-be the whole series of that patchset, which is just that one extra
-patch.
+> +static int
+> +msharefs_open(struct inode *inode, struct file *file)
+> +{
+> +	return simple_open(inode, file);
+> +}
 
--- 
-Jens Axboe
+Again, whatever for?
 
+> +static struct dentry
+> +*msharefs_alloc_dentry(struct dentry *parent, const char *name)
+> +{
+> +	struct dentry *d;
+> +	struct qstr q;
+> +	int err;
+> +
+> +	q.name = name;
+> +	q.len = strlen(name);
+> +
+> +	err = msharefs_d_hash(parent, &q);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	d = d_alloc(parent, &q);
+> +	if (d)
+> +		return d;
+> +
+> +	return ERR_PTR(-ENOMEM);
+> +}
+
+And it's different from d_alloc_name() how, exactly?
+
+> +		case S_IFLNK:
+> +			inode->i_op = &page_symlink_inode_operations;
+> +			break;
+
+Really?  You've got symlinks here?
+
+> +		default:
+> +			discard_new_inode(inode);
+> +			inode = NULL;
+
+That's an odd way to spell BUG()...
+
+> +static int
+> +msharefs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode, dev_t dev)
+> +{
+> +	struct inode *inode;
+> +	int err = 0;
+> +
+> +	inode = msharefs_get_inode(dir->i_sb, dir, mode);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +
+> +	d_instantiate(dentry, inode);
+> +	dget(dentry);
+> +	dir->i_mtime = dir->i_ctime = current_time(dir);
+> +
+> +	return err;
+> +}
+
+BTW, what's the point of having device nodes on that thing?
+
+> +static int
+> +msharefs_create(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode, bool excl)
+> +{
+> +	return msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFREG, 0);
+> +}
+> +
+> +static int
+> +msharefs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+> +		struct dentry *dentry, umode_t mode)
+> +{
+> +	int ret = msharefs_mknod(&init_user_ns, dir, dentry, mode | S_IFDIR, 0);
+> +
+> +	if (!ret)
+> +		inc_nlink(dir);
+> +	return ret;
+> +}
+> +
+> +static const struct inode_operations msharefs_file_inode_ops = {
+> +	.setattr	= simple_setattr,
+> +	.getattr	= simple_getattr,
+> +};
+> +static const struct inode_operations msharefs_dir_inode_ops = {
+> +	.create		= msharefs_create,
+> +	.lookup		= simple_lookup,
+> +	.link		= simple_link,
+> +	.unlink		= simple_unlink,
+> +	.mkdir		= msharefs_mkdir,
+> +	.rmdir		= simple_rmdir,
+> +	.mknod		= msharefs_mknod,
+> +	.rename		= simple_rename,
+> +};
+> +
+>  static void
+>  mshare_evict_inode(struct inode *inode)
+>  {
+> @@ -58,7 +175,7 @@ mshare_info_read(struct file *file, char __user *buf, size_t nbytes,
+>  {
+>  	char s[80];
+>  
+> -	sprintf(s, "%ld", PGDIR_SIZE);
+> +	sprintf(s, "%ld\n", PGDIR_SIZE);
+>  	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
+>  }
+>  
+> @@ -72,6 +189,38 @@ static const struct super_operations mshare_s_ops = {
+>  	.evict_inode = mshare_evict_inode,
+>  };
+>  
+> +static int
+> +prepopulate_files(struct super_block *s, struct inode *dir,
+> +			struct dentry *root, const struct tree_descr *files)
+> +{
+> +	int i;
+> +	struct inode *inode;
+> +	struct dentry *dentry;
+> +
+> +	for (i = 0; !files->name || files->name[0]; i++, files++) {
+> +		if (!files->name)
+> +			continue;
+> +
+> +		dentry = msharefs_alloc_dentry(root, files->name);
+> +		if (!dentry)
+> +			return -ENOMEM;
+> +
+> +		inode = msharefs_get_inode(s, dir, S_IFREG | files->mode);
+> +		if (!inode) {
+> +			dput(dentry);
+> +			return -ENOMEM;
+> +		}
+> +		inode->i_mode = S_IFREG | files->mode;
+> +		inode->i_atime = inode->i_mtime = inode->i_ctime
+> +			= current_time(inode);
+> +		inode->i_fop = files->ops;
+> +		inode->i_ino = i;
+> +		d_add(dentry, inode);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Looks remarkably similar to something I've seen somewhere... fs/libfs.c,
+if I'm not mistaken...
+
+Sarcasm aside, what's wrong with using simple_fill_super()?
