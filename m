@@ -2,45 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E15256201B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B2156203A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236308AbiF3QSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 12:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55258 "EHLO
+        id S235815AbiF3QYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 12:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235069AbiF3QSa (ORCPT
+        with ESMTP id S235554AbiF3QYW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 12:18:30 -0400
-Received: from mail.yonan.net (mail.yonan.net [54.244.116.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB4C1EECA;
-        Thu, 30 Jun 2022 09:18:30 -0700 (PDT)
-Received: from [10.10.0.40] (unknown [76.130.91.106])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Thu, 30 Jun 2022 12:24:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E0E31907;
+        Thu, 30 Jun 2022 09:24:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.yonan.net (Postfix) with ESMTPSA id 546323E880;
-        Thu, 30 Jun 2022 16:18:29 +0000 (UTC)
-Message-ID: <cd783f6c-9aa6-2f63-000c-4bcb252a3567@openvpn.net>
-Date:   Thu, 30 Jun 2022 10:18:28 -0600
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 23B796201C;
+        Thu, 30 Jun 2022 16:24:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD74C34115;
+        Thu, 30 Jun 2022 16:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656606259;
+        bh=Kyao6ux2Oi0CPubvRIyv034ggKSZ0VAhBLxea5f0PrA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oeaGOmnO48BqYna0op41w17dtYjRdzYVWNsmVE6RYGcn6VShmcr0NvScCL5iIgmn/
+         Wdpy1QqTitoI5SnpcasINYERq9fdXtRxBF7hvePGkVMuxVuLP+bhLJzgvfff4nKyVp
+         hFo2v4cxptJt5zr3F12OkanQP6vgPGuPD9bIO+1e46Ol5mUHRtfMH5ZS6LqWoGziMQ
+         LjIZD087NiD8ShiN44aWCXEdtXctDYBfa7hYyH7XuY2isQW4OEW2RH8ryenKG2vB4U
+         FepVqO2g8i9vrucY8Jznu9Ou6pI8XMaLV3TgZ/YQvj0oYqEcKbPEvUfgMxCY2JbVtr
+         27mUqo4fntUCg==
+Date:   Thu, 30 Jun 2022 10:24:14 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, agk@redhat.com, song@kernel.org,
+        djwong@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, javier@javigon.com,
+        johannes.thumshirn@wdc.com, bvanassche@acm.org,
+        dongli.zhang@oracle.com, ming.lei@redhat.com, willy@infradead.org,
+        jefflexu@linux.alibaba.com, josef@toxicpanda.com, clm@fb.com,
+        dsterba@suse.com, jack@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jlayton@kernel.org, idryomov@gmail.com,
+        danil.kipnis@cloud.ionos.com, ebiggers@google.com,
+        jinpu.wang@cloud.ionos.com
+Subject: Re: [PATCH 2/6] nvme: add support for the Verify command
+Message-ID: <Yr3OLiEd+/6wryCx@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220630091406.19624-1-kch@nvidia.com>
+ <20220630091406.19624-3-kch@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] namei: implemented RENAME_NEWER flag for renameat2()
- conditional replace
-Content-Language: en-US
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-References: <20220627221107.176495-1-james@openvpn.net>
- <CAOQ4uxi5mKd1OuAcdFemx=h+1Ay-Ka4F6ddO5_fjk7m6G88MuQ@mail.gmail.com>
- <3062694c-8725-3653-a8e6-de2942aed1c2@openvpn.net>
- <CAOQ4uxjfZ=c4Orm2VcbsOuqEkdsXViZhxLN55CN5-5ZtSqj4Sg@mail.gmail.com>
-From:   James Yonan <james@openvpn.net>
-In-Reply-To: <CAOQ4uxjfZ=c4Orm2VcbsOuqEkdsXViZhxLN55CN5-5ZtSqj4Sg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220630091406.19624-3-kch@nvidia.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -49,34 +66,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/28/22 23:15, Amir Goldstein wrote:
->> because the application layer has already done the heavy lifting on the
->> networking side so that the filesystem layer can be local, fast, and
->> atomic.  So yes, I haven't tested this yet on networked filesystems.
->> But I'm thinking that because all functionality is implemented at the
->> VFS layer, it should be portable to any fs that also supports
->> RENAME_NOREPLACE, with the caveat that it depends on the ability of the
->> VFS to get a current and accurate mtime attribute inside the critical
->> section between lock_rename() and unlock_rename().
-> The implementation is generic. You just implement the logic in the vfs and
-> enable it for a few tested filesystems and whoever wants to join the party
-> is welcome to test their own filesystems and opt-in to the new flag whether
-> they like. Nothing wrong with that.
->
-> w.r.t stability of i_mtime, if I am not mistaken i_mtime itself is
-> stable with inode
-> lock held (i.e. after lock_two_nondirectories()), however, as Dave pointed out,
-> the file's data can be modified in page cache, so as long as the file is open
-> for write or mmaped writable, the check of mtime is not atomic.
->
-> Neil's suggestion to deny the operation on open files makes sense.
-> You can use a variant of deny_write_access() that takes inode
-> which implies the error  ETXTBSY for an attempt to exchange newer
-> with a file that is open for write.
+On Thu, Jun 30, 2022 at 02:14:02AM -0700, Chaitanya Kulkarni wrote:
+> Allow verify operations (REQ_OP_VERIFY) on the block device, if the
+> device supports optional command bit set for verify. Add support
+> to setup verify command. Set maximum possible verify sectors in one
+> verify command according to maximum hardware sectors supported by the
+> controller.
 
-So I will incorporate these suggestions into an upcoming v2 patch.
-
-Thanks,
-James
-
-
+Shouldn't the limit be determined by Identify Controller NVM CSS's 'VSL' field
+instead of its max data transfer?
