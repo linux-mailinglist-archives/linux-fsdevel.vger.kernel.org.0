@@ -2,183 +2,359 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D145622D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 21:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD305623B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 21:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235578AbiF3TOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 15:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49360 "EHLO
+        id S235533AbiF3T66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 15:58:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232621AbiF3TO0 (ORCPT
+        with ESMTP id S231747AbiF3T66 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 15:14:26 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA85393D5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 12:14:24 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id v126so211930pgv.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 12:14:24 -0700 (PDT)
+        Thu, 30 Jun 2022 15:58:58 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD4842A71A;
+        Thu, 30 Jun 2022 12:58:56 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id v14so133331wra.5;
+        Thu, 30 Jun 2022 12:58:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CseVMsc9DMcvnremI2IMCVn9RXMEwKZ3PfQxnseEk1Y=;
-        b=L86qxID6q2M+JSm6WJlw/ywbiK2Bd4F4OqP2crvM+fBErSUs7vAk8+S+Iq/oWCc3S3
-         A/zD733aSeW/NQtqDBUXacjPlB7RxpFMnf6lRRa/+NdtBmLjMtHmcPsoOWwkq8KCWT59
-         Wrjd2sZMC+z5N1mQaKCk8s3sRW71BeCnVhZwSRy715zMP+SNJe7eU9WYohudOv1KNRGA
-         /2Hl1gt/4XtlScYZ3mwC111MIu9O+AEpZ9xmxnKCHZmdZRhh6DrJvNuc5sQfRD0Ka1kU
-         JrjpbfOKNuX8+d69m9LSTBv0r1O0mwEp5rUB+SIBwil7KVtufeEqPNZkhvO1MatEsuMw
-         lriQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9QZcvcsspiDu0ezh00850yM9fmqbrE/S8z3J3Gp/Ua4=;
+        b=ed/ZOevyJxh4/uQ6NqO8SeJO/sEQ/v5UpnAuh8LYXb4MzNFupCccuTg0fo5Xfb0FCh
+         PKIwwTG2/eSHriOCILsIwKv3mjFzWWGFGJ3t+6Nfc6R1DxGTBUCoARJ+CIc3TJ2Sb4zP
+         QQTnEw15eToJXBouyQrxpZUVQUOhsxoavjF21sWefMDk0Box+mRovW/clrO3dVacWWjr
+         herJOL4cOaKrqsc5VFZ5Ldke8PLICHv3DbncazIqIrTrkR3J9z1Ca9lwLw74QNI+hH1W
+         H9T+UHQSbfP3YwP0TNAzo7jHn2TYlBZ1dHGyyheDqblGAry5UA/feXnh1AeGAANKpYcT
+         87Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CseVMsc9DMcvnremI2IMCVn9RXMEwKZ3PfQxnseEk1Y=;
-        b=dIgWtbW0TKQPaFLkyH0YyAHzUSfWSG34cmXCXu/i6NnDu23FfDxzY5lig2Z5fnU/SC
-         bGJ+n12lW44AB2FX7iU/MihmQ4LjB6BoL4trpGacmjgRpUeuVfepgDLW2OW8VMHBaBS4
-         q/BunWLZ9yRITU3ylXYUt0Ksx26RP31WkYiN9C/RVRLOcNEPm+XZMHomXsLT/F8OLbs8
-         m1MZIS9egVh2atj8WLfubjx1hsUe4V2yvSCXoFVEOzIHIBcgmcx8buEGHi13uDXKP5tJ
-         24pyXHAA4hhQaiY/6NISMWToavUxBxmAzRZ8xx1D+a4uBw1L+YnGG/ApjPW2k429ZrvJ
-         tY8Q==
-X-Gm-Message-State: AJIora9MioJGIclBGrSe4ZwB8nRlQGVJ+cTFFq3N+WWenA0JGtz72gPm
-        VhsaAKxZwnFBRTBponFItuqIAvsb9hsuxgRAWvN3dQ==
-X-Google-Smtp-Source: AGRyM1sSw2bcuHVxuECIXV0dhinx7eNbwu+6Xk72mVPwUCDEPf65Qjtbn+gPrnXqf1ZcPTdHgl0RAcjI8NMysu55SIM=
-X-Received: by 2002:a65:6b8a:0:b0:3db:7dc5:fec2 with SMTP id
- d10-20020a656b8a000000b003db7dc5fec2mr8746604pgw.223.1656616463900; Thu, 30
- Jun 2022 12:14:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9QZcvcsspiDu0ezh00850yM9fmqbrE/S8z3J3Gp/Ua4=;
+        b=Fqu1UrGttlxHY6hMJm78pH7110ObF/pU7t/aLPVpB9V61MUs4SmJnqqDp6gKAgfknJ
+         iI9ikFdZ1rxyLusQ+U0euY8qXCd8qrc3ZzDbPahyY17JdKXGO7rgvmkdV7PK56g5i+I3
+         I/8VddkhOHOruNnD/dRZTvMSUlOrLzjO3UMj+wJcCr7WyCPMQXcu46aRgyFphYg5zHwj
+         +BlpifG/FFDkVwq6YdBgl5nVCL0N91ykrcKQ5unEnXMqsuZ2SeYYuQ/9YUd4NkqK+zfZ
+         S40PMQUfvSi567k3SkmK0TKKW//L/Yf1EabnagzOkDfnT7li8aTXIGcoiQA5ELs6oqHF
+         qORw==
+X-Gm-Message-State: AJIora+s5zchFzoAGV2heQpPH69fjC8Y9ojwgGo5UT3xMdWgN01Tug9c
+        Pb0vWKCXjD75vN0MI14nKu8=
+X-Google-Smtp-Source: AGRyM1ux+HdkTbgMtrsXB7QGMszPXjMR0e8Wt/0sf+GMVUVl4rDgtEHEQE6uPsLNUivMYK1wAj2teA==
+X-Received: by 2002:a5d:6812:0:b0:21b:8a2f:f732 with SMTP id w18-20020a5d6812000000b0021b8a2ff732mr9994550wru.202.1656619135292;
+        Thu, 30 Jun 2022 12:58:55 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([77.137.66.49])
+        by smtp.gmail.com with ESMTPSA id n7-20020a5d67c7000000b0021b9e8d4c22sm20341008wrw.61.2022.06.30.12.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 12:58:54 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Steve French <smfrench@gmail.com>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        He Zhe <zhe.he@windriver.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        Luis Henriques <lhenriques@suse.de>
+Subject: [RESEND PATCH v16] vfs: fix copy_file_range() regression in cross-fs copies
+Date:   Thu, 30 Jun 2022 22:58:49 +0300
+Message-Id: <20220630195849.3045248-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-7-chao.p.peng@linux.intel.com> <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
- <20220624090246.GA2181919@chaop.bj.intel.com>
-In-Reply-To: <20220624090246.GA2181919@chaop.bj.intel.com>
-From:   Vishal Annapurve <vannapurve@google.com>
-Date:   Thu, 30 Jun 2022 12:14:13 -0700
-Message-ID: <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     "Nikunj A. Dadhania" <nikunj@amd.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...
-> > >     /*
-> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > index afe18d70ece7..e18460e0d743 100644
-> > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > @@ -2899,6 +2899,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
-> > >     if (max_level == PG_LEVEL_4K)
-> > >             return PG_LEVEL_4K;
-> > >
-> > > +   if (kvm_slot_is_private(slot))
-> > > +           return max_level;
-> >
-> > Can you explain the rationale behind the above change?
-> > AFAIU, this overrides the transparent_hugepage=never setting for both
-> > shared and private mappings.
->
-> As Sean pointed out, this should check against fault->is_private instead
-> of the slot. For private fault, the level is retrieved and stored to
-> fault->max_level in kvm_faultin_pfn_private() instead of here.
->
-> For shared fault, it will continue to query host_level below. For
-> private fault, the host level has already been accounted in
-> kvm_faultin_pfn_private().
->
-> Chao
-> >
+A regression has been reported by Nicolas Boichat, found while using the
+copy_file_range syscall to copy a tracefs file.  Before commit
+5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+kernel would return -EXDEV to userspace when trying to copy a file across
+different filesystems.  After this commit, the syscall doesn't fail anymore
+and instead returns zero (zero bytes copied), as this file's content is
+generated on-the-fly and thus reports a size of zero.
 
-With transparent_hugepages=always setting I see issues with the
-current implementation.
+Another regression has been reported by He Zhe - the assertion of
+WARN_ON_ONCE(ret == -EOPNOTSUPP) can be triggered from userspace when
+copying from a sysfs file whose read operation may return -EOPNOTSUPP.
 
-Scenario:
-1) Guest accesses a gfn range 0x800-0xa00 as private
-2) Guest calls mapgpa to convert the range 0x84d-0x86e as shared
-3) Guest tries to access recently converted memory as shared for the first time
-Guest VM shutdown is observed after step 3 -> Guest is unable to
-proceed further since somehow code section is not as expected
+Since we do not have test coverage for copy_file_range() between any
+two types of filesystems, the best way to avoid these sort of issues
+in the future is for the kernel to be more picky about filesystems that
+are allowed to do copy_file_range().
 
-Corresponding KVM trace logs after step 3:
-VCPU-0-61883   [078] ..... 72276.115679: kvm_page_fault: address
-84d000 error_code 4
-VCPU-0-61883   [078] ..... 72276.127005: kvm_mmu_spte_requested: gfn
-84d pfn 100b4a4d level 2
-VCPU-0-61883   [078] ..... 72276.127008: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 800 level 2 old_spte 100b1b16827 new_spte 100b4a00ea7
-VCPU-0-61883   [078] ..... 72276.127009: kvm_mmu_prepare_zap_page: sp
-gen 0 gfn 800 l1 8-byte q0 direct wux nxe ad root 0 sync
-VCPU-0-61883   [078] ..... 72276.127009: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 800 level 1 old_spte 1003eb27e67 new_spte 5a0
-VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 801 level 1 old_spte 10056cc8e67 new_spte 5a0
-VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 802 level 1 old_spte 10056fa2e67 new_spte 5a0
-VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 803 level 1 old_spte 0 new_spte 5a0
-....
- VCPU-0-61883   [078] ..... 72276.127089: kvm_tdp_mmu_spte_changed: as
-id 0 gfn 9ff level 1 old_spte 100a43f4e67 new_spte 5a0
- VCPU-0-61883   [078] ..... 72276.127090: kvm_mmu_set_spte: gfn 800
-spte 100b4a00ea7 (rwxu) level 2 at 10052fa5020
- VCPU-0-61883   [078] ..... 72276.127091: kvm_fpu: unload
+This patch restores some cross-filesystem copy restrictions that existed
+prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+devices"), namely, cross-sb copy is not allowed for filesystems that do
+not implement ->copy_file_range().
 
-Looks like with transparent huge pages enabled kvm tried to handle the
-shared memory fault on 0x84d gfn by coalescing nearby 4K pages
-to form a contiguous 2MB page mapping at gfn 0x800, since level 2 was
-requested in kvm_mmu_spte_requested.
-This caused the private memory contents from regions 0x800-0x84c and
-0x86e-0xa00 to get unmapped from the guest leading to guest vm
-shutdown.
+Filesystems that do implement ->copy_file_range() have full control of
+the result - if this method returns an error, the error is returned to
+the user.  Before this change this was only true for fs that did not
+implement the ->remap_file_range() operation (i.e. nfsv3).
 
-Does getting the mapping level as per the fault access type help
-address the above issue? Any such coalescing should not cross between
-private to
-shared or shared to private memory regions.
+Filesystems that do not implement ->copy_file_range() still fall-back to
+the generic_copy_file_range() implementation when the copy is within the
+same sb.  This helps the kernel can maintain a more consistent story
+about which filesystems support copy_file_range().
 
-> > >     host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
-> > >     return min(host_level, max_level);
-> > >  }
-> >
+nfsd and ksmbd servers are modified to fall-back to the
+generic_copy_file_range() implementation in case vfs_copy_file_range()
+fails with -EOPNOTSUPP or -EXDEV, which preserves behavior of
+server-side-copy.
 
-Regards,
-Vishal
+fall-back to generic_copy_file_range() is not implemented for the smb
+operation FSCTL_DUPLICATE_EXTENTS_TO_FILE, which is arguably a correct
+change of behavior.
+
+Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
+Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
+Link: https://lore.kernel.org/linux-fsdevel/20210630161320.29006-1-lhenriques@suse.de/
+Reported-by: Nicolas Boichat <drinkcat@chromium.org>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+Fixes: 64bf5ff58dff ("vfs: no fallback for ->copy_file_range")
+Link: https://lore.kernel.org/linux-fsdevel/20f17f64-88cb-4e80-07c1-85cb96c83619@windriver.com/
+Reported-by: He Zhe <zhe.he@windriver.com>
+Tested-by: Namjae Jeon <linkinjeon@kernel.org>
+Tested-by: Luis Henriques <lhenriques@suse.de>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+
+Hi Linus,
+
+Can you please take this patch to fix a long standing
+regressions of cross-fs copy_file_range().
+
+This has been dragging for too long and I cannot seem to get
+Al's attention.
+
+Thanks,
+Amir.
+
+Changes since v15:
+- Added Tested-by from Luis and Namje
+
+Changes since v14 [1]:
+- Allow fallback to generic_copy_file_range() within same sb
+- Run the LTP copy_file_range tests
+- Assume patch authorship
+
+Changes since v13:
+- Rebased and tested over 5.19-rc1
+- Never fallback from ->copy_file_range() to generic_copy_file_range()
+- Added fallback to generic_copy_file_range() in ksmbd
+- Typo fixes in commit message and comments
+
+[1] https://lore.kernel.org/linux-fsdevel/20220606134608.684131-1-amir73il@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgHPgFTWBOF34=UDtaCOk0EA6f=66szS-Ox62YNPx1b=A@mail.gmail.com/
+
+ fs/ksmbd/smb2pdu.c | 16 ++++++++--
+ fs/ksmbd/vfs.c     |  4 +++
+ fs/nfsd/vfs.c      |  8 ++++-
+ fs/read_write.c    | 77 ++++++++++++++++++++++++++--------------------
+ 4 files changed, 68 insertions(+), 37 deletions(-)
+
+diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
+index e6f4ccc12f49..17f42f5b02fe 100644
+--- a/fs/ksmbd/smb2pdu.c
++++ b/fs/ksmbd/smb2pdu.c
+@@ -7806,14 +7806,24 @@ int smb2_ioctl(struct ksmbd_work *work)
+ 		src_off = le64_to_cpu(dup_ext->SourceFileOffset);
+ 		dst_off = le64_to_cpu(dup_ext->TargetFileOffset);
+ 		length = le64_to_cpu(dup_ext->ByteCount);
+-		cloned = vfs_clone_file_range(fp_in->filp, src_off, fp_out->filp,
+-					      dst_off, length, 0);
++		/*
++		 * XXX: It is not clear if FSCTL_DUPLICATE_EXTENTS_TO_FILE
++		 * should fall back to vfs_copy_file_range().  This could be
++		 * beneficial when re-exporting nfs/smb mount, but note that
++		 * this can result in partial copy that returns an error status.
++		 * If/when FSCTL_DUPLICATE_EXTENTS_TO_FILE_EX is implemented,
++		 * fall back to vfs_copy_file_range(), should be avoided when
++		 * the flag DUPLICATE_EXTENTS_DATA_EX_SOURCE_ATOMIC is set.
++		 */
++		cloned = vfs_clone_file_range(fp_in->filp, src_off,
++					      fp_out->filp, dst_off, length, 0);
+ 		if (cloned == -EXDEV || cloned == -EOPNOTSUPP) {
+ 			ret = -EOPNOTSUPP;
+ 			goto dup_ext_out;
+ 		} else if (cloned != length) {
+ 			cloned = vfs_copy_file_range(fp_in->filp, src_off,
+-						     fp_out->filp, dst_off, length, 0);
++						     fp_out->filp, dst_off,
++						     length, 0);
+ 			if (cloned != length) {
+ 				if (cloned < 0)
+ 					ret = cloned;
+diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+index dcdd07c6efff..8d57347231ce 100644
+--- a/fs/ksmbd/vfs.c
++++ b/fs/ksmbd/vfs.c
+@@ -1777,6 +1777,10 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work *work,
+ 
+ 		ret = vfs_copy_file_range(src_fp->filp, src_off,
+ 					  dst_fp->filp, dst_off, len, 0);
++		if (ret == -EOPNOTSUPP || ret == -EXDEV)
++			ret = generic_copy_file_range(src_fp->filp, src_off,
++						      dst_fp->filp, dst_off,
++						      len, 0);
+ 		if (ret < 0)
+ 			return ret;
+ 
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 840e3af63a6f..b764213bcc55 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -577,6 +577,7 @@ __be32 nfsd4_clone_file_range(struct svc_rqst *rqstp,
+ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+ 			     u64 dst_pos, u64 count)
+ {
++	ssize_t ret;
+ 
+ 	/*
+ 	 * Limit copy to 4MB to prevent indefinitely blocking an nfsd
+@@ -587,7 +588,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+ 	 * limit like this and pipeline multiple COPY requests.
+ 	 */
+ 	count = min_t(u64, count, 1 << 22);
+-	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
++	ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
++
++	if (ret == -EOPNOTSUPP || ret == -EXDEV)
++		ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
++					      count, 0);
++	return ret;
+ }
+ 
+ __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+diff --git a/fs/read_write.c b/fs/read_write.c
+index b1b1cdfee9d3..c77df4ca6558 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1397,28 +1397,6 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+ }
+ EXPORT_SYMBOL(generic_copy_file_range);
+ 
+-static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+-				  struct file *file_out, loff_t pos_out,
+-				  size_t len, unsigned int flags)
+-{
+-	/*
+-	 * Although we now allow filesystems to handle cross sb copy, passing
+-	 * a file of the wrong filesystem type to filesystem driver can result
+-	 * in an attempt to dereference the wrong type of ->private_data, so
+-	 * avoid doing that until we really have a good reason.  NFS defines
+-	 * several different file_system_type structures, but they all end up
+-	 * using the same ->copy_file_range() function pointer.
+-	 */
+-	if (file_out->f_op->copy_file_range &&
+-	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+-		return file_out->f_op->copy_file_range(file_in, pos_in,
+-						       file_out, pos_out,
+-						       len, flags);
+-
+-	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+-				       flags);
+-}
+-
+ /*
+  * Performs necessary checks before doing a file copy
+  *
+@@ -1440,6 +1418,24 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * We allow some filesystems to handle cross sb copy, but passing
++	 * a file of the wrong filesystem type to filesystem driver can result
++	 * in an attempt to dereference the wrong type of ->private_data, so
++	 * avoid doing that until we really have a good reason.
++	 *
++	 * nfs and cifs define several different file_system_type structures
++	 * and several different sets of file_operations, but they all end up
++	 * using the same ->copy_file_range() function pointer.
++	 */
++	if (file_out->f_op->copy_file_range) {
++		if (file_in->f_op->copy_file_range !=
++		    file_out->f_op->copy_file_range)
++			return -EXDEV;
++	} else if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb) {
++		return -EXDEV;
++	}
++
+ 	/* Don't touch certain kinds of inodes */
+ 	if (IS_IMMUTABLE(inode_out))
+ 		return -EPERM;
+@@ -1505,26 +1501,41 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	file_start_write(file_out);
+ 
+ 	/*
+-	 * Try cloning first, this is supported by more file systems, and
+-	 * more efficient if both clone and copy are supported (e.g. NFS).
++	 * Cloning is supported by more file systems, so we implement copy on
++	 * same sb using clone, but for filesystems where both clone and copy
++	 * are supported (e.g. nfs,cifs), we only call the copy method.
+ 	 */
++	if (file_out->f_op->copy_file_range) {
++		ret = file_out->f_op->copy_file_range(file_in, pos_in,
++						      file_out, pos_out,
++						      len, flags);
++		goto done;
++	}
++
+ 	if (file_in->f_op->remap_file_range &&
+ 	    file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
+-		loff_t cloned;
+-
+-		cloned = file_in->f_op->remap_file_range(file_in, pos_in,
++		ret = file_in->f_op->remap_file_range(file_in, pos_in,
+ 				file_out, pos_out,
+ 				min_t(loff_t, MAX_RW_COUNT, len),
+ 				REMAP_FILE_CAN_SHORTEN);
+-		if (cloned > 0) {
+-			ret = cloned;
++		if (ret > 0)
+ 			goto done;
+-		}
+ 	}
+ 
+-	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+-				flags);
+-	WARN_ON_ONCE(ret == -EOPNOTSUPP);
++	/*
++	 * We can get here for same sb copy of filesystems that do not implement
++	 * ->copy_file_range() in case filesystem does not support clone or in
++	 * case filesystem supports clone but rejected the clone request (e.g.
++	 * because it was not block aligned).
++	 *
++	 * In both cases, fall back to kernel copy so we are able to maintain a
++	 * consistent story about which filesystems support copy_file_range()
++	 * and which filesystems do not, that will allow userspace tools to
++	 * make consistent desicions w.r.t using copy_file_range().
++	 */
++	ret = generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
++				      flags);
++
+ done:
+ 	if (ret > 0) {
+ 		fsnotify_access(file_in);
+-- 
+2.25.1
+
