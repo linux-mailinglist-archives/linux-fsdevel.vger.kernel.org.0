@@ -2,52 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3C5561D3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 16:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 527C5561E39
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 16:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236847AbiF3OKZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 10:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59694 "EHLO
+        id S237211AbiF3OjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 10:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236795AbiF3OJd (ORCPT
+        with ESMTP id S237247AbiF3Oi4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 10:09:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6FC73911;
-        Thu, 30 Jun 2022 06:55:18 -0700 (PDT)
+        Thu, 30 Jun 2022 10:38:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8A613D72;
+        Thu, 30 Jun 2022 07:37:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A863461F5F;
-        Thu, 30 Jun 2022 13:55:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27D5C34115;
-        Thu, 30 Jun 2022 13:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1656597309;
-        bh=WaG1nHyRp9gM42Yl11WvQkmWsXZ9kxeW+GdjIh4gZQ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gy+HLNQQUJbel1W12NXfp/BXDWF3SVmlcFSCQ7/aNDP2mFD1AsV6+N87pHA79nCHW
-         kCLUL6M1oCAHfkh83a+QHv9bVObWM9fTk/QYimj/aR3CYfJ+Yl5SPxPJFs9qPCEduO
-         bnsuVeW6k5S1ZtxIrRh2nTa36Kp1MXFsos8/Ir3M=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Forshee <sforshee@digitalocean.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>
-Subject: [PATCH 5.15 24/28] fs: account for group membership
-Date:   Thu, 30 Jun 2022 15:47:20 +0200
-Message-Id: <20220630133233.642494810@linuxfoundation.org>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220630133232.926711493@linuxfoundation.org>
-References: <20220630133232.926711493@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2BC67B82B6B;
+        Thu, 30 Jun 2022 14:37:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7F5C34115;
+        Thu, 30 Jun 2022 14:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656599871;
+        bh=/aKdg4VWn/KZFVgD5OXdWMRKddbnB0NjBu1Lh2t9GSk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B0O/rRjDYQ6CgMVyXNfUzGH6MAOrwkBYtLvmbI8zW04YyRgHFIrV3iW+7oWLlMc8C
+         n3ZXWFWUfa/zMs/8/NVWZpZijPKGMpSk/dcUoie7jBSbI8tPXfyi4kW8xT5Mn2WsY9
+         bnMTw18YLtzMXSQ0xKrYYqcdD7EPVyK1+DD3MmuX+KjOV977UUGMrdxlI1fgUCeYRw
+         S3kVY9HMADaXtlTmkiR4/k7mpB306JESQDWAJb0LI1dZRus8E5d6xJiIT0UB+ICqSw
+         pkyW1cUESYCGR2RTYnx1A+A/neO7yPgKMMKAKFvYMosCEM/+yOQLigp/vIJDKEZNzv
+         G00BPKF2Ue1BQ==
+Date:   Thu, 30 Jun 2022 16:37:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     KP Singh <kpsingh@kernel.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Yosry Ahmed <yosryahmed@google.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for
+ bpf_getxattr
+Message-ID: <20220630143745.iuzi7qa4yd5m3des@wittgenstein>
+References: <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
+ <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
+ <20220629081119.ddqvfn3al36fl27q@wittgenstein>
+ <20220629095557.oet6u2hi7msit6ff@wittgenstein>
+ <CAADnVQ+HhhQdcz_u8kP45Db_gUK+pOYg=jObZpLtdin=v_t9tw@mail.gmail.com>
+ <20220630114549.uakuocpn7w5jfrz2@wittgenstein>
+ <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
+ <20220630132635.bxxx7q654y5icd5b@wittgenstein>
+ <CACYkzJ6At2T9YGgs25mbqdVUiLtOh1LabZ5Auc+oDm4605A31A@mail.gmail.com>
+ <20220630134702.bn2eq3mxeiqmg2fj@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220630134702.bn2eq3mxeiqmg2fj@wittgenstein>
 X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,110 +73,226 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <brauner@kernel.org>
+On Thu, Jun 30, 2022 at 03:47:02PM +0200, Christian Brauner wrote:
+> On Thu, Jun 30, 2022 at 03:29:53PM +0200, KP Singh wrote:
+> > On Thu, Jun 30, 2022 at 3:26 PM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Thu, Jun 30, 2022 at 02:21:56PM +0200, KP Singh wrote:
+> > > > On Thu, Jun 30, 2022 at 1:45 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > > >
+> > > > > On Wed, Jun 29, 2022 at 08:02:50PM -0700, Alexei Starovoitov wrote:
+> > > > > > On Wed, Jun 29, 2022 at 2:56 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > > > > > > > > >
+> > > > > > > > > > > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > > > > > > > > > > ---
+> > > > > > > > > > > >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
+> > > > > > > > > >
+> > > > > > > > > > [...]
+> > > > > > > > > >
+> > > > > > > > > > > > +SEC("lsm.s/bprm_committed_creds")
+> > > > > > > > > > > > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> > > > > > > > > > > > +{
+> > > > > > > > > > > > +     struct task_struct *current = bpf_get_current_task_btf();
+> > > > > > > > > > > > +     char dir_xattr_value[64] = {0};
+> > > > > > > > > > > > +     int xattr_sz = 0;
+> > > > > > > > > > > > +
+> > > > > > > > > > > > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > > > > > > > > > > > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
+> > > > > > > > > > > > +                             dir_xattr_value, 64);
+> > > > > > > > > > >
+> > > > > > > > > > > Yeah, this isn't right. You're not accounting for the caller's userns
+> > > > > > > > > > > nor for the idmapped mount. If this is supposed to work you will need a
+> > > > > > > > > > > variant of vfs_getxattr() that takes the mount's idmapping into account
+> > > > > > > > > > > afaict. See what needs to happen after do_getxattr().
+> > > > > > > > > >
+> > > > > > > > > > Thanks for taking a look.
+> > > > > > > > > >
+> > > >
+> > > > [...]
+> > > >
+> > > > > > > > >
+> > > > > > > > > That will not be correct.
+> > > > > > > > > posix_acl_fix_xattr_to_user checking current_user_ns()
+> > > > > > > > > is checking random tasks that happen to be running
+> > > > > > > > > when lsm hook got invoked.
+> > > > > > > > >
+> > > > > > > > > KP,
+> > > > > > > > > we probably have to document clearly that neither 'current*'
+> > > > > > > > > should not be used here.
+> > > > > > > > > xattr_permission also makes little sense in this context.
+> > > > > > > > > If anything it can be a different kfunc if there is a use case,
+> > > > > > > > > but I don't see it yet.
+> > > > > > > > > bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
+> > > > > > > > > call it directly. It's the kernel that is doing its security thing.
+> > > > > > > >
+> > > > > > > > Right, but LSMs usually only retrieve their own xattr namespace (ima,
+> > > > > > > > selinux, smack) or they calculate hashes for xattrs based on the raw
+> > > > > > > > filesystem xattr values (evm).
+> > > > > > > >
+> > > > > > > > But this new bpf_getxattr() is different. It allows to retrieve _any_
+> > > > > > > > xattr in any security hook it can be attached to. So someone can write a
+> > > > > > > > bpf program that retrieves filesystem capabilites or posix acls. And
+> > > > > > > > these are xattrs that require higher-level vfs involvement to be
+> > > > > > > > sensible in most contexts.
+> > > > > > > >
+> > > >
+> > > > [...]
+> > > >
+> > > > > > > >
+> > > > > > > > This hooks a bpf-lsm program to the security_bprm_committed_creds()
+> > > > > > > > hook. It then retrieves the extended attributes of the file to be
+> > > > > > > > executed. The hook currently always retrieves the raw filesystem values.
+> > > > > > > >
+> > > > > > > > But for example any XATTR_NAME_CAPS filesystem capabilities that
+> > > > > > > > might've been stored will be taken into account during exec. And both
+> > > > > > > > the idmapping of the mount and the caller matter when determing whether
+> > > > > > > > they are used or not.
+> > > > > > > >
+> > > > > > > > But the current implementation of bpf_getxattr() just ignores both. It
+> > > > > > > > will always retrieve the raw filesystem values. So if one invokes this
+> > > > > > > > hook they're not actually retrieving the values as they are seen by
+> > > > > > > > fs/exec.c. And I'm wondering why that is ok? And even if this is ok for
+> > > > > > > > some use-cases it might very well become a security issue in others if
+> > > > > > > > access decisions are always based on the raw values.
+> > > > > > > >
+> > > > > > > > I'm not well-versed in this so bear with me, please.
+> > > > > > >
+> > > > > > > If this is really just about retrieving the "security.bpf" xattr and no
+> > > > > > > other xattr then the bpf_getxattr() variant should somehow hard-code
+> > > > > > > that to ensure that no other xattrs can be retrieved, imho.
+> > > > > >
+> > > > > > All of these restrictions look very artificial to me.
+> > > > > > Especially the part "might very well become a security issue"
+> > > > > > just doesn't click.
+> > > > > > We're talking about bpf-lsm progs here that implement security.
+> > > > > > Can somebody implement a poor bpf-lsm that doesn't enforce
+> > > > > > any actual security? Sure. It's a code.
+> > > > >
+> > > > > The point is that with the current implementation of bpf_getxattr() you
+> > > > > are able to retrieve any xattrs and we have way less control over a
+> > > > > bpf-lsm program than we do over selinux which a simple git grep
+> > > > > __vfs_getxattr() is all we need.
+> > > > >
+> > > > > The thing is that with bpf_getxattr() as it stands it is currently
+> > > > > impossible to retrieve xattr values - specifically filesystem
+> > > > > capabilities and posix acls - and see them exactly like the code you're
+> > > > > trying to supervise is. And that seems very strange from a security
+> > > > > perspective. So if someone were to write
+> > > > >
+> > > > > SEC("lsm.s/bprm_creds_from_file")
+> > > > > void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
+> > > > > {
+> > > > >         struct task_struct *current = bpf_get_current_task_btf();
+> > > > >
+> > > > >         xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > > > >                                 bprm->file->f_path.dentry->d_inode,
+> > > > >                                 XATTR_NAME_POSIX_ACL_ACCESS, ..);
+> > > > >         // or
+> > > > >         xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
+> > > > >                                 bprm->file->f_path.dentry->d_inode,
+> > > > >                                 XATTR_NAME_CAPS, ..);
+> > > > >
+> > > > > }
+> > > > >
+> > > > > they'd get the raw nscaps and the raw xattrs back. But now, as just a
+> > > > > tiny example, the nscaps->rootuid and the ->e_id fields in the posix
+> > > > > ACLs make zero sense in this context.
+> > > > >
+> > > > > And what's more there's no way for the bpf-lsm program to turn them into
+> > > > > something that makes sense in the context of the hook they are retrieved
+> > > > > in. It lacks all the necessary helpers to do so afaict.
+> > > > >
+> > > > > > No one complains about the usage of EXPORT_SYMBOL(__vfs_getxattr)
+> > > > > > in the existing LSMs like selinux.
+> > > > >
+> > > > > Selinux only cares about its own xattr namespace. It doesn't retrieve
+> > > > > fscaps or posix acls and it's not possible to write selinux programs
+> > > > > that do so. With the bpf-lsm that's very much possible.
+> > > > >
+> > > > > And if we'd notice selinux would start retrieving random xattrs we'd ask
+> > > > > the same questions we do here.
+> > > > >
+> > > > > > No one complains about its usage in out of tree LSMs.
+> > > > > > Is that a security issue? Of course not.
+> > > > > > __vfs_getxattr is a kernel mechanism that LSMs use to implement
+> > > > > > the security features they need.
+> > > > > > __vfs_getxattr as kfunc here is pretty much the same as EXPORT_SYMBOL
+> > > > > > with a big difference that it's EXPORT_SYMBOL_GPL.
+> > > > > > BPF land doesn't have an equivalent of non-gpl export and is not going
+> > > > > > to get one.
+> > > >
+> > > > I want to reiterate what Alexei is saying here:
+> > > >
+> > > > *Please* consider this as a simple wrapper around __vfs_getxattr
+> > > > with a limited attach surface and extra verification checks and
+> > > > and nothing else.
+> > > >
+> > > > What you are saying is __vfs_getxattr does not make sense in some
+> > > > contexts. But kernel modules can still use it right?
+> > > >
+> > > > The user is implementing an LSM, if they chose to do things that don't make
+> > > > sense, then they can surely cause a lot more harm:
+> > > >
+> > > > SEC("lsm/bprm_check_security")
+> > > > int BPF_PROG(bprm_check, struct linux_binprm *bprm)
+> > > > {
+> > > >      return -EPERM;
+> > > > }
+> > > >
+> > > > >
+> > > > > This discussion would probably be a lot shorter if this series were sent
+> > > > > with a proper explanation of how this supposed to work and what it's
+> > > > > used for.
+> > > >
+> > > > It's currently scoped to BPF LSM (albeit limited to LSM for now)
+> > > > but it won't just be used in LSM programs but some (allow-listed)
+> > > > tracing programs too.
+> > > >
+> > > > We want to leave the flexibility to the implementer of the LSM hooks. If the
+> > > > implementer choses to retrieve posix_acl_* we can also expose
+> > > > posix_acl_fix_xattr_to_user or a different kfunc that adds this logic too
+> > > > but that would be a separate kfunc (and a separate use-case).
+> > >
+> > > No, sorry. That's what I feared and that's why I think this low-level
+> > > exposure of __vfs_getxattr() is wrong:
+> > > The posix_acl_fix_xattr_*() helpers, as well as the helpers like
+> > > get_file_caps() will not be exported. We're not going to export that
+> > 
+> > I don't want to expose them and I don't want any others to be
+> > exposed either.
+> > 
+> > > deeply internal vfs machinery. So I would NACK that. If you want that -
+> > > and that's what I'm saying here - you need to encapsulate this into your
+> > > vfs_*xattr() helper that you can call from your kfuncs.
+> > 
+> > It seems like __vfs_getxattr is already exposed and does the wrong thing in
+> > some contexts, why can't we just "fix" __vfs_getxattr then?
+> 
+> To me having either a version of bpf_getxattr() that restricts access to
+> certain xattrs or a version that takes care to perform the neccesary
+> translations is what seems to make the most sense. I suggested that in
+> one of my first mails.
+> 
+> The one thing where the way the xattrs are retrieved really matters is
+> for vfscaps (see get_vfs_caps_from_disk()) you really need something
+> like that function in order for vfs caps to make any sense and be
+> interpretable by the user of the hook.
+> 
+> But again, I might just misunderstand the context here and for the
+> bpf-lsm all of this isn't really a concern. If your new series comes out
+> I'll try to get more into the wider context.
+> If the security folks are happy with this then I won't argue.
 
-commit 168f912893407a5acb798a4a58613b5f1f98c717 upstream.
+I think for posix acls you're actually fine since you never report
+anything to userspace. So one of your bpf-lsms might reasonably
+interpret this.
 
-When calling setattr_prepare() to determine the validity of the
-attributes the ia_{g,u}id fields contain the value that will be written
-to inode->i_{g,u}id. This is exactly the same for idmapped and
-non-idmapped mounts and allows callers to pass in the values they want
-to see written to inode->i_{g,u}id.
-
-When group ownership is changed a caller whose fsuid owns the inode can
-change the group of the inode to any group they are a member of. When
-searching through the caller's groups we need to use the gid mapped
-according to the idmapped mount otherwise we will fail to change
-ownership for unprivileged users.
-
-Consider a caller running with fsuid and fsgid 1000 using an idmapped
-mount that maps id 65534 to 1000 and 65535 to 1001. Consequently, a file
-owned by 65534:65535 in the filesystem will be owned by 1000:1001 in the
-idmapped mount.
-
-The caller now requests the gid of the file to be changed to 1000 going
-through the idmapped mount. In the vfs we will immediately map the
-requested gid to the value that will need to be written to inode->i_gid
-and place it in attr->ia_gid. Since this idmapped mount maps 65534 to
-1000 we place 65534 in attr->ia_gid.
-
-When we check whether the caller is allowed to change group ownership we
-first validate that their fsuid matches the inode's uid. The
-inode->i_uid is 65534 which is mapped to uid 1000 in the idmapped mount.
-Since the caller's fsuid is 1000 we pass the check.
-
-We now check whether the caller is allowed to change inode->i_gid to the
-requested gid by calling in_group_p(). This will compare the passed in
-gid to the caller's fsgid and search the caller's additional groups.
-
-Since we're dealing with an idmapped mount we need to pass in the gid
-mapped according to the idmapped mount. This is akin to checking whether
-a caller is privileged over the future group the inode is owned by. And
-that needs to take the idmapped mount into account. Note, all helpers
-are nops without idmapped mounts.
-
-New regression test sent to xfstests.
-
-Link: https://github.com/lxc/lxd/issues/10537
-Link: https://lore.kernel.org/r/20220613111517.2186646-1-brauner@kernel.org
-Fixes: 2f221d6f7b88 ("attr: handle idmapped mounts")
-Cc: Seth Forshee <sforshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@vger.kernel.org # 5.15+
-CC: linux-fsdevel@vger.kernel.org
-Reviewed-by: Seth Forshee <sforshee@digitalocean.com>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/attr.c |   26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -61,9 +61,15 @@ static bool chgrp_ok(struct user_namespa
- 		     const struct inode *inode, kgid_t gid)
- {
- 	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
--	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
--	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
--		return true;
-+	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
-+		kgid_t mapped_gid;
-+
-+		if (gid_eq(gid, inode->i_gid))
-+			return true;
-+		mapped_gid = mapped_kgid_fs(mnt_userns, i_user_ns(inode), gid);
-+		if (in_group_p(mapped_gid))
-+			return true;
-+	}
- 	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
- 		return true;
- 	if (gid_eq(kgid, INVALID_GID) &&
-@@ -123,12 +129,20 @@ int setattr_prepare(struct user_namespac
- 
- 	/* Make sure a caller can chmod. */
- 	if (ia_valid & ATTR_MODE) {
-+		kgid_t mapped_gid;
-+
- 		if (!inode_owner_or_capable(mnt_userns, inode))
- 			return -EPERM;
-+
-+		if (ia_valid & ATTR_GID)
-+			mapped_gid = mapped_kgid_fs(mnt_userns,
-+						i_user_ns(inode), attr->ia_gid);
-+		else
-+			mapped_gid = i_gid_into_mnt(mnt_userns, inode);
-+
- 		/* Also check the setgid bit! */
--               if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
--                                i_gid_into_mnt(mnt_userns, inode)) &&
--                    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
-+		if (!in_group_p(mapped_gid) &&
-+		    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
- 			attr->ia_mode &= ~S_ISGID;
- 	}
- 
-
-
+But for vfscaps you need them fixed up. That's what's done in
+vfs_getxattr() via xattr_getsecurity() which calls into
+security_inode_getsecurity() and then into cap_inode_getsecurity() which
+does the conversion from the on-disk into the proper in-memory
+representation. And that's nasty because fscaps are versioned depending
+on whether they are namespaced or not.
