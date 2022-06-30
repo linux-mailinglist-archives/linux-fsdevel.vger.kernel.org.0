@@ -2,76 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EDE56204F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4253F56205D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236293AbiF3Q3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 12:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37524 "EHLO
+        id S235958AbiF3Qfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 12:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236274AbiF3Q3G (ORCPT
+        with ESMTP id S235389AbiF3Qfg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 12:29:06 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7751735242;
-        Thu, 30 Jun 2022 09:29:05 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id w187so18803365vsb.1;
-        Thu, 30 Jun 2022 09:29:05 -0700 (PDT)
+        Thu, 30 Jun 2022 12:35:36 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6109F3AA55;
+        Thu, 30 Jun 2022 09:35:35 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id c130-20020a1c3588000000b0039c6fd897b4so2064079wma.4;
+        Thu, 30 Jun 2022 09:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1a1RzxlSCIM5dhtCqVAmfijoRUkJ4QQhUiMrMG0/U+k=;
-        b=nge/4Og2obmsAZqMW7WDf73S0qVksl/kWK/6XGt1QGAZoUZvRdszv07aJYpM7wDVPr
-         CV6hD27j9UyiaFC+frjNcMd0HBOqkEkvLyDFUGVUrfmN+PacsRLCngGVi/7b554YK7Fz
-         JMQwNuMEurGBA5RLnxHaq+Dnvb95xEH5I2X9ioJxpUqxB2e5s2npEncLYf7hY/MbIIU3
-         Q65sZmCKg5gdcAmX2b8AcCRghD21iTBp3A0nLVJBjdDV1OdGjnp+ZiS76DEppwDHACvR
-         fmN3N3CHeI4syPY5ia37AulmGr4Zt0iepvuBeMqe9S4V7h2OaeNDo3nIuRr19nQgHB3C
-         ojMw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lZIrTmlOnvUkLrFbSOhPtwGibISpt/RODIchaEd1CDY=;
+        b=gvOxH2z87z7QsFkRgTQuNhQyyz+dHV1+8rh1sM7GpDupM74IOa6Ym2zyVx4Y0mEnkA
+         xFy3h+4BLgQAGQb7kHWwxfMcgIUz4Tef84LuOZORClSobvlsqYZZA4JRBDfKNY3iS9A8
+         W3vDemOPYtYp6bt4LA+muwinmH5c50oo9YbK3ghNa7sz/mzg54ZgVTtrFKX2Cgzw+P3N
+         ELSRjvVF4ivQ1YmTMe+MNMmYKoyNYpV+LtXu6h2BXUafKGQrVOGF0X6LVvrsdTzc/XfD
+         EcDDOVPqA+9w2kvc7GCTWMKYCQjY0KUvF3eMQA1meIaibaLIqLPbyUm6YJoKiAbmsj+a
+         uGnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1a1RzxlSCIM5dhtCqVAmfijoRUkJ4QQhUiMrMG0/U+k=;
-        b=tEv24tUDxCwMmErgLKbwNIJNwUwAmKitSWAn/Xj3gLPuLQjM/AN1ryR8CT4yREVW25
-         5KPyHLNIOHFoTHozEQ5tXfKn3uKyilf34j0FW1rI7nML8hQd1IXofmbQGpOSOE1E58u6
-         0xneGixD/o7jZHlKyHCOfK6zIExswlAuwkhGV6cjdwf6kdBlqUJt1bWwovU9NGzJXmv9
-         G10VhE9QdJKJ1QE8ZBmlWdt0SB/kwCU39h37UeREuAsoxozs/Du8iIPhizPvcYmpynmL
-         Pp6txlNhPpS5jbVyisijl7MvpytvGgU3ooKoJE6joO7Cm9jfG3233pSCl5s8sbsn9xar
-         w+vg==
-X-Gm-Message-State: AJIora/m+q477irGsQzmaGoUyhNWrPq+08TCi0RJ3U43w1BoAkkitKn3
-        CvqZwPoH3To/HrEOnfNDcEtHWop+uyiXE6ZutF8=
-X-Google-Smtp-Source: AGRyM1sgS6ijsKCwRqwmgQKWMOIBMYAygsJYHI3yCEwvUdnIrxokOV2PwPiDavJUDDs9Cm+7xBjrbstsdcfeGiezf0c=
-X-Received: by 2002:a67:c113:0:b0:354:3ef9:3f79 with SMTP id
- d19-20020a67c113000000b003543ef93f79mr8992976vsj.3.1656606544004; Thu, 30 Jun
- 2022 09:29:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lZIrTmlOnvUkLrFbSOhPtwGibISpt/RODIchaEd1CDY=;
+        b=GTEt4q69tWJR2OLe5ZtgtbMVaSXCHk6rFl+Ko7Mg3+tdejbLhNQrZ7yv8of3PJFB0A
+         CRj0NMSrYyMIv1DmTeONmJqx/dc2hDoBsEdpee75d2hd37af4iHnJiMUjeMWfcckq5Ti
+         1PTnrWm2Vt5xfFsjJOuTpXDNf0rxy/J20CCEq8e8o4TDSlpd5K2JFJ7F1gxs7Cdqcywa
+         pS5vjHKig30sFfm7mYlue0GiTsNsLKeHnlVueUP6YEtZfvgErXKA7AhFJbciQXJgFIDx
+         SpGPD4NzJAy9ZjbTrwVc8L7WrIefPO2dJs7lYYvoMaxbcZWLXilwm+Y6M27vCoNc5CIb
+         acaw==
+X-Gm-Message-State: AJIora8BaJ8TbUcC2B5jXAMHiQF7qD84IBqucxn25/bqj/KmDHxTyI+A
+        UXuS0uhkwzeGqPuKuZLR8Fk=
+X-Google-Smtp-Source: AGRyM1sQNe4+WIPmqW10XET/JjOyzodgMYKlJLfdcugPO9fE6FCvfEevPFPhlgS/sBSR469fLSNDFQ==
+X-Received: by 2002:a1c:4b11:0:b0:3a0:4270:fcfa with SMTP id y17-20020a1c4b11000000b003a04270fcfamr12974836wma.53.1656606933805;
+        Thu, 30 Jun 2022 09:35:33 -0700 (PDT)
+Received: from localhost.localdomain (host-87-6-98-182.retail.telecomitalia.it. [87.6.98.182])
+        by smtp.gmail.com with ESMTPSA id u3-20020a05600c210300b003a044fe7fe7sm7112303wml.9.2022.06.30.09.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 09:35:32 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, nvdimm@lists.linux.dev,
+        io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
+        llvm@lists.linux.dev
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Thu, 30 Jun 2022 18:35:27 +0200
+Message-Id: <20220630163527.9776-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
- <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
- <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
- <20220629081119.ddqvfn3al36fl27q@wittgenstein> <20220629095557.oet6u2hi7msit6ff@wittgenstein>
- <CAADnVQ+HhhQdcz_u8kP45Db_gUK+pOYg=jObZpLtdin=v_t9tw@mail.gmail.com>
- <20220630114549.uakuocpn7w5jfrz2@wittgenstein> <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
-In-Reply-To: <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 30 Jun 2022 19:28:52 +0300
-Message-ID: <CAOQ4uxhKG7wDsh2qhtzcF7QYFRD51r500C9YKp2NrBPJtjphww@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jan Kara <jack@suse.cz>, Alessio Balsini <balsini@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -82,30 +88,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> >
-> > This discussion would probably be a lot shorter if this series were sent
-> > with a proper explanation of how this supposed to work and what it's
-> > used for.
->
-> It's currently scoped to BPF LSM (albeit limited to LSM for now)
-> but it won't just be used in LSM programs but some (allow-listed)
-> tracing programs too.
->
+The use of kmap() and kmap_atomic() are being deprecated in favor of
+kmap_local_page().
 
-KP,
+With kmap_local_page(), the mappings are per thread, CPU local and not
+globally visible. Furthermore, the mappings can be acquired from any
+context (including interrupts).
 
-Without taking sides in the discussion about the security aspect of
-bpf_getxattr(),
-I wanted to say that we have plans to add BPF hooks for fanotify event
-filters and
-AFAIK Alessio's team is working on adding BPF hooks for FUSE bypass decisions.
+Therefore, use kmap_local_page() in exec.c because these mappings are per
+thread, CPU local, and not globally visible.
 
-In both those cases, being able to tag files with some xattr and use
-that as part of
-criteria in the hook would be very useful IMO, but I don't think that
-it should be a
-problem to limit the scope of the allowed namespace to security.bpf.* for these
-use cases.
+Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+HIGHMEM64GB enabled.
 
-Thanks,
-Amir.
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+ fs/exec.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 0989fb8472a1..4a2129c0d422 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -583,11 +583,11 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ 
+ 				if (kmapped_page) {
+ 					flush_dcache_page(kmapped_page);
+-					kunmap(kmapped_page);
++					kunmap_local(kaddr);
+ 					put_arg_page(kmapped_page);
+ 				}
+ 				kmapped_page = page;
+-				kaddr = kmap(kmapped_page);
++				kaddr = kmap_local_page(kmapped_page);
+ 				kpos = pos & PAGE_MASK;
+ 				flush_arg_page(bprm, kpos, kmapped_page);
+ 			}
+@@ -601,7 +601,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ out:
+ 	if (kmapped_page) {
+ 		flush_dcache_page(kmapped_page);
+-		kunmap(kmapped_page);
++		kunmap_local(kaddr);
+ 		put_arg_page(kmapped_page);
+ 	}
+ 	return ret;
+@@ -883,11 +883,11 @@ int transfer_args_to_stack(struct linux_binprm *bprm,
+ 
+ 	for (index = MAX_ARG_PAGES - 1; index >= stop; index--) {
+ 		unsigned int offset = index == stop ? bprm->p & ~PAGE_MASK : 0;
+-		char *src = kmap(bprm->page[index]) + offset;
++		char *src = kmap_local_page(bprm->page[index]) + offset;
+ 		sp -= PAGE_SIZE - offset;
+ 		if (copy_to_user((void *) sp, src, PAGE_SIZE - offset) != 0)
+ 			ret = -EFAULT;
+-		kunmap(bprm->page[index]);
++		kunmap_local(src);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -1680,13 +1680,13 @@ int remove_arg_zero(struct linux_binprm *bprm)
+ 			ret = -EFAULT;
+ 			goto out;
+ 		}
+-		kaddr = kmap_atomic(page);
++		kaddr = kmap_local_page(page);
+ 
+ 		for (; offset < PAGE_SIZE && kaddr[offset];
+ 				offset++, bprm->p++)
+ 			;
+ 
+-		kunmap_atomic(kaddr);
++		kunmap_local(kaddr);
+ 		put_arg_page(page);
+ 	} while (offset == PAGE_SIZE);
+ 
+-- 
+2.36.1
+
