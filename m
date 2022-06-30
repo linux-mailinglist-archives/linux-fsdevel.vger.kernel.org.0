@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D46561CCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 16:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F9A561CED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 16:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236824AbiF3OK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 10:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
+        id S236864AbiF3OKn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 10:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236795AbiF3OKe (ORCPT
+        with ESMTP id S236427AbiF3OKP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 10:10:34 -0400
+        Thu, 30 Jun 2022 10:10:15 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8FB599E6;
-        Thu, 30 Jun 2022 06:55:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D1A7B34D;
+        Thu, 30 Jun 2022 06:55:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 489EDB82AEF;
-        Thu, 30 Jun 2022 13:55:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82D6BC34115;
-        Thu, 30 Jun 2022 13:55:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EC59CB82AF8;
+        Thu, 30 Jun 2022 13:55:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661FAC34115;
+        Thu, 30 Jun 2022 13:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1656597323;
-        bh=+5LbjSJgZKHKTCgUxnjz17wIqsLTdKKaL1Sthm7157Q=;
+        s=korg; t=1656597325;
+        bh=n6pCRpxRo1ejolie+HwU9V9duHfbqPeFU7Zrwi/AZt0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiWecIHDbDl1dMNDwvhEL4v5SZHlwICIaJQQAY3uGqGnGQo32bnTQXhhwpx5NrONB
-         8DDvWlSuRlsg9abpouRoi8uro1S6h9b5zx/qHE7IRlCYbM1nu3BHYAlGjctzJ2KJO8
-         Fo0TBaiUkUT5aD5WVrb9tQEmIXdGSvS+KUStU290=
+        b=lXG8VpV5r34mtYYBUDk6FuRXKXKOZiFgU+0Hh8mtsIUKDKgZgVj77H/dvaPckOYsp
+         GypL8nqyj97UJiOaQREneOYzXSrPCuDl0BTS7vdKozTlxGun7a0xym8sNqVhLy7LsJ
+         gN7QDH0Uj13znq4+ZIxmeh+iOY2+mquXH12Wj0cI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         "Christian Brauner (Microsoft)" <brauner@kernel.org>
-Subject: [PATCH 5.15 16/28] fs: account for filesystem mappings
-Date:   Thu, 30 Jun 2022 15:47:12 +0200
-Message-Id: <20220630133233.405793763@linuxfoundation.org>
+Subject: [PATCH 5.15 17/28] docs: update mapping documentation
+Date:   Thu, 30 Jun 2022 15:47:13 +0200
+Message-Id: <20220630133233.434921899@linuxfoundation.org>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220630133232.926711493@linuxfoundation.org>
 References: <20220630133232.926711493@linuxfoundation.org>
@@ -61,83 +61,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
 
-commit 1ac2a4104968e0a60b4b3572216a92aab5c1b025 upstream.
+commit 8cc5c54de44c5e8e104d364a627ac4296845fc7f upstream.
 
-Currently we only support idmapped mounts for filesystems mounted
-without an idmapping. This was a conscious decision mentioned in
-multiple places (cf. e.g. [1]).
+Now that we implement the full remapping algorithms described in our
+documentation remove the section about shortcircuting them.
 
-As explained at length in [3] it is perfectly fine to extend support for
-idmapped mounts to filesystem's mounted with an idmapping should the
-need arise. The need has been there for some time now. Various container
-projects in userspace need this to run unprivileged and nested
-unprivileged containers (cf. [2]).
-
-Before we can port any filesystem that is mountable with an idmapping to
-support idmapped mounts we need to first extend the mapping helpers to
-account for the filesystem's idmapping. This again, is explained at
-length in our documentation at [3] but I'll give an overview here again.
-
-Currently, the low-level mapping helpers implement the remapping
-algorithms described in [3] in a simplified manner. Because we could
-rely on the fact that all filesystems supporting idmapped mounts are
-mounted without an idmapping the translation step from or into the
-filesystem idmapping could be skipped.
-
-In order to support idmapped mounts of filesystem's mountable with an
-idmapping the translation step we were able to skip before cannot be
-skipped anymore. A filesystem mounted with an idmapping is very likely
-to not use an identity mapping and will instead use a non-identity
-mapping. So the translation step from or into the filesystem's idmapping
-in the remapping algorithm cannot be skipped for such filesystems. More
-details with examples can be found in [3].
-
-This patch adds a few new and prepares some already existing low-level
-mapping helpers to perform the full translation algorithm explained in
-[3]. The low-level helpers can be written in a way that they only
-perform the additional translation step when the filesystem is indeed
-mounted with an idmapping.
-
-If the low-level helpers detect that they are not dealing with an
-idmapped mount they can simply return the relevant k{g,u}id unchanged;
-no remapping needs to be performed at all. The no_idmapping() helper
-detects whether the shortcut can be used.
-
-If the low-level helpers detected that they are dealing with an idmapped
-mount but the underlying filesystem is mounted without an idmapping we
-can rely on the previous shorcut and can continue to skip the
-translation step from or into the filesystem's idmapping.
-
-These checks guarantee that only the minimal amount of work is
-performed. As before, if idmapped mounts aren't used the low-level
-helpers are idempotent and no work is performed at all.
-
-This patch adds the helpers mapped_k{g,u}id_fs() and
-mapped_k{g,u}id_user(). Following patches will port all places to
-replace the old k{g,u}id_into_mnt() and k{g,u}id_from_mnt() with these
-two new helpers. After the conversion is done k{g,u}id_into_mnt() and
-k{g,u}id_from_mnt() will be removed. This also concludes the renaming of
-the mapping helpers we started in [4]. Now, all mapping helpers will
-started with the "mapped_" prefix making everything nice and consistent.
-
-The mapped_k{g,u}id_fs() helpers replace the k{g,u}id_into_mnt()
-helpers. They are to be used when k{g,u}ids are to be mapped from the
-vfs, e.g. from from struct inode's i_{g,u}id.  Conversely, the
-mapped_k{g,u}id_user() helpers replace the k{g,u}id_from_mnt() helpers.
-They are to be used when k{g,u}ids are to be written to disk, e.g. when
-entering from a system call to change ownership of a file.
-
-This patch only introduces the helpers. It doesn't yet convert the
-relevant places to account for filesystem mounted with an idmapping.
-
-[1]: commit 2ca4dcc4909d ("fs/mount_setattr: tighten permission checks")
-[2]: https://github.com/containers/podman/issues/10374
-[3]: Documentations/filesystems/idmappings.rst
-[4]: commit a65e58e791a1 ("fs: document and rename fsid helpers")
-
-Link: https://lore.kernel.org/r/20211123114227.3124056-5-brauner@kernel.org (v1)
-Link: https://lore.kernel.org/r/20211130121032.3753852-5-brauner@kernel.org (v2)
-Link: https://lore.kernel.org/r/20211203111707.3901969-5-brauner@kernel.org
+Link: https://lore.kernel.org/r/20211123114227.3124056-6-brauner@kernel.org (v1)
+Link: https://lore.kernel.org/r/20211130121032.3753852-6-brauner@kernel.org (v2)
+Link: https://lore.kernel.org/r/20211203111707.3901969-6-brauner@kernel.org
 Cc: Seth Forshee <sforshee@digitalocean.com>
 Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Christoph Hellwig <hch@lst.de>
@@ -148,257 +79,86 @@ Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/fs.h            |    4 
- include/linux/mnt_idmapping.h |  193 +++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 191 insertions(+), 6 deletions(-)
+ Documentation/filesystems/idmappings.rst |   72 -------------------------------
+ 1 file changed, 72 deletions(-)
 
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1638,7 +1638,7 @@ static inline void i_gid_write(struct in
- static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
- 				    const struct inode *inode)
- {
--	return kuid_into_mnt(mnt_userns, inode->i_uid);
-+	return mapped_kuid_fs(mnt_userns, &init_user_ns, inode->i_uid);
- }
- 
- /**
-@@ -1652,7 +1652,7 @@ static inline kuid_t i_uid_into_mnt(stru
- static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
- 				    const struct inode *inode)
- {
--	return kgid_into_mnt(mnt_userns, inode->i_gid);
-+	return mapped_kgid_fs(mnt_userns, &init_user_ns, inode->i_gid);
- }
- 
- /**
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -6,6 +6,11 @@
- #include <linux/uidgid.h>
- 
- struct user_namespace;
-+/*
-+ * Carries the initial idmapping of 0:0:4294967295 which is an identity
-+ * mapping. This means that {g,u}id 0 is mapped to {g,u}id 0, {g,u}id 1 is
-+ * mapped to {g,u}id 1, [...], {g,u}id 1000 to {g,u}id 1000, [...].
-+ */
- extern struct user_namespace init_user_ns;
- 
- /**
-@@ -65,8 +70,188 @@ static inline kgid_t kgid_from_mnt(struc
- }
- 
- /**
-+ * initial_idmapping - check whether this is the initial mapping
-+ * @ns: idmapping to check
-+ *
-+ * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
-+ * [...], 1000 to 1000 [...].
-+ *
-+ * Return: true if this is the initial mapping, false if not.
-+ */
-+static inline bool initial_idmapping(const struct user_namespace *ns)
-+{
-+	return ns == &init_user_ns;
-+}
-+
-+/**
-+ * no_idmapping - check whether we can skip remapping a kuid/gid
-+ * @mnt_userns: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ *
-+ * This function can be used to check whether a remapping between two
-+ * idmappings is required.
-+ * An idmapped mount is a mount that has an idmapping attached to it that
-+ * is different from the filsystem's idmapping and the initial idmapping.
-+ * If the initial mapping is used or the idmapping of the mount and the
-+ * filesystem are identical no remapping is required.
-+ *
-+ * Return: true if remapping can be skipped, false if not.
-+ */
-+static inline bool no_idmapping(const struct user_namespace *mnt_userns,
-+				const struct user_namespace *fs_userns)
-+{
-+	return initial_idmapping(mnt_userns) || mnt_userns == fs_userns;
-+}
-+
-+/**
-+ * mapped_kuid_fs - map a filesystem kuid into a mnt_userns
-+ * @mnt_userns: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kuid : kuid to be mapped
-+ *
-+ * Take a @kuid and remap it from @fs_userns into @mnt_userns. Use this
-+ * function when preparing a @kuid to be reported to userspace.
-+ *
-+ * If no_idmapping() determines that this is not an idmapped mount we can
-+ * simply return @kuid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kuid won't change when calling
-+ * from_kuid() so we can simply retrieve the value via __kuid_val()
-+ * directly.
-+ *
-+ * Return: @kuid mapped according to @mnt_userns.
-+ * If @kuid has no mapping in either @mnt_userns or @fs_userns INVALID_UID is
-+ * returned.
-+ */
-+static inline kuid_t mapped_kuid_fs(struct user_namespace *mnt_userns,
-+				    struct user_namespace *fs_userns,
-+				    kuid_t kuid)
-+{
-+	uid_t uid;
-+
-+	if (no_idmapping(mnt_userns, fs_userns))
-+		return kuid;
-+	if (initial_idmapping(fs_userns))
-+		uid = __kuid_val(kuid);
-+	else
-+		uid = from_kuid(fs_userns, kuid);
-+	if (uid == (uid_t)-1)
-+		return INVALID_UID;
-+	return make_kuid(mnt_userns, uid);
-+}
-+
-+/**
-+ * mapped_kgid_fs - map a filesystem kgid into a mnt_userns
-+ * @mnt_userns: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kgid : kgid to be mapped
-+ *
-+ * Take a @kgid and remap it from @fs_userns into @mnt_userns. Use this
-+ * function when preparing a @kgid to be reported to userspace.
-+ *
-+ * If no_idmapping() determines that this is not an idmapped mount we can
-+ * simply return @kgid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kgid won't change when calling
-+ * from_kgid() so we can simply retrieve the value via __kgid_val()
-+ * directly.
-+ *
-+ * Return: @kgid mapped according to @mnt_userns.
-+ * If @kgid has no mapping in either @mnt_userns or @fs_userns INVALID_GID is
-+ * returned.
-+ */
-+static inline kgid_t mapped_kgid_fs(struct user_namespace *mnt_userns,
-+				    struct user_namespace *fs_userns,
-+				    kgid_t kgid)
-+{
-+	gid_t gid;
-+
-+	if (no_idmapping(mnt_userns, fs_userns))
-+		return kgid;
-+	if (initial_idmapping(fs_userns))
-+		gid = __kgid_val(kgid);
-+	else
-+		gid = from_kgid(fs_userns, kgid);
-+	if (gid == (gid_t)-1)
-+		return INVALID_GID;
-+	return make_kgid(mnt_userns, gid);
-+}
-+
-+/**
-+ * mapped_kuid_user - map a user kuid into a mnt_userns
-+ * @mnt_userns: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kuid : kuid to be mapped
-+ *
-+ * Use the idmapping of @mnt_userns to remap a @kuid into @fs_userns. Use this
-+ * function when preparing a @kuid to be written to disk or inode.
-+ *
-+ * If no_idmapping() determines that this is not an idmapped mount we can
-+ * simply return @kuid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kuid won't change when calling
-+ * make_kuid() so we can simply retrieve the value via KUIDT_INIT()
-+ * directly.
-+ *
-+ * Return: @kuid mapped according to @mnt_userns.
-+ * If @kuid has no mapping in either @mnt_userns or @fs_userns INVALID_UID is
-+ * returned.
-+ */
-+static inline kuid_t mapped_kuid_user(struct user_namespace *mnt_userns,
-+				      struct user_namespace *fs_userns,
-+				      kuid_t kuid)
-+{
-+	uid_t uid;
-+
-+	if (no_idmapping(mnt_userns, fs_userns))
-+		return kuid;
-+	uid = from_kuid(mnt_userns, kuid);
-+	if (uid == (uid_t)-1)
-+		return INVALID_UID;
-+	if (initial_idmapping(fs_userns))
-+		return KUIDT_INIT(uid);
-+	return make_kuid(fs_userns, uid);
-+}
-+
-+/**
-+ * mapped_kgid_user - map a user kgid into a mnt_userns
-+ * @mnt_userns: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kgid : kgid to be mapped
-+ *
-+ * Use the idmapping of @mnt_userns to remap a @kgid into @fs_userns. Use this
-+ * function when preparing a @kgid to be written to disk or inode.
-+ *
-+ * If no_idmapping() determines that this is not an idmapped mount we can
-+ * simply return @kgid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kgid won't change when calling
-+ * make_kgid() so we can simply retrieve the value via KGIDT_INIT()
-+ * directly.
-+ *
-+ * Return: @kgid mapped according to @mnt_userns.
-+ * If @kgid has no mapping in either @mnt_userns or @fs_userns INVALID_GID is
-+ * returned.
-+ */
-+static inline kgid_t mapped_kgid_user(struct user_namespace *mnt_userns,
-+				      struct user_namespace *fs_userns,
-+				      kgid_t kgid)
-+{
-+	gid_t gid;
-+
-+	if (no_idmapping(mnt_userns, fs_userns))
-+		return kgid;
-+	gid = from_kgid(mnt_userns, kgid);
-+	if (gid == (gid_t)-1)
-+		return INVALID_GID;
-+	if (initial_idmapping(fs_userns))
-+		return KGIDT_INIT(gid);
-+	return make_kgid(fs_userns, gid);
-+}
-+
-+/**
-  * mapped_fsuid - return caller's fsuid mapped up into a mnt_userns
-- * @mnt_userns: user namespace of the relevant mount
-+ * @mnt_userns: the mount's idmapping
-  *
-  * Use this helper to initialize a new vfs or filesystem object based on
-  * the caller's fsuid. A common example is initializing the i_uid field of
-@@ -78,12 +263,12 @@ static inline kgid_t kgid_from_mnt(struc
-  */
- static inline kuid_t mapped_fsuid(struct user_namespace *mnt_userns)
- {
--	return kuid_from_mnt(mnt_userns, current_fsuid());
-+	return mapped_kuid_user(mnt_userns, &init_user_ns, current_fsuid());
- }
- 
- /**
-  * mapped_fsgid - return caller's fsgid mapped up into a mnt_userns
-- * @mnt_userns: user namespace of the relevant mount
-+ * @mnt_userns: the mount's idmapping
-  *
-  * Use this helper to initialize a new vfs or filesystem object based on
-  * the caller's fsgid. A common example is initializing the i_gid field of
-@@ -95,7 +280,7 @@ static inline kuid_t mapped_fsuid(struct
-  */
- static inline kgid_t mapped_fsgid(struct user_namespace *mnt_userns)
- {
--	return kgid_from_mnt(mnt_userns, current_fsgid());
-+	return mapped_kgid_user(mnt_userns, &init_user_ns, current_fsgid());
- }
- 
- #endif /* _LINUX_MNT_IDMAPPING_H */
+--- a/Documentation/filesystems/idmappings.rst
++++ b/Documentation/filesystems/idmappings.rst
+@@ -952,75 +952,3 @@ The raw userspace id that is put on disk
+ their home directory back to their home computer where they are assigned
+ ``u1000`` using the initial idmapping and mount the filesystem with the initial
+ idmapping they will see all those files owned by ``u1000``.
+-
+-Shortcircuting
+---------------
+-
+-Currently, the implementation of idmapped mounts enforces that the filesystem
+-is mounted with the initial idmapping. The reason is simply that none of the
+-filesystems that we targeted were mountable with a non-initial idmapping. But
+-that might change soon enough. As we've seen above, thanks to the properties of
+-idmappings the translation works for both filesystems mounted with the initial
+-idmapping and filesystem with non-initial idmappings.
+-
+-Based on this current restriction to filesystem mounted with the initial
+-idmapping two noticeable shortcuts have been taken:
+-
+-1. We always stash a reference to the initial user namespace in ``struct
+-   vfsmount``. Idmapped mounts are thus mounts that have a non-initial user
+-   namespace attached to them.
+-
+-   In order to support idmapped mounts this needs to be changed. Instead of
+-   stashing the initial user namespace the user namespace the filesystem was
+-   mounted with must be stashed. An idmapped mount is then any mount that has
+-   a different user namespace attached then the filesystem was mounted with.
+-   This has no user-visible consequences.
+-
+-2. The translation algorithms in ``mapped_fs*id()`` and ``i_*id_into_mnt()``
+-   are simplified.
+-
+-   Let's consider ``mapped_fs*id()`` first. This function translates the
+-   caller's kernel id into a kernel id in the filesystem's idmapping via
+-   a mount's idmapping. The full algorithm is::
+-
+-    mapped_fsuid(kid):
+-      /* Map the kernel id up into a userspace id in the mount's idmapping. */
+-      from_kuid(mount-idmapping, kid) = uid
+-
+-      /* Map the userspace id down into a kernel id in the filesystem's idmapping. */
+-      make_kuid(filesystem-idmapping, uid) = kuid
+-
+-   We know that the filesystem is always mounted with the initial idmapping as
+-   we enforce this in ``mount_setattr()``. So this can be shortened to::
+-
+-    mapped_fsuid(kid):
+-      /* Map the kernel id up into a userspace id in the mount's idmapping. */
+-      from_kuid(mount-idmapping, kid) = uid
+-
+-      /* Map the userspace id down into a kernel id in the filesystem's idmapping. */
+-      KUIDT_INIT(uid) = kuid
+-
+-   Similarly, for ``i_*id_into_mnt()`` which translated the filesystem's kernel
+-   id into a mount's kernel id::
+-
+-    i_uid_into_mnt(kid):
+-      /* Map the kernel id up into a userspace id in the filesystem's idmapping. */
+-      from_kuid(filesystem-idmapping, kid) = uid
+-
+-      /* Map the userspace id down into a kernel id in the mounts's idmapping. */
+-      make_kuid(mount-idmapping, uid) = kuid
+-
+-   Again, we know that the filesystem is always mounted with the initial
+-   idmapping as we enforce this in ``mount_setattr()``. So this can be
+-   shortened to::
+-
+-    i_uid_into_mnt(kid):
+-      /* Map the kernel id up into a userspace id in the filesystem's idmapping. */
+-      __kuid_val(kid) = uid
+-
+-      /* Map the userspace id down into a kernel id in the mounts's idmapping. */
+-      make_kuid(mount-idmapping, uid) = kuid
+-
+-Handling filesystems mounted with non-initial idmappings requires that the
+-translation functions be converted to their full form. They can still be
+-shortcircuited on non-idmapped mounts. This has no user-visible consequences.
 
 
