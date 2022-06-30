@@ -2,459 +2,636 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6132F562009
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF82562019
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 18:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236090AbiF3QOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 12:14:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52272 "EHLO
+        id S236205AbiF3QSa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 12:18:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235383AbiF3QOp (ORCPT
+        with ESMTP id S235069AbiF3QS2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 12:14:45 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E7D26134
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 09:14:43 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id l24so19563909ion.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 09:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6KfFntQ5abb9IbQI/ttBZAHVJMdR+q3WC68Fa70eZtA=;
-        b=IoPvaR7NgsCIpRrOgUVsw+uJqASE8RnoAN+4hJo3TbgsrNiSInUZWvV+wg0WZjq2by
-         SF1GEcVklrb85YvB/xj95AeXQuPsCTwGcWryk6cBbUbruAwelemDEGZjNgpZnyzIMKun
-         9A7AR4uOQjGMmGC3Rivk3wYQu9bRnerxPmvx/tWDs9jJwH2Vo2TfigbkB7r7IzQ4qoAN
-         F14JCQdl+O4W2wDfoQbiOtQI6Kh60XhKrzhbaTzJzMAo0fBRZkWP3ktoR84Q3ytfYCb8
-         2uacAS+q0kgj2SjzUk0yADAIPCr2V2vyPuxcI9J0dZBls7g4C5y7qjlGEqRMI3jydkmy
-         +1kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6KfFntQ5abb9IbQI/ttBZAHVJMdR+q3WC68Fa70eZtA=;
-        b=iUtUbCUpNFIi8YHD2KPhr2imJv54KqJV9ERDGOCSTsJfCrN7b9e8sBoYCsO5zuOYM7
-         IT42sjy0Td2/27ZcS7hrZdKamlxgdgBHgDtjRR3Vr7v0wgcbpDnRa6Dxe/tsNPxt9apt
-         Kxq5Fgj9pCoIAf3xwk2+RHgAiAn+arknRcE4MVtOR/G7WYqufzddB4UFPPNMidL+LZGm
-         f3Jx1vG/kqSGclTmALTwWmQG94fGKwogd3x29rfgnX7Dz1XgO1libqIDAsSjtT92VTqH
-         AiYWBO2+N/OKA3dZMh+jDuC3zEHCgIKegfhq7OUiTyx9rmqExxu+gW/DMSz0h35oa6ps
-         ZXxw==
-X-Gm-Message-State: AJIora+z2VCAVapTMXanqerdikXsZMMgy7KXHV1FU/XNAma/RXqX5PIO
-        zraEG1jS9hTGSKdAYz82xq0lee8FMc4ia/MrWZNl0g==
-X-Google-Smtp-Source: AGRyM1s4W7oZz+xDTMwNDb7RYtNHPQh/osWwLFvxCzv27GBY0hvD0aThekDF3JcPacdCaGwiWuHow1B40irkjCWrgDY=
-X-Received: by 2002:a02:caae:0:b0:33c:8ae0:cc51 with SMTP id
- e14-20020a02caae000000b0033c8ae0cc51mr6058454jap.92.1656605683065; Thu, 30
- Jun 2022 09:14:43 -0700 (PDT)
+        Thu, 30 Jun 2022 12:18:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171A21EC7F;
+        Thu, 30 Jun 2022 09:18:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9987661FFB;
+        Thu, 30 Jun 2022 16:18:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1484C34115;
+        Thu, 30 Jun 2022 16:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656605906;
+        bh=FNqG9nClUfdn9TnASVFMj5V788rc3hGSwKyxEuvVVFk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J5p3lhbJI8VOen72bxecwV8g5Ml7LefIqf5OH1zPkd9Jt3JcxXB+X+moMJ1nrh5I2
+         Imlltepf26S9tc6h8M/0MBSitMRtaUPlhbs6HsPORqcITAtCb90jpRmV4rYU5M/7OF
+         JrCUtb7D3e3clNn2akgZUIT0+8C85A6j/57/wRgCD/aKydbpyPrSDydOtVt5H5xY4+
+         OYCzkxo3S9M1z6qgEsf9QpB69x911R8quDYLNIya88m3jta3ld3JKUpkrAS82yQ+9T
+         UtDO3ClLaNbklWNJwTPsZB5oys2NrzgXdO7/r8bLWKcGLlhSHPNhYA3APv5EEiqmke
+         hGr3o8VkSEGPw==
+Date:   Thu, 30 Jun 2022 09:18:25 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, agk@redhat.com, song@kernel.org,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, javier@javigon.com,
+        johannes.thumshirn@wdc.com, bvanassche@acm.org,
+        dongli.zhang@oracle.com, ming.lei@redhat.com, willy@infradead.org,
+        jefflexu@linux.alibaba.com, josef@toxicpanda.com, clm@fb.com,
+        dsterba@suse.com, jack@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jlayton@kernel.org, idryomov@gmail.com,
+        danil.kipnis@cloud.ionos.com, ebiggers@google.com,
+        jinpu.wang@cloud.ionos.com
+Subject: Re: [PATCH 1/6] block: add support for REQ_OP_VERIFY
+Message-ID: <Yr3M0W5T/CwMtvte@magnolia>
+References: <20220630091406.19624-1-kch@nvidia.com>
+ <20220630091406.19624-2-kch@nvidia.com>
 MIME-Version: 1.0
-References: <000000000000f94c4805e289fc47@google.com> <YrvYEdTNWcvhIE7U@sol.localdomain>
- <CAJHvVcgoeKhqFTN5aGfQ53GbRDYJsfkRjeUM-yO5AROC0A8ekQ@mail.gmail.com> <Yr1jKwz2+SGxjcuW@kernel.org>
-In-Reply-To: <Yr1jKwz2+SGxjcuW@kernel.org>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Thu, 30 Jun 2022 09:14:07 -0700
-Message-ID: <CAJHvVciyL0i-8HaAWSo9rvbJn-_yqhCmj2FEPhUU=7TdMnKrag@mail.gmail.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in truncate_inode_partial_folio
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220630091406.19624-2-kch@nvidia.com>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 1:47 AM Mike Rapoport <rppt@kernel.org> wrote:
->
-> On Wed, Jun 29, 2022 at 09:30:12AM -0700, Axel Rasmussen wrote:
-> > On Tue, Jun 28, 2022 at 9:41 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > On Tue, Jun 28, 2022 at 03:59:26PM -0700, syzbot wrote:
-> > > > Hello,
-> > > >
-> > > > syzbot found the following issue on:
-> > > >
-> > > > HEAD commit:    941e3e791269 Merge tag 'for_linus' of git://git.kernel.org..
-> > > > git tree:       upstream
-> > > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=1670ded4080000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=833001d0819ddbc9
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=9bd2b7adbd34b30b87e4
-> > > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140f9ba8080000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15495188080000
-> > > >
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-> > > >
-> > > > BUG: unable to handle page fault for address: ffff888021f7e005
-> > > > #PF: supervisor write access in kernel mode
-> > > > #PF: error_code(0x0002) - not-present page
-> > > > PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
-> > > > Oops: 0002 [#1] PREEMPT SMP KASAN
-> > > > CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > > RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
-> > > > Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-> > > > RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
-> > > > RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
-> > > > RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
-> > > > RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
-> > > > R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
-> > > > R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
-> > > > FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
-> > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > Call Trace:
-> > > >  <TASK>
-> > > >  zero_user_segments include/linux/highmem.h:272 [inline]
-> > > >  folio_zero_range include/linux/highmem.h:428 [inline]
-> > > >  truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
-> > > >  truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
-> > > >  truncate_inode_pages mm/truncate.c:452 [inline]
-> > > >  truncate_pagecache+0x63/0x90 mm/truncate.c:753
-> > > >  simple_setattr+0xed/0x110 fs/libfs.c:535
-> > > >  secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
-> > > >  notify_change+0xb8c/0x12b0 fs/attr.c:424
-> > > >  do_truncate+0x13c/0x200 fs/open.c:65
-> > > >  do_sys_ftruncate+0x536/0x730 fs/open.c:193
-> > > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> > > >  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> > > > RIP: 0033:0x7fb29d900899
-> > > > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > > > RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-> > > > RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
-> > > > RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
-> > > > RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
-> > > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
-> > > > R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
-> > > >  </TASK>
-> > > > Modules linked in:
-> > > > CR2: ffff888021f7e005
-> > > > ---[ end trace 0000000000000000 ]---
-> > >
-> > > I think this is a bug in memfd_secret.  secretmem_setattr() can race with a page
-> > > being faulted in by secretmem_fault().  Specifically, a page can be faulted in
-> > > after secretmem_setattr() has set i_size but before it zeroes out the partial
-> > > page past i_size.  memfd_secret pages aren't mapped in the kernel direct map, so
-> > > the crash occurs when the kernel tries to zero out the partial page.
-> > >
-> > > I don't know what the best solution is -- maybe a rw_semaphore protecting
-> > > secretmem_fault() and secretmem_setattr()?  Or perhaps secretmem_setattr()
-> > > should avoid the call to truncate_setsize() by not using simple_setattr(), given
-> > > that secretmem_setattr() only supports the size going from zero to nonzero.
-> >
-> > From my perspective the rw_semaphore approach sounds reasonable.
-> >
-> > simple_setattr() and the functions it calls to do the actual work
-> > isn't a tiny amount of code, it would be a shame to reimplement it in
-> > secretmem.c.
-> >
-> > For the rwsem, I guess the idea is setattr will take it for write, and
-> > fault will take it for read? Since setattr is a very infrequent
-> > operation - a typical use case is you'd do it exactly once right after
-> > opening the memfd_secret - this seems like it wouldn't make fault
-> > significantly less performant. It's also a pretty small change I
-> > think, just a few lines.
->
-> Below is my take on adding a semaphore and making ->setattr() and ->fault()
-> mutually exclusive. It's only lightly tested so I'd appreciate if Eric
-> could give it a whirl.
->
-> With addition of semaphore to secretmem_setattr() it seems we don't need
-> special care for size changes, just calling simple_setattr() after taking
-> the semaphore should be fine. Thoughts?
-
-The patch below looks correct to me. I do think we still need the
-check which prevents truncating a memfd_secret with an existing
-nonzero size, though, because I think simple_setattr's way of doing
-that still BUGs in a non-racy way (rwsem doesn't help with this). The
-patch below keeps this, so maybe I'm just misinterpreting "we don't
-need special care for size changes".
-
-I haven't booted+tested it, I'll leave that to Eric since he already
-has a reproducer setup for this. But, for what it's worth, feel free
-to take:
-
-Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
-
-
->
-> From edfcb2f0d31c2132bda483635dd2a8dd295efb04 Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> Date: Thu, 30 Jun 2022 11:26:37 +0300
-> Subject: [PATCH] secretmem: fix unhandled fault in truncate
->
-> syzkaller reports the following issue:
->
-> BUG: unable to handle page fault for address: ffff888021f7e005
-> PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
-> Oops: 0002 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
-> Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-> RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
-> RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
-> RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
-> R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
-> R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
-> FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  zero_user_segments include/linux/highmem.h:272 [inline]
->  folio_zero_range include/linux/highmem.h:428 [inline]
->  truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
->  truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
->  truncate_inode_pages mm/truncate.c:452 [inline]
->  truncate_pagecache+0x63/0x90 mm/truncate.c:753
->  simple_setattr+0xed/0x110 fs/libfs.c:535
->  secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
->  notify_change+0xb8c/0x12b0 fs/attr.c:424
->  do_truncate+0x13c/0x200 fs/open.c:65
->  do_sys_ftruncate+0x536/0x730 fs/open.c:193
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> RIP: 0033:0x7fb29d900899
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-> RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
-> RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
-> RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
-> R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
->  </TASK>
-> Modules linked in:
-> CR2: ffff888021f7e005
-> ---[ end trace 0000000000000000 ]---
->
-> Eric Biggers suggested that this happens when
-> secretmem_setattr()->simple_setattr() races with secretmem_fault() so
-> that a page that is faulted in by secretmem_fault() (and thus removed
-> from the direct map) is zeroed by inode truncation right afterwards.
->
-> Use an rw_semaphore to make secretmem_fault() and secretmem_setattr()
-> mutually exclusive.
->
-> Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-> Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+On Thu, Jun 30, 2022 at 02:14:01AM -0700, Chaitanya Kulkarni wrote:
+> This adds a new block layer operation to offload verifying a range of
+> LBAs. This support is needed in order to provide file systems and
+> fabrics, kernel components to offload LBA verification when it is
+> supported by the hardware controller. In case hardware offloading is
+> not supported then we provide API to emulate the same. The prominent
+> example of that is SCSI and NVMe Verify command. We also provide
+> an emulation of the same operation that can be used in case H/W does
+> not support verify. This is still useful when block device is remotely
+> attached e.g. using NVMeOF.
+> 
+> Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
 > ---
->  mm/secretmem.c | 48 ++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 40 insertions(+), 8 deletions(-)
->
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 206ed6b40c1d..40573b045c96 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -47,30 +47,41 @@ bool secretmem_active(void)
->         return !!atomic_read(&secretmem_users);
+>  Documentation/ABI/stable/sysfs-block |  12 +++
+>  block/blk-core.c                     |   5 +
+>  block/blk-lib.c                      | 155 +++++++++++++++++++++++++++
+>  block/blk-merge.c                    |  18 ++++
+>  block/blk-settings.c                 |  17 +++
+>  block/blk-sysfs.c                    |   8 ++
+>  block/blk.h                          |   4 +
+>  block/ioctl.c                        |  35 ++++++
+>  include/linux/bio.h                  |   9 +-
+>  include/linux/blk_types.h            |   2 +
+>  include/linux/blkdev.h               |  22 ++++
+>  include/uapi/linux/fs.h              |   1 +
+>  12 files changed, 285 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+> index e8797cd09aff..a71d9c41cf8b 100644
+> --- a/Documentation/ABI/stable/sysfs-block
+> +++ b/Documentation/ABI/stable/sysfs-block
+> @@ -657,6 +657,18 @@ Description:
+>  		in a single write zeroes command. If write_zeroes_max_bytes is
+>  		0, write zeroes is not supported by the device.
+>  
+> +What:		/sys/block/<disk>/queue/verify_max_bytes
+> +Date:		April 2022
+> +Contact:	Chaitanya Kulkarni <kch@nvidia.com>
+> +Description:
+> +		Devices that support verify operation in which a single
+> +		request can be issued to verify the range of the contiguous
+> +		blocks on the storage without any payload in the request.
+> +		This can be used to optimize verifying LBAs on the device
+> +		without reading by offloading functionality. verify_max_bytes
+> +		indicates how many bytes can be written in a single verify
+> +		command. If verify_max_bytes is 0, verify operation is not
+> +		supported by the device.
+>  
+>  What:		/sys/block/<disk>/queue/zone_append_max_bytes
+>  Date:		May 2020
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 06ff5bbfe8f6..9ad52247dcdf 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -123,6 +123,7 @@ static const char *const blk_op_name[] = {
+>  	REQ_OP_NAME(ZONE_FINISH),
+>  	REQ_OP_NAME(ZONE_APPEND),
+>  	REQ_OP_NAME(WRITE_ZEROES),
+> +	REQ_OP_NAME(VERIFY),
+>  	REQ_OP_NAME(DRV_IN),
+>  	REQ_OP_NAME(DRV_OUT),
+>  };
+> @@ -842,6 +843,10 @@ void submit_bio_noacct(struct bio *bio)
+>  		if (!q->limits.max_write_zeroes_sectors)
+>  			goto not_supported;
+>  		break;
+> +	case REQ_OP_VERIFY:
+> +		if (!q->limits.max_verify_sectors)
+> +			goto not_supported;
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> diff --git a/block/blk-lib.c b/block/blk-lib.c
+> index 09b7e1200c0f..4624d68bb3cb 100644
+> --- a/block/blk-lib.c
+> +++ b/block/blk-lib.c
+> @@ -340,3 +340,158 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+>  	return ret;
 >  }
->
-> +struct secretmem_state {
-> +       struct rw_semaphore rw_sem;
-> +};
+>  EXPORT_SYMBOL(blkdev_issue_secure_erase);
 > +
->  static vm_fault_t secretmem_fault(struct vm_fault *vmf)
->  {
->         struct address_space *mapping = vmf->vma->vm_file->f_mapping;
->         struct inode *inode = file_inode(vmf->vma->vm_file);
-> +       struct secretmem_state *state = inode->i_private;
->         pgoff_t offset = vmf->pgoff;
->         gfp_t gfp = vmf->gfp_mask;
->         unsigned long addr;
->         struct page *page;
-> +       vm_fault_t ret;
->         int err;
->
->         if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
->                 return vmf_error(-EINVAL);
->
-> +       down_read(&state->rw_sem);
+> +/**
+> + * __blkdev_emulate_verify - emulate number of verify operations
+> + * 				asynchronously
+> + * @bdev:	blockdev to issue
+> + * @sector:	start sector
+> + * @nr_sects:	number of sectors to verify
+> + * @gfp_mask:	memory allocation flags (for bio_alloc)
+> + * @biop:	pointer to anchor bio
+> + * @buf:	data buffer to mapped on bio
+> + *
+> + * Description:
+> + *  Verify a block range by emulating REQ_OP_VERIFY into REQ_OP_READ,
+> + *  use this when H/W offloading is not supported asynchronously.
+> + *  Caller is responsible to handle anchored bio.
+> + */
+> +static int __blkdev_emulate_verify(struct block_device *bdev, sector_t sector,
+> +		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop, char *buf)
+> +{
+> +	struct bio *bio = *biop;
+> +	unsigned int sz;
+> +	int bi_size;
 > +
->  retry:
->         page = find_lock_page(mapping, offset);
->         if (!page) {
->                 page = alloc_page(gfp | __GFP_ZERO);
-> -               if (!page)
-> -                       return VM_FAULT_OOM;
-> +               if (!page) {
-> +                       ret = VM_FAULT_OOM;
-> +                       goto out;
-> +               }
->
->                 err = set_direct_map_invalid_noflush(page);
->                 if (err) {
->                         put_page(page);
-> -                       return vmf_error(err);
-> +                       ret = vmf_error(err);
-> +                       goto out;
->                 }
->
->                 __SetPageUptodate(page);
-> @@ -86,7 +97,8 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
->                         if (err == -EEXIST)
->                                 goto retry;
->
-> -                       return vmf_error(err);
-> +                       ret = vmf_error(err);
-> +                       goto out;
->                 }
->
->                 addr = (unsigned long)page_address(page);
-> @@ -94,7 +106,11 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
->         }
->
->         vmf->page = page;
-> -       return VM_FAULT_LOCKED;
-> +       ret = VM_FAULT_LOCKED;
+> +	while (nr_sects != 0) {
+> +		bio = blk_next_bio(bio, bdev,
+> +				__blkdev_sectors_to_bio_pages(nr_sects),
+> +				REQ_OP_READ, gfp_mask);
+> +		bio->bi_iter.bi_sector = sector;
 > +
-> +out:
-> +       up_read(&state->rw_sem);
-> +       return ret;
+> +		while (nr_sects != 0) {
+> +			bool is_vaddr = is_vmalloc_addr(buf);
+> +			struct page *p;
+> +
+> +			p = is_vaddr ? vmalloc_to_page(buf) : virt_to_page(buf);
+> +			sz = min((sector_t) PAGE_SIZE, nr_sects << 9);
+> +
+> +			bi_size = bio_add_page(bio, p, sz, offset_in_page(buf));
+> +			if (bi_size < sz)
+> +				return -EIO;
+> +
+> +			nr_sects -= bi_size >> 9;
+> +			sector += bi_size >> 9;
+> +			buf += bi_size;
+> +		}
+> +		cond_resched();
+> +	}
+> +
+> +	*biop = bio;
+> +	return 0;
+> +}
+> +
+> +/**
+> + * __blkdev_issue_verify - generate number of verify operations
+> + * @bdev:	blockdev to issue
+> + * @sector:	start sector
+> + * @nr_sects:	number of sectors to verify
+> + * @gfp_mask:	memory allocation flags (for bio_alloc())
+> + * @biop:	pointer to anchor bio
+> + *
+> + * Description:
+> + *  Verify a block range using hardware offload.
+> + *
+> + * The function will emulate verify operation if no explicit hardware
+> + * offloading for verifying is provided.
+> + */
+> +int __blkdev_issue_verify(struct block_device *bdev, sector_t sector,
+> +		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
+> +{
+> +	unsigned int max_verify_sectors = bdev_verify_sectors(bdev);
+> +	sector_t min_io_sect = (BIO_MAX_VECS << PAGE_SHIFT) >> 9;
+> +	struct bio *bio = *biop;
+> +	sector_t curr_sects;
+> +	char *buf;
+> +
+> +	if (!max_verify_sectors) {
+> +		int ret = 0;
+> +
+> +		buf = kzalloc(min_io_sect << 9, GFP_KERNEL);
+
+k*z*alloc?  I don't think you need to zero a buffer that we're reading
+into, right?
+
+--D
+
+> +		if (!buf)
+> +			return -ENOMEM;
+> +
+> +		while (nr_sects > 0) {
+> +			curr_sects = min_t(sector_t, nr_sects, min_io_sect);
+> +			ret = __blkdev_emulate_verify(bdev, sector, curr_sects,
+> +						      gfp_mask, &bio, buf);
+> +			if (ret)
+> +				break;
+> +
+> +			if (bio) {
+> +				ret = submit_bio_wait(bio);
+> +				bio_put(bio);
+> +				bio = NULL;
+> +			}
+> +
+> +			nr_sects -= curr_sects;
+> +			sector += curr_sects;
+> +
+> +		}
+> +		/* set the biop to NULL since we have alrady completed above */
+> +		*biop = NULL;
+> +		kfree(buf);
+> +		return ret;
+> +	}
+> +
+> +	while (nr_sects) {
+> +		bio = blk_next_bio(bio, bdev, 0, REQ_OP_VERIFY, gfp_mask);
+> +		bio->bi_iter.bi_sector = sector;
+> +
+> +		if (nr_sects > max_verify_sectors) {
+> +			bio->bi_iter.bi_size = max_verify_sectors << 9;
+> +			nr_sects -= max_verify_sectors;
+> +			sector += max_verify_sectors;
+> +		} else {
+> +			bio->bi_iter.bi_size = nr_sects << 9;
+> +			nr_sects = 0;
+> +		}
+> +		cond_resched();
+> +	}
+> +	*biop = bio;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(__blkdev_issue_verify);
+> +
+> +/**
+> + * blkdev_issue_verify - verify a block range
+> + * @bdev:	blockdev to verify
+> + * @sector:	start sector
+> + * @nr_sects:	number of sectors to verify
+> + * @gfp_mask:	memory allocation flags (for bio_alloc)
+> + *
+> + * Description:
+> + *  Verify a block range using hardware offload.
+> + */
+> +int blkdev_issue_verify(struct block_device *bdev, sector_t sector,
+> +		sector_t nr_sects, gfp_t gfp_mask)
+> +{
+> +	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
+> +	struct bio *bio = NULL;
+> +	struct blk_plug plug;
+> +	int ret = 0;
+> +
+> +	if ((sector | nr_sects) & bs_mask)
+> +		return -EINVAL;
+> +
+> +	blk_start_plug(&plug);
+> +	ret = __blkdev_issue_verify(bdev, sector, nr_sects, gfp_mask, &bio);
+> +	if (ret == 0 && bio) {
+> +		ret = submit_bio_wait(bio);
+> +		bio_put(bio);
+> +	}
+> +	blk_finish_plug(&plug);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(blkdev_issue_verify);
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 7771dacc99cb..8ff305377b5a 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -153,6 +153,20 @@ static struct bio *blk_bio_write_zeroes_split(struct request_queue *q,
+>  	return bio_split(bio, q->limits.max_write_zeroes_sectors, GFP_NOIO, bs);
 >  }
->
->  static const struct vm_operations_struct secretmem_vm_ops = {
-> @@ -163,11 +179,17 @@ static int secretmem_setattr(struct user_namespace *mnt_userns,
->  {
->         struct inode *inode = d_inode(dentry);
->         unsigned int ia_valid = iattr->ia_valid;
-> +       struct secretmem_state *state = inode->i_private;
-> +       int ret;
->
-> +       down_write(&state->rw_sem);
->         if ((ia_valid & ATTR_SIZE) && inode->i_size)
-> -               return -EINVAL;
-> +               ret = -EINVAL;
-> +       else
-> +               ret = simple_setattr(mnt_userns, dentry, iattr);
-> +       up_write(&state->rw_sem);
->
-> -       return simple_setattr(mnt_userns, dentry, iattr);
-> +       return ret;
+>  
+> +static struct bio *blk_bio_verify_split(struct request_queue *q,
+> +		struct bio *bio, struct bio_set *bs, unsigned *nsegs)
+> +{
+> +	*nsegs = 0;
+> +
+> +	if (!q->limits.max_verify_sectors)
+> +		return NULL;
+> +
+> +	if (bio_sectors(bio) <= q->limits.max_verify_sectors)
+> +		return NULL;
+> +
+> +	return bio_split(bio, q->limits.max_verify_sectors, GFP_NOIO, bs);
+> +}
+> +
+>  /*
+>   * Return the maximum number of sectors from the start of a bio that may be
+>   * submitted as a single request to a block device. If enough sectors remain,
+> @@ -336,6 +350,10 @@ void __blk_queue_split(struct request_queue *q, struct bio **bio,
+>  		split = blk_bio_write_zeroes_split(q, *bio, &q->bio_split,
+>  				nr_segs);
+>  		break;
+> +	case REQ_OP_VERIFY:
+> +		split = blk_bio_verify_split(q, *bio, &q->bio_split,
+> +				nr_segs);
+> +		break;
+>  	default:
+>  		split = blk_bio_segment_split(q, *bio, &q->bio_split, nr_segs);
+>  		break;
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index 6ccceb421ed2..c77697290bc5 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -43,6 +43,7 @@ void blk_set_default_limits(struct queue_limits *lim)
+>  	lim->max_dev_sectors = 0;
+>  	lim->chunk_sectors = 0;
+>  	lim->max_write_zeroes_sectors = 0;
+> +	lim->max_verify_sectors = 0;
+>  	lim->max_zone_append_sectors = 0;
+>  	lim->max_discard_sectors = 0;
+>  	lim->max_hw_discard_sectors = 0;
+> @@ -80,6 +81,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+>  	lim->max_sectors = UINT_MAX;
+>  	lim->max_dev_sectors = UINT_MAX;
+>  	lim->max_write_zeroes_sectors = UINT_MAX;
+> +	lim->max_verify_sectors = UINT_MAX;
+>  	lim->max_zone_append_sectors = UINT_MAX;
 >  }
->
->  static const struct inode_operations secretmem_iops = {
-> @@ -179,22 +201,30 @@ static struct vfsmount *secretmem_mnt;
->  static struct file *secretmem_file_create(unsigned long flags)
+>  EXPORT_SYMBOL(blk_set_stacking_limits);
+> @@ -202,6 +204,19 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+>  }
+>  EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
+>  
+> +/**
+> + * blk_queue_max_verify_sectors - set max sectors for a single verify
+> + *
+> + * @q:  the request queue for the device
+> + * @max_verify_sectors: maximum number of sectors to verify per command
+> + **/
+> +void blk_queue_max_verify_sectors(struct request_queue *q,
+> +		unsigned int max_verify_sectors)
+> +{
+> +	q->limits.max_verify_sectors = max_verify_sectors;
+> +}
+> +EXPORT_SYMBOL(blk_queue_max_verify_sectors);
+> +
+>  /**
+>   * blk_queue_max_zone_append_sectors - set max sectors for a single zone append
+>   * @q:  the request queue for the device
+> @@ -554,6 +569,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+>  	t->max_dev_sectors = min_not_zero(t->max_dev_sectors, b->max_dev_sectors);
+>  	t->max_write_zeroes_sectors = min(t->max_write_zeroes_sectors,
+>  					b->max_write_zeroes_sectors);
+> +	t->max_verify_sectors = min(t->max_verify_sectors,
+> +				    b->max_verify_sectors);
+>  	t->max_zone_append_sectors = min(t->max_zone_append_sectors,
+>  					b->max_zone_append_sectors);
+>  	t->bounce = max(t->bounce, b->bounce);
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 88bd41d4cb59..4fb6a731acad 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -113,6 +113,12 @@ queue_ra_store(struct request_queue *q, const char *page, size_t count)
+>  	return ret;
+>  }
+>  
+> +static ssize_t queue_verify_max_show(struct request_queue *q, char *page)
+> +{
+> +	return sprintf(page, "%llu\n",
+> +		(unsigned long long)q->limits.max_verify_sectors << 9);
+> +}
+> +
+>  static ssize_t queue_max_sectors_show(struct request_queue *q, char *page)
 >  {
->         struct file *file = ERR_PTR(-ENOMEM);
-> +       struct secretmem_state *state;
->         struct inode *inode;
->
->         inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
->         if (IS_ERR(inode))
->                 return ERR_CAST(inode);
->
-> +       state = kzalloc(sizeof(*state), GFP_KERNEL);
-> +       if (!state)
-> +               goto err_free_inode;
+>  	int max_sectors_kb = queue_max_sectors(q) >> 1;
+> @@ -588,6 +594,7 @@ QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
+>  
+>  QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
+>  QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
+> +QUEUE_RO_ENTRY(queue_verify_max, "verify_max_bytes");
+>  QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
+>  QUEUE_RO_ENTRY(queue_zone_write_granularity, "zone_write_granularity");
+>  
+> @@ -644,6 +651,7 @@ static struct attribute *queue_attrs[] = {
+>  	&queue_discard_zeroes_data_entry.attr,
+>  	&queue_write_same_max_entry.attr,
+>  	&queue_write_zeroes_max_entry.attr,
+> +	&queue_verify_max_entry.attr,
+>  	&queue_zone_append_max_entry.attr,
+>  	&queue_zone_write_granularity_entry.attr,
+>  	&queue_nonrot_entry.attr,
+> diff --git a/block/blk.h b/block/blk.h
+> index 434017701403..63a0e3aca7e0 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -132,6 +132,9 @@ static inline bool rq_mergeable(struct request *rq)
+>  	if (req_op(rq) == REQ_OP_WRITE_ZEROES)
+>  		return false;
+>  
+> +	if (req_op(rq) == REQ_OP_VERIFY)
+> +		return false;
 > +
->         file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
->                                  O_RDWR, &secretmem_fops);
->         if (IS_ERR(file))
-> -               goto err_free_inode;
-> +               goto err_free_state;
->
->         mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
->         mapping_set_unevictable(inode->i_mapping);
->
-> +       init_rwsem(&state->rw_sem);
+>  	if (req_op(rq) == REQ_OP_ZONE_APPEND)
+>  		return false;
+>  
+> @@ -286,6 +289,7 @@ static inline bool blk_may_split(struct request_queue *q, struct bio *bio)
+>  	case REQ_OP_DISCARD:
+>  	case REQ_OP_SECURE_ERASE:
+>  	case REQ_OP_WRITE_ZEROES:
+> +	case REQ_OP_VERIFY:
+>  		return true; /* non-trivial splitting decisions */
+>  	default:
+>  		break;
+> diff --git a/block/ioctl.c b/block/ioctl.c
+> index 46949f1b0dba..60a48e24b82d 100644
+> --- a/block/ioctl.c
+> +++ b/block/ioctl.c
+> @@ -192,6 +192,39 @@ static int blk_ioctl_zeroout(struct block_device *bdev, fmode_t mode,
+>  	return err;
+>  }
+>  
+> +static int blk_ioctl_verify(struct block_device *bdev, fmode_t mode,
+> +		unsigned long arg)
+> +{
+> +	uint64_t range[2];
+> +	struct address_space *mapping;
+> +	uint64_t start, end, len;
 > +
->         inode->i_op = &secretmem_iops;
->         inode->i_mapping->a_ops = &secretmem_aops;
-> +       inode->i_private = state;
->
->         /* pretend we are a normal file with zero size */
->         inode->i_mode |= S_IFREG;
-> @@ -202,6 +232,8 @@ static struct file *secretmem_file_create(unsigned long flags)
->
->         return file;
->
-> +err_free_state:
-> +       kfree(state);
->  err_free_inode:
->         iput(inode);
->         return file;
->
-> base-commit: 03c765b0e3b4cb5063276b086c76f7a612856a9a
-> --
-> 2.34.1
->
->
-> > > The following commit tried to fix a similar bug, but it wasn't enough:
-> > >
-> > >         commit f9b141f93659e09a52e28791ccbaf69c273b8e92
-> > >         Author: Axel Rasmussen <axelrasmussen@google.com>
-> > >         Date:   Thu Apr 14 19:13:31 2022 -0700
-> > >
-> > >             mm/secretmem: fix panic when growing a memfd_secret
-> > >
-> > >
-> > > Here's a simplified reproducer.  Note, for memfd_secret to be supported, the
-> > > kernel config must contain CONFIG_SECRETMEM=y and the kernel command line must
-> > > contain secretmem.enable=1.
-> > >
-> > > #include <pthread.h>
-> > > #include <setjmp.h>
-> > > #include <signal.h>
-> > > #include <sys/mman.h>
-> > > #include <sys/syscall.h>
-> > > #include <unistd.h>
-> > >
-> > > static volatile int fd;
-> > > static jmp_buf jump_buf;
-> > >
-> > > static void *truncate_thread(void *arg)
-> > > {
-> > >         for (;;)
-> > >                 ftruncate(fd, 1000);
-> > > }
-> > >
-> > > static void handle_sigbus(int sig)
-> > > {
-> > >         longjmp(jump_buf, 1);
-> > > }
-> > >
-> > > int main(void)
-> > > {
-> > >         struct sigaction act = {
-> > >                 .sa_handler = handle_sigbus,
-> > >                 .sa_flags = SA_NODEFER,
-> > >         };
-> > >         pthread_t t;
-> > >         void *addr;
-> > >
-> > >         sigaction(SIGBUS, &act, NULL);
-> > >
-> > >         pthread_create(&t, NULL, truncate_thread, NULL);
-> > >         for (;;) {
-> > >                 fd = syscall(__NR_memfd_secret, 0);
-> > >                 addr = mmap(NULL, 8192, PROT_WRITE, MAP_SHARED, fd, 0);
-> > >                 if (setjmp(jump_buf) == 0)
-> > >                         *(unsigned int *)addr = 0;
-> > >                 munmap(addr, 8192);
-> > >                 close(fd);
-> > >         }
-> > > }
->
-> --
-> Sincerely yours,
-> Mike.
+> +	if (!(mode & FMODE_READ))
+> +		return -EBADF;
+> +
+> +	if (copy_from_user(range, (void __user *)arg, sizeof(range)))
+> +		return -EFAULT;
+> +
+> +	start = range[0];
+> +	len = range[1];
+> +	end = start + len - 1;
+> +
+> +	if (start & 511)
+> +		return -EINVAL;
+> +	if (len & 511)
+> +		return -EINVAL;
+> +	if (end >= (uint64_t)i_size_read(bdev->bd_inode))
+> +		return -EINVAL;
+> +	if (end < start)
+> +		return -EINVAL;
+> +
+> +	/* Invalidate the page cache, including dirty pages */
+> +	mapping = bdev->bd_inode->i_mapping;
+> +	truncate_inode_pages_range(mapping, start, end);
+
+You might want to write any dirty pagecache contents to disk before you
+invalidate them all...
+
+> +
+> +	return blkdev_issue_verify(bdev, start >> 9, len >> 9, GFP_KERNEL);
+> +}
+> +
+>  static int put_ushort(unsigned short __user *argp, unsigned short val)
+>  {
+>  	return put_user(val, argp);
+> @@ -483,6 +516,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+>  		return blk_ioctl_secure_erase(bdev, mode, argp);
+>  	case BLKZEROOUT:
+>  		return blk_ioctl_zeroout(bdev, mode, arg);
+> +	case BLKVERIFY:
+> +		return blk_ioctl_verify(bdev, mode, arg);
+>  	case BLKGETDISKSEQ:
+>  		return put_u64(argp, bdev->bd_disk->diskseq);
+>  	case BLKREPORTZONE:
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 1cf3738ef1ea..3dfafe1da098 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -55,7 +55,8 @@ static inline bool bio_has_data(struct bio *bio)
+>  	    bio->bi_iter.bi_size &&
+>  	    bio_op(bio) != REQ_OP_DISCARD &&
+>  	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
+> -	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
+> +	    bio_op(bio) != REQ_OP_WRITE_ZEROES &&
+> +	    bio_op(bio) != REQ_OP_VERIFY)
+>  		return true;
+>  
+>  	return false;
+> @@ -65,7 +66,8 @@ static inline bool bio_no_advance_iter(const struct bio *bio)
+>  {
+>  	return bio_op(bio) == REQ_OP_DISCARD ||
+>  	       bio_op(bio) == REQ_OP_SECURE_ERASE ||
+> -	       bio_op(bio) == REQ_OP_WRITE_ZEROES;
+> +	       bio_op(bio) == REQ_OP_WRITE_ZEROES ||
+> +	       bio_op(bio) == REQ_OP_VERIFY;
+>  }
+>  
+>  static inline void *bio_data(struct bio *bio)
+> @@ -176,7 +178,7 @@ static inline unsigned bio_segments(struct bio *bio)
+>  	struct bvec_iter iter;
+>  
+>  	/*
+> -	 * We special case discard/write same/write zeroes, because they
+> +	 * We special case discard/write same/write zeroes/verify, because they
+>  	 * interpret bi_size differently:
+>  	 */
+>  
+> @@ -184,6 +186,7 @@ static inline unsigned bio_segments(struct bio *bio)
+>  	case REQ_OP_DISCARD:
+>  	case REQ_OP_SECURE_ERASE:
+>  	case REQ_OP_WRITE_ZEROES:
+> +	case REQ_OP_VERIFY:
+>  		return 0;
+>  	default:
+>  		break;
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index a24d4078fb21..0d5383fc84ed 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -363,6 +363,8 @@ enum req_opf {
+>  	REQ_OP_FLUSH		= 2,
+>  	/* discard sectors */
+>  	REQ_OP_DISCARD		= 3,
+> +	/* Verify the sectors */
+> +	REQ_OP_VERIFY		= 6,
+>  	/* securely erase sectors */
+>  	REQ_OP_SECURE_ERASE	= 5,
+>  	/* write the zero filled sector many times */
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 608d577734c2..78fd6c5530d7 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -266,6 +266,7 @@ struct queue_limits {
+>  	unsigned int		max_hw_discard_sectors;
+>  	unsigned int		max_secure_erase_sectors;
+>  	unsigned int		max_write_zeroes_sectors;
+> +	unsigned int		max_verify_sectors;
+>  	unsigned int		max_zone_append_sectors;
+>  	unsigned int		discard_granularity;
+>  	unsigned int		discard_alignment;
+> @@ -925,6 +926,9 @@ static inline unsigned int blk_queue_get_max_sectors(struct request_queue *q,
+>  	if (unlikely(op == REQ_OP_WRITE_ZEROES))
+>  		return q->limits.max_write_zeroes_sectors;
+>  
+> +	if (unlikely(op == REQ_OP_VERIFY))
+> +		return q->limits.max_verify_sectors;
+> +
+>  	return q->limits.max_sectors;
+>  }
+>  
+> @@ -968,6 +972,8 @@ extern void blk_queue_max_discard_sectors(struct request_queue *q,
+>  		unsigned int max_discard_sectors);
+>  extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+>  		unsigned int max_write_same_sectors);
+> +extern void blk_queue_max_verify_sectors(struct request_queue *q,
+> +		unsigned int max_verify_sectors);
+>  extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
+>  extern void blk_queue_max_zone_append_sectors(struct request_queue *q,
+>  		unsigned int max_zone_append_sectors);
+> @@ -1119,6 +1125,12 @@ extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>  extern int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>  		sector_t nr_sects, gfp_t gfp_mask, unsigned flags);
+>  
+> +extern int __blkdev_issue_verify(struct block_device *bdev,
+> +		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+> +		struct bio **biop);
+> +extern int blkdev_issue_verify(struct block_device *bdev, sector_t sector,
+> +		sector_t nr_sects, gfp_t gfp_mask);
+> +
+>  static inline int sb_issue_discard(struct super_block *sb, sector_t block,
+>  		sector_t nr_blocks, gfp_t gfp_mask, unsigned long flags)
+>  {
+> @@ -1293,6 +1305,16 @@ static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
+>  	return 0;
+>  }
+>  
+> +static inline unsigned int bdev_verify_sectors(struct block_device *bdev)
+> +{
+> +	struct request_queue *q = bdev_get_queue(bdev);
+> +
+> +	if (q)
+> +		return q->limits.max_verify_sectors;
+> +
+> +	return 0;
+> +}
+> +
+>  static inline bool bdev_nonrot(struct block_device *bdev)
+>  {
+>  	return blk_queue_nonrot(bdev_get_queue(bdev));
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index bdf7b404b3e7..ad0e5cb5cac4 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -185,6 +185,7 @@ struct fsxattr {
+>  #define BLKROTATIONAL _IO(0x12,126)
+>  #define BLKZEROOUT _IO(0x12,127)
+>  #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
+> +#define BLKVERIFY _IO(0x12,129)
+>  /*
+>   * A jump here: 130-136 are reserved for zoned block devices
+>   * (see uapi/linux/blkzoned.h)
+> -- 
+> 2.29.0
+> 
