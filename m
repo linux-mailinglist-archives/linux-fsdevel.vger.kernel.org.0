@@ -2,72 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44222561E8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 16:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9D0561E94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 17:00:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235306AbiF3O7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 10:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36280 "EHLO
+        id S235367AbiF3O7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 10:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234003AbiF3O7S (ORCPT
+        with ESMTP id S233484AbiF3O73 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 10:59:18 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2ED1EAF0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 07:59:17 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id h192so18766188pgc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 07:59:17 -0700 (PDT)
+        Thu, 30 Jun 2022 10:59:29 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC341EC42;
+        Thu, 30 Jun 2022 07:59:28 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id w1-20020a17090a6b8100b001ef26ab992bso3170230pjj.0;
+        Thu, 30 Jun 2022 07:59:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=googlemail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qlh+zR4sLlUERmwK/XvlQfyn3K58u4Hbj9CmOVIz4kE=;
-        b=cySIqHpyfsq8wQfibZxaJwaBXBeRR3JRvYpqgG1nVFVyrgi4LGoeV1DCnz+GUpcJZi
-         vT2GKVz1T5yQgwGNvIl6KYW0vxnhoYMmHep7DSLgEhlE4dH3JbX8xsH7u7Q0YDAaqWZB
-         PXQeuKGS5/5qJdUNfMydr8TlO412HmIgUpCRDqcO6iCx42bmkoMoolK4422JO9qnvbKu
-         sKB5LHRSVjQQL+eS4HB3OHwcVCB46n5hn22BgT5u4wWgh1yMKWK0hg2Fypw+Baqu285d
-         Z1HOy9YW95intZv3yiOB/e2R2hwuAhPHQUe1HLSN9SxxalhlNtvcxT7m3s1B3qU6k40r
-         XorA==
+        bh=vDdC8MWrQ6wZJiRG/CDlxCW2oNQMtGgdO4bcX2PBWTo=;
+        b=hUkLdRk5Sl/4Klb0oO55UMPf9zmWbX29THlfRNeOGCiw929jeEGHVT+X8rkl2+0b0W
+         AxVBSV73eAn41PobV29GVgABmsQZcvrWWziySDPM9LeV5+fJlQVX1EA7l3wuQ0gGvpuX
+         KHKqvN9vj+dZorzYnrPQCQ45MagiZJExnu34wMpGveMtM4vXX5axppP5X7A5LPus3Jke
+         72z4ETDKKHjxz+b6saIKbniCZvDz6ujimO4EBBMX3iWNrnnQIjb7u8t9VYwxONIj5o/x
+         j8acEPrL8LBSs5WiRVRwLLQBrXWc1Fl34zfA10r7Bc3xWAOlSPVKmwFqxxP5horzQppO
+         aRMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qlh+zR4sLlUERmwK/XvlQfyn3K58u4Hbj9CmOVIz4kE=;
-        b=h+/yTvZwpur/8oEtHhooWCaqL1a3odrv3sG/ftbS4oxtxDz25Hx1zKR3Clzg1BXk8t
-         vwd4DWYt7Mgx33pLCe+xU2+VOAfG3j+2LSxMgTuXOXvLVvsG66yb9zf7mc0BF/t5o1C/
-         tYQTOAxAnfv/pJuOHhsWoVMhaBfJmoKeDGz36/e4dw+LuaLaaTff/MOU9Jne7L/UJbQt
-         y8u9hYiOHTRbidyBwfPdk2AnumOkAVBFkMbqQB1VogqWL6AtRgUhYxmW/VU0SCGYhUad
-         4BqIjTSGGWuxRAvXngbYdJChD0qdsmT4eMvga29LWS1R5ePUh2Hx3EnjJ8ARn8Uf1zxg
-         +YIw==
-X-Gm-Message-State: AJIora9Z/pkbwBm+OfeXDNn5gIBt/zLqD8YjtqPAgCn+SNItKmlTe4ZM
-        jogx5o7MGZG9dFgIauOX1EjMbwyuICMKKBgguJN/8A==
-X-Google-Smtp-Source: AGRyM1vUCsuZmHMc5xW1I9rctk1g7DAhH7nYwPSylj9azya/RnKwLQLnCSlUCsYsF2F6h7UAtirPuEGm9aMBRhwBBmA=
-X-Received: by 2002:a05:6a00:2395:b0:525:8980:5dc7 with SMTP id
- f21-20020a056a00239500b0052589805dc7mr16410526pfc.8.1656601156814; Thu, 30
- Jun 2022 07:59:16 -0700 (PDT)
+        bh=vDdC8MWrQ6wZJiRG/CDlxCW2oNQMtGgdO4bcX2PBWTo=;
+        b=L/jmuibqAxAXgzUKiuSOFZLXU/A6fUEFsdJIf8XzjLhrxRvlted8+u/B4nqidjS0uR
+         YftCcRSdyd3u0dQVNp+URg0TNHvkN4mwQHp0XCBjpb8C3sPKD76BFIZuuHdjh3AegTgq
+         bQHHBpmbwMK5w+6CdegmSeRbl4tIRs0ac1t6dj4DqEZXUvhjaEhrWKAZz2LJW0TEGJDf
+         3y1hbTZplwQL45Y3ax0+Pt8Kwv1StNa0bsUFdFNFpe0etrT6T+F1YUneLUWTIrHNKPlc
+         KdfSezfYpa5AKGLp16ISOIaGYPTWWjaIOvnoQciz5+KKx+7e4c20uEWmTVtWLPZ0ZUGg
+         HN9g==
+X-Gm-Message-State: AJIora8Q4KAYSC8jk+kWPY1pv57BvpCOaRqniLyxHKZR5Y4W2ayvJQH1
+        J0DTRDNN59/Y/QZhrsD6XwK50NrIyuDyrkchkhs=
+X-Google-Smtp-Source: AGRyM1shSTsxwuCBHUACAQlZ5+ZkkdgCKu271yMVqtcvNSFnvG1kqiGCJylg52i/qOqhou6yjlR/94Q8T+U7Nqxk2kQ=
+X-Received: by 2002:a17:90b:38cc:b0:1ed:474a:a675 with SMTP id
+ nn12-20020a17090b38cc00b001ed474aa675mr11080856pjb.149.1656601168472; Thu, 30
+ Jun 2022 07:59:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <xm26fsjotqda.fsf@google.com> <20220629165542.da7fc8a2a5dbd53cf99572aa@linux-foundation.org>
- <CALvZod5KX7XEHR9h_jFHf5pJcYB+dODEeaLKrQLtSy9EUqgvWw@mail.gmail.com> <20220629192435.df27c0dbb07ef72165e1de5e@linux-foundation.org>
-In-Reply-To: <20220629192435.df27c0dbb07ef72165e1de5e@linux-foundation.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 30 Jun 2022 07:59:05 -0700
-Message-ID: <CALvZod5hJ8VJ4E9jhqjCKc8au8_b-h_q+g=2pbQVUSBvappE6g@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH] epoll: autoremove wakers even more aggressively
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Benjamin Segall <bsegall@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Khazhismel Kumykov <khazhy@google.com>, Heiher <r@hev.cc>
+References: <cover.1656531090.git.khalid.aziz@oracle.com> <e7606a8ea6360c253b32d14a2dbde9f7818b7eaf.1656531090.git.khalid.aziz@oracle.com>
+In-Reply-To: <e7606a8ea6360c253b32d14a2dbde9f7818b7eaf.1656531090.git.khalid.aziz@oracle.com>
+From:   Mark Hemment <markhemm@googlemail.com>
+Date:   Thu, 30 Jun 2022 15:59:17 +0100
+Message-ID: <CANe_+Uh--cJvG=N4KEkg63AF2FTtYz9e-Z8N=uwWpuTHMNtwLw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] mm/mshare: Add vm flag for shared PTE
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        Kees Cook <keescook@chromium.org>, kirill@shutemov.name,
+        kucharsk@gmail.com, linkinjeon@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, longpeng2@huawei.com,
+        luto@kernel.org, pcc@google.com, rppt@kernel.org,
+        sieberf@amazon.com, sjpark@amazon.de,
+        Suren Baghdasaryan <surenb@google.com>, tst@schoebel-theuer.de,
+        yzaikin@google.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,44 +77,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 7:24 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, 29 Jun 2022 at 23:54, Khalid Aziz <khalid.aziz@oracle.com> wrote:
 >
-> On Wed, 29 Jun 2022 18:12:46 -0700 Shakeel Butt <shakeelb@google.com> wrote:
+> Add a bit to vm_flags to indicate a vma shares PTEs with others. Add
+> a function to determine if a vma shares PTE by checking this flag.
+> This is to be used to find the shared page table entries on page fault
+> for vmas sharing PTE.
 >
-> > On Wed, Jun 29, 2022 at 4:55 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > On Wed, 15 Jun 2022 14:24:23 -0700 Benjamin Segall <bsegall@google.com> wrote:
-> > >
-> > > > If a process is killed or otherwise exits while having active network
-> > > > connections and many threads waiting on epoll_wait, the threads will all
-> > > > be woken immediately, but not removed from ep->wq. Then when network
-> > > > traffic scans ep->wq in wake_up, every wakeup attempt will fail, and
-> > > > will not remove the entries from the list.
-> > > >
-> > > > This means that the cost of the wakeup attempt is far higher than usual,
-> > > > does not decrease, and this also competes with the dying threads trying
-> > > > to actually make progress and remove themselves from the wq.
-> > > >
-> > > > Handle this by removing visited epoll wq entries unconditionally, rather
-> > > > than only when the wakeup succeeds - the structure of ep_poll means that
-> > > > the only potential loss is the timed_out->eavail heuristic, which now
-> > > > can race and result in a redundant ep_send_events attempt. (But only
-> > > > when incoming data and a timeout actually race, not on every timeout)
-> > > >
-> > >
-> > > Thanks.  I added people from 412895f03cbf96 ("epoll: atomically remove
-> > > wait entry on wake up") to cc.  Hopefully someone there can help review
-> > > and maybe test this.
-> > >
-> > >
-> >
-> > Thanks Andrew. Just wanted to add that we are seeing this issue in
-> > production with real workloads and it has caused hard lockups.
-> > Particularly network heavy workloads with a lot of threads in
-> > epoll_wait() can easily trigger this issue if they get killed
-> > (oom-killed in our case).
+> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/mm.h             | 8 ++++++++
+>  include/trace/events/mmflags.h | 3 ++-
+>  mm/internal.h                  | 5 +++++
+>  3 files changed, 15 insertions(+), 1 deletion(-)
 >
-> Hard lockups are undesirable.  Is a cc:stable justified here?
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index bc8f326be0ce..0ddc3057f73b 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -310,11 +310,13 @@ extern unsigned int kobjsize(const void *objp);
+>  #define VM_HIGH_ARCH_BIT_2     34      /* bit only usable on 64-bit architectures */
+>  #define VM_HIGH_ARCH_BIT_3     35      /* bit only usable on 64-bit architectures */
+>  #define VM_HIGH_ARCH_BIT_4     36      /* bit only usable on 64-bit architectures */
+> +#define VM_HIGH_ARCH_BIT_5     37      /* bit only usable on 64-bit architectures */
+>  #define VM_HIGH_ARCH_0 BIT(VM_HIGH_ARCH_BIT_0)
+>  #define VM_HIGH_ARCH_1 BIT(VM_HIGH_ARCH_BIT_1)
+>  #define VM_HIGH_ARCH_2 BIT(VM_HIGH_ARCH_BIT_2)
+>  #define VM_HIGH_ARCH_3 BIT(VM_HIGH_ARCH_BIT_3)
+>  #define VM_HIGH_ARCH_4 BIT(VM_HIGH_ARCH_BIT_4)
+> +#define VM_HIGH_ARCH_5 BIT(VM_HIGH_ARCH_BIT_5)
+>  #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+>
+>  #ifdef CONFIG_ARCH_HAS_PKEYS
+> @@ -356,6 +358,12 @@ extern unsigned int kobjsize(const void *objp);
+>  # define VM_MTE_ALLOWED        VM_NONE
+>  #endif
+>
+> +#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+> +#define VM_SHARED_PT   VM_HIGH_ARCH_5
+> +#else
+> +#define VM_SHARED_PT   0
+> +#endif
+> +
 
-Not for now as I don't know if we can blame a patch which might be the
-source of this behavior.
+I'm not clear why mshare is using high-vma flags for VM_SHARED_PT.
+CONFIG_ARCH_USES_HIGH_VMA_FLAGS might not be defined, making mshare
+unsupported (or, rather, broken).
+Is this being done as there is a shortage of non-high flags?
+0x00000800 is available, although it appears to be the last one (quick
+check).
+(When using the last 'normal' flag bit, good idea to highlight this in
+the cover letter.)
+
+>  #ifndef VM_GROWSUP
+>  # define VM_GROWSUP    VM_NONE
+>  #endif
+> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> index e87cb2b80ed3..30e56cbac99b 100644
+> --- a/include/trace/events/mmflags.h
+> +++ b/include/trace/events/mmflags.h
+> @@ -194,7 +194,8 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )               \
+>         {VM_MIXEDMAP,                   "mixedmap"      },              \
+>         {VM_HUGEPAGE,                   "hugepage"      },              \
+>         {VM_NOHUGEPAGE,                 "nohugepage"    },              \
+> -       {VM_MERGEABLE,                  "mergeable"     }               \
+> +       {VM_MERGEABLE,                  "mergeable"     },              \
+> +       {VM_SHARED_PT,                  "sharedpt"      }               \
+>
+>  #define show_vma_flags(flags)                                          \
+>         (flags) ? __print_flags(flags, "|",                             \
+> diff --git a/mm/internal.h b/mm/internal.h
+> index c0f8fbe0445b..3f2790aea918 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -861,4 +861,9 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
+>
+>  DECLARE_PER_CPU(struct per_cpu_nodestat, boot_nodestats);
+>
+> +static inline bool vma_is_shared(const struct vm_area_struct *vma)
+> +{
+> +       return vma->vm_flags & VM_SHARED_PT;
+> +}
+> +
+>  #endif /* __MM_INTERNAL_H */
+> --
+> 2.32.0
+>
