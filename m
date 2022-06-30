@@ -2,209 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE39D560F65
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 05:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F020D5611E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 07:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231972AbiF3DDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jun 2022 23:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43672 "EHLO
+        id S231620AbiF3Fpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 01:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiF3DDE (ORCPT
+        with ESMTP id S229844AbiF3Fpa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jun 2022 23:03:04 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483F937018;
-        Wed, 29 Jun 2022 20:03:03 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id lw20so36344997ejb.4;
-        Wed, 29 Jun 2022 20:03:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6g2G4kTu/cl5EOpn/9908zjA20ML111IqszPL34SQHc=;
-        b=cq8nQhgHTWRfnjPvnp47nEu0wC7Zo8l/UDK9csc4hfUXpTzavddyGNLV85YF50DH9N
-         QB7b5VOH165slHnZ2GX/6X0wv5+doEof9EMAZbBOUL8uqzyQqpC8irHDJMChMpyUZEE8
-         usoQGvm51sfMIGSQOqEqXy8hQykdDrQ6B1MVPYh6yOXc0DAW5XrCok0Vazxj5UJ+/jMy
-         T7cXLmzTcFaB8SwC8kfLbklgETQO1NbjYTc1hZUitP+/jlJkl4YTiDJLxqYFfzZMyMIR
-         Mx0PvGNJug5wAj8Ac1kHPsOIUI7VrFE2AD2ixLrMrkYG4DTe0IFiC18xDdotCaH4R2S+
-         5N1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6g2G4kTu/cl5EOpn/9908zjA20ML111IqszPL34SQHc=;
-        b=GggUrKnmE5HnBL56jAArauW/pGAZxeglEJJiWz8Hly25vHu6V9j1OfPeOmpMB2MFXq
-         YH9Sbo6CkC/983MHo8x1VpxJHrWX+J4zcQmSvnqf2L0dBNLYcAjijEyxgZgg0z0wD/3d
-         zmRc/5HIsovHnmYXBjOGcO06qryVqWJzW6GoSy2JEZT97qqcSujolTVGDWRPzXSQ45jb
-         CbioS72Bu3N/P+e/fUDnPvnoAKwzyqcdUZAcYpv1r7u6ZtCKoeW1z/Vv+o0cVCIuPpf0
-         kaK03bK4lbUPVAWIm6fv4cxmhN7R9N1xsrueSpSekS/nkoFuhKd3oSDSD++QLZl1qIUy
-         RBIg==
-X-Gm-Message-State: AJIora+BuQtmkzknm4L+cTU7pZT8hCwWoP4fcZnnwiqGSmgMvrJyVSFZ
-        xzpzpQXjzWpp367VBHdYnmsSJuMEjYbfnwElOUY=
-X-Google-Smtp-Source: AGRyM1uUKy1ILCS5Z7cF3IglEgNZiZpcnSeExUI3rDBA9z2ARLajtjfeiiV/qevOWqQkJGdslzbWyITcYVCZLSekg5M=
-X-Received: by 2002:a17:907:6e03:b0:726:a6a3:7515 with SMTP id
- sd3-20020a1709076e0300b00726a6a37515mr6682210ejc.676.1656558181723; Wed, 29
- Jun 2022 20:03:01 -0700 (PDT)
+        Thu, 30 Jun 2022 01:45:30 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF5B220C2;
+        Wed, 29 Jun 2022 22:45:29 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25U5j2ke032089;
+        Thu, 30 Jun 2022 05:45:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=VoxilQHYTOvtN/3xYTNYRHQYcSVuN2/FdHfQD65sdkE=;
+ b=d4uMpM+zD8s4sRL+7/tZGukn5sgY+YL9jWAcRI261n4LlTykRbD5zqd222RMcf0cODZC
+ kNMhJpkMMDaSLOtFkBomv8VfLUT+kSk7tJb4/uSv1loQrFlUtR3ji3aBptTAGkq7pPOR
+ xdRQ04wxwz1vf7jWAC1mG3tIKPb3HwFabvZNIMD/40g5JQaUZ6ATyynAwkvQo9HcpLrN
+ 2RwK1LgoV4cQ51xm4OLuIrzSXR+vnrb2YkHcf6yLpZQKKTfpEual9pK6h1KnvCAzUtBt
+ rOh0E/fuDR5LlEtGbVJoZ5QFMWUe/WOYNvqoWwCVFm6u42irhsxV22owQGrXu2uaVN2O qA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h15y60064-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jun 2022 05:45:12 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25U5jB3w032377;
+        Thu, 30 Jun 2022 05:45:11 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h15y60054-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jun 2022 05:45:11 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25U5bH1W018623;
+        Thu, 30 Jun 2022 05:45:09 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3gwsmj7js9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jun 2022 05:45:08 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25U5j5R814418258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jun 2022 05:45:05 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C6F34C04A;
+        Thu, 30 Jun 2022 05:45:05 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF1524C04E;
+        Thu, 30 Jun 2022 05:45:04 +0000 (GMT)
+Received: from [9.171.88.50] (unknown [9.171.88.50])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Jun 2022 05:45:04 +0000 (GMT)
+Message-ID: <cffe618e-e104-ef55-70aa-efda904a9c21@linux.ibm.com>
+Date:   Thu, 30 Jun 2022 07:45:04 +0200
 MIME-Version: 1.0
-References: <20220628161948.475097-1-kpsingh@kernel.org> <20220628161948.475097-6-kpsingh@kernel.org>
- <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
- <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
- <20220629081119.ddqvfn3al36fl27q@wittgenstein> <20220629095557.oet6u2hi7msit6ff@wittgenstein>
-In-Reply-To: <20220629095557.oet6u2hi7msit6ff@wittgenstein>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 29 Jun 2022 20:02:50 -0700
-Message-ID: <CAADnVQ+HhhQdcz_u8kP45Db_gUK+pOYg=jObZpLtdin=v_t9tw@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
+Content-Language: en-US
+To:     Keith Busch <kbusch@kernel.org>, Eric Farman <farman@linux.ibm.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>, Keith Busch <kbusch@fb.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        ebiggers@kernel.org, pankydev8@gmail.com,
+        Stefan Haberland <sth@linux.ibm.com>,
+        =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.ibm.com>
+References: <YrS6/chZXbHsrAS8@kbusch-mbp>
+ <e2b08a5c452d4b8322566cba4ed33b58080f03fa.camel@linux.ibm.com>
+ <e0038866ac54176beeac944c9116f7a9bdec7019.camel@linux.ibm.com>
+ <c5affe3096fd7b7996cb5fbcb0c41bbf3dde028e.camel@linux.ibm.com>
+ <YrnOmOUPukGe8xCq@kbusch-mbp.dhcp.thefacebook.com>
+ <20220628110024.01fcf84f.pasic@linux.ibm.com>
+ <83e65083890a7ac9c581c5aee0361d1b49e6abd9.camel@linux.ibm.com>
+ <a765fff67679155b749aafa90439b46ab1269a64.camel@linux.ibm.com>
+ <YrvMY7oPnhIka4IF@kbusch-mbp.dhcp.thefacebook.com>
+ <f723b1c013d78cae2f3236eba0d14129837dc7b0.camel@linux.ibm.com>
+ <Yryi8VXTjDu1R1Zc@kbusch-mbp>
+From:   Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <Yryi8VXTjDu1R1Zc@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: r1VTj3oQr0NpGzaHgrEEIFoeroqGhtRV
+X-Proofpoint-ORIG-GUID: kQnHM4h2VuTXtiCC-vVXCW0L0xPDoJgR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-30_02,2022-06-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
+ lowpriorityscore=0 impostorscore=0 adultscore=0 phishscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206300020
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 2:56 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Wed, Jun 29, 2022 at 10:11:19AM +0200, Christian Brauner wrote:
-> > On Tue, Jun 28, 2022 at 03:28:42PM -0700, Alexei Starovoitov wrote:
-> > > On Tue, Jun 28, 2022 at 10:52 AM KP Singh <kpsingh@kernel.org> wrote:
-> > > >
-> > > > On Tue, Jun 28, 2022 at 7:33 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > >
-> > > > > On Tue, Jun 28, 2022 at 04:19:48PM +0000, KP Singh wrote:
-> > > > > > A simple test that adds an xattr on a copied /bin/ls and reads it back
-> > > > > > when the copied ls is executed.
-> > > > > >
-> > > > > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > > > > > ---
-> > > > > >  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
-> > > >
-> > > > [...]
-> > > >
-> > > > > > +SEC("lsm.s/bprm_committed_creds")
-> > > > > > +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-> > > > > > +{
-> > > > > > +     struct task_struct *current = bpf_get_current_task_btf();
-> > > > > > +     char dir_xattr_value[64] = {0};
-> > > > > > +     int xattr_sz = 0;
-> > > > > > +
-> > > > > > +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> > > > > > +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
-> > > > > > +                             dir_xattr_value, 64);
-> > > > >
-> > > > > Yeah, this isn't right. You're not accounting for the caller's userns
-> > > > > nor for the idmapped mount. If this is supposed to work you will need a
-> > > > > variant of vfs_getxattr() that takes the mount's idmapping into account
-> > > > > afaict. See what needs to happen after do_getxattr().
-> > > >
-> > > > Thanks for taking a look.
-> > > >
-> > > > So, If I understand correctly, we don't need xattr_permission (and
-> > > > other checks in
-> > > > vfs_getxattr) here as the BPF programs run as CAP_SYS_ADMIN.
-> > > >
-> > > > but...
-> > > >
-> > > > So, Is this bit what's missing then?
-> > > >
-> > > > error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
-> > > > if (error > 0) {
-> > > >     if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
-> > > > (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
-> > > >         posix_acl_fix_xattr_to_user(mnt_userns, d_inode(d),
-> > > >             ctx->kvalue, error);
-> > >
-> > > That will not be correct.
-> > > posix_acl_fix_xattr_to_user checking current_user_ns()
-> > > is checking random tasks that happen to be running
-> > > when lsm hook got invoked.
-> > >
-> > > KP,
-> > > we probably have to document clearly that neither 'current*'
-> > > should not be used here.
-> > > xattr_permission also makes little sense in this context.
-> > > If anything it can be a different kfunc if there is a use case,
-> > > but I don't see it yet.
-> > > bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
-> > > call it directly. It's the kernel that is doing its security thing.
-> >
-> > Right, but LSMs usually only retrieve their own xattr namespace (ima,
-> > selinux, smack) or they calculate hashes for xattrs based on the raw
-> > filesystem xattr values (evm).
-> >
-> > But this new bpf_getxattr() is different. It allows to retrieve _any_
-> > xattr in any security hook it can be attached to. So someone can write a
-> > bpf program that retrieves filesystem capabilites or posix acls. And
-> > these are xattrs that require higher-level vfs involvement to be
-> > sensible in most contexts.
-> >
-> > So looking at:
-> >
-> > SEC("lsm.s/bprm_committed_creds")
-> > void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-> > {
-> >       struct task_struct *current = bpf_get_current_task_btf();
-> >       char dir_xattr_value[64] = {0};
-> >       int xattr_sz = 0;
-> >
-> >       xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> >                               bprm->file->f_path.dentry->d_inode, XATTR_NAME,
-> >                               dir_xattr_value, 64);
-> >
-> >       if (xattr_sz <= 0)
-> >               return;
-> >
-> >       if (!bpf_strncmp(dir_xattr_value, sizeof(XATTR_VALUE), XATTR_VALUE))
-> >               result = 1;
-> > }
-> >
-> > This hooks a bpf-lsm program to the security_bprm_committed_creds()
-> > hook. It then retrieves the extended attributes of the file to be
-> > executed. The hook currently always retrieves the raw filesystem values.
-> >
-> > But for example any XATTR_NAME_CAPS filesystem capabilities that
-> > might've been stored will be taken into account during exec. And both
-> > the idmapping of the mount and the caller matter when determing whether
-> > they are used or not.
-> >
-> > But the current implementation of bpf_getxattr() just ignores both. It
-> > will always retrieve the raw filesystem values. So if one invokes this
-> > hook they're not actually retrieving the values as they are seen by
-> > fs/exec.c. And I'm wondering why that is ok? And even if this is ok for
-> > some use-cases it might very well become a security issue in others if
-> > access decisions are always based on the raw values.
-> >
-> > I'm not well-versed in this so bear with me, please.
->
-> If this is really just about retrieving the "security.bpf" xattr and no
-> other xattr then the bpf_getxattr() variant should somehow hard-code
-> that to ensure that no other xattrs can be retrieved, imho.
+CCing Stefan, Jan.
 
-All of these restrictions look very artificial to me.
-Especially the part "might very well become a security issue"
-just doesn't click.
-We're talking about bpf-lsm progs here that implement security.
-Can somebody implement a poor bpf-lsm that doesn't enforce
-any actual security? Sure. It's a code.
-No one complains about the usage of EXPORT_SYMBOL(__vfs_getxattr)
-in the existing LSMs like selinux.
-No one complains about its usage in out of tree LSMs.
-Is that a security issue? Of course not.
-__vfs_getxattr is a kernel mechanism that LSMs use to implement
-the security features they need.
-__vfs_getxattr as kfunc here is pretty much the same as EXPORT_SYMBOL
-with a big difference that it's EXPORT_SYMBOL_GPL.
-BPF land doesn't have an equivalent of non-gpl export and is not going
-to get one.
+Below is necessary (in dasd-eckd.c) to make kvm boot working again (and this seems to be the right thing anyway).
+
+Am 29.06.22 um 21:07 schrieb Keith Busch:
+> On Wed, Jun 29, 2022 at 02:04:47PM -0400, Eric Farman wrote:
+>> s390 dasd
+>>
+>> This made me think to change my rootfs, and of course the problem goes
+>> away once on something like a SCSI volume.
+>>
+>> So crawling through the dasd (instead of virtio) driver and I finally
+>> find the point where a change to dma_alignment (which you mentioned
+>> earlier) would actually fit.
+>>
+>> Such a change fixes this for me, so I'll run it by our DASD guys.
+>> Thanks for your help and patience.
+> 
+> I'm assuming there's some driver or device requirement that's making this
+> necessary. Is the below driver change what you're looking for? If so, I think
+> you might want this regardless of this direct-io patch just because other
+> interfaces like blk_rq_map_user_iov() and blk_rq_aligned() align to it.
+> 
+> ---
+> diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
+> index 60be7f7bf2d1..5c79fb02cded 100644
+> --- a/drivers/s390/block/dasd_fba.c
+> +++ b/drivers/s390/block/dasd_fba.c
+> @@ -780,6 +780,7 @@ static void dasd_fba_setup_blk_queue(struct dasd_block *block)
+>   	/* With page sized segments each segment can be translated into one idaw/tidaw */
+>   	blk_queue_max_segment_size(q, PAGE_SIZE);
+>   	blk_queue_segment_boundary(q, PAGE_SIZE - 1);
+> +	blk_queue_dma_alignment(q, PAGE_SIZE - 1);
+>   
+>   	q->limits.discard_granularity = logical_block_size;
+>   
+> --
