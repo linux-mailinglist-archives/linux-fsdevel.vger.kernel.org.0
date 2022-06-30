@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96EAC56264F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 00:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F42D56265E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 01:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbiF3W6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 18:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47824 "EHLO
+        id S231521AbiF3XCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 19:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbiF3W6V (ORCPT
+        with ESMTP id S231508AbiF3XB7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 18:58:21 -0400
+        Thu, 30 Jun 2022 19:01:59 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF2D3B011;
-        Thu, 30 Jun 2022 15:58:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB4753D3D;
+        Thu, 30 Jun 2022 16:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=S/+biBIIU9UdjIcwTOYXd9h3c56AURDSMTACq4UFluM=; b=j44wui+KQxn1Lo77Lh20kh2iO3
-        XKEMwDRB4LpYKiYLtWM95ySbFIGAlT47iRtsZseqjZ0p/jHiYmTRwq5yupaTuY6nj8XAh2JSAMeqf
-        NsYQkC63fru/VKsfQyViDzMfjfZJlg54Wjeb6vstPiwl7NCj8Wi0SqwvwcszyUISNF8ruDEmQW7Nd
-        R6oea9ASJ30e29WXtaMehgRrcB90wDWm/m14ZBmh1d7vN+mbEAXr3+pX2dxrNs+UMe2IaItBmAcBZ
-        39ThDuTAHgOfrUSbP4cVLkkiro6cPsZF2rxXzEgW+Crhax84ZIrghkbU7UJ9T/cgB0Ijpgbaj9/iq
-        /yrRKw0w==;
+        bh=xsduXeYpmYNCgboOcGK4VNY+9k6YY2Ixlo9C8vms2e4=; b=ZBDESSTIfrnnm6hKzRVvdIl1ix
+        dgLjjyV2Nev4pj2vRYyc37c1fFexZ8efPNcLd8D/PdBGnz2Huf9bqusubprgoi542GG2N9qNNcQXR
+        Q9InCgdUpoFWAycJM2KnJglPOdozkhIp1OWQopjZhI3GXZ4p8wmyS8BkAczlaeQUJqI752n2AwXsq
+        dy3lnx4msooiYUCGZo/xRLYj4VnHvAUyEhcmEmV3EXaSf+HGC+CgF5QDRaD7riKXh1BP06GeNa2VC
+        kYMxRf3z7vA9VJ1ZW7Lt5YOT8nD2OwL7g3+0VQFTHgoiu7+1Hh+Sy5V/jgrFa7dbpOhtdeHEXAj5a
+        HLLJLuGA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o736R-006if9-Gt;
-        Thu, 30 Jun 2022 22:57:39 +0000
-Date:   Thu, 30 Jun 2022 23:57:39 +0100
+        id 1o739z-006ijm-JP;
+        Thu, 30 Jun 2022 23:01:19 +0000
+Date:   Fri, 1 Jul 2022 00:01:19 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Khalid Aziz <khalid.aziz@oracle.com>
 Cc:     akpm@linux-foundation.org, willy@infradead.org,
@@ -42,14 +42,15 @@ Cc:     akpm@linux-foundation.org, willy@infradead.org,
         pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
         sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
         yzaikin@google.com
-Subject: Re: [PATCH v2 1/9] mm: Add msharefs filesystem
-Message-ID: <Yr4qY32eHzJy5vvw@ZenIV>
+Subject: Re: [PATCH v2 2/9] mm/mshare: pre-populate msharefs with information
+ file
+Message-ID: <Yr4rP7rfxqOzxbCZ@ZenIV>
 References: <cover.1656531090.git.khalid.aziz@oracle.com>
- <de5566e71e038d95342d00364c6760c7078cb091.1656531090.git.khalid.aziz@oracle.com>
+ <34e2eabbef5916c784dc16856ce25b3967f9b405.1656531090.git.khalid.aziz@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <de5566e71e038d95342d00364c6760c7078cb091.1656531090.git.khalid.aziz@oracle.com>
+In-Reply-To: <34e2eabbef5916c784dc16856ce25b3967f9b405.1656531090.git.khalid.aziz@oracle.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -60,20 +61,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 04:53:52PM -0600, Khalid Aziz wrote:
-> +static int
-> +msharefs_d_hash(const struct dentry *dentry, struct qstr *qstr)
+On Wed, Jun 29, 2022 at 04:53:53PM -0600, Khalid Aziz wrote:
+
+> +static void
+> +mshare_evict_inode(struct inode *inode)
 > +{
-> +	unsigned long hash = init_name_hash(dentry);
-> +	const unsigned char *s = qstr->name;
-> +	unsigned int len = qstr->len;
-> +
-> +	while (len--)
-> +		hash = partial_name_hash(*s++, hash);
-> +	qstr->hash = end_name_hash(hash);
-> +	return 0;
+> +	clear_inode(inode);
 > +}
 
-What do you need that for and how is it different from letting it
-use full_name_hash() (which is what it will do if you leave
-dentry_operations->d_hash equal to NULL)?
+Again, what for?  And while we are at it, shouldn't you evict the
+pages when inode gets freed and ->i_data along with it?
+IOW, aren't you missing
+                truncate_inode_pages_final(&inode->i_data);
+That, or just leave ->evict_inode NULL...
