@@ -2,81 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D60562468
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 22:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3656E562478
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 22:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237304AbiF3UjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 16:39:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34732 "EHLO
+        id S237398AbiF3Umq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 16:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237264AbiF3Uiz (ORCPT
+        with ESMTP id S237175AbiF3Umo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 16:38:55 -0400
-Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B12D2710;
-        Thu, 30 Jun 2022 13:38:42 -0700 (PDT)
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id 8E59152055C;
-        Thu, 30 Jun 2022 22:38:40 +0200 (CEST)
-Received: from lxhi-065 (10.72.94.33) by hi2exch02.adit-jv.com (10.72.92.28)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Thu, 30 Jun
- 2022 22:38:39 +0200
-Date:   Thu, 30 Jun 2022 22:38:34 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>,
-        "rob@landley.net" <rob@landley.net>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "niveditas98@gmail.com" <niveditas98@gmail.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 3/3] gen_init_cpio: add support for file metadata
-Message-ID: <20220630203834.GA5234@lxhi-065>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <20190523121803.21638-4-roberto.sassu@huawei.com>
- <20220616151603.GA4400@lxhi-065>
- <fca71da4092a45689d34ce6eeffd1893@huawei.com>
+        Thu, 30 Jun 2022 16:42:44 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62EE3646F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 13:42:43 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UG18kI032059
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 13:42:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=0xc3C+DXiwfPrlt4XSU9WIovS0CAm1/2e62U38mNxyc=;
+ b=ZFsXMrTM1X8gcmIiwcWiyqIlNCU3OO7An8JzvXGBgo6qoY9vJ2Ppys7HzRhDjgYR+yWO
+ 6jhppSbO0mJgQMbW00nHDiuoGtvZDHizQIrblgYllWZ4C7FY6Cym9lBxA4KPZKpY/V+I
+ SWCVmaNgEh0KIx/QGhr+ZfQETEGAZnAX2UU= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h12ug6fyd-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 13:42:42 -0700
+Received: from twshared14577.08.ash8.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Thu, 30 Jun 2022 13:42:41 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 1293D5932DB4; Thu, 30 Jun 2022 13:42:29 -0700 (PDT)
+From:   Keith Busch <kbusch@fb.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>
+CC:     <axboe@kernel.dk>, Kernel Team <Kernel-team@fb.com>, <hch@lst.de>,
+        <willy@infradead.org>, <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 00/12] block: support for partial sector reads
+Date:   Thu, 30 Jun 2022 13:42:00 -0700
+Message-ID: <20220630204212.1265638-1-kbusch@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <fca71da4092a45689d34ce6eeffd1893@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.94.33]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: mOcD79MxsZaEdRkhXrkJ6RgLbzXFNDoD
+X-Proofpoint-ORIG-GUID: mOcD79MxsZaEdRkhXrkJ6RgLbzXFNDoD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-30_14,2022-06-28_01,2022-06-22_01
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Roberto,
+From: Keith Busch <kbusch@kernel.org>
 
-On Do, Jun 30, 2022 at 03:06:30 +0000, Roberto Sassu wrote:
-> sorry, I'm a bit busy. Will have a look at your comments
-> as soon as possible, and maybe I rebase the patches.
+At LSFMM nearly 2 months ago, I discussed how some storage hardware
+supports the ability to read at granularities smaller than a sector, and
+the nvme protocol feature that enables this capability, "bit buckets".
+This is useful in scenarios where only parts of sectors are used by the
+application, and the primary benefits to support this are:
 
-No rush. Thanks for keeping in touch.
+  * Improved link bandwidth usage
+  * Reduced memory utilization
 
-Best regards,
-Eugeniu.
+This series enables the block layer and nvme to set up bit bucket
+descriptors for read commands, then enables user space direct-io to make
+use of this capability by allowing the user to specify an arbitrary
+offset and length. This allows truncating an arbitrary number of bytes
+off sectors from the front and end of the transfer. =20
+
+There are no current in-kernel users beyond the direct-io cases, but
+this could also be used for to truncate bytes out of the middle of a
+transfer as well. For example, if you wanted to read a page and knew you
+wer going to immediately dirty some number of bytes in the middle, you
+could set up a read request to skip those in the data transfer.
+
+Keith Busch (12):
+  block: move direct io alignment check to common
+  iomap: save copy of bdev for direct io
+  iomap: get logical block size directly
+  iomap: use common blkdev alignment check
+  block: add bit bucket capabilities
+  nvme: add support for bit buckets
+  block: allow copying pre-registered bvecs
+  block: add bio number of vecs helper for partials
+  block: add partial sector parameter helper
+  block: add direct-io partial sector read support
+  iomap: add direct io partial sector read support
+  block: export and document bit_bucket attribute
+
+ Documentation/ABI/stable/sysfs-block |  9 +++
+ block/bio.c                          | 42 +++++++++++-
+ block/blk-core.c                     |  5 ++
+ block/blk-merge.c                    |  3 +-
+ block/blk-mq.c                       |  2 +
+ block/blk-sysfs.c                    |  3 +
+ block/fops.c                         | 97 ++++++++++++++++++----------
+ drivers/nvme/host/core.c             |  3 +
+ drivers/nvme/host/nvme.h             |  6 ++
+ drivers/nvme/host/pci.c              | 17 ++++-
+ fs/iomap/direct-io.c                 | 43 ++++++++----
+ include/linux/bio.h                  | 11 ++++
+ include/linux/blk-mq.h               |  2 +
+ include/linux/blk_types.h            |  1 +
+ include/linux/blkdev.h               | 41 ++++++++++++
+ include/linux/nvme.h                 |  2 +
+ 16 files changed, 236 insertions(+), 51 deletions(-)
+
+--=20
+2.30.2
+
