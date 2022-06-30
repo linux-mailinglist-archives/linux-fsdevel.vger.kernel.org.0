@@ -2,431 +2,694 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B64A561567
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 10:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4288B5615EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 11:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232869AbiF3Ir6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 04:47:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
+        id S234124AbiF3JOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 05:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbiF3Ir6 (ORCPT
+        with ESMTP id S234070AbiF3JOV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 04:47:58 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD70E3982F;
-        Thu, 30 Jun 2022 01:47:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4FBCFB82922;
-        Thu, 30 Jun 2022 08:47:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE39C34115;
-        Thu, 30 Jun 2022 08:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656578874;
-        bh=QXlp7dJ2o7CJ43JsIC1G+oA+EOkK0MDpCbSQKIZZpwk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cY+EB/1vpe2qlFbRMTG6TaCURLED8htdKd8AgmiYtNhrdTBrPLd60Baw5pWJSmSYT
-         7F0hP1vRiZO45zwM4j88vygPle+lVdv6DeIuob9mV4cMS2GXfmGo/Ai4TUHbEjUkzQ
-         LkLISH/corylj3xyx+DUC0I2CFY7mBjkCpA9N5g+iN05CDxSI9T+Di4a2+B5S3++kr
-         JOew9IvAIFP/MNbkpjjFfLKHKveulBobrvxRf9K4ui9ALJDhJ687r757NEK0bJbxpP
-         IRvb2l389ynVgBXMrH1/0asDuX/5h1N9rtd2jvKzCrkmbZRPQYEBhLd2vye/ftf9ey
-         goGND/nniJxAQ==
-Date:   Thu, 30 Jun 2022 11:47:39 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
- truncate_inode_partial_folio
-Message-ID: <Yr1jKwz2+SGxjcuW@kernel.org>
-References: <000000000000f94c4805e289fc47@google.com>
- <YrvYEdTNWcvhIE7U@sol.localdomain>
- <CAJHvVcgoeKhqFTN5aGfQ53GbRDYJsfkRjeUM-yO5AROC0A8ekQ@mail.gmail.com>
+        Thu, 30 Jun 2022 05:14:21 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29E8240BD;
+        Thu, 30 Jun 2022 02:14:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O78+PXr+/vRNNfMOz4Yb2KznlTwvP67uZxl5Ojqy8HKxYLG6/N4NJDn9smRnrauVi/qZJWY2HxK41iYJtzhBVHAnt5KzYZ7L825KNuTg8wPpSDwhEBCKPCFBq0OXvN9Ud2SZ5FrMHHh8+CU0RVmcSrOPCOZWgpThGaDXpQ7ZT+yP+F3OuBIkMquw4gPe1i+eTqpTmiHY73V4S1DhheyBPuyURC68tE6Yr/eSoZF12OXqkKQKIwxn8bQ7DjvTP8g/x3vsUwcpbU2W5oGy3P1sr7mSJrNK4/lwRD3JxGQaMPSPdUT2FjwXptIeQs/AJdvn/+UEHDYrn79FVg6Vr8EFHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZIKYgSi8FEB/8bYaiu7+YXsjGTNBlPiCSGf24gXOvP0=;
+ b=c1yFad5iqED7PWvjrvExCjG8RVw6h+d1GN0mvgpucgHR/19Ir7LyYKLXkKzh48ZOvzRISRTDWAI00ZYuX9/vl/5zv7H3vPoF2i+SjLkJUzBdOAhos3BOM3APIN2LHPqSyBEGzViGcIy6DGY/DaJqCbFYNU2JkPNYDcBvZisX77GUYxsGI/kDhopDMNuMGvQgd/2NhGCWjnEnNMf8/a0VI5v+VQoOzyLv446obUzAHOpTwz7AucmxOvQNNBUibupSKwEb7sM+k0liT3+0CVI4JetUy276UGMWuf1Ea70JdgnWrHFfH19SD4WaJONm2YGDZYgPFoLl+JKh3j5vghPFgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=grimberg.me smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZIKYgSi8FEB/8bYaiu7+YXsjGTNBlPiCSGf24gXOvP0=;
+ b=XT4AqCgKnjZhOq7UysnjA48CUcBpJktVwwptG1hE0Aj4Z5sgdSyJjm02HPzIeeqY4T2qRT+FYARF7mUJGsT00KBfQrre9CWO8uJLg4yUoRmLaZjW6G32VXsZApRghisKFRUmQIuORj+YFCCkfuUCnT+2cLpysEPYgcjzV/GrvqxYzJ1n6Inj5wTWMKFYyBWiKi8If85ryLm3Z+JAD71NfqAqPij8fuP5oqCRHtEWRaGTbIpwfrc2A39pzLnqobhhq6yn7AYKMHonRIhmh03cYFDDxQEebVz/ApBCCSiTqjP/Wh3bNqL9ss+aRcfij8iI+jcV/ug852zgVV9hqkekHQ==
+Received: from MW4P221CA0008.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::13)
+ by DM5PR1201MB0153.namprd12.prod.outlook.com (2603:10b6:4:57::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Thu, 30 Jun
+ 2022 09:14:17 +0000
+Received: from CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8b:cafe::c6) by MW4P221CA0008.outlook.office365.com
+ (2603:10b6:303:8b::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15 via Frontend
+ Transport; Thu, 30 Jun 2022 09:14:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT058.mail.protection.outlook.com (10.13.174.164) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5395.14 via Frontend Transport; Thu, 30 Jun 2022 09:14:17 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Thu, 30 Jun
+ 2022 09:14:17 +0000
+Received: from dev.nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 30 Jun
+ 2022 02:14:15 -0700
+From:   Chaitanya Kulkarni <kch@nvidia.com>
+To:     <linux-block@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <agk@redhat.com>, <song@kernel.org>,
+        <djwong@kernel.org>, <kbusch@kernel.org>, <hch@lst.de>,
+        <sagi@grimberg.me>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <viro@zeniv.linux.org.uk>,
+        <javier@javigon.com>, <johannes.thumshirn@wdc.com>,
+        <bvanassche@acm.org>, <dongli.zhang@oracle.com>,
+        <ming.lei@redhat.com>, <willy@infradead.org>,
+        <jefflexu@linux.alibaba.com>, <josef@toxicpanda.com>, <clm@fb.com>,
+        <dsterba@suse.com>, <jack@suse.com>, <tytso@mit.edu>,
+        <adilger.kernel@dilger.ca>, <jlayton@kernel.org>,
+        <idryomov@gmail.com>, <danil.kipnis@cloud.ionos.com>,
+        <ebiggers@google.com>, <jinpu.wang@cloud.ionos.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Subject: [PATCH 0/6] block: add support for REQ_OP_VERIFY
+Date:   Thu, 30 Jun 2022 02:14:00 -0700
+Message-ID: <20220630091406.19624-1-kch@nvidia.com>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJHvVcgoeKhqFTN5aGfQ53GbRDYJsfkRjeUM-yO5AROC0A8ekQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="y"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 628ae762-7407-4cae-de06-08da5a78e8d6
+X-MS-TrafficTypeDiagnostic: DM5PR1201MB0153:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6/CSXdVuDm4VgZZ7KnSaQw8/9wahZ/W4fqekKNVqoE7rR3EvjUreUjly9M0k?=
+ =?us-ascii?Q?x8w55tIIulIQgcLfIiyKLcQOkB8PZmwuhGxJIVb1r/FSntQ2/goUb3uLu7Up?=
+ =?us-ascii?Q?/4bPebu4yZGb68Hv2ZGpBav1bbrAcEWW7mC8l4u2gy4iQr9soB4IZ7gkAsec?=
+ =?us-ascii?Q?ew7NmekiujRNUo0SMF8ymzpXpfO3lH1NSkGTGkDSu4u07lrwkfvcpDrrvVRb?=
+ =?us-ascii?Q?FKp+vmPW9adHOknDpYSxXuqE4JByBYZfJrnZ0WHiViiMY514rO6T2Yc3IGOS?=
+ =?us-ascii?Q?Hg6iKP59W5jddhHn2+Y/XBiljqYpn+iEA5uwcNu4KIb9laGPARLNH5BeER+c?=
+ =?us-ascii?Q?Lk2MpkGR0bAg0tGyOGMe/CvnoDzbd50X7U0MV/vY6hSVEJICNbA2KErMl21k?=
+ =?us-ascii?Q?LQQH5/fE8rCgkFZltS99Z5ZrOom87ATkymfZnbjXtA8IeMX6TK5neGMbC4xH?=
+ =?us-ascii?Q?mfeemEfw7irMF+PPwA1ysf9w24O/BQH1j09KI8YAuESicU3fIvlbxORhH9d1?=
+ =?us-ascii?Q?Nh0w94DWnAJbS/sCFs1C3hgik2ZmnxrOr3I8/qu8RVtOgTdgnWvcbriAXQzf?=
+ =?us-ascii?Q?P3ZwlIj6AvQYFFb9pAtxUW+KdpDTaxLGPihv6+iPx46Gy4s85LmRXnrAV6T6?=
+ =?us-ascii?Q?uzL+j77f1sYPv3hIClq8ZdAZ9NG6FtEbicHZaBO/e5auPm6504nuV8+xwW+2?=
+ =?us-ascii?Q?2WH41naOf59uRnIpVNEuDOgriK5HWocvJSVkw64Qoskvgx/PSTVebced+QUt?=
+ =?us-ascii?Q?iYq1zq/krZHzJKF55Kk+wXMC73C7ILOK9rxfLC8w97/4hCaTFtTN/NLFYVUv?=
+ =?us-ascii?Q?FA4O2tBirONHWMfjhd0iAd8Z7Q4LG03qbOhE8O6Vy8BPkCfNOekyvGp9HgEL?=
+ =?us-ascii?Q?0uc9cim3ILJMChqapq9O7s8jCufpNR+1B8Y/0pq42adM1HrqGYGWUmcwb4D0?=
+ =?us-ascii?Q?V5ZRsmR5ddN61ZSXNSBKjA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(376002)(346002)(136003)(46966006)(40470700004)(36840700001)(47076005)(82310400005)(356005)(83380400001)(30864003)(107886003)(8936002)(2906002)(36756003)(5660300002)(16526019)(7406005)(186003)(1076003)(110136005)(2616005)(426003)(336012)(54906003)(316002)(81166007)(7416002)(966005)(36860700001)(8676002)(70206006)(4326008)(70586007)(7696005)(40480700001)(40460700003)(6666004)(82740400003)(478600001)(26005)(41300700001)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2022 09:14:17.3911
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 628ae762-7407-4cae-de06-08da5a78e8d6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT058.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0153
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 09:30:12AM -0700, Axel Rasmussen wrote:
-> On Tue, Jun 28, 2022 at 9:41 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Tue, Jun 28, 2022 at 03:59:26PM -0700, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    941e3e791269 Merge tag 'for_linus' of git://git.kernel.org..
-> > > git tree:       upstream
-> > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=1670ded4080000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=833001d0819ddbc9
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=9bd2b7adbd34b30b87e4
-> > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140f9ba8080000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15495188080000
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-> > >
-> > > BUG: unable to handle page fault for address: ffff888021f7e005
-> > > #PF: supervisor write access in kernel mode
-> > > #PF: error_code(0x0002) - not-present page
-> > > PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
-> > > Oops: 0002 [#1] PREEMPT SMP KASAN
-> > > CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
-> > > Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-> > > RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
-> > > RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
-> > > RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
-> > > RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
-> > > R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
-> > > R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
-> > > FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  <TASK>
-> > >  zero_user_segments include/linux/highmem.h:272 [inline]
-> > >  folio_zero_range include/linux/highmem.h:428 [inline]
-> > >  truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
-> > >  truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
-> > >  truncate_inode_pages mm/truncate.c:452 [inline]
-> > >  truncate_pagecache+0x63/0x90 mm/truncate.c:753
-> > >  simple_setattr+0xed/0x110 fs/libfs.c:535
-> > >  secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
-> > >  notify_change+0xb8c/0x12b0 fs/attr.c:424
-> > >  do_truncate+0x13c/0x200 fs/open.c:65
-> > >  do_sys_ftruncate+0x536/0x730 fs/open.c:193
-> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> > >  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> > > RIP: 0033:0x7fb29d900899
-> > > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > > RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-> > > RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
-> > > RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
-> > > RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
-> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
-> > > R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
-> > >  </TASK>
-> > > Modules linked in:
-> > > CR2: ffff888021f7e005
-> > > ---[ end trace 0000000000000000 ]---
-> >
-> > I think this is a bug in memfd_secret.  secretmem_setattr() can race with a page
-> > being faulted in by secretmem_fault().  Specifically, a page can be faulted in
-> > after secretmem_setattr() has set i_size but before it zeroes out the partial
-> > page past i_size.  memfd_secret pages aren't mapped in the kernel direct map, so
-> > the crash occurs when the kernel tries to zero out the partial page.
-> >
-> > I don't know what the best solution is -- maybe a rw_semaphore protecting
-> > secretmem_fault() and secretmem_setattr()?  Or perhaps secretmem_setattr()
-> > should avoid the call to truncate_setsize() by not using simple_setattr(), given
-> > that secretmem_setattr() only supports the size going from zero to nonzero.
-> 
-> From my perspective the rw_semaphore approach sounds reasonable.
-> 
-> simple_setattr() and the functions it calls to do the actual work
-> isn't a tiny amount of code, it would be a shame to reimplement it in
-> secretmem.c.
-> 
-> For the rwsem, I guess the idea is setattr will take it for write, and
-> fault will take it for read? Since setattr is a very infrequent
-> operation - a typical use case is you'd do it exactly once right after
-> opening the memfd_secret - this seems like it wouldn't make fault
-> significantly less performant. It's also a pretty small change I
-> think, just a few lines.
- 
-Below is my take on adding a semaphore and making ->setattr() and ->fault()
-mutually exclusive. It's only lightly tested so I'd appreciate if Eric
-could give it a whirl.
+Hi,
 
-With addition of semaphore to secretmem_setattr() it seems we don't need
-special care for size changes, just calling simple_setattr() after taking
-the semaphore should be fine. Thoughts?
+This adds support for the REQ_OP_VERIFY. In this version we add
+support for block layer. NVMe host side, NVMeOF Block device backend,
+and NVMeOF File device backend and null_blk driver.
 
-From edfcb2f0d31c2132bda483635dd2a8dd295efb04 Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Thu, 30 Jun 2022 11:26:37 +0300
-Subject: [PATCH] secretmem: fix unhandled fault in truncate
+In this version we also add a new blkverify userspace tool along with
+the testcases patch for the util-linux, this patch will be followed
+by the this series.
 
-syzkaller reports the following issue:
+Below is the summary of testlog :-
 
-BUG: unable to handle page fault for address: ffff888021f7e005
-PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
-Oops: 0002 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
-Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
-RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
-RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
-R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
-R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
-FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- zero_user_segments include/linux/highmem.h:272 [inline]
- folio_zero_range include/linux/highmem.h:428 [inline]
- truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
- truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
- truncate_inode_pages mm/truncate.c:452 [inline]
- truncate_pagecache+0x63/0x90 mm/truncate.c:753
- simple_setattr+0xed/0x110 fs/libfs.c:535
- secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
- notify_change+0xb8c/0x12b0 fs/attr.c:424
- do_truncate+0x13c/0x200 fs/open.c:65
- do_sys_ftruncate+0x536/0x730 fs/open.c:193
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7fb29d900899
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
-RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
-RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
-R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
- </TASK>
-Modules linked in:
-CR2: ffff888021f7e005
----[ end trace 0000000000000000 ]---
+1. NVMeOF bdev-ns null_blk verify=0 (triggering bdev emulation code) :-
+-----------------------------------------------------------------------
 
-Eric Biggers suggested that this happens when
-secretmem_setattr()->simple_setattr() races with secretmem_fault() so
-that a page that is faulted in by secretmem_fault() (and thus removed
-from the direct map) is zeroed by inode truncation right afterwards.
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 1171.171536] nvmet: nvmet_bdev_emulate_verify_work 467
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1  
+NVME Verify Success
+linux-block (for-next) # dmesg -c 
+[ 1199.322161] nvmet: nvmet_bdev_emulate_verify_work 467
 
-Use an rw_semaphore to make secretmem_fault() and secretmem_setattr()
-mutually exclusive.
+2. NVMeOF bdev-ns null_blk verify=1.
+-----------------------------------------------------------------------
 
-Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-Suggested-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- mm/secretmem.c | 48 ++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 40 insertions(+), 8 deletions(-)
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 1257.661548] nvmet: nvmet_bdev_execute_verify 506
+[ 1257.661558] null_blk: null_process_cmd 1406
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1  
+NVME Verify Success
+linux-block (for-next) # dmesg -c 
+[ 1269.613415] nvmet: nvmet_bdev_execute_verify 506
+[ 1269.613425] null_blk: null_process_cmd 1406
 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 206ed6b40c1d..40573b045c96 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -47,30 +47,41 @@ bool secretmem_active(void)
- 	return !!atomic_read(&secretmem_users);
- }
- 
-+struct secretmem_state {
-+	struct rw_semaphore rw_sem;
-+};
-+
- static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	struct secretmem_state *state = inode->i_private;
- 	pgoff_t offset = vmf->pgoff;
- 	gfp_t gfp = vmf->gfp_mask;
- 	unsigned long addr;
- 	struct page *page;
-+	vm_fault_t ret;
- 	int err;
- 
- 	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
- 		return vmf_error(-EINVAL);
- 
-+	down_read(&state->rw_sem);
-+
- retry:
- 	page = find_lock_page(mapping, offset);
- 	if (!page) {
- 		page = alloc_page(gfp | __GFP_ZERO);
--		if (!page)
--			return VM_FAULT_OOM;
-+		if (!page) {
-+			ret = VM_FAULT_OOM;
-+			goto out;
-+		}
- 
- 		err = set_direct_map_invalid_noflush(page);
- 		if (err) {
- 			put_page(page);
--			return vmf_error(err);
-+			ret = vmf_error(err);
-+			goto out;
- 		}
- 
- 		__SetPageUptodate(page);
-@@ -86,7 +97,8 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- 			if (err == -EEXIST)
- 				goto retry;
- 
--			return vmf_error(err);
-+			ret = vmf_error(err);
-+			goto out;
- 		}
- 
- 		addr = (unsigned long)page_address(page);
-@@ -94,7 +106,11 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
- 	}
- 
- 	vmf->page = page;
--	return VM_FAULT_LOCKED;
-+	ret = VM_FAULT_LOCKED;
-+
-+out:
-+	up_read(&state->rw_sem);
-+	return ret;
- }
- 
- static const struct vm_operations_struct secretmem_vm_ops = {
-@@ -163,11 +179,17 @@ static int secretmem_setattr(struct user_namespace *mnt_userns,
- {
- 	struct inode *inode = d_inode(dentry);
- 	unsigned int ia_valid = iattr->ia_valid;
-+	struct secretmem_state *state = inode->i_private;
-+	int ret;
- 
-+	down_write(&state->rw_sem);
- 	if ((ia_valid & ATTR_SIZE) && inode->i_size)
--		return -EINVAL;
-+		ret = -EINVAL;
-+	else
-+		ret = simple_setattr(mnt_userns, dentry, iattr);
-+	up_write(&state->rw_sem);
- 
--	return simple_setattr(mnt_userns, dentry, iattr);
-+	return ret;
- }
- 
- static const struct inode_operations secretmem_iops = {
-@@ -179,22 +201,30 @@ static struct vfsmount *secretmem_mnt;
- static struct file *secretmem_file_create(unsigned long flags)
- {
- 	struct file *file = ERR_PTR(-ENOMEM);
-+	struct secretmem_state *state;
- 	struct inode *inode;
- 
- 	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		goto err_free_inode;
-+
- 	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
- 				 O_RDWR, &secretmem_fops);
- 	if (IS_ERR(file))
--		goto err_free_inode;
-+		goto err_free_state;
- 
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
- 	mapping_set_unevictable(inode->i_mapping);
- 
-+	init_rwsem(&state->rw_sem);
-+
- 	inode->i_op = &secretmem_iops;
- 	inode->i_mapping->a_ops = &secretmem_aops;
-+	inode->i_private = state;
- 
- 	/* pretend we are a normal file with zero size */
- 	inode->i_mode |= S_IFREG;
-@@ -202,6 +232,8 @@ static struct file *secretmem_file_create(unsigned long flags)
- 
- 	return file;
- 
-+err_free_state:
-+	kfree(state);
- err_free_inode:
- 	iput(inode);
- 	return file;
+3. NVMeOF file-ns :-
+-----------------------------------------------------------------------
 
-base-commit: 03c765b0e3b4cb5063276b086c76f7a612856a9a
--- 
-2.34.1
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 3452.675959] nvme_setup_verify 844
+[ 3452.675969] nvmet: nvmet_file_execute_verify 525
+[ 3452.675971] nvmet: nvmet_file_emulate_verify_work 502
+[ 3452.675972] nvmet: do_direct_io_emulate_verify 431
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1
+NVME Verify Success
+linux-block (for-next) # dmesg  -c 
+[ 3459.794385] nvmet: nvmet_file_execute_verify 525
+[ 3459.794389] nvmet: nvmet_file_emulate_verify_work 502
+[ 3459.794391] nvmet: do_direct_io_emulate_verify 431
 
+4. NVMe PCIe device.
+-----------------------------------------------------------------------
 
-> > The following commit tried to fix a similar bug, but it wasn't enough:
-> >
-> >         commit f9b141f93659e09a52e28791ccbaf69c273b8e92
-> >         Author: Axel Rasmussen <axelrasmussen@google.com>
-> >         Date:   Thu Apr 14 19:13:31 2022 -0700
-> >
-> >             mm/secretmem: fix panic when growing a memfd_secret
-> >
-> >
-> > Here's a simplified reproducer.  Note, for memfd_secret to be supported, the
-> > kernel config must contain CONFIG_SECRETMEM=y and the kernel command line must
-> > contain secretmem.enable=1.
-> >
-> > #include <pthread.h>
-> > #include <setjmp.h>
-> > #include <signal.h>
-> > #include <sys/mman.h>
-> > #include <sys/syscall.h>
-> > #include <unistd.h>
-> >
-> > static volatile int fd;
-> > static jmp_buf jump_buf;
-> >
-> > static void *truncate_thread(void *arg)
-> > {
-> >         for (;;)
-> >                 ftruncate(fd, 1000);
-> > }
-> >
-> > static void handle_sigbus(int sig)
-> > {
-> >         longjmp(jump_buf, 1);
-> > }
-> >
-> > int main(void)
-> > {
-> >         struct sigaction act = {
-> >                 .sa_handler = handle_sigbus,
-> >                 .sa_flags = SA_NODEFER,
-> >         };
-> >         pthread_t t;
-> >         void *addr;
-> >
-> >         sigaction(SIGBUS, &act, NULL);
-> >
-> >         pthread_create(&t, NULL, truncate_thread, NULL);
-> >         for (;;) {
-> >                 fd = syscall(__NR_memfd_secret, 0);
-> >                 addr = mmap(NULL, 8192, PROT_WRITE, MAP_SHARED, fd, 0);
-> >                 if (setjmp(jump_buf) == 0)
-> >                         *(unsigned int *)addr = 0;
-> >                 munmap(addr, 8192);
-> >                 close(fd);
-> >         }
-> > }
+linux-block (for-next) # modprobe nvme
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme0n1
+linux-block (for-next) # dmesg  -c
+[ 2763.432194] nvme nvme0: pci function 0000:00:04.0
+[ 2763.473827] nvme nvme0: 48/0/0 default/read/poll queues
+[ 2763.478868] nvme nvme0: Ignoring bogus Namespace Identifiers
+[ 2766.583923] nvme_setup_verify 844
+
+Here is a link for the complete cover-letter for the background to save
+reviewer's time :-
+https://patchwork.kernel.org/project/dm-devel/cover/20211104064634.4481-1-chaitanyak@nvidia.com/
+
+-ck
+
+Chaitanya Kulkarni (6):
+  block: add support for REQ_OP_VERIFY
+  nvme: add support for the Verify command
+  nvmet: add Verify command support for bdev-ns
+  nvmet: add Verify emulation support for bdev-ns
+  nvmet: add verify emulation support for file-ns
+  null_blk: add REQ_OP_VERIFY support
+
+ Documentation/ABI/stable/sysfs-block |  12 +++
+ block/blk-core.c                     |   5 +
+ block/blk-lib.c                      | 155 +++++++++++++++++++++++++++
+ block/blk-merge.c                    |  18 ++++
+ block/blk-settings.c                 |  17 +++
+ block/blk-sysfs.c                    |   8 ++
+ block/blk.h                          |   4 +
+ block/ioctl.c                        |  35 ++++++
+ drivers/block/null_blk/main.c        |  20 +++-
+ drivers/block/null_blk/null_blk.h    |   1 +
+ drivers/nvme/host/core.c             |  33 ++++++
+ drivers/nvme/target/admin-cmd.c      |   3 +-
+ drivers/nvme/target/core.c           |  14 ++-
+ drivers/nvme/target/io-cmd-bdev.c    |  75 +++++++++++++
+ drivers/nvme/target/io-cmd-file.c    | 152 ++++++++++++++++++++++++++
+ drivers/nvme/target/nvmet.h          |   4 +-
+ include/linux/bio.h                  |   9 +-
+ include/linux/blk_types.h            |   2 +
+ include/linux/blkdev.h               |  22 ++++
+ include/linux/nvme.h                 |  19 ++++
+ include/uapi/linux/fs.h              |   1 +
+ 21 files changed, 601 insertions(+), 8 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.29.0
+
+######################## NVMeOF bdev-ns null_blk verify=0 ######################
+
+0 directories, 0 files
+linux-block (for-next) # ./bdev.sh 1
+++ FILE=/dev/nvme0n1
+++ NN=1
+++ NQN=testnqn
+++ let NR_DEVICES=NN+1
+++ modprobe -r null_blk
+++ modprobe null_blk nr_devices=0 verify=0
+++ modprobe nvme
+++ modprobe nvme-fabrics
+++ modprobe nvmet
+++ modprobe nvme-loop
+++ dmesg -c
+++ sleep 2
+++ tree /sys/kernel/config
+/sys/kernel/config
+├── nullb
+│   └── features
+└── nvmet
+    ├── hosts
+    ├── ports
+    └── subsystems
+
+5 directories, 1 file
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn
+++ mkdir /sys/kernel/config/nvmet/ports/1/
+++ echo -n loop
+++ echo -n 1
+++ ln -s /sys/kernel/config/nvmet/subsystems/testnqn /sys/kernel/config/nvmet/ports/1/subsystems/
+++ sleep 1
+++ echo transport=loop,nqn=testnqn
++++ shuf -i 1-1 -n 1
+++ for i in `shuf -i  1-$NN -n $NN`
+++ mkdir config/nullb/nullb1
+++ echo 4096
+++ echo 20971520
+++ echo 1
++++ cat config/nullb/nullb1/index
+++ IDX=0
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
+++ let IDX=IDX+1
+++ echo ' ####### /dev/nullb1'
+ ####### /dev/nullb1
+++ echo -n /dev/nullb1
+++ cat /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1/device_path
+/dev/nullb1
+++ echo 1
+++ dmesg -c
+[ 1150.985720] nvmet: creating nvm controller 1 for subsystem testnqn for NQN nqn.2014-08.org.nvmexpress:uuid:7f5b83f1-b258-4300-9a55-cd1902bea8c2.
+[ 1150.985882] nvme nvme1: creating 48 I/O queues.
+[ 1150.990654] nvme nvme1: new ctrl: "testnqn"
+[ 1150.995681] null_blk: disk nullb1 created
+[ 1150.998886] nvmet: adding nsid 1 to subsystem testnqn
+[ 1151.000716] nvme nvme1: rescanning namespaces.
+++ sleep 1
+++ mount
+++ column -t
+++ grep nvme
+++ '[' 1 ']'
++++ wc -l
++++ ls -l /dev/nvme1 /dev/nvme1n1
+++ cnt=2
+++ echo 2
+2
+++ '[' 2 -gt 1 ']'
+++ break
+++ dmesg -c
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 1171.171536] nvmet: nvmet_bdev_emulate_verify_work 467
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1  
+NVME Verify Success
+linux-block (for-next) # dmesg -c 
+[ 1199.322161] nvmet: nvmet_bdev_emulate_verify_work 467
+linux-block (for-next) # ./delete.sh 1
++ nvme disconnect -n testnqn
+NQN:testnqn disconnected 1 controller(s)
+
+real	0m0.343s
+user	0m0.002s
+sys	0m0.003s
+++ shuf -i 1-1 -n 1
++ for i in `shuf -i  1-$NN -n $NN`
++ echo 0
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
++ rmdir config/nullb/nullb1
++ sleep 2
++ rm -fr /sys/kernel/config/nvmet/ports/1/subsystems/testnqn
++ sleep 1
++ rmdir /sys/kernel/config/nvmet/ports/1
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn
++ sleep 1
++ modprobe -r nvme_loop
++ modprobe -r nvme_fabrics
++ modprobe -r nvmet
++ modprobe -r nvme
++ modprobe -r null_blk
++ umount /mnt/nvme0n1
+umount: /mnt/nvme0n1: no mount point specified.
++ umount /mnt/backend
+umount: /mnt/backend: not mounted.
++ tree /sys/kernel/config
+/sys/kernel/config
+
+0 directories, 0 files
+
+######################## NVMeOF bdev-ns null_blk verify=1 #####################
+
+linux-block (for-next) # ./bdev.sh 1
+++ FILE=/dev/nvme0n1
+++ NN=1
+++ NQN=testnqn
+++ let NR_DEVICES=NN+1
+++ modprobe -r null_blk
+++ modprobe null_blk nr_devices=0 verify=1
+++ modprobe nvme
+++ modprobe nvme-fabrics
+++ modprobe nvmet
+++ modprobe nvme-loop
+++ dmesg -c
+++ sleep 2
+++ tree /sys/kernel/config
+/sys/kernel/config
+├── nullb
+│   └── features
+└── nvmet
+    ├── hosts
+    ├── ports
+    └── subsystems
+
+5 directories, 1 file
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn
+++ mkdir /sys/kernel/config/nvmet/ports/1/
+++ echo -n loop
+++ echo -n 1
+++ ln -s /sys/kernel/config/nvmet/subsystems/testnqn /sys/kernel/config/nvmet/ports/1/subsystems/
+++ sleep 1
+++ echo transport=loop,nqn=testnqn
++++ shuf -i 1-1 -n 1
+++ for i in `shuf -i  1-$NN -n $NN`
+++ mkdir config/nullb/nullb1
+++ echo 4096
+++ echo 20971520
+++ echo 1
++++ cat config/nullb/nullb1/index
+++ IDX=0
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
+++ let IDX=IDX+1
+++ echo ' ####### /dev/nullb1'
+ ####### /dev/nullb1
+++ echo -n /dev/nullb1
+++ cat /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1/device_path
+/dev/nullb1
+++ echo 1
+++ dmesg -c
+[ 1250.311632] nvmet: creating nvm controller 1 for subsystem testnqn for NQN nqn.2014-08.org.nvmexpress:uuid:328bb18d-3662-48eb-8bc2-ca7d4ad73799.
+[ 1250.311853] nvme nvme1: creating 48 I/O queues.
+[ 1250.316251] nvme nvme1: new ctrl: "testnqn"
+[ 1250.321710] null_blk: disk nullb1 created
+[ 1250.324678] nvmet: adding nsid 1 to subsystem testnqn
+[ 1250.326546] nvme nvme1: rescanning namespaces.
+++ sleep 1
+++ mount
+++ column -t
+++ grep nvme
+++ '[' 1 ']'
++++ wc -l
++++ ls -l /dev/nvme1 /dev/nvme1n1
+++ cnt=2
+++ echo 2
+2
+++ '[' 2 -gt 1 ']'
+++ break
+++ dmesg -c
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 1257.661548] nvmet: nvmet_bdev_execute_verify 506
+[ 1257.661558] null_blk: null_process_cmd 1406
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1  
+NVME Verify Success
+linux-block (for-next) # dmesg -c 
+[ 1269.613415] nvmet: nvmet_bdev_execute_verify 506
+[ 1269.613425] null_blk: null_process_cmd 1406
+linux-block (for-next) # 
+linux-block (for-next) # ./delete.sh 1
++ nvme disconnect -n testnqn
+NQN:testnqn disconnected 1 controller(s)
+
+real	0m0.339s
+user	0m0.002s
+sys	0m0.003s
+++ shuf -i 1-1 -n 1
++ for i in `shuf -i  1-$NN -n $NN`
++ echo 0
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
++ rmdir config/nullb/nullb1
++ sleep 2
++ rm -fr /sys/kernel/config/nvmet/ports/1/subsystems/testnqn
++ sleep 1
++ rmdir /sys/kernel/config/nvmet/ports/1
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn
++ sleep 1
++ modprobe -r nvme_loop
++ modprobe -r nvme_fabrics
++ modprobe -r nvmet
++ modprobe -r nvme
++ modprobe -r null_blk
++ umount /mnt/nvme0n1
+umount: /mnt/nvme0n1: no mount point specified.
++ umount /mnt/backend
+umount: /mnt/backend: not mounted.
++ tree /sys/kernel/config
+/sys/kernel/config
+
+0 directories, 0 files
+
+################################### NVMeOF file-ns #############################
+
+linux-block (for-next) # 
+linux-block (for-next) # ./file.sh 1
+++ FILE=/mnt/backend/nvme1n1
+++ SS=testnqn
+++ SSPATH=/sys/kernel/config/nvmet/subsystems/testnqn/
+++ PORTS=/sys/kernel/config/nvmet/ports
+++ main
+++ load_modules
+++ dmesg -c
+++ modprobe nvme
+++ modprobe nvme-fabrics
+++ modprobe nvmet
+++ modprobe nvme-loop
+++ sleep 3
+++ mount_fs
+++ make_nullb
+++ ./compile_nullb.sh
++ umount /mnt/nullb0
+umount: /mnt/nullb0: not mounted.
++ rmdir 'config/nullb/nullb*'
+rmdir: failed to remove 'config/nullb/nullb*': No such file or directory
++ dmesg -c
++ modprobe -r null_blk
++ lsmod
++ grep null_blk
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/null_blk/
+++ uname -r
++ HOST_DEST=/lib/modules/5.18.0blk+/kernel/drivers/block/null_blk/
++ cp drivers/block/null_blk//null_blk.ko /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//
++ ls -lrth /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//null_blk.ko
+-rw-r--r--. 1 root root 1.1M Jun 29 17:06 /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//null_blk.ko
++ sleep 1
++ dmesg -c
+++ ./compile_nullb.sh
++ umount /mnt/nullb0
+umount: /mnt/nullb0: not mounted.
++ rmdir 'config/nullb/nullb*'
+rmdir: failed to remove 'config/nullb/nullb*': No such file or directory
++ dmesg -c
++ modprobe -r null_blk
++ lsmod
++ grep null_blk
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/null_blk/
+++ uname -r
++ HOST_DEST=/lib/modules/5.18.0blk+/kernel/drivers/block/null_blk/
++ cp drivers/block/null_blk//null_blk.ko /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//
++ ls -lrth /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//null_blk.ko
+-rw-r--r--. 1 root root 1.1M Jun 29 17:06 /lib/modules/5.18.0blk+/kernel/drivers/block/null_blk//null_blk.ko
++ sleep 1
++ dmesg -c
+++ modprobe null_blk nr_devices=0
+++ sleep 1
+++ mkdir config/nullb/nullb0
+++ tree config/nullb/nullb0
+config/nullb/nullb0
+├── badblocks
+├── blocking
+├── blocksize
+├── cache_size
+├── completion_nsec
+├── discard
+├── home_node
+├── hw_queue_depth
+├── index
+├── irqmode
+├── max_sectors
+├── mbps
+├── memory_backed
+├── poll_queues
+├── power
+├── queue_mode
+├── size
+├── submit_queues
+├── use_per_node_hctx
+├── verify
+├── virt_boundary
+├── zone_capacity
+├── zoned
+├── zone_max_active
+├── zone_max_open
+├── zone_nr_conv
+└── zone_size
+
+0 directories, 27 files
+++ echo 1
+++ echo 512
+++ echo 20480
+++ echo 1
+++ sleep 2
++++ cat config/nullb/nullb0/index
+++ IDX=0
+++ lsblk
+++ grep null0
+++ sleep 1
+++ mkfs.xfs -f /dev/nullb0
+meta-data=/dev/nullb0            isize=512    agcount=4, agsize=1310720 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=0
+data     =                       bsize=4096   blocks=5242880, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+++ mount /dev/nullb0 /mnt/backend/
+++ sleep 1
+++ mount
+++ column -t
+++ grep nvme
+++ dd if=/dev/zero of=/mnt/backend/nvme1n1 count=2621440 bs=4096
+2621440+0 records in
+2621440+0 records out
+10737418240 bytes (11 GB, 10 GiB) copied, 5.01608 s, 2.1 GB/s
+++ file /mnt/backend/nvme1n1
+/mnt/backend/nvme1n1: data
+++ make_target
+++ tree /sys/kernel/config
+/sys/kernel/config
+├── nullb
+│   ├── features
+│   └── nullb0
+│       ├── badblocks
+│       ├── blocking
+│       ├── blocksize
+│       ├── cache_size
+│       ├── completion_nsec
+│       ├── discard
+│       ├── home_node
+│       ├── hw_queue_depth
+│       ├── index
+│       ├── irqmode
+│       ├── max_sectors
+│       ├── mbps
+│       ├── memory_backed
+│       ├── poll_queues
+│       ├── power
+│       ├── queue_mode
+│       ├── size
+│       ├── submit_queues
+│       ├── use_per_node_hctx
+│       ├── verify
+│       ├── virt_boundary
+│       ├── zone_capacity
+│       ├── zoned
+│       ├── zone_max_active
+│       ├── zone_max_open
+│       ├── zone_nr_conv
+│       └── zone_size
+└── nvmet
+    ├── hosts
+    ├── ports
+    └── subsystems
+
+6 directories, 28 files
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn/
+++ for i in 1
+++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn//namespaces/1
+++ echo -n /mnt/backend/nvme1n1
+++ cat /sys/kernel/config/nvmet/subsystems/testnqn//namespaces/1/device_path
+/mnt/backend/nvme1n1
+++ cat /sys/kernel/config/nvmet/subsystems/testnqn//namespaces/1/buffered_io
+0
+++ echo 1
+++ mkdir /sys/kernel/config/nvmet/ports/1/
+++ echo -n loop
+++ echo -n 1
+++ ln -s /sys/kernel/config/nvmet/subsystems/testnqn/ /sys/kernel/config/nvmet/ports/1/subsystems/
+++ sleep 1
+++ connect
+++ echo transport=loop,nqn=testnqn
+++ sleep 1
+++ dmesg -c
+[ 3436.671070] null_blk: module loaded
+[ 3437.678812] null_blk: disk nullb0 created
+[ 3440.700250] XFS (nullb0): Mounting V5 Filesystem
+[ 3440.701686] XFS (nullb0): Ending clean mount
+[ 3440.701772] xfs filesystem being mounted at /mnt/backend supports timestamps until 2038 (0x7fffffff)
+[ 3446.742777] nvmet: adding nsid 1 to subsystem testnqn
+[ 3447.752282] nvmet: creating nvm controller 1 for subsystem testnqn for NQN nqn.2014-08.org.nvmexpress:uuid:55bf9c5a-2992-4ffc-ac53-18003029a0b9.
+[ 3447.752423] nvme nvme1: creating 48 I/O queues.
+[ 3447.758869] nvme nvme1: new ctrl: "testnqn"
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme1n1 
+linux-block (for-next) # dmesg -c 
+[ 3452.675959] nvme_setup_verify 844
+[ 3452.675969] nvmet: nvmet_file_execute_verify 525
+[ 3452.675971] nvmet: nvmet_file_emulate_verify_work 502
+[ 3452.675972] nvmet: do_direct_io_emulate_verify 431
+linux-block (for-next) # nvme verify -s 0 -c 1024 /dev/nvme1n1
+NVME Verify Success
+linux-block (for-next) # dmesg  -c 
+[ 3459.794385] nvmet: nvmet_file_execute_verify 525
+[ 3459.794389] nvmet: nvmet_file_emulate_verify_work 502
+[ 3459.794391] nvmet: do_direct_io_emulate_verify 431
+linux-block (for-next) #  
+linux-block (for-next) # 
+linux-block (for-next) # ./delete.sh 1
++ nvme disconnect -n testnqn
+NQN:testnqn disconnected 1 controller(s)
+
+real	0m0.338s
+user	0m0.001s
+sys	0m0.004s
+++ shuf -i 1-1 -n 1
++ for i in `shuf -i  1-$NN -n $NN`
++ echo 0
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
++ rmdir config/nullb/nullb0
++ sleep 2
++ rm -fr /sys/kernel/config/nvmet/ports/1/subsystems/testnqn
++ sleep 1
++ rmdir /sys/kernel/config/nvmet/ports/1
++ rmdir /sys/kernel/config/nvmet/subsystems/testnqn
++ sleep 1
++ modprobe -r nvme_loop
++ modprobe -r nvme_fabrics
++ modprobe -r nvmet
++ modprobe -r nvme
++ umount /mnt/nvme0n1
+umount: /mnt/nvme0n1: no mount point specified.
++ umount /mnt/backend
++ modprobe -r null_blk
++ tree /sys/kernel/config
+/sys/kernel/config
+
+0 directories, 0 files
+
+################################# NVMe PCIe device  ###########################
+linux-block (for-next) #
+linux-block (for-next) #
+linux-block (for-next) # modprobe nvme
+linux-block (for-next) # blkverify -o 0 -l 40960 /dev/nvme0n1
+linux-block (for-next) # dmesg  -c
+[ 2763.432194] nvme nvme0: pci function 0000:00:04.0
+[ 2763.473827] nvme nvme0: 48/0/0 default/read/poll queues
+[ 2763.478868] nvme nvme0: Ignoring bogus Namespace Identifiers
+[ 2766.583923] nvme_setup_verify 844
