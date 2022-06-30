@@ -2,301 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6B95619B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 13:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 743865619CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 14:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235173AbiF3L5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 07:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41906 "EHLO
+        id S235202AbiF3MD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 08:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235167AbiF3L5P (ORCPT
+        with ESMTP id S233427AbiF3MDz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 07:57:15 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4316A5A465;
-        Thu, 30 Jun 2022 04:57:14 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id dw10-20020a17090b094a00b001ed00a16eb4so2596599pjb.2;
-        Thu, 30 Jun 2022 04:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ssV3BijP819GyjFZBA03r3B0/BGXRwO+N1QrLHf0riE=;
-        b=FcEcbf2+bJoSX1iwK4hNNtuMb0654YUXlfXG/xRN5T5axCiE2v4fkfK/8zrAGU8YCt
-         5aurUNLExmvO3F0N/dd2wv8Im1beU/ZH6XWNevV+LZ7FfWSv59FdmiRWg+Dl40Yv/4FF
-         RZfKJ4pu+66R5oXyJLwJguAgUOc+W10qiCHUD9xg5DP8UsrTtYmgJ7vh8k+Fp+VvkDDL
-         V1c37xSJW82u82QO7aMuQSRIhG9NzkopXDOXl9bc9f78RxBGFs3qlFNROQZGR1b4172Q
-         vIZ9t4sKiI38U37K9wOMRaXrSWAaPxS4z3YdrFVvV0ZYcQQYpfFpKuhZ4fKi7Pk57CeG
-         v9sQ==
+        Thu, 30 Jun 2022 08:03:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BEAA074798
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 05:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656590632;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DjTtG+0RqCMHzX5eN04DCnK0F3ZDM8TYHV+E49O0lmQ=;
+        b=LS0EYls6K5EBVVuTfy/b5axXzE6gm8NgtyRsrwPeMxHP99xBEv5bFaB/LFIfvN68pwRAFv
+        dWqVER3IK0c/JF5n33iRo85WV4Ls9lNBPZQK/LY1VcWs+K5mwKauA2222PrVtxHMOmQoeS
+        bF8vVFv1pNGrK0cDUqZJWYaQiurE0EU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-513-VGZHRRQkM-GrbdncSpoehg-1; Thu, 30 Jun 2022 08:03:51 -0400
+X-MC-Unique: VGZHRRQkM-GrbdncSpoehg-1
+Received: by mail-qk1-f198.google.com with SMTP id g194-20020a379dcb000000b006aef700d954so19057119qke.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 05:03:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ssV3BijP819GyjFZBA03r3B0/BGXRwO+N1QrLHf0riE=;
-        b=WSfSqer8NQRyKVanoas5/jzs8tuJVJeErq2mCRMLuCiRmugWQ2R6tyBD2akUsZCYY+
-         R1za09amBg+3m6x1VnPLJrXp6MdNkmLNZgjbeo2UW+0H4jGEQcGc7TMYFeI5yxPSPAOE
-         5po3WilcaqqKNh7isfuuMVwZaOf03QLnamUSKhxz/si+xnX2sXUF7zfPc01xO/TAP5Gb
-         uoMtAW5KLxT2vlrxmCfBhyZAvR+T7eru9QzoQdoYXzdWllS++EB9ihQFsAZNUgsjcgBJ
-         aeTJz39Ig4wE3TYTNIy88xwJu+PPP65o3Hps3BXQRJxNeUFTEaO5fayz1s1ra8uRFV9O
-         gNPA==
-X-Gm-Message-State: AJIora+EnXUyCNN2HhmB/hxRsXqPzMlqnCZRmWx7UaVCPy2O23Mn7F9J
-        uhxkRf15+zBULnXZQqU+S2VxBjXhfTyrBgBaBeQ=
-X-Google-Smtp-Source: AGRyM1vyl+TrG19s+XDd/i6A759a/ZBIdLQHRy45NvDuoDk4NbKh4OiybR5wm6zwy4rSsjGq7htGFLyGfkFxEs1BWMg=
-X-Received: by 2002:a17:90b:1810:b0:1ed:28dd:c215 with SMTP id
- lw16-20020a17090b181000b001ed28ddc215mr9824225pjb.18.1656590233763; Thu, 30
- Jun 2022 04:57:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=DjTtG+0RqCMHzX5eN04DCnK0F3ZDM8TYHV+E49O0lmQ=;
+        b=j0zpFJWFtglzpmuDevXVbXnm+lisonkNJhQ+skyUdX4+7kB1d7zLm6sIbirIJMaFnV
+         3uzNAxGf+xVyqJ8X00rBBtflZyhQJuCYLx84sxBToofz4/TIKu2Ifm2bbhyMvXacAJKg
+         0PbPVTdHlxqIlFP1lGPzlnC2dMCcS15YtbCc7MuQQU2J/9lJ0mezpXowxgsxm2heDoIN
+         OzCNgPjXexrRZkdNrPJoi8bB3gWWmPMHUS45393iS2nreWdWUsL6+zCEuGkowkcjMLTL
+         afDHmEyYWCarYeufG/PFqDut+3hdXD4Ae3JAuIrYsLbPgVQwE+XCcWpsWyqdscHrZlQV
+         EwjA==
+X-Gm-Message-State: AJIora+R7eO9Y1AIrszc3UpTr3YIiu4QsnJiwoOqPO1+u7nEEGHbMf/I
+        tJFy68y/rYBdDEyfifdwOJruTJt03Pi7+RO+wnNu3eQp+5Bc9qM93tTtjQY3fxl2kSSTP8UkRld
+        Kf+xinHThK2WnOARBT2TeZ4QY6Q==
+X-Received: by 2002:ae9:c203:0:b0:6b1:17a5:a56d with SMTP id j3-20020ae9c203000000b006b117a5a56dmr5905579qkg.705.1656590631296;
+        Thu, 30 Jun 2022 05:03:51 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1v/N7n/XGyXmbJYFqomZ9zL/F0CDIeQsBh9Np3+S6wqPRl66MueeztNc8Po6I4gTfRI19vlIg==
+X-Received: by 2002:ae9:c203:0:b0:6b1:17a5:a56d with SMTP id j3-20020ae9c203000000b006b117a5a56dmr5905529qkg.705.1656590630960;
+        Thu, 30 Jun 2022 05:03:50 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id h18-20020ac87772000000b002f905347586sm12662055qtu.14.2022.06.30.05.03.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 05:03:50 -0700 (PDT)
+Date:   Thu, 30 Jun 2022 08:03:47 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Kalesh Singh <kaleshsingh@google.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        David.Laight@aculab.com, Ioannis Ilkos <ilkos@google.com>,
+        "T.J. Mercier" <tjmercier@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>
+Subject: Re: [PATCH v2 1/2] procfs: Add 'size' to /proc/<pid>/fdinfo/
+Message-ID: <Yr2RI3dJ0B4TALE5@bfoster>
+References: <20220623220613.3014268-1-kaleshsingh@google.com>
+ <20220623220613.3014268-2-kaleshsingh@google.com>
+ <Yrrrz7MxMu8OoEPU@bfoster>
+ <CAC_TJvejs5gbggC1hekyjUNctC_8+3FmVn0B7zAZox2+MkEjaA@mail.gmail.com>
+ <YrxEUbDkYLE6XF6x@bfoster>
+ <CAC_TJvcRd7=9xGXP5-t8v3g5iFWtYANpGA-nTqaGZBVTwa=07w@mail.gmail.com>
+ <Yr2NngYE2qX8WzPV@bfoster>
 MIME-Version: 1.0
-References: <cover.1656531090.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1656531090.git.khalid.aziz@oracle.com>
-From:   Mark Hemment <markhemm@googlemail.com>
-Date:   Thu, 30 Jun 2022 12:57:02 +0100
-Message-ID: <CANe_+Uj6RXw_X5Bv9_UkD_ngA_7haz3rqmbd2FAGzP1uHsxAfA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] Add support for shared PTEs across processes
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
-        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
-        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
-        Kees Cook <keescook@chromium.org>, kirill@shutemov.name,
-        kucharsk@gmail.com, linkinjeon@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, longpeng2@huawei.com,
-        luto@kernel.org, pcc@google.com, rppt@kernel.org,
-        sieberf@amazon.com, sjpark@amazon.de,
-        Suren Baghdasaryan <surenb@google.com>, tst@schoebel-theuer.de,
-        yzaikin@google.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Yr2NngYE2qX8WzPV@bfoster>
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Khalid,
+On Thu, Jun 30, 2022 at 07:48:46AM -0400, Brian Foster wrote:
+> On Wed, Jun 29, 2022 at 01:43:11PM -0700, Kalesh Singh wrote:
+> > On Wed, Jun 29, 2022 at 5:23 AM Brian Foster <bfoster@redhat.com> wrote:
+> > >
+> > > On Tue, Jun 28, 2022 at 03:38:02PM -0700, Kalesh Singh wrote:
+> > > > On Tue, Jun 28, 2022 at 4:54 AM Brian Foster <bfoster@redhat.com> wrote:
+> > > > >
+> > > > > On Thu, Jun 23, 2022 at 03:06:06PM -0700, Kalesh Singh wrote:
+> > > > > > To be able to account the amount of memory a process is keeping pinned
+> > > > > > by open file descriptors add a 'size' field to fdinfo output.
+> > > > > >
+> > > > > > dmabufs fds already expose a 'size' field for this reason, remove this
+> > > > > > and make it a common field for all fds. This allows tracking of
+> > > > > > other types of memory (e.g. memfd and ashmem in Android).
+> > > > > >
+> > > > > > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> > > > > > Reviewed-by: Christian König <christian.koenig@amd.com>
+> > > > > > ---
+> > > > > >
+> > > > > > Changes in v2:
+> > > > > >   - Add Christian's Reviewed-by
+> > > > > >
+> > > > > > Changes from rfc:
+> > > > > >   - Split adding 'size' and 'path' into a separate patches, per Christian
+> > > > > >   - Split fdinfo seq_printf into separate lines, per Christian
+> > > > > >   - Fix indentation (use tabs) in documentaion, per Randy
+> > > > > >
+> > > > > >  Documentation/filesystems/proc.rst | 12 ++++++++++--
+> > > > > >  drivers/dma-buf/dma-buf.c          |  1 -
+> > > > > >  fs/proc/fd.c                       |  9 +++++----
+> > > > > >  3 files changed, 15 insertions(+), 7 deletions(-)
+> > > > > >
+> > > ...
+> > > > >
+> > > > > Also not sure if it matters that much for your use case, but something
+> > > > > worth noting at least with shmem is that one can do something like:
+> > > > >
+> > > > > # cat /proc/meminfo | grep Shmem:
+> > > > > Shmem:               764 kB
+> > > > > # xfs_io -fc "falloc -k 0 10m" ./file
+> > > > > # ls -alh file
+> > > > > -rw-------. 1 root root 0 Jun 28 07:22 file
+> > > > > # stat file
+> > > > >   File: file
+> > > > >   Size: 0               Blocks: 20480      IO Block: 4096   regular empty file
+> > > > > # cat /proc/meminfo | grep Shmem:
+> > > > > Shmem:             11004 kB
+> > > > >
+> > > > > ... where the resulting memory usage isn't reflected in i_size (but is
+> > > > > is in i_blocks/bytes).
+> > > >
+> > > > I tried a similar experiment a few times, but I don't see the same
+> > > > results. In my case, there is not any change in shmem. IIUC the
+> > > > fallocate is allocating the disk space not shared memory.
+> > > >
+> > >
+> > > Sorry, it was implied in my previous test was that I was running against
+> > > tmpfs. So regardless of fs, the fallocate keep_size semantics shown in
+> > > both cases is as expected: the underlying blocks are allocated and the
+> > > inode size is unchanged.
+> > >
+> > > What wasn't totally clear to me when I read this patch was 1. whether
+> > > tmpfs refers to Shmem and 2. whether tmpfs allowed this sort of
+> > > operation. The test above seems to confirm both, however, right? E.g., a
+> > > more detailed example:
+> > >
+> > > # mount | grep /tmp
+> > > tmpfs on /tmp type tmpfs (rw,nosuid,nodev,seclabel,nr_inodes=1048576,inode64)
+> > > # cat /proc/meminfo | grep Shmem:
+> > > Shmem:              5300 kB
+> > > # xfs_io -fc "falloc -k 0 1g" /tmp/file
+> > > # stat /tmp/file
+> > >   File: /tmp/file
+> > >   Size: 0               Blocks: 2097152    IO Block: 4096   regular empty file
+> > > Device: 22h/34d Inode: 45          Links: 1
+> > > Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+> > > Context: unconfined_u:object_r:user_tmp_t:s0
+> > > Access: 2022-06-29 08:04:01.301307154 -0400
+> > > Modify: 2022-06-29 08:04:01.301307154 -0400
+> > > Change: 2022-06-29 08:04:01.451312834 -0400
+> > >  Birth: 2022-06-29 08:04:01.301307154 -0400
+> > > # cat /proc/meminfo | grep Shmem:
+> > > Shmem:           1053876 kB
+> > > # rm -f /tmp/file
+> > > # cat /proc/meminfo | grep Shmem:
+> > > Shmem:              5300 kB
+> > >
+> > > So clearly this impacts Shmem.. was your test run against tmpfs or some
+> > > other (disk based) fs?
+> > 
+> > Hi Brian,
+> > 
+> > Thanks for clarifying. My issue was tmpfs not mounted at /tmp in my system:
+> > 
+> > ==> meminfo.start <==
+> > Shmem:               572 kB
+> > ==> meminfo.stop <==
+> > Shmem:             51688 kB
+> > 
+> 
+> Ok, makes sense.
+> 
+> > >
+> > > FWIW, I don't have any objection to exposing inode size if it's commonly
+> > > useful information. My feedback was more just an fyi that i_size doesn't
+> > > necessarily reflect underlying space consumption (whether it's memory or
+> > > disk space) in more generic cases, because it sounds like that is really
+> > > what you're after here. The opposite example to the above would be
+> > > something like an 'xfs_io -fc "truncate 1t" /tmp/file', which shows a
+> > > 1TB inode size with zero additional shmem usage.
+> > 
+> > From these cases, it seems the more generic way to do this is by
+> > calculating the actual size consumed using the blocks. (i_blocks *
+> > 512). So in the latter example  'xfs_io -fc "truncate 1t" /tmp/file'
+> > the size consumed would be zero. Let me know if it sounds ok to you
+> > and I can repost the updated version.
+> > 
+> 
+> That sounds a bit more useful to me if you're interested in space usage,
+> or at least I don't have a better idea for you. ;)
+> 
+> One thing to note is that I'm not sure whether all fs' use i_blocks
+> reliably. E.g., XFS populates stat->blocks via a separate block counter
+> in the XFS specific inode structure (see xfs_vn_getattr()). A bunch of
+> other fs' seem to touch it so perhaps that is just an outlier. You could
+> consider fixing that up, perhaps make a ->getattr() call to avoid it, or
+> just use the field directly if it's useful enough as is and there are no
+> other objections. Something to think about anyways..
+> 
 
-On Wed, 29 Jun 2022 at 23:54, Khalid Aziz <khalid.aziz@oracle.com> wrote:
->
->
-> Memory pages shared between processes require a page table entry
-> (PTE) for each process. Each of these PTE consumes consume some of
-> the memory and as long as number of mappings being maintained is
-> small enough, this space consumed by page tables is not
-> objectionable. When very few memory pages are shared between
-> processes, the number of page table entries (PTEs) to maintain is
-> mostly constrained by the number of pages of memory on the system.
-> As the number of shared pages and the number of times pages are
-> shared goes up, amount of memory consumed by page tables starts to
-> become significant. This issue does not apply to threads. Any number
-> of threads can share the same pages inside a process while sharing
-> the same PTEs. Extending this same model to sharing pages across
-> processes can eliminate this issue for sharing across processes as
-> well.
->
-> Some of the field deployments commonly see memory pages shared
-> across 1000s of processes. On x86_64, each page requires a PTE that
-> is only 8 bytes long which is very small compared to the 4K page
-> size. When 2000 processes map the same page in their address space,
-> each one of them requires 8 bytes for its PTE and together that adds
-> up to 8K of memory just to hold the PTEs for one 4K page. On a
-> database server with 300GB SGA, a system crash was seen with
-> out-of-memory condition when 1500+ clients tried to share this SGA
-> even though the system had 512GB of memory. On this server, in the
-> worst case scenario of all 1500 processes mapping every page from
-> SGA would have required 878GB+ for just the PTEs. If these PTEs
-> could be shared, amount of memory saved is very significant.
->
-> This patch series implements a mechanism in kernel to allow
-> userspace processes to opt into sharing PTEs. It adds a new
-> in-memory filesystem - msharefs. A file created on msharefs creates
-> a new shared region where all processes sharing that region will
-> share the PTEs as well. A process can create a new file on msharefs
-> and then mmap it which assigns a starting address and size to this
-> mshare'd region. Another process that has the right permission to
-> open the file on msharefs can then mmap this file in its address
-> space at same virtual address and size and share this region through
-> shared PTEs. An unlink() on the file marks the mshare'd region for
-> deletion once there are no more users of the region. When the mshare
-> region is deleted, all the pages used by the region are freed.
+Oh, I wonder if you're looking for similar "file rss" information this
+series wants to collect/expose..?
 
-  Noting the flexibility of 'mshare' has been reduced from v1.  The
-earlier version allowed msharing of named mappings, while this patch
-is only for anonymous mappings.
-  Any plans to support named mappings?  If not, I guess *someone* will
-want it (eventually).  Minor, as the patch does not introduce new
-syscalls, but having an API which is flexible for both named and anon
-mappings would be good (this is a nit, not a strong suggestion).
+https://lore.kernel.org/linux-fsdevel/20220624080444.7619-1-christian.koenig@amd.com/#r
 
-  The cover letter details the problem being solved and the API, but
-gives no details of the implementation.  A paragraph on the use of a
-mm_struct per-msharefs file would be helpful.
+Brian
 
-  I've only quickly scanned the patchset; not in enough detail to
-comment on each patch, but a few observations.
+> Brian
+> 
+> > Thanks,
+> > Kalesh
+> > 
+> > >
+> > > Brian
+> > >
+> > > > cat /proc/meminfo > meminfo.start
+> > > > xfs_io -fc "falloc -k 0 50m" ./xfs_file
+> > > > cat /proc/meminfo > meminfo.stop
+> > > > tail -n +1 meminfo.st* | grep -i '==\|Shmem:'
+> > > >
+> > > > ==> meminfo.start <==
+> > > > Shmem:               484 kB
+> > > > ==> meminfo.stop <==
+> > > > Shmem:               484 kB
+> > > >
+> > > > ls -lh xfs_file
+> > > > -rw------- 1 root root 0 Jun 28 15:12 xfs_file
+> > > >
+> > > > stat xfs_file
+> > > >   File: xfs_file
+> > > >   Size: 0               Blocks: 102400     IO Block: 4096   regular empty file
+> > > >
+> > > > Thanks,
+> > > > Kalesh
+> > > >
+> > > > >
+> > > > > Brian
+> > > > >
+> > > > > >
+> > > > > >       /* show_fd_locks() never deferences files so a stale value is safe */
+> > > > > >       show_fd_locks(m, file, files);
+> > > > > > --
+> > > > > > 2.37.0.rc0.161.g10f37bed90-goog
+> > > > > >
+> > > > >
+> > > >
+> > >
+> > > --
+> > > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+> > >
+> > 
 
-  o I was expecting to see mprotect() against a mshared vma to either
-be disallowed or code to support the splitting of a mshared vma.  I
-didn't see either.
-
-  o For the case where the mshare file has been closed/unmmap but not
-unlinked, a 'mshare_data' structure will leaked when the inode is
-evicted.
-
-  o The alignment requirement is PGDIR_SIZE, which is very large.
-Should/could this be PMD_SIZE?
-
-  o mshare should be a conditional feature (CONFIG_MSHARE ?).
-
-
-  I might get a chance do a finer grain review later/tomorrow.
-
-> API
-> ===
->
-> mshare does not introduce a new API. It instead uses existing APIs
-> to implement page table sharing. The steps to use this feature are:
->
-> 1. Mount msharefs on /sys/fs/mshare -
->         mount -t msharefs msharefs /sys/fs/mshare
->
-> 2. mshare regions have alignment and size requirements. Start
->    address for the region must be aligned to an address boundary and
->    be a multiple of fixed size. This alignment and size requirement
->    can be obtained by reading the file /sys/fs/mshare/mshare_info
->    which returns a number in text format. mshare regions must be
->    aligned to this boundary and be a multiple of this size.
->
-> 3. For the process creating mshare region:
->         a. Create a file on /sys/fs/mshare, for example -
->                 fd = open("/sys/fs/mshare/shareme",
->                                 O_RDWR|O_CREAT|O_EXCL, 0600);
->
->         b. mmap this file to establish starting address and size -
->                 mmap((void *)TB(2), BUF_SIZE, PROT_READ | PROT_WRITE,
->                         MAP_SHARED, fd, 0);
->
->         c. Write and read to mshared region normally.
->
-> 4. For processes attaching to mshare'd region:
->         a. Open the file on msharefs, for example -
->                 fd = open("/sys/fs/mshare/shareme", O_RDWR);
->
->         b. Get information about mshare'd region from the file:
->                 struct mshare_info {
->                         unsigned long start;
->                         unsigned long size;
->                 } m_info;
->
->                 read(fd, &m_info, sizeof(m_info));
->
->         c. mmap the mshare'd region -
->                 mmap(m_info.start, m_info.size,
->                         PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
->
-> 5. To delete the mshare region -
->                 unlink("/sys/fs/mshare/shareme");
->
->
->
-> Example Code
-> ============
->
-> Snippet of the code that a donor process would run looks like below:
->
-> -----------------
->         fd = open("/sys/fs/mshare/mshare_info", O_RDONLY);
->         read(fd, req, 128);
->         alignsize = atoi(req);
->         close(fd);
->         fd = open("/sys/fs/mshare/shareme", O_RDWR|O_CREAT|O_EXCL, 0600);
->         start = alignsize * 4;
->         size = alignsize * 2;
->         addr = mmap((void *)start, size, PROT_READ | PROT_WRITE,
->                         MAP_SHARED | MAP_ANONYMOUS, 0, 0);
-
-Typo, missing 'fd'; MAP_SHARED | MAP_ANONYMOUS, fd, 0)
-
->         if (addr == MAP_FAILED)
->                 perror("ERROR: mmap failed");
->
->         strncpy(addr, "Some random shared text",
->                         sizeof("Some random shared text"));
-> -----------------
->
->
-> Snippet of code that a consumer process would execute looks like:
->
-> -----------------
->         struct mshare_info {
->                 unsigned long start;
->                 unsigned long size;
->         } minfo;
->
->
->         fd = open("/sys/fs/mshare/shareme", O_RDONLY);
->
->         if ((count = read(fd, &minfo, sizeof(struct mshare_info)) > 0))
->                 printf("INFO: %ld bytes shared at addr 0x%lx \n",
->                                 minfo.size, minfo.start);
->
->         addr = mmap(minfo.start, minfo.size, PROT_READ | PROT_WRITE,
->                         MAP_SHARED, fd, 0);
->
->         printf("Guest mmap at %px:\n", addr);
->         printf("%s\n", addr);
->         printf("\nDone\n");
->
-> -----------------
->
->
->
-> v1 -> v2:
->         - Eliminated mshare and mshare_unlink system calls and
->           replaced API with standard mmap and unlink (Based upon
->           v1 patch discussions and LSF/MM discussions)
->         - All fd based API (based upon feedback and suggestions from
->           Andy Lutomirski, Eric Biederman, Kirill and others)
->         - Added a file /sys/fs/mshare/mshare_info to provide
->           alignment and size requirement info (based upon feedback
->           from Dave Hansen, Mark Hemment and discussions at LSF/MM)
->         - Addressed TODOs in v1
->         - Added support for directories in msharefs
->         - Added locks around any time vma is touched (Dave Hansen)
->         - Eliminated the need to point vm_mm in original vmas to the
->           newly synthesized mshare mm
->         - Ensured mmap_read_unlock is called for correct mm in
->           handle_mm_fault (Dave Hansen)
->
-> Khalid Aziz (9):
->   mm: Add msharefs filesystem
->   mm/mshare: pre-populate msharefs with information file
->   mm/mshare: make msharefs writable and support directories
->   mm/mshare: Add a read operation for msharefs files
->   mm/mshare: Add vm flag for shared PTE
->   mm/mshare: Add mmap operation
->   mm/mshare: Add unlink and munmap support
->   mm/mshare: Add basic page table sharing support
->   mm/mshare: Enable mshare region mapping across processes
->
->  Documentation/filesystems/msharefs.rst |  19 +
->  include/linux/mm.h                     |  10 +
->  include/trace/events/mmflags.h         |   3 +-
->  include/uapi/linux/magic.h             |   1 +
->  include/uapi/linux/mman.h              |   5 +
->  mm/Makefile                            |   2 +-
->  mm/internal.h                          |   7 +
->  mm/memory.c                            | 101 ++++-
->  mm/mshare.c                            | 575 +++++++++++++++++++++++++
->  9 files changed, 719 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/filesystems/msharefs.rst
->  create mode 100644 mm/mshare.c
->
-> --
-> 2.32.0
-
-Cheers,
-Mark
