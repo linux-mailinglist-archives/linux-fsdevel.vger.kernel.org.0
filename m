@@ -2,71 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04184561F7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 17:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 850E8561FAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jun 2022 17:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235885AbiF3PkO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 11:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
+        id S236169AbiF3Psv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 11:48:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235619AbiF3PkM (ORCPT
+        with ESMTP id S235391AbiF3Psu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 11:40:12 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3341B2CE1A;
-        Thu, 30 Jun 2022 08:40:10 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UEqHdq020594;
-        Thu, 30 Jun 2022 15:39:32 GMT
+        Thu, 30 Jun 2022 11:48:50 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19FD220F4;
+        Thu, 30 Jun 2022 08:48:49 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UEsTEX009821;
+        Thu, 30 Jun 2022 15:47:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
  subject : to : cc : references : from : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=J5nVcfXZKQHiWwrBv6H8gb5Ojidoh7tTS4qCyO2kcIw=;
- b=zTdvMZovJ/p4zQqhwRI8OTEnD3Trky5kiuLbOxBwqWtuZ4YASxnVOJI/MGVa4O9L5/Ev
- VirQ/83VEELUVAWVvOLGrRKm7ZgsD/fF+kkC7PTrHG6ecxjlndH4iWExTGVEIObQaujo
- akBAyDStFMaW9hx/OYPv6t0foTMyVN6R686xEtrI9R1itWIgKufunPCg9TO4q/GUSiq5
- gED+f6XXHefmNGoh8k0LERVcEMdTI7hOjKhA/0G5WRfl9ArTotEHblNaDTHn7C3FZDKz
- zkk6DzgaP+d6U4+lj5FzWLIqQ0ssH3p0aXPt2fJfGXLeIBj8boN9zdAhtKSkMiERVX/u fA== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwsysmm0a-1
+ bh=JLWwS/m8sRq9fDmubAA0VIFlByWKniewsJH1B+PTD4U=;
+ b=KCNdphqIZR2oN7GbVVngVSyojVtQzp5qJ/fOUZpxUI/bvo5koXkL7iqvi/fvS++X693X
+ M96e44dDsQ+NHaYDyMqYQrCUPuhfl8hNsYBviawWRY2fr86p5olzswAp4qX1eGm1pfWb
+ TEbDNqpJP0KSqtrJvLZ2V9lHm9u3953ivayA/uD4KV4whfuVtP7uBUtuscy4wt+9xxY1
+ rliEU7iG2L7oTxMAN9sTCVEFkNYmFEG5MgeB/Kn224Tac4q5Zj/Vfv2ZVXQBeK1qjZnw
+ TWeB99pDVNBm63qyBlrxBrmXzoPiB2Pw1TalQVm6vzggOaTMg/fC5tdmwroG6LbAGMqV /g== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwtwucug4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jun 2022 15:39:32 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25UFbBVS019191;
-        Thu, 30 Jun 2022 15:39:31 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2108.outbound.protection.outlook.com [104.47.55.108])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gwrt4bc9n-1
+        Thu, 30 Jun 2022 15:47:05 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25UFb9YZ018938;
+        Thu, 30 Jun 2022 15:47:05 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2046.outbound.protection.outlook.com [104.47.73.46])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gwrt4k23m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jun 2022 15:39:31 +0000
+        Thu, 30 Jun 2022 15:47:05 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lIN5uhzimJ7QejgGCDACyeKcaRqSCKPbTDBr40FjrcaqXVxrsFilfawq/2OfvKCmDM19X01RKvdhmmA0kxE+eKOEmrRgF5EylK7PCQXRpZKsAQXvZn8CxFELq+Eq3UTBr0WV9w0xCF838s2MtkwbGBsFwtTho1mUfIVI8oZSDZC4x4Vtkt868fLdvbHotTbCZRrMRawPlF3gnTqZeN0gNtRchu9fxsbrPxt8JdRJCYyBZ2nqM5nFaeD1SSbgiHT3faoBDtZxL0k+Qdo8jRFRgkkBXWqqvq1hOpFKhwgBQSmlBTGOU2LT2eZhcX53w3uOJQeeZpJhldwwJPmvUEUe9A==
+ b=gUEO+HQSV2ZcgtzcZYcj9T/fMjVNF3wX3xghbV2uUHReNsiCsVJz9v00jMd0kvPhftbFnx7Vtz3mL1dnP37spcUkHRkr9wzV4poemZtkw1132wPVBaqR2twdm5mcAhV/XAgxaS1yUcgYEAqYRN1PBBi9F0Is7m35F50SAGI8RWlMWr9UOwnY4N9qDnOLtiSq30plGehm6nZznIK9pSxKRN/IGnTiwe4LeO2qVqlm1pmc9g3tZM8+UssoMOdZwczvWxBTPYV7UthjEsNOEzK174k2r789StIEzyDGFHLSXQw0V9ChPdiExrnXo9GnsoyLwTV8WxPs+hmpIKJKOKnuQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J5nVcfXZKQHiWwrBv6H8gb5Ojidoh7tTS4qCyO2kcIw=;
- b=P8N82PcJnNwXAcyp9PrYcpS6+e/QSEME7k+Ha1Uqw1J6HDWlZdewjdh43lYocSve25RKfCGs8kRaEhk9vh+U0aPrVwRkf7bLdIZKHGGNbLknwpXTMlnjxUdpjRjTq9pswV3FvvMdSC0864jwOjVcgR5/bqj24vQR5g0NkfQB46nGdv+osU+oCSbZbxWqoncqomDl2NSIn/t2FWJ/NxISuYzWXAFUWUrzCs9+L9ZTaFR1k1RMEbEakEaattobxovW/KQ8g+pOT6SPCzlvJ3I+BJMrdOHXh/e+30jYHF8j41IeLQfLJW32GBS06p1PZQ6VpSBY/c2TfCKbSYA3lV5Gpg==
+ bh=JLWwS/m8sRq9fDmubAA0VIFlByWKniewsJH1B+PTD4U=;
+ b=IUvt+PcISSBKGI7W00b8R8kDRZg3FiYu5V+p9CQLXYNnUbig6lXfJN+qvxoCqqlasrOa7HPA9dR+NaSRwr3F5KqktVy0SRWprEeHGgKLqCfLmC7rQSoCRPxarXDYdC3jAetvrGxR7TyLCrjGXCsMlqJp5yPjYtba/+ewH4eJdLEvumgjrTD1cZoFgk8zuZd0gsGUegwLnkw6mmmTvh9jhXi9xy55It39J/l7qadXLO8AQ0SxfLND2EtA9EeQiozRb36vs66nh1OFubd8zVKxL5OiQfteSppkvogI3m8j8FVsYKOgqNdJesm0Kb7zEB+CBwkLC+DXirUk+uzBYaKpnw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J5nVcfXZKQHiWwrBv6H8gb5Ojidoh7tTS4qCyO2kcIw=;
- b=Zy92QTxdBRX/0Py4ssk74RiGCWXG4D433F17cYBrTl45Lurg9oWR2yHJzSEC/O17u1hegw95V9+GCYyMRzlA4QEBTv19C4badDMR947Cebk1AiwC9jz7iVAi2yzJZzH92DV/3PjUCo7LvRkgATk1e8fatNtsYPKa/qsraGdBBGA=
+ bh=JLWwS/m8sRq9fDmubAA0VIFlByWKniewsJH1B+PTD4U=;
+ b=ZkXE+MJZvRx8mrZjdQ9eFL5oSnquYvg5ZUoY+F+15yB62benR3lvK1L2r4amSHvWUJtJSImbkWEbJBo87OYHbmHiZ5JIYipwOfVjGqjFewTsvvC/On3a02zhJSy15rzpAKLBcip06K8z3mGGABMspyjCB2/7Nr8VZBvaf/G+QK8=
 Received: from BN8PR10MB3220.namprd10.prod.outlook.com (2603:10b6:408:c8::18)
- by CO1PR10MB4737.namprd10.prod.outlook.com (2603:10b6:303:91::17) with
+ by CY4PR10MB1925.namprd10.prod.outlook.com (2603:10b6:903:123::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Thu, 30 Jun
- 2022 15:39:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Thu, 30 Jun
+ 2022 15:47:01 +0000
 Received: from BN8PR10MB3220.namprd10.prod.outlook.com
  ([fe80::28d2:e82b:afa1:bbc2]) by BN8PR10MB3220.namprd10.prod.outlook.com
  ([fe80::28d2:e82b:afa1:bbc2%3]) with mapi id 15.20.5373.022; Thu, 30 Jun 2022
- 15:39:28 +0000
-Message-ID: <2ddfad15-394c-241f-b120-5b297ed5356f@oracle.com>
-Date:   Thu, 30 Jun 2022 09:39:24 -0600
+ 15:47:01 +0000
+Message-ID: <63d8437e-5e33-5d83-de86-779f5d334ba3@oracle.com>
+Date:   Thu, 30 Jun 2022 09:46:57 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH v2 0/9] Add support for shared PTEs across processes
+Subject: Re: [PATCH v2 5/9] mm/mshare: Add vm flag for shared PTE
 Content-Language: en-US
 To:     Mark Hemment <markhemm@googlemail.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -83,81 +83,82 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Suren Baghdasaryan <surenb@google.com>, tst@schoebel-theuer.de,
         yzaikin@google.com
 References: <cover.1656531090.git.khalid.aziz@oracle.com>
- <CANe_+Uj6RXw_X5Bv9_UkD_ngA_7haz3rqmbd2FAGzP1uHsxAfA@mail.gmail.com>
+ <e7606a8ea6360c253b32d14a2dbde9f7818b7eaf.1656531090.git.khalid.aziz@oracle.com>
+ <CANe_+Uh--cJvG=N4KEkg63AF2FTtYz9e-Z8N=uwWpuTHMNtwLw@mail.gmail.com>
 From:   Khalid Aziz <khalid.aziz@oracle.com>
-In-Reply-To: <CANe_+Uj6RXw_X5Bv9_UkD_ngA_7haz3rqmbd2FAGzP1uHsxAfA@mail.gmail.com>
+In-Reply-To: <CANe_+Uh--cJvG=N4KEkg63AF2FTtYz9e-Z8N=uwWpuTHMNtwLw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR2101CA0023.namprd21.prod.outlook.com
- (2603:10b6:805:106::33) To BN8PR10MB3220.namprd10.prod.outlook.com
+X-ClientProxiedBy: SA1PR03CA0023.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::28) To BN8PR10MB3220.namprd10.prod.outlook.com
  (2603:10b6:408:c8::18)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e16e1c65-6fe2-4033-4a2d-08da5aaeb7fc
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4737:EE_
+X-MS-Office365-Filtering-Correlation-Id: bab0faee-e3b9-479c-df00-08da5aafc5a4
+X-MS-TrafficTypeDiagnostic: CY4PR10MB1925:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Y7mx9aklisAkUYellLfwvpmuKH1KYoNYp0dKURrN78qvrs+RADtFg18LDgRU3DWSq9vk1mhxiBXKFgizYe7cTYRgy3+k9Bxnc0R4cfCVCJ4tlMrDxbIASV40h0YzmRSeXp+tHQ4nMGIl7WxjxQg3NjZLedGh/WxUjdjAUQUvESViJugb4KBLlXR9FQ5m1+8BjZhLVMKHrJjQ0u1hI5VwiVAp92L98umdGvv5JftLXX6vE6sHo8UvfGGjX7JkE1hgjQlaVidpgpLTwGHrjUYkJoMdIcAm0oNPvsFN+/Yu93rvOwwCtdQZpyA5VxDEQGoV+WGVIn8GiASf/Q0ta8jvaZCUPEnAJ9YViVRZ+RG7+99B3TsKnPnpOSB+5InSRGtsKjhIs2ec55lOd9IMk05UM0ykL/6J6TqEyuB8olcNeSLyqayMZQeqwWjv0kXtjVy9V88EVjh/dnSG77X8PntPaBoZj8tPNd4FfxNj1DKD4ldKAgYp8ApJAFo6nV2KS5qSwjYR74Do+YUyraRVT+oimVzyKhNh6ZwvKX5ZQCLjLRQbA3IMc2JvUdcYbU2F/LjwBCTsv4X7zmeME/l1zyFRYGoRpIo2X+Q0OWCrxFct/Qp+417qHb9sWMYzKQ6HZOGDUUO/YUVU87q/iKQHrDXdqYC4z+22kfAX7kwYGY1IjXDh0F7rEaEeSK1glY4G+UQOLZ0QEU89lviWtRYH1jwFFN0pjRFgtD3WK8CGd4zuuvtgi1YHxzLJR4gQqqeACm91VtNccF18exitjrsXdPCBjAO59oAXOEnWmPgMYJgo0XRbmhvAtEoTx+6OfVPl1LaSquPrTM8L3byt0fkSEKnoQA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB3220.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(366004)(396003)(136003)(39860400002)(376002)(346002)(6512007)(41300700001)(7416002)(6666004)(31686004)(36756003)(478600001)(5660300002)(53546011)(38100700002)(2616005)(6506007)(186003)(6486002)(8676002)(31696002)(8936002)(44832011)(66476007)(66946007)(83380400001)(66556008)(4326008)(316002)(6916009)(2906002)(54906003)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: iIgcynCetD+v3sPfvzGQovo3uLoxfBmmGDPnKhrVGeB2t4h0MKym7qTebmuxE8sVD4bKbys3CF9tQSgWpVKN5UADkg4soQI67+jEv7bWvdPJJT36IomblMs20xcDJbc9o9raTT6/PIxkTPYDG8fG79XPr+YqFKeXLOeZTxvAX+qbghpaLUmVvgaHOgtUo6bLiRHBCzc61j3r87xOmfikjHFGH46lb6W0amtni2DMmLNx4C9pLJtSmVNp0nXnqaSvO17Pu7CiWL/IkpKn8yhUFcpS1emzadfjnKQp+WVmCgAqVv9uq0XyInZn1CHwrFSQ5kzcQsrwjvdwsWb5BGsVb0Wu33fJeHiNPS7oG3+BOap0Rm7z5N9PirssINf+3epUow7U7wF1/2zDdj7VQiA/wnCaZTKR/5Fgr5IKWw3Mx7gW0+RxuvCopWPaHouABsIHnBvI56SSaIfmYd6C+Mp6GEZ2puW1KRiMLL0EUjZ4NSH54ojKbGAv7IhVEW4Q0CySnzIVsDifOMFJMakcN2DmB7Ib+cSkbNHSG7+8oiFvm3Yar5vZjBuqUb3vIv2/5VU2FHhJeoy/diICXcdY4FSyad/cGckVFBIIhd6FixHJmXMqppOh4MUgiSneCRLDcZUd8qyZlPWK/UhT0G1qN60bAHCrqZoJxpRdcjM0HKyExG6AoEF+4fwqLVTHnIDicVtsBRbhgfZgGLNRgF0aqUokWepffcaZscLy5e8yhFvcGp/46Y0C4F/6VSgaaSmS/Yi8WMBz2k4CWX7MrTyJs9izIOdeCut/mXW4VKwlX1y6Mpp7kXvahqKG4lvWrNEzEALs18cLfGO5BjBnB5y41XkBVg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB3220.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(376002)(346002)(136003)(396003)(39860400002)(366004)(186003)(54906003)(44832011)(6916009)(38100700002)(36756003)(31686004)(316002)(2616005)(7416002)(4326008)(86362001)(6486002)(41300700001)(8936002)(6506007)(53546011)(31696002)(5660300002)(6666004)(66946007)(2906002)(6512007)(8676002)(66476007)(66556008)(83380400001)(478600001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K0E0NmVVSWV6ZS91U2hZbm54clJGNXBEZk5QNWJZVnFIMDRTQzExYm45WGVz?=
- =?utf-8?B?eHRyRWhKY3pFR3RiWDN6NXZHZkFTK3ZzMXhKRTc2VnNTR3pXTC9na05ENUQ4?=
- =?utf-8?B?cTIzMHVsekhDOFM2MThGRjhmQzgwZlFnUkIxaTRqNVlackNnR1lOb3VCbllL?=
- =?utf-8?B?QkZoT2lDQUtEQVRsVUUvNmJacEc3UEpabTNubURrNVQreGE1QnAzbHpVYS9m?=
- =?utf-8?B?ZjlxeGpxa2dCMWp1Vkw4WlBWRkU0Q21tVWp4WE93eHdjWEQ0VW9pRTB5STNy?=
- =?utf-8?B?ck9NeG1zRjVDelN4OHhqVG5WZXJUNVVpMlVSamRXa2xMbXdNRVZ5SGgwVzVj?=
- =?utf-8?B?anBuNElBc1RQcm1Nd2UrTlhTd0lwNWJxTlp2UlRsTDJWYmQrKzVLcmdYam92?=
- =?utf-8?B?dFRRcmdQZHJwVVh1WVNFZ0xiWUdDUEZaSVZuYTMzaHNQYmhUWndBV2pIQjEw?=
- =?utf-8?B?dlE3cmVCVU1DMmpmYkd3SFFWTHRyUnQrQkpudTNUSzgvTmpVUWZOZEh1TnN5?=
- =?utf-8?B?V2JKSVAxTDFnUDBVZndRbkVNMVFyYlE2WmNWUXNONzI1MHlvRDVXR1E4enRE?=
- =?utf-8?B?UkpqdThNSFNJY2huM2dZbkM4RFg1QzJSNGg3bGd2MWJ0VkhMakVCRncvOFlL?=
- =?utf-8?B?Yndyd2ZjVnFLTDVkWXl3d1phRzRlSFlRQWI1ZUF5Um9LYUFzWHdHTm5ML09Y?=
- =?utf-8?B?ZGRiNWVaa1lIUkp0TFE4MVU5MmNxSEJBTEpmS3NTNGZuTUdzN2FubDMyQmRY?=
- =?utf-8?B?YnB5TkxtOEgyY09FMFVhTkhEUDdaWHU5WUZtYUJOdDhzeDBzSTdCMUxRZ3gx?=
- =?utf-8?B?Unc3UEZoU0xHdlhUdnU0ejZEc2MySDl4TTFXWjY1TVdudWNwanEzd0QyUjRn?=
- =?utf-8?B?RHhiZEtMNWpLa2FRNThwZEVLZy9mS3poeG5HUGEreXV4U21iMnBxUkR0bGhZ?=
- =?utf-8?B?aWEyKzBUTTlWbUFQKzBDZUQxeW1zcFVjS2pVRVJMUGk3K095YkYzTUhnWmdr?=
- =?utf-8?B?T2RObzJSSW9XS2h6Zlo2cjUreDBYa0htaDBwejVpUit3SDQweXVFeGdoNVdK?=
- =?utf-8?B?V09TRi96SnJhZHNFaTVKMDloNWVKTWdDQnpLSk42czFyK3d2ZFpCT0hhS3dT?=
- =?utf-8?B?MlVaaE9wZVhQeTk0Z0s3UTBiS3ZxeTBIWldHM3BHVWpJcDF6aWk4QXE0bE1a?=
- =?utf-8?B?eGtxVGx0d0ovTVJnelhmVzg4emZ0ckpPVVpWSkFleVVhU0Y0QUx2Vk1TTWR1?=
- =?utf-8?B?dUd2aEZWK2RlNGpRWGZFbXkxZjFtaU1mbjJKNSsyZ1d5ZnRJRGFuY3BHWEZa?=
- =?utf-8?B?UVVpV1FheU93a2lUbTYrUHFBNCt4RlltR09vaWJwenAyRit6bHVBOHlLcWJW?=
- =?utf-8?B?R05mWlRMWlFYWEs0aHI0a0pwZktVRWNTcTdNTWFWeURyQVN5UThzYXNxWEtT?=
- =?utf-8?B?VXh6MUppVHY5alljdUlPdlozZnErWmwrNktkNnUxV05tc3ZlOWlsRVJGV1R1?=
- =?utf-8?B?WUYwWHRVa2VZZE1UTmF0Q2FsME1XbHFmTkdkYlNvcStIWHVhQWRMM2xKWUp2?=
- =?utf-8?B?SURWRDFMaktvaExROXNWRFhycFZIYlozN2dxZG82WXVWNENFU0JpeUwzb0VC?=
- =?utf-8?B?My82L3FXak54OG0vNmZ2eldvUGU1dUd1SmJMQzE0WlJrRE5neFdrb0h1Ymtj?=
- =?utf-8?B?T1pxcUpBRXB0bDNqVmtXY0JOWjdKcDl1QzlGRi82bzVjUVRObGZxWVlKNitl?=
- =?utf-8?B?UDk0VjRRNnA2di85VXdhcmU4THBwekJmZWdsYkttREcrY2d5eUxoQmpzUWNx?=
- =?utf-8?B?NFlsTTN3blpaVllSOGgvOTZ3eFNHOWhnLzlZNWVHWXVHUWdBMWJOYjlGRzQz?=
- =?utf-8?B?clNtNW45ZS9GdHZCWWFpQm9zanpNc2E2TDkxNVNoRllvWXNLaWJWekU4dUl4?=
- =?utf-8?B?cnR2WWliR2pjdW5pOUU1R2RETjRmbUw2eGo3SkcvaDJQdi9vUVhJTFhqSHFT?=
- =?utf-8?B?dEFkSWNGcndOalExOCtPQWhLN3BaWklkN2s3bCtjdWVTM3ZoemFiVU0zUHdO?=
- =?utf-8?B?NE0yVUlBamIwUGhHbnB2SElDbktnMm1VMGNRMFQ0amJKQzM1WHRacUh2Vm1I?=
- =?utf-8?B?L1c1dGpPVlFzbk05OCsyeWpVQkNSOE5GbFlXdkh3Q1JyWFptSmhSQUtFdlBr?=
- =?utf-8?B?VHE4LzQ1ZVFGZUZweEZwL0pNYy9ZWThaMUlWNXNYV1EyWS9qT3ZJL0JpV0Nr?=
- =?utf-8?B?RHBJb05nQmN5ZWNBYWVjdFRocWdRPT0=?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TzhiMm10Q1l1RnNOMXR3QnVBRVdMbFR0bkgwMGdoUk5OZElUaFJrMjJ3cHVU?=
+ =?utf-8?B?QzFsT3JqbDlBZTJMRC9TUm4vVDFuL2dDbm1tNFFvNGhuQ3FKeEwxZnBXOXFt?=
+ =?utf-8?B?dkNaNytmWFFTOWlTZ1p4dU5EN0ZLcUZpTThvNXFsTlpsNExNM3E1c0JBQjNU?=
+ =?utf-8?B?Uk5TTmxHaGZvUysxVkYwRmNpQk5mVnlBNzBJYmZqTUFBSTFmWDJPZGI3anRz?=
+ =?utf-8?B?NmdQalRsUjdjMzNMa2dSODdYV1hoSkZHWWxtcSt2V2ZGdnoydFZoL1VPcVR4?=
+ =?utf-8?B?NGc4Z2g3WElFL1l2aTRHVnkvcDV6VzJEOWRiWWFQS0l6WUorTnlHaFQ2LzNR?=
+ =?utf-8?B?L1N1V1RMN3hSb1E1QVM3cVVvZld6ZXVRRmNYV1ptTE0rSXozV3BRWko2czFs?=
+ =?utf-8?B?MFZWRWJMb3VGYTVmaDRlNTdFZ0NhcVlMaUxXU0JmampxbmFHRFFIaFJOUUhT?=
+ =?utf-8?B?Tm1vQTZtYnV1d0RhZWRhcm9IemxuTTRpWjE1OHBTeEFQUjJQb2ZFMlJ3dENQ?=
+ =?utf-8?B?OWhOUmtweWxjeTJadlhydHdxdE8xSFhFWitaVGlPN1RUbVFsaUNpUWhscVNj?=
+ =?utf-8?B?SUVjdjVBZUJmUVM3dDNjZEpVQ0plZHphWVRkWWZybzgrQ0VYNGZIajJOYkQr?=
+ =?utf-8?B?ZlhCNzFjMkhTRFpjTGhYWXJUZE5TcFZDUHQxbEZ6T3ZRQWFJbi8wNCsxSHdu?=
+ =?utf-8?B?emw4dWVDNk94UmQxWldHL2tkMHl6bmtwaCtBUzM3SmFJRHJMVTlzWmc5V09p?=
+ =?utf-8?B?WE9sdDdCNDZTMnZDc3NCVjREVnI1VzViMjZHNng3Z1lNZ2ljL3lQZHhLbHpB?=
+ =?utf-8?B?OER6amx4aDNHVHF3ZHFXZUxLU3lzQllHQXF5YkE1bjJIUEhaYjBOTnFVamlJ?=
+ =?utf-8?B?ZHNaUlk5ZTd5N2h3VnRvQWJ1ZHBDUnM4MnVkRktWemNNUUhuOXErUy9wYk1i?=
+ =?utf-8?B?UGl6dm4wcWxPajRITGhuSTh6dUx6aFh6YVNkQ1NYSGErREhZMlYralZMMFFH?=
+ =?utf-8?B?VDNpc2FEMyt4NWViR01IZ1F0TnpMV1V5T2phQWlpZURWK3VFeE1BVURkU292?=
+ =?utf-8?B?NVprbE9QVm4wYURPZ2h1dW9IWkF6UTJnK01mdkF0ajhGV1p3bVRETXNDT2lx?=
+ =?utf-8?B?YVRyVXF0Uzc5SmlqMkw1NG0wTC8ycmNUSVgvVlp0TmRFTXB2cmF4YktoUXF5?=
+ =?utf-8?B?aWpHV0V5NWdnMWdvQTAwOStHNHFZSlpMbEJncHVZQmtoSnUvQzBIMVZRbUJz?=
+ =?utf-8?B?Qi8xTEhxYU9qWDIrTG1OblNGbnVXenRnUlVqdWZnTWZUSm9IbU5QN1VxRkJw?=
+ =?utf-8?B?NDVTczVjT2ZvL0hjWEYydUFmS1IyejlHcU1UTE9FNk5nKzQ3MmRNSlVZczVS?=
+ =?utf-8?B?RkpQREQ0bmQ3OVdFZkNSWjR5TlN4elVxRHVmZmZPTUNxY1RuTm9PM2FrSk13?=
+ =?utf-8?B?eGZNSCtFbzEra01TQXkvTm9hQmhNU2VEclcraXI2M2hDM0FvQ1RNUktOVDJm?=
+ =?utf-8?B?bjF4NUoxTnJCakVmOGtOWDhtdFRMUWpvaWtGdEJYVVRKckJHajloWDlLMWxs?=
+ =?utf-8?B?OElRVmNmek9KWFRNQVBBQWJkb2dOclRweGFyRkNmOWl1S1NDOThqS3RWZm1D?=
+ =?utf-8?B?a1ZvTFFPOGM5V21qM0JObGRtZWVCZGJEcTNhNllrREZ3ZUtnYnVaaXpuYWVY?=
+ =?utf-8?B?SVVsVGFSRGFZeDh2SHh2Y3oxSXFpVll4Z2hNZ1BObThOUGtIVEVhMWF5K0JS?=
+ =?utf-8?B?blVzeS9FeldmY0RvbStIOE1PcnpHV1lHVk56Z20ydUhZUm4wdzY4eWJOYTdR?=
+ =?utf-8?B?ejNyMmRmQlBVQmpyTGVmWUZQcFJDdGdwcC9lL3lKbXZEME5zZmVQVUtYNCti?=
+ =?utf-8?B?UGY5SXJMTUJSSExLdXcrSUxXMzJmbUE3K1Z3a2RaZ1lWSUNrRnZDSnhtdFor?=
+ =?utf-8?B?Tmx4QUQvSEZnUnlCL2t1WHFEb2ZEZVBkSVU4dDJSTi9ndUwrS2had3E0aUs1?=
+ =?utf-8?B?RnYvdUhzbTRYQWhmaitUOEZFRkxNV2NmNVJqaDlWemFBaU94alBvU2xNQXNu?=
+ =?utf-8?B?NC9KbGdsWnpnOXZHTzY3dmRrbGdsQWxJZVkvOXZZanJMSlU3Vm5GS1o5bUJZ?=
+ =?utf-8?B?QkdIaFN1ZkZYQ1kzQTZibnhsak02NHBJSk5IWlk1Vm05eUxpUFFPQStuUitt?=
+ =?utf-8?B?eUVyYmdKelI3RVlSck5lcXNPNHBOOXZYaUhsYTloS09lcVEySDdod0tUWnY1?=
+ =?utf-8?B?TWpHVmZsY09rakV3dmdOVzRTOVhRPT0=?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e16e1c65-6fe2-4033-4a2d-08da5aaeb7fc
+X-MS-Exchange-CrossTenant-Network-Message-Id: bab0faee-e3b9-479c-df00-08da5aafc5a4
 X-MS-Exchange-CrossTenant-AuthSource: BN8PR10MB3220.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2022 15:39:28.6264
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2022 15:47:01.0852
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hUNxmn5iH3+zxersqG21rWHoDjx3/SPnrdYB0PLjeyUaKVg84HrCsq0VSCd4X1EricvE81hc5PSGh/yTNZSPhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4737
+X-MS-Exchange-CrossTenant-UserPrincipalName: mUQ56wvR9TY3O+umAWJv8yu7Mv+fmbjDU73oSAJH3yp1oSLRUxcaF7pH9z1c51RHBUwyZVsUqzZL+fM37NDREw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1925
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
  definitions=2022-06-30_11:2022-06-28,2022-06-30 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
- definitions=main-2206300062
-X-Proofpoint-ORIG-GUID: lRM3StzGVOq7XhVTcCdaJfsVlcq83fcC
-X-Proofpoint-GUID: lRM3StzGVOq7XhVTcCdaJfsVlcq83fcC
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206300062
+X-Proofpoint-ORIG-GUID: YH1QrYO5UiAD_fTN0fTTsQZTcE9z-lsK
+X-Proofpoint-GUID: YH1QrYO5UiAD_fTN0fTTsQZTcE9z-lsK
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -168,178 +169,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/30/22 05:57, Mark Hemment wrote:
-> Hi Khalid,
-> 
+On 6/30/22 08:59, Mark Hemment wrote:
 > On Wed, 29 Jun 2022 at 23:54, Khalid Aziz <khalid.aziz@oracle.com> wrote:
 >>
+>> Add a bit to vm_flags to indicate a vma shares PTEs with others. Add
+>> a function to determine if a vma shares PTE by checking this flag.
+>> This is to be used to find the shared page table entries on page fault
+>> for vmas sharing PTE.
 >>
->> Memory pages shared between processes require a page table entry
->> (PTE) for each process. Each of these PTE consumes consume some of
->> the memory and as long as number of mappings being maintained is
->> small enough, this space consumed by page tables is not
->> objectionable. When very few memory pages are shared between
->> processes, the number of page table entries (PTEs) to maintain is
->> mostly constrained by the number of pages of memory on the system.
->> As the number of shared pages and the number of times pages are
->> shared goes up, amount of memory consumed by page tables starts to
->> become significant. This issue does not apply to threads. Any number
->> of threads can share the same pages inside a process while sharing
->> the same PTEs. Extending this same model to sharing pages across
->> processes can eliminate this issue for sharing across processes as
->> well.
+>> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> ---
+>>   include/linux/mm.h             | 8 ++++++++
+>>   include/trace/events/mmflags.h | 3 ++-
+>>   mm/internal.h                  | 5 +++++
+>>   3 files changed, 15 insertions(+), 1 deletion(-)
 >>
->> Some of the field deployments commonly see memory pages shared
->> across 1000s of processes. On x86_64, each page requires a PTE that
->> is only 8 bytes long which is very small compared to the 4K page
->> size. When 2000 processes map the same page in their address space,
->> each one of them requires 8 bytes for its PTE and together that adds
->> up to 8K of memory just to hold the PTEs for one 4K page. On a
->> database server with 300GB SGA, a system crash was seen with
->> out-of-memory condition when 1500+ clients tried to share this SGA
->> even though the system had 512GB of memory. On this server, in the
->> worst case scenario of all 1500 processes mapping every page from
->> SGA would have required 878GB+ for just the PTEs. If these PTEs
->> could be shared, amount of memory saved is very significant.
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index bc8f326be0ce..0ddc3057f73b 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -310,11 +310,13 @@ extern unsigned int kobjsize(const void *objp);
+>>   #define VM_HIGH_ARCH_BIT_2     34      /* bit only usable on 64-bit architectures */
+>>   #define VM_HIGH_ARCH_BIT_3     35      /* bit only usable on 64-bit architectures */
+>>   #define VM_HIGH_ARCH_BIT_4     36      /* bit only usable on 64-bit architectures */
+>> +#define VM_HIGH_ARCH_BIT_5     37      /* bit only usable on 64-bit architectures */
+>>   #define VM_HIGH_ARCH_0 BIT(VM_HIGH_ARCH_BIT_0)
+>>   #define VM_HIGH_ARCH_1 BIT(VM_HIGH_ARCH_BIT_1)
+>>   #define VM_HIGH_ARCH_2 BIT(VM_HIGH_ARCH_BIT_2)
+>>   #define VM_HIGH_ARCH_3 BIT(VM_HIGH_ARCH_BIT_3)
+>>   #define VM_HIGH_ARCH_4 BIT(VM_HIGH_ARCH_BIT_4)
+>> +#define VM_HIGH_ARCH_5 BIT(VM_HIGH_ARCH_BIT_5)
+>>   #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
 >>
->> This patch series implements a mechanism in kernel to allow
->> userspace processes to opt into sharing PTEs. It adds a new
->> in-memory filesystem - msharefs. A file created on msharefs creates
->> a new shared region where all processes sharing that region will
->> share the PTEs as well. A process can create a new file on msharefs
->> and then mmap it which assigns a starting address and size to this
->> mshare'd region. Another process that has the right permission to
->> open the file on msharefs can then mmap this file in its address
->> space at same virtual address and size and share this region through
->> shared PTEs. An unlink() on the file marks the mshare'd region for
->> deletion once there are no more users of the region. When the mshare
->> region is deleted, all the pages used by the region are freed.
+>>   #ifdef CONFIG_ARCH_HAS_PKEYS
+>> @@ -356,6 +358,12 @@ extern unsigned int kobjsize(const void *objp);
+>>   # define VM_MTE_ALLOWED        VM_NONE
+>>   #endif
+>>
+>> +#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+>> +#define VM_SHARED_PT   VM_HIGH_ARCH_5
+>> +#else
+>> +#define VM_SHARED_PT   0
+>> +#endif
+>> +
 > 
->    Noting the flexibility of 'mshare' has been reduced from v1.  The
-> earlier version allowed msharing of named mappings, while this patch
-> is only for anonymous mappings.
->    Any plans to support named mappings?  If not, I guess *someone* will
-> want it (eventually).  Minor, as the patch does not introduce new
-> syscalls, but having an API which is flexible for both named and anon
-> mappings would be good (this is a nit, not a strong suggestion).
+> I'm not clear why mshare is using high-vma flags for VM_SHARED_PT.
+> CONFIG_ARCH_USES_HIGH_VMA_FLAGS might not be defined, making mshare
+> unsupported (or, rather, broken).
+> Is this being done as there is a shortage of non-high flags?
+> 0x00000800 is available, although it appears to be the last one (quick
+> check).
+> (When using the last 'normal' flag bit, good idea to highlight this in
+> the cover letter.)
 
-I apologize for not clarifying this. The initial mmap() call looks like an anonymous mapping but one could easily call 
-mremap later and map any other objects in the same address space which remains shared until the mshare region is torn 
-down. It is my intent to support mapping any objects in mshare region.
+It indeed is because of shortage of non-high flag. 0x00000800 is the only non-high flag available and I am inclined to 
+leave that last flag for more fundamental features. Then again if we want to move hugetlbfs page table sharing code over 
+to mshare base code, it might be necessary to consume that last flag. Nevertheless, mshare code should not break if 
+high-vma flags are not available. I definitely need to fix that.
 
-> 
->    The cover letter details the problem being solved and the API, but
-> gives no details of the implementation.  A paragraph on the use of a
-> mm_struct per-msharefs file would be helpful.
-
-Good point. I will do that next time.
-
-> 
->    I've only quickly scanned the patchset; not in enough detail to
-> comment on each patch, but a few observations.
-> 
->    o I was expecting to see mprotect() against a mshared vma to either
-> be disallowed or code to support the splitting of a mshared vma.  I
-> didn't see either.msharefs_delmm
-
-Since mshare region is intended to support multiple objects being mapped in the region and different protections on 
-different parts of region, mprotect should be supported and should handle splitting the mshare'd vmas. Until basic code 
-is solid, it would make sense to prevent splitting vmas and add that on later. I will add this code.
-
-> 
->    o For the case where the mshare file has been closed/unmmap but not
-> unlinked, a 'mshare_data' structure will leaked when the inode is
-> evicted.
-
-You are right. mshare_evict_inode() needs to call msharefs_delmm() to clean up.
-
-> 
->    o The alignment requirement is PGDIR_SIZE, which is very large.
-> Should/could this be PMD_SIZE?
-
-Yes, PGDIR_SIZE is large. It works for the database folks who requested this feature but PMD might be more versatile. I 
-have been thinking about switching to PMD since that will make it easier to move hugetlbfs page table sharing code over 
-to this code.
-
-> 
->    o mshare should be a conditional feature (CONFIG_MSHARE ?).
-
-I can do that. I was reluctant to add yet another CONFIG option. Since this feature is activated explicitly by userspace 
-code, is it necessary to make it a config option?
-
-> 
-> 
->    I might get a chance do a finer grain review later/tomorrow.
-> 
->> API
->> ===
->>
->> mshare does not introduce a new API. It instead uses existing APIs
->> to implement page table sharing. The steps to use this feature are:
->>
->> 1. Mount msharefs on /sys/fs/mshare -
->>          mount -t msharefs msharefs /sys/fs/mshare
->>
->> 2. mshare regions have alignment and size requirements. Start
->>     address for the region must be aligned to an address boundary and
->>     be a multiple of fixed size. This alignment and size requirement
->>     can be obtained by reading the file /sys/fs/mshare/mshare_info
->>     which returns a number in text format. mshare regions must be
->>     aligned to this boundary and be a multiple of this size.
->>
->> 3. For the process creating mshare region:
->>          a. Create a file on /sys/fs/mshare, for example -
->>                  fd = open("/sys/fs/mshare/shareme",
->>                                  O_RDWR|O_CREAT|O_EXCL, 0600);
->>
->>          b. mmap this file to establish starting address and size -
->>                  mmap((void *)TB(2), BUF_SIZE, PROT_READ | PROT_WRITE,
->>                          MAP_SHARED, fd, 0);
->>
->>          c. Write and read to mshared region normally.
->>
->> 4. For processes attaching to mshare'd region:
->>          a. Open the file on msharefs, for example -
->>                  fd = open("/sys/fs/mshare/shareme", O_RDWR);
->>
->>          b. Get information about mshare'd region from the file:
->>                  struct mshare_info {
->>                          unsigned long start;
->>                          unsigned long size;
->>                  } m_info;
->>
->>                  read(fd, &m_info, sizeof(m_info));
->>
->>          c. mmap the mshare'd region -
->>                  mmap(m_info.start, m_info.size,
->>                          PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
->>
->> 5. To delete the mshare region -
->>                  unlink("/sys/fs/mshare/shareme");
->>
->>
->>
->> Example Code
->> ============
->>
->> Snippet of the code that a donor process would run looks like below:
->>
->> -----------------
->>          fd = open("/sys/fs/mshare/mshare_info", O_RDONLY);
->>          read(fd, req, 128);
->>          alignsize = atoi(req);
->>          close(fd);
->>          fd = open("/sys/fs/mshare/shareme", O_RDWR|O_CREAT|O_EXCL, 0600);
->>          start = alignsize * 4;
->>          size = alignsize * 2;
->>          addr = mmap((void *)start, size, PROT_READ | PROT_WRITE,
->>                          MAP_SHARED | MAP_ANONYMOUS, 0, 0);
-> 
-> Typo, missing 'fd'; MAP_SHARED | MAP_ANONYMOUS, fd, 0)
-
-Yes, you are right. I will fix that.
-
-Thanks, Mark! I really appreciate your taking time to review this code.
-
---
+Thanks,
 Khalid
+
+> 
+>>   #ifndef VM_GROWSUP
+>>   # define VM_GROWSUP    VM_NONE
+>>   #endif
+>> diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+>> index e87cb2b80ed3..30e56cbac99b 100644
+>> --- a/include/trace/events/mmflags.h
+>> +++ b/include/trace/events/mmflags.h
+>> @@ -194,7 +194,8 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,  "softdirty"     )               \
+>>          {VM_MIXEDMAP,                   "mixedmap"      },              \
+>>          {VM_HUGEPAGE,                   "hugepage"      },              \
+>>          {VM_NOHUGEPAGE,                 "nohugepage"    },              \
+>> -       {VM_MERGEABLE,                  "mergeable"     }               \
+>> +       {VM_MERGEABLE,                  "mergeable"     },              \
+>> +       {VM_SHARED_PT,                  "sharedpt"      }               \
+>>
+>>   #define show_vma_flags(flags)                                          \
+>>          (flags) ? __print_flags(flags, "|",                             \
+>> diff --git a/mm/internal.h b/mm/internal.h
+>> index c0f8fbe0445b..3f2790aea918 100644
+>> --- a/mm/internal.h
+>> +++ b/mm/internal.h
+>> @@ -861,4 +861,9 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
+>>
+>>   DECLARE_PER_CPU(struct per_cpu_nodestat, boot_nodestats);
+>>
+>> +static inline bool vma_is_shared(const struct vm_area_struct *vma)
+>> +{
+>> +       return vma->vm_flags & VM_SHARED_PT;
+>> +}
+>> +
+>>   #endif /* __MM_INTERNAL_H */
+>> --
+>> 2.32.0
+>>
+
