@@ -2,180 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1F56562814
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 03:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5478F56289C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 03:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232381AbiGABVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 21:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37650 "EHLO
+        id S232623AbiGABzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jun 2022 21:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbiGABVx (ORCPT
+        with ESMTP id S229480AbiGABzf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 21:21:53 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C835A2CB;
-        Thu, 30 Jun 2022 18:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656638512; x=1688174512;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G2fAQsutHSI8kLKVVakNXwxot1Yyc0ooUkqIi8b15IA=;
-  b=c4QNRs3N2jhbkzCT0dIZHMMxEFx/ac7LUFsFEPsniCXGblAEkZvkybgD
-   GDcHXRcw4VSAG6BT/4XWBSmDwWYayzar6sdrw1OFn63hYE7KeExTVe1ob
-   y/EoKg6MikYiAmFGPgUIgwE+4grBZXLbqXJTK+0BWXUphaA1aGHapHbWL
-   Q+l57jzMy09nd4vlmFN5QZCasEGtUtjOPkk1JU7YJDy2kjRntnGHTYhla
-   xz+aJ+V+DURO1OpuqsP258meHj/yW5Ea4sJw8gOGEsCEUOa3XwalSv2QU
-   GOqXG156DuYDjvCbwFV2UPXtV3BrVN5IMzmfJdQ/hAR32ytHnBmyCYuly
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10394"; a="282547312"
-X-IronPort-AV: E=Sophos;i="5.92,236,1650956400"; 
-   d="scan'208";a="282547312"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2022 18:21:52 -0700
-X-IronPort-AV: E=Sophos;i="5.92,236,1650956400"; 
-   d="scan'208";a="596042946"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.249.169.250]) ([10.249.169.250])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2022 18:21:42 -0700
-Message-ID: <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
-Date:   Fri, 1 Jul 2022 09:21:39 +0800
+        Thu, 30 Jun 2022 21:55:35 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C040A3191C;
+        Thu, 30 Jun 2022 18:55:34 -0700 (PDT)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LYysb1zs4zkWdf;
+        Fri,  1 Jul 2022 09:53:39 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (7.193.23.164) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 1 Jul 2022 09:55:33 +0800
+Received: from [10.174.176.73] (10.174.176.73) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 1 Jul 2022 09:55:32 +0800
+Subject: Re: Major btrfs fiemap slowdown on file with many extents once in
+ cache (RCU stalls?) (Was: [PATCH 1/3] filemap: Correct the conditions for
+ marking a folio as accessed)
+To:     Dominique MARTINET <dominique.martinet@atmark-techno.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        <linux-btrfs@vger.kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <20220619151143.1054746-1-willy@infradead.org>
+ <20220619151143.1054746-2-willy@infradead.org>
+ <Yr1QwVW+sHWlAqKj@atmark-techno.com>
+From:   Yu Kuai <yukuai3@huawei.com>
+Message-ID: <8cffd985-ba62-c4be-f9af-bb8314df8a67@huawei.com>
+Date:   Fri, 1 Jul 2022 09:55:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.10.0
-Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
-Content-Language: en-US
-To:     Michael Roth <michael.roth@amd.com>,
-        Vishal Annapurve <vannapurve@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        "Nikunj A. Dadhania" <nikunj@amd.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, mhocko@suse.com
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-7-chao.p.peng@linux.intel.com>
- <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
- <20220624090246.GA2181919@chaop.bj.intel.com>
- <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
- <20220630222140.of4md7bufd5jv5bh@amd.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20220630222140.of4md7bufd5jv5bh@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Yr1QwVW+sHWlAqKj@atmark-techno.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.73]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/1/2022 6:21 AM, Michael Roth wrote:
-> On Thu, Jun 30, 2022 at 12:14:13PM -0700, Vishal Annapurve wrote:
->> With transparent_hugepages=always setting I see issues with the
->> current implementation.
->>
->> Scenario:
->> 1) Guest accesses a gfn range 0x800-0xa00 as private
->> 2) Guest calls mapgpa to convert the range 0x84d-0x86e as shared
->> 3) Guest tries to access recently converted memory as shared for the first time
->> Guest VM shutdown is observed after step 3 -> Guest is unable to
->> proceed further since somehow code section is not as expected
->>
->> Corresponding KVM trace logs after step 3:
->> VCPU-0-61883   [078] ..... 72276.115679: kvm_page_fault: address
->> 84d000 error_code 4
->> VCPU-0-61883   [078] ..... 72276.127005: kvm_mmu_spte_requested: gfn
->> 84d pfn 100b4a4d level 2
->> VCPU-0-61883   [078] ..... 72276.127008: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 800 level 2 old_spte 100b1b16827 new_spte 100b4a00ea7
->> VCPU-0-61883   [078] ..... 72276.127009: kvm_mmu_prepare_zap_page: sp
->> gen 0 gfn 800 l1 8-byte q0 direct wux nxe ad root 0 sync
->> VCPU-0-61883   [078] ..... 72276.127009: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 800 level 1 old_spte 1003eb27e67 new_spte 5a0
->> VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 801 level 1 old_spte 10056cc8e67 new_spte 5a0
->> VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 802 level 1 old_spte 10056fa2e67 new_spte 5a0
->> VCPU-0-61883   [078] ..... 72276.127010: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 803 level 1 old_spte 0 new_spte 5a0
->> ....
->>   VCPU-0-61883   [078] ..... 72276.127089: kvm_tdp_mmu_spte_changed: as
->> id 0 gfn 9ff level 1 old_spte 100a43f4e67 new_spte 5a0
->>   VCPU-0-61883   [078] ..... 72276.127090: kvm_mmu_set_spte: gfn 800
->> spte 100b4a00ea7 (rwxu) level 2 at 10052fa5020
->>   VCPU-0-61883   [078] ..... 72276.127091: kvm_fpu: unload
->>
->> Looks like with transparent huge pages enabled kvm tried to handle the
->> shared memory fault on 0x84d gfn by coalescing nearby 4K pages
->> to form a contiguous 2MB page mapping at gfn 0x800, since level 2 was
->> requested in kvm_mmu_spte_requested.
->> This caused the private memory contents from regions 0x800-0x84c and
->> 0x86e-0xa00 to get unmapped from the guest leading to guest vm
->> shutdown.
+在 2022/06/30 15:29, Dominique MARTINET 写道:
+> Hi Willy, linux-btrfs@vger,
 > 
-> Interesting... seems like that wouldn't be an issue for non-UPM SEV, since
-> the private pages would still be mapped as part of that 2M mapping, and
-> it's completely up to the guest as to whether it wants to access as
-> private or shared. But for UPM it makes sense this would cause issues.
+> Matthew Wilcox (Oracle) wrote on Sun, Jun 19, 2022 at 04:11:41PM +0100:
+>> We had an off-by-one error which meant that we never marked the first page
+>> in a read as accessed.  This was visible as a slowdown when re-reading
+>> a file as pages were being evicted from cache too soon.  In reviewing
+>> this code, we noticed a second bug where a multi-page folio would be
+>> marked as accessed multiple times when doing reads that were less than
+>> the size of the folio.
 > 
->>
->> Does getting the mapping level as per the fault access type help
->> address the above issue? Any such coalescing should not cross between
->> private to
->> shared or shared to private memory regions.
-> 
-> Doesn't seem like changing the check to fault->is_private would help in
-> your particular case, since the subsequent host_pfn_mapping_level() call
-> only seems to limit the mapping level to whatever the mapping level is
-> for the HVA in the host page table.
-> 
-> Seems like with UPM we need some additional handling here that also
-> checks that the entire 2M HVA range is backed by non-private memory.
-> 
-> Non-UPM SNP hypervisor patches already have a similar hook added to
-> host_pfn_mapping_level() which implements such a check via RMP table, so
-> UPM might need something similar:
-> 
->    https://github.com/AMDESE/linux/commit/ae4475bc740eb0b9d031a76412b0117339794139
-> 
-> -Mike
+> when debugging an unrelated issue (short reads on btrfs with io_uring
+> and O_DIRECT[1]), I noticed that my horrible big file copy speeds fell
+> down from ~2GB/s (there's compression and lots of zeroes) to ~100MB/s
+> the second time I was copying it with cp.
 > 
 
-For TDX, we try to track the page type (shared, private, mixed) of each 
-gfn at given level. Only when the type is shared/private, can it be 
-mapped at that level. When it's mixed, i.e., it contains both shared 
-pages and private pages at given level, it has to go to next smaller level.
+Hi,
 
-https://github.com/intel/tdx/commit/ed97f4042eb69a210d9e972ccca6a84234028cad
+With this patch ctive_page() will be called the second time that page is
+mark accessed, which has some extra overhead, however, 2GB/s -> 100MB/s
+is insane, I'm not sure how this is possible, but it seems like it has
+something to do with this change.(Noted that it's problematic that page
+will not mark accessed before this patch).
 
+BTW, during my test, the speed of buffer read in ext4 only fell down a
+little.
 
+Thanks,
+Kuai
+> I've taken a moment to bisect this and came down to this patch.
+> 
+> [1] https://lore.kernel.org/all/YrrFGO4A1jS0GI0G@atmark-techno.com/T/#u
+> 
+> 
+> 
+> Dropping caches (echo 3 > /proc/sys/vm/drop_caches) restore the speed,
+> so there appears to be some bad effect to having the file in cache for
+> fiemap?
+> To be fair that file is pretty horrible:
+> ---
+> # compsize bigfile
+> Processed 1 file, 194955 regular extents (199583 refs), 0 inline.
+> Type       Perc     Disk Usage   Uncompressed Referenced
+> TOTAL       15%      3.7G          23G          23G
+> none       100%      477M         477M         514M
+> zstd        14%      3.2G          23G          23G
+> ---
+> 
+> Here's what perf has to say about it on top of this patch when running
+> `cp bigfile /dev/null` the first time:
+> 
+> 98.97%     0.00%  cp       [kernel.kallsyms]    [k]
+> entry_SYSCALL_64_after_hwframe
+>   entry_SYSCALL_64_after_hwframe
+>   do_syscall_64
+>    - 93.40% ksys_read
+>       - 93.36% vfs_read
+>          - 93.25% new_sync_read
+>             - 93.20% filemap_read
+>                - 83.38% filemap_get_pages
+>                   - 82.76% page_cache_ra_unbounded
+>                      + 59.72% folio_alloc
+>                      + 13.43% read_pages
+>                      + 8.75% filemap_add_folio
+>                        0.64% xa_load
+>                     0.52% filemap_get_read_batch
+>                + 8.75% copy_page_to_iter
+>    - 4.73% __x64_sys_ioctl
+>       - 4.72% do_vfs_ioctl
+>          - btrfs_fiemap
+>             - 4.70% extent_fiemap
+>                + 3.95% btrfs_check_shared
+>                + 0.70% get_extent_skip_holes
+> 
+> and second time:
+> 99.90%     0.00%  cp       [kernel.kallsyms]    [k]
+> entry_SYSCALL_64_after_hwfram
+>   entry_SYSCALL_64_after_hwframe
+>   do_syscall_64
+>    - 94.62% __x64_sys_ioctl
+>         do_vfs_ioctl
+>         btrfs_fiemap
+>       - extent_fiemap
+>          - 50.01% get_extent_skip_holes
+>             - 50.00% btrfs_get_extent_fiemap
+>                - 49.97% count_range_bits
+>                     rb_next
+>          + 28.72% lock_extent_bits
+>          + 15.55% __clear_extent_bit
+>    - 5.21% ksys_read
+>       + 5.21% vfs_read
+> 
+> (if this isn't readable, 95% of the time is spent on fiemap the second
+> time around)
+> 
+> 
+> 
+> 
+> I've also been observing RCU stalls on my laptop with the same workload
+> (cp to /dev/null), but unfortunately I could not reproduce in qemu so I
+> could not take traces to confirm they are caused by the same commit but
+> given the workload I'd say that is it?
+> I can rebuild a kernel for my laptop and confirm if you think it should
+> be something else.
+> 
+> 
+> I didn't look at the patch itself (yet) so have no suggestion at this
+> point - it's plausible the patch fixed something and just exposed slow
+> code that had been there all along so it might be better to look at the
+> btrfs side first, I don't know.
+> If you don't manage to reproduce I'll be happy to test anything thrown
+> at me at the very least.
+> 
+> 
+> Thanks,
+> 
