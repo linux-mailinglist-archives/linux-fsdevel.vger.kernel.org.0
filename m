@@ -2,317 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B32562E51
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 10:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E79562EB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 10:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235154AbiGAIdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 04:33:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
+        id S236296AbiGAIr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 04:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234628AbiGAIdL (ORCPT
+        with ESMTP id S232545AbiGAIrz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 04:33:11 -0400
-Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1ACF27;
-        Fri,  1 Jul 2022 01:33:07 -0700 (PDT)
-Received: by mail-ua1-x930.google.com with SMTP id x21so592908uat.2;
-        Fri, 01 Jul 2022 01:33:07 -0700 (PDT)
+        Fri, 1 Jul 2022 04:47:55 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07DF8735B2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 01:47:51 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id b7-20020a256707000000b00669b4b2c5daso1483997ybc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 01:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zf7O5+C12xkBZEjntAQhutE3SIC+c4/paW/K1GljThM=;
-        b=Ain0sDY9YxqSO/IpDGWEsdj9RmCM8VyXWvh1wEU2slinheQqK4wHfA/gTW0m8U1JIg
-         Yz6592Wp+tCmv5HeY0uWu//R2wShMV/q+u1N/ZTk1q5m9iDUplZX88bf0RGBW0/CbLA5
-         I7Nq/an0Fr6VOQXUsYURptVCnY17gukLl6Z5IWj0MppZJrgJTbUTuWen+DJkQtxwd4Zr
-         p4ca8HuprwFOSw7ifyVPWusiAu4KYLlYhwmlcTSOX3JVhvkQT7N3JU/j0kNLN8zpux+T
-         HV5NylrLkJNprYpE4Zkny0rBroKNOXWYT8EPqu5ax1SRy07isfHIFecuFjSutZc5k8up
-         aDKg==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=NuZanDiX6ZABSMbfniI1TGr/DxYkHBykbUx4x4ghkJs=;
+        b=CZLCtNgssNVr6nSXDn6fB604VBq+KkeWkf1tsogW0rqBqDsWGig719MPVJL6gYAvgY
+         9RLRb9A15yblqEPywZl4Lgr6YSf9RXOrCrx05owdb7fROgwlMHPgEHweT+hfEokeoi8o
+         LNHODCorIbIyKm8aLbO68fc481xtKztaTjZzYQOWZdYOt+CAO+QwI1YDcZSKV3SuqVOA
+         FJ1LmVHx3rC43z4OWzucakfkXECe5G+RwAjDe0BEzlgwIeQv+q77AUOJhIdqm3JQLg0q
+         MP46dyYMh7yz1bpDLglsTAKkhXu3eoWqjeliptD0SJta9R4nLcM52BDKD2JG16NnEN4l
+         O7Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zf7O5+C12xkBZEjntAQhutE3SIC+c4/paW/K1GljThM=;
-        b=73YRciWTVfBfDqfqoNLucEMX9yqPabsE1y4ySgaN0TbafOHP19Cn47Y21u/dCUCTBi
-         VKAprpIHixKGaWPyJNnt7gutAZF1gTEGj8l2mvVCI7dfJEQX8E5dVlofZp9a2cF5apaV
-         FnSGgFOYnsx90NTTTNiCPb9appsA30F12EqkOylhlhK5xnDC4Hu7V7bWq2aLfBNiGkAn
-         TNCujOsN6tk0ti5uIYleg4FkCK79u9CHlP2mk+4xtwJ97yrchOzZkliWCG7lGDeBQKE+
-         y6p0Puk0o+eirRbw7TZbHn4GnlbNrJEridiWV1rP2dzj0gdB2V+/y9cLDtjPupe5ALep
-         wKgw==
-X-Gm-Message-State: AJIora/pVPfLTv5aOfIEaShGnRYptMsHHUdiRxRYUOtc3BHcvud/eb+X
-        dt2HdGlG9bZI/9ItAG0GW3sOA6+Q6EyZ9j6lh+Lj79Hwah8=
-X-Google-Smtp-Source: AGRyM1vFmHpP3tTrhP71e+fllDzt5Iv2Rt5/51bAPK5T1EiSPAPc7kYOuwIyUOMAIlpifL8sqrLTivavue17f4Euz3E=
-X-Received: by 2002:ab0:4973:0:b0:37f:27c2:59fb with SMTP id
- a48-20020ab04973000000b0037f27c259fbmr7466219uad.80.1656664386965; Fri, 01
- Jul 2022 01:33:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220628173344.h7ihvyl6vuky5xus@wittgenstein> <CACYkzJ5ij9rth_v3KQrCVYsQr2STBEWq1EAzkDb5D06CoRRSjA@mail.gmail.com>
- <CAADnVQ+mokn3Yo492Zng=Gtn_LgT-T1XLth5BXyKZXFno-3ZDg@mail.gmail.com>
- <20220629081119.ddqvfn3al36fl27q@wittgenstein> <20220629095557.oet6u2hi7msit6ff@wittgenstein>
- <CAADnVQ+HhhQdcz_u8kP45Db_gUK+pOYg=jObZpLtdin=v_t9tw@mail.gmail.com>
- <20220630114549.uakuocpn7w5jfrz2@wittgenstein> <CACYkzJ4uiY5B09RqRFhePNXKYLmhD_F2KepEO-UZ4tQN09yWBg@mail.gmail.com>
- <20220630132635.bxxx7q654y5icd5b@wittgenstein> <CACYkzJ6At2T9YGgs25mbqdVUiLtOh1LabZ5Auc+oDm4605A31A@mail.gmail.com>
- <20220630134702.bn2eq3mxeiqmg2fj@wittgenstein> <7d42faf7-1f55-03cb-e17e-e12f7cffe3de@schaufler-ca.com>
- <CACYkzJ7fVCWFtKhFqth5CNHGTiPnS8d=T2+-xSc03UBGLgW+4Q@mail.gmail.com> <e95e107e-e279-6efc-0011-3995b96414af@schaufler-ca.com>
-In-Reply-To: <e95e107e-e279-6efc-0011-3995b96414af@schaufler-ca.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 1 Jul 2022 11:32:55 +0300
-Message-ID: <CAOQ4uxgyPYK78Cs_OvjNrCF3wMJ9rnZooZZPenzRN_jDs7pXwQ@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 5/5] bpf/selftests: Add a selftest for bpf_getxattr
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     KP Singh <kpsingh@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>,
-        Serge Hallyn <serge@hallyn.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=NuZanDiX6ZABSMbfniI1TGr/DxYkHBykbUx4x4ghkJs=;
+        b=haHPAM5aVeZhSoDE8Wbxwa9gS9HjP+a+OwpjmM+OLUZ9OwudyfcAewxOr7t9AkUjnp
+         nGdmW9MqJ69kE7w4Ot9bR3PWvURJrbRMMk4kma2gG+lupBOh5205qUj0v8PF+kkJaP0f
+         rZrWkbHnSCeGrmljU6gxyLI1mFID0UUp94lvXt8HfoOpaEN7Xn0U1TxKLKrsZpf0WBJT
+         8vaC6RjMSPn/Kta7hiAvx/PszVy9f8beCswNR16212ETtRy9sZgcfClXtV8Vxme19lU1
+         e4r3ZzFPfb41BAKD1VMY8BQGc0MWMQ4YiGUszSMQnhnpxoLbnPso78/+z1ME7UnyvUsG
+         ddUA==
+X-Gm-Message-State: AJIora+QSjtJYAAfyV4Bhox5wKhh2af3vpyHjBsBjHUyTPpN6nuZCen/
+        nQf1YQscsIErP0p86insfuyPVz17mBuYuQ==
+X-Google-Smtp-Source: AGRyM1ueeVhwlJQ7zRKjLy1gM9/U9w/+eRK9KccBKyOEVw0DgaknmIifOXTfkG/tj2NIxQjOyOX+A2D1Xy7eSg==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a25:d292:0:b0:66c:8adb:ce55 with SMTP id
+ j140-20020a25d292000000b0066c8adbce55mr14348011ybg.131.1656665270212; Fri, 01
+ Jul 2022 01:47:50 -0700 (PDT)
+Date:   Fri,  1 Jul 2022 16:47:41 +0800
+Message-Id: <20220701084744.3002019-1-davidgow@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH v4 1/4] panic: Taint kernel if tests are run
+From:   David Gow <davidgow@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Cc:     David Gow <davidgow@google.com>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kbuild@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 1, 2022 at 2:39 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 6/30/2022 3:23 PM, KP Singh wrote:
-> > On Thu, Jun 30, 2022 at 6:10 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 6/30/2022 6:47 AM, Christian Brauner wrote:
-> >>> On Thu, Jun 30, 2022 at 03:29:53PM +0200, KP Singh wrote:
-> >>>> On Thu, Jun 30, 2022 at 3:26 PM Christian Brauner <brauner@kernel.org> wrote:
-> >>>>> On Thu, Jun 30, 2022 at 02:21:56PM +0200, KP Singh wrote:
-> >>>>>> On Thu, Jun 30, 2022 at 1:45 PM Christian Brauner <brauner@kernel.org> wrote:
-> >>>>>>> On Wed, Jun 29, 2022 at 08:02:50PM -0700, Alexei Starovoitov wrote:
-> >>>>>>>> On Wed, Jun 29, 2022 at 2:56 AM Christian Brauner <brauner@kernel.org> wrote:
-> >>>>>> [...]
-> >>>>>>
-> >>>>>>>>>>>>>> Signed-off-by: KP Singh <kpsingh@kernel.org>
-> >>>>>>>>>>>>>> ---
-> >>>>>>>>>>>>>>  .../testing/selftests/bpf/prog_tests/xattr.c  | 54 +++++++++++++++++++
-> >>>>>>>>>>>> [...]
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>>> +SEC("lsm.s/bprm_committed_creds")
-> >>>>>>>>>>>>>> +void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-> >>>>>>>>>>>>>> +{
-> >>>>>>>>>>>>>> +     struct task_struct *current = bpf_get_current_task_btf();
-> >>>>>>>>>>>>>> +     char dir_xattr_value[64] = {0};
-> >>>>>>>>>>>>>> +     int xattr_sz = 0;
-> >>>>>>>>>>>>>> +
-> >>>>>>>>>>>>>> +     xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> >>>>>>>>>>>>>> +                             bprm->file->f_path.dentry->d_inode, XATTR_NAME,
-> >>>>>>>>>>>>>> +                             dir_xattr_value, 64);
-> >>>>>>>>>>>>> Yeah, this isn't right. You're not accounting for the caller's userns
-> >>>>>>>>>>>>> nor for the idmapped mount. If this is supposed to work you will need a
-> >>>>>>>>>>>>> variant of vfs_getxattr() that takes the mount's idmapping into account
-> >>>>>>>>>>>>> afaict. See what needs to happen after do_getxattr().
-> >>>>>>>>>>>> Thanks for taking a look.
-> >>>>>>>>>>>>
-> >>>>>> [...]
-> >>>>>>
-> >>>>>>>>>>> That will not be correct.
-> >>>>>>>>>>> posix_acl_fix_xattr_to_user checking current_user_ns()
-> >>>>>>>>>>> is checking random tasks that happen to be running
-> >>>>>>>>>>> when lsm hook got invoked.
-> >>>>>>>>>>>
-> >>>>>>>>>>> KP,
-> >>>>>>>>>>> we probably have to document clearly that neither 'current*'
-> >>>>>>>>>>> should not be used here.
-> >>>>>>>>>>> xattr_permission also makes little sense in this context.
-> >>>>>>>>>>> If anything it can be a different kfunc if there is a use case,
-> >>>>>>>>>>> but I don't see it yet.
-> >>>>>>>>>>> bpf-lsm prog calling __vfs_getxattr is just like other lsm-s that
-> >>>>>>>>>>> call it directly. It's the kernel that is doing its security thing.
-> >>>>>>>>>> Right, but LSMs usually only retrieve their own xattr namespace (ima,
-> >>>>>>>>>> selinux, smack) or they calculate hashes for xattrs based on the raw
-> >>>>>>>>>> filesystem xattr values (evm).
-> >>>>>>>>>>
-> >>>>>>>>>> But this new bpf_getxattr() is different. It allows to retrieve _any_
-> >>>>>>>>>> xattr in any security hook it can be attached to. So someone can write a
-> >>>>>>>>>> bpf program that retrieves filesystem capabilites or posix acls. And
-> >>>>>>>>>> these are xattrs that require higher-level vfs involvement to be
-> >>>>>>>>>> sensible in most contexts.
-> >>>>>>>>>>
-> >>>>>> [...]
-> >>>>>>
-> >>>>>>>>>> This hooks a bpf-lsm program to the security_bprm_committed_creds()
-> >>>>>>>>>> hook. It then retrieves the extended attributes of the file to be
-> >>>>>>>>>> executed. The hook currently always retrieves the raw filesystem values.
-> >>>>>>>>>>
-> >>>>>>>>>> But for example any XATTR_NAME_CAPS filesystem capabilities that
-> >>>>>>>>>> might've been stored will be taken into account during exec. And both
-> >>>>>>>>>> the idmapping of the mount and the caller matter when determing whether
-> >>>>>>>>>> they are used or not.
-> >>>>>>>>>>
-> >>>>>>>>>> But the current implementation of bpf_getxattr() just ignores both. It
-> >>>>>>>>>> will always retrieve the raw filesystem values. So if one invokes this
-> >>>>>>>>>> hook they're not actually retrieving the values as they are seen by
-> >>>>>>>>>> fs/exec.c. And I'm wondering why that is ok? And even if this is ok for
-> >>>>>>>>>> some use-cases it might very well become a security issue in others if
-> >>>>>>>>>> access decisions are always based on the raw values.
-> >>>>>>>>>>
-> >>>>>>>>>> I'm not well-versed in this so bear with me, please.
-> >>>>>>>>> If this is really just about retrieving the "security.bpf" xattr and no
-> >>>>>>>>> other xattr then the bpf_getxattr() variant should somehow hard-code
-> >>>>>>>>> that to ensure that no other xattrs can be retrieved, imho.
-> >>>>>>>> All of these restrictions look very artificial to me.
-> >>>>>>>> Especially the part "might very well become a security issue"
-> >>>>>>>> just doesn't click.
-> >>>>>>>> We're talking about bpf-lsm progs here that implement security.
-> >>>>>>>> Can somebody implement a poor bpf-lsm that doesn't enforce
-> >>>>>>>> any actual security? Sure. It's a code.
-> >>>>>>> The point is that with the current implementation of bpf_getxattr() you
-> >>>>>>> are able to retrieve any xattrs and we have way less control over a
-> >>>>>>> bpf-lsm program than we do over selinux which a simple git grep
-> >>>>>>> __vfs_getxattr() is all we need.
-> >>>>>>>
-> >>>>>>> The thing is that with bpf_getxattr() as it stands it is currently
-> >>>>>>> impossible to retrieve xattr values - specifically filesystem
-> >>>>>>> capabilities and posix acls - and see them exactly like the code you're
-> >>>>>>> trying to supervise is. And that seems very strange from a security
-> >>>>>>> perspective. So if someone were to write
-> >>>>>>>
-> >>>>>>> SEC("lsm.s/bprm_creds_from_file")
-> >>>>>>> void BPF_PROG(bprm_cc, struct linux_binprm *bprm)
-> >>>>>>> {
-> >>>>>>>         struct task_struct *current = bpf_get_current_task_btf();
-> >>>>>>>
-> >>>>>>>         xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> >>>>>>>                                 bprm->file->f_path.dentry->d_inode,
-> >>>>>>>                                 XATTR_NAME_POSIX_ACL_ACCESS, ..);
-> >>>>>>>         // or
-> >>>>>>>         xattr_sz = bpf_getxattr(bprm->file->f_path.dentry,
-> >>>>>>>                                 bprm->file->f_path.dentry->d_inode,
-> >>>>>>>                                 XATTR_NAME_CAPS, ..);
-> >>>>>>>
-> >>>>>>> }
-> >>>>>>>
-> >>>>>>> they'd get the raw nscaps and the raw xattrs back. But now, as just a
-> >>>>>>> tiny example, the nscaps->rootuid and the ->e_id fields in the posix
-> >>>>>>> ACLs make zero sense in this context.
-> >>>>>>>
-> >>>>>>> And what's more there's no way for the bpf-lsm program to turn them into
-> >>>>>>> something that makes sense in the context of the hook they are retrieved
-> >>>>>>> in. It lacks all the necessary helpers to do so afaict.
-> >>>>>>>
-> >>>>>>>> No one complains about the usage of EXPORT_SYMBOL(__vfs_getxattr)
-> >>>>>>>> in the existing LSMs like selinux.
-> >>>>>>> Selinux only cares about its own xattr namespace. It doesn't retrieve
-> >>>>>>> fscaps or posix acls and it's not possible to write selinux programs
-> >>>>>>> that do so. With the bpf-lsm that's very much possible.
-> >>>>>>>
-> >>>>>>> And if we'd notice selinux would start retrieving random xattrs we'd ask
-> >>>>>>> the same questions we do here.
-> >>>>>>>
-> >>>>>>>> No one complains about its usage in out of tree LSMs.
-> >>>>>>>> Is that a security issue? Of course not.
-> >>>>>>>> __vfs_getxattr is a kernel mechanism that LSMs use to implement
-> >>>>>>>> the security features they need.
-> >>>>>>>> __vfs_getxattr as kfunc here is pretty much the same as EXPORT_SYMBOL
-> >>>>>>>> with a big difference that it's EXPORT_SYMBOL_GPL.
-> >>>>>>>> BPF land doesn't have an equivalent of non-gpl export and is not going
-> >>>>>>>> to get one.
-> >>>>>> I want to reiterate what Alexei is saying here:
-> >>>>>>
-> >>>>>> *Please* consider this as a simple wrapper around __vfs_getxattr
-> >>>>>> with a limited attach surface and extra verification checks and
-> >>>>>> and nothing else.
-> >>>>>>
-> >>>>>> What you are saying is __vfs_getxattr does not make sense in some
-> >>>>>> contexts. But kernel modules can still use it right?
-> >>>>>>
-> >>>>>> The user is implementing an LSM, if they chose to do things that don't make
-> >>>>>> sense, then they can surely cause a lot more harm:
-> >>>>>>
-> >>>>>> SEC("lsm/bprm_check_security")
-> >>>>>> int BPF_PROG(bprm_check, struct linux_binprm *bprm)
-> >>>>>> {
-> >>>>>>      return -EPERM;
-> >>>>>> }
-> >>>>>>
-> >>>>>>> This discussion would probably be a lot shorter if this series were sent
-> >>>>>>> with a proper explanation of how this supposed to work and what it's
-> >>>>>>> used for.
-> >>>>>> It's currently scoped to BPF LSM (albeit limited to LSM for now)
-> >>>>>> but it won't just be used in LSM programs but some (allow-listed)
-> >>>>>> tracing programs too.
-> >>>>>>
-> >>>>>> We want to leave the flexibility to the implementer of the LSM hooks. If the
-> >>>>>> implementer choses to retrieve posix_acl_* we can also expose
-> >>>>>> posix_acl_fix_xattr_to_user or a different kfunc that adds this logic too
-> >>>>>> but that would be a separate kfunc (and a separate use-case).
-> >>>>> No, sorry. That's what I feared and that's why I think this low-level
-> >>>>> exposure of __vfs_getxattr() is wrong:
-> >>>>> The posix_acl_fix_xattr_*() helpers, as well as the helpers like
-> >>>>> get_file_caps() will not be exported. We're not going to export that
-> >>>> I don't want to expose them and I don't want any others to be
-> >>>> exposed either.
-> >>>>
-> >>>>> deeply internal vfs machinery. So I would NACK that. If you want that -
-> >>>>> and that's what I'm saying here - you need to encapsulate this into your
-> >>>>> vfs_*xattr() helper that you can call from your kfuncs.
-> >>>> It seems like __vfs_getxattr is already exposed and does the wrong thing in
-> >>>> some contexts, why can't we just "fix" __vfs_getxattr then?
-> >>> To me having either a version of bpf_getxattr() that restricts access to
-> >>> certain xattrs or a version that takes care to perform the neccesary
-> >>> translations is what seems to make the most sense. I suggested that in
-> >>> one of my first mails.
-> >>>
-> >>> The one thing where the way the xattrs are retrieved really matters is
-> >>> for vfscaps (see get_vfs_caps_from_disk()) you really need something
-> >>> like that function in order for vfs caps to make any sense and be
-> >>> interpretable by the user of the hook.
-> >>>
-> >>> But again, I might just misunderstand the context here and for the
-> >>> bpf-lsm all of this isn't really a concern. If your new series comes out
-> >>> I'll try to get more into the wider context.
-> >>> If the security folks are happy with this then I won't argue.
-> >> A security module (BPF) using another security module's (Smack)
-> >> xattrs without that module's (Smack) explicit approval would be
-> >> considered extremely rude.  Smack and SELinux use published interfaces
-> >> of the capability security module, but never access the capability
-> >> attributes directly. The details of a security module's implementation
-> >> are not a factor. The fact that BPF uses loadable programs as opposed
-> >> to loadable policy is not relevant. The only security.xattr values
-> >> that the BPF security module should allow the programs it runs to
-> >> access are the ones it is managing. If you decided to create an eBPF
-> > What about kernel modules who can use __vfs_getxattr already as
-> > it's an exported symbol? This can still end up influencing
-> > security policy or using them in any way they like.
->
-> If I put code in Smack to read SELinux attributes I would expect
-> to get a possibly polite but definitely strongly worded email
-> from Paul Moore regarding that behavior. The integrity subsystem
-> looks at Smack and SELinux attributes, but that's upstream and
-> we can see what nefarious things are being done with them. Because
-> I can see the upstream kernel code I can convince myself that
-> regardless of the SELinux policy loaded SELinux isn't going to
-> muck with the Smack attributes. I can't say the same for eBPF
-> programs that aren't going to be in Linus' tree.
->
-> > Anyways, I think, for now, for the use case we have, it can work with
-> > a restriction to security.bpf xattrs.
->
-> I can't say that this whole discussion is making me feel better
-> about the BPF LSM concept. The approval was based on the notion
-> that eBPF programs were restricted to "safe" behavior. It's
-> hard to see how allowing access to security.selinux could be
-> guaranteed to be in support of safe behavior.
->
+Most in-kernel tests (such as KUnit tests) are not supposed to run on
+production systems: they may do deliberately illegal things to trigger
+errors, and have security implications (for example, KUnit assertions
+will often deliberately leak kernel addresses).
 
-Apropos __vfs_getxattr(), looks like ecryptfs_getxattr_lower()
-is abusing it.
-Christian, not sure if you intend to spend time of idmapped
-mount support of ecryptfs lower layer, but anyway that's that.
+Add a new taint type, TAINT_TEST to signal that a test has been run.
+This will be printed as 'N' (originally for kuNit, as every other
+sensible letter was taken.)
 
-Thanks,
-Amir.
+This should discourage people from running these tests on production
+systems, and to make it easier to tell if tests have been run
+accidentally (by loading the wrong configuration, etc.)
+
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: David Gow <davidgow@google.com>
+---
+
+Finally getting back to this, with the addition of a MODULE_INFO()
+to mark a module as a test module. This is automatically set for modules
+in the "tools/testing" directory by modpost (see patch #2).
+
+The 'N' character for the taint is even less useful now that it's no
+longer short for kuNit, but all the letters in TEST are taken. :-(
+
+Changes since v3:
+https://lore.kernel.org/lkml/20220513083212.3537869-1-davidgow@google.com/
+- Remove the mention of KUnit from the documentation.
+- Add Luis and Brendan's Acked/Reviewed-by tags.
+
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20220430030019.803481-1-davidgow@google.com/
+- Rename TAINT_KUNIT -> TAINT_TEST.
+- Split into separate patches for adding the taint, and triggering it.
+- Taint on a kselftest_module being loaded (patch 3/3)
+
+Changes since v1:
+https://lore.kernel.org/linux-kselftest/20220429043913.626647-1-davidgow@google.com/
+- Make the taint per-module, to handle the case when tests are in
+  (longer lasting) modules. (Thanks Greg KH).
+
+Note that this still has checkpatch.pl warnings around bracket
+placement, which are intentional as part of matching the surrounding
+code.
+
+---
+ Documentation/admin-guide/tainted-kernels.rst | 1 +
+ include/linux/panic.h                         | 3 ++-
+ kernel/panic.c                                | 1 +
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+index ceeed7b0798d..7d80e8c307d1 100644
+--- a/Documentation/admin-guide/tainted-kernels.rst
++++ b/Documentation/admin-guide/tainted-kernels.rst
+@@ -100,6 +100,7 @@ Bit  Log  Number  Reason that got the kernel tainted
+  15  _/K   32768  kernel has been live patched
+  16  _/X   65536  auxiliary taint, defined for and used by distros
+  17  _/T  131072  kernel was built with the struct randomization plugin
++ 18  _/N  262144  an in-kernel test has been run
+ ===  ===  ======  ========================================================
+ 
+ Note: The character ``_`` is representing a blank in this table to make reading
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index e71161da69c4..c7759b3f2045 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -68,7 +68,8 @@ static inline void set_arch_panic_timeout(int timeout, int arch_default_timeout)
+ #define TAINT_LIVEPATCH			15
+ #define TAINT_AUX			16
+ #define TAINT_RANDSTRUCT		17
+-#define TAINT_FLAGS_COUNT		18
++#define TAINT_TEST			18
++#define TAINT_FLAGS_COUNT		19
+ #define TAINT_FLAGS_MAX			((1UL << TAINT_FLAGS_COUNT) - 1)
+ 
+ struct taint_flag {
+diff --git a/kernel/panic.c b/kernel/panic.c
+index a3c758dba15a..6b3369e21026 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -428,6 +428,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
+ 	[ TAINT_AUX ]			= { 'X', ' ', true },
+ 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
++	[ TAINT_TEST ]			= { 'N', ' ', true },
+ };
+ 
+ /**
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
+
