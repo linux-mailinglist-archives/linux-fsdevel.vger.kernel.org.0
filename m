@@ -2,248 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B05563754
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 18:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C29A563760
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 18:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbiGAQDc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 12:03:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
+        id S230295AbiGAQGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 12:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231384AbiGAQDb (ORCPT
+        with ESMTP id S230285AbiGAQGJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 12:03:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 334EE1EC59
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 09:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656691409;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gscZC+lbayJaYo1pkT+jEcXOiGusMCk35lYaddpSCrQ=;
-        b=gh0F0KqW6iQbah68R0R63QA7xS0X95hLW+5XOH9dMcy6sTwksI80qMyD685uRO90e/1vxl
-        1s7/L9dV6Glze5eoU+ITf7YMqbRixyXMn2FNnUaK9VjhswjhlJApdiCFf8NLMYF88uLVZh
-        V3RqMs8ehzIFUVBgwDDzX0bhBptyReA=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-227-UHCaPeoNMqSmvVFF7n3KBA-1; Fri, 01 Jul 2022 12:03:27 -0400
-X-MC-Unique: UHCaPeoNMqSmvVFF7n3KBA-1
-Received: by mail-qt1-f199.google.com with SMTP id d4-20020ac86144000000b00319586f86fcso643625qtm.16
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 09:03:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gscZC+lbayJaYo1pkT+jEcXOiGusMCk35lYaddpSCrQ=;
-        b=Qf+BzfoEWeLIbVpxsxxqc5vXeRphwg3vLf52JGmxeh2wl3Va3HESnUa4noiTYkIdaR
-         CW7x+31zKdkEtGluImb22etWXu1ASst23iEZcgtyJpc4LvXxGbw5Pc71l/2HVPqNfCWd
-         R+6pLWn0X2jiqPFhv5zmkPCk9O/zKLFNITI5nhsyK/l4mxPA4CG1lL54ZwE4CLAEHkeC
-         wfOrXwB8SO/0bVJCGelUoDwsP6AYZLtqHvffT56Fs734ANiIJFLC4/x2Ca+bZLjPJDX5
-         RFYVm3gF+1bE7XbR8V7CVpGv0rk+QBSDFI1zStXGtdX4LFriJUCWUkSTOAU65k6+qzjP
-         wfbQ==
-X-Gm-Message-State: AJIora+tzwbVb7/zLSscToU1ayG5h9fkdit3NB2H5j54XbxeZN92gpMH
-        JWp74jRScIGcVd33HKhsjfkFakCU7/jNXdjyZuL+d32BBcrdlfusvmYmvJOle0rDZMATlne4k/r
-        WYEdSwpct7vxO/Jee7zb3FixA8w==
-X-Received: by 2002:a37:a7d3:0:b0:6ae:fdb9:e8e4 with SMTP id q202-20020a37a7d3000000b006aefdb9e8e4mr10821094qke.325.1656691406979;
-        Fri, 01 Jul 2022 09:03:26 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1t1iYX6rjVasonclgqOkCg3XboPMmcC14x0LLHDXq1Sopq++ualMy1pa8Lq3L2tngGTGEAphw==
-X-Received: by 2002:a37:a7d3:0:b0:6ae:fdb9:e8e4 with SMTP id q202-20020a37a7d3000000b006aefdb9e8e4mr10821008qke.325.1656691406093;
-        Fri, 01 Jul 2022 09:03:26 -0700 (PDT)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05620a16ac00b006a70f581243sm16748615qkj.93.2022.07.01.09.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 09:03:25 -0700 (PDT)
-Date:   Fri, 1 Jul 2022 12:03:23 -0400
-From:   Brian Foster <bfoster@redhat.com>
+        Fri, 1 Jul 2022 12:06:09 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1807F248E8;
+        Fri,  1 Jul 2022 09:06:07 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 261G3HEc011298;
+        Fri, 1 Jul 2022 16:05:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=ekxWYIshII2uG7rFbkVxDnfj1gvv/y6hsHfrcw6R8Fo=;
+ b=v80BxooYOEEo7eUXp3Vc2NmA/n6wuDnFTRtvwK0ac+NiAiteX3clgIG+cDN1rW4MaQ34
+ J+VED2XyDKL1esKRvtcyOHmfcLVk05Hjr6Ha/Oc0c4Q0Y9StU4BSxbKeo6UCZ3VCoyZL
+ tG7U3OeUNNe3QyAc7I4jhsm4+yfEQB941PObpw/FHWKvRzyQWlFzI7J0xtegJ9sjDdlJ
+ 7aJLf0LFqkgAKne4a4uNYsvlUrqZxQXnxglbX4Mm/lUUQcxOf/mUC9YeFnqijEhNl8dF
+ ygV/nxkmdAQFMaTKHVjdPaKuwAX+i79v2LcQX7oEdX7rlVZBPK1/I+DL6iN1SONjFHKr bQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gws52qm0e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Jul 2022 16:05:21 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 261FuV7d003649;
+        Fri, 1 Jul 2022 16:05:20 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2173.outbound.protection.outlook.com [104.47.56.173])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gwrt52hfk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Jul 2022 16:05:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q0fEa3Y3AulrAUCxnkmU091I56+FZGEHYeAEsEUZh2gpAQWhYT2lD82MIsG78h5TchVeIiYBRBb9LiNjvsSutQbQ7LVwYXfSi3vQ/6rzOKIP77ax0XtfDMmmauVLXLmZswe26FgfX3IUH64/tfYxlkC521cTNzZPHTb5WSFLXuWsgR0hPuiz3dBUZoTPJneU39WoixnSA6Qz+ESAWcvMeL0X9b+ysdd5DuoT7ilurL7vHSiRHZFny8Lir8+gShfKH/ZeAEENWbsDmMNWW0oJxPH7kpcVTkcibEUTbpjZK90O7eBulH6dUOnFIVZS2iX4d8RcctB31SYwhscsvPvpwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ekxWYIshII2uG7rFbkVxDnfj1gvv/y6hsHfrcw6R8Fo=;
+ b=ZKLK7CkdbV/h16gSxMgzCdax9oaqajWX7NfKRDHGf/CRK918CLmfejSILPTLyavOhL8cXC69KgAAzS0ZhNT7rFiIH24Xp2CobfqN4OMC7eMd2iOxexmeA9j38EnmUX6XUYfvgH9tAy9kZ8HZlbKSYOEL/H2Lrdl/7BGNFzubsifvuHd59SVRlZskuTsiuGwtVGRuGisPT58IJG149lmujrkogqCG1cxYAC9/MFymduCcSlgugOnBvAr/kVF0oKN/dRZoDhZg4lm+7JXoYp/9pTMns/9hz06XKRRgoPvxyBF8C1OM3gyQNoE7Qt++lsrw74qZHM8HBdMW6JWOy35sbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ekxWYIshII2uG7rFbkVxDnfj1gvv/y6hsHfrcw6R8Fo=;
+ b=Clf7ZP2+qrV40o9T2A+IO/VZbT/biUY1kaj0OnN1plWZZiJ5yvozWzqMKX8NlYOFHA2POBoq6MM2xxS4LbdsjDahxBBwLUfq/aNGyUFevw6XNnW+x188xIYvxdBAGXq1Rsn+tC8tzprCxG3RIjclmL6b7Z9+hPnAeFvZdKPbnSI=
+Received: from BN8PR10MB3220.namprd10.prod.outlook.com (2603:10b6:408:c8::18)
+ by DS7PR10MB5975.namprd10.prod.outlook.com (2603:10b6:8:9d::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5395.15; Fri, 1 Jul 2022 16:05:18 +0000
+Received: from BN8PR10MB3220.namprd10.prod.outlook.com
+ ([fe80::28d2:e82b:afa1:bbc2]) by BN8PR10MB3220.namprd10.prod.outlook.com
+ ([fe80::28d2:e82b:afa1:bbc2%3]) with mapi id 15.20.5373.022; Fri, 1 Jul 2022
+ 16:05:18 +0000
+Message-ID: <9a62cda7-d9ee-3456-8b41-0423db33a62c@oracle.com>
+Date:   Fri, 1 Jul 2022 10:05:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 1/9] mm: Add msharefs filesystem
+Content-Language: en-US
 To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-mm@kvack.org
-Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
- Support large folios)
-Message-ID: <Yr8ay3FJiL+7q0bW@bfoster>
-References: <Yrm6YM2uS+qOoPcn@casper.infradead.org>
- <YrosM1+yvMYliw2l@magnolia>
- <20220628073120.GI227878@dread.disaster.area>
- <YrrlrMK/7pyZwZj2@casper.infradead.org>
- <Yrrmq4hmJPkf5V7s@casper.infradead.org>
- <Yrr/oBlf1Eig8uKS@casper.infradead.org>
- <20220628221757.GJ227878@dread.disaster.area>
- <YruNE72sW4Aizq8U@magnolia>
- <YrxMOgIvKVe6u/uR@bfoster>
- <Yry0bkQRN4sGgTbf@magnolia>
+Cc:     akpm@linux-foundation.org, willy@infradead.org,
+        aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+References: <cover.1656531090.git.khalid.aziz@oracle.com>
+ <de5566e71e038d95342d00364c6760c7078cb091.1656531090.git.khalid.aziz@oracle.com>
+ <Yr4bREHJQV0oISSo@magnolia>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+In-Reply-To: <Yr4bREHJQV0oISSo@magnolia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P220CA0007.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::12) To BN8PR10MB3220.namprd10.prod.outlook.com
+ (2603:10b6:408:c8::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yry0bkQRN4sGgTbf@magnolia>
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 65f66d57-9311-4f43-6e9e-08da5b7b7dfe
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5975:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: eOUqZt6ngj2VNZZfqLyz+FpWnyb5hAPDT30aMqTOIBxgBOgy8YvbB1S5k7ivks8bpkuJ2IatuplwvAF0kM/J8HEmyfqXUoP2jBrifPm1C8FnhUfBf4YmXRSmZEHqJWA87aX5uKwF+34x82UqDbXeXQ5hX4DVTFueJfMNTBZvAG9Gs2ZQWmJyD0MpqurslUKK7QVJRewzKmRHoiUCwrucR5CtMBSlGwYxDDe9sy4hMaXYSK8UEiUYO3r3cZd2dsC2YIFjQVc8W/mWAyfCUucSH0UIQUOVxo5XT5JZJJG65qk4pxnKrniBaNXHlw1zr4n18QgKa6fpTGfzJ/rCJHq1A8Y8PmoAsb91Ta8nUlrkZSYWSCb8bHhvW041Kvrj4Om8jqn+d1dEFYOM1OSiwZQyvgcA2K2igYkQHXPVdCptsYtq+RdJQxM7ZSMLN0Mc9wLDnyCTdUo0X5LCYmVLsXmQn9NgyuC9RozkXzMONx+9ovspEn5z0IRusBVt7Xeh1jni7BhGadtcj2KOmdkYEv3DyGiHqLgIoHihZLtcIPa3GoXFPtoAjSv0qPFgjmDekpdc/sLiQ3s0/n7BTRPc4vXxEx40d9iWSjwc0B5f+1DJ/sqBVghsfrbSTlnYf+4OWj7bG6RgnMIWaAAVzPwxeSayyYiotHJ61w2AyixJTSiBwd8GZrSD9i7DBM8fRFkPeeJ2un8KA+tMTdYtN8VmkiEBO9mpwk62r5LcpO3mWDrav/+zhJy/T+rfJjMpOjfXQrxxZJU24h5LHXc8I29foVBxn0QUheMGnQn8/OR0ylZLNDAUAXd+FfaEcgt+UVvCd5DGESewaFROzrXF7KmM6vL8kojQIM4/AugJkyzX4a2fFLc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR10MB3220.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(136003)(39860400002)(396003)(376002)(366004)(36756003)(4326008)(66556008)(66476007)(66946007)(44832011)(8676002)(5660300002)(83380400001)(41300700001)(6486002)(2906002)(31686004)(316002)(6916009)(31696002)(8936002)(7416002)(478600001)(26005)(6506007)(86362001)(53546011)(2616005)(6666004)(38100700002)(6512007)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SnhRK0ZBZ1JwNXlXK25wTUo3MmVXOUNBTkxxNFFxanFBWkVaUi9vZGZGbmNP?=
+ =?utf-8?B?TzJ2b3dSMEs1OVJXVU1OT25KRFRwdkZzcjFNL3VaZUpEVko2ZktaSjZxVHdm?=
+ =?utf-8?B?QW41cGFOVmwwYVd5cE5qaHZueUcwYS9CMzRBZlg4VXJLMDdERVc5RXBhaFhx?=
+ =?utf-8?B?TDhTdDhqYmhnRVU3UFBmcmFoZThHN0hCNXUyQlZPSzJRVnJUVVZUQUlwUnZi?=
+ =?utf-8?B?QVkyRktsN3ZBWnpJZVhocGlBTGtBa0VKQ1FBa1JFZnB3cFQrcFRYMS9ocDBu?=
+ =?utf-8?B?cE1sYTY3NGRHM3lDejZZNStHbjdMZGtTWUxqRTB2QnFPWFgrMysrL09JVWlP?=
+ =?utf-8?B?bm9tUEI0UnYzRHBvMExBVi9FVytsTUZhMHc3ZXNjeXhqUWM2US9YZWwwdWZ3?=
+ =?utf-8?B?WldxZm9LMlgyeEtwVHFGT29lSzloRHlZdEI3V3JNOFZhMzYwd0w2VG9sVUxx?=
+ =?utf-8?B?WkZqNTZqMno0b21pVmt3S21XU21haHBlanBLQVB0ZlBSS0U1dVRDTFNoY1ZW?=
+ =?utf-8?B?YkFjYTFEUTgybU00SVhMRkVMdXptU0c2aGQwVmJsMk5BVnFzYStCQjBBQlZQ?=
+ =?utf-8?B?MVFMMXB1T3BVdHhLVGhBQk9EbnZValhJak53VWViaDNFQWJaa2RabUo1N29X?=
+ =?utf-8?B?R2xLbTAzWnBJZWszRjFRa1RxZFppL1lvdnlvQ2p3NWVuRVJmc2w5NytvYm04?=
+ =?utf-8?B?T1R1bnBOUHN6OFN5NGNPMW5LdFdFS1FxZkplaXk2Sk4rb3NjWkhjbUFPNTRE?=
+ =?utf-8?B?bXlmU1JXdklSakhjcjdMSWxaMVNJdzFPSllPRkJGWjNORmZBV1EzNTJJTktl?=
+ =?utf-8?B?ck0zY1UxU0FJM3dVYkpidk1URlhIcERZcDM4azBrbTNoSnF6amloYy9WbFVJ?=
+ =?utf-8?B?MTMvRGFiUlBLNENGVndDNHcvQUswdW4wQ05TTFNwdUVsY2dEMjBySUt2Zklm?=
+ =?utf-8?B?TUpNTkU5NG8wb3hSdzN3dVVhRmxRNHZnTy9BTTJFeE1TRkYzQkU2bVZCcnlk?=
+ =?utf-8?B?NGtpQklKbGxVMmE4MjdsVExRMjI4dDlVUEhMTWFSamRrbkJEc0NYNEJienps?=
+ =?utf-8?B?VzVrRWZYb2FHYTRaYUgzK0xSUjMxR3doOWJPM0s4b1pjR0QxOUVMRFpWaG42?=
+ =?utf-8?B?R2tiak5qZ210b1hqNHNsUGM0VFJZUDB1elgvbWtBUUwzZzhEZk5keHFkc3B4?=
+ =?utf-8?B?RnlXZGZtQUJRUzN4YUs4NjFTYXFoUXlNR0l5ZWZKb3pPWXhMSGRtbk9aQnV4?=
+ =?utf-8?B?Yys2QXVWZWZjUjlxWFVETi9qNHEySmxhN0FyNWlDUVU0WVJRTWVhK0d0K3Nk?=
+ =?utf-8?B?T3UvQzVMcFh3SVNWdW51VVpjNGZUSERqa09OcEIwd2xlc1h4eGNaNlZvZGk3?=
+ =?utf-8?B?QmVPZEdzQmtLWWtVSjRRRTFncmc3Q1dsYmtXOEJvczhFaEVJekhCUmEwWC9B?=
+ =?utf-8?B?ZStJSzNkcmEwcmlvL29lSVJPVy9XM1B3UTlab2xmeThNb09kSUxSQmFLMHEy?=
+ =?utf-8?B?b1JET3ZDK2dHZmdpZEJoS09naGFtQ2tXdjlXV3BNeWtQUlBHQkdWbk9YVGVW?=
+ =?utf-8?B?a1htcEJ1N3hzWXArejdFOHpoSklUWXdsdUEwdFlJR3IzRkh6WHNvUC8rbDRh?=
+ =?utf-8?B?NEdBOWVOTWN5cVdrK1FXQ01qMlh4bXlEek9ick1LVkk0TDVLQlFFM0ZJcXRw?=
+ =?utf-8?B?YWxtdWk5c0pNcmorUTZHUk81R3lialEzY2E4MStDdXRwakZXaC9vYmcwUTUx?=
+ =?utf-8?B?UTVtTjBwYUlNQXJiVmZuK1RCS2pYelUvMUNEVk5WUmgwWXVGWG1ZOHVwZDVj?=
+ =?utf-8?B?UkI3OFRkNktJMmhETUtLUXZuSnhQRG5zRHpTeS9LU1hCNFE0cElUMHc0cDVI?=
+ =?utf-8?B?T2tTK0pQaGthS0tiWUU0cGNFSDJLTWdsVk1nK1NleXJ3aFBOQmpzLzRBaUZi?=
+ =?utf-8?B?dkI4eVJyUXMyWVQzWEEzL3B2ZkRvcUhlTEVzU0E4QTlxK0tseDhVZml0Qzhr?=
+ =?utf-8?B?bWNMVEh5NEgwc0ZMMDI1NG9vL0NvS3NMMDI0bWsxVmRmVTJQbm55cmlFQ0gr?=
+ =?utf-8?B?bHhRbzVickg2cVhnZEpHbDA0Y1BETHpBMVo3RE9yZDNSNlY1eS9QQXFsT0Zk?=
+ =?utf-8?Q?2ized4kJDrTudzDRjHtZnZ0xZ?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65f66d57-9311-4f43-6e9e-08da5b7b7dfe
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR10MB3220.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 16:05:18.0840
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: P16A7jTuF/axdbfTL1eOovPeyr8NGLCHDZ7AMATpZov5ktZcFqLSCM3oaccXUMO9aqCgtU+PobAqFt0eT6Yp3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5975
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-07-01_08:2022-06-28,2022-07-01 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2207010063
+X-Proofpoint-ORIG-GUID: ZOzJjfeAGhG_VNJajNbO5cZDByOFpWoR
+X-Proofpoint-GUID: ZOzJjfeAGhG_VNJajNbO5cZDByOFpWoR
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 01:22:06PM -0700, Darrick J. Wong wrote:
-> On Wed, Jun 29, 2022 at 08:57:30AM -0400, Brian Foster wrote:
-> > On Tue, Jun 28, 2022 at 04:21:55PM -0700, Darrick J. Wong wrote:
-> > > On Wed, Jun 29, 2022 at 08:17:57AM +1000, Dave Chinner wrote:
-> > > > On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
-> > > > > On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
-> > > > > > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
-> > > > > > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
-> > > > > > > > So using this technique, I've discovered that there's a dirty page
-> > > > > > > > accounting leak that eventually results in fsx hanging in
-> > > > > > > > balance_dirty_pages().
-> > > > > > > 
-> > > > > > > Alas, I think this is only an accounting error, and not related to
-> > > > > > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
-> > > > > > > seeing is dirty pages being dropped at truncation without the
-> > > > > > > appropriate accounting.  ie this should be the fix:
-> > > > > > 
-> > > > > > Argh, try one that actually compiles.
-> > > > > 
-> > > > > ... that one's going to underflow the accounting.  Maybe I shouldn't
-> > > > > be writing code at 6am?
-> > > > > 
-> > > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > > > index f7248002dad9..4eec6ee83e44 100644
-> > > > > --- a/mm/huge_memory.c
-> > > > > +++ b/mm/huge_memory.c
-> > > > > @@ -18,6 +18,7 @@
-> > > > >  #include <linux/shrinker.h>
-> > > > >  #include <linux/mm_inline.h>
-> > > > >  #include <linux/swapops.h>
-> > > > > +#include <linux/backing-dev.h>
-> > > > >  #include <linux/dax.h>
-> > > > >  #include <linux/khugepaged.h>
-> > > > >  #include <linux/freezer.h>
-> > > > > @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> > > > >  		__split_huge_page_tail(head, i, lruvec, list);
-> > > > >  		/* Some pages can be beyond EOF: drop them from page cache */
-> > > > >  		if (head[i].index >= end) {
-> > > > > -			ClearPageDirty(head + i);
-> > > > > -			__delete_from_page_cache(head + i, NULL);
-> > > > > +			struct folio *tail = page_folio(head + i);
-> > > > > +
-> > > > >  			if (shmem_mapping(head->mapping))
-> > > > >  				shmem_uncharge(head->mapping->host, 1);
-> > > > > -			put_page(head + i);
-> > > > > +			else if (folio_test_clear_dirty(tail))
-> > > > > +				folio_account_cleaned(tail,
-> > > > > +					inode_to_wb(folio->mapping->host));
-> > > > > +			__filemap_remove_folio(tail, NULL);
-> > > > > +			folio_put(tail);
-> > > > >  		} else if (!PageAnon(page)) {
-> > > > >  			__xa_store(&head->mapping->i_pages, head[i].index,
-> > > > >  					head + i, 0);
-> > > > > 
-> > > > 
-> > > > Yup, that fixes the leak.
-> > > > 
-> > > > Tested-by: Dave Chinner <dchinner@redhat.com>
-> > > 
-> > > Four hours of generic/522 running is long enough to conclude that this
-> > > is likely the fix for my problem and migrate long soak testing to my
-> > > main g/522 rig and:
-> > > 
-> > > Tested-by: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > 
-> > Just based on Willy's earlier comment.. what I would probably be a
-> > little careful/curious about here is whether the accounting fix leads to
-> > an indirect behavior change that does impact reproducibility of the
-> > corruption problem. For example, does artificially escalated dirty page
-> > tracking lead to increased reclaim/writeback activity than might
-> > otherwise occur, and thus contend with the fs workload? Clearly it has
-> > some impact based on Dave's balance_dirty_pages() problem reproducer,
-> > but I don't know if it extends beyond that off the top of my head. That
-> > might make some sense if the workload is fsx, since that doesn't
-> > typically stress cache/memory usage the way a large fsstress workload or
-> > something might.
-> > 
-> > So for example, interesting questions might be... Do your corruption
-> > events happen to correspond with dirty page accounting crossing some
-> > threshold based on available memory in your test environment? Does
-> > reducing available memory affect reproducibility? Etc.
+On 6/30/22 15:53, Darrick J. Wong wrote:
+> On Wed, Jun 29, 2022 at 04:53:52PM -0600, Khalid Aziz wrote:
+>> Add a ram-based filesystem that contains page table sharing
+>> information and files that enables processes to share page tables.
+>> This patch adds the basic filesystem that can be mounted.
+>>
+>> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+>> ---
+>>   Documentation/filesystems/msharefs.rst |  19 +++++
+>>   include/uapi/linux/magic.h             |   1 +
+>>   mm/Makefile                            |   2 +-
+>>   mm/mshare.c                            | 103 +++++++++++++++++++++++++
+>>   4 files changed, 124 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/filesystems/msharefs.rst
+>>   create mode 100644 mm/mshare.c
+>>
+>> diff --git a/Documentation/filesystems/msharefs.rst b/Documentation/filesystems/msharefs.rst
+>> new file mode 100644
+>> index 000000000000..fd161f67045d
+>> --- /dev/null
+>> +++ b/Documentation/filesystems/msharefs.rst
+>> @@ -0,0 +1,19 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +
+>> +=====================================================
+>> +msharefs - a filesystem to support shared page tables
+>> +=====================================================
+>> +
+>> +msharefs is a ram-based filesystem that allows multiple processes to
+>> +share page table entries for shared pages.
+>> +
+>> +msharefs is typically mounted like this::
+>> +
+>> +	mount -t msharefs none /sys/fs/mshare
+>> +
+>> +When a process calls mshare syscall with a name for the shared address
+>> +range,
 > 
-> Yeah, I wonder that too now.  I managed to trace generic/522 a couple of
-> times before willy's patch dropped.  From what I could tell, a large
-> folio X would get page P assigned to the fsx file's page cache to cover
-> range R, dirtied, and written to disk.  At some point later, we'd
-> reflink into part of the file range adjacent to P, but not P itself.
-> I /think/ that should have caused the whole folio to get invalidated?
+> You mean creat()?
 > 
-> Then some more things happened (none of which dirtied R, according to
-> fsx) and then suddenly writeback would trigger on some page (don't know
-> which) that would write to the disk blocks backing R.  I'm fairly sure
-> that's where the incorrect disk contents came from.
+>> a file with the same name is created under msharefs with that
+>> +name. This file can be opened by another process, if permissions
+>> +allow, to query the addresses shared under this range. These files are
+>> +removed by mshare_unlink syscall and can not be deleted directly.
 > 
-> Next, we'd reflink part of the file range including R into a different
-> part of the file (call it R2).  fsx would read R2, bringing a new page
-> into cache, and it wouldn't match the fsxgood buffer, leading to fsx
-> aborting.
-> 
-> After a umount/mount cycle, reading R and R2 would both reveal the
-> incorrect contents that had caused fsx to abort.
+> Oh?
 > 
 
-FWIW, I hadn't been able to reproduce this in my default environment to
-this point. With the memory leak issue in the light, I was eventually
-able to by reducing dirty_bytes to something the system would be more
-likely to hit sooner (i.e. 16-32MB), but I also see stalling behavior
-and whatnot due to the leak that requires backing off from the specified
-dirty limit every so often.
+msharefs.rst needs to be updated.
 
-If I apply the accounting patch to avoid the leak and set
-dirty_background_bytes to something notably aggressive (1kB), the test
-survived 100 iterations or so before I stopped it. If I then set
-dirty_bytes to something similarly aggressive (1MB), I hit the failure
-on the next iteration (assuming it's the same problem). It's spinning
-again at ~25 or so iterations without a failure so far, so I'd have to
-wait and see how reliable the reproducer really is. Though if it doesn't
-reoccur soonish, perhaps I'll try reducing dirty_bytes a bit more...
+>> +Hence these files are created as immutable files.
+>> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+>> index f724129c0425..2a57a6ec6f3e 100644
+>> --- a/include/uapi/linux/magic.h
+>> +++ b/include/uapi/linux/magic.h
+>> @@ -105,5 +105,6 @@
+>>   #define Z3FOLD_MAGIC		0x33
+>>   #define PPC_CMM_MAGIC		0xc7571590
+>>   #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+>> +#define MSHARE_MAGIC		0x4d534852	/* "MSHR" */
+>>   
+>>   #endif /* __LINUX_MAGIC_H__ */
+>> diff --git a/mm/Makefile b/mm/Makefile
+>> index 6f9ffa968a1a..51a2ab9080d9 100644
+>> --- a/mm/Makefile
+>> +++ b/mm/Makefile
+>> @@ -37,7 +37,7 @@ CFLAGS_init-mm.o += $(call cc-disable-warning, override-init)
+>>   CFLAGS_init-mm.o += $(call cc-disable-warning, initializer-overrides)
+>>   
+>>   mmu-y			:= nommu.o
+>> -mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o \
+>> +mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o mshare.o \
+>>   			   mlock.o mmap.o mmu_gather.o mprotect.o mremap.o \
+>>   			   msync.o page_vma_mapped.o pagewalk.o \
+>>   			   pgtable-generic.o rmap.o vmalloc.o
+>> diff --git a/mm/mshare.c b/mm/mshare.c
+>> new file mode 100644
+>> index 000000000000..c8fab3869bab
+>> --- /dev/null
+>> +++ b/mm/mshare.c
+> 
+> Filesystems are usually supposed to live under fs/; is there some reason
+> to put it in mm/?
+> 
+> I guess shmfs is in mm so maybe this isn't much of an objection.
+> 
+> Also, should this fs be selectable via a Kconfig option?
 
-My suspicion based on these characteristics would be that the blocking
-limit triggers more aggressive reclaim/invalidation, and thus helps
-detect the problem sooner. If reflink is involved purely as a cache
-invalidation step (i.e. so a subsequent read will hit the disk and
-detect a cache inconsistency), then it might be interesting to see if it
-can still be reproduced without reflink operations enabled but instead
-with some combination of the -f/-X fsx flags to perform more flush
-invals and on-disk data checks..
+Since this filesystem is meant to support an mm feature, I felt it was more appropriate for it to reside under mm/, 
+similar to shmfs.
 
-Brian
+I could add a Kconfig option. The option would be to enable mshare feature. msharefs would automatically be enabled when 
+mshare is enabled, i.e. msharefs shouldn't be a visible Kconfig option. Do we see a reason to make mshare an optional 
+feature? If we can base hugetlbfs page table sharing on mshare in future, this will not be an optional feature at that 
+time and mshare kconfig option will have to be removed.
 
-> Unfortunately the second ftrace attempt ate some trace data, so I was
-> unable to figure out if the same thing happened again.
-> 
-> At this point I really need to get on reviewing patches for 5.20, so
-> I'll try to keep poking at this (examining the trace data requires a lot
-> of concentration which isn't really possible while sawzall construction
-> is going on at home) but at worst I can ask Linus to merge a patch for
-> 5.19 final that makes setting mapping_set_large_folio a
-> Kconfig/CONFIG_XFS_DEBUG option.
-> 
-> --D
-> 
-> > 
-> > Brian
-> > 
-> > > --D
-> > > 
-> > > > Cheers,
-> > > > 
-> > > > Dave.
-> > > > -- 
-> > > > Dave Chinner
-> > > > david@fromorbit.com
-> > > 
-> > 
-> 
+Thanks,
+Khalid
+
 
