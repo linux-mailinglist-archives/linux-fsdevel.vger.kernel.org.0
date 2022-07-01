@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 192AA562B7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 08:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F84562B83
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 08:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234859AbiGAGVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 02:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53980 "EHLO
+        id S234670AbiGAG0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 02:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234844AbiGAGVf (ORCPT
+        with ESMTP id S233243AbiGAG0N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 02:21:35 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F8235248
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 23:21:31 -0700 (PDT)
+        Fri, 1 Jul 2022 02:26:13 -0400
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB5A44A0A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 23:26:12 -0700 (PDT)
 Received: by nautica.notk.org (Postfix, from userid 108)
-        id 11D74C01E; Fri,  1 Jul 2022 08:21:29 +0200 (CEST)
+        id 19633C01E; Fri,  1 Jul 2022 08:26:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1656656489; bh=zIKmNp840b9jAGjrtkUGw4VRxAxHguosuIYLa47yB34=;
+        t=1656656771; bh=8KuF7lCMeR+mJs7SOLEYTdl0pzoWYDAVyDksIv/MR9k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ck7CI6knNtfWYVHVDT7aorZqEMVMCNoYIMXZYashId9EkNnYaUPib9MBNo0lVHd14
-         EcClPG3Qiml16eJdI52WoLW9GrD5t5QhFyk4/4E+DZGlqw2X7xQ4pXDagN1pgSglcM
-         fR8irGDjOEm1WcvlqdEQlpjO3YOmIVhqAY7e+b+NndTSahpcYK//Rz3d+qU7EO7H6p
-         MVFGgEdbJoYjEoMc7KH5AZzu8qUpd+wS0idsW+BoFsWU8g5vcv0+CzuCOT6qAGfxrU
-         TKyFy8k6T+MfpgL32SgXWPVRvGJvYlMG6PTlUDdbdlLhGzH+OOfiVbNq0aSCpCA/rH
-         +NmdmJttpPALw==
+        b=yOuBZ0zruDJp1YYOYUFn0crbg3yBquFi/ZLPuQkXgusgOjBcg61L2WwAvimukWJQc
+         kY2mfM2VeDc8bgS0Fqnh6RJ0b8jeUl5KjlBf8SLYQFbxTQAqf/WNI4gMu383S/Oelr
+         9qek1R82CgtronQ3A53bdgcdSZwclsEtDkqJK5qb74F3jDLeqrfqerxG2phtwfxWIc
+         1no7nzB3BUqJtAiZAxIP6tT65DJ2+dz567pz0vcI/bFAlYiqsz6YVqytPatvupXU5R
+         N7W4LNiUkYws5BMdNcIKeETNzyvoVBJqRRAyUcDgaRthIAEyVd/KFxYhlYZtxehUYC
+         P6z7awWOiAkQw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 X-Spam-Level: 
@@ -33,21 +33,21 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id AED61C009;
-        Fri,  1 Jul 2022 08:21:25 +0200 (CEST)
+        by nautica.notk.org (Postfix) with ESMTPS id 3294DC009;
+        Fri,  1 Jul 2022 08:26:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1656656488; bh=zIKmNp840b9jAGjrtkUGw4VRxAxHguosuIYLa47yB34=;
+        t=1656656769; bh=8KuF7lCMeR+mJs7SOLEYTdl0pzoWYDAVyDksIv/MR9k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pop9Eo/JxgIt9lF9/vdUcN6vNOipQIHTXutwEwzF+wd/NzBZD+seIXSqbqHcjcaez
-         lgdHflQLZRevOp3mHXJAz/cYa2VL8AlrCvtczWvWoqUHbCf1PKIdHNYZv4lODzeREm
-         nfylafu3O/GmpRE9f4XIqxPcCSIG3MFfUh5DlcOR/zmXhIyMI1F2CSpm3thOpYkQ+r
-         zp14AMCuOGTaSp0tsSvwf+0cuPfmCmzCv9Rbfmm+rVUlphvRDsjnccfyJo92Fmgr/Q
-         Qce7dgvBTu6kj8fyJWhE90ZoGqwNWrweh9yZUVmcWqiH+k/UxYII3wLU1OfcMDA90J
-         EsNa2Cob054Vw==
+        b=yKd0d/+Fx+Zuyzx49JTRyrfspYAW8eZ5bwr1VdCcFA8hM5cYN1sPRFOYO0Q1gp6Oa
+         NEb5DXkqZnkQ9KFRCs/Fro2hV8hYoWZo+3zqJ6YyJRZOqM/ygEpjngfJrdbYaQGORB
+         uqjDCHzcqibT7SOBtnW6aLAySGdZGmE111hSJF30fYC3pMnTzpZGmXo5XAJZfXfxoM
+         pXU3Lq6lhdS+HCS+oNfwih2IME7SER/HQHRkd1Bibir3yvOw4aM+TFQL/hKLW82ECv
+         zNMXgmrLQwKcfg2fIN5h4vpUA5H8pzAPvUshbIIm3ro/wP7/QleZ/3lhSZ2Pw/CUID
+         JCybneRW5cHVA==
 Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id b988fa74;
-        Fri, 1 Jul 2022 06:21:21 +0000 (UTC)
-Date:   Fri, 1 Jul 2022 15:21:06 +0900
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 058b78c1;
+        Fri, 1 Jul 2022 06:26:04 +0000 (UTC)
+Date:   Fri, 1 Jul 2022 15:25:49 +0900
 From:   Dominique Martinet <asmadeus@codewreck.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -55,9 +55,10 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>,
         David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
+        Christian Brauner <brauner@kernel.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>
 Subject: Re: [PATCH 01/44] 9p: handling Rerror without copy_from_iter_full()
-Message-ID: <Yr6SUlY7QZMmb04S@codewreck.org>
+Message-ID: <Yr6TbVQvu+noSzc8@codewreck.org>
 References: <YrKWRCOOWXPHRCKg@ZenIV>
  <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 MIME-Version: 1.0
@@ -67,6 +68,10 @@ In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
+
+
+(sigh, I'm tired -- said I'd add Christian in Ccs and promply forgot to
+do it. Sorry for double send to everyone else.)
 
 +Christian Schoenebeck in Ccs as that concerns qemu as well.
 
