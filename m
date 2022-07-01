@@ -2,212 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC0D562B40
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 08:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192AA562B7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 08:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233375AbiGAGKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 02:10:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
+        id S234859AbiGAGVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 02:21:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbiGAGKu (ORCPT
+        with ESMTP id S234844AbiGAGVf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 02:10:50 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08C61DA62;
-        Thu, 30 Jun 2022 23:10:49 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4F5945C0061;
-        Fri,  1 Jul 2022 02:10:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 01 Jul 2022 02:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1656655849; x=
-        1656742249; bh=k1W5DMoXurzbQJ/ZkPRxE74KndqCvp2BPtDKdSkedwI=; b=X
-        /VV+8trPBbb+vBv+SicCHaboOyjXmjEer0xpn0FMOPvwPjLaLAe7b3yZEJvZY8rm
-        q6yHDf/Tra+AyoTbYQlDtgu1/48T2oBhPbd3zlIroHVAYxj6GzzyN0UtT0lB+XO/
-        +mYUBPlUtEHmKWfHIHRYt4IXF4YcJWAEnfZXU0p6eAVuzTN/L1EXCU3hw1n+HzaP
-        eO/Aod+GrI4R3qMU8O899GKxf3DbLrTJpERXsx806gF4u+IQSjtadPrl3J9rEWlS
-        UCAVxHfo3ZmNetc6vrGrjKx4sz3HioKpmIHnzqp4Jx86NgWYCxrSi8t6Ps7abaVc
-        WLn3tDbxo8Z5liisPFjXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656655849; x=
-        1656742249; bh=k1W5DMoXurzbQJ/ZkPRxE74KndqCvp2BPtDKdSkedwI=; b=t
-        FbIizNm9mYjIE7LSip8RT434fbWbtZE9xivCXQAXIGgNv7uMpxPUqAXg1aiM40M3
-        Fd89Sfrl2RxTJ5sNxtC6VF8B8gjzwJegH1nGLZWOu4kw+NsZVu1ZCCo/QBpfdnrK
-        DG7V4FDoioQoT+DD3nF4dSYq5mejuAoYt4JPM526jUz0ntF9+Y7yd69hc64YLd+L
-        Dak7utSihyCSfaaqmP9lG54tKrVJbvw9aiAyem0mnZMaRdRMTQCpvAymuV4JcTAt
-        jdxEFq6JOjhg1j8T/tFpdXM14OYg+JFYKpKQqRgepzT9qP8AymOqGq3HhxzGf3cb
-        MmxSfpSKzHhik0Ms2tGAw==
-X-ME-Sender: <xms:6I--Yo4O5vJepmTh1536gCOnBmQgCQVODCjy4bYepUFaj9cOvyRBMA>
-    <xme:6I--Yp7i5fMylPGejt_gMz_h6rsFzGEy3PG9ONB5VxSQuFsVqGxqjlF1ds1CZPdR3
-    WPbTY4bObo5>
-X-ME-Received: <xmr:6I--YnfJg0e9TAfsqWIjPnoilpkC-YHN4Ztz0QxCaS0F9TknC9cErPVdXp54pI1nNIQBzixeVNrrAcMZrZ1NnTo32SwRV_3Y8ECDrWtwjDUIEgB3Kv6v>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehvddguddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgr
-    nhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrh
-    hnpeegvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvg
-    hnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:6I--YtIdtQpc0rJsBa5NvacxxESkQ6l5qgYpdgrLvX2H3n5JtwCMqQ>
-    <xmx:6I--YsIixB1cq32MmIeG-V1WSR7O_2Yh970MW-9zYIzmxG2hY4yTfQ>
-    <xmx:6I--Yuy0e6vHiTSS2C7qO5pEDHNiG787SvcmspOwRC9M2xpGrDZPEA>
-    <xmx:6Y--YhGv9LUUZuEfgdeP6J8gVVutX3CMCOGqshthkPOg74m0XSyg5g>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Jul 2022 02:10:46 -0400 (EDT)
-Message-ID: <22f9fbb7-a557-f372-7ede-92f0af338bd1@themaw.net>
-Date:   Fri, 1 Jul 2022 14:10:41 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [REPOST PATCH] nfs: fix port value parsing
-Content-Language: en-US
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "Anna.Schumaker@Netapp.com" <Anna.Schumaker@Netapp.com>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "SteveD@redhat.com" <SteveD@redhat.com>,
-        "bcodding@redhat.com" <bcodding@redhat.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-References: <165637590710.37553.7481596265813355098.stgit@donald.themaw.net>
- <cadcb382d47ef037c5b713b099ae46640dfea37d.camel@hammerspace.com>
- <ccd23a54-27b5-e65c-4a97-b169676c23bc@themaw.net>
- <891563475afc32c49fab757b8b56ecdc45b30641.camel@hammerspace.com>
- <fd23da3f-e242-da15-ab1c-3e53490a8577@themaw.net>
- <c81b95d2b68480ead9f3bb88d6cf5a82a43c73b8.camel@hammerspace.com>
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <c81b95d2b68480ead9f3bb88d6cf5a82a43c73b8.camel@hammerspace.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 1 Jul 2022 02:21:35 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F8235248
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jun 2022 23:21:31 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 11D74C01E; Fri,  1 Jul 2022 08:21:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1656656489; bh=zIKmNp840b9jAGjrtkUGw4VRxAxHguosuIYLa47yB34=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ck7CI6knNtfWYVHVDT7aorZqEMVMCNoYIMXZYashId9EkNnYaUPib9MBNo0lVHd14
+         EcClPG3Qiml16eJdI52WoLW9GrD5t5QhFyk4/4E+DZGlqw2X7xQ4pXDagN1pgSglcM
+         fR8irGDjOEm1WcvlqdEQlpjO3YOmIVhqAY7e+b+NndTSahpcYK//Rz3d+qU7EO7H6p
+         MVFGgEdbJoYjEoMc7KH5AZzu8qUpd+wS0idsW+BoFsWU8g5vcv0+CzuCOT6qAGfxrU
+         TKyFy8k6T+MfpgL32SgXWPVRvGJvYlMG6PTlUDdbdlLhGzH+OOfiVbNq0aSCpCA/rH
+         +NmdmJttpPALw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id AED61C009;
+        Fri,  1 Jul 2022 08:21:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1656656488; bh=zIKmNp840b9jAGjrtkUGw4VRxAxHguosuIYLa47yB34=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pop9Eo/JxgIt9lF9/vdUcN6vNOipQIHTXutwEwzF+wd/NzBZD+seIXSqbqHcjcaez
+         lgdHflQLZRevOp3mHXJAz/cYa2VL8AlrCvtczWvWoqUHbCf1PKIdHNYZv4lODzeREm
+         nfylafu3O/GmpRE9f4XIqxPcCSIG3MFfUh5DlcOR/zmXhIyMI1F2CSpm3thOpYkQ+r
+         zp14AMCuOGTaSp0tsSvwf+0cuPfmCmzCv9Rbfmm+rVUlphvRDsjnccfyJo92Fmgr/Q
+         Qce7dgvBTu6kj8fyJWhE90ZoGqwNWrweh9yZUVmcWqiH+k/UxYII3wLU1OfcMDA90J
+         EsNa2Cob054Vw==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id b988fa74;
+        Fri, 1 Jul 2022 06:21:21 +0000 (UTC)
+Date:   Fri, 1 Jul 2022 15:21:06 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 01/44] 9p: handling Rerror without copy_from_iter_full()
+Message-ID: <Yr6SUlY7QZMmb04S@codewreck.org>
+References: <YrKWRCOOWXPHRCKg@ZenIV>
+ <20220622041552.737754-1-viro@zeniv.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
++Christian Schoenebeck in Ccs as that concerns qemu as well.
 
-On 30/6/22 07:57, Trond Myklebust wrote:
-> On Thu, 2022-06-30 at 07:33 +0800, Ian Kent wrote:
->> On 29/6/22 23:33, Trond Myklebust wrote:
->>> On Wed, 2022-06-29 at 09:02 +0800, Ian Kent wrote:
->>>> On 28/6/22 22:34, Trond Myklebust wrote:
->>>>> On Tue, 2022-06-28 at 08:25 +0800, Ian Kent wrote:
->>>>>> The valid values of nfs options port and mountport are 0 to
->>>>>> USHRT_MAX.
->>>>>>
->>>>>> The fs parser will return a fail for port values that are
->>>>>> negative
->>>>>> and the sloppy option handling then returns success.
->>>>>>
->>>>>> But the sloppy option handling is meant to return success for
->>>>>> invalid
->>>>>> options not valid options with invalid values.
->>>>>>
->>>>>> Parsing these values as s32 rather than u32 prevents the
->>>>>> parser
->>>>>> from
->>>>>> returning a parse fail allowing the later USHRT_MAX option
->>>>>> check
->>>>>> to
->>>>>> correctly return a fail in this case. The result check could
->>>>>> be
->>>>>> changed
->>>>>> to use the int_32 union variant as well but leaving it as a
->>>>>> uint_32
->>>>>> check avoids using two logical compares instead of one.
->>>>>>
->>>>>> Signed-off-by: Ian Kent <raven@themaw.net>
->>>>>> ---
->>>>>>     fs/nfs/fs_context.c |    4 ++--
->>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
->>>>>> index 9a16897e8dc6..f4da1d2be616 100644
->>>>>> --- a/fs/nfs/fs_context.c
->>>>>> +++ b/fs/nfs/fs_context.c
->>>>>> @@ -156,14 +156,14 @@ static const struct fs_parameter_spec
->>>>>> nfs_fs_parameters[] = {
->>>>>>            fsparam_u32   ("minorversion",  Opt_minorversion),
->>>>>>            fsparam_string("mountaddr",     Opt_mountaddr),
->>>>>>            fsparam_string("mounthost",     Opt_mounthost),
->>>>>> -       fsparam_u32   ("mountport",     Opt_mountport),
->>>>>> +       fsparam_s32   ("mountport",     Opt_mountport),
->>>>>>            fsparam_string("mountproto",    Opt_mountproto),
->>>>>>            fsparam_u32   ("mountvers",     Opt_mountvers),
->>>>>>            fsparam_u32   ("namlen",        Opt_namelen),
->>>>>>            fsparam_u32   ("nconnect",      Opt_nconnect),
->>>>>>            fsparam_u32   ("max_connect",   Opt_max_connect),
->>>>>>            fsparam_string("nfsvers",       Opt_vers),
->>>>>> -       fsparam_u32   ("port",          Opt_port),
->>>>>> +       fsparam_s32   ("port",          Opt_port),
->>>>>>            fsparam_flag_no("posix",        Opt_posix),
->>>>>>            fsparam_string("proto",         Opt_proto),
->>>>>>            fsparam_flag_no("rdirplus",     Opt_rdirplus),
->>>>>>
->>>>>>
->>>>> Why don't we just check for the ENOPARAM return value from
->>>>> fs_parse()?
->>>> In this case I think the return will be EINVAL.
->>> My point is that 'sloppy' is only supposed to work to suppress the
->>> error in the case where an option is not found by the parser. That
->>> corresponds to the error ENOPARAM.
->> Well, yes, and that's why ENOPARAM isn't returned and shouldn't be.
->>
->> And if the sloppy option is given it doesn't get to check the value
->>
->> of the option, it just returns success which isn't right.
->>
->>
->>>> I think that's a bit to general for this case.
->>>>
->>>> This seemed like the most sensible way to fix it.
->>>>
->>> Your patch works around just one symptom of the problem instead of
->>> addressing the root cause.
->>>
->> Ok, how do you recommend I fix this?
->>
-> Maybe I'm missing something, but why not this?
->
-> 8<--------------------------------
-> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-> index 9a16897e8dc6..8f1f9b4af89d 100644
-> --- a/fs/nfs/fs_context.c
-> +++ b/fs/nfs/fs_context.c
-> @@ -484,7 +484,7 @@ static int nfs_fs_context_parse_param(struct
-> fs_context *fc,
->   
->   	opt = fs_parse(fc, nfs_fs_parameters, param, &result);
->   	if (opt < 0)
-> -		return ctx->sloppy ? 1 : opt;
-> +		return (opt == -ENOPARAM && ctx->sloppy) ? 1 : opt;
->   
->   	if (fc->security)
->   		ctx->has_sec_mnt_opts = 1;
->
-I tested this with the autofs connectathon tests I use which has lots of
+The patch I'm replying to is at
+https://lkml.kernel.org/r/20220622041552.737754-1-viro@zeniv.linux.org.uk
 
-success and fail cases. As expected there were no surprises, the tests
+Al Viro wrote on Wed, Jun 22, 2022 at 05:15:09AM +0100:
+>         p9_client_zc_rpc()/p9_check_zc_errors() are playing fast
+> and loose with copy_from_iter_full().
+> 
+> 	Reading from file is done by sending Tread request.  Response
+> consists of fixed-sized header (including the amount of data actually
+> read) followed by the data itself.
+> 
+> 	For zero-copy case we arrange the things so that the first
+> 11 bytes of reply go into the fixed-sized buffer, with the rest going
+> straight into the pages we want to read into.
+> 
+> 	What makes the things inconvenient is that sglist describing
+> what should go where has to be set *before* the reply arrives.  As
+> the result, if reply is an error, the things get interesting.  On success
+> we get
+> 	size[4] Rread tag[2] count[4] data[count]
+> For error layout varies depending upon the protocol variant -
+> in original 9P and 9P2000 it's
+> 	size[4] Rerror tag[2] len[2] error[len]
+> in 9P2000.U
+> 	size[4] Rerror tag[2] len[2] error[len] errno[4]
+> in 9P2000.L
+> 	size[4] Rlerror tag[2] errno[4]
+> 
+> 	The last case is nice and simple - we have an 11-byte response
+> that fits into the fixed-sized buffer we hoped to get an Rread into.
+> In other two, though, we get a variable-length string spill into the
+> pages we'd prepared for the data to be read.
+> 
+> 	Had that been in fixed-sized buffer (which is actually 4K),
+> we would've dealt with that the same way we handle non-zerocopy case.
+> However, for zerocopy it doesn't end up there, so we need to copy it
+> from those pages.
+> 
+> 	The trouble is, by the time we get around to that, the
+> references to pages in question are already dropped.  As the result,
+> p9_zc_check_errors() tries to get the data using copy_from_iter_full().
+> Unfortunately, the iov_iter it's trying to read from might *NOT* be
+> capable of that.  It is, after all, a data destination, not data source.
+> In particular, if it's an ITER_PIPE one, copy_from_iter_full() will
+> simply fail.
+> 
+> 	In ->zc_request() itself we do have those pages and dealing with
+> the problem in there would be a simple matter of memcpy_from_page()
+> into the fixed-sized buffer.  Moreover, it isn't hard to recognize
+> the (rare) case when such copying is needed.  That way we get rid of
+> p9_zc_check_errors() entirely - p9_check_errors() can be used instead
+> both for zero-copy and non-zero-copy cases.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-worked fine and gave the expected results.
+I ran basic tests with this, should be ok given the code path is never
+used on normal (9p2000.L) workloads.
 
 
-I'll send an updated patch, is a "Suggested-by" attribution sufficient
+I also tried 9p2000.u for principle and ... I have no idea if this works
+but it didn't seem to blow up there at least.
+The problem is that 9p2000.u just doesn't work well even without these
+patches, so I still stand by what I said about 9p2000.u and virtio (zc
+interface): we really can (and I think should) just say virtio doesn't
+support 9p2000.u.
+(and could then further simplify this)
 
-or would you like something different?
+If you're curious, 9p2000.u hangs without your patch on at least two
+different code paths (trying to read a huge buffer aborts sending a
+reply because msize is too small instead of clamping it, that one has a
+qemu warning message; but there are others ops like copyrange that just
+fail silently and I didn't investigate)
+
+I'd rather not fool someone into believing we support it when nobody has
+time to maintain it and it fails almost immediately when user requests
+some unusual IO patterns... And I definitely don't have time to even try
+fixing it.
+I'll suggest the same thing to qemu lists if we go that way.
 
 
-Ian
+Anyway, for anything useful:
 
+Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
+Tested-by: Dominique Martinet <asmadeus@codewreck.org>
+
+--
+Dominique
