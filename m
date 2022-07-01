@@ -2,71 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C24562AC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 07:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC0D562B40
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 08:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233411AbiGAFO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 01:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
+        id S233375AbiGAGKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 02:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbiGAFOz (ORCPT
+        with ESMTP id S234693AbiGAGKu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 01:14:55 -0400
-Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C2BD6677EE;
-        Thu, 30 Jun 2022 22:14:53 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3AJLjYGq6B6cmXTrRbn3QZXwxRtJbFchMFZxGqfqr?=
- =?us-ascii?q?LsXjdYENS12RVy2McX2/UPKnYZzPxKohxPorjpBkF7JCGx4cwT1A5pCpnJ55og?=
- =?us-ascii?q?ZCbXIzGdC8cHM8zwvXrFRsht4NHAjX5BJhcokT0+1H9YtANkVEmjfvSHuCkUba?=
- =?us-ascii?q?dUsxMbVQMpBkJ2EsLd9ER0tYAbeiRW2thiPuqyyHtEAbNNw1cbgr435m+RCZH5?=
- =?us-ascii?q?5wejt+3UmsWPpintHeG/5Uc4Ql2yauZdxMUSaEMdgK2qnqq8V23wo/Z109F5tK?=
- =?us-ascii?q?NmbC9fFAIQ6LJIE6FjX8+t6qK20AE/3JtlP1gcqd0hUR/0l1lm/hr1dxLro32R?=
- =?us-ascii?q?wEyIoXCheYcTwJFVSp5OMWq/Zeeeyfn4JLPlB2un3zEhq8G4FsNFYER5Od7KW9?=
- =?us-ascii?q?U8vkfMjoMclaIgOfe6LKwSsFtgMo5JcXmNY9ZvWtvpRnVD+khR5/rQKjQ49Jcm?=
- =?us-ascii?q?jAqiahmG+jSZs8cQT5udwjbJRlOPEoHTp4zgo+Agnj5bi0dpkmZqLQ650DNwwF?=
- =?us-ascii?q?rlrvgKtzYfpqNX8o9tkKZoH/Wumf0GBcXMPSBxjeftHGhnOnCmWX8Qo16PLm58?=
- =?us-ascii?q?ON6xU2d3UQNBxAME1i2u/+0jgi5Qd03FqC+0kLCtoBrrAryEIa7BEb+/Ra5Utc?=
- =?us-ascii?q?nc4I4O4UHBMulk8I4OzqkO1U=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AKuVcIKPFYuaVXMBcTiWjsMiBIKoaSvp037Eq?=
- =?us-ascii?q?v3oBKyC9Ffbo7vxG/c5rsyMc5wx/ZJhNo6HlBEDEewK6yXcX2+cs1NWZMDUO0V?=
- =?us-ascii?q?HAROoJgLcKgQeQfhEWndQ86U4PSdkcNDS9NzlHZNjBkXSFOudl0N+a67qpmOub?=
- =?us-ascii?q?639sSDthY6Zm4xwRMHfhLmRGABlBGYEiFIeRou5Opz+bc3wRacihQlYfWeyrna?=
- =?us-ascii?q?ywqLvWJQ4BGwU86BSDyReh6LvBGRCe2RsEFxNjqI1SiVT4rw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="127096438"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 01 Jul 2022 13:14:52 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id B88394D1719A;
-        Fri,  1 Jul 2022 13:14:51 +0800 (CST)
-Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Fri, 1 Jul 2022 13:14:50 +0800
-Received: from [192.168.22.78] (10.167.225.141) by
- G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Fri, 1 Jul 2022 13:14:53 +0800
-Message-ID: <07805923-6455-e046-8c0a-60ed99d1fb38@fujitsu.com>
-Date:   Fri, 1 Jul 2022 13:14:51 +0800
+        Fri, 1 Jul 2022 02:10:50 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08C61DA62;
+        Thu, 30 Jun 2022 23:10:49 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4F5945C0061;
+        Fri,  1 Jul 2022 02:10:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 01 Jul 2022 02:10:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1656655849; x=
+        1656742249; bh=k1W5DMoXurzbQJ/ZkPRxE74KndqCvp2BPtDKdSkedwI=; b=X
+        /VV+8trPBbb+vBv+SicCHaboOyjXmjEer0xpn0FMOPvwPjLaLAe7b3yZEJvZY8rm
+        q6yHDf/Tra+AyoTbYQlDtgu1/48T2oBhPbd3zlIroHVAYxj6GzzyN0UtT0lB+XO/
+        +mYUBPlUtEHmKWfHIHRYt4IXF4YcJWAEnfZXU0p6eAVuzTN/L1EXCU3hw1n+HzaP
+        eO/Aod+GrI4R3qMU8O899GKxf3DbLrTJpERXsx806gF4u+IQSjtadPrl3J9rEWlS
+        UCAVxHfo3ZmNetc6vrGrjKx4sz3HioKpmIHnzqp4Jx86NgWYCxrSi8t6Ps7abaVc
+        WLn3tDbxo8Z5liisPFjXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656655849; x=
+        1656742249; bh=k1W5DMoXurzbQJ/ZkPRxE74KndqCvp2BPtDKdSkedwI=; b=t
+        FbIizNm9mYjIE7LSip8RT434fbWbtZE9xivCXQAXIGgNv7uMpxPUqAXg1aiM40M3
+        Fd89Sfrl2RxTJ5sNxtC6VF8B8gjzwJegH1nGLZWOu4kw+NsZVu1ZCCo/QBpfdnrK
+        DG7V4FDoioQoT+DD3nF4dSYq5mejuAoYt4JPM526jUz0ntF9+Y7yd69hc64YLd+L
+        Dak7utSihyCSfaaqmP9lG54tKrVJbvw9aiAyem0mnZMaRdRMTQCpvAymuV4JcTAt
+        jdxEFq6JOjhg1j8T/tFpdXM14OYg+JFYKpKQqRgepzT9qP8AymOqGq3HhxzGf3cb
+        MmxSfpSKzHhik0Ms2tGAw==
+X-ME-Sender: <xms:6I--Yo4O5vJepmTh1536gCOnBmQgCQVODCjy4bYepUFaj9cOvyRBMA>
+    <xme:6I--Yp7i5fMylPGejt_gMz_h6rsFzGEy3PG9ONB5VxSQuFsVqGxqjlF1ds1CZPdR3
+    WPbTY4bObo5>
+X-ME-Received: <xmr:6I--YnfJg0e9TAfsqWIjPnoilpkC-YHN4Ztz0QxCaS0F9TknC9cErPVdXp54pI1nNIQBzixeVNrrAcMZrZ1NnTo32SwRV_3Y8ECDrWtwjDUIEgB3Kv6v>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehvddguddtkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepkfgr
+    nhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrh
+    hnpeegvdetvedvfeeivdeuueejgeetvdehlefhheethfekgfejueffgeeugfekudfhjeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvg
+    hnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:6I--YtIdtQpc0rJsBa5NvacxxESkQ6l5qgYpdgrLvX2H3n5JtwCMqQ>
+    <xmx:6I--YsIixB1cq32MmIeG-V1WSR7O_2Yh970MW-9zYIzmxG2hY4yTfQ>
+    <xmx:6I--Yuy0e6vHiTSS2C7qO5pEDHNiG787SvcmspOwRC9M2xpGrDZPEA>
+    <xmx:6Y--YhGv9LUUZuEfgdeP6J8gVVutX3CMCOGqshthkPOg74m0XSyg5g>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 1 Jul 2022 02:10:46 -0400 (EDT)
+Message-ID: <22f9fbb7-a557-f372-7ede-92f0af338bd1@themaw.net>
+Date:   Fri, 1 Jul 2022 14:10:41 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
-To:     "Darrick J. Wong" <djwong@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-        <david@fromorbit.com>, <hch@infradead.org>
-References: <20220609143435.393724-1-ruansy.fnst@fujitsu.com>
- <Yr5AV5HaleJXMmUm@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <Yr5AV5HaleJXMmUm@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [REPOST PATCH] nfs: fix port value parsing
+Content-Language: en-US
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        "Anna.Schumaker@Netapp.com" <Anna.Schumaker@Netapp.com>
+Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "SteveD@redhat.com" <SteveD@redhat.com>,
+        "bcodding@redhat.com" <bcodding@redhat.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+References: <165637590710.37553.7481596265813355098.stgit@donald.themaw.net>
+ <cadcb382d47ef037c5b713b099ae46640dfea37d.camel@hammerspace.com>
+ <ccd23a54-27b5-e65c-4a97-b169676c23bc@themaw.net>
+ <891563475afc32c49fab757b8b56ecdc45b30641.camel@hammerspace.com>
+ <fd23da3f-e242-da15-ab1c-3e53490a8577@themaw.net>
+ <c81b95d2b68480ead9f3bb88d6cf5a82a43c73b8.camel@hammerspace.com>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <c81b95d2b68480ead9f3bb88d6cf5a82a43c73b8.camel@hammerspace.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: B88394D1719A.AFAA7
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -74,61 +98,116 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-
-在 2022/7/1 8:31, Darrick J. Wong 写道:
-> On Thu, Jun 09, 2022 at 10:34:35PM +0800, Shiyang Ruan wrote:
->> Failure notification is not supported on partitions.  So, when we mount
->> a reflink enabled xfs on a partition with dax option, let it fail with
->> -EINVAL code.
+On 30/6/22 07:57, Trond Myklebust wrote:
+> On Thu, 2022-06-30 at 07:33 +0800, Ian Kent wrote:
+>> On 29/6/22 23:33, Trond Myklebust wrote:
+>>> On Wed, 2022-06-29 at 09:02 +0800, Ian Kent wrote:
+>>>> On 28/6/22 22:34, Trond Myklebust wrote:
+>>>>> On Tue, 2022-06-28 at 08:25 +0800, Ian Kent wrote:
+>>>>>> The valid values of nfs options port and mountport are 0 to
+>>>>>> USHRT_MAX.
+>>>>>>
+>>>>>> The fs parser will return a fail for port values that are
+>>>>>> negative
+>>>>>> and the sloppy option handling then returns success.
+>>>>>>
+>>>>>> But the sloppy option handling is meant to return success for
+>>>>>> invalid
+>>>>>> options not valid options with invalid values.
+>>>>>>
+>>>>>> Parsing these values as s32 rather than u32 prevents the
+>>>>>> parser
+>>>>>> from
+>>>>>> returning a parse fail allowing the later USHRT_MAX option
+>>>>>> check
+>>>>>> to
+>>>>>> correctly return a fail in this case. The result check could
+>>>>>> be
+>>>>>> changed
+>>>>>> to use the int_32 union variant as well but leaving it as a
+>>>>>> uint_32
+>>>>>> check avoids using two logical compares instead of one.
+>>>>>>
+>>>>>> Signed-off-by: Ian Kent <raven@themaw.net>
+>>>>>> ---
+>>>>>>     fs/nfs/fs_context.c |    4 ++--
+>>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+>>>>>> index 9a16897e8dc6..f4da1d2be616 100644
+>>>>>> --- a/fs/nfs/fs_context.c
+>>>>>> +++ b/fs/nfs/fs_context.c
+>>>>>> @@ -156,14 +156,14 @@ static const struct fs_parameter_spec
+>>>>>> nfs_fs_parameters[] = {
+>>>>>>            fsparam_u32   ("minorversion",  Opt_minorversion),
+>>>>>>            fsparam_string("mountaddr",     Opt_mountaddr),
+>>>>>>            fsparam_string("mounthost",     Opt_mounthost),
+>>>>>> -       fsparam_u32   ("mountport",     Opt_mountport),
+>>>>>> +       fsparam_s32   ("mountport",     Opt_mountport),
+>>>>>>            fsparam_string("mountproto",    Opt_mountproto),
+>>>>>>            fsparam_u32   ("mountvers",     Opt_mountvers),
+>>>>>>            fsparam_u32   ("namlen",        Opt_namelen),
+>>>>>>            fsparam_u32   ("nconnect",      Opt_nconnect),
+>>>>>>            fsparam_u32   ("max_connect",   Opt_max_connect),
+>>>>>>            fsparam_string("nfsvers",       Opt_vers),
+>>>>>> -       fsparam_u32   ("port",          Opt_port),
+>>>>>> +       fsparam_s32   ("port",          Opt_port),
+>>>>>>            fsparam_flag_no("posix",        Opt_posix),
+>>>>>>            fsparam_string("proto",         Opt_proto),
+>>>>>>            fsparam_flag_no("rdirplus",     Opt_rdirplus),
+>>>>>>
+>>>>>>
+>>>>> Why don't we just check for the ENOPARAM return value from
+>>>>> fs_parse()?
+>>>> In this case I think the return will be EINVAL.
+>>> My point is that 'sloppy' is only supposed to work to suppress the
+>>> error in the case where an option is not found by the parser. That
+>>> corresponds to the error ENOPARAM.
+>> Well, yes, and that's why ENOPARAM isn't returned and shouldn't be.
 >>
->> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> 
-> Looks good to me, though I think this patch applies to ... wherever all
-> those rmap+reflink+dax patches went.  I think that's akpm's tree, right?
-
-Yes, they are in his tree, still in mm-unstable now.
-
-> 
-> Ideally this would go in through there to keep the pieces together, but
-> I don't mind tossing this in at the end of the 5.20 merge window if akpm
-> is unwilling.
-
-Both are fine to me.  Thanks!
-
-
---
-Ruan.
-
-> 
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> --D
-> 
->> ---
->>   fs/xfs/xfs_super.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
+>> And if the sloppy option is given it doesn't get to check the value
 >>
->> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
->> index 8495ef076ffc..a3c221841fa6 100644
->> --- a/fs/xfs/xfs_super.c
->> +++ b/fs/xfs/xfs_super.c
->> @@ -348,8 +348,10 @@ xfs_setup_dax_always(
->>   		goto disable_dax;
->>   	}
->>   
->> -	if (xfs_has_reflink(mp)) {
->> -		xfs_alert(mp, "DAX and reflink cannot be used together!");
->> +	if (xfs_has_reflink(mp) &&
->> +	    bdev_is_partition(mp->m_ddev_targp->bt_bdev)) {
->> +		xfs_alert(mp,
->> +			"DAX and reflink cannot work with multi-partitions!");
->>   		return -EINVAL;
->>   	}
->>   
->> -- 
->> 2.36.1
+>> of the option, it just returns success which isn't right.
 >>
 >>
+>>>> I think that's a bit to general for this case.
+>>>>
+>>>> This seemed like the most sensible way to fix it.
+>>>>
+>>> Your patch works around just one symptom of the problem instead of
+>>> addressing the root cause.
+>>>
+>> Ok, how do you recommend I fix this?
 >>
+> Maybe I'm missing something, but why not this?
+>
+> 8<--------------------------------
+> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+> index 9a16897e8dc6..8f1f9b4af89d 100644
+> --- a/fs/nfs/fs_context.c
+> +++ b/fs/nfs/fs_context.c
+> @@ -484,7 +484,7 @@ static int nfs_fs_context_parse_param(struct
+> fs_context *fc,
+>   
+>   	opt = fs_parse(fc, nfs_fs_parameters, param, &result);
+>   	if (opt < 0)
+> -		return ctx->sloppy ? 1 : opt;
+> +		return (opt == -ENOPARAM && ctx->sloppy) ? 1 : opt;
+>   
+>   	if (fc->security)
+>   		ctx->has_sec_mnt_opts = 1;
+>
+I tested this with the autofs connectathon tests I use which has lots of
 
+success and fail cases. As expected there were no surprises, the tests
+
+worked fine and gave the expected results.
+
+
+I'll send an updated patch, is a "Suggested-by" attribution sufficient
+
+or would you like something different?
+
+
+Ian
 
