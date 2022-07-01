@@ -2,53 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 988E45634A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 15:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A7F5634FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 16:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231555AbiGANrc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 09:47:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40980 "EHLO
+        id S231889AbiGAOTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 10:19:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231557AbiGANrb (ORCPT
+        with ESMTP id S230029AbiGAOTK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 09:47:31 -0400
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 033102252F
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 06:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=Go8HaF3VoPFHkP1B+Cs94du0xGeGCJofe/qVsbIPjkI=; b=P+Ok4CmVFAuqyeWMyzkEVmSGmN
-        v2npl2aO+/twyehOX6N73lfvkARlPcAMKx+vIaELSTRMGLNkNy6PDgBmereWviFoRLvUgR+a1UqpK
-        Zl0aMBja+btfhJhNoIkCqhUWpbJJ+euffRYv8EJOOIpotpm7SY6jIwTwJ9hRbyCmHYO31wOenNwXU
-        EE3CtHjq4+vJn9ovTh1VucmdIYc7otyiuKpnS/HddRNR1nyr8A3VvOca+DEFHV5+ruk5NNk7eBHHY
-        p26IXmIbZEYyiGCMfP3UkBdjURvpGXhpm00jIctQFMn6yiOdxdYmAkoZ8etA34DO8xXobMaIgajgE
-        UR1aBYpvchUTHo7z1dlZqtce9+7t3pMUrPd6+o7faJAyVqT0j5P/wlZ5bbQkFXFyH50TSAJbKSIV2
-        OjCxwdwLjBvWxvB/dM+ylMO0Akra3PFiUmVz0MzvMoHD1OCosd2JQ9yO1Jm6KCw5o9pxBwXdUWfXm
-        Wdl2JrUUtCT853x0iEKU8dyJ+18WD0kMAd5U8GV5AeANVN7UQT2kTHXzZom7n4RmsDIqzvGzaODil
-        +1zQxUH5rQSDEN07KKx5EdbkqXjPbiqd6fL/VuB47Mg/0YIm0BXNgcutzCLVpHkAxdbZXIsjfq3OP
-        CIpapsct0BUIZeuUkc23CGgVRM98yvfja3f9D7OOg=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 40/44] 9p: convert to advancing variant of
- iov_iter_get_pages_alloc()
-Date:   Fri, 01 Jul 2022 15:47:24 +0200
-Message-ID: <7966323.F5XntFNgCk@silver>
-In-Reply-To: <20220622041552.737754-40-viro@zeniv.linux.org.uk>
-References: <YrKWRCOOWXPHRCKg@ZenIV> <20220622041552.737754-1-viro@zeniv.linux.org.uk>
- <20220622041552.737754-40-viro@zeniv.linux.org.uk>
+        Fri, 1 Jul 2022 10:19:10 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BA830F41
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 07:19:09 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id l6so2493180plg.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 07:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=rzOZ/i9oSJaRcIRoI1iWhltC/vefgetj7tSZBTo878o=;
+        b=5HQrr8bsUEE61UmPmshuXLouerN7bDpQGL6uPBj0Z6oD+Z+BzfeXdXxfm+HPdIICP6
+         /xCJl1spZE4rJ97OF6puWsMJeHT9fvWxiRJbInko4k9KIJa9H4KxjwB5wo6cnUvHyRFj
+         3sa5jGx+4i/PgAp+XuwaejZ9X4yU18bWxPPbSJ0UKI9Z/6uHpbhVEcuSij4DdWW05JlZ
+         rCM4EpDrWg0Cx81bPnObzhqxBdnMW586nX+S86OWrQyBaK4GXuBJJfPgVpsJaUqMJBNT
+         j26E0dFwkFVt/aYyW3ZaB1RbYsySGLK4uO5JiaNKqgQcAS22gmYw9jOHmKP7CkOyB0aw
+         FYNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=rzOZ/i9oSJaRcIRoI1iWhltC/vefgetj7tSZBTo878o=;
+        b=AQBKRdOlRjInQhiEXUJOvwfdMFDTd7QSF4wTAHpYaGDcz5afByh58JXbM5FkG1Kdws
+         IhlgruiYy1wR1fLE0CbwkYH3b25kL/Oqqe9FIhgJiYlN6ctkVO8o1DA3X2EmKdwMtW+K
+         4Bsy7KuJj0jnzFbWPGcOo/aoWABf+NmdY9AT9/daaEuW75Dx1uljdZ92mfiBG173R6ig
+         Ri0xRyO1x4X+lILFdAeC4anG6a3KnLPBUrIdPjOGOQvd0/ACGBlipS3GCAoRSjjXFlLp
+         dGBHtqvvGfiquKFMm68eOeNRKI6JOcvEfIaKftG2YKFfHGCtYgCsWWSlPa3M/GthqgnJ
+         jvRA==
+X-Gm-Message-State: AJIora8iBMKgSFs8KHwymCORgRPapxKIBRQvjNtvoBpebh7517tw2gUe
+        XBpGstjyzzH7PivmqMi7j0IbNQ==
+X-Google-Smtp-Source: AGRyM1v0RzZrxH3XgsAPTjbzNfvNy9O3MwTKLMrckgh2iet5mvp0kq7mJYZDwHlDICGwRoI1VcItsw==
+X-Received: by 2002:a17:90b:17c3:b0:1ed:157:b9f1 with SMTP id me3-20020a17090b17c300b001ed0157b9f1mr17066106pjb.205.1656685148583;
+        Fri, 01 Jul 2022 07:19:08 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g8-20020a62e308000000b005251ff30dccsm15615879pfh.160.2022.07.01.07.19.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Jul 2022 07:19:07 -0700 (PDT)
+Message-ID: <0a75a0c4-e2e5-b403-27bc-e43872fecdc1@kernel.dk>
+Date:   Fri, 1 Jul 2022 08:19:06 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v7 15/15] xfs: Add async buffered write support
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>, Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20220601210141.3773402-1-shr@fb.com>
+ <20220601210141.3773402-16-shr@fb.com> <Yr56ci/IZmN0S9J6@ZenIV>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Yr56ci/IZmN0S9J6@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,173 +76,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mittwoch, 22. Juni 2022 06:15:48 CEST Al Viro wrote:
-> that one is somewhat clumsier than usual and needs serious testing.
+On 6/30/22 10:39 PM, Al Viro wrote:
+> On Wed, Jun 01, 2022 at 02:01:41PM -0700, Stefan Roesch wrote:
+>> This adds the async buffered write support to XFS. For async buffered
+>> write requests, the request will return -EAGAIN if the ilock cannot be
+>> obtained immediately.
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> breaks generic/471...
 
-Hi Al,
+That test case is odd, because it makes some weird assumptions about
+what RWF_NOWAIT means. Most notably that it makes it mean if we should
+instantiate blocks or not. Where did those assumed semantics come from?
+On the read side, we have clearly documented that it should "not wait
+for data which is not immediately available".
 
-it took me a bit to find the patch that introduces
-iov_iter_get_pages_alloc2(), but this patch itself looks fine:
+Now it is possible that we're returning a spurious -EAGAIN here when we
+should not be. And that would be a bug imho. I'll dig in and see what's
+going on.
 
-Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
-
-Please give me some days for thorough testing. We recently had 9p broken (with
-cache=loose) for half a year, so I would like to avoid repetition.
-
-Best regards,
-Christian Schoenebeck
-
-> ---
->  net/9p/client.c       | 39 +++++++++++++++++++++++----------------
->  net/9p/protocol.c     |  3 +--
->  net/9p/trans_virtio.c |  3 ++-
->  3 files changed, 26 insertions(+), 19 deletions(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index d403085b9ef5..cb4324211561 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -1491,7 +1491,7 @@ p9_client_read_once(struct p9_fid *fid, u64 offset,
-> struct iov_iter *to, struct p9_client *clnt = fid->clnt;
->  	struct p9_req_t *req;
->  	int count = iov_iter_count(to);
-> -	int rsize, non_zc = 0;
-> +	int rsize, received, non_zc = 0;
->  	char *dataptr;
-> 
->  	*err = 0;
-> @@ -1520,36 +1520,40 @@ p9_client_read_once(struct p9_fid *fid, u64 offset,
-> struct iov_iter *to, }
->  	if (IS_ERR(req)) {
->  		*err = PTR_ERR(req);
-> +		if (!non_zc)
-> +			iov_iter_revert(to, count - iov_iter_count(to));
->  		return 0;
->  	}
-> 
->  	*err = p9pdu_readf(&req->rc, clnt->proto_version,
-> -			   "D", &count, &dataptr);
-> +			   "D", &received, &dataptr);
->  	if (*err) {
-> +		if (!non_zc)
-> +			iov_iter_revert(to, count - iov_iter_count(to));
->  		trace_9p_protocol_dump(clnt, &req->rc);
->  		p9_tag_remove(clnt, req);
->  		return 0;
->  	}
-> -	if (rsize < count) {
-> -		pr_err("bogus RREAD count (%d > %d)\n", count, rsize);
-> -		count = rsize;
-> +	if (rsize < received) {
-> +		pr_err("bogus RREAD count (%d > %d)\n", received, rsize);
-> +		received = rsize;
->  	}
-> 
->  	p9_debug(P9_DEBUG_9P, "<<< RREAD count %d\n", count);
-> 
->  	if (non_zc) {
-> -		int n = copy_to_iter(dataptr, count, to);
-> +		int n = copy_to_iter(dataptr, received, to);
-> 
-> -		if (n != count) {
-> +		if (n != received) {
->  			*err = -EFAULT;
->  			p9_tag_remove(clnt, req);
->  			return n;
->  		}
->  	} else {
-> -		iov_iter_advance(to, count);
-> +		iov_iter_revert(to, count - received - iov_iter_count(to));
->  	}
->  	p9_tag_remove(clnt, req);
-> -	return count;
-> +	return received;
->  }
->  EXPORT_SYMBOL(p9_client_read_once);
-> 
-> @@ -1567,6 +1571,7 @@ p9_client_write(struct p9_fid *fid, u64 offset, struct
-> iov_iter *from, int *err) while (iov_iter_count(from)) {
->  		int count = iov_iter_count(from);
->  		int rsize = fid->iounit;
-> +		int written;
-> 
->  		if (!rsize || rsize > clnt->msize - P9_IOHDRSZ)
->  			rsize = clnt->msize - P9_IOHDRSZ;
-> @@ -1584,27 +1589,29 @@ p9_client_write(struct p9_fid *fid, u64 offset,
-> struct iov_iter *from, int *err) offset, rsize, from);
->  		}
->  		if (IS_ERR(req)) {
-> +			iov_iter_revert(from, count - iov_iter_count(from));
->  			*err = PTR_ERR(req);
->  			break;
->  		}
-> 
-> -		*err = p9pdu_readf(&req->rc, clnt->proto_version, "d", &count);
-> +		*err = p9pdu_readf(&req->rc, clnt->proto_version, "d", &written);
->  		if (*err) {
-> +			iov_iter_revert(from, count - iov_iter_count(from));
->  			trace_9p_protocol_dump(clnt, &req->rc);
->  			p9_tag_remove(clnt, req);
->  			break;
->  		}
-> -		if (rsize < count) {
-> -			pr_err("bogus RWRITE count (%d > %d)\n", count, rsize);
-> -			count = rsize;
-> +		if (rsize < written) {
-> +			pr_err("bogus RWRITE count (%d > %d)\n", written, rsize);
-> +			written = rsize;
->  		}
-> 
->  		p9_debug(P9_DEBUG_9P, "<<< RWRITE count %d\n", count);
-> 
->  		p9_tag_remove(clnt, req);
-> -		iov_iter_advance(from, count);
-> -		total += count;
-> -		offset += count;
-> +		iov_iter_revert(from, count - written - iov_iter_count(from));
-> +		total += written;
-> +		offset += written;
->  	}
->  	return total;
->  }
-> diff --git a/net/9p/protocol.c b/net/9p/protocol.c
-> index 3754c33e2974..83694c631989 100644
-> --- a/net/9p/protocol.c
-> +++ b/net/9p/protocol.c
-> @@ -63,9 +63,8 @@ static size_t
->  pdu_write_u(struct p9_fcall *pdu, struct iov_iter *from, size_t size)
->  {
->  	size_t len = min(pdu->capacity - pdu->size, size);
-> -	struct iov_iter i = *from;
-> 
-> -	if (!copy_from_iter_full(&pdu->sdata[pdu->size], len, &i))
-> +	if (!copy_from_iter_full(&pdu->sdata[pdu->size], len, from))
->  		len = 0;
-> 
->  	pdu->size += len;
-> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> index 2a210c2f8e40..1977d33475fe 100644
-> --- a/net/9p/trans_virtio.c
-> +++ b/net/9p/trans_virtio.c
-> @@ -331,7 +331,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
-> if (err == -ERESTARTSYS)
->  				return err;
->  		}
-> -		n = iov_iter_get_pages_alloc(data, pages, count, offs);
-> +		n = iov_iter_get_pages_alloc2(data, pages, count, offs);
->  		if (n < 0)
->  			return n;
->  		*need_drop = 1;
-> @@ -373,6 +373,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
-> (*pages)[index] = kmap_to_page(p);
->  			p += PAGE_SIZE;
->  		}
-> +		iov_iter_advance(data, len);
->  		return len;
->  	}
->  }
-
-
+-- 
+Jens Axboe
 
