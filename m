@@ -2,75 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F385A562938
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 04:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01361562A97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 06:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233635AbiGACkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jun 2022 22:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
+        id S231426AbiGAEjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 00:39:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233533AbiGACkv (ORCPT
+        with ESMTP id S229549AbiGAEjV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jun 2022 22:40:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B3C61D71;
-        Thu, 30 Jun 2022 19:40:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81CD9621E6;
-        Fri,  1 Jul 2022 02:40:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3014CC34115;
-        Fri,  1 Jul 2022 02:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656643249;
-        bh=5CG6PQNhFAVSniQ+OiaKwGEwxvQrcazv+VzD2hwP9Bw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rAJ7IVXDFORay0N5IbRdF31i77wtc1E8/FSV4BLVdfWuH+HKuPDsOKgSO5W2+A0Kk
-         p033exPTScRkdNMu+hIeVvnAerqis/+bzWIMxJMx0B9oUTE5HQNo0ym6plmwkBAREl
-         Tf4QrMWG2ctr76pxY7LcSXDoiPTX8amzrYeCYAejfA1/+5/eL5MgO8f1nsPyCQ3zwv
-         fn6P3DhKBEhjGTAh5wovPzMcxXudoLQv6qWvHT7GDxDOiwXkoK4quJA/MRMuZ0yWxL
-         /mG7Q3LNxRKSE30RWn+XbcbETuhiOxfL0J37ykeZib9hcCLeDcXNpP7NrCO4AQwAsF
-         wj5XmPxXFeyYw==
-Date:   Thu, 30 Jun 2022 20:40:46 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Keith Busch <kbusch@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, axboe@kernel.dk,
-        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        willy@infradead.org, sagi@grimberg.me
-Subject: Re: [PATCH 07/12] block: allow copying pre-registered bvecs
-Message-ID: <Yr5erjAN/NTdIG78@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220630204212.1265638-1-kbusch@fb.com>
- <20220630204212.1265638-8-kbusch@fb.com>
+        Fri, 1 Jul 2022 00:39:21 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 445D05A45F;
+        Thu, 30 Jun 2022 21:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cq3htZEYFFtvd/u6WrlIkpab3k8hY7kkRHjqsyHHRwE=; b=F+6XPA3sXvJ6qA3XYsUoG5XpNm
+        BnfDYsGkWnlDAWIfyOf+7tYZAoN5vRvPgpWChAGNnAm+m9IELpO0WqAdpu0NugGe18NZkD7RZyxrh
+        /G4eM3oZJ8mOiAUOuEJaDsc9mf6TZ2R/Z8+t9vnv+kTEZCXiKrxFl96M7+167qk6gqyv9QN1GFtNz
+        co30vlwoW5Oilr5odA3whFFJyEdnwGsfSvSwrZ9FzTuaYMI8TRw8V00xvu2ugcPqjCRGnfW728PDQ
+        HCLRlTZCX499t+H+tGJsrfZh2b4rVL4x5J5aQtGZlQj8hNPVm+NtRYWMZOoJ4jo8QNY7ldfR9zTl1
+        4LgupzVA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o78R0-006npC-26;
+        Fri, 01 Jul 2022 04:39:14 +0000
+Date:   Fri, 1 Jul 2022 05:39:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        axboe@kernel.dk, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v7 15/15] xfs: Add async buffered write support
+Message-ID: <Yr56ci/IZmN0S9J6@ZenIV>
+References: <20220601210141.3773402-1-shr@fb.com>
+ <20220601210141.3773402-16-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220630204212.1265638-8-kbusch@fb.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220601210141.3773402-16-shr@fb.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 01:42:07PM -0700, Keith Busch wrote:
->  void bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter)
->  {
->  	size_t size = iov_iter_count(iter);
->  
->  	WARN_ON_ONCE(bio->bi_max_vecs);
->  
-> +	if (bio->bi_max_vecs) {
-> +		bio_copy_bvec(bio, iter);
-> +		return;
-> +	}
+On Wed, Jun 01, 2022 at 02:01:41PM -0700, Stefan Roesch wrote:
+> This adds the async buffered write support to XFS. For async buffered
+> write requests, the request will return -EAGAIN if the ilock cannot be
+> obtained immediately.
 
-Obviously the WARN_ON_ONCE needs to go away with this.
-
-And with the follow on users in this series, there's also a bug with putting
-page references on these at bio_endio, so don't try testing pre-registered
-buffers with this series. I'll send a fix in the v2 if we get that far.
+breaks generic/471...
