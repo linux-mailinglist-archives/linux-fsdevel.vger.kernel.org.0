@@ -2,35 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 036AA56398B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 21:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6938563A0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 21:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbiGATIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 15:08:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53776 "EHLO
+        id S232495AbiGAT3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 15:29:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231566AbiGATIr (ORCPT
+        with ESMTP id S231715AbiGAT3E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 15:08:47 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C96BA3A721
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 12:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dxovQmNiTE5o7nUeGHP2iETQFkJ4h48SBo1it3vB12U=; b=Ku8ECqJ0+4KWN1s1IzawE1jzl5
-        RgBVPfmT46SQRL3BGQU/kzwSs3FpFXVioRjyrPlbXvOgFRHeqWPTYlQVVcixsqcBs+aupZG6WyV1n
-        bvI25dFJumYGDLM3Gp2Tnm/+oVOvhQwdYzjz7NtunLIaGgoT1+7EtwWCP3gX0/EONs3NeQExA8UDp
-        /j6K/wozogT5BASTSz3NVjJti/C42JOtgEgKsri3VsnojzcoHqWNF1xzMto4rmvI1rOmumoMUk8pD
-        K/E6GQ8DKJVQdp+hajSfFoApsBJLDG98FctAo9UUshXVAxrHbgh+Bsxrd75WD2ZdiXHS9cFb2kaYJ
-        f7e6urKQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o7M0L-0075bF-Nf;
-        Fri, 01 Jul 2022 19:08:37 +0000
-Date:   Fri, 1 Jul 2022 20:08:37 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Keith Busch <kbusch@kernel.org>
+        Fri, 1 Jul 2022 15:29:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C5A12A9C
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 12:28:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2D035B831A5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 19:28:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F80C3411E;
+        Fri,  1 Jul 2022 19:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656703696;
+        bh=FH4brdONAm4m/QU5pplePcNhLbuVfcTsYPctqeS0lTA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=brtn1eJOpzfeib/0lgE09+ABpEZdRQ1IrY4RtfRgaqQkpY9SJiR3bgmV7FzCbHX2D
+         isieVX/RYeWsxfRSkM2wfA2DvmFxMdM+xs/CKvgWEbHrhqWl56zgIaiHNhp0KnoFZX
+         kY8hN1YejnIGML/jr6ycLR0Yek4CaH7j+fLNfWd9cryJTAYf3esPHKKYklPEldnZMS
+         56cS+XixDKRMV+iuncOd9BbBQP+6f5H691mrW+xB4p/KaXAsD2M5vzQtxeaND9me2B
+         wGCE9In7ND568XXm1rzimk0pTO6LqHQy7LWHaYhGN0QIrQyYFuSsOHUkzkqGZ2GmKy
+         GQ3QEDg/bv+pw==
+Date:   Fri, 1 Jul 2022 13:28:13 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>,
@@ -40,9 +44,8 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [block.git conflicts] Re: [PATCH 37/44] block: convert to
  advancing variants of iov_iter_get_pages{,_alloc}()
-Message-ID: <Yr9GNfmeO/xCjzD4@ZenIV>
-References: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
- <20220622041552.737754-37-viro@zeniv.linux.org.uk>
+Message-ID: <Yr9KzV6u2iTPPQmq@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220622041552.737754-37-viro@zeniv.linux.org.uk>
  <Yr4fj0uGfjX5ZvDI@ZenIV>
  <Yr4mKJvzdrUsssTh@ZenIV>
  <Yr5W3G19zUQuCA7R@kbusch-mbp.dhcp.thefacebook.com>
@@ -51,78 +54,49 @@ References: <20220622041552.737754-1-viro@zeniv.linux.org.uk>
  <Yr838ci8FUsiZlSW@ZenIV>
  <Yr85AaNqNAEr+5ve@ZenIV>
  <Yr8/LLXaEIa7KPDT@kbusch-mbp.dhcp.thefacebook.com>
+ <Yr9GNfmeO/xCjzD4@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yr8/LLXaEIa7KPDT@kbusch-mbp.dhcp.thefacebook.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Yr9GNfmeO/xCjzD4@ZenIV>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 12:38:36PM -0600, Keith Busch wrote:
-> On Fri, Jul 01, 2022 at 07:12:17PM +0100, Al Viro wrote:
-> > On Fri, Jul 01, 2022 at 07:07:45PM +0100, Al Viro wrote:
-> > > > page we got before would be leaked since unused pages are only released on an
-> > > > add_page error. I was about to reply with a patch that fixes this, but here's
-> > > > the one that I'm currently testing:
-> > > 
-> > > AFAICS, result is broken; you might end up consuming some data and leaving
-> > > iterator not advanced at all.  With no way for the caller to tell which way it
-> > > went.
+On Fri, Jul 01, 2022 at 08:08:37PM +0100, Al Viro wrote:
+> On Fri, Jul 01, 2022 at 12:38:36PM -0600, Keith Busch wrote:
+> > >  	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
+> > > -	if (size > 0)
+> > > -		size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
+> > >  	if (unlikely(size <= 0))
+> > >  		return size ? size : -EFAULT;
+> > > +	nr_pages = DIV_ROUND_UP(offset + size, PAGE_SIZE);
+> > >  
+> > > +	size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
+> > 
+> > We still need to return EFAULT if size becomes 0 because that's the only way
+> > bio_iov_iter_get_pages()'s loop will break out in this condition.
 > 
-> I think I see what you mean, though the issue with a non-advancing iterator on
-> a partially filled bio was happening prior to this patch.
-> 
-> > How about the following?
-> 
-> This looks close to what I was about to respond with. Just a couple issues
-> below:
-> 
-> > -static void bio_put_pages(struct page **pages, size_t size, size_t off)
-> > -{
-> > -	size_t i, nr = DIV_ROUND_UP(size + (off & ~PAGE_MASK), PAGE_SIZE);
-> > -
-> > -	for (i = 0; i < nr; i++)
-> > -		put_page(pages[i]);
-> > -}
-> > -
-> >  static int bio_iov_add_page(struct bio *bio, struct page *page,
-> >  		unsigned int len, unsigned int offset)
-> >  {
-> > @@ -1211,6 +1203,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-> >  	ssize_t size, left;
-> >  	unsigned len, i;
-> >  	size_t offset;
-> > +	int ret;
-> 
-> 'ret' might never be initialized if 'size' aligns down to 0.
+> I really don't like these calling conventions ;-/
 
-Point.
+No argument here; I'm just working in the space as I found it. :)
+ 
+> What do you want to happen if we have that align-down to reduce size?
+> IOW, what should be the state after that loop in the caller?
 
-> >  	/*
-> >  	 * Move page array up in the allocated memory for the bio vecs as far as
-> > @@ -1228,14 +1221,13 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-> >  	 * the iov data will be picked up in the next bio iteration.
-> >  	 */
-> >  	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-> > -	if (size > 0)
-> > -		size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
-> >  	if (unlikely(size <= 0))
-> >  		return size ? size : -EFAULT;
-> > +	nr_pages = DIV_ROUND_UP(offset + size, PAGE_SIZE);
-> >  
-> > +	size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
-> 
-> We still need to return EFAULT if size becomes 0 because that's the only way
-> bio_iov_iter_get_pages()'s loop will break out in this condition.
+We fill up the bio to bi_max_vecs. If there are more pages than vectors, then
+the bio is submitted as-is with the partially drained iov_iter. The remainder
+of the iov is left for a subsequent bio to deal with.
 
-I really don't like these calling conventions ;-/
-
-What do you want to happen if we have that align-down to reduce size?
-IOW, what should be the state after that loop in the caller?
+The ALIGN_DOWN is required because I've replaced the artificial kernel aligment
+with the underlying hardware's alignment. The hardware's alignment is usually
+smaller than a block size. If the last bvec has a non-block aligned offset,
+then it has to be truncated down, which could result in a 0 size when bi_vcnt
+is already non-zero. If that happens, we just submit the bio as-is, and
+allocate a new one to deal with the rest of the iov.
