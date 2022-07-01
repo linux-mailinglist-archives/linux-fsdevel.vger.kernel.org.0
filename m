@@ -2,179 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8AB056374E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 18:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B05563754
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 18:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231295AbiGAQCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 12:02:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54430 "EHLO
+        id S230285AbiGAQDc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 12:03:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbiGAQCi (ORCPT
+        with ESMTP id S231384AbiGAQDb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 12:02:38 -0400
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B812217058
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 09:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=uC9dI/5zMaGeQeLrvz9kid964PMTDAQBXxj9nf81kIU=; b=IVNKxmEdl95C5QaJPjHFI+VruG
-        cU6sk9uA4Uv1fzapqpw86UUmulcOsZSn1YrJlULDYA7qPNSjl3FvqCzFnXdxyrQAcex1GWp9AK2dZ
-        sGI5Mlp1+R9ShH6QH0Nb/WY42gU8AudEOrzPG/deJVSjoXXxJMSQcOj+rdbgvUDVeguIWxUvJAzPV
-        jGp8NqTRfvIwIUvE6tDGgFcukqFAiJ/IIPKyLOjrQThr7/QcpVjmMH3eyFDkfv4ev0Sszxq6oo/5K
-        JPyC0+/XASQte4bcM06IR1wrDw0t53M4aYS23HJZDOelAW9BUj7YxOotwiAnKh5578Wb3dXsZIEB6
-        K9tHbX4/d4Icqd/0vydWJ3wOwe4xcs3OheBBq+X0AVd7BpCE3I0anU93FaVp6mQ6IqkMugdgwIR3T
-        7R0lCi52HOOrWzP+y+9BclNjFenVxNaQGLiStU/FAilhJGr5156EcK7aqI+lXd48k7fDaoychmTXn
-        7PExVG3mhIEOvi9faSGaMclwlQLVd5gJF8PHhp7cfERpIL/Fr+WUm2yL4rYMwquxG3Grhiwk2InMN
-        9puQqnTURMqHEan+rfoxj04wN7S7hlO2eQ/pYJCNH1M6ghX1EF6oRqOn8JiRAxm4XCk8GRcGVq2JT
-        4Va2LU+csT665HNYzWAlMBYj5N2O+PHr4PcH0PQf0=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Fri, 1 Jul 2022 12:03:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 334EE1EC59
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 09:03:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656691409;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gscZC+lbayJaYo1pkT+jEcXOiGusMCk35lYaddpSCrQ=;
+        b=gh0F0KqW6iQbah68R0R63QA7xS0X95hLW+5XOH9dMcy6sTwksI80qMyD685uRO90e/1vxl
+        1s7/L9dV6Glze5eoU+ITf7YMqbRixyXMn2FNnUaK9VjhswjhlJApdiCFf8NLMYF88uLVZh
+        V3RqMs8ehzIFUVBgwDDzX0bhBptyReA=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-227-UHCaPeoNMqSmvVFF7n3KBA-1; Fri, 01 Jul 2022 12:03:27 -0400
+X-MC-Unique: UHCaPeoNMqSmvVFF7n3KBA-1
+Received: by mail-qt1-f199.google.com with SMTP id d4-20020ac86144000000b00319586f86fcso643625qtm.16
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 09:03:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gscZC+lbayJaYo1pkT+jEcXOiGusMCk35lYaddpSCrQ=;
+        b=Qf+BzfoEWeLIbVpxsxxqc5vXeRphwg3vLf52JGmxeh2wl3Va3HESnUa4noiTYkIdaR
+         CW7x+31zKdkEtGluImb22etWXu1ASst23iEZcgtyJpc4LvXxGbw5Pc71l/2HVPqNfCWd
+         R+6pLWn0X2jiqPFhv5zmkPCk9O/zKLFNITI5nhsyK/l4mxPA4CG1lL54ZwE4CLAEHkeC
+         wfOrXwB8SO/0bVJCGelUoDwsP6AYZLtqHvffT56Fs734ANiIJFLC4/x2Ca+bZLjPJDX5
+         RFYVm3gF+1bE7XbR8V7CVpGv0rk+QBSDFI1zStXGtdX4LFriJUCWUkSTOAU65k6+qzjP
+         wfbQ==
+X-Gm-Message-State: AJIora+tzwbVb7/zLSscToU1ayG5h9fkdit3NB2H5j54XbxeZN92gpMH
+        JWp74jRScIGcVd33HKhsjfkFakCU7/jNXdjyZuL+d32BBcrdlfusvmYmvJOle0rDZMATlne4k/r
+        WYEdSwpct7vxO/Jee7zb3FixA8w==
+X-Received: by 2002:a37:a7d3:0:b0:6ae:fdb9:e8e4 with SMTP id q202-20020a37a7d3000000b006aefdb9e8e4mr10821094qke.325.1656691406979;
+        Fri, 01 Jul 2022 09:03:26 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1t1iYX6rjVasonclgqOkCg3XboPMmcC14x0LLHDXq1Sopq++ualMy1pa8Lq3L2tngGTGEAphw==
+X-Received: by 2002:a37:a7d3:0:b0:6ae:fdb9:e8e4 with SMTP id q202-20020a37a7d3000000b006aefdb9e8e4mr10821008qke.325.1656691406093;
+        Fri, 01 Jul 2022 09:03:26 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id s12-20020a05620a16ac00b006a70f581243sm16748615qkj.93.2022.07.01.09.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 09:03:25 -0700 (PDT)
+Date:   Fri, 1 Jul 2022 12:03:23 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
         Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 01/44] 9p: handling Rerror without copy_from_iter_full()
-Date:   Fri, 01 Jul 2022 18:02:31 +0200
-Message-ID: <6628265.VPEUYjqhpI@silver>
-In-Reply-To: <Yr6TbVQvu+noSzc8@codewreck.org>
-References: <YrKWRCOOWXPHRCKg@ZenIV> <20220622041552.737754-1-viro@zeniv.linux.org.uk>
- <Yr6TbVQvu+noSzc8@codewreck.org>
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: Re: Multi-page folio issues in 5.19-rc4 (was [PATCH v3 25/25] xfs:
+ Support large folios)
+Message-ID: <Yr8ay3FJiL+7q0bW@bfoster>
+References: <Yrm6YM2uS+qOoPcn@casper.infradead.org>
+ <YrosM1+yvMYliw2l@magnolia>
+ <20220628073120.GI227878@dread.disaster.area>
+ <YrrlrMK/7pyZwZj2@casper.infradead.org>
+ <Yrrmq4hmJPkf5V7s@casper.infradead.org>
+ <Yrr/oBlf1Eig8uKS@casper.infradead.org>
+ <20220628221757.GJ227878@dread.disaster.area>
+ <YruNE72sW4Aizq8U@magnolia>
+ <YrxMOgIvKVe6u/uR@bfoster>
+ <Yry0bkQRN4sGgTbf@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yry0bkQRN4sGgTbf@magnolia>
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Freitag, 1. Juli 2022 08:25:49 CEST Dominique Martinet wrote:
-> (sigh, I'm tired -- said I'd add Christian in Ccs and promply forgot to
-> do it. Sorry for double send to everyone else.)
+On Wed, Jun 29, 2022 at 01:22:06PM -0700, Darrick J. Wong wrote:
+> On Wed, Jun 29, 2022 at 08:57:30AM -0400, Brian Foster wrote:
+> > On Tue, Jun 28, 2022 at 04:21:55PM -0700, Darrick J. Wong wrote:
+> > > On Wed, Jun 29, 2022 at 08:17:57AM +1000, Dave Chinner wrote:
+> > > > On Tue, Jun 28, 2022 at 02:18:24PM +0100, Matthew Wilcox wrote:
+> > > > > On Tue, Jun 28, 2022 at 12:31:55PM +0100, Matthew Wilcox wrote:
+> > > > > > On Tue, Jun 28, 2022 at 12:27:40PM +0100, Matthew Wilcox wrote:
+> > > > > > > On Tue, Jun 28, 2022 at 05:31:20PM +1000, Dave Chinner wrote:
+> > > > > > > > So using this technique, I've discovered that there's a dirty page
+> > > > > > > > accounting leak that eventually results in fsx hanging in
+> > > > > > > > balance_dirty_pages().
+> > > > > > > 
+> > > > > > > Alas, I think this is only an accounting error, and not related to
+> > > > > > > the problem(s) that Darrick & Zorro are seeing.  I think what you're
+> > > > > > > seeing is dirty pages being dropped at truncation without the
+> > > > > > > appropriate accounting.  ie this should be the fix:
+> > > > > > 
+> > > > > > Argh, try one that actually compiles.
+> > > > > 
+> > > > > ... that one's going to underflow the accounting.  Maybe I shouldn't
+> > > > > be writing code at 6am?
+> > > > > 
+> > > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > > index f7248002dad9..4eec6ee83e44 100644
+> > > > > --- a/mm/huge_memory.c
+> > > > > +++ b/mm/huge_memory.c
+> > > > > @@ -18,6 +18,7 @@
+> > > > >  #include <linux/shrinker.h>
+> > > > >  #include <linux/mm_inline.h>
+> > > > >  #include <linux/swapops.h>
+> > > > > +#include <linux/backing-dev.h>
+> > > > >  #include <linux/dax.h>
+> > > > >  #include <linux/khugepaged.h>
+> > > > >  #include <linux/freezer.h>
+> > > > > @@ -2439,11 +2440,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+> > > > >  		__split_huge_page_tail(head, i, lruvec, list);
+> > > > >  		/* Some pages can be beyond EOF: drop them from page cache */
+> > > > >  		if (head[i].index >= end) {
+> > > > > -			ClearPageDirty(head + i);
+> > > > > -			__delete_from_page_cache(head + i, NULL);
+> > > > > +			struct folio *tail = page_folio(head + i);
+> > > > > +
+> > > > >  			if (shmem_mapping(head->mapping))
+> > > > >  				shmem_uncharge(head->mapping->host, 1);
+> > > > > -			put_page(head + i);
+> > > > > +			else if (folio_test_clear_dirty(tail))
+> > > > > +				folio_account_cleaned(tail,
+> > > > > +					inode_to_wb(folio->mapping->host));
+> > > > > +			__filemap_remove_folio(tail, NULL);
+> > > > > +			folio_put(tail);
+> > > > >  		} else if (!PageAnon(page)) {
+> > > > >  			__xa_store(&head->mapping->i_pages, head[i].index,
+> > > > >  					head + i, 0);
+> > > > > 
+> > > > 
+> > > > Yup, that fixes the leak.
+> > > > 
+> > > > Tested-by: Dave Chinner <dchinner@redhat.com>
+> > > 
+> > > Four hours of generic/522 running is long enough to conclude that this
+> > > is likely the fix for my problem and migrate long soak testing to my
+> > > main g/522 rig and:
+> > > 
+> > > Tested-by: Darrick J. Wong <djwong@kernel.org>
+> > > 
+> > 
+> > Just based on Willy's earlier comment.. what I would probably be a
+> > little careful/curious about here is whether the accounting fix leads to
+> > an indirect behavior change that does impact reproducibility of the
+> > corruption problem. For example, does artificially escalated dirty page
+> > tracking lead to increased reclaim/writeback activity than might
+> > otherwise occur, and thus contend with the fs workload? Clearly it has
+> > some impact based on Dave's balance_dirty_pages() problem reproducer,
+> > but I don't know if it extends beyond that off the top of my head. That
+> > might make some sense if the workload is fsx, since that doesn't
+> > typically stress cache/memory usage the way a large fsstress workload or
+> > something might.
+> > 
+> > So for example, interesting questions might be... Do your corruption
+> > events happen to correspond with dirty page accounting crossing some
+> > threshold based on available memory in your test environment? Does
+> > reducing available memory affect reproducibility? Etc.
 > 
-> +Christian Schoenebeck in Ccs as that concerns qemu as well.
+> Yeah, I wonder that too now.  I managed to trace generic/522 a couple of
+> times before willy's patch dropped.  From what I could tell, a large
+> folio X would get page P assigned to the fsx file's page cache to cover
+> range R, dirtied, and written to disk.  At some point later, we'd
+> reflink into part of the file range adjacent to P, but not P itself.
+> I /think/ that should have caused the whole folio to get invalidated?
 > 
-> The patch I'm replying to is at
-> https://lkml.kernel.org/r/20220622041552.737754-1-viro@zeniv.linux.org.uk
+> Then some more things happened (none of which dirtied R, according to
+> fsx) and then suddenly writeback would trigger on some page (don't know
+> which) that would write to the disk blocks backing R.  I'm fairly sure
+> that's where the incorrect disk contents came from.
 > 
-> Al Viro wrote on Wed, Jun 22, 2022 at 05:15:09AM +0100:
-> >         p9_client_zc_rpc()/p9_check_zc_errors() are playing fast
-> > 
-> > and loose with copy_from_iter_full().
-> > 
-> > 	Reading from file is done by sending Tread request.  Response
-> > 
-> > consists of fixed-sized header (including the amount of data actually
-> > read) followed by the data itself.
-> > 
-> > 	For zero-copy case we arrange the things so that the first
-> > 
-> > 11 bytes of reply go into the fixed-sized buffer, with the rest going
-> > straight into the pages we want to read into.
-> > 
-> > 	What makes the things inconvenient is that sglist describing
-> > 
-> > what should go where has to be set *before* the reply arrives.  As
-> > the result, if reply is an error, the things get interesting.  On success
-> > we get
-> > 
-> > 	size[4] Rread tag[2] count[4] data[count]
-> > 
-> > For error layout varies depending upon the protocol variant -
-> > in original 9P and 9P2000 it's
-> > 
-> > 	size[4] Rerror tag[2] len[2] error[len]
-> > 
-> > in 9P2000.U
-> > 
-> > 	size[4] Rerror tag[2] len[2] error[len] errno[4]
-> > 
-> > in 9P2000.L
-> > 
-> > 	size[4] Rlerror tag[2] errno[4]
-> > 	
-> > 	The last case is nice and simple - we have an 11-byte response
-> > 
-> > that fits into the fixed-sized buffer we hoped to get an Rread into.
-> > In other two, though, we get a variable-length string spill into the
-> > pages we'd prepared for the data to be read.
-> > 
-> > 	Had that been in fixed-sized buffer (which is actually 4K),
-> > 
-> > we would've dealt with that the same way we handle non-zerocopy case.
-> > However, for zerocopy it doesn't end up there, so we need to copy it
-> > from those pages.
-> > 
-> > 	The trouble is, by the time we get around to that, the
-> > 
-> > references to pages in question are already dropped.  As the result,
-> > p9_zc_check_errors() tries to get the data using copy_from_iter_full().
-> > Unfortunately, the iov_iter it's trying to read from might *NOT* be
-> > capable of that.  It is, after all, a data destination, not data source.
-> > In particular, if it's an ITER_PIPE one, copy_from_iter_full() will
-> > simply fail.
-> > 
-> > 	In ->zc_request() itself we do have those pages and dealing with
-> > 
-> > the problem in there would be a simple matter of memcpy_from_page()
-> > into the fixed-sized buffer.  Moreover, it isn't hard to recognize
-> > the (rare) case when such copying is needed.  That way we get rid of
-> > p9_zc_check_errors() entirely - p9_check_errors() can be used instead
-> > both for zero-copy and non-zero-copy cases.
-> > 
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Next, we'd reflink part of the file range including R into a different
+> part of the file (call it R2).  fsx would read R2, bringing a new page
+> into cache, and it wouldn't match the fsxgood buffer, leading to fsx
+> aborting.
 > 
-> I ran basic tests with this, should be ok given the code path is never
-> used on normal (9p2000.L) workloads.
+> After a umount/mount cycle, reading R and R2 would both reveal the
+> incorrect contents that had caused fsx to abort.
+> 
 
-I haven't read this patch in detail yet, but upfront: POSIX error strings are 
-like what, max. 128 bytes, no? So my expectation therefore would be that this 
-patch could be further simplified.
+FWIW, I hadn't been able to reproduce this in my default environment to
+this point. With the memory leak issue in the light, I was eventually
+able to by reducing dirty_bytes to something the system would be more
+likely to hit sooner (i.e. 16-32MB), but I also see stalling behavior
+and whatnot due to the leak that requires backing off from the specified
+dirty limit every so often.
 
-Apart from that, I would rename handle_rerror() to something that reflects 
-better what it actually does, e.g. unsparse_error() or cp_rerror_to_sdata().
+If I apply the accounting patch to avoid the leak and set
+dirty_background_bytes to something notably aggressive (1kB), the test
+survived 100 iterations or so before I stopped it. If I then set
+dirty_bytes to something similarly aggressive (1MB), I hit the failure
+on the next iteration (assuming it's the same problem). It's spinning
+again at ~25 or so iterations without a failure so far, so I'd have to
+wait and see how reliable the reproducer really is. Though if it doesn't
+reoccur soonish, perhaps I'll try reducing dirty_bytes a bit more...
 
-> I also tried 9p2000.u for principle and ... I have no idea if this works
-> but it didn't seem to blow up there at least.
-> The problem is that 9p2000.u just doesn't work well even without these
-> patches, so I still stand by what I said about 9p2000.u and virtio (zc
-> interface): we really can (and I think should) just say virtio doesn't
-> support 9p2000.u.
-> (and could then further simplify this)
->
-> If you're curious, 9p2000.u hangs without your patch on at least two
-> different code paths (trying to read a huge buffer aborts sending a
-> reply because msize is too small instead of clamping it, that one has a
-> qemu warning message; but there are others ops like copyrange that just
-> fail silently and I didn't investigate)
+My suspicion based on these characteristics would be that the blocking
+limit triggers more aggressive reclaim/invalidation, and thus helps
+detect the problem sooner. If reflink is involved purely as a cache
+invalidation step (i.e. so a subsequent read will hit the disk and
+detect a cache inconsistency), then it might be interesting to see if it
+can still be reproduced without reflink operations enabled but instead
+with some combination of the -f/-X fsx flags to perform more flush
+invals and on-disk data checks..
 
-Last time I tested 9p2000.u was with the "remove msize limit" (WIP) patches:
-https://lore.kernel.org/all/cover.1640870037.git.linux_oss@crudebyte.com/
-Where I did not observe any issue with 9p2000.u.
+Brian
 
-What msize are we talking about, or can you tell a way to reproduce?
-
-> I'd rather not fool someone into believing we support it when nobody has
-> time to maintain it and it fails almost immediately when user requests
-> some unusual IO patterns... And I definitely don't have time to even try
-> fixing it.
-> I'll suggest the same thing to qemu lists if we go that way.
-
-Yeah, the situation with 9p2000.u in QEMU is similar in the sense that 
-9p2000.u is barely used, little contributions, code not in good shape (e.g 
-slower in many aspects in comparison to 9p2000.L), and for that reason I 
-discussed with Greg to deprecate 9p2000.u in QEMU (not done yet). We are not 
-aware about any serious issue with 9p2000.u though.
-
-Best regards,
-Christian Schoenebeck
-
+> Unfortunately the second ftrace attempt ate some trace data, so I was
+> unable to figure out if the same thing happened again.
+> 
+> At this point I really need to get on reviewing patches for 5.20, so
+> I'll try to keep poking at this (examining the trace data requires a lot
+> of concentration which isn't really possible while sawzall construction
+> is going on at home) but at worst I can ask Linus to merge a patch for
+> 5.19 final that makes setting mapping_set_large_folio a
+> Kconfig/CONFIG_XFS_DEBUG option.
+> 
+> --D
+> 
+> > 
+> > Brian
+> > 
+> > > --D
+> > > 
+> > > > Cheers,
+> > > > 
+> > > > Dave.
+> > > > -- 
+> > > > Dave Chinner
+> > > > david@fromorbit.com
+> > > 
+> > 
+> 
 
