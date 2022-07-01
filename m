@@ -2,39 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A264563422
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 15:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2C3563426
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 15:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236573AbiGANLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 09:11:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
+        id S236447AbiGANLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 09:11:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236227AbiGANL2 (ORCPT
+        with ESMTP id S236477AbiGANLl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 09:11:28 -0400
+        Fri, 1 Jul 2022 09:11:41 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEAA564F4;
-        Fri,  1 Jul 2022 06:11:12 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 213BD21B4;
-        Fri,  1 Jul 2022 13:09:53 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C79D5925C;
+        Fri,  1 Jul 2022 06:11:26 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 7254221B5;
+        Fri,  1 Jul 2022 13:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1656680993;
-        bh=EjlWxm79lVaiCmeyrgDYpsSvzCOyXg3FUYILHL91If0=;
+        d=paragon-software.com; s=mail; t=1656681016;
+        bh=02KihnYdaZm2ncpfXa/zdWa/4dUMAjXhtcspmqZ/iQc=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=Mf0etTJWXkZEsLpA50TR3ZaEOPTOXYLSdR+opcdH/02tvEa7CtfOnRmb/wmVB/zTr
-         f3UwElSgjMFwecLnPk1AjXV5cr6sw3ivv1wLqUIBkvB20mIuNeH5zMiHTiOzl2Hk8a
-         YLuSAIanH9qEB9nWkLBiNaCbupoVr5Tk+6LACdYk=
+        b=mP4lTzPxF70rg8R7AaoBiR2jL2xAFAY+/6mtWP6oh7IKcqR5wLOJ1idZf5Zjh8i7L
+         OfBAp92Ofh+91lXT/L+ZGvnA37YVn15fwKKQtETHQylGpHDbegufSUGpnQi94rQqQO
+         jLkzOUXZNqufZbc7pstGHzmk0s+QpPwIQHpIFB+8=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id B8B4B21B8;
+        Fri,  1 Jul 2022 13:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1656681073;
+        bh=02KihnYdaZm2ncpfXa/zdWa/4dUMAjXhtcspmqZ/iQc=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=KvvpoADQyImOQM7pjCEgEWkZjUezYYwliAyAPGCu8BtmjposgJNA2ewq3EaCC1hoT
+         3FdOOzUXW1bxub9Da494xDQIpwT9QprpJReI3d5nZmt5+39xQcH9qTwVzPntRj8JrD
+         xi89KWLZyPirofVKtghKw0441ycBJA7XABOgKoeE=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 1 Jul 2022 16:10:50 +0300
-Message-ID: <653b1628-074c-82a6-9926-d793bbcb031b@paragon-software.com>
-Date:   Fri, 1 Jul 2022 16:10:49 +0300
+ 15.1.2375.7; Fri, 1 Jul 2022 16:11:13 +0300
+Message-ID: <5ddc83fd-5e98-d66a-91c2-afb8a037ebb6@paragon-software.com>
+Date:   Fri, 1 Jul 2022 16:11:12 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: [PATCH 3/5] fs/ntfs3: Add new argument is_mft to ntfs_mark_rec_free
+Subject: [PATCH 4/5] fs/ntfs3: Make static function attr_load_runs
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -55,131 +65,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This argument helps in avoiding double locking
+attr_load_runs is an internal function
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/frecord.c | 12 ++++++------
-  fs/ntfs3/fsntfs.c  |  9 ++++++---
-  fs/ntfs3/inode.c   |  2 +-
-  fs/ntfs3/ntfs_fs.h |  2 +-
-  4 files changed, 14 insertions(+), 11 deletions(-)
+  fs/ntfs3/attrib.c  | 4 ++--
+  fs/ntfs3/ntfs_fs.h | 2 --
+  2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 64041152fd98..756d9a18fa00 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -1048,7 +1048,7 @@ static int ni_ins_attr_ext(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le,
-  	err = -EINVAL;
-  
-  out1:
--	ntfs_mark_rec_free(sbi, rno);
-+	ntfs_mark_rec_free(sbi, rno, is_mft);
-  
-  out:
-  	return err;
-@@ -1243,7 +1243,7 @@ static int ni_expand_mft_list(struct ntfs_inode *ni)
-  		mft_min = mft_new;
-  		mi_min = mi_new;
-  	} else {
--		ntfs_mark_rec_free(sbi, mft_new);
-+		ntfs_mark_rec_free(sbi, mft_new, true);
-  		mft_new = 0;
-  		ni_remove_mi(ni, mi_new);
-  	}
-@@ -1326,7 +1326,7 @@ static int ni_expand_mft_list(struct ntfs_inode *ni)
-  
-  out:
-  	if (mft_new) {
--		ntfs_mark_rec_free(sbi, mft_new);
-+		ntfs_mark_rec_free(sbi, mft_new, true);
-  		ni_remove_mi(ni, mi_new);
-  	}
-  
-@@ -1585,7 +1585,7 @@ int ni_delete_all(struct ntfs_inode *ni)
-  		mi->dirty = true;
-  		mi_write(mi, 0);
-  
--		ntfs_mark_rec_free(sbi, mi->rno);
-+		ntfs_mark_rec_free(sbi, mi->rno, false);
-  		ni_remove_mi(ni, mi);
-  		mi_put(mi);
-  		node = next;
-@@ -1596,7 +1596,7 @@ int ni_delete_all(struct ntfs_inode *ni)
-  	ni->mi.dirty = true;
-  	err = mi_write(&ni->mi, 0);
-  
--	ntfs_mark_rec_free(sbi, ni->mi.rno);
-+	ntfs_mark_rec_free(sbi, ni->mi.rno, false);
-  
-  	return err;
-  }
-@@ -3286,7 +3286,7 @@ int ni_write_inode(struct inode *inode, int sync, const char *hint)
-  			err = err2;
-  
-  		if (is_empty) {
--			ntfs_mark_rec_free(sbi, mi->rno);
-+			ntfs_mark_rec_free(sbi, mi->rno, false);
-  			rb_erase(node, &ni->mi_tree);
-  			mi_put(mi);
-  		}
-diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
-index 3de5700a9b83..c53dd4c9e47b 100644
---- a/fs/ntfs3/fsntfs.c
-+++ b/fs/ntfs3/fsntfs.c
-@@ -703,12 +703,14 @@ int ntfs_look_free_mft(struct ntfs_sb_info *sbi, CLST *rno, bool mft,
-  
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index 43b9482f9830..68a210bb54fe 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -84,8 +84,8 @@ static inline bool attr_must_be_resident(struct ntfs_sb_info *sbi,
   /*
-   * ntfs_mark_rec_free - Mark record as free.
-+ * is_mft - true if we are changing MFT
+   * attr_load_runs - Load all runs stored in @attr.
    */
--void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno)
-+void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno, bool is_mft)
+-int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
+-		   struct runs_tree *run, const CLST *vcn)
++static int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
++			  struct runs_tree *run, const CLST *vcn)
   {
-  	struct wnd_bitmap *wnd = &sbi->mft.bitmap;
-  
--	down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_MFT);
-+	if (!is_mft)
-+		down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_MFT);
-  	if (rno >= wnd->nbits)
-  		goto out;
-  
-@@ -727,7 +729,8 @@ void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno)
-  		sbi->mft.next_free = rno;
-  
-  out:
--	up_write(&wnd->rw_lock);
-+	if (!is_mft)
-+		up_write(&wnd->rw_lock);
-  }
-  
-  /*
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 6c78930be035..a49da4ec6dc3 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1636,7 +1636,7 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  	ni->mi.dirty = false;
-  	discard_new_inode(inode);
-  out3:
--	ntfs_mark_rec_free(sbi, ino);
-+	ntfs_mark_rec_free(sbi, ino, false);
-  
-  out2:
-  	__putname(new_de);
+  	int err;
+  	CLST svcn = le64_to_cpu(attr->nres.svcn);
 diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index ebe4a8ecc20d..5472cde2aa5f 100644
+index 5472cde2aa5f..b88721e48458 100644
 --- a/fs/ntfs3/ntfs_fs.h
 +++ b/fs/ntfs3/ntfs_fs.h
-@@ -590,7 +590,7 @@ int ntfs_look_for_free_space(struct ntfs_sb_info *sbi, CLST lcn, CLST len,
-  			     enum ALLOCATE_OPT opt);
-  int ntfs_look_free_mft(struct ntfs_sb_info *sbi, CLST *rno, bool mft,
-  		       struct ntfs_inode *ni, struct mft_inode **mi);
--void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno);
-+void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno, bool is_mft);
-  int ntfs_clear_mft_tail(struct ntfs_sb_info *sbi, size_t from, size_t to);
-  int ntfs_refresh_zone(struct ntfs_sb_info *sbi);
-  int ntfs_update_mftmirr(struct ntfs_sb_info *sbi, int wait);
+@@ -408,8 +408,6 @@ enum REPARSE_SIGN {
+  };
+  
+  /* Functions from attrib.c */
+-int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
+-		   struct runs_tree *run, const CLST *vcn);
+  int attr_allocate_clusters(struct ntfs_sb_info *sbi, struct runs_tree *run,
+  			   CLST vcn, CLST lcn, CLST len, CLST *pre_alloc,
+  			   enum ALLOCATE_OPT opt, CLST *alen, const size_t fr,
 -- 
 2.37.0
 
