@@ -2,132 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55BF95638FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 20:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FFB756393E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Jul 2022 20:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbiGASOq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Jul 2022 14:14:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43976 "EHLO
+        id S230296AbiGASip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Jul 2022 14:38:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiGASOp (ORCPT
+        with ESMTP id S230272AbiGASio (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jul 2022 14:14:45 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8DFD13FB4
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 11:14:43 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id 68so3075715pgb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 11:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=+2cjOm2iV0K6Fh37ckIuAiSPC7PAkAib0BkzJQTS0+s=;
-        b=37Z/LMNRq6UGadaXxmJOSRipY4rroGzOo3QgmZRy2ucWwXpMiTrzuNd7EEp6pNoJax
-         HTUCYoauubMAVWuf0R7SarFV5P4ZeO6qr8rm6ZPPt7kXiv0Hc4gW6JPonc6R2CUXKDW3
-         hia5chKFOpdKMVjQ4lt/qFB8M+n0QeL5Fd2+/U+gLUZS5HKYBcVwkdM+A9swXyCWtD8P
-         WQYLl3mtwqddkRd2iTE5dmwr07p3swYcSVXbbnRgv8fhtwiVdJYUgQRJ5zfW1uHMtr7D
-         hgtuffkm4EVCOvEV1wUjpqBpUZxmxHoFjlagIe2taAsHlfCPaj6Z/Yr6V24EwTXdr2e1
-         phPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+2cjOm2iV0K6Fh37ckIuAiSPC7PAkAib0BkzJQTS0+s=;
-        b=WKXuoZBr+lBmBTTG23TX/uQpaYpj0l1uf0xNzuwFvMfZlRx0mmtiYkvO0mDLwxAW3A
-         5Old0WDCMxXT8S9HCJEHaRPf/r5YgBWEG3S3pCSeIz0wYwk7/A8rmDY0K3T2NeaVswuu
-         8GctAKQUWanLPEVhkAW8O4wKn11VuM3YIpE2Xcw43hzvjdcBlfApOgArQsKiFPnsWW8t
-         d2xrB46+1I3VKALNj2rTqsBZ7CGMzOj0WI3pCEiqCA4/Lmmy02J5I/hWCa+HNFQdkeKP
-         Y4/nFA7P7l2uDHV0i32s9ZoJoXXATLyJEsgRxMCwum35rArDimw7bq1CUQaX43tdun/B
-         ne4Q==
-X-Gm-Message-State: AJIora/QR1bmVv/zYtXLYaYIcqxk7GpsV5yhH7fy9lwbOh0S0cbED0Uo
-        ECQgAymmC8yc1E/SqNJxnS2r9g==
-X-Google-Smtp-Source: AGRyM1tgpHo+10wcI7TOf9FXHzT5lkC3dyL+mkSzScOZoo+gMDXmGOW87BcbBjT7laY527aiFmqxcQ==
-X-Received: by 2002:a05:6a00:26cf:b0:4f6:fc52:7b6a with SMTP id p15-20020a056a0026cf00b004f6fc527b6amr21371577pfw.39.1656699283240;
-        Fri, 01 Jul 2022 11:14:43 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id h5-20020a170902680500b0015e8d4eb20dsm16065865plk.87.2022.07.01.11.14.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Jul 2022 11:14:42 -0700 (PDT)
-Message-ID: <47dd9e6a-4e08-e562-12ff-5450fc42da77@kernel.dk>
-Date:   Fri, 1 Jul 2022 12:14:41 -0600
+        Fri, 1 Jul 2022 14:38:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DE03275E8
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 11:38:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B7B30B8315D
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 18:38:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48F5C3411E;
+        Fri,  1 Jul 2022 18:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656700720;
+        bh=9fWZiD9K9cdBgqEM5Re/cNJ4U2m82/ffqJTgyWLYcP4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CgHxBQjrsaUPCu02kqTmLxUgxW8Qps/shjgT7a8P6Cmi6+QyzyjT4jG4KKXNHCufI
+         WyuS/tGbxTsVKsVyfbfTJlvtE+Zol1YuFA0NY6FTtB2xfGWpxCQp48da2tdfkTfg5S
+         P9zlNOwFBtJsMb5eewFespOwWS8MoRBup3tE4IuyVuAnaackKM56dTirgMZP3GKznG
+         UHTMTs1eEBtwPMTc35tNgdLXtE2vrxS5H9vg4n+FzDLRhBOH97wBpUI9DS8Wgb+b9J
+         b/MCAIxX8xuagKqV8Ff/kwOyNhwqnChfibGyNE0B3iRV/pnIFW0aoNSUe7Rx1eEf/E
+         EylIbzIB0B6eQ==
+Date:   Fri, 1 Jul 2022 12:38:36 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [block.git conflicts] Re: [PATCH 37/44] block: convert to
+ advancing variants of iov_iter_get_pages{,_alloc}()
+Message-ID: <Yr8/LLXaEIa7KPDT@kbusch-mbp.dhcp.thefacebook.com>
+References: <YrKWRCOOWXPHRCKg@ZenIV>
+ <20220622041552.737754-1-viro@zeniv.linux.org.uk>
+ <20220622041552.737754-37-viro@zeniv.linux.org.uk>
+ <Yr4fj0uGfjX5ZvDI@ZenIV>
+ <Yr4mKJvzdrUsssTh@ZenIV>
+ <Yr5W3G19zUQuCA7R@kbusch-mbp.dhcp.thefacebook.com>
+ <Yr8xmNMEOJke6NOx@ZenIV>
+ <Yr80qNeRhFtPb/f3@kbusch-mbp.dhcp.thefacebook.com>
+ <Yr838ci8FUsiZlSW@ZenIV>
+ <Yr85AaNqNAEr+5ve@ZenIV>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v7 15/15] xfs: Add async buffered write support
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Stefan Roesch <shr@fb.com>,
-        io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20220601210141.3773402-1-shr@fb.com>
- <20220601210141.3773402-16-shr@fb.com> <Yr56ci/IZmN0S9J6@ZenIV>
- <0a75a0c4-e2e5-b403-27bc-e43872fecdc1@kernel.dk>
- <ef7c1154-b5ba-4017-f9fd-dea936a837fc@kernel.dk>
- <ca60a7dc-b16d-d8ce-f56c-547b449da8c9@kernel.dk> <Yr83aD0yuEwvJ7tL@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Yr83aD0yuEwvJ7tL@magnolia>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yr85AaNqNAEr+5ve@ZenIV>
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/1/22 12:05 PM, Darrick J. Wong wrote:
-> On Fri, Jul 01, 2022 at 08:38:07AM -0600, Jens Axboe wrote:
->> On 7/1/22 8:30 AM, Jens Axboe wrote:
->>> On 7/1/22 8:19 AM, Jens Axboe wrote:
->>>> On 6/30/22 10:39 PM, Al Viro wrote:
->>>>> On Wed, Jun 01, 2022 at 02:01:41PM -0700, Stefan Roesch wrote:
->>>>>> This adds the async buffered write support to XFS. For async buffered
->>>>>> write requests, the request will return -EAGAIN if the ilock cannot be
->>>>>> obtained immediately.
->>>>>
->>>>> breaks generic/471...
->>>>
->>>> That test case is odd, because it makes some weird assumptions about
->>>> what RWF_NOWAIT means. Most notably that it makes it mean if we should
->>>> instantiate blocks or not. Where did those assumed semantics come from?
->>>> On the read side, we have clearly documented that it should "not wait
->>>> for data which is not immediately available".
->>>>
->>>> Now it is possible that we're returning a spurious -EAGAIN here when we
->>>> should not be. And that would be a bug imho. I'll dig in and see what's
->>>> going on.
->>>
->>> This is the timestamp update that needs doing which will now return
->>> -EAGAIN if IOCB_NOWAIT is set as it may block.
->>>
->>> I do wonder if we should just allow inode time updates with IOCB_NOWAIT,
->>> even on the io_uring side. Either that, or passed in RWF_NOWAIT
->>> semantics don't map completely to internal IOCB_NOWAIT semantics. At
->>> least in terms of what generic/471 is doing, but I'm not sure who came
->>> up with that and if it's established semantics or just some made up ones
->>> from whomever wrote that test. I don't think they make any sense, to be
->>> honest.
->>
->> Further support that generic/471 is just randomly made up semantics,
->> it needs to special case btrfs with nocow or you'd get -EAGAIN anyway
->> for that test.
->>
->> And it's relying on some random timing to see if this works. I really
->> think that test case is just hot garbage, and doesn't test anything
->> meaningful.
-> 
-> <shrug> I had thought that NOWAIT means "don't wait for *any*thing",
-> which would include timestamp updates... but then I've never been all
-> that clear on what specifically NOWAIT will and won't wait for. :/
+On Fri, Jul 01, 2022 at 07:12:17PM +0100, Al Viro wrote:
+> On Fri, Jul 01, 2022 at 07:07:45PM +0100, Al Viro wrote:
+> > > page we got before would be leaked since unused pages are only released on an
+> > > add_page error. I was about to reply with a patch that fixes this, but here's
+> > > the one that I'm currently testing:
+> > 
+> > AFAICS, result is broken; you might end up consuming some data and leaving
+> > iterator not advanced at all.  With no way for the caller to tell which way it
+> > went.
 
-Agree, at least the read semantics (kind of) make sense, but the ones
-seemingly made up by generic/471 don't seem to make any sense at all.
+I think I see what you mean, though the issue with a non-advancing iterator on
+a partially filled bio was happening prior to this patch.
 
--- 
-Jens Axboe
+> How about the following?
 
+This looks close to what I was about to respond with. Just a couple issues
+below:
+
+> -static void bio_put_pages(struct page **pages, size_t size, size_t off)
+> -{
+> -	size_t i, nr = DIV_ROUND_UP(size + (off & ~PAGE_MASK), PAGE_SIZE);
+> -
+> -	for (i = 0; i < nr; i++)
+> -		put_page(pages[i]);
+> -}
+> -
+>  static int bio_iov_add_page(struct bio *bio, struct page *page,
+>  		unsigned int len, unsigned int offset)
+>  {
+> @@ -1211,6 +1203,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  	ssize_t size, left;
+>  	unsigned len, i;
+>  	size_t offset;
+> +	int ret;
+
+'ret' might never be initialized if 'size' aligns down to 0.
+
+>  	/*
+>  	 * Move page array up in the allocated memory for the bio vecs as far as
+> @@ -1228,14 +1221,13 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  	 * the iov data will be picked up in the next bio iteration.
+>  	 */
+>  	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
+> -	if (size > 0)
+> -		size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
+>  	if (unlikely(size <= 0))
+>  		return size ? size : -EFAULT;
+> +	nr_pages = DIV_ROUND_UP(offset + size, PAGE_SIZE);
+>  
+> +	size = ALIGN_DOWN(size, bdev_logical_block_size(bio->bi_bdev));
+
+We still need to return EFAULT if size becomes 0 because that's the only way
+bio_iov_iter_get_pages()'s loop will break out in this condition.
