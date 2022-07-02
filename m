@@ -2,210 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2483B563F0D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jul 2022 10:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1855E56412E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jul 2022 17:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbiGBIHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Jul 2022 04:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59180 "EHLO
+        id S232053AbiGBPp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Jul 2022 11:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231723AbiGBIHW (ORCPT
+        with ESMTP id S230429AbiGBPp0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Jul 2022 04:07:22 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DCFB52496F
-        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Jul 2022 01:07:17 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CE9325ECEFC;
-        Sat,  2 Jul 2022 18:07:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1o7Y9m-00DaJT-Ua; Sat, 02 Jul 2022 18:07:11 +1000
-Date:   Sat, 2 Jul 2022 18:07:10 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     James Yonan <james@openvpn.net>
-Cc:     linux-fsdevel@vger.kernel.org, neilb@suse.de, amir73il@gmail.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] namei: implemented RENAME_NEWER_MTIME flag for
- renameat2() conditional replace
-Message-ID: <20220702080710.GB3108597@dread.disaster.area>
-References: <a4ea9789-6126-e058-8f55-6dfc8a3f30c3@openvpn.net>
- <20220701092326.1845210-1-james@openvpn.net>
+        Sat, 2 Jul 2022 11:45:26 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57407E021
+        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Jul 2022 08:45:25 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id v126so5030421pgv.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Jul 2022 08:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=L8uRugG259ow8lB/6bwsm0wXpVSdlTgfQOD2OG9pVM8=;
+        b=a/URZv0YNXb2JWskKUnMyYGVCaH6eKzyZwpc+VgRXHWz/jzXEiLkoavTAyEgqjAWV9
+         aJW8AovEsvGt6N7ooM0r5auDchH69iKhsMCgHsUA3fKlUHEvpgurobUhtD822xWQSuy1
+         77CxWfdpadYYgjBuG7GtcIGo9LgUIFjNo9SyBiYK30dGeQi7sKwrzJns84oLmrOrTPKZ
+         M3IOkY0F6xnF6h5dfY/GJpMt9xVLNu1g/DvssHfLlP16vcBRtG0OECQrfpbJUI4zuCTP
+         wQISiIS9W/hVSgvH51xKPp+T+A7V2VkqcckJKEm9TMPZAhwsb2TzzDMV7/QDMogNrAPt
+         spnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=L8uRugG259ow8lB/6bwsm0wXpVSdlTgfQOD2OG9pVM8=;
+        b=iy+TUKXTQHwB1TqFR+bnWbr58i//DE9+zj1pXb+QqdnCBLwxJLWDcdKkd0Bv1GpDsZ
+         /o/zqF8phR+iQT3lr2wzOeHa7P2NISgniLPasterKftGcXLun3D9mN6mEjGQFQpb4XoP
+         8o5PdSEf/1QcxZUB8+sMgJA1LB0fkXraVqsLsV8WrJXTTgS+OxH7kIYlvOCaEm/uybsp
+         KCkTHho/BJh5J/YbiNbifQYCDOWxd8WaHW3GH/2L8EfLrwL0D0lcbzzhjC3X01R1tZuz
+         F4ZunDNi5I49EQNJgJx9BlZzOFBlKfVB7RYUca/tZgoD8Gpt8dyyJNYSfe+xFVBbbVmU
+         Zw5g==
+X-Gm-Message-State: AJIora/wIQ1FYDLTb9FjJ02Y0Z6nTU2zLENBXm0TcaXH3RFqD0hVgPe5
+        9PPpX2RpUvNJFC3GumjrUBup4w==
+X-Google-Smtp-Source: AGRyM1uoCqB3+qSGT7jodAAtPjFmzXlE/CkwxVYh/uP7bk8sUaXS+NqiuWZHyBTBR9YBmP7RdH/yXw==
+X-Received: by 2002:a63:548:0:b0:412:1de7:89e0 with SMTP id 69-20020a630548000000b004121de789e0mr1097416pgf.373.1656776724772;
+        Sat, 02 Jul 2022 08:45:24 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id f8-20020a17090ace0800b001eee6b107fasm8708693pju.39.2022.07.02.08.45.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Jul 2022 08:45:24 -0700 (PDT)
+Message-ID: <5cfdd462-d21b-cb62-3ad3-3ecd8cbc0a31@kernel.dk>
+Date:   Sat, 2 Jul 2022 09:45:23 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220701092326.1845210-1-james@openvpn.net>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62bffcb3
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=uDo-SIiEAAAA:8 a=7-415B0cAAAA:8
-        a=skXxjZ357ps82uG1LdEA:9 a=CjuIK1q_8ugA:10 a=Rkhf4GTZPwEC63LfVcCP:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] fs: allow inode time modification with IOCB_NOWAIT
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stefan Roesch <shr@fb.com>
+References: <39f8b446-dce3-373f-eb86-e3333b31122c@kernel.dk>
+ <Yr/gFLRLBE76enwG@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Yr/gFLRLBE76enwG@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 03:23:26AM -0600, James Yonan wrote:
-> RENAME_NEWER_MTIME is a new userspace-visible flag for renameat2(), and
-> stands alongside existing flags such as RENAME_NOREPLACE, RENAME_EXCHANGE,
-> and RENAME_WHITEOUT.
+On 7/2/22 12:05 AM, Christoph Hellwig wrote:
+> On Fri, Jul 01, 2022 at 02:09:32PM -0600, Jens Axboe wrote:
+>> generic/471 complains because it expects any write done with RWF_NOWAIT
+>> to succeed as long as the blocks for the write are already instantiated.
+>> This isn't necessarily a correct assumption, as there are other conditions
+>> that can cause an RWF_NOWAIT write to fail with -EAGAIN even if the range
+>> is already there.
+>>
+>> Since the risk of blocking off this path is minor, just allow inode
+>> time updates with IOCB_NOWAIT set. Then we can later decide if we should
+>> catch this further down the stack.
 > 
-> RENAME_NEWER_MTIME is a conditional variation on RENAME_NOREPLACE, and
-> indicates that if the target of the rename exists, the rename or exchange
-> will only succeed if the source file is newer than the target (i.e. source
-> mtime > target mtime).  Otherwise, the rename will fail with -EEXIST
-> instead of replacing the target.  When the target doesn't exist,
-> RENAME_NEWER_MTIME does a plain rename like RENAME_NOREPLACE.
-> 
-> RENAME_NEWER_MTIME can also be combined with RENAME_EXCHANGE for
-> conditional exchange, where the exchange only occurs if source mtime >
-> target mtime.  Otherwise, the operation will fail with -EEXIST.
-> 
-> RENAME_NEWER_MTIME is very useful in distributed systems that mirror a
-> directory structure, or use a directory as a key/value store, and need to
-> guarantee that files will only be overwritten by newer files, and that all
-> updates are atomic.
+> I think this is broken.  Please just drop the test, the non-blocking
+> behavior here makes a lot of sense.  At least for XFS, the update
+> will end up allocating and commit a transaction which involves memory
+> allocation, a blocking lock and possibly waiting for lock space.
 
-You need to cc linux-api and write a renameat2() man page update
-that documents how this option behaves for application developers.
-The bits where it will appear to randomly fail are especially
-important to document properly...
+I'm fine with that, I've made my opinions on that test case clear in
+previous emails. I'll drop the patch for now.
 
-> RENAME_NEWER_MTIME is implemented in vfs_rename(), and we lock and deny
-> write access to both source and target inodes before comparing their
-> mtimes, to stabilize the comparison.
-> 
-> So one question to ask is could this functionality be implemented in
-> userspace without adding a new renameat2() flag?  I think you could
-> attempt it with iterative RENAME_EXCHANGE, but it's hackish, inefficient,
-> and not atomic, because races could cause temporary mtime backtracks.
-> How about using file locking?  Probably not, because the problem we want
-> to solve is maintaining file/directory atomicity for readers by creating
-> files out-of-directory, setting their mtime, and atomically moving them
-> into place.  The strategy to lock such an operation really requires more
-> complex locking methods than are generally exposed to userspace.  And if
-> you are using inotify on the directory to notify readers of changes, it
-> certainly makes sense to reduce unnecessary churn by preventing a move
-> operation based on the mtime check.
-> 
-> While some people might question the utility of adding features to
-> filesystems to make them more like databases, there is real value in the
-> performance, atomicity, consistent VFS interface, multi-thread safety, and
-> async-notify capabilities of modern filesystems that starts to blur the
-> line, and actually make filesystem-based key-value stores a win for many
-> applications.
-> 
-> Like RENAME_NOREPLACE, the RENAME_NEWER_MTIME implementation lives in
-> the VFS, however the individual fs implementations do strict flags
-> checking and will return -EINVAL for any flag they don't recognize.
-> At this time, I have enabled and tested RENAME_NEWER_MTIME on ext2, ext3,
-> ext4, xfs, btrfs, and tmpfs.
-> 
-> I did not notice a general self-test for renameat2() at the VFS
-> layer (outside of fs-specific tests), so I created one, though
-> at the moment it only exercises RENAME_NEWER_MTIME and RENAME_EXCHANGE.
-> The self-test is written to be portable to the Linux Test Project,
-> and the advantage of running it there is that it automatically runs
-> tests on multiple filesystems.  See comments at the beginning of
-> renameat2_tests.c for more info.
-> 
-> Build and run the self-test with:
-> 
->   make -C tools/testing/selftests TARGETS=renameat2 run_tests
-> 
-> Questions:
-> 
-> Q: Why use mtime and not ctime for timestamp comparison?
-> 
-> A: I think the "use a directory as a key/value store" use case
->    cares about the modification time of the file content rather
->    than metadata.  Also, the rename operation itself modifies
->    ctime, making it less useful as a reference timestamp.
->    In any event, this patch creates the infrastructure for
->    conditional rename/exchange based on inode timestamp, so a
->    subsequent patch to add RENAME_NEWER_CTIME would be a mostly
->    trivial exercise.
-> 
-> Q: Why compare mtimes when some systems have poor system clock
->    accuracy and resolution?
-> 
-> A: So in the "use a directory as a key/value store" use case
->    in distributed systems, the file mtime is actually determined
->    remotely by the file content creator and is set locally
->    via futimens() rather than the local system clock.  So this gives
->    you nanosecond-scale time resolution if the content creator
->    supports it, even if the local system clock has less resolution.
+I will say though that even in low memory testing, I never saw XFS block
+off the inode time update. So at least we have room for future
+improvements here, it's wasteful to return -EAGAIN here when the vast
+majority of time updates don't end up blocking.
 
-That's not a useful answer to an application developer wondering if
-he can use this feature in his application. This answer is the
-justification of why *your application doesn't care* about poor
-timestamp resolution, not an explanation of how some other
-application can detect and/or address the problem when it arises...
+One issue there too is that, by default, XFS uses a high granularity
+threshold for when the time should be updated, making the problem worse.
 
-.....
-
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index de11992dc577..34226dfbca7a 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -54,6 +54,7 @@ TARGETS += proc
->  TARGETS += pstore
->  TARGETS += ptrace
->  TARGETS += openat2
-> +TARGETS += renameat2
->  TARGETS += resctrl
->  TARGETS += rlimits
->  TARGETS += rseq
-> diff --git a/tools/testing/selftests/renameat2/.gitignore b/tools/testing/selftests/renameat2/.gitignore
-> new file mode 100644
-> index 000000000000..79bbdf497559
-> --- /dev/null
-> +++ b/tools/testing/selftests/renameat2/.gitignore
-> @@ -0,0 +1 @@
-> +renameat2_tests
-> diff --git a/tools/testing/selftests/renameat2/Makefile b/tools/testing/selftests/renameat2/Makefile
-> new file mode 100644
-> index 000000000000..c39f5e281a5d
-> --- /dev/null
-> +++ b/tools/testing/selftests/renameat2/Makefile
-> @@ -0,0 +1,10 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +CFLAGS = -g -Wall -O2
-> +CFLAGS += $(KHDR_INCLUDES)
-> +
-> +TEST_GEN_PROGS := renameat2_tests
-> +
-> +include ../lib.mk
-> +
-> +$(OUTPUT)/renameat2_tests: renameat2_tests.c
-> diff --git a/tools/testing/selftests/renameat2/renameat2_tests.c b/tools/testing/selftests/renameat2/renameat2_tests.c
-> new file mode 100644
-> index 000000000000..1fdb908cf428
-> --- /dev/null
-> +++ b/tools/testing/selftests/renameat2/renameat2_tests.c
-> @@ -0,0 +1,447 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Written by James Yonan <james@openvpn.net>
-> + * Copyright (c) 2022 OpenVPN, Inc.
-> + */
-.....
-
-Please add the test in a separate patch. You probably also want to
-write tests for fstests so that it gets exercised regularly by
-filesystem developers who will notice when it breaks on their
-filesystem......
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
