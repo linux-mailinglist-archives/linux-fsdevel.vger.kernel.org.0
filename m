@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF75563E89
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jul 2022 06:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9D8563E90
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Jul 2022 06:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232086AbiGBEp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Jul 2022 00:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42024 "EHLO
+        id S232242AbiGBEpj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Jul 2022 00:45:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231967AbiGBEp0 (ORCPT
+        with ESMTP id S232151AbiGBEpg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Jul 2022 00:45:26 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA5C1EEF5
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 21:45:24 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id bi22-20020a05600c3d9600b003a04de22ab6so2622231wmb.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 21:45:24 -0700 (PDT)
+        Sat, 2 Jul 2022 00:45:36 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2C634B84
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Jul 2022 21:45:32 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so2350107wme.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Jul 2022 21:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=t7mi3yy5Bb+5p8twoToj9fm7lbmU9mDusARkLol1Xlw=;
-        b=ToiJRwS6pHXrzSjSnTuHKxFVajRY6aXB/gVJWYYGBYlJVeHfqUGCP8/NkcNLu8aPzS
-         yAOOvgYc22jh+Ikzs9ojVS618CJvQWW0Z97RwPq1uPsDJ/vycBrrF221lVSw4M6VXvq2
-         yU5nnT96ekMdJnLtnaRqL9+rkDomXR3MrVZv5/TxlrwecNu1Vzn5cRtMPwOcaazePNKB
-         2Oyw8LlGu+7F1aTYqbpryOS5nb1Mt/2ADKyvkMNtkbIGsSbO/Wa8T7I1DKhb19/Da22J
-         YZT4avDTtiyl/qcvBs1tzvEdKsMGe183psRR69Vrl33yQGz4PQTulS3siqE8hMGdRuGe
-         mtZg==
+        bh=MRqiYE9fpsZDzqt7Kiyf/TLeYSb81wlhel7ezTaN3aU=;
+        b=dssCX8KC8EZBOEbn1kzLC1pLJCE65hoq/crX+a1ldOqZE9ZA36QafmTSDDNFd3Aila
+         VD9lQkKL+Mwsu3ZdVZEomEsPC65cy/7oaPkSPdZ4eaBzNf+8sxmHJxmxUR3iY8cB7SwH
+         ySdDEuxft+Rqzl5UGiRvWVPwAZgkm8mJFPQaCdtjYLVLJm7skPUu95PzqC8Ca08pW4Ga
+         ZwlLijdNubA4R5TXKqpCiXzbRbIp+RMksu2SPvzPhpKEQrddlDK4HpCI5ffcpsXGpvSv
+         LHU1RbttlrpzMqOGgS2pZOK2Hp4NZx+egjhCoEyHwvirO8W1+yRuaBQDUl8Dr70PBOyU
+         Mw7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=t7mi3yy5Bb+5p8twoToj9fm7lbmU9mDusARkLol1Xlw=;
-        b=e4okM74TDAg2pewovt/uSqXoxsM1sn1Wusxp5gSPd0P+j7moZZsBXkwU+0xNYY6k1a
-         RkUi8Mmcg3qRJnyw5bNruH+myY4+KXGMy5Y8A0v1+kQf87Sg2vl+WuVn8S/ju/xKwj5r
-         0o0JvbnrIaw0iW67ufgNXFm/wNAVoP6P+ZLVg2uqRtJMQy6IJdYLhBy9QrSiGHNuXKDk
-         Zl4F9/DkV/gTTyNqm3nvss3vKuFWinx54r9NZeJoquuws9U/EYZE2W1Gtz4RB25pwKqf
-         gpHs7eHaI7uYyDsADhKuTTc02iKZT1Vn0Jh2byJ0D9HapewnU81XkaoIa00bZ5pP+WzE
-         0Hxg==
-X-Gm-Message-State: AJIora+//2qbpOY55Er+BrfpGIZFKqtpndnjlWEI32i5My3TnJNi12Pb
-        4runTajwVSb1fsguCFVKLA5GVlZswbkuQ1Uckq7FjA==
-X-Google-Smtp-Source: AGRyM1tGijl82OhiA1sFnwORt2+qIpv+4fkfRv8eVyHlrNPW3B5mWZT8c68Tze0io1DNHJoLwaz7f9O0/Wy5pmlIPg0=
-X-Received: by 2002:a05:600c:34ce:b0:3a0:3b4b:9022 with SMTP id
- d14-20020a05600c34ce00b003a03b4b9022mr20217035wmq.66.1656737122786; Fri, 01
- Jul 2022 21:45:22 -0700 (PDT)
+        bh=MRqiYE9fpsZDzqt7Kiyf/TLeYSb81wlhel7ezTaN3aU=;
+        b=rwzOi7N1xSLkPhNmr/e6DpOgZJTrYEdOdjA8wJwHh2WdjGhq/diAv/aTNcGAFYm/Gx
+         Dyo5fJW0x0gaO8FfYOQeqoyUdYyznOydUQcHoBth5bXETo0+MGclLKmC9HOEd3x30lgP
+         ViaavQz2liB1XdQAjf/A7a0gb68pHAVTA/laddshqNJ7KeHtdwo2ef6ZOwIferPbou+a
+         lN1IoLi907FydFFTXD/7P/DEediAHTAe4mcWJWtPvuhOiSluhJjtHbn3QB+uZdhNa2Ky
+         xOXrKkbPryJssNo++nPFyH22Z1Zfkt62OYEM5UAJU+L4U6pwchP1yeh0VZAUTMdDHIZu
+         giPQ==
+X-Gm-Message-State: AJIora+Bwj4hs1Fnx/GTpyhM8unpXGwTo/Cvay5UgboLCZjWocDQ/zj2
+        SGLUzoarYxsZLdn6hB0YltOHDLDjNGplSRIeQHsf0Q==
+X-Google-Smtp-Source: AGRyM1s99vdnEyfE5yfELpKGwl12sCKs6XvDYNjyHsDu0rm9rfrsT/ScBNUsvx+1LZdHS9NHuMpBb0xM8qD1jOb3BdU=
+X-Received: by 2002:a05:600c:4e8e:b0:3a0:4f43:beb6 with SMTP id
+ f14-20020a05600c4e8e00b003a04f43beb6mr21738567wmq.176.1656737130660; Fri, 01
+ Jul 2022 21:45:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220702040959.3232874-1-davidgow@google.com> <20220702040959.3232874-2-davidgow@google.com>
-In-Reply-To: <20220702040959.3232874-2-davidgow@google.com>
+References: <20220702040959.3232874-1-davidgow@google.com> <20220702040959.3232874-4-davidgow@google.com>
+In-Reply-To: <20220702040959.3232874-4-davidgow@google.com>
 From:   David Gow <davidgow@google.com>
-Date:   Sat, 2 Jul 2022 12:45:11 +0800
-Message-ID: <CABVgOSncQmFM50+B2rr31hFeiriF19MY7KTiUF4BddR0cTVXqA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] module: panic: Taint the kernel when selftest
- modules load
+Date:   Sat, 2 Jul 2022 12:45:19 +0800
+Message-ID: <CABVgOSmUrUuZm0eYkPF66mKEsj+CR4JFb9Km_e-0TbJYcK0fjQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] selftest: Taint kernel when test module loaded
 To:     Brendan Higgins <brendanhiggins@google.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -80,7 +79,7 @@ Cc:     "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000b53f7605e2cb2bd3"
+        boundary="0000000000002c2c6b05e2cb2c72"
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
@@ -92,37 +91,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000b53f7605e2cb2bd3
+--0000000000002c2c6b05e2cb2c72
 Content-Type: text/plain; charset="UTF-8"
 
 On Sat, Jul 2, 2022 at 12:10 PM David Gow <davidgow@google.com> wrote:
 >
-> Taint the kernel with TAINT_TEST whenever a test module loads, by adding
-> a new "TEST" module property, and setting it for all modules in the
-> tools/testing directory. This property can also be set manually, for
-> tests which live outside the tools/testing directory with:
-> MODULE_INFO(test, "Y");
+> Make any kselftest test module (using the kselftest_module framework)
+> taint the kernel with TAINT_TEST on module load.
+>
+> Also mark the module as a test module using MODULE_INFO(test, "Y") so
+> that other tools can tell this is a test module. We can't rely solely
+> on this, though, as these test modules are also often built-in.
+>
+> Finally, update the kselftest documentation to mention that the kernel
+> should be tainted, and how to do so manually (as below).
+>
+> Note that several selftests use kernel modules which are not based on
+> the kselftest_module framework, and so will not automatically taint the
+> kernel.
+>
+> This can be done in two ways:
+> - Moving the module to the tools/testing directory. All modules under
+>   this directory will taint the kernel.
+> - Adding the 'test' module property with:
+>   MODULE_INFO(test, "Y")
+>
+> Similarly, selftests which do not load modules into the kernel generally
+> should not taint the kernel (or possibly should only do so on failure),
+> as it's assumed that testing from user-space should be safe. Regardless,
+> they can write to /proc/sys/kernel/tainted if required.
 >
 > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > Signed-off-by: David Gow <davidgow@google.com>
 > ---
 
-I forgot the changelogs here. The only significant difference from v4
-is the change from pr_warn() to pr_warn_once().
+Whoops: forgot the changelogs. Only patches 2 and 4 had changes. For this patch:
 
 Changes since v4:
-https://lore.kernel.org/linux-kselftest/20220701084744.3002019-2-davidgow@google.com/
-- Use pr_warn_once() to only log a warning the first time a module
-taints the kernel with TAINT_TEST
-  - Loading lots of test modules is a common usecase, and this would
-otherwise spam the logs too much.
-  - Thanks Luis.
-- Remove a superfluous newline (Thanks Greg)
-- Add Luis' Reviewed-by tag.
+https://lore.kernel.org/lkml/20220513083212.3537869-3-davidgow@google.com/
+- Actually use the new TAINT_TEST name, instead of TAINT_KUNIT
+(Thanks, kernel-test-robot)
+- Document how to use this (or MODULE_INFO()) to taint the kernel.
+(Thanks, Luis)
+- Also add MODULE_INFO(test, "Y") to embed the fact that this is a
+test module into the .ko
+  - Nothing depends on it now, but it should allow us to tell this is
+a test module without executing it in the future.
 
-This patch was new in v4 of the series.
+No changes since v3:
+https://lore.kernel.org/lkml/20220513083212.3537869-3-davidgow@google.com/
 
---000000000000b53f7605e2cb2bd3
+--0000000000002c2c6b05e2cb2c72
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -189,14 +208,14 @@ OOYwT0BUtHYR/3903Dmdx5Alq+NDvUHDjozgo0f6oIkwDXT3yBV36utQ/jFisd36C8RD5mM+NFpu
 3aqLXARRbKtxw29ErCwulof2dcAonG7cd5j+gmS84sLhKU+BhL1OQVXnJ5tj7xZ5Ri5I23brcwk0
 lk/gWqfgs3ppT9Xk7zVit9q8MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
 R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
-MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB6
-MUW5/2C+NwdwPyzrypegp4o7/ZCX80g3E7oQCfQzrzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMjA3MDIwNDQ1MjNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAj
+8FPvsmeLLBv2qSHpiRXmw4mLERHgLmxI7cRDFFD3hzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjA3MDIwNDQ1MzBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
-CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAQFU/kt+/Zqo2zj+QL0VK
-HLb7oths0piZaOIg1yjUPn6SR9VzMfvQ1ko1zy+DzlDsnmiTn2bsCmLYZUmDhxP1E2Whf+sEJtne
-ClcxQCJOvq0UEb0TMI9jHYUw7gPtli05wZhtUUAg9YhyvzCMy8QIyMO01fQ0wGEjxIV8ZuPE7D/B
-vAFi+RfvHMFm5XEbgNW7FPM/Pvil8u+bvcmXJ9jZ9Bi2AsGtsooDwFWAeIhvNxuVZ0C2Gzr6ZEih
-4ETDq0imMuJOe5opjJMpzQhDD+k3HrBPsTbeOMYAbIFL0vOqz7xvUqRmuxrL7tnSEXe9hQRZIo1y
-ykjj9R+rZGII+vYxTw==
---000000000000b53f7605e2cb2bd3--
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEATrBfiy4X0qroElcl+tjW
+Xj48Xr6tvUo8UKbUQjUlfBqSmDLvQO1DR3M9T3JSxlwEmdreBHDdX5Jn9u+yKs16iT91wQXgq/75
+FI6v6JZgIqnkDyIQUoxLI2jW+vLoyevVVOrPCD3mqWa6FRNbvsvqDnVubFlYSm7+DrLl/f/7fsu/
+21SvsRXbEb5XU5EM+uheJmEBF1WppMaMHVPWxAPhS9VSX4DrmJBHGunA42gt1NS+TKgCIlON2Maf
+o2ZTmIprhMFRqfSB0ofeRhTWNuOoMHREIQ1OGwRKuTMz6AKG9t1wNCQFcCmQ6foW2nA7jPBhJ7Hy
+JHe3sZgL+mVTypcIoQ==
+--0000000000002c2c6b05e2cb2c72--
