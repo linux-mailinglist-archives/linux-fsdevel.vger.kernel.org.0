@@ -2,110 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E01564821
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 16:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A88DD56482A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 16:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231693AbiGCOgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jul 2022 10:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45012 "EHLO
+        id S232263AbiGCOyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jul 2022 10:54:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiGCOgs (ORCPT
+        with ESMTP id S229739AbiGCOyP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jul 2022 10:36:48 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31D363AB
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 07:36:47 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 78BF45C0067;
-        Sun,  3 Jul 2022 10:36:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 03 Jul 2022 10:36:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1656859004; x=1656945404; bh=9sb6rt0Ya3
-        RmOGuh36gCVHconvVIAJmML1ProfK4+Yk=; b=YKvzItZu1TBqCtFrhYNgERwvyE
-        +9AZq3H9jH6nOqMnE05G5Icn7BFXMXgglyBJIso3G/afk+uJHaBlqJHrQCRfiNOB
-        9Ssj7x2NNTP5e/G7VFCFuV6cUOoumG+VqCD8TO/bf3THcTADTt/wcZj4Lb6oLUwu
-        Isdv6BtDdA833OddQJPaKmXRiWAT4AbiK+9po26ksPD5xGBNX791aSXHs7HiCxhm
-        q3g1hIz4QqVW0HBKI3+OLI4ThpFT3dsI8fAAKRKi1tBsyYVsCM6q+giIZ44BuN5y
-        abP5gCOOCFl1i8FZgCF2d56jLyXR3H/wbL4aeRGChy0skP2b0MR2ipL+Nyaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:date:feedback-id:feedback-id:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1656859004; x=1656945404; bh=9sb6rt0Ya3RmOGuh36gCVHconvVI
-        AJmML1ProfK4+Yk=; b=CS7R7UYSQH10IoQ+sVzIRNBwZjhrF4N7uP9cLcFylHuU
-        /aWw/DQ4aizROjdhNu+PI8q4b9E8I3TPoRBS0vq+AV3mDDPg2kz+ObCEcr05d4B9
-        kvUoOmFua+zgp9hvqno8Y1zaSKVcMPaDlFBD19z/A6vemBirux4CWGEF2/Z6wi2J
-        Ofy/MuSrnI+rXtjOSYsJSV59+8moZRVZi6pyrEKJVURQctVJEKwauGBojVLOqeLz
-        6MMic0JnjvvbKrb9fYwj4EndGcECCKdG0MnL8dot8ZZ70XIoWEiy+N4LP4NE81Or
-        8LksDNmB+iySp7NWOY6gt9Vjogdv6aBuR3RjVbabyw==
-X-ME-Sender: <xms:fKnBYiREzafHGAwCOaEeBHiVwPuzYC1bJz2eQb9yoIuqI6eiYYK8zw>
-    <xme:fKnBYnx3xC4jHkBi5L4OwHXW20gXiOjyWbIAxT7NEMkDlqLzq1nFdc78TAAHQsMeE
-    YNyu4rabSAQMxjp>
-X-ME-Received: <xmr:fKnBYv2fsBIZWu_hJpKSn-SHZfmiyXk39JitBdMlSMoEfuFGo91WIVWzicqJ_Ebv0N15LmiVDYs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehjedgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhholhgr
-    uhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeeftefhgfejhfelkeduieeludeuffduvedvveefkeevtdevgeevfeejgfdvuedt
-    keenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpih
-    hkohhlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:fKnBYuDYEM3JTiqnLlS5II1Bs2okpBcf7jCl8WIGTxQTTmwvdU394w>
-    <xmx:fKnBYrhbyd0GQtMSCyqb2uVrJFyo8KiihsrU97hE8kVr9XOv6TmvyA>
-    <xmx:fKnBYqr5qfWWApdlFPi2QqO1IedE4dwVT0SjcJulsvQ7YBd31Lt75w>
-    <xmx:fKnBYreeJkW9ANMlnCHWbPqO6MfXWAYa9XnGClAytqCVee6vnvRzgg>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 3 Jul 2022 10:36:43 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 85FE198C;
-        Sun,  3 Jul 2022 14:36:42 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 1A961682A4; Sun,  3 Jul 2022 15:36:42 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        miklos <mszeredi@redhat.com>
-Subject: potential race in FUSE's readdir() + releasedir()?
-Mail-Copies-To: never
-Mail-Followup-To: Linux FS Devel <linux-fsdevel@vger.kernel.org>, fuse-devel
-        <fuse-devel@lists.sourceforge.net>, miklos <mszeredi@redhat.com>
-Date:   Sun, 03 Jul 2022 15:36:42 +0100
-Message-ID: <87tu7yjm9x.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Sun, 3 Jul 2022 10:54:15 -0400
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194ED2DC4;
+        Sun,  3 Jul 2022 07:54:15 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id t21so6837960pfq.1;
+        Sun, 03 Jul 2022 07:54:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=N/5JSOMEADoapmIXoVRcPDoVueHzRiWPhNBdsUZ1uek=;
+        b=vrVUo2KTpKNzb5cG4zxaRTPges13A+3TxcVWKad7B5j6k3xGAGGgZn36G/cQcYT4/X
+         4sejEmA3+fG2a/zQbYfkPGWe2ZwyeH2hx/0zcYGaHXd57P+btpsXHUUpjX1Vl5mijzED
+         kgkeeE+s8bxiV3e3rr+yQ9cplTBg4nAewBGq85+LgVws9m/cj3fOor4YFckD9PiZg7Ic
+         YGq0JmPLJnnQpN7YBFLjPk92iFgj3JfNl3S8InU7O3xvq8fN5gMKJr3KY31fYYB0L6wy
+         6lOo4D5j+pis68XNptYEh8EgaMz1GQPWORwamnpg91zAwZxLzZru4NegfifVfoFF+kJG
+         TLRg==
+X-Gm-Message-State: AJIora8yxtyPbre1x6pzQ9bxCIfEkEL75Bh457x0RVBv4jd9upr0k0zM
+        fCbAQKMEKrKVetZzdpVZYgg=
+X-Google-Smtp-Source: AGRyM1v3iRbadRBADbEjJfZBpuos8qHnw0o4bD0D51mMNQMz8DhRKlPNNZqEkr5eG8gAifIg5nx96Q==
+X-Received: by 2002:a63:7741:0:b0:40c:c3cb:d9bd with SMTP id s62-20020a637741000000b0040cc3cbd9bdmr20458523pgc.581.1656860054340;
+        Sun, 03 Jul 2022 07:54:14 -0700 (PDT)
+Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
+        by smtp.gmail.com with ESMTPSA id g24-20020a170902d5d800b00168c4c3ed94sm18981428plh.309.2022.07.03.07.54.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Jul 2022 07:54:13 -0700 (PDT)
+Message-ID: <1abb9307-509d-e2dc-5756-ebc297a62538@acm.org>
+Date:   Sun, 3 Jul 2022 07:54:11 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
+ expunges
+Content-Language: en-US
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        amir73il@gmail.com, pankydev8@gmail.com, josef@toxicpanda.com,
+        jmeneghi@redhat.com, Jan Kara <jack@suse.cz>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>
+References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
+ <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org> <YsGaU4lFjR5Gh29h@mit.edu>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <YsGaU4lFjR5Gh29h@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 7/3/22 06:32, Theodore Ts'o wrote:
+> On Sat, Jul 02, 2022 at 02:48:12PM -0700, Bart Van Assche wrote:
+>>
+>> I strongly disagree with annotating tests with failure rates. My opinion is
+>> that on a given test setup a test either should pass 100% of the time or
+>> fail 100% of the time.
+> 
+> My opinion is also that no child should ever go to bed hungry, and we
+> should end world hunger.
 
-I am seeing something that to me looks like a race between FUSE's
-readdir() and releasedir() handlers. On kernel 5.18, the FUSE daemon
-seems to (ocasionally) receive a releasedir() request while a readdir()
-request with the same `struct fuse_file_info *fi->fh` is still active
-(i.e., the FUSE daemon hasn't sent a reply to the kernel for this yet).
+In my view the above comment is unfair. The first year after I wrote the
+SRP tests in blktests I submitted multiple fixes for kernel bugs 
+encountered by running these tests. Although it took a significant 
+effort, after about one year the test itself and the kernel code it 
+triggered finally resulted in reliable operation of the test. After that 
+initial stabilization period these tests uncovered regressions in many 
+kernel development cycles, even in the v5.19-rc cycle.
 
-Could this be a bug in the kernel? Or is there something else that could
-explain this?
+Since I'm not very familiar with xfstests I do not know what makes the 
+stress tests in this test suite fail. Would it be useful to modify the 
+code that decides the test outcome to remove the flakiness, e.g. by only 
+checking that the stress tests do not trigger any unwanted behavior, 
+e.g. kernel warnings or filesystem inconsistencies?
 
-Best,
--Nikolaus
+Thanks,
 
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+Bart.
