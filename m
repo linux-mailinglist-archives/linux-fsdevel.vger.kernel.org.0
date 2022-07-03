@@ -2,99 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A88DD56482A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 16:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE3356483E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 17:05:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232263AbiGCOyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jul 2022 10:54:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
+        id S232458AbiGCPFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jul 2022 11:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiGCOyP (ORCPT
+        with ESMTP id S231145AbiGCPFh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jul 2022 10:54:15 -0400
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194ED2DC4;
-        Sun,  3 Jul 2022 07:54:15 -0700 (PDT)
-Received: by mail-pf1-f171.google.com with SMTP id t21so6837960pfq.1;
-        Sun, 03 Jul 2022 07:54:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=N/5JSOMEADoapmIXoVRcPDoVueHzRiWPhNBdsUZ1uek=;
-        b=vrVUo2KTpKNzb5cG4zxaRTPges13A+3TxcVWKad7B5j6k3xGAGGgZn36G/cQcYT4/X
-         4sejEmA3+fG2a/zQbYfkPGWe2ZwyeH2hx/0zcYGaHXd57P+btpsXHUUpjX1Vl5mijzED
-         kgkeeE+s8bxiV3e3rr+yQ9cplTBg4nAewBGq85+LgVws9m/cj3fOor4YFckD9PiZg7Ic
-         YGq0JmPLJnnQpN7YBFLjPk92iFgj3JfNl3S8InU7O3xvq8fN5gMKJr3KY31fYYB0L6wy
-         6lOo4D5j+pis68XNptYEh8EgaMz1GQPWORwamnpg91zAwZxLzZru4NegfifVfoFF+kJG
-         TLRg==
-X-Gm-Message-State: AJIora8yxtyPbre1x6pzQ9bxCIfEkEL75Bh457x0RVBv4jd9upr0k0zM
-        fCbAQKMEKrKVetZzdpVZYgg=
-X-Google-Smtp-Source: AGRyM1v3iRbadRBADbEjJfZBpuos8qHnw0o4bD0D51mMNQMz8DhRKlPNNZqEkr5eG8gAifIg5nx96Q==
-X-Received: by 2002:a63:7741:0:b0:40c:c3cb:d9bd with SMTP id s62-20020a637741000000b0040cc3cbd9bdmr20458523pgc.581.1656860054340;
-        Sun, 03 Jul 2022 07:54:14 -0700 (PDT)
-Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
-        by smtp.gmail.com with ESMTPSA id g24-20020a170902d5d800b00168c4c3ed94sm18981428plh.309.2022.07.03.07.54.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Jul 2022 07:54:13 -0700 (PDT)
-Message-ID: <1abb9307-509d-e2dc-5756-ebc297a62538@acm.org>
-Date:   Sun, 3 Jul 2022 07:54:11 -0700
+        Sun, 3 Jul 2022 11:05:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D88A5F5E;
+        Sun,  3 Jul 2022 08:05:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EC49E60FD2;
+        Sun,  3 Jul 2022 15:05:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41BAAC341C6;
+        Sun,  3 Jul 2022 15:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656860735;
+        bh=ml13+lJ64hkDt+1Ct13RJqBJF6v3V7P/yEHeyrAHOeA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bBtjHQaGEfthY5DMayH45IyAqUTbp/YmwR9fik/6KJvWbrI8oBBFjPmRa4hk617mH
+         ffqsPlr2mXvUW4oDLJF+aRXkj72qizkIdk5fms5cCvic8z1YeV7PAIfLhCd3NCFzq5
+         kRSKZTl/iZ++8ql5m3Jr1Uxi9uBam33GEzDTHVAR1jDbBHo8dgRVQS+5czb0m8OFiR
+         qKQgoj2yTdiAlvyBOruncG0lNl4k47nX3BMHSU84Cbd4Csepcr8+VrECqn1S9eKu6+
+         9HPCSpV5dcq+sgGSsO265cwgw31yeEzqQyLmRFnaShm4LGmXR8X7iGYs3m3soGH0yb
+         hCLFZx6xJB3Xw==
+Date:   Sun, 3 Jul 2022 08:05:34 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de, fstests <fstests@vger.kernel.org>
+Subject: [GIT PULL] xfs: bug fixes for 5.19-rc5
+Message-ID: <YsGwPqUYSW/IwgkN@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
- expunges
-Content-Language: en-US
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        amir73il@gmail.com, pankydev8@gmail.com, josef@toxicpanda.com,
-        jmeneghi@redhat.com, Jan Kara <jack@suse.cz>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org> <YsGaU4lFjR5Gh29h@mit.edu>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <YsGaU4lFjR5Gh29h@mit.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/3/22 06:32, Theodore Ts'o wrote:
-> On Sat, Jul 02, 2022 at 02:48:12PM -0700, Bart Van Assche wrote:
->>
->> I strongly disagree with annotating tests with failure rates. My opinion is
->> that on a given test setup a test either should pass 100% of the time or
->> fail 100% of the time.
-> 
-> My opinion is also that no child should ever go to bed hungry, and we
-> should end world hunger.
+Hi Linus,
 
-In my view the above comment is unfair. The first year after I wrote the
-SRP tests in blktests I submitted multiple fixes for kernel bugs 
-encountered by running these tests. Although it took a significant 
-effort, after about one year the test itself and the kernel code it 
-triggered finally resulted in reliable operation of the test. After that 
-initial stabilization period these tests uncovered regressions in many 
-kernel development cycles, even in the v5.19-rc cycle.
+Please pull this branch containing bug fixes for XFS for 5.19-rc5.  The
+patches in this branch fix some stalling problems and correct the last
+of the problems (I hope) observed during testing of the new atomic xattr
+update feature.
 
-Since I'm not very familiar with xfstests I do not know what makes the 
-stress tests in this test suite fail. Would it be useful to modify the 
-code that decides the test outcome to remove the flakiness, e.g. by only 
-checking that the stress tests do not trigger any unwanted behavior, 
-e.g. kernel warnings or filesystem inconsistencies?
+As usual, I did a test-merge with upstream master as of a few minutes
+ago, and it completed flawlessly.  Please let me know if you encounter
+any problems.
 
-Thanks,
+--D
 
-Bart.
+The following changes since commit e89ab76d7e2564c65986add3d634cc5cf5bacf14:
+
+  xfs: preserve DIFLAG2_NREXT64 when setting other inode attributes (2022-06-15 23:13:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.19-fixes-4
+
+for you to fetch changes up to 7561cea5dbb97fecb952548a0fb74fb105bf4664:
+
+  xfs: prevent a UAF when log IO errors race with unmount (2022-07-01 09:09:52 -0700)
+
+----------------------------------------------------------------
+Fixes for 5.19-rc5:
+ - Fix statfs blocking on background inode gc workers
+ - Fix some broken inode lock assertion code
+ - Fix xattr leaf buffer leaks when cancelling a deferred xattr update
+   operation
+ - Clean up xattr recovery to make it easier to understand.
+ - Fix xattr leaf block verifiers tripping over empty blocks.
+ - Remove complicated and error prone xattr leaf block bholding mess.
+ - Fix a bug where an rt extent crossing EOF was treated as "posteof"
+   blocks and cleaned unnecessarily.
+ - Fix a UAF when log shutdown races with unmount.
+
+----------------------------------------------------------------
+Darrick J. Wong (6):
+      xfs: always free xattri_leaf_bp when cancelling a deferred op
+      xfs: clean up the end of xfs_attri_item_recover
+      xfs: empty xattr leaf header blocks are not corruption
+      xfs: don't hold xattr leaf buffers across transaction rolls
+      xfs: dont treat rt extents beyond EOF as eofblocks to be cleared
+      xfs: prevent a UAF when log IO errors race with unmount
+
+Dave Chinner (2):
+      xfs: bound maximum wait time for inodegc work
+      xfs: introduce xfs_inodegc_push()
+
+Kaixu Xia (2):
+      xfs: factor out the common lock flags assert
+      xfs: use invalidate_lock to check the state of mmap_lock
+
+ fs/xfs/libxfs/xfs_attr.c      | 38 ++++++-------------------
+ fs/xfs/libxfs/xfs_attr.h      |  5 ----
+ fs/xfs/libxfs/xfs_attr_leaf.c | 35 ++++++++++++-----------
+ fs/xfs/libxfs/xfs_attr_leaf.h |  3 +-
+ fs/xfs/xfs_attr_item.c        | 27 ++++++++++--------
+ fs/xfs/xfs_bmap_util.c        |  2 ++
+ fs/xfs/xfs_icache.c           | 56 ++++++++++++++++++++++++-------------
+ fs/xfs/xfs_icache.h           |  1 +
+ fs/xfs/xfs_inode.c            | 64 +++++++++++++++++--------------------------
+ fs/xfs/xfs_log.c              |  9 ++++--
+ fs/xfs/xfs_mount.h            |  2 +-
+ fs/xfs/xfs_qm_syscalls.c      |  9 ++++--
+ fs/xfs/xfs_super.c            |  9 ++++--
+ fs/xfs/xfs_trace.h            |  1 +
+ 14 files changed, 130 insertions(+), 131 deletions(-)
