@@ -2,178 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAF6564554
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 07:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F04956474B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 14:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbiGCF5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jul 2022 01:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35214 "EHLO
+        id S232199AbiGCMpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jul 2022 08:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiGCF5I (ORCPT
+        with ESMTP id S229739AbiGCMps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jul 2022 01:57:08 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D2B635C;
-        Sat,  2 Jul 2022 22:57:07 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id w187so6134945vsb.1;
-        Sat, 02 Jul 2022 22:57:07 -0700 (PDT)
+        Sun, 3 Jul 2022 08:45:48 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11274E2F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 05:45:47 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id f85so2829637pfa.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Jul 2022 05:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S09EmHyul/XlTGMMFg0S5sr547tyBYiGoQ4G8XzTNcI=;
-        b=ddINMmdAPrBQ66IZHifncJZbP+UcQiW7L/OYWGGvmDNZH4IEFt4XTLbAkliUAs5/N+
-         0YvwesqIn0cN9U8oaOX7J29t7/go35LyZWnbCmMVtReMixfQPcPDcXW4GQCmPs25xWeN
-         MOl5i+h83ZjwLVYoJ6e9gi1aTl+hw1ufA+PFGAsDXkrTHt9tYT/ZSW3jhNvrGNt10rZm
-         cRn8L1Dt6+Qp+Hlusfu/UbYY0/avVy0DkJEkbO+LAuiDijNAlvczNO67x8JYDvWJ0UUN
-         ZE77P4pJUVJBgs/8AagbpVojikLyV4lInQQikeOhpFs4GyH/gB6lFwgIAtb4rcDtddZR
-         nx7Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=1zTTCbaZiy4t3xiCt8tiL8N2DzYy/9mYQpvLnJQEdMI=;
+        b=AhyB1VaMCrkl4aKrgO+rqswiofNhl3MTHWL4W5NQD67uUU5Mo9pQGc4IOCo7zaP8px
+         IzIXdMIlZoB61bWab6iv4Nuh7dcMTJqlB3QVEMfxcCNgCW1vXraMGCKDufEkqeFeBo8u
+         S/z4QzbSVyeyVRD4MtOJq8yUPIMVTyvCkaqre38YWRn81gpEMlgFWtj7tb5j4kxlLa21
+         JOxP69XIrNR+mbrNL/s5Tq6GAXAn+p8dald6VALb12FLR4Oyv0TXm/NZhGMJlUlN2kq0
+         ngmL57amAaH4bpeJAdmcFJUmOJ2hyA2vZDRZXcEDvwY0bBs1AMxmmeO9zVLjfVQ4coDR
+         KUxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S09EmHyul/XlTGMMFg0S5sr547tyBYiGoQ4G8XzTNcI=;
-        b=Q3jYSUkTeVdGwK5BJ+V1i0qU/vm0pOHw79HvJQ95Xly4L9Av52gT0TkyE/wg81/iSh
-         tKMGGyWPBCmmWqB3KBHBp8Kqxf68QLmZ2KgIfpnTKdSh3EZOn6CMP6dO6Garh+jS4Ttr
-         w6nUZyvT96xHEYSgkQJm9KSSyNRg3V69II0d51pmuJjkUHR+tFy/7YtuYV3f/maWC8f2
-         mIGbZPzlgbrK0ANMObaEYcSSExj9x9MmX1qNswYIaMU/8HD46NYtsDwNfKrM/SR6AIz/
-         HpAJ5FHXik+NjFXsVme5C1tdlqmlw5ZJuSIgRWsq4HjfIMzmN8N8OEFdHylEfPT2epul
-         N/IQ==
-X-Gm-Message-State: AJIora8cLuIS0cGAUOMjezHHzv17sPErGBdDxcQ/emP4JIPBhSFVX5/i
-        9uz1cPSeE6m1NQhUGqLgBY1uPd5v2M3eBS9jdWk=
-X-Google-Smtp-Source: AGRyM1tn8NLjJQpQ8hpfGDpoOVBmFOazVY52hM8TqvGWp/ZGkht9NeNFbBfVPOD7UgaiXvL6gEGW/PI/Raf5gZDorqk=
-X-Received: by 2002:a05:6102:38c7:b0:356:4e2f:ae5b with SMTP id
- k7-20020a05610238c700b003564e2fae5bmr14281202vst.71.1656827826320; Sat, 02
- Jul 2022 22:57:06 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1zTTCbaZiy4t3xiCt8tiL8N2DzYy/9mYQpvLnJQEdMI=;
+        b=vmZHiwERhiap56eL5Oevjdf+DwCaToZgO8cDcGWCxmKzcOa0r+vJzGzVhaIbXSLpHH
+         8o7QhpVDRNLNzzC+YPO0KAh7rfZbhr6Ret5SA7MCNvm7Ez31fvp3dc9dr4HD4bJ8SXOp
+         r8uLSnS93AhBce8V1R4e1khBOO7WDdovkZPntb4YGHzvCTsSGcO/4YleSHHIItuWHb1L
+         /N3C3JeK6vIL13Hdy2H976ykjU5P8Q42dOn2aB5jiiMsicrWemR4z3dLjuNtwJfTC33J
+         72xF+cKtchZDL/1DM6vfTNKjqxjZdnlrdv62+oQHzixebGh2VgdJnvNvfnT9sJd1OqKG
+         iqNw==
+X-Gm-Message-State: AJIora/4aupA/y/bDwl5wg5YG4xNCtYCRRLoe27KSO2Bi921dnWeCh8L
+        GCncGLfcJep6FklA0Q5Yk3qCVyCJIXHNhQ==
+X-Google-Smtp-Source: AGRyM1u8WfHSYgcVllj0ksl/aoX6LIaOgNV8FCdymGnSe09Y1CliKIVq/ajvsOiJAiPgIaQkfaNY3A==
+X-Received: by 2002:a05:6a00:4194:b0:527:f9a4:73b7 with SMTP id ca20-20020a056a00419400b00527f9a473b7mr23346482pfb.61.1656852346463;
+        Sun, 03 Jul 2022 05:45:46 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id u13-20020a17090a1d4d00b001e87bd6f6c2sm7751233pju.50.2022.07.03.05.45.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Jul 2022 05:45:45 -0700 (PDT)
+Message-ID: <3e042646-7c3b-ac06-d847-74b3df77fb62@kernel.dk>
+Date:   Sun, 3 Jul 2022 06:45:44 -0600
 MIME-Version: 1.0
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org> <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org>
-In-Reply-To: <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 3 Jul 2022 08:56:54 +0300
-Message-ID: <CAOQ4uxgBtMifsNt1SDA0tz098Rt7Km6MAaNgfCeW=s=FPLtpCQ@mail.gmail.com>
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for expunges
-To:     Bart Van Assche <bvanassche@acm.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
-        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
-        fstests <fstests@vger.kernel.org>, Zorro Lang <zlang@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] fs: allow inode time modification with IOCB_NOWAIT
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stefan Roesch <shr@fb.com>
+References: <39f8b446-dce3-373f-eb86-e3333b31122c@kernel.dk>
+ <Yr/gFLRLBE76enwG@infradead.org>
+ <5cfdd462-d21b-cb62-3ad3-3ecd8cbc0a31@kernel.dk>
+ <20220703000648.GA3237952@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220703000648.GA3237952@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 3, 2022 at 12:48 AM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On 5/18/22 20:07, Luis Chamberlain wrote:
-> > I've been promoting the idea that running fstests once is nice,
-> > but things get interesting if you try to run fstests multiple
-> > times until a failure is found. It turns out at least kdevops has
-> > found tests which fail with a failure rate of typically 1/2 to
-> > 1/30 average failure rate. That is 1/2 means a failure can happen
-> > 50% of the time, whereas 1/30 means it takes 30 runs to find the
-> > failure.
-> >
-> > I have tried my best to annotate failure rates when I know what
-> > they might be on the test expunge list, as an example:
-> >
-> > workflows/fstests/expunges/5.17.0-rc7/xfs/unassigned/xfs_reflink.txt:generic/530 # failure rate about 1/15 https://gist.github.com/mcgrof/4129074db592c170e6bf748aa11d783d
-> >
-> > The term "failure rate 1/15" is 16 characters long, so I'd like
-> > to propose to standardize a way to represent this. How about
-> >
-> > generic/530 # F:1/15
-> >
-> > Then we could extend the definition. F being current estimate, and this
-> > can be just how long it took to find the first failure. A more valuable
-> > figure would be failure rate avarage, so running the test multiple
-> > times, say 10, to see what the failure rate is and then averaging the
-> > failure out. So this could be a more accurate representation. For this
-> > how about:
-> >
-> > generic/530 # FA:1/15
-> >
-> > This would mean on average there failure rate has been found to be about
-> > 1/15, and this was determined based on 10 runs.
-> >
-> > We should also go extend check for fstests/blktests to run a test
-> > until a failure is found and report back the number of successes.
-> >
-> > Thoughts?
-> >
-> > Note: yes failure rates lower than 1/100 do exist but they are rare
-> > creatures. I love them though as my experience shows so far that they
-> > uncover hidden bones in the closet, and they they make take months and
-> > a lot of eyeballs to resolve.
->
-> I strongly disagree with annotating tests with failure rates. My opinion
-> is that on a given test setup a test either should pass 100% of the time
-> or fail 100% of the time. If a test passes in one run and fails in
-> another run that either indicates a bug in the test or a bug in the
-> software that is being tested. Examples of behaviors that can cause
-> tests to behave unpredictably are use-after-free bugs and race
-> conditions. How likely it is to trigger such behavior depends on a
-> number of factors. This could even depend on external factors like which
-> network packets are received from other systems. I do not expect that
-> flaky tests have an exact failure rate. Hence my opinion that flaky
-> tests are not useful and also that it is not useful to annotate flaky
-> tests with a failure rate. If a test is flaky I think that the root
-> cause of the flakiness must be determined and fixed.
->
+On 7/2/22 6:06 PM, Dave Chinner wrote:
+> On Sat, Jul 02, 2022 at 09:45:23AM -0600, Jens Axboe wrote:
+>> On 7/2/22 12:05 AM, Christoph Hellwig wrote:
+>>> On Fri, Jul 01, 2022 at 02:09:32PM -0600, Jens Axboe wrote:
+>>>> generic/471 complains because it expects any write done with RWF_NOWAIT
+>>>> to succeed as long as the blocks for the write are already instantiated.
+>>>> This isn't necessarily a correct assumption, as there are other conditions
+>>>> that can cause an RWF_NOWAIT write to fail with -EAGAIN even if the range
+>>>> is already there.
+>>>>
+>>>> Since the risk of blocking off this path is minor, just allow inode
+>>>> time updates with IOCB_NOWAIT set. Then we can later decide if we should
+>>>> catch this further down the stack.
+>>>
+>>> I think this is broken.  Please just drop the test, the non-blocking
+>>> behavior here makes a lot of sense.  At least for XFS, the update
+>>> will end up allocating and commit a transaction which involves memory
+>>> allocation, a blocking lock and possibly waiting for lock space.
+>>
+>> I'm fine with that, I've made my opinions on that test case clear in
+>> previous emails. I'll drop the patch for now.
+>>
+>> I will say though that even in low memory testing, I never saw XFS block
+>> off the inode time update. So at least we have room for future
+>> improvements here, it's wasteful to return -EAGAIN here when the vast
+>> majority of time updates don't end up blocking.
+> 
+> It's not low memory testing that you should be concerned about -
+> it's when the journal runs out of space that you'll get long,
+> unbound latencies waiting for timestamp updates. Waiting for journal
+> space to become available could, in the worst case, entail waiting
+> for tens of thousands of small random metadata IOs to be submitted
+> and completed....
 
-That is true for some use cases, but unfortunately, the flaky
-fstests are way too valuable and too hard to replace or improve,
-so practically, fs developers have to run them, but not everyone does.
+Right, I know it's not a specifically targeted test. But testing
+blocking on a new journal space would certainly be interesting in
+itself, if someone where to make xfs_vn_update_time() honor IOCB_NOWAIT
+for that.
 
-Zorro has already proposed to properly tag the non deterministic tests
-with a specific group and I think there is really no other solution.
+More realistic is probably just checking SB_LAZYTIME and allowing
+IOCB_NOWAIT for that.
 
-The only question is whether we remove them from the 'auto' group
-(I think we should).
+>> One issue there too is that, by default, XFS uses a high granularity
+>> threshold for when the time should be updated, making the problem worse.
+> 
+> That's not an XFS issue - we're just following the VFS rules for
+> when mtime needs to be changed. If you want to avoid frequent
+> transactional (on-disk) mtime updates, then use the lazytime mount
+> option to limit on-disk mtime updates to once per day.
 
-There is probably a large overlap already between the 'stress' 'soak' and
-'fuzzers' test groups and the non-deterministic tests.
-Moreover, if the test is not a stress/fuzzer test and it is not deterministic
-then the test is likely buggy.
+Seems like that would be a better default (for anyone, not just XFS),
+but that's more likely a bigger can of worms I don't have any interest
+in opening :-)
 
-There is only one 'stress' test not in 'auto' group (generic/019), only two
-'soak' tests not in the 'auto' group (generic/52{1,2}).
-There are only three tests in 'soak' group and they are also exactly
-the same three tests in the 'long_rw' group.
+-- 
+Jens Axboe
 
-So instead of thinking up a new 'flaky' 'random' 'stochastic' name
-we may just repurpose the 'soak' group for this matter and start
-moving known flaky tests from 'auto' to 'soak'.
-
-generic/52{1,2} can be removed from 'soak' group and remain
-in 'long_rw' group, unless filesystem developers would like to
-add those to the stochastic test run.
-
-filesystem developers that will run ./check -g auto -g soak
-will get the exact same test coverage as today's -g auto
-and the "commoners" that run ./check -g auto will enjoy blissful
-determitic test results, at least for the default config of regularly
-tested filesystems (a.k.a, the ones tested by kernet test bot).?
-
-Darrick,
-
-As the one who created the 'soak' group and only one that added
-tests to it, what do you think about this proposal?
-What do you think should be done with generic/52{1,2}?
-
-Thanks,
-Amir.
