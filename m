@@ -2,64 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF25256477E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 15:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E555564786
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Jul 2022 15:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232674AbiGCNQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jul 2022 09:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
+        id S232462AbiGCNap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jul 2022 09:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbiGCNQS (ORCPT
+        with ESMTP id S229739AbiGCNao (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jul 2022 09:16:18 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD4463E9;
-        Sun,  3 Jul 2022 06:16:17 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-118-63.bstnma.fios.verizon.net [173.48.118.63])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 263DFRbI024097
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 3 Jul 2022 09:15:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1656854134; bh=yN7VurO+JH7Mo0Ckmg7/VswnfnxYfW2lA7CXiFOOZa8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=ENt1xY3yANlkp01oZmFFQ1vZpE5hmxZSOapOmMq1o5KLT10yJRziY0BKdKrjhgJ35
-         KNDLYbuCEEoqhnlCinIttTawZM2ofnrLQcVKtZNNX7UXnGs/s+osL1b6aDzo2JPulX
-         CP9wmtbj1ncOzLJNn1R39ZLIxFvzuuXefQ+2W9Co7/CnsjEDWz+cW5ERywjH/bOxr6
-         JT+NWKgEln2ytRbYong40dTokBPmcyEttS5JuwhqTeF3y9MiIYXnzH4grRXI3Dd/Ek
-         iKbcMoQyFaaScDOSSzBfNEEcUzBREwE+W3WTsPeba3UJguLF8KZF/258dp8FUgqRD7
-         r9telvU5q75uA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id C788315C3E94; Sun,  3 Jul 2022 09:15:27 -0400 (EDT)
-Date:   Sun, 3 Jul 2022 09:15:27 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
-        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
-        fstests <fstests@vger.kernel.org>, Zorro Lang <zlang@redhat.com>,
+        Sun, 3 Jul 2022 09:30:44 -0400
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777F863DC
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 06:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=TwGXx+r3+9ZCR7/02cY8pYnDGmveOvfix0E0wLTE2v4=; b=w0wOBR3pZgYLCZgqnQUAZI8UQj
+        3RZJKmx90Nev01yl5SnE+1Tx1GLSr2qpPPZJMe31W4NB/WtXjfl1Sm8TRmoNEHTmXGLnNwqLQyj4C
+        FgAOiF39hbmg4q4xiRB/p1hTXaOmakTOl3kqOcuAaawdv1sub5M1RFJx3b/1L5Mzn7GzAqhmKPYCL
+        TpJ3LDPF85dKk35vvKPUNC/dy6luY1txbHxtNoQNDpYKCHY8QME5zsA8Jlc3TqQoPuXm2jyUd2YcZ
+        Rae92y1eo2yQR0+npJkdpLO4jTuSXCqAbKtj3CANbAzL6Uzz/CT++XmKCbD4ZSzP0sffWC01VA3GF
+        QSUlETPxPuM6orIVdGgXSBTfLEn0/bdrt9L41oTfcPUnHHCWfSbOt2NgN2Mq7VA6Yz9jpt9Cf20T3
+        213lGlWgXdGAmMVDFfn3s0O8LwQyRLAUoUQL10bB6EckZR/gDKRNUshk3WMgSof/38RMq3i85ompv
+        62ZvbvSpAuvpuguxEyMFakh8zrSW8li6ttuvxXRIiRjSeN/2LndgJFNGwMX78xVJcH0D6M15MDkzO
+        BaUMM5Eb3CN48trPtgvUHMPj9yXGYO0GuFIF+MZneG8Kz73+p/Ph7Pur6N8r9o7jBhKOJVtxqRBCc
+        4PcRe6qx6o/fTuUb/8QImk99aCNkwe1pWiMAEQr0A=;
+From:   Christian Schoenebeck <linux_oss@crudebyte.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
- expunges
-Message-ID: <YsGWb8nPUySuhos/@mit.edu>
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org>
- <CAOQ4uxgBtMifsNt1SDA0tz098Rt7Km6MAaNgfCeW=s=FPLtpCQ@mail.gmail.com>
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [PATCH 01/44] 9p: handling Rerror without copy_from_iter_full()
+Date:   Sun, 03 Jul 2022 15:30:38 +0200
+Message-ID: <14408937.dLXoRf4GRQ@silver>
+In-Reply-To: <Yr9gVtOKPiDR/IP6@codewreck.org>
+References: <YrKWRCOOWXPHRCKg@ZenIV> <6628265.VPEUYjqhpI@silver>
+ <Yr9gVtOKPiDR/IP6@codewreck.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgBtMifsNt1SDA0tz098Rt7Km6MAaNgfCeW=s=FPLtpCQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,50 +56,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 03, 2022 at 08:56:54AM +0300, Amir Goldstein wrote:
+On Freitag, 1. Juli 2022 23:00:06 CEST Dominique Martinet wrote:
+> Christian Schoenebeck wrote on Fri, Jul 01, 2022 at 06:02:31PM +0200:
+> > > I also tried 9p2000.u for principle and ... I have no idea if this works
+> > > but it didn't seem to blow up there at least.
+> > > The problem is that 9p2000.u just doesn't work well even without these
+> > > patches, so I still stand by what I said about 9p2000.u and virtio (zc
+> > > interface): we really can (and I think should) just say virtio doesn't
+> > > support 9p2000.u.
+> > > (and could then further simplify this)
+> > > 
+> > > If you're curious, 9p2000.u hangs without your patch on at least two
+> > > different code paths (trying to read a huge buffer aborts sending a
+> > > reply because msize is too small instead of clamping it, that one has a
+> > > qemu warning message; but there are others ops like copyrange that just
+> > > fail silently and I didn't investigate)
+> > 
+> > Last time I tested 9p2000.u was with the "remove msize limit" (WIP)
+> > patches:
+> > https://lore.kernel.org/all/cover.1640870037.git.linux_oss@crudebyte.com/
+> > Where I did not observe any issue with 9p2000.u.
+> > 
+> > What msize are we talking about, or can you tell a way to reproduce?
 > 
-> That is true for some use cases, but unfortunately, the flaky
-> fstests are way too valuable and too hard to replace or improve,
-> so practically, fs developers have to run them, but not everyone does.
+> I just ran fsstress on a
+> `mount -t 9p -o cache=none,trans=virtio,version=9p2000.u` mount on
+> v5.19-rc2:
 > 
-> Zorro has already proposed to properly tag the non deterministic tests
-> with a specific group and I think there is really no other solution.
+> fsstress -d /mnt/fstress -n 1000 -v
+> 
+> If that doesn't reproduce for you (and you care) I can turn some more
+> logs on, but from the look of it it could very well be msize related, I
+> just didn't check as I don't expect any real user
 
-The non-deterministic tests are not the sole, or even the most likely
-cause of flaky tests.  Or put another way, even if we used a
-deterministic pseudo-random numberator seed for some of the curently
-"non-determinstic tests" (and I believe we are for many of them
-already anyway), it's not going to be make the flaky tests go away.
+Confirmed. :/ I tested with various kernel versions (also w/wo "remove msize 
+limit" WIP patches), different combinations of msize and cache options. They 
+all start to hang the fsstress app with 9p2000.u protocol version, sometimes 
+sooner, sometimes later.
 
-That's because with many of these tests, we are running multiple
-threads either in the fstress or fsx, or in the antogonist workload
-that is say, running the space utilization to full to generate ENOSPC
-errors, and then deleting a bunch of files to trigger as many ENOSPC
-hitter events as possible.
+BTW, fsstress does not pass with 9p2000.L here either, it would not hang, but 
+it consistently terminates fsstress with (cache=none|mmap):
 
-> The only question is whether we remove them from the 'auto' group
-> (I think we should).
+    posix_memalign: Invalid argument
 
-I wouldn't; if someone wants to exclude the non-determistic tests,
-once they are tagged as belonging to a group, they can just exclude
-that group.  So there's no point removing them from the auto group
-IMHO.
+@Greg: JFYI
 
-> filesystem developers that will run ./check -g auto -g soak
-> will get the exact same test coverage as today's -g auto
-> and the "commoners" that run ./check -g auto will enjoy blissful
-> determitic test results, at least for the default config of regularly
-> tested filesystems (a.k.a, the ones tested by kernet test bot).?
+Best regards,
+Christian Schoenebeck
 
-First of all, there are a number of tests today which are in soak or
-long_rw which are not in auto, so "-g auto -g soak" will *not* result
-in the "exact same test coverage".
 
-Secondly, as I've tested above, deterministic tests does not
-necessasrily mean determinsitic test results --- unless by
-"determinsitic tests" you mean "completely single-threaded tests",
-which would eliminate a large amount of useful test coverage.
-
-Cheers,
-
-					- Ted
