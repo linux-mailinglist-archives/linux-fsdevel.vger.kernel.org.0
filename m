@@ -2,105 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCC856503B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 11:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E1D56521E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 12:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233386AbiGDJBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jul 2022 05:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60888 "EHLO
+        id S234012AbiGDKXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jul 2022 06:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbiGDJBv (ORCPT
+        with ESMTP id S234631AbiGDKWw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jul 2022 05:01:51 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A716210E5;
-        Mon,  4 Jul 2022 02:01:50 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id s206so8383922pgs.3;
-        Mon, 04 Jul 2022 02:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gff4bRc9l1CM3lMZz7jp+pp69/SmZ01DbDZ8owZYVXs=;
-        b=AEHQkcXyKk//5++zVgOF3Y6WkdbYVotRWbOu2uonuIHG/djjFcJ/ndGd7mOzEiFrOs
-         ordb1Ys6ogLsL8mOdmxu7YWqrXhCoUaCq1yu/7ihK867l1UABDFCYC6izb3MRWtheeJu
-         IhBAucOBBZPEndboRb7slMO4LUPjjNfumlgghsXZJlAggUPne1GNt5BVDowa89BHmBV6
-         D2D+6bdL7QXk/14d+eAwNpy/FaeXtqM0sttDDskgKDUGMFp957TFarllV6S1uk1LQlSX
-         51tcufPNakfS83Z8lnDKsuET5w5uV8HHYDjVWXrT3MVnYLpTn491HeTjAVK8uGvyWqSi
-         qo1g==
+        Mon, 4 Jul 2022 06:22:52 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331E9EE27
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jul 2022 03:22:23 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id g9-20020a056e020d0900b002d958b2a86dso4054393ilj.14
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jul 2022 03:22:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gff4bRc9l1CM3lMZz7jp+pp69/SmZ01DbDZ8owZYVXs=;
-        b=i0xJR3Pswo0B8OxA9nhsfNlNo8qMm86bnadL+RresCN6UlGsiuM6/SdKWzEvDnWoBD
-         JLyZ0ryr+Sh0WaTCIqkehGKbu/xAYJxxdvt+QwBhaCXqKfhgrfmu0PuLerk5cZUkTD0b
-         dY2vOzGl2fe0uvPDZlbBAs0iJ/01cxr25GSRWUvVDQPfc+ePwIro4OHoMU6C+nx2QGXa
-         3QFteQ6MP4Y7t+K4WrkXCmcT3WcuJlZiQjQPiFbg2YqcN7++1ew05EF5IACfmrAlT65V
-         d5MiYvAmek/iBgI/kAkJmP/pxQuhHkb/X4ZIpIIzGeCi2UehTe3q8V9rj8/mIFaOaNep
-         0CFw==
-X-Gm-Message-State: AJIora+kRkKcAxAT6vQdSV4v0bGB3ErHGI2UFa+kmSEryO+NQ2d/sCqe
-        muJqZQQ/ylFby+CJWB2wfCyY2bnKlcA=
-X-Google-Smtp-Source: AGRyM1sbBRIAhJuyEq51QH8QR6b58C71X/nJEKB2rkbi/zD/yuvR40wM1RL92y7YPa6JL9EQRSkl/Q==
-X-Received: by 2002:a65:6a4f:0:b0:3fe:9ef:1c49 with SMTP id o15-20020a656a4f000000b003fe09ef1c49mr24383975pgu.229.1656925310171;
-        Mon, 04 Jul 2022 02:01:50 -0700 (PDT)
-Received: from localhost ([2406:7400:63:cb1d:811:33e9:9bc2:d40])
-        by smtp.gmail.com with ESMTPSA id 64-20020a17090a09c600b001ef7eb39be1sm3135872pjo.55.2022.07.04.02.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 02:01:49 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 14:31:44 +0530
-From:   Ritesh Harjani <ritesh.list@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC 1/3] jbd2: Drop useless return value of submit_bh
-Message-ID: <20220704090144.hdj3fpaaqyj35yt3@riteshh-domain>
-References: <cover.1655703466.git.ritesh.list@gmail.com>
- <57b9cb59e50dfdf68eef82ef38944fbceba4e585.1655703467.git.ritesh.list@gmail.com>
- <YrEhXYBeQz8kNuGo@casper.infradead.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=4pdQPExu1CxWkPIISPAm43n8OOK3mvTWX1WzFcrgFAE=;
+        b=SqilmmHGY4clNRevIKCOmakYHcotV3IEneXOjfgokzTTEKWCqRSTF7+NfdedN9RChO
+         ixNSwc2WHSlpojew5rTeaUkU5+VM5fXQy8VYpBcF5lPO7v5cBe3mN/vynCLn1zvPUymU
+         iWWbo4JhIXY2aA8yiqikYhmEIPDsfpE/nVRHMm5JVFBTRBZ86whUGFzaz755uSFWtsv/
+         ppp49gSqIYGnwcngEb47ZuWkFyutK2dAxl/D8s1qfG2MBbpQOhoQCepCFSM6WQDAUK30
+         JFwpvNY9WnIO1lybqsa3SfWMa4HplYzfzI44WAM3XNNp7dI+IKDC8gLlFT6uVwHo+UkI
+         lp7g==
+X-Gm-Message-State: AJIora8MMXWGykHP7Bxid8xaUqaktuT2H5xPRIHFAwLiZC+iMKAXJ8m0
+        ZEv1DVVbBzSFJXqHKgn5qLctVMvLMOylSmD3IX4//gi4XTca
+X-Google-Smtp-Source: AGRyM1svTKsfhtE5NUDRjTKC7GwT58I+T8Re1RwALp7+U9WXmgfLjvPjYMxSVc5fr0hhH5gkOjitfkOQyQknD7KKGji6I4hkhKYw
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrEhXYBeQz8kNuGo@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6e02:b42:b0:2d9:1f46:517 with SMTP id
+ f2-20020a056e020b4200b002d91f460517mr16596698ilu.292.1656930142479; Mon, 04
+ Jul 2022 03:22:22 -0700 (PDT)
+Date:   Mon, 04 Jul 2022 03:22:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008f6f7405e2f81ce9@google.com>
+Subject: [syzbot] WARNING in mark_buffer_dirty (4)
+From:   syzbot <syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/06/21 02:39AM, Matthew Wilcox wrote:
-> On Mon, Jun 20, 2022 at 11:28:40AM +0530, Ritesh Harjani wrote:
-> > @@ -1636,14 +1636,12 @@ static int jbd2_write_superblock(journal_t *journal, int write_flags)
-> >  		sb->s_checksum = jbd2_superblock_csum(journal, sb);
-> >  	get_bh(bh);
-> >  	bh->b_end_io = end_buffer_write_sync;
-> > -	ret = submit_bh(REQ_OP_WRITE, write_flags, bh);
-> > +	submit_bh(REQ_OP_WRITE, write_flags, bh);
-> >  	wait_on_buffer(bh);
-> >  	if (buffer_write_io_error(bh)) {
-> >  		clear_buffer_write_io_error(bh);
-> >  		set_buffer_uptodate(bh);
-> >  		ret = -EIO;
-> > -	}
-> > -	if (ret) {
-> >  		printk(KERN_ERR "JBD2: Error %d detected when updating "
-> >  		       "journal superblock for %s.\n", ret,
-> >  		       journal->j_devname);
->
-> Maybe rephrase the error message?  And join it together to match the
-> current preferred style.
->
-> 		printk(KERN_ERR "JBD2: I/O error when updating journal superblock for %s.\n",
-> 				journal->j_devname);
+Hello,
 
-Sure, I will update the printk message like above and send out a v3
-(since I haven't receieved any other comments so I think v3 should be good to be
-picked up now)
+syzbot found the following issue on:
 
--ritesh
+HEAD commit:    d9b2ba67917c Merge tag 'platform-drivers-x86-v5.19-3' of g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15d5f0f0080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3a010dbf6a7af480
+dashboard link: https://syzkaller.appspot.com/bug?extid=2af3bc9585be7f23f290
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14464f70080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1779a598080000
 
+Bisection is inconclusive: the first bad commit could be any of:
+
+a1a98689301b drm: Add privacy-screen class (v4)
+befe5404a00b drm/privacy-screen: Add X86 specific arch init code
+107fe9043020 drm/connector: Add support for privacy-screen properties (v4)
+8a12b170558a drm/privacy-screen: Add notifier support (v2)
+334f74ee85dc drm/connector: Add a drm_connector privacy-screen helper functions (v2)
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a2e85c080000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com
+
+WARNING: CPU: 0 PID: 3647 at fs/buffer.c:1081 mark_buffer_dirty+0x59d/0xa20 fs/buffer.c:1081
+Modules linked in:
+CPU: 1 PID: 3647 Comm: syz-executor864 Not tainted 5.19.0-rc4-syzkaller-00036-gd9b2ba67917c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:mark_buffer_dirty+0x59d/0xa20 fs/buffer.c:1081
+Code: 89 ee 41 83 e6 01 4c 89 f6 e8 8f c2 94 ff 4d 85 f6 0f 84 7a fe ff ff e8 21 c6 94 ff 49 8d 5d ff e9 6c fe ff ff e8 13 c6 94 ff <0f> 0b e9 ac fa ff ff e8 07 c6 94 ff 0f 0b e9 d0 fa ff ff e8 fb c5
+RSP: 0018:ffffc900030c7d30 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88806e7bda38 RCX: 0000000000000000
+RDX: ffff888071720100 RSI: ffffffff81e4d16d RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff88807c21e7d8
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffed100f314eda
+FS:  00007fe4fb903700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe4fb925000 CR3: 0000000079e8a000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ minix_put_super+0x199/0x500 fs/minix/inode.c:49
+ generic_shutdown_super+0x14c/0x400 fs/super.c:462
+ kill_block_super+0x97/0xf0 fs/super.c:1394
+ deactivate_locked_super+0x94/0x160 fs/super.c:332
+ deactivate_super+0xad/0xd0 fs/super.c:363
+ cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:177
+ ptrace_notify+0x114/0x140 kernel/signal.c:2353
+ ptrace_report_syscall include/linux/ptrace.h:420 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:482 [inline]
+ syscall_exit_work kernel/entry/common.c:249 [inline]
+ syscall_exit_to_user_mode_prepare+0xdb/0x230 kernel/entry/common.c:276
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:281 [inline]
+ syscall_exit_to_user_mode+0x9/0x50 kernel/entry/common.c:294
+ do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7fe4fb9774c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe4fb9032f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffec RBX: 00007fe4fb9fc3f0 RCX: 00007fe4fb9774c9
+RDX: 0000000020000140 RSI: 00000000200000c0 RDI: 00000000200002c0
+RBP: 00007fe4fb9c90a8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 6f6f6c2f7665642f R14: 000000807fffffff R15: 00007fe4fb9fc3f8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
