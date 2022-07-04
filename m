@@ -2,45 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5A656527F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 12:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E5EB5652CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 12:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233575AbiGDKig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jul 2022 06:38:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34534 "EHLO
+        id S232288AbiGDK4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jul 2022 06:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233477AbiGDKif (ORCPT
+        with ESMTP id S230390AbiGDK4D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jul 2022 06:38:35 -0400
+        Mon, 4 Jul 2022 06:56:03 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2AF2AF0;
-        Mon,  4 Jul 2022 03:38:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A6A5FCC;
+        Mon,  4 Jul 2022 03:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bgFpDRJ1phHQqdCoJBko0cJC9ngsJhc8l5GKh4nATgo=; b=rSgWnvQEmiowdltF5/el1vzXCe
-        EouJ0fQsqVyuBzwEgkUO/ew48ICBo4l6H1cJc+N/MR1v+uMNj3mbLq0RDNvRygBYzO3xqLdtaWTce
-        JqeMO6RsgfJ+n0AeIFuo1oWQuW9yyBtXVqlGlZ2orNkHOJZRGlyNAf2D5kg5iMm0959zGWd13jboR
-        qpX+oF9PeFyB3pFOqV9dUr3NVFQLBAp9nJ3Of3Kx+0fwekZlbOisV7XugG9/ZzvX9gwnarHiOmMxc
-        4/AUFNBs96GW3W+jWK6WEZYSAUhxYZFmNJnvsltMLtdytDmbe0jQe97UrRuPLt4emehZsKnv8V6UD
-        19e6+GEw==;
+        bh=aHTDO/YJ8aGotOUySHpZmBA2IK/AYGta8a11Qxk049w=; b=s6qVg0SXIdr2Bixh8llOuoDVCr
+        +OLOcYGtA4qfmT7FmbG1F1PjNYy2HTk85M7Ia9ugtRx/XEIk3QvXSb23GF6mrbywlQdBtUsaLcV2t
+        gRt1KdjtedYHrkV/NoG7s7fyXXIPnpSm4KpCn4wHe2+rMbm4WxVfOHZ8pcHJJovyrmMvV46/RGLB1
+        ihKj9KTToyccQ4930a3Rm03wPWv9QW/og7kzvrZajuMtMv0U92P+c7sc+v8oZjKnYqq5XEAHq/qaS
+        MNRa//2XVDiefp12fZbXVph8BDFibbN2i4mYvWiHGeRQD/AQjSdw7tT4puL5fA4I8P1QtUJMP8rlW
+        zB/B1vvg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o8JT6-00HBd7-Bw; Mon, 04 Jul 2022 10:38:16 +0000
-Date:   Mon, 4 Jul 2022 11:38:16 +0100
+        id 1o8JkG-00HCHF-4t; Mon, 04 Jul 2022 10:56:00 +0000
+Date:   Mon, 4 Jul 2022 11:56:00 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     akpm@linux-foundation.org, jgg@ziepe.ca, jhubbard@nvidia.com,
-        william.kucharski@oracle.com, dan.j.williams@intel.com,
-        jack@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH] mm: fix missing wake-up event for FSDAX pages
-Message-ID: <YsLDGEiVSHN3Xx/g@casper.infradead.org>
-References: <20220704074054.32310-1-songmuchun@bytedance.com>
+To:     syzbot <syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] WARNING in mark_buffer_dirty (4)
+Message-ID: <YsLHQCvp8W5oObv2@casper.infradead.org>
+References: <0000000000008f6f7405e2f81ce9@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220704074054.32310-1-songmuchun@bytedance.com>
+In-Reply-To: <0000000000008f6f7405e2f81ce9@google.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -51,110 +49,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 04, 2022 at 03:40:54PM +0800, Muchun Song wrote:
-> FSDAX page refcounts are 1-based, rather than 0-based: if refcount is
-> 1, then the page is freed.  The FSDAX pages can be pinned through GUP,
-> then they will be unpinned via unpin_user_page() using a folio variant
-> to put the page, however, folio variants did not consider this special
-> case, the result will be to miss a wakeup event (like the user of
-> __fuse_dax_break_layouts()).
+On Mon, Jul 04, 2022 at 03:22:22AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d9b2ba67917c Merge tag 'platform-drivers-x86-v5.19-3' of g..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15d5f0f0080000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3a010dbf6a7af480
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2af3bc9585be7f23f290
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14464f70080000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1779a598080000
+> 
+> Bisection is inconclusive: the first bad commit could be any of:
+> 
+> a1a98689301b drm: Add privacy-screen class (v4)
+> befe5404a00b drm/privacy-screen: Add X86 specific arch init code
+> 107fe9043020 drm/connector: Add support for privacy-screen properties (v4)
+> 8a12b170558a drm/privacy-screen: Add notifier support (v2)
+> 334f74ee85dc drm/connector: Add a drm_connector privacy-screen helper functions (v2)
 
-Argh, no.  The 1-based refcounts are a blight on the entire kernel.
-They need to go away, not be pushed into folios as well.  I think
-we're close to having that fixed, but until then, this should do
-the trick?
+It's clearly none of those commits.  This is a bug in minix, afaict.
+Judging by the earlier errors, I'd say that it tried to read something,
+failed, then marked it dirty, at which point we hit an assertion that
+you shouldn't mark a !uptodate buffer as dirty.  Given that this is
+minix, I have no interest in pursuing this bug further.  Why is syzbot
+even testing with minix?
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index cc98ab012a9b..4cef5e0f78b6 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1129,18 +1129,18 @@ static inline bool is_zone_movable_page(const struct page *page)
- #if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
- DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
- 
--bool __put_devmap_managed_page(struct page *page);
--static inline bool put_devmap_managed_page(struct page *page)
-+bool __put_devmap_managed_page(struct page *page, int refs);
-+static inline bool put_devmap_managed_page(struct page *page, int refs)
- {
- 	if (!static_branch_unlikely(&devmap_managed_key))
- 		return false;
- 	if (!is_zone_device_page(page))
- 		return false;
--	return __put_devmap_managed_page(page);
-+	return __put_devmap_managed_page(page, refs);
- }
- 
- #else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
--static inline bool put_devmap_managed_page(struct page *page)
-+static inline bool put_devmap_managed_page(struct page *page, int refs)
- {
- 	return false;
- }
-@@ -1246,7 +1246,7 @@ static inline void put_page(struct page *page)
- 	 * For some devmap managed pages we need to catch refcount transition
- 	 * from 2 to 1:
- 	 */
--	if (put_devmap_managed_page(&folio->page))
-+	if (put_devmap_managed_page(&folio->page, 1))
- 		return;
- 	folio_put(folio);
- }
-diff --git a/mm/gup.c b/mm/gup.c
-index d1132b39aa8f..28df02121c78 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -88,7 +88,8 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
- 	 * belongs to this folio.
- 	 */
- 	if (unlikely(page_folio(page) != folio)) {
--		folio_put_refs(folio, refs);
-+		if (!put_devmap_managed_page(&folio->page, refs))
-+			folio_put_refs(folio, refs);
- 		goto retry;
- 	}
- 
-@@ -177,6 +178,8 @@ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
- 			refs *= GUP_PIN_COUNTING_BIAS;
- 	}
- 
-+	if (put_devmap_managed_page(&folio->page, refs))
-+		return;
- 	folio_put_refs(folio, refs);
- }
- 
-diff --git a/mm/memremap.c b/mm/memremap.c
-index b870a659eee6..b25e40e3a11e 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -499,7 +499,7 @@ void free_zone_device_page(struct page *page)
- }
- 
- #ifdef CONFIG_FS_DAX
--bool __put_devmap_managed_page(struct page *page)
-+bool __put_devmap_managed_page(struct page *page, int refs)
- {
- 	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
- 		return false;
-@@ -509,7 +509,7 @@ bool __put_devmap_managed_page(struct page *page)
- 	 * refcount is 1, then the page is free and the refcount is
- 	 * stable because nobody holds a reference on the page.
- 	 */
--	if (page_ref_dec_return(page) == 1)
-+	if (page_ref_sub_return(page, refs) == 1)
- 		wake_up_var(&page->_refcount);
- 	return true;
- }
-diff --git a/mm/swap.c b/mm/swap.c
-index c6194cfa2af6..94e42a9bab92 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -960,7 +960,7 @@ void release_pages(struct page **pages, int nr)
- 				unlock_page_lruvec_irqrestore(lruvec, flags);
- 				lruvec = NULL;
- 			}
--			if (put_devmap_managed_page(&folio->page))
-+			if (put_devmap_managed_page(&folio->page, 1))
- 				continue;
- 			if (folio_put_testzero(folio))
- 				free_zone_device_page(&folio->page);
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a2e85c080000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com
+> 
+> WARNING: CPU: 0 PID: 3647 at fs/buffer.c:1081 mark_buffer_dirty+0x59d/0xa20 fs/buffer.c:1081
+> Modules linked in:
+> CPU: 1 PID: 3647 Comm: syz-executor864 Not tainted 5.19.0-rc4-syzkaller-00036-gd9b2ba67917c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:mark_buffer_dirty+0x59d/0xa20 fs/buffer.c:1081
+> Code: 89 ee 41 83 e6 01 4c 89 f6 e8 8f c2 94 ff 4d 85 f6 0f 84 7a fe ff ff e8 21 c6 94 ff 49 8d 5d ff e9 6c fe ff ff e8 13 c6 94 ff <0f> 0b e9 ac fa ff ff e8 07 c6 94 ff 0f 0b e9 d0 fa ff ff e8 fb c5
+> RSP: 0018:ffffc900030c7d30 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff88806e7bda38 RCX: 0000000000000000
+> RDX: ffff888071720100 RSI: ffffffff81e4d16d RDI: 0000000000000001
+> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000001 R12: ffff88807c21e7d8
+> R13: 0000000000000000 R14: 0000000000000000 R15: ffffed100f314eda
+> FS:  00007fe4fb903700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fe4fb925000 CR3: 0000000079e8a000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  minix_put_super+0x199/0x500 fs/minix/inode.c:49
+>  generic_shutdown_super+0x14c/0x400 fs/super.c:462
+>  kill_block_super+0x97/0xf0 fs/super.c:1394
+>  deactivate_locked_super+0x94/0x160 fs/super.c:332
+>  deactivate_super+0xad/0xd0 fs/super.c:363
+>  cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:177
+>  ptrace_notify+0x114/0x140 kernel/signal.c:2353
+>  ptrace_report_syscall include/linux/ptrace.h:420 [inline]
+>  ptrace_report_syscall_exit include/linux/ptrace.h:482 [inline]
+>  syscall_exit_work kernel/entry/common.c:249 [inline]
+>  syscall_exit_to_user_mode_prepare+0xdb/0x230 kernel/entry/common.c:276
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:281 [inline]
+>  syscall_exit_to_user_mode+0x9/0x50 kernel/entry/common.c:294
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> RIP: 0033:0x7fe4fb9774c9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fe4fb9032f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffec RBX: 00007fe4fb9fc3f0 RCX: 00007fe4fb9774c9
+> RDX: 0000000020000140 RSI: 00000000200000c0 RDI: 00000000200002c0
+> RBP: 00007fe4fb9c90a8 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+> R13: 6f6f6c2f7665642f R14: 000000807fffffff R15: 00007fe4fb9fc3f8
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> syzbot can test patches for this issue, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
