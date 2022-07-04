@@ -2,104 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DE5564AE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 02:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA7A564B18
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 03:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbiGDA2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Jul 2022 20:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
+        id S232842AbiGDBOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Jul 2022 21:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbiGDA2I (ORCPT
+        with ESMTP id S233089AbiGDBOF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Jul 2022 20:28:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9D5146273
-        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 17:28:07 -0700 (PDT)
+        Sun, 3 Jul 2022 21:14:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 438FB6377
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 18:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656894486;
+        s=mimecast20190719; t=1656897235;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KaOqL05Ps6uhrMzHuCOajL20Q0d9A5HdIZuOghHczsA=;
-        b=JIDx6Og8Gj6ddCslj/9+hSBi/N3OjNMkLVfDr5O5wVmFZSl5QMg1+CoLyOCSj5/IikGKsv
-        eDJfSHDgPpnjUkvun30Ew3FLYC0xfwubmxdeD2k+euGuD90clztNmuE9GdOyHkEvHuI8Sz
-        PcFjyDu8b5JLucHu/F+Ids/djoz4D60=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=nv3kLqVRpORhA1eU8Voo6ss8wDxc+AM8OLmudfWCLYs=;
+        b=g+on8ILU3TZ3NxYF+EXMjA7PV2V9D7+PHOY1eQDafgIx0VtV/oY1Rs6f8RXu65ecak3wDq
+        VcsAEjesx6IfD4lo/xDExtl25iPijiPqdTZhxpCNtm6Yb44STxFAV3waakz6RCbxYj3q5l
+        kVInWumh019a6EFLcmeNEge2ZqFwoMY=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-321-QGC7METAMZmauiSUHT1D6Q-1; Sun, 03 Jul 2022 20:28:05 -0400
-X-MC-Unique: QGC7METAMZmauiSUHT1D6Q-1
-Received: by mail-ed1-f69.google.com with SMTP id z17-20020a05640235d100b0043762b1e1e3so6036412edc.21
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Jul 2022 17:28:05 -0700 (PDT)
+ us-mta-632-XAdbdptINAKAOggp-ATuGw-1; Sun, 03 Jul 2022 21:13:54 -0400
+X-MC-Unique: XAdbdptINAKAOggp-ATuGw-1
+Received: by mail-pj1-f69.google.com with SMTP id gd18-20020a17090b0fd200b001ef193b5452so4503978pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Jul 2022 18:13:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KaOqL05Ps6uhrMzHuCOajL20Q0d9A5HdIZuOghHczsA=;
-        b=JdqIvg4bE7TelDT/BLtB0UEq48G+iR/XyYXc/ifiEsJGtbMEwqgoa5lKd4tiIfCGjs
-         PXo9Kx4WBQfdilL9v3GF/Nuncya6MCHUVE8sBko4f+bv9WaTEZZ+ps5F7LXjBwO1xRN5
-         fCaGrZ2EHYu6nEgkyFestttwnfng0ZoftyWBUc0bIE93Q3hnCdvsexclh4mq7QZwQ1df
-         k3Otnyuta+53Psj+bKyOLI5Sxbh3NnHjTgTB3QWX4tteMnx0946wsClH1qmIl6qj3g98
-         DOK8swNyqPRtqp7FJkXK38rh3Ij0sd6jtGad6FQELg/ZeENZyfPxh7vj6heSjqJtMS8r
-         UjEQ==
-X-Gm-Message-State: AJIora86d5Nqja2JXvose2fcCEuN7NweqTv6YISTbL4IiPUPQNyiaT9b
-        m2mldfa2y1FOwh4/6Y3SNgT5INYlrI0f/t0ZMItrpS+KmHLSv3KSC7UQCtM3IxeZvod+9Hjq5SD
-        TEotHBMWZ/C7gE/mU4G8hcxSzXg==
-X-Received: by 2002:a17:907:9488:b0:722:e5c8:c647 with SMTP id dm8-20020a170907948800b00722e5c8c647mr25659274ejc.291.1656894484451;
-        Sun, 03 Jul 2022 17:28:04 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tcUAU1lKCz9GNKy7EtOXC3/ZrGPSQpn7jqZTgAk6gvwW3u4/BpvwAo+0cmPpJ0xoClkP5dRw==
-X-Received: by 2002:a17:907:9488:b0:722:e5c8:c647 with SMTP id dm8-20020a170907948800b00722e5c8c647mr25659267ejc.291.1656894484297;
-        Sun, 03 Jul 2022 17:28:04 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b40:2ee8:642:1aff:fe31:a15c])
-        by smtp.gmail.com with ESMTPSA id jz2-20020a170906bb0200b00726314d0655sm13524634ejb.39.2022.07.03.17.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jul 2022 17:28:03 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 02:28:02 +0200
-From:   Danilo Krummrich <dakr@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] treewide: idr: align IDR and IDA APIs
-Message-ID: <YsIx4DSiaZPyMEMu@pollux>
-References: <20220703181739.387584-1-dakr@redhat.com>
- <YsIAypeKXFg97xbG@casper.infradead.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=nv3kLqVRpORhA1eU8Voo6ss8wDxc+AM8OLmudfWCLYs=;
+        b=0USHNaGtjJYOkglwt1Ri7oxfgG7YX9GmkBxPumxhisJPX0pfZPC4ZKPvmAjSCn1aWU
+         wejV+lY3NcGmpv33ENa2dqVg9KSJxHFmYINhhAHGukxt21IoSP1/oJ2oSfWcqQPB8Hjp
+         NyugDjfFtcjYv+oRhlBXPhn3R9kVqASqUgCWMmQhU+4ZF+O3M01s2It5dXm6BRQFA9oM
+         rG0Azsv51plHsZmT/wjqBK9Yop2VU/YfOnTgHG6oyX45k/jt9RLXewJ3YrbTktFpzuMo
+         32+oA3SwxSRLsDVkUTfJ5vfNZBEWEVhHWpy+hlqrZZXFU7oNUW9AGU1VYokWJkBXXVI4
+         DEMg==
+X-Gm-Message-State: AJIora+KeWwyy5UfPEV9w5O/AH00o567OEULMTKVno3H4B32xBUXPpmD
+        +cZ9Slp6LD/K0JmQrF+Pxboen8j30RPN+QrytsCA8ig3wyuQqOiGZdR2FYyFPyl2WpOyRTV07rr
+        bKZxIlzUTpB3jKoweIscKrJI+7Q==
+X-Received: by 2002:a63:33ce:0:b0:40c:5487:6e6d with SMTP id z197-20020a6333ce000000b0040c54876e6dmr23506166pgz.135.1656897232907;
+        Sun, 03 Jul 2022 18:13:52 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1v+HireMspFAh1WUDJ6ByKYptcG3louApKnYoE9dNmZU5NVDm+4O8N59fgytQgg2A5L4LbblA==
+X-Received: by 2002:a63:33ce:0:b0:40c:5487:6e6d with SMTP id z197-20020a6333ce000000b0040c54876e6dmr23506145pgz.135.1656897232639;
+        Sun, 03 Jul 2022 18:13:52 -0700 (PDT)
+Received: from [10.72.12.186] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id q17-20020a656851000000b003fdc16f5de2sm19407912pgt.15.2022.07.03.18.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Jul 2022 18:13:51 -0700 (PDT)
+Subject: Re: [PATCH 1/2] netfs: release the folio lock and put the folio
+ before retrying
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        dhowells@redhat.com
+Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, willy@infradead.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com
+References: <20220701022947.10716-1-xiubli@redhat.com>
+ <20220701022947.10716-2-xiubli@redhat.com>
+ <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <f55d10f8-55f6-f56c-bb41-bce139869c8d@redhat.com>
+Date:   Mon, 4 Jul 2022 09:13:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YsIAypeKXFg97xbG@casper.infradead.org>
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 03, 2022 at 09:49:14PM +0100, Matthew Wilcox wrote:
-> On Sun, Jul 03, 2022 at 08:17:38PM +0200, Danilo Krummrich wrote:
-> > For allocating IDs the ID allocator (IDA) provides the following
-> > functions: ida_alloc(), ida_alloc_range(), ida_alloc_min() and
-> > ida_alloc_max() whereas for IDRs only idr_alloc() is available.
-> > 
-> > In contrast to ida_alloc(), idr_alloc() behaves like ida_alloc_range(),
-> > which takes MIN and MAX arguments to define the bounds within an ID
-> > should be allocated - ida_alloc() instead implicitly uses the maximal
-> > bounds possible for MIN and MAX without taking those arguments.
-> > 
-> > In order to align the IDR and IDA APIs this patch provides
-> > implementations for idr_alloc(), idr_alloc_range(), idr_alloc_min() and
-> > idr_alloc_max(), which are analogue to the IDA API.
-> 
-> I don't really want to make any changes to the IDR API.  I want to get
-> rid of the IDR API.
 
-Forgot to mention, I noticed that there is even a new user of the IDR API in
-next/master: commit d8782ec59eb8 ("mlxsw: Add an initial PGT table support")
+On 7/1/22 6:38 PM, Jeff Layton wrote:
+> On Fri, 2022-07-01 at 10:29 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> The lower layer filesystem should always make sure the folio is
+>> locked and do the unlock and put the folio in netfs layer.
+>>
+>> URL: https://tracker.ceph.com/issues/56423
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/netfs/buffered_read.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+>> index 42f892c5712e..257fd37c2461 100644
+>> --- a/fs/netfs/buffered_read.c
+>> +++ b/fs/netfs/buffered_read.c
+>> @@ -351,8 +351,11 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>>   		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
+>>   		if (ret < 0) {
+>>   			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+>> -			if (ret == -EAGAIN)
+>> +			if (ret == -EAGAIN) {
+>> +				folio_unlock(folio);
+>> +				folio_put(folio);
+>>   				goto retry;
+>> +			}
+>>   			goto error;
+>>   		}
+>>   	}
+> I don't know here... I think it might be better to just expect that when
+> this function returns an error that the folio has already been unlocked.
+> Doing it this way will mean that you will lock and unlock the folio a
+> second time for no reason.
+>
+> Maybe something like this instead?
+>
+> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+> index 42f892c5712e..8ae7b0f4c909 100644
+> --- a/fs/netfs/buffered_read.c
+> +++ b/fs/netfs/buffered_read.c
+> @@ -353,7 +353,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>                          trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+>                          if (ret == -EAGAIN)
+>                                  goto retry;
+> -                       goto error;
+> +                       goto error_unlocked;
+>                  }
+>          }
+>   
+> @@ -418,6 +418,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>   error:
+>          folio_unlock(folio);
+>          folio_put(folio);
+> +error_unlocked:
+>          _leave(" = %d", ret);
+>          return ret;
+>   }
 
-Maybe it makes sense to point out that the IDR API is deprecated and XArray
-should be used instead at the beginning of the IDR documentation file, such
-that it's obvious for new potential users?
+Then the "afs" won't work correctly:
 
-- Danilo
+377 static int afs_check_write_begin(struct file *file, loff_t pos, 
+unsigned len,
+378                                  struct folio *folio, void **_fsdata)
+379 {
+380         struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
+381
+382         return test_bit(AFS_VNODE_DELETED, &vnode->flags) ? -ESTALE : 0;
+383 }
+
+The "afs" does nothing with the folio lock.
+
+-- Xiubo
+
 
