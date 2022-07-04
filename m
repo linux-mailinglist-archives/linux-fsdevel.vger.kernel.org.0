@@ -2,114 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 044A6564D6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 07:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 021B3564E0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 08:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231591AbiGDFqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jul 2022 01:46:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        id S232209AbiGDG6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jul 2022 02:58:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231833AbiGDFqQ (ORCPT
+        with ESMTP id S229475AbiGDG6o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jul 2022 01:46:16 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51687658F;
-        Sun,  3 Jul 2022 22:46:14 -0700 (PDT)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2643LbrL003589;
-        Mon, 4 Jul 2022 05:46:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=PwndybbU5St62Xaa17A+kFodMrjT7D2lRUFJja/O3A4=;
- b=NFnjF+rqrwl0Cvo/xVNxiRg5Z9eXjq6/fIbFdOxcrtyFC9dma8B84g2LzTQ7tIzi+9yS
- wLsZ8MWZidAwjGLbKKjPSweY9YEQ93Zoojo4+K81AdMeqIMt/Ipj2mGfVF4ET2wwVho9
- zH+CMqdBN01Krl4g+94np1vy/8mdwb0Qp8xB2dR5GVmGIKdKDkvtZ6f1IKVbv3xkHgc/
- WzbTpATRZmqHRcYvBprfXzsZIi7BwdNvLAFAs1iri1eSW2oPm2k+AB4rQmxGj651MC9T
- 6mRN5Uy0+WrlYwwRH1PJkPV3ZFhbUN6P/t0KnvFuMBzRNrq1F9yeyte73Ga2rk6SfISs lA== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h3r7yja69-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Jul 2022 05:46:12 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2645aH2l005963;
-        Mon, 4 Jul 2022 05:46:10 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma03fra.de.ibm.com with ESMTP id 3h2dn8sn2s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Jul 2022 05:46:10 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2645k8jH19005922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Jul 2022 05:46:08 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46A4442042;
-        Mon,  4 Jul 2022 05:46:08 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6804E4203F;
-        Mon,  4 Jul 2022 05:46:06 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.91.160])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Jul 2022 05:46:06 +0000 (GMT)
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     linux-ext4@vger.kernel.org
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ext4: Reflect mb_optimize_scan value in options file
-Date:   Mon,  4 Jul 2022 11:16:03 +0530
-Message-Id: <20220704054603.21462-1-ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
+        Mon, 4 Jul 2022 02:58:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0C651A9
+        for <linux-fsdevel@vger.kernel.org>; Sun,  3 Jul 2022 23:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656917923;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ghxbx0CrH3dddBVyHTb8hqO8bOGREHZArBfhTAg4nok=;
+        b=jDWNuh5DzH7cTvk2GTl0W1AM/QIl+opocEFeaz2ZWjxAOXFypar+x+4vP0frQ9ZRKcRbqc
+        GSDEC1k0hm6dCbW0OSDTpsRnzEJDSAqYl0zDj/QiqEnwND58kZwjO1R5YPnM+1SmKfdfAs
+        xVAdBVhH3JVHmOazQAiTYIq/X/luZds=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-616-GFixmgmhODCKlzmaKoM1Wg-1; Mon, 04 Jul 2022 02:58:41 -0400
+X-MC-Unique: GFixmgmhODCKlzmaKoM1Wg-1
+Received: by mail-pj1-f71.google.com with SMTP id v19-20020a17090abb9300b001ef7bbd5a28so2732241pjr.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Jul 2022 23:58:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Ghxbx0CrH3dddBVyHTb8hqO8bOGREHZArBfhTAg4nok=;
+        b=YUcjmMlqt9Jjsoj1jfa3bJJMQfPrcNcpWY1uxSIwc5K79CEtrldvf32pWgKtfdvSs0
+         jg6nk8LDaEAsAYdVuU++p2y1ATwP2KsmGETRALHZM7RiA2Z/wTd/WhLbhvbNgGVraMhC
+         cZ1kH3dfMrH4b9FNq9u3OXjqvOwGfns4wqGjUP6N/ks7Qk+lTndXFmQzohEe5+tMoXza
+         M49ASru5hOU80hBnOnit0QGdE6ySlBKIzfXS3kNhPXcFEFCrz1TBHQZuEoUEcfPlQygF
+         Ua9zJvhAGFW+2OFZp/zLJZUA5jBP4EgB9xB9KGMO6ZeofO8OMwlCL8TFlWg1YLqg2Aad
+         Zg5g==
+X-Gm-Message-State: AJIora/+PGGRp3p/lFb3W6AlLnSeJxZasp7JOKwWttjM/LwPHjggsyiw
+        tehUvCihfkU+Ql6Y/tou00leCPC4My6fyuKo6SldLwLX2qhIIhLkZIco9mANhmxw0GMjKaDBKXd
+        aKVud4ETYf3K9oLIeszAEpsotig==
+X-Received: by 2002:a17:90b:35d2:b0:1ef:3695:f1ea with SMTP id nb18-20020a17090b35d200b001ef3695f1eamr27947311pjb.127.1656917920803;
+        Sun, 03 Jul 2022 23:58:40 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sUsVrLQldShVE3/gxCAEU958LIEvJsghCNdNaAbMJ5v/bDAYIRm40Vl6khnOnFJy17l1K8DQ==
+X-Received: by 2002:a17:90b:35d2:b0:1ef:3695:f1ea with SMTP id nb18-20020a17090b35d200b001ef3695f1eamr27947289pjb.127.1656917920514;
+        Sun, 03 Jul 2022 23:58:40 -0700 (PDT)
+Received: from [10.72.12.186] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id u7-20020a17090341c700b0016be3f2cca4sm1189697ple.239.2022.07.03.23.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Jul 2022 23:58:39 -0700 (PDT)
+Subject: Re: [PATCH 1/2] netfs: release the folio lock and put the folio
+ before retrying
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        dhowells@redhat.com
+Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, willy@infradead.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com
+References: <20220701022947.10716-1-xiubli@redhat.com>
+ <20220701022947.10716-2-xiubli@redhat.com>
+ <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <c2eea9eb-e4b2-efdf-8edc-a929ac276c19@redhat.com>
+Date:   Mon, 4 Jul 2022 14:58:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: l3BjGiAVlvRLgJqbWgWrlkSH0gmQC_IM
-X-Proofpoint-ORIG-GUID: l3BjGiAVlvRLgJqbWgWrlkSH0gmQC_IM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-04_05,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1011 spamscore=0 mlxscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2204290000 definitions=main-2207040023
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support to display the mb_optimize_scan value in
-/proc/fs/ext4/<dev>/options file. The option is only
-displayed when the value is non default.
 
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/super.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On 7/1/22 6:38 PM, Jeff Layton wrote:
+> On Fri, 2022-07-01 at 10:29 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> The lower layer filesystem should always make sure the folio is
+>> locked and do the unlock and put the folio in netfs layer.
+>>
+>> URL: https://tracker.ceph.com/issues/56423
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/netfs/buffered_read.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+>> index 42f892c5712e..257fd37c2461 100644
+>> --- a/fs/netfs/buffered_read.c
+>> +++ b/fs/netfs/buffered_read.c
+>> @@ -351,8 +351,11 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>>   		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
+>>   		if (ret < 0) {
+>>   			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+>> -			if (ret == -EAGAIN)
+>> +			if (ret == -EAGAIN) {
+>> +				folio_unlock(folio);
+>> +				folio_put(folio);
+>>   				goto retry;
+>> +			}
+>>   			goto error;
+>>   		}
+>>   	}
+> I don't know here... I think it might be better to just expect that when
+> this function returns an error that the folio has already been unlocked.
+> Doing it this way will mean that you will lock and unlock the folio a
+> second time for no reason.
+>
+> Maybe something like this instead?
+>
+> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+> index 42f892c5712e..8ae7b0f4c909 100644
+> --- a/fs/netfs/buffered_read.c
+> +++ b/fs/netfs/buffered_read.c
+> @@ -353,7 +353,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>                          trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+>                          if (ret == -EAGAIN)
+>                                  goto retry;
+> -                       goto error;
+> +                       goto error_unlocked;
+>                  }
+>          }
+>   
+> @@ -418,6 +418,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+>   error:
+>          folio_unlock(folio);
+>          folio_put(folio);
+> +error_unlocked:
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 845f2f8aee5f..e3fd50b0d6b7 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3011,6 +3011,15 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
- 	} else if (test_opt2(sb, DAX_INODE)) {
- 		SEQ_OPTS_PUTS("dax=inode");
- 	}
-+
-+	if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD &&
-+			!test_opt2(sb, MB_OPTIMIZE_SCAN)) {
-+		SEQ_OPTS_PUTS("mb_optimize_scan=0");
-+	} else if (sbi->s_groups_count < MB_DEFAULT_LINEAR_SCAN_THRESHOLD &&
-+			test_opt2(sb, MB_OPTIMIZE_SCAN)) {
-+		SEQ_OPTS_PUTS("mb_optimize_scan=1");
-+	}
-+
- 	ext4_show_quota_options(seq, sb);
- 	return 0;
- }
--- 
-2.27.0
+Should we also put the folio in ceph and afs ? Won't it introduce 
+something like use-after-free bug ?
+
+Maybe we should unlock it in ceph and afs and put it in netfs layer.
+
+-- Xiubo
+
+
+
+>          _leave(" = %d", ret);
+>          return ret;
+>   }
+>
 
