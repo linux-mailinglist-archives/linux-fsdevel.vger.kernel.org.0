@@ -2,192 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD905652D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 12:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0F3B5653D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Jul 2022 13:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbiGDK43 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Jul 2022 06:56:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
+        id S233634AbiGDLiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Jul 2022 07:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233121AbiGDK4Z (ORCPT
+        with ESMTP id S233709AbiGDLh6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jul 2022 06:56:25 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7C7F5BC
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jul 2022 03:56:23 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id y141so8620277pfb.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jul 2022 03:56:23 -0700 (PDT)
+        Mon, 4 Jul 2022 07:37:58 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C251275A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Jul 2022 04:36:59 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id v16so1639336wrd.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Jul 2022 04:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CXQfpYTDQSPQk5n85TMF5Rtc8fjIvsWXa8Dgsig58ac=;
-        b=Bp2IHpgWFvsjVPLdIykEUTI6E62rNcXQ1Qqs+kBE0ofKgsRCSjGPqjUiszcAFTH8sk
-         srzUVlPKcuxjQuahsuvWr9Vp+Eoegd4/LBZrvv8mm/Iuq5yfReWHvWwKmp8M7I/Kt9k7
-         btxI7NFaYQbE5kkpesVGFRY+TCtBn130gljZFXT3XlzG3nWfQyMg4pCBfu4tGjqVgx3V
-         Epsbxi5Mi5ILXuhvvnngWCarZ+VLTWRlHQ6+UVUvp5ad/4oDaBf5Y0ZqzK6wVkV3Nugw
-         vB/QyqZLvCVUn0FJXiupvXPszkB98MVXCfwCFIuOIkyd6y6YgKAmAKt75CiToINptW7M
-         K/mw==
+        d=sigma-star.at; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jKBXFXotED+1B6HSUGwFJyKmmy7t6L5/nnjdgGUAKlQ=;
+        b=GchmpI00QpgNnXPViV6O1v1u0F8sqA2pYV/cmhjXgilUzmxqputunPj9kcvX8y0JLC
+         BpDbb+GL/1bygv5SU05WXap65417/i/IXvnNDOkhv79FGrB+PTfB5uRuVWSU0/jBJ4me
+         MoTMjxYmbR5gg+7zrb9sAWn3eGh6RUaIRWeNLMifSXbfB9ySbYKY+QL89oyW0xfWalxI
+         ZRcnYlRlQdrOx7i7c+wRMUoWjM1cz2b8Y3UQdcfUlWhUhZxhA/fxKcW3HvEKz8nLdvn9
+         37NC0pbJL3n5XNm8NpJfXHxqUweivGk0tSFaiYu2nAr+BxrvIYdt1iwmlPs2IMSP25+9
+         xxvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CXQfpYTDQSPQk5n85TMF5Rtc8fjIvsWXa8Dgsig58ac=;
-        b=c0v40JoYNENefovpCUkArrzegKUorrxUW+95clrGBtCjlpCg+loeG4cIcXdC3AfhyZ
-         /ok/Js4V8SZ9SN1CjDnQzi7FR87E1g2q3u1dluJJWWYVJbogvo4aDnUjzjyqLGbnMpd+
-         W8w/O+yPl8kFoelMMp7NaTso0VvEkbjdo1WcOOvNWZopjzDLBmjzGb+WISiCSJHXeqCc
-         WxPxNDdrr0pUD10YGjjud0fV4P5AKykJQRnMH1I9lMmllFXnVpfkhbQtYMSbUSsyIDuV
-         B8wZbhcEOOSylpO21WJMBIhM4jf2yOugk6khmThx48VxAAHIfqjYT13QORNIokkpS9he
-         WXPg==
-X-Gm-Message-State: AJIora/GLKvWYYYk5jgOHDOOJDrtKE2TPmZXGtscZ+Fzi66zhZ7roGd/
-        xgoSPp5hcqy3Wlv6aLSGNdhDY0/F36HyjBrU
-X-Google-Smtp-Source: AGRyM1tfnUur7TuwOQxmJlxXtmywkayWT23lDh1TS6mNt5d9dgW0FSIZYivIOlrTCPT21ttAkbBfaA==
-X-Received: by 2002:a05:6a00:1808:b0:528:3ec:543a with SMTP id y8-20020a056a00180800b0052803ec543amr27281869pfa.70.1656932183295;
-        Mon, 04 Jul 2022 03:56:23 -0700 (PDT)
-Received: from localhost ([139.177.225.245])
-        by smtp.gmail.com with ESMTPSA id s23-20020a170902a51700b001690d283f52sm20554943plq.158.2022.07.04.03.56.22
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jKBXFXotED+1B6HSUGwFJyKmmy7t6L5/nnjdgGUAKlQ=;
+        b=ULulXjJO4hR6lfPPF7k0kW46AskVIV07gweO0K0xf4sYgL/lm3qOzkRw/yMtgJHslS
+         9ijgPklDe9qjmyOUrF7ln0Q8o+PplkzZRmAmbIr3thWl055bZCaAvGamhJV5BrQW4j5c
+         duuFzYQRawBCK0wWyWCLR1MpGLd582q7fchXWsiQzp1V9C+8GdLTdYT/Pcctq3dqjbQL
+         toI8tictyoqowp5nUZUk8OHvj6VZutvfM0C+lrosNLWC1woYmvuUuB3F2CE/fNergIuZ
+         NTyE/mxrYD27B2YeEWIhFz4ENs8mjWTjpVHs8VM5zJ5aSveX1c3LpATr7PyDozarav/T
+         6lkQ==
+X-Gm-Message-State: AJIora/bHQBgTycz+cl+kfOh3oiuxVzmNjEL6Y0dXU9yhtDEEhUfJ+zh
+        ZtfPjlJLn7PB6nF4t5Q0qOvOvqOgpJHxJtPV
+X-Google-Smtp-Source: AGRyM1v7SuvpBPTmFFNywaDGZaClkX0cqYJPP32wQi/aQNebSh9M5YVFubXkbTKAoYfCuR9nCHZjYQ==
+X-Received: by 2002:adf:d215:0:b0:21d:689f:7eb0 with SMTP id j21-20020adfd215000000b0021d689f7eb0mr5986598wrh.542.1656934617719;
+        Mon, 04 Jul 2022 04:36:57 -0700 (PDT)
+Received: from blindfold.localnet ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id e20-20020a5d5954000000b0020fcaba73bcsm30279765wri.104.2022.07.04.04.36.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 03:56:23 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 18:56:19 +0800
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, jgg@ziepe.ca, jhubbard@nvidia.com,
-        william.kucharski@oracle.com, dan.j.williams@intel.com,
-        jack@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH] mm: fix missing wake-up event for FSDAX pages
-Message-ID: <YsLHUxNjXLOumaIy@FVFYT0MHHV2J.usts.net>
-References: <20220704074054.32310-1-songmuchun@bytedance.com>
- <YsLDGEiVSHN3Xx/g@casper.infradead.org>
+        Mon, 04 Jul 2022 04:36:57 -0700 (PDT)
+From:   Richard Weinberger <richard@sigma-star.at>
+To:     alpss@penguingang.at
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Subject: [ANNOUNCE] Alpine Linux Persistence and Storage Summit 2022
+Date:   Mon, 04 Jul 2022 13:36:56 +0200
+Message-ID: <1778345.CLbsiaQdQ3@somecomputer>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YsLDGEiVSHN3Xx/g@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 04, 2022 at 11:38:16AM +0100, Matthew Wilcox wrote:
-> On Mon, Jul 04, 2022 at 03:40:54PM +0800, Muchun Song wrote:
-> > FSDAX page refcounts are 1-based, rather than 0-based: if refcount is
-> > 1, then the page is freed.  The FSDAX pages can be pinned through GUP,
-> > then they will be unpinned via unpin_user_page() using a folio variant
-> > to put the page, however, folio variants did not consider this special
-> > case, the result will be to miss a wakeup event (like the user of
-> > __fuse_dax_break_layouts()).
-> 
-> Argh, no.  The 1-based refcounts are a blight on the entire kernel.
-> They need to go away, not be pushed into folios as well.  I think
+We proudly announce the fifth Alpine Linux Persistence and Storage Summit
+(ALPSS), which will be held October 11th to 14th at the Lizumerhuette [1]
+[2] in Austria.
 
-I would be happy if this could go away.
+The goal of this conference is to discuss the hot topics in Linux storage
+and file systems, such as persistent memory, NVMe, zoned storage, and I/O
+scheduling in a cool and relaxed setting with spectacular views in the
+Austrian alps.
 
-> we're close to having that fixed, but until then, this should do
-> the trick?
-> 
+We plan to have a small selection of short and to the point talks with
+lots of room for discussion in small groups, as well as ample downtime
+to enjoy the surrounding.
 
-The following fix looks good to me since it lowers the overhead as
-much as possible
+Attendance is free except for the accommodation and food at the lodge [3],
+but the number of seats is strictly limited.  If you are interested in
+attending please reserve a seat by mailing your favorite topic(s) to:
 
-Thanks.
+	alpss-pc@penguingang.at
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index cc98ab012a9b..4cef5e0f78b6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1129,18 +1129,18 @@ static inline bool is_zone_movable_page(const struct page *page)
->  #if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
->  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
->  
-> -bool __put_devmap_managed_page(struct page *page);
-> -static inline bool put_devmap_managed_page(struct page *page)
-> +bool __put_devmap_managed_page(struct page *page, int refs);
-> +static inline bool put_devmap_managed_page(struct page *page, int refs)
->  {
->  	if (!static_branch_unlikely(&devmap_managed_key))
->  		return false;
->  	if (!is_zone_device_page(page))
->  		return false;
-> -	return __put_devmap_managed_page(page);
-> +	return __put_devmap_managed_page(page, refs);
->  }
->  
->  #else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
-> -static inline bool put_devmap_managed_page(struct page *page)
-> +static inline bool put_devmap_managed_page(struct page *page, int refs)
->  {
->  	return false;
->  }
-> @@ -1246,7 +1246,7 @@ static inline void put_page(struct page *page)
->  	 * For some devmap managed pages we need to catch refcount transition
->  	 * from 2 to 1:
->  	 */
-> -	if (put_devmap_managed_page(&folio->page))
-> +	if (put_devmap_managed_page(&folio->page, 1))
->  		return;
->  	folio_put(folio);
->  }
-> diff --git a/mm/gup.c b/mm/gup.c
-> index d1132b39aa8f..28df02121c78 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -88,7 +88,8 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
->  	 * belongs to this folio.
->  	 */
->  	if (unlikely(page_folio(page) != folio)) {
-> -		folio_put_refs(folio, refs);
-> +		if (!put_devmap_managed_page(&folio->page, refs))
-> +			folio_put_refs(folio, refs);
->  		goto retry;
->  	}
->  
-> @@ -177,6 +178,8 @@ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
->  			refs *= GUP_PIN_COUNTING_BIAS;
->  	}
->  
-> +	if (put_devmap_managed_page(&folio->page, refs))
-> +		return;
->  	folio_put_refs(folio, refs);
->  }
->  
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index b870a659eee6..b25e40e3a11e 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -499,7 +499,7 @@ void free_zone_device_page(struct page *page)
->  }
->  
->  #ifdef CONFIG_FS_DAX
-> -bool __put_devmap_managed_page(struct page *page)
-> +bool __put_devmap_managed_page(struct page *page, int refs)
->  {
->  	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
->  		return false;
-> @@ -509,7 +509,7 @@ bool __put_devmap_managed_page(struct page *page)
->  	 * refcount is 1, then the page is free and the refcount is
->  	 * stable because nobody holds a reference on the page.
->  	 */
-> -	if (page_ref_dec_return(page) == 1)
-> +	if (page_ref_sub_return(page, refs) == 1)
->  		wake_up_var(&page->_refcount);
->  	return true;
->  }
-> diff --git a/mm/swap.c b/mm/swap.c
-> index c6194cfa2af6..94e42a9bab92 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -960,7 +960,7 @@ void release_pages(struct page **pages, int nr)
->  				unlock_page_lruvec_irqrestore(lruvec, flags);
->  				lruvec = NULL;
->  			}
-> -			if (put_devmap_managed_page(&folio->page))
-> +			if (put_devmap_managed_page(&folio->page, 1))
->  				continue;
->  			if (folio_put_testzero(folio))
->  				free_zone_device_page(&folio->page);
-> 
+If you are interested in giving a short and crisp talk please also send
+an abstract to the same address.
+
+The Lizumerhuette is an Alpine Society lodge in a high alpine environment.
+A hike of approximately 2 hours is required to the lodge, and no other
+accommodations are available within walking distance.
+
+Due to the ongoing COVID-19 pandemic special rules including travel
+restrictions, mask and vaccination mandates may be in place in October.
+Please check the travel restrictions [4] carefully for international
+travel.  We very strongly recommend all attendees to be vaccinated
+against COVID-19 and will provide you with updates as needed.
+
+Thank you on behalf of the program committee:
+
+    Christoph Hellwig
+    Johannes Thumshirn
+    Richard Weinberger
+
+[1] http://www.tyrol.com/things-to-do/sports/hiking/refuge-huts/a-lizumer-hut
+[2] https://www.glungezer.at/l-i-z-u-m-e-r-h-%C3%BC-t-t-e/
+[3] approx. EUR 40-60 per person and night, depending on the room
+    category
+[4] https://www.austria.info/en/service-and-facts/coronavirus-information
+
+
+
