@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98816567AA0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 01:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACFF567A9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 01:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbiGEXWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jul 2022 19:22:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37464 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiGEXWO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231761AbiGEXWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 5 Jul 2022 19:22:14 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 350B2193F0;
-        Tue,  5 Jul 2022 16:22:13 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229635AbiGEXWM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Jul 2022 19:22:12 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B28193F0;
+        Tue,  5 Jul 2022 16:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657063333; x=1688599333;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=X3Cp7WNefgqvD2vUfXjmNNUWqDvy/vYXCkMcRrUovEI=;
-  b=cbERZAIOydj2QyO9FewOIsbniiOmpqU61VHMCq++eWRyQE8+2uj0rwCO
-   26o1FVj7PKEmY598gBu+tJ7WTG/nK3YvxbZQwaAevRdEK0pSQeRajD0KX
-   KVHFQePjmWJ72b0PbpWx9ebMiGDEP1aJFp+F0wX7RZqFKLqD8JpV4evpo
-   4kWD3hJj3dnBGtfBXhoZ6lYelTohSjVYSAxnqsA49wwI33xOFRWQZdoFd
-   rNSFh3nSSvfvZFE2Y8v8yvDZoYQtu6VmzbFxyhKu1osmN8IORvGpvG2b1
-   eRiCGIOdDqxY/KM0SsOOw4A09oJhje8UX/e4K1m44ZZohnTNhz02XIVI4
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="282320888"
+  t=1657063331; x=1688599331;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=zm0KOQVEYYEWOhSmHB8yhZfj2F0Gg29XPhX+LCnTORc=;
+  b=mdGOMkJ7d0uBXjLiAbhSyP1c1EpyP4APMNnYWw6HYRB4KrxGg3jJeVLR
+   D3RRrxIZ5D+4ajhBvFBO1Ca7qqb7Zxy+vxBZjHLdSfpj4k2LmCHpm05G6
+   2v2jodirotfgEY1ib51xFyAJqJYtIBRwFBWuxbr/9K9uYUqPYk2tC+y4v
+   sTsCol47M3BfKI+2CbtWSotrbRk64NS0T7mBGdKz5F2/YFZvq7AmqRTRy
+   glyfJX4a0lcC3JOTwLI6/D0KZ/foJktbnW+WDlkh1GrlIgc2oKmwxDJLA
+   Q/Dooof+X6TJBXUVFMY8ePuPiMYwHwETUa+4mL4+avZxDvLQpvcEx4KTg
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="283593110"
 X-IronPort-AV: E=Sophos;i="5.92,248,1650956400"; 
-   d="scan'208";a="282320888"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 16:22:08 -0700
+   d="scan'208";a="283593110"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 16:22:11 -0700
 X-IronPort-AV: E=Sophos;i="5.92,248,1650956400"; 
-   d="scan'208";a="620052149"
+   d="scan'208";a="597455659"
 Received: from adiazinf-mobl.amr.corp.intel.com (HELO localhost) ([10.255.0.103])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 16:22:05 -0700
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 16:22:09 -0700
 From:   ira.weiny@intel.com
 To:     Dan Williams <dan.j.williams@intel.com>,
         Matthew Wilcox <willy@infradead.org>
@@ -47,14 +47,16 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
         linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
         linux-pci@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 0/3] Introduce devm_xa_init
-Date:   Tue,  5 Jul 2022 16:21:56 -0700
-Message-Id: <20220705232159.2218958-1-ira.weiny@intel.com>
+Subject: [RFC PATCH 1/3] xarray: Introduce devm_xa_init()
+Date:   Tue,  5 Jul 2022 16:21:57 -0700
+Message-Id: <20220705232159.2218958-2-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220705232159.2218958-1-ira.weiny@intel.com>
+References: <20220705232159.2218958-1-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -65,41 +67,79 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-This is submitted RFC for 2 reasons.  First I'm not quite sure where to place
-the call in the headers.  Second the use of the new call is dependent on some
-CXL code which was just been submitted.[0]  I want to get opinions on if this new
-call seems useful or just more confusing to the XArray interface.  If useful
-I'll respin after the CXL stuff lands and perhaps it can go through Dan's tree.
+Many devices may have arrays of resources which are allocated with
+device managed functions.  The objects referenced by the XArray are
+therefore automatically destroyed without the need for the XArray.
 
-While converting some CXL code to XArray a pattern emerged which seemed useful
-to codify.
+Introduce devm_xa_init() which takes care of the destruction of the
+XArray meta data automatically as well.
 
-In two different situations[1][2] an XArray was initialized in such a way that
-using devm_add_action() could be used to call xa_destroy() automatically.
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-In the first situation[1] the XArray was storing long values directly and in
-the other situation the pointers were allocated using device managed functions
-(devm_*).
-
-In these situations it seems that a device managed xa_init() would be useful.
-
-[0] https://lore.kernel.org/linux-cxl/20220705154932.2141021-1-ira.weiny@intel.com/
-[1] https://lore.kernel.org/linux-cxl/20220705154932.2141021-4-ira.weiny@intel.com/
-[2] https://lore.kernel.org/linux-cxl/20220705154932.2141021-5-ira.weiny@intel.com/
-
-
-
-Ira Weiny (3):
-  xarray: Introduce devm_xa_init()
-  pci/doe: Use devm_xa_init()
-  CXL/doe: Use devm_xa_init()
-
+---
+The main issue I see with this is defining devm_xa_init() in device.h.
+This makes sense because a device is required to use the call.  However,
+I'm worried about if users will find the call there vs including it in
+xarray.h?
+---
  drivers/base/core.c    | 20 ++++++++++++++++++++
- drivers/cxl/pci.c      |  8 +-------
- drivers/pci/doe.c      | 14 ++------------
  include/linux/device.h |  3 +++
- 4 files changed, 26 insertions(+), 19 deletions(-)
+ 2 files changed, 23 insertions(+)
 
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 2eede2ec3d64..8c5c20a62744 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2609,6 +2609,26 @@ void devm_device_remove_groups(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_device_remove_groups);
+ 
++static void xa_destroy_cb(void *xa)
++{
++	xa_destroy(xa);
++}
++
++/**
++ * devm_xa_init() - Device managed initialization of an empty XArray
++ * @dev: The device this xarray is associated with
++ * @xa: XArray
++ *
++ * Context: Any context
++ * Returns: 0 on success, -errno if the action fails to be set
++ */
++int devm_xa_init(struct device *dev, struct xarray *xa)
++{
++	xa_init(xa);
++	return devm_add_action(dev, xa_destroy_cb, xa);
++}
++EXPORT_SYMBOL(devm_xa_init);
++
+ static int device_add_attrs(struct device *dev)
+ {
+ 	struct class *class = dev->class;
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 073f1b0126ac..e06dc63e375b 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -27,6 +27,7 @@
+ #include <linux/uidgid.h>
+ #include <linux/gfp.h>
+ #include <linux/overflow.h>
++#include <linux/xarray.h>
+ #include <linux/device/bus.h>
+ #include <linux/device/class.h>
+ #include <linux/device/driver.h>
+@@ -978,6 +979,8 @@ int __must_check devm_device_add_group(struct device *dev,
+ void devm_device_remove_group(struct device *dev,
+ 			      const struct attribute_group *grp);
+ 
++int devm_xa_init(struct device *dev, struct xarray *xa);
++
+ /*
+  * Platform "fixup" functions - allow the platform to have their say
+  * about devices and actions that the general device layer doesn't
 -- 
 2.35.3
 
