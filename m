@@ -2,86 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6741D56701A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 15:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32598567027
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 16:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231816AbiGEN6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jul 2022 09:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47166 "EHLO
+        id S231693AbiGEOC1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jul 2022 10:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233383AbiGEN5l (ORCPT
+        with ESMTP id S231759AbiGEOB6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jul 2022 09:57:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E7A1CFEF;
-        Tue,  5 Jul 2022 06:41:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CC0B61722;
-        Tue,  5 Jul 2022 13:41:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ACE6C341C7;
-        Tue,  5 Jul 2022 13:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657028489;
-        bh=aHlxnEAEQM5r6al9d8XqU+n34AltTALTHE2pF/9B8lI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=J7JvST/3EoYyCBzmIrNNK8lBxeod3pxrE04YCmrnKfGau5/Ywkzei/+R8GHabJptP
-         NqUvnOpPczK7lwWhu7xAw7H9azruDWObVf6DifUGWpHhDv/kKhHe449hzAZWXK/ZSn
-         tbBh6hruWOVPYmS2Z/VB5M1iUmhevDHzxPQyeJNGvmigszYPlx3S/M1UvaImncqlN8
-         WBtcYQxBQSmwTUEXT7JE/fLUKjTlQoLjREBMZcUiTU4dF/0xul8NJjMB4WbCdDfg4w
-         dUzdKzGNWn4S4KghttEf267tG2MoiTBMaTIWCRuEY+CvlZ4utP1Z7itlE2WVkIF0Uk
-         ks2SsSTBr7+ZQ==
-Message-ID: <459eec8a5cd41316aedbff6287900cd92ff92b52.camel@kernel.org>
-Subject: Re: [PATCH 1/2] netfs: release the folio lock and put the folio
- before retrying
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     xiubli@redhat.com, idryomov@gmail.com, vshankar@redhat.com,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        willy@infradead.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com
-Date:   Tue, 05 Jul 2022 09:41:25 -0400
-In-Reply-To: <2187946.1657027284@warthog.procyon.org.uk>
-References: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
-         <20220701022947.10716-1-xiubli@redhat.com>
-         <20220701022947.10716-2-xiubli@redhat.com>
-         <2187946.1657027284@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        Tue, 5 Jul 2022 10:01:58 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1D5D118
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jul 2022 06:47:28 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id z13so13670923qts.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Jul 2022 06:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aC7tiWGDUmjG4E+Vlf1HDuDZFXAFOR+FnjCqRmORTyc=;
+        b=HPc5a7APrqmVXvuv5diow+iSYd8P0GBEUcygVWpOkE9Y4My7LL+qpTLid+Vu13E7kq
+         ZMzttA9/ceVExR+3wOxr9nXJMAmqRpxVRSpYfEVN/whAoVKGpdd+2bnjuO0hZ0cKt6HL
+         PE8bLwSxxoYkiuJytIdQBdmnQCnoNlzIxkyB6hT8uKG6uENRnBCSh3qQyDDRIdtq2kcf
+         m9+dqK82EAbZwoLIeAqHobNHiyQHxfPQ7zF+aST8mPzSQbGYsOJURJqVNtVPmusK+qqN
+         +vQQA4O2OJyk6d3OD+pLnWLLy70RYnuD+ox2bgcmMRbq9cPOmSHZmkCam8OCt8A598JW
+         ZQxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aC7tiWGDUmjG4E+Vlf1HDuDZFXAFOR+FnjCqRmORTyc=;
+        b=ucr7pPedmRQ6YUxPU0JjZC+zttKNOTeFoIq75qTUrjWls1iPFLxmcVYaOD7QQSq3JX
+         /rFiCbKcGiSXZH4D6Gq/PX8cO65khChfXyRa/yDf+vYIN4KixaCgaCFJ8wUv/Io8XfRa
+         5Q3fwzCSHkEMnvmp6hxW0TiBT+ZVah+P2qAKNer/UBvOOXGet5mUMCdj2dsRFhymQKSZ
+         5lQD5Ro2+ADkbV7UMNSNsXuAgzowv47pDiD8lnQPZmxYjHZtsA5eRgyNWuLcHeUCunhX
+         GWY1upjdbkmEHg51R+DXaplLcisdE3ck8qO8GhaxllakpH48hNmxYz7TR1Hyg4vH0EC4
+         HXUA==
+X-Gm-Message-State: AJIora8PEZKkO0rAGeJPTZdHDdi4d05yB6TX58e+8eN2VJCGCQctoKJf
+        +tQPCmPzlWKbdSKlyf0mkJic9A==
+X-Google-Smtp-Source: AGRyM1vvib7F+uTcsONBGb8V+lPuSuzNrIyahf3+BZ177JeEEhvuW5nixoUCeLrPQ5VLMB5h+kPVNQ==
+X-Received: by 2002:a05:6214:5099:b0:473:5d:d29f with SMTP id kk25-20020a056214509900b00473005dd29fmr5025227qvb.55.1657028847407;
+        Tue, 05 Jul 2022 06:47:27 -0700 (PDT)
+Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id c4-20020a05620a268400b006aee03a95dfsm26905631qkp.124.2022.07.05.06.47.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 06:47:26 -0700 (PDT)
+Date:   Tue, 5 Jul 2022 09:47:25 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Stefan Roesch <shr@fb.com>,
+        io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        Christoph Hellwig <hch@lst.de>, rgoldwyn@suse.com
+Subject: Re: [PATCH v7 15/15] xfs: Add async buffered write support
+Message-ID: <YsRA7TGWA7ovZjrF@localhost.localdomain>
+References: <20220601210141.3773402-1-shr@fb.com>
+ <20220601210141.3773402-16-shr@fb.com>
+ <Yr56ci/IZmN0S9J6@ZenIV>
+ <0a75a0c4-e2e5-b403-27bc-e43872fecdc1@kernel.dk>
+ <ef7c1154-b5ba-4017-f9fd-dea936a837fc@kernel.dk>
+ <ca60a7dc-b16d-d8ce-f56c-547b449da8c9@kernel.dk>
+ <Yr83aD0yuEwvJ7tL@magnolia>
+ <47dd9e6a-4e08-e562-12ff-5450fc42da77@kernel.dk>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47dd9e6a-4e08-e562-12ff-5450fc42da77@kernel.dk>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-07-05 at 14:21 +0100, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > I don't know here... I think it might be better to just expect that whe=
-n
-> > this function returns an error that the folio has already been unlocked=
-.
-> > Doing it this way will mean that you will lock and unlock the folio a
-> > second time for no reason.
->=20
-> I seem to remember there was some reason you wanted the folio unlocking a=
-nd
-> putting.  I guess you need to drop the ref to flush it.
->=20
-> Would it make sense for ->check_write_begin() to be passed a "struct foli=
-o
-> **folio" rather than "struct folio *folio" and then the filesystem can cl=
-ear
-> *folio if it disposes of the page?
->=20
+On Fri, Jul 01, 2022 at 12:14:41PM -0600, Jens Axboe wrote:
+> On 7/1/22 12:05 PM, Darrick J. Wong wrote:
+> > On Fri, Jul 01, 2022 at 08:38:07AM -0600, Jens Axboe wrote:
+> >> On 7/1/22 8:30 AM, Jens Axboe wrote:
+> >>> On 7/1/22 8:19 AM, Jens Axboe wrote:
+> >>>> On 6/30/22 10:39 PM, Al Viro wrote:
+> >>>>> On Wed, Jun 01, 2022 at 02:01:41PM -0700, Stefan Roesch wrote:
+> >>>>>> This adds the async buffered write support to XFS. For async buffered
+> >>>>>> write requests, the request will return -EAGAIN if the ilock cannot be
+> >>>>>> obtained immediately.
+> >>>>>
+> >>>>> breaks generic/471...
+> >>>>
+> >>>> That test case is odd, because it makes some weird assumptions about
+> >>>> what RWF_NOWAIT means. Most notably that it makes it mean if we should
+> >>>> instantiate blocks or not. Where did those assumed semantics come from?
+> >>>> On the read side, we have clearly documented that it should "not wait
+> >>>> for data which is not immediately available".
+> >>>>
+> >>>> Now it is possible that we're returning a spurious -EAGAIN here when we
+> >>>> should not be. And that would be a bug imho. I'll dig in and see what's
+> >>>> going on.
+> >>>
+> >>> This is the timestamp update that needs doing which will now return
+> >>> -EAGAIN if IOCB_NOWAIT is set as it may block.
+> >>>
+> >>> I do wonder if we should just allow inode time updates with IOCB_NOWAIT,
+> >>> even on the io_uring side. Either that, or passed in RWF_NOWAIT
+> >>> semantics don't map completely to internal IOCB_NOWAIT semantics. At
+> >>> least in terms of what generic/471 is doing, but I'm not sure who came
+> >>> up with that and if it's established semantics or just some made up ones
+> >>> from whomever wrote that test. I don't think they make any sense, to be
+> >>> honest.
+> >>
+> >> Further support that generic/471 is just randomly made up semantics,
+> >> it needs to special case btrfs with nocow or you'd get -EAGAIN anyway
+> >> for that test.
+> >>
+> >> And it's relying on some random timing to see if this works. I really
+> >> think that test case is just hot garbage, and doesn't test anything
+> >> meaningful.
+> > 
+> > <shrug> I had thought that NOWAIT means "don't wait for *any*thing",
+> > which would include timestamp updates... but then I've never been all
+> > that clear on what specifically NOWAIT will and won't wait for. :/
+> 
+> Agree, at least the read semantics (kind of) make sense, but the ones
+> seemingly made up by generic/471 don't seem to make any sense at all.
+>
 
-I'd be OK with that too.
---=20
-Jeff Layton <jlayton@kernel.org>
+Added Goldwyn to the CC list for this.
+
+This appears to be just a confusion about what we think NOWAIT should mean.
+Looking at the btrfs code it seems like Goldwyn took it as literally as possible
+so we wouldn't do any NOWAIT IO's unless it was into a NOCOW area, meaning we
+literally wouldn't do anything other than wrap the bio up and fire it off.
+
+The general consensus seems to be that NOWAIT isn't that strict, and that
+BTRFS's definition was too strict.  I wrote initial patches to give to Stefan to
+clean up the Btrfs side to allow us to use NOWAIT under a lot more
+circumstances.
+
+Goldwyn, this test seems to be a little specific to our case, and can be flakey
+if the timing isn't just right.  I think we should just remove it?  Especially
+since how we define NOWAIT isn't quite right.  Does that sound reasonable to
+you?
+
+I think a decent followup would be to add a NOWAIT specific fio test to fsperf
+so we still can catch any NOWAIT related regressions, without trying to test for
+specific behavior for something that can fail under a whole lot of conditions
+unrelated to our implementation.  Thanks,
+
+Josef 
