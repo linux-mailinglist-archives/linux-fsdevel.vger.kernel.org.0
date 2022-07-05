@@ -2,73 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 742A1566F7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 15:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 218E0566FDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 15:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232769AbiGENk6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jul 2022 09:40:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58056 "EHLO
+        id S232812AbiGENuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jul 2022 09:50:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232841AbiGENkl (ORCPT
+        with ESMTP id S231801AbiGENtj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jul 2022 09:40:41 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CBDA23AA
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jul 2022 06:01:50 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id t19so19778923lfl.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Jul 2022 06:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Z4iSxnTq0Lx/bwbqoXAyNmer4bl96DtB3Zb1VFh8QGs=;
-        b=lIoO/Q1zsRJMQw+49guyuEHG0aeP+WYtKv3tq+YNGH4ORsHKWEdhZsAviWQJ3/Sxjk
-         ckZlj63HBbSYDTcFFpVivE3UWpB3WiNBnnv7BZw9GOWFtss0eoR9/qvOqJZ9korndGQ7
-         QpoPeLr4zGvbXumX4us4nP4cHxg9sISMiFMBDEItvcbelSpJIHFm38Evt49W7tgC9hcq
-         ec3tVmPOXuUxd1Xfs02+bl7gl/Ytnv2w5w4TDkL7+y+K8kyHwzU2v8On9hwisewQrFLH
-         Ix3u3fTM4dHs6ek3+TNmCG31zTey/uujkvE7y38kVaG/rYLH7xDoD2stZA7N4vx+D/79
-         m2fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Z4iSxnTq0Lx/bwbqoXAyNmer4bl96DtB3Zb1VFh8QGs=;
-        b=NWyEQuthnRL/dvvDiNTS7urFAZJ9C0k+eD1dRhTjtxzzXec/TetP7ADPjZEcpUzM7y
-         5J6cKMcjrebHFwP/30sdrOQoKCjZRCdFbV/7N3gdcEDwxnlgW9Rcqm0hk98CWb53lIko
-         SqH/qiL958SloV9oYs9uDNnmK7/WsF3B59O03qsTMUgmAU0ct8g/UrIKKqnBlBtXm0dx
-         5bQBpT3uXWSLBI4m2FN4w5f5zUA7mSbHFggwmSQYzmBuxCacWeonYR2vDMCgYKKv/Yib
-         bfiei9Gwp1xzDFi8gDJZ0cffjQ3518a0oWPcnj2h/aUAwmlzGMfcJofQUvEoEJnEAQvL
-         RhOw==
-X-Gm-Message-State: AJIora/fEfSPeN5ZGGLv7iO4Pk4jUPkBn3TYfJSx2QA9+F5hTuIlKphT
-        ChhuYz/k3GeuBG5EygeEuUF6fpgCP/Gpw6PFc9A=
-X-Google-Smtp-Source: AGRyM1ulnmfEI/NZdh+WUruPhna3AxAzNobxtbnKsVPfd34IpZpYCDlngimNYuZWKpM3d05c1V3GYGGqh9UB1WX+QAc=
-X-Received: by 2002:a05:6512:1104:b0:482:e25b:9e75 with SMTP id
- l4-20020a056512110400b00482e25b9e75mr4087124lfg.298.1657026108440; Tue, 05
- Jul 2022 06:01:48 -0700 (PDT)
+        Tue, 5 Jul 2022 09:49:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A8D9E2FE57
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jul 2022 06:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657027289;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IU1hmx/6CablWOPeTIIqi3YqGNsqAV5xUAc3aVqmUGg=;
+        b=Lo2NtQ8Npj0l5ZmQVcBYjawSjyL8hczlCDE6eDHNRF3ayadpxGcVaHoikLksdwvCG1Hwvg
+        Yia1RCrxN1raYa3h2eoFOK8AZwu4IrEDKXjeJ8UVibORWeM+bGf4+hfdkF7VI169ijTnkf
+        nk/Jm6Rxp8ydAHI8iUViV0DvyM4Op20=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-77--JCJQmBOMB2CUtYwGYxzUw-1; Tue, 05 Jul 2022 09:21:26 -0400
+X-MC-Unique: -JCJQmBOMB2CUtYwGYxzUw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0964F811E7A;
+        Tue,  5 Jul 2022 13:21:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCF03416390;
+        Tue,  5 Jul 2022 13:21:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+References: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org> <20220701022947.10716-1-xiubli@redhat.com> <20220701022947.10716-2-xiubli@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, xiubli@redhat.com, idryomov@gmail.com,
+        vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, willy@infradead.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com
+Subject: Re: [PATCH 1/2] netfs: release the folio lock and put the folio before retrying
 MIME-Version: 1.0
-Received: by 2002:a05:6504:2051:b0:1cf:b3c7:83d5 with HTTP; Tue, 5 Jul 2022
- 06:01:47 -0700 (PDT)
-Reply-To: azimpemji251@gmail.com
-From:   Azim Pemji <simoniyeh5@gmail.com>
-Date:   Tue, 5 Jul 2022 14:01:47 +0100
-Message-ID: <CADBBFbG_2nqSam1TQPSzoVVYZg8APuZ6N_iADxgXzHUwd9=FEQ@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2187945.1657027284.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Jul 2022 14:21:24 +0100
+Message-ID: <2187946.1657027284@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Die Summe von 450.000 =E2=82=AC wurde Ihnen von Herrn Azim gespendet. Bitte
-kontaktieren Sie uns f=C3=BCr weitere Informationen unter
-azimpemji251@gmail.com
+Jeff Layton <jlayton@kernel.org> wrote:
+
+> I don't know here... I think it might be better to just expect that when
+> this function returns an error that the folio has already been unlocked.
+> Doing it this way will mean that you will lock and unlock the folio a
+> second time for no reason.
+
+I seem to remember there was some reason you wanted the folio unlocking and
+putting.  I guess you need to drop the ref to flush it.
+
+Would it make sense for ->check_write_begin() to be passed a "struct folio
+**folio" rather than "struct folio *folio" and then the filesystem can clear
+*folio if it disposes of the page?
+
+David
+
