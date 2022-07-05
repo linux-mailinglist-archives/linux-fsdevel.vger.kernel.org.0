@@ -2,47 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81FAF5676A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 20:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 672175676CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 20:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232425AbiGESjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jul 2022 14:39:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44226 "EHLO
+        id S232277AbiGESs0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jul 2022 14:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232390AbiGESi6 (ORCPT
+        with ESMTP id S231971AbiGESsY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jul 2022 14:38:58 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EED213F5B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jul 2022 11:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6RPq7cN/EKPxe41EPw79+WsV/zNfqmD092l1jJM25F4=; b=inTN5klWhRzdX57bjJ0M6fqTJG
-        UwFMhsGIXvA4PiGKclQSUO3FyHzu8AldeXcbOs8OOOmrJNa2CgvUV56NMRlME0jmkeSQbX9Rm6Wjz
-        fkMTcac7wNX9psxKqgCSlTST1ho6AJsdfgW1IFCuMaaCi9i0Vrf6Jk+PBsEEWOuvG0+ydR7yRh/X6
-        uwKfZMznNYM6xnM4BlMBK2B+gBY1KNqGGF/cjJVyFWuKdX6iC2Sue1vvrSIONEq672fgnTE1/e0Gu
-        nVpPKsUeFjP/CASv0+FiB63iy6/6i0UkOyfs/nlqYdPoi1EvtwTzviEUQFHOksIl9OoiJSpECD5qZ
-        gcUkKxRw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o8nRl-000p83-Im; Tue, 05 Jul 2022 18:38:53 +0000
-Date:   Tue, 5 Jul 2022 19:38:53 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Boris Burkov <boris@bur.io>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: XArray multiple marks support
-Message-ID: <YsSFPXR4SYlHiQaI@casper.infradead.org>
-References: <Yr3Fum4Gb9sxkrB3@zen>
- <YsNqmIQP7LTs/vXB@casper.infradead.org>
- <YsR8h34aNzHiS3EY@zen>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YsR8h34aNzHiS3EY@zen>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        Tue, 5 Jul 2022 14:48:24 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473851E2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Jul 2022 11:48:21 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id 5so5841809plk.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Jul 2022 11:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=BSbXCfRZzu1sc0QuV1HkqqBljeY0zd38lwwZDh0JnJo=;
+        b=Kd3cpipzlwnLlnKJdcxPG025r3TV9ZWDL3aoqgYfurx5lzDvGaGX6BfmdHnPHDcvgt
+         L8l8pOu5ADDKplKfhC9gddERsmEvM0OaGl9+IrErYXh5YDbD79yVw0nUj7fqRJWhY54d
+         TsDVr6Hx3Ff9rvr7l//f6QsgivhiFy3t7DYMJSSDTfMbwQujMpA43mfepIefrWrITL9h
+         6nKfst5ovb+aJRGhUGNYtuUFRUR5HLOqF0u4XFsH5szb2dBeLlKmIWVN1UW9P+F6bho6
+         zz7weIyxss9qXo1Lp1m8hHl9nZinzypxQg2g5mT0mYlNlk3dBW8vtIsbwCfRXJjM/Q4q
+         8Rhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=BSbXCfRZzu1sc0QuV1HkqqBljeY0zd38lwwZDh0JnJo=;
+        b=mnNJWe0BCm5xm/lAJny5y0AfTw3SEdN7HHRWhCjfueuKshb0UMEPhcOWyKHvdte19/
+         zga21kTA9jOzOBhsdQ9ET4TPk7tbCvoydcQIetuAioglleyRD9NzQOlwmpd8P+amfSJH
+         Use8Mo9E1FSJ/9FBwiOc8NaJkRhiGvSrQli2SODgab8MHA8YTUHRvRQP2eIflVYkXr4J
+         t3cHdLpKd4SjluxjIafmrjmCIBAub5EOEEyzhWS+mHLyVc/oQsulnbQgA/DowKPjmBKt
+         CzCKjg6oamgmeayg+qRBdnO0naBVNp+1/OViTEoFnhuqe6YNAotrSnqBNfQhh4b56+qc
+         WHWQ==
+X-Gm-Message-State: AJIora/LbsRgheK9pvAXOMZrWJobQG12987LJqF9SdEykaj9ZX+1P0xQ
+        +yve9dUsjMfE4kJnCeXONq45Of7ZnvUXkWq+
+X-Google-Smtp-Source: AGRyM1sxnzrQt04QNWvyPseXhRPtfc0YDoXI6e9lhzpzrHLkgjmCcHcFZz2sRm0/5o54Dzag9tgBoA==
+X-Received: by 2002:a17:90b:1e02:b0:1ec:d979:4a8e with SMTP id pg2-20020a17090b1e0200b001ecd9794a8emr42406028pjb.181.1657046900696;
+        Tue, 05 Jul 2022 11:48:20 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id z15-20020a1709027e8f00b0015e8d4eb273sm7258665pla.189.2022.07.05.11.48.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Jul 2022 11:48:20 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <FC073359-35EA-4F86-AA9C-8419919CB37C@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_981A43CC-F6C0-4259-9094-62E96A5B913D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [man-pages PATCH RESEND] statx.2: correctly document STATX_ALL
+Date:   Tue, 5 Jul 2022 12:48:18 -0600
+In-Reply-To: <20220705183614.16786-1-ebiggers@kernel.org>
+Cc:     linux-man@vger.kernel.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+To:     Eric Biggers <ebiggers@kernel.org>
+References: <20220705183614.16786-1-ebiggers@kernel.org>
+X-Mailer: Apple Mail (2.3273)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,33 +73,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 05, 2022 at 11:01:43AM -0700, Boris Burkov wrote:
-> > Unfortunately, I don't think doing this will work out really well for
-> > you.  The bits really are independent of each other, and the power of
-> > the search marks lies in their ability to skip over vast swathes of
-> > the array when they're not marked.  But to do what you want, we'd end up
-> > doing something like this:
-> > 
-> > leaf array 1:
-> >   entry 0 is in category 1
-> >   entry 1 is in category 2
-> >   entry 2 is in category 5
-> > 
-> > and now we have to set all three bits in the parent of leaf array 1,
-> > so any search will have to traverse all of leaf array 1 in order to find
-> > out whether there are any entries in the category we're looking for.
+
+--Apple-Mail=_981A43CC-F6C0-4259-9094-62E96A5B913D
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Jul 5, 2022, at 12:36 PM, Eric Biggers <ebiggers@kernel.org> wrote:
 > 
-> Thank you for the explanation. To check my understanding, does this
-> point also imply that currently the worst case for marked search is if
-> every leaf array has an entry with each mark set?
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Since kernel commit 581701b7efd6 ("uapi: deprecate STATX_ALL"),
+> STATX_ALL is deprecated.  It doesn't include STATX_MNT_ID, and it won't
+> include any future flags.  Update the man page accordingly.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Yes.  Each leaf array is 64 entries, and the tags are stored at the end
-of the node.  A mark search consists of scanning one of the three
-bitmaps.  Which means we have to load two cachelines (both the header
-and the mark array) out of each node which has a mark set.  We can
-avoid accessing six or seven of the nine cachelines if only one
-bit is set, but with the amount of prefetching CPUs do these days,
-I don't know how effective that is.
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-I keep meaning to try moving the mark array from the end of the
-node to the header, but I worry it'll hurt non-marked lookups.
+> ---
+> man2/statx.2 | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/man2/statx.2 b/man2/statx.2
+> index a8620be6f..561e64f7b 100644
+> --- a/man2/statx.2
+> +++ b/man2/statx.2
+> @@ -244,8 +244,9 @@ STATX_SIZE	Want stx_size
+> STATX_BLOCKS	Want stx_blocks
+> STATX_BASIC_STATS	[All of the above]
+> STATX_BTIME	Want stx_btime
+> +STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+> +         	This is deprecated and should not be used.
+> STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> -STATX_ALL	[All currently available fields]
+> .TE
+> .in
+> .PP
+> 
+> base-commit: 88646725187456fad6f17552e96c50c93bd361dc
+> --
+> 2.37.0
+> 
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_981A43CC-F6C0-4259-9094-62E96A5B913D
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmLEh3IACgkQcqXauRfM
+H+Bybw/+Pfq6HNtfpFER9B59gYEuQP9dk44QUXQXTQ/3vFIumU4EpsN6GE61QNr7
+8GFr105CssEsBaN7Vp8X8lfbvbOi8T2G11kU/N8DUoCGIrJH9QLMdCxPxJSUg2jr
+QTVf5NU3+JH1ouZJCDr5j+OlyorweejdDYbth++JUH+REIPyq0oFNNvrqd1as5Cm
+9DWsqBHHLFkeuErjmzJSBapqt2ckzUFe0I6qoVRfgFWz+UiOVW3eo954dF1FYcP4
+OeTzwnwU2Y9j+tXIvaTENiTuzpaA9WxJFcdZqJWtkUVCFdIbjkP15fN58+PN0foD
++kAxLeXuisHGiny2KED3pdfiJqzDE7UGAjzvGhkVStoRuuv5BRqUOOOQ1aDcNVaP
+dFyLU+7i2X+E8WM8vyqUgpBG7v+cCm+CUVopPllcpgxbecnjKqcbT9g9eg+N5bwm
+W7r80rwO0YUdIEKU3zfe8sxHarOF+DVM4KznAl+zNO90zcZWbWDuD5joxVnrDBk/
+QcQdxgeW+oJC0GXSHWBbaiFwnZnagOKkWps9ogb06DWMRmmWFQXPc3RuT7UDbR4G
+TPi2VdqxzAhFUjeiLyVwl292I1c5I+xPnoCx1laiys+wlTRJhTf6a7wQcRFOdn02
+B1fnurJYzG9bzVNL8auPbSVuix8fFo/qrpxVuQokCU9VoLONZho=
+=d8bg
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_981A43CC-F6C0-4259-9094-62E96A5B913D--
