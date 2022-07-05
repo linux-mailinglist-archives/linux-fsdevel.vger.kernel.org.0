@@ -2,455 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C4FE567081
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 16:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B82155670DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Jul 2022 16:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231307AbiGEOL6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Jul 2022 10:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35398 "EHLO
+        id S232499AbiGEOWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Jul 2022 10:22:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233244AbiGEOL1 (ORCPT
+        with ESMTP id S233218AbiGEOWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Jul 2022 10:11:27 -0400
-Received: from mail.yonan.net (mail.yonan.net [54.244.116.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D0AB20F7F;
-        Tue,  5 Jul 2022 07:04:16 -0700 (PDT)
-Received: from unless.localdomain (c-71-196-190-209.hsd1.co.comcast.net [71.196.190.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.yonan.net (Postfix) with ESMTPSA id B940C3E953;
-        Tue,  5 Jul 2022 14:04:15 +0000 (UTC)
-From:   James Yonan <james@openvpn.net>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     david@fromorbit.com, neilb@suse.de, amir73il@gmail.com,
-        viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
-        James Yonan <james@openvpn.net>
-Subject: [RESEND PATCH v3 1/2] namei: implemented RENAME_NEWER_MTIME flag for renameat2() conditional replace
-Date:   Tue,  5 Jul 2022 08:03:20 -0600
-Message-Id: <20220705140320.895557-1-james@openvpn.net>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220702080710.GB3108597@dread.disaster.area>
-References: <20220702080710.GB3108597@dread.disaster.area>
+        Tue, 5 Jul 2022 10:22:09 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6102F7;
+        Tue,  5 Jul 2022 07:21:39 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 265E53JS029319;
+        Tue, 5 Jul 2022 14:21:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=PJ6sfBrteaY3d3xMJ6YNRiQMX0P+Yb8RFk/boKnsfdA=;
+ b=IcuaBfPCkS3JBXYz13zKb07+pE4O5NfRXxI17vqqWrsxI9QnLGk2v5mZykumnvlyD596
+ JnzP3Xr2SmrPg/NxyGSkMxukISXEpNDW3j33H2bcKBWhj45hrAE6dFCgQaTnCmRCgnm8
+ 1VqLGH6AeD/AMn8X4+xRRGhCCYZaVMG4FL9e2qViWnvcQdk4Zovx6MAD795soSn2VKfw
+ /hrPviNQX29R4lSK2+MqBA+oJK36WrI7OKPOQyC056E7SRQX3uEWTbF6gK1f4Eo/JL3y
+ v547QbiLcQC7mzuV16VVZ1sQ4sm7MNQJtYmTjgMMoZcnDwBTE1zwY+Dk7g00wq5ZiBv+ nQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h4pg0s49g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Jul 2022 14:21:26 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 265E59PY030047;
+        Tue, 5 Jul 2022 14:21:26 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h4pg0s48x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Jul 2022 14:21:25 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 265E6SMd031049;
+        Tue, 5 Jul 2022 14:21:24 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3h2d9jc58c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Jul 2022 14:21:24 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 265ELTtp32899530
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 Jul 2022 14:21:29 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CEBA55204F;
+        Tue,  5 Jul 2022 14:21:20 +0000 (GMT)
+Received: from thinkpad (unknown [9.171.76.42])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id 272035204E;
+        Tue,  5 Jul 2022 14:21:20 +0000 (GMT)
+Date:   Tue, 5 Jul 2022 16:21:18 +0200
+From:   Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Jan Kara <jack@suse.cz>, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH] btrfs: remove btrfs_writepage_cow_fixup
+Message-ID: <20220705162118.153efe62@thinkpad>
+In-Reply-To: <20220629075837.GA22346@lst.de>
+References: <20220624122334.80603-1-hch@lst.de>
+        <7c30b6a4-e628-baea-be83-6557750f995a@gmx.com>
+        <20220624125118.GA789@lst.de>
+        <20220624130750.cu26nnm6hjrru4zd@quack3.lan>
+        <20220625091143.GA23118@lst.de>
+        <20220627101914.gpoz7f6riezkolad@quack3.lan>
+        <e73be42e-fce5-733a-310d-db9dc5011796@gmx.com>
+        <20220628115356.GB20633@suse.cz>
+        <20220629075837.GA22346@lst.de>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,RCVD_IN_SORBS_WEB,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qQir0kRs4iE1Xk7GHT__fz80lb2HMA69
+X-Proofpoint-ORIG-GUID: VSjWlvkv1KztAt_UQzmGzsCnbd9pp_os
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-05_10,2022-06-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=710 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2207050061
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RENAME_NEWER_MTIME is a new userspace-visible flag for renameat2(), and
-stands alongside existing flags including RENAME_NOREPLACE,
-RENAME_EXCHANGE, and RENAME_WHITEOUT.
+On Wed, 29 Jun 2022 09:58:37 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
-RENAME_NEWER_MTIME is a conditional variation on RENAME_NOREPLACE, and
-indicates that if the target of the rename exists, the rename or exchange
-will only succeed if the source file is newer than the target (i.e.
-source mtime > target mtime).  Otherwise, the rename will fail with
--EEXIST instead of replacing the target.  When the target doesn't exist,
-RENAME_NEWER_MTIME does a plain rename like RENAME_NOREPLACE.
+> On Tue, Jun 28, 2022 at 01:53:56PM +0200, David Sterba wrote:
+> > This would work only for the higher level API where eg. RDMA notifies
+> > the filesystem, but there's still the s390 case that is part of the
+> > hardware architecture. The fixup worker is there as a safety for all
+> > other cases, I'm not fine removing or ignoring it.  
+> 
+> I'd really like to have a confirmation of this whole s390 theory.
+> s390 does treat some dirtying different than the other architectures,
+> but none of that should leak into the file system API if any way that
+> bypasses ->page_mkwrite.
+> 
+> Because if it did most file systems would be completely broken on
+> s390.
 
-RENAME_NEWER_MTIME can also be combined with RENAME_EXCHANGE for
-conditional exchange, where the exchange only occurs if source mtime >
-target mtime.  Otherwise, the operation will fail with -EEXIST.
+Could you please be more specific about what exactly you mean with
+"the s390 case that is part of the hardware architecture"?
 
-Some of the use cases for RENAME_NEWER_MTIME include (a) using a
-directory as a key-value store, or (b) maintaining a near-real-time
-mirror of a remote data source.  A common design pattern for maintaining
-such a data store would be to create a file using a temporary pathname,
-setting the file mtime using utimensat(2) or futimens(2) based on the
-remote creation timestamp of the file content, then using
-RENAME_NEWER_MTIME to move the file into place in the target directory.
-If the operation returns an error with errno == EEXIST, then the source
-file is not up-to-date and can safely be deleted. The goal is to
-facilitate distributed systems having many concurrent writers and
-readers, where update notifications are possibly delayed, duplicated, or
-reordered, yet where readers see a consistent view of the target
-directory with predictable semantics and atomic updates.
+One thing that s390 might handle different from others, is that it
+is not using a HW dirty bit in the PTE, but instead a fault-triggered
+SW dirty bit.
 
-Note that RENAME_NEWER_MTIME depends on accurate, high-resolution
-timestamps for mtime, preferably approaching nanosecond resolution.
+E.g. pte_mkwrite() will mark a PTE as writable (via another SW bit),
+but not clear the HW protection bit, which would then generate a
+fault on first write access. In handle_pte_fault(), the PTE would
+then be marked as dirty via pte_mkdirty(), which also clears the HW
+protection bit, at least for pte_write() PTEs.
+For the !pte_write() COW case, we would go through do_wp_page() like
+everybody else, but probably still end up in some pte_mkdirty()
+eventually, to avoid getting another fault.
 
-RENAME_NEWER_MTIME is implemented in vfs_rename(), and we lock and deny
-write access to both source and target inodes before comparing their
-mtimes, to stabilize the comparison.
+Not being familiar with either btrfs, any other fs, or RDMA, I cannot
+really follow the discussion here. Still it seems to me that you are
+not talking about special s390 HW architecture regarding PTE, but
+rather about some (struct) page dirtying on the COW path, which should
+be completely common code and not subject to any s390 special case.
 
-The use case for RENAME_NEWER_MTIME doesn't really align with
-directories, so we return -EISDIR if either source or target is a
-directory.  This makes the locking necessary to stabilize the mtime
-comparison (in vfs_rename()) much more straightforward.
-
-Like RENAME_NOREPLACE, the RENAME_NEWER_MTIME implementation lives in
-the VFS, however the individual fs implementations do strict flags
-checking and will return -EINVAL for any flag they don't recognize.
-At this time, I have enabled and tested RENAME_NEWER_MTIME on ext2, ext3,
-ext4, xfs, btrfs, and tmpfs.
-
-I did not notice a general self-test for renameat2() at the VFS
-layer (outside of fs-specific tests), so I created one, though
-at the moment it only exercises RENAME_NEWER_MTIME and RENAME_EXCHANGE.
-The self-test is written to be portable to the Linux Test Project,
-and the advantage of running it there is that it automatically runs
-tests on multiple filesystems.  See comments at the beginning of
-renameat2_tests.c for more info.
-
-Build and run the self-test with:
-
-  make -C tools/testing/selftests TARGETS=renameat2 run_tests
-
-Questions:
-
-Q: Why use mtime and not ctime for timestamp comparison?
-
-A: I see the "use a directory as a key/value store" use case
-   as caring more about the modification time of the file content
-   rather than the metadata.  Also, the rename operation itself
-   modifies ctime, making it less useful as a reference timestamp.
-   In any event, this patch creates the infrastructure for
-   conditional rename/exchange based on inode timestamp, so a
-   subsequent patch to add RENAME_NEWER_CTIME would be a mostly
-   trivial exercise.
-
-Signed-off-by: James Yonan <james@openvpn.net>
----
-Patch version history:
-
-v2: Changed flag name from RENAME_NEWER to RENAME_NEWER_MTIME so
-    as to disambiguate and make it clear that we are comparing
-    mtime values.
-
-    RENAME_NEWER_MTIME can now be combined with RENAME_EXCHANGE
-    for conditional exchange, where exchange only occurs if
-    source mtime > target mtime.
-
-    Moved the mtime comparison logic into vfs_rename() to take
-    advantage of existing {lock,unlock}_two_nondirectories critical
-    section, and then further nest another critical section
-    {deny,allow}_write_access (adapted to inodes) to stabilize the
-    mtime, since our use case doesn't require renaming files that
-    are open for write (we will return -ETXTBSY in this case).
-
-    Did some refactoring of inline functions in linux/fs.h that
-    manage inode->i_writecount, and added inode_deny_write_access2()
-    and inode_allow_write_access2() functions.
-
-    Extended the self-test (renameat2_tests.c):
-
-    1. Verify that RENAME_NEWER_MTIME fails with errno == ETXTBSY when
-       one of the files is open for write.
-
-    2. Test conditional exchange use case with combined flags
-       RENAME_EXCHANGE|RENAME_NEWER_MTIME.
-
-    3. The test .c file is now drop-in portable to the Linux Test
-       Project where you can take advantage of the .all_filesystems = 1
-       flag to automatically run tests on multiple filesystems.
-
-v3: The use case for RENAME_NEWER_MTIME doesn't really align
-    with directories, so return -EISDIR if either source or
-    target is a directory.  This makes the locking necessary
-    to stabilize the mtime comparison (in vfs_rename())
-    much more straightforward.
-
-    simple_rename() in libfs.c doesn't need to support
-    RENAME_NEWER_MTIME.
-
-    Broke up some long lines.
-
-    Rebased on top of 5.19-rc5.
-
-    Break out the self-test into a separate patch.
-
-    Documented RENAME_NEWER_MTIME in the rename.2 man page
-    (separate patch).
----
- Documentation/filesystems/vfs.rst | 11 ++++++++
- fs/btrfs/inode.c                  |  3 ++-
- fs/ext2/namei.c                   |  2 +-
- fs/ext4/namei.c                   |  3 ++-
- fs/namei.c                        | 37 +++++++++++++++++++++++---
- fs/xfs/xfs_iops.c                 |  3 ++-
- include/linux/fs.h                | 43 ++++++++++++++++++++++++++++---
- include/uapi/linux/fs.h           |  1 +
- mm/shmem.c                        |  3 ++-
- tools/include/uapi/linux/fs.h     |  1 +
- 10 files changed, 95 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 08069ecd49a6..495e7352cca1 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -515,6 +515,17 @@ otherwise noted.
- 	(2) RENAME_EXCHANGE: exchange source and target.  Both must
- 	exist; this is checked by the VFS.  Unlike plain rename, source
- 	and target may be of different type.
-+	(3) RENAME_NEWER_MTIME: this flag is similar to RENAME_NOREPLACE,
-+	and indicates a conditional rename: if the target of the rename
-+	exists, the rename should only succeed if the source file is
-+	newer than the target (i.e. source mtime > target mtime).
-+	Otherwise, the rename should fail with -EEXIST instead of
-+	replacing the target.  To exchange source and target conditional
-+	on source being newer than target, pass flags as
-+	RENAME_EXCHANGE|RENAME_NEWER_MTIME.  RENAME_NEWER_MTIME will fail
-+	with -ETXTBSY if either source or target is open for write.
-+	RENAME_NEWER_MTIME is not currently supported on directories, and
-+	will return -EISDIR if either source or target is a directory.
- 
- ``get_link``
- 	called by the VFS to follow a symbolic link to the inode it
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 05e0c4a5affd..0b78858d25b8 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9549,7 +9549,8 @@ static int btrfs_rename2(struct user_namespace *mnt_userns, struct inode *old_di
- 			 struct dentry *old_dentry, struct inode *new_dir,
- 			 struct dentry *new_dentry, unsigned int flags)
- {
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
-+		      | RENAME_NEWER_MTIME))
- 		return -EINVAL;
- 
- 	if (flags & RENAME_EXCHANGE)
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index 5f6b7560eb3f..35dc17f80528 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -336,7 +336,7 @@ static int ext2_rename (struct user_namespace * mnt_userns,
- 	struct ext2_dir_entry_2 * old_de;
- 	int err;
- 
--	if (flags & ~RENAME_NOREPLACE)
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_NEWER_MTIME))
- 		return -EINVAL;
- 
- 	err = dquot_initialize(old_dir);
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index db4ba99d1ceb..3e393e2959b6 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -4128,7 +4128,8 @@ static int ext4_rename2(struct user_namespace *mnt_userns,
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(old_dir->i_sb))))
- 		return -EIO;
- 
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
-+		      | RENAME_NEWER_MTIME))
- 		return -EINVAL;
- 
- 	err = fscrypt_prepare_rename(old_dir, old_dentry, new_dir, new_dentry,
-diff --git a/fs/namei.c b/fs/namei.c
-index 1f28d3f463c3..7776afc199c0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -40,6 +40,7 @@
- #include <linux/bitops.h>
- #include <linux/init_task.h>
- #include <linux/uaccess.h>
-+#include <linux/time64.h>
- 
- #include "internal.h"
- #include "mount.h"
-@@ -4685,11 +4686,22 @@ int vfs_rename(struct renamedata *rd)
- 
- 	take_dentry_name_snapshot(&old_name, old_dentry);
- 	dget(new_dentry);
--	if (!is_dir || (flags & RENAME_EXCHANGE))
-+	if (!is_dir || (flags & (RENAME_EXCHANGE|RENAME_NEWER_MTIME)))
- 		lock_two_nondirectories(source, target);
- 	else if (target)
- 		inode_lock(target);
- 
-+	if ((flags & RENAME_NEWER_MTIME) && target) {
-+		/* deny write access to stabilize mtime comparison below */
-+		error = inode_deny_write_access2(source, target);
-+		if (error) /* -ETXTBSY */
-+			goto out1;
-+		if (timespec64_compare(&source->i_mtime, &target->i_mtime) <= 0) {
-+			error = -EEXIST;
-+			goto out;
-+		}
-+	}
-+
- 	error = -EPERM;
- 	if (IS_SWAPFILE(source) || (target && IS_SWAPFILE(target)))
- 		goto out;
-@@ -4736,7 +4748,10 @@ int vfs_rename(struct renamedata *rd)
- 			d_exchange(old_dentry, new_dentry);
- 	}
- out:
--	if (!is_dir || (flags & RENAME_EXCHANGE))
-+	if ((flags & RENAME_NEWER_MTIME) && target)
-+		inode_allow_write_access2(source, target);
-+out1:
-+	if (!is_dir || (flags & (RENAME_EXCHANGE|RENAME_NEWER_MTIME)))
- 		unlock_two_nondirectories(source, target);
- 	else if (target)
- 		inode_unlock(target);
-@@ -4769,11 +4784,12 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	bool should_retry = false;
- 	int error = -EINVAL;
- 
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
-+		      | RENAME_NEWER_MTIME))
- 		goto put_names;
- 
- 	if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
--	    (flags & RENAME_EXCHANGE))
-+	    (flags & (RENAME_EXCHANGE | RENAME_NEWER_MTIME)))
- 		goto put_names;
- 
- 	if (flags & RENAME_EXCHANGE)
-@@ -4825,6 +4841,19 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 	error = -EEXIST;
- 	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry))
- 		goto exit5;
-+	if (flags & RENAME_NEWER_MTIME) {
-+		/* The use case for RENAME_NEWER_MTIME doesn't really align
-+		 * with directories, so bail out here if either source or
-+		 * target is a directory.  This makes the locking necessary
-+		 * to stabilize the mtime comparison (in vfs_rename)
-+		 * much more straightforward.
-+		 */
-+		error = -EISDIR;
-+		if (d_is_dir(old_dentry))
-+			goto exit5;
-+		if (d_is_positive(new_dentry) && d_is_dir(new_dentry))
-+			goto exit5;
-+	}
- 	if (flags & RENAME_EXCHANGE) {
- 		error = -ENOENT;
- 		if (d_is_negative(new_dentry))
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 29f5b8b8aca6..a6ec8edd5398 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -457,7 +457,8 @@ xfs_vn_rename(
- 	struct xfs_name	oname;
- 	struct xfs_name	nname;
- 
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
-+		      | RENAME_NEWER_MTIME))
- 		return -EINVAL;
- 
- 	/* if we are exchanging files, we need to set i_mode of both files */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9ad5e3520fae..0c79f12ec51f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2819,14 +2819,21 @@ static inline void file_end_write(struct file *file)
-  * use {get,deny}_write_access() - these functions check the sign and refuse
-  * to do the change if sign is wrong.
-  */
-+static inline int inode_deny_write_access(struct inode *inode)
-+{
-+	return atomic_dec_unless_positive(&inode->i_writecount) ? 0 : -ETXTBSY;
-+}
-+static inline void inode_allow_write_access(struct inode *inode)
-+{
-+	atomic_inc(&inode->i_writecount);
-+}
- static inline int get_write_access(struct inode *inode)
- {
- 	return atomic_inc_unless_negative(&inode->i_writecount) ? 0 : -ETXTBSY;
- }
- static inline int deny_write_access(struct file *file)
- {
--	struct inode *inode = file_inode(file);
--	return atomic_dec_unless_positive(&inode->i_writecount) ? 0 : -ETXTBSY;
-+	return inode_deny_write_access(file_inode(file));
- }
- static inline void put_write_access(struct inode * inode)
- {
-@@ -2835,13 +2842,43 @@ static inline void put_write_access(struct inode * inode)
- static inline void allow_write_access(struct file *file)
- {
- 	if (file)
--		atomic_inc(&file_inode(file)->i_writecount);
-+		inode_allow_write_access(file_inode(file));
- }
- static inline bool inode_is_open_for_write(const struct inode *inode)
- {
- 	return atomic_read(&inode->i_writecount) > 0;
- }
- 
-+/**
-+ * inode_deny_write_access2 - deny write access on two inodes.
-+ * Returns -ETXTBSY if write access cannot be denied on either inode.
-+ * @inode1: first inode
-+ * @inode2: second inode
-+ */
-+static inline int inode_deny_write_access2(struct inode *inode1, struct inode *inode2)
-+{
-+	int error = inode_deny_write_access(inode1);
-+	if (error)
-+		return error;
-+	error = inode_deny_write_access(inode2);
-+	if (error)
-+		inode_allow_write_access(inode1);
-+	return error;
-+}
-+
-+/**
-+ * inode_allow_write_access2 - allow write access on two inodes.
-+ * This method is intended to be called after a successful call
-+ * to inode_deny_write_access2().
-+ * @inode1: first inode
-+ * @inode2: second inode
-+ */
-+static inline void inode_allow_write_access2(struct inode *inode1, struct inode *inode2)
-+{
-+	inode_allow_write_access(inode1);
-+	inode_allow_write_access(inode2);
-+}
-+
- #if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
- static inline void i_readcount_dec(struct inode *inode)
- {
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index bdf7b404b3e7..7e9c32dce3e4 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -50,6 +50,7 @@
- #define RENAME_NOREPLACE	(1 << 0)	/* Don't overwrite target */
- #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
- #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
-+#define RENAME_NEWER_MTIME	(1 << 3)	/* Only newer file can overwrite target */
- 
- struct file_clone_range {
- 	__s64 src_fd;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index a6f565308133..41de04b828fd 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3009,7 +3009,8 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
- 	struct inode *inode = d_inode(old_dentry);
- 	int they_are_dirs = S_ISDIR(inode->i_mode);
- 
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
-+		      | RENAME_NEWER_MTIME))
- 		return -EINVAL;
- 
- 	if (flags & RENAME_EXCHANGE)
-diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
-index bdf7b404b3e7..7e9c32dce3e4 100644
---- a/tools/include/uapi/linux/fs.h
-+++ b/tools/include/uapi/linux/fs.h
-@@ -50,6 +50,7 @@
- #define RENAME_NOREPLACE	(1 << 0)	/* Don't overwrite target */
- #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
- #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
-+#define RENAME_NEWER_MTIME	(1 << 3)	/* Only newer file can overwrite target */
- 
- struct file_clone_range {
- 	__s64 src_fd;
--- 
-2.25.1
-
+Somewhere in this thread it was also mentioned that "s390 can not do
+page flags update atomically", which I can not confirm, in case this
+was the question. The code in include/linux/page-flags.h seems to
+use normal (arch)_test/set/clear_bit operations, which should always be
+atomic on s390.
