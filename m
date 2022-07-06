@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABD3568131
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 10:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D7C568136
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 10:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232009AbiGFIYs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jul 2022 04:24:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34724 "EHLO
+        id S231964AbiGFIYy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jul 2022 04:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232054AbiGFIYU (ORCPT
+        with ESMTP id S231962AbiGFIYd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jul 2022 04:24:20 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751502317C;
-        Wed,  6 Jul 2022 01:24:19 -0700 (PDT)
+        Wed, 6 Jul 2022 04:24:33 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0805248C3;
+        Wed,  6 Jul 2022 01:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657095859; x=1688631859;
+  t=1657095871; x=1688631871;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4RqYsqOgMgPs4JDgf0SUKlW6JB5EWiu8UDnwronwhT8=;
-  b=Fp6nN8p46kB/kFuRh3LhdQL+ikFtUaqnd7wgLeyZc4jRRwQIhK0jrhgQ
-   GOk/qXDMDyOqRnTkO8snt/j3AdHD2qSJr3da+AFfLCOLr/71b+ysABvpy
-   EPqaWiyNAl2mfPGufH52Ufnd0/GPf/eSRyibIxmcc5z1OYIvL2hY3cpcg
-   fUwRiVCr+M3ik96XH5WzZJ6lh/iZXiLJ5Fbte1VRlhzmIjTHjc9yMQf0f
-   IZGPlCgZpo0fw2DnoPenSCd+kQefFcP6+puQZIQrh2I1e1Ci57vl7xiC8
-   6che/8V4HAy5yt6oHI5dF1mskXnS4ezVg9ZYM0kBqiTZa4c/yognJgSJb
+  bh=MKQ/rcKgV3drdHlWuFoH8sIMBaUN6eYji0w3R3tli4U=;
+  b=HkSexBI8iotE10lNxXJYeNtQWP+CackIKTyXVfkd9yZPbztQMxwjnJ5D
+   euu6Apo6Fh6FA4R07YCc6Zb4UGITL7DXzsU4SJFogP3kbLnSSWZz52uSa
+   12IwMn3X1zGzUm1Gt/1/OMUOV9qTImUCtvJ1NErEKsTIOh5e3yOTENjmt
+   iq+lXgvLr39r0MzGseH32qiw7V0mHV/0GcPwhZH75SqgK04mNeildGCsC
+   cBoeVaCHjU9n6tZSiX4M7pmKUImAPFJgbj1xwL4N0guFtfHEryUU/du36
+   WrPXDy+KyF9YmrTpX2LTWwDGhICHIoD0hjZ2KfIxFTHZGaXY1bka11ntv
    A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="266709759"
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="264100019"
 X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="266709759"
+   d="scan'208";a="264100019"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 01:24:18 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 01:24:30 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="567967876"
+   d="scan'208";a="567967895"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2022 01:24:08 -0700
+  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2022 01:24:19 -0700
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -71,312 +71,269 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v7 03/14] mm: Introduce memfile_notifier
-Date:   Wed,  6 Jul 2022 16:20:05 +0800
-Message-Id: <20220706082016.2603916-4-chao.p.peng@linux.intel.com>
+Subject: [PATCH v7 04/14] mm/shmem: Support memfile_notifier
+Date:   Wed,  6 Jul 2022 16:20:06 +0800
+Message-Id: <20220706082016.2603916-5-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch introduces memfile_notifier facility so existing memory file
-subsystems (e.g. tmpfs/hugetlbfs) can provide memory pages to allow a
-third kernel component to make use of memory bookmarked in the memory
-file and gets notified when the pages in the memory file become
-invalidated.
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-It will be used for KVM to use a file descriptor as the guest memory
-backing store and KVM will use this memfile_notifier interface to
-interact with memory file subsystems. In the future there might be other
-consumers (e.g. VFIO with encrypted device memory).
+Implement shmem as a memfile_notifier backing store. Essentially it
+interacts with the memfile_notifier feature flags for userspace
+access/page migration/page reclaiming and implements the necessary
+memfile_backing_store callbacks.
 
-It consists below components:
- - memfile_backing_store: Each supported memory file subsystem can be
-   implemented as a memory backing store which bookmarks memory and
-   provides callbacks for other kernel systems (memfile_notifier
-   consumers) to interact with.
- - memfile_notifier: memfile_notifier consumers defines callbacks and
-   associate them to a file using memfile_register_notifier().
- - memfile_node: A memfile_node is associated with the file (inode) from
-   the backing store and includes feature flags and a list of registered
-   memfile_notifier for notifying.
-
-In KVM usages, userspace is in charge of guest memory lifecycle: it first
-allocates pages in memory backing store and then passes the fd to KVM and
-lets KVM register memory slot to memory backing store via
-memfile_register_notifier.
-
-Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/linux/memfile_notifier.h |  93 ++++++++++++++++++++++++
- mm/Kconfig                       |   4 +
- mm/Makefile                      |   1 +
- mm/memfile_notifier.c            | 121 +++++++++++++++++++++++++++++++
- 4 files changed, 219 insertions(+)
- create mode 100644 include/linux/memfile_notifier.h
- create mode 100644 mm/memfile_notifier.c
+ include/linux/shmem_fs.h |   2 +
+ mm/shmem.c               | 109 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 110 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/memfile_notifier.h b/include/linux/memfile_notifier.h
-new file mode 100644
-index 000000000000..c5d66fd8ba53
---- /dev/null
-+++ b/include/linux/memfile_notifier.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MEMFILE_NOTIFIER_H
-+#define _LINUX_MEMFILE_NOTIFIER_H
-+
-+#include <linux/pfn_t.h>
-+#include <linux/rculist.h>
-+#include <linux/spinlock.h>
-+#include <linux/srcu.h>
-+#include <linux/fs.h>
-+
-+/* memory in the file is inaccessible from userspace (e.g. read/write/mmap) */
-+#define MEMFILE_F_USER_INACCESSIBLE	BIT(0)
-+/* memory in the file is unmovable (e.g. via pagemigration)*/
-+#define MEMFILE_F_UNMOVABLE		BIT(1)
-+/* memory in the file is unreclaimable (e.g. via kswapd) */
-+#define MEMFILE_F_UNRECLAIMABLE		BIT(2)
-+
-+#define MEMFILE_F_ALLOWED_MASK		(MEMFILE_F_USER_INACCESSIBLE | \
-+					MEMFILE_F_UNMOVABLE | \
-+					MEMFILE_F_UNRECLAIMABLE)
-+
-+struct memfile_node {
-+	struct list_head	notifiers;	/* registered notifiers */
-+	unsigned long		flags;		/* MEMFILE_F_* flags */
-+};
-+
-+struct memfile_backing_store {
-+	struct list_head list;
-+	spinlock_t lock;
-+	struct memfile_node* (*lookup_memfile_node)(struct file *file);
-+	int (*get_pfn)(struct file *file, pgoff_t offset, pfn_t *pfn,
-+		       int *order);
-+	void (*put_pfn)(pfn_t pfn);
-+};
-+
-+struct memfile_notifier;
-+struct memfile_notifier_ops {
-+	void (*invalidate)(struct memfile_notifier *notifier,
-+			   pgoff_t start, pgoff_t end);
-+};
-+
-+struct memfile_notifier {
-+	struct list_head list;
-+	struct memfile_notifier_ops *ops;
-+	struct memfile_backing_store *bs;
-+};
-+
-+static inline void memfile_node_init(struct memfile_node *node)
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index a68f982f22d1..6031c0b08d26 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -9,6 +9,7 @@
+ #include <linux/percpu_counter.h>
+ #include <linux/xattr.h>
+ #include <linux/fs_parser.h>
++#include <linux/memfile_notifier.h>
+ 
+ /* inode in-kernel data */
+ 
+@@ -25,6 +26,7 @@ struct shmem_inode_info {
+ 	struct simple_xattrs	xattrs;		/* list of xattrs */
+ 	atomic_t		stop_eviction;	/* hold when working on inode */
+ 	struct timespec64	i_crtime;	/* file creation time */
++	struct memfile_node	memfile_node;	/* memfile node */
+ 	struct inode		vfs_inode;
+ };
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6c8aef15a17d..627e315c3b4d 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -905,6 +905,17 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+ 	return page ? page_folio(page) : NULL;
+ }
+ 
++static void notify_invalidate(struct inode *inode, struct folio *folio,
++				   pgoff_t start, pgoff_t end)
 +{
-+	INIT_LIST_HEAD(&node->notifiers);
-+	node->flags = 0;
++	struct shmem_inode_info *info = SHMEM_I(inode);
++
++	start = max(start, folio->index);
++	end = min(end, folio->index + folio_nr_pages(folio));
++
++	memfile_notifier_invalidate(&info->memfile_node, start, end);
 +}
 +
+ /*
+  * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+@@ -948,6 +959,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 			}
+ 			index += folio_nr_pages(folio) - 1;
+ 
++			notify_invalidate(inode, folio, start, end);
++
+ 			if (!unfalloc || !folio_test_uptodate(folio))
+ 				truncate_inode_folio(mapping, folio);
+ 			folio_unlock(folio);
+@@ -1021,6 +1034,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 					index--;
+ 					break;
+ 				}
++
++				notify_invalidate(inode, folio, start, end);
++
+ 				VM_BUG_ON_FOLIO(folio_test_writeback(folio),
+ 						folio);
+ 				truncate_inode_folio(mapping, folio);
+@@ -1092,6 +1108,13 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 		    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
+ 			return -EPERM;
+ 
++		if (info->memfile_node.flags & MEMFILE_F_USER_INACCESSIBLE) {
++			if (oldsize)
++				return -EPERM;
++			if (!PAGE_ALIGNED(newsize))
++				return -EINVAL;
++		}
++
+ 		if (newsize != oldsize) {
+ 			error = shmem_reacct_size(SHMEM_I(inode)->flags,
+ 					oldsize, newsize);
+@@ -1336,6 +1359,8 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
+ 		goto redirty;
+ 	if (!total_swap_pages)
+ 		goto redirty;
++	if (info->memfile_node.flags & MEMFILE_F_UNRECLAIMABLE)
++		goto redirty;
+ 
+ 	/*
+ 	 * Our capabilities prevent regular writeback or sync from ever calling
+@@ -2271,6 +2296,9 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (ret)
+ 		return ret;
+ 
++	if (info->memfile_node.flags & MEMFILE_F_USER_INACCESSIBLE)
++		return -EPERM;
++
+ 	/* arm64 - allow memory tagging on RAM-based files */
+ 	vma->vm_flags |= VM_MTE_ALLOWED;
+ 
+@@ -2306,6 +2334,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+ 		info->i_crtime = inode->i_mtime;
+ 		INIT_LIST_HEAD(&info->shrinklist);
+ 		INIT_LIST_HEAD(&info->swaplist);
++		memfile_node_init(&info->memfile_node);
+ 		simple_xattrs_init(&info->xattrs);
+ 		cache_no_acl(inode);
+ 		mapping_set_large_folios(inode->i_mapping);
+@@ -2477,6 +2506,8 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+ 	}
++	if (unlikely(info->memfile_node.flags & MEMFILE_F_USER_INACCESSIBLE))
++		return -EPERM;
+ 
+ 	if (unlikely(info->seals & F_SEAL_AUTO_ALLOCATE))
+ 		sgp = SGP_NOALLOC;
+@@ -2556,6 +2587,13 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		end_index = i_size >> PAGE_SHIFT;
+ 		if (index > end_index)
+ 			break;
++
++		if (SHMEM_I(inode)->memfile_node.flags &
++				MEMFILE_F_USER_INACCESSIBLE) {
++			error = -EPERM;
++			break;
++		}
++
+ 		if (index == end_index) {
+ 			nr = i_size & ~PAGE_MASK;
+ 			if (nr <= offset)
+@@ -2697,6 +2735,12 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 			goto out;
+ 		}
+ 
++		if ((info->memfile_node.flags & MEMFILE_F_USER_INACCESSIBLE) &&
++		    (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))) {
++			error = -EINVAL;
++			goto out;
++		}
++
+ 		shmem_falloc.waitq = &shmem_falloc_waitq;
+ 		shmem_falloc.start = (u64)unmap_start >> PAGE_SHIFT;
+ 		shmem_falloc.next = (unmap_end + 1) >> PAGE_SHIFT;
+@@ -3806,6 +3850,20 @@ static int shmem_error_remove_page(struct address_space *mapping,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_MIGRATION
++static int shmem_migrate_page(struct address_space *mapping,
++			      struct page *newpage, struct page *page,
++			      enum migrate_mode mode)
++{
++	struct inode *inode = mapping->host;
++	struct shmem_inode_info *info = SHMEM_I(inode);
++
++	if (info->memfile_node.flags & MEMFILE_F_UNMOVABLE)
++		return -EOPNOTSUPP;
++	return migrate_page(mapping, newpage, page, mode);
++}
++#endif
++
+ const struct address_space_operations shmem_aops = {
+ 	.writepage	= shmem_writepage,
+ 	.dirty_folio	= noop_dirty_folio,
+@@ -3814,7 +3872,7 @@ const struct address_space_operations shmem_aops = {
+ 	.write_end	= shmem_write_end,
+ #endif
+ #ifdef CONFIG_MIGRATION
+-	.migratepage	= migrate_page,
++	.migratepage	= shmem_migrate_page,
+ #endif
+ 	.error_remove_page = shmem_error_remove_page,
+ };
+@@ -3931,6 +3989,51 @@ static struct file_system_type shmem_fs_type = {
+ 	.fs_flags	= FS_USERNS_MOUNT,
+ };
+ 
 +#ifdef CONFIG_MEMFILE_NOTIFIER
-+/* APIs for backing stores */
-+extern void memfile_register_backing_store(struct memfile_backing_store *bs);
-+extern int memfile_node_set_flags(struct file *file, unsigned long flags);
-+extern void memfile_notifier_invalidate(struct memfile_node *node,
-+					pgoff_t start, pgoff_t end);
-+/*APIs for notifier consumers */
-+extern int memfile_register_notifier(struct file *file, unsigned long flags,
-+				     struct memfile_notifier *notifier);
-+extern void memfile_unregister_notifier(struct memfile_notifier *notifier);
-+
-+#else /* !CONFIG_MEMFILE_NOTIFIER */
-+static inline void memfile_register_backing_store(struct memfile_backing_store *bs)
++static struct memfile_node *shmem_lookup_memfile_node(struct file *file)
 +{
++	struct inode *inode = file_inode(file);
++
++	if (!shmem_mapping(inode->i_mapping))
++		return NULL;
++
++	return  &SHMEM_I(inode)->memfile_node;
 +}
 +
-+static inline int memfile_node_set_flags(struct file *file, unsigned long flags)
++
++static int shmem_get_pfn(struct file *file, pgoff_t offset, pfn_t *pfn,
++			 int *order)
 +{
-+	return -EOPNOTSUPP;
++	struct page *page;
++	int ret;
++
++	ret = shmem_getpage(file_inode(file), offset, &page, SGP_WRITE);
++	if (ret)
++		return ret;
++
++	unlock_page(page);
++	*pfn = page_to_pfn_t(page);
++	*order = thp_order(compound_head(page));
++	return 0;
 +}
 +
-+static inline void memfile_notifier_invalidate(struct memfile_node *node,
-+					       pgoff_t start, pgoff_t end)
++static void shmem_put_pfn(pfn_t pfn)
 +{
++	struct page *page = pfn_t_to_page(pfn);
++
++	if (!page)
++		return;
++
++	put_page(page);
 +}
 +
-+static inline int memfile_register_notifier(struct file *file,
-+					    unsigned long flags,
-+					    struct memfile_notifier *notifier)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline void memfile_unregister_notifier(struct memfile_notifier *notifier)
-+{
-+}
-+
++static struct memfile_backing_store shmem_backing_store = {
++	.lookup_memfile_node = shmem_lookup_memfile_node,
++	.get_pfn = shmem_get_pfn,
++	.put_pfn = shmem_put_pfn,
++};
 +#endif /* CONFIG_MEMFILE_NOTIFIER */
 +
-+#endif /* _LINUX_MEMFILE_NOTIFIER_H */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 169e64192e48..19ab9350f5cb 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1130,6 +1130,10 @@ config PTE_MARKER_UFFD_WP
- 	  purposes.  It is required to enable userfaultfd write protection on
- 	  file-backed memory types like shmem and hugetlbfs.
+ void __init shmem_init(void)
+ {
+ 	int error;
+@@ -3956,6 +4059,10 @@ void __init shmem_init(void)
+ 	else
+ 		shmem_huge = SHMEM_HUGE_NEVER; /* just in case it was patched */
+ #endif
++
++#ifdef CONFIG_MEMFILE_NOTIFIER
++	memfile_register_backing_store(&shmem_backing_store);
++#endif
+ 	return;
  
-+config MEMFILE_NOTIFIER
-+	bool
-+	select SRCU
-+
- source "mm/damon/Kconfig"
- 
- endmenu
-diff --git a/mm/Makefile b/mm/Makefile
-index 6f9ffa968a1a..b7e3fb5fa85b 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -133,3 +133,4 @@ obj-$(CONFIG_PAGE_REPORTING) += page_reporting.o
- obj-$(CONFIG_IO_MAPPING) += io-mapping.o
- obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
- obj-$(CONFIG_GENERIC_IOREMAP) += ioremap.o
-+obj-$(CONFIG_MEMFILE_NOTIFIER) += memfile_notifier.o
-diff --git a/mm/memfile_notifier.c b/mm/memfile_notifier.c
-new file mode 100644
-index 000000000000..799d3197903e
---- /dev/null
-+++ b/mm/memfile_notifier.c
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ *  Copyright (C) 2022  Intel Corporation.
-+ *             Chao Peng <chao.p.peng@linux.intel.com>
-+ */
-+
-+#include <linux/memfile_notifier.h>
-+#include <linux/pagemap.h>
-+#include <linux/srcu.h>
-+
-+DEFINE_STATIC_SRCU(memfile_srcu);
-+static __ro_after_init LIST_HEAD(backing_store_list);
-+
-+
-+void memfile_notifier_invalidate(struct memfile_node *node,
-+				 pgoff_t start, pgoff_t end)
-+{
-+	struct memfile_notifier *notifier;
-+	int id;
-+
-+	id = srcu_read_lock(&memfile_srcu);
-+	list_for_each_entry_srcu(notifier, &node->notifiers, list,
-+				 srcu_read_lock_held(&memfile_srcu)) {
-+		if (notifier->ops->invalidate)
-+			notifier->ops->invalidate(notifier, start, end);
-+	}
-+	srcu_read_unlock(&memfile_srcu, id);
-+}
-+
-+void __init memfile_register_backing_store(struct memfile_backing_store *bs)
-+{
-+	spin_lock_init(&bs->lock);
-+	list_add_tail(&bs->list, &backing_store_list);
-+}
-+
-+static void memfile_node_update_flags(struct file *file, unsigned long flags)
-+{
-+	struct address_space *mapping = file_inode(file)->i_mapping;
-+	gfp_t gfp;
-+
-+	gfp = mapping_gfp_mask(mapping);
-+	if (flags & MEMFILE_F_UNMOVABLE)
-+		gfp &= ~__GFP_MOVABLE;
-+	else
-+		gfp |= __GFP_MOVABLE;
-+	mapping_set_gfp_mask(mapping, gfp);
-+
-+	if (flags & MEMFILE_F_UNRECLAIMABLE)
-+		mapping_set_unevictable(mapping);
-+	else
-+		mapping_clear_unevictable(mapping);
-+}
-+
-+int memfile_node_set_flags(struct file *file, unsigned long flags)
-+{
-+	struct memfile_backing_store *bs;
-+	struct memfile_node *node;
-+
-+	if (flags & ~MEMFILE_F_ALLOWED_MASK)
-+		return -EINVAL;
-+
-+	list_for_each_entry(bs, &backing_store_list, list) {
-+		node = bs->lookup_memfile_node(file);
-+		if (node) {
-+			spin_lock(&bs->lock);
-+			node->flags = flags;
-+			spin_unlock(&bs->lock);
-+			memfile_node_update_flags(file, flags);
-+			return 0;
-+		}
-+	}
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+int memfile_register_notifier(struct file *file, unsigned long flags,
-+			      struct memfile_notifier *notifier)
-+{
-+	struct memfile_backing_store *bs;
-+	struct memfile_node *node;
-+	struct list_head *list;
-+
-+	if (!file || !notifier || !notifier->ops)
-+		return -EINVAL;
-+	if (flags & ~MEMFILE_F_ALLOWED_MASK)
-+		return -EINVAL;
-+
-+	list_for_each_entry(bs, &backing_store_list, list) {
-+		node = bs->lookup_memfile_node(file);
-+		if (node) {
-+			list = &node->notifiers;
-+			notifier->bs = bs;
-+
-+			spin_lock(&bs->lock);
-+			if (list_empty(list))
-+				node->flags = flags;
-+			else if (node->flags ^ flags) {
-+				spin_unlock(&bs->lock);
-+				return -EINVAL;
-+			}
-+
-+			list_add_rcu(&notifier->list, list);
-+			spin_unlock(&bs->lock);
-+			memfile_node_update_flags(file, flags);
-+			return 0;
-+		}
-+	}
-+
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL_GPL(memfile_register_notifier);
-+
-+void memfile_unregister_notifier(struct memfile_notifier *notifier)
-+{
-+	spin_lock(&notifier->bs->lock);
-+	list_del_rcu(&notifier->list);
-+	spin_unlock(&notifier->bs->lock);
-+
-+	synchronize_srcu(&memfile_srcu);
-+}
-+EXPORT_SYMBOL_GPL(memfile_unregister_notifier);
+ out1:
 -- 
 2.25.1
 
