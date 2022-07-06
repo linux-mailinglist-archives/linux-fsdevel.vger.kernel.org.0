@@ -2,135 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50300568A20
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 15:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD544568B46
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 16:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232571AbiGFNwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jul 2022 09:52:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51780 "EHLO
+        id S233413AbiGFOb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jul 2022 10:31:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231656AbiGFNwX (ORCPT
+        with ESMTP id S232523AbiGFOb0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jul 2022 09:52:23 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3491EAC5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jul 2022 06:52:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=IGzH70xSyPKuqAHmGbi8YxnvKpA0WupTOhm3OlPhxTk=; b=YIxvZcMFeiSigBGl2q7q0IT9Po
-        sHdzGATAWKg8w7HufHqTvgpJDwnNyNlUkJKEw68Zo/fXnktNoQLNQmOZ774CpWZjH2oZc+impQoSV
-        /aI90Wa/CAVVwUUStc/U5CqbvU+QLgBJuKODKNsWce+NYf6mA18Ov9sHsmS/fbw61tcFjNnBrgGj1
-        i+mYw1xLHDJzcXr1EPv+57DXt169uZAyssAlNi94qZZ/Yrx0FH4W7N2UZ79zwsaj81aJWceXl/wL3
-        usBTqkl8R/uOjYKvRdAxQf9f+hY+fTFKCDgQQEe4nUgYusqPDuXT7RpYP+OXwpxbYEe81S72qn7EX
-        Rq2bAKdg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o95Ry-008n9e-3E;
-        Wed, 06 Jul 2022 13:52:18 +0000
-Date:   Wed, 6 Jul 2022 14:52:18 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH] burying long-dead rudiments in mntput_no_expire()
-Message-ID: <YsWTkmAs53Wjf2nN@ZenIV>
+        Wed, 6 Jul 2022 10:31:26 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B445A20182;
+        Wed,  6 Jul 2022 07:31:24 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-118-63.bstnma.fios.verizon.net [173.48.118.63])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 266ETwXl010753
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 6 Jul 2022 10:29:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1657117802; bh=NUUsO3D1IV2NnscRXQ3iW7vDLpbznJlBJF/3puoiFlU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=ByMVPDFr5R8Axivia9yVVNfmFzr4obgpDayheOHhBGP5rmhlYUHdlEHTNapSRSbf5
+         aU9t1GR/wcQgSFL/PlOl2xi1rRKoVFUsw1meRM189aCKKaCoVCnEzjCQIBLCcfNayW
+         9PwiaPAWermMd6xdFujtqUTzfOK5GZTYQA/CIOGTogVSfOo5KvlPGWBAQd6HlJWEPJ
+         NoVB7juD+bkcdYyzBN4rS3qExjK+32bsNAtI/b71wChegqKDeqd/obsyme4fYlmG3h
+         NPJ7v6IORhwbj8MAsfVR8BBTSDAnYqaxo9BAgZNJXifHiqbuItiJXN/+d8oCe4h0nJ
+         Aek0hE4Sl/5iw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id DD1BA15C3E94; Wed,  6 Jul 2022 10:29:57 -0400 (EDT)
+Date:   Wed, 6 Jul 2022 10:29:57 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
+        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
+        fstests <fstests@vger.kernel.org>, Zorro Lang <zlang@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
+ expunges
+Message-ID: <YsWcZbBALgWKS88+@mit.edu>
+References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
+ <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org>
+ <CAOQ4uxgBtMifsNt1SDA0tz098Rt7Km6MAaNgfCeW=s=FPLtpCQ@mail.gmail.com>
+ <20220704032516.GC3237952@dread.disaster.area>
+ <CAOQ4uxj5wabQvsGELS7t_Z9Z4Z2ZUHAR8d+LBao89ANErwZ95g@mail.gmail.com>
+ <20220705031133.GD3237952@dread.disaster.area>
+ <CAOQ4uxi2rBGqmtXghFJ+frDORETum+4KOKEg0oeX-woPXLNxTw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxi2rBGqmtXghFJ+frDORETum+4KOKEg0oeX-woPXLNxTw@mail.gmail.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	A bit of context: the original RCU conversion of struct mount
-handling had several bugs, spotted and fixed only 5 years later, in
-119e1ef80ecf "fix __legitimize_mnt()/mntput() race".  However, bits and
-pieces of old broken approach hadn't been removed.
+On Wed, Jul 06, 2022 at 01:11:16PM +0300, Amir Goldstein wrote:
+> 
+> So I am wondering what is the status today, because I rarely
+> see fstests failure reports from kernel test bot on the list, but there
+> are some reports.
+> 
+> Does anybody have a clue what hw/fs/config/group of fstests
+> kernel test bot is running on linux-next?
 
-	legitimize_mnt() takes a non-counting reference the caller had
-found after rcu_read_lock() and sampling of mount_lock seqcount and
-tries to turn it into counting one if mount_lock seqcount had not been changed.
+Te zero-day test bot only reports test regressions.  So they have some
+list of tests that have failed in the past, and they only report *new*
+test failures.  This is not just true for fstests, but it's also true
+for things like check and compiler warnings warnings --- and I suspect
+it's for those sorts of reports that caused the zero-day bot to keep
+state, and to filter out test failures and/or check warnings and/or
+compiler warnings, so that only new test failures and/or new compiler
+warnigns are reported.  If they didn't, they would be spamming kernel
+developers, and given how.... "kind and understanding" kernel
+developers are at getting spammed, especially when sometimes the
+complaints are bogus ones (either test bugs or compiler bugs), my
+guess is that they did the filtering out of sheer self-defense.  It
+certainly wasn't something requested by a file system developer as far
+as I know.
 
-	The hard part is dealing with the possibility of race with final
-mntput() - we want the successful fast path through legitimize_mnt()
-to be lockless, so there's a possibility of legitimize_mnt()
-incrementing refcount, only to recheck the mount_lock seqcount and
-notice that it had been disturbed by what would've been the final
-mntput().  In that case legitimize_mnt() needs to drop the reference
-it has acquired and report failure.
 
-	Original approach had been to have the final mntput() to
-mark mount as doomed when it commits to killing it off, with
-legitimize_mnt() doing mntput() if it noticed mount_lock disturbed
-while it had been grabbing a reference and mntput checking if
-it has already marked the mount doomed and leaving its destruction
-to the thread that had done the marking.
+So this is how I think an automated system for "drive-by testers"
+should work.  First, the tester would specify the baseline/origin tag,
+and the testing system would run the tests on the baseline once.
+Hopefully, the test runner already has exclude files so that kernel
+bugs that cause an immediate kernel crash or deadlock would be already
+be in the exclude list.  But as I've discovered this weekend, for file
+systems that I haven't tried in a few yeas, like udf, or
+ubifs. etc. there may be missing tests that result in the test VM to
+stop responding and/or crash.
 
-	That had been racy - since this mntput() from legitimize_mnt()
-might end up doing real work (if what would've been the final mntput()
-had observed attempted increment by legitimize_mnt()) it can't be done
-under rcu_read_lock(), but in case if the race went the other way round
-and final mntput() had *not* seen an attempted increment, rcu_read_lock()
-we are holding might be the only thing preventing freeing of struct
-mount in question.
+I have a planned improvement where if you are using the gce-xfstests's
+lightweight test manager, since the LTM is constantly reading the
+serial console, a deadlock can be detected and the LTM can restart the
+VM.  The VM can then disambiguate from a forced reboot caused by the
+LTM, or a forced shutdown caused by the use of a preemptible VM (a
+planned feature not yet fully implemented yet), and the test runner
+can skip the tests already run, and skip the test which caused the
+crash or deadlock, and this could be reported so that eventually, the
+test could be added to the exclude file to benefit thouse people who
+are using kvm-xfstests.  (This is an example of a planned improvement
+in xfstests-bld which if someone is interested in helping to implement
+it, they should give me a ring.)
 
-	Fortunately, legitimize_mnt() can tell one case from another by
-grabbing mount_lock and checking whether the mount had been marked doomed
-- if it had been marked we known that the final mntput() has already done
-mnt_get_count() and not observed our increment, so we can just decrement
-it quietly.  If it hadn't been marked, we know that we need to do full
-mntput(), but we also know that it's safe to drop rcu_read_lock() -
-mount won't get freed under us.
+Once the tests which are failing given a particular baseline are
+known, this state would then get saved, and then now the tests can be
+run on the drive-by developer's changes.  We can now compare the known
+failures for the baseline, with the changed kernels, and if there are
+any new failures, there are two possibilities: (a) this was a new
+feailure caused by the drive-by developer's changes, (b) this was a
+pre-existing known flake.
 
-	That's what the commit in question had done - in effect,
-it had taken the "is it already marked doomed?"  check from mntput()
-to legitimize_mnt().  Which is the right thing to do, but we should've
-removed that check from mntput() itself.  While we are at it, there's
-no reason for mntput() to hold onto rcu_read_lock() past the handling of
-"still mounted, we know it's not the final drop" case.
+To disambiguate between these two cases, we now run the failed test N
+times (where N is probably something like 10-50 times; I normally use
+25 times) on the changed kernel, and get the failure rate.  If the
+failure rate is 100%, then this is almost certainly (a).  If the
+failure rate is < 100% (and greater than 0%), then we need to rerun
+the failed test on the baseline kernel N times, and see if the failure
+rate is 0%, then we should do a bisection search to determine the
+guilty commit.
 
-	Patch below takes the remnants out.  It should've been done
-as part of the original fix; as it is, the magical mystery shite had
-been left behind.
+If the failure rate is 0%, then this is either an extremely rare
+flake, in which case we might need to increase N --- or it's an
+example of a test failure which is sensitive to the order of tests
+which are failed, in which case we may need to reun all of the tests
+in order up to the failed test.
 
-	Folks, could you give it some beating?  I realize that original
-reproducers might be long gone, but...
+This is right now what I do when processing patches for upstream.
+It's also rather similar to what we're doing for the XFS stable
+backports, because it's much more efficient than running the baseline
+tests 100 times (which can take a week of continuous testing per
+Luis's comments) --- we only tests dozens (or more) times where a
+potential flake has been found, as opposed to *all* tests.  It's all
+done manually, but it would be great if we could automate this to make
+life easier for XFS stable backporters, and *also* for drive-by
+developers.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 68789f896f08..ad94f9e228ae 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1224,6 +1224,7 @@ static void mntput_no_expire(struct mount *mnt)
- 		rcu_read_unlock();
- 		return;
- 	}
-+	rcu_read_unlock();
- 	lock_mount_hash();
- 	/*
- 	 * make sure that if __legitimize_mnt() has not seen us grab
-@@ -1234,17 +1235,10 @@ static void mntput_no_expire(struct mount *mnt)
- 	count = mnt_get_count(mnt);
- 	if (count != 0) {
- 		WARN_ON(count < 0);
--		rcu_read_unlock();
--		unlock_mount_hash();
--		return;
--	}
--	if (unlikely(mnt->mnt.mnt_flags & MNT_DOOMED)) {
--		rcu_read_unlock();
- 		unlock_mount_hash();
- 		return;
- 	}
- 	mnt->mnt.mnt_flags |= MNT_DOOMED;
--	rcu_read_unlock();
- 
- 	list_del(&mnt->mnt_instance);
- 
+And again, if anyone is interested in helping with this, especially if
+you're familiar with shell, python 3, and/or the Go language, please
+contact me off-line.
+
+Cheers,
+
+						- Ted
