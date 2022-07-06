@@ -2,39 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 348EF5690B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 19:32:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D0C5690B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 19:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233180AbiGFRcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jul 2022 13:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52032 "EHLO
+        id S233891AbiGFRdQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jul 2022 13:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232118AbiGFRcS (ORCPT
+        with ESMTP id S232118AbiGFRdP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jul 2022 13:32:18 -0400
+        Wed, 6 Jul 2022 13:33:15 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0372B2A27B;
-        Wed,  6 Jul 2022 10:32:16 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 615471D06;
-        Wed,  6 Jul 2022 17:31:13 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E46529CB5;
+        Wed,  6 Jul 2022 10:33:14 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 139A21D06;
+        Wed,  6 Jul 2022 17:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1657128673;
-        bh=tMnAizoXK6QBMMXkKehfHJvqxNBU6tVkklOZnbjrjZQ=;
+        d=paragon-software.com; s=mail; t=1657128731;
+        bh=LgQprGKfPWWuIWgll8EWNs0wlfhTJEIbWh1bL9GAuCI=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=hoors9GGD369P9C8i6yq4B/py99HgIgEcPGhZowZg1RDhClVJIEs4kUzae3O8fiXX
-         rXiPAdCVJqvEPhC+6GR/TfOkNVs//9dpimwbc9yt6ozP+GS6GgAR6IWCr8rsiaKxFW
-         buMZWC6hgRB7PN1Oo8td32yRR/2mcAsQxCvqyTDE=
+        b=oDBtcpPS2VLw6xbG4fTzvuM3c72F+gQXF1y9LLiTqTh3O6P+geSF4SBaRIqhFRYVk
+         qMe/e7i1yhc0Hbz6irA3TTDoC2efuJeaekfOdF/AvgBg2ly6T1nH+eh8wPsDKlGoqE
+         ag3r+vwIiy1NVKSmFoqgK3n+oCU/bGmGiquvG/44=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id BEAC92133;
+        Wed,  6 Jul 2022 17:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1657128792;
+        bh=LgQprGKfPWWuIWgll8EWNs0wlfhTJEIbWh1bL9GAuCI=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=t+uPJMkAnFdfLNFSKZnSIx+x3gvlKrH69UgQy6X+gRUooNaEd/DDOkuku1YDKoY2u
+         qx6QvgmvwJUYInctEPGG/5EWtp5048G8PlyUqn8FxSO12r59vo4VanvHvATIL03kS8
+         A1EsDEhCNaZEUlBXs7vDeXI5b2/7XpOsNExyQTMA=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 6 Jul 2022 20:32:14 +0300
-Message-ID: <61c894b8-9dc3-2d8f-3a60-80f60c24c7dd@paragon-software.com>
-Date:   Wed, 6 Jul 2022 20:32:14 +0300
+ 15.1.2375.7; Wed, 6 Jul 2022 20:33:12 +0300
+Message-ID: <1e532f1e-1ba5-11a8-8cb1-100b5c3a0f3b@paragon-software.com>
+Date:   Wed, 6 Jul 2022 20:33:12 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: [PATCH 1/2] fs/ntfs3: Added comments to frecord functions
+Subject: [PATCH 2/2] fs/ntfs3: Check possible errors in run_pack in advance
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -55,109 +65,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added some comments in frecord.c for more context.
-Also changed run_lookup to static because it's an internal function.
+Checking in advance speeds things up in some cases.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/bitmap.c  | 3 +--
-  fs/ntfs3/frecord.c | 8 ++++----
-  fs/ntfs3/ntfs_fs.h | 1 -
-  fs/ntfs3/run.c     | 2 +-
-  4 files changed, 6 insertions(+), 8 deletions(-)
+  fs/ntfs3/run.c | 39 ++++++++++++++++++++++-----------------
+  1 file changed, 22 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
-index e3b5680fd516..bb9ebb160227 100644
---- a/fs/ntfs3/bitmap.c
-+++ b/fs/ntfs3/bitmap.c
-@@ -1393,9 +1393,8 @@ int wnd_extend(struct wnd_bitmap *wnd, size_t new_bits)
-  
-  void wnd_zone_set(struct wnd_bitmap *wnd, size_t lcn, size_t len)
-  {
--	size_t zlen;
-+	size_t zlen = wnd->zone_end - wnd->zone_bit;
-  
--	zlen = wnd->zone_end - wnd->zone_bit;
-  	if (zlen)
-  		wnd_add_free_ext(wnd, wnd->zone_bit, zlen, false);
-  
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index acd9f444bd64..bc48923693a9 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -1287,7 +1287,7 @@ static int ni_expand_mft_list(struct ntfs_inode *ni)
-  	done = asize - run_size - SIZEOF_NONRESIDENT;
-  	le32_sub_cpu(&ni->mi.mrec->used, done);
-  
--	/* Estimate the size of second part: run_buf=NULL. */
-+	/* Estimate packed size (run_buf=NULL). */
-  	err = run_pack(run, svcn, evcn + 1 - svcn, NULL, sbi->record_size,
-  		       &plen);
-  	if (err < 0)
-@@ -1317,6 +1317,7 @@ static int ni_expand_mft_list(struct ntfs_inode *ni)
-  	attr->name_off = SIZEOF_NONRESIDENT_LE;
-  	attr->flags = 0;
-  
-+	/* This function can't fail - cause already checked above. */
-  	run_pack(run, svcn, evcn + 1 - svcn, Add2Ptr(attr, SIZEOF_NONRESIDENT),
-  		 run_size, &plen);
-  
-@@ -1392,8 +1393,6 @@ int ni_expand_list(struct ntfs_inode *ni)
-  
-  	/* Split MFT data as much as possible. */
-  	err = ni_expand_mft_list(ni);
--	if (err)
--		goto out;
-  
-  out:
-  	return !err && !done ? -EOPNOTSUPP : err;
-@@ -1419,6 +1418,7 @@ int ni_insert_nonresident(struct ntfs_inode *ni, enum ATTR_TYPE type,
-  	u32 run_size, asize;
-  	struct ntfs_sb_info *sbi = ni->mi.sbi;
-  
-+	/* Estimate packed size (run_buf=NULL). */
-  	err = run_pack(run, svcn, len, NULL, sbi->max_bytes_per_attr - run_off,
-  		       &plen);
-  	if (err < 0)
-@@ -1448,12 +1448,12 @@ int ni_insert_nonresident(struct ntfs_inode *ni, enum ATTR_TYPE type,
-  	attr->name_off = cpu_to_le16(name_off);
-  	attr->flags = flags;
-  
-+	/* This function can't fail - cause already checked above. */
-  	run_pack(run, svcn, len, Add2Ptr(attr, run_off), run_size, &plen);
-  
-  	attr->nres.svcn = cpu_to_le64(svcn);
-  	attr->nres.evcn = cpu_to_le64((u64)svcn + len - 1);
-  
--	err = 0;
-  	if (new_attr)
-  		*new_attr = attr;
-  
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index b88721e48458..cf1fa69a0eb8 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -773,7 +773,6 @@ bool run_lookup_entry(const struct runs_tree *run, CLST vcn, CLST *lcn,
-  void run_truncate(struct runs_tree *run, CLST vcn);
-  void run_truncate_head(struct runs_tree *run, CLST vcn);
-  void run_truncate_around(struct runs_tree *run, CLST vcn);
--bool run_lookup(const struct runs_tree *run, CLST vcn, size_t *index);
-  bool run_add_entry(struct runs_tree *run, CLST vcn, CLST lcn, CLST len,
-  		   bool is_mft);
-  bool run_collapse_range(struct runs_tree *run, CLST vcn, CLST len);
 diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
-index 7609d45a2d72..95fb9d739706 100644
+index 95fb9d739706..e4bd46b02531 100644
 --- a/fs/ntfs3/run.c
 +++ b/fs/ntfs3/run.c
-@@ -31,7 +31,7 @@ struct ntfs_run {
-   * Case of entry missing from list 'index' will be set to
-   * point to insertion position for the entry question.
-   */
--bool run_lookup(const struct runs_tree *run, CLST vcn, size_t *index)
-+static bool run_lookup(const struct runs_tree *run, CLST vcn, size_t *index)
-  {
-  	size_t min_idx, max_idx, mid_idx;
-  	struct ntfs_run *r;
+@@ -821,26 +821,36 @@ int run_pack(const struct runs_tree *run, CLST svcn, CLST len, u8 *run_buf,
+  	CLST next_vcn, vcn, lcn;
+  	CLST prev_lcn = 0;
+  	CLST evcn1 = svcn + len;
++	const struct ntfs_run *r, *r_end;
+  	int packed_size = 0;
+  	size_t i;
+-	bool ok;
+  	s64 dlcn;
+  	int offset_size, size_size, tmp;
+  
+-	next_vcn = vcn = svcn;
+-
+  	*packed_vcns = 0;
+  
+  	if (!len)
+  		goto out;
+  
+-	ok = run_lookup_entry(run, vcn, &lcn, &len, &i);
++	/* Check all required entries [svcn, encv1) available. */
++	if (!run_lookup(run, svcn, &i))
++		return -ENOENT;
+  
+-	if (!ok)
+-		goto error;
++	r_end = run->runs + run->count;
++	r = run->runs + i;
+  
+-	if (next_vcn != vcn)
+-		goto error;
++	for (next_vcn = r->vcn + r->len; next_vcn < evcn1;
++	     next_vcn = r->vcn + r->len) {
++		if (++r >= r_end || r->vcn != next_vcn)
++			return -ENOENT;
++	}
++
++	/* Repeat cycle above and pack runs. Assume no errors. */
++	r = run->runs + i;
++	len = svcn - r->vcn;
++	vcn = svcn;
++	lcn = r->lcn == SPARSE_LCN ? SPARSE_LCN : (r->lcn + len);
++	len = r->len - len;
+  
+  	for (;;) {
+  		next_vcn = vcn + len;
+@@ -889,12 +899,10 @@ int run_pack(const struct runs_tree *run, CLST svcn, CLST len, u8 *run_buf,
+  		if (packed_size + 1 >= run_buf_size || next_vcn >= evcn1)
+  			goto out;
+  
+-		ok = run_get_entry(run, ++i, &vcn, &lcn, &len);
+-		if (!ok)
+-			goto error;
+-
+-		if (next_vcn != vcn)
+-			goto error;
++		r += 1;
++		vcn = r->vcn;
++		lcn = r->lcn;
++		len = r->len;
+  	}
+  
+  out:
+@@ -903,9 +911,6 @@ int run_pack(const struct runs_tree *run, CLST svcn, CLST len, u8 *run_buf,
+  		run_buf[0] = 0;
+  
+  	return packed_size + 1;
+-
+-error:
+-	return -EOPNOTSUPP;
+  }
+  
+  /*
 -- 
 2.37.0
 
