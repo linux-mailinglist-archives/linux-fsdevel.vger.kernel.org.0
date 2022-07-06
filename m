@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E2B568143
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 10:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F02568169
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Jul 2022 10:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbiGFIZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jul 2022 04:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36214 "EHLO
+        id S232286AbiGFI0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jul 2022 04:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbiGFIZl (ORCPT
+        with ESMTP id S232107AbiGFIZx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jul 2022 04:25:41 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F462495A;
-        Wed,  6 Jul 2022 01:25:19 -0700 (PDT)
+        Wed, 6 Jul 2022 04:25:53 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B2324BCE;
+        Wed,  6 Jul 2022 01:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657095919; x=1688631919;
+  t=1657095930; x=1688631930;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sS9EoSSO28MiiP0hU+aCuuctHY7SRSWTE16kACa1rxg=;
-  b=jTmD8Mnpq61xTJAQIfix/D9GmxN3U2BeAz42ZUpnialYbdqtBSx9xOc0
-   yCpGoNzItPtD0PMJNsT0OPhurp/jamHVtWTWH6FmhBlpH6MRVfsGFf1X8
-   jn3HemiQR8f6nzFVmKIuBtLQES0FOYBWs9wbxDCE1ytKdxDKflYwYViFZ
-   CT/CKm47tmfdfhk4M4MZwTCz0b3a/pKYGD3A9D1wI4rRYQgPhmw2Kbcts
-   hKcBBrIT8up4HY83tNldOyQ1jjC7ql+nR//xDcM+TSoPWLzN/buPeDma4
-   kLPTZl0T8jYCTXwT+GKu3kh7H103KUNRTQ9do3DQkmdTMSlaUi/xKtl9D
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="264100156"
+  bh=weaxkp9/xqFnQWhYd4tsfdzie5zGF32jOb8m6XNOVC4=;
+  b=NcebVdNpV0G0J5Saspwt23A+aErfXnNq9LK6ibS0G5hFrhjI9utRymcj
+   +pH4MaPi3HMkFAV9ZZ6hJAJgJYUhh3+9iq5KRQdSVHw2vngGzpjnW0hBr
+   nUEewWsRfL/bi8pzL+ieI2Hw1LsdQlFvhubx2/ReHgkPaMYd/UTsmu3k0
+   hKZe+p0eULR1Lb2J9Y9ZNftGqfF+CmW1qPxs0aixY/8F6vo/lirg71EPP
+   uQB3A2YcdrZkxwrrurkOWKm56Q3C701t4Amp7Ug4R3k69DeAFqT6bPd+z
+   e2oy9hTH/HLuLEQww+66oHJuVziMHYSquWWsac6l391tVtRIJ0rqq+rq8
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="282433454"
 X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="264100156"
+   d="scan'208";a="282433454"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 01:25:15 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 01:25:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="567968092"
+   d="scan'208";a="567968152"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2022 01:25:03 -0700
+  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2022 01:25:15 -0700
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
-Date:   Wed,  6 Jul 2022 16:20:10 +0800
-Message-Id: <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
+Subject: [PATCH v7 09/14] KVM: Extend the memslot to support fd-based private memory
+Date:   Wed,  6 Jul 2022 16:20:11 +0800
+Message-Id: <20220706082016.2603916-10-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
@@ -89,639 +89,346 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The sync mechanism between mmu_notifier and page fault handler employs
-fields mmu_notifier_seq/count and mmu_notifier_range_start/end. For the
-to be added private memory, there is the same mechanism needed but not
-rely on mmu_notifier (It uses new introduced memfile_notifier). This
-patch renames the existing fields and related helper functions to a
-neutral name mmu_updating_* so private memory can reuse.
+Extend the memslot definition to provide guest private memory through a
+file descriptor(fd) instead of userspace_addr(hva). Such guest private
+memory(fd) may never be mapped into userspace so no userspace_addr(hva)
+can be used. Instead add another two new fields
+(private_fd/private_offset), plus the existing memory_size to represent
+the private memory range. Such memslot can still have the existing
+userspace_addr(hva). When use, a single memslot can maintain both
+private memory through private fd(private_fd/private_offset) and shared
+memory through hva(userspace_addr). Whether the private or shared part
+is effective for a guest GPA is maintained by other KVM code.
 
-No functional change intended.
+Since there is no userspace mapping for private fd so we cannot
+rely on get_user_pages() to get the pfn in KVM, instead we add a new
+memfile_notifier in the memslot and rely on it to get pfn by interacting
+the callbacks from memory backing store with the fd/offset.
 
+This new extension is indicated by a new flag KVM_MEM_PRIVATE. At
+compile time, a new config HAVE_KVM_PRIVATE_MEM is added and right now
+it is selected on X86_64 for Intel TDX usage.
+
+To make KVM easy, internally we use a binary compatible alias struct
+kvm_user_mem_region to handle both the normal and the '_ext' variants.
+
+Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- arch/arm64/kvm/mmu.c                     |  8 ++---
- arch/mips/kvm/mmu.c                      | 10 +++---
- arch/powerpc/include/asm/kvm_book3s_64.h |  2 +-
- arch/powerpc/kvm/book3s_64_mmu_host.c    |  4 +--
- arch/powerpc/kvm/book3s_64_mmu_hv.c      |  4 +--
- arch/powerpc/kvm/book3s_64_mmu_radix.c   |  6 ++--
- arch/powerpc/kvm/book3s_hv_nested.c      |  2 +-
- arch/powerpc/kvm/book3s_hv_rm_mmu.c      |  8 ++---
- arch/powerpc/kvm/e500_mmu_host.c         |  4 +--
- arch/riscv/kvm/mmu.c                     |  4 +--
- arch/x86/kvm/mmu/mmu.c                   | 14 ++++----
- arch/x86/kvm/mmu/paging_tmpl.h           |  4 +--
- include/linux/kvm_host.h                 | 38 ++++++++++-----------
- virt/kvm/kvm_main.c                      | 42 +++++++++++-------------
- virt/kvm/pfncache.c                      | 14 ++++----
- 15 files changed, 81 insertions(+), 83 deletions(-)
+ Documentation/virt/kvm/api.rst | 38 ++++++++++++++++----
+ arch/x86/kvm/Kconfig           |  2 ++
+ arch/x86/kvm/x86.c             |  2 +-
+ include/linux/kvm_host.h       | 13 +++++--
+ include/uapi/linux/kvm.h       | 28 +++++++++++++++
+ virt/kvm/Kconfig               |  3 ++
+ virt/kvm/kvm_main.c            | 64 +++++++++++++++++++++++++++++-----
+ 7 files changed, 132 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 87f1cd0df36e..7ee6fafc24ee 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -993,7 +993,7 @@ transparent_hugepage_adjust(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		 * THP doesn't start to split while we are adjusting the
- 		 * refcounts.
- 		 *
--		 * We are sure this doesn't happen, because mmu_notifier_retry
-+		 * We are sure this doesn't happen, because mmu_updating_retry
- 		 * was successful and we are holding the mmu_lock, so if this
- 		 * THP is trying to split, it will be blocked in the mmu
- 		 * notifier before touching any of the pages, specifically
-@@ -1188,9 +1188,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 			return ret;
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index bafaeedd455c..4f27c973a952 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -1319,7 +1319,7 @@ yet and must be cleared on entry.
+ :Capability: KVM_CAP_USER_MEMORY
+ :Architectures: all
+ :Type: vm ioctl
+-:Parameters: struct kvm_userspace_memory_region (in)
++:Parameters: struct kvm_userspace_memory_region(_ext) (in)
+ :Returns: 0 on success, -1 on error
+ 
+ ::
+@@ -1332,9 +1332,18 @@ yet and must be cleared on entry.
+ 	__u64 userspace_addr; /* start of the userspace allocated memory */
+   };
+ 
++  struct kvm_userspace_memory_region_ext {
++	struct kvm_userspace_memory_region region;
++	__u64 private_offset;
++	__u32 private_fd;
++	__u32 pad1;
++	__u64 pad2[14];
++};
++
+   /* for kvm_memory_region::flags */
+   #define KVM_MEM_LOG_DIRTY_PAGES	(1UL << 0)
+   #define KVM_MEM_READONLY	(1UL << 1)
++  #define KVM_MEM_PRIVATE		(1UL << 2)
+ 
+ This ioctl allows the user to create, modify or delete a guest physical
+ memory slot.  Bits 0-15 of "slot" specify the slot id and this value
+@@ -1365,12 +1374,27 @@ It is recommended that the lower 21 bits of guest_phys_addr and userspace_addr
+ be identical.  This allows large pages in the guest to be backed by large
+ pages in the host.
+ 
+-The flags field supports two flags: KVM_MEM_LOG_DIRTY_PAGES and
+-KVM_MEM_READONLY.  The former can be set to instruct KVM to keep track of
+-writes to memory within the slot.  See KVM_GET_DIRTY_LOG ioctl to know how to
+-use it.  The latter can be set, if KVM_CAP_READONLY_MEM capability allows it,
+-to make a new slot read-only.  In this case, writes to this memory will be
+-posted to userspace as KVM_EXIT_MMIO exits.
++kvm_userspace_memory_region_ext includes all the kvm_userspace_memory_region
++fields. It also includes additional fields for some specific features. See
++below description of flags field for more information. It's recommended to use
++kvm_userspace_memory_region_ext in new userspace code.
++
++The flags field supports below flags:
++
++- KVM_MEM_LOG_DIRTY_PAGES can be set to instruct KVM to keep track of writes to
++  memory within the slot.  See KVM_GET_DIRTY_LOG ioctl to know how to use it.
++
++- KVM_MEM_READONLY can be set, if KVM_CAP_READONLY_MEM capability allows it, to
++  make a new slot read-only.  In this case, writes to this memory will be posted
++  to userspace as KVM_EXIT_MMIO exits.
++
++- KVM_MEM_PRIVATE can be set to indicate a new slot has private memory backed by
++  a file descirptor(fd) and the content of the private memory is invisible to
++  userspace. In this case, userspace should use private_fd/private_offset in
++  kvm_userspace_memory_region_ext to instruct KVM to provide private memory to
++  guest. Userspace should guarantee not to map the same pfn indicated by
++  private_fd/private_offset to different gfns with multiple memslots. Failed to
++  do this may result undefined behavior.
+ 
+ When the KVM_CAP_SYNC_MMU capability is available, changes in the backing of
+ the memory region are automatically reflected into the guest.  For example, an
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index e3cbd7706136..1f160801e2a7 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -48,6 +48,8 @@ config KVM
+ 	select SRCU
+ 	select INTERVAL_TREE
+ 	select HAVE_KVM_PM_NOTIFIER if PM
++	select HAVE_KVM_PRIVATE_MEM if X86_64
++	select MEMFILE_NOTIFIER if HAVE_KVM_PRIVATE_MEM
+ 	help
+ 	  Support hosting fully virtualized guest machines using hardware
+ 	  virtualization extensions.  You will need a fairly recent
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 567d13405445..77d16b90045c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12154,7 +12154,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
  	}
  
--	mmu_seq = vcpu->kvm->mmu_notifier_seq;
-+	mmu_seq = vcpu->kvm->mmu_updating_seq;
- 	/*
--	 * Ensure the read of mmu_notifier_seq happens before we call
-+	 * Ensure the read of mmu_updating_seq happens before we call
- 	 * gfn_to_pfn_prot (which calls get_user_pages), so that we don't risk
- 	 * the page we just got a reference to gets unmapped before we have a
- 	 * chance to grab the mmu_lock, which ensure that if the page gets
-@@ -1246,7 +1246,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	else
- 		write_lock(&kvm->mmu_lock);
- 	pgt = vcpu->arch.hw_mmu->pgt;
--	if (mmu_notifier_retry(kvm, mmu_seq))
-+	if (mmu_updating_retry(kvm, mmu_seq))
- 		goto out_unlock;
+ 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+-		struct kvm_userspace_memory_region m;
++		struct kvm_user_mem_region m;
  
- 	/*
-diff --git a/arch/mips/kvm/mmu.c b/arch/mips/kvm/mmu.c
-index 1bfd1b501d82..abd468c6a749 100644
---- a/arch/mips/kvm/mmu.c
-+++ b/arch/mips/kvm/mmu.c
-@@ -615,17 +615,17 @@ static int kvm_mips_map_page(struct kvm_vcpu *vcpu, unsigned long gpa,
- 	 * Used to check for invalidations in progress, of the pfn that is
- 	 * returned by pfn_to_pfn_prot below.
- 	 */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	/*
--	 * Ensure the read of mmu_notifier_seq isn't reordered with PTE reads in
-+	 * Ensure the read of mmu_updating_seq isn't reordered with PTE reads in
- 	 * gfn_to_pfn_prot() (which calls get_user_pages()), so that we don't
- 	 * risk the page we get a reference to getting unmapped before we have a
--	 * chance to grab the mmu_lock without mmu_notifier_retry() noticing.
-+	 * chance to grab the mmu_lock without mmu_updating_retry () noticing.
- 	 *
- 	 * This smp_rmb() pairs with the effective smp_wmb() of the combination
- 	 * of the pte_unmap_unlock() after the PTE is zapped, and the
- 	 * spin_lock() in kvm_mmu_notifier_invalidate_<page|range_end>() before
--	 * mmu_notifier_seq is incremented.
-+	 * mmu_updating_seq is incremented.
- 	 */
- 	smp_rmb();
- 
-@@ -638,7 +638,7 @@ static int kvm_mips_map_page(struct kvm_vcpu *vcpu, unsigned long gpa,
- 
- 	spin_lock(&kvm->mmu_lock);
- 	/* Check if an invalidation has taken place since we got pfn */
--	if (mmu_notifier_retry(kvm, mmu_seq)) {
-+	if (mmu_updating_retry(kvm, mmu_seq)) {
- 		/*
- 		 * This can happen when mappings are changed asynchronously, but
- 		 * also synchronously if a COW is triggered by
-diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
-index 4def2bd17b9b..4d35fb913de5 100644
---- a/arch/powerpc/include/asm/kvm_book3s_64.h
-+++ b/arch/powerpc/include/asm/kvm_book3s_64.h
-@@ -666,7 +666,7 @@ static inline pte_t *find_kvm_host_pte(struct kvm *kvm, unsigned long mmu_seq,
- 	VM_WARN(!spin_is_locked(&kvm->mmu_lock),
- 		"%s called with kvm mmu_lock not held \n", __func__);
- 
--	if (mmu_notifier_retry(kvm, mmu_seq))
-+	if (mmu_updating_retry(kvm, mmu_seq))
- 		return NULL;
- 
- 	pte = __find_linux_pte(kvm->mm->pgd, ea, NULL, hshift);
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_host.c b/arch/powerpc/kvm/book3s_64_mmu_host.c
-index 1ae09992c9ea..78f1aae8cb60 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_host.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_host.c
-@@ -90,7 +90,7 @@ int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct kvmppc_pte *orig_pte,
- 	unsigned long pfn;
- 
- 	/* used to check for invalidations in progress */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	/* Get host physical address for gpa */
-@@ -151,7 +151,7 @@ int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct kvmppc_pte *orig_pte,
- 	cpte = kvmppc_mmu_hpte_cache_next(vcpu);
- 
- 	spin_lock(&kvm->mmu_lock);
--	if (!cpte || mmu_notifier_retry(kvm, mmu_seq)) {
-+	if (!cpte || mmu_updating_retry(kvm, mmu_seq)) {
- 		r = -EAGAIN;
- 		goto out_unlock;
- 	}
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-index 514fd45c1994..bcdec6a6f2a7 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -578,7 +578,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_vcpu *vcpu,
- 		return -EFAULT;
- 
- 	/* used to check for invalidations in progress */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	ret = -EFAULT;
-@@ -693,7 +693,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_vcpu *vcpu,
- 
- 	/* Check if we might have been invalidated; let the guest retry if so */
- 	ret = RESUME_GUEST;
--	if (mmu_notifier_retry(vcpu->kvm, mmu_seq)) {
-+	if (mmu_updating_retry(vcpu->kvm, mmu_seq)) {
- 		unlock_rmap(rmap);
- 		goto out_unlock;
- 	}
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-index 42851c32ff3b..c8890ccc3f40 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-@@ -639,7 +639,7 @@ int kvmppc_create_pte(struct kvm *kvm, pgd_t *pgtable, pte_t pte,
- 	/* Check if we might have been invalidated; let the guest retry if so */
- 	spin_lock(&kvm->mmu_lock);
- 	ret = -EAGAIN;
--	if (mmu_notifier_retry(kvm, mmu_seq))
-+	if (mmu_updating_retry(kvm, mmu_seq))
- 		goto out_unlock;
- 
- 	/* Now traverse again under the lock and change the tree */
-@@ -829,7 +829,7 @@ int kvmppc_book3s_instantiate_page(struct kvm_vcpu *vcpu,
- 	bool large_enable;
- 
- 	/* used to check for invalidations in progress */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	/*
-@@ -1190,7 +1190,7 @@ void kvmppc_radix_flush_memslot(struct kvm *kvm,
- 	 * Increase the mmu notifier sequence number to prevent any page
- 	 * fault that read the memslot earlier from writing a PTE.
- 	 */
--	kvm->mmu_notifier_seq++;
-+	kvm->mmu_updating_seq++;
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
-diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
-index 0644732d1a25..09f841f730da 100644
---- a/arch/powerpc/kvm/book3s_hv_nested.c
-+++ b/arch/powerpc/kvm/book3s_hv_nested.c
-@@ -1579,7 +1579,7 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
- 	/* 2. Find the host pte for this L1 guest real address */
- 
- 	/* Used to check for invalidations in progress */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	/* See if can find translation in our partition scoped tables for L1 */
-diff --git a/arch/powerpc/kvm/book3s_hv_rm_mmu.c b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
-index 2257fb18cb72..952b504dc98a 100644
---- a/arch/powerpc/kvm/book3s_hv_rm_mmu.c
-+++ b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
-@@ -219,7 +219,7 @@ long kvmppc_do_h_enter(struct kvm *kvm, unsigned long flags,
- 	g_ptel = ptel;
- 
- 	/* used later to detect if we might have been invalidated */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	/* Find the memslot (if any) for this address */
-@@ -366,7 +366,7 @@ long kvmppc_do_h_enter(struct kvm *kvm, unsigned long flags,
- 			rmap = real_vmalloc_addr(rmap);
- 		lock_rmap(rmap);
- 		/* Check for pending invalidations under the rmap chain lock */
--		if (mmu_notifier_retry(kvm, mmu_seq)) {
-+		if (mmu_updating_retry(kvm, mmu_seq)) {
- 			/* inval in progress, write a non-present HPTE */
- 			pteh |= HPTE_V_ABSENT;
- 			pteh &= ~HPTE_V_VALID;
-@@ -932,7 +932,7 @@ static long kvmppc_do_h_page_init_zero(struct kvm_vcpu *vcpu,
- 	int i;
- 
- 	/* Used later to detect if we might have been invalidated */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	arch_spin_lock(&kvm->mmu_lock.rlock.raw_lock);
-@@ -960,7 +960,7 @@ static long kvmppc_do_h_page_init_copy(struct kvm_vcpu *vcpu,
- 	long ret = H_SUCCESS;
- 
- 	/* Used later to detect if we might have been invalidated */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	arch_spin_lock(&kvm->mmu_lock.rlock.raw_lock);
-diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
-index 7f16afc331ef..d7636b926f25 100644
---- a/arch/powerpc/kvm/e500_mmu_host.c
-+++ b/arch/powerpc/kvm/e500_mmu_host.c
-@@ -339,7 +339,7 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
- 	unsigned long flags;
- 
- 	/* used to check for invalidations in progress */
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	/*
-@@ -460,7 +460,7 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
- 	}
- 
- 	spin_lock(&kvm->mmu_lock);
--	if (mmu_notifier_retry(kvm, mmu_seq)) {
-+	if (mmu_updating_retry(kvm, mmu_seq)) {
- 		ret = -EAGAIN;
- 		goto out;
- 	}
-diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-index 081f8d2b9cf3..a7db374d3861 100644
---- a/arch/riscv/kvm/mmu.c
-+++ b/arch/riscv/kvm/mmu.c
-@@ -654,7 +654,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
- 		return ret;
- 	}
- 
--	mmu_seq = kvm->mmu_notifier_seq;
-+	mmu_seq = kvm->mmu_updating_seq;
- 
- 	hfn = gfn_to_pfn_prot(kvm, gfn, is_write, &writeable);
- 	if (hfn == KVM_PFN_ERR_HWPOISON) {
-@@ -674,7 +674,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
- 
- 	spin_lock(&kvm->mmu_lock);
- 
--	if (mmu_notifier_retry(kvm, mmu_seq))
-+	if (mmu_updating_retry(kvm, mmu_seq))
- 		goto out_unlock;
- 
- 	if (writeable) {
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 0d882fad4bc1..545eb74305fe 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -2908,7 +2908,7 @@ static void direct_pte_prefetch(struct kvm_vcpu *vcpu, u64 *sptep)
- 	 * If addresses are being invalidated, skip prefetching to avoid
- 	 * accidentally prefetching those addresses.
- 	 */
--	if (unlikely(vcpu->kvm->mmu_notifier_count))
-+	if (unlikely(vcpu->kvm->mmu_updating_count))
- 		return;
- 
- 	__direct_pte_prefetch(vcpu, sp, sptep);
-@@ -2950,7 +2950,7 @@ static int host_pfn_mapping_level(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
- 	/*
- 	 * Lookup the mapping level in the current mm.  The information
- 	 * may become stale soon, but it is safe to use as long as
--	 * 1) mmu_notifier_retry was checked after taking mmu_lock, and
-+	 * 1) mmu_updating_retry was checked after taking mmu_lock, and
- 	 * 2) mmu_lock is taken now.
- 	 *
- 	 * We still need to disable IRQs to prevent concurrent tear down
-@@ -3035,7 +3035,7 @@ void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
- 		return;
- 
- 	/*
--	 * mmu_notifier_retry() was successful and mmu_lock is held, so
-+	 * mmu_updating_retry was successful and mmu_lock is held, so
- 	 * the pmd can't be split from under us.
- 	 */
- 	fault->goal_level = fault->req_level;
-@@ -4182,7 +4182,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
- 		return true;
- 
- 	return fault->slot &&
--	       mmu_notifier_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
-+	       mmu_updating_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
- }
- 
- static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-@@ -4206,7 +4206,7 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
- 	if (r)
- 		return r;
- 
--	mmu_seq = vcpu->kvm->mmu_notifier_seq;
-+	mmu_seq = vcpu->kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	r = kvm_faultin_pfn(vcpu, fault);
-@@ -6023,7 +6023,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 
- 	write_lock(&kvm->mmu_lock);
- 
--	kvm_inc_notifier_count(kvm, gfn_start, gfn_end);
-+	kvm_mmu_updating_begin(kvm, gfn_start, gfn_end);
- 
- 	flush = __kvm_zap_rmaps(kvm, gfn_start, gfn_end);
- 
-@@ -6037,7 +6037,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 		kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
- 						   gfn_end - gfn_start);
- 
--	kvm_dec_notifier_count(kvm, gfn_start, gfn_end);
-+	kvm_mmu_updating_end(kvm, gfn_start, gfn_end);
- 
- 	write_unlock(&kvm->mmu_lock);
- }
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index 2448fa8d8438..acf7e41aa02b 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -589,7 +589,7 @@ static void FNAME(pte_prefetch)(struct kvm_vcpu *vcpu, struct guest_walker *gw,
- 	 * If addresses are being invalidated, skip prefetching to avoid
- 	 * accidentally prefetching those addresses.
- 	 */
--	if (unlikely(vcpu->kvm->mmu_notifier_count))
-+	if (unlikely(vcpu->kvm->mmu_updating_count))
- 		return;
- 
- 	if (sp->role.direct)
-@@ -838,7 +838,7 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
- 	else
- 		fault->max_level = walker.level;
- 
--	mmu_seq = vcpu->kvm->mmu_notifier_seq;
-+	mmu_seq = vcpu->kvm->mmu_updating_seq;
- 	smp_rmb();
- 
- 	r = kvm_faultin_pfn(vcpu, fault);
+ 		m.slot = id | (i << 16);
+ 		m.flags = 0;
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index e9153b54e2a4..c262ebb168a7 100644
+index c262ebb168a7..1b203c8aa696 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -765,10 +765,10 @@ struct kvm {
+@@ -44,6 +44,7 @@
  
- #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
- 	struct mmu_notifier mmu_notifier;
--	unsigned long mmu_notifier_seq;
--	long mmu_notifier_count;
--	gfn_t mmu_notifier_range_start;
--	gfn_t mmu_notifier_range_end;
-+	unsigned long mmu_updating_seq;
-+	long mmu_updating_count;
-+	gfn_t mmu_updating_range_start;
-+	gfn_t mmu_updating_range_end;
- #endif
- 	struct list_head devices;
- 	u64 manual_dirty_log_protect;
-@@ -1362,8 +1362,8 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
- void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
- #endif
+ #include <asm/kvm_host.h>
+ #include <linux/kvm_dirty_ring.h>
++#include <linux/memfile_notifier.h>
  
--void kvm_inc_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
--void kvm_dec_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
-+void kvm_mmu_updating_begin(struct kvm *kvm, gfn_t start, gfn_t end);
-+void kvm_mmu_updating_end(struct kvm *kvm, gfn_t start, gfn_t end);
+ #ifndef KVM_MAX_VCPU_IDS
+ #define KVM_MAX_VCPU_IDS KVM_MAX_VCPUS
+@@ -576,8 +577,16 @@ struct kvm_memory_slot {
+ 	u32 flags;
+ 	short id;
+ 	u16 as_id;
++	struct file *private_file;
++	loff_t private_offset;
++	struct memfile_notifier notifier;
+ };
  
- long kvm_arch_dev_ioctl(struct file *filp,
- 			unsigned int ioctl, unsigned long arg);
-@@ -1901,42 +1901,42 @@ extern const struct kvm_stats_header kvm_vcpu_stats_header;
- extern const struct _kvm_stats_desc kvm_vcpu_stats_desc[];
- 
- #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
--static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
-+static inline int mmu_updating_retry(struct kvm *kvm, unsigned long mmu_seq)
++static inline bool kvm_slot_can_be_private(const struct kvm_memory_slot *slot)
++{
++	return slot && (slot->flags & KVM_MEM_PRIVATE);
++}
++
+ static inline bool kvm_slot_dirty_track_enabled(const struct kvm_memory_slot *slot)
  {
--	if (unlikely(kvm->mmu_notifier_count))
-+	if (unlikely(kvm->mmu_updating_count))
- 		return 1;
- 	/*
--	 * Ensure the read of mmu_notifier_count happens before the read
--	 * of mmu_notifier_seq.  This interacts with the smp_wmb() in
-+	 * Ensure the read of mmu_updating_count happens before the read
-+	 * of mmu_updating_seq.  This interacts with the smp_wmb() in
- 	 * mmu_notifier_invalidate_range_end to make sure that the caller
--	 * either sees the old (non-zero) value of mmu_notifier_count or
--	 * the new (incremented) value of mmu_notifier_seq.
-+	 * either sees the old (non-zero) value of mmu_updating_count or
-+	 * the new (incremented) value of mmu_updating_seq.
- 	 * PowerPC Book3s HV KVM calls this under a per-page lock
- 	 * rather than under kvm->mmu_lock, for scalability, so
- 	 * can't rely on kvm->mmu_lock to keep things ordered.
- 	 */
- 	smp_rmb();
--	if (kvm->mmu_notifier_seq != mmu_seq)
-+	if (kvm->mmu_updating_seq != mmu_seq)
- 		return 1;
- 	return 0;
- }
+ 	return slot->flags & KVM_MEM_LOG_DIRTY_PAGES;
+@@ -1109,9 +1118,9 @@ enum kvm_mr_change {
+ };
  
--static inline int mmu_notifier_retry_gfn(struct kvm *kvm,
-+static inline int mmu_updating_retry_gfn(struct kvm *kvm,
- 					 unsigned long mmu_seq,
- 					 gfn_t gfn)
- {
- 	lockdep_assert_held(&kvm->mmu_lock);
- 	/*
--	 * If mmu_notifier_count is non-zero, then the range maintained by
-+	 * If mmu_updating_count is non-zero, then the range maintained by
- 	 * kvm_mmu_notifier_invalidate_range_start contains all addresses that
- 	 * might be being invalidated. Note that it may include some false
- 	 * positives, due to shortcuts when handing concurrent invalidations.
- 	 */
--	if (unlikely(kvm->mmu_notifier_count) &&
--	    gfn >= kvm->mmu_notifier_range_start &&
--	    gfn < kvm->mmu_notifier_range_end)
-+	if (unlikely(kvm->mmu_updating_count) &&
-+	    gfn >= kvm->mmu_updating_range_start &&
-+	    gfn < kvm->mmu_updating_range_end)
- 		return 1;
--	if (kvm->mmu_notifier_seq != mmu_seq)
-+	if (kvm->mmu_updating_seq != mmu_seq)
- 		return 1;
- 	return 0;
- }
+ int kvm_set_memory_region(struct kvm *kvm,
+-			  const struct kvm_userspace_memory_region *mem);
++			  const struct kvm_user_mem_region *mem);
+ int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region *mem);
++			    const struct kvm_user_mem_region *mem);
+ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
+ void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
+ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index a36e78710382..c467c69b7ad7 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -103,6 +103,33 @@ struct kvm_userspace_memory_region {
+ 	__u64 userspace_addr; /* start of the userspace allocated memory */
+ };
+ 
++struct kvm_userspace_memory_region_ext {
++	struct kvm_userspace_memory_region region;
++	__u64 private_offset;
++	__u32 private_fd;
++	__u32 pad1;
++	__u64 pad2[14];
++};
++
++#ifdef __KERNEL__
++/*
++ * kvm_user_mem_region is a kernel-only alias of kvm_userspace_memory_region_ext
++ * that "unpacks" kvm_userspace_memory_region so that KVM can directly access
++ * all fields from the top-level "extended" region.
++ */
++struct kvm_user_mem_region {
++	__u32 slot;
++	__u32 flags;
++	__u64 guest_phys_addr;
++	__u64 memory_size;
++	__u64 userspace_addr;
++	__u64 private_offset;
++	__u32 private_fd;
++	__u32 pad1;
++	__u64 pad2[14];
++};
++#endif
++
+ /*
+  * The bit 0 ~ bit 15 of kvm_memory_region::flags are visible for userspace,
+  * other bits are reserved for kvm internal use which are defined in
+@@ -110,6 +137,7 @@ struct kvm_userspace_memory_region {
+  */
+ #define KVM_MEM_LOG_DIRTY_PAGES	(1UL << 0)
+ #define KVM_MEM_READONLY	(1UL << 1)
++#define KVM_MEM_PRIVATE		(1UL << 2)
+ 
+ /* for KVM_IRQ_LINE */
+ struct kvm_irq_level {
+diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+index a8c5c9f06b3c..ccaff13cc5b8 100644
+--- a/virt/kvm/Kconfig
++++ b/virt/kvm/Kconfig
+@@ -72,3 +72,6 @@ config KVM_XFER_TO_GUEST_WORK
+ 
+ config HAVE_KVM_PM_NOTIFIER
+        bool
++
++config HAVE_KVM_PRIVATE_MEM
++       bool
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4d7f0e72366f..3ae4944b9f15 100644
+index 3ae4944b9f15..230c8ff9659c 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -698,30 +698,29 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
- 
- 	/*
- 	 * .change_pte() must be surrounded by .invalidate_range_{start,end}().
--	 * If mmu_notifier_count is zero, then no in-progress invalidations,
-+	 * If mmu_updating_count is zero, then no in-progress invalidations,
- 	 * including this one, found a relevant memslot at start(); rechecking
- 	 * memslots here is unnecessary.  Note, a false positive (count elevated
- 	 * by a different invalidation) is sub-optimal but functionally ok.
- 	 */
- 	WARN_ON_ONCE(!READ_ONCE(kvm->mn_active_invalidate_count));
--	if (!READ_ONCE(kvm->mmu_notifier_count))
-+	if (!READ_ONCE(kvm->mmu_updating_count))
- 		return;
- 
- 	kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
- }
- 
--void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
--				   unsigned long end)
-+void kvm_mmu_updating_begin(struct kvm *kvm, gfn_t start, gfn_t end)
- {
- 	/*
- 	 * The count increase must become visible at unlock time as no
- 	 * spte can be established without taking the mmu_lock and
- 	 * count is also read inside the mmu_lock critical section.
- 	 */
--	kvm->mmu_notifier_count++;
--	if (likely(kvm->mmu_notifier_count == 1)) {
--		kvm->mmu_notifier_range_start = start;
--		kvm->mmu_notifier_range_end = end;
-+	kvm->mmu_updating_count++;
-+	if (likely(kvm->mmu_updating_count == 1)) {
-+		kvm->mmu_updating_range_start = start;
-+		kvm->mmu_updating_range_end = end;
- 	} else {
- 		/*
- 		 * Fully tracking multiple concurrent ranges has diminishing
-@@ -732,10 +731,10 @@ void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
- 		 * accumulate and persist until all outstanding invalidates
- 		 * complete.
- 		 */
--		kvm->mmu_notifier_range_start =
--			min(kvm->mmu_notifier_range_start, start);
--		kvm->mmu_notifier_range_end =
--			max(kvm->mmu_notifier_range_end, end);
-+		kvm->mmu_updating_range_start =
-+			min(kvm->mmu_updating_range_start, start);
-+		kvm->mmu_updating_range_end =
-+			max(kvm->mmu_updating_range_end, end);
+@@ -1508,7 +1508,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
  	}
  }
  
-@@ -748,7 +747,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 		.end		= range->end,
- 		.pte		= __pte(0),
- 		.handler	= kvm_unmap_gfn_range,
--		.on_lock	= kvm_inc_notifier_count,
-+		.on_lock	= kvm_mmu_updating_begin,
- 		.on_unlock	= kvm_arch_guest_memory_reclaimed,
- 		.flush_on_ret	= true,
- 		.may_block	= mmu_notifier_range_blockable(range),
-@@ -759,7 +758,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	/*
- 	 * Prevent memslot modification between range_start() and range_end()
- 	 * so that conditionally locking provides the same result in both
--	 * functions.  Without that guarantee, the mmu_notifier_count
-+	 * functions.  Without that guarantee, the mmu_updating_count
- 	 * adjustments will be imbalanced.
- 	 *
- 	 * Pairs with the decrement in range_end().
-@@ -775,7 +774,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	 * any given time, and the caches themselves can check for hva overlap,
- 	 * i.e. don't need to rely on memslot overlap checks for performance.
- 	 * Because this runs without holding mmu_lock, the pfn caches must use
--	 * mn_active_invalidate_count (see above) instead of mmu_notifier_count.
-+	 * mn_active_invalidate_count (see above) instead of mmu_updating_count.
- 	 */
- 	gfn_to_pfn_cache_invalidate_start(kvm, range->start, range->end,
- 					  hva_range.may_block);
-@@ -785,22 +784,21 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 	return 0;
- }
- 
--void kvm_dec_notifier_count(struct kvm *kvm, unsigned long start,
--				   unsigned long end)
-+void kvm_mmu_updating_end(struct kvm *kvm, gfn_t start, gfn_t end)
+-static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
++static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
  {
- 	/*
- 	 * This sequence increase will notify the kvm page fault that
- 	 * the page that is going to be mapped in the spte could have
- 	 * been freed.
- 	 */
--	kvm->mmu_notifier_seq++;
-+	kvm->mmu_updating_seq++;
- 	smp_wmb();
- 	/*
- 	 * The above sequence increase must be visible before the
- 	 * below count decrease, which is ensured by the smp_wmb above
--	 * in conjunction with the smp_rmb in mmu_notifier_retry().
-+	 * in conjunction with the smp_rmb in mmu_updating_retry().
- 	 */
--	kvm->mmu_notifier_count--;
-+	kvm->mmu_updating_count--;
- }
+ 	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
  
- static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
-@@ -812,7 +810,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 		.end		= range->end,
- 		.pte		= __pte(0),
- 		.handler	= (void *)kvm_null_fn,
--		.on_lock	= kvm_dec_notifier_count,
-+		.on_lock	= kvm_mmu_updating_end,
- 		.on_unlock	= (void *)kvm_null_fn,
- 		.flush_on_ret	= false,
- 		.may_block	= mmu_notifier_range_blockable(range),
-@@ -833,7 +831,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 	if (wake)
- 		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
- 
--	BUG_ON(kvm->mmu_notifier_count < 0);
-+	BUG_ON(kvm->mmu_updating_count < 0);
- }
- 
- static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
-diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
-index ab519f72f2cd..aa6d24966a76 100644
---- a/virt/kvm/pfncache.c
-+++ b/virt/kvm/pfncache.c
-@@ -112,27 +112,27 @@ static inline bool mmu_notifier_retry_cache(struct kvm *kvm, unsigned long mmu_s
+@@ -1902,7 +1902,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+  * Must be called holding kvm->slots_lock for write.
+  */
+ int __kvm_set_memory_region(struct kvm *kvm,
+-			    const struct kvm_userspace_memory_region *mem)
++			    const struct kvm_user_mem_region *mem)
  {
- 	/*
- 	 * mn_active_invalidate_count acts for all intents and purposes
--	 * like mmu_notifier_count here; but the latter cannot be used
-+	 * like mmu_updating_count here; but the latter cannot be used
- 	 * here because the invalidation of caches in the mmu_notifier
--	 * event occurs _before_ mmu_notifier_count is elevated.
-+	 * event occurs _before_ mmu_updating_count is elevated.
- 	 *
- 	 * Note, it does not matter that mn_active_invalidate_count
- 	 * is not protected by gpc->lock.  It is guaranteed to
- 	 * be elevated before the mmu_notifier acquires gpc->lock, and
--	 * isn't dropped until after mmu_notifier_seq is updated.
-+	 * isn't dropped until after mmu_updating_seq is updated.
- 	 */
- 	if (kvm->mn_active_invalidate_count)
- 		return true;
+ 	struct kvm_memory_slot *old, *new;
+ 	struct kvm_memslots *slots;
+@@ -2006,7 +2006,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
  
- 	/*
- 	 * Ensure mn_active_invalidate_count is read before
--	 * mmu_notifier_seq.  This pairs with the smp_wmb() in
-+	 * mmu_updating_seq.  This pairs with the smp_wmb() in
- 	 * mmu_notifier_invalidate_range_end() to guarantee either the
- 	 * old (non-zero) value of mn_active_invalidate_count or the
--	 * new (incremented) value of mmu_notifier_seq is observed.
-+	 * new (incremented) value of mmu_updating_seq is observed.
- 	 */
- 	smp_rmb();
--	return kvm->mmu_notifier_seq != mmu_seq;
-+	return kvm->mmu_updating_seq != mmu_seq;
+ int kvm_set_memory_region(struct kvm *kvm,
+-			  const struct kvm_userspace_memory_region *mem)
++			  const struct kvm_user_mem_region *mem)
+ {
+ 	int r;
+ 
+@@ -2018,7 +2018,7 @@ int kvm_set_memory_region(struct kvm *kvm,
+ EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+ 
+ static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
+-					  struct kvm_userspace_memory_region *mem)
++					  struct kvm_user_mem_region *mem)
+ {
+ 	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+ 		return -EINVAL;
+@@ -4608,6 +4608,33 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+ 	return fd;
  }
  
- static kvm_pfn_t hva_to_pfn_retry(struct kvm *kvm, struct gfn_to_pfn_cache *gpc)
-@@ -155,7 +155,7 @@ static kvm_pfn_t hva_to_pfn_retry(struct kvm *kvm, struct gfn_to_pfn_cache *gpc)
- 	gpc->valid = false;
++#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
++do {										\
++	BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=		\
++		     offsetof(struct kvm_userspace_memory_region, field));	\
++	BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=		\
++		     sizeof_field(struct kvm_userspace_memory_region, field));	\
++} while (0)
++
++#define SANITY_CHECK_MEM_REGION_EXT_FIELD(field)					\
++do {											\
++	BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=			\
++		     offsetof(struct kvm_userspace_memory_region_ext, field));		\
++	BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=			\
++		     sizeof_field(struct kvm_userspace_memory_region_ext, field));	\
++} while (0)
++
++static void kvm_sanity_check_user_mem_region_alias(void)
++{
++	SANITY_CHECK_MEM_REGION_FIELD(slot);
++	SANITY_CHECK_MEM_REGION_FIELD(flags);
++	SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
++	SANITY_CHECK_MEM_REGION_FIELD(memory_size);
++	SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
++	SANITY_CHECK_MEM_REGION_EXT_FIELD(private_offset);
++	SANITY_CHECK_MEM_REGION_EXT_FIELD(private_fd);
++}
++
+ static long kvm_vm_ioctl(struct file *filp,
+ 			   unsigned int ioctl, unsigned long arg)
+ {
+@@ -4631,14 +4658,35 @@ static long kvm_vm_ioctl(struct file *filp,
+ 		break;
+ 	}
+ 	case KVM_SET_USER_MEMORY_REGION: {
+-		struct kvm_userspace_memory_region kvm_userspace_mem;
++		struct kvm_user_mem_region mem;
++		unsigned long size;
++		u32 flags;
++
++		kvm_sanity_check_user_mem_region_alias();
++
++		memset(&mem, 0, sizeof(mem));
  
- 	do {
--		mmu_seq = kvm->mmu_notifier_seq;
-+		mmu_seq = kvm->mmu_updating_seq;
- 		smp_rmb();
+ 		r = -EFAULT;
+-		if (copy_from_user(&kvm_userspace_mem, argp,
+-						sizeof(kvm_userspace_mem)))
++
++		if (get_user(flags,
++			(u32 __user *)(argp + offsetof(typeof(mem), flags))))
++			goto out;
++
++		if (flags & KVM_MEM_PRIVATE) {
++			r = -EINVAL;
++			goto out;
++		}
++
++		size = sizeof(struct kvm_userspace_memory_region);
++
++		if (copy_from_user(&mem, argp, size))
++			goto out;
++
++		r = -EINVAL;
++		if ((flags ^ mem.flags) & KVM_MEM_PRIVATE)
+ 			goto out;
  
- 		write_unlock_irq(&gpc->lock);
+-		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
++		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+ 		break;
+ 	}
+ 	case KVM_GET_DIRTY_LOG: {
 -- 
 2.25.1
 
