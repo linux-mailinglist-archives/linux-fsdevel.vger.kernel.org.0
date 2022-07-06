@@ -2,192 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A6D8569563
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 00:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C13A85695E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 01:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233917AbiGFWiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Jul 2022 18:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40364 "EHLO
+        id S233543AbiGFXdk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Jul 2022 19:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233491AbiGFWiD (ORCPT
+        with ESMTP id S231312AbiGFXdj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Jul 2022 18:38:03 -0400
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0472B1BC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jul 2022 15:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1657147082; x=1688683082;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6qnLDe/yg7WUXPj4IO0fRwUVQrjauWYs9yVOFR0aA/I=;
-  b=MmklzOh6EsPVf+a59NYG7thwCn7JQa8o6u6lLUl01QIV2uFmqF+bryeo
-   r4J9RQhLxX+3omB+fKWxtaDPh2GkSPT3U+0LA6G/dT1hCIgk+cFSeGjuF
-   zHHLCoNt+HgD/EhDechld6LyYneZH7xWR13Al7rgPy9ZLNySu17N2qSDs
-   k72VBZcmFkmHgaCmyUqd91A16kBh0J7IvgX7KgFga60LQWIcHt8GNqrjq
-   Cr6DRDpWObAbKBOeu0LOFuoySTRnvaUuH0oQsAP/vprELO+5y3G+zgP7O
-   1GJ8c6vrQ8ZIC5Zg/eYAwX81B3dMGdTveXTRs3D7Qe+Nc3J0jXtEaOoV+
-   g==;
-X-IronPort-AV: E=Sophos;i="5.92,251,1650902400"; 
-   d="scan'208";a="209925915"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Jul 2022 06:38:01 +0800
-IronPort-SDR: dmy/gw8jK+/BUSGhUO4CISbmwbQ4hfDQ1rMSzwvj47JUV+M7hOa8daxoIsqLsnSK0xUWbd876Y
- GjFTUNeEBrAncr2UocFaeSnGZjP5Y0+TRpGKyzYciXiRXC5A7DsfPm1C9dtfeByRKgXS8am1n8
- VC5zfE/bcdrkCQQjnQEe0FokxwOMzE1ikKoyhQ+Gmjvi/XWOKGeg0pNSvZ1yyOG80ySZGqQKx+
- Jcsy0vuHMxgg2bpf3F95Gl16OB3Bb6RLMH7NkzR9e5rPtjdRYOuGdErsDjup7bGl3w7UbhLZvx
- ix2rPSJEiZlgt5p7bQ5IU4P4
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Jul 2022 14:59:47 -0700
-IronPort-SDR: 3tpw/GKzKZDeHtZVb1bqPD3qUKrWqN9av4Mg3SXaibAStQRjz0tBXtBl8/eXqnCfrNyS3QIN3F
- g49fp6AMbTHGB34gKrdqZ6hKBi9RjM8ROGJUd5UdjmksRYfYv8wCFwCzG/zQuDJrNq4kyxk09n
- mgdChGuyE+8CqOPjR3ZzDoDsIf9vm89ZFbxI4IELnhww26FUZwXls8V82xO7FbXRHEHSMaeuZp
- Wknaaaezvf2BqoZIEMwRsA7hD3RAbbl7t/jrXrva5kelf/FFPWJwrXf9ZqJjeZi1dOxGecmoSY
- CNo=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Jul 2022 15:38:02 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4LdZF54Xt3z1Rwnm
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Jul 2022 15:38:01 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1657147076; x=1659739077; bh=6qnLDe/yg7WUXPj4IO0fRwUVQrjauWYs9yV
-        OFR0aA/I=; b=h9HBHIsp+uufAe60GPD0mLTMw0xwsXiH3GXdODQQcpHzf/18rCt
-        v5dst8X1xkW5dir+LG8yLMOLK0K6iZNqN5BJZNyV5cNtSnY2ifPvLBLtjYvGSPzR
-        Eo5FFBMUobHwO3rhFbjOeYA3N1IqkJZaUEkwFY7gVsn+IVy8DjVpt1rRpuWJ4g62
-        t0k0hIa5a+1z3CvoaJv4IUNCZ15vB06QKD4eUmxWzoDF74l0V7n9TiP7d7grPqXA
-        VgUeL4fHpX3sU0IdkYovJ/SqJBbHkWruoLtyRf/r5pIl4YqUABb8JcmkNx9TG6xp
-        pxrMMhyUmxrggGlBENoNE9sialZE4U2UTmA==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id mlw3EOo1ohBY for <linux-fsdevel@vger.kernel.org>;
-        Wed,  6 Jul 2022 15:37:56 -0700 (PDT)
-Received: from [10.225.163.110] (unknown [10.225.163.110])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4LdZDz1csyz1RtVk;
-        Wed,  6 Jul 2022 15:37:55 -0700 (PDT)
-Message-ID: <061ce84e-794d-e235-657a-238dd2308cf5@opensource.wdc.com>
-Date:   Thu, 7 Jul 2022 07:37:53 +0900
+        Wed, 6 Jul 2022 19:33:39 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E2D2C13F;
+        Wed,  6 Jul 2022 16:33:38 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-fe023ab520so23275476fac.10;
+        Wed, 06 Jul 2022 16:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dzOHVv+XbHrZsgZSc3OOkERaguxtxPA+pM05lL+6VEQ=;
+        b=TP6mmgadAGE06un4m7cHhzx09Aza0OFLYZrPwuVrd+U5Il94rd+JBQQulyK3OvzSFB
+         QD/fryC7srd5WiUkne7pSs+ZiY4gG5eyP7bmoRE3w43DSRhflWl1F0XmqQXlzibTm4NL
+         7jWxpT4UvTah1DZxv4XSGjXjdjywgMVCQtDd7dZIvqj6MZ5vl7+YooKPZEd9aFmEhUjI
+         3KEqpFYL7pCLFE0uXW1Rw1qY6rJxsSGm3Rcnc9Jr+kB+k3T7LpC692ib6zHcl0X/I0+y
+         kOYoZGdmdqcQlseB8QLuH8RbmMViP52kjUrgK7BBn5b0l9ELA9FIL814V8dU3tWA86tV
+         MEvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dzOHVv+XbHrZsgZSc3OOkERaguxtxPA+pM05lL+6VEQ=;
+        b=6GmkNOry4qLAGW6WvXKmjIj3eJunKTGYjgNpFus8kl/ujFu42mb7LbyxDJXNHRU3+v
+         Qrxp8N3xkmCHN6z7cfgGJGG65ZmLYZho4VfDFeablZRtMcqbzw1DRGb9qUUFHezzJE+l
+         A4IR8MX3P6z/Z9HkDmt7YGrzH04j75qLQRm/HzxpQ9JEMCwCikuO9kHEvNN91AMJ5/CC
+         052dYvrQW0hXFXfTXMhOSv1bcFCM2Iz8Eo8qXS8QFTRgPj1BnR/J9eeOgRWEGkmo3H3w
+         2HwQUUK2HY2BpgBDzUqFmSgGrrR2ziaArnkqd/EFHO1+cHERcUtPNQ7hz+64+MZZGF+/
+         Kv9w==
+X-Gm-Message-State: AJIora+opnPDGYVyRE1WZomZ2yn/LZg60CsyTHk/7T7YI7oIDe5+ONBA
+        vdfzYWihHbbwD3Kropouybo=
+X-Google-Smtp-Source: AGRyM1uAlBkPBvG9rksI3+esyDpbN2qye6njZ6On8tiP2U/lcinWRfHTouianYxDWxwy6R7mWpKQYA==
+X-Received: by 2002:a05:6870:a70c:b0:10c:3bb7:ea15 with SMTP id g12-20020a056870a70c00b0010c3bb7ea15mr104203oam.69.1657150417374;
+        Wed, 06 Jul 2022 16:33:37 -0700 (PDT)
+Received: from localhost.localdomain (host-79-53-109-127.retail.telecomitalia.it. [79.53.109.127])
+        by smtp.gmail.com with ESMTPSA id f19-20020a056830057300b0060bd2d06a1csm17583363otc.47.2022.07.06.16.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 16:33:36 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH] aio: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Thu,  7 Jul 2022 01:33:28 +0200
+Message-Id: <20220706233328.18582-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] zonefs: Call page_address() on page acquired with
- GFP_KERNEL flag
-Content-Language: en-US
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>
-References: <20220705142202.24603-1-fmdefrancesco@gmail.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220705142202.24603-1-fmdefrancesco@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/5/22 23:22, Fabio M. De Francesco wrote:
-> zonefs_read_super() acquires a page with alloc_page(GFP_KERNEL). That
-> page cannot come from ZONE_HIGHMEM, thus there's no need to map it with
-> kmap().
-> 
-> Therefore, use a plain page_address() on that page.
-> 
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+The use of kmap() and kmap_atomic() are being deprecated in favor of
+kmap_local_page().
 
-Applied to for-5.20. Thanks !
+With kmap_local_page(), the mappings are per thread, CPU local and not
+globally visible. Furthermore, the mappings can be acquired from any
+context (including interrupts).
 
-> ---
->  fs/zonefs/super.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 053299758deb..bd4e4be97a68 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -1687,11 +1687,11 @@ static int zonefs_read_super(struct super_block *sb)
->  	if (ret)
->  		goto free_page;
->  
-> -	super = kmap(page);
-> +	super = page_address(page);
->  
->  	ret = -EINVAL;
->  	if (le32_to_cpu(super->s_magic) != ZONEFS_MAGIC)
-> -		goto unmap;
-> +		goto free_page;
->  
->  	stored_crc = le32_to_cpu(super->s_crc);
->  	super->s_crc = 0;
-> @@ -1699,14 +1699,14 @@ static int zonefs_read_super(struct super_block *sb)
->  	if (crc != stored_crc) {
->  		zonefs_err(sb, "Invalid checksum (Expected 0x%08x, got 0x%08x)",
->  			   crc, stored_crc);
-> -		goto unmap;
-> +		goto free_page;
->  	}
->  
->  	sbi->s_features = le64_to_cpu(super->s_features);
->  	if (sbi->s_features & ~ZONEFS_F_DEFINED_FEATURES) {
->  		zonefs_err(sb, "Unknown features set 0x%llx\n",
->  			   sbi->s_features);
-> -		goto unmap;
-> +		goto free_page;
->  	}
->  
->  	if (sbi->s_features & ZONEFS_F_UID) {
-> @@ -1714,7 +1714,7 @@ static int zonefs_read_super(struct super_block *sb)
->  				       le32_to_cpu(super->s_uid));
->  		if (!uid_valid(sbi->s_uid)) {
->  			zonefs_err(sb, "Invalid UID feature\n");
-> -			goto unmap;
-> +			goto free_page;
->  		}
->  	}
->  
-> @@ -1723,7 +1723,7 @@ static int zonefs_read_super(struct super_block *sb)
->  				       le32_to_cpu(super->s_gid));
->  		if (!gid_valid(sbi->s_gid)) {
->  			zonefs_err(sb, "Invalid GID feature\n");
-> -			goto unmap;
-> +			goto free_page;
->  		}
->  	}
->  
-> @@ -1732,14 +1732,12 @@ static int zonefs_read_super(struct super_block *sb)
->  
->  	if (memchr_inv(super->s_reserved, 0, sizeof(super->s_reserved))) {
->  		zonefs_err(sb, "Reserved area is being used\n");
-> -		goto unmap;
-> +		goto free_page;
->  	}
->  
->  	import_uuid(&sbi->s_uuid, super->s_uuid);
->  	ret = 0;
->  
-> -unmap:
-> -	kunmap(page);
->  free_page:
->  	__free_page(page);
->  
+Therefore, use kmap_local_page() in aio.c because these mappings are per
+thread, CPU local, and not globally visible.
 
+Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+HIGHMEM64GB enabled.
 
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+
+I've tested with "./check -g aio". The tests in this group fail 3/26
+times, with and without my patch. Therefore, these changes don't introduce
+further errors.
+
+ fs/aio.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 3c249b938632..343fea0c6d1a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ctx->user_id = ctx->mmap_base;
+ 	ctx->nr_events = nr_events; /* trusted copy */
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->nr = nr_events;	/* user copy */
+ 	ring->id = ~0U;
+ 	ring->head = ring->tail = 0;
+@@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ring->compat_features = AIO_RING_COMPAT_FEATURES;
+ 	ring->incompat_features = AIO_RING_INCOMPAT_FEATURES;
+ 	ring->header_length = sizeof(struct aio_ring);
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	return 0;
+@@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+ 					 * we are protected from page migration
+ 					 * changes ring_pages by ->ring_lock.
+ 					 */
+-					ring = kmap_atomic(ctx->ring_pages[0]);
++					ring = kmap_local_page(ctx->ring_pages[0]);
+ 					ring->id = ctx->id;
+-					kunmap_atomic(ring);
++					kunmap_local(ring);
+ 					return 0;
+ 				}
+ 
+@@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx *ctx)
+ 		 * against ctx->completed_events below will make sure we do the
+ 		 * safe/right thing.
+ 		 */
+-		ring = kmap_atomic(ctx->ring_pages[0]);
++		ring = kmap_local_page(ctx->ring_pages[0]);
+ 		head = ring->head;
+-		kunmap_atomic(ring);
++		kunmap_local(ring);
+ 
+ 		refill_reqs_available(ctx, head, ctx->tail);
+ 	}
+@@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 	if (++tail >= ctx->nr_events)
+ 		tail = 0;
+ 
+-	ev_page = kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
++	ev_page = kmap_local_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 	event = ev_page + pos % AIO_EVENTS_PER_PAGE;
+ 
+ 	*event = iocb->ki_res;
+ 
+-	kunmap_atomic(ev_page);
++	kunmap_local(ev_page);
+ 	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 
+ 	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+@@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 
+ 	ctx->tail = tail;
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	ring->tail = tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	ctx->completed_events++;
+@@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 	mutex_lock(&ctx->ring_lock);
+ 
+ 	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	tail = ring->tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 
+ 	/*
+ 	 * Ensure that once we've read the current tail pointer, that
+@@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		avail = min(avail, nr - ret);
+ 		avail = min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+ 
+-		ev = kmap(page);
++		ev = kmap_local_page(page);
+ 		copy_ret = copy_to_user(event + ret, ev + pos,
+ 					sizeof(*ev) * avail);
+-		kunmap(page);
++		kunmap_local(ev);
+ 
+ 		if (unlikely(copy_ret)) {
+ 			ret = -EFAULT;
+@@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		head %= ctx->nr_events;
+ 	}
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->head = head;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	pr_debug("%li  h%u t%u\n", ret, head, tail);
 -- 
-Damien Le Moal
-Western Digital Research
+2.36.1
+
