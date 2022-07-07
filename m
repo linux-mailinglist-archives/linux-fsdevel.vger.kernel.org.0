@@ -2,50 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9A556A1FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 14:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3043256A201
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 14:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235513AbiGGMcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 08:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
+        id S235516AbiGGMcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 08:32:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235514AbiGGMca (ORCPT
+        with ESMTP id S235514AbiGGMce (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 08:32:30 -0400
+        Thu, 7 Jul 2022 08:32:34 -0400
 Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4852A205F7;
-        Thu,  7 Jul 2022 05:32:30 -0700 (PDT)
-Received: by mail-pg1-f174.google.com with SMTP id 145so18217454pga.12;
-        Thu, 07 Jul 2022 05:32:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF341222AC;
+        Thu,  7 Jul 2022 05:32:33 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 145so18217772pga.12;
+        Thu, 07 Jul 2022 05:32:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0+3gGGHGSRYILkmDsrdHu4ItFEdxRLioJSHJJ5TE8ec=;
-        b=cSs9vZgE+tb2a7TBnoGBxyrAgHme3glfhV/BXSPFcj/6Go1VBaY5F1PBh+v5szLEt/
-         jlImtFArS4U43kVjaTPtT/FOaoJcCHwfRNb82ZXWpbek8iFpRwMlH+5+WiHgqPKLnh2N
-         OfLgpIzASwgIo3p/NcnC1aOIFS08/bbOJzQBnX0kJ1obYMqhnM6cyp1nKeS1UAVu+s3B
-         oMUaFome+GjtbPETuKpFPSwgbwMQFO031EuAaAp4i/SjJ4b1GWKHjCo8jozp/StwdR1S
-         Gf+xh94nLzdo1g7rtXvM+EGsis3xFqv0GbNMgk5RPC/nblBDY8BtqhHHRT5S32sfYCsW
-         gqEg==
-X-Gm-Message-State: AJIora9toFUhbdln6/yBnJhODnOeK0OP7kKFd4cOW7WzVtjmy6IwlodO
-        itMLp4jG0OJVKBgLr3Z2L74=
-X-Google-Smtp-Source: AGRyM1uKX4ZWeLr7/42CVS6WpTmR79kaOZ+VG4CggRVyf/GhbFknZMj8TV+3CmLndckVmJ2ccB8W0g==
-X-Received: by 2002:a05:6a00:170e:b0:525:4cac:fa65 with SMTP id h14-20020a056a00170e00b005254cacfa65mr52927549pfc.40.1657197149682;
-        Thu, 07 Jul 2022 05:32:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z1HV4QHwdZW8PPs0gTIR2eMtxWWt1aDvWNTekhaZT8k=;
+        b=wU/l/sbvQ9CEpPjzCOulPCs8BpLMJSOS+FojGj6jKnkxQCO2AaGUiej+4OX7B/Pzh9
+         BGngXKNK5gj0WP8JhQnpA+7WZ6Yropfi+pKnjcMi2yIzklRk1kkkNYeQwOC/8cGx+Jk2
+         rrm9nR3qti9MC0hVfAoH/YFdGi1hQTeQzBrhDP4ogOH+hw9X5f+uAtdr1FM9eHcZUtf/
+         icmFcEJ6O/35QIIkZi6GZpdGPfo5HN/UPBgBW4Y99vwwfYMFKWa1obrNmVp/W/EeG0uW
+         vfPZ3FTo2VKMwx7TcOL7W1Jss//huYlrmgwU7fvWxwGstUMrk6vDF+pFsxn5Le3AtQF2
+         D/LA==
+X-Gm-Message-State: AJIora9j7qGQlsO7y+kAuVlwx7eyfT9GE/eSpGUsslNkDF5b3Jg8cSnG
+        REmI8ue/x7H/Zjw3OINyhf0=
+X-Google-Smtp-Source: AGRyM1vIw/tbTbRwqCQXlW5nAqwsZsOA8IERz773Wh8aTUOKsNuWpWWP85jYTorYk6Algvu94sMVUA==
+X-Received: by 2002:a63:9142:0:b0:412:b171:b6ac with SMTP id l63-20020a639142000000b00412b171b6acmr4582053pge.206.1657197153519;
+        Thu, 07 Jul 2022 05:32:33 -0700 (PDT)
 Received: from localhost.localdomain ([211.49.23.9])
-        by smtp.gmail.com with ESMTPSA id u13-20020a63454d000000b0040d2224ae04sm25825227pgk.76.2022.07.07.05.32.27
+        by smtp.gmail.com with ESMTPSA id u13-20020a63454d000000b0040d2224ae04sm25825227pgk.76.2022.07.07.05.32.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 05:32:29 -0700 (PDT)
+        Thu, 07 Jul 2022 05:32:33 -0700 (PDT)
 From:   Namjae Jeon <linkinjeon@kernel.org>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         smfrench@gmail.com, hyc.lee@gmail.com, senozhatsky@chromium.org,
-        Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v6 0/3] ksmbd patches included vfs changes
-Date:   Thu,  7 Jul 2022 21:32:02 +0900
-Message-Id: <20220707123205.6902-1-linkinjeon@kernel.org>
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH v6 1/3] ksmbd: remove internal.h include
+Date:   Thu,  7 Jul 2022 21:32:03 +0900
+Message-Id: <20220707123205.6902-2-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220707123205.6902-1-linkinjeon@kernel.org>
+References: <20220707123205.6902-1-linkinjeon@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
@@ -59,55 +62,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset contains vfs changes that are needed to fix racy issue
-in ksmbd. Added the 1/3 patch by Al's additional review comment.
+Since vfs_path_lookup is exported, It should not be internal.
+Move vfs_path_lookup prototype in internal.h to linux/namei.h.
 
-Al Viro (1):
-  fs: introduce lock_rename_child() helper
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+---
+ fs/internal.h         | 2 --
+ fs/ksmbd/vfs.c        | 2 --
+ include/linux/namei.h | 2 ++
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
-Namjae Jeon (2):
-  ksmbd: remove internal.h include
-  ksmbd: fix racy issue from using ->d_parent and ->d_name
-
-v6:
-  - rename __lookup_hash() to lookup_one_qstr_excl and export.
-  - change dget() to dget_parent() in unlink.
-  - lock parent of open file in smb2_open() to make file_present
-    worthable.
-v5:
-  - add lock_rename_child() helper.
-  - remove d_is_symlink() check for new_path.dentry.
-  - use lock_rename_child() helper instead of lock_rename().
-  - use dget() instead of dget_parent().
-  - check that old_child is still hashed.
-  - directly check child->parent instead of using take_dentry_name_snapshot().
-v4:
-   - switch the order of 3/4 and 4/4 patch.
-   - fix vfs_path_parent_lookup() parameter description mismatch.
-v3:
-  - use dget_parent + take_dentry_name_snapshot() to check stability of source
-    rename in smb2_vfs_rename().
-v2:
-  - add filename_lock to avoid racy issue from fp->filename. (Sergey Senozhatsky)
-  - fix warning: variable 'old_dentry' is used uninitialized (kernel
-    test robot)
-
-Al Viro (1):
-  fs: introduce lock_rename_child() helper
-
-Namjae Jeon (2):
-  ksmbd: remove internal.h include
-  ksmbd: fix racy issue from using ->d_parent and ->d_name
-
- fs/internal.h         |   2 -
- fs/ksmbd/smb2pdu.c    | 146 ++++-----------
- fs/ksmbd/vfs.c        | 415 +++++++++++++++++-------------------------
- fs/ksmbd/vfs.h        |  19 +-
- fs/ksmbd/vfs_cache.c  |   5 +-
- fs/namei.c            | 103 ++++++++---
- include/linux/namei.h |   9 +
- 7 files changed, 299 insertions(+), 400 deletions(-)
-
+diff --git a/fs/internal.h b/fs/internal.h
+index 87e96b9024ce..c994f0408b29 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -58,8 +58,6 @@ extern int finish_clean_context(struct fs_context *fc);
+  */
+ extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
+ 			   struct path *path, struct path *root);
+-extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+-			   const char *, unsigned int, struct path *);
+ int do_rmdir(int dfd, struct filename *name);
+ int do_unlinkat(int dfd, struct filename *name);
+ int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+index 5d185564aef6..1770b30772da 100644
+--- a/fs/ksmbd/vfs.c
++++ b/fs/ksmbd/vfs.c
+@@ -18,8 +18,6 @@
+ #include <linux/sched/xacct.h>
+ #include <linux/crc32c.h>
+ 
+-#include "../internal.h"	/* for vfs_path_lookup */
+-
+ #include "glob.h"
+ #include "oplock.h"
+ #include "connection.h"
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index caeb08a98536..40c693525f79 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -63,6 +63,8 @@ extern struct dentry *kern_path_create(int, const char *, struct path *, unsigne
+ extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
+ extern void done_path_create(struct path *, struct dentry *);
+ extern struct dentry *kern_path_locked(const char *, struct path *);
++int vfs_path_lookup(struct dentry *, struct vfsmount *, const char *,
++		    unsigned int, struct path *);
+ 
+ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
+ extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
 -- 
 2.34.1
 
