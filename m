@@ -2,220 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F5A569DAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 10:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C91569DB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 10:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235174AbiGGImv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 04:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56972 "EHLO
+        id S235280AbiGGIpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 04:45:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235019AbiGGImu (ORCPT
+        with ESMTP id S232615AbiGGIpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 04:42:50 -0400
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5D5421AD
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jul 2022 01:42:48 -0700 (PDT)
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-        by gw2.atmark-techno.com (Postfix) with ESMTPS id 23F7720CA8
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jul 2022 17:42:48 +0900 (JST)
-Received: by mail-pf1-f200.google.com with SMTP id y37-20020a056a001ca500b00528bbf82c1eso2702355pfw.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jul 2022 01:42:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3KNJ0jvCuSTCRCLb61BgOL0HuOp/dDIh3Ds4jE5/Wd8=;
-        b=F4kvpR0SprEtNMkL0SY5eUDVLwG4hBN2JpcRLl4UoAyZGIgz+e2FaHLFgVATnhYO5l
-         Gu8eyocQB+iuLuDq4gpO8t07X4elHHn3GpJjxSOtuRhIkStqpYVaYwcaEhpyWAT0Ua/C
-         d0CrGHJoxKRpIHpEzcqNnE9YxRWv2CTMYL28jJo4P3bB3l46FZNQtpkSg4vLF8lMouLb
-         2CQdT86WwdQXafCbBR7bE7uDFW6IebIw+52WGagSs4jWZQjIweDLTjvF5v8ph7txGAMV
-         L3Mrj6rKMI5a6U5nsDCf5/+UWC1HRaiM2ykWg4D4zL1Yj5AARkxNzrse3oPRdn1/Xv/T
-         Pnrw==
-X-Gm-Message-State: AJIora8B0YPoLrwOTDtRhYJPlZnfQuKv7etWoipVdMc2u+Q1ATZXFx5E
-        lEfm3jVbQ0ZOpArq9lSlD8xiSHhVwVpR8U++JfEBtYQIKBftK27tNPV8zKBk/e0vHe1sF9xPfuf
-        WXo1bHv2SwaL1w4BLdPp2jzzk2SY=
-X-Received: by 2002:a17:902:ce8b:b0:16c:66d:c455 with SMTP id f11-20020a170902ce8b00b0016c066dc455mr6226720plg.41.1657183367154;
-        Thu, 07 Jul 2022 01:42:47 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sl6xaortDRQF+TsW10UlLhtxNJzNhgEA9NhVfM/GsCZojFjHwA/fsAEiLsvbH+YtNDguJMYA==
-X-Received: by 2002:a17:902:ce8b:b0:16c:66d:c455 with SMTP id f11-20020a170902ce8b00b0016c066dc455mr6226682plg.41.1657183366698;
-        Thu, 07 Jul 2022 01:42:46 -0700 (PDT)
-Received: from pc-zest.atmarktech (103.131.189.35.bc.googleusercontent.com. [35.189.131.103])
-        by smtp.gmail.com with ESMTPSA id n7-20020a170903110700b0016bfa097927sm4308856plh.249.2022.07.07.01.42.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jul 2022 01:42:46 -0700 (PDT)
-Received: from martinet by pc-zest.atmarktech with local (Exim 4.95)
-        (envelope-from <martinet@pc-zest>)
-        id 1o9N5x-009Ogn-2d;
-        Thu, 07 Jul 2022 17:42:45 +0900
-Date:   Thu, 7 Jul 2022 17:42:35 +0900
-From:   Dominique MARTINET <dominique.martinet@atmark-techno.com>
-To:     Yu Kuai <yukuai3@huawei.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: Re: Major btrfs fiemap slowdown on file with many extents once in
- cache (RCU stalls?) (Was: [PATCH 1/3] filemap: Correct the conditions for
- marking a folio as accessed)
-Message-ID: <Ysace25wh5BbLd5f@atmark-techno.com>
-References: <20220619151143.1054746-1-willy@infradead.org>
- <20220619151143.1054746-2-willy@infradead.org>
- <Yr1QwVW+sHWlAqKj@atmark-techno.com>
- <8cffd985-ba62-c4be-f9af-bb8314df8a67@huawei.com>
+        Thu, 7 Jul 2022 04:45:09 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563D813F9F;
+        Thu,  7 Jul 2022 01:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657183508; x=1688719508;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=edbKoKalbvq90CBmxogPesuIiDjl8rwJ49B+zZvetjQ=;
+  b=BfVKisWKCdx8CvBHxqsYg7j9cXv26yoQXE72HrhvrsHZACMcDf+Q4QeE
+   iezKOt76usGXV+kbwaKO7ucB7IaYA4gBUybR0oLB4xyC1Vm4hlMy3Mfqh
+   9orF/TMUfYsnaA4siDN3OfNN2ZHi8li2Tg62mdzzqPrFaDG0JJbV+DRPP
+   iwpbPp2cvvpvUZ62IKMOCHbcsc96XaEccZnOxR3WRawWvB7mbC3jKctJN
+   8CAuCUDBdHrDFmaFdIMnnGGbzhA6JCPGgQiHYVbqMyi9DeZgOTiWpgxom
+   oJhCT3UL+2okh6qNBEUcmQZZmIof0uguLdB3ImckLr4T46d5mInnCBOBg
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="345659129"
+X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
+   d="scan'208";a="345659129"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:45:06 -0700
+X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
+   d="scan'208";a="651047273"
+Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.255.31.6]) ([10.255.31.6])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:44:45 -0700
+Subject: Re: [linux-next:master] BUILD REGRESSION
+ 088b9c375534d905a4d337c78db3b3bfbb52c4a0
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        kernel test robot <lkp@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
+        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
+        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
+        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
+        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
+        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
+        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
+        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
+        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
+        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
+        intel-wired-lan@lists.osuosl.org, greybus-dev@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        devicetree@vger.kernel.org, dev@openvswitch.org,
+        dccp@vger.kernel.org, damon@lists.linux.dev,
+        coreteam@netfilter.org, cgroups@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ath11k@lists.infradead.org,
+        apparmor@lists.ubuntu.com, amd-gfx@lists.freedesktop.org,
+        alsa-devel@alsa-project.org,
+        accessrunner-general@lists.sourceforge.net
+References: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
+ <YsaUgfPbOg7WuBuB@kroah.com>
+From:   "Chen, Rong A" <rong.a.chen@intel.com>
+Message-ID: <c86816fd-aaba-01a9-5def-44868f0a46c9@intel.com>
+Date:   Thu, 7 Jul 2022 16:44:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8cffd985-ba62-c4be-f9af-bb8314df8a67@huawei.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <YsaUgfPbOg7WuBuB@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(added btrfs maintainers in direct cc)
-
-Yu Kuai wrote on Fri, Jul 01, 2022 at 09:55:31AM +0800:
-> With this patch ctive_page() will be called the second time that page is
-> mark accessed, which has some extra overhead, however, 2GB/s -> 100MB/s
-> is insane, I'm not sure how this is possible, but it seems like it has
-> something to do with this change.(Noted that it's problematic that page
-> will not mark accessed before this patch).
-
-I honestly don't understand why folio being marked as accessed affects
-how fiemap is processed...
-My guess would be that this indeed "just fixes" that pages didn't get
-marked as accessed -> were dropped from cache -> it kept the inode
-io_tree small -> fiemap was fast ; and it really just a problem that the
-fiemap algorithm doesn't scale, but I haven't really checked if I'm
-right here.
 
 
-So I don't think we should focus so much on the regression part as to
-figure out what's actually different the second time around and make
-that faster.
+On 7/7/2022 4:08 PM, Greg KH wrote:
+> On Thu, Jul 07, 2022 at 02:56:34PM +0800, kernel test robot wrote:
+>> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+>> branch HEAD: 088b9c375534d905a4d337c78db3b3bfbb52c4a0  Add linux-next specific files for 20220706
+>>
+>> Error/Warning reports:
+>>
+>> https://lore.kernel.org/linux-doc/202207070644.x48XOOvs-lkp@intel.com
+>>
+>> Error/Warning: (recently discovered and may have been fixed)
+>>
+>> Documentation/arm/google/chromebook-boot-flow.rst: WARNING: document isn't included in any toctree
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1108): undefined reference to `__aeabi_ddiv'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1124): undefined reference to `__aeabi_ui2d'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1164): undefined reference to `__aeabi_dmul'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1170): undefined reference to `__aeabi_dadd'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1180): undefined reference to `__aeabi_dsub'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1190): undefined reference to `__aeabi_d2uiz'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x162c): undefined reference to `__aeabi_d2iz'
+>> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x16b0): undefined reference to `__aeabi_i2d'
+>> dc_dmub_srv.c:(.text+0x10f8): undefined reference to `__aeabi_ui2d'
+>> dc_dmub_srv.c:(.text+0x464): undefined reference to `__floatunsidf'
+>> dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
+>> drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
+>> drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
+>> drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x750): undefined reference to `__fixdfsi'
+>> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7c0): undefined reference to `__floatsidf'
+>> powerpc-linux-ld: drivers/pci/endpoint/functions/pci-epf-vntb.c:174: undefined reference to `ntb_link_event'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x468): undefined reference to `__divdf3'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x46c): undefined reference to `__muldf3'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x470): undefined reference to `__adddf3'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x474): undefined reference to `__subdf3'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x478): undefined reference to `__fixunsdfsi'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x47c): undefined reference to `__fixdfsi'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x480): undefined reference to `__floatsidf'
+>> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x60c): undefined reference to `__floatunsidf'
+>>
+>> Unverified Error/Warning (likely false positive, please contact us if interested):
+>>
+>> arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
+>> drivers/android/binder.c:1481:19-23: ERROR: from is NULL but dereferenced.
+>> drivers/android/binder.c:2920:29-33: ERROR: target_thread is NULL but dereferenced.
+>> drivers/android/binder.c:353:25-35: ERROR: node -> proc is NULL but dereferenced.
+>> drivers/android/binder.c:4888:16-20: ERROR: t is NULL but dereferenced.
+>> drivers/base/regmap/regmap.c:1996:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/char/random.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
+>> drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+>> drivers/greybus/operation.c:617:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> 
+> <snip>
+> 
+> When the compiler crashes, why are you blaming all of these different
+> mailing lists?  Perhaps you need to fix your compiler :)
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
+Hi Greg,
 
-checking with 'perf script' btrfs_get_extent_fiemap() spends most of its
-time on this:
- delalloc_len = count_range_bits(&inode->io_tree, &delalloc_start,
-                                 end, len, EXTENT_DELALLOC, 1);
+Sorry for the inconvience, we'll fix it ASAP.
 
-I have no idea what delalloc is supposed to be, but I can guess there is
-just way too many nodes in the io_tree: why is that and why wasn't there
-so many the first time around? I would assumed that as the file gets
-read it is put into cache, so the end of the first read should slow down
-as well but it didn't, so I'm sure I misunderstood something and I'm
-wasting everyone's time. Feel free to ignore me and find the issue
-instead :)
-
-
-> BTW, during my test, the speed of buffer read in ext4 only fell down a
-> little.
-
-For "normal" files that don't have ~200k extents full of holes and
-compression changes and whatever else this has gone through, I can
-confirm the slowdown is not as bad -- almost unnoticeable when few
-extents.
-but I still have my laptop cashing when I'm copying this file twice
-(well, I -could- just turn off panic_on_stall...) so it can go from a
-little to infinity...
-
-
-Thanks,
-
-(Leaving rest of the message for anyone catching up now; if there's
-anything you'd like me to do feel free to ask.)
-
-> > I've taken a moment to bisect this and came down to this patch.
-> > (5ccc944dce3d ("filemap: Correct the conditions for marking a folio
-> > as accessed"))
-> > 
-> > [1] https://lore.kernel.org/all/YrrFGO4A1jS0GI0G@atmark-techno.com/T/#u
-> > 
-> > 
-> > 
-> > Dropping caches (echo 3 > /proc/sys/vm/drop_caches) restore the speed,
-> > so there appears to be some bad effect to having the file in cache for
-> > fiemap?
-> > To be fair that file is pretty horrible:
-> > ---
-> > # compsize bigfile
-> > Processed 1 file, 194955 regular extents (199583 refs), 0 inline.
-> > Type       Perc     Disk Usage   Uncompressed Referenced
-> > TOTAL       15%      3.7G          23G          23G
-> > none       100%      477M         477M         514M
-> > zstd        14%      3.2G          23G          23G
-> > ---
-> > 
-> > Here's what perf has to say about it on top of this patch when running
-> > `cp bigfile /dev/null` the first time:
-> > 
-> > 98.97%     0.00%  cp       [kernel.kallsyms]    [k]
-> > entry_SYSCALL_64_after_hwframe
-> >   entry_SYSCALL_64_after_hwframe
-> >   do_syscall_64
-> >    - 93.40% ksys_read
-> >       - 93.36% vfs_read
-> >          - 93.25% new_sync_read
-> >             - 93.20% filemap_read
-> >                - 83.38% filemap_get_pages
-> >                   - 82.76% page_cache_ra_unbounded
-> >                      + 59.72% folio_alloc
-> >                      + 13.43% read_pages
-> >                      + 8.75% filemap_add_folio
-> >                        0.64% xa_load
-> >                     0.52% filemap_get_read_batch
-> >                + 8.75% copy_page_to_iter
-> >    - 4.73% __x64_sys_ioctl
-> >       - 4.72% do_vfs_ioctl
-> >          - btrfs_fiemap
-> >             - 4.70% extent_fiemap
-> >                + 3.95% btrfs_check_shared
-> >                + 0.70% get_extent_skip_holes
-> > 
-> > and second time:
-> > 99.90%     0.00%  cp       [kernel.kallsyms]    [k]
-> > entry_SYSCALL_64_after_hwfram
-> >   entry_SYSCALL_64_after_hwframe
-> >   do_syscall_64
-> >    - 94.62% __x64_sys_ioctl
-> >         do_vfs_ioctl
-> >         btrfs_fiemap
-> >       - extent_fiemap
-> >          - 50.01% get_extent_skip_holes
-> >             - 50.00% btrfs_get_extent_fiemap
-> >                - 49.97% count_range_bits
-> >                     rb_next
-> >          + 28.72% lock_extent_bits
-> >          + 15.55% __clear_extent_bit
-> >    - 5.21% ksys_read
-> >       + 5.21% vfs_read
-> > 
-> > (if this isn't readable, 95% of the time is spent on fiemap the second
-> > time around)
-> > 
-> > 
-> > 
-> > 
-> > I've also been observing RCU stalls on my laptop with the same workload
-> > (cp to /dev/null), but unfortunately I could not reproduce in qemu so I
-> > could not take traces to confirm they are caused by the same commit but
-> > given the workload I'd say that is it?
-> > I can rebuild a kernel for my laptop and confirm if you think it should
-> > be something else.
-> > 
-> > 
-> > I didn't look at the patch itself (yet) so have no suggestion at this
-> > point - it's plausible the patch fixed something and just exposed slow
-> > code that had been there all along so it might be better to look at the
-> > btrfs side first, I don't know.
-> > If you don't manage to reproduce I'll be happy to test anything thrown
-> > at me at the very least.
-
--- 
-Dominique
+Best Regards,
+Rong Chen
