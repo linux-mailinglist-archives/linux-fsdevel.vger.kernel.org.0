@@ -2,170 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D51B56AC86
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 22:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CB256ACB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 22:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236773AbiGGUIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 16:08:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
+        id S235937AbiGGU2V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 16:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236724AbiGGUIL (ORCPT
+        with ESMTP id S235709AbiGGU2U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 16:08:11 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8404660510
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jul 2022 13:08:09 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id e132so20449329pgc.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jul 2022 13:08:09 -0700 (PDT)
+        Thu, 7 Jul 2022 16:28:20 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 735762A94D
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jul 2022 13:28:19 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id v2so2671789ilo.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jul 2022 13:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cFtvjAz52PfP2pPD+ElBW0/QBf2EF5ZKVG4poUQicBo=;
-        b=mP6SCv4ZYKPXIVkeWPvSzYVLVZhUki25eBM3YjhHa4kfvUF6M24odaSonkI7GHxDgl
-         q8l7jb+yebppC1HydPiKCkfhvmANyTWfCu52lX2gIwEpQBnE29Hb8QHYalq/BA13UOjv
-         +Zyr+YT7RtoA7XbaOypkXR3a1booylX88aVw60q9E8Hgv256LIL7u283VOkjfSc/SkGk
-         xBZgDfQP4w+8tYaciO9M9qkbnh1pzs5vOsjgxpOmnkZpqJo64Sb1mOLl2eYm3CP/azOl
-         MjvEVEDBMn2QuzM5ShiwcRwk74T7S++IlrVOEUYGSFYHaFxUDcAizX/UA4mV7JIntHW7
-         0e3w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lnPdki3U1HzYs0CImjis2nyJH9ZY1bhBPOIDGHPVDrw=;
+        b=f/+n6NnnOyy+rz5DYYmTw3B1MCd7fk1PKnsKmvCKhWZP/bR9y/KKqqJ8Hr9inQZVf9
+         eG6YeqBRj95B8m2MJjUWSusb2rDPoyiYVSw1hGcy8U6Gn18T0rQa0LWDy71kyXfqX9Ig
+         dk3MJJHrEqf11QvXorsaV5z4I4iKUayii5z9k7cJCx9s5PeJB0eeKFejQWwZGgo+irbt
+         vSv3tVDn/7R0Qiu/rmi14L0Ij/G5v1pmCd3qLg8dyC1jXRel+CbF750in+IL5G+NR2oL
+         q1XcKnOTm5YPZfOyX2Y7WXezKSs8AFyk8sfQi/ZCNsxAED5oyGlpTwiGoBIF52u3U90X
+         NQIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cFtvjAz52PfP2pPD+ElBW0/QBf2EF5ZKVG4poUQicBo=;
-        b=HtSC5WKh2u5MtyUK2STgdFzXPzRjYPiZVvu3gkVgAh5On2/hdjyF/yhpoBmmL3DtTt
-         nzSGAoGQF/cVfr/kmJn6WSnhM8pT5VUlMvQiNTl80iNMht2z8KOswKeynt2ojlShnSe5
-         25qvr2D0ihAZc0TGmP6gy86Z/HdEGs6YSYZdRgCV1m5yz89JyIfjh8EQYrQ8+B3+fY7p
-         z4NNy83n4xn834ugMTiowwFz2A0FdetvC+FB3aLgjLQ5kHSwTGqNIQQmBMzTtftTE2Ex
-         Uc3CuGxRBfnpeaiFrGAfL5D2BV4Inp/Dh/q7xwLxTz1Uv3ObDflN3a4QzIbVzD85lJFE
-         fe0g==
-X-Gm-Message-State: AJIora/bvQiHtBgxYB77t1aD16VRKXHt/YgeHkvW3PH7pXCVh7UiL1Kx
-        CD1cXqsA+4kJNFZoKZdXktJVXw==
-X-Google-Smtp-Source: AGRyM1vO+9LD36zGVYjZHKVETQF42VSn4ohks+4f4YrWxIjNuhp8m2LWNGsH0so1jBJkR3/GbUBuuQ==
-X-Received: by 2002:a17:902:d28a:b0:16b:e4d6:6534 with SMTP id t10-20020a170902d28a00b0016be4d66534mr23220212plc.68.1657224488885;
-        Thu, 07 Jul 2022 13:08:08 -0700 (PDT)
-Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id w8-20020a627b08000000b00528c6c7bb65sm2244075pfc.83.2022.07.07.13.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 13:08:08 -0700 (PDT)
-Date:   Thu, 7 Jul 2022 20:08:04 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Michael Roth <michael.roth@amd.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Nikunj A. Dadhania" <nikunj@amd.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, mhocko@suse.com
-Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
-Message-ID: <Ysc9JDcVAnlVrGC8@google.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-7-chao.p.peng@linux.intel.com>
- <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
- <20220624090246.GA2181919@chaop.bj.intel.com>
- <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
- <20220630222140.of4md7bufd5jv5bh@amd.com>
- <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lnPdki3U1HzYs0CImjis2nyJH9ZY1bhBPOIDGHPVDrw=;
+        b=MNNiyroLWFOs1zlVA6hgYOOIISrDUjCGkvLL/j4xV9CF+a6KTgkeinZDr5M0DPwQx9
+         LJCvZbzGFF2P3eSoBlKHBGCuCe7PXVsbczViqn7ZuAJB0F2oPvi56aGnGFC3o0LnScJf
+         btu51Ygety2B70XoulVt92BwPvdvaBubh3w7YR1hOze2a5wC89Cj1KF3rOIB7sGTCI4e
+         PU/1W5uZsWk7zxKrBeTIzypRbpCe+uq5dNOJPX417GSba4P+IPlVC1vaAn1d/3W5MsV2
+         kTSYRYmo+1iK+caHFnITjnq6eYivic20oaDpRotSGesuwlf6pHwRPglgnyg0NRc5Xdbk
+         zShw==
+X-Gm-Message-State: AJIora/tu9QqSCOPFrIFrCNRLyWMUB1kzSpn8GsIUtfuPUBRF6EqwcI3
+        y6UWIEZCcrvK955vhRZof8Kck5vNgbFeLFvCdi7L+Q==
+X-Google-Smtp-Source: AGRyM1tM/KnkuQVig9sLggudWlxS0l+TZ6ubWAAz8YA3uJntlv3Ha8v/eItGrj3jm2fMpqn8xenn2fg11jZjfISsrbQ=
+X-Received: by 2002:a92:a801:0:b0:2da:b79f:777 with SMTP id
+ o1-20020a92a801000000b002dab79f0777mr28719684ilh.275.1657225698668; Thu, 07
+ Jul 2022 13:28:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
+References: <20220707165650.248088-1-rppt@kernel.org>
+In-Reply-To: <20220707165650.248088-1-rppt@kernel.org>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 7 Jul 2022 13:27:42 -0700
+Message-ID: <CAJHvVcjH_MZq083ot3x2p=n-rQhiEjfzW82cnruBG9a4cozrpg@mail.gmail.com>
+Subject: Re: [PATCH v2] secretmem: fix unhandled fault in truncate
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 01, 2022, Xiaoyao Li wrote:
-> On 7/1/2022 6:21 AM, Michael Roth wrote:
-> > On Thu, Jun 30, 2022 at 12:14:13PM -0700, Vishal Annapurve wrote:
-> > > With transparent_hugepages=always setting I see issues with the
-> > > current implementation.
+Looks correct to me - at least, I'm confident it will prevent the
+race. I'm not really familiar enough with filesystem APIs to know
+whether Yang's suggestion is better or not, though.
 
-...
+Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
 
-> > > Looks like with transparent huge pages enabled kvm tried to handle the
-> > > shared memory fault on 0x84d gfn by coalescing nearby 4K pages
-> > > to form a contiguous 2MB page mapping at gfn 0x800, since level 2 was
-> > > requested in kvm_mmu_spte_requested.
-> > > This caused the private memory contents from regions 0x800-0x84c and
-> > > 0x86e-0xa00 to get unmapped from the guest leading to guest vm
-> > > shutdown.
-> > 
-> > Interesting... seems like that wouldn't be an issue for non-UPM SEV, since
-> > the private pages would still be mapped as part of that 2M mapping, and
-> > it's completely up to the guest as to whether it wants to access as
-> > private or shared. But for UPM it makes sense this would cause issues.
-> > 
-> > > 
-> > > Does getting the mapping level as per the fault access type help
-> > > address the above issue? Any such coalescing should not cross between
-> > > private to
-> > > shared or shared to private memory regions.
-> > 
-> > Doesn't seem like changing the check to fault->is_private would help in
-> > your particular case, since the subsequent host_pfn_mapping_level() call
-> > only seems to limit the mapping level to whatever the mapping level is
-> > for the HVA in the host page table.
-> > 
-> > Seems like with UPM we need some additional handling here that also
-> > checks that the entire 2M HVA range is backed by non-private memory.
-> > 
-> > Non-UPM SNP hypervisor patches already have a similar hook added to
-> > host_pfn_mapping_level() which implements such a check via RMP table, so
-> > UPM might need something similar:
-> > 
-> >    https://github.com/AMDESE/linux/commit/ae4475bc740eb0b9d031a76412b0117339794139
-> > 
-> > -Mike
-> > 
-> 
-> For TDX, we try to track the page type (shared, private, mixed) of each gfn
-> at given level. Only when the type is shared/private, can it be mapped at
-> that level. When it's mixed, i.e., it contains both shared pages and private
-> pages at given level, it has to go to next smaller level.
-> 
-> https://github.com/intel/tdx/commit/ed97f4042eb69a210d9e972ccca6a84234028cad
 
-Hmm, so a new slot->arch.page_attr array shouldn't be necessary, KVM can instead
-update slot->arch.lpage_info on shared<->private conversions.  Detecting whether
-a given range is partially mapped could get nasty if KVM defers tracking to the
-backing store, but if KVM itself does the tracking as was previously suggested[*],
-then updating lpage_info should be relatively straightfoward, e.g. use
-xa_for_each_range() to see if a given 2mb/1gb range is completely covered (fully
-shared) or not covered at all (fully private).
-
-[*] https://lore.kernel.org/all/YofeZps9YXgtP3f1@google.com
+On Thu, Jul 7, 2022 at 9:57 AM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> From: Mike Rapoport <rppt@linux.ibm.com>
+>
+> syzkaller reports the following issue:
+>
+> BUG: unable to handle page fault for address: ffff888021f7e005
+> PGD 11401067 P4D 11401067 PUD 11402067 PMD 21f7d063 PTE 800fffffde081060
+> Oops: 0002 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 3761 Comm: syz-executor281 Not tainted 5.19.0-rc4-syzkaller-00014-g941e3e791269 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:64
+> Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
+> RSP: 0018:ffffc9000329fa90 EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000ffb
+> RDX: 0000000000000ffb RSI: 0000000000000000 RDI: ffff888021f7e005
+> RBP: ffffea000087df80 R08: 0000000000000001 R09: ffff888021f7e005
+> R10: ffffed10043efdff R11: 0000000000000000 R12: 0000000000000005
+> R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000000ffb
+> FS:  00007fb29d8b2700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff888021f7e005 CR3: 0000000026e7b000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  zero_user_segments include/linux/highmem.h:272 [inline]
+>  folio_zero_range include/linux/highmem.h:428 [inline]
+>  truncate_inode_partial_folio+0x76a/0xdf0 mm/truncate.c:237
+>  truncate_inode_pages_range+0x83b/0x1530 mm/truncate.c:381
+>  truncate_inode_pages mm/truncate.c:452 [inline]
+>  truncate_pagecache+0x63/0x90 mm/truncate.c:753
+>  simple_setattr+0xed/0x110 fs/libfs.c:535
+>  secretmem_setattr+0xae/0xf0 mm/secretmem.c:170
+>  notify_change+0xb8c/0x12b0 fs/attr.c:424
+>  do_truncate+0x13c/0x200 fs/open.c:65
+>  do_sys_ftruncate+0x536/0x730 fs/open.c:193
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> RIP: 0033:0x7fb29d900899
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fb29d8b2318 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+> RAX: ffffffffffffffda RBX: 00007fb29d988408 RCX: 00007fb29d900899
+> RDX: 00007fb29d900899 RSI: 0000000000000005 RDI: 0000000000000003
+> RBP: 00007fb29d988400 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb29d98840c
+> R13: 00007ffca01a23bf R14: 00007fb29d8b2400 R15: 0000000000022000
+>  </TASK>
+> Modules linked in:
+> CR2: ffff888021f7e005
+> ---[ end trace 0000000000000000 ]---
+>
+> Eric Biggers suggested that this happens when
+> secretmem_setattr()->simple_setattr() races with secretmem_fault() so
+> that a page that is faulted in by secretmem_fault() (and thus removed
+> from the direct map) is zeroed by inode truncation right afterwards.
+>
+> Since do_truncate() takes inode_lock(), adding inode_lock_shared() to
+> secretmem_fault() prevents the race.
+>
+> Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
+> Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>
+> v2: use inode_lock_shared() rather than add a new rw_sem to secretmem
+>
+> Axel, I didn't add your Reviewed-by because v2 is quite different.
+>
+>  mm/secretmem.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 206ed6b40c1d..a4fabf705e4f 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -55,22 +55,28 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>         gfp_t gfp = vmf->gfp_mask;
+>         unsigned long addr;
+>         struct page *page;
+> +       vm_fault_t ret;
+>         int err;
+>
+>         if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+>                 return vmf_error(-EINVAL);
+>
+> +       inode_lock_shared(inode);
+> +
+>  retry:
+>         page = find_lock_page(mapping, offset);
+>         if (!page) {
+>                 page = alloc_page(gfp | __GFP_ZERO);
+> -               if (!page)
+> -                       return VM_FAULT_OOM;
+> +               if (!page) {
+> +                       ret = VM_FAULT_OOM;
+> +                       goto out;
+> +               }
+>
+>                 err = set_direct_map_invalid_noflush(page);
+>                 if (err) {
+>                         put_page(page);
+> -                       return vmf_error(err);
+> +                       ret = vmf_error(err);
+> +                       goto out;
+>                 }
+>
+>                 __SetPageUptodate(page);
+> @@ -86,7 +92,8 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>                         if (err == -EEXIST)
+>                                 goto retry;
+>
+> -                       return vmf_error(err);
+> +                       ret = vmf_error(err);
+> +                       goto out;
+>                 }
+>
+>                 addr = (unsigned long)page_address(page);
+> @@ -94,7 +101,11 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>         }
+>
+>         vmf->page = page;
+> -       return VM_FAULT_LOCKED;
+> +       ret = VM_FAULT_LOCKED;
+> +
+> +out:
+> +       inode_unlock_shared(inode);
+> +       return ret;
+>  }
+>
+>  static const struct vm_operations_struct secretmem_vm_ops = {
+>
+> base-commit: 03c765b0e3b4cb5063276b086c76f7a612856a9a
+> --
+> 2.34.1
+>
