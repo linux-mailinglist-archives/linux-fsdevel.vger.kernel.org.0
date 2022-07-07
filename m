@@ -2,112 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C91569DB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 10:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1685569E57
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 11:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235280AbiGGIpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 04:45:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59360 "EHLO
+        id S234797AbiGGJNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 05:13:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbiGGIpJ (ORCPT
+        with ESMTP id S230120AbiGGJNs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 04:45:09 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563D813F9F;
-        Thu,  7 Jul 2022 01:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657183508; x=1688719508;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=edbKoKalbvq90CBmxogPesuIiDjl8rwJ49B+zZvetjQ=;
-  b=BfVKisWKCdx8CvBHxqsYg7j9cXv26yoQXE72HrhvrsHZACMcDf+Q4QeE
-   iezKOt76usGXV+kbwaKO7ucB7IaYA4gBUybR0oLB4xyC1Vm4hlMy3Mfqh
-   9orF/TMUfYsnaA4siDN3OfNN2ZHi8li2Tg62mdzzqPrFaDG0JJbV+DRPP
-   iwpbPp2cvvpvUZ62IKMOCHbcsc96XaEccZnOxR3WRawWvB7mbC3jKctJN
-   8CAuCUDBdHrDFmaFdIMnnGGbzhA6JCPGgQiHYVbqMyi9DeZgOTiWpgxom
-   oJhCT3UL+2okh6qNBEUcmQZZmIof0uguLdB3ImckLr4T46d5mInnCBOBg
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="345659129"
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="345659129"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:45:06 -0700
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="651047273"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.255.31.6]) ([10.255.31.6])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:44:45 -0700
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 088b9c375534d905a4d337c78db3b3bfbb52c4a0
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        kernel test robot <lkp@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
-        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
-        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
-        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
-        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
-        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
-        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
-        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
-        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
-        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
-        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
-        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
-        intel-wired-lan@lists.osuosl.org, greybus-dev@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
-        devicetree@vger.kernel.org, dev@openvswitch.org,
-        dccp@vger.kernel.org, damon@lists.linux.dev,
-        coreteam@netfilter.org, cgroups@vger.kernel.org,
-        ceph-devel@vger.kernel.org, ath11k@lists.infradead.org,
-        apparmor@lists.ubuntu.com, amd-gfx@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        accessrunner-general@lists.sourceforge.net
-References: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
- <YsaUgfPbOg7WuBuB@kroah.com>
-From:   "Chen, Rong A" <rong.a.chen@intel.com>
-Message-ID: <c86816fd-aaba-01a9-5def-44868f0a46c9@intel.com>
-Date:   Thu, 7 Jul 2022 16:44:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.12.0
+        Thu, 7 Jul 2022 05:13:48 -0400
+Received: from out199-3.us.a.mail.aliyun.com (out199-3.us.a.mail.aliyun.com [47.90.199.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047F72A963;
+        Thu,  7 Jul 2022 02:13:45 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=xhao@linux.alibaba.com;NM=1;PH=DS;RN=29;SR=0;TI=SMTPD_---0VIcLc37_1657185215;
+Received: from B-X3VXMD6M-2058.local(mailfrom:xhao@linux.alibaba.com fp:SMTPD_---0VIcLc37_1657185215)
+          by smtp.aliyun-inc.com;
+          Thu, 07 Jul 2022 17:13:37 +0800
+Reply-To: xhao@linux.alibaba.com
+Subject: Re: [PATCH v2 8/9] mm/mshare: Add basic page table sharing support
+To:     Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
+        willy@infradead.org
+Cc:     aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
+        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+References: <cover.1656531090.git.khalid.aziz@oracle.com>
+ <7b768f38ad8a8be3aa35ac1e6316e556b121e866.1656531090.git.khalid.aziz@oracle.com>
+From:   Xin Hao <xhao@linux.alibaba.com>
+Message-ID: <bc5ac335-a08f-a910-fc59-cdcbd86ea726@linux.alibaba.com>
+Date:   Thu, 7 Jul 2022 17:13:31 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <YsaUgfPbOg7WuBuB@kroah.com>
+In-Reply-To: <7b768f38ad8a8be3aa35ac1e6316e556b121e866.1656531090.git.khalid.aziz@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,80 +55,418 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+On 6/30/22 6:53 AM, Khalid Aziz wrote:
+> Add support for creating a new set of shared page tables in a new
+> mm_struct upon mmap of an mshare region. Add page fault handling in
+> this now mshare'd region. Modify exit_mmap path to make sure page
+> tables in the mshare'd regions are kept intact when a process using
+> mshare'd region exits. Clean up mshare mm_struct when the mshare
+> region is deleted. This support is for the process creating mshare
+> region only. Subsequent patches will add support for other processes
+> to be able to map the mshare region.
+>
+> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   include/linux/mm.h |   2 +
+>   mm/internal.h      |   2 +
+>   mm/memory.c        | 101 +++++++++++++++++++++++++++++-
+>   mm/mshare.c        | 149 ++++++++++++++++++++++++++++++++++++---------
+>   4 files changed, 222 insertions(+), 32 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0ddc3057f73b..63887f06b37b 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1859,6 +1859,8 @@ void free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+>   		unsigned long end, unsigned long floor, unsigned long ceiling);
+>   int
+>   copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
+> +int
+> +mshare_copy_ptes(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
+>   int follow_pte(struct mm_struct *mm, unsigned long address,
+>   	       pte_t **ptepp, spinlock_t **ptlp);
+>   int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 3f2790aea918..6ae7063ac10d 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -861,6 +861,8 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
+>   
+>   DECLARE_PER_CPU(struct per_cpu_nodestat, boot_nodestats);
+>   
+> +extern vm_fault_t find_shared_vma(struct vm_area_struct **vma,
+> +					unsigned long *addrp);
+>   static inline bool vma_is_shared(const struct vm_area_struct *vma)
+>   {
+>   	return vma->vm_flags & VM_SHARED_PT;
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 7a089145cad4..2a8d5b8928f5 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -416,15 +416,20 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>   		unlink_anon_vmas(vma);
+>   		unlink_file_vma(vma);
+>   
+> +		/*
+> +		 * There is no page table to be freed for vmas that
+> +		 * are mapped in mshare regions
+> +		 */
+>   		if (is_vm_hugetlb_page(vma)) {
+>   			hugetlb_free_pgd_range(tlb, addr, vma->vm_end,
+>   				floor, next ? next->vm_start : ceiling);
+> -		} else {
+> +		} else if (!vma_is_shared(vma)) {
+>   			/*
+>   			 * Optimization: gather nearby vmas into one call down
+>   			 */
+>   			while (next && next->vm_start <= vma->vm_end + PMD_SIZE
+> -			       && !is_vm_hugetlb_page(next)) {
+> +			       && !is_vm_hugetlb_page(next)
+> +			       && !vma_is_shared(next)) {
+>   				vma = next;
+>   				next = vma->vm_next;
+>   				unlink_anon_vmas(vma);
+> @@ -1260,6 +1265,54 @@ vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+>   	return false;
+>   }
+>   
+> +/*
+> + * Copy PTEs for mshare'd pages.
+> + * This code is based upon copy_page_range()
+> + */
+> +int
+> +mshare_copy_ptes(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+> +{
+> +	pgd_t *src_pgd, *dst_pgd;
+> +	unsigned long next;
+> +	unsigned long addr = src_vma->vm_start;
+> +	unsigned long end = src_vma->vm_end;
+> +	struct mm_struct *dst_mm = dst_vma->vm_mm;
+> +	struct mm_struct *src_mm = src_vma->vm_mm;
+> +	struct mmu_notifier_range range;
+> +	int ret = 0;
+> +
+> +	mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_PAGE,
+> +				0, src_vma, src_mm, addr, end);
+> +	mmu_notifier_invalidate_range_start(&range);
+> +	/*
+> +	 * Disabling preemption is not needed for the write side, as
+> +	 * the read side doesn't spin, but goes to the mmap_lock.
+> +	 *
+> +	 * Use the raw variant of the seqcount_t write API to avoid
+> +	 * lockdep complaining about preemptibility.
+> +	 */
+> +	mmap_assert_write_locked(src_mm);
+> +	raw_write_seqcount_begin(&src_mm->write_protect_seq);
+> +
+> +	dst_pgd = pgd_offset(dst_mm, addr);
+> +	src_pgd = pgd_offset(src_mm, addr);
+> +	do {
+> +		next = pgd_addr_end(addr, end);
+> +		if (pgd_none_or_clear_bad(src_pgd))
+> +			continue;
+> +		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
+> +					    addr, next))) {
+> +			ret = -ENOMEM;
+> +			break;
+> +		}
+> +	} while (dst_pgd++, src_pgd++, addr = next, addr != end);
+> +
+> +	raw_write_seqcount_end(&src_mm->write_protect_seq);
+> +	mmu_notifier_invalidate_range_end(&range);
+> +
+> +	return ret;
+> +}
+> +
+>   int
+>   copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+>   {
+> @@ -1628,6 +1681,13 @@ void unmap_page_range(struct mmu_gather *tlb,
+>   	pgd_t *pgd;
+>   	unsigned long next;
+>   
+> +	/*
+> +	 * No need to unmap vmas that share page table through
+> +	 * mshare region
+> +	 */
+> +	if (vma_is_shared(vma))
+> +		return;
+> +
+>   	BUG_ON(addr >= end);
+>   	tlb_start_vma(tlb, vma);
+>   	pgd = pgd_offset(vma->vm_mm, addr);
+> @@ -5113,6 +5173,8 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>   			   unsigned int flags, struct pt_regs *regs)
+>   {
+>   	vm_fault_t ret;
+> +	bool shared = false;
+> +	struct mm_struct *orig_mm;
+>   
+>   	__set_current_state(TASK_RUNNING);
+>   
+> @@ -5122,6 +5184,16 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>   	/* do counter updates before entering really critical section. */
+>   	check_sync_rss_stat(current);
+>   
+> +	orig_mm = vma->vm_mm;
+> +	if (unlikely(vma_is_shared(vma))) {
+> +		ret = find_shared_vma(&vma, &address);
+> +		if (ret)
+> +			return ret;
+> +		if (!vma)
+> +			return VM_FAULT_SIGSEGV;
+> +		shared = true;
+if  shared is true,  so it mean the origin vma are replaced, but the 
+code not free the origin vma ?
+> +	}
+> +
+>   	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+>   					    flags & FAULT_FLAG_INSTRUCTION,
+>   					    flags & FAULT_FLAG_REMOTE))
+> @@ -5139,6 +5211,31 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>   	else
+>   		ret = __handle_mm_fault(vma, address, flags);
+>   
+> +	/*
+> +	 * Release the read lock on shared VMA's parent mm unless
+> +	 * __handle_mm_fault released the lock already.
+> +	 * __handle_mm_fault sets VM_FAULT_RETRY in return value if
+> +	 * it released mmap lock. If lock was released, that implies
+> +	 * the lock would have been released on task's original mm if
+> +	 * this were not a shared PTE vma. To keep lock state consistent,
+> +	 * make sure to release the lock on task's original mm
+> +	 */
+> +	if (shared) {
+> +		int release_mmlock = 1;
+> +
+> +		if (!(ret & VM_FAULT_RETRY)) {
+> +			mmap_read_unlock(vma->vm_mm);
+> +			release_mmlock = 0;
+> +		} else if ((flags & FAULT_FLAG_ALLOW_RETRY) &&
+> +			(flags & FAULT_FLAG_RETRY_NOWAIT)) {
+> +			mmap_read_unlock(vma->vm_mm);
+> +			release_mmlock = 0;
+> +		}
+> +
+> +		if (release_mmlock)
+> +			mmap_read_unlock(orig_mm);
+> +	}
+> +
+>   	if (flags & FAULT_FLAG_USER) {
+>   		mem_cgroup_exit_user_fault();
+>   		/*
+> diff --git a/mm/mshare.c b/mm/mshare.c
+> index 90ce0564a138..2ec0e56ffd69 100644
+> --- a/mm/mshare.c
+> +++ b/mm/mshare.c
+> @@ -15,7 +15,7 @@
+>    */
+>   
+>   #include <linux/fs.h>
+> -#include <linux/mount.h>
+> +#include <linux/mm.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/pseudo_fs.h>
+> @@ -24,6 +24,7 @@
+>   #include <uapi/linux/limits.h>
+>   #include <uapi/linux/mman.h>
+>   #include <linux/sched/mm.h>
+> +#include <linux/mmu_context.h>
+>   
+>   static struct super_block *msharefs_sb;
+>   struct mshare_data {
+> @@ -33,6 +34,43 @@ struct mshare_data {
+>   	struct mshare_info *minfo;
+>   };
+>   
+> +/* Returns holding the host mm's lock for read.  Caller must release. */
+> +vm_fault_t
+> +find_shared_vma(struct vm_area_struct **vmap, unsigned long *addrp)
+> +{
+> +	struct vm_area_struct *vma, *guest = *vmap;
+> +	struct mshare_data *info = guest->vm_private_data;
+> +	struct mm_struct *host_mm = info->mm;
+> +	unsigned long host_addr;
+> +	pgd_t *pgd, *guest_pgd;
+> +
+> +	mmap_read_lock(host_mm);
+> +	host_addr = *addrp - guest->vm_start + host_mm->mmap_base;
+> +	pgd = pgd_offset(host_mm, host_addr);
+> +	guest_pgd = pgd_offset(guest->vm_mm, *addrp);
+> +	if (!pgd_same(*guest_pgd, *pgd)) {
+> +		set_pgd(guest_pgd, *pgd);
+> +		mmap_read_unlock(host_mm);
+> +		return VM_FAULT_NOPAGE;
+> +	}
+> +
+> +	*addrp = host_addr;
+> +	vma = find_vma(host_mm, host_addr);
+> +
+> +	/* XXX: expand stack? */
+> +	if (vma && vma->vm_start > host_addr)
+> +		vma = NULL;
+> +
+> +	*vmap = vma;
+> +
+> +	/*
+> +	 * release host mm lock unless a matching vma is found
+> +	 */
+> +	if (!vma)
+> +		mmap_read_unlock(host_mm);
+> +	return 0;
+> +}
+> +
+>   static const struct inode_operations msharefs_dir_inode_ops;
+>   static const struct inode_operations msharefs_file_inode_ops;
+>   
+> @@ -64,6 +102,14 @@ msharefs_read(struct kiocb *iocb, struct iov_iter *iov)
+>   	return ret;
+>   }
+>   
+> +static void
+> +msharefs_delmm(struct mshare_data *info)
+> +{
+> +	mmput(info->mm);
+> +	kfree(info->minfo);
+> +	kfree(info);
+> +}
+> +
+>   static void
+>   msharefs_close(struct vm_area_struct *vma)
+>   {
+> @@ -73,9 +119,7 @@ msharefs_close(struct vm_area_struct *vma)
+>   		mmap_read_lock(info->mm);
+>   		if (info->deleted) {
+>   			mmap_read_unlock(info->mm);
+> -			mmput(info->mm);
+> -			kfree(info->minfo);
+> -			kfree(info);
+> +			msharefs_delmm(info);
+>   		} else {
+>   			mmap_read_unlock(info->mm);
+>   		}
+> @@ -90,31 +134,80 @@ static int
+>   msharefs_mmap(struct file *file, struct vm_area_struct *vma)
+>   {
+>   	struct mshare_data *info = file->private_data;
+> -	struct mm_struct *mm = info->mm;
+> +	struct mm_struct *new_mm = info->mm;
+> +	int err = 0;
+>   
+> -	mmap_write_lock(mm);
+> +	mmap_write_lock(new_mm);
+>   	/*
+> -	 * If this mshare region has been set up once already, bail out
+> +	 * If this mshare region has not been set up, set up the
+> +	 * applicable address range for the region and prepare for
+> +	 * page table sharing
+>   	 */
+> -	if (mm->mmap_base != 0)
+> +	if (new_mm->mmap_base != 0) {
+>   		return -EINVAL;
+> +	} else {
+> +		struct mm_struct *old_mm;
+> +		struct vm_area_struct *new_vma;
+> +
+> +		if ((vma->vm_start | vma->vm_end) & (PGDIR_SIZE - 1))
+> +			return -EINVAL;
+> +
+> +		old_mm = current->mm;
+> +		mmap_assert_write_locked(old_mm);
+> +		new_mm->mmap_base = vma->vm_start;
+> +		new_mm->task_size = vma->vm_end - vma->vm_start;
+> +		if (!new_mm->task_size)
+> +			new_mm->task_size--;
+> +		info->minfo->start = new_mm->mmap_base;
+> +		info->minfo->size = new_mm->task_size;
+> +		info->deleted = 0;
+> +		refcount_inc(&info->refcnt);
+> +
+> +		/*
+> +		 * Mark current VMA as shared and copy over to mshare
+> +		 * mm_struct
+> +		 */
+> +		vma->vm_private_data = info;
+> +		new_vma = vm_area_dup(vma);
+> +		if (!new_vma) {
+> +			vma->vm_private_data = NULL;
+> +			mmap_write_unlock(new_mm);
+> +			err = -ENOMEM;
+> +			goto err_out;
+> +		}
+> +		vma->vm_flags |= (VM_SHARED_PT|VM_SHARED);
+> +		vma->vm_ops = &msharefs_vm_ops;
+> +
+> +		/*
+> +		 * Newly created mshare mapping is anonymous mapping
+> +		 */
+> +		new_vma->vm_mm = new_mm;
+> +		vma_set_anonymous(new_vma);
+> +		new_vma->vm_file = NULL;
+> +		new_vma->vm_flags &= ~VM_SHARED;
+> +
+> +		/*
+> +		 * Do not use THP for mshare region
+> +		 */
+> +		new_vma->vm_flags |= VM_NOHUGEPAGE;
+> +		err = insert_vm_struct(new_mm, new_vma);
+> +		if (err) {
+> +			mmap_write_unlock(new_mm);
+> +			err = -ENOMEM;
+> +			goto err_out;
+> +		}
+>   
+> -	if ((vma->vm_start | vma->vm_end) & (PGDIR_SIZE - 1))
+> -		return -EINVAL;
+> +		/*
+> +		 * Copy over current PTEs
+> +		 */
+> +		err = mshare_copy_ptes(new_vma, vma);
+> +	}
+>   
+> -	mm->mmap_base = vma->vm_start;
+> -	mm->task_size = vma->vm_end - vma->vm_start;
+> -	if (!mm->task_size)
+> -		mm->task_size--;
+> -	mmap_write_unlock(mm);
+> -	info->minfo->start = mm->mmap_base;
+> -	info->minfo->size = mm->task_size;
+> -	info->deleted = 0;
+> -	refcount_inc(&info->refcnt);
+> -	vma->vm_flags |= VM_SHARED_PT;
+> -	vma->vm_private_data = info;
+> -	vma->vm_ops = &msharefs_vm_ops;
+> -	return 0;
+> +	mmap_write_unlock(new_mm);
+> +	return err;
+> +
+> +err_out:
+> +	return err;
+>   }
+>   
+>   static const struct file_operations msharefs_file_operations = {
+> @@ -291,14 +384,10 @@ msharefs_unlink(struct inode *dir, struct dentry *dentry)
+>   	mmap_write_unlock(info->mm);
+>   
+>   	/*
+> -	 * Is this the last reference? If so, delete mshare region and
+> -	 * remove the file
+> +	 * Is this the last reference? If so, delete mshare region
+>   	 */
+> -	if (!refcount_dec_and_test(&info->refcnt)) {
+> -		mmput(info->mm);
+> -		kfree(info->minfo);
+> -		kfree(info);
+> -	}
+> +	if (refcount_dec_and_test(&info->refcnt))
+> +		msharefs_delmm(info);
+>   	return 0;
+>   }
+>   
 
-On 7/7/2022 4:08 PM, Greg KH wrote:
-> On Thu, Jul 07, 2022 at 02:56:34PM +0800, kernel test robot wrote:
->> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
->> branch HEAD: 088b9c375534d905a4d337c78db3b3bfbb52c4a0  Add linux-next specific files for 20220706
->>
->> Error/Warning reports:
->>
->> https://lore.kernel.org/linux-doc/202207070644.x48XOOvs-lkp@intel.com
->>
->> Error/Warning: (recently discovered and may have been fixed)
->>
->> Documentation/arm/google/chromebook-boot-flow.rst: WARNING: document isn't included in any toctree
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1108): undefined reference to `__aeabi_ddiv'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1124): undefined reference to `__aeabi_ui2d'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1164): undefined reference to `__aeabi_dmul'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1170): undefined reference to `__aeabi_dadd'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1180): undefined reference to `__aeabi_dsub'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1190): undefined reference to `__aeabi_d2uiz'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x162c): undefined reference to `__aeabi_d2iz'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x16b0): undefined reference to `__aeabi_i2d'
->> dc_dmub_srv.c:(.text+0x10f8): undefined reference to `__aeabi_ui2d'
->> dc_dmub_srv.c:(.text+0x464): undefined reference to `__floatunsidf'
->> dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
->> drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
->> drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
->> drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x750): undefined reference to `__fixdfsi'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7c0): undefined reference to `__floatsidf'
->> powerpc-linux-ld: drivers/pci/endpoint/functions/pci-epf-vntb.c:174: undefined reference to `ntb_link_event'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x468): undefined reference to `__divdf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x46c): undefined reference to `__muldf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x470): undefined reference to `__adddf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x474): undefined reference to `__subdf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x478): undefined reference to `__fixunsdfsi'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x47c): undefined reference to `__fixdfsi'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x480): undefined reference to `__floatsidf'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x60c): undefined reference to `__floatunsidf'
->>
->> Unverified Error/Warning (likely false positive, please contact us if interested):
->>
->> arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
->> drivers/android/binder.c:1481:19-23: ERROR: from is NULL but dereferenced.
->> drivers/android/binder.c:2920:29-33: ERROR: target_thread is NULL but dereferenced.
->> drivers/android/binder.c:353:25-35: ERROR: node -> proc is NULL but dereferenced.
->> drivers/android/binder.c:4888:16-20: ERROR: t is NULL but dereferenced.
->> drivers/base/regmap/regmap.c:1996:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/char/random.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
->> drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/greybus/operation.c:617:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> 
-> <snip>
-> 
-> When the compiler crashes, why are you blaming all of these different
-> mailing lists?  Perhaps you need to fix your compiler :)
-> 
-> thanks,
-> 
-> greg k-h
-> 
+-- 
+Best Regards!
+Xin Hao
 
-Hi Greg,
-
-Sorry for the inconvience, we'll fix it ASAP.
-
-Best Regards,
-Rong Chen
