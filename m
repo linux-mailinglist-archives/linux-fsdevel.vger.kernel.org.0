@@ -2,471 +2,684 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1685569E57
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 11:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56690569FF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 12:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234797AbiGGJNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 05:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55332 "EHLO
+        id S234884AbiGGKbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 06:31:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiGGJNs (ORCPT
+        with ESMTP id S235330AbiGGKbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 05:13:48 -0400
-Received: from out199-3.us.a.mail.aliyun.com (out199-3.us.a.mail.aliyun.com [47.90.199.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047F72A963;
-        Thu,  7 Jul 2022 02:13:45 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=xhao@linux.alibaba.com;NM=1;PH=DS;RN=29;SR=0;TI=SMTPD_---0VIcLc37_1657185215;
-Received: from B-X3VXMD6M-2058.local(mailfrom:xhao@linux.alibaba.com fp:SMTPD_---0VIcLc37_1657185215)
-          by smtp.aliyun-inc.com;
-          Thu, 07 Jul 2022 17:13:37 +0800
-Reply-To: xhao@linux.alibaba.com
-Subject: Re: [PATCH v2 8/9] mm/mshare: Add basic page table sharing support
-To:     Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
-        willy@infradead.org
-Cc:     aneesh.kumar@linux.ibm.com, arnd@arndb.de, 21cnbao@gmail.com,
-        corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com,
-        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
-        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
-        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
-        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
-        yzaikin@google.com
-References: <cover.1656531090.git.khalid.aziz@oracle.com>
- <7b768f38ad8a8be3aa35ac1e6316e556b121e866.1656531090.git.khalid.aziz@oracle.com>
-From:   Xin Hao <xhao@linux.alibaba.com>
-Message-ID: <bc5ac335-a08f-a910-fc59-cdcbd86ea726@linux.alibaba.com>
-Date:   Thu, 7 Jul 2022 17:13:31 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Thu, 7 Jul 2022 06:31:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9495564F3;
+        Thu,  7 Jul 2022 03:31:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 61C3F622B4;
+        Thu,  7 Jul 2022 10:31:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925EBC3411E;
+        Thu,  7 Jul 2022 10:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657189866;
+        bh=lWsE81JZr7G4bvmt1HdOt9XAuQK3z64Wg5KVk5o0vFg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VImBZOTYKpQi5n4QW2j9idCh/X+j0zJlagIPZTPJM0HHoEUzVnWcUdoM2uJhFTm8o
+         SEWsAXghJNIVEFcVXx/QPHCvGKhdQdHENxV9ew0b8IROOf1CoAJC6kTM9GTCZO6S2G
+         nS0Bq1Rxy/tTTDpz5VHz93aUtEvOA8MWr9Onq+qYygVTwCKfuElbeEgaTujlvWZT2v
+         9nn/GIQx0m00QX2r0RLiurMbRIDOizWYWrk9Vs8IocCxk0n4rMRGaWSkrYYoPgkfFS
+         D+Myn4TDGJslaohGPmdSWch1fp3lXAi74YPU+IzQQdIrqoZCRAQDascGev9qIGBdOh
+         8VZImmTEgQKZQ==
+Date:   Thu, 7 Jul 2022 12:31:00 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Seth Forshee <sforshee@digitalocean.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] acl: report correct ownership in some ovl use-cases
+Message-ID: <20220707103100.rphgrcnrficb22tk@wittgenstein>
+References: <20220705144502.165935-1-brauner@kernel.org>
+ <YsXN4056AenjHap9@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <7b768f38ad8a8be3aa35ac1e6316e556b121e866.1656531090.git.khalid.aziz@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YsXN4056AenjHap9@redhat.com>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jul 06, 2022 at 02:01:07PM -0400, Vivek Goyal wrote:
+> On Tue, Jul 05, 2022 at 04:45:02PM +0200, Christian Brauner wrote:
+> > This cycle we added support for mounting overlayfs on top of idmapped mounts.
+> > Recently I've started looking into potential corner cases when trying to add
+> > additional tests and I noticed that reporting for POSIX ACLs is currently wrong
+> > when using idmapped layers with overlayfs mounted on top of it.
+> > 
+> > I'm going to give a rather detailed explanation to both the origin of the
+> > problem and the solution.
+> > 
+> > Let's assume the user creates the following directory layout and they have a
+> > rootfs /var/lib/lxc/c1/rootfs. The files in this rootfs are owned as you would
+> > expect files on your host system to be owned. For example, ~/.bashrc for your
+> > regular user would be owned by 1000:1000 and /root/.bashrc would be owned by
+> > 0:0. IOW, this is just regular boring filesystem tree on an ext4 or xfs
+> > filesystem.
+> > 
+> > The user chooses to set POSIX ACLs using the setfacl binary granting the user
+> > with uid 4 read, write, and execute permissions for their .bashrc file:
+> > 
+> >         setfacl -m u:4:rwx /var/lib/lxc/c2/rootfs/home/ubuntu/.bashrc
+> > 
+> > Now they to expose the whole rootfs to a container using an idmapped mount. So
+> > they first create:
+> > 
+> >         mkdir -pv /vol/contpool/{ctrover,merge,lowermap,overmap}
+> >         mkdir -pv /vol/contpool/ctrover/{over,work}
+> > 
+> > The user now creates an idmapped mount for the rootfs:
+> > 
+> >         mount-idmapped/mount-idmapped --map-mount=b:0:10000000:65536 \
+> >                                       /var/lib/lxc/c2/rootfs \
+> >                                       /vol/contpool/lowermap
+> > 
+> > This for example makes it so that /var/lib/lxc/c2/rootfs/home/ubuntu/.bashrc
+> > which is owned by uid and gid 1000 as being owned by uid and gid 10001000 at
+> > /vol/contpool/lowermap/home/ubuntu/.bashrc.
+> > 
+> > Similarly, the user creates another idmapped mount using the same idmapping:
+> > 
+> >         mount-idmapped/mount-idmapped --map-mount=b:0:10000000:65536 \
+> >                                       /vol/contpool/ctrover/ \
+> >                                       /vol/contpool/overmap/
+> > 
+> > Assume the user wants to expose these idmapped mounts through an overlayfs
+> > mount to a container.
+> > 
+> >        mount -t overlay overlay                      \
+> >              -o lowerdir=/vol/contpool/lowermap,     \
+> >                 upperdir=/vol/contpool/overmap/over, \
+> >                 workdir=/vol/contpool/overmap/work   \
+> >              /vol/contpool/merge
+> > 
+> > The user can do this in two ways:
+> > 
+> > (1) Mount overlayfs in the initial user namespace and expose it to the
+> >     container.
+> > (2) Mount overlayfs on top of the idmapped mounts inside of the container's
+> >     user namespace.
+> > 
+> > Let's assume the user chooses the (1) option and mounts overlayfs on the host
+> > and then changes into a container which uses the idmapping 0:10000000:65536
+> > which is the same used for the two idmapped mounts.
+> > 
+> > Now the user tries to retrieve the POSIX ACLs using the getfacl command
+> > 
+> >         getfacl -n /vol/contpool/lowermap/home/ubuntu/.bashrc
+> > 
+> > and to their surprise they see:
+> > 
+> >         # file: vol/contpool/merge/home/ubuntu/.bashrc
+> >         # owner: 1000
+> >         # group: 1000
+> >         user::rw-
+> >         user:4294967295:rwx
+> >         group::r--
+> >         mask::rwx
+> >         other::r--
+> > 
+> > indicating the the uid wasn't correctly translated according to the idmapped
+> > mount. The problem is how we currently translate POSIX ACLs. Let's inspect the
+> > callchain in this example:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:0:4k /* initial idmapping */
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                   |> vfs_getxattr()
+> >                   |  -> __vfs_getxattr()
+> >                   |     -> handler->get == ovl_posix_acl_xattr_get()
+> >                   |        -> ovl_xattr_get()
+> >                   |           -> vfs_getxattr()
+> >                   |              -> __vfs_getxattr()
+> >                   |                 -> handler->get() /* lower filesystem callback */
+> >                   |> posix_acl_fix_xattr_to_user()
+> >                      {
+> >                               4 = make_kuid(&init_user_ns, 4);
+> >                               4 = mapped_kuid_fs(&init_user_ns /* no idmapped mount */, 4);
+> >                               /* FAILURE */
+> >                              -1 = from_kuid(0:10000000:65536 /* caller's idmapping */, 4);
+> >                      }
+> > 
+> > If the user chooses to use option (2) and mounts overlayfs on top of idmapped
+> > mounts inside the container things don't look that much better:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:10000000:65536
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                   |> vfs_getxattr()
+> >                   |  -> __vfs_getxattr()
+> >                   |     -> handler->get == ovl_posix_acl_xattr_get()
+> >                   |        -> ovl_xattr_get()
+> >                   |           -> vfs_getxattr()
+> >                   |              -> __vfs_getxattr()
+> >                   |                 -> handler->get() /* lower filesystem callback */
+> >                   |> posix_acl_fix_xattr_to_user()
+> >                      {
+> >                               4 = make_kuid(&init_user_ns, 4);
+> >                               4 = mapped_kuid_fs(&init_user_ns, 4);
+> >                               /* FAILURE */
+> >                              -1 = from_kuid(0:10000000:65536 /* caller's idmapping */, 4);
+> >                      }
+> > 
+> > As is easily seen the problem arises because the idmapping of the lower mount
+> > isn't taken into account as all of this happens in do_gexattr(). But
+> > do_getxattr() is always called on an overlayfs mount and inode and thus cannot
+> > possible take the idmapping of the lower layers into account.
+> > 
+> > This problem is similar for fscaps but there the translation happens as part of
+> > vfs_getxattr() already. Let's walk through an fscaps overlayfs callchain:
+> > 
+> >         setcap 'cap_net_raw+ep' /var/lib/lxc/c2/rootfs/home/ubuntu/.bashrc
+> > 
+> > The expected outcome here is that we'll receive the cap_net_raw capability as
+> > we are able to map the uid associated with the fscap to 0 within our container.
+> > IOW, we want to see 0 as the result of the idmapping translations.
+> > 
+> > If the user chooses option (1) we get the following callchain for fscaps:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:0:4k /* initial idmapping */
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                    -> vfs_getxattr()
+> >                       -> xattr_getsecurity()
+> >                          -> security_inode_getsecurity()                                       ________________________________
+> >                             -> cap_inode_getsecurity()                                         |                              |
+> >                                {                                                               V                              |
+> >                                         10000000 = make_kuid(0:0:4k /* overlayfs idmapping */, 10000000);                     |
+> >                                         10000000 = mapped_kuid_fs(0:0:4k /* no idmapped mount */, 10000000);                  |
+> >                                                /* Expected result is 0 and thus that we own the fscap. */                     |
+> >                                                0 = from_kuid(0:10000000:65536 /* caller's idmapping */, 10000000);            |
+> >                                }                                                                                              |
+> >                                -> vfs_getxattr_alloc()                                                                        |
+> >                                   -> handler->get == ovl_other_xattr_get()                                                    |
+> >                                      -> vfs_getxattr()                                                                        |
+> >                                         -> xattr_getsecurity()                                                                |
+> >                                            -> security_inode_getsecurity()                                                    |
+> >                                               -> cap_inode_getsecurity()                                                      |
+> >                                                  {                                                                            |
+> >                                                                 0 = make_kuid(0:0:4k /* lower s_user_ns */, 0);               |
+> >                                                          10000000 = mapped_kuid_fs(0:10000000:65536 /* idmapped mount */, 0); |
+> >                                                          10000000 = from_kuid(0:0:4k /* overlayfs idmapping */, 10000000);    |
+> >                                                          |____________________________________________________________________|
+> >                                                  }
+> >                                                  -> vfs_getxattr_alloc()
+> >                                                     -> handler->get == /* lower filesystem callback */
+> > 
+> > And if the user chooses option (2) we get:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:10000000:65536
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                    -> vfs_getxattr()
+> >                       -> xattr_getsecurity()
+> >                          -> security_inode_getsecurity()                                                _______________________________
+> >                             -> cap_inode_getsecurity()                                                  |                             |
+> >                                {                                                                        V                             |
+> >                                        10000000 = make_kuid(0:10000000:65536 /* overlayfs idmapping */, 0);                           |
+> >                                        10000000 = mapped_kuid_fs(0:0:4k /* no idmapped mount */, 10000000);                           |
+> >                                                /* Expected result is 0 and thus that we own the fscap. */                             |
+> >                                               0 = from_kuid(0:10000000:65536 /* caller's idmapping */, 10000000);                     |
+> >                                }                                                                                                      |
+> >                                -> vfs_getxattr_alloc()                                                                                |
+> >                                   -> handler->get == ovl_other_xattr_get()                                                            |
+> >                                     |-> vfs_getxattr()                                                                                |
+> >                                         -> xattr_getsecurity()                                                                        |
+> >                                            -> security_inode_getsecurity()                                                            |
+> >                                               -> cap_inode_getsecurity()                                                              |
+> >                                                  {                                                                                    |
+> >                                                                  0 = make_kuid(0:0:4k /* lower s_user_ns */, 0);                      |
+> >                                                           10000000 = mapped_kuid_fs(0:10000000:65536 /* idmapped mount */, 0);        |
+> >                                                                  0 = from_kuid(0:10000000:65536 /* overlayfs idmapping */, 10000000); |
+> >                                                                  |____________________________________________________________________|
+> >                                                  }
+> >                                                  -> vfs_getxattr_alloc()
+> >                                                     -> handler->get == /* lower filesystem callback */
+> > 
+> > We can see how the translation happens correctly in those cases as the
+> > conversion happens within the vfs_getxattr() helper.
+> > 
+> > For POSIX ACLs we need to do something similar. However, in contrast to fscaps
+> > we cannot apply the fix directly to the kernel internal posix acl data
+> > structure as this would alter the cached values and would also require a rework
+> > of how we currently deal with POSIX ACLs in general which almost never take the
+> > filesystem idmapping into account (the noteable exception being FUSE but even
+> > there the implementation is special) and instead retrieve the raw values based
+> > on the initial idmapping.
+> > 
+> > The correct values are then generated right before returning to userspace. The
+> > fix for this is to move taking the mount's idmapping into account directly in
+> > vfs_getxattr() instead of having it be part of posix_acl_fix_xattr_to_user().
+> > 
+> > To this end we split out two small and unexported helpers
+> > posix_acl_getxattr_idmapped_mnt() and posix_acl_setxattr_idmapped_mnt(). The
+> > former to be called in vfs_getxattr() and the latter to be called in
+> > vfs_setxattr().
+> > 
+> > Let's go back to the original example. Assume the user chose option (1) and
+> > mounted overlayfs on top of idmapped mounts on the host:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:0:4k /* initial idmapping */
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                   |> vfs_getxattr()
+> >                   |  |> __vfs_getxattr()
+> >                   |  |  -> handler->get == ovl_posix_acl_xattr_get()
+> >                   |  |     -> ovl_xattr_get()
+> >                   |  |        -> vfs_getxattr()
+> >                   |  |           |> __vfs_getxattr()
+> >                   |  |           |  -> handler->get() /* lower filesystem callback */
+> >                   |  |           |> posix_acl_getxattr_idmapped_mnt()
+> >                   |  |              {
+> >                   |  |                       /* This is a nop on non-idmapped mounts. */
+> >                   |  |                              4 = make_kuid(&init_user_ns, 4);
+> >                   |  |                       10000004 = mapped_kuid_fs(0:10000000:65536 /* lower idmapped mount */, 4);
+> >                   |  |                       10000004 = from_kuid(&init_user_ns, 10000004);
+> >                   |  |                       |___________________________________
+> >                   |  |              }                                           |
+> >                   |  |> posix_acl_getxattr_idmapped_mnt()                       |
+> >                   |     {                                                       |
+> >                   |             /* This is a nop on non-idmapped mounts. */     V
+> >                   |             10000004 = make_kuid(&init_user_ns, 10000004);
+> >                   |             10000004 = mapped_kuid_fs(&init_user_ns /* no idmapped mount */, 10000004);
+> >                   |             10000004 = from_kuid(&init_user_ns, 10000004);
+> >                   |     }       |_________________________________________________
+> >                   |                                                              |
+> >                   |> posix_acl_fix_xattr_to_user()                               |
+> >                      {                                                           V
+> >                                  10000004 = make_kuid(0:0:4k /* init_user_ns */, 10000004);
+> >                                         /* SUCCESS */
+> >                                         4 = from_kuid(0:10000000:65536 /* caller's idmapping */, 10000004);
+> >                      }
+> 
+> Hi Christian,
+> 
+> Trying to understand the problem and solution. I am wondering
+> why do we still have posix_acl_fix_xattr_to_user().
+> 
+> Shouldn't posix_acl_getxattr_idmapped_mnt() (Or whatever name is
+> appropriate), take care of doing all the translations. Something along
+> the lines of cap_inode_getsecurity(). 
+> 
+> IOW, I am viewing it as if posix_acl_getxattr_idmapped_mnt() takes
+> care of doing all the translations for each layer. And it is called
+> twice for stacked filesystem. So for the example when overaly is mounted
+> from outside the user_ns.
+> 
+> 	idmapped mount lower:      		0:10000000:65536
+> 	caller's idmapping:                      0:10000000:65536
+> 	overlayfs idmapping (ofs->creator_cred): 0:0:4k /* initial idmapping */
+> 
+> Overlay layer translations
+> 	10000004 = make_kuid(&init_user_ns, 10000004);
+> 	/* Overlayfs mount has no idmapping */
+> 	10000004 = mapped_kuid_fs(&init_user_ns, &init_user_ns, 10000004);
+> 	/* Map into caller's idmapping. And caller in this case is process
+> 	 * inside user namespace */
+> 	4 = from_kuid(0:10000000:65536, 10000004);
+> 
+> Lower layer translations
+> 	4 = make_kuid(&init_user_ns, 4);
+> 	10000004 = mapped_kuid_fs(0:10000000:65536 /* lower idmapped mount */, &init_user_ns, 4);
+> 	/* Map into caller's idmapping. And caller in this case is mounter
+> 	 * of overlayfs which is init_user_ns */
+> 	10000004 = from_kuid(&init_user_ns, 10000004);
+> 
+> Above kind of makes more sense to me based on your documentation here.
+> 
+> https://www.kernel.org/doc/html/latest/filesystems/idmappings.html
+> 
+> But there is a good chance that I am missing something.
+> 
+> And when overlayfs is mounted from inside user namepsace, then
+> translations could look as follows.
+> 
+> 	idmapped mount lower:      		0:10000000:65536
+> 	caller's idmapping:                      0:10000000:65536
+> 	overlayfs idmapping (ofs->creator_cred): 0:10000000:65536
+> 
+> Overlay layer translations
+> 	/* Overlayfs was mounted from inside user namespace */
+> 	10000004 = make_kuid(0:10000000:65536, 4);
+> 	/* Overlayfs mount has no idmapping */
+> 	10000004 = mapped_kuid_fs(&init_user_ns, 0:10000000:65536, 10000004);
+> 	/* Map into caller's idmapping. And caller in this case is process
+> 	 * inside user namespace */
+> 	4 = from_kuid(0:10000000:65536, 10000004);
+> 
+> Lower layer translations
+> 	4 = make_kuid(&init_user_ns, 4);
+> 	10000004 = mapped_kuid_fs(0:10000000:65536 /* lower idmapped mount */, &init_user_ns, 4);
+> 	/* Map into caller's idmapping. And caller in this case is mounter
+> 	 * of overlayfs which was inside user namespace */
+> 	4 = from_kuid(0:10000000:65536, 10000004);
+> 
+> 
+> 
+> > And similarly if the user chooses option (1) and mounted overayfs on top of
+> 
+> You probably mean if "user chooses option (2)". And following example
+> also seems to be for option 1 and not option 2.
 
-On 6/30/22 6:53 AM, Khalid Aziz wrote:
-> Add support for creating a new set of shared page tables in a new
-> mm_struct upon mmap of an mshare region. Add page fault handling in
-> this now mshare'd region. Modify exit_mmap path to make sure page
-> tables in the mshare'd regions are kept intact when a process using
-> mshare'd region exits. Clean up mshare mm_struct when the mshare
-> region is deleted. This support is for the process creating mshare
-> region only. Subsequent patches will add support for other processes
-> to be able to map the mshare region.
->
-> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   include/linux/mm.h |   2 +
->   mm/internal.h      |   2 +
->   mm/memory.c        | 101 +++++++++++++++++++++++++++++-
->   mm/mshare.c        | 149 ++++++++++++++++++++++++++++++++++++---------
->   4 files changed, 222 insertions(+), 32 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0ddc3057f73b..63887f06b37b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1859,6 +1859,8 @@ void free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
->   		unsigned long end, unsigned long floor, unsigned long ceiling);
->   int
->   copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
-> +int
-> +mshare_copy_ptes(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
->   int follow_pte(struct mm_struct *mm, unsigned long address,
->   	       pte_t **ptepp, spinlock_t **ptlp);
->   int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 3f2790aea918..6ae7063ac10d 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -861,6 +861,8 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
->   
->   DECLARE_PER_CPU(struct per_cpu_nodestat, boot_nodestats);
->   
-> +extern vm_fault_t find_shared_vma(struct vm_area_struct **vma,
-> +					unsigned long *addrp);
->   static inline bool vma_is_shared(const struct vm_area_struct *vma)
->   {
->   	return vma->vm_flags & VM_SHARED_PT;
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 7a089145cad4..2a8d5b8928f5 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -416,15 +416,20 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
->   		unlink_anon_vmas(vma);
->   		unlink_file_vma(vma);
->   
-> +		/*
-> +		 * There is no page table to be freed for vmas that
-> +		 * are mapped in mshare regions
-> +		 */
->   		if (is_vm_hugetlb_page(vma)) {
->   			hugetlb_free_pgd_range(tlb, addr, vma->vm_end,
->   				floor, next ? next->vm_start : ceiling);
-> -		} else {
-> +		} else if (!vma_is_shared(vma)) {
->   			/*
->   			 * Optimization: gather nearby vmas into one call down
->   			 */
->   			while (next && next->vm_start <= vma->vm_end + PMD_SIZE
-> -			       && !is_vm_hugetlb_page(next)) {
-> +			       && !is_vm_hugetlb_page(next)
-> +			       && !vma_is_shared(next)) {
->   				vma = next;
->   				next = vma->vm_next;
->   				unlink_anon_vmas(vma);
-> @@ -1260,6 +1265,54 @@ vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
->   	return false;
->   }
->   
-> +/*
-> + * Copy PTEs for mshare'd pages.
-> + * This code is based upon copy_page_range()
-> + */
-> +int
-> +mshare_copy_ptes(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-> +{
-> +	pgd_t *src_pgd, *dst_pgd;
-> +	unsigned long next;
-> +	unsigned long addr = src_vma->vm_start;
-> +	unsigned long end = src_vma->vm_end;
-> +	struct mm_struct *dst_mm = dst_vma->vm_mm;
-> +	struct mm_struct *src_mm = src_vma->vm_mm;
-> +	struct mmu_notifier_range range;
-> +	int ret = 0;
-> +
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_PAGE,
-> +				0, src_vma, src_mm, addr, end);
-> +	mmu_notifier_invalidate_range_start(&range);
-> +	/*
-> +	 * Disabling preemption is not needed for the write side, as
-> +	 * the read side doesn't spin, but goes to the mmap_lock.
-> +	 *
-> +	 * Use the raw variant of the seqcount_t write API to avoid
-> +	 * lockdep complaining about preemptibility.
-> +	 */
-> +	mmap_assert_write_locked(src_mm);
-> +	raw_write_seqcount_begin(&src_mm->write_protect_seq);
-> +
-> +	dst_pgd = pgd_offset(dst_mm, addr);
-> +	src_pgd = pgd_offset(src_mm, addr);
-> +	do {
-> +		next = pgd_addr_end(addr, end);
-> +		if (pgd_none_or_clear_bad(src_pgd))
-> +			continue;
-> +		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
-> +					    addr, next))) {
-> +			ret = -ENOMEM;
-> +			break;
-> +		}
-> +	} while (dst_pgd++, src_pgd++, addr = next, addr != end);
-> +
-> +	raw_write_seqcount_end(&src_mm->write_protect_seq);
-> +	mmu_notifier_invalidate_range_end(&range);
-> +
-> +	return ret;
-> +}
-> +
->   int
->   copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
->   {
-> @@ -1628,6 +1681,13 @@ void unmap_page_range(struct mmu_gather *tlb,
->   	pgd_t *pgd;
->   	unsigned long next;
->   
-> +	/*
-> +	 * No need to unmap vmas that share page table through
-> +	 * mshare region
-> +	 */
-> +	if (vma_is_shared(vma))
-> +		return;
-> +
->   	BUG_ON(addr >= end);
->   	tlb_start_vma(tlb, vma);
->   	pgd = pgd_offset(vma->vm_mm, addr);
-> @@ -5113,6 +5173,8 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->   			   unsigned int flags, struct pt_regs *regs)
->   {
->   	vm_fault_t ret;
-> +	bool shared = false;
-> +	struct mm_struct *orig_mm;
->   
->   	__set_current_state(TASK_RUNNING);
->   
-> @@ -5122,6 +5184,16 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->   	/* do counter updates before entering really critical section. */
->   	check_sync_rss_stat(current);
->   
-> +	orig_mm = vma->vm_mm;
-> +	if (unlikely(vma_is_shared(vma))) {
-> +		ret = find_shared_vma(&vma, &address);
-> +		if (ret)
-> +			return ret;
-> +		if (!vma)
-> +			return VM_FAULT_SIGSEGV;
-> +		shared = true;
-if  shared is true,  so it mean the origin vma are replaced, but the 
-code not free the origin vma ?
-> +	}
-> +
->   	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
->   					    flags & FAULT_FLAG_INSTRUCTION,
->   					    flags & FAULT_FLAG_REMOTE))
-> @@ -5139,6 +5211,31 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->   	else
->   		ret = __handle_mm_fault(vma, address, flags);
->   
-> +	/*
-> +	 * Release the read lock on shared VMA's parent mm unless
-> +	 * __handle_mm_fault released the lock already.
-> +	 * __handle_mm_fault sets VM_FAULT_RETRY in return value if
-> +	 * it released mmap lock. If lock was released, that implies
-> +	 * the lock would have been released on task's original mm if
-> +	 * this were not a shared PTE vma. To keep lock state consistent,
-> +	 * make sure to release the lock on task's original mm
-> +	 */
-> +	if (shared) {
-> +		int release_mmlock = 1;
-> +
-> +		if (!(ret & VM_FAULT_RETRY)) {
-> +			mmap_read_unlock(vma->vm_mm);
-> +			release_mmlock = 0;
-> +		} else if ((flags & FAULT_FLAG_ALLOW_RETRY) &&
-> +			(flags & FAULT_FLAG_RETRY_NOWAIT)) {
-> +			mmap_read_unlock(vma->vm_mm);
-> +			release_mmlock = 0;
-> +		}
-> +
-> +		if (release_mmlock)
-> +			mmap_read_unlock(orig_mm);
-> +	}
-> +
->   	if (flags & FAULT_FLAG_USER) {
->   		mem_cgroup_exit_user_fault();
->   		/*
-> diff --git a/mm/mshare.c b/mm/mshare.c
-> index 90ce0564a138..2ec0e56ffd69 100644
-> --- a/mm/mshare.c
-> +++ b/mm/mshare.c
-> @@ -15,7 +15,7 @@
->    */
->   
->   #include <linux/fs.h>
-> -#include <linux/mount.h>
-> +#include <linux/mm.h>
->   #include <linux/syscalls.h>
->   #include <linux/uaccess.h>
->   #include <linux/pseudo_fs.h>
-> @@ -24,6 +24,7 @@
->   #include <uapi/linux/limits.h>
->   #include <uapi/linux/mman.h>
->   #include <linux/sched/mm.h>
-> +#include <linux/mmu_context.h>
->   
->   static struct super_block *msharefs_sb;
->   struct mshare_data {
-> @@ -33,6 +34,43 @@ struct mshare_data {
->   	struct mshare_info *minfo;
->   };
->   
-> +/* Returns holding the host mm's lock for read.  Caller must release. */
-> +vm_fault_t
-> +find_shared_vma(struct vm_area_struct **vmap, unsigned long *addrp)
-> +{
-> +	struct vm_area_struct *vma, *guest = *vmap;
-> +	struct mshare_data *info = guest->vm_private_data;
-> +	struct mm_struct *host_mm = info->mm;
-> +	unsigned long host_addr;
-> +	pgd_t *pgd, *guest_pgd;
-> +
-> +	mmap_read_lock(host_mm);
-> +	host_addr = *addrp - guest->vm_start + host_mm->mmap_base;
-> +	pgd = pgd_offset(host_mm, host_addr);
-> +	guest_pgd = pgd_offset(guest->vm_mm, *addrp);
-> +	if (!pgd_same(*guest_pgd, *pgd)) {
-> +		set_pgd(guest_pgd, *pgd);
-> +		mmap_read_unlock(host_mm);
-> +		return VM_FAULT_NOPAGE;
-> +	}
-> +
-> +	*addrp = host_addr;
-> +	vma = find_vma(host_mm, host_addr);
-> +
-> +	/* XXX: expand stack? */
-> +	if (vma && vma->vm_start > host_addr)
-> +		vma = NULL;
-> +
-> +	*vmap = vma;
-> +
-> +	/*
-> +	 * release host mm lock unless a matching vma is found
-> +	 */
-> +	if (!vma)
-> +		mmap_read_unlock(host_mm);
-> +	return 0;
-> +}
-> +
->   static const struct inode_operations msharefs_dir_inode_ops;
->   static const struct inode_operations msharefs_file_inode_ops;
->   
-> @@ -64,6 +102,14 @@ msharefs_read(struct kiocb *iocb, struct iov_iter *iov)
->   	return ret;
->   }
->   
-> +static void
-> +msharefs_delmm(struct mshare_data *info)
-> +{
-> +	mmput(info->mm);
-> +	kfree(info->minfo);
-> +	kfree(info);
-> +}
-> +
->   static void
->   msharefs_close(struct vm_area_struct *vma)
->   {
-> @@ -73,9 +119,7 @@ msharefs_close(struct vm_area_struct *vma)
->   		mmap_read_lock(info->mm);
->   		if (info->deleted) {
->   			mmap_read_unlock(info->mm);
-> -			mmput(info->mm);
-> -			kfree(info->minfo);
-> -			kfree(info);
-> +			msharefs_delmm(info);
->   		} else {
->   			mmap_read_unlock(info->mm);
->   		}
-> @@ -90,31 +134,80 @@ static int
->   msharefs_mmap(struct file *file, struct vm_area_struct *vma)
->   {
->   	struct mshare_data *info = file->private_data;
-> -	struct mm_struct *mm = info->mm;
-> +	struct mm_struct *new_mm = info->mm;
-> +	int err = 0;
->   
-> -	mmap_write_lock(mm);
-> +	mmap_write_lock(new_mm);
->   	/*
-> -	 * If this mshare region has been set up once already, bail out
-> +	 * If this mshare region has not been set up, set up the
-> +	 * applicable address range for the region and prepare for
-> +	 * page table sharing
->   	 */
-> -	if (mm->mmap_base != 0)
-> +	if (new_mm->mmap_base != 0) {
->   		return -EINVAL;
-> +	} else {
-> +		struct mm_struct *old_mm;
-> +		struct vm_area_struct *new_vma;
-> +
-> +		if ((vma->vm_start | vma->vm_end) & (PGDIR_SIZE - 1))
-> +			return -EINVAL;
-> +
-> +		old_mm = current->mm;
-> +		mmap_assert_write_locked(old_mm);
-> +		new_mm->mmap_base = vma->vm_start;
-> +		new_mm->task_size = vma->vm_end - vma->vm_start;
-> +		if (!new_mm->task_size)
-> +			new_mm->task_size--;
-> +		info->minfo->start = new_mm->mmap_base;
-> +		info->minfo->size = new_mm->task_size;
-> +		info->deleted = 0;
-> +		refcount_inc(&info->refcnt);
-> +
-> +		/*
-> +		 * Mark current VMA as shared and copy over to mshare
-> +		 * mm_struct
-> +		 */
-> +		vma->vm_private_data = info;
-> +		new_vma = vm_area_dup(vma);
-> +		if (!new_vma) {
-> +			vma->vm_private_data = NULL;
-> +			mmap_write_unlock(new_mm);
-> +			err = -ENOMEM;
-> +			goto err_out;
-> +		}
-> +		vma->vm_flags |= (VM_SHARED_PT|VM_SHARED);
-> +		vma->vm_ops = &msharefs_vm_ops;
-> +
-> +		/*
-> +		 * Newly created mshare mapping is anonymous mapping
-> +		 */
-> +		new_vma->vm_mm = new_mm;
-> +		vma_set_anonymous(new_vma);
-> +		new_vma->vm_file = NULL;
-> +		new_vma->vm_flags &= ~VM_SHARED;
-> +
-> +		/*
-> +		 * Do not use THP for mshare region
-> +		 */
-> +		new_vma->vm_flags |= VM_NOHUGEPAGE;
-> +		err = insert_vm_struct(new_mm, new_vma);
-> +		if (err) {
-> +			mmap_write_unlock(new_mm);
-> +			err = -ENOMEM;
-> +			goto err_out;
-> +		}
->   
-> -	if ((vma->vm_start | vma->vm_end) & (PGDIR_SIZE - 1))
-> -		return -EINVAL;
-> +		/*
-> +		 * Copy over current PTEs
-> +		 */
-> +		err = mshare_copy_ptes(new_vma, vma);
-> +	}
->   
-> -	mm->mmap_base = vma->vm_start;
-> -	mm->task_size = vma->vm_end - vma->vm_start;
-> -	if (!mm->task_size)
-> -		mm->task_size--;
-> -	mmap_write_unlock(mm);
-> -	info->minfo->start = mm->mmap_base;
-> -	info->minfo->size = mm->task_size;
-> -	info->deleted = 0;
-> -	refcount_inc(&info->refcnt);
-> -	vma->vm_flags |= VM_SHARED_PT;
-> -	vma->vm_private_data = info;
-> -	vma->vm_ops = &msharefs_vm_ops;
-> -	return 0;
-> +	mmap_write_unlock(new_mm);
-> +	return err;
-> +
-> +err_out:
-> +	return err;
->   }
->   
->   static const struct file_operations msharefs_file_operations = {
-> @@ -291,14 +384,10 @@ msharefs_unlink(struct inode *dir, struct dentry *dentry)
->   	mmap_write_unlock(info->mm);
->   
->   	/*
-> -	 * Is this the last reference? If so, delete mshare region and
-> -	 * remove the file
-> +	 * Is this the last reference? If so, delete mshare region
->   	 */
-> -	if (!refcount_dec_and_test(&info->refcnt)) {
-> -		mmput(info->mm);
-> -		kfree(info->minfo);
-> -		kfree(info);
-> -	}
-> +	if (refcount_dec_and_test(&info->refcnt))
-> +		msharefs_delmm(info);
->   	return 0;
->   }
->   
+Indeed, fixed.
 
--- 
-Best Regards!
-Xin Hao
+> 
+> Thanks
+> Vivek
+> 
+> > idmapped mounts inside the container:
+> > 
+> >         idmapped mount /vol/contpool/merge:      0:10000000:65536
+> >         caller's idmapping:                      0:10000000:65536
+> >         overlayfs idmapping (ofs->creator_cred): 0:10000000:65536
+> > 
+> >         sys_getxattr()
+> >         -> path_getxattr()
+> >            -> getxattr()
+> >               -> do_getxattr()
+> >                   |> vfs_getxattr()
+> >                   |  |> __vfs_getxattr()
+> >                   |  |  -> handler->get == ovl_posix_acl_xattr_get()
+> >                   |  |     -> ovl_xattr_get()
+> >                   |  |        -> vfs_getxattr()
+> >                   |  |           |> __vfs_getxattr()
+> >                   |  |           |  -> handler->get() /* lower filesystem callback */
+> >                   |  |           |> posix_acl_getxattr_idmapped_mnt()
+> >                   |  |              {
+> >                   |  |                       /* This is a nop on non-idmapped mounts. */
+> >                   |  |                              4 = make_kuid(&init_user_ns, 4);
+> >                   |  |                       10000004 = mapped_kuid_fs(0:10000000:65536 /* lower idmapped mount */, 4);
+> >                   |  |                       10000004 = from_kuid(&init_user_ns, 10000004);
+> >                   |  |                       |___________________________________
+> >                   |  |              }                                           |
+> >                   |  |> posix_acl_getxattr_idmapped_mnt()                       |
+> >                   |     {                                                       |
+> >                   |             /* This is a nop on non-idmapped mounts. */     V
+> >                   |             10000004 = make_kuid(&init_user_ns, 10000004);
+> 
+> In this example, overlayfs is mounted from inside the user namespace,
+> so overlay filesystem idmappings are not init_user_ns. Should this be
+> following instead.
 
+I initially had the same idea as you had. But I alluded to a problem
+with this in the following section of the commit message:
+
+        of how we currently deal with POSIX ACLs in general which almost never take the
+        filesystem idmapping into account (the noteable exception being FUSE but even
+
+First, let's consider a tmpfs mounted inside of a container with the
+current translation routines:
+====================================================================
+
+caller_idmapping: 0:10000000:65536
+fs_idmapping:     0:10000000:65536
+
+/* Setting a POSIX ACL for uid 4 on a tmpfs mounted in container */
+ 1 sys_setxattr()
+ 2 -> path_setxattr()
+ 3    -> setxattr()
+ 4       -> do_setxattr()
+ 5          |> posix_acl_fix_xattr_from_user()
+ 6          |  {
+ 7 	    |          /* caller_idmapping */
+ 8          |          10000004 = make_kuid(0:10000000:65536, 4);
+ 9 	    |          /* no idmapped mount */
+10          |          10000004 = mapped_kuid_user(&init_user_ns, &init_user_ns, 10000004);
+11          |          /* Always initial_idmapping, never fs_idmapping */
+12          |          10000004 = from_kuid(&init_user_ns, 10000004);
+13          |  }
+14          |> vfs_setxattr()
+15              -> __vfs_setxattr_locked()
+16                 -> __vfs_setxattr_noperm()
+17                    -> __vfs_setxattr()
+18                       -> handler->set() == posix_acl_xattr_set()
+19                          -> posix_acl_from_xattr(&init_user_ns, ...)
+20                             {
+21 			            /* Always initial_idmapping, never fs_idmapping (Notable exception being FUSE). */
+22                                     10000004 = make_kuid(&init_user_ns, 10000004);
+23                             }
+24                             -> set_posix_acl()
+25                                -> posix_acl_valid(i_user_ns(inode), ...)
+26                                   {
+27                                          /* fs_idmapping */
+28                                           true = kuid_has_mapping(0:10000000:65536, 10000004);
+29                                   }
+30                                   -> inode->i_op->set_acl() == simple_set_acl()
+31                                      -> posix_acl_update_mode()
+32                                      -> set_cached_acl()
+
+/* Retrieving the POSIX ACL for uid 4 on a tmpfs mounted in container */
+ 1 sys_getxattr()
+ 2 -> path_getxattr()
+ 3    -> getxattr()
+ 4       -> do_getxattr()
+ 5           |> vfs_getxattr()
+ 6           |  -> __vfs_getxattr()
+ 7           |     -> handler->get == posix_acl_xattr_get()
+ 8           |        -> posix_acl_to_xattr(&init_user_ns, ...)
+ 9           |           {
+10 	     |  	      /* Always initial_idmapping, never fs_idmapping (Notable exception being FUSE). */
+11           |                   10000004 = from_kuid(&init_user_ns, 10000004);
+12           |           }
+13           |> posix_acl_fix_xattr_to_user()
+14              {
+15 	             /* Always initial_idmapping, never fs_idmapping. */
+16                      10000004 = make_kuid(&init_user_ns, 10000004);
+17 		     /* no idmapped mount */
+18                      10000004 = mapped_kuid_fs(&init_user_ns, &init_user_ns, 10000004);
+19                      /* caller_idmapping */
+20                      4 = from_kuid(0:10000000:65536, 10000004);
+21              }
+
+As you can see in line getxattr-8, getxattr-15 as well as setxattr-12
+and setxattr-21 it's always the initial_idmapping that is used, never
+the idmapping of the filesystem. Iow, even for a tmpfs mounted in a
+container we'd use the initial_idmapping to prepare the ACLs for the
+filesystem. 
+
+But now let's consider a tmpfs mounted inside of a container with your
+proposed translation routines where this causes things to break:
+======================================================================
+
+caller_idmapping: 0:10000000:65536
+fs_idmapping:     0:10000000:65536
+
+/* Setting a POSIX ACL for uid 4 on a tmpfs mounted inside a user namespace. */
+ 1 sys_setxattr()
+ 2 -> path_setxattr()
+ 3    -> setxattr()
+ 4       -> do_setxattr()
+ 5          -> vfs_setxattr()
+ 6             -> posix_acl_fix_xattr_from_user()
+ 7                {
+ 8                         /* caller_idmapping */
+ 9                        10000004 = make_kuid(0:10000000:65536, 4);
+10 		          /* no idmapped mount */
+11                        10000004 = mapped_kuid_user(&init_user_ns, &init_user_ns, 10000004);
+12 	                  /* NEW: fs_idmapping */
+13                               4 = from_kuid(0:10000000:65536, 10000004);
+14                }
+15             -> __vfs_setxattr_locked()
+16                -> __vfs_setxattr_noperm()
+17                   -> __vfs_setxattr()
+18                      -> handler->set() == posix_acl_xattr_set()
+19                         -> posix_acl_from_xattr(&init_user_ns, ...)
+20                            {
+21 				      /* Always initial_idmapping, never fs_idmapping (Notable exception being FUSE). */
+22                                    4 = make_kuid(&init_user_ns, 4);
+23                            }
+24                            -> set_posix_acl()
+25                               -> posix_acl_valid(i_user_ns(inode), ...)
+26                                  {
+27                                          /* fs_idmapping */
+28                                          false = kuid_has_mapping(0:10000000:65536, 4); /* FAILURE */
+29                                  }
+30                                  -> inode->i_op->set_acl() == simple_set_acl()
+31                                     -> posix_acl_update_mode()
+32                                     -> set_cached_acl()
+
+ 1 sys_getxattr()
+ 2 -> path_getxattr()
+ 3    -> getxattr()
+ 4       -> do_getxattr()
+ 5           -> vfs_getxattr()
+ 6              |> __vfs_getxattr()
+ 7              |  -> handler->get == posix_acl_xattr_get()
+ 8              |     -> posix_acl_to_xattr(&init_user_ns, ...)
+ 9              |        {
+10              |                /* Always initial_idmapping, never fs_idmapping (Notable exception being FUSE). */
+11              |                10000004 = from_kuid(&init_user_ns, 10000004);
+12              |        }
+13              |> posix_acl_fix_xattr_to_user()
+14                 {
+15                         /* fs_idmapping */                     
+16                         -1 = make_kuid(0:10000000:65536, 10000004);
+17                         -1 = mapped_kuid_fs(&init_user_ns, &init_user_ns, 10000004);
+18                         /* caller_idmapping */
+19                         -1 = from_kuid(0:10000000:65536, 10000004);
+20                 }
+
+So if we start to take the fs_idmapping into account in getxattr-15 and
+setxattr-13 we will fail to create or retrieve ACLs for tmpfs mounted in
+containers.
+
+Now, the reason for this is that posix_acl_{from,to}_xattr() in line
+getxattr-8 and setxattr-19 don't operate on the fs_idmapping but always
+on the initial_idmapping.
+
+I considered switching posix_acl_{from,to}_xattr() to operate on the
+fs_idmapping to make the translation routines work the way you
+described:
+
+tmpfs: mounted inside of container with __adapted__ current translation routines
+================================================================================
+
+caller_idmapping: 0:10000000:65536
+fs_idmapping:     0:10000000:65536
+
+/* Setting a POSIX ACL for uid 4 on a tmpfs mounted inside a user namespace */
+ 1 sys_setxattr()
+ 2 -> path_setxattr()
+ 3    -> setxattr()
+ 4       -> do_setxattr()
+ 5          |> posix_acl_fix_xattr_from_user()
+ 6          |  {
+ 7 	    |          /* caller_idmapping */
+ 8          |          10000004 = make_kuid(0:10000000:65536, 4);
+ 9 	    |          /* no idmapped mount */
+10          |          10000004 = mapped_kuid_user(&init_user_ns, &init_user_ns, 10000004);
+11          |          /* NEW: fs_idmapping */
+12          |                 4 = from_kuid(0:10000000:65536, 10000004);
+13          |  }
+14          |> vfs_setxattr()
+15              -> __vfs_setxattr_locked()
+16                 -> __vfs_setxattr_noperm()
+17                    -> __vfs_setxattr()
+18                       -> handler->set() == posix_acl_xattr_set()
+19                          -> posix_acl_from_xattr(0:10000000:65536, ...)
+20                             {
+21                                     /* NEW: fs_idmapping */
+22                                     10000004 = make_kuid(0:10000000:65536, 4);
+23                             }
+24                             -> set_posix_acl()
+25                                -> posix_acl_valid(i_user_ns(inode), ...)
+26                                   {
+27                                          /* fs_idmapping */
+28                                           true = kuid_has_mapping(0:10000000:65536, 10000004);
+29                                   }
+30                                   -> inode->i_op->set_acl() == simple_set_acl()
+31                                      -> posix_acl_update_mode()
+32                                      -> set_cached_acl()
+
+ 1 sys_getxattr()
+ 2 -> path_getxattr()
+ 3    -> getxattr()
+ 4       -> do_getxattr()
+ 5           |> vfs_getxattr()
+ 6           |  -> __vfs_getxattr()
+ 7           |     -> handler->get == posix_acl_xattr_get()
+ 8           |        -> posix_acl_to_xattr(0:10000000:65536, ...)
+ 9           |           {
+10           |                   /* fs_idmapping */
+11           |                   4 = from_kuid(0:10000000:65536, 10000004);
+12           |           }
+13           |> posix_acl_fix_xattr_to_user()
+14              {
+15                      /* NEW: fs_idmapping */
+16                      10000004 = make_kuid(0:10000000:65536, 4);
+17	                /* no idmapped mount */
+18                      10000004 = mapped_kuid_fs(&init_user_ns, &init_user_ns, 10000004);
+19                      /* caller_idmapping */
+20                      4 = from_kuid(0:10000000:65536, 10000004);
+21              }
+
+Now your proposal works. But I thought two things spoke against it but
+I'm happy to be convinced otherwise. First, the change is tree-wide and
+subtle.
+
+Second, this would mean that in both line getxattr-10 and line
+setxattr-11 we'd have a raw uid and gid value - which is 4 in this
+example - stored instead of the "mapped" 10000004 until the fs_idmapping
+is reapplied in getxattr-15 and setxattr-21.
+
+(Technically, this is currently a subtle type confusion but one that
+we've tolerated for a long time. The 10000004 isn't really a {g,u}id
+it's a k{g,u}id which is stored in the form of a {g,u}id in the posix
+acl uapi struct which doesn't carre {g,u}ids. Otherwise we could just
+carry the k{g,u}ids generated via caller_idmapping directly...)
+
+All of this is probably not a huge deal and we could change it. And I'd
+consider that in the future but for now the safer way to do this from my
+vantage point was to keep the posix_acl_{from,to}_xattr() helpers as
+they are and just move the idmapped mount translations into vfs_setxattr().
+
+Iow, within vfs_setxattr() we'd continue to purely deal with non-caller
+properties such as idmapped mounts. I'm happy to pursue other approaches
+though including the one you proposed if you think it's worth it though.
+
+(Sorry for the lenghty mail... Hopefully I didn't make any mnistakes in
+my thinking.)
