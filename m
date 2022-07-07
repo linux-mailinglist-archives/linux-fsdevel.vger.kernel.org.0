@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 537B456A768
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 18:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B54C956A7B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 18:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235576AbiGGQGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 12:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        id S235976AbiGGQMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 12:12:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235526AbiGGQGv (ORCPT
+        with ESMTP id S235953AbiGGQLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 12:06:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4F5313AA;
-        Thu,  7 Jul 2022 09:06:50 -0700 (PDT)
+        Thu, 7 Jul 2022 12:11:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FE433350;
+        Thu,  7 Jul 2022 09:10:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9595BB8229B;
-        Thu,  7 Jul 2022 16:06:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F89FC3411E;
-        Thu,  7 Jul 2022 16:06:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 347E0623E2;
+        Thu,  7 Jul 2022 16:10:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D6AAC3411E;
+        Thu,  7 Jul 2022 16:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657210008;
-        bh=oPBwVTVUTBS4gk+6cwOddlL8JaBrmv0EYfh3pizuiGg=;
+        s=k20201202; t=1657210249;
+        bh=9Rh396CKXH0FuHlZMYkM5a1yPWoX1HChEl9dRmBJAm0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=SH4PvLTcKL4XlgKChSv8Bjzcl7z3/oPrHT5tHUJ1nCC54KKrGZfuY9cGH3OnRXc+a
-         CfPv5ZpHFxJEITwjSndmKooeT6IU1Msw7FaqlBHtM7V5r8tx9l5wAhRby/JnJTFhum
-         SEkdiXlCWeaMYqL1LeNlCFIZVJhx9pTsA0nMP59mVzr9hfGNGD+KwELdmeAJsXL7up
-         xVskuo8JR++AKNy57oqAlE4+qf6CqRfnSryxFmlysFWhwXkjv1w1uQKCjYVBz3H1Za
-         p4CaSap5Q2PmFjnGwFky5oNdcBcgNC61SVL7BMBLEF2Jza3phKLakrO93NlpivhIBL
-         5o6Vh/nJWAkqQ==
-Date:   Thu, 7 Jul 2022 11:06:46 -0500
+        b=jmK0c+vyGAqHN6jPfTbrSNu9EnDBttNpGRdQSMwCFbEfc7KdToJwScXAWeTYRvbie
+         kHRCTjiKCsuuC2ihifrSa2lHfXRe053aS5BgvUgySDICUtvvDItDggQ8nqgnC9DYqe
+         oaBSvLRzQ7MzgQKEtLLyu+x6vmqpqKnVt92AhZ5jIo2UYbnSVbOidhyYEAl6V9huZQ
+         YfhBlFr3Y2B+WVwhgHTXQMzqh4kbYqOh4yZ6RFL8nPKnv/VPEUc4QEnLngxEKyd8QU
+         HkGvJCBESZA5E7NDpwdCpKawMTaj1TKeIuv7Z4aKB0RrsYDifUOv0fcdJj+Iub6Ji5
+         xCIzxtgKH1k+A==
+Date:   Thu, 7 Jul 2022 11:10:47 -0500
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     ira.weiny@intel.com
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -43,12 +43,12 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
         linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
         linux-pci@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] pci/doe: Use devm_xa_init()
-Message-ID: <20220707160646.GA306751@bhelgaas>
+Subject: Re: [RFC PATCH 1/3] xarray: Introduce devm_xa_init()
+Message-ID: <20220707161047.GA307158@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220705232159.2218958-3-ira.weiny@intel.com>
+In-Reply-To: <20220705232159.2218958-2-ira.weiny@intel.com>
 X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,59 +59,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 05, 2022 at 04:21:58PM -0700, ira.weiny@intel.com wrote:
+On Tue, Jul 05, 2022 at 04:21:57PM -0700, ira.weiny@intel.com wrote:
 > From: Ira Weiny <ira.weiny@intel.com>
 > 
-> The XArray being used to store the protocols does not even store
-> allocated objects.
+> Many devices may have arrays of resources which are allocated with
+> device managed functions.  The objects referenced by the XArray are
+> therefore automatically destroyed without the need for the XArray.
 
-I guess the point is that the doe_mb->prots XArray doesn't reference
-any other objects that would need to be freed when destroying
-doe_mb->prots?  A few more words here would make the commit log more
-useful to non-XArray experts.
+"... without the need for the XArray" seems like it's missing
+something.
 
-s|pci/doe|PCI/DOE| in subject to match the drivers/pci convention.
+Should this say something like "... without the need for destroying
+them in the XArray destroy action"?
 
-> Use devm_xa_init() to automatically destroy the XArray when the PCI
-> device goes away.
+> Introduce devm_xa_init() which takes care of the destruction of the
+> XArray meta data automatically as well.
 > 
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
 > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  drivers/pci/doe.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-> index 0b02f33ef994..aa36f459d375 100644
-> --- a/drivers/pci/doe.c
-> +++ b/drivers/pci/doe.c
-> @@ -386,13 +386,6 @@ static int pci_doe_cache_protocols(struct pci_doe_mb *doe_mb)
->  	return 0;
+> ---
+> The main issue I see with this is defining devm_xa_init() in device.h.
+> This makes sense because a device is required to use the call.  However,
+> I'm worried about if users will find the call there vs including it in
+> xarray.h?
+> ---
+>  drivers/base/core.c    | 20 ++++++++++++++++++++
+>  include/linux/device.h |  3 +++
+>  2 files changed, 23 insertions(+)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 2eede2ec3d64..8c5c20a62744 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -2609,6 +2609,26 @@ void devm_device_remove_groups(struct device *dev,
 >  }
+>  EXPORT_SYMBOL_GPL(devm_device_remove_groups);
 >  
-> -static void pci_doe_xa_destroy(void *mb)
-> -{
-> -	struct pci_doe_mb *doe_mb = mb;
-> -
-> -	xa_destroy(&doe_mb->prots);
-> -}
-> -
->  static void pci_doe_destroy_workqueue(void *mb)
+> +static void xa_destroy_cb(void *xa)
+> +{
+> +	xa_destroy(xa);
+> +}
+> +
+> +/**
+> + * devm_xa_init() - Device managed initialization of an empty XArray
+> + * @dev: The device this xarray is associated with
+> + * @xa: XArray
+> + *
+> + * Context: Any context
+> + * Returns: 0 on success, -errno if the action fails to be set
+> + */
+> +int devm_xa_init(struct device *dev, struct xarray *xa)
+> +{
+> +	xa_init(xa);
+> +	return devm_add_action(dev, xa_destroy_cb, xa);
+> +}
+> +EXPORT_SYMBOL(devm_xa_init);
+> +
+>  static int device_add_attrs(struct device *dev)
 >  {
->  	struct pci_doe_mb *doe_mb = mb;
-> @@ -440,11 +433,8 @@ struct pci_doe_mb *pcim_doe_create_mb(struct pci_dev *pdev, u16 cap_offset)
->  	doe_mb->pdev = pdev;
->  	doe_mb->cap_offset = cap_offset;
->  	init_waitqueue_head(&doe_mb->wq);
-> -
-> -	xa_init(&doe_mb->prots);
-> -	rc = devm_add_action(dev, pci_doe_xa_destroy, doe_mb);
-> -	if (rc)
-> -		return ERR_PTR(rc);
-> +	if (devm_xa_init(dev, &doe_mb->prots))
-> +		return ERR_PTR(-ENOMEM);
+>  	struct class *class = dev->class;
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 073f1b0126ac..e06dc63e375b 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -27,6 +27,7 @@
+>  #include <linux/uidgid.h>
+>  #include <linux/gfp.h>
+>  #include <linux/overflow.h>
+> +#include <linux/xarray.h>
+>  #include <linux/device/bus.h>
+>  #include <linux/device/class.h>
+>  #include <linux/device/driver.h>
+> @@ -978,6 +979,8 @@ int __must_check devm_device_add_group(struct device *dev,
+>  void devm_device_remove_group(struct device *dev,
+>  			      const struct attribute_group *grp);
 >  
->  	doe_mb->work_queue = alloc_ordered_workqueue("DOE: [%x]", 0,
->  						     doe_mb->cap_offset);
+> +int devm_xa_init(struct device *dev, struct xarray *xa);
+> +
+>  /*
+>   * Platform "fixup" functions - allow the platform to have their say
+>   * about devices and actions that the general device layer doesn't
 > -- 
 > 2.35.3
 > 
