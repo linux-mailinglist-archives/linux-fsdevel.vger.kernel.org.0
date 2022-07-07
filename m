@@ -2,51 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3762956AD4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 23:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CC856ADC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Jul 2022 23:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236618AbiGGVQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 17:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        id S236857AbiGGVgi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 17:36:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236225AbiGGVQS (ORCPT
+        with ESMTP id S236801AbiGGVgh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 17:16:18 -0400
+        Thu, 7 Jul 2022 17:36:37 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4A4C2FFE9;
-        Thu,  7 Jul 2022 14:16:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91942380;
+        Thu,  7 Jul 2022 14:36:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vz0EFpm4EW4gscqucL2WOCV1P8PWt/Mzd6nQNhrFspc=; b=x+aYVaGFXkMC2Yz6p9/PsALvoX
-        u+VV36hM4Et20cfaBCQlKV3uGFbzdzbo2SdPvmGV+LLu9XAM5KRz4adGbbc/xumshei1IrzvJqXEk
-        KXLb5YFtucnwluV9wPvHtxbMbGOfoJLbtWeR22lQcosq2mi5sp/3jlPnEFQZs1BKR1LSmYYd/2uLK
-        cuQiEFZnRrs2wyO731M8kctC87h4CWOWln9XlcXCAiWDvWRI7Cp5yMynlyvjW4zhs4J0qzfFErifu
-        anG3g89WjmjUkTdJUko6YqEfOJhkXYeV8Dei2Ppo7LcdafBnmYW0hOEysNrHQWvQM10P2ydraKDSF
-        WFGwV7gg==;
+        bh=ttm6gGP6SLsd/ERoDNA6enC+GfvJnC9kynUKCW0O0ns=; b=yG/OHYUxpGtlw44gkc5XopLGK7
+        I6y30vKOkhOgcv+c8LaKNmQixg7SzUKOv8wSBBO+6LBT8YXJPQXcIR0qWJClh6qOzughOSEPsNMfy
+        S8DJkDEk+QYlc/azK+k+pGgEtW9CrNp8CzMc1vh7pfA3wOIoQtKS6wSLiAAByTp2BbN5++4vl3VAC
+        Zku/392MLRMD/b2b6Zeco5gTA+2lC0sHcilcbcxPhxpF/P1rFjeBgdu6UdzweR4E0XmzLUCeP2ogK
+        RObaFJoTdvPJ1wAzXrh490Wnuns+OppbHZaPWd99DmY2EgLSK7UE7EuHzOSk9RlAx4688b2+ycQXa
+        /fqLBcTw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o9Yr7-000ILa-DQ; Thu, 07 Jul 2022 21:16:13 +0000
-Date:   Thu, 7 Jul 2022 14:16:13 -0700
+        id 1o9ZAn-000Lbq-4A; Thu, 07 Jul 2022 21:36:33 +0000
+Date:   Thu, 7 Jul 2022 14:36:33 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, amir73il@gmail.com,
-        pankydev8@gmail.com, josef@toxicpanda.com, jmeneghi@redhat.com,
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Zorro Lang <zlang@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, pankydev8@gmail.com,
+        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
         Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
         Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>
+        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
+        fstests <fstests@vger.kernel.org>
 Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
  expunges
-Message-ID: <YsdNHQZdlT1IU5dv@bombadil.infradead.org>
+Message-ID: <YsdR4XgXW+iE/m8h@bombadil.infradead.org>
 References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <a120fb86-5a08-230f-33ee-1cb47381fff1@acm.org>
- <YsGaU4lFjR5Gh29h@mit.edu>
- <1abb9307-509d-e2dc-5756-ebc297a62538@acm.org>
+ <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
+ <20220519112450.zbje64mrh65pifnz@zlang-mailbox>
+ <YoZbF90qS+LlSDfS@casper.infradead.org>
+ <20220519154419.ziy4esm4tgikejvj@zlang-mailbox>
+ <YoZq7/lr8hvcs9T3@casper.infradead.org>
+ <YsB54p1vpBg4v2Xd@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1abb9307-509d-e2dc-5756-ebc297a62538@acm.org>
+In-Reply-To: <YsB54p1vpBg4v2Xd@mit.edu>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -58,53 +65,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 03, 2022 at 07:54:11AM -0700, Bart Van Assche wrote:
-> On 7/3/22 06:32, Theodore Ts'o wrote:
-> > On Sat, Jul 02, 2022 at 02:48:12PM -0700, Bart Van Assche wrote:
-> > > 
-> > > I strongly disagree with annotating tests with failure rates. My opinion is
-> > > that on a given test setup a test either should pass 100% of the time or
-> > > fail 100% of the time.
-> > 
-> > My opinion is also that no child should ever go to bed hungry, and we
-> > should end world hunger.
+On Sat, Jul 02, 2022 at 01:01:22PM -0400, Theodore Ts'o wrote:
+> Note: I recommend that you skip using the loop device xfstests
+> strategy, which Luis likes to advocate.  For the perspective of
+> *likely* regressions caused by the Folio patches, I claim they are
+> going to cause you more pain than they are worth.  If there are some
+> strange Folio/loop device interactions, they aren't likely going to be
+> obvious/reproduceable failures that will cause pain to linux-next
+> testers.  While it would be nice to find **all** possible bugs before
+> patches go usptream to Linus, if it slows down your development
+> velocity to near-standstill, it's not worth it.  We have to be
+> realistic about things.
+
+Regressions with the loopback block driver can creep up and we used to
+be much worse, but we have gotten better at it. Certainly testing a
+loopback driver can mean running into a regression with the loopback
+driver. But some block driver must be used in the end.
+
+> What about other file systems?  Well, first of all, xfstests only has
+> support for the following file systems:
 > 
-> In my view the above comment is unfair. The first year after I wrote the
-> SRP tests in blktests I submitted multiple fixes for kernel bugs encountered
-> by running these tests. Although it took a significant effort, after about
-> one year the test itself and the kernel code it triggered finally resulted
-> in reliable operation of the test. After that initial stabilization period
-> these tests uncovered regressions in many kernel development cycles, even in
-> the v5.19-rc cycle.
+> 	9p btrfs ceph cifs exfat ext2 ext4 f2fs gfs glusterfs jfs msdos
+> 	nfs ocfs2 overlay pvfs2 reiserfs tmpfs ubifs udf vfat virtiofs xfs
 > 
-> Since I'm not very familiar with xfstests I do not know what makes the
-> stress tests in this test suite fail. Would it be useful to modify the code
-> that decides the test outcome to remove the flakiness, e.g. by only checking
-> that the stress tests do not trigger any unwanted behavior, e.g. kernel
-> warnings or filesystem inconsistencies?
+> {kvm,gce}-xfstests supports these 16 file systems:
+> 
+> 	9p btrfs exfat ext2 ext4 f2fs jfs msdos nfs overlay reiserfs
+> 	tmpfs ubifs udf vfat xfs
+> 
+> kdevops has support for these file systems:
+> 
+> 	btrfs ext4 xfs
 
-Filesystems and the block layer are bundled on top of tons of things in
-the kernel, and those layers could introduce the undeterminism. To rule
-out determinism we must first rule out undeterminism in other areas of
-the kernel, and that will take a long time. Things like kunit tests will
-help here, along with adding more tests to other smaller layers. The
-list is long.
+Thanks for this list Ted!
 
-At LSFMM I mentioned how blktests block/009 had an odd failure rate of
-about 1/669 a while ago. The issue was real, and it took a while to
-figure out what the real issue was. Jan Kara's patches solved these
-issues and they are not trivial to backport to ancient enterprise
-kernels ;)
+And so adding suport for a new filesystem in kdevops should be:
 
-Another more recent one was the undeterministic RCU cpu stall warnings with
-a failure rate of about 1/80 on zbd/006 and that lead to some interesting
-revelations about how qemu's use of discard was shitty and just needed
-to be enhanced.
+ * a kconfig symbol for the fs and then one per supported mkfs config
+   option you want to support
 
-Yes, you can probably make zbd/006 more atomic and split it into 10
-tests, but I don't think we can escape the lack of determinism in
-certain areas of the kernel. We can *work to improve* it, but again,
-that will take time, and I am not quite sure many folks really want
-that too.
+ * a configuration file for it, this can be as elaborate to support
+   different mkfs config options as we have for xfs [0] or one
+   with just one or two mkfs config options [1]. The default
+   is just shared information.
+
+[0] https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/fstests/templates/xfs/xfs.config
+[1] https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/fstests/templates/ext4/ext4.config
+
+> There are more complex things you could do, such as running a baseline
+> set of tests 500 times (as Luis suggests),
+
+I advocate 100 and I suggest that is a nice goal for enterprise kernels.
+
+I also personally advocate this confidence in a baseline for stable
+kernels if *I* am going to backport changes.
+
+> but I believe that for your
+> use case, it's not a good use of your time.  You'd need to speed
+> several weeks finding *all* the flaky tests up front, especially if
+> you want to do this for a large set of file systems.  It's much more
+> efficient to check if a suspetected test regression is really a flaky
+> test result when you come across them.
+
+Or you work with a test runner that has the list of known failures / flaky
+failures for a target configuration like using loopbacks already. And
+hence why I tend to attend to these for xfs, btrfs, and ext4 when I have
+time. My goal has been to work towards a baseline of at least 100
+successful runs without failure tracking upstream.
 
   Luis
