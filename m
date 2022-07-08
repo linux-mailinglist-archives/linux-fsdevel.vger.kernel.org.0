@@ -2,249 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 110F756C46C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 01:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB0556C35C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 01:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239870AbiGHUSx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 16:18:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45208 "EHLO
+        id S240065AbiGHUWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 16:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239177AbiGHUSv (ORCPT
+        with ESMTP id S240060AbiGHUWR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 16:18:51 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC4A2DA8D;
-        Fri,  8 Jul 2022 13:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657311530; x=1688847530;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=VVk3DH0J2s/uapV8NWCtaDc5GhklK5rVSPC7QvYirRw=;
-  b=I4HWS6DW7TPURtJjOnNQ6FJ8zcQK4/+AoZQ+SxXW0YrpJjx6kIRAiRP+
-   n0B2inkLJolYzsb8b/ZaeZPl2hn8l7xS7dcM3v8CBjVeiIZqL1XKvH0qB
-   /pS7cKrMOKJhaJh0iU6lCuTJF4G9+XqXeZjwSVCpHwGzVYVSj7sVDK8+P
-   gjucFaHCmQBOMThQ/59wdzTwY4hBet0KtvHNe1Z6soSMusHZx/xuw/9ky
-   IBqzdbOq7DoXhmvgPmwbXJDvW7WEddrpQlj/AHhBlKbdiEJpJTLBUDi+c
-   HLXm/G+W6dtj6TubPJugXzCLj3DG+qLdOJT/veETJ79nr47UHsun056SZ
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10402"; a="284380544"
-X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
-   d="scan'208";a="284380544"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 13:18:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
-   d="scan'208";a="770891287"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga005.jf.intel.com with ESMTP; 08 Jul 2022 13:18:48 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Fri, 8 Jul 2022 13:18:47 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27 via Frontend Transport; Fri, 8 Jul 2022 13:18:47 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.27; Fri, 8 Jul 2022 13:18:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UlBVGPo8ZOdxlkMKPoWw0QOF56YXG2y36tAURuXdUcHD/PwkriuF26XUwC303gnupt9O2WyUKd0/dN2BhBiIhI5CCNAD7BVzXC5KrAOaU5VELoBAb41FiR1iH66MeUSKYzwl6D6irmihmHung985geHzv1tchy3UkoAJzEGrhWvS8OfxukFqd+J6zteLzV80LBIa9qev4+OJ4ajxOfm7fsDyUgciMRXnQntDkTOLWVKm8RPMQm5PT7+77H4V+FplQ0HEc/+KhCiOEY8Zt67jeC6pBOc5mVhddxzAdHKw1sXEBPP2h9mY5Tb7ucT97v6gz0RRLGY5WgS2W2tq/wH47A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1dY29o8B4Mhyqv6tEXPMBWAevROIgmOmlR/cMTPpMT4=;
- b=N/pBaYNacXdRDAb7L46BJba6HBWDcET68gyNZH+U1BOn94tLhxMS1TAn7s5p7qpEL5161rHAx5PVUoWYgOwdcwC35oQ1Jj/mDdZi4SFecJWUliWsoJRIwpGxPpsbdKwkKGSouoeBlfmWqD2VKoQaE69ScA08JszFR26E6JsNnavwCmkxWvpEmMhluAnLrV5V9q157LAYpAU8IUUGHAx+q2qbNSj0VmcPswZuTxeKIgvOOp25qMIQXDUUPaEPmQkiS+6sJLBtENryUM1QAqnpO3ZV6k6JojbJP/X8Gh7uQIMMDXYRPMfR/fLSpuofZyKSvhICkKQHf+ASGTRWcdxTdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6311.namprd11.prod.outlook.com (2603:10b6:8:a6::21) by
- MWHPR11MB1296.namprd11.prod.outlook.com (2603:10b6:300:1d::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5395.18; Fri, 8 Jul 2022 20:18:45 +0000
-Received: from DM4PR11MB6311.namprd11.prod.outlook.com
- ([fe80::f188:57e2:349e:51da]) by DM4PR11MB6311.namprd11.prod.outlook.com
- ([fe80::f188:57e2:349e:51da%9]) with mapi id 15.20.5417.020; Fri, 8 Jul 2022
- 20:18:45 +0000
-Date:   Fri, 8 Jul 2022 13:18:35 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-CC:     Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Matthew Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Nathan Chancellor" <nathan@kernel.org>,
+        Fri, 8 Jul 2022 16:22:17 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED278736D
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 13:22:16 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id b1so7845540ilf.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jul 2022 13:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/UZePUHRNJILM679cWPNfgYLf9iBJLiMq5x1kWJ7CZ4=;
+        b=U4pdhs9bqBwM/E03LS2JpiFDCzjMlIq4GhGcpD6IuJj8LLGxXDbSJwvnx+GS0OJdVB
+         Fk3e8R/0Mo4Hti7k2MR7W66WaMnhWkydN3kRYJ2NNjthsCuxlV8LPe1zcEz/GEs4F1ZW
+         NoMF3cvZe2cnKZriRCjzI1C2hZQSt7+5L0pT4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/UZePUHRNJILM679cWPNfgYLf9iBJLiMq5x1kWJ7CZ4=;
+        b=1YQcOzY4LvAhWEEEtbPlfkb1XO/NoWh9aoxZ1wmk7lClOC8F4bgKqLbz3Jsgqm+wdB
+         TKZQMWQbHpdv1zLdJyzlNTGUAGrmSTQrhs9hcf/7PXIJakmI+VDT2Q6PZBV1ozQwq15E
+         IDwBW6P0IS1OPzfAOC6Y4Qq3VPLp4S5VVxMfEPDTxXeZc+sdgUgJ2S64SIQ5kYdhIJPC
+         FfXCWB4FYpXXWbb4UkL1THE7uarLXHrHF1HTZIEA3Hb5z9GFPS4+9sHZdioYgI8FQA+r
+         3iUFCqFLjssFNTj7HD/kbCJ55tRGkc+ORwPBg9MjBiBuCoWBe3vm98gXRiHkPdMEvDQK
+         pTXw==
+X-Gm-Message-State: AJIora+hP1GpKEQ/0nJ3ohF0v2lwYLRZKuSmQqbmrLQNWHOlOzv4wTno
+        pkE328iWErts3s13G8NtVmetLg==
+X-Google-Smtp-Source: AGRyM1sqoFVBarg/sjA1rALOnA1pW658MEpnpIO3S4XvRk/cZWsGRtqSyVTChGm4FvqKvvqsH5qgAg==
+X-Received: by 2002:a05:6e02:144f:b0:2dc:2850:2956 with SMTP id p15-20020a056e02144f00b002dc28502956mr3093263ilo.258.1657311736099;
+        Fri, 08 Jul 2022 13:22:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id u18-20020a92ccd2000000b002d8d813892csm16967320ilq.8.2022.07.08.13.22.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Jul 2022 13:22:15 -0700 (PDT)
+Subject: Re: [PATCH v6 3/4] kunit: Taint the kernel when KUnit tests are run
+To:     David Gow <davidgow@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
         Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, <linux-aio@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <nvdimm@lists.linux.dev>,
-        <io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <llvm@lists.linux.dev>
-Subject: Re: [PATCH] fs: Replace kmap{,_atomic}() with kmap_local_page()
-Message-ID: <YsiQptk19txHrG4c@iweiny-desk3>
-References: <20220630163527.9776-1-fmdefrancesco@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220630163527.9776-1-fmdefrancesco@gmail.com>
-X-ClientProxiedBy: BYAPR05CA0036.namprd05.prod.outlook.com
- (2603:10b6:a03:c0::49) To DM4PR11MB6311.namprd11.prod.outlook.com
- (2603:10b6:8:a6::21)
+        Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220708044847.531566-1-davidgow@google.com>
+ <20220708044847.531566-3-davidgow@google.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <fc638852-ac9a-abab-8fdb-01b685cdec96@linuxfoundation.org>
+Date:   Fri, 8 Jul 2022 14:22:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f27b0ca9-3d98-41ff-4538-08da611f0f05
-X-MS-TrafficTypeDiagnostic: MWHPR11MB1296:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: h4AKFrD5SWs8KrDKuR0224t5bcnBpaCVkXRD/Tu0RPfmlp90uOpVT7UPwuhiKloGlM1kK1piwZHYjij1mFkFbSAXkawR2n0FhWShgxeTjse7MCGlxA62QR/SNGUIxhRh+bkQYMtYu2hKzsO0BVzX/LQDGwEypqf+9KG+R/hAz2g+LCdERO4zyfivriWmczWFataBJlGvSj/4wo1at2JvudlUqJHRHuxWsF3KxlpQku78C5t9ZVqBT7MbUWT5fAJLe452BH0hDsSS6f3vraNmHoupJci5gBkF7SR0a6ZMuqEH1PFjB7tuwI3iYbUnV9jDviiE7HOjtZLqVTUSC1dUKxRQkY0setOqCfLCTBT8nGaI/Bf5h4OepEyOYuxR2z5U+k6Xi0f1ZO+4SFnzOH9zPLkPEKI741ON8V+zhGyXtpPWFgWSqMNaJnXgRjPSNoNKJH/ipg1aG4ey6zicbRwRJiKZVRLipU9o0juy+zVR/1cYb8f89AY4TvWROQsefCE4aTTlvr8MZJnYeJCPanZrft/fYbRAdkamFJvHTUWdfLiwaY+qowHfuUggmhBGW9JZNuI8gdIRH4SsBoRnCmDAqI53G9aEOpKHjNqlvuvDvnoqK1i8VqciW08dVmNq9hOutX4UoQQUa+ZZ9uXo5hDqXzGbRSsG71z7morYIMvpVYeO2dp6sfL52wajjuhY8ipBBBUPFkrHpRUg/WBis98KFb7L+FJOwp0cT3FShrYVmpeOIa45QfW3OCQLjOu2tT/8
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6311.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(366004)(396003)(136003)(376002)(39860400002)(346002)(8676002)(66946007)(2906002)(66476007)(38100700002)(33716001)(83380400001)(4326008)(66556008)(8936002)(41300700001)(86362001)(5660300002)(7416002)(82960400001)(6506007)(9686003)(6666004)(54906003)(186003)(6486002)(44832011)(316002)(6916009)(6512007)(478600001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TRSjz3bBhhXqkrGhdMGqvCE8WJuRTFDICGtL22yi1BRfJu1G57KI4+oM3BsZ?=
- =?us-ascii?Q?cIsV86JGFPND923/5wcFVejez2ucZl/IHLTofg0b4w1nrXllV2GEXtuMtNZe?=
- =?us-ascii?Q?CAQag4n31avWzmKmd3dLZmJ4QyIEP2RWIywUDyA5fN3S5PvaT6d0bj20Ctpw?=
- =?us-ascii?Q?rowt9Gfazh5DRCE55hazf55xPQQMVSF3aEtkLMdzp2CovLqERCWPX3Fr1DzG?=
- =?us-ascii?Q?OZy1MM4Mq6MNg40qtMWExNYVdCj3qenwhTtSPFOg0Mmq8gS/VFB8CH4S69aW?=
- =?us-ascii?Q?cutxQ44ECvALRXhT/bFkea+rPLf6ggNmyBlA7qlc4lg81+F32lWWPMq2bdLl?=
- =?us-ascii?Q?/dGWS7aBdpbjI5zQa+bZjsOgufforGBN8Sh8Ogvg5Zo2SdOJOVz0CFzqPYij?=
- =?us-ascii?Q?x5J6B1Ok/flZN3E4JTiFziOb8ea5MfZpciQHqseWn8SIfeh/jPoxN2Zj4cUa?=
- =?us-ascii?Q?N5fNEHLHHMftLqqJPYxF8z/qtLhCTQqyoCVugubP374jekCr0v0q8i3lgDGd?=
- =?us-ascii?Q?kZuYZrFyBxrF7Kfb6fgpf7hmbsfNg1iUKAKWhiLu0H8Ds9OS9AgKbRb0SUAI?=
- =?us-ascii?Q?uvSjjeh/Ej/UHvhksxLmCGJRjQFbPdU3mJtsUKXaYTrpuZk5Ij33HpM0hbVY?=
- =?us-ascii?Q?VTWdweEVcIMPO+Q/sC2KnPqzkrdlbdUTXsFQ5Ra/c0k7lFkwpd+dHrjcoyDS?=
- =?us-ascii?Q?6aJFy5Ophe1L9gaBNNZhP6yDscodfam7RuRfbAb2NRccIdbBcBlldwWxee3W?=
- =?us-ascii?Q?UUo/Uv3vtNUPMDEhTJMRFyxZSSMDyLPEqoUYr5ZZz3M2wHRkM2Rjrcyi0G7G?=
- =?us-ascii?Q?AmgRoFEmO+h1XYfgIuIuKlPdLrJlneBcN9HhUxV3CVXOkEhA+WK1clqVKsCo?=
- =?us-ascii?Q?ccMnxf2AnwHRQTFi8heTOGMwZ5hyd3dThisR1vWJLEdwpiZgU6L6F0kdCf9p?=
- =?us-ascii?Q?vddFPlM4s+aJ2I6+k80oxO8+LWrQ9s2akw9NLXM9KZGm2KetFm0pA+iBfh4j?=
- =?us-ascii?Q?XtRQiuMXMQ30M3vZA2AxuwSODL9sEluQ4/9j6yhiHuHng16dJC4pOcmq8grK?=
- =?us-ascii?Q?QW958p/tc0kn19RDVuWtxqe/pT1DdRlivF9S/jsQezZ7obGorXakHVp7V0Fc?=
- =?us-ascii?Q?384tkoaU0ILblfdc7eyCyOkj03IZvoo9BBMO3TTFAW11vl8NjNc0dalsCYbM?=
- =?us-ascii?Q?PuubtWMP0KrgaOscF396sbedG8GBAQUaYJqkWaTRlDaQsfYqMDsyzurRLprI?=
- =?us-ascii?Q?PrPRXxEIm+HQ91snYkEkEeH4z8OERqyBL4nyvE38ARnvt6O9op7LIKPobDWd?=
- =?us-ascii?Q?XnBBYayIxpwvlgJ94bpgiAFoNgEKoBWj2gE5JPLukYYU/zRvLDyw6GOrlIUS?=
- =?us-ascii?Q?vADVQqehfu0WQXxos5FU0CacSlFoS+PDc0CTYfJgbdmoTfWay7+dHkdMlXLf?=
- =?us-ascii?Q?9lonRaBwrJje9zOo+548YmnUZunjykk7pc0MrmxawYVktXlgSn3mKMYfsC5l?=
- =?us-ascii?Q?oaCKLW1ZQ0l5PxHd1+WuxRhbx5uVUmKEYCUX/0Z3bx5jrDMuTHN7QupR9ZcA?=
- =?us-ascii?Q?15AdWzWj7HqEjKzZ6MS23pfyfw6yUsQ1DUQjQy9OBDJNxIlCQCn6WhUBygyj?=
- =?us-ascii?Q?Jao5t7ws7bcUOyrQiD265PxtuE3O0eQd6ruWhC7xP53u?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f27b0ca9-3d98-41ff-4538-08da611f0f05
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6311.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 20:18:45.1949
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kKweMs2Qyq8SjHVNH9lAGi4PWUc2cI+aObiL4wPSXvutv0f/KPGsyLHXGCm4XVAoWLn2UIw38A3IJ3c/sG7oCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1296
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220708044847.531566-3-davidgow@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 06:35:27PM +0200, Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
+On 7/7/22 10:48 PM, David Gow wrote:
+> Make KUnit trigger the new TAINT_TEST taint when any KUnit test is run.
+> Due to KUnit tests not being intended to run on production systems, and
+> potentially causing problems (or security issues like leaking kernel
+> addresses), the kernel's state should not be considered safe for
+> production use after KUnit tests are run.
 > 
-> With kmap_local_page(), the mappings are per thread, CPU local and not
-> globally visible. Furthermore, the mappings can be acquired from any
-> context (including interrupts).
+> This both marks KUnit modules as test modules using MODULE_INFO() and
+> manually taints the kernel when tests are run (which catches builtin
+> tests).
 > 
-> Therefore, use kmap_local_page() in exec.c because these mappings are per
-> thread, CPU local, and not globally visible.
-> 
-> Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
-> HIGHMEM64GB enabled.
-> 
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-
-This looks good but there is a kmap_atomic() in this file which I _think_ can
-be converted as well.  But that is good as a separate patch.
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-
-> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+> Tested-by: Daniel Latypov <dlatypov@google.com>
+> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> Signed-off-by: David Gow <davidgow@google.com>
 > ---
->  fs/exec.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 0989fb8472a1..4a2129c0d422 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -583,11 +583,11 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
->  
->  				if (kmapped_page) {
->  					flush_dcache_page(kmapped_page);
-> -					kunmap(kmapped_page);
-> +					kunmap_local(kaddr);
->  					put_arg_page(kmapped_page);
->  				}
->  				kmapped_page = page;
-> -				kaddr = kmap(kmapped_page);
-> +				kaddr = kmap_local_page(kmapped_page);
->  				kpos = pos & PAGE_MASK;
->  				flush_arg_page(bprm, kpos, kmapped_page);
->  			}
-> @@ -601,7 +601,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
->  out:
->  	if (kmapped_page) {
->  		flush_dcache_page(kmapped_page);
-> -		kunmap(kmapped_page);
-> +		kunmap_local(kaddr);
->  		put_arg_page(kmapped_page);
->  	}
->  	return ret;
-> @@ -883,11 +883,11 @@ int transfer_args_to_stack(struct linux_binprm *bprm,
->  
->  	for (index = MAX_ARG_PAGES - 1; index >= stop; index--) {
->  		unsigned int offset = index == stop ? bprm->p & ~PAGE_MASK : 0;
-> -		char *src = kmap(bprm->page[index]) + offset;
-> +		char *src = kmap_local_page(bprm->page[index]) + offset;
->  		sp -= PAGE_SIZE - offset;
->  		if (copy_to_user((void *) sp, src, PAGE_SIZE - offset) != 0)
->  			ret = -EFAULT;
-> -		kunmap(bprm->page[index]);
-> +		kunmap_local(src);
->  		if (ret)
->  			goto out;
->  	}
-> @@ -1680,13 +1680,13 @@ int remove_arg_zero(struct linux_binprm *bprm)
->  			ret = -EFAULT;
->  			goto out;
->  		}
-> -		kaddr = kmap_atomic(page);
-> +		kaddr = kmap_local_page(page);
->  
->  		for (; offset < PAGE_SIZE && kaddr[offset];
->  				offset++, bprm->p++)
->  			;
->  
-> -		kunmap_atomic(kaddr);
-> +		kunmap_local(kaddr);
->  		put_arg_page(page);
->  	} while (offset == PAGE_SIZE);
->  
-> -- 
-> 2.36.1
+> No changes since v5:
+> https://lore.kernel.org/linux-kselftest/20220702040959.3232874-3-davidgow@google.com/
 > 
+> No changes since v4:
+> https://lore.kernel.org/linux-kselftest/20220701084744.3002019-3-davidgow@google.com/
+> 
+
+David, Brendan, Andrew,
+
+Just confirming the status of these patches. I applied v4 1/3 and v4 3/4
+to linux-kselftest kunit for 5.20-rc1.
+
+I am seeing v5 and v6 now. Andrew applied v5 looks like. Would you like
+me to drop the two I applied? Do we have to refresh with v6?
+
+thanks,
+-- Shuah
+
