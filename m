@@ -2,109 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C40F356B48D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 10:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE59856B4D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 10:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237859AbiGHIey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 04:34:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
+        id S237478AbiGHIyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 04:54:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237206AbiGHIex (ORCPT
+        with ESMTP id S237218AbiGHIyj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 04:34:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E4BA312615
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 01:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657269292;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Fri, 8 Jul 2022 04:54:39 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D56761D47;
+        Fri,  8 Jul 2022 01:54:38 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id F019E1FEFE;
+        Fri,  8 Jul 2022 08:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1657270477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=OP4X7LUwgicK2Z8iBMF1E87pgvSh5qnsKOoxYGUrQZE=;
-        b=WTXE9QpcWj/4hSJCuvEnauYTvICvnfumdBI0KEsZSuJuHWIZg+M6+eFxGdVZrl4u7wOMdg
-        3Kyzugz4dK+gVYAV6wMa6ZzFWpDiDOMrqSg7VjEFY/FFRxv67m+zKdDdyEK1ttlS8C2Anh
-        V5OVwB+alVKQPytupjiDcqbEg9bAmxM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-655-YLkXHmJ7MkK83y7yYijfCw-1; Fri, 08 Jul 2022 04:34:48 -0400
-X-MC-Unique: YLkXHmJ7MkK83y7yYijfCw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=Y09aHnftKgsb755aav+tcisMBqwaGQVPRoF6I/GeksQ=;
+        b=pFEUnbCb+AjEBxNHzdq1IzRE0SheLCfh79/KP/G2SXw3v7NpmirYHy0MKyq6FafCpJoHdC
+        Zbw81wF2FOf/Qk3Ph1hEgS9khYQ4lGrGD+cADZ22SMXc6uOyDMgwsrnnvaOpOJQRDLhzAb
+        HRMxK0Ok91k7A5/A6xLynKW6jrv/yZ0=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C18123C0ED4C;
-        Fri,  8 Jul 2022 08:34:47 +0000 (UTC)
-Received: from localhost (ovpn-12-169.pek2.redhat.com [10.72.12.169])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 17E662166B26;
-        Fri,  8 Jul 2022 08:34:46 +0000 (UTC)
-Date:   Fri, 8 Jul 2022 16:34:43 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Jianglei Nie <niejianglei2021@163.com>, akpm@linux-foundation.org
-Cc:     vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] proc/vmcore: fix potential memory leak in
- vmcore_init()
-Message-ID: <YsfsIzjmhR5VQU3N@MiWiFi-R3L-srv>
-References: <20220704081839.2232996-1-niejianglei2021@163.com>
+        by relay2.suse.de (Postfix) with ESMTPS id 04BBE2C141;
+        Fri,  8 Jul 2022 08:54:33 +0000 (UTC)
+Date:   Fri, 8 Jul 2022 10:54:33 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Gang Li <ligang.bdlg@bytedance.com>
+Cc:     akpm@linux-foundation.org, surenb@google.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        keescook@chromium.org, rostedt@goodmis.org, mingo@redhat.com,
+        peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, david@redhat.com, imbrenda@linux.ibm.com,
+        adobriyan@gmail.com, yang.yang29@zte.com.cn, brauner@kernel.org,
+        stephen.s.brennan@oracle.com, zhengqi.arch@bytedance.com,
+        haolee.swjtu@gmail.com, xu.xin16@zte.com.cn,
+        Liam.Howlett@oracle.com, ohoono.kwon@samsung.com,
+        peterx@redhat.com, arnd@arndb.de, shy828301@gmail.com,
+        alex.sierra@amd.com, xianting.tian@linux.alibaba.com,
+        willy@infradead.org, ccross@google.com, vbabka@suse.cz,
+        sujiaxun@uniontech.com, sfr@canb.auug.org.au,
+        vasily.averin@linux.dev, mgorman@suse.de, vvghjk1234@gmail.com,
+        tglx@linutronix.de, luto@kernel.org, bigeasy@linutronix.de,
+        fenghua.yu@intel.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] mm, oom: Introduce per numa node oom for
+ CONSTRAINT_{MEMORY_POLICY,CPUSET}
+Message-ID: <YsfwyTHE/5py1kHC@dhcp22.suse.cz>
+References: <20220708082129.80115-1-ligang.bdlg@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220704081839.2232996-1-niejianglei2021@163.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220708082129.80115-1-ligang.bdlg@bytedance.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/04/22 at 04:18pm, Jianglei Nie wrote:
-> elfcorehdr_alloc() allocates a memory chunk for elfcorehdr_addr with
-> kzalloc(). If is_vmcore_usable() returns false, elfcorehdr_addr is a
-> predefined value. If parse_crash_elf_headers() occurs some error and
-> returns a negetive value, the elfcorehdr_addr should be released with
-> elfcorehdr_free().
-> 
-> We can fix by calling elfcorehdr_free() when parse_crash_elf_headers()
-> fails.
+On Fri 08-07-22 16:21:24, Gang Li wrote:
+> TLDR
+> ----
+> If a mempolicy or cpuset is in effect, out_of_memory() will select victim
+> on specific node to kill. So that kernel can avoid accidental killing on
+> NUMA system.
 
-LGTM,
+We have discussed this in your previous posting and an alternative
+proposal was to use cpusets to partition NUMA aware workloads and
+enhance the oom killer to be cpuset aware instead which should be a much
+easier solution.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+> Problem
+> -------
+> Before this patch series, oom will only kill the process with the highest 
+> memory usage by selecting process with the highest oom_badness on the
+> entire system.
+> 
+> This works fine on UMA system, but may have some accidental killing on NUMA
+> system.
+> 
+> As shown below, if process c.out is bind to Node1 and keep allocating pages
+> from Node1, a.out will be killed first. But killing a.out did't free any
+> mem on Node1, so c.out will be killed then.
+> 
+> A lot of AMD machines have 8 numa nodes. In these systems, there is a
+> greater chance of triggering this problem.
 
-> 
-> Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
-> ---
->  fs/proc/vmcore.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 4eaeb645e759..86887bd90263 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -1569,7 +1569,7 @@ static int __init vmcore_init(void)
->  	rc = parse_crash_elf_headers();
->  	if (rc) {
->  		pr_warn("Kdump: vmcore not initialized\n");
-> -		return rc;
-> +		goto fail;
->  	}
->  	elfcorehdr_free(elfcorehdr_addr);
->  	elfcorehdr_addr = ELFCORE_ADDR_ERR;
-> @@ -1577,6 +1577,9 @@ static int __init vmcore_init(void)
->  	proc_vmcore = proc_create("vmcore", S_IRUSR, NULL, &vmcore_proc_ops);
->  	if (proc_vmcore)
->  		proc_vmcore->size = vmcore_size;
-> +
-> +fail:
-> +	elfcorehdr_free(elfcorehdr_addr);
->  	return 0;
->  }
->  fs_initcall(vmcore_init);
-> -- 
-> 2.25.1
-> 
-
+Please be more specific about existing usecases which suffer from the
+current OOM handling limitations. 
+-- 
+Michal Hocko
+SUSE Labs
