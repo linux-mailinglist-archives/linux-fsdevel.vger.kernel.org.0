@@ -2,108 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EC656B56C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 11:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCFE56B5AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 11:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237626AbiGHJZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 05:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47608 "EHLO
+        id S237482AbiGHJfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 05:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237506AbiGHJZr (ORCPT
+        with ESMTP id S237290AbiGHJe7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 05:25:47 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5B35FF1
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 02:25:45 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id j12so9095104plj.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jul 2022 02:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=l76lwu0gnwm/BRNuFyHSAOJEi0ORTe8+eknNAmXKjds=;
-        b=rfzaFQGT5WylU8oFzZ3Bm68tK5cbUJbFE9StIG5s9hhsbRmfmyXpTX1vYAFS6j1sbO
-         54fzhiZV7ncHK4Nr8HGnmkIfr2ytnO8L9enycMsyVsVIL1tiXZVpZqSpKlDbdzlr1hkY
-         5SH3l1JlLCIaVKwtkJN3exq1MhVYULNmdtYE+3L2FEtWtbYyCTh7i5U27YS5hNLZS0Xi
-         TkCdvF8KuNND6fSaeYKOvdHkBq2ajs61bZsAjRcCL57hyN0L81gtcBE6SGAlrMn1jLvp
-         TQMFQ82Z2m2T8NG7gNKsoCwNbcmQba3/hsB+SpuTecMd4FglfijuRPwEi0zcwSVVDuyS
-         /4FQ==
+        Fri, 8 Jul 2022 05:34:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A391532EC1
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 02:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657272897;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=sMFHzJKRiYj62gdYRhno9WSMM22FrLKbwCUpBPEktWM=;
+        b=IFbCmAIGioD3FcTWcwnZ4Aqlc3jzOEZZPAEiNtnih7hOsOFVTjBeSiI07jhRBux4kNMC+q
+        iTxohJv+sFvWo0efsYjmvfuDkkgMfB6BeyCBLZnQ2jzUXDbB2jfXo9LWlIBGqZN217fgdn
+        x3GIrvFquX17FLYvZOchjXEU+wtdoKw=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-408-vld6GB2dOrW5EGRY1SMkzw-1; Fri, 08 Jul 2022 05:34:54 -0400
+X-MC-Unique: vld6GB2dOrW5EGRY1SMkzw-1
+Received: by mail-ej1-f69.google.com with SMTP id hd35-20020a17090796a300b0072a707cfac4so5451078ejc.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jul 2022 02:34:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=l76lwu0gnwm/BRNuFyHSAOJEi0ORTe8+eknNAmXKjds=;
-        b=m5icPQYSYgZC0CiE4GZgii4I76efs+AmzIgJOy4jv64Xs+9/BgQRswmFk2GZUQ7hLO
-         CAY9b58+uouRYeRI/hzQA+PLJwXdEibYeShaTmS3678xQKMF1mNcpazJLNkxpXl5MvKZ
-         PkzDCTqmJEEkyMv1XXcFcOi9UJ9liBMOwsBLLR/kFCh91uxJQNj63fak1W0SehESSUIO
-         fPPp2qqmXyXbFk0MyEd1M4S5Xk/vLRmyJOU3BS7wIJE+awJp0JIyC5HyfbVI1BlNDblr
-         r2kJ2Iylpe1DZpw/tP/Ne9+edTqZVr6iEsuT5oM4BUdsmrI370W2KbNF12Q2EeXAhMrE
-         dMCA==
-X-Gm-Message-State: AJIora8zMSjDcHzdOUtf5iDv7zAcDVeFrGy3h2tXdg92FRPamVvrHq14
-        usGodWzIFQyYDJzkQiCQkTReSA==
-X-Google-Smtp-Source: AGRyM1uqbelvg6m24YuvTJPV4Xejv5UL/IUxXrRtbsELGOPhY6RycQiwGj2gryVPaBaHnMht6h77RQ==
-X-Received: by 2002:a17:902:e80c:b0:16c:28a6:8aa0 with SMTP id u12-20020a170902e80c00b0016c28a68aa0mr422950plg.119.1657272345465;
-        Fri, 08 Jul 2022 02:25:45 -0700 (PDT)
-Received: from [10.255.210.8] ([139.177.225.241])
-        by smtp.gmail.com with ESMTPSA id z11-20020a1709027e8b00b0016b865ea2ddsm23212195pla.85.2022.07.08.02.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 02:25:44 -0700 (PDT)
-Message-ID: <be9303de-3800-c26f-4530-9a29fe044956@bytedance.com>
-Date:   Fri, 8 Jul 2022 17:25:31 +0800
+        bh=sMFHzJKRiYj62gdYRhno9WSMM22FrLKbwCUpBPEktWM=;
+        b=au1vCEnChNX6TzwPSH97adWfCmD98LxcIefF4ejhqJPYP9F56HIqxvnrKvZ8YnsfbT
+         5WwAypQWbFtJ1SL/Wl6Px75OZjP+Di2I4g2f0bY1YyJYpdPyakhkTDFCbud/z76QRGwk
+         CJhO0mgdSeg8m/1s8WRzOkYq+54JODSGiXDXGx00SkCCxQp6pFL/d3i15/fvG/kZlSag
+         GDLv5/LAn6Xuj5ZSsCmbBoeqW7WOvyg5Z9ml/czN/BR1J+supz2qVyF+1rjdbPiepDSg
+         aSTmg9xVfmuQVvd7tjWxPoPPsO7gd48bULJRxAJPLM9hz0RlrgH7h/5tCcoUEu7D0N9z
+         0pgQ==
+X-Gm-Message-State: AJIora/Ey1Z9EW7wRVyirj+loRhFLFcfr9mDDvX0xGhUzNieo+zVItr1
+        G2rLXHuGA74owdsvfE5fUgEJZTGC8Z4ymuwxM2msD4Yrx7HY1PtL84kYe6kj1H+4rQtXhyHAbFR
+        Pv1RYbZVYPi8QvPyevrWAgUQTRg==
+X-Received: by 2002:a17:907:2895:b0:72a:f3bd:6e5f with SMTP id em21-20020a170907289500b0072af3bd6e5fmr2545868ejc.767.1657272893404;
+        Fri, 08 Jul 2022 02:34:53 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1vqzsj8D95ygzAuhY0cpDJI7xEx8WuoI4Z9hfBmeRv2uPXFteeEPUMGrkSiqA1aqHu8V5VEjQ==
+X-Received: by 2002:a17:907:2895:b0:72a:f3bd:6e5f with SMTP id em21-20020a170907289500b0072af3bd6e5fmr2545851ejc.767.1657272893155;
+        Fri, 08 Jul 2022 02:34:53 -0700 (PDT)
+Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id j24-20020aa7de98000000b00435726bd375sm29359084edv.57.2022.07.08.02.34.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 02:34:52 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Robert O'Callahan <roc@ocallahan.org>
+Subject: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
+Date:   Fri,  8 Jul 2022 11:34:51 +0200
+Message-Id: <20220708093451.472870-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: Re: [PATCH v2 0/5] mm, oom: Introduce per numa node oom for
- CONSTRAINT_{MEMORY_POLICY,CPUSET}
-Content-Language: en-US
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     akpm@linux-foundation.org, surenb@google.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        keescook@chromium.org, rostedt@goodmis.org, mingo@redhat.com,
-        peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, david@redhat.com, imbrenda@linux.ibm.com,
-        adobriyan@gmail.com, yang.yang29@zte.com.cn, brauner@kernel.org,
-        stephen.s.brennan@oracle.com, zhengqi.arch@bytedance.com,
-        haolee.swjtu@gmail.com, xu.xin16@zte.com.cn,
-        Liam.Howlett@oracle.com, ohoono.kwon@samsung.com,
-        peterx@redhat.com, arnd@arndb.de, shy828301@gmail.com,
-        alex.sierra@amd.com, xianting.tian@linux.alibaba.com,
-        willy@infradead.org, ccross@google.com, vbabka@suse.cz,
-        sujiaxun@uniontech.com, sfr@canb.auug.org.au,
-        vasily.averin@linux.dev, mgorman@suse.de, vvghjk1234@gmail.com,
-        tglx@linutronix.de, luto@kernel.org, bigeasy@linutronix.de,
-        fenghua.yu@intel.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org
-References: <20220708082129.80115-1-ligang.bdlg@bytedance.com>
- <YsfwyTHE/5py1kHC@dhcp22.suse.cz>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <YsfwyTHE/5py1kHC@dhcp22.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oh apologize. I just realized what you mean.
+Since userfaultfd doesn't implement a write operation, it is more
+appropriate to open it read-only.
 
-I should try a "cpuset cgroup oom killer" selecting victim from a
-specific cpuset cgroup.
+When userfaultfds are opened read-write like it is now, and such fd is
+passed from one process to another, SELinux will check both read and
+write permissions for the target process, even though it can't actually
+do any write operation on the fd later.
 
-On 2022/7/8 16:54, Michal Hocko wrote:
-> On Fri 08-07-22 16:21:24, Gang Li wrote:
-> 
-> We have discussed this in your previous posting and an alternative
-> proposal was to use cpusets to partition NUMA aware workloads and
-> enhance the oom killer to be cpuset aware instead which should be a much
-> easier solution.
+Inspired by the following bug report, which has hit the SELinux scenario
+described above:
+https://bugzilla.redhat.com/show_bug.cgi?id=1974559
+
+Reported-by: Robert O'Callahan <roc@ocallahan.org>
+Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+
+Resending as the last submission was ignored for over a year...
+
+https://lore.kernel.org/lkml/20210624152515.1844133-1-omosnace@redhat.com/T/
+
+I marked this as RFC, because I'm not sure if this has any unwanted side
+effects. I only ran this patch through selinux-testsuite, which has a
+simple userfaultfd subtest, and a reproducer from the Bugzilla report.
+
+Please tell me whether this makes sense and/or if it passes any
+userfaultfd tests you guys might have.
+
+ fs/userfaultfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index e943370107d0..8ccf00be63e1 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+ 	int fd;
+ 
+ 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
+-			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
++			O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+ 	if (fd < 0)
+ 		return fd;
+ 
+@@ -2090,7 +2090,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+ 	mmgrab(ctx->mm);
+ 
+ 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
+-			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
++			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+ 	if (fd < 0) {
+ 		mmdrop(ctx->mm);
+ 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+-- 
+2.36.1
+
