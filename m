@@ -2,171 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A641056B0EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 05:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC5C56B214
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 07:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237090AbiGHDaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 23:30:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59258 "EHLO
+        id S237347AbiGHEtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 00:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236946AbiGHDaE (ORCPT
+        with ESMTP id S237217AbiGHEtJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 23:30:04 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F7E747B5;
-        Thu,  7 Jul 2022 20:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657251003; x=1688787003;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PT02IACBa7Wm0O3NAyqOHw8PuqCfYgWEKpI8T6m3E9Q=;
-  b=gWBFJ8bKzkdleLNFzf1MYRu/9xaIowwykmV0ryKxUQJMp6NekZWLYtE7
-   kmxCrg465f1yTjOiNVQuMExTbU8UecqXo8Fvj9rLEA0K4l6veTIk8g+8H
-   iILMULRbXp+Ro/i7c4A+gHfXHdB064MiQCOb1n2ouCyRiTttUrnXZgfyD
-   HQV1/5/XDurl4rNY1U8MYVhXQDV+0l+oQ701Ksk9qJr8Sp8ejWbJFWi0R
-   mcJyAMS9Cu/mJ23qq0kpl/UdpwCh1pw6cRr/cJK1UflDcJ2fvjNUIaEBa
-   ja4rAI3Cdvh1OxGxSicSuxFo+3yzMMp+9gHoUEwI4j/7Ff7m2WDDrXriB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="370492166"
-X-IronPort-AV: E=Sophos;i="5.92,254,1650956400"; 
-   d="scan'208";a="370492166"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 20:30:02 -0700
-X-IronPort-AV: E=Sophos;i="5.92,254,1650956400"; 
-   d="scan'208";a="651398466"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.249.175.131]) ([10.249.175.131])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 20:29:51 -0700
-Message-ID: <5d0b9341-78b5-0959-2517-0fb1fe83a205@intel.com>
-Date:   Fri, 8 Jul 2022 11:29:49 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.11.0
-Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Michael Roth <michael.roth@amd.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Nikunj A. Dadhania" <nikunj@amd.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        Fri, 8 Jul 2022 00:49:09 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA93D27FDF
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Jul 2022 21:49:06 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id 9-20020a631449000000b00412b1418c79so3729155pgu.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Jul 2022 21:49:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VZyJYOYOmyBhccquB8jdOUnepxpHA2EaXyI1P4UgbZk=;
+        b=OHzkH6CUxvF29C6YQodBsFfPokm7+7etvB60EYT5rIwMD9OH9U0AtmpXKx8ZweKRed
+         oVZZWfzMiTxQCiJZmTzZFy/2zT1zAwz/QiMCizqTeCDDUMzkWm28PYce3SbM5zzYBW77
+         yV0Uad6HwQFnl1WR7X0N9vmmphNFvmNcYpOaRGosGMuX2CSg5QrwApAEgKVwDHQTpcxy
+         Sky7eDBPBbF7SJ/f16wadWBTNZoJ/jocoStlAp9thvE9KSXkl3BZyWZ1QT9Zu68DamHv
+         OkCWlI0K2FLP1JijkIPh/bzpwjR0tPLlC54olqaueZJM3XL7OldUYMDKpjvcPNHZcS7f
+         1tug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VZyJYOYOmyBhccquB8jdOUnepxpHA2EaXyI1P4UgbZk=;
+        b=SSCJG4Yh9n29NnrRDDa1Xr4forrsp3DCGYDpdhW5H9vgs/8PBn2U2nmUuyqijvuhoB
+         HlbjouJSqSDF/MsJlHm1RpmgPSlzuKctBikU5mwwq3RUUQKPsomLr7epp21qAECXRMEM
+         mQhg6vbm9d+eQlteINr+OtE2xaBgpF753xcIAoPhvO8s0lFgj50DLpi/+fRWy7kTHHoZ
+         fGvC1J2Ro/Ma4kDgDP8EYHGmuJ5XLZeI5ujXtgWhqo3mPdUpmUAaSSvxoJmNVNLaagBI
+         kJeVNS+ua7TDbHljf3rYAMkAWH4/1f2lejiIrtOKcKiVAdIMU6F36EuHuw6IV/U6gfn4
+         yviA==
+X-Gm-Message-State: AJIora8+KalcnEJ/yJ/RksPCcFuKojJAwb6e2+FfFc4WiEL1XJRm/RcL
+        QMtu9gCkXdTXPKfIMUtT5iGtFW6OrZ471Q==
+X-Google-Smtp-Source: AGRyM1v/UKrknfucMWmYcBRyH1xUQKjKyi5ZMpliyIdbk8sMgra7H2LLCj2bXBXPVZ4KhAqUnXO25gVfJYLhfQ==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a05:6a00:1895:b0:527:f270:64de with SMTP
+ id x21-20020a056a00189500b00527f27064demr1678536pfh.61.1657255746437; Thu, 07
+ Jul 2022 21:49:06 -0700 (PDT)
+Date:   Fri,  8 Jul 2022 12:48:44 +0800
+Message-Id: <20220708044847.531566-1-davidgow@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH v6 1/4] panic: Taint kernel if tests are run
+From:   David Gow <davidgow@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, mhocko@suse.com
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-7-chao.p.peng@linux.intel.com>
- <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
- <20220624090246.GA2181919@chaop.bj.intel.com>
- <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
- <20220630222140.of4md7bufd5jv5bh@amd.com>
- <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
- <Ysc9JDcVAnlVrGC8@google.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <Ysc9JDcVAnlVrGC8@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>
+Cc:     David Gow <davidgow@google.com>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/8/2022 4:08 AM, Sean Christopherson wrote:
-> On Fri, Jul 01, 2022, Xiaoyao Li wrote:
->> On 7/1/2022 6:21 AM, Michael Roth wrote:
->>> On Thu, Jun 30, 2022 at 12:14:13PM -0700, Vishal Annapurve wrote:
->>>> With transparent_hugepages=always setting I see issues with the
->>>> current implementation.
-> 
-> ...
-> 
->>>> Looks like with transparent huge pages enabled kvm tried to handle the
->>>> shared memory fault on 0x84d gfn by coalescing nearby 4K pages
->>>> to form a contiguous 2MB page mapping at gfn 0x800, since level 2 was
->>>> requested in kvm_mmu_spte_requested.
->>>> This caused the private memory contents from regions 0x800-0x84c and
->>>> 0x86e-0xa00 to get unmapped from the guest leading to guest vm
->>>> shutdown.
->>>
->>> Interesting... seems like that wouldn't be an issue for non-UPM SEV, since
->>> the private pages would still be mapped as part of that 2M mapping, and
->>> it's completely up to the guest as to whether it wants to access as
->>> private or shared. But for UPM it makes sense this would cause issues.
->>>
->>>>
->>>> Does getting the mapping level as per the fault access type help
->>>> address the above issue? Any such coalescing should not cross between
->>>> private to
->>>> shared or shared to private memory regions.
->>>
->>> Doesn't seem like changing the check to fault->is_private would help in
->>> your particular case, since the subsequent host_pfn_mapping_level() call
->>> only seems to limit the mapping level to whatever the mapping level is
->>> for the HVA in the host page table.
->>>
->>> Seems like with UPM we need some additional handling here that also
->>> checks that the entire 2M HVA range is backed by non-private memory.
->>>
->>> Non-UPM SNP hypervisor patches already have a similar hook added to
->>> host_pfn_mapping_level() which implements such a check via RMP table, so
->>> UPM might need something similar:
->>>
->>>     https://github.com/AMDESE/linux/commit/ae4475bc740eb0b9d031a76412b0117339794139
->>>
->>> -Mike
->>>
->>
->> For TDX, we try to track the page type (shared, private, mixed) of each gfn
->> at given level. Only when the type is shared/private, can it be mapped at
->> that level. When it's mixed, i.e., it contains both shared pages and private
->> pages at given level, it has to go to next smaller level.
->>
->> https://github.com/intel/tdx/commit/ed97f4042eb69a210d9e972ccca6a84234028cad
-> 
-> Hmm, so a new slot->arch.page_attr array shouldn't be necessary, KVM can instead
-> update slot->arch.lpage_info on shared<->private conversions.  Detecting whether
-> a given range is partially mapped could get nasty if KVM defers tracking to the
-> backing store, but if KVM itself does the tracking as was previously suggested[*],
-> then updating lpage_info should be relatively straightfoward, e.g. use
-> xa_for_each_range() to see if a given 2mb/1gb range is completely covered (fully
-> shared) or not covered at all (fully private).
-> 
-> [*] https://lore.kernel.org/all/YofeZps9YXgtP3f1@google.com
+Most in-kernel tests (such as KUnit tests) are not supposed to run on
+production systems: they may do deliberately illegal things to trigger
+errors, and have security implications (for example, KUnit assertions
+will often deliberately leak kernel addresses).
 
-Yes, slot->arch.page_attr was introduced to help identify whether a page 
-is completely shared/private at given level. It seems XARRAY can serve 
-the same purpose, though I know nothing about it. Looking forward to 
-seeing the patch of using XARRAY.
+Add a new taint type, TAINT_TEST to signal that a test has been run.
+This will be printed as 'N' (originally for kuNit, as every other
+sensible letter was taken.)
 
-yes, update slot->arch.lpage_info is good to utilize the existing logic 
-and Isaku has applied it to slot->arch.lpage_info for 2MB support patches.
+This should discourage people from running these tests on production
+systems, and to make it easier to tell if tests have been run
+accidentally (by loading the wrong configuration, etc.)
+
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: David Gow <davidgow@google.com>
+---
+
+This is v6 of the "make tests taint the kernel" patchset. The only
+changes since v5 (which is the version in linux-next at time of writing)
+are some rather critical fixes to patch 2/4, where the cruicial check
+was inverted. (Oops!)
+
+The 'N' character for the taint is even less useful now that it's no
+longer short for kuNit, but all the letters in TEST are taken. :-(
+
+No changes since v5:
+https://lore.kernel.org/linux-kselftest/20220702040959.3232874-1-davidgow@google.com/
+
+No changes since v4:
+https://lore.kernel.org/linux-kselftest/20220701084744.3002019-1-davidgow@google.com/
+
+Changes since v3:
+https://lore.kernel.org/lkml/20220513083212.3537869-1-davidgow@google.com/
+- Remove the mention of KUnit from the documentation.
+- Add Luis and Brendan's Acked/Reviewed-by tags.
+
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20220430030019.803481-1-davidgow@google.com/
+- Rename TAINT_KUNIT -> TAINT_TEST.
+- Split into separate patches for adding the taint, and triggering it.
+- Taint on a kselftest_module being loaded (patch 3/3)
+
+Changes since v1:
+https://lore.kernel.org/linux-kselftest/20220429043913.626647-1-davidgow@google.com/
+- Make the taint per-module, to handle the case when tests are in
+  (longer lasting) modules. (Thanks Greg KH).
+
+Note that this still has checkpatch.pl warnings around bracket
+placement, which are intentional as part of matching the surrounding
+code.
+
+---
+ Documentation/admin-guide/tainted-kernels.rst | 1 +
+ include/linux/panic.h                         | 3 ++-
+ kernel/panic.c                                | 1 +
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+index ceeed7b0798d..7d80e8c307d1 100644
+--- a/Documentation/admin-guide/tainted-kernels.rst
++++ b/Documentation/admin-guide/tainted-kernels.rst
+@@ -100,6 +100,7 @@ Bit  Log  Number  Reason that got the kernel tainted
+  15  _/K   32768  kernel has been live patched
+  16  _/X   65536  auxiliary taint, defined for and used by distros
+  17  _/T  131072  kernel was built with the struct randomization plugin
++ 18  _/N  262144  an in-kernel test has been run
+ ===  ===  ======  ========================================================
+ 
+ Note: The character ``_`` is representing a blank in this table to make reading
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index e71161da69c4..c7759b3f2045 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -68,7 +68,8 @@ static inline void set_arch_panic_timeout(int timeout, int arch_default_timeout)
+ #define TAINT_LIVEPATCH			15
+ #define TAINT_AUX			16
+ #define TAINT_RANDSTRUCT		17
+-#define TAINT_FLAGS_COUNT		18
++#define TAINT_TEST			18
++#define TAINT_FLAGS_COUNT		19
+ #define TAINT_FLAGS_MAX			((1UL << TAINT_FLAGS_COUNT) - 1)
+ 
+ struct taint_flag {
+diff --git a/kernel/panic.c b/kernel/panic.c
+index a3c758dba15a..6b3369e21026 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -428,6 +428,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
+ 	[ TAINT_AUX ]			= { 'X', ' ', true },
+ 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
++	[ TAINT_TEST ]			= { 'N', ' ', true },
+ };
+ 
+ /**
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
+
