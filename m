@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF9156B6DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 12:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C191B56B6E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 12:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237242AbiGHKMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 06:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57090 "EHLO
+        id S238042AbiGHKND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 06:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237988AbiGHKMf (ORCPT
+        with ESMTP id S238003AbiGHKMv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 06:12:35 -0400
+        Fri, 8 Jul 2022 06:12:51 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E66684ED8;
-        Fri,  8 Jul 2022 03:12:35 -0700 (PDT)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2686IFFj028448;
-        Fri, 8 Jul 2022 03:12:35 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A94284EE0;
+        Fri,  8 Jul 2022 03:12:45 -0700 (PDT)
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267LQ5tS003531;
+        Fri, 8 Jul 2022 03:12:45 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type : content-id
  : mime-version; s=facebook;
- bh=D5UZlRMEIRV2T2pFb6Ty03JZQMkDGOiv12a6PyZkxmk=;
- b=H9wQj4vFte9ukhIZaD7o7/VUIQ/WwF++Clqe0DPgwrXzwTdyz7INADkzmBXGQTXO3L/1
- K44A6T7afbX0o6BiZhlKE9zfEvo0cV3Ln45ScwDNcay5f9OjsSFBkrNUNZGqMFwMsr9R
- N+BqNpYO0fQX0XEI69yMD7IfH9PptfUAnS8= 
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2108.outbound.protection.outlook.com [104.47.55.108])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h6f69gxqs-2
+ bh=zjZxs3sHJCcGfe2WaxNN4wBqJbhgFayELS86JTHs9Sg=;
+ b=DrzGp/QosIM2Jyf+0p0OZaseK/OIvYEev/xoIEB3jHWRv3QgsJikn8a4L8SQ00xBjU+N
+ RsmTGUy01xwu1AYK8VSX1gv8h8gAtprK+RZenEejvAF1qAetuqMXZjGPaotJ2/qbjBeg
+ UDPeeJaSbko5SH2MezgQj8t8pjN6MsaBVhs= 
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2106.outbound.protection.outlook.com [104.47.55.106])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3h67d23c7w-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 Jul 2022 03:12:34 -0700
+        Fri, 08 Jul 2022 03:12:45 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dz8HRg13MdJPlupmouOJCpvnDK9r7ZaFDD1W59BD+A7fDnxqfjWW59w7RBgnZOACUF5LEAEqsxUHEEvwPX1H9t/DlMzmCtj2/bUOrEpsJmV61Bvw+Tvnw6XXNheN4D3MO/9SBgbXlJRPPUmXYlYetSQ6MnrAZxCQ+t5yEjwEmBopH203tNsy7xZaahLPp/941crJ6pUW+5rqOkfG+lCltbEkJWzvBtqTrzVf8T81xwgjQmqVT1ndQDMK6Arszm8MbOggPa+PbZFPNrLmzRGIMxbHzodcF7tLx6yUF4gyCPOS5VN+6NotFkQYbZOQJJG35xb5bJMaHNBKqWa1ccNp7g==
+ b=mN0qUfoHPS5jpS5JB+pYHYQtCRMuFgIsyQ3Gabx/dx5CMnk82lYZIsC41t8CkPoceZjE1XtfC2CQuhDPI9M/jsyWbGI/4Zt96SsN8kvqE3PenL0A0ZxvYNZTeJQUJKskZcL42eJlNBiVRj5cGrgEiKx+7PRDDFnNlTWw0RbWvfEcSmiAKCkFvYFNrpNjwIQf52DvMf8kMk0cwrZpwraiocojp8YRoGInRjmQmzX+S/Nb07YldSZQnjbGGZu0kuH0siRj73Zzu4w6aHzIrStZicy5MTgrtCQRZ4Yfm9fqhwz/8EAzPPJOHSq5qfiLX9BpYQOcDNkRFoMzJZQc9+KFww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D5UZlRMEIRV2T2pFb6Ty03JZQMkDGOiv12a6PyZkxmk=;
- b=iA+2v5w8uESd3GLqd79E6ek10YASlh5dOEg1d2Q4A2p37SuOOGMzpBKTWGdb7d22Do53gS4/MDjWMrqZSKOs6q8iEoB9s8m9RvRjua9bpNTjf231/u476XB0XUL+Ew3YdQdiQmufgWrpHOIgHk9B5uZsi8RyeiVJ3m7DfmIntjdf9eZsOREEr+P7bC5mWbnZE9UEIMt4Yo82DkzduAjPb7DXAOkE70MBNs3/B3gqDbN2ZyTktAse/mra3GJhWGGO7o5kexftjJdAXLed6svvFXZw/HvR+CwdrsJgZkTs9shaA30iiOX1bEwBlrtIIQMzDA2pPGrXm87yJk4IHQ7QTQ==
+ bh=zjZxs3sHJCcGfe2WaxNN4wBqJbhgFayELS86JTHs9Sg=;
+ b=m4BoQ5TCKVgAgvBo5H0CuE/cb4/1Uc8/Xy3t8+grtgaDkFHPgFIo0ekX0zPMUwk51THFGXHgZU++CN79QOJtpBPUO0lLB8jvC7ZjQsnWePZRG4G5Xf+CcSVVfFbja5Pj1Y3m8/3OfdajscVcJxD/yn5soLU3VyjuitWWvNXB5Phz83QoahmYJU3hcn1zvSGpeit2v39C6gMZNumlnYLvWeXh+Vr30nk4mIH5ZARjyyhcDIn7TSd1vtQ92K+g7TXlgGrrJbqDQW1jrG9fEnmFQnaI6vVBAEboo3zLqvNPgPHddizf4SQgHv1x+NSpFQ7nEwkmxj6Aaw5AmVcaeKAJSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
@@ -43,11 +43,11 @@ Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
  by BYAPR15MB2501.namprd15.prod.outlook.com (2603:10b6:a02:88::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.20; Fri, 8 Jul
- 2022 10:12:32 +0000
+ 2022 10:12:42 +0000
 Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174]) by SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174%8]) with mapi id 15.20.5417.017; Fri, 8 Jul 2022
- 10:12:32 +0000
+ 10:12:42 +0000
 From:   Jonathan McDowell <noodles@fb.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
@@ -62,13 +62,13 @@ CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Matthew Garrett <mjg59@srcf.ucam.org>,
         Dmitrii Potoskuev <dpotoskuev@fb.com>
-Subject: [RFC PATCH 6/7] HACK: Allow the use of generic decompress with gzip
- outside __init
-Thread-Topic: [RFC PATCH 6/7] HACK: Allow the use of generic decompress with
- gzip outside __init
-Thread-Index: AQHYkrM9uTGnvX3+A0mmGfCUTcA11A==
-Date:   Fri, 8 Jul 2022 10:12:32 +0000
-Message-ID: <942e53a4062d7915b5e90e370742f18f42741fbe.1657272362.git.noodles@fb.com>
+Subject: [RFC PATCH 7/7] ima: Support measurement of kexec initramfs
+ components
+Thread-Topic: [RFC PATCH 7/7] ima: Support measurement of kexec initramfs
+ components
+Thread-Index: AQHYkrNDsat2nr2ZjUCutP79WCPZOA==
+Date:   Fri, 8 Jul 2022 10:12:42 +0000
+Message-ID: <a34feafe9794749aca848c814ac87013cbbc594b.1657272362.git.noodles@fb.com>
 References: <cover.1657272362.git.noodles@fb.com>
 In-Reply-To: <cover.1657272362.git.noodles@fb.com>
 Accept-Language: en-GB, en-US
@@ -76,58 +76,58 @@ Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 56ff9d7a-e73e-4b80-6bea-08da60ca5f90
+x-ms-office365-filtering-correlation-id: e4be3d2c-f562-473d-fdb8-08da60ca657f
 x-ms-traffictypediagnostic: BYAPR15MB2501:EE_
 x-fb-source: Internal
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Xz89tZ6E1RWzoPXNXP7EPQ/yhEWYzB0wLh0Be+JSMntO9ycXHt67EsWMYYlH9zk+2RL8qXKthKdcZGKXdLCiy/2EcOGrc5XQebtpsNM8jyD3BAALzdSq/aNxc8F7OAh6dGBpImJTAGHmWtHxkGlce4u4s7Mihr1tLYKLKhJoMZQNBEOgB5CxcXvHoxe30BnduYTeCLCvc0Qli8WDLsDQuO4jPx6zYc/Mulv2MuLlQRTeZ2XzMCxC0sO6ESy87KkgpOqsrKcpEg916xvoyRp2yjfKeOonHlQ4ahAdXV7u2SCoIM3sXQWaA8IaUEe6FJ7emETWBaOgDd6CPGtjEz4Z7Q/9GomKoVc7wPF/URaRrlzR0zQHH2a4xP8TS8dXbnl5lKZSw906DUGg2F9lXOgXaoBzojVhNEzMU1wvggpnXozUuwDL+4YCN2SJHeUDjs0y9LcLqvqhg3Hx5oSPegJvU0epFo29axGnaa0JeWHTD4hBmxbNu5tvk9LoHsGk+09e0Tm1Zq4UmNBADjgMJRgdmoXcTLMM0mujNB7vqOJxF6Wdl7FAq/Mh4VUAhLVSggsjN0Yl3wJwfW9nUJ7LYaoff7XzslZDVB7y9t0Ghbinwni4kLe1ClDXpErDEjBQ5BGGSRcsnAKW/7SK787dQ7jfutNEMEzgnCAz5kCUgbN3KdU8Y52b4PS9fEktZ1jBJ+a5OEv/wg6s1r+UyJK/HDDePPUnNyEPauEeD4R5BYoslsn4qMNcTVGKrPgESOIV2JY7q/4xoXqyMBaryhoSNAnT8d8r0CJKyb4iUo0Y0s9L9dxj/3E1A3FXiIUQSdQuo4W+VN1KGmrxLLnBNV4Cl05lNg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(136003)(396003)(346002)(39860400002)(366004)(38100700002)(110136005)(2906002)(54906003)(122000001)(316002)(7416002)(83380400001)(8936002)(2616005)(5660300002)(36756003)(6506007)(38070700005)(6512007)(26005)(76116006)(91956017)(8676002)(66946007)(4326008)(64756008)(66446008)(66476007)(66556008)(71200400001)(186003)(86362001)(6486002)(478600001)(41300700001)(41533002);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: 2D66VnBiNdVwZsmRWbqOZHKUZo1/xzzn+cSwa1zazDEXgaYCKEsKsa4Mf+Q8Hxm/9M4Ur8BTwXTv3kA6vfVeCvOS5cWnNw0d7rZntRz++arIrn+IokBzXX4cKEDO3HV43AeC27NRau0b1oYzKSkOYjkWcvYCkyDIJLsfUszjNrV5/Mx+El48BbQylv0UuvmH2QPWyKcWAUyPVD2wP5snRfrbHdsMY2mGK4H0oyBbwHxV5wMOCmn7ijQRyhozvGeLXcTJEiC8QUW0qlM+Oi05g1TXMZfzj6hV17SVibXmZPqmKE9P7SkL7+I7ELnnYWTVOp+jlsPRsbGY9NGpTP6LREgH9Jw2kGFdZWmwiSomgmpFPyyBnZtcuPdnaN1TpKaGHlr5iRGZTcvGudQfx4G8FGrCLBI1TGoG4jvDelgKLBtotOODt7gc8dLMkfr6jb8nTfIxkiwFOniudELbUhHtCennOnR/GbQ/AJcQc2898WJhkcHIIw8olJ98D0R2hnwT8ypD/ogxDuoIk5DnzmtUT5sbSqK7aej522ptvMds/Uf4ecPlGaB27j73CXkP0iZdcx/3Wy4L+lY+ZpcyNk84/zHUWuMAn5MBiQllERYMo9KLho2TbvGoJjRu6XFSWEvoZzVcBjt5xRxRfXy2QCuoSuJ1gwwlSbtSgtAh+eGSeE9YEk+uv0weSUrpExz4WqAvhtmE9Ajy4Q3qzOs8+ZrKhQ1b+1X1Bc4ZKeFQcYL5vJmfhRBWZDiXbAFNF4cvsAT3VnZrxj8kp+mf1t4nfzkW524J5RhxxHnRQkDLDeCjy7jNkun654D7+ir0mYSi702X
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(136003)(396003)(346002)(39860400002)(366004)(38100700002)(110136005)(2906002)(54906003)(122000001)(316002)(7416002)(83380400001)(8936002)(2616005)(5660300002)(36756003)(6506007)(38070700005)(6512007)(26005)(76116006)(91956017)(8676002)(66946007)(4326008)(64756008)(66446008)(66476007)(66556008)(71200400001)(186003)(86362001)(6486002)(478600001)(41300700001);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xuIsnMou8Xm2uXRyfS1tNT0ZNqYxL3DGCa9ndwigcx679+VajcF976vbXzHX?=
- =?us-ascii?Q?gMhwUkpPQe92Fmun8TOhR09TMD3jY/fP1f09UP1pMdbNicZxfrg9aEoS8IzF?=
- =?us-ascii?Q?ooir+CmS/LWQ3bObLNijvye0lpG1gp2nOuqcxD+q8ysJm/NHCUZRINsK/h+G?=
- =?us-ascii?Q?HKp0GpgGMRkp0DeZ3ceQk4KtFHzAgQeFPqrbdsZaWIMPxLa04uVBk7+j+/Ta?=
- =?us-ascii?Q?jZSy7+qc2FYDVIiVHai6AI2E7Wn6dUHVwlL/fzJXfKFHR9wtRDTAoXQyxgSm?=
- =?us-ascii?Q?5RWEW6nvlSNex+pIZftUjTNFo22a7Jc6FjUlyYbhApAmkiTyFxcpwPzjizZe?=
- =?us-ascii?Q?bwlFaDo7hxhsvLmBsl93ouUVdVBOv05C0vsU86/y8JC6KXA3LuAMEvmcMm9V?=
- =?us-ascii?Q?mrUZetU/+LATxc4eVrhdXbvPxNKvgv7POz7rAgwVebfoBFJaR1vGQlOyGBGc?=
- =?us-ascii?Q?HJnnOabN+M2X8LucszGittTyTIHRPHnOctbZM3V4motiKFU7k1Orb8Wgi87R?=
- =?us-ascii?Q?lr8YwpuZpoAOagc+5X3irxNWDlI34stsd+REHpDEa3a+Q7aJpBZmDpZIeXZN?=
- =?us-ascii?Q?rjZb9CZmwO9SPO20ea429iayTVJUryboGKzObb/AoBIi8a71YUYvB3YEc2L8?=
- =?us-ascii?Q?NYGeoCnV9foS6hP83NqcwRuMRaIH3QRaH7I6QvqAcDx227ImYjwLL28KQ4ej?=
- =?us-ascii?Q?ik+HvekwCCcfrVLhBlxBTy82/M0JBssXpKYNk3BtxI84qUpUqx08Tr0rNpr9?=
- =?us-ascii?Q?MBBIStzz33tEXw4JRJToAkv5St99VZMpCJh/1Ub/RU36UmBF5jnwyJa1S15J?=
- =?us-ascii?Q?Iatv0S4EmEOa+LNF9doK7wSWf29EVkG18lj4jFn0UjOge9fVDV8D6dXx8moo?=
- =?us-ascii?Q?Obh3mffwqI4GxI/BHl9GTr0NvZze3ww0wsinUmcPnjamWg47pGbhBBQhVMeN?=
- =?us-ascii?Q?/UK7e0xjml5pfhSHp2151nw6LGukLxyFdqNwQVx6uaR/cdFPDEC9NZlINZJr?=
- =?us-ascii?Q?Qul8kp/KDhHpqkO1G3n0NDTo5qwtD5aaFW3/yyWw01j79vdWJenaUdiQKqYG?=
- =?us-ascii?Q?3Ps9G0/qi3nOAEXTcWvgtavlhhcdVHqT0Wp0F4TgkWn1mhoVjOjjRAnqbsNk?=
- =?us-ascii?Q?BH4FELx2dU/s4IsHyQp75Jq0C4YDBJXdWvAv+sGKhFZZ2Rj4lYy75Ry58s1E?=
- =?us-ascii?Q?AhO49MZwSFLxmE+3ahpoMXnn3SShgcK4uMVQmVLNXBfuaN9LZzgwN+cIUXAb?=
- =?us-ascii?Q?V8u81/RCn9k7U46RUN2MKnRrONuY0KYFPANmEzxm3x/AZfPIKXQC/dpj9YGd?=
- =?us-ascii?Q?spUD1VnlY7AFO6bK5mby33dTP3HoOy+MJVJwIlBbVrj9tjdXLpYs9h/KDuDy?=
- =?us-ascii?Q?iQe69ecqCiH/+mfM2ihYW53GPpk3+OxadBGm+FWrUZ+3sj8ByNaO6RLO8Lem?=
- =?us-ascii?Q?9AWrb+TihJc+Qbnr9hTIlBqYscR2c6vVXfZVq++pTtrtqLUiRkDur75u49qm?=
- =?us-ascii?Q?3dLYK9VUg9R0ndy8acdlRsQdZX7lG7u99nBdiVp/cMi1wXyhJ3NZqsV9DmGN?=
- =?us-ascii?Q?CPKhl+fh+n+xx8H0cDYrk0/Jv4PCMhu2E9myBCLY?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ARjriCiTSV+Zv29LiNfp08sxvG//0y5t7e3Y1HN7KCZ4Fp2hoZ4+7JGV3wF5?=
+ =?us-ascii?Q?3OqCnRN/2F8sfgPD+HFeaaFuxwTTyfU2UsT2SC5uG9QNBIp67a4LFyBpLI9I?=
+ =?us-ascii?Q?joGijhElVkTHbcYZYSYqnGnowBS08eXBpAO7GCtCCYZZoqhegaRdAnFlVudF?=
+ =?us-ascii?Q?a8UftCmd47QaaP19T2G4T5HxgnotDNGRksmzL1WR626AraEIW0QNC5NlZFPB?=
+ =?us-ascii?Q?CK46R7Ap5I9FCfEWvBxN+5a1uSsPyoPZIi65KMvA1zFktm/U/e3UaLc/UwPq?=
+ =?us-ascii?Q?qqygS3Tfgi2qD6t4mcm/Jlg3yBzBSDFRsVSExRhbBflO32maXYI74qmtXRNo?=
+ =?us-ascii?Q?UGwmDfT3EdvINofT9pZfdE5474R4jfkgyzNZjbDdGN7LyXCXxVBIcdee3l47?=
+ =?us-ascii?Q?77Mcb0Xygst+o4reuj6o4AGpht6AXDswIsbZw/7CNCAUoAmoC9HUmFr5ubDj?=
+ =?us-ascii?Q?Swo5qu4Hc6k0rOUWH+Me/W9NrRrcSpWlNelmRPVTzGA7wlQQDac/trqsaQgi?=
+ =?us-ascii?Q?BWpmEMXWzA6LbnhrE2PLkyGaJJ0teC0pez12re0JCNFtnKq2gonKqhy2NDcv?=
+ =?us-ascii?Q?EQZde8Kjg4n/DKCdRsZN6rka/QqQPT3xuaqs/RYVkXoP43cT6LgMcXvOcM7F?=
+ =?us-ascii?Q?DNZsF1Z/nI8dMbEqDTI4r9id5ZHWZ28+S146CHPed7Qmenusd4wtz7+IasB5?=
+ =?us-ascii?Q?aRT5msn8hoa2SxtsjiSuU0awQdqwrPWTs5nDKxnvhyOORaztfzi5+D6cO+IJ?=
+ =?us-ascii?Q?wgpLX3aKi6QDQAsOlHwWhfxForQWH+W0+flBn5fd2md12oqouVqmMhH8+eXy?=
+ =?us-ascii?Q?yG7HovaZjwji7kg5IczO5HQPzVTG/5f3qfK6LtpcVYicTBnTkSyXq+36b/jn?=
+ =?us-ascii?Q?iKcVQg9ypISBklIoPnMV4ScqNU3x+PLL4juzSckHNUm8KJdblAvyU+0MCsOU?=
+ =?us-ascii?Q?JbDAaw5gAx41K4K8v/hGSf8zRvS5dCvgeOPmxEuUW46KopgZgwscPbdeIocE?=
+ =?us-ascii?Q?Rgjaei7W5DZf+tOg6oFPBEOjiveli+6cEOjgpkdCJbvBxH6xPNvbU6tv/4i1?=
+ =?us-ascii?Q?VocXfbDN1bmctqakUwik1g1p1IDgD7ZXCUYxn+CiWBHd1RZi/HmbK/z/fiP8?=
+ =?us-ascii?Q?P4TM4saC9HAgGyqtQ6X4PcOlyK+iZUhMposD6RyfsYNKc0MvKfzaPpyGnC79?=
+ =?us-ascii?Q?Pah50e3aKWmUre/TbqbsXS2BcC15s/viT4b/jR9PaCUIp01zN7k9sFkaY694?=
+ =?us-ascii?Q?mmfSlON9/ONs0x8j/sF524vjHPoFcEvGYm4zl0ftycGCDjZKFmo3uKdf5IYf?=
+ =?us-ascii?Q?ULzPLnQgv5rzpNU5fZQujB+OwZ8ziMB6ROXhe9vWPYnLFCbBihpjvBypVvfo?=
+ =?us-ascii?Q?fxs15LSquBxxOx16cILx3S7+KGXOEPyFvVxiQxgx7zBYsL0WVMOqEDqfe/u6?=
+ =?us-ascii?Q?DmGRO+VGSXN6YLZ0Luss8kH5zMInzPqAzrskeSYzg4+xRE2Besu0DhRUG72Q?=
+ =?us-ascii?Q?8Tb2OemUg3Qc75TgmcFrtMQXrAiM6obYx321SH8Z6BFmGa7IPUd2IjT90qZU?=
+ =?us-ascii?Q?zr+wEka40noVcvVJaQ1LVUsuEhxv4NadJS1BpbB1?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <CD90B919620B584AA0A24A0A7FF54A67@namprd15.prod.outlook.com>
+Content-ID: <44B9BED31809C24DBE92192698654E43@namprd15.prod.outlook.com>
 MIME-Version: 1.0
 X-OriginatorOrg: fb.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56ff9d7a-e73e-4b80-6bea-08da60ca5f90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 10:12:32.8993
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4be3d2c-f562-473d-fdb8-08da60ca657f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2022 10:12:42.8737
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k6BSxXFMrnJOxc1pTr/X9jvGxn4fAj2UamSfHNamJZqRtngLLQX00wZcemkgACHp
+X-MS-Exchange-CrossTenant-userprincipalname: TXIlD1GSxQyOahVixBQnULEq6s2K5Y+X17vPTGiMYsm+9vAAs6uZGtx5tWiG90E6
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2501
-X-Proofpoint-GUID: 2mNxPY7shnpBdOyeUn52qduFvv0AaXmj
-X-Proofpoint-ORIG-GUID: 2mNxPY7shnpBdOyeUn52qduFvv0AaXmj
+X-Proofpoint-GUID: Ud51Ebe8-mman3GWqjyu2wzU2rc49v5R
+X-Proofpoint-ORIG-GUID: Ud51Ebe8-mman3GWqjyu2wzU2rc49v5R
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-08_08,2022-06-28_01,2022-06-22_01
@@ -141,52 +141,265 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The generic decompression support is only available in the __init
-section. Hack this out for now with gzip for testing. Longer term this
-needs rethought in a similar fashion to the cpio support.
+An initramfs can be made up of multiple components that are concatenated
+together e.g. an early uncompressed cpio archive containing early
+firmware followed by a gziped cpio archive containing the actual
+userspace initramfs. Add a Kconfig option to allow the IMA subsystem to
+measure these components separately rather than as a single blob,
+allowing for easier reasoning about system state when checking TPM PCR
+values or the IMA integrity log.
 
 Signed-off-by: Jonathan McDowell <noodles@fb.com>
 ---
- lib/decompress.c         | 4 ++--
- lib/decompress_inflate.c | 4 ++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ security/integrity/ima/Kconfig    |  16 +++
+ security/integrity/ima/ima_main.c | 191 ++++++++++++++++++++++++++++--
+ 2 files changed, 199 insertions(+), 8 deletions(-)
 
-diff --git a/lib/decompress.c b/lib/decompress.c
-index ab3fc90ffc64..89a5709e454a 100644
---- a/lib/decompress.c
-+++ b/lib/decompress.c
-@@ -48,7 +48,7 @@ struct compress_format {
- 	decompress_fn decompressor;
- };
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 7249f16257c7..b75da44a32f2 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -41,6 +41,22 @@ config IMA_KEXEC
+ 	   Depending on the IMA policy, the measurement list can grow to
+ 	   be very large.
  
--static const struct compress_format compressed_formats[] __initconst = {
-+static const struct compress_format compressed_formats[] = {
- 	{ {0x1f, 0x8b}, "gzip", gunzip },
- 	{ {0x1f, 0x9e}, "gzip", gunzip },
- 	{ {0x42, 0x5a}, "bzip2", bunzip2 },
-@@ -60,7 +60,7 @@ static const struct compress_format compressed_formats[] __initconst = {
- 	{ {0, 0}, NULL, NULL }
- };
- 
--decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
-+decompress_fn decompress_method(const unsigned char *inbuf, long len,
- 				const char **name)
- {
- 	const struct compress_format *cf;
-diff --git a/lib/decompress_inflate.c b/lib/decompress_inflate.c
-index 6130c42b8e59..b245d6e5f8a6 100644
---- a/lib/decompress_inflate.c
-+++ b/lib/decompress_inflate.c
-@@ -33,6 +33,10 @@
- 
- #define GZIP_IOBUF_SIZE (16*1024)
- 
-+/* HACK */
-+#undef INIT
-+#define INIT
++config IMA_MEASURE_INITRAMFS_COMPONENTS
++	bool "Enable measurement of individual kexec initramfs components"
++	depends on IMA
++	select CPIO
++	default n
++	help
++	   initramfs images can be made up of multiple separate components,
++	   e.g. an early uncompressed cpio archive containing early firmware
++	   followed by a gziped cpio archive containing the actual userspace
++	   initramfs. More complex systems might involve a firmware archive,
++	   a userspace archive and then a kernel module archive, allowing for
++	   only the piece that needs changed to vary between boots.
 +
- static long INIT nofill(void *buffer, unsigned long len)
- {
- 	return -1;
++	   This option tells IMA to measure each individual component of the
++	   initramfs separately, rather than as a single blob.
++
+ config IMA_MEASURE_PCR_IDX
+ 	int
+ 	depends on IMA
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 040b03ddc1c7..be7f446df4f2 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -26,6 +26,8 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <linux/cpio.h>
++#include <linux/decompress/generic.h>
+ 
+ #include "ima.h"
+ 
+@@ -198,6 +200,169 @@ void ima_file_free(struct file *file)
+ 	ima_check_last_writer(iint, inode, file);
+ }
+ 
++#ifdef CONFIG_IMA_MEASURE_INITRAMFS_COMPONENTS
++static void initrd_error(char *x)
++{
++	pr_err("measure initrd: error from decompressor: %s\n", x);
++}
++
++static long initrd_flush(void *buf, unsigned long size)
++{
++	return size;
++}
++
++static int process_initrd_measurement(struct integrity_iint_cache *iint,
++				      struct file *file, char *buf,
++				      loff_t size, const char *pathname,
++				      struct modsig *modsig, int pcr,
++				      struct evm_ima_xattr_data *xattr_value,
++				      int xattr_len,
++				      struct ima_template_desc *template_desc)
++{
++	struct cpio_context cpio_ctx;
++	const char *compress_name;
++	enum hash_algo hash_algo;
++	decompress_fn decompress;
++	long consumed, written;
++	char *start, *cur;
++	char *component;
++	int buf_len;
++	bool in_cpio;
++	int rc = 0;
++	int part;
++
++	/*
++	 * We collect this once, over the whole buffer.
++	 */
++	if (modsig)
++		ima_collect_modsig(modsig, buf, size);
++
++	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
++
++	/*
++	 * Pathname, compression name, 2 : separators, single digit part
++	 * and a trailing NUL.
++	 */
++	buf_len = strlen(pathname) + 5 + 2 + 2;
++	component = kmalloc(buf_len, GFP_KERNEL);
++	if (!component)
++		return -ENOMEM;
++
++	memset(&cpio_ctx, 0, sizeof(cpio_ctx));
++	cpio_ctx.parse_only = true;
++	rc = cpio_start(&cpio_ctx);
++	if (rc)
++		goto out;
++	in_cpio = false;
++	start = buf;
++	cur = buf;
++	part = 0;
++
++	while (rc == 0 && size) {
++		loff_t saved_offset = cpio_ctx.this_header;
++
++		/* It's a CPIO archive, process it */
++		if (*buf == '0' && !(cpio_ctx.this_header & 3)) {
++			in_cpio = true;
++			cpio_ctx.state = CPIO_START;
++			written = cpio_write_buffer(&cpio_ctx, buf, size);
++
++			if (written < 0) {
++				pr_err("Failed to process archive: %ld\n",
++				       written);
++				break;
++			}
++
++			buf += written;
++			size -= written;
++			continue;
++		}
++		if (!*buf) {
++			buf++;
++			size--;
++			cpio_ctx.this_header++;
++			continue;
++		}
++
++		if (in_cpio) {
++			iint->flags &= ~(IMA_COLLECTED);
++			iint->measured_pcrs &= ~(0x1 << pcr);
++			rc = ima_collect_measurement(iint, file, cur,
++						     buf - cur, hash_algo,
++						     NULL);
++			if (rc == -ENOMEM)
++				return rc;
++
++			snprintf(component, buf_len, "%s:%s:%d",
++				 pathname, "cpio", part);
++
++			ima_store_measurement(iint, file, component,
++					      xattr_value, xattr_len, NULL, pcr,
++					      template_desc);
++			part++;
++
++			in_cpio = false;
++		}
++
++		decompress = decompress_method(buf, size, &compress_name);
++		if (decompress) {
++			rc = decompress(buf, size, NULL, initrd_flush, NULL,
++					&consumed, initrd_error);
++			if (rc) {
++				pr_err("Failed to decompress archive\n");
++				break;
++			}
++		} else if (compress_name) {
++			pr_info("Compression method %s not configured.\n", compress_name);
++			break;
++		}
++
++		iint->flags &= ~(IMA_COLLECTED);
++		iint->measured_pcrs &= ~(0x1 << pcr);
++		rc = ima_collect_measurement(iint, file, buf,
++					     consumed, hash_algo, NULL);
++		if (rc == -ENOMEM)
++			goto out;
++
++		snprintf(component, buf_len, "%s:%s:%d", pathname,
++			 compress_name, part);
++
++		ima_store_measurement(iint, file, component,
++				      xattr_value, xattr_len, NULL, pcr,
++				      template_desc);
++		part++;
++
++		cpio_ctx.this_header = saved_offset + consumed;
++		buf += consumed;
++		size -= consumed;
++		cur = buf;
++	}
++	cpio_finish(&cpio_ctx);
++
++	/* Measure anything that remains */
++	if (size != 0) {
++		iint->flags &= ~(IMA_COLLECTED);
++		iint->measured_pcrs &= ~(0x1 << pcr);
++		rc = ima_collect_measurement(iint, file, buf, size, hash_algo,
++					     NULL);
++		if (rc == -ENOMEM)
++			goto out;
++
++		snprintf(component, buf_len, "%s:left:%d",
++			 pathname,
++			 part);
++
++		ima_store_measurement(iint, file, component,
++				      xattr_value, xattr_len, NULL, pcr,
++				      template_desc);
++	}
++
++out:
++	kfree(component);
++	return rc;
++}
++#endif
++
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+ 			       enum ima_hooks func)
+@@ -334,17 +499,27 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+-	rc = ima_collect_measurement(iint, file, buf, size, hash_algo, modsig);
+-	if (rc == -ENOMEM)
+-		goto out_locked;
+-
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+ 
+-	if (action & IMA_MEASURE)
+-		ima_store_measurement(iint, file, pathname,
+-				      xattr_value, xattr_len, modsig, pcr,
+-				      template_desc);
++	if (IS_ENABLED(CONFIG_IMA_MEASURE_INITRAMFS_COMPONENTS) &&
++	    (action & IMA_MEASURE) && func == KEXEC_INITRAMFS_CHECK) {
++		rc = process_initrd_measurement(iint, file, buf, size,
++						pathname, modsig, pcr,
++						xattr_value, xattr_len,
++						template_desc);
++	} else {
++		rc = ima_collect_measurement(iint, file, buf, size, hash_algo,
++					     modsig);
++		if (rc == -ENOMEM)
++			goto out_locked;
++
++		if (action & IMA_MEASURE)
++			ima_store_measurement(iint, file, pathname,
++					      xattr_value, xattr_len, modsig,
++					      pcr, template_desc);
++	}
++
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_check_blacklist(iint, modsig, pcr);
+ 		if (rc != -EPERM) {
 -- 
 2.36.1
