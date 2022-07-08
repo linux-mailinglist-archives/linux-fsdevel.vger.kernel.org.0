@@ -2,130 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 381CF56B8D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 13:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D9356B8EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 13:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238148AbiGHLsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 07:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
+        id S238175AbiGHLup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Jul 2022 07:50:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238134AbiGHLr5 (ORCPT
+        with ESMTP id S238173AbiGHLuk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 07:47:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 25663951EB
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 04:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657280871;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4qkbfqfqgKZl4vr074ljOBTMMH/P10CPWSxYVWQ0VaQ=;
-        b=FCuSWDvc6F+ue15KbQP1eXfSSY4vA7DWmwMWLy39B5B7mk6rZw0BL4XLr4qhYXCCq8kLfm
-        v6QBjIrFghlzfBGtJ6Japz4HsaKf830OSt3rYqTEmRp5C/FvruxPfAHAXZqYYdtBuOT9qn
-        i+c72Hs1gyRRLH6xl7r090ltrfwJnwY=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-671-VJ2wZIm1MB2EDK5sPn7Byg-1; Fri, 08 Jul 2022 07:47:50 -0400
-X-MC-Unique: VJ2wZIm1MB2EDK5sPn7Byg-1
-Received: by mail-wm1-f69.google.com with SMTP id p21-20020a05600c1d9500b003a2d6c2b643so971166wms.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jul 2022 04:47:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=4qkbfqfqgKZl4vr074ljOBTMMH/P10CPWSxYVWQ0VaQ=;
-        b=ENvq4b74rMDquSSSpWJ4JrvE8jq1QsnXPIMTCQg4UaUpyUDSYGll34i94lM0gACaNb
-         nLV/qmiiHaHt0AbBS+ukidvwjpicBEW/bQsO8vphd0YzaA4UNP3CeYYQOgFUiyixw+cn
-         +IEDEycn61sULIp7YqVbSgct43eYocd5agwH3cJ1nk1eZYKPltaE3/DfQCFaKfVLSBHh
-         yPviWzDExPPzF6t4owRyZ8T8VaxGj1F0upbYCOVaPmskwu0BrRZScPGFafbR+CvrkPWj
-         ijvd+oP180SgQ+2wb2JCL9hV3V0oeoI/oIqMDKXtrH+0uqDrqFDlhK0UnKOjB41vEK2Q
-         fvVw==
-X-Gm-Message-State: AJIora9c7VEXB5YNMPNjRTMQ8BKnDQDLZKslaokWMKOLpU23N0NpI3Mt
-        UZXPPCid/qk14e6c2SySyqh2lW69jGjl1a4BjwcOSD9aynnQa+qdZVx79eVfror8KKgYiGkKRAD
-        s/raFZ9dbqCL0AMNpLpTF9xTaAA==
-X-Received: by 2002:a5d:5888:0:b0:21d:754b:7afb with SMTP id n8-20020a5d5888000000b0021d754b7afbmr2987063wrf.117.1657280868920;
-        Fri, 08 Jul 2022 04:47:48 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1v/4S12fBMAIfaRf6uHmDKcskesUNfg3rO09s8QGSm+icsKU/YKWY8scksGW1bdpOE3Fs4d7Q==
-X-Received: by 2002:a5d:5888:0:b0:21d:754b:7afb with SMTP id n8-20020a5d5888000000b0021d754b7afbmr2987044wrf.117.1657280868662;
-        Fri, 08 Jul 2022 04:47:48 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:6300:c44f:789a:59b5:91e9? (p200300cbc7026300c44f789a59b591e9.dip0.t-ipconnect.de. [2003:cb:c702:6300:c44f:789a:59b5:91e9])
-        by smtp.gmail.com with ESMTPSA id m16-20020adfe950000000b0021d70a871cbsm10008073wrn.32.2022.07.08.04.47.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 04:47:48 -0700 (PDT)
-Message-ID: <0864a811-53c8-a87b-a32d-d6f4c7945caa@redhat.com>
-Date:   Fri, 8 Jul 2022 13:47:46 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     willy@infradead.org, aneesh.kumar@linux.ibm.com, arnd@arndb.de,
-        21cnbao@gmail.com, corbet@lwn.net, dave.hansen@linux.intel.com,
-        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
-        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
-        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
-        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
-        yzaikin@google.com
-References: <cover.1656531090.git.khalid.aziz@oracle.com>
- <20220701212403.77ab8139b6e1aca87fae119e@linux-foundation.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v2 0/9] Add support for shared PTEs across processes
-In-Reply-To: <20220701212403.77ab8139b6e1aca87fae119e@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 8 Jul 2022 07:50:40 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FB29A6A8;
+        Fri,  8 Jul 2022 04:50:28 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 268BM0tL029788;
+        Fri, 8 Jul 2022 11:50:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=9lirF09Kmt0HGQk1TfIGDd4fJQRMu7hqmmT+uH9e9ck=;
+ b=lgR+wc0ahBhfEyMyrk6h1AMNSXqis1tdeTPEgqju57+bZIZ9Hd0Ai9Ywd9pDQbsLzEtc
+ tb2HXyGeVKeE0ygxzM85Nm/PBM0HtsvXF0rlpC2tUlMfwLzZLXV71KLAYvyr9li0yXA4
+ wyK61kWIlq/stLJl5YW357PcDTHHduFP4g9WXmx9XQNnXArw4MFRYOnr9y7ee5kW6VmX
+ 8ek5wdlaBXWn+pzzWDu7Vp2xJzZ6DqO64gIPdnq+Mp+ET5lKb/ylfi+jN6JrC14LaruN
+ QNOpEJukgXgTsVc7ikRkvG4UM7/ynfe2Ot164wqLLYWkREHWKCiHn8B9wpN4rLMmypnp SA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h6kn4rgs4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jul 2022 11:50:08 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 268BNVM8031916;
+        Fri, 8 Jul 2022 11:50:07 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h6kn4rgr8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jul 2022 11:50:07 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 268BMHt9008105;
+        Fri, 8 Jul 2022 11:50:05 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 3h4usd3x7s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jul 2022 11:50:05 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 268Bmg7s24248692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jul 2022 11:48:42 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C65055204F;
+        Fri,  8 Jul 2022 11:50:02 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.64.141])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B9CD452050;
+        Fri,  8 Jul 2022 11:49:59 +0000 (GMT)
+Message-ID: <01c9e6e230b54831091757fe7a09714ccf4bd898.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 0/7] ima: Support measurement of kexec initramfs
+ components
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jonathan McDowell <noodles@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dmitrii Potoskuev <dpotoskuev@fb.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Date:   Fri, 08 Jul 2022 07:49:58 -0400
+In-Reply-To: <cover.1657272362.git.noodles@fb.com>
+References: <cover.1657272362.git.noodles@fb.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kTyHucsnhDSKbscf09Oh3zDa-C4FtSr_
+X-Proofpoint-GUID: UwNG2QbbcUtmRMAfCoOHPXgyQiHrAfeH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-08_08,2022-07-08_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
+ definitions=main-2207080042
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02.07.22 06:24, Andrew Morton wrote:
-> On Wed, 29 Jun 2022 16:53:51 -0600 Khalid Aziz <khalid.aziz@oracle.com> wrote:
+On Fri, 2022-07-08 at 10:10 +0000, Jonathan McDowell wrote:
+> This patchset is not yet complete, but it's already moving around a
+> bunch of stuff so I am sending it out to get either some agreement that
+> it's a vaguely sane approach, or some pointers about how I should be
+> doing this instead.
 > 
->> This patch series implements a mechanism in kernel to allow
->> userspace processes to opt into sharing PTEs. It adds a new
->> in-memory filesystem - msharefs. 
+> It aims to add an option to IMA to measure the individual components
+> that make up an initramfs that is being used for kexec, rather than the
+> entire initramfs blob. For example in the situation where the initramfs
+> blob contains some uncompressed early firmware and then a compressed
+> filesystem there will be 2 measurements folded into the TPM, and logged
+> into the IMA log.
 > 
-> Dumb question: why do we need a new filesystem for this?  Is it not
-> feasible to permit PTE sharing for mmaps of tmpfs/xfs/ext4/etc files?
+> Why is this useful? Consider the situation where images have been split
+> out to a set of firmware, an initial userspace image that does the usual
+> piece of finding the right root device and switching into it, and an
+> image that contains the necessary kernel modules.
 > 
+> For a given machine the firmware + userspace images are unlikely to
+> change often, while the kernel modules change with each upgrade. If we
+> measure the concatenated image as a single blob then it is necessary to
+> calculate all the permutations of images that result, which means
+> building and hashing the combinations. By measuring each piece
+> individually a hash can be calculated for each component up front
+> allowing for easier analysis of whether the running state is an expected
+> one.
+> 
+> The KEXEC_FILE_LOAD syscall only allows a single initramfs image to be
+> passed in; one option would be to add a new syscall that supports
+> multiple initramfs fds and read each in kimage_file_prepare_segments().
+> 
+> Instead I've taken a more complicated approach that doesn't involve a
+> new syscall or altering the kexec userspace, building on top of the way
+> the boot process parses the initramfs and using that same technique
+> within the IMA measurement for the READING_KEXEC_INITRAMFS path.
+> 
+> To that end I've pulled the cpio handling code out of init/initramfs.c
+> and into lib/ and made it usable outside of __init when required. That's
+> involved having to pull some of the init_syscall file handling routines
+> into the cpio code (and cleaning them up when the cpio code is the only
+> user). I think there's the potential for a bit more code clean up here,
+> but I've tried to keep it limited to providing the functionality I need
+> and making checkpatch happy for the moment.
+> 
+> Patch 1 pulls the code out to lib/ and moves the global static variables
+> that hold the state into a single context structure.
+> 
+> Patch 2 does some minimal error path improvements so we're not just
+> passing a string around to indicate there's been an error.
+> 
+> Patch 3 is where I pull the file handling routines into the cpio code.
+> It didn't seem worth moving this to somewhere other code could continue
+> to use them when only the cpio code was doing so, but it did involve a
+> few extra exported functions from fs/
+> 
+> Patch 4 actually allows the use of the cpio code outside of __init when
+> CONFIG_CPIO is selected.
+> 
+> Patch 5 is a hack so I can use the generic decompress + gzip outside of
+> __init. If this overall approach is acceptable then I'll do some work to
+> make this generically available in the same manner as the cpio code
+> before actually submitting for inclusion.
+> 
+> Patch 6 is the actual piece I'm interested in; doing individual
+> measurements for each component within IMA.
 
-IIRC, the general opinion at LSF/MM was that this approach at hand is
-makes people nervous and I at least am not convinced that we really want
-to have this upstream.
+Hi Jonathan,
 
-What's *completely* missing from the cover letter are the dirty details:
-"Actual data is mmap'ed using anonymous pages, ext4/xfs/btfrfs/etc
-files.". Gah.
+Before going down this path, just making sure you're aware:
+- of the IMA hooks for measuring and appraising firmware.
 
-As raised already, "anonymous pages" makes me shiver.
+- of Roberto Sassu's "initramfs: add support for xattrs in the initial
+ram disk" patch set that have been lingering for lack of review and
+upstreaming.[1]   There's been some recent interest in it.
 
+[1] Message-Id: <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
 
-(To me, what I read, this looks like an RFC to me, yet I see "v2". But I
-am a little confused why most of the feedback at LSF/MM seems to be
-ignored and people are moving forward with this approach. But maybe my
-memory is wrong.)
+thanks,
 
-Please, let's look into more generic page table sharing just like
-hugetlb already provides to some degree. And if we need additional
-alignment requirements to share multiple page table levels, then let's
-look into that as well for special users.
-
--- 
-Thanks,
-
-David / dhildenb
+Mimi
 
