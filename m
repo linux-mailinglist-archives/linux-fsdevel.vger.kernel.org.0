@@ -2,163 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13AC056AFB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 03:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E89EA56B022
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Jul 2022 03:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235753AbiGHAlA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Jul 2022 20:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47126 "EHLO
+        id S236002AbiGHBj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Jul 2022 21:39:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiGHAk7 (ORCPT
+        with ESMTP id S235477AbiGHBj0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Jul 2022 20:40:59 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE5370E4F;
-        Thu,  7 Jul 2022 17:40:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 6BEA8CE276E;
-        Fri,  8 Jul 2022 00:40:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F750C3411E;
-        Fri,  8 Jul 2022 00:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657240855;
-        bh=IXsR/QrzvoIMkoWHmolTYwhwxD9j/FgCzzm8PhvI41I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BHrJ5+tCKYeD5Tmi/HULyLybxMAX92YkwnxJ0wQIUeGXK/c43NKQS8J8DqdH4Slh4
-         yC8A4kxW/vtHiPmC1kV/FRP0xkTRJ44kLgf9oUzp2m05sNm0dmQcmkBXy0BNOGvtJN
-         lw3ahGiwfRNWHCcUh3MMr95nBVCeQkUdV4kgaiGmAWrKRmm7Oktj/tFgeQGwJwHoNi
-         HGxcnEaS1lnd09pAWMYZacRdZVWa23boN/R2kX/dPum11+hIzPS7ziMtahUDHrA47o
-         BhTva9WGfwu3x1BSP1WTlaDWbkP9n6LXRxIR4nDTwss9wnlJFzH2AvMC9DSrDb1G0P
-         6ioLZ2kFcQCFQ==
-Date:   Thu, 7 Jul 2022 17:40:52 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     David Gow <davidgow@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] module: panic: Taint the kernel when selftest
- modules load
-Message-ID: <Ysd9FG1fOSnzKv8d@dev-arch.thelio-3990X>
-References: <20220702040959.3232874-1-davidgow@google.com>
- <20220702040959.3232874-2-davidgow@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220702040959.3232874-2-davidgow@google.com>
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Thu, 7 Jul 2022 21:39:26 -0400
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [IPv6:2403:5800:3:25::1001])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321AF72EF9;
+        Thu,  7 Jul 2022 18:39:25 -0700 (PDT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp01.aussiebb.com.au (Postfix) with ESMTP id 664B1100505;
+        Fri,  8 Jul 2022 11:39:21 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+        by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qEfo4WgXJ19A; Fri,  8 Jul 2022 11:39:21 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+        id 5B8161007B3; Fri,  8 Jul 2022 11:39:21 +1000 (AEST)
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
+Received: from donald.themaw.net (180-150-90-198.b4965a.per.nbn.aussiebb.net [180.150.90.198])
+        by smtp01.aussiebb.com.au (Postfix) with ESMTP id 1DA00100505;
+        Fri,  8 Jul 2022 11:39:19 +1000 (AEST)
+Subject: [REPOST PATCH v2] vfs: parse: deal with zero length string value
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Siddhesh Poyarekar <siddhesh@gotplt.org>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 08 Jul 2022 09:39:18 +0800
+Message-ID: <165724435867.30814.6980005089665688371.stgit@donald.themaw.net>
+User-Agent: StGit/1.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 02, 2022 at 12:09:57PM +0800, David Gow wrote:
-> Taint the kernel with TAINT_TEST whenever a test module loads, by adding
-> a new "TEST" module property, and setting it for all modules in the
-> tools/testing directory. This property can also be set manually, for
-> tests which live outside the tools/testing directory with:
-> MODULE_INFO(test, "Y");
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> Signed-off-by: David Gow <davidgow@google.com>
-> ---
->  kernel/module/main.c  | 7 +++++++
->  scripts/mod/modpost.c | 3 +++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index fed58d30725d..730503561eb0 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -1988,6 +1988,13 @@ static int check_modinfo(struct module *mod, struct load_info *info, int flags)
->  	/* Set up license info based on the info section */
->  	set_license(mod, get_modinfo(info, "license"));
->  
-> +	if (!get_modinfo(info, "test")) {
-> +		if (!test_taint(TAINT_TEST))
-> +			pr_warn_once("%s: loading test module taints kernel.\n",
-> +				     mod->name);
-> +		add_taint_module(mod, TAINT_TEST, LOCKDEP_STILL_OK);
-> +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 29d5a841e215..5937212b4433 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -2191,6 +2191,9 @@ static void add_header(struct buffer *b, struct module *mod)
->  
->  	if (strstarts(mod->name, "drivers/staging"))
->  		buf_printf(b, "\nMODULE_INFO(staging, \"Y\");\n");
-> +
-> +	if (strstarts(mod->name, "tools/testing"))
-> +		buf_printf(b, "\nMODULE_INFO(test, \"Y\");\n");
->  }
->  
->  static void add_exported_symbols(struct buffer *buf, struct module *mod)
-> -- 
-> 2.37.0.rc0.161.g10f37bed90-goog
-> 
-> 
+Parsing an fs string that has zero length should result in the parameter
+being set to NULL so that downstream processing handles it correctly.
+For example, the proc mount table processing should print "(none)" in
+this case to preserve mount record field count, but if the value points
+to the NULL string this doesn't happen.
 
-Hi David,
+Changes:
 
-This change has landed in linux-next as commit e20729ede7ed ("module:
-panic: taint the kernel when selftest modules load") and on all of my
-test machines, I see this new message printed, even though as far as I
-am aware, I am not loading any testing modules. For example, in QEMU, I
-see:
+v2: fix possible oops if conversion functions such as fs_param_is_u32()
+    are called.
 
-[    0.596978] serio: loading test module taints kernel.
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/fs_context.c            |   17 ++++++++++++-----
+ fs/fs_parser.c             |   16 ++++++++++++++++
+ include/linux/fs_context.h |    3 ++-
+ 3 files changed, 30 insertions(+), 6 deletions(-)
 
-and on my Honeycomb LX2, I see:
-
-[    5.400861] fuse: loading test module taints kernel.
-
-It seems like the get_modinfo() check might be wrong? The following diff
-resolves it for me, I can send a formal patch if necessary (although it
-appears to have gone in via -mm so I assume Andrew can squash this in).
-
-Cheers,
-Nathan
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 730503561eb0..4f91e41b8bc9 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1988,7 +1988,7 @@ static int check_modinfo(struct module *mod, struct load_info *info, int flags)
- 	/* Set up license info based on the info section */
- 	set_license(mod, get_modinfo(info, "license"));
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 24ce12f0db32..df04e5fc6d66 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -96,7 +96,9 @@ int vfs_parse_fs_param_source(struct fs_context *fc, struct fs_parameter *param)
+ 	if (strcmp(param->key, "source") != 0)
+ 		return -ENOPARAM;
  
--	if (!get_modinfo(info, "test")) {
-+	if (get_modinfo(info, "test")) {
- 		if (!test_taint(TAINT_TEST))
- 			pr_warn_once("%s: loading test module taints kernel.\n",
- 				     mod->name);
+-	if (param->type != fs_value_is_string)
++	/* source value may be NULL */
++	if (param->type != fs_value_is_string &&
++	    param->type != fs_value_is_empty)
+ 		return invalf(fc, "Non-string source");
+ 
+ 	if (fc->source)
+@@ -175,10 +177,15 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
+ 	};
+ 
+ 	if (value) {
+-		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
+-		if (!param.string)
+-			return -ENOMEM;
+-		param.type = fs_value_is_string;
++		if (!v_size) {
++			param.string = NULL;
++			param.type = fs_value_is_empty;
++		} else {
++			param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
++			if (!param.string)
++				return -ENOMEM;
++			param.type = fs_value_is_string;
++		}
+ 	}
+ 
+ 	ret = vfs_parse_fs_param(fc, &param);
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index ed40ce5742fd..2046f41ab00b 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -197,6 +197,8 @@ int fs_param_is_bool(struct p_log *log, const struct fs_parameter_spec *p,
+ 		     struct fs_parameter *param, struct fs_parse_result *result)
+ {
+ 	int b;
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string)
+ 		return fs_param_bad_value(log, param);
+ 	if (!*param->string && (p->flags & fs_param_can_be_empty))
+@@ -213,6 +215,8 @@ int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec *p,
+ 		    struct fs_parameter *param, struct fs_parse_result *result)
+ {
+ 	int base = (unsigned long)p->data;
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string)
+ 		return fs_param_bad_value(log, param);
+ 	if (!*param->string && (p->flags & fs_param_can_be_empty))
+@@ -226,6 +230,8 @@ EXPORT_SYMBOL(fs_param_is_u32);
+ int fs_param_is_s32(struct p_log *log, const struct fs_parameter_spec *p,
+ 		    struct fs_parameter *param, struct fs_parse_result *result)
+ {
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string)
+ 		return fs_param_bad_value(log, param);
+ 	if (!*param->string && (p->flags & fs_param_can_be_empty))
+@@ -239,6 +245,8 @@ EXPORT_SYMBOL(fs_param_is_s32);
+ int fs_param_is_u64(struct p_log *log, const struct fs_parameter_spec *p,
+ 		    struct fs_parameter *param, struct fs_parse_result *result)
+ {
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string)
+ 		return fs_param_bad_value(log, param);
+ 	if (!*param->string && (p->flags & fs_param_can_be_empty))
+@@ -253,6 +261,8 @@ int fs_param_is_enum(struct p_log *log, const struct fs_parameter_spec *p,
+ 		     struct fs_parameter *param, struct fs_parse_result *result)
+ {
+ 	const struct constant_table *c;
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string)
+ 		return fs_param_bad_value(log, param);
+ 	if (!*param->string && (p->flags & fs_param_can_be_empty))
+@@ -268,6 +278,8 @@ EXPORT_SYMBOL(fs_param_is_enum);
+ int fs_param_is_string(struct p_log *log, const struct fs_parameter_spec *p,
+ 		       struct fs_parameter *param, struct fs_parse_result *result)
+ {
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_string ||
+ 	    (!*param->string && !(p->flags & fs_param_can_be_empty)))
+ 		return fs_param_bad_value(log, param);
+@@ -278,6 +290,8 @@ EXPORT_SYMBOL(fs_param_is_string);
+ int fs_param_is_blob(struct p_log *log, const struct fs_parameter_spec *p,
+ 		     struct fs_parameter *param, struct fs_parse_result *result)
+ {
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	if (param->type != fs_value_is_blob)
+ 		return fs_param_bad_value(log, param);
+ 	return 0;
+@@ -287,6 +301,8 @@ EXPORT_SYMBOL(fs_param_is_blob);
+ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
+ 		  struct fs_parameter *param, struct fs_parse_result *result)
+ {
++	if (param->type == fs_value_is_empty)
++		return 0;
+ 	switch (param->type) {
+ 	case fs_value_is_string:
+ 		if ((!*param->string && !(p->flags & fs_param_can_be_empty)) ||
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 13fa6f3df8e4..ff1375a16c8c 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -50,7 +50,8 @@ enum fs_context_phase {
+  */
+ enum fs_value_type {
+ 	fs_value_is_undefined,
+-	fs_value_is_flag,		/* Value not given a value */
++	fs_value_is_flag,		/* Does not take a value */
++	fs_value_is_empty,		/* Value is not given */
+ 	fs_value_is_string,		/* Value is a string */
+ 	fs_value_is_blob,		/* Value is a binary blob */
+ 	fs_value_is_filename,		/* Value is a filename* + dirfd */
+
+
