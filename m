@@ -2,87 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBB256C8B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 12:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B57056C8A2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 12:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbiGIKHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Jul 2022 06:07:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
+        id S229676AbiGIKHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jul 2022 06:07:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiGIKHo (ORCPT
+        with ESMTP id S229541AbiGIKHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Jul 2022 06:07:44 -0400
+        Sat, 9 Jul 2022 06:07:40 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 509CF4B4B8;
-        Sat,  9 Jul 2022 03:07:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CCDD4B0FA;
+        Sat,  9 Jul 2022 03:07:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E898E60E84;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DE7D60DE9;
         Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EAE2C341C7;
-        Sat,  9 Jul 2022 10:07:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F58FC341CE;
+        Sat,  9 Jul 2022 10:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657361259;
-        bh=KJtmXylkYfBUCP9nKw3ANSOdLovVVTpFPXktiDmYhX8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LnWbmh+eLrmzEUuOUtwt1Zk7RPhAHxviv/xN1zz17DDCm7ZZ2jcjIeAUW4KTxMXed
-         KM6hlnyvwgcE/ucoKBLNi3lTI0HLQorkZBQKDriJ83QapG5TazYrBSO0s5jpBgI518
-         zjHSfekRlLlgNoH4pC8Bvx7SWcUhuyyANeCxHX9hJfkXhijte2QxQFmBhEqOt4NAki
-         WRxJiBGp9FbjYtPunI+ANm5ybjHbUrO7XEI2HfTHJrTDCbiOpxKJM0muKF/npo2L8i
-         8btVRvA0c3zQa7eBwzLXG2Hotce3pbtGp96wKaC+VQwn/aYfgAwZb7CnJrfDBP08B6
-         LAxmYYMrturXw==
+        s=k20201202; t=1657361258;
+        bh=dqYqnXuzEPE0mXihhCJPYUpFXM9zwpfA8rk6kSTuBCk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GKfzx3SqXsJGBAjpsgDp6mypn1L5oUbOzKatAFWraRL49e9nq1dnhRUIYWNjmdkCm
+         ImzGorGOPul0XG+ZwWHru7Y4g2RqB/EBU18NdDa+7xUaTcju3MlMnoYnvDLhginzxn
+         +WZ8YDUZtfzmJzYXBCzAsz+YsHbZZssFwR99l9Drs3XtOqSwxuJH5RhyHck9B+h5L4
+         Zk6yJRNPQKKap1ztitDAo47wA3Fi9ANOjwFY0nDxrNlj/pPyePAF34n8/tO07SOD4u
+         38DnHUEk76GYExc6lDMX/ymd43tkqJFmbaF5bPJPclBSU1yYX7mdS8a6hM8SpK9X4U
+         H8lxc9/OPfztA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.95)
         (envelope-from <mchehab@kernel.org>)
-        id 1oA7N9-004EGQ-BD;
+        id 1oA7N9-004EGo-HT;
         Sat, 09 Jul 2022 11:07:35 +0100
 From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Alex Shi <alexs@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Leo Yan <leo.yan@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Marco Elver <elver@google.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Max Staudt <max@enpas.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Yanteng Si <siyanteng@loongson.cn>, coresight@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-can@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-pci@vger.kernel.org,
-        linux-sgx@vger.kernel.org, netdev@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v3 00/21] Update Documentation/ cross references and fix issues
-Date:   Sat,  9 Jul 2022 11:07:13 +0100
-Message-Id: <cover.1657360984.git.mchehab@kernel.org>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 08/21] fs: namei: address some kernel-doc issues
+Date:   Sat,  9 Jul 2022 11:07:21 +0100
+Message-Id: <c6e79b4e972c7c1890c22c15e5391dbef0e2f619.1657360984.git.mchehab@kernel.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1657360984.git.mchehab@kernel.org>
+References: <cover.1657360984.git.mchehab@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -95,68 +61,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This series fix almost all fixable issues when building the html docs at
-linux-next (next-20220608):
+There are couple of symbols missing documentation:
 
-- Address some broken cross-references;
-- Fix kernel-doc warnings;
-- Fix bad tags on ReST files.
+	fs/namei.c:649: warning: Function parameter or member 'mnt' not described in 'path_connected'
+	fs/namei.c:649: warning: Function parameter or member 'dentry' not described in 'path_connected'
+	fs/namei.c:1089: warning: Function parameter or member 'inode' not described in 'may_follow_link'
 
-With this series applied, plus other pending patches that should hopefully
-be merged in time for the next merge window, htmldocs build will produce
-just 4 warnings with Sphinx 2.4.4.
+Document them.
 
-Sphinx >=3 will produce some extra false-positive warnings due to conflicts
-between structs and functions sharing the same name. Hopefully this will
-be fixed either on a new Sphinx 5.x version or Sphinx 6.0.
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+---
 
-Mauro Carvalho Chehab (21):
-  docs: networking: update netdevices.rst reference
-  docs: update vmalloced-kernel-stacks.rst reference
-  docs: update vmemmap_dedup.rst reference
-  docs: zh_CN: page_migration: fix reference to mm index.rst
-  dt-bindings: arm: update arm,coresight-cpu-debug.yaml reference
-  x86/sgx: fix kernel-doc markups
-  fscache: fix kernel-doc documentation
-  fs: namei: address some kernel-doc issues
-  drm/scheduler: fix a kernel-doc warning
-  drm/scheduler: add a missing kernel-doc parameter
-  kfence: fix a kernel-doc parameter
-  genalloc: add a description for start_addr parameter
-  textsearch: document list inside struct ts_ops
-  dcache: fix a kernel-doc warning
-  docs: ext4: blockmap.rst: fix a broken table
-  docs: PCI: pci-vntb-function.rst: Properly include ascii artwork
-  docs: PCI: pci-vntb-howto.rst: fix a title markup
-  docs: virt: kvm: fix a title markup at api.rst
-  docs: ABI: sysfs-bus-nvdimm
-  docs: leds: index.rst: add leds-qcom-lpg to it
-  Documentation: coresight: fix binding wildcards
+To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
+See [PATCH v3 00/21] at: https://lore.kernel.org/all/cover.1657360984.git.mchehab@kernel.org/
 
- Documentation/ABI/testing/sysfs-bus-nvdimm             |  2 ++
- Documentation/PCI/endpoint/pci-vntb-function.rst       |  2 +-
- Documentation/PCI/endpoint/pci-vntb-howto.rst          |  2 +-
- Documentation/filesystems/ext4/blockmap.rst            |  2 +-
- Documentation/leds/index.rst                           |  1 +
- Documentation/trace/coresight/coresight-cpu-debug.rst  |  2 +-
- Documentation/trace/coresight/coresight.rst            |  2 +-
- Documentation/translations/zh_CN/mm/page_migration.rst |  2 +-
- .../translations/zh_CN/mm/vmalloced-kernel-stacks.rst  |  2 +-
- Documentation/virt/kvm/api.rst                         |  6 +++---
- arch/x86/include/uapi/asm/sgx.h                        | 10 ++++++++--
- drivers/gpu/drm/scheduler/sched_main.c                 |  1 +
- drivers/net/can/can327.c                               |  2 +-
- fs/namei.c                                             |  3 +++
- include/drm/gpu_scheduler.h                            |  1 +
- include/linux/dcache.h                                 |  2 +-
- include/linux/fscache.h                                |  4 ++--
- include/linux/genalloc.h                               |  1 +
- include/linux/kfence.h                                 |  1 +
- include/linux/textsearch.h                             |  1 +
- mm/hugetlb_vmemmap.h                                   |  2 +-
- 21 files changed, 34 insertions(+), 17 deletions(-)
+ fs/namei.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/fs/namei.c b/fs/namei.c
+index 1f28d3f463c3..a8079d6250bc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -640,6 +640,8 @@ static bool nd_alloc_stack(struct nameidata *nd)
+ 
+ /**
+  * path_connected - Verify that a dentry is below mnt.mnt_root
++ * @mnt: pointer to vfs mount
++ * @dentry:  pointer to dentry to verify
+  *
+  * Rename can sometimes move a file or directory outside of a bind
+  * mount, path_connected allows those cases to be detected.
+@@ -1072,6 +1074,7 @@ fs_initcall(init_fs_namei_sysctls);
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+  * @nd: nameidata pathwalk data
++ * @inode: inode to check
+  *
+  * In the case of the sysctl_protected_symlinks sysctl being enabled,
+  * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
 -- 
 2.36.1
-
 
