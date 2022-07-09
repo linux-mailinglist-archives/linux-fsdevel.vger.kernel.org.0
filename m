@@ -2,245 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B638056C66C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 05:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8205D56C748
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Jul 2022 07:34:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbiGIDfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Jul 2022 23:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59780 "EHLO
+        id S229561AbiGIFed (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Jul 2022 01:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiGIDfl (ORCPT
+        with ESMTP id S229448AbiGIFec (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Jul 2022 23:35:41 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF297CB4B
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Jul 2022 20:35:39 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id h17so669158wrx.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Jul 2022 20:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PYUvSrUcJo4H9s2N0GzmP2gQ316nJBasvQNNovhT8c4=;
-        b=Bln8lRhc3tP57Dj7odkC/0roBKy/ObQ3FL6cQ766pZUgVJGTK7oZpqsfoEUWuk5Uoj
-         KX6C5mLH4Kdbuc0yYEDDVyXYz1pv3nQyCHA5bTfXxq/X3XFbsgQ2uB2xG2T0Gwdoy/P+
-         QfBzXZg48CLe3qnyzDRSisURDBfDjclUhQuhDbRlCfrVerc0jJ+UGcrF36CkAsFFHY6C
-         yJmm1Av/u/dGOlu98utOs9gUr2vo3pxc4U53utWAwmORfjAshOr5Vc8tiv1knZz+BPIR
-         /sZ9tosc7BUpj/W9FAkj/K7bIHDpWygU54yfQbp1yTQt6qZtIvXHCs2ZreWRheLoyyBu
-         YQog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PYUvSrUcJo4H9s2N0GzmP2gQ316nJBasvQNNovhT8c4=;
-        b=qJ6XL1ZE2bfFk4ePt4R7UD2i3Znp8WuXYOQHL6cP5Z+bt+MMUYgFjBMCwyjtFsnOgE
-         N+ht+NYhwkBTiUqKGSprx6A/3m0/ocdarGM+grHJL62s3MD04p+NlRS0zvFJrkMmT+4Z
-         i51OJcy8dESnYS6u5BDhXB0cnlt89GGzf+usOi8pRrkvCuElkegva8qnGIjO8Mz6QdVm
-         MOvsgAp7Hwh/qkNiz/zMbDsStSv0SZX4QiSF5KWdhotvGGgKsFnByX49NqWx5FHbbKpy
-         WVj7htkhDh54VC+Ypf6yqiLZLDI0G7zP7cx16MfcMXQ3LqhJNTV4tU6/QNSF3YlIiblz
-         aF4g==
-X-Gm-Message-State: AJIora9vBKa5Rz1RKXuNfYaGH6dNee1y1d9kVn30Dg+uFC56jPe75HZc
-        014qks7+Y7vfQOAacxq2izak7Zp+UJq+0DquRlCKjg==
-X-Google-Smtp-Source: AGRyM1shMGyZogpGCQ7rR8WEcQtWqL8IiGW2YMygvlDEPhuGrGBQS1ciC9jpCUsZGsmLEfDWmVRI67mLR1of4gEOnKo=
-X-Received: by 2002:adf:e804:0:b0:21d:6e85:7550 with SMTP id
- o4-20020adfe804000000b0021d6e857550mr6400492wrm.337.1657337738375; Fri, 08
- Jul 2022 20:35:38 -0700 (PDT)
+        Sat, 9 Jul 2022 01:34:32 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76F089A81;
+        Fri,  8 Jul 2022 22:34:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1657344868;
+        bh=WQJYEsiTE2uKcSIa88wX9tDWIRA1dKUlveQY5EoYUgs=;
+        h=X-UI-Sender-Class:Date:To:From:Subject;
+        b=i0f0K89NqWgoVBjzdY0fafkvfiTGvnzO1NBRlwsgIxjkcgUoEEXWrZ4weTRrkxNcn
+         NW7u3m50Mf3ZT2ET0FYDpzjY1iE7JOZ7z2SlWyvzh7nwaOxTzMWelpCqDXirKhFDiJ
+         xqLxElJ2pwXTsJQv+cg9MNx25qGi07jE84yhZ51I=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.134.222]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MQ5vW-1nwtwh3iJU-00M0As; Sat, 09
+ Jul 2022 07:34:27 +0200
+Message-ID: <fe10a412-8a1b-d582-a80b-8832519e0314@gmx.de>
+Date:   Sat, 9 Jul 2022 07:33:51 +0200
 MIME-Version: 1.0
-References: <20220708044847.531566-1-davidgow@google.com> <20220708044847.531566-3-davidgow@google.com>
- <fc638852-ac9a-abab-8fdb-01b685cdec96@linuxfoundation.org>
- <CAGS_qxpODhSEs_sMm5Gu55EsYy-M9V98eLU-8O+xGMxncXmY4A@mail.gmail.com>
- <f25f96ce-1c9b-7e66-a5be-96d7cf2988cf@linuxfoundation.org> <a00efaa8-71e0-c531-b6a4-e3d695ad628b@linuxfoundation.org>
-In-Reply-To: <a00efaa8-71e0-c531-b6a4-e3d695ad628b@linuxfoundation.org>
-From:   David Gow <davidgow@google.com>
-Date:   Sat, 9 Jul 2022 11:35:27 +0800
-Message-ID: <CABVgOSkroVjxTDoKTLBxiX_Fw5qZQmchDpY4U3XCCRYfXbS2bQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] kunit: Taint the kernel when KUnit tests are run
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Daniel Latypov <dlatypov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000002f319b05e3570393"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-parisc <linux-parisc@vger.kernel.org>
+From:   Helge Deller <deller@gmx.de>
+Subject: WARNING: CPU: 1 PID: 14735 at fs/dcache.c:365 dentry_free+0x100/0x128
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Bo1iDPqNzEIlDBTe7ZziPASjiqeLpZ4fTonwjaN0gNa3vU69Bie
+ HQ3cYQhieH9i02VADN4ZB1FXOUF+Xmq+ncjsf6sSWYMBsI0cENrSB8ryMPcrM9DsXSwaTfR
+ s5UC0OYqJu4hTMdgSiAbty9JITVNAiHatT/V7CLdhTZOmgf18fhWCh7bNDdRjlry8xDhqge
+ 7ABeW/1l72cr7vqZ3/iHA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:evpVDAfgM/k=:FCitVBuC0+fSEB/pYdIaol
+ C2VDu+NHLSjtOnHcYgYLb11qp9eIGp355AD+JkfE80nspWX3hgrgoSNyzr8NES9eoMolfDp4q
+ y1wZL59hvKW1KKOep1JsY3FnTDpRJDCzDMhp+YkO89F4M/p/hiKoGt6OL+H5HSy/FeYH/xyA3
+ kCeqslt5v69IRM/N+dDlqgiRluA/wz+hLirJMycoUV4mqkMT6mTZn4Sxk1tPZBK4jZc85nlMp
+ 3fEmT3ah0r3Qhv+1ioAggISxeaQzdjYquLPtGoPyvvZof/K3dC+K7EBCJPBut77KDeWHzvWcD
+ YY2p2UWOLt4z7q6IsPsQyrweGeVOV6v7x9jziQ52g4JQcCdPvduyu6mmIx9wBFlXWUPvwFO2k
+ R1khYS6FtGbi0hkvWEAL1kAJuQJVKmUyST/EsQ8ka9QVpuvBWDjs/++Kjqrso0EgSxuGLFvRg
+ ccDhjazA19+pBNorlqXJA7WxIvD/rk5l39Ls2rtQYvsavXOhLJqRxuC3mIopFwcs4dOis/iDw
+ SYsBQl6aSeUigqK1ISuYPX2WUzp2Uful6bLZcyIa/Z72G7ImclTzPP8zUPcJFai83TC7pDGtQ
+ YtZHscCJA3/u1E2LOuU96VVz+ymoULjx4S7B81xa4QPBsgWcXFmkPw9fZv4YP0JOHBrFwGMHG
+ mtu/AwOIGZWdOR5eFXClKeHgFGQmxS8x1Qmb1QcCWZLHPw8ZLo5PGJhI8GHkEbR05bxlY+NbP
+ 905fUoI2df2wXaDVCjIbx5vOJpdLMFN4RmcO9sYy6qL6FNHmcIKjtBCWeVo5NvovVc42eACV4
+ ulolLpRSco9tDFWhPwSzdlYBfvv/u4zmf7sORx7TuF60KbeEBenH1ChZrPr0hUQblgdyxFSnz
+ 7gA0DaVNyrDRboVqnQFBhqPBW0TijECn+/RW7gZ9fyswaktKkfRT5hei1zyX6+uZxZkyvUfJT
+ y6HgNkeUTaG30Kx87NDAO9UrknbvNMVXYl6Zfq/cjxEnkFfEIiTBISspTZlcUTkLfyClgxYir
+ SAue5kqn3FAMTMFpbluvOFFnGqckhdjThSAukwD6DCvfRDayWCGrd+Q6fJv2dAyEMx/hg060g
+ TiFM6LijjqKX2LBMX1U2RPYG5cjQjcnNA85+7qEO0Wn0k+Ke6t6kMH48g==
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000002f319b05e3570393
-Content-Type: text/plain; charset="UTF-8"
+On the debian buildd servers for the parisc architecture I'm facing
+the following warning, after which it gets stuck so that I need to
+reboot the server.
+This happens rarely, but I can reproduce it after some time.
+Filesystem is tmpfs.
 
-On Sat, Jul 9, 2022 at 5:24 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 7/8/22 3:22 PM, Shuah Khan wrote:
-> > On 7/8/22 3:00 PM, Daniel Latypov wrote:
-> >> On Fri, Jul 8, 2022 at 1:22 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
-> >>>
-> >>> On 7/7/22 10:48 PM, David Gow wrote:
-> >>>> Make KUnit trigger the new TAINT_TEST taint when any KUnit test is run.
-> >>>> Due to KUnit tests not being intended to run on production systems, and
-> >>>> potentially causing problems (or security issues like leaking kernel
-> >>>> addresses), the kernel's state should not be considered safe for
-> >>>> production use after KUnit tests are run.
-> >>>>
-> >>>> This both marks KUnit modules as test modules using MODULE_INFO() and
-> >>>> manually taints the kernel when tests are run (which catches builtin
-> >>>> tests).
-> >>>>
-> >>>> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-> >>>> Tested-by: Daniel Latypov <dlatypov@google.com>
-> >>>> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> >>>> Signed-off-by: David Gow <davidgow@google.com>
-> >>>> ---
-> >>>>
-> >>>> No changes since v5:
-> >>>> https://lore.kernel.org/linux-kselftest/20220702040959.3232874-3-davidgow@google.com/
-> >>>>
-> >>>> No changes since v4:
-> >>>> https://lore.kernel.org/linux-kselftest/20220701084744.3002019-3-davidgow@google.com/
-> >>>>
-> >>>
-> >>> David, Brendan, Andrew,
-> >>>
-> >>> Just confirming the status of these patches. I applied v4 1/3 and v4 3/4
-> >>> to linux-kselftest kunit for 5.20-rc1.
-> >>> I am seeing v5 and v6 now. Andrew applied v5 looks like. Would you like
-> >>> me to drop the two I applied? Do we have to refresh with v6?
-> >>
-> >> Just noting here that there'll be a merge conflict between this patch
-> >> (3/4) and some other patches lined up to go through the kunit tree:
-> >> https://patchwork.kernel.org/project/linux-kselftest/patch/20220625050838.1618469-2-davidgow@google.com/
-> >>
-> >> Not sure how we want to handle that.
-> >>
-> >
-> > I can go drop the two patches and have Andrew carry the series through
-> > mm tree.
-> >
->
-> Sorry spoke too soon. Yes there are others that might have conflicts as
-> Daniel pointed out:
->
-> https://patchwork.kernel.org/project/linux-kselftest/patch/20220625050838.1618469-2-davidgow@google.com/
->
-> thanks,
-> -- Shuah
->
+I'm happy to add debug code if necessary...
 
-Thanks everyone for pointing these out.
+Helge
 
-I've rebased the other series (the KUnit module support one:
-https://lore.kernel.org/linux-kselftest/20220709032001.819487-1-davidgow@google.com/
-) on top of this.
+[128321.224739] ------------[ cut here ]------------
+[128321.283492] WARNING: CPU: 1 PID: 14735 at fs/dcache.c:365 dentry_free+=
+0x100/0x128
+[128321.371369] Modules linked in: dm_mod(E) ipt_REJECT(E) nf_reject_ipv4(=
+E) xt_multiport(E) nft_compat(E) nf_tables(E) nfnetlink(E) ipmi_si(E) ipmi=
+_devintf(E) sg(E) ipmi_msghandler(E) fuse(E) configfs(E) sunrpc(E) ip_tabl=
+es(E) x_tables(E) autofs4(E) ext4(E) crc16(E) mbcache(E) jbd2(E) btrfs(E) =
+blake2b_generic(E) xor(E) raid6_pq(E) zstd_compress(E) libcrc32c(E) crc32c=
+_generic(E) sd_mod(E) t10_pi(E) crc64_rocksoft(E) crc64(E) crc_t10dif(E) c=
+rct10dif_generic(E) ohci_pci(E) crct10dif_common(E) ata_generic(E) sata_si=
+l(E) ehci_pci(E) pata_sil680(E) mptspi(E) mptscsih(E) ohci_hcd(E) mptbase(=
+E) scsi_transport_spi(E) ehci_hcd(E) libata(E) scsi_mod(E) usbcore(E) e100=
+0(E) usb_common(E) scsi_common(E)
+[128322.103374] CPU: 1 PID: 14735 Comm: cc1plus Tainted: G            E   =
+  5.18.9+ #27
+[128322.195315] Hardware name: 9000/785/C8000
+[128322.247318]
+[128322.263314]      YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
+[128322.323316] PSW: 00001000000001101111000000001111 Tainted: G          =
+  E
+[128322.407315] r00-03  000000000806f00f 0000000239aa8700 000000004073be90=
+ 0000000239aa87a0
+[128322.507313] r04-07  00000000410e1a00 000000411c8e3b40 0000000211715ad8=
+ 000000411c8e3b98
+[128322.603314] r08-11  00000000410b8e80 0000000041147200 00000000000800e0=
+ 0000000041147200
+[128322.699311] r12-15  0000000000000001 0000000010000000 0000000041147200=
+ 0000000041147200
+[128322.795312] r16-19  000000411c8e3b98 0000000000000000 00000000415084d0=
+ 0000000002c55000
+[128322.895311] r20-23  000000000800000f 000000004fb33600 000000000800000f=
+ 0000000211715b20
+[128322.991311] r24-27  000000411c8e3bd0 000000411c8e3bd0 000000411c8e3b40=
+ 00000000410e1a00
+[128323.087309] r28-31  00000000416bf9d8 0000000239aa8770 0000000239aa8820=
+ 000000000000cf14
+[128323.187310] sr00-03  000000000500a800 0000000000000000 000000000000000=
+0 000000000500a800
+[128323.283324] sr04-07  0000000000000000 0000000000000000 000000000000000=
+0 0000000000000000
+[128323.383313]
+[128323.399309] IASQ: 0000000000000000 0000000000000000 IAOQ: 000000004073=
+b3d4 000000004073b3d8
+[128323.503310]  IIR: 03ffe01f    ISR: 0000000010340400  IOR: 000003e6aa2a=
+87a8
+[128323.587306]  CPU:        1   CR30: 0000000212ff0ce0 CR31: ffffffffffff=
+ffff
+[128323.667328]  ORIG_R28: 0000000239aa8920
+[128323.715307]  IAOQ[0]: dentry_free+0x100/0x128
+[128323.771306]  IAOQ[1]: dentry_free+0x104/0x128
+[128323.823305]  RP(r2): __dentry_kill+0x284/0x2e8
+[128323.875347] Backtrace:
+[128323.907319]  [<000000004073be90>] __dentry_kill+0x284/0x2e8
+[128323.975309]  [<000000004073d6d8>] dput+0x334/0x5a8
+[128324.031311]  [<0000000040726d94>] step_into+0x790/0xa88
+[128324.095309]  [<0000000040728910>] path_openat+0x21c/0x1ba8
+[128324.163310]  [<000000004072c018>] do_filp_open+0x9c/0x198
+[128324.231310]  [<0000000040702320>] do_sys_openat2+0x14c/0x2a8
+[128324.299309]  [<0000000040702c54>] compat_sys_openat+0x58/0xb8
+[128324.367308]  [<0000000040303e30>] syscall_exit+0x0/0x10
 
-If they all go in via the kselftest/kunit tree, everything should be fine now.
+after that:
 
-Cheers,
--- David
-
---0000000000002f319b05e3570393
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-z/tQRXr3iPeVmZCr7nttMEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
-dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
-AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
-c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
-LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
-LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
-Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQAx+EQjLATc/sze
-VoZkH7OLz+/no1+y31x4BQ3wjW7lKfay9DAAVym896b7ECttSo95GEvS7pYMikzud57WypK7Bjpi
-ep8YLarLRDrvyyvBuYtyDrIewkuASHtV1oy5E6QZZe2VOxMm6e2oJnFFjbflot4A08D3SwqDwV0i
-OOYwT0BUtHYR/3903Dmdx5Alq+NDvUHDjozgo0f6oIkwDXT3yBV36utQ/jFisd36C8RD5mM+NFpu
-3aqLXARRbKtxw29ErCwulof2dcAonG7cd5j+gmS84sLhKU+BhL1OQVXnJ5tj7xZ5Ri5I23brcwk0
-lk/gWqfgs3ppT9Xk7zVit9q8MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
-R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
-MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDW
-xOGRhc2KC7kyBAOO9VflVYWYSBCJ/Qfi9dyPQ2bzwzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMjA3MDkwMzM1MzhaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
-CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEADngLlw+7BHWsDfXodA5M
-3ZhqcKoIUGTKOKpkyuCXDO2O0vKj8H+haMpVNzKb2bCYv1uGJ7wmYoCVGlEWyfEav54JNa7H0CId
-0KmpuSkAFG0AmzSaowoyS6brF411oVsZfEorrGd+H/0v2p+yeF5McUzsBxW5J11rFRw/A/YNysqz
-kHZkkNaZN8H46I3fYTGaNNVvYkbFJw3SXDO10Hbg6g1QLMHhcSF23AuLeaNoN1NN3vzLWIgkuq9n
-SSxPm6THzbhMkmIXgPU0J1KeAuk4LmnWoLX0s3q4qWfaBTD8r4BYYa9yC7w/Ojx6KJTiM/kxZXtq
-hAU+ejbbM2raoq4MZQ==
---0000000000002f319b05e3570393--
+[128324.451303] ---[ end trace 0000000000000000 ]---
+[128345.511159] rcu: INFO: rcu_sched self-detected stall on CPU
+[128345.511159] rcu:    0-...!: (5249 ticks this GP) idle=3D3c3/1/0x400000=
+0000000002 softirq=3D35954078/35954078 fqs=3D54
+[128345.511159]         (t=3D5250 jiffies g=3D33838821 q=3D175418)
+[128345.511159] rcu: rcu_sched kthread starved for 5146 jiffies! g33838821=
+ f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D1
+[128345.511159] rcu:    Unless rcu_sched kthread gets sufficient CPU time,=
+ OOM is now expected behavior.
+[128345.511159] ...
+[128345.511159]
+[128345.511159] rcu: Stack dump where RCU GP kthread last ran:
+[128345.511159] Task dump for CPU 1:
+[128345.511159] task:cc1plus         state:R  running task     stack:    0=
+ pid:14735 ppid: 14734 flags:0x00000014
+[128345.511159] Backtrace:
+[128345.511159]  [<000000004071f5c8>] __legitimize_path+0x7c/0x108
+[128345.511159]  [<00000000407210d4>] lookup_fast+0x1c8/0x290
+[128345.511159]  [<00000000407277b4>] walk_component+0x1e8/0x330
+[128345.511159]  [<0000000040727be8>] link_path_walk.part.0.constprop.0+0x=
+2ec/0x4d0
+[128345.511159]  [<0000000040728844>] path_openat+0x150/0x1ba8
+[128345.511159]  [<000000004072c018>] do_filp_open+0x9c/0x198
+[128345.511159]  [<0000000040702320>] do_sys_openat2+0x14c/0x2a8
+[128345.511159]  [<0000000040702c54>] compat_sys_openat+0x58/0xb8
+[128345.511159]  [<0000000040303e30>] syscall_exit+0x0/0x10
+[128345.511159]
