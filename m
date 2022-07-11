@@ -2,81 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7742856D75C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jul 2022 10:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B59B256D82E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jul 2022 10:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbiGKIFn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jul 2022 04:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44554 "EHLO
+        id S230213AbiGKIfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jul 2022 04:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbiGKIFm (ORCPT
+        with ESMTP id S230190AbiGKIek (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jul 2022 04:05:42 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC811CFEE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 01:05:40 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id m16so5220439edb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 01:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qpNftIfufBijXs61t2fbqPPMjRNBNhYq1TOGrCn+qYw=;
-        b=GtYrhB91KdGnH4XaAVnXnPLvG0Rii7bCVpBpANpwobyavUlEcUXsh8clGeRobp3QAi
-         ae3etISSt+xpBnVJAsWqZE3wLhUMY6toD5rVpi1VHi9PkmHzjE0ROvuc8WWL8gY4mwZB
-         6TQjKaE/pxIyf+3qce3xC5eeq1e7zyRZWTQ/w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qpNftIfufBijXs61t2fbqPPMjRNBNhYq1TOGrCn+qYw=;
-        b=Qy1h1UprlktvcLGzgsG1XSU0hwzRfLG2QqNs+TTLAQCdIjb2EGBCiGFQ8tZY79mLg6
-         AZ8ly31iAkcmcJOCV6OLsorKYDaCrR3NzTPCt4OviY9eDzQUAVXNLi2EPizYnOPYR3/t
-         /FdNB7+CeFxyWxzvl8d7sVbNTdirTvfqCMrDpkJsjF8xJpD0bT1R2Sj/ILhWjgllZBgz
-         446zjfm94kjE6T3qCcColc71/Wzl6Zub6oa8gQ1efJWRT5GLewbjn6/JobpIIAU/2sWC
-         cl5DyiUnFjL+f2Rz85tBKnSidkwJxmOlXme22Sem4nup++b1C2QYBOCQxcx2IgdksD9T
-         dekg==
-X-Gm-Message-State: AJIora/Ony8kS5nBySgyFWIup18Ukn/DF6LY6HyJFg25OkYlQ/pbBJBq
-        yZxHIh1fLEh/PsNWBXizGnQyEy4btdDbJpXwe9wcvg==
-X-Google-Smtp-Source: AGRyM1uha8RTA/ZAChUfUSQEpusiB+IvUzqmb1E+atMn4urVHuxfTszimLLU/JHCHL2uheQ1xEtFRJZv5YTTQdlZWPU=
-X-Received: by 2002:a05:6402:3202:b0:43a:86f5:a930 with SMTP id
- g2-20020a056402320200b0043a86f5a930mr22732765eda.389.1657526739373; Mon, 11
- Jul 2022 01:05:39 -0700 (PDT)
+        Mon, 11 Jul 2022 04:34:40 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614ACDF8B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 01:33:46 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 5D99C32007D7;
+        Mon, 11 Jul 2022 04:33:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 11 Jul 2022 04:33:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1657528423; x=
+        1657614823; bh=y3LUwrVXkGFUHqDs67lggoWMtERIGgc0O5oLxufAtSQ=; b=P
+        uEpO2eyB3e8kaydspDboLAyLdXyMK21KaIsbgX1bsq1+3fX6+Nst7JbOB+M6y8bh
+        wZdFTVpZdf4MrR9AOPs7XiNqtWPM6Gw1F6vrSvlmsnC8o939qD59u3JdjZOGQdn/
+        Z2r/4zNSirggkWZRr1akwucYPR9Fw68aONo6Oh3kyouOmfMuv2fheL76yiAOiL8J
+        5PaOno8/Aq1LdOcVnR58UUJkD4PbYjcXzKZ2WhXmh0TldfpTUvBhQkMX8ma21RrK
+        M3QqC/wi2WYf6loT7iCbGhOBf2qE2sjPLGQwPfCTAuKAyPRqKnLM2ON0OjatUeU0
+        QsAhO8lt/V7qkwBXyJevw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1657528423; x=
+        1657614823; bh=y3LUwrVXkGFUHqDs67lggoWMtERIGgc0O5oLxufAtSQ=; b=Z
+        MIg9n/PfBD+IbhPwOC/hZaaPaPhn4KJaa391K0l+A54zVUIHW3kQqRPZLn9uw8dp
+        tyCRBSuX83Cw7o010MCeaUQzs1MhcG86cKtb7lh+UTBuGNKN1g2bqUty0+nEEhKl
+        y48ZCzxBYcDSlH7MdX0FWrJV7PsLSGEd4/LMARHHLDZ/8OMLX2Ft77rJfC3DfM9h
+        jvwLDjDocNOilJDRWfluxrEc0A4iE/pYR5UVXjBdy+l9v0JLSSTzIYktQWv9USPH
+        bjteYVPIlB80T7QMz2WOElA0xzfXoi2JiNssx/dP4xL2YTjTGchik60cSLC1rSTM
+        d0EKJoPbmoT1GzzSObzQg==
+X-ME-Sender: <xms:Z-DLYmj8BQoKtpnZc7dyiS3QgzwkekCJjFAwUr4JAQSfmG_Qeku8nQ>
+    <xme:Z-DLYnAEKM1O78_qfky34tgNfYL0aC9ToenBfjDVgOcHJx-xxFqViE-vwSKWIcaw6
+    GKUvKMMb1eOFVB5>
+X-ME-Received: <xmr:Z-DLYuHbpnya3hnFTZaEW436LpxvN7TZfbtnRv2ATRRkbuAej32Ptl61XjiRDtFt5565NCTleTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgtdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
+    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrf
+    grthhtvghrnhepleffjefhgfffiedufeekvdeflefhheejjedugeejuefgleehvdejtdeg
+    kedthfetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eppfhikhholhgruhhssehrrghthhdrohhrgh
+X-ME-Proxy: <xmx:Z-DLYvQw5xKyJIxXG40x59IobUEVYLzknI7nXKdwWYH5i5EfT2f7fA>
+    <xmx:Z-DLYjzUnrd-UqSHxVLN67HfsEKI7zkR6gNzGVbJGpgsC4Inx7aXpA>
+    <xmx:Z-DLYt7hhBEX9zlEWdDnrS6GwjtnAYyvx2AuDi3Mr3D8BSRGzXvw3w>
+    <xmx:Z-DLYuoP_oQi1ijdga5B8G3Nz0je7_AA1qNUWcdm4Trham9cKAIxhw>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Jul 2022 04:33:43 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 52257438;
+        Mon, 11 Jul 2022 08:33:41 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id E7822D3481; Mon, 11 Jul 2022 10:33:40 +0200 (CEST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        miklos <mszeredi@redhat.com>
+Subject: Re: [fuse-devel] potential race in FUSE's readdir() + releasedir()?
+References: <87tu7yjm9x.fsf@vostro.rath.org>
+        <CAJfpegvgWZcwP=M7hE44=jaKfmB2PXyzyodii63JZhGwVhaJHQ@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>, Linux FS Devel
+        <linux-fsdevel@vger.kernel.org>, fuse-devel
+        <fuse-devel@lists.sourceforge.net>, miklos <mszeredi@redhat.com>
+Date:   Mon, 11 Jul 2022 09:33:40 +0100
+In-Reply-To: <CAJfpegvgWZcwP=M7hE44=jaKfmB2PXyzyodii63JZhGwVhaJHQ@mail.gmail.com>
+        (Miklos Szeredi's message of "Wed, 6 Jul 2022 10:35:56 +0200")
+Message-ID: <878rp0xd3v.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20220615055755.197-1-xieyongji@bytedance.com>
-In-Reply-To: <20220615055755.197-1-xieyongji@bytedance.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 11 Jul 2022 10:05:28 +0200
-Message-ID: <CAJfpegu8qB+omP+EKAckLqTKJtRwetFn5xRx8LfXqCeq7a=-kQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Allow skipping abort interface for virtiofs
-To:     Xie Yongji <xieyongji@bytedance.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Jun 2022 at 07:58, Xie Yongji <xieyongji@bytedance.com> wrote:
+On Jul 06 2022, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Sun, 3 Jul 2022 at 16:37, Nikolaus Rath <Nikolaus@rath.org> wrote:
+>>
+>> Hello,
+>>
+>> I am seeing something that to me looks like a race between FUSE's
+>> readdir() and releasedir() handlers. On kernel 5.18, the FUSE daemon
+>> seems to (ocasionally) receive a releasedir() request while a readdir()
+>> request with the same `struct fuse_file_info *fi->fh` is still active
+>> (i.e., the FUSE daemon hasn't sent a reply to the kernel for this yet).
+>>
+>> Could this be a bug in the kernel? Or is there something else that could
+>> explain this?
 >
-> The commit 15c8e72e88e0 ("fuse: allow skipping control
-> interface and forced unmount") tries to remove the control
-> interface for virtio-fs since it does not support aborting
-> requests which are being processed. But it doesn't work now.
->
-> This series fixes the bug, but only remove the abort interface
-> instead since other interfaces should be useful.
+> Is there a log where this can be observed?
 
-I'd prefer properly wiring up the fc->no_control if there's no
-concrete use case for the rest of knobs.
+Not so far, I haven't been able to reproduce it with debug logging
+enabled.
 
-Thanks,
-Miklos
+The way that I'm inferring what's happening is from a crash due to
+writing to freed memory. My fi->fh points to a malloc'ed area that is
+free'd in releasedir(), and written to in readdir().
+
+
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
