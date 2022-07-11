@@ -2,191 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9C02570E10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 01:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4034570E1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 01:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbiGKXPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jul 2022 19:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39152 "EHLO
+        id S231287AbiGKXRf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jul 2022 19:17:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231216AbiGKXPn (ORCPT
+        with ESMTP id S230103AbiGKXRd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jul 2022 19:15:43 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F2958735A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 16:15:42 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 136so11212612ybl.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 16:15:42 -0700 (PDT)
+        Mon, 11 Jul 2022 19:17:33 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C8C87F7F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 16:17:31 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id y3so6373644iof.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 16:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5ZvoNrrFE3nmN7+wVapurCnBu267yWOoQYKYwm2cZlA=;
-        b=h8DT22+wyNOULS4PEbbruwv3a1Q9EfxNbIhiIbhn8IsCxwXCugztDCZt4aXB5+uKpN
-         i+xlpK84BAxiJQJe8rtnCbxrzwdjOPexodrhYRuLJHcft08Pt3q9LWOUFj33isPZM8OG
-         sL0McsoxzhkVCxGHUbaDxOk/rie/TecBPLIYT7Rj90gO4atNc00hTgnLRMXi65d6/rgw
-         xYmz1vdFuYfjvK9EDognJsm9m4kSgrWC2J+IyMpU8F7XoOOgVJiXBZhf2lokwhxv7XVF
-         sToTs4rGW/lTcVAS5JMqE6iwMMayB/noPDwC/ke6PjNdFxt7uxMoCW5y41vKEP9bqK2n
-         8e5Q==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X4V9spvk1I9jjtr8sVusqF9oSSPPa+R7P/GUBMC4gLc=;
+        b=iL2mD/P0V4lfh23PpOV1RJOguNLsoUgdYgJwIjkRgS64rurYUXaVJSd3k7136hlWh+
+         aSX3Sy9hkwO1TextBrkhg7/G0fkAst9YMLYeZGIPYO0n1vg88u4nguP2uIcjBSJdIG2s
+         TQRIQWOEtYP10f+luBeND/Wq3Hi7OU8xOISJE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5ZvoNrrFE3nmN7+wVapurCnBu267yWOoQYKYwm2cZlA=;
-        b=U5A0tdCHlOj21WTDBJftOEr4cpSLoYT89EVqjIjm05VFJlYB7t/Iy3fWgAk0BK+6Vz
-         fXV3HJAjRm9udoTZYrWH+4kWAJEatAoJDNNiyIS4ZV6Qu8SG/CQAAbDAFEuQIw3Shd3a
-         5MjeXIWK7JBHT1LqVRC+b5x/PWWM1LWF8YvrYc5yE6LDbt7JWNMBu8hAKaZDS4h4OOf8
-         Dwe2WF94plbAu2WJdTnqLFiHnw8gG4I3Q5UW8Tg4Flme/pf9pxAKg1XXQfILVw3M9+Kf
-         k5OaX5INWBP1brykiT1p0hUfKf3cZReAorXdZFVp4LhHQXsWauUdGSWOLbrjgpcSKnWv
-         Lxug==
-X-Gm-Message-State: AJIora/q9KV/+4bw8Wu8zed5zNjPGFgTaTpX56K2/7QcVgFHWbXOEP1S
-        xTxsnU+bCkD86plWB7YYKS1+x3n0Mj1Jeop/BVuU0w==
-X-Google-Smtp-Source: AGRyM1sNriE+i2iOsMQUz8LcFB7VN+nenZ8+7T7fgkdvZ66sbrVYCEI8HVMMnMGX6jzX4rNdbiE1FVjCtgbXzcYRBEA=
-X-Received: by 2002:a25:cfd0:0:b0:66e:b731:7954 with SMTP id
- f199-20020a25cfd0000000b0066eb7317954mr20007259ybg.396.1657581341375; Mon, 11
- Jul 2022 16:15:41 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X4V9spvk1I9jjtr8sVusqF9oSSPPa+R7P/GUBMC4gLc=;
+        b=p/kLPyEWKjZew5vwTmcJmOFot45oFtMv7Db+IuWswbb2UvNhrPJXwZDkC0CedXMqqr
+         T85I2peipFu8zRGgxP9yv7l+OJAOpG7LBXutVTv0zC/NTePSAVj8JVC0MNSIQgv6WbxN
+         ZORdB/zzQ9vsfIur9DuFYdkGNdDBxKzaFEmSy1jZ+uAq2eIO45VedqLhFE9ESBXblrKu
+         LTtKrrU8BXfrH9V+CFSZqtcka6O2S3tHfMW4KMKdsmPysz68cxaeB7PPaynoYg/J3uas
+         XYiK/ZVoss/DSTnlPqErmPcOAcCwTtAWX9+l/azqqTalxvSAy9wJ/3XxdDKpCrGcClxM
+         r0VQ==
+X-Gm-Message-State: AJIora9NM0N+6a88oUaSvV1wEjl54Pwz3ssPAhVNsU2mIyud+CLES5mV
+        DXZyVRm2D4WzVXVUFxlZNEQPT3jlCzBFPA==
+X-Google-Smtp-Source: AGRyM1uj5haGzpa8pwS0HQnvZKEjcACNgX12g8/rtIBFbcZxuC0BrgiAPyKTyF5FN6ouZQ+LKJ9q5Q==
+X-Received: by 2002:a05:6602:2e0c:b0:669:b7a8:fb0a with SMTP id o12-20020a0566022e0c00b00669b7a8fb0amr10334823iow.121.1657581450696;
+        Mon, 11 Jul 2022 16:17:30 -0700 (PDT)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id y20-20020a056e02119400b002dc239fbd04sm3185890ili.22.2022.07.11.16.17.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jul 2022 16:17:30 -0700 (PDT)
+Subject: Re: [PATCH v6 3/4] kunit: Taint the kernel when KUnit tests are run
+To:     David Gow <davidgow@google.com>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220708044847.531566-1-davidgow@google.com>
+ <20220708044847.531566-3-davidgow@google.com>
+ <fc638852-ac9a-abab-8fdb-01b685cdec96@linuxfoundation.org>
+ <CAGS_qxpODhSEs_sMm5Gu55EsYy-M9V98eLU-8O+xGMxncXmY4A@mail.gmail.com>
+ <f25f96ce-1c9b-7e66-a5be-96d7cf2988cf@linuxfoundation.org>
+ <a00efaa8-71e0-c531-b6a4-e3d695ad628b@linuxfoundation.org>
+ <CABVgOSkroVjxTDoKTLBxiX_Fw5qZQmchDpY4U3XCCRYfXbS2bQ@mail.gmail.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <4e5ca5b9-cdb8-4ddf-b057-27f721427f52@linuxfoundation.org>
+Date:   Mon, 11 Jul 2022 17:17:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <20220616211016.4037482-1-dylanbhatch@google.com>
- <941e0991-eb3e-f988-8262-3d51ff8badad@linuxfoundation.org>
- <CADBMgpwt2ALzBTtEm7v6DLL_9pjUhVLDpBLHXn1b0bvVf2BSvg@mail.gmail.com>
- <47312e8a-87fe-c7dc-d354-74e81482bc1e@linuxfoundation.org>
- <CADBMgpx9hwHaWe=m2kQhKOJFWnLSejoWa6wz1VECEkLhWq4qog@mail.gmail.com>
- <a5f46e4e-a472-77ce-f61e-b2f9922bdd50@linuxfoundation.org>
- <CADBMgpzyOKVO1ju_WkxYLhXGvwJjHoL6V-+Nw49UdTFoPY7NvQ@mail.gmail.com>
- <b48cc574-302c-e74f-0720-9912f4663cbe@linuxfoundation.org> <CADBMgpz3z_hB_5BVVD5-4r3qYCVc_p_SrYKZLwaLg9Fy+h2p6g@mail.gmail.com>
-In-Reply-To: <CADBMgpz3z_hB_5BVVD5-4r3qYCVc_p_SrYKZLwaLg9Fy+h2p6g@mail.gmail.com>
-From:   Dylan Hatch <dylanbhatch@google.com>
-Date:   Mon, 11 Jul 2022 16:15:30 -0700
-Message-ID: <CADBMgpzPkErW=exgbzr+0z1x3JFdX9fuUJBhFG6ePxG59kvHaA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/proc: Fix proc-pid-vm for vsyscall=xonly.
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CABVgOSkroVjxTDoKTLBxiX_Fw5qZQmchDpY4U3XCCRYfXbS2bQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Accidentally hit direct reply, adding Shuah Khan <shuah@kernel.org>,
-linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-linux-kselftest@vger.kernel.org, Shuah Khan
-<skhan@linuxfoundation.org>
+On 7/8/22 9:35 PM, David Gow wrote:
+> On Sat, Jul 9, 2022 at 5:24 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 7/8/22 3:22 PM, Shuah Khan wrote:
+>>> On 7/8/22 3:00 PM, Daniel Latypov wrote:
+>>>> On Fri, Jul 8, 2022 at 1:22 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>>
+>>>>> On 7/7/22 10:48 PM, David Gow wrote:
+>>>>>> Make KUnit trigger the new TAINT_TEST taint when any KUnit test is run.
+>>>>>> Due to KUnit tests not being intended to run on production systems, and
+>>>>>> potentially causing problems (or security issues like leaking kernel
+>>>>>> addresses), the kernel's state should not be considered safe for
+>>>>>> production use after KUnit tests are run.
+>>>>>>
+>>>>>> This both marks KUnit modules as test modules using MODULE_INFO() and
+>>>>>> manually taints the kernel when tests are run (which catches builtin
+>>>>>> tests).
+>>>>>>
+>>>>>> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>>>> Tested-by: Daniel Latypov <dlatypov@google.com>
+>>>>>> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+>>>>>> Signed-off-by: David Gow <davidgow@google.com>
+>>>>>> ---
+>>>>>>
+>>>>>> No changes since v5:
+>>>>>> https://lore.kernel.org/linux-kselftest/20220702040959.3232874-3-davidgow@google.com/
+>>>>>>
+>>>>>> No changes since v4:
+>>>>>> https://lore.kernel.org/linux-kselftest/20220701084744.3002019-3-davidgow@google.com/
+>>>>>>
+>>>>>
+>>>>> David, Brendan, Andrew,
+>>>>>
+>>>>> Just confirming the status of these patches. I applied v4 1/3 and v4 3/4
+>>>>> to linux-kselftest kunit for 5.20-rc1.
+>>>>> I am seeing v5 and v6 now. Andrew applied v5 looks like. Would you like
+>>>>> me to drop the two I applied? Do we have to refresh with v6?
+>>>>
+>>>> Just noting here that there'll be a merge conflict between this patch
+>>>> (3/4) and some other patches lined up to go through the kunit tree:
+>>>> https://patchwork.kernel.org/project/linux-kselftest/patch/20220625050838.1618469-2-davidgow@google.com/
+>>>>
+>>>> Not sure how we want to handle that.
+>>>>
+>>>
+>>> I can go drop the two patches and have Andrew carry the series through
+>>> mm tree.
+>>>
+>>
+>> Sorry spoke too soon. Yes there are others that might have conflicts as
+>> Daniel pointed out:
+>>
+>> https://patchwork.kernel.org/project/linux-kselftest/patch/20220625050838.1618469-2-davidgow@google.com/
+>>
+>> thanks,
+>> -- Shuah
+>>
+> 
+> Thanks everyone for pointing these out.
+> 
+> I've rebased the other series (the KUnit module support one:
+> https://lore.kernel.org/linux-kselftest/20220709032001.819487-1-davidgow@google.com/
+> ) on top of this.
+> 
+> If they all go in via the kselftest/kunit tree, everything should be fine now.
+> 
+> Cheers,
+> -- David
+> 
 
-On Mon, Jul 11, 2022 at 4:04 PM Dylan Hatch <dylanbhatch@google.com> wrote:
->
-> On Wed, Jun 22, 2022 at 10:15 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
-> >
-> > On 6/21/22 6:18 PM, Dylan Hatch wrote:
-> > > On Fri, Jun 17, 2022 at 3:27 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
-> > >>
-> > >> On 6/17/22 4:05 PM, Dylan Hatch wrote:
-> > >>> On Fri, Jun 17, 2022 at 12:38 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
-> > >>>>
-> > >>>> On 6/17/22 12:45 PM, Dylan Hatch wrote:
-> > >>>>> On Thu, Jun 16, 2022 at 4:01 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
-> > >>>>>>
-> > >>>
-> > >>>>
-> > >>>> It depends on the goal of the test. Is the test looking to see if the
-> > >>>> probe fails with insufficient permissions, then you are changing the
-> > >>>> test to not check for that condition.
-> > >>>
-> > >>> The goal of the test is to validate the output of /proc/$PID/maps, and
-> > >>> the memory probe is only needed as setup to determine what the
-> > >>> expected output should be. This used to be sufficient, but now it can
-> > >>> no longer fully disambiguate it with the introduction of
-> > >>> vsyscall=xonly. The solution proposed here is to disambiguate it by
-> > >>> also checking the length read from /proc/$PID/maps.
-> > >>>
-> > >>>>
-> > >>
-> > >> Makes sense. However the question is does this test need to be enhanced
-> > >> with the addition of vsyscall=xonly?
-> > >>
-> > >>>> I would say in this case, the right approach would be to leave the test
-> > >>>> as is and report expected fail and add other cases.
-> > >>>>
-> > >>>> The goal being adding more coverage and not necessarily opt for a simple
-> > >>>> solution.
-> > >>>
-> > >>> What does it mean to report a test as expected fail? Is this a
-> > >>> mechanism unique to kselftest? I agree adding another test case would
-> > >>> work, but I'm unsure how to do it within the framework of kselftest.
-> > >>> Ideally, there would be separate test cases for vsyscall=none,
-> > >>> vsyscall=emulate, and vsyscall=xonly, but these options can be toggled
-> > >>> both in the kernel config and on the kernel command line, meaning (to
-> > >>> the best of my knowledge) these test cases would have to be built
-> > >>> conditionally against the conflig options and also parse the command
-> > >>> line for the 'vsyscall' option.
-> > >>>
-> > >>
-> > >> Expected fail isn't unique kselftest. It is a testing criteria where
-> > >> a test is expected to fail. For example if a file can only be opened
-> > >> with privileged user a test that runs and looks for failure is an
-> > >> expected to fail case - we are looking for a failure.
-> > >>
-> > >> A complete battery of tests for vsyscall=none, vsyscall=emulate,
-> > >> vsyscall=xonly would test for conditions that are expected to pass
-> > >> and fail based on the config.
-> > >>
-> > >> tools/testing/selftests/proc/config doesn't have any config options
-> > >> that are relevant to VSYSCALL
-> > >>
-> > >> Can you please send me the how you are running the test and what the
-> > >> failure output looks like?
-> > >
-> > > I'm building a kernel with the following relevant configurations:
-> > >
-> > > $ cat .config | grep VSYSCALL
-> > > CONFIG_GENERIC_TIME_VSYSCALL=y
-> > > CONFIG_X86_VSYSCALL_EMULATION=y
-> > > CONFIG_LEGACY_VSYSCALL_XONLY=y
-> > > # CONFIG_LEGACY_VSYSCALL_NONE is not set
-> > >
-> > > Running the test without this change both in virtme and on real
-> > > hardware gives the following error:
-> > >
-> > > # ./tools/testing/selftests/proc/proc-pid-vm
-> > > proc-pid-vm: proc-pid-vm.c:328: int main(void): Assertion `rv == len' failed.
-> > > Aborted
-> > >
-> > > This is because when CONFIG_LEGACY_VSYSCALL_XONLY=y a probe of the
-> > > vsyscall page results in a segfault. This test was originally written
-> > > before this option existed so it incorrectly assumes the vsyscall page
-> > > isn't mapped at all, and the expected buffer length doesn't match the
-> > > result.
-> > >
-> > > An alternate method of fixing this test could involve setting the
-> > > expected result based on the config with #ifdef blocks, but I wasn't
-> > > sure if that could be done for kernel config options in kselftest
-> > > code. There's also the matter of checking the kernel command line for
-> > > a `vsyscall=` arg, is parsing /proc/cmdline the best way to do this?
-> > >
-> >
-> > We have a few tests do ifdef to be able to test the code as well as deal
-> > with config specific tests. Not an issue.
-> >
-> > Parsing /proc/cmdline line is flexible for sure, if you want to use that
-> > route.
-> >
-> > Thank you for finding the problem and identifying missing coverage. Look
-> > forward to any patches fixing the problem.
-> >
-> > thanks,
-> > -- Shuah
->
-I've done some experimenting with ifdefs on config options, but it
-seems that these options do not propagate properly into the tests. Is
-there a specific method I should be using to propagate the config
-values, or would you be able to point me to an example where this is
-done properly?
+Thank you David. All patches applied now to linux-kselftest kunit for 5.20-rc1
 
-Thanks and sorry for the slow reply on this,
-Dylan
+thanks,
+-- Shuah
