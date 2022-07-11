@@ -2,200 +2,464 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3993D570967
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jul 2022 19:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25ED570A83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Jul 2022 21:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbiGKRsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Jul 2022 13:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
+        id S231806AbiGKTQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Jul 2022 15:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbiGKRsU (ORCPT
+        with ESMTP id S231755AbiGKTQw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Jul 2022 13:48:20 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652E72AC69
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 10:48:19 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 26BGUFS4013599
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 10:48:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=Ziq1gzB9L/hW1OA9ldNTXu0NFxd9b8/YHfK7r6sKr74=;
- b=KiqZNAPn09THDriy6/+KWwVj2dy/IebLiSItlUI0ZNayZyfmoDX+YTnfhVKZZzbgw3JP
- 5D7V1x+lIVoPFsHHd004uF/a99gAIQYKjYAyREZd2yYSdaIqR8jywVbAmmaxHgfX2LLd
- yMpef4MUR+phJMUi3rZGXyvmJ0x43ZfGX+Q= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3h7567twsy-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Jul 2022 10:48:18 -0700
-Received: from twshared22934.08.ash9.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:11d::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Mon, 11 Jul 2022 10:48:16 -0700
-Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
-        id 21F19A243DCD; Mon, 11 Jul 2022 10:48:09 -0700 (PDT)
-From:   Dave Marchevsky <davemarchevsky@fb.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        kernel-team <kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, <clm@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Dave Marchevsky <davemarchevsky@fb.com>
-Subject: [RESEND PATCH v4] fuse: Add module param for CAP_SYS_ADMIN access bypassing allow_other
-Date:   Mon, 11 Jul 2022 10:48:08 -0700
-Message-ID: <20220711174808.2579654-1-davemarchevsky@fb.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 11 Jul 2022 15:16:52 -0400
+Received: from mail.yonan.net (mail.yonan.net [54.244.116.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A3CB6D2F4;
+        Mon, 11 Jul 2022 12:16:46 -0700 (PDT)
+Received: from unless.localdomain (unknown [76.130.91.106])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.yonan.net (Postfix) with ESMTPSA id 439593E950;
+        Mon, 11 Jul 2022 19:16:45 +0000 (UTC)
+From:   James Yonan <james@openvpn.net>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     david@fromorbit.com, neilb@suse.de, amir73il@gmail.com,
+        viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
+        James Yonan <james@openvpn.net>
+Subject: [PATCH v4 1/2] namei: implemented RENAME_NEWER_MTIME flag for renameat2() conditional replace
+Date:   Mon, 11 Jul 2022 13:13:30 -0600
+Message-Id: <20220711191331.2739584-1-james@openvpn.net>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220702080710.GB3108597@dread.disaster.area>
+References: <20220702080710.GB3108597@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: pVac-zmTRHajNXvklXa2ZoFLkZb1PF-C
-X-Proofpoint-ORIG-GUID: pVac-zmTRHajNXvklXa2ZoFLkZb1PF-C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-11_22,2022-07-08_01,2022-06-22_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
-superblock's namespace or a descendant"), access to allow_other FUSE
-filesystems has been limited to users in the mounting user namespace or
-descendants. This prevents a process that is privileged in its userns -
-but not its parent namespaces - from mounting a FUSE fs w/ allow_other
-that is accessible to processes in parent namespaces.
+RENAME_NEWER_MTIME is a new userspace-visible flag for renameat2(), and
+stands alongside existing flags including RENAME_NOREPLACE,
+RENAME_EXCHANGE, and RENAME_WHITEOUT.
 
-While this restriction makes sense overall it breaks a legitimate
-usecase: I have a tracing daemon which needs to peek into
-process' open files in order to symbolicate - similar to 'perf'. The
-daemon is a privileged process in the root userns, but is unable to peek
-into FUSE filesystems mounted by processes in child namespaces.
+RENAME_NEWER_MTIME is a conditional variation on RENAME_NOREPLACE, and
+indicates that if the target of the rename exists, the rename or exchange
+will only succeed if the source file is newer than the target (i.e.
+source mtime > target mtime).  Otherwise, the rename will fail with
+-EEXIST instead of replacing the target.  When the target doesn't exist,
+RENAME_NEWER_MTIME does a plain rename like RENAME_NOREPLACE.
 
-This patch adds a module param, allow_sys_admin_access, to act as an
-escape hatch for this descendant userns logic and for the allow_other
-mount option in general. Setting allow_sys_admin_access allows
-processes with CAP_SYS_ADMIN in the initial userns to access FUSE
-filesystems irrespective of the mounting userns or whether allow_other
-was set. A sysadmin setting this param must trust FUSEs on the host to
-not DoS processes as described in 73f03c2b4b52.
+RENAME_NEWER_MTIME can also be combined with RENAME_EXCHANGE for
+conditional exchange, where the exchange only occurs if source mtime >
+target mtime.  Otherwise, the operation will fail with -EEXIST.
 
-Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Some of the use cases for RENAME_NEWER_MTIME include (a) using a
+directory as a key-value store, or (b) maintaining a near-real-time
+mirror of a remote data source.  A common design pattern for maintaining
+such a data store would be to create a file using a temporary pathname,
+setting the file mtime using utimensat(2) or futimens(2) based on the
+remote creation timestamp of the file content, then using
+RENAME_NEWER_MTIME to move the file into place in the target directory.
+If the operation returns an error with errno == EEXIST, then the source
+file is not up-to-date and can safely be deleted. The goal is to
+facilitate distributed systems having many concurrent writers and
+readers, where update notifications are possibly delayed, duplicated, or
+reordered, yet where readers see a consistent view of the target
+directory with predictable semantics and atomic updates.
+
+Note that RENAME_NEWER_MTIME depends on accurate, high-resolution
+timestamps for mtime, preferably approaching nanosecond resolution.
+
+RENAME_NEWER_MTIME is implemented in vfs_rename(), and we lock and deny
+write access to both source and target inodes before comparing their
+mtimes, to stabilize the comparison.
+
+The use case for RENAME_NEWER_MTIME doesn't really align with
+directories, so we return -EISDIR if either source or target is a
+directory.  This makes the locking necessary to stabilize the mtime
+comparison (in vfs_rename()) much more straightforward.
+
+Like RENAME_NOREPLACE, the RENAME_NEWER_MTIME implementation lives in
+the VFS, however the individual fs implementations do strict flags
+checking and will return -EINVAL for any flag they don't recognize.
+At this time, I have enabled and tested RENAME_NEWER_MTIME on ext2, ext3,
+ext4, xfs, btrfs, and tmpfs.
+
+I did not notice a general self-test for renameat2() at the VFS
+layer (outside of fs-specific tests), so I created one, though
+at the moment it only exercises RENAME_NEWER_MTIME and RENAME_EXCHANGE.
+The self-test is written to be portable to the Linux Test Project,
+and the advantage of running it there is that it automatically runs
+tests on multiple filesystems.  See comments at the beginning of
+renameat2_tests.c for more info.
+
+Build and run the self-test with:
+
+  make -C tools/testing/selftests TARGETS=renameat2 run_tests
+
+Questions:
+
+Q: Why use mtime and not ctime for timestamp comparison?
+
+A: I see the "use a directory as a key/value store" use case
+   as caring more about the modification time of the file content
+   rather than the metadata.  Also, the rename operation itself
+   modifies ctime, making it less useful as a reference timestamp.
+   In any event, this patch creates the infrastructure for
+   conditional rename/exchange based on inode timestamp, so a
+   subsequent patch to add RENAME_NEWER_CTIME would be a mostly
+   trivial exercise.
+
+Signed-off-by: James Yonan <james@openvpn.net>
 ---
-v3 -> v4: lore.kernel.org/linux-fsdevel/20220617004710.621301-1-davemarch=
-evsky@fb.com
-  * Add discussion of new module option and allow_other userns
-    interaction in docs (Christian)
-	* (v4 RESEND) Add Christian's reviewed-by
+Patch version history:
 
-v2 -> v3: lore.kernel.org/linux-fsdevel/20220601184407.2086986-1-davemarc=
-hevsky@fb.com
-  * Module param now allows initial userns CAP_SYS_ADMIN to bypass allow_=
-other
-    check entirely
+v2: Changed flag name from RENAME_NEWER to RENAME_NEWER_MTIME so
+    as to disambiguate and make it clear that we are comparing
+    mtime values.
 
-v1 -> v2: lore.kernel.org/linux-fsdevel/20211111221142.4096653-1-davemarc=
-hevsky@fb.com
-  * Use module param instead of capability check
+    RENAME_NEWER_MTIME can now be combined with RENAME_EXCHANGE
+    for conditional exchange, where exchange only occurs if
+    source mtime > target mtime.
 
- Documentation/filesystems/fuse.rst | 29 ++++++++++++++++++++++++-----
- fs/fuse/dir.c                      | 10 ++++++++++
- 2 files changed, 34 insertions(+), 5 deletions(-)
+    Moved the mtime comparison logic into vfs_rename() to take
+    advantage of existing {lock,unlock}_two_nondirectories critical
+    section, and then further nest another critical section
+    {deny,allow}_write_access (adapted to inodes) to stabilize the
+    mtime, since our use case doesn't require renaming files that
+    are open for write (we will return -ETXTBSY in this case).
 
-diff --git a/Documentation/filesystems/fuse.rst b/Documentation/filesyste=
-ms/fuse.rst
-index 8120c3c0cb4e..1e31e87aee68 100644
---- a/Documentation/filesystems/fuse.rst
-+++ b/Documentation/filesystems/fuse.rst
-@@ -279,7 +279,7 @@ How are requirements fulfilled?
- 	the filesystem or not.
-=20
- 	Note that the *ptrace* check is not strictly necessary to
--	prevent B/2/i, it is enough to check if mount owner has enough
-+	prevent C/2/i, it is enough to check if mount owner has enough
- 	privilege to send signal to the process accessing the
- 	filesystem, since *SIGSTOP* can be used to get a similar effect.
-=20
-@@ -288,10 +288,29 @@ I think these limitations are unacceptable?
-=20
- If a sysadmin trusts the users enough, or can ensure through other
- measures, that system processes will never enter non-privileged
--mounts, it can relax the last limitation with a 'user_allow_other'
--config option.  If this config option is set, the mounting user can
--add the 'allow_other' mount option which disables the check for other
--users' processes.
-+mounts, it can relax the last limitation in several ways:
-+
-+  - With the 'user_allow_other' config option. If this config option is
-+    set, the mounting user can add the 'allow_other' mount option which
-+    disables the check for other users' processes.
-+
-+    User namespaces have an unintuitive interaction with 'allow_other':
-+    an unprivileged user - normally restricted from mounting with
-+    'allow_other' - could do so in a user namespace where they're
-+    privileged. If any process could access such an 'allow_other' mount
-+    this would give the mounting user the ability to manipulate
-+    processes in user namespaces where they're unprivileged. For this
-+    reason 'allow_other' restricts access to users in the same userns
-+    or a descendant.
-+
-+  - With the 'allow_sys_admin_access' module option. If this option is
-+    set, super user's processes have unrestricted access to mounts
-+    irrespective of allow_other setting or user namespace of the
-+    mounting user.
-+
-+Note that both of these relaxations expose the system to potential
-+information leak or *DoS* as described in points B and C/2/i-ii in the
-+preceding section.
-=20
- Kernel - userspace interface
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 9dfee44e97ad..d325d2387615 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -11,6 +11,7 @@
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/fs_context.h>
-+#include <linux/moduleparam.h>
- #include <linux/sched.h>
- #include <linux/namei.h>
- #include <linux/slab.h>
-@@ -21,6 +22,12 @@
- #include <linux/types.h>
- #include <linux/kernel.h>
-=20
-+static bool __read_mostly allow_sys_admin_access;
-+module_param(allow_sys_admin_access, bool, 0644);
-+MODULE_PARM_DESC(allow_sys_admin_access,
-+ "Allow users with CAP_SYS_ADMIN in initial userns "
-+ "to bypass allow_other access check");
-+
- static void fuse_advise_use_readdirplus(struct inode *dir)
+    Did some refactoring of inline functions in linux/fs.h that
+    manage inode->i_writecount, and added inode_deny_write_access2()
+    and inode_allow_write_access2() functions.
+
+    Extended the self-test (renameat2_tests.c):
+
+    1. Verify that RENAME_NEWER_MTIME fails with errno == ETXTBSY when
+       one of the files is open for write.
+
+    2. Test conditional exchange use case with combined flags
+       RENAME_EXCHANGE|RENAME_NEWER_MTIME.
+
+    3. The test .c file is now drop-in portable to the Linux Test
+       Project where you can take advantage of the .all_filesystems = 1
+       flag to automatically run tests on multiple filesystems.
+
+v3: The use case for RENAME_NEWER_MTIME doesn't really align
+    with directories, so return -EISDIR if either source or
+    target is a directory.  This makes the locking necessary
+    to stabilize the mtime comparison (in vfs_rename())
+    much more straightforward.
+
+    simple_rename() in libfs.c doesn't need to support
+    RENAME_NEWER_MTIME.
+
+    Broke up some long lines.
+
+    Rebased on top of 5.19-rc5.
+
+    Break out the self-test into a separate patch.
+
+    Documented RENAME_NEWER_MTIME in the rename.2 man page
+    (separate patch).
+
+v4: Testing for d_is_postive() is unneeded if testing d_is_dir()
+    on target dentry.
+
+    Break long lines after | operator, rather than before.
+
+    Rebased on top of 5.19-rc6.
+
+    Submitted rename.2 man page update to linux-man@vger.kernel.org
+---
+ Documentation/filesystems/vfs.rst | 11 ++++++++
+ fs/btrfs/inode.c                  |  3 ++-
+ fs/ext2/namei.c                   |  2 +-
+ fs/ext4/namei.c                   |  3 ++-
+ fs/namei.c                        | 37 +++++++++++++++++++++++---
+ fs/xfs/xfs_iops.c                 |  3 ++-
+ include/linux/fs.h                | 43 ++++++++++++++++++++++++++++---
+ include/uapi/linux/fs.h           |  1 +
+ mm/shmem.c                        |  3 ++-
+ tools/include/uapi/linux/fs.h     |  1 +
+ 10 files changed, 95 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 08069ecd49a6..495e7352cca1 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -515,6 +515,17 @@ otherwise noted.
+ 	(2) RENAME_EXCHANGE: exchange source and target.  Both must
+ 	exist; this is checked by the VFS.  Unlike plain rename, source
+ 	and target may be of different type.
++	(3) RENAME_NEWER_MTIME: this flag is similar to RENAME_NOREPLACE,
++	and indicates a conditional rename: if the target of the rename
++	exists, the rename should only succeed if the source file is
++	newer than the target (i.e. source mtime > target mtime).
++	Otherwise, the rename should fail with -EEXIST instead of
++	replacing the target.  To exchange source and target conditional
++	on source being newer than target, pass flags as
++	RENAME_EXCHANGE|RENAME_NEWER_MTIME.  RENAME_NEWER_MTIME will fail
++	with -ETXTBSY if either source or target is open for write.
++	RENAME_NEWER_MTIME is not currently supported on directories, and
++	will return -EISDIR if either source or target is a directory.
+ 
+ ``get_link``
+ 	called by the VFS to follow a symbolic link to the inode it
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 05e0c4a5affd..22c59808762a 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9549,7 +9549,8 @@ static int btrfs_rename2(struct user_namespace *mnt_userns, struct inode *old_di
+ 			 struct dentry *old_dentry, struct inode *new_dir,
+ 			 struct dentry *new_dentry, unsigned int flags)
  {
- 	struct fuse_inode *fi =3D get_fuse_inode(dir);
-@@ -1229,6 +1236,9 @@ int fuse_allow_current_process(struct fuse_conn *fc=
-)
- {
- 	const struct cred *cred;
-=20
-+	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
-+		return 1;
+-	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT |
++		      RENAME_NEWER_MTIME))
+ 		return -EINVAL;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index 5f6b7560eb3f..35dc17f80528 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -336,7 +336,7 @@ static int ext2_rename (struct user_namespace * mnt_userns,
+ 	struct ext2_dir_entry_2 * old_de;
+ 	int err;
+ 
+-	if (flags & ~RENAME_NOREPLACE)
++	if (flags & ~(RENAME_NOREPLACE | RENAME_NEWER_MTIME))
+ 		return -EINVAL;
+ 
+ 	err = dquot_initialize(old_dir);
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index db4ba99d1ceb..5f3f124e3f90 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -4128,7 +4128,8 @@ static int ext4_rename2(struct user_namespace *mnt_userns,
+ 	if (unlikely(ext4_forced_shutdown(EXT4_SB(old_dir->i_sb))))
+ 		return -EIO;
+ 
+-	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT |
++		      RENAME_NEWER_MTIME))
+ 		return -EINVAL;
+ 
+ 	err = fscrypt_prepare_rename(old_dir, old_dentry, new_dir, new_dentry,
+diff --git a/fs/namei.c b/fs/namei.c
+index 1f28d3f463c3..e7917def510a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -40,6 +40,7 @@
+ #include <linux/bitops.h>
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
++#include <linux/time64.h>
+ 
+ #include "internal.h"
+ #include "mount.h"
+@@ -4685,11 +4686,22 @@ int vfs_rename(struct renamedata *rd)
+ 
+ 	take_dentry_name_snapshot(&old_name, old_dentry);
+ 	dget(new_dentry);
+-	if (!is_dir || (flags & RENAME_EXCHANGE))
++	if (!is_dir || (flags & (RENAME_EXCHANGE|RENAME_NEWER_MTIME)))
+ 		lock_two_nondirectories(source, target);
+ 	else if (target)
+ 		inode_lock(target);
+ 
++	if ((flags & RENAME_NEWER_MTIME) && target) {
++		/* deny write access to stabilize mtime comparison below */
++		error = inode_deny_write_access2(source, target);
++		if (error) /* -ETXTBSY */
++			goto out1;
++		if (timespec64_compare(&source->i_mtime, &target->i_mtime) <= 0) {
++			error = -EEXIST;
++			goto out;
++		}
++	}
 +
- 	if (fc->allow_other)
- 		return current_in_userns(fc->user_ns);
-=20
---=20
-2.30.2
+ 	error = -EPERM;
+ 	if (IS_SWAPFILE(source) || (target && IS_SWAPFILE(target)))
+ 		goto out;
+@@ -4736,7 +4748,10 @@ int vfs_rename(struct renamedata *rd)
+ 			d_exchange(old_dentry, new_dentry);
+ 	}
+ out:
+-	if (!is_dir || (flags & RENAME_EXCHANGE))
++	if ((flags & RENAME_NEWER_MTIME) && target)
++		inode_allow_write_access2(source, target);
++out1:
++	if (!is_dir || (flags & (RENAME_EXCHANGE|RENAME_NEWER_MTIME)))
+ 		unlock_two_nondirectories(source, target);
+ 	else if (target)
+ 		inode_unlock(target);
+@@ -4769,11 +4784,12 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	bool should_retry = false;
+ 	int error = -EINVAL;
+ 
+-	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT
++		      | RENAME_NEWER_MTIME))
+ 		goto put_names;
+ 
+ 	if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
+-	    (flags & RENAME_EXCHANGE))
++	    (flags & (RENAME_EXCHANGE | RENAME_NEWER_MTIME)))
+ 		goto put_names;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+@@ -4825,6 +4841,19 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	error = -EEXIST;
+ 	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry))
+ 		goto exit5;
++
++	/* The use case for RENAME_NEWER_MTIME doesn't really align
++	 * with directories, so bail out here if either source or
++	 * target is a directory.  This makes the locking necessary
++	 * to stabilize the mtime comparison (in vfs_rename)
++	 * much more straightforward.
++	 */
++	if ((flags & RENAME_NEWER_MTIME) &&
++	    (d_is_dir(old_dentry) || d_is_dir(new_dentry))) {
++		error = -EISDIR;
++		goto exit5;
++	}
++
+ 	if (flags & RENAME_EXCHANGE) {
+ 		error = -ENOENT;
+ 		if (d_is_negative(new_dentry))
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 29f5b8b8aca6..d615cc2b8d36 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -457,7 +457,8 @@ xfs_vn_rename(
+ 	struct xfs_name	oname;
+ 	struct xfs_name	nname;
+ 
+-	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT |
++		      RENAME_NEWER_MTIME))
+ 		return -EINVAL;
+ 
+ 	/* if we are exchanging files, we need to set i_mode of both files */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9ad5e3520fae..0c79f12ec51f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2819,14 +2819,21 @@ static inline void file_end_write(struct file *file)
+  * use {get,deny}_write_access() - these functions check the sign and refuse
+  * to do the change if sign is wrong.
+  */
++static inline int inode_deny_write_access(struct inode *inode)
++{
++	return atomic_dec_unless_positive(&inode->i_writecount) ? 0 : -ETXTBSY;
++}
++static inline void inode_allow_write_access(struct inode *inode)
++{
++	atomic_inc(&inode->i_writecount);
++}
+ static inline int get_write_access(struct inode *inode)
+ {
+ 	return atomic_inc_unless_negative(&inode->i_writecount) ? 0 : -ETXTBSY;
+ }
+ static inline int deny_write_access(struct file *file)
+ {
+-	struct inode *inode = file_inode(file);
+-	return atomic_dec_unless_positive(&inode->i_writecount) ? 0 : -ETXTBSY;
++	return inode_deny_write_access(file_inode(file));
+ }
+ static inline void put_write_access(struct inode * inode)
+ {
+@@ -2835,13 +2842,43 @@ static inline void put_write_access(struct inode * inode)
+ static inline void allow_write_access(struct file *file)
+ {
+ 	if (file)
+-		atomic_inc(&file_inode(file)->i_writecount);
++		inode_allow_write_access(file_inode(file));
+ }
+ static inline bool inode_is_open_for_write(const struct inode *inode)
+ {
+ 	return atomic_read(&inode->i_writecount) > 0;
+ }
+ 
++/**
++ * inode_deny_write_access2 - deny write access on two inodes.
++ * Returns -ETXTBSY if write access cannot be denied on either inode.
++ * @inode1: first inode
++ * @inode2: second inode
++ */
++static inline int inode_deny_write_access2(struct inode *inode1, struct inode *inode2)
++{
++	int error = inode_deny_write_access(inode1);
++	if (error)
++		return error;
++	error = inode_deny_write_access(inode2);
++	if (error)
++		inode_allow_write_access(inode1);
++	return error;
++}
++
++/**
++ * inode_allow_write_access2 - allow write access on two inodes.
++ * This method is intended to be called after a successful call
++ * to inode_deny_write_access2().
++ * @inode1: first inode
++ * @inode2: second inode
++ */
++static inline void inode_allow_write_access2(struct inode *inode1, struct inode *inode2)
++{
++	inode_allow_write_access(inode1);
++	inode_allow_write_access(inode2);
++}
++
+ #if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
+ static inline void i_readcount_dec(struct inode *inode)
+ {
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index bdf7b404b3e7..7e9c32dce3e4 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -50,6 +50,7 @@
+ #define RENAME_NOREPLACE	(1 << 0)	/* Don't overwrite target */
+ #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
+ #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
++#define RENAME_NEWER_MTIME	(1 << 3)	/* Only newer file can overwrite target */
+ 
+ struct file_clone_range {
+ 	__s64 src_fd;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index a6f565308133..94d8324db46d 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3009,7 +3009,8 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
+ 	struct inode *inode = d_inode(old_dentry);
+ 	int they_are_dirs = S_ISDIR(inode->i_mode);
+ 
+-	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT |
++		      RENAME_NEWER_MTIME))
+ 		return -EINVAL;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
+index bdf7b404b3e7..7e9c32dce3e4 100644
+--- a/tools/include/uapi/linux/fs.h
++++ b/tools/include/uapi/linux/fs.h
+@@ -50,6 +50,7 @@
+ #define RENAME_NOREPLACE	(1 << 0)	/* Don't overwrite target */
+ #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
+ #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
++#define RENAME_NEWER_MTIME	(1 << 3)	/* Only newer file can overwrite target */
+ 
+ struct file_clone_range {
+ 	__s64 src_fd;
+-- 
+2.25.1
 
