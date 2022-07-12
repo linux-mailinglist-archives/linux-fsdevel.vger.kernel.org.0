@@ -2,84 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DC4571B4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 15:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60890571B69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 15:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbiGLNbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 09:31:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
+        id S233139AbiGLNfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 09:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232987AbiGLNbe (ORCPT
+        with ESMTP id S230453AbiGLNfi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 09:31:34 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B6EB628E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 06:31:32 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id fd6so10113024edb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 06:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=hPJjqua15ah0sn3T7jWS+IFyxkya2Msc4Z32Nn2kGoc=;
-        b=rg5QfwIufOpJub8XP1Do/yDFjwLo/4t6z3t0MVStmetmWBYwLZdVZFAfcHoRgYuULQ
-         dhca7EmYKW/nyw6Emq5yMl47pmsCvL5eqqRyQjI6t+cTZL46Rqp67OGPqy7T1nBYdMAc
-         EjhvJ817SyhMg+YYsqMuMFZA3gyJyQl0gJC3o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=hPJjqua15ah0sn3T7jWS+IFyxkya2Msc4Z32Nn2kGoc=;
-        b=VjAzpkjW2SElki7qDvAP6jVxsOgu6n/7qi0tmG0ztFWnFDrFOWBiRaefPsXwnKhlkF
-         /koYDf9+BgfTf2a2Q0kTg/BXZjK/Lp/qX5Nty0afOiDI5zflh8dn+yHGQoxO1BTd8npf
-         DXTOU/z05x2jfFS2CdrJb3GugZZWRg1xtcrqfdAydJjdnD79FaPd2U6hlseuDjLFBa0+
-         FYoupLuMbBTiBthu9vmCGIW5yqS8gECC+i1dX1JKeAvL6orLItgMODMlrKxeGDIWeypA
-         Ts6faAowaRC7/NRiGQIXZENurcJUPUm6yF+O/QMKyAVJRsmwSm4e55Q3Yb6mdtkX+bnZ
-         78Wg==
-X-Gm-Message-State: AJIora8MTK0HKY7+VVyX1G0d9uR7YW4XZI3H9maQ4cBgQ9dfkCHk+qSA
-        gwDizNbbQWivnjQmvGd3UiVr8Q==
-X-Google-Smtp-Source: AGRyM1usO+07EFR5sCIZbvQcc/IsObDEBI0KLY3SELHUhBKsdOKF7QwU9BBoz3qsp+Ku7g593e0m5A==
-X-Received: by 2002:a05:6402:5201:b0:43a:d797:b9c with SMTP id s1-20020a056402520100b0043ad7970b9cmr13125486edd.343.1657632690892;
-        Tue, 12 Jul 2022 06:31:30 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (82-144-177-44.pool.digikabel.hu. [82.144.177.44])
-        by smtp.gmail.com with ESMTPSA id l18-20020a1709063d3200b0072af3c59354sm3850822ejf.146.2022.07.12.06.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 06:31:30 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 15:31:24 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs fixes for 5.19-rc7
-Message-ID: <Ys13gTA+irEuI+OA@miu.piliscsaba.redhat.com>
+        Tue, 12 Jul 2022 09:35:38 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C360B6DB4;
+        Tue, 12 Jul 2022 06:35:34 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 59F5920151;
+        Tue, 12 Jul 2022 13:35:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1657632931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+zipOz8mXTXKTOJCGZnBsxuqw/eZ2Vsh+kILV8kuqxE=;
+        b=VWaLz0Zi9WuzNQOHKOhhmJXt/adh3j2q5b/mwzjcUHqDNxLTThxGq10ppyCwcdaoz7LMJG
+        fBbTccaLbUuIIasDGhIXlz9896nN1pgO6K/iJTc8czSOkvt1q+ktZaXXGkXoZPK7wf7wTq
+        M3ccS3h7L6Y79Ux6ZHqhmnY5IB03Juw=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 4DFB72C141;
+        Tue, 12 Jul 2022 13:35:29 +0000 (UTC)
+Date:   Tue, 12 Jul 2022 15:35:28 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Abel Wu <wuyun.abel@bytedance.com>
+Cc:     Gang Li <ligang.bdlg@bytedance.com>, akpm@linux-foundation.org,
+        surenb@google.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, viro@zeniv.linux.org.uk,
+        ebiederm@xmission.com, keescook@chromium.org, rostedt@goodmis.org,
+        mingo@redhat.com, peterz@infradead.org, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, namhyung@kernel.org, david@redhat.com,
+        imbrenda@linux.ibm.com, adobriyan@gmail.com,
+        yang.yang29@zte.com.cn, brauner@kernel.org,
+        stephen.s.brennan@oracle.com, zhengqi.arch@bytedance.com,
+        haolee.swjtu@gmail.com, xu.xin16@zte.com.cn,
+        Liam.Howlett@oracle.com, ohoono.kwon@samsung.com,
+        peterx@redhat.com, arnd@arndb.de, shy828301@gmail.com,
+        alex.sierra@amd.com, xianting.tian@linux.alibaba.com,
+        willy@infradead.org, ccross@google.com, vbabka@suse.cz,
+        sujiaxun@uniontech.com, sfr@canb.auug.org.au,
+        vasily.averin@linux.dev, mgorman@suse.de, vvghjk1234@gmail.com,
+        tglx@linutronix.de, luto@kernel.org, bigeasy@linutronix.de,
+        fenghua.yu@intel.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        hezhongkun.hzk@bytedance.com
+Subject: Re: [PATCH v2 0/5] mm, oom: Introduce per numa node oom for
+ CONSTRAINT_{MEMORY_POLICY,CPUSET}
+Message-ID: <Ys14oIHL85d/T7s+@dhcp22.suse.cz>
+References: <20220708082129.80115-1-ligang.bdlg@bytedance.com>
+ <YsfwyTHE/5py1kHC@dhcp22.suse.cz>
+ <41ae31a7-6998-be88-858c-744e31a76b2a@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <41ae31a7-6998-be88-858c-744e31a76b2a@bytedance.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Tue 12-07-22 19:12:18, Abel Wu wrote:
+[...]
+> I was just going through the mail list and happen to see this. There
+> is another usecase for us about per-numa memory usage.
+> 
+> Say we have several important latency-critical services sitting inside
+> different NUMA nodes without intersection. The need for memory of these
+> LC services varies, so the free memory of each node is also different.
+> Then we launch several background containers without cpuset constrains
+> to eat the left resources. Now the problem is that there doesn't seem
+> like a proper memory policy available to balance the usage between the
+> nodes, which could lead to memory-heavy LC services suffer from high
+> memory pressure and fails to meet the SLOs.
 
-Please pull from:
+I do agree that cpusets would be rather clumsy if usable at all in a
+scenario when you are trying to mix NUMA bound workloads with those
+that do not have any NUMA proferences. Could you be more specific about
+requirements here though?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.19-rc7
-
-Add a temporary fix for posix acls on idmapped mounts introduced in this
-cycle.  Proper fix will be added in the next cycle.
-
-Thanks,
-Miklos
-
----
-Christian Brauner (1):
-      ovl: turn of SB_POSIXACL with idmapped layers temporarily
-
----
- Documentation/filesystems/overlayfs.rst |  4 ++++
- fs/overlayfs/super.c                    | 25 ++++++++++++++++++++++++-
- 2 files changed, 28 insertions(+), 1 deletion(-)
+Let's say you run those latency critical services with "simple" memory
+policies and mix them with the other workload without any policies in
+place so they compete over memory. It is not really clear to me how can
+you achieve any reasonable QoS in such an environment. Your latency
+critical servises will be more constrained than the non-critical ones
+yet they are more demanding AFAIU.
+-- 
+Michal Hocko
+SUSE Labs
