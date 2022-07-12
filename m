@@ -2,220 +2,296 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 315AD571ED1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 17:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A028571F54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 17:33:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbiGLPUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 11:20:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
+        id S234144AbiGLPdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 11:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232878AbiGLPTD (ORCPT
+        with ESMTP id S234089AbiGLPcz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 11:19:03 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79777C4441;
-        Tue, 12 Jul 2022 08:14:15 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1E5D45C00C5;
-        Tue, 12 Jul 2022 11:14:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 12 Jul 2022 11:14:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; t=1657638853; x=1657725253; bh=K0oMR9Ywpn
-        pKggCpxNkdlZh5kdkAJqeLH7UnRFMxakI=; b=C9jqbtzu0ua6Xvp3yUcf1xf+Lm
-        VPJH2O9Sp4oY3pywlygS/B03nZPxTRBwIQwhYpsvQOggXQrIPS1gbHdO+UeQRpxU
-        gsdjoN2YtmfSjtxFVGk9jByVmpWs2fas4X6Xwr2lYHeWWS+Rto9gXAp5QoDMgHnG
-        rG1sr1ycMnP5gu+Pl4idKf2SqgHWxRsP88Zsv6+eeBl+6N+uL1qwrE9IJVlGOgjy
-        ogSqbDRbW40WfhlkuZbMxT1zHUqG0cXRlk8fpfHNdbTZc3JVgX7VNJyAiIsHtrSW
-        9fplwBUE1Cs1hYgTh/9Ruln84neAU+L9STM8RRmX1Px3Go2Ich0qGfLm5/wg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1657638853; x=1657725253; bh=K0oMR9YwpnpKggCpxNkdlZh5kdkA
-        JqeLH7UnRFMxakI=; b=MLyWGRCS1eNuiNFYsB+Qvr3q3mk6v7JBLrsEv1096i1l
-        EdyfWzcbYZxXSdLVLIq+M8LgrOtJtjGk9EV6hJ8bC5sco2qcauVQYbrWjH191nWB
-        fscU3Oyd/or/GLlAn3aYOl6YtbP4SsnE1/5f4W3xeIKFZPqfi5lP6Jzc0F5nDH7j
-        TE2FsE29qKH603ed1+7z8AcV3mMTqOAvK51sQMSwgYZhrArWCsee7vYKB/GwrFsQ
-        RvT2gSiaFUigKU9hempeaBkjsTkxQ76imOlCzj3JIj4pyEL876o1FMYOKr6ORH3u
-        eKQmxkiPrqROzsMq0SZV/bcfojILAtVdXf4VEky3wg==
-X-ME-Sender: <xms:xI_NYux5d-8Iev1TLqAiy9kLYYN5IrHzsqQehAXxzqSZkQomJbpeVA>
-    <xme:xI_NYqQN76Lt0BJ8LS_eIUYRRHwc1mug93J9ybYl01UzJi6ilC3VECkxtfSfdgnyT
-    xvJzYIdqPCboOPVX8w>
-X-ME-Received: <xmr:xI_NYgV_muiSLBJ16BAyTAQ2fNtMoMHg6pzdoTXeU6ccl9MQwQS2v8OW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejhedgkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
-    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:xI_NYkj_ZYvQglH4Sqp7xt1zNZJOYLDWh7AaA_2WaEYdX6LQ4iEJtQ>
-    <xmx:xI_NYgAmbADCYfkWcFbWrW2DiXsTpu9zAqbLhcCpsU4Nw1UcRbe4rw>
-    <xmx:xI_NYlLKFuH_pEiUhM0OZM_pQ3sXrgYmuCocbrpcPcEQmzHeSIJlAQ>
-    <xmx:xY_NYj_P4MUdWdoUFGdHSP_FHN7-LtyWzH68FAQePCFy00SSy3AVfw>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Jul 2022 11:14:11 -0400 (EDT)
-Date:   Tue, 12 Jul 2022 09:14:09 -0600
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: strange interaction between fuse + pidns
-Message-ID: <Ys2PwTS0qFmGNFqy@netflix>
-References: <YrShFXRLtRt6T/j+@risky>
- <CAJfpegvH1EMS_469yOyUP9f=eCAEqzhyngm7h=YLRExeRdPEaw@mail.gmail.com>
- <CAJfpegurW7==LEp2yXWMYdBYXTZN4HCMMVJPu-f8yvHVbu79xQ@mail.gmail.com>
- <YsyHMVLuT5U6mm+I@netflix>
- <877d4jbabb.fsf@email.froward.int.ebiederm.org>
- <Ysyp8Kbl8FzhApUb@netflix>
- <87zghf6yhe.fsf@email.froward.int.ebiederm.org>
- <Ys16l6+iotX2JE33@netflix>
- <87sfn62yd1.fsf@email.froward.int.ebiederm.org>
+        Tue, 12 Jul 2022 11:32:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68BD4BFAF5;
+        Tue, 12 Jul 2022 08:32:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1995FB819D3;
+        Tue, 12 Jul 2022 15:32:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC34C341C8;
+        Tue, 12 Jul 2022 15:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657639964;
+        bh=9qnxd5yEoFJkgNd5jg2N0kH3uaiAS1gJDJ34k0Kvyh8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=esiku/gdsjWqgW8NFqkB16CYSYMKrjAusBpAfXB7nVJ8RHvn1izwTdQoFcuM01djw
+         mXk2tJwBh0eteXp8GshyiNv3yKAqpHFTrUcqONEDiYwzGFwjG6er4MauM/vk8lHFjL
+         Rputyykv60R/nqdqErUC+2CrD27mtRugcDGFqMPiDDaHHCV3v4p6PrVrBYwUDE/SOa
+         JJm51ys7ZfRK3CmuaKV21+df53W4rbaS1P2aB7kcZOWTNg3biugm5fuI2XrsCzgbJG
+         PGn3ctLIq5lfrSFkYELq6AP+lUhEKl+m1qa8rhdHK3kqfXwwo0ka1azBswAgfIblf4
+         AcOS7mhKZ2MtQ==
+Date:   Tue, 12 Jul 2022 08:32:44 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jeremy Bongio <bongiojp@gmail.com>
+Cc:     Ted Tso <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] Add ioctls to get/set the ext4 superblock uuid.
+Message-ID: <Ys2UHPSza5g7As+L@magnolia>
+References: <20220701201123.183468-1-bongiojp@gmail.com>
+ <YsRv2iaVltGW8Yj2@magnolia>
+ <CANfQU3y8m=08yJDgFSDztO0=b-pD6A4mXH8PQW9yh6ivq8h_Jw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87sfn62yd1.fsf@email.froward.int.ebiederm.org>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CANfQU3y8m=08yJDgFSDztO0=b-pD6A4mXH8PQW9yh6ivq8h_Jw@mail.gmail.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 12, 2022 at 09:34:50AM -0500, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
-> 
-> > On Mon, Jul 11, 2022 at 06:06:21PM -0500, Eric W. Biederman wrote:
-> >> Tycho Andersen <tycho@tycho.pizza> writes:
-> >> It is not different enough to change the semantics.  What I am aiming
-> >> for is having a dedicated flag indicating a task will exit, that
-> >> fatal_signal_pending can check.  And I intend to make that flag one way
-> >> so that once it is set it will never be cleared.
+On Mon, Jul 11, 2022 at 09:33:00PM -0700, Jeremy Bongio wrote:
+> On Tue, Jul 5, 2022 at 10:07 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > Ok - how far out is that? I'd like to try to convince Miklos to land
-> > the fuse part of this fix now, but without the "look at shared signals
-> > too" patch, that fix is useless. I'm not married to my patch, but I
-> > would like to get this fixed somehow soon.
-> 
-> My point is that we need to figure out why you need the look at shared
-> signals.
-
-At least in the case where the task was already exiting, it's because
-complete_signal() never wakes them up.
-
-> If I can get everything reviewed my changes will be in the next merge
-> window (it unfortunately always takes longer to get the code reviewed
-> than I would like).
-> 
-> However when my changes land does not matter.  What you are trying to
-> solve is orthogonal of my on-going work.
-> 
-> The problem is that looking at shared signals is fundamentally broken.
-> A case in point is that kernel threads can have a pending SIGKILL that
-> is not a fatal signal.  As kernel threads are allowed to ignore or even
-> handle SIGKILL.
-> 
-> If you want to change fatal_signal_pending to include PF_EXITING I would
-> need to double check the implications but I think that would work, and
-> would not have the problems including the shared pending state of
-> SIGKILL.
-
-I think that would work. I'll test it out, thanks.
-
-> >> The other thing I have played with that might be relevant was removing
-> >> the explicit wait in zap_pid_ns_processes and simply not allowing wait
-> >> to reap the pid namespace init until all it's children had been reaped.
-> >> Essentially how we deal with the thread group leader for ordinary
-> >> processes.  Does that sound like it might help in the fuse case?
+> > On Fri, Jul 01, 2022 at 01:11:23PM -0700, Jeremy Bongio wrote:
+> > > This fixes a race between changing the ext4 superblock uuid and operations
+> > > like mounting, resizing, changing features, etc.
+> > >
+> > > Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+> > > Signed-off-by: Jeremy Bongio <bongiojp@gmail.com>
+> > > ---
+> > >  fs/ext4/ext4.h  | 13 ++++++++
+> > >  fs/ext4/ioctl.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 96 insertions(+)
+> > >
+> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > > index 75b8d81b2469..0cf960cb591e 100644
+> > > --- a/fs/ext4/ext4.h
+> > > +++ b/fs/ext4/ext4.h
+> > > @@ -724,6 +724,8 @@ enum {
+> > >  #define EXT4_IOC_GETSTATE            _IOW('f', 41, __u32)
+> > >  #define EXT4_IOC_GET_ES_CACHE                _IOWR('f', 42, struct fiemap)
+> > >  #define EXT4_IOC_CHECKPOINT          _IOW('f', 43, __u32)
+> > > +#define EXT4_IOC_GETFSUUID           _IOR('f', 44, struct fsuuid)
+> > > +#define EXT4_IOC_SETFSUUID           _IOW('f', 44, struct fsuuid)
+> > >
+> > >  #define EXT4_IOC_SHUTDOWN _IOR ('X', 125, __u32)
+> > >
+> > > @@ -753,6 +755,17 @@ enum {
+> > >                                               EXT4_IOC_CHECKPOINT_FLAG_ZEROOUT | \
+> > >                                               EXT4_IOC_CHECKPOINT_FLAG_DRY_RUN)
+> > >
+> > > +/*
+> > > + * Structure for EXT4_IOC_GETFSUUID/EXT4_IOC_SETFSUUID
+> > > + */
+> > > +struct fsuuid {
+> > > +     __u32       fu_len;
+> > > +     __u32       fu_flags;
+> > > +     __u8 __user fu_uuid[];
 > >
-> > No, the problem is that the wait code doesn't know to look in the
-> > right place, so waiting later still won't help.
+> > __user is unnecessary here -- it applies to pointers, not to struct
+> > members.
+> >
+> > > +};
+> > > +
+> > > +#define EXT4_IOC_SETFSUUID_FLAG_BLOCKING 0x1
+> >
+> > What does this do?
+> >
+> > (Better yet, can you please write a manpage describing these new
+> > ioctls?)
 > 
-> I was suggesting to modify the kernel so that zap_pid_ns_processes would
-> not wait for the zapped processes.  Instead I was proposing that
-> delay_group_leader called from wait_consider_task would simply refuse to
-> allow the init process of a pid namespace to be reaped until every other
-> process of that pid namespace had exited.
-> 
-> You can prototype how that would affect the deadlock by simply removing
-> the waiting from zap_pid_ns_processes.
-> 
-> I suggest that simply because that has the potential to remove some of
-> the strange pid namespace cases.
-> 
-> I don't understand the problematic interaction between pid namespace
-> shutdown and the fuse daemon, so I am merely suggesting a possibility
-> that I know can simplify pid namespace shutdown.
-> 
-> Something like:
-> 
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index f4f8cb0435b4..d22a30b0b0cf 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -207,47 +207,6 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
->  	read_unlock(&tasklist_lock);
->  	rcu_read_unlock();
->  
-> -	/*
-> -	 * Reap the EXIT_ZOMBIE children we had before we ignored SIGCHLD.
-> -	 * kernel_wait4() will also block until our children traced from the
-> -	 * parent namespace are detached and become EXIT_DEAD.
-> -	 */
-> -	do {
-> -		clear_thread_flag(TIF_SIGPENDING);
-> -		rc = kernel_wait4(-1, NULL, __WALL, NULL);
-> -	} while (rc != -ECHILD);
-> -
-> -	/*
-> -	 * kernel_wait4() misses EXIT_DEAD children, and EXIT_ZOMBIE
-> -	 * process whose parents processes are outside of the pid
-> -	 * namespace.  Such processes are created with setns()+fork().
-> -	 *
-> -	 * If those EXIT_ZOMBIE processes are not reaped by their
-> -	 * parents before their parents exit, they will be reparented
-> -	 * to pid_ns->child_reaper.  Thus pidns->child_reaper needs to
-> -	 * stay valid until they all go away.
-> -	 *
-> -	 * The code relies on the pid_ns->child_reaper ignoring
-> -	 * SIGCHILD to cause those EXIT_ZOMBIE processes to be
-> -	 * autoreaped if reparented.
-> -	 *
-> -	 * Semantically it is also desirable to wait for EXIT_ZOMBIE
-> -	 * processes before allowing the child_reaper to be reaped, as
-> -	 * that gives the invariant that when the init process of a
-> -	 * pid namespace is reaped all of the processes in the pid
-> -	 * namespace are gone.
-> -	 *
-> -	 * Once all of the other tasks are gone from the pid_namespace
-> -	 * free_pid() will awaken this task.
-> -	 */
-> -	for (;;) {
-> -		set_current_state(TASK_INTERRUPTIBLE);
-> -		if (pid_ns->pid_allocated == init_pids)
-> -			break;
-> -		schedule();
-> -	}
-> -	__set_current_state(TASK_RUNNING);
-> -
->  	if (pid_ns->reboot)
->  		current->signal->group_exit_code = pid_ns->reboot;
+> Good idea. I'll write a manpage as if it were being converted to a general ioctl
+> and not specific to ext4.
 
-Yes, but we need to add the wait to delay_group_leader(), and if the
-tasks are stuck indefinitely looking at the wrong condition, I don't
-see how moving it will help resolve things.
+Thank you. :)
 
-Thanks,
+> >
+> > > +
+> > >  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+> > >  /*
+> > >   * ioctl commands in 32 bit emulation
+> > > diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> > > index cb01c1da0f9d..75069afc16ae 100644
+> > > --- a/fs/ext4/ioctl.c
+> > > +++ b/fs/ext4/ioctl.c
+> > > @@ -20,6 +20,7 @@
+> > >  #include <linux/delay.h>
+> > >  #include <linux/iversion.h>
+> > >  #include <linux/fileattr.h>
+> > > +#include <linux/uuid.h>
+> > >  #include "ext4_jbd2.h"
+> > >  #include "ext4.h"
+> > >  #include <linux/fsmap.h>
+> > > @@ -41,6 +42,15 @@ static void ext4_sb_setlabel(struct ext4_super_block *es, const void *arg)
+> > >       memcpy(es->s_volume_name, (char *)arg, EXT4_LABEL_MAX);
+> > >  }
+> > >
+> > > +/*
+> > > + * Superblock modification callback function for changing file system
+> > > + * UUID.
+> > > + */
+> > > +static void ext4_sb_setuuid(struct ext4_super_block *es, const void *arg)
+> > > +{
+> > > +     memcpy(es->s_uuid, (__u8 *)arg, UUID_SIZE);
+> > > +}
+> > > +
+> > >  static
+> > >  int ext4_update_primary_sb(struct super_block *sb, handle_t *handle,
+> > >                          ext4_update_sb_callback func,
+> > > @@ -1131,6 +1141,73 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
+> > >       return 0;
+> > >  }
+> > >
+> > > +static int ext4_ioctl_getuuid(struct ext4_sb_info *sbi,
+> > > +                     struct fsuuid __user *ufsuuid)
+> > > +{
+> > > +     int ret = 0;
+> > > +     __u8 uuid[UUID_SIZE];
+> >
+> > Save some stack space and copy sbi->s_es->s_uuid into fsuuid.fu_uuid,
+> > and then copy_to_user from the kernel stack object out to userspace's
+> > object.
+> 
+> I can't copy sbi->s_es->s_uuid into fsuuid.fu_uuid since fu_uuid is a
+> VLA (size 0 array).
+> Are you suggesting I copy_to_user() from sbi->s_es->s_uuid into
+> ufsuuid within the locked region?
 
-Tycho
+No, I'd ... forgotten my own previous suggestion, so please ignore this.
+
+> >
+> > > +     struct fsuuid fsuuid;
+> > > +
+> > > +     if (copy_from_user(&fsuuid, ufsuuid, sizeof(fsuuid)))
+> > > +             return -EFAULT;
+> > > +
+> > > +     if (fsuuid.fu_len != UUID_SIZE)
+> > > +             return -EINVAL;
+> >
+> > This function needs to check that fsuuid.fu_flags doesn't contain any
+> > unknown bitflags.
+> >
+> > > +
+> > > +     lock_buffer(sbi->s_sbh);
+> > > +     memcpy(uuid, sbi->s_es->s_uuid, UUID_SIZE);
+> > > +     unlock_buffer(sbi->s_sbh);
+> > > +
+> > > +     if (copy_to_user(&ufsuuid->fu_uuid[0], uuid, UUID_SIZE))
+> > > +             ret = -EFAULT;
+> > > +     return ret;
+> >
+> >         if (copy_to_user(...))
+> >                 return -EFAULT;
+> >
+> >         return 0;
+> >
+> > ?
+> >
+> > > +}
+> > > +
+> > > +static int ext4_ioctl_setuuid(struct file *filp,
+> > > +                     const struct fsuuid __user *ufsuuid)
+> > > +{
+> > > +     int ret = 0;
+> > > +     struct super_block *sb = file_inode(filp)->i_sb;
+> > > +     struct fsuuid fsuuid;
+> > > +     __u8 uuid[UUID_SIZE];
+> > > +
+> > > +     if (!capable(CAP_SYS_ADMIN))
+> > > +             return -EPERM;
+> > > +
+> > > +     /*
+> > > +      * If any checksums (group descriptors or metadata) are being used
+> > > +      * then the checksum seed feature is required to change the UUID.
+> > > +      */
+> > > +     if (((ext4_has_feature_gdt_csum(sb) || ext4_has_metadata_csum(sb))
+> > > +                     && !ext4_has_feature_csum_seed(sb))
+> > > +             || ext4_has_feature_stable_inodes(sb))
+> > > +             return -EOPNOTSUPP;
+> > > +
+> > > +     if (copy_from_user(&fsuuid, ufsuuid, sizeof(fsuuid)))
+> > > +             return -EFAULT;
+> > > +
+> > > +     if (fsuuid.fu_len != UUID_SIZE)
+> > > +             return -EINVAL;
+> >
+> > This function needs to check that fsuuid.fu_flags doesn't contain any
+> > unknown bits.
+> >
+> > > +
+> > > +     if (copy_from_user(uuid, &ufsuuid->fu_uuid[0], UUID_SIZE))
+> > > +             return -EFAULT;
+> > > +
+> > > +     ret = mnt_want_write_file(filp);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     do {
+> > > +             if (ret == -EBUSY)
+> > > +                     msleep(1000);
+> > > +             ret = ext4_update_superblocks_fn(sb, ext4_sb_setuuid, &uuid);
+> > > +     } while (ret == -EBUSY &&
+> > > +             fsuuid.fu_flags & EXT4_IOC_SETFSUUID_FLAG_BLOCKING);
+> >
+> > So... I guess by default, userspace gets NOWAIT mode?  That's a little
+> > strange, usually kernel convention is blocking mode by default, with
+> > nowait selectable via function flags.
+> >
+> > Also, what's the intended use case here?  Why would we want to set a
+> > uuid but only if the superblock(s) aren't busy?
+> 
+> When an ext4 filesystem is being resized, which could potentially take
+> a long time,
+> ext4_update_superblocks_fn() will return -EBUSY. In that case we can
+> either sleep and retry,
+> or return EBUSY to userspace. However, for my use case, I only care
+> about the blocking case.
+> I'll remove the flag since the default mode will be blocking.
+
+<nod>
+
+--D
+
+> 
+> >
+> > --D
+> >
+> > > +
+> > > +     mnt_drop_write_file(filp);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > >  static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> > >  {
+> > >       struct inode *inode = file_inode(filp);
+> > > @@ -1509,6 +1586,10 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> > >               return ext4_ioctl_setlabel(filp,
+> > >                                          (const void __user *)arg);
+> > >
+> > > +     case EXT4_IOC_GETFSUUID:
+> > > +             return ext4_ioctl_getuuid(EXT4_SB(sb), (void __user *)arg);
+> > > +     case EXT4_IOC_SETFSUUID:
+> > > +             return ext4_ioctl_setuuid(filp, (const void __user *)arg);
+> > >       default:
+> > >               return -ENOTTY;
+> > >       }
+> > > @@ -1586,6 +1667,8 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> > >       case EXT4_IOC_CHECKPOINT:
+> > >       case FS_IOC_GETFSLABEL:
+> > >       case FS_IOC_SETFSLABEL:
+> > > +     case EXT4_IOC_GETFSUUID:
+> > > +     case EXT4_IOC_SETFSUUID:
+> > >               break;
+> > >       default:
+> > >               return -ENOIOCTLCMD;
+> > > --
+> > > 2.37.0.rc0.161.g10f37bed90-goog
+> > >
