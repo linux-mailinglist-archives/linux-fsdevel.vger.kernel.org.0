@@ -2,63 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A9B57214F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 18:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 992F25721CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 19:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233465AbiGLQrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 12:47:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36970 "EHLO
+        id S230044AbiGLRdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 13:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbiGLQrN (ORCPT
+        with ESMTP id S229976AbiGLRdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 12:47:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 79C4426550
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 09:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657644431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G3Svshh0CSIKBecEYyWOPWehxtR8pBn+wN2kw/qyhZM=;
-        b=PlaQXlLZ+5tVZOf6logywhOEMlg7pK+S+MXygk67cvguXwmuWEMK3UArtx+mqiGsZoSXn/
-        BhKfVC0G8CAGp+fKCz9b9Grj8dGuS4tUwLpYwQoNg/F64eqP2r69z3d5UYwiyoxGD98hwm
-        4uP6BF/mS5FhdAwBctUKAeYbZoYo3i8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-661-6coTC7AOMUyVvxJ9Rq57pA-1; Tue, 12 Jul 2022 12:47:08 -0400
-X-MC-Unique: 6coTC7AOMUyVvxJ9Rq57pA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DC23C1C04B4C;
-        Tue, 12 Jul 2022 16:47:07 +0000 (UTC)
-Received: from [172.16.176.1] (unknown [10.22.48.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99E0E40CF8E4;
-        Tue, 12 Jul 2022 16:47:06 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     "David Howells" <dhowells@redhat.com>,
-        linux-kernel@vger.kernel.org, "Ian Kent" <raven@themaw.net>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Linux Containers" <containers@lists.linux.dev>
-Subject: Re: [RFC PATCH 0/2] Keyagents: another call_usermodehelper approach
- for namespaces
-Date:   Tue, 12 Jul 2022 12:47:05 -0400
-Message-ID: <148B818D-0F61-42F6-A0EA-20D060E42560@redhat.com>
-In-Reply-To: <875yk25scg.fsf@email.froward.int.ebiederm.org>
-References: <cover.1657624639.git.bcodding@redhat.com>
- <875yk25scg.fsf@email.froward.int.ebiederm.org>
+        Tue, 12 Jul 2022 13:33:23 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7E68C4460
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:21 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id mf4so14404016ejc.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mRIVhl5guQrXZ0/Ez2Hr3fYE2IT2iDZ4PPDSwFOX/Y0=;
+        b=V6/V9rtqaJEeqohiqSuEv47BPTa2PNcq9ig3RTPmnNnVdbNfeDzyIiv/IHCCD+WSr0
+         x5btDD3zFbLCGnmcovMEjcloEUMGKifhhAUlGznFlXdqngGEieh6V+ASYK1QEzyMkD6V
+         nY0Cjkuui0YS/0bwAw14ZyTW4wot5DPgN1ylo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mRIVhl5guQrXZ0/Ez2Hr3fYE2IT2iDZ4PPDSwFOX/Y0=;
+        b=rK58qSdopdra9C4VCc23uZwzdX6mecJAWgn1FlZCYH19EFf93BN9HUEUs4C1FT6rCa
+         H5ZbKPrEi6bVEQwJXBcVNylyfMdWR9cb499NB6Ays7RcGn+uwxph9pZwQYoiPKd9YMza
+         OdWln4G1G0q/o0/pGgWCRc+iA1fDRygkxNzRasmd/F3nUhEh/e4+VzfdcB/2qDNMpPTN
+         MTgCd7XuNEAychx6fRXo5oIpksZheIoYNX3Z94n/7MxbiblU74x6amRfUX3y6NnMGecc
+         Nh/DMTLGOrjOB4UYcX460ZP58HDTjcKo2jsM+qYU5Kss71s7Iu3M1hEWQZ9LDi7t7Dpk
+         cAQQ==
+X-Gm-Message-State: AJIora9qiuU7vyEEbvRaJucVq4jhmW54sHYUqpV43qTbDm4cFEpt3PFq
+        7cUXWXP5Aeh+GF4YioHZpFOcQCIxn1i9t9aD
+X-Google-Smtp-Source: AGRyM1u01kIDh3+A8ZqGb+cPXyRgtGJReWdqLIIpqSBwsDPhYF5j8u8HWNdQVBsxs6L7V/slKdbciA==
+X-Received: by 2002:a17:907:7639:b0:72b:60b5:7458 with SMTP id jy25-20020a170907763900b0072b60b57458mr9600499ejc.664.1657647199820;
+        Tue, 12 Jul 2022 10:33:19 -0700 (PDT)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id gg9-20020a170906e28900b006ff0b457cdasm4043939ejb.53.2022.07.12.10.33.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Jul 2022 10:33:18 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id v14so12167789wra.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:18 -0700 (PDT)
+X-Received: by 2002:a5d:69c2:0:b0:21d:807c:a892 with SMTP id
+ s2-20020a5d69c2000000b0021d807ca892mr23116772wrw.274.1657647197746; Tue, 12
+ Jul 2022 10:33:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
+In-Reply-To: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
+From:   Linus Torvalds <torvalds@linuxfoundation.org>
+Date:   Tue, 12 Jul 2022 10:33:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
+Message-ID: <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
+Subject: Re: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
+To:     ansgar.loesser@kom.tu-darmstadt.de,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Security Officers <security@kernel.org>,
+        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
+        =?UTF-8?Q?Bj=C3=B6rn_Scheuermann?= 
+        <scheuermann@kom.tu-darmstadt.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,176 +85,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12 Jul 2022, at 10:16, Eric W. Biederman wrote:
+[ Adding random people who get blamed for lines in this remap_range
+thing to the participants ]
 
-> Adding the containers list to the discussion so more interested people
-> have a chance of seeing this.
+On Tue, Jul 12, 2022 at 5:11 AM Ansgar L=C3=B6=C3=9Fer
+<ansgar.loesser@tu-darmstadt.de> wrote:
 >
-> Benjamin Coddington <bcodding@redhat.com> writes:
+> using the deduplication API we found out, that the FIDEDUPERANGE ioctl
+> syscall can be used to read a writeonly file.
+
+So I think your patch is slightly wrong, but I think this is worth
+fixing - just likely differently.
+
+First off - an odd technicality: you can already read write-only files
+by simply mmap'ing them, because on many architectures PROT_WRITE ends
+up implying PROT_READ too.
+
+So you should basically expect that "I have permissions to write to
+the file" automatically means that you can read it too.
+
+People simply do that "open for writing, mmap to change it" and expect
+it to work - not realizing that that means you have to be able to read
+it too.
+
+Anybody who thought otherwise was sadly wrong, and if you depend on
+"this is write-only" as some kind of security measure for secrets, you
+need to fix your setup.
+
+Now, is that a "feature or a bug"? You be the judge.It is what it is,
+and it's always been that way. Writability trumps readability, even if
+you have to do special things to get there.
+
+That said, this file remap case was clearly not intentional, and
+despite the mmap() issue I think this is just plain wrong and we
+should fix it as a QoI issue.
+
+A dedupe may only write to the destination file, but at the same time
+it does obviously have that implication of "I need to be able to read
+it to see that it's duplicate".
+
+However, your patch is wrong:
+
+> --- a/fs/remap_range.c
+> +++ b/fs/remap_range.c
+> @@ -414,11 +414,11 @@ static bool allow_file_dedupe(struct file *file)
 >
->> A persistent unsolved problem exists: how can the kernel find and/or =
+>       if (capable(CAP_SYS_ADMIN))
+>           return true;
+> -    if (file->f_mode & FMODE_WRITE)
+> +    if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D (FMODE_READ |
+> FMODE_WRITE))
+>           return true;
 
->> create
->> the appropriate "container" within which to execute a userspace =
+This part looks like a good idea - although it is possible that people
+will argue that this is the same kind of issue as 'mmap()' has (but
+unlike mmap, we don't have "this is how the hardware works" issues, or
+"long history of uses").
 
->> program to
->> construct keys or satisfy users of call_usermodehelper()?
->>
->> I believe the latest serious attempt to solve this problem was =
+But
 
->> David's "Make
->> containers kernel objects":
->> https://lore.kernel.org/lkml/149547014649.10599.12025037906646164347.s=
-tgit@warthog.procyon.org.uk/
->>
->> Over in NFS' space, we've most recently pondered this issue while =
+> -    if (!inode_permission(mnt_userns, inode, MAY_WRITE))
+> +    if (!inode_permission(mnt_userns, inode, MAY_READ | MAY_WRITE))
 
->> looking at
->> ways to pass a kernel socket to userspace in order to handle TLS =
+looks wrong.
 
->> events:
->> https://lore.kernel.org/linux-nfs/E2BF9CFF-9361-400B-BDEE-CF5E0AFDCA63=
-@redhat.com/
->>
->> The problem is that containers are not kernel objects, rather a =
+Note that readability is about the file *descriptor*, not the inode.
+Because the file descriptor may have been opened by somebody who had
+permission to read the file even for a write-only file.
 
->> collection
->> of namespaces, cgroups, etc.  Attempts at making the kernel aware of
->> containers have been mired in discussion and problems.  It has been
->> suggested that the best representation of a "container" from the =
+That happens for capability reasons, but it also happens for things
+like "open(O_RDWR | O_CREAT, 0444)" which creates a new file that is
+write-only in the filesystem, but despite that the file descriptor is
+actually readable by the opener.
 
->> kernel's
->> perspective is a process.
->>
->> Keyagents are processes represented by a key.  If a keyagent's key is =
+I wonder if the inode_permission() check should just be removed
+entirely (ie the MAY_WRITE check smells bogus too, for the same reason
+I don't like the added MAY_READ one)
 
->> linked
->> to a session_keyring, it can be sent a realtime signal when a calling
->> process requests a matching key_type.  That signal will dispatch the =
+ The file permission check - that was done at open time - is the
+correct one, and is the one that read/write already uses.
 
->> process
->> to construct the desired key within the keyagent process context.  =
+Any permission checks done at IO time are basically always buggy:
+things may have changed since the 'open()', and those changes
+explicitly should *not* matter for the IO. That's really fundamentally
+how UNIX file permissions work.
 
->> Keyagents
->> are similar to ssh-agents.  To use a keyagent, one must execute a =
-
->> keyagent
->> process in the desired context, and then link the keyagent's key onto =
-
->> other
->> process' session_keyrings.
->>
->> This method of linking keyagent keys to session_keyrings can be used =
-
->> to
->> construct the various mappings of callers to keyagents that =
-
->> containers may
->> need.  A single keyagent process can answer request-key upcalls =
-
->> across
->> container boundaries, or upcalls can be restricted to specific =
-
->> containers.
->>
->> I'm aware that building on realtime signals may not be a popular =
-
->> choice, but
->> using realtime signals makes this work simple and ensures delivery.  =
-
->> Realtime
->> signals are able to convey everything needed to construct keys in =
-
->> userspace:
->> the under-construction key's serial number.
->>
->> This work is not complete; it has security implications, it needs
->> documentation, it has not been reviewed by anyone.  Thanks for =
-
->> reading this
->> RFC.  I wish to collect criticism and validate this approach.
->
-> At a high level I do agree that we need to send a message to a =
-
-> userspace
-> process and that message should contain enough information to start =
-
-> the
-> user mode helper.
->
-> Then a daemon or possibly the container init can receive the message
-> and dispatch the user mode helper.
->
-> Fundamentally that design solves all of the container issues, and I
-> think solves a few of the user mode helper issues as well.
->
-> The challenge with this design is that it requires someone standing up =
-
-> a
-> daemon to receive the messages and call a user mode helper to retain
-> compatibility with current systems.
-
-Yes..
-
-> I would prefer to see a file descriptor rather than a signal used to
-> deliver the message.  Signals suck for many many reasons and a file
-> descriptor based notification potentially can be much simpler.
-
-In the example keyagent on userspace side, signal handling is done with
-signalfd(2), which greatly simplifies things.
-
-> One of those many reasons is that by not following the common pattern
-> for filling in kernel_siginfo you have left uninitialized padding in
-> your structure that will be copied to userspace thus creating a kernel
-> information leak.  Similarly your code doesn't fill in about half the
-> fields that are present in the siginfo union for the _rt case.
-
-Yes, I just used the stack and only filled in the bare minimum.
-
-> I think a file descriptor based design could additionally address the
-> back and forth your design needs with keys to figure out what event =
-
-> has
-> happened and what user mode helper to invoke.
-
-The keys have already built out a fairly rich interface for accepting
-authorization keys, and instantiating partially-constructed keys.  I =
-
-think
-the only communication needed (currently) is to dispatch and pass the =
-
-key
-serial value.
-
-If we used file descriptors instead of rt signals, there'd be some =
-
-protocol
-engineering to do.
-
-> Ideally I would also like to see a design less tied to keys.  So that =
-
-> we
-> could use this for the other user mode helper cases as well.   That =
-
-> said
-> solving request_key appears to be the truly important part, there =
-
-> aren't
-> many other user mode helpers.  Still it would be nice if in theory the
-> design could be used to dispatch the coredump helper as well.
-
-What if there was a key_type "usermode_helper"?  Requesting a key of =
-
-that
-type executes the binary specified in the callout info.  A keyagent =
-
-could
-satisfy the creation of this key, which would allow the usermode_helper
-process to execute in the context of a container.  If no keyagent, fall =
-
-back
-to the legacy call_usermode_helper.
-
-Thanks for the look,
-Ben
-
+                Linus
