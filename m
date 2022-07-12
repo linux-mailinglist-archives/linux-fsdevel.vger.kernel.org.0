@@ -2,172 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 992F25721CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 19:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C315721DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 19:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbiGLRdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 13:33:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41180 "EHLO
+        id S230444AbiGLRk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 13:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229976AbiGLRdX (ORCPT
+        with ESMTP id S229547AbiGLRk0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 13:33:23 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7E68C4460
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:21 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id mf4so14404016ejc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:21 -0700 (PDT)
+        Tue, 12 Jul 2022 13:40:26 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 349CBC25AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:40:24 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id 70so8093424pfx.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mRIVhl5guQrXZ0/Ez2Hr3fYE2IT2iDZ4PPDSwFOX/Y0=;
-        b=V6/V9rtqaJEeqohiqSuEv47BPTa2PNcq9ig3RTPmnNnVdbNfeDzyIiv/IHCCD+WSr0
-         x5btDD3zFbLCGnmcovMEjcloEUMGKifhhAUlGznFlXdqngGEieh6V+ASYK1QEzyMkD6V
-         nY0Cjkuui0YS/0bwAw14ZyTW4wot5DPgN1ylo=
+         :cc;
+        bh=Sp14BDiJ3o3yBys1mNzUPG3x8p1qawMTa3Q7bZ9V7ZQ=;
+        b=JY1A1qPuUfcobXSu0qwLPgQ3ReI/jpVuV88VYHV8/If49pMd0RDr4gujE+Epi0V+pt
+         MR1Md8Mt4od2yWXymnRQIs2rnbJCKyK8h2ZBriJa/VlBXDJskI7u6X5UZPA9jrykbCAc
+         S0fdmGAzVueQoSYSAFvtwMEc7tq9oRFG7kS+9LFRFipZO2kcbd/AYV7P0YezpS0uLFUr
+         VMV68lkSOkDnLV/SF7xX3hNXmfuO+65NJTWUvybohd95W6/Z0wBiFIDZyA6dj+R3hlL5
+         7vLbMup2inmleDBdFQt/jvIcXjpUtwFUUcWiKeLXMAbA/oa+MFaRtuZJydb7wkkap/w+
+         5D9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mRIVhl5guQrXZ0/Ez2Hr3fYE2IT2iDZ4PPDSwFOX/Y0=;
-        b=rK58qSdopdra9C4VCc23uZwzdX6mecJAWgn1FlZCYH19EFf93BN9HUEUs4C1FT6rCa
-         H5ZbKPrEi6bVEQwJXBcVNylyfMdWR9cb499NB6Ays7RcGn+uwxph9pZwQYoiPKd9YMza
-         OdWln4G1G0q/o0/pGgWCRc+iA1fDRygkxNzRasmd/F3nUhEh/e4+VzfdcB/2qDNMpPTN
-         MTgCd7XuNEAychx6fRXo5oIpksZheIoYNX3Z94n/7MxbiblU74x6amRfUX3y6NnMGecc
-         Nh/DMTLGOrjOB4UYcX460ZP58HDTjcKo2jsM+qYU5Kss71s7Iu3M1hEWQZ9LDi7t7Dpk
-         cAQQ==
-X-Gm-Message-State: AJIora9qiuU7vyEEbvRaJucVq4jhmW54sHYUqpV43qTbDm4cFEpt3PFq
-        7cUXWXP5Aeh+GF4YioHZpFOcQCIxn1i9t9aD
-X-Google-Smtp-Source: AGRyM1u01kIDh3+A8ZqGb+cPXyRgtGJReWdqLIIpqSBwsDPhYF5j8u8HWNdQVBsxs6L7V/slKdbciA==
-X-Received: by 2002:a17:907:7639:b0:72b:60b5:7458 with SMTP id jy25-20020a170907763900b0072b60b57458mr9600499ejc.664.1657647199820;
-        Tue, 12 Jul 2022 10:33:19 -0700 (PDT)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id gg9-20020a170906e28900b006ff0b457cdasm4043939ejb.53.2022.07.12.10.33.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jul 2022 10:33:18 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id v14so12167789wra.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 10:33:18 -0700 (PDT)
-X-Received: by 2002:a5d:69c2:0:b0:21d:807c:a892 with SMTP id
- s2-20020a5d69c2000000b0021d807ca892mr23116772wrw.274.1657647197746; Tue, 12
- Jul 2022 10:33:17 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Sp14BDiJ3o3yBys1mNzUPG3x8p1qawMTa3Q7bZ9V7ZQ=;
+        b=OW4D+IGfgFApGAp12Y7khKtQuloylA44YmVAZoxtrnKAsQrqbfsVY++QD8XJCIBhHU
+         /AfMdz6yxEdSLCvPQUdN2q19Oj3VYzlXM3urrVjgWE7WV3KrZOKKm9tgdUUyY8GFSnZ9
+         6udH0aPa2PRboumg54b27bWMCVkgho45TxtfWTxGbSjzE7MyLAoWBwK1mS3rVw5yCi8S
+         ykvL9W+d8sFDzji7DzyP3IU0c/wh/M9JOR7qDLJCU5kiNNQEh+sN8bwtfvFApVb1gk1C
+         StiuBUKsHZ7D+Blg5zkm2iUg9QUSpKVGmJb9ikQTgn17BbEeOr4SVdLPvBO86js0eKIQ
+         IQqQ==
+X-Gm-Message-State: AJIora9wsbTk8yp4dLs4TG9zbEoSzYUGVhPTsJJuna8dZHfNkV73xXAu
+        JY6nA1T7nIey40vLh9/RlYingO/QKowFja+EAEs=
+X-Google-Smtp-Source: AGRyM1t5I4ckAblDJVCQOsZeDEea9rEVIbFiFh5Nju1djPkIcFOozw7FE7mOLqeUdQulEtdeUh/OnxcxdoBGurVJuqY=
+X-Received: by 2002:a63:3cd:0:b0:415:f76d:fb4 with SMTP id 196-20020a6303cd000000b00415f76d0fb4mr10978219pgd.587.1657647623722;
+ Tue, 12 Jul 2022 10:40:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
-In-Reply-To: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
-From:   Linus Torvalds <torvalds@linuxfoundation.org>
-Date:   Tue, 12 Jul 2022 10:33:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
-Message-ID: <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
-Subject: Re: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
-To:     ansgar.loesser@kom.tu-darmstadt.de,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
+References: <20220707165650.248088-1-rppt@kernel.org> <CAHbLzkqLPi9i3BspCLUe=eZ4huTY2ZnbfD19K_ShsaOC47En_w@mail.gmail.com>
+ <YsdITMg5xZiu8Yoh@magnolia> <CAHbLzkpnkcFg5hOf49V=gFSvTWsWUe_M8-69knDpvSSdua+x4w@mail.gmail.com>
+ <Ysfqxg9Ury1NX27N@kernel.org>
+In-Reply-To: <Ysfqxg9Ury1NX27N@kernel.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 12 Jul 2022 10:40:11 -0700
+Message-ID: <CAHbLzkpB59wX-U4Y4Bs4hxAZKy9JG29UtRPks1458VredwRxTg@mail.gmail.com>
+Subject: Re: [PATCH v2] secretmem: fix unhandled fault in truncate
+To:     Mike Rapoport <rppt@kernel.org>, Jan Kara <jack@suse.cz>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Hillf Danton <hdanton@sina.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Security Officers <security@kernel.org>,
-        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?UTF-8?Q?Bj=C3=B6rn_Scheuermann?= 
-        <scheuermann@kom.tu-darmstadt.de>
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ Adding random people who get blamed for lines in this remap_range
-thing to the participants ]
-
-On Tue, Jul 12, 2022 at 5:11 AM Ansgar L=C3=B6=C3=9Fer
-<ansgar.loesser@tu-darmstadt.de> wrote:
+On Fri, Jul 8, 2022 at 1:29 AM Mike Rapoport <rppt@kernel.org> wrote:
 >
-> using the deduplication API we found out, that the FIDEDUPERANGE ioctl
-> syscall can be used to read a writeonly file.
-
-So I think your patch is slightly wrong, but I think this is worth
-fixing - just likely differently.
-
-First off - an odd technicality: you can already read write-only files
-by simply mmap'ing them, because on many architectures PROT_WRITE ends
-up implying PROT_READ too.
-
-So you should basically expect that "I have permissions to write to
-the file" automatically means that you can read it too.
-
-People simply do that "open for writing, mmap to change it" and expect
-it to work - not realizing that that means you have to be able to read
-it too.
-
-Anybody who thought otherwise was sadly wrong, and if you depend on
-"this is write-only" as some kind of security measure for secrets, you
-need to fix your setup.
-
-Now, is that a "feature or a bug"? You be the judge.It is what it is,
-and it's always been that way. Writability trumps readability, even if
-you have to do special things to get there.
-
-That said, this file remap case was clearly not intentional, and
-despite the mmap() issue I think this is just plain wrong and we
-should fix it as a QoI issue.
-
-A dedupe may only write to the destination file, but at the same time
-it does obviously have that implication of "I need to be able to read
-it to see that it's duplicate".
-
-However, your patch is wrong:
-
-> --- a/fs/remap_range.c
-> +++ b/fs/remap_range.c
-> @@ -414,11 +414,11 @@ static bool allow_file_dedupe(struct file *file)
+> On Thu, Jul 07, 2022 at 03:09:32PM -0700, Yang Shi wrote:
+> > On Thu, Jul 7, 2022 at 1:55 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > On Thu, Jul 07, 2022 at 10:48:00AM -0700, Yang Shi wrote:
+> > > > On Thu, Jul 7, 2022 at 9:57 AM Mike Rapoport <rppt@kernel.org> wrote:
+> > > > >
+> > > > > Eric Biggers suggested that this happens when
+> > > > > secretmem_setattr()->simple_setattr() races with secretmem_fault() so
+> > > > > that a page that is faulted in by secretmem_fault() (and thus removed
+> > > > > from the direct map) is zeroed by inode truncation right afterwards.
+> > > > >
+> > > > > Since do_truncate() takes inode_lock(), adding inode_lock_shared() to
+> > > > > secretmem_fault() prevents the race.
+> > > >
+> > > > Should invalidate_lock be used to serialize between page fault and truncate?
+> > >
+> > > I would have thought so, given Documentation/filesystems/locking.rst:
+> > >
+> > > "->fault() is called when a previously not present pte is about to be
+> > > faulted in. The filesystem must find and return the page associated with
+> > > the passed in "pgoff" in the vm_fault structure. If it is possible that
+> > > the page may be truncated and/or invalidated, then the filesystem must
+> > > lock invalidate_lock, then ensure the page is not already truncated
+> > > (invalidate_lock will block subsequent truncate), and then return with
+> > > VM_FAULT_LOCKED, and the page locked. The VM will unlock the page."
+> > >
+> > > IIRC page faults aren't supposed to take i_rwsem because the fault could
+> > > be in response to someone mmaping a file into memory and then write()ing
+> > > to the same file using the mmapped region.  The write() takes
+> > > inode_lock and faults on the buffer, so the fault cannot take inode_lock
+> > > again.
+> >
+> > Do you mean writing from one part of the file to the other part of the
+> > file so the "from" buffer used by copy_from_user() is part of the
+> > mmaped region?
+> >
+> > Another possible deadlock issue by using inode_lock in page faults is
+> > mmap_lock is acquired before inode_lock, but write may acquire
+> > inode_lock before mmap_lock, it is a AB-BA lock pattern, but it should
+> > not cause real deadlock since mmap_lock is not exclusive for page
+> > faults. But such pattern should be avoided IMHO.
+> >
+> > > That said... I don't think memfd_secret files /can/ be written to?
 >
->       if (capable(CAP_SYS_ADMIN))
->           return true;
-> -    if (file->f_mode & FMODE_WRITE)
-> +    if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D (FMODE_READ |
-> FMODE_WRITE))
->           return true;
+> memfd_secret files cannot be written to, they can only be mmap()ed.
+> Synchronization is only required between
+> do_truncate()->...->simple_setatt() and secretmem->fault() and I don't see
+> how that can deadlock.
 
-This part looks like a good idea - although it is possible that people
-will argue that this is the same kind of issue as 'mmap()' has (but
-unlike mmap, we don't have "this is how the hardware works" issues, or
-"long history of uses").
+Sure, there is no deadlock.
 
-But
+>
+> I'm not an fs expert though, so if you think that invalidate_lock() is
+> safer, I don't mind s/inode_lock/invalidate_lock/ in the patch.
 
-> -    if (!inode_permission(mnt_userns, inode, MAY_WRITE))
-> +    if (!inode_permission(mnt_userns, inode, MAY_READ | MAY_WRITE))
+IIUC invalidate_lock should be preferred per the filesystem's locking
+document. And I found Jan Kara's email of the invalidate_lock
+patchset, please refer to
+https://lore.kernel.org/linux-mm/20210715133202.5975-1-jack@suse.cz/.
 
-looks wrong.
-
-Note that readability is about the file *descriptor*, not the inode.
-Because the file descriptor may have been opened by somebody who had
-permission to read the file even for a write-only file.
-
-That happens for capability reasons, but it also happens for things
-like "open(O_RDWR | O_CREAT, 0444)" which creates a new file that is
-write-only in the filesystem, but despite that the file descriptor is
-actually readable by the opener.
-
-I wonder if the inode_permission() check should just be removed
-entirely (ie the MAY_WRITE check smells bogus too, for the same reason
-I don't like the added MAY_READ one)
-
- The file permission check - that was done at open time - is the
-correct one, and is the one that read/write already uses.
-
-Any permission checks done at IO time are basically always buggy:
-things may have changed since the 'open()', and those changes
-explicitly should *not* matter for the IO. That's really fundamentally
-how UNIX file permissions work.
-
-                Linus
+>
+> > > Hard to say, since I can't find a manpage describing what that syscall
+> > > does.
+>
+> Right, I don't see it's published :-/
+>
+> There is a groff version:
+> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/memfd_secret.2
+>
+> > > --D
+> > >
+> > > >
+> > > > >
+> > > > > Reported-by: syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
+> > > > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > > > > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> > > > > ---
+> > > > >
+> > > > > v2: use inode_lock_shared() rather than add a new rw_sem to secretmem
+> > > > >
+> > > > > Axel, I didn't add your Reviewed-by because v2 is quite different.
+> > > > >
+> > > > >  mm/secretmem.c | 21 ++++++++++++++++-----
+> > > > >  1 file changed, 16 insertions(+), 5 deletions(-)
+> > > > >
+> > > > > diff --git a/mm/secretmem.c b/mm/secretmem.c
+> > > > > index 206ed6b40c1d..a4fabf705e4f 100644
+> > > > > --- a/mm/secretmem.c
+> > > > > +++ b/mm/secretmem.c
+> > > > > @@ -55,22 +55,28 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> > > > >         gfp_t gfp = vmf->gfp_mask;
+> > > > >         unsigned long addr;
+> > > > >         struct page *page;
+> > > > > +       vm_fault_t ret;
+> > > > >         int err;
+> > > > >
+> > > > >         if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+> > > > >                 return vmf_error(-EINVAL);
+> > > > >
+> > > > > +       inode_lock_shared(inode);
+> > > > > +
+> > > > >  retry:
+> > > > >         page = find_lock_page(mapping, offset);
+> > > > >         if (!page) {
+> > > > >                 page = alloc_page(gfp | __GFP_ZERO);
+> > > > > -               if (!page)
+> > > > > -                       return VM_FAULT_OOM;
+> > > > > +               if (!page) {
+> > > > > +                       ret = VM_FAULT_OOM;
+> > > > > +                       goto out;
+> > > > > +               }
+> > > > >
+> > > > >                 err = set_direct_map_invalid_noflush(page);
+> > > > >                 if (err) {
+> > > > >                         put_page(page);
+> > > > > -                       return vmf_error(err);
+> > > > > +                       ret = vmf_error(err);
+> > > > > +                       goto out;
+> > > > >                 }
+> > > > >
+> > > > >                 __SetPageUptodate(page);
+> > > > > @@ -86,7 +92,8 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> > > > >                         if (err == -EEXIST)
+> > > > >                                 goto retry;
+> > > > >
+> > > > > -                       return vmf_error(err);
+> > > > > +                       ret = vmf_error(err);
+> > > > > +                       goto out;
+> > > > >                 }
+> > > > >
+> > > > >                 addr = (unsigned long)page_address(page);
+> > > > > @@ -94,7 +101,11 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> > > > >         }
+> > > > >
+> > > > >         vmf->page = page;
+> > > > > -       return VM_FAULT_LOCKED;
+> > > > > +       ret = VM_FAULT_LOCKED;
+> > > > > +
+> > > > > +out:
+> > > > > +       inode_unlock_shared(inode);
+> > > > > +       return ret;
+> > > > >  }
+> > > > >
+> > > > >  static const struct vm_operations_struct secretmem_vm_ops = {
+> > > > >
+> > > > > base-commit: 03c765b0e3b4cb5063276b086c76f7a612856a9a
+> > > > > --
+> > > > > 2.34.1
+> > > > >
+> > > > >
+>
+> --
+> Sincerely yours,
+> Mike.
