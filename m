@@ -2,191 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 706BC571CD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 682AB571CEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbiGLOfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 10:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
+        id S233355AbiGLOjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 10:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233499AbiGLOfJ (ORCPT
+        with ESMTP id S230113AbiGLOjN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 10:35:09 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150F4B31F5;
-        Tue, 12 Jul 2022 07:34:59 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:57756)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oBGyX-00B32U-U5; Tue, 12 Jul 2022 08:34:57 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:46192 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oBGyW-00Dghw-Qt; Tue, 12 Jul 2022 08:34:57 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <YrShFXRLtRt6T/j+@risky>
-        <CAJfpegvH1EMS_469yOyUP9f=eCAEqzhyngm7h=YLRExeRdPEaw@mail.gmail.com>
-        <CAJfpegurW7==LEp2yXWMYdBYXTZN4HCMMVJPu-f8yvHVbu79xQ@mail.gmail.com>
-        <YsyHMVLuT5U6mm+I@netflix>
-        <877d4jbabb.fsf@email.froward.int.ebiederm.org>
-        <Ysyp8Kbl8FzhApUb@netflix>
-        <87zghf6yhe.fsf@email.froward.int.ebiederm.org>
-        <Ys16l6+iotX2JE33@netflix>
-Date:   Tue, 12 Jul 2022 09:34:50 -0500
-In-Reply-To: <Ys16l6+iotX2JE33@netflix> (Tycho Andersen's message of "Tue, 12
-        Jul 2022 07:43:51 -0600")
-Message-ID: <87sfn62yd1.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 12 Jul 2022 10:39:13 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D492495E;
+        Tue, 12 Jul 2022 07:39:12 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id mf4so13509996ejc.3;
+        Tue, 12 Jul 2022 07:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=MkimO/JYfFEWErwwRlGZI0yEI3KTdQ++omf5SZxftc4=;
+        b=kBVAhs7SuDDu7URHr0MlshT8v64mj4buHFbV/4Rbh3RrmSkwTHDt/+porNaTfhjeFR
+         xQOmNyrpXOnrt8deh+kv+2VUxxwjT+BKXdjUI8+V4u3t+40qiOkj5c/o/twvWDLnuDPL
+         mD1BhRtPWDZ4ZqOHWJHDqSLGcdP+R5rjEH0bxu8I4uaAmrxonjwyid8CLhkI3RbjPeF8
+         fBke5NR6KZUfvlPwGMJHOUFx9Y7v20jN+kibypMCu8Mt/RMIwavyux3ZxxnsuIQw/XW5
+         Augm2qz4Ec/06nsrp5NMYBbRDmHDyzIG+65HY5RehskEXxqmsOPLbLzi2Z0/TFKdocI3
+         zrTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=MkimO/JYfFEWErwwRlGZI0yEI3KTdQ++omf5SZxftc4=;
+        b=WYG/PCHS51lHr1DFIMdNVTgZ/YOL7CsTtX9I46/RMBqXxT5R2XYyktMZgIAaIHHX03
+         r8DP9JhpU4EWrxrUDylsc5XKYG5+Rrec2z7d/ws7QIUCapOlswxuYJELHUx8mEwEqJqD
+         OW87unmtyydtMW2jmPi3OeOYPVWPYwj7WY9+hRrd6t35eyHwGibrsmGkaeBtbYzF4zHc
+         rh7ixEFjqVuRk1WXt3z/S0gk0qs7fHq1DOHaWexx5zGsjpFzZapFOMZ/oBFXDtww3hxy
+         seqUXA/CP0LBREP2em0SXRhQYun2i2z7vOonHong2DYhGsASD1UH8khx6f3d2KJlOquR
+         Z2yg==
+X-Gm-Message-State: AJIora/1rKolZ8GEdCfnMtK8jKnhIgcXtNCdEmg7Xvfzlxh9k3PjS2b7
+        exeOWHPzr8T6VSkg9SAv7A==
+X-Google-Smtp-Source: AGRyM1sFrjxb8Xrs4zv78FZe/7YJyrbgXHAoRlUjqwvCnWRK+PDXIDo+aqby0XL2zc8NS68689prlw==
+X-Received: by 2002:a17:906:7b82:b0:6f3:ee8d:b959 with SMTP id s2-20020a1709067b8200b006f3ee8db959mr24608884ejo.458.1657636750966;
+        Tue, 12 Jul 2022 07:39:10 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.253.195])
+        by smtp.gmail.com with ESMTPSA id 18-20020a170906211200b006feec47dae9sm3861670ejt.157.2022.07.12.07.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 07:39:09 -0700 (PDT)
+Date:   Tue, 12 Jul 2022 17:39:07 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, dylanbhatch@google.com,
+        skhan@linuxfoundation.org
+Subject: [PATCH] proc: fix test for "vsyscall=xonly" boot option
+Message-ID: <Ys2Hi3Ps933B6IsE@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oBGyW-00Dghw-Qt;;;mid=<87sfn62yd1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19GFtaSVDwPoTYZnHwdRxtgbEun6enaSZ4=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 527 ms - load_scoreonly_sql: 0.09 (0.0%),
-        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.8%), parse: 1.29
-        (0.2%), extract_message_metadata: 14 (2.7%), get_uri_detail_list: 2.7
-        (0.5%), tests_pri_-1000: 14 (2.7%), tests_pri_-950: 1.46 (0.3%),
-        tests_pri_-900: 1.02 (0.2%), tests_pri_-90: 98 (18.5%), check_bayes:
-        95 (18.0%), b_tokenize: 10 (1.9%), b_tok_get_all: 10 (1.9%),
-        b_comp_prob: 3.4 (0.6%), b_tok_touch_all: 68 (12.8%), b_finish: 0.99
-        (0.2%), tests_pri_0: 368 (69.8%), check_dkim_signature: 0.78 (0.1%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.56 (0.1%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 12 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: strange interaction between fuse + pidns
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tycho Andersen <tycho@tycho.pizza> writes:
+Booting with vsyscall=xonly results in the "--xp" vsyscall VMA:
 
-> On Mon, Jul 11, 2022 at 06:06:21PM -0500, Eric W. Biederman wrote:
->> Tycho Andersen <tycho@tycho.pizza> writes:
->> It is not different enough to change the semantics.  What I am aiming
->> for is having a dedicated flag indicating a task will exit, that
->> fatal_signal_pending can check.  And I intend to make that flag one way
->> so that once it is set it will never be cleared.
->
-> Ok - how far out is that? I'd like to try to convince Miklos to land
-> the fuse part of this fix now, but without the "look at shared signals
-> too" patch, that fix is useless. I'm not married to my patch, but I
-> would like to get this fixed somehow soon.
+	ffffffffff600000-ffffffffff601000 --xp ... [vsyscall]\n
 
-My point is that we need to figure out why you need the look at shared
-signals.
+Test does read from fixed vsyscall address to determine if kernel
+supports vsyscall page but it doesn't work with vsyscall=xonly
+because, well, vsyscall page is execute only.
 
-If I can get everything reviewed my changes will be in the next merge
-window (it unfortunately always takes longer to get the code reviewed
-than I would like).
+Fix test by trying to execute from the first byte of the page
+(which contains gettimeofday() stub). This should work because vsyscall
+entry points themselves have stable addresses by design.
 
-However when my changes land does not matter.  What you are trying to
-solve is orthogonal of my on-going work.
+	Alexey, avoiding parsing .config, /proc/config.gz and
+	/proc/cmdline at all costs.
 
-The problem is that looking at shared signals is fundamentally broken.
-A case in point is that kernel threads can have a pending SIGKILL that
-is not a fatal signal.  As kernel threads are allowed to ignore or even
-handle SIGKILL.
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-If you want to change fatal_signal_pending to include PF_EXITING I would
-need to double check the implications but I think that would work, and
-would not have the problems including the shared pending state of
-SIGKILL.
+	I'm not sure who reported what, so please add tested-by and
+	reported-by lines.
 
->> The other thing I have played with that might be relevant was removing
->> the explicit wait in zap_pid_ns_processes and simply not allowing wait
->> to reap the pid namespace init until all it's children had been reaped.
->> Essentially how we deal with the thread group leader for ordinary
->> processes.  Does that sound like it might help in the fuse case?
->
-> No, the problem is that the wait code doesn't know to look in the
-> right place, so waiting later still won't help.
+ tools/testing/selftests/proc/proc-pid-vm.c |   75 ++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 7 deletions(-)
 
-I was suggesting to modify the kernel so that zap_pid_ns_processes would
-not wait for the zapped processes.  Instead I was proposing that
-delay_group_leader called from wait_consider_task would simply refuse to
-allow the init process of a pid namespace to be reaped until every other
-process of that pid namespace had exited.
-
-You can prototype how that would affect the deadlock by simply removing
-the waiting from zap_pid_ns_processes.
-
-I suggest that simply because that has the potential to remove some of
-the strange pid namespace cases.
-
-I don't understand the problematic interaction between pid namespace
-shutdown and the fuse daemon, so I am merely suggesting a possibility
-that I know can simplify pid namespace shutdown.
-
-Something like:
-
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index f4f8cb0435b4..d22a30b0b0cf 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -207,47 +207,6 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
- 	read_unlock(&tasklist_lock);
- 	rcu_read_unlock();
+--- a/tools/testing/selftests/proc/proc-pid-vm.c
++++ b/tools/testing/selftests/proc/proc-pid-vm.c
+@@ -211,10 +211,19 @@ static int make_exe(const uint8_t *payload, size_t len)
+ }
+ #endif
  
--	/*
--	 * Reap the EXIT_ZOMBIE children we had before we ignored SIGCHLD.
--	 * kernel_wait4() will also block until our children traced from the
--	 * parent namespace are detached and become EXIT_DEAD.
--	 */
--	do {
--		clear_thread_flag(TIF_SIGPENDING);
--		rc = kernel_wait4(-1, NULL, __WALL, NULL);
--	} while (rc != -ECHILD);
--
--	/*
--	 * kernel_wait4() misses EXIT_DEAD children, and EXIT_ZOMBIE
--	 * process whose parents processes are outside of the pid
--	 * namespace.  Such processes are created with setns()+fork().
--	 *
--	 * If those EXIT_ZOMBIE processes are not reaped by their
--	 * parents before their parents exit, they will be reparented
--	 * to pid_ns->child_reaper.  Thus pidns->child_reaper needs to
--	 * stay valid until they all go away.
--	 *
--	 * The code relies on the pid_ns->child_reaper ignoring
--	 * SIGCHILD to cause those EXIT_ZOMBIE processes to be
--	 * autoreaped if reparented.
--	 *
--	 * Semantically it is also desirable to wait for EXIT_ZOMBIE
--	 * processes before allowing the child_reaper to be reaped, as
--	 * that gives the invariant that when the init process of a
--	 * pid namespace is reaped all of the processes in the pid
--	 * namespace are gone.
--	 *
--	 * Once all of the other tasks are gone from the pid_namespace
--	 * free_pid() will awaken this task.
--	 */
--	for (;;) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		if (pid_ns->pid_allocated == init_pids)
--			break;
--		schedule();
--	}
--	__set_current_state(TASK_RUNNING);
--
- 	if (pid_ns->reboot)
- 		current->signal->group_exit_code = pid_ns->reboot;
+-static bool g_vsyscall = false;
++/*
++ * 0: vsyscall VMA doesn't exist	vsyscall=none
++ * 1: vsyscall VMA is r-xp		vsyscall=emulate
++ * 2: vsyscall VMA is --xp		vsyscall=xonly
++ */
++static int g_vsyscall;
++static const char *str_vsyscall;
  
-
-Eric
+-static const char str_vsyscall[] =
++static const char str_vsyscall_0[] = "";
++static const char str_vsyscall_1[] =
+ "ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
++static const char str_vsyscall_2[] =
++"ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
+ 
+ #ifdef __x86_64__
+ static void sigaction_SIGSEGV(int _, siginfo_t *__, void *___)
+@@ -223,13 +232,47 @@ static void sigaction_SIGSEGV(int _, siginfo_t *__, void *___)
+ }
+ 
+ /*
+- * vsyscall page can't be unmapped, probe it with memory load.
++ * vsyscall page can't be unmapped, probe it directly.
+  */
+ static void vsyscall(void)
+ {
+ 	pid_t pid;
+ 	int wstatus;
+ 
++	pid = fork();
++	if (pid < 0) {
++		fprintf(stderr, "fork, errno %d\n", errno);
++		exit(1);
++	}
++	if (pid == 0) {
++		struct rlimit rlim = {0, 0};
++		(void)setrlimit(RLIMIT_CORE, &rlim);
++
++		/* Hide "segfault at ffffffffff600000" messages. */
++		struct sigaction act;
++		memset(&act, 0, sizeof(struct sigaction));
++		act.sa_flags = SA_SIGINFO;
++		act.sa_sigaction = sigaction_SIGSEGV;
++		(void)sigaction(SIGSEGV, &act, NULL);
++
++		/* gettimeofday(NULL, NULL); */
++		asm volatile (
++			"call %P0"
++			:
++			: "i" (0xffffffffff600000), "D" (NULL), "S" (NULL)
++			: "rax"
++		);
++		exit(0);
++	}
++	waitpid(pid, &wstatus, 0);
++	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0) {
++		/* vsyscall page exists and is executable. */
++	} else {
++		/* vsyscall page doesn't exist. */
++		g_vsyscall = 0;
++		return;
++	}
++
+ 	pid = fork();
+ 	if (pid < 0) {
+ 		fprintf(stderr, "fork, errno %d\n", errno);
+@@ -251,8 +294,13 @@ static void vsyscall(void)
+ 	}
+ 	waitpid(pid, &wstatus, 0);
+ 	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0) {
+-		g_vsyscall = true;
++		/* vsyscall page is readable and executable. */
++		g_vsyscall = 1;
++		return;
+ 	}
++
++	/* vsyscall page is executable but unreadable. */
++	g_vsyscall = 2;
+ }
+ 
+ int main(void)
+@@ -261,6 +309,19 @@ int main(void)
+ 	int exec_fd;
+ 
+ 	vsyscall();
++	switch (g_vsyscall) {
++	case 0:
++		str_vsyscall = str_vsyscall_0;
++		break;
++	case 1:
++		str_vsyscall = str_vsyscall_1;
++		break;
++	case 2:
++		str_vsyscall = str_vsyscall_2;
++		break;
++	default:
++		abort();
++	}
+ 
+ 	atexit(ate);
+ 
+@@ -314,7 +375,7 @@ int main(void)
+ 
+ 	/* Test /proc/$PID/maps */
+ 	{
+-		const size_t len = strlen(buf0) + (g_vsyscall ? strlen(str_vsyscall) : 0);
++		const size_t len = strlen(buf0) + strlen(str_vsyscall);
+ 		char buf[256];
+ 		ssize_t rv;
+ 		int fd;
+@@ -327,7 +388,7 @@ int main(void)
+ 		rv = read(fd, buf, sizeof(buf));
+ 		assert(rv == len);
+ 		assert(memcmp(buf, buf0, strlen(buf0)) == 0);
+-		if (g_vsyscall) {
++		if (g_vsyscall > 0) {
+ 			assert(memcmp(buf + strlen(buf0), str_vsyscall, strlen(str_vsyscall)) == 0);
+ 		}
+ 	}
+@@ -374,7 +435,7 @@ int main(void)
+ 			assert(memmem(buf, rv, S[i], strlen(S[i])));
+ 		}
+ 
+-		if (g_vsyscall) {
++		if (g_vsyscall > 0) {
+ 			assert(memmem(buf, rv, str_vsyscall, strlen(str_vsyscall)));
+ 		}
+ 	}
