@@ -2,62 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 682AB571CEF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC75571D4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233355AbiGLOjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 10:39:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        id S233746AbiGLOvx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 10:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbiGLOjN (ORCPT
+        with ESMTP id S229803AbiGLOvv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 10:39:13 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D492495E;
-        Tue, 12 Jul 2022 07:39:12 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id mf4so13509996ejc.3;
-        Tue, 12 Jul 2022 07:39:12 -0700 (PDT)
+        Tue, 12 Jul 2022 10:51:51 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6D7B5211;
+        Tue, 12 Jul 2022 07:51:50 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id oy13so9883143ejb.1;
+        Tue, 12 Jul 2022 07:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=MkimO/JYfFEWErwwRlGZI0yEI3KTdQ++omf5SZxftc4=;
-        b=kBVAhs7SuDDu7URHr0MlshT8v64mj4buHFbV/4Rbh3RrmSkwTHDt/+porNaTfhjeFR
-         xQOmNyrpXOnrt8deh+kv+2VUxxwjT+BKXdjUI8+V4u3t+40qiOkj5c/o/twvWDLnuDPL
-         mD1BhRtPWDZ4ZqOHWJHDqSLGcdP+R5rjEH0bxu8I4uaAmrxonjwyid8CLhkI3RbjPeF8
-         fBke5NR6KZUfvlPwGMJHOUFx9Y7v20jN+kibypMCu8Mt/RMIwavyux3ZxxnsuIQw/XW5
-         Augm2qz4Ec/06nsrp5NMYBbRDmHDyzIG+65HY5RehskEXxqmsOPLbLzi2Z0/TFKdocI3
-         zrTg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ohD9UF6uzScCkaRRL6IfLijJPBvQPL46WSu3ekIaMko=;
+        b=XalLj4YEimrOm0DucpPtiTBXG1XUbQE6LbwNdaw6d9Qafz0x1UjzjVfWLDjHyZOK8D
+         PxDll/hnYdW9V0G9Cb6tcNxNqQtreLdz9ygcAXEMmDpGKTZaGqQr9Rwh8Cs0v06eR7Gs
+         TFA8BgFZ6H/4snvBE9F61iHlmX4p+mAWh8eCagAIzcbAIm7WIJWFLLp3XBV+uOK0lQVK
+         OlU5wwwgzh5KrHqg6/9z4BYwW/ZBaVWsNeO2nEdTzCuPam1QSdHvXn9HtN1bMtxKcv4H
+         CWludgFE5qwVg4Qh/C252SRayGZqoofskaxfvkfHnUIAJJFv89tt2BQ57JHm5YBsoiDF
+         N5Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=MkimO/JYfFEWErwwRlGZI0yEI3KTdQ++omf5SZxftc4=;
-        b=WYG/PCHS51lHr1DFIMdNVTgZ/YOL7CsTtX9I46/RMBqXxT5R2XYyktMZgIAaIHHX03
-         r8DP9JhpU4EWrxrUDylsc5XKYG5+Rrec2z7d/ws7QIUCapOlswxuYJELHUx8mEwEqJqD
-         OW87unmtyydtMW2jmPi3OeOYPVWPYwj7WY9+hRrd6t35eyHwGibrsmGkaeBtbYzF4zHc
-         rh7ixEFjqVuRk1WXt3z/S0gk0qs7fHq1DOHaWexx5zGsjpFzZapFOMZ/oBFXDtww3hxy
-         seqUXA/CP0LBREP2em0SXRhQYun2i2z7vOonHong2DYhGsASD1UH8khx6f3d2KJlOquR
-         Z2yg==
-X-Gm-Message-State: AJIora/1rKolZ8GEdCfnMtK8jKnhIgcXtNCdEmg7Xvfzlxh9k3PjS2b7
-        exeOWHPzr8T6VSkg9SAv7A==
-X-Google-Smtp-Source: AGRyM1sFrjxb8Xrs4zv78FZe/7YJyrbgXHAoRlUjqwvCnWRK+PDXIDo+aqby0XL2zc8NS68689prlw==
-X-Received: by 2002:a17:906:7b82:b0:6f3:ee8d:b959 with SMTP id s2-20020a1709067b8200b006f3ee8db959mr24608884ejo.458.1657636750966;
-        Tue, 12 Jul 2022 07:39:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ohD9UF6uzScCkaRRL6IfLijJPBvQPL46WSu3ekIaMko=;
+        b=nCExnLmx+xvtn88cLG0bUmglM6V9uleh0uEDqxMUG8nN4ZXH9I1CNCU1gHx3NtPi/0
+         8OFgSWcShGiaElxUjwAj1KkP7g23b0klXpgw/9s2JyFVnf6pCYOPkUGU1jHSMtkBbafy
+         pmsih36kNHeAuKmdsVL5DceDOayfbUID5TB0w9DRnjieYTmiwPRLJQyVtZJaaJVX4w7q
+         hUj7EGIjvPVkvtZMIXxSLmpFRFfNINxSa6ejA4iTG0bc8XPsSQtg7iTEhqgEHABDaFxX
+         VW8NMzd832+XV4Sdv7N1x/CmYvvvnu4ssP1SrnJTR47dTupS9W2so8YCk5VHAP+RGL9B
+         zpkg==
+X-Gm-Message-State: AJIora8zo4XbpmM04zy5ckfL3J0VN8I9pyaZc7Ir3X/o0FF+y30FI/zC
+        Y/Cmuq8GrR36QNaBAMQA6g==
+X-Google-Smtp-Source: AGRyM1upauE6FqdQaZK4QcUJQo697BivQz5ATxOL2rZCw4eQYehpq2pyYS5GcNHWG48Ggsx3bs2QKw==
+X-Received: by 2002:a17:906:84fa:b0:72b:3257:527b with SMTP id zp26-20020a17090684fa00b0072b3257527bmr20376447ejb.477.1657637508902;
+        Tue, 12 Jul 2022 07:51:48 -0700 (PDT)
 Received: from localhost.localdomain ([46.53.253.195])
-        by smtp.gmail.com with ESMTPSA id 18-20020a170906211200b006feec47dae9sm3861670ejt.157.2022.07.12.07.39.09
+        by smtp.gmail.com with ESMTPSA id a17-20020a50ff11000000b0043af8007e7fsm8852edu.3.2022.07.12.07.51.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 07:39:09 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 17:39:07 +0300
+        Tue, 12 Jul 2022 07:51:47 -0700 (PDT)
+Date:   Tue, 12 Jul 2022 17:51:45 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, dylanbhatch@google.com,
         skhan@linuxfoundation.org
-Subject: [PATCH] proc: fix test for "vsyscall=xonly" boot option
-Message-ID: <Ys2Hi3Ps933B6IsE@localhost.localdomain>
+Subject: [PATCH v2] proc: fix test for "vsyscall=xonly" boot option
+Message-ID: <Ys2KgeiEMboU8Ytu@localhost.localdomain>
+References: <Ys2Hi3Ps933B6IsE@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <Ys2Hi3Ps933B6IsE@localhost.localdomain>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -68,17 +71,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Booting with vsyscall=xonly results in the "--xp" vsyscall VMA:
+Booting with vsyscall=xonly results in the following vsyscall VMA:
 
 	ffffffffff600000-ffffffffff601000 --xp ... [vsyscall]\n
 
 Test does read from fixed vsyscall address to determine if kernel
-supports vsyscall page but it doesn't work with vsyscall=xonly
-because, well, vsyscall page is execute only.
+supports vsyscall page but it doesn't work because, well, vsyscall
+page is execute only.
 
-Fix test by trying to execute from the first byte of the page
-(which contains gettimeofday() stub). This should work because vsyscall
-entry points themselves have stable addresses by design.
+Fix test by trying to execute from the first byte of the page which
+contains gettimeofday() stub. This should work because vsyscall
+entry points have stable addresses by design.
 
 	Alexey, avoiding parsing .config, /proc/config.gz and
 	/proc/cmdline at all costs.
@@ -86,8 +89,11 @@ entry points themselves have stable addresses by design.
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
+	v2: add rcx, r11 clobbers, how could I forget
+
 	I'm not sure who reported what, so please add tested-by and
 	reported-by lines.
+
 
  tools/testing/selftests/proc/proc-pid-vm.c |   75 ++++++++++++++++++++++++++---
  1 file changed, 68 insertions(+), 7 deletions(-)
@@ -149,7 +155,7 @@ Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 +			"call %P0"
 +			:
 +			: "i" (0xffffffffff600000), "D" (NULL), "S" (NULL)
-+			: "rax"
++			: "rax", "rcx", "r11"
 +		);
 +		exit(0);
 +	}
