@@ -2,105 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6B2571C4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 706BC571CD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Jul 2022 16:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233481AbiGLOWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Jul 2022 10:22:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
+        id S230264AbiGLOfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Jul 2022 10:35:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233453AbiGLOWb (ORCPT
+        with ESMTP id S233499AbiGLOfJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Jul 2022 10:22:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8781C3340A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 07:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657635749;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JRth/JuCuClo783o03abQL28yzBSESS3ebbCWk69Wso=;
-        b=aUGC4iEi7QxlYE52Uju6mSISoYD7JG4GfC/mzCFFUzP16udCboRQWh3yZNxuQoitoqqyCG
-        Ix+0KvqsRF8FkwiTxxqKKf7O9WULmfU3jC+SyjPMN6cQBMQsK2P0QQOBskemme/N+R/Bad
-        sCpQG/fCZ8JNYNj+iDBVyzuQC7ey7xA=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-433-wGvGCSvRNxeDr0M0uyVlBQ-1; Tue, 12 Jul 2022 10:22:28 -0400
-X-MC-Unique: wGvGCSvRNxeDr0M0uyVlBQ-1
-Received: by mail-qt1-f200.google.com with SMTP id gd27-20020a05622a5c1b00b0031eae6afe5aso6719351qtb.23
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 07:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JRth/JuCuClo783o03abQL28yzBSESS3ebbCWk69Wso=;
-        b=nJQJwyAPM0mJ4Z6OCMJOjwzPKTSASB55ng/eMfhK9s497fiF5R4kzzXnTmQfcpmdxW
-         dEe8JjHq6JGubCAIKTwXmpeE8uGVVpEn48j08WdPJ7X+MVAQetCKVQDn5YNEUYVfzYUn
-         QMNfnjyPb9lZZKW/5lLHt/eoayWMkjBgTu9mC0SmPR3CBM+v8WOiA3Vgp2gMfqn+9HhT
-         2l6+T3bnr2qeE0Wonyw1UlA1WOmv9zd8aW/bPh8AIrX8hqx465XBZJwZjfsj4u9qv6on
-         3hwFF1WimlrVhGOhyOMlQnU0i8eRrDLRngCXNXa9KBd9Yt66+zCFPL6vuTzM2HU60mLL
-         aMcA==
-X-Gm-Message-State: AJIora98tORkw3ZnVrWOwjkxJCy8CF9TSHO0dMt7Lw1TGRtsn9QY1WD0
-        /Dt50mTS1US5LBSiToF8yjbcfJkgwus7x4G7TX+En/Yo66exY/w43+2gNrFxIbaxM/yo7TS7IOs
-        wrDRPWw+jf4hDp1YAK10saWnX2w==
-X-Received: by 2002:a05:622a:186:b0:319:1d49:2db7 with SMTP id s6-20020a05622a018600b003191d492db7mr17712533qtw.444.1657635748132;
-        Tue, 12 Jul 2022 07:22:28 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tv78XEVFTMuhWhQKwfrYHtCI9m9VH1riCwijD5DC+NNMp6Ay9I1CfvMy+cndUw9mqJUB3Uxg==
-X-Received: by 2002:a05:622a:186:b0:319:1d49:2db7 with SMTP id s6-20020a05622a018600b003191d492db7mr17712507qtw.444.1657635747901;
-        Tue, 12 Jul 2022 07:22:27 -0700 (PDT)
-Received: from xz-m1.local (bras-base-aurron9127w-grc-37-74-12-30-48.dsl.bell.ca. [74.12.30.48])
-        by smtp.gmail.com with ESMTPSA id t20-20020a37ea14000000b006a6d7c3a82esm9106182qkj.15.2022.07.12.07.22.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 07:22:27 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 10:22:25 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert O'Callahan <roc@ocallahan.org>
-Subject: Re: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
-Message-ID: <Ys2DobolHlrXP4/M@xz-m1.local>
-References: <20220708093451.472870-1-omosnace@redhat.com>
+        Tue, 12 Jul 2022 10:35:09 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150F4B31F5;
+        Tue, 12 Jul 2022 07:34:59 -0700 (PDT)
+Received: from in02.mta.xmission.com ([166.70.13.52]:57756)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oBGyX-00B32U-U5; Tue, 12 Jul 2022 08:34:57 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:46192 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oBGyW-00Dghw-Qt; Tue, 12 Jul 2022 08:34:57 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Tycho Andersen <tycho@tycho.pizza>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <YrShFXRLtRt6T/j+@risky>
+        <CAJfpegvH1EMS_469yOyUP9f=eCAEqzhyngm7h=YLRExeRdPEaw@mail.gmail.com>
+        <CAJfpegurW7==LEp2yXWMYdBYXTZN4HCMMVJPu-f8yvHVbu79xQ@mail.gmail.com>
+        <YsyHMVLuT5U6mm+I@netflix>
+        <877d4jbabb.fsf@email.froward.int.ebiederm.org>
+        <Ysyp8Kbl8FzhApUb@netflix>
+        <87zghf6yhe.fsf@email.froward.int.ebiederm.org>
+        <Ys16l6+iotX2JE33@netflix>
+Date:   Tue, 12 Jul 2022 09:34:50 -0500
+In-Reply-To: <Ys16l6+iotX2JE33@netflix> (Tycho Andersen's message of "Tue, 12
+        Jul 2022 07:43:51 -0600")
+Message-ID: <87sfn62yd1.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220708093451.472870-1-omosnace@redhat.com>
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1oBGyW-00Dghw-Qt;;;mid=<87sfn62yd1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX19GFtaSVDwPoTYZnHwdRxtgbEun6enaSZ4=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Tycho Andersen <tycho@tycho.pizza>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 527 ms - load_scoreonly_sql: 0.09 (0.0%),
+        signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.8%), parse: 1.29
+        (0.2%), extract_message_metadata: 14 (2.7%), get_uri_detail_list: 2.7
+        (0.5%), tests_pri_-1000: 14 (2.7%), tests_pri_-950: 1.46 (0.3%),
+        tests_pri_-900: 1.02 (0.2%), tests_pri_-90: 98 (18.5%), check_bayes:
+        95 (18.0%), b_tokenize: 10 (1.9%), b_tok_get_all: 10 (1.9%),
+        b_comp_prob: 3.4 (0.6%), b_tok_touch_all: 68 (12.8%), b_finish: 0.99
+        (0.2%), tests_pri_0: 368 (69.8%), check_dkim_signature: 0.78 (0.1%),
+        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.56 (0.1%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 12 (2.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: strange interaction between fuse + pidns
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 08, 2022 at 11:34:51AM +0200, Ondrej Mosnacek wrote:
-> Since userfaultfd doesn't implement a write operation, it is more
-> appropriate to open it read-only.
-> 
-> When userfaultfds are opened read-write like it is now, and such fd is
-> passed from one process to another, SELinux will check both read and
-> write permissions for the target process, even though it can't actually
-> do any write operation on the fd later.
-> 
-> Inspired by the following bug report, which has hit the SELinux scenario
-> described above:
-> https://bugzilla.redhat.com/show_bug.cgi?id=1974559
-> 
-> Reported-by: Robert O'Callahan <roc@ocallahan.org>
-> Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Tycho Andersen <tycho@tycho.pizza> writes:
 
-Acked-by: Peter Xu <peterx@redhat.com>
+> On Mon, Jul 11, 2022 at 06:06:21PM -0500, Eric W. Biederman wrote:
+>> Tycho Andersen <tycho@tycho.pizza> writes:
+>> It is not different enough to change the semantics.  What I am aiming
+>> for is having a dedicated flag indicating a task will exit, that
+>> fatal_signal_pending can check.  And I intend to make that flag one way
+>> so that once it is set it will never be cleared.
+>
+> Ok - how far out is that? I'd like to try to convince Miklos to land
+> the fuse part of this fix now, but without the "look at shared signals
+> too" patch, that fix is useless. I'm not married to my patch, but I
+> would like to get this fixed somehow soon.
 
--- 
-Peter Xu
+My point is that we need to figure out why you need the look at shared
+signals.
 
+If I can get everything reviewed my changes will be in the next merge
+window (it unfortunately always takes longer to get the code reviewed
+than I would like).
+
+However when my changes land does not matter.  What you are trying to
+solve is orthogonal of my on-going work.
+
+The problem is that looking at shared signals is fundamentally broken.
+A case in point is that kernel threads can have a pending SIGKILL that
+is not a fatal signal.  As kernel threads are allowed to ignore or even
+handle SIGKILL.
+
+If you want to change fatal_signal_pending to include PF_EXITING I would
+need to double check the implications but I think that would work, and
+would not have the problems including the shared pending state of
+SIGKILL.
+
+>> The other thing I have played with that might be relevant was removing
+>> the explicit wait in zap_pid_ns_processes and simply not allowing wait
+>> to reap the pid namespace init until all it's children had been reaped.
+>> Essentially how we deal with the thread group leader for ordinary
+>> processes.  Does that sound like it might help in the fuse case?
+>
+> No, the problem is that the wait code doesn't know to look in the
+> right place, so waiting later still won't help.
+
+I was suggesting to modify the kernel so that zap_pid_ns_processes would
+not wait for the zapped processes.  Instead I was proposing that
+delay_group_leader called from wait_consider_task would simply refuse to
+allow the init process of a pid namespace to be reaped until every other
+process of that pid namespace had exited.
+
+You can prototype how that would affect the deadlock by simply removing
+the waiting from zap_pid_ns_processes.
+
+I suggest that simply because that has the potential to remove some of
+the strange pid namespace cases.
+
+I don't understand the problematic interaction between pid namespace
+shutdown and the fuse daemon, so I am merely suggesting a possibility
+that I know can simplify pid namespace shutdown.
+
+Something like:
+
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index f4f8cb0435b4..d22a30b0b0cf 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -207,47 +207,6 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
+ 	read_unlock(&tasklist_lock);
+ 	rcu_read_unlock();
+ 
+-	/*
+-	 * Reap the EXIT_ZOMBIE children we had before we ignored SIGCHLD.
+-	 * kernel_wait4() will also block until our children traced from the
+-	 * parent namespace are detached and become EXIT_DEAD.
+-	 */
+-	do {
+-		clear_thread_flag(TIF_SIGPENDING);
+-		rc = kernel_wait4(-1, NULL, __WALL, NULL);
+-	} while (rc != -ECHILD);
+-
+-	/*
+-	 * kernel_wait4() misses EXIT_DEAD children, and EXIT_ZOMBIE
+-	 * process whose parents processes are outside of the pid
+-	 * namespace.  Such processes are created with setns()+fork().
+-	 *
+-	 * If those EXIT_ZOMBIE processes are not reaped by their
+-	 * parents before their parents exit, they will be reparented
+-	 * to pid_ns->child_reaper.  Thus pidns->child_reaper needs to
+-	 * stay valid until they all go away.
+-	 *
+-	 * The code relies on the pid_ns->child_reaper ignoring
+-	 * SIGCHILD to cause those EXIT_ZOMBIE processes to be
+-	 * autoreaped if reparented.
+-	 *
+-	 * Semantically it is also desirable to wait for EXIT_ZOMBIE
+-	 * processes before allowing the child_reaper to be reaped, as
+-	 * that gives the invariant that when the init process of a
+-	 * pid namespace is reaped all of the processes in the pid
+-	 * namespace are gone.
+-	 *
+-	 * Once all of the other tasks are gone from the pid_namespace
+-	 * free_pid() will awaken this task.
+-	 */
+-	for (;;) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		if (pid_ns->pid_allocated == init_pids)
+-			break;
+-		schedule();
+-	}
+-	__set_current_state(TASK_RUNNING);
+-
+ 	if (pid_ns->reboot)
+ 		current->signal->group_exit_code = pid_ns->reboot;
+ 
+
+Eric
