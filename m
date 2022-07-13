@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E67F574035
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 01:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FAC574053
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 02:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231736AbiGMXwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 19:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58746 "EHLO
+        id S229884AbiGNACw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 20:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230371AbiGMXwc (ORCPT
+        with ESMTP id S229495AbiGNACv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 19:52:32 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31ABE52DF2;
-        Wed, 13 Jul 2022 16:52:31 -0700 (PDT)
+        Wed, 13 Jul 2022 20:02:51 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DD820B;
+        Wed, 13 Jul 2022 17:02:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657756351; x=1689292351;
+  t=1657756970; x=1689292970;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=d4b95Nutiv+fVkeoTmmbeGdels6G19ALZ7QCpFCTTwc=;
-  b=ec0iUFs99XSrMBcTD4mfXpTGHIwEqAsiwpuU0GWzLKvYLXib/Azi8/Ly
-   9SiWuFCJyvAZfo7rLKu5nf79sZvP+XJ6uh10Bz4eaKKMTjP83DO/NRwwk
-   m2H19M4PddgwWJsAoRb8+MPNz4kFHILwnuhNGexn3kqyeiEwcLlDCXmaR
-   f/0qxuApQRvbaQdu1Pxx0cgYHtScpq0DVs3CUY6sQAG+li45pLMiuilKj
-   9aEC94fvRy0+sWgWzOfKcnrFNwVTXXH0vp4CRxjh+iFcQB6PrH+VabVvQ
-   mFbVzKYeTFIA9a93CFf+yAD4urjaNXi2VrlFY5v1J6eCWO7OiDlGD4o6Y
+  bh=26iuG2PU8gROzu7IcUO0TLcA9lykFGbxNWG8zTRrDpg=;
+  b=BHZkgySkaM4voPeSvG7NNKOtqgxUbYRJrXr1AfnhgExX9mFsLr+7Pr2/
+   3b7vvnxQjaDYvWM9dWtWTNRuv2QsuvCQZ3BOFUu/SLAFeHuy8EHRW9zZC
+   aKY3WPVoppxeZ11ysASXWMxpOU7+GlRWbnTqZc8apzW2uxdicC+84K7b0
+   VPys08r5MXjmCLjEjzyZlRZDS100H+m3thriEpbrLDIDhSlvdEV6779fW
+   5ry6ImhEJgYT+J14h+GBOWEcPilenNiQ/exgNNw1Fco7cVixq05kjWd7T
+   pUxLpqDpKZg4Za9vhSIHADmsO1KsUMk0PMQBhufqMSP9kDZcVPCqii9N4
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="371685475"
+X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="311021375"
 X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
-   d="scan'208";a="371685475"
+   d="scan'208";a="311021375"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 16:52:30 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 17:02:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
-   d="scan'208";a="593176855"
+   d="scan'208";a="593178497"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 13 Jul 2022 16:52:20 -0700
-Date:   Thu, 14 Jul 2022 07:49:03 +0800
+  by orsmga007.jf.intel.com with ESMTP; 13 Jul 2022 17:02:39 -0700
+Date:   Thu, 14 Jul 2022 07:59:22 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -72,60 +72,68 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 04/14] mm/shmem: Support memfile_notifier
-Message-ID: <20220713234903.GA2881285@chaop.bj.intel.com>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220713235922.GB2881285@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-5-chao.p.peng@linux.intel.com>
- <c4112b84-9359-d4c8-1852-0057c074607c@amd.com>
- <20220713074458.GB2831541@chaop.bj.intel.com>
- <74097857-1908-2ff2-1e54-bf7e658ea6c6@amd.com>
+ <b1c12a4b-46f7-081b-242f-005a8824aad1@amd.com>
+ <20220713075738.GC2831541@chaop.bj.intel.com>
+ <13d25d2e-ff79-5762-ddb8-87df56f5cbcf@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <74097857-1908-2ff2-1e54-bf7e658ea6c6@amd.com>
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <13d25d2e-ff79-5762-ddb8-87df56f5cbcf@amd.com>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 12:01:13PM +0200, Gupta, Pankaj wrote:
+On Wed, Jul 13, 2022 at 12:35:56PM +0200, Gupta, Pankaj wrote:
 > 
-> > > > +#ifdef CONFIG_MIGRATION
-> > > > +static int shmem_migrate_page(struct address_space *mapping,
-> > > > +			      struct page *newpage, struct page *page,
-> > > > +			      enum migrate_mode mode)
-> > > > +{
-> > > > +	struct inode *inode = mapping->host;
-> > > > +	struct shmem_inode_info *info = SHMEM_I(inode);
-> > > > +
-> > > > +	if (info->memfile_node.flags & MEMFILE_F_UNMOVABLE)
-> > > > +		return -EOPNOTSUPP;
-> > > > +	return migrate_page(mapping, newpage, page, mode);
+> > > > This is the v7 of this series which tries to implement the fd-based KVM
+> > > > guest private memory. The patches are based on latest kvm/queue branch
+> > > > commit:
+> > > > 
+> > > >     b9b71f43683a (kvm/queue) KVM: x86/mmu: Buffer nested MMU
+> > > > split_desc_cache only by default capacity
+> > > > 
+> > > > Introduction
+> > > > ------------
+> > > > In general this patch series introduce fd-based memslot which provides
+> > > > guest memory through memory file descriptor fd[offset,size] instead of
+> > > > hva/size. The fd can be created from a supported memory filesystem
+> > > > like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
 > > > 
-> > > Wondering how well page migrate would work for private pages
-> > > on shmem memfd based backend?
+> > > Thinking a bit, As host side fd on tmpfs or shmem will store memory on host
+> > > page cache instead of mapping pages into userspace address space. Can we hit
+> > > double (un-coordinated) page cache problem with this when guest page cache
+> > > is also used?
 > > 
-> >  From high level:
-> >    - KVM unset MEMFILE_F_UNMOVABLE bit to indicate it capable of
-> >      migrating a page.
-> >    - Introduce new 'migrate' callback(s) to memfile_notifier_ops for KVM
-> >      to register.
-> >    - The callback is hooked to migrate_page() here.
-> >    - Once page migration requested, shmem calls into the 'migrate'
-> >      callback(s) to perform additional steps for encrypted memory (For
-> >      TDX we will call TDH.MEM.PAGE.RELOCATE).
+> > This is my understanding: in host it will be indeed in page cache (in
+> > current shmem implementation) but that's just the way it allocates and
+> > provides the physical memory for the guest. In guest, guest OS will not
+> > see this fd (absolutely), it only sees guest memory, on top of which it
+> > can build its own page cache system for its own file-mapped content but
+> > that is unrelated to host page cache.
 > 
-> Yes, that would require additional (protocol specific) handling for private
-> pages. Was trying to find where "MEMFILE_F_UNMOVABLE" flag is set currently?
+> yes. If guest fills its page cache with file backed memory, this at host
+> side(on shmem fd backend) will also fill the host page cache fast. This can
+> have an impact on performance of guest VM's if host goes to memory pressure
+> situation sooner. Or else we end up utilizing way less System RAM.
 
-It's set with memfile_register_notifier() in patch 13.
+(Currently), the file backed guest private memory is long-term pinned
+and not reclaimable, it's in page cache anyway once we allocated it for
+guest. This does not depend on how guest use it (e.g. use it for guest
+page cache or not). 
 
+Chao
 > 
 > Thanks,
 > Pankaj
+> 
