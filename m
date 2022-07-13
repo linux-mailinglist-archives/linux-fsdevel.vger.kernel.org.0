@@ -2,145 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 718B3572C35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 06:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFE7572CB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 06:47:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbiGMEPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 00:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50760 "EHLO
+        id S231253AbiGMErE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 00:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiGMEPT (ORCPT
+        with ESMTP id S229770AbiGMErD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 00:15:19 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11625A851D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 21:15:18 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id bp15so7469250ejb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 21:15:17 -0700 (PDT)
+        Wed, 13 Jul 2022 00:47:03 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E09C7657;
+        Tue, 12 Jul 2022 21:46:59 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id q5-20020a17090a304500b001efcc885cc4so1666320pjl.4;
+        Tue, 12 Jul 2022 21:46:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mR6ve7jNYBBEabfglRDxTAXQ9ivd99sGg14WaUcXb50=;
-        b=hhbwjs19sFKxiC3MiE6IyuW8dbxbqAkAalzc4jUel4GHpRclUJwxyapuGsnji3fOkm
-         jkw+kG3P7SYMvr3FhK53pEpM1WaDVkQz7NO2XQk9V4f632kNuPnEZx5lm6InnNrXr+il
-         XO0dGVV4UuEze6c0FC7xP4vJ7LUt8YQEzHEA8=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gBaYkCq2UOecKkI/ZcXaXDVPy+SEFxbUDpVc4bdCZmM=;
+        b=h1H/+uf4FxW4bgT2t3lI+XGqdPLgtl0u4V9II5sch1nlT+lMFHYXepqKt3obshgGQr
+         3HvlRGfLhGGuN/cLDAW+qlK3KCK5YFGagFcXTsXxI41AZhR0UvNjIOlpluv73F4bxF/g
+         pFWma2sdbuCLVJtI9XiLV2fs42bsQjkzpvmWkN4oCL2sNl7r9G1b+YQyRp08KueMfFes
+         c4o+4R1l23aSWaIKGanMB/60uX0VmGGgtKiBWNxIHEkc06LPSYVDvoQbvR1B5UwEmIHV
+         dw1B4Nb9a9I4T9YxMEAxznmpehRy31heyuhIqdWkyGOAybIB3VCVbIEOmwToNh5BrTu+
+         lr5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mR6ve7jNYBBEabfglRDxTAXQ9ivd99sGg14WaUcXb50=;
-        b=oMgSCIO+ScH9OopuiuE9OhvEU0ib0zxvoy7qLO8flHLvHFLmzkIVmm/ky30PJuUEAx
-         l+cey3D12KsuvdKA6kvDzfm3UFyN6uLukdX0XYS0ReJX9tyl9bvIpGF35sUeDbGvkY2Q
-         t+1PM609beCd3gjkykmbatfTD/dTWnM+x7WAQZDlE1g50QfsSBisvd8IBNFcJUgGnaCy
-         iWs9MB7YqD3cEkDC5VdP3KquWg4Ek3OMsUjctWwrA2S7Vqw1XJlJPmQWI2pCndsgXusg
-         FoOWddqi7yFqSY91F4RgwjoLD/f99T4b5W8H145RghK+cjiynCtSLoM4oJAFvdh/UhRy
-         1Uyw==
-X-Gm-Message-State: AJIora9VWzdWmxw+WqfIvft2MycWSj84d9Q1Uh+CpJxx3blCB4mOfm+F
-        U8Lhg2JMtBT5KBxzBgF9sXI3fADjRB5+A1OjUUM=
-X-Google-Smtp-Source: AGRyM1sDoey6fy30WmRFV9fzAGdk/uFWve1scJ27qy4TAYgqK30N2pURqxjp77PQYoTgBin8IPMOFg==
-X-Received: by 2002:a17:907:2c54:b0:72b:64bd:cbf7 with SMTP id hf20-20020a1709072c5400b0072b64bdcbf7mr1452230ejc.116.1657685716310;
-        Tue, 12 Jul 2022 21:15:16 -0700 (PDT)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id l20-20020aa7d954000000b0042617ba638esm7054025eds.24.2022.07.12.21.15.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jul 2022 21:15:14 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id h17so13810210wrx.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Jul 2022 21:15:14 -0700 (PDT)
-X-Received: by 2002:a05:6000:1f8c:b0:21d:7e98:51ba with SMTP id
- bw12-20020a0560001f8c00b0021d7e9851bamr1110292wrb.442.1657685714024; Tue, 12
- Jul 2022 21:15:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gBaYkCq2UOecKkI/ZcXaXDVPy+SEFxbUDpVc4bdCZmM=;
+        b=oItuH4RaAJAToFdOZg68Nl6CFB7yOzmRhia1WTM0+k1sZYzgvZ2onMK0Rt/wT7DV6e
+         WkEe1az71KF8Tc2pM1PE6UVj/dFuziESIjpSTJrLnbdo2F4HyjXmjefv6xdJ8y0MJX22
+         2NALsgE+cPYCwzTpvTQPpsh2r0lnruX/gg0Ex29951w43SRlC5EFoh84qgfBAZ06GLEk
+         3AJSzFn210fBTuKzYpBnxsfhTEePzJQxkOEV22fZ293/iibFJ31/aeuTpjfMadkZnXV8
+         NUt3f7gzO0PGyjoyXXutjYNb5nHLTBFB+k5/ddPvxcOwSvLskllQocdTdEyMipwjko3/
+         w9Cg==
+X-Gm-Message-State: AJIora8vIO4Rl93VFsNmuXQSKLL+MlH9+2EnW8T0Y0kWUZ5NAQJggsq+
+        WXdI/56OsfqkiNwaeMvU650=
+X-Google-Smtp-Source: AGRyM1t4Kvp3+MPAFYCpd5hlmg5MlCU8bpPTtIXAtIiqdQtJ+Yzx2cYW2gylT+SNs6NaoePwv/3tlQ==
+X-Received: by 2002:a17:90b:1d02:b0:1f0:1c2c:cc64 with SMTP id on2-20020a17090b1d0200b001f01c2ccc64mr1836081pjb.52.1657687618757;
+        Tue, 12 Jul 2022 21:46:58 -0700 (PDT)
+Received: from localhost.localdomain (pcd364232.netvigator.com. [203.218.154.232])
+        by smtp.gmail.com with ESMTPSA id fr14-20020a17090ae2ce00b001f0097c2fb2sm469316pjb.28.2022.07.12.21.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 21:46:58 -0700 (PDT)
+From:   Hawkins Jiawei <yin31149@gmail.com>
+To:     hare@suse.de
+Cc:     ak@tempesta-tech.com, borisp@nvidia.com, chuck.lever@oracle.com,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        netdev@vger.kernel.org, simo@redhat.com, kuba@kernel.org,
+        18801353760@163.com, paskripkin@gmail.com,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH RFC 1/5] net: Add distinct sk_psock field
+Date:   Wed, 13 Jul 2022 12:46:37 +0800
+Message-Id: <20220713044637.106017-1-yin31149@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <325938d3-bb82-730b-046c-451dde8cc14c@suse.de>
+References: <325938d3-bb82-730b-046c-451dde8cc14c@suse.de>
 MIME-Version: 1.0
-References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
- <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
- <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
- <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
- <Ys3TrAf95FpRgr+P@localhost.localdomain> <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
- <Ys4WdKSUTcvktuEl@magnolia> <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
-In-Reply-To: <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linuxfoundation.org>
-Date:   Tue, 12 Jul 2022 21:14:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgEqAE3Fgx=1hoKEkTVhpm9YiLeROYGaQieRXagJLu8XA@mail.gmail.com>
-Message-ID: <CAHk-=wgEqAE3Fgx=1hoKEkTVhpm9YiLeROYGaQieRXagJLu8XA@mail.gmail.com>
-Subject: Re: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        ansgar.loesser@kom.tu-darmstadt.de, Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Security Officers <security@kernel.org>,
-        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?UTF-8?Q?Bj=C3=B6rn_Scheuermann?= 
-        <scheuermann@kom.tu-darmstadt.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 12, 2022 at 7:58 PM Linus Torvalds
-<torvalds@linuxfoundation.org> wrote:
+>On 4/18/22 18:49, Chuck Lever wrote:
+>> The sk_psock facility populates the sk_user_data field with the
+>> address of an extra bit of metadata. User space sockets never
+>> populate the sk_user_data field, so this has worked out fine.
+>> 
+>> However, kernel consumers such as the RPC client and server do
+>> populate the sk_user_data field. The sk_psock() function cannot tell
+>> that the content of sk_user_data does not point to psock metadata,
+>> so it will happily return a pointer to something else, cast to a
+>> struct sk_psock.
+>> 
+>> Thus kernel consumers and psock currently cannot co-exist.
+>> 
+>> We could educate sk_psock() to return NULL if sk_user_data does
+>> not point to a struct sk_psock. However, a more general solution
+>> that enables full co-existence psock and other uses of sk_user_data
+>> might be more interesting.
+>> 
+>> Move the struct sk_psock address to its own pointer field so that
+>> the contents of the sk_user_data field is preserved.
+>> 
+>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>> ---
+>>   include/linux/skmsg.h |    2 +-
+>>   include/net/sock.h    |    4 +++-
+>>   net/core/skmsg.c      |    6 +++---
+>>   3 files changed, 7 insertions(+), 5 deletions(-)
+>> 
+>Reviewed-by: Hannes Reinecke <hare@suse.de>
 >
-> Well, if you're supposed to be able to dedupe read-only files, then
-> the whole "check for writing" is just bogus to begin with.
+>Cheers,
+>
+>Hannes
 
-Hmm. Maybe that's too strong. The "if you can write to it, you can
-always dedup it" does make sense, and then couple that with "other
-situations are also ok".
+In Patchwork website, this patch fails the checks on
+netdev/cc_maintainers.
 
-And if you were to want to dedup things like symlinks (do people?) you
-need to be able to handle FMODE_PATH cases that aren't FMODE_WRITE.
+So maybe you need CC folks pointed out by
+scripts/get_maintainer.pl script, which is suggested
+by Jakub Kicinski <kuba@kernel.org>.
 
-And at that point, the "inode owner" check starts making sense.
+What's more, Syskaller reports
+refcount bug in sk_psock_get (2).
 
-Except the code doesn't allow symlinks anyway right now, so that's
-kind of theoretical.
+In this bug, the problem is that smc and psock, 
+both use sk_user_data field to save their 
+private data. So they will treat field in their own way.
 
-But then you really do need to check for IS_IMMUTABLE there too and
-that it's a valid file type, and not just hope that it's checked for
-elsewhere. And those checks shouldn't pass just because of
-CAP_SYS_ADMIN, so that check seems to be in the wrong place too.
+> in smc_switch_to_fallback(), and set smc->clcsock->sk_user_data
+> to origin smc in smc_fback_replace_callbacks().
+> 
+> Later, sk_psock_get() will treat the smc->clcsock->sk_user_data
+> as sk_psock type, which triggers the refcnt warning.
 
-So maybe it mostly works (apart from how clearly the destination
-offset alignment check is somehow missing or done too late or
-whatever), but it all seems very random, with checks spread out and
-not with any consistency or logic.
-
-As an example of this randomness, for the dedup source file, we have
-three different error returns for checking whether it's ok in
-vfs_dedupe_file_range(*):
-
-        if (S_ISDIR(src->i_mode))
-                return -EISDIR;
-
-        if (!S_ISREG(src->i_mode))
-                return -EINVAL;
-
-        if (!file->f_op->remap_file_range)
-                return -EOPNOTSUPP;
-
-but then for the destination check the code does
-
-        ret = -EISDIR;
-        if (S_ISDIR(file_inode(dst_file)->i_mode))
-                goto out_drop_write;
-
-        ret = -EINVAL;
-        if (!dst_file->f_op->remap_file_range)
-                goto out_drop_write;
-
-and again - maybe this works, and it's just that the error return is
-inconsistent for source-vs-target, but it just reinforces that whole
-"this is all completely ad-hoc and doesn't really make much sense".
-
-            Linus
+I have tested this patch and the reproducer did not trigger any issue.
+For more details, you can check the email
+[PATCH] smc: fix refcount bug in sk_psock_get (2)
