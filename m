@@ -2,103 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5978573D2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 21:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B626D573DB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 22:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236925AbiGMTda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 15:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        id S236862AbiGMUVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 16:21:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236664AbiGMTd2 (ORCPT
+        with ESMTP id S236883AbiGMUVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 15:33:28 -0400
-Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381C22DAA2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:33:26 -0700 (PDT)
-Received: by mail-vs1-xe42.google.com with SMTP id x125so9067660vsb.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:33:26 -0700 (PDT)
+        Wed, 13 Jul 2022 16:21:31 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD5D2E694
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 13:21:29 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id x184so11208445pfx.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 13:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=CAIH/48VCAZZUEhRpfaRPTSaBdpuCbyHyIV69iiJf1M=;
-        b=aM1IhBunUxE23qoS04VXLKhmfEzv0G+rIPuL+tw7ecWQpkkV/VIRfagQrgSyOoTIAm
-         AZWPXQE2ns7ZNMtu2h9VrGRckGYmFXAYncydcobmDBiRLde8BCgwi2hlvMDHXzYgqMkQ
-         SeJxIk0u87w3y3HvNwB5qYF3cTerdoWv2b9mV8jFDizIJX8stbEHhwQnKSILH4q0Huup
-         hTOO9Jx4LSsJcLZc09WMxCsF4ciSzvQTXVpvt0KUlX7r0Y8qXhkOofhAjq9rhr7n0O3a
-         0Nz5Fyl2IiFFXOdqA4nMId1341Np8datpnUgsVwvaqGydn6uB0z1+35u/mxwEULjiUxM
-         xCNw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=JcYpGy4wzAqqtoFWvjiTbUFlKhGd0IaTVFe++/A2tj8=;
+        b=j3/yPTm93If9fOoylNboDvrKY3qdKwD+2gPm56U744CITZPKzrmWQSjHCfhH1XDpj8
+         1cg3oDoehjlRPSBHyP8ld4ZTcOZak844Ie0+2k+5lJcfIfQZSoIGqHARuNSFIjGwjnGL
+         u6uZgq//x3qX/jONleOFz8cx+pRBR7fXRzYNMIZIgglFxnUIpqrZFJnTyphVoH97Z1N/
+         iO1m1byzqdETeZiNlLI75M09vhqyTk8V7+7eVYsstdXAWCpSZC8OrNIDIWvD4V/UWNzh
+         fdS3KD6wg0P37ss2wfWteZ1vRhx4LiwAjoWv9IR3h2NwYKzV3o+PsggSFyJiiJw+ip/W
+         aSxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=CAIH/48VCAZZUEhRpfaRPTSaBdpuCbyHyIV69iiJf1M=;
-        b=OlSAe0HjUGBayyeaTqf/UGea9IT6KvTU6GvHxysISJ1WDgSk33WY6ImHjiyznB4y8t
-         y3UOBEAVDWTxN9LHiq/6P+ElBOxBEpOHeJ7u4YLFjshdulfVAPWgF2v4xfFfd7B9m1wB
-         KPxFC7nFsFCAXQgJFV0oVxP6QmtICydGF4VzReY94K8/vfYikQHplaZ7Dngi19kosB2t
-         IfUOsAZxCLegSlN1u/8DKvq3BioDpiFncPfPzeMvw7k5Pc01gKfHbrOgKw/VXEJY+vAg
-         Wqsxtcb2uzjiLh1tlYBMFowmBnvdx2zsLekg1eprTIMreU1QqwkUACxGm6JIU4TM7lcU
-         Wy9g==
-X-Gm-Message-State: AJIora+adyL1GRV4qzPZ6X3Vd7tDoXNiVwGuI3mMIA+xaQCazBwCVHqv
-        LpU++4X/9G/m0mhkH3TRsALaD0tApxV/3e+QERY=
-X-Google-Smtp-Source: AGRyM1sJxaHNFmNllzWTe6lcXJtKq+jpeM0H1VbICZMt0N2iL7xjj1CQ/iGumgoql0QuMbeebjAgPClviShoH8saaK0=
-X-Received: by 2002:a67:a449:0:b0:357:3407:9f60 with SMTP id
- p9-20020a67a449000000b0035734079f60mr2391818vsh.17.1657740805145; Wed, 13 Jul
- 2022 12:33:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=JcYpGy4wzAqqtoFWvjiTbUFlKhGd0IaTVFe++/A2tj8=;
+        b=Hx7F/RaScKQc91LvfmKHCMGp6WHxAHnh//TbXw7U+o1t6p4FdB439eaqkh9kf8qXMS
+         ttiv417KJWS5lWYrtMbdG4b4ubbOOkVpUw4V2659tkVDwfvzBtd2O3WR2RZGNk+lLoGg
+         AYxY95cpvhvgjHUnh2Il4GrWrHJ9sBdPiDz1b+zlg9Vh7VYj8COdfHPKQcR6F8ANPfM7
+         Db30ED24P7mAQgXP9sijeCzUsKG1lsYhsbCVCT7qVBO6eMyvsCNMa0J6UVsmOZ/9N/UT
+         jAAA54jkDdeY5dlxZbazPiHDcFfOb9zmw/ALOXkr5U0uEQH1fu9gHNyU1n5hNnPv2uLO
+         YQ+w==
+X-Gm-Message-State: AJIora/EX5eb1emV6Nl0GGoQFnJIpTDk1WrBoy2sP3nYsVKMjk8x53ap
+        3/Vhy5pBZ/ugw58rlMbON27BkA==
+X-Google-Smtp-Source: AGRyM1sRtpOzM8so8J17lC2HC0Gp5PVrftTwsJh5/KvwUQD6vq4e+sEjRVff8ts6usamWE4TAZfvFw==
+X-Received: by 2002:a63:4042:0:b0:411:bbfe:e736 with SMTP id n63-20020a634042000000b00411bbfee736mr4375329pga.1.1657743688555;
+        Wed, 13 Jul 2022 13:21:28 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id f14-20020a170902ce8e00b00168b113f222sm9357024plg.173.2022.07.13.13.21.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jul 2022 13:21:28 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kbusch@fb.com
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, kbusch@kernel.org
+In-Reply-To: <20220712153256.2202024-1-kbusch@fb.com>
+References: <20220712153256.2202024-1-kbusch@fb.com>
+Subject: Re: [PATCHv2 1/3] block: ensure iov_iter advances for added pages
+Message-Id: <165774368761.35656.10611792606953434095.b4-ty@kernel.dk>
+Date:   Wed, 13 Jul 2022 14:21:27 -0600
 MIME-Version: 1.0
-Received: by 2002:a67:e05b:0:0:0:0:0 with HTTP; Wed, 13 Jul 2022 12:33:24
- -0700 (PDT)
-Reply-To: pstefanopessina80@gmail.com
-From:   STEFANO PESSINA <awabuts49@gmail.com>
-Date:   Wed, 13 Jul 2022 22:33:24 +0300
-Message-ID: <CABqU-Kt960=z5WPCBXkW7U+2SM=criymhoesJ=oQD7uhrCaFLQ@mail.gmail.com>
-Subject: donation
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:e42 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4889]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [awabuts49[at]gmail.com]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [pstefanopessina80[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [awabuts49[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
+On Tue, 12 Jul 2022 08:32:54 -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> There are cases where a bio may not accept additional pages, and the iov
+> needs to advance to the last data length that was accepted. The zone
+> append used to handle this correctly, but was inadvertently broken when
+> the setup was made common with the normal r/w case.
+> 
+> [...]
 
-Congratulations!
-The sum of =E2=82=AC1,500,000.00 has been donated to you by STEFANO PESSINA=
-.
-Kindly get back for more info via pstefanopessina80@gmail.com
+Applied, thanks!
+
+[1/3] block: ensure iov_iter advances for added pages
+      commit: 5a044eef1265581683530e75351c19e29ee33a11
+[2/3] block: ensure bio_iov_add_page can't fail
+      commit: ac3c48e32c047a3781d6bc28bb5013e4431350fd
+[3/3] block: fix leaking page ref on truncated direct io
+      commit: 44b6b0b0e980d99d24de7e5d57baae48a78db3b6
+
+Best regards,
+-- 
+Jens Axboe
+
+
