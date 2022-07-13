@@ -2,152 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7906257375C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 15:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F22F57383F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 16:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236263AbiGMN1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 09:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52776 "EHLO
+        id S236565AbiGMOBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 10:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236144AbiGMN1M (ORCPT
+        with ESMTP id S236392AbiGMOB0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 09:27:12 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF09B7EC
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 06:27:10 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C161A33D85;
-        Wed, 13 Jul 2022 13:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1657718828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Wed, 13 Jul 2022 10:01:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 48F1B2E6BB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 07:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657720865;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xSttkQibOdpLVJNx+valLwwJwjzjQSj9FMSHu4JsuBw=;
-        b=2BmCELKzLQf1nkiT8LfUAVeuziqZCZ8EAa1qI9J3RGSC+3iIKruBmWW1U/ue0LQWPlmbbE
-        Y6UK3E7xNIIvSwCXiGgsjxjdhwS+XIK1Y2uIERuU34qoa9lhfAEl5GMdXWI1EmKSNUFkmU
-        pTkEqpO6GKmhupfByDzL8+SnLS4Ints=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1657718828;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xSttkQibOdpLVJNx+valLwwJwjzjQSj9FMSHu4JsuBw=;
-        b=WIHvBDrZ7Ij9z93tYvGYf8C3j49kL3XmRHfbZPWlJhJrKSHZyfsDj2QjwskR8F5kMBaqB8
-        XVnYVAFaAD1XaaDQ==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id EB9732C142;
-        Wed, 13 Jul 2022 13:27:07 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 52EE2A0635; Wed, 13 Jul 2022 15:27:01 +0200 (CEST)
-Date:   Wed, 13 Jul 2022 15:27:01 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Mike Rapoport <rppt@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Hillf Danton <hdanton@sina.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] secretmem: fix unhandled fault in truncate
-Message-ID: <20220713132701.rnb5eieno4gmpvqh@quack3>
-References: <20220707165650.248088-1-rppt@kernel.org>
- <CAHbLzkqLPi9i3BspCLUe=eZ4huTY2ZnbfD19K_ShsaOC47En_w@mail.gmail.com>
- <YsdITMg5xZiu8Yoh@magnolia>
- <CAHbLzkpnkcFg5hOf49V=gFSvTWsWUe_M8-69knDpvSSdua+x4w@mail.gmail.com>
- <Ysfqxg9Ury1NX27N@kernel.org>
- <CAHbLzkpB59wX-U4Y4Bs4hxAZKy9JG29UtRPks1458VredwRxTg@mail.gmail.com>
+        bh=9KGqf/qeI+POrrn3TKUE5pxqC/C4LValvbrjKc6vdrc=;
+        b=g/6oEjlQ10PkM5jQ/YdB/mEuYgVja8C/AvexVUI0JWLfuxG8xRGFKYBFwf//R3aDffDh8C
+        Kw5lbUZWrybbZ0kNiRk95HE1t1S+ISnGPSSzUT2W3NY64Ss9ISi3TLSag3p9J0nzsiYNXb
+        J/2UEcbUFYKylvAD8g614dAwlofGJH4=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-490-r9EG3LqRNQ6-qdyk54BWTQ-1; Wed, 13 Jul 2022 10:01:03 -0400
+X-MC-Unique: r9EG3LqRNQ6-qdyk54BWTQ-1
+Received: by mail-ed1-f72.google.com with SMTP id w13-20020a05640234cd00b0043a991fb3f3so8426498edc.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 07:01:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:organization:subject
+         :in-reply-to:content-transfer-encoding;
+        bh=9KGqf/qeI+POrrn3TKUE5pxqC/C4LValvbrjKc6vdrc=;
+        b=vy1/nCBMcBZ3MuAZHNkzhn3buV4neJAAs/JDliyj057xchSv86qQbCTNbZHMHmY6qm
+         JgSh/jxNJd8+RYSG7Vo+3wS11/WJ9J67twz3APhb5RczjghFLMSd4jR8M0liejF247hf
+         QoJtXGPXPMy0IkowPqHXSPcJK2MfPqbEzYIS7mMZeusoANBXvZrzLsestywRUgoDt5u6
+         i4UyFjNtWZSDtXJBAgarORklFUUZTPtkwZQO6G+f7iD4tKNEBTl67m3oMXVMhroM6LVi
+         aZRpKyMdT1Q1EsmQIPKmopx2BqU6X3r805uzMTOIXqfGw5Be7UT0NpGJw+FxL+M6yG/D
+         YCeQ==
+X-Gm-Message-State: AJIora+V0OY5DWpWC5ZujCj0fWegLyR8XqLr6owFEm47yP8ChBMJHRWL
+        pCxksXOpD5VpI0eT4m6cDkTF9MiRLDKIGXszORm2bUtp+ToqZPJT+nHBl3hFtAkOGmJJCxaX3Zd
+        dTSyt/CAv6XfqKcISgPmQtwyAOQ==
+X-Received: by 2002:a05:6402:194d:b0:43a:82da:b0f3 with SMTP id f13-20020a056402194d00b0043a82dab0f3mr5153376edz.104.1657720862046;
+        Wed, 13 Jul 2022 07:01:02 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tfg+NQpq62PNkTi+9zGICpZjxIA1/V35s1b3D7GuzEpMEmnElvJd01BSGXkYV7V6mf4wtNGg==
+X-Received: by 2002:a05:6402:194d:b0:43a:82da:b0f3 with SMTP id f13-20020a056402194d00b0043a82dab0f3mr5153326edz.104.1657720861765;
+        Wed, 13 Jul 2022 07:01:01 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:5800:5009:e8d0:d95e:544d? (p200300cbc70758005009e8d0d95e544d.dip0.t-ipconnect.de. [2003:cb:c707:5800:5009:e8d0:d95e:544d])
+        by smtp.gmail.com with ESMTPSA id e2-20020a056402088200b0042dcbc3f302sm7975139edy.36.2022.07.13.07.01.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jul 2022 07:01:01 -0700 (PDT)
+Message-ID: <397f3cb2-1351-afcf-cd87-e8f9fb482059@redhat.com>
+Date:   Wed, 13 Jul 2022 16:00:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkpB59wX-U4Y4Bs4hxAZKy9JG29UtRPks1458VredwRxTg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     willy@infradead.org, aneesh.kumar@linux.ibm.com, arnd@arndb.de,
+        21cnbao@gmail.com, corbet@lwn.net, dave.hansen@linux.intel.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+References: <cover.1656531090.git.khalid.aziz@oracle.com>
+ <20220701212403.77ab8139b6e1aca87fae119e@linux-foundation.org>
+ <0864a811-53c8-a87b-a32d-d6f4c7945caa@redhat.com>
+ <357da99d-d096-a790-31d7-ee477e37c705@oracle.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v2 0/9] Add support for shared PTEs across processes
+In-Reply-To: <357da99d-d096-a790-31d7-ee477e37c705@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 12-07-22 10:40:11, Yang Shi wrote:
-> On Fri, Jul 8, 2022 at 1:29 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Thu, Jul 07, 2022 at 03:09:32PM -0700, Yang Shi wrote:
-> > > On Thu, Jul 7, 2022 at 1:55 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > >
-> > > > On Thu, Jul 07, 2022 at 10:48:00AM -0700, Yang Shi wrote:
-> > > > > On Thu, Jul 7, 2022 at 9:57 AM Mike Rapoport <rppt@kernel.org> wrote:
-> > > > > >
-> > > > > > Eric Biggers suggested that this happens when
-> > > > > > secretmem_setattr()->simple_setattr() races with secretmem_fault() so
-> > > > > > that a page that is faulted in by secretmem_fault() (and thus removed
-> > > > > > from the direct map) is zeroed by inode truncation right afterwards.
-> > > > > >
-> > > > > > Since do_truncate() takes inode_lock(), adding inode_lock_shared() to
-> > > > > > secretmem_fault() prevents the race.
-> > > > >
-> > > > > Should invalidate_lock be used to serialize between page fault and truncate?
-> > > >
-> > > > I would have thought so, given Documentation/filesystems/locking.rst:
-> > > >
-> > > > "->fault() is called when a previously not present pte is about to be
-> > > > faulted in. The filesystem must find and return the page associated with
-> > > > the passed in "pgoff" in the vm_fault structure. If it is possible that
-> > > > the page may be truncated and/or invalidated, then the filesystem must
-> > > > lock invalidate_lock, then ensure the page is not already truncated
-> > > > (invalidate_lock will block subsequent truncate), and then return with
-> > > > VM_FAULT_LOCKED, and the page locked. The VM will unlock the page."
-> > > >
-> > > > IIRC page faults aren't supposed to take i_rwsem because the fault could
-> > > > be in response to someone mmaping a file into memory and then write()ing
-> > > > to the same file using the mmapped region.  The write() takes
-> > > > inode_lock and faults on the buffer, so the fault cannot take inode_lock
-> > > > again.
-> > >
-> > > Do you mean writing from one part of the file to the other part of the
-> > > file so the "from" buffer used by copy_from_user() is part of the
-> > > mmaped region?
-> > >
-> > > Another possible deadlock issue by using inode_lock in page faults is
-> > > mmap_lock is acquired before inode_lock, but write may acquire
-> > > inode_lock before mmap_lock, it is a AB-BA lock pattern, but it should
-> > > not cause real deadlock since mmap_lock is not exclusive for page
-> > > faults. But such pattern should be avoided IMHO.
-> > >
-> > > > That said... I don't think memfd_secret files /can/ be written to?
-> >
-> > memfd_secret files cannot be written to, they can only be mmap()ed.
-> > Synchronization is only required between
-> > do_truncate()->...->simple_setatt() and secretmem->fault() and I don't see
-> > how that can deadlock.
+On 08.07.22 21:36, Khalid Aziz wrote:
+> On 7/8/22 05:47, David Hildenbrand wrote:
+>> On 02.07.22 06:24, Andrew Morton wrote:
+>>> On Wed, 29 Jun 2022 16:53:51 -0600 Khalid Aziz <khalid.aziz@oracle.com> wrote:
+>>>
+>>>> This patch series implements a mechanism in kernel to allow
+>>>> userspace processes to opt into sharing PTEs. It adds a new
+>>>> in-memory filesystem - msharefs.
+>>>
+>>> Dumb question: why do we need a new filesystem for this?  Is it not
+>>> feasible to permit PTE sharing for mmaps of tmpfs/xfs/ext4/etc files?
+>>>
+>>
+>> IIRC, the general opinion at LSF/MM was that this approach at hand is
+>> makes people nervous and I at least am not convinced that we really want
+>> to have this upstream.
 > 
-> Sure, there is no deadlock.
-> 
-> >
-> > I'm not an fs expert though, so if you think that invalidate_lock() is
-> > safer, I don't mind s/inode_lock/invalidate_lock/ in the patch.
-> 
-> IIUC invalidate_lock should be preferred per the filesystem's locking
-> document. And I found Jan Kara's email of the invalidate_lock
-> patchset, please refer to
-> https://lore.kernel.org/linux-mm/20210715133202.5975-1-jack@suse.cz/.
+> Hi David,
 
-Yeah, so using invalidate_lock for such synchronization would be certainly
-more standard than using inode_lock. Although I agree that for filesystems
-that do not support read(2) and write(2) there does not seem to be an
-immediate risk of a deadlock when inode_lock is used inside a page fault.
+Hi Khalid,
 
-								Honza
+> 
+> You are right that sharing page tables across processes feels scary, but at the same time threads already share PTEs and 
+> this just extends that concept to processes.
+
+They share a *mm* including a consistent virtual memory layout (VMA
+list). Page table sharing is just a side product of that. You could even
+call page tables just an implementation detail to produce that
+consistent virtual memory layout -- described for that MM via a
+different data structure.
+
+> A number of people have commented on potential usefulness of this concept 
+> and implementation.
+
+... and a lot of people raised concerns. Yes, page table sharing to
+reduce memory consumption/tlb misses/... is something reasonable to
+have. But that doesn't require mshare, as hugetlb has proven.
+
+The design might be useful for a handful of corner (!) cases, but as the
+cover letter only talks about memory consumption of page tables, I'll
+not care about those. Once these corner cases are explained and deemed
+important, we might want to think of possible alternatives to explore
+the solution space.
+
+> There were concerns raised about being able to make this safe and reliable.
+> I had agreed to send a 
+> second version of the patch incorporating feedback from last review and LSF/MM, and that is what v2 patch is about. The 
+
+Okay, most of the changes I saw are related to the user interface, not
+to any of the actual dirty implementation-detail concerns. And the cover
+letter is not really clear what's actually happening under the hood and
+what the (IMHO) weird semantics of the design imply (as can be seen from
+Andrews reply).
+
+> suggestion to extend hugetlb PMD sharing was discussed briefly. Conclusion from that discussion and earlier discussion 
+> on mailing list was hugetlb PMD sharing is built with special case code in too many places in the kernel and it is 
+> better to replace it with something more general purpose than build even more on it. Mike can correct me if I got that 
+> wrong.
+
+Yes, I pushed for the removal of that yet-another-hugetlb-special-stuff,
+and asked the honest question if we can just remove it and replace it by
+something generic in the future. And as I learned, we most probably
+cannot rip that out without affecting existing user space. Even
+replacing it by mshare() would degrade existing user space.
+
+So the natural thing to reduce page table consumption (again, what this
+cover letter talks about) for user space (semi- ?)automatically for
+MAP_SHARED files is to factor out what hugetlb has, and teach generic MM
+code to cache and reuse page tables (PTE and PMD tables should be
+sufficient) where suitable.
+
+For reasonably aligned mappings and mapping sizes, it shouldn't be too
+hard (I know, locking ...), to cache and reuse page tables attached to
+files -- similar to what hugetlb does, just in a generic way. We might
+want a mechanism to enable/disable this for specific processes and/or
+VMAs, but these are minor details.
+
+And that could come for free for existing user space, because page
+tables, and how they are handled, would just be an implementation detail.
+
+
+I'd be really interested into what the major roadblocks/downsides
+file-based page table sharing has. Because I am not convinced that a
+mechanism like mshare() -- that has to be explicitly implemented+used by
+user space -- is required for that.
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+
+David / dhildenb
+
