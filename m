@@ -2,156 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D339572F92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 09:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA737572F99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 09:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234884AbiGMHsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 03:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44154 "EHLO
+        id S234250AbiGMHty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 03:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234860AbiGMHs3 (ORCPT
+        with ESMTP id S231130AbiGMHtd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 03:48:29 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B524BE6332;
-        Wed, 13 Jul 2022 00:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657698506; x=1689234506;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=nUfcHt/iaf3oMSfMyzHxGwWsSmqpbvlJ2JFwYR1oe/M=;
-  b=C4cP7E864jxiXG8f7VB1bNxdXYNG12yHhsNZlDN4+uGv70+0xztfKFhO
-   ukHKXBXu1kiraU7YIGFaenCfBQGF12+KplTVGTDE5pjFlrAu2bDNCandl
-   T8Gh5bxOsB80l3NLxqG6z6o9q05NfddgX+xdoHTH0wbzeRopuEji/FJ9O
-   MwxqbvPhvp/R0Aa9j5ooO1/+8VEZcN8BFz79RyuF1bCjNSfbolylaS6ak
-   3jek3LsAlr7oCc3JOixWVJ2yp1nVSNT/Z744IJKJtHKlCR9BADxTEcqGY
-   aWaRfqH/L7MwQmC9R5lpqwIhG9Z7JXfVNTLoRxoejPMuwEDoiR1ICVjeX
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10406"; a="264928758"
-X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
-   d="scan'208";a="264928758"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 00:48:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
-   d="scan'208";a="685067167"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2022 00:48:16 -0700
-Date:   Wed, 13 Jul 2022 15:44:58 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 04/14] mm/shmem: Support memfile_notifier
-Message-ID: <20220713074458.GB2831541@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-5-chao.p.peng@linux.intel.com>
- <c4112b84-9359-d4c8-1852-0057c074607c@amd.com>
+        Wed, 13 Jul 2022 03:49:33 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9CADFC25AF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 00:49:20 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4C70A10E7EE5;
+        Wed, 13 Jul 2022 17:49:17 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oBX7T-000JlF-Vm; Wed, 13 Jul 2022 17:49:16 +1000
+Date:   Wed, 13 Jul 2022 17:49:15 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linuxfoundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        ansgar.loesser@kom.tu-darmstadt.de, Christoph Hellwig <hch@lst.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Security Officers <security@kernel.org>,
+        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
+        =?iso-8859-1?Q?Bj=F6rn?= Scheuermann 
+        <scheuermann@kom.tu-darmstadt.de>
+Subject: [PATCH] fs/remap: constrain dedupe of EOF blocks
+Message-ID: <20220713074915.GD3600936@dread.disaster.area>
+References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
+ <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
+ <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
+ <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
+ <Ys3TrAf95FpRgr+P@localhost.localdomain>
+ <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
+ <Ys4WdKSUTcvktuEl@magnolia>
+ <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
+ <20220713064631.GC3600936@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c4112b84-9359-d4c8-1852-0057c074607c@amd.com>
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220713064631.GC3600936@dread.disaster.area>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62ce78ff
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=8nJEP1OIZ-IA:10 a=RgO8CyIxsXoA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
+        a=jcsaIUBvv7G4UYzQmW8A:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 12, 2022 at 08:02:34PM +0200, Gupta, Pankaj wrote:
-> On 7/6/2022 10:20 AM, Chao Peng wrote:
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > 
-> > Implement shmem as a memfile_notifier backing store. Essentially it
-> > interacts with the memfile_notifier feature flags for userspace
-> > access/page migration/page reclaiming and implements the necessary
-> > memfile_backing_store callbacks.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >   include/linux/shmem_fs.h |   2 +
-> >   mm/shmem.c               | 109 ++++++++++++++++++++++++++++++++++++++-
-> >   2 files changed, 110 insertions(+), 1 deletion(-)
-...
+From: Dave Chinner <dchinner@redhat.com>
 
-> > +#ifdef CONFIG_MIGRATION
-> > +static int shmem_migrate_page(struct address_space *mapping,
-> > +			      struct page *newpage, struct page *page,
-> > +			      enum migrate_mode mode)
-> > +{
-> > +	struct inode *inode = mapping->host;
-> > +	struct shmem_inode_info *info = SHMEM_I(inode);
-> > +
-> > +	if (info->memfile_node.flags & MEMFILE_F_UNMOVABLE)
-> > +		return -EOPNOTSUPP;
-> > +	return migrate_page(mapping, newpage, page, mode);
-> 
-> Wondering how well page migrate would work for private pages
-> on shmem memfd based backend?
+If dedupe of an EOF block is not constrainted to match against only
+other EOF blocks with the same EOF offset into the block, it can
+match against any other block that has the same matching initial
+bytes in it, even if the bytes beyond EOF in the source file do
+not match.
 
-From high level:
-  - KVM unset MEMFILE_F_UNMOVABLE bit to indicate it capable of
-    migrating a page.
-  - Introduce new 'migrate' callback(s) to memfile_notifier_ops for KVM
-    to register.
-  - The callback is hooked to migrate_page() here.
-  - Once page migration requested, shmem calls into the 'migrate'
-    callback(s) to perform additional steps for encrypted memory (For
-    TDX we will call TDH.MEM.PAGE.RELOCATE).
+Fix this by constraining the EOF block matching to only match
+against other EOF blocks that have identical EOF offsets and data.
+This allows "whole file dedupe" to continue to work without allowing
+eof blocks to randomly match against partial full blocks with the
+same data.
 
-Chao
-> 
-> > +}
-> > +#endif
-> > +
-> >   const struct address_space_operations shmem_aops = {
-> >   	.writepage	= shmem_writepage,
-> >   	.dirty_folio	= noop_dirty_folio,
-> > @@ -3814,7 +3872,7 @@ const struct address_space_operations shmem_aops = {
-> >   	.write_end	= shmem_write_end,
-> >   #endif
-> >   #ifdef CONFIG_MIGRATION
-> > -	.migratepage	= migrate_page,
-> > +	.migratepage	= shmem_migrate_page,
-> >   #endif
-> >   	.error_remove_page = shmem_error_remove_page,
-> >   };
-> > @@ -3931,6 +3989,51 @@ static struct file_system_type shmem_fs_type = {
-> >   	.fs_flags	= FS_USERNS_MOUNT,
-> >   };
- 
+Reported-by: Ansgar Lößer <ansgar.loesser@tu-darmstadt.de>
+Fixes: 1383a7ed6749 ("vfs: check file ranges before cloning files")
+Link: https://lore.kernel.org/linux-fsdevel/a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de/
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+
+This is tested against the case provided in the initial report. Old
+kernel:
+
+$ ./dedupe.sh |less
+secret
+$
+
+Patched kernel:
+
+$ ./dedupe.sh
+dedupe-bug: t.c:90: main: Assertion `status != FILE_DEDUPE_RANGE_DIFFERS' failed.
+./dedupe.sh: line 11:  4831 Aborted /home/dave/dedupe-bug $MNT/writeonly.txt $MNT/test.tmp
+$
+
+So now it fails with FILE_DEDUPE_RANGE_DIFFERS because it can't use
+short files to discover the dedupe character match one byte at a
+time.
+
+It also passes fstests ismoke tests via running the './check -g
+dedupe' test group, so the fix doesn't obviously break anything.
+
+ fs/remap_range.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index e112b5424cdb..881a306ee247 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -71,7 +71,8 @@ static int generic_remap_checks(struct file *file_in, loff_t pos_in,
+ 	 * Otherwise, make sure the count is also block-aligned, having
+ 	 * already confirmed the starting offsets' block alignment.
+ 	 */
+-	if (pos_in + count == size_in) {
++	if (pos_in + count == size_in &&
++	    (!(remap_flags & REMAP_FILE_DEDUP) || pos_out + count == size_out)) {
+ 		bcount = ALIGN(size_in, bs) - pos_in;
+ 	} else {
+ 		if (!IS_ALIGNED(count, bs))
