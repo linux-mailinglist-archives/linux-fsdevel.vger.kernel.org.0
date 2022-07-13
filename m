@@ -2,105 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFBEC57402E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 01:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E67F574035
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 01:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231561AbiGMXs1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 19:48:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56306 "EHLO
+        id S231736AbiGMXwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 19:52:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230371AbiGMXsZ (ORCPT
+        with ESMTP id S230371AbiGMXwc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 19:48:25 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 203E74D4D3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 16:48:25 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 29ED110E8110;
-        Thu, 14 Jul 2022 09:48:22 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oBm5c-000a61-Gk; Thu, 14 Jul 2022 09:48:20 +1000
-Date:   Thu, 14 Jul 2022 09:48:20 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linuxfoundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        ansgar.loesser@kom.tu-darmstadt.de, Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Security Officers <security@kernel.org>,
-        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?iso-8859-1?Q?Bj=F6rn?= Scheuermann 
-        <scheuermann@kom.tu-darmstadt.de>
-Subject: Re: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly
- files
-Message-ID: <20220713234820.GF3600936@dread.disaster.area>
-References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
- <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
- <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
- <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
- <Ys3TrAf95FpRgr+P@localhost.localdomain>
- <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
- <Ys4WdKSUTcvktuEl@magnolia>
- <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
- <20220713064631.GC3600936@dread.disaster.area>
- <CAHk-=wjdndJozh+xbecdMo2MJ4_ZhWs3UoBgmuGXN2xjdeUktg@mail.gmail.com>
+        Wed, 13 Jul 2022 19:52:32 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31ABE52DF2;
+        Wed, 13 Jul 2022 16:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657756351; x=1689292351;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=d4b95Nutiv+fVkeoTmmbeGdels6G19ALZ7QCpFCTTwc=;
+  b=ec0iUFs99XSrMBcTD4mfXpTGHIwEqAsiwpuU0GWzLKvYLXib/Azi8/Ly
+   9SiWuFCJyvAZfo7rLKu5nf79sZvP+XJ6uh10Bz4eaKKMTjP83DO/NRwwk
+   m2H19M4PddgwWJsAoRb8+MPNz4kFHILwnuhNGexn3kqyeiEwcLlDCXmaR
+   f/0qxuApQRvbaQdu1Pxx0cgYHtScpq0DVs3CUY6sQAG+li45pLMiuilKj
+   9aEC94fvRy0+sWgWzOfKcnrFNwVTXXH0vp4CRxjh+iFcQB6PrH+VabVvQ
+   mFbVzKYeTFIA9a93CFf+yAD4urjaNXi2VrlFY5v1J6eCWO7OiDlGD4o6Y
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="371685475"
+X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
+   d="scan'208";a="371685475"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 16:52:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
+   d="scan'208";a="593176855"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 13 Jul 2022 16:52:20 -0700
+Date:   Thu, 14 Jul 2022 07:49:03 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 04/14] mm/shmem: Support memfile_notifier
+Message-ID: <20220713234903.GA2881285@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-5-chao.p.peng@linux.intel.com>
+ <c4112b84-9359-d4c8-1852-0057c074607c@amd.com>
+ <20220713074458.GB2831541@chaop.bj.intel.com>
+ <74097857-1908-2ff2-1e54-bf7e658ea6c6@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjdndJozh+xbecdMo2MJ4_ZhWs3UoBgmuGXN2xjdeUktg@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62cf59c8
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8
-        a=eYdKgMM6oUqLe4G3ecEA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <74097857-1908-2ff2-1e54-bf7e658ea6c6@amd.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 01:16:37AM -0700, Linus Torvalds wrote:
+On Wed, Jul 13, 2022 at 12:01:13PM +0200, Gupta, Pankaj wrote:
 > 
-> Can we please all agree that this code is too obscure for its own good?
+> > > > +#ifdef CONFIG_MIGRATION
+> > > > +static int shmem_migrate_page(struct address_space *mapping,
+> > > > +			      struct page *newpage, struct page *page,
+> > > > +			      enum migrate_mode mode)
+> > > > +{
+> > > > +	struct inode *inode = mapping->host;
+> > > > +	struct shmem_inode_info *info = SHMEM_I(inode);
+> > > > +
+> > > > +	if (info->memfile_node.flags & MEMFILE_F_UNMOVABLE)
+> > > > +		return -EOPNOTSUPP;
+> > > > +	return migrate_page(mapping, newpage, page, mode);
+> > > 
+> > > Wondering how well page migrate would work for private pages
+> > > on shmem memfd based backend?
+> > 
+> >  From high level:
+> >    - KVM unset MEMFILE_F_UNMOVABLE bit to indicate it capable of
+> >      migrating a page.
+> >    - Introduce new 'migrate' callback(s) to memfile_notifier_ops for KVM
+> >      to register.
+> >    - The callback is hooked to migrate_page() here.
+> >    - Once page migration requested, shmem calls into the 'migrate'
+> >      callback(s) to perform additional steps for encrypted memory (For
+> >      TDX we will call TDH.MEM.PAGE.RELOCATE).
+> 
+> Yes, that would require additional (protocol specific) handling for private
+> pages. Was trying to find where "MEMFILE_F_UNMOVABLE" flag is set currently?
 
-Oh, there's no denying that, or that the API is .... poor.
+It's set with memfile_register_notifier() in patch 13.
 
-The problem is that touching this code has a very high validation
-burden. Like Darrick, I'm familiar with this code because we were
-the poor shmucks who decided dedupe needed data integrity testing
-before we could support it in XFS. Three months of finding and
-fixing data corruption after data corruption in the ioctl/vfs layers
-and tens of billions of fsx ops later...
-
-... and the code has really not changed very much since then.
-
-That's the fundamental problem with rewriting this code - validating
-that changes have not introduced new data corruption bugs on XFS,
-btrfs, NFS and other idedupe supporting filesystems is time
-consuming and resource intensive.  And it can't be skipped, because
-corrupting user data is even worse than breaking userspace
-applications (i.e. you can fix the kernel so the apps run again, but
-corrupted data is gone forever).
-
-So while the code might be somewhat inscrutible for outsiders with
-no familiarity of the dedupe/clone APIs or it's required behaviours,
-it works as advertised and doesn't corrupt data. Hence for the past
-few years the rule "don't try to fix what ain't broke" has applied -
-we've all got plenty of stuff that is actually broken or deficient
-and needs to be fixed to deal with first....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 
+> Thanks,
+> Pankaj
