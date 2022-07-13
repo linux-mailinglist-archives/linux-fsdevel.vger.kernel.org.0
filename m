@@ -2,50 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6E0573B87
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 18:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DB0573B89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 18:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236995AbiGMQq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 12:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53212 "EHLO
+        id S236360AbiGMQrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 12:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236569AbiGMQqm (ORCPT
+        with ESMTP id S233370AbiGMQrT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 12:46:42 -0400
+        Wed, 13 Jul 2022 12:47:19 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3342FFD2;
-        Wed, 13 Jul 2022 09:46:41 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 70B7A1DDC;
-        Wed, 13 Jul 2022 16:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1657730731;
-        bh=+Kxi6wCqMCYp3uid88lNveT4fDMaGw09h6CkdfU5K6A=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=hiLucy7XTGMVKScpiHa+Gpk9vIwT1Gmbze39+X0o1vROp+khJq3lwy6gzkl7O6T+9
-         4C5QRS2LjjLDUqRHJIDHW0RTaHt0hK2s3UPCf9mLDLhWjovbeoOZyYKvwGglHbiz0I
-         GfddntXvhPbtC+HG8F/3W1GUPsR5wIlAIihKkqMM=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDD82F66F;
+        Wed, 13 Jul 2022 09:47:17 -0700 (PDT)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 041E4213E;
-        Wed, 13 Jul 2022 16:46:39 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id BADFE1DDC;
+        Wed, 13 Jul 2022 16:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1657730799;
-        bh=+Kxi6wCqMCYp3uid88lNveT4fDMaGw09h6CkdfU5K6A=;
+        d=paragon-software.com; s=mail; t=1657730767;
+        bh=LbmuPQY5mP/niQQZAD6y/cHTHk3ho0WyMWitsZ6l2sw=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=f9li3KrufgwTrm5ZEbWRHRqk0YQsOXz+B1weK916No18JJT9rdWccioHON9mDaWF4
-         zKpvA1nUmnCjmrBMXnazuBr2nI4CJP1uUfk0oLNZLiAnlYVJ3dpNqmPvd4MMR3YWeK
-         ws+kwGaTCAfKManicuHe2V39S1TXirMgq4bm/794=
+        b=TOZYl6/ThTMJz7JwIkTVUWK4o+ZWAmhYP1JAJnXGdPbQ6bdibDR9SEhPofDnWqby0
+         TOthxDsEwqoRuyM4U3nDHec1dhBck3TrhEQNtgT2mg4dqKyZU4DESELlyXHhnYi3K2
+         z53sS9DZocFTYcI9bN6lTjs37QgRoQr8D75tdIHQ=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 13 Jul 2022 19:46:38 +0300
-Message-ID: <ab84cf8a-63bc-fc54-9f0c-43b3ef2705ab@paragon-software.com>
-Date:   Wed, 13 Jul 2022 19:46:38 +0300
+ 15.1.2375.7; Wed, 13 Jul 2022 19:47:15 +0300
+Message-ID: <1282d35f-ed0d-e020-a4e5-8700744e2c3b@paragon-software.com>
+Date:   Wed, 13 Jul 2022 19:47:14 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: [PATCH 4/6] fs/ntfs3: Refactoring attr_insert_range to restore after
- errors
+Subject: [PATCH 5/6] fs/ntfs3: Create MFT zone only if length is large enough
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -66,189 +55,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added done and undo labels for restoring after errors
+Also removed uninformative print
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/attrib.c | 115 ++++++++++++++++++++++++++++++++++------------
-  1 file changed, 86 insertions(+), 29 deletions(-)
+  fs/ntfs3/fsntfs.c | 11 +++--------
+  1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-index 24d545041787..71f870d497ae 100644
---- a/fs/ntfs3/attrib.c
-+++ b/fs/ntfs3/attrib.c
-@@ -2275,28 +2275,29 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index e6f5bf684da4..d09213ae9755 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -806,12 +806,6 @@ int ntfs_refresh_zone(struct ntfs_sb_info *sbi)
   
-  	if (!attr_b->non_res) {
-  		err = attr_set_size(ni, ATTR_DATA, NULL, 0, run,
--				    data_size + bytes, NULL, false, &attr);
-+				    data_size + bytes, NULL, false, NULL);
-+
-+		le_b = NULL;
-+		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
-+				      &mi_b);
-+		if (!attr_b) {
-+			err = -EINVAL;
-+			goto bad_inode;
-+		}
-+
-  		if (err)
-  			goto out;
--		if (!attr->non_res) {
-+
-+		if (!attr_b->non_res) {
-  			/* Still resident. */
--			char *data = Add2Ptr(attr, attr->res.data_off);
-+			char *data = Add2Ptr(attr_b, attr_b->res.data_off);
-  
-  			memmove(data + bytes, data, bytes);
-  			memset(data, 0, bytes);
--			err = 0;
--			goto out;
-+			goto done;
-  		}
-+
-  		/* Resident files becomes nonresident. */
--		le_b = NULL;
--		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
--				      &mi_b);
--		if (!attr_b)
--			return -ENOENT;
--		if (!attr_b->non_res) {
--			err = -EINVAL;
--			goto out;
--		}
-  		data_size = le64_to_cpu(attr_b->nres.data_size);
-  		alloc_size = le64_to_cpu(attr_b->nres.alloc_size);
-  	}
-@@ -2314,14 +2315,14 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
-  		mi = mi_b;
-  	} else if (!le_b) {
-  		err = -EINVAL;
--		goto out;
-+		goto bad_inode;
-  	} else {
-  		le = le_b;
-  		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-  				    &mi);
-  		if (!attr) {
-  			err = -EINVAL;
--			goto out;
-+			goto bad_inode;
-  		}
-  
-  		svcn = le64_to_cpu(attr->nres.svcn);
-@@ -2344,7 +2345,6 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
-  		goto out;
-  
-  	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
--	run_truncate_head(run, next_svcn);
-  
-  	while ((attr = ni_enum_attr_ex(ni, attr, &le, &mi)) &&
-  	       attr->type == ATTR_DATA && !attr->name_len) {
-@@ -2357,9 +2357,27 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
-  		mi->dirty = true;
-  	}
-  
-+	if (next_svcn < evcn1 + len) {
-+		err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run,
-+					    next_svcn, evcn1 + len - next_svcn,
-+					    a_flags, NULL, NULL, NULL);
-+
-+		le_b = NULL;
-+		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
-+				      &mi_b);
-+		if (!attr_b) {
-+			err = -EINVAL;
-+			goto bad_inode;
-+		}
-+
-+		if (err) {
-+			/* ni_insert_nonresident failed. Try to undo. */
-+			goto undo_insert_range;
-+		}
-+	}
-+
-  	/*
--	 * Update primary attribute segment in advance.
--	 * pointer attr_b may become invalid (layout of mft is changed)
-+	 * Update primary attribute segment.
-  	 */
-  	if (vbo <= ni->i_valid)
-  		ni->i_valid += bytes;
-@@ -2374,14 +2392,7 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
-  		attr_b->nres.valid_size = cpu_to_le64(ni->i_valid);
-  	mi_b->dirty = true;
-  
--	if (next_svcn < evcn1 + len) {
--		err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run,
--					    next_svcn, evcn1 + len - next_svcn,
--					    a_flags, NULL, NULL, NULL);
--		if (err)
--			goto out;
+  	/* Try to allocate clusters after last MFT run. */
+  	zlen = wnd_find(wnd, sbi->zone_max, lcn_s, 0, &lcn_s);
+-	if (!zlen) {
+-		ntfs_notice(sbi->sb, "MftZone: unavailable");
+-		return 0;
 -	}
 -
-+done:
-  	ni->vfs_inode.i_size += bytes;
-  	ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-  	mark_inode_dirty(&ni->vfs_inode);
-@@ -2390,8 +2401,54 @@ int attr_insert_range(struct ntfs_inode *ni, u64 vbo, u64 bytes)
-  	run_truncate(run, 0); /* clear cached values. */
+-	/* Truncate too large zone. */
+  	wnd_zone_set(wnd, lcn_s, zlen);
   
-  	up_write(&ni->file.run_lock);
--	if (err)
--		_ntfs_bad_inode(&ni->vfs_inode);
+  	return 0;
+@@ -2473,8 +2467,9 @@ void mark_as_free_ex(struct ntfs_sb_info *sbi, CLST lcn, CLST len, bool trim)
+  	if (zlen == zone_len) {
+  		/* MFT zone already has maximum size. */
+  	} else if (!zone_len) {
+-		/* Create MFT zone. */
+-		wnd_zone_set(wnd, lcn, zlen);
++		/* Create MFT zone only if 'zlen' is large enough. */
++		if (zlen == sbi->zone_max)
++			wnd_zone_set(wnd, lcn, zlen);
+  	} else {
+  		CLST zone_lcn = wnd_zone_bit(wnd);
   
-  	return err;
-+
-+bad_inode:
-+	_ntfs_bad_inode(&ni->vfs_inode);
-+	goto out;
-+
-+undo_insert_range:
-+	svcn = le64_to_cpu(attr_b->nres.svcn);
-+	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
-+
-+	if (svcn <= vcn && vcn < evcn1) {
-+		attr = attr_b;
-+		le = le_b;
-+		mi = mi_b;
-+	} else if (!le_b) {
-+		goto bad_inode;
-+	} else {
-+		le = le_b;
-+		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-+				    &mi);
-+		if (!attr) {
-+			goto bad_inode;
-+		}
-+
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
-+	}
-+
-+	if (attr_load_runs(attr, ni, run, NULL))
-+		goto bad_inode;
-+
-+	if (!run_collapse_range(run, vcn, len))
-+		goto bad_inode;
-+
-+	if (mi_pack_runs(mi, attr, run, evcn1 + len - svcn))
-+		goto bad_inode;
-+
-+	while ((attr = ni_enum_attr_ex(ni, attr, &le, &mi)) &&
-+	       attr->type == ATTR_DATA && !attr->name_len) {
-+		le64_sub_cpu(&attr->nres.svcn, len);
-+		le64_sub_cpu(&attr->nres.evcn, len);
-+		if (le) {
-+			le->vcn = attr->nres.svcn;
-+			ni->attr_list.dirty = true;
-+		}
-+		mi->dirty = true;
-+	}
-+
-+	goto out;
-  }
 -- 
 2.37.0
 
