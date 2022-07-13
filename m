@@ -2,202 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 068B257368F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 14:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7906257375C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 15:27:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbiGMMsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 08:48:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33988 "EHLO
+        id S236263AbiGMN1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 09:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiGMMsN (ORCPT
+        with ESMTP id S236144AbiGMN1M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 08:48:13 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75882224;
-        Wed, 13 Jul 2022 05:48:11 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4LjcmG5Tvnz1L96G;
-        Wed, 13 Jul 2022 20:45:34 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 13 Jul 2022 20:48:07 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600013.china.huawei.com
- (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 13 Jul
- 2022 20:48:06 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <ebiederm@xmission.com>, <willy@infradead.org>, <bhe@redhat.com>,
-        <bfoster@redhat.com>, <akpm@linux-foundation.org>,
-        <kaleshsingh@google.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>, <yukuai3@huawei.com>
-Subject: [PATCH v5] proc: Fix a dentry lock race between release_task and lookup
-Date:   Wed, 13 Jul 2022 21:00:29 +0800
-Message-ID: <20220713130029.4133533-1-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 13 Jul 2022 09:27:12 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF09B7EC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 06:27:10 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C161A33D85;
+        Wed, 13 Jul 2022 13:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1657718828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xSttkQibOdpLVJNx+valLwwJwjzjQSj9FMSHu4JsuBw=;
+        b=2BmCELKzLQf1nkiT8LfUAVeuziqZCZ8EAa1qI9J3RGSC+3iIKruBmWW1U/ue0LQWPlmbbE
+        Y6UK3E7xNIIvSwCXiGgsjxjdhwS+XIK1Y2uIERuU34qoa9lhfAEl5GMdXWI1EmKSNUFkmU
+        pTkEqpO6GKmhupfByDzL8+SnLS4Ints=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1657718828;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xSttkQibOdpLVJNx+valLwwJwjzjQSj9FMSHu4JsuBw=;
+        b=WIHvBDrZ7Ij9z93tYvGYf8C3j49kL3XmRHfbZPWlJhJrKSHZyfsDj2QjwskR8F5kMBaqB8
+        XVnYVAFaAD1XaaDQ==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id EB9732C142;
+        Wed, 13 Jul 2022 13:27:07 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 52EE2A0635; Wed, 13 Jul 2022 15:27:01 +0200 (CEST)
+Date:   Wed, 13 Jul 2022 15:27:01 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Mike Rapoport <rppt@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot+9bd2b7adbd34b30b87e4@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] secretmem: fix unhandled fault in truncate
+Message-ID: <20220713132701.rnb5eieno4gmpvqh@quack3>
+References: <20220707165650.248088-1-rppt@kernel.org>
+ <CAHbLzkqLPi9i3BspCLUe=eZ4huTY2ZnbfD19K_ShsaOC47En_w@mail.gmail.com>
+ <YsdITMg5xZiu8Yoh@magnolia>
+ <CAHbLzkpnkcFg5hOf49V=gFSvTWsWUe_M8-69knDpvSSdua+x4w@mail.gmail.com>
+ <Ysfqxg9Ury1NX27N@kernel.org>
+ <CAHbLzkpB59wX-U4Y4Bs4hxAZKy9JG29UtRPks1458VredwRxTg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHbLzkpB59wX-U4Y4Bs4hxAZKy9JG29UtRPks1458VredwRxTg@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
-moved proc_flush_task() behind __exit_signal(). Then, process systemd
-can take long period high cpu usage during releasing task in following
-concurrent processes:
+On Tue 12-07-22 10:40:11, Yang Shi wrote:
+> On Fri, Jul 8, 2022 at 1:29 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Thu, Jul 07, 2022 at 03:09:32PM -0700, Yang Shi wrote:
+> > > On Thu, Jul 7, 2022 at 1:55 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jul 07, 2022 at 10:48:00AM -0700, Yang Shi wrote:
+> > > > > On Thu, Jul 7, 2022 at 9:57 AM Mike Rapoport <rppt@kernel.org> wrote:
+> > > > > >
+> > > > > > Eric Biggers suggested that this happens when
+> > > > > > secretmem_setattr()->simple_setattr() races with secretmem_fault() so
+> > > > > > that a page that is faulted in by secretmem_fault() (and thus removed
+> > > > > > from the direct map) is zeroed by inode truncation right afterwards.
+> > > > > >
+> > > > > > Since do_truncate() takes inode_lock(), adding inode_lock_shared() to
+> > > > > > secretmem_fault() prevents the race.
+> > > > >
+> > > > > Should invalidate_lock be used to serialize between page fault and truncate?
+> > > >
+> > > > I would have thought so, given Documentation/filesystems/locking.rst:
+> > > >
+> > > > "->fault() is called when a previously not present pte is about to be
+> > > > faulted in. The filesystem must find and return the page associated with
+> > > > the passed in "pgoff" in the vm_fault structure. If it is possible that
+> > > > the page may be truncated and/or invalidated, then the filesystem must
+> > > > lock invalidate_lock, then ensure the page is not already truncated
+> > > > (invalidate_lock will block subsequent truncate), and then return with
+> > > > VM_FAULT_LOCKED, and the page locked. The VM will unlock the page."
+> > > >
+> > > > IIRC page faults aren't supposed to take i_rwsem because the fault could
+> > > > be in response to someone mmaping a file into memory and then write()ing
+> > > > to the same file using the mmapped region.  The write() takes
+> > > > inode_lock and faults on the buffer, so the fault cannot take inode_lock
+> > > > again.
+> > >
+> > > Do you mean writing from one part of the file to the other part of the
+> > > file so the "from" buffer used by copy_from_user() is part of the
+> > > mmaped region?
+> > >
+> > > Another possible deadlock issue by using inode_lock in page faults is
+> > > mmap_lock is acquired before inode_lock, but write may acquire
+> > > inode_lock before mmap_lock, it is a AB-BA lock pattern, but it should
+> > > not cause real deadlock since mmap_lock is not exclusive for page
+> > > faults. But such pattern should be avoided IMHO.
+> > >
+> > > > That said... I don't think memfd_secret files /can/ be written to?
+> >
+> > memfd_secret files cannot be written to, they can only be mmap()ed.
+> > Synchronization is only required between
+> > do_truncate()->...->simple_setatt() and secretmem->fault() and I don't see
+> > how that can deadlock.
+> 
+> Sure, there is no deadlock.
+> 
+> >
+> > I'm not an fs expert though, so if you think that invalidate_lock() is
+> > safer, I don't mind s/inode_lock/invalidate_lock/ in the patch.
+> 
+> IIUC invalidate_lock should be preferred per the filesystem's locking
+> document. And I found Jan Kara's email of the invalidate_lock
+> patchset, please refer to
+> https://lore.kernel.org/linux-mm/20210715133202.5975-1-jack@suse.cz/.
 
-  systemd                                 ps
-kernel_waitid                 stat(/proc/tgid)
-  do_wait                       filename_lookup
-    wait_consider_task            lookup_fast
-      release_task
-        __exit_signal
-          __unhash_process
-            detach_pid
-              __change_pid // remove task->pid_links
-                                     d_revalidate -> pid_revalidate  // 0
-                                     d_invalidate(/proc/tgid)
-                                       shrink_dcache_parent(/proc/tgid)
-                                         d_walk(/proc/tgid)
-                                           spin_lock_nested(/proc/tgid/fd)
-                                           // iterating opened fd
-        proc_flush_pid                                    |
-           d_invalidate (/proc/tgid/fd)                   |
-              shrink_dcache_parent(/proc/tgid/fd)         |
-                shrink_dentry_list(subdirs)               ↓
-                  shrink_lock_dentry(/proc/tgid/fd) --> race on dentry lock
+Yeah, so using invalidate_lock for such synchronization would be certainly
+more standard than using inode_lock. Although I agree that for filesystems
+that do not support read(2) and write(2) there does not seem to be an
+immediate risk of a deadlock when inode_lock is used inside a page fault.
 
-Function d_invalidate() will remove dentry from hash firstly, but why does
-proc_flush_pid() process dentry '/proc/tgid/fd' before dentry '/proc/tgid'?
-That's because proc_pid_make_inode() adds proc inode in reverse order by
-invoking hlist_add_head_rcu(). But proc should not add any inodes under
-'/proc/tgid' except '/proc/tgid/task/pid', fix it by adding inode into
-'pid->inodes' only if the inode is /proc/tgid or /proc/tgid/task/pid.
+								Honza
 
-Performance regression:
-Create 200 tasks, each task open one file for 50,000 times. Kill all
-tasks when opened files exceed 10,000,000 (cat /proc/sys/fs/file-nr).
-
-Before fix:
-$ time killall -wq aa
-  real    4m40.946s   # During this period, we can see 'ps' and 'systemd'
-			taking high cpu usage.
-
-After fix:
-$ time killall -wq aa
-  real    1m20.732s   # During this period, we can see 'systemd' taking
-			high cpu usage.
-
-Fixes: 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=216054
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Suggested-by: Brian Foster <bfoster@redhat.com>
----
- v1->v2: Add new helper proc_pid_make_base_inode that performs the extra
-	 work of adding to the pid->list.
- v2->v3: Add performance regression in commit message.
- v3->v4: Make proc_pid_make_base_inode() static
- v4->v5: Add notes to explain what proc_pid_make_base_inode() does
- fs/proc/base.c | 46 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 8 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 8dfa36a99c74..93f7e3d971e4 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1885,7 +1885,7 @@ void proc_pid_evict_inode(struct proc_inode *ei)
- 	put_pid(pid);
- }
- 
--struct inode *proc_pid_make_inode(struct super_block * sb,
-+struct inode *proc_pid_make_inode(struct super_block *sb,
- 				  struct task_struct *task, umode_t mode)
- {
- 	struct inode * inode;
-@@ -1914,11 +1914,6 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 
- 	/* Let the pid remember us for quick removal */
- 	ei->pid = pid;
--	if (S_ISDIR(mode)) {
--		spin_lock(&pid->lock);
--		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
--		spin_unlock(&pid->lock);
--	}
- 
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
- 	security_task_to_inode(task, inode);
-@@ -1931,6 +1926,39 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	return NULL;
- }
- 
-+/*
-+ * Generating an inode and adding it into @pid->inodes, so that task will
-+ * invalidate inode's dentry before being released.
-+ *
-+ * This helper is used for creating dir-type entries under '/proc' and
-+ * '/proc/<tgid>/task'. Other entries(eg. fd, stat) under '/proc/<tgid>'
-+ * can be released by invalidating '/proc/<tgid>' dentry.
-+ * In theory, dentries under '/proc/<tgid>/task' can also be released by
-+ * invalidating '/proc/<tgid>' dentry, we reserve it to handle single
-+ * thread exiting situation: Any one of threads should invalidate its
-+ * '/proc/<tgid>/task/<pid>' dentry before released.
-+ */
-+static struct inode *proc_pid_make_base_inode(struct super_block *sb,
-+				struct task_struct *task, umode_t mode)
-+{
-+	struct inode *inode;
-+	struct proc_inode *ei;
-+	struct pid *pid;
-+
-+	inode = proc_pid_make_inode(sb, task, mode);
-+	if (!inode)
-+		return NULL;
-+
-+	/* Let proc_flush_pid find this directory inode */
-+	ei = PROC_I(inode);
-+	pid = ei->pid;
-+	spin_lock(&pid->lock);
-+	hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-+	spin_unlock(&pid->lock);
-+
-+	return inode;
-+}
-+
- int pid_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int query_flags)
- {
-@@ -3369,7 +3397,8 @@ static struct dentry *proc_pid_instantiate(struct dentry * dentry,
- {
- 	struct inode *inode;
- 
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task,
-+					 S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
-@@ -3671,7 +3700,8 @@ static struct dentry *proc_task_instantiate(struct dentry *dentry,
- 	struct task_struct *task, const void *ptr)
- {
- 	struct inode *inode;
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task,
-+					 S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
 -- 
-2.31.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
