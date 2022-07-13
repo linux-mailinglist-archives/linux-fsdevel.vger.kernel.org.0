@@ -2,126 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA737572F99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 09:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7222F572FEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 10:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234250AbiGMHty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 03:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
+        id S234828AbiGMIB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 04:01:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231130AbiGMHtd (ORCPT
+        with ESMTP id S231664AbiGMIBZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 03:49:33 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9CADFC25AF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 00:49:20 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4C70A10E7EE5;
-        Wed, 13 Jul 2022 17:49:17 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oBX7T-000JlF-Vm; Wed, 13 Jul 2022 17:49:16 +1000
-Date:   Wed, 13 Jul 2022 17:49:15 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linuxfoundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        ansgar.loesser@kom.tu-darmstadt.de, Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Security Officers <security@kernel.org>,
-        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?iso-8859-1?Q?Bj=F6rn?= Scheuermann 
-        <scheuermann@kom.tu-darmstadt.de>
-Subject: [PATCH] fs/remap: constrain dedupe of EOF blocks
-Message-ID: <20220713074915.GD3600936@dread.disaster.area>
-References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
- <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
- <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
- <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
- <Ys3TrAf95FpRgr+P@localhost.localdomain>
- <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
- <Ys4WdKSUTcvktuEl@magnolia>
- <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
- <20220713064631.GC3600936@dread.disaster.area>
+        Wed, 13 Jul 2022 04:01:25 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED1FE024B;
+        Wed, 13 Jul 2022 01:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657699284; x=1689235284;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=7ENYqPqKTk0ESIJ/QoNgf3KZMY16w1kA6fyDKtIJ5rs=;
+  b=kNCjkJ85qfjLYK9qXQSQByNS+v9xJRKUpuzu8lH80gStYi9Iozs7Rl0h
+   0HWCpUEP5oZSEvmpeWEXVAV+YKETkCaOUeZ3C7XOuk59dNVJkhoQKYaEI
+   GiPmRlpQ8wZQPNJDZokx6u0l3H9jYr7KtOsoh0Dwl96MjgUuJBz++qjsh
+   kqkF32AcVYSyINx5VEzI0vbCScmCr08tsJaZJ4tMhc+b6DZ6c8Rp6xi4C
+   /RCaXDMVFL9tbZ+xIJdK2hij6L3q9l23+m8Kt8u3D76xOALO4b1TytUNh
+   VIeD9HjgOzaIS2Tf8JHtjjtaePuqrlqN41IOwCDb860KmKZJPxx2d0s75
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10406"; a="286277206"
+X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
+   d="scan'208";a="286277206"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 01:01:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
+   d="scan'208";a="685071104"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2022 01:00:56 -0700
+Date:   Wed, 13 Jul 2022 15:57:38 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220713075738.GC2831541@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <b1c12a4b-46f7-081b-242f-005a8824aad1@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220713064631.GC3600936@dread.disaster.area>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62ce78ff
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=8nJEP1OIZ-IA:10 a=RgO8CyIxsXoA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
-        a=jcsaIUBvv7G4UYzQmW8A:9 a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <b1c12a4b-46f7-081b-242f-005a8824aad1@amd.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+On Wed, Jul 13, 2022 at 05:58:32AM +0200, Gupta, Pankaj wrote:
+> 
+> > This is the v7 of this series which tries to implement the fd-based KVM
+> > guest private memory. The patches are based on latest kvm/queue branch
+> > commit:
+> > 
+> >    b9b71f43683a (kvm/queue) KVM: x86/mmu: Buffer nested MMU
+> > split_desc_cache only by default capacity
+> > 
+> > Introduction
+> > ------------
+> > In general this patch series introduce fd-based memslot which provides
+> > guest memory through memory file descriptor fd[offset,size] instead of
+> > hva/size. The fd can be created from a supported memory filesystem
+> > like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
+> 
+> Thinking a bit, As host side fd on tmpfs or shmem will store memory on host
+> page cache instead of mapping pages into userspace address space. Can we hit
+> double (un-coordinated) page cache problem with this when guest page cache
+> is also used?
 
-If dedupe of an EOF block is not constrainted to match against only
-other EOF blocks with the same EOF offset into the block, it can
-match against any other block that has the same matching initial
-bytes in it, even if the bytes beyond EOF in the source file do
-not match.
+This is my understanding: in host it will be indeed in page cache (in
+current shmem implementation) but that's just the way it allocates and
+provides the physical memory for the guest. In guest, guest OS will not
+see this fd (absolutely), it only sees guest memory, on top of which it
+can build its own page cache system for its own file-mapped content but
+that is unrelated to host page cache.
 
-Fix this by constraining the EOF block matching to only match
-against other EOF blocks that have identical EOF offsets and data.
-This allows "whole file dedupe" to continue to work without allowing
-eof blocks to randomly match against partial full blocks with the
-same data.
-
-Reported-by: Ansgar Lößer <ansgar.loesser@tu-darmstadt.de>
-Fixes: 1383a7ed6749 ("vfs: check file ranges before cloning files")
-Link: https://lore.kernel.org/linux-fsdevel/a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de/
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
-
-This is tested against the case provided in the initial report. Old
-kernel:
-
-$ ./dedupe.sh |less
-secret
-$
-
-Patched kernel:
-
-$ ./dedupe.sh
-dedupe-bug: t.c:90: main: Assertion `status != FILE_DEDUPE_RANGE_DIFFERS' failed.
-./dedupe.sh: line 11:  4831 Aborted /home/dave/dedupe-bug $MNT/writeonly.txt $MNT/test.tmp
-$
-
-So now it fails with FILE_DEDUPE_RANGE_DIFFERS because it can't use
-short files to discover the dedupe character match one byte at a
-time.
-
-It also passes fstests ismoke tests via running the './check -g
-dedupe' test group, so the fix doesn't obviously break anything.
-
- fs/remap_range.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index e112b5424cdb..881a306ee247 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -71,7 +71,8 @@ static int generic_remap_checks(struct file *file_in, loff_t pos_in,
- 	 * Otherwise, make sure the count is also block-aligned, having
- 	 * already confirmed the starting offsets' block alignment.
- 	 */
--	if (pos_in + count == size_in) {
-+	if (pos_in + count == size_in &&
-+	    (!(remap_flags & REMAP_FILE_DEDUP) || pos_out + count == size_out)) {
- 		bcount = ALIGN(size_in, bs) - pos_in;
- 	} else {
- 		if (!IS_ALIGNED(count, bs))
+Chao
+> 
+> Thanks,
+> Pankaj
+> 
