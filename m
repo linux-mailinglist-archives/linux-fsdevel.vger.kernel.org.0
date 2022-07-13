@@ -2,126 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7222F572FEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 10:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CD15730D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 10:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234828AbiGMIB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 04:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
+        id S235523AbiGMIVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 04:21:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbiGMIBZ (ORCPT
+        with ESMTP id S235110AbiGMIUw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 04:01:25 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED1FE024B;
-        Wed, 13 Jul 2022 01:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657699284; x=1689235284;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=7ENYqPqKTk0ESIJ/QoNgf3KZMY16w1kA6fyDKtIJ5rs=;
-  b=kNCjkJ85qfjLYK9qXQSQByNS+v9xJRKUpuzu8lH80gStYi9Iozs7Rl0h
-   0HWCpUEP5oZSEvmpeWEXVAV+YKETkCaOUeZ3C7XOuk59dNVJkhoQKYaEI
-   GiPmRlpQ8wZQPNJDZokx6u0l3H9jYr7KtOsoh0Dwl96MjgUuJBz++qjsh
-   kqkF32AcVYSyINx5VEzI0vbCScmCr08tsJaZJ4tMhc+b6DZ6c8Rp6xi4C
-   /RCaXDMVFL9tbZ+xIJdK2hij6L3q9l23+m8Kt8u3D76xOALO4b1TytUNh
-   VIeD9HjgOzaIS2Tf8JHtjjtaePuqrlqN41IOwCDb860KmKZJPxx2d0s75
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10406"; a="286277206"
-X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
-   d="scan'208";a="286277206"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 01:01:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
-   d="scan'208";a="685071104"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2022 01:00:56 -0700
-Date:   Wed, 13 Jul 2022 15:57:38 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <20220713075738.GC2831541@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <b1c12a4b-46f7-081b-242f-005a8824aad1@amd.com>
+        Wed, 13 Jul 2022 04:20:52 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF02D5464E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 01:16:59 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id sz17so18497737ejc.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 01:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m8kgQPuUH8sMZbqBDu6Yvo0zZMPK8MB4N3c8nJfJPrI=;
+        b=LWbDQuQkejb7dVQP9BxfiFEePUYcuSS8G2u4BCnVYvqCkjRhvsA/K0SzL5ToUlhMqw
+         wsd49pLcDVMAW21ehoYq5RxXVptYyJfYfpIhOW6z+GN3pndMthVv1Fy0O95ab4FZ1flN
+         C4MJQ1B42EK/jeCNCIr1ORAZbSXPd68Nnw96E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m8kgQPuUH8sMZbqBDu6Yvo0zZMPK8MB4N3c8nJfJPrI=;
+        b=ETLw8e6tBSe9S4XxGH7G3KtHXT5GTNC1e5fK+280BmWT5RAZRu7eNP8kRKBNGoi/lA
+         FfBOB72fwAR+FIW05TDqLGqxw9rVFUo2Ze7Tt2vcGM2QKx1mNPo9/dyrtD+6CCcCTa9e
+         eWLyArtclDYOXbiLMT1IGtwcdur9eWKjshJNvQYAWbFOvTzAhPWR4TutvxD52c6TxTV4
+         09DZaYyYS7IBkrEbPwMqx9RRuZpsPvDwMo6QCF0X1G//c44cGkuZSZgpJ9erLzy84VsQ
+         q3kWVzu9H+UhNuOi/zm1MakRWCsHON2TP3j8o4ELDrSFD8uODNN9fl1bQ10IZTXam/VP
+         KV1A==
+X-Gm-Message-State: AJIora8iLPMNVUUygTz35tKPdKh0/8ZaNfkI+NCJCMLJ6TO+F1oHkF3Y
+        DwpL7RetyoTRXYTJGmz2LQap/trGewDLQ863fTo=
+X-Google-Smtp-Source: AGRyM1tJcD3lqeCDIFmBwJKqOjnedKJKDtPhWIiwMz9fQI/Jj+MAK/Msqjjz4wXNl76vwg8W5rlBhw==
+X-Received: by 2002:a17:907:7604:b0:72b:4ad5:b21c with SMTP id jx4-20020a170907760400b0072b4ad5b21cmr2182236ejc.412.1657700217900;
+        Wed, 13 Jul 2022 01:16:57 -0700 (PDT)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id 18-20020a170906201200b00722e50e259asm4631230ejo.102.2022.07.13.01.16.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jul 2022 01:16:55 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id h17so14433906wrx.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 01:16:54 -0700 (PDT)
+X-Received: by 2002:a05:6000:1f8c:b0:21d:7e98:51ba with SMTP id
+ bw12-20020a0560001f8c00b0021d7e9851bamr1919032wrb.442.1657700214277; Wed, 13
+ Jul 2022 01:16:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1c12a4b-46f7-081b-242f-005a8824aad1@amd.com>
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
+ <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
+ <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
+ <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
+ <Ys3TrAf95FpRgr+P@localhost.localdomain> <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
+ <Ys4WdKSUTcvktuEl@magnolia> <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
+ <20220713064631.GC3600936@dread.disaster.area>
+In-Reply-To: <20220713064631.GC3600936@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linuxfoundation.org>
+Date:   Wed, 13 Jul 2022 01:16:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjdndJozh+xbecdMo2MJ4_ZhWs3UoBgmuGXN2xjdeUktg@mail.gmail.com>
+Message-ID: <CAHk-=wjdndJozh+xbecdMo2MJ4_ZhWs3UoBgmuGXN2xjdeUktg@mail.gmail.com>
+Subject: Re: Information Leak: FIDEDUPERANGE ioctl allows reading writeonly files
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        ansgar.loesser@kom.tu-darmstadt.de, Christoph Hellwig <hch@lst.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Security Officers <security@kernel.org>,
+        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
+        =?UTF-8?Q?Bj=C3=B6rn_Scheuermann?= 
+        <scheuermann@kom.tu-darmstadt.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 05:58:32AM +0200, Gupta, Pankaj wrote:
-> 
-> > This is the v7 of this series which tries to implement the fd-based KVM
-> > guest private memory. The patches are based on latest kvm/queue branch
-> > commit:
-> > 
-> >    b9b71f43683a (kvm/queue) KVM: x86/mmu: Buffer nested MMU
-> > split_desc_cache only by default capacity
-> > 
-> > Introduction
-> > ------------
-> > In general this patch series introduce fd-based memslot which provides
-> > guest memory through memory file descriptor fd[offset,size] instead of
-> > hva/size. The fd can be created from a supported memory filesystem
-> > like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
-> 
-> Thinking a bit, As host side fd on tmpfs or shmem will store memory on host
-> page cache instead of mapping pages into userspace address space. Can we hit
-> double (un-coordinated) page cache problem with this when guest page cache
-> is also used?
+On Tue, Jul 12, 2022 at 11:46 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> Hence if we restrict EOF block deduping to both the src and dst
+> files having matching EOF offsets in their EOF blocks like so:
+>
+> -       if (pos_in + count == size_in) {
+> +       if (pos_in + count == size_in &&
+> +           (!(remap_flags & REMAP_FILE_DEDUP) || pos_out + count == size_out)) {
+>                  bcount = ALIGN(size_in, bs) - pos_in;
 
-This is my understanding: in host it will be indeed in page cache (in
-current shmem implementation) but that's just the way it allocates and
-provides the physical memory for the guest. In guest, guest OS will not
-see this fd (absolutely), it only sees guest memory, on top of which it
-can build its own page cache system for its own file-mapped content but
-that is unrelated to host page cache.
+I agree with checking the target size too.
 
-Chao
-> 
-> Thanks,
-> Pankaj
-> 
+And I can see how missing that might cause the problem.
+
+I don't think that is limited to the REMAP_FILE_DEDUP case, though.
+Even if you a clone operation, you cannot just clone the EOF block to
+some random part of the destination.
+
+Anyway, isn't all of this supposed to be done by
+generic_remap_check_len()? That function already takes care of a
+similar concern for REMAP_FILE_CAN_SHORTEN, where the size of the
+*output* file matters.
+
+So generic_remap_check_len() basically already does one EOF block
+check for the output file. It just doesn't do it for the input side.
+
+And currently generic_remap_check_len() is done too late for
+REMAP_FILE_DEDUP, which did its handling just before calling it.
+
+So while I agree with your patch from a "this seems to be the
+underlying bug", I think the fix should be to move this "both EOF
+blocks have to match" logic to generic_remap_check_len(), and just do
+that *before* that
+
+        if (remap_flags & REMAP_FILE_DEDUP) {
+
+in generic_remap_file_range_prep().
+
+No?
+
+That said, the rest of that code in generic_remap_checks() still makes
+little to no sense to me.
+
+Look:
+
+>                  bcount = ALIGN(size_in, bs) - pos_in;
+
+and we literally *just* checked that "pos_in + count == size_in".
+
+So we can write that as
+
+>                  bcount = ALIGN(pos_in + count, bs) - pos_in;
+
+That doesn't look simpler, but...
+
+Again, just a few lines above this all, we had
+
+>         if (!IS_ALIGNED(pos_in, bs) || !IS_ALIGNED(pos_out, bs))
+>                 return -EINVAL;
+
+so we know that 'pos_in' is aligned wrt bs.
+
+So we can rewrite that "ALIGN(pos_in + count, bs)" as "pos_in +
+ALIGN(count, bs)", because 'pos_in' doesn't change anything wrt an
+alignment operation.
+
+And then trivial simplification ("pos_in - pos_in goes away") makes
+the whole expression be just
+
+>                  bcount = ALIGN(count, bs);
+
+which just once more makes me go "maybe this code works, but it is
+clearly written for maximum nonsensical value".
+
+The "else" side is equally overly complex too, and does
+
+                if (!IS_ALIGNED(count, bs))
+                        count = ALIGN_DOWN(count, bs);
+                bcount = count;
+
+which is just a really complicated way to write
+
+                bcount = ALIGN_DOWN(count, bs);
+                count = bcount;
+
+so that side if the if-statement knew that it could just align the
+count directly, but decided to do that in the least obvious way too.
+
+If 'count' was already aligned, ALIGN_DOWN() does nothing. And masking
+is much cheaper than testing and branching.
+
+Not to mention just *simpler*: One case aligns up to the next block
+boundary ("include the shared EOF block"), the other case aligns down
+("only try to merge full blocks")./
+
+Now the code makes sense, although it's still somewhat subtle in that
+the align-down case will also update 'count' (which is returned),
+while the EOF code will only set 'bcount' (which is only used for the
+overlapping range check) .
+
+But then, when you look at that and understand what's going on, that
+in turn then makes *another* thing obvious: the whole existence of
+'bcount' is entirely pointless.
+
+Because 'bcount' is only used for that range check, and for the
+non-EOF case it's the same as 'count'.
+
+And for the EOF case, doing that alignment is entirely pointless,
+since if the in/out inodes are the same, then the file size is going
+to be the same, and the EOF block is going to overlap whether bcount
+was aligned to block boundary or not.
+
+So the EOF case might as well just have made 'bcount = count' without
+any alignment to the next block boundary at all.
+
+And once it does that, now bcount is _always_ the same as count, and
+there is no point in having bcount at all.
+
+So after doing all the above simplification, you can then get rid of
+'bcount' entirely.
+
+> So, yeah, I think arguing about permissions and API and all that
+> stuff is just going completely down the wrong track because it
+> doesn't actually address the root cause of the information leak....
+
+I agree that getting this "check the right range" thing right is the
+prime thing.
+
+The code being *very* hard to follow and not having any obvious rules
+really does not help, though. The permission checks are odd. And the
+range checks were odd and inscrutable and buggy to boot.
+
+Yes, I require that people don't break user space. That's the #1 rule
+of kernel development.
+
+But that does not mean or imply "write incomprehensible code".
+
+And honestly, I think your suggested patch just makes incomprehensibly
+and pointlessly complex code even more so.
+
+Which is why I'm suggesting the real fix is to clean it up, and mover
+that EOF offset check to generic_remap_check_len() where it belongs,
+and where we already have that comment:
+
+ * ... For deduplication we accept a partial EOF block only if it ends at the
+ * destination file's EOF (can not link it into the middle of a file).
+
+but that comment doesn't actually match the code in that function.
+
+In fact, that comment currently doesn't match any existing code at all
+(your suggested patch would be that code, but in another place
+entirely).
+
+Can we please all agree that this code is too obscure for its own good?
+
+                     Linus
