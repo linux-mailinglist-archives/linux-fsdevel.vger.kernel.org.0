@@ -2,105 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ADDD573CFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 21:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5978573D2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 21:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236887AbiGMTJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 15:09:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35530 "EHLO
+        id S236925AbiGMTda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 15:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbiGMTJt (ORCPT
+        with ESMTP id S236664AbiGMTd2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 15:09:49 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0644515A31
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:09:47 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id dn9so21511335ejc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:09:47 -0700 (PDT)
+        Wed, 13 Jul 2022 15:33:28 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 381C22DAA2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:33:26 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id x125so9067660vsb.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=75dAHpzz7HRb5HORG8SCgwBTYFSSv6+GS55I/0F+VwM=;
-        b=BHuyZ7wU3N4SSBB44CGvEV9eWdAPGrHxXnBgFh5/1+IpQ0QqpGBQEP0Ekr66lbvQSh
-         3E3ShCNu7MGHKlnFvTEsk2ZDU1xo5yPXYIn+zvLsukeOQvWkTwH6fT9Uui9zXSfkmJtS
-         VRwzJUdub7wbU6aC8+HCv5D7eC7sRxfz989nw=
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=CAIH/48VCAZZUEhRpfaRPTSaBdpuCbyHyIV69iiJf1M=;
+        b=aM1IhBunUxE23qoS04VXLKhmfEzv0G+rIPuL+tw7ecWQpkkV/VIRfagQrgSyOoTIAm
+         AZWPXQE2ns7ZNMtu2h9VrGRckGYmFXAYncydcobmDBiRLde8BCgwi2hlvMDHXzYgqMkQ
+         SeJxIk0u87w3y3HvNwB5qYF3cTerdoWv2b9mV8jFDizIJX8stbEHhwQnKSILH4q0Huup
+         hTOO9Jx4LSsJcLZc09WMxCsF4ciSzvQTXVpvt0KUlX7r0Y8qXhkOofhAjq9rhr7n0O3a
+         0Nz5Fyl2IiFFXOdqA4nMId1341Np8datpnUgsVwvaqGydn6uB0z1+35u/mxwEULjiUxM
+         xCNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=75dAHpzz7HRb5HORG8SCgwBTYFSSv6+GS55I/0F+VwM=;
-        b=ipF++hkrNiJMvKykzEIc8gTB5jkxpKIBSudgB+X3uNWBscYDG1eV6l2LlAsJioc37S
-         HL3zrVt2iwKRqoR9w3kxTCF9y3DWJHjqU5wY7vArOiAEU0rjwFjfQskpXi23cm66Yuk7
-         z8FOFIZxdErNiIYtfBU0c5uECuTMVfK/2s+Vl0pufjHUylfG982cVeGMy8J4ZDzkNLA9
-         mpn6yy76002Jfy9+K6d+XxIu5M/HFkZuMacJRU7B3fE4VruEX3EQnv7ygs0o6DbypYuP
-         pt3DhXcUk83kEKTbvHRi1HslUi8ueOypUmaPptYbVh1QGrxmMoaQLgbGHmo9McoB7dSc
-         Jy/w==
-X-Gm-Message-State: AJIora/SJiDQ2XmxNow8/0jz0imGT9wdhhoOojwxJuBKB0dv90oArK1+
-        fYArKuBBfweTt9LRRrZleeDn1owg47DwBBn9c9M=
-X-Google-Smtp-Source: AGRyM1ufEeZrzRJWxHLH2FEzyDaOO+Vc7vUhLUpcKdzvdVr9Im/x3nM9w1PYBoWxHU6OrJPO+y+bAw==
-X-Received: by 2002:a17:907:b0a:b0:72b:3176:3fe5 with SMTP id h10-20020a1709070b0a00b0072b31763fe5mr4909961ejl.48.1657739386248;
-        Wed, 13 Jul 2022 12:09:46 -0700 (PDT)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
-        by smtp.gmail.com with ESMTPSA id r24-20020a1709067fd800b006fe8b456672sm5318048ejs.3.2022.07.13.12.09.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 12:09:44 -0700 (PDT)
-Received: by mail-wr1-f46.google.com with SMTP id h17so16864217wrx.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Jul 2022 12:09:44 -0700 (PDT)
-X-Received: by 2002:a05:6000:1a88:b0:21d:aa97:cb16 with SMTP id
- f8-20020a0560001a8800b0021daa97cb16mr4758792wry.97.1657739383678; Wed, 13 Jul
- 2022 12:09:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=CAIH/48VCAZZUEhRpfaRPTSaBdpuCbyHyIV69iiJf1M=;
+        b=OlSAe0HjUGBayyeaTqf/UGea9IT6KvTU6GvHxysISJ1WDgSk33WY6ImHjiyznB4y8t
+         y3UOBEAVDWTxN9LHiq/6P+ElBOxBEpOHeJ7u4YLFjshdulfVAPWgF2v4xfFfd7B9m1wB
+         KPxFC7nFsFCAXQgJFV0oVxP6QmtICydGF4VzReY94K8/vfYikQHplaZ7Dngi19kosB2t
+         IfUOsAZxCLegSlN1u/8DKvq3BioDpiFncPfPzeMvw7k5Pc01gKfHbrOgKw/VXEJY+vAg
+         Wqsxtcb2uzjiLh1tlYBMFowmBnvdx2zsLekg1eprTIMreU1QqwkUACxGm6JIU4TM7lcU
+         Wy9g==
+X-Gm-Message-State: AJIora+adyL1GRV4qzPZ6X3Vd7tDoXNiVwGuI3mMIA+xaQCazBwCVHqv
+        LpU++4X/9G/m0mhkH3TRsALaD0tApxV/3e+QERY=
+X-Google-Smtp-Source: AGRyM1sJxaHNFmNllzWTe6lcXJtKq+jpeM0H1VbICZMt0N2iL7xjj1CQ/iGumgoql0QuMbeebjAgPClviShoH8saaK0=
+X-Received: by 2002:a67:a449:0:b0:357:3407:9f60 with SMTP id
+ p9-20020a67a449000000b0035734079f60mr2391818vsh.17.1657740805145; Wed, 13 Jul
+ 2022 12:33:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de>
- <CAHk-=wjrOgiWfN2uWf8Ajgr4SjeWMkEJ1Sd=H6pnS_JLjJwTcQ@mail.gmail.com>
- <CAEzrpqdweuZ2ufMKDJwSzP5W021F7mgS+7toSo6VDgvDzd0ZqA@mail.gmail.com>
- <CAHk-=wgEgAjX5gRntm0NutaNtjkzN+OaJVMaJAqved4dxPtAqw@mail.gmail.com>
- <Ys3TrAf95FpRgr+P@localhost.localdomain> <CAHk-=wi1-o-3iF09+PnNHq6_HLQhRn+32ow_f44to7_JuNCUoA@mail.gmail.com>
- <Ys4WdKSUTcvktuEl@magnolia> <CAHk-=wjUw11O60KuPBpsq1-hut9-Y76puzGqvgFJr5RwUPLS_A@mail.gmail.com>
- <20220713064631.GC3600936@dread.disaster.area> <20220713074915.GD3600936@dread.disaster.area>
- <5548ef63-62f9-4f46-5793-03165ceccacc@tu-darmstadt.de> <CAHk-=wgw3mWybD3E4236sGjNdnFsR60XHKhQNe0rJW5mbhqUAA@mail.gmail.com>
- <b5805118-7e56-3d43-28e9-9e0198ee43f3@tu-darmstadt.de>
-In-Reply-To: <b5805118-7e56-3d43-28e9-9e0198ee43f3@tu-darmstadt.de>
-From:   Linus Torvalds <torvalds@linuxfoundation.org>
-Date:   Wed, 13 Jul 2022 12:09:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wip=9-_w5s=g0BkuLMEufjV25QkUASZ_9NwY_a=O+BR9g@mail.gmail.com>
-Message-ID: <CAHk-=wip=9-_w5s=g0BkuLMEufjV25QkUASZ_9NwY_a=O+BR9g@mail.gmail.com>
-Subject: Re: [PATCH] vf/remap: return the amount of bytes actually deduplicated
-To:     ansgar.loesser@kom.tu-darmstadt.de
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Security Officers <security@kernel.org>,
-        Max Schlecht <max.schlecht@informatik.hu-berlin.de>,
-        =?UTF-8?Q?Bj=C3=B6rn_Scheuermann?= 
-        <scheuermann@kom.tu-darmstadt.de>
+Received: by 2002:a67:e05b:0:0:0:0:0 with HTTP; Wed, 13 Jul 2022 12:33:24
+ -0700 (PDT)
+Reply-To: pstefanopessina80@gmail.com
+From:   STEFANO PESSINA <awabuts49@gmail.com>
+Date:   Wed, 13 Jul 2022 22:33:24 +0300
+Message-ID: <CABqU-Kt960=z5WPCBXkW7U+2SM=criymhoesJ=oQD7uhrCaFLQ@mail.gmail.com>
+Subject: donation
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:e42 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4889]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [awabuts49[at]gmail.com]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [pstefanopessina80[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [awabuts49[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 11:51 AM Ansgar L=C3=B6=C3=9Fer
-<ansgar.loesser@tu-darmstadt.de> wrote:
->
-> This is my first commit, so I hope it is ok like this.
+--=20
 
-The patch was whitespace-damaged (tabs converted to spaces, but also
-extra spaces), but with something this small and simple I just fixed
-it up manually.
-
-               Linus
+Congratulations!
+The sum of =E2=82=AC1,500,000.00 has been donated to you by STEFANO PESSINA=
+.
+Kindly get back for more info via pstefanopessina80@gmail.com
