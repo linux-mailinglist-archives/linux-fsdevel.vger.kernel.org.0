@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF49572EFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 09:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C982572F06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Jul 2022 09:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234679AbiGMHV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 03:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47598 "EHLO
+        id S234268AbiGMHVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Jul 2022 03:21:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234268AbiGMHVX (ORCPT
+        with ESMTP id S234708AbiGMHVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 03:21:23 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D54DBD6A4;
-        Wed, 13 Jul 2022 00:21:22 -0700 (PDT)
+        Wed, 13 Jul 2022 03:21:42 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2066.outbound.protection.outlook.com [40.107.96.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F51BC444D;
+        Wed, 13 Jul 2022 00:21:31 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kJXBMFV7W77J5pKkNcLkgwRtSmYVEy5VwhTFyqQw1MnjDvCuauwXvCxAbV9QhkK9Xhsj1hsoEG4b+jCCkl0r9Hj476nUta9qdvYK4+GGadamKs+EcghHNIDtgg2ZEylHfD1d6PJ8MuViRacWyZji8uiDcBGotBajsZWG0ouplWTXbKAaKeHNGQWs847jpt28DzHtKDl9SG3zGjra+Z+Ga4pMfD3ZGR6UlV63MxXPhLMGo1m+u6dtZodjgTZrdc41HGXK34rgNqrGFl5XJTm1uxBtstuGs19i85HqoOzu2wXdzg0PLQazn0V+5QKXQN4+06yfbFXBwvmfbxSw6ayQRA==
+ b=Ces1hp0VphY/+rM5L3o9xzMQHPwM5zeCkdEj+vYtHnXQFvJg88kHs2BZMXAQjqGHE4PVrzEp12KPWIwCKz6+UFFJRyS7vFF2ZeFHFUYfTSu5FLMxmpU7bDRv6hLcBMe+eqx/GqUihUqXSJnnobI8AuRdTspXNZtc+Nq/2AtmJEYf/0A0r84VCyJ7dDqxES0Dl2gP+mg2w/1aV2kssm6ro/AsBS9gwZJDuPdwYfqY/gUDCL6ckC94nWfLpn3vCYmB+2UxykPxiRe6RIpxsW1mG8E5x35+RGyu19+S/2aeZQ/QEayUh43NDsO6wUcUFUoICdU+GTz20CsdT3ux84IoAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=30wO3uwCbH1dNbT1ErY4RtXTihb6khWDZ0CyQZeNbTM=;
- b=gCg+XBumRlQaO3uP/pLG8UBsQPUUJVdsPej+5SPcYCo87Iiu6QCAsLfaRtXk9vwAA7VJOypfzUIdUFs2yap4FAw3UPwfPzbRhonwLR6QX3erwgvh1ym/J+7VouKcwLjBnAo/707IMbvpXwON/teAY+qO5wSa1HtMjNy3EZ8drpy6tg/ha6976mjxieIqFuHfbF1XOYfgwuPDqqBpLjYt77WSAveH98aeS58PnWMawVONN49dVuxhq0DUqUrfC4S0qVeiZbJ+SuMv0O37bPoSO7XJVhc2qT6SzSWZ+eJCtclGnDI7b5L+Zga6H+oqnXkVBQZ2DDeNEpZCUQtz1NkGhA==
+ bh=VE7jo1aPoWeVsjqVruNOXX2q9+W6F6XYr+aNXAjKYvI=;
+ b=A5Ea6hXgd/1m4tCRVDpDjJtYq7qlKW7XvZA0Ud2xjmCRgQyu8JApSJxJtOzDq/obcNWPxN3Aw/43zNT6aSJxc1k/UKMYG7BGwGR/38+pep9CaAUdIcg67ghYCPThN+2yCnwV4yc2nTYVe8WeH9j6Uwh/dYQqlS42lZqwOhZZRWXnup5a7G36AQfoa0HidpKc3qYt1WPUgbiWKe/hFF9vnUzGTJbeu5ZJ3Z/3zXANpFe9+XQQmZmH7Spn+AO1pMNjolr9k1CzbPfvzZxaplwC1tBY16KO5wMzq1FUi7dpJ2mA0VhbNoVNamus29peAvtazg7NxRh8ZRhJgiANDsD9tw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=kernel.dk smtp.mailfrom=nvidia.com; dmarc=pass
+ 12.22.5.235) smtp.rcpttodomain=kernel.dk smtp.mailfrom=nvidia.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=30wO3uwCbH1dNbT1ErY4RtXTihb6khWDZ0CyQZeNbTM=;
- b=Gwp5af7ppBSFjlEOLDpGdbcb2eb8C3HHv6gQevwcoqskFqIqQ4I63a3vbWNH3JNnn+qIsiU2xLruhGAVliTiLU0XUwLP0+Ub6DQFfL80dnkJb5pvx8QKlvCLyAKM46e03DMwpwW+ifM1hjZPcFLXVDrs655p/+jF1EX7Aar7WkeT1T17iicEI2LwYCWQv0mABVcWuLiJdBNkTAfT2IRsKO0uQELU8dPeX5EVhwycuPWAVxyI2BTv7WB2m/U43XaJzvHwG4DAUL60iF4Vks5ULZrnU5f8sYIAJ/aqMNa/9WWMLnWGOSYqwhbhmQTXFV+5uMsnMOLoqum6BX1hKhUcog==
-Received: from MW4PR04CA0298.namprd04.prod.outlook.com (2603:10b6:303:89::33)
- by BYAPR12MB3493.namprd12.prod.outlook.com (2603:10b6:a03:dd::15) with
+ bh=VE7jo1aPoWeVsjqVruNOXX2q9+W6F6XYr+aNXAjKYvI=;
+ b=tJ3gk24kFle6zQ9g776L5FFyCv3+3hfXI3Gr8QPB+FbcTSZaEGFUarg02ZyGPZHwN612xsDQ6WVnKDPC7yc7r33gW9kM9Mgi/PLk0TUa/bXEaZE2M+NEdWotxwrwepLPKd27hCzE2XvBjnwAT4OZXBlaSBsr2M+DEaCBhByfrVQK6qzkYKObRG/VVwh28s+ABNxUdSSlnGTSWav08vWlikHmKg2Rn7kWQUF6n4qDyVzVqhqac3Jh038uPzUCX+xyeLe5UKM1Ty8gitE98/LoLE7n+7HX1Oka0AYpPnAzFLmAewUL6j9PvwVgJKLm5+LCSpt6T2GRIxWbb8tOgZLnCw==
+Received: from MW4PR03CA0212.namprd03.prod.outlook.com (2603:10b6:303:b9::7)
+ by PH0PR12MB5500.namprd12.prod.outlook.com (2603:10b6:510:ef::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.25; Wed, 13 Jul
- 2022 07:21:19 +0000
-Received: from CO1NAM11FT025.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:89:cafe::ca) by MW4PR04CA0298.outlook.office365.com
- (2603:10b6:303:89::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.15 via Frontend
- Transport; Wed, 13 Jul 2022 07:21:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Wed, 13 Jul
+ 2022 07:21:28 +0000
+Received: from CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b9:cafe::3f) by MW4PR03CA0212.outlook.office365.com
+ (2603:10b6:303:b9::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.12 via Frontend
+ Transport; Wed, 13 Jul 2022 07:21:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- CO1NAM11FT025.mail.protection.outlook.com (10.13.175.232) with Microsoft SMTP
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT054.mail.protection.outlook.com (10.13.174.70) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5438.12 via Frontend Transport; Wed, 13 Jul 2022 07:21:19 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 13 Jul
- 2022 07:21:08 +0000
-Received: from dev.nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ 15.20.5438.12 via Frontend Transport; Wed, 13 Jul 2022 07:21:28 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 13 Jul
+ 2022 07:21:26 +0000
+Received: from dev.nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Wed, 13 Jul
- 2022 00:21:06 -0700
+ 2022 00:21:23 -0700
 From:   Chaitanya Kulkarni <kch@nvidia.com>
 To:     <linux-block@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
         <linux-nvme@lists.infradead.org>, <linux-xfs@vger.kernel.org>,
@@ -75,35 +75,37 @@ CC:     <axboe@kernel.dk>, <agk@redhat.com>, <song@kernel.org>,
         <idryomov@gmail.com>, <danil.kipnis@cloud.ionos.com>,
         <ebiggers@google.com>, <jinpu.wang@cloud.ionos.com>,
         Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH V2 0/6] block: add support for REQ_OP_VERIFY 
-Date:   Wed, 13 Jul 2022 00:20:13 -0700
-Message-ID: <20220713072019.5885-1-kch@nvidia.com>
+Subject: [PATCH V2 1/6] block: add support for REQ_OP_VERIFY
+Date:   Wed, 13 Jul 2022 00:20:14 -0700
+Message-ID: <20220713072019.5885-2-kch@nvidia.com>
 X-Mailer: git-send-email 2.29.0
+In-Reply-To: <20220713072019.5885-1-kch@nvidia.com>
+References: <20220713072019.5885-1-kch@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="y"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.126.231.35]
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
 X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3e8c86c0-d7b3-4581-05f3-08da64a04835
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3493:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2c2658e-557d-43dc-2b7b-08da64a04d5d
+X-MS-TrafficTypeDiagnostic: PH0PR12MB5500:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8QaLkpPTpOzcZUNAXUnYirdrF8k1lz0lyez1k1t5BzAhxPGHMgF09QWHtyP7yf10wrSBNLFDDnqNuwIeVgSt0jsXx7EH3DrUQOHFLDqw/H7wAAneMWjXyIWSTqPdNR2GLaHNz51SHHmscLQWLW6+MOnGX/iAhN9sp1roYQ93QIKyHTyLdRWAAECBER1NRzziBH3sXm9/4sXaCJjgngGbbLQkQXWwUekUgcTBkFH5AfeugFwHEc5lepjvY4VIPbxpKjDID23ArXplSNJNei0rpRodU0E+eHNPT+OsDxDkdW/TSj88HLDEOPJcaC8O8+/TUN7Z9A97SFCdpkfZyVh6p1zI0U0+4YFMubZV0t+bybIAgMYI3b7sCpnz0tHxGzMOgZqxaklRH8nXcInwB1LwZ4iT6jaa7zBcGFhVElLWihcKd2+DFfsMgoMkuTCGHEiTQ12Hd8nwCNgY287uDPBaVkgXcezJLeFKaF9qniJUpwXol8gNMMJTlJaoDov70IgfCz/PUb3adjXj5RUU3ROboDtsUSKnk9sNIRg4lpYfGFSMEyXYTL6mxwWWA0OUl+AQsJ7je0KRBPzP9nP7dAajOJLQ9GFJeyjcQYfel0q37ZxSHzTa8aUtbp7zzrN3zbu69ijmh/TKGo7vJm8Eh4NqJ42anEFHXPNVyL7juNOIdl+A1ylTpdjzOeBA0+YjGKPTtn4+A8Oc1fugyxb831bbMr7Y0UkyFtiogaRSL6HeFC+jHu3z4tTpG8B1vgcYgprU93TJ3llSz8z1zmQlbJls4G+CqmJYpyRQ7mWOG5RNowlZWeHdc1rT7qM7rL1EHhDtj98C5KsOdnVGd8yYjKLqieNwfDROP/kCzcGfVdCL1gKb/7gjZJVPj701kJ3rXGKMM2M7FhKfH4VL3CtN1eW255VsK7P9KUbt8GB3sh8HlnglOCjYVEGVi+tmC7LT4FBd
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(396003)(376002)(136003)(346002)(39860400002)(46966006)(36840700001)(40470700004)(40460700003)(7406005)(5660300002)(316002)(30864003)(40480700001)(36860700001)(83380400001)(81166007)(36756003)(7416002)(8936002)(186003)(8676002)(47076005)(4743002)(336012)(4326008)(356005)(70586007)(16526019)(1076003)(70206006)(7696005)(6666004)(82740400003)(54906003)(426003)(2616005)(82310400005)(107886003)(26005)(110136005)(478600001)(966005)(41300700001)(2906002)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: IxDilZGDEvnPvZXc+IvRv0MQzex8wMun98eqtA7kdd+SFvAcPr0Ol7gjZJYuhserY00wuGDzTmtO71GoEPB9L7FyBtqan5NEOw5jzOOvALmBM19shQGvBygUr5FZiGS1lSPud+8VWg1hQvXh7EUoFCQt6zgjeUPbxoXekNiubGQKAe4CNG9qZrDBR5fw0B2QHCl0VJZmkOo39C1DDl2leMATnWJFERZG9uO5MHZLqyKdp4oDT8tR7o7VmyYTMwFdShs4F0qRzY7dA8geM3y9wgWg4BLhxhZU9/DxYt9agr9u2Ylp6R4/CgN/XPZ2m4VufCcU5BNDFvnCqLygZwYVHXkWIIGAtRbBwxmalYi6QMRpp+yeJawgwKgKzktYWMH44BBHCVycSDrN1WFMKlZNIR7cMLbThoWq2msHuotbf7MBE0mPliKQkm7tFl4IXfcVZT19YIGhXIWCA5xRO/2B/nU86dokMLqPLiCYiXVuQwdQmEPsJ39SAbyd0LsYSl4/Ap8xBF1PBxnKO5XykiShfX4cjC/RQzaMLSiMbHhukkJqbUG8ftT6rftVFJjz0BjRzXhD2GNMs0rtNaSZGpNx2S2KyHXOzFTVpJYx3hwZqXkCD9vygY0qedocKhOODoqIHXxn8V/7L3qWoC18tLLqQMRQpdz0wAQnzgzDpQr6rNL61aTeg9nncy2HuDRRhH1oARCWKjxhND76TkwEs3y+d4PA/CnU+JYPHqAAEcRsP91OyyUnyv+4OmrNlFBuLs62BvxLlKyHGj8d0YuN0Yip1Jts2X8eUijhekzr0xSQ+9GmAw4yhiZHxOZJD2KRAbLdPoSK60HhFq0UyyDL8TX5wiFsQMVtbUjBGRSLhefKRZqO8k2WvzYaUIDWSuzMZEMq
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(39860400002)(376002)(346002)(396003)(36840700001)(40470700004)(46966006)(1076003)(70586007)(186003)(8676002)(2616005)(16526019)(7416002)(316002)(107886003)(426003)(336012)(70206006)(4326008)(81166007)(6666004)(82310400005)(7696005)(47076005)(40480700001)(36756003)(41300700001)(478600001)(82740400003)(40460700003)(110136005)(54906003)(8936002)(356005)(2906002)(7406005)(30864003)(36860700001)(83380400001)(26005)(5660300002)(2101003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 07:21:19.3919
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 07:21:28.0593
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e8c86c0-d7b3-4581-05f3-08da64a04835
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2c2658e-557d-43dc-2b7b-08da64a04d5d
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT025.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3493
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5500
 X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -114,226 +116,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+This adds a new block layer operation to offload verifying a range of
+LBAs. This support is needed in order to provide file systems and
+fabrics, kernel components to offload LBA verification when it is
+supported by the hardware controller. In case hardware offloading is
+not supported then we provide API to emulate the same. The prominent
+example of that is SCSI and NVMe Verify command. Block layer API also
+provide an emulation of the same operation that can be used in case H/W
+does not support verify. This is still useful when block device is
+remotely attached e.g. using NVMeOF.
 
-One of the responsibilities of the Operating System, along with managing
-resources, is to provide a unified interface to the user by creating
-hardware abstractions. In the Linux Kernel storage stack that
-abstraction is created by implementing the generic request operations
-such as REQ_OP_READ/REQ_OP_WRITE or REQ_OP_DISCARD/REQ_OP_WRITE_ZEROES,
-etc that are mapped to the specific low-level hardware protocol commands 
-e.g. SCSI or NVMe.
-
-With that in mind, this patch-series implements a new block layer
-operation to offload the data verification on to the controller if
-supported or emulate the operation if not. The main advantage is to free
-up the CPU and reduce the host link traffic since, for some devices,
-their internal bandwidth is higher than the host link and offloading this
-operation can improve the performance of the proactive error detection
-applications such as file system level scrubbing. 
-
-* Background *
------------------------------------------------------------------------
-
-NVMe Specification provides a controller level Verify command [1] which
-is similar to the ATA Verify [2] command where the controller is
-responsible for data verification without transferring the data to the
-host. (Offloading LBAs verification). This is designed to proactively
-discover any data corruption issues when the device is free so that
-applications can protect sensitive data and take corrective action
-instead of waiting for failure to occur.
-
-The NVMe Verify command is added in order to provide low level media
-scrubbing and possibly moving the data to the right place in case it has
-correctable media degradation. Also, this provides a way to enhance
-file-system level scrubbing/checksum verification and optinally offload
-this task, which is CPU intensive, to the kernel (when emulated), over
-the fabric, and to the controller (when supported).   
-
-This is useful when the controller's internal bandwidth is higher than
-the host's bandwith showing a sharp increase in the performance due to
-_no host traffic or host CPU involvement_.
-
-* Implementation *
------------------------------------------------------------------------
-
-Right now there is no generic interface which can be used by the
-in-kernel components such as file-system or userspace application
-(except passthru commands or some combination of write/read/compare) to 
-issue verify command with the central block layer API. This can lead to
-each userspace applications having protocol specific IOCTL which
-defeates the purpose of having the OS provide a H/W abstraction.
-
-This patch series introduces a new block layer payloadless request
-operation REQ_OP_VERIFY that allows in-kernel components & userspace
-applications to verify the range of the LBAs by offloading checksum
-scrubbing/verification to the controller that is directly attached to
-the host. For direct attached devices this leads to decrease in the host
-DMA traffic and CPU usage and for the fabrics attached device over the
-network that leads to a decrease in the network traffic and CPU usage
-for both host & target.
-
-* Scope *
------------------------------------------------------------------------
-
-Please note this only covers the operating system level overhead.
-Analyzing controller verify command performance for common protocols
-(SCSI/NVMe) is out of scope for REQ_OP_VERIFY.
-
-* Micro Benchmarks *
------------------------------------------------------------------------
-
-When verifing 500GB of data on NVMeOF with nvme-loop and null_blk as a
-target backend block device results show almost a 80% performance
-increase :-
-
-With Verify resulting in REQ_OP_VERIFY to null_blk :-
-
-real	2m3.773s
-user	0m0.000s
-sys	0m59.553s
-
-With Emulation resulting in REQ_OP_READ null_blk :-
-
-real	12m18.964s
-user	0m0.002s
-sys	1m15.666s
-
-Any comments are welcome.
-
-Below is the summary of testlog :-
-
-1. blkverify command on nvme-pcie :-
-------------------------------------
-[   22.802798] nvme nvme0: pci function 0000:00:04.0
-[   22.846145] nvme nvme0: 48/0/0 default/read/poll queues
-[   22.857822] blkdev_issue_verify 490
-*[   22.857827] __blkdev_issue_verify 419*
-*[   22.857828] __blkdev_issue_verify 452*
-*[   22.857911] __blkdev_issue_verify 466*
-[   22.857922] nvme_setup_verify 844
-[   22.858287] blkdev_issue_verify 502
-modprobe: FATAL: Module nvme is in use.
-
-2. blkverify command on null_blk verify=0 :-
---------------------------------------------
-Observed the emulation from block layer :-
-
-[   24.696254] blkdev_issue_verify 490
-[   24.696259] __blkdev_issue_verify 419
-[   24.696263] __blkdev_issue_verify 429
-*[   24.696264] __blkdev_emulate_verify 366*
-*[   24.696265] __blkdev_emulate_verify 368*
-[   24.696334] blkdev_issue_verify 502
-
-3. blkverify command on null_blk verify=0 :-
---------------------------------------------
-Observed the REQ_OP_VERIFY from block layer :-
-[   26.396652] blkdev_issue_verify 490
-*[   26.396659] __blkdev_issue_verify 419*
-*[   26.396662] __blkdev_issue_verify 452*
-*[   26.396669] __blkdev_issue_verify 466*
-[   26.396702] null_blk: null_process_cmd 1406 kworker/0:1H
-[   26.396740] blkdev_issue_verify 502
-
-4. blkverify command on NVMeOF block device backend null_blk verify=0 :-
-Observed REQ_OP_VERIFY on host side as target support NVMe verify.
-Observed the emulation from block layer on target :-
-[   31.520548] blkdev_issue_verify 490
-*[   31.520553] __blkdev_issue_verify 419*
-*[   31.520554] __blkdev_issue_verify 452*
-*[   31.520885] __blkdev_issue_verify 466*
-[   31.520976] nvme_setup_verify 844
-[   31.520982] nvmet: nvmet_bdev_submit_emulate_verify 469
-[   31.520984] blkdev_issue_verify 490
-[   31.520985] __blkdev_issue_verify 419
-[   31.520989] __blkdev_issue_verify 429
-*[   31.520990] __blkdev_emulate_verify 36*
-*[   31.520990] __blkdev_emulate_verify 368*
-*[   31.521088] blkdev_issue_verify 502*
-*[   31.521097] blkdev_issue_verify 502*
-[   31.534798] nvme nvme1: Removing ctrl: NQN "testnqn"
-
-3. blkverify command on NVMeOF block device backend null_blk verify=1 :-
-Observed the REQ_OP_VERIFY from host and target block layer :-
-[   54.399880] blkdev_issue_verify 490
-[   54.399885] __blkdev_issue_verify 419
-[   54.399887] __blkdev_issue_verify 452
-[   54.399962] __blkdev_issue_verify 466
-[   54.400038] nvme_setup_verify 844
-[   54.400044] nvmet: nvmet_bdev_execute_verify 497
-*[   54.400045] __blkdev_issue_verify 419*
-*[   54.400046] __blkdev_issue_verify 452*
-*[   54.400048] __blkdev_issue_verify 466*
-[   54.400053] null_blk: null_process_cmd 1406 kworker/20:1
-[   54.400062] blkdev_issue_verify 502
-[   54.405139] nvme nvme1: Removing ctrl: NQN "testnqn"
-
-6. blkverify command on scsi debug drive :-
-Observed REQ_OP_VERIFY mapped onto SCSI Verify (16) :-
-[   61.727782] sd 2:0:0:0: Attached scsi generic sg3 type 0
-[   61.727853] sd 2:0:0:0: Power-on or device reset occurred
-[   61.729965] sd 2:0:0:0: [sdc] 8388608 512-byte logical blocks: (4.29 GB/4.00 GiB)
-[   61.730992] sd 2:0:0:0: [sdc] Write Protect is off
-[   61.730996] sd 2:0:0:0: [sdc] Mode Sense: 73 00 10 08
-[   61.733141] sd 2:0:0:0: [sdc] Write cache: enabled, read cache: enabled, supports DPO and FUA
-[   61.737303] sd 2:0:0:0: [sdc] VERIFY16 supported
-[   61.737307] sd 2:0:0:0: [sdc] Preferred minimum I/O size 512 bytes
-[   61.737309] sd 2:0:0:0: [sdc] Optimal transfer size 524288 bytes
-[   61.755811] sd 2:0:0:0: [sdc] VERIFY16 supported
-[   61.757983] sd 2:0:0:0: [sdc] Attached SCSI disk
-[   61.759689] blkdev_issue_verify 490
-*[   61.759693] __blkdev_issue_verify 419*
-*[   61.759695] __blkdev_issue_verify 452*
-*[   61.759770] __blkdev_issue_verify 466*
-[   61.759784] sd_setup_verify_cmnd 1101
-[   61.759785] sd_setup_verify16_cmnd 1063
-[   61.760800] blkdev_issue_verify 502
-
--ck
-
-Changes from V1:-
-
-1. Don't use kzalloc for buffer allocation. (Darrik)
-2. Use NVMe controllers VSL (Verify Size Limit) to set the verify max
-   sectors limit for the block layer queue. (Keith, Christoph)
-3. Remove the word "we" from commit messages and point to the right
-   kernel subsystem. (Christoph).
-4. Add complete original cover-letter.
-5. Add SCSI REQ_OP_VERIFY patch with Damien's comments addressed.
-6. Remove the patch for the NVMeOF file-ns.
-
-References:-
-
-[1] NVMe Verify :-
-
-For pro-actively avoiding unrecoverable read errors, NVMe 1.4 adds
-Verify and Get LBA Status commands. The Verify command is simple: it
-does everything a normal read command does, except for returning the
-data to the host system. If a read command would return an error, a
-verify command will return the same error. If a read command would be
-successful, a verify command will be as well. This makes it possible to
-do a low-level scrub of the stored data without being bottlenecked by
-the host interface bandwidth. Some SSDs will react to a fixable ECC
-error by moving or re-writing degraded data, and a verify command
-should trigger the same behavior. Overall, this should reduce the need
-for filesystem-level checksum scrubbing/verification. Each Verify
-command is tagged with a bit indicating whether the SSD should fail
-fast or try hard to recover data, similar to but overriding the above
-Read Recovery Level setting.
-
-[2]
-
-http://t13.org/Documents/UploadedDocuments/docs2017/di529...
-
-Chaitanya Kulkarni (6):
-  block: add support for REQ_OP_VERIFY
-  nvme: add support for the Verify command
-  nvmet: add Verify command support for bdev-ns
-  nvmet: add Verify emulation support for bdev-ns
-  null_blk: add REQ_OP_VERIFY support
-  scsi: sd: add support for REQ_OP_VERIFY
-
+Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
+---
  Documentation/ABI/stable/sysfs-block |  12 +++
  block/blk-core.c                     |   5 +
  block/blk-lib.c                      | 155 +++++++++++++++++++++++++++
@@ -342,297 +136,541 @@ Chaitanya Kulkarni (6):
  block/blk-sysfs.c                    |   8 ++
  block/blk.h                          |   7 ++
  block/ioctl.c                        |  35 ++++++
- drivers/block/null_blk/main.c        |  20 +++-
- drivers/block/null_blk/null_blk.h    |   1 +
- drivers/nvme/host/core.c             |  31 ++++++
- drivers/nvme/host/nvme.h             |   1 +
- drivers/nvme/target/admin-cmd.c      |   3 +-
- drivers/nvme/target/io-cmd-bdev.c    |  66 ++++++++++++
- drivers/scsi/sd.c                    | 124 +++++++++++++++++++++
- drivers/scsi/sd.h                    |   5 +
  include/linux/bio.h                  |   9 +-
  include/linux/blk_types.h            |   2 +
  include/linux/blkdev.h               |  19 ++++
- include/linux/nvme.h                 |  19 ++++
  include/uapi/linux/fs.h              |   1 +
- 21 files changed, 553 insertions(+), 5 deletions(-)
+ 12 files changed, 285 insertions(+), 3 deletions(-)
 
-linux-block (for-next) # 
-linux-block (for-next) # sh verify-test.sh 
-nvme-pcie
-[   22.802798] nvme nvme0: pci function 0000:00:04.0
-[   22.846145] nvme nvme0: 48/0/0 default/read/poll queues
-[   22.849666] nvme nvme0: Ignoring bogus Namespace Identifiers
-[   22.857822] blkdev_issue_verify 490
-[   22.857827] __blkdev_issue_verify 419
-[   22.857828] __blkdev_issue_verify 452
-[   22.857911] __blkdev_issue_verify 466
-[   22.857922] nvme_setup_verify 844
-[   22.858287] blkdev_issue_verify 502
-modprobe: FATAL: Module nvme is in use.
-
-null_blk verify=0
-[   24.696254] blkdev_issue_verify 490
-[   24.696259] __blkdev_issue_verify 419
-[   24.696263] __blkdev_issue_verify 429
-[   24.696264] __blkdev_emulate_verify 366
-[   24.696265] __blkdev_emulate_verify 368
-[   24.696334] blkdev_issue_verify 502
-
-null_blk verify=1
-[   26.396652] blkdev_issue_verify 490
-[   26.396659] __blkdev_issue_verify 419
-[   26.396662] __blkdev_issue_verify 452
-[   26.396669] __blkdev_issue_verify 466
-[   26.396702] null_blk: null_process_cmd 1406 kworker/0:1H
-[   26.396740] blkdev_issue_verify 502
-
-bdev-ns null_blk verify=0
-++ FILE=/dev/nvme0n1
-++ NN=1
-++ NQN=testnqn
-++ let NR_DEVICES=NN+1
-++ modprobe -r null_blk
-++ modprobe null_blk nr_devices=0 verify=0
-++ modprobe nvme
-++ modprobe nvme-fabrics
-++ modprobe nvmet
-++ modprobe nvme-loop
-++ dmesg -c
-++ sleep 2
-++ tree /sys/kernel/config
-/sys/kernel/config
-├── nullb
-│   └── features
-└── nvmet
-    ├── hosts
-    ├── ports
-    └── subsystems
-
-5 directories, 1 file
-++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn
-++ mkdir /sys/kernel/config/nvmet/ports/1/
-++ echo -n loop
-++ echo -n 1
-++ ln -s /sys/kernel/config/nvmet/subsystems/testnqn /sys/kernel/config/nvmet/ports/1/subsystems/
-++ sleep 1
-++ echo transport=loop,nqn=testnqn
-+++ shuf -i 1-1 -n 1
-++ for i in `shuf -i  1-$NN -n $NN`
-++ mkdir config/nullb/nullb1
-++ echo 4096
-++ echo 512000
-++ echo 1
-+++ cat config/nullb/nullb1/index
-++ IDX=0
-++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
-++ let IDX=IDX+1
-++ echo ' ####### /dev/nullb1'
- ####### /dev/nullb1
-++ echo -n /dev/nullb1
-++ cat /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1/device_path
-/dev/nullb1
-++ echo 1
-++ dmesg -c
-[   30.489780] nvmet: creating nvm controller 1 for subsystem testnqn for NQN nqn.2014-08.org.nvmexpress:uuid:2ee37606-f9d7-4925-8a61-784320913d7b.
-[   30.489918] nvme nvme1: creating 48 I/O queues.
-[   30.495425] nvme nvme1: new ctrl: "testnqn"
-[   30.500883] null_blk: disk nullb1 created
-[   30.503497] nvmet: adding nsid 1 to subsystem testnqn
-[   30.505313] nvme nvme1: rescanning namespaces.
-++ sleep 1
-++ mount
-++ column -t
-++ grep nvme
-++ '[' 1 ']'
-+++ wc -l
-+++ ls -l /dev/nvme1 /dev/nvme1n1
-++ cnt=2
-++ echo 2
-2
-++ '[' 2 -gt 1 ']'
-++ break
-++ dmesg -c
-+ nvme disconnect -n testnqn
-NQN:testnqn disconnected 1 controller(s)
-
-real	0m0.362s
-user	0m0.000s
-sys	0m0.009s
-++ shuf -i 1-1 -n 1
-+ for i in `shuf -i  1-$NN -n $NN`
-+ echo 0
-+ rmdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
-+ rmdir config/nullb/nullb1
-+ sleep 2
-+ rm -fr /sys/kernel/config/nvmet/ports/1/subsystems/testnqn
-+ sleep 1
-+ rmdir /sys/kernel/config/nvmet/ports/1
-+ rmdir /sys/kernel/config/nvmet/subsystems/testnqn
-+ sleep 1
-+ modprobe -r nvme_loop
-+ modprobe -r nvme_fabrics
-+ modprobe -r nvmet
-+ modprobe -r nvme
-+ umount /mnt/nvme0n1
-umount: /mnt/nvme0n1: no mount point specified.
-+ umount /mnt/backend
-umount: /mnt/backend: not mounted.
-+ modprobe -r null_blk
-+ tree /sys/kernel/config
-/sys/kernel/config
-
-0 directories, 0 files
-[   31.520548] blkdev_issue_verify 490
-[   31.520553] __blkdev_issue_verify 419
-[   31.520554] __blkdev_issue_verify 452
-[   31.520885] __blkdev_issue_verify 466
-[   31.520976] nvme_setup_verify 844
-[   31.520982] nvmet: nvmet_bdev_submit_emulate_verify 469
-[   31.520984] blkdev_issue_verify 490
-[   31.520985] __blkdev_issue_verify 419
-[   31.520989] __blkdev_issue_verify 429
-[   31.520990] __blkdev_emulate_verify 366
-[   31.520990] __blkdev_emulate_verify 368
-[   31.521088] blkdev_issue_verify 502
-[   31.521097] blkdev_issue_verify 502
-[   31.534798] nvme nvme1: Removing ctrl: NQN "testnqn"
-
-bdev-ns null_blk verify=1
-++ FILE=/dev/nvme0n1
-++ NN=1
-++ NQN=testnqn
-++ let NR_DEVICES=NN+1
-++ modprobe -r null_blk
-++ modprobe null_blk nr_devices=0 verify=1
-++ modprobe nvme
-++ modprobe nvme-fabrics
-++ modprobe nvmet
-++ modprobe nvme-loop
-++ dmesg -c
-++ sleep 2
-++ tree /sys/kernel/config
-/sys/kernel/config
-├── nullb
-│   └── features
-└── nvmet
-    ├── hosts
-    ├── ports
-    └── subsystems
-
-5 directories, 1 file
-++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn
-++ mkdir /sys/kernel/config/nvmet/ports/1/
-++ echo -n loop
-++ echo -n 1
-++ ln -s /sys/kernel/config/nvmet/subsystems/testnqn /sys/kernel/config/nvmet/ports/1/subsystems/
-++ sleep 1
-++ echo transport=loop,nqn=testnqn
-+++ shuf -i 1-1 -n 1
-++ for i in `shuf -i  1-$NN -n $NN`
-++ mkdir config/nullb/nullb1
-++ echo 4096
-++ echo 512000
-++ echo 1
-+++ cat config/nullb/nullb1/index
-++ IDX=0
-++ mkdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
-++ let IDX=IDX+1
-++ echo ' ####### /dev/nullb1'
- ####### /dev/nullb1
-++ echo -n /dev/nullb1
-++ cat /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1/device_path
-/dev/nullb1
-++ echo 1
-++ dmesg -c
-[   53.372782] nvmet: creating nvm controller 1 for subsystem testnqn for NQN nqn.2014-08.org.nvmexpress:uuid:0c78049e-e88f-4f9f-a8ff-bf6287235660.
-[   53.373088] nvme nvme1: creating 48 I/O queues.
-[   53.377729] nvme nvme1: new ctrl: "testnqn"
-[   53.382877] null_blk: disk nullb1 created
-[   53.385343] nvmet: adding nsid 1 to subsystem testnqn
-[   53.387320] nvme nvme1: rescanning namespaces.
-++ sleep 1
-++ mount
-++ column -t
-++ grep nvme
-++ '[' 1 ']'
-+++ wc -l
-+++ ls -l /dev/nvme1 /dev/nvme1n1
-++ cnt=2
-++ echo 2
-2
-++ '[' 2 -gt 1 ']'
-++ break
-++ dmesg -c
-+ nvme disconnect -n testnqn
-NQN:testnqn disconnected 1 controller(s)
-
-real	0m0.364s
-user	0m0.000s
-sys	0m0.007s
-++ shuf -i 1-1 -n 1
-+ for i in `shuf -i  1-$NN -n $NN`
-+ echo 0
-+ rmdir /sys/kernel/config/nvmet/subsystems/testnqn/namespaces/1
-+ rmdir config/nullb/nullb1
-+ sleep 2
-+ rm -fr /sys/kernel/config/nvmet/ports/1/subsystems/testnqn
-+ sleep 1
-+ rmdir /sys/kernel/config/nvmet/ports/1
-+ rmdir /sys/kernel/config/nvmet/subsystems/testnqn
-+ sleep 1
-+ modprobe -r nvme_loop
-+ modprobe -r nvme_fabrics
-+ modprobe -r nvmet
-+ modprobe -r nvme
-+ umount /mnt/nvme0n1
-umount: /mnt/nvme0n1: no mount point specified.
-+ umount /mnt/backend
-umount: /mnt/backend: not mounted.
-+ modprobe -r null_blk
-+ tree /sys/kernel/config
-/sys/kernel/config
-
-0 directories, 0 files
-[   54.399880] blkdev_issue_verify 490
-[   54.399885] __blkdev_issue_verify 419
-[   54.399887] __blkdev_issue_verify 452
-[   54.399962] __blkdev_issue_verify 466
-[   54.400038] nvme_setup_verify 844
-[   54.400044] nvmet: nvmet_bdev_execute_verify 497
-[   54.400045] __blkdev_issue_verify 419
-[   54.400046] __blkdev_issue_verify 452
-[   54.400048] __blkdev_issue_verify 466
-[   54.400053] null_blk: null_process_cmd 1406 kworker/20:1
-[   54.400062] blkdev_issue_verify 502
-[   54.405139] nvme nvme1: Removing ctrl: NQN "testnqn"
-
-scsi debug
-modprobe: FATAL: Module scsi_debug is in use.
-[   61.392949] scsi_debug: module verification failed: signature and/or required key missing - tainting kernel
-[   61.727201] scsi_debug:sdebug_driver_probe: scsi_debug: trim poll_queues to 0. poll_q/nr_hw = (0/1)
-[   61.727208] scsi host2: scsi_debug: version 0191 [20210520]
-                 dev_size_mb=4096, opts=0x0, submit_queues=1, statistics=0
-[   61.727369] scsi 2:0:0:0: Direct-Access     Linux    scsi_debug       0191 PQ: 0 ANSI: 7
-[   61.727782] sd 2:0:0:0: Attached scsi generic sg3 type 0
-[   61.727853] sd 2:0:0:0: Power-on or device reset occurred
-[   61.729965] sd 2:0:0:0: [sdc] 8388608 512-byte logical blocks: (4.29 GB/4.00 GiB)
-[   61.730992] sd 2:0:0:0: [sdc] Write Protect is off
-[   61.730996] sd 2:0:0:0: [sdc] Mode Sense: 73 00 10 08
-[   61.733141] sd 2:0:0:0: [sdc] Write cache: enabled, read cache: enabled, supports DPO and FUA
-[   61.737303] sd 2:0:0:0: [sdc] VERIFY16 supported
-[   61.737307] sd 2:0:0:0: [sdc] Preferred minimum I/O size 512 bytes
-[   61.737309] sd 2:0:0:0: [sdc] Optimal transfer size 524288 bytes
-[   61.755811] sd 2:0:0:0: [sdc] VERIFY16 supported
-[   61.757983] sd 2:0:0:0: [sdc] Attached SCSI disk
-[   61.759689] blkdev_issue_verify 490
-[   61.759693] __blkdev_issue_verify 419
-[   61.759695] __blkdev_issue_verify 452
-[   61.759770] __blkdev_issue_verify 466
-[   61.759784] sd_setup_verify_cmnd 1101
-[   61.759785] sd_setup_verify16_cmnd 1063
-[   61.760800] blkdev_issue_verify 502
-
+diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+index cd14ecb3c9a5..e3a10ed1f955 100644
+--- a/Documentation/ABI/stable/sysfs-block
++++ b/Documentation/ABI/stable/sysfs-block
+@@ -666,6 +666,18 @@ Description:
+ 		in a single write zeroes command. If write_zeroes_max_bytes is
+ 		0, write zeroes is not supported by the device.
+ 
++What:		/sys/block/<disk>/queue/verify_max_bytes
++Date:		July 2022
++Contact:	Chaitanya Kulkarni <kch@nvidia.com>
++Description:
++		Devices that support verify operation in which a single
++		request can be issued to verify the range of the contiguous
++		blocks on the storage without any payload in the request.
++		This can be used to optimize verifying LBAs on the device
++		without reading by offloading functionality. verify_max_bytes
++		indicates how many bytes can be written in a single verify
++		command. If verify_max_bytes is 0, verify operation is not
++		supported by the device.
+ 
+ What:		/sys/block/<disk>/queue/zone_append_max_bytes
+ Date:		May 2020
+diff --git a/block/blk-core.c b/block/blk-core.c
+index b530ce7b370c..a77975b8ae60 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -123,6 +123,7 @@ static const char *const blk_op_name[] = {
+ 	REQ_OP_NAME(ZONE_FINISH),
+ 	REQ_OP_NAME(ZONE_APPEND),
+ 	REQ_OP_NAME(WRITE_ZEROES),
++	REQ_OP_NAME(VERIFY),
+ 	REQ_OP_NAME(DRV_IN),
+ 	REQ_OP_NAME(DRV_OUT),
+ };
+@@ -785,6 +786,10 @@ void submit_bio_noacct(struct bio *bio)
+ 		if (!q->limits.max_write_zeroes_sectors)
+ 			goto not_supported;
+ 		break;
++	case REQ_OP_VERIFY:
++		if (!q->limits.max_verify_sectors)
++			goto not_supported;
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 09b7e1200c0f..df2e2bc092b3 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -340,3 +340,158 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(blkdev_issue_secure_erase);
++
++/**
++ * __blkdev_emulate_verify - emulate number of verify operations
++ *				asynchronously
++ * @bdev:	blockdev to issue
++ * @sector:	start sector
++ * @nr_sects:	number of sectors to verify
++ * @gfp_mask:	memory allocation flags (for bio_alloc)
++ * @biop:	pointer to anchor bio
++ * @buf:	data buffer to mapped on bio
++ *
++ * Description:
++ *  Verify a block range by emulating REQ_OP_VERIFY into REQ_OP_READ,
++ *  use this when H/W offloading is not supported asynchronously.
++ *  Caller is responsible to handle anchored bio.
++ */
++static int __blkdev_emulate_verify(struct block_device *bdev, sector_t sector,
++		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop, char *buf)
++{
++	struct bio *bio = *biop;
++	unsigned int sz;
++	int bi_size;
++
++	while (nr_sects != 0) {
++		bio = blk_next_bio(bio, bdev,
++				__blkdev_sectors_to_bio_pages(nr_sects),
++				REQ_OP_READ, gfp_mask);
++		bio->bi_iter.bi_sector = sector;
++
++		while (nr_sects != 0) {
++			bool is_vaddr = is_vmalloc_addr(buf);
++			struct page *p;
++
++			p = is_vaddr ? vmalloc_to_page(buf) : virt_to_page(buf);
++			sz = min((sector_t) PAGE_SIZE, nr_sects << 9);
++
++			bi_size = bio_add_page(bio, p, sz, offset_in_page(buf));
++			if (bi_size < sz)
++				return -EIO;
++
++			nr_sects -= bi_size >> 9;
++			sector += bi_size >> 9;
++			buf += bi_size;
++		}
++		cond_resched();
++	}
++
++	*biop = bio;
++	return 0;
++}
++
++/**
++ * __blkdev_issue_verify - generate number of verify operations
++ * @bdev:	blockdev to issue
++ * @sector:	start sector
++ * @nr_sects:	number of sectors to verify
++ * @gfp_mask:	memory allocation flags (for bio_alloc())
++ * @biop:	pointer to anchor bio
++ *
++ * Description:
++ *  Verify a block range using hardware offload.
++ *
++ * The function will emulate verify operation if no explicit hardware
++ * offloading for verifying is provided.
++ */
++int __blkdev_issue_verify(struct block_device *bdev, sector_t sector,
++		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
++{
++	unsigned int max_verify_sectors = bdev_verify_sectors(bdev);
++	sector_t min_io_sect = (BIO_MAX_VECS << PAGE_SHIFT) >> 9;
++	struct bio *bio = *biop;
++	sector_t curr_sects;
++	char *buf;
++
++	if (!max_verify_sectors) {
++		int ret = 0;
++
++		buf = kmalloc(min_io_sect << 9, GFP_KERNEL);
++		if (!buf)
++			return -ENOMEM;
++
++		while (nr_sects > 0) {
++			curr_sects = min_t(sector_t, nr_sects, min_io_sect);
++			ret = __blkdev_emulate_verify(bdev, sector, curr_sects,
++						      gfp_mask, &bio, buf);
++			if (ret)
++				break;
++
++			if (bio) {
++				ret = submit_bio_wait(bio);
++				bio_put(bio);
++				bio = NULL;
++			}
++
++			nr_sects -= curr_sects;
++			sector += curr_sects;
++
++		}
++		/* set the biop to NULL since we have alrady completed above */
++		*biop = NULL;
++		kfree(buf);
++		return ret;
++	}
++
++	while (nr_sects) {
++		bio = blk_next_bio(bio, bdev, 0, REQ_OP_VERIFY, gfp_mask);
++		bio->bi_iter.bi_sector = sector;
++
++		if (nr_sects > max_verify_sectors) {
++			bio->bi_iter.bi_size = max_verify_sectors << 9;
++			nr_sects -= max_verify_sectors;
++			sector += max_verify_sectors;
++		} else {
++			bio->bi_iter.bi_size = nr_sects << 9;
++			nr_sects = 0;
++		}
++		cond_resched();
++	}
++	*biop = bio;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(__blkdev_issue_verify);
++
++/**
++ * blkdev_issue_verify - verify a block range
++ * @bdev:	blockdev to verify
++ * @sector:	start sector
++ * @nr_sects:	number of sectors to verify
++ * @gfp_mask:	memory allocation flags (for bio_alloc)
++ *
++ * Description:
++ *  Verify a block range using hardware offload.
++ */
++int blkdev_issue_verify(struct block_device *bdev, sector_t sector,
++		sector_t nr_sects, gfp_t gfp_mask)
++{
++	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
++	struct bio *bio = NULL;
++	struct blk_plug plug;
++	int ret = 0;
++
++	if ((sector | nr_sects) & bs_mask)
++		return -EINVAL;
++
++	blk_start_plug(&plug);
++	ret = __blkdev_issue_verify(bdev, sector, nr_sects, gfp_mask, &bio);
++	if (ret == 0 && bio) {
++		ret = submit_bio_wait(bio);
++		bio_put(bio);
++	}
++	blk_finish_plug(&plug);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(blkdev_issue_verify);
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 5abf5aa5a5f0..f19668c1b7bf 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -153,6 +153,20 @@ static struct bio *blk_bio_write_zeroes_split(struct request_queue *q,
+ 	return bio_split(bio, q->limits.max_write_zeroes_sectors, GFP_NOIO, bs);
+ }
+ 
++static struct bio *blk_bio_verify_split(struct request_queue *q,
++		struct bio *bio, struct bio_set *bs, unsigned *nsegs)
++{
++	*nsegs = 0;
++
++	if (!q->limits.max_verify_sectors)
++		return NULL;
++
++	if (bio_sectors(bio) <= q->limits.max_verify_sectors)
++		return NULL;
++
++	return bio_split(bio, q->limits.max_verify_sectors, GFP_NOIO, bs);
++}
++
+ /*
+  * Return the maximum number of sectors from the start of a bio that may be
+  * submitted as a single request to a block device. If enough sectors remain,
+@@ -346,6 +360,10 @@ void __blk_queue_split(struct request_queue *q, struct bio **bio,
+ 		split = blk_bio_write_zeroes_split(q, *bio, &q->bio_split,
+ 				nr_segs);
+ 		break;
++	case REQ_OP_VERIFY:
++		split = blk_bio_verify_split(q, *bio, &q->bio_split,
++				nr_segs);
++		break;
+ 	default:
+ 		split = blk_bio_segment_split(q, *bio, &q->bio_split, nr_segs);
+ 		break;
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index 8bb9eef5310e..83fb42d42a91 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -43,6 +43,7 @@ void blk_set_default_limits(struct queue_limits *lim)
+ 	lim->max_dev_sectors = 0;
+ 	lim->chunk_sectors = 0;
+ 	lim->max_write_zeroes_sectors = 0;
++	lim->max_verify_sectors = 0;
+ 	lim->max_zone_append_sectors = 0;
+ 	lim->max_discard_sectors = 0;
+ 	lim->max_hw_discard_sectors = 0;
+@@ -80,6 +81,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+ 	lim->max_sectors = UINT_MAX;
+ 	lim->max_dev_sectors = UINT_MAX;
+ 	lim->max_write_zeroes_sectors = UINT_MAX;
++	lim->max_verify_sectors = UINT_MAX;
+ 	lim->max_zone_append_sectors = UINT_MAX;
+ }
+ EXPORT_SYMBOL(blk_set_stacking_limits);
+@@ -202,6 +204,19 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+ }
+ EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
+ 
++/**
++ * blk_queue_max_verify_sectors - set max sectors for a single verify
++ *
++ * @q:  the request queue for the device
++ * @max_verify_sectors: maximum number of sectors to verify per command
++ **/
++void blk_queue_max_verify_sectors(struct request_queue *q,
++		unsigned int max_verify_sectors)
++{
++	q->limits.max_verify_sectors = max_verify_sectors;
++}
++EXPORT_SYMBOL(blk_queue_max_verify_sectors);
++
+ /**
+  * blk_queue_max_zone_append_sectors - set max sectors for a single zone append
+  * @q:  the request queue for the device
+@@ -554,6 +569,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+ 	t->max_dev_sectors = min_not_zero(t->max_dev_sectors, b->max_dev_sectors);
+ 	t->max_write_zeroes_sectors = min(t->max_write_zeroes_sectors,
+ 					b->max_write_zeroes_sectors);
++	t->max_verify_sectors = min(t->max_verify_sectors,
++				    b->max_verify_sectors);
+ 	t->max_zone_append_sectors = min(t->max_zone_append_sectors,
+ 					b->max_zone_append_sectors);
+ 	t->bounce = max(t->bounce, b->bounce);
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index c0303026752d..bae72999a230 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -113,6 +113,12 @@ queue_ra_store(struct request_queue *q, const char *page, size_t count)
+ 	return ret;
+ }
+ 
++static ssize_t queue_verify_max_show(struct request_queue *q, char *page)
++{
++	return sprintf(page, "%llu\n",
++		(unsigned long long)q->limits.max_verify_sectors << 9);
++}
++
+ static ssize_t queue_max_sectors_show(struct request_queue *q, char *page)
+ {
+ 	int max_sectors_kb = queue_max_sectors(q) >> 1;
+@@ -593,6 +599,7 @@ QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
+ 
+ QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
+ QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
++QUEUE_RO_ENTRY(queue_verify_max, "verify_max_bytes");
+ QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
+ QUEUE_RO_ENTRY(queue_zone_write_granularity, "zone_write_granularity");
+ 
+@@ -650,6 +657,7 @@ static struct attribute *queue_attrs[] = {
+ 	&queue_discard_zeroes_data_entry.attr,
+ 	&queue_write_same_max_entry.attr,
+ 	&queue_write_zeroes_max_entry.attr,
++	&queue_verify_max_entry.attr,
+ 	&queue_zone_append_max_entry.attr,
+ 	&queue_zone_write_granularity_entry.attr,
+ 	&queue_nonrot_entry.attr,
+diff --git a/block/blk.h b/block/blk.h
+index b71e22c97d77..af0a4942812f 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -132,6 +132,9 @@ static inline bool rq_mergeable(struct request *rq)
+ 	if (req_op(rq) == REQ_OP_WRITE_ZEROES)
+ 		return false;
+ 
++	if (req_op(rq) == REQ_OP_VERIFY)
++		return false;
++
+ 	if (req_op(rq) == REQ_OP_ZONE_APPEND)
+ 		return false;
+ 
+@@ -169,6 +172,9 @@ static inline unsigned int blk_queue_get_max_sectors(struct request_queue *q,
+ 	if (unlikely(op == REQ_OP_WRITE_ZEROES))
+ 		return q->limits.max_write_zeroes_sectors;
+ 
++	if (unlikely(op == REQ_OP_VERIFY))
++		return q->limits.max_verify_sectors;
++
+ 	return q->limits.max_sectors;
+ }
+ 
+@@ -299,6 +305,7 @@ static inline bool blk_may_split(struct request_queue *q, struct bio *bio)
+ 	case REQ_OP_DISCARD:
+ 	case REQ_OP_SECURE_ERASE:
+ 	case REQ_OP_WRITE_ZEROES:
++	case REQ_OP_VERIFY:
+ 		return true; /* non-trivial splitting decisions */
+ 	default:
+ 		break;
+diff --git a/block/ioctl.c b/block/ioctl.c
+index 60121e89052b..31094e14f42a 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -192,6 +192,39 @@ static int blk_ioctl_zeroout(struct block_device *bdev, fmode_t mode,
+ 	return err;
+ }
+ 
++static int blk_ioctl_verify(struct block_device *bdev, fmode_t mode,
++		unsigned long arg)
++{
++	uint64_t range[2];
++	struct address_space *mapping;
++	uint64_t start, end, len;
++
++	if (!(mode & FMODE_READ))
++		return -EBADF;
++
++	if (copy_from_user(range, (void __user *)arg, sizeof(range)))
++		return -EFAULT;
++
++	start = range[0];
++	len = range[1];
++	end = start + len - 1;
++
++	if (start & 511)
++		return -EINVAL;
++	if (len & 511)
++		return -EINVAL;
++	if (end >= (uint64_t)i_size_read(bdev->bd_inode))
++		return -EINVAL;
++	if (end < start)
++		return -EINVAL;
++
++	/* Invalidate the page cache, including dirty pages */
++	mapping = bdev->bd_inode->i_mapping;
++	truncate_inode_pages_range(mapping, start, end);
++
++	return blkdev_issue_verify(bdev, start >> 9, len >> 9, GFP_KERNEL);
++}
++
+ static int put_ushort(unsigned short __user *argp, unsigned short val)
+ {
+ 	return put_user(val, argp);
+@@ -483,6 +516,8 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 		return blk_ioctl_secure_erase(bdev, mode, argp);
+ 	case BLKZEROOUT:
+ 		return blk_ioctl_zeroout(bdev, mode, arg);
++	case BLKVERIFY:
++		return blk_ioctl_verify(bdev, mode, arg);
+ 	case BLKGETDISKSEQ:
+ 		return put_u64(argp, bdev->bd_disk->diskseq);
+ 	case BLKREPORTZONE:
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 992ee987f273..31fa66c23485 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -55,7 +55,8 @@ static inline bool bio_has_data(struct bio *bio)
+ 	    bio->bi_iter.bi_size &&
+ 	    bio_op(bio) != REQ_OP_DISCARD &&
+ 	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
+-	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
++	    bio_op(bio) != REQ_OP_WRITE_ZEROES &&
++	    bio_op(bio) != REQ_OP_VERIFY)
+ 		return true;
+ 
+ 	return false;
+@@ -65,7 +66,8 @@ static inline bool bio_no_advance_iter(const struct bio *bio)
+ {
+ 	return bio_op(bio) == REQ_OP_DISCARD ||
+ 	       bio_op(bio) == REQ_OP_SECURE_ERASE ||
+-	       bio_op(bio) == REQ_OP_WRITE_ZEROES;
++	       bio_op(bio) == REQ_OP_WRITE_ZEROES ||
++	       bio_op(bio) == REQ_OP_VERIFY;
+ }
+ 
+ static inline void *bio_data(struct bio *bio)
+@@ -176,7 +178,7 @@ static inline unsigned bio_segments(struct bio *bio)
+ 	struct bvec_iter iter;
+ 
+ 	/*
+-	 * We special case discard/write same/write zeroes, because they
++	 * We special case discard/write same/write zeroes/verify, because they
+ 	 * interpret bi_size differently:
+ 	 */
+ 
+@@ -184,6 +186,7 @@ static inline unsigned bio_segments(struct bio *bio)
+ 	case REQ_OP_DISCARD:
+ 	case REQ_OP_SECURE_ERASE:
+ 	case REQ_OP_WRITE_ZEROES:
++	case REQ_OP_VERIFY:
+ 		return 0;
+ 	default:
+ 		break;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index a24d4078fb21..0d5383fc84ed 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -363,6 +363,8 @@ enum req_opf {
+ 	REQ_OP_FLUSH		= 2,
+ 	/* discard sectors */
+ 	REQ_OP_DISCARD		= 3,
++	/* Verify the sectors */
++	REQ_OP_VERIFY		= 6,
+ 	/* securely erase sectors */
+ 	REQ_OP_SECURE_ERASE	= 5,
+ 	/* write the zero filled sector many times */
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 22c477fadc0f..8a44f442af9d 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -296,6 +296,7 @@ struct queue_limits {
+ 	unsigned int		max_hw_discard_sectors;
+ 	unsigned int		max_secure_erase_sectors;
+ 	unsigned int		max_write_zeroes_sectors;
++	unsigned int		max_verify_sectors;
+ 	unsigned int		max_zone_append_sectors;
+ 	unsigned int		discard_granularity;
+ 	unsigned int		discard_alignment;
+@@ -930,6 +931,8 @@ extern void blk_queue_max_discard_sectors(struct request_queue *q,
+ 		unsigned int max_discard_sectors);
+ extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+ 		unsigned int max_write_same_sectors);
++extern void blk_queue_max_verify_sectors(struct request_queue *q,
++		unsigned int max_verify_sectors);
+ extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
+ extern void blk_queue_max_zone_append_sectors(struct request_queue *q,
+ 		unsigned int max_zone_append_sectors);
+@@ -1079,6 +1082,12 @@ extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+ extern int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, unsigned flags);
+ 
++extern int __blkdev_issue_verify(struct block_device *bdev,
++		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
++		struct bio **biop);
++extern int blkdev_issue_verify(struct block_device *bdev, sector_t sector,
++		sector_t nr_sects, gfp_t gfp_mask);
++
+ static inline int sb_issue_discard(struct super_block *sb, sector_t block,
+ 		sector_t nr_blocks, gfp_t gfp_mask, unsigned long flags)
+ {
+@@ -1253,6 +1262,16 @@ static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
+ 	return 0;
+ }
+ 
++static inline unsigned int bdev_verify_sectors(struct block_device *bdev)
++{
++	struct request_queue *q = bdev_get_queue(bdev);
++
++	if (q)
++		return q->limits.max_verify_sectors;
++
++	return 0;
++}
++
+ static inline bool bdev_nonrot(struct block_device *bdev)
+ {
+ 	return blk_queue_nonrot(bdev_get_queue(bdev));
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index bdf7b404b3e7..ad0e5cb5cac4 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -185,6 +185,7 @@ struct fsxattr {
+ #define BLKROTATIONAL _IO(0x12,126)
+ #define BLKZEROOUT _IO(0x12,127)
+ #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
++#define BLKVERIFY _IO(0x12,129)
+ /*
+  * A jump here: 130-136 are reserved for zoned block devices
+  * (see uapi/linux/blkzoned.h)
 -- 
 2.29.0
 
