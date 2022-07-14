@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D5B9575412
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 19:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CA4575421
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 19:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbiGNRdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 13:33:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56840 "EHLO
+        id S239470AbiGNRic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 13:38:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiGNRdH (ORCPT
+        with ESMTP id S232679AbiGNRib (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 13:33:07 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D234E55097;
-        Thu, 14 Jul 2022 10:33:06 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id oy13so4698563ejb.1;
-        Thu, 14 Jul 2022 10:33:06 -0700 (PDT)
+        Thu, 14 Jul 2022 13:38:31 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B59606B6;
+        Thu, 14 Jul 2022 10:38:30 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id x91so3366433ede.1;
+        Thu, 14 Jul 2022 10:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wl4sLOCF4r2ryQPKsJLAlrwRrWQnq6/0JlGSvQNEWKo=;
-        b=TRPa1OlsYyCUZtSFg9cBU6tOHcsv8iEC/lby3fn89qjOU2w4LYMGsGo1b0y9nFtRLe
-         TYQwjlZc4Z0/8xxqDmAkN+3jst09QapJBY1kUg45L3/uBCBJ24B99Gv+9zmmar4x+zmo
-         FiNQFWLqMIhJi2j5xZXIyV3F9B7mrUWWbTitmsB90MK3CTZBNETSMkqi1BZnbFOKVhqJ
-         4yyeSOTHK+AYxaIQGJiWWA6NcGBiPVrVRKQosXID8HXVrTdwG0aLxw+cAi/RvUaxsOYn
-         vQ/6Z5wDSfsrkHzqBxQUbXeIV0onMU9NdNMsG2/ukBAA+9vBeHIUwpPyud9V98my9A4Q
-         clyw==
+        bh=Yu2+SIwToyiijVbo49UhP1kKR2aa55foE/D2/YT55Yg=;
+        b=IWw5CaMfCXVmaVCS03FgCetqbph2FBq2DUnPT/8+/8GQMunsfmxv0pYinebZmpiuq3
+         Y+ZXXUC12JAPvmVqatMBk5t/MzDjcc7+XhpU2CRuLNYH96ZQz86xc/tmUyb+cZ6A5JoK
+         IttW1wUcqf3GZ436e7C3CZLqtT9JV84KIUArFqMXyUFqR7tHznpw6QNFf/qvF2l98Yat
+         QlulbkF6P9Ltj3XDWaZVAaf8gAKS5aD1NC7gQh6mcBp6MM79Mt0VC9GrVwYvz8cu6dal
+         o10N2lLvoGNqST0P9Pg6eB6vketB+wvZtFehLb1VWg5vPSH6FWJGNA1VuQFNeMOWscgG
+         DXeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wl4sLOCF4r2ryQPKsJLAlrwRrWQnq6/0JlGSvQNEWKo=;
-        b=XJ9foouA7uh9I1K7W8NQS8gZPA/FJV9EmJZisz/HEWTaLEJ4Pbz15VaLQHjA3u7hyO
-         eW0T8/KoBc6UAGg9Sfixkqo6N3/kzLZeS4nQWd3Pe+aDQU8Ng4jsq/sHlMqlx/944LSq
-         k83zmYVO+b6V+wcyg2rlsK0ekyD+xeP7IWSCmVtHaPWIaGlGLxlWDW8Ly5VYFI4YCEXb
-         YrbZVnWlFrGCpnf1DCCATot3m8Xo/mkkVW8FvZKqkD1FcIunM/dijg02Uo8P7jxODVGb
-         4SNK9wTiTJYxqDxeD3hsyknyjrAh7hdFWL2dQ4m3HqMvND+jEWuQ3sitoU3PIhMN38eK
-         Aleg==
-X-Gm-Message-State: AJIora/s8kaT8u4w2oELwI40lfX/kmMS4StMNTk2F422SR0zKoq34WxV
-        AI3k3aFTtdSHXMaIHVjFZcoURDZpVDQ=
-X-Google-Smtp-Source: AGRyM1u8zVl5Ok/5naDIlDYM0Rjk2/BJUSfdhrkoneWxhHCTmGRDeXNU7c4ISL2tJmCu7RPN1oXChg==
-X-Received: by 2002:a17:907:3f29:b0:72b:91df:2c4b with SMTP id hq41-20020a1709073f2900b0072b91df2c4bmr9803308ejc.206.1657819985210;
-        Thu, 14 Jul 2022 10:33:05 -0700 (PDT)
+        bh=Yu2+SIwToyiijVbo49UhP1kKR2aa55foE/D2/YT55Yg=;
+        b=f4bJ7gFQDJmm0zXMeUJfYzaXkWueEEMU48liDWxfU/rVORO+g9DYWaPBfSIFG/Ofzm
+         GRrZWo2HG37FVRTyJTliXC8hDakwC92waKC9dhFPCeLOJm/IgB3KDZand6Wnq2k5MAz2
+         oeLL9vxH3t3OjNl/q8Q6c3XTeOu2qWDB7MECxNIo/YfJZL8qChLRVfxeDuD/HkFdH2R1
+         YWVBqK4sHiSutSioLvwwJ+FMzmzwI+s/g85mEY3tTYiILzz0Nf7Z2Mvt83jmVyXvNti0
+         qn6R1Y8L/ta8KFIi/PKGXLkmoDH3Ob61HAv8jQUStdCSxe15yHQ4Fmg5pVvioLdPkJY1
+         g0Xg==
+X-Gm-Message-State: AJIora+r1hgBNDuZvRMJNLeA1K5qync+0eD7/zPcCZFaRUNn0ck0tzQs
+        YRuA8hZBzuINfyxDn1P454H0VTQm6WA=
+X-Google-Smtp-Source: AGRyM1sp11JRsdFgMZcGctJa6r0ts/rppEWWYSPQdRobSA6f2F4IXltHCnp1Q3lsilwqlAoKnBW2aw==
+X-Received: by 2002:aa7:dd06:0:b0:43b:247e:3d6c with SMTP id i6-20020aa7dd06000000b0043b247e3d6cmr5120458edv.407.1657820309353;
+        Thu, 14 Jul 2022 10:38:29 -0700 (PDT)
 Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a10-20020a170906190a00b0072aa1313f5csm910875eje.201.2022.07.14.10.33.04
+        by smtp.gmail.com with ESMTPSA id j17-20020a17090623f100b0072a55ec6f3bsm942235ejg.165.2022.07.14.10.38.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 10:33:04 -0700 (PDT)
+        Thu, 14 Jul 2022 10:38:28 -0700 (PDT)
 From:   Uros Bizjak <ubizjak@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Uros Bizjak <ubizjak@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] epoll: Use try_cmpxchg in list_add_tail_lockless
-Date:   Thu, 14 Jul 2022 19:32:55 +0200
-Message-Id: <20220714173255.12987-1-ubizjak@gmail.com>
+Subject: [PATCH] posix_acl: Use try_cmpxchg in get_acl
+Date:   Thu, 14 Jul 2022 19:38:19 +0200
+Message-Id: <20220714173819.13312-1-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,31 +69,31 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Use try_cmpxchg instead of cmpxchg (*ptr, old, new) == old
-in list_add_tail_lockless. x86 CMPXCHG instruction returns
-success in ZF flag, so this change saves a compare after
-cmpxchg (and related move instruction in front of cmpxchg).
+in get_acl. x86 CMPXCHG instruction returns success in ZF flag,
+so this change saves a compare after cmpxchg (and related move
+instruction in front of cmpxchg).
 
 No functional change intended.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 ---
- fs/eventpoll.c | 2 +-
+ fs/posix_acl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index e2daa940ebce..6705cb965fbe 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1065,7 +1065,7 @@ static inline bool list_add_tail_lockless(struct list_head *new,
- 	 * added to the list from another CPU: the winner observes
- 	 * new->next == new.
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 962d32468eb4..49a13fd4d3cb 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -164,7 +164,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+ 	 * Cache the result, but only if our sentinel is still in place.
  	 */
--	if (cmpxchg(&new->next, new, head) != new)
-+	if (!try_cmpxchg(&new->next, &new, head))
- 		return false;
- 
- 	/*
+ 	posix_acl_dup(acl);
+-	if (unlikely(cmpxchg(p, sentinel, acl) != sentinel))
++	if (unlikely(!try_cmpxchg(p, &sentinel, acl)))
+ 		posix_acl_release(acl);
+ 	return acl;
+ }
 -- 
 2.35.3
 
