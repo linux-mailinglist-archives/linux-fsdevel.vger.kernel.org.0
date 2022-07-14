@@ -2,309 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9648C57509C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 16:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C820575224
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 17:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239914AbiGNOST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 10:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58614 "EHLO
+        id S240095AbiGNPo3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 11:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239104AbiGNOSS (ORCPT
+        with ESMTP id S238847AbiGNPo1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 10:18:18 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678BE643CB;
-        Thu, 14 Jul 2022 07:18:15 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 9A4881F926;
-        Thu, 14 Jul 2022 14:18:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1657808294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ahtBmMFVqn+iStyYp+fe1qrCLV3kGTdnrSb81jBiVNM=;
-        b=Vu2ZFAOu2QVTU7sNzBQDz+5lBTeTKy3a2qucZ1eW/1gpiisz6U+Ly/5WUtDUuGBWwqTi+p
-        bt4naTaMeg1PCOmXG0KbvAkJ9GKk6u0BrunBK/mjXlSnE4VRmeSCerDS6k07E77R4JOqS5
-        HaxPYzcE0DWHbzaBqhZwWfhV2b6Jbto=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1657808294;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ahtBmMFVqn+iStyYp+fe1qrCLV3kGTdnrSb81jBiVNM=;
-        b=An7OdbqbbK79nbXw8d2fs37p9OVp53SCkstx7OQucB7A43pwzAFqJUAWjC7G5IHNlnYiLV
-        ZW3IR/TGBqIHq1Ag==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 672E92C141;
-        Thu, 14 Jul 2022 14:18:14 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0D36FA0659; Thu, 14 Jul 2022 16:18:13 +0200 (CEST)
-Date:   Thu, 14 Jul 2022 16:18:13 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     linux-mm@kvack.org
-Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] possible deadlock in start_this_handle (3)
-Message-ID: <20220714141813.yi5p4o2tiyvkao6b@quack3>
-References: <000000000000471c2905e3c2c2c2@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 14 Jul 2022 11:44:27 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2DDAE4E;
+        Thu, 14 Jul 2022 08:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657813467; x=1689349467;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=FN7haTZMN6zPDUbvEGdolsvt29iXJQuUxTTV8/lfbvw=;
+  b=IV/XNTL8fp+ybH4c1PEb87Sv8Fa6pZRxip6SAICROwGO8PF4H3U00oNq
+   lGcSaiNF6UBfhPu3sUx/eczSui/z+s258Y6ehnRSgwQLqlU/IrmjDsfuy
+   7pnP0mu419VTzj3TlWlrYMB69Hv5OmfIC+l3kAl6p0Rl8dBPj4dDom2OK
+   1g5RYGv+NQiwPiwWWIDD+3gaL3kWAr71i+wQh1MCzxOaaNA/9LQd8Gq+G
+   Ks91XL5gslpsLKZVP5T97eN67uncLSEVxjHXqwZEP2l4kEhDVOR2i/fT5
+   jnhckmoHLaMEBV8xRVBmzyEDDfli9SYa8UjqjnMIoP4BA+VpPKypZ3MmX
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10408"; a="265960269"
+X-IronPort-AV: E=Sophos;i="5.92,271,1650956400"; 
+   d="scan'208";a="265960269"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2022 08:44:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,271,1650956400"; 
+   d="scan'208";a="571141926"
+Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jul 2022 08:44:06 -0700
+Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
+ fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27; Thu, 14 Jul 2022 08:44:06 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.27 via Frontend Transport; Thu, 14 Jul 2022 08:44:06 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.40) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.27; Thu, 14 Jul 2022 08:44:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XlKwCC615n6uSBPce2bZixnVHtBxTKjtt6qiQqzb8AxyhqAQF0+Uh8BpVBjMMyYnMo4tbjer/en9wxwu5Y9gDC0qyqOzm/9Jr7WCzLnHshM9lrxAC/b1Ei0e51GwdGBOvPVkJCoHuf+MzayAC8cYn+nMLR+N/65y6YnEv3Oz1XjWG/3eHG0GqgGp6PjO4dllTtZV5/+CTAfLaV9KU9jB5IR9DWc49bGFg6tYCIyGsaFQQutk3m3FrfhIgno9zbHkMPz2FaZ2Wxg2j3OE+WNZs4G0prMCOF1TRWBQNsQHe0ODbOPRqpk8W4Zb0OvXDSthIHv0u3/msvYv7DDUCwEC/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Iw9ZWhWZVySunOKQWuc58oQSxg+I+VD8dlHffeNrpGw=;
+ b=TXha29agjG5f3ga+wA5Q1TmXT4lavfWXLbMkBQonQULc6udwnTKhd1Z61KFmvzt3QZkUw1UiWFzzSQNcAY3Ab+P6Lu8njPDf8GY1+an5Vp8EVGYOS91WHlxhm7ltIsO/O7v2NOWH3d+OPp1rCM6wxoNSe03entCIPIW6FERSO9LJ+fa//frRwhzs4frcrLqazXgYco+n72eLh3JQfb25fuEgZSX09I8FSTpVDWqV9OVryK5/YexziqsvS10rkluv3VPRXvK64gvWhxMl3ytU2FDHgMnGa/z+qI5utNnkdycvLF5OemXRaRABNpafqSjKJQTVJnXZaq2mXMwCBWDh7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20) by DM6PR11MB2937.namprd11.prod.outlook.com
+ (2603:10b6:5:62::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.23; Thu, 14 Jul
+ 2022 15:44:03 +0000
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::6466:20a6:57b4:1edf]) by MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::6466:20a6:57b4:1edf%11]) with mapi id 15.20.5438.014; Thu, 14 Jul
+ 2022 15:44:03 +0000
+Date:   Thu, 14 Jul 2022 08:44:00 -0700
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Alison Schofield" <alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        <linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] xarray: Introduce devm_xa_init()
+Message-ID: <62d039c0cfc13_16fb972943f@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20220705232159.2218958-1-ira.weiny@intel.com>
+ <20220705232159.2218958-2-ira.weiny@intel.com>
+ <YshE/pwSUBPAeybU@casper.infradead.org>
+ <YshGSgHiAiu9QwiZ@iweiny-desk3>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <000000000000471c2905e3c2c2c2@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <YshGSgHiAiu9QwiZ@iweiny-desk3>
+X-ClientProxiedBy: SJ0PR03CA0375.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::20) To MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7a5268bf-14a3-40b4-ca9b-08da65afad93
+X-MS-TrafficTypeDiagnostic: DM6PR11MB2937:EE_
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 264iuS/iHEqhl89G//p8bGoivoUnR9xRC2UpbtKVohScdV+EUvYXbIvmNjmEBMAQDk8ogsb2AaYs1SV6N6uqr2YQz8QQOSo/220elc7+LZBlbOo1NMqmoYnpZphwYr3cKB1t7EZDF5lccHqf15qOLcKXGphM3iBse9ZCALdedzmksfqTQKo6nktur64hdJz0O+3txxkRz7Tb8VoefZvdeYh/8JpthhKUyVvnUdoz6RpoOfmnUv1c/Ua56C85IhCOm7Yy6QonX/+3tzb7Q7YtmIsrbRUFew/OFFhG5rKKRFn1Kwr2rEt74qa5Jp1sdTr7RcAgSTULYXNfhMDS7vkJZm1siE019NRniJprfO5dWapa3VPjFYKWAtdNYPzHvr4cB+ZD4T4X+672MmBY2flKiUF08DUT9gxDLcK3xUXcDhyBYr0DqyCGkDiImNIIDqmMuTLL3WXjggNO2koXlsWCHrwrxeMAdwgDMyZWo+zINUC5n8ot1ru6zx0UsCYZ+m/qlNiIiicMQznyFuL8f3HgI2bnjnU/gCwRFyYDjX9Zgu8xE5i5R5p03wgOMUNWMtN3vFUzYyb/Eo22Biyzu8tCqvrexzbX5Xfi1vbMgX+mdZfEQ8/9+6C0grjRY7ugX6fxPUYZPDG1fJQNzTECpKaG1KCF7QOp2XfLX50lrIp9ISVMeUKHCaaPFw/odKag9TVRUsabWZSzI2ZTdPdLtmNTZ6jj8WR99tPEptrHWnqrUbGMECd8IGVzf6IAY8EntG4dIy5B6ifOMIiVlpk7xPeDzA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(39860400002)(376002)(396003)(366004)(346002)(136003)(2906002)(9686003)(41300700001)(8676002)(8936002)(26005)(6512007)(38100700002)(86362001)(6486002)(478600001)(5660300002)(82960400001)(186003)(110136005)(66946007)(6506007)(316002)(4326008)(54906003)(66556008)(66476007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?F1IKuNaiAXiJElu17FwdK8KJ7rTV08GwJluboTi6EqSHlDZn5EECuEdpUc2j?=
+ =?us-ascii?Q?o09qr6+MR9ij2+MapqsXHu+0xHh3K18p+tq7OcGD1pcaP5tDZivIfc0YOBCf?=
+ =?us-ascii?Q?KgN3WXGnYZ23lVT5TmTQLtmu/J0ARWdj5we8ov66ljoU4jB87/ES9RmTO/Q2?=
+ =?us-ascii?Q?z46LZBwKoGKSs0NKWmIHaPc5VEr7BHI+rQ05qUBm8QvuQp46B58RB1wuonqm?=
+ =?us-ascii?Q?n3xlfn0wdhHQMTK7R9Yqrr+YskU+vvpulaP+0xCevMWu0+AsUKS5I6MhROK3?=
+ =?us-ascii?Q?365gzJnCXsxPNMo49+TMTK19xOx3mmEMQLAyEZgB6Jm/BbaCJMkzCUmyiWCs?=
+ =?us-ascii?Q?FKq41u9/ImtwPIzNJReII+145ZZLlrAVBQU3csW/ESOOaNvkzk0UDuKp4TGi?=
+ =?us-ascii?Q?OQN4d1DF/bmixH1PLNqS76tCtcOk7pEcwJUqXnMdcsqArw86OSGHrCDaLET+?=
+ =?us-ascii?Q?ninWqGvPYykd/+anXCcKGDjUyPm2Q0SoVn7Zk2tvqCgnqJKcX/ZOOFOMsGnf?=
+ =?us-ascii?Q?tmOm6KlGrutYQEthYqk7NwT4Eb7pwtMKjHIni3i9BTOFOE2fGVD0asCROVQN?=
+ =?us-ascii?Q?ju6gYbqVHhGJpDQLZQLKlOgqJMf/gS/Cqg3IPtFk7Daqw8wJFq+/KE6vydF3?=
+ =?us-ascii?Q?4i01+JC7Lm5TyO5jstwuQCUVNpgQfxja6VH0HDoD4eSpjgzBV/yWPKWwxI6s?=
+ =?us-ascii?Q?nPw8NK9en63SFXfs0KBGFNaV90R+epCw9GqU9EfL7ElJ01yEGc/vLEpCCxxg?=
+ =?us-ascii?Q?QlOkcBkfnHSSu/hOyn8+CEw1Fao42Ameuw0eMNXNbM5LUxTiALVqkb0CB+Lu?=
+ =?us-ascii?Q?FlHWPKyAdAiCFq40AysD9yc7H5BK9xvXZNsltR59VMSvv5wUP3xHZvHiIUNq?=
+ =?us-ascii?Q?jF4VXvAQil+jQXZiOG9vcc7oSYdn4QO6AI7ON73QakQhPuoTpjmOyfIb7jUH?=
+ =?us-ascii?Q?Pr+eq7MQbX09EUlOJJi45/AHS4EIjEknJArPtSWHSmZnFnRO8bdCWXmoFtT+?=
+ =?us-ascii?Q?9bzFHBUJmPbzGpLpqR6mDfKVBQ9Q4K9gE2IRDq+ZaiTenndulNdHljX0rhPh?=
+ =?us-ascii?Q?NokQDyT+LxibZY62jU2DmiWt9PP9PCcjIc+q8oem8S4si9Fomgee3+VIpg2L?=
+ =?us-ascii?Q?nH+YDkMQKyiKxdXpdeuI2/BiNs/M0PoTDdkWPXgB+oHha90cxOdhb+hZYIjA?=
+ =?us-ascii?Q?nagDGQacNqOVQhcTPMmdjAOw7ovPLA3eJFVq8ycnh8/9NXiSJf33o/jivOq5?=
+ =?us-ascii?Q?9X1lkCrDCiwbqsopgUM24J2CmoKdM1hvXLn/thyvv2obrzNXdg23kaRbWZTp?=
+ =?us-ascii?Q?tipIDURBWM3IglGGDe8BU/gek0oBTWaLuLfRrVNgUABJFMrqM7QiyI4H/see?=
+ =?us-ascii?Q?9CJzPmAhnCOsm+YmDyZ3ydwAZhiNfv/91WMWk3OmuktI+euPVzb/VHjrzr76?=
+ =?us-ascii?Q?4KVhprk81VwdYf7Vrn3OjfoZp7tN1pJjJbiL+4+GCh7GNlaiKKDXGKsR0ETY?=
+ =?us-ascii?Q?TQmh/L0qrcbdmzLt5Vda1eZZZ0khpCmCgZNK+g7+AFTFpWANlSKfuODK02Zr?=
+ =?us-ascii?Q?T0TlAYNQQmhR0fXSda4571juGBF7RjTVaXrFgserqXX/fWhRSSdQlAdkEL7/?=
+ =?us-ascii?Q?pg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a5268bf-14a3-40b4-ca9b-08da65afad93
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2022 15:44:03.4360
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5gLpPnIbMgOILlGk5jibJXLBrjZgb/QOUo5aTHiLh5LUc9w3Tqp2UTiV8K2jo8ezIDw1PqQSz7Oj/n8c6F0L/FpUHsQqbWawJZoxp9aHmWk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2937
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Ira Weiny wrote:
+> On Fri, Jul 08, 2022 at 03:53:50PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jul 05, 2022 at 04:21:57PM -0700, ira.weiny@intel.com wrote:
+> > > The main issue I see with this is defining devm_xa_init() in device.h.
+> > > This makes sense because a device is required to use the call.  However,
+> > > I'm worried about if users will find the call there vs including it in
+> > > xarray.h?
+> > 
+> > Honestly, I don't want users to find it.  This only makes sense if you're
+> > already bought in to the devm cult.  I worry people will think that
+> > they don't need to do anything else; that everything will be magically
+> > freed for them, and we'll leak the objects pointed to from the xarray.
+> > I don't even like having xa_destroy() in the API, because of exactly this.
+> > 
+> 
+> Fair enough.  Are you ok with the concept though?
 
-so this lockdep report looks real but is more related to OOM handling than
-to ext4 as such. The immediate problem I can see is that
-mem_cgroup_print_oom_meminfo() which is called under oom_lock calls
-memory_stat_format() which does GFP_KERNEL allocations to allocate buffers
-for dumping of MM statistics. This creates oom_lock -> fs reclaim
-dependency and because OOM can be hit (and thus oom_lock acquired) in
-practically any allocation (regardless of GFP_NOFS) this has a potential of
-creating real deadlock cycles.
+I came here to same the same thing as Matthew. devm_xa_init() does not
+lessen review burden like other devm helpers. A reviewer still needs to
+go verfy that the patch that uses this makes sure to free all objects in
+the xarray before it gets destroyed.
 
-So should mem_cgroup_print_oom_meminfo() be using
-memalloc_nofs_save/restore() to avoid such deadlocks? Or perhaps someone
-sees another solution? Generally allocating memory to report OOM looks a
-bit dangerous to me ;).
-
-								Honza
-
-On Thu 14-07-22 05:08:26, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    5a29232d870d Merge tag 'for-5.19-rc6-tag' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16619ce8080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=525bc0635a2b942a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2d2aeadc6ce1e1f11d45
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> userspace arch: i386
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+2d2aeadc6ce1e1f11d45@syzkaller.appspotmail.com
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 5.19.0-rc6-syzkaller-00026-g5a29232d870d #0 Not tainted
-> ------------------------------------------------------
-> khugepaged/48 is trying to acquire lock:
-> ffff888044598990 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0xfb4/0x14a0 fs/jbd2/transaction.c:461
-> 
-> but task is already holding lock:
-> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4638 [inline]
-> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
-> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x9e1/0x2160 mm/page_alloc.c:5066
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #2 (fs_reclaim){+.+.}-{0:0}:
->        __fs_reclaim_acquire mm/page_alloc.c:4589 [inline]
->        fs_reclaim_acquire+0x115/0x160 mm/page_alloc.c:4603
->        might_alloc include/linux/sched/mm.h:271 [inline]
->        slab_pre_alloc_hook mm/slab.h:723 [inline]
->        slab_alloc_node mm/slub.c:3157 [inline]
->        slab_alloc mm/slub.c:3251 [inline]
->        kmem_cache_alloc_trace+0x40/0x3f0 mm/slub.c:3282
->        kmalloc include/linux/slab.h:600 [inline]
->        memory_stat_format+0x95/0xae0 mm/memcontrol.c:1468
->        mem_cgroup_print_oom_meminfo.cold+0x50/0x7e mm/memcontrol.c:1594
->        dump_header+0x13f/0x7f9 mm/oom_kill.c:462
->        oom_kill_process.cold+0x10/0x15 mm/oom_kill.c:1037
->        out_of_memory+0x358/0x14b0 mm/oom_kill.c:1175
->        mem_cgroup_out_of_memory+0x206/0x270 mm/memcontrol.c:1650
->        memory_max_write+0x25c/0x3b0 mm/memcontrol.c:6299
->        cgroup_file_write+0x1de/0x770 kernel/cgroup/cgroup.c:3882
->        kernfs_fop_write_iter+0x3f8/0x610 fs/kernfs/file.c:290
->        call_write_iter include/linux/fs.h:2058 [inline]
->        new_sync_write+0x38a/0x560 fs/read_write.c:504
->        vfs_write+0x7c0/0xac0 fs/read_write.c:591
->        ksys_write+0x127/0x250 fs/read_write.c:644
->        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
->        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
->        do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:203
->        entry_SYSENTER_compat_after_hwframe+0x53/0x62
-> 
-> -> #1 (oom_lock){+.+.}-{3:3}:
->        __mutex_lock_common kernel/locking/mutex.c:603 [inline]
->        __mutex_lock+0x12f/0x1350 kernel/locking/mutex.c:747
->        mem_cgroup_out_of_memory+0x8d/0x270 mm/memcontrol.c:1640
->        mem_cgroup_oom mm/memcontrol.c:1880 [inline]
->        try_charge_memcg+0xef9/0x1380 mm/memcontrol.c:2670
->        obj_cgroup_charge_pages mm/memcontrol.c:2999 [inline]
->        obj_cgroup_charge+0x2ab/0x5e0 mm/memcontrol.c:3289
->        memcg_slab_pre_alloc_hook mm/slab.h:505 [inline]
->        slab_pre_alloc_hook mm/slab.h:728 [inline]
->        slab_alloc_node mm/slub.c:3157 [inline]
->        slab_alloc mm/slub.c:3251 [inline]
->        __kmem_cache_alloc_lru mm/slub.c:3258 [inline]
->        kmem_cache_alloc+0x92/0x3b0 mm/slub.c:3268
->        kmem_cache_zalloc include/linux/slab.h:723 [inline]
->        alloc_buffer_head+0x20/0x140 fs/buffer.c:3294
->        alloc_page_buffers+0x285/0x7a0 fs/buffer.c:829
->        grow_dev_page fs/buffer.c:965 [inline]
->        grow_buffers fs/buffer.c:1011 [inline]
->        __getblk_slow+0x525/0x1080 fs/buffer.c:1038
->        __getblk_gfp+0x6e/0x80 fs/buffer.c:1333
->        sb_getblk include/linux/buffer_head.h:326 [inline]
->        ext4_getblk+0x20d/0x7c0 fs/ext4/inode.c:866
->        ext4_bread+0x2a/0x1c0 fs/ext4/inode.c:912
->        ext4_append+0x177/0x3a0 fs/ext4/namei.c:67
->        ext4_init_new_dir+0x25e/0x4d0 fs/ext4/namei.c:2920
->        ext4_mkdir+0x3cf/0xb20 fs/ext4/namei.c:2966
->        vfs_mkdir+0x1c3/0x3b0 fs/namei.c:3975
->        do_mkdirat+0x285/0x300 fs/namei.c:4001
->        __do_sys_mkdirat fs/namei.c:4016 [inline]
->        __se_sys_mkdirat fs/namei.c:4014 [inline]
->        __ia32_sys_mkdirat+0x81/0xa0 fs/namei.c:4014
->        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
->        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
->        do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:203
->        entry_SYSENTER_compat_after_hwframe+0x53/0x62
-> 
-> -> #0 (jbd2_handle){++++}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3095 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3214 [inline]
->        validate_chain kernel/locking/lockdep.c:3829 [inline]
->        __lock_acquire+0x2abe/0x5660 kernel/locking/lockdep.c:5053
->        lock_acquire kernel/locking/lockdep.c:5665 [inline]
->        lock_acquire+0x1ab/0x570 kernel/locking/lockdep.c:5630
->        start_this_handle+0xfe7/0x14a0 fs/jbd2/transaction.c:463
->        jbd2__journal_start+0x399/0x930 fs/jbd2/transaction.c:520
->        __ext4_journal_start_sb+0x3a8/0x4a0 fs/ext4/ext4_jbd2.c:105
->        __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
->        ext4_dirty_inode+0x9d/0x110 fs/ext4/inode.c:5949
->        __mark_inode_dirty+0x495/0x1050 fs/fs-writeback.c:2381
->        mark_inode_dirty_sync include/linux/fs.h:2337 [inline]
->        iput.part.0+0x57/0x820 fs/inode.c:1767
->        iput+0x58/0x70 fs/inode.c:1760
->        dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
->        __dentry_kill+0x3c0/0x640 fs/dcache.c:607
->        shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
->        prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
->        super_cache_scan+0x336/0x590 fs/super.c:104
->        do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:770
->        shrink_slab+0x17c/0x6f0 mm/vmscan.c:930
->        shrink_node_memcgs mm/vmscan.c:3124 [inline]
->        shrink_node+0x8b3/0x1db0 mm/vmscan.c:3245
->        shrink_zones mm/vmscan.c:3482 [inline]
->        do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3540
->        try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3775
->        __perform_reclaim mm/page_alloc.c:4641 [inline]
->        __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
->        __alloc_pages_slowpath.constprop.0+0xa8a/0x2160 mm/page_alloc.c:5066
->        __alloc_pages+0x436/0x510 mm/page_alloc.c:5439
->        __alloc_pages_node include/linux/gfp.h:587 [inline]
->        khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:859
->        collapse_huge_page mm/khugepaged.c:1062 [inline]
->        khugepaged_scan_pmd mm/khugepaged.c:1348 [inline]
->        khugepaged_scan_mm_slot mm/khugepaged.c:2170 [inline]
->        khugepaged_do_scan mm/khugepaged.c:2251 [inline]
->        khugepaged+0x3473/0x66a0 mm/khugepaged.c:2296
->        kthread+0x2e9/0x3a0 kernel/kthread.c:376
->        ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
-> 
-> other info that might help us debug this:
-> 
-> Chain exists of:
->   jbd2_handle --> oom_lock --> fs_reclaim
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(fs_reclaim);
->                                lock(oom_lock);
->                                lock(fs_reclaim);
->   lock(jbd2_handle);
-> 
->  *** DEADLOCK ***
-> 
-> 3 locks held by khugepaged/48:
->  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4638 [inline]
->  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
->  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x9e1/0x2160 mm/page_alloc.c:5066
->  #1: ffffffff8be7d850 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab+0xc9/0x6f0 mm/vmscan.c:920
->  #2: ffff8880445800e0 (&type->s_umount_key#33){++++}-{3:3}, at: trylock_super fs/super.c:415 [inline]
->  #2: ffff8880445800e0 (&type->s_umount_key#33){++++}-{3:3}, at: super_cache_scan+0x6c/0x590 fs/super.c:79
-> 
-> stack backtrace:
-> CPU: 2 PID: 48 Comm: khugepaged Not tainted 5.19.0-rc6-syzkaller-00026-g5a29232d870d #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
->  check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2175
->  check_prev_add kernel/locking/lockdep.c:3095 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3214 [inline]
->  validate_chain kernel/locking/lockdep.c:3829 [inline]
->  __lock_acquire+0x2abe/0x5660 kernel/locking/lockdep.c:5053
->  lock_acquire kernel/locking/lockdep.c:5665 [inline]
->  lock_acquire+0x1ab/0x570 kernel/locking/lockdep.c:5630
->  start_this_handle+0xfe7/0x14a0 fs/jbd2/transaction.c:463
->  jbd2__journal_start+0x399/0x930 fs/jbd2/transaction.c:520
->  __ext4_journal_start_sb+0x3a8/0x4a0 fs/ext4/ext4_jbd2.c:105
->  __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
->  ext4_dirty_inode+0x9d/0x110 fs/ext4/inode.c:5949
->  __mark_inode_dirty+0x495/0x1050 fs/fs-writeback.c:2381
->  mark_inode_dirty_sync include/linux/fs.h:2337 [inline]
->  iput.part.0+0x57/0x820 fs/inode.c:1767
->  iput+0x58/0x70 fs/inode.c:1760
->  dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
->  __dentry_kill+0x3c0/0x640 fs/dcache.c:607
->  shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
->  prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
->  super_cache_scan+0x336/0x590 fs/super.c:104
->  do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:770
->  shrink_slab+0x17c/0x6f0 mm/vmscan.c:930
->  shrink_node_memcgs mm/vmscan.c:3124 [inline]
->  shrink_node+0x8b3/0x1db0 mm/vmscan.c:3245
->  shrink_zones mm/vmscan.c:3482 [inline]
->  do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3540
->  try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3775
->  __perform_reclaim mm/page_alloc.c:4641 [inline]
->  __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
->  __alloc_pages_slowpath.constprop.0+0xa8a/0x2160 mm/page_alloc.c:5066
->  __alloc_pages+0x436/0x510 mm/page_alloc.c:5439
->  __alloc_pages_node include/linux/gfp.h:587 [inline]
->  khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:859
->  collapse_huge_page mm/khugepaged.c:1062 [inline]
->  khugepaged_scan_pmd mm/khugepaged.c:1348 [inline]
->  khugepaged_scan_mm_slot mm/khugepaged.c:2170 [inline]
->  khugepaged_do_scan mm/khugepaged.c:2251 [inline]
->  khugepaged+0x3473/0x66a0 mm/khugepaged.c:2296
->  kthread+0x2e9/0x3a0 kernel/kthread.c:376
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If there still needs to be an open-coded "empty the xarray" step, then
+that can just do the xa_destroy() there. So for me, no, the concept of
+this just not quite jive.
