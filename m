@@ -2,423 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5606574F88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 15:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9648C57509C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 16:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239470AbiGNNqm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 09:46:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42738 "EHLO
+        id S239914AbiGNOST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 10:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239863AbiGNNqj (ORCPT
+        with ESMTP id S239104AbiGNOSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 09:46:39 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1D5C52888;
-        Thu, 14 Jul 2022 06:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657806397; x=1689342397;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a8t6jcgaeS5+TBBKksOjMpoTEzx+ZxUag/6ZeJZJPGM=;
-  b=Cv0EGHbxx/NZLeiuvdUxS17hH/8j3x4ZRh6tZYUEEE3VP+muxMWWIOUi
-   2Im08eh2M1fZxywoBusssn1qQGxIgV5O0t7YRebPaSnBVpTuz5WyHYiDK
-   B00UZZ6ZnTNNy7rFwMkYXobNHM31+CwxDn89q6pD4NTJOCcXU5O7x38XN
-   TMjmzZ90d1sinKKLdZLk7Ehg9WCS1LC5Vs1rmqMVyuzX4qJxwJ4KoCeWF
-   npXrkPmsGVq45LFIAJHM6g21cvbcAdxu5cFigLLXIRTCVO/QhTqh3YLeE
-   BfvGtecDyvJXhdwDMWqiOrx+rVVC07HUJglOQRHi1Lughb8wja+IJPg7i
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="371827297"
-X-IronPort-AV: E=Sophos;i="5.92,271,1650956400"; 
-   d="scan'208";a="371827297"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2022 06:46:27 -0700
-X-IronPort-AV: E=Sophos;i="5.92,271,1650956400"; 
-   d="scan'208";a="653879044"
-Received: from rli9-dbox.sh.intel.com (HELO rli9-dbox) ([10.239.159.142])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2022 06:46:24 -0700
-Date:   Thu, 14 Jul 2022 21:45:08 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     kernel test robot <lkp@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        ntfs3@lists.linux.dev, linux-pci@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-can@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, bpf@vger.kernel.org
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 4662b7adea50bb62e993a67f611f3be625d3df0d
-Message-ID: <YtAd5ApndzCoK2LH@rli9-dbox>
-References: <62cf77c3.3T/sxYUjJq0ImGp4%lkp@intel.com>
- <YtANl3Y5YRhOM0zH@shell.armlinux.org.uk>
+        Thu, 14 Jul 2022 10:18:18 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678BE643CB;
+        Thu, 14 Jul 2022 07:18:15 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9A4881F926;
+        Thu, 14 Jul 2022 14:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1657808294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ahtBmMFVqn+iStyYp+fe1qrCLV3kGTdnrSb81jBiVNM=;
+        b=Vu2ZFAOu2QVTU7sNzBQDz+5lBTeTKy3a2qucZ1eW/1gpiisz6U+Ly/5WUtDUuGBWwqTi+p
+        bt4naTaMeg1PCOmXG0KbvAkJ9GKk6u0BrunBK/mjXlSnE4VRmeSCerDS6k07E77R4JOqS5
+        HaxPYzcE0DWHbzaBqhZwWfhV2b6Jbto=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1657808294;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ahtBmMFVqn+iStyYp+fe1qrCLV3kGTdnrSb81jBiVNM=;
+        b=An7OdbqbbK79nbXw8d2fs37p9OVp53SCkstx7OQucB7A43pwzAFqJUAWjC7G5IHNlnYiLV
+        ZW3IR/TGBqIHq1Ag==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 672E92C141;
+        Thu, 14 Jul 2022 14:18:14 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 0D36FA0659; Thu, 14 Jul 2022 16:18:13 +0200 (CEST)
+Date:   Thu, 14 Jul 2022 16:18:13 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     linux-mm@kvack.org
+Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu, linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] possible deadlock in start_this_handle (3)
+Message-ID: <20220714141813.yi5p4o2tiyvkao6b@quack3>
+References: <000000000000471c2905e3c2c2c2@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YtANl3Y5YRhOM0zH@shell.armlinux.org.uk>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <000000000000471c2905e3c2c2c2@google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 14, 2022 at 01:35:35PM +0100, Russell King (Oracle) wrote:
-> Hi,
-> 
-> I don't mean to discourge test systems, but looking at this, I just go
-> "meh" and delete it - it doesn't seem to contain obviously useful
-> information. One has to read every damn line to see if there's something
-> of relevence, which I for one am not going to do.
-> 
-> Is there some kind of improvement that could be done to this to make it
-> more useful - such as only sending the warnings/errors to the
-> appropriate mailing lists for those - rather than grouping everything
-> together into one email. At least that should make the stuff (a) more
-> relevant and (b) easier to parse.
+Hello,
 
-Thanks for the feedback Russell, we will further consider how to make this
-summary report more helpful, and reduce unnecessary distribution to many
-mailing list.
+so this lockdep report looks real but is more related to OOM handling than
+to ext4 as such. The immediate problem I can see is that
+mem_cgroup_print_oom_meminfo() which is called under oom_lock calls
+memory_stat_format() which does GFP_KERNEL allocations to allocate buffers
+for dumping of MM statistics. This creates oom_lock -> fs reclaim
+dependency and because OOM can be hit (and thus oom_lock acquired) in
+practically any allocation (regardless of GFP_NOFS) this has a potential of
+creating real deadlock cycles.
 
-Typically, 0day ci sends 2 kinds of reports, one is bisected report, which
-has specific warning/error as you mentioned to related receivers. Such as
-https://lore.kernel.org/all/202207130344.AUqExE4E-lkp@intel.com/
+So should mem_cgroup_print_oom_meminfo() be using
+memalloc_nofs_save/restore() to avoid such deadlocks? Or perhaps someone
+sees another solution? Generally allocating memory to report OOM looks a
+bit dangerous to me ;).
 
-The other is this summary, we want to give an overview to the owner for the
-head status. And we will re-consider the appropriate audiences for the mail
-and the contents to make it clear.
+								Honza
 
+On Thu 14-07-22 05:08:26, syzbot wrote:
+> Hello,
 > 
-> Russell.
+> syzbot found the following issue on:
 > 
-> On Thu, Jul 14, 2022 at 09:56:19AM +0800, kernel test robot wrote:
-> > tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> > branch HEAD: 4662b7adea50bb62e993a67f611f3be625d3df0d  Add linux-next specific files for 20220713
-> > 
-> > Error/Warning reports:
-> > 
-> > https://lore.kernel.org/linux-doc/202207021352.PpKTUY8V-lkp@intel.com
-> > https://lore.kernel.org/linux-doc/202207031437.qIh6LFcx-lkp@intel.com
-> > https://lore.kernel.org/linux-doc/202207051821.3f0eRIsL-lkp@intel.com
-> > https://lore.kernel.org/linux-doc/202207140742.GTPk4U8i-lkp@intel.com
-> > https://lore.kernel.org/linux-mm/202206292052.LsFui3zO-lkp@intel.com
-> > https://lore.kernel.org/linux-mm/202207140042.cK3tlk6j-lkp@intel.com
-> > https://lore.kernel.org/llvm/202207090100.acXdJ79H-lkp@intel.com
-> > 
-> > Error/Warning: (recently discovered and may have been fixed)
-> > 
-> > Documentation/PCI/endpoint/pci-vntb-function.rst:82: WARNING: Unexpected indentation.
-> > Documentation/PCI/endpoint/pci-vntb-howto.rst:131: WARNING: Title underline too short.
-> > Documentation/filesystems/netfs_library.rst:384: WARNING: Inline emphasis start-string without end-string.
-> > Documentation/filesystems/netfs_library:609: fs/netfs/buffered_read.c:318: WARNING: Inline emphasis start-string without end-string.
-> > Documentation/virt/kvm/api.rst:8256: WARNING: Title underline too short.
-> > Documentation/virt/kvm/api.rst:8263: WARNING: Unexpected indentation.
-> > drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:2837:6: warning: no previous prototype for function 'dc_reset_state' [-Wmissing-prototypes]
-> > drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_binary_assert_format'
-> > drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
-> > drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
-> > drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
-> > fs/ntfs/attrib.c:705:18: warning: Either the condition '!al' is redundant or there is pointer arithmetic with NULL pointer. [nullPointerArithmeticRedundantCheck]
-> > fs/ntfs/layout.h:126:43: warning: Parameter 'p' can be declared with const [constParameter]
-> > fs/ntfs/ntfs.h:144:3: warning: Assignment of function parameter has no effect outside the function. [uselessAssignmentArg]
-> > fs/super.c:1310:57: warning: Parameter 'data' can be declared with const [constParameter]
-> > fs/super.c:750:52: warning: Parameter 'bdev' can be declared with const [constParameter]
-> > ipc/shm.c:158:0: warning: failed to expand 'ipc_init_proc_interface', it is invalid to use a preprocessor directive as macro parameter [preprocessorErrorDirective]
-> > kernel/bpf/task_iter.c:152:11: warning: Redundant initialization for 'curr_fd'. The initialized value is overwritten before it is read. [redundantInitialization]
-> > kernel/bpf/task_iter.c:498:59: warning: Parameter 'v' can be declared with const [constParameter]
-> > kernel/fork.c:3256:42: warning: Parameter 'table' can be declared with const [constParameter]
-> > kernel/fork.c:942:33: warning: Parameter 'src' can be declared with const [constParameter]
-> > kernel/sched/fair.c:5081:25: warning: Uninitialized variables: cfs_rq.load, cfs_rq.nr_running, cfs_rq.h_nr_running, cfs_rq.idle_nr_running, cfs_rq.idle_h_nr_running, cfs_rq.exec_clock, cfs_rq.min_vruntime, cfs_rq.min_vruntime_copy, cfs_rq.tasks_timeline, cfs_rq.curr, cfs_rq.next, cfs_rq.last, cfs_rq.skip [uninitvar]
-> > kernel/sched/fair.c:6967:7: warning: Local variable 'min_vruntime' shadows outer function [shadowFunction]
-> > lib/maple_tree.c:1522:52: warning: Parameter 'gaps' can be declared with const [constParameter]
-> > lib/maple_tree.c:1871:21: warning: Array index 'split' is used before limits check. [arrayIndexThenCheck]
-> > lib/maple_tree.c:2033:55: warning: Parameter 'mas' can be declared with const [constParameter]
-> > lib/maple_tree.c:2426:8: warning: Redundant initialization for 'r_tmp'. The initialized value is overwritten before it is read. [redundantInitialization]
-> > lib/maple_tree.c:2427:8: warning: Redundant initialization for 'l_tmp'. The initialized value is overwritten before it is read. [redundantInitialization]
-> > lib/maple_tree.c:3160:22: warning: Found suspicious operator ',' [constStatement]
-> > lib/maple_tree.c:3208:11: warning: Size of pointer 'pivs' used instead of size of its data. [pointerSize]
-> > lib/maple_tree.c:326:2: warning: Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
-> > lib/maple_tree.c:4266:15: warning: The if condition is the same as the previous if condition [duplicateCondition]
-> > lib/maple_tree.c:4302:23: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
-> > lib/maple_tree.c:694:59: warning: Parameter 'pivots' can be declared with const [constParameter]
-> > lib/test_printf.c:415:11: warning: Local variable 'addr' shadows outer function [shadowFunction]
-> > mm/highmem.c:737:13: warning: Uninitialized variable: pam->page [uninitvar]
-> > mm/migrate.c:355:53: warning: Parameter 'mapping' can be declared with const [constParameter]
-> > mm/migrate.c:875:7: warning: Redundant initialization for 'rc'. The initialized value is overwritten before it is read. [redundantInitialization]
-> > mm/mlock.c:230:20: warning: Using pointer that is a temporary. [danglingTemporaryLifetime]
-> > mm/slab.c:1635:24: warning: Uninitialized variables: slab.__page_flags, slab.__unused_1, slab.freelist, slab.units, slab.__unused_2, slab.__page_refcount [uninitvar]
-> > mm/slab.c:3289:7: warning: Redundant assignment of 'objp' to itself. [selfAssignment]
-> > mm/slab.c:3509:8: warning: Redundant assignment of 'p[i]' to itself. [selfAssignment]
-> > mm/slab.c:405:9: warning: Local variable 'slab_size' shadows outer function [shadowFunction]
-> > mm/vmstat.c:1409:53: warning: Parameter 'pos' can be declared with const [constParameter]
-> > mm/vmstat.c:1650:68: warning: Parameter 'zone' can be declared with const [constParameter]
-> > mm/zsmalloc.c:2019:15: warning: Uninitialized variables: zspage.huge, zspage.fullness, zspage.class, zspage.isolated, zspage.magic, zspage.inuse, zspage.freeobj, zspage.first_page, zspage.lock [uninitvar]
-> > mm/zsmalloc.c:2060:16: warning: Local variable 'obj_allocated' shadows outer function [shadowFunction]
-> > or1k-linux-ld: drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_binary_assert_format'
-> > or1k-linux-ld: drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_do_failed_assertion'
-> > 
-> > Unverified Error/Warning (likely false positive, please contact us if interested):
-> > 
-> > arch/x86/kernel/cpu/rdrand.c:36 x86_init_rdrand() error: uninitialized symbol 'prev'.
-> > drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/gpu/drm/tests/drm_buddy_test.c:197:26-31: ERROR: invalid reference to the index variable of the iterator on line 152
-> > drivers/infiniband/hw/irdma/hw.c:1484:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/md/dm-mpath.c:1681:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/dvb-frontends/mxl692.c:49:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/i2c/ov5647.c:636:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/i2c/st-mipid02.c:295:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/platform/qcom/venus/vdec.c:1505:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/platform/st/sti/delta/delta-v4l2.c:719:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/media/tuners/msi001.c:81:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/mfd/sec-core.c:429:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/mmc/host/sh_mmcif.c:1318:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/bonding/bond_main.c:4647:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/can/slcan/slcan-core.c:601:14: sparse:    void *
-> > drivers/net/can/slcan/slcan-core.c:601:14: sparse:    void [noderef] __rcu *
-> > drivers/net/can/slcan/slcan-core.c:601:14: sparse: sparse: incompatible types in comparison expression (different address spaces):
-> > drivers/net/dsa/microchip/ksz9477.c:501:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:1388:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/faraday/ftgmac100.c:854:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/hisilicon/hns/hnae.c:436:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/intel/i40e/i40e_main.c:9347:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/intel/ice/ice_base.c:1003:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/intel/ice/ice_dcb_lib.c:520:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/intel/ice/ice_vlan_mode.c:379:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/intel/igb/e1000_phy.c:1185:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/microchip/encx24j600.c:827:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/microchip/lan743x_main.c:1238:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/smsc/smsc9420.c:451:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/ethernet/vertexcom/mse102x.c:422:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/phy/dp83640.c:890:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/usb/cdc_ncm.c:195:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/net/usb/rtl8150.c:176:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/parport/ieee1284_ops.c:615:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/scsi/elx/efct/efct_unsol.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/scsi/elx/libefc/efc_domain.c:692:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/scsi/megaraid/megaraid_sas_fp.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/soc/mediatek/mtk-mutex.c:793:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/staging/media/zoran/zr36016.c:430:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/staging/media/zoran/zr36050.c:829:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/staging/media/zoran/zr36060.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/target/iscsi/iscsi_target.c:2348:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/target/target_core_device.c:1013:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/thunderbolt/tmu.c:758:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/thunderbolt/tunnel.c:1264:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/tty/serial/atmel_serial.c:1442:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/usb/host/uhci-q.c:1367:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/usb/serial/digi_acceleport.c:1167:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > drivers/video/backlight/qcom-wled.c:871:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > fs/ext4/mballoc.c:3618:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > fs/kernel_read_file.c:61 kernel_read_file() warn: impossible condition '(i_size > (((~0) >> 1))) => (s64min-s64max > s64max)'
-> > fs/ubifs/recovery.c:1062:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > include/linux/bits.h:9:41: warning: shift by negative count ('-1') [-Wanalyzer-shift-count-negative]
-> > mm/filemap.c:1354:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > mm/khugepaged.c:2410 madvise_collapse() warn: possible memory leak of 'cc'
-> > mm/madvise.c:1174:66: warning: Parameter 'task' can be declared with const [constParameter]
-> > mm/page_alloc.c:1181:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > mm/page_alloc.c:7744:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > mm/slub.c:5434:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > net/bluetooth/hci_event.c:5926:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > net/qrtr/mhi.c:102:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > net/wireless/reg.c:205:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/pci/lola/lola.c:178:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/pci/pcxhr/pcxhr_core.c:134:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/pci/rme9652/hdsp.c:666:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/soc/fsl/fsl_spdif.c:1508:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/soc/sh/rcar/core.c:1602:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > sound/soc/sof/intel/mtl.c:553:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> > {standard input}:2311: Error: expecting )
-> > 
-> > Error/Warning ids grouped by kconfigs:
-> > 
-> > gcc_recent_errors
-> > |-- alpha-allyesconfig
-> > |   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
-> > |   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
-> > |-- alpha-randconfig-r004-20220712
-> > |   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
-> > |   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
-> > |-- arc-allyesconfig
-> > |   |-- block-partitions-efi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- block-sed-opal.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- crypto-asymmetric_keys-pkcs7_verify.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-ata-libata-core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-ata-libata-eh.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-ata-sata_dwc_460ex.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-base-power-runtime.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-block-rbd.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-bluetooth-hci_ll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-bluetooth-hci_qca.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-cdrom-cdrom.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-char-ipmi-ipmi_ssif.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-char-pcmcia-cm4000_cs.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-char-random.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-char-tpm-tpm_tis_core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-clk-bcm-clk-iproc-armpll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-clk-clk-bd718x7.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-clk-clk-lochnagar.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-crypto-ccree-cc_request_mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-crypto-qce-sha.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-crypto-qce-skcipher.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-cxl-core-hdm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-cxl-core-pci.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-dma-buf-dma-buf.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-firmware-arm_scmi-bus.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-firmware-arm_scmi-clock.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-firmware-arm_scmi-powercap.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-firmware-arm_scmi-sensors.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-firmware-arm_scmi-voltage.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-fpga-dfl-fme-mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gnss-usb.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_debug.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce110-dce110_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce112-dce112_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu7_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu8_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-vega10_powertune.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-smumgr-smu7_smumgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_ttm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-bridge-cadence-cdns-mhdp8546-hdcp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > |   |-- drivers-gpu-drm-bridge-ite-it66121.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-> > clang_recent_errors
-> > |-- arm-randconfig-r024-20220712
-> > |   `-- drivers-gpu-drm-tests-drm_mm_test.c:warning:stack-frame-size-()-exceeds-limit-()-in-__igt_reserve
-> > |-- s390-randconfig-r044-20220713
-> > |   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:no-previous-prototype-for-function-dc_reset_state
-> > |-- x86_64-randconfig-a001
-> > |   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-> > |-- x86_64-randconfig-a005
-> > |   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-> > |-- x86_64-randconfig-a012
-> > |   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-> > `-- x86_64-randconfig-k001
-> >     `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-> > 
-> > elapsed time: 723m
-> > 
-> > configs tested: 95
-> > configs skipped: 2
-> > 
-> > gcc tested configs:
-> > arm                                 defconfig
-> > arm                              allyesconfig
-> > arm64                            allyesconfig
-> > i386                          randconfig-c001
-> > nios2                         3c120_defconfig
-> > arm64                            alldefconfig
-> > powerpc                      makalu_defconfig
-> > sh                          r7785rp_defconfig
-> > arm                      footbridge_defconfig
-> > arm                            lart_defconfig
-> > arm                            hisi_defconfig
-> > sh                          urquell_defconfig
-> > microblaze                      mmu_defconfig
-> > sparc                               defconfig
-> > sh                          r7780mp_defconfig
-> > m68k                           virt_defconfig
-> > arc                              alldefconfig
-> > sh                           se7721_defconfig
-> > mips                            gpr_defconfig
-> > arc                 nsimosci_hs_smp_defconfig
-> > sparc                       sparc32_defconfig
-> > csky                                defconfig
-> > x86_64                                  kexec
-> > sparc                            allyesconfig
-> > xtensa                           allyesconfig
-> > riscv                             allnoconfig
-> > riscv                    nommu_k210_defconfig
-> > i386                   debian-10.3-kselftests
-> > riscv                          rv32_defconfig
-> > riscv                    nommu_virt_defconfig
-> > i386                              debian-10.3
-> > arm                  randconfig-c002-20220712
-> > x86_64                        randconfig-c001
-> > ia64                             allmodconfig
-> > alpha                            allyesconfig
-> > m68k                             allmodconfig
-> > arc                              allyesconfig
-> > m68k                             allyesconfig
-> > powerpc                           allnoconfig
-> > mips                             allyesconfig
-> > powerpc                          allmodconfig
-> > sh                               allmodconfig
-> > i386                                defconfig
-> > i386                             allyesconfig
-> > x86_64                        randconfig-a006
-> > i386                          randconfig-a001
-> > i386                          randconfig-a003
-> > i386                          randconfig-a005
-> > x86_64                        randconfig-a013
-> > x86_64                        randconfig-a011
-> > x86_64                        randconfig-a015
-> > i386                          randconfig-a012
-> > i386                          randconfig-a016
-> > i386                          randconfig-a014
-> > arc                  randconfig-r043-20220712
-> > riscv                randconfig-r042-20220712
-> > s390                 randconfig-r044-20220712
-> > arc                  randconfig-r043-20220713
-> > x86_64                        randconfig-a002
-> > x86_64                        randconfig-a004
-> > um                             i386_defconfig
-> > um                           x86_64_defconfig
-> > x86_64                              defconfig
-> > x86_64                               rhel-8.3
-> > x86_64                           allyesconfig
-> > x86_64                          rhel-8.3-func
-> > x86_64                         rhel-8.3-kunit
-> > x86_64                    rhel-8.3-kselftests
-> > x86_64                           rhel-8.3-syz
-> > 
-> > clang tested configs:
-> > powerpc                     akebono_defconfig
-> > mips                           ip27_defconfig
-> > riscv                            alldefconfig
-> > arm                       imx_v4_v5_defconfig
-> > arm                        mvebu_v5_defconfig
-> > mips                          ath79_defconfig
-> > arm                        magician_defconfig
-> > x86_64                        randconfig-k001
-> > x86_64                        randconfig-a005
-> > i386                          randconfig-a002
-> > i386                          randconfig-a006
-> > i386                          randconfig-a004
-> > x86_64                        randconfig-a012
-> > x86_64                        randconfig-a014
-> > x86_64                        randconfig-a016
-> > i386                          randconfig-a013
-> > i386                          randconfig-a011
-> > i386                          randconfig-a015
-> > hexagon              randconfig-r041-20220712
-> > hexagon              randconfig-r045-20220712
-> > hexagon              randconfig-r045-20220713
-> > riscv                randconfig-r042-20220713
-> > hexagon              randconfig-r041-20220713
-> > s390                 randconfig-r044-20220713
-> > x86_64                        randconfig-a001
-> > x86_64                        randconfig-a003
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://01.org/lkp
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > 
+> HEAD commit:    5a29232d870d Merge tag 'for-5.19-rc6-tag' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16619ce8080000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=525bc0635a2b942a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2d2aeadc6ce1e1f11d45
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> userspace arch: i386
 > 
-> -- 
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2d2aeadc6ce1e1f11d45@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 5.19.0-rc6-syzkaller-00026-g5a29232d870d #0 Not tainted
+> ------------------------------------------------------
+> khugepaged/48 is trying to acquire lock:
+> ffff888044598990 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0xfb4/0x14a0 fs/jbd2/transaction.c:461
+> 
+> but task is already holding lock:
+> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4638 [inline]
+> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
+> ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x9e1/0x2160 mm/page_alloc.c:5066
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (fs_reclaim){+.+.}-{0:0}:
+>        __fs_reclaim_acquire mm/page_alloc.c:4589 [inline]
+>        fs_reclaim_acquire+0x115/0x160 mm/page_alloc.c:4603
+>        might_alloc include/linux/sched/mm.h:271 [inline]
+>        slab_pre_alloc_hook mm/slab.h:723 [inline]
+>        slab_alloc_node mm/slub.c:3157 [inline]
+>        slab_alloc mm/slub.c:3251 [inline]
+>        kmem_cache_alloc_trace+0x40/0x3f0 mm/slub.c:3282
+>        kmalloc include/linux/slab.h:600 [inline]
+>        memory_stat_format+0x95/0xae0 mm/memcontrol.c:1468
+>        mem_cgroup_print_oom_meminfo.cold+0x50/0x7e mm/memcontrol.c:1594
+>        dump_header+0x13f/0x7f9 mm/oom_kill.c:462
+>        oom_kill_process.cold+0x10/0x15 mm/oom_kill.c:1037
+>        out_of_memory+0x358/0x14b0 mm/oom_kill.c:1175
+>        mem_cgroup_out_of_memory+0x206/0x270 mm/memcontrol.c:1650
+>        memory_max_write+0x25c/0x3b0 mm/memcontrol.c:6299
+>        cgroup_file_write+0x1de/0x770 kernel/cgroup/cgroup.c:3882
+>        kernfs_fop_write_iter+0x3f8/0x610 fs/kernfs/file.c:290
+>        call_write_iter include/linux/fs.h:2058 [inline]
+>        new_sync_write+0x38a/0x560 fs/read_write.c:504
+>        vfs_write+0x7c0/0xac0 fs/read_write.c:591
+>        ksys_write+0x127/0x250 fs/read_write.c:644
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
+>        do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:203
+>        entry_SYSENTER_compat_after_hwframe+0x53/0x62
+> 
+> -> #1 (oom_lock){+.+.}-{3:3}:
+>        __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+>        __mutex_lock+0x12f/0x1350 kernel/locking/mutex.c:747
+>        mem_cgroup_out_of_memory+0x8d/0x270 mm/memcontrol.c:1640
+>        mem_cgroup_oom mm/memcontrol.c:1880 [inline]
+>        try_charge_memcg+0xef9/0x1380 mm/memcontrol.c:2670
+>        obj_cgroup_charge_pages mm/memcontrol.c:2999 [inline]
+>        obj_cgroup_charge+0x2ab/0x5e0 mm/memcontrol.c:3289
+>        memcg_slab_pre_alloc_hook mm/slab.h:505 [inline]
+>        slab_pre_alloc_hook mm/slab.h:728 [inline]
+>        slab_alloc_node mm/slub.c:3157 [inline]
+>        slab_alloc mm/slub.c:3251 [inline]
+>        __kmem_cache_alloc_lru mm/slub.c:3258 [inline]
+>        kmem_cache_alloc+0x92/0x3b0 mm/slub.c:3268
+>        kmem_cache_zalloc include/linux/slab.h:723 [inline]
+>        alloc_buffer_head+0x20/0x140 fs/buffer.c:3294
+>        alloc_page_buffers+0x285/0x7a0 fs/buffer.c:829
+>        grow_dev_page fs/buffer.c:965 [inline]
+>        grow_buffers fs/buffer.c:1011 [inline]
+>        __getblk_slow+0x525/0x1080 fs/buffer.c:1038
+>        __getblk_gfp+0x6e/0x80 fs/buffer.c:1333
+>        sb_getblk include/linux/buffer_head.h:326 [inline]
+>        ext4_getblk+0x20d/0x7c0 fs/ext4/inode.c:866
+>        ext4_bread+0x2a/0x1c0 fs/ext4/inode.c:912
+>        ext4_append+0x177/0x3a0 fs/ext4/namei.c:67
+>        ext4_init_new_dir+0x25e/0x4d0 fs/ext4/namei.c:2920
+>        ext4_mkdir+0x3cf/0xb20 fs/ext4/namei.c:2966
+>        vfs_mkdir+0x1c3/0x3b0 fs/namei.c:3975
+>        do_mkdirat+0x285/0x300 fs/namei.c:4001
+>        __do_sys_mkdirat fs/namei.c:4016 [inline]
+>        __se_sys_mkdirat fs/namei.c:4014 [inline]
+>        __ia32_sys_mkdirat+0x81/0xa0 fs/namei.c:4014
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
+>        do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:203
+>        entry_SYSENTER_compat_after_hwframe+0x53/0x62
+> 
+> -> #0 (jbd2_handle){++++}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3095 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3214 [inline]
+>        validate_chain kernel/locking/lockdep.c:3829 [inline]
+>        __lock_acquire+0x2abe/0x5660 kernel/locking/lockdep.c:5053
+>        lock_acquire kernel/locking/lockdep.c:5665 [inline]
+>        lock_acquire+0x1ab/0x570 kernel/locking/lockdep.c:5630
+>        start_this_handle+0xfe7/0x14a0 fs/jbd2/transaction.c:463
+>        jbd2__journal_start+0x399/0x930 fs/jbd2/transaction.c:520
+>        __ext4_journal_start_sb+0x3a8/0x4a0 fs/ext4/ext4_jbd2.c:105
+>        __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
+>        ext4_dirty_inode+0x9d/0x110 fs/ext4/inode.c:5949
+>        __mark_inode_dirty+0x495/0x1050 fs/fs-writeback.c:2381
+>        mark_inode_dirty_sync include/linux/fs.h:2337 [inline]
+>        iput.part.0+0x57/0x820 fs/inode.c:1767
+>        iput+0x58/0x70 fs/inode.c:1760
+>        dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
+>        __dentry_kill+0x3c0/0x640 fs/dcache.c:607
+>        shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
+>        prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
+>        super_cache_scan+0x336/0x590 fs/super.c:104
+>        do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:770
+>        shrink_slab+0x17c/0x6f0 mm/vmscan.c:930
+>        shrink_node_memcgs mm/vmscan.c:3124 [inline]
+>        shrink_node+0x8b3/0x1db0 mm/vmscan.c:3245
+>        shrink_zones mm/vmscan.c:3482 [inline]
+>        do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3540
+>        try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3775
+>        __perform_reclaim mm/page_alloc.c:4641 [inline]
+>        __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
+>        __alloc_pages_slowpath.constprop.0+0xa8a/0x2160 mm/page_alloc.c:5066
+>        __alloc_pages+0x436/0x510 mm/page_alloc.c:5439
+>        __alloc_pages_node include/linux/gfp.h:587 [inline]
+>        khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:859
+>        collapse_huge_page mm/khugepaged.c:1062 [inline]
+>        khugepaged_scan_pmd mm/khugepaged.c:1348 [inline]
+>        khugepaged_scan_mm_slot mm/khugepaged.c:2170 [inline]
+>        khugepaged_do_scan mm/khugepaged.c:2251 [inline]
+>        khugepaged+0x3473/0x66a0 mm/khugepaged.c:2296
+>        kthread+0x2e9/0x3a0 kernel/kthread.c:376
+>        ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   jbd2_handle --> oom_lock --> fs_reclaim
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(fs_reclaim);
+>                                lock(oom_lock);
+>                                lock(fs_reclaim);
+>   lock(jbd2_handle);
+> 
+>  *** DEADLOCK ***
+> 
+> 3 locks held by khugepaged/48:
+>  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4638 [inline]
+>  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
+>  #0: ffffffff8bebdb20 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0x9e1/0x2160 mm/page_alloc.c:5066
+>  #1: ffffffff8be7d850 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab+0xc9/0x6f0 mm/vmscan.c:920
+>  #2: ffff8880445800e0 (&type->s_umount_key#33){++++}-{3:3}, at: trylock_super fs/super.c:415 [inline]
+>  #2: ffff8880445800e0 (&type->s_umount_key#33){++++}-{3:3}, at: super_cache_scan+0x6c/0x590 fs/super.c:79
+> 
+> stack backtrace:
+> CPU: 2 PID: 48 Comm: khugepaged Not tainted 5.19.0-rc6-syzkaller-00026-g5a29232d870d #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+>  check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2175
+>  check_prev_add kernel/locking/lockdep.c:3095 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3214 [inline]
+>  validate_chain kernel/locking/lockdep.c:3829 [inline]
+>  __lock_acquire+0x2abe/0x5660 kernel/locking/lockdep.c:5053
+>  lock_acquire kernel/locking/lockdep.c:5665 [inline]
+>  lock_acquire+0x1ab/0x570 kernel/locking/lockdep.c:5630
+>  start_this_handle+0xfe7/0x14a0 fs/jbd2/transaction.c:463
+>  jbd2__journal_start+0x399/0x930 fs/jbd2/transaction.c:520
+>  __ext4_journal_start_sb+0x3a8/0x4a0 fs/ext4/ext4_jbd2.c:105
+>  __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
+>  ext4_dirty_inode+0x9d/0x110 fs/ext4/inode.c:5949
+>  __mark_inode_dirty+0x495/0x1050 fs/fs-writeback.c:2381
+>  mark_inode_dirty_sync include/linux/fs.h:2337 [inline]
+>  iput.part.0+0x57/0x820 fs/inode.c:1767
+>  iput+0x58/0x70 fs/inode.c:1760
+>  dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
+>  __dentry_kill+0x3c0/0x640 fs/dcache.c:607
+>  shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
+>  prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
+>  super_cache_scan+0x336/0x590 fs/super.c:104
+>  do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:770
+>  shrink_slab+0x17c/0x6f0 mm/vmscan.c:930
+>  shrink_node_memcgs mm/vmscan.c:3124 [inline]
+>  shrink_node+0x8b3/0x1db0 mm/vmscan.c:3245
+>  shrink_zones mm/vmscan.c:3482 [inline]
+>  do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3540
+>  try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3775
+>  __perform_reclaim mm/page_alloc.c:4641 [inline]
+>  __alloc_pages_direct_reclaim mm/page_alloc.c:4663 [inline]
+>  __alloc_pages_slowpath.constprop.0+0xa8a/0x2160 mm/page_alloc.c:5066
+>  __alloc_pages+0x436/0x510 mm/page_alloc.c:5439
+>  __alloc_pages_node include/linux/gfp.h:587 [inline]
+>  khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:859
+>  collapse_huge_page mm/khugepaged.c:1062 [inline]
+>  khugepaged_scan_pmd mm/khugepaged.c:1348 [inline]
+>  khugepaged_scan_mm_slot mm/khugepaged.c:2170 [inline]
+>  khugepaged_do_scan mm/khugepaged.c:2251 [inline]
+>  khugepaged+0x3473/0x66a0 mm/khugepaged.c:2296
+>  kthread+0x2e9/0x3a0 kernel/kthread.c:376
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
