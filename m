@@ -2,60 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4621957536A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 18:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C907B5753D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 19:17:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240466AbiGNQvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 12:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51408 "EHLO
+        id S239183AbiGNRRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 13:17:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239171AbiGNQvE (ORCPT
+        with ESMTP id S230012AbiGNRRJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 12:51:04 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC4AD61D57;
-        Thu, 14 Jul 2022 09:49:00 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id b11so4425251eju.10;
-        Thu, 14 Jul 2022 09:49:00 -0700 (PDT)
+        Thu, 14 Jul 2022 13:17:09 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407FE474E6;
+        Thu, 14 Jul 2022 10:17:05 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id ez10so4539212ejc.13;
+        Thu, 14 Jul 2022 10:17:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tB1X93ogJhANylPWr2KI+y5WU3eGimpfd/iYXdMRut4=;
-        b=X8U+PGKBTMHOF8FwhbT/aZH3hn6B64YhGubQUkCCB1pzaV60oGRqHqM3KLwAR4sJPo
-         NNNTnxtGtQFVIlLbZBytBuFOVL0lKdXCjg9n2njXxbsu2aCwAEZa+o9l7+zNzPIO5vUg
-         HH1pI7kTvNjsCccK+gLuS3loNLQmhBF6UXyfdnMolOeXkdpGRuSC3zioP22LGUFGQ2Gb
-         9bft6r+fP2Mhw5zqJBjZ1hr6u/tE4PdZ84cSOX4l1+V0OggdnYSvSgI6nJoZOjVJt+lK
-         GBAUq0RqaOaNzFy4YhfH1YaKQw3R8sKoC1a9uQZ6qOQ3DxKJCvjP1gEpbi87k6PCs/QE
-         eoJg==
+        bh=aT73ovZkq/npubIyLigGbBLJTEexGlHL4gMxc6aPln8=;
+        b=BGa0lNo0DUpc3iXq7AD97rOi8dhvdPScN7+fCgHUqML7PCEhKKx/6SqTF8RhC/d+Kh
+         t69E9wzOjUmONW7qTsmVdvcX1KlUXFoz0DgJ6JRMdLUPEDa+T5t4eft4xhvUKknahqvd
+         mrukhXm3X6e4R5hxAseAnz/Qi3kuQbIELrBA6tohi/Ra6mBgCRuJGB5lxaa9cSLpAOje
+         0nyaRzHt1nTpIX8Ce6vo1OyjeePldLZLzM+ZTzl9U75+BqHBlEe7Of5UZnmRj6Bfcf6Z
+         xBxicZQ8yVj5gucGWkxZIsvv2fFxJwi9XMG4CBTfYGtG5wypSyopZEBdHj3lPdrFq6kg
+         1Zkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tB1X93ogJhANylPWr2KI+y5WU3eGimpfd/iYXdMRut4=;
-        b=WgCSM9fDwIuFWd0R6jEgBL6QgXsgFgB869QhTGkeUjNf+QI4lEHs3rogiuirBFfqk+
-         r7ZgkNmvgfMcyRY4kA3UrAU4NZtJpE/FShDkc+xu0X+kUm3MyzC6CKb8M0WghLwgL8CX
-         mle1HdQZkXSdPmCw1NkCFDBXabsCzQWesU0KlQ7Zf0q5RaYc/toS/V4iz+YZ++LMe680
-         A8R6JDHg+S1HFEijUZ19IOSbDZOSOYJe853V24P44QFaK1HAqtTye+7l8blwQfhDBylH
-         f4Ef4jsybPcQZBFobyNXS+5RpZtJ7+3Vt/6pz9ceYLe01ewxP3nmVAziKJlysciJamrK
-         RV0A==
-X-Gm-Message-State: AJIora9CQntxI3ISBV7NrgM2cVPJcsr1vAucS6iHzZh4EjDFHyVXeuoC
-        jS9+v9B7zesvbu9901Y4q80=
-X-Google-Smtp-Source: AGRyM1vGKigNOMcGNTFD/m1cRqJkjwoUYHw1esw9kHfp9D3mSa/PVRMcdlYAr9R0e4OEQANe+UeVIg==
-X-Received: by 2002:a17:907:7f9e:b0:72e:d375:431 with SMTP id qk30-20020a1709077f9e00b0072ed3750431mr5750854ejc.580.1657817339457;
-        Thu, 14 Jul 2022 09:48:59 -0700 (PDT)
+        bh=aT73ovZkq/npubIyLigGbBLJTEexGlHL4gMxc6aPln8=;
+        b=J8znpMW69JgAeZnvOLMmlv/8FWuwvGCdxoShtGtBLxrEjFZE0BA2UJ6GS7B8hUlifW
+         fm5ZEM88t8bWPaxKn1K5AbrL1p+fRCAR8KETNCH+HvqSLoCQejtOSXKV+9ITY+kSD8/e
+         i6IzY9vTPdRsvzGAlbtOPdfk0XGcaH9gjQGaLXcin22R0H8Z4O2kKRuJ7awiiKf5/lCw
+         MAkA/2jKNbICGO7EB7if6QJzEgA99j1CQX+9hvXHnj9WDUqCqdMzLWFsWYAmHgNGRgGR
+         S4tYzMov5G0rsd4acEsFqj8IlOXQ1HQWrgN44JILduEoyBPXCkN2ZQbxva6Numzfe76b
+         FQ5Q==
+X-Gm-Message-State: AJIora/iqzRjFBq2IRfLG1QjPxqUUhjDf8/NhVUetrM7E3tMvP6hBJxw
+        LdjyH2ImoRzuYgk99aq7iFDMHmk8nAQ=
+X-Google-Smtp-Source: AGRyM1vpW2N1A1esFXcNudY8G1KDnk2qb0S7P6tY3W8yA8uidwsrHOnIuAdW49wShoHabBEK8TKCBw==
+X-Received: by 2002:a17:906:106:b0:715:7cdf:400f with SMTP id 6-20020a170906010600b007157cdf400fmr9871224eje.1.1657819023585;
+        Thu, 14 Jul 2022 10:17:03 -0700 (PDT)
 Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id f25-20020a50fc99000000b00438ac12d6b9sm1325174edq.52.2022.07.14.09.48.58
+        by smtp.gmail.com with ESMTPSA id 18-20020a170906201200b0072b1bb3cc08sm905151ejo.120.2022.07.14.10.17.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 09:48:59 -0700 (PDT)
+        Thu, 14 Jul 2022 10:17:03 -0700 (PDT)
 From:   Uros Bizjak <ubizjak@gmail.com>
-To:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Uros Bizjak <ubizjak@gmail.com>, Benjamin LaHaise <bcrl@kvack.org>,
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Uros Bizjak <ubizjak@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] aio: Use atomic_try_cmpxchg in __get_reqs_available
-Date:   Thu, 14 Jul 2022 18:48:51 +0200
-Message-Id: <20220714164851.3055-1-ubizjak@gmail.com>
+Subject: [PATCH] buffer: Use try_cmpxchg in discard_buffer
+Date:   Thu, 14 Jul 2022 19:16:53 +0200
+Message-Id: <20220714171653.12128-1-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,47 +68,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use atomic_try_cmpxchg instead of atomic_cmpxchg (*ptr, old, new) == old
-in __get_reqs_available. x86 CMPXCHG instruction returns success in
-ZF flag, so this change saves a compare after cmpxchg (and related move
-instruction in front of cmpxchg).
+Use try_cmpxchg instead of cmpxchg (*ptr, old, new) == old
+in discard_buffer. x86 CMPXCHG instruction returns success in
+ZF flag, so this change saves a compare after cmpxchg (and
+related move instruction in front of cmpxchg).
 
-Also, atomic_try_cmpxchg implicitly assigns old *ptr value
-to "old" when cmpxchg fails, enabling further code simplifications.
+Also, try_cmpxchg implicitly assigns old *ptr value to "old"
+when cmpxchg fails, enabling further code simplifications.
+
+Note that the value from *ptr should be read using READ_ONCE to
+prevent the compiler from merging, refetching or reordering the read.
 
 No functional change intended.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 ---
- fs/aio.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/buffer.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 3c249b938632..054897f59c5e 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -951,16 +951,13 @@ static bool __get_reqs_available(struct kioctx *ctx)
- 	local_irq_save(flags);
- 	kcpu = this_cpu_ptr(ctx->cpu);
- 	if (!kcpu->reqs_available) {
--		int old, avail = atomic_read(&ctx->reqs_available);
-+		int avail = atomic_read(&ctx->reqs_available);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 898c7f301b1b..23e1f0dcdbc4 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1464,19 +1464,15 @@ EXPORT_SYMBOL(set_bh_page);
  
- 		do {
- 			if (avail < ctx->req_batch)
- 				goto out;
--
--			old = avail;
--			avail = atomic_cmpxchg(&ctx->reqs_available,
--					       avail, avail - ctx->req_batch);
--		} while (avail != old);
-+		} while (!atomic_try_cmpxchg(&ctx->reqs_available,
-+					     &avail, avail - ctx->req_batch));
+ static void discard_buffer(struct buffer_head * bh)
+ {
+-	unsigned long b_state, b_state_old;
++	unsigned long b_state;
  
- 		kcpu->reqs_available += ctx->req_batch;
- 	}
+ 	lock_buffer(bh);
+ 	clear_buffer_dirty(bh);
+ 	bh->b_bdev = NULL;
+-	b_state = bh->b_state;
+-	for (;;) {
+-		b_state_old = cmpxchg(&bh->b_state, b_state,
+-				      (b_state & ~BUFFER_FLAGS_DISCARD));
+-		if (b_state_old == b_state)
+-			break;
+-		b_state = b_state_old;
+-	}
++	b_state = READ_ONCE(bh->b_state);
++	do {
++	} while (!try_cmpxchg(&bh->b_state, &b_state,
++			      b_state & ~BUFFER_FLAGS_DISCARD));
+ 	unlock_buffer(bh);
+ }
+ 
 -- 
 2.35.3
 
