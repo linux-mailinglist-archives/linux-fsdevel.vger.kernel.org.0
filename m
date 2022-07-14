@@ -2,384 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8361B574116
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 03:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE906574226
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 06:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232118AbiGNB46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Jul 2022 21:56:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46184 "EHLO
+        id S233542AbiGNEPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 00:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229725AbiGNB45 (ORCPT
+        with ESMTP id S233317AbiGNEPo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Jul 2022 21:56:57 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF94186E7;
-        Wed, 13 Jul 2022 18:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657763815; x=1689299815;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1dI46LC8EZvKaITJZeugXLHI1LUtI+XqdOG1yfoS3vY=;
-  b=iBA5J2262w60MB+N6lVlOISDo3EYainoyZnKQ2iMkDjeem5qdyw/c5GF
-   6VBvLyYf0+JnflMU+VS6np9CN8KAyzTgKUeO8EaqKBPeIAdrcaBpWoyLG
-   6lIQLmkzDO/9ryVa63C9FadP9RKTCuLR1cKfTOk22lzEYu6f+xwvKro/O
-   Hk/vjMDL1ygDUaOoEeiB+Qsxa7p52/wbckU1dPp2zHoh8Ov/lkVgRmdMI
-   degWvv5EdXzMTt4W89gHC4WICCHTffybeFK1bsVPKjkXF3NtCwL8e1rDo
-   lb50NEj8UJ/1pKzLKy0wKIkOmpsmqrCIzm6+H1a3rBrpWgNO2ia1jHNX6
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="268422128"
-X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
-   d="scan'208";a="268422128"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 18:56:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,269,1650956400"; 
-   d="scan'208";a="653660088"
-Received: from lkp-server01.sh.intel.com (HELO fd2c14d642b4) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Jul 2022 18:56:51 -0700
-Received: from kbuild by fd2c14d642b4 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1oBo5y-00002E-BL;
-        Thu, 14 Jul 2022 01:56:50 +0000
-Date:   Thu, 14 Jul 2022 09:56:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     ntfs3@lists.linux.dev, linux-pci@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-can@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, bpf@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 4662b7adea50bb62e993a67f611f3be625d3df0d
-Message-ID: <62cf77c3.3T/sxYUjJq0ImGp4%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 14 Jul 2022 00:15:44 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E162275F6;
+        Wed, 13 Jul 2022 21:15:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mEJjSPV8NY4nyEIfjNgcQO6/ZCZc08dmQGyeDokvrF7V0MfnJfa2M9tDUWOcba+zDwk4U0+bi348H2As5IwnuO1XSuNOtWi4gWODqHZ0/2LRxvWpq7eC4OAf/zDbaoCFRoRc8l300YhUXWmOqxeiWHc6OIKtNqSK4L2gnXgmCKBSG39ebPfNhzoqqSaaTQLAsT+mGiRwwaDC7wCWUPMQCo/ub90Vix5rQldWpJ3q0RTExAGhGxsUQoJAn16Cl5hQmrXGbLIes8u0otKyYBS+MSZfz2tcoBdCEUg0F6M4DviRboLNzmNGAyIj3LczvvNSS3Eyp5akBJt/JPLT/K30QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bTGiMXdwYkBrnbm5BTYNyYMlVJSQtsIzkNi5opfCOog=;
+ b=QhhMmwwXdxGDZNFZCWz6nmXGqHJj15g37SG2vUhrShTO21kiMi1AvPTUn+VXJmhtMtoZnH5Jlu+dO/iPPSCL6phrvCDpz/jQMJkm3fzJ37d+XCcacjiDO6CrQWhaV6QSlk8eWndTC367ezIJWMS0gXCaLwb9yZ54qnr+D+fzFmTA2RhgY+9zrct5DJcnpmUr8V4wV5XlxzB8uzd9aj9xNgqScivziAhTVg7ntQ3dklcYz4sTIq+Qn7fGnK5jDTOmGIs8YBfdHhfLMxKf0zssoLakZH058+3IhMj/LC1ZXIT/ylEIKWpoN3yOr6rf9TNnEEdRNow2E3Ss2exIdegUGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bTGiMXdwYkBrnbm5BTYNyYMlVJSQtsIzkNi5opfCOog=;
+ b=eiiZR5G1dhwQS6+C7C8CosYkNfr79DPJMFfpZDcl7woy2CjnctiUazb0srqlYl3dGsb7oGxS333awDKR9MM6lDHGtHEWq338Kjf9YTN22N1eVzeX2f4uRjky12h+z5jXoHa7p3vgbya3oYB3Hg0SO10X+l9th5gbEqY7stRwipI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
+ (2603:10b6:910:1f::11) by DM5PR1201MB0220.namprd12.prod.outlook.com
+ (2603:10b6:4:4e::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.25; Thu, 14 Jul
+ 2022 04:15:41 +0000
+Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
+ ([fe80::1001:3c79:9504:8d6a]) by CY4PR1201MB0181.namprd12.prod.outlook.com
+ ([fe80::1001:3c79:9504:8d6a%10]) with mapi id 15.20.5417.026; Thu, 14 Jul
+ 2022 04:15:38 +0000
+Message-ID: <5a1434a7-1820-b76d-d0c2-3f7463f0e8be@amd.com>
+Date:   Thu, 14 Jul 2022 06:15:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v7 04/14] mm/shmem: Support memfile_notifier
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-5-chao.p.peng@linux.intel.com>
+ <c4112b84-9359-d4c8-1852-0057c074607c@amd.com>
+ <20220713074458.GB2831541@chaop.bj.intel.com>
+ <74097857-1908-2ff2-1e54-bf7e658ea6c6@amd.com>
+ <20220713234903.GA2881285@chaop.bj.intel.com>
+From:   "Gupta, Pankaj" <pankaj.gupta@amd.com>
+In-Reply-To: <20220713234903.GA2881285@chaop.bj.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-ClientProxiedBy: AM6PR08CA0031.eurprd08.prod.outlook.com
+ (2603:10a6:20b:c0::19) To CY4PR1201MB0181.namprd12.prod.outlook.com
+ (2603:10b6:910:1f::11)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9b7e9975-1e2b-4172-a6e8-08da654f81b1
+X-MS-TrafficTypeDiagnostic: DM5PR1201MB0220:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: KNYYFyPY++6AOipkh4E+MpGRSkMqCI9suUGViz3+WzwxTVqBqYYYT7fdY6Se57cygutsSzZmffej/w7hJDlbWagsinPpbocstC5aN0/9EadosVC/l811jNn89wq+MQ+5IkB2i+Aoc84h/C1Bghy+iTq2sONPq2sg+FN3Awq/e3Z9Jwq4z87fyRyOvewfAPB5zHQXD4f9N2w8DgfV0OmJUo653SkfbGIwfTZnUKtB4k2Qu5O2ewK0BjSA9ypXSRk/RfWNSNxcyMAOLrX8pNkm6nKJSK8ynWfMwJId0OXHQ+Xr2su2W0P1ypeDTec3hDjCvQXp56r7TKQ+vjyJGVcatEK0hkckbHFADVtlGuSW7YSuW48WlFPDZ7TxmmLg+8ZUBBQ+DJ9ZUEIcz1Hjv+z3YBtnFo7wGHQLz0tuU4jIsE4+2jlFV+o9uU00373aU3IFPe4ck16EciUfTVRRtQOy6juRy8Rk1PaMg83FlHP9GXvWjcZynm7gi8Tddiy9+vjsDOYk4BCET+FWcDXfB59wVBAQ57rpVmXLuhczhalSIICBN90wLXiiCqMY2S2Dz8sbDuyY91RLdmMjxvDfuK6vSnTmwCtYoCI971h3FHjQbkF305gTkWFNCj5ejT3vZDFtEK6fBRcrWWLrantZMXLOrsPfWTRdhT53URo95QFL0piSO5GzwEVVuVZbH/Ui2rRVY8Go3leOTk8hSVr8/SxULMfHqPoEFh5A3REmI9zVAE3JqoMHKUu0YWbysW7xg88ll0r89bSelU+xumnMXKNlYg+7pNTmaW9PRYPOGRhk20HkXnBb4fv/VuUdiCkLusvHtKQKMJHUBr1KE6BKUmy+Nw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1201MB0181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(366004)(376002)(396003)(136003)(66556008)(6506007)(8676002)(86362001)(6512007)(54906003)(66476007)(4326008)(316002)(66946007)(6666004)(478600001)(6916009)(5660300002)(31696002)(31686004)(2616005)(41300700001)(26005)(36756003)(6486002)(38100700002)(186003)(83380400001)(7416002)(8936002)(7406005)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bGNFanF2NG5rMzJEaGNRMTgrb1ZoZ2ZoM1hSQ0tJVlhnNk9yNU9kOTE2MUY2?=
+ =?utf-8?B?eGJKQ3JhR3N2SVlRSmx3dU5zV2lkRElYSWtTOW5XeVRCNSs3bXlHUHlBSWtx?=
+ =?utf-8?B?T0laK1hRbm1uSXF5aWpudkRJc1BOaG50QjhCQjMzSVRSdHZudjNNQ09DQmJp?=
+ =?utf-8?B?WWtTdXFNYzlRSDVPL0RPTk1BNjBGUzlXYStySTJ1Nkhybi9KTnN6bXBVUmd0?=
+ =?utf-8?B?c1hiZGs4U2NCUnVLTmhaLzczR01kTlJkdnhpamUwdklLV1IvMERYclVjd1ZZ?=
+ =?utf-8?B?OCtxZFlCUjU0VFNPUUJid0I5bWJkMTVVcDZ3dFEvdVFYN0FWYk8rbm9hcGpj?=
+ =?utf-8?B?cDlwT3ROcytKU2ZDUk9MclRxcGtMOHVNbVBnOVIrT2hYMFRQYStpS3ZYZENr?=
+ =?utf-8?B?TFlHVjdSQmNtZmhJUGRzTUthRFhuSlE3eVl5TTlvMW9zTit3Y2NuU1l5T3RJ?=
+ =?utf-8?B?Z2RCK0hWVWgyakxNa0pTYXh4TlZqTlIxY1VPRXZNQUhOTGxSK3hGZnQ3MEJZ?=
+ =?utf-8?B?WWpObjFBMUhVL2NtcWdhVks1S3ZHRFFjYzJoWEJaZUVTZldhSHg3b2RnTmNl?=
+ =?utf-8?B?QnVzaTRWYUV5TDAyU1VmMHNkTWtXR1JpSE1yN0psRnBSTHB1ajd2YXVzZDBx?=
+ =?utf-8?B?dmxsVzB6ay9ucmw2bWpNQk9zbzIwODduM2NSRHZVOEpzOTN3cmxTdElySmxB?=
+ =?utf-8?B?dHRoejNET09MQmlWckpZckJ1UUxwVFpBbzRCNFNWcnM0V1R0em5TdWRQYi9l?=
+ =?utf-8?B?djk3cHFvQko0dVBhdkF6NkpoMWovNTNhTDVWdi9vdGMxdjIySTgwSjNXWmhu?=
+ =?utf-8?B?NDU3Yi9DQ2xWU05ZV2FwZFd5WU1TMmttNUt3M1pCckZEcFI3QTBJdkh6Tytu?=
+ =?utf-8?B?U3FEVGlPWEdvMXlhdzNxOGtRL3BFTFg2OWJYTXJOUHlVazFoYTBkOGFCeER0?=
+ =?utf-8?B?RU9JWmxJRE01cWtTanhORXhHK05DN09BV3NhVy85R0hkM2I5QlFOSitWeCtD?=
+ =?utf-8?B?dGNxazJ6SGNEOXlUQ1VvdTFMbVpDVTlkNFVPcnBKTXdoM1dGTFNRNzNNNkor?=
+ =?utf-8?B?bWovaVFpa0owS29SRmI1T0FPeWNSc3RkUEdEKyt2WEl0UWhuK2d3cm9FWGQr?=
+ =?utf-8?B?eDl6cnN1dE4raXhWaS9YNDhHK0dEZWZ1ZGRZYnpDZzFzdkM4bytCUkJSblhx?=
+ =?utf-8?B?TGRHWFdWYXp5akR4NTZvU0E3TmQrRzJRL2F6a1owZnJMYjkwZ1JrL2U4TERR?=
+ =?utf-8?B?STBHbGphenJOM1lHa3NUM3lDcU9ISXdSSEFBcDhpZzRBNHk4ellTS2p2TTV0?=
+ =?utf-8?B?RVZ3K1Nua1pHeXZRdHorbk1QRnU2YnpPK3N4VVlzTjJkN08vd1pydUMwZmNv?=
+ =?utf-8?B?OExDbktkMDl3VWpNUVBsQXNyaFE3VWJVblZuRmNsNzUyOWMycUlBalc4SFVX?=
+ =?utf-8?B?dTVmTGM2UWRTcktEcGV5OGFiWmZHZVowcjJkempzem1kVjdRM2o2S3VPdHM3?=
+ =?utf-8?B?Wk45NlViankrenZFaUhxOFdYVTVjNEx1d1FMVHJKalE3WmQ4RXhPd2poWVJP?=
+ =?utf-8?B?UzBVMDd3dndHc202REZMTytwMlpGU3ROQVM2Y0x6WkxIbjdSV1hRMGZaZTJt?=
+ =?utf-8?B?dEpVWE9rdFkydVEzdEwycyszMkVMN2kvNCtKSkJJL0NtZHluNEtmYnFoYmh1?=
+ =?utf-8?B?elJERzBCeG1wc1NhOHEvOEZQYW9TMC92ejRPU3N5NlJ3TlpuOUtQZzVFQkcv?=
+ =?utf-8?B?enRPMEtmUnhBVlJXSW1TOXlFampmWlR4Q2tBdWpKOS9UdVhqVjdQNFI3anl1?=
+ =?utf-8?B?aWxJL2Q4anNaU2t6U21vQnRBcyszMlNISlFCUUtOd1pUaC9WTlV6NTg2TEl6?=
+ =?utf-8?B?a050QWpLSit1aWUvdkxLcTZCeVluMG1NbG1VYjdkK01nejNMSkZaWmNMc25M?=
+ =?utf-8?B?L2FEeEFkNEdQSnF5RTJFNWU0TkljMDhQV3cyWUkrMlBIYXZNT0xlOTMydEVV?=
+ =?utf-8?B?VWlqZmF1R01wSGk2cVlYTHczYnJhZGtheGNXb3BBZnFxYWc3ellMQkJjaGMw?=
+ =?utf-8?B?eTBDREFPWFpoeVVIZGM1UFQzWHMrSkxvN2QrQ2g5eTY2RU1LZUlQNHI3OURp?=
+ =?utf-8?Q?ekf5+bGeksvuTNWpY6OD2Lttf?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7e9975-1e2b-4172-a6e8-08da654f81b1
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1201MB0181.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2022 04:15:38.3290
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m+b06IpsjgEOYfxHj1gTD2cqskHhbrKfxjVtgISLfTYZPLQyrzxj6idV3vorXjJfj01n3iqYSo1gvqQxY+lAWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0220
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 4662b7adea50bb62e993a67f611f3be625d3df0d  Add linux-next specific files for 20220713
 
-Error/Warning reports:
+>>>>> +#ifdef CONFIG_MIGRATION
+>>>>> +static int shmem_migrate_page(struct address_space *mapping,
+>>>>> +			      struct page *newpage, struct page *page,
+>>>>> +			      enum migrate_mode mode)
+>>>>> +{
+>>>>> +	struct inode *inode = mapping->host;
+>>>>> +	struct shmem_inode_info *info = SHMEM_I(inode);
+>>>>> +
+>>>>> +	if (info->memfile_node.flags & MEMFILE_F_UNMOVABLE)
+>>>>> +		return -EOPNOTSUPP;
+>>>>> +	return migrate_page(mapping, newpage, page, mode);
+>>>>
+>>>> Wondering how well page migrate would work for private pages
+>>>> on shmem memfd based backend?
+>>>
+>>>   From high level:
+>>>     - KVM unset MEMFILE_F_UNMOVABLE bit to indicate it capable of
+>>>       migrating a page.
+>>>     - Introduce new 'migrate' callback(s) to memfile_notifier_ops for KVM
+>>>       to register.
+>>>     - The callback is hooked to migrate_page() here.
+>>>     - Once page migration requested, shmem calls into the 'migrate'
+>>>       callback(s) to perform additional steps for encrypted memory (For
+>>>       TDX we will call TDH.MEM.PAGE.RELOCATE).
+>>
+>> Yes, that would require additional (protocol specific) handling for private
+>> pages. Was trying to find where "MEMFILE_F_UNMOVABLE" flag is set currently?
+> 
+> It's set with memfile_register_notifier() in patch 13.
 
-https://lore.kernel.org/linux-doc/202207021352.PpKTUY8V-lkp@intel.com
-https://lore.kernel.org/linux-doc/202207031437.qIh6LFcx-lkp@intel.com
-https://lore.kernel.org/linux-doc/202207051821.3f0eRIsL-lkp@intel.com
-https://lore.kernel.org/linux-doc/202207140742.GTPk4U8i-lkp@intel.com
-https://lore.kernel.org/linux-mm/202206292052.LsFui3zO-lkp@intel.com
-https://lore.kernel.org/linux-mm/202207140042.cK3tlk6j-lkp@intel.com
-https://lore.kernel.org/llvm/202207090100.acXdJ79H-lkp@intel.com
+o.k.
 
-Error/Warning: (recently discovered and may have been fixed)
+Thanks,
 
-Documentation/PCI/endpoint/pci-vntb-function.rst:82: WARNING: Unexpected indentation.
-Documentation/PCI/endpoint/pci-vntb-howto.rst:131: WARNING: Title underline too short.
-Documentation/filesystems/netfs_library.rst:384: WARNING: Inline emphasis start-string without end-string.
-Documentation/filesystems/netfs_library:609: fs/netfs/buffered_read.c:318: WARNING: Inline emphasis start-string without end-string.
-Documentation/virt/kvm/api.rst:8256: WARNING: Title underline too short.
-Documentation/virt/kvm/api.rst:8263: WARNING: Unexpected indentation.
-drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:2837:6: warning: no previous prototype for function 'dc_reset_state' [-Wmissing-prototypes]
-drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_binary_assert_format'
-drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
-drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
-drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
-fs/ntfs/attrib.c:705:18: warning: Either the condition '!al' is redundant or there is pointer arithmetic with NULL pointer. [nullPointerArithmeticRedundantCheck]
-fs/ntfs/layout.h:126:43: warning: Parameter 'p' can be declared with const [constParameter]
-fs/ntfs/ntfs.h:144:3: warning: Assignment of function parameter has no effect outside the function. [uselessAssignmentArg]
-fs/super.c:1310:57: warning: Parameter 'data' can be declared with const [constParameter]
-fs/super.c:750:52: warning: Parameter 'bdev' can be declared with const [constParameter]
-ipc/shm.c:158:0: warning: failed to expand 'ipc_init_proc_interface', it is invalid to use a preprocessor directive as macro parameter [preprocessorErrorDirective]
-kernel/bpf/task_iter.c:152:11: warning: Redundant initialization for 'curr_fd'. The initialized value is overwritten before it is read. [redundantInitialization]
-kernel/bpf/task_iter.c:498:59: warning: Parameter 'v' can be declared with const [constParameter]
-kernel/fork.c:3256:42: warning: Parameter 'table' can be declared with const [constParameter]
-kernel/fork.c:942:33: warning: Parameter 'src' can be declared with const [constParameter]
-kernel/sched/fair.c:5081:25: warning: Uninitialized variables: cfs_rq.load, cfs_rq.nr_running, cfs_rq.h_nr_running, cfs_rq.idle_nr_running, cfs_rq.idle_h_nr_running, cfs_rq.exec_clock, cfs_rq.min_vruntime, cfs_rq.min_vruntime_copy, cfs_rq.tasks_timeline, cfs_rq.curr, cfs_rq.next, cfs_rq.last, cfs_rq.skip [uninitvar]
-kernel/sched/fair.c:6967:7: warning: Local variable 'min_vruntime' shadows outer function [shadowFunction]
-lib/maple_tree.c:1522:52: warning: Parameter 'gaps' can be declared with const [constParameter]
-lib/maple_tree.c:1871:21: warning: Array index 'split' is used before limits check. [arrayIndexThenCheck]
-lib/maple_tree.c:2033:55: warning: Parameter 'mas' can be declared with const [constParameter]
-lib/maple_tree.c:2426:8: warning: Redundant initialization for 'r_tmp'. The initialized value is overwritten before it is read. [redundantInitialization]
-lib/maple_tree.c:2427:8: warning: Redundant initialization for 'l_tmp'. The initialized value is overwritten before it is read. [redundantInitialization]
-lib/maple_tree.c:3160:22: warning: Found suspicious operator ',' [constStatement]
-lib/maple_tree.c:3208:11: warning: Size of pointer 'pivs' used instead of size of its data. [pointerSize]
-lib/maple_tree.c:326:2: warning: Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
-lib/maple_tree.c:4266:15: warning: The if condition is the same as the previous if condition [duplicateCondition]
-lib/maple_tree.c:4302:23: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
-lib/maple_tree.c:694:59: warning: Parameter 'pivots' can be declared with const [constParameter]
-lib/test_printf.c:415:11: warning: Local variable 'addr' shadows outer function [shadowFunction]
-mm/highmem.c:737:13: warning: Uninitialized variable: pam->page [uninitvar]
-mm/migrate.c:355:53: warning: Parameter 'mapping' can be declared with const [constParameter]
-mm/migrate.c:875:7: warning: Redundant initialization for 'rc'. The initialized value is overwritten before it is read. [redundantInitialization]
-mm/mlock.c:230:20: warning: Using pointer that is a temporary. [danglingTemporaryLifetime]
-mm/slab.c:1635:24: warning: Uninitialized variables: slab.__page_flags, slab.__unused_1, slab.freelist, slab.units, slab.__unused_2, slab.__page_refcount [uninitvar]
-mm/slab.c:3289:7: warning: Redundant assignment of 'objp' to itself. [selfAssignment]
-mm/slab.c:3509:8: warning: Redundant assignment of 'p[i]' to itself. [selfAssignment]
-mm/slab.c:405:9: warning: Local variable 'slab_size' shadows outer function [shadowFunction]
-mm/vmstat.c:1409:53: warning: Parameter 'pos' can be declared with const [constParameter]
-mm/vmstat.c:1650:68: warning: Parameter 'zone' can be declared with const [constParameter]
-mm/zsmalloc.c:2019:15: warning: Uninitialized variables: zspage.huge, zspage.fullness, zspage.class, zspage.isolated, zspage.magic, zspage.inuse, zspage.freeobj, zspage.first_page, zspage.lock [uninitvar]
-mm/zsmalloc.c:2060:16: warning: Local variable 'obj_allocated' shadows outer function [shadowFunction]
-or1k-linux-ld: drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_binary_assert_format'
-or1k-linux-ld: drivers/mmc/host/sdhci-of-aspeed-test.c:10: undefined reference to `kunit_do_failed_assertion'
+Pankaj
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
-
-arch/x86/kernel/cpu/rdrand.c:36 x86_init_rdrand() error: uninitialized symbol 'prev'.
-drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/gpu/drm/tests/drm_buddy_test.c:197:26-31: ERROR: invalid reference to the index variable of the iterator on line 152
-drivers/infiniband/hw/irdma/hw.c:1484:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/md/dm-mpath.c:1681:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/dvb-frontends/mxl692.c:49:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/i2c/ov5647.c:636:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/i2c/st-mipid02.c:295:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/platform/qcom/venus/vdec.c:1505:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/platform/st/sti/delta/delta-v4l2.c:719:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/tuners/msi001.c:81:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/mfd/sec-core.c:429:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/mmc/host/sh_mmcif.c:1318:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/bonding/bond_main.c:4647:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/can/slcan/slcan-core.c:601:14: sparse:    void *
-drivers/net/can/slcan/slcan-core.c:601:14: sparse:    void [noderef] __rcu *
-drivers/net/can/slcan/slcan-core.c:601:14: sparse: sparse: incompatible types in comparison expression (different address spaces):
-drivers/net/dsa/microchip/ksz9477.c:501:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:1388:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/faraday/ftgmac100.c:854:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/hisilicon/hns/hnae.c:436:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/i40e/i40e_main.c:9347:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_base.c:1003:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_dcb_lib.c:520:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_vlan_mode.c:379:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/igb/e1000_phy.c:1185:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/microchip/encx24j600.c:827:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/microchip/lan743x_main.c:1238:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/smsc/smsc9420.c:451:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/vertexcom/mse102x.c:422:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/phy/dp83640.c:890:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/usb/cdc_ncm.c:195:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/usb/rtl8150.c:176:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/parport/ieee1284_ops.c:615:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/elx/efct/efct_unsol.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/elx/libefc/efc_domain.c:692:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/megaraid/megaraid_sas_fp.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/soc/mediatek/mtk-mutex.c:793:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36016.c:430:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36050.c:829:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36060.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/target/iscsi/iscsi_target.c:2348:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/target/target_core_device.c:1013:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/thunderbolt/tmu.c:758:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/thunderbolt/tunnel.c:1264:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/tty/serial/atmel_serial.c:1442:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/usb/host/uhci-q.c:1367:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/usb/serial/digi_acceleport.c:1167:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/video/backlight/qcom-wled.c:871:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-fs/ext4/mballoc.c:3618:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-fs/kernel_read_file.c:61 kernel_read_file() warn: impossible condition '(i_size > (((~0) >> 1))) => (s64min-s64max > s64max)'
-fs/ubifs/recovery.c:1062:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-include/linux/bits.h:9:41: warning: shift by negative count ('-1') [-Wanalyzer-shift-count-negative]
-mm/filemap.c:1354:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/khugepaged.c:2410 madvise_collapse() warn: possible memory leak of 'cc'
-mm/madvise.c:1174:66: warning: Parameter 'task' can be declared with const [constParameter]
-mm/page_alloc.c:1181:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/page_alloc.c:7744:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/slub.c:5434:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/bluetooth/hci_event.c:5926:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/qrtr/mhi.c:102:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/wireless/reg.c:205:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/lola/lola.c:178:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/pcxhr/pcxhr_core.c:134:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/rme9652/hdsp.c:666:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/fsl/fsl_spdif.c:1508:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/sh/rcar/core.c:1602:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/sof/intel/mtl.c:553:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-{standard input}:2311: Error: expecting )
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
-|   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
-|-- alpha-randconfig-r004-20220712
-|   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
-|   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
-|-- arc-allyesconfig
-|   |-- block-partitions-efi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- block-sed-opal.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- crypto-asymmetric_keys-pkcs7_verify.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-libata-core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-libata-eh.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-sata_dwc_460ex.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-base-power-runtime.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-block-rbd.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-bluetooth-hci_ll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-bluetooth-hci_qca.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cdrom-cdrom.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-ipmi-ipmi_ssif.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-pcmcia-cm4000_cs.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-random.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-tpm-tpm_tis_core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-bcm-clk-iproc-armpll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-clk-bd718x7.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-clk-lochnagar.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-ccree-cc_request_mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-qce-sha.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-qce-skcipher.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cxl-core-hdm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cxl-core-pci.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-dma-buf-dma-buf.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-bus.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-clock.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-powercap.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-sensors.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-voltage.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-fpga-dfl-fme-mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gnss-usb.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_debug.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce110-dce110_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce112-dce112_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu7_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu8_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-vega10_powertune.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-smumgr-smu7_smumgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_ttm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-cadence-cdns-mhdp8546-hdcp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-ite-it66121.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-clang_recent_errors
-|-- arm-randconfig-r024-20220712
-|   `-- drivers-gpu-drm-tests-drm_mm_test.c:warning:stack-frame-size-()-exceeds-limit-()-in-__igt_reserve
-|-- s390-randconfig-r044-20220713
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc.c:warning:no-previous-prototype-for-function-dc_reset_state
-|-- x86_64-randconfig-a001
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-|-- x86_64-randconfig-a005
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-|-- x86_64-randconfig-a012
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-`-- x86_64-randconfig-k001
-    `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-
-elapsed time: 723m
-
-configs tested: 95
-configs skipped: 2
-
-gcc tested configs:
-arm                                 defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-i386                          randconfig-c001
-nios2                         3c120_defconfig
-arm64                            alldefconfig
-powerpc                      makalu_defconfig
-sh                          r7785rp_defconfig
-arm                      footbridge_defconfig
-arm                            lart_defconfig
-arm                            hisi_defconfig
-sh                          urquell_defconfig
-microblaze                      mmu_defconfig
-sparc                               defconfig
-sh                          r7780mp_defconfig
-m68k                           virt_defconfig
-arc                              alldefconfig
-sh                           se7721_defconfig
-mips                            gpr_defconfig
-arc                 nsimosci_hs_smp_defconfig
-sparc                       sparc32_defconfig
-csky                                defconfig
-x86_64                                  kexec
-sparc                            allyesconfig
-xtensa                           allyesconfig
-riscv                             allnoconfig
-riscv                    nommu_k210_defconfig
-i386                   debian-10.3-kselftests
-riscv                          rv32_defconfig
-riscv                    nommu_virt_defconfig
-i386                              debian-10.3
-arm                  randconfig-c002-20220712
-x86_64                        randconfig-c001
-ia64                             allmodconfig
-alpha                            allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-m68k                             allyesconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-i386                                defconfig
-i386                             allyesconfig
-x86_64                        randconfig-a006
-i386                          randconfig-a001
-i386                          randconfig-a003
-i386                          randconfig-a005
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-x86_64                        randconfig-a015
-i386                          randconfig-a012
-i386                          randconfig-a016
-i386                          randconfig-a014
-arc                  randconfig-r043-20220712
-riscv                randconfig-r042-20220712
-s390                 randconfig-r044-20220712
-arc                  randconfig-r043-20220713
-x86_64                        randconfig-a002
-x86_64                        randconfig-a004
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
-x86_64                          rhel-8.3-func
-x86_64                         rhel-8.3-kunit
-x86_64                    rhel-8.3-kselftests
-x86_64                           rhel-8.3-syz
-
-clang tested configs:
-powerpc                     akebono_defconfig
-mips                           ip27_defconfig
-riscv                            alldefconfig
-arm                       imx_v4_v5_defconfig
-arm                        mvebu_v5_defconfig
-mips                          ath79_defconfig
-arm                        magician_defconfig
-x86_64                        randconfig-k001
-x86_64                        randconfig-a005
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                          randconfig-a013
-i386                          randconfig-a011
-i386                          randconfig-a015
-hexagon              randconfig-r041-20220712
-hexagon              randconfig-r045-20220712
-hexagon              randconfig-r045-20220713
-riscv                randconfig-r042-20220713
-hexagon              randconfig-r041-20220713
-s390                 randconfig-r044-20220713
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
