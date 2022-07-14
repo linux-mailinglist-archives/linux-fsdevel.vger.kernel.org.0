@@ -2,94 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 579D3575664
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 22:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C925F57570B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 23:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232447AbiGNUhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 16:37:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
+        id S239067AbiGNVg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 17:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbiGNUhF (ORCPT
+        with ESMTP id S232321AbiGNVg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 16:37:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35893ED42;
-        Thu, 14 Jul 2022 13:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=r34t2dkJs6BauaDSmiqcG3RpPOCpjuABQcyajNTUCZ0=; b=sS+ulQPK+Ee7+6p6UIG+7ZxPAZ
-        fOHqIKnCg5qMLRZqlTpV1Wld0tGXRiMnnNWu7ceI2eMXiP5czu0S83NlYGlbVAQKZIU0J9sYI5k+Z
-        dEtEjOjAeBQZhTTLcXJikMreAUzuFHPfp44MvS9T/p36cUCame835KosMovzg/un43VzL+d9ZKLN3
-        WshYLFEHZHiIOL/p3z1Ui7HeXONOIr9zXXpQnUJRNKVgKc1XRvrdz4TCrDekwbOS3g4KO5XpRe1zc
-        8UNimPSm+H3pJwZxtMX3k07fKtr4GBwFW1GBJiRTX/o4hfsNIhpf87R5Eoeh2niSeP5R7ZEdLnXT4
-        T+eeKxMQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oC5Zp-001Vr8-Cg; Thu, 14 Jul 2022 20:36:49 +0000
-Date:   Thu, 14 Jul 2022 13:36:49 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     keescook@chromium.org, songmuchun@bytedance.com,
-        yzaikin@google.com, mhocko@suse.com, mgorman@techsingularity.net,
-        Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net,
-        kuba@kernel.org, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: [GIT PULL] sysctl fixes for v5.19-rc7
-Message-ID: <YtB+YayGeq/KgOqK@bombadil.infradead.org>
+        Thu, 14 Jul 2022 17:36:26 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7DA13F06
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jul 2022 14:36:23 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-10bec750eedso4064223fac.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Jul 2022 14:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=d6Y4PJn4e4OHfXaqqzt6DxiZwXN++QJEYWcqrk5YCAk=;
+        b=Wf2PaExtCvQQhSD6GzFj9p3mnGi6MmdHeptNTa6pcjWaTSqRXDcdGKGNRxhnnIcXwn
+         nT1Y4dfvj44AJdbrnfyQ8/aUL2h82xCTc6e9U0OVHMheoCdQAEt2CaVkUA0ArCG/gH+R
+         sZdOnagpL9XtefeYbEPpTBmprfVJ6jCSo1BPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=d6Y4PJn4e4OHfXaqqzt6DxiZwXN++QJEYWcqrk5YCAk=;
+        b=tZOeFfoJTD5NBg+W6yOFJMM2Iyqv+maUzIt3JIvM8gzjfSASpZxU/b2KQHdJXZEyiP
+         j3cBJ2FM6d5IsfT3pWub/3y/QiwhGkj4QtkaXnbEhPa9oL8qoohcNJTznD6B4k0A0io4
+         3i14RZaml4ucrkwKL9D2qw1YFsn3vBNfWvri33Ppp7NUfv1zuV6eDrtyBIJOUEf1zG9v
+         q8eRW9Y8ffVYWZH5inqztJivQgh2qVBqDofA7yqIKES7ZPUmJ27rlwfrHrItdEe1nIBi
+         JzdQp3ZGYwNpKLzfDHTz9UXjlM0xn3Slv956/J+N16Wfg8JLtLX5qhCr7ODZIoldAama
+         NsJQ==
+X-Gm-Message-State: AJIora8OQlnJt/AI3zkrZl8NDS+uiR8tB7TUfFkCgr0rJGeQDca+MkCR
+        nahYrX/2HYkSGPPrLwscDM8ztnI+Q2tTWw==
+X-Google-Smtp-Source: AGRyM1t4Myc5kFjsvPLRN34EdAntuLawCu4x0RTBiHDikYjVawkz58ozSAKImIJQhn742UNLxKdUHQ==
+X-Received: by 2002:a05:6870:51c6:b0:10c:2b7c:a542 with SMTP id b6-20020a05687051c600b0010c2b7ca542mr8348378oaj.19.1657834582793;
+        Thu, 14 Jul 2022 14:36:22 -0700 (PDT)
+Received: from localhost ([2605:a601:ac0f:820:1f77:47fa:4ce9:ddce])
+        by smtp.gmail.com with ESMTPSA id e18-20020a4ae0d2000000b00432ac97ad09sm1123189oot.26.2022.07.14.14.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jul 2022 14:36:22 -0700 (PDT)
+Date:   Thu, 14 Jul 2022 16:36:21 -0500
+From:   Seth Forshee <sforshee@digitalocean.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] acl: move idmapped mount fixup into
+ vfs_{g,s}etxattr()
+Message-ID: <YtCMVQIm0cU1wnYU@do-x1extreme>
+References: <20220708090134.385160-1-brauner@kernel.org>
+ <20220708090134.385160-2-brauner@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220708090134.385160-2-brauner@kernel.org>
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus,
+On Fri, Jul 08, 2022 at 11:01:32AM +0200, Christian Brauner wrote:
+> This cycle we added support for mounting overlayfs on top of idmapped mounts.
+> Recently I've started looking into potential corner cases when trying to add
+> additional tests and I noticed that reporting for POSIX ACLs is currently wrong
+> when using idmapped layers with overlayfs mounted on top of it.
 
-I've only received one fix for sysctls for v5.19-rc cycle. It's perhaps
-silly to send a pull request for just one patch but oh well.
+<snip detailed explanation>
 
-I'll take that time given I am sending a pull request to note that
-Kuniyuki Iwashima has posted a trove of fixes with races for when a
-subsystem does not do proper locking for read/write to the variables and
-so has put effort to do this where applicable by ensuring the sysctl
-proc stuff uses READ_ONCE/WRITE_ONCE helpers. Since most of the issues
-there have been identified on networking side Dave has picked all that
-up. I'll let him decide if he wants that on the rc or not.
+Beyond the issues described here, it also looks like the vfs_*() calls
+are been inconsistent wrt idmapped mounts. With acls it takes/returns
+unmapped ids, but other interfaces like vfs_getattr() return mapped ids.
+So it makes sense to make vfs_{get,set}xattr() behave likewise.
 
-I figured I'd mention I don't have much cleanups for kernel/sysctl.c queued up
-for v5.20 so expect little work there later for the next cycle. That
-should also help with deciding if Kuniyuki's fixes get merged on v5.19
-or v5.20 as there shouldn't be any expected conflicts either way.
+I have one small suggestion below, but I think this looks good.
 
-  Luis
+Reviewed-by: Seth Forshee <sforshee@digitalocean.com>
 
-The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
+> +static inline bool is_posix_acl_xattr(const char *name)
+> +{
+> +	return (strcmp(name, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+> +	       (strcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT) == 0);
+> +}
+> +
 
-  Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+There are locations still open-coding this check -- setxattr_convert()
+and do_getxattr(). Maybe consider adding a follow-on patch to convert
+those too.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/sysctl-fixes-5.19-rc7
-
-for you to fetch changes up to 43b5240ca6b33108998810593248186b1e3ae34a:
-
-  mm: sysctl: fix missing numa_stat when !CONFIG_HUGETLB_PAGE (2022-07-14 13:13:49 -0700)
-
-----------------------------------------------------------------
-Only one fix for sysctl
-
-----------------------------------------------------------------
-Muchun Song (1):
-      mm: sysctl: fix missing numa_stat when !CONFIG_HUGETLB_PAGE
-
- kernel/sysctl.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Seth
