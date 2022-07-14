@@ -2,98 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67CA4575421
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 19:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCAE6575446
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Jul 2022 19:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239470AbiGNRic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Jul 2022 13:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33298 "EHLO
+        id S238890AbiGNRyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Jul 2022 13:54:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232679AbiGNRib (ORCPT
+        with ESMTP id S230514AbiGNRyT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Jul 2022 13:38:31 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B59606B6;
-        Thu, 14 Jul 2022 10:38:30 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id x91so3366433ede.1;
-        Thu, 14 Jul 2022 10:38:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Yu2+SIwToyiijVbo49UhP1kKR2aa55foE/D2/YT55Yg=;
-        b=IWw5CaMfCXVmaVCS03FgCetqbph2FBq2DUnPT/8+/8GQMunsfmxv0pYinebZmpiuq3
-         Y+ZXXUC12JAPvmVqatMBk5t/MzDjcc7+XhpU2CRuLNYH96ZQz86xc/tmUyb+cZ6A5JoK
-         IttW1wUcqf3GZ436e7C3CZLqtT9JV84KIUArFqMXyUFqR7tHznpw6QNFf/qvF2l98Yat
-         QlulbkF6P9Ltj3XDWaZVAaf8gAKS5aD1NC7gQh6mcBp6MM79Mt0VC9GrVwYvz8cu6dal
-         o10N2lLvoGNqST0P9Pg6eB6vketB+wvZtFehLb1VWg5vPSH6FWJGNA1VuQFNeMOWscgG
-         DXeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Yu2+SIwToyiijVbo49UhP1kKR2aa55foE/D2/YT55Yg=;
-        b=f4bJ7gFQDJmm0zXMeUJfYzaXkWueEEMU48liDWxfU/rVORO+g9DYWaPBfSIFG/Ofzm
-         GRrZWo2HG37FVRTyJTliXC8hDakwC92waKC9dhFPCeLOJm/IgB3KDZand6Wnq2k5MAz2
-         oeLL9vxH3t3OjNl/q8Q6c3XTeOu2qWDB7MECxNIo/YfJZL8qChLRVfxeDuD/HkFdH2R1
-         YWVBqK4sHiSutSioLvwwJ+FMzmzwI+s/g85mEY3tTYiILzz0Nf7Z2Mvt83jmVyXvNti0
-         qn6R1Y8L/ta8KFIi/PKGXLkmoDH3Ob61HAv8jQUStdCSxe15yHQ4Fmg5pVvioLdPkJY1
-         g0Xg==
-X-Gm-Message-State: AJIora+r1hgBNDuZvRMJNLeA1K5qync+0eD7/zPcCZFaRUNn0ck0tzQs
-        YRuA8hZBzuINfyxDn1P454H0VTQm6WA=
-X-Google-Smtp-Source: AGRyM1sp11JRsdFgMZcGctJa6r0ts/rppEWWYSPQdRobSA6f2F4IXltHCnp1Q3lsilwqlAoKnBW2aw==
-X-Received: by 2002:aa7:dd06:0:b0:43b:247e:3d6c with SMTP id i6-20020aa7dd06000000b0043b247e3d6cmr5120458edv.407.1657820309353;
-        Thu, 14 Jul 2022 10:38:29 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id j17-20020a17090623f100b0072a55ec6f3bsm942235ejg.165.2022.07.14.10.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 10:38:28 -0700 (PDT)
-From:   Uros Bizjak <ubizjak@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Uros Bizjak <ubizjak@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] posix_acl: Use try_cmpxchg in get_acl
-Date:   Thu, 14 Jul 2022 19:38:19 +0200
-Message-Id: <20220714173819.13312-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Thu, 14 Jul 2022 13:54:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2132F27177;
+        Thu, 14 Jul 2022 10:54:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CBDCAB82779;
+        Thu, 14 Jul 2022 17:54:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEAAC34114;
+        Thu, 14 Jul 2022 17:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657821255;
+        bh=LgU+sYC6IUyCyX2o7fwrVIJ7cvKYLuT2/55WRReuVuk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=miK77TVEWJzTCgxOunLKwtg+bA4M2rbSH6kRxi8PeaYxE7T8a2fQkRJDBoyTOQjZ+
+         P39e07+GfiM2KD0lvYiJd7QQNy6dpTtGIa9KUi8/E/0iSLcQ7JkUECWw1g4A6N71OO
+         vv6++OCRidDQp0ekvihKIjwcgtB2DJ0URyILgMWdcpEwdnMZEGlwhkInw+RBelqDba
+         soOqdmPgEN1XHEVM28Oln3izsHpXswM711d3W9X6m5wyEtnESil+ozOdJKGo27IykI
+         nMU+ORrvI3wjsw+mC5KORWbTjzq7Au2FR7PlORe/B75JNMKd39FfyoIPGpzEX6SY7T
+         lIHJXqNKwc21w==
+Date:   Thu, 14 Jul 2022 10:54:14 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "jane.chu@oracle.com" <jane.chu@oracle.com>
+Subject: Re: [RFC PATCH v6] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+Message-ID: <YtBYRrkSkuF4VU5e@magnolia>
+References: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
+ <20220714103421.1988696-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220714103421.1988696-1-ruansy.fnst@fujitsu.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use try_cmpxchg instead of cmpxchg (*ptr, old, new) == old
-in get_acl. x86 CMPXCHG instruction returns success in ZF flag,
-so this change saves a compare after cmpxchg (and related move
-instruction in front of cmpxchg).
+On Thu, Jul 14, 2022 at 10:34:29AM +0000, ruansy.fnst@fujitsu.com wrote:
+> This patch is inspired by Dan's "mm, dax, pmem: Introduce
+> dev_pagemap_failure()"[1].  With the help of dax_holder and
+> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+> (or mapped device) on it to unmap all files in use and notify processes
+> who are using those files.
+> 
+> Call trace:
+> trigger unbind
+>  -> unbind_store()
+>   -> ... (skip)
+>    -> devres_release_all()   # was pmem driver ->remove() in v1
+>     -> kill_dax()
+>      -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+>       -> xfs_dax_notify_failure()
+> 
+> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+> event.  So do not shutdown filesystem directly if something not
+> supported, or if failure range includes metadata area.  Make sure all
+> files and processes are handled correctly.
+> 
+> ==
+> Changes since v5:
+>   1. Renamed MF_MEM_REMOVE to MF_MEM_PRE_REMOVE
+>   2. hold s_umount before sync_filesystem()
+>   3. move sync_filesystem() after SB_BORN check
+>   4. Rebased on next-20220714
+> 
+> Changes since v4:
+>   1. sync_filesystem() at the beginning when MF_MEM_REMOVE
+>   2. Rebased on next-20220706
+> 
+> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 
-No functional change intended.
+Looks reasonable to me now,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
----
- fs/posix_acl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--D
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 962d32468eb4..49a13fd4d3cb 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -164,7 +164,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
- 	 * Cache the result, but only if our sentinel is still in place.
- 	 */
- 	posix_acl_dup(acl);
--	if (unlikely(cmpxchg(p, sentinel, acl) != sentinel))
-+	if (unlikely(!try_cmpxchg(p, &sentinel, acl)))
- 		posix_acl_release(acl);
- 	return acl;
- }
--- 
-2.35.3
-
+> ---
+>  drivers/dax/super.c         |  3 ++-
+>  fs/xfs/xfs_notify_failure.c | 15 +++++++++++++++
+>  include/linux/mm.h          |  1 +
+>  3 files changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 9b5e2a5eb0ae..cf9a64563fbe 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+>  		return;
+>  
+>  	if (dax_dev->holder_data != NULL)
+> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+> +				MF_MEM_PRE_REMOVE);
+>  
+>  	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+>  	synchronize_srcu(&dax_srcu);
+> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> index 69d9c83ea4b2..6da6747435eb 100644
+> --- a/fs/xfs/xfs_notify_failure.c
+> +++ b/fs/xfs/xfs_notify_failure.c
+> @@ -76,6 +76,9 @@ xfs_dax_failure_fn(
+>  
+>  	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+>  	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> +		/* Do not shutdown so early when device is to be removed */
+> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+> +			return 0;
+>  		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>  		return -EFSCORRUPTED;
+>  	}
+> @@ -174,12 +177,22 @@ xfs_dax_notify_failure(
+>  	struct xfs_mount	*mp = dax_holder(dax_dev);
+>  	u64			ddev_start;
+>  	u64			ddev_end;
+> +	int			error;
+>  
+>  	if (!(mp->m_sb.sb_flags & SB_BORN)) {
+>  		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
+>  		return -EIO;
+>  	}
+>  
+> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
+> +		xfs_info(mp, "device is about to be removed!");
+> +		down_write(&mp->m_super->s_umount);
+> +		error = sync_filesystem(mp->m_super);
+> +		up_write(&mp->m_super->s_umount);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+>  	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
+>  		xfs_warn(mp,
+>  			 "notify_failure() not supported on realtime device!");
+> @@ -188,6 +201,8 @@ xfs_dax_notify_failure(
+>  
+>  	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+>  	    mp->m_logdev_targp != mp->m_ddev_targp) {
+> +		if (mf_flags & MF_MEM_PRE_REMOVE)
+> +			return 0;
+>  		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+>  		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>  		return -EFSCORRUPTED;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 4287bec50c28..2ddfb76c8a83 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3188,6 +3188,7 @@ enum mf_flags {
+>  	MF_SOFT_OFFLINE = 1 << 3,
+>  	MF_UNPOISON = 1 << 4,
+>  	MF_SW_SIMULATED = 1 << 5,
+> +	MF_MEM_PRE_REMOVE = 1 << 6,
+>  };
+>  int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>  		      unsigned long count, int mf_flags);
+> -- 
+> 2.37.0
