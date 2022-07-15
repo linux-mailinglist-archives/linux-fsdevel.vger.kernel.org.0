@@ -2,79 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69724576363
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jul 2022 16:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4A357646A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Jul 2022 17:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232001AbiGOOHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jul 2022 10:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36818 "EHLO
+        id S235394AbiGOP2t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jul 2022 11:28:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiGOOHG (ORCPT
+        with ESMTP id S235313AbiGOP2s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jul 2022 10:07:06 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 538A7DD8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jul 2022 07:07:04 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id eq6so6426964edb.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jul 2022 07:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tG8UwfM9XgsU2gpK8iZAI5QuO4Taq8sY6XWqWuLovpU=;
-        b=M3X5Tr7FPZHC+7bkRn7RRykQVi/wfaS3ybPSNR/xzd4iJZkrgXYUWFxjI5HWMhxv0M
-         9BOv9pkEYqlbio5/KLX6bt/3ju9AEDpu2LsiZi3WrH5mHJVk/gCyouJ67m2pt6ZPEPt6
-         VxGKJlEFF6Hsk/vkwoPwefkk0ZgwGzZzL7tME=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tG8UwfM9XgsU2gpK8iZAI5QuO4Taq8sY6XWqWuLovpU=;
-        b=z3UH+FkmYOIf4VRFNQHbbrzyHBuibDTOd1l/A9Og1C5SM+QYUftvl1RO6xqhdJIQf4
-         2Zc4KCEDjGPS1KKIHfghNAg3WsIMLaIS4VxOTyPCe2dCMFYSnPw0RjxKXgA29ETQ4DXd
-         ndd2aheDVV4kwFcKjcmefzIE9BhLgb+BWKzXCGRlrZCwrVHIgtuN5Baoqbm8Hnb5PR2d
-         yn6+MliJGjYWjdrZcS5eaoneEKwNRJcMMntfrHKfSsfg90zWZJW5YZ6KM240L6pZ0HBF
-         g5LHsntWMw9LB7s4XjV82B6JWAWn58vHtaTHfdCe7qHVzGrbqKmSnhFKDkXpuBMiDK/H
-         iI+w==
-X-Gm-Message-State: AJIora/R22ttsl9xCdPgZtyrHEVj8sXFdwjKicOkefIloLgQElX4yaii
-        Ab/AKLakmoYgh1dh7omXBD/0h6U6th7FF22iYfVAhw==
-X-Google-Smtp-Source: AGRyM1uq6Rh6Te7IY61z9eJaeA+04DZZ9mK0UQyF/K217FYesaE7A0mHMwzT6A9TAcC215uqb5P++5cm8U64EFQ5NIs=
-X-Received: by 2002:a05:6402:270d:b0:43a:d1e8:460b with SMTP id
- y13-20020a056402270d00b0043ad1e8460bmr18857128edd.40.1657894022967; Fri, 15
- Jul 2022 07:07:02 -0700 (PDT)
+        Fri, 15 Jul 2022 11:28:48 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB8DB86A;
+        Fri, 15 Jul 2022 08:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657898925; x=1689434925;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fgGIM11WL/fGrNMhdwG3+gYp9Dg+doXJUDhLlpjD/eg=;
+  b=dmSdkG2SaEXsuuSqe12mOBLb2Ph9VM/7IILlXAt5X0tBJiy7ZlilujH9
+   sMX96sqZuRUtXPQ75K5+BJsvDndGI2XJKaru6jwero3NUEiqtvuiLRPq3
+   vK+J9tyoJ7g8ysFyess0ZgaWiHtyyaflDz9BpDhaSnlmcRv2e/1IbIB+A
+   oS+6wWwy2i5MnlbXimJMUYcQGS2xU32S/F4pwLOGUtQJqrY77kUQ03ZrP
+   Z2Yvkh1ET8785qsb6Ly04irDyi1rpsuRJ9rWGrrMvdicvmU4pIU/7LCSd
+   YGzYWWPLy/f0sgZzKzC8kHcuJwwNveVJPb5OMCg5ERtW3urvHsKzv424x
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10408"; a="285842898"
+X-IronPort-AV: E=Sophos;i="5.92,274,1650956400"; 
+   d="scan'208";a="285842898"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2022 08:28:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,274,1650956400"; 
+   d="scan'208";a="664226118"
+Received: from lkp-server02.sh.intel.com (HELO ff137eb26ff1) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jul 2022 08:28:43 -0700
+Received: from kbuild by ff137eb26ff1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1oCNF7-0000JJ-Ls;
+        Fri, 15 Jul 2022 15:28:37 +0000
+Date:   Fri, 15 Jul 2022 23:28:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Benjamin Coddington <bcodding@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, ebiederm@xmission.com,
+        Ian Kent <raven@themaw.net>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KEYS: Add keyagent request_key
+Message-ID: <202207152343.9SGLm8sP-lkp@intel.com>
+References: <061dd6fe81dc97a4375e52ec0da20a54cf582cb5.1657624639.git.bcodding@redhat.com>
 MIME-Version: 1.0
-References: <20220715075343.2730026-1-williamsukatube@163.com>
-In-Reply-To: <20220715075343.2730026-1-williamsukatube@163.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 15 Jul 2022 16:06:52 +0200
-Message-ID: <CAJfpegs4jRd=FrgDaLxcnbCKWCU=PrsdEzat58j0xB2XdTatZg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Fix a potential memory leak for kstrdup()
-To:     williamsukatube@163.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        William Dean <williamsukatube@gmail.com>,
-        Hacash Robot <hacashRobot@santino.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <061dd6fe81dc97a4375e52ec0da20a54cf582cb5.1657624639.git.bcodding@redhat.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Jul 2022 at 09:54, <williamsukatube@163.com> wrote:
->
-> From: William Dean <williamsukatube@gmail.com>
->
-> kfree() is missing on an error path to free the memory allocated by
-> kstrdup():
->
->   sb->s_subtype = kstrdup(parent_sb->s_subtype, GFP_KERNEL);
->
-> So it is better to free it via kfree(sb->s_subtype).
+Hi Benjamin,
 
-Not needed.  s_subtype will be freed in __put_super().
+Thank you for the patch! Perhaps something to improve:
 
-Thanks,
-Miklos
+[auto build test WARNING on jmorris-security/next-testing]
+[also build test WARNING on dhowells-fs/fscache-next arnd-asm-generic/master linus/master v5.19-rc6 next-20220714]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/Keyagents-another-call_usermodehelper-approach-for-namespaces/20220712-203658
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-testing
+config: i386-defconfig (https://download.01.org/0day-ci/archive/20220715/202207152343.9SGLm8sP-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/4d4f4ae463335d3e611bdb71330ab37af115cde9
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Benjamin-Coddington/Keyagents-another-call_usermodehelper-approach-for-namespaces/20220712-203658
+        git checkout 4d4f4ae463335d3e611bdb71330ab37af115cde9
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash security/keys/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   security/keys/request_key.c: In function 'construct_key':
+>> security/keys/request_key.c:254:1: warning: label 'done' defined but not used [-Wunused-label]
+     254 | done:
+         | ^~~~
+
+
+vim +/done +254 security/keys/request_key.c
+
+   217	
+   218	/*
+   219	 * Call out to userspace for key construction.
+   220	 *
+   221	 * Program failure is ignored in favour of key status.
+   222	 */
+   223	static int construct_key(struct key *key, const void *callout_info,
+   224				 size_t callout_len, void *aux,
+   225				 struct key *dest_keyring)
+   226	{
+   227		request_key_actor_t actor;
+   228		struct key *authkey;
+   229		int ret;
+   230	
+   231		kenter("%d,%p,%zu,%p", key->serial, callout_info, callout_len, aux);
+   232	
+   233		/* allocate an authorisation key */
+   234		authkey = request_key_auth_new(key, "create", callout_info, callout_len,
+   235					       dest_keyring);
+   236		if (IS_ERR(authkey))
+   237			return PTR_ERR(authkey);
+   238	
+   239		/* Make the call */
+   240		actor = call_sbin_request_key;
+   241		if (key->type->request_key)
+   242			actor = key->type->request_key;
+   243	#ifdef CONFIG_KEYAGENT
+   244		else {
+   245			ret = keyagent_request_key(authkey, aux);
+   246	
+   247			/* ENOKEY: no keyagents match on calling process' keyrings */
+   248			if (ret != -ENOKEY)
+   249				goto done;
+   250		}
+   251	#endif
+   252		ret = actor(authkey, aux);
+   253	
+ > 254	done:
+   255		/* check that the actor called complete_request_key() prior to
+   256		 * returning an error */
+   257		WARN_ON(ret < 0 &&
+   258			!test_bit(KEY_FLAG_INVALIDATED, &authkey->flags));
+   259	
+   260		key_put(authkey);
+   261		kleave(" = %d", ret);
+   262		return ret;
+   263	}
+   264	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
