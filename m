@@ -2,130 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C339576B30
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Jul 2022 03:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A99576B32
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Jul 2022 03:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbiGPB1h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Jul 2022 21:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59062 "EHLO
+        id S231236AbiGPBcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Jul 2022 21:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiGPB1g (ORCPT
+        with ESMTP id S230072AbiGPBcL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Jul 2022 21:27:36 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C266B15A14
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jul 2022 18:27:34 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-31c8a5d51adso51213727b3.14
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jul 2022 18:27:34 -0700 (PDT)
+        Fri, 15 Jul 2022 21:32:11 -0400
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0BA43E7A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Jul 2022 18:32:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=oNUmtpieKLTpKC9Phy1E+O2Qwr+LcgpjVlKPKz6ZsMY=;
-        b=o3YYx9oRz4vs+i20GvTWtA2fo2ETFMeVSiAqrPAjMumbgk6QsUfn/L2857Y1U4kr91
-         vklLL5DSuzEDM920bdCqKAMwVm4TZrdIbmt15k1jgJIHxfR2M3E7zYEP8JAC7UfjbOPP
-         BUfsSW6TIpP5Zd+0767BBU6jYGQIuKTH6NuHwbuI8Ok0AGwudcmQcNEJKE0uPakdLJha
-         BSQHl/QlbT7Tx2Gt4EzHMIkcAgxAelFpUjH17w/t9BXELeqSi0tBgNQP9F0wr/k6HFmy
-         H0kpyAk/8g5j0lUBzM1Q5DdfBFyv+9bdMt4D3AGxguc5NSFR9q3njhxZLt3co38DKu8I
-         5FYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=oNUmtpieKLTpKC9Phy1E+O2Qwr+LcgpjVlKPKz6ZsMY=;
-        b=QOdu49x1ZKHJ1K6L55Q1sgznE0X1uA+vS19CXeKao35AMR9b6vzOtb+8OOTTT5LSFx
-         EqzrWywzqB879Jp900+4zyAkKHS2LmonYq8OSzuoUCPRGak3WN/pjOgwmQJR6UdwlfcS
-         JFArTguZIgUUYtz3iEqiKPxExDQLVaJtH+aUk8H/3OB8sxfz8oaYPD0gx4hT2l5F1jLm
-         7li4/F/ZYBF2pcJUHI9Lz+YmWKiYo2CHV5f8xXpoDfnSKykmeB+/79id57rR1wSAW5pw
-         thIIBZPIcIuDtVQlt6+fP8Z3gXChFvjlz/I1rmsMHigf2XfTbGGaiumGBKJTQO01mWtH
-         /gaQ==
-X-Gm-Message-State: AJIora+US/V6NSoBqnRr/2ShPaBXmKwb/FiM+nD6xAOGjzaHd5tESmgq
-        u9YnIlqccy0LoKJmVeEywCaFYdaqKXjlOg==
-X-Google-Smtp-Source: AGRyM1tgce6Og74FBQ8kWDBrQFEYIJs1vYjRR78miz5377H8QoZuC/el3NaKqVJGVtRTP4sANPPWTE2wuKnhCw==
-X-Received: from shakeelb.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:28b])
- (user=shakeelb job=sendgmr) by 2002:a25:e74d:0:b0:66e:5c8e:609 with SMTP id
- e74-20020a25e74d000000b0066e5c8e0609mr16394088ybh.585.1657934854024; Fri, 15
- Jul 2022 18:27:34 -0700 (PDT)
-Date:   Sat, 16 Jul 2022 01:27:31 +0000
-In-Reply-To: <CALvZod5hJ8VJ4E9jhqjCKc8au8_b-h_q+g=2pbQVUSBvappE6g@mail.gmail.com>
-Message-Id: <20220716012731.2zz7hpg3qbhwgeqd@google.com>
-Mime-Version: 1.0
-References: <xm26fsjotqda.fsf@google.com> <20220629165542.da7fc8a2a5dbd53cf99572aa@linux-foundation.org>
- <CALvZod5KX7XEHR9h_jFHf5pJcYB+dODEeaLKrQLtSy9EUqgvWw@mail.gmail.com>
- <20220629192435.df27c0dbb07ef72165e1de5e@linux-foundation.org> <CALvZod5hJ8VJ4E9jhqjCKc8au8_b-h_q+g=2pbQVUSBvappE6g@mail.gmail.com>
-Subject: Re: [RESEND RFC PATCH] epoll: autoremove wakers even more aggressively
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Benjamin Segall <bsegall@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Khazhismel Kumykov <khazhy@google.com>, Heiher <r@hev.cc>
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1657935127; x=1689471127;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=42pGIUa9Q6IV6yCVU6D7hjavW4N5MHMYFeIuv3o8epI=;
+  b=lOYqhG+ed1UNeV3wrvwu2rxwwbcGuGXQgwTd3lhwEh6gbrzECreH1h0r
+   jPAmZuSx8Fpu07O4ACSzf+vqvrkozpZM/yl24xGhR23YEfcksfKw/GVem
+   5rBpZ6D5UHjKlr5oMGF0/sYfOo6VkgUHQwfQGdZ4zfyAKnOOb2TR24I38
+   g=;
+X-IronPort-AV: E=Sophos;i="5.92,275,1650931200"; 
+   d="scan'208";a="222364099"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-iad-1d-9a235a16.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP; 16 Jul 2022 01:31:54 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1d-9a235a16.us-east-1.amazon.com (Postfix) with ESMTPS id 57344800CE;
+        Sat, 16 Jul 2022 01:31:53 +0000 (UTC)
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.36; Sat, 16 Jul 2022 01:31:52 +0000
+Received: from 88665a182662.ant.amazon.com (10.43.161.172) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.9;
+ Sat, 16 Jul 2022 01:31:50 +0000
+From:   Kuniyuki Iwashima <kuniyu@amazon.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+CC:     Kuniyuki Iwashima <kuniyu@amazon.com>,
+        Kuniyuki Iwashima <kuni1840@gmail.com>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] fs/lock: Don't allocate file_lock in flock_make_lock().
+Date:   Fri, 15 Jul 2022 18:31:40 -0700
+Message-ID: <20220716013140.61445-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.172]
+X-ClientProxiedBy: EX13D40UWA003.ant.amazon.com (10.43.160.29) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 07:59:05AM -0700, Shakeel Butt wrote:
-> On Wed, Jun 29, 2022 at 7:24 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 29 Jun 2022 18:12:46 -0700 Shakeel Butt <shakeelb@google.com> wrote:
-> >
-> > > On Wed, Jun 29, 2022 at 4:55 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > > >
-> > > > On Wed, 15 Jun 2022 14:24:23 -0700 Benjamin Segall <bsegall@google.com> wrote:
-> > > >
-> > > > > If a process is killed or otherwise exits while having active network
-> > > > > connections and many threads waiting on epoll_wait, the threads will all
-> > > > > be woken immediately, but not removed from ep->wq. Then when network
-> > > > > traffic scans ep->wq in wake_up, every wakeup attempt will fail, and
-> > > > > will not remove the entries from the list.
-> > > > >
-> > > > > This means that the cost of the wakeup attempt is far higher than usual,
-> > > > > does not decrease, and this also competes with the dying threads trying
-> > > > > to actually make progress and remove themselves from the wq.
-> > > > >
-> > > > > Handle this by removing visited epoll wq entries unconditionally, rather
-> > > > > than only when the wakeup succeeds - the structure of ep_poll means that
-> > > > > the only potential loss is the timed_out->eavail heuristic, which now
-> > > > > can race and result in a redundant ep_send_events attempt. (But only
-> > > > > when incoming data and a timeout actually race, not on every timeout)
-> > > > >
-> > > >
-> > > > Thanks.  I added people from 412895f03cbf96 ("epoll: atomically remove
-> > > > wait entry on wake up") to cc.  Hopefully someone there can help review
-> > > > and maybe test this.
-> > > >
-> > > >
-> > >
-> > > Thanks Andrew. Just wanted to add that we are seeing this issue in
-> > > production with real workloads and it has caused hard lockups.
-> > > Particularly network heavy workloads with a lot of threads in
-> > > epoll_wait() can easily trigger this issue if they get killed
-> > > (oom-killed in our case).
-> >
-> > Hard lockups are undesirable.  Is a cc:stable justified here?
-> 
-> Not for now as I don't know if we can blame a patch which might be the
-> source of this behavior.
+Two functions, flock syscall and locks_remove_flock(), call
+flock_make_lock().  It allocates struct file_lock from slab
+cache if its argument fl is NULL.
 
-I am able to repro the epoll hard lockup on next-20220715 with Ben's
-patch reverted. The repro is a simple TCP server and tens of clients
-communicating over loopback. Though to cause the hard lockup I have to
-create a couple thousand threads in epoll_wait() in server and also
-reduce the kernel.watchdog_thresh. With Ben's patch the repro does not
-cause the hard lockup even with kernel.watchdog.thresh=1.
+When we call flock syscall, we pass NULL to allocate memory
+for struct file_lock.  However, we always free it at the end
+by locks_free_lock().  We need not allocate it and instead
+should use a local variable as locks_remove_flock() does.
 
-Please add:
+Also, the validation for flock_translate_cmd() is not necessary
+for locks_remove_flock().  So we move the part to flock syscall
+and make flock_make_lock() return nothing.
 
-Tested-by: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+---
+ fs/locks.c | 57 +++++++++++++++++++-----------------------------------
+ 1 file changed, 20 insertions(+), 37 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index ca28e0e50e56..db75f4537abc 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -425,21 +425,9 @@ static inline int flock_translate_cmd(int cmd) {
+ }
+ 
+ /* Fill in a file_lock structure with an appropriate FLOCK lock. */
+-static struct file_lock *
+-flock_make_lock(struct file *filp, unsigned int cmd, struct file_lock *fl)
++static void flock_make_lock(struct file *filp, struct file_lock *fl, int type)
+ {
+-	int type = flock_translate_cmd(cmd);
+-
+-	if (type < 0)
+-		return ERR_PTR(type);
+-
+-	if (fl == NULL) {
+-		fl = locks_alloc_lock();
+-		if (fl == NULL)
+-			return ERR_PTR(-ENOMEM);
+-	} else {
+-		locks_init_lock(fl);
+-	}
++	locks_init_lock(fl);
+ 
+ 	fl->fl_file = filp;
+ 	fl->fl_owner = filp;
+@@ -447,8 +435,6 @@ flock_make_lock(struct file *filp, unsigned int cmd, struct file_lock *fl)
+ 	fl->fl_flags = FL_FLOCK;
+ 	fl->fl_type = type;
+ 	fl->fl_end = OFFSET_MAX;
+-
+-	return fl;
+ }
+ 
+ static int assign_type(struct file_lock *fl, long type)
+@@ -2097,14 +2083,18 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
+  */
+ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ {
+-	struct fd f = fdget(fd);
+-	struct file_lock *lock;
+-	int can_sleep, unlock;
++	int can_sleep, unlock, type;
++	struct file_lock fl;
++	struct fd f;
+ 	int error;
+ 
+-	error = -EBADF;
++	type = flock_translate_cmd(cmd);
++	if (type < 0)
++		return type;
++
++	f = fdget(fd);
+ 	if (!f.file)
+-		goto out;
++		return -EBADF;
+ 
+ 	can_sleep = !(cmd & LOCK_NB);
+ 	cmd &= ~LOCK_NB;
+@@ -2127,32 +2117,25 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ 		goto out_putf;
+ 	}
+ 
+-	lock = flock_make_lock(f.file, cmd, NULL);
+-	if (IS_ERR(lock)) {
+-		error = PTR_ERR(lock);
+-		goto out_putf;
+-	}
++	flock_make_lock(f.file, &fl, type);
+ 
+ 	if (can_sleep)
+-		lock->fl_flags |= FL_SLEEP;
++		fl.fl_flags |= FL_SLEEP;
+ 
+-	error = security_file_lock(f.file, lock->fl_type);
++	error = security_file_lock(f.file, fl.fl_type);
+ 	if (error)
+-		goto out_free;
++		goto out_putf;
+ 
+ 	if (f.file->f_op->flock)
+ 		error = f.file->f_op->flock(f.file,
+-					  (can_sleep) ? F_SETLKW : F_SETLK,
+-					  lock);
++					    can_sleep ? F_SETLKW : F_SETLK,
++					    &fl);
+ 	else
+-		error = locks_lock_file_wait(f.file, lock);
+-
+- out_free:
+-	locks_free_lock(lock);
++		error = locks_lock_file_wait(f.file, &fl);
+ 
+  out_putf:
+ 	fdput(f);
+- out:
++
+ 	return error;
+ }
+ 
+@@ -2614,7 +2597,7 @@ locks_remove_flock(struct file *filp, struct file_lock_context *flctx)
+ 	if (list_empty(&flctx->flc_flock))
+ 		return;
+ 
+-	flock_make_lock(filp, LOCK_UN, &fl);
++	flock_make_lock(filp, &fl, flock_translate_cmd(LOCK_UN));
+ 	fl.fl_flags |= FL_CLOSE;
+ 
+ 	if (filp->f_op->flock)
+-- 
+2.30.2
+
