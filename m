@@ -2,195 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3851C57893B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 20:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95215578996
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 20:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235602AbiGRSIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 14:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50324 "EHLO
+        id S235996AbiGRSaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 14:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235694AbiGRSIQ (ORCPT
+        with ESMTP id S234741AbiGRSaE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 14:08:16 -0400
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09FB22F004;
-        Mon, 18 Jul 2022 11:08:15 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,281,1650960000"; 
-   d="scan'208";a="79917465"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 18 Jul 2022 10:08:14 -0800
-IronPort-SDR: zDH7NpIdnCMcwT/D3prrqMMhlGnooyg0d/vhKwsQ0lbC8PuU04Gv9ZCy4BNlxdbHMTipPu7yzI
- dRMIu+m44ScLzHSFuk1bs8Ke08oCUF1fdtWSLySCjNnRNbNbRqvzPvN10aGLaiF4xz+hncd+0H
- w6grKi3yhHgBbe41Ac8tf1gLu427xsb4JbCK67KTEudG/ltVQCQNF9/N9qfGccyar1t//X34gq
- HsStVJsdYbWaWOsQLdbtbvtx5Nc4d6iFxX75zmgTGALxm3lBG+OSR+9nWMcypiPEFqSevnUg3O
- bnk=
-Message-ID: <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
-Date:   Mon, 18 Jul 2022 19:08:04 +0100
+        Mon, 18 Jul 2022 14:30:04 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CEC71EAF0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 11:30:03 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id g1so16481211edb.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 11:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cmv5hgCvNzLGGr3LktdlyBF/B6b4xDynWT6Leb6vwMU=;
+        b=KBwiHB+SXKRnkpvfkXzleS7byHrzZEABKfttt7pWmaEsExqk03fAWoqPR7nKPf3yLn
+         Fyy7ZwVpbxtKJXXXE5vUlGB1XmrO7dWEjESKiVizPyTEuMwzHXNx/5JkAO4H6cQPZBsZ
+         raIzGwzOE6ZLTmMNCIsGijKHIUXqYKCek8XUw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cmv5hgCvNzLGGr3LktdlyBF/B6b4xDynWT6Leb6vwMU=;
+        b=ohmL9vEzi/ghnFoQ9n9HRl4FBJAbElZ1SZVsHsQBDRPcGsuo++g0EzHdJK4SBAC/R6
+         Rs2MxEzugeqNQKeiyMWjn9FSQ47NLXaLZIHY1BUwws3i18Hxdm+yQaWV7GLVErsjtnU2
+         nSAz6zI8SUNIo6SqisPiYzRQNnW6/HhAOFizd8LepG1YohaZ1pb4Rko2jRLvT0vJJ7Gj
+         tOFrcKpY9BNmAca1ly7vKOwT4AYGaNcuTyC2wTT1Q5LSDN1g66n06nlOUPmAxa58KqXY
+         dxWfBXz8uvmqPr7dmXgtWU8U2ES2lKS0ch97A717Alf5tVZr7mqcomyayq6mi26x3731
+         Sndg==
+X-Gm-Message-State: AJIora8zmpSFygIKBE6AN/6DcvWcvvTG8ZkyIykuRug+1Ew0flDI8dR9
+        /sYLUE4d0ABG43QNeI3r5QArGb0keUQzoMIU
+X-Google-Smtp-Source: AGRyM1tVIheXKpkNOg9sVU2aHbDK2ZEBdDQL7QbbRuQ82k7xOHeJVhHigi63Cze6ydxWnhUtp7spmA==
+X-Received: by 2002:a05:6402:34ce:b0:43a:a4bb:27a6 with SMTP id w14-20020a05640234ce00b0043aa4bb27a6mr38479078edc.158.1658169001322;
+        Mon, 18 Jul 2022 11:30:01 -0700 (PDT)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
+        by smtp.gmail.com with ESMTPSA id d25-20020aa7c1d9000000b0043a75f62155sm9053355edp.86.2022.07.18.11.30.00
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Jul 2022 11:30:00 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id a5so18286757wrx.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 11:30:00 -0700 (PDT)
+X-Received: by 2002:a5d:69c2:0:b0:21d:807c:a892 with SMTP id
+ s2-20020a5d69c2000000b0021d807ca892mr23808743wrw.274.1658168999877; Mon, 18
+ Jul 2022 11:29:59 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-GB
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
- <20220609102627.GA3922@lxhi-065>
- <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
- <20220610153336.GA8881@lxhi-065>
- <4bc349a59e4042f7831b1190914851fe@huawei.com>
- <20220615092712.GA4068@lxhi-065>
- <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
- <f82d4961986547b28b6de066219ad08b@huawei.com>
-From:   Jim Baxter <jim_baxter@mentor.com>
-Organization: Siemens Digital Industries Software
-In-Reply-To: <f82d4961986547b28b6de066219ad08b@huawei.com>
+References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
+ <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+ <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com> <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
+ <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com> <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
+ <A31096BA-C128-4D0B-B27D-C34560844ED0@kohlschutter.com> <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
+In-Reply-To: <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 18 Jul 2022 11:29:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
+Message-ID: <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
+Subject: Re: [PATCH] [REGRESSION] ovl: Handle ENOSYS when fileattr support is
+ missing in lower/upper fs
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     =?UTF-8?Q?Christian_Kohlsch=C3=BCtter?= 
+        <christian@kohlschutter.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12) To
- svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Jul 18, 2022 at 6:13 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> Correct.  The question is whether any application would break in this
+> case.  I think not, but you are free to prove otherwise.
 
+Most often, an error is "just an error", and most applications usually
+won't care.
 
-Best regards,
+There are exceptions: some errors are very much "do something special"
+(eg EAGAIN or EINTR _are_ often separately tested for and often mean
+"just retry"). And permission error handling is often different from
+EINVAL etc.
 
-*Jim Baxter*
+And ENOSYS can easily be such an error - people probing whether they
+are running on a new kernel that supports a new system call or not.
 
-Siemens Digital Industries Software
-Automotive Business Unit
-DI SW STS ABU
-UK
-Tel.: +44 (161) 926-1656
-mailto:jim.baxter@siemens.com <mailto:jim.baxter@siemens.com>
-sw.siemens.com <https://sw.siemens.com/>
+And yeah, some of our ioctl's are odd, and we have a lot of drivers
+(and driver infrastructure) that basically does "this device does not
+support this ioctl, so return ENOSYS".
 
-On 18/07/2022 17:49, Roberto Sassu wrote:
->> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->> Sent: Monday, July 18, 2022 6:36 PM
->>
->>
->> Hello,
->>
->> I have been testing these patches and do not see the xattr information when
->> trying to retrieve it within the initramfs, do you have an example of how
->> you tested this originally?
-> 
-> Hi Jim, all
-> 
-> apologies, I didn't find yet the time to look at this.
+I don't think that's the right thing to do, but I think it's
+understandable. The traditional error for "this device does not
+support this ioctl" is ENOTTY, which sounds so crazy to non-tty people
+that I understand why people have used ENOSYS instead.
 
-Hello Roberto,
+It's sad that it's called "ENOTTY" and some (at least historical)
+strerror() implementations will indeed return "Not a tty". Never mind
+that modern ones will say "inappropriate ioctl for device" - even when
+the string has been updated, the error number isn't called
+EINAPPROPRAITEDEVICE.
 
-Thank you for your response, I can wait until you have looked at the patches,
-I asked the question to make sure it was not something wrong in my
-configuration.
+But it is what it is, and so I think ENOTTY is understandably not used
+in many situations just because it's such a senseless historical name.
 
-> 
-> Uhm, I guess this could be solved with:
-> 
-> https://github.com/openeuler-mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
-> 
-> and adding initramtmpfs to the kernel command line. You are
-> probably using ramfs, which does not have xattr support.
-> 
+And so if people don't use ENOSYS, they use EINVAL.
 
+I *suspect* no application cares: partly because ioctl error numbers
+are so random anyway, but also very much if this is a "without
+overlayfs it does X, with overlayfs it does Y".
 
-Thank you, I have tested that patch but the problem remained. Here is my
-command line, I wonder if there is something wrong.
+The sanest thing to do is likely to make ovl match what a non-ovl
+setup would do in the same situation (_either_ of the overlaid
+filesystems - there might be multiple cases).
 
-Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0 initrd=0x500000000 rootwait 
+But I'm missing the original report. It sounds like there was a
+regression and we already have a case of "changing the error number
+broke something". If so, that regression should be fixed.
 
+In general, I'm perfectly happy with people fixing error numbers and
+changing them.
 
-I also found that root is always mounted as rootfs in my initramfs system
-which I understood to be tmpfs, is that incorrect?
+The only thing I require is that if those cleanups and fixes are
+reported to break something, people quickly revert (and preferably add
+a big comment about "Use *this* error number, because while this
+*other* error number would make sense, application XyZ expects AbC"..)
 
-sh-3.2# mount
-none on / type rootfs (rw)
-
-
->> So far I have set the xattr in the rootfs before creating the cpio file like this:
->> $ setfattr -n user.comment -v "this is a comment" test.txt
->> If I access the data here it works:
->> $ getfattr test.txt
->> # file: test.txt
->> user.comment
->>
->>
->> Then I package it and try to verify it with this command:
->> $getfattr /test.txt
-> 
-> I assume you try to pack/unpack, right? If I remember correctly
-> I only implemented the pack part. Unpacking is done by the kernel
-> (but you are right, it should be done by user space too).
-> 
-
-
-I modified the file before packing. To pack I use the following commands:
-
-$ ./usr/gen_initramfs.sh -l initramfs.list -e xattr ../rootfs > initramfs.cpio
-$ gzip initramfs.cpio
-$ mkimage -A arm64 -O linux -T ramdisk -d initramfs.cpio.gz uRamdisk
-
-The kernel is loaded using:
-booti ${kernaddr} ${initramaddr} ${dtbaddr}
-
-
-
-
->> Which returns to the command line without the data.
->>
->>
->>
->> I believe the cpio is working because I see the file /METADATA\!\!\! in
->> the target root filesystem, which shows the following when viewed with cat -e:
->> 00000028^A^Auser.comment^@this is a comment
->>
->> This matches the data I fed in at the start, so I believe the data is being
->> transferred correctly but I am accessioning it with the wrong tools.
-> 
-> Yes, xattrs are marshalled in the METADATA!!! file, one per regular file
-> xattrs are applied to. Xattrs are applied to the previous regular file.
-> That file name was preferred to adding a suffix to the file, to avoid
-> reaching the filename size limit.
-> 
-> Roberto
-
-Best regards,
-Jim
+             Linus
