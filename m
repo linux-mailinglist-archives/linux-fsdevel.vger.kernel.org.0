@@ -2,117 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B922B577F1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 11:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B44577F5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 12:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234217AbiGRJ4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 05:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
+        id S233360AbiGRKKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 06:10:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233670AbiGRJ4b (ORCPT
+        with ESMTP id S229783AbiGRKKO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 05:56:31 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06A31A05E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 02:56:29 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id m13so4342392edc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 02:56:29 -0700 (PDT)
+        Mon, 18 Jul 2022 06:10:14 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715F5EE15
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 03:10:12 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id r2so15280435wrs.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 03:10:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EUG2Bl6auG4euKWbKCVfTQIsL72qesYuYx+oA0TLXYA=;
-        b=cg5+u12elLlpSxw3zBnGpBIdLV4ULJ+lK4j7a2Vev65lyzIlATOSd8n5BjaNPJVE+Z
-         Ro3kg6lD3KBtLbjuyrfp3MwPHJ6Nf2i2nIZ1XYoVYC8qgHVN7KCKPRYjaIRiWVcpiS/L
-         1ZAbIDtBWP5aW9TvBDocEY2oz9hrdSOxVrrIE=
+        d=kohlschutter-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=V0Up84QcSxidoOLER6+f0HHJOz7kslEDF3Bka2NBftY=;
+        b=jVZ2q33IUhoiETY5C+ok3PsFxD0p9m2B2Vqf9Aq2bfjwzWYavSG5cuKIg1JtmVp09v
+         pI0Z9plKrR7g9Oif1bNCSWqSWAc+dFncmx3HOCNUqi99Kd2iWYStCc/oyPH6Chr2IlYQ
+         aOS7DToaDQ7PYERWfso2iuwqKSw9T854up6zJwxAQwPIGn2gurijbR+TqMMZmkz4u2oB
+         6WIUIf9AU59MhuQkGtjcKzjZHBIkMvc5o+7bo1qIXM1SwlJPBjgBe5fINl6mvHqi0jGh
+         Y2ARezUdE6uCVEGHQi/x0d5M91F98AdyHR47QjwzEnv2wm0wyAWKv5ayhT8+xoMl1i41
+         Yb4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EUG2Bl6auG4euKWbKCVfTQIsL72qesYuYx+oA0TLXYA=;
-        b=qDOqNl4I2Pd7aa766FbSuYuRzFUt5eSuRytXG7BChIZNQGwgSlzFDK/0i+VAsjbMrz
-         Mxo8ZlwzAqLKjBCOxBdawd56YyeqD1yhHbkNvKZAJsR5iCoVgggoOH/6Dn/04f0Ndn9s
-         pbrZOgCi7dvuaFmwu2xX0hqTAE6v3sMOA+c2lipsvTOwBjFb4kDavrAugw9M5caJ/N3n
-         RojYLtvWwCT3lSyLmlrVKn9U3PbE+qgvW86eaH5dPMxC3wUEJjQq6TR6XB6/p+vkm0Uf
-         ljqQCcJSMqO2jiohBXIZvea5d3eswWrAH7bXFPATKXj7XSZtTOACYVyquk3bdoEHBvbv
-         +wig==
-X-Gm-Message-State: AJIora8Jg+nIc2FyKyBXveiWl4EwL42yVMxYpFj1hS792PeFR4XM3lo1
-        EdBvG93uXeQPD0XUZGooqEPnjiHJCLIVKY7kI+ZVzw==
-X-Google-Smtp-Source: AGRyM1siVaVBPENz8Hu3bRiVVYnwdDIPhJO1Dl29/Uf8jdEBsgt3QTxxZTllwS0pUhnOqW9n8zkC3tCxOzTTfQgM/O8=
-X-Received: by 2002:a05:6402:e96:b0:43a:f21f:42a0 with SMTP id
- h22-20020a0564020e9600b0043af21f42a0mr36554601eda.382.1658138188528; Mon, 18
- Jul 2022 02:56:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220601011103.12681-1-dlunev@google.com> <20220601111059.v4.2.I692165059274c30b59bed56940b54a573ccb46e4@changeid>
-In-Reply-To: <20220601111059.v4.2.I692165059274c30b59bed56940b54a573ccb46e4@changeid>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 18 Jul 2022 11:56:17 +0200
-Message-ID: <CAJfpegsitwAnrU3H3ig3a7AWKknTZNo0cFc5kPm09KzZGgO-bQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] FUSE: Retire superblock on force unmount
-To:     Daniil Lunev <dlunev@chromium.org>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Daniil Lunev <dlunev@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=V0Up84QcSxidoOLER6+f0HHJOz7kslEDF3Bka2NBftY=;
+        b=mEgrqgJmOGB0gonlIPYWTu6edlsl9xZN+zuZMd/kyhNtRcqb1ipJyosWbY8h96ZalC
+         MIdbTNt5BPOE+B+ucRMP1Uu3ZDbIE9lc8dnmGJ91KaJfCXOVewIO03vg9gjligancQl+
+         7naVUWlFRQuLPOueJUAE2n+6oKSQS3PfFX4IzHPo1EiDj68Qwbjzpx56pfAeXfg1mJ8f
+         U/iWORroXWfOIir0L54VLjILm/QSnP3nc4AeszjgztVqmvdOu9PYfD4kDDymBSu/Mu8G
+         2u+zs4Ep6MJZ7aLCLsm+ANZwfD/UV3wvBDv7N/ZZIRvcnJrcf7Iv8scU07c1W5sk9yzS
+         apdQ==
+X-Gm-Message-State: AJIora/I/OAacr5APoSnIipTvb8IVXrm5ViOK2TUVhBr9VFn9uFq73Om
+        tK6+e4runnH4zS7hpIcM2wyzgA==
+X-Google-Smtp-Source: AGRyM1vye9FdKpzNyDN73lxjv/5FP4i0RATVh5IDQLmILpyIEgvMXve2IqwEKG56GPBT8x7ENSPZZg==
+X-Received: by 2002:a5d:6d0e:0:b0:21d:6d4c:e0e4 with SMTP id e14-20020a5d6d0e000000b0021d6d4ce0e4mr23052805wrq.355.1658139010992;
+        Mon, 18 Jul 2022 03:10:10 -0700 (PDT)
+Received: from smtpclient.apple (ip5b434222.dynamic.kabel-deutschland.de. [91.67.66.34])
+        by smtp.gmail.com with ESMTPSA id k15-20020a7bc30f000000b0039c54bb28f2sm14489511wmj.36.2022.07.18.03.10.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jul 2022 03:10:10 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
+Subject: Re: [PATCH] ovl: Handle ENOSYS when fileattr support is missing in
+ lower/upper fs
+From:   =?utf-8?Q?Christian_Kohlsch=C3=BCtter?= 
+        <christian@kohlschutter.com>
+In-Reply-To: <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+Date:   Mon, 18 Jul 2022 12:10:09 +0200
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com>
+References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
+ <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+X-Mailer: Apple Mail (2.3696.100.31)
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 1 Jun 2022 at 03:11, Daniil Lunev <dlunev@chromium.org> wrote:
->
-> From: Daniil Lunev <dlunev@chromium.org>
->
-> Force unmount of FUSE severes the connection with the user space, even
-> if there are still open files. Subsequent remount tries to re-use the
-> superblock held by the open files, which is meaningless in the FUSE case
-> after disconnect - reused super block doesn't have userspace counterpart
-> attached to it and is incapable of doing any IO.
->
-> Signed-off-by: Daniil Lunev <dlunev@chromium.org>
->
-> Signed-off-by: Daniil Lunev <dlunev@google.com>
+> Am 18.07.2022 um 11:14 schrieb Miklos Szeredi <miklos@szeredi.hu>:
+>=20
+> On Mon, 4 Jul 2022 at 20:36, Christian Kohlsch=C3=BCtter
+> <christian@kohlschutter.com> wrote:
+>>=20
+>> overlayfs may fail to complete updates when a filesystem lacks
+>> fileattr/xattr syscall support and responds with an ENOSYS error =
+code,
+>> resulting in an unexpected "Function not implemented" error.
+>=20
+> Issue seems to be with fuse: nothing should be returning ENOSYS to
+> userspace except the syscall lookup code itself.  ENOSYS means that
+> the syscall does not exist.
+>=20
+> Fuse uses ENOSYS in the protocol to indicate that the filesystem does
+> not support that operation, but that's not the value that the
+> filesystem should be returning to userspace.
+>=20
+> The getxattr/setxattr implementations already translate ENOSYS to
+> EOPNOTSUPP, but ioctl doesn't.
+>=20
+> The attached patch (untested) should do this.   Can you please give it =
+a try?
+>=20
+> Thanks,
+> Miklos
+> <fuse-ioctl-translate-enosys.patch>
 
-Why the double sign-off?
+Yes, that change basically has the same effect for the demo use case,.
 
-> ---
->
-> (no changes since v3)
->
-> Changes in v3:
-> - No changes
->
-> Changes in v2:
-> - Use an exported function instead of directly modifying superblock
->
->  fs/fuse/inode.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 8c0665c5dff88..8875361544b2a 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -476,8 +476,11 @@ static void fuse_umount_begin(struct super_block *sb)
->  {
->         struct fuse_conn *fc = get_fuse_conn_super(sb);
->
-> -       if (!fc->no_force_umount)
-> -               fuse_abort_conn(fc);
-> +       if (fc->no_force_umount)
-> +               return;
-> +
-> +       fuse_abort_conn(fc);
-> +       retire_super(sb);
+However: it will change (and potentially) break assumptions in user =
+space. We should never break user space.
 
-And this is called for both block and non-block supers.  Which means
-that the bdi will be unregistered, yet the sb could still be reused
-(see fuse_test_super()).
+Example: lsattr /test/lower
+Currently, fuse returns ENOSYS, e.g.
+> lsattr: reading ./lost+found: Function not implemented
+With your change, it would return ENOTTY
+> lsattr: reading ./lost+found: Not a tty
 
-Thanks,
-Miklos
+
+I also tried the setup (without patches) on a very old 4.4.176 system, =
+and everything works fine. ovl introduced the regression, so it should =
+also be fixed there.
+It may affect other filing systems as well (I see some other fs also =
+return ENOSYS on occasion).
+
+It's safe to say that adding the ENOSYS to the ovl code is probably the =
+best move. Besides, you already have a workaround for ntfs-3g there as =
+well.
+
+Best,
+Christian
+
