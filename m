@@ -2,139 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CC25781C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 14:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5DF57821C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 14:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234809AbiGRMLy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 08:11:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59420 "EHLO
+        id S235041AbiGRMVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 08:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234801AbiGRMLx (ORCPT
+        with ESMTP id S235025AbiGRMVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 08:11:53 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15AABF6F;
-        Mon, 18 Jul 2022 05:11:52 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id D8AC71FB7D;
-        Mon, 18 Jul 2022 12:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1658146310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=V6D6pW7KOU2kPWCiZd07qffFGU6SpyCb2tbQHBnWrPk=;
-        b=EXPnzUbilMMA5F7I79PNHtjTgfbMNI9Re7xNL324QWOc5NRzwccoapCXDua4tdUktLRmBD
-        bqJJ6Pj+LoonmpjEJP9fMbxhYEWaV4vgH0QQoo2JU/UFNvQwduA0OeLIzlzuT7gU37fUAA
-        HHZbVqI9QkVqm/m53IDyVIhn0W+WGW0=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E612B2C141;
-        Mon, 18 Jul 2022 12:11:45 +0000 (UTC)
-Date:   Mon, 18 Jul 2022 14:11:44 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Abel Wu <wuyun.abel@bytedance.com>
-Cc:     Gang Li <ligang.bdlg@bytedance.com>, akpm@linux-foundation.org,
-        surenb@google.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, viro@zeniv.linux.org.uk,
-        ebiederm@xmission.com, keescook@chromium.org, rostedt@goodmis.org,
-        mingo@redhat.com, peterz@infradead.org, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, david@redhat.com,
-        imbrenda@linux.ibm.com, adobriyan@gmail.com,
-        yang.yang29@zte.com.cn, brauner@kernel.org,
-        stephen.s.brennan@oracle.com, zhengqi.arch@bytedance.com,
-        haolee.swjtu@gmail.com, xu.xin16@zte.com.cn,
-        Liam.Howlett@oracle.com, ohoono.kwon@samsung.com,
-        peterx@redhat.com, arnd@arndb.de, shy828301@gmail.com,
-        alex.sierra@amd.com, xianting.tian@linux.alibaba.com,
-        willy@infradead.org, ccross@google.com, vbabka@suse.cz,
-        sujiaxun@uniontech.com, sfr@canb.auug.org.au,
-        vasily.averin@linux.dev, mgorman@suse.de, vvghjk1234@gmail.com,
-        tglx@linutronix.de, luto@kernel.org, bigeasy@linutronix.de,
-        fenghua.yu@intel.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        hezhongkun.hzk@bytedance.com
-Subject: Re: [PATCH v2 0/5] mm, oom: Introduce per numa node oom for
- CONSTRAINT_{MEMORY_POLICY,CPUSET}
-Message-ID: <YtVOAGga+B3CmFKC@dhcp22.suse.cz>
-References: <20220708082129.80115-1-ligang.bdlg@bytedance.com>
- <YsfwyTHE/5py1kHC@dhcp22.suse.cz>
- <41ae31a7-6998-be88-858c-744e31a76b2a@bytedance.com>
- <Ys14oIHL85d/T7s+@dhcp22.suse.cz>
- <6f6a2257-3b60-e312-3ee3-fb08b972dbf2@bytedance.com>
+        Mon, 18 Jul 2022 08:21:31 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1F224F3F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 05:21:29 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id bp15so20882530ejb.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 05:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ie8y8xom7gdgORK3/wgC6v2nBY/N6LA9J5NWgTDl2HM=;
+        b=dZ9jScMt4MO13dtuzooZqTSxO2bjJkLycwSI6B0TBmg9pnUReCQ76CmaV4WQ6A5J1F
+         BXd0HR3D0YzUSUo21ICIN4NsTAl3SmzYXTrgawKRuq35PsRaR1GgaemH76YDIv0NQeDv
+         D1EK/PliBPHo5GdlCRd296v+4mVWyx5UzS/OI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ie8y8xom7gdgORK3/wgC6v2nBY/N6LA9J5NWgTDl2HM=;
+        b=GOfjD1abANEtFAr/SUikcbnJNWROKgUoIFl2d6DksgZUo4O5esZg14Ph/uwK07iTwo
+         SmjX0LfQxvCAjvC5zRi7+cW3K7dGTqpFzBik3WXGd+yeA+7KBY0P4erjFgqdnVJV5v7p
+         kiStaRkVbc4MfP1THI9VAFlUtQ/Qk3HxtZ2CPn2jLtG6d1JoUXTTlaUQkKFkTLN0C+vv
+         h1gE5ry3XjEg4uNHZus/oEaZc21vrcQpdnJ3J4PjBGCg8dxMqCjnqddyt4l33iTmzJp4
+         dhfhOiiPsWYdp5kdoYl/VWtXlzrPRdfszcoDdYFBABdVzVsKpSSg1IeivYW03lWvC+98
+         7j6g==
+X-Gm-Message-State: AJIora+H54pqQkdPhM7D3Nwk7BNY/wUVkssHNL45tawm7Up+uskcvxLJ
+        KA9dqq5aFw6V3pVAIlcmrFc6OMi/p/hKcL9/42QsHg==
+X-Google-Smtp-Source: AGRyM1vI/im93ImHCgZ05iECidEYFcWtEzzcaF2dJOWQB1/Yq5IMa3L6gYgLFbipMZiZCi+5b2lvg6oArb2FqBJ9MTI=
+X-Received: by 2002:a17:906:93ef:b0:72b:44e2:bdd8 with SMTP id
+ yl15-20020a17090693ef00b0072b44e2bdd8mr25545654ejb.192.1658146887863; Mon, 18
+ Jul 2022 05:21:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f6a2257-3b60-e312-3ee3-fb08b972dbf2@bytedance.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
+ <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+ <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com> <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
+ <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com>
+In-Reply-To: <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 18 Jul 2022 14:21:16 +0200
+Message-ID: <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: Handle ENOSYS when fileattr support is missing in
+ lower/upper fs
+To:     =?UTF-8?Q?Christian_Kohlsch=C3=BCtter?= 
+        <christian@kohlschutter.com>
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 12-07-22 23:00:55, Abel Wu wrote:
-> 
-> On 7/12/22 9:35 PM, Michal Hocko Wrote:
-> > On Tue 12-07-22 19:12:18, Abel Wu wrote:
-> > [...]
-> > > I was just going through the mail list and happen to see this. There
-> > > is another usecase for us about per-numa memory usage.
-> > > 
-> > > Say we have several important latency-critical services sitting inside
-> > > different NUMA nodes without intersection. The need for memory of these
-> > > LC services varies, so the free memory of each node is also different.
-> > > Then we launch several background containers without cpuset constrains
-> > > to eat the left resources. Now the problem is that there doesn't seem
-> > > like a proper memory policy available to balance the usage between the
-> > > nodes, which could lead to memory-heavy LC services suffer from high
-> > > memory pressure and fails to meet the SLOs.
-> > 
-> > I do agree that cpusets would be rather clumsy if usable at all in a
-> > scenario when you are trying to mix NUMA bound workloads with those
-> > that do not have any NUMA proferences. Could you be more specific about
-> > requirements here though?
-> 
-> Yes, these LC services are highly sensitive to memory access latency
-> and bandwidth, so they are provisioned by NUMA node granule to meet
-> their performance requirements. While on the other hand, they usually
-> do not make full use of cpu/mem resources which increases the TCO of
-> our IDCs, so we have to co-locate them with background tasks.
-> 
-> Some of these LC services are memory-bound but leave much of cpu's
-> capacity unused. In this case we hope the co-located background tasks
-> to consume some leftover without introducing obvious mm overhead to
-> the LC services.
+On Mon, 18 Jul 2022 at 12:56, Christian Kohlsch=C3=BCtter
+<christian@kohlschutter.com> wrote:
 
-This are some tough requirements and I am afraid far from any typical
-usage. So I believe that you need a careful tunning much more than a
-policy which I really have hard time to imagine wrt semantic TBH.
- 
-> > Let's say you run those latency critical services with "simple" memory
-> > policies and mix them with the other workload without any policies in
-> > place so they compete over memory. It is not really clear to me how can
-> > you achieve any reasonable QoS in such an environment. Your latency
-> > critical servises will be more constrained than the non-critical ones
-> > yet they are more demanding AFAIU.
-> 
-> Yes, the QoS over memory is the biggest block in the way (the other
-> resources are relatively easier). For now, we hacked a new mpol to
-> achieve weighted-interleave behavior to balance the memory usage across
-> NUMA nodes, and only set memcg protections to the LC services. If the
-> memory pressure is still high, the background tasks will be killed.
-> Ideas? Thanks!
+> However, users of fuse that have no business with overlayfs suddenly see =
+their ioctl return ENOTTY instead of ENOSYS.
 
-It is not really clear what the new memory policy does and what is the
-semantic of it from your description. Memory protection (via memcg) of
-your sensitive workload makes sense but it would require proper setting
-of background jobs as well. As soon as you hit the global direct reclaim
-then the memory protection won't safe your sensitve workload.
+And returning ENOTTY is the correct behavior.  See this comment in
+<asm-generic/errrno.h>:
 
--- 
-Michal Hocko
-SUSE Labs
+/*
+ * This error code is special: arch syscall entry code will return
+ * -ENOSYS if users try to call a syscall that doesn't exist.  To keep
+ * failures of syscalls that really do exist distinguishable from
+ * failures due to attempts to use a nonexistent syscall, syscall
+ * implementations should refrain from returning -ENOSYS.
+ */
+#define ENOSYS 38 /* Invalid system call number */
+
+Thanks,
+Miklos
