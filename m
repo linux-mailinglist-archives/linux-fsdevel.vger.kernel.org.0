@@ -2,101 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E7057864B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 17:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90CC15787AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 18:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235395AbiGRP0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 11:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40504 "EHLO
+        id S235820AbiGRQnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 12:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235389AbiGRP0m (ORCPT
+        with ESMTP id S235791AbiGRQnc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 11:26:42 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F79E286FF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 08:26:39 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id l12so9329145plk.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 08:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Yt9oE0kz3TmH5FGxe6pEDCKgvRvBbOAA/ay7EMCbyEc=;
-        b=Uff3ivfihawnDb3MVf5QlQ2jPMMai38C6bP4DepEErQNRp/Kc0gYVje6cUTN3mqgBa
-         8e/i6cCNzLQRIo6XA6wMXV8Z208mTTLPAFevNS72jjatByWcRHbhRuXNC/PzoiNVlj0A
-         G9sTexZ1nkBq8bHjUgqFI7BC1X8Fl1pf5ZeLZgS5QdWIqKzWIGGLSvIy/UwP2bykPTMR
-         S0KDUdaMZvJIWXXz6SkPgu1okTxSS3xRe0n7hIARn0g4omp+/4Oqj1iwRKhLmSvwxOC1
-         gHiiZYsDVdI0DS6/yoOU3d2IjW3kS0u9umKDtPmgnjR6gLoFlRAZm1r5c55NFjc5PcWF
-         DbCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Yt9oE0kz3TmH5FGxe6pEDCKgvRvBbOAA/ay7EMCbyEc=;
-        b=BKPBQuqZw+0PaSR85ksXji7FHbWHKNG4aBlgo2kHiW4DPWSPdvDr4dok99C0mfvKP9
-         LHSfeMdHCaKp4/czneYxUKF4T7GrBhlWcFsu1hXncqnkAZ8BZ4ozG5J+JHvy/K45g+Sp
-         7XyXhbJIYcPJIGJR1dDoMhvNZr7EKMoQFRRHo2ynnqgM0dtIoqScPx+fsZoPyFkQ3gT8
-         sX2CB8n3cWilHeNX5y1QWjt2DF7eTrc6+GWmWQTT2Qz0ZD6FZn7VeRluVSvTxgN2hzDq
-         8IVXKJeTupTfzgBDrOy2u1EJvgtiHslt0OofrMyFFsNzwKHUufwpYQNaFnA1eOXMOGyg
-         n4eg==
-X-Gm-Message-State: AJIora/4MJjPZRPOe1YxUXDfu+8qsU/V7Zz6DJN4DGWmOt+3umShxsz8
-        4aj7lymNdRzm4jBizOpMYiJE1g==
-X-Google-Smtp-Source: AGRyM1vgtGvBYkyh0ni5e/mqVLrnNK1+XKLqZyiT0UcMq2k28Wiwo9nZP6ot9un6Y/cxDUraL3c4cg==
-X-Received: by 2002:a17:903:1208:b0:16b:81f6:e992 with SMTP id l8-20020a170903120800b0016b81f6e992mr29233754plh.55.1658157998529;
-        Mon, 18 Jul 2022 08:26:38 -0700 (PDT)
-Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id h14-20020a63e14e000000b004161b3c3388sm8342392pgk.26.2022.07.18.08.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 08:26:38 -0700 (PDT)
-Date:   Mon, 18 Jul 2022 15:26:34 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     "Gupta, Pankaj" <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 07/14] KVM: Use gfn instead of hva for
- mmu_notifier_retry
-Message-ID: <YtV7qpYZoT6jIKHQ@google.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-8-chao.p.peng@linux.intel.com>
- <d480a850-601b-cda2-b671-04d839c98429@amd.com>
- <20220718132950.GA38104@chaop.bj.intel.com>
+        Mon, 18 Jul 2022 12:43:32 -0400
+X-Greylist: delayed 243 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 18 Jul 2022 09:43:29 PDT
+Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285802B1A4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 09:43:29 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.92,281,1650960000"; 
+   d="scan'208";a="79810792"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa3.mentor.iphmx.com with ESMTP; 18 Jul 2022 08:36:16 -0800
+IronPort-SDR: RTjfIgzc+dEN6kC/wiahZ34aDq4N/lz4wt2gOaf3gyvKgbBgy7GQpdrAGz0TSAiEUWi+ya5Unr
+ gmkYsvQK+ohtMCEWFgUOpyY66f9X39W1vVK02qBI1H5onSYK75Pc/1vMoVCUJxGv33IMPq9bQ2
+ oVXSpXODQ6Og1foDv+s8GFj50phjddzVPBJt2HR23rxJmXRZiaFdLlzC1jNdr2lwwmR5DNHLGX
+ AK5/7yyQ++vhwU/PHSyXdo4u6nIwJuPb8F93oY3w+emM9L4h04z8oSkrSns1WQE8vNYUpZYkVK
+ UJM=
+Message-ID: <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+Date:   Mon, 18 Jul 2022 17:36:06 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220718132950.GA38104@chaop.bj.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Content-Language: en-GB
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+ <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+ <20220610153336.GA8881@lxhi-065>
+ <4bc349a59e4042f7831b1190914851fe@huawei.com>
+ <20220615092712.GA4068@lxhi-065>
+From:   Jim Baxter <jim_baxter@mentor.com>
+Organization: Siemens Digital Industries Software
+In-Reply-To: <20220615092712.GA4068@lxhi-065>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-13.mgc.mentorg.com (139.181.222.13) To
+ svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -104,36 +86,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 18, 2022, Chao Peng wrote:
-> On Fri, Jul 15, 2022 at 01:36:15PM +0200, Gupta, Pankaj wrote:
-> > > Currently in mmu_notifier validate path, hva range is recorded and then
-> > > checked in the mmu_notifier_retry_hva() from page fault path. However
-> > > for the to be introduced private memory, a page fault may not have a hva
-> > 
-> > As this patch appeared in v7, just wondering did you see an actual bug
-> > because of it? And not having corresponding 'hva' occurs only with private
-> > memory because its not mapped to host userspace?
+On 15/06/2022 10:27, Eugeniu Rosca wrote:
+> Hello Roberto,
 > 
-> The addressed problem is not new in this version, previous versions I
-> also had code to handle it (just in different way). But the problem is:
-> mmu_notifier/memfile_notifier may be in the progress of invalidating a
-> pfn that obtained earlier in the page fault handler, when happens, we
-> should retry the fault. In v6 I used global mmu_notifier_retry() for
-> memfile_notifier but that can block unrelated mmu_notifer invalidation
-> which has hva range specified.
+> On Fr, Jun 10, 2022 at 03:38:24 +0000, Roberto Sassu wrote:
+>> I would be happy to address the remaining concerns, or take more
+>> suggestions, and then develop a new version of the patch set.
+> I face a number of conflicts when I try to rebase the latest openEuler
+> commits against vanilla master (v5.19-rc2). Do you think it is possible
+> to submit the rebased version to ML?
 > 
-> Sean gave a comment at https://lkml.org/lkml/2022/6/17/1001 to separate
-> memfile_notifier from mmu_notifier but during the implementation I
-> realized we actually can reuse the same code for shared and private
-> memory if both using gpa range and that can simplify the code handling
-> in kvm_zap_gfn_range and some other code (e.g. we don't need two
-> versions for memfile_notifier/mmu_notifier).
+> In addition, I can also see some open/unresolved points from Mimi [*].
+> Did you by chance find some mutual agreement offline or do you think
+> they would still potentially need some attention?
+> 
+> Maybe we can resume the discussion once you submit the rebased series?
+> 
+> Many thanks and looking forward to it.
+> 
+> [*] Potentially comments which deserve a reply/clarification/resolution
+> 
+> https://lore.kernel.org/lkml/1561985652.4049.24.camel@linux.ibm.com/#t
+> https://lore.kernel.org/lkml/1561908456.3985.23.camel@linux.ibm.com/
+> 
+> BR, Eugeniu.
+> 
 
-This should work, though I'm undecided as to whether or not it's a good idea.  KVM
-allows aliasing multiple gfns to a single hva, and so using the gfn could result
-in a much larger range being rejected given the simplistic algorithm for handling
-multiple ranges in kvm_inc_notifier_count().  But I assume such aliasing is uncommon,
-so I'm not sure it's worth optimizing for.
 
-> Adding gpa range for private memory invalidation also relieves the
-> above blocking issue between private memory page fault and mmu_notifier.
+Hello,
+
+I have been testing these patches and do not see the xattr information when
+trying to retrieve it within the initramfs, do you have an example of how
+you tested this originally?
+
+
+So far I have set the xattr in the rootfs before creating the cpio file like this:
+$ setfattr -n user.comment -v "this is a comment" test.txt
+If I access the data here it works:
+$ getfattr test.txt 
+# file: test.txt
+user.comment
+
+
+Then I package it and try to verify it with this command:
+$getfattr /test.txt
+
+Which returns to the command line without the data.
+
+
+
+I believe the cpio is working because I see the file /METADATA\!\!\! in
+the target root filesystem, which shows the following when viewed with cat -e:
+00000028^A^Auser.comment^@this is a comment
+
+This matches the data I fed in at the start, so I believe the data is being
+transferred correctly but I am accessioning it with the wrong tools.
+
+Thank you for any help.
+
+Best regards,
+Jim
