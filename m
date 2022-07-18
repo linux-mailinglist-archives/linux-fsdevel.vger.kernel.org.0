@@ -2,111 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2975783B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 15:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04965783C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 15:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234121AbiGRNac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 09:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54174 "EHLO
+        id S233933AbiGRNex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 09:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233852AbiGRNaQ (ORCPT
+        with ESMTP id S233900AbiGRNew (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 09:30:16 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EC41A388;
-        Mon, 18 Jul 2022 06:29:59 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.155]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MtO06-1nOMvi0yvG-00usz7; Mon, 18 Jul 2022 15:29:48 +0200
-Message-ID: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
-Date:   Mon, 18 Jul 2022 15:29:47 +0200
+        Mon, 18 Jul 2022 09:34:52 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE5C19C3E;
+        Mon, 18 Jul 2022 06:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658151291; x=1689687291;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=rHFYZeCUhUEMCyj5v9zq3o/zGTENSXf+B8mm6YmDQ6A=;
+  b=YA9EYCDeqWGfW1UPeaGqPCbNH1VGlfaFYurfw47BjMg/51HVhjZlBkqo
+   3KV7aJ374rocye5HlIm/HEMAaWTi4RSnKoCS2lw1WTMO3EftDEOEUrbTN
+   6jFi3ynXfjcAgvWuWkL1Xq4jsEYK9jjoozTzS4s1ShaseQ3TXehLL3HHV
+   vrEGzA1cQNCj4O36qc0086cNkoXxr4FTbWq/pj9Qv2nK3/outpdbIYPva
+   15l11Eb04u+pZU8eRLlagutnTcKUhN1Ok77sYT2J0nsqM3vhX/5X/5ZU0
+   NMXQjobZssAEmP6p/cnJXNdqprL1e40dS7OMFzxojnVT2s3Tb0kBJ6yWL
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10411"; a="347907674"
+X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
+   d="scan'208";a="347907674"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 06:34:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
+   d="scan'208";a="624730241"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga008.jf.intel.com with ESMTP; 18 Jul 2022 06:34:40 -0700
+Date:   Mon, 18 Jul 2022 21:29:50 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 07/14] KVM: Use gfn instead of hva for
+ mmu_notifier_retry
+Message-ID: <20220718132950.GA38104@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-8-chao.p.peng@linux.intel.com>
+ <d480a850-601b-cda2-b671-04d839c98429@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Content-Language: en-US
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-To:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:9fY30Z9jd9z0wsQphdvwiUzBCnLULQyuNQ0uIByAwsbooQNcfqb
- nKlAGwHxs0c5ASlv6XRDoLl+hDi/3Gp9Sb9X9yAOgc5WfuqRQZiF9sp1OA8kutUAGtP8oC/
- ox0cnH2YpmLwrfrAG+h0eSWfP8aKbduEAmEL14GxyPgWFrONRY7Ea3Djvp83TUerI0XyUre
- irkvwxm217+MRIau00B9Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CwKwexPPutM=:ml7nh5Q5lT5cE3anMzqwB+
- 5MbPejskWOkTI6L2y9E9elOAAbC48I2y5a4O4G7pTvByLSQRwBCVgTFzVUs3I0FzdFmG40r+u
- LNbaE9BVmWGq/B3s1HX2gF5BBvHuFryJQ8H3jAJmUItanRoeOCx4ODcpPknR2/6o28vWDNOUJ
- QEf/eCz5j9a6PqUU7FSjmyL8s8KSmEN3noMneD7dcvpCnm7OUIDtfZSnf7qPfR3av6AOO0rPE
- wYDoTDaUNtCTyiUbp66641aS7UP8HPq3uczjYA4w6gwGgLnusabxwOXgSLLRnhOjJ7vs47zr5
- e2iDP+9U92CguJsrZ0QAn+ZnuYHkT0I4ENOvE+UU+foMU/l8OJZuHzO5+h640qL4NcSn1RMSQ
- DpfS1aaMJKg2lM6xmR9rix5HVq6mUsIgu4EwKs+CLlC5L5IURWzLkU5gg3eI80sdeF+biFAK9
- XlNNTKA0eaQRn1WXQgCQ/l8z2VRsfPqBh8RW4ZAu6gfOkH9QJemAUMGb20ERhWFBON7qojMFc
- MhoPZsg7JskUI9AI3TGuyf2AGOVWywRmG7KyxJgY3byduJnuTT6ysUNKtIvHt2XyUdvoK0Bnq
- 396QDB1pqWAM5X4X047fKbjJoruAMD+H2z90+/uBffSTKK7EBNvrcE9KrzDVBrmvRx6ExSwmB
- J2yUTOcsH9iQ/+rQJD5dLSLq4U4BtAkaA8Ku2p/0SWF6EVbNBGGTtwgwjIHUdGeiUbCtT4QbD
- wyoB7gAnkur27LuTAON7kru1z9sVJK68MkkQRAdRvARclqmavoUX3kEjSR0=
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,HEXHASH_WORD,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d480a850-601b-cda2-b671-04d839c98429@amd.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, Jul 15, 2022 at 01:36:15PM +0200, Gupta, Pankaj wrote:
+> > Currently in mmu_notifier validate path, hva range is recorded and then
+> > checked in the mmu_notifier_retry_hva() from page fault path. However
+> > for the to be introduced private memory, a page fault may not have a hva
+> 
+> As this patch appeared in v7, just wondering did you see an actual bug
+> because of it? And not having corresponding 'hva' occurs only with private
+> memory because its not mapped to host userspace?
 
-i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm 
-unable to run "rpi-update" without massive performance regression on my 
-Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 
-this tool successfully downloads the latest firmware (> 100 MB) on my 
-development micro SD card (Kingston 16 GB Industrial) with a ext4 
-filesystem within ~ 1 min. The same scenario on Linux 5.18 shows the 
-following symptoms:
+The addressed problem is not new in this version, previous versions I
+also had code to handle it (just in different way). But the problem is:
+mmu_notifier/memfile_notifier may be in the progress of invalidating a
+pfn that obtained earlier in the page fault handler, when happens, we
+should retry the fault. In v6 I used global mmu_notifier_retry() for
+memfile_notifier but that can block unrelated mmu_notifer invalidation
+which has hva range specified.
 
-- download takes endlessly much time and leads to an abort by userspace 
-in most cases because of the poor performance
-- massive system load during download even after download has been 
-aborted (heartbeat LED goes wild)
-- whole system becomes nearly unresponsive
-- system load goes back to normal after > 10 min
-- dmesg doesn't show anything suspicious
+Sean gave a comment at https://lkml.org/lkml/2022/6/17/1001 to separate
+memfile_notifier from mmu_notifier but during the implementation I
+realized we actually can reuse the same code for shared and private
+memory if both using gpa range and that can simplify the code handling
+in kvm_zap_gfn_range and some other code (e.g. we don't need two
+versions for memfile_notifier/mmu_notifier).
 
-I was able to bisect this issue:
+Adding gpa range for private memory invalidation also relieves the
+above blocking issue between private memory page fault and mmu_notifier.
 
-ff042f4a9b050895a42cae893cc01fa2ca81b95c good
-4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
-25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
-b4bc93bd76d4da32600795cd323c971f00a2e788 bad
-3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
-b080cee72ef355669cbc52ff55dc513d37433600 good
-ad9c6ee642a61adae93dfa35582b5af16dc5173a good
-9b03992f0c88baef524842e411fbdc147780dd5d bad
-aab4ed5816acc0af8cce2680880419cd64982b1d good
-14705fda8f6273501930dfe1d679ad4bec209f52 good
-5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
-8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
-077d0c2c78df6f7260cdd015a991327efa44d8ad bad
-cc5095747edfb054ca2068d01af20be3fcc3634f good
-27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
-
-commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
-Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Date:   Tue Mar 8 15:22:01 2022 +0530
-
-ext4: make mb_optimize_scan performance mount option work with extents
-
-If i revert this commit with Linux 5.19-rc6 the performance regression 
-disappears.
-
-Please ask if you need more information.
-
-Regards
-
+Chao
+> 
+> Thanks,
+> Pankaj
+> 
+> > associated, checking gfn(gpa) makes more sense. For existing non private
+> > memory case, gfn is expected to continue to work.
+> > 
+> > The patch also fixes a potential bug in kvm_zap_gfn_range() which has
+> > already been using gfn when calling kvm_inc/dec_notifier_count() in
+> > current code.
+> > 
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >   arch/x86/kvm/mmu/mmu.c   |  2 +-
+> >   include/linux/kvm_host.h | 18 ++++++++----------
+> >   virt/kvm/kvm_main.c      |  6 +++---
+> >   3 files changed, 12 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index f7fa4c31b7c5..0d882fad4bc1 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -4182,7 +4182,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
+> >   		return true;
+> >   	return fault->slot &&
+> > -	       mmu_notifier_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
+> > +	       mmu_notifier_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
+> >   }
+> >   static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 0bdb6044e316..e9153b54e2a4 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -767,8 +767,8 @@ struct kvm {
+> >   	struct mmu_notifier mmu_notifier;
+> >   	unsigned long mmu_notifier_seq;
+> >   	long mmu_notifier_count;
+> > -	unsigned long mmu_notifier_range_start;
+> > -	unsigned long mmu_notifier_range_end;
+> > +	gfn_t mmu_notifier_range_start;
+> > +	gfn_t mmu_notifier_range_end;
+> >   #endif
+> >   	struct list_head devices;
+> >   	u64 manual_dirty_log_protect;
+> > @@ -1362,10 +1362,8 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+> >   void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+> >   #endif
+> > -void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
+> > -				   unsigned long end);
+> > -void kvm_dec_notifier_count(struct kvm *kvm, unsigned long start,
+> > -				   unsigned long end);
+> > +void kvm_inc_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+> > +void kvm_dec_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+> >   long kvm_arch_dev_ioctl(struct file *filp,
+> >   			unsigned int ioctl, unsigned long arg);
+> > @@ -1923,9 +1921,9 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+> >   	return 0;
+> >   }
+> > -static inline int mmu_notifier_retry_hva(struct kvm *kvm,
+> > +static inline int mmu_notifier_retry_gfn(struct kvm *kvm,
+> >   					 unsigned long mmu_seq,
+> > -					 unsigned long hva)
+> > +					 gfn_t gfn)
+> >   {
+> >   	lockdep_assert_held(&kvm->mmu_lock);
+> >   	/*
+> > @@ -1935,8 +1933,8 @@ static inline int mmu_notifier_retry_hva(struct kvm *kvm,
+> >   	 * positives, due to shortcuts when handing concurrent invalidations.
+> >   	 */
+> >   	if (unlikely(kvm->mmu_notifier_count) &&
+> > -	    hva >= kvm->mmu_notifier_range_start &&
+> > -	    hva < kvm->mmu_notifier_range_end)
+> > +	    gfn >= kvm->mmu_notifier_range_start &&
+> > +	    gfn < kvm->mmu_notifier_range_end)
+> >   		return 1;
+> >   	if (kvm->mmu_notifier_seq != mmu_seq)
+> >   		return 1;
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index da263c370d00..4d7f0e72366f 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -536,8 +536,7 @@ static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
+> >   typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+> > -typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+> > -			     unsigned long end);
+> > +typedef void (*on_lock_fn_t)(struct kvm *kvm, gfn_t start, gfn_t end);
+> >   typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+> > @@ -624,7 +623,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+> >   				locked = true;
+> >   				KVM_MMU_LOCK(kvm);
+> >   				if (!IS_KVM_NULL_FN(range->on_lock))
+> > -					range->on_lock(kvm, range->start, range->end);
+> > +					range->on_lock(kvm, gfn_range.start,
+> > +							    gfn_range.end);
+> >   				if (IS_KVM_NULL_FN(range->handler))
+> >   					break;
+> >   			}
