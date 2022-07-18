@@ -2,69 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7104A577ED8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 11:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4EA577F04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 11:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234185AbiGRJmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 05:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35002 "EHLO
+        id S234309AbiGRJvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 05:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234203AbiGRJl4 (ORCPT
+        with ESMTP id S234300AbiGRJvt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 05:41:56 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAEE19C1C;
-        Mon, 18 Jul 2022 02:41:56 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id 125so9862712vsx.7;
-        Mon, 18 Jul 2022 02:41:56 -0700 (PDT)
+        Mon, 18 Jul 2022 05:51:49 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E7A1AF3F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 02:51:43 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id ss3so20161706ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 02:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Uw96p5rg9bMjde+tQ6Y+RJreM2+o6oDSBazbHt0Gpe4=;
-        b=ZMcgYemoS6vhtGV+wZTepAv0v7yYdmq3PKJVRg8DujBUwUrtzrBTIQtVGghklIuZsp
-         pMH+ZEbCBITkHbGhkhnJVzLS/JRkvLlB3L1msVvqVDzqH0IaOlwS7HrlrywJufHp7a/1
-         Y46jotEQTTbMuP32ne5lLIti/hegrnYiBGCwT9XX/WeYE/yteviq9WPcw27r1wC+V43l
-         k0cNHGA09ys6nFRf+Q+HEeguCh75hz+/+d0OO1JmuJI4xeKUV4wP92OHwULfEI+pWMhI
-         Z4OSmv1RwcrOKfyQYWrW1I0zb/bFVGMMxpd7U5luCglHL8fYp3ncTlDbS6pHHk/YYaZL
-         R/SQ==
+        bh=RiLfSPG+jClf3kMGZRiuZEBRpwhLt+4GrcqCg7VELk0=;
+        b=LAdIowJ91/gUZxwIyFbBh+maGqGsqFiQfNOb7+Km6vo29sbQeKC6VQBPi+wrNZLHlx
+         zH7oYinSGgwTwfWe/IN9O4FRBC52tO3o6SDE0JdHQVmkM0cXhn53s457/bleEcuVPlUq
+         QGW/uu90sHSYtS2b+/v1EPZleAIPR3H9c/AtU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Uw96p5rg9bMjde+tQ6Y+RJreM2+o6oDSBazbHt0Gpe4=;
-        b=RwJSp5cZsXPC/5yy8LmbKTRNz/6JtGRbZaZ3e2m06SB7Iia0UtTo1tKI/64IAzMh5R
-         8Av1hD0kQ4o6freVqSPjbfquzZtZmkNsEfFGToFqaj2M8REJIUeq73jg/ylakb21xJDy
-         GYervOLjU7U+KEJME7Qmir+os8T8iHAnzc5gMur1RJcL7dQVVPRyB/fTjbV0VIJHvmek
-         Hz9Ff7wpFjvjQLqFMlVqcKq9lysLyDHKFDsw+qz6tj5cXwrUZGWf1TsvdGQfOO8pmNQS
-         N26utQ1WR/laTo5yu5zaXyp/DAvYwMrRpXM1H0KMroO3Uo2fDWivLvFluzKGIhuigiqA
-         jewQ==
-X-Gm-Message-State: AJIora/vBhm8fIEeMagtZj1HCbs/lAS3VLaVuKU4jMS8VBA8ZTiovfBj
-        wen71xosbbhrypooGSW8zo9JzIO956DoDdhs0YcWJpAs7oJK7w==
-X-Google-Smtp-Source: AGRyM1uwPymo7DRuHzRKWZ13dPYMPZ/am7w4EtUZor/81WS5GgLWhgdwQXs2hG/1EIRU7O70pBwq+X5JnU9nktk2d/M=
-X-Received: by 2002:a05:6102:834:b0:357:e3b9:56d5 with SMTP id
- k20-20020a056102083400b00357e3b956d5mr190138vsb.72.1658137315176; Mon, 18 Jul
- 2022 02:41:55 -0700 (PDT)
+        bh=RiLfSPG+jClf3kMGZRiuZEBRpwhLt+4GrcqCg7VELk0=;
+        b=RH7nkB9x3YTirTPiZx3h19HzKmbAylkocTTtUmy0jcHdp0tCYxLhe7GXsRtIqne4ya
+         Z1ur1Tq2TNWSfE3f6R8KOXnATHz2MlUfMFzg4E0vo5LoRvztmzHB8wo8F7EEoLGYhedM
+         UQm4KXm86lGmX9TpGc9f+FADHR0xT6b7JcFWdgvLlpS8OgX1f6SHZ84VS90NM9/E4O+u
+         vJkaUTVzYMWizxqSgFP3srdPBRZ9iihW6HRAG05fAONo8zRSGacEb9JvggnhVSuZh/CE
+         ruu9OgS1EXgXmfFYuImfAwysY1+p53KwAMEVL8xMGz1fLiHfG0/4d24pL37pFqO0tW1u
+         VrmQ==
+X-Gm-Message-State: AJIora+5PSIkZSs7eC75HXNw6DN8rrASW5DcJfPIbmJivcoBDWFMYeqC
+        cC1kmN6/rnpo3SLqFiL0C03wIko1lBf1d/CvUxj/Cg==
+X-Google-Smtp-Source: AGRyM1vlbx2uFDgQZlteYGU8/BVd543S2VQZEI2+vWh3QOJOZkSuwUg75H32xmDvy47HCTzOScYb3uueVvG04DwO0yE=
+X-Received: by 2002:a17:907:2854:b0:72b:7daf:cc0d with SMTP id
+ el20-20020a170907285400b0072b7dafcc0dmr24294498ejc.524.1658137902383; Mon, 18
+ Jul 2022 02:51:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <YtTM8GYn0/HkSoet@squish.home.loc>
-In-Reply-To: <YtTM8GYn0/HkSoet@squish.home.loc>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 18 Jul 2022 11:41:43 +0200
-Message-ID: <CAOQ4uxgya2-H9=qNZkRBO1exr=GRqyn=PFfGgAf0Px0VkH4bjQ@mail.gmail.com>
-Subject: Re: [REGRESSION] recent changes to copy_file_range behavior breakage
-To:     Paul Thompson <paul.a.thompson@zohomail.com>
-Cc:     regressions@lists.linux.dev,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        mat h <isolation.principle@gmail.com>,
-        arvidn <arvid@libtorrent.org>,
-        Luis Henriques <lhenriques@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+References: <20220601011103.12681-1-dlunev@google.com> <20220601111059.v4.1.I0e579520b03aa244906b8fe2ef1ec63f2ab7eecf@changeid>
+In-Reply-To: <20220601111059.v4.1.I0e579520b03aa244906b8fe2ef1ec63f2ab7eecf@changeid>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 18 Jul 2022 11:51:31 +0200
+Message-ID: <CAJfpegv8-0_Jsf7wUOVsXkt69o4Xrq0TgvwUzZF+RHX4_nxMzw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] fs/super: function to prevent super re-use
+To:     Daniil Lunev <dlunev@chromium.org>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Daniil Lunev <dlunev@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,67 +65,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 18, 2022 at 5:01 AM Paul Thompson
-<paul.a.thompson@zohomail.com> wrote:
+On Wed, 1 Jun 2022 at 03:11, Daniil Lunev <dlunev@chromium.org> wrote:
 >
->         Something that worked in 5.18.9 no longer does in 5.18.1[01] and 5.19-rc6.
+> From: Daniil Lunev <dlunev@chromium.org>
 >
->         Using the example code in the man page for copy_file_range:
+> The function is to be called from filesystem-specific code to mark a
+> superblock to be ignored by superblock test and thus never re-used. The
+> function also unregisters bdi if the bdi is per-superblock to avoid
+> collision if a new superblock is created to represent the filesystem.
+> generic_shutdown_super() skips unregistering bdi for a retired
+> superlock as it assumes retire function has already done it.
 >
-> # ./copy-file-range testfile-on-ext4 /path-to-another-ext4/testfile (or symlink thereto)
+> Signed-off-by: Daniil Lunev <dlunev@chromium.org>
+> Signed-off-by: Daniil Lunev <dlunev@google.com>
+> ---
 >
-> Works in 5.18.9, fails with:
+> Changes in v4:
+> - Simplify condition according to Christoph Hellwig's comments.
 >
-> # copy_file_range: Invalid cross-device link
+> Changes in v3:
+> - Back to state tracking from v1
+> - Use s_iflag to mark superblocked ignored
+> - Only unregister private bdi in retire, without freeing
 >
-> And produces garbage file at destination on newer (5.18.10+) kernels.
+> Changes in v2:
+> - Remove super from list of superblocks instead of using a flag
 >
->         This breaks eg. qbittorrent (moving a distro image across ext4
-> filesystems, or following such a symlink) So potentially other real world
-> applications. I do not know if the reason for the commit overrides this
-> breakage, but it caused me a bit of a headache.
+>  fs/super.c         | 28 ++++++++++++++++++++++++++--
+>  include/linux/fs.h |  2 ++
+>  2 files changed, 28 insertions(+), 2 deletions(-)
 >
+> diff --git a/fs/super.c b/fs/super.c
+> index f1d4a193602d6..3fb9fc8d61160 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -422,6 +422,30 @@ bool trylock_super(struct super_block *sb)
+>         return false;
+>  }
+>
+> +/**
+> + *     retire_super    -       prevernts superblock from being reused
 
-Hi Paul,
+s/prevernts/prevents/
 
-I apologize for the headache this change has caused you.
-FWIW, Arvidn has already fixed the problem in libtorrent 2.0.7 release yesterday
-following a report by Mat [1].
+> + *     @sb: superblock to retire
+> + *
+> + *     The function marks superblock to be ignored in superblock test, which
+> + *     prevents it from being reused for any new mounts.
 
-The story here is that cross-fs copy_file_range() was not allowed pre
-kernel v5.3.
-When we started allowing it in v5.3, we did not and we could not test
-all possible
-combinations of src and dst fs, so it took a few years, but regression reports
-started to surface [2].
-
-We decided to try and revert the behavior to pre kernel v5.3 to fix those
-regressions.
-
-The first attempt was around v5.12 release, but sadly, the patch got ignored
-and it wasn't before v5.19-rc5 that we managed to get the patch merged.
-
-In the meanwhile, libtorrent 2.0.0 was released with code that assumes
-that cross-fs copy_file_range() failure is a fatal error. This was
-fixed is 2.0.7
-released yesterday and I hope this fix will be packaged soon for distros.
-
-There is no easy way to find if other userspace tools have made the same
-assumptions except for getting regression reports like yours.
-It is encouraging to me that I got two regression reports from you and Mat
-shortly after the kernel patch was merged, which suggests that if there are
-other userspace tools out there making the same assumption, we will hear
-about them in the near future.
-
-If we find out that is it too late to revert to pre v5.3 behavior,
-then there are
-a few other options that were discussed on [2], but none of them are pretty
-and there was no consensus on either solution, so I'd rather wait a bit to
-see if other workloads rely on cross-fs copy_file_range() from any src fs to
-any dst fs, before taking further action.
+This works for block supers and nothing else, at least as this patch
+stands.  That might be okay, but should at least be documented.
 
 Thanks,
-Amir.
-
-[1] https://github.com/qbittorrent/qBittorrent/issues/17352
-[2] https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+Miklos
