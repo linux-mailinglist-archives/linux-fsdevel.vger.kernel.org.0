@@ -2,43 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90CC15787AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 18:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96ED95787C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 18:49:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235820AbiGRQnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 12:43:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40672 "EHLO
+        id S233561AbiGRQtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 12:49:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235791AbiGRQnc (ORCPT
+        with ESMTP id S229639AbiGRQtd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 12:43:32 -0400
-X-Greylist: delayed 243 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 18 Jul 2022 09:43:29 PDT
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285802B1A4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 09:43:29 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.92,281,1650960000"; 
-   d="scan'208";a="79810792"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 18 Jul 2022 08:36:16 -0800
-IronPort-SDR: RTjfIgzc+dEN6kC/wiahZ34aDq4N/lz4wt2gOaf3gyvKgbBgy7GQpdrAGz0TSAiEUWi+ya5Unr
- gmkYsvQK+ohtMCEWFgUOpyY66f9X39W1vVK02qBI1H5onSYK75Pc/1vMoVCUJxGv33IMPq9bQ2
- oVXSpXODQ6Og1foDv+s8GFj50phjddzVPBJt2HR23rxJmXRZiaFdLlzC1jNdr2lwwmR5DNHLGX
- AK5/7yyQ++vhwU/PHSyXdo4u6nIwJuPb8F93oY3w+emM9L4h04z8oSkrSns1WQE8vNYUpZYkVK
- UJM=
-Message-ID: <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
-Date:   Mon, 18 Jul 2022 17:36:06 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-GB
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
+        Mon, 18 Jul 2022 12:49:33 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9B8C336;
+        Mon, 18 Jul 2022 09:49:31 -0700 (PDT)
+Received: from fraeml705-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LmnvT21FCz6HJbV;
+        Tue, 19 Jul 2022 00:47:49 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Mon, 18 Jul 2022 18:49:29 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
+ Mon, 18 Jul 2022 18:49:29 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Jim Baxter <jim_baxter@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
 CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+        "Masahiro Yamada" <masahiroy@kernel.org>,
         Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
         "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
@@ -58,6 +51,13 @@ CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
         "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
         Dirk Behme <dirk.behme@de.bosch.com>,
         Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: RE: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Topic: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Index: AQHYe+tsPH1HC/8x8Uq7oovD5MPpKK1G5r2QgAG+ywCAACILEIAHUz4AgDRUxQCAACKFgA==
+Date:   Mon, 18 Jul 2022 16:49:28 +0000
+Message-ID: <f82d4961986547b28b6de066219ad08b@huawei.com>
 References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
  <1561909199.3985.33.camel@linux.ibm.com>
  <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
@@ -69,16 +69,19 @@ References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
  <20220610153336.GA8881@lxhi-065>
  <4bc349a59e4042f7831b1190914851fe@huawei.com>
  <20220615092712.GA4068@lxhi-065>
-From:   Jim Baxter <jim_baxter@mentor.com>
-Organization: Siemens Digital Industries Software
-In-Reply-To: <20220615092712.GA4068@lxhi-065>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-13.mgc.mentorg.com (139.181.222.13) To
- svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+ <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+In-Reply-To: <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,63 +89,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/06/2022 10:27, Eugeniu Rosca wrote:
-> Hello Roberto,
-> 
-> On Fr, Jun 10, 2022 at 03:38:24 +0000, Roberto Sassu wrote:
->> I would be happy to address the remaining concerns, or take more
->> suggestions, and then develop a new version of the patch set.
-> I face a number of conflicts when I try to rebase the latest openEuler
-> commits against vanilla master (v5.19-rc2). Do you think it is possible
-> to submit the rebased version to ML?
-> 
-> In addition, I can also see some open/unresolved points from Mimi [*].
-> Did you by chance find some mutual agreement offline or do you think
-> they would still potentially need some attention?
-> 
-> Maybe we can resume the discussion once you submit the rebased series?
-> 
-> Many thanks and looking forward to it.
-> 
-> [*] Potentially comments which deserve a reply/clarification/resolution
-> 
-> https://lore.kernel.org/lkml/1561985652.4049.24.camel@linux.ibm.com/#t
-> https://lore.kernel.org/lkml/1561908456.3985.23.camel@linux.ibm.com/
-> 
-> BR, Eugeniu.
-> 
-
-
-Hello,
-
-I have been testing these patches and do not see the xattr information when
-trying to retrieve it within the initramfs, do you have an example of how
-you tested this originally?
-
-
-So far I have set the xattr in the rootfs before creating the cpio file like this:
-$ setfattr -n user.comment -v "this is a comment" test.txt
-If I access the data here it works:
-$ getfattr test.txt 
-# file: test.txt
-user.comment
-
-
-Then I package it and try to verify it with this command:
-$getfattr /test.txt
-
-Which returns to the command line without the data.
-
-
-
-I believe the cpio is working because I see the file /METADATA\!\!\! in
-the target root filesystem, which shows the following when viewed with cat -e:
-00000028^A^Auser.comment^@this is a comment
-
-This matches the data I fed in at the start, so I believe the data is being
-transferred correctly but I am accessioning it with the wrong tools.
-
-Thank you for any help.
-
-Best regards,
-Jim
+PiBGcm9tOiBKaW0gQmF4dGVyIFttYWlsdG86amltX2JheHRlckBtZW50b3IuY29tXQ0KPiBTZW50
+OiBNb25kYXksIEp1bHkgMTgsIDIwMjIgNjozNiBQTQ0KPiBPbiAxNS8wNi8yMDIyIDEwOjI3LCBF
+dWdlbml1IFJvc2NhIHdyb3RlOg0KPiA+IEhlbGxvIFJvYmVydG8sDQo+ID4NCj4gPiBPbiBGciwg
+SnVuIDEwLCAyMDIyIGF0IDAzOjM4OjI0ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+
+PiBJIHdvdWxkIGJlIGhhcHB5IHRvIGFkZHJlc3MgdGhlIHJlbWFpbmluZyBjb25jZXJucywgb3Ig
+dGFrZSBtb3JlDQo+ID4+IHN1Z2dlc3Rpb25zLCBhbmQgdGhlbiBkZXZlbG9wIGEgbmV3IHZlcnNp
+b24gb2YgdGhlIHBhdGNoIHNldC4NCj4gPiBJIGZhY2UgYSBudW1iZXIgb2YgY29uZmxpY3RzIHdo
+ZW4gSSB0cnkgdG8gcmViYXNlIHRoZSBsYXRlc3Qgb3BlbkV1bGVyDQo+ID4gY29tbWl0cyBhZ2Fp
+bnN0IHZhbmlsbGEgbWFzdGVyICh2NS4xOS1yYzIpLiBEbyB5b3UgdGhpbmsgaXQgaXMgcG9zc2li
+bGUNCj4gPiB0byBzdWJtaXQgdGhlIHJlYmFzZWQgdmVyc2lvbiB0byBNTD8NCj4gPg0KPiA+IElu
+IGFkZGl0aW9uLCBJIGNhbiBhbHNvIHNlZSBzb21lIG9wZW4vdW5yZXNvbHZlZCBwb2ludHMgZnJv
+bSBNaW1pIFsqXS4NCj4gPiBEaWQgeW91IGJ5IGNoYW5jZSBmaW5kIHNvbWUgbXV0dWFsIGFncmVl
+bWVudCBvZmZsaW5lIG9yIGRvIHlvdSB0aGluaw0KPiA+IHRoZXkgd291bGQgc3RpbGwgcG90ZW50
+aWFsbHkgbmVlZCBzb21lIGF0dGVudGlvbj8NCj4gPg0KPiA+IE1heWJlIHdlIGNhbiByZXN1bWUg
+dGhlIGRpc2N1c3Npb24gb25jZSB5b3Ugc3VibWl0IHRoZSByZWJhc2VkIHNlcmllcz8NCj4gPg0K
+PiA+IE1hbnkgdGhhbmtzIGFuZCBsb29raW5nIGZvcndhcmQgdG8gaXQuDQo+ID4NCj4gPiBbKl0g
+UG90ZW50aWFsbHkgY29tbWVudHMgd2hpY2ggZGVzZXJ2ZSBhIHJlcGx5L2NsYXJpZmljYXRpb24v
+cmVzb2x1dGlvbg0KPiA+DQo+ID4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8xNTYxOTg1
+NjUyLjQwNDkuMjQuY2FtZWxAbGludXguaWJtLmNvbS8jdA0KPiA+IGh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL2xrbWwvMTU2MTkwODQ1Ni4zOTg1LjIzLmNhbWVsQGxpbnV4LmlibS5jb20vDQo+ID4N
+Cj4gPiBCUiwgRXVnZW5pdS4NCj4gPg0KPiANCj4gDQo+IEhlbGxvLA0KPiANCj4gSSBoYXZlIGJl
+ZW4gdGVzdGluZyB0aGVzZSBwYXRjaGVzIGFuZCBkbyBub3Qgc2VlIHRoZSB4YXR0ciBpbmZvcm1h
+dGlvbiB3aGVuDQo+IHRyeWluZyB0byByZXRyaWV2ZSBpdCB3aXRoaW4gdGhlIGluaXRyYW1mcywg
+ZG8geW91IGhhdmUgYW4gZXhhbXBsZSBvZiBob3cNCj4geW91IHRlc3RlZCB0aGlzIG9yaWdpbmFs
+bHk/DQoNCkhpIEppbSwgYWxsDQoNCmFwb2xvZ2llcywgSSBkaWRuJ3QgZmluZCB5ZXQgdGhlIHRp
+bWUgdG8gbG9vayBhdCB0aGlzLg0KDQpVaG0sIEkgZ3Vlc3MgdGhpcyBjb3VsZCBiZSBzb2x2ZWQg
+d2l0aDoNCg0KaHR0cHM6Ly9naXRodWIuY29tL29wZW5ldWxlci1taXJyb3Iva2VybmVsL2NvbW1p
+dC8xOGE1MDJmN2UzYjFkZTdiOWJhMGM3MDg5NmNlMDhlZTEzZDA1MmRhDQoNCmFuZCBhZGRpbmcg
+aW5pdHJhbXRtcGZzIHRvIHRoZSBrZXJuZWwgY29tbWFuZCBsaW5lLiBZb3UgYXJlDQpwcm9iYWJs
+eSB1c2luZyByYW1mcywgd2hpY2ggZG9lcyBub3QgaGF2ZSB4YXR0ciBzdXBwb3J0Lg0KDQo+IFNv
+IGZhciBJIGhhdmUgc2V0IHRoZSB4YXR0ciBpbiB0aGUgcm9vdGZzIGJlZm9yZSBjcmVhdGluZyB0
+aGUgY3BpbyBmaWxlIGxpa2UgdGhpczoNCj4gJCBzZXRmYXR0ciAtbiB1c2VyLmNvbW1lbnQgLXYg
+InRoaXMgaXMgYSBjb21tZW50IiB0ZXN0LnR4dA0KPiBJZiBJIGFjY2VzcyB0aGUgZGF0YSBoZXJl
+IGl0IHdvcmtzOg0KPiAkIGdldGZhdHRyIHRlc3QudHh0DQo+ICMgZmlsZTogdGVzdC50eHQNCj4g
+dXNlci5jb21tZW50DQo+IA0KPiANCj4gVGhlbiBJIHBhY2thZ2UgaXQgYW5kIHRyeSB0byB2ZXJp
+ZnkgaXQgd2l0aCB0aGlzIGNvbW1hbmQ6DQo+ICRnZXRmYXR0ciAvdGVzdC50eHQNCg0KSSBhc3N1
+bWUgeW91IHRyeSB0byBwYWNrL3VucGFjaywgcmlnaHQ/IElmIEkgcmVtZW1iZXIgY29ycmVjdGx5
+DQpJIG9ubHkgaW1wbGVtZW50ZWQgdGhlIHBhY2sgcGFydC4gVW5wYWNraW5nIGlzIGRvbmUgYnkg
+dGhlIGtlcm5lbA0KKGJ1dCB5b3UgYXJlIHJpZ2h0LCBpdCBzaG91bGQgYmUgZG9uZSBieSB1c2Vy
+IHNwYWNlIHRvbykuDQoNCj4gV2hpY2ggcmV0dXJucyB0byB0aGUgY29tbWFuZCBsaW5lIHdpdGhv
+dXQgdGhlIGRhdGEuDQo+IA0KPiANCj4gDQo+IEkgYmVsaWV2ZSB0aGUgY3BpbyBpcyB3b3JraW5n
+IGJlY2F1c2UgSSBzZWUgdGhlIGZpbGUgL01FVEFEQVRBXCFcIVwhIGluDQo+IHRoZSB0YXJnZXQg
+cm9vdCBmaWxlc3lzdGVtLCB3aGljaCBzaG93cyB0aGUgZm9sbG93aW5nIHdoZW4gdmlld2VkIHdp
+dGggY2F0IC1lOg0KPiAwMDAwMDAyOF5BXkF1c2VyLmNvbW1lbnReQHRoaXMgaXMgYSBjb21tZW50
+DQo+IA0KPiBUaGlzIG1hdGNoZXMgdGhlIGRhdGEgSSBmZWQgaW4gYXQgdGhlIHN0YXJ0LCBzbyBJ
+IGJlbGlldmUgdGhlIGRhdGEgaXMgYmVpbmcNCj4gdHJhbnNmZXJyZWQgY29ycmVjdGx5IGJ1dCBJ
+IGFtIGFjY2Vzc2lvbmluZyBpdCB3aXRoIHRoZSB3cm9uZyB0b29scy4NCg0KWWVzLCB4YXR0cnMg
+YXJlIG1hcnNoYWxsZWQgaW4gdGhlIE1FVEFEQVRBISEhIGZpbGUsIG9uZSBwZXIgcmVndWxhciBm
+aWxlDQp4YXR0cnMgYXJlIGFwcGxpZWQgdG8uIFhhdHRycyBhcmUgYXBwbGllZCB0byB0aGUgcHJl
+dmlvdXMgcmVndWxhciBmaWxlLg0KVGhhdCBmaWxlIG5hbWUgd2FzIHByZWZlcnJlZCB0byBhZGRp
+bmcgYSBzdWZmaXggdG8gdGhlIGZpbGUsIHRvIGF2b2lkDQpyZWFjaGluZyB0aGUgZmlsZW5hbWUg
+c2l6ZSBsaW1pdC4NCg0KUm9iZXJ0bw0K
