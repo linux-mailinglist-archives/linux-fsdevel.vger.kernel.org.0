@@ -2,112 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 543E1578BD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 22:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2740F578D60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 00:13:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235953AbiGRUdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 16:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40030 "EHLO
+        id S233880AbiGRWNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 18:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233811AbiGRUdx (ORCPT
+        with ESMTP id S233294AbiGRWNi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 16:33:53 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F7760FE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 13:33:51 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id tk8so12100202ejc.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Jul 2022 13:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kohlschutter-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sSv2PAexsfUE9wq4Vnr5gzIcjcTTTaBz8dE26papfHA=;
-        b=IJJcCEXhNxNmtiDW2OGrGVBpaFveJy/2+ca0zyYvkL0RyBQDhIpY8uCp607SqjC67d
-         cer5uPHuB2hckfieCG89+jhd/m8haca5WABkZrhz8amgU7mWStKRNrw8s8oDR+jwR8a7
-         mLdxl/woBcmoQ3H+Ftn55L/gWKLubVRv0UQtpb9vwEYyhTVbqEyTI/fbpzca1hPluQ53
-         g12tYdpM4/5B3gfwAZMoFZcA2deW+VcqDKTwvadM6/AqXzP/3645ba5JYqaVN0nSQk3N
-         G/CDnJMjvpAx3Z3zpBmA0ziBFb0WjTFF4iqXLyE00tIGg8/0qJ2bvXKdpNcI5fGROykV
-         cvgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sSv2PAexsfUE9wq4Vnr5gzIcjcTTTaBz8dE26papfHA=;
-        b=AVpm65JwfMg2cWtM865ZrXDrtXzBCdKBYcFGCI0RPZZIC0mX95OzBnswzeKhBtiLtJ
-         CgA47kzQMUfE91MAEdiiaxRx8mR8nje7gz5UUTmKkqXUn1ZCDXppkKwsojHIEdxyVD7L
-         ZEOd0Dy5FVjnptk8/UUSv2rzBNeARxFmGFwwq0kRvgZXpX9AbZfq4QGo1ZFp+sbdT6yz
-         qKXOm7wH5kCGI3IAOUH8fEdpm2WGVYtCOa+RlXs7LpqLiY9d5Y73gNjF7ivlUE3KBr7U
-         32ZYcVtWftL10mRp1yYxBWOk8Jz3Gupxa/BkNsCvrZqj86y/zvKHMXuWc5jnsUx/iCvJ
-         E0rA==
-X-Gm-Message-State: AJIora8Q8K62tuCILm5TmNo9XOA8rlD1XJo395ikT27/iL88NobKWpvP
-        5bn4vEBm8a6g5Sk2iGFw1GLHww==
-X-Google-Smtp-Source: AGRyM1uYoMKL4o8fEJPcZOlazCzJbfp4VNHRO5l1QjQlmBXCZz8CQv+PVr1YcoLXLQMjpIdnF70/jA==
-X-Received: by 2002:a17:907:62a6:b0:6ef:8118:d3e2 with SMTP id nd38-20020a17090762a600b006ef8118d3e2mr26685388ejc.605.1658176430371;
-        Mon, 18 Jul 2022 13:33:50 -0700 (PDT)
-Received: from smtpclient.apple (ip5b434222.dynamic.kabel-deutschland.de. [91.67.66.34])
-        by smtp.gmail.com with ESMTPSA id bc4-20020a056402204400b0043a78236cd2sm9238603edb.89.2022.07.18.13.33.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jul 2022 13:33:49 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
-Subject: Re: [PATCH] [REGRESSION] ovl: Handle ENOSYS when fileattr support is
- missing in lower/upper fs
-From:   =?utf-8?Q?Christian_Kohlsch=C3=BCtter?= 
-        <christian@kohlschutter.com>
-In-Reply-To: <CAHk-=wg+bpP5cvcaBhnmJKzTmAtgx12UhR4qzFXXb52atn9gDw@mail.gmail.com>
-Date:   Mon, 18 Jul 2022 22:33:48 +0200
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <56E6CAAE-FF25-4898-8F9D-048164582E7B@kohlschutter.com>
-References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
- <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
- <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com>
- <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
- <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com>
- <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
- <A31096BA-C128-4D0B-B27D-C34560844ED0@kohlschutter.com>
- <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
- <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
- <EE5E5841-3561-4530-8813-95C16A36D94A@kohlschutter.com>
- <CAHk-=wh5V8tQScw9Bgc8OiD0r5XmfVSCPp2OHPEf0p5T3obuZg@mail.gmail.com>
- <CAJfpeguXB9mAk=jwWQmk3rivYnaWoLrju_hq-LwtYyNXG4JOeg@mail.gmail.com>
- <CAHk-=wg+bpP5cvcaBhnmJKzTmAtgx12UhR4qzFXXb52atn9gDw@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3696.100.31)
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        Mon, 18 Jul 2022 18:13:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AEB7313AD;
+        Mon, 18 Jul 2022 15:13:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A44E86152C;
+        Mon, 18 Jul 2022 22:13:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF3AC341C0;
+        Mon, 18 Jul 2022 22:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658182415;
+        bh=6sNH6sal5TicDehq4BhVSgQxonrBdrjzj1qkQO3IpZc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jep36cTrn9SQVYkmm3O3YLkoKbgaTEQTGa57ZmONF0Bn98aLslFIPI+aeMMDnTFWD
+         QViGm3mbzPGm09ShDjupZINzYt9Vsurt1GHosk/tD5N9X8kwevHYf9+gPf4C6aVMze
+         iOwQYXF2yrxcMUdbj1PUUIEUjoih8j7FXXaEKhQGSRZWJeLS8bUHTOtYoXCw2480U8
+         VsefHX40HcAtybwFIwScOKBqvzI4ZQ+29sNii2cFxjQ+yivnOmDotFWs+SPPo862kG
+         t5CeD5mjEJD6SzRwp4rFxxpWrbXyFv+mLhaAHpi7FwhaNX5D8zC0FcfiAeA8WZ0+ez
+         oKDpiVX3ROzNA==
+Date:   Mon, 18 Jul 2022 15:13:35 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "jane.chu@oracle.com" <jane.chu@oracle.com>
+Subject: Re: [RFC PATCH v6] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+Message-ID: <YtXbD4e8mLHqWSwL@magnolia>
+References: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
+ <20220714103421.1988696-1-ruansy.fnst@fujitsu.com>
+ <62d05eb8e663c_1643dc294fa@dwillia2-xfh.jf.intel.com.notmuch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62d05eb8e663c_1643dc294fa@dwillia2-xfh.jf.intel.com.notmuch>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Am 18.07.2022 um 22:12 schrieb Linus Torvalds =
-<torvalds@linux-foundation.org>:
->=20
-> On Mon, Jul 18, 2022 at 12:28 PM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->>=20
->> So this is a bug in the kernel part of fuse, that doesn't catch and
->> convert ENOSYS in case of the ioctl request.
->=20
-> Ahh, even better. No need to worry about external issues.
->=20
->            Linus
+On Thu, Jul 14, 2022 at 11:21:44AM -0700, Dan Williams wrote:
+> ruansy.fnst@fujitsu.com wrote:
+> > This patch is inspired by Dan's "mm, dax, pmem: Introduce
+> > dev_pagemap_failure()"[1].  With the help of dax_holder and
+> > ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+> > (or mapped device) on it to unmap all files in use and notify processes
+> > who are using those files.
+> > 
+> > Call trace:
+> > trigger unbind
+> >  -> unbind_store()
+> >   -> ... (skip)
+> >    -> devres_release_all()   # was pmem driver ->remove() in v1
+> >     -> kill_dax()
+> >      -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+> >       -> xfs_dax_notify_failure()
+> > 
+> > Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+> > event.  So do not shutdown filesystem directly if something not
+> > supported, or if failure range includes metadata area.  Make sure all
+> > files and processes are handled correctly.
+> > 
+> > ==
+> > Changes since v5:
+> >   1. Renamed MF_MEM_REMOVE to MF_MEM_PRE_REMOVE
+> >   2. hold s_umount before sync_filesystem()
+> >   3. move sync_filesystem() after SB_BORN check
+> >   4. Rebased on next-20220714
+> > 
+> > Changes since v4:
+> >   1. sync_filesystem() at the beginning when MF_MEM_REMOVE
+> >   2. Rebased on next-20220706
+> > 
+> > [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+> > 
+> > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> > ---
+> >  drivers/dax/super.c         |  3 ++-
+> >  fs/xfs/xfs_notify_failure.c | 15 +++++++++++++++
+> >  include/linux/mm.h          |  1 +
+> >  3 files changed, 18 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> > index 9b5e2a5eb0ae..cf9a64563fbe 100644
+> > --- a/drivers/dax/super.c
+> > +++ b/drivers/dax/super.c
+> > @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+> >  		return;
+> >  
+> >  	if (dax_dev->holder_data != NULL)
+> > -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+> > +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+> > +				MF_MEM_PRE_REMOVE);
+> >  
+> >  	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+> >  	synchronize_srcu(&dax_srcu);
+> > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> > index 69d9c83ea4b2..6da6747435eb 100644
+> > --- a/fs/xfs/xfs_notify_failure.c
+> > +++ b/fs/xfs/xfs_notify_failure.c
+> > @@ -76,6 +76,9 @@ xfs_dax_failure_fn(
+> >  
+> >  	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+> >  	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> > +		/* Do not shutdown so early when device is to be removed */
+> > +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+> > +			return 0;
+> >  		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+> >  		return -EFSCORRUPTED;
+> >  	}
+> > @@ -174,12 +177,22 @@ xfs_dax_notify_failure(
+> >  	struct xfs_mount	*mp = dax_holder(dax_dev);
+> >  	u64			ddev_start;
+> >  	u64			ddev_end;
+> > +	int			error;
+> >  
+> >  	if (!(mp->m_sb.sb_flags & SB_BORN)) {
+> >  		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
+> >  		return -EIO;
+> >  	}
+> >  
+> > +	if (mf_flags & MF_MEM_PRE_REMOVE) {
+> > +		xfs_info(mp, "device is about to be removed!");
+> > +		down_write(&mp->m_super->s_umount);
+> > +		error = sync_filesystem(mp->m_super);
+> > +		up_write(&mp->m_super->s_umount);
+> 
+> Are all mappings invalidated after this point?
 
-My concern was fixing it in fuse instead of ovl would leave non-fuse =
-filesystems affected (even though I don't have proof that such =
-filesystems exist).
+No; all this step does is pushes dirty filesystem [meta]data to pmem
+before we lose DAXDEV_ALIVE...
 
-I'm glad you are OK with Miklos' change; the outcome of this discussion =
-certainly adds some nuance to the famous "don't break userspace" / error =
-code thread from 2012.
+> The goal of the removal notification is to invalidate all DAX mappings
+> that are no pointing to pfns that do not exist anymore, so just syncing
+> does not seem like enough, and the shutdown is skipped above. What am I
+> missing?
 
-Best,
-Christian
+...however, the shutdown above only applies to filesystem metadata.  In
+effect, we avoid the fs shutdown in MF_MEM_PRE_REMOVE mode, which
+enables the mf_dax_kill_procs calls to proceed against mapped file data.
+I have a nagging suspicion that in non-PREREMOVE mode, we can end up
+shutting down the filesytem on an xattr block and the 'return
+-EFSCORRUPTED' actually prevents us from reaching all the remaining file
+data mappings.
 
+IOWs, I think that clause above really ought to have returned zero so
+that we keep the filesystem up while we're tearing down mappings, and
+only call xfs_force_shutdown() after we've had a chance to let
+xfs_dax_notify_ddev_failure() tear down all the mappings.
+
+I missed that subtlety in the initial ~30 rounds of review, but I figure
+at this point let's just land it in 5.20 and clean up that quirk for
+-rc1.
+
+> Notice that kill_dev_dax() does unmap_mapping_range() after invalidating
+> the dax device and that ensures that all existing mappings are gone and
+> cannot be re-established. As far as I can see a process with an existing
+> dax mapping will still be able to use it after this runs, no?
+
+I'm not sure where in akpm's tree I find kill_dev_dax()?  I'm cribbing
+off of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/fs/xfs/xfs_notify_failure.c?h=mm-stable
+
+--D
