@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14A21577A4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 07:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4074B577A8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Jul 2022 07:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232986AbiGRFRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Jul 2022 01:17:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38886 "EHLO
+        id S232908AbiGRFsp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Jul 2022 01:48:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229711AbiGRFRX (ORCPT
+        with ESMTP id S231846AbiGRFso (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Jul 2022 01:17:23 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E9BF59E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jul 2022 22:17:22 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id v185so8440191ioe.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jul 2022 22:17:22 -0700 (PDT)
+        Mon, 18 Jul 2022 01:48:44 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9172A13E95
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jul 2022 22:48:42 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id m20so5513064ili.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Jul 2022 22:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cawiqsheGGWFN1Ov9qenDV/5UHYQ8mZquFaaC25tDDQ=;
-        b=Q+GJ/ePnT2rSqGKISayWp6fCwcwEhTD39VYGRtBgEekIzIGZ10ax1tkLPSfDTuOBBj
-         KvOO6eO3m3OFBCTzA6xXy6g7XpyQCsUZnKWYLf7F1bUE/fzAK3aiHrXX/pGxuQioKgIR
-         9jCKmhFhzG5yldZbhSUQ467FO3bp8Vzd5LGj421Tk8aSzeDwPo7atou/RN69o7c9Pn7O
-         xKcSQZI5aTBCkmEukIr9Z3CsZlbM0FnFAdAVzabJSl6fEn4sFiUL+br4MzlOty6lqp1t
-         hufAWWtXFjcbfMJ+3ohOnMI6HzepN3ZXAUeuIKkHV4ZmY+6hZH8nNgoqNyZ7ulfYueeK
-         3KZw==
+        bh=5478hwD1geMytUD3wVPoeJZhwTy4cycpCPQmrTCnTZg=;
+        b=BkNgTXAyATVhNFY3S8AP/X5px4j2fZ3U3WwT/uZ/aEku3uIxCq8E6WaFHnyg6dVCJY
+         gfSiDNN8yZcc3/Xx0/mU4u/095YHUN5UNPT59colJPwoxPsi8nlqeI4HNWdxrfxm8bM3
+         o3tQFLAKbCmXB/rXOefzDSPqesVLr4WSMsHh/YJQaV5xH9id0vfTDLSO0EiOZAPBSyrr
+         ZFfByl6BTrC1iTg0jxdMHdmKCSkZqMl9UX7HJogxEXTI41a0GbpeMUry+2xfczeNKdBd
+         ShbWNS0dnhSlUvaJ+EFttspIovE7i4neJg2Xh4Sre+22hDIZZkVyNx8HaABoSJtcTKFm
+         Jlpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cawiqsheGGWFN1Ov9qenDV/5UHYQ8mZquFaaC25tDDQ=;
-        b=mn5i5ohuKFwCexVbG9H5QetOG1Uk9M2xo5/NVxrB5ZdjlVhXpJveAm8+XOC/HcCWuE
-         SLLKH8RR+gZ0TQoZJowofpkLR3jJBdfHV5Xgo/CQWDwKOc30Q3OBrVwv4lwFozI4dZ65
-         rtLQWlCSjzjinPKm8wbPbf8uMztTlNrvpG6G+eT9mkB07/5AAa3Vp+/yYikxd6mtHY7V
-         25CjHkETsrXskK75Qie9PSCM9HOVaL8n2okLNVZoB5t46+jJAKGzrNvVeC5DWISGWE3H
-         Hyv6xLV+YNfVvgLR/uJXDGqJAvIq8CRv08RF/A+oTFJEBhQxMgWDZa6NenYJ19sin2Sk
-         TnaQ==
-X-Gm-Message-State: AJIora9G7Z/UMlz5HSa0fYsIZVuBT2XaopOp34okdH3riqiPAPaf7ZdQ
-        IJcS05lSQvccvoUzJRXaBuafCGOYiisPhmXpWKBd3Q==
-X-Google-Smtp-Source: AGRyM1sLgk4flxCUSG1N/AWOCFeXOAm1rklEmUw6z0mL6wUGtw8OQn+tLjnxuIP7HbuJsBBAPsBMXid0sNf3xu8QCQg=
-X-Received: by 2002:a6b:5f03:0:b0:67b:ef4d:e3ed with SMTP id
- t3-20020a6b5f03000000b0067bef4de3edmr4852530iob.45.1658121441378; Sun, 17 Jul
- 2022 22:17:21 -0700 (PDT)
+        bh=5478hwD1geMytUD3wVPoeJZhwTy4cycpCPQmrTCnTZg=;
+        b=I8VNwKG+ZYa44YKptOTZvLUUib0J8PRQBZqMStBBdiW6vhqO9qllehR1R3bcSa/fPd
+         +N0dIJmQFIxPNZE9JhmqXIw96A2Um/Z/TonAVmSu8sY0rmewxnKXxJnePfNSn5TjmZoH
+         lZVj07ALrMSANStaDTU7FA8DecZEFg7CZ8AZkGgDu+m3DsEUjyoBlTgx5KevlvGDey7Y
+         Dufc6ccrZ0EBNEmixl2e+BpO3XrUtzVIOjINCmfnF/DjqEujK3y+OvwBBkiqngDmf2NP
+         RcelZYRpv918CQ8XDsPqQQoo8hfvLmlMWZw4D15rtMKN2EDf7lf2Y0OhLIZi32+KvElU
+         V+yg==
+X-Gm-Message-State: AJIora9m2/Y/bOkXJUMIirSD66WA5b2/9BZ+YGuIwLiYoQtNx2gXYuOV
+        05sf0000cvcFQIDhPxaDchcb099yPb38ACx8oMQUK3YtuPpuTw==
+X-Google-Smtp-Source: AGRyM1s3FSthJkoeoe8H94w4BTANwxeQ/AiAsgyDETWEEJLZvMmiVTY33sE0EofHuhzKaUpgNhoSqg+74MxQOjKPV7U=
+X-Received: by 2002:a05:6e02:2197:b0:2dc:ce65:d638 with SMTP id
+ j23-20020a056e02219700b002dcce65d638mr5151399ila.216.1658123321912; Sun, 17
+ Jul 2022 22:48:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com> <YrySlhapXqHX4/1P@redhat.com>
-In-Reply-To: <YrySlhapXqHX4/1P@redhat.com>
+References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com> <YryWjGe6MgBmSkhO@redhat.com>
+In-Reply-To: <YryWjGe6MgBmSkhO@redhat.com>
 From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Date:   Mon, 18 Jul 2022 13:17:10 +0800
-Message-ID: <CAFQAk7jWHvAoFkVW2cUt6QJY8jKuxpjnP-_RtLKOV5USGCvfBw@mail.gmail.com>
-Subject: [PATCH] fuse: writeback_cache consistency enhancement (writeback_cache_v2)
+Date:   Mon, 18 Jul 2022 13:48:30 +0800
+Message-ID: <CAFQAk7iNc0aOHh4aYg4zuoUsxeBzPYo21VdU+pEhsWs2uixwoQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] fuse: writeback_cache consistency
+ enhancement (writeback_cache_v2)
 To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>,
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xieyongji@bytedance.com,
         fam.zheng@bytedance.com, Miklos Szeredi <mszeredi@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -66,7 +67,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 1:57 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Thu, Jun 30, 2022 at 2:14 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
 > On Fri, Jun 24, 2022 at 01:58:25PM +0800, Jiachen Zhang wrote:
 > > Some users may want both the high performance of the writeback_cahe mode and
@@ -83,38 +84,35 @@ On Thu, Jun 30, 2022 at 1:57 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 > >     generated by kernel are just temporary values that are never flushed to
 > >     server, and they can also be updated by the official server cmtime when
 > >     the writeback cache is clean.
-> >
-> >     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
-> >     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
-> >     are likely not equal to the offical server cmtime.
 >
-> We have a init flag to negotiate FUSE_AUTO_INVAL_DATA to enable/disable
-> fc->auto_inval_data. So should it be filesystem's (user space) responsibility
-> to not use FUSE_AUTO_INVAL_DATA when using FUSE_WRITEBACK_CACHE. I mean,
-> otherwise it is confusing. On one hand filesystem is using FUSE_AUTO_INVAL_DATA
-> but it silently is ingored by kernel because FUSE_WRITEBACK_CACHE is
-> being used as well.
+> Can this give the appearance of time going backwards. If file server
+> is getting time stamps from another remote filesystem (say NFS), it
+> is possible that client and server clocks are not in sync. So for
+> a stat() might return temporary value of c/mtime from local kernel and
+> once it gets udpated, it returns a time which might be behind previous
+> time. Sounds like trouble to me.
 >
 
 Hi Vivek,
 
-The fc->auto_inval_data branch code is also skipped in writeback_cache
-v1 mode, so I think we can also skip it in writeback_cache_v2. I
-listed this point here because it is not skipped in Miklos'
-writeback_cache_v2 initial patch.
+Yes, the time is likely to be changed silently on a client after the
+data is flush to the server. But in terms of consistency, some FS
+implementations may rely on the server mtime to revalidate cache. In
+such a case, if the server time is updated from multiple client time
+sources, it may lead to false cache revalidation results.
 
-Thanks,
-Jiachen
+> This can happen more often on virtiofs (even without a remote filesystem
+> being involved).
+>
 
-> will it make more sense to just document it and let filesystem authors
-> enable options carefully.
->
-> BTW, this probably should be a separate patch in the patch series anyway
-> with proper explanation.
->
-> Thanks
-> Vivek
->
+Maybe if there is no need of multiple VM-guest consistency, we can
+just disable the writeback_cache_v2 mode.
+
+
+> >
+> >     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
+> >     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
+> >     are likely not equal to the offical server cmtime.
 > >
 > >     3. If any page is ever flushed to the server during FUSE_GETATTR
 > >     handling on fuse server, even if the cache is clean when
@@ -134,6 +132,26 @@ Jiachen
 > >
 > > Together with another patch [2], a FUSE daemon is able to implement
 > > close-to-open (CTO) consistency like what is done in NFS clients.
+>
+> If your goal is to implement NFS style CTO with writeback cache mode, then
+> is it not enough to query and udpate attributes at file open time. Instead
+> of worrying about also updating attrs while file is open (and cache is
+> clean). Updating attrs when cache is clean, is non-deterministic anyway,
+> so I don't see how it can be very useful for applications.
+>
+
+IIUC, the NFS-style CTO consistency only requires updating invalidated
+data & attr caches on file open, and the cache updating will be
+delayed if there is any writing opens, even if the cache is clean. So
+writeback_cache_v2 updates even more radical than NFS-style CTO.
+
+Thanks,
+Jiachen
+
+> Thanks
+> Vivek
+>
+>
 > >
 > > [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
 > > [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
