@@ -2,208 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D871157A9F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 00:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F1857AA01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 00:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237820AbiGSWol (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 18:44:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44158 "EHLO
+        id S240356AbiGSWqR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 18:46:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231709AbiGSWok (ORCPT
+        with ESMTP id S240360AbiGSWqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 18:44:40 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9AE375F103;
-        Tue, 19 Jul 2022 15:44:37 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A3D9B10E7ECF;
-        Wed, 20 Jul 2022 08:44:36 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oDvxC-002voo-K3; Wed, 20 Jul 2022 08:44:34 +1000
-Date:   Wed, 20 Jul 2022 08:44:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Anna Schumaker <anna@kernel.org>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 6/6] NFSD: Repeal and replace the READ_PLUS
- implementation
-Message-ID: <20220719224434.GL3600936@dread.disaster.area>
-References: <20220715184433.838521-1-anna@kernel.org>
- <20220715184433.838521-7-anna@kernel.org>
- <EC97C20D-A317-49F9-8280-062D1AAEE49A@oracle.com>
- <20220718011552.GK3600936@dread.disaster.area>
- <CAFX2Jf=FrXHMxioWLHFkRHxBNDRe-9SBUmCcco9gkaY8EQOSZg@mail.gmail.com>
+        Tue, 19 Jul 2022 18:46:15 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 516CC4F184
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 15:46:14 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id v185so13030193ioe.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 15:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lnuskSEx1rWRFyExO7VDAIyPqC7rs15nNdWPt5ojSJo=;
+        b=MjL9o3vEOb0cC/AOC29+FJHaYEDdp3YF4uPnUKdH2MSDVyDrF7ODr3Ke0Wcy4ilYzf
+         BzCFwxsZ/XHiEHTOzXcQJv3vCytelIwqMbSVQy/FRLtlMuURP6ov3NWCIw8RZPLahcDd
+         C48SeV+unpKZ2XPeGrdmEDCsa6LF6ZASoymNm+TqHMtWQYybbebrFT/9bV5YYeMDLZ4x
+         oaPJRoZ/aZAKBfaZ9E6cpvtaiAhFYSDi9LC7qcvIPN12naTuSVOg+/o2fA2e6EiO7Fa0
+         xHvsR1NLSDdqKv1q7gdh+mZLQNyp7KE54xFUiOdTzB8i+cvo8dMLbT1d0lXkvAObz4G2
+         IAjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lnuskSEx1rWRFyExO7VDAIyPqC7rs15nNdWPt5ojSJo=;
+        b=fRZI5pWU0o2t3SmXUxoZp5j41JITKVXm8a3HYPbf8+bCEqBZ0aA23qQo2u+X/VIE6b
+         1texmLJ9WCNvTlnbMKkR6uv5LjuJ3y4mAnsvL68RZGW53zQNN1vcRdbnuKkj3eos9YAg
+         a6iaFLjw0O9GOKIh1p+74hP2R/v280IY0e10aFmVVviSFyafR0wN3cTrd+TNY33GWr3J
+         4tQtUUuGNAPXnO9ihFV6Z645LwvOasN0A9JGBLhCK//yqOrYsp9d6e+zVmoQK8QuNnOK
+         8Pzbs9R0QRrMrLyrfjRb0654RbE3Jj1udcIKNBqBXuerQW4x1ps1Fkrkc6SUY8QBplUe
+         /kyA==
+X-Gm-Message-State: AJIora+8caghEcqAPdMewJ0jkR/F2TEOQ86We1TqJ763zEjJQqvKBnde
+        HbP/hsq/RjjuGy2z9/j8I83Oo1GakvhloViq/CYeZg==
+X-Google-Smtp-Source: AGRyM1scKsvkgjvOBcySMD8ANT00O0TRABCY2NJ0UUBywdxmH7xhFhuqq83FJ/2EITJFvKlSUEurf8W9R+8SpfjeE5I=
+X-Received: by 2002:a05:6602:1644:b0:678:8ba4:8df6 with SMTP id
+ y4-20020a056602164400b006788ba48df6mr16243773iow.138.1658270773545; Tue, 19
+ Jul 2022 15:46:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFX2Jf=FrXHMxioWLHFkRHxBNDRe-9SBUmCcco9gkaY8EQOSZg@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62d733d4
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8 a=VwQbUJbxAAAA:8
-        a=JDjsHSkAAAAA:8 a=ar1VmM8jAAAA:8 a=P6JkxrBpAAAA:8 a=Omq8ZIaKN1FLDrBX4RAA:9
-        a=CjuIK1q_8ugA:10 a=u37mErDvIGIA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=dseMxAR1CDlncBZeV_se:22
-        a=rFd2LkbIa9bXzCDub527:22 a=dwOG0T2NmQ8MtARghG3a:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220719195628.3415852-1-axelrasmussen@google.com>
+ <20220719195628.3415852-3-axelrasmussen@google.com> <D43534E1-7982-45EE-8B16-2C4687F49E77@vmware.com>
+In-Reply-To: <D43534E1-7982-45EE-8B16-2C4687F49E77@vmware.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Tue, 19 Jul 2022 15:45:37 -0700
+Message-ID: <CAJHvVcigVqAibm0JODkiR=Pcd3E14xp0NB6acw2q2enwnrnLSA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 04:46:50PM -0400, Anna Schumaker wrote:
-> On Sun, Jul 17, 2022 at 9:16 PM Dave Chinner <david@fromorbit.com> wrote:
+On Tue, Jul 19, 2022 at 3:32 PM Nadav Amit <namit@vmware.com> wrote:
+>
+> On Jul 19, 2022, at 12:56 PM, Axel Rasmussen <axelrasmussen@google.com> w=
+rote:
+>
+> > Historically, it has been shown that intercepting kernel faults with
+> > userfaultfd (thereby forcing the kernel to wait for an arbitrary amount
+> > of time) can be exploited, or at least can make some kinds of exploits
+> > easier. So, in 37cd0575b8 "userfaultfd: add UFFD_USER_MODE_ONLY" we
+> > changed things so, in order for kernel faults to be handled by
+> > userfaultfd, either the process needs CAP_SYS_PTRACE, or this sysctl
+> > must be configured so that any unprivileged user can do it.
 > >
-> > On Fri, Jul 15, 2022 at 07:08:13PM +0000, Chuck Lever III wrote:
-> > > > On Jul 15, 2022, at 2:44 PM, Anna Schumaker <anna@kernel.org> wrote:
-> > > >
-> > > > From: Anna Schumaker <Anna.Schumaker@Netapp.com>
-> > > >
-> > > > Rather than relying on the underlying filesystem to tell us where hole
-> > > > and data segments are through vfs_llseek(), let's instead do the hole
-> > > > compression ourselves. This has a few advantages over the old
-> > > > implementation:
-> > > >
-> > > > 1) A single call to the underlying filesystem through nfsd_readv() means
-> > > >   the file can't change from underneath us in the middle of encoding.
+> > In a typical implementation of a hypervisor with live migration (take
+> > QEMU/KVM as one such example), we do indeed need to be able to handle
+> > kernel faults. But, both options above are less than ideal:
 > >
-> > Hi Anna,
+> > - Toggling the sysctl increases attack surface by allowing any
+> >  unprivileged user to do it.
 > >
-> > I'm assuming you mean the vfs_llseek(SEEK_HOLE) call at the start
-> > of nfsd4_encode_read_plus_data() that is used to trim the data that
-> > has already been read out of the file?
-> 
-> There is also the vfs_llseek(SEEK_DATA) call at the start of
-> nfsd4_encode_read_plus_hole(). They are used to determine the length
-> of the current hole or data segment.
-> 
+> > - Granting the live migration process CAP_SYS_PTRACE gives it this
+> >  ability, but *also* the ability to "observe and control the
+> >  execution of another process [...], and examine and change [its]
+> >  memory and registers" (from ptrace(2)). This isn't something we need
+> >  or want to be able to do, so granting this permission violates the
+> >  "principle of least privilege".
 > >
-> > What's the problem with racing with a hole punch here? All it does
-> > is shorten the read data returned to match the new hole, so all it's
-> > doing is making the returned data "more correct".
-> 
-> The problem is we call vfs_llseek() potentially many times when
-> encoding a single reply to READ_PLUS. nfsd4_encode_read_plus() has a
-> loop where we alternate between hole and data segments until we've
-> encoded the requested number of bytes. My attempts at locking the file
-> have resulted in a deadlock since vfs_llseek() also locks the file, so
-> the file could change from underneath us during each iteration of the
-> loop.
-
-So the problem being solved is that the current encoding is not
-atomic, rather than trying to avoid any computational overhead of
-multiple vfs_llseek calls (which are largely just the same extent
-lookups as we do during the read call)?
-
-The implementation just seems backwards to me - rather than reading
-data and then trying to work out where the holes are, I suspect it
-should be working out where the holes are and then reading the data.
-This is how the IO path in filesystems work, so it would seem like a
-no-brainer to try to leverage the infrastructure we already have to
-do that.
-
-The information is there and we have infrastructure that exposes it
-to the IO path, it's just *underneath* the page cache and the page
-cache destroys the information that it used to build the data it
-returns to the NFSD.
-
-IOWs, it seems to me that what READ_PLUS really wants is a "sparse
-read operation" from the filesystem rather than the current "read
-that fills holes with zeroes". i.e. a read operation that sets an
-iocb flag like RWF_SPARSE_READ to tell the filesystem to trim the
-read to just the ranges that contain data.
-
-That way the read populates the page cache over a single contiguous
-range of data and returns with the {offset, len} that spans the
-range that is read and mapped. The caller can then read that region
-out of the page cache and mark all the non-data regions as holes in
-whatever manner they need to.
-
-The iomap infrastructure that XFS and other filesystems use provide
-this exact "map only what contains data" capability - an iomap tells
-the page cache exactly what underlies the data range (hole, data,
-unwritten extents, etc) in an efficient manner, so it wouldn't be a
-huge stretch just to limit read IO ranges to those that contain only
-DATA extents.
-
-At this point READ_PLUS then just needs to iterate doing sparse
-reads and recording the ranges that return data as vector of some
-kind that is then passes to the encoding function to encode it as
-a sparse READ_PLUS data range....
-
-> > OTOH, if something allocates over a hole that the read filled with
-> > zeros, what's the problem with occasionally returning zeros as data?
-> > Regardless, if this has raced with a write to the file that filled
-> > that hole, we're already returning stale data/hole information to
-> > the client regardless of whether we trim it or not....
+> > This is all a long winded way to say: we want a more fine-grained way t=
+o
+> > grant access to userfaultfd, without granting other additional
+> > permissions at the same time.
 > >
-> > i.e. I can't see a correctness or data integrity problem here that
-> > doesn't already exist, and I have my doubts that hole
-> > punching/filling racing with reads happens often enough to create a
-> > performance or bandwidth problem OTW. Hence I've really got no idea
-> > what the problem that needs to be solved here is.
-> >
-> > Can you explain what the symptoms of the problem a user would see
-> > that this change solves?
-> 
-> This fixes xfstests generic/091 and generic/263, along with this
-> reported bug: https://bugzilla.kernel.org/show_bug.cgi?id=215673
+> > To achieve this, add a /dev/userfaultfd misc device. This device
+> > provides an alternative to the userfaultfd(2) syscall for the creation
+> > of new userfaultfds. The idea is, any userfaultfds created this way wil=
+l
+> > be able to handle kernel faults, without the caller having any special
+> > capabilities. Access to this mechanism is instead restricted using e.g.
+> > standard filesystem permissions.
+>
+> Are there any other =E2=80=9Cdevices" that when opened by different proce=
+sses
+> provide such isolated interfaces in each process? I.e., devices that if y=
+ou
+> read from them in different processes you get completely unrelated data?
+> (putting aside namespaces).
+>
+> It all sounds so wrong to me, that I am going to try again to pushback
+> (sorry).
 
-Oh, that bug is mixing mmap() reads and writes with direct IO reads
-and writes. We don't guarantee data integrity and coherency when
-applications do that, and a multi-part buffered read operation isn't
-going to make that any better...
+No need to be sorry. :)
 
-> > > > 2) A single call to the underlying filestem also means that the
-> > > >   underlying filesystem only needs to synchronize cached and on-disk
-> > > >   data one time instead of potentially many speeding up the reply.
-> >
-> > SEEK_HOLE/DATA doesn't require cached data to be sync'd to disk to
-> > be coherent - that's only a problem FIEMAP has (and syncing cached
-> > data doesn't fix the TOCTOU coherency issue!).  i.e. SEEK_HOLE/DATA
-> > will check the page cache for data if appropriate (e.g. unwritten
-> > disk extents may have data in memory over the top of them) instead
-> > of syncing data to disk.
-> 
-> For some reason, btrfs on virtual hardware has terrible performance
-> numbers when using vfs_llseek() with files that are already in the
-> server's cache.
+>
+> From a semantic point of view - userfaultfd is process specific. It is
+> therefore similar to /proc/[pid]/mem (or /proc/[pid]/pagemap and so on).
+>
+> So why can=E2=80=99t we put it there? I saw that you argued against it in=
+ your
+> cover-letter, and I think that your argument is you would need
+> CAP_SYS_PTRACE if you want to access userfaultfd of other processes. But
+> this is EXACTLY the way opening /proc/[pid]/mem is performed - see
+> proc_mem_open().
+>
+> So instead of having some strange device that behaves differently in the
+> context of each process, you can just have /proc/[pid]/userfaultfd and th=
+en
+> use mm_access() to check if you have permissions to access userfaultfd (j=
+ust
+> like proc_mem_open() does). This would be more intuitive for users as it =
+is
+> similar to other /proc/[pid]/X, and would cover both local and remote
+> use-cases.
 
-IIRC, btrfs has extent lookup scalability problems, so you're going
-to see this sort of issue with SEEK_HOLE/DATA on large fragmented
-cached files in btrfs, especially if things like compression is
-enabled. See this recent btrfs bug report, for example:
+Ah, so actually I find this argument much more compelling.
 
-https://lore.kernel.org/linux-fsdevel/Yr1QwVW+sHWlAqKj@atmark-techno.com/
+I don't find it persuasive that we should put it in /proc for the
+purpose of supporting cross-process memory manipulation, because I
+think the syscall works better for that, and in that case we don't
+mind depending on CAP_SYS_PTRACE.
 
-The fiemap overhead in the second cached read is effectively what
-you'll also see with SEEK_HOLE/DATA as they are similar extent
-lookup operations.
+But, what you've argued here I do find persuasive. :) You are right, I
+can't think of any other example of a device node in /dev that works
+like this, where it is completely independent on a per-process basis.
+The closest I could come up with was /dev/zero or /dev/null or
+similar. You won't affect any other process by touching these, but I
+don't think these are good examples.
 
-> I think it had something to do with how they lock
-> extents, and some extra work that needs to be done if the file already
-> exists in the server's memory but it's been  a few years since I've
-> gone into their code to figure out where the slowdown is coming from.
-> See this section of my performance results wiki page:
-> https://wiki.linux-nfs.org/wiki/index.php/Read_Plus_May_2022#BTRFS_3
+I'll send a v5 which does this. I do worry that cross-process support
+is probably complex to get right, so I might leave that out and only
+allow a process to open its own device for now.
 
-Yup, that's pretty much it - a 1.2GB/s -> 100MB/s perf drop on cached
-reads when READ_PLUS is enabled is in line with the above bug
-report.
-
-This really is a btrfs extent lookup issue, not a problem with
-SEEK_HOLE/DATA, but I think it's a moot point because I suspect that
-sparse read capability in the FS IO path would be a much better
-solution to this problem than trying to use SEEK_HOLE/DATA to
-reconstruct file sparseness post-read...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>
