@@ -2,154 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D41EE57A87B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 22:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACFE57A8B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 22:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239786AbiGSUsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 16:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
+        id S239777AbiGSU4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 16:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240236AbiGSUrq (ORCPT
+        with ESMTP id S233195AbiGSU4m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 16:47:46 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D827599D4;
-        Tue, 19 Jul 2022 13:47:44 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26JJnuHL031787;
-        Tue, 19 Jul 2022 20:47:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=Ecc0CNntQ4AiG8Vfir21Jn4VmXaWzx2DVy1S66L4FuY=;
- b=ksL0/vJaCAEl48z34ZR9tG2AbPkc+CMYwpx+V7SWlbdu+WBYhvZr+9ltCu3tgW6qJqOL
- 7upLKoQzOWCrnVtLzdT9finTMGVAMyclEJQVAQnW1KEzbYwgHL85VrC09YPj1gbzTw4K
- OXCoI3wjfEfFBWqS1pcNiwEDvTI0vdYu9wj0V1YZX8JHPXok4KllFbaYxZibKmqgnJue
- 74NC3bEdyBaDZDB5fOP8o2FSNTbvVqxwSpliddG3V7CiVomVdaia1pMYs6GxU49v/FVE
- +KbE3V1ZzbrD4gMDt8FrbjFltsfmglFvG21MLQdhfW0j0Z0gZNZsZfkvTFfD84Fa51Gs xA== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbnvtfqt7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 20:47:38 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26JJA7K0016382;
-        Tue, 19 Jul 2022 20:47:37 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2170.outbound.protection.outlook.com [104.47.59.170])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1emw2hv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 20:47:37 +0000
+        Tue, 19 Jul 2022 16:56:42 -0400
+Received: from na01-obe.outbound.protection.outlook.com (mail-centralusazon11013000.outbound.protection.outlook.com [52.101.64.0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3690145F7A;
+        Tue, 19 Jul 2022 13:56:41 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J3XJOqZJEByKfnrXx8w8jZtjL/bketjfdq7/MFE2G4RAl2/m4PrW9rDc7pb2LXlLViamzzmdI3unlUa+7a4TB3jT90+hVXeBg7EWHI7jrhLZ8Rf0/ouOFTPn++EmhIpM3H56fNMbMKQtmjDVqoSz95O+4BsDFZ9hzTS3Sxmp9HhXQH2jzXLQQqrR9PiVKm7Ab6O1Z8beC/VTZj8OFoSkiyEMdZFwI60EdzKD8Hdw30oU/0S4YwLy9ipTr2mIYLvk8OwS184jY904jEB1M1MSaszS70kLCuV0Pu6y6LhZs1bvXAvUkEDqCdSqRX43JZfl1CbN3GyqxtnvawSopJ5deg==
+ b=KQxBsgUHgaGva8sIl0ZSY2pXjSP67XJfj01bcKaXtno1Erodoq0IBrvoSvfeSfwxBB9w9JJi5rE+y9BAl/3angeg8iNEVV58UhMeUVMC9aXrmdxsATFXoWwGcQttJSjfN5PvTSejeuY7QzbRr9/yb6sqUgFJ49DErYdl7Bl4GrtBIDuC1kuabbtGy6u4wmThdpSi7i7kZVXaKWFTx0pauwOa8nlXHLlGfyQFFwAyGqrGwEBqUY/KVzZhDCpsNMK5/oBrmqxjNBesOvLF3XEXCOujX+H6qvHRytY4SH4f1dgpzRuM6eOy9JjiepaV5e92T21xhEwC4oNbl48ZO2BmCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ecc0CNntQ4AiG8Vfir21Jn4VmXaWzx2DVy1S66L4FuY=;
- b=RvqtmxT+cQUhANNZzGiFIYTSNbCafR7JSRlPXVw6cAyibFHjCDGOdyCBFYHrDX/VVPFYGUJZCSW2pV3/mpahW0iUBG6iIqetubCY2stGQrRrokfZwzUV2gystAzEGJMvfFI26PhME5Ox7CJI08ceZucPGQdfcW2q6PPC8roCzTOpT13PJmpamq+UXpJvsDGFhxppFFe0bu+pgFauKYWcvVfwbis51yw2Z3ae5oJhz5UEJlLbI+9sShT5+1WI+/Ebd+H5uzO30qv0vfEOTMZ8KbiMdxaz4kbMldsRI82cCWnr/l50W641FOXDQTl0AVCs83RQ3Scy3A0Cg3OlIasnfw==
+ bh=aqOpkjN7RcY7etaEejGkajjnIMX8cHSg+MFU2XJzgxo=;
+ b=hQAweGeM08aYx4L8Tu0tfNNsWPTtf38k3qBHfnE8RFKDpqSW1Y5edA2Se3RaElB8uNkSfqUgBs7zXPW5QHFm+sE+F/V4Sg6CGEvgRE32GmLRz/ElZ5ema6pGahXogaziAToa3xErfirpjPqZh2cZaNmxdaQz24QEWiiTaSW/8YjqAc9mLN5DLQ9PmV9ongszRkWMVhMVgPbD5aDnBi7yvP6Jwz9Pkx23xTPw6IlCbtMbdfmqZ35So2i1MCkQuwu8pZarCMoSR8rTrWcQ7plbuStXrAecVNlm2WjcL8FYOpgJ9LOO0XS0ufWQygPAhJe+bzoKe30eMDptU8fm+rxGUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ecc0CNntQ4AiG8Vfir21Jn4VmXaWzx2DVy1S66L4FuY=;
- b=FbD7h/CC7VYYfEClvUHgwyMEVgwtdsL5PReoACJx46n0O2yi6DEOGBfK5qOy1vz+T/nz+Papt2J9+8GjkJeknO7h92q3WCBFrjlMNMDVK2UfApJjr+on7gcu6DIt73wiVDmZrePWpwtWrXCwCbGPdDIDnDK4/4012fhyivgxfOI=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by BLAPR10MB5201.namprd10.prod.outlook.com (2603:10b6:208:332::23) with
+ bh=aqOpkjN7RcY7etaEejGkajjnIMX8cHSg+MFU2XJzgxo=;
+ b=MVLpMi0swlt1p4IXkbOE2B24MLQM5lvswfjTFc0KRxpBlXKnlQYdRMNP0ICQAbT/aa/M6VLqjMVdg+I26HAl6BtcNxJ33Xw6/8S+rJXtxw+rf59ByoLahoA6U//VaFpAiAT83eHmI4ZMltCb0/J/WUkpJt77FnjruYwo0tNnDs0=
+Received: from BY3PR05MB8531.namprd05.prod.outlook.com (2603:10b6:a03:3ce::6)
+ by SN6PR05MB4685.namprd05.prod.outlook.com (2603:10b6:805:98::25) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.14; Tue, 19 Jul
- 2022 20:47:34 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::8cc6:21c7:b3e7:5da6]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::8cc6:21c7:b3e7:5da6%7]) with mapi id 15.20.5438.023; Tue, 19 Jul 2022
- 20:47:34 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Anna Schumaker <anna@kernel.org>
-CC:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.11; Tue, 19 Jul
+ 2022 20:56:36 +0000
+Received: from BY3PR05MB8531.namprd05.prod.outlook.com
+ ([fe80::d813:9300:4877:39d0]) by BY3PR05MB8531.namprd05.prod.outlook.com
+ ([fe80::d813:9300:4877:39d0%7]) with mapi id 15.20.5458.018; Tue, 19 Jul 2022
+ 20:56:36 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH v3 6/6] NFSD: Repeal and replace the READ_PLUS
- implementation
-Thread-Topic: [PATCH v3 6/6] NFSD: Repeal and replace the READ_PLUS
- implementation
-Thread-Index: AQHYmHrzYsqP79DW8UWdtY79IK5gxq1/y34AgAOLZACAAqAVgIAAMx4AgAAGf4A=
-Date:   Tue, 19 Jul 2022 20:47:34 +0000
-Message-ID: <1D37AF7B-DE7E-410A-A41A-880D0AB416F9@oracle.com>
-References: <20220715184433.838521-1-anna@kernel.org>
- <20220715184433.838521-7-anna@kernel.org>
- <EC97C20D-A317-49F9-8280-062D1AAEE49A@oracle.com>
- <20220718011552.GK3600936@dread.disaster.area>
- <5A400446-A6FD-436B-BDE2-DAD61239F98F@oracle.com>
- <CAFX2Jfmm6t8V1P3Lt9j2gE_GFpKo51Z8jKPvxdbFoJfVi=dn9A@mail.gmail.com>
-In-Reply-To: <CAFX2Jfmm6t8V1P3Lt9j2gE_GFpKo51Z8jKPvxdbFoJfVi=dn9A@mail.gmail.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linuxkselftest <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v4 5/5] selftests: vm: add /dev/userfaultfd test cases to
+ run_vmtests.sh
+Thread-Topic: [PATCH v4 5/5] selftests: vm: add /dev/userfaultfd test cases to
+ run_vmtests.sh
+Thread-Index: AQHYm6mvzpF6bpiM90aPwCYm0In9H62GLLyA
+Date:   Tue, 19 Jul 2022 20:56:36 +0000
+Message-ID: <6B7CAF01-7711-483E-BE57-630150407648@vmware.com>
+References: <20220719195628.3415852-1-axelrasmussen@google.com>
+ <20220719195628.3415852-6-axelrasmussen@google.com>
+In-Reply-To: <20220719195628.3415852-6-axelrasmussen@google.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-mailer: Apple Mail (2.3696.100.31)
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vmware.com;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b95b8c2a-6f90-4db8-b879-08da69c7e84f
-x-ms-traffictypediagnostic: BLAPR10MB5201:EE_
+x-ms-office365-filtering-correlation-id: 6fcc13f5-dfb3-4341-048a-08da69c92ba0
+x-ms-traffictypediagnostic: SN6PR05MB4685:EE_
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nfDcrzMFtqqC5AR2FL9TTBBqIjuUPJ2E01qlkrRdOb6w16TpmRzNSP7TvzNukKfeqaM9XmO9ZaSRsMUjF3yOQRxCmdDagmyl5psm+BsDKJDiaJAhwPCKbeU0bxd0lUx/PNL8zKuUqmnsslb+poXOXwz0h+n8H1bTscrxSlbgEqTH+g2nSOB0baUngWxFfk7Zo8weP06cllu5cUFaLyR8madxVzftiXeG3asEzkHaE+qflgE4XDDLIR8exgqUxi6Ayxm3h6PWfJfYYlQTX13Vbw13scDqk4HbYY61xsLSYQ1KS9fjCPpLZ08HN+efqz6NFkI3lkOJzxtliW/D56J5gbfOvziWDoD3S6QGV/r7mtICyxVzZRcdZParqv3zrwx0jBuxgVMLPWCt+e1XXDaqk43XuySTXN8K/F2qqOqNmWZ9gEXAt5mOprm9sjQPXppFHMx0tZnkOcUGyXawFioMDgPhvxLVRUUnTwFCq2DEgeoAnYfE6I+Y3U1myJmJo5Xxjlx0dg1Sb4DY/JXO7etRthsKgjmU7dT/E8ITKLZpv6vtfE+800k23FuesD295MhexZatQasxjY5HwDiPbfOUlNvZDEqTImcnP2+Fj3vrtKD6rk3JP5ef5r5MRSVWth2Unl8IH9bAXA0eaZsdVwEW5CRaVWwPCori/63B8oH4xJ4VpNAELQvE//VO9OfJie+UPSR+fK9PBqY04o+cxnRMkaROz58xO89i0AGwZQRfU3NqoNvp5335lP2cHWYqyInbpR6F+cdx7E9oR1uIj0cljnG/bJ4Vk16wudyS8xBur58LYH5iCFW4fIUmw/YLT8DN/xKb/9TDTDPDnxgbjwhpJFtXM+lfXpoRM8yd2ptXGObtjWCEzghLrGCFipn3bsZH
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(396003)(136003)(376002)(346002)(39860400002)(366004)(83380400001)(2616005)(38100700002)(45080400002)(38070700005)(5660300002)(26005)(186003)(2906002)(6506007)(8936002)(53546011)(478600001)(122000001)(71200400001)(966005)(86362001)(316002)(64756008)(54906003)(4326008)(8676002)(66946007)(66556008)(6512007)(33656002)(66476007)(76116006)(91956017)(66446008)(41300700001)(36756003)(6486002)(6916009)(45980500001);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: =?us-ascii?Q?J/2lqxkI9f+/uhw2BKqfya4BrqW35A6O4JTrex+eP27cC/a63igeQdP9t6P7?=
+ =?us-ascii?Q?+qU2nyjuBlKiiJzGBa2rJ2x1Sa0cbHqLrvfHRQi+E5bOPNjyv5oanJ/v8/H2?=
+ =?us-ascii?Q?CmRV5/qH7BAymYfDdAZ7UzkgI8bmvEI++c0ZTOBG1jfZ7FOCBJG2yBc3aANY?=
+ =?us-ascii?Q?XHhIG8KZ6MttquHRimyc6iDaSnWcB543/a80OYj8zYSJ4RKco0o7al5rFJTS?=
+ =?us-ascii?Q?+nfKR7BJ2NsbxXUSIGssn7pnGHmZ33s4IIuPJWr6Q/5Qp1K0d3ay9XgAeRfd?=
+ =?us-ascii?Q?nub0hWu5fz8Vv0+TT4vZneXjpTqf7DiLJnJRDViuYdDvnRkhRShKzfXMTzMV?=
+ =?us-ascii?Q?mN/OW0+2/pDRAN7IccTJXjmDJQZw96XVTiRKiAZuXbQOVmuYzym3Jh88eaTb?=
+ =?us-ascii?Q?vUoerPn2YgSUJnPkoM9PVInFfVwXeCM5FNMyX55gXJ1X9PkuaqZ04hLkeE3g?=
+ =?us-ascii?Q?thZMclIaZ9FbgCDeLhv1Vpf6ukdiJnUgbZQcAXofx1E86qqc9kuvuGoMETGn?=
+ =?us-ascii?Q?NxgfrNgixjtPongB4UPkPQN789WmQBwgDAIv7IBflfnxXaa3kuFtlpMfp1vO?=
+ =?us-ascii?Q?f5pGmuOjeBnvYsq+HMCUKOFsLRNul5ZPsysyC2WnjlucvFpRnTbveT+jpvwA?=
+ =?us-ascii?Q?av+5DyZedfw8U2gXF/Ah7qrZOaM7Cobf4T3DjCYssoXnsnJEEkbyyQWCzNkY?=
+ =?us-ascii?Q?ktzssglMzwMrJD163q0WJPtN8Q3UD61KeqYeRnhQvZ8x8p11TIOwrgEuyyqu?=
+ =?us-ascii?Q?Yd7Qh6FZH/ZDSDcV3l9vGrJMpf6dM9OE4rkImLD/amUzV8jIQa19DbjWvUjd?=
+ =?us-ascii?Q?GgzWYVYAJ3Mp8fKLcdY8Ip1tBxJrlAQXPmZfP+axO2xtfmkm2Z1XGcoaWIN/?=
+ =?us-ascii?Q?jTg9Wp5IcgRNQPz7x+TdB9CIzs7TwXcVB2kQgJBKVmOCnOp4TpQkxEyKD9xf?=
+ =?us-ascii?Q?v3tTX/yLonZ5EQA4vQaO+A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR05MB8531.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(366004)(136003)(346002)(376002)(396003)(5660300002)(316002)(41300700001)(36756003)(186003)(6486002)(66556008)(54906003)(6916009)(53546011)(6512007)(2616005)(478600001)(2906002)(966005)(76116006)(4326008)(86362001)(64756008)(8676002)(38100700002)(66446008)(122000001)(66946007)(71200400001)(26005)(8936002)(38070700005)(83380400001)(6506007)(7416002)(33656002)(66476007)(45980500001);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gQLnNt17XwyNQJfjh+/LttxosJINrbUDO7yknfEPV86H3jOkwJsj4myZPtsM?=
- =?us-ascii?Q?7sqCm05hEONBKWCRSKmAmcHiGj54BDJpsIJ6V0dUCYaDLucjeEoPYFrBStMw?=
- =?us-ascii?Q?NwvoenYt06P+VKQ09ctIwyOsNlCe3y/O44P5o+FfM2Shk/il/6Sx3DDDfhNp?=
- =?us-ascii?Q?eLveGEhSd+11LrmAXHGvRuEgx86s8GrDCKJT0HRuBK9QRByva4FrqKwGm8vM?=
- =?us-ascii?Q?QzEJADPKtcevfDhVqAnx7U1F3AFllgpA0/LUG8uExOtI+H3rHVPvOs+r8Buo?=
- =?us-ascii?Q?YYQZ14IK8a3KjytyHZdfYuU2aIoofYHpgTnoJteMmvobGD+ASck+/ijWJDhP?=
- =?us-ascii?Q?6pcPqHqSB9518KfmB8rhPfNBhfCaTOInPczX0UOImOnhBkwIZ4Uy2VK8fMTv?=
- =?us-ascii?Q?TvItgsbToDnopfYtUgwGYQl9WL/zA+uqyxntHgJvKwpz4sFjwdTs6qKEb52F?=
- =?us-ascii?Q?O/Xvnnwte6RTKq0XY9PIe7gL6qlscqKAumTJ/Ce5X0eNpMAC+RCSx3/hCMqB?=
- =?us-ascii?Q?S687z33m2wZcVHqLQFnscYPIQjJ+d4PZGOy6EY69zz20tmgmBbI42TX0MUWz?=
- =?us-ascii?Q?sGObX+AzJwztjZkIfVIVwwgQmO91dogDvBbEREbkvsz5FT5qj87ZH2BDFH/z?=
- =?us-ascii?Q?daFhf2x4TF8599ZR/34tbQddoAzYQ078s6Rf+l2GW1R8/zAo8GuR9/HZDE10?=
- =?us-ascii?Q?5oHRF/rY07iFlH+wXKwHPDQleyiUVBgO3FkAKw/JJcww/aqCsy2oZjGukxAv?=
- =?us-ascii?Q?W2ot0J7kYX2aCc134n9KZJaDOajUefhVmfaQ4yiLn4oredzCE1PpbDALQIBG?=
- =?us-ascii?Q?dlGMqkly1E6ei8YmQNdEUg0zEz25aG5ykoS4Rx3reGm9H0u0Xv5frJGY/7iv?=
- =?us-ascii?Q?VKLg8O5OpAFxjzcqO/IlyOAQrP/7HNYMTzuMVImq28pvk5uE7udlp7hZAVJ5?=
- =?us-ascii?Q?SkFCYyf2ZC98mMExMM9dKpVTdm/aB+dWOrezAOrRs8IOh9kkxXAzWiThvuoX?=
- =?us-ascii?Q?SJUxi9Y9+21o9Bevb1Bluwpc14kkLf4jpr/LljzWyv36VrUAE9WSxbvBG4iq?=
- =?us-ascii?Q?+oDocYawOT2kKfY9RM+eEpIfHVsATazSxtqVwP/ig6/KEcOyYRRX3/mtf2Gt?=
- =?us-ascii?Q?N4nqa4YK8i2PIWAJb6uvYA+eoV07PFkuzNMbCSKryVWu+iIpNAJhF4QYqHXI?=
- =?us-ascii?Q?9mBB0cP3fttpbPrvvop2XyvYUMVvTEKxw6g4B4tOdmgx18w13x37CxuftiFH?=
- =?us-ascii?Q?bN23jEdIgj6KfrBOCYVynC7mpLfCSQY0QeqR7WEL526eHqdzf08IYYHGhQyI?=
- =?us-ascii?Q?V5Fmg6Q3H+cpPpgzYrerdFrNcqxts023TKWaA31mNlv4WvYwS+cCgX1p5n1N?=
- =?us-ascii?Q?i2X2RIbjpZpbMzycvEV6CCtSvrbr1J0Uf3EHAdZGs9poX0H2JM7UtKmxtedA?=
- =?us-ascii?Q?YqlJLZR5vpXxoJV7s8YLOFUnfcLUie6k50soXzWWdftsuryIIaMzABklrGtk?=
- =?us-ascii?Q?rrujtzspbuuYcFFkczBtJi4pU5hPqzUUsbTOlv/3WpnAQJ88EZnvje750awP?=
- =?us-ascii?Q?Aigxertn8yAjOJCKZKVo47wICknaqABe8GpJ2nClf/bh2J65DQSU4vJg2Yto?=
- =?us-ascii?Q?JA=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tHYjYGf7Z49zZFFu6IVspLrsuDYOXtNS/KM/baS7NfArK+RZM+s+qM7qD+7S?=
+ =?us-ascii?Q?gfIlh1QYXSiJ2b+WS8M4UBsGMBi9yz1Wc/tt7P5ML6QVpIvT49VdzaElXT9n?=
+ =?us-ascii?Q?CK3JO2YchSX7fhltRcKjgWIaivqfxa+JpnSD6H2spH6Px16Sm3s6lb6Mey9w?=
+ =?us-ascii?Q?qK9O2op89kjVZU/2rb6QmCoisulz1q5B2Vws74a3GFO28zILF17tp7+qL2Be?=
+ =?us-ascii?Q?FOq9WjFkdBqxxsgkN3xEAgLA1/sYQV/Mk+/IBimdC61Zm05XRK/RNvNVloUH?=
+ =?us-ascii?Q?b9DSKN+88yVMywsWnEBmnfYQN0lYdQjbstHWW1cH/+1pFVeR7pjX+TznKalU?=
+ =?us-ascii?Q?DA61a8LjJHD8Cw5HutZMpqWZI7EyqstItauQNWnm1a59bxYwXGL/BhnEKZV0?=
+ =?us-ascii?Q?h1/AnxDJpAioVqVyAbvqw+hhzYofJ4yXLwwDct2c5gdWwkC1u97rFI2Fsjjw?=
+ =?us-ascii?Q?XOdJhBTQ9DJs24laDHgpTcIYUl8BpOCaUL/pp8ynKpq/wKMVX7gkWiwb0I8I?=
+ =?us-ascii?Q?sFUf6/QrGsQZWOICjLxCWqEvTvXbTfOH3pzcQZSy6C6Y/Xd1SBsTZBac8nJV?=
+ =?us-ascii?Q?g6wTLLAJ6RuJlmNW3u2CazseHDG4zW8gAZmX/8fWRfEljgzkK0ZNFE0U9Tbx?=
+ =?us-ascii?Q?oRfk+KygoNHrVRjZDt5HkOgejxbiGZlKIjBrR3Ne3zZois9aBKYcTb4IP4Ny?=
+ =?us-ascii?Q?Ep/3LMJBmoAx+7JQ3rF/phXmwfAPDM4g4RPV1uN8wz90l6043c1SOsEjky5p?=
+ =?us-ascii?Q?MBNn54qYfOmajHkl8y6m/uiwp0UoSTzyWDIDljXjvRGPdY7VFgtZQa2Gq5QM?=
+ =?us-ascii?Q?NrXlAjtoOIicQg1NozmFRBBNMVhszaomFMCTC12qXTwG6H8+bqrx2duDKuYl?=
+ =?us-ascii?Q?+xqhmUtIQvz3iwR28LVFuFp26xj3jKTwAYHbZRem+vR4SylC1iO7Y7wYswyW?=
+ =?us-ascii?Q?9KPNTtpoKAZB26J8DuczqvzOxz2BM1zKBE5vDC/GFiijJIMHhXrfWnRDVVRC?=
+ =?us-ascii?Q?JIMnqFKrZzK03wg320QY4BVoQXx/oaFuzEvAS9KeIYELlmNhSbWFFRv6/9Zf?=
+ =?us-ascii?Q?Q9bSS+xOWaxyY6J24xZv4yk0OGygu1oXXGfFI7j36oCWoo8SnFAyQV0+p7NB?=
+ =?us-ascii?Q?yoqDLOVgU+FZbSliB/3z8k5q24EAUe7DJxwd0NR/Wfz9bjLbhkjnZU3IODFG?=
+ =?us-ascii?Q?RxdTPecQXL5VCyx1T5qtzeTBzQVg1kcPZAQGUBjZ834twqHMohkBN1MAbo24?=
+ =?us-ascii?Q?yCsS+EwuX/1hnQ4VLF3MFaHMrTsMMiTFzDE68gNbNszDbQdDTQ0cCRNiEdG0?=
+ =?us-ascii?Q?V5lOqC+iuL+VmQUqpZCfIvyoH7oCNnmvcji1Gclt3v+nyGEVE1IXrjFMUFPm?=
+ =?us-ascii?Q?lKvgbkwKuGydqtplWoBucI34QtbZa9qHOw2NzHOTLv8+x/gubY9MXUY9Qi13?=
+ =?us-ascii?Q?4cS799Vu16kguYzVEolo3OBFlDZo3O1SmJokFo2aQdCh20rohoFBJPh1sjXF?=
+ =?us-ascii?Q?mw0RGuijbGGKwDr+4RSF0OAHtkPMuna8+5HLhT8d0V9ApOoXRU5ebBNDBc1P?=
+ =?us-ascii?Q?u+F36pt4fzqs1vOtMteo1L/csJZHdzKKVY2glXsp?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4B363769A243AC449F33EDCA7672E8EC@namprd10.prod.outlook.com>
+Content-ID: <AED34CA9925D9C48967DC7A4E99266EB@namprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
+X-OriginatorOrg: vmware.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b95b8c2a-6f90-4db8-b879-08da69c7e84f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2022 20:47:34.2667
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR05MB8531.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fcc13f5-dfb3-4341-048a-08da69c92ba0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2022 20:56:36.6971
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0A0TTDCFUp/lruJlOhOSPBtobdCkQHdxxStOOPTQZSVKEWQrqeFh8aQhPvpxfp8fMFnbuotPyhwdybR8rqRfOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5201
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-19_08,2022-07-19_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207190086
-X-Proofpoint-GUID: NeLoXz8UEVblKgk5HlCn80yBGR0C8rw3
-X-Proofpoint-ORIG-GUID: NeLoXz8UEVblKgk5HlCn80yBGR0C8rw3
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-MS-Exchange-CrossTenant-userprincipalname: K0OD650ubvU4U/2uuNR9WksovmHmiv2ClbV4oi3QYqEiYtS7JdUZVgPaUD8BRvg8wmgh3VhI798G0KX9kPWWOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR05MB4685
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_NONE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -157,192 +155,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Jul 19, 2022, at 12:56 PM, Axel Rasmussen <axelrasmussen@google.com> wro=
+te:
 
-
-> On Jul 19, 2022, at 4:24 PM, Anna Schumaker <anna@kernel.org> wrote:
+> This new mode was recently added to the userfaultfd selftest. We want to
+> exercise both userfaultfd(2) as well as /dev/userfaultfd, so add both
+> test cases to the script.
 >=20
-> On Tue, Jul 19, 2022 at 1:21 PM Chuck Lever III <chuck.lever@oracle.com> =
-wrote:
->>=20
->>=20
->>=20
->>> On Jul 17, 2022, at 9:15 PM, Dave Chinner <david@fromorbit.com> wrote:
->>>=20
->>> On Fri, Jul 15, 2022 at 07:08:13PM +0000, Chuck Lever III wrote:
->>>>> On Jul 15, 2022, at 2:44 PM, Anna Schumaker <anna@kernel.org> wrote:
->>>>>=20
->>>>> +nfsd4_encode_read_plus_segments(struct nfsd4_compoundres *resp,
->>>>> + struct nfsd4_read *read,
->>>>> + unsigned int *segments, u32 *eof)
->>>>> {
->>>>> - struct file *file =3D read->rd_nf->nf_file;
->>>>> - loff_t data_pos =3D vfs_llseek(file, read->rd_offset, SEEK_DATA);
->>>>> - loff_t f_size =3D i_size_read(file_inode(file));
->>>>> - unsigned long count;
->>>>> - __be32 *p;
->>>>> + struct xdr_stream *xdr =3D resp->xdr;
->>>>> + unsigned int bufpos =3D xdr->buf->len;
->>>>> + u64 offset =3D read->rd_offset;
->>>>> + struct read_plus_segment segment;
->>>>> + enum data_content4 pagetype;
->>>>> + unsigned long maxcount;
->>>>> + unsigned int pagenum =3D 0;
->>>>> + unsigned int pagelen;
->>>>> + char *vpage, *p;
->>>>> + __be32 nfserr;
->>>>>=20
->>>>> - if (data_pos =3D=3D -ENXIO)
->>>>> - data_pos =3D f_size;
->>>>> - else if (data_pos <=3D read->rd_offset || (data_pos < f_size && dat=
-a_pos % PAGE_SIZE))
->>>>> - return nfsd4_encode_read_plus_data(resp, read, maxcount, eof, &f_si=
-ze);
->>>>> - count =3D data_pos - read->rd_offset;
->>>>> -
->>>>> - /* Content type, offset, byte count */
->>>>> - p =3D xdr_reserve_space(resp->xdr, 4 + 8 + 8);
->>>>> - if (!p)
->>>>> + /* enough space for a HOLE segment before we switch to the pages */
->>>>> + if (!xdr_reserve_space(xdr, 5 * XDR_UNIT))
->>>>> return nfserr_resource;
->>>>> + xdr_commit_encode(xdr);
->>>>>=20
->>>>> - *p++ =3D htonl(NFS4_CONTENT_HOLE);
->>>>> - p =3D xdr_encode_hyper(p, read->rd_offset);
->>>>> - p =3D xdr_encode_hyper(p, count);
->>>>> + maxcount =3D min_t(unsigned long, read->rd_length,
->>>>> + (xdr->buf->buflen - xdr->buf->len));
->>>>>=20
->>>>> - *eof =3D (read->rd_offset + count) >=3D f_size;
->>>>> - *maxcount =3D min_t(unsigned long, count, *maxcount);
->>>>> + nfserr =3D nfsd4_read_plus_readv(resp, read, &maxcount, eof);
->>>>> + if (nfserr)
->>>>> + return nfserr;
->>>>> +
->>>>> + while (maxcount > 0) {
->>>>> + vpage =3D xdr_buf_nth_page_address(xdr->buf, pagenum, &pagelen);
->>>>> + pagelen =3D min_t(unsigned int, pagelen, maxcount);
->>>>> + if (!vpage || pagelen =3D=3D 0)
->>>>> + break;
->>>>> + p =3D memchr_inv(vpage, 0, pagelen);
->>>>=20
->>>> I'm still not happy about touching every byte in each READ_PLUS
->>>> payload. I think even though the rest of this work is merge-ready,
->>>> this is a brute-force mechanism that's OK for a proof of concept
->>>> but not appropriate for production-ready code.
->>>=20
->>> Seems like a step backwards as it defeats the benefit zero-copy read
->>> IO paths on the server side....
->>=20
->> Tom Haynes' vision for READ_PLUS was to eventually replace the
->> legacy READ operation. That means READ_PLUS(CONTENT_DATA) needs
->> to be as fast and efficient as plain READ. (It would be great
->> to use splice reads for CONTENT_DATA if we can!)
+> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Acked-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+> tools/testing/selftests/vm/run_vmtests.sh | 5 +++++
+> 1 file changed, 5 insertions(+)
 >=20
-> I remember Bruce thinking we could only use splice reads for the very
-> first segment if it's data, but that was a few years ago so I don't
-> know if anything has changed that would allow spliced reads for all
-> data.
-
-That might be a limitation of the current NFSv4 READ implementation
-rather than something we always have to live with. But yes, I think
-it's true that splice read only works for the first READ in a
-COMPOUND, and READ_PLUS CONTENT_DATA segments are a similar
-situation.
-
-Even so, IMO enabling splice read on the first segment would cover
-important use cases, in particular the case when there are no holes.
-
-'Twould be interesting to add a metric to see how often READ_PLUS
-returns a hole. Just a thought.
-
-
->> But I also thought the purpose of READ_PLUS was to help clients
->> preserve unallocated extents in files during copy operations.
->> An unallocated extent is not the same as an allocated extent
->> that has zeroes written into it. IIUC this new logic does not
->> distinguish between those two cases at all. (And please correct
->> me if this is really not the goal of READ_PLUS).
+> diff --git a/tools/testing/selftests/vm/run_vmtests.sh b/tools/testing/se=
+lftests/vm/run_vmtests.sh
+> index e70ae0f3aaf6..156f864030fc 100755
+> --- a/tools/testing/selftests/vm/run_vmtests.sh
+> +++ b/tools/testing/selftests/vm/run_vmtests.sh
+> @@ -121,12 +121,17 @@ run_test ./gup_test -a
+> run_test ./gup_test -ct -F 0x1 0 19 0x1000
 >=20
-> I wasn't aware of this as a goal of READ_PLUS. As of right now, Linux
-> doesn't really have a way to punch holes into pagecache data, so we
-> and up needing to zero-fill on the client side during decoding.
+> run_test ./userfaultfd anon 20 16
+> +run_test ./userfaultfd anon:dev 20 16
+> # Hugetlb tests require source and destination huge pages. Pass in half t=
+he
+> # size ($half_ufd_size_MB), which is used for *each*.
+> run_test ./userfaultfd hugetlb "$half_ufd_size_MB" 32
+> +run_test ./userfaultfd hugetlb:dev "$half_ufd_size_MB" 32
+> run_test ./userfaultfd hugetlb_shared "$half_ufd_size_MB" 32 "$mnt"/uffd-=
+test
+> rm -f "$mnt"/uffd-test
+> +run_test ./userfaultfd hugetlb_shared:dev "$half_ufd_size_MB" 32 "$mnt"/=
+uffd-test
+> +rm -f "$mnt"/uffd-test
+> run_test ./userfaultfd shmem 20 16
+> +run_test ./userfaultfd shmem:dev 20 16
 
-Again, that might not always be the case? But OK, I'll table that.
+Do not do it if it would require another version of the patche-set, but
+otherwise, consider using a loop as I did in [1].
 
-
->> I would like to retain precise detection of unallocated extents
->> in files. Maybe SEEK_HOLE/SEEK_DATA is not how to do that, but
->> my feeling is that checking for zero bytes is definitely not
->> the way to do it.
->=20
-> Ok.
->>=20
->>=20
->>>> I've cc'd linux-fsdevel to see if we can get some more ideas going
->>>> and move this forward.
->>>>=20
->>>> Another thought I had was to support returning only one or two
->>>> segments per reply. One CONTENT segment, one HOLE segment, or one
->>>> of each. Would that be enough to prevent the issues around file
->>>> updates racing with the construction of the reply?
->>>=20
->>> Before I can make any sort of useful suggestion, I need to have it
->>> explained to me why we care if the underlying file mapping has
->>> changed between the read of the data and the SEEK_HOLE trim check,
->>> because it's not at all clear to me what problem this change is
->>> actually solving.
->>=20
->> The cover letter for this series calls out generic/091 and
->> generic/263 -- it mentioned both are failing with NFSv4.2. I've
->> tried to reproduce failures here, but both passed.
->=20
-> Did you check that CONFIG_NFS_V4_2_READ_PLUS=3Dy on the client? We had
-> it disabled due to these tests and the very, very long time servers
-> exporting btrfs take to read already-cached data (see btrfs sections
-> in the wiki page linked in the cover letter).
-
-Confirmed: that variable is set in my client's booted kernel.
-
-
-> There is also this bugzilla documenting the problem:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D215673
-
-OK, then let's add
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D215673
-
-to this patch when you resubmit. (I used to use BugLink:
-but I gather Linus doesn't like that tag name).
-
-
->> Anna, can you provide a root-cause analysis of what is failing
->> in your testing? Maybe a reproducer for us to kick around?
->=20
-> The only reproducers I have are the xfstests mentioned. They fail
-> pretty reliably on my setup (linux nfsd exporting xfs).
-
-Then, the first order of business is to understand why you
-can reproduce the failure easily but I cannot. (Hrm, I think
-I did try to reproduce on xfs, but I'll have to check).
-
-I'd like to see READ_PLUS working well in NFSD, so I'll
-try to be as helpful as I can. There will be a learning
-curve ;-)
-
-
-> Anna
->=20
->> I'm guessing you might be encountering races because your
->> usual test environment is virtual, so we need to understand
->> how timing effects the results.
->>=20
->>=20
->> --
->> Chuck Lever
-
---
-Chuck Lever
-
-
+[1] https://lore.kernel.org/linux-mm/20220718114748.2623-6-namit@vmware.com=
+/
 
