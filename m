@@ -2,116 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EB157A140
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 16:22:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A00AC57A174
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 16:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236428AbiGSOWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 10:22:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
+        id S238624AbiGSO2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 10:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236204AbiGSOVp (ORCPT
+        with ESMTP id S237767AbiGSO1o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 10:21:45 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA5E66B81
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 07:04:46 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id i132-20020a1c3b8a000000b003a2fa488efdso1698618wma.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 07:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=L94oHBSftAEa3rDT4AJ1V+PwG4JicNPHLRIniySo+rM=;
-        b=StLIAtFJw2aByBPEd5DWw/mCW7IX8gyCWM24C5VoqghqL3x7mLezHcKBXBVSrWP84Y
-         xwJElpDOvDRLZdnqDBCB9YrtqBbi8nAuLZ7PkqfcIRG8P2uZCRlaQkLM/e0+BkVvjmzf
-         EoBA2nTXSoq6MqT7QsrHRWmlaghdUAZFzDjzMxYZw0AaCjJao/XrX/wnTYMTML475E5j
-         GANHdeYrjqP2moSb/cJNcp5EQWfLnCtQtrtdNtWENXrpj2oBY6tzngcPwdFsMkZ0Uyqh
-         mwM+Zonn09DR2yP4vuGqU45N6YFgxne2OxhbnzW1eCaZhoRvB4Ton3Y7R0TYnMCqorjq
-         0BFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=L94oHBSftAEa3rDT4AJ1V+PwG4JicNPHLRIniySo+rM=;
-        b=5rwAMk4P8T3l41UywlCSfcRMjZ/eQuXNbQ7SBspnBvI4NsJEurv+rAjuU5v6tM2ble
-         Vbkct0JqSvPVYAuA1sN1ZVAMMArR1L4ZAkDcG5L+2rUoGHv7FnEtMRqAi/IBDelQXDdS
-         QLgwxVqnp4NTF9NoV3oXW7sOJPCKhvQS2s3Rq+X+8RxApRj5i5Z4sZMKrPmK5w4N7CPN
-         TSszDNj7/7aUCx5YU2myDnt1GYV5PO0HdjmhBHibNk4nanH7tKVJeFxpMhHrEOx/yqNr
-         n1+HfPMPbpuNWC27B2f42M8d/28lU0xe+wCTRjQzzl0HDp7hFzXcvnnR2Si2NaF6Rkql
-         xfag==
-X-Gm-Message-State: AJIora+uLl3Aha1eagPZdhGoSAzCDcvz7uUcRPWavztEqe2KvFrla0dr
-        jihlpmuNhjuikkuFDC+WohjjMA==
-X-Google-Smtp-Source: AGRyM1tjuVhJR84hP2gMCuawKRlwNGX9ih4Tn6UUGN84EYqew++4Z1I0GdyS8KZxc7vD+L14OYUgug==
-X-Received: by 2002:a1c:7915:0:b0:3a3:11a3:7452 with SMTP id l21-20020a1c7915000000b003a311a37452mr15511350wme.27.1658239485155;
-        Tue, 19 Jul 2022 07:04:45 -0700 (PDT)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id i16-20020a5d5230000000b0021d9d13bf6csm13252481wra.97.2022.07.19.07.04.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jul 2022 07:04:44 -0700 (PDT)
-Date:   Tue, 19 Jul 2022 15:04:41 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Haimin Zhang <tcs.kernel@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Haimin Zhang <tcs_kernel@tencent.com>,
-        TCS Robot <tcs_robot@tencent.com>
-Subject: Re: [PATCH v2] fs/pipe: Deinitialize the watch_queue when pipe is
- freed
-Message-ID: <Yta5+UOcK2rgBT6q@google.com>
-References: <20220509131726.59664-1-tcs.kernel@gmail.com>
- <Ynl+kUGRYaovLc8q@sol.localdomain>
- <YsVYQAQ8ylvMQtR2@google.com>
+        Tue, 19 Jul 2022 10:27:44 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B37BDF;
+        Tue, 19 Jul 2022 07:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658240047; x=1689776047;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=/UxCRrCRwzJ4X66ZQ0IeKBQtuQGxvYag5toGoeMRWuQ=;
+  b=CZYyYygzXCqloUO9aGVdDcJXYjTh9oYBJFxUMSxe3vvRKpU4gOckgOMn
+   JilTFTI6emQSdx8rywraLU90dhr1EOEFNhKfhHa+WsZwIMkLeSH7zbqq8
+   FJouPrO28zJUxeb/SxE4iTLfLasD7me/K4TWdAjq7X4a2dohduIirBRKf
+   WNMDKsJHPtvSN0BsTYzXvXe3ManHlqTz4kQe21r9Bp/HBTiLQpGGnwOKd
+   U3tdxxcsUWbu4QZv9FYTSDAfiMSLeYxqi5lVXlJjruhpOV6n6KK1zvRtZ
+   q9yPYIc6RAqbyfUskmfkyguvP+kJlEdUqp0XNo4+JbI2iX1YsPRQhKoAg
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="284063648"
+X-IronPort-AV: E=Sophos;i="5.92,284,1650956400"; 
+   d="scan'208";a="284063648"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2022 07:13:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,284,1650956400"; 
+   d="scan'208";a="655776691"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Jul 2022 07:13:34 -0700
+Date:   Tue, 19 Jul 2022 22:08:43 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
+ memory regions
+Message-ID: <20220719140843.GA84779@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+ <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YsVYQAQ8ylvMQtR2@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 06 Jul 2022, Lee Jones wrote:
+On Tue, Jul 19, 2022 at 10:00:23AM +0200, Gupta, Pankaj wrote:
 
-> On Mon, 09 May 2022, Eric Biggers wrote:
+...
+
+> > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
+> > +{
+> > +	return false;
+> > +}
 > 
-> > On Mon, May 09, 2022 at 09:17:26PM +0800, Haimin Zhang wrote:
-> > > From: Haimin Zhang <tcs_kernel@tencent.com>
-> > > 
-> > > Add a new function call to deinitialize the watch_queue of a freed pipe.
-> > > When a pipe node is freed, it doesn't make pipe->watch_queue->pipe null.
-> > > Later when function post_one_notification is called, it will use this
-> > > field, but it has been freed and watch_queue->pipe is a dangling pointer.
-> > > It makes a uaf issue.
-> > > Check wqueu->defunct before pipe check since pipe becomes invalid once all
-> > > watch queues were cleared.
-> > > 
-> > > Reported-by: TCS Robot <tcs_robot@tencent.com>
-> > > Signed-off-by: Haimin Zhang <tcs_kernel@tencent.com>
-> > 
-> > Is this fixing something?  If so it should have a "Fixes" tag.
+> Does this function has to be overriden by SEV and TDX to support the private
+> regions?
+
+Yes it should be overridden by architectures which want to support it.
+
 > 
-> It sure is.
+> > +
+> >   static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
+> >   {
+> >   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+> > @@ -4689,6 +4729,22 @@ static long kvm_vm_ioctl(struct file *filp,
+> >   		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+> >   		break;
+> >   	}
+> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > +	case KVM_MEMORY_ENCRYPT_REG_REGION:
+> > +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
+> > +		struct kvm_enc_region region;
+> > +
+> > +		if (!kvm_arch_private_mem_supported(kvm))
+> > +			goto arch_vm_ioctl;
+> > +
+> > +		r = -EFAULT;
+> > +		if (copy_from_user(&region, argp, sizeof(region)))
+> > +			goto out;
+> > +
+> > +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
 > 
-> Haimin, are you planning a v3?
+> this is to store private region metadata not only the encrypted region?
 
-This patch is set to fix a pretty public / important bug.
+Correct.
 
-Has there been any more activity that I may have missed?
+> 
+> Also, seems same ioctl can be used to put other regions (e.g firmware, later
+> maybe DAX backend etc) into private memory?
 
-Perhaps it's been superseded?
+Possibly. Depends on what exactly the semantics is. If just want to set
+those regions as private current code already support that.
 
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Chao
+> 
+> > +		break;
+> > +	}
+> > +#endif
+> >   	case KVM_GET_DIRTY_LOG: {
+> >   		struct kvm_dirty_log log;
+> > @@ -4842,6 +4898,7 @@ static long kvm_vm_ioctl(struct file *filp,
+> >   		r = kvm_vm_ioctl_get_stats_fd(kvm);
+> >   		break;
+> >   	default:
+> > +arch_vm_ioctl:
+> >   		r = kvm_arch_vm_ioctl(filp, ioctl, arg);
+> >   	}
+> >   out:
+> 
