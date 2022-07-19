@@ -2,180 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46F1857AA01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 00:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C8757AA28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 01:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240356AbiGSWqR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 18:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
+        id S240649AbiGSXCa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 19:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240360AbiGSWqP (ORCPT
+        with ESMTP id S238664AbiGSXCJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 18:46:15 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 516CC4F184
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 15:46:14 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id v185so13030193ioe.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 15:46:14 -0700 (PDT)
+        Tue, 19 Jul 2022 19:02:09 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF8550052
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 16:02:02 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id 75so29255859ybf.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Jul 2022 16:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lnuskSEx1rWRFyExO7VDAIyPqC7rs15nNdWPt5ojSJo=;
-        b=MjL9o3vEOb0cC/AOC29+FJHaYEDdp3YF4uPnUKdH2MSDVyDrF7ODr3Ke0Wcy4ilYzf
-         BzCFwxsZ/XHiEHTOzXcQJv3vCytelIwqMbSVQy/FRLtlMuURP6ov3NWCIw8RZPLahcDd
-         C48SeV+unpKZ2XPeGrdmEDCsa6LF6ZASoymNm+TqHMtWQYybbebrFT/9bV5YYeMDLZ4x
-         oaPJRoZ/aZAKBfaZ9E6cpvtaiAhFYSDi9LC7qcvIPN12naTuSVOg+/o2fA2e6EiO7Fa0
-         xHvsR1NLSDdqKv1q7gdh+mZLQNyp7KE54xFUiOdTzB8i+cvo8dMLbT1d0lXkvAObz4G2
-         IAjg==
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=YeEFrOpnueqp49lpSsCtkyhW66cD5QzqZPU5hyS5TkM=;
+        b=IidRqp259LnIGwKSY8eSnwY2pSvVpnXgD6l4DtZ0nS1en5/eIODexxA8HY1P3fOj1G
+         k3L2dqT2adyYNMP0Xveqboy+8rHiXHxkUk7eN+Z4c1u4A1dmYZTv8XeBq3Mcqc8JpY/J
+         Y+FZqCw+ctBHW93xydCMO1T2zbJgKE6zi4yOKnSgCU0wXAb68jTgzbksOw/WF0fuySr4
+         IszSqaPAblIoqFUVbDoenHDcU4oM8zz2T2X2YOFu4paIHinYHYAEpHDagNDILO9VwXpP
+         1+8RZDNcKixJbUOVKzMHhr00ZyE0o1uffduD4Jla0qSaybMZB4f9mMaQZtZwFiKbVkVp
+         7loA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lnuskSEx1rWRFyExO7VDAIyPqC7rs15nNdWPt5ojSJo=;
-        b=fRZI5pWU0o2t3SmXUxoZp5j41JITKVXm8a3HYPbf8+bCEqBZ0aA23qQo2u+X/VIE6b
-         1texmLJ9WCNvTlnbMKkR6uv5LjuJ3y4mAnsvL68RZGW53zQNN1vcRdbnuKkj3eos9YAg
-         a6iaFLjw0O9GOKIh1p+74hP2R/v280IY0e10aFmVVviSFyafR0wN3cTrd+TNY33GWr3J
-         4tQtUUuGNAPXnO9ihFV6Z645LwvOasN0A9JGBLhCK//yqOrYsp9d6e+zVmoQK8QuNnOK
-         8Pzbs9R0QRrMrLyrfjRb0654RbE3Jj1udcIKNBqBXuerQW4x1ps1Fkrkc6SUY8QBplUe
-         /kyA==
-X-Gm-Message-State: AJIora+8caghEcqAPdMewJ0jkR/F2TEOQ86We1TqJ763zEjJQqvKBnde
-        HbP/hsq/RjjuGy2z9/j8I83Oo1GakvhloViq/CYeZg==
-X-Google-Smtp-Source: AGRyM1scKsvkgjvOBcySMD8ANT00O0TRABCY2NJ0UUBywdxmH7xhFhuqq83FJ/2EITJFvKlSUEurf8W9R+8SpfjeE5I=
-X-Received: by 2002:a05:6602:1644:b0:678:8ba4:8df6 with SMTP id
- y4-20020a056602164400b006788ba48df6mr16243773iow.138.1658270773545; Tue, 19
- Jul 2022 15:46:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=YeEFrOpnueqp49lpSsCtkyhW66cD5QzqZPU5hyS5TkM=;
+        b=1MzGPm6HMhVre3zdUqDa7ItwfEeVDLi597q5XEg0oXhHRKF+5wi0187E6Eis6qPgg1
+         uCQceOVGq1SF6YZgK73aaPuaMg+ZkCRc6jq6TjlPWPh9uK2aV2MA1ymD7dJ0RYtNVjRZ
+         u2Amc9OindpHBKFZDNHy03g7SD9zotob2x0Mz8rZVWBThJryQoLkdoqFBOn7tOUHyi+f
+         PTI12Xy8/M/S7LO0GGLCTVmxR6OLL57taazRXF4uGJMbaem6H7dTZH1LOwraCbtUUjB7
+         /Q/VPzBB0qjbJh8h+UYayWx7k776dm1SOX//pHNyvM+X4f4p7MwtUIIYWL7uspnvsune
+         +g8g==
+X-Gm-Message-State: AJIora9BQFJQy3tT0eH+ccu9n3S8lvjW+whjBiOnBji6MKjMZwWCdLw2
+        9Z+p6OxoAeNOg4cG14tPRN4QBSFuG5qlmCeSCs8=
+X-Google-Smtp-Source: AGRyM1sl0J4NyfzC2f29bqXT9oPchs8cDVndRHRbS2Q3refz6ns6Y35SIupBWILMCNYHx3pJ+wk7AlhI9UdwA1sMqK0=
+X-Received: by 2002:a25:850b:0:b0:66c:d287:625a with SMTP id
+ w11-20020a25850b000000b0066cd287625amr35727355ybk.31.1658271721069; Tue, 19
+ Jul 2022 16:02:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220719195628.3415852-1-axelrasmussen@google.com>
- <20220719195628.3415852-3-axelrasmussen@google.com> <D43534E1-7982-45EE-8B16-2C4687F49E77@vmware.com>
-In-Reply-To: <D43534E1-7982-45EE-8B16-2C4687F49E77@vmware.com>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 19 Jul 2022 15:45:37 -0700
-Message-ID: <CAJHvVcigVqAibm0JODkiR=Pcd3E14xp0NB6acw2q2enwnrnLSA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] userfaultfd: add /dev/userfaultfd for fine grained
- access control
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Sender: belloashawu72@gmail.com
+Received: by 2002:a05:7000:26b1:0:0:0:0 with HTTP; Tue, 19 Jul 2022 16:02:00
+ -0700 (PDT)
+From:   Lisa Williams <lw23675851@gmail.com>
+Date:   Wed, 20 Jul 2022 00:02:00 +0100
+X-Google-Sender-Auth: BO4DmyfvjRINBOwOOpcYOq24sHk
+Message-ID: <CAOjupQKQ6zRjFB_6SefXkEmKaf0_dwC_KfS2LmZFQLFEaDr30A@mail.gmail.com>
+Subject: My name is Dr Lisa Williams
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 3:32 PM Nadav Amit <namit@vmware.com> wrote:
->
-> On Jul 19, 2022, at 12:56 PM, Axel Rasmussen <axelrasmussen@google.com> w=
-rote:
->
-> > Historically, it has been shown that intercepting kernel faults with
-> > userfaultfd (thereby forcing the kernel to wait for an arbitrary amount
-> > of time) can be exploited, or at least can make some kinds of exploits
-> > easier. So, in 37cd0575b8 "userfaultfd: add UFFD_USER_MODE_ONLY" we
-> > changed things so, in order for kernel faults to be handled by
-> > userfaultfd, either the process needs CAP_SYS_PTRACE, or this sysctl
-> > must be configured so that any unprivileged user can do it.
-> >
-> > In a typical implementation of a hypervisor with live migration (take
-> > QEMU/KVM as one such example), we do indeed need to be able to handle
-> > kernel faults. But, both options above are less than ideal:
-> >
-> > - Toggling the sysctl increases attack surface by allowing any
-> >  unprivileged user to do it.
-> >
-> > - Granting the live migration process CAP_SYS_PTRACE gives it this
-> >  ability, but *also* the ability to "observe and control the
-> >  execution of another process [...], and examine and change [its]
-> >  memory and registers" (from ptrace(2)). This isn't something we need
-> >  or want to be able to do, so granting this permission violates the
-> >  "principle of least privilege".
-> >
-> > This is all a long winded way to say: we want a more fine-grained way t=
-o
-> > grant access to userfaultfd, without granting other additional
-> > permissions at the same time.
-> >
-> > To achieve this, add a /dev/userfaultfd misc device. This device
-> > provides an alternative to the userfaultfd(2) syscall for the creation
-> > of new userfaultfds. The idea is, any userfaultfds created this way wil=
-l
-> > be able to handle kernel faults, without the caller having any special
-> > capabilities. Access to this mechanism is instead restricted using e.g.
-> > standard filesystem permissions.
->
-> Are there any other =E2=80=9Cdevices" that when opened by different proce=
-sses
-> provide such isolated interfaces in each process? I.e., devices that if y=
-ou
-> read from them in different processes you get completely unrelated data?
-> (putting aside namespaces).
->
-> It all sounds so wrong to me, that I am going to try again to pushback
-> (sorry).
+Hi Dear,
 
-No need to be sorry. :)
+My name is Dr Lisa Williams from the United States.I am a French and
+American nationality (dual) living in the U.S and sometimes in France
+for Work Purpose.
 
->
-> From a semantic point of view - userfaultfd is process specific. It is
-> therefore similar to /proc/[pid]/mem (or /proc/[pid]/pagemap and so on).
->
-> So why can=E2=80=99t we put it there? I saw that you argued against it in=
- your
-> cover-letter, and I think that your argument is you would need
-> CAP_SYS_PTRACE if you want to access userfaultfd of other processes. But
-> this is EXACTLY the way opening /proc/[pid]/mem is performed - see
-> proc_mem_open().
->
-> So instead of having some strange device that behaves differently in the
-> context of each process, you can just have /proc/[pid]/userfaultfd and th=
-en
-> use mm_access() to check if you have permissions to access userfaultfd (j=
-ust
-> like proc_mem_open() does). This would be more intuitive for users as it =
-is
-> similar to other /proc/[pid]/X, and would cover both local and remote
-> use-cases.
+I hope you consider my friend request. I will share some of my pics
+and more details about myself when I get your response.
 
-Ah, so actually I find this argument much more compelling.
+Thanks
 
-I don't find it persuasive that we should put it in /proc for the
-purpose of supporting cross-process memory manipulation, because I
-think the syscall works better for that, and in that case we don't
-mind depending on CAP_SYS_PTRACE.
-
-But, what you've argued here I do find persuasive. :) You are right, I
-can't think of any other example of a device node in /dev that works
-like this, where it is completely independent on a per-process basis.
-The closest I could come up with was /dev/zero or /dev/null or
-similar. You won't affect any other process by touching these, but I
-don't think these are good examples.
-
-I'll send a v5 which does this. I do worry that cross-process support
-is probably complex to get right, so I might leave that out and only
-allow a process to open its own device for now.
-
->
+With love
+Lisa
