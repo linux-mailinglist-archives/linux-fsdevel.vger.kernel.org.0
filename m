@@ -2,50 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5395E5794C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 10:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89AEB5796CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 11:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234116AbiGSIAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 04:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49548 "EHLO
+        id S237348AbiGSJzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 05:55:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbiGSIAe (ORCPT
+        with ESMTP id S236799AbiGSJzc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 04:00:34 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ED6B27B25;
-        Tue, 19 Jul 2022 01:00:32 -0700 (PDT)
+        Tue, 19 Jul 2022 05:55:32 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2048.outbound.protection.outlook.com [40.107.102.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E3365FC;
+        Tue, 19 Jul 2022 02:55:30 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NgOozxxAw5mslatr5tmJBSS+JCDy+eidQzWhCvZ9C7vnJG4KtxRMHpSMkbUSdTBLCW6oBYFlxNvdDCJrH0htUOZ8tHJPXPVDbwFbzUf3Qlp1cqZWZDLyyfDpSCMp5nBnjjUCpKIkWuY4Xy8PriMrzWc40GnqlVNqrOO2hPVYesvbBKN35sPNHNTkB08Y4WuS30T0eWxqkjWXbdLeKKxKpOM0WTECDiLt7BpkbQty409KVh3mJKPr3cyqrONTbYmcf4EvXEc/65qUl7q/tmeUjOGOIyycHEwyocmhSAgE+5e/LFwn3cOOZyGYSXCL+JlcEuyJF1YLSbIjN+nUdiB3Pg==
+ b=Lx9RpAkE5S9DX1SyeP3DBYv521p4lBDT10/CvkVZ+qJJIeUnnQlD72zLHFfPDM852gGTAfhVN+8Ue9JphPF27RRbVKV3uJVWBlVRo6zZZSjz992dR54qHbILmscwZ/8+XaaBK4gnbbpHWPXrNTLIev2fw/AicsV3GcNjTm+Wocn/JUlq/LgqyRh/ekBF92SmmJm7p99bc7hLgLMmsDGF7HOq8+wXAcenYVpUSGsIorWAcli0+aIouHFRJHDfOCwcc7AjDjGbBD4EC6snTX/BcE/G30UHf9he8D0MW6W7dtgulB7UAQNa/YfGO1fBOYROZvajtNl3xf+lZ/0qlVm8pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5vYeZfmapjLmdLlPWqNiAG6ATVbljuFfKnaemzl87AU=;
- b=dzpVvKvBIIYMUo/utbvuVYeM2fNV9PMUCrbEfI/FGwX50DoWapqXvUu5VFUGSgOjoEDs2D5radA9gMcJw4wCXO49GRdlkdETdd6xFVcevRQGJCElr1Z6SpaeJvsnJzum+OyCWslWR33dxpEVToJoDSwzQdkFe04NxOm5TFSABEa0DF1hawdOV3kr/rVs/tsFAFLzSooVK/slQolXn+IAintzekk1wTs4VYxy8SZjRmZDBotwK1ad8OIsB6PNt8CNpPHSHqa+x4E5Bv10939NWTu7RTa7omMk5AvBrAkeO9tnb5V/vJ7iitLysn5jiCvn8dD8EYjSo+73nMWhp3Q6Ig==
+ bh=70hmuR1b7NLuxCTwSnix+Ee+8ZrWcZptdWeRZc6YCaA=;
+ b=ZQZf6adb3nNeAdZqxTn6W3o06/9d3n37F/JlGcWyBScip4/GgCsj2LvlwStB5MZKsSyK1twlNuqnJTsUpv5rneocEiDuQTq1HVX24emxc3GXhydPzU8/zBq1BrfuqwXKa26l2aVVUnCyM4WecmCG71wQyHchR6A5lag8r7NxnAA5Pop9DFKGw4DD6QULFOvdd+lgK6U+pIeNWMpMbIdzUbgoXlASWFvw3069+cBwUwcx05oyodW5l2LazzmpoC+26IS93y2zJunixShTonvlV6I4EG5VxDX7K8AfHw/1kJyN6mASQa7gY+BDvSG7mu/AC572jO0QHpLi+t0bXaxRqg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5vYeZfmapjLmdLlPWqNiAG6ATVbljuFfKnaemzl87AU=;
- b=u3K9Y8nT8fEblBexNa0+c1rDPxLkvplr5XthBD6/Iz5M1LW0O2gZ3EjXTROM2mXxmhx5GaC024hGXZ0Pvgc+uB6ioThe04XfwdZ3TXXDCDhHtfWKTXfBXjQLpyTBGgxQwVh+4Roi7romomX+EVHI94I1lEADr+2b+ptMl4RjhmU=
+ bh=70hmuR1b7NLuxCTwSnix+Ee+8ZrWcZptdWeRZc6YCaA=;
+ b=BtJAAhPUzRS5OQ5bsXi8RlPG7CwKZfTNJ5pAt0lYP3+kL+Dw1JtMDv9Cn0+kiqpDqp3A5NITgbGveLnhr79dgpYhqQbVmRu8JPIBuwLJeuWJ8oJyeSae3vcDOIjO+xBThKXcuktSm5zwK4cvqJFml6g5nRZVMPPEsmwCKZm2HJ0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
- (2603:10b6:910:1f::11) by DM6PR12MB4531.namprd12.prod.outlook.com
- (2603:10b6:5:2a4::9) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10b6:910:1f::11) by SA0PR12MB4381.namprd12.prod.outlook.com
+ (2603:10b6:806:70::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.14; Tue, 19 Jul
- 2022 08:00:28 +0000
+ 2022 09:55:27 +0000
 Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
  ([fe80::1001:3c79:9504:8d6a]) by CY4PR1201MB0181.namprd12.prod.outlook.com
  ([fe80::1001:3c79:9504:8d6a%10]) with mapi id 15.20.5438.023; Tue, 19 Jul
- 2022 08:00:26 +0000
-Message-ID: <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
-Date:   Tue, 19 Jul 2022 10:00:23 +0200
+ 2022 09:55:27 +0000
+Message-ID: <de1e15b8-b7e7-d077-eff8-0992bd06e38a@amd.com>
+Date:   Tue, 19 Jul 2022 11:55:24 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
- memory regions
+Subject: Re: [PATCH v7 13/14] KVM: Enable and expose KVM_MEM_PRIVATE
 Content-Language: en-US
 To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -80,72 +79,72 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-14-chao.p.peng@linux.intel.com>
 From:   "Gupta, Pankaj" <pankaj.gupta@amd.com>
-In-Reply-To: <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220706082016.2603916-14-chao.p.peng@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0143.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:96::17) To CY4PR1201MB0181.namprd12.prod.outlook.com
+X-ClientProxiedBy: FR3P281CA0101.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a1::10) To CY4PR1201MB0181.namprd12.prod.outlook.com
  (2603:10b6:910:1f::11)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b2a7699c-58a0-4b6a-9481-08da695cbd06
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4531:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bd929cc-03f5-4b54-7dd4-08da696ccec1
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4381:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4uh20U9nrxQejvAS1Z+Vxa8vRSD0xCCyLhF11MhBTPsD0sYpxFt/QJCSA3o/xGer13z2Qe1fFDX5iIecrpQj7xqRK+8HyqZmX4XcDw2WXQVRYfOblnxvXiKUWWhxvJyjn4gFcIYEdNAxFUvmm7v7FxQJnk7Q6yXu3eovvnEWbf6g2pYugk8wfz6WPiH/NvWZBxqg5O/Q8gBoXp34f3sMwTZ/SQLIjNf5X7wLWd2E8eMcA/F2ABX4aedjo6Vx6fJct5HwtO52f8gaVjpfReJrSM7skHNnDC1Pa1bPp3AUH3x36JpPNOSSsDQJxly6OEZUD1P2hak6kOXqkA/gKJrlHBagLl3yT8T7b9lkXQZtYezI/0IanflQIUY62yGyhNBaBueKLOCGkFIDaCvnoPXcS+t/mRJRYxcfAnxO4J9Sn2KXV/a3FsIPindIqtC9PQJWKpMeCXaPmpgHqaVhkBpb8FrrVdf2OesLAZFq0enH2w2iFFDkDQHZ48fOJeZX9b6gsOQKjgIDLumN6PK/mEGtkN4UlqVnR3S0smplHU0Iev7fnsHVOCXFiQic0Iy+CPYR9XXQ5PiR2ZT/7dFoVkMkIeky81ddIDIy3pFI3u6CUMDWSzWpe2siWO+xFd7ZxX8yKcR2O9YxrCQVEddp+ILjhHvCqCNV1bPjZwuqYeFBioCbBxXs/godh72+bCwHPP/VNoNes4wvsJ6OwWjvNOIWAX2nFhI7AtQO0WYK1n10TBjwrEr+r0UxPKroC1zoYoH00aZ98iHWaMQZXVjDVmJXKXLrGo3FKLInszGiyyiGS4PQTGwSswDnUv8dWcIg0vq1uAB8YLHAltrmsDCMIxXrkA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1201MB0181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(136003)(366004)(39860400002)(396003)(346002)(83380400001)(6512007)(2906002)(6666004)(41300700001)(5660300002)(86362001)(6506007)(186003)(66476007)(6486002)(7406005)(2616005)(7416002)(31696002)(478600001)(8936002)(54906003)(316002)(38100700002)(66556008)(4326008)(31686004)(36756003)(8676002)(66946007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: /HMkfW1GcwHDi7cKT2ZWJBYwORhSPbBjSmLYi/iLf2IlaaMwkN/yTCS1qFNc8vRo+m3R9rE3cAkVVVk9Z+0AOzc38HmGtxjwc2Qc4p1YyC8YZSGyr2trMQ4S4X4K10HBXmZqCqqTkDsxmO79PFBtylS229s67pwzXTQae3QTORkEx/0eRK24JWUBPtcm+76IrZpPq0rk/xfNDvpLghvkCGQZe9Wxvem4l58F/HXFeNNVU6HZORiVvwcF5uwgBLc4jBECnS5YTXe/MNTyjbJoyGw4q2lUQ6p1mjAYI5Np7aftg42NO3JCL18LrCsVpCnBWyks7vw3LC2T3IgTjTeBruFE0XaNUrEPIXQeVfVbJMwlPhAkY89wUhICKg1grDBmPnwBgjEJ4UCK27J5qwpqGoMbhfLfT+YpFhqQ9NL19y1uI40NN0jbKxu/93dAPHuV8OXJchjo8xyq2PXE3Tk1BaimOorwTyV2puV2acfb2P2DvyNkMiD/Yf0WtBcSoC3jubaFxab2xOTWr+OLlBYgVEkf0AOejPWrodkOcnrwoVy0DBTAisL+E1BhKQGfeVlAIcipDqSRWpWAjjjPPCY6DeHlzDq8SkSRyW+RyL/UJP+YPxtLDYCy86ByAWUkc7P9465bRXydK3mkdjKj1RXLrOAEgQNittY4MyUM89otidbrct9QxDpFlY2P0Il7NOMZvSG+g1nvpNX1CeKICaoPC1HKzxLewhSBTvk1gGa7HO1eLYV2whq+J+50D980MIIGFMbrGruWnhEBkgb+bpEFggyv2G48FLUK1hRnN1dcn2/LbDQxRvE8OkbU+8dgPIJKe3PvxQrrDSlYGtLxr3yAVA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1201MB0181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(396003)(346002)(136003)(376002)(39860400002)(54906003)(316002)(36756003)(66556008)(31686004)(66946007)(4326008)(8676002)(66476007)(2906002)(41300700001)(6666004)(186003)(83380400001)(6512007)(7406005)(5660300002)(2616005)(7416002)(6486002)(38100700002)(8936002)(31696002)(86362001)(6506007)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T25od0I4V0pNNnhGempLSWFaUTZabGxFZVJDd01adWFFdHlmNlRWUFlaVEJs?=
- =?utf-8?B?L1N1aU9qbjIzdkVGeFlZMCtZandEb2NyQnUvQk9mMk1SaWR5WXFtZ2xaN2JP?=
- =?utf-8?B?cnR4QWVTWENBazhFTnRIa20rdmM5S2VMUUIxZ1pJcjZOV2Vhd3JUdHd2Zm9v?=
- =?utf-8?B?cFlsRnlWZmhKeit1UnNVZjVuMVVPc1ZOUFVjdzh1K0FDQkkxbWZUREVmRVVL?=
- =?utf-8?B?UElHTlplem4veVpYMUN3RDZKem5tVE1iTHUyRWtiM1pWa2JrK3NHK2hhRk1x?=
- =?utf-8?B?TG5IaHE3YVpUeHluTzlFMklUbG9jeUJueUZESzc3WmlmMUFhUmVpc0VGSzBL?=
- =?utf-8?B?R0huc1kxTitWaHlaN2tzT3dhdno2NFU3SkxLN0tUVVN3VU13cDd6SGRVTHR3?=
- =?utf-8?B?dW9XUVlucEpMcnlpV2pRSkZNSU1mMElMRlF2RDNkeGgrU0hlWXplL3UxZU9J?=
- =?utf-8?B?ZjNqRXJ6Zko5MElpNWR3WFo1STJZZ3luNG9SMzQxYzl1T1dyODNwQUlEWTE0?=
- =?utf-8?B?YzlwOWNvdkhGL2FjT2FkYXBoSTJlc3NjTDhEdkUrS0VZMkdmYVpsQ2t0OXZo?=
- =?utf-8?B?bkNmNHdKZjQwV29Eb01rY0lXL3hsNEFJOU5EZVhCdEs3anNMODlLL2o0S0Rk?=
- =?utf-8?B?bm5LTGlCRkRQejNsK0F0aVJoMUNEVEtZcTNuaFZlUVhjTTZuRThucXkxUVl2?=
- =?utf-8?B?M0ZZYnFkeXJoZjc1Z0xvVUQzVFYwOTcxN3ZoTDQ3ZWdocTNVcTk5SzNyMW9y?=
- =?utf-8?B?d3ZKVlp0TVNuR1M5QlJMb0RZTCtOVnlseDlUUmtZeTdNd0FMa2x5Qnh4NzY1?=
- =?utf-8?B?cmtXVWV0RDZjVkRKbVpScGw2bmN0QXB4ekUyZ1dSM2U0U0Z5VVJtSWJ5Z0Vm?=
- =?utf-8?B?aHBZY0p3RTB5MnFpNWoyMTNUaVVZQTRnblRwYXQ5ZWlJeVJXdXJEYkJPQ1Zn?=
- =?utf-8?B?ZkFVMDJhWlhDV1Y1QW9uNUFQMXlFMGI5U3c1M0RZQ2ZJOUVBODJuc3lOSyt2?=
- =?utf-8?B?d0dhM2lZWkJQV0hWZ1k3aUNDQ2JiNHdzenUrVHU0NndsaUQ0RmtvcGhuNm83?=
- =?utf-8?B?eHV6SDQ4V2xFcFltc01BYVJBc3VBcitpVjlRRXVETVdiUXNnT2pGUFlmaUdk?=
- =?utf-8?B?L01PZ2VCT3hwU1FKL2c5Y1ZObzQyOFNWQklESkNpU2dzNEMrTXpaclhNWmt4?=
- =?utf-8?B?ZGQ5d2QxTU9TbFVhc1hncnJjOWhzalNtVTZiUTBZSFp6L0F3RUZaR2hadkdi?=
- =?utf-8?B?aXBib1RtSzl1T1pucllQdTBSQ1d5UlVBZ2FwWnFLelV1RFI5MGU0ZG1aNFlr?=
- =?utf-8?B?QzIwTExPVHNnWjNLSzYzOWRCNzJTL0dXbmtlUkhtbzZTcy82R3prV05zc0ZO?=
- =?utf-8?B?YmNOaFd4dzNYaUNxbDFkWDY0M2FGMHUya1I2d1J6VFBwUEZNczBmaGh6UDgz?=
- =?utf-8?B?SjZCWlp5aWtLR2kxYzN5QlJRM0xCOHNtMVN3UGFTNnNkRkNsY3BaR2s5L080?=
- =?utf-8?B?Zm9ndldyM0laT01DcnZWSVhvaEhmQmVCT2o5Wld1Z1ZXK0w1SmpuQnJWMkF3?=
- =?utf-8?B?eURKRzNpY0JFQTZTRDZLT01rMExnekt2TUVwNkx0WERkWjg3OG9sT3JmVWR0?=
- =?utf-8?B?KzNrMzZCUUlTaEEzSUpDYlRqTTdoQ0p0QlZlcnNiM25adnIrSWlBeXJrSHJn?=
- =?utf-8?B?ZHFBMVJjWkEwSCt1cjBpV3dlZk5PaHhKVVl4dG1NNTl5eFJSZVZmOExJZVdw?=
- =?utf-8?B?cS94U2NhRTR1M05ZY3RRZmZHU00xM3o5alF6ajVTL0pxanFVajBaTk9CTk5q?=
- =?utf-8?B?SlJMcjRBWGpvUjVhRzJPa1crOGNabTl3aG9qY0RDWmJTZjBXTXVEVkZCVlFH?=
- =?utf-8?B?NGtYNGFmUUtxYXhHcm9KeWJVTnZ6bmRVSzBJVXo5WGpCVlk2czYwT2VhMnV2?=
- =?utf-8?B?cHQweXNFRFUrTGRSaFZWdnZqa1RXRDE5VWpjVHZKRUdEWGRCcDRwUzBreE8z?=
- =?utf-8?B?OWtqc1Mvdnl3WTVIN1FKcnBJQ2xMenE3R2d4ZEJyUjVoUlpnSHRtU0ZMSU5s?=
- =?utf-8?B?MkJaK0RrbTZyRnpEQ3pxNEorMGJ5dG93VU92QnNneTRDdTFGSlRPSWNLcW5B?=
- =?utf-8?B?STdNSGxoOWtIWmZKNUx4YkFzWlZiTkNaOXB2WWdoOTV5UmVyaCtrSlFVQ3BM?=
- =?utf-8?Q?7I84xZnw5TD6Ty/3irCVdkU=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dldKZmN2RC8zT29tMEZsZmZiRGhlNVJuVTRuTitEWVlNS1Z3UmQrUDQ3Nk10?=
+ =?utf-8?B?T3VSMGZ3OXljMEdJRHhXRjR4dnd6WDRHUU5GK2JXSTdjeHBwVEVpc0k2YkxD?=
+ =?utf-8?B?NVZZQU5qK1hjKzJBcmdsZGFLT3dZYjdHTXlzOCtxT053ZUxiQTltUDBVZ2hJ?=
+ =?utf-8?B?WjlaYWQ2WjRwblZXbGNjZ1Z4N3Qwayt4TEJOU0tnbE5pM3lLMUtSbFRiMkZO?=
+ =?utf-8?B?YmdaeVZXTHo0OVEvSGI2R3pGa3FNMUtFcTZYOWhreXBvcXRaczVzRUFYQTg1?=
+ =?utf-8?B?cXJhZjhXMjdtSUJ4bFJxR0FUZ0V2aVZFVHlhZkx4M3p1TEMxTjNRVFY2Y1Fw?=
+ =?utf-8?B?OUlBamJ4UDBsVEdQWEZ1NWFadWlrWmxielc5dDVUNE5vZ2x2T1NwcjdyZzdm?=
+ =?utf-8?B?SVZMaWJtTUptd09iaExBL1NvdHRYclhxcWYzVlNvVkg4b0lhaHIwUXl2VjlR?=
+ =?utf-8?B?T1VxYzBuT3BLSkhYc1lUdGlJc0Q2SkNyaGhWUzVYQmlPTGlOVnQ2Z0VBM2xw?=
+ =?utf-8?B?U1ljVno1Z2JzVXViTjVKYU9vUmpKTVdCc3BWOUJMdVQ1M01OMTA3TmFWMjV1?=
+ =?utf-8?B?eWZ5YVk5bElmTnRIVHFqRG45WXdiK3VZR0dIbHU4Q2I3RWtyR00rVVR4ZGJ5?=
+ =?utf-8?B?enl5d2V1ZHZLS1hYMG01SXhOWnRneGVNWnRnc2xtajF0emYvUnZPT0pNUmRh?=
+ =?utf-8?B?UzloMm53Z1EreXJKOThwZ3lGLzBiRzhxVHNZQkE2dWVKMFlvUm5HekdMeTZt?=
+ =?utf-8?B?OTMrVjB2Q0pEMXBCRTdqMnd6NHllTVZwbFRxNnpURDVZenlSQjM1dmtEdUV5?=
+ =?utf-8?B?RERTVmptQUtWaThCM0tOU1g1dVgrVFBNa3U5UTFhZ3RzL3I1eFZaSlV0bGhK?=
+ =?utf-8?B?SHovMnBpYzJib2NMd1d5SG9MWnhnVmg2Z1VFY3ZBdGR0S1M2d1lmU05INDdr?=
+ =?utf-8?B?b1ZBMlljU1gyaDBSbGJMbC8vOERxRUtBVFRwK3R2RGp3OStWcEd6ejBTeTkr?=
+ =?utf-8?B?VTJtR0w1b1o5Y042WGczaXJHSy9FNzl4aGZlbkZ5eEdDckI3aTRuaVFVZ1JN?=
+ =?utf-8?B?T0RRUFd4aHNmMWVWUHFLOGZQTzgxUkY3MU1pY2hOemhZM0tZUmJhSjM3MXJj?=
+ =?utf-8?B?V2Vtcms1Y1JqSDBpSWU2RnBaaDlhR1JQWHAvclVDa2VyalVOQm9wTFhXWVU3?=
+ =?utf-8?B?WTBxanplWG9EeHI4N0xBNm51QWEra0l4Rk0wYmJpcXRYcFpwZWRJamp4NGZF?=
+ =?utf-8?B?TG1rVU0yQm00M2p2ZngxbXRSbHFaV2FIUzkvYkdmRTFuV3lWaFZqS0hvK1ha?=
+ =?utf-8?B?aEhVbDRkMGM2cmF2UTladHdISW1FYWpoSlY0d2JlUnl4WWJzblgrejNCTXhQ?=
+ =?utf-8?B?TllWVGUyWHlzU21XcFQxUnA2UVR2bkZ5bmt1R0Q3RHZNOHUvZm9pNER3MzdN?=
+ =?utf-8?B?N1AxbmpnM1dNVndHaENXazl2SEx4QlhXQ01xRk1JMjRUNTh3bGYrZlhjZk1h?=
+ =?utf-8?B?V0NDelRrc2pNZGM4dnB2akNlZXhHbmwxVHQ3aW9QMlpkOU1YbVR5RmxIVUpQ?=
+ =?utf-8?B?d01yRXhPeGxMZnFIQkNuOGtpZEIrcFBmMlM2V0pjQUlFRUZFUnVQbkxJdTVp?=
+ =?utf-8?B?ZWhiRVAxV1lrN2FFbUtTdmlRWkpOelRXNjZOSm96VTUyYlk4UGkydlV1REZJ?=
+ =?utf-8?B?UU1TcFVvRXZZN2VTdGJjMmduYXZMWkJ6Q0ZHSXAxck5NclEyeTNmWXBSUmJX?=
+ =?utf-8?B?L2lYYU81d01WZXZ2aEdOOWliaTFLOWMvZ0VlUEZmZytTUUphZk5hWUt4WG85?=
+ =?utf-8?B?NHZTSThkQWxPVVRMckthWjA1WHNueUw2WnRVYlN0VGhJeDA2K2xBZ0RIRmVT?=
+ =?utf-8?B?T2tXaVJGcFpzUm9uU1pWRk9BYjJHbUpwZXduZGVvY3BwazduU2ZkT1dDVHlL?=
+ =?utf-8?B?a2FWa08xQlJITGpwYjM5Tys3cEM0NWxBdVJyZVRRdlIycjRRcXlWeVBPeUxi?=
+ =?utf-8?B?djg1N2RoUi9PR0dxNlFVYkNQK0FWQ2RXM3IzQVVzRml5cVVnZ1YwdnRGVmlo?=
+ =?utf-8?B?VGxzL2tXZWJ6dGRYc1dQS1huSVdBZHNDSzYyck5NZVVmRE1kZ1llSm9YUkdt?=
+ =?utf-8?B?MklqSks2VkVOMGw3Yld1SURkcXZTRDB1NDMvYk00VDRZV1FhLzlSdHpkSGJI?=
+ =?utf-8?Q?I1zeQbV+9nPcIqUU5niE94qYCnBZcNz/ENzq1SoKLxN4?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2a7699c-58a0-4b6a-9481-08da695cbd06
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bd929cc-03f5-4b54-7dd4-08da696ccec1
 X-MS-Exchange-CrossTenant-AuthSource: CY4PR1201MB0181.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2022 08:00:26.1047
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2022 09:55:27.6267
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bPQ1sDIuH8eLLbIONGnIGYA2dKfsZejM+j6FuUzWpHVsAaVD0KGoWan93qeUzqEZSBIODjOZMgIToe3BqMeXZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4531
+X-MS-Exchange-CrossTenant-UserPrincipalName: LOIaFtjPSy7IQ1Lv5vvp8ZDHX5hJnliwD9TtquPTxyoyKY2pRmiudDDkheDyWe5gevgC3RyDmEHfHhiFXUtXnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4381
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
@@ -156,238 +155,238 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chao,
-
-Some comments below:
-
-> If CONFIG_HAVE_KVM_PRIVATE_MEM=y, userspace can register/unregister the
-> guest private memory regions through KVM_MEMORY_ENCRYPT_{UN,}REG_REGION
-> ioctls. The patch reuses existing SEV ioctl but differs that the
-> address in the region for private memory is gpa while SEV case it's hva.
+> Register private memslot to fd-based memory backing store and handle the
+> memfile notifiers to zap the existing mappings.
 > 
-> The private memory region is stored as xarray in KVM for memory
-> efficiency in normal usages and zapping existing memory mappings is also
-> a side effect of these two ioctls.
+> Currently the register is happened at memslot creating time and the
+> initial support does not include page migration/swap.
 > 
+> KVM_MEM_PRIVATE is not exposed by default, architecture code can turn
+> on it by implementing kvm_arch_private_mem_supported().
+> 
+> A 'kvm' reference is added in memslot structure since in
+> memfile_notifier callbacks we can only obtain a memslot reference while
+> kvm is need to do the zapping.
+> 
+> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 > ---
->   Documentation/virt/kvm/api.rst  | 17 +++++++---
->   arch/x86/include/asm/kvm_host.h |  1 +
->   arch/x86/kvm/Kconfig            |  1 +
->   arch/x86/kvm/mmu.h              |  2 --
->   include/linux/kvm_host.h        |  8 +++++
->   virt/kvm/kvm_main.c             | 57 +++++++++++++++++++++++++++++++++
->   6 files changed, 80 insertions(+), 6 deletions(-)
+>   include/linux/kvm_host.h |   1 +
+>   virt/kvm/kvm_main.c      | 117 ++++++++++++++++++++++++++++++++++++---
+>   2 files changed, 109 insertions(+), 9 deletions(-)
 > 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 5ecfc7fbe0ee..dfb4caecab73 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -4715,10 +4715,19 @@ Documentation/virt/kvm/amd-memory-encryption.rst.
->   This ioctl can be used to register a guest memory region which may
->   contain encrypted data (e.g. guest RAM, SMRAM etc).
->   
-> -It is used in the SEV-enabled guest. When encryption is enabled, a guest
-> -memory region may contain encrypted data. The SEV memory encryption
-> -engine uses a tweak such that two identical plaintext pages, each at
-> -different locations will have differing ciphertexts. So swapping or
-> +Currently this ioctl supports registering memory regions for two usages:
-> +private memory and SEV-encrypted memory.
-> +
-> +When private memory is enabled, this ioctl is used to register guest private
-> +memory region and the addr/size of kvm_enc_region represents guest physical
-> +address (GPA). In this usage, this ioctl zaps the existing guest memory
-> +mappings in KVM that fallen into the region.
-> +
-> +When SEV-encrypted memory is enabled, this ioctl is used to register guest
-> +memory region which may contain encrypted data for a SEV-enabled guest. The
-> +addr/size of kvm_enc_region represents userspace address (HVA). The SEV
-> +memory encryption engine uses a tweak such that two identical plaintext pages,
-> +each at different locations will have differing ciphertexts. So swapping or
->   moving ciphertext of those pages will not result in plaintext being
->   swapped. So relocating (or migrating) physical backing pages for the SEV
->   guest will require some additional steps.
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index dae190e19fce..92120e3a224e 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -37,6 +37,7 @@
->   #include <asm/hyperv-tlfs.h>
->   
->   #define __KVM_HAVE_ARCH_VCPU_DEBUGFS
-> +#define __KVM_HAVE_ZAP_GFN_RANGE
->   
->   #define KVM_MAX_VCPUS 1024
->   
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 1f160801e2a7..05861b9656a4 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -50,6 +50,7 @@ config KVM
->   	select HAVE_KVM_PM_NOTIFIER if PM
->   	select HAVE_KVM_PRIVATE_MEM if X86_64
->   	select MEMFILE_NOTIFIER if HAVE_KVM_PRIVATE_MEM
-> +	select XARRAY_MULTI if HAVE_KVM_PRIVATE_MEM
->   	help
->   	  Support hosting fully virtualized guest machines using hardware
->   	  virtualization extensions.  You will need a fairly recent
-> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-> index a99acec925eb..428cd2e88cbd 100644
-> --- a/arch/x86/kvm/mmu.h
-> +++ b/arch/x86/kvm/mmu.h
-> @@ -209,8 +209,6 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->   	return -(u32)fault & errcode;
->   }
->   
-> -void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end);
-> -
->   int kvm_arch_write_log_dirty(struct kvm_vcpu *vcpu);
->   
->   int kvm_mmu_post_init_vm(struct kvm *kvm);
 > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 1b203c8aa696..da33f8828456 100644
+> index 8f56426aa1e3..4e5a0db68799 100644
 > --- a/include/linux/kvm_host.h
 > +++ b/include/linux/kvm_host.h
-> @@ -260,6 +260,10 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
->   bool kvm_set_spte_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
->   #endif
->   
-> +#ifdef __KVM_HAVE_ZAP_GFN_RANGE
-> +void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end);
-> +#endif
-> +
->   enum {
->   	OUTSIDE_GUEST_MODE,
->   	IN_GUEST_MODE,
-> @@ -795,6 +799,9 @@ struct kvm {
->   	struct notifier_block pm_notifier;
->   #endif
->   	char stats_id[KVM_STATS_NAME_SIZE];
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> +	struct xarray mem_attr_array;
-> +#endif
+> @@ -584,6 +584,7 @@ struct kvm_memory_slot {
+>   	struct file *private_file;
+>   	loff_t private_offset;
+>   	struct memfile_notifier notifier;
+> +	struct kvm *kvm;
 >   };
 >   
->   #define kvm_err(fmt, ...) \
-> @@ -1459,6 +1466,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
->   int kvm_arch_post_init_vm(struct kvm *kvm);
->   void kvm_arch_pre_destroy_vm(struct kvm *kvm);
->   int kvm_arch_create_vm_debugfs(struct kvm *kvm);
-> +bool kvm_arch_private_mem_supported(struct kvm *kvm);
->   
->   #ifndef __KVM_HAVE_ARCH_VM_ALLOC
->   /*
+>   static inline bool kvm_slot_can_be_private(const struct kvm_memory_slot *slot)
 > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 230c8ff9659c..bb714c2a4b06 100644
+> index bb714c2a4b06..d6f7e074cab2 100644
 > --- a/virt/kvm/kvm_main.c
 > +++ b/virt/kvm/kvm_main.c
-> @@ -914,6 +914,35 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+> @@ -941,6 +941,63 @@ static int kvm_vm_ioctl_set_encrypted_region(struct kvm *kvm, unsigned int ioctl
 >   
->   #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
->   
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> +#define KVM_MEM_ATTR_PRIVATE	0x0001
-> +static int kvm_vm_ioctl_set_encrypted_region(struct kvm *kvm, unsigned int ioctl,
-> +					     struct kvm_enc_region *region)
+>   	return r;
+>   }
+> +
+> +static void kvm_memfile_notifier_invalidate(struct memfile_notifier *notifier,
+> +					    pgoff_t start, pgoff_t end)
 > +{
-> +	unsigned long start, end;
-> +	void *entry;
-> +	int r;
+> +	struct kvm_memory_slot *slot = container_of(notifier,
+> +						    struct kvm_memory_slot,
+> +						    notifier);
+> +	unsigned long base_pgoff = slot->private_offset >> PAGE_SHIFT;
+> +	gfn_t start_gfn = slot->base_gfn;
+> +	gfn_t end_gfn = slot->base_gfn + slot->npages;
 > +
-> +	if (region->size == 0 || region->addr + region->size < region->addr)
-> +		return -EINVAL;
-> +	if (region->addr & (PAGE_SIZE - 1) || region->size & (PAGE_SIZE - 1))
-> +		return -EINVAL;
 > +
-> +	start = region->addr >> PAGE_SHIFT;
-> +	end = (region->addr + region->size - 1) >> PAGE_SHIFT;
+> +	if (start > base_pgoff)
+> +		start_gfn = slot->base_gfn + start - base_pgoff;
 > +
-> +	entry = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION ?
-> +				xa_mk_value(KVM_MEM_ATTR_PRIVATE) : NULL;
+> +	if (end < base_pgoff + slot->npages)
+> +		end_gfn = slot->base_gfn + end - base_pgoff;
 > +
-> +	r = xa_err(xa_store_range(&kvm->mem_attr_array, start, end,
-> +					entry, GFP_KERNEL_ACCOUNT));
+> +	if (start_gfn >= end_gfn)
+> +		return;
 > +
-> +	kvm_zap_gfn_range(kvm, start, end + 1);
-> +
-> +	return r;
+> +	kvm_zap_gfn_range(slot->kvm, start_gfn, end_gfn);
 > +}
-> +#endif /* CONFIG_HAVE_KVM_PRIVATE_MEM */
 > +
->   #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
->   static int kvm_pm_notifier_call(struct notifier_block *bl,
->   				unsigned long state,
-> @@ -1138,6 +1167,9 @@ static struct kvm *kvm_create_vm(unsigned long type)
->   	spin_lock_init(&kvm->mn_invalidate_lock);
->   	rcuwait_init(&kvm->mn_memslots_update_rcuwait);
->   	xa_init(&kvm->vcpu_array);
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> +	xa_init(&kvm->mem_attr_array);
-> +#endif
+> +static struct memfile_notifier_ops kvm_memfile_notifier_ops = {
+> +	.invalidate = kvm_memfile_notifier_invalidate,
+> +};
+> +
+> +#define KVM_MEMFILE_FLAGS (MEMFILE_F_USER_INACCESSIBLE | \
+> +			   MEMFILE_F_UNMOVABLE | \
+> +			   MEMFILE_F_UNRECLAIMABLE)
+> +
+> +static inline int kvm_private_mem_register(struct kvm_memory_slot *slot)
+> +{
+> +	slot->notifier.ops = &kvm_memfile_notifier_ops;
+> +	return memfile_register_notifier(slot->private_file, KVM_MEMFILE_FLAGS,
+> +					 &slot->notifier);
+> +}
+> +
+> +static inline void kvm_private_mem_unregister(struct kvm_memory_slot *slot)
+> +{
+> +	memfile_unregister_notifier(&slot->notifier);
+> +}
+> +
+> +#else /* !CONFIG_HAVE_KVM_PRIVATE_MEM */
+> +
+> +static inline int kvm_private_mem_register(struct kvm_memory_slot *slot)
+> +{
+> +	WARN_ON_ONCE(1);
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline void kvm_private_mem_unregister(struct kvm_memory_slot *slot)
+> +{
+> +	WARN_ON_ONCE(1);
+> +}
+> +
+>   #endif /* CONFIG_HAVE_KVM_PRIVATE_MEM */
 >   
->   	INIT_LIST_HEAD(&kvm->gpc_list);
->   	spin_lock_init(&kvm->gpc_lock);
-> @@ -1305,6 +1337,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
->   		kvm_free_memslots(kvm, &kvm->__memslots[i][0]);
->   		kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
->   	}
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> +	xa_destroy(&kvm->mem_attr_array);
-> +#endif
->   	cleanup_srcu_struct(&kvm->irq_srcu);
->   	cleanup_srcu_struct(&kvm->srcu);
->   	kvm_arch_free_vm(kvm);
-> @@ -1508,6 +1543,11 @@ static void kvm_replace_memslot(struct kvm *kvm,
->   	}
+>   #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+> @@ -987,6 +1044,11 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
+>   /* This does not remove the slot from struct kvm_memslots data structures */
+>   static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+>   {
+> +	if (slot->flags & KVM_MEM_PRIVATE) {
+> +		kvm_private_mem_unregister(slot);
+> +		fput(slot->private_file);
+> +	}
+> +
+>   	kvm_destroy_dirty_bitmap(slot);
+>   
+>   	kvm_arch_free_memslot(kvm, slot);
+> @@ -1548,10 +1610,16 @@ bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
+>   	return false;
 >   }
 >   
-> +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
-> +{
-> +	return false;
-> +}
-
-Does this function has to be overriden by SEV and TDX to support the 
-private regions?
-
-> +
->   static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
+> -static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
+> +static int check_memory_region_flags(struct kvm *kvm,
+> +				     const struct kvm_user_mem_region *mem)
 >   {
 >   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> @@ -4689,6 +4729,22 @@ static long kvm_vm_ioctl(struct file *filp,
->   		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
->   		break;
->   	}
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> +	case KVM_MEMORY_ENCRYPT_REG_REGION:
-> +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> +		struct kvm_enc_region region;
-> +
-> +		if (!kvm_arch_private_mem_supported(kvm))
-> +			goto arch_vm_ioctl;
-> +
-> +		r = -EFAULT;
-> +		if (copy_from_user(&region, argp, sizeof(region)))
-> +			goto out;
-> +
-> +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
-
-this is to store private region metadata not only the encrypted region?
-
-Also, seems same ioctl can be used to put other regions (e.g firmware, 
-later maybe DAX backend etc) into private memory?
-
-> +		break;
-> +	}
-> +#endif
->   	case KVM_GET_DIRTY_LOG: {
->   		struct kvm_dirty_log log;
 >   
-> @@ -4842,6 +4898,7 @@ static long kvm_vm_ioctl(struct file *filp,
->   		r = kvm_vm_ioctl_get_stats_fd(kvm);
->   		break;
->   	default:
-> +arch_vm_ioctl:
->   		r = kvm_arch_vm_ioctl(filp, ioctl, arg);
->   	}
->   out:
+> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> +	if (kvm_arch_private_mem_supported(kvm))
+> +		valid_flags |= KVM_MEM_PRIVATE;
+> +#endif
+> +
+>   #ifdef __KVM_HAVE_READONLY_MEM
+>   	valid_flags |= KVM_MEM_READONLY;
+>   #endif
+> @@ -1627,6 +1695,12 @@ static int kvm_prepare_memory_region(struct kvm *kvm,
+>   {
+>   	int r;
+>   
+> +	if (change == KVM_MR_CREATE && new->flags & KVM_MEM_PRIVATE) {
+> +		r = kvm_private_mem_register(new);
+> +		if (r)
+> +			return r;
+> +	}
+> +
+>   	/*
+>   	 * If dirty logging is disabled, nullify the bitmap; the old bitmap
+>   	 * will be freed on "commit".  If logging is enabled in both old and
+> @@ -1655,6 +1729,9 @@ static int kvm_prepare_memory_region(struct kvm *kvm,
+>   	if (r && new && new->dirty_bitmap && (!old || !old->dirty_bitmap))
+>   		kvm_destroy_dirty_bitmap(new);
+>   
+> +	if (r && change == KVM_MR_CREATE && new->flags & KVM_MEM_PRIVATE)
+> +		kvm_private_mem_unregister(new);
+> +
+>   	return r;
+>   }
+>   
+> @@ -1952,7 +2029,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	int as_id, id;
+>   	int r;
+>   
+> -	r = check_memory_region_flags(mem);
+> +	r = check_memory_region_flags(kvm, mem);
+>   	if (r)
+>   		return r;
+>   
+> @@ -1971,6 +2048,10 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
+>   			mem->memory_size))
+>   		return -EINVAL;
+> +	if (mem->flags & KVM_MEM_PRIVATE &&
+> +		(mem->private_offset & (PAGE_SIZE - 1) ||
+> +		 mem->private_offset > U64_MAX - mem->memory_size))
+> +		return -EINVAL;
+>   	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
+>   		return -EINVAL;
+>   	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
+> @@ -2009,6 +2090,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
+>   			return -EINVAL;
+>   	} else { /* Modify an existing slot. */
+> +		/* Private memslots are immutable, they can only be deleted. */
+> +		if (mem->flags & KVM_MEM_PRIVATE)
+> +			return -EINVAL;
+>   		if ((mem->userspace_addr != old->userspace_addr) ||
+>   		    (npages != old->npages) ||
+>   		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
+> @@ -2037,10 +2121,27 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	new->npages = npages;
+>   	new->flags = mem->flags;
+>   	new->userspace_addr = mem->userspace_addr;
+> +	if (mem->flags & KVM_MEM_PRIVATE) {
+> +		new->private_file = fget(mem->private_fd);
+> +		if (!new->private_file) {
+> +			r = -EINVAL;
+> +			goto out;
+> +		}
+> +		new->private_offset = mem->private_offset;
+> +	}
+> +
+> +	new->kvm = kvm;
+>   
+>   	r = kvm_set_memslot(kvm, old, new, change);
+>   	if (r)
+> -		kfree(new);
+> +		goto out;
+> +
+> +	return 0;
+> +
+> +out:
+> +	if (new->private_file)
+> +		fput(new->private_file);
+> +	kfree(new);
+>   	return r;
+>   }
+>   EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+> @@ -4712,12 +4813,10 @@ static long kvm_vm_ioctl(struct file *filp,
+>   			(u32 __user *)(argp + offsetof(typeof(mem), flags))))
+>   			goto out;
+>   
+> -		if (flags & KVM_MEM_PRIVATE) {
+> -			r = -EINVAL;
+> -			goto out;
+> -		}
+> -
+> -		size = sizeof(struct kvm_userspace_memory_region);
+> +		if (flags & KVM_MEM_PRIVATE)
+> +			size = sizeof(struct kvm_userspace_memory_region_ext);
+
+Not sure if we use kvm_userspace_memory_region_ext or 
+kvm_user_mem_region, just for readability.
+
+> +		else
+> +			size = sizeof(struct kvm_userspace_memory_region);
+>   
+>   		if (copy_from_user(&mem, argp, size))
+>   			goto out;
 
