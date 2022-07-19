@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A00AC57A174
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 16:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F39F57A18E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Jul 2022 16:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238624AbiGSO2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 10:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46312 "EHLO
+        id S237711AbiGSObD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 10:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237767AbiGSO1o (ORCPT
+        with ESMTP id S239667AbiGSO3p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 10:27:44 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B37BDF;
-        Tue, 19 Jul 2022 07:14:07 -0700 (PDT)
+        Tue, 19 Jul 2022 10:29:45 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7273161B1F;
+        Tue, 19 Jul 2022 07:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658240047; x=1689776047;
+  t=1658240264; x=1689776264;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=/UxCRrCRwzJ4X66ZQ0IeKBQtuQGxvYag5toGoeMRWuQ=;
-  b=CZYyYygzXCqloUO9aGVdDcJXYjTh9oYBJFxUMSxe3vvRKpU4gOckgOMn
-   JilTFTI6emQSdx8rywraLU90dhr1EOEFNhKfhHa+WsZwIMkLeSH7zbqq8
-   FJouPrO28zJUxeb/SxE4iTLfLasD7me/K4TWdAjq7X4a2dohduIirBRKf
-   WNMDKsJHPtvSN0BsTYzXvXe3ManHlqTz4kQe21r9Bp/HBTiLQpGGnwOKd
-   U3tdxxcsUWbu4QZv9FYTSDAfiMSLeYxqi5lVXlJjruhpOV6n6KK1zvRtZ
-   q9yPYIc6RAqbyfUskmfkyguvP+kJlEdUqp0XNo4+JbI2iX1YsPRQhKoAg
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="284063648"
+  bh=uCiOnx7XhlhIdPTfR9PaYhGj+08ZCZ+aPucYOLw91eY=;
+  b=OzzfxIk0a+IGaEkdENZ8GOJ0xXoWWjSt7xK9IOEN6umzrYBSCDXMqCBV
+   aBFucqvgSeS1mk9zaPmZn9Sa+57cbgvT8bwAMNsYP1V0UXwi1pJPFwbZB
+   AZdHjoLHdHcgfBBAcVIrfmkeXvlE8YUt7Z37jiR7k4wspDU6D2gXEkPlq
+   /1zgyN5PMFKMefTfwqWQ2mzE+QBRsIwrpJ5gULnNtA/9rv++l3JU+5loD
+   MSRs4eHjdpdesroG5ym1A71mzr616YEFm8qOIBEBfvralXIkDvcJdXcR3
+   JmLhnsDBf0iceZuc6kBwGDg9BtaDjBerWKjWAKV0IUxEzV2hoHmYONnNF
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="287247161"
 X-IronPort-AV: E=Sophos;i="5.92,284,1650956400"; 
-   d="scan'208";a="284063648"
+   d="scan'208";a="287247161"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2022 07:13:43 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2022 07:17:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,284,1650956400"; 
-   d="scan'208";a="655776691"
+   d="scan'208";a="655777767"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by fmsmga008.fm.intel.com with ESMTP; 19 Jul 2022 07:13:34 -0700
-Date:   Tue, 19 Jul 2022 22:08:43 +0800
+  by fmsmga008.fm.intel.com with ESMTP; 19 Jul 2022 07:17:33 -0700
+Date:   Tue, 19 Jul 2022 22:12:43 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -72,87 +72,53 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
- memory regions
-Message-ID: <20220719140843.GA84779@chaop.bj.intel.com>
+Subject: Re: [PATCH v7 13/14] KVM: Enable and expose KVM_MEM_PRIVATE
+Message-ID: <20220719141243.GB84779@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
- <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
+ <20220706082016.2603916-14-chao.p.peng@linux.intel.com>
+ <de1e15b8-b7e7-d077-eff8-0992bd06e38a@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <de1e15b8-b7e7-d077-eff8-0992bd06e38a@amd.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 10:00:23AM +0200, Gupta, Pankaj wrote:
+On Tue, Jul 19, 2022 at 11:55:24AM +0200, Gupta, Pankaj wrote:
 
 ...
 
-> > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
-> > +{
-> > +	return false;
-> > +}
+> > @@ -4712,12 +4813,10 @@ static long kvm_vm_ioctl(struct file *filp,
+> >   			(u32 __user *)(argp + offsetof(typeof(mem), flags))))
+> >   			goto out;
+> > -		if (flags & KVM_MEM_PRIVATE) {
+> > -			r = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		size = sizeof(struct kvm_userspace_memory_region);
+> > +		if (flags & KVM_MEM_PRIVATE)
+> > +			size = sizeof(struct kvm_userspace_memory_region_ext);
 > 
-> Does this function has to be overriden by SEV and TDX to support the private
-> regions?
+> Not sure if we use kvm_userspace_memory_region_ext or kvm_user_mem_region,
+> just for readability.
 
-Yes it should be overridden by architectures which want to support it.
-
-> 
-> > +
-> >   static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
-> >   {
-> >   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> > @@ -4689,6 +4729,22 @@ static long kvm_vm_ioctl(struct file *filp,
-> >   		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
-> >   		break;
-> >   	}
-> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > +	case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > +		struct kvm_enc_region region;
-> > +
-> > +		if (!kvm_arch_private_mem_supported(kvm))
-> > +			goto arch_vm_ioctl;
-> > +
-> > +		r = -EFAULT;
-> > +		if (copy_from_user(&region, argp, sizeof(region)))
-> > +			goto out;
-> > +
-> > +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
-> 
-> this is to store private region metadata not only the encrypted region?
-
-Correct.
-
-> 
-> Also, seems same ioctl can be used to put other regions (e.g firmware, later
-> maybe DAX backend etc) into private memory?
-
-Possibly. Depends on what exactly the semantics is. If just want to set
-those regions as private current code already support that.
+Somehow, but majorly for code maintainability, kvm_user_mem_region is
+designed to be the alias of kvm_userspace_memory_region_ext so in the
+code we can access the 'unpacked' fields using something like
+'mem.usersapce_addr' instead of 'mem.region.userspace_addr'.
 
 Chao
 > 
-> > +		break;
-> > +	}
-> > +#endif
-> >   	case KVM_GET_DIRTY_LOG: {
-> >   		struct kvm_dirty_log log;
-> > @@ -4842,6 +4898,7 @@ static long kvm_vm_ioctl(struct file *filp,
-> >   		r = kvm_vm_ioctl_get_stats_fd(kvm);
-> >   		break;
-> >   	default:
-> > +arch_vm_ioctl:
-> >   		r = kvm_arch_vm_ioctl(filp, ioctl, arg);
-> >   	}
-> >   out:
-> 
+> > +		else
+> > +			size = sizeof(struct kvm_userspace_memory_region);
+> >   		if (copy_from_user(&mem, argp, size))
+> >   			goto out;
