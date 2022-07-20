@@ -2,122 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F7E57B849
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 16:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C304C57B89B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 16:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235675AbiGTOP7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jul 2022 10:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34532 "EHLO
+        id S233005AbiGTOif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jul 2022 10:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234279AbiGTOP5 (ORCPT
+        with ESMTP id S229526AbiGTOif (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jul 2022 10:15:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17E3A1B7B6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 07:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658326556;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zFK3tkfEyTe6jEh19UggWd/zo4/NbtsoQCP905aDbQo=;
-        b=gucKQA5ScqwJ2Z/a3RZwP9n8hMvlsfHs7wGaFCVkTehQ4rQ6BB1kwhoJB6Boyo2q85tvLY
-        fnEwYc7qGbDav7U2StTzqjS6TkApAVPk3dj2hg8KzhUh+7OdAU+MgICBRzq58LoDqmhMld
-        hBcnrzdop7KEqpnYARKosA/cHDw8cMA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-401-dU7N4XjZMdq_AqhedIGCSg-1; Wed, 20 Jul 2022 10:15:50 -0400
-X-MC-Unique: dU7N4XjZMdq_AqhedIGCSg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 20 Jul 2022 10:38:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA9122298;
+        Wed, 20 Jul 2022 07:38:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 139ED280F2AE;
-        Wed, 20 Jul 2022 14:15:50 +0000 (UTC)
-Received: from fedora (unknown [10.40.194.108])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E29ADC1D3AD;
-        Wed, 20 Jul 2022 14:15:48 +0000 (UTC)
-Date:   Wed, 20 Jul 2022 16:15:46 +0200
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2579061A59;
+        Wed, 20 Jul 2022 14:38:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB1F1C3411E;
+        Wed, 20 Jul 2022 14:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658327913;
+        bh=EdVnBgwJm4ZOmBl1kVWjnuugcysfSqGPCoS7zTlgmWk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NsoplAas1FTYHMtyl50MzeaA5zcp0/NgkJqOuhJpfQGqEeZC3BeiIlGXOXuJDrSUB
+         3BR769FZ6lj7cw0QzA7zhKFaopJmHNyRhtSznugqA1A/P2vPX/oXajGNhAeERjdLEm
+         jdIhFdNaPRX3U5V07QVhCR8JLFzGEaQq0pvfMye1xQr2l+L2XXDAiq0O6ATruLjRfc
+         ZLMww3X9Bx1JPijCtf5cywDi/iZKxd44mPQ1iz07Ep7UbjKEEnGsMIcyzg3QW2y+pQ
+         yui8z8wjLqEe8o97JAhCWaACc1OQgTUiXasw2EOC+MCnTGYA/kJd4GVZy4NMikNGIA
+         EUOxQ5zIm5UJQ==
+Message-ID: <ad7218a41fa8ac26911a9ccb79c87609d4279fea.camel@kernel.org>
+Subject: Re: should we make "-o iversion" the default on ext4 ?
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Lukas Czerner <lczerner@redhat.com>
 Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
         linux-ext4@vger.kernel.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Benjamin Coddington <bcodding@redhat.com>
-Subject: Re: should we make "-o iversion" the default on ext4 ?
-Message-ID: <20220720141546.46l2d7bxwukjhtl7@fedora>
+Date:   Wed, 20 Jul 2022 10:38:31 -0400
+In-Reply-To: <20220720141546.46l2d7bxwukjhtl7@fedora>
 References: <69ac1d3ef0f63b309204a570ef4922d2684ed7f9.camel@kernel.org>
+         <20220720141546.46l2d7bxwukjhtl7@fedora>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69ac1d3ef0f63b309204a570ef4922d2684ed7f9.camel@kernel.org>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 09:51:33AM -0400, Jeff Layton wrote:
-> Back in 2018, I did a patchset [1] to rework the inode->i_version
-> counter handling to be much less expensive, particularly when no-one is
-> querying for it.
-> 
-> Testing at the time showed that the cost of enabling i_version on ext4
-> was close to 0 when nothing is querying it, but I stopped short of
-> trying to make it the default at the time (mostly out of an abundance of
-> caution). Since then, we still see a steady stream of cache-coherency
-> problems with NFSv4 on ext4 when this option is disabled (e.g. [2]).
-> 
-> Is it time to go ahead and make this option the default on ext4? I don't
-> see a real downside to doing so, though I'm unclear on how we should
-> approach this. Currently the option is twiddled using MS_I_VERSION flag,
-> and it's unclear to me how we can reverse the sense of such a flag.
-> 
-> Thoughts?
-> 
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a4b7fd7d34de5765dece2dd08060d2e1f7be3b39
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=2107587
+On Wed, 2022-07-20 at 16:15 +0200, Lukas Czerner wrote:
+> On Tue, Jul 19, 2022 at 09:51:33AM -0400, Jeff Layton wrote:
+> > Back in 2018, I did a patchset [1] to rework the inode->i_version
+> > counter handling to be much less expensive, particularly when no-one is
+> > querying for it.
+> >=20
+> > Testing at the time showed that the cost of enabling i_version on ext4
+> > was close to 0 when nothing is querying it, but I stopped short of
+> > trying to make it the default at the time (mostly out of an abundance o=
+f
+> > caution). Since then, we still see a steady stream of cache-coherency
+> > problems with NFSv4 on ext4 when this option is disabled (e.g. [2]).
+> >=20
+> > Is it time to go ahead and make this option the default on ext4? I don'=
+t
+> > see a real downside to doing so, though I'm unclear on how we should
+> > approach this. Currently the option is twiddled using MS_I_VERSION flag=
+,
+> > and it's unclear to me how we can reverse the sense of such a flag.
+> >=20
+> > Thoughts?
+> >=20
+> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+/commit/?id=3Da4b7fd7d34de5765dece2dd08060d2e1f7be3b39
+> > [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D2107587
+>=20
+> Hi,
+>=20
+> I don't have the results myself yet, but a quick look at how it is done
+> suggests that indeed the impact should be low. But not zero, at least
+> every time the inode is loaded from disk it is scheduled for i_version
+> update on the next attempted increment. Could that have an effect on
+> some particular common workload you can think of?
+>=20
 
-Hi,
+Yeah, it's not zero, but hopefully any performance hit would end up
+amortized over the long term use of the inode. In the common situation
+where the i_version flag hasn't been queried, this just ends up being an
+extra atomic fetch to look at i_version and detect that.
 
-I don't have the results myself yet, but a quick look at how it is done
-suggests that indeed the impact should be low. But not zero, at least
-every time the inode is loaded from disk it is scheduled for i_version
-update on the next attempted increment. Could that have an effect on
-some particular common workload you can think of?
+> How would we approach making iversion a default? libmount is passing
+> this option to the kernel as just a MS_I_VERSION flag that is set when
+> -o iversion is used and left empty when the -o noiversion is used. This
+> means that while we could make it a default in ext4, we don't have any
+> way of knowing whether the user asked for -o noiversion. So that's not
+> really an option.
+>=20
+> Updating the mke2fs/tune2fs to allow setting iversion as a default mount
+> option I think has the same problem.
+>=20
+> So the only way I can see ATM would be to introduce another mountflag
+> for libmount to indicate -o noiversion. This way we can make iversion a
+> default on ext4 without loosing the information about user provided -o
+> noiversion option.
+>=20
+> Is there a different way I am not seeing?
+>=20
 
-How would we approach making iversion a default? libmount is passing
-this option to the kernel as just a MS_I_VERSION flag that is set when
--o iversion is used and left empty when the -o noiversion is used. This
-means that while we could make it a default in ext4, we don't have any
-way of knowing whether the user asked for -o noiversion. So that's not
-really an option.
+Right, implementing this is the difficult bit actually since this uses a
+MS_* flag.=A0If we do make this the default, we'd definitely want to
+continue allowing "-o noiversion" to disable it.
 
-Updating the mke2fs/tune2fs to allow setting iversion as a default mount
-option I think has the same problem.
+Could we just reverse the default in libmount? It might cause this to
+suddenly be enabled in some deployments, but in most cases, people
+wouldn't even notice and they could still specify -o noiversion to turn
+it off.
 
-So the only way I can see ATM would be to introduce another mountflag
-for libmount to indicate -o noiversion. This way we can make iversion a
-default on ext4 without loosing the information about user provided -o
-noiversion option.
+Another idea would be to introduce new mount options for this, but
+that's kind of nasty from a UI standpoint.
 
-Is there a different way I am not seeing?
+>=20
+> If we can do reasonably extensive testing that will indeed show
+> negligible impact when nothing is querying i_version, then I would be in
+> favor of the change.
+>=20
 
-
-If we can do reasonably extensive testing that will indeed show
-negligible impact when nothing is querying i_version, then I would be in
-favor of the change.
-
-Thanks!
--Lukas
-
-> 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
-
+Excellent! I think that would be best if we can get away with it. A lot
+of people are currently running ext4-backed nfs servers and aren't using
+that mount option.
+--=20
+Jeff Layton <jlayton@kernel.org>
