@@ -2,84 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D4557C078
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 01:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF3A57C0A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 01:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbiGTXFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jul 2022 19:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        id S231482AbiGTXLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jul 2022 19:11:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231289AbiGTXFV (ORCPT
+        with ESMTP id S231605AbiGTXIv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jul 2022 19:05:21 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E8B6367
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 16:05:20 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id n7so87855ioo.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 16:05:20 -0700 (PDT)
+        Wed, 20 Jul 2022 19:08:51 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9290173920
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 16:08:22 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id c139so131568pfc.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 16:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=m1T4qbDxhSzNmOGzCQwvKdvIhsg9ftO1mwgvo87Nrw8=;
-        b=bhybBTw1im+DhwPHQWv+PzdM9trpgtKREb+kM6QNvHD05jCfagtV+lxooUJ731yakd
-         AtmTTjzC8ckolKZiHiuVoq5DcUcI7f0G3HBUlfBmed4XPivrb/aOGboWYwHTinfh/++2
-         KRREJxhfTSMu6dTk41fjcd+Bqsc5KPFtBHWAbuwg8IPFwwXIE//5nOy4HCjcrxn47h40
-         mLXHvQIlkmaXgPe8ZDzmvua0rHVH5BFWYJyCkSblCjWPH1/rObx2gAxsel7HdAEjQ3FR
-         fmrAxAKRzPK/ulKi/nMXeHIsh58mE9P7jvbmC3e7oo0ga1aE+dxNq4jKi8+XsEwstDfN
-         YTIw==
+        bh=Nszl3bsf2mnME2IbrRKNWdpEyNRDpL7edLFc4oh5rQk=;
+        b=FwlOpTY1Xy5ZtTxSMQshR8kwWNBaEnIm9ywPyxdMxe3T/XxFEM/rXOZ8shtzx6jRRS
+         91M8w+897Sjn6+U9yhdoQBbOHvUIZbnudqyVKqIbiFL3KIAItk6n7+SblQBLvdTN309V
+         3g30TPedV8pjIQUF/c55Q9haSHOBERI23VMmBXMMfrJh6ECBxww0/hu+TOsLKCzYQ+gw
+         GdGAnrtzEzMI3WfqML65BzsZafuMe/PQ0gjEW6sraCLwWPSVKqu83KinR/xUkg5DZP6e
+         1lFSj7wj5ru0N/Lu8b5OfGt3wIdl4NxJaMaNB7fu16Hj/vtrqiGttQ3ijzZC5VLTZ10Y
+         P4jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m1T4qbDxhSzNmOGzCQwvKdvIhsg9ftO1mwgvo87Nrw8=;
-        b=gEXXo72N1bg7SLhKHjmNtmVPPjF6hBdUgvZSCVbq78zq0WBJ/LlUILa4gnVftkV+F+
-         qksa9Oqy25s9rmvb4pBsUk+CIg9EyRSgaYjNRRN9MML/5o86oLSlRKh/DVUCJHX7P3Fg
-         pqktpJ8id0z0s1MaHLrxYcx0MJ2+taWIostbf4J0irC641rqcil1/l6dK6KHWHkgznE7
-         kjpRVB8e3QJ5WJSzEu+lBLsCgDlLfrxEh5R2ZqnnuDY2KXZ4xLE2kjWajTHF3oBJYeYA
-         M1q5FKEs3DNRvOBf3lVoJYm5andgyUKtx+UHRbEqY4TeMkU6ac8j4Yb2B4vFycg9EmMu
-         PHcg==
-X-Gm-Message-State: AJIora8VWi93n6DZCuVCYj4kcTvpcn2gXSYU9azKuyRyS2oBVlTNfLas
-        o1GaPP/sb3+568F4ZWIrg9tlloyjuEgU88xTOTgvSA==
-X-Google-Smtp-Source: AGRyM1vHwHvPWd8988+SD0LKzqKrSlWnqr4l9t8oZmoloK10ndRc8Ai0iTZof6+FZFo8o5tMT3S8rrmuJp1srFev0W4=
-X-Received: by 2002:a05:6602:2f03:b0:678:9c7c:97a5 with SMTP id
- q3-20020a0566022f0300b006789c7c97a5mr18761335iow.32.1658358319643; Wed, 20
- Jul 2022 16:05:19 -0700 (PDT)
+        bh=Nszl3bsf2mnME2IbrRKNWdpEyNRDpL7edLFc4oh5rQk=;
+        b=x/443WG+CIaMYz8RBqVK9dF76h1vfnaVgfYJ7KWsJfuwqlILIkB78ydMDzUY2soXCP
+         WwC4h6mVRpxwPrIe3ioOROlWKDi5iTS453fOqM7wWQT8iaMNs4phtxcQiGUUbr/0ufNP
+         QK+qTh8WE7TLZwnA8haTALaFwDXEUKptpSLumGr2oJHy98P3lZaLxq9r5F1fIiOxXEeZ
+         XGc7Nb6Ot7lFqojxjxFp3s+MyiicJiYetZmEmC3lAR8V9ni+Arj5B11mRQux1rZGiDMI
+         pQpz+WYpeSPLrhbTJekEeV3ND9xb6BnI27Uxhfl2GOKyaqIn4MOLrLWLL+E6+8txMEw2
+         4eug==
+X-Gm-Message-State: AJIora+Jy6Mp0nM+noQwL6jfwpn9x4S52R1KcxoqA0Wufe4hJRXwseK7
+        nGKj/3kJ23LXSbGZThOamDzVkkPKvmFAatsgkOTSrw==
+X-Google-Smtp-Source: AGRyM1sVSu2sWaA6KhwjXATdLIcan8zoTwRzYetVEkO/NR0+movB4Kj6gdLqTbANspAPpdn1ss3XaAW1x7VvJRw8slU=
+X-Received: by 2002:a62:1a8b:0:b0:528:d505:1a06 with SMTP id
+ a133-20020a621a8b000000b00528d5051a06mr41267868pfa.78.1658358501699; Wed, 20
+ Jul 2022 16:08:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220719195628.3415852-1-axelrasmussen@google.com> <PH7PR11MB6353950F607F7B8F274A3550FD8E9@PH7PR11MB6353.namprd11.prod.outlook.com>
-In-Reply-To: <PH7PR11MB6353950F607F7B8F274A3550FD8E9@PH7PR11MB6353.namprd11.prod.outlook.com>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Wed, 20 Jul 2022 16:04:43 -0700
-Message-ID: <CAJHvVchusMjvhLxYkWpa+iTaHvXYPFHcX7JGP=bW60e_O1jFGA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine grained
- access control
-To:     "Schaufler, Casey" <casey.schaufler@intel.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-7-chao.p.peng@linux.intel.com> <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
+ <20220624090246.GA2181919@chaop.bj.intel.com> <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
+ <20220630222140.of4md7bufd5jv5bh@amd.com> <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
+ <Ysc9JDcVAnlVrGC8@google.com> <5d0b9341-78b5-0959-2517-0fb1fe83a205@intel.com>
+In-Reply-To: <5d0b9341-78b5-0959-2517-0fb1fe83a205@intel.com>
+From:   Vishal Annapurve <vannapurve@google.com>
+Date:   Wed, 20 Jul 2022 16:08:10 -0700
+Message-ID: <CAGtprH9knCr++C7jgXYCi1zfYcreip1uun-d+eucjEQy9xymNg@mail.gmail.com>
+Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Nikunj A. Dadhania" <nikunj@amd.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Mike Rapoport <rppt@kernel.org>,
-        "Amit, Nadav" <namit@vmware.com>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, mhocko@suse.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -87,132 +103,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 3:16 PM Schaufler, Casey
-<casey.schaufler@intel.com> wrote:
+> > Hmm, so a new slot->arch.page_attr array shouldn't be necessary, KVM can instead
+> > update slot->arch.lpage_info on shared<->private conversions.  Detecting whether
+> > a given range is partially mapped could get nasty if KVM defers tracking to the
+> > backing store, but if KVM itself does the tracking as was previously suggested[*],
+> > then updating lpage_info should be relatively straightfoward, e.g. use
+> > xa_for_each_range() to see if a given 2mb/1gb range is completely covered (fully
+> > shared) or not covered at all (fully private).
+> >
+> > [*] https://lore.kernel.org/all/YofeZps9YXgtP3f1@google.com
 >
-> > -----Original Message-----
-> > From: Axel Rasmussen <axelrasmussen@google.com>
-> > Sent: Tuesday, July 19, 2022 12:56 PM
-> > To: Alexander Viro <viro@zeniv.linux.org.uk>; Andrew Morton
-> > <akpm@linux-foundation.org>; Dave Hansen
-> > <dave.hansen@linux.intel.com>; Dmitry V . Levin <ldv@altlinux.org>; Gleb
-> > Fotengauer-Malinovskiy <glebfm@altlinux.org>; Hugh Dickins
-> > <hughd@google.com>; Jan Kara <jack@suse.cz>; Jonathan Corbet
-> > <corbet@lwn.net>; Mel Gorman <mgorman@techsingularity.net>; Mike
-> > Kravetz <mike.kravetz@oracle.com>; Mike Rapoport <rppt@kernel.org>;
-> > Amit, Nadav <namit@vmware.com>; Peter Xu <peterx@redhat.com>;
-> > Shuah Khan <shuah@kernel.org>; Suren Baghdasaryan
-> > <surenb@google.com>; Vlastimil Babka <vbabka@suse.cz>; zhangyi
-> > <yi.zhang@huawei.com>
-> > Cc: Axel Rasmussen <axelrasmussen@google.com>; linux-
-> > doc@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-mm@kvack.org; linux-
-> > kselftest@vger.kernel.org
-> > Subject: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine grained
-> > access control
+> Yes, slot->arch.page_attr was introduced to help identify whether a page
+> is completely shared/private at given level. It seems XARRAY can serve
+> the same purpose, though I know nothing about it. Looking forward to
+> seeing the patch of using XARRAY.
 >
-> I assume that leaving the LSM mailing list off of the CC is purely
-> accidental. Please, please include us in the next round.
+> yes, update slot->arch.lpage_info is good to utilize the existing logic
+> and Isaku has applied it to slot->arch.lpage_info for 2MB support patches.
 
-Honestly it just hadn't occurred to me, but I'm more than happy to CC
-it on future revisions.
+Chao, are you planning to implement these changes to ensure proper
+handling of hugepages partially mapped as private/shared in subsequent
+versions of this series?
+Or is this something left to be handled by the architecture specific code?
 
->
-> >
-> > This series is based on torvalds/master.
-> >
-> > The series is split up like so:
-> > - Patch 1 is a simple fixup which we should take in any case (even by itself).
-> > - Patches 2-6 add the feature, configurable selftest support, and docs.
-> >
-> > Why not ...?
-> > ============
-> >
-> > - Why not /proc/[pid]/userfaultfd? The proposed use case for this is for one
-> >   process to open a userfaultfd which can intercept another process' page
-> >   faults. This seems to me like exactly what CAP_SYS_PTRACE is for, though,
-> > so I
-> >   think this use case can simply use a syscall without the powers
-> > CAP_SYS_PTRACE
-> >   grants being "too much".
-> >
-> > - Why not use a syscall? Access to syscalls is generally controlled by
-> >   capabilities. We don't have a capability which is used for userfaultfd access
-> >   without also granting more / other permissions as well, and adding a new
-> >   capability was rejected [1].
-> >
-> >     - It's possible a LSM could be used to control access instead. I suspect
-> >       adding a brand new one just for this would be rejected,
->
-> You won't know if you don't ask.
-
-Fair enough - I wonder if MM folks (Andrew, Peter, Nadav especially)
-would find that approach more palatable than /proc/[pid]/userfaultfd?
-Would it make sense from our perspective to propose a userfaultfd- or
-MM-specific LSM for controlling access to certain features?
-
-I remember +Andrea saying Red Hat was also interested in some kind of
-access control mechanism like this. Would one or the other approach be
-more convenient for you?
-
->
-> >       but I think some
-> >       existing ones like SELinux can be used to filter syscall access. Enabling
-> >       SELinux for large production deployments which don't already use it is
-> >       likely to be a huge undertaking though, and I don't think this use case by
-> >       itself is enough to motivate that kind of architectural change.
-> >
-> > Changelog
-> > =========
-> >
-> > v3->v4:
-> >   - Picked up an Acked-by on 5/5.
-> >   - Updated cover letter to cover "why not ...".
-> >   - Refactored userfaultfd_allowed() into userfaultfd_syscall_allowed().
-> > [Peter]
-> >   - Removed obsolete comment from a previous version. [Peter]
-> >   - Refactored userfaultfd_open() in selftest. [Peter]
-> >   - Reworded admin-guide documentation. [Mike, Peter]
-> >   - Squashed 2 commits adding /dev/userfaultfd to selftest and making
-> > selftest
-> >     configurable. [Peter]
-> >   - Added "syscall" test modifier (the default behavior) to selftest. [Peter]
-> >
-> > v2->v3:
-> >   - Rebased onto linux-next/akpm-base, in order to be based on top of the
-> >     run_vmtests.sh refactor which was merged previously.
-> >   - Picked up some Reviewed-by's.
-> >   - Fixed ioctl definition (_IO instead of _IOWR), and stopped using
-> >     compat_ptr_ioctl since it is unneeded for ioctls which don't take a pointer.
-> >   - Removed the "handle_kernel_faults" bool, simplifying the code. The result
-> > is
-> >     logically equivalent, but simpler.
-> >   - Fixed userfaultfd selftest so it returns KSFT_SKIP appropriately.
-> >   - Reworded documentation per Shuah's feedback on v2.
-> >   - Improved example usage for userfaultfd selftest.
-> >
-> > v1->v2:
-> >   - Add documentation update.
-> >   - Test *both* userfaultfd(2) and /dev/userfaultfd via the selftest.
-> >
-> > [1]: https://lore.kernel.org/lkml/686276b9-4530-2045-6bd8-
-> > 170e5943abe4@schaufler-ca.com/T/
-> >
-> > Axel Rasmussen (5):
-> >   selftests: vm: add hugetlb_shared userfaultfd test to run_vmtests.sh
-> >   userfaultfd: add /dev/userfaultfd for fine grained access control
-> >   userfaultfd: selftests: modify selftest to use /dev/userfaultfd
-> >   userfaultfd: update documentation to describe /dev/userfaultfd
-> >   selftests: vm: add /dev/userfaultfd test cases to run_vmtests.sh
-> >
-> >  Documentation/admin-guide/mm/userfaultfd.rst | 41 +++++++++++-
-> >  Documentation/admin-guide/sysctl/vm.rst      |  3 +
-> >  fs/userfaultfd.c                             | 69 ++++++++++++++++----
-> >  include/uapi/linux/userfaultfd.h             |  4 ++
-> >  tools/testing/selftests/vm/run_vmtests.sh    | 11 +++-
-> >  tools/testing/selftests/vm/userfaultfd.c     | 69 +++++++++++++++++---
-> >  6 files changed, 169 insertions(+), 28 deletions(-)
-> >
-> > --
-> > 2.37.0.170.g444d1eabd0-goog
->
+Regards,
+Vishal
