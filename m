@@ -2,158 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C957157B946
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 17:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3750857B981
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 17:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241135AbiGTPMO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jul 2022 11:12:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
+        id S241111AbiGTPXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jul 2022 11:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233491AbiGTPML (ORCPT
+        with ESMTP id S232046AbiGTPXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jul 2022 11:12:11 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B313CBE5;
-        Wed, 20 Jul 2022 08:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658329930; x=1689865930;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=q2IlxigBdcwC0dpWUgLpaaCiXj48I0dLaoXRVby3NyA=;
-  b=JVxnA3G31BtwwX7d89ETBKonHVpwhK4I3u2fu7mJk3+lv/F5g+6hMlFI
-   voWmJsThLQ0l5RXtt395CJTthSmFEEBdGsi+WIKvdLBQfX8nbhiXqN9Qe
-   ET1r2bf3pmInDiYPuxddPimaNum33EKgsAH+lFUhKFj3iAXDvMg9CnqO+
-   vbUg1tHuoJbGuxV4ITFJdZzrxtaPSfg7HgpRxUdFv3Yh0+abmruxgGjue
-   629HVUuhoV9SJBPPqHd0Vy74LA1qlNKknRstmM/j/gYARF8cHUiVfdqC0
-   jJC+5Ld3nRSuBOISqtHImJKQsZj3ZHxQBETUIhW6jF55X2aBIpteJWyji
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="285567970"
-X-IronPort-AV: E=Sophos;i="5.92,286,1650956400"; 
-   d="scan'208";a="285567970"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2022 08:12:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,286,1650956400"; 
-   d="scan'208";a="595275695"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 20 Jul 2022 08:11:56 -0700
-Date:   Wed, 20 Jul 2022 23:07:06 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
- memory regions
-Message-ID: <20220720150706.GB124133@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
- <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
- <20220719140843.GA84779@chaop.bj.intel.com>
- <36e671d2-6b95-8e4f-c2ac-fee4b2670c6e@amd.com>
+        Wed, 20 Jul 2022 11:23:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 92EFD5B7A6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 08:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1658330582;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KUcxIoB2J7OZSdoCp00xQlFV5PxUPCmzZjIlgAQpABg=;
+        b=iRBOy7ZziRxlnJgPbKF09AVDKyIaYNVafa+8BSoiZVdwTUEGVrsysPyNTiQPZNhEw2jPGI
+        7ZMIApxVvsKtcpVrUWc5F7eW0Wt+/V9kcT5890EWISJzXZ7JtFU1TQQKpxSCTshexRcGEL
+        Eo1iz/qivytzHYP18tnLgICJaMdBZtY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-593-NSpBIl2VOkWCl7pVBu4WtA-1; Wed, 20 Jul 2022 11:23:01 -0400
+X-MC-Unique: NSpBIl2VOkWCl7pVBu4WtA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 508538F3EE0;
+        Wed, 20 Jul 2022 15:23:00 +0000 (UTC)
+Received: from fedora (unknown [10.40.194.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 419AE1121314;
+        Wed, 20 Jul 2022 15:22:59 +0000 (UTC)
+Date:   Wed, 20 Jul 2022 17:22:57 +0200
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>
+Subject: Re: should we make "-o iversion" the default on ext4 ?
+Message-ID: <20220720152257.t67grnm4wdi3dpld@fedora>
+References: <69ac1d3ef0f63b309204a570ef4922d2684ed7f9.camel@kernel.org>
+ <20220720141546.46l2d7bxwukjhtl7@fedora>
+ <ad7218a41fa8ac26911a9ccb79c87609d4279fea.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <36e671d2-6b95-8e4f-c2ac-fee4b2670c6e@amd.com>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad7218a41fa8ac26911a9ccb79c87609d4279fea.camel@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 04:23:52PM +0200, Gupta, Pankaj wrote:
-> 
-> > > > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
-> > > > +{
-> > > > +	return false;
-> > > > +}
-> > > 
-> > > Does this function has to be overriden by SEV and TDX to support the private
-> > > regions?
-> > 
-> > Yes it should be overridden by architectures which want to support it.
-> 
-> o.k
-> > 
-> > > 
-> > > > +
-> > > >    static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
-> > > >    {
-> > > >    	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> > > > @@ -4689,6 +4729,22 @@ static long kvm_vm_ioctl(struct file *filp,
-> > > >    		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
-> > > >    		break;
-> > > >    	}
-> > > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > > +	case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > > > +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > > > +		struct kvm_enc_region region;
-> > > > +
-> > > > +		if (!kvm_arch_private_mem_supported(kvm))
-> > > > +			goto arch_vm_ioctl;
-> > > > +
-> > > > +		r = -EFAULT;
-> > > > +		if (copy_from_user(&region, argp, sizeof(region)))
-> > > > +			goto out;
-> > > > +
-> > > > +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
-> > > 
-> > > this is to store private region metadata not only the encrypted region?
-> > 
-> > Correct.
-> 
-> Sorry for not being clear, was suggesting name change of this function from:
-> "kvm_vm_ioctl_set_encrypted_region" to "kvm_vm_ioctl_set_private_region"
+On Wed, Jul 20, 2022 at 10:38:31AM -0400, Jeff Layton wrote:
+> On Wed, 2022-07-20 at 16:15 +0200, Lukas Czerner wrote:
 
-Though I don't have strong reason to change it, I'm fine with this and
-this name matches the above kvm_arch_private_mem_supported perfectly.
+--snip--
 
-Thanks,
-Chao
+> > How would we approach making iversion a default? libmount is passing
+> > this option to the kernel as just a MS_I_VERSION flag that is set when
+> > -o iversion is used and left empty when the -o noiversion is used. This
+> > means that while we could make it a default in ext4, we don't have any
+> > way of knowing whether the user asked for -o noiversion. So that's not
+> > really an option.
+> > 
+> > Updating the mke2fs/tune2fs to allow setting iversion as a default mount
+> > option I think has the same problem.
+> > 
+> > So the only way I can see ATM would be to introduce another mountflag
+> > for libmount to indicate -o noiversion. This way we can make iversion a
+> > default on ext4 without loosing the information about user provided -o
+> > noiversion option.
+> > 
+> > Is there a different way I am not seeing?
+> > 
+> 
+> Right, implementing this is the difficult bit actually since this uses a
+> MS_* flag. If we do make this the default, we'd definitely want to
+> continue allowing "-o noiversion" to disable it.
+> 
+> Could we just reverse the default in libmount? It might cause this to
+> suddenly be enabled in some deployments, but in most cases, people
+> wouldn't even notice and they could still specify -o noiversion to turn
+> it off.
+
+Can be done, but that would change the default for everyone. Not sure if
+that desirable. Also I can image this being a bit confusing. I still
+think the best approach would be to introduce another MS_ flag for
+noiversion case. I think there is precedence in the case of
+MS_STRICTATIME - not exactly the same but similar enough.
+
+> Another idea would be to introduce new mount options for this, but
+> that's kind of nasty from a UI standpoint.
 > 
 > > 
-> > > 
-> > > Also, seems same ioctl can be used to put other regions (e.g firmware, later
-> > > maybe DAX backend etc) into private memory?
+> > If we can do reasonably extensive testing that will indeed show
+> > negligible impact when nothing is querying i_version, then I would be in
+> > favor of the change.
 > > 
-> > Possibly. Depends on what exactly the semantics is. If just want to set
-> > those regions as private current code already support that.
 > 
-> Agree. Sure!
+> Excellent! I think that would be best if we can get away with it. A lot
+> of people are currently running ext4-backed nfs servers and aren't using
+> that mount option.
+
+Could you provide some performance numbers for iversion case?
+
+Thanks!
+-Lukas
+
+> -- 
+> Jeff Layton <jlayton@kernel.org>
 > 
-> 
-> Thanks,
-> Pankaj
+
