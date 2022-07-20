@@ -2,153 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2AED57ADD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 04:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A952857ADFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 04:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238389AbiGTC1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Jul 2022 22:27:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54194 "EHLO
+        id S238378AbiGTCb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Jul 2022 22:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238289AbiGTC11 (ORCPT
+        with ESMTP id S238289AbiGTCbf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Jul 2022 22:27:27 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0967B1E6;
-        Tue, 19 Jul 2022 19:22:59 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id s21so16398943pjq.4;
-        Tue, 19 Jul 2022 19:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cO1rkdmuR7oU7bdfMTLhtMVH5g0UFDfLxXUgSSq290Q=;
-        b=Pg+23lszg/SMLvpTmuUuWn7zjrLDDUntSNiqSnY9WYIdZX/j15HznIbwfe6QbVfLfp
-         f6rctMgHQYPkaceqThkzrLIK0LgkpI/jV3EQenObsbg6f12v9mHQQetSWZGFeDCCy5Kz
-         VDC13JEj7ZqqP2hpBqBXPqj4vVLVc9WhaneWRXlCaqm5mCvMupRHQwBDhfWPir3ZIY9+
-         5cd7gNbxEZYvDd1JnQ51MS0kN0JJmvbASMGr79k6oXMya+crLOP3qS11M/l64IoFPdZS
-         7DM5ZVQvCAU5TowlrZ4RR3ajmC2pvb9t57I2+cWD7sshfFy6IFh6CkQmQq1Rfsz7IRey
-         cQmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cO1rkdmuR7oU7bdfMTLhtMVH5g0UFDfLxXUgSSq290Q=;
-        b=GmCsZ+Dy5wLCcKIm5UjibTO9vBj4Tc+3Nj7rTH6/ipiTd3Ix+UwEH5F7nbwddofbNp
-         XbJkhpa3CRSqdyd93Amen4Q0DiFQ9U10StLYL5RT4wLE1xEmxZ3L+wuR/AfCXti9JILU
-         OfLcofdDue8hPlzoQkmyK/il1oYCPa+Fpzw+83KEENgu+Qg1kBZV4NwHRN1SefNr87JL
-         3AqLVPxp/+ukyoaQU6Dv1/ciOnsSJAMBTYJqy81j4A5tWmafGrkTgODePIAliM4EebgO
-         eqmPYtbl2xoEUkDyqozFOfBo2GHUYX7GNfVgmEeaLTNch89M2YNPO1di15gtWH5vt/U6
-         2wLg==
-X-Gm-Message-State: AJIora/cplC38CQee4QE+kw6a09vvXp92Kfwa5so+d6umlkxonjznv+6
-        hxraYnBRzUHRr7nVyVJbl4g=
-X-Google-Smtp-Source: AGRyM1tHNsb+oWEVREcDzaw1lIXwkfEzP1rakZkQKX9TOABe/2TEHuqjDnSIhJIm2G8raA5nLI9n4A==
-X-Received: by 2002:a17:902:e551:b0:16c:5a22:4823 with SMTP id n17-20020a170902e55100b0016c5a224823mr35231811plf.38.1658283776923;
-        Tue, 19 Jul 2022 19:22:56 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id f129-20020a625187000000b00525b61fc3f8sm12361724pfb.40.2022.07.19.19.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jul 2022 19:22:56 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: yang.yang29@zte.com.cn
-To:     viro@zeniv.linux.org.uk, hughd@google.com,
-        akpm@linux-foundation.org, hch@infradead.org,
-        hsiangkao@linux.alibaba.com
-Cc:     yang.yang29@zte.com.cn, axboe@kernel.dk, yangerkun@huawei.com,
-        johannes.thumshirn@wdc.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        CGEL ZTE <cgel.zte@gmail.com>
-Subject: [PATCH] fs: drop_caches: skip dropping pagecache which is always dirty
-Date:   Wed, 20 Jul 2022 02:21:19 +0000
-Message-Id: <20220720022118.1495752-1-yang.yang29@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Tue, 19 Jul 2022 22:31:35 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68EB5A891;
+        Tue, 19 Jul 2022 19:31:33 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id A99C5320089C;
+        Tue, 19 Jul 2022 22:31:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 19 Jul 2022 22:31:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1658284292; x=
+        1658370692; bh=29i1hrZsl5NXrlVlhjdPpQNpjKoeLeQnUW12TsJOaio=; b=N
+        7mvVFDfiwzkmmi8YfhXoRe8L+Bz/oh9mrkAptbYnCPhoavGUjzcOaUfA7gT/oRyS
+        faLOsPrgRNdjA6BRHrqUxofQFtNPF7AvPSi9uYhSgks9lF1yMZ1kYlxz1OTwU44G
+        3e2d8z1fGtVzquAnKu+54o17M/D7REi2pByXtGXEsR6jq0ZjMH458uhWy6B+mDmo
+        EYL7eWXk+1QhRsSr5rxf4cLywBxpc4uiG6IB5rzYWe5UuOgF40E9Hw6taFElhCYy
+        GNN3C/JsZZDaVE262ZzCxafsZ7NK1B9lvKxASLesD6+iB0T6Q3l5DtqlJxb09zNe
+        OnDKXqPY8RQg1ZzjRFHPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1658284292; x=
+        1658370692; bh=29i1hrZsl5NXrlVlhjdPpQNpjKoeLeQnUW12TsJOaio=; b=B
+        JmDTV+X+BdlEiUbNUxzCS8xKncB/K+APilpbwmFiHN9bL+yKM/8dEdBnKqgnJXOX
+        KSwfUIrYgD3+GXidnhePUXuPyXIkXrgpL7Fl6X8L1iWcMk0YVzXEDeVFegxZWCE2
+        ReS49qnkwLKAOT02wvhANWVH0Q1koyZZ6qEYQ0lYqzCoo4NB739n9rBvCLzFFMPv
+        CcEnrjodVprkO3svuTC3BnrJu1wVuL8VNKgW4p8qcweRog5hiWlIaefGb8dti/8J
+        NKBtpJ9lsUUTJx0RIuxLIxhZygkCbMDYfCVbAqEYj0Paim7Ffu8VzkH7Yt0mDpjf
+        UjGK0SPMS9k+r8aRlsC/g==
+X-ME-Sender: <xms:A2nXYlK-sAwZUCIqK4cTB1ErlRfF7AEO6utZUTppLab9rPJEnQotMA>
+    <xme:A2nXYhLRzAnbyPsTqU7x8xSTTb4xhqziryaHsFn2Usu7V9ngM9pe7FoiHD3BFgO46
+    oNZhAYXWE-y>
+X-ME-Received: <xmr:A2nXYtuIA4CDUy8UJHWQ4VDXqaLoKNq_Obvb-9cFjfxwk9yzWSLRyL9pIGJNf-HBUdffckkQP8EBYI8WJTOH28P7SWvRak2_nsuVr8nSpbGWNLSmn_M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeluddgiedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epuefhueeiieejueevkefgiedtteehgfdutdelfffhleeflefhudeuvdefhfeghfehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:A2nXYmZzPQcXiJSzk__nMgr7iKiyTBX8cMapBBsIyM9Mx2ATiSKRCw>
+    <xmx:A2nXYsaKI10HGosAZHYFu1tPwQx9gtQKpoL_wmhfQtz002idMSbUag>
+    <xmx:A2nXYqCWProIE7AuayrnpvC6xvcs_L5IdsL02mSG-mlV1xrFP-dUYA>
+    <xmx:BGnXYkEwZ-yuPA0WlNIC4uXmLLpUklwXq-NJCu8fkYvzbL6-8c3dmQ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 19 Jul 2022 22:31:28 -0400 (EDT)
+Message-ID: <41252c7e-674b-c110-962b-c20204dc7424@themaw.net>
+Date:   Wed, 20 Jul 2022 10:31:26 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 2/3] vfs: add propagate_mount_tree_busy() helper
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <165751053430.210556.5634228273667507299.stgit@donald.themaw.net>
+ <165751066658.210556.1326573473015621909.stgit@donald.themaw.net>
+ <YtdgUOJlTc4aB+82@ZenIV>
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <YtdgUOJlTc4aB+82@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Yang Yang <yang.yang29@zte.com.cn>
 
-Pagecache of some kind of fs has PG_dirty bit set once it was
-allocated, so it can't be dropped. These fs include ramfs and
-tmpfs. This can make drop_pagecache_sb() more efficient.
+On 20/7/22 09:54, Al Viro wrote:
+> On Mon, Jul 11, 2022 at 11:37:46AM +0800, Ian Kent wrote:
+>
+>> +static int do_mount_in_use_check(struct mount *mnt, int cnt)
+>> +{
+>> +	struct mount *topper;
+>> +
+>> +	/* Is there exactly one mount on the child that covers
+>> +	 * it completely?
+>> +	 */
+>> +	topper = find_topper(mnt);
+>> +	if (topper) {
+>> +		int topper_cnt = topper->mnt_mounts_cnt + 1;
+>> +
+>> +		/* Open file or pwd within singular mount? */
+>> +		if (do_refcount_check(topper, topper_cnt))
+>> +			return 1;
+> Whatever the hell for?  umount(2) will be able to slide the
+> underlying mount from under the topper, whatever the
+> refcount of topper might have been.
 
-Introduce a new fs flag to do this, and this new flag may be
-used in other case in future.
+My thinking was that a process could have set a working
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-Signed-off-by: CGEL ZTE <cgel.zte@gmail.com>
----
- fs/drop_caches.c   | 7 +++++++
- fs/ramfs/inode.c   | 2 +-
- include/linux/fs.h | 1 +
- mm/shmem.c         | 2 +-
- 4 files changed, 10 insertions(+), 2 deletions(-)
+directory (or opened a descriptor) and some later change
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index e619c31b6bd9..16956d5d3922 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -19,6 +19,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- {
- 	struct inode *inode, *toput_inode = NULL;
- 
-+	/*
-+	 * Pagecache of this kind of fs has PG_dirty bit set once it was
-+	 * allocated, so it can't be dropped.
-+	 */
-+	if (sb->s_type->fs_flags & FS_ALWAYS_DIRTY)
-+		return;
-+
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index bc66d0173e33..5fb62d37618f 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -289,7 +289,7 @@ static struct file_system_type ramfs_fs_type = {
- 	.init_fs_context = ramfs_init_fs_context,
- 	.parameters	= ramfs_fs_parameters,
- 	.kill_sb	= ramfs_kill_sb,
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALWAYS_DIRTY,
- };
- 
- static int __init init_ramfs_fs(void)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e285bd9d6188..90cdd10d683e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2532,6 +2532,7 @@ struct file_system_type {
- #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
- #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
- #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
-+#define FS_ALWAYS_DIRTY		64	/* Pagecache is always dirty. */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	int (*init_fs_context)(struct fs_context *);
- 	const struct fs_parameter_spec *parameters;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8baf26eda989..5d549f61735f 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3974,7 +3974,7 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALWAYS_DIRTY,
- };
- 
- void __init shmem_init(void)
--- 
-2.25.1
+to an autofs map resulted in it being mounted on. It's
+
+irrelevant now with your suggested simpler approach, ;)
+
+
+Ian
 
