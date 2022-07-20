@@ -2,156 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEA557B683
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 14:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC61D57B6BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Jul 2022 14:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234372AbiGTMds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Jul 2022 08:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32952 "EHLO
+        id S240708AbiGTMsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Jul 2022 08:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240528AbiGTMdf (ORCPT
+        with ESMTP id S231571AbiGTMsO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Jul 2022 08:33:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3370D4D807
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 05:33:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DC97EB81F2D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 12:33:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9C0C3411E;
-        Wed, 20 Jul 2022 12:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658320386;
-        bh=Z4c82suRVc4GtGCbhpnDlMD+hZbL411UX1V6St46LPw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SQhwbOIQP1Xw/KysKVUDtDqMwFP7yFLU76xvoCHpYoajLs3HlZqLXXbp7vstIn/uj
-         NMVavLhVIyz5tYT3rUt3BF/mgF4R0M10as0Q3DPZbVroc2lZbcf5BrrvcwP/IE/P6S
-         eg2UR2EjpACddywZnU+UHHSMDzVPMDeo8QfJBwa3+L6N9yGg9NDe5NIs8uDsVTuNXi
-         bFXboxU2TForJRt4etKt139zv9cIKIZKKsNS26YTuweIdB5lPoFfFdpQDiTNg5JZfe
-         M4RmIXv9zjjvMGZWts7ryvao/CHbR6OL0sRAgYzK32MdhH2D2OOuJTZ7fUwjG/wmT+
-         UVA+aKWOf9lKQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] ntfs: fix acl handling
-Date:   Wed, 20 Jul 2022 14:32:52 +0200
-Message-Id: <20220720123252.686466-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 20 Jul 2022 08:48:14 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41E02AE14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 05:48:11 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id o18so3512801pjs.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Jul 2022 05:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=gGzhbksNlmAjolVQXQdc9eTCDYUNBeJ75ClnIeGoBhQ=;
+        b=p4DVtuHsUlq3ow05vMOkgjy2v8TGkBw9yNnqN0k3Aez87VPlF/SrkPj5HMP+WMIMpa
+         1+LFW6tYsXVIOkCzmONzXA0EAFKIUfZBghG1PRzbdUdJgZdSfZM0lrAnItaIv60JDGgj
+         xJEQcJzCh/SPy5GP65S0ddQkj8BvR1BXbgNJCb0dW7q2UKWomROZPbtuHxe3H7k2Z4/L
+         XuGRDG4muhkTbtCGccalZ+DbKsgLVdEcN42mdmMOEJhkUVp+aEBPcGM/qXl2D9gOm0jq
+         ZHvp+oeLZ/yvVXWXqo2yIZyWXYZJ2yoJR5AKPD5C8fev28ydJjva7QdpjqDzOKSXCAAY
+         AjqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=gGzhbksNlmAjolVQXQdc9eTCDYUNBeJ75ClnIeGoBhQ=;
+        b=4O9sF31VKF9OBQF3p84Pip6Nc4H+12iLlNeoCO6+gGrGKR7+oq0vVdzSKzXbrkc6AX
+         kv3HfEh1F5mgPQcHxDMN0jcRkm2gybvybwQ1rBSI7DaFXHL356KYlUJjKM4f2KqCLERe
+         YHuGueavCEvwAyqohQPim5yqzNSjDUGagCdmJrRA0klkxs4uQTMzHpk7kLzUlWz1MrTU
+         Hu49a/buFWg1CpE4BQq95CjJfKPH/gZkzKd+xJkkYgNd/R28rNdwNfIzXFDLRRGkKMNL
+         SToznIbiyYibrG8xa4MCWeUHOa9tojBB+66HpjcOVkkL6AV9NsgHEQMLyrcm+hf0WEGD
+         vZvQ==
+X-Gm-Message-State: AJIora8kpbT2TZhklsfT+aAiK/kTngnIkyvOporaONA3wC/zizbcsEhV
+        ipYZjmESSeUTHqGuXYHtaLuvMQ==
+X-Google-Smtp-Source: AGRyM1sWwt7u1rTQL3JPhU9/TDBVwmyvsCTLPJg5D9wKXKP4XmGv+Ftymq6kH5fEnfwVfjO7Yh9vkw==
+X-Received: by 2002:a17:902:eb8e:b0:16c:29dc:f1f3 with SMTP id q14-20020a170902eb8e00b0016c29dcf1f3mr38949744plg.22.1658321291126;
+        Wed, 20 Jul 2022 05:48:11 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id u14-20020a654c0e000000b0040d0a57be02sm11875401pgq.31.2022.07.20.05.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Jul 2022 05:48:10 -0700 (PDT)
+Message-ID: <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
+Date:   Wed, 20 Jul 2022 06:48:09 -0600
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3790; h=from:subject; bh=Z4c82suRVc4GtGCbhpnDlMD+hZbL411UX1V6St46LPw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRd//qhSm/PPD/lKZJ1HxKFF2z7+FIqecPbtaeul08ucN1y qyZatKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAidYUM/yzkKp2n7S0v7Q2a+GTyG6 +sH8umZcmU/fW6rDNfSWfmpJOMDKeqzH26Z7AycSc3X9vPpvkx4YL6t1vydTazD83Ktl8+kQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v5.10 1/1] io_uring: Use original task for req identity in
+ io_identity_cow()
+Content-Language: en-US
+To:     Lee Jones <lee@kernel.org>
+Cc:     stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220719115251.441526-1-lee@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220719115251.441526-1-lee@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While looking at our current POSIX ACL handling in the context of some
-overlayfs work I went through a range of other filesystems checking how they
-handle them currently and encountered ntfs3.
+On 7/19/22 5:52 AM, Lee Jones wrote:
+> This issue is conceptually identical to the one fixed in 29f077d07051
+> ("io_uring: always use original task when preparing req identity"), so
+> rather than reinvent the wheel, I'm shamelessly quoting the commit
+> message from that patch - thanks Jens:
+> 
+>  "If the ring is setup with IORING_SETUP_IOPOLL and we have more than
+>   one task doing submissions on a ring, we can up in a situation where
+>   we assign the context from the current task rather than the request
+>   originator.
+> 
+>   Always use req->task rather than assume it's the same as current.
+> 
+>   No upstream patch exists for this issue, as only older kernels with
+>   the non-native workers have this problem."
 
-The posic_acl_{from,to}_xattr() helpers always need to operate on the
-filesystem idmapping. Since ntfs3 can only be mounted in the initial user
-namespace the relevant idmapping is init_user_ns.
+Greg, can you pick this one up for 5.10-stable? Thanks!
 
-The posix_acl_{from,to}_xattr() helpers are concerned with translating between
-the kernel internal struct posix_acl{_entry} and the uapi struct
-posix_acl_xattr_{header,entry} and the kernel internal data structure is cached
-filesystem wide.
-
-Additional idmappings such as the caller's idmapping or the mount's idmapping
-are handled higher up in the VFS. Individual filesystems usually do not need to
-concern themselves with these.
-
-The posix_acl_valid() helper is concerned with checking whether the values in
-the kernel internal struct posix_acl can be represented in the filesystem's
-idmapping. IOW, if they can be written to disk. So this helper too needs to
-take the filesystem's idmapping.
-
-Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
-Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- fs/ntfs3/xattr.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 5e0e0280e70d..3e9118705174 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -478,8 +478,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
- }
- 
- #ifdef CONFIG_NTFS3_FS_POSIX_ACL
--static struct posix_acl *ntfs_get_acl_ex(struct user_namespace *mnt_userns,
--					 struct inode *inode, int type,
-+static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
- 					 int locked)
- {
- 	struct ntfs_inode *ni = ntfs_i(inode);
-@@ -514,7 +513,7 @@ static struct posix_acl *ntfs_get_acl_ex(struct user_namespace *mnt_userns,
- 
- 	/* Translate extended attribute to acl. */
- 	if (err >= 0) {
--		acl = posix_acl_from_xattr(mnt_userns, buf, err);
-+		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
- 	} else if (err == -ENODATA) {
- 		acl = NULL;
- 	} else {
-@@ -537,8 +536,7 @@ struct posix_acl *ntfs_get_acl(struct inode *inode, int type, bool rcu)
- 	if (rcu)
- 		return ERR_PTR(-ECHILD);
- 
--	/* TODO: init_user_ns? */
--	return ntfs_get_acl_ex(&init_user_ns, inode, type, 0);
-+	return ntfs_get_acl_ex(inode, type, 0);
- }
- 
- static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
-@@ -595,7 +593,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
- 		value = kmalloc(size, GFP_NOFS);
- 		if (!value)
- 			return -ENOMEM;
--		err = posix_acl_to_xattr(mnt_userns, acl, value, size);
-+		err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
- 		if (err < 0)
- 			goto out;
- 		flags = 0;
-@@ -641,7 +639,7 @@ static int ntfs_xattr_get_acl(struct user_namespace *mnt_userns,
- 	if (!acl)
- 		return -ENODATA;
- 
--	err = posix_acl_to_xattr(mnt_userns, acl, buffer, size);
-+	err = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
- 	posix_acl_release(acl);
- 
- 	return err;
-@@ -665,12 +663,12 @@ static int ntfs_xattr_set_acl(struct user_namespace *mnt_userns,
- 	if (!value) {
- 		acl = NULL;
- 	} else {
--		acl = posix_acl_from_xattr(mnt_userns, value, size);
-+		acl = posix_acl_from_xattr(&init_user_ns, value, size);
- 		if (IS_ERR(acl))
- 			return PTR_ERR(acl);
- 
- 		if (acl) {
--			err = posix_acl_valid(mnt_userns, acl);
-+			err = posix_acl_valid(&init_user_ns, acl);
- 			if (err)
- 				goto release_and_out;
- 		}
-
-base-commit: ff6992735ade75aae3e35d16b17da1008d753d28
 -- 
-2.34.1
+Jens Axboe
 
