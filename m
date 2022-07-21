@@ -2,189 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C75A57D688
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 00:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4FA57D6E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 00:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbiGUWHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 18:07:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47864 "EHLO
+        id S229833AbiGUWcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 18:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231879AbiGUWHs (ORCPT
+        with ESMTP id S229739AbiGUWcI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 18:07:48 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFBA88744
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 15:07:46 -0700 (PDT)
+        Thu, 21 Jul 2022 18:32:08 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75281B7A3;
+        Thu, 21 Jul 2022 15:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658441266; x=1689977266;
+  t=1658442727; x=1689978727;
   h=date:from:to:cc:subject:message-id:references:
    in-reply-to:mime-version;
-  bh=FPxQlNN2rmxz1M/r1OhqQz08Bo6Rwfkhyq75YDQGrWU=;
-  b=dsuuYXOUi7o8lzB6emz47m6NXo+FlET+xssAwMYzq0JTDfq3YyKHIQ5s
-   WADTvmCQZZy/f3+ZCu+HYH7waXuEPC6e8OP8wrtB/U0AYSKgfnM5VtEpa
-   C+LmS4lKvoWX/0fK7TK9mf1BVa0nEHAbjnDAtqoenBuekmZxOOLnTZCL0
-   3jCLrgNCPTRYjK4NKNTo+NGfRnecX/z/ApQ+A2nGTaH1WFEJMazYA4iLU
-   lgk0rXc6LobG0AsBhJJppwcbxyKPgccHkWemXdXBbb5Srg+VUNl3chnB4
-   zhZXQDB2FcDD2uzjW/UGnBSiCEOIfEPeP7LyKnrL54idjtcRrAn8Czf8R
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10415"; a="267579373"
+  bh=8GXS+MumU8gPy/Pb6vPNNRn3HGXDtrkY3dK1BuNA0ts=;
+  b=EWD1sTFyDLVHQVqTtsRm3dUMfyGTz4uhf806VXnrPyUhn4/GhFFmrkum
+   osaiTWiRzyObiuiOppMkY8ZHF97EhbjMc3/zYjNGhdmsKX84M3r2ws7b1
+   ub9FmjnEKxB0py+jYCawIP71yaRtjyDVZkt8LkYRzTFs9pZ7mIq02s+Dj
+   39CzIOeLdufCxsHg6Omy+BiwMaMu0exSL5mjoOUfvkcx2VoYdflNMCSnV
+   SqnVd8Bv1ofvmJ6U2Hf7D8rOT0RgwMVAhJB9O/2aGsgWC1kkcMgQWMpXB
+   F68UL5Ap8ReJYzuhT9nO4obukkyMYBp8ODvn06LUS+GnoIa+L9dhNBf56
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10415"; a="266960330"
 X-IronPort-AV: E=Sophos;i="5.93,184,1654585200"; 
-   d="scan'208";a="267579373"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 15:07:46 -0700
+   d="scan'208";a="266960330"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 15:32:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,184,1654585200"; 
-   d="scan'208";a="548949912"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga003.jf.intel.com with ESMTP; 21 Jul 2022 15:07:45 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
+   d="scan'208";a="725216106"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2022 15:32:06 -0700
+Received: from orsmsx607.amr.corp.intel.com (10.22.229.20) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 21 Jul 2022 15:07:45 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.1.2375.28; Thu, 21 Jul 2022 15:32:06 -0700
+Received: from orsmsx607.amr.corp.intel.com (10.22.229.20) by
+ ORSMSX607.amr.corp.intel.com (10.22.229.20) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28 via Frontend Transport; Thu, 21 Jul 2022 15:07:45 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.104)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ 15.1.2375.28; Thu, 21 Jul 2022 15:32:06 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx607.amr.corp.intel.com (10.22.229.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28 via Frontend Transport; Thu, 21 Jul 2022 15:32:06 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.27; Thu, 21 Jul 2022 15:07:45 -0700
+ 15.1.2308.27; Thu, 21 Jul 2022 15:32:05 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VN03ouLvmgx2aVzTLQSATWTS6v0Figl44MVqfn1x0Szkq112icu/idyumFtnEm5y3ILO2V9XjXk0BTTpjOgcAMHWZvwEgtrvma41D+7YEkPnqFOPg/q7hsvfp62r5H0HRFyz8m46A6Gt1jSM1fiNJs+ZOFu4R45cj4Y7RJXXkynWuT8Z8L4KG8qc4xA1UT2XzCp9nRAfu2ICr+48rBPRjR4EFXHihfEuwHwlasuwhcobv8pCtnq2o79sN4t6Og7aFuPSQ6OQKW/cjfJm6/u44KL6/DL3BZ6wguFJyqBuP28Lsh4MaH5NXUNiE7YgNMtJjgu/KRP/xwx7z1HC/AkKag==
+ b=iBe93qd8+jd/o/JiqAaIWayGpb7xq3vxstvaUCnSofPtYF3XvG3sT9nt/oahbRbQMxbKBrHTeueihFan3gnYH8mzifDN2nC3y8PHyUl1SeEJ8aQCeG8LJIKSRa8NAANOoXGuNzGuhlb4KoQnVEkwEYkcNixY0i/17pGyhhg/It8ah9kgO4rVfuLjPRqFOe3b8jItwKgwge6003OjoCBo37OIJno/1btA8wh5ySAJfoUnxEzAGDB3YVxFHwG7TgdG33aB1UkN6KUImjlL0bDCHWeTAD11Wvs5+SzzffrFz0RB0D5DBlQq35q991PeCtJ2Rdw1CeWzBsScFX4uM9iOpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IifXe80LPL5F7pkUUCp/AsKt3qVVQ6GgJ3PXnvJ/y1w=;
- b=EKOvrKY2RJoK6hefdkC9xKhki7Ehab+oXRF8MoIAkAHy1IAO8eV5KFKOGBCJ/5gURZp/wHsNHpNv1rJnZCeZoB+X5afeJyXtxpGRhrOI9QPcURZJGszxvrQ32oxiuk35etcG0RoRLvMeMKUjTd9P0a4p/blyNmzJRHqFQd01YDQFYWlCh+6dbr4euAVI/WbNYZUAZhHV7cikQKxcL7ZoUkKQZXVV4156UWbsuDT+ftad/uw9e/KBMpXwMwCZlxB5T+lTMijh3NJZd/ByUJ6Pm93FEPSrYv6CpAWnEDZg9KYynhvQCOzy8iLv8JG1kbPYBLc8oYh/hq1/nWgmlGH8+w==
+ bh=71GrRWGcPcx2KUURmgdCqr+s+OTMZzXWa1Xr0E0PzYU=;
+ b=H+NYgfqGjTQyILMSbbJIyhzyYevHsF4S/+ZSNBwgo4J4jap3WvdzlYh3nUYX2jOo8vu5rBqYcx0g5NN3pA8sxg2uJUaxr3ZXrYPF4lJLoJ4nTTYihwlwQW1SjTRk7w+PIePoGYrDvhsh6rowPMWFK/c92sngz3E/4zVYhLzw+dkiBZecN9k/POat+obgH9ezsdGGIAeUoG5I6DKfkU/QZVkYLq/HEQ+BVdnPE21KD4V8WmK/ySCpOQcoTU061V3ZhLgBFvEdeUdIs7jKGkzMk4HwmpJ2x503LFliZl4rGvnbyEm6cq7M8lQ2+nufW/18vhT1JSSfUEyxNOPaFFtYXw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DM4PR11MB6311.namprd11.prod.outlook.com (2603:10b6:8:a6::21) by
- BL0PR11MB2963.namprd11.prod.outlook.com (2603:10b6:208:7b::28) with Microsoft
+ PH0PR11MB5029.namprd11.prod.outlook.com (2603:10b6:510:30::15) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5438.19; Thu, 21 Jul 2022 22:07:43 +0000
+ 15.20.5458.18; Thu, 21 Jul 2022 22:32:04 +0000
 Received: from DM4PR11MB6311.namprd11.prod.outlook.com
  ([fe80::3154:e32f:e50c:4fa6]) by DM4PR11MB6311.namprd11.prod.outlook.com
  ([fe80::3154:e32f:e50c:4fa6%6]) with mapi id 15.20.5438.017; Thu, 21 Jul 2022
- 22:07:43 +0000
-Date:   Thu, 21 Jul 2022 15:07:38 -0700
+ 22:32:04 +0000
+Date:   Thu, 21 Jul 2022 15:31:59 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     David Sterba <dsterba@suse.com>
-CC:     <linux-fsdevel@vger.kernel.org>,
-        "Fabio M . De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH v2] affs: use memcpy_to_zero and remove replace
- kmap_atomic()
-Message-ID: <YtnOKvyjvYwFcFQ1@iweiny-desk3>
-References: <20220712222744.24783-1-dsterba@suse.com>
- <20220721185024.5789-1-dsterba@suse.com>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-aio@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] aio: Replace kmap{,_atomic}() with kmap_local_page()
+Message-ID: <YtnT36RXiWQ/Qtl9@iweiny-desk3>
+References: <20220706233328.18582-1-fmdefrancesco@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20220721185024.5789-1-dsterba@suse.com>
-X-ClientProxiedBy: BYAPR08CA0035.namprd08.prod.outlook.com
- (2603:10b6:a03:100::48) To DM4PR11MB6311.namprd11.prod.outlook.com
+In-Reply-To: <20220706233328.18582-1-fmdefrancesco@gmail.com>
+X-ClientProxiedBy: BY5PR03CA0001.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::11) To DM4PR11MB6311.namprd11.prod.outlook.com
  (2603:10b6:8:a6::21)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bc56bd87-22d1-4a8e-f28f-08da6b656f8f
-X-MS-TrafficTypeDiagnostic: BL0PR11MB2963:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87c99078-9a90-4f83-7018-08da6b68d64a
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5029:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wUZ7DG+vLMJZBhYLxPYBxcRVco02DdECGd38SvSuXAVFXrpmPvQ9AcmDaalLwsCQAVIGYT4ywc5QbCJ0xMZisXu6AFbBwiTVGaUO5nIQQRFayFc0tx+wFTNJNNSOQT/tXgdbPMdULBBwmu1adR8l2vBwkQurv4QVgdAiFtIReR52Gn+Q03AnnUNesFfsGvsiOM0X25Mbg2qjx+6ySqC5QkOIr3t8YM3ewlHUY8NuOcLXWcTvi0/TzSOUR9aILtgq1azJMhqrDDyuwMeA5oqWXz/dqAQ1tx6snl13fS/zm57nfzg09rI52206xcdLlC8sLW8aIRXDHEINooOd4bLTo5o4Q8uqUV3cZyyTOakpz1/3Od94EIgTvVvONORPbPt1RTrjVdy6lvv05DaFIp6VpsjFO6IzaNYX5XUZse8x9AyKJSqHBr9wC3kcOzLGVm6ZvukjI4z7EGE/xscauBdGEA5t7G0byVWfaKP1mzKRKK9/IfKr5zauxMdghIvLj+29fcV5SHXWs08l6J9p44tUcYUFTWLnqtWKAlYt/2bPYRrlOCGQWEhTJHZD6shtKSnYz/wjZE5X6fr9pm4WuisEYL5KX+Vx7DQUWiFOBRYz+hZJPHbAwypTCpyjh9QVgeuueY8zRXsIrXZrGjie8IDlnRUXOjMLjd5lNwvSeGAAXNQWgQGWeVLzMPjg9eomcXTT8gQY6TywmDOgpLbj/zd2a0ZQOxg6y6gBj+mKJrcGY4kbnQ27xcYCuryQEa8P13ZF
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6311.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(39860400002)(396003)(136003)(376002)(366004)(346002)(6916009)(6666004)(6506007)(6512007)(6486002)(26005)(41300700001)(478600001)(66946007)(316002)(44832011)(66556008)(33716001)(8936002)(8676002)(4326008)(2906002)(5660300002)(38100700002)(82960400001)(186003)(66476007)(86362001)(83380400001)(9686003);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: rnzYdvj54ex798mgpn0snKDbbisAqUp+0BwhNH7K4oW15C/gW8hJHwwVJyk14qY8xtFDMQ273/Remag5ojzu0J3nXcwjDAEG0xvBb4gZgoPdB6tiytpdN3tZykpQj9lgliaiZJMVANxaC01sEIOmAc5cTepIu3E0aukxHOrs737SeZxHwtEoGXUN82MZUnzDTwLsDuCxpF/am3R099TZSi9v/68AHw5AROVMYmxUiWGMT+meRs/v9gOSJeK5kA3FLaFQu8tGAtw4c5rTdRAxUrCMuWri2zfquM+V4fJkMfV8sJQJ2XHVZu1KVzl9uKCyW3+VvD7WZd4S26dBkwG3UmPlGqbnEw2XZjo66HQZ8w/K2EdzM+XoXTTBsQ5D3gmypiEwv/Hg5c9Ua/t1l9HMAQdlAqy8b2qAUGjRy/JnWgoUQyqnWvLWVvTyyQ+iAvqr0EbtNCd1khrBhG6LOm5VCWiOv7OzYAYIdc7lYXA2qGsj5ZP751rgAdOPEWp+uXir7c5t2DwcMz3mKqKRHzrK860NGTZsHHi/sqrKzzB8TEQnvOytWlGAdmCiR34rsZkBT/y1HoI04xaADvsFhJaH5XwTikLgMTPGINVNJQVWJIJs4AyxKw1SFokhFru/fa7ZqaYs+7qU5+6VG2E0ghR/Ay84fg3fA5uWuD5eS37nCdPRohq6KMzf34ouKUG+DVyZ7pYl1RzkJ1e7u9J0M+Phx/Ybxj1gmovaZkyUuAqm/3Wm6zNlyWeNZqXkF9159/6Z
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6311.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(346002)(396003)(39860400002)(376002)(366004)(136003)(26005)(2906002)(6486002)(82960400001)(66476007)(83380400001)(33716001)(6506007)(8936002)(6666004)(44832011)(41300700001)(5660300002)(86362001)(6916009)(9686003)(186003)(54906003)(6512007)(66556008)(316002)(478600001)(4326008)(38100700002)(66946007)(8676002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?vBwcYR+l+VXMs1z2YZAUyJDBsWztIrLB2WUPANlT0VZ08HfReXeENxABY/wq?=
- =?us-ascii?Q?fbbhoGmzw7nuSWO07zf/2Vn89eGy5SQ9C3Lnima/gjHUx3h7lOKCak6KbdY1?=
- =?us-ascii?Q?4d30loAfH1f/uZY3ksul7uY0Osgde8b0tgD4W1nNsdXy05TOBQs3MIwBrGUO?=
- =?us-ascii?Q?wV1bOPPaBaoDqZWWaqoaMxteVSvCkLAcsCPmcaTSnGl3JLjC6T0+W4xBZL0g?=
- =?us-ascii?Q?0jJPatbadhTUbH2WXgfNHueQkEYHpEoqcb8ibaHdwINuLzAwiPFGgBwjJIcW?=
- =?us-ascii?Q?5o9L0SGTSHn5FHZEtMx/GqsTnW45RBOk1EamB8lhV+7zlkpSlPrL/KMJumhb?=
- =?us-ascii?Q?37Nep4Xbn6MnwlHBSYXZR++bJsqslcKx9jihf8k+oxC1T1oo5Bwju0PFZM6E?=
- =?us-ascii?Q?Q1nVt/0gispp29zJdXFCzoWSAAeOIxHXBkoo+TGE2fV9D4gChNi3dq/eJidw?=
- =?us-ascii?Q?KiclsdxCAbd3OrsR1UHbkQtANVxgQsWJor5eHZgYgYMg4tLUP9GNFK6Sq3kv?=
- =?us-ascii?Q?FPyzja+NsI4nFKgjOMjoPZGQmHyspfP/vn7CRTUMVuzzNV29Tz1J4EePuope?=
- =?us-ascii?Q?IsYENgNS46/MdhbbWB6sTeZT/+BdkaAkcDZSJChzZ01iLfaHBKLIh6Cmhkqd?=
- =?us-ascii?Q?XXFrYXNAi+pYCmkykpZDpKH8dbo2oe75BWgT5sXpZt221opVl67SNR0C62sx?=
- =?us-ascii?Q?XyKWB1RCkOf1VG05s8l8GO6ToIGzpEx6piZ04P+yc25fdGjoaKKmne8gUtX6?=
- =?us-ascii?Q?LusRJ7rvnNgw+n1WMmCGWE2hJ45rKGxCorBHs2Vz8raSniW4eFjbx+Tn8gFw?=
- =?us-ascii?Q?ipQOM2gL3FazNtdcnyFGsXHp5ztq4GmnrBx3D/oiPhP5jVDdF0vggyqR2kZx?=
- =?us-ascii?Q?kx44IJPzfA19z7qUPFS41Gmgt2qCk355R1qw48eA0ob17OLxYdJr2eRvypzZ?=
- =?us-ascii?Q?NMC4CY3CFk9ExEpZSmFbdC6lTThA6OxwwrhBteFbTVvTmHoy1OD5GaW1Eyxr?=
- =?us-ascii?Q?ewBCAhquHrislyY3bm+SdFxsOeGQVWSe5uE2x5XxjyQ1mco83tQA4WTDQLwn?=
- =?us-ascii?Q?CPxIZuzS3hGrO524aTYqOPjLzRo3mgy4ArjatnIVlGuPFSXbmJlHtXu3xALq?=
- =?us-ascii?Q?V5uh8IOiYH17HBEhWgJx3M/ubca3BBRZeLqB0qSvuPNvR3wMaUfP6531VfaV?=
- =?us-ascii?Q?+/6gMiGF4WYHsGYe7k+plu5xDoXr5Of5tSsso1x16FNCoNv9g0rTOOXa2Rjc?=
- =?us-ascii?Q?Nex/ZyEhOWdAatIjxKt0l1pbcvp//txMKlzUJNAwa8vplb3dEr2ZTL4pYRKP?=
- =?us-ascii?Q?9VeSIX8hujzziPWHbSeN2fieBD7wEjyW/Z77ENBfndJDNCNnCDttgK8GQz+L?=
- =?us-ascii?Q?2F/DdBJos2JviJ7X5qRNLorshoxfL0inuM/BQoRQ01A0EyasJsesiIYzf39W?=
- =?us-ascii?Q?zDDapj2iPlc8M2d2uEi3jXBQswDBbq52XSFKRCtl2TDFg/8s68eJiMXUBpsQ?=
- =?us-ascii?Q?EV2duf+pVIMsKhsxaDLSQaOYAEMYl9OVGwTiBkRW+hjsmQciX38AFONo0rzW?=
- =?us-ascii?Q?V/MzU+dJ8UTcID/SzYBn45zT7BU+vxB/flhWzC1Q?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc56bd87-22d1-4a8e-f28f-08da6b656f8f
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oNzRzxDQ+7uNK+eByrjRQ18hQgOxAvrmFuetx3GQu0Fm4PJ0GozPGpBSuPET?=
+ =?us-ascii?Q?x9xGHv2o2Y/28MWueewdap7p3maW0bQTdwQfjukHJ/jLiCatuX0vmOjZVBhf?=
+ =?us-ascii?Q?DHHTWEDjpipt7J3EaPSrquwXyRLK/4UzpaCmYwq87a5mLe+OM2/5l5zAvTqn?=
+ =?us-ascii?Q?Ccr+YfFyVeSP+ApnyoLXBIXAxJkyiu5IvN1Vk0kt8S/VBgNqSX2w6nQNnivi?=
+ =?us-ascii?Q?ocEJNfivY5ZJPvJCgjZyvR04djN89PgrCAtJiayEaBhOLM0RE89OPnavF5Om?=
+ =?us-ascii?Q?5oChdjveT3KYjdOYGfX73LXFoOav3gmogDmdkoF6OyjpeZhC8di/f6/q2RcD?=
+ =?us-ascii?Q?wvcRHPC/Wl5YhtdMKgzwlppzonxGs6djd9C1t/W7mAvEF1peOASuIxh+1TUU?=
+ =?us-ascii?Q?eqn2y43vBaOuEEfPgSih6q7CTOE0GelkHLGgqiulm0bR2wD7amKprS+sdb+R?=
+ =?us-ascii?Q?q8KPjgWBPVWqSUVIAZ9JwlkGmoAsm9+FPys36A2taAlOMl7rhUQILi/3D3YA?=
+ =?us-ascii?Q?ySrICUuTQtgzobv1GUgCOduzW2tcjJTyIKx55tw4a8jbf9WDOTonoSXNIHmr?=
+ =?us-ascii?Q?YoD8Tvq70o3GYRhHeEw0XkPeEcArTm4p8Q/tvtgkhX7y06pXM8luc58PQzMK?=
+ =?us-ascii?Q?DTzdfKXUzRuz3k6RkwlFp0ph8o/OoaqR0DZfYPaqnO1B6hcBLNchEfukGMtU?=
+ =?us-ascii?Q?uYTwmJmyStnUltCRrJ6pl0Mnli9rDTnCanOUPHg72EVgWdfXkvGGoTbwcznH?=
+ =?us-ascii?Q?/4r669icsKET7CX39FXbVOmjUIME5rzK6YsYKoRkLjrUOQ8Toanz/yjEuI3b?=
+ =?us-ascii?Q?29XfTnia0iZVBsqyYEwK4M4vDeSgbfHsFfe/eNQhO0ljiXQumkkzKHb4d0rV?=
+ =?us-ascii?Q?g6O9XJNIKYXbfmJQk/Qo3zAliMUlqAQMJahiSApABU0aDj2ZohBB3tsWf7LF?=
+ =?us-ascii?Q?nGtPXCBnnt4cRLz2ozccQIaRkVIX8oxAz5qoeVAlUr2CR3tpnkH+A1k4naw9?=
+ =?us-ascii?Q?TGnSTV6s2Q53/qChyDYeeOh71EN0mi3iq2SD5HOK9UouXTRdmjsoOZWFYqwL?=
+ =?us-ascii?Q?pcRORUdtnR+7L1UfKuAAl9voJLU/LM3N7eCjsd16jML/TCZhA0uU6HR6zI7K?=
+ =?us-ascii?Q?39iy1yoZSrSI5RslI/bW+WYYBjleatWuocKysWadQgB+H5ILsudRbtMk7y+9?=
+ =?us-ascii?Q?Mqh37klVQ4bh58WJ4qPcaM42XEE+RsjfYap5dEmtLwpJNMQUaYeheIhkKLcu?=
+ =?us-ascii?Q?EDfEUcCdwWUM/ZUimG0ONcMkeUMBpUlIMCceZbEvypyEwaUJaLbyhsgXMk4H?=
+ =?us-ascii?Q?yAaeb719kwfNQbs5W+t4ZkUmaGaq3HKvUWwO1LNSf6xO9TxgLtggTfM2FWMr?=
+ =?us-ascii?Q?bhYxfpokJKpsEIkL2Ol+mGElQ+BOruumKCee0kSEI2PM+HKnGGD4eCSC+HZZ?=
+ =?us-ascii?Q?BkYaXP198a5Rw8a47AfPv47f97rO20bXL3GkUg1dWDxDOLZ2fwayDhqd0knV?=
+ =?us-ascii?Q?NiIl5uZ9grtjjmqKP4DgvaZyrl9ruX1m9rCGgPgvBJh/yFweSyCyo3ktAC2o?=
+ =?us-ascii?Q?TO/U20/xQf+GI0eAVlsE9AjnWy/4eG/WaNMrHGvf?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87c99078-9a90-4f83-7018-08da6b68d64a
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6311.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2022 22:07:43.6263
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2022 22:32:04.3413
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ysZTouBnnJBf/3eqstNIJxxFQFruWT3DIBV6K6vv0lk/sMtUBSk4r9iMINxm6X1x0ZjK/jGMB4XOKvF+SQ/XXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR11MB2963
+X-MS-Exchange-CrossTenant-UserPrincipalName: KV9FTfDyPZ1mNQyX1v6VyvhAMgpH9x20S1E8rKbTuOhUaplkbEs6+UVC4bggBfqcTfCa7D+n+jxZyPEK76orYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5029
 X-OriginatorOrg: intel.com
 X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 08:50:24PM +0200, David Sterba wrote:
-> The use of kmap() is being deprecated in favor of kmap_local_page()
-> where it is feasible. For kmap around a memcpy there's a convenience
-> helper memcpy_to_page, use it.
+On Thu, Jul 07, 2022 at 01:33:28AM +0200, Fabio M. De Francesco wrote:
+> The use of kmap() and kmap_atomic() are being deprecated in favor of
+> kmap_local_page().
 > 
-> CC: Ira Weiny <ira.weiny@intel.com>
-
-Typo in the subject: s/memcpy_to_page/memcpy_to_zero
-
-Other than that.
+> With kmap_local_page(), the mappings are per thread, CPU local and not
+> globally visible. Furthermore, the mappings can be acquired from any
+> context (including interrupts).
+> 
+> Therefore, use kmap_local_page() in aio.c because these mappings are per
+> thread, CPU local, and not globally visible.
+> 
+> Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+> HIGHMEM64GB enabled.
+> 
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
 
 Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-> CC: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-> Signed-off-by: David Sterba <dsterba@suse.com>
+> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
 > ---
->  fs/affs/file.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/fs/affs/file.c b/fs/affs/file.c
-> index cd00a4c68a12..45a21729f358 100644
-> --- a/fs/affs/file.c
-> +++ b/fs/affs/file.c
-> @@ -526,7 +526,6 @@ affs_do_readpage_ofs(struct page *page, unsigned to, int create)
->  	struct inode *inode = page->mapping->host;
->  	struct super_block *sb = inode->i_sb;
->  	struct buffer_head *bh;
-> -	char *data;
->  	unsigned pos = 0;
->  	u32 bidx, boff, bsize;
->  	u32 tmp;
-> @@ -545,9 +544,7 @@ affs_do_readpage_ofs(struct page *page, unsigned to, int create)
->  			return PTR_ERR(bh);
->  		tmp = min(bsize - boff, to - pos);
->  		BUG_ON(pos + tmp > to || tmp > bsize);
-> -		data = kmap_atomic(page);
-> -		memcpy(data + pos, AFFS_DATA(bh) + boff, tmp);
-> -		kunmap_atomic(data);
-> +		memcpy_to_page(page, pos, AFFS_DATA(bh) + boff, tmp);
->  		affs_brelse(bh);
->  		bidx++;
->  		pos += tmp;
+> I've tested with "./check -g aio". The tests in this group fail 3/26
+> times, with and without my patch. Therefore, these changes don't introduce
+> further errors.
+> 
+>  fs/aio.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 3c249b938632..343fea0c6d1a 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+>  	ctx->user_id = ctx->mmap_base;
+>  	ctx->nr_events = nr_events; /* trusted copy */
+>  
+> -	ring = kmap_atomic(ctx->ring_pages[0]);
+> +	ring = kmap_local_page(ctx->ring_pages[0]);
+>  	ring->nr = nr_events;	/* user copy */
+>  	ring->id = ~0U;
+>  	ring->head = ring->tail = 0;
+> @@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+>  	ring->compat_features = AIO_RING_COMPAT_FEATURES;
+>  	ring->incompat_features = AIO_RING_INCOMPAT_FEATURES;
+>  	ring->header_length = sizeof(struct aio_ring);
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  	flush_dcache_page(ctx->ring_pages[0]);
+>  
+>  	return 0;
+> @@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+>  					 * we are protected from page migration
+>  					 * changes ring_pages by ->ring_lock.
+>  					 */
+> -					ring = kmap_atomic(ctx->ring_pages[0]);
+> +					ring = kmap_local_page(ctx->ring_pages[0]);
+>  					ring->id = ctx->id;
+> -					kunmap_atomic(ring);
+> +					kunmap_local(ring);
+>  					return 0;
+>  				}
+>  
+> @@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx *ctx)
+>  		 * against ctx->completed_events below will make sure we do the
+>  		 * safe/right thing.
+>  		 */
+> -		ring = kmap_atomic(ctx->ring_pages[0]);
+> +		ring = kmap_local_page(ctx->ring_pages[0]);
+>  		head = ring->head;
+> -		kunmap_atomic(ring);
+> +		kunmap_local(ring);
+>  
+>  		refill_reqs_available(ctx, head, ctx->tail);
+>  	}
+> @@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  	if (++tail >= ctx->nr_events)
+>  		tail = 0;
+>  
+> -	ev_page = kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+> +	ev_page = kmap_local_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+>  	event = ev_page + pos % AIO_EVENTS_PER_PAGE;
+>  
+>  	*event = iocb->ki_res;
+>  
+> -	kunmap_atomic(ev_page);
+> +	kunmap_local(ev_page);
+>  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+>  
+>  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+> @@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  
+>  	ctx->tail = tail;
+>  
+> -	ring = kmap_atomic(ctx->ring_pages[0]);
+> +	ring = kmap_local_page(ctx->ring_pages[0]);
+>  	head = ring->head;
+>  	ring->tail = tail;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  	flush_dcache_page(ctx->ring_pages[0]);
+>  
+>  	ctx->completed_events++;
+> @@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+>  	mutex_lock(&ctx->ring_lock);
+>  
+>  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+> -	ring = kmap_atomic(ctx->ring_pages[0]);
+> +	ring = kmap_local_page(ctx->ring_pages[0]);
+>  	head = ring->head;
+>  	tail = ring->tail;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  
+>  	/*
+>  	 * Ensure that once we've read the current tail pointer, that
+> @@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+>  		avail = min(avail, nr - ret);
+>  		avail = min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+>  
+> -		ev = kmap(page);
+> +		ev = kmap_local_page(page);
+>  		copy_ret = copy_to_user(event + ret, ev + pos,
+>  					sizeof(*ev) * avail);
+> -		kunmap(page);
+> +		kunmap_local(ev);
+>  
+>  		if (unlikely(copy_ret)) {
+>  			ret = -EFAULT;
+> @@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
+>  		head %= ctx->nr_events;
+>  	}
+>  
+> -	ring = kmap_atomic(ctx->ring_pages[0]);
+> +	ring = kmap_local_page(ctx->ring_pages[0]);
+>  	ring->head = head;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  	flush_dcache_page(ctx->ring_pages[0]);
+>  
+>  	pr_debug("%li  h%u t%u\n", ret, head, tail);
 > -- 
 > 2.36.1
 > 
