@@ -2,51 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F25EA57C7BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 11:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB01057C7DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 11:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbiGUJe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 05:34:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
+        id S232398AbiGUJmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 05:42:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbiGUJeZ (ORCPT
+        with ESMTP id S229731AbiGUJmQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 05:34:25 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897D48053F;
-        Thu, 21 Jul 2022 02:34:24 -0700 (PDT)
+        Thu, 21 Jul 2022 05:42:16 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5969A1C112;
+        Thu, 21 Jul 2022 02:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658396064; x=1689932064;
+  t=1658396535; x=1689932535;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=wCb9PX4Sp0/BeSAl8rvIo3FQtV/S7LHLo0bGkTMYvrA=;
-  b=TztBwVMhKq369DA2k08ewtfAXu9LZpAjXKVivbEJIVR6GjjdyXJ4DKx2
-   L/bM0MgvQmYONtr8u3N504B/v+KOZDhtOx5aQJSH6xKe5f+e9d+yvIP4f
-   cwF84aN6RNa7V0Fq+KMd9H+4yFmFH8eWEg4oYnr6MWsctfEWUrWw8OSJB
-   +DBGymO1Im9DlG9PUUMSWmTWLPHppbN7T86A1DwLB7/kAhRgcvvM1AAzQ
-   KY5eeys0UEejnRrnlebBNbUB4PcefCXj0Nmqo+QQzUK/Uhs6XJLSss/0T
-   4psZu8l/Rts/oKACBA/aElGcQOCzQ1EyZ55yeHRnP/TQDJbsLExiTTadI
+  bh=6iF6C2k7uRS+q7Yo8OaJrnqIl0kJvizDvEKWhi3avTo=;
+  b=Pe9rfO8vat0nGOs77YG91Bvo6eWdIDHb8dU0nNMCHozKvugdAoPYpiqN
+   snYEZEOKRayHadPpjPS4gsshfLXzFJGvCxRePS15aTSLPiHIIaw9mLyOr
+   gLuWW1LMxCWszVsygo045ZkFQ3Bo8mFz8qQFUwv+s2mnB2vuSgHBteGir
+   smCKEHbAoS2n51xktKfL/xHWHEOJvPuIA2teMfSWlO2EyUBaM1rptmpvY
+   smTLxrtqMoHG0EUrsKByX8NSDG1OGCTUKP9+8dhLzrdkSUPgHN5ChBSMT
+   AhcgQz7n56uH/56Dt47MM68IJ7zRXUdI36tXSp8qulo9u/vc025jYpKGK
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="350988486"
+X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="285764611"
 X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
-   d="scan'208";a="350988486"
+   d="scan'208";a="285764611"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 02:34:06 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 02:42:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
-   d="scan'208";a="656666919"
+   d="scan'208";a="656669811"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Jul 2022 02:33:56 -0700
-Date:   Thu, 21 Jul 2022 17:29:06 +0800
+  by fmsmga008.fm.intel.com with ESMTP; 21 Jul 2022 02:42:05 -0700
+Date:   Thu, 21 Jul 2022 17:37:15 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Wei Wang <wei.w.wang@linux.intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
@@ -75,21 +73,15 @@ Cc:     Sean Christopherson <seanjc@google.com>,
         Muchun Song <songmuchun@bytedance.com>
 Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
  memory regions
-Message-ID: <20220721092906.GA153288@chaop.bj.intel.com>
+Message-ID: <20220721093715.GB153288@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
  <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
- <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
- <20220719140843.GA84779@chaop.bj.intel.com>
- <36e671d2-6b95-8e4f-c2ac-fee4b2670c6e@amd.com>
- <20220720150706.GB124133@chaop.bj.intel.com>
- <d0fd229d-afa6-c66d-3e55-09ac5877453e@amd.com>
- <YtgrkXqP/GIi9ujZ@google.com>
- <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
+ <Ytgw8HAsKTmZaubv@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
+In-Reply-To: <Ytgw8HAsKTmZaubv@google.com>
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -99,113 +91,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 03:34:59PM +0800, Wei Wang wrote:
+On Wed, Jul 20, 2022 at 04:44:32PM +0000, Sean Christopherson wrote:
+> On Wed, Jul 06, 2022, Chao Peng wrote:
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index 230c8ff9659c..bb714c2a4b06 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -914,6 +914,35 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+> >  
+> >  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+> >  
+> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > +#define KVM_MEM_ATTR_PRIVATE	0x0001
+> > +static int kvm_vm_ioctl_set_encrypted_region(struct kvm *kvm, unsigned int ioctl,
+> > +					     struct kvm_enc_region *region)
+> > +{
+> > +	unsigned long start, end;
 > 
+> As alluded to in a different reply, because this will track GPAs instead of HVAs,
+> the type needs to be "gpa_t", not "unsigned long".  Oh, actually, they need to
+> be gfn_t, since those are what gets shoved into the xarray.
+
+It's gfn_t actually. My original purpose for this is 32bit architectures
+(if any) can also work with it since index of xarrary is 32bit on those
+architectures.  But kvm_enc_region is u64 so itr's even not possible.
+
 > 
-> On 7/21/22 00:21, Sean Christopherson wrote:
-> > On Wed, Jul 20, 2022, Gupta, Pankaj wrote:
-> > > > > > > > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
-> > Use kvm_arch_has_private_mem(), both because "has" makes it obvious this is checking
-> > a flag of sorts, and to align with other helpers of this nature (and with
-> > CONFIG_HAVE_KVM_PRIVATE_MEM).
-> > 
-> >    $ git grep kvm_arch | grep supported | wc -l
-> >    0
-> >    $ git grep kvm_arch | grep has | wc -l
-> >    26
-
-Make sense. kvm_arch_has_private_mem it actually better.
-
-> > 
-> > > > > > > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > > > > > > +	case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > > > > > > > +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > > > > > > > +		struct kvm_enc_region region;
-> > > > > > > > +
-> > > > > > > > +		if (!kvm_arch_private_mem_supported(kvm))
-> > > > > > > > +			goto arch_vm_ioctl;
-> > > > > > > > +
-> > > > > > > > +		r = -EFAULT;
-> > > > > > > > +		if (copy_from_user(&region, argp, sizeof(region)))
-> > > > > > > > +			goto out;
-> > > > > > > > +
-> > > > > > > > +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
-> > > > > > > this is to store private region metadata not only the encrypted region?
-> > > > > > Correct.
-> > > > > Sorry for not being clear, was suggesting name change of this function from:
-> > > > > "kvm_vm_ioctl_set_encrypted_region" to "kvm_vm_ioctl_set_private_region"
-> > > > Though I don't have strong reason to change it, I'm fine with this and
-> > > Yes, no strong reason, just thought "kvm_vm_ioctl_set_private_region" would
-> > > depict the actual functionality :)
-> > > 
-> > > > this name matches the above kvm_arch_private_mem_supported perfectly.
-> > > BTW could not understand this, how "kvm_vm_ioctl_set_encrypted_region"
-> > > matches "kvm_arch_private_mem_supported"?
-> > Chao is saying that kvm_vm_ioctl_set_private_region() pairs nicely with
-> > kvm_arch_private_mem_supported(), not that the "encrypted" variant pairs nicely.
-> > 
-> > I also like using "private" instead of "encrypted", though we should probably
-> > find a different verb than "set", because calling "set_private" when making the
-> > region shared is confusing.  I'm struggling to come up with a good alternative
-> > though.
-> > 
-> > kvm_vm_ioctl_set_memory_region() is already taken by KVM_SET_USER_MEMORY_REGION,
-> > and that also means that anything with "memory_region" in the name is bound to be
-> > confusing.
-> > 
-> > Hmm, and if we move away from "encrypted", it probably makes sense to pass in
-> > addr+size instead of a kvm_enc_region.
-
-This makes sense.
-
-> > 
-> > Maybe this?
-> > 
-> > static int kvm_vm_ioctl_set_or_clear_mem_private(struct kvm *kvm, gpa_t gpa,
-> > 					         gpa_t size, bool set_private)
-
-Currently this should work.
-
-> > 
-> > and then:
-> > 
-> > #ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > 	case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > 	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > 		bool set = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
-> > 		struct kvm_enc_region region;
-> > 
-> > 		if (!kvm_arch_private_mem_supported(kvm))
-> > 			goto arch_vm_ioctl;
-> > 
-> > 		r = -EFAULT;
-> > 		if (copy_from_user(&region, argp, sizeof(region)))
-> > 			goto out;
-> > 
-> > 		r = kvm_vm_ioctl_set_or_clear_mem_private(kvm, region.addr,
-> > 							  region.size, set);
-> > 		break;
-> > 	}
-> > #endif
-> > 
-> > I don't love it, so if someone has a better idea...
-> > 
-> Maybe you could tag it with cgs for all the confidential guest support
-> related stuff:
-> e.g. kvm_vm_ioctl_set_cgs_mem()
+> > +	void *entry;
+> > +	int r;
+> > +
+> > +	if (region->size == 0 || region->addr + region->size < region->addr)
+> > +		return -EINVAL;
+> > +	if (region->addr & (PAGE_SIZE - 1) || region->size & (PAGE_SIZE - 1))
+> > +		return -EINVAL;
+> > +
+> > +	start = region->addr >> PAGE_SHIFT;
+> > +	end = (region->addr + region->size - 1) >> PAGE_SHIFT;
+> > +
+> > +	entry = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION ?
+> > +				xa_mk_value(KVM_MEM_ATTR_PRIVATE) : NULL;
+> > +
+> > +	r = xa_err(xa_store_range(&kvm->mem_attr_array, start, end,
+> > +					entry, GFP_KERNEL_ACCOUNT));
 > 
-> bool is_private = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
-> ...
-> kvm_vm_ioctl_set_cgs_mem(, is_private)
+> IIUC, this series treats memory as shared by default.  I think we should invert
+> that and have KVM's ABI be that all guest memory as private by default, i.e.
+> require the guest to opt into sharing memory instead of opt out of sharing memory.
+> 
+> And then the xarray would track which regions are shared.
 
-If we plan to widely use such abbr. through KVM (e.g. it's well known),
-I'm fine.
+Maybe I missed some information discussed elsewhere? I followed
+https://lkml.org/lkml/2022/5/23/772. KVM is shared by default but
+userspace should set all guest memory to private before the guest
+launch, guest then sees all memory as private.  While default it to
+private sounds also good, if we only talk about the private/shared in
+private memory context (I think so), then there is no ambiguity.
 
-I actually use mem_attr in patch: https://lkml.org/lkml/2022/7/20/610
-But I also don't quite like it, it's so generic and sounds say nothing.
+> 
+> Regarding mem_attr_array, it probably makes sense to explicitly include what it's
+> tracking in the name, i.e. name it {private,shared}_mem_array depending on whether
+> it's used to track private vs. shared memory.  If we ever need to track metadata
+> beyond shared/private then we can tweak the name as needed, e.g. if hardware ever
+> supports secondary non-ephemeral encryption keys.
 
-But I do want a name can cover future usages other than just 
-private/shared (pKVM for example may have a third state).
+As I think that there may be other state beyond that. Fine with me to
+just take consideration of private/shared, and it also sounds
+reasonable for people who want to support that to change.
 
-Thanks,
 Chao
