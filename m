@@ -2,131 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14ECF57D2B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 19:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB5057D2D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 19:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbiGURqL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 13:46:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40866 "EHLO
+        id S232093AbiGUR67 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 13:58:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbiGURqJ (ORCPT
+        with ESMTP id S232012AbiGUR66 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 13:46:09 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BED33A26;
-        Thu, 21 Jul 2022 10:46:08 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:44794)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oEaFT-00EnHe-8s; Thu, 21 Jul 2022 11:46:07 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:37930 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oEaFS-00CknM-Ap; Thu, 21 Jul 2022 11:46:06 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Zhang Yuchen <zhangyuchen.lcr@bytedance.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Muchun Song <songmuchun@bytedance.com>,
-        linux-api@vger.kernel.org, keescook@chromium.org,
-        yzaikin@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20220721081617.36103-1-zhangyuchen.lcr@bytedance.com>
-        <Ytl772fRS74eIneC@bombadil.infradead.org>
-Date:   Thu, 21 Jul 2022 12:45:42 -0500
-In-Reply-To: <Ytl772fRS74eIneC@bombadil.infradead.org> (Luis Chamberlain's
-        message of "Thu, 21 Jul 2022 09:16:47 -0700")
-Message-ID: <87wnc6nyux.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 21 Jul 2022 13:58:58 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3619288117
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 10:58:56 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id s18-20020a17090aa11200b001f1e9e2438cso5997804pjp.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 10:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wvI0q5HAql8tMPxcnKbiOi/9NxgmmSwnzAAkVZd1GZE=;
+        b=QeJXriKT9c5kzVC7WwOIhi80ckWM6ug8VcaWprkpELe4t4pSILpTjfg8m+cMtOrWBe
+         jmelByXoDseFjzPN05HlM35WJraOgVD8XBmkQsrB5vGpNrj70IhxBhsBNPglHsEpzekf
+         1kG3W212r4FUnxp6h1itgEO/FJ4Uuo3CeYYXkoiOWqCRXrzKR28+BcJbG5kguyytRjkg
+         rjsFU2rMHcaFZYM7jRBwDx3y4TNjRz8cS5RWMgjh+1ofnV6wnx05hcN9heFlTTNfsAVq
+         qUjZMJxGLa9mHYyEFjkrcwiRRdLtgvROz3H/Z1mIRgvYivxLAzSanUXyi85+4NTaGuJS
+         Ssew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wvI0q5HAql8tMPxcnKbiOi/9NxgmmSwnzAAkVZd1GZE=;
+        b=z4nVDppIHSeyqwYi14NEyR86P+1P8l37II4BItgDewGhn2BTNTck3mtEj6VLi7hO23
+         hNJE+p/cfPb7X+RYitmxYPO9pqPIqgrC8bx8S1vVAA27a3z1BN2TBXf1NL/C3vs/bGYw
+         sf0oKq5ygu0ifv194tMTfPoW46asx7zWchhhUFVvTEZRXr0L9EnIUgmGub2zlVn/9Cx5
+         ZWwFInY8kJVJ+t7MvWBRP2r3ZuKKNCiP+gnQpgsbJhsg72qHlnXeAoHivUnKd+SInsQj
+         iI2wj+9/q+xFHc6QjWArZbeNU4vj+RZL/kekODT6u+EZObgfDIVRWlruV/ceYBlMdLkU
+         vpdA==
+X-Gm-Message-State: AJIora8aky/JjTYAGI7Xn4q0GC1+AmTE0n6O+vBqM/7s1xsDiX+EJBDw
+        38gvqx/1HxY0TXI0cttUYnYnxUEML+2bgw==
+X-Google-Smtp-Source: AGRyM1sy1sNPIZTfbcs9D/R5onBZFJSx4EAG07fQgd3u5pHjtvT3tSBi6UiM7uRquYtBlR+3qYzZvg==
+X-Received: by 2002:a17:90b:3d84:b0:1ef:9049:9f43 with SMTP id pq4-20020a17090b3d8400b001ef90499f43mr12682443pjb.45.1658426335405;
+        Thu, 21 Jul 2022 10:58:55 -0700 (PDT)
+Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
+        by smtp.gmail.com with ESMTPSA id f4-20020a170902684400b0016c1cdd2de3sm1956763pln.281.2022.07.21.10.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jul 2022 10:58:54 -0700 (PDT)
+Date:   Thu, 21 Jul 2022 17:58:50 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Wei Wang <wei.w.wang@linux.intel.com>,
+        "Gupta, Pankaj" <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
+ memory regions
+Message-ID: <YtmT2irvgInX1kPp@google.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+ <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
+ <20220719140843.GA84779@chaop.bj.intel.com>
+ <36e671d2-6b95-8e4f-c2ac-fee4b2670c6e@amd.com>
+ <20220720150706.GB124133@chaop.bj.intel.com>
+ <d0fd229d-afa6-c66d-3e55-09ac5877453e@amd.com>
+ <YtgrkXqP/GIi9ujZ@google.com>
+ <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
+ <20220721092906.GA153288@chaop.bj.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oEaFS-00CknM-Ap;;;mid=<87wnc6nyux.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19PVm7taLEyMu/qVXZ+V45ZQOvYPYkE79c=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220721092906.GA153288@chaop.bj.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Luis Chamberlain <mcgrof@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 405 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 10 (2.4%), b_tie_ro: 9 (2.1%), parse: 0.84 (0.2%),
-         extract_message_metadata: 3.5 (0.9%), get_uri_detail_list: 1.46
-        (0.4%), tests_pri_-1000: 3.5 (0.9%), tests_pri_-950: 1.17 (0.3%),
-        tests_pri_-900: 0.91 (0.2%), tests_pri_-90: 89 (22.1%), check_bayes:
-        88 (21.7%), b_tokenize: 6 (1.6%), b_tok_get_all: 8 (1.9%),
-        b_comp_prob: 2.5 (0.6%), b_tok_touch_all: 68 (16.7%), b_finish: 0.92
-        (0.2%), tests_pri_0: 279 (69.0%), check_dkim_signature: 0.48 (0.1%),
-        check_dkim_adsp: 2.8 (0.7%), poll_dns_idle: 0.97 (0.2%), tests_pri_10:
-        1.96 (0.5%), tests_pri_500: 6 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] proc: fix create timestamp of files in proc
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Luis Chamberlain <mcgrof@kernel.org> writes:
+On Thu, Jul 21, 2022, Chao Peng wrote:
+> On Thu, Jul 21, 2022 at 03:34:59PM +0800, Wei Wang wrote:
+> > 
+> > 
+> > On 7/21/22 00:21, Sean Christopherson wrote:
+> > Maybe you could tag it with cgs for all the confidential guest support
+> > related stuff: e.g. kvm_vm_ioctl_set_cgs_mem()
+> > 
+> > bool is_private = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
+> > ...
+> > kvm_vm_ioctl_set_cgs_mem(, is_private)
+> 
+> If we plan to widely use such abbr. through KVM (e.g. it's well known),
+> I'm fine.
 
-> On Thu, Jul 21, 2022 at 04:16:17PM +0800, Zhang Yuchen wrote:
->> A user has reported a problem that the /proc/{pid} directory
->> creation timestamp is incorrect.
->
-> The directory?
+I'd prefer to stay away from "confidential guest", and away from any VM-scoped
+name for that matter.  User-unmappable memmory has use cases beyond hiding guest
+state from the host, e.g. userspace could use inaccessible/unmappable memory to
+harden itself against unintentional access to guest memory.
 
-A bit of history that I don't think made it to the git log is that
-procps uses the /proc/<pid> directory, to discover the uid and gid of the
-process.
+> I actually use mem_attr in patch: https://lkml.org/lkml/2022/7/20/610
+> But I also don't quite like it, it's so generic and sounds say nothing.
+> 
+> But I do want a name can cover future usages other than just 
+> private/shared (pKVM for example may have a third state).
 
-I have memories of Albert Cahalan reporting regressions because I
-had tweaked the attributes of proc in ways that I expected no
-one would care about and caused a regression in procps.
+I don't think there can be a third top-level state.  Memory is either private to
+the guest or it's not.  There can be sub-states, e.g. memory could be selectively
+shared or encrypted with a different key, in which case we'd need metadata to
+track that state.
 
-So it is not unreasonable for people to have used proc in surprising
-ways.
+Though that begs the question of whether or not private_fd is the correct
+terminology.  E.g. if guest memory is backed by a memfd that can't be mapped by
+userspace (currently F_SEAL_INACCESSIBLE), but something else in the kernel plugs
+that memory into a device or another VM, then arguably that memory is shared,
+especially the multi-VM scenario.
 
-I took a quick read through procps and it looks like procps reads
-/proc/<pid>/stat to get the start_time of the process.
+For TDX and SNP "private vs. shared" is likely the correct terminology given the
+current specs, but for generic KVM it's probably better to align with whatever
+terminology is used for memfd.  "inaccessible_fd" and "user_inaccessible_fd" are
+a bit odd since the fd itself is accesible.
 
+What about "user_unmappable"?  E.g.
 
-Which leads us to this quality of implementation issue that the time
-on the inode of a proc directory is the first time that someone read
-the directory and observed the file.  Which does not need to be anything
-at all related to the start time.
+  F_SEAL_USER_UNMAPPABLE, MFD_USER_UNMAPPABLE, KVM_HAS_USER_UNMAPPABLE_MEMORY,
+  MEMFILE_F_USER_INACCESSIBLE, user_unmappable_fd, etc...
 
-I think except for the symlinks and files under /proc/pid/fd and
-/proc/pid/fdinfo there is a very good case for making all of the files
-/proc/pid have a creation time of equal to the creation of the process
-in question.  Although the files under /proc/pid/task/ need to have
-a time equal to the creation time of the thread in question.
+that gives us flexibility to map the memory from within the kernel, e.g. into
+other VMs or devices.
 
-Improving the quality of implementation requires caring enough to make
-that change, and right now I don't.
+Hmm, and then keep your original "mem_attr_array" name?  And probably 
 
-At the same time I would say the suggested patch is a bad idea.
-Any application that breaks because we hard set the timestamp on a proc
-file or directory to the beginning of time is automatically counts as a
-regression.
+ int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+ 			       bool is_user_mappable)
 
-Since the entire point of the patch is to break applications that are
-doing things wrong, aka cause regressions I don't think the patch
-make sense.
+Then the x86/mmu code for TDX/SNP private faults could be:
 
-So I would vote for understanding what the problem user is doing.  Then
-either proc can be improved to better support users, or we can do
-nothing.
+	is_private = !kvm_is_gpa_user_mappable();
 
-Except for explaining the history and how people have legitimately used
-implementation details of proc before, I am not really interested.  But
-I do think we can do better.
+	if (fault->is_private != is_private) {
 
-Eric
+or if we want to avoid mixing up "user_mappable" and "user_unmappable":
 
+	is_private = kvm_is_gpa_user_unmappable();
+
+	if (fault->is_private != is_private) {
+
+though a helper that returns a negative (not mappable) feels kludgy.  And I like
+kvm_is_gpa_user_mappable() because then when there's not "special" memory, it
+defaults to true, which is more intuitive IMO.
+
+And then if the future needs more precision, e.g. user-unmappable memory isn't
+necessarily guest-exclusive, the uAPI names still work even though KVM internals
+will need to be reworked, but that's unavoidable.  E.g. piggybacking
+KVM_MEMORY_ENCRYPT_(UN)REG_REGION doesn't allow for further differentiation,
+so we'd need to _extend_ the uAPI, but the _existing_ uAPI would still be sane.
