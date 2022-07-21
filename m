@@ -2,320 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5827757D14A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 18:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5F3657D22B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 19:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233828AbiGUQSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 12:18:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
+        id S229565AbiGURDn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 13:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233925AbiGUQR0 (ORCPT
+        with ESMTP id S229462AbiGURDl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 12:17:26 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97641EAD0;
-        Thu, 21 Jul 2022 09:17:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WgzZa30sO+MTxtlA0G94jkaG79sJrQmGOgNm2L7+a4M=; b=G488QPpAKdPaCXlw2obmqR+nGs
-        NvfabYxXM4ZkKo3kBSH7a3JJkXYXPjgnhNjKd437BaEQyUCAk1bv03U85k5IfLYHa0EXI9/SVHf7v
-        K8ro5wxfUW2Y/af4rDz2ZHi0FFX0T1AR5XIlDW1ah6XTivivF13xRtxT7vjayOSrJqVxZ0GAe6NLa
-        aOQJ6zEdMveM7HszD2oeCnlbRzs5skq32IgThd9aOjhbqlr63J7ENEZ0spLU70yDsA5m+eukzPg3d
-        r7GgRmIXtid+rjtKILjEdgGEJk7xPw5AGJi0lmsDJysRBpwQY8rKgR8hJWoqfwgcB7CuYdGIvq3qb
-        wTqy5grw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oEYr1-009my1-T0; Thu, 21 Jul 2022 16:16:47 +0000
-Date:   Thu, 21 Jul 2022 09:16:47 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Zhang Yuchen <zhangyuchen.lcr@bytedance.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Muchun Song <songmuchun@bytedance.com>,
-        linux-api@vger.kernel.org
-Cc:     keescook@chromium.org, yzaikin@google.com,
-        songmuchun@bytedance.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] proc: fix create timestamp of files in proc
-Message-ID: <Ytl772fRS74eIneC@bombadil.infradead.org>
-References: <20220721081617.36103-1-zhangyuchen.lcr@bytedance.com>
+        Thu, 21 Jul 2022 13:03:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AA9D52E77;
+        Thu, 21 Jul 2022 10:03:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EBD14B8258F;
+        Thu, 21 Jul 2022 17:03:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C82C3411E;
+        Thu, 21 Jul 2022 17:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658423017;
+        bh=MEAgg5xlrSHfw/vB4g6gAKIOOIm5YlQdbo6WnU3fPZg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=An2Lwwt92uepwUVcj/p4G2J4HnEQIBfCm/MNLeQVKlwYrJ+NeK5RKbOGjr3rMNxRL
+         LksKCwP1/f1kK8cqD31t8+SRx0pjGAuSuaNJUo5oJ6QDPSyCwCPfrZxEQTBj80JigI
+         3pE4fYDkQGVmR/s3T8Ilms7GC2eS+aiJLiKqjgVgLvodEM1PWsQHuERpMo8r3+YTTE
+         zBFzWE7ahkjDal9SMOujhg/uYj/zxGxcglDRnhsHoIp3CjFAuvhsEDMRLyBpKQyOn0
+         d/EY9aEGbBhRHDyqsYSHApK8+bi004OLTI2XwcArTX3e5XaFx6saku/hfkreJdeALZ
+         oLsRJYlFGDxWQ==
+Message-ID: <b4fc03c6c770e0f91f546619741c6a98361f2316.camel@kernel.org>
+Subject: Re: should we make "-o iversion" the default on ext4 ?
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>
+Date:   Thu, 21 Jul 2022 13:03:35 -0400
+In-Reply-To: <20220721140606.btqznsqqdpn4h3wm@fedora>
+References: <69ac1d3ef0f63b309204a570ef4922d2684ed7f9.camel@kernel.org>
+         <20220720141546.46l2d7bxwukjhtl7@fedora>
+         <ad7218a41fa8ac26911a9ccb79c87609d4279fea.camel@kernel.org>
+         <20220720152257.t67grnm4wdi3dpld@fedora>
+         <5533aca629bf17b517e33f0b7edb02550b7548a7.camel@kernel.org>
+         <20220721140606.btqznsqqdpn4h3wm@fedora>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220721081617.36103-1-zhangyuchen.lcr@bytedance.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 04:16:17PM +0800, Zhang Yuchen wrote:
-> A user has reported a problem that the /proc/{pid} directory
-> creation timestamp is incorrect.
+On Thu, 2022-07-21 at 16:06 +0200, Lukas Czerner wrote:
+> On Wed, Jul 20, 2022 at 12:42:11PM -0400, Jeff Layton wrote:
+> > On Wed, 2022-07-20 at 17:22 +0200, Lukas Czerner wrote:
+> >=20
+> > >  But not zero, at least
+> > > every time the inode is loaded from disk it is scheduled for i_versio=
+n
+> > > update on the next attempted increment. Could that have an effect on
+> > > some particular common workload you can think of?
+> > >=20
+> >=20
+> > FWIW, it's doubtful that you'd even notice this. You'd almost certainly
+> > be updating the mtime or ctime on the next change anyway, so updating
+> > the i_version in that case is basically free. You will probably need to
+> > do some a few extra atomic in-memory operations, but that's probably no=
+t
+> > noticeable in something I/O constrained.
+> >=20
+> > >=20
+> > > Could you provide some performance numbers for iversion case?
+> > >=20
+> >=20
+> > I'm writing to a LVM volume on a no-name-brand ssd I have sitting
+> > around. fio jobfile is here:
+>=20
+> That's very simplistic test, but fair enough. I've ran 10 iterations of
+> xfstests with and without iversion and there is no significant
+> difference, in fact it's all well within run by run variation. That's
+> true in aggregate as well for individual tests.
+>=20
 
-The directory?
+Yeah. This change was most evident with small I/O sizes, so if there is
+an effect here it'll likely show up there.
+=20
+> However there are problems to solve before we attempt to make it a
+> default. With -o iversion ext4/026 and generic/622 fails. The ext4/026
+> seems to be a real bug and I am not sure about the other one yet.
+>=20
+> I'll look into it.
+>=20
 
-> He believes that the directory was created when the process was
-> started, so the timestamp of the directory creation should also
-> be when the process was created.
+Interesting, thanks. Lack of testing with that option enabled is
+probably another good reason to go ahead and make it the default. Let me
+know what you find.
 
-A quick glance at Documentation/filesystems/proc.rst reveals there
-is documentation that the process creation time is the start_time in
-the stat file for the pid. It makes absolutely no mention of the
-directory creation time.
+> -Lukas
+>=20
+> >=20
+> > [global]
+> > name=3Dfio-seq-write
+> > filename=3Dfio-seq-write
+> > rw=3Dwrite
+> > bs=3D4k
+> > direct=3D0
+> > numjobs=3D1
+> > time_based
+> > runtime=3D300
+> >=20
+> > [file1]
+> > size=3D1G
+> > ioengine=3Dlibaio
+> > iodepth=3D16
+> >=20
+> > iversion support disabled:
+> >=20
+> > $ fio ./4k-write.fio
+> > file1: (g=3D0): rw=3Dwrite, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) =
+4096B-4096B, ioengine=3Dlibaio, iodepth=3D16
+> > fio-3.27
+> > Starting 1 process
+> > file1: Laying out IO file (1 file / 1024MiB)
+> > Jobs: 1 (f=3D1): [W(1)][100.0%][w=3D52.5MiB/s][w=3D13.4k IOPS][eta 00m:=
+00s]
+> > file1: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D10056: Wed Jul 20 12:28=
+:21 2022
+> >   write: IOPS=3D96.3k, BW=3D376MiB/s (394MB/s)(110GiB/300001msec); 0 zo=
+ne resets
+> >     slat (nsec): min=3D1112, max=3D5727.5k, avg=3D1917.70, stdev=3D1300=
+.30
+> >     clat (nsec): min=3D1112, max=3D2146.5M, avg=3D156067.38, stdev=3D15=
+568002.13
+> >      lat (usec): min=3D3, max=3D2146.5k, avg=3D158.03, stdev=3D15568.00
+> >     clat percentiles (usec):
+> >      |  1.00th=3D[   36],  5.00th=3D[   36], 10.00th=3D[   37], 20.00th=
+=3D[   37],
+> >      | 30.00th=3D[   38], 40.00th=3D[   38], 50.00th=3D[   38], 60.00th=
+=3D[   39],
+> >      | 70.00th=3D[   39], 80.00th=3D[   40], 90.00th=3D[   42], 95.00th=
+=3D[   44],
+> >      | 99.00th=3D[   52], 99.50th=3D[   59], 99.90th=3D[   77], 99.95th=
+=3D[   88],
+> >      | 99.99th=3D[  169]
+> >    bw (  KiB/s): min=3D15664, max=3D1599456, per=3D100.00%, avg=3D89776=
+1.07, stdev=3D504329.17, samples=3D257
+> >    iops        : min=3D 3916, max=3D399864, avg=3D224440.26, stdev=3D12=
+6082.33, samples=3D257
+> >   lat (usec)   : 2=3D0.01%, 4=3D0.01%, 10=3D0.01%, 20=3D0.01%, 50=3D98.=
+80%
+> >   lat (usec)   : 100=3D1.18%, 250=3D0.02%, 500=3D0.01%
+> >   lat (msec)   : 10=3D0.01%, 2000=3D0.01%, >=3D2000=3D0.01%
+> >   cpu          : usr=3D5.45%, sys=3D23.92%, ctx=3D78418, majf=3D0, minf=
+=3D14
+> >   IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D100.0%, 3=
+2=3D0.0%, >=3D64=3D0.0%
+> >      submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, =
+64=3D0.0%, >=3D64=3D0.0%
+> >      complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.1%, 32=3D0.0%, =
+64=3D0.0%, >=3D64=3D0.0%
+> >      issued rwts: total=3D0,28889786,0,0 short=3D0,0,0,0 dropped=3D0,0,=
+0,0
+> >      latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D=
+16
+> >=20
+> > Run status group 0 (all jobs):
+> >   WRITE: bw=3D376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), =
+io=3D110GiB (118GB), run=3D300001-300001msec
+> >=20
+> > Disk stats (read/write):
+> >     dm-7: ios=3D0/22878, merge=3D0/0, ticks=3D0/373254, in_queue=3D3732=
+54, util=3D43.89%, aggrios=3D0/99746, aggrmerge=3D0/9246, aggrticks=3D0/140=
+6831, aggrin_queue=3D1408420, aggrutil=3D73.56%
+> >   sda: ios=3D0/99746, merge=3D0/9246, ticks=3D0/1406831, in_queue=3D140=
+8420, util=3D73.56%
+> >=20
+> > mounted with -o iversion:
+> >=20
+> > $ fio ./4k-write.fio
+> > file1: (g=3D0): rw=3Dwrite, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) =
+4096B-4096B, ioengine=3Dlibaio, iodepth=3D16
+> > fio-3.27
+> > Starting 1 process
+> > Jobs: 1 (f=3D1): [W(1)][100.0%][eta 00m:00s]                         =
+=20
+> > file1: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D10369: Wed Jul 20 12:33=
+:57 2022
+> >   write: IOPS=3D96.2k, BW=3D376MiB/s (394MB/s)(110GiB/300001msec); 0 zo=
+ne resets
+> >     slat (nsec): min=3D1112, max=3D1861.5k, avg=3D1994.58, stdev=3D890.=
+78
+> >     clat (nsec): min=3D1392, max=3D2113.3M, avg=3D156252.71, stdev=3D15=
+409487.99
+> >      lat (usec): min=3D3, max=3D2113.3k, avg=3D158.30, stdev=3D15409.49
+> >     clat percentiles (usec):
+> >      |  1.00th=3D[   37],  5.00th=3D[   38], 10.00th=3D[   38], 20.00th=
+=3D[   38],
+> >      | 30.00th=3D[   39], 40.00th=3D[   39], 50.00th=3D[   40], 60.00th=
+=3D[   40],
+> >      | 70.00th=3D[   41], 80.00th=3D[   42], 90.00th=3D[   43], 95.00th=
+=3D[   45],
+> >      | 99.00th=3D[   53], 99.50th=3D[   60], 99.90th=3D[   79], 99.95th=
+=3D[   90],
+> >      | 99.99th=3D[  174]
+> >    bw (  KiB/s): min=3D  304, max=3D1540000, per=3D100.00%, avg=3D87072=
+7.42, stdev=3D499371.78, samples=3D265
+> >    iops        : min=3D   76, max=3D385000, avg=3D217681.82, stdev=3D12=
+4842.94, samples=3D265
+> >   lat (usec)   : 2=3D0.01%, 4=3D0.01%, 10=3D0.01%, 20=3D0.01%, 50=3D98.=
+49%
+> >   lat (usec)   : 100=3D1.48%, 250=3D0.02%, 500=3D0.01%
+> >   lat (msec)   : 2=3D0.01%, 2000=3D0.01%, >=3D2000=3D0.01%
+> >   cpu          : usr=3D5.71%, sys=3D24.49%, ctx=3D52874, majf=3D0, minf=
+=3D18
+> >   IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D100.0%, 3=
+2=3D0.0%, >=3D64=3D0.0%
+> >      submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, =
+64=3D0.0%, >=3D64=3D0.0%
+> >      complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.1%, 32=3D0.0%, =
+64=3D0.0%, >=3D64=3D0.0%
+> >      issued rwts: total=3D0,28856695,0,0 short=3D0,0,0,0 dropped=3D0,0,=
+0,0
+> >      latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D=
+16
+> >=20
+> > Run status group 0 (all jobs):
+> >   WRITE: bw=3D376MiB/s (394MB/s), 376MiB/s-376MiB/s (394MB/s-394MB/s), =
+io=3D110GiB (118GB), run=3D300001-300001msec
+> >=20
+> > Disk stats (read/write):
+> >     dm-7: ios=3D1/16758, merge=3D0/0, ticks=3D2/341817, in_queue=3D3418=
+19, util=3D47.93%, aggrios=3D1/98153, aggrmerge=3D0/5691, aggrticks=3D2/139=
+9496, aggrin_queue=3D1400893, aggrutil=3D73.42%
+> >   sda: ios=3D1/98153, merge=3D0/5691, ticks=3D2/1399496, in_queue=3D140=
+0893, util=3D73.42%
+> >=20
+> > --=20
+> > Jeff Layton <jlayton@kernel.org>
+> >=20
+>=20
 
-The directory creation time has been the way it is since linux history [0]
-commit fdb2f0a59a1c7 ("[PATCH] Linux-0.97.3 (September 5, 1992)) and so this
-has been the way .. since the beginning.
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
-
-The last change was by Deepa to correct y2038 considerations through
-commit 078cd8279e659 ("fs: Replace CURRENT_TIME with current_time() for
-inode timestamps").
-
-Next time you try to report something like this please be very sure
-to learn to use git blame, and then git blame foo.c <commit-id>~1 and
-keep doing this until you get to the root commit, this will let you
-determine *how long has this been this way*. When you run into a
-commit history which lands to the first git commit on linux you can
-use the above linux history.git to go back further as I did.
-
-> The file timestamp in procfs is the timestamp when the inode was
-> created. If the inode of a file in procfs is reclaimed, the inode
-> will be recreated when it is opened again, and the timestamp will
-> be changed to the time when it was recreated.
-
-The commit log above starts off with a report of the directory
-of a PID. When does the directory of a PID change dates when its
-respective start_time does not? When does this reclaim happen exactly?
-Under what situation?
-
-And if that is not happening, can you name *one* file in a process
-directory under proc which does get reclaimed for, for which this
-does happen?
-
-> In other file systems, this timestamp is typically recorded in
-> the file system and assigned to the inode when the inode is created.
-
-I don't understand, which files are we reclaiming in procfs which
-get re-recreated which your *user* is having issues with? What did
-they report exactly, I'm *super* curious what your user reported
-exactly. Do you have a bug report somewhere? Or any information
-about its bug report. Can you pass it on to Muchun for peer review?
-What file were they monitoring and what tool were they using which
-made them realize there was a sort of issue?
-
-> This mechanism can be confusing to users who are not familiar with it.
-
-Why are they monitoring it? Why would a *new* inode having a different
-timestamp be an issue as per existing documentation?
-
-> For users who know this mechanism, they will choose not to trust this time.
-> So the timestamp now has no meaning other than to confuse the user.
-
-That is unfair given this is the first *user* to report confusion since
-the inception of Linux, don't you think?
-
-> It needs fixing.
-
-A fix is for when there is an issue. You are not reporting a bug or an
-issue, but you seem to be reporting something a confused user sees and
-perhaps lack of documentation for something which is not even tracked
-or cared for. This is the way things have been done since the beginning.
-It doesn't mean things can't change, but there needs to be a good reason.
-
-The terminology of "fix" implies something is broken. The only thing
-seriouly broken here is this patch you are suggesting and the mechanism
-which is enabling you to send patches for what you think are issues and
-seriously wasting people's time. That seriously needs to be fixed.
-
-> There are three solutions. We don't have to make the timestamp
-> meaningful, as long as the user doesn't trust the timestamp.
-> 
-> 1. Add to the kernel documentation that the timestamp in PROC is
->    not reliable and do not use this timestamp.
->    The problem with this solution is that most users don't read
->    the kernel documentation and it can still be misleading.
-> 
-> 2. Fix it, change the timestamp of /proc/pid to the timestamp of
->    process creation.
-> 
->    This raises new questions.
-> 
->    a. Users don't know which kernel version is correct.
-> 
->    b. This problem exists not only in the pid directory, but also
->       in other directories under procfs. It would take a lot of
->       extra work to fix them all. There are also easier ways for
->       users to get the creation time information better than this.
-> 
->    c. We need to describe the specific meaning of each file under
->       proc in the kernel documentation for the creation time.
->       Because the creation time of various directories has different
->       meanings. For example, PID directory is the process creation
->       time, FD directory is the FD creation time and so on.
-> 
->    d. Some files have no associated entity, such as iomem.
->       Unable to give a meaningful time.
-> 
-> 3. Instead of fixing it, set the timestamp in all procfs to 0.
->    Users will see it as an error and will not use it.
-> 
-> I think 3 is better. Any other suggestions?
->
-> Signed-off-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-
-The logic behind this patch is way off track, a little effort
-alone should have made you reach similar conflusions as I have.
-Your patch does your suggested step 3), so no way! What you are
-proposing can potentially break things! Have you put some effort
-into evaluating the negative possible impacts of your patch? If
-not, can you do that now?  Did you even *boot* test your patch?
-
-It makes all of the proc files go dated back to Jan 1 1970.
-
-How can this RFC in any way shape or form have been sent with
-a serious intent?
-
-Sadly the lack of any serious consideration of the past and then
-for you to easily suggest to make a new change which could easily
-break existing users makes me needing to ask you to please have
-one of your peers at bytedance.com such as Muchun Song to please
-review your patches prior to you posting them, because otherwise
-this is creating noise and quite frankly make me wonder if you
-are intentially trying to break things.
-
-Muchun Song, sorry but can you please help here ensure that your
-peers don't post this level of quality of patches again? It would be
-seriously appreciated.
-
-Users exist for years without issue and now you want to change things
-for a user which finds something done which is not documented and want
-to purposely *really* change things for *everyone* to ways which have
-0 compatibility with what users may have been expecting before.
-
-How can you conclude this?
-
-This suggested patch is quite alarming.
-
-  Luis
-
-Below is just nonsense.
-
-> ---
->  fs/proc/base.c        | 4 +++-
->  fs/proc/inode.c       | 3 ++-
->  fs/proc/proc_sysctl.c | 3 ++-
->  fs/proc/self.c        | 3 ++-
->  fs/proc/thread_self.c | 3 ++-
->  5 files changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 0b72a6d8aac3..af440ef13091 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1892,6 +1892,8 @@ struct inode *proc_pid_make_inode(struct super_block *sb,
->  	struct proc_inode *ei;
->  	struct pid *pid;
->  
-> +	struct timespec64 ts_zero = {0, 0};
-> +
->  	/* We need a new inode */
->  
->  	inode = new_inode(sb);
-> @@ -1902,7 +1904,7 @@ struct inode *proc_pid_make_inode(struct super_block *sb,
->  	ei = PROC_I(inode);
->  	inode->i_mode = mode;
->  	inode->i_ino = get_next_ino();
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
->  	inode->i_op = &proc_def_inode_operations;
->  
->  	/*
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index fd40d60169b5..efb1c935fa8d 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -642,6 +642,7 @@ const struct inode_operations proc_link_inode_operations = {
->  struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
->  {
->  	struct inode *inode = new_inode(sb);
-> +	struct timespec64 ts_zero = {0, 0};
->  
->  	if (!inode) {
->  		pde_put(de);
-> @@ -650,7 +651,7 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
->  
->  	inode->i_private = de->data;
->  	inode->i_ino = de->low_ino;
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
->  	PROC_I(inode)->pde = de;
->  	if (is_empty_pde(de)) {
->  		make_empty_dir_inode(inode);
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 021e83fe831f..c670f9d3b871 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -455,6 +455,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
->  	struct ctl_table_root *root = head->root;
->  	struct inode *inode;
->  	struct proc_inode *ei;
-> +	struct timespec64 ts_zero = {0, 0};
->  
->  	inode = new_inode(sb);
->  	if (!inode)
-> @@ -476,7 +477,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
->  	head->count++;
->  	spin_unlock(&sysctl_lock);
->  
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
->  	inode->i_mode = table->mode;
->  	if (!S_ISDIR(table->mode)) {
->  		inode->i_mode |= S_IFREG;
-> diff --git a/fs/proc/self.c b/fs/proc/self.c
-> index 72cd69bcaf4a..b9e572fdc27c 100644
-> --- a/fs/proc/self.c
-> +++ b/fs/proc/self.c
-> @@ -44,9 +44,10 @@ int proc_setup_self(struct super_block *s)
->  	self = d_alloc_name(s->s_root, "self");
->  	if (self) {
->  		struct inode *inode = new_inode(s);
-> +		struct timespec64 ts_zero = {0, 0};
->  		if (inode) {
->  			inode->i_ino = self_inum;
-> -			inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +			inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
->  			inode->i_mode = S_IFLNK | S_IRWXUGO;
->  			inode->i_uid = GLOBAL_ROOT_UID;
->  			inode->i_gid = GLOBAL_ROOT_GID;
-> diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-> index a553273fbd41..964966387da2 100644
-> --- a/fs/proc/thread_self.c
-> +++ b/fs/proc/thread_self.c
-> @@ -44,9 +44,10 @@ int proc_setup_thread_self(struct super_block *s)
->  	thread_self = d_alloc_name(s->s_root, "thread-self");
->  	if (thread_self) {
->  		struct inode *inode = new_inode(s);
-> +		struct timespec64 ts_zero = {0, 0};
->  		if (inode) {
->  			inode->i_ino = thread_self_inum;
-> -			inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +			inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
->  			inode->i_mode = S_IFLNK | S_IRWXUGO;
->  			inode->i_uid = GLOBAL_ROOT_UID;
->  			inode->i_gid = GLOBAL_ROOT_GID;
-> -- 
-> 2.30.2
-> 
+--=20
+Jeff Layton <jlayton@kernel.org>
