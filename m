@@ -2,152 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E7A57CE7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 17:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2984857CEC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 17:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbiGUPFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 11:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
+        id S229985AbiGUPUW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 11:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiGUPFR (ORCPT
+        with ESMTP id S229732AbiGUPUT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 11:05:17 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4006342
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 08:05:14 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 72so1967705pge.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 08:05:14 -0700 (PDT)
+        Thu, 21 Jul 2022 11:20:19 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75731A394
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 08:20:18 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id l11so3258313ybu.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 08:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+qHP7skd3Cv7XJJygZVSwGskr21EGyWaFJgDdfd1xqA=;
-        b=oQSFR9+MjkkY1ur4gDW1MTlCrXf3uwlJLfESqNwsf2awYRDW0+8aavy8VzAuy9DB0G
-         JDCIQp1vt5BvWbaqkABHrCn9h2qVHzO/SxEDKgSBlbay4FQdznJ6OWnc4Hc0C/769sBL
-         aq7cj8hP0AUHXUTvnue16TNcqCwcMJHJ1Gz4cj7NXbvObCQklTY4pdJ1ZwEWRYUotwWt
-         BRQpaLf82OEJ9tYyxOPCUOLwadWEY7ln+vmIVrCj1MGptoVCZg53AGjaczk8CTfjFYcd
-         x+IeQO2qzB9zjTUGUovD73lL5DdL7DCL3eyEpBmg3MXYdMfYAAsyQOy2T2yk808kuO5O
-         Wxgw==
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=ecd1Q2yPx0A7W7K7jCuZP1F8wCmAYdVKX1aCc8pJ7gM=;
+        b=F7ujndKGfaviF0KU3h8f6EBukO+Lt0lE1ptQWtJGIX5Vz/Yb23W9PaQkNkvIAfgoNB
+         Mxa+PHsg25Wq63enbDq9kZZDAEtP+tfaQxoAiusKcP3qYmNXD3kihtv2XzqBXBIpzh8P
+         z5kQhTzA/4aRGenRT2YcsPPtrpyckTOMgdP5Lr38XcL24ZYatmKlbCBC2Rs9FF/zj68S
+         YUOU0goulUfFN4skKCnm7H82V5B+4iib7a97WHt+m2FbqVvl/WAHDYEwFEG1nPtozOgW
+         YPm8gP4sM92C2oyQ1jnMkA0HHUZXRFbXpFCyqSzOQChP7fa3zzRIy3lZmbRnGrd4M+Wx
+         Zfgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+qHP7skd3Cv7XJJygZVSwGskr21EGyWaFJgDdfd1xqA=;
-        b=ey1v9RyKyNqj8L3kxLxnKlI+a0hJ5LaGS0KLELDC1GSuZ4vTkbee0ZREzliv/Pv3ro
-         S/SLp/6U8fwnk+jox9jXWng9a27gmeTW9/S+4ezJdAtpqlMWUtGhbnc1jh/dLAXuflVA
-         lLKi1cDhHael6R7KUFF2Zec0P8/X2g1mW6BRItfsyaqseM2gFjoL9nWJGUWcNhqTWT5r
-         2sH/NHI9suX8N8Ka7yny5YVzhmkB9ZWySMkm5ruH2/1HsuzbUGwWXbu1P1DYFn9fdSTQ
-         rdnmzub2FtNGFI2TwxGOu0qBvjc5jZJfdFb/5iIplHaH3/32Pyjp5O9BPCg4dVDFyZLN
-         f5Rg==
-X-Gm-Message-State: AJIora/33VHqY4yrZVwkLvWRYbvK9qSQ89h65b9wNWZPoRlNJ0tbRupN
-        6cpRcosryGoOb+oUPxDNf9JkJ27kpYj+8A==
-X-Google-Smtp-Source: AGRyM1uCSCT3ljh7PToWudc0PHcaebaKp/GEubhDiVG89ItWbH0HuD55vNtJx6Xaam1ITOer8uSeSA==
-X-Received: by 2002:a63:b56:0:b0:41a:495a:2a26 with SMTP id a22-20020a630b56000000b0041a495a2a26mr13293961pgl.411.1658415913932;
-        Thu, 21 Jul 2022 08:05:13 -0700 (PDT)
-Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id a17-20020aa78e91000000b005254e44b748sm1872610pfr.84.2022.07.21.08.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jul 2022 08:05:13 -0700 (PDT)
-Date:   Thu, 21 Jul 2022 15:05:09 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 01/14] mm: Add F_SEAL_AUTO_ALLOCATE seal to memfd
-Message-ID: <YtlrJR3uP6940tjd@google.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-2-chao.p.peng@linux.intel.com>
- <f39c4f63-a511-4beb-b3a4-66589ddb5475@redhat.com>
- <39067d09-b32b-23a6-ae0e-00ac2fe0466c@redhat.com>
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=ecd1Q2yPx0A7W7K7jCuZP1F8wCmAYdVKX1aCc8pJ7gM=;
+        b=sZ73/09ml4Z8/FT1dSb/ygy411BTGpzcqFUKcJNU80Yk2nwRBGoS2/0ry9b+ArJqPy
+         sXxSTkHUIvr9GfbvLiEw7BR+Kaxq3qGNr+FQ0IxsPg4A5tIhkOToRcRKZKG7/Nj320Sg
+         r2507wBJ/GoX77or12WosF2zEwqsiaeIODje7uckGGCMiKExEMzF/CUFkJaHuoiaxg8I
+         i4Y0G6V9axFiEFrRCD3S10TjmTUTm8p7/srrGTlnScsNZRWo22+nejcys8pZHwAnh4JF
+         rRPSRocqXeb8R2RXYjXsGy/XKILLhzP9ha94s9IFSQa08FJQN3eMUlaxy7xMPXIFJGpy
+         QruA==
+X-Gm-Message-State: AJIora/beSNTGbmpf1gBprwSb0cXKEySHTV5WAEoGa7EpeoWlgmn+Adw
+        9ruhZHGCMIlMdxR2AB4W4mVpT1SmO6+/tK1p0LU=
+X-Google-Smtp-Source: AGRyM1scsOwxVDMVhannZEjPdAUSh0lvRukz5IAfDPaDscOGgDabRvzRfzeXyWVhbdhc+bIUr7LxcgmySimy32FPLe8=
+X-Received: by 2002:a25:824a:0:b0:670:8d20:7e96 with SMTP id
+ d10-20020a25824a000000b006708d207e96mr10543181ybn.157.1658416817812; Thu, 21
+ Jul 2022 08:20:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39067d09-b32b-23a6-ae0e-00ac2fe0466c@redhat.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Sender: davidscottdavid21@gmail.com
+Received: by 2002:a05:7110:3214:b0:18a:76e2:aa9b with HTTP; Thu, 21 Jul 2022
+ 08:20:17 -0700 (PDT)
+From:   "Mr. Jimmy Moore" <jimmymoore265@gmail.com>
+Date:   Thu, 21 Jul 2022 18:20:17 +0300
+X-Google-Sender-Auth: pD_j18LqzYLTZE3wUb3VbOCH31I
+Message-ID: <CAC65ENQog43p+MXAcVVcb6GpwcfjPPdKHRfBpTUuFrEmnddbDw@mail.gmail.com>
+Subject: UNITED NATIONS COVID-19 COMPENSATION FUNDS.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_60,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLY,LOTS_OF_MONEY,LOTTO_DEPT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,
+        T_HK_NAME_FM_MR_MRS,UNDISC_MONEY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b43 listed in]
+        [list.dnswl.org]
+        *  1.5 BAYES_60 BODY: Bayes spam probability is 60 to 80%
+        *      [score: 0.6464]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [davidscottdavid21[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [davidscottdavid21[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        *  1.0 FREEMAIL_REPLY From and body contain different freemails
+        *  0.0 LOTTO_DEPT Claims Department
+        *  2.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 21, 2022, David Hildenbrand wrote:
-> On 21.07.22 11:44, David Hildenbrand wrote:
-> > On 06.07.22 10:20, Chao Peng wrote:
-> >> Normally, a write to unallocated space of a file or the hole of a sparse
-> >> file automatically causes space allocation, for memfd, this equals to
-> >> memory allocation. This new seal prevents such automatically allocating,
-> >> either this is from a direct write() or a write on the previously
-> >> mmap-ed area. The seal does not prevent fallocate() so an explicit
-> >> fallocate() can still cause allocating and can be used to reserve
-> >> memory.
-> >>
-> >> This is used to prevent unintentional allocation from userspace on a
-> >> stray or careless write and any intentional allocation should use an
-> >> explicit fallocate(). One of the main usecases is to avoid memory double
-> >> allocation for confidential computing usage where we use two memfds to
-> >> back guest memory and at a single point only one memfd is alive and we
-> >> want to prevent memory allocation for the other memfd which may have
-> >> been mmap-ed previously. More discussion can be found at:
-> >>
-> >>   https://lkml.org/lkml/2022/6/14/1255
-> >>
-> >> Suggested-by: Sean Christopherson <seanjc@google.com>
-> >> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> >> ---
-> >>  include/uapi/linux/fcntl.h |  1 +
-> >>  mm/memfd.c                 |  3 ++-
-> >>  mm/shmem.c                 | 16 ++++++++++++++--
-> >>  3 files changed, 17 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> >> index 2f86b2ad6d7e..98bdabc8e309 100644
-> >> --- a/include/uapi/linux/fcntl.h
-> >> +++ b/include/uapi/linux/fcntl.h
-> >> @@ -43,6 +43,7 @@
-> >>  #define F_SEAL_GROW	0x0004	/* prevent file from growing */
-> >>  #define F_SEAL_WRITE	0x0008	/* prevent writes */
-> >>  #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
-> >> +#define F_SEAL_AUTO_ALLOCATE	0x0020  /* prevent allocation for writes */
-> > 
-> > Why only "on writes" and not "on reads". IIRC, shmem doesn't support the
-> > shared zeropage, so you'll simply allocate a new page via read() or on
-> > read faults.
-> 
-> Correction: on read() we don't allocate a fresh page. But on read faults
-> we would. So this comment here needs clarification.
+UNITED NATIONS COVID-19 OVERDUE COMPENSATION UNIT.
+REFERENCE PAYMENT CODE: 8525595
+BAILOUT AMOUNT:$3.5 MILLION USD
+ADDRESS: NEW YORK, NY 10017, UNITED STATES
 
-Not just the comment, the code too.  The intent of F_SEAL_AUTO_ALLOCATE is very
-much to block _all_ implicit allocations (or maybe just fault-based allocations
-if "implicit" is too broad of a description).
+Dear award recipient, Covid-19 Compensation funds.
+
+You are receiving this correspondence because we have finally reached
+a consensus with the UN, IRS, and IMF that your total fund worth $3.5
+Million Dollars of Covid-19 Compensation payment shall be delivered to
+your nominated mode of receipt, and you are expected to pay the sum of
+$12,000 for levies owed to authorities after receiving your funds.
+
+You have a grace period of 2 weeks to pay the $12,000 levy after you
+have received your Covid-19 Compensation total sum of $3.5 Million. We
+shall proceed with the payment of your bailout grant only if you agree
+to the terms and conditions stated.
+
+Contact Dr. Mustafa Ali for more information by email at: (
+mustafaliali180@gmail.com ) Your consent in this regard would be
+highly appreciated.
+
+Regards,
+Mr. Jimmy Moore.
+Undersecretary-General United Nations
+Office of Internal Oversight-UNIOS.
