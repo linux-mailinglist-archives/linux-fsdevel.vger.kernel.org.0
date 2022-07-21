@@ -2,231 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34D8457C5FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 10:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F25EA57C7BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 11:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbiGUIQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 04:16:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47892 "EHLO
+        id S232537AbiGUJe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 05:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232130AbiGUIQc (ORCPT
+        with ESMTP id S229663AbiGUJeZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 04:16:32 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DF17D781
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 01:16:26 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id o5-20020a17090a3d4500b001ef76490983so795834pjf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 01:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vcjP/TTiCJtollpq0IPhYOJ7clDYhyVICdNwHyD3LrE=;
-        b=zSgKsABZNHCGDGlRauoWxpAH/o/0gRVuIgQ9ktno6Af3XPNaeY7ZIkQbIP1dODyyW6
-         SyK/9cq3DiYyhrwSAOBIgFy9YhGgH3oPglY56gT28qdvQij5J8IbvF1G3UAurRqRaLY8
-         VlNnceYzSRQ59u17FNBweM260mhdf51ls1OGj1DTrVpwjr2ukZ/l+p1ccJvzkhaULMDC
-         VOSTkOS1+lFNpaMcgUJHwvvZ5HSZckSRvTuQrpsQL/Xig2HvGDgJeOkGGVwf8/ezcr07
-         YEdk1nTyI82qUMYsFB3Rxl6jpyYHSc3z0T6MfwpB33NJWKdp90G2ueFhHfAEMcyEitg8
-         FkJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vcjP/TTiCJtollpq0IPhYOJ7clDYhyVICdNwHyD3LrE=;
-        b=SN4w/smnnVQ/gE0uf4NNvqA7umv0A5mzx1U2G6OJ3Df5YgwZwcQ232JzCJ8o1uYG2j
-         DCk/MBtH2Ljwkik+oCWMZk0p6wlrsUOKkfuLzIj+r9w5aHkRVCRaAMx1/zeVRNYtM/ie
-         42gaOG/+ZvGV9esywC5Fy9/YKrdzwDFqKir+3i3Lv4gfy5wirO7AaWftWt2dWQM8of2y
-         f+jDMP7v0kY5B1//Z8qnqlju1Nh5Nb1mjV+oapyol52zvYzTU+RguX5d9K9tJ7fK4V1h
-         DKDekpqZlShiAaMZTkY9gxL6MV+cDtFnjzFa+WJg4Uo6gm47TtswskBIx8xADCCo2YI4
-         xYZA==
-X-Gm-Message-State: AJIora8PrQQ6CQLxf29Uea39UhQx/+D45igGD0ETDr/KakfQsdJR67ul
-        h4s1AEujqxF7isG3gs8rqHbgBA==
-X-Google-Smtp-Source: AGRyM1uXK++DxHvIzgYiDg8vMrV8xv2FtMAqJSlSdEaG5dKsvrlGScwbEADljdYPFp4BHWGJk22qlA==
-X-Received: by 2002:a17:90a:9409:b0:1f0:e171:f2bd with SMTP id r9-20020a17090a940900b001f0e171f2bdmr9758963pjo.245.1658391386081;
-        Thu, 21 Jul 2022 01:16:26 -0700 (PDT)
-Received: from C02GF2LXMD6R.bytedance.net ([139.177.225.246])
-        by smtp.gmail.com with ESMTPSA id j2-20020a17090a694200b001f204399045sm837995pjm.17.2022.07.21.01.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jul 2022 01:16:25 -0700 (PDT)
-From:   Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        songmuchun@bytedance.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-Subject: [RFC] proc: fix create timestamp of files in proc
-Date:   Thu, 21 Jul 2022 16:16:17 +0800
-Message-Id: <20220721081617.36103-1-zhangyuchen.lcr@bytedance.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+        Thu, 21 Jul 2022 05:34:25 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897D48053F;
+        Thu, 21 Jul 2022 02:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658396064; x=1689932064;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=wCb9PX4Sp0/BeSAl8rvIo3FQtV/S7LHLo0bGkTMYvrA=;
+  b=TztBwVMhKq369DA2k08ewtfAXu9LZpAjXKVivbEJIVR6GjjdyXJ4DKx2
+   L/bM0MgvQmYONtr8u3N504B/v+KOZDhtOx5aQJSH6xKe5f+e9d+yvIP4f
+   cwF84aN6RNa7V0Fq+KMd9H+4yFmFH8eWEg4oYnr6MWsctfEWUrWw8OSJB
+   +DBGymO1Im9DlG9PUUMSWmTWLPHppbN7T86A1DwLB7/kAhRgcvvM1AAzQ
+   KY5eeys0UEejnRrnlebBNbUB4PcefCXj0Nmqo+QQzUK/Uhs6XJLSss/0T
+   4psZu8l/Rts/oKACBA/aElGcQOCzQ1EyZ55yeHRnP/TQDJbsLExiTTadI
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="350988486"
+X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
+   d="scan'208";a="350988486"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 02:34:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
+   d="scan'208";a="656666919"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Jul 2022 02:33:56 -0700
+Date:   Thu, 21 Jul 2022 17:29:06 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Wei Wang <wei.w.wang@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        "Gupta, Pankaj" <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
+ memory regions
+Message-ID: <20220721092906.GA153288@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+ <f02baa37-8d34-5d07-a0ae-300ffefc7fee@amd.com>
+ <20220719140843.GA84779@chaop.bj.intel.com>
+ <36e671d2-6b95-8e4f-c2ac-fee4b2670c6e@amd.com>
+ <20220720150706.GB124133@chaop.bj.intel.com>
+ <d0fd229d-afa6-c66d-3e55-09ac5877453e@amd.com>
+ <YtgrkXqP/GIi9ujZ@google.com>
+ <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A user has reported a problem that the /proc/{pid} directory
-creation timestamp is incorrect.
-He believes that the directory was created when the process was
-started, so the timestamp of the directory creation should also
-be when the process was created.
+On Thu, Jul 21, 2022 at 03:34:59PM +0800, Wei Wang wrote:
+> 
+> 
+> On 7/21/22 00:21, Sean Christopherson wrote:
+> > On Wed, Jul 20, 2022, Gupta, Pankaj wrote:
+> > > > > > > > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
+> > Use kvm_arch_has_private_mem(), both because "has" makes it obvious this is checking
+> > a flag of sorts, and to align with other helpers of this nature (and with
+> > CONFIG_HAVE_KVM_PRIVATE_MEM).
+> > 
+> >    $ git grep kvm_arch | grep supported | wc -l
+> >    0
+> >    $ git grep kvm_arch | grep has | wc -l
+> >    26
 
-The file timestamp in procfs is the timestamp when the inode was
-created. If the inode of a file in procfs is reclaimed, the inode
-will be recreated when it is opened again, and the timestamp will
-be changed to the time when it was recreated.
-In other file systems, this timestamp is typically recorded in
-the file system and assigned to the inode when the inode is created.
+Make sense. kvm_arch_has_private_mem it actually better.
 
-This mechanism can be confusing to users who are not familiar with
-it.
-For users who know this mechanism, they will choose not to trust
-this time.
-So the timestamp now has no meaning other than to confuse the user.
-It needs fixing.
+> > 
+> > > > > > > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > > > > > > > +	case KVM_MEMORY_ENCRYPT_REG_REGION:
+> > > > > > > > +	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
+> > > > > > > > +		struct kvm_enc_region region;
+> > > > > > > > +
+> > > > > > > > +		if (!kvm_arch_private_mem_supported(kvm))
+> > > > > > > > +			goto arch_vm_ioctl;
+> > > > > > > > +
+> > > > > > > > +		r = -EFAULT;
+> > > > > > > > +		if (copy_from_user(&region, argp, sizeof(region)))
+> > > > > > > > +			goto out;
+> > > > > > > > +
+> > > > > > > > +		r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
+> > > > > > > this is to store private region metadata not only the encrypted region?
+> > > > > > Correct.
+> > > > > Sorry for not being clear, was suggesting name change of this function from:
+> > > > > "kvm_vm_ioctl_set_encrypted_region" to "kvm_vm_ioctl_set_private_region"
+> > > > Though I don't have strong reason to change it, I'm fine with this and
+> > > Yes, no strong reason, just thought "kvm_vm_ioctl_set_private_region" would
+> > > depict the actual functionality :)
+> > > 
+> > > > this name matches the above kvm_arch_private_mem_supported perfectly.
+> > > BTW could not understand this, how "kvm_vm_ioctl_set_encrypted_region"
+> > > matches "kvm_arch_private_mem_supported"?
+> > Chao is saying that kvm_vm_ioctl_set_private_region() pairs nicely with
+> > kvm_arch_private_mem_supported(), not that the "encrypted" variant pairs nicely.
+> > 
+> > I also like using "private" instead of "encrypted", though we should probably
+> > find a different verb than "set", because calling "set_private" when making the
+> > region shared is confusing.  I'm struggling to come up with a good alternative
+> > though.
+> > 
+> > kvm_vm_ioctl_set_memory_region() is already taken by KVM_SET_USER_MEMORY_REGION,
+> > and that also means that anything with "memory_region" in the name is bound to be
+> > confusing.
+> > 
+> > Hmm, and if we move away from "encrypted", it probably makes sense to pass in
+> > addr+size instead of a kvm_enc_region.
 
-There are three solutions. We don't have to make the timestamp
-meaningful, as long as the user doesn't trust the timestamp.
+This makes sense.
 
-1. Add to the kernel documentation that the timestamp in PROC is
-   not reliable and do not use this timestamp.
-   The problem with this solution is that most users don't read
-   the kernel documentation and it can still be misleading.
+> > 
+> > Maybe this?
+> > 
+> > static int kvm_vm_ioctl_set_or_clear_mem_private(struct kvm *kvm, gpa_t gpa,
+> > 					         gpa_t size, bool set_private)
 
-2. Fix it, change the timestamp of /proc/pid to the timestamp of
-   process creation.
+Currently this should work.
 
-   This raises new questions.
+> > 
+> > and then:
+> > 
+> > #ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > 	case KVM_MEMORY_ENCRYPT_REG_REGION:
+> > 	case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
+> > 		bool set = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
+> > 		struct kvm_enc_region region;
+> > 
+> > 		if (!kvm_arch_private_mem_supported(kvm))
+> > 			goto arch_vm_ioctl;
+> > 
+> > 		r = -EFAULT;
+> > 		if (copy_from_user(&region, argp, sizeof(region)))
+> > 			goto out;
+> > 
+> > 		r = kvm_vm_ioctl_set_or_clear_mem_private(kvm, region.addr,
+> > 							  region.size, set);
+> > 		break;
+> > 	}
+> > #endif
+> > 
+> > I don't love it, so if someone has a better idea...
+> > 
+> Maybe you could tag it with cgs for all the confidential guest support
+> related stuff:
+> e.g. kvm_vm_ioctl_set_cgs_mem()
+> 
+> bool is_private = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
+> ...
+> kvm_vm_ioctl_set_cgs_mem(, is_private)
 
-   a. Users don't know which kernel version is correct.
+If we plan to widely use such abbr. through KVM (e.g. it's well known),
+I'm fine.
 
-   b. This problem exists not only in the pid directory, but also
-      in other directories under procfs. It would take a lot of
-      extra work to fix them all. There are also easier ways for
-      users to get the creation time information better than this.
+I actually use mem_attr in patch: https://lkml.org/lkml/2022/7/20/610
+But I also don't quite like it, it's so generic and sounds say nothing.
 
-   c. We need to describe the specific meaning of each file under
-      proc in the kernel documentation for the creation time.
-      Because the creation time of various directories has different
-      meanings. For example, PID directory is the process creation
-      time, FD directory is the FD creation time and so on.
+But I do want a name can cover future usages other than just 
+private/shared (pKVM for example may have a third state).
 
-   d. Some files have no associated entity, such as iomem.
-      Unable to give a meaningful time.
-
-3. Instead of fixing it, set the timestamp in all procfs to 0.
-   Users will see it as an error and will not use it.
-
-I think 3 is better. Any other suggestions?
-
-Signed-off-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
----
- fs/proc/base.c        | 4 +++-
- fs/proc/inode.c       | 3 ++-
- fs/proc/proc_sysctl.c | 3 ++-
- fs/proc/self.c        | 3 ++-
- fs/proc/thread_self.c | 3 ++-
- 5 files changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 0b72a6d8aac3..af440ef13091 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1892,6 +1892,8 @@ struct inode *proc_pid_make_inode(struct super_block *sb,
- 	struct proc_inode *ei;
- 	struct pid *pid;
- 
-+	struct timespec64 ts_zero = {0, 0};
-+
- 	/* We need a new inode */
- 
- 	inode = new_inode(sb);
-@@ -1902,7 +1904,7 @@ struct inode *proc_pid_make_inode(struct super_block *sb,
- 	ei = PROC_I(inode);
- 	inode->i_mode = mode;
- 	inode->i_ino = get_next_ino();
--	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
- 	inode->i_op = &proc_def_inode_operations;
- 
- 	/*
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index fd40d60169b5..efb1c935fa8d 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -642,6 +642,7 @@ const struct inode_operations proc_link_inode_operations = {
- struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- {
- 	struct inode *inode = new_inode(sb);
-+	struct timespec64 ts_zero = {0, 0};
- 
- 	if (!inode) {
- 		pde_put(de);
-@@ -650,7 +651,7 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- 
- 	inode->i_private = de->data;
- 	inode->i_ino = de->low_ino;
--	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
- 	PROC_I(inode)->pde = de;
- 	if (is_empty_pde(de)) {
- 		make_empty_dir_inode(inode);
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 021e83fe831f..c670f9d3b871 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -455,6 +455,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
- 	struct ctl_table_root *root = head->root;
- 	struct inode *inode;
- 	struct proc_inode *ei;
-+	struct timespec64 ts_zero = {0, 0};
- 
- 	inode = new_inode(sb);
- 	if (!inode)
-@@ -476,7 +477,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
- 	head->count++;
- 	spin_unlock(&sysctl_lock);
- 
--	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
- 	inode->i_mode = table->mode;
- 	if (!S_ISDIR(table->mode)) {
- 		inode->i_mode |= S_IFREG;
-diff --git a/fs/proc/self.c b/fs/proc/self.c
-index 72cd69bcaf4a..b9e572fdc27c 100644
---- a/fs/proc/self.c
-+++ b/fs/proc/self.c
-@@ -44,9 +44,10 @@ int proc_setup_self(struct super_block *s)
- 	self = d_alloc_name(s->s_root, "self");
- 	if (self) {
- 		struct inode *inode = new_inode(s);
-+		struct timespec64 ts_zero = {0, 0};
- 		if (inode) {
- 			inode->i_ino = self_inum;
--			inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+			inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
- 			inode->i_mode = S_IFLNK | S_IRWXUGO;
- 			inode->i_uid = GLOBAL_ROOT_UID;
- 			inode->i_gid = GLOBAL_ROOT_GID;
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index a553273fbd41..964966387da2 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -44,9 +44,10 @@ int proc_setup_thread_self(struct super_block *s)
- 	thread_self = d_alloc_name(s->s_root, "thread-self");
- 	if (thread_self) {
- 		struct inode *inode = new_inode(s);
-+		struct timespec64 ts_zero = {0, 0};
- 		if (inode) {
- 			inode->i_ino = thread_self_inum;
--			inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+			inode->i_mtime = inode->i_atime = inode->i_ctime = ts_zero;
- 			inode->i_mode = S_IFLNK | S_IRWXUGO;
- 			inode->i_uid = GLOBAL_ROOT_UID;
- 			inode->i_gid = GLOBAL_ROOT_GID;
--- 
-2.30.2
-
+Thanks,
+Chao
