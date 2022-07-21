@@ -2,162 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A401E57C7EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 11:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E901D57C811
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Jul 2022 11:50:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232657AbiGUJoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 05:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
+        id S232802AbiGUJu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 05:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbiGUJoT (ORCPT
+        with ESMTP id S232763AbiGUJu0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 05:44:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3F68880F6C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 02:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658396657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DO1aaB3+Ryi/v9YoRM2rpcbD7ftKevyNrI/tAjdvyKQ=;
-        b=eYfKWylvfuGeSN7Esr1yNZ75LDhs1vWK9VCZ6plw6mWmextrYI0r64QOl+pyK7skVNNWCP
-        zV2aWD9EJ28x9lpv8matsqwKSMHjpfflUdnffjIg2v4HcCKDbzKn32HTB57C18BS/yDSc7
-        +I0GLSOs6RJiRPMaSVZ4clcHVPwY4LE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-401-_51JP8wsOTyeXNtaL-uipg-1; Thu, 21 Jul 2022 05:44:16 -0400
-X-MC-Unique: _51JP8wsOTyeXNtaL-uipg-1
-Received: by mail-wm1-f69.google.com with SMTP id bh18-20020a05600c3d1200b003a32044cc9fso765666wmb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 02:44:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=DO1aaB3+Ryi/v9YoRM2rpcbD7ftKevyNrI/tAjdvyKQ=;
-        b=0vdbgxQaLHhESNQA+BA2cGZNmxcj7EFbt4nQBck0LYrJqKkCyHnWP3bG4bvgIcw7om
-         ihu/xuSRpgb9ILWTgJPcJca645u0kX9zyZ6RmxlI1ZB7xQ/otHNkiPJu0axsi5zaPps/
-         7NImtTrI3NRW0SMZNkyJFNQJr9nS8K9S9fpaBYQ+pdLodkmGNvoQj9vTFmlnssk/j0CE
-         HLL8OPdq6gbk6KhDQXuUoNEZcj4svcC+gD2UxDrfjcd+zILqimxB9/xOnW5WzaUyWqNk
-         0AdiTtmpRBTta5O28o6Zje9xxvymtTXCPrxTfPAdZHiGVGcjALCxqfF0BP/ZA/ufhWq9
-         z7rw==
-X-Gm-Message-State: AJIora/wYM6HW526RWwB6RfCxT2letCjaZAwm49ioSeeAY6bwt2c5IfK
-        yMpwtmUgfB6vWHZyuitC8cW7OicmZ5l4GhO/JpkyM1PM7QNXYvQS8V6FYS2hgiI60ArrVyQOHnf
-        QJvUFFu4iz+e18zDEmQMu0AGXFA==
-X-Received: by 2002:adf:f70c:0:b0:21e:492c:34ae with SMTP id r12-20020adff70c000000b0021e492c34aemr5793558wrp.482.1658396655097;
-        Thu, 21 Jul 2022 02:44:15 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sVdrY1ryXQTKjciP6+YD6dSto/SyNrNllZQ6zlLoQwsdperSLs8uCpuTc1KPqklo41+2oqvA==
-X-Received: by 2002:adf:f70c:0:b0:21e:492c:34ae with SMTP id r12-20020adff70c000000b0021e492c34aemr5793481wrp.482.1658396654459;
-        Thu, 21 Jul 2022 02:44:14 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:e000:25d3:15fa:4c8b:7e8d? (p200300cbc707e00025d315fa4c8b7e8d.dip0.t-ipconnect.de. [2003:cb:c707:e000:25d3:15fa:4c8b:7e8d])
-        by smtp.gmail.com with ESMTPSA id b18-20020adff912000000b0021d65675583sm1340859wrr.52.2022.07.21.02.44.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jul 2022 02:44:13 -0700 (PDT)
-Message-ID: <f39c4f63-a511-4beb-b3a4-66589ddb5475@redhat.com>
-Date:   Thu, 21 Jul 2022 11:44:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v7 01/14] mm: Add F_SEAL_AUTO_ALLOCATE seal to memfd
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Thu, 21 Jul 2022 05:50:26 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F62F3A480;
+        Thu, 21 Jul 2022 02:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658397026; x=1689933026;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=Ac+0RLuL49DbuWul8+wP6iRaArHsOfPE0tmeiZTP7OA=;
+  b=hTz9YotS9xWFXknZGPbV5OQvu8sG0LrT5rFevNkwwiIgKl6KwmDsQYRC
+   1TcBzqSLV5bi8LdQ1YXvkhw19UIsscuzprhts6aeemNB+1Sp5LRIFi8/z
+   sZQTus0dU8u165S/MHo5Z+qv2WRisKjvSYsjG6iruBw7hgnxXK86+nc7W
+   s8Jz5ywGQDwv3m2xJaX4Eqbl/td8a8kbfSpe/6Q362yFc3C1s8mUacbs9
+   js/KZrommMztWrZ0ecc+oSf1FtOjH2oFM6+xZ+ydi/gsnPDrnMDShmbnE
+   c0IGYgBTSP/m2Exoznwsuh9tCWa7PA4JGU80KIxHRUKUDXgfBjxa343bZ
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10414"; a="287752644"
+X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
+   d="scan'208";a="287752644"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2022 02:50:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,289,1650956400"; 
+   d="scan'208";a="626050085"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga008.jf.intel.com with ESMTP; 21 Jul 2022 02:50:12 -0700
+Date:   Thu, 21 Jul 2022 17:45:23 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Vishal Annapurve <vannapurve@google.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        "Nikunj A. Dadhania" <nikunj@amd.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
         Hugh Dickins <hughd@google.com>,
         Jeff Layton <jlayton@kernel.org>,
         "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Mike Rapoport <rppt@kernel.org>,
         Steven Price <steven.price@arm.com>,
         "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-2-chao.p.peng@linux.intel.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20220706082016.2603916-2-chao.p.peng@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 6/8] KVM: Handle page fault for private memory
+Message-ID: <20220721094523.GC153288@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-7-chao.p.peng@linux.intel.com>
+ <b3ce0855-0e4b-782a-599c-26590df948dd@amd.com>
+ <20220624090246.GA2181919@chaop.bj.intel.com>
+ <CAGtprH82H_fjtRbL0KUxOkgOk4pgbaEbAydDYfZ0qxz41JCnAQ@mail.gmail.com>
+ <20220630222140.of4md7bufd5jv5bh@amd.com>
+ <4fe3b47d-e94a-890a-5b87-6dfb7763bc7e@intel.com>
+ <Ysc9JDcVAnlVrGC8@google.com>
+ <5d0b9341-78b5-0959-2517-0fb1fe83a205@intel.com>
+ <CAGtprH9knCr++C7jgXYCi1zfYcreip1uun-d+eucjEQy9xymNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGtprH9knCr++C7jgXYCi1zfYcreip1uun-d+eucjEQy9xymNg@mail.gmail.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06.07.22 10:20, Chao Peng wrote:
-> Normally, a write to unallocated space of a file or the hole of a sparse
-> file automatically causes space allocation, for memfd, this equals to
-> memory allocation. This new seal prevents such automatically allocating,
-> either this is from a direct write() or a write on the previously
-> mmap-ed area. The seal does not prevent fallocate() so an explicit
-> fallocate() can still cause allocating and can be used to reserve
-> memory.
+On Wed, Jul 20, 2022 at 04:08:10PM -0700, Vishal Annapurve wrote:
+> > > Hmm, so a new slot->arch.page_attr array shouldn't be necessary, KVM can instead
+> > > update slot->arch.lpage_info on shared<->private conversions.  Detecting whether
+> > > a given range is partially mapped could get nasty if KVM defers tracking to the
+> > > backing store, but if KVM itself does the tracking as was previously suggested[*],
+> > > then updating lpage_info should be relatively straightfoward, e.g. use
+> > > xa_for_each_range() to see if a given 2mb/1gb range is completely covered (fully
+> > > shared) or not covered at all (fully private).
+> > >
+> > > [*] https://lore.kernel.org/all/YofeZps9YXgtP3f1@google.com
+> >
+> > Yes, slot->arch.page_attr was introduced to help identify whether a page
+> > is completely shared/private at given level. It seems XARRAY can serve
+> > the same purpose, though I know nothing about it. Looking forward to
+> > seeing the patch of using XARRAY.
+> >
+> > yes, update slot->arch.lpage_info is good to utilize the existing logic
+> > and Isaku has applied it to slot->arch.lpage_info for 2MB support patches.
 > 
-> This is used to prevent unintentional allocation from userspace on a
-> stray or careless write and any intentional allocation should use an
-> explicit fallocate(). One of the main usecases is to avoid memory double
-> allocation for confidential computing usage where we use two memfds to
-> back guest memory and at a single point only one memfd is alive and we
-> want to prevent memory allocation for the other memfd which may have
-> been mmap-ed previously. More discussion can be found at:
+> Chao, are you planning to implement these changes to ensure proper
+> handling of hugepages partially mapped as private/shared in subsequent
+> versions of this series?
+> Or is this something left to be handled by the architecture specific code?
+
+Ah, the topic gets moved to a different place. I should update here.
+There were more discussions under TDX KVM patch series and I actually
+just sent out the draft code for this:
+
+https://lkml.org/lkml/2022/7/20/610
+
+That patch is based on UPM v7 here. If I can get more feedbacks there
+then I will include an udpated version in UPM v8.
+
+If you have bandwdith, you can also play with that patch, any feedback
+is welcome.
+
+Chao
 > 
->   https://lkml.org/lkml/2022/6/14/1255
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  include/uapi/linux/fcntl.h |  1 +
->  mm/memfd.c                 |  3 ++-
->  mm/shmem.c                 | 16 ++++++++++++++--
->  3 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 2f86b2ad6d7e..98bdabc8e309 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -43,6 +43,7 @@
->  #define F_SEAL_GROW	0x0004	/* prevent file from growing */
->  #define F_SEAL_WRITE	0x0008	/* prevent writes */
->  #define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
-> +#define F_SEAL_AUTO_ALLOCATE	0x0020  /* prevent allocation for writes */
-
-Why only "on writes" and not "on reads". IIRC, shmem doesn't support the
-shared zeropage, so you'll simply allocate a new page via read() or on
-read faults.
-
-
-Also, I *think* you can place pages via userfaultfd into shmem. Not sure
-if that would count "auto alloc", but it would certainly bypass fallocate().
-
--- 
-Thanks,
-
-David / dhildenb
-
+> Regards,
+> Vishal
