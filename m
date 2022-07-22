@@ -2,214 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D95557DA4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 08:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B36A57DABD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 09:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234144AbiGVGco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 02:32:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39168 "EHLO
+        id S234376AbiGVHOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jul 2022 03:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiGVGcn (ORCPT
+        with ESMTP id S232572AbiGVHOE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jul 2022 02:32:43 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF6A93FA36;
-        Thu, 21 Jul 2022 23:32:41 -0700 (PDT)
+        Fri, 22 Jul 2022 03:14:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0D293C1E;
+        Fri, 22 Jul 2022 00:14:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9C1B7B8275D;
-        Fri, 22 Jul 2022 06:32:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409B3C341C7;
-        Fri, 22 Jul 2022 06:32:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BCD1862188;
+        Fri, 22 Jul 2022 07:14:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F25C341C6;
+        Fri, 22 Jul 2022 07:14:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658471559;
-        bh=ZfV/3G80JQ5U/WzbU/60kdUAzVwIklhZgtdR+E34XQg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=uWh7jzpKluReGVDH2b6+Q+Y/moM3XVZb5l1tj+K0euN1fpAM0B4sQ4zZ4fUOKPDDM
-         icHglZKA60bnYHk8L+YtETmFDA0ge69UgyYcLhwv7j/6BiRSR83ozzwE/PBYEzh4/H
-         7NCGf36/w2etd7b5kTQM+inQ0eyT/+MSAS2yfhsFNR2XLPQjZ/k3AH3iCy75ZG7YxN
-         C+QgABdpTp1J1CkGv23ZyIX82PMLrMoz8PBuH8EtljXnywLOIuja33dbxfkyO8Rv/g
-         OKpgkMpMZxpTfJrpzodFyzjdlx1FZwILNS0DFBpwxQXr8OPQr20xSG92cDHndVP2P5
-         x5oCujYvvTL+Q==
-Received: by mail-wr1-f54.google.com with SMTP id k11so4713290wrx.5;
-        Thu, 21 Jul 2022 23:32:39 -0700 (PDT)
-X-Gm-Message-State: AJIora+JFr+bNSr0KLKjggUBTdkBMr857ih8ofbpY9EO6tHlKpFh4Gqt
-        vKmpYbJoN3MrFsVhT/UV4ZPJOiKz+MBWC06ObSQ=
-X-Google-Smtp-Source: AGRyM1u8KuxQy+sDKdavNtnIaObpDNsq25AhSqnPGVwAtCZSZUf9DyhY02FItA3LQ5/yvvy7w/e14DHqZO+azUZlQH0=
-X-Received: by 2002:adf:eacb:0:b0:21e:60a2:ae9e with SMTP id
- o11-20020adfeacb000000b0021e60a2ae9emr1353976wrn.295.1658471557383; Thu, 21
- Jul 2022 23:32:37 -0700 (PDT)
+        s=k20201202; t=1658474042;
+        bh=9mq8X3BGsuBzR6Ln4xciUKT8RQwcULSFGtUPi9jeosE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FLVRrpieLDHN39FkoGOUIAkHKLGpScI1ahdV3AgjGwfrcluvepuBzBT6F2984u3pe
+         YxdD4BK8sy57CBvIm0XSdTFHQJcTcxNfBuwIZ22bE+QsqIcWOa3jZVywdVcsgMnYMl
+         P8eZPra5KWYWA4zPs0rDJwnuri0qsYj5L/yrWJbb40slzWXWuRwOl/sdNhOL0RjjiZ
+         t3hdZX2Thct6y6Piv8vzHp2E9U66v9l12USihLfnS30azOvbROyOeiNtaOmUZhk+ya
+         QY9fg85OhHr4fbM1wBBORT+kBwT4kVrxB6luu3IFOzwg+6fTek78HFSblPNzVzfX+z
+         MqEM0tbLisn/Q==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH v4 0/9] make statx() return DIO alignment information
+Date:   Fri, 22 Jul 2022 00:12:19 -0700
+Message-Id: <20220722071228.146690-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-Received: by 2002:a5d:644a:0:0:0:0:0 with HTTP; Thu, 21 Jul 2022 23:32:36
- -0700 (PDT)
-In-Reply-To: <SG2PR04MB3899752B10CFB6CF93A6127C81879@SG2PR04MB3899.apcprd04.prod.outlook.com>
-References: <SG2PR04MB3899752B10CFB6CF93A6127C81879@SG2PR04MB3899.apcprd04.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Fri, 22 Jul 2022 15:32:36 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-zdfcJusQX3sBxfANztnmzprp+RtEchCX0_twHq_291w@mail.gmail.com>
-Message-ID: <CAKYAXd-zdfcJusQX3sBxfANztnmzprp+RtEchCX0_twHq_291w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] exfat: remove duplicate write directory entries
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc:     "sj1557.seo" <sj1557.seo@samsung.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-07-11 18:29 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
-> Changes for v2:
->   - [1/3]: Fix timing of calling __exfat_write_inode()
->     - __exfat_write_inode() should be called after updating inode.
->     - This call will be removed in [3/3], so the patch series is
->       no code changes between v1 and v2.
->
->
-> These patches simplifie the code, and removes unnecessary writes for the
-> following operations.
->
-> 1. Write data to an empty file
->   * Preparation
->     ```
->     mkdir /mnt/dir;touch /mnt/dir/file;sync
->     ```
->   * Capture the blktrace log of the following command
->     ```
->     dd if=/dev/zero of=/mnt/dir/file bs=${cluster_size} count=1 oflag=append
-> conv=notrunc
->     ```
->   * blktrace log
->     * Before
->       ```
->       179,3    0        1     0.000000000    84  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    2        1    30.259435003   189  C   W 2628864 + 256 [0]
->  /dir/file
->       179,3    0        2    30.264066003    84  C   W 2627584 + 1 [0]
->  BitMap
->       179,3    2        2    30.261749337   189  C   W 2628608 + 1 [0]
->  /dir/
->       179,3    0        3    60.479159007    84  C   W 2628608 + 1 [0]
->  /dir/
->       ```
->     * After
->       ```
->       179,3    0        1     0.000000000    84  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    3        1    30.185383337    87  C   W 2629888 + 256 [0]
->  /dir/file
->       179,3    0        2    30.246422004    84  C   W 2627584 + 1 [0]
->  BitMap
->       179,3    0        3    60.466497674    84  C   W 2628352 + 1 [0]
->  /dir/
->       ```
->
-> 2. Allocate a new cluster for a directory
->   * Preparation
->     ```
->     mkdir /mnt/dir
->     for ((i=1; i<cluster_size/96; i++)); do > /mnt/dir/file$i; done
->     mkdir /mnt/dir/dir1; sync
->     ```
->   * Capture the blktrace log of the following command
->     ```
->     > /mnt/dir/file
->     ```
->   * blktrace log
->     - Before
->       ```
->       179,3    0        1     0.000000000    84  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    2        1    30.263762003   189  C   W 2629504 + 128 [0]
->  /dir/
->       179,3    2        2    30.275596670   189  C   W 2629376 + 128 [0]
->  /dir/
->       179,3    2        3    30.290174003   189  C   W 2629119 + 1 [0]
->  /dir/
->       179,3    2        4    30.292362670   189  C   W 2628096 + 1 [0]
->  /
->       179,3    2        5    30.294547337   189  C   W 2627584 + 1 [0]
->  BitMap
->       179,3    0        2    30.296661337    84  C   W 2625536 + 1 [0]
->  FatArea
->       179,3    0        3    60.478775007    84  C   W 2628096 + 1 [0]
->  /
->       ```
->     - After
->       ```
->       179,3    0        1     0.000000000    84  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    3        1    30.288114670    87  C   W 2631552 + 128 [0]
->  /dir/
->       179,3    3        2    30.303518003    87  C   W 2631424 + 128 [0]
->  /dir/
->       179,3    3        3    30.324212337    87  C   W 2631167 + 1 [0]
->  /dir/
->       179,3    3        4    30.326579003    87  C   W 2627584 + 1 [0]
->  BitMap
->       179,3    0        2    30.328892670    84  C   W 2625536 + 1 [0]
->  FatArea
->       179,3    0        3    60.503128674    84  C   W 2628096 + 1 [0]
->  /
->       ```
->
-> 3. Truncate and release cluster from the file
->   * Preparation
->     ```
->     mkdir /mnt/dir
->     dd if=/dev/zero of=/mnt/dir/file bs=${cluster_size} count=2
->     sync
->     ```
->   * Capture the blktrace log of the following command
->     ```
->     truncate -s ${cluster_size} /mnt/dir/file
->     ```
->
->   * blktrace log
->     * Before
->       ```
->       179,3    0        1     0.000000000    84  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    1        1     5.048452334    49  C   W 2629120 + 1 [0]
->  /dir/
->       179,3    0        2     5.062994334    84  C   W 2627584 + 1 [0]
->  BitMap
->       179,3    0        3    10.031253002    84  C   W 2629120 + 1 [0]
->  /dir/
->       ```
->
->      * After
->       ```
->       179,3    0        1     0.000000000  9143  C  WS 2623488 + 1 [0]
->  BootArea
->       179,3    0        2    14.839244001  9143  C   W 2629888 + 1 [0]
->  /dir/
->       179,3    0        3    14.841562335  9143  C   W 2627584 + 1 [0]
->  BitMap
->       ```
->
-> Yuezhang Mo (3):
->   exfat: reuse __exfat_write_inode() to update directory entry
->   exfat: remove duplicate write inode for truncating file
->   exfat: remove duplicate write inode for extending dir/file
->
->  fs/exfat/exfat_fs.h |  1 +
->  fs/exfat/file.c     | 82 ++++++++++++++-------------------------------
->  fs/exfat/inode.c    | 41 ++++++-----------------
->  fs/exfat/namei.c    | 20 -----------
->  4 files changed, 37 insertions(+), 107 deletions(-)
+This patchset makes the statx() system call return direct I/O (DIO)
+alignment information.  This allows userspace to easily determine
+whether a file supports DIO, and if so with what alignment restrictions.
 
-Applied, Thanks for your work!
->
-> --
-> 2.25.1
->
+Patch 1 adds the basic VFS support for STATX_DIOALIGN.  Patch 2 wires it
+up for all block device files.  The remaining patches wire it up for
+regular files on ext4, f2fs, and xfs.  Support for regular files on
+other filesystems can be added later.
+
+I've also written a man-pages patch, which I'm sending separately.
+
+Note, f2fs has one corner case where DIO reads are allowed but not DIO
+writes.  The proposed statx fields can't represent this.  My proposal
+(patch 6) is to just eliminate this case, as it seems much too weird.
+But I'd appreciate any feedback on that part.
+
+This patchset applies to v5.19-rc7.
+
+Changed v3 => v4:
+   - Added xfs support.
+
+   - Moved the helper function for block devices into block/bdev.c.
+   
+   - Adjusted the ext4 patch to not introduce a bug where misaligned DIO
+     starts being allowed on encrypted files when it gets combined with
+     the patch "iomap: add support for dma aligned direct-io" that is
+     queued in the block tree for 5.20.
+
+   - Made a simplification in fscrypt_dio_supported().
+
+Changed v2 => v3:
+   - Dropped the stx_offset_align_optimal field, since its purpose
+     wasn't clearly distinguished from the existing stx_blksize.
+
+   - Renamed STATX_IOALIGN to STATX_DIOALIGN, to reflect the new focus
+     on DIO only.
+
+   - Similarly, renamed stx_{mem,offset}_align_dio to
+     stx_dio_{mem,offset}_align, to reflect the new focus on DIO only.
+
+   - Wired up STATX_DIOALIGN on block device files.
+
+Changed v1 => v2:
+   - No changes.
+
+Eric Biggers (9):
+  statx: add direct I/O alignment information
+  vfs: support STATX_DIOALIGN on block devices
+  fscrypt: change fscrypt_dio_supported() to prepare for STATX_DIOALIGN
+  ext4: support STATX_DIOALIGN
+  f2fs: move f2fs_force_buffered_io() into file.c
+  f2fs: don't allow DIO reads but not DIO writes
+  f2fs: simplify f2fs_force_buffered_io()
+  f2fs: support STATX_DIOALIGN
+  xfs: support STATX_DIOALIGN
+
+ block/bdev.c              | 25 ++++++++++++++++++++
+ fs/crypto/inline_crypt.c  | 49 +++++++++++++++++++--------------------
+ fs/ext4/ext4.h            |  1 +
+ fs/ext4/file.c            | 37 ++++++++++++++++++++---------
+ fs/ext4/inode.c           | 36 ++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h            | 45 -----------------------------------
+ fs/f2fs/file.c            | 45 ++++++++++++++++++++++++++++++++++-
+ fs/stat.c                 | 14 +++++++++++
+ fs/xfs/xfs_iops.c         |  9 +++++++
+ include/linux/blkdev.h    |  4 ++++
+ include/linux/fscrypt.h   |  7 ++----
+ include/linux/stat.h      |  2 ++
+ include/uapi/linux/stat.h |  4 +++-
+ 13 files changed, 190 insertions(+), 88 deletions(-)
+
+base-commit: ff6992735ade75aae3e35d16b17da1008d753d28
+-- 
+2.37.0
+
