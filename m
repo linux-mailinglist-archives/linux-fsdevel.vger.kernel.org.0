@@ -2,111 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1921257E7B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 21:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0A557E820
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 22:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236575AbiGVT42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 15:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52416 "EHLO
+        id S235099AbiGVUMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jul 2022 16:12:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231149AbiGVT40 (ORCPT
+        with ESMTP id S236592AbiGVUMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jul 2022 15:56:26 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354259C27B;
-        Fri, 22 Jul 2022 12:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=ZosF4/sMc0ihmX47ZtSXWJLh9VlS4bzSsfv/BETdwF4=; b=VNhO9L3HEMflnvHx6vsxrwdWR6
-        BeMsUX5k5thgO5ceMSltwRfdDNQWHw+slUvZMJF45URjzjQ5t5orJLjccfNNLVm9hE6NWLyla9sVK
-        DUETIYMZSceOB1HrGZsftTEV9OHhGsKOmWu0qWiWOc4qTm3K06uxzC6at2pm0mP2SkjWzylGhaAsy
-        lTnNeEdIEnfgUc/7nAoeqnAJheKRqrETrRi3SGS3sD8zs/fgcO8TZyt+Y02zuUpLUN4kTq7qSapud
-        zBOQYKE9BXo6z6MRWlVu9REjeS7eiA1KnbqJzHReMVKXPbAYgtT63wFw/+jZThS9GF06guioAuLmt
-        YLCk674g==;
-Received: from [2601:1c0:6280:3f0::a6b3]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oEykt-009cUn-Fz; Fri, 22 Jul 2022 19:56:11 +0000
-Message-ID: <d0c9c894-bfff-e3ee-c1be-84b7690a7a86@infradead.org>
-Date:   Fri, 22 Jul 2022 12:56:09 -0700
+        Fri, 22 Jul 2022 16:12:41 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57512A9B9B;
+        Fri, 22 Jul 2022 13:12:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1658520757;
+        bh=1lu/oIs0WiJHNhHfcks6ORWsi614Qbc/WNzkGCwoC/0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=CFEnlPpiSi8Kz2mJNF9KdmEO99RJSp3MaCyxk0rkXbpgq2Xd7Dd5x/sMzlxm4LHqJ
+         8gDl+l6PGdKyo2o3Hc3lFoDGNtmm6GOdzXOZ3bEvek3V7a2hXnbmDZinLWPiD1cx3q
+         S4NIk2sTZ2bVR/L1ODLl2FZWIKqhLsjZJCppDBSk=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 849581287A12;
+        Fri, 22 Jul 2022 16:12:37 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VHxCfJzEDPyx; Fri, 22 Jul 2022 16:12:37 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1658520757;
+        bh=1lu/oIs0WiJHNhHfcks6ORWsi614Qbc/WNzkGCwoC/0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=CFEnlPpiSi8Kz2mJNF9KdmEO99RJSp3MaCyxk0rkXbpgq2Xd7Dd5x/sMzlxm4LHqJ
+         8gDl+l6PGdKyo2o3Hc3lFoDGNtmm6GOdzXOZ3bEvek3V7a2hXnbmDZinLWPiD1cx3q
+         S4NIk2sTZ2bVR/L1ODLl2FZWIKqhLsjZJCppDBSk=
+Received: from [IPv6:2601:5c4:4300:c551:a71:90ff:fec2:f05b] (unknown [IPv6:2601:5c4:4300:c551:a71:90ff:fec2:f05b])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 06CBA1287A10;
+        Fri, 22 Jul 2022 16:12:36 -0400 (EDT)
+Message-ID: <7e1182f7c01af15d47d7ee836a72bbd5e9b47d64.camel@HansenPartnership.com>
+Subject: Re: [PATCH] hfsplus: Fix code typo
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Xin Gao <gaoxin@cdjrlc.com>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 22 Jul 2022 16:12:34 -0400
+In-Reply-To: <20220722195133.18730-1-gaoxin@cdjrlc.com>
+References: <20220722195133.18730-1-gaoxin@cdjrlc.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 2/2] Documentation/filesystems/proc.rst: document procfs
- inode timestamps
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
-        corbet@lwn.net, keescook@chromium.org, yzaikin@google.com
-Cc:     songmuchun@bytedance.com, zhangyuchen.lcr@bytedance.com,
-        dhowells@redhat.com, deepa.kernel@gmail.com, hch@lst.de,
-        linux-doc@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220722162934.1888835-1-mcgrof@kernel.org>
- <20220722162934.1888835-3-mcgrof@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220722162934.1888835-3-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi--
-
-On 7/22/22 09:29, Luis Chamberlain wrote:
-> The timestamps for procfs files are not well understood and can
-> confuse users and developers [0] in particular for the timestamp
-> for the start time or a process. Clarify what they mean and that
-> they are a reflection of the ephemeral nature of the filesystem
-> inodes.
+On Sat, 2022-07-23 at 03:51 +0800, Xin Gao wrote:
+> The double `free' is duplicated in line 498, remove one.
 > 
-> The procfs inodes are created when you first read them and then
-> stuffed in the page cache. If the page cache and indodes are
-> reclaimed they can be removed, and re-created with a new timestamp
-> after read again. Document this little bit of tribal knowledge.
-> 
-> [0] https://lkml.kernel.org/r/20220721081617.36103-1-zhangyuchen.lcr@bytedance.com
-> Reported-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Xin Gao <gaoxin@cdjrlc.com>
 > ---
->  Documentation/filesystems/proc.rst | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  fs/hfsplus/btree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 9fd5249f1a5f..9defe9af683a 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -59,6 +59,15 @@ The proc  file  system acts as an interface to internal data structures in the
->  kernel. It  can  be  used to obtain information about the system and to change
->  certain kernel parameters at runtime (sysctl).
->  
-> +The proc files are dynamic in nature and allow for developers to make the
+> diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
+> index 66774f4cb4fd..655cf60eabbf 100644
+> --- a/fs/hfsplus/btree.c
+> +++ b/fs/hfsplus/btree.c
+> @@ -495,7 +495,7 @@ void hfs_bmap_free(struct hfs_bnode *node)
+>  	m = 1 << (~nidx & 7);
+>  	byte = data[off];
+>  	if (!(byte & m)) {
+> -		pr_crit("trying to free free bnode "
+> +		pr_crit("trying to free bnode "
 
-Awkward. How about:
+What makes you think this message needs correcting?  The code seems to
+be checking whether we're freeing an already free bnode, meaning the
+message looks correct as is and the proposed change makes it incorrect.
 
-   The proc files are dynamic and allow for the content to be changed each time
-   a file is read.
+James
 
-> +content to be changed each time a file is read. The proc files and directories
 
-                                                   The proc files and directory
-
-> +inodes are created when someone first reads a respective proc file or directory,
-> +as such the timestamps of the proc files reflect this time. As with other
-> +filesystems, these proc inodes can be removed through reclaim under memory
-> +pressure and so the timestamps of the proc files can change if the proc files
-> +are destroyed and re-created (echo 3 > /proc/sys/vm/drop_caches forces and
-> +illustrate the reclaim of inodes and page cache).
-> +
->  First, we'll  take  a  look  at the read-only parts of /proc. In Chapter 2, we
->  show you how you can use /proc/sys to change settings.
-
-Thanks.
--- 
-~Randy
