@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E185C57DAE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 09:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319B457DAEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 09:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234480AbiGVHOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 03:14:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        id S234192AbiGVHOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jul 2022 03:14:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234340AbiGVHOG (ORCPT
+        with ESMTP id S234148AbiGVHOG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 22 Jul 2022 03:14:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F16A0951C4;
-        Fri, 22 Jul 2022 00:14:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59599936BC;
+        Fri, 22 Jul 2022 00:14:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B534621A1;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E14CD6219F;
         Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1C6C385A2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73054C385A5;
         Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1658474044;
-        bh=d+gWaf5KF5ulzUXfYdXRVW3moWPvOd4xhr1Z99HXtok=;
+        bh=Xi5JrwkGMRjNbBiivYG5NLjIO4EBV+YXLEfJAlDv+2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ecmAOyRk83sVidXkCqPXM0AvJI/hX0NNO3+GMSbA65CKnQ6xYihQgCnuxl01RTOZy
-         Z7R4dpODT1qt3s4ZE2XTxOX2/qmbkHFuLqMkJY81Kw+lFM25FWN1SbnpwZ35/ILD48
-         51HoNht6KIakI3oAuZYe6K3sP3x01RGcjbdNB7ewTgTdBIdpdaDNjYlqvLliwEbIU/
-         V/HvXpi0vjnN1SaD5DmV3DxDWD7IIQg0elzH7uAYXZQuY/CsgdG/eSh8CJHKHUYMuc
-         AysHmjopOy2sP3MsRAbqf8HwTxLez/ocsTeVUR9x1bQXwrxB2RvDFX/Xyydjxq27n7
-         ztoUQcXuh7mEA==
+        b=II9Y3TRuV9mm5FKGUq5vXuOGQbIVBnrNvh78iv2geP1tmChv9AzzLQZYDqm4tQjb1
+         S0pSKHPSNGTKRaUtmDdMPde0Dj5C5Wg8vaKKKjRtMslmfrBqMJ9MbHQSEdknxSyV5o
+         c7lCTbLiFarDSsGfKNd+49lsVxNM1ITiOdNs5hOcoN0beKAa6M2vtbYYsrg43YGV4H
+         8wht22UspK6ct/EI4E4Q3pUB/9MR8qux46/w5MfdrNHJxqs//qv8FCoqYj451co34R
+         KfN393kPHJT0O3hO5nTk2Ihtyt6BrjkBkKiKdm5UVjVoJtBuBUktXJC7aho/mGlyvX
+         02EQXEBwohTqg==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Subject: [PATCH v4 5/9] f2fs: move f2fs_force_buffered_io() into file.c
-Date:   Fri, 22 Jul 2022 00:12:24 -0700
-Message-Id: <20220722071228.146690-6-ebiggers@kernel.org>
+Subject: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
+Date:   Fri, 22 Jul 2022 00:12:25 -0700
+Message-Id: <20220722071228.146690-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220722071228.146690-1-ebiggers@kernel.org>
 References: <20220722071228.146690-1-ebiggers@kernel.org>
@@ -58,134 +58,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-f2fs_force_buffered_io() is only used in file.c, so move it into there.
-No behavior change.  This makes it easier to review later patches.
+Currently, if an f2fs filesystem is mounted with the mode=lfs and
+io_bits mount options, DIO reads are allowed but DIO writes are not.
+Allowing DIO reads but not DIO writes is an unusual restriction, which
+is likely to be surprising to applications, namely any application that
+both reads and writes from a file (using O_DIRECT).  This behavior is
+also incompatible with the proposed STATX_DIOALIGN extension to statx.
+Given this, let's drop the support for DIO reads in this configuration.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/f2fs.h | 45 ---------------------------------------------
- fs/f2fs/file.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 45 deletions(-)
+ fs/f2fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7869e749700fc2..d187b7d7ed2435 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4426,17 +4426,6 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
--static inline int block_unaligned_IO(struct inode *inode,
--				struct kiocb *iocb, struct iov_iter *iter)
--{
--	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
--	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
--	loff_t offset = iocb->ki_pos;
--	unsigned long align = offset | iov_iter_alignment(iter);
--
--	return align & blocksize_mask;
--}
--
- static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
- 								int flag)
- {
-@@ -4447,40 +4436,6 @@ static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
- 	return sbi->aligned_blksize;
- }
- 
--static inline bool f2fs_force_buffered_io(struct inode *inode,
--				struct kiocb *iocb, struct iov_iter *iter)
--{
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	int rw = iov_iter_rw(iter);
--
--	if (!fscrypt_dio_supported(inode))
--		return true;
--	if (fsverity_active(inode))
--		return true;
--	if (f2fs_compressed_file(inode))
--		return true;
--
--	/* disallow direct IO if any of devices has unaligned blksize */
--	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
--		return true;
--	/*
--	 * for blkzoned device, fallback direct IO to buffered IO, so
--	 * all IOs can be serialized by log-structured write.
--	 */
--	if (f2fs_sb_has_blkzoned(sbi))
--		return true;
--	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
--		if (block_unaligned_IO(inode, iocb, iter))
--			return true;
--		if (F2FS_IO_ALIGNED(sbi))
--			return true;
--	}
--	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
--		return true;
--
--	return false;
--}
--
- static inline bool f2fs_need_verity(const struct inode *inode, pgoff_t idx)
- {
- 	return fsverity_active(inode) &&
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bd14cef1b08fd2..5e5c97fccfb4ee 100644
+index 5e5c97fccfb4ee..ad0212848a1ab9 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -808,6 +808,51 @@ int f2fs_truncate(struct inode *inode)
- 	return 0;
- }
- 
-+static int block_unaligned_IO(struct inode *inode, struct kiocb *iocb,
-+			      struct iov_iter *iter)
-+{
-+	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-+	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-+	loff_t offset = iocb->ki_pos;
-+	unsigned long align = offset | iov_iter_alignment(iter);
-+
-+	return align & blocksize_mask;
-+}
-+
-+static inline bool f2fs_force_buffered_io(struct inode *inode,
-+				struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	int rw = iov_iter_rw(iter);
-+
-+	if (!fscrypt_dio_supported(inode))
-+		return true;
-+	if (fsverity_active(inode))
-+		return true;
-+	if (f2fs_compressed_file(inode))
-+		return true;
-+
-+	/* disallow direct IO if any of devices has unaligned blksize */
-+	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
-+		return true;
-+	/*
-+	 * for blkzoned device, fallback direct IO to buffered IO, so
-+	 * all IOs can be serialized by log-structured write.
-+	 */
-+	if (f2fs_sb_has_blkzoned(sbi))
-+		return true;
-+	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
-+		if (block_unaligned_IO(inode, iocb, iter))
-+			return true;
-+		if (F2FS_IO_ALIGNED(sbi))
-+			return true;
-+	}
-+	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
-+		return true;
-+
-+	return false;
-+}
-+
- int f2fs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		 struct kstat *stat, u32 request_mask, unsigned int query_flags)
+@@ -823,7 +823,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 				struct kiocb *iocb, struct iov_iter *iter)
  {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int rw = iov_iter_rw(iter);
+ 
+ 	if (!fscrypt_dio_supported(inode))
+ 		return true;
+@@ -841,7 +840,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi))
+ 		return true;
+-	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
++	if (f2fs_lfs_mode(sbi)) {
+ 		if (block_unaligned_IO(inode, iocb, iter))
+ 			return true;
+ 		if (F2FS_IO_ALIGNED(sbi))
 -- 
 2.37.0
 
