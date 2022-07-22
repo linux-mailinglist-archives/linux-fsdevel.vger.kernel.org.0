@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA4757D889
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 04:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B2D57D88D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 04:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234250AbiGVCYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Jul 2022 22:24:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36800 "EHLO
+        id S234150AbiGVCY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Jul 2022 22:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234207AbiGVCYk (ORCPT
+        with ESMTP id S234233AbiGVCYp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Jul 2022 22:24:40 -0400
+        Thu, 21 Jul 2022 22:24:45 -0400
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 550D297A34
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 19:24:34 -0700 (PDT)
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFCF597D69
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 19:24:37 -0700 (PDT)
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 03F103F133
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jul 2022 02:24:33 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AC55E3F12B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Jul 2022 02:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1658456673;
-        bh=wJNrQQtx3gOtb03R7lr5BRoZshGsFg1ZQbX8SV/qIv0=;
+        s=20210705; t=1658456676;
+        bh=hqasS2PjFohy8PE1VKCVY/VWJWfGA+Wsx6gjsloj5Nc=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=r4lSoSS5CaVrwrWKRmJWV2+/IEfrTcWEZHu/kaIZrYuC5SbuuiY9+2tXWwf6weg3i
-         nmFdJdz10A7QQXG6+FzOqh91lD2rXhVU/Zn8InBoLokf5BsbVkify5aSoL5n2Kzk3S
-         ap7kFTYL6ozFsdqgzznbHfATlS5F2Ggp/xNE45k3tw9EXZzIeBYcqB+JQJegjfHWRT
-         Gqne7fnYWDvPLh63KK6/i+sACeiFLgnG9Sl/pVuxKZMaFn1wuy7l1rfRLV6WgZAT1m
-         gUbCIq4Qs//6HRwRjvIXcvCbvae/6vCnJp4NkMqmkUc2VLsESqZhEPtKoiqy5Cb9U4
-         4E7rGCwcims7w==
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-101be2b197dso1771362fac.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 19:24:32 -0700 (PDT)
+        b=bfW3CIV6Ifd12tL2gp1Pykke8x+MrUiWqEVjj6hy0PZcH/AEKERz2bfrv9l8bBK8x
+         wPc32ErXkzXdjwRIAhUf3UnKZLpWgl67rv5Go6ILn4su4ANl4OQayWgUHS3F9vReOu
+         pHYZ2iaVBKOckmzjOfJ10k96wISdlnKaExWKXJv8i5zJhwvVYRr4mbcdIOcM1qSh20
+         L+8Qf33UiY/clI3QwTvb+5XIOLojNh3PmgGyZaLtjBoPZUlZw6G16LzFUh+XKlZSWF
+         JrrvqoDC3G70isrmu5wtPfLopq3//Utqq2RRz+7MO0L9MgWTQB9kkoPCKrpFoQPYYG
+         aAYg5PWgIcCrw==
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-10d7a610a64so1774212fac.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Jul 2022 19:24:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wJNrQQtx3gOtb03R7lr5BRoZshGsFg1ZQbX8SV/qIv0=;
-        b=79J5DvToHiT0F+vJVFxIaWHn6fnyfYCvUXdG60ly4k5ba3Sh3r45Cv90DN3RB54B7n
-         Ozqv2Lr8VJ4a3FD5doXYfQeZb3ILEM4dIML5m+EO2/uJYPlk3AQofwMIyQQ+wnbkGnJK
-         UpZpl+KF2qnnG602u+jnkKxwmyTFPNMWw3gRqVnYD8pYm4wjg9HyWdM8yeJ+0/qZKav2
-         ZCYPjnVKPMTcuqXA2QQnHj6f2WGgYbTsmJ/glZIeXJ+egNwSqNxXfIEgw9xeRsdFgYsp
-         KQJ5wwZWbvMpxT8v6q+pN5KyvjTZlTiBYwcQGleiib04lsS/umXKKUDlnK1/8v4P2Z0k
-         GSuw==
-X-Gm-Message-State: AJIora9h7/kEqT6RVgFG8ezmRZAgVEj7E8//+I1TEiu4Nil+KxuZc/dO
-        5f8KlDFPZDHQlFg8Nsoo40ybIqwtgKphKf6huCR4Wn/uakoy45EzAd01Vg3cQNhrz/oGHJHpMXY
-        ACj6lN+IbbWgK8BSxf2Qr8TykNqaQzt6FPogpyPCfER4=
-X-Received: by 2002:a05:6808:168f:b0:325:2974:77d6 with SMTP id bb15-20020a056808168f00b00325297477d6mr475091oib.199.1658456672594;
-        Thu, 21 Jul 2022 19:24:32 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1s65fv3xUo8XMCP9XXulfad6SVF8ugAzDtIkHRV6v0nExF6efgLcw0ldBLwljX4w1+HXqAo5Q==
-X-Received: by 2002:a05:6808:168f:b0:325:2974:77d6 with SMTP id bb15-20020a056808168f00b00325297477d6mr475086oib.199.1658456672319;
-        Thu, 21 Jul 2022 19:24:32 -0700 (PDT)
+        bh=hqasS2PjFohy8PE1VKCVY/VWJWfGA+Wsx6gjsloj5Nc=;
+        b=iNPn/o5nWkiinvNOzqP3xKnJYutQVyrr8+0c9tH1BcyEpTyxUs2JWOfUCQem4iRtJf
+         6W5uHDu8xN4nyGDrZCqtvP9fEVaEo/NN9LKmCSaLwXDKhQxz1yw4OxdfPR2vXXE+kCY6
+         vwbVez+fEFI4oSG2WmWoasUz5oMXeokUbTGHG4NNPPBqWRr1Ddkor/T5K0YGB7eBrsUC
+         YGRIX9D1T+QmS8HddQhnQGLZL1I4c+PyytUTzP07yh7NGKF/b9YO2KRblEudt4HWf56b
+         uYkrz4KGQ7WpHuOJnHMg3CmDtV2puEPTcz1BJFFgpexU80qZIuVuRhrJJFXOWZX9cj8m
+         j8AQ==
+X-Gm-Message-State: AJIora+0NOzBr3D+qX0Uk1BBWCUAiFPj7AFUCeFJJaAP5kvoWXN5hGK/
+        ddEAJaXb09i/Jva/+AkJ6qJP9IyoHTQddXlZWAU/5v1UGZj5xE8xNyUJTWwmvF5fKCaYHKdyc/m
+        k36DtG1nW2ZTKwg/GjDU70zQ4DZyrFXno9SssQwLEJDw=
+X-Received: by 2002:a05:6830:6517:b0:614:d582:77d7 with SMTP id cm23-20020a056830651700b00614d58277d7mr507273otb.323.1658456675938;
+        Thu, 21 Jul 2022 19:24:35 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uLS6QJ5eow90pKBFp4ctGLCUQ8MqGGb68x3HdZDh7OOZ9QuEHvw5tz1dmPFuwuWlLEdvLurA==
+X-Received: by 2002:a05:6830:6517:b0:614:d582:77d7 with SMTP id cm23-20020a056830651700b00614d58277d7mr507263otb.323.1658456675607;
+        Thu, 21 Jul 2022 19:24:35 -0700 (PDT)
 Received: from mfo-t470.. ([2804:14c:4e1:8732:c479:1206:16fb:ce1f])
-        by smtp.gmail.com with ESMTPSA id k23-20020a056870959700b000f5f4ad194bsm1814528oao.25.2022.07.21.19.24.29
+        by smtp.gmail.com with ESMTPSA id k23-20020a056870959700b000f5f4ad194bsm1814528oao.25.2022.07.21.19.24.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jul 2022 19:24:31 -0700 (PDT)
+        Thu, 21 Jul 2022 19:24:35 -0700 (PDT)
 From:   Mauricio Faria de Oliveira <mfo@canonical.com>
 To:     linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
         linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
@@ -66,9 +66,9 @@ Cc:     Masahiro Yamada <masahiroy@kernel.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>
-Subject: [RFC PATCH 3/6] sysctl, mod_devicetable: shadow struct ctl_table.procname for file2alias
-Date:   Thu, 21 Jul 2022 23:24:13 -0300
-Message-Id: <20220722022416.137548-4-mfo@canonical.com>
+Subject: [RFC PATCH 4/6] module, modpost: introduce support for MODULE_SYSCTL_TABLE
+Date:   Thu, 21 Jul 2022 23:24:14 -0300
+Message-Id: <20220722022416.137548-5-mfo@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220722022416.137548-1-mfo@canonical.com>
 References: <20220722022416.137548-1-mfo@canonical.com>
@@ -83,160 +83,253 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to expose a sysctl entry to modpost (file2alias.c, precisely)
-we have to shadow 'struct ctl_table' in mod_devicetable.h, as scripts
-should not access kernel headers or its types (see file2alias.c).
+Now that 'struct ctl_table' is exposed to modpost/file2alias,
+introduce MODULE_SYSCTL_TABLE to register some sysctl tables,
+just like MODULE_DEVICE_TABLE for, eg, drivers PCI ID tables.
 
-The required field is '.procname' (basename of '/proc/sys/.../entry').
+This adds a '__mod_sysctl__<name>_device_table' symbol in the
+module that points to the array of 'struct ctl_table' entries.
 
-Since 'struct ctl_table' is annotated for structure randomization and
-we need a known offset for '.procname' (remember, no kernel headers),
-take it out of the randomized portion (as in, eg, 'struct task_struct').
+This is identified and handled by file2alias, as other tables,
+that emits MODULE_ALIAS("sysctl:<struct ctl_table.procname>")
+statements for each entry.
 
-Of course, add build-time checks for struct size and .procname offset
-between both structs. (This has to be done on kernel side; for headers.)
+That would be relatively simple for 'procname' as a char array
+(eg, do_{rpmsg,i2c,spi}_entry()) but since it's a char pointer
+an ELF relocation is used (it sets that pointer value to where
+the string it should point to actually ends up).
 
-With that in place, use the regular macros in devicetable-offsets.c to
-define SIZE_... and OFF_... macros for the shadow struct and the field
-of interest.
+...
+
+It's probably not ideal to convert 'struct ctl_table.procname'
+to a char array, as the max length it uses in some modules is
+long, and all other users would pay the memory price of a one-
+size-fits-all array size.
+
+Also, some places set it to NULL, which requires special care
+and changes (i.e., set/check the first byte is '\0').
+
+Anyway, the resulting disadvantages in the general case aren't
+worth the simplicity gain in this particular case.
+
+...
+
+So, add ELF relocation handling code, borrowing that function
+we factored-out in modpost.c earlier.
+
+The logic and details are commented in the source, but briefly:
+
+0) modpost.c calls file2alias.c's handle_moddevtable()
+
+1) handle_moddevtable()
+1.1) matches a '__mod__sysctl__..._device_table' symbol
+1.2) calls do_sysctl_table() for it (array of struct ctl_table)
+
+2) do_sysctl_table()
+2.1) finds the relocation section that _references_ the section
+     that defines that symbol (ie, that holds the actual values
+     of 'procname' char pointers to be replaced in that symbol).
+2.2) calls do_sysctl_entry() for each entry in that table/array
+
+3) do_sysctl_entry()
+3.1) calls do_sysctl_section_relx() to scan a relocation section
+     for the relocation entry that targets a particular procname
+     pointer of this entry (struct ctl_table).
+3.2) do_sysctl_section_relx() returns its source string pointer.
+3.3) do_sysctl_entry() stores 'sysctl:<procname>' in the buffer.
+
+4) do_sysctl_table() emits a 'MODULE_ALIAS()' statement with it.
+
+...
+
+This algorithm is likely iterating over the earlier relocation
+entries many times as each 'struct ctl_table' entry starts the
+loop over the relocation section again, but keep it simple now.
+
+We could keep the relocation entry cursor pointer across calls,
+and start over only when we can't find a relocation, I guess.
 
 Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
 ---
- fs/proc/proc_sysctl.c             | 19 +++++++++++++++++++
- include/linux/mod_devicetable.h   | 25 +++++++++++++++++++++++++
- include/linux/sysctl.h            | 11 ++++++++++-
- kernel/sysctl.c                   |  1 +
- scripts/mod/devicetable-offsets.c |  3 +++
- 5 files changed, 58 insertions(+), 1 deletion(-)
+ include/linux/module.h   |   7 +++
+ scripts/mod/file2alias.c | 111 +++++++++++++++++++++++++++++++++++++++
+ scripts/mod/modpost.c    |   4 +-
+ scripts/mod/modpost.h    |   3 ++
+ 4 files changed, 123 insertions(+), 2 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 021e83fe831f..ebbf8702387e 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -19,6 +19,24 @@
- #include <linux/kmemleak.h>
- #include "internal.h"
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 518296ea7f73..3010f687df19 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -247,6 +247,13 @@ extern typeof(name) __mod_##type##__##name##_device_table		\
+ #define MODULE_DEVICE_TABLE(type, name)
+ #endif
  
-+#ifdef CONFIG_MODULES
-+#include <linux/mod_devicetable.h>
-+
-+static void check_struct_sysctl_device_id(void)
-+{
-+	/*
-+	 * The shadow struct sysctl_device_id for file2alias.c needs
-+	 * the same size of struct ctl_table and offset for procname.
-+	 */
-+	BUILD_BUG_ON(sizeof(struct sysctl_device_id)
-+			!= sizeof(struct ctl_table));
-+	BUILD_BUG_ON(offsetof(struct sysctl_device_id, procname)
-+			!= offsetof(struct ctl_table, procname));
-+}
-+#else
-+static void check_struct_sysctl_device_id(void) {}
++#if defined(MODULE) && defined(CONFIG_PROC_SYSCTL)
++/* Creates an alias so file2alias.c can find sysctl "device" table. */
++#define MODULE_SYSCTL_TABLE(name) MODULE_DEVICE_TABLE(sysctl, name)
++#else /* !MODULE || !CONFIG_PROC_SYSCTL */
++#define MODULE_SYSCTL_TABLE(name)
 +#endif
 +
- #define list_for_each_table_entry(entry, table) \
- 	for ((entry) = (table); (entry)->procname; (entry)++)
- 
-@@ -1779,6 +1797,7 @@ int __init proc_sys_init(void)
- 	proc_sys_root->proc_dir_ops = &proc_sys_dir_file_operations;
- 	proc_sys_root->nlink = 0;
- 
-+	check_struct_sysctl_device_id();
- 	return sysctl_init_bases();
+ /* Version of form [<epoch>:]<version>[-<extra-version>].
+  * Or for CVS/RCS ID version, everything but the number is stripped.
+  * <epoch>: A (small) unsigned integer which allows you to start versions
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index cbd6b0f48b4e..3bf9cb84c548 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -1452,6 +1452,115 @@ static int do_dfl_entry(const char *filename, void *symval, char *alias)
+ 	return 1;
  }
- 
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index 549590e9c644..9cee024d8f2f 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -20,6 +20,31 @@ enum {
- 	PCI_ID_F_VFIO_DRIVER_OVERRIDE = 1,
- };
  
 +/*
-+ * "Device" table entry for a sysctl file (shadow of struct ctl_table).
++ * Scan the relocation section with section header index 'relx_shndx'
++ * for the relocation entry for target 'offset' and return a pointer
++ * to its source value (from another section/offset).
 + *
-+ * Only the procname field is reliable (known offset); all other fields
-+ * are in the randomized portion of struct ctl_table, do NOT use them.
++ * The caller must ensure sechdr->sh_type == SHT_RELA or SHT_REL.
 + */
-+struct sysctl_device_id {
++static void *do_sysctl_section_relx(struct elf_info *info,
++				    unsigned int relx_shndx, int offset)
++{
++	/* Relocation section's header, and start/stop addresses. */
++	Elf_Shdr *sechdr = &info->sechdrs[relx_shndx];
++	Elf_Rela *start = (void *)info->hdr + sechdr->sh_offset;
++	Elf_Rela *stop  = (void *)start + sechdr->sh_size;
 +
-+	/* This must be the first field (shadowed from struct ctl_table). */
-+	const char *procname;
++	/* Relocation entry cursor and size in SHT_RELA or SHT_REL. */
++	Elf_Rela *relx; /* access .r_addend in SHT_RELA _only_! */
++	size_t relx_size;
 +
-+	/* Here begins the randomizable portion of struct ctl_table. */
++	if (sechdr->sh_type == SHT_RELA)
++		relx_size = sizeof(Elf_Rela);
++	else if (sechdr->sh_type == SHT_REL)
++		relx_size = sizeof(Elf_Rel);
++	else
++		return NULL;
 +
-+	void *data;
-+	int maxlen;
-+	unsigned short mode; // umode_t in <linux/types.h>
-+	void *child;
-+	void *proc_handler;
-+	void *poll;
-+	void *extra1;
-+	void *extra2;
++	for (relx = start; relx < stop; relx = (void *)relx + relx_size) {
++		/*
++		 * 'r' is the relocation entry, applied to the 'target offset'
++		 * in the 'target section' of this (relocation) section, with
++		 * the value from symbol 'sym' (in/at 'source section/offset').
++		 */
++		Elf_Rela r;
++		Elf_Sym *sym;
++		unsigned int sym_shndx;
++		int sym_offset;
 +
-+	/* Here ends the randomizable portion of struct ctl_table. */
-+};
++		if (get_relx_sym(info, sechdr, relx, &r, &sym))
++			continue;
 +
- /**
-  * struct pci_device_id - PCI device ID structure
-  * @vendor:		Vendor ID to match (or PCI_ANY_ID)
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 780690dc08cd..676112fde5ff 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -133,7 +133,13 @@ static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
++		/* Looking for this target offset. */
++		if (r.r_offset != offset)
++			continue;
++
++		/* Pointer to source section/offset (note: addend is needed). */
++		sym_shndx = get_secindex(info, sym);
++		sym_offset = sym->st_value;
++		return (void *)info->hdr + info->sechdrs[sym_shndx].sh_offset
++			+ sym_offset + r.r_addend;
++	}
++
++	return NULL;
++}
++
++/* Looks like: sysctl:S */
++static int do_sysctl_entry(const char *modname, int sym_entry_offset,
++			   char *alias, const char *symname,
++			   unsigned int relx_shndx, struct elf_info *info)
++{
++	/* Find the relocation entry for procname's offset and use its string */
++	int offset = sym_entry_offset + OFF_sysctl_device_id_procname;
++	const char *procname = do_sysctl_section_relx(info, relx_shndx, offset);
++
++	if (procname) {
++		sprintf(alias, "sysctl:%s", procname);
++		return 1;
++	}
++
++	error("%s: [%s.ko] cannot find relocation string.\n", symname, modname);
++	return 0;
++}
++
++static void do_sysctl_table(void *symval, unsigned long size,
++			    struct module *mod, const char *symname,
++			    Elf_Sym *sym, struct elf_info *info)
++{
++	unsigned long id_size = SIZE_sysctl_device_id;
++	unsigned int i, secindex, shndx;
++	char alias[ALIAS_SIZE];
++
++	device_id_check(mod->name, "sysctl", size, id_size, symval);
++	/* Leave last one: it's the terminator. */
++	size -= id_size;
++
++	/* Find relocation section that references the section w/ the symbol. */
++	shndx = sym->st_shndx;
++	for (secindex = 0; secindex < info->num_sections; secindex++) {
++		Elf_Shdr *shdr = &info->sechdrs[secindex];
++
++		if ((shdr->sh_type == SHT_REL || shdr->sh_type == SHT_RELA) &&
++		    (shdr->sh_flags & SHF_INFO_LINK) && shdr->sh_info == shndx)
++			break;
++	}
++
++	if (secindex == info->num_sections) {
++		error("%s: [%s.ko] cannot find relocation section.\n",
++		      symname, mod->name);
++		return;
++	}
++
++	/* The symbol is an array of struct ctl_table elements at offset 'i'. */
++	for (i = 0; i < size; i += id_size) {
++		if (do_sysctl_entry(mod->name, sym->st_value+i, alias, symname, secindex, info)) {
++			buf_printf(&mod->dev_table_buf,
++				   "MODULE_ALIAS(\"%s\");\n", alias);
++		}
++	}
++}
++
+ /* Does namelen bytes of name exactly match the symbol? */
+ static bool sym_is(const char *name, unsigned namelen, const char *symbol)
+ {
+@@ -1585,6 +1694,8 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
+ 		do_pnp_device_entry(symval, sym->st_size, mod);
+ 	else if (sym_is(name, namelen, "pnp_card"))
+ 		do_pnp_card_entries(symval, sym->st_size, mod);
++	if (sym_is(name, namelen, "sysctl"))
++		do_sysctl_table(symval, sym->st_size, mod, symname, sym, info);
+ 	else {
+ 		int i;
  
- /* A sysctl table is an array of struct ctl_table: */
- struct ctl_table {
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index d1ed67fa290b..e2df2fbb0909 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1735,8 +1735,8 @@ static int addend_mips_rel(struct elf_info *elf, Elf_Shdr *sechdr, Elf_Rela *r)
+  * w/ possible relocation addend 'r.r_addend').
+  * - 'sym' is that symbol (a pointer to the symbol table + symbol table index).
+  */
+-static int get_relx_sym(struct elf_info *elf, Elf_Shdr *sechdr, Elf_Rela *rela,
+-			Elf_Rela *out_r, Elf_Sym **out_sym)
++int get_relx_sym(struct elf_info *elf, Elf_Shdr *sechdr, Elf_Rela *rela,
++		 Elf_Rela *out_r, Elf_Sym **out_sym)
+ {
+ 	Elf_Sym *sym;
+ 	Elf_Rela r;
+diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+index 044bdfb894b7..cdb95c7e03a9 100644
+--- a/scripts/mod/modpost.h
++++ b/scripts/mod/modpost.h
+@@ -212,3 +212,6 @@ void modpost_log(enum loglevel loglevel, const char *fmt, ...);
+ #define warn(fmt, args...)	modpost_log(LOG_WARN, fmt, ##args)
+ #define error(fmt, args...)	modpost_log(LOG_ERROR, fmt, ##args)
+ #define fatal(fmt, args...)	modpost_log(LOG_FATAL, fmt, ##args)
 +
-+	/* This must be the first field (shadowed to struct sysctl_device_id) */
- 	const char *procname;		/* Text ID for /proc/sys, or zero */
-+
-+	/* This begins the randomizable portion of the struct. */
-+	randomized_struct_fields_start
-+
- 	void *data;
- 	int maxlen;
- 	umode_t mode;
-@@ -142,7 +148,10 @@ struct ctl_table {
- 	struct ctl_table_poll *poll;
- 	void *extra1;
- 	void *extra2;
--} __randomize_layout;
-+
-+	/* New fields go above here, so they are in the randomized portion. */
-+	randomized_struct_fields_end
-+};
- 
- struct ctl_node {
- 	struct rb_node node;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 223376959d29..15073621cfa8 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2487,6 +2487,7 @@ int __init sysctl_init_bases(void)
- 
- 	return 0;
- }
-+
- #endif /* CONFIG_SYSCTL */
- /*
-  * No sense putting this after each symbol definition, twice,
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index c0d3bcb99138..43b2549940d2 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -262,5 +262,8 @@ int main(void)
- 	DEVID(ishtp_device_id);
- 	DEVID_FIELD(ishtp_device_id, guid);
- 
-+	DEVID(sysctl_device_id);
-+	DEVID_FIELD(sysctl_device_id, procname);
-+
- 	return 0;
- }
++int get_relx_sym(struct elf_info *elf, Elf_Shdr *sechdr, Elf_Rela *rela,
++			Elf_Rela *out_r, Elf_Sym **out_sym);
 -- 
 2.25.1
 
