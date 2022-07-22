@@ -2,51 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA1F57E45C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 18:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C18D357E469
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Jul 2022 18:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235516AbiGVQ35 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 12:29:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57698 "EHLO
+        id S235567AbiGVQb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jul 2022 12:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbiGVQ3y (ORCPT
+        with ESMTP id S229567AbiGVQbz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jul 2022 12:29:54 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8DE691CD5;
-        Fri, 22 Jul 2022 09:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=dfsvCtbqj1aTabifZLD8rO8Jn7E44Br7CNa+F9C5WOo=; b=Eh0R/EMH/rCoU82UJQhON4r0qZ
-        qqmUefp4at7/z2HepFQw3gDMVCE719zc+a/allPpuCx/8Mi5FyLndHi8qs+tkuUJMog80gIvoc/a6
-        TKzO7Qf23pJPkOncSRAcwZfP6QOs1W28Vr68g8EmOc1RgQO0xuPY1XFE9MNhgCKU57JSzDRyEs9Q1
-        +65qpuaaWRCVcjTxI4rU/nUdY8ESPq6vi8fgrkw6liUVeh7UTJA9qbYr2bQ6DrpiHoAGh5toS5k3M
-        5HWKNJOoIo+81NOoC0QqXdZ3RR45Bn+MA1JORBKDGG2e7r9qUVvMx8RzV30FP3wk7Yr9MIN4f3w2j
-        eNfN8liQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oEvX1-007vOh-CK; Fri, 22 Jul 2022 16:29:39 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     ebiederm@xmission.com, corbet@lwn.net, keescook@chromium.org,
-        yzaikin@google.com
-Cc:     songmuchun@bytedance.com, zhangyuchen.lcr@bytedance.com,
-        dhowells@redhat.com, deepa.kernel@gmail.com, hch@lst.de,
-        mcgrof@kernel.org, linux-doc@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] Documentation/filesystems/proc.rst: document procfs inode timestamps
-Date:   Fri, 22 Jul 2022 09:29:34 -0700
-Message-Id: <20220722162934.1888835-3-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220722162934.1888835-1-mcgrof@kernel.org>
-References: <20220722162934.1888835-1-mcgrof@kernel.org>
+        Fri, 22 Jul 2022 12:31:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E805C89A9B;
+        Fri, 22 Jul 2022 09:31:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C2190B82970;
+        Fri, 22 Jul 2022 16:31:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682F5C341C6;
+        Fri, 22 Jul 2022 16:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658507510;
+        bh=2zJKttnRhj1+bfpQ1neKDFu0IlRxRblBoec0bp8Sdok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R6uxrMTGkXqjhGQr3zA8qNa8GSPQYWhhd4mQ3yYrU74pGY1LX1IaIR5hc0nNP92LQ
+         q9wz+Ac3IrLVRoZlFBxpRSiQx2lr3niXhLmKlEKd0WaePq36/63ztLdxUHKVP91cna
+         iTiD0U+7tuK8NQRrlnfsoyqCoOVisiWxoj95uBcTC6TpEN1dPCJvAwk4AG+OLFbipY
+         Ev1zg3asT7LDP81fPvnsbpQUSyN9RHHDGbrlF5ehxKVjBYDOL18hUhi2yOduvU0hdK
+         zkACGw2vJii36YKdGWHobF9F/E/t5jlN1+H172Y6t7CaMxCzV8c30PiPug7zXwMxcb
+         86mtOuQB7uKRA==
+Date:   Fri, 22 Jul 2022 09:31:49 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [man-pages RFC PATCH v2] statx.2, open.2: document STATX_DIOALIGN
+Message-ID: <YtrQ9cWwUkmOUe9r@magnolia>
+References: <20220722074229.148925-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220722074229.148925-1-ebiggers@kernel.org>
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,58 +57,155 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The timestamps for procfs files are not well understood and can
-confuse users and developers [0] in particular for the timestamp
-for the start time or a process. Clarify what they mean and that
-they are a reflection of the ephemeral nature of the filesystem
-inodes.
+On Fri, Jul 22, 2022 at 12:42:28AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Document the proposed STATX_DIOALIGN support for statx()
+> (https://lore.kernel.org/linux-fsdevel/20220722071228.146690-1-ebiggers@kernel.org/T/#u).
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v2: rebased onto man-pages master branch, mentioned xfs, and updated
+>     link to patchset
+> 
+>  man2/open.2  | 43 ++++++++++++++++++++++++++++++++-----------
+>  man2/statx.2 | 29 +++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 11 deletions(-)
+> 
+> diff --git a/man2/open.2 b/man2/open.2
+> index d1485999f..ef29847c3 100644
+> --- a/man2/open.2
+> +++ b/man2/open.2
+> @@ -1732,21 +1732,42 @@ of user-space buffers and the file offset of I/Os.
+>  In Linux alignment
+>  restrictions vary by filesystem and kernel version and might be
+>  absent entirely.
+> -However there is currently no filesystem\-independent
+> -interface for an application to discover these restrictions for a given
+> -file or filesystem.
+> -Some filesystems provide their own interfaces
+> -for doing so, for example the
+> +The handling of misaligned
+> +.B O_DIRECT
+> +I/Os also varies; they can either fail with
+> +.B EINVAL
+> +or fall back to buffered I/O.
+> +.PP
+> +Since Linux 5.20,
+> +.B O_DIRECT
+> +support and alignment restrictions for a file can be queried using
+> +.BR statx (2),
+> +using the
+> +.B STATX_DIOALIGN
+> +flag.
+> +Support for
+> +.B STATX_DIOALIGN
+> +varies by filesystem; see
+> +.BR statx (2).
+> +.PP
+> +Some filesystems provide their own interfaces for querying
+> +.B O_DIRECT
+> +alignment restrictions, for example the
+>  .B XFS_IOC_DIOINFO
+>  operation in
+>  .BR xfsctl (3).
+> +.B STATX_DIOALIGN
+> +should be used instead when it is available.
+>  .PP
+> -Under Linux 2.4, transfer sizes, the alignment of the user buffer,
+> -and the file offset must all be multiples of the logical block size
+> -of the filesystem.
+> -Since Linux 2.6.0, alignment to the logical block size of the
+> -underlying storage (typically 512 bytes) suffices.
+> -The logical block size can be determined using the
+> +If none of the above is available, then direct I/O support and alignment
+> +restrictions can only be assumed from known characteristics of the filesystem,
+> +the individual file, the underlying storage device(s), and the kernel version.
+> +In Linux 2.4, most block device based filesystems require that the file offset
+> +and the length and memory address of all I/O segments be multiples of the
+> +filesystem block size (typically 4096 bytes).
+> +In Linux 2.6.0, this was relaxed to the logical block size of the block device
+> +(typically 512 bytes).
+> +A block device's logical block size can be determined using the
+>  .BR ioctl (2)
+>  .B BLKSSZGET
+>  operation or from the shell using the command:
+> diff --git a/man2/statx.2 b/man2/statx.2
+> index 0326e9af0..ea38ec829 100644
+> --- a/man2/statx.2
+> +++ b/man2/statx.2
+> @@ -61,7 +61,12 @@ struct statx {
+>         containing the filesystem where the file resides */
+>      __u32 stx_dev_major;   /* Major ID */
+>      __u32 stx_dev_minor;   /* Minor ID */
+> +
+>      __u64 stx_mnt_id;      /* Mount ID */
+> +
+> +    /* Direct I/O alignment restrictions */
+> +    __u32 stx_dio_mem_align;
+> +    __u32 stx_dio_offset_align;
+>  };
+>  .EE
+>  .in
+> @@ -247,6 +252,8 @@ STATX_BTIME	Want stx_btime
+>  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+>  	It is deprecated and should not be used.
+>  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
+> +	(since Linux 5.20; support varies by filesystem)
+>  .TE
+>  .in
+>  .PP
+> @@ -407,6 +414,28 @@ This is the same number reported by
+>  .BR name_to_handle_at (2)
+>  and corresponds to the number in the first field in one of the records in
+>  .IR /proc/self/mountinfo .
+> +.TP
+> +.I stx_dio_mem_align
+> +The alignment (in bytes) required for user memory buffers for direct I/O
+> +.BR "" ( O_DIRECT )
+> +on this file. or 0 if direct I/O is not supported on this file.
 
-The procfs inodes are created when you first read them and then
-stuffed in the page cache. If the page cache and indodes are
-reclaimed they can be removed, and re-created with a new timestamp
-after read again. Document this little bit of tribal knowledge.
+Nit: "..on this file, or 0 if direct..."
 
-[0] https://lkml.kernel.org/r/20220721081617.36103-1-zhangyuchen.lcr@bytedance.com
-Reported-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- Documentation/filesystems/proc.rst | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> +.IP
+> +.B STATX_DIOALIGN
+> +.IR "" ( stx_dio_mem_align
+> +and
+> +.IR stx_dio_offset_align )
+> +is supported on block devices since Linux 5.20.
+> +The support on regular files varies by filesystem; it is supported by ext4,
+> +f2fs, and xfs since Linux 5.20.
+> +.TP
+> +.I stx_dio_offset_align
+> +The alignment (in bytes) required for file offsets and I/O segment lengths for
+> +direct I/O
+> +.BR "" ( O_DIRECT )
+> +on this file, or 0 if direct I/O is not supported on this file.
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 9fd5249f1a5f..9defe9af683a 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -59,6 +59,15 @@ The proc  file  system acts as an interface to internal data structures in the
- kernel. It  can  be  used to obtain information about the system and to change
- certain kernel parameters at runtime (sysctl).
- 
-+The proc files are dynamic in nature and allow for developers to make the
-+content to be changed each time a file is read. The proc files and directories
-+inodes are created when someone first reads a respective proc file or directory,
-+as such the timestamps of the proc files reflect this time. As with other
-+filesystems, these proc inodes can be removed through reclaim under memory
-+pressure and so the timestamps of the proc files can change if the proc files
-+are destroyed and re-created (echo 3 > /proc/sys/vm/drop_caches forces and
-+illustrate the reclaim of inodes and page cache).
-+
- First, we'll  take  a  look  at the read-only parts of /proc. In Chapter 2, we
- show you how you can use /proc/sys to change settings.
- 
-@@ -328,6 +337,13 @@ It's slow but very precise.
- 		system call
-   ============= ===============================================================
- 
-+Note that the start_time inside the stat file is different than the timestamp
-+of the stat file itself. The timestamp of the stat file simply reflects the
-+first time the stat file was read. The proc inode for this file can be reclaimed
-+under memory pressure and be recreated after this and so the timestamp can
-+change. Userspace should rely on the start_time entry in the the stat file to
-+get a process start time.
-+
- The /proc/PID/maps file contains the currently mapped memory regions and
- their access permissions.
- 
--- 
-2.35.1
+On this last part -- userspace can only conclude that directio is not
+supported on the file if ((STATX_DIOALIGN & stx_mask) &&
+stx_dio_offset_align == 0), right?
 
+IOWs, if (STATX_DIOALIGN & stx_mask)==0 then userspace can't draw any
+conclusions from stx_dio_offset_align, correct?
+
+If the answers are yes and yes, then I think I've understood all this
+and can say
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+
+> +This will only be nonzero if
+> +.I stx_dio_mem_align
+> +is nonzero, and vice versa.
+>  .PP
+>  For further information on the above fields, see
+>  .BR inode (7).
+> 
+> base-commit: f9f25914e4ed393ac284ab921876e8a78722c504
+> -- 
+> 2.37.0
+> 
