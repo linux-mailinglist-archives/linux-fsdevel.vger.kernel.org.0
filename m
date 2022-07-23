@@ -2,109 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FFF57EF52
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 15:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB15157EF6F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 16:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbiGWNzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jul 2022 09:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
+        id S237470AbiGWORy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jul 2022 10:17:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGWNzE (ORCPT
+        with ESMTP id S237449AbiGWORx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jul 2022 09:55:04 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4D11A3B7;
-        Sat, 23 Jul 2022 06:55:03 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id AEE8932004CE;
-        Sat, 23 Jul 2022 09:54:59 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 23 Jul 2022 09:55:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNF
-        qHeIbtVzIb073wzdSnjciqKKDdNQyLlEY=; b=Ag2UIiZRazRWQyd3DdhVMX55en
-        2fA7Qg3pHLmXjadGIlcG29CVBtJtYiUchJD+57V30Du+xx7W49LtKiYRpjAGqAsa
-        CccWWsPhSBmimy6twPZ1c/BKKaG2O52EL1zYsfvdYRU/xpQ5xZ0dRcoSQxek+ydM
-        rQDNNUVuVaIT83xDnTEZTK4M3f1FI4hxcXtVkW1KqVEIcTn9DFOSUjpPlI85L2RQ
-        y56fHi5EzMV7n76vEHlb/4ot1wgymFipobvqhyHiXpzjUztn2ncCLhnz9FyZPAcy
-        W9SDqp8niXAA19X/N1O5zouw/nIQbLNmOVzTmx7zVRrbRQddnMygEaIYuSGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNFqHeIbtVzIb073wzdSn
-        jciqKKDdNQyLlEY=; b=t+MLJeKgT1TY1aE4NMp4Ns1iigNgfhEqqgBchwkwTG8e
-        yhRXzuWs2O0KH25O8D6NKtpzj5pR8NQ43buap1JbmlaG3Dw38K0HGOqNfbinPCeY
-        0xJzxSuvkSBcImYeqVVLUnhUfVVErgkdbzgMhj4hGi8k5ZX3jnYMfocRQi4D54tu
-        eDhkr7Tl6ZJEFceiG9fPUlGk3NCGthGSP+suBxX/nE9XiO+dYGqfCqb7Na51BgEK
-        3zOc9cfu/ibu0bHZX0CaqvOvoWYln3VLsvZA+UuAOsJoSPF0dx+bTMuetltIzn02
-        9iDMgbLD0G1imx59Uxkz/7dOJtTKH2LfVwF1l5+BTw==
-X-ME-Sender: <xms:sv3bYjo5z8BMdXyJ1MUFaWQ2Ji8EOtX_Sz5taB4ux0-fHDRE2aa7gw>
-    <xme:sv3bYtqVE5vv2eAnuHfVNt8kruVh20hgaodX_eLkpPMgjPkzVQRPWZZjyP4YWVHVw
-    RrTgtCNjktf3A>
-X-ME-Received: <xmr:sv3bYgMCUcggTFAMcn1ALFaQexyxaVUbHCDS6QrxYJgr0T0se7SK_Q8FRAk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddtgedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
-    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
-    hhrdgtohhm
-X-ME-Proxy: <xmx:sv3bYm7588vIXc-S6UM7WFR5XssKtopKZLUy3Xw5lNnkGAvNrsZJSQ>
-    <xmx:sv3bYi7MpZqFQS_LWxDLSJir6Jfk17eC_mPiiJDDc3OSp0jEuk3d2g>
-    <xmx:sv3bYujfV22KmAIzouaodBqpFzn7LJVoQtfGe6b9J0gBy0DYPPPesA>
-    <xmx:s_3bYizHWq0PcaSwzia3gg2A7Fx0zU5fKFToj1q3Xxh_Gemq6r32Gg>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Jul 2022 09:54:58 -0400 (EDT)
-Date:   Sat, 23 Jul 2022 15:54:57 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Lee Jones <lee@kernel.org>, stable@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5.10 1/1] io_uring: Use original task for req identity
- in io_identity_cow()
-Message-ID: <Ytv9sdsy9iGcUrVy@kroah.com>
-References: <20220719115251.441526-1-lee@kernel.org>
- <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
+        Sat, 23 Jul 2022 10:17:53 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B818D186CB
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 07:17:50 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id a82so6924090ybb.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 07:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mEoPEbeOyWxlrBYzTjx3/LLOWXpb1CcPOZICGC0v96M=;
+        b=jr/xvpvbVmNf+xIG0dbLCrMyluMNU3l3gZeFwLtkhnYy/4UleXz2aomwnjH+3TbMKl
+         11dBUhnttUE/J/yKFXfQN03yrN4WFewxF/+VJ/kcL6pFsFUOYhgePHT7kQM1GWHE4cnj
+         J0HF2vx93jhldzsXpN3975BnFyYHwrHhHDTW6S28Y1Bp+thJmDbF88XkOqYjLcRbtVMz
+         EymXnwDWc6excfS/Vg36Y6KXmCjFyN9Fy9ta6W1R+MsF1Y9qT+ckV60hFtIARmjwjo36
+         hhkKLiL31tekMRZqBQY+Ta4faait4JFH08LLjUBAqpKD/CnXK6iHsPwk/7J98gJf2WT9
+         7zEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mEoPEbeOyWxlrBYzTjx3/LLOWXpb1CcPOZICGC0v96M=;
+        b=I0g0UEw0NDcNER4DGy9HDnIO+Q15RIOzdVjbGrvzpd2HFSVkPiI6Tyw7hHjQom0fEg
+         aXAdnqgHG47ou2+SvhEdjpQq71yzs4sYgAGDLcA9+guTWMa6F8IWnIOBAoNv3fFCw5lg
+         aMY3ObpB9IBvh2PqlJTm+EDH0IY0bYeTVOovWIq22icliWkHYsNvR0nz96FqhNstjg2o
+         lnmA8eB6o8O+AF/OHKGqBCxtDM/4gAT79+8f8wc99VuY1JpDySHH3gP07YJ4UVvZhj9J
+         hxV5HFE8N8rbnz8z890RHRp0XkhWtWcCrfzPC5lvOPoTxQBm9xIuwQCEreZ85xPnm6MB
+         L9IA==
+X-Gm-Message-State: AJIora8daDDj6Wg1bv1J6xpDBydGktEpp4ukZUFyyweFxui3D6E5LMvo
+        PPuc3n55kfXbd2QjCfQNr94QMe2fOrRYEzGUzki2jg==
+X-Google-Smtp-Source: AGRyM1vMVZvJKOP7aWWuKyr1n74NN+gmMGpp4/ODkk6r1z+KdpVQo9OtmmE4byGdqk74TpSHifmeukWE0kzdATNgfP0=
+X-Received: by 2002:a25:2f4a:0:b0:670:ea89:72b2 with SMTP id
+ v71-20020a252f4a000000b00670ea8972b2mr3546504ybv.427.1658585869576; Sat, 23
+ Jul 2022 07:17:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20220722162934.1888835-1-mcgrof@kernel.org> <20220722162934.1888835-3-mcgrof@kernel.org>
+In-Reply-To: <20220722162934.1888835-3-mcgrof@kernel.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Sat, 23 Jul 2022 22:17:12 +0800
+Message-ID: <CAMZfGtV4wC-8uT47v-nYhEi82cqNVNf1CFMM8qRU7Nd3SMyv5w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Documentation/filesystems/proc.rst: document procfs
+ inode timestamps
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Zhang Yuchen <zhangyuchen.lcr@bytedance.com>,
+        David Howells <dhowells@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 06:48:09AM -0600, Jens Axboe wrote:
-> On 7/19/22 5:52 AM, Lee Jones wrote:
-> > This issue is conceptually identical to the one fixed in 29f077d07051
-> > ("io_uring: always use original task when preparing req identity"), so
-> > rather than reinvent the wheel, I'm shamelessly quoting the commit
-> > message from that patch - thanks Jens:
-> > 
-> >  "If the ring is setup with IORING_SETUP_IOPOLL and we have more than
-> >   one task doing submissions on a ring, we can up in a situation where
-> >   we assign the context from the current task rather than the request
-> >   originator.
-> > 
-> >   Always use req->task rather than assume it's the same as current.
-> > 
-> >   No upstream patch exists for this issue, as only older kernels with
-> >   the non-native workers have this problem."
-> 
-> Greg, can you pick this one up for 5.10-stable? Thanks!
+On Sat, Jul 23, 2022 at 12:29 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> The timestamps for procfs files are not well understood and can
+> confuse users and developers [0] in particular for the timestamp
+> for the start time or a process. Clarify what they mean and that
+> they are a reflection of the ephemeral nature of the filesystem
+> inodes.
+>
+> The procfs inodes are created when you first read them and then
+> stuffed in the page cache. If the page cache and indodes are
+> reclaimed they can be removed, and re-created with a new timestamp
+> after read again. Document this little bit of tribal knowledge.
+>
+> [0] https://lkml.kernel.org/r/20220721081617.36103-1-zhangyuchen.lcr@bytedance.com
+> Reported-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  Documentation/filesystems/proc.rst | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 9fd5249f1a5f..9defe9af683a 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -59,6 +59,15 @@ The proc  file  system acts as an interface to internal data structures in the
+>  kernel. It  can  be  used to obtain information about the system and to change
+>  certain kernel parameters at runtime (sysctl).
+>
+> +The proc files are dynamic in nature and allow for developers to make the
+> +content to be changed each time a file is read. The proc files and directories
+> +inodes are created when someone first reads a respective proc file or directory,
+> +as such the timestamps of the proc files reflect this time. As with other
+> +filesystems, these proc inodes can be removed through reclaim under memory
+> +pressure and so the timestamps of the proc files can change if the proc files
+> +are destroyed and re-created (echo 3 > /proc/sys/vm/drop_caches forces and
+> +illustrate the reclaim of inodes and page cache).
 
-Now queued up, thanks.
+Thanks for fixing this.
 
-greg k-h
+> +
+>  First, we'll  take  a  look  at the read-only parts of /proc. In Chapter 2, we
+>  show you how you can use /proc/sys to change settings.
+>
+> @@ -328,6 +337,13 @@ It's slow but very precise.
+>                 system call
+>    ============= ===============================================================
+>
+> +Note that the start_time inside the stat file is different than the timestamp
+> +of the stat file itself. The timestamp of the stat file simply reflects the
+> +first time the stat file was read. The proc inode for this file can be reclaimed
+> +under memory pressure and be recreated after this and so the timestamp can
+> +change. Userspace should rely on the start_time entry in the the stat file to
+> +get a process start time.
+> +
+
+I'm not sure the value of those comments since the above description
+is already enough to tell people the timestamp of /proc files or directories
+can be changed in some cases, which already includes the case of
+/proc/PID/stat.
+
+If we really want to take /proc/PID/stat as an example to show the
+timestamp is unstable, I think it is better to move those comments to the
+above section where you explain why the timestamp can be changed .
+
+Thanks.
+
+>  The /proc/PID/maps file contains the currently mapped memory regions and
+>  their access permissions.
+>
+> --
+> 2.35.1
+>
