@@ -2,129 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A3557EBA1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 05:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF67D57EC2C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 07:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229975AbiGWDJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 23:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59288 "EHLO
+        id S231751AbiGWFDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jul 2022 01:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiGWDJ2 (ORCPT
+        with ESMTP id S229723AbiGWFDS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jul 2022 23:09:28 -0400
+        Sat, 23 Jul 2022 01:03:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC03278598;
-        Fri, 22 Jul 2022 20:09:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F13BE9D4;
+        Fri, 22 Jul 2022 22:03:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EEA762308;
-        Sat, 23 Jul 2022 03:09:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8C9C341C6;
-        Sat, 23 Jul 2022 03:09:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDEE160AFB;
+        Sat, 23 Jul 2022 05:03:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A452C341C0;
+        Sat, 23 Jul 2022 05:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658545766;
-        bh=yfeKrSA/SfbRW4ZHy2JK6fnHYLeUM29oPE55X5506UQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Oxm6j4n4k6TEwVlK1dp/rDs53BLhwoauQbLGK35rc3QJ+wKey0b7sGTpikHW4XCvY
-         1JQNGkU2/ealbT+TOlf5zdl65Ecd0y/txIIQwq85gdvSTrBRDN00VMmMFOzHLaK8co
-         Tm3Ejfx8av5weVgr8UFTcaBA8CZcFNbCF4xWNajYI9OCEWgsi3etdizaEN291jOYya
-         EWgKUJ6hjldQNmY7xRMSkvHOK0oqmPh1bMP39edxeiCh9w3Extm3R/FoZu5F+ZGeWS
-         zPTL4jl/DeG2NZSThdoMW+a3xiq0qebMTY8jfhn4XDCwuNqYBjJqN6Y4E1vBNieytj
-         F3xnrGkgASOBQ==
-Message-ID: <2171cf37-ea82-25c5-ad85-a80519525045@kernel.org>
-Date:   Fri, 22 Jul 2022 20:09:23 -0700
+        s=k20201202; t=1658552596;
+        bh=AaXFZrwKTUU6UrRXrK94Z+zja72i1JjD3maZa+2WSDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NiPTZKSntRLpsWC2wnEE/9s5Ls/ZV/qrKlqVIc1zO4K13INz/0pAB23jjh+OIe7Tb
+         aVLUcjYx/E1f93YFKBHh6aF95V6SekpqSSQIbeSA/e+2vU4E6KJs/geUKC57+cZBXQ
+         Xp0Aim38hl+Kp2FRQpOR+J/blPWy9OQ6nTQM+X0KCptWqjbOA8fba8Qmo+qSyHIcCB
+         WkqPesCM9h8o31anSVs3tyFkotxcc5XlUjsHc23KYfW73nxG8qicIVJsNUGp+yChFd
+         As/bA1MVnE3ZuwU4WizlJnw19tLqcMIZTcW6iJ1zOTW3+sWC/V3DbMrhHxjq6rTm5t
+         C0YYwut8nyrIw==
+Date:   Fri, 22 Jul 2022 22:03:15 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        pankydev8@gmail.com, Keith Busch <kbusch@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
+Message-ID: <YtuBE8EZbATU495P@magnolia>
+References: <20220610195830.3574005-1-kbusch@fb.com>
+ <20220610195830.3574005-12-kbusch@fb.com>
+ <YtpTYSNUCwPelNgL@sol.localdomain>
+ <YtrkJgwOmCGqPO3E@magnolia>
+ <YtromC4cR5a0mog8@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Steven Price <steven.price@arm.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        nikunj@amd.com, ashish.kalra@amd.com
-References: <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
- <YksIQYdG41v3KWkr@google.com> <Ykslo2eo2eRXrpFR@google.com>
- <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
- <Ykwbqv90C7+8K+Ao@google.com> <YkyEaYiL0BrDYcZv@google.com>
- <20220422105612.GB61987@chaop.bj.intel.com>
- <20220509223056.pyazfxjwjvipmytb@amd.com> <YnmjvX9ow4elYsY8@google.com>
- <c3ca63d6-db27-d783-40ca-486b3fbbced7@amd.com> <YtnCyqbI26QfRuOP@google.com>
-From:   Andy Lutomirski <luto@kernel.org>
-In-Reply-To: <YtnCyqbI26QfRuOP@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YtromC4cR5a0mog8@gmail.com>
 X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/21/22 14:19, Sean Christopherson wrote:
-> On Thu, Jul 21, 2022, Gupta, Pankaj wrote:
->>
-
->>> I view it as a performance problem because nothing stops KVM from copying from
->>> userspace into the private fd during the SEV ioctl().  What's missing is the
->>> ability for userspace to directly initialze the private fd, which may or may not
->>> avoid an extra memcpy() depending on how clever userspace is.
->> Can you please elaborate more what you see as a performance problem? And
->> possible ways to solve it?
+On Fri, Jul 22, 2022 at 06:12:40PM +0000, Eric Biggers wrote:
+> On Fri, Jul 22, 2022 at 10:53:42AM -0700, Darrick J. Wong wrote:
+> > On Fri, Jul 22, 2022 at 12:36:01AM -0700, Eric Biggers wrote:
+> > > [+f2fs list and maintainers]
+> > > 
+> > > On Fri, Jun 10, 2022 at 12:58:30PM -0700, Keith Busch wrote:
+> > > > From: Keith Busch <kbusch@kernel.org>
+> > > > 
+> > > > Use the address alignment requirements from the block_device for direct
+> > > > io instead of requiring addresses be aligned to the block size.
+> > > > 
+> > > > Signed-off-by: Keith Busch <kbusch@kernel.org>
+> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > ---
+> > > >  fs/iomap/direct-io.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > > index 370c3241618a..5d098adba443 100644
+> > > > --- a/fs/iomap/direct-io.c
+> > > > +++ b/fs/iomap/direct-io.c
+> > > > @@ -242,7 +242,6 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > > >  	struct inode *inode = iter->inode;
+> > > >  	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
+> > > >  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> > > > -	unsigned int align = iov_iter_alignment(dio->submit.iter);
+> > > >  	loff_t length = iomap_length(iter);
+> > > >  	loff_t pos = iter->pos;
+> > > >  	unsigned int bio_opf;
+> > > > @@ -253,7 +252,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > > >  	size_t copied = 0;
+> > > >  	size_t orig_count;
+> > > >  
+> > > > -	if ((pos | length | align) & ((1 << blkbits) - 1))
+> > > > +	if ((pos | length) & ((1 << blkbits) - 1) ||
+> > > > +	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+> > 
+> > How does this change intersect with "make statx() return DIO alignment
+> > information" ?  Will the new STATX_DIOALIGN implementations have to be
+> > adjusted to set stx_dio_mem_align = bdev_dma_alignment(...)?
+> > 
+> > I'm guessing the answer is yes, but I haven't seen any patches on the
+> > list to do that, but more and more these days email behaves like a flood
+> > of UDP traffic... :(
+> > 
 > 
-> Oh, I'm not saying there actually _is_ a performance problem.  What I'm saying is
-> that in-place encryption is not a functional requirement, which means it's purely
-> an optimization, and thus we should other bother supporting in-place encryption
-> _if_ it would solve a performane bottleneck.
+> Yes.  I haven't done that in the STATX_DIOALIGN patchset yet because I've been
+> basing it on upstream, which doesn't yet have this iomap patch.  I haven't been
+> expecting STATX_DIOALIGN to make 5.20, given that it's a new UAPI that needs
+> time to be properly reviewed, plus I've just been busy with other things.  So
+> I've been planning to make the above change after this patch lands upstream.
 
-Even if we end up having a performance problem, I think we need to 
-understand the workloads that we want to optimize before getting too 
-excited about designing a speedup.
+<nod> Ok, I'm looking forward to it.  Thank you for your work on statx! :)
 
-In particular, there's (depending on the specific technology, perhaps, 
-and also architecture) a possible tradeoff between trying to reduce 
-copying and trying to reduce unmapping and the associated flushes.  If a 
-user program maps an fd, populates it, and then converts it in place 
-into private memory (especially if it doesn't do it in a single shot), 
-then that memory needs to get unmapped both from the user mm and 
-probably from the kernel direct map.  On the flip side, it's possible to 
-imagine an ioctl that does copy-and-add-to-private-fd that uses a 
-private mm and doesn't need any TLB IPIs.
+--D
 
-All of this is to say that trying to optimize right now seems quite 
-premature to me.
+> - Eric
