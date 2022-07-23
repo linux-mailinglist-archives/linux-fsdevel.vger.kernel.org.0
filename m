@@ -2,120 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF67D57EC2C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 07:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3997257EC7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 09:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231751AbiGWFDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jul 2022 01:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
+        id S236967AbiGWHmS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jul 2022 03:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiGWFDS (ORCPT
+        with ESMTP id S236947AbiGWHmQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jul 2022 01:03:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F13BE9D4;
-        Fri, 22 Jul 2022 22:03:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EDEE160AFB;
-        Sat, 23 Jul 2022 05:03:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A452C341C0;
-        Sat, 23 Jul 2022 05:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658552596;
-        bh=AaXFZrwKTUU6UrRXrK94Z+zja72i1JjD3maZa+2WSDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NiPTZKSntRLpsWC2wnEE/9s5Ls/ZV/qrKlqVIc1zO4K13INz/0pAB23jjh+OIe7Tb
-         aVLUcjYx/E1f93YFKBHh6aF95V6SekpqSSQIbeSA/e+2vU4E6KJs/geUKC57+cZBXQ
-         Xp0Aim38hl+Kp2FRQpOR+J/blPWy9OQ6nTQM+X0KCptWqjbOA8fba8Qmo+qSyHIcCB
-         WkqPesCM9h8o31anSVs3tyFkotxcc5XlUjsHc23KYfW73nxG8qicIVJsNUGp+yChFd
-         As/bA1MVnE3ZuwU4WizlJnw19tLqcMIZTcW6iJ1zOTW3+sWC/V3DbMrhHxjq6rTm5t
-         C0YYwut8nyrIw==
-Date:   Fri, 22 Jul 2022 22:03:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Keith Busch <kbusch@fb.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com, Keith Busch <kbusch@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCHv6 11/11] iomap: add support for dma aligned direct-io
-Message-ID: <YtuBE8EZbATU495P@magnolia>
-References: <20220610195830.3574005-1-kbusch@fb.com>
- <20220610195830.3574005-12-kbusch@fb.com>
- <YtpTYSNUCwPelNgL@sol.localdomain>
- <YtrkJgwOmCGqPO3E@magnolia>
- <YtromC4cR5a0mog8@gmail.com>
+        Sat, 23 Jul 2022 03:42:16 -0400
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE084E868;
+        Sat, 23 Jul 2022 00:42:15 -0700 (PDT)
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay01.hostedemail.com (Postfix) with ESMTP id 89ABC1C6789;
+        Sat, 23 Jul 2022 07:42:14 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id 7942120019;
+        Sat, 23 Jul 2022 07:42:13 +0000 (UTC)
+Message-ID: <0350c21bcfdc896f2b912363f221958d41ebf1e1.camel@perches.com>
+Subject: Re: [PATCH 3/4] exfat: Expand exfat_err() and co directly to pr_*()
+ macro
+From:   Joe Perches <joe@perches.com>
+To:     Takashi Iwai <tiwai@suse.de>, linux-fsdevel@vger.kernel.org
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 23 Jul 2022 00:42:12 -0700
+In-Reply-To: <20220722142916.29435-4-tiwai@suse.de>
+References: <20220722142916.29435-1-tiwai@suse.de>
+         <20220722142916.29435-4-tiwai@suse.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.1-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YtromC4cR5a0mog8@gmail.com>
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_NONE,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Stat-Signature: 3t95ozn3cgqiwgokc1xckwhqba4pqumh
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 7942120019
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/YD59ycuUpf1eRiadcD8l6BgVFFY4LRTI=
+X-HE-Tag: 1658562133-578320
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 06:12:40PM +0000, Eric Biggers wrote:
-> On Fri, Jul 22, 2022 at 10:53:42AM -0700, Darrick J. Wong wrote:
-> > On Fri, Jul 22, 2022 at 12:36:01AM -0700, Eric Biggers wrote:
-> > > [+f2fs list and maintainers]
-> > > 
-> > > On Fri, Jun 10, 2022 at 12:58:30PM -0700, Keith Busch wrote:
-> > > > From: Keith Busch <kbusch@kernel.org>
-> > > > 
-> > > > Use the address alignment requirements from the block_device for direct
-> > > > io instead of requiring addresses be aligned to the block size.
-> > > > 
-> > > > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > ---
-> > > >  fs/iomap/direct-io.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > > index 370c3241618a..5d098adba443 100644
-> > > > --- a/fs/iomap/direct-io.c
-> > > > +++ b/fs/iomap/direct-io.c
-> > > > @@ -242,7 +242,6 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > > >  	struct inode *inode = iter->inode;
-> > > >  	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
-> > > >  	unsigned int fs_block_size = i_blocksize(inode), pad;
-> > > > -	unsigned int align = iov_iter_alignment(dio->submit.iter);
-> > > >  	loff_t length = iomap_length(iter);
-> > > >  	loff_t pos = iter->pos;
-> > > >  	unsigned int bio_opf;
-> > > > @@ -253,7 +252,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > > >  	size_t copied = 0;
-> > > >  	size_t orig_count;
-> > > >  
-> > > > -	if ((pos | length | align) & ((1 << blkbits) - 1))
-> > > > +	if ((pos | length) & ((1 << blkbits) - 1) ||
-> > > > +	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > 
-> > How does this change intersect with "make statx() return DIO alignment
-> > information" ?  Will the new STATX_DIOALIGN implementations have to be
-> > adjusted to set stx_dio_mem_align = bdev_dma_alignment(...)?
-> > 
-> > I'm guessing the answer is yes, but I haven't seen any patches on the
-> > list to do that, but more and more these days email behaves like a flood
-> > of UDP traffic... :(
-> > 
+On Fri, 2022-07-22 at 16:29 +0200, Takashi Iwai wrote:
+> Currently the error and info messages handled by exfat_err() and co
+> are tossed to exfat_msg() function that does nothing but passes the
+> strings with printk() invocation.  Not only that this is more overhead
+> by the indirect calls, but also this makes harder to extend for the
+> debug print usage; because of the direct printk() call, you cannot
+> make it for dynamic debug or without debug like the standard helpers
+> such as pr_debug() or dev_dbg().
 > 
-> Yes.  I haven't done that in the STATX_DIOALIGN patchset yet because I've been
-> basing it on upstream, which doesn't yet have this iomap patch.  I haven't been
-> expecting STATX_DIOALIGN to make 5.20, given that it's a new UAPI that needs
-> time to be properly reviewed, plus I've just been busy with other things.  So
-> I've been planning to make the above change after this patch lands upstream.
+> For addressing the problem, this patch replaces exfat_msg() function
+> with a macro to expand to pr_*() directly.  This allows us to create
+> exfat_debug() macro that is expanded to pr_debug() (which output can
+> gracefully suppressed via dyndbg).
+[]
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+[]
+> @@ -508,14 +508,19 @@ void __exfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
+>  #define exfat_fs_error_ratelimit(sb, fmt, args...) \
+>  		__exfat_fs_error(sb, __ratelimit(&EXFAT_SB(sb)->ratelimit), \
+>  		fmt, ## args)
+> -void exfat_msg(struct super_block *sb, const char *lv, const char *fmt, ...)
+> -		__printf(3, 4) __cold;
+> +
+> +/* expand to pr_xxx() with prefix */
+> +#define exfat_msg(sb, lv, fmt, ...) \
+> +	pr_##lv("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
+> +
+>  #define exfat_err(sb, fmt, ...)						\
+> -	exfat_msg(sb, KERN_ERR, fmt, ##__VA_ARGS__)
+> +	exfat_msg(sb, err, fmt, ##__VA_ARGS__)
+>  #define exfat_warn(sb, fmt, ...)					\
+> -	exfat_msg(sb, KERN_WARNING, fmt, ##__VA_ARGS__)
+> +	exfat_msg(sb, warn, fmt, ##__VA_ARGS__)
+>  #define exfat_info(sb, fmt, ...)					\
+> -	exfat_msg(sb, KERN_INFO, fmt, ##__VA_ARGS__)
+> +	exfat_msg(sb, info, fmt, ##__VA_ARGS__)
+> +#define exfat_debug(sb, fmt, ...)					\
+> +	exfat_msg(sb, debug, fmt, ##__VA_ARGS__)
 
-<nod> Ok, I'm looking forward to it.  Thank you for your work on statx! :)
+I think this would be clearer using pr_<level> directly instead
+of an indirecting macro that uses concatenation of <level> that
+obscures the actual use of pr_<level>
 
---D
+Either: (and this first option would be my preference)
 
-> - Eric
+#define exfat_err(sb, fmt, ...) \
+	pr_err("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
+#define exfat_warn(sb, fmt, ...) \
+	pr_warn("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
+etc...
+
+or using an indirecting macro:
+
+#define exfat_printk(pr_level, sb, fmt, ...)	\
+	pr_level("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
+
+#define exfat_err(sb, fmt, ...)
+	exfat_printk(pr_err, sb, fmt, ##__VA_ARGS)
+#define exfat_warn(sb, fmt, ...)
+	exfat_printk(pr_warn, sb, fmt, ##__VA_ARGS)
+etc...
+
+and btw, there are multiple uses of exfat_<level> output with a
+unnecessary and duplicated '\n' that the macro already adds that
+should be removed:
+
+$ git grep -P -n '\bexfat_(err|warn|info).*\\n' fs/exfat/
+fs/exfat/fatent.c:334:                  exfat_err(sb, "sbi->clu_srch_ptr is invalid (%u)\n",
+fs/exfat/nls.c:674:                     exfat_err(sb, "failed to read sector(0x%llx)\n",
+fs/exfat/super.c:467:           exfat_err(sb, "bogus sector size bits : %u\n",
+fs/exfat/super.c:476:           exfat_err(sb, "bogus sectors bits per cluster : %u\n",
+
