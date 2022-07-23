@@ -2,80 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D9B957EEED
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 13:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FFF57EF52
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 15:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233329AbiGWLMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jul 2022 07:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
+        id S232670AbiGWNzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jul 2022 09:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbiGWLMO (ORCPT
+        with ESMTP id S229760AbiGWNzE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jul 2022 07:12:14 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAED72A409
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 04:12:13 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id i16-20020a5d9350000000b0067bce490d06so2600176ioo.14
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 04:12:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=kSEPk2gR5UfYg7ejNXWHJjGcK8BWdPT0bnqKdUjv0Xc=;
-        b=FdwbxIXwepyuPkZZ4x/nUbN6KDepHWFPT+DpxK3bpOe7VQkBqzibvRiL+Ekhv0Ue8N
-         fzLqtJGfymf9Ko5MvcG0ppIYRLc6GORQqkwqht28bHXTy6LugjfiM2xRdn9jrIHkBi0Y
-         Z2LoIlJd2U6wwxugBP/gYl/S69QypMt6oBjoF4UdmaV1GMQmvunJOk1AtPZJISeoe50Z
-         KFngJZZjkHotoUYtU4xJmPJpwehwlOrdUlYDjBgIewCaCQFV9sMixOKyTPpRaIGhw2eR
-         kV60QL062vKcZ/cp8b6R5f0TulRyCEsbUALYJVRnOuLah3KpA7nprFuYwk9BpH8oOWg0
-         nUCQ==
-X-Gm-Message-State: AJIora9IuHOvWefXaMqeLJ5PEe4fIFnvVXQEsBCObVF5P3oygaT931GC
-        GSqzfysE1QprfRHBclqCHDuXlOKaCOaSa7AQw01a1PqOvSxm
-X-Google-Smtp-Source: AGRyM1uDrwlfaO9bep5C8GKeB0JMcclfsFXKNBpHLwJ6CuERxqxLhtmt66U8Qc9s146Q7tOzC4h05jOI7Iyk8+IvlkQgmGdNs1Nj
+        Sat, 23 Jul 2022 09:55:04 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4D11A3B7;
+        Sat, 23 Jul 2022 06:55:03 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id AEE8932004CE;
+        Sat, 23 Jul 2022 09:54:59 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 23 Jul 2022 09:55:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNF
+        qHeIbtVzIb073wzdSnjciqKKDdNQyLlEY=; b=Ag2UIiZRazRWQyd3DdhVMX55en
+        2fA7Qg3pHLmXjadGIlcG29CVBtJtYiUchJD+57V30Du+xx7W49LtKiYRpjAGqAsa
+        CccWWsPhSBmimy6twPZ1c/BKKaG2O52EL1zYsfvdYRU/xpQ5xZ0dRcoSQxek+ydM
+        rQDNNUVuVaIT83xDnTEZTK4M3f1FI4hxcXtVkW1KqVEIcTn9DFOSUjpPlI85L2RQ
+        y56fHi5EzMV7n76vEHlb/4ot1wgymFipobvqhyHiXpzjUztn2ncCLhnz9FyZPAcy
+        W9SDqp8niXAA19X/N1O5zouw/nIQbLNmOVzTmx7zVRrbRQddnMygEaIYuSGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1658584499; x=1658670899; bh=Q+8K3gHBNFqHeIbtVzIb073wzdSn
+        jciqKKDdNQyLlEY=; b=t+MLJeKgT1TY1aE4NMp4Ns1iigNgfhEqqgBchwkwTG8e
+        yhRXzuWs2O0KH25O8D6NKtpzj5pR8NQ43buap1JbmlaG3Dw38K0HGOqNfbinPCeY
+        0xJzxSuvkSBcImYeqVVLUnhUfVVErgkdbzgMhj4hGi8k5ZX3jnYMfocRQi4D54tu
+        eDhkr7Tl6ZJEFceiG9fPUlGk3NCGthGSP+suBxX/nE9XiO+dYGqfCqb7Na51BgEK
+        3zOc9cfu/ibu0bHZX0CaqvOvoWYln3VLsvZA+UuAOsJoSPF0dx+bTMuetltIzn02
+        9iDMgbLD0G1imx59Uxkz/7dOJtTKH2LfVwF1l5+BTw==
+X-ME-Sender: <xms:sv3bYjo5z8BMdXyJ1MUFaWQ2Ji8EOtX_Sz5taB4ux0-fHDRE2aa7gw>
+    <xme:sv3bYtqVE5vv2eAnuHfVNt8kruVh20hgaodX_eLkpPMgjPkzVQRPWZZjyP4YWVHVw
+    RrTgtCNjktf3A>
+X-ME-Received: <xmr:sv3bYgMCUcggTFAMcn1ALFaQexyxaVUbHCDS6QrxYJgr0T0se7SK_Q8FRAk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddtgedgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
+    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:sv3bYm7588vIXc-S6UM7WFR5XssKtopKZLUy3Xw5lNnkGAvNrsZJSQ>
+    <xmx:sv3bYi7MpZqFQS_LWxDLSJir6Jfk17eC_mPiiJDDc3OSp0jEuk3d2g>
+    <xmx:sv3bYujfV22KmAIzouaodBqpFzn7LJVoQtfGe6b9J0gBy0DYPPPesA>
+    <xmx:s_3bYizHWq0PcaSwzia3gg2A7Fx0zU5fKFToj1q3Xxh_Gemq6r32Gg>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 23 Jul 2022 09:54:58 -0400 (EDT)
+Date:   Sat, 23 Jul 2022 15:54:57 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Lee Jones <lee@kernel.org>, stable@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5.10 1/1] io_uring: Use original task for req identity
+ in io_identity_cow()
+Message-ID: <Ytv9sdsy9iGcUrVy@kroah.com>
+References: <20220719115251.441526-1-lee@kernel.org>
+ <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9383:0:b0:67b:adc2:c053 with SMTP id
- c3-20020a5d9383000000b0067badc2c053mr1432522iol.102.1658574733153; Sat, 23
- Jul 2022 04:12:13 -0700 (PDT)
-Date:   Sat, 23 Jul 2022 04:12:13 -0700
-In-Reply-To: <000000000000cbe0e605e0caa8e0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cdbe1105e4770541@google.com>
-Subject: Re: [syzbot] possible deadlock in corrupted
-From:   syzbot <syzbot+5c3c53e6db862466e7b6@syzkaller.appspotmail.com>
-To:     chuck.lever@oracle.com, jlayton@kernel.org,
-        johannes.berg@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@nbd.name,
-        syzkaller-bugs@googlegroups.com, toke@kernel.org,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17dba691-2a2b-4b20-40c3-ec77282179b0@kernel.dk>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Jul 20, 2022 at 06:48:09AM -0600, Jens Axboe wrote:
+> On 7/19/22 5:52 AM, Lee Jones wrote:
+> > This issue is conceptually identical to the one fixed in 29f077d07051
+> > ("io_uring: always use original task when preparing req identity"), so
+> > rather than reinvent the wheel, I'm shamelessly quoting the commit
+> > message from that patch - thanks Jens:
+> > 
+> >  "If the ring is setup with IORING_SETUP_IOPOLL and we have more than
+> >   one task doing submissions on a ring, we can up in a situation where
+> >   we assign the context from the current task rather than the request
+> >   originator.
+> > 
+> >   Always use req->task rather than assume it's the same as current.
+> > 
+> >   No upstream patch exists for this issue, as only older kernels with
+> >   the non-native workers have this problem."
+> 
+> Greg, can you pick this one up for 5.10-stable? Thanks!
 
-commit f856373e2f31ffd340e47e2b00027bd4070f74b3
-Author: Felix Fietkau <nbd@nbd.name>
-Date:   Tue May 31 19:08:24 2022 +0000
+Now queued up, thanks.
 
-    wifi: mac80211: do not wake queues on a vif that is being stopped
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11363672080000
-start commit:   3abc3ae553c7 Merge tag '9p-for-5.19-rc4' of https://github..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=574cf8e4f636f8ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=5c3c53e6db862466e7b6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16545ce4080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1087453ff00000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: wifi: mac80211: do not wake queues on a vif that is being stopped
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+greg k-h
