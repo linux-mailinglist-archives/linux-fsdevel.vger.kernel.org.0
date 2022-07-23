@@ -2,122 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A12C57E970
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 00:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9DC57EAF1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 03:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236581AbiGVWBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Jul 2022 18:01:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
+        id S232029AbiGWBCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Jul 2022 21:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiGVWBK (ORCPT
+        with ESMTP id S229572AbiGWBCi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Jul 2022 18:01:10 -0400
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7BD12AD3;
-        Fri, 22 Jul 2022 15:01:09 -0700 (PDT)
-Received: by mail-pf1-f181.google.com with SMTP id 17so5573573pfy.0;
-        Fri, 22 Jul 2022 15:01:09 -0700 (PDT)
+        Fri, 22 Jul 2022 21:02:38 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7793D13E18;
+        Fri, 22 Jul 2022 18:02:37 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id c12so217137ede.3;
+        Fri, 22 Jul 2022 18:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jlyu+Ezdns1o/Dl+mNDx1dSSzCArmmCHe5zOulHCgYY=;
+        b=PZsBl5ooCfsAyfBssviyiVR5Tq1jj7pKvSq+8EIYiuLRuANId3eEJ8Cfne0oRH5tST
+         cNckwvwkYNCJil7c4bHdQwdq+1j/ZICMbKPDmupGpGkjuYuypwIlqr25b/2zb8nGj+L7
+         8X6BT7i0cfdvLYah+oB/+uw18/v7O2tlssjrHraunx39DcQd6oIsFM91LN1KRUjOeySk
+         107g886IDOhDMfSuVZ8M22SN2x2lCSM95MlNgPfYmjNiwur+gHG+g9710+/nPbgwn0jJ
+         VB2nk9BZ+suPliZX/YIqKiK3alTptYuhcFjUg7RbgvcF8nWJZFV9um7H8k3hL7Y+Q5TY
+         PsjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ajABxSWxUsCKK9Od/qyGt1skys7+Os0a1j5QneotZAc=;
-        b=pHTVnlr0j8aazre/ckFL9Ibpo2RrF48v+q9azJxE6tMLk1jPDzLet2UIZSOajgLbvL
-         KNuzEAGlfy17au3yClIknYryV7aA1wdQgK286ienNuI9sAUvjoQY2AJm7yojGXB21oLU
-         6db3XQL1OM6syNcGt1Z9j8BTr/jXg2tGwKpSohuexEmkuADi3TMZV37rReY5Tdyt5w9J
-         wlVQyt4tZ6t+/U5mwtHW+pdxNHuYj2eoEEOMe/DoQCH4nyVRarHuYgZwharKcDDhxts7
-         G977jhODVOlhWhJQqVai6+5pJ50DbgH8fTXc1fZo9d+AgtxTgxSvXS9nCuVquxyubPEE
-         dNIQ==
-X-Gm-Message-State: AJIora/QoTqcRb0nJLywOgBx34AJUav/TqDyBooXyRIsB3Bga9UhUvjS
-        iuPCyW7d9Hn6koKOuQgQNXDxB1N9aDkUOQ==
-X-Google-Smtp-Source: AGRyM1vg+HIfwhtPL+PdWNr+gthVaYVrLjl4aYh4LyhLKIfuUmvhrIx/NVwQSMMB+QOUIwNSw5D80g==
-X-Received: by 2002:a63:5b5f:0:b0:416:1e31:5704 with SMTP id l31-20020a635b5f000000b004161e315704mr1494610pgm.523.1658527269253;
-        Fri, 22 Jul 2022 15:01:09 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:805b:3c64:6a1f:424c? ([2620:15c:211:201:805b:3c64:6a1f:424c])
-        by smtp.gmail.com with ESMTPSA id x8-20020a170902a38800b0016c46ff1973sm4220464pla.228.2022.07.22.15.01.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Jul 2022 15:01:08 -0700 (PDT)
-Message-ID: <a1cceb79-c72c-5a76-ed7a-156c09505692@acm.org>
-Date:   Fri, 22 Jul 2022 15:01:06 -0700
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jlyu+Ezdns1o/Dl+mNDx1dSSzCArmmCHe5zOulHCgYY=;
+        b=f7YRrftJNREBJlYrmrtZIE7CNplfquASOus+izDvxXFHwmFsTmEzz0fG3wdNAkCK03
+         LKUCZpwEEbQ4VIFGp22EMkOvzC+Opjp4gskkWXEf9ZqlzWRs4OrQNwKMg0qwRAky2Wfa
+         OKZxuBmjtvfijbmM3YeBHyGKJHn740vJyOgpQUQsJaQK4bgYoZzPHBvc+/vTZcSOEkTe
+         gvKrOGc17J4UzzEUsh5y/pDCiuZulKtuda2IgoYZT/mg2TIApSeA38yO1ebxK1fagh7d
+         whTwxAVxSa8YbnoCYqkYX6bZoeapaH2dxqqbdo+5/m0VPNw3C4c6wHsimS92M/9suPrS
+         CHCA==
+X-Gm-Message-State: AJIora+SkjvqIVttqYrJPHpcqZ0i4xNMXu/EGGQrCNqBCQJaIwJCpSCs
+        aFlYsyn+m8UnzE28ZeDpDNQ=
+X-Google-Smtp-Source: AGRyM1sAMP8KHkAWh5bS378ppL8TdO4StC0sEC6TB/Rq2m5BGNgizfRRhPByQs8fPv0/46kAMhGelA==
+X-Received: by 2002:a05:6402:524d:b0:43a:72fe:76b7 with SMTP id t13-20020a056402524d00b0043a72fe76b7mr2211131edd.398.1658538155443;
+        Fri, 22 Jul 2022 18:02:35 -0700 (PDT)
+Received: from opensuse.localnet (host-79-56-6-250.retail.telecomitalia.it. [79.56.6.250])
+        by smtp.gmail.com with ESMTPSA id r10-20020a1709061baa00b0071cef8bafc3sm2549153ejg.1.2022.07.22.18.02.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jul 2022 18:02:34 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, nvdimm@lists.linux.dev,
+        io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] fs: Call kmap_local_page() in copy_string_kernel()
+Date:   Sat, 23 Jul 2022 03:02:32 +0200
+Message-ID: <2115146.irdbgypaU6@opensuse>
+In-Reply-To: <Ytnr3IhSkDOjqbZ1@iweiny-desk3>
+References: <20220710100136.25496-1-fmdefrancesco@gmail.com> <Ytnr3IhSkDOjqbZ1@iweiny-desk3>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCHv6 07/11] block/bounce: count bytes instead of sectors
-Content-Language: en-US
-To:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        damien.lemoal@opensource.wdc.com, ebiggers@kernel.org,
-        pankydev8@gmail.com, Keith Busch <kbusch@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>
-References: <20220610195830.3574005-1-kbusch@fb.com>
- <20220610195830.3574005-8-kbusch@fb.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20220610195830.3574005-8-kbusch@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/10/22 12:58, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> Individual bv_len's may not be a sector size.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->   block/bounce.c | 13 ++++++++++---
->   1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/block/bounce.c b/block/bounce.c
-> index 8f7b6fe3b4db..fbadf179601f 100644
-> --- a/block/bounce.c
-> +++ b/block/bounce.c
-> @@ -205,19 +205,26 @@ void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig)
->   	int rw = bio_data_dir(*bio_orig);
->   	struct bio_vec *to, from;
->   	struct bvec_iter iter;
-> -	unsigned i = 0;
-> +	unsigned i = 0, bytes = 0;
->   	bool bounce = false;
-> -	int sectors = 0;
-> +	int sectors;
->   
->   	bio_for_each_segment(from, *bio_orig, iter) {
->   		if (i++ < BIO_MAX_VECS)
-> -			sectors += from.bv_len >> 9;
-> +			bytes += from.bv_len;
->   		if (PageHighMem(from.bv_page))
->   			bounce = true;
->   	}
->   	if (!bounce)
->   		return;
->   
-> +	/*
-> +	 * Individual bvecs might not be logical block aligned. Round down
-> +	 * the split size so that each bio is properly block size aligned,
-> +	 * even if we do not use the full hardware limits.
-> +	 */
-> +	sectors = ALIGN_DOWN(bytes, queue_logical_block_size(q)) >>
-> +			SECTOR_SHIFT;
->   	if (sectors < bio_sectors(*bio_orig)) {
->   		bio = bio_split(*bio_orig, sectors, GFP_NOIO, &bounce_bio_split);
->   		bio_chain(bio, *bio_orig);
+On venerd=C3=AC 22 luglio 2022 02:14:20 CEST Ira Weiny wrote:
+> On Sun, Jul 10, 2022 at 12:01:36PM +0200, Fabio M. De Francesco wrote:
+> > The use of kmap_atomic() is being deprecated in favor of=20
+kmap_local_page().
+> >=20
+> > With kmap_local_page(), the mappings are per thread, CPU local, not
+> > globally visible and can take page faults. Furthermore, the mappings=20
+can be
+> > acquired from any context (including interrupts).
+> >=20
+> > Therefore, use kmap_local_page() in copy_string_kernel() instead of
+> > kmap_atomic().
+> >=20
+> > Tested with xfstests on a QEMU + KVM 32-bits VM booting a kernel with
+> > HIGHMEM64GB enabled.
+> >=20
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> > ---
+> >=20
+> > I sent a first patch to fs/exec.c for converting kmap() and=20
+kmap_atomic()
+> > to kmap_local_page():
+> > https://lore.kernel.org/lkml/20220630163527.9776-1-fmdefrancesco@gmail.=
+com/
+> >=20
+> > Some days ago, Ira Weiny, while he was reviewing that patch, made me=20
+notice
+> > that I had overlooked a second kmap_atomic() in the same file (thanks):
+> > https://lore.kernel.org/lkml/YsiQptk19txHrG4c@iweiny-desk3/
+> >=20
+> > I've been asked to send this as an additional change. This is why there=
+=20
+will
+> > not be any second version of that previous patch.
+> >=20
+> >  fs/exec.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 4a2129c0d422..5fa652ca5823 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -639,11 +639,11 @@ int copy_string_kernel(const char *arg, struct=20
+linux_binprm *bprm)
+> >  		page =3D get_arg_page(bprm, pos, 1);
+> >  		if (!page)
+> >  			return -E2BIG;
+> > -		kaddr =3D kmap_atomic(page);
+> > +		kaddr =3D kmap_local_page(page);
+> >  		flush_arg_page(bprm, pos & PAGE_MASK, page);
+>=20
+> I really question why we can't use memcpy_to_page() here and move the
+> flush_arg_page() prior to the mapping?
+>=20
+> flush_arg_page() only calls flush_cache_page() which does not need the
+> mapping to work correctly AFAICT.
 
-Do I see correctly that there are two changes in this patch: counting 
-bytes instead of sectors and also splitting at logical block boundaries 
-instead of a 512-byte boundary? Should this patch perhaps be split?
+You're right here. I'm sorry for being so lazy and not checking that=20
+flush_arg_page() does not need to be called while the task holds the local=
+=20
+mapping :-(
 
-Thanks,
+In v2 I'll move flush_arg_page() one line above memcpy_to_page().
 
-Bart.
+Thanks for your comment,
+
+=46abio
+
+>=20
+> Ira
+>=20
+> >  		memcpy(kaddr + offset_in_page(pos), arg,=20
+bytes_to_copy);
+> >  		flush_dcache_page(page);
+> > -		kunmap_atomic(kaddr);
+> > +		kunmap_local(kaddr);
+> >  		put_arg_page(page);
+> >  	}
+> > =20
+> > --=20
+> > 2.36.1
+> >=20
+>=20
+
+
+
+
