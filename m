@@ -2,149 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB15157EF6F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Jul 2022 16:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FF257F2A1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Jul 2022 04:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237470AbiGWORy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Jul 2022 10:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
+        id S238730AbiGXCCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Jul 2022 22:02:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237449AbiGWORx (ORCPT
+        with ESMTP id S229602AbiGXCCF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Jul 2022 10:17:53 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B818D186CB
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 07:17:50 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id a82so6924090ybb.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Jul 2022 07:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mEoPEbeOyWxlrBYzTjx3/LLOWXpb1CcPOZICGC0v96M=;
-        b=jr/xvpvbVmNf+xIG0dbLCrMyluMNU3l3gZeFwLtkhnYy/4UleXz2aomwnjH+3TbMKl
-         11dBUhnttUE/J/yKFXfQN03yrN4WFewxF/+VJ/kcL6pFsFUOYhgePHT7kQM1GWHE4cnj
-         J0HF2vx93jhldzsXpN3975BnFyYHwrHhHDTW6S28Y1Bp+thJmDbF88XkOqYjLcRbtVMz
-         EymXnwDWc6excfS/Vg36Y6KXmCjFyN9Fy9ta6W1R+MsF1Y9qT+ckV60hFtIARmjwjo36
-         hhkKLiL31tekMRZqBQY+Ta4faait4JFH08LLjUBAqpKD/CnXK6iHsPwk/7J98gJf2WT9
-         7zEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mEoPEbeOyWxlrBYzTjx3/LLOWXpb1CcPOZICGC0v96M=;
-        b=I0g0UEw0NDcNER4DGy9HDnIO+Q15RIOzdVjbGrvzpd2HFSVkPiI6Tyw7hHjQom0fEg
-         aXAdnqgHG47ou2+SvhEdjpQq71yzs4sYgAGDLcA9+guTWMa6F8IWnIOBAoNv3fFCw5lg
-         aMY3ObpB9IBvh2PqlJTm+EDH0IY0bYeTVOovWIq22icliWkHYsNvR0nz96FqhNstjg2o
-         lnmA8eB6o8O+AF/OHKGqBCxtDM/4gAT79+8f8wc99VuY1JpDySHH3gP07YJ4UVvZhj9J
-         hxV5HFE8N8rbnz8z890RHRp0XkhWtWcCrfzPC5lvOPoTxQBm9xIuwQCEreZ85xPnm6MB
-         L9IA==
-X-Gm-Message-State: AJIora8daDDj6Wg1bv1J6xpDBydGktEpp4ukZUFyyweFxui3D6E5LMvo
-        PPuc3n55kfXbd2QjCfQNr94QMe2fOrRYEzGUzki2jg==
-X-Google-Smtp-Source: AGRyM1vMVZvJKOP7aWWuKyr1n74NN+gmMGpp4/ODkk6r1z+KdpVQo9OtmmE4byGdqk74TpSHifmeukWE0kzdATNgfP0=
-X-Received: by 2002:a25:2f4a:0:b0:670:ea89:72b2 with SMTP id
- v71-20020a252f4a000000b00670ea8972b2mr3546504ybv.427.1658585869576; Sat, 23
- Jul 2022 07:17:49 -0700 (PDT)
+        Sat, 23 Jul 2022 22:02:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A717B11C19;
+        Sat, 23 Jul 2022 19:02:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 40D2DB80D3E;
+        Sun, 24 Jul 2022 02:02:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76C80C341C0;
+        Sun, 24 Jul 2022 02:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658628121;
+        bh=P7SNPqf+kK7Uv5jaRDdQvqwL+CiGRzt4kUYwRGuMwuM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YJjZPL/MEDF7Q2m0BsBorqsKTC+7h5i+R/udBxD0IuxUYQvVrek2cohPL6C7rPK8C
+         BOIHeWQ47tSvQSwI94gwdGleMtB23vMKEb3haUxSBCX5/JlAvuYeArRveRVG8+3QEo
+         +6VFDKSDJMw9FFgBBLmQ+cLOLNGbS7+uaGXorNhz/GJCbEk9IrfBzoGFQqA3lvEqT/
+         IubqfaoIUl1E/s1tqxFU+K/t7aGL7ohNdS7zbDj5qO6rB7Bo3don7Mrfl370ed4tyB
+         ne38gcQUbi3ov4JkM1ULuc7Y1gl4VeaGWhJHpDSVd+ASvcC0gltl164iKK43cuILr1
+         i1plHjvIsYaNg==
+Date:   Sat, 23 Jul 2022 19:01:59 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
+Message-ID: <YtyoF89iOg8gs7hj@google.com>
+References: <20220722071228.146690-1-ebiggers@kernel.org>
+ <20220722071228.146690-7-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20220722162934.1888835-1-mcgrof@kernel.org> <20220722162934.1888835-3-mcgrof@kernel.org>
-In-Reply-To: <20220722162934.1888835-3-mcgrof@kernel.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Sat, 23 Jul 2022 22:17:12 +0800
-Message-ID: <CAMZfGtV4wC-8uT47v-nYhEi82cqNVNf1CFMM8qRU7Nd3SMyv5w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Documentation/filesystems/proc.rst: document procfs
- inode timestamps
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Zhang Yuchen <zhangyuchen.lcr@bytedance.com>,
-        David Howells <dhowells@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220722071228.146690-7-ebiggers@kernel.org>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 23, 2022 at 12:29 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> The timestamps for procfs files are not well understood and can
-> confuse users and developers [0] in particular for the timestamp
-> for the start time or a process. Clarify what they mean and that
-> they are a reflection of the ephemeral nature of the filesystem
-> inodes.
->
-> The procfs inodes are created when you first read them and then
-> stuffed in the page cache. If the page cache and indodes are
-> reclaimed they can be removed, and re-created with a new timestamp
-> after read again. Document this little bit of tribal knowledge.
->
-> [0] https://lkml.kernel.org/r/20220721081617.36103-1-zhangyuchen.lcr@bytedance.com
-> Reported-by: Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+On 07/22, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Currently, if an f2fs filesystem is mounted with the mode=lfs and
+> io_bits mount options, DIO reads are allowed but DIO writes are not.
+> Allowing DIO reads but not DIO writes is an unusual restriction, which
+> is likely to be surprising to applications, namely any application that
+> both reads and writes from a file (using O_DIRECT).  This behavior is
+> also incompatible with the proposed STATX_DIOALIGN extension to statx.
+> Given this, let's drop the support for DIO reads in this configuration.
+
+IIRC, we allowed DIO reads since applications complained a lower performance.
+So, I'm afraid this change will make another confusion to users. Could
+you please apply the new bahavior only for STATX_DIOALIGN?
+
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
->  Documentation/filesystems/proc.rst | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 9fd5249f1a5f..9defe9af683a 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -59,6 +59,15 @@ The proc  file  system acts as an interface to internal data structures in the
->  kernel. It  can  be  used to obtain information about the system and to change
->  certain kernel parameters at runtime (sysctl).
->
-> +The proc files are dynamic in nature and allow for developers to make the
-> +content to be changed each time a file is read. The proc files and directories
-> +inodes are created when someone first reads a respective proc file or directory,
-> +as such the timestamps of the proc files reflect this time. As with other
-> +filesystems, these proc inodes can be removed through reclaim under memory
-> +pressure and so the timestamps of the proc files can change if the proc files
-> +are destroyed and re-created (echo 3 > /proc/sys/vm/drop_caches forces and
-> +illustrate the reclaim of inodes and page cache).
-
-Thanks for fixing this.
-
-> +
->  First, we'll  take  a  look  at the read-only parts of /proc. In Chapter 2, we
->  show you how you can use /proc/sys to change settings.
->
-> @@ -328,6 +337,13 @@ It's slow but very precise.
->                 system call
->    ============= ===============================================================
->
-> +Note that the start_time inside the stat file is different than the timestamp
-> +of the stat file itself. The timestamp of the stat file simply reflects the
-> +first time the stat file was read. The proc inode for this file can be reclaimed
-> +under memory pressure and be recreated after this and so the timestamp can
-> +change. Userspace should rely on the start_time entry in the the stat file to
-> +get a process start time.
-> +
-
-I'm not sure the value of those comments since the above description
-is already enough to tell people the timestamp of /proc files or directories
-can be changed in some cases, which already includes the case of
-/proc/PID/stat.
-
-If we really want to take /proc/PID/stat as an example to show the
-timestamp is unstable, I think it is better to move those comments to the
-above section where you explain why the timestamp can be changed .
-
-Thanks.
-
->  The /proc/PID/maps file contains the currently mapped memory regions and
->  their access permissions.
->
-> --
-> 2.35.1
->
+>  fs/f2fs/file.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 5e5c97fccfb4ee..ad0212848a1ab9 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -823,7 +823,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+>  				struct kiocb *iocb, struct iov_iter *iter)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> -	int rw = iov_iter_rw(iter);
+>  
+>  	if (!fscrypt_dio_supported(inode))
+>  		return true;
+> @@ -841,7 +840,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+>  	 */
+>  	if (f2fs_sb_has_blkzoned(sbi))
+>  		return true;
+> -	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
+> +	if (f2fs_lfs_mode(sbi)) {
+>  		if (block_unaligned_IO(inode, iocb, iter))
+>  			return true;
+>  		if (F2FS_IO_ALIGNED(sbi))
+> -- 
+> 2.37.0
