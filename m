@@ -2,106 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 480E5580290
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 18:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5C658036F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 19:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235986AbiGYQW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jul 2022 12:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        id S236207AbiGYRRW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jul 2022 13:17:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236003AbiGYQW1 (ORCPT
+        with ESMTP id S229544AbiGYRRV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jul 2022 12:22:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F57817AA4;
-        Mon, 25 Jul 2022 09:22:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E00B9B81028;
-        Mon, 25 Jul 2022 16:22:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E31A9C341C6;
-        Mon, 25 Jul 2022 16:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658766143;
-        bh=IOTwnII+NVaJQaT2cuPRVp55oSbZX/q32do6Vju8igY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FrI6Hm7w5nuBzAVNkNpxMygvTe0yxcYK0FdhH/tuzDWWGb2BIOzGAaeANmnQGcRiR
-         zKN1u6vqFxQn9+8yH6cF3Bz+zTqLjEaqEueO8ehaAvds4tsiWaBGY4PvzRuDoBoft7
-         sbO2eyFduu/Qi8bdcq5Qo7v1wwaHrH6f0OaAAPoGg6iM2s+blg52vK9LwStxKgvI0H
-         0L3tggsuX07QI9iiiVOtFYGXQT4AIi9EzcoxxBxulih2xosUeX+bMqs5qgCi0wBqy7
-         kZraKLMULBJEDWDoHFerZsJTumh/aOnZur+LPFXC/3C/dcS3McvydMMEmG8vTFS+eE
-         c6yDPvLnWz7Vw==
-Message-ID: <7ae8a678f59a49ffeaaa39265d5108135911eeb3.camel@kernel.org>
-Subject: Re: should we make "-o iversion" the default on ext4 ?
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com, Benjamin Coddington <bcodding@redhat.com>
-Date:   Mon, 25 Jul 2022 12:22:21 -0400
-In-Reply-To: <20220721223244.GP3600936@dread.disaster.area>
-References: <69ac1d3ef0f63b309204a570ef4922d2684ed7f9.camel@kernel.org>
-         <20220721223244.GP3600936@dread.disaster.area>
-Content-Type: text/plain; charset="ISO-8859-15"
+        Mon, 25 Jul 2022 13:17:21 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E6918393
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 10:17:20 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id c20-20020a9d4814000000b0061cecd22af4so4656594otf.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 10:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=eL2xRVgOKUKmpeDr+ye9Ri8ghs0kUi231r2vO8s5QTI=;
+        b=HqOGNKuh9UjoA3KqMsi4sgwjIiqMNEp7ViMRolZFcm0skyrs/0fv7ibsB5iSaMGOUd
+         QAd/Jgj2OghlFzr35Lpd2xEbucsTpkVskvlQVnK85yPrEU5dBACad/V4ybkzrcNMrzWz
+         6/LYJn4FXHc0kOFALzFawvLC2czaby16WLTZVo6fs5dBrGXTSt6uc7/hhAmqscDPAd76
+         12MkiOrFj7bZtHQh2J+jpOBXW4omhhk7W6W9vCakSM2waO9pW4nmefNDUHLgsGox6POI
+         HB32aJ7i6/jpG9FvHPYJ55CXc73FLYpyCbiov09Qg8DaBWGiEWSIYcbh9iRI83yJ+aFH
+         ubWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=eL2xRVgOKUKmpeDr+ye9Ri8ghs0kUi231r2vO8s5QTI=;
+        b=2p+9BcL0PziYm+8mf+c2J68oJaAX8S8cQ919fw1H6HqYJ0c9Ci6DMou5hni9+zwqKh
+         5noLq75euTt+IMKma8X1qE5ZURP72iP7wJ0KunGMhCQ7JSBoP+zC+DgotspVyeRS77oH
+         YHS5d099NMh4v2Wn280PJ/SITwJ+gQv0ymSyhSGZa199cpnpDpThSbKHnHTFfKa/hUq2
+         VzsW69dqz0zFIbZt8Sd+au2Kkq2TiCjDfNs0e6s1mMgM4/m61HNtNxNhMgtZFiiujTBG
+         XI4X0XAFYr5MwzLP13YNl9zXzs9DKYzayCJOAaVLMX3YKNEFldh0nYbBqXKqV8OL2mqH
+         ulcw==
+X-Gm-Message-State: AJIora+3BcqRF0qTYCvwcpRH55Ti6RCwPrjHR9QxSH6OWlBEMbuXYIqk
+        2HrGe6EKfVarJy+h+HxNJP7qbw==
+X-Google-Smtp-Source: AGRyM1tJMTAGKHUY7aX05hNL3la6HYs0t/QP9F9rkoXus7juxlpDN3oRs+6QZ5w3uVikT6Bz9CN2pA==
+X-Received: by 2002:a9d:4547:0:b0:61c:7217:24bc with SMTP id p7-20020a9d4547000000b0061c721724bcmr5358756oti.48.1658769439771;
+        Mon, 25 Jul 2022 10:17:19 -0700 (PDT)
+Received: from smtpclient.apple ([2600:1700:42f0:6600:f58b:5af2:526d:b883])
+        by smtp.gmail.com with ESMTPSA id s30-20020a056870611e00b0010d04a20030sm6186302oae.36.2022.07.25.10.17.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Jul 2022 10:17:18 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
+Subject: Re: [PATCH] hfsplus: Convert kmap() to kmap_local_page() in bitmap.c
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <20220724205007.11765-1-fmdefrancesco@gmail.com>
+Date:   Mon, 25 Jul 2022 10:17:13 -0700
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ira Weiny <ira.weiny@intel.com>
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Message-Id: <A2FB0201-8342-481B-A60C-32A2B0494D33@dubeyko.com>
+References: <20220724205007.11765-1-fmdefrancesco@gmail.com>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+X-Mailer: Apple Mail (2.3696.100.31)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-07-22 at 08:32 +1000, Dave Chinner wrote:
-> On Tue, Jul 19, 2022 at 09:51:33AM -0400, Jeff Layton wrote:
-> > Back in 2018, I did a patchset [1] to rework the inode->i_version
-> > counter handling to be much less expensive, particularly when no-one is
-> > querying for it.
->=20
-> Yup, there's zero additional overhead for maintaining i_version in
-> XFS when nothing is monitoring it. Updating it comes for free in any
-> transaction that modifies the inode, so when writes
-> occur i_version gets bumped if timestamps change or allocation is
-> required.
->=20
-> And when something is monitoring it, the overhead is effectively a
-> single "timestamp" update for each peek at i_version the monitoring
-> agent makes. This is also largely noise....
->=20
-> > Testing at the time showed that the cost of enabling i_version on ext4
-> > was close to 0 when nothing is querying it, but I stopped short of
-> > trying to make it the default at the time (mostly out of an abundance o=
-f
-> > caution). Since then, we still see a steady stream of cache-coherency
-> > problems with NFSv4 on ext4 when this option is disabled (e.g. [2]).
-> >=20
-> > Is it time to go ahead and make this option the default on ext4? I don'=
-t
-> > see a real downside to doing so, though I'm unclear on how we should
-> > approach this. Currently the option is twiddled using MS_I_VERSION flag=
-,
-> > and it's unclear to me how we can reverse the sense of such a flag.
->=20
-> XFS only enables SB_I_VERSION based on an on disk format flag - you
-> can't turn it on or off by mount options, so it completely ignores
-> MS_I_VERSION.
->=20
-> > Thoughts?
->=20
-> My 2c is to behave like XFS: ignore the mount option and always turn
-> it on.
 
-I'd be fine with that, personally.
 
-They could also couple that with a tune2fs flag or something, so you
-could still disable it if it were a problem for some reason.
+> On Jul 24, 2022, at 1:50 PM, Fabio M. De Francesco =
+<fmdefrancesco@gmail.com> wrote:
+>=20
+> kmap() is being deprecated in favor of kmap_local_page().
+>=20
+> There are two main problems with kmap(): (1) It comes with an overhead =
+as
+> mapping space is restricted and protected by a global lock for
+> synchronization and (2) it also requires global TLB invalidation when =
+the
+> kmap=E2=80=99s pool wraps and it might block when the mapping space is =
+fully
+> utilized until a slot becomes available.
+>=20
+> With kmap_local_page() the mappings are per thread, CPU local, can =
+take
+> page faults, and can be called from any context (including =
+interrupts).
+> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+> the tasks can be preempted and, when they are scheduled to run again, =
+the
+> kernel virtual addresses are restored and are still valid.
+>=20
+> Since its use in bitmap.c is safe everywhere, it should be preferred.
+>=20
+> Therefore, replace kmap() with kmap_local_page() in bnode.c.
+>=20
 
-It's unlikely that anyone will really notice however, so turning it on
-unconditionally may be the best place to start.
---=20
-Jeff Layton <jlayton@kernel.org>
+Looks good. Maybe, it makes sense to combine all kmap() related =
+modifications in HFS+ into
+one patchset?
+
+Reviewed by: Viacheslav Dubeyko <slava@dubeyko.com>=20
+
+Thanks,
+Slava.
+
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> ---
+> fs/hfsplus/bitmap.c | 18 +++++++++---------
+> 1 file changed, 9 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/fs/hfsplus/bitmap.c b/fs/hfsplus/bitmap.c
+> index cebce0cfe340..0848b053b365 100644
+> --- a/fs/hfsplus/bitmap.c
+> +++ b/fs/hfsplus/bitmap.c
+> @@ -39,7 +39,7 @@ int hfsplus_block_allocate(struct super_block *sb, =
+u32 size,
+> 		start =3D size;
+> 		goto out;
+> 	}
+> -	pptr =3D kmap(page);
+> +	pptr =3D kmap_local_page(page);
+> 	curr =3D pptr + (offset & (PAGE_CACHE_BITS - 1)) / 32;
+> 	i =3D offset % 32;
+> 	offset &=3D ~(PAGE_CACHE_BITS - 1);
+> @@ -74,7 +74,7 @@ int hfsplus_block_allocate(struct super_block *sb, =
+u32 size,
+> 			}
+> 			curr++;
+> 		}
+> -		kunmap(page);
+> +		kunmap_local(pptr);
+> 		offset +=3D PAGE_CACHE_BITS;
+> 		if (offset >=3D size)
+> 			break;
+> @@ -127,7 +127,7 @@ int hfsplus_block_allocate(struct super_block *sb, =
+u32 size,
+> 			len -=3D 32;
+> 		}
+> 		set_page_dirty(page);
+> -		kunmap(page);
+> +		kunmap_local(pptr);
+> 		offset +=3D PAGE_CACHE_BITS;
+> 		page =3D read_mapping_page(mapping, offset / =
+PAGE_CACHE_BITS,
+> 					 NULL);
+> @@ -135,7 +135,7 @@ int hfsplus_block_allocate(struct super_block *sb, =
+u32 size,
+> 			start =3D size;
+> 			goto out;
+> 		}
+> -		pptr =3D kmap(page);
+> +		pptr =3D kmap_local_page(page);
+> 		curr =3D pptr;
+> 		end =3D pptr + PAGE_CACHE_BITS / 32;
+> 	}
+> @@ -151,7 +151,7 @@ int hfsplus_block_allocate(struct super_block *sb, =
+u32 size,
+> done:
+> 	*curr =3D cpu_to_be32(n);
+> 	set_page_dirty(page);
+> -	kunmap(page);
+> +	kunmap_local(pptr);
+> 	*max =3D offset + (curr - pptr) * 32 + i - start;
+> 	sbi->free_blocks -=3D *max;
+> 	hfsplus_mark_mdb_dirty(sb);
+> @@ -185,7 +185,7 @@ int hfsplus_block_free(struct super_block *sb, u32 =
+offset, u32 count)
+> 	page =3D read_mapping_page(mapping, pnr, NULL);
+> 	if (IS_ERR(page))
+> 		goto kaboom;
+> -	pptr =3D kmap(page);
+> +	pptr =3D kmap_local_page(page);
+> 	curr =3D pptr + (offset & (PAGE_CACHE_BITS - 1)) / 32;
+> 	end =3D pptr + PAGE_CACHE_BITS / 32;
+> 	len =3D count;
+> @@ -215,11 +215,11 @@ int hfsplus_block_free(struct super_block *sb, =
+u32 offset, u32 count)
+> 		if (!count)
+> 			break;
+> 		set_page_dirty(page);
+> -		kunmap(page);
+> +		kunmap_local(pptr);
+> 		page =3D read_mapping_page(mapping, ++pnr, NULL);
+> 		if (IS_ERR(page))
+> 			goto kaboom;
+> -		pptr =3D kmap(page);
+> +		pptr =3D kmap_local_page(page);
+> 		curr =3D pptr;
+> 		end =3D pptr + PAGE_CACHE_BITS / 32;
+> 	}
+> @@ -231,7 +231,7 @@ int hfsplus_block_free(struct super_block *sb, u32 =
+offset, u32 count)
+> 	}
+> out:
+> 	set_page_dirty(page);
+> -	kunmap(page);
+> +	kunmap_local(pptr);
+> 	sbi->free_blocks +=3D len;
+> 	hfsplus_mark_mdb_dirty(sb);
+> 	mutex_unlock(&sbi->alloc_mutex);
+> --=20
+> 2.37.1
+>=20
+
