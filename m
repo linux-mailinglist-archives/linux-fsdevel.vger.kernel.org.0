@@ -2,70 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C410F58043E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 21:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E41580445
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 21:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236084AbiGYTCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jul 2022 15:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
+        id S235192AbiGYTKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jul 2022 15:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiGYTCh (ORCPT
+        with ESMTP id S230455AbiGYTKS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jul 2022 15:02:37 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23541D32E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 12:02:36 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id b11so22239122eju.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 12:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MUM1CP+2ZUXhXNaHHKSpsTwJwtJWDDOSw2yAzcWT8HA=;
-        b=Ypv/i1muEan0Jrz4RW1JiLlZsx7zfu0ARaCP6zqgK8Dlpn80HGGhrRt8UE6mn9DmkJ
-         vxHb3S355f1kNXk55/F9pYtnWV4f+Ey56rYjhEXyAG3cFqxlQA47EZo8qxAaIPcmnY6v
-         YGxToS3ajc5GxWQqtUZd+BlwV30mYDfKwTico=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MUM1CP+2ZUXhXNaHHKSpsTwJwtJWDDOSw2yAzcWT8HA=;
-        b=MDGhDnlkHrYU5s8nhQQbhnEQIsY8GNqsxLNjtAJZm/gGZq2zvf8lKDELvzmYyKYGi8
-         8nmiUWX5QAR0xXJu7/a4bBMLpphQ40c1vZMt4W/W0sYOdKtJVXjxp2TRNzP9hjMXRHVB
-         qGHKubl7iKVlJqct4nTPAug8Lft4EMWa53v5erZLFQI+qnBs1Eia0F1jbDO3lpYcJzOT
-         HuCBB0yvVB62679yEFl1rQIBkwn+32KPzCeGNrdKeVO9Qb7fUDLeh3YojfpBKP353N5A
-         e/Lkfa2fxbLkBwupOY5K9FQp4jal6KibD3lNExcTkEr5HkYEZNwO3bihY4SwyK5LH6ws
-         R7+A==
-X-Gm-Message-State: AJIora8x/u7U0O3yGu/FbXmyBLY0LwMrZYXQ2m1cJCfKd1i55GR16buo
-        44MKjQfwqoCgVKt4xAAXIqrIRM3k+g1CMgi2
-X-Google-Smtp-Source: AGRyM1sYmLTgC/we+qd796r2Bg5M4KUDhF4+NHG/vPQ9iH/8cOEnkE//7yiKdHgWGQ1Tdpdb0d+g2Q==
-X-Received: by 2002:a17:906:ef90:b0:72b:9ce5:f016 with SMTP id ze16-20020a170906ef9000b0072b9ce5f016mr10950455ejb.697.1658775754997;
-        Mon, 25 Jul 2022 12:02:34 -0700 (PDT)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
-        by smtp.gmail.com with ESMTPSA id b21-20020a170906151500b007030c97ae62sm5598225ejd.191.2022.07.25.12.02.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jul 2022 12:02:33 -0700 (PDT)
-Received: by mail-wm1-f42.google.com with SMTP id c22so7426209wmr.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 12:02:33 -0700 (PDT)
-X-Received: by 2002:a05:600c:3553:b0:3a3:2b65:299e with SMTP id
- i19-20020a05600c355300b003a32b65299emr19647350wmq.145.1658775753078; Mon, 25
- Jul 2022 12:02:33 -0700 (PDT)
+        Mon, 25 Jul 2022 15:10:18 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C34965B0;
+        Mon, 25 Jul 2022 12:10:16 -0700 (PDT)
+Received: from [192.168.1.107] ([37.4.249.109]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MMoXC-1nxI7N2v1o-00Ij2c; Mon, 25 Jul 2022 21:09:33 +0200
+Message-ID: <0840b428-3a77-2339-354f-7fbd3295bb4d@i2se.com>
+Date:   Mon, 25 Jul 2022 21:09:32 +0200
 MIME-Version: 1.0
-References: <YtR8tPTkL/L1kFkY@yury-laptop> <Yt7jfiSlNOeeookP@yury-laptop>
-In-Reply-To: <Yt7jfiSlNOeeookP@yury-laptop>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 25 Jul 2022 12:02:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjroqb0Hr9-1BCATjSuBdfdkWS6qqFaLXrwFCsHvgGH_g@mail.gmail.com>
-Message-ID: <CAHk-=wjroqb0Hr9-1BCATjSuBdfdkWS6qqFaLXrwFCsHvgGH_g@mail.gmail.com>
-Subject: Re: x86_64/kvm: kernel hangs on poweroff
-To:     Yury Norov <yury.norov@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
+ Raspberry Pi
+Content-Language: en-US
+To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
+References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+ <Yt6xsyy3+qEMn08y@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <Yt6xsyy3+qEMn08y@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:zkohnzVDX6GEalSLCUMmFbqsJwJxoWATycrIQTqfL65iZiwPMEU
+ sy2EqTGJuiWYWrXJisaMISx7068cC556l6CddnfCMdyIvmNbcEYqDoQq++J8tcBtny2QvM2
+ nXjQwuWg1bnGKPrhuohz1zn6todYnIPUYKwDr8bDhZQkIupzpGLho1aPm2f6e97bKtmChlk
+ NHuZraFoL2SKzcqIpzt6A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IUuuotGKt7w=:3t7CcV2l5Kwia56EcLvCgw
+ 5Vz9s2Y22iHojAn9A/2W0W59LbQlQCAXd7D/TBj9axxgFnBj0VGB6yb9DsKifrLBKqLHBOfFo
+ p7TNzv3ZORlKaIGGr0O++Fe50rNQytVVn+nJEwfCu5hAjIGUEfZ6iPRzWi2ZOlNgXVbfr5xMP
+ W92w4YM2r+Uide4E/5UUpCA7Qi7ueoRmHUvm5NIY6e/YxPqgVbxFRtBkpCiyXzdXoo7aa1tbd
+ El7sgvNeyHzdLGekdUgtflFPO3a3JL/Ve3LkWlz5cSOEyFIr4lda0L1EiC03Tl6S79Nw27a96
+ v6OU/8wC1P9oBdi8KeGGOYuZglcWwMhqnOxhjqA39YPHTreoXrFLU8g3EWVK5ZlI+Dr35QDBf
+ oIVHfLFa7pGlb2nRcpa4/+fO+AVk3cTeDW7eRo0OUv0svYs/ZjH4iqdI+QHq5aFLZrBPiL6A3
+ HgFjHnWvaaSJS786MFgcszzNZpLhbmoGTNVQdmL6e4nBDUIMwx9hLrk850K9lttrpzG4H/Kcu
+ PPDSIvjW6OIYLnNk8bxMKmz16R9prlaT+bjlTROqpN67WVufzHx1Jbcb+cyJ3Q7kkm3c0WmO6
+ +eCkHD5qnp+HBtRox0QG60M1M0CpRh954K8mUXs/u6CdeazN8Yhvi1mxE1uGA66LlPCCgX+sQ
+ g+sc9TF1mhYDqSQG6lIAVPkRJp7j1QOXdt6ohbCrGPTG8liInq9XyvJWPj9g2KI7Byfk1mC6y
+ vCzhz0aQvqyJv8HewN3wSzx/Czt5Al79de2aXUG05d8l3KKXlxVjVflJXeY=
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,56 +65,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 25, 2022 at 11:40 AM Yury Norov <yury.norov@gmail.com> wrote:
+Hi Ojaswin,
+
+Am 25.07.22 um 17:07 schrieb Ojaswin Mujoo:
+> On Mon, Jul 18, 2022 at 03:29:47PM +0200, Stefan Wahren wrote:
+>> Hi,
+>>
+>> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
+>> unable to run "rpi-update" without massive performance regression on my
+>> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
+>> tool successfully downloads the latest firmware (> 100 MB) on my development
+>> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
+>> min. The same scenario on Linux 5.18 shows the following symptoms:
+>>
+>> - download takes endlessly much time and leads to an abort by userspace in
+>> most cases because of the poor performance
+>> - massive system load during download even after download has been aborted
+>> (heartbeat LED goes wild)
+>> - whole system becomes nearly unresponsive
+>> - system load goes back to normal after > 10 min
+>> - dmesg doesn't show anything suspicious
+>>
+>> I was able to bisect this issue:
+>>
+>> ff042f4a9b050895a42cae893cc01fa2ca81b95c good
+>> 4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
+>> 25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
+>> b4bc93bd76d4da32600795cd323c971f00a2e788 bad
+>> 3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
+>> b080cee72ef355669cbc52ff55dc513d37433600 good
+>> ad9c6ee642a61adae93dfa35582b5af16dc5173a good
+>> 9b03992f0c88baef524842e411fbdc147780dd5d bad
+>> aab4ed5816acc0af8cce2680880419cd64982b1d good
+>> 14705fda8f6273501930dfe1d679ad4bec209f52 good
+>> 5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
+>> 8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
+>> 077d0c2c78df6f7260cdd015a991327efa44d8ad bad
+>> cc5095747edfb054ca2068d01af20be3fcc3634f good
+>> 27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
+>>
+>> commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
+>> Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> Date:   Tue Mar 8 15:22:01 2022 +0530
+>>
+>> ext4: make mb_optimize_scan performance mount option work with extents
+>>
+>> If i revert this commit with Linux 5.19-rc6 the performance regression
+>> disappears.
+>>
+>> Please ask if you need more information.
+> Hi Stefan,
 >
-> I didn't investigate on it and I think I'll have no chance to look
-> closer at next week or two.
+> Apologies, I had missed this email initially. So this particular patch
+> simply changed a typo in an if condition which was preventing the
+> mb_optimize_scan option to be enabled correctly (This feature was
+> introduced in the following commit [1]). I think with the
+> mb_optimize_scan now working, it is somehow causing the firmware
+> download/update to take a longer time.
+>
+> I'll try to investigate this and get back with my findings.
 
-I suspect you will have to bisect it, but it may not even be kernel-specific.
+thanks. I wasn't able to reproduce this heavy load symptoms with every 
+SD card. Maybe this depends on the write performance of the SD card to 
+trigger the situation (used command to measure write performance: dd 
+if=/dev/zero of=/boot/test bs=1M count=30 oflag=dsync,direct ).
 
-> Just reproduced on v5.19-rc8.
+I tested a Kingston consumer 32 GB which had nearly constant write 
+performance of 13 MB/s and didn't had the heavy load symptoms. The 
+firmware update was done in a few seconds, so hard to say that at least 
+the performance regression is reproducible.
 
-Well, it apparently also reproduces with 5.18, so it's not a regression.
+I also tested 2x Kingston industrial 16 GB which had a floating write 
+performance between 5 and 10 MB/s (wear leveling?) and both had the 
+heavy load symptoms.
 
-> > [   22.162259] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000000
-> > [   22.163539] CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.19.0-rc6 #198
-> > [   22.164327] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
-> > [   22.164327] Call Trace:
-> > [   22.164327]  <TASK>
-> > [   22.164327]  dump_stack_lvl+0x34/0x44
-> > [   22.164327]  panic+0x107/0x28a
-> > [   22.164327]  do_exit.cold+0x15/0x15
-> > [   22.164327]  ? sys_off_notify+0x3e/0x60
-> > [   22.164327]  __do_sys_reboot+0x1df/0x220
-> > [   22.164327]  ? vfs_writev+0xc7/0x190
-> > [   22.164327]  ? virtio_crypto_ctrl_vq_request+0xd0/0xd0
-> > [   22.164327]  ? fpregs_assert_state_consistent+0x1e/0x40
-> > [   22.164327]  do_syscall_64+0x3b/0x90
-> > [   22.164327]  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> > [   22.164327] RIP: 0033:0x7f42b4118443
-> > [   22.164327] Code: 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 89 fa be 69 19 12 28 bf ad de e1 fe b8 a9 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 f9 c9 0d 00 f7 d8
+All SD cards has been detected as ultra high speed DDR50 by the emmc2 
+interface.
 
-That's literally the "exit()" system call.
+Best regards
 
-So the only reason the kernel is complaining is that your user mode
-'init' is calling 'exit()'. Thaty will just make the kernel go "Sorry,
-I can't continue, I need init as the child reaper". IOW, it's not a
-"kernel bug" kind of panic, it's literally the kernel just going "I'm
-done".
-
-The fact that I don't think I've seen anybody else reporting this
-makes me think it's something you do.
-
-Without any other reports I can find, and thus no pattern to it, I
-think it's on you to figure out when this started happening and what
-it is that triggers it, since you're the only one that sees it.
-
-It smells like it's your KVM setup that doesn't recognize the
-power-off sequence, so the IO operation that is *supposed* to power
-off the machine (and in the case of KVM, make it exit), doesn't do so,
-and then that poweroff() thing returns to user space, and then user
-space says "I tried to power off, it didn't work, so I'm just going to
-exit", and that is what makes the kernel then say "init exited, I
-can't continue either"
-
-              Linus
+>
+> Regard,
+> Ojaswin
+>
+> [1]
+> 	commit 196e402adf2e4cd66f101923409f1970ec5f1af3
+> 	From: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+> 	Date: Thu, 1 Apr 2021 10:21:27 -0700
+> 	
+> 	ext4: improve cr 0 / cr 1 group scanning
+>
+>> Regards
+>>
