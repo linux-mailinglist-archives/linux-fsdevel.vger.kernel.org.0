@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2BC57FFA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 15:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3E757FFCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Jul 2022 15:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233487AbiGYNPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Jul 2022 09:15:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43658 "EHLO
+        id S232329AbiGYNaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Jul 2022 09:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232415AbiGYNPV (ORCPT
+        with ESMTP id S231653AbiGYNaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Jul 2022 09:15:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E5D49DF6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 06:15:09 -0700 (PDT)
+        Mon, 25 Jul 2022 09:30:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2F51E62F6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Jul 2022 06:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658754908;
+        s=mimecast20190719; t=1658755814;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=mUrrGxg2XdYxNcp8a192sSk3YqA6UbAr9RQqZi36MAM=;
-        b=jTXVDQmsXlKo/HPm/YDU1xEJF/VHaULylrmhMcA5TiEMGWR0oOjhE8TOn7Cc68S91k0SV+
-        PEmtVQhC6MvrIn/KiCK864mnLwtEevI6bqUNQ/hlyDMC7HWVa8gAHxCT4QyLN4IZljqbLs
-        YLDBb5MnUJOLD7tkmambhJMiPQoEqgQ=
+        bh=zLMssCDX8YRpUX67ts2quc3CX+QfCsx92UJz77SC0ZQ=;
+        b=flQTABdZ1iGj8V8N84PgfoVxupXEFNbdpFD2D/OUgAo2y4FcbRiSknm0z62TioxF6HVKOG
+        8UU9PgYc9jXh8kKgbSvSyNei98vaD/vsBisZdEmqn7QB8ZJ2G4/i3YvgPDEd6q7Hkat0NH
+        2vTxHadqXOiorke7/+YyTPne4N83MAs=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-18-pSC4yvN9Nx-tduZKOCHnrA-1; Mon, 25 Jul 2022 09:15:05 -0400
-X-MC-Unique: pSC4yvN9Nx-tduZKOCHnrA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-593-hLt_s_vTMcSBT3UtWf2uGA-1; Mon, 25 Jul 2022 09:30:12 -0400
+X-MC-Unique: hLt_s_vTMcSBT3UtWf2uGA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 18EA68037B5;
-        Mon, 25 Jul 2022 13:15:05 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 46FA88039A5;
+        Mon, 25 Jul 2022 13:30:12 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D085C1D3AD;
-        Mon, 25 Jul 2022 13:15:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 30F561415122;
+        Mon, 25 Jul 2022 13:30:12 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 65B0822341E; Mon, 25 Jul 2022 09:15:04 -0400 (EDT)
-Date:   Mon, 25 Jul 2022 09:15:04 -0400
+        id 0837B22341E; Mon, 25 Jul 2022 09:30:12 -0400 (EDT)
+Date:   Mon, 25 Jul 2022 09:30:11 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>,
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xieyongji@bytedance.com,
         fam.zheng@bytedance.com, Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH] fuse: writeback_cache consistency enhancement
- (writeback_cache_v2)
-Message-ID: <Yt6XWPGx8leFtD8b@redhat.com>
+Subject: Re: [External] Re: [PATCH] fuse: writeback_cache consistency
+ enhancement (writeback_cache_v2)
+Message-ID: <Yt6a4//QTmg1r0xw@redhat.com>
 References: <20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com>
- <YrySlhapXqHX4/1P@redhat.com>
- <CAFQAk7jWHvAoFkVW2cUt6QJY8jKuxpjnP-_RtLKOV5USGCvfBw@mail.gmail.com>
+ <YryWjGe6MgBmSkhO@redhat.com>
+ <CAFQAk7iNc0aOHh4aYg4zuoUsxeBzPYo21VdU+pEhsWs2uixwoQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFQAk7jWHvAoFkVW2cUt6QJY8jKuxpjnP-_RtLKOV5USGCvfBw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+In-Reply-To: <CAFQAk7iNc0aOHh4aYg4zuoUsxeBzPYo21VdU+pEhsWs2uixwoQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,8 +65,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 18, 2022 at 01:17:10PM +0800, Jiachen Zhang wrote:
-> On Thu, Jun 30, 2022 at 1:57 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Mon, Jul 18, 2022 at 01:48:30PM +0800, Jiachen Zhang wrote:
+> On Thu, Jun 30, 2022 at 2:14 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 > >
 > > On Fri, Jun 24, 2022 at 01:58:25PM +0800, Jiachen Zhang wrote:
 > > > Some users may want both the high performance of the writeback_cahe mode and
@@ -83,72 +83,65 @@ On Mon, Jul 18, 2022 at 01:17:10PM +0800, Jiachen Zhang wrote:
 > > >     generated by kernel are just temporary values that are never flushed to
 > > >     server, and they can also be updated by the official server cmtime when
 > > >     the writeback cache is clean.
-> > >
-> > >     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
-> > >     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
-> > >     are likely not equal to the offical server cmtime.
 > >
-> > We have a init flag to negotiate FUSE_AUTO_INVAL_DATA to enable/disable
-> > fc->auto_inval_data. So should it be filesystem's (user space) responsibility
-> > to not use FUSE_AUTO_INVAL_DATA when using FUSE_WRITEBACK_CACHE. I mean,
-> > otherwise it is confusing. On one hand filesystem is using FUSE_AUTO_INVAL_DATA
-> > but it silently is ingored by kernel because FUSE_WRITEBACK_CACHE is
-> > being used as well.
+> > Can this give the appearance of time going backwards. If file server
+> > is getting time stamps from another remote filesystem (say NFS), it
+> > is possible that client and server clocks are not in sync. So for
+> > a stat() might return temporary value of c/mtime from local kernel and
+> > once it gets udpated, it returns a time which might be behind previous
+> > time. Sounds like trouble to me.
 > >
 > 
 > Hi Vivek,
 > 
-> The fc->auto_inval_data branch code is also skipped in writeback_cache
-> v1 mode, so I think we can also skip it in writeback_cache_v2. I
-> listed this point here because it is not skipped in Miklos'
-> writeback_cache_v2 initial patch.
+> Yes, the time is likely to be changed silently on a client after the
+> data is flush to the server. But in terms of consistency, some FS
+> implementations may rely on the server mtime to revalidate cache. In
+> such a case, if the server time is updated from multiple client time
+> sources, it may lead to false cache revalidation results.
+> 
+> > This can happen more often on virtiofs (even without a remote filesystem
+> > being involved).
+> >
+> 
+> Maybe if there is no need of multiple VM-guest consistency, we can
+> just disable the writeback_cache_v2 mode.
 
-So, fc->auto_inval_data seems to invalidate inode pages if either file
-size or mtime in user space (file server) has changed since last cached
-value.
+To me writeback_cache_v2 mode in current form is not making much sense.
+What are the semantics. If we are caching writes (and size/mtime/ctime)
+locally, then either we should not be expecting sharing to happen
+from other clients or we need to implement lease kind of mechanism
+so that we flush out data before other clients do writes.
 
-With writeback cache v1, we don't even trust/use size or mtime value
-as retrieved from server. And if we are not using size/mtime value as
-retrieved from server, there is no question of invalidating local cached
-data. Idea seems to be that we are writing and caching the contents
-locally (and not expecting the changes to take place on server from other
-clients). So for v1 mode, it kind of makes sense to not pay attention
-to auto_inval_data.
+What is being proposed seems very odd. Local caching is happening at
+the same time sharing among multiple clients is happening. If one
+client writes and updates mtime, other client can sometime update
+its mtime (if cache is clean) and ignore it other times. Even if
+it updates mtime, it might not flush its local cache (auto_inval_data).
+Time can go backward. If two clients are writing to same file and
+talking to each other over network, then their writes can appear to
+be completely out of order. 
 
-For write cache v2, on one hand you are updating the size as received
-from the server. So you are epxecting another client to update the
-file. But at the same time you are not willing to invalidate local
-page cache. That is not making much sense to me.
+I feel that if we are using writeback_cache, we should not be using
+sharing among multiple clients. If we do want to locally cache dirty
+pages and at the same time do sharing, we need to implement notion of
+leases as other remote filesystems have done.
 
-For example, say with writeback cache v2, you have cached few pages (not
-dirty) from file foo.txt in the kernel (client). Now another client
-overwrites the file foo.txt and hence modified mtime. When you get new
-mtime in first client (kenrel), you will simply ignore it and continue
-to use old data?
-
-I think you need to write a more coherent changelog/cover-letter. First
-define what's the current behavior and then define what will be the
-new behavior and how does it impact overall caching etc. We seem to be
-talking about small individual pieces but I am not sure I am clear
-on overall architecture of this new mode.
+Current proposed semantics of writeback_cache_v2 seem to be just
+a band aid for a specific use case.
 
 Thanks
 Vivek
 
 
+
+
 > 
-> Thanks,
-> Jiachen
 > 
-> > will it make more sense to just document it and let filesystem authors
-> > enable options carefully.
-> >
-> > BTW, this probably should be a separate patch in the patch series anyway
-> > with proper explanation.
-> >
-> > Thanks
-> > Vivek
-> >
+> > >
+> > >     2. Skip mtime-based revalidation when fc->auto_inval_data is set with
+> > >     fc->writeback_cache_v2. Because the kernel-generated temporary cmtime
+> > >     are likely not equal to the offical server cmtime.
 > > >
 > > >     3. If any page is ever flushed to the server during FUSE_GETATTR
 > > >     handling on fuse server, even if the cache is clean when
@@ -168,6 +161,26 @@ Vivek
 > > >
 > > > Together with another patch [2], a FUSE daemon is able to implement
 > > > close-to-open (CTO) consistency like what is done in NFS clients.
+> >
+> > If your goal is to implement NFS style CTO with writeback cache mode, then
+> > is it not enough to query and udpate attributes at file open time. Instead
+> > of worrying about also updating attrs while file is open (and cache is
+> > clean). Updating attrs when cache is clean, is non-deterministic anyway,
+> > so I don't see how it can be very useful for applications.
+> >
+> 
+> IIUC, the NFS-style CTO consistency only requires updating invalidated
+> data & attr caches on file open, and the cache updating will be
+> delayed if there is any writing opens, even if the cache is clean. So
+> writeback_cache_v2 updates even more radical than NFS-style CTO.
+> 
+> Thanks,
+> Jiachen
+> 
+> > Thanks
+> > Vivek
+> >
+> >
 > > >
 > > > [1] https://lore.kernel.org/linux-fsdevel/Ymfu8fGbfYi4FxQ4@miu.piliscsaba.redhat.com
 > > > [2] https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
