@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADEBB581738
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 18:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A9258173D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 18:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239335AbiGZQVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jul 2022 12:21:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+        id S239380AbiGZQVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jul 2022 12:21:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237717AbiGZQU4 (ORCPT
+        with ESMTP id S239322AbiGZQVI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jul 2022 12:20:56 -0400
+        Tue, 26 Jul 2022 12:21:08 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153F4255A5;
-        Tue, 26 Jul 2022 09:20:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF16727171;
+        Tue, 26 Jul 2022 09:21:06 -0700 (PDT)
 Received: from localhost.localdomain (unknown [203.135.47.243])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2411966015A9;
-        Tue, 26 Jul 2022 17:20:43 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B07F96601967;
+        Tue, 26 Jul 2022 17:20:54 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658852453;
-        bh=2XJezlM2O6mq/j4/cdoFLK6TcWCjkGUL5ahOSzikQrE=;
+        s=mail; t=1658852465;
+        bh=s6eqXFSk6GZEoo/gcU7nGfRgAO8upesyCU6wcU5FTRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DD6J0sFg1PTj3EJZLhlR7/+xNSPOMV69E8RiZxrn74CZeVGkI1SS9LFPtILfRDyrk
-         11uiDC8ef3j1vxs48UbEniz5rg2s16ZSakUvXHCwQPj6PHAIqXq1JPuW3w4eTQNj38
-         t5UULnJkkP+JggGTRXQocJv0Io551fmgt8od018KD4nwFm9HaJKsH/uwQ1wFtppoJT
-         3aJL7gEcWUzBy8OF5PtHKMP4/UMaxaeLhaiCbyqUYPPGtVHIhbUiYoBlYHjyVXTw8b
-         8+nmpQNtCRINSJ/4NuPtr/XvaeR54EonTNG/2iAYqMhj+oYJePSZH0GEbs/cNAACym
-         IBWWCckKRLDLw==
+        b=oWOW0yfY+fyhwjzIf9jeBedeg2FkBZ2QYDN0yyceKZGGy9yc9gTtgTDNBLI1cQzqp
+         V2Rg96D7b/kLJfPs3jCkgQqUppHkLuYyZ8HeegcgGfCBmECyjvcllWUrpjj1RYghb2
+         mPQ6oVoLoBt4WkFlC2lrX+0D/uUs2QE7tWE2q9dVHwblbo1R4LpmmlFBj31sPW+x69
+         qxB5E1eyfdPjhtg0ffGmglaXK6TIzFiOoXuP+DXZ42za/ih2ztHq56o5Dzrbaga2sy
+         LQIpirxwZuZl7QxEgdiQeU24/ikR72RKWA/enkxpIQ3ISlaOUKu75GkNEac+ok9jsd
+         qZEGKbTPexd+Q==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Andy Lutomirski <luto@kernel.org>,
@@ -60,13 +60,14 @@ To:     Jonathan Corbet <corbet@lwn.net>,
         krisman@collabora.com
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 1/5] fs/proc/task_mmu: make functions global to be used in other files
-Date:   Tue, 26 Jul 2022 21:18:50 +0500
-Message-Id: <20220726161854.276359-2-usama.anjum@collabora.com>
+Subject: [PATCH 2/5] mm: Implement process_memwatch syscall
+Date:   Tue, 26 Jul 2022 21:18:51 +0500
+Message-Id: <20220726161854.276359-3-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220726161854.276359-1-usama.anjum@collabora.com>
 References: <20220726161854.276359-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
@@ -77,232 +78,417 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update the clear_soft_dirty() and clear_soft_dirty_pmd() to optionally
-clear and return the status if page is dirty.
+This syscall can be used to watch the process's memory and perform
+atomic operations which aren't possible through procfs. Two operations
+have been implemented. MEMWATCH_SD_GET is used to get the soft dirty
+pages. MEMWATCH_SD_CLEAR clears the soft dirty bit from dirty pages.
+MEMWATCH_SD_IGNORE_VMA can be specified to ignore VMA dirty flags.
+These operations can be used collectively in one operation as well.
+
+NAME
+       process_memwatch - get process's memory information
+
+SYNOPSIS
+       #include <linux/memwatch.h>   /* Definition of MEMWATCH_*
+constants */
+
+       long process_memwatch(int pidfd, unsigned long start, int len,
+                             unsigned int flags, void *vec,
+                             int vec_len);
+
+       Note:  Glibc does not provide a wrapper for this system call;
+       call it using syscall(2).
+
+DESCRIPTION
+       process_memwatch() system call is  used  to  get  information
+       about the memory of the process.
+
+   Arguments
+       pidfd specifies the pidfd of process whose memory needs to be
+       watched. The calling process must have PTRACE_MODE_ATTACH_FS‐
+       CREDS  capabilities  over  the  process  whose pidfd has been
+       specified.  It can be zero which means that the process wants
+       to  watch  its  own  memory.  The  operation is determined by
+       flags.  The start argument must be a multiple of  the  system
+       page  size.  The  len  argument need not be a multiple of the
+       page size, but since the  information  is  returned  for  the
+       whole pages, len is effectively rounded up to the next multi‐
+       ple of the page size.
+
+       vec is an output array in which the offsets of the pages  are
+       returned.  Offset is calculated from start address. User lets
+       the kernel know about the size of the vec by passing size  in
+       vec_len.   The  system  call returns when the whole range has
+       been searched or vec is completely filled.  The  whole  range
+       isn't cleared if vec fills up completely.
+
+   Operations
+       The  flags  argument specifies the operation to be performed.
+       The MEMWATCH_SD_GET and MEMWATCH_SD_CLEAR operations  can  be
+       used  separately  or  together to perform MEMWATCH_SD_GET and
+       MEMWATCH_SD_CLEAR atomically as one operation.
+
+       MEMWATCH_SD_GET
+              Get the page offsets which are soft dirty.
+
+       MEMWATCH_SD_CLEAR
+              Clear the pages which are soft dirty.
+
+       MEMWATCH_SD_NO_REUSED_REGIONS
+              This optional flag can  be  specified  in  combination
+              with other flags. VM_SOFTDIRTY is ignored for the VMAs
+              for performance reasons. This flag  shows  only  those
+              pages  dirty  which  have been written by the user ex‐
+              plicitly. All new allocations are not be  returned  as
+              dirty.
+
+RETURN VALUE
+       The  0  or  positive  value  is returned on success. Positive
+       value when returned shows the number of dirty pages filled in
+       vec.    In   the   event  of  an  error  (and  assuming  that
+       process_memwatch() was invoked via  syscall(2)),  all  opera‐
+       tions return -1 and set errno to indicate the error.
+
+ERRORS
+       EINVAL invalid arguments.
+
+       ESRCH  Cannot access the process.
+
+       EIO    I/O error.
+
+This is based on a patch from Gabriel Krisman Bertazi.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- fs/proc/task_mmu.c        | 84 +--------------------------------
- include/linux/mm_inline.h | 99 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+), 82 deletions(-)
+ include/uapi/linux/memwatch.h |  12 ++
+ mm/Makefile                   |   2 +-
+ mm/memwatch.c                 | 285 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 298 insertions(+), 1 deletion(-)
+ create mode 100644 include/uapi/linux/memwatch.h
+ create mode 100644 mm/memwatch.c
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f8cd58846a28..94d5761cc369 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1076,86 +1076,6 @@ struct clear_refs_private {
- 	enum clear_refs_types type;
- };
+diff --git a/include/uapi/linux/memwatch.h b/include/uapi/linux/memwatch.h
+new file mode 100644
+index 000000000000..7e86ffdc10f5
+--- /dev/null
++++ b/include/uapi/linux/memwatch.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++
++#ifndef _MEMWATCH_H
++#define _MEMWATCH_H
++
++/* memwatch operations */
++#define MEMWATCH_SD_GET			0x1
++#define MEMWATCH_SD_CLEAR		0x2
++#define MEMWATCH_SD_NO_REUSED_REGIONS	0x4
++
++#endif
++
+diff --git a/mm/Makefile b/mm/Makefile
+index 8083fa85a348..aa72e4ced1f3 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -37,7 +37,7 @@ CFLAGS_init-mm.o += $(call cc-disable-warning, override-init)
+ CFLAGS_init-mm.o += $(call cc-disable-warning, initializer-overrides)
  
--#ifdef CONFIG_MEM_SOFT_DIRTY
--
--static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr, pte_t pte)
--{
--	struct page *page;
--
--	if (!pte_write(pte))
--		return false;
--	if (!is_cow_mapping(vma->vm_flags))
--		return false;
--	if (likely(!test_bit(MMF_HAS_PINNED, &vma->vm_mm->flags)))
--		return false;
--	page = vm_normal_page(vma, addr, pte);
--	if (!page)
--		return false;
--	return page_maybe_dma_pinned(page);
--}
--
--static inline void clear_soft_dirty(struct vm_area_struct *vma,
--		unsigned long addr, pte_t *pte)
--{
--	/*
--	 * The soft-dirty tracker uses #PF-s to catch writes
--	 * to pages, so write-protect the pte as well. See the
--	 * Documentation/admin-guide/mm/soft-dirty.rst for full description
--	 * of how soft-dirty works.
--	 */
--	pte_t ptent = *pte;
--
--	if (pte_present(ptent)) {
--		pte_t old_pte;
--
--		if (pte_is_pinned(vma, addr, ptent))
--			return;
--		old_pte = ptep_modify_prot_start(vma, addr, pte);
--		ptent = pte_wrprotect(old_pte);
--		ptent = pte_clear_soft_dirty(ptent);
--		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
--	} else if (is_swap_pte(ptent)) {
--		ptent = pte_swp_clear_soft_dirty(ptent);
--		set_pte_at(vma->vm_mm, addr, pte, ptent);
--	}
--}
--#else
--static inline void clear_soft_dirty(struct vm_area_struct *vma,
--		unsigned long addr, pte_t *pte)
--{
--}
--#endif
--
--#if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
--static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
--		unsigned long addr, pmd_t *pmdp)
--{
--	pmd_t old, pmd = *pmdp;
--
--	if (pmd_present(pmd)) {
--		/* See comment in change_huge_pmd() */
--		old = pmdp_invalidate(vma, addr, pmdp);
--		if (pmd_dirty(old))
--			pmd = pmd_mkdirty(pmd);
--		if (pmd_young(old))
--			pmd = pmd_mkyoung(pmd);
--
--		pmd = pmd_wrprotect(pmd);
--		pmd = pmd_clear_soft_dirty(pmd);
--
--		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
--	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
--		pmd = pmd_swp_clear_soft_dirty(pmd);
--		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
--	}
--}
--#else
--static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
--		unsigned long addr, pmd_t *pmdp)
--{
--}
--#endif
--
- static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 				unsigned long end, struct mm_walk *walk)
- {
-@@ -1168,7 +1088,7 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
- 		if (cp->type == CLEAR_REFS_SOFT_DIRTY) {
--			clear_soft_dirty_pmd(vma, addr, pmd);
-+			check_soft_dirty_pmd(vma, addr, pmd, true);
- 			goto out;
- 		}
- 
-@@ -1194,7 +1114,7 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 		ptent = *pte;
- 
- 		if (cp->type == CLEAR_REFS_SOFT_DIRTY) {
--			clear_soft_dirty(vma, addr, pte);
-+			check_soft_dirty(vma, addr, pte, true);
- 			continue;
- 		}
- 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 7b25b53c474a..65014c347a94 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -360,4 +360,103 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
- #endif
- }
- 
+ mmu-y			:= nommu.o
+-mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o \
++mmu-$(CONFIG_MMU)	:= highmem.o memory.o memwatch.o mincore.o \
+ 			   mlock.o mmap.o mmu_gather.o mprotect.o mremap.o \
+ 			   msync.o page_vma_mapped.o pagewalk.o \
+ 			   pgtable-generic.o rmap.o vmalloc.o
+diff --git a/mm/memwatch.c b/mm/memwatch.c
+new file mode 100644
+index 000000000000..9be09bc431d2
+--- /dev/null
++++ b/mm/memwatch.c
+@@ -0,0 +1,285 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2020 Collabora Ltd.
++ */
++#include <linux/pagewalk.h>
++#include <linux/vmalloc.h>
++#include <linux/syscalls.h>
++#include <asm/tlb.h>
++#include <asm/tlbflush.h>
++#include <linux/sched/mm.h>
++#include <linux/mm_inline.h>
++#include <uapi/linux/memwatch.h>
++#include <uapi/asm-generic/errno-base.h>
++#include <linux/compat.h>
++#include <linux/minmax.h>
++
 +#ifdef CONFIG_MEM_SOFT_DIRTY
-+static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr, pte_t pte)
-+{
-+	struct page *page;
++#define MEMWATCH_SD_OPS_MASK (MEMWATCH_SD_GET | MEMWATCH_SD_CLEAR | \
++			      MEMWATCH_SD_NO_REUSED_REGIONS)
 +
-+	if (!pte_write(pte))
-+		return false;
-+	if (!is_cow_mapping(vma->vm_flags))
-+		return false;
-+	if (likely(!test_bit(MMF_HAS_PINNED, &vma->vm_mm->flags)))
-+		return false;
-+	page = vm_normal_page(vma, addr, pte);
-+	if (!page)
-+		return false;
-+	return page_maybe_dma_pinned(page);
++struct memwatch_sd_private {
++	unsigned long start;
++	unsigned int flags;
++	unsigned int index;
++	unsigned int vec_len;
++	unsigned long *vec;
++};
++
++static int memwatch_pmd_entry(pmd_t *pmd, unsigned long addr,
++			      unsigned long end, struct mm_walk *walk)
++{
++	struct memwatch_sd_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	unsigned long start = addr;
++	spinlock_t *ptl;
++	pte_t *pte;
++	int dirty;
++	bool dirty_vma = (p->flags & MEMWATCH_SD_NO_REUSED_REGIONS) ? 0 :
++			 (vma->vm_flags & VM_SOFTDIRTY);
++
++	end = min(end, walk->vma->vm_end);
++	ptl = pmd_trans_huge_lock(pmd, vma);
++	if (ptl) {
++		if (dirty_vma || check_soft_dirty_pmd(vma, addr, pmd, false)) {
++			/*
++			 * Break huge page into small pages if operation needs to be performed is
++			 * on a portion of the huge page or the return buffer cannot store complete
++			 * data. Then process this PMD as having normal pages.
++			 */
++			if (((p->flags & MEMWATCH_SD_CLEAR) && (end - addr < HPAGE_SIZE)) ||
++			    ((p->flags & MEMWATCH_SD_GET) &&
++			     (p->index + HPAGE_SIZE/PAGE_SIZE > p->vec_len))) {
++				spin_unlock(ptl);
++				split_huge_pmd(vma, pmd, addr);
++				goto process_pages;
++			} else {
++				dirty = check_soft_dirty_pmd(vma, addr, pmd,
++							     p->flags & MEMWATCH_SD_CLEAR);
++				if ((p->flags & MEMWATCH_SD_GET) && (dirty_vma || dirty)) {
++					for (; addr != end && p->index < p->vec_len;
++					     addr += PAGE_SIZE)
++						p->vec[p->index++] = addr - p->start;
++				}
++			}
++		}
++		spin_unlock(ptl);
++		return 0;
++	}
++
++process_pages:
++	if (pmd_trans_unstable(pmd))
++		return 0;
++
++	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
++	for (; addr != end; pte++, addr += PAGE_SIZE) {
++		dirty = check_soft_dirty(vma, addr, pte, p->flags & MEMWATCH_SD_CLEAR);
++
++		if ((p->flags & MEMWATCH_SD_GET) && (dirty_vma || dirty)) {
++			p->vec[p->index++] = addr - p->start;
++			WARN_ON(p->index > p->vec_len);
++		}
++	}
++	pte_unmap_unlock(pte - 1, ptl);
++	cond_resched();
++
++	if (p->flags & MEMWATCH_SD_CLEAR)
++		flush_tlb_mm_range(vma->vm_mm, start, end, PAGE_SHIFT, false);
++
++	return 0;
 +}
 +
-+static inline bool check_soft_dirty(struct vm_area_struct *vma,
-+				    unsigned long addr, pte_t *pte, bool clear)
++static int memwatch_pte_hole(unsigned long addr, unsigned long end, int depth,
++			     struct mm_walk *walk)
 +{
-+	/*
-+	 * The soft-dirty tracker uses #PF-s to catch writes
-+	 * to pages, so write-protect the pte as well. See the
-+	 * Documentation/admin-guide/mm/soft-dirty.rst for full description
-+	 * of how soft-dirty works.
-+	 */
-+	pte_t ptent = *pte;
-+	int dirty = 0;
++	struct memwatch_sd_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
 +
-+	if (pte_present(ptent)) {
-+		pte_t old_pte;
++	if (p->flags & MEMWATCH_SD_NO_REUSED_REGIONS)
++		return 0;
 +
-+		dirty = pte_soft_dirty(ptent);
++	if (vma && (vma->vm_flags & VM_SOFTDIRTY) && (p->flags & MEMWATCH_SD_GET)) {
++		for (; addr != end && p->index < p->vec_len; addr += PAGE_SIZE)
++			p->vec[p->index++] = addr - p->start;
++	}
 +
-+		if (dirty && clear && !pte_is_pinned(vma, addr, ptent)) {
-+			old_pte = ptep_modify_prot_start(vma, addr, pte);
-+			ptent = pte_wrprotect(old_pte);
-+			ptent = pte_clear_soft_dirty(ptent);
-+			ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
++	return 0;
++}
++
++static int memwatch_pre_vma(unsigned long start, unsigned long end, struct mm_walk *walk)
++{
++	struct memwatch_sd_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	int ret;
++	unsigned long end_cut = end;
++
++	if (p->flags & MEMWATCH_SD_NO_REUSED_REGIONS)
++		return 0;
++
++	if ((p->flags & MEMWATCH_SD_CLEAR) && (vma->vm_flags & VM_SOFTDIRTY)) {
++		if (vma->vm_start < start) {
++			ret = split_vma(vma->vm_mm, vma, start, 1);
++			if (ret)
++				return ret;
 +		}
-+	} else if (is_swap_pte(ptent)) {
-+		dirty = pte_swp_soft_dirty(ptent);
 +
-+		if (dirty && clear) {
-+			ptent = pte_swp_clear_soft_dirty(ptent);
-+			set_pte_at(vma->vm_mm, addr, pte, ptent);
++		if (p->flags & MEMWATCH_SD_GET)
++			end_cut = min(start + p->vec_len * PAGE_SIZE, end);
++
++		if (vma->vm_end > end_cut) {
++			ret = split_vma(vma->vm_mm, vma, end_cut, 0);
++			if (ret)
++				return ret;
 +		}
 +	}
 +
-+	return !!dirty;
++	return 0;
 +}
-+#else
-+static inline bool check_soft_dirty(struct vm_area_struct *vma,
-+				    unsigned long addr, pte_t *pte, bool clear)
++
++static void memwatch_post_vma(struct mm_walk *walk)
 +{
-+	return false;
++	struct memwatch_sd_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++
++	if (p->flags & MEMWATCH_SD_NO_REUSED_REGIONS)
++		return;
++
++	if ((p->flags & MEMWATCH_SD_CLEAR) && (vma->vm_flags & VM_SOFTDIRTY)) {
++		vma->vm_flags &= ~VM_SOFTDIRTY;
++		vma_set_page_prot(vma);
++	}
 +}
-+#endif
 +
-+#if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-+static inline bool check_soft_dirty_pmd(struct vm_area_struct *vma,
-+					unsigned long addr, pmd_t *pmdp, bool clear)
++static int memwatch_pmd_test_walk(unsigned long start, unsigned long end,
++				  struct mm_walk *walk)
 +{
-+	pmd_t old, pmd = *pmdp;
-+	int dirty = 0;
++	struct memwatch_sd_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
 +
-+	if (pmd_present(pmd)) {
-+		dirty = pmd_soft_dirty(pmd);
-+		if (dirty && clear) {
-+			/* See comment in change_huge_pmd() */
-+			old = pmdp_invalidate(vma, addr, pmdp);
-+			if (pmd_dirty(old))
-+				pmd = pmd_mkdirty(pmd);
-+			if (pmd_young(old))
-+				pmd = pmd_mkyoung(pmd);
++	if ((p->flags & MEMWATCH_SD_GET) && (p->index == p->vec_len))
++		return -1;
 +
-+			pmd = pmd_wrprotect(pmd);
-+			pmd = pmd_clear_soft_dirty(pmd);
++	if (vma->vm_flags & VM_PFNMAP)
++		return 1;
 +
-+			set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
-+		}
-+	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
-+		dirty = pmd_swp_soft_dirty(pmd);
++	return 0;
++}
 +
-+		if (dirty && clear) {
-+			pmd = pmd_swp_clear_soft_dirty(pmd);
-+			set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++static const struct mm_walk_ops memwatch_ops = {
++	.test_walk = memwatch_pmd_test_walk,
++	.pre_vma = memwatch_pre_vma,
++	.pmd_entry = memwatch_pmd_entry,
++	.pte_hole = memwatch_pte_hole,
++	.post_vma = memwatch_post_vma,
++};
++
++static long do_process_memwatch(int pidfd, void __user *start_addr, int len,
++				unsigned int flags, loff_t __user *vec, int vec_len)
++{
++	struct memwatch_sd_private watch;
++	struct mmu_notifier_range range;
++	unsigned long start, end;
++	struct task_struct *task;
++	struct mm_struct *mm;
++	unsigned int f_flags;
++	int ret;
++
++	start = (unsigned long)untagged_addr(start_addr);
++	if ((!IS_ALIGNED(start, PAGE_SIZE)) || !access_ok((void __user *)start, len))
++		return -EINVAL;
++
++	if ((flags == 0) || (flags == MEMWATCH_SD_NO_REUSED_REGIONS) ||
++	    (flags & ~MEMWATCH_SD_OPS_MASK))
++		return -EINVAL;
++
++	if ((flags & MEMWATCH_SD_GET) && ((vec_len == 0) || (!vec) ||
++	    !access_ok(vec, vec_len)))
++		return -EINVAL;
++
++	end = start + len;
++	watch.start = start;
++	watch.flags = flags;
++	watch.index = 0;
++	watch.vec_len = vec_len;
++
++	if (pidfd) {
++		task = pidfd_get_task(pidfd, &f_flags);
++		if (IS_ERR(task))
++			return PTR_ERR(task);
++	} else {
++		task = current;
++	}
++
++	if (flags & MEMWATCH_SD_GET) {
++		watch.vec = vzalloc(vec_len * sizeof(loff_t));
++		if (!watch.vec) {
++			ret = -ENOMEM;
++			goto put_task;
 +		}
 +	}
-+	return !!dirty;
-+}
-+#else
-+static inline bool check_soft_dirty_pmd(struct vm_area_struct *vma,
-+					unsigned long addr, pmd_t *pmdp, bool clear)
-+{
-+	return false;
++
++	mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
++	if (IS_ERR_OR_NULL(mm)) {
++		ret = mm ? PTR_ERR(mm) : -ESRCH;
++		goto free_watch;
++	}
++
++	if (flags & MEMWATCH_SD_CLEAR) {
++		mmap_write_lock(mm);
++
++		mmu_notifier_range_init(&range, MMU_NOTIFY_SOFT_DIRTY, 0, NULL,
++					mm, start, end);
++		mmu_notifier_invalidate_range_start(&range);
++		inc_tlb_flush_pending(mm);
++	} else {
++		mmap_read_lock(mm);
++	}
++
++	ret = walk_page_range(mm, start, end, &memwatch_ops, &watch);
++
++	if (flags & MEMWATCH_SD_CLEAR) {
++		mmu_notifier_invalidate_range_end(&range);
++		dec_tlb_flush_pending(mm);
++
++		mmap_write_unlock(mm);
++	} else {
++		mmap_read_unlock(mm);
++	}
++
++	mmput(mm);
++
++	if (ret < 0)
++		goto free_watch;
++
++	if (flags & MEMWATCH_SD_GET) {
++		ret = copy_to_user(vec, watch.vec, watch.index * sizeof(loff_t));
++		if (ret) {
++			ret = -EIO;
++			goto free_watch;
++		}
++		ret = watch.index;
++	} else {
++		ret = 0;
++	}
++
++free_watch:
++	if (flags & MEMWATCH_SD_GET)
++		vfree(watch.vec);
++put_task:
++	if (pidfd)
++		put_task_struct(task);
++
++	return ret;
 +}
 +#endif
 +
- #endif
++SYSCALL_DEFINE6(process_memwatch, int, pidfd, void __user*, start,
++		int, len, unsigned int, flags, loff_t __user *, vec, int, vec_len)
++{
++	int ret = -EPERM;
++
++#ifdef CONFIG_MEM_SOFT_DIRTY
++	ret = do_process_memwatch(pidfd, start, len, flags, vec, vec_len);
++#endif
++	return ret;
++}
 -- 
 2.30.2
 
