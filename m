@@ -2,154 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E38658174A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 18:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5E058187E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 19:38:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239428AbiGZQVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jul 2022 12:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
+        id S239478AbiGZRi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jul 2022 13:38:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239403AbiGZQVl (ORCPT
+        with ESMTP id S239432AbiGZRi1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jul 2022 12:21:41 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B4D27171;
-        Tue, 26 Jul 2022 09:21:40 -0700 (PDT)
-Received: from localhost.localdomain (unknown [203.135.47.243])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7894D6601B1C;
-        Tue, 26 Jul 2022 17:21:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658852499;
-        bh=TmWomaer23vw+1UBA3al27F9ID8ZyZsnkETWciuw1wo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JYxDiXjFw2RkNWx91Wt51o8qc6YV+mR0wWrLTDbpoFMfe3Sm/04uV2+UuB+HZoPki
-         0LpF4pUQRsSnI+7DxtjBwuPAeLwCQ/qyDdaclFKJ+bERTYT+YUt2uei5lSfeFGo3TF
-         T4yPY5Sd28kVEHpcexgG1LJBXgG8JhGY1FeA0KN/RJeEN0o81WkQMhaeSf4Uf3gAc0
-         YHeoRBk07uMeOULuahJ+RXY1EBsZwQy+wZa7CouuePJB5SJwdBkw2m+n8DWOZSQR2T
-         o7PzSRNNsh1HW9C4vc1+RVy3KIWCebD4CKYXChyycV98zy8R/GX0c102u7g5xE7uPa
-         Bq/+E/YbB7zqQ==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-        linux-kernel@vger.kernel.org (open list),
-        linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM),
-        linux-api@vger.kernel.org (open list:ABI/API),
-        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES),
-        linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
-        linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS
-        SUBSYSTEM),
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-        krisman@collabora.com
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH 5/5] mm: add process_memwatch syscall documentation
-Date:   Tue, 26 Jul 2022 21:18:54 +0500
-Message-Id: <20220726161854.276359-6-usama.anjum@collabora.com>
+        Tue, 26 Jul 2022 13:38:27 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5F12E9EC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jul 2022 10:38:23 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26QFUYDl009215
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jul 2022 10:38:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=TQ4x8cQWq9MYenRRcsAzpxkvl0fQnbZVQyviX3DQONI=;
+ b=dEcb/ru4htwPplD7PFRDUk/nfCfhXVED4nYTkHnqJf7jq7KMS1XpQpQclO+vcwqIgC0q
+ 14IdIMlxNCY8TzTBgV/Pp+KA31Y5YYnbBrY6j5Oy26aAEeolNMeaMFkiPiQIO/fZfpie
+ 8m/i6UUydVSSL8Yhlo0URLa5doc7lHZNqfI= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hj592n3c9-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jul 2022 10:38:22 -0700
+Received: from twshared6324.05.ash7.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Tue, 26 Jul 2022 10:38:20 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 4492F698E4A6; Tue, 26 Jul 2022 10:38:15 -0700 (PDT)
+From:   Keith Busch <kbusch@fb.com>
+To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 0/5] dma mapping optimisations
+Date:   Tue, 26 Jul 2022 10:38:09 -0700
+Message-ID: <20220726173814.2264573-1-kbusch@fb.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220726161854.276359-1-usama.anjum@collabora.com>
-References: <20220726161854.276359-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: A_78E3CRL2B2LDRspjb871ZM-iu2xVgj
+X-Proofpoint-GUID: A_78E3CRL2B2LDRspjb871ZM-iu2xVgj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-26_05,2022-07-26_01,2022-06-22_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the syscall with explanation of the operations.
+From: Keith Busch <kbusch@kernel.org>
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- Documentation/admin-guide/mm/soft-dirty.rst | 48 ++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+The typical journey a user address takes for a read or write to a block
+device undergoes various represenations for every IO. Each consumes
+memory and CPU cycles. When the backing storage is NVMe, the sequence
+looks something like the following:
 
-diff --git a/Documentation/admin-guide/mm/soft-dirty.rst b/Documentation/admin-guide/mm/soft-dirty.rst
-index cb0cfd6672fa..030d75658010 100644
---- a/Documentation/admin-guide/mm/soft-dirty.rst
-+++ b/Documentation/admin-guide/mm/soft-dirty.rst
-@@ -5,7 +5,12 @@ Soft-Dirty PTEs
- ===============
- 
- The soft-dirty is a bit on a PTE which helps to track which pages a task
--writes to. In order to do this tracking one should
-+writes to.
-+
-+Using Proc FS
-+-------------
-+
-+In order to do this tracking one should
- 
-   1. Clear soft-dirty bits from the task's PTEs.
- 
-@@ -20,6 +25,47 @@ writes to. In order to do this tracking one should
-      64-bit qword is the soft-dirty one. If set, the respective PTE was
-      written to since step 1.
- 
-+Using System Call
-+-----------------
-+
-+process_memwatch system call can be used to find the dirty pages.::
-+
-+	long process_memwatch(int pidfd, unsigned long start, int len,
-+			      unsigned int flags, void *vec, int vec_len);
-+
-+The pidfd specifies the pidfd of process whose memory needs to be watched.
-+The calling process must have PTRACE_MODE_ATTACH_FSCREDS capabilities over
-+the process whose pidfd has been specified. It can be zero which means that
-+the process wants to watch its own memory. The operation is determined by
-+flags. The start argument must be a multiple of the system page size. The
-+len argument need not be a multiple of the page size, but since the
-+information is returned for the whole pages, len is effectively rounded
-+up to the next multiple of the page size.
-+
-+The vec is output array in which the offsets of the pages are returned.
-+Offset is calculated from start address. User lets the kernel know about the
-+size of the vec by passing size in vec_len. The system call returns when the
-+whole range has been searched or vec is completely filled. The whole range
-+isn't cleared if vec fills up completely.
-+
-+The flags argument specifies the operation to be performed. The MEMWATCH_SD_GET
-+and MEMWATCH_SD_CLEAR operations can be used separately or together to perform
-+MEMWATCH_SD_GET and MEMWATCH_SD_CLEAR atomically as one operation.::
-+
-+	MEMWATCH_SD_GET
-+		Get the page offsets which are soft dirty.
-+
-+	MEMWATCH_SD_CLEAR
-+		Clear the pages which are soft dirty.
-+
-+	MEMWATCH_SD_NO_REUSED_REGIONS
-+		This optional flag can be specified in combination with other flags.
-+		VM_SOFTDIRTY is ignored for the VMAs for performances reasons. This
-+		flag shows only those pages dirty which have been written to by the
-+		user. All new allocations aren't returned to be dirty.
-+
-+Explanation
-+-----------
- 
- Internally, to do this tracking, the writable bit is cleared from PTEs
- when the soft-dirty bit is cleared. So, after this, when the task tries to
--- 
+  __user void *
+  struct iov_iter
+  struct pages[]
+  struct bio_vec[]
+  struct scatterlist[]
+  __le64[]
+
+Applications will often use the same buffer for many IO, though, so
+these per-IO transformations to reach the exact same hardware descriptor
+is unnecessary.
+
+The io_uring interface already provides a way for users to register
+buffers to get to the 'struct bio_vec[]'. That still leaves the
+scatterlist needed for the repeated dma_map_sg(), then transform to
+nvme's PRP list format.
+
+This series takes the registered buffers a step further. A block driver
+can implement a new .dma_map() callback to complete the to the
+hardware's DMA mapped address representation, and return a cookie so a
+user can reference it later for any given IO. When used, the block stack
+can skip significant amounts of code, improving CPU utilization, and, if
+not bandwidth limited, IOPs. The larger the IO, the more signficant the
+improvement.
+
+The implementation is currently limited to mapping a registered buffer
+to a single block device.
+
+Here's some perf profiling 128k random read tests demonstrating the CPU
+savings:
+
+With premapped bvec:
+
+  --46.84%--blk_mq_submit_bio
+            |
+            |--31.67%--blk_mq_try_issue_directly
+                       |
+                        --31.57%--__blk_mq_try_issue_directly
+                                  |
+                                   --31.39%--nvme_queue_rq
+                                             |
+                                             |--25.35%--nvme_prep_rq.part=
+.68
+
+With premapped DMA:
+
+  --25.86%--blk_mq_submit_bio
+            |
+            |--12.95%--blk_mq_try_issue_directly
+                       |
+                        --12.84%--__blk_mq_try_issue_directly
+                                  |
+                                   --12.53%--nvme_queue_rq
+                                             |
+                                             |--5.01%--nvme_prep_rq.part.=
+68
+
+Keith Busch (5):
+  blk-mq: add ops to dma map bvec
+  iov_iter: introduce type for preregistered dma tags
+  block: add dma tag bio type
+  io_uring: add support for dma pre-mapping
+  nvme-pci: implement dma_map support
+
+ block/bdev.c                  |  20 +++
+ block/bio.c                   |  25 ++-
+ block/blk-merge.c             |  18 +++
+ drivers/nvme/host/pci.c       | 291 +++++++++++++++++++++++++++++++++-
+ include/linux/bio.h           |  21 +--
+ include/linux/blk-mq.h        |  25 +++
+ include/linux/blk_types.h     |   6 +-
+ include/linux/blkdev.h        |  16 ++
+ include/linux/uio.h           |   9 ++
+ include/uapi/linux/io_uring.h |  12 ++
+ io_uring/io_uring.c           | 129 +++++++++++++++
+ io_uring/net.c                |   2 +-
+ io_uring/rsrc.c               |  13 +-
+ io_uring/rsrc.h               |  16 +-
+ io_uring/rw.c                 |   2 +-
+ lib/iov_iter.c                |  25 ++-
+ 16 files changed, 600 insertions(+), 30 deletions(-)
+
+--=20
 2.30.2
 
