@@ -2,69 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CEA6580E25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 09:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F30C3580E30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 09:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238141AbiGZHqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jul 2022 03:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35606 "EHLO
+        id S238264AbiGZHrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jul 2022 03:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237720AbiGZHqH (ORCPT
+        with ESMTP id S237783AbiGZHrX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jul 2022 03:46:07 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26718DEB4;
-        Tue, 26 Jul 2022 00:46:05 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id DCAC234DAD;
-        Tue, 26 Jul 2022 07:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1658821563; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 26 Jul 2022 03:47:23 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32DDF1FCF1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Jul 2022 00:47:22 -0700 (PDT)
+Date:   Tue, 26 Jul 2022 09:47:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1658821641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vZH4jjl9hEczVGTLrSclPcz/CNDj3oRXL2GKSqr/f3w=;
-        b=TmAISVPoxl0qgnHOoRIOpQMSbHUntCPFfwVCYv6pqm7R9yh7GANqMB6r1F4i1GL4NP5OH4
-        iNiPxMYa+0E5PM42WPgudNmvnO1b7twZvBZBnsEfxSEdJtTLwo6ftbybtUR08Sg92c0hZ1
-        OcSpgKEWeUO7NqiJe2cLYC54HcfPSjk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1658821563;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        bh=29CActygTDI8QI5QtQ/hhwNU7LvhcY+F8JPzzESKgw8=;
+        b=YLELDO2aGwFJtSjl5ZkY5x4zVe5JKn/pFd53k4xW7r3sgM8r9drcrBn/PMe4injzf3Y4wH
+        smDCUjvIhV9P8fbYQNwVfm5hhKD5wYHpWXPgIsuEMmoJy3gKv9UPc9xFn34kZootCccw4p
+        pH8h2L6mPjDXWuTvZj0zcbu5FcDUVZHlEv/QUTmMAgiWTn8xkZmYiN2f4ayF1Y4SZSts+B
+        3VRafw/gSw/eheO/i6cEDTjOOkLLJEmHxwas8jvVtNt7pOmdTPGSnv0KVnAII24haRqyCu
+        YURn+NTDp/EdZ8OvQK7GMt4hLMav1wHRC6wkEw894Ze8JkqZahivMET5KAWcNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1658821641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vZH4jjl9hEczVGTLrSclPcz/CNDj3oRXL2GKSqr/f3w=;
-        b=ahDBgmTLf2zM8fQzwRHzEN2vrTerxWAC9BL8nEsbtm18n6EFZGgAvJBtl1AWtsNcFM1ASs
-        RbrWHuvox7vFYPAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A828813322;
-        Tue, 26 Jul 2022 07:46:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id WGRAKLub32JxcgAAMHmgww
-        (envelope-from <tiwai@suse.de>); Tue, 26 Jul 2022 07:46:03 +0000
-Date:   Tue, 26 Jul 2022 09:46:03 +0200
-Message-ID: <871qu8tiys.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, Joe Perches <joe@perches.com>,
-        linux-fsdevel@vger.kernel.org,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] exfat: Expand exfat_err() and co directly to pr_*() macro
-In-Reply-To: <CAKYAXd_tohLszyrThNLE5tPHt=2Z8Xtt=hzzEQe3iqf0t549EQ@mail.gmail.com>
-References: <20220722142916.29435-1-tiwai@suse.de>
-        <20220722142916.29435-4-tiwai@suse.de>
-        <0350c21bcfdc896f2b912363f221958d41ebf1e1.camel@perches.com>
-        <87edyc2r2e.wl-tiwai@suse.de>
-        <CAKYAXd_tohLszyrThNLE5tPHt=2Z8Xtt=hzzEQe3iqf0t549EQ@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+        bh=29CActygTDI8QI5QtQ/hhwNU7LvhcY+F8JPzzESKgw8=;
+        b=M9ZIvGfVUJlVOj/3XascNIK9RgMbbEBdgHlt7K1fecnZDtFGa5a3rjhF5wO3wbZA7ISjB8
+        af8cPP+bNsVE1yDg==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 3/4 v2] fs/dcache: Use __d_lookup_unhash() in __d_add/move()
+Message-ID: <Yt+cB0SKcAu2iSf/@linutronix.de>
+References: <20220613140712.77932-1-bigeasy@linutronix.de>
+ <20220613140712.77932-4-bigeasy@linutronix.de>
+ <Yt9Y2JhqVHOP0vRT@ZenIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Yt9Y2JhqVHOP0vRT@ZenIV>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -74,75 +61,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 Jul 2022 09:02:40 +0200,
-Namjae Jeon wrote:
-> 
-> 2022-07-23 17:04 GMT+09:00, Takashi Iwai <tiwai@suse.de>:
-> > On Sat, 23 Jul 2022 09:42:12 +0200,
-> > Joe Perches wrote:
-> >>
-> >> On Fri, 2022-07-22 at 16:29 +0200, Takashi Iwai wrote:
-> >> > Currently the error and info messages handled by exfat_err() and co
-> >> > are tossed to exfat_msg() function that does nothing but passes the
-> >> > strings with printk() invocation.  Not only that this is more overhead
-> >> > by the indirect calls, but also this makes harder to extend for the
-> >> > debug print usage; because of the direct printk() call, you cannot
-> >> > make it for dynamic debug or without debug like the standard helpers
-> >> > such as pr_debug() or dev_dbg().
-> >> >
-> >> > For addressing the problem, this patch replaces exfat_msg() function
-> >> > with a macro to expand to pr_*() directly.  This allows us to create
-> >> > exfat_debug() macro that is expanded to pr_debug() (which output can
-> >> > gracefully suppressed via dyndbg).
-> >> []
-> >> > diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-> >> []
-> >> > @@ -508,14 +508,19 @@ void __exfat_fs_error(struct super_block *sb, int
-> >> > report, const char *fmt, ...)
-> >> >  #define exfat_fs_error_ratelimit(sb, fmt, args...) \
-> >> >  		__exfat_fs_error(sb, __ratelimit(&EXFAT_SB(sb)->ratelimit), \
-> >> >  		fmt, ## args)
-> >> > -void exfat_msg(struct super_block *sb, const char *lv, const char *fmt,
-> >> > ...)
-> >> > -		__printf(3, 4) __cold;
-> >> > +
-> >> > +/* expand to pr_xxx() with prefix */
-> >> > +#define exfat_msg(sb, lv, fmt, ...) \
-> >> > +	pr_##lv("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
-> >> > +
-> >> >  #define exfat_err(sb, fmt, ...)						\
-> >> > -	exfat_msg(sb, KERN_ERR, fmt, ##__VA_ARGS__)
-> >> > +	exfat_msg(sb, err, fmt, ##__VA_ARGS__)
-> >> >  #define exfat_warn(sb, fmt, ...)					\
-> >> > -	exfat_msg(sb, KERN_WARNING, fmt, ##__VA_ARGS__)
-> >> > +	exfat_msg(sb, warn, fmt, ##__VA_ARGS__)
-> >> >  #define exfat_info(sb, fmt, ...)					\
-> >> > -	exfat_msg(sb, KERN_INFO, fmt, ##__VA_ARGS__)
-> >> > +	exfat_msg(sb, info, fmt, ##__VA_ARGS__)
-> >> > +#define exfat_debug(sb, fmt, ...)					\
-> >> > +	exfat_msg(sb, debug, fmt, ##__VA_ARGS__)
-> >>
-> >> I think this would be clearer using pr_<level> directly instead
-> >> of an indirecting macro that uses concatenation of <level> that
-> >> obscures the actual use of pr_<level>
-> >>
-> >> Either: (and this first option would be my preference)
-> >>
-> >> #define exfat_err(sb, fmt, ...) \
-> >> 	pr_err("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
-> >> #define exfat_warn(sb, fmt, ...) \
-> >> 	pr_warn("exFAT-fs (%s): " fmt "\n", (sb)->s_id, ##__VA_ARGS__)
-> >> etc...
-> >
-> > IMO, it's a matter of taste, and I don't mind either way.
-> > Just let me know.
-> Joe has already said that he prefers the first.
+__d_add() and __d_move() invoke __d_lookup_done() from within a preemption
+disabled region. This violates the PREEMPT_RT constraints as the wake up
+acquires wait_queue_head::lock which is a "sleeping" spinlock on RT.
 
-My question was about the preference of the exfat maintainers :)
+As a preparation for solving this completely, invoke __d_lookup_unhash()
+=66rom __d_add/move() and handle the wakeup there.
 
-> Will you send v2 patch-set ?
+This allows to move the spin_lock/unlock(dentry::lock) pair into
+__d_lookup_done() which debloats the d_lookup_done() inline. Rename
+__d_lookup_done() -> __d_lookup_wake() to force build failures for OOT code
+which used __d_lookup_done() and did not adapt.
 
-Sure.
+No functional change. Moving the wake up out of the preemption disabled
+region on RT will be handled in a subsequent change.
 
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1=E2=80=A6v2:
+   - Rename __d_lookup_done() -> __d_lookup_wake().
 
-Takashi
+ fs/dcache.c            |   10 ++++++----
+ include/linux/dcache.h |    9 +++------
+ 2 files changed, 9 insertions(+), 10 deletions(-)
+
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2735,11 +2735,13 @@ static wait_queue_head_t *__d_lookup_unh
+ 	return d_wait;
+ }
+=20
+-void __d_lookup_done(struct dentry *dentry)
++void __d_lookup_wake(struct dentry *dentry)
+ {
++	spin_lock(&dentry->d_lock);
+ 	wake_up_all(__d_lookup_unhash(dentry));
++	spin_unlock(&dentry->d_lock);
+ }
+-EXPORT_SYMBOL(__d_lookup_done);
++EXPORT_SYMBOL(__d_lookup_wake);
+=20
+ /* inode->i_lock held if inode is non-NULL */
+=20
+@@ -2751,7 +2753,7 @@ static inline void __d_add(struct dentry
+ 	if (unlikely(d_in_lookup(dentry))) {
+ 		dir =3D dentry->d_parent->d_inode;
+ 		n =3D start_dir_add(dir);
+-		__d_lookup_done(dentry);
++		wake_up_all(__d_lookup_unhash(dentry));
+ 	}
+ 	if (inode) {
+ 		unsigned add_flags =3D d_flags_for_inode(inode);
+@@ -2940,7 +2942,7 @@ static void __d_move(struct dentry *dent
+ 	if (unlikely(d_in_lookup(target))) {
+ 		dir =3D target->d_parent->d_inode;
+ 		n =3D start_dir_add(dir);
+-		__d_lookup_done(target);
++		wake_up_all(__d_lookup_unhash(target));
+ 	}
+=20
+ 	write_seqcount_begin(&dentry->d_seq);
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -349,7 +349,7 @@ static inline void dont_mount(struct den
+ 	spin_unlock(&dentry->d_lock);
+ }
+=20
+-extern void __d_lookup_done(struct dentry *);
++extern void __d_lookup_wake(struct dentry *dentry);
+=20
+ static inline int d_in_lookup(const struct dentry *dentry)
+ {
+@@ -358,11 +358,8 @@ static inline int d_in_lookup(const stru
+=20
+ static inline void d_lookup_done(struct dentry *dentry)
+ {
+-	if (unlikely(d_in_lookup(dentry))) {
+-		spin_lock(&dentry->d_lock);
+-		__d_lookup_done(dentry);
+-		spin_unlock(&dentry->d_lock);
+-	}
++	if (unlikely(d_in_lookup(dentry)))
++		__d_lookup_wake(dentry);
+ }
+=20
+ extern void dput(struct dentry *);
