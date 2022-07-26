@@ -2,170 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B648580FD9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 11:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86269581237
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 13:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237807AbiGZJ1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jul 2022 05:27:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33398 "EHLO
+        id S238898AbiGZLjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jul 2022 07:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbiGZJ1U (ORCPT
+        with ESMTP id S238850AbiGZLjW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jul 2022 05:27:20 -0400
-Received: from conssluserg-02.nifty.com (conssluserg-02.nifty.com [210.131.2.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117D02E9F6;
-        Tue, 26 Jul 2022 02:27:18 -0700 (PDT)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 26Q9QrdN024374;
-        Tue, 26 Jul 2022 18:26:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 26Q9QrdN024374
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1658827614;
-        bh=d6NNJ+nW6fZ2WWBYBA5DCiVLw0ZFlnZQJAM4KipXE4A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jPARB7HAapfEkUCDpves2bids8NaztvHxYcrpmaz30aXBKKCq5Fls6fPm6JMl4NEB
-         A+CXQn86ICJNahuYe+wJUVp4X42qyknJGMTFem8Fg39gyqprHgP6bGqygnGJySLLpY
-         Fi0TJ4n8AGHy1QHghgmYAb6tG67BBglbtafIao4SUkicjwCuxWlMCf234yupSWwONe
-         QXTA/NB4xuFdazVACjtFGA/3J6GXfrlFE7KiQy3L10fGJswdIINwUuYL80GwdwbA/X
-         1oaSD81CRh1UXkmTAspo/hdqn56A4uPd0xGP0lEi/wZspTN5MpNFXg4n7sMAhQFY4U
-         xr5ezJ4ImSfvQ==
-X-Nifty-SrcIP: [209.85.128.41]
-Received: by mail-wm1-f41.google.com with SMTP id w8-20020a05600c014800b003a32e89bc4eso7783829wmm.5;
-        Tue, 26 Jul 2022 02:26:53 -0700 (PDT)
-X-Gm-Message-State: AJIora/2pKak2LpGwKZTl3vd0m6XP8zASBoBMlLp0+mjXsh8PgPb+uHl
-        x6DEomJxckWccPXLwh36ZnUSnHhXNk2KwJ6TOHg=
-X-Google-Smtp-Source: AGRyM1uGeaCDAN8z8yKxHxFJ9V3AepuKKOjXcNTD81j1E/+9R+DcEVLuRRv9FUeLk7HNSkZXBvwGr+EHMfBpPdhcGfg=
-X-Received: by 2002:a05:600c:35ce:b0:3a3:1b7f:bbd8 with SMTP id
- r14-20020a05600c35ce00b003a31b7fbbd8mr11063089wmq.22.1658827612274; Tue, 26
- Jul 2022 02:26:52 -0700 (PDT)
+        Tue, 26 Jul 2022 07:39:22 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699421B7B4;
+        Tue, 26 Jul 2022 04:39:20 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 0CA201FBB6;
+        Tue, 26 Jul 2022 11:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1658835559; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3RdE6D5LluIMS7uHdldNeXeQC/M3YuNxvgWNeNiYXq8=;
+        b=Ed4f/3JSh0o0I5iOeWr3KEosQNINvAuSuNwyhO1gYx+xktXbHPTI0/e3Hkqxyi6DO1XciD
+        Ky8d39voi79b7UYY0xbCENqKCF9u51FkwJ4en8zWFcZh23/Vz43n5ox1TU654L0R7xaf8J
+        H++zzPJ/2ar7cBK/CLkHS/eudnoG/1M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1658835559;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3RdE6D5LluIMS7uHdldNeXeQC/M3YuNxvgWNeNiYXq8=;
+        b=324awbVk5O0Q9whboOmO7Z2OMXRXYpWGIJs+xDcsBha/voXYzD+bUXQ9fm6s9Fc9sh7EBa
+        159Z69789CQUMqDg==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id F11D62C15D;
+        Tue, 26 Jul 2022 11:39:18 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 8559EA0664; Tue, 26 Jul 2022 13:39:18 +0200 (CEST)
+Date:   Tue, 26 Jul 2022 13:39:18 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Xin Gao <gaoxin@cdjrlc.com>
+Cc:     jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fsnotify: Fix comment typo
+Message-ID: <20220726113918.qj7x53uw4e7u7hld@quack3>
+References: <20220722194639.18545-1-gaoxin@cdjrlc.com>
 MIME-Version: 1.0
-References: <20220722022416.137548-1-mfo@canonical.com> <20220722022416.137548-4-mfo@canonical.com>
-In-Reply-To: <20220722022416.137548-4-mfo@canonical.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 26 Jul 2022 18:25:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARvJEhEOwg_PHe3WKT9BkSchnGOmeiUaB+7E__NS9qrVw@mail.gmail.com>
-Message-ID: <CAK7LNARvJEhEOwg_PHe3WKT9BkSchnGOmeiUaB+7E__NS9qrVw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/6] sysctl, mod_devicetable: shadow struct
- ctl_table.procname for file2alias
-To:     Mauricio Faria de Oliveira <mfo@canonical.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-modules <linux-modules@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220722194639.18545-1-gaoxin@cdjrlc.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 11:24 AM Mauricio Faria de Oliveira
-<mfo@canonical.com> wrote:
->
-> In order to expose a sysctl entry to modpost (file2alias.c, precisely)
-> we have to shadow 'struct ctl_table' in mod_devicetable.h, as scripts
-> should not access kernel headers or its types (see file2alias.c).
->
-> The required field is '.procname' (basename of '/proc/sys/.../entry').
->
-> Since 'struct ctl_table' is annotated for structure randomization and
-> we need a known offset for '.procname' (remember, no kernel headers),
-> take it out of the randomized portion (as in, eg, 'struct task_struct').
->
-> Of course, add build-time checks for struct size and .procname offset
-> between both structs. (This has to be done on kernel side; for headers.)
->
-> With that in place, use the regular macros in devicetable-offsets.c to
-> define SIZE_... and OFF_... macros for the shadow struct and the field
-> of interest.
->
-> Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+On Sat 23-07-22 03:46:39, Xin Gao wrote:
+> The double `if' is duplicated in line 104, remove one.
+> 
+> Signed-off-by: Xin Gao <gaoxin@cdjrlc.com>
+
+Thanks! I've added the patch to my tree.
+
+								Honza
+
 > ---
->  fs/proc/proc_sysctl.c             | 19 +++++++++++++++++++
->  include/linux/mod_devicetable.h   | 25 +++++++++++++++++++++++++
->  include/linux/sysctl.h            | 11 ++++++++++-
->  kernel/sysctl.c                   |  1 +
->  scripts/mod/devicetable-offsets.c |  3 +++
->  5 files changed, 58 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 021e83fe831f..ebbf8702387e 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -19,6 +19,24 @@
->  #include <linux/kmemleak.h>
->  #include "internal.h"
->
-> +#ifdef CONFIG_MODULES
-> +#include <linux/mod_devicetable.h>
-> +
-> +static void check_struct_sysctl_device_id(void)
-> +{
-> +       /*
-> +        * The shadow struct sysctl_device_id for file2alias.c needs
-> +        * the same size of struct ctl_table and offset for procname.
-> +        */
-> +       BUILD_BUG_ON(sizeof(struct sysctl_device_id)
-> +                       != sizeof(struct ctl_table));
-> +       BUILD_BUG_ON(offsetof(struct sysctl_device_id, procname)
-> +                       != offsetof(struct ctl_table, procname));
-
-
-Nit:
-
-If you use static_assert(), you can remove
- check_struct_sysctl_device_id().
-
-
-You can write static_assert() out of a function.
-
-
-
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 223376959d29..15073621cfa8 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2487,6 +2487,7 @@ int __init sysctl_init_bases(void)
->
->         return 0;
->  }
-> +
-
-
-Noise.
-
-
-
-
->  #endif /* CONFIG_SYSCTL */
->  /*
->   * No sense putting this after each symbol definition, twice,
-> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-> index c0d3bcb99138..43b2549940d2 100644
-> --- a/scripts/mod/devicetable-offsets.c
-> +++ b/scripts/mod/devicetable-offsets.c
-> @@ -262,5 +262,8 @@ int main(void)
->         DEVID(ishtp_device_id);
->         DEVID_FIELD(ishtp_device_id, guid);
->
-> +       DEVID(sysctl_device_id);
-> +       DEVID_FIELD(sysctl_device_id, procname);
-> +
->         return 0;
->  }
-> --
-> 2.25.1
->
-
-
+>  fs/notify/fsnotify.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 6eee19d15e8c..a9773167d695 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -100,7 +100,7 @@ void fsnotify_sb_delete(struct super_block *sb)
+>   * Given an inode, first check if we care what happens to our children.  Inotify
+>   * and dnotify both tell their parents about events.  If we care about any event
+>   * on a child we run all of our children and set a dentry flag saying that the
+> - * parent cares.  Thus when an event happens on a child it can quickly tell if
+> + * parent cares.  Thus when an event happens on a child it can quickly tell
+>   * if there is a need to find a parent and send the event to the parent.
+>   */
+>  void __fsnotify_update_child_dentry_flags(struct inode *inode)
+> -- 
+> 2.30.2
+> 
 -- 
-Best Regards
-Masahiro Yamada
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
