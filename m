@@ -2,64 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF295816D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 17:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 086EF581732
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Jul 2022 18:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232746AbiGZPzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Jul 2022 11:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46672 "EHLO
+        id S239246AbiGZQUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Jul 2022 12:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229569AbiGZPzD (ORCPT
+        with ESMTP id S229831AbiGZQUq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Jul 2022 11:55:03 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3D627B1A;
-        Tue, 26 Jul 2022 08:55:02 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N4hBx-1nIvtA3s4l-011jIV; Tue, 26 Jul 2022 17:54:48 +0200
-Message-ID: <e9aa5629-b6a8-3e5d-422e-eb79ac333fdc@i2se.com>
-Date:   Tue, 26 Jul 2022 17:54:46 +0200
+        Tue, 26 Jul 2022 12:20:46 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231121CB39;
+        Tue, 26 Jul 2022 09:20:45 -0700 (PDT)
+Received: from localhost.localdomain (unknown [203.135.47.243])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 93E386601AA5;
+        Tue, 26 Jul 2022 17:20:33 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1658852443;
+        bh=Q8yKS/CE9WeaVU/KjkLDiu1+P/03f/c90M8YsCixowU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cgN22QmV02XkyYXSex/PVpjIAgeSTJ3OarhCz60EXZZSIFtH4Ry66m5tQhPibiNlx
+         ejgKdT6EuGerVmVtrcDtxz065YEw9n4vz/5f3G9wrhBym7pKH4ZrPC5hXxzrpdS0pD
+         Y1+Vx0AtG6jvdTF6VVfdadQR7EtGSZILqK0V8oACG7CF3mgz8xIOtBNM/lDziTLvNw
+         E2FHA8881Ts8ak3YP5z5ZQ9lUe1hCTA0nD7zL0NiTzkQF93DaE+LH7271nX/Vt45Ro
+         BW5l2/BzT/sJwUwaL4wlymWvcrdPd3yhj65fBxc2bnIgd0LIBoQZGDjVsTEDnPsr+q
+         M4e19wsh2sZ3g==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list),
+        linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM),
+        linux-api@vger.kernel.org (open list:ABI/API),
+        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES),
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
+        linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS
+        SUBSYSTEM),
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        krisman@collabora.com
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH 0/5] Add process_memwatch syscall
+Date:   Tue, 26 Jul 2022 21:18:49 +0500
+Message-Id: <20220726161854.276359-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-Content-Language: en-US
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
- <Yt6xsyy3+qEMn08y@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <0840b428-3a77-2339-354f-7fbd3295bb4d@i2se.com>
- <Yt+M+JgW6KuZFMvc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <Yt+M+JgW6KuZFMvc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:+dY6Kw53OPA/ANxTwrXbadLr9BxDgCp9BdmptMzwrzBDV6TzFUo
- mkson++S3IEVczYGDV9ClD/8+EP1JZx3x0G/BaBCLVSJrK7U2ORxtS2cqh7iO+DvtEuaJOz
- hc37biZ6ZyLTX2JQibCW/SJZ65Qg5CWwRjeGwaTua88x8GNXrbQN5d/QU7fruTA9juG7c3a
- N9k8PSHjlB0rCMUY/CZZA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FltFsHVm5wk=:KB0K6gA+eRBKw2BXxFwPN+
- p/hqYthcxfqAKD2IVY06KdtE1XhMyuJhX3cLAplAFcdjGolTBX/LRZLuKW30NJPKBahvM8oYq
- lxWCkEMsEeRjNW+9U41PisYpyEWnqYFENKWXs0TKGYbtvC+sywN8J0VSE9ru3I0gfz/HdBZiA
- WfkZ6bP3zUxVHcupaB5FMZ9qvqXMWWIo4dyB4G8Dbwr/T8CQ/0zVxrr8yXbs09NZm8/tRYVI5
- VxhX2lNlgXm0PG/m3pFdNQbR2ncCWu3PlEMeX+zevdtvcibfZJCDTo+PrPOCRG9h/K4iriIr3
- PIRCAi5PEqI/jBvCI4bCDm3XBmvUj0ZUD1bas/bK1RAEABvu/1QHrZ89dTq/e4Th9BoXmlGg0
- loYa8fIcUiiWRXXuORArdALZdcz2qlQ3DFSEW9I9beMRus9MOq0poyvNFRsFUxTEV82FvKIAk
- e1qjRl01Ff+EBrNnDW6AI9bb63bnNQyIqoBeAmf8PpGmyhxXeeVQErKthwJCK2Bm0/i5qsX3E
- e3AVVDVSDwGdyLQ8W1DepIPjdZueVxwq5+QoG14iSOa8Mu+jaR/imrxyxPCtgGe0L0Y6xG5oK
- ry5bYpMWkCCjxacSPqjGuR9OGv2sWtwyxYyXih2jCJUurhZwYKQFBISzdgqgVj8/ubzeaiWXW
- SNlb/lj0JT4bbZpug0YqlY3WoPgDM9ZLJmjsIthnkNqTS+1FgP1/IjbrkiPLuEL6C4A88dunC
- mEWk90dxMK8/BgF3bvsNarLsloRiazNltfyWpg0SgVQ2+ClXCbKzB2CFcJg=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,110 +76,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ojaswin,
+Hello,
 
-Am 26.07.22 um 08:43 schrieb Ojaswin Mujoo:
-> On Mon, Jul 25, 2022 at 09:09:32PM +0200, Stefan Wahren wrote:
->> Hi Ojaswin,
->>
->> Am 25.07.22 um 17:07 schrieb Ojaswin Mujoo:
->>> On Mon, Jul 18, 2022 at 03:29:47PM +0200, Stefan Wahren wrote:
->>>> Hi,
->>>>
->>>> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
->>>> unable to run "rpi-update" without massive performance regression on my
->>>> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
->>>> tool successfully downloads the latest firmware (> 100 MB) on my development
->>>> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
->>>> min. The same scenario on Linux 5.18 shows the following symptoms:
->>>>
->>>> - download takes endlessly much time and leads to an abort by userspace in
->>>> most cases because of the poor performance
->>>> - massive system load during download even after download has been aborted
->>>> (heartbeat LED goes wild)
->>>> - whole system becomes nearly unresponsive
->>>> - system load goes back to normal after > 10 min
->>>> - dmesg doesn't show anything suspicious
->>>>
->>>> I was able to bisect this issue:
->>>>
->>>> ff042f4a9b050895a42cae893cc01fa2ca81b95c good
->>>> 4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
->>>> 25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
->>>> b4bc93bd76d4da32600795cd323c971f00a2e788 bad
->>>> 3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
->>>> b080cee72ef355669cbc52ff55dc513d37433600 good
->>>> ad9c6ee642a61adae93dfa35582b5af16dc5173a good
->>>> 9b03992f0c88baef524842e411fbdc147780dd5d bad
->>>> aab4ed5816acc0af8cce2680880419cd64982b1d good
->>>> 14705fda8f6273501930dfe1d679ad4bec209f52 good
->>>> 5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
->>>> 8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
->>>> 077d0c2c78df6f7260cdd015a991327efa44d8ad bad
->>>> cc5095747edfb054ca2068d01af20be3fcc3634f good
->>>> 27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
->>>>
->>>> commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
->>>> Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->>>> Date:   Tue Mar 8 15:22:01 2022 +0530
->>>>
->>>> ext4: make mb_optimize_scan performance mount option work with extents
->>>>
->>>> If i revert this commit with Linux 5.19-rc6 the performance regression
->>>> disappears.
->>>>
->>>> Please ask if you need more information.
->>> Hi Stefan,
->>>
->>> Apologies, I had missed this email initially. So this particular patch
->>> simply changed a typo in an if condition which was preventing the
->>> mb_optimize_scan option to be enabled correctly (This feature was
->>> introduced in the following commit [1]). I think with the
->>> mb_optimize_scan now working, it is somehow causing the firmware
->>> download/update to take a longer time.
->>>
->>> I'll try to investigate this and get back with my findings.
->> thanks. I wasn't able to reproduce this heavy load symptoms with every SD
->> card. Maybe this depends on the write performance of the SD card to trigger
->> the situation (used command to measure write performance: dd if=/dev/zero
->> of=/boot/test bs=1M count=30 oflag=dsync,direct ).
->>
->> I tested a Kingston consumer 32 GB which had nearly constant write
->> performance of 13 MB/s and didn't had the heavy load symptoms. The firmware
->> update was done in a few seconds, so hard to say that at least the
->> performance regression is reproducible.
->>
->> I also tested 2x Kingston industrial 16 GB which had a floating write
->> performance between 5 and 10 MB/s (wear leveling?) and both had the heavy
->> load symptoms.
->>
->> All SD cards has been detected as ultra high speed DDR50 by the emmc2
->> interface.
->>
->> Best regards
->>
->>> Regard,
->>> Ojaswin
->>>
->>> [1]
->>> 	commit 196e402adf2e4cd66f101923409f1970ec5f1af3
->>> 	From: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
->>> 	Date: Thu, 1 Apr 2021 10:21:27 -0700
->>> 	
->>> 	ext4: improve cr 0 / cr 1 group scanning
->>>
->>>> Regards
->>>>
-> Thanks for the info Stefan, I'm still trying to reproduce the issue but
-> it's slightly challenging since I don't have my RPi handy at the moment.
->
-> In the meantime, would you please try out the mb_optmize_scan=0 command
-> line options to see if that helps bypass the issue. This will help
-> confirm if the issue lies in mb_optmize_scan itself or if its something
-> else.
->
-I run the firmware update 5 times with mb_optimize_scan=0 on my 
-Raspberry Pi 4 and the industrial SD card and everytime the update worked.
->
-> Regards,
-> Ojaswin
+This patch series implements a new syscall, process_memwatch. Currently,
+only the support to watch soft-dirty PTE bit is added. This syscall is
+generic to watch the memory of the process. There is enough room to add
+more operations like this to watch memory in the future.
+
+Soft-dirty PTE bit of the memory pages can be viewed by using pagemap
+procfs file. The soft-dirty PTE bit for the memory in a process can be
+cleared by writing to the clear_refs file. This series adds features that
+weren't possible through the Proc FS interface.
+- There is no atomic get soft-dirty PTE bit status and clear operation
+  possible.
+- The soft-dirty PTE bit of only a part of memory cannot be cleared.
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The Proc FS interface is enough for that as I think the process
+is frozen. We have the use case where we need to track the soft-dirty
+PTE bit for running processes. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows. This syscall is used by games to keep
+track of dirty pages and keep processing only the dirty pages. This
+syscall can be used by the CRIU project and other applications which
+require soft-dirty PTE bit information.
+
+As in the current kernel there is no way to clear a part of memory (instead
+of clearing the Soft-Dirty bits for the entire processi) and get+clear
+operation cannot be performed atomically, there are other methods to mimic
+this information entirely in userspace with poor performance:
+- The mprotect syscall and SIGSEGV handler for bookkeeping
+- The userfaultfd syscall with the handler for bookkeeping
+
+        long process_memwatch(int pidfd, unsigned long start, int len,
+                              unsigned int flags, void *vec, int vec_len);
+
+This syscall can be used by the CRIU project and other applications which
+require soft-dirty PTE bit information. The following operations are
+supported in this syscall:
+- Get the pages that are soft-dirty.
+- Clear the pages which are soft-dirty.
+- The optional flag to ignore the VM_SOFTDIRTY and only track per page
+soft-dirty PTE bit
+
+There are two decisions which have been taken about how to get the output
+from the syscall.
+- Return offsets of the pages from the start in the vec
+- Stop execution when vec is filled with dirty pages
+These two arguments doesn't follow the mincore() philosophy where the
+output array corresponds to the address range in one to one fashion, hence
+the output buffer length isn't passed and only a flag is set if the page
+is present. This makes mincore() easy to use with less control. We are
+passing the size of the output array and putting return data consecutively
+which is offset of dirty pages from the start. The user can convert these
+offsets back into the dirty page addresses easily. Suppose, the user want
+to get first 10 dirty pages from a total memory of 100 pages. He'll
+allocate output buffer of size 10 and process_memwatch() syscall will
+abort after finding the 10 pages. This behaviour is needed to support
+Windows' getWriteWatch(). The behaviour like mincore() can be achieved by
+passing output buffer of 100 size. This interface can be used for any
+desired behaviour.
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (5):
+  fs/proc/task_mmu: make functions global to be used in other files
+  mm: Implement process_memwatch syscall
+  mm: wire up process_memwatch syscall for x86
+  selftests: vm: add process_memwatch syscall tests
+  mm: add process_memwatch syscall documentation
+
+ Documentation/admin-guide/mm/soft-dirty.rst   |  48 +-
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ fs/proc/task_mmu.c                            |  84 +--
+ include/linux/mm_inline.h                     |  99 +++
+ include/linux/syscalls.h                      |   3 +-
+ include/uapi/asm-generic/unistd.h             |   5 +-
+ include/uapi/linux/memwatch.h                 |  12 +
+ kernel/sys_ni.c                               |   1 +
+ mm/Makefile                                   |   2 +-
+ mm/memwatch.c                                 | 285 ++++++++
+ tools/include/uapi/asm-generic/unistd.h       |   5 +-
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |   1 +
+ tools/testing/selftests/vm/.gitignore         |   1 +
+ tools/testing/selftests/vm/Makefile           |   2 +
+ tools/testing/selftests/vm/memwatch_test.c    | 635 ++++++++++++++++++
+ 16 files changed, 1098 insertions(+), 87 deletions(-)
+ create mode 100644 include/uapi/linux/memwatch.h
+ create mode 100644 mm/memwatch.c
+ create mode 100644 tools/testing/selftests/vm/memwatch_test.c
+
+-- 
+2.30.2
+
