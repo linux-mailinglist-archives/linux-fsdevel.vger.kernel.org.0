@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA8FC5825E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jul 2022 13:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F125825E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jul 2022 13:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbiG0LtX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jul 2022 07:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37160 "EHLO
+        id S232481AbiG0LtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jul 2022 07:49:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232502AbiG0LtR (ORCPT
+        with ESMTP id S232499AbiG0LtQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jul 2022 07:49:17 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685D74AD7D
+        Wed, 27 Jul 2022 07:49:16 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67BE74AD78
         for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 04:49:13 -0700 (PDT)
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
         s=2020; t=1658922551;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=xRKJXpuPOY37Ota4Hpp5h4OjuhB+djpnafgzHxMM0tk=;
-        b=4C54cDG57KD1DEFXMj3/3DvbLuA1EnYC9vSJagp3/kgrOri8zkZ3ShMDKqxE7w7O/K9FrP
-        KApNJ7h8h6E9Nw3GJM0oQPEX3ODR3HAENQFvC93ax5EXB/6aThpwY4OFpBU6Z/c0vq6EK9
-        ZSj+/NyFHypscrBdEYokxamPFO4QCQEGlhMTKj4yS7vcbEoPr52yskFRi06yoFL4wz2WMZ
-        Lf+K1ZEO5KK0cNaLf0SiFW05Ss2cuojoh7pQd9mwDSJHbecycr0+/WWQF/4J/z01NguRlS
-        7XCyphmyEOHHlc21ZtmIVjx+ZkpcX/ETbnnBaFEvejeAW64+YybW+ffAD24NeA==
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=l2X2DqDoeVLNPuGgYJPU21ZoOObmpTzKokmqtTV7SfU=;
+        b=kX5EgXzxRRECz7jKIFEP/hsLUb0CV0p141JOd/QfZwhqNUKIooUzw3X7XoZ0aMq8lFXzui
+        U5zCOTb5tIPlb3z/SfAR6x83w9vpwiWWKw4ZlsVzJHlD7rEVra0tE5GkNBKzYdCc5rLUZn
+        /uneJWJUHA9DZu/KqcBxq/MVViXbmgXHoem7eQNHcIRljoQpYP2flQ2TsAVyMrh1dqTirQ
+        dhUZt9nvRSZcZAaqVxnbuy5OQB8jGEpky6++Tv8wpyI+ux1e9zeRAE35yYb4YQh0gCLfqQ
+        B8T2mGZVFzaDQCnM7PEfg85watjCRGJFNaPmSFZdNeOEAY+hEXqeKyfmJqWMqQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
         s=2020e; t=1658922551;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=xRKJXpuPOY37Ota4Hpp5h4OjuhB+djpnafgzHxMM0tk=;
-        b=yPVNNViplcdC41IZMg1Q5WtzDCBZgjxVsPl9IXg3EN24/Pmjhp/SuI+UZSRWgvmuQzAZl2
-        KnoQADLANYcTb1Cg==
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=l2X2DqDoeVLNPuGgYJPU21ZoOObmpTzKokmqtTV7SfU=;
+        b=tDa/NobMm33dK6f5onLnvWViwfdJPf6DfPZXd/n6UaF58XGLzaW6CxWz2/Qi5cFD7jXPBo
+        4H3tJavv/dv2MWDA==
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 0/4 v2] fs/dcache: Resolve the last RT woes.
-Date:   Wed, 27 Jul 2022 13:49:00 +0200
-Message-Id: <20220727114904.130761-1-bigeasy@linutronix.de>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 1/4 v2] fs/dcache: d_add_ci() needs to complete parallel lookup.
+Date:   Wed, 27 Jul 2022 13:49:01 +0200
+Message-Id: <20220727114904.130761-2-bigeasy@linutronix.de>
+In-Reply-To: <20220727114904.130761-1-bigeasy@linutronix.de>
+References: <20220727114904.130761-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -54,91 +58,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is v2 of the series, v1 is available at
-   https://https://lkml.kernel.org/r/.kernel.org/all/20220613140712.77932-1=
--bigeasy@linutronix.de/
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-v1=E2=80=A6v2:
-   - Make patch around Al's description of a bug in d_add_ci(). I took
-     the liberty to make him Author and added his signed-off-by since I
-     sinmply added a patch-body around his words.
+Result of d_alloc_parallel() in d_add_ci() is fed to d_splice_alias(), which
+*NORMALLY* feeds it to __d_add() or __d_move() in a way that will have
+__d_lookup_done() applied to it.
 
-   - The reasoning of why delaying the wakeup is reasonable has been
-     replaced with Al's analysis of the code.
+However, there is a nasty possibility - d_splice_alias() might legitimately
+fail without having marked the sucker not in-lookup. dentry will get dropped
+by d_add_ci(), so ->d_wait won't end up pointing to freed object, but it's
+still a bug - retain_dentry() will scream bloody murder upon seeing that, a=
+nd
+for a good reason; we'll get hash chain corrupted. It's impossible to hit
+without corrupted fs image (ntfs or case-insensitive xfs), but it's a bug.
 
-   - The split of wake up has been done differently (and I hope this is
-     what Al meant). First the wake up has been pushed to the caller and
-     then delayed to end_dir_add() after preemption has been enabled.
+Invoke d_lookup_done() after d_splice_alias() to ensure that the
+in-lookip flag is always cleared.
 
-   - There is still __d_lookup_unhash(), __d_lookup_unhash_wake() and
-     __d_lookup_done() is removed.
-     __d_lookup_done() is removed because it is exported and the return
-     value changes which will affect OOT users which are not aware of
-     it.
-     There is still d_lookup_done() which invokes
-     __d_lookup_unhash_wake(). This can't remain in the header file due
-     to cyclic depencies which in turn can't resolve wake_up_all()
-     within the inline function.
+Fixes: d9171b9345261 ("parallel lookups machinery, part 4 (and last)")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ fs/dcache.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-The original cover letter:
-
-PREEMPT_RT has two issues with the dcache code:
-
-   1) i_dir_seq is a special cased sequence counter which uses the lowest
-      bit as writer lock. This requires that preemption is disabled.
-
-      On !RT kernels preemption is implictly disabled by spin_lock(), but
-      that's not the case on RT kernels.
-
-      Replacing i_dir_seq on RT with a seqlock_t comes with its own
-      problems due to arbitrary lock nesting. Using a seqcount with an
-      associated lock is not possible either because the locks held by the
-      callers are not necessarily related.
-
-      Explicitly disabling preemption on RT kernels across the i_dir_seq
-      write held critical section is the obvious and simplest solution. The
-      critical section is small, so latency is not really a concern.
-
-   2) The wake up of dentry::d_wait waiters is in a preemption disabled
-      section, which violates the RT constraints as wake_up_all() has
-      to acquire the wait queue head lock which is a 'sleeping' spinlock
-      on RT.
-
-      There are two reasons for the non-preemtible section:
-
-         A) The wake up happens under the hash list bit lock
-
-         B) The wake up happens inside the i_dir_seq write side
-            critical section
-
-       #A is solvable by moving it outside of the hash list bit lock held=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-       section.
-
-       Making #B preemptible on RT is hard or even impossible due to lock
-       nesting constraints.
-
-       A possible solution would be to replace the waitqueue by a simple
-       waitqueue which can be woken up inside atomic sections on RT.
-
-       But aside of Linus not being a fan of simple waitqueues, there is
-       another observation vs. this wake up. It's likely for the woken up
-       waiter to immediately contend on dentry::lock.
-
-       It turns out that there is no reason to do the wake up within the
-       i_dir_seq write held region. The only requirement is to do the wake
-       up within the dentry::lock held region. Further details in the
-       individual patches.
-
-       That allows to move the wake up out of the non-preemptible section
-       on RT, which also reduces the dentry::lock held time after wake up.
-
-Thanks,
-
-Sebastian
-
-
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2239,6 +2239,7 @@ struct dentry *d_add_ci(struct dentry *d
+ 		}=20
+ 	}
+ 	res =3D d_splice_alias(inode, found);
++	d_lookup_done(found);
+ 	if (res) {
+ 		dput(found);
+ 		return res;
