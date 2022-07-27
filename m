@@ -2,90 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F565834C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jul 2022 23:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7AA9583557
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 00:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236525AbiG0VNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jul 2022 17:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
+        id S234615AbiG0Wcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jul 2022 18:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232051AbiG0VNv (ORCPT
+        with ESMTP id S229644AbiG0Wcl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jul 2022 17:13:51 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8FA4E87F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 14:13:50 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id 72so16911281pge.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 14:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YHrp+/mnJmHfV69EUAYZdN7aFUtabolaTlyqxdvvPaU=;
-        b=Jtp2twDnzN+4lWaWTsFbsKGaBtyat8ch1PmoFuOXt68nO5wqOiMFomfJhAZjw3mihm
-         Cj6sAu38qi4Mhu0CXP0FrbKv+B9zeWomjPcPK7nT9VNK3aUlepC9S5nuNfviS8aFofK7
-         CeOTLuly65dMx9aZTq/hzifVONzGQiTDoxNRg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YHrp+/mnJmHfV69EUAYZdN7aFUtabolaTlyqxdvvPaU=;
-        b=SzuNeY1KpbCKF6KqzFvSCHYSBFaG/w57PWE/yOrYrx9uULzDKiRfGLCbC3uc1UgEnv
-         p/NfYQs12FOfeBPrpEm7+3BRZwuDPP5TGu7n12Tt/d+JmkxVCCkmCUo0Cf1HxiaiVX+E
-         5cLgmXxa2cw1HtCRJjcQ5at2AyhUhohxMnm3HmIAqEjON/R7hkzRhGeiFoMk4Bt8vfFK
-         WEVxvxIMxXbBV/kmP07k+Gkqxf0eXjL2y27nab61akw6EhPDHf+y1kaurpTGZwZ2+g88
-         tTzE3zT1AZnvB1vS8h8duLjyVokLxQjPU5pitUVLtjXeoZZkCHNBCBK+qa1NOGrozwBn
-         h5yQ==
-X-Gm-Message-State: AJIora8Paiq1B6wP7mW5hVTzbX7a78Ar9gTmcI2/cWmeoFQAxS+qBhek
-        ErrHFRBPMSvjYEBhIX3NUWDlmQ==
-X-Google-Smtp-Source: AGRyM1vdkfYRiqix/j7n8sooInJkoyk6a2nXU232zrO69Dea58sX+6BxmUs4R8B8kSGyKxalspeuTA==
-X-Received: by 2002:a63:560d:0:b0:419:759a:6653 with SMTP id k13-20020a63560d000000b00419759a6653mr20669183pgb.219.1658956429931;
-        Wed, 27 Jul 2022 14:13:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n17-20020a170902e55100b0016d6c38d37bsm8013304plf.156.2022.07.27.14.13.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jul 2022 14:13:49 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, fmdefrancesco@gmail.com,
-        ebiederm@xmission.com, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>, ira.weiny@intel.com
-Subject: Re: [PATCH v2] fs: Call kmap_local_page() in copy_string_kernel()
-Date:   Wed, 27 Jul 2022 14:13:44 -0700
-Message-Id: <165895642099.601089.13587838249930753502.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220724212523.13317-1-fmdefrancesco@gmail.com>
-References: <20220724212523.13317-1-fmdefrancesco@gmail.com>
+        Wed, 27 Jul 2022 18:32:41 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A5F9D558F5;
+        Wed, 27 Jul 2022 15:32:39 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-20-138.pa.nsw.optusnet.com.au [49.195.20.138])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0562262CC03;
+        Thu, 28 Jul 2022 08:32:34 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oGpZw-0065Ed-SD; Thu, 28 Jul 2022 08:32:32 +1000
+Date:   Thu, 28 Jul 2022 08:32:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@fb.com>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de
+Subject: Re: [PATCH 4/5] io_uring: add support for dma pre-mapping
+Message-ID: <20220727223232.GV3600936@dread.disaster.area>
+References: <20220726173814.2264573-1-kbusch@fb.com>
+ <20220726173814.2264573-5-kbusch@fb.com>
+ <YuB09cZh7rmd260c@ZenIV>
+ <YuFEhQuFtyWcw7rL@kbusch-mbp.dhcp.thefacebook.com>
+ <YuFGCO7M29fr3bVB@ZenIV>
+ <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62e1bd07
+        a=cxZHBGNDieHvTKNp/pucQQ==:117 a=cxZHBGNDieHvTKNp/pucQQ==:17
+        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8
+        a=jTGfvSW0_HNO3Awiv3YA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 24 Jul 2022 23:25:23 +0200, Fabio M. De Francesco wrote:
-> The use of kmap_atomic() is being deprecated in favor of kmap_local_page().
+On Wed, Jul 27, 2022 at 09:04:25AM -0600, Keith Busch wrote:
+> On Wed, Jul 27, 2022 at 03:04:56PM +0100, Al Viro wrote:
+> > On Wed, Jul 27, 2022 at 07:58:29AM -0600, Keith Busch wrote:
+> > > On Wed, Jul 27, 2022 at 12:12:53AM +0100, Al Viro wrote:
+> > > > On Tue, Jul 26, 2022 at 10:38:13AM -0700, Keith Busch wrote:
+> > > > 
+> > > > > +	if (S_ISBLK(file_inode(file)->i_mode))
+> > > > > +		bdev = I_BDEV(file->f_mapping->host);
+> > > > > +	else if (S_ISREG(file_inode(file)->i_mode))
+> > > > > +		bdev = file->f_inode->i_sb->s_bdev;
+> > > > 
+> > > > *blink*
+> > > > 
+> > > > Just what's the intended use of the second case here?
+> > > 
+> > > ??
+> > > 
+> > > The use case is same as the first's: dma map the user addresses to the backing
+> > > storage. There's two cases here because getting the block_device for a regular
+> > > filesystem file is different than a raw block device.
+> > 
+> > Excuse me, but "file on some filesystem + block number on underlying device"
+> > makes no sense as an API...
 > 
-> With kmap_local_page(), the mappings are per thread, CPU local and not
-> globally visible. Furthermore, the mappings can be acquired from any
-> context (including interrupts).
+> Sorry if I'm misunderstanding your concern here.
 > 
-> Therefore, replace kmap_atomic() with kmap_local_page() in
-> copy_string_kernel(). Instead of open-coding local mapping + memcpy(),
-> use memcpy_to_page(). Delete a redundant call to flush_dcache_page().
-> 
-> [...]
+> The API is a file descriptor + index range of registered buffers (which is a
+> pre-existing io_uring API). The file descriptor can come from opening either a
+> raw block device (ex: /dev/nvme0n1), or any regular file on a mounted
+> filesystem using nvme as a backing store.
 
-Applied to for-next/execve, thanks!
+That's fundamentally flawed. Filesystems can have multiple block
+devices backing them that the VFS doesn't actually know about (e.g.
+btrfs, XFS, etc). Further, some of these filesystems can spread
+indiivdual file data across mutliple block devices i.e. the backing
+bdev changes as file offset changes....
 
-[1/1] fs: Call kmap_local_page() in copy_string_kernel()
-      https://git.kernel.org/kees/c/0ff95c390bc8
+Filesystems might not even have a block device (NFS, CIFS, etc) -
+what happens if you call this function on a file belonging to such a
+filesystem?
 
+> You don't need to know about specific block numbers. You can use the result
+> with any offset in the underlying block device.
+
+Sure, but you how exactly do you know what block device the file
+offset maps to?
+
+We have entire layers like fs/iomap or bufferheads for this - their
+entire purpose in life is to efficiently manage the translation
+between {file, file_offset} and {dev, dev_offset} for the purposes
+of IO and data access...
+
+Cheers,
+
+Dave.
 -- 
-Kees Cook
-
+Dave Chinner
+david@fromorbit.com
