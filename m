@@ -2,94 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04EF5583277
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jul 2022 20:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F565834C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Jul 2022 23:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237323AbiG0Sxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jul 2022 14:53:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
+        id S236525AbiG0VNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Jul 2022 17:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbiG0Sxj (ORCPT
+        with ESMTP id S232051AbiG0VNv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jul 2022 14:53:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3BF4564D7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 10:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658944274;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cFBj7bYM41fbdLBT9pSUbRsCO93VFlM0clQRLWukkKs=;
-        b=L769YmjNjQEwQnxlgU34Qhz0lEBm0ALfOEDBorBVv+1Wve+deX73SQs6i3BV4nbIAkEGd9
-        NDBCCzc0wvD8FokDMQ2NI9m2gsOEDza5A6/RSoqhgkHMY+/6H+JxvKEut9lkJfK7Tq1xOu
-        Wqtn/4k8t544Ggda3yjlOKfVJOuwOog=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-136-hIeJ3yulP1Km3lPlos-Vgg-1; Wed, 27 Jul 2022 13:51:09 -0400
-X-MC-Unique: hIeJ3yulP1Km3lPlos-Vgg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7A18A811E80;
-        Wed, 27 Jul 2022 17:51:08 +0000 (UTC)
-Received: from fedora (unknown [10.40.192.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4987E492CA2;
-        Wed, 27 Jul 2022 17:51:07 +0000 (UTC)
-Date:   Wed, 27 Jul 2022 19:51:04 +0200
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Tadeusz Struk <tadeusz.struk@linaro.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+bd13648a53ed6933ca49@syzkaller.appspotmail.com
-Subject: Re: [PATCH] ext4: try to flush inline data before calling BUG in
- writepages
-Message-ID: <20220727175104.cnth7s452thpuosj@fedora>
-References: <983bb802-d883-18d4-7945-dbfa209c1cc8@linaro.org>
- <20220726224428.407887-1-tadeusz.struk@linaro.org>
- <20220727172517.bv2bflydy2urqttv@fedora>
- <29a17172-c8c6-0e69-6e38-e482500d2ae3@linaro.org>
+        Wed, 27 Jul 2022 17:13:51 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8FA4E87F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 14:13:50 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 72so16911281pge.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Jul 2022 14:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YHrp+/mnJmHfV69EUAYZdN7aFUtabolaTlyqxdvvPaU=;
+        b=Jtp2twDnzN+4lWaWTsFbsKGaBtyat8ch1PmoFuOXt68nO5wqOiMFomfJhAZjw3mihm
+         Cj6sAu38qi4Mhu0CXP0FrbKv+B9zeWomjPcPK7nT9VNK3aUlepC9S5nuNfviS8aFofK7
+         CeOTLuly65dMx9aZTq/hzifVONzGQiTDoxNRg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YHrp+/mnJmHfV69EUAYZdN7aFUtabolaTlyqxdvvPaU=;
+        b=SzuNeY1KpbCKF6KqzFvSCHYSBFaG/w57PWE/yOrYrx9uULzDKiRfGLCbC3uc1UgEnv
+         p/NfYQs12FOfeBPrpEm7+3BRZwuDPP5TGu7n12Tt/d+JmkxVCCkmCUo0Cf1HxiaiVX+E
+         5cLgmXxa2cw1HtCRJjcQ5at2AyhUhohxMnm3HmIAqEjON/R7hkzRhGeiFoMk4Bt8vfFK
+         WEVxvxIMxXbBV/kmP07k+Gkqxf0eXjL2y27nab61akw6EhPDHf+y1kaurpTGZwZ2+g88
+         tTzE3zT1AZnvB1vS8h8duLjyVokLxQjPU5pitUVLtjXeoZZkCHNBCBK+qa1NOGrozwBn
+         h5yQ==
+X-Gm-Message-State: AJIora8Paiq1B6wP7mW5hVTzbX7a78Ar9gTmcI2/cWmeoFQAxS+qBhek
+        ErrHFRBPMSvjYEBhIX3NUWDlmQ==
+X-Google-Smtp-Source: AGRyM1vdkfYRiqix/j7n8sooInJkoyk6a2nXU232zrO69Dea58sX+6BxmUs4R8B8kSGyKxalspeuTA==
+X-Received: by 2002:a63:560d:0:b0:419:759a:6653 with SMTP id k13-20020a63560d000000b00419759a6653mr20669183pgb.219.1658956429931;
+        Wed, 27 Jul 2022 14:13:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n17-20020a170902e55100b0016d6c38d37bsm8013304plf.156.2022.07.27.14.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jul 2022 14:13:49 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, fmdefrancesco@gmail.com,
+        ebiederm@xmission.com, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Kees Cook <keescook@chromium.org>, ira.weiny@intel.com
+Subject: Re: [PATCH v2] fs: Call kmap_local_page() in copy_string_kernel()
+Date:   Wed, 27 Jul 2022 14:13:44 -0700
+Message-Id: <165895642099.601089.13587838249930753502.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220724212523.13317-1-fmdefrancesco@gmail.com>
+References: <20220724212523.13317-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29a17172-c8c6-0e69-6e38-e482500d2ae3@linaro.org>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 27, 2022 at 10:40:25AM -0700, Tadeusz Struk wrote:
-> Hi Lukas,
-> On 7/27/22 10:25, Lukas Czerner wrote:
-> > I don't think this is the right fix. We're in ext4_writepages, so at
-> > this point I don't think an inode should have any actual inline data in
-> > it. If it does it's a bug and the question is how did this get here?
-> > 
-> > The inode is likely corrupted and it should have been noticed earliler
-> > and it should never get here.
+On Sun, 24 Jul 2022 23:25:23 +0200, Fabio M. De Francesco wrote:
+> The use of kmap_atomic() is being deprecated in favor of kmap_local_page().
 > 
-> Yes, that was just an attempt fix something that I'm not quite familiar
-> with.
+> With kmap_local_page(), the mappings are per thread, CPU local and not
+> globally visible. Furthermore, the mappings can be acquired from any
+> context (including interrupts).
 > 
-> Jan sent already a patch for that fixes it:
-> https://lore.kernel.org/all/20220727155753.13969-1-jack@suse.cz/
+> Therefore, replace kmap_atomic() with kmap_local_page() in
+> copy_string_kernel(). Instead of open-coding local mapping + memcpy(),
+> use memcpy_to_page(). Delete a redundant call to flush_dcache_page().
 > 
-> -- 
-> Thanks,
-> Tadeusz
-> 
+> [...]
 
-Yeah, I just noticed sorry about that. I was missing the email context
-for some reason.
+Applied to for-next/execve, thanks!
 
-Thanks!
--Lukas
+[1/1] fs: Call kmap_local_page() in copy_string_kernel()
+      https://git.kernel.org/kees/c/0ff95c390bc8
+
+-- 
+Kees Cook
 
