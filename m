@@ -2,141 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B23D3584274
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 16:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95EFE58439A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 17:53:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbiG1O7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 10:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42566 "EHLO
+        id S231430AbiG1PxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 11:53:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbiG1O7E (ORCPT
+        with ESMTP id S229539AbiG1PxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 10:59:04 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABADEF75
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jul 2022 07:59:03 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id c24so1610462qkm.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jul 2022 07:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hefring-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z5/tjPr6QG6frGjHfD5cFUY7n0xr+lehOx18t20B7bI=;
-        b=6M1MGyT0JZCI3ep5oiwXY/o2YOAgICvED40hIK3y6zgNdw0bpmYMtlXW9IxdWq79P/
-         RsPQEENCdp3uPwrcKarSAZ8A9/uF21G+tUHruEiprCOsLBhdJ6BrrTQTqacVnbhl25Xg
-         7ld+FnmhkEl0/XC0iP63zjLcr92/l4aG1se9zjS1xyKNJmtqEX3f/QjWdCK144cVGnwa
-         KIWCSIHjGj42flH2QOrxjKWIdxzwfuJazR8b+AS9cPIve8tPu7Y9oaXCM2vQf8tAeCyZ
-         RMr/KVUCOG8ygAM9Tlryu/3fE9Dmnv+n1Rr7453wDm3m9jv4cez/0uey2XRuzTVxS0Ju
-         Cv5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z5/tjPr6QG6frGjHfD5cFUY7n0xr+lehOx18t20B7bI=;
-        b=QAdWeUJqNL7ayWoK8Eoc+Qo+rnPJixfHnqQvW3qkmpRa7HrgsFANH+A7N1rHSg5tao
-         ChDtdePgjfiGs3Er5BK6/Bsbwp4aqokh64W5vfDIVC/PUCLABIe3+P2BfotdYxPZSaUs
-         yEW5k32VSL3UiQComoA1fWOePZA580TEvHjEqETAxzeScs/KusQeFxULIZwD2bN2SZmG
-         Buz7jDmLFbLuc51yotCgyEwczVqXBNdFvzxQtY/cAvFHoyB/5FxAI039f2BqDX3T24yf
-         oeWhUNRdepGpIAXiuEC/fLFsLOmSCddP9lVNXHaZh5/UQLBnQopCzuY/EC+SQddB0709
-         kB2g==
-X-Gm-Message-State: AJIora+0VT8Y9ZtR0Vw3X1ZqR5cZOX+2krUIjVuGm235LSBsFEMen9kE
-        iEpOI3FHRvABL7wPsE/FoQ7FpB+A8ibUwg==
-X-Google-Smtp-Source: AGRyM1t4DkwKnAnFc0kfx/Gt2EUQ5qJqQfJcIgulv+SylVQonHQaHp57fMDss5NRbvjRTVONPN9/gg==
-X-Received: by 2002:a05:620a:1907:b0:6a6:2fac:462f with SMTP id bj7-20020a05620a190700b006a62fac462fmr19703589qkb.213.1659020342806;
-        Thu, 28 Jul 2022 07:59:02 -0700 (PDT)
-Received: from hefring.. ([50.212.55.89])
-        by smtp.gmail.com with ESMTPSA id g24-20020ac870d8000000b0031e9ff0c44fsm586860qtp.20.2022.07.28.07.59.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 07:59:02 -0700 (PDT)
-From:   Ben Wolsieffer <ben.wolsieffer@hefring.com>
-X-Google-Original-From: Ben Wolsieffer <Ben.Wolsieffer@hefring.com>
-Cc:     Andrew Morton <akpm@osdl.org>,
-        Ben Wolsieffer <Ben.Wolsieffer@hefring.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: /proc/<pid>/maps: release mmap read lock
-Date:   Thu, 28 Jul 2022 10:58:58 -0400
-Message-Id: <20220728145859.497397-1-Ben.Wolsieffer@hefring.com>
-X-Mailer: git-send-email 2.36.1
+        Thu, 28 Jul 2022 11:53:06 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B62CF2E9CC;
+        Thu, 28 Jul 2022 08:53:05 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 6DBD21F8D0;
+        Thu, 28 Jul 2022 15:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1659023584; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tRazPMMQgCNoZTT8t5E+ydoF4IaYw/yvSCZueBX2vlc=;
+        b=Wp0uWZIheJ9zb1Rc4LorCsj+g6x3DWfXF5vbllhKRksxE/RZKcv/prLu3c8eCgj2KzSOGh
+        DRX3yTcRuKsyr/ugUePcCfY09e3FzttIzI1xT0DQ82/jcCgv9nWcqrXt6Dosprh2NSK/+/
+        cvKBnFYfDd+KB8ADt0jbNuOTYepdla0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1659023584;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tRazPMMQgCNoZTT8t5E+ydoF4IaYw/yvSCZueBX2vlc=;
+        b=ibID4RGaYu7op8jW6cl1Q6w8I7GyCAQsd3LQ0YZNYqB8+5ib2FB2fMgf+RyFAIwSLCjfgy
+        f+5vePk+N98wmQDA==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 4D82A2C141;
+        Thu, 28 Jul 2022 15:53:04 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 14FDCA0668; Thu, 28 Jul 2022 17:52:42 +0200 (CEST)
+Date:   Thu, 28 Jul 2022 17:52:42 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     linux-ext4@vger.kernel.org, jlayton@kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ext4: don't increase iversion counter for ea_inodes
+Message-ID: <20220728155242.byfyjs3oswru7stt@quack3>
+References: <20220728133914.49890-1-lczerner@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220728133914.49890-1-lczerner@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The no-MMU implementation of /proc/<pid>/map doesn't normally release
-the mmap read lock, since the !IS_ERR_OR_NULL(_vml) condition in m_stop
-is false in most cases.
+On Thu 28-07-22 15:39:13, Lukas Czerner wrote:
+> ea_inodes are using i_version for storing part of the reference count so
+> we really need to leave it alone.
+> 
+> The problem can be reproduced by xfstest ext4/026 when iversion is
+> enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
+> inodes in ext4_mark_iloc_dirty().
+> 
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
 
-This patch syncs the relevant locking and error handling code from the
-MMU implementation to reduce the divergence between the two
-implementations and fix the locking bug.
+Looks good. Feel free to add:
 
-Signed-off-by: Ben Wolsieffer <Ben.Wolsieffer@hefring.com>
----
- fs/proc/task_nommu.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index a6d21fc0033c..97f387d30e74 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -208,11 +208,16 @@ static void *m_start(struct seq_file *m, loff_t *pos)
- 		return ERR_PTR(-ESRCH);
- 
- 	mm = priv->mm;
--	if (!mm || !mmget_not_zero(mm))
-+	if (!mm || !mmget_not_zero(mm)) {
-+		put_task_struct(priv->task);
-+		priv->task = NULL;
- 		return NULL;
-+	}
- 
- 	if (mmap_read_lock_killable(mm)) {
- 		mmput(mm);
-+		put_task_struct(priv->task);
-+		priv->task = NULL;
- 		return ERR_PTR(-EINTR);
- 	}
- 
-@@ -221,23 +226,21 @@ static void *m_start(struct seq_file *m, loff_t *pos)
- 		if (n-- == 0)
- 			return p;
- 
--	mmap_read_unlock(mm);
--	mmput(mm);
- 	return NULL;
- }
- 
--static void m_stop(struct seq_file *m, void *_vml)
-+static void m_stop(struct seq_file *m, void *v)
- {
- 	struct proc_maps_private *priv = m->private;
-+	struct mm_struct *mm = priv->mm;
- 
--	if (!IS_ERR_OR_NULL(_vml)) {
--		mmap_read_unlock(priv->mm);
--		mmput(priv->mm);
--	}
--	if (priv->task) {
--		put_task_struct(priv->task);
--		priv->task = NULL;
--	}
-+	if (!priv->task)
-+		return;
-+
-+	mmap_read_unlock(mm);
-+	mmput(mm);
-+	put_task_struct(priv->task);
-+	priv->task = NULL;
- }
- 
- static void *m_next(struct seq_file *m, void *_p, loff_t *pos)
+								Honza
+
+> ---
+>  fs/ext4/inode.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 84c0eb55071d..b76554124224 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5717,7 +5717,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
+>  	}
+>  	ext4_fc_track_inode(handle, inode);
+>  
+> -	if (IS_I_VERSION(inode))
+> +	/*
+> +	 * ea_inodes are using i_version for storing reference count, don't
+> +	 * mess with it
+> +	 */
+> +	if (IS_I_VERSION(inode) &&
+> +	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
+>  		inode_inc_iversion(inode);
+>  
+>  	/* the do_update_inode consumes one bh->b_count */
+> -- 
+> 2.35.3
+> 
 -- 
-2.36.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
