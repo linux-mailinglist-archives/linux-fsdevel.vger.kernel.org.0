@@ -2,164 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC30B584470
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 18:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56042584864
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 00:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231735AbiG1Qxv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 12:53:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37756 "EHLO
+        id S230473AbiG1WsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 18:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231759AbiG1Qxs (ORCPT
+        with ESMTP id S229614AbiG1WsN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 12:53:48 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B53E474374;
-        Thu, 28 Jul 2022 09:53:44 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4B961344D0;
-        Thu, 28 Jul 2022 16:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1659027223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CZDY3aqgFQ6Ip+bma3fiKPCAe3pQSvpckr0RLpuq5rQ=;
-        b=SoLXiq3lWEMmBTps7RexCtGXjqeUZr/yrZVFGs0Mg3eT5hJaKXRQ0jGDFcIscKxnHpEZ9W
-        A7bs7m3WefWD5rc/12o4WemFNTmTj4+dxMX5SixnT/jaSulukjhu0VI3ChXYcho275bLL4
-        7f7/yKK7wKJm51dtLu8dzaHGGPyCb6g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1659027223;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CZDY3aqgFQ6Ip+bma3fiKPCAe3pQSvpckr0RLpuq5rQ=;
-        b=0wOZLqCQPf/3CZON6pWb++WpEaMbUZYBM4htqOVSdgi3M58cDP9C6b+J9hZxX9QtSq8la2
-        vqZzS4k0Z4tQ2KAw==
-Received: from quack3.suse.cz (unknown [10.163.43.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B99662C141;
-        Thu, 28 Jul 2022 16:53:36 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 3D845A0668; Thu, 28 Jul 2022 18:53:32 +0200 (CEST)
-Date:   Thu, 28 Jul 2022 18:53:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     linux-ext4@vger.kernel.org, jlayton@kernel.org, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: record I_DIRTY_TIME even if inode already has
- I_DIRTY_INODE
-Message-ID: <20220728165332.cu2kiduob2xyvoep@quack3>
-References: <20220728133914.49890-1-lczerner@redhat.com>
- <20220728133914.49890-2-lczerner@redhat.com>
+        Thu, 28 Jul 2022 18:48:13 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6A8B84F65E;
+        Thu, 28 Jul 2022 15:48:12 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-20-138.pa.nsw.optusnet.com.au [49.195.20.138])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id BDCD662CC74;
+        Fri, 29 Jul 2022 08:48:06 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oHCIV-006TpR-LO; Fri, 29 Jul 2022 08:48:03 +1000
+Date:   Fri, 29 Jul 2022 08:48:03 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: remove iomap_writepage v2
+Message-ID: <20220728224803.GZ3861211@dread.disaster.area>
+References: <20220719041311.709250-1-hch@lst.de>
+ <20220728111016.uwbaywprzkzne7ib@quack3>
+ <YuKam52dkTGycay2@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220728133914.49890-2-lczerner@redhat.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL
-        autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <YuKam52dkTGycay2@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=62e3122a
+        a=cxZHBGNDieHvTKNp/pucQQ==:117 a=cxZHBGNDieHvTKNp/pucQQ==:17
+        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8
+        a=daDVLCEH9rD64MzAnTUA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 28-07-22 15:39:14, Lukas Czerner wrote:
-> Currently the I_DIRTY_TIME will never get set if the inode already has
-> I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
-> true, however ext4 will only update the on-disk inode in
-> ->dirty_inode(), not on actual writeback. As a result if the inode
-> already has I_DIRTY_INODE state by the time we get to
-> __mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
-> into on-disk inode and will not get updated until the next I_DIRTY_INODE
-> update, which might never come if we crash or get a power failure.
+On Thu, Jul 28, 2022 at 03:18:03PM +0100, Matthew Wilcox wrote:
+> On Thu, Jul 28, 2022 at 01:10:16PM +0200, Jan Kara wrote:
+> > Hi Christoph!
+> > 
+> > On Tue 19-07-22 06:13:07, Christoph Hellwig wrote:
+> > > this series removes iomap_writepage and it's callers, following what xfs
+> > > has been doing for a long time.
+> > 
+> > So this effectively means "no writeback from page reclaim for these
+> > filesystems" AFAICT (page migration of dirty pages seems to be handled by
+> > iomap_migrate_page()) which is going to make life somewhat harder for
+> > memory reclaim when memory pressure is high enough that dirty pages are
+> > reaching end of the LRU list. I don't expect this to be a problem on big
+> > machines but it could have some undesirable effects for small ones
+> > (embedded, small VMs). I agree per-page writeback has been a bad idea for
+> > efficiency reasons for at least last 10-15 years and most filesystems
+> > stopped dealing with more complex situations (like block allocation) from
+> > ->writepage() already quite a few years ago without any bug reports AFAIK.
+> > So it all seems like a sensible idea from FS POV but are MM people on board
+> > or at least aware of this movement in the fs land?
 > 
-> The problem can be reproduced on ext4 by running xfstest generic/622
-> with -o iversion mount option. Fix it by setting I_DIRTY_TIME even if
-> the inode already has I_DIRTY_INODE.
-
-As a datapoint I've checked and XFS has the very same problem as ext4.
-
-> Also clear the I_DIRTY_TIME after ->dirty_inode() otherwise it may never
-> get cleared.
+> I mentioned it during my folio session at LSFMM, but didn't put a huge
+> emphasis on it.
 > 
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> ---
->  fs/fs-writeback.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 05221366a16d..174f01e6b912 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -2383,6 +2383,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  
->  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
->  		flags &= ~I_DIRTY_TIME;
-> +		if (inode->i_state & I_DIRTY_TIME) {
-> +			spin_lock(&inode->i_lock);
-> +			inode->i_state &= ~I_DIRTY_TIME;
-> +			spin_unlock(&inode->i_lock);
-> +		}
+> For XFS, writeback should already be in progress on other pages if
+> we're getting to the point of trying to call ->writepage() in vmscan.
+> Surely this is also true for other filesystems?
 
-Hum, so this is a bit dangerous because inode->i_state may be inconsistent
-with the writeback list inode is queued in (wb->b_dirty_time) and these two
-are supposed to be in sync. So I rather think we need to make sure we go
-through the full round of 'update flags and writeback list' below in case
-we need to clear I_DIRTY_TIME from inode->i_state.
+Yes.
 
->  	} else {
->  		/*
->  		 * Else it's either I_DIRTY_PAGES, I_DIRTY_TIME, or nothing.
-> @@ -2399,13 +2404,20 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  	 */
->  	smp_mb();
->  
-> -	if (((inode->i_state & flags) == flags) ||
-> -	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
-> +	if ((inode->i_state & flags) == flags)
->  		return;
->  
->  	spin_lock(&inode->i_lock);
-> -	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
-> +	if (dirtytime && (inode->i_state & I_DIRTY_INODE)) {
-> +		/*
-> +		 * We've got a new lazytime update. Make sure it's recorded in
-> +		 * i_state, because the time might have already got updated in
-> +		 * ->dirty_inode() and will not get updated until next
-> +		 *  I_DIRTY_INODE update.
-> +		 */
-> +		inode->i_state |= I_DIRTY_TIME;
->  		goto out_unlock_inode;
-> +	}
+It's definitely true for btrfs, too, because btrfs_writepage does:
 
-So I'm afraid this combination is not properly handled in
-writeback_single_inode() where we have at the end:
+static int btrfs_writepage(struct page *page, struct writeback_control *wbc)
+{
+        struct inode *inode = page->mapping->host;
+        int ret;
 
-        if (!(inode->i_state & I_DIRTY_ALL))
-                inode_cgwb_move_to_attached(inode, wb);
-        else if (!(inode->i_state & I_SYNC_QUEUED) &&
-                 (inode->i_state & I_DIRTY))
-                redirty_tail_locked(inode, wb);
+        if (current->flags & PF_MEMALLOC) {
+                redirty_page_for_writepage(wbc, page);
+                unlock_page(page);
+                return 0;
+        }
+....
 
-So inode that had I_DIRTY_SYNC | I_DIRTY_TIME will not be properly refiled
-to wb->b_dirty_time list after writeback was done and I_DIRTY_SYNC got
-cleared.
+It also rejects all calls to write dirty pages from memory reclaim
+contexts.
 
-So we need to refine it to something like:
+ext4 will also reject writepage calls from memory allocation if
+block allocation is required (due to delayed allocation) or
+unwritten extents need converting to written. i.e. if it has to run
+blocking transactions.
 
-	if (!(inode->i_state & I_DIRTY_ALL))
-		inode_cgwb_move_to_attached(inode, wb);
-	else if (!(inode->i_state & I_SYNC_QUEUED)) {
-		if (inode->i_state & I_DIRTY) {
-			redirty_tail_locked(inode, wb);
-		} else if (inode->i_state & I_DIRTY_TIME) {
-			inode->dirtied_when = jiffies;
-			inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
-		}
-	}
+So all three major filesystems will either partially or wholly
+reject ->writepage calls from memory reclaim context.
 
-								Honza
+IOWs, if memory reclaim is depending on ->writepage() to make
+reclaim progress, it's not working as advertised on the vast
+majority of production Linux systems....
+
+The reality is that ->writepage is a relic of a bygone era of OS and
+filesystem design. It was useful in the days where writing a dirty
+page just involved looking up the bufferhead attached to the page to
+get the disk mapping and then submitting it for IO.
+
+Those days are long gone - filesystems have complex IO submission
+paths now that have to handle delayed allocation, copy-on-write,
+unwritten extents, have unbound memory demand, etc. All the
+filesystems that support these 1990s era filesystem technologies
+simply turn off ->writepage in memory reclaim contexts.
+
+Hence for the vast majority of linux users (i.e. everyone using
+ext4, btrfs and XFS), ->writepage no longer plays any part in memory
+reclaim on their systems.
+
+So why should we try to maintain the fiction that ->writepage is
+required functionality in a filesystem when it clearly isn't?
+
+Cheers,
+
+Dave.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dave Chinner
+david@fromorbit.com
