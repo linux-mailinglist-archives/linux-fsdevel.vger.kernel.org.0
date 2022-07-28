@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF7858409E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 16:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 128E55840A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 16:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbiG1OJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 10:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
+        id S231126AbiG1OKA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 10:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbiG1OJS (ORCPT
+        with ESMTP id S230293AbiG1OJa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 10:09:18 -0400
+        Thu, 28 Jul 2022 10:09:30 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C11222AD;
-        Thu, 28 Jul 2022 07:09:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66F95F13C;
+        Thu, 28 Jul 2022 07:09:27 -0700 (PDT)
 Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26SDKdrT005372;
-        Thu, 28 Jul 2022 07:09:17 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26SD9eEh012416;
+        Thu, 28 Jul 2022 07:09:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type : content-id
  : mime-version; s=facebook;
- bh=4CZ1hZn2cbkt7i9J+NMQpIdxxO0FwrubGh36izgjG4E=;
- b=XJPDQmukAr8gN9WyMQicItDFKbbIVPeGC/kAzFD/QzViq76QnU4MenTC/AhUkSu6GigH
- iWzKr3RhaKPZ9lePqCv/OibMPv8ze8r9EGn0Lksrso0ojfzALDLDULLSg2Wg8P6Wd6Ya
- OaW564wsl68XmhpV+ed74EX4N+eqazyMZDs= 
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hks0ps38f-2
+ bh=LEJpDPX/NKMZyfnFH7rB9Ov/WvBAflqmzyE4kZeGnbA=;
+ b=h7w3bpUIdhpC1MrI8L4amecfwzwwL7bzkgvMz86M1ChmRBjvef5+o10z1SNGxwAgO2ZZ
+ KdrV/P0xy7p1y4/YnR7BRGjKp40Tfaf5IYJmiYrMH2ZI9vD4ydfAkthEZKXVKnQHI7Gs
+ 4Xzjni0iPWqEU2U9fwmFDQtxVPSrdNYi4Uc= 
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hks0ps39h-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jul 2022 07:09:16 -0700
+        Thu, 28 Jul 2022 07:09:27 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gqOPwDAXyJf9aqv4JqCNpB1cAKA/3i0xtcEcbdR+EunEB0kuB9Fna61VxlUTAntPT6fOqP6RAYTJvni18rKR4U/bbEjsZv8zJ/GLzdpYmhrKLDYiQ6Gvk8Ni8Ftaa9zdwVnLfqVY0m2K43i1IFLD/C4yYREDztNe9xYGnjrvDPAtwqdC88J/8mVtWAJ4BV7JZeXYMQSGf8ih8vhbyU0+IGfIafQGZJ0Dq4co+0RH//FKiluAf5QMmMmd/XywuFhEF6qHVE5AOZTjK8pwBY6cU5TeHA0/oSQSllRPgT+dJN/U7zoDIKmnK8xuOV0deU/eIle/Xez1LRc9KR17juv6pg==
+ b=UMh15I2ARfcVSvtIzWFK+6Bo1FyG9NACDA377KpCrqIX4pcj+SYhCOP86p9ZqaBAU0cU9Lw3jF1VhpdxJuaHQMBLdOXUs+SHF2Ljf/jDBHokE10XVdPVewnX5+7QZm6aQzAvgwcKWcWgRNnzUWSlziIUCpNILsC8WlKd4IFshc8tVv9mZymcyhY9il9kykp4E70hkreBQypq+XhE74QUHeklELjyBVCdG6A2mbGFwq8oqVJEEUQzGzYbW02kjp0vB5uAZ+2Rdr5kuBE4UtvGeXMgjvZyrKykuxgnYfrWZhb+zUilNJ9F9MwkrI04DFUhPvJaadx3vlA7Bz7boD2V9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4CZ1hZn2cbkt7i9J+NMQpIdxxO0FwrubGh36izgjG4E=;
- b=YAestAJ84w59bPkO7O46rWepRkb1Vv6lHxzg8GvdaN+vnX9Go9cpiniwsHsaYzD2eDkhJJ3xJr6zfcERwnQkgx2BZaBRCIg5zaHerPydOLRLEBcVtyJcSaIKA/waoJaxx5OsWa8s8L+S7cuYqxcSeu62juYDNJ3aTn1OHzYhH+iK8IOnpKTqsePqxySuCijtL5oyPqYXX1dpxHxaYgAPlRqOen1JnGx00+L3COdU0jw6cdVikhqdJgYbk+R6jtwH0Z3A/pdCdihiqg5UNkdzrPo7Pf+mTftZFnQ4RyTZIOeuS7DCk5crFqxaRtJBgEbb6jEaxye+FC00Oedw8Dyn/Q==
+ bh=LEJpDPX/NKMZyfnFH7rB9Ov/WvBAflqmzyE4kZeGnbA=;
+ b=PXJHcFKEwg/kl4i55bPMb8rJxbRIb72CV/Op0rpJpVjWXaZk/Gg+0PXcdX/v/mFCtKzuZmm6oNTF8GnonVsGYwDzYw0hFwMQZLAoDAYxr2oIISKKxxYYA5SpMDTcbsN73ZZ4z8YUN1Uqhe1aUZJ4715qlVMHAoUqtCkKGfch8Md/nozSvhtzWchLtiAR7ndRiUU72+UstJxLqr6+YvnksRaYetmkxhaehYD4NA3Zz9mWv0ehCSptZaHrRbA8uuHPcITEZiwc0LmEqSk1yXZ1+V1vB7IlXjhBs2gorHCQK3xxfFoaLHZWdSN/f3ech/cEuIyEHX9eCgWh8c2ne8n76Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
@@ -43,11 +43,11 @@ Received: from SJ0PR15MB4552.namprd15.prod.outlook.com (2603:10b6:a03:379::12)
  by MN2PR15MB4256.namprd15.prod.outlook.com (2603:10b6:208:fe::25) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.25; Thu, 28 Jul
- 2022 14:09:12 +0000
+ 2022 14:09:22 +0000
 Received: from SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174]) by SJ0PR15MB4552.namprd15.prod.outlook.com
  ([fe80::81f9:c21c:c5bf:e174%8]) with mapi id 15.20.5458.025; Thu, 28 Jul 2022
- 14:09:12 +0000
+ 14:09:22 +0000
 From:   Jonathan McDowell <noodles@fb.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
@@ -61,11 +61,13 @@ CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Matthew Garrett <mjg59@srcf.ucam.org>,
         Dmitrii Potoskuev <dpotoskuev@fb.com>
-Subject: [RFC PATCH v2 2/7] lib/cpio: Improve error handling
-Thread-Topic: [RFC PATCH v2 2/7] lib/cpio: Improve error handling
-Thread-Index: AQHYooucwp+PEgLZlU+UDY/xIbZ3dA==
-Date:   Thu, 28 Jul 2022 14:09:12 +0000
-Message-ID: <f0dba8907e02cbaf3615e60446b394ee3fb9a847.1659003817.git.noodles@fb.com>
+Subject: [RFC PATCH v2 3/7] lib/cpio: use non __init filesystem related
+ functions
+Thread-Topic: [RFC PATCH v2 3/7] lib/cpio: use non __init filesystem related
+ functions
+Thread-Index: AQHYoouisaJ4GxUn7UeGeqD/Ofxiug==
+Date:   Thu, 28 Jul 2022 14:09:22 +0000
+Message-ID: <7ad4218faaf60b632329c86b819b4615b6c6f121.1659003817.git.noodles@fb.com>
 References: <cover.1657272362.git.noodles@fb.com>
  <cover.1659003817.git.noodles@fb.com>
 In-Reply-To: <cover.1659003817.git.noodles@fb.com>
@@ -74,58 +76,58 @@ Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1781041f-13c8-42ae-7160-08da70a2bf41
+x-ms-office365-filtering-correlation-id: 1c73fb1d-f512-4ccb-6375-08da70a2c52e
 x-ms-traffictypediagnostic: MN2PR15MB4256:EE_
 x-fb-source: Internal
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nDBlBD0ZAeQkzMTvVW2VIIs21A/TNqigbzdu2RQW++bWB1Qzk6GQvyp701FYpnK5oRQr99rPQO/JqPsTJy/bb2zhEwuZd/hzXOSS47GJgA3mIHCXID80Acgo7BjPr8NVfPrOmOC1VcG7ZE1pFkjs6OzvfadDI2NPE4fxS+K4qX46PEj5P6NWAOBgcjYbKJrCCk1+64EVkjwo7t/Gl+lA6PY3OWpjKeTrfOjbf+EChhqwZ2+0XeAS8jMwExWiZatWSwn9zbE0DgM3A7n+3uPONlFYuC7Bpd1M/zYMQmxDREW0vrAZX+g8vCbtDYl83gynEvyBaO5QdDFj1R3A9vMjgnWQYmUhdfCL1AknC0wHfikqbHmHTOQwyHmwJi36l6Kg7giUIWIfVEZ1mtQGpf6X+5CuquEU8NY/C0Fmj2/UpOPTCs1vS6aYvY5cFQK76qMzXSUA4lfPV9G2ZdBw+pLzNO+PnBkkAsRwcVe9SBUVKZ+FjZedL+BJERxaSNKswdif+4EVrJgsmf8bVv5bgN+muk9CywyzPgciqBWeDxLn9doTROlt2iWRhS9NT/HO6YoodWG2Dh+2WGBFGJxjw3LkKoHNwPMkHb67CXVU7hGCcxUSvY8342NKdH9byGj45tElL8BWsA8bRmm7hwoyOW1bllTua+eFMfBLu0FfcYHPQhqjxl81qeCfTT3xp7+cQgdoMeWvSwYpA5PGRAhh15edlT1znAPXAv59x6cfu17q9nTezl11EYhJSKECFoBUUEAzyQ5BI9+xCdM4GKkuil9t9vAbkx3zJDqQN64wD4FWNRf+Ko+XjeT7Lrfig0rDY6lt
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(366004)(136003)(39860400002)(396003)(7416002)(2616005)(2906002)(478600001)(122000001)(41300700001)(6506007)(86362001)(316002)(36756003)(186003)(5660300002)(38070700005)(38100700002)(66476007)(4326008)(83380400001)(6486002)(6512007)(91956017)(110136005)(54906003)(26005)(71200400001)(76116006)(66946007)(8676002)(8936002)(64756008)(66556008)(66446008);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: T3jc76xrcFrCxrpsEG0XtdIaHJH8c6e9RZfxhIHeWNLUMDftZcKWzIa8SSiaM1XZw3mdXNR991bEr7o0bbsNBkq8we862dxwRF3i6HXqz/2sTcsdWN8IkgSM0JjYtTN70DilCDcDOQR6jehskkaW+EQHrJTcYQhesGR18zhlM04Q5vTbU+DSFk4v+GOluJsjUh0b3L8ZSswUOvbYEYQLwHeBHcd+enpNeOBHSzwWo0/ZXKuZSH3d33tzZFcjHGpjwc6G9GhJQMbTZLKU9ksd/bpyEW3YTTzUIvZTOIakpl2rDhROcEdWTyV4nYEQE7SDh32lOnlD5a17vg3MxhrG41NSiAklentOSok56yWdEQ0YPVf6SnpSQT8Uus1KZCTHyo5itemQr53rNEIxJ1zYkJ57Nj+PAflaQWGaGdbsUNSzlaXN/WAZmsWt3eLMScQ0BqxKa7TDd/OqxXlahzjMyH1MXf4e5H/JSKtIjDQOHoJ9gb2NrH8pELL9r8Y225w8wSGD2ZamUbM2YniNdD8t7Fua6oisdSv1fJhPH1lKAr+cY1NqWkVsJYHx0AvLLGVpw2AWBJBz2T1uzDi+w3ykd74cLHMf/vYhba5t3P2GOPqehuCoimrmapjRcUs+yNMw/LLUDZTZnfbXa+7TP9gM8M8eSzumRBvp02lYyl7yPwmGOzskp3hkedk+fp+c8aESmKFCdPj20udzl5cPa3Rx0warnrSdcvGvDnTjhh/3iof6bkIr8BB6034MGaXTXhC1/Xdn+s4xccChUZLaABrvfI2yOuSSw/QyZj6UJh+p1G6BJ3GYxgGtqd6URbJ4gMVY
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB4552.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(366004)(136003)(39860400002)(396003)(7416002)(2616005)(2906002)(478600001)(122000001)(41300700001)(6506007)(86362001)(316002)(36756003)(186003)(30864003)(5660300002)(38070700005)(38100700002)(66476007)(4326008)(83380400001)(6486002)(6512007)(91956017)(110136005)(54906003)(26005)(71200400001)(76116006)(66946007)(8676002)(8936002)(64756008)(66556008)(66446008);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RKhrI78mQM3liZfyitw56Kwcc08hUDhHoIOQhDHD3lSqyLp9S5iBFHzXylBa?=
- =?us-ascii?Q?zexj5Ai8YYjDcBBks24PQg4S0ti5QVFGjj923xGBFvzvrsq/2et058CJ+411?=
- =?us-ascii?Q?tqvPXUp1QWrMEUQp86T/kWdMxLMQ7uKieFB2zbWyGikXE6jcbdkcsj280YEU?=
- =?us-ascii?Q?q+jTbsImbqxeEyXsk0uumPjYYyy/C/dY2WsJQZlQtImhFbjVTXWX00mqMeDZ?=
- =?us-ascii?Q?+kP9ml+gJeBl+/KkUh8o07pOp/Th/7yt+ftMQV0ubwI1GEWJvaMgrY+AXAE+?=
- =?us-ascii?Q?aml6HXivpZrBhG2Wa2VVVadGLueEGSwf5Z3Y4mew9zKONkt50eFtN6m4bh3W?=
- =?us-ascii?Q?/+ZRTRT+eEtIWz39EqQl8Ekh+XUdlH5VqC8ojWl2dm1gDFiEyxdqftI543Vo?=
- =?us-ascii?Q?TWXgaemjzi5wGzPmuGqLcHTT7V4BXU6jkwxhDggV7IiSktGuKM0P016neg1X?=
- =?us-ascii?Q?x3qBUIq/o7CEqMrEE7wj9Lk824EXOsa06uvCuSQ7ckrubhsn+ocRXkGH2Dtk?=
- =?us-ascii?Q?lpaUGrPZLaIWVsvaKofUY7otKCo5Iq7GkQaALBIWakLI09RQdBWck13ZEywk?=
- =?us-ascii?Q?+6s1qTdLLznKgpgpLXYQOsc0GcXNGzpc1FKWWAJ0X1uQqtr3+j1Mgjw6gJFN?=
- =?us-ascii?Q?UKulewmN7NHmtpx3VmlZF5MAYpTH2r5zdFHADJrtTWTwSeS/qsW/5VBndPED?=
- =?us-ascii?Q?4WmWgwNNZnkmckOnEoWsC2ROWWzDr4+PwkVF4jdGxq/zgYPZEB84NDY+fHVI?=
- =?us-ascii?Q?H8mTy9Z67XWIKpFh1uwfP5++aI5F5AFkouXTyfSQgfvhX7i5m7ry4x0iGnP+?=
- =?us-ascii?Q?YyyADOYbhvE8RHdxINkf84/4wkskj5siru38J8q4mrSsqrgz/2j5BHMQQgsu?=
- =?us-ascii?Q?W2j9IinqY21Vy/nJFCTxNKm/vZ6t3R6++dTLWngRSW+GHU3RxFRns+N2kSK4?=
- =?us-ascii?Q?NM9dX+FUiBxAJcDm3c541ddC9cSWYQH29nYL9upKhakxLVSo+GTsOqUNYh1d?=
- =?us-ascii?Q?+b8PZOYKd+E0diXtlLEUa5Xgl9mkKAQSDEz5qCbVjPYblzFiDCV52Lcn8rDS?=
- =?us-ascii?Q?daPBTeU88TNG3ikGTV4pZa2SPhLcSyKEIzdW07VVEXQwDm+LpSqBtHVKMnbk?=
- =?us-ascii?Q?FpriSetMqg/INMn+8FD0dO3aqiOo7fV1oMk5w6FA4vH6AvRbpOaMpmE3UQug?=
- =?us-ascii?Q?Ucz+Ki2BCcgif6yNFRFTYe6bsqRCenmKc2PPLmhucB1XbgzVQsahGmIzUAxM?=
- =?us-ascii?Q?gcEubtqOwgK/Qa0MApcrN8gHApTlqkVH7p4/JiH6M+SW7iP+e2vBDAsYecRn?=
- =?us-ascii?Q?ZbMWJAkwaC3gdNO8UTzq1EnXqfIz226nywu9hJmj7+jGedpPNo6ibtnFZpRZ?=
- =?us-ascii?Q?yAPv9co3X51NHZNa1xv+cAMkXkI+9JEdCQDSCWbpB7NixQzXopVtPS+WO9eS?=
- =?us-ascii?Q?HW2qOE3UuWfJONljVZb05T4Jgq9QX/w/zp2KrunYwah1V4aILQrov+EFudpi?=
- =?us-ascii?Q?8T+5VVAq9AvUiTG5z+lWczCFHIKQ0QfTqJKk5BOrXCgys6wQUzdQBwLOoMm7?=
- =?us-ascii?Q?WbiasTs+egNJQC6n7zxBRedOCyrEuq/c0nLRVJoS?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sphL66o7Ulu245zqpYbei+GG7Bx7D3VHiwl0FBvKs4qDM5P0epiPMTNVjnag?=
+ =?us-ascii?Q?+1ObL9iYF+Vc4u5ql3ehH0sTHXYk29cA+YGOxv3kDsUz/qJ2wjN5w9w9j904?=
+ =?us-ascii?Q?1S98b7qOWqctolbdiSrrRKmUATQwLUUKpnh1hQ5B6kRdNypXADYJIXP0b9fH?=
+ =?us-ascii?Q?rjcBbY+QvidxF8ODaPqj4U5ve//4hoLzg1hEpu9FTOuvBegIexpbCuvD6hrj?=
+ =?us-ascii?Q?9aUZsrJcxDc9MZFwRUhWZqrCq8DTevrvqyqppGc1z0tkvdqPajZ2Efl4pExv?=
+ =?us-ascii?Q?icQnzX4zP9hxE9XsdmzlVG1MSoX3KFv09qzlCIu9sz4h8eBUwjB6L/DZQK5w?=
+ =?us-ascii?Q?+f2m3rm4Cd8FdRxEdzDzzo4MLRHQcn7PWWYKuSljc1AmuVTk+xxQByErAjf8?=
+ =?us-ascii?Q?7QeuaHEoiXafoRNcY5KrdIymFjPyBtOdxru7VOaC5haZpExfcC1DdyALE0pp?=
+ =?us-ascii?Q?/Do8YMDcr8XidIJotKpa6ISP1ZekCnkUFn7SvkeaZd/1WqaGmmMr1y9deN00?=
+ =?us-ascii?Q?OHoKLCY4auK+hleEDvfxnlD/V1P/fN5wOjiugS9Qb2pjfMtjb/p5CAZF2voM?=
+ =?us-ascii?Q?GK0vvP1PqHaO9y5/e4WnfTgC7uA+eY+1JwDv1FIYp2GPEg4Zb5SxkRdcTine?=
+ =?us-ascii?Q?7r+/0VMXXrrYTnWqsX9smYK25S/v6F6zx3BxkUtlBv9uEaY44saPLJCrgk/M?=
+ =?us-ascii?Q?U1QwuEXpBE6W6ps5nwtZnoFhBWDt9Dwvhvz41pkHCeHMgrEj7jWFN5jCnThk?=
+ =?us-ascii?Q?S9IWgsOtW8tmmyKwjpwsVFYLFhAF2HLqub/THnyI+MgEo1QL/o19XVKUhpdR?=
+ =?us-ascii?Q?rndegp68DzM5IR8WqnXvOFtJngx7bVJ75llhCImP3E7DhVGwF5u2sLsrOzYO?=
+ =?us-ascii?Q?P7zer5uNJcTTEQdk3lgwsMcWJqW1BbtIEd//pJKFx9xTqHWfIVRunOHauGsr?=
+ =?us-ascii?Q?21CbEIiNs4wiRXCykdE/F+cDevZHJGsR99WhlIKv06MYk/my5ntOt60WesZA?=
+ =?us-ascii?Q?kK4HG8Io875az41S83/vXB0WCgJlecCMSGaKpNjjkrpdnKmw1MQbtqQGfdl0?=
+ =?us-ascii?Q?/bc30iUd+B5z3R4Zr/bvsGv4EdN8P7CHle/UO7EFOlvHYn7mJrsXFxHAvY3J?=
+ =?us-ascii?Q?cOHPLQjNeKz/JiFmKJEiXEkNaP0c0fHDO8vDqlGiT2YcJMQ0znS5+z3fLHcm?=
+ =?us-ascii?Q?ngOCryPmSW2FTh/Fdo02bbrC/7Y6KsfVbgon3A96162PWcRD4y80nq9eZVYn?=
+ =?us-ascii?Q?UAAGMPTucBtIik6/kvQKimZM+mKbbsFN9piPup4aB+XP7qCUxG885Il2Edyo?=
+ =?us-ascii?Q?v9RJj9XPngfGJcDQMGYlxvz34C9v0jTwXUoLXpNIlX0yGc23rVKca0B1Qn4y?=
+ =?us-ascii?Q?8bDe1+zOdd4L/s41kbjhZ3PwAw6ShUCMzGrIKdA8fmN8rV25uk663dOrv6z5?=
+ =?us-ascii?Q?UpGVh0cie6FppRwqK9Ha2ALmU070TAtan9D8ikklacfEVvhg+e/2JZQNyhbB?=
+ =?us-ascii?Q?GDdx0jtJ4yWU+OrZQQTOsV6qR5S2Fv/4vbYIfnf8FIV6u0zMVn5GAR8zU4oL?=
+ =?us-ascii?Q?zWVDoMtd8PmnnuC3Ys2hzfjO88slAkxAj9cI4KVZ?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <57B1A3003B6BC645847C0278A259714B@namprd15.prod.outlook.com>
+Content-ID: <031C80F7C7EC8447BD5DE89D4840F3A7@namprd15.prod.outlook.com>
 MIME-Version: 1.0
 X-OriginatorOrg: fb.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB4552.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1781041f-13c8-42ae-7160-08da70a2bf41
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2022 14:09:12.1784
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c73fb1d-f512-4ccb-6375-08da70a2c52e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2022 14:09:22.1198
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G1dM+25bc+EbZ4EfZUTcFMujTVBLzV+TblRx/krICe4gS/ht43MvCGlwwBUrhF68
+X-MS-Exchange-CrossTenant-userprincipalname: CwrmjewM7Fe9Q8QvPMOPnzuzKzc8yfs4Fb6+NCd9mPWgkvZd8ocamporaEHNm2Py
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB4256
-X-Proofpoint-GUID: ghVbqN44zCxuA6Sli_WTQJnW_C2DVTxi
-X-Proofpoint-ORIG-GUID: ghVbqN44zCxuA6Sli_WTQJnW_C2DVTxi
+X-Proofpoint-GUID: r4DCnt7PYt8RzXR1ejLAma---IDrzdq9
+X-Proofpoint-ORIG-GUID: r4DCnt7PYt8RzXR1ejLAma---IDrzdq9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-28_05,2022-07-28_02,2022-06-22_01
@@ -139,169 +141,461 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As preparation for making the cpio parsing routines more generally
-available improve the error handling such that we pass back a suitable
-errno rather than a string message, and correctly exit execution when
-such an error is raised.
+In preparation for making the cpio functions generally available rather
+than just at init make sure we're using versions of the filesystem
+related functions that aren't in the __init section. Remove functions
+only used by us from fs/init.c while folding into the cpio code
+directly.
 
 Signed-off-by: Jonathan McDowell <noodles@fb.com>
 ---
- include/linux/cpio.h |  1 -
- init/initramfs.c     | 10 ++++++--
- lib/cpio.c           | 56 +++++++++++++++++++++++++++-----------------
- 3 files changed, 43 insertions(+), 24 deletions(-)
+v2:
+- Fold in directory EEXIST checking from patch 4
+- Add EEXIST checking for device nodes (kernel test reboot boot test)
+---
+ fs/init.c                     | 101 ---------------------
+ fs/internal.h                 |   4 -
+ include/linux/fs.h            |   4 +
+ include/linux/init_syscalls.h |   6 --
+ lib/cpio.c                    | 162 +++++++++++++++++++++++++++++-----
+ 5 files changed, 145 insertions(+), 132 deletions(-)
 
-diff --git a/include/linux/cpio.h b/include/linux/cpio.h
-index 2f9fd735331e..69a15fffa5c6 100644
---- a/include/linux/cpio.h
-+++ b/include/linux/cpio.h
-@@ -44,7 +44,6 @@ struct cpio_context {
- 	unsigned long byte_count;
- 	bool csum_present;
- 	u32 io_csum;
--	char *errmsg;
+diff --git a/fs/init.c b/fs/init.c
+index 5c36adaa9b44..a946ad672dee 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -79,37 +79,6 @@ int __init init_chroot(const char *filename)
+ 	return error;
+ }
  
- 	char *collected;
- 	long remains;
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 00c101d04f4b..79c3a3f42cdb 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -62,10 +62,16 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 		if (*buf == '0' && !(ctx.this_header & 3)) {
- 			ctx.state = CPIO_START;
- 			written = cpio_write_buffer(&ctx, buf, len);
-+
-+			if (written < 0) {
-+				pr_err("Failed to process archive: %ld\n",
-+				       written);
-+				error("failed to process archive");
-+				break;
-+			}
-+
- 			buf += written;
- 			len -= written;
--			if (ctx.errmsg)
--				message = ctx.errmsg;
- 			continue;
- 		}
- 		if (!*buf) {
+-int __init init_chown(const char *filename, uid_t user, gid_t group, int flags)
+-{
+-	int lookup_flags = (flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
+-	struct path path;
+-	int error;
+-
+-	error = kern_path(filename, lookup_flags, &path);
+-	if (error)
+-		return error;
+-	error = mnt_want_write(path.mnt);
+-	if (!error) {
+-		error = chown_common(&path, user, group);
+-		mnt_drop_write(path.mnt);
+-	}
+-	path_put(&path);
+-	return error;
+-}
+-
+-int __init init_chmod(const char *filename, umode_t mode)
+-{
+-	struct path path;
+-	int error;
+-
+-	error = kern_path(filename, LOOKUP_FOLLOW, &path);
+-	if (error)
+-		return error;
+-	error = chmod_common(&path, mode);
+-	path_put(&path);
+-	return error;
+-}
+-
+ int __init init_eaccess(const char *filename)
+ {
+ 	struct path path;
+@@ -163,58 +132,6 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
+ 	return error;
+ }
+ 
+-int __init init_link(const char *oldname, const char *newname)
+-{
+-	struct dentry *new_dentry;
+-	struct path old_path, new_path;
+-	struct user_namespace *mnt_userns;
+-	int error;
+-
+-	error = kern_path(oldname, 0, &old_path);
+-	if (error)
+-		return error;
+-
+-	new_dentry = kern_path_create(AT_FDCWD, newname, &new_path, 0);
+-	error = PTR_ERR(new_dentry);
+-	if (IS_ERR(new_dentry))
+-		goto out;
+-
+-	error = -EXDEV;
+-	if (old_path.mnt != new_path.mnt)
+-		goto out_dput;
+-	mnt_userns = mnt_user_ns(new_path.mnt);
+-	error = may_linkat(mnt_userns, &old_path);
+-	if (unlikely(error))
+-		goto out_dput;
+-	error = security_path_link(old_path.dentry, &new_path, new_dentry);
+-	if (error)
+-		goto out_dput;
+-	error = vfs_link(old_path.dentry, mnt_userns, new_path.dentry->d_inode,
+-			 new_dentry, NULL);
+-out_dput:
+-	done_path_create(&new_path, new_dentry);
+-out:
+-	path_put(&old_path);
+-	return error;
+-}
+-
+-int __init init_symlink(const char *oldname, const char *newname)
+-{
+-	struct dentry *dentry;
+-	struct path path;
+-	int error;
+-
+-	dentry = kern_path_create(AT_FDCWD, newname, &path, 0);
+-	if (IS_ERR(dentry))
+-		return PTR_ERR(dentry);
+-	error = security_path_symlink(&path, dentry, oldname);
+-	if (!error)
+-		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
+-				    dentry, oldname);
+-	done_path_create(&path, dentry);
+-	return error;
+-}
+-
+ int __init init_unlink(const char *pathname)
+ {
+ 	return do_unlinkat(AT_FDCWD, getname_kernel(pathname));
+@@ -239,24 +156,6 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+ 	return error;
+ }
+ 
+-int __init init_rmdir(const char *pathname)
+-{
+-	return do_rmdir(AT_FDCWD, getname_kernel(pathname));
+-}
+-
+-int __init init_utimes(char *filename, struct timespec64 *ts)
+-{
+-	struct path path;
+-	int error;
+-
+-	error = kern_path(filename, 0, &path);
+-	if (error)
+-		return error;
+-	error = vfs_utimes(&path, ts);
+-	path_put(&path);
+-	return error;
+-}
+-
+ int __init init_dup(struct file *file)
+ {
+ 	int fd;
+diff --git a/fs/internal.h b/fs/internal.h
+index 87e96b9024ce..c57d5f0aa731 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -60,9 +60,6 @@ extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
+ 			   struct path *path, struct path *root);
+ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
+-int do_rmdir(int dfd, struct filename *name);
+-int do_unlinkat(int dfd, struct filename *name);
+-int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+ int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
+ 		 struct filename *newname, unsigned int flags);
+ int do_mkdirat(int dfd, struct filename *name, umode_t mode);
+@@ -132,7 +129,6 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+ int chmod_common(const struct path *path, umode_t mode);
+ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		int flag);
+-int chown_common(const struct path *path, uid_t user, gid_t group);
+ extern int vfs_open(const struct path *, struct file *);
+ 
+ /*
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9ad5e3520fae..1cb51a54799b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2636,11 +2636,15 @@ static inline struct file *file_clone_open(struct file *file)
+ 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
+ }
+ extern int filp_close(struct file *, fl_owner_t id);
++extern int chown_common(const struct path *path, uid_t user, gid_t group);
+ 
++extern int do_rmdir(int dfd, struct filename *name);
++extern int do_unlinkat(int dfd, struct filename *name);
+ extern struct filename *getname_flags(const char __user *, int, int *);
+ extern struct filename *getname_uflags(const char __user *, int);
+ extern struct filename *getname(const char __user *);
+ extern struct filename *getname_kernel(const char *);
++extern int may_linkat(struct user_namespace *mnt_userns, struct path *link);
+ extern void putname(struct filename *name);
+ 
+ extern int finish_open(struct file *file, struct dentry *dentry,
+diff --git a/include/linux/init_syscalls.h b/include/linux/init_syscalls.h
+index 92045d18cbfc..196030cd958d 100644
+--- a/include/linux/init_syscalls.h
++++ b/include/linux/init_syscalls.h
+@@ -5,15 +5,9 @@ int __init init_mount(const char *dev_name, const char *dir_name,
+ int __init init_umount(const char *name, int flags);
+ int __init init_chdir(const char *filename);
+ int __init init_chroot(const char *filename);
+-int __init init_chown(const char *filename, uid_t user, gid_t group, int flags);
+-int __init init_chmod(const char *filename, umode_t mode);
+ int __init init_eaccess(const char *filename);
+ int __init init_stat(const char *filename, struct kstat *stat, int flags);
+ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev);
+-int __init init_link(const char *oldname, const char *newname);
+-int __init init_symlink(const char *oldname, const char *newname);
+ int __init init_unlink(const char *pathname);
+ int __init init_mkdir(const char *pathname, umode_t mode);
+-int __init init_rmdir(const char *pathname);
+-int __init init_utimes(char *filename, struct timespec64 *ts);
+ int __init init_dup(struct file *file);
 diff --git a/lib/cpio.c b/lib/cpio.c
-index c71bebd4cc98..5d150939704f 100644
+index 5d150939704f..9a0120c638db 100644
 --- a/lib/cpio.c
 +++ b/lib/cpio.c
-@@ -221,12 +221,10 @@ static int __init do_header(struct cpio_context *ctx)
- 		ctx->csum_present = false;
- 	} else if (!memcmp(ctx->collected, "070702", 6)) {
- 		ctx->csum_present = true;
-+	} else if (memcmp(ctx->collected, "070707", 6) == 0) {
-+		return -EPROTONOSUPPORT;
- 	} else {
--		if (memcmp(ctx->collected, "070707", 6) == 0)
--			ctx->errmsg = "incorrect cpio method used: use -H newc option";
--		else
--			ctx->errmsg = "no cpio magic";
--		return 1;
-+		return -EINVAL;
- 	}
- 	parse_header(ctx, ctx->collected);
- 	ctx->next_header = ctx->this_header + N_ALIGN(ctx->name_len) + ctx->body_len;
-@@ -266,7 +264,8 @@ static int __init do_reset(struct cpio_context *ctx)
- 	while (ctx->byte_count && *ctx->victim == '\0')
- 		eat(ctx, 1);
- 	if (ctx->byte_count && (ctx->this_header & 3))
--		ctx->errmsg = "broken padding";
-+		return -EFAULT;
+@@ -3,8 +3,9 @@
+ #include <linux/file.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+-#include <linux/init_syscalls.h>
+ #include <linux/list.h>
++#include <linux/namei.h>
++#include <linux/security.h>
+ #include <linux/slab.h>
+ 
+ static ssize_t __init xwrite(struct cpio_context *ctx, struct file *file,
+@@ -92,18 +93,25 @@ static void __init free_hash(struct cpio_context *ctx)
+ }
+ 
+ #ifdef CONFIG_INITRAMFS_PRESERVE_MTIME
+-static void __init do_utime(char *filename, time64_t mtime)
++static void __init do_utime_path(const struct path *path, time64_t mtime)
+ {
+ 	struct timespec64 t[2] = { { .tv_sec = mtime }, { .tv_sec = mtime } };
+ 
+-	init_utimes(filename, t);
++	vfs_utimes(path, t);
+ }
+ 
+-static void __init do_utime_path(const struct path *path, time64_t mtime)
++static int __init do_utime(char *filename, time64_t mtime)
+ {
+-	struct timespec64 t[2] = { { .tv_sec = mtime }, { .tv_sec = mtime } };
++	struct path path;
++	int error;
+ 
+-	vfs_utimes(path, t);
++	error = kern_path(filename, 0, &path);
++	if (error)
++		return error;
++	do_utime_path(&path, mtime);
++	path_put(&path);
 +
++	return error;
+ }
+ 
+ static int __init dir_add(struct cpio_context *ctx, const char *name, time64_t mtime)
+@@ -133,12 +141,31 @@ static void __init dir_utime(struct cpio_context *ctx)
+ 	}
+ }
+ #else
+-static void __init do_utime(char *filename, time64_t mtime) {}
++static int __init do_utime(char *filename, time64_t mtime) { return 0; }
+ static void __init do_utime_path(const struct path *path, time64_t mtime) {}
+ static int __init dir_add(struct cpio_context *ctx, const char *name, time64_t mtime) { return 0; }
+ static void __init dir_utime(struct cpio_context *ctx) {}
+ #endif
+ 
++static int __init cpio_chown(const char *filename, uid_t user, gid_t group,
++			     int flags)
++{
++	int lookup_flags = (flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
++	struct path path;
++	int error;
++
++	error = kern_path(filename, lookup_flags, &path);
++	if (error)
++		return error;
++	error = mnt_want_write(path.mnt);
++	if (!error) {
++		error = chown_common(&path, user, group);
++		mnt_drop_write(path.mnt);
++	}
++	path_put(&path);
++	return error;
++}
++
+ /* cpio header parsing */
+ 
+ static void __init parse_header(struct cpio_context *ctx, char *s)
+@@ -269,27 +296,67 @@ static int __init do_reset(struct cpio_context *ctx)
  	return 1;
  }
  
-@@ -344,23 +343,29 @@ static int __init do_name(struct cpio_context *ctx)
- 
- static int __init do_copy(struct cpio_context *ctx)
+-static void __init clean_path(char *path, umode_t fmode)
++static void __init clean_path(char *pathname, umode_t fmode)
  {
-+	int ret;
-+
- 	if (ctx->byte_count >= ctx->body_len) {
--		if (xwrite(ctx, ctx->wfile, ctx->victim, ctx->body_len,
--			   &ctx->wfile_pos) != ctx->body_len)
--			ctx->errmsg = "write error";
-+		ret = xwrite(ctx, ctx->wfile, ctx->victim, ctx->body_len,
-+			     &ctx->wfile_pos);
-+		if (ret != ctx->body_len)
-+			return (ret < 0) ? ret : -EIO;
++	struct path path;
+ 	struct kstat st;
++	int error;
  
- 		do_utime_path(&ctx->wfile->f_path, ctx->mtime);
- 		fput(ctx->wfile);
- 		if (ctx->csum_present && ctx->io_csum != ctx->hdr_csum)
--			ctx->errmsg = "bad data checksum";
-+			return -EBADMSG;
+-	if (!init_stat(path, &st, AT_SYMLINK_NOFOLLOW) &&
+-	    (st.mode ^ fmode) & S_IFMT) {
++	error = kern_path(pathname, 0, &path);
++	if (error)
++		return;
++	error = vfs_getattr(&path, &st, STATX_BASIC_STATS, AT_NO_AUTOMOUNT);
++	path_put(&path);
++	if (error)
++		return;
 +
- 		eat(ctx, ctx->body_len);
- 		ctx->state = CPIO_SKIPIT;
- 		return 0;
++	if ((st.mode ^ fmode) & S_IFMT) {
+ 		if (S_ISDIR(st.mode))
+-			init_rmdir(path);
++			do_rmdir(AT_FDCWD, getname_kernel(pathname));
+ 		else
+-			init_unlink(path);
++			do_unlinkat(AT_FDCWD, getname_kernel(pathname));
  	}
- 
--	if (xwrite(ctx, ctx->wfile, ctx->victim, ctx->byte_count,
--		   &ctx->wfile_pos) != ctx->byte_count)
--		ctx->errmsg = "write error";
-+	ret = xwrite(ctx, ctx->wfile, ctx->victim, ctx->byte_count,
-+		     &ctx->wfile_pos);
-+	if (ret != ctx->byte_count)
-+		return (ret < 0) ? ret : -EIO;
-+
- 	ctx->body_len -= ctx->byte_count;
- 	eat(ctx, ctx->byte_count);
- 	return 1;
-@@ -392,12 +397,19 @@ static __initdata int (*actions[])(struct cpio_context *) = {
- long __init cpio_write_buffer(struct cpio_context *ctx, char *buf,
- 			      unsigned long len)
- {
-+	int ret;
-+
- 	ctx->byte_count = len;
- 	ctx->victim = buf;
- 
--	while (!actions[ctx->state](ctx))
--		;
--	return len - ctx->byte_count;
-+	ret = 0;
-+	while (ret == 0)
-+		ret = actions[ctx->state](ctx);
-+
-+	if (ret < 0)
-+		return ret;
-+	else
-+		return len - ctx->byte_count;
  }
  
- long __init cpio_process_buffer(struct cpio_context *ctx, void *bufv,
-@@ -407,11 +419,13 @@ long __init cpio_process_buffer(struct cpio_context *ctx, void *bufv,
- 	long written;
- 	long left = len;
- 
--	if (ctx->errmsg)
--		return -1;
-+	while ((written = cpio_write_buffer(ctx, buf, left)) < left) {
-+		char c;
+ static int __init maybe_link(struct cpio_context *ctx)
+ {
++	struct dentry *new_dentry;
++	struct path old_path, new_path;
++	struct user_namespace *mnt_userns;
++	int error;
 +
-+		if (written < 0)
-+			return written;
- 
--	while ((written = cpio_write_buffer(ctx, buf, left)) < left && !ctx->errmsg) {
--		char c = buf[written];
-+		c = buf[written];
- 
- 		if (c == '0') {
- 			buf += written;
-@@ -422,7 +436,7 @@ long __init cpio_process_buffer(struct cpio_context *ctx, void *bufv,
- 			left -= written;
- 			ctx->state = CPIO_RESET;
- 		} else {
--			ctx->errmsg = "junk within compressed archive";
-+			return -EINVAL;
+ 	if (ctx->nlink >= 2) {
+ 		char *old = find_link(ctx, ctx->major, ctx->minor, ctx->ino,
+ 				ctx->mode, ctx->collected);
+ 		if (old) {
+ 			clean_path(ctx->collected, 0);
+-			return (init_link(old, ctx->collected) < 0) ? -1 : 1;
++
++			error = kern_path(old, 0, &old_path);
++			if (error)
++				return error;
++
++			new_dentry = kern_path_create(AT_FDCWD, ctx->collected, &new_path, 0);
++			error = PTR_ERR(new_dentry);
++			if (IS_ERR(new_dentry))
++				goto out;
++
++			error = -EXDEV;
++			if (old_path.mnt != new_path.mnt)
++				goto out_dput;
++			mnt_userns = mnt_user_ns(new_path.mnt);
++			error = may_linkat(mnt_userns, &old_path);
++			if (unlikely(error))
++				goto out_dput;
++			error = security_path_link(old_path.dentry, &new_path, new_dentry);
++			if (error)
++				goto out_dput;
++			error = vfs_link(old_path.dentry, mnt_userns, new_path.dentry->d_inode,
++					 new_dentry, NULL);
++out_dput:
++			done_path_create(&new_path, new_dentry);
++out:
++			path_put(&old_path);
++			return (error < 0) ? error : 1;
  		}
  	}
+ 	return 0;
+@@ -297,6 +364,10 @@ static int __init maybe_link(struct cpio_context *ctx)
  
+ static int __init do_name(struct cpio_context *ctx)
+ {
++	struct dentry *dentry;
++	struct path path;
++	int error;
++
+ 	ctx->state = CPIO_SKIPIT;
+ 	ctx->next_state = CPIO_RESET;
+ 	if (strcmp(ctx->collected, "TRAILER!!!") == 0) {
+@@ -325,16 +396,48 @@ static int __init do_name(struct cpio_context *ctx)
+ 			ctx->state = CPIO_COPYFILE;
+ 		}
+ 	} else if (S_ISDIR(ctx->mode)) {
+-		init_mkdir(ctx->collected, ctx->mode);
+-		init_chown(ctx->collected, ctx->uid, ctx->gid, 0);
+-		init_chmod(ctx->collected, ctx->mode);
++		dentry = kern_path_create(AT_FDCWD, ctx->collected, &path, LOOKUP_DIRECTORY);
++
++		if (!IS_ERR(dentry)) {
++			error = security_path_mkdir(&path, dentry, ctx->mode);
++			if (!error)
++				error = vfs_mkdir(mnt_user_ns(path.mnt),
++						  path.dentry->d_inode,
++						  dentry, ctx->mode);
++			done_path_create(&path, dentry);
++		} else {
++			error = PTR_ERR(dentry);
++		}
++
++		if (error && error != -EEXIST)
++			return error;
++
++		cpio_chown(ctx->collected, ctx->uid, ctx->gid, 0);
+ 		dir_add(ctx, ctx->collected, ctx->mtime);
+ 	} else if (S_ISBLK(ctx->mode) || S_ISCHR(ctx->mode) ||
+ 		   S_ISFIFO(ctx->mode) || S_ISSOCK(ctx->mode)) {
+ 		if (maybe_link(ctx) == 0) {
+-			init_mknod(ctx->collected, ctx->mode, ctx->rdev);
+-			init_chown(ctx->collected, ctx->uid, ctx->gid, 0);
+-			init_chmod(ctx->collected, ctx->mode);
++			if (S_ISFIFO(ctx->mode) || S_ISSOCK(ctx->mode))
++				ctx->rdev = 0;
++
++			dentry = kern_path_create(AT_FDCWD, ctx->collected, &path, 0);
++			if (!IS_ERR(dentry)) {
++				error = security_path_mknod(&path, dentry, ctx->mode,
++							    ctx->rdev);
++				if (!error)
++					error = vfs_mknod(mnt_user_ns(path.mnt),
++							  path.dentry->d_inode,
++							  dentry, ctx->mode,
++							  new_decode_dev(ctx->rdev));
++				done_path_create(&path, dentry);
++			} else {
++				error = PTR_ERR(dentry);
++			}
++
++			if (error && error != -EEXIST)
++				return error;
++
++			cpio_chown(ctx->collected, ctx->uid, ctx->gid, 0);
+ 			do_utime(ctx->collected, ctx->mtime);
+ 		}
+ 	}
+@@ -373,10 +476,27 @@ static int __init do_copy(struct cpio_context *ctx)
+ 
+ static int __init do_symlink(struct cpio_context *ctx)
+ {
++	struct dentry *dentry;
++	struct path path;
++	int error;
++
+ 	ctx->collected[N_ALIGN(ctx->name_len) + ctx->body_len] = '\0';
+ 	clean_path(ctx->collected, 0);
+-	init_symlink(ctx->collected + N_ALIGN(ctx->name_len), ctx->collected);
+-	init_chown(ctx->collected, ctx->uid, ctx->gid, AT_SYMLINK_NOFOLLOW);
++
++	dentry = kern_path_create(AT_FDCWD, ctx->collected, &path, 0);
++	if (IS_ERR(dentry))
++		return PTR_ERR(dentry);
++	error = security_path_symlink(&path, dentry,
++				      ctx->collected + N_ALIGN(ctx->name_len));
++	if (!error)
++		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				    dentry,
++				    ctx->collected + N_ALIGN(ctx->name_len));
++	done_path_create(&path, dentry);
++	if (error)
++		return error;
++
++	cpio_chown(ctx->collected, ctx->uid, ctx->gid, AT_SYMLINK_NOFOLLOW);
+ 	do_utime(ctx->collected, ctx->mtime);
+ 	ctx->state = CPIO_SKIPIT;
+ 	ctx->next_state = CPIO_RESET;
 -- 
 2.30.2
