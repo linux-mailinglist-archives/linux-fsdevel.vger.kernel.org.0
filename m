@@ -2,133 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B014E583B8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 11:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AA4583BA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 12:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235331AbiG1Jz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 05:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57260 "EHLO
+        id S235418AbiG1KBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 06:01:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235034AbiG1Jz5 (ORCPT
+        with ESMTP id S234953AbiG1KA6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 05:55:57 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D68E057248
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Jul 2022 02:55:56 -0700 (PDT)
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26S9maj7017913;
-        Thu, 28 Jul 2022 09:55:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=O8VupqDTsAYKvUVU/b+7rGVyEc6mF3YFu4ZRD6YkTOk=;
- b=Dcp8e8kAt2wNlxAb33AoqrwoqaiIZ9aFYHe2i6ayACLbJb2nv1ooSXm0G786iyLm6Rdr
- P9jO8g1MXwD3ok8rdCAVmZCUONWha9Yp3Njw1bRp149Wvm7OTlIIdPGBGNrYk/imZNyx
- 4czIz93RpY35y52HS/tCHbbYjYaQ6R0iK9t7LvRSS+DDOMMwItk+NmwvnFPgtFO7iwaE
- iwEF+ICm6xGkKZU5XEpZwSiFY3+1+EdDIuEFDODbzV6/XbiSLOYxOPm+vQrLHI+sb1n2
- IIJJSXfk4hsHnw55UpajlHMAGAeqQdGOuI0SFkq9tMXEErWsF78QkCjRvQI5G3xmpDIb Cw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3hkr58r584-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jul 2022 09:55:18 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26S9n80R022320;
-        Thu, 28 Jul 2022 09:55:17 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3hkr58r56t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jul 2022 09:55:17 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26S9pgUP003068;
-        Thu, 28 Jul 2022 09:55:15 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 3hg945mnd6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jul 2022 09:55:14 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 26S9r9wf33358150
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Jul 2022 09:53:09 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CBDF42041;
-        Thu, 28 Jul 2022 09:55:12 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2718F42045;
-        Thu, 28 Jul 2022 09:55:12 +0000 (GMT)
-Received: from li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com (unknown [9.145.185.171])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 28 Jul 2022 09:55:12 +0000 (GMT)
-Date:   Thu, 28 Jul 2022 11:55:10 +0200
-From:   Alexander Gordeev <agordeev@linux.ibm.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 9/44] new iov_iter flavour - ITER_UBUF
-Message-ID: <YuJc/gfGDj4loOqt@li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com>
-References: <YrKWRCOOWXPHRCKg@ZenIV>
- <20220622041552.737754-1-viro@zeniv.linux.org.uk>
- <20220622041552.737754-9-viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220622041552.737754-9-viro@zeniv.linux.org.uk>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: yOJJOKTnJ6xNA6-usU-pbbwExkGGokpf
-X-Proofpoint-GUID: oSR4FKnsytCEdhdB7UlVYskQFZ9RhsqK
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 28 Jul 2022 06:00:58 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79EEA167E5;
+        Thu, 28 Jul 2022 03:00:57 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 376741FFA3;
+        Thu, 28 Jul 2022 10:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1659002456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7MjBR5d5iF90QgK09LCBa7b8puT8yJDuRAnIWGff5/g=;
+        b=p3SWZtJOXud4Li8R6rfKe2x881b6TTDg8HOqBY1Bty2qZUV/BOw4oHBobvYWKg7PKIeaav
+        O+88qm2XQv3t098vubRxl0M7XSJB/WTtPoPPcDJpVY4r+VKbRUP/3aIzvOtfpdW9mTihy4
+        AVuxtH5f4JfWxIkD4pGQBru+WRuOCu0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1659002456;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7MjBR5d5iF90QgK09LCBa7b8puT8yJDuRAnIWGff5/g=;
+        b=T8jJtrsDU6q84QyDoCMshrYrfIFt+wL3JI2SNyqF0xECz3qBuyImj/AAPEERFnFhYssjVH
+        /ZM5bBJdClR670Ag==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 9D5F82C141;
+        Thu, 28 Jul 2022 10:00:55 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 21874A0664; Thu, 28 Jul 2022 12:00:55 +0200 (CEST)
+Date:   Thu, 28 Jul 2022 12:00:55 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
+Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
+ Raspberry Pi
+Message-ID: <20220728100055.efbvaudwp3ofolpi@quack3>
+References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-28_03,2022-07-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0 bulkscore=0
- mlxlogscore=999 impostorscore=0 malwarescore=0 spamscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2206140000 definitions=main-2207280041
-X-Spam-Status: No, score=-0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        URIBL_ABUSE_SURBL autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 22, 2022 at 05:15:17AM +0100, Al Viro wrote:
-> Equivalent of single-segment iovec.  Initialized by iov_iter_ubuf(),
-> checked for by iter_is_ubuf(), otherwise behaves like ITER_IOVEC
-> ones.
+Hello!
+
+On Mon 18-07-22 15:29:47, Stefan Wahren wrote:
+> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
+> unable to run "rpi-update" without massive performance regression on my
+> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
+> tool successfully downloads the latest firmware (> 100 MB) on my development
+> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
+> min. The same scenario on Linux 5.18 shows the following symptoms:
+
+Thanks for report and the bisection!
+ 
+> - download takes endlessly much time and leads to an abort by userspace in
+> most cases because of the poor performance
+> - massive system load during download even after download has been aborted
+> (heartbeat LED goes wild)
+
+OK, is it that the CPU is busy or are we waiting on the storage card?
+Observing top(1) for a while should be enough to get the idea.  (sorry, I'm
+not very familiar with RPi so I'm not sure what heartbeat LED shows).
+
+> - whole system becomes nearly unresponsive
+> - system load goes back to normal after > 10 min
+
+So what likely happens is that the downloaded data is in the pagecache and
+what is causing the stuckage is that we are writing it back to the SD card
+that somehow is much less efficient with mb_optimize_scan=1 for your setup.
+Even if you stop the download, we still have dirty data in the page cache
+which we need to write out so that is the reason why the system takes so
+long to return back to normal.
+
+> - dmesg doesn't show anything suspicious
 > 
-> We are going to expose the things like ->write_iter() et.al. to those
-> in subsequent commits.
+> I was able to bisect this issue:
 > 
-> New predicate (user_backed_iter()) that is true for ITER_IOVEC and
-> ITER_UBUF; places like direct-IO handling should use that for
-> checking that pages we modify after getting them from iov_iter_get_pages()
-> would need to be dirtied.
+> ff042f4a9b050895a42cae893cc01fa2ca81b95c good
+> 4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
+> 25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
+> b4bc93bd76d4da32600795cd323c971f00a2e788 bad
+> 3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
+> b080cee72ef355669cbc52ff55dc513d37433600 good
+> ad9c6ee642a61adae93dfa35582b5af16dc5173a good
+> 9b03992f0c88baef524842e411fbdc147780dd5d bad
+> aab4ed5816acc0af8cce2680880419cd64982b1d good
+> 14705fda8f6273501930dfe1d679ad4bec209f52 good
+> 5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
+> 8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
+> 077d0c2c78df6f7260cdd015a991327efa44d8ad bad
+> cc5095747edfb054ca2068d01af20be3fcc3634f good
+> 27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
 > 
-> DO NOT assume that replacing iter_is_iovec() with user_backed_iter()
-> will solve all problems - there's code that uses iter_is_iovec() to
-> decide how to poke around in iov_iter guts and for that the predicate
-> replacement obviously won't suffice.
+> commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
+> Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Date:   Tue Mar 8 15:22:01 2022 +0530
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Link: https://lore.kernel.org/r/20220622041552.737754-9-viro@zeniv.linux.org.uk
+> ext4: make mb_optimize_scan performance mount option work with extents
+> 
+> If i revert this commit with Linux 5.19-rc6 the performance regression
+> disappears.
+> 
+> Please ask if you need more information.
 
-Hi Al,
+Can you run "iostat -x 1" while the download is running so that we can see
+roughly how the IO pattern looks?
 
-This changes causes sendfile09 LTP testcase fail in linux-next
-(up to next-20220727) on s390. In fact, not this change exactly,
-but rather 92d4d18eecb9 ("new iov_iter flavour - ITER_UBUF") -
-which differs from what is posted here.
+Also can get filesystem metadata image of your card like:
+  e2image -r <fs-device> - | gzip >/tmp/ext4-image.gz
 
-AFAICT page_cache_pipe_buf_confirm() encounters !PageUptodate()
-and !page->mapping page and returns -ENODATA.
+and put it somewhere for download? The image will contain only fs metadata,
+not data so it should be relatively small and we won't have access to your
+secrets ;). With the image we'd be able to see how the free space looks
+like and whether it perhaps does not trigger some pathological behavior.
 
-I am going to narrow the testcase and get more details, but please
-let me know if I am missing something.
+My current suspicion is that because the new allocator strategy spreads
+allocations over more block groups, we end up with more open erase blocks
+on the SD card which forces the firmware to do more garbage collection and
+RMW of erase blocks and write performance tanks...
 
-Thanks!
+Thanks.
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
