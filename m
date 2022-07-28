@@ -2,164 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E005836F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 04:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA640583998
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 09:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236855AbiG1CfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Jul 2022 22:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        id S234496AbiG1HiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 03:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbiG1CfR (ORCPT
+        with ESMTP id S233032AbiG1HiF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Jul 2022 22:35:17 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1868D13E85;
-        Wed, 27 Jul 2022 19:35:15 -0700 (PDT)
-Received: from dread.disaster.area (pa49-195-20-138.pa.nsw.optusnet.com.au [49.195.20.138])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 25C0D10C8868;
-        Thu, 28 Jul 2022 12:35:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oGtMl-0069Ji-VP; Thu, 28 Jul 2022 12:35:11 +1000
-Date:   Thu, 28 Jul 2022 12:35:11 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Keith Busch <kbusch@fb.com>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, hch@lst.de
-Subject: Re: [PATCH 4/5] io_uring: add support for dma pre-mapping
-Message-ID: <20220728023511.GX3600936@dread.disaster.area>
-References: <20220726173814.2264573-1-kbusch@fb.com>
- <20220726173814.2264573-5-kbusch@fb.com>
- <YuB09cZh7rmd260c@ZenIV>
- <YuFEhQuFtyWcw7rL@kbusch-mbp.dhcp.thefacebook.com>
- <YuFGCO7M29fr3bVB@ZenIV>
- <YuFT+UYxd2QtDPe5@kbusch-mbp.dhcp.thefacebook.com>
- <20220727223232.GV3600936@dread.disaster.area>
- <YuHDeRImQPuuV2Mr@kbusch-mbp.dhcp.thefacebook.com>
+        Thu, 28 Jul 2022 03:38:05 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A6452E54;
+        Thu, 28 Jul 2022 00:38:02 -0700 (PDT)
+Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1oGy5o-0000kv-Ci; Thu, 28 Jul 2022 09:38:00 +0200
+Message-ID: <62df64ca-dc79-c308-a8e0-7c2b2c45248a@leemhuis.info>
+Date:   Thu, 28 Jul 2022 09:37:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YuHDeRImQPuuV2Mr@kbusch-mbp.dhcp.thefacebook.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62e1f5e2
-        a=cxZHBGNDieHvTKNp/pucQQ==:117 a=cxZHBGNDieHvTKNp/pucQQ==:17
-        a=kj9zAlcOel0A:10 a=RgO8CyIxsXoA:10 a=7-415B0cAAAA:8
-        a=DxEnDgycP0rwEceSJA4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
+        Jan Kara <jack@suse.cz>
+References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+ <Yt6xsyy3+qEMn08y@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <0840b428-3a77-2339-354f-7fbd3295bb4d@i2se.com>
+ <Yt+M+JgW6KuZFMvc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <e9aa5629-b6a8-3e5d-422e-eb79ac333fdc@i2se.com>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
+ Raspberry Pi
+In-Reply-To: <e9aa5629-b6a8-3e5d-422e-eb79ac333fdc@i2se.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1658993883;e2a7abd8;
+X-HE-SMSGID: 1oGy5o-0000kv-Ci
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 27, 2022 at 05:00:09PM -0600, Keith Busch wrote:
-> On Thu, Jul 28, 2022 at 08:32:32AM +1000, Dave Chinner wrote:
-> > On Wed, Jul 27, 2022 at 09:04:25AM -0600, Keith Busch wrote:
-> > > On Wed, Jul 27, 2022 at 03:04:56PM +0100, Al Viro wrote:
-> > > > On Wed, Jul 27, 2022 at 07:58:29AM -0600, Keith Busch wrote:
-> > > > > On Wed, Jul 27, 2022 at 12:12:53AM +0100, Al Viro wrote:
-> > > > > > On Tue, Jul 26, 2022 at 10:38:13AM -0700, Keith Busch wrote:
-> > > > > > 
-> > > > > > > +	if (S_ISBLK(file_inode(file)->i_mode))
-> > > > > > > +		bdev = I_BDEV(file->f_mapping->host);
-> > > > > > > +	else if (S_ISREG(file_inode(file)->i_mode))
-> > > > > > > +		bdev = file->f_inode->i_sb->s_bdev;
-> > > > > > 
-> > > > > > *blink*
-> > > > > > 
-> > > > > > Just what's the intended use of the second case here?
-> > > > > 
-> > > > > ??
-> > > > > 
-> > > > > The use case is same as the first's: dma map the user addresses to the backing
-> > > > > storage. There's two cases here because getting the block_device for a regular
-> > > > > filesystem file is different than a raw block device.
-> > > > 
-> > > > Excuse me, but "file on some filesystem + block number on underlying device"
-> > > > makes no sense as an API...
-> > > 
-> > > Sorry if I'm misunderstanding your concern here.
-> > > 
-> > > The API is a file descriptor + index range of registered buffers (which is a
-> > > pre-existing io_uring API). The file descriptor can come from opening either a
-> > > raw block device (ex: /dev/nvme0n1), or any regular file on a mounted
-> > > filesystem using nvme as a backing store.
-> > 
-> > That's fundamentally flawed. Filesystems can have multiple block
-> > devices backing them that the VFS doesn't actually know about (e.g.
-> > btrfs, XFS, etc). Further, some of these filesystems can spread
-> > indiivdual file data across mutliple block devices i.e. the backing
-> > bdev changes as file offset changes....
-> > 
-> > Filesystems might not even have a block device (NFS, CIFS, etc) -
-> > what happens if you call this function on a file belonging to such a
-> > filesystem?
+
+
+On 26.07.22 17:54, Stefan Wahren wrote:
+> Hi Ojaswin,
 > 
-> The block_device driver has to opt-in to this feature. If a multi-device block
-> driver wants to opt-in to this, then it would be responsible to handle
-> translating that driver's specific cookie to whatever representation the
-> drivers it stacks atop require. Otherwise, the cookie threaded through the bio
-> is an opque value: nothing between io_uring and the block_device driver need to
-> decode it.
+> Am 26.07.22 um 08:43 schrieb Ojaswin Mujoo:
+>> On Mon, Jul 25, 2022 at 09:09:32PM +0200, Stefan Wahren wrote:
+>>> Hi Ojaswin,
+>>>
+>>> Am 25.07.22 um 17:07 schrieb Ojaswin Mujoo:
+>>>> On Mon, Jul 18, 2022 at 03:29:47PM +0200, Stefan Wahren wrote:
+>>>>> Hi,
+>>>>>
+>>>>> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
+>>>>> unable to run "rpi-update" without massive performance regression
+>>>>> on my
+>>>>> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux
+>>>>> 5.17 this
+>>>>> tool successfully downloads the latest firmware (> 100 MB) on my
+>>>>> development
+>>>>> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem
+>>>>> within ~ 1
+>>>>> min. The same scenario on Linux 5.18 shows the following symptoms:
+>>>>>
+>>>>> - download takes endlessly much time and leads to an abort by
+>>>>> userspace in
+>>>>> most cases because of the poor performance
+>>>>> - massive system load during download even after download has been
+>>>>> aborted
+>>>>> (heartbeat LED goes wild)
+>>>>> - whole system becomes nearly unresponsive
+>>>>> - system load goes back to normal after > 10 min
+>>>>> - dmesg doesn't show anything suspicious
+>>>>>
+>>>>> I was able to bisect this issue:
+>>>>>
+>>>>> ff042f4a9b050895a42cae893cc01fa2ca81b95c good
+>>>>> 4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
+>>>>> 25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
+>>>>> b4bc93bd76d4da32600795cd323c971f00a2e788 bad
+>>>>> 3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
+>>>>> b080cee72ef355669cbc52ff55dc513d37433600 good
+>>>>> ad9c6ee642a61adae93dfa35582b5af16dc5173a good
+>>>>> 9b03992f0c88baef524842e411fbdc147780dd5d bad
+>>>>> aab4ed5816acc0af8cce2680880419cd64982b1d good
+>>>>> 14705fda8f6273501930dfe1d679ad4bec209f52 good
+>>>>> 5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
+>>>>> 8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
+>>>>> 077d0c2c78df6f7260cdd015a991327efa44d8ad bad
+>>>>> cc5095747edfb054ca2068d01af20be3fcc3634f good
+>>>>> 27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
+>>>>>
+>>>>> commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
+>>>>> Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>>>>> Date:   Tue Mar 8 15:22:01 2022 +0530
+>>>>>
+>>>>> ext4: make mb_optimize_scan performance mount option work with extents
+>>>>>
+>>>>> If i revert this commit with Linux 5.19-rc6 the performance regression
+>>>>> disappears.
+>>>>>
+>>>>> Please ask if you need more information.
+>>>> Hi Stefan,
+>>>>
+>>>> Apologies, I had missed this email initially. So this particular patch
+>>>> simply changed a typo in an if condition which was preventing the
+>>>> mb_optimize_scan option to be enabled correctly (This feature was
+>>>> introduced in the following commit [1]). I think with the
+>>>> mb_optimize_scan now working, it is somehow causing the firmware
+>>>> download/update to take a longer time.
+>>>>
+>>>> I'll try to investigate this and get back with my findings.
+>>> thanks. I wasn't able to reproduce this heavy load symptoms with
+>>> every SD
+>>> card. Maybe this depends on the write performance of the SD card to
+>>> trigger
+>>> the situation (used command to measure write performance: dd
+>>> if=/dev/zero
+>>> of=/boot/test bs=1M count=30 oflag=dsync,direct ).
+>>>
+>>> I tested a Kingston consumer 32 GB which had nearly constant write
+>>> performance of 13 MB/s and didn't had the heavy load symptoms. The
+>>> firmware
+>>> update was done in a few seconds, so hard to say that at least the
+>>> performance regression is reproducible.
+>>>
+>>> I also tested 2x Kingston industrial 16 GB which had a floating write
+>>> performance between 5 and 10 MB/s (wear leveling?) and both had the
+>>> heavy
+>>> load symptoms.
+>>>
+>>> All SD cards has been detected as ultra high speed DDR50 by the emmc2
+>>> interface.
+>>>
+>>> Best regards
+>>>
+>>>> Regard,
+>>>> Ojaswin
+>>>>
+>>>> [1]
+>>>>     commit 196e402adf2e4cd66f101923409f1970ec5f1af3
+>>>>     From: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+>>>>     Date: Thu, 1 Apr 2021 10:21:27 -0700
+>>>>     
+>>>>     ext4: improve cr 0 / cr 1 group scanning
+>>>>
+>>>>> Regards
+>>>>>
+>> Thanks for the info Stefan, I'm still trying to reproduce the issue but
+>> it's slightly challenging since I don't have my RPi handy at the moment.
+>>
+>> In the meantime, would you please try out the mb_optmize_scan=0 command
+>> line options to see if that helps bypass the issue. This will help
+>> confirm if the issue lies in mb_optmize_scan itself or if its something
+>> else.
+>>
+> I run the firmware update 5 times with mb_optimize_scan=0 on my
+> Raspberry Pi 4 and the industrial SD card and everytime the update worked.
+>>
 
-I'm not talking about "multi-device" block devices like we build
-with DM or MD to present a single stacked block device to the
-filesystem. I'm talking about the fact that both btrfs and XFS
-support multiple *independent* block devices in the one filesystem.
+[CCing Jan]
 
-i.e.:
+FYI, Jan yesterday reported benchmark regresses that might or might not
+be related Stefan's regression on the Raspberry Pi:
+https://lore.kernel.org/all/20220727105123.ckwrhbilzrxqpt24@quack3/
 
-# mkfs.xfs -r rtdev=/dev/nvme0n1 -l logdev=/dev/nvme1n1,size=2000m /dev/nvme2n1
-meta-data=/dev/nvme2n1           isize=512    agcount=4, agsize=22893287 blks
-         =                       sectsz=512   attr=2, projid32bit=1
-         =                       crc=1        finobt=1, sparse=1, rmapbt=0
-         =                       reflink=0    bigtime=1 inobtcount=1 nrext64=0
-data     =                       bsize=4096   blocks=91573146, imaxpct=25
-         =                       sunit=0      swidth=0 blks
-naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
-log      =/dev/nvme1n1           bsize=4096   blocks=512000, version=2
-         =                       sectsz=512   sunit=0 blks, lazy-count=1
-realtime =/dev/nvme0n1           extsz=4096   blocks=91573146, rtextents=91573146
-#
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
 
-This builds an XFS filesystem which can write file data to either
-/dev/nvme0n1 or /dev/nvme2n1, and journal IO will get sent to a
-third block dev (/dev/nvme1n1).
+P.S.: As the Linux kernel's regression tracker I deal with a lot of
+reports and sometimes miss something important when writing mails like
+this. If that's the case here, don't hesitate to tell me in a public
+reply, it's in everyone's interest to set the public record straight.
 
-So, which block device do we map for the DMA buffers that contain
-the file data for any given file in that filesystem? There is no
-guarantee that is is sb->s_bdev, because it only points at one of
-the two block devices that can contain file data.
-
-Btrfs is similar, but it might stripe data across /dev/nvme0n1,
-/dev/nvme1n1 and /dev/nvme2n1 for a single file writes (and hence
-reads) and so needs separate DMA mappings for each block device just
-to do IO direct to/from one file....
-
-Indeed, for XFS there's no requirement that the block devices have
-the same capabilities or even storage types - the rtdev could be
-spinning disks, the logdev an nvme SSD, and the datadev is pmem. If
-XFs has to do something special, it queries the bdev it needs to
-operate on (e.g. DAX mappings are only allowed on pmem based
-devices).
-
-Hence it is invalid to assume that sb->s_bdev points at the actual
-block device the data for any given regular file is stored on. It is
-also invalid to assume the characteristics of the device in
-sb->s_bdev are common for all files in the filesystem.
-
-IOWs, the only way you can make something like this work via
-filesystem mapping infrastructure to translate file offset to
-to a {dev, dev_offset} tuple to tell you what persistently mapped
-device buffers you need to use for IO to the given file {offset,len}
-range that IO needs to be done on....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+#regzbot monitor
+https://lore.kernel.org/all/20220727105123.ckwrhbilzrxqpt24@quack3/
