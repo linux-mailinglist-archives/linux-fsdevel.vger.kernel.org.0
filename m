@@ -2,66 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6AA4583BA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 12:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A60583CE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Jul 2022 13:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235418AbiG1KBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 06:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32922 "EHLO
+        id S236759AbiG1LKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 07:10:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234953AbiG1KA6 (ORCPT
+        with ESMTP id S236757AbiG1LKV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 06:00:58 -0400
+        Thu, 28 Jul 2022 07:10:21 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79EEA167E5;
-        Thu, 28 Jul 2022 03:00:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149A8248D9;
+        Thu, 28 Jul 2022 04:10:19 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 376741FFA3;
-        Thu, 28 Jul 2022 10:00:56 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 4205F20767;
+        Thu, 28 Jul 2022 11:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1659002456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1659006618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7MjBR5d5iF90QgK09LCBa7b8puT8yJDuRAnIWGff5/g=;
-        b=p3SWZtJOXud4Li8R6rfKe2x881b6TTDg8HOqBY1Bty2qZUV/BOw4oHBobvYWKg7PKIeaav
-        O+88qm2XQv3t098vubRxl0M7XSJB/WTtPoPPcDJpVY4r+VKbRUP/3aIzvOtfpdW9mTihy4
-        AVuxtH5f4JfWxIkD4pGQBru+WRuOCu0=
+        bh=Ch7OpJ9togQrcIvktUHsyLTlf/K2VFQcctastF2/ugA=;
+        b=FCWtvrX0enwGt/24CACMuJlboGjfqQhB9CUh53r1V4R7Q+P2f8G/Rz2cOKMtCEqqMhF4ac
+        cVrAELjWf+1zwF57+XpH1ipr3AaAAOzR1+WOfzMSgaY0O0ZcLK3avwiSxXAwmXK490k04D
+        ulOVOEKQ8Td6kbdIiLNEKwHL5adoNy8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1659002456;
+        s=susede2_ed25519; t=1659006618;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7MjBR5d5iF90QgK09LCBa7b8puT8yJDuRAnIWGff5/g=;
-        b=T8jJtrsDU6q84QyDoCMshrYrfIFt+wL3JI2SNyqF0xECz3qBuyImj/AAPEERFnFhYssjVH
-        /ZM5bBJdClR670Ag==
+        bh=Ch7OpJ9togQrcIvktUHsyLTlf/K2VFQcctastF2/ugA=;
+        b=FUh7NyixVBdFFcjpzMMwj8qKd7dO71QTdNpxiDnX9HMHCJw+QKu+crfxmuo1KD6WUwxksP
+        MjXSLHlpxT0XUMAA==
 Received: from quack3.suse.cz (unknown [10.163.43.118])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9D5F82C141;
-        Thu, 28 Jul 2022 10:00:55 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 97F522C141;
+        Thu, 28 Jul 2022 11:10:17 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 21874A0664; Thu, 28 Jul 2022 12:00:55 +0200 (CEST)
-Date:   Thu, 28 Jul 2022 12:00:55 +0200
+        id 4F4C9A0668; Thu, 28 Jul 2022 13:10:16 +0200 (CEST)
+Date:   Thu, 28 Jul 2022 13:10:16 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-Message-ID: <20220728100055.efbvaudwp3ofolpi@quack3>
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: remove iomap_writepage v2
+Message-ID: <20220728111016.uwbaywprzkzne7ib@quack3>
+References: <20220719041311.709250-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+In-Reply-To: <20220719041311.709250-1-hch@lst.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -71,87 +68,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
+Hi Christoph!
 
-On Mon 18-07-22 15:29:47, Stefan Wahren wrote:
-> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
-> unable to run "rpi-update" without massive performance regression on my
-> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
-> tool successfully downloads the latest firmware (> 100 MB) on my development
-> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
-> min. The same scenario on Linux 5.18 shows the following symptoms:
+On Tue 19-07-22 06:13:07, Christoph Hellwig wrote:
+> this series removes iomap_writepage and it's callers, following what xfs
+> has been doing for a long time.
 
-Thanks for report and the bisection!
- 
-> - download takes endlessly much time and leads to an abort by userspace in
-> most cases because of the poor performance
-> - massive system load during download even after download has been aborted
-> (heartbeat LED goes wild)
+So this effectively means "no writeback from page reclaim for these
+filesystems" AFAICT (page migration of dirty pages seems to be handled by
+iomap_migrate_page()) which is going to make life somewhat harder for
+memory reclaim when memory pressure is high enough that dirty pages are
+reaching end of the LRU list. I don't expect this to be a problem on big
+machines but it could have some undesirable effects for small ones
+(embedded, small VMs). I agree per-page writeback has been a bad idea for
+efficiency reasons for at least last 10-15 years and most filesystems
+stopped dealing with more complex situations (like block allocation) from
+->writepage() already quite a few years ago without any bug reports AFAIK.
+So it all seems like a sensible idea from FS POV but are MM people on board
+or at least aware of this movement in the fs land?
 
-OK, is it that the CPU is busy or are we waiting on the storage card?
-Observing top(1) for a while should be enough to get the idea.  (sorry, I'm
-not very familiar with RPi so I'm not sure what heartbeat LED shows).
+Added a few CC's for that.
 
-> - whole system becomes nearly unresponsive
-> - system load goes back to normal after > 10 min
-
-So what likely happens is that the downloaded data is in the pagecache and
-what is causing the stuckage is that we are writing it back to the SD card
-that somehow is much less efficient with mb_optimize_scan=1 for your setup.
-Even if you stop the download, we still have dirty data in the page cache
-which we need to write out so that is the reason why the system takes so
-long to return back to normal.
-
-> - dmesg doesn't show anything suspicious
-> 
-> I was able to bisect this issue:
-> 
-> ff042f4a9b050895a42cae893cc01fa2ca81b95c good
-> 4b0986a3613c92f4ec1bdc7f60ec66fea135991f bad
-> 25fd2d41b505d0640bdfe67aa77c549de2d3c18a bad
-> b4bc93bd76d4da32600795cd323c971f00a2e788 bad
-> 3fe2f7446f1e029b220f7f650df6d138f91651f2 bad
-> b080cee72ef355669cbc52ff55dc513d37433600 good
-> ad9c6ee642a61adae93dfa35582b5af16dc5173a good
-> 9b03992f0c88baef524842e411fbdc147780dd5d bad
-> aab4ed5816acc0af8cce2680880419cd64982b1d good
-> 14705fda8f6273501930dfe1d679ad4bec209f52 good
-> 5c93e8ecd5bd3bfdee013b6da0850357eb6ca4d8 good
-> 8cb5a30372ef5cf2b1d258fce1711d80f834740a bad
-> 077d0c2c78df6f7260cdd015a991327efa44d8ad bad
-> cc5095747edfb054ca2068d01af20be3fcc3634f good
-> 27b38686a3bb601db48901dbc4e2fc5d77ffa2c1 good
-> 
-> commit 077d0c2c78df6f7260cdd015a991327efa44d8ad
-> Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Date:   Tue Mar 8 15:22:01 2022 +0530
-> 
-> ext4: make mb_optimize_scan performance mount option work with extents
-> 
-> If i revert this commit with Linux 5.19-rc6 the performance regression
-> disappears.
-> 
-> Please ask if you need more information.
-
-Can you run "iostat -x 1" while the download is running so that we can see
-roughly how the IO pattern looks?
-
-Also can get filesystem metadata image of your card like:
-  e2image -r <fs-device> - | gzip >/tmp/ext4-image.gz
-
-and put it somewhere for download? The image will contain only fs metadata,
-not data so it should be relatively small and we won't have access to your
-secrets ;). With the image we'd be able to see how the free space looks
-like and whether it perhaps does not trigger some pathological behavior.
-
-My current suspicion is that because the new allocator strategy spreads
-allocations over more block groups, we end up with more open erase blocks
-on the SD card which forces the firmware to do more garbage collection and
-RMW of erase blocks and write performance tanks...
-
-Thanks.
 								Honza
 
+> Changes since v1:
+>  - clean up a printk in gfs2
+> 
+> Diffstat:
+>  fs/gfs2/aops.c         |   26 --------------------------
+>  fs/gfs2/log.c          |    5 ++---
+>  fs/iomap/buffered-io.c |   15 ---------------
+>  fs/zonefs/super.c      |    8 --------
+>  include/linux/iomap.h  |    3 ---
+>  5 files changed, 2 insertions(+), 55 deletions(-)
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
