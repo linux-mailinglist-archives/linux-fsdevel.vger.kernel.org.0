@@ -2,165 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3671B5848AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 01:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F9F584A10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 05:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233560AbiG1X0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Jul 2022 19:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48940 "EHLO
+        id S233405AbiG2DIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Jul 2022 23:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbiG1X0e (ORCPT
+        with ESMTP id S230081AbiG2DIt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Jul 2022 19:26:34 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD736664D6;
-        Thu, 28 Jul 2022 16:26:33 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id f7so3408413pjp.0;
-        Thu, 28 Jul 2022 16:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=FThKBW22ogMZ47y3LqB8ynEnI2mNCgS8VuEq+ywlvPw=;
-        b=BtvUVSDMSmGoe5Tpq0s9nciuzr4DV9IgWQwcbWUwB+o5DnCjMhZvM8IrzrwdpxSsz6
-         jmFxISC4xWyfQKr3p1gD+UoUpQILzUpXc4axZs15WUA2UybUGHjqmrIZKtjFZ2gNlv8h
-         1ZbrhuKANt9KtqHTnTxSWuaaVXz+OVAA6NWEq2MOm8P/5+hA2lBSVbmt/sABfgxE9s5l
-         HkLaH9IqtkUZN2uX7wW9po6s5ffiR/M7vrQjqf1Izidn82dSreyFB4+7X1dOQK+Qx38R
-         cEO8S4EOeMiIR2jZeBS20aCpNe80BSTO7gouJFHkSk3+FdbEiDhLzI7NKcobwqM2wg8m
-         p1wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=FThKBW22ogMZ47y3LqB8ynEnI2mNCgS8VuEq+ywlvPw=;
-        b=woLUCBy1XUdfYwqdtt9W1DSvNOerxptPM0Bf58mu46YU1FzlbRqAx02EnE7aInw7TE
-         Mn0NkMGTzLWB76FOWPy2m5PmVZ9ZY9x/MTfNOEwFXmET1Gurn6eXYXA/uQVAYpyBX35e
-         KavpyjNOmpupRbjhoflb0Eak8XWKoEhSFDgEQChagKgL6/ingitbzxTx7Id/PiFFcRBz
-         HuRZituotFGJZpLAvuiOVe+fABpf+uCpBujxctA+05r5BD4kpZJXOMdwTCwLYTz6dkYp
-         a5hN+E47IIqg/NTytgdDQeBoZlG3FBcohSJvvF/jpWsLhNvENvcb2EPV0dbcJDttzOD8
-         HWaQ==
-X-Gm-Message-State: ACgBeo2eYgDT2VGikHugI8Eaas1R/yEImqL0dITM/lGkaAZhkgL0/DYJ
-        mMHzDalK8NnRveYEVz2cHcJOsMzyRlxmPFHXTB4=
-X-Google-Smtp-Source: AA6agR5nvgMY86Y4sS/smtiWS4Mu1pYIFaY23gz00YkgOpJys8r91kVGv4QlE6/ujnAEXKtFvGqA+lRvB4hNhgDPpjs=
-X-Received: by 2002:a17:902:a516:b0:16d:4379:f34a with SMTP id
- s22-20020a170902a51600b0016d4379f34amr1176999plq.26.1659050793250; Thu, 28
- Jul 2022 16:26:33 -0700 (PDT)
+        Thu, 28 Jul 2022 23:08:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515EF7B78A;
+        Thu, 28 Jul 2022 20:08:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E002F61E05;
+        Fri, 29 Jul 2022 03:08:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4866CC43470;
+        Fri, 29 Jul 2022 03:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659064127;
+        bh=5OsBdiEjYx6egc32iX+tiEv1xN1iIy+h3EehGYoPG+E=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=o90jwd0zX0Zzph/GS+Vkq5WAkYOp8XJ154Fde8nhm6HPrW2N6qpbuQ45941UdDQVI
+         j0Pj5+Ua9mH3fJfOHamGHPi83XlEmnoCUU4uq6nKpiR1xZpz9qsXYHkA06G6VNLet8
+         AWK8J78gr5I4Js4ytObDDt+UpPN1km8emx2+7kvP0zcLb2RnHs6tBP6eoOL0NBD2r5
+         GCfUQJfXMoOM99FdBf6L35Sf3bubeCr0zq/fTUXl/f7uT2wlWUqZpsxT2SmiYbThOI
+         WsRWdYbgzHEZuEaK01F5UgNfgYJVsOV+FCdw4ulMRqPUMlbFQvurD0EiKrs2o5+j9R
+         dpMgfvH/uNZ1g==
+Received: by mail-oi1-f174.google.com with SMTP id c185so4526281oia.7;
+        Thu, 28 Jul 2022 20:08:47 -0700 (PDT)
+X-Gm-Message-State: AJIora+mTFhkypgwBcPpwleImRn5+CuhFs1jtU55wUxRofFi6XVLWd7m
+        426atc93IbrN0qCDAPn8+PwMUtfZr/o9Tk76ths=
+X-Google-Smtp-Source: AGRyM1si0r1HZlCPHgEcoqcmDfNjLOpSJLEuoT9j3YrdNg36VqRRnxsa/Ok/akRf0wWxOkN78wRMd69vZV+s+Orn//4=
+X-Received: by 2002:a05:6808:1b20:b0:33a:b9ab:30d8 with SMTP id
+ bx32-20020a0568081b2000b0033ab9ab30d8mr1096213oib.8.1659064126395; Thu, 28
+ Jul 2022 20:08:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220719041311.709250-1-hch@lst.de> <20220728111016.uwbaywprzkzne7ib@quack3>
- <YuKam52dkTGycay2@casper.infradead.org> <20220728224803.GZ3861211@dread.disaster.area>
-In-Reply-To: <20220728224803.GZ3861211@dread.disaster.area>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 28 Jul 2022 16:26:20 -0700
-Message-ID: <CAHbLzkptH+U9DP4yfGUfyOex47OQgYd2fOZYtCOxOr1S2ZTEeQ@mail.gmail.com>
-Subject: Re: remove iomap_writepage v2
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Received: by 2002:a05:6839:41a4:0:0:0:0 with HTTP; Thu, 28 Jul 2022 20:08:45
+ -0700 (PDT)
+In-Reply-To: <20220726083929.1684-1-tiwai@suse.de>
+References: <20220726083929.1684-1-tiwai@suse.de>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 29 Jul 2022 12:08:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9dtCeFBb_-2g0GGwV6umwK4riWhpctvfXY7gpY1OO5pA@mail.gmail.com>
+Message-ID: <CAKYAXd9dtCeFBb_-2g0GGwV6umwK4riWhpctvfXY7gpY1OO5pA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] exfat: Fixes for ENAMETOOLONG error handling
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Petr Vorel <pvorel@suse.cz>, Joe Perches <joe@perches.com>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 28, 2022 at 3:48 PM Dave Chinner <david@fromorbit.com> wrote:
+2022-07-26 17:39 GMT+09:00, Takashi Iwai <tiwai@suse.de>:
+> Hi,
 >
-> On Thu, Jul 28, 2022 at 03:18:03PM +0100, Matthew Wilcox wrote:
-> > On Thu, Jul 28, 2022 at 01:10:16PM +0200, Jan Kara wrote:
-> > > Hi Christoph!
-> > >
-> > > On Tue 19-07-22 06:13:07, Christoph Hellwig wrote:
-> > > > this series removes iomap_writepage and it's callers, following what xfs
-> > > > has been doing for a long time.
-> > >
-> > > So this effectively means "no writeback from page reclaim for these
-> > > filesystems" AFAICT (page migration of dirty pages seems to be handled by
-> > > iomap_migrate_page()) which is going to make life somewhat harder for
-> > > memory reclaim when memory pressure is high enough that dirty pages are
-> > > reaching end of the LRU list. I don't expect this to be a problem on big
-> > > machines but it could have some undesirable effects for small ones
-> > > (embedded, small VMs). I agree per-page writeback has been a bad idea for
-> > > efficiency reasons for at least last 10-15 years and most filesystems
-> > > stopped dealing with more complex situations (like block allocation) from
-> > > ->writepage() already quite a few years ago without any bug reports AFAIK.
-> > > So it all seems like a sensible idea from FS POV but are MM people on board
-> > > or at least aware of this movement in the fs land?
-> >
-> > I mentioned it during my folio session at LSFMM, but didn't put a huge
-> > emphasis on it.
-> >
-> > For XFS, writeback should already be in progress on other pages if
-> > we're getting to the point of trying to call ->writepage() in vmscan.
-> > Surely this is also true for other filesystems?
+> this is a revised series for fixing the error code of rename syscall
+> as well as cleanup / suppress the superfluous error messages.
 >
-> Yes.
+> As an LTP test case reported, exfat returns the inconsistent error
+> code for the case of renaming oversized file names:
+>   https://bugzilla.suse.com/show_bug.cgi?id=1201725
+> The first patch fixes this inconsistency.
 >
-> It's definitely true for btrfs, too, because btrfs_writepage does:
+> The second patch is just for correcting the definitions as bit flags,
+> and the remaining two patches are for suppressing the error message
+> that can be triggered too easily to debug messages.
+Applied, Thanks for your work!
 >
-> static int btrfs_writepage(struct page *page, struct writeback_control *wbc)
-> {
->         struct inode *inode = page->mapping->host;
->         int ret;
 >
->         if (current->flags & PF_MEMALLOC) {
->                 redirty_page_for_writepage(wbc, page);
->                 unlock_page(page);
->                 return 0;
->         }
-> ....
+> thanks,
 >
-> It also rejects all calls to write dirty pages from memory reclaim
-> contexts.
-
-Aha, it seems even kswapd (it has PF_MEMALLOC set) is rejected too.
-
+> Takashi
 >
-> ext4 will also reject writepage calls from memory allocation if
-> block allocation is required (due to delayed allocation) or
-> unwritten extents need converting to written. i.e. if it has to run
-> blocking transactions.
+> ===
 >
-> So all three major filesystems will either partially or wholly
-> reject ->writepage calls from memory reclaim context.
+> v1: https://lore.kernel.org/r/20220722142916.29435-1-tiwai@suse.de
 >
-> IOWs, if memory reclaim is depending on ->writepage() to make
-> reclaim progress, it's not working as advertised on the vast
-> majority of production Linux systems....
+> v1->v2:
+> * Expand to pr_*() directly in exfat_*() macros
+> * Add a patch to drop superfluous newlines in error messages
 >
-> The reality is that ->writepage is a relic of a bygone era of OS and
-> filesystem design. It was useful in the days where writing a dirty
-> page just involved looking up the bufferhead attached to the page to
-> get the disk mapping and then submitting it for IO.
+> ===
 >
-> Those days are long gone - filesystems have complex IO submission
-> paths now that have to handle delayed allocation, copy-on-write,
-> unwritten extents, have unbound memory demand, etc. All the
-> filesystems that support these 1990s era filesystem technologies
-> simply turn off ->writepage in memory reclaim contexts.
+> Takashi Iwai (5):
+>   exfat: Return ENAMETOOLONG consistently for oversized paths
+>   exfat: Define NLS_NAME_* as bit flags explicitly
+>   exfat: Expand exfat_err() and co directly to pr_*() macro
+>   exfat: Downgrade ENAMETOOLONG error message to debug messages
+>   exfat: Drop superfluous new line for error messages
 >
-> Hence for the vast majority of linux users (i.e. everyone using
-> ext4, btrfs and XFS), ->writepage no longer plays any part in memory
-> reclaim on their systems.
+>  fs/exfat/exfat_fs.h | 18 ++++++++++--------
+>  fs/exfat/fatent.c   |  2 +-
+>  fs/exfat/misc.c     | 17 -----------------
+>  fs/exfat/namei.c    |  2 +-
+>  fs/exfat/nls.c      |  4 ++--
+>  fs/exfat/super.c    |  4 ++--
+>  6 files changed, 16 insertions(+), 31 deletions(-)
 >
-> So why should we try to maintain the fiction that ->writepage is
-> required functionality in a filesystem when it clearly isn't?
->
-> Cheers,
->
-> Dave.
 > --
-> Dave Chinner
-> david@fromorbit.com
+> 2.35.3
+>
 >
