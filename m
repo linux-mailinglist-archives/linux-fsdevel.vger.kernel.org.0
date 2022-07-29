@@ -2,196 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E42584F70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 13:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AD41584F9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 13:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233446AbiG2LSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 07:18:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37340 "EHLO
+        id S232959AbiG2Lab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 07:30:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232959AbiG2LSo (ORCPT
+        with ESMTP id S235223AbiG2La3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 07:18:44 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7C57FE5C;
-        Fri, 29 Jul 2022 04:18:42 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 8E2CE348CD;
-        Fri, 29 Jul 2022 11:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1659093521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q/lKSasX/1DXxqiFOXKfLbZqYgAxcwzKDEqTPp4vlLI=;
-        b=hSkt98MfuKeYQ34uvxjmVWKf3aIX/CXMjWnGpzWnonSuTTd9Nl7N943ab1tvvIlWwfakG2
-        7lRwVbnEP1BQyT9tN6/A6GZPYxS7q7iosXOOiDyKdKiLTiVabarZwS/ucU3henoqD6FKnQ
-        HIb1yXfh5EZzJpmBqaoIAtsvaPMBJYU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1659093521;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q/lKSasX/1DXxqiFOXKfLbZqYgAxcwzKDEqTPp4vlLI=;
-        b=TE79SUG6iJSZkpd8YOKuNPS5SkKKA2+NsnFsQmN/PDG3q0dgHBgSaFNGndw1ztJnxdnqS7
-        jvjU1q+pHMMzKPBg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 5B2782C141;
-        Fri, 29 Jul 2022 11:18:41 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 898B3A0666; Fri, 29 Jul 2022 13:18:40 +0200 (CEST)
-Date:   Fri, 29 Jul 2022 13:18:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        jlayton@kernel.org, tytso@mit.edu, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs: record I_DIRTY_TIME even if inode already has
- I_DIRTY_INODE
-Message-ID: <20220729111840.a7qmh3vjtr662tvx@quack3>
-References: <20220728133914.49890-1-lczerner@redhat.com>
- <20220728133914.49890-2-lczerner@redhat.com>
- <20220728165332.cu2kiduob2xyvoep@quack3>
- <20220729085219.3mbn7vrrdsxvdcyf@fedora>
+        Fri, 29 Jul 2022 07:30:29 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EBA2CCBE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 04:30:27 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4LvQL96TpjzMqvq2;
+        Fri, 29 Jul 2022 13:30:25 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4LvQL92QcPzlqwsR;
+        Fri, 29 Jul 2022 13:30:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1659094225;
+        bh=6mgZ9R4TbL6/dB83+UPCkoky+fcr3XYpt6kJSlp1yoI=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=QPMri8kxBp6C4hptRc6y6IQbSRGIBf33QqnxRXe5G2ROjfBcQZXCcuH5uoLnEmlsL
+         0/tY1namWUgdDufKSpBNJ52nhK/W1vhLXxVEZHHorfDeP7Pk2v2U/G3UUjaA7Xk3XL
+         7XxZU3jDeqlxmKkm5OrFk8utv6k6cRTN80EiwJKw=
+Message-ID: <c8964ea0-df91-da78-89c6-85fb02a6a3bc@digikod.net>
+Date:   Fri, 29 Jul 2022 13:30:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220729085219.3mbn7vrrdsxvdcyf@fedora>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: 
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220707200612.132705-1-gnoack3000@gmail.com>
+ <20220707200612.132705-3-gnoack3000@gmail.com>
+ <f93e7b0f-8782-248f-df9a-4670ede67dae@digikod.net> <YsxPgm30TUOxJbzS@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH 2/2] landlock: Selftests for truncate(2) support.
+In-Reply-To: <YsxPgm30TUOxJbzS@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-07-22 10:52:19, Lukas Czerner wrote:
-> On Thu, Jul 28, 2022 at 06:53:32PM +0200, Jan Kara wrote:
-> > On Thu 28-07-22 15:39:14, Lukas Czerner wrote:
-> > > Currently the I_DIRTY_TIME will never get set if the inode already has
-> > > I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
-> > > true, however ext4 will only update the on-disk inode in
-> > > ->dirty_inode(), not on actual writeback. As a result if the inode
-> > > already has I_DIRTY_INODE state by the time we get to
-> > > __mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
-> > > into on-disk inode and will not get updated until the next I_DIRTY_INODE
-> > > update, which might never come if we crash or get a power failure.
-> > > 
-> > > The problem can be reproduced on ext4 by running xfstest generic/622
-> > > with -o iversion mount option. Fix it by setting I_DIRTY_TIME even if
-> > > the inode already has I_DIRTY_INODE.
+
+On 11/07/2022 18:27, Günther Noack wrote:
+> On Fri, Jul 08, 2022 at 01:17:46PM +0200, Mickaël Salaün wrote:
+
+[...]
+
+>>
+>>> +		{
+>>> +			.path = file1_s1d1,
+>>> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+>>> +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
+>>> +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+>>> +		},
+>>> +		{
+>>> +			.path = file2_s1d2,
+>>> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+>>> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
+>>> +		},
+>>> +		{
+>>> +			.path = file1_s1d2,
+>>> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+>>> +		},
+>>
+>> Move this entry before file2_s1d2 to keep the paths sorted and make this
+>> easier to read. You can change the access rights per path to also keep their
+>> ordering though.
 > 
-> Hi Jan,
+> I've admittedly found it difficult to remember which of these files
+> and subdirectories exist and how they are named and mixed up the names
+> at least twice when developing these tests. To make it easier, I've now
+> renamed these by including this at the top of the test:
 > 
-> thanks for th review.
+> char *file_rwt = file1_s1d1;
+> char *file_rw = file2_s1s1;
+> // etc
 > 
-> > 
-> > As a datapoint I've checked and XFS has the very same problem as ext4.
+> With the test using names like file_rwt, I find that easier to work
+> with and found myself jumping less between the "rules" on top and the
+> place where the assertions are written out.
 > 
-> Very interesting, I did look at xfs when I was debugging this problem
-> and wans't able to tell whether they have the same problem or not, but
-> it certainly can't be reproduced by generic/622. Or at least I can't
-> reproduce it on XFS.
+> This is admittedly a bit out of line with the other tests, but maybe
+> it's worth doing? Let me know what you think.
+
+It indeed makes things clearer.
+
+
 > 
-> So I wonder what is XFS doing differently in that case.
-
-OK, that's a bit curious but xfs has xfs_fs_dirty_inode() that's there
-exactly to update timestamps when lazytime period expires. So in theory it
-seems possible we lose the timestamp update.
-
-> > > Also clear the I_DIRTY_TIME after ->dirty_inode() otherwise it may never
-> > > get cleared.
-> > > 
-> > > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> > > ---
-> > >  fs/fs-writeback.c | 18 +++++++++++++++---
-> > >  1 file changed, 15 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > > index 05221366a16d..174f01e6b912 100644
-> > > --- a/fs/fs-writeback.c
-> > > +++ b/fs/fs-writeback.c
-> > > @@ -2383,6 +2383,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
-> > >  
-> > >  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-> > >  		flags &= ~I_DIRTY_TIME;
-> > > +		if (inode->i_state & I_DIRTY_TIME) {
-> > > +			spin_lock(&inode->i_lock);
-> > > +			inode->i_state &= ~I_DIRTY_TIME;
-> > > +			spin_unlock(&inode->i_lock);
-> > > +		}
-> > 
-> > Hum, so this is a bit dangerous because inode->i_state may be inconsistent
-> > with the writeback list inode is queued in (wb->b_dirty_time) and these two
-> > are supposed to be in sync. So I rather think we need to make sure we go
-> > through the full round of 'update flags and writeback list' below in case
-> > we need to clear I_DIRTY_TIME from inode->i_state.
+>>
+>>
+>>> +		{
+>>> +			.path = dir_s2d3,
+>>> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+>>> +		},
+>>> +		// Implicitly: No access rights for file2_s1d1.
+>>
+>> Comment to move after the use of file1_s1d1.
 > 
-> Ok, so we're clearing I_DIRTY_TIME in __ext4_update_other_inode_time()
-> which will opportunistically update the time fields for inodes in the
-> same block as the inode we're doing an update for via
-> ext4_do_update_inode(). Don't we also need to rewire that differently?
+> I'm understanding this as "keep the files in order according to the
+> layout". I've reshuffled things a bit by renaming them, but this is
+> also in the right order now.
+
+Right.
+
+[...]
+
+>>> +	reg_fd = open(file1_s1d1, O_RDWR | O_CLOEXEC);
+>>> +	ASSERT_LE(0, reg_fd);
+>>> +	EXPECT_EQ(0, ftruncate(reg_fd, 10));
+>>
+>> You should not use EXPECT but ASSERT here. I use EXPECT when an error could
+>> block a test or when it could stop a cleanup (i.e. teardown).
 > 
-> XFS is also clearing it on it's own in log code, but I can't tell if it
-> has the same problem as you describe here.
+> ASSERT is the variant that stops the test immediately, whereas EXPECT
+> notes down the test failure and continues execution.
+> 
+> So in that spirit, I tried to use:
+> 
+>   * ASSERT for successful open() calls where the FD is still needed later
+>   * ASSERT for close() (for symmetry with open())
+>   * EXPECT for expected-failing open() calls where the FD is not used later
+>   * EXPECT for everything else
 
-Yes, we'll possibly have clean inodes still on wb->b_dirty_time list.
-Checking the code, this should be safe in the end.
+I understand your logic, but this gymnastic adds complexity to writing 
+tests (which might be difficult to explain) for not much gain. Indeed, 
+all these tests should pass, except if we add a SKIP (cf. 
+https://lore.kernel.org/all/20220628222941.2642917-1-jeffxu@google.com/).
 
-But thinking more about the possible races these two places clearing
-I_DIRTY_TIME are safe because we copy timestamps to on-disk inode after
-clearing I_DIRTY_TIME. But your clearing of I_DIRTY_TIME in
-__mark_inode_dirty() could result in loosing timestamp update if it races
-in the wrong way (basically the bug you're trying to fix would remain
-unfixed).
+In the case of an open FD, it will not be an issue to not close it if a 
+test failed, which is not the same with FIXTURE_TEARDOWN where we want 
+the workspace to be clean after tests, whether they succeeded or failed.
 
-Hum, thinking about it, even clearing of I_DIRTY_TIME later in
-__mark_inode_dirty is problematic. There is still a race like:
 
-CPU1					CPU2
-					__mark_inode_dirty(inode, I_DIRTY_TIME)
-					  sets I_DIRTY_TIME in inode->i_state
+> 
+> I had another pass over the tests and have started to use EXPECT for a
+> few expected-failing open() calls.
+> 
+> The selftest framework seems inspired by the Googletest framework
+> (https://google.github.io/googletest/primer.html#assertions) where
+> this is described as: "Usually EXPECT_* are preferred, as they allow
+> more than one failure to be reported in a test. However, you should
+> use ASSERT_* if it doesn’t make sense to continue when the assertion
+> in question fails."
 
-__mark_inode_dirty(inode, I_DIRTY_SYNC)
-  ->dirty_inode() - copies timestamps
+I think this is good in theory, but in practice, at least for the 
+Landlock selftests, everything should pass. Any test failure is a 
+blocker because it breaks the contract with users.
 
-					__mark_inode_dirty(inode, I_DIRTY_TIME)
-					  I_DIRTY_TIME already set -> bail
-  ...
-  if (flags & I_DIRTY_INODE)
-    inode->i_state &= ~I_DIRTY_TIME;
+I find it very difficult to write tests that would check as much as 
+possible, even if some of these tests failed, without unexpected 
+behaviors (e.g. blocking the whole tests, writing to unexpected 
+locations…) because it changes the previous state from a known state to 
+a set of potential states (e.g. when creating or removing files). Doing 
+it generically increases complexity for tests which may already be 
+difficult to understand. When investigating a test failure, we can still 
+replace some ASSERT with EXPECT though.
 
-and we have just lost the second timestamp update.
 
-To fix this we'd need to clear I_DIRTY_TIME in inode->i_state before
-calling ->dirty_inode() but that clashes with XFS' usage of ->dirty_inode
-which uses I_DIRTY_TIME in inode->i_state to detect that timestamp update
-is requested. I think we could do something like:
+> 
+> I imagined that the same advice would apply to the kernel selftests?
+> Please let me know if I'm overlooking subtle differences here.
 
-	if (flags & I_DIRTY_INODE) {
-		/* Inode timestamp update will piggback on this dirtying */
-		if (inode->i_state & I_DIRTY_TIME) {
-			spin_lock(&inode->i_lock);
-			if (inode->i_state & I_DIRTY_TIME) {
-				inode->i_state &= ~I_DIRTY_TIME;
-				flags |= I_DIRTY_TIME;
-			}
-			spin_unlock(&inode->i_lock);
-		}
-		...
-		if (sb->s_op->dirty_inode)
-			sb->s_op->dirty_inode(inode,
-				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
-		...
-	}
+I made kselftest_harness.h generally available (outside of seccomp) but 
+I guess each subsystem maintainer might handle that differently.
 
-And then XFS could check for I_DIRTY_TIME in flags to detect what it needs
-to do.
-
-Hopefully now things are correct ;). Famous last words...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+See 
+https://lore.kernel.org/all/1b043379-b6eb-d272-c9b9-25c6960e1ef1@digikod.net/ 
+for similar concerns.
