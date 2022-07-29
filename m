@@ -2,186 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F325854A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 19:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA3458553B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 21:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237332AbiG2Rkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 13:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53538 "EHLO
+        id S238344AbiG2TCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 15:02:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbiG2Rkv (ORCPT
+        with ESMTP id S238315AbiG2TCU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 13:40:51 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BAC13F4F;
-        Fri, 29 Jul 2022 10:40:50 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:50536)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oHTyi-006isz-6z; Fri, 29 Jul 2022 11:40:48 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:39356 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oHTyg-0048ss-85; Fri, 29 Jul 2022 11:40:47 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-kernel@vger.kernel.org, <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-References: <YuFdUj5X4qckC/6g@tycho.pizza> <20220727175538.GC18822@redhat.com>
-        <YuGBXnqb5rPwAlYk@tycho.pizza> <20220727191949.GD18822@redhat.com>
-        <YuGUyayVWDB7R89i@tycho.pizza> <20220728091220.GA11207@redhat.com>
-        <YuL9uc8WfiYlb2Hw@tycho.pizza>
-        <87pmhofr1q.fsf@email.froward.int.ebiederm.org>
-        <YuPlqp0jSvVu4WBK@tycho.pizza>
-        <87v8rfevz3.fsf@email.froward.int.ebiederm.org>
-        <YuQPc51yXhnBHjIx@tycho.pizza>
-Date:   Fri, 29 Jul 2022 12:40:39 -0500
-In-Reply-To: <YuQPc51yXhnBHjIx@tycho.pizza> (Tycho Andersen's message of "Fri,
-        29 Jul 2022 10:48:51 -0600")
-Message-ID: <87h72zes14.fsf_-_@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 29 Jul 2022 15:02:20 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8961C86C27
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 12:02:17 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id w10so5435885plq.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 12:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=LkO9SgTZ2fPl2HYX0gFonlaXjyZgw7WltwbfzzP2PWU=;
+        b=LcCMO/BfHtLr67gbUfFYeZ2DnL0Qe15D/zjxvFdRRh7VmNk7LN5oMsc24VO/GmbV/U
+         PuV6l97/eHoUtKDyH52SVtPAZ87OnqBus/o63uyQuFgufZzCyq9XsxfOUYAdERS1Jgqd
+         Z8e1N8bqzr0z8QDItDcXKcyyEaabrG/16s5zoaP1WRFBF4Ue7XuTf8xaQCPaAoBgg974
+         KUIBiMYBx36eqSObwBq4p2WXddbpg1bPZ34gDbt+XQiuHO4akXNCCqBoLF/FeCnzUG2i
+         XE9mksL3i7ZMYBmA4SOK8RBlplgWMUQ4wTuOLsTMqyyIK0ibz34Lq8CE9D2iQAq/i5AS
+         iEgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=LkO9SgTZ2fPl2HYX0gFonlaXjyZgw7WltwbfzzP2PWU=;
+        b=K80+y0kk0VGe2M4JKyU9JQJe584wkXlpe6kWNn0u52JK3kQNUqrEDy2IxAtAMTaoD4
+         I7kUGjA/ll1Z2Rik6Fr26WI8UU4ttqSJTCUa6tf2fqphwQVEeggogMzCRASYGhiQhJgY
+         IkCJtLNAbFbzHdnnL8ijFA+gS7LXzprfjULrot+JXNm973SN7GV9hBLYdDRCvEVYpfI2
+         N7yaNYu1bXkC72/EyFr9c0m/nzeOitQ0voG9VF3yLXSPbztK+GB8LmzwhqgmFeJn+4OV
+         Lq9Zl80Cz3v9NPo6SEN1IeELnbFkWgoofk+jvYbJfmP9d20Rxw9aBf+mo0pIGvGgXhFn
+         JTAA==
+X-Gm-Message-State: ACgBeo1sjVOSQoWoGo8HTVHH5eqOkTrcEcTDlX0wZFLpOOMHupF83W1+
+        Ixrx/LfiiejCpxJrHhdtvYCbTQ==
+X-Google-Smtp-Source: AA6agR6iqcQsub1nBR7JRnM5qfcyEbknlTLsOfU5kvnAs7e7vtoc0LC7cubgKQlDwv2I4efPq2wL9Q==
+X-Received: by 2002:a17:90a:2ec5:b0:1f2:ea66:c832 with SMTP id h5-20020a17090a2ec500b001f2ea66c832mr6318473pjs.31.1659121336897;
+        Fri, 29 Jul 2022 12:02:16 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id n16-20020a170902e55000b0016d5cf36ff8sm4042180plf.274.2022.07.29.12.02.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Jul 2022 12:02:16 -0700 (PDT)
+Date:   Fri, 29 Jul 2022 19:02:12 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
+Message-ID: <YuQutJAhKWcsrrYl@google.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oHTyg-0048ss-85;;;mid=<87h72zes14.fsf_-_@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX18595RWFXCeZlQueTtAQx1O87M4ImD8yzw=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1445 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 11 (0.8%), b_tie_ro: 10 (0.7%), parse: 1.06
-        (0.1%), extract_message_metadata: 12 (0.9%), get_uri_detail_list: 2.0
-        (0.1%), tests_pri_-1000: 14 (1.0%), tests_pri_-950: 1.27 (0.1%),
-        tests_pri_-900: 1.04 (0.1%), tests_pri_-90: 69 (4.8%), check_bayes: 68
-        (4.7%), b_tokenize: 9 (0.6%), b_tok_get_all: 9 (0.6%), b_comp_prob:
-        2.6 (0.2%), b_tok_touch_all: 44 (3.1%), b_finish: 0.81 (0.1%),
-        tests_pri_0: 1318 (91.2%), check_dkim_signature: 0.68 (0.0%),
-        check_dkim_adsp: 3.2 (0.2%), poll_dns_idle: 1.26 (0.1%), tests_pri_10:
-        3.2 (0.2%), tests_pri_500: 10 (0.7%), rewrite_mail: 0.00 (0.0%)
-Subject: [RFC][PATCH] fuse: In fuse_flush only wait if someone wants the
- return code
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jul 06, 2022, Chao Peng wrote:
+> The sync mechanism between mmu_notifier and page fault handler employs
+> fields mmu_notifier_seq/count and mmu_notifier_range_start/end. For the
+> to be added private memory, there is the same mechanism needed but not
+> rely on mmu_notifier (It uses new introduced memfile_notifier). This
+> patch renames the existing fields and related helper functions to a
+> neutral name mmu_updating_* so private memory can reuse.
 
-In my very light testing this resolves a hang where a thread of the fuse
-server was accessing the fuse filesystem (the fuse server is serving
-up), when the fuse server is killed.
+mmu_updating_* is too broad of a term, e.g. page faults and many other operations
+also update the mmu.  Although the name most definitely came from the mmu_notifier,
+it's not completely inaccurate for other sources, e.g. KVM's MMU is still being
+notified of something, even if the source is not the actual mmu_notifier.
 
-The practical problem is that the fuse server file descriptor was being
-closed after the file descriptor into the fuse filesystem so that the
-fuse filesystem operations were being blocked for instead of being
-aborted.  Simply skipping the unnecessary wait resolves this issue.
+If we really want a different name, I'd vote for nomenclature that captures the
+invalidation aspect, which is really what the variables are all trackng, e.g.
 
-This is just a proof of concept and someone should look to see if the
-fuse max_background limit could cause a problem with this approach.
-
-Additionally testing PF_EXITING is a very crude way to tell if someone
-wants the return code from the vfs flush operation.  As such in the long
-run it probably makes sense to get some direct vfs support for knowing
-if flush needs to block until all of the flushing is complete and a
-status/return code can be returned.
-
-Unless I have missed something this is a generic optimization that can
-apply to many network filesystems.
-
-Al, vfs folks? 
-
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- fs/fuse/file.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 05caa2b9272e..a4fccd859495 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -464,6 +464,62 @@ static void fuse_sync_writes(struct inode *inode)
- 	fuse_release_nowrite(inode);
- }
- 
-+struct fuse_flush_args {
-+	struct fuse_args args;
-+	struct fuse_flush_in inarg;
-+	struct inode *inode;
-+};
-+
-+static void fuse_flush_end(struct fuse_mount *fm, struct fuse_args *args, int err)
-+{
-+	struct fuse_flush_args *fa = container_of(args, typeof(*fa), args);
-+
-+	if (err == -ENOSYS) {
-+		fm->fc->no_flush = 1;
-+		err = 0;
-+	}
-+
-+	/*
-+	 * In memory i_blocks is not maintained by fuse, if writeback cache is
-+	 * enabled, i_blocks from cached attr may not be accurate.
-+	 */
-+	if (!err && fm->fc->writeback_cache)
-+		fuse_invalidate_attr_mask(fa->inode, STATX_BLOCKS);
-+
-+	kfree(fa);
-+}
-+
-+static int fuse_flush_async(struct file *file, fl_owner_t id)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct fuse_mount *fm = get_fuse_mount(inode);
-+	struct fuse_file *ff = file->private_data;
-+	struct fuse_flush_args *fa;
-+	int err;
-+
-+	fa = kzalloc(sizeof(*fa), GFP_KERNEL);
-+	if (!fa)
-+		return -ENOMEM;
-+
-+	fa->inarg.fh = ff->fh;
-+	fa->inarg.lock_owner = fuse_lock_owner_id(fm->fc, id);
-+	fa->args.opcode = FUSE_FLUSH;
-+	fa->args.nodeid = get_node_id(inode);
-+	fa->args.in_numargs = 1;
-+	fa->args.in_args[0].size = sizeof(fa->inarg);
-+	fa->args.in_args[0].value = &fa->inarg;
-+	fa->args.force = true;
-+	fa->args.end = fuse_flush_end;
-+	fa->inode = inode;
-+	__iget(inode);
-+
-+	err = fuse_simple_background(fm, &fa->args, GFP_KERNEL);
-+	if (err)
-+		fuse_flush_end(fm, &fa->args, err);
-+
-+	return err;
-+}
-+
- static int fuse_flush(struct file *file, fl_owner_t id)
- {
- 	struct inode *inode = file_inode(file);
-@@ -495,6 +551,9 @@ static int fuse_flush(struct file *file, fl_owner_t id)
- 	if (fm->fc->no_flush)
- 		goto inval_attr_out;
- 
-+	if (current->flags & PF_EXITING)
-+		return fuse_flush_async(file, id);
-+
- 	memset(&inarg, 0, sizeof(inarg));
- 	inarg.fh = ff->fh;
- 	inarg.lock_owner = fuse_lock_owner_id(fm->fc, id);
--- 
-2.35.3
+  mmu_invalidate_seq
+  mmu_invalidate_in_progress
+  mmu_invalidate_range_start
+  mmu_invalidate_range_end
 
