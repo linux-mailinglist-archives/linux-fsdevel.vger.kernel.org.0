@@ -2,91 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54988584B35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 07:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17DD584DB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 10:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234624AbiG2FbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 01:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58338 "EHLO
+        id S235383AbiG2IxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 04:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234539AbiG2Fap (ORCPT
+        with ESMTP id S235451AbiG2IxP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 01:30:45 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF46B2252B;
-        Thu, 28 Jul 2022 22:30:43 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MVdUQ-1nrtva20Yu-00RZCZ; Fri, 29 Jul 2022 07:30:26 +0200
-Message-ID: <2217188c-7009-f142-3e7e-b3e61d2c1324@i2se.com>
-Date:   Fri, 29 Jul 2022 07:30:25 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-Content-Language: en-US
+        Fri, 29 Jul 2022 04:53:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 357FC83F20
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 01:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659084792;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=py4nC9RcneVm7rtf/qpXgPVxI4j21Dc4T3UzN7ARlTs=;
+        b=bi8kTPuwaI/WmB2aRKYPylPZwiqL86bOqQ09c8ZbdAeO7zQve7iyN2jk9GR91yhHoMsE31
+        m9XAB3t5Ey0pB3fKndgI67BAU9O5CVPLAaI832uXeoT/2CmhOdnPF0EzeiakbIaaOgJ8CW
+        aS3WyBtqb0xT6CAbMpwXDzLnvKEk1Cc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-195-x79EmJKlMSOtjMGiOhz6MQ-1; Fri, 29 Jul 2022 04:52:23 -0400
+X-MC-Unique: x79EmJKlMSOtjMGiOhz6MQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B4FBB1C05190;
+        Fri, 29 Jul 2022 08:52:22 +0000 (UTC)
+Received: from fedora (unknown [10.40.194.157])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CA925C15D4F;
+        Fri, 29 Jul 2022 08:52:21 +0000 (UTC)
+Date:   Fri, 29 Jul 2022 10:52:19 +0200
+From:   Lukas Czerner <lczerner@redhat.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
- <20220728100055.efbvaudwp3ofolpi@quack3>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220728100055.efbvaudwp3ofolpi@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:FNwSToRwLJFsGPwaWndrCkF2afnJZmdTz8/LvCWfTqfzb+Wj0fG
- C+5a+Gl7+RwsgqdTkryfEOtAq+3TwLsOpYzpdKf64zVjv61poSLT4WLcW5Ff5BAPCD+lr8r
- +0nFRCM81tCMEuPI8T9N+xJprm01eip07MWJN0p42DGtBJsepV9s259mNUD2kmLohkDDrZP
- mNUCZf6Q2mpB4m1+6NlCA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:db/sxB+DMa0=:AkfFhuXq5Uq+wEnTYFMCIM
- zP1mAxYsVg2LrNKjrrYZLTDnv1LdlGNjRCC9eCOEQqy6wEJ+rVcu4lVXZG4zIucRlvfG2PhsI
- rAwinCwvyTy7NJ4I0RY3iFzByfvKdnrvgoy36RLz0URMQVx0x+K+9aZCBnxINdTrTvzsJo6np
- gOlhm+GPqTUQvvDQZRqyEQPggQPSbTmOpfLHFfEpEVgOfiPv/241LgGcGjZSj6fSHYoFhgGww
- z7j0ivYQJZS68lkAncx0O3+zgR+LMuUEuPtCZfKq2CQJdjyv8YFjUvP6Psw8XrjtUnlMHOp/R
- P3IasBIXTKbF3ekElozrNitOX2ThVPdG53NyyWF/UrSTZUyIenwTEiVAFongYwYymHQhmiGGb
- cjnhXJE4psItTLZXeaRfyuLwLhH6ZRir4vnX298tUbbcfYgHav7GzEYoQNwFj5atnXCShSkEW
- IWSEmg1GU0/8xTaBWou/j8fBTdup4JXp41sl05TtLuDXjQOk6cT6d3GK+97ydU5gwvvsUbIEU
- npuQ5dTusXruuBpVCKMcjiIT2trV5LozA8O6QZTLNmGAUG8Z+FZ00bv4PZEUsVo3oowDMN+IT
- wzeOe0M5kje23ToytOQrqAFUQpUpXke5cJ3IGX2312KD9H4eJ2FkZSbMQvMQ/WyBMt9OjWN5q
- eoVRL4J645bG0Q5u1ZG3m2di1dimrtR2JLkUmuDzXx1hupc1e9gtXr8DmhY4OfvoY91pRHpcA
- A7s7xQNY9ykSSb28ZwEBa+QqVQ1H1P8aGCh2OnAb56Fd+5m6xFXFTMfFUgY=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     linux-ext4@vger.kernel.org, jlayton@kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: record I_DIRTY_TIME even if inode already has
+ I_DIRTY_INODE
+Message-ID: <20220729085219.3mbn7vrrdsxvdcyf@fedora>
+References: <20220728133914.49890-1-lczerner@redhat.com>
+ <20220728133914.49890-2-lczerner@redhat.com>
+ <20220728165332.cu2kiduob2xyvoep@quack3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220728165332.cu2kiduob2xyvoep@quack3>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jul 28, 2022 at 06:53:32PM +0200, Jan Kara wrote:
+> On Thu 28-07-22 15:39:14, Lukas Czerner wrote:
+> > Currently the I_DIRTY_TIME will never get set if the inode already has
+> > I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
+> > true, however ext4 will only update the on-disk inode in
+> > ->dirty_inode(), not on actual writeback. As a result if the inode
+> > already has I_DIRTY_INODE state by the time we get to
+> > __mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
+> > into on-disk inode and will not get updated until the next I_DIRTY_INODE
+> > update, which might never come if we crash or get a power failure.
+> > 
+> > The problem can be reproduced on ext4 by running xfstest generic/622
+> > with -o iversion mount option. Fix it by setting I_DIRTY_TIME even if
+> > the inode already has I_DIRTY_INODE.
+
 Hi Jan,
 
-Am 28.07.22 um 12:00 schrieb Jan Kara:
-> Hello!
-> Can you run "iostat -x 1" while the download is running so that we can see
-> roughly how the IO pattern looks?
->
-> Also can get filesystem metadata image of your card like:
->    e2image -r <fs-device> - | gzip >/tmp/ext4-image.gz
->
-> and put it somewhere for download? The image will contain only fs metadata,
-> not data so it should be relatively small and we won't have access to your
-> secrets ;). With the image we'd be able to see how the free space looks
-> like and whether it perhaps does not trigger some pathological behavior.
->
-> My current suspicion is that because the new allocator strategy spreads
-> allocations over more block groups, we end up with more open erase blocks
-> on the SD card which forces the firmware to do more garbage collection and
-> RMW of erase blocks and write performance tanks...
->
-> Thanks.
-thanks for your feedback. Unfortunately i'm busy the next days, so it 
-will take some time to provide this.
+thanks for th review.
+
+> 
+> As a datapoint I've checked and XFS has the very same problem as ext4.
+
+Very interesting, I did look at xfs when I was debugging this problem
+and wans't able to tell whether they have the same problem or not, but
+it certainly can't be reproduced by generic/622. Or at least I can't
+reproduce it on XFS.
+
+So I wonder what is XFS doing differently in that case.
+
+> 
+> > Also clear the I_DIRTY_TIME after ->dirty_inode() otherwise it may never
+> > get cleared.
+> > 
+> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> > ---
+> >  fs/fs-writeback.c | 18 +++++++++++++++---
+> >  1 file changed, 15 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > index 05221366a16d..174f01e6b912 100644
+> > --- a/fs/fs-writeback.c
+> > +++ b/fs/fs-writeback.c
+> > @@ -2383,6 +2383,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+> >  
+> >  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
+> >  		flags &= ~I_DIRTY_TIME;
+> > +		if (inode->i_state & I_DIRTY_TIME) {
+> > +			spin_lock(&inode->i_lock);
+> > +			inode->i_state &= ~I_DIRTY_TIME;
+> > +			spin_unlock(&inode->i_lock);
+> > +		}
+> 
+> Hum, so this is a bit dangerous because inode->i_state may be inconsistent
+> with the writeback list inode is queued in (wb->b_dirty_time) and these two
+> are supposed to be in sync. So I rather think we need to make sure we go
+> through the full round of 'update flags and writeback list' below in case
+> we need to clear I_DIRTY_TIME from inode->i_state.
+
+Ok, so we're clearing I_DIRTY_TIME in __ext4_update_other_inode_time()
+which will opportunistically update the time fields for inodes in the
+same block as the inode we're doing an update for via
+ext4_do_update_inode(). Don't we also need to rewire that differently?
+
+XFS is also clearing it on it's own in log code, but I can't tell if it
+has the same problem as you describe here.
+
+> 
+> >  	} else {
+> >  		/*
+> >  		 * Else it's either I_DIRTY_PAGES, I_DIRTY_TIME, or nothing.
+> > @@ -2399,13 +2404,20 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+> >  	 */
+> >  	smp_mb();
+> >  
+> > -	if (((inode->i_state & flags) == flags) ||
+> > -	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
+> > +	if ((inode->i_state & flags) == flags)
+> >  		return;
+> >  
+> >  	spin_lock(&inode->i_lock);
+> > -	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
+> > +	if (dirtytime && (inode->i_state & I_DIRTY_INODE)) {
+> > +		/*
+> > +		 * We've got a new lazytime update. Make sure it's recorded in
+> > +		 * i_state, because the time might have already got updated in
+> > +		 * ->dirty_inode() and will not get updated until next
+> > +		 *  I_DIRTY_INODE update.
+> > +		 */
+> > +		inode->i_state |= I_DIRTY_TIME;
+> >  		goto out_unlock_inode;
+> > +	}
+> 
+> So I'm afraid this combination is not properly handled in
+> writeback_single_inode() where we have at the end:
+> 
+>         if (!(inode->i_state & I_DIRTY_ALL))
+>                 inode_cgwb_move_to_attached(inode, wb);
+>         else if (!(inode->i_state & I_SYNC_QUEUED) &&
+>                  (inode->i_state & I_DIRTY))
+>                 redirty_tail_locked(inode, wb);
+> 
+> So inode that had I_DIRTY_SYNC | I_DIRTY_TIME will not be properly refiled
+> to wb->b_dirty_time list after writeback was done and I_DIRTY_SYNC got
+> cleared.
+> 
+> So we need to refine it to something like:
+> 
+> 	if (!(inode->i_state & I_DIRTY_ALL))
+> 		inode_cgwb_move_to_attached(inode, wb);
+> 	else if (!(inode->i_state & I_SYNC_QUEUED)) {
+> 		if (inode->i_state & I_DIRTY) {
+> 			redirty_tail_locked(inode, wb);
+> 		} else if (inode->i_state & I_DIRTY_TIME) {
+> 			inode->dirtied_when = jiffies;
+> 			inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
+> 		}
+> 	}
+
+Very nice, thanks, I'll have a look.
+
+-Lukas
+
+> 
 > 								Honza
->
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> 
+
