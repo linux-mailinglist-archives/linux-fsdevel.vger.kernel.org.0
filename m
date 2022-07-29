@@ -2,158 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E65584EF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 12:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E42584F70
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 13:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235617AbiG2KiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 06:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34720 "EHLO
+        id S233446AbiG2LSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 07:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235421AbiG2KiA (ORCPT
+        with ESMTP id S232959AbiG2LSo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 06:38:00 -0400
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DE38238A;
-        Fri, 29 Jul 2022 03:37:58 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.93,201,1654588800"; 
-   d="scan'208";a="80469973"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 29 Jul 2022 02:37:57 -0800
-IronPort-SDR: qPRhArPH6ZfwOvrGboF1DO33OGLMQs0xHIKjcfXqY8Lk27NI4sJNrioLfb4O/zeu75QM7acBJx
- RUiWkZqPSTWojbH0H0gXzxy/AL+nvHb00tFrOLkYnz/RHKwpAFa5g0qG3soTRxC8QbfLqoSHZk
- wsjD87724I0ya8BQw7zoawEfU6OQAUebQgZEiBN7/k3LcVgLyKE/KE0Am/W2zUJ6Nf1J6hiQhb
- AHY6i8npVGsz+kLBnTR84kSvUca7daDXzQ9R7oRw907kjBH87faV4+/VQ35izCe2TiLYq2O+Cp
- xwo=
-Message-ID: <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
-Date:   Fri, 29 Jul 2022 11:37:49 +0100
+        Fri, 29 Jul 2022 07:18:44 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7C57FE5C;
+        Fri, 29 Jul 2022 04:18:42 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8E2CE348CD;
+        Fri, 29 Jul 2022 11:18:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1659093521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q/lKSasX/1DXxqiFOXKfLbZqYgAxcwzKDEqTPp4vlLI=;
+        b=hSkt98MfuKeYQ34uvxjmVWKf3aIX/CXMjWnGpzWnonSuTTd9Nl7N943ab1tvvIlWwfakG2
+        7lRwVbnEP1BQyT9tN6/A6GZPYxS7q7iosXOOiDyKdKiLTiVabarZwS/ucU3henoqD6FKnQ
+        HIb1yXfh5EZzJpmBqaoIAtsvaPMBJYU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1659093521;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q/lKSasX/1DXxqiFOXKfLbZqYgAxcwzKDEqTPp4vlLI=;
+        b=TE79SUG6iJSZkpd8YOKuNPS5SkKKA2+NsnFsQmN/PDG3q0dgHBgSaFNGndw1ztJnxdnqS7
+        jvjU1q+pHMMzKPBg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 5B2782C141;
+        Fri, 29 Jul 2022 11:18:41 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 898B3A0666; Fri, 29 Jul 2022 13:18:40 +0200 (CEST)
+Date:   Fri, 29 Jul 2022 13:18:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        jlayton@kernel.org, tytso@mit.edu, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: record I_DIRTY_TIME even if inode already has
+ I_DIRTY_INODE
+Message-ID: <20220729111840.a7qmh3vjtr662tvx@quack3>
+References: <20220728133914.49890-1-lczerner@redhat.com>
+ <20220728133914.49890-2-lczerner@redhat.com>
+ <20220728165332.cu2kiduob2xyvoep@quack3>
+ <20220729085219.3mbn7vrrdsxvdcyf@fedora>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Content-Language: en-GB
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        "takondra@cisco.com" <takondra@cisco.com>,
-        "kamensky@cisco.com" <kamensky@cisco.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
- <20220609102627.GA3922@lxhi-065>
- <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
- <20220610153336.GA8881@lxhi-065>
- <4bc349a59e4042f7831b1190914851fe@huawei.com>
- <20220615092712.GA4068@lxhi-065>
- <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
- <f82d4961986547b28b6de066219ad08b@huawei.com>
- <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
- <8e6a723874644449be99fcebb0905058@huawei.com>
-From:   Jim Baxter <jim_baxter@mentor.com>
-Organization: Siemens Digital Industries Software
-In-Reply-To: <8e6a723874644449be99fcebb0905058@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-09.mgc.mentorg.com (139.181.222.9) To
- svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220729085219.3mbn7vrrdsxvdcyf@fedora>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 19/07/2022 07:55, Roberto Sassu wrote:
->> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->> Sent: Monday, July 18, 2022 8:08 PM
->>
->>
->>
->> Best regards,
->>
->> *Jim Baxter*
->>
->> Siemens Digital Industries Software
->> Automotive Business Unit
->> DI SW STS ABU
->> UK
->> Tel.: +44 (161) 926-1656
->> mailto:jim.baxter@siemens.com <mailto:jim.baxter@siemens.com>
->> sw.siemens.com <https://sw.siemens.com/>
->>
->> On 18/07/2022 17:49, Roberto Sassu wrote:
->>>> From: Jim Baxter [mailto:jim_baxter@mentor.com]
->>>> Sent: Monday, July 18, 2022 6:36 PM
->>>>
->>>>
->>>> Hello,
->>>>
->>>> I have been testing these patches and do not see the xattr information when
->>>> trying to retrieve it within the initramfs, do you have an example of how
->>>> you tested this originally?
->>>
->>> Hi Jim, all
->>>
->>> apologies, I didn't find yet the time to look at this.
->>
->> Hello Roberto,
->>
->> Thank you for your response, I can wait until you have looked at the patches,
->> I asked the question to make sure it was not something wrong in my
->> configuration.
->>
->>>
->>> Uhm, I guess this could be solved with:
->>>
->>> https://github.com/openeuler-
->> mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
->>>
->>> and adding initramtmpfs to the kernel command line. You are
->>> probably using ramfs, which does not have xattr support.
->>>
-
-Can I clarify which filesystem type is supported with this patch series?
-Is it tmpfs or perhaps a ramdisk?
-
-
->>
->>
->> Thank you, I have tested that patch but the problem remained. Here is my
->> command line, I wonder if there is something wrong.
->>
->> Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0
->> initrd=0x500000000 rootwait
+On Fri 29-07-22 10:52:19, Lukas Czerner wrote:
+> On Thu, Jul 28, 2022 at 06:53:32PM +0200, Jan Kara wrote:
+> > On Thu 28-07-22 15:39:14, Lukas Czerner wrote:
+> > > Currently the I_DIRTY_TIME will never get set if the inode already has
+> > > I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
+> > > true, however ext4 will only update the on-disk inode in
+> > > ->dirty_inode(), not on actual writeback. As a result if the inode
+> > > already has I_DIRTY_INODE state by the time we get to
+> > > __mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
+> > > into on-disk inode and will not get updated until the next I_DIRTY_INODE
+> > > update, which might never come if we crash or get a power failure.
+> > > 
+> > > The problem can be reproduced on ext4 by running xfstest generic/622
+> > > with -o iversion mount option. Fix it by setting I_DIRTY_TIME even if
+> > > the inode already has I_DIRTY_INODE.
 > 
-> It is just initramtmpfs, without rootfstype=.
+> Hi Jan,
 > 
-> Roberto
+> thanks for th review.
+> 
+> > 
+> > As a datapoint I've checked and XFS has the very same problem as ext4.
+> 
+> Very interesting, I did look at xfs when I was debugging this problem
+> and wans't able to tell whether they have the same problem or not, but
+> it certainly can't be reproduced by generic/622. Or at least I can't
+> reproduce it on XFS.
+> 
+> So I wonder what is XFS doing differently in that case.
 
-Best regards,
-Jim
+OK, that's a bit curious but xfs has xfs_fs_dirty_inode() that's there
+exactly to update timestamps when lazytime period expires. So in theory it
+seems possible we lose the timestamp update.
+
+> > > Also clear the I_DIRTY_TIME after ->dirty_inode() otherwise it may never
+> > > get cleared.
+> > > 
+> > > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> > > ---
+> > >  fs/fs-writeback.c | 18 +++++++++++++++---
+> > >  1 file changed, 15 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > > index 05221366a16d..174f01e6b912 100644
+> > > --- a/fs/fs-writeback.c
+> > > +++ b/fs/fs-writeback.c
+> > > @@ -2383,6 +2383,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+> > >  
+> > >  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
+> > >  		flags &= ~I_DIRTY_TIME;
+> > > +		if (inode->i_state & I_DIRTY_TIME) {
+> > > +			spin_lock(&inode->i_lock);
+> > > +			inode->i_state &= ~I_DIRTY_TIME;
+> > > +			spin_unlock(&inode->i_lock);
+> > > +		}
+> > 
+> > Hum, so this is a bit dangerous because inode->i_state may be inconsistent
+> > with the writeback list inode is queued in (wb->b_dirty_time) and these two
+> > are supposed to be in sync. So I rather think we need to make sure we go
+> > through the full round of 'update flags and writeback list' below in case
+> > we need to clear I_DIRTY_TIME from inode->i_state.
+> 
+> Ok, so we're clearing I_DIRTY_TIME in __ext4_update_other_inode_time()
+> which will opportunistically update the time fields for inodes in the
+> same block as the inode we're doing an update for via
+> ext4_do_update_inode(). Don't we also need to rewire that differently?
+> 
+> XFS is also clearing it on it's own in log code, but I can't tell if it
+> has the same problem as you describe here.
+
+Yes, we'll possibly have clean inodes still on wb->b_dirty_time list.
+Checking the code, this should be safe in the end.
+
+But thinking more about the possible races these two places clearing
+I_DIRTY_TIME are safe because we copy timestamps to on-disk inode after
+clearing I_DIRTY_TIME. But your clearing of I_DIRTY_TIME in
+__mark_inode_dirty() could result in loosing timestamp update if it races
+in the wrong way (basically the bug you're trying to fix would remain
+unfixed).
+
+Hum, thinking about it, even clearing of I_DIRTY_TIME later in
+__mark_inode_dirty is problematic. There is still a race like:
+
+CPU1					CPU2
+					__mark_inode_dirty(inode, I_DIRTY_TIME)
+					  sets I_DIRTY_TIME in inode->i_state
+
+__mark_inode_dirty(inode, I_DIRTY_SYNC)
+  ->dirty_inode() - copies timestamps
+
+					__mark_inode_dirty(inode, I_DIRTY_TIME)
+					  I_DIRTY_TIME already set -> bail
+  ...
+  if (flags & I_DIRTY_INODE)
+    inode->i_state &= ~I_DIRTY_TIME;
+
+and we have just lost the second timestamp update.
+
+To fix this we'd need to clear I_DIRTY_TIME in inode->i_state before
+calling ->dirty_inode() but that clashes with XFS' usage of ->dirty_inode
+which uses I_DIRTY_TIME in inode->i_state to detect that timestamp update
+is requested. I think we could do something like:
+
+	if (flags & I_DIRTY_INODE) {
+		/* Inode timestamp update will piggback on this dirtying */
+		if (inode->i_state & I_DIRTY_TIME) {
+			spin_lock(&inode->i_lock);
+			if (inode->i_state & I_DIRTY_TIME) {
+				inode->i_state &= ~I_DIRTY_TIME;
+				flags |= I_DIRTY_TIME;
+			}
+			spin_unlock(&inode->i_lock);
+		}
+		...
+		if (sb->s_op->dirty_inode)
+			sb->s_op->dirty_inode(inode,
+				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
+		...
+	}
+
+And then XFS could check for I_DIRTY_TIME in flags to detect what it needs
+to do.
+
+Hopefully now things are correct ;). Famous last words...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
