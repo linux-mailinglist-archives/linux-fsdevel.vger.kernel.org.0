@@ -2,67 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A06584DFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 11:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E65584EF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Jul 2022 12:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234660AbiG2JWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 05:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54300 "EHLO
+        id S235617AbiG2KiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 06:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbiG2JWX (ORCPT
+        with ESMTP id S235421AbiG2KiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 05:22:23 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A1F64C5;
-        Fri, 29 Jul 2022 02:22:21 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 0FF2F2023D;
-        Fri, 29 Jul 2022 09:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1659086540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OHzMII7PmKpSZu+Cs5j/9PDskHpu0BMOk43FfHJdKQk=;
-        b=S6GKQOAhWYnzbVu0TE5UB84iqB66BKVcTXefdopftRLJHl1YcsxVp1FFj/kmuoQRfHBhEA
-        09ENhhytmrZq8ess84vton5RnX1ahcB+fx8fT7XZPyFI2UR4ihGg/eMSXRu8C3xHQBakut
-        3rWGSApEPPeNgt2Nrs34FTf0f4bQ8ks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1659086540;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OHzMII7PmKpSZu+Cs5j/9PDskHpu0BMOk43FfHJdKQk=;
-        b=vN4nMwJbNlRYg1gyJSpj0/jFhJQeNO3vyHiQxpK0yF5FYgtBVTpgkVVlQyKtZY5id7TGUr
-        4bflt3z5Qw6djRDg==
-Received: from suse.de (unknown [10.163.43.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E1FBA2C142;
-        Fri, 29 Jul 2022 09:22:17 +0000 (UTC)
-Date:   Fri, 29 Jul 2022 10:22:16 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: remove iomap_writepage v2
-Message-ID: <20220729092216.GE3493@suse.de>
-References: <20220719041311.709250-1-hch@lst.de>
- <20220728111016.uwbaywprzkzne7ib@quack3>
+        Fri, 29 Jul 2022 06:38:00 -0400
+Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DE38238A;
+        Fri, 29 Jul 2022 03:37:58 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,201,1654588800"; 
+   d="scan'208";a="80469973"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa2.mentor.iphmx.com with ESMTP; 29 Jul 2022 02:37:57 -0800
+IronPort-SDR: qPRhArPH6ZfwOvrGboF1DO33OGLMQs0xHIKjcfXqY8Lk27NI4sJNrioLfb4O/zeu75QM7acBJx
+ RUiWkZqPSTWojbH0H0gXzxy/AL+nvHb00tFrOLkYnz/RHKwpAFa5g0qG3soTRxC8QbfLqoSHZk
+ wsjD87724I0ya8BQw7zoawEfU6OQAUebQgZEiBN7/k3LcVgLyKE/KE0Am/W2zUJ6Nf1J6hiQhb
+ AHY6i8npVGsz+kLBnTR84kSvUca7daDXzQ9R7oRw907kjBH87faV4+/VQ35izCe2TiLYq2O+Cp
+ xwo=
+Message-ID: <d6af7f7e-7f8c-a6a7-7a09-84928fd69774@mentor.com>
+Date:   Fri, 29 Jul 2022 11:37:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20220728111016.uwbaywprzkzne7ib@quack3>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Content-Language: en-GB
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+References: <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+ <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+ <20220610153336.GA8881@lxhi-065>
+ <4bc349a59e4042f7831b1190914851fe@huawei.com>
+ <20220615092712.GA4068@lxhi-065>
+ <032ade35-6eb8-d698-ac44-aa45d46752dd@mentor.com>
+ <f82d4961986547b28b6de066219ad08b@huawei.com>
+ <737ddf72-05f4-a47e-c901-fec5b1dfa7a6@mentor.com>
+ <8e6a723874644449be99fcebb0905058@huawei.com>
+From:   Jim Baxter <jim_baxter@mentor.com>
+Organization: Siemens Digital Industries Software
+In-Reply-To: <8e6a723874644449be99fcebb0905058@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-09.mgc.mentorg.com (139.181.222.9) To
+ svr-ies-mbx-12.mgc.mentorg.com (139.181.222.12)
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,81 +89,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 28, 2022 at 01:10:16PM +0200, Jan Kara wrote:
-> Hi Christoph!
+
+On 19/07/2022 07:55, Roberto Sassu wrote:
+>> From: Jim Baxter [mailto:jim_baxter@mentor.com]
+>> Sent: Monday, July 18, 2022 8:08 PM
+>>
+>>
+>>
+>> Best regards,
+>>
+>> *Jim Baxter*
+>>
+>> Siemens Digital Industries Software
+>> Automotive Business Unit
+>> DI SW STS ABU
+>> UK
+>> Tel.: +44 (161) 926-1656
+>> mailto:jim.baxter@siemens.com <mailto:jim.baxter@siemens.com>
+>> sw.siemens.com <https://sw.siemens.com/>
+>>
+>> On 18/07/2022 17:49, Roberto Sassu wrote:
+>>>> From: Jim Baxter [mailto:jim_baxter@mentor.com]
+>>>> Sent: Monday, July 18, 2022 6:36 PM
+>>>>
+>>>>
+>>>> Hello,
+>>>>
+>>>> I have been testing these patches and do not see the xattr information when
+>>>> trying to retrieve it within the initramfs, do you have an example of how
+>>>> you tested this originally?
+>>>
+>>> Hi Jim, all
+>>>
+>>> apologies, I didn't find yet the time to look at this.
+>>
+>> Hello Roberto,
+>>
+>> Thank you for your response, I can wait until you have looked at the patches,
+>> I asked the question to make sure it was not something wrong in my
+>> configuration.
+>>
+>>>
+>>> Uhm, I guess this could be solved with:
+>>>
+>>> https://github.com/openeuler-
+>> mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
+>>>
+>>> and adding initramtmpfs to the kernel command line. You are
+>>> probably using ramfs, which does not have xattr support.
+>>>
+
+Can I clarify which filesystem type is supported with this patch series?
+Is it tmpfs or perhaps a ramdisk?
+
+
+>>
+>>
+>> Thank you, I have tested that patch but the problem remained. Here is my
+>> command line, I wonder if there is something wrong.
+>>
+>> Kernel command line: rw rootfstype=initramtmpfs root=/dev/ram0
+>> initrd=0x500000000 rootwait
 > 
-> On Tue 19-07-22 06:13:07, Christoph Hellwig wrote:
-> > this series removes iomap_writepage and it's callers, following what xfs
-> > has been doing for a long time.
+> It is just initramtmpfs, without rootfstype=.
 > 
-> So this effectively means "no writeback from page reclaim for these
-> filesystems" AFAICT (page migration of dirty pages seems to be handled by
-> iomap_migrate_page()) which is going to make life somewhat harder for
-> memory reclaim when memory pressure is high enough that dirty pages are
-> reaching end of the LRU list. I don't expect this to be a problem on big
-> machines but it could have some undesirable effects for small ones
-> (embedded, small VMs). I agree per-page writeback has been a bad idea for
-> efficiency reasons for at least last 10-15 years and most filesystems
-> stopped dealing with more complex situations (like block allocation) from
-> ->writepage() already quite a few years ago without any bug reports AFAIK.
-> So it all seems like a sensible idea from FS POV but are MM people on board
-> or at least aware of this movement in the fs land?
-> 
-> Added a few CC's for that.
-> 
+> Roberto
 
-There is some context missing because it's not clear what the full impact is
-but it is definitly the case that writepage is ignored in some contexts for
-common filesystems so lets assume that writepage from reclaim context always
-failed as a worst case scenario. Certainly this type of change is something
-linux-mm needs to be aware of because we've been blind-sided before.
-
-I don't think it would be incredibly damaging although there *might* be
-issues with small systems or cgroups. In many respects, vmscan has been
-moving in this direction for a long time e.g. f84f6e2b0868 ("mm: vmscan:
-do not writeback filesystem pages in kswapd except in high priority") and
-e2be15f6c3ee ("mm: vmscan: stall page reclaim and writeback pages based on
-dirty/writepage pages encountered"). This was roughly 10 years ago when
-it was clear that FS writeback from reclaim context was fragile (iirc it
-was partially due to concerns about stack depth and later concerns that a
-filesystem would simply ignore the writeback request). There also is less
-reliance on stalling reclaim by queueing and waiting on writeback but we now
-should explicitly throttle if no progress is being made e.g. 69392a403f49
-("mm/vmscan: throttle reclaim when no progress is being made") and some
-follow-up fixes.
-
-There still is a reliance on swap and shmem pages will not ignore writepage
-but I assume that is still ok.
-
-One potential caveat is if wakeup_flusher_threads() is ignored because
-there is a reliance in reclaim that if all the pages at the tail of the
-LRU are dirty pages not queued for writeback then wakeup_flusher_threads()
-will do something so pages get marked for immediate reclaim when writeback
-completes. Of course there is no guarantee that flusher threads will start
-writeback on the old pages and the pages could be backed by a slow BDI
-but wakeup_flusher_threads() should not be ignored.
-
-Another caveat is that comments become misleading. Take for example the
-comment "Only kswapd can writeback filesystem folios to avoid risk of
-stack overflow." The wording should change to note that writepage may
-do nothing at all.  There also might need to be some adjustment on when
-pages get marked for immediate reclaim when they are dirty but not under
-writeback. pageout() might need a tracepoint for "mapping->a_ops->writepage
-== NULL" to help debug problems around a failure to queue pages for writback
-although that could be done as a test patch for a bug.
-
-There would need to be some changes made if writepage always or often failed
-and there might be some premature throttling based on "NOPROGRESS" on small
-systems due to dirty-not-writepage pages at the tail of the LRU but I don't
-think it would be an immediate disaster, Reclaim throttling is no longer
-based on the ability to queue for writeback or "congestion" state of BDIs
-and some care is taken to not prematurely stall on NOPROGRESS. However,
-if there was a bug related to premature stalls or excessive CPU usage
-from direct reclaimers or kswapd that bisected to a change in writepage
-then it should be fixed on the vmscan-side to put an emphasis on handling
-"reclaim is in trouble when the bulk of reclaimable pages are FS-only,
-dirty and not under writeback but ->writepage is a no-op".
-
--- 
-Mel Gorman
-SUSE Labs
+Best regards,
+Jim
