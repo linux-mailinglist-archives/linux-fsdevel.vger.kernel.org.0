@@ -2,212 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DD595856DB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jul 2022 00:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CB358577F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jul 2022 02:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239409AbiG2W3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 18:29:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56752 "EHLO
+        id S231311AbiG3ADU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Jul 2022 20:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbiG2W3p (ORCPT
+        with ESMTP id S229686AbiG3ADT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 18:29:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 176188C594;
-        Fri, 29 Jul 2022 15:29:44 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 49C942032F;
-        Fri, 29 Jul 2022 22:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1659133782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E0TuExryY/ekNZtJLTSiSiBco3WSZ8uX2qoTD9LZG64=;
-        b=vw+AUqU0dhFqA/mKq3TNLVahGIPr/V6F3qLv4/mCxKkKJN9xnLPVOF20P/fRsrQmhP0ul2
-        ES4zUoka/ZRGM4HPT5Zzth31wBl0HuEMgkEOCx5orYxhR9JFpxnE6vCOx0qdKr6d5mScek
-        cjH68yNiMS3v7GByG5KPvJGcawMG9Mg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1659133782;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E0TuExryY/ekNZtJLTSiSiBco3WSZ8uX2qoTD9LZG64=;
-        b=qzqW9eUnqM4rRrRxeOfLkk4/OH4OfGC1C8CFUqfvR5V/7w84Z4EXYwCSM8Tl3wceW/u49j
-        +c9CjV2agGrcqTBQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 43EFC2C141;
-        Fri, 29 Jul 2022 22:29:40 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id E1146A0666; Sat, 30 Jul 2022 00:29:39 +0200 (CEST)
-Date:   Sat, 30 Jul 2022 00:29:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Khazhismel Kumykov <khazhy@chromium.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Khazhismel Kumykov <khazhy@google.com>
-Subject: Re: [PATCH] writeback: check wb shutdown for bw_dwork
-Message-ID: <20220729222939.p6r4qs7gfgooay3n@quack3>
-References: <20220729215123.1998585-1-khazhy@google.com>
+        Fri, 29 Jul 2022 20:03:19 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14ACE43311
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 17:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jZTXnZCkES6wzSPyhtcYp7hetRxIybqtgcazoIDp/uE=; b=ZdO2h0EsQ5Hb22jUa14hvNqxNf
+        5VDikyIuaTHoOPtn1Fj0R/6F2IMDWGMySlmNzfJM8zNnxjSPVqExON+MTd2k7TPxWim6hYLLlAwMJ
+        xGGzj/f6ix8ABjXl/8xF0o1EhhZb2jKgqCOCMeq/GkTTnI46w0gabmxOmyE3MkxKGzuEoZEHHGALf
+        MDQUt1l1OXfYZGf5jNY/x+LUGX41tqduOK9Mb+240BQKOLpVv15HUC24V//sxEC2gn0eMUWqMe8WV
+        YX+uX5AkOPYLmg+3ZJlrNdluybtjdE91b/z3beJ8ZHEj8qb2B1MbYEB07eId2X2HXTwU4Lb0AJthG
+        DVdOA9Iw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oHZwo-00HCy0-Lx;
+        Sat, 30 Jul 2022 00:03:14 +0000
+Date:   Sat, 30 Jul 2022 01:03:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Alexander Gordeev <agordeev@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 9/44] new iov_iter flavour - ITER_UBUF
+Message-ID: <YuR1QsxRId9TUV8o@ZenIV>
+References: <YrKWRCOOWXPHRCKg@ZenIV>
+ <20220622041552.737754-1-viro@zeniv.linux.org.uk>
+ <20220622041552.737754-9-viro@zeniv.linux.org.uk>
+ <YuJc/gfGDj4loOqt@li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com>
+ <YuQXE+MBAHVhdWW3@ZenIV>
+ <YuRNTTCgc+dp2TD6@tuxmaker.boeblingen.de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220729215123.1998585-1-khazhy@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YuRNTTCgc+dp2TD6@tuxmaker.boeblingen.de.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 29-07-22 14:51:23, Khazhismel Kumykov wrote:
-> This fixes a KASAN splat in timer interrupt after removing a device
+On Fri, Jul 29, 2022 at 11:12:45PM +0200, Alexander Gordeev wrote:
+> On Fri, Jul 29, 2022 at 06:21:23PM +0100, Al Viro wrote:
+> > > Hi Al,
+> > > 
+> > > This changes causes sendfile09 LTP testcase fail in linux-next
+> > > (up to next-20220727) on s390. In fact, not this change exactly,
+> > > but rather 92d4d18eecb9 ("new iov_iter flavour - ITER_UBUF") -
+> > > which differs from what is posted here.
+> > > 
+> > > AFAICT page_cache_pipe_buf_confirm() encounters !PageUptodate()
+> > > and !page->mapping page and returns -ENODATA.
+> > > 
+> > > I am going to narrow the testcase and get more details, but please
+> > > let me know if I am missing something.
+> > 
+> > Grrr....
+> > 
+> > -               } else if (iter_is_iovec(to)) {
+> > +               } else if (!user_backed_iter(to)) {
+> > 
+> > in mm/shmem.c.  Spot the typo...
+> > 
+> > Could you check if replacing that line with
+> > 		} else if (user_backed_iter(to)) {
+> > 
+> > fixes the breakage?
 > 
-> Move wb->work_lock to be irq-safe, as complete may be called from irq
-> 
-> Fixes: 45a2966fd641 ("writeback: fix bandwidth estimate for spiky workload")
-> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+> Yes, it does! So just to be sure - this is the fix:
 
-The patch looks good but I wish there are more details in the changelog
-because with this terse changelog I can only guess. I suppose something
-like:
+FWIW, there'd been another braino, caught by test from Hugh Dickins;
+this one in ITER_PIPE: allocate buffers as we go in copy-to-pipe primitives
 
-writeback: avoid use after free after removing a device
+Incremental follows; folded and pushed out.
 
-When a disk is removed, bdi_unregister() gets called to stop any further
-writeback and wait for the running one to complete. However while IO
-completes, wb_inode_writeback_end() will schedule another delayed writeback
-and by the time timer fires the bdi_writeback structure may be already
-freed. Fix the problem by checking whether bdi is still alive before
-scheduling new work in wb_inode_writeback_end(). Since this requires
-wb->work_lock and wb_inode_writeback_end() may get called from an
-interrupt, switch wb->work_lock to an irqsafe lock.
-
-								Honza
-
-> ---
->  fs/fs-writeback.c   | 12 ++++++------
->  mm/backing-dev.c    | 10 +++++-----
->  mm/page-writeback.c |  6 +++++-
->  3 files changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 05221366a16d..08a1993ab7fd 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -134,10 +134,10 @@ static bool inode_io_list_move_locked(struct inode *inode,
->  
->  static void wb_wakeup(struct bdi_writeback *wb)
->  {
-> -	spin_lock_bh(&wb->work_lock);
-> +	spin_lock_irq(&wb->work_lock);
->  	if (test_bit(WB_registered, &wb->state))
->  		mod_delayed_work(bdi_wq, &wb->dwork, 0);
-> -	spin_unlock_bh(&wb->work_lock);
-> +	spin_unlock_irq(&wb->work_lock);
->  }
->  
->  static void finish_writeback_work(struct bdi_writeback *wb,
-> @@ -164,7 +164,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
->  	if (work->done)
->  		atomic_inc(&work->done->cnt);
->  
-> -	spin_lock_bh(&wb->work_lock);
-> +	spin_lock_irq(&wb->work_lock);
->  
->  	if (test_bit(WB_registered, &wb->state)) {
->  		list_add_tail(&work->list, &wb->work_list);
-> @@ -172,7 +172,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
->  	} else
->  		finish_writeback_work(wb, work);
->  
-> -	spin_unlock_bh(&wb->work_lock);
-> +	spin_unlock_irq(&wb->work_lock);
->  }
->  
->  /**
-> @@ -2082,13 +2082,13 @@ static struct wb_writeback_work *get_next_work_item(struct bdi_writeback *wb)
->  {
->  	struct wb_writeback_work *work = NULL;
->  
-> -	spin_lock_bh(&wb->work_lock);
-> +	spin_lock_irq(&wb->work_lock);
->  	if (!list_empty(&wb->work_list)) {
->  		work = list_entry(wb->work_list.next,
->  				  struct wb_writeback_work, list);
->  		list_del_init(&work->list);
->  	}
-> -	spin_unlock_bh(&wb->work_lock);
-> +	spin_unlock_irq(&wb->work_lock);
->  	return work;
->  }
->  
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 95550b8fa7fe..de65cb1e5f76 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -260,10 +260,10 @@ void wb_wakeup_delayed(struct bdi_writeback *wb)
->  	unsigned long timeout;
->  
->  	timeout = msecs_to_jiffies(dirty_writeback_interval * 10);
-> -	spin_lock_bh(&wb->work_lock);
-> +	spin_lock_irq(&wb->work_lock);
->  	if (test_bit(WB_registered, &wb->state))
->  		queue_delayed_work(bdi_wq, &wb->dwork, timeout);
-> -	spin_unlock_bh(&wb->work_lock);
-> +	spin_unlock_irq(&wb->work_lock);
->  }
->  
->  static void wb_update_bandwidth_workfn(struct work_struct *work)
-> @@ -334,12 +334,12 @@ static void cgwb_remove_from_bdi_list(struct bdi_writeback *wb);
->  static void wb_shutdown(struct bdi_writeback *wb)
->  {
->  	/* Make sure nobody queues further work */
-> -	spin_lock_bh(&wb->work_lock);
-> +	spin_lock_irq(&wb->work_lock);
->  	if (!test_and_clear_bit(WB_registered, &wb->state)) {
-> -		spin_unlock_bh(&wb->work_lock);
-> +		spin_unlock_irq(&wb->work_lock);
->  		return;
->  	}
-> -	spin_unlock_bh(&wb->work_lock);
-> +	spin_unlock_irq(&wb->work_lock);
->  
->  	cgwb_remove_from_bdi_list(wb);
->  	/*
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 55c2776ae699..3c34db15cf70 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2867,6 +2867,7 @@ static void wb_inode_writeback_start(struct bdi_writeback *wb)
->  
->  static void wb_inode_writeback_end(struct bdi_writeback *wb)
->  {
-> +	unsigned long flags;
->  	atomic_dec(&wb->writeback_inodes);
->  	/*
->  	 * Make sure estimate of writeback throughput gets updated after
-> @@ -2875,7 +2876,10 @@ static void wb_inode_writeback_end(struct bdi_writeback *wb)
->  	 * that if multiple inodes end writeback at a similar time, they get
->  	 * batched into one bandwidth update.
->  	 */
-> -	queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
-> +	spin_lock_irqsave(&wb->work_lock, flags);
-> +	if (test_bit(WB_registered, &wb->state))
-> +		queue_delayed_work(bdi_wq, &wb->bw_dwork, BANDWIDTH_INTERVAL);
-> +	spin_unlock_irqrestore(&wb->work_lock, flags);
->  }
->  
->  bool __folio_end_writeback(struct folio *folio)
-> -- 
-> 2.37.1.455.g008518b4e5-goog
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 642841ce7595..939078ffbfb5 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -469,7 +469,7 @@ static size_t copy_pipe_to_iter(const void *addr, size_t bytes,
+ 		struct page *page = append_pipe(i, n, &off);
+ 		chunk = min_t(size_t, n, PAGE_SIZE - off);
+ 		if (!page)
+-			break;
++			return bytes - n;
+ 		memcpy_to_page(page, off, addr, chunk);
+ 		addr += chunk;
+ 	}
+@@ -774,7 +774,7 @@ static size_t pipe_zero(size_t bytes, struct iov_iter *i)
+ 		char *p;
+ 
+ 		if (!page)
+-			break;
++			return bytes - n;
+ 		chunk = min_t(size_t, n, PAGE_SIZE - off);
+ 		p = kmap_local_page(page);
+ 		memset(p + off, 0, chunk);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6b83f3971795..6c8a84a1fbbb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2603,7 +2603,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			ret = copy_page_to_iter(page, offset, nr, to);
+ 			put_page(page);
+ 
+-		} else if (!user_backed_iter(to)) {
++		} else if (user_backed_iter(to)) {
+ 			/*
+ 			 * Copy to user tends to be so well optimized, but
+ 			 * clear_user() not so much, that it is noticeably
