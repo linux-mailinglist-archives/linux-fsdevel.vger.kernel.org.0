@@ -2,57 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B98A0585785
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jul 2022 02:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BE8658589F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Jul 2022 06:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238817AbiG3AQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Jul 2022 20:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36152 "EHLO
+        id S231738AbiG3Ela (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Jul 2022 00:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbiG3AQG (ORCPT
+        with ESMTP id S229581AbiG3El2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Jul 2022 20:16:06 -0400
+        Sat, 30 Jul 2022 00:41:28 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1525175A8;
-        Fri, 29 Jul 2022 17:16:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7653369F08
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Jul 2022 21:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=s3aSkqR/dYUoO2LIxitiibTrasBdwNm6x5YaSCe1T4c=; b=WeIft9Zo2zESXHly8mhIsLVSGb
-        dbJQYDIHLnES8L5DoSiypKxWusG/dtS3icrixuN9xhE/A2NwJid2XZ8KZ1V9uhv8FI5UCrURGSDZ4
-        gily7+r3epBqZ+DUUpUivY/663gz7QJ2CgOJh6Pjl8c1kV1JquPn9T9ZB/HLwzKbQ5DRSVL+FxETG
-        KCINowQ73vq+HG5ma71zfHBS6dSbLYM3R8P4Pr8dEioZuV5xk5zA+VA/KqqeHWnXB7dPfmaWJqHDM
-        ZfwYkqjwvl16A7k9vKJNbZrncYMNdv/CKocEuuP7eIUq0MfIzd32sVTQV7tNkQnXYU1iOBPHxhEer
-        6qCOLrEQ==;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=UTOgnLJPV0orVDpWE/X5YqNrEqhSq7Y0/RU8n+QbPG8=; b=AMwdFEmpVe/nYgT+4kR7GR6TcI
+        HOwbQTxobz/1moeDXAoAe8L2z48YqmAFBLG5Bsjk7gpIqez9L6DLZjAtTgCfcXBAAKrQJDExf0dMz
+        ss27cNCXrd2vqP/hwMsx92syOMXV1YKX3yyI+ZwgUGk+wAZ+amswwUn+FvgLNgWBYaBMpadThFW0B
+        ai0GsUyaa1LP7+A532o94IDSPXGyXclH+/6kbdsG5NPqOf4tBj4z4Zl0CScxlMKZdi75Unuy+NbWe
+        VLyhOY0l7YFjI6JcFU/KCq2xJJ+KlomtMdsE67/Mp9f2hFiaQewwJJYjSO8uNGCPA3vKeYu3VcXnc
+        cL7SmFGw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oHa8v-00HD4Q-PH;
-        Sat, 30 Jul 2022 00:15:45 +0000
-Date:   Sat, 30 Jul 2022 01:15:45 +0100
+        id 1oHeI1-00HFp3-Ra;
+        Sat, 30 Jul 2022 04:41:25 +0000
+Date:   Sat, 30 Jul 2022 05:41:25 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.pizza>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] fuse: In fuse_flush only wait if someone wants the
- return code
-Message-ID: <YuR4MRL8WxA88il+@ZenIV>
-References: <20220727191949.GD18822@redhat.com>
- <YuGUyayVWDB7R89i@tycho.pizza>
- <20220728091220.GA11207@redhat.com>
- <YuL9uc8WfiYlb2Hw@tycho.pizza>
- <87pmhofr1q.fsf@email.froward.int.ebiederm.org>
- <YuPlqp0jSvVu4WBK@tycho.pizza>
- <87v8rfevz3.fsf@email.froward.int.ebiederm.org>
- <YuQPc51yXhnBHjIx@tycho.pizza>
- <87h72zes14.fsf_-_@email.froward.int.ebiederm.org>
- <20220729204730.GA3625@redhat.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/4 v2] fs/dcache: Resolve the last RT woes.
+Message-ID: <YuS2dYPtfed+lHji@ZenIV>
+References: <20220727114904.130761-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220729204730.GA3625@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220727114904.130761-1-bigeasy@linutronix.de>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -63,33 +52,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 29, 2022 at 10:47:32PM +0200, Oleg Nesterov wrote:
-> On 07/29, Eric W. Biederman wrote:
-> >
-> > +static int fuse_flush_async(struct file *file, fl_owner_t id)
-> > +{
-> > +	struct inode *inode = file_inode(file);
-> > +	struct fuse_mount *fm = get_fuse_mount(inode);
-> > +	struct fuse_file *ff = file->private_data;
-> > +	struct fuse_flush_args *fa;
-> > +	int err;
-> > +
-> > +	fa = kzalloc(sizeof(*fa), GFP_KERNEL);
-> > +	if (!fa)
-> > +		return -ENOMEM;
-> > +
-> > +	fa->inarg.fh = ff->fh;
-> > +	fa->inarg.lock_owner = fuse_lock_owner_id(fm->fc, id);
-> > +	fa->args.opcode = FUSE_FLUSH;
-> > +	fa->args.nodeid = get_node_id(inode);
-> > +	fa->args.in_numargs = 1;
-> > +	fa->args.in_args[0].size = sizeof(fa->inarg);
-> > +	fa->args.in_args[0].value = &fa->inarg;
-> > +	fa->args.force = true;
-> > +	fa->args.end = fuse_flush_end;
-> > +	fa->inode = inode;
-> > +	__iget(inode);
+On Wed, Jul 27, 2022 at 01:49:00PM +0200, Sebastian Andrzej Siewior wrote:
+> This is v2 of the series, v1 is available at
+>    https://https://lkml.kernel.org/r/.kernel.org/all/20220613140712.77932-1-bigeasy@linutronix.de/
 > 
-> Hmm... who does iput() ?
+> v1…v2:
+>    - Make patch around Al's description of a bug in d_add_ci(). I took
+>      the liberty to make him Author and added his signed-off-by since I
+>      sinmply added a patch-body around his words.
+> 
+>    - The reasoning of why delaying the wakeup is reasonable has been
+>      replaced with Al's analysis of the code.
+> 
+>    - The split of wake up has been done differently (and I hope this is
+>      what Al meant). First the wake up has been pushed to the caller and
+>      then delayed to end_dir_add() after preemption has been enabled.
+> 
+>    - There is still __d_lookup_unhash(), __d_lookup_unhash_wake() and
+>      __d_lookup_done() is removed.
+>      __d_lookup_done() is removed because it is exported and the return
+>      value changes which will affect OOT users which are not aware of
+>      it.
+>      There is still d_lookup_done() which invokes
+>      __d_lookup_unhash_wake(). This can't remain in the header file due
+>      to cyclic depencies which in turn can't resolve wake_up_all()
+>      within the inline function.
 
-... or holds ->i_lock as expected by __iget()...
+Applied, with slightly different first commit (we only care about
+d_lookup_done() if d_splice_alias() returns non-NULL).
+
+See vfs.git#work.dcache.
