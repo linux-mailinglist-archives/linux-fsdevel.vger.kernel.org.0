@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D34586174
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jul 2022 22:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B21586182
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jul 2022 23:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237966AbiGaUvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 Jul 2022 16:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
+        id S238321AbiGaVCk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 Jul 2022 17:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbiGaUvl (ORCPT
+        with ESMTP id S231264AbiGaVCj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 Jul 2022 16:51:41 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4ADE120BA
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 13:51:40 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id uk30so4824296ejc.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 13:51:40 -0700 (PDT)
+        Sun, 31 Jul 2022 17:02:39 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FACFDF0A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 14:02:38 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id f5so4254177eje.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 14:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=D1fnuTWJXlc2dukCsRsC5YQz2zD6ofMDDxPYK2SWWv4=;
-        b=d4o7e56v6jaT/H39UmhsDACmb3MPAMvJJPhLDSCiN2LHVwivDQ648MIwKHekYwgCeK
-         yNYv4J6/pOe8JmTVWy1w2wnXmQagkxahHOq+/eIYdSbqC1T6I7bBJiwyd+hqGrvUgq4Q
-         pLQG2n9c3fDKVgK0znE3hVIfiq3PTKLVMybfI=
+        bh=zHs5DigNbmFfl4ihweOFjtJBnI+LejnSW9zgoAc00WA=;
+        b=grBcAk81NHh6FjeHlS8R3QpHWx7ucYh4v1m/OXvCC8U7iTniplzdCcxOs0x/e14jiL
+         xeMflycY8QiWP7C8N/JDKeNRpyoi5hnaSrSRbYm7nGI/ojO3nfDPmmzYeNKm2TVagBaO
+         xElrzy3VYeqvTBcPCBiYL9ZqykMuqvJwZstMY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=D1fnuTWJXlc2dukCsRsC5YQz2zD6ofMDDxPYK2SWWv4=;
-        b=rTI1ahjDX1nAR9QRSetn0/aEDISyu43MOOPYN4AdKgZLzqZsb+IHXspXzcFM1/3Xg3
-         CEIDZNhNwnMPmT3PnOIH9WIkPH2NfqOtYi6fU4jBQzYtSZLUfq4muXo5DSMxRPL67pZw
-         D6vFtAe9cEqwzPmqkCHXGbap6oUaRFlhs31Wyi73e989RDg+Db9br9JqnUtq/l3xpMP1
-         SyfFbSO7wYDLkl9/Z6C4ohyyZai09qmj30pI6hW9ZAs2FkIL+J8dvBw0fg/a+NCtu3RW
-         NmNkzSPVwSlEX8H5Dz6qHlQ2N7DU1bivz7Gv3NkJPiQ1fZQvv91NUkDU5nbqekvlhA4p
-         BJkw==
-X-Gm-Message-State: AJIora/FDgkudcJ1/C4DJpd/qnqpMZ71wDhAppkAUto59LBG1Yn3vk21
-        mQZDNmPLvf/AlgcUYfVtEeL5n0Tk2Kvk6qsB4JU=
-X-Google-Smtp-Source: AGRyM1t+qdZTmbQTi3ZkFXHcQSnnY+BH7Gk6EOIs0xTbXnVZ3GMLd8N9RL/CVusG8hbnIHGAZfbxrQ==
-X-Received: by 2002:a17:907:2723:b0:72b:5a8a:f983 with SMTP id d3-20020a170907272300b0072b5a8af983mr10348101ejl.635.1659300699221;
-        Sun, 31 Jul 2022 13:51:39 -0700 (PDT)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id b7-20020aa7cd07000000b0043a87e6196esm5783321edw.6.2022.07.31.13.51.38
+        bh=zHs5DigNbmFfl4ihweOFjtJBnI+LejnSW9zgoAc00WA=;
+        b=DsvEJTr2TCyKgSfZXRxJ6PR/KvgyQceVa9wAXTHLPHbKN6kykhQkXHHq/Zx1668Tin
+         lVhcgDXEjMwnwYhjUpmlqvfbDe6uvxK1BK8uImP9cDL/BoK+ah3IihX3RwstEB/xrg/o
+         b8cP7GhVpmef6tpR8GosQWvkA6oJ1qm7g52rnYD7KNH88DmzB+4PXAG5jsga5e5MdayP
+         CN1LS8HZ8vCtsOv0+GmsdFz6JMgqKej5UlgftdPsH63sgQxGegYSVRc+ARjR/QTqxj6I
+         gNkt2hPKFmU3mY2kI2i+lJ0dqiewRdltscgXhOWnNC9SUB6SwC9aE5eoVr1cj9MI5IOW
+         H3mA==
+X-Gm-Message-State: ACgBeo27pCV1JEw/yYXWjDSY//mvD9hq6dvpERxUMBtCdLIO9MZ+CubQ
+        U7SZDglnqfN8lpLiNZGIBT3XwJEvy3REquzLyMM=
+X-Google-Smtp-Source: AA6agR6zLyS6ukm/LR3mfm7p2v2yl8xFVD4Kt6Vg4lHOHAkswudNfGVZ3X91m5WxrF8bQVfrtZoAEg==
+X-Received: by 2002:a17:907:3e20:b0:730:7528:d7d7 with SMTP id hp32-20020a1709073e2000b007307528d7d7mr2439152ejc.136.1659301356823;
+        Sun, 31 Jul 2022 14:02:36 -0700 (PDT)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id i12-20020a50d74c000000b0043ba1ecb0dfsm5846910edj.75.2022.07.31.14.02.36
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Jul 2022 13:51:38 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id v5so4914412wmj.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 13:51:38 -0700 (PDT)
-X-Received: by 2002:a05:600c:4ed0:b0:3a3:3ef3:c8d1 with SMTP id
- g16-20020a05600c4ed000b003a33ef3c8d1mr9272114wmq.154.1659300698214; Sun, 31
- Jul 2022 13:51:38 -0700 (PDT)
+        Sun, 31 Jul 2022 14:02:36 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id h205-20020a1c21d6000000b003a34ac64bdfso3438826wmh.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 14:02:36 -0700 (PDT)
+X-Received: by 2002:a05:600c:3553:b0:3a3:2b65:299e with SMTP id
+ i19-20020a05600c355300b003a32b65299emr9035672wmq.145.1659301052865; Sun, 31
+ Jul 2022 13:57:32 -0700 (PDT)
 MIME-Version: 1.0
 References: <alpine.LRH.2.02.2207310703170.14394@file01.intranet.prod.int.rdu2.redhat.com>
  <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com>
@@ -58,13 +58,13 @@ References: <alpine.LRH.2.02.2207310703170.14394@file01.intranet.prod.int.rdu2.r
  <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com>
  <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com>
  <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311641060.21350@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.2207311641060.21350@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 31 Jul 2022 13:51:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjmO0aWk_X5nKWEmquQ9VDzauKRW4oK4++0HNFgGo9Rvw@mail.gmail.com>
-Message-ID: <CAHk-=wjmO0aWk_X5nKWEmquQ9VDzauKRW4oK4++0HNFgGo9Rvw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] make buffer_locked provide an acquire semantics
+Date:   Sun, 31 Jul 2022 13:57:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com>
+Message-ID: <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] wait_bit: do read barrier after testing a bit
 To:     Mikulas Patocka <mpatocka@redhat.com>
 Cc:     Will Deacon <will@kernel.org>,
         "Paul E. McKenney" <paulmck@kernel.org>,
@@ -95,25 +95,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 31, 2022 at 1:43 PM Mikulas Patocka <mpatocka@redhat.com> wrote:
+On Sun, Jul 31, 2022 at 1:41 PM Mikulas Patocka <mpatocka@redhat.com> wrote:
 >
-> +
-> +static __always_inline int buffer_locked(const struct buffer_head *bh)
-> +{
-> +       unsigned long state = smp_load_acquire(&bh->b_state);
-> +       return test_bit(BH_Lock, &state);
+> -       if (!test_bit(bit, word))
+> +       if (!test_bit(bit, word)) {
+> +               smp_rmb();
 
-This should not use 'test_bit()'. I suspect that generates horrendous
-code, because it's a volatile access, so now you'll load it into a
-register, and I suspect it will generate s pointless spill just to do
-a volatile load.
+Logically, I don't think that makes sense.
 
-I didn't check.
+Maybe you're checking the buffer being up-to-date before you *write* to it?
 
-So once you've loaded b_state, just test the bit directly with
+So smp_rmb() seems entirely wrong.
 
-    return (state & (1u << BH_Lock)) != 0;
+I think it should consistently aim for just doing
+
+        unsigned long state = smp_read_acquire(word);
+        if (!(state & (1 << bit)))
+                return 0;
 
 or whatever.
 
-              Linus
+We should strive to *not* add new uses of the legacy memory barriers.
+They are garbage from last century when people didn't know better.
+
+Then people learnt to use acquire and release, and things improved.
+Let's live in that improved world.
+
+                 Linus
