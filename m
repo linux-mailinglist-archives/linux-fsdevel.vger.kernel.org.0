@@ -2,103 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35767585F6D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jul 2022 17:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A93585FCA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Jul 2022 18:24:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236937AbiGaPMa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 Jul 2022 11:12:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56750 "EHLO
+        id S237532AbiGaQYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 Jul 2022 12:24:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbiGaPM3 (ORCPT
+        with ESMTP id S235773AbiGaQYh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 Jul 2022 11:12:29 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B0EDE9C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 08:12:28 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id i9-20020a056e021b0900b002dd12dfd5b6so5332776ilv.16
-        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 08:12:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc;
-        bh=a+90tKGpxIgQGHZAFmR8vGKT1i1v6W2Mxa4cyi97svg=;
-        b=oHb/yyKE1FJGz8HjlG1w9eyydELzWEucApZ3Q2FREU874wg14r9mpInWdFeuExQq68
-         sxwExs1m1TzTBfS1Js0BOyLU+n6YbUIX9hnnCpk6tpeQJmVqwDFB8+M7UWgF2RZGmcu3
-         g79ERPg3/3kuJOAwFFMumwEoG25Mu9VeZu5YkbEMt8K385l6p2IMWqayM2rNMU6u4SvU
-         3pV48iUbB/rNsgFdcOQpQ1QmCX6GNpNG9K2/GwraQO14N7Z9rxZt/AB+g7WkPA/m3bqY
-         Ptzf5wqsKums2dVIyQGZDbIxULHwnKEHr2XCJ2v7TDJchiG3xMeg8np+W4j8/OvasVNd
-         9v0Q==
-X-Gm-Message-State: AJIora9O4YRmYZ3JyvKIzp6AtsBxirQO25JO+37jyxRjY70pMRSg5Ym0
-        bvOOOu0V+xALHm3UBClhXKToNTxlQ4wqiyCBdBetiBNG0XRj
-X-Google-Smtp-Source: AGRyM1s92FwyoWUQSUfpar2IQhAhdBOIZEm0A2lqgrIS6qOWhLh0KnMvlVVpLwMKTzuEeqpHos363hcB/ncoEVbCv7RBNhyX68JI
+        Sun, 31 Jul 2022 12:24:37 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C524FD19
+        for <linux-fsdevel@vger.kernel.org>; Sun, 31 Jul 2022 09:24:36 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2C9343754D;
+        Sun, 31 Jul 2022 16:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1659284675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=p4L9Qkd2gdeZ2TNlApycON4Ljo8qjwPh+92ALTu8HKo=;
+        b=0XWZo160rK2giUuYrakJYnU8Vn4sQtj4dfzJv4Gl4GGFa72u/QtKGWOoVQL3eaOM/AR6gI
+        pq7BlYiTr1KzKinWb4Frxx7ruysi6WFgcS9b1B7GguU9/UeiLoPNjJXFWVQmLOFkyd0kcZ
+        hUscoD0pO4FixE7vNUqO11QEEaChva4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1659284675;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=p4L9Qkd2gdeZ2TNlApycON4Ljo8qjwPh+92ALTu8HKo=;
+        b=5mRATl7iXCJzzAgi2kyejHa2lxGyFlmL8zOc0bQ253ncrxWzq9vj6An1ZiZi1RQNhz1FCq
+        E6/WYczyAiMyKLDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CADF613416;
+        Sun, 31 Jul 2022 16:24:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mkJ5L8Ks5mICGQAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Sun, 31 Jul 2022 16:24:34 +0000
+From:   Petr Vorel <pvorel@suse.cz>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Petr Vorel <petr.vorel@gmail.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Subject: [PATCH 1/1] MAINTAINERS: Add Namjae's exfat git tree
+Date:   Sun, 31 Jul 2022 18:24:27 +0200
+Message-Id: <20220731162427.16362-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca07:0:b0:2dc:43d4:1e9a with SMTP id
- j7-20020a92ca07000000b002dc43d41e9amr4670237ils.240.1659280347953; Sun, 31
- Jul 2022 08:12:27 -0700 (PDT)
-Date:   Sun, 31 Jul 2022 08:12:27 -0700
-In-Reply-To: <000000000000bdee330594070441@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b901a205e51b4f46@google.com>
-Subject: Re: [syzbot] memory leak in cap_inode_getsecurity
-From:   syzbot <syzbot+942d5390db2d9624ced8@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marka@mediation.com, phind.uet@gmail.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+From: Petr Vorel <petr.vorel@gmail.com>
 
-HEAD commit:    6a010258447d Merge tag 'for-linus' of git://git.armlinux.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15883fee080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a1dcc1942e30704
-dashboard link: https://syzkaller.appspot.com/bug?extid=942d5390db2d9624ced8
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1568846a080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f5e536080000
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+942d5390db2d9624ced8@syzkaller.appspotmail.com
-
-executing program
-BUG: memory leak
-unreferenced object 0xffff88810f0ac060 (size 32):
-  comm "syz-executor240", pid 3622, jiffies 4294961303 (age 14.040s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff814c6ecd>] __do_krealloc mm/slab_common.c:1185 [inline]
-    [<ffffffff814c6ecd>] krealloc+0x4d/0xb0 mm/slab_common.c:1218
-    [<ffffffff8162625c>] vfs_getxattr_alloc+0x13c/0x1c0 fs/xattr.c:379
-    [<ffffffff822374b2>] cap_inode_getsecurity+0xb2/0x500 security/commoncap.c:400
-    [<ffffffff8223d88c>] security_inode_getsecurity+0x7c/0xb0 security/security.c:1441
-    [<ffffffff81625a0a>] xattr_getsecurity fs/xattr.c:327 [inline]
-    [<ffffffff81625a0a>] vfs_getxattr+0x22a/0x290 fs/xattr.c:423
-    [<ffffffff81c0ab02>] ovl_xattr_get+0x62/0xa0 fs/overlayfs/inode.c:404
-    [<ffffffff81624742>] __vfs_getxattr+0x72/0xa0 fs/xattr.c:401
-    [<ffffffff82236f52>] cap_inode_need_killpriv+0x22/0x40 security/commoncap.c:301
-    [<ffffffff8223d773>] security_inode_need_killpriv+0x23/0x60 security/security.c:1419
-    [<ffffffff8161074e>] dentry_needs_remove_privs fs/inode.c:1992 [inline]
-    [<ffffffff8161074e>] dentry_needs_remove_privs+0x4e/0xa0 fs/inode.c:1982
-    [<ffffffff815cfead>] do_truncate+0x7d/0x130 fs/open.c:57
-    [<ffffffff815d0169>] vfs_truncate+0x209/0x240 fs/open.c:111
-    [<ffffffff815d0268>] do_sys_truncate.part.0+0xc8/0xe0 fs/open.c:134
-    [<ffffffff815d0303>] do_sys_truncate fs/open.c:128 [inline]
-    [<ffffffff815d0303>] __do_sys_truncate fs/open.c:146 [inline]
-    [<ffffffff815d0303>] __se_sys_truncate fs/open.c:144 [inline]
-    [<ffffffff815d0303>] __x64_sys_truncate+0x33/0x50 fs/open.c:144
-    [<ffffffff845b1955>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-    [<ffffffff845b1955>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-    [<ffffffff84600087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 64379c699903..0cfde0f3544b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7573,6 +7573,7 @@ M:	Namjae Jeon <linkinjeon@kernel.org>
+ M:	Sungjong Seo <sj1557.seo@samsung.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
+ F:	fs/exfat/
+ 
+ EXT2 FILE SYSTEM
+-- 
+2.36.1
 
