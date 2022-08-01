@@ -2,125 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2433586D5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 17:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177CC586D83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 17:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233072AbiHAPB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 11:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42128 "EHLO
+        id S233182AbiHAPRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 11:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232781AbiHAPBy (ORCPT
+        with ESMTP id S231444AbiHAPQj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 11:01:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0D34011C3F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 08:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659366113;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iiba4+W7jZLYO1ySi5qFdgb2HBH/IsPBRLKYnq1fXIY=;
-        b=Jr7fKHCRjupCIrROsdKmMIW4m/iqu8xlX1PpW7trgwYaYl7D6Bdd60Iipte+ASBz+loyZs
-        xcOkXHDsFsfK8dEFSyOudzq/rGyuQT2uA/NYa7XCTpnWnxH8gwxNYTjlDq3AWs+qRTcMSS
-        +omvDogjDbvjOrvhCrG9YLUKxyzEFvo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-399--nIrmDyMNk-h82Qyrwe4lQ-1; Mon, 01 Aug 2022 11:01:47 -0400
-X-MC-Unique: -nIrmDyMNk-h82Qyrwe4lQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B02F801585;
-        Mon,  1 Aug 2022 15:01:41 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 257C1C27D95;
-        Mon,  1 Aug 2022 15:01:41 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 271F1f8v028288;
-        Mon, 1 Aug 2022 11:01:41 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 271F1eJk028270;
-        Mon, 1 Aug 2022 11:01:40 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 1 Aug 2022 11:01:40 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] change buffer_locked, so that it has acquire
- semantics
-In-Reply-To: <YuflGG60pHiXp2z/@casper.infradead.org>
-Message-ID: <alpine.LRH.2.02.2208011040190.27101@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2207310703170.14394@file01.intranet.prod.int.rdu2.redhat.com> <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com> <alpine.LRH.2.02.2207310920390.6506@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com> <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com> <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com> <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com> <alpine.LRH.2.02.2208010628510.22006@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2208010642220.22006@file01.intranet.prod.int.rdu2.redhat.com> <YuflGG60pHiXp2z/@casper.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 1 Aug 2022 11:16:39 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B0828710;
+        Mon,  1 Aug 2022 08:16:29 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id E7BCF5C0170;
+        Mon,  1 Aug 2022 11:16:26 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 01 Aug 2022 11:16:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1659366986; x=1659453386; bh=Jlx2wYS5dQ
+        dMZHaghArFewcukAvfQ2fbejFlis23+aY=; b=aIU0HpcThNBOo6ZZJQRtmFrO4g
+        gE1B39TEWk8ZWiYdZ84gH04zoDxg526nHX+nsq0AK6DSmLN55UjyGtDQQlTVxKKQ
+        0AJKeiMRK6dSSXCWhM53EIXSogbgniiDe8Rnb6Ry5b6BTjsSWMVkDXLa76ziBS6f
+        fgblPPQuZzCMWf9ql++u1dyIpM1A6dikBmFlx7MvXjWii/IvMbmiImYyNjiB8N7r
+        6YsL56Zyfc78VbX81ed9b4Qj6P/YYmq9AHvprt4PzcwKq+HrQzURFDbpWeLHmBSe
+        vOZI9NJEgrjA7GlOpG4ZysrilMKHoTKXa/9LSTJSvv793uyc+mDCHklYuEsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1659366986; x=1659453386; bh=Jlx2wYS5dQdMZHaghArFewcukAvf
+        Q2fbejFlis23+aY=; b=E0snMbrZg5xvbjxrUpoz7PM7dW2IzqG2uLP3WTbO7yXS
+        KsZE7kfF42nht4pSdYwiimka9LCy+WmQ1qZ6znerWlsNj6wJRW1+uPlCB2/rL0JW
+        gudMuY1SJysmPofkw6Jma6H+OvUt/79Abiqz0L1Deg1lBRwaCnol/HCx2/Q6Pf0R
+        U5IZpmfZnm4kb5y5bXP5kAmTnCz0uO5O83E7+A5hVwEv2qHvniq8EkYqyPoXdxO7
+        2oCLzEFrT9uiryb8sSPMGFQG6+h59PE3ApfXj88o1SqMdAQx43ri1VB1u1iJ654c
+        pkLRTrFu4go3y2eVCg1L3+fr5ijX3Gqmn3HhR8bc5A==
+X-ME-Sender: <xms:Su7nYjsHH5a4J6YMvOkOb-BPnqNseDcpcC-y5U3mS6GEvP8elEPi1A>
+    <xme:Su7nYkcyD-iHnzYjpshw-3co7cVI7YoalADZVbHl3SO4gik6Bk_lEn9ccgT5cD-pL
+    UNqpKAKYcMrSg-feeE>
+X-ME-Received: <xmr:Su7nYmyKeFjb3Sin2HTSlmMc-rOInbdhpSatPmrsJ-qJnhmGHNmzX-O2FBJl6A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddvfedgkeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
+    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
+    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
+    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:Su7nYiNkI4DfqBt5l5Jb_lVX561Zkvp6xhVEJj0sqz1vrhMpITnAWw>
+    <xmx:Su7nYj_ZkEFFy-8rEraSKbqnLyctQmI8DAPI6Rn7xm1gBGkzARVMWw>
+    <xmx:Su7nYiW21XZTNvowFVzyM7XfGDYEzWGduwzBT6jLgpOS1yPnvF9MAw>
+    <xmx:Su7nYukLYtFBDh7MLlz4ijzzdeWlANB9cClK9Nj0kSqgi9Y92y4CfA>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 1 Aug 2022 11:16:24 -0400 (EDT)
+Date:   Mon, 1 Aug 2022 09:16:23 -0600
+From:   Tycho Andersen <tycho@tycho.pizza>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH v2] fuse: In fuse_flush only wait if someone wants
+ the return code
+Message-ID: <YufuRyehrRquv+lk@tycho.pizza>
+References: <20220728091220.GA11207@redhat.com>
+ <YuL9uc8WfiYlb2Hw@tycho.pizza>
+ <87pmhofr1q.fsf@email.froward.int.ebiederm.org>
+ <YuPlqp0jSvVu4WBK@tycho.pizza>
+ <87v8rfevz3.fsf@email.froward.int.ebiederm.org>
+ <YuQPc51yXhnBHjIx@tycho.pizza>
+ <87h72zes14.fsf_-_@email.froward.int.ebiederm.org>
+ <20220729204730.GA3625@redhat.com>
+ <YuR4MRL8WxA88il+@ZenIV>
+ <875yjfdw3a.fsf_-_@email.froward.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875yjfdw3a.fsf_-_@email.froward.int.ebiederm.org>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Jul 30, 2022 at 12:10:33AM -0500, Eric W. Biederman wrote:
+> +static int fuse_flush_async(struct file *file, fl_owner_t id)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct fuse_mount *fm = get_fuse_mount(inode);
+> +	struct fuse_file *ff = file->private_data;
+> +	struct fuse_flush_args *fa;
+> +	int err;
+> +
+> +	fa = kzalloc(sizeof(*fa), GFP_KERNEL);
+> +	if (!fa)
+> +		return -ENOMEM;
+> +
+> +	fa->inarg.fh = ff->fh;
+> +	fa->inarg.lock_owner = fuse_lock_owner_id(fm->fc, id);
+> +	fa->args.opcode = FUSE_FLUSH;
+> +	fa->args.nodeid = get_node_id(inode);
+> +	fa->args.in_numargs = 1;
+> +	fa->args.in_args[0].size = sizeof(fa->inarg);
+> +	fa->args.in_args[0].value = &fa->inarg;
+> +	fa->args.force = true;
 
+Seems like you need a
 
-On Mon, 1 Aug 2022, Matthew Wilcox wrote:
+    fa->args.nocreds = true;
 
-> On Mon, Aug 01, 2022 at 06:43:55AM -0400, Mikulas Patocka wrote:
-> > Let's have a look at this piece of code in __bread_slow:
-> > 	get_bh(bh);
-> > 	bh->b_end_io = end_buffer_read_sync;
-> > 	submit_bh(REQ_OP_READ, 0, bh);
-> > 	wait_on_buffer(bh);
-> > 	if (buffer_uptodate(bh))
-> > 		return bh;
-> > Neither wait_on_buffer nor buffer_uptodate contain any memory barrier.
-> > Consequently, if someone calls sb_bread and then reads the buffer data,
-> > the read of buffer data may be executed before wait_on_buffer(bh) on
-> > architectures with weak memory ordering and it may return invalid data.
-> > 
-> > Fix this bug by changing the function buffer_locked to have the acquire
-> > semantics - so that code that follows buffer_locked cannot be moved before
-> > it.
-> 
-> I think this is the wrong approach.  Instead, buffer_set_uptodate()
-> should have the smp_wmb() and buffer_uptodate should have the smp_rmb().
-> Just like the page flags.  As I said last night.
+here or you'll hit the WARN() in fuse_simple_background().
 
-Linus said that he prefers acquire/release to smp_rmb/smp_wmb. So, sort it 
-out with him :)
-
-In most cases, the buffer is set uptodate while it is locked, so that 
-there is no race on the uptodate flag (the race exists on the locked 
-flag). Are there any cases where the uptodate flag is modified on unlocked 
-buffer, so that it needs special treatment too?
-
-Mikulas
-
+Tycho
