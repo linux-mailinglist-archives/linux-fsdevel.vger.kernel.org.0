@@ -2,72 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 281EB586CF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 16:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC68C586D06
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 16:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbiHAOhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 10:37:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49688 "EHLO
+        id S232759AbiHAOkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 10:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230387AbiHAOhh (ORCPT
+        with ESMTP id S230109AbiHAOkg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 10:37:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2D833368;
-        Mon,  1 Aug 2022 07:37:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FaVkEakWw5UkhKC0z7612iz8Sezsq/DZXrhQ3cY+yUw=; b=SAVLI21ATZ0FBXs5JGrzgiY8kR
-        D3nAfI+mwkN2X3CVciMzhnRNeK0fE1T1BijkZDqOIIwU0O/QYFDZtbXIJcb68dwsEzKLH/wo3JgWH
-        X0OGrqQJfPULEwbVEqXf4fWxoMNjHdFeN+cYMMZbPOw4GKwhgow0ux5Ewv9t5aBSZhemfTw/+rl5j
-        jJMURX+yBxTbNqX/fJ7ja0ZdWzc4g188df9V61KvjCsflUbJkHZ5mnjQun2tpud6G111k8GPM39K6
-        zT7phs7VVtYeujVZJdpPjHXizMAEzvGPv1kvaYCJDKKqXvvjq/rs02cvLyRXnG0ml/SIq2RmbGqDa
-        Ei7zY8xw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oIWXg-007Aot-Ki; Mon, 01 Aug 2022 14:37:12 +0000
-Date:   Mon, 1 Aug 2022 15:37:12 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] change buffer_locked, so that it has acquire
- semantics
-Message-ID: <YuflGG60pHiXp2z/@casper.infradead.org>
-References: <alpine.LRH.2.02.2207310703170.14394@file01.intranet.prod.int.rdu2.redhat.com>
- <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com>
- <alpine.LRH.2.02.2207310920390.6506@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com>
- <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com>
- <alpine.LRH.2.02.2208010628510.22006@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2208010642220.22006@file01.intranet.prod.int.rdu2.redhat.com>
+        Mon, 1 Aug 2022 10:40:36 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A726537185;
+        Mon,  1 Aug 2022 07:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1659364835; x=1690900835;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fpTxLnSKdCefwrmog3N//MC/2iEi6i+ELgFRyAQC2bY=;
+  b=CcKfsnBbDxrQw/JPAV5/oLhwLCN3+yfeVnWxi1kZq4TyBdMYfjyvus6W
+   L4PFME/aKttHbdrMFNCo4+VaUWnUtJhv6+i8nHOkOQpgaXdoutTJNT6xi
+   5IE0SPCW9EQ61H3apE+zrNNT7KSKKAEZBvNU4q6eIsB3XWXzntIu5zGWP
+   h9aYJXdjtzC2Daey1dUZk54fFjqpUF5HxAZOYPvKSATHdU3UlmqNBV/9k
+   T/az2tNUI3hvwUVa3oGVy7/IcfnbtxEzBWD/JA5oM8brPY4Q5pkCfqJ4C
+   7VnIMCeIeOjw0O4jGacgPg8B9iVJmNpw6D0ei/kj2SpcvPOL6ojdpR2ey
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10426"; a="276062502"
+X-IronPort-AV: E=Sophos;i="5.93,208,1654585200"; 
+   d="scan'208";a="276062502"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2022 07:40:35 -0700
+X-IronPort-AV: E=Sophos;i="5.93,208,1654585200"; 
+   d="scan'208";a="744281754"
+Received: from cdthomas-mobl2.amr.corp.intel.com (HELO [10.209.57.155]) ([10.209.57.155])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2022 07:40:32 -0700
+Message-ID: <dc878e6c-c1d2-c291-00ef-11cff6cb03ec@intel.com>
+Date:   Mon, 1 Aug 2022 07:40:32 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.2208010642220.22006@file01.intranet.prod.int.rdu2.redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v7 14/14] memfd_create.2: Describe MFD_INACCESSIBLE flag
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-15-chao.p.peng@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20220706082016.2603916-15-chao.p.peng@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,23 +91,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 01, 2022 at 06:43:55AM -0400, Mikulas Patocka wrote:
-> Let's have a look at this piece of code in __bread_slow:
-> 	get_bh(bh);
-> 	bh->b_end_io = end_buffer_read_sync;
-> 	submit_bh(REQ_OP_READ, 0, bh);
-> 	wait_on_buffer(bh);
-> 	if (buffer_uptodate(bh))
-> 		return bh;
-> Neither wait_on_buffer nor buffer_uptodate contain any memory barrier.
-> Consequently, if someone calls sb_bread and then reads the buffer data,
-> the read of buffer data may be executed before wait_on_buffer(bh) on
-> architectures with weak memory ordering and it may return invalid data.
-> 
-> Fix this bug by changing the function buffer_locked to have the acquire
-> semantics - so that code that follows buffer_locked cannot be moved before
-> it.
+This patch does not belong in this series.  It's not a patch to the
+kernel.  This is a kernel series.
 
-I think this is the wrong approach.  Instead, buffer_set_uptodate()
-should have the smp_wmb() and buffer_uptodate should have the smp_rmb().
-Just like the page flags.  As I said last night.
+It would be much more appropriate to put a link to a separately posted
+manpage patch in the cover letter.
