@@ -2,73 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C937586E74
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 18:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03FBD586EAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 18:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234107AbiHAQSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 12:18:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
+        id S233145AbiHAQia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 12:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233797AbiHAQSP (ORCPT
+        with ESMTP id S232304AbiHAQi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 12:18:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AADA933E16
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 09:18:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 65961B81218
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 16:18:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 19AF5C433C1;
-        Mon,  1 Aug 2022 16:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659370692;
-        bh=6xTOtrHsGm5naosYN3fuyrzv3DEzGnumW1IPFilsBJ4=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=gtoctKXnCgHTt/i10Bw0S0boXyjkkcQIe4xfyxBa39NK6NqmzMwHL/Bd2I3MRoPPu
-         AXBVMVxOHoMofOjgSI3UbHzFLcJZiN2L4ZYE5nxfz5Ur9tU3ww7z7ybC1cuwUDX0j7
-         KXCO0tMLoXjN8ELyEVCs06tWW8P81Ng1epdvrxca4c10IJddAB6yqhVe060dbdqbxR
-         G6RRizolSCIdrUnsTwma4fUpASh8W+gJrbpqX/cENTXX50Cl33MmfFOJCKdCGphPRx
-         GHw2TWZH1tt93GQlyoJkav+RC5/8x7aLqsv6tEij5/iHBNyVh2UjXsJLdrr/pb/lGN
-         Aj3WpIxCwngcw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 08AAAC43140;
-        Mon,  1 Aug 2022 16:18:12 +0000 (UTC)
-Subject: Re: [GIT PULL] Ext2 and reiserfs fixes and cleanups for 5.20-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220728122416.h4bu74ptr6l3g2ur@quack3>
-References: <20220728122416.h4bu74ptr6l3g2ur@quack3>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220728122416.h4bu74ptr6l3g2ur@quack3>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.20-rc1
-X-PR-Tracked-Commit-Id: fa78f336937240d1bc598db817d638086060e7e9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: af07685b9ca18a5104c073847c83cf443f5c6114
-Message-Id: <165937069203.17475.13755418735561775584.pr-tracker-bot@kernel.org>
-Date:   Mon, 01 Aug 2022 16:18:12 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 1 Aug 2022 12:38:29 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902BA1CD
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 09:38:25 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id bx38so3061065ljb.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Aug 2022 09:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
+        b=UpgXbpfO0w/dJq4k0vuSl6sUdwOXFPzo72SUDWGRn4yCt6QTXqfTKNyPrrLSbJ8yzY
+         7SvNYiuTJto9ZKlzvm5aoeOkIg+OLPLmA7JtBAqJNAo3ZwaSjplZ/wAzKUOl+dDU/dDK
+         hYOtZRuneAEXUY6rJcSHGhuzX712qrYQrFpKbC7RuKjQlSCmwGRK5sGDya2wx4XaUf+k
+         IlVzDxfqSKvxeU6NrU/S6TRC1i25W9OIICD2HGjN/h5O8s28u9oHxFPUHjB6EjmlL3W1
+         LOFyxwAfOSDkgEr1jZ/ZsXk1P0uSiTY0XrYgKEkG3SBkCMdWMSlGcFhfScKKMVApzTc3
+         wpBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
+        b=VCLRLYrkSN6oG0Fnp2+1TvOL7MNSPU6+NqJbyTSJGIENDx94PcLii6ZHn7olipKWcv
+         yI/jdRLlWMbgMVH2AgdY36mbTV8hg1zoByvtkd6fdmAfj/3z27jdyOPRBAU4y22+iFnA
+         wX11JJ2NiNpADlXgW8W2AWt49ql1K8o9VXaGu0SciMr2zg9ojxHhNmQ2GLku42yWvF6p
+         Ce86HwAeaYHy48N6M20w7miUPA0/EJxA7Nvkqrz+3I0NRteh7+j25b2LV/9VSNTxfmTb
+         xqEaukeYm+OFMFBaVbfgXAk9iB9+m5dWD7/yifrCqYtQp8O1ekwhbe1nNCR8I7fIF2V6
+         730Q==
+X-Gm-Message-State: AJIora8+9jB5BoiqHg3PCnxpbFf5hArayHjMGQXTqvmHizIx+CaMG29r
+        ifuQtRggvbM9IQAm/G0x95j+0UnRJMNJmSw42L0=
+X-Google-Smtp-Source: AGRyM1uhfxKvD7WlSvnzrbGlwEuRLAbxrb3yEpNH1m/q+RCiRS7C4p1DxknGjCMobov/SaZ/nFOLCAAIjg3qtSJ3b84=
+X-Received: by 2002:a2e:be90:0:b0:25e:1496:a0b8 with SMTP id
+ a16-20020a2ebe90000000b0025e1496a0b8mr5567966ljr.194.1659371903861; Mon, 01
+ Aug 2022 09:38:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:aa6:cb52:0:b0:1fa:aaed:e6d9 with HTTP; Mon, 1 Aug 2022
+ 09:38:23 -0700 (PDT)
+From:   Bright Gawayn <gben68387@gmail.com>
+Date:   Mon, 1 Aug 2022 22:08:23 +0530
+Message-ID: <CAG1+V0w-Pt5No3wNn5Sm7K_0Y_mZnH5=drEjS3cseB6w-yBsLg@mail.gmail.com>
+Subject: Lucrative business proposal very urgent!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.9 required=5.0 tests=ADVANCE_FEE_3_NEW,BAYES_50,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,UNDISC_MONEY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:244 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5001]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [gben68387[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [gben68387[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  3.5 ADVANCE_FEE_3_NEW Appears to be advance fee fraud (Nigerian
+        *      419)
+        *  2.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 28 Jul 2022 14:24:16 +0200:
+Hello dear My name is Mr Bright Gawayn,  It's my pleasure to contact you today.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.20-rc1
+We use a certain raw material in our pharmaceutical firm for the
+manufacture of animal vaccines and many more.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/af07685b9ca18a5104c073847c83cf443f5c6114
+My intention is to give you the new contact information of the local
+manufacturer of this raw material in India and every details regarding
+how to supply the material to my company if you're interested, my
+company pays in advance for this material.
 
-Thank you!
+Due to some reasons, which I will explain in my next email, I cannot
+procure this material and supply it to my company myself due to the
+fact that I am a staff in the company.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Please get back to me as soon as possible for full detail if you are interested.
+
+Thanks and regards
+Bright.
