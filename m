@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B64D587238
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 22:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEDBD587258
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 22:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233661AbiHAURR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 16:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
+        id S234364AbiHAUbg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 16:31:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232218AbiHAURP (ORCPT
+        with ESMTP id S232486AbiHAUbf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 16:17:15 -0400
+        Mon, 1 Aug 2022 16:31:35 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCA3F3;
-        Mon,  1 Aug 2022 13:17:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C10132A421;
+        Mon,  1 Aug 2022 13:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
         Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=MihrIX9xxvINQlzJRyOqidEAph+Kwa/bRg0s8UIamnE=; b=mxhnwtvgx+0+syKlnHdO8Z3zpr
-        VNwIanjB6XZoSEYWbltm6x08K41JRuPBN5YzAEr6gsnYu/omqIUDHE4xeF6tFixGgGX//IdDO8CM2
-        gt0Ph7VCZz/2RqENLfJSGfFQtMco7AkcfRoZif0SRHVXhAOQbb37NCxWRWWHLn5KAR96AiuVw6j9U
-        CqwUGpGOfGqWtNBx4iDNDKbZx/bCkepbnFJ0Y7R/oN00KkeHUWxk83nM6vi9bDidXMSyegQ7IHPQQ
-        qIurF0EpHxm8RHdHWJb5TxHQfTdFPNhuiNyEvg2dNUAQZYD8E1+kYhzSPfo1FuEtTXE+jxWgx05Ze
-        zN0iLC7w==;
+        bh=4jh4kQGu6gukhOtDtPB04ygoxMJ+tn6uaTTsSiR87xU=; b=SMf4twsT/3bAVdIcT3GE4tLGZc
+        F0AxTDgsRuH22VqZC6FpeSA5v6iRaY1LRrF0BII8tSmMbjngg/RebUyCsWpjeQnMDbtriF6Nt+Ju7
+        Ppf+bFKQZ/JQPho8XPlqHnCy2JGcUtYtrFLflIpzCJAVnRjnLHAs/a7+ZXXGiv9SCzJMLt2Zr/IjM
+        bnfTkuFhaepMTg3tJ7Vrt+s6hBJMUHNnvwraXTySI5ig4QMix/7rwGc0KxUBEA2kxvEQP+0rPNy8n
+        +SuK/HjXjFbcTue4BAKAIZT98Ax8vLqkS9GwudoRpaKlekWIfKz4YcFdEdZ/EVuSzPmGhyJ4Fm7Mm
+        xzz7of1Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oIbqh-000P26-2F;
-        Mon, 01 Aug 2022 20:17:11 +0000
-Date:   Mon, 1 Aug 2022 21:17:11 +0100
+        id 1oIc4Y-000PF5-Mf;
+        Mon, 01 Aug 2022 20:31:30 +0000
+Date:   Mon, 1 Aug 2022 21:31:30 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] vfs.git pile 1 - namei stuff
-Message-ID: <Yug0x5GvaInf3opV@ZenIV>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs.git pile 2 - lseek stuff
+Message-ID: <Yug4Is18ZrZ3fEAy@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -47,39 +48,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+	Jason's lseek series.  One note: after that no_llseek is defined
+to NULL; boilerplate initializers ought to be removed, but that's better
+done at the end of merge window - fewer conflicts that way.  Could you run
+
+git grep -l -w no_llseek | grep -v porting.rst | while read i; do
+	sed -i '/\<no_llseek\>/d' $i
+done
+
+just before -rc1 to take that boilerplate out?
+
 The following changes since commit b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3:
 
   Linux 5.19-rc2 (2022-06-12 16:11:37 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-work.namei
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-work.lseek
 
-for you to fetch changes up to 3bd8bc897161730042051cd5f9c6ed1e94cb5453:
+for you to fetch changes up to 868941b14441282ba08761b770fc6cad69d5bdb7:
 
-  step_into(): move fetching ->d_inode past handle_mounts() (2022-07-06 13:16:07 -0400)
+  fs: remove no_llseek (2022-07-16 09:19:47 -0400)
 
 ----------------------------------------------------------------
-	RCU pathwalk cleanups.  Storing sampled ->d_seq of
-the next dentry in nameidata simplifies life considerably,
-especially if we delay fetching ->d_inode until step_into().
+	Saner handling of "lseek should fail with ESPIPE" - gets rid of
+magical no_llseek thing and makes checks consistent.  In particular,
+ad-hoc "can we do splice via internal pipe" checks got saner (and
+somewhat more permissive, which is what Jason had been after, AFAICT)
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 ----------------------------------------------------------------
-Al Viro (10):
-      __follow_mount_rcu(): verify that mount_lock remains unchanged
-      namei: get rid of pointless unlikely(read_seqcount_retry(...))
-      follow_dotdot{,_rcu}(): change calling conventions
-      switch try_to_unlazy_next() to __legitimize_mnt()
-      namei: move clearing LOOKUP_RCU towards rcu_read_unlock()
-      namei: stash the sampled ->d_seq into nameidata
-      step_into(): lose inode argument
-      follow_dotdot{,_rcu}(): don't bother with inode
-      lookup_fast(): don't bother with inode
-      step_into(): move fetching ->d_inode past handle_mounts()
+Jason A. Donenfeld (6):
+      fs: clear or set FMODE_LSEEK based on llseek function
+      fs: do not compare against ->llseek
+      dma-buf: remove useless FMODE_LSEEK flag
+      vfio: do not set FMODE_LSEEK flag
+      fs: check FMODE_LSEEK to control internal pipe splicing
+      fs: remove no_llseek
 
- fs/mount.h     |   1 -
- fs/namei.c     | 191 +++++++++++++++++++++++++--------------------------------
- fs/namespace.c |   2 +-
- 3 files changed, 86 insertions(+), 108 deletions(-)
+ Documentation/filesystems/porting.rst |  8 ++++++++
+ drivers/dma-buf/dma-buf.c             |  1 -
+ drivers/gpu/drm/drm_file.c            |  3 +--
+ drivers/vfio/vfio.c                   |  2 +-
+ fs/coredump.c                         |  4 ++--
+ fs/file_table.c                       |  2 ++
+ fs/open.c                             |  2 ++
+ fs/overlayfs/copy_up.c                |  3 +--
+ fs/read_write.c                       | 17 +++--------------
+ fs/splice.c                           | 10 ++++------
+ include/linux/fs.h                    |  2 +-
+ kernel/bpf/bpf_iter.c                 |  3 +--
+ 12 files changed, 26 insertions(+), 31 deletions(-)
