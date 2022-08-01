@@ -2,87 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E57586F55
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 19:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAC2258704D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 20:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbiHARNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 13:13:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
+        id S233808AbiHASSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 14:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232609AbiHARNw (ORCPT
+        with ESMTP id S232431AbiHASSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 13:13:52 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E602980B
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 10:13:49 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id p81so8888734iod.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Aug 2022 10:13:49 -0700 (PDT)
+        Mon, 1 Aug 2022 14:18:30 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BFA286D7;
+        Mon,  1 Aug 2022 11:18:29 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id b25so9008669qka.11;
+        Mon, 01 Aug 2022 11:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=RMpq00zmLmRyLkH3ymS8AD8nFPc9nuPS5SpA8DGRQjc=;
-        b=CzbG8jn3lmpWwZNf2DkfRaHkYPFhpnngD3tqdI3rzFaOFYHZNMm6okjhZb6FbHgpBV
-         MvAiCTK6W4xcrO1x5Yjhl019C5+KjcritcRqSFhQaKoMajPDUHQeWFPDkHYMGeRgY8Vu
-         Vlq+9AkYHWni1BvEapZhFKQ5KeDvskzMF4zzTqigIUCnuDP933nMxj/APjQzuu+RArVP
-         gqfUWjMDhjWL2VnCff9414QnqJgVQzUNvnp9EqGeJ9Iz8m8BDzpuJNlFQ+ROha+Bnafo
-         tluUwY6NGaRCfpXGufNKvA0sFeRiZ78FJK3XduIgR/UnkVscDBe9pPntr4MQx346BtAD
-         SBjw==
+        d=gmail.com; s=20210112;
+        h=feedback-id:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aZNeN9+MdPNWv/80FGv0B2+b6ix8m0rC1xLUVxAPEro=;
+        b=P+THs3+hpOJj+W+aciYujyHr6zELzS0hhs6oUwu7apuyILX9I22KmTnSiZ+EoKbo6y
+         MrDFUl9QJ+IAUqsyUINEvFrHVhBHYQtKLtpTojRJ7TSLBXblJKGmz2HRQZhl6jlWtIjg
+         ev+zL5tQIQ7FKMEqw7M5vMM2y73ETVKbs5xzAPxgwPjuieIDNWM27gOPu1WQVrwA5Mat
+         O9YZ9ZNfr+Eel8VT8ihN3PRWAZddYhwTY5co1a5tiv5QKCCva4JQApbxgqMx19PhLinG
+         HMoLWVKxFNY/JYqeoot8eQt42VsUNerx+EP7tnJlqX4a6wTgUQ+2iBzYQbaGfGkwIrxN
+         oSWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=RMpq00zmLmRyLkH3ymS8AD8nFPc9nuPS5SpA8DGRQjc=;
-        b=uUtyxl+7m9vSqwaBMtUlqc6msap+OxJ4zPvxPg+bRX9C4APMSlTQDNQI2ImmbHGKEu
-         oXbzbqbyVSjMDvGXnkHa4wvNQuW5pq5ai0MvD1G5zt5dMSYpZ46ii0Uqc+TQeHx7A2GJ
-         VVxHwrSztlGO7KSZuHmuOZzoKl/YbNSx8IyhL1s7/FbWGLgBffxv9vJ20dqVccTdRMjV
-         2Xr+z8sQoSPD1idM9BkQSJCyodI178ZPf4K51TbpYwion15QHrUJAe/IGYnnzDLSjvL+
-         lvtRzO4OfxRb/Z/q2UaFx92izlx21Om93PNwAum1MTVYfAiLyk8HhJoroxiu5GAuzQtf
-         k0zg==
-X-Gm-Message-State: AJIora+RDxc3HlVkW1YdApBTx/W8IBtqlbra1f2Cfsg0y7QxBsr1rFQr
-        2M7NQOV0ZdGhQ39QwYAoYTBRtIgulMO7D6XrCpfMUw==
-X-Google-Smtp-Source: AGRyM1us0RojN6/riPQbz3AQEf91WYt9XAWKjIH70t+mubW2Sqp7fsmB2PQ5cQkQI2b+gMYBSBcGhDrF0ZlLMZgjF94=
-X-Received: by 2002:a05:6602:2f03:b0:678:9c7c:97a5 with SMTP id
- q3-20020a0566022f0300b006789c7c97a5mr5833295iow.32.1659374028847; Mon, 01 Aug
- 2022 10:13:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220719195628.3415852-1-axelrasmussen@google.com>
- <PH7PR11MB6353950F607F7B8F274A3550FD8E9@PH7PR11MB6353.namprd11.prod.outlook.com>
- <CAJHvVchusMjvhLxYkWpa+iTaHvXYPFHcX7JGP=bW60e_O1jFGA@mail.gmail.com> <7EF50BE4-84EA-4D57-B58C-6697F1B74904@vmware.com>
-In-Reply-To: <7EF50BE4-84EA-4D57-B58C-6697F1B74904@vmware.com>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Mon, 1 Aug 2022 10:13:12 -0700
-Message-ID: <CAJHvVcghaZjgU6YhoGMehQTDU36S-UL5djG+Bym6Uax=VVoX7g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine grained
- access control
-To:     Nadav Amit <namit@vmware.com>
-Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>,
+        h=x-gm-message-state:feedback-id:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=aZNeN9+MdPNWv/80FGv0B2+b6ix8m0rC1xLUVxAPEro=;
+        b=1K/gQcKiv5lSPsmgVdPHGYhFts5LAHQfW8X9j7/2lhDf1xVKsDTESbx4dkLfrTw6FH
+         CUTWB2s3sgEzM+plPU5gCNQP+RnBBK/IFDprQWSlomVTbbJgv121QxV+dRtQcK/9l8ke
+         eiBrsuH4U/x0F70K4lHDkLkJhkFRHrBnF7OCGRgPiAgasL8us+JofGcqVCdllf6b1J0Z
+         zw6w790MiM6Brbja8CpKW2zldy+gEYbLdFtMdqmsZ4dFC1QEkHPXNQa6d2ae9O74rxb6
+         Qc0HDrneh3pi7gas6GYtjz2SzvgU1Uu3saBRvMdCncf2477Cl+vPyO6Y+g6D8CQVDCEs
+         SmbQ==
+X-Gm-Message-State: AJIora+ZyB1JS0yyMMO7WsLzus9AoY9FVz1ZdJkdvBjrLUAzhn6xfWDz
+        mkt3j2JCV901Bk0iPcbfFjM=
+X-Google-Smtp-Source: AGRyM1tRvPLYzYlohmH7aiLSI1DvpK62DzmPttb0nhGWKoIwXgQ23iQSZDvpMI4HO1DM0fZcVrhnwg==
+X-Received: by 2002:a37:42d6:0:b0:6b5:7da4:4cb2 with SMTP id p205-20020a3742d6000000b006b57da44cb2mr12620716qka.588.1659377908976;
+        Mon, 01 Aug 2022 11:18:28 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id ay18-20020a05620a179200b006a8b6848556sm8886496qkb.7.2022.08.01.11.18.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Aug 2022 11:18:28 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailauth.nyi.internal (Postfix) with ESMTP id A8D3F27C0077;
+        Mon,  1 Aug 2022 14:18:27 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 01 Aug 2022 14:18:27 -0400
+X-ME-Sender: <xms:8hjoYp1SpVnlRtrnWMRO_i-sF_HV9DN58SB9aRhkF50_ClRrqaT-rg>
+    <xme:8hjoYgFXT0o6WjWaVW9V2lrSEpUW2_bidKKqRisd7bQvQZiLTTXSXto5JckDxw1VZ
+    DbbNtWMOGBRSnBq0g>
+X-ME-Received: <xmr:8hjoYp5JP_aDk1qu-zjLTeASNgMnmfxOB_4MRZjTE5WSJNU8dBvQUTlY_Em5PA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddvfedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:8hjoYm24oduREDGW2mEXN2905tyI-qkBaHL5rLwcvq9FNK1QhOX7bw>
+    <xmx:8hjoYsE4TZbicSoAxF7bVBtrfdrToeaJXqqhPuQmlfPUPyiN1fL7LA>
+    <xmx:8hjoYn8ssZDOZKOE5LXOQTBT5X-4Rf1vjinlAfFNWxTMDeqVgq-zSw>
+    <xmx:8xjoYq8p2z0yqg5-tTjNLHaZc7ATswj9i3xC2EjsiMvq-R7-K7K4lA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 1 Aug 2022 14:18:26 -0400 (EDT)
+Date:   Mon, 1 Aug 2022 11:17:28 -0700
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] introduce test_bit_acquire and use it in
+ wait_on_bit
+Message-ID: <YugYuBzIkr+gN5Vi@boqun-archlinux>
+References: <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com>
+ <alpine.LRH.2.02.2207310920390.6506@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com>
+ <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com>
+ <alpine.LRH.2.02.2208010640260.22006@file01.intranet.prod.int.rdu2.redhat.com>
+ <20220801155421.GB26280@willie-the-truck>
+ <alpine.LRH.2.02.2208011206430.31960@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.2208011206430.31960@file01.intranet.prod.int.rdu2.redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -90,124 +122,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I finished up some other work and got around to writing a v5 today,
-but I ran into a problem with /proc/[pid]/userfaultfd.
+On Mon, Aug 01, 2022 at 12:12:47PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Mon, 1 Aug 2022, Will Deacon wrote:
+> 
+> > On Mon, Aug 01, 2022 at 06:42:15AM -0400, Mikulas Patocka wrote:
+> > 
+> > > Index: linux-2.6/arch/x86/include/asm/bitops.h
+> > > ===================================================================
+> > > --- linux-2.6.orig/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
+> > > +++ linux-2.6/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
+> > > @@ -203,8 +203,10 @@ arch_test_and_change_bit(long nr, volati
+> > >  
+> > >  static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
+> > >  {
+> > > -	return ((1UL << (nr & (BITS_PER_LONG-1))) &
+> > > +	bool r = ((1UL << (nr & (BITS_PER_LONG-1))) &
+> > >  		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
+> > > +	barrier();
+> > > +	return r;
+> > 
+> > Hmm, I find it a bit weird to have a barrier() here given that 'addr' is
+> > volatile and we don't need a barrier() like this in the definition of
+> > READ_ONCE(), for example.
+> 
+> gcc doesn't reorder two volatile accesses, but it can reorder non-volatile
+> accesses around volatile accesses.
+> 
+> The purpose of the compiler barrier is to make sure that the non-volatile 
+> accesses that follow test_bit are not reordered by the compiler before the 
+> volatile access to addr.
+> 
 
-Files in /proc/[pid]/* are owned by the user/group which started the
-process, and they don't support being chmod'ed.
+Better to have a constant_test_bit_acquire()? I don't think all
+test_bit() call sites need the ordering?
 
-For the userfaultfd device, I think we want the following semantics:
-- For UFFDs created via the device, we want to always allow handling
-kernel mode faults
-- For security, the device should be owned by root:root by default, so
-unprivileged users don't have default access to handle kernel faults
-- But, the system administrator should be able to chown/chmod it, to
-grant access to handling kernel faults for this process more widely.
+Regards,
+Boqun
 
-It could be made to work like that but I think it would involve at least:
-
-- Special casing userfaultfd in proc_pid_make_inode
-- Updating setattr/getattr for /proc/[pid] to meaningfully store and
-then retrieve uid/gid different from the task's, again probably
-special cased for userfautlfd since we don't want this behavior for
-other files
-
-It seems to me such a change might raise eyebrows among procfs folks.
-Before I spend the time to write this up, does this seem like
-something that would obviously be nack'ed?
-
-On Wed, Jul 20, 2022 at 4:21 PM Nadav Amit <namit@vmware.com> wrote:
->
-> On Jul 20, 2022, at 4:04 PM, Axel Rasmussen <axelrasmussen@google.com> wr=
-ote:
->
-> > =E2=9A=A0 External Email
-> >
-> > On Wed, Jul 20, 2022 at 3:16 PM Schaufler, Casey
-> > <casey.schaufler@intel.com> wrote:
-> >>> -----Original Message-----
-> >>> From: Axel Rasmussen <axelrasmussen@google.com>
-> >>> Sent: Tuesday, July 19, 2022 12:56 PM
-> >>> To: Alexander Viro <viro@zeniv.linux.org.uk>; Andrew Morton
-> >>> <akpm@linux-foundation.org>; Dave Hansen
-> >>> <dave.hansen@linux.intel.com>; Dmitry V . Levin <ldv@altlinux.org>; G=
-leb
-> >>> Fotengauer-Malinovskiy <glebfm@altlinux.org>; Hugh Dickins
-> >>> <hughd@google.com>; Jan Kara <jack@suse.cz>; Jonathan Corbet
-> >>> <corbet@lwn.net>; Mel Gorman <mgorman@techsingularity.net>; Mike
-> >>> Kravetz <mike.kravetz@oracle.com>; Mike Rapoport <rppt@kernel.org>;
-> >>> Amit, Nadav <namit@vmware.com>; Peter Xu <peterx@redhat.com>;
-> >>> Shuah Khan <shuah@kernel.org>; Suren Baghdasaryan
-> >>> <surenb@google.com>; Vlastimil Babka <vbabka@suse.cz>; zhangyi
-> >>> <yi.zhang@huawei.com>
-> >>> Cc: Axel Rasmussen <axelrasmussen@google.com>; linux-
-> >>> doc@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
-> >>> kernel@vger.kernel.org; linux-mm@kvack.org; linux-
-> >>> kselftest@vger.kernel.org
-> >>> Subject: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine gr=
-ained
-> >>> access control
-> >>
-> >> I assume that leaving the LSM mailing list off of the CC is purely
-> >> accidental. Please, please include us in the next round.
-> >
-> > Honestly it just hadn't occurred to me, but I'm more than happy to CC
-> > it on future revisions.
-> >
-> >>> This series is based on torvalds/master.
-> >>>
-> >>> The series is split up like so:
-> >>> - Patch 1 is a simple fixup which we should take in any case (even by=
- itself).
-> >>> - Patches 2-6 add the feature, configurable selftest support, and doc=
-s.
-> >>>
-> >>> Why not ...?
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>
-> >>> - Why not /proc/[pid]/userfaultfd? The proposed use case for this is =
-for one
-> >>> process to open a userfaultfd which can intercept another process' pa=
-ge
-> >>> faults. This seems to me like exactly what CAP_SYS_PTRACE is for, tho=
-ugh,
-> >>> so I
-> >>> think this use case can simply use a syscall without the powers
-> >>> CAP_SYS_PTRACE
-> >>> grants being "too much".
-> >>>
-> >>> - Why not use a syscall? Access to syscalls is generally controlled b=
-y
-> >>> capabilities. We don't have a capability which is used for userfaultf=
-d access
-> >>> without also granting more / other permissions as well, and adding a =
-new
-> >>> capability was rejected [1].
-> >>>
-> >>> - It's possible a LSM could be used to control access instead. I susp=
-ect
-> >>> adding a brand new one just for this would be rejected,
-> >>
-> >> You won't know if you don't ask.
-> >
-> > Fair enough - I wonder if MM folks (Andrew, Peter, Nadav especially)
-> > would find that approach more palatable than /proc/[pid]/userfaultfd?
-> > Would it make sense from our perspective to propose a userfaultfd- or
-> > MM-specific LSM for controlling access to certain features?
-> >
-> > I remember +Andrea saying Red Hat was also interested in some kind of
-> > access control mechanism like this. Would one or the other approach be
-> > more convenient for you?
->
-> To reiterate my position - I think that /proc/[pid]/userfaultfd is very
-> natural and can be easily extended to support cross-process access of
-> userfaultfd. The necessary access controls are simple in any case. For
-> cross-process access, they are similar to those that are used for other
-> /proc/[pid]/X such as pagemap.
->
-> I have little experience with LSM and I do not know how real deployments =
-use
-> them. If they are easier to deploy and people prefer them over some
-> pseudo-file, I cannot argue against them.
->
->
+> > > Index: linux-2.6/include/linux/wait_bit.h
+> > > ===================================================================
+> > > --- linux-2.6.orig/include/linux/wait_bit.h	2022-08-01 12:27:43.000000000 +0200
+> > > +++ linux-2.6/include/linux/wait_bit.h	2022-08-01 12:27:43.000000000 +0200
+> > > @@ -71,7 +71,7 @@ static inline int
+> > >  wait_on_bit(unsigned long *word, int bit, unsigned mode)
+> > >  {
+> > >  	might_sleep();
+> > > -	if (!test_bit(bit, word))
+> > > +	if (!test_bit_acquire(bit, word))
+> > >  		return 0;
+> > >  	return out_of_line_wait_on_bit(word, bit,
+> > >  				       bit_wait,
+> > 
+> > Yet another approach here would be to leave test_bit as-is and add a call to
+> > smp_acquire__after_ctrl_dep() since that exists already -- I don't have
+> > strong opinions about it, but it saves you having to add another stub to
+> > x86.
+> 
+> It would be the same as my previous patch with smp_rmb() that Linus didn't 
+> like. But I think smp_rmb (or smp_acquire__after_ctrl_dep) would be 
+> correct here.
+> 
+> > Will
+> 
+> Mikulas
+> 
