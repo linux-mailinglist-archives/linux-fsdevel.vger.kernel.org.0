@@ -2,130 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19188586F16
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 18:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E57586F55
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Aug 2022 19:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232156AbiHAQ6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Aug 2022 12:58:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49618 "EHLO
+        id S233089AbiHARNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Aug 2022 13:13:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbiHAQ6C (ORCPT
+        with ESMTP id S232609AbiHARNw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Aug 2022 12:58:02 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 438FB6385;
-        Mon,  1 Aug 2022 09:58:01 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1D9375C018A;
-        Mon,  1 Aug 2022 12:57:58 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 01 Aug 2022 12:57:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1659373078; x=
-        1659459478; bh=PwwN5504JpT9KHcDb60BwHye95H5oaCrlINKkI5OJ8g=; b=t
-        Y2YBXRI24x3/9/oJyx1X66+TpNZnq8AxYeXjM7HBx8Snbbx5l6MGLHuwi81SpUid
-        zdwF1M9/OHobo04lrql6uyEe6tgBOgILqIwnuIhCbBKVogc7uiHGX9PS7it9KMLF
-        OyNs8g8UxmwZmd4iane0xBOOSaFGNsaY//UmLpWfqlh8wXdIe/oAGFTP0KGWaLXK
-        FANVGEiZsyRaMXltMGKSSKVZOnxRw3jxdkWAe2xuGblNBX4W6s7qxJxV9fs+wfsI
-        kBO40oM37cNcvYrzAqnFmrE8NZncTZbqvpsd/6i4BroDb4q5UOLFGBdqHnTRHADp
-        BPs/dqi4kkFENOuVmO+ew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1659373078; x=1659459478; bh=PwwN5504JpT9KHcDb60BwHye95H5
-        oaCrlINKkI5OJ8g=; b=aK+GuoqHJFVPrEhMUVCNorQmB7AXILjO4f8J9rUFnXl5
-        0zZXiWPFvCoWmTxfFYNbKjfai5wkG+MPrnAqYA5zn4qBDho/f202pgWiwqIgQh+3
-        zAkBby4K0thW+CefUEHv/Mp2E9iBvd9x+gFLxxeuNR7WmD6k1opkXjVZ5sJwbQT9
-        fuN0VvX8WwBWw2JMN+yTCa0wofz54YoMujillSw09X/PfIu+XuuYmPussYKLcxNn
-        YYsSY0AigS40cXDs2Sz6m200hTYYREauiRhO76QAGvFxMLwCYFh6DLqTtqDOl+BW
-        bUIRGIOWtdscpzX+WwC4LTgc+b/7Z3bVdrXp9PFQ9Q==
-X-ME-Sender: <xms:FQboYiJHOZeUrWF0WRD-VPcFXDmqGKeXBzNdbnIg2FHi0qpeJxrhTA>
-    <xme:FQboYqLxmTDwAHWcv6r_0YD2QpA5KpOctpTvqdbUyXVmpP_42JufNSnW4BQhCDdtF
-    AciumIHwzv6L-mti5Y>
-X-ME-Received: <xmr:FQboYivGWzXF3lCuL9HxXSvAThXhBLRUB9ZspczBD_33fG897cKp1KK6XwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvddvfedguddtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeflohhs
-    hhcuvfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqne
-    cuggftrfgrthhtvghrnhepleeljeduiefguedtffejledttdehvdefhffhgfdvieelvddu
-    teefkeeuvdelhffhnecuffhomhgrihhnpeeffedrshhonecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhoshhhsehjohhshhhtrhhiphhlvght
-    thdrohhrgh
-X-ME-Proxy: <xmx:FQboYnZupWoLG6ZGtaZir5bAR4yH3-XEafe-3lm6G2rjGqgMCvm-6w>
-    <xmx:FQboYpbQuW43SPld-Tkdpe5dSANM-TnTbn59-Ih56BqUbq44Xj2_sA>
-    <xmx:FQboYjAws_VlQhBBlPF3EUKZ5jsUyvNFU6h7pUUxXDnaCNSye4TLng>
-    <xmx:FgboYoka-rrd0kw93ZNxDURDapg-EwkGTSfW1nFu7WG-U1DJuhdUgw>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Aug 2022 12:57:57 -0400 (EDT)
-Date:   Mon, 1 Aug 2022 09:57:56 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Helge Deller <deller@gmx.de>
-Cc:     linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Dump command line of faulting process to syslog
-Message-ID: <YugGFEjJvIwzifq7@localhost>
-References: <20220801152016.36498-1-deller@gmx.de>
+        Mon, 1 Aug 2022 13:13:52 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E602980B
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Aug 2022 10:13:49 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id p81so8888734iod.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Aug 2022 10:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc;
+        bh=RMpq00zmLmRyLkH3ymS8AD8nFPc9nuPS5SpA8DGRQjc=;
+        b=CzbG8jn3lmpWwZNf2DkfRaHkYPFhpnngD3tqdI3rzFaOFYHZNMm6okjhZb6FbHgpBV
+         MvAiCTK6W4xcrO1x5Yjhl019C5+KjcritcRqSFhQaKoMajPDUHQeWFPDkHYMGeRgY8Vu
+         Vlq+9AkYHWni1BvEapZhFKQ5KeDvskzMF4zzTqigIUCnuDP933nMxj/APjQzuu+RArVP
+         gqfUWjMDhjWL2VnCff9414QnqJgVQzUNvnp9EqGeJ9Iz8m8BDzpuJNlFQ+ROha+Bnafo
+         tluUwY6NGaRCfpXGufNKvA0sFeRiZ78FJK3XduIgR/UnkVscDBe9pPntr4MQx346BtAD
+         SBjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
+        bh=RMpq00zmLmRyLkH3ymS8AD8nFPc9nuPS5SpA8DGRQjc=;
+        b=uUtyxl+7m9vSqwaBMtUlqc6msap+OxJ4zPvxPg+bRX9C4APMSlTQDNQI2ImmbHGKEu
+         oXbzbqbyVSjMDvGXnkHa4wvNQuW5pq5ai0MvD1G5zt5dMSYpZ46ii0Uqc+TQeHx7A2GJ
+         VVxHwrSztlGO7KSZuHmuOZzoKl/YbNSx8IyhL1s7/FbWGLgBffxv9vJ20dqVccTdRMjV
+         2Xr+z8sQoSPD1idM9BkQSJCyodI178ZPf4K51TbpYwion15QHrUJAe/IGYnnzDLSjvL+
+         lvtRzO4OfxRb/Z/q2UaFx92izlx21Om93PNwAum1MTVYfAiLyk8HhJoroxiu5GAuzQtf
+         k0zg==
+X-Gm-Message-State: AJIora+RDxc3HlVkW1YdApBTx/W8IBtqlbra1f2Cfsg0y7QxBsr1rFQr
+        2M7NQOV0ZdGhQ39QwYAoYTBRtIgulMO7D6XrCpfMUw==
+X-Google-Smtp-Source: AGRyM1us0RojN6/riPQbz3AQEf91WYt9XAWKjIH70t+mubW2Sqp7fsmB2PQ5cQkQI2b+gMYBSBcGhDrF0ZlLMZgjF94=
+X-Received: by 2002:a05:6602:2f03:b0:678:9c7c:97a5 with SMTP id
+ q3-20020a0566022f0300b006789c7c97a5mr5833295iow.32.1659374028847; Mon, 01 Aug
+ 2022 10:13:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220801152016.36498-1-deller@gmx.de>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220719195628.3415852-1-axelrasmussen@google.com>
+ <PH7PR11MB6353950F607F7B8F274A3550FD8E9@PH7PR11MB6353.namprd11.prod.outlook.com>
+ <CAJHvVchusMjvhLxYkWpa+iTaHvXYPFHcX7JGP=bW60e_O1jFGA@mail.gmail.com> <7EF50BE4-84EA-4D57-B58C-6697F1B74904@vmware.com>
+In-Reply-To: <7EF50BE4-84EA-4D57-B58C-6697F1B74904@vmware.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Mon, 1 Aug 2022 10:13:12 -0700
+Message-ID: <CAJHvVcghaZjgU6YhoGMehQTDU36S-UL5djG+Bym6Uax=VVoX7g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+To:     Nadav Amit <namit@vmware.com>
+Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 01, 2022 at 05:20:13PM +0200, Helge Deller wrote:
-> This patch series allows the arch-specific kernel fault handlers to dump
-> in addition to the typical info (IP address, fault type, backtrace and so on)
-> the command line of the faulting process.
-> 
-> The motivation for this patch is that it's sometimes quite hard to find out and
-> annoying to not know which program *exactly* faulted when looking at the syslog.
-> 
-> Some examples from the syslog are:
-> 
-> On parisc:
->    do_page_fault() command='cc1' type=15 address=0x00000000 in libc-2.33.so[f6abb000+184000]
->    CPU: 1 PID: 13472 Comm: cc1 Tainted: G            E     5.10.133+ #45
->    Hardware name: 9000/785/C8000
-> 
-> -> We see the "cc1" compiler crashed, but it would be useful to know which file was compiled.
-> 
-> With this patch series, the kernel now prints in addition:
->    cc1[13472] cmdline: /usr/lib/gcc/hppa-linux-gnu/12/cc1 -quiet @/tmp/ccRkFSfY -imultilib . -imultiarch hppa-linux-gnu -D USE_MINIINTERPRETER -D NO_REGS -D _HPUX_SOURCE -D NOSMP -D THREADED_RTS -include /build/ghc/ghc-9.0.2/includes/dist-install/build/ghcversion.h -iquote compiler/GHC/Iface -quiet -dumpdir /tmp/ghc13413_0/ -dumpbase ghc_5.hc -dumpbase-ext .hc -O -Wimplicit -fno-PIC -fwrapv -fno-builtin -fno-strict-aliasing -o /tmp/ghc13413_0/ghc_5.s
-> 
-> -> now we know that cc1 crashed while compiling some haskell code.
+I finished up some other work and got around to writing a v5 today,
+but I ran into a problem with /proc/[pid]/userfaultfd.
 
-This does seem really useful for debugging.
+Files in /proc/[pid]/* are owned by the user/group which started the
+process, and they don't support being chmod'ed.
 
-However, it's also an information disclosure in various ways. The
-arguments of a program are often more sensitive than the name, and logs
-have a tendency to end up in various places, such as bug reports.
+For the userfaultfd device, I think we want the following semantics:
+- For UFFDs created via the device, we want to always allow handling
+kernel mode faults
+- For security, the device should be owned by root:root by default, so
+unprivileged users don't have default access to handle kernel faults
+- But, the system administrator should be able to chown/chmod it, to
+grant access to handling kernel faults for this process more widely.
 
-An example of how this can be an issue:
-- You receive an email or other message with a sensitive link to follow
-- You open the link, which launches `firefox https://...`
-- You continue browsing from that window
-- Firefox crashes (and recovers and restarts, so you don't think
-  anything of it)
-- Later, you report a bug on a different piece of software, and the bug
-  reporting process includes a copy of the kernel log
+It could be made to work like that but I think it would involve at least:
 
-I am *not* saying that we shouldn't do this; it seems quite helpful.
-However, I think we need to arrange to treat this as sensitive
-information, similar to kptr_restrict. (It would also be helpful if
-there was a way to tell `dmesg` "please give me the redacted version of
-the log", and bug reporting software used that by default.)
+- Special casing userfaultfd in proc_pid_make_inode
+- Updating setattr/getattr for /proc/[pid] to meaningfully store and
+then retrieve uid/gid different from the task's, again probably
+special cased for userfautlfd since we don't want this behavior for
+other files
 
-- Josh Triplett
+It seems to me such a change might raise eyebrows among procfs folks.
+Before I spend the time to write this up, does this seem like
+something that would obviously be nack'ed?
+
+On Wed, Jul 20, 2022 at 4:21 PM Nadav Amit <namit@vmware.com> wrote:
+>
+> On Jul 20, 2022, at 4:04 PM, Axel Rasmussen <axelrasmussen@google.com> wr=
+ote:
+>
+> > =E2=9A=A0 External Email
+> >
+> > On Wed, Jul 20, 2022 at 3:16 PM Schaufler, Casey
+> > <casey.schaufler@intel.com> wrote:
+> >>> -----Original Message-----
+> >>> From: Axel Rasmussen <axelrasmussen@google.com>
+> >>> Sent: Tuesday, July 19, 2022 12:56 PM
+> >>> To: Alexander Viro <viro@zeniv.linux.org.uk>; Andrew Morton
+> >>> <akpm@linux-foundation.org>; Dave Hansen
+> >>> <dave.hansen@linux.intel.com>; Dmitry V . Levin <ldv@altlinux.org>; G=
+leb
+> >>> Fotengauer-Malinovskiy <glebfm@altlinux.org>; Hugh Dickins
+> >>> <hughd@google.com>; Jan Kara <jack@suse.cz>; Jonathan Corbet
+> >>> <corbet@lwn.net>; Mel Gorman <mgorman@techsingularity.net>; Mike
+> >>> Kravetz <mike.kravetz@oracle.com>; Mike Rapoport <rppt@kernel.org>;
+> >>> Amit, Nadav <namit@vmware.com>; Peter Xu <peterx@redhat.com>;
+> >>> Shuah Khan <shuah@kernel.org>; Suren Baghdasaryan
+> >>> <surenb@google.com>; Vlastimil Babka <vbabka@suse.cz>; zhangyi
+> >>> <yi.zhang@huawei.com>
+> >>> Cc: Axel Rasmussen <axelrasmussen@google.com>; linux-
+> >>> doc@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+> >>> kernel@vger.kernel.org; linux-mm@kvack.org; linux-
+> >>> kselftest@vger.kernel.org
+> >>> Subject: [PATCH v4 0/5] userfaultfd: add /dev/userfaultfd for fine gr=
+ained
+> >>> access control
+> >>
+> >> I assume that leaving the LSM mailing list off of the CC is purely
+> >> accidental. Please, please include us in the next round.
+> >
+> > Honestly it just hadn't occurred to me, but I'm more than happy to CC
+> > it on future revisions.
+> >
+> >>> This series is based on torvalds/master.
+> >>>
+> >>> The series is split up like so:
+> >>> - Patch 1 is a simple fixup which we should take in any case (even by=
+ itself).
+> >>> - Patches 2-6 add the feature, configurable selftest support, and doc=
+s.
+> >>>
+> >>> Why not ...?
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>
+> >>> - Why not /proc/[pid]/userfaultfd? The proposed use case for this is =
+for one
+> >>> process to open a userfaultfd which can intercept another process' pa=
+ge
+> >>> faults. This seems to me like exactly what CAP_SYS_PTRACE is for, tho=
+ugh,
+> >>> so I
+> >>> think this use case can simply use a syscall without the powers
+> >>> CAP_SYS_PTRACE
+> >>> grants being "too much".
+> >>>
+> >>> - Why not use a syscall? Access to syscalls is generally controlled b=
+y
+> >>> capabilities. We don't have a capability which is used for userfaultf=
+d access
+> >>> without also granting more / other permissions as well, and adding a =
+new
+> >>> capability was rejected [1].
+> >>>
+> >>> - It's possible a LSM could be used to control access instead. I susp=
+ect
+> >>> adding a brand new one just for this would be rejected,
+> >>
+> >> You won't know if you don't ask.
+> >
+> > Fair enough - I wonder if MM folks (Andrew, Peter, Nadav especially)
+> > would find that approach more palatable than /proc/[pid]/userfaultfd?
+> > Would it make sense from our perspective to propose a userfaultfd- or
+> > MM-specific LSM for controlling access to certain features?
+> >
+> > I remember +Andrea saying Red Hat was also interested in some kind of
+> > access control mechanism like this. Would one or the other approach be
+> > more convenient for you?
+>
+> To reiterate my position - I think that /proc/[pid]/userfaultfd is very
+> natural and can be easily extended to support cross-process access of
+> userfaultfd. The necessary access controls are simple in any case. For
+> cross-process access, they are similar to those that are used for other
+> /proc/[pid]/X such as pagemap.
+>
+> I have little experience with LSM and I do not know how real deployments =
+use
+> them. If they are easier to deploy and people prefer them over some
+> pseudo-file, I cannot argue against them.
+>
+>
