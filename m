@@ -2,150 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE8A9588290
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 21:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2720B5882A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 21:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbiHBTg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Aug 2022 15:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58016 "EHLO
+        id S232116AbiHBThE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Aug 2022 15:37:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232210AbiHBTg0 (ORCPT
+        with ESMTP id S229869AbiHBTgy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Aug 2022 15:36:26 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C2E1903B;
-        Tue,  2 Aug 2022 12:36:25 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D192A3874B;
-        Tue,  2 Aug 2022 19:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1659468983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wKwulhIx515tBs9KarM3vkMSrD1Pc01HY8nx9DrB6Ko=;
-        b=lIxgGmgiJjHkY4CpdyLYOyrlEZr6WXWjSxUXwr7T3l6G3upE9bl6mkc06qVICbyJV25D5j
-        NN6IMBnVJ2ikFzF6e3VxiEeAurK54PYq8864I4xh6dLh4NxwezB7QvuJh7TqP2aaMbzwUo
-        7jVXeZ1t2Lcu0SuoH5FUysm4N4xDEv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1659468983;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wKwulhIx515tBs9KarM3vkMSrD1Pc01HY8nx9DrB6Ko=;
-        b=NQfgJ+ZFnqEBYm9kVtWA/ahzEUqSBoH97VXJ/OSSWF6JgIYf9eKq87vwjCYHFcq5dZwe0B
-        VtNvgOR948PO1lAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4438713A8E;
-        Tue,  2 Aug 2022 19:36:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qliOAbd86WItbAAAMHmgww
-        (envelope-from <ematsumiya@suse.de>); Tue, 02 Aug 2022 19:36:23 +0000
-Date:   Tue, 2 Aug 2022 16:36:20 -0300
-From:   Enzo Matsumiya <ematsumiya@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-cifs@vger.kernel.org, smfrench@gmail.com, pc@cjr.nz,
-        ronniesahlberg@gmail.com, nspmangalore@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tom@talpey.com, samba-technical@lists.samba.org,
-        pshilovsky@samba.org
-Subject: Re: [RFC PATCH 0/3] Rename "cifs" module to "smbfs"
-Message-ID: <20220802193620.dyvt5qiszm2pobsr@cyberdelia>
-References: <20220801190933.27197-1-ematsumiya@suse.de>
- <c05f4fc668fa97e737758ab03030d7170c0edbd9.camel@kernel.org>
+        Tue, 2 Aug 2022 15:36:54 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FFE52FC5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Aug 2022 12:36:51 -0700 (PDT)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 272I2kNQ009977
+        for <linux-fsdevel@vger.kernel.org>; Tue, 2 Aug 2022 12:36:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=X5KiHuWoXgBIuVrSx8XOIR6Xe13KImAdENsTHExt4b8=;
+ b=dZNeS2rZxfKFzjoiJ5QzQy+5TfRcsljXZxq5nl2LF4Twy+iUSMPEFixcPu4xPPkvctJs
+ vbm4QxskFmlHXhaS2LsrW4Nhyn9Shk0Cf91VY+CZds6ti4CMoDYSe4OfC/hbT8LXIO/B
+ 5DuLW7dvkFQGsWildKLdh6kUaBgyFaGz1jw= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hq2bpurtm-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Aug 2022 12:36:51 -0700
+Received: from twshared6324.05.ash7.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Tue, 2 Aug 2022 12:36:49 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id BF99F6E59EF7; Tue,  2 Aug 2022 12:36:37 -0700 (PDT)
+From:   Keith Busch <kbusch@fb.com>
+To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv2 0/7] dma mapping optimisations
+Date:   Tue, 2 Aug 2022 12:36:26 -0700
+Message-ID: <20220802193633.289796-1-kbusch@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c05f4fc668fa97e737758ab03030d7170c0edbd9.camel@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Wdttz81AdsUfWhYOsG_CEzVC8XYYPXhm
+X-Proofpoint-GUID: Wdttz81AdsUfWhYOsG_CEzVC8XYYPXhm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-02_14,2022-08-02_01,2022-06-22_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/02, Jeff Layton wrote:
->On Mon, 2022-08-01 at 16:09 -0300, Enzo Matsumiya wrote:
->> Hi,
->>
->> As part of the ongoing effort to remove the "cifs" nomenclature from the
->> Linux SMB client, I'm proposing the rename of the module to "smbfs".
->>
->> As it's widely known, CIFS is associated to SMB1.0, which, in turn, is
->> associated with the security issues it presented in the past. Using
->> "SMBFS" makes clear what's the protocol in use for outsiders, but also
->> unties it from any particular protocol version. It also fits in the
->> already existing "fs/smbfs_common" and "fs/ksmbd" naming scheme.
->>
->> This short patch series only changes directory names and includes/ifdefs=
- in
->> headers and source code, and updates docs to reflect the rename. Other
->> than that, no source code/functionality is modified (WIP though).
->>
->> Patch 1/3: effectively changes the module name to "smbfs" and create a
->> 	   "cifs" module alias to maintain compatibility (a warning
->> 	   should be added to indicate the complete removal/isolation of
->> 	   CIFS/SMB1.0 code).
->> Patch 2/3: rename the source-code directory to align with the new module
->> 	   name
->> Patch 3/3: update documentation references to "fs/cifs" or "cifs.ko" or
->> 	   "cifs module" to use the new name
->>
->> Enzo Matsumiya (3):
->>   cifs: change module name to "smbfs.ko"
->>   smbfs: rename directory "fs/cifs" -> "fs/smbfs"
->>   smbfs: update doc references
->> ...
->
->Why do this? My inclination is to say NAK here.
->
->This seems like a lot of change for not a lot of benefit. Renaming the
->directory like this pretty much guarantees that backporting patches
->after this change to kernels that existed before it will be very
->difficult.
+From: Keith Busch <kbusch@kernel.org>
 
-Hi Jeff, yes that's a big concern that I've discussed internally with my
-team as well, since we'll also suffer from those future backports.
+Changes since v1:
 
-But, as stated in the commit message, and from what I gathered from
-Steve, it has been an ongoing wish to have the "cifs" name no longer
-associated with a module handling SMB2.0 and SMB3.0, as the name brings
-back old bad memories for several users.
+  Mapping/unmapping goes through file ops instead of block device ops.
+  This abstracts io_uring from knowing about specific block devices. For
+  this series, the only "file system" implementing the ops is the raw
+  block device, but should be easy enough to add more filesystems if
+  needed.
 
-There really is no functional benefit for this change, and I have no
-argument against that.
+  Mapping register requires io_uring fixed files. This ties the
+  registered buffer's lifetime to no more than the file it was
+  registered with.
 
->Also, bear in mind that there used to be an smbfs in the kernel that
->predated cifs.ko. That was removed ~2010 though, which is long enough
->ago that it shouldn't produce conflicts in currently shipping releases.=A0
+Summary:
 
-Yes, I was aware of this before sending v1, and it got raised again in
-https://lore.kernel.org/all/20220802135201.4vm36drd5mp57nvv@cyberdelia/
+A typical journey a user address takes for a read or write to a block
+device undergoes various represenations for every IO. Each consumes
+memory and CPU cycles. When the backing storage is NVMe, the sequence
+looks something like the following:
 
-I have no experience on what kind of issues/problems could arise of
-that, aside from the git commit history being weird. If you ever seen
-any problems with that happening, please do share.
+  __user void *
+  struct iov_iter
+  struct pages[]
+  struct bio_vec[]
+  struct scatterlist[]
+  __le64[]
 
->Jeff Layton <jlayton@kernel.org>
+Applications will often use the same buffer for many IO, though, so
+these potentially costly per-IO transformations to reach the exact same
+hardware descriptor can be skipped.
 
-I sent a v2 with a new "fs/smb" directory name, but kept "smbfs" as the
-module name.
+The io_uring interface already provides a way for users to register
+buffers to get to the 'struct bio_vec[]'. That still leaves the
+scatterlist needed for the repeated dma_map_sg(), then transform to
+nvme's PRP list format.
 
-Sorry I didn't reply to you before that, I got confused as the thread
-replies all went to different folders in my mailbox.
+This series takes the registered buffers a step further. A block driver
+can implement a new .dma_map() callback to complete the representation
+to the hardware's DMA mapped address, and return a cookie so a user can
+reference it later for any given IO. When used, the block stack can skip
+significant amounts of code, improving CPU utilization, and, if not
+bandwidth limited, IOPs.
 
+The implementation is currently limited to mapping a registered buffer
+to a single file.
 
-Cheers,
+Keith Busch (7):
+  blk-mq: add ops to dma map bvec
+  file: add ops to dma map bvec
+  iov_iter: introduce type for preregistered dma tags
+  block: add dma tag bio type
+  io_uring: introduce file slot release helper
+  io_uring: add support for dma pre-mapping
+  nvme-pci: implement dma_map support
 
-Enzo
+ block/bdev.c                   |  20 +++
+ block/bio.c                    |  25 ++-
+ block/blk-merge.c              |  19 +++
+ block/fops.c                   |  20 +++
+ drivers/nvme/host/pci.c        | 302 +++++++++++++++++++++++++++++++--
+ fs/file.c                      |  15 ++
+ include/linux/bio.h            |  21 ++-
+ include/linux/blk-mq.h         |  24 +++
+ include/linux/blk_types.h      |   6 +-
+ include/linux/blkdev.h         |  16 ++
+ include/linux/fs.h             |  20 +++
+ include/linux/io_uring_types.h |   2 +
+ include/linux/uio.h            |   9 +
+ include/uapi/linux/io_uring.h  |  12 ++
+ io_uring/filetable.c           |  34 ++--
+ io_uring/filetable.h           |  10 +-
+ io_uring/io_uring.c            | 137 +++++++++++++++
+ io_uring/net.c                 |   2 +-
+ io_uring/rsrc.c                |  26 +--
+ io_uring/rsrc.h                |  10 +-
+ io_uring/rw.c                  |   2 +-
+ lib/iov_iter.c                 |  24 ++-
+ 22 files changed, 704 insertions(+), 52 deletions(-)
+
+--=20
+2.30.2
+
