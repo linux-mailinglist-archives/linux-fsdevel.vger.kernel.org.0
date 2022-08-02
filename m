@@ -2,134 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67DD2587BAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 13:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9CF587BDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 13:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236555AbiHBLi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Aug 2022 07:38:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37834 "EHLO
+        id S233950AbiHBL6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Aug 2022 07:58:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236526AbiHBLi0 (ORCPT
+        with ESMTP id S231208AbiHBL6R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Aug 2022 07:38:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0A6C14AD76
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Aug 2022 04:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659440302;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aZR8bP/6vfFe2ZtFsHhxNrpc5QQ5iUzaeMIrD3s/QxI=;
-        b=QJaryW1hYusdqQVJDKC8V5f9lcgW/uTK1jUmvl+/QmSR+MD3H9b6AYreOI+OLR6b4P2tVz
-        DmSDiApgkeuaTtZx1zWxyaujMDQnrELSxXX6VFWFXtnx6oYgl0M1R8la0IRS/d4/KW6Fk7
-        iaiKfC2YHfkYkUT0gfExeud935hPEmU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-43-KVXa-6jDOh-4-IuGat-U4A-1; Tue, 02 Aug 2022 07:38:19 -0400
-X-MC-Unique: KVXa-6jDOh-4-IuGat-U4A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 2 Aug 2022 07:58:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D454AD7A;
+        Tue,  2 Aug 2022 04:58:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A08283C01DFF;
-        Tue,  2 Aug 2022 11:38:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7870818EA8;
-        Tue,  2 Aug 2022 11:38:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 272BcI3l009514;
-        Tue, 2 Aug 2022 07:38:18 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 272BcHWP009510;
-        Tue, 2 Aug 2022 07:38:17 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 2 Aug 2022 07:38:17 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Will Deacon <will@kernel.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] introduce test_bit_acquire and use it in
- wait_on_bit
-In-Reply-To: <20220802084015.GB26962@willie-the-truck>
-Message-ID: <alpine.LRH.2.02.2208020726220.6971@file01.intranet.prod.int.rdu2.redhat.com>
-References: <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com> <alpine.LRH.2.02.2207310920390.6506@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com> <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com> <alpine.LRH.2.02.2208010640260.22006@file01.intranet.prod.int.rdu2.redhat.com> <20220801155421.GB26280@willie-the-truck> <alpine.LRH.2.02.2208011206430.31960@file01.intranet.prod.int.rdu2.redhat.com>
- <20220802084015.GB26962@willie-the-truck>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 06746B81EF5;
+        Tue,  2 Aug 2022 11:58:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38397C433D6;
+        Tue,  2 Aug 2022 11:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659441493;
+        bh=aPuGftVIsDG7Y7CdPuQDLSg2l7bYocqX44l5KaPCV+o=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nN7B7dn6pf45P3zOzbiq/D/QsHIPhcIQJxRRRdP80mViCmLjfmn1Fr733ERmKNFY/
+         7EyBNhoEuUPE9zwfw+nAtWUzDeZrN19Hd9Y4tmTaqpPrmEIZabnHwqYDcHGKcQxl0j
+         I/m+3+bHkgApXESFafCUKfUoRxhK4HPAqPfTzebOnRYqCzOStVuAJrjCYIs0g4KQwE
+         cExhU9aovDx36rWpC/nlYkGxIgwcdRa0625TpIPcxqqHqvTf/qxWdup8ZYpvTxA8Zu
+         jUZTdXhAXSo+q1G75f1C8zgL0shOCpNETKSji4liF2tUg41uYn26LsIyfvJfaQDI/j
+         phixbeomx1jJg==
+Message-ID: <ec2d4a30372548ad0e7fa2c72c10e527f95aa6f2.camel@kernel.org>
+Subject: Re: [PATCH 1/2] ext4: don't increase iversion counter for ea_inodes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Lukas Czerner <lczerner@redhat.com>, linux-ext4@vger.kernel.org
+Cc:     tytso@mit.edu, linux-fsdevel@vger.kernel.org
+Date:   Tue, 02 Aug 2022 07:58:11 -0400
+In-Reply-To: <20220728133914.49890-1-lczerner@redhat.com>
+References: <20220728133914.49890-1-lczerner@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 2022-07-28 at 15:39 +0200, Lukas Czerner wrote:
+> ea_inodes are using i_version for storing part of the reference count so
+> we really need to leave it alone.
+>=20
+> The problem can be reproduced by xfstest ext4/026 when iversion is
+> enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
+> inodes in ext4_mark_iloc_dirty().
+>=20
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> ---
+>  fs/ext4/inode.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 84c0eb55071d..b76554124224 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5717,7 +5717,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
+>  	}
+>  	ext4_fc_track_inode(handle, inode);
+> =20
+> -	if (IS_I_VERSION(inode))
+> +	/*
+> +	 * ea_inodes are using i_version for storing reference count, don't
+> +	 * mess with it
+> +	 */
+> +	if (IS_I_VERSION(inode) &&
+> +	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
+>  		inode_inc_iversion(inode);
+> =20
+>  	/* the do_update_inode consumes one bh->b_count */
 
-
-On Tue, 2 Aug 2022, Will Deacon wrote:
-
-> On Mon, Aug 01, 2022 at 12:12:47PM -0400, Mikulas Patocka wrote:
-> > On Mon, 1 Aug 2022, Will Deacon wrote:
-> > > On Mon, Aug 01, 2022 at 06:42:15AM -0400, Mikulas Patocka wrote:
-> > > 
-> > > > Index: linux-2.6/arch/x86/include/asm/bitops.h
-> > > > ===================================================================
-> > > > --- linux-2.6.orig/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
-> > > > +++ linux-2.6/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
-> > > > @@ -203,8 +203,10 @@ arch_test_and_change_bit(long nr, volati
-> > > >  
-> > > >  static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-> > > >  {
-> > > > -	return ((1UL << (nr & (BITS_PER_LONG-1))) &
-> > > > +	bool r = ((1UL << (nr & (BITS_PER_LONG-1))) &
-> > > >  		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
-> > > > +	barrier();
-> > > > +	return r;
-> > > 
-> > > Hmm, I find it a bit weird to have a barrier() here given that 'addr' is
-> > > volatile and we don't need a barrier() like this in the definition of
-> > > READ_ONCE(), for example.
-> > 
-> > gcc doesn't reorder two volatile accesses, but it can reorder non-volatile
-> > accesses around volatile accesses.
-> > 
-> > The purpose of the compiler barrier is to make sure that the non-volatile 
-> > accesses that follow test_bit are not reordered by the compiler before the 
-> > volatile access to addr.
-> 
-> If we need these accesses to be ordered reliably, then we need a CPU barrier
-> and that will additionally prevent the compiler reordering. So I still don't
-> think we need the barrier() here.
-
-This is x86-specific code. x86 has strong memory ordering, so we only care 
-about compiler reordering.
-
-We could use smp_rmb() (or smp_load_acquire()) instead of barrier() here, 
-but smp_rmb() and smp_load_acquire() on x86 is identical to barrier() 
-anyway.
-
-Mikulas
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
