@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E99858792C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 10:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 511CD587967
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Aug 2022 10:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236413AbiHBIk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Aug 2022 04:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
+        id S236146AbiHBIzH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Aug 2022 04:55:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233888AbiHBIk0 (ORCPT
+        with ESMTP id S234821AbiHBIzG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Aug 2022 04:40:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B3AFDF2E;
-        Tue,  2 Aug 2022 01:40:24 -0700 (PDT)
+        Tue, 2 Aug 2022 04:55:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4653642ADC;
+        Tue,  2 Aug 2022 01:55:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 643AC60B2F;
-        Tue,  2 Aug 2022 08:40:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60EFDC433C1;
-        Tue,  2 Aug 2022 08:40:20 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F24ADB819ED;
+        Tue,  2 Aug 2022 08:55:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B243C433C1;
+        Tue,  2 Aug 2022 08:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659429623;
-        bh=rbPayMUNRP+UW1L0745xa3YzYtRl5oydAMq3hSkE6vw=;
+        s=k20201202; t=1659430502;
+        bh=v15SE+bUAYu+VHGxejCWUdqp30Em57EgFuZNbFuNzTc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FiDO17vWUmS1Z8jtkPzKkyvSaZpJ7ba8MmIocSTM9w2aklYKg5e7Wtw3u7w/f6+VK
-         LIziq0FVkDYgIjPpk94igb3yFJ0bXIrT7HfJwt70GEfDcfHDcHotw+CLO9ersYdL8L
-         mMQzlGBgQUFgV6rO4cfbPvjVWjR6d8wmQ0c4jrTSQl8kjn2SFxRe/DXrJGyGwlOZE8
-         RuTcY4uuQiERasm7s6MphVD+hXI84He3HRqVjv4qHS3+BKkG0b5+kieiq5/8BRECqW
-         x6os6UN2aF3IM5cfZihjQekTnjpK9VulnTmFrbdhCvGVnyEMAp5hUKPaYqqyP8gx1+
-         KyNA2GQp+KCRw==
-Date:   Tue, 2 Aug 2022 09:40:16 +0100
+        b=lbqFy2fE3Hh6GUPcBuRDtvA42awecTErYS9b1Hsb9KTF/K59i5ujZxqkV0Umlmo9u
+         UP/RyYbwe/IKDhdjQCqUDCxefMu6VfEry+/VRsPztmsyBNyeAZmuOy21xxh4dR13Zo
+         /Cr2iCHUecG9MSfjHQaSRAwT3Fzxvgl6/W2cteBcXPB+ABgRQWFwiIJ/rXc9vnKy6a
+         G20Cvw8Tlsr8wQrzWFfQldfN8qmG7x2sjBP9GMZysrv7K8p89F8JrfCVYwUg4Af/fm
+         UdOR78bEMaQyZwOGK/3T81a4FdefnqNZ3EEevH4hrM2ZiPRxIsYVWhZ1KECk0gmSnb
+         oJ10SWnBG+yvg==
+Date:   Tue, 2 Aug 2022 09:54:55 +0100
 From:   Will Deacon <will@kernel.org>
-To:     Mikulas Patocka <mpatocka@redhat.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
         Ard Biesheuvel <ardb@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Alan Stern <stern@rowland.harvard.edu>,
@@ -53,23 +53,20 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] introduce test_bit_acquire and use it in
- wait_on_bit
-Message-ID: <20220802084015.GB26962@willie-the-truck>
-References: <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com>
+Subject: Re: [PATCH v2] make buffer_locked provide an acquire semantics
+Message-ID: <20220802085455.GC26962@willie-the-truck>
+References: <alpine.LRH.2.02.2207310703170.14394@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAMj1kXFYRNrP2k8yppgfdKg+CxWeYfHTbzLBuyBqJ9UVAR_vaQ@mail.gmail.com>
  <alpine.LRH.2.02.2207310920390.6506@file01.intranet.prod.int.rdu2.redhat.com>
  <alpine.LRH.2.02.2207311104020.16444@file01.intranet.prod.int.rdu2.redhat.com>
  <CAHk-=wiC_oidYZeMD7p0E-=TAuLgrNQ86-sB99=hRqFM8fVLDQ@mail.gmail.com>
- <alpine.LRH.2.02.2207311542280.21273@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2207311639360.21350@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wjA8HBrVqAqAetUvwNr=hcvhfnO7oMrOAd4V8bbSqokNA@mail.gmail.com>
- <alpine.LRH.2.02.2208010640260.22006@file01.intranet.prod.int.rdu2.redhat.com>
- <20220801155421.GB26280@willie-the-truck>
- <alpine.LRH.2.02.2208011206430.31960@file01.intranet.prod.int.rdu2.redhat.com>
+ <20220731173011.GX2860372@paulmck-ThinkPad-P17-Gen-1>
+ <20220801154108.GA26280@willie-the-truck>
+ <20220801192035.GA2860372@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.2208011206430.31960@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <20220801192035.GA2860372@paulmck-ThinkPad-P17-Gen-1>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -80,65 +77,145 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 01, 2022 at 12:12:47PM -0400, Mikulas Patocka wrote:
-> On Mon, 1 Aug 2022, Will Deacon wrote:
-> > On Mon, Aug 01, 2022 at 06:42:15AM -0400, Mikulas Patocka wrote:
-> > 
-> > > Index: linux-2.6/arch/x86/include/asm/bitops.h
-> > > ===================================================================
-> > > --- linux-2.6.orig/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
-> > > +++ linux-2.6/arch/x86/include/asm/bitops.h	2022-08-01 12:27:43.000000000 +0200
-> > > @@ -203,8 +203,10 @@ arch_test_and_change_bit(long nr, volati
-> > >  
-> > >  static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-> > >  {
-> > > -	return ((1UL << (nr & (BITS_PER_LONG-1))) &
-> > > +	bool r = ((1UL << (nr & (BITS_PER_LONG-1))) &
-> > >  		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
-> > > +	barrier();
-> > > +	return r;
-> > 
-> > Hmm, I find it a bit weird to have a barrier() here given that 'addr' is
-> > volatile and we don't need a barrier() like this in the definition of
-> > READ_ONCE(), for example.
+On Mon, Aug 01, 2022 at 12:20:35PM -0700, Paul E. McKenney wrote:
+> On Mon, Aug 01, 2022 at 04:41:09PM +0100, Will Deacon wrote:
+> > Apologies for the slow response here; believe it or not, I was attending
+> > a workshop about memory ordering.
 > 
-> gcc doesn't reorder two volatile accesses, but it can reorder non-volatile
-> accesses around volatile accesses.
-> 
-> The purpose of the compiler barrier is to make sure that the non-volatile 
-> accesses that follow test_bit are not reordered by the compiler before the 
-> volatile access to addr.
+> Nice!!!  Anything that I can/should know from that gathering?  ;-)
 
-If we need these accesses to be ordered reliably, then we need a CPU barrier
-and that will additionally prevent the compiler reordering. So I still don't
-think we need the barrier() here.
+Oh come off it, you know this stuff already ;)
 
-> > > Index: linux-2.6/include/linux/wait_bit.h
-> > > ===================================================================
-> > > --- linux-2.6.orig/include/linux/wait_bit.h	2022-08-01 12:27:43.000000000 +0200
-> > > +++ linux-2.6/include/linux/wait_bit.h	2022-08-01 12:27:43.000000000 +0200
-> > > @@ -71,7 +71,7 @@ static inline int
-> > >  wait_on_bit(unsigned long *word, int bit, unsigned mode)
-> > >  {
-> > >  	might_sleep();
-> > > -	if (!test_bit(bit, word))
-> > > +	if (!test_bit_acquire(bit, word))
-> > >  		return 0;
-> > >  	return out_of_line_wait_on_bit(word, bit,
-> > >  				       bit_wait,
+> > On Sun, Jul 31, 2022 at 10:30:11AM -0700, Paul E. McKenney wrote:
+> > > On Sun, Jul 31, 2022 at 09:51:47AM -0700, Linus Torvalds wrote:
+> > > > Even alpha is specified to be locally ordered wrt *one* memory
+> > > > location, including for reads (See table 5-1: "Processor issue order",
+> > > > and also 5.6.2.2: "Litmus test 2"). So if a previous read has seen a
+> > > > new value, a subsequent read is not allowed to see an older one - even
+> > > > without a memory barrier.
+> > > > 
+> > > > Will, Paul? Maybe that's only for overlapping loads/stores, not for
+> > > > loads/loads. Because maybe alpha for once isn't the weakest possible
+> > > > ordering.
+> > > 
+> > > The "bad boy" in this case is Itanium, which can do some VLIW reordering
+> > > of accesses.  Or could, I am not sure that newer Itanium hardware
+> > > does this.  But this is why Itanium compilers made volatile loads use
+> > > the ld,acq instruction.
+> > > 
+> > > Which means that aligned same-sized marked accesses to a single location
+> > > really do execute consistently with some global ordering, even on Itanium.
 > > 
-> > Yet another approach here would be to leave test_bit as-is and add a call to
-> > smp_acquire__after_ctrl_dep() since that exists already -- I don't have
-> > strong opinions about it, but it saves you having to add another stub to
-> > x86.
+> > Although this is true, there's a really subtle issue which crops up if you
+> > try to compose this read-after-read ordering with dependencies in the case
+> > where the two reads read the same value (which is encapsulated by the
+> > unusual RSW litmus test that I've tried to convert to C below):
 > 
-> It would be the same as my previous patch with smp_rmb() that Linus didn't 
-> like. But I think smp_rmb (or smp_acquire__after_ctrl_dep) would be 
-> correct here.
+> RSW from the infamous test6.pdf, correct?
 
-Right, I saw Linus' objection to smp_rmb() and I'm not sure where
-smp_acquire__after_ctrl_dep() fits in with his line of reasoning. On the one
-hand, it's talking about acquire ordering, but on the other, it's ugly as
-sin :)
+That's the badger. I've no doubt that you're aware of it already, but I
+thought it was a useful exercise to transcribe it to C and have it on the
+mailing list for folks to look at.
+
+> > /* Global definitions; assume everything zero-initialised */
+> > struct foo {
+> > 	int *x;
+> > };
+> > 
+> > int x;
+> > struct foo foo;
+> > struct foo *ptr;
+> > 
+> > 
+> > /* CPU 0 */
+> > WRITE_ONCE(x, 1);
+> 
+> Your x is RSW's z?
+
+Yes.
+
+> > WRITE_ONCE(foo.x, &x);
+> 
+> And your foo.x is RSW's x?  If so, the above WRITE_ONCE() could happen at
+> compile time, correct?  Or in the initialization clause of a litmus test?
+
+Yes, although I think it's a tiny bit more like real code to have it done
+here, although it means that the "surprising" outcome relies on this being
+reordered before the store to x.
+
+> > /*
+> >  * Release ordering to ensure that somebody following a non-NULL ptr will
+> >  * see a fully-initialised 'foo'. smp_[w]mb() would work as well.
+> >  */
+> > smp_store_release(&ptr, &foo);
+> 
+> Your ptr is RSW's y, correct?
+
+Yes.
+
+> > /* CPU 1 */
+> > int *xp1, *xp2, val;
+> > struct foo *foop;
+> > 
+> > /* Load the global pointer and check that it's not NULL. */
+> > foop = READ_ONCE(ptr);
+> > if (!foop)
+> > 	return;
+> 
+> A litmus tests can do this via the filter clause.
+
+Indeed, but I was trying to make this look like C code for non-litmus
+speakers!
+
+> > /*
+> >  * Load 'foo.x' via the pointer we just loaded. This is ordered after the
+> >  * previous READ_ONCE() because of the address dependency.
+> >  */
+> > xp1 = READ_ONCE(foop->x);
+> > 
+> > /*
+> >  * Load 'foo.x' directly via the global 'foo'.
+> >  * _This is loading the same address as the previous READ_ONCE() and
+> >  *  therefore cannot return a stale (NULL) value!_
+> >  */
+> > xp2 = READ_ONCE(foo.x);
+> 
+> OK, same location, but RSW calls only for po, not addr from the initial
+> read to this read, got it.  (My first attempt left out this nuance,
+> in case you were wondering.)
+
+Right, there is only po from the initial read to this read. If there was an
+address dependency, then we'd have a chain of address dependencies from the
+first read to the last read on this CPU and the result (of x == 0) would be
+forbidden.
+
+> > /*
+> >  * Load 'x' via the pointer we just loaded.
+> >  * _We may see zero here!_
+> >  */
+> > val = READ_ONCE(*xp2);
+> 
+> And herd7/LKMM agree with this, at least assuming I got the litmus
+> test right.  (I used RSW's variables as a cross-check.)
+
+That's promising, but see below...
+
+> C rsw
+> 
+> {
+> 	a=0;
+> 	x=z;
+> 	y=a;
+> 	z=0;
+> }
+> 
+> P0(int *x, int **y, int *z)
+> {
+> 	WRITE_ONCE(*z, 1);
+> 	WRITE_ONCE(*y, x);
+> }
+
+Ah wait, you need a barrier between these two writes, don't you? I used
+an smp_store_release() but smp[w]_mb() should do too.
 
 Will
