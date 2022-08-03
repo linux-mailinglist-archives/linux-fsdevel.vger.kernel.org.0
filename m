@@ -2,86 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE925891EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 19:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61056589244
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 20:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238170AbiHCR5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Aug 2022 13:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32930 "EHLO
+        id S238107AbiHCS3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Aug 2022 14:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237807AbiHCR5O (ORCPT
+        with ESMTP id S236751AbiHCS3F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Aug 2022 13:57:14 -0400
-X-Greylist: delayed 416 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 03 Aug 2022 10:57:12 PDT
-Received: from mx.cjr.nz (mx.cjr.nz [51.158.111.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD965A16B;
-        Wed,  3 Aug 2022 10:57:11 -0700 (PDT)
-Received: from authenticated-user (mx.cjr.nz [51.158.111.142])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: pc)
-        by mx.cjr.nz (Postfix) with ESMTPSA id D4A4B7FD17;
-        Wed,  3 Aug 2022 17:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjr.nz; s=dkim;
-        t=1659549012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MA+gnPofh7m0h90TueToyzo3t+yzml63JRNV5q5y+mM=;
-        b=H8pbMXoR4BHlmgxonNr793NznJqZ9uF2fbyp4ntsh0kwo/o82AcslpT6B9H2AbXRXmPs5P
-        TG+PG3ohHvY+M1ZIWTOTJ4yFSDVgfiQLJ4M3iDmlOIPxjJrxkxFP1uR4/qPb5vbYOOdFG2
-        IMba8Ecuw1yIW4+GtisxxRPoTxdqgZvLqNlkl6K48rNPkPrF4MuC2T+kS2WILNKkPW0IfJ
-        Lv7xgBOUBm3DRAsMeDs2PvCDCWfhyxxdjLdIxPFYeuEDGAnsPN4qVsmgm/kOyodA9DQiZW
-        fkznHdHsqsrAbxXVOoYvgkyY/aAxhLOItY6Nyhde6silCD1nzBTlotJZv/fhSQ==
-From:   Paulo Alcantara <pc@cjr.nz>
-To:     Enzo Matsumiya <ematsumiya@suse.de>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     linux-cifs@vger.kernel.org, smfrench@gmail.com,
-        ronniesahlberg@gmail.com, nspmangalore@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tom@talpey.com, samba-technical@lists.samba.org,
-        pshilovsky@samba.org
-Subject: Re: [RFC PATCH 0/3] Rename "cifs" module to "smbfs"
-In-Reply-To: <20220803144519.rn6ybbroedgmuaie@cyberdelia>
-References: <20220801190933.27197-1-ematsumiya@suse.de>
- <c05f4fc668fa97e737758ab03030d7170c0edbd9.camel@kernel.org>
- <20220802193620.dyvt5qiszm2pobsr@cyberdelia>
- <6f3479265b446d180d71832fd0c12650b908ebe2.camel@kernel.org>
- <20220803144519.rn6ybbroedgmuaie@cyberdelia>
-Date:   Wed, 03 Aug 2022 14:50:17 -0300
-Message-ID: <87fsidnrmu.fsf@cjr.nz>
+        Wed, 3 Aug 2022 14:29:05 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4902A3DF17;
+        Wed,  3 Aug 2022 11:29:04 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id n185so9104607wmn.4;
+        Wed, 03 Aug 2022 11:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJmOeTx06Lwu2fiuMzcG5dIKwqxwvQUWSEnoeJ++UWc=;
+        b=JmYucQwk2UfoYXlb90FNHzTAHQvr9D2+kHxYT4XYngWqkCCo6RtGwUz21B785dhdnX
+         HkOhgATfzaOWyr+haRcQpS3WeyVQuREVxWKzs6tbeX1P0XFo7iT1knUcUPeFeZXhxeIa
+         dzjREPw6h/c4pQ8yu0R+vWm89jUE/h3QPVOFLzIzas+nhl+SzRRSRnhZq1Cqk9XUYXFK
+         u1KWIqJ/t2fHBBHO07LINKBod4uH1YWiM2YxtS02l2hJb+lI69QBW9hbdDo/Pr1ZTrdK
+         NKSg97XHPHVoSi7xj00wGu4sDNgaAFVS7KhVqm8IlwlM/paEm1YO3bDQjgXF3PgtecRl
+         nmEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJmOeTx06Lwu2fiuMzcG5dIKwqxwvQUWSEnoeJ++UWc=;
+        b=zCseoWTXrhpQjdDEv8JDVfO7Q+vFwpWV6F+UbKggGBTKv3St8/sFRzqPBNnFPfM92i
+         SXOvKovT3MSiEp0YaHRaNBhX/S0f3NJGkcv5thNDguj2mMDVJjGf4KGOxXuqfHCWE2ki
+         PWtDJFmu1obF/UPwOjUkqLwoF935gY73Di3wB71RAP/qTBxWpayTWIrYE9L00wEhOiEx
+         VMO15Hu7g+lgcqyI28i9KWQrxO7j6Zar/fzYN/pcS5T5bgCuMNgS1igJJ3R47h6s/cWj
+         V0KNnET50s3oI1gHAKspVjQpakmmcelthl50E17pUfVhNyvkev3n/U/6QwgbTTGC+k/I
+         4Qyg==
+X-Gm-Message-State: ACgBeo300MTyEfuFiTckbcDeddAQ/QigUX3frL7Yl6MAH5ffSLPjrLLq
+        cniuMZhSGCTa/B1udljNzKs=
+X-Google-Smtp-Source: AA6agR5h2y2OSTJgWl3pVSJ+3Bg46IOFmOdhF2GtED5TKoijJMNG+N/aw/qjBuuNyHTQX2nQXHDtQA==
+X-Received: by 2002:a7b:ca48:0:b0:3a3:365d:1089 with SMTP id m8-20020a7bca48000000b003a3365d1089mr3853699wml.153.1659551342790;
+        Wed, 03 Aug 2022 11:29:02 -0700 (PDT)
+Received: from localhost.localdomain (host-79-27-108-198.retail.telecomitalia.it. [79.27.108.198])
+        by smtp.gmail.com with ESMTPSA id m13-20020a05600c4f4d00b003a3200bc788sm3491904wmq.33.2022.08.03.11.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Aug 2022 11:29:01 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v2] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Wed,  3 Aug 2022 20:28:56 +0200
+Message-Id: <20220803182856.28246-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enzo Matsumiya <ematsumiya@suse.de> writes:
+The use of kmap() and kmap_atomic() are being deprecated in favor of
+kmap_local_page().
 
-> A note on backports: I myself (and Paulo) do the backports for our SLE
-> products, sometimes down to SLE11-SP4 (based on kernel 3.0) and I
-> could not see what other issues could appear given if we backport this
-> rename to released products.
->
-> Of course, I don't know every process for every distro vendors, so if
-> someone could provide feedback on this, I'd appreciate.
->
-> @Paulo I'd like to hear your opinion on possible issues of future backports,
-> if we backported this rename patch to SLES.
+There are two main problems with kmap(): (1) It comes with an overhead as
+mapping space is restricted and protected by a global lock for
+synchronization and (2) it also requires global TLB invalidation when the
+kmap’s pool wraps and it might block when the mapping space is fully
+utilized until a slot becomes available.
 
-We all know that backports aren't usually easy to deal with --
-especially when doing them on very old kernels.  So, if we're gonna make
-them even more difficult, there must be a good reason like a new feature
-or bugfix.  This rename simply doesn't justify all the trouble, IMO.
+With kmap_local_page() the mappings are per thread, CPU local, can take
+page faults, and can be called from any context (including interrupts).
+It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+the tasks can be preempted and, when they are scheduled to run again, the
+kernel virtual addresses are restored and are still valid.
 
-Besides, for any future fixes marked for stable after this rename, it's
-gonna be tricky as well.  Of course, we can definitely handle them but
-not worth the trouble, too.
+Since the use of kmap_local_page() in exec.c is safe, it should be
+preferred everywhere in exec.c.
 
-Just to be clear, this is a NAK from me.
+As said, since kmap_local_page() can be also called from atomic context,
+and since remove_arg_zero() doesn't (and shouldn't ever) rely on an
+implicit preempt_disable(), this function can also safely replace
+kmap_atomic().
+
+Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+fs/exec.c.
+
+Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+with HIGHMEM64GB enabled.
+
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+
+v1->v2: Added more information to the commit log to address some
+objections expressed by Eric W. Biederman[1] in reply to v1. No changes
+have been made to the code. Forwarded a tag from Ira Weiny (thanks!).
+
+[1] https://lore.kernel.org/lkml/8735fmqcfz.fsf@email.froward.int.ebiederm.org/
+
+ fs/exec.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 5fd73915c62c..b51dd14e7388 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -584,11 +584,11 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ 
+ 				if (kmapped_page) {
+ 					flush_dcache_page(kmapped_page);
+-					kunmap(kmapped_page);
++					kunmap_local(kaddr);
+ 					put_arg_page(kmapped_page);
+ 				}
+ 				kmapped_page = page;
+-				kaddr = kmap(kmapped_page);
++				kaddr = kmap_local_page(kmapped_page);
+ 				kpos = pos & PAGE_MASK;
+ 				flush_arg_page(bprm, kpos, kmapped_page);
+ 			}
+@@ -602,7 +602,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ out:
+ 	if (kmapped_page) {
+ 		flush_dcache_page(kmapped_page);
+-		kunmap(kmapped_page);
++		kunmap_local(kaddr);
+ 		put_arg_page(kmapped_page);
+ 	}
+ 	return ret;
+@@ -880,11 +880,11 @@ int transfer_args_to_stack(struct linux_binprm *bprm,
+ 
+ 	for (index = MAX_ARG_PAGES - 1; index >= stop; index--) {
+ 		unsigned int offset = index == stop ? bprm->p & ~PAGE_MASK : 0;
+-		char *src = kmap(bprm->page[index]) + offset;
++		char *src = kmap_local_page(bprm->page[index]) + offset;
+ 		sp -= PAGE_SIZE - offset;
+ 		if (copy_to_user((void *) sp, src, PAGE_SIZE - offset) != 0)
+ 			ret = -EFAULT;
+-		kunmap(bprm->page[index]);
++		kunmap_local(src);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -1683,13 +1683,13 @@ int remove_arg_zero(struct linux_binprm *bprm)
+ 			ret = -EFAULT;
+ 			goto out;
+ 		}
+-		kaddr = kmap_atomic(page);
++		kaddr = kmap_local_page(page);
+ 
+ 		for (; offset < PAGE_SIZE && kaddr[offset];
+ 				offset++, bprm->p++)
+ 			;
+ 
+-		kunmap_atomic(kaddr);
++		kunmap_local(kaddr);
+ 		put_arg_page(page);
+ 	} while (offset == PAGE_SIZE);
+ 
+-- 
+2.37.1
+
