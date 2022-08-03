@@ -2,51 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C86A35889EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 11:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC545889F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 11:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237920AbiHCJyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Aug 2022 05:54:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
+        id S237437AbiHCJ5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Aug 2022 05:57:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237602AbiHCJxh (ORCPT
+        with ESMTP id S233564AbiHCJ47 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Aug 2022 05:53:37 -0400
+        Wed, 3 Aug 2022 05:56:59 -0400
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CC81F62F;
-        Wed,  3 Aug 2022 02:53:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB9B1CB03;
+        Wed,  3 Aug 2022 02:56:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1659520405; x=1691056405;
+  t=1659520618; x=1691056618;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=+aPcfNfpscocEOQ9jmuyTbo+RfEvHrVOwXoeE1Ifd/w=;
-  b=j0N3CPDfs4Hl5SCNF8eDyc5hqJe0BCeYqvjbJc19KzrSbKCp6uIuuPF9
-   r83PtLqpqkef+mVD+pG/l3bNMkBvYLbc5l5y0mrko/7AeLN5W6nlxZWRP
-   MizYNmmjbhuphOt06/7XsZpGdZBKL0XFOdOh1qSfwyyioiw26iEhh0dL/
-   yAhwhaG31uz8Xbw+K7t395p+t7Q3and99QW7zYy1CijNkdp0OD0TvYESO
-   dMKTxRZ7GyEoik9yvfQj5rAbp6xpqXNN4FXo8z/yvznY88vuFeJhqjm0E
-   +aX4soEHDtZY/Ss+cLIMCEBzvRVf2iPu4JQUumjdblrBJODZftY27BH4e
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10427"; a="272679939"
+  bh=p5ITce4KSwHKZdQfiAt1mQ6fsiDPcz5sMpR9X2/JV9U=;
+  b=J44Oroi9dkQohAkdmm//1B3v0l3PSQYvfuswpDxH10tA4gy/+8JuXOVQ
+   Wfok64HMXke9Dlb5BIsAYfLsGUXyxrslajIu9ZLN38w2+plrSOLuQh0cm
+   uxBzY2tJyfuREhUH0ZKCDCzqEP/ET+vY6ZdCfIq9HgNRn1VIUx+P3PdZL
+   5KXEYPouBEe1ajqbEAYNwC692NS9tLy0SHWyEBBGAor5tE2Te1uwHtJS7
+   9zfcX+P7gL3QIhNFX6u5Sq0CPjbBBYnc9drQ8Y7NEKEnUQZZBgn7UxCZr
+   XH3wC7QoLwXu0YuwEyhy8RuIOL/AD9oexftddJqjrpt3Sxm27F+DlADSm
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10427"; a="272680561"
 X-IronPort-AV: E=Sophos;i="5.93,213,1654585200"; 
-   d="scan'208";a="272679939"
+   d="scan'208";a="272680561"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2022 02:53:24 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2022 02:56:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,213,1654585200"; 
-   d="scan'208";a="599588924"
+   d="scan'208";a="599589620"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2022 02:53:14 -0700
-Date:   Wed, 3 Aug 2022 17:48:27 +0800
+  by orsmga007.jf.intel.com with ESMTP; 03 Aug 2022 02:56:47 -0700
+Date:   Wed, 3 Aug 2022 17:52:00 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     Sean Christopherson <seanjc@google.com>
-Cc:     Wei Wang <wei.w.wang@linux.intel.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
@@ -73,24 +71,16 @@ Cc:     Wei Wang <wei.w.wang@linux.intel.com>,
         Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
- memory regions
-Message-ID: <20220803094827.GA607465@chaop.bj.intel.com>
+Subject: Re: [PATCH v7 12/14] KVM: Handle page fault for private memory
+Message-ID: <20220803095200.GB607465@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220720150706.GB124133@chaop.bj.intel.com>
- <d0fd229d-afa6-c66d-3e55-09ac5877453e@amd.com>
- <YtgrkXqP/GIi9ujZ@google.com>
- <45ae9f57-d595-f202-abb5-26a03a2ca131@linux.intel.com>
- <20220721092906.GA153288@chaop.bj.intel.com>
- <YtmT2irvgInX1kPp@google.com>
- <20220725130417.GA304216@chaop.bj.intel.com>
- <YuQ64RgWqdoAAGdY@google.com>
- <Yuh0ikhoh+tCK6VW@google.com>
- <YulTH7bL4MwT5v5K@google.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-13-chao.p.peng@linux.intel.com>
+ <YuRKAcT3cuEE4GgF@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YulTH7bL4MwT5v5K@google.com>
+In-Reply-To: <YuRKAcT3cuEE4GgF@google.com>
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
         autolearn=ham autolearn_force=no version=3.4.6
@@ -100,58 +90,181 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 02, 2022 at 04:38:55PM +0000, Sean Christopherson wrote:
-> On Tue, Aug 02, 2022, Sean Christopherson wrote:
-> > I think we should avoid UNMAPPABLE even on the KVM side of things for the core
-> > memslots functionality and instead be very literal, e.g.
+On Fri, Jul 29, 2022 at 08:58:41PM +0000, Sean Christopherson wrote:
+> On Wed, Jul 06, 2022, Chao Peng wrote:
+> > A page fault can carry the private/shared information for
+> > KVM_MEM_PRIVATE memslot, this can be filled by architecture code(like
+> > TDX code). To handle page fault for such access, KVM maps the page only
+> > when this private property matches the host's view on the page.
 > > 
-> > 	KVM_HAS_FD_BASED_MEMSLOTS
-> > 	KVM_MEM_FD_VALID
+> > For a successful match, private pfn is obtained with memfile_notifier
+> > callbacks from private fd and shared pfn is obtained with existing
+> > get_user_pages.
 > > 
-> > We'll still need KVM_HAS_USER_UNMAPPABLE_MEMORY, but it won't be tied directly to
-> > the memslot.  Decoupling the two thingis will require a bit of extra work, but the
-> > code impact should be quite small, e.g. explicitly query and propagate
-> > MEMFILE_F_USER_INACCESSIBLE to kvm_memory_slot to track if a memslot can be private.
-> > And unless I'm missing something, it won't require an additional memslot flag.
-> > The biggest oddity (if we don't also add KVM_MEM_PRIVATE) is that KVM would
-> > effectively ignore the hva for fd-based memslots for VM types that don't support
-> > private memory, i.e. userspace can't opt out of using the fd-based backing, but that
-> > doesn't seem like a deal breaker.
+> > For a failed match, KVM causes a KVM_EXIT_MEMORY_FAULT exit to
+> > userspace. Userspace then can convert memory between private/shared from
+> > host's view then retry the access.
+> > 
+> > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >  arch/x86/kvm/mmu/mmu.c          | 60 ++++++++++++++++++++++++++++++++-
+> >  arch/x86/kvm/mmu/mmu_internal.h | 18 ++++++++++
+> >  arch/x86/kvm/mmu/mmutrace.h     |  1 +
+> >  include/linux/kvm_host.h        | 35 ++++++++++++++++++-
+> >  4 files changed, 112 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 545eb74305fe..27dbdd4fe8d1 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -3004,6 +3004,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
+> >  	if (max_level == PG_LEVEL_4K)
+> >  		return PG_LEVEL_4K;
+> >  
+> > +	if (kvm_mem_is_private(kvm, gfn))
+> > +		return max_level;
+> > +
+> >  	host_level = host_pfn_mapping_level(kvm, gfn, pfn, slot);
+> >  	return min(host_level, max_level);
+> >  }
+> > @@ -4101,10 +4104,52 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
+> >  	kvm_mmu_do_page_fault(vcpu, work->cr2_or_gpa, 0, true);
+> >  }
+> >  
+> > +static inline u8 order_to_level(int order)
+> > +{
+> > +	enum pg_level level;
+> > +
+> > +	for (level = KVM_MAX_HUGEPAGE_LEVEL; level > PG_LEVEL_4K; level--)
+> 
+> Curly braces needed for the for-loop.
+> 
+> And I think it makes sense to take in the fault->max_level, that way this is
+> slightly more performant when the guest mapping is smaller than the host, e.g.
+> 
+> 	for (level = max_level; level > PG_LEVEL_4K; level--)
+> 		...
+> 
+> 	return level;
+> 
+> Though I think I'd vote to avoid a loop entirely and do:
+> 
+> 	BUILD_BUG_ON(KVM_MAX_HUGEPAGE_LEVEL > PG_LEVEL_1G);
+> 
+> 	if (order > ???)
+> 		return PG_LEVEL_1G;
+> 	
+> 	if (order > ???)
+> 		return PG_LEVEL_2M;
+> 
+> 	return PG_LEVEL_4K;
 
-I actually love this idea. I don't mind adding extra code for potential
-usage other than confidential VMs if we can have a workable solution for
-it.
+Sounds good.
 
 > 
-> Hrm, but basing private memory on top of a generic FD_VALID would effectively require
-> shared memory to use hva-based memslots for confidential VMs.  That'd yield a very
-> weird API, e.g. non-confidential VMs could be backed entirely by fd-based memslots,
-> but confidential VMs would be forced to use hva-based memslots.
+> 
+> > +		if (order >= page_level_shift(level) - PAGE_SHIFT)
+> > +			return level;
+> > +	return level;
+> > +}
+> > +
+> > +static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+> > +				   struct kvm_page_fault *fault)
+> > +{
+> > +	int order;
+> > +	struct kvm_memory_slot *slot = fault->slot;
+> > +	bool private_exist = kvm_mem_is_private(vcpu->kvm, fault->gfn);
+> > +
+> > +	if (fault->is_private != private_exist) {
+> > +		vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
+> > +		if (fault->is_private)
+> > +			vcpu->run->memory.flags = KVM_MEMORY_EXIT_FLAG_PRIVATE;
+> > +		else
+> > +			vcpu->run->memory.flags = 0;
+> > +		vcpu->run->memory.padding = 0;
+> > +		vcpu->run->memory.gpa = fault->gfn << PAGE_SHIFT;
+> > +		vcpu->run->memory.size = PAGE_SIZE;
+> > +		return RET_PF_USER;
+> > +	}
+> > +
+> > +	if (fault->is_private) {
+> > +		if (kvm_private_mem_get_pfn(slot, fault->gfn, &fault->pfn, &order))
+> > +			return RET_PF_RETRY;
+> > +		fault->max_level = min(order_to_level(order), fault->max_level);
+> > +		fault->map_writable = !(slot->flags & KVM_MEM_READONLY);
+> > +		return RET_PF_FIXED;
+> > +	}
+> > +
+> > +	/* Fault is shared, fallthrough. */
+> > +	return RET_PF_CONTINUE;
+> > +}
+> > +
+> >  static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> >  {
+> >  	struct kvm_memory_slot *slot = fault->slot;
+> >  	bool async;
+> > +	int r;
+> >  
+> >  	/*
+> >  	 * Retry the page fault if the gfn hit a memslot that is being deleted
+> > @@ -4133,6 +4178,12 @@ static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> >  			return RET_PF_EMULATE;
+> >  	}
+> >  
+> > +	if (kvm_slot_can_be_private(slot)) {
+> > +		r = kvm_faultin_pfn_private(vcpu, fault);
+> > +		if (r != RET_PF_CONTINUE)
+> > +			return r == RET_PF_FIXED ? RET_PF_CONTINUE : r;
+> 
+> I apologize if I've given you conflicting feedback in the past.  Now that this
+> returns RET_PF_* directly, I definitely think it makes sense to do:
+> 
+> 	if (kvm_slot_can_be_private(slot) &&
+> 	    fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> 		vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
+> 		if (fault->is_private)
+> 			vcpu->run->memory.flags = KVM_MEMORY_EXIT_FLAG_PRIVATE;
+> 		else
+> 			vcpu->run->memory.flags = 0;
+> 		vcpu->run->memory.padding = 0;
+> 		vcpu->run->memory.gpa = fault->gfn << PAGE_SHIFT;
+> 		vcpu->run->memory.size = PAGE_SIZE;
+> 		return RET_PF_USER;
+> 	}
+> 
+> 	if (fault->is_private)
+> 		return kvm_faultin_pfn_private(vcpu, fault);
+> 
+> That way kvm_faultin_pfn_private() only handles private faults, and this doesn't
+> need to play games with RET_PF_FIXED.
 
-It would work if we can treat userspace_addr as optional for
-KVM_MEM_FD_VALID, e.g. userspace can opt in to decide whether needing
-the mappable part or not for a regular VM and we can enforce KVM for
-confidential VMs. But the u64 type of userspace_addr doesn't allow us to
-express a 'null' value so sounds like we will end up needing another
-flag anyway.
-
-In concept, we could have three cofigurations here:
-  1. hva-only: without any flag and use userspace_addr;
-  2. fd-only:  another new flag is needed and use fd/offset;
-  3. hva/fd mixed: both userspace_addr and fd/offset is effective.
-     KVM_MEM_PRIVATE is a subset of it for confidential VMs. Not sure
-     regular VM also wants this.
-
-There is no direct relationship between unmappable and fd-based since
-even fd-based can also be mappable for regular VM?
+Agreed, this looks much simpler.
 
 > 
-> Ignore this idea for now.  If there's an actual use case for generic fd-based memory
-> then we'll want a separate flag, fd, and offset, i.e. that support could be added
-> independent of KVM_MEM_PRIVATE.
+> 
+> > +	}
+> > +
+> >  	async = false;
+> >  	fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, &async,
+> >  					  fault->write, &fault->map_writable,
+> > @@ -4241,7 +4292,11 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> >  		read_unlock(&vcpu->kvm->mmu_lock);
+> >  	else
+> >  		write_unlock(&vcpu->kvm->mmu_lock);
+> > -	kvm_release_pfn_clean(fault->pfn);
+> > +
+> > +	if (fault->is_private)
+> > +		kvm_private_mem_put_pfn(fault->slot, fault->pfn);
+> > +	else
+> > +		kvm_release_pfn_clean(fault->pfn);
+> 
+> AFAIK, we never bottomed out on whether or not this is needed[*].  Can you follow
+> up with Kirill to get an answer before posting v8?
 
-If we ignore this idea now (which I'm also fine), do you still think we
-need change KVM_MEM_PRIVATE to KVM_MEM_USER_UNMAPPBLE?
+Sure.
 
-Thanks,
 Chao
+> 
+> [*] https://lore.kernel.org/all/20220620141647.GC2016793@chaop.bj.intel.com
