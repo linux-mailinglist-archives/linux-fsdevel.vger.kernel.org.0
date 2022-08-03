@@ -2,220 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 402E558868D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 06:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF7A588690
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 06:36:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235740AbiHCEdt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Aug 2022 00:33:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
+        id S235352AbiHCEgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Aug 2022 00:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiHCEds (ORCPT
+        with ESMTP id S233920AbiHCEgy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Aug 2022 00:33:48 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA735720D;
-        Tue,  2 Aug 2022 21:33:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BED5CB819F3;
-        Wed,  3 Aug 2022 04:33:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82576C433C1;
-        Wed,  3 Aug 2022 04:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659501224;
-        bh=id9I8D3e7agQ56Vv5SWmx4sZLvoGWkQXWA23gW96Ja4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TbV/ufCihC66Kn35+ChJqEGIJijhyFQ57MIgEHSTCYdFEL3Q7k5TRsYP+qeP/2+nQ
-         vpHbhiCpSv8aWFM2ifPeNaOOWjNiscqWUBZ08mBmDlMJYP3bOVnhBViugVS3zubaAh
-         HlXI6NeLL9okc6pNZHbBGwTJtx3QJ0EjrnVlgXkhYN8OAqDG8aI1DZcWNk6RCWHBUk
-         6YB4W+D/4CaBGX4PzWjujhCQjKqrg5OroD4Ts2eOkWiMxxP/LhLXMtSBVxrsqe+L6W
-         DNI+pggUqxvAbDSttn0wO0C1OnHbniD79oPgJkXbuwXWYbwkmsvVuB6pNMWdmspBoI
-         ddd+MFDqOLldw==
-Date:   Tue, 2 Aug 2022 21:33:44 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "jane.chu@oracle.com" <jane.chu@oracle.com>
-Subject: Re: [RFC PATCH v6] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Message-ID: <Yun6qIonQbeqVvso@magnolia>
-References: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
- <20220714103421.1988696-1-ruansy.fnst@fujitsu.com>
- <62d05eb8e663c_1643dc294fa@dwillia2-xfh.jf.intel.com.notmuch>
- <YtXbD4e8mLHqWSwL@magnolia>
- <62d5e515de3a_929192941e@dwillia2-xfh.jf.intel.com.notmuch>
- <ef6fbc40-db59-eca5-e3e1-19f5809ec357@fujitsu.com>
+        Wed, 3 Aug 2022 00:36:54 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A1A4C635
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Aug 2022 21:36:52 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a7so16371607ejp.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Aug 2022 21:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZrONgrMU4/j0YqOE8LxJizn19E/WThMbzwNaGuk0yHw=;
+        b=qowGaHhGR4RLjP9feKVtZpOeO1uUG0FmeEHBdll2wtdYVbbTqUg+t7ZPy5w2UXJ7xk
+         JDi9OIPw0UJDGIG5PFeN1as94WT20LblKu/9x/t9NwRA6Ysn+Ko6fNSA/CzY0UkzQ7tA
+         N8C8SDPmpN0SveMiH8dNIcerL7L2Uj8w9ijvQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZrONgrMU4/j0YqOE8LxJizn19E/WThMbzwNaGuk0yHw=;
+        b=z6abPY/RO1xny4SZCl2HD9jjOGRx6iQiFlDxGVOvmpG2GpTTUWu/KG7EXbqG+KRiL/
+         xDrvsa8pFtKzR+iZZTpuJ8KWIUo3BMuLEsVYSpSN/6u2oIlo8BUpfAqV88wjwi3glUBB
+         NVHvJiRi2i9QTUIZQUi/1zQqj3dycO1jz8TN81juqRGjoCQKl0vCDQq+kjylH9HiJvRI
+         gSPIMnp/HoAEEGK2gj3Rmz1CXD1UrFPNJcnI1m+7GcoFNr9JGRcgyxEMmKDj+TDqxbsk
+         ai2LSHYH+mXdv8B5nWA4Hhu/ij3UmYubRpf3c/CA079f+7szeiPN/J5DyDKhiybj7a1s
+         2U+A==
+X-Gm-Message-State: AJIora9kjLywHZa0ZvgH2iDvxUtB7thZUu2GxN92DVHhWsaoB6VbuDWi
+        BPflz+/oZvEzHYBb9P4vIGNBAvwVjYuMdr6EqbwRfg==
+X-Google-Smtp-Source: AGRyM1uGNnWdKexSU/vpaoXc5D0QH6TWSpKHZBMfW2czqTBdzoco+WHXeLVYCMFi6CIDXAOHzg+mUq61R5ZSHDiq+eI=
+X-Received: by 2002:a17:907:2855:b0:72b:700e:21eb with SMTP id
+ el21-20020a170907285500b0072b700e21ebmr19087858ejc.270.1659501410566; Tue, 02
+ Aug 2022 21:36:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef6fbc40-db59-eca5-e3e1-19f5809ec357@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <000000000000bdee330594070441@google.com>
+In-Reply-To: <000000000000bdee330594070441@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 3 Aug 2022 06:36:39 +0200
+Message-ID: <CAJfpeguS6Ta9LcGU0A_JkfvPWZup_Ndg+tpvpbzXJuWPNZwGgw@mail.gmail.com>
+Subject: Re: memory leak in cap_inode_getsecurity
+To:     syzbot <syzbot+942d5390db2d9624ced8@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: multipart/mixed; boundary="00000000000014ef9a05e54ec82d"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 03, 2022 at 02:43:20AM +0000, ruansy.fnst@fujitsu.com wrote:
-> 
-> 在 2022/7/19 6:56, Dan Williams 写道:
-> > Darrick J. Wong wrote:
-> >> On Thu, Jul 14, 2022 at 11:21:44AM -0700, Dan Williams wrote:
-> >>> ruansy.fnst@fujitsu.com wrote:
-> >>>> This patch is inspired by Dan's "mm, dax, pmem: Introduce
-> >>>> dev_pagemap_failure()"[1].  With the help of dax_holder and
-> >>>> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
-> >>>> (or mapped device) on it to unmap all files in use and notify processes
-> >>>> who are using those files.
-> >>>>
-> >>>> Call trace:
-> >>>> trigger unbind
-> >>>>   -> unbind_store()
-> >>>>    -> ... (skip)
-> >>>>     -> devres_release_all()   # was pmem driver ->remove() in v1
-> >>>>      -> kill_dax()
-> >>>>       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-> >>>>        -> xfs_dax_notify_failure()
-> >>>>
-> >>>> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-> >>>> event.  So do not shutdown filesystem directly if something not
-> >>>> supported, or if failure range includes metadata area.  Make sure all
-> >>>> files and processes are handled correctly.
-> >>>>
-> >>>> ==
-> >>>> Changes since v5:
-> >>>>    1. Renamed MF_MEM_REMOVE to MF_MEM_PRE_REMOVE
-> >>>>    2. hold s_umount before sync_filesystem()
-> >>>>    3. move sync_filesystem() after SB_BORN check
-> >>>>    4. Rebased on next-20220714
-> >>>>
-> >>>> Changes since v4:
-> >>>>    1. sync_filesystem() at the beginning when MF_MEM_REMOVE
-> >>>>    2. Rebased on next-20220706
-> >>>>
-> >>>> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-> >>>>
-> >>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> >>>> ---
-> >>>>   drivers/dax/super.c         |  3 ++-
-> >>>>   fs/xfs/xfs_notify_failure.c | 15 +++++++++++++++
-> >>>>   include/linux/mm.h          |  1 +
-> >>>>   3 files changed, 18 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> >>>> index 9b5e2a5eb0ae..cf9a64563fbe 100644
-> >>>> --- a/drivers/dax/super.c
-> >>>> +++ b/drivers/dax/super.c
-> >>>> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
-> >>>>   		return;
-> >>>>   
-> >>>>   	if (dax_dev->holder_data != NULL)
-> >>>> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-> >>>> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-> >>>> +				MF_MEM_PRE_REMOVE);
-> >>>>   
-> >>>>   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
-> >>>>   	synchronize_srcu(&dax_srcu);
-> >>>> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-> >>>> index 69d9c83ea4b2..6da6747435eb 100644
-> >>>> --- a/fs/xfs/xfs_notify_failure.c
-> >>>> +++ b/fs/xfs/xfs_notify_failure.c
-> >>>> @@ -76,6 +76,9 @@ xfs_dax_failure_fn(
-> >>>>   
-> >>>>   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-> >>>>   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> >>>> +		/* Do not shutdown so early when device is to be removed */
-> >>>> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-> >>>> +			return 0;
-> >>>>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-> >>>>   		return -EFSCORRUPTED;
-> >>>>   	}
-> >>>> @@ -174,12 +177,22 @@ xfs_dax_notify_failure(
-> >>>>   	struct xfs_mount	*mp = dax_holder(dax_dev);
-> >>>>   	u64			ddev_start;
-> >>>>   	u64			ddev_end;
-> >>>> +	int			error;
-> >>>>   
-> >>>>   	if (!(mp->m_sb.sb_flags & SB_BORN)) {
-> >>>>   		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
-> >>>>   		return -EIO;
-> >>>>   	}
-> >>>>   
-> >>>> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
-> >>>> +		xfs_info(mp, "device is about to be removed!");
-> >>>> +		down_write(&mp->m_super->s_umount);
-> >>>> +		error = sync_filesystem(mp->m_super);
-> >>>> +		up_write(&mp->m_super->s_umount);
-> >>>
-> >>> Are all mappings invalidated after this point?
-> >>
-> >> No; all this step does is pushes dirty filesystem [meta]data to pmem
-> >> before we lose DAXDEV_ALIVE...
-> >>
-> >>> The goal of the removal notification is to invalidate all DAX mappings
-> >>> that are no pointing to pfns that do not exist anymore, so just syncing
-> >>> does not seem like enough, and the shutdown is skipped above. What am I
-> >>> missing?
-> >>
-> >> ...however, the shutdown above only applies to filesystem metadata.  In
-> >> effect, we avoid the fs shutdown in MF_MEM_PRE_REMOVE mode, which
-> >> enables the mf_dax_kill_procs calls to proceed against mapped file data.
-> >> I have a nagging suspicion that in non-PREREMOVE mode, we can end up
-> >> shutting down the filesytem on an xattr block and the 'return
-> >> -EFSCORRUPTED' actually prevents us from reaching all the remaining file
-> >> data mappings.
-> >>
-> >> IOWs, I think that clause above really ought to have returned zero so
-> >> that we keep the filesystem up while we're tearing down mappings, and
-> >> only call xfs_force_shutdown() after we've had a chance to let
-> >> xfs_dax_notify_ddev_failure() tear down all the mappings.
-> >>
-> >> I missed that subtlety in the initial ~30 rounds of review, but I figure
-> >> at this point let's just land it in 5.20 and clean up that quirk for
-> >> -rc1.
-> > 
-> > Sure, this is a good baseline to incrementally improve.
-> 
-> Hi Dan, Darrick
-> 
-> Do I need to fix somewhere on this patch?  I'm not sure if it is looked good...
+--00000000000014ef9a05e54ec82d
+Content-Type: text/plain; charset="UTF-8"
 
-Eh, wait for me to send the xfs pull request and then I'll clean things
-up and send you a patch. :)
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+master
 
---D
+On Thu, 3 Oct 2019 at 21:59, syzbot
+<syzbot+942d5390db2d9624ced8@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    0f1a7b3f timer-of: don't use conditional expression with m..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1329640d600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d66badf12ef344c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=942d5390db2d9624ced8
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1107b513600000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+942d5390db2d9624ced8@syzkaller.appspotmail.com
+>
+> 2019/10/03 14:00:37 executed programs: 36
+> 2019/10/03 14:00:43 executed programs: 44
+> 2019/10/03 14:00:49 executed programs: 63
+> BUG: memory leak
+> unreferenced object 0xffff8881202cb480 (size 32):
+>    comm "syz-executor.0", pid 7246, jiffies 4294946879 (age 14.010s)
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>    backtrace:
+>      [<00000000a8379648>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:43 [inline]
+>      [<00000000a8379648>] slab_post_alloc_hook mm/slab.h:586 [inline]
+>      [<00000000a8379648>] slab_alloc mm/slab.c:3319 [inline]
+>      [<00000000a8379648>] __do_kmalloc mm/slab.c:3653 [inline]
+>      [<00000000a8379648>] __kmalloc_track_caller+0x165/0x300 mm/slab.c:3670
+>      [<000000008858463c>] __do_krealloc mm/slab_common.c:1638 [inline]
+>      [<000000008858463c>] krealloc+0x7f/0xb0 mm/slab_common.c:1689
+>      [<0000000057f9eb8e>] vfs_getxattr_alloc+0x100/0x180 fs/xattr.c:289
+>      [<00000000c2154e30>] cap_inode_getsecurity+0x9c/0x2c0
+> security/commoncap.c:389
+>      [<00000000b2664a09>] security_inode_getsecurity+0x4c/0x90
+> security/security.c:1314
+>      [<00000000921624c0>] xattr_getsecurity fs/xattr.c:244 [inline]
+>      [<00000000921624c0>] vfs_getxattr+0xf2/0x1a0 fs/xattr.c:332
+>      [<000000001ff6977b>] getxattr+0x97/0x240 fs/xattr.c:538
+>      [<00000000b945681f>] path_getxattr+0x6b/0xc0 fs/xattr.c:566
+>      [<000000001a9d3fce>] __do_sys_getxattr fs/xattr.c:578 [inline]
+>      [<000000001a9d3fce>] __se_sys_getxattr fs/xattr.c:575 [inline]
+>      [<000000001a9d3fce>] __x64_sys_getxattr+0x28/0x30 fs/xattr.c:575
+>      [<000000002e998337>] do_syscall_64+0x73/0x1f0
+> arch/x86/entry/common.c:290
+>      [<00000000f252aa21>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-> 
-> --
-> Thanks,
-> Ruan.
-> 
-> > 
-> >>
-> >>> Notice that kill_dev_dax() does unmap_mapping_range() after invalidating
-> >>> the dax device and that ensures that all existing mappings are gone and
-> >>> cannot be re-established. As far as I can see a process with an existing
-> >>> dax mapping will still be able to use it after this runs, no?
-> >>
-> >> I'm not sure where in akpm's tree I find kill_dev_dax()?  I'm cribbing
-> >> off of:
-> >>
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/fs/xfs/xfs_notify_failure.c?h=mm-stable
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/drivers/dax/bus.c?h=mm-stable#n381
-> > 
-> > Where the observation is that when device-dax is told that the device is
-> > going away it invalidates all the active mappings to that single
-> > character-device-inode. The hope being that in the fsdax case all the
-> > dax-mapped filesystem inodes would experience the same irreversible
-> > invalidation as the device is exiting.
+--00000000000014ef9a05e54ec82d
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="vfs_getxattr_alloc-dont-allocate-buf-on-failure.patch"
+Content-Disposition: attachment; 
+	filename="vfs_getxattr_alloc-dont-allocate-buf-on-failure.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_l6d486bu0>
+X-Attachment-Id: f_l6d486bu0
+
+RnJvbTogTWlrbG9zIFN6ZXJlZGkgPG1zemVyZWRpQHJlZGhhdC5jb20+ClN1YmplY3Q6IHZmc19n
+ZXR4YXR0cl9hbGxvYygpOiBkb24ndCBhbGxvY2F0ZSBidWYgb24gZmFpbHVyZQoKU29tZSBjYWxs
+ZXJzIG9mIHZmc19nZXR4YXR0cl9hbGxvYygpIGFzc3VtZSB0aGF0IG9uIGZhaWx1cmUgdGhlIGFs
+bG9jYXRlZApidWZmZXIgZG9lcyBub3QgbmVlZCB0byBiZSBmcmVlZC4KCkNhbGxlcnMgY291bGQg
+YmUgZml4ZWQsIGJ1dCBmaXhpbmcgdGhlIHNlbWFudGljcyBvZiB2ZnNfZ2V0eGF0dHJfYWxsb2Mo
+KSBpcwpzaW1wbGVyIGFuZCBtYWtlcyBzdXJlIHRoYXQgdGhpcyBjbGFzcyBvZiBidWdzIGRvZXMg
+bm90IG9jY3VyIGFnYWluLgoKSWYgdGhpcyB3YXMgY2FsbGVkIGluIGEgbG9vcCAoaS5lLiB4YXR0
+cl92YWx1ZSBjb250YWlucyBhbiBhbHJlYWR5CmFsbG9jYXRlZCBidWZmZXIpLCB0aGVuIGNhbGxl
+ciB3aWxsIHN0aWxsIG5lZWQgdG8gY2xlYW4gdXAgYWZ0ZXIgYW4gZXJyb3IuCgpSZXBvcnRlZC1h
+bmQtdGVzdGVkLWJ5OiBzeXpib3QrOTQyZDUzOTBkYjJkOTYyNGNlZDhAc3l6a2FsbGVyLmFwcHNw
+b3RtYWlsLmNvbQpGaXhlczogMTYwMWZiYWQyYjE0ICgieGF0dHI6IGRlZmluZSB2ZnNfZ2V0eGF0
+dHJfYWxsb2MgYW5kIHZmc194YXR0cl9jbXAiKQpTaWduZWQtb2ZmLWJ5OiBNaWtsb3MgU3plcmVk
+aSA8bXN6ZXJlZGlAcmVkaGF0LmNvbT4KLS0tCiBmcy94YXR0ci5jIHwgICAgNSArKysrLQogMSBm
+aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKLS0tIGEvZnMveGF0
+dHIuYworKysgYi9mcy94YXR0ci5jCkBAIC0zODMsNyArMzgzLDEwIEBAIHZmc19nZXR4YXR0cl9h
+bGxvYyhzdHJ1Y3QgdXNlcl9uYW1lc3BhY2UKIAl9CiAKIAllcnJvciA9IGhhbmRsZXItPmdldCho
+YW5kbGVyLCBkZW50cnksIGlub2RlLCBuYW1lLCB2YWx1ZSwgZXJyb3IpOwotCSp4YXR0cl92YWx1
+ZSA9IHZhbHVlOworCWlmIChlcnJvciA8IDAgJiYgKnhhdHRyX3ZhbHVlID09IE5VTEwpCisJCWtm
+cmVlKHZhbHVlKTsKKwllbHNlCisJCSp4YXR0cl92YWx1ZSA9IHZhbHVlOwogCXJldHVybiBlcnJv
+cjsKIH0KIAo=
+--00000000000014ef9a05e54ec82d--
