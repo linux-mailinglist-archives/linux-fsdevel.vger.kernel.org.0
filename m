@@ -2,123 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE3685892E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 21:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F2C5893A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Aug 2022 22:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237066AbiHCTtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Aug 2022 15:49:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        id S238367AbiHCUwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Aug 2022 16:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233409AbiHCTti (ORCPT
+        with ESMTP id S238558AbiHCUwP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Aug 2022 15:49:38 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36177248FB;
-        Wed,  3 Aug 2022 12:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZWxbbnA21y0t6xKiYRqKvDsF1ANgoMiT3UqVXr62jW8=; b=mkpdGKKxh/8AWrjM3cHiHjNIQn
-        Ncudfbw+CQQ1JyuOtXr9PQBC/D+yGe1fRbeskX1lECGyAhuLhsrROwwPe1YUbgd8EbJTIpkL+oxUJ
-        W9aAuOaYabYkjj8ekbFfAQGwGgNVoiujl1JPXV/g7+GhU4DjgyszZj2YCtwoo2X2pNcJkXMVVwQYk
-        R9yQ8cTIRCjg9QDl81tQmncfWTxYjzni8CJ0MbGyqWo3rf9ARNli6tvUsLBCEZmZuQSFryB4iOaK+
-        iiwhrMWr5aHClmKXr7t+jkGYubh5rZnMsPrd6h6hQuPEvg4mv8uUFulECuh0MFPoG7R/ucsMRxk1m
-        jlR7Z3Sg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oJKN3-000va8-00;
-        Wed, 03 Aug 2022 19:49:33 +0000
-Date:   Wed, 3 Aug 2022 20:49:32 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs.git pile 3 - dcache
-Message-ID: <YurRTBO40kil4Bw5@ZenIV>
-References: <YurA3aSb4GRr4wlW@ZenIV>
- <CAHk-=wizUgMbZKnOjvyeZT5E+WZM0sV+zS5Qxt84wp=BsRk3eQ@mail.gmail.com>
+        Wed, 3 Aug 2022 16:52:15 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09702E7D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Aug 2022 13:52:13 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id l24so13780710ion.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Aug 2022 13:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=f+kJgdEkgp30bWaERe4Vski1FE7alwIJq4u2OppbQ/w=;
+        b=nj16+e5UJJcV/iFA34nUwfYrmf8FXuwzPi/8/W6RQw0zoXtOJLIRLvJKTcBTtDpAp/
+         0XftVz4Z3LHV5y9B7DUgyqH5zFwxdjo8Qa3qZskoprp3/Wr32nmg3A00IP64hGUy7JsB
+         gVanoNCw962W3jg+fblI+m3JBB+U89fbrUB0LEY2pwHWdjynW7Uu3v0jyzTM84dLdNpi
+         gGZEl08Ftqzv8r41ziW5svbIDLuiXjiKjUQjeT46l23ys7WOY8x4HjXvzcoJGuH5ZmSV
+         roDBz/GQkfq1hWI4DZBtJMD09AWMgMAqwjre2LlcKlDG51KHsv2m4gQRh40jnt8zMDJH
+         yHEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=f+kJgdEkgp30bWaERe4Vski1FE7alwIJq4u2OppbQ/w=;
+        b=JTFpyt8cT6gRnlSk8acSX7RFdALNb2UsDOjAUKlqbwQ2Z8HF70Iz4/tqPoLNNelvB/
+         a4qm5yUiSBlED3/4MZVhx9ltem02elt5F7LSB11mCr8kDilHlUrr8oks5U+dRvBLV4NK
+         3wJmnW9wEcKS1W602tdrr05NKS8Ki7zBcY7YqzHCX4zzRJQ+jwy62CIb2Ms89GKnPxO6
+         SECq9FWijAtgoMb/u2Jeh9Zw04XjMgt7BH6VK0+xbRvjT+zEhwUuh4+k8LCBH2xcHg9G
+         ZXefaYPhFsr+dZrIW/Da7LvQQbBy+gVaoZQwCHtbqsuDUVje1yzbkCuP1dX8IKiotgck
+         J6bQ==
+X-Gm-Message-State: AJIora/FEAFmlhCQqawlQcuRLYZ/LbAyxMI+XOcIFhdUJDtv6seoZG86
+        VvgIa80FmqemDKa6awMj8S3Yag==
+X-Google-Smtp-Source: AGRyM1tXxs7zhlm9Jvu6+p+FJ20VNCh4BqAcQdBeq/oalyDynJMU6/wzgc9VjBlrlK7mjN0rz9uRoQ==
+X-Received: by 2002:a5e:d817:0:b0:67c:38a8:8f25 with SMTP id l23-20020a5ed817000000b0067c38a88f25mr9333590iok.123.1659559932393;
+        Wed, 03 Aug 2022 13:52:12 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id f6-20020a02b786000000b003426eb18d1dsm5183460jam.105.2022.08.03.13.52.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Aug 2022 13:52:11 -0700 (PDT)
+Message-ID: <5f8fc910-8fad-f71a-704b-8017d364d0ed@kernel.dk>
+Date:   Wed, 3 Aug 2022 14:52:11 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wizUgMbZKnOjvyeZT5E+WZM0sV+zS5Qxt84wp=BsRk3eQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCHv2 0/7] dma mapping optimisations
+Content-Language: en-US
+To:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     hch@lst.de, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+References: <20220802193633.289796-1-kbusch@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220802193633.289796-1-kbusch@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 03, 2022 at 11:57:27AM -0700, Linus Torvalds wrote:
-> On Wed, Aug 3, 2022 at 11:39 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >         Main part here is making parallel lookups safe for RT - making
-> > sure preemption is disabled in start_dir_add()/ end_dir_add() sections (on
-> > non-RT it's automatic, on RT it needs to to be done explicitly) and moving
-> > wakeups from __d_lookup_done() inside of such to the end of those sections.
+On 8/2/22 1:36 PM, Keith Busch wrote:
+> device undergoes various represenations for every IO. Each consumes
+> memory and CPU cycles. When the backing storage is NVMe, the sequence
+> looks something like the following:
 > 
-> Ugh.
+>   __user void *
+>   struct iov_iter
+>   struct pages[]
+>   struct bio_vec[]
+>   struct scatterlist[]
+>   __le64[]
 > 
-> I really dislike this pattern:
+> Applications will often use the same buffer for many IO, though, so
+> these potentially costly per-IO transformations to reach the exact same
+> hardware descriptor can be skipped.
 > 
->         if (IS_ENABLED(CONFIG_PREEMPT_RT))
->                 preempt_disable();
->        ...
->         if (IS_ENABLED(CONFIG_PREEMPT_RT))
->                 preempt_enable();
+> The io_uring interface already provides a way for users to register
+> buffers to get to the 'struct bio_vec[]'. That still leaves the
+> scatterlist needed for the repeated dma_map_sg(), then transform to
+> nvme's PRP list format.
 > 
-> and while the new comment explains *why* it exists, it's still very ugly indeed.
+> This series takes the registered buffers a step further. A block driver
+> can implement a new .dma_map() callback to complete the representation
+> to the hardware's DMA mapped address, and return a cookie so a user can
+> reference it later for any given IO. When used, the block stack can skip
+> significant amounts of code, improving CPU utilization, and, if not
+> bandwidth limited, IOPs.
 > 
-> We have it in a couple of other places, and we also end up having
-> another variation on the theme that is about "migrate_{dis,en}able()",
-> except it is written as
-> 
->         if (IS_ENABLED(CONFIG_PREEMPT_RT))
->                 migrate_disable();
->         else
->                 preempt_disable();
-> 
-> because on non-PREEMPT_RT obviously preempt_disable() is the better
-> and simpler thing.
-> 
-> Can we please just introduce helper functions?
-> 
-> At least that
-> 
->         if (IS_ENABLED(CONFIG_PREEMPT_RT))
->                 preempt_disable();
->         ...
-> 
-> pattern could be much more naturally expressed as
-> 
->         preempt_disable_under_spinlock();
->         ...
-> 
-> which would make the code really explain what is going on. I would
-> still encourage that *comment* about it, but I think we really should
-> strive for code that makes sense even without a comment.
-> 
-> The fact that then without PREEMPT_RT, the whole
-> "preempt_disable_under_spinlock()" becomes a no-op is then an
-> implementation detail - and not so different from how a regular
-> preempt_disable() becomes a no-op when on UP (or with PREEMPT_NONE).
-> 
-> And that "preempt_disable_under_spinlock()" really documents what is
-> going on, and I feel would make that code easier to understand? The
-> fact that PREEMPT_RT has different rules about preemption is not
-> something that the dentry code should care about.
-> 
-> The dentry code could just say "I want to disable preemption, and I
-> already hold a spinlock, so do what is best".
-> 
-> So then "preempt_disable_under_spinlock()" precisely documents what
-> the dentry code really wants.
-> 
-> No?
+> The implementation is currently limited to mapping a registered buffer
+> to a single file.
 
-Fine by me, but I think that this is better dealt with by the rt folks;
-I've no objections to replacing that open-coded stuff in dcache.c with
-better documented primitives, so when such patches materialize...
+I ran this on my test box to see how we'd do. First the bad news:
+smaller block size IO seems slower. I ran with QD=8 and used 24 drives,
+and using t/io_uring (with registered buffers, polled, etc) and a 512b
+block size I get:
+
+IOPS=44.36M, BW=21.66GiB/s, IOS/call=1/1
+IOPS=44.64M, BW=21.80GiB/s, IOS/call=2/2
+IOPS=44.69M, BW=21.82GiB/s, IOS/call=1/1
+IOPS=44.55M, BW=21.75GiB/s, IOS/call=2/2
+IOPS=44.93M, BW=21.94GiB/s, IOS/call=1/1
+IOPS=44.79M, BW=21.87GiB/s, IOS/call=1/2
+
+and adding -D1 I get:
+
+IOPS=43.74M, BW=21.36GiB/s, IOS/call=1/1
+IOPS=44.04M, BW=21.50GiB/s, IOS/call=1/1
+IOPS=43.63M, BW=21.30GiB/s, IOS/call=2/2
+IOPS=43.67M, BW=21.32GiB/s, IOS/call=1/1
+IOPS=43.57M, BW=21.28GiB/s, IOS/call=1/2
+IOPS=43.53M, BW=21.25GiB/s, IOS/call=2/1
+
+which does regress that workload. Since we avoid more expensive setup at
+higher block sizes, I tested that too. Here's using 128k IOs with -D0:
+
+OPS=972.18K, BW=121.52GiB/s, IOS/call=31/31
+IOPS=988.79K, BW=123.60GiB/s, IOS/call=31/31
+IOPS=990.40K, BW=123.80GiB/s, IOS/call=31/31
+IOPS=987.80K, BW=123.48GiB/s, IOS/call=31/31
+IOPS=988.12K, BW=123.52GiB/s, IOS/call=31/31
+
+and here with -D1:
+
+IOPS=978.36K, BW=122.30GiB/s, IOS/call=31/31
+IOPS=996.75K, BW=124.59GiB/s, IOS/call=31/31
+IOPS=996.55K, BW=124.57GiB/s, IOS/call=31/31
+IOPS=996.52K, BW=124.56GiB/s, IOS/call=31/31
+IOPS=996.54K, BW=124.57GiB/s, IOS/call=31/31
+IOPS=996.51K, BW=124.56GiB/s, IOS/call=31/31
+
+which is a notable improvement. Then I checked CPU utilization,
+switching to IRQ driven IO instead. And the good news there for bs=128K
+we end up using half the CPU to achieve better performance. So definite
+win there!
+
+Just a quick dump on some quick result, I didn't look further into this
+just yet.
+
+-- 
+Jens Axboe
+
