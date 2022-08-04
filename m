@@ -2,49 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5685896B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 05:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD12458982C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 09:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237487AbiHDDsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Aug 2022 23:48:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
+        id S238969AbiHDHKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Aug 2022 03:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237278AbiHDDsO (ORCPT
+        with ESMTP id S230001AbiHDHKv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Aug 2022 23:48:14 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D7C3A4B2;
-        Wed,  3 Aug 2022 20:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=C2vVQksbZ1MNoZZ8nE57IM4USVRK+xczEP8c/5HM5jk=; b=Gb37F/noH4vAgJdhC01lTqx7Ha
-        FORfGx8GwyI9fy0bYfnLvyaiy9iSA/JWPJOZ2HdfKwGKOXRjmw3jkJioXOieMP3FBk0TptCe5cRGR
-        B+qNoTjU87j5ffC6u6HnxsvnAcTygnaqQOg+1PLDOIWMxNLriDgV18fIrUhBopMREJa8tBpH1Y54z
-        pPqZsPMsJYmK0cyfN7lv1lJbL+ZK/77TO4hS8nCdi6Gar+iqcVe60p4j3NQ+gVwYyfslnX/IF5WGc
-        E3RwFUsvlx2H8DBxQBBTyKUWypu4M0HyuHmAvedjhWRtR7IuJRMnVdskoD2eAAr/F+AVrRpfVaHBK
-        KIAW2vpw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oJRq7-00126W-5E;
-        Thu, 04 Aug 2022 03:48:03 +0000
-Date:   Thu, 4 Aug 2022 04:48:03 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Tony Lu <tonylu@linux.alibaba.com>
-Cc:     kgraul@linux.ibm.com, kuba@kernel.org, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH net-next] net/smc: Introduce TCP ULP support
-Message-ID: <YutBc9aCQOvPPlWN@ZenIV>
-References: <20211228134435.41774-1-tonylu@linux.alibaba.com>
- <Yus1SycZxcd+wHwz@ZenIV>
+        Thu, 4 Aug 2022 03:10:51 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 550862CE04;
+        Thu,  4 Aug 2022 00:10:47 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id j17so2849222pgl.5;
+        Thu, 04 Aug 2022 00:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Msx+MTdWqnPNVUHp+3FfvLfdSxDAnztRmbALqvTfmJc=;
+        b=ee2B6ZmuD7w/b216B4sfnS7nxgF19nbbPD5seH0PzGR35P0l0m9VVe9qFY5joUzJwv
+         iGIgbUoJeOoPnK8RYddMDCWsam2EAdTDUk+2AAnJFInausC/w4mQ2e9JWHj5oNqpLmJM
+         ZmraEjxD8qh3F/SCH81nNk09N2xF+KP95AbrPc1phVtNBvj5AX3qcNeulUAWJ7Hymogk
+         VqWvw5PYeg9pv95ntmSIiWZUY7COS9mMSx+VnBuEmtTMpgIUnMguWM3fOELjfqr08cB9
+         YBCc9XKnWP8+/2JP25FF31wt0Z5iUujxqEQEuxCTiUrEDXf51d/LCk8VLAdiABIOIjqV
+         3uTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Msx+MTdWqnPNVUHp+3FfvLfdSxDAnztRmbALqvTfmJc=;
+        b=MT1h+TG2A44d4eNya5+1LTqanxdXxxTxNmEerBcgl7JFD9bC9Q75X89Yfb0Lvfmuml
+         qTfgFiq8DTX73f1YH6q1rgqdvursgeQ3bZ9lNhfir1eK0PdLTJ7YkaUMCZSER93WhTSi
+         oEOyDEgF9cyWSqNo4YrdBh/iOUfGGRJK6n80smwonPR/wzJIZhTjWCRSDkIKHHpalrw/
+         VP5bGqjaN2tpfwrB0A4d2YoxLn2AJQgdU5bUeuiWmWDUhi2LfxpOsi+TLR6mQryo+FuG
+         /33rK0j0lMQN1Y29cy+68KPXAkUZVxG2EF9jFsjNaf9xt8pDf4jIQ+yZxV+4/JJdtjFF
+         GoPQ==
+X-Gm-Message-State: ACgBeo3+WmETvhCNOpd8cbLkeWTKEUIVfAZjqWbDfwJWrqws9MwBYB84
+        VQ3Xv9EGg91MSI3jdewWT1k=
+X-Google-Smtp-Source: AA6agR4epr3dQoXSYo3tVKgoUy+uKNO2hxFagEdJ8l6v4De0QEoIfT716hYj4Pnm1/vc1DQPzChKgQ==
+X-Received: by 2002:a63:e343:0:b0:41c:d5cd:a39 with SMTP id o3-20020a63e343000000b0041cd5cd0a39mr562084pgj.512.1659597046489;
+        Thu, 04 Aug 2022 00:10:46 -0700 (PDT)
+Received: from localhost ([192.55.54.49])
+        by smtp.gmail.com with ESMTPSA id n15-20020a056a00212f00b0052deda6e3d2sm137803pfj.98.2022.08.04.00.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Aug 2022 00:10:45 -0700 (PDT)
+Date:   Thu, 4 Aug 2022 00:10:44 -0700
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        isaku.yamahata@gmail.com
+Subject: Re: [PATCH v7 07/14] KVM: Use gfn instead of hva for
+ mmu_notifier_retry
+Message-ID: <20220804071044.GA4091749@ls.amr.corp.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-8-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Yus1SycZxcd+wHwz@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <20220706082016.2603916-8-chao.p.peng@linux.intel.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,37 +102,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 04, 2022 at 03:56:11AM +0100, Al Viro wrote:
-> 	Half a year too late, but then it hadn't been posted on fsdevel.
-> Which it really should have been, due to
-> 
-> > +	/* replace tcp socket to smc */
-> > +	smcsock->file = tcp->file;
-> > +	smcsock->file->private_data = smcsock;
-> > +	smcsock->file->f_inode = SOCK_INODE(smcsock); /* replace inode when sock_close */
-> > +	smcsock->file->f_path.dentry->d_inode = SOCK_INODE(smcsock); /* dput() in __fput */
-> > +	tcp->file = NULL;
-> 
-> this.  It violates a bunch of rather fundamental assertions about the
-> data structures you are playing with, and I'm not even going into the
-> lifetime and refcounting issues.
-> 
-> 	* ->d_inode of a busy positive dentry never changes while refcount
-> of dentry remains positive.  A lot of places in VFS rely upon that.
-> 	* ->f_inode of a file never changes, period.
-> 	* ->private_data of a struct file associated with a socket never
-> changes; it can be accessed lockless, with no precautions beyond "make sure
-> that refcount of struct file will remain positive".
+On Wed, Jul 06, 2022 at 04:20:09PM +0800,
+Chao Peng <chao.p.peng@linux.intel.com> wrote:
 
-Consider, BTW, what it does to sockfd_lookup() users.  We grab a reference
-to struct file, pick struct socket from its ->private_data, work with that
-sucker, then do sockfd_put().  Which does fput(sock->file).
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 0bdb6044e316..e9153b54e2a4 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1362,10 +1362,8 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+>  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+>  #endif
+>  
+> -void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
+> -				   unsigned long end);
+> -void kvm_dec_notifier_count(struct kvm *kvm, unsigned long start,
+> -				   unsigned long end);
+> +void kvm_inc_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+> +void kvm_dec_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+>  
+>  long kvm_arch_dev_ioctl(struct file *filp,
+>  			unsigned int ioctl, unsigned long arg);
 
-Guess what happens if sockfd_lookup() is given the descriptor of your
-TCP socket, just before that tcp->file = NULL?  Right, fput(NULL) as
-soon as matching sockfd_put() is called.  And the very first thing fput()
-does is this:
-        if (atomic_long_dec_and_test(&file->f_count)) {
+The corresponding changes in kvm_main.c are missing.
 
-And that's just one example - a *lot* of places both in VFS and in
-net/* rely upon these assertions.  This is really not a workable approach.
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b2c79bef61bd..0184e327f6f5 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -711,8 +711,7 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+        kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
+ }
+ 
+-void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
+-                                  unsigned long end)
++void kvm_inc_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end)
+ {
+        /*
+         * The count increase must become visible at unlock time as no
+@@ -786,8 +785,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+        return 0;
+ }
+ 
+-void kvm_dec_notifier_count(struct kvm *kvm, unsigned long start,
+-                                  unsigned long end)
++void kvm_dec_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end)
+ {
+        /*
+         * This sequence increase will notify the kvm page fault that
+
+
+-- 
+Isaku Yamahata <isaku.yamahata@gmail.com>
