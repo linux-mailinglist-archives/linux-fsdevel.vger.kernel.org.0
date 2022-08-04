@@ -2,135 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 824C7589F7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 18:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62CE658A109
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 21:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234169AbiHDQm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Aug 2022 12:42:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51680 "EHLO
+        id S237342AbiHDTDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Aug 2022 15:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiHDQm2 (ORCPT
+        with ESMTP id S232454AbiHDTD2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Aug 2022 12:42:28 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC5C39BBF
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Aug 2022 09:42:26 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id z187so9915076pfb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Aug 2022 09:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=+CnBeoe7uqEcxaB+1aAe8bKxhqf9IbvpUHHTGwUqr4U=;
-        b=WmRCslE9kOuIR6KnPHmII1JL58W/uouaQW7Tcin9RLlyJDDrGFhgfwB1M8A5f3tMAf
-         Aw41mRetrEtddPH+vaIptXu8+gpN1C7OlGiMoXSm9a5QgNzUpBt7XodP79FPPQmegTNr
-         hkgUSOE7Lpj4XmSo7rksCTRKaD2kvBQ13I8sKOYpu/iFPLFofommLFjx9+DEntWY7s47
-         OLbnacVu6uy2MY34Qq5d6L6EoUtBTEFaheopOEHNog0y5QeQCkZmz0/TKyC38y8YBkt2
-         3h1Ab7b9GkCKg5PuFmOLIThaSSll6kXXslvaSgKdYWMHNv59lC432ht+tAV8ug48Ebfn
-         CU1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+CnBeoe7uqEcxaB+1aAe8bKxhqf9IbvpUHHTGwUqr4U=;
-        b=ug+prYiLF7goH/oI/Oi1anqe1v4q+rr6+p6lT+j6qtqFrXnpZoka6WeSs5PyjiSwn+
-         oF+rZpKVfwYl5MZau9cLGHiSTqNISjP9N8fC71DjENlOXoa++lsSgFVjA3g9CO2NsfaA
-         Q0HDWTAbwalAlFil6/0DkOtoDTbjrM4Or4gF8YadYkD0kp8XjVNr7wvExcPVTIEC3Zpm
-         iumpL70B2dQSYo/lb7SRnVR8SlV/wOxTdvyOnIr51gf9aqbI+iSNEkeRVTqb3NXKIU/T
-         v5q/zvorGvRlY/3XQ/Es4oK7lM9C/pjz+dHuMsDjHiQLrY29V8eiDfr8DkPCQUHsA64/
-         Ey0w==
-X-Gm-Message-State: ACgBeo3UgSkuv39YGUzMy2doi1EAcV/W6W6WRHEl3iMAx5sDm7vBqGjE
-        iqbnjcdKpUUremBrLtzxqqfcRg==
-X-Google-Smtp-Source: AA6agR6kMtN9endtZcnUlYAQ+oFGuA9Xrr1w70/pFRQoDTBxqaqU9fUwrglmB1vgkcAfMZVmAWfUrg==
-X-Received: by 2002:a63:5353:0:b0:419:f140:2dae with SMTP id t19-20020a635353000000b00419f1402daemr2253734pgl.526.1659631346066;
-        Thu, 04 Aug 2022 09:42:26 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s25-20020aa78bd9000000b0052e0b928c3csm1132114pfd.219.2022.08.04.09.42.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Aug 2022 09:42:25 -0700 (PDT)
-Message-ID: <d72ea27d-ba80-2b9b-11e0-7fff11c8bf3f@kernel.dk>
-Date:   Thu, 4 Aug 2022 10:42:24 -0600
+        Thu, 4 Aug 2022 15:03:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7194F6D9CB;
+        Thu,  4 Aug 2022 12:03:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE1BF616C2;
+        Thu,  4 Aug 2022 19:03:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C97C433C1;
+        Thu,  4 Aug 2022 19:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659639806;
+        bh=X7SaZV8NQYFASqG1eXvSDJ7c73ijas8hXeL+BClnemQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=WUY/8Ckxx+AsFlgt80MLBv3NCXV9f7cIh/nqssiOjPAqpQHGJ4eElZ4F6jqqn6az4
+         JkS1m8vkuGjssI3FX9Y4LL5ZXWLFOluw4CYz29z1FB6zpeW6LpS4w2lVGX3uNZlQk+
+         W/azQHgk3I6TatLgVaMr8GP6YMBGUn6uDBAeYmz8ZU7Dd0aMI33w7eFSDAwPLA4Mi/
+         d0fck0RxnUIFs5N6W4Ff5febReOhje5PkxF7UEeorYXkzb/bEg1ELOltMNLoRxfwOX
+         IdWmiM6scwlj/IoILvwNb1J8MIu9bue89EBqmkrh9ow5VGRT1mLck9vw2febnfVuMW
+         XVwy98XYMZWig==
+Message-ID: <cf24d6b5496598e7717428c6bdcb2366a7d49529.camel@kernel.org>
+Subject: Re: [RFC PATCH 0/3] Rename "cifs" module to "smbfs"
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Enzo Matsumiya <ematsumiya@suse.de>, Tom Talpey <tom@talpey.com>
+Cc:     linux-cifs@vger.kernel.org, smfrench@gmail.com, pc@cjr.nz,
+        ronniesahlberg@gmail.com, nspmangalore@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        samba-technical@lists.samba.org, pshilovsky@samba.org
+Date:   Thu, 04 Aug 2022 15:03:23 -0400
+In-Reply-To: <20220803015655.7u5b6i4eo5sfnryb@cyberdelia>
+References: <20220801190933.27197-1-ematsumiya@suse.de>
+         <c05f4fc668fa97e737758ab03030d7170c0edbd9.camel@kernel.org>
+         <20220802193620.dyvt5qiszm2pobsr@cyberdelia>
+         <6f3479265b446d180d71832fd0c12650b908ebe2.camel@kernel.org>
+         <1c2e8880-3efe-b55d-ee50-87d57efc3130@talpey.com>
+         <20220803015655.7u5b6i4eo5sfnryb@cyberdelia>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCHv2 0/7] dma mapping optimisations
-Content-Language: en-US
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>
-References: <20220802193633.289796-1-kbusch@fb.com>
- <5f8fc910-8fad-f71a-704b-8017d364d0ed@kernel.dk>
- <YuvzqbcXwGUMtKmm@kbusch-mbp.dhcp.thefacebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YuvzqbcXwGUMtKmm@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/4/22 10:28 AM, Keith Busch wrote:
-> On Wed, Aug 03, 2022 at 02:52:11PM -0600, Jens Axboe wrote:
->> I ran this on my test box to see how we'd do. First the bad news:
->> smaller block size IO seems slower. I ran with QD=8 and used 24 drives,
->> and using t/io_uring (with registered buffers, polled, etc) and a 512b
->> block size I get:
->>
->> IOPS=44.36M, BW=21.66GiB/s, IOS/call=1/1
->> IOPS=44.64M, BW=21.80GiB/s, IOS/call=2/2
->> IOPS=44.69M, BW=21.82GiB/s, IOS/call=1/1
->> IOPS=44.55M, BW=21.75GiB/s, IOS/call=2/2
->> IOPS=44.93M, BW=21.94GiB/s, IOS/call=1/1
->> IOPS=44.79M, BW=21.87GiB/s, IOS/call=1/2
->>
->> and adding -D1 I get:
->>
->> IOPS=43.74M, BW=21.36GiB/s, IOS/call=1/1
->> IOPS=44.04M, BW=21.50GiB/s, IOS/call=1/1
->> IOPS=43.63M, BW=21.30GiB/s, IOS/call=2/2
->> IOPS=43.67M, BW=21.32GiB/s, IOS/call=1/1
->> IOPS=43.57M, BW=21.28GiB/s, IOS/call=1/2
->> IOPS=43.53M, BW=21.25GiB/s, IOS/call=2/1
->>
->> which does regress that workload.
-> 
-> Bummer, I would expect -D1 to be no worse. My test isn't nearly as consistent
-> as yours, so I'm having some trouble measuring. I'm only coming with a few
-> micro-optimizations that might help. A diff is below on top of this series. I
-> also created a branch with everything folded in here:
+On Tue, 2022-08-02 at 22:56 -0300, Enzo Matsumiya wrote:
+> On 08/02, Tom Talpey wrote:
+> > The initial goal is to modularize the SMB1 code, so it can be completel=
+y
+> > removed from a running system. The extensive refactoring logically lead=
+s
+> > to this directory renaming, but renaming is basically a side effect.
+> >=20
 
-That seemed to do the trick! Don't pay any attention to the numbers
-being slightly different than before for -D0, it's a slightly different
-kernel. But same test, -d8 -s2 -c2, polled:
+This is a great technical goal. Splitting up cifs.ko into smaller
+modules would be great, in addition to being able to turn off smb1
+support.
 
--D0 -B1
-IOPS=45.39M, BW=22.16GiB/s, IOS/call=1/1
-IOPS=46.06M, BW=22.49GiB/s, IOS/call=2/1
-IOPS=45.70M, BW=22.31GiB/s, IOS/call=1/1
-IOPS=45.71M, BW=22.32GiB/s, IOS/call=2/2
-IOPS=45.83M, BW=22.38GiB/s, IOS/call=1/1
-IOPS=45.64M, BW=22.29GiB/s, IOS/call=2/2
+> > Stamping out the four-letter word C-I-F-S is a secondary goal. At this
+> > point, the industry has stopped using it. You make a good point that
+> > it's still visible outside the kernel source though.
+> >=20
+> > It makes good sense to do the refactoring in place, at first. Splitting
+> > the {smb1,cifs}*.[ch] files will be more complex, but maybe easier to
+> > review and merge, without folding in a new directory tree and git rm/mv=
+.
+> > Either way, there will be at least two modules, maybe three if we split
+> > out generic subroutines.
+> >=20
+> > Enzo, you're up to your elbows in this code now, is it too ugly without
+> > the new directories?
+>=20
+> Having things in separate directories and code appropriately distributed
+> in coherently named headers/sources certainly makes things easier to
+> work with.
+>=20
+> Of course this patch is not important, by far, but from what I
+> gathered, it was some people's wish to move away from "cifs" name.
+>=20
+> Answering your question (IIUC), Tom, I'm ok with postponing this change.
+>=20
+>=20
 
--D1 -B1
-IOPS=45.94M, BW=22.43GiB/s, IOS/call=1/1
-IOPS=46.08M, BW=22.50GiB/s, IOS/call=1/1
-IOPS=46.27M, BW=22.59GiB/s, IOS/call=2/1
-IOPS=45.88M, BW=22.40GiB/s, IOS/call=1/1
-IOPS=46.18M, BW=22.55GiB/s, IOS/call=2/1
-IOPS=46.13M, BW=22.52GiB/s, IOS/call=2/2
-IOPS=46.40M, BW=22.66GiB/s, IOS/call=1/1
+Cool. I'm not even really opposed to moving the directory to a new one,
+but I think a change of that magnitude ought to have some clear
+technical benefit. Maybe it'll look more palatable once the breakup into
+multiple modules is in place.
 
-which is a smidge higher, and definitely not regressing now.
-
--- 
-Jens Axboe
-
+--=20
+Jeff Layton <jlayton@kernel.org>
