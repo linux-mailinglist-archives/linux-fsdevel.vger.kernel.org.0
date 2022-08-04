@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4CF7589EA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 17:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B083589EC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Aug 2022 17:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239778AbiHDP1A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Aug 2022 11:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34210 "EHLO
+        id S239902AbiHDPfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Aug 2022 11:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235936AbiHDP07 (ORCPT
+        with ESMTP id S234829AbiHDPfQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Aug 2022 11:26:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE00221245
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Aug 2022 08:26:57 -0700 (PDT)
+        Thu, 4 Aug 2022 11:35:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 236F82DE
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Aug 2022 08:35:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659626816;
+        s=mimecast20190719; t=1659627313;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=UwVPMHNGaFZ81vFKHr3nYXqw8Kj/v9CVpEE3w8x/Lig=;
-        b=ZiUr3H69wPvNI8hoIdGXa2zlu2unYUHpSPtWFI/MnmaECUjph344tgR+vFSwdM+N6lOIWD
-        MWHKqWoybzkxEEXQZ11pyxJWhzOKmDYe9s4mcdlJKyLUBwgfNdZ1wfU89Qsga2XtOWxy1V
-        mGJHtpXMwiPaad9dJMhf4mBTBguhfDA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VT0u7ZaKN37z3Ednw0jIyi0lKP1rrj9zj9DcgovdyPU=;
+        b=auunYObo9MDVyB6+QYHaxSbX6mG3xj9Yo9fvkWxrzHimEzUn9bQgzBrOcUT+tjonWp5NFm
+        euwMZg1GexA7rgw/i0pcwkMTZ20mAQs+2p7VOrx8PdP9ZUf6kGHSW1ZSqA+TjdWzNB4l3h
+        TgGgXlueHxgExJSMJexnc7utdVfaZAo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-526-OqRHtPYhM2Gz9Xwe5BTvKA-1; Thu, 04 Aug 2022 11:26:53 -0400
-X-MC-Unique: OqRHtPYhM2Gz9Xwe5BTvKA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ us-mta-201-r8WPkGNBM6ORsWj8XwDSYw-1; Thu, 04 Aug 2022 11:34:55 -0400
+X-MC-Unique: r8WPkGNBM6ORsWj8XwDSYw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C31D43800C36;
-        Thu,  4 Aug 2022 15:26:52 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 962E485A581;
+        Thu,  4 Aug 2022 15:34:54 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E9B9403D0D0;
-        Thu,  4 Aug 2022 15:26:50 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E7F621410DDA;
+        Thu,  4 Aug 2022 15:34:52 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] nfs: Fix automount superblock LSM init problem,
+Subject: [PATCH v2] nfs: Fix automount superblock LSM init problem,
  preventing sb sharing
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
@@ -55,15 +55,15 @@ Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
         dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Thu, 04 Aug 2022 16:26:49 +0100
-Message-ID: <165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk>
+Date:   Thu, 04 Aug 2022 16:34:52 +0100
+Message-ID: <165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -109,16 +109,17 @@ cc: linux-security-module@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 ---
 
- fs/fs_context.c               |    4 ++++
+ fs/fs_context.c               |    4 +++
  fs/nfs/getroot.c              |    1 +
- fs/super.c                    |   10 ++++++----
+ fs/super.c                    |   10 ++++---
  include/linux/fs_context.h    |    1 +
  include/linux/lsm_hook_defs.h |    1 +
- include/linux/lsm_hooks.h     |    6 +++++-
- include/linux/security.h      |    6 ++++++
- security/security.c           |    5 +++++
- security/selinux/hooks.c      |   29 +++++++++++++++++++++++++++++
- 9 files changed, 58 insertions(+), 5 deletions(-)
+ include/linux/lsm_hooks.h     |    6 +++-
+ include/linux/security.h      |    6 ++++
+ security/security.c           |    5 +++
+ security/selinux/hooks.c      |   29 +++++++++++++++++++
+ security/smack/smack_lsm.c    |   61 +++++++++++++++++++++++++++++++++++++++++
+ 10 files changed, 119 insertions(+), 5 deletions(-)
 
 diff --git a/fs/fs_context.c b/fs/fs_context.c
 index 24ce12f0db32..22248b8a88a8 100644
@@ -251,7 +252,7 @@ index 188b8f782220..e683027f9424 100644
  {
  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 1bbd53321d13..ddeaff4f3bb1 100644
+index 1bbd53321d13..6714cc592521 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
 @@ -2768,6 +2768,34 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
@@ -265,7 +266,7 @@ index 1bbd53321d13..ddeaff4f3bb1 100644
 +	const struct inode_security_struct *root_isec;
 +	struct selinux_mnt_opts *opts;
 +
-+	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
++	if (reference) {
 +		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
 +		if (!opts)
 +			return -ENOMEM;
@@ -297,5 +298,84 @@ index 1bbd53321d13..ddeaff4f3bb1 100644
  	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
  	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
  	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 6207762dbdb1..6eaad28e9f0d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -612,6 +612,66 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
+ 	return -EINVAL;
+ }
+ 
++/**
++ * smack_fs_context_init - Initialise security data for a filesystem context
++ * @fc: The filesystem context.
++ * @reference: Reference dentry (automount/reconfigure) or NULL
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_init(struct fs_context *fc,
++				 struct dentry *reference)
++{
++	struct superblock_smack *sbsp;
++	struct smack_mnt_opts *ctx;
++	struct inode_smack *isp;
++
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	fc->security = ctx;
++
++	if (reference) {
++		sbsp = smack_superblock(reference->d_sb);
++		isp = smack_inode(reference->d_sb->s_root->d_inode);
++
++		if (sbsp->smk_default) {
++			ctx->fsdefault = kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
++			if (!ctx->fsdefault)
++				return -ENOMEM;
++		}
++
++		if (sbsp->smk_floor) {
++			ctx->fsfloor = kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
++			if (!ctx->fsfloor)
++				return -ENOMEM;
++		}
++
++		if (sbsp->smk_hat) {
++			ctx->fshat = kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
++			if (!ctx->fshat)
++				return -ENOMEM;
++		}
++
++
++		if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
++			if (sbsp->smk_root) {
++				ctx->fstransmute = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
++				if (!ctx->fstransmute)
++					return -ENOMEM;
++			}
++		} else {
++			if (sbsp->smk_root) {
++				ctx->fsroot = kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
++				if (!ctx->fsroot)
++					return -ENOMEM;
++			}
++		}
++	}
++
++	return 0;
++}
++
+ /**
+  * smack_fs_context_dup - Duplicate the security data on fs_context duplication
+  * @fc: The new filesystem context.
+@@ -4755,6 +4815,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+ 	LSM_HOOK_INIT(syslog, smack_syslog),
+ 
++	LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
+ 	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
+ 	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
+ 
 
 
