@@ -2,411 +2,339 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA0958AAD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Aug 2022 14:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED89058AB66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Aug 2022 15:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240719AbiHEMYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Aug 2022 08:24:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
+        id S237742AbiHENL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Aug 2022 09:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237660AbiHEMYX (ORCPT
+        with ESMTP id S236378AbiHENLz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Aug 2022 08:24:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD4F331F;
-        Fri,  5 Aug 2022 05:24:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4D07EB82499;
-        Fri,  5 Aug 2022 12:24:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DA8C433D7;
-        Fri,  5 Aug 2022 12:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659702259;
-        bh=2G6YYGLVwkjhV5fP63SZgR6E6mqLhM0tl8rQ17sWp1s=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RnzKQF4vTZjt4fbL0N0u/87Gsi2rmIs5w2H1GN/6XoATAQIhW3nwN0HIwNClnpJuz
-         wlrI8LOZbcEqkRPhC9jHNmAHC/Q1PDP0la1OstvDR2p4gsqZAwka+i7hS1o/KbiHbO
-         IGIE5yi8AIWXVY2FJ228p2bopEPi34dLqfUgXmoNDFIPsKQGLDr5wGFjW63PsAcDsr
-         CVMqV4T3znGuTV4B3X47Rf0Rs+KSt52XIrHfKDceQ9i3mOIsqlcuFjCtQHpgD7Ou4/
-         /dwQmvIOsav5u4a9N81/GVdXN2vBjnBXTVOg8gGfowFGc8eaHeh6KIxCy38RB1S+R9
-         ufs/Ag8q4qxFA==
-Message-ID: <b767fd4f14469005035eca04cc74ea5222601566.camel@kernel.org>
-Subject: Re: [PATCH v2] nfs: Fix automount superblock LSM init problem,
- preventing sb sharing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 05 Aug 2022 08:24:16 -0400
-In-Reply-To: <165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk>
-References: <165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
+        Fri, 5 Aug 2022 09:11:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 210021ADA2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Aug 2022 06:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659705113;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AyPKB0mAxCNUUWTYUlhhyb+rMbnmnQZaMJrhaPpuC5o=;
+        b=Th5lltrkc3gPBQUqZcvIz0Rob7W3MypvgwhD5VonYPrZyEIss8VUlWbU2C9IENXRSccwNK
+        MielicDMy7kyFWEOmAnZ2hF52nE7oiYD/6iJEDYaJpeCIsJjA6E3gIt3X3EPatB4PAvPUq
+        HpDM4+mK1Yg0mvSR+rPC41zvjUgmhHM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-171-Ck9YN_QAMDetoHxVkWJ8VQ-1; Fri, 05 Aug 2022 09:11:51 -0400
+X-MC-Unique: Ck9YN_QAMDetoHxVkWJ8VQ-1
+Received: by mail-wm1-f70.google.com with SMTP id d10-20020a05600c34ca00b003a4f0932ec3so4210694wmq.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Aug 2022 06:11:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc;
+        bh=AyPKB0mAxCNUUWTYUlhhyb+rMbnmnQZaMJrhaPpuC5o=;
+        b=D4tGG7X3B/kfB0Q63TjMc8enomaG1bXdW6Q0wNtIwZl9LSdA/5+ldlUH3Nfr4ndNdX
+         Srp3zt+pfzSWQUIvC3p244/98albJOt+FZVZ9KZICeYR7JVuNkuRfDCdQjwYw+0YCXwn
+         gYEzV8n/74CdPYwUYV82IQNktKbBCZxMk80vm6DRfwLp3TXxuEoo/7/brDLinytarjIg
+         g6I7JFdGIidMSxyR2Aml1VeGeAgvceYXy8RhvlW9LNG8CClbeXI5uSNLBJPWXAeswYeo
+         i+0M6b1sUOYXwgOldZyk2Y8lMatIcsrSuTJ9pdwl9duGqQSHG0TDfITzxXtZ489NHfsl
+         DfpQ==
+X-Gm-Message-State: ACgBeo0YKGRV3rMZU6pYfkL0UDWnHpVOYIwYmxeZxH61PfS0RjitiIPX
+        oLrKy3WuHKYIufRlS79WuvuEujbqGjS9ASgOB/KROYgruGj5ohg3n7D+Q1TdaYSZfEhiZlQP/Xi
+        y0i1t7BPs7dIPxE8W8FKGl+77Dw==
+X-Received: by 2002:a05:600c:22d8:b0:3a5:1450:669e with SMTP id 24-20020a05600c22d800b003a51450669emr4266321wmg.102.1659705109372;
+        Fri, 05 Aug 2022 06:11:49 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR4maTuPBUIPkvn2YU8/xJs1p/whDw6HWacNW7NECuUlgU3tCxwmiRypaxnYb/j68PL3fr0dTA==
+X-Received: by 2002:a05:600c:22d8:b0:3a5:1450:669e with SMTP id 24-20020a05600c22d800b003a51450669emr4266282wmg.102.1659705109038;
+        Fri, 05 Aug 2022 06:11:49 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:fb00:f5c3:24b2:3d03:9d52? (p200300cbc706fb00f5c324b23d039d52.dip0.t-ipconnect.de. [2003:cb:c706:fb00:f5c3:24b2:3d03:9d52])
+        by smtp.gmail.com with ESMTPSA id b21-20020a05600c06d500b0039c5ab7167dsm8505998wmn.48.2022.08.05.06.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Aug 2022 06:11:48 -0700 (PDT)
+Message-ID: <c0c10ef9-b811-f259-9117-f056612c8bd1@redhat.com>
+Date:   Fri, 5 Aug 2022 15:11:46 +0200
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-3-chao.p.peng@linux.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v7 02/14] selftests/memfd: Add tests for
+ F_SEAL_AUTO_ALLOCATE
+In-Reply-To: <20220706082016.2603916-3-chao.p.peng@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-08-04 at 16:34 +0100, David Howells wrote:
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
->=20
-> Fix this by adding a new LSM hook to load fc->security for submount
-> creation when alloc_fs_context() is creating the fs_context for it.
->=20
-> However, this uncovers a further bug: nfs_get_root() initialises the
-> superblock security manually by calling security_sb_set_mnt_opts() or
-> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> complaining.
->=20
-> Fix that by adding a flag to the fs_context that suppresses the
-> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NF=
-S
-> when it sets the LSM context on the new superblock.
->=20
-> The first bug leads to messages like the following appearing in dmesg:
->=20
-> 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,=
-100000,2ee,3a98,1d4c,3a98,1)
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() =
-to it.")
-> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> cc: Anna Schumaker <anna@kernel.org>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Scott Mayhew <smayhew@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Paul Moore <paul@paul-moore.com>
-> cc: Casey Schaufler <casey@schaufler-ca.com>
-> cc: linux-nfs@vger.kernel.org
-> cc: selinux@vger.kernel.org
-> cc: linux-security-module@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
+On 06.07.22 10:20, Chao Peng wrote:
+> Add tests to verify sealing memfds with the F_SEAL_AUTO_ALLOCATE works
+> as expected.
+> 
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 > ---
->=20
->  fs/fs_context.c               |    4 +++
->  fs/nfs/getroot.c              |    1 +
->  fs/super.c                    |   10 ++++---
->  include/linux/fs_context.h    |    1 +
->  include/linux/lsm_hook_defs.h |    1 +
->  include/linux/lsm_hooks.h     |    6 +++-
->  include/linux/security.h      |    6 ++++
->  security/security.c           |    5 +++
->  security/selinux/hooks.c      |   29 +++++++++++++++++++
->  security/smack/smack_lsm.c    |   61 +++++++++++++++++++++++++++++++++++=
-++++++
->  10 files changed, 119 insertions(+), 5 deletions(-)
->=20
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index 24ce12f0db32..22248b8a88a8 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct fi=
-le_system_type *fs_type,
->  		break;
+>  tools/testing/selftests/memfd/memfd_test.c | 166 +++++++++++++++++++++
+>  1 file changed, 166 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+> index 94df2692e6e4..b849ece295fd 100644
+> --- a/tools/testing/selftests/memfd/memfd_test.c
+> +++ b/tools/testing/selftests/memfd/memfd_test.c
+> @@ -9,6 +9,7 @@
+>  #include <fcntl.h>
+>  #include <linux/memfd.h>
+>  #include <sched.h>
+> +#include <setjmp.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <signal.h>
+> @@ -232,6 +233,31 @@ static void mfd_fail_open(int fd, int flags, mode_t mode)
 >  	}
-> =20
-> +	ret =3D security_fs_context_init(fc, reference);
-> +	if (ret < 0)
-> +		goto err_fc;
+>  }
+>  
+> +static void mfd_assert_fallocate(int fd)
+> +{
+> +	int r;
 > +
->  	/* TODO: Make all filesystems support this unconditionally */
->  	init_fs_context =3D fc->fs_type->init_fs_context;
->  	if (!init_fs_context)
-> diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-> index 11ff2b2e060f..651bffb0067e 100644
-> --- a/fs/nfs/getroot.c
-> +++ b/fs/nfs/getroot.c
-> @@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_con=
-text *fc)
+> +	r = fallocate(fd, 0, 0, mfd_def_size);
+> +	if (r < 0) {
+> +		printf("fallocate(ALLOC) failed: %m\n");
+> +		abort();
+> +	}
+> +}
+> +
+> +static void mfd_assert_punch_hole(int fd)
+> +{
+> +	int r;
+> +
+> +	r = fallocate(fd,
+> +		      FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> +		      0,
+> +		      mfd_def_size);
+> +	if (r < 0) {
+> +		printf("fallocate(PUNCH_HOLE) failed: %m\n");
+> +		abort();
+> +	}
+> +}
+> +
+>  static void mfd_assert_read(int fd)
+>  {
+>  	char buf[16];
+> @@ -594,6 +620,94 @@ static void mfd_fail_grow_write(int fd)
 >  	}
->  	if (error)
->  		goto error_splat_root;
-> +	fc->lsm_set =3D true;
->  	if (server->caps & NFS_CAP_SECURITY_LABEL &&
->  		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
->  		server->caps &=3D ~NFS_CAP_SECURITY_LABEL;
-> diff --git a/fs/super.c b/fs/super.c
-> index 60f57c7bc0a6..a1c440336fd9 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1519,10 +1519,12 @@ int vfs_get_tree(struct fs_context *fc)
->  	smp_wmb();
->  	sb->s_flags |=3D SB_BORN;
-> =20
-> -	error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> -	if (unlikely(error)) {
-> -		fc_drop_locked(fc);
-> -		return error;
-> +	if (!(fc->lsm_set)) {
-> +		error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> +		if (unlikely(error)) {
-> +			fc_drop_locked(fc);
-> +			return error;
+>  }
+>  
+> +static void mfd_assert_hole_write(int fd)
+> +{
+> +	ssize_t l;
+> +	void *p;
+> +	char *p1;
+> +
+> +	/*
+> +	 * huegtlbfs does not support write, but we want to
+> +	 * verify everything else here.
+> +	 */
+> +	if (!hugetlbfs_test) {
+> +		/* verify direct write() succeeds */
+> +		l = write(fd, "\0\0\0\0", 4);
+> +		if (l != 4) {
+> +			printf("write() failed: %m\n");
+> +			abort();
 > +		}
->  	}
-> =20
->  	/*
-> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> index 13fa6f3df8e4..3876dd96bb20 100644
-> --- a/include/linux/fs_context.h
-> +++ b/include/linux/fs_context.h
-> @@ -110,6 +110,7 @@ struct fs_context {
->  	bool			need_free:1;	/* Need to call ops->free() */
->  	bool			global:1;	/* Goes into &init_user_ns */
->  	bool			oldapi:1;	/* Coming from mount(2) */
-> +	bool			lsm_set:1;	/* security_sb_set/clone_mnt_opts() already done */
->  };
-> =20
->  struct fs_context_operations {
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
-h
-> index eafa1d2489fd..6d1c738e4a84 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_bin=
-prm *bprm, struct file *f
->  LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
->  LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm =
-*bprm)
->  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *=
-bprm)
-> +LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry *=
-reference)
->  LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
->  	 struct fs_context *src_sc)
->  LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 91c8146649f5..1782814c7c5b 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -87,8 +87,12 @@
->   * Security hooks for mount using fs_context.
->   *	[See also Documentation/filesystems/mount_api.rst]
->   *
-> + * @fs_context_init:
-> + *	Initialise fc->security.  This is initialised to NULL by the caller.
-> + *	@fc indicates the new filesystem context.
-> + *	@dentry indicates a reference for submount/remount
->   * @fs_context_dup:
-> - *	Allocate and attach a security structure to sc->security.  This point=
-er
-> + *	Allocate and attach a security structure to fc->security.  This point=
-er
->   *	is initialised to NULL by the caller.
->   *	@fc indicates the new filesystem context.
->   *	@src_fc indicates the original filesystem context.
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 7fc4e9f49f54..94834f699b04 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -291,6 +291,7 @@ int security_bprm_creds_from_file(struct linux_binprm=
- *bprm, struct file *file);
->  int security_bprm_check(struct linux_binprm *bprm);
->  void security_bprm_committing_creds(struct linux_binprm *bprm);
->  void security_bprm_committed_creds(struct linux_binprm *bprm);
-> +int security_fs_context_init(struct fs_context *fc, struct dentry *refer=
-ence);
->  int security_fs_context_dup(struct fs_context *fc, struct fs_context *sr=
-c_fc);
->  int security_fs_context_parse_param(struct fs_context *fc, struct fs_par=
-ameter *param);
->  int security_sb_alloc(struct super_block *sb);
-> @@ -620,6 +621,11 @@ static inline void security_bprm_committed_creds(str=
-uct linux_binprm *bprm)
->  {
->  }
-> =20
-> +static inline int security_fs_context_init(struct fs_context *fc,
-> +					   struct dentry *reference)
-> +{
-> +	return 0;
-> +}
->  static inline int security_fs_context_dup(struct fs_context *fc,
->  					  struct fs_context *src_fc)
->  {
-> diff --git a/security/security.c b/security/security.c
-> index 188b8f782220..e683027f9424 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -880,6 +880,11 @@ void security_bprm_committed_creds(struct linux_binp=
-rm *bprm)
->  	call_void_hook(bprm_committed_creds, bprm);
->  }
-> =20
-> +int security_fs_context_init(struct fs_context *fc, struct dentry *refer=
-ence)
-> +{
-> +	return call_int_hook(fs_context_init, 0, fc, reference);
-> +}
-> +
->  int security_fs_context_dup(struct fs_context *fc, struct fs_context *sr=
-c_fc)
->  {
->  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 1bbd53321d13..6714cc592521 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2768,6 +2768,34 @@ static int selinux_umount(struct vfsmount *mnt, in=
-t flags)
->  				   FILESYSTEM__UNMOUNT, NULL);
->  }
-> =20
-> +static int selinux_fs_context_init(struct fs_context *fc,
-> +				   struct dentry *reference)
-> +{
-> +	const struct superblock_security_struct *sbsec;
-> +	const struct inode_security_struct *root_isec;
-> +	struct selinux_mnt_opts *opts;
-> +
-> +	if (reference) {
-> +		opts =3D kzalloc(sizeof(*opts), GFP_KERNEL);
-> +		if (!opts)
-> +			return -ENOMEM;
-> +
-> +		root_isec =3D backing_inode_security(reference->d_sb->s_root);
-> +		sbsec =3D selinux_superblock(reference->d_sb);
-> +		if (sbsec->flags & FSCONTEXT_MNT)
-> +			opts->fscontext_sid	=3D sbsec->sid;
-> +		if (sbsec->flags & CONTEXT_MNT)
-> +			opts->context_sid	=3D sbsec->mntpoint_sid;
-> +		if (sbsec->flags & ROOTCONTEXT_MNT)
-> +			opts->rootcontext_sid	=3D root_isec->sid;
-> +		if (sbsec->flags & DEFCONTEXT_MNT)
-> +			opts->defcontext_sid	=3D sbsec->def_sid;
-> +		fc->security =3D opts;
 > +	}
 > +
-> +	return 0;
+> +	/* verify mmaped write succeeds */
+> +	p = mmap(NULL,
+> +		 mfd_def_size,
+> +		 PROT_READ | PROT_WRITE,
+> +		 MAP_SHARED,
+> +		 fd,
+> +		 0);
+> +	if (p == MAP_FAILED) {
+> +		printf("mmap() failed: %m\n");
+> +		abort();
+> +	}
+> +	p1 = (char *)p + mfd_def_size - 1;
+> +	*p1 = 'H';
+> +	if (*p1 != 'H') {
+> +		printf("mmaped write failed: %m\n");
+> +		abort();
+> +
+> +	}
+> +	munmap(p, mfd_def_size);
 > +}
 > +
->  static int selinux_fs_context_dup(struct fs_context *fc,
->  				  struct fs_context *src_fc)
+> +sigjmp_buf jbuf, *sigbuf;
+> +static void sig_handler(int sig, siginfo_t *siginfo, void *ptr)
+> +{
+> +	if (sig == SIGBUS) {
+> +		if (sigbuf)
+> +			siglongjmp(*sigbuf, 1);
+> +		abort();
+> +	}
+> +}
+> +
+> +static void mfd_fail_hole_write(int fd)
+> +{
+> +	ssize_t l;
+> +	void *p;
+> +	char *p1;
+> +
+> +	/* verify direct write() fails */
+> +	l = write(fd, "data", 4);
+> +	if (l > 0) {
+> +		printf("expected failure on write(), but got %d: %m\n", (int)l);
+> +		abort();
+> +	}
+> +
+> +	/* verify mmaped write fails */
+> +	p = mmap(NULL,
+> +		 mfd_def_size,
+> +		 PROT_READ | PROT_WRITE,
+> +		 MAP_SHARED,
+> +		 fd,
+> +		 0);
+> +	if (p == MAP_FAILED) {
+> +		printf("mmap() failed: %m\n");
+> +		abort();
+> +	}
+> +
+> +	sigbuf = &jbuf;
+> +	if (sigsetjmp(*sigbuf, 1))
+> +		goto out;
+> +
+> +	/* Below write should trigger SIGBUS signal */
+> +	p1 = (char *)p + mfd_def_size - 1;
+> +	*p1 = 'H';
+
+Maybe you want to verify separately, that bothj
+
+> +	printf("failed to receive SIGBUS for mmaped write: %m\n");
+> +	abort();
+> +out:
+> +	munmap(p, mfd_def_size);
+> +}
+> +
+>  static int idle_thread_fn(void *arg)
 >  {
-> @@ -7239,6 +7267,7 @@ static struct security_hook_list selinux_hooks[] __=
-lsm_ro_after_init =3D {
->  	/*
->  	 * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
->  	 */
-> +	LSM_HOOK_INIT(fs_context_init, selinux_fs_context_init),
->  	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
->  	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
->  	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 6207762dbdb1..6eaad28e9f0d 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -612,6 +612,66 @@ static int smack_add_opt(int token, const char *s, v=
-oid **mnt_opts)
->  	return -EINVAL;
+>  	sigset_t set;
+> @@ -880,6 +994,57 @@ static void test_seal_resize(void)
+>  	close(fd);
 >  }
-> =20
-> +/**
-> + * smack_fs_context_init - Initialise security data for a filesystem con=
-text
-> + * @fc: The filesystem context.
-> + * @reference: Reference dentry (automount/reconfigure) or NULL
-> + *
-> + * Returns 0 on success or -ENOMEM on error.
+>  
+> +/*
+> + * Test F_SEAL_AUTO_ALLOCATE
+> + * Test whether F_SEAL_AUTO_ALLOCATE actually prevents allocation.
 > + */
-> +static int smack_fs_context_init(struct fs_context *fc,
-> +				 struct dentry *reference)
+> +static void test_seal_auto_allocate(void)
 > +{
-> +	struct superblock_smack *sbsp;
-> +	struct smack_mnt_opts *ctx;
-> +	struct inode_smack *isp;
+> +	struct sigaction act;
+> +	int fd;
 > +
-> +	ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +	fc->security =3D ctx;
+> +	printf("%s SEAL-AUTO-ALLOCATE\n", memfd_str);
 > +
-> +	if (reference) {
-> +		sbsp =3D smack_superblock(reference->d_sb);
-> +		isp =3D smack_inode(reference->d_sb->s_root->d_inode);
-> +
-> +		if (sbsp->smk_default) {
-> +			ctx->fsdefault =3D kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
-> +			if (!ctx->fsdefault)
-> +				return -ENOMEM;
-> +		}
-> +
-> +		if (sbsp->smk_floor) {
-> +			ctx->fsfloor =3D kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
-> +			if (!ctx->fsfloor)
-> +				return -ENOMEM;
-> +		}
-> +
-> +		if (sbsp->smk_hat) {
-> +			ctx->fshat =3D kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
-> +			if (!ctx->fshat)
-> +				return -ENOMEM;
-> +		}
-> +
-> +
-> +		if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
-> +			if (sbsp->smk_root) {
-> +				ctx->fstransmute =3D kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-> +				if (!ctx->fstransmute)
-> +					return -ENOMEM;
-> +			}
-> +		} else {
-> +			if (sbsp->smk_root) {
-> +				ctx->fsroot =3D kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
-> +				if (!ctx->fsroot)
-> +					return -ENOMEM;
-> +			}
-> +		}
+> +	memset(&act, 0, sizeof(act));
+> +	act.sa_sigaction = sig_handler;
+> +	act.sa_flags = SA_SIGINFO;
+> +	if (sigaction(SIGBUS, &act, 0)) {
+> +		printf("sigaction() failed: %m\n");
+> +		abort();
 > +	}
 > +
-> +	return 0;
-> +}
+> +	fd = mfd_assert_new("kern_memfd_seal_auto_allocate",
+> +			    mfd_def_size,
+> +			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
 > +
->  /**
->   * smack_fs_context_dup - Duplicate the security data on fs_context dupl=
-ication
->   * @fc: The new filesystem context.
-> @@ -4755,6 +4815,7 @@ static struct security_hook_list smack_hooks[] __ls=
-m_ro_after_init =3D {
->  	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
->  	LSM_HOOK_INIT(syslog, smack_syslog),
-> =20
-> +	LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
->  	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
->  	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
-> =20
->=20
->=20
+> +	/* read/write should pass if F_SEAL_AUTO_ALLOCATE not set */
+> +	mfd_assert_read(fd);
+> +	mfd_assert_hole_write(fd);
+> +
+> +	mfd_assert_has_seals(fd, 0);
+> +	mfd_assert_add_seals(fd, F_SEAL_AUTO_ALLOCATE);
+> +	mfd_assert_has_seals(fd, F_SEAL_AUTO_ALLOCATE);
+> +
+> +	/* read/write should pass for pre-allocated area */
+> +	mfd_assert_read(fd);
+> +	mfd_assert_hole_write(fd);
+> +
+> +	mfd_assert_punch_hole(fd);
+> +
+> +	/* read should pass, write should fail in hole */
+> +	mfd_assert_read(fd);
+> +	mfd_fail_hole_write(fd);
+> +
+> +	mfd_assert_fallocate(fd);
+> +
+> +	/* read/write should pass after fallocate */
+> +	mfd_assert_read(fd);
+> +	mfd_assert_hole_write(fd);
+> +
+> +	close(fd);
+> +}
 
-I hit a problem when testing this:
+What might make sense is to verify for the following operations:
+* read()
+* write()
+* read via mmap
+* write via mmap
 
-xfstest generic/294 fails on nfs with or without this patch. Without the
-patch it seems to fail because the errors returned are different than
-expected (EROFS instead of EEXIST). With this patch, it fails to remount
-the filesystem at all, which I think is a regression.
+After sealing on a hole, that there is *still* a hole and that only the
+read() might succeed, with a comment stating that shmem optimized for
+read on holes by reading from the shared zeropage.
 
-We should probably fix the test to not be so specific about the error
-being returned here too, but that's a different issue.
---=20
-Jeff Layton <jlayton@kernel.org>
+I'd suggest decoupling hole_write from hole_mmap_write and similarly
+have hole_read and hole_mmap_read.
+
+You should be able to use fstat() to obtain the number of allocated
+blocks to check that fairly easily.
+
+-- 
+Thanks,
+
+David / dhildenb
+
