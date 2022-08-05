@@ -2,105 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7792E58AD78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Aug 2022 17:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B47C58AE0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Aug 2022 18:26:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241407AbiHEPsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Aug 2022 11:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47520 "EHLO
+        id S237902AbiHEQZ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Aug 2022 12:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230223AbiHEPqE (ORCPT
+        with ESMTP id S236783AbiHEQZF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Aug 2022 11:46:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF9376978;
-        Fri,  5 Aug 2022 08:45:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D8666B82987;
-        Fri,  5 Aug 2022 15:45:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D9DC43470;
-        Fri,  5 Aug 2022 15:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659714301;
-        bh=kDhO2X//rHE1f3NmQ76TBXX4I/1jwdVQI94cz/jmob8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ke9ySX6mIc6wEXAgsCtzhRgiUv0smB4HA07KU/2qHYzRhebPeV9Yewg4i+88YhZKa
-         JyKgYKgtdpcrra9GURQh1iBagP8ALKBMZNysGcOEr8CRJGpPfcEwr8qeExo6aKe/0Y
-         3G8ZBNs1Lom9U1uboO5qXNcp9C8Yxh9wteFC4voWW+Nhb207WmzZ0w5qu7PQWkM89a
-         zkjvgvOffd0Ekcqt8E/tJOi1x+AxtILw46XCnK7e+2940uwygl66E8KiytQFyn0zMq
-         v6gdM0NEcMq8JwhmN+OXveaLv+1JhRrXlpPP7dcohug9KgvCVDdBmna6iHG6BfGDPG
-         1ey1b7AxmgK/g==
-From:   Miguel Ojeda <ojeda@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>
-Subject: [PATCH v9 27/27] MAINTAINERS: Rust
-Date:   Fri,  5 Aug 2022 17:42:12 +0200
-Message-Id: <20220805154231.31257-28-ojeda@kernel.org>
-In-Reply-To: <20220805154231.31257-1-ojeda@kernel.org>
-References: <20220805154231.31257-1-ojeda@kernel.org>
+        Fri, 5 Aug 2022 12:25:05 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9ED4C630
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 Aug 2022 09:24:53 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 275G7ZFC002830
+        for <linux-fsdevel@vger.kernel.org>; Fri, 5 Aug 2022 09:24:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=8lReZdcTYdIHAj71wx1nJeUfZ+0HnE66EFO+CeaoAJE=;
+ b=hDLVPUbDviGVwoUuIjajlQlposOw+/tuaTOc9OU/mScEWupEPQ3ufruiOeBG/ak0IMu2
+ lhS7pEo/XM0v+FsjsHuoEdY55hUT/clKJEmL6XFkUXa3RVi+7uYGqsp1Hcax1jvKH4Db
+ mi/TMLpelQNQkdC/mBW3Mn1IUwSTaJUQIgE= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3hrfvf84dh-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Aug 2022 09:24:53 -0700
+Received: from twshared14818.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Fri, 5 Aug 2022 09:24:50 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 3C17F70374FD; Fri,  5 Aug 2022 09:24:45 -0700 (PDT)
+From:   Keith Busch <kbusch@fb.com>
+To:     <linux-nvme@lists.infradead.org>, <linux-block@vger.kernel.org>,
+        <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <Kernel-team@fb.com>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv3 0/7] dma mapping optimisations
+Date:   Fri, 5 Aug 2022 09:24:37 -0700
+Message-ID: <20220805162444.3985535-1-kbusch@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: RK3w862rUToJWmh4iQ3UBJ8WeyWC6rJT
+X-Proofpoint-ORIG-GUID: RK3w862rUToJWmh4iQ3UBJ8WeyWC6rJT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-05_08,2022-08-05_01,2022-06-22_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miguel, Alex and Wedson will be maintaining the Rust support.
+From: Keith Busch <kbusch@kernel.org>
 
-Boqun, Gary and Björn will be reviewers.
+Changes since v2:
 
-Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- MAINTAINERS | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+  Fixed incorrect io_uring io_fixed_file index validit checksy: this shou=
+ld
+  have been validating the file_ptr (Ammar)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 64379c699903..263ff9abca0b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17477,6 +17477,24 @@ L:	linux-rdma@vger.kernel.org
- S:	Maintained
- F:	drivers/infiniband/ulp/rtrs/
- 
-+RUST
-+M:	Miguel Ojeda <ojeda@kernel.org>
-+M:	Alex Gaynor <alex.gaynor@gmail.com>
-+M:	Wedson Almeida Filho <wedsonaf@google.com>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+R:	Gary Guo <gary@garyguo.net>
-+R:	Björn Roy Baron <bjorn3_gh@protonmail.com>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://github.com/Rust-for-Linux/linux
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+T:	git https://github.com/Rust-for-Linux/linux.git rust-next
-+F:	Documentation/rust/
-+F:	rust/
-+F:	samples/rust/
-+F:	scripts/*rust*
-+K:	\b(?i:rust)\b
-+
- RXRPC SOCKETS (AF_RXRPC)
- M:	David Howells <dhowells@redhat.com>
- M:	Marc Dionne <marc.dionne@auristor.com>
--- 
-2.37.1
+  Various micro-optimizations: move up dma in iov type checks, skip
+  iov_iter_advance on async IO (Jens).
+
+  NVMe driver cleanups splitting the fast and slow paths.
+
+  NVMe driver prp list setup fixes when using the slow path.
+
+Summary:
+
+A user address undergoes various represenations for a typical read or
+write command. Each consumes memory and CPU cycles. When the backing
+storage is NVMe, the sequence looks something like the following:
+
+  __user void *
+  struct iov_iter
+  struct pages[]
+  struct bio_vec[]
+  struct scatterlist[]
+  __le64[]
+
+Applications will often use the same buffer for many IO, so these
+potentially costly per-IO transformations to reach the exact same
+hardware descriptor can be skipped.
+
+The io_uring interface already provides a way for users to register
+buffers to get to 'struct bio_vec[]'. That still leaves the scatterlist
+needed for the repeated dma_map_sg(), then transform to nvme's PRP list
+format.
+
+This series takes the registered buffers a step further. A block driver
+can implement a new .dma_map() callback to reach the hardware's DMA
+mapped address format, and return a cookie so a user can reference it
+later for any given IO. When used, the block stack can skip significant
+amounts of code, improving CPU utilization and IOPs.
+
+The implementation is currently limited to mapping a registered buffer
+to a single io_uring fixed file.
+
+Keith Busch (7):
+  blk-mq: add ops to dma map bvec
+  file: add ops to dma map bvec
+  iov_iter: introduce type for preregistered dma tags
+  block: add dma tag bio type
+  io_uring: introduce file slot release helper
+  io_uring: add support for dma pre-mapping
+  nvme-pci: implement dma_map support
+
+ block/bdev.c                   |  20 +++
+ block/bio.c                    |  24 ++-
+ block/blk-merge.c              |  19 ++
+ block/fops.c                   |  24 ++-
+ drivers/nvme/host/pci.c        | 314 +++++++++++++++++++++++++++++++--
+ fs/file.c                      |  15 ++
+ include/linux/bio.h            |  22 ++-
+ include/linux/blk-mq.h         |  24 +++
+ include/linux/blk_types.h      |   6 +-
+ include/linux/blkdev.h         |  16 ++
+ include/linux/fs.h             |  20 +++
+ include/linux/io_uring_types.h |   2 +
+ include/linux/uio.h            |   9 +
+ include/uapi/linux/io_uring.h  |  12 ++
+ io_uring/filetable.c           |  34 ++--
+ io_uring/filetable.h           |  10 +-
+ io_uring/io_uring.c            | 139 +++++++++++++++
+ io_uring/net.c                 |   2 +-
+ io_uring/rsrc.c                |  27 +--
+ io_uring/rsrc.h                |  10 +-
+ io_uring/rw.c                  |   2 +-
+ lib/iov_iter.c                 |  27 ++-
+ 22 files changed, 724 insertions(+), 54 deletions(-)
+
+--=20
+2.30.2
 
