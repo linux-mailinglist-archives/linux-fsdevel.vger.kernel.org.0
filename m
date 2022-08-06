@@ -2,64 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B8658B667
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Aug 2022 17:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AECC158B849
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Aug 2022 22:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbiHFPYM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Aug 2022 11:24:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
+        id S233100AbiHFUsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 Aug 2022 16:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231604AbiHFPYL (ORCPT
+        with ESMTP id S232812AbiHFUsJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Aug 2022 11:24:11 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07F310558;
-        Sat,  6 Aug 2022 08:24:08 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MauFB-1niXj640Zn-00cQBP; Sat, 06 Aug 2022 17:23:56 +0200
-Message-ID: <d3d36051-3f7e-ffe3-6991-85614c1384b4@i2se.com>
-Date:   Sat, 6 Aug 2022 17:23:54 +0200
+        Sat, 6 Aug 2022 16:48:09 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443CB7661
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 Aug 2022 13:48:08 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id x2-20020a6bfe02000000b00682bffede8fso3040663ioh.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Aug 2022 13:48:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc;
+        bh=6veuc/XHAxtn2Xroc6Y8PJ3UWlSKQeS+PX4HS+juUVM=;
+        b=ui9HuF37K+tfrMfciTRx1By3cO7FfXlMP2CpYsptUgM0Ooo80edby9Kqio7LZR17xw
+         xiGZK6QOMJ/zo8LVId4FK8xzGz/P/d0qkTNLlG5/nZCGlfFonT1P/ZbASBA9i1EXDaBv
+         zYjA3D55UcF7MD4xnMxw/oK4Lh6RyUsvBHI01mfu7XdnOjIhFaXoDpXxXChubDL2NhFl
+         Cpw+9Dwb85rTsuChVFrX7dWKcZpcTITGlvKzi1T2gqcBGYb1DH00jT2l8XMHnEuGY178
+         pWQt1aOw7VaP/o9QCyKEJdF+nc9tE/7DTr170sohHZO/We5oEFn/JlPIQbZShECUgLN/
+         lQUQ==
+X-Gm-Message-State: ACgBeo097i3+Hu6+7xnoEafdt8CsamG7G0ghr1ECry0WUjEAuxbekcMm
+        ePFww5kzqqwktnXEHb3XPPZxNUte8u7JwoUqnBB6iswZ6Twz
+X-Google-Smtp-Source: AA6agR5XWoTMTg8WspELDXHq4ObjTW5Sza4vp/U8sJQu61nNhwbxCz94Dx8ZlDCKEV6Eg5gQNxMtkC4uL09b2zbMSriONduq5s/p
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-Content-Language: en-US
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
- <20220728100055.efbvaudwp3ofolpi@quack3>
- <76a9b920-0937-7bef-db55-844f0f5f6c1b@i2se.com>
-In-Reply-To: <76a9b920-0937-7bef-db55-844f0f5f6c1b@i2se.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:jsGpuA1mHPfP/MeKzoZiAP5VNlKTEaEP1K4aBBwuPNiAQYx+6Ln
- nKhp8wwgv+PBbCE1KHlBKO3ZLmGkd1IkpGWyn0MdY9y3sEjrrq0C3/3jjgku/7zAjqmkZwK
- QzNmC8JOpyuJ82jg6d+nfbsSymGyx5BTP5ijURd/pWidI3z/TdP9UyKWs9u7l5MAUQeMrID
- jlOBJBXllI6QCsLYbe9mA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YQdPEoSU+10=:mhSBOrbq5u+XX12OonkXA3
- 4PSVQcb8Jlwo2N7cv/E7NuuMwQv4lnVgkFOIsnBho+e7V5QwJXOyglmMqpzT380jOlJdF0APj
- +C5P8b1v818Ag2JAOAbXC4qZOZn7YzMXuwLHHdM3eUKTqHZvyIFcAIW+uEH9bXcH5px0qtsvg
- 1nedGpkftsEaP+pu3D87hei6m9KGescGjn2dmiJ1NyPfF1WwN+GsYb9JwRRTBsVeDVEQLYUgO
- +1d0YpHMi88ss56uv01lYD1I6c7+04wOFVLKCNj+UCJrBcps+LipvMn7h3zn70u/jFBOyi7pv
- Kjzqi5niHbWQN/s/vV4qf8tOoWC46f102gTSMbCn204uWMP55T2ucwtdwjxbha5XoPHtp6wvR
- WJJciuIyGi+BKE7nk9G01GJS+SdduDyvlmgu0lnLFTYTzvTJ6koGZ2KOEVgvLoecypS99Y3Ws
- x3uZBb0SY6Oc/eHcadjBPXMEikK7iarF4GSKigxVt6xla2fWDPTTRsyvFn8QwfBph6V5+AEwE
- BRNEHo0z+Ax/0uK3uOiuIHqudIl5b2/g4lHUrgssay15EPFsATgZhvGSSNPPp3iDweqRvm3IW
- yXEIEkkcQzt4nfcBv7M1K7MnCkjfpU34tawPTdJicIaDElWT4l0g1oXbc+Q3YruTA8xOz4AGZ
- bORqbzHDOkTq6tnRWg8k2HeU5L9iUL8QqGH2gljtt6YD3XaSyuk7jwZzrg/wQYba/TIV0VFdW
- 6qc79QuO1TPnXp5lfg2MndSdJN/9jHE8CNAShlXcfZNiz+o+rvZnDzoAPxw=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a6b:d307:0:b0:680:bcfb:bed7 with SMTP id
+ s7-20020a6bd307000000b00680bcfbbed7mr4687069iob.61.1659818887648; Sat, 06 Aug
+ 2022 13:48:07 -0700 (PDT)
+Date:   Sat, 06 Aug 2022 13:48:07 -0700
+In-Reply-To: <0000000000005b04fa05dd71e0e0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000309f9e05e598b315@google.com>
+Subject: Re: [syzbot] KASAN: out-of-bounds Write in end_buffer_read_sync
+From:   syzbot <syzbot+3f7f291a3d327486073c@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        gautammenghani201@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,29 +57,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+syzbot has bisected this issue to:
 
-Am 31.07.22 um 22:42 schrieb Stefan Wahren:
-> Hi Jan,
->
-> Am 28.07.22 um 12:00 schrieb Jan Kara:
->>
->> Also can get filesystem metadata image of your card like:
->>    e2image -r <fs-device> - | gzip >/tmp/ext4-image.gz
->>
->> and put it somewhere for download? The image will contain only fs 
->> metadata,
->> not data so it should be relatively small and we won't have access to 
->> your
->> secrets ;). With the image we'd be able to see how the free space looks
->> like and whether it perhaps does not trigger some pathological behavior.
-> i've problems with this. If i try store uncompressed the metadata of 
-> the second SD card partition (/dev/sdb2 = rootfs) the generated image 
-> file is nearly big as the whole partition. In compressed state it's 25 
-> MB. Is this expected?
+commit 6e5be40d32fb1907285277c02e74493ed43d77fe
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Fri Aug 13 14:21:30 2021 +0000
 
-This performance regression is also reproducible with 5.19 kernel 
-(arm64, defconfig) and 64-bit Raspberry Pi OS. Unfortunately the problem 
-with metadata generation is the same, the generated uncompressed file is 
-15 GB.
+    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14aab3ca080000
+start commit:   200e340f2196 Merge tag 'pull-work.dcache' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16aab3ca080000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12aab3ca080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a3f4d6985d3164cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e211fa080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14866761080000
+
+Reported-by: syzbot+3f7f291a3d327486073c@syzkaller.appspotmail.com
+Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
