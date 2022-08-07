@@ -2,46 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4051F58BC5A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62EAC58BC5D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:30:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234967AbiHGSaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Aug 2022 14:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60210 "EHLO
+        id S235418AbiHGSah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Aug 2022 14:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235418AbiHGSaU (ORCPT
+        with ESMTP id S235166AbiHGSa1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Aug 2022 14:30:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C79262;
-        Sun,  7 Aug 2022 11:30:18 -0700 (PDT)
+        Sun, 7 Aug 2022 14:30:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF6F2E7;
+        Sun,  7 Aug 2022 11:30:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 060236101A;
-        Sun,  7 Aug 2022 18:30:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30976C433D6;
-        Sun,  7 Aug 2022 18:30:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 13D22B80B45;
+        Sun,  7 Aug 2022 18:30:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FFBC433D6;
+        Sun,  7 Aug 2022 18:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659897017;
-        bh=D78JJuqaZG0wlBgJF/TRMF4PoMY3GiNJ+eWpx53TS2A=;
+        s=k20201202; t=1659897022;
+        bh=ajVmJ/17P8va0rP1dk24T+EEllee7H4348kdGVeTSq8=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tnWEiPvJxWqzCm1BvmulbPDo5yavQb1d6IaJa9v6aN3qiXyAUQR8tO9LovHz8laq/
-         VTJA6K3N0nAsfSLWNTQP04bm3uxkFX1I01i6TmgLPoMFL6lgw0GCeTB2TKgYVNYbox
-         yFORJDl4EQ5bGpb6gFdHFuET2YdzbiZl8cNHXsceDhTeqPQplUbYTTN3Z0YWoXAC/g
-         1dokRniBphM9eAj00VGvmKO/NZjvjMpqQ7n7zM6gCL8h9soRTJCnnQj6NoHnETl9Zh
-         qzbMZ88AmoapvrqIeC6pkA1Kn3+BjJ9oB87TVAn9C+nDaHv/BEYTbD6m0DUG8FRMFb
-         R+uonW59HpCJw==
-Subject: [PATCH 02/14] xfs: document the general theory underlying online fsck
- design
+        b=u6wr+3b41I+/U0YnDWfADpNLx6I/ngmy5+pVakfqq4IGDuf8p7ge/H5iZp0yeMBpF
+         1M7yz9lG9ATuIcsEGGelHBq2B1acqAoHXACNuwY/oXwIyJLI3lrSUBf7NouftqsZY6
+         Yr+7jTlgJxHW3fUcELMymP9OkgAf1AbVXLi2jp6MY1iNcKVvn/rtkluQ4k2+VvqTbm
+         dWZZXMRs4BWx6l0yu6KmsWE4s2HwJ0pO/n3qP7u7ByhBfXXq7CfC2K9xVSl1H7GUA1
+         Zb6lEFcRIUCcpKZYv+Mbt5KyI/LzVYpZRDOZOV8975Q56ULdD08rNshxM0Ri+bJIi/
+         Y1Uchbs0i5Eeg==
+Subject: [PATCH 03/14] xfs: document the testing plan for online fsck
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com
-Date:   Sun, 07 Aug 2022 11:30:16 -0700
-Message-ID: <165989701674.2495930.14992920103388372437.stgit@magnolia>
+Date:   Sun, 07 Aug 2022 11:30:22 -0700
+Message-ID: <165989702236.2495930.5556030223682318775.stgit@magnolia>
 In-Reply-To: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 References: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -60,387 +59,210 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Start the second chapter of the online fsck design documentation.
-This covers the general theory underlying how online fsck works.
+Start the third chapter of the online fsck design documentation.  This
+covers the testing plan to make sure that both online and offline fsck
+can detect arbitrary problems and correct them without making things
+worse.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  366 ++++++++++++++++++++
- 1 file changed, 366 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  187 ++++++++++++++++++++
+ 1 file changed, 187 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 25717ebb5f80..a03a7b9f0250 100644
+index a03a7b9f0250..d630b6bdbe4a 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -197,3 +197,369 @@ metadata to enable targeted checking and repair operations while the system
- is running.
- This capability will be coupled to automatic system management so that
- autonomous self-healing of XFS maximizes service availability.
+@@ -563,3 +563,190 @@ functionality.
+ Many of these risks are inherent to software programming.
+ Despite this, it is hoped that this new functionality will prove useful in
+ reducing unexpected downtime.
 +
-+2. Theory of Operation
-+======================
++3. Testing Plan
++===============
 +
-+Because it is necessary for online fsck to lock and scan live metadata objects,
-+online fsck consists of three separate code components.
-+The first is the userspace driver program ``xfs_scrub``, which is responsible
-+for identifying individual metadata items, scheduling work items for them,
-+reacting to the outcomes appropriately, and reporting results to the system
-+administrator.
-+The second and third are in the kernel, which implements functions to check
-+and repair each type of online fsck work item.
++As stated before, fsck tools have three main goals:
 +
-++------------------------------------------------------------------+
-+| **Note**:                                                        |
-++------------------------------------------------------------------+
-+| For brevity, this document shortens the phrase "online fsck work |
-+| item" to "scrub item".                                           |
-++------------------------------------------------------------------+
++1. Detect inconsistencies in the metadata;
 +
-+Scrub item types are delineated in a manner consistent with the Unix design
-+philosophy, which is to say that each item should handle one aspect of a
-+metadata structure, and handle it well.
++2. Eliminate those inconsistencies; and
 +
-+Scope
-+-----
++3. Minimize further loss of data.
 +
-+In principle, online fsck should be able to check and to repair everything that
-+the offline fsck program can handle.
-+However, the adjective *online* brings with it the limitation that online fsck
-+cannot deal with anything that prevents the filesystem from going on line, i.e.
-+mounting.
-+This limitation means that maintenance of the offline fsck tool will continue.
-+A second limitation of online fsck is that it must follow the same resource
-+sharing and lock acquisition rules as the regular filesystem.
-+This means that scrub cannot take *any* shortcuts to save time, because doing
-+so could lead to concurrency problems.
-+In other words, online fsck will never be able to fix 100% of the
-+inconsistencies that offline fsck can repair, and a complete run of online fsck
-+may take longer.
-+However, both of these limitations are acceptable tradeoffs to satisfy the
-+different motivations of online fsck, which are to **minimize system downtime**
-+and to **increase predictability of operation**.
++Demonstrations of correct operation are necessary to build users' confidence
++that the software behaves within expectations.
++Unfortunately, it was not really feasible to perform regular exhaustive testing
++of every aspect of a fsck tool until the introduction of low-cost virtual
++machines with high-IOPS storage.
++With ample hardware availability in mind, the testing strategy for the online
++fsck project involves differential analysis against the existing fsck tools and
++systematic testing of every attribute of every type of metadata object.
++Testing can be split into four major categories, as discussed below.
 +
-+.. _scrubphases:
++Integrated Testing with fstests
++-------------------------------
 +
-+Phases of Work
++The primary goal of any free software QA effort is to make testing as
++inexpensive and widespread as possible to maximize the scaling advantages of
++community.
++In other words, testing should maximize the breadth of filesystem configuration
++scenarios and hardware setups.
++This improves code quality by enabling the authors of online fsck to find and
++fix bugs early, and helps developers of new features to find integration
++issues earlier in their development effort.
++
++The Linux filesystem community shares a common QA testing suite,
++`fstests <https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/>`_, for
++functional and regression testing.
++Even before development work began on online fsck, fstests (when run on XFS)
++would run both the ``xfs_check`` and ``xfs_repair -n`` commands on the test and
++scratch filesystems between each test.
++This provides a level of assurance that the kernel and the fsck tools stay in
++alignment about what constitutes consistent metadata.
++During development of the online checking code, fstests was modified to run
++``xfs_scrub -n`` between each test to ensure that the new checking code
++produces the same results as the two existing fsck tools.
++
++To start development of online repair, fstests was modified to run
++``xfs_repair`` to rebuild the filesystem's metadata indices between tests.
++This ensures that offline repair does not crash, leave a corrupt filesystem
++after it exists, or trigger complaints from the online check.
++This also established a baseline for what can and cannot be repaired offline.
++To complete the first phase of development of online repair, fstests was
++modified to be able to run ``xfs_scrub`` in a "force rebuild" mode.
++This enables a comparison of the effectiveness of online repair as compared to
++the existing offline repair tools.
++
++General Fuzz Testing of Metadata Blocks
++---------------------------------------
++
++XFS benefits greatly from having a very robust debugging tool, ``xfs_db``.
++
++Before development of online fsck even began, a set of fstests were created
++to test the rather common fault that entire metadata blocks get corrupted.
++This required the creation of fstests library code that can create a filesystem
++containing every possible type of metadata object.
++Next, individual test cases were created to create a test filesystem, identify
++a single block of a specific type of metadata object, trash it with the
++existing ``blocktrash`` command in ``xfs_db``, and test the reaction of a
++particular metadata validation strategy.
++
++This earlier test suite enabled XFS developers to test the ability of the
++in-kernel validation functions and the ability of the offline fsck tool to
++detect and eliminate the inconsistent metadata.
++This part of the test suite was extended to cover online fsck in exactly the
++same manner.
++
++In other words, for a given fstests filesystem configuration:
++
++* For each metadata object existing on the filesystem:
++
++  * Write garbage to it
++
++  * Test the reactions of:
++
++    1. The kernel verifiers to stop obviously bad metadata
++    2. Offline repair (``xfs_repair``) to detect and fix
++    3. Online repair (``xfs_scrub``) to detect and fix
++
++Targeted Fuzz Testing of Metadata Records
++-----------------------------------------
++
++A quick conversation with the other XFS developers revealed that the existing
++test infrastructure could be extended to provide a much more powerful
++facility: targeted fuzz testing of every metadata field of every metadata
++object in the filesystem.
++``xfs_db`` can modify every field of every metadata structure in every
++block in the filesystem to simulate the effects of memory corruption and
++software bugs.
++Given that fstests already contains the ability to create a filesystem
++containing every metadata format known to the filesystem, ``xfs_db`` can be
++used to perform exhaustive fuzz testing!
++
++For a given fstests filesystem configuration:
++
++* For each metadata object existing on the filesystem...
++
++  * For each record inside that metadata object...
++
++    * For each field inside that record...
++
++      * For each conceivable type of transformation that can be applied to a bit field...
++
++        1. Clear all bits
++        2. Set all bits
++        3. Toggle the most significant bit
++        4. Toggle the middle bit
++        5. Toggle the least significant bit
++        6. Add a small quantity
++        7. Subtract a small quantity
++        8. Randomize the contents
++
++        * ...test the reactions of:
++
++          1. The kernel verifiers to stop obviously bad metadata
++          2. Offline checking (``xfs_repair -n``)
++          3. Offline repair (``xfs_repair``)
++          4. Online checking (``xfs_scrub -n``)
++          5. Online repair (``xfs_scrub``)
++          6. Both repair tools (``xfs_scrub`` and then ``xfs_repair`` if online repair doesn't succeed)
++
++This is quite the combinatoric explosion!
++
++Fortunately, having this much test coverage makes it easy for XFS developers to
++check the responses of XFS' fsck tools.
++Since the introduction of the fuzz testing framework, these tests have been
++used to discover incorrect repair code and missing functionality for entire
++classes of metadata objects in ``xfs_repair``.
++The enhanced testing was used to finalize the deprecation of ``xfs_check`` by
++confirming that ``xfs_repair`` could detect at least as many corruptions as
++the older tool.
++
++These tests have been very valuable for ``xfs_scrub`` in the same ways -- they
++allow the online fsck developers to compare online fsck against offline fsck,
++and they enable XFS developers to find deficiencies in the code base.
++
++Proposed patchsets include
++`general fuzzer improvements
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fuzzer-improvements>`_,
++`fuzzing baselines
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fuzz-baseline>`_,
++and `improvements in fuzz testing comprehensiveness
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=more-fuzz-testing>`_.
++
++Stress Testing
 +--------------
 +
-+The userspace driver program ``xfs_scrub`` splits the work of checking and
-+repairing an entire filesystem into seven phases.
-+Each phase concentrates on checking specific types of scrub items and depends
-+on the success of all previous phases.
-+The seven phases are as follows:
++A unique requirement to online fsck is the ability to operate on a filesystem
++concurrently with regular workloads.
++Although it is of course impossible to run ``xfs_scrub`` with *zero* observable
++impact on the running system, the online repair code should never introduce
++inconsistencies into the filesystem metadata, and regular workloads should
++never notice resource starvation.
++To verify that these conditions are being met, fstests has been enhanced in
++the following ways:
 +
-+1. Collect geometry information about the mounted filesystem and computer,
-+   discover the online fsck capabilities of the kernel, and open the
-+   underlying storage devices.
++* For each scrub item type, create a test to exercise checking that item type
++  while running ``fsstress``.
++* For each scrub item type, create a test to exercise repairing that item type
++  while running ``fsstress``.
++* Race ``fsstress`` and ``xfs_scrub -n`` to ensure that checking the whole
++  filesystem doesn't cause problems.
++* Race ``fsstress`` and ``xfs_scrub`` in force-rebuild mode to ensure that
++  force-repairing the whole filesystem doesn't cause problems.
++* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
++  freezing and thawing the filesystem.
++* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
++  remounting the filesystem read-only and read-write.
++* The same, but running ``fsx`` instead of ``fsstress``.  (Not done yet?)
 +
-+2. Check allocation group metadata, all realtime volume metadata, and all quota
-+   files.
-+   Each metadata structure is scheduled as a separate scrub item.
-+   If corruption is found in the inode header or inode btree and ``xfs_scrub``
-+   is permitted to perform repairs, then those scrub items are repaired to
-+   prepare for phase 3.
-+   Repairs are implemented by resubmitting the scrub item to the kernel with
-+   the repair flag enabled; this is discussed in the next section.
-+   Optimizations and all other repairs are deferred to phase 4.
++Success is defined by the ability to run all of these tests without observing
++any unexpected filesystem shutdowns due to corrupted metadata, kernel hang
++check warnings, or any other sort of mischief.
 +
-+3. Check all metadata of every file in the filesystem.
-+   Each metadata structure is also scheduled as a separate scrub item.
-+   If repairs are needed, ``xfs_scrub`` is permitted to perform repairs,
-+   and there were no problems detected during phase 2, then those scrub items
-+   are repaired.
-+   Optimizations and unsuccessful repairs are deferred to phase 4.
-+
-+4. All remaining repairs and scheduled optimizations are performed during this
-+   phase, if the caller permits them.
-+   Before starting repairs, the summary counters are checked and any necessary
-+   repairs are performed so that subsequent repairs will not fail the resource
-+   reservation step due to wildly incorrect summary counters.
-+   Unsuccesful repairs are requeued as long as forward progress on repairs is
-+   made somewhere in the filesystem.
-+   Free space in the filesystem is trimmed at the end of phase 4 if the
-+   filesystem is clean.
-+
-+5. By the start of this phase, all primary and secondary filesystem metadata
-+   must be correct.
-+   Summary counters such as the free space counts and quota resource counts
-+   are checked and corrected.
-+   Directory entry names and extended attribute names are checked for
-+   suspicious entries such as control characters or confusing Unicode sequences
-+   appearing in names.
-+
-+6. If the caller asks for a media scan, read all allocated and written data
-+   file extents in the filesystem.
-+   The ability to use hardware-assisted data file integrity checking is new
-+   to online fsck; neither of the previous tools have this capability.
-+   If media errors occur, they will be mapped to the owning files and reported.
-+
-+7. Re-check the summary counters and presents the caller with a summary of
-+   space usage and file counts.
-+
-+Steps for Each Scrub Item
-+-------------------------
-+
-+The kernel scrub code uses a three-step strategy for checking and repairing
-+the one aspect of a metadata object represented by a scrub item:
-+
-+1. The scrub item of interest is checked for corruptions; opportunities for
-+   optimization; and for values that are directly controlled by the system
-+   administrator but look suspicious.
-+   If the item is not corrupt or does not need optimization, resource are
-+   released and the positive scan results are returned to userspace.
-+   If the item is corrupt or could be optimized but the caller does not permit
-+   this, resources are released and the negative scan results are returned to
-+   userspace.
-+   Otherwise, the kernel moves on to the second step.
-+
-+2. The repair function is called to rebuild the data structure.
-+   Repair functions generally choose rebuild a structure from other metadata
-+   rather than try to salvage the existing structure.
-+   If the repair fails, the scan results from the first step are returned to
-+   userspace.
-+   Otherwise, the kernel moves on to the third step.
-+
-+3. In the third step, the kernel runs the same checks over the new metadata
-+   item to assess the efficacy of the repairs.
-+   The results of the reassessment are returned to userspace.
-+
-+Classification of Metadata
-+--------------------------
-+
-+Each type of metadata object (and therefore each type of scrub item) is
-+classified as follows:
-+
-+Primary Metadata
-+````````````````
-+
-+Metadata structures in this category should be most familiar to filesystem
-+users either because they are directly created by the user or they index
-+objects created by the user
-+Most filesystem objects fall into this class.
-+Resource and lock acquisition for scrub code follows the same order as regular
-+filesystem accesses.
-+
-+Primary metadata objects are the simplest for scrub to process.
-+The principal filesystem object (either an allocation group or an inode) that
-+owns the item being scrubbed is locked to guard against concurrent updates.
-+The check function examines every record associated with the type for obvious
-+errors and cross-references healthy records against other metadata to look for
-+inconsistencies.
-+Repairs for this class of scrub item are simple, since the repair function
-+starts by holding all the resources acquired in the previous step.
-+The repair function scans available metadata as needed to record all the
-+observations needed to complete the structure.
-+Next, it stages the observations in a new ondisk structure and commits it
-+atomically to complete the repair.
-+Finally, the storage from the old data structure are carefully reaped.
-+
-+Because ``xfs_scrub`` locks a primary object for the duration of the repair,
-+this is effectively an offline repair operation performed on a subset of the
-+filesystem.
-+This minimizes the complexity of the repair code because it is not necessary to
-+handle concurrent updates from other threads, nor is it necessary to access
-+any other part of the filesystem.
-+As a result, indexed structures can be rebuilt very quickly, and programs
-+trying to access the damaged structure will be blocked until repairs complete.
-+The only infrastructure needed by the repair code are the staging area for
-+observations and a means to write new structures to disk.
-+Despite these limitations, the advantage that online repair holds is clear:
-+targeted work on individual shards of the filesystem avoids total loss of
-+service.
-+
-+This mechanism is described in section 2.1 ("Off-Line Algorithm") of
-+V. Srinivasan and M. J. Carey, `"Performance of On-Line Index Construction
-+Algorithms" <https://dl.acm.org/doi/10.5555/645336.649870>`_,
-+*Extending Database Technology*, pp. 293-309, 1992.
-+
-+Most primary metadata repair functions stage their intermediate results in an
-+in-memory array prior to formatting the new ondisk structure, which is very
-+similar to the list-based algorithm discussed in section 2.3 ("List-Based
-+Algorithms") of Srinivasan.
-+However, any data structure builder that maintains a resource lock for the
-+duration of the repair is *always* an offline algorithm.
-+
-+Secondary Metadata
-+``````````````````
-+
-+Metadata structures in this category reflect records found in primary metadata,
-+but are only needed for online fsck or for reorganization of the filesystem.
-+Resource and lock acquisition for scrub code do not follow the same order as
-+regular filesystem accesses, and may involve full filesystem scans.
-+
-+Secondary metadata objects are difficult for scrub to process, because scrub
-+attaches to the secondary object but needs to check primary metadata, which
-+runs counter to the usual order of resource acquisition.
-+Check functions can be limited in scope to reduce runtime.
-+Repairs, however, require a full scan of primary metadata, which can take a
-+long time to complete.
-+Under these conditions, ``xfs_scrub`` cannot lock resources for the entire
-+duration of the repair.
-+
-+Instead, repair functions set up an in-memory staging structure to store
-+observations.
-+Depending on the requirements of the specific repair function, the staging
-+index can have the same format as the ondisk structure, or it can have a design
-+specific to that repair function.
-+The next step is to release all locks and start the filesystem scan.
-+When the repair scanner needs to record an observation, the staging data are
-+locked long enough to apply the update.
-+Simultaneously, the repair function hooks relevant parts of the filesystem to
-+apply updates to the staging data if the the update pertains to an object that
-+has already been scanned by the index builder.
-+Once the scan is done, the owning object is re-locked, the live data is used to
-+write a new ondisk structure, and the repairs are committed atomically.
-+The hooks are disabled and the staging staging area is freed.
-+Finally, the storage from the old data structure are carefully reaped.
-+
-+Introducing concurrency helps online repair avoid various locking problems, but
-+comes at a high cost to code complexity.
-+Live filesystem code has to be hooked so that the repair function can observe
-+updates in progress.
-+The staging area has to become a fully functional parallel structure so that
-+updates can be merged from the hooks.
-+Finally, the hook, the filesystem scan, and the inode locking model must be
-+sufficiently well integrated that a hook event can decide if a given update
-+should be applied to the staging structure.
-+
-+In theory, the scrub implementation could apply these same techniques for
-+primary metadata, but doing so would make it massively more complex and less
-+performant.
-+Programs attempting to access the damaged structures are not blocked from
-+operation, which may cause application failure or an unplanned filesystem
-+shutdown.
-+
-+Inspiration for the secondary metadata repair strategy was drawn from section
-+2.4 of Srinivasan above, and sections 2 ("NSF: Inded Build Without Side-File")
-+and 3.1.1 ("Duplicate Key Insert Problem") in C. Mohan, `"Algorithms for
-+Creating Indexes for Very Large Tables Without Quiescing Updates"
-+<https://dl.acm.org/doi/10.1145/130283.130337>`_, 1992.
-+
-+The sidecar index mentioned above bears some resemblance to the side file
-+method mentioned in Srinivasan and Mohan.
-+Their method consists of an index builder that extracts relevant record data to
-+build the new structure as quickly as possible; and an auxiliary structure that
-+captures all updates that would be committed to the index by other threads were
-+the new index already online.
-+After the index building scan finishes, the updates recorded in the side file
-+are applied to the new index.
-+To avoid conflicts between the index builder and other writer threads, the
-+builder maintains a publicly visible cursor that tracks the progress of the
-+scan through the record space.
-+To avoid duplication of work between the side file and the index builder, side
-+file updates are elided when the record ID for the update is greater than the
-+cursor position within the record ID space.
-+
-+To minimize changes to the rest of the codebase, XFS online repair keeps the
-+replacement index hidden until it's completely ready to go.
-+In other words, there is no attempt to expose the keyspace of the new index
-+while repair is running.
-+The complexity of such an approach would be very high and perhaps more
-+appropriate to building *new* indices.
-+
-+**Question**: Can the full scan and live update code used to facilitate a
-+repair also be used to implement a comprehensive check?
-+
-+*Answer*: Probably, though this has not been yet been studied.
-+
-+Summary Information
-+```````````````````
-+
-+Metadata structures in this last category summarize the contents of primary
-+metadata records.
-+These are often used to speed up resource usage queries, and are many times
-+smaller than the primary metadata which they represent.
-+Check and repair both require full filesystem scans, but resource and lock
-+acquisition follow the same paths as regular filesystem accesses.
-+
-+The superblock summary counters have special requirements due to the underlying
-+implementation of the incore counters, and will be treated separately.
-+Check and repair of the other types of summary counters (quota resource counts
-+and file link counts) employ the same filesystem scanning and hooking
-+techniques as outlined above, but because the underlying data are sets of
-+integer counters, the staging data need not be a fully functional mirror of the
-+ondisk structure.
-+
-+Inspiration for quota and file link count repair strategies were drawn from
-+sections 2.12 ("Online Index Operations") through 2.14 ("Incremental View
-+Maintenace") of G.  Graefe, `"Concurrent Queries and Updates in Summary Views
-+and Their Indexes"
-+<http://www.odbms.org/wp-content/uploads/2014/06/Increment-locks.pdf>`_, 2011.
-+
-+Since quotas are non-negative integer counts of resource usage, online
-+quotacheck can use the incremental view deltas described in section 2.14 to
-+track pending changes to the block and inode usage counts in each transaction,
-+and commit those changes to a dquot side file when the transaction commits.
-+Delta tracking is necessary for dquots because the index builder scans inodes,
-+whereas the data structure being rebuilt is an index of dquots.
-+Link count checking combines the view deltas and commit step into one because
-+it sets attributes of the objects being scanned instead of writing them to a
-+separate data structure.
-+Each online fsck function will be discussed as case studies later in this
-+document.
-+
-+Risk Management
-+---------------
-+
-+During the development of online fsck, several risk factors were identified
-+that may make the feature unsuitable for certain distributors and users.
-+Steps can be taken to mitigate or eliminate those risks, though at a cost to
-+functionality.
-+
-+- **Decreased performance**: Adding metadata indices to the filesystem
-+  increases the time cost of persisting changes to disk, and the reverse space
-+  mapping and directory parent pointers are no exception.
-+  System administrators who require the maximum performance can disable the
-+  reverse mapping features at format time, though this choice dramatically
-+  reduces the ability of online fsck to find inconsistencies and repair them.
-+
-+- **Incorrect repairs**: As with all software, there might be defects in the
-+  software that result in incorrect repairs being written to the filesystem.
-+  Systematic fuzz testing (detailed in the next section) is employed by the
-+  authors to find bugs early, but it might not catch everything.
-+  The kernel build system provides Kconfig options (``CONFIG_XFS_ONLINE_SCRUB``
-+  and ``CONFIG_XFS_ONLINE_REPAIR``) to enable distributors to choose not to
-+  accept this risk.
-+  The xfsprogs build system has a configure option (``--enable-scrub=no``) that
-+  disables building of the ``xfs_scrub`` binary, though this is not a risk
-+  mitigation if the kernel functionality remains enabled.
-+
-+- **Inability to repair**: Sometimes, a filesystem is too badly damaged to be
-+  repairable.
-+  If the keyspaces of several metadata indices overlap in some manner but a
-+  coherent narrative cannot be formed from records collected, then the repair
-+  fails.
-+  To reduce the chance that a repair will fail with a dirty transaction and
-+  render the filesystem unusable, the online repair functions have been
-+  designed to stage and validate all new records before committing the new
-+  structure.
-+
-+- **Misbehavior**: Online fsck requires many privileges -- raw IO to block
-+  devices, opening files by handle, ignoring Unix discretionary access control,
-+  and the ability to perform administrative changes.
-+  Running this automatically in the background scares people, so the systemd
-+  background service is configured to run with only the privileges required.
-+  Obviously, this cannot address certain problems like the kernel crashing or
-+  deadlocking, but it should be sufficient to prevent the scrub process from
-+  escaping and reconfiguring the system.
-+  The cron job does not have this protection.
-+
-+- **Fuzz Kiddiez**: There are many people now who seem to think that running
-+  automated fuzz testing of ondisk artifacts to find mischevious behavior and
-+  spraying exploit code onto the public mailing list for instant zero-day
-+  disclosure is somehow of some social benefit.
-+  In the view of this author, the benefit is realized only when the fuzz
-+  operators help to **fix** the flaws, but this opinion apparently is not
-+  widely shared among security "researchers".
-+  The XFS maintainers' continuing ability to manage these events presents an
-+  ongoing risk to the stability of the development process.
-+  Automated testing should front-load some of the risk while the feature is
-+  considered EXPERIMENTAL.
-+
-+Many of these risks are inherent to software programming.
-+Despite this, it is hoped that this new functionality will prove useful in
-+reducing unexpected downtime.
++Proposed patchsets include `general stress testing
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=race-scrub-and-mount-state-changes>`_
++and the `evolution of existing per-function stress testing
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=refactor-scrub-stress>`_.
 
