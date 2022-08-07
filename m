@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B02CF58BC6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A8258BC71
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235589AbiHGSbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Aug 2022 14:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60774 "EHLO
+        id S234579AbiHGSbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Aug 2022 14:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233083AbiHGSbS (ORCPT
+        with ESMTP id S235460AbiHGSbX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Aug 2022 14:31:18 -0400
+        Sun, 7 Aug 2022 14:31:23 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B29EB0;
-        Sun,  7 Aug 2022 11:31:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4939272B;
+        Sun,  7 Aug 2022 11:31:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E4BDB80DBA;
-        Sun,  7 Aug 2022 18:31:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE6DC433C1;
-        Sun,  7 Aug 2022 18:31:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4CD94B80B84;
+        Sun,  7 Aug 2022 18:31:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81A7C433C1;
+        Sun,  7 Aug 2022 18:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659897073;
-        bh=h5X2lpm082/mJJDj7+uFUDJntxexGYYmBIQJvVJxUQo=;
+        s=k20201202; t=1659897079;
+        bh=mk44QepRk7leX0w7W3CosV73bKF+jfZVXqlsizRAqOA=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oZgzgVhXj9gAMYWDMBvUXrNUkDsyjuhgXUYCKW+4E5fLXECB9o3KZdICCxYPcpsL2
-         pcf3lhVbE8oSGw9aJCRuXp+z4jnvCQte8OEkXFROwZQnPDdADcCuknkzi9ICTvZXlw
-         Bolz6dalsl1Ygfxg9XeIeOcKgSjQL+AoZGDnU1IuNtSqvpOqcB1DpbFKPzFs55dimF
-         9TRJByT2tmaV9D0/r3m4SHqmRhkca4Ptrxdg+mikJd3YjuXw+/t23FjmXxIaokj3Kc
-         kU13BItDIaoP5kj1br7G6qTUxeH2U1QEMqVjBHY1R117BcA53/zhHDgP2ZhWbtK7Rv
-         eVSWa6GFkVKnQ==
-Subject: [PATCH 12/14] xfs: document directory tree repairs
+        b=fmm/d7jFbAOGxAckc8e1jPxoRgitC3HhC0o0kCMV+lxNLydXFIy2tjCKzrgkUbt0r
+         trWLQLPcZcgofv7lkC6APD9b+uCPTeZUSa6lRjagCZ+uXhrjiPOqUmzR09fv1iZqmX
+         s8UiMu9qNEWZzX9qZ6tGYa4B99RRSZ+Vszdcfv8Cm+xN3ZIkeszE5jkOz98b+WRCiu
+         63niqTK6jb5cwwwJyG9h4eYuhH27Bzp7XseJWx5t5wAV3WlVGwAQa6Lv8n347yHO2F
+         cUxhAZpWszDeaZNg0gPUXB6gHEzIVZt2rNND/d3PuKWb7uxNUjC4Xegm73/gM4D/Ys
+         bwInJdG5cUZyg==
+Subject: [PATCH 13/14] xfs: document the userspace fsck driver program
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com
-Date:   Sun, 07 Aug 2022 11:31:12 -0700
-Message-ID: <165989707288.2495930.10745689863482227727.stgit@magnolia>
+Date:   Sun, 07 Aug 2022 11:31:18 -0700
+Message-ID: <165989707848.2495930.3643292675955502890.stgit@magnolia>
 In-Reply-To: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 References: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -59,261 +59,342 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Directory tree repairs are the least complete part of online fsck, due
-to the lack of directory parent pointers.  However, even without that
-feature, we can still make some corrections to the directory tree -- we
-can salvage as many directory entries as we can from a damaged
-directory, and we can reattach orphaned inodes to the lost+found, just
-as xfs_repair does now.
+Add the sixth chapter of the online fsck design documentation, where
+we discuss the details of the data structures and algorithms used by the
+driver program xfs_scrub.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  236 ++++++++++++++++++++
- 1 file changed, 236 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  313 ++++++++++++++++++++
+ 1 file changed, 313 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 6cdec62e3f23..cd26ccd3a0e4 100644
+index cd26ccd3a0e4..adffc8c31c9c 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -4273,3 +4273,239 @@ The proposed patchset is the
- `extended attribute repair
- <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-xattrs>`_
+@@ -300,6 +300,9 @@ The seven phases are as follows:
+ 7. Re-check the summary counters and presents the caller with a summary of
+    space usage and file counts.
+ 
++This allocation of responsibilities will be :ref:`revisited <scrubcheck>`
++later in this document.
++
+ Steps for Each Scrub Item
+ -------------------------
+ 
+@@ -4509,3 +4512,313 @@ The proposed patches are in the
+ `orphanage adoption
+ <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-orphanage>`_
  series.
 +
-+Fixing Directories
++6. Userspace Algorithms and Data Structures
++===========================================
++
++This section discusses the key algorithms and data structures of the userspace
++program, ``xfs_scrub``, that provide the ability to drive metadata checks and
++repairs in the kernel, verify file data, and look for other potential problems.
++
++.. _scrubcheck:
++
++Checking Metadata
++-----------------
++
++Recall the :ref:`phases of fsck work<scrubphases>` outlined earlier.
++That structure follows naturally from the data dependencies designed into the
++filesystem from its beginnings in 1993.
++In XFS, there are several groups of metadata dependencies:
++
++a. Filesystem summary counts depend on consistency within the inode indices,
++   the allocation group space btrees, and the realtime volume space
++   information.
++
++b. Quota resource counts depend on consistency within the quota file data
++   forks, inode indices, inode records, and the forks of every file on the
++   system.
++
++c. The naming hierarchy depends on consistency within the directory and
++   extended attribute structures.
++   This includes file link counts.
++
++d. Directories, extended attributes, and file data depend on consistency within
++   the file forks that map directory and extended attribute data to physical
++   storage media.
++
++e. The file forks depends on consistency within inode records and the space
++   metadata indices of the allocation groups and the realtime volume.
++   This includes quota and realtime metadata files.
++
++f. Inode records depends on consistency within the inode metadata indices.
++
++g. Realtime space metadata depend on the inode records and data forks of the
++   realtime metadata inodes.
++
++h. The allocation group metadata indices (free space, inodes, reference count,
++   and reverse mapping btrees) depend on consistency within the AG headers and
++   between all the AG metadata btrees.
++
++i. ``xfs_scrub`` depends on the filesystem being mounted and kernel support
++   for online fsck functionality.
++
++Therefore, a metadata dependency graph is a convenient way to schedule checking
++operations in the ``xfs_scrub`` program:
++
++- Phase 1 checks that the provided path maps to an XFS filesystem and detect
++  the kernel's scrubbing abilities, which validates group (i).
++
++- Phase 2 scrubs groups (g) and (h) in parallel using a threaded workqueue.
++
++- Phase 3 checks groups (f), (e), and (d), in that order.
++  These groups are all file metadata, which means that inodes are scanned in
++  parallel.
++
++- Phase 4 repairs everything in groups (i) through (d) so that phases 5 and 6
++  may run reliably.
++
++- Phase 5 starts by checking groups (b) and (c) in parallel before moving on
++  to checking names.
++
++- Phase 6 depends on groups (i) through (b) to find file data blocks to verify,
++  to read them, and to report which blocks of which files are affected.
++
++- Phase 7 checks group (a), having validated everything else.
++
++Notice that the data dependencies between groups are enforced by the structure
++of the program flow.
++
++Parallel Inode Scans
++--------------------
++
++An XFS filesystem can easily contain hundreds of millions of inodes.
++Given that XFS targets installations with large high-performance storage,
++it is desirable to scrub inodes in parallel to minimize runtime, particularly
++if the program has been invoked manually from a command line.
++This requires careful scheduling to keep the threads as evenly loaded as
++possible.
++
++Early iterations of the ``xfs_scrub`` inode scanner naïvely created a single
++workqueue and scheduled a single workqueue item per AG.
++Each workqueue item walked the inode btree (with ``XFS_IOC_INUMBERS``) to find
++inode chunks and then called bulkstat (``XFS_IOC_BULKSTAT``) to gather enough
++information to construct file handles.
++The file handle was then passed to a function to generate scrub items for each
++metadata object of each inode.
++This simple algorithm leads to thread balancing problems in phase 3 if the
++filesystem contains one AG with a few large sparse files and the rest of the
++AGs contain many smaller files.
++The inode scan dispatch function was not sufficiently granular; it should have
++been dispatching at the level of individual inodes, or, to constrain memory
++consumption, inode btree records.
++
++Thanks to Dave Chinner, bounded workqueues in userspace enable ``xfs_scrub`` to
++avoid this problem with ease by adding a second workqueue.
++Just like before, the first workqueue is seeded with one workqueue item per AG,
++and it uses INUMBERS to find inode btree chunks.
++The second workqueue, however, is configured with an upper bound on the number
++of items that can be waiting to be run.
++Each inode btree chunk found by the first workqueue's workers are queued to the
++second workqueue, and it is this second workqueue that queries BULKSTAT,
++creates a file handle, and passes it to a function to generate scrub items for
++each metadata object of each inode.
++If the second workqueue is too full, the workqueue add function blocks the
++first workqueue's workers until the backlog eases.
++This doesn't completely solve the balancing problem, but reduces it enough to
++move on to more pressing issues.
++
++The proposed patchsets are the scrub
++`performance tweaks
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-performance-tweaks>`_
++and the
++`inode scan rebalance
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-iscan-rebalance>`_
++series.
++
++.. _scrubrepair:
++
++Scheduling Repairs
 +------------------
 +
-+Fixing directories is difficult with currently available filesystem features.
-+The offline repair tool scans all inodes to find files with nonzero link count,
-+and then it scans all directories to establish parentage of those linked files.
-+Damaged files and directories are zapped, and files with no parent are
-+moved to the ``/lost+found`` directory.
-+It does not try to salvage anything.
++During phase 2, corruptions and inconsistencies reported in any AGI header or
++inode btree are repaired immediately, because phase 3 relies on proper
++functioning of the inode indices to find inodes to scan.
++Failed repairs are rescheduled to phase 4.
++Problems reported in any other space metadata are deferred to phase 4.
++Optimization opportunities are always deferred to phase 4, no matter their
++origin.
 +
-+The best that online repair can do at this time is to read directory data
-+blocks and salvage any dirents that look plausible, correct link counts, and
-+move orphans back into the directory tree.
-+The salvage process is discussed in the case study at the end of this section.
-+The second component to fixing the directory tree online is the :ref:`file link
-+count fsck <nlinks>`, since it can scan the entire filesystem to make sure that
-+files can neither be deleted while there are still parents nor forgotten after
-+all parents sever their links to the child.
-+The third part is discussed at the :ref:`end of this section<orphanage>`.
-+However, there may be a solution to these deficiencies soon!
++During phase 3, corruptions and inconsistencies reported in any part of a
++file's metadata are repaired immediately if all space metadata were validated
++during phase 2.
++Repairs that fail or cannot be repaired immediately are scheduled for phase 4.
 +
-+Parent Pointers
-+```````````````
++In the original design of ``xfs_scrub``, it was thought that repairs would be
++so infrequent that the ``struct xfs_scrub_metadata`` objects used to
++communicate with the kernel could also be used as the primary object to
++schedule repairs.
++With recent increases in the number of optimizations possible for a given
++filesystem object, it became much more memory-efficient to track all eligible
++repairs for a given filesystem object with a single repair item.
++Each repair item represents a single lockable object -- AGs, metadata files,
++individual inodes, or a class of summary information.
 +
-+The lack of secondary directory metadata hinders directory tree reconstruction
-+in much the same way that the historic lack of reverse space mapping
-+information once hindered reconstruction of filesystem space metadata.
-+Specifically, the lack of redundant metadata makes it nearly impossible to
-+construct a true replacement for a damaged directory; the best repair can do is
-+to salvage the dirents and use the file link count repair function to move
-+orphaned files to the lost and found.
-+The proposed parent pointer feature, however, will make total directory
-+reconstruction possible.
++Phase 4 is responsible for scheduling a lot of repair work in as quick a
++manner as is practical.
++The :ref:`data dependencies <scrubcheck>` outlined earlier still apply, which
++means that ``xfs_scrub`` must try to complete the repair work scheduled by
++phase 2 before trying repair work scheduled by phase 3.
++The repair process is as follows:
 +
-+Directory parent pointers were first proposed as an XFS feature more than a
-+decade ago by SGI.
-+In that implementation, each link from a parent directory to a child file was
-+augmented by an extended attribute in the child that could be used to identify
-+the parent directory.
-+Unfortunately, this early implementation had several major shortcomings:
++1. Start a round of repair with a workqueue and enough workers to keep the CPUs
++   as busy as the user desires.
 +
-+1. The XFS codebase of the late 2000s did not have the infrastructure to
-+   enforce strong referential integrity in the directory tree, which is a fancy
-+   way to say that it could not guarantee that a change in a forward link would
-+   always be followed up by a corresponding change to the reverse links.
++   a. For each repair item queued by phase 2,
 +
-+2. Referential integrity was not integrated into either offline repair tool.
-+   Checking had to be done online without taking any kernel or inode locks to
-+   coordinate access.
-+   It is not clear if this actually worked properly.
++      i.   Ask the kernel to repair everything listed in the repair item for a
++           given filesystem object.
 +
-+3. The extended attribute did not record the name of the directory entry in the
-+   parent, so the first parent pointer implementation cannot be used to
-+   reconnect the directory tree.
++      ii.  Make a note if the kernel made any progress in reducing the number
++           of repairs needed for this object.
 +
-+4. Extended attribute forks only support 65,536 extents, which means that
-+   parent pointer attribute creation is likely to fail at some point before the
-+   maximum file link count is achieved.
++      iii. If the object no longer requires repairs, revalidate all metadata
++           associated with this object.
++           If the revalidation succeeds, drop the repair item.
++           If not, requeue the item for more repairs.
 +
-+In the second implementation (currently being developed by Allison Henderson
-+and Chandan Babu), the extended attribute code will be enhanced to use log
-+intent items to guarantee that an extended attribute update can always be
-+completed by log recovery.
-+The maximum extent counts of both the data and attribute forks have raised to
-+allow for creation of as many parent pointers as possible.
-+The parent pointer data will also include the entry name and location within
-+the parent.
-+In other words, child files will store parent pointer mappings of the form
-+``(parent_ino, parent_gen, dirent_pos) → (dirent_name)`` in their extended
-+attribute data.
-+With that in place, XFS can guarantee strong referential integrity of directory
-+tree operations -- forward links will always be complemented with reverse
-+links.
++   b. If any repairs were made, jump back to 1a to retry all the phase 2 items.
 +
-+When the parent pointer feature lands, the directory checking process can be
-+strengthened to ensure that the target of each dirent also contains a parent
-+pointer pointing back to the dirent.
-+The quality of directory repairs will improve because online fsck will be able
-+to reconstruct a directory in its entirety instead of skipping unsalvageable
-+areas.
-+This process is imagined to involve a :ref:`coordinated inode scan <iscan>` and
-+a :ref:`directory entry live update hook <liveupdate>`:
-+Scan every file in the entire filesystem, and every time the scan encounters a
-+file with a parent pointer to the directory that is being reconstructed, record
-+this entry in the temporary directory.
-+When the scan is complete, atomically swap the contents of the temporary
-+directory and the directory being repaired.
-+This code has not yet been constructed, so there is not yet a case study laying
-+out exactly how this process works.
++   c. For each repair item queued by phase 3,
 +
-+Parent pointers themselves can be checked by scanning each pointer and
-+verifying that the target of the pointer is a directory and that it contains a
-+dirent that corresponds to the information recorded in the parent pointer.
-+Reconstruction of the parent pointer information will work similarly to
-+directory reconstruction -- scan the filesystem, record the dirents pointing to
-+the file being repaired, and rebuild that part of the xattr namespace.
++      i.   Ask the kernel to repair everything listed in the repair item for a
++           given filesystem object.
 +
-+**Question**: How will repair ensure that the ``dirent_pos`` fields match in
-+the reconstructed directory?
++      ii.  Make a note if the kernel made any progress in reducing the number
++           of repairs needed for this object.
 +
-+*Answer*: The field could be designated advisory, since the other three values
-+are sufficient to find the entry in the parent.
-+However, this makes indexed key lookup impossible while repairs are ongoing.
-+A second option would be to allow creating directory entries at specified
-+offsets, which solves the referential integrity problem but runs the risk that
-+dirent creation will fail due to conflicts with the free space in the
-+directory.
-+These conflicts could be resolved by appending the directory entry and amending
-+the xattr code to support updating an xattr key and reindexing the dabtree,
-+though this would have to be performed with the parent directory still locked.
-+A fourth option would be to remove the parent pointer entry and re-add it
-+atomically.
++      iii. If the object no longer requires repairs, revalidate all metadata
++           associated with this object.
++           If the revalidation succeeds, drop the repair item.
++           If not, requeue the item for more repairs.
 +
-+Case Study: Salvaging Directories
-+`````````````````````````````````
++   d. If any repairs were made, jump back to 1c to retry all the phase 3 items.
 +
-+Unlike extended attributes, directory blocks are all the same size, so
-+salvaging directories is straightforward:
++2. If step 1 made any repair progress of any kind, jump back to step 1 to start
++   another round of repair.
 +
-+1. Find the parent of the directory.
-+   If the dotdot entry is not unreadable, try to confirm that the alleged
-+   parent has a child entry pointing back to the directory being repaired.
-+   Otherwise, walk the filesystem to find it.
++3. If there are items left to repair, run them all serially one more time.
++   Complain if the repairs were not successful, since this is the last chance
++   to repair anything.
 +
-+2. Walk the first partition of data fork of the directory to find the directory
-+   entry data blocks.
-+   When one is found,
++Corruptions and inconsistencies encountered during phases 5 and 7 are repaired
++immediately.
++Corrupt file data blocks reported by phase 6 cannot be recovered by the
++filesystem.
 +
-+   a. Walk the directory data block to find candidate entries.
-+      When an entry is found:
++The proposed patchsets are the
++`repair warning improvements
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-better-repair-warnings>`_,
++refactoring of the
++`repair data dependency
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-data-deps>`_
++and
++`object tracking
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-object-tracking>`_,
++and the
++`repair scheduling
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-scheduling>`_
++improvement series.
 +
-+      i. Check the name for problems, and ignore the name if there are.
++Checking Names for Confusable Unicode Sequences
++-----------------------------------------------
 +
-+      ii. Retrieve the inumber and grab the inode.
-+          If that succeeds, add the name, inode number, and file type to the
-+          staging xfarray and xblob.
++If ``xfs_scrub`` succeeds in validating the filesystem metadata by the end of
++phase 4, it moves on to phase 5, which checks for suspicious looking names in
++the filesystem.
++These names consist of the filesystem label, names in directory entries, and
++the names of extended attributes.
++Like most Unix filesystems, XFS imposes the sparest of constraints on the
++contents of a name -- slashes and null bytes are not allowed in directory
++entries; and null bytes are not allowed in extended attributes and the
++filesystem label.
++Directory entries and attribute keys store the length of the name explicitly
++ondisk, which means that nulls are not name terminators.
++For this section, the term "naming domain" refers to any place where names are
++presented together -- all the names in a directory, or all the attributes of a
++file.
 +
-+3. If the memory usage of the xfarray and xfblob exceed a certain amount of
-+   memory or there are no more directory data blocks to examine, unlock the
-+   directory and add the staged dirents into the temporary directory.
-+   Truncate the staging files.
++Although the Unix naming constraints are very permissive, the reality of most
++modern-day Linux systems is that programs work with Unicode character code
++points to support international languages.
++These programs typically encode those code points in UTF-8 when interfacing
++with the C library because the kernel expects null-terminated names.
++In the common case, therefore, names found in an XFS filesystem are actually
++UTF-8 encoded Unicode data.
 +
-+4. Use atomic extent swapping to exchange the new and old directory structures.
-+   The old directory blocks are now attached to the temporary file.
++To maximize its expressiveness, the Unicode standard defines separate control
++points for various characters that render similarly or identically in writing
++systems around the world.
++For example, the character "Cyrillic Small Letter A" U+0430 "а" often renders
++identically to "Latin Small Letter A" U+0061 "a".
 +
-+5. Reap the temporary file.
++The standard also permits characters to be constructed in multiple ways --
++either by using a defined code point, or by combining one code point with
++various combining marks.
++For example, the character "Angstrom Sign U+212B "Å" can also be expressed
++as "Latin Capital Letter A" U+0041 "A" followed by "Combining Ring Above"
++U+030A "◌̊".
++Both sequences render identically.
 +
-+**Question**: Should repair invalidate dentries when rebuilding a directory?
++Like the standards that preceded it, Unicode also defines various control
++characters to alter the presentation of text.
++For example, the character "Right-to-Left Override" U+202E can trick some
++programs into rendering "moo\\xe2\\x80\\xaegnp.txt" as "mootxt.png".
++A second category of rendering problems involves whitespace characters.
++If the character "Zero Width Space" U+200B is encountered in a file name, the
++name will render identically to a name that does not have the zero width
++space.
 +
-+**Question**: Can the dentry cache know about a directory entry that cannot be
-+salvaged?
++If two names within a naming domain have different byte sequences but render
++identically, a user may be confused by it.
++The kernel, in its indifference to upper level encoding schemes, permits this.
++Most filesystem drivers persist the byte sequence names that are given to them
++by the VFS.
 +
-+In theory, the dentry cache should be a subset of the directory entries on disk
-+because there's no way to load a dentry without having something to read in the
-+directory.
-+However, it is possible for a coherency problem to be introduced if the ondisk
-+structures becomes corrupt *after* the cache loads.
-+In theory it is necessary to scan all dentry cache entries for a directory to
-+ensure that one of the following apply:
++Techniques for detecting confusable names are explained in great detail in
++sections 4 and 5 of the
++`Unicode Security Mechanisms <https://unicode.org/reports/tr39/>`_
++document.
++``xfs_scrub``, when it detects UTF-8 encoding in use on a system, uses the
++Unicode normalization form NFD in conjunction with the confusable name
++detection component of
++`libicu <https://github.com/unicode-org/icu>`_
++to identify names with a directory or within a file's extended attributes that
++could be confused for each other.
++Names are also checked for control characters, non-rendering characters, and
++mixing of bidirectional characters.
++All of these potential issues are reported to the system administrator during
++phase 5.
 +
-+1. The cached dentry reflects an ondisk dirent in the new directory.
++Media Verification of File Data Extents
++---------------------------------------
 +
-+2. The cached dentry no longer has a corresponding ondisk dirent in the new
-+   directory and the dentry can be purged from the cache.
++The system administrator can elect to initiate a media scan of all file data
++blocks.
++This scan after validation of all filesystem metadata (except for the summary
++counters) as phase 6.
++The scan starts by calling ``FS_IOC_GETFSMAP`` to scan the filesystem space map
++to find areas that are allocated to file data fork extents.
++Gaps betweeen data fork extents that are smaller than 64k are treated as if
++they were data fork extents to reduce the command setup overhead.
++When the space map scan accumulates a region larger than 32MB, a media
++verification request is sent to the disk as a directio read of the raw block
++device.
 +
-+3. The cached dentry no longer has an ondisk dirent but the dentry cannot be
-+   purged.
-+   This is bad.
-+
-+Unfortunately, the dentry cache does not have a means to walk all the dentries
-+with a particular directory as a parent.
-+This makes detecting situations #2 and #3 impossible, and remains an
-+interesting question for research.
-+
-+The proposed patchset is the
-+`directory repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-dirs>`_
-+series.
-+
-+.. _orphanage:
-+
-+The Orphanage
-+-------------
-+
-+Filesystems present files as a directed, and hopefully acyclic, graph.
-+In other words, a tree.
-+The root of the filesystem is a directory, and each entry in a directory points
-+downwards either to more subdirectories or to non-directory files.
-+Unfortunately, a disruption in the directory graph pointers result in a
-+disconnected graph, which makes files impossible to access via regular path
-+resolution.
-+The directory parent pointer online scrub code can detect a dotdot entry
-+pointing to a parent directory that doesn't have a link back to the child
-+directory, and the file link count checker can detect a file that isn't pointed
-+to by any directory in the filesystem.
-+If the file in question has a positive link count, the file in question is an
-+orphan.
-+
-+When orphans are found, they should be reconnected to the directory tree.
-+Offline fsck solves the problem by creating a directory ``/lost+found`` to
-+serve as an orphanage, and linking orphan files into the orphanage by using the
-+inumber as the name.
-+Reparenting a file to the orphanage does not reset any of its permissions or
-+ACLs.
-+
-+This process is more involved in the kernel than it is in userspace.
-+The directory and file link count repair setup functions must use the regular
-+VFS mechanisms to create the orphanage directory with all the necessary
-+security attributes and dentry cache entries, just like a regular directory
-+tree modification.
-+
-+Orphaned files are adopted by the orphanage as follows:
-+
-+1. Call ``xrep_orphanage_try_create`` at the start of the scrub setup function
-+   to try to ensure that the lost and found directory actually exists.
-+   This also attaches the orphanage directory to the scrub context.
-+
-+2. If the decision is made to reconnect a file, take the IOLOCK of both the
-+   orphanage and the file being reattached.
-+   The ``xrep_orphanage_iolock_two`` function follows the inode locking
-+   strategy discussed earlier.
-+
-+3. Call ``xrep_orphanage_compute_blkres`` and ``xrep_orphanage_compute_name``
-+   to compute the new name in the orphanage and the block reservation required.
-+
-+4. Use ``xrep_orphanage_adoption_prep`` to reserve resources to the repair
-+   transaction.
-+
-+5. Call ``xrep_orphanage_adopt`` to reparent the orphaned file into the lost
-+   and found, and update the kernel dentry cache.
-+
-+The proposed patches are in the
-+`orphanage adoption
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-orphanage>`_
-+series.
++If the verification read fails, ``xfs_scrub`` retries with single-block reads
++to narrow down the failure to the specific region of the media and recorded.
++When it has finished issuing verification requests, it again uses the space
++mapping ioctl to map the recorded media errors back to metadata structures
++and report what has been lost.
++For media errors in blocks owned by files, the lack of parent pointers means
++that the entire filesystem must be walked to report the file paths and offsets
++corresponding to the media error.
 
