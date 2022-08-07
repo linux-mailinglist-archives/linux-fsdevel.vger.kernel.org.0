@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 524BF58BC6C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A4458BC6D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Aug 2022 20:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235501AbiHGSbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Aug 2022 14:31:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60688 "EHLO
+        id S235543AbiHGSbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Aug 2022 14:31:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233083AbiHGSbF (ORCPT
+        with ESMTP id S235460AbiHGSbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Aug 2022 14:31:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D55F54;
-        Sun,  7 Aug 2022 11:31:03 -0700 (PDT)
+        Sun, 7 Aug 2022 14:31:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21733EB0;
+        Sun,  7 Aug 2022 11:31:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C51C160FF8;
-        Sun,  7 Aug 2022 18:31:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3DAC433C1;
-        Sun,  7 Aug 2022 18:31:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 938976101A;
+        Sun,  7 Aug 2022 18:31:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF33C433D6;
+        Sun,  7 Aug 2022 18:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659897062;
-        bh=YwuYnAgx+RdxmVQfem3Ql6hJFW9RdKIBqmJmS2Btsa4=;
+        s=k20201202; t=1659897067;
+        bh=5/4nUF9iXQN95Bg+9VjXcSFH9OpTP8eJt89T1dD1eNg=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=J8DpUkhu7O/+waaQE4vQFmFq/iarzIsAksERT1IRt3AWkTA+ppBtO3yuT5pawjdfD
-         qOWbkHKiQtHFEicWc76hxor+2tfftzIr67rIKMaS8gF2WQaxIbxcKHeJxLq4QElvSg
-         JFRqHXn4La+9FkvL6DLMRLQ76258M5QJys4rSYm6n+CBmqa4T3V6SbmkzU1OMQqPDv
-         z42P07OU7RWOO4Z1vAZjFLdd6GUMk4355tpLJoURnQhVGgHP32JGXws0ZULJKm5cs1
-         KTkqTiGV/Dyqi0AU05swllIQvagNa1jnQLtk24cPp2ISKg9/TC6EJHcKDpsFMTsdku
-         YfKlgD4VQz3rA==
-Subject: [PATCH 10/14] xfs: document full filesystem scans for online fsck
+        b=o+k6aNjzJouIRHv+wfgBD3S9PL8RTRftA40avpIT1Rzi6QzDt3y57wolgi81tkpm+
+         QNVxNFF2pVqrNfhszq0YUxlXZdTUpt1rpPVgj+V3DxYKxzTOaCn6gLvGhC6ktmObwe
+         lBqXUWkMjCJxbLYwySOEuADkN1kOqESRIqUdcDwPexry8RR1p7M6OkDjrZFl6jc3pM
+         xvbXPMfpSmlqQpPrqTMgpc9N8zsv69rury5TXp9DdJuv6puEJ9sNy/SfQDZ/95UCWT
+         2lS3SjbgAQkmISqbuDovikZTXJ5X0lom8pSm11O+4HuEYrs5TdRqBKaz6N2FSTPPJl
+         P0aXGeyyZZa7w==
+Subject: [PATCH 11/14] xfs: document metadata file repair
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com
-Date:   Sun, 07 Aug 2022 11:31:01 -0700
-Message-ID: <165989706154.2495930.7153862838976316072.stgit@magnolia>
+Date:   Sun, 07 Aug 2022 11:31:07 -0700
+Message-ID: <165989706724.2495930.16666816051421634368.stgit@magnolia>
 In-Reply-To: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 References: <165989700514.2495930.13997256907290563223.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,702 +59,608 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Certain parts of the online fsck code need to scan every file in the
-entire filesystem.  It is not acceptable to block the entire filesystem
-while this happens, which means that we need to be clever in allowing
-scans to coordinate with ongoing filesystem updates.  We also need to
-hook the filesystem so that regular updates propagate to the staging
-records.
+File-based metadata (such as xattrs and directories) can be extremely
+large.  To reduce the memory requirements and maximize code reuse, it is
+very convenient to create a temporary file, use the regular dir/attr
+code to store salvaged information, and then atomically swap the extents
+between the file being repaired and the temporary file.  Record the high
+level concepts behind how temporary files and atomic content swapping
+should work, and then present some case studies of what the actual
+repair functions do.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  677 ++++++++++++++++++++
- 1 file changed, 677 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  574 ++++++++++++++++++++
+ 1 file changed, 574 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 10709dc74dcb..5ab2d76ad694 100644
+index 5ab2d76ad694..6cdec62e3f23 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -3022,3 +3022,680 @@ The proposed patchset is the
- `summary counter cleanup
- <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-fscounters>`_
+@@ -3256,6 +3256,8 @@ Proposed patchsets include fixing
+ `dir iget usage
+ <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-dir-iget-fixes>`_.
+ 
++.. _ilocking:
++
+ Locking Inodes
+ ^^^^^^^^^^^^^^
+ 
+@@ -3699,3 +3701,575 @@ The proposed patchset is the
+ `rmap repair
+ <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-rmap-btree>`_
  series.
 +
-+Full Filesystem Scans
-+---------------------
++Staging Repairs with Temporary Files on Disk
++--------------------------------------------
 +
-+Certain types of metadata can only be checked by walking every file in the
-+entire filesystem to record observations and comparing the observations against
-+what's recorded on disk.
-+Like every other type of online repair, repairs are made by writing those
-+observations to disk in a replacement structure and committing it atomically.
-+However, it is not practical to shut down the entire filesystem to examine
-+hundreds of billions of files because the downtime would be excessive.
-+Therefore, online fsck must build the infrastructure to manage a live scan of
-+all the files in the filesystem.
-+There are two questions that need to be solved to perform a live walk:
++XFS stores a substantial amount of metadata in file forks: directories,
++extended attributes, symbolic link targets, free space bitmaps and summary
++information for the realtime volume, and quota records.
++File forks map 64-bit logical file fork space extents to physical storage space
++extents, similar to how a memory management unit maps 64-bit virtual addresses
++to physical memory addresses.
++Therefore, file-based tree structures (such as directories and extended
++attributes) use blocks mapped in the file fork offset address space that point
++to other blocks mapped within that same address space, and file-based linear
++structures (such as bitmaps and quota records) compute array element offsets in
++the file fork offset address space.
 +
-+- How does scrub manage the scan while it is collecting data?
++In the initial iteration of file metadata repair, the damaged metadata blocks
++would be scanned for salvageable data; the extents in the file fork would be
++reaped; and then a new structure would be built in its place.
++This strategy did not survive the introduction of the atomic repair requirement
++expressed earlier in this document.
++The second iteration explored building a second structure at a high offset
++in the fork from the salvage data, reaping the old extents, and using a
++``COLLAPSE_RANGE`` operation to slide the new extents into place.
++This had many drawbacks:
 +
-+- How does the scan keep abreast of changes being made to the system by other
-+  threads?
++- Array structures are linearly addressed, and the regular filesystem codebase
++  does not have the concept of a linear offset that could be applied to the
++  record offset computation to build an alternate copy.
 +
-+.. _iscan:
++- Extended attributes are allowed to use the entire attr fork offset address
++  space.
 +
-+Coordinated Inode Scans
-+```````````````````````
++- Even if repair could build an alternate copy of a data structure in a
++  different part of the fork address space, the atomic repair commit
++  requirement means that online repair would have to be able to perform a log
++  assisted ``COLLAPSE_RANGE`` operation to ensure that the old structure was
++  completely replaced.
 +
-+In the original Unix filesystems of the 1970s, each directory entry contained
-+an index number (*inumber*) which was used as an index into on ondisk array
-+(*itable*) of fixed-size records (*inodes*) describing a file's attributes and
-+its data block mapping.
-+This system is described by J. Lions, `"inode (5659)"
-+<http://www.lemis.com/grog/Documentation/Lions/>`_ in *Lions' Commentary on
-+UNIX, 6th Edition*, (Dept. of Computer Science, the University of New South
-+Wales, November 1977), pp. 18-2; and later by D. Ritchie and K. Thompson,
-+`"Implementation of the File System"
-+<https://archive.org/details/bstj57-6-1905/page/n8/mode/1up>`_, from *The UNIX
-+Time-Sharing System*, (The Bell System Technical Journal, July 1978), pp.
-+1913-4.
++- A crash after construction of the secondary tree but before the range
++  collapse would leave unreachable blocks in the file fork.
++  This would likely confuse things further.
 +
-+XFS retains most of this design, except now inumbers are search keys over all
-+the space in the data section filesystem.
-+They form a continuous keyspace that can be expressed as a 64-bit integer,
-+though the inodes themselves are sparsely distributed within the keyspace.
-+Scans proceed in a linear fashion across the inumber keyspace, starting from
-+``0x0`` and ending at ``0xFFFFFFFFFFFFFFFF``.
-+Naturally, a scan through a keyspace requires a scan cursor object to track the
-+scan progress.
-+Because this keyspace is sparse, this cursor contains two parts.
-+The first part of this scan cursor object tracks the inode that will be
-+examined next; call this the examination cursor.
-+Somewhat less obviously, the scan cursor object must also track which parts of
-+the keyspace have already been visited, which is critical for deciding if a
-+concurrent filesystem update needs to be incorporated into the scan data.
-+Call this the visited inode cursor.
++- Reaping blocks after a repair is not a simple operation, and initiating a
++  reap operation from a restarted range collapse operation during log recovery
++  is daunting.
 +
-+Advancing the scan cursor is a multi-step process encapsulated in
-+``xchk_iscan_iter``:
++- Directory entry blocks and quota records record the file fork offset in the
++  header area of each block.
++  An atomic range collapse operation would have to rewrite this part of each
++  block header.
++  Rewriting a single field in block headers is not a huge problem, but it's
++  something to be aware of.
 +
-+1. Lock the AGI buffer of the AG containing the inode pointed to by the visited
-+   inode cursor.
-+   This guarantee that inodes in this AG cannot be allocated or freed while
-+   advancing the cursor.
++- Each block in a directory or extended attributes btree index contains sibling
++  and child block pointers.
++  Were the atomic commit to use a range collapse operation, each block would
++  have to be rewritten very carefully to preserve the graph structure.
++  Doing this as part of a range collapse means rewriting a large number of
++  blocks repeatedly, which is not conducive to quick repairs.
 +
-+2. Use the per-AG inode btree to look up the next inumber after the one that
-+   was just visited, since it may not be keyspace adjacent.
++The third iteration of the design for file metadata repair went for a totally
++new strategy -- create a temporary file in the XFS filesystem, write a new
++structure at the correct offsets into the temporary file, and atomically swap
++the fork mappings (and hence the fork contents) to commit the repair.
++Once the repair is complete, the old fork can be reaped as necessary; if the
++system goes down during the reap, the iunlink code will delete the blocks
++during log recovery.
 +
-+3. If there are no more inodes left in this AG:
++**Note**: All space usage and inode indices in the filesystem *must* be
++consistent to use a temporary file safely!
++This dependency is the reason why online repair can only use pageable kernel
++memory to stage ondisk space usage information.
 +
-+   a. Move the examination cursor to the point of the inumber keyspace that
-+      corresponds to the start of the next AG.
++Swapping extents with a temporary file still requires a rewrite of the owner
++field of the block headers, but this is *much* simpler than moving tree blocks
++individually.
++Furthermore, the buffer verifiers do not verify owner fields (since they are
++not aware of the inode that owns the block), which makes reaping of old file
++blocks much simpler.
++Extent swapping requires that AG space metadata and the file fork metadata of
++the file being repaired are all consistent with respect to each other, but
++that's already a requirement for correct operation of files in general.
++There is, however, a slight downside -- if the system crashes during the reap
++phase and the fork extents are crosslinked, the iunlink processing will fail
++because freeing space will find the extra reverse mappings and abort.
 +
-+   b. Adjust the visited inode cursor to indicate that it has "visited" the
-+      last possible inode in the current AG's inode keyspace.
-+      XFS inumbers are segmented, so the cursor needs to be marked as having
-+      visited the entire keyspace up to just before the start of the next AG's
-+      inode keyspace.
++Temporary files created for repair are similar to ``O_TMPFILE`` files created
++by userspace.
++They are not linked into a directory and the entire file will be reaped when
++the last reference to the file is lost.
++The key differences are that these files must have no access permission outside
++the kernel at all, they must be specially marked to prevent them from being
++opened by handle, and they must never be linked into the directory tree.
 +
-+   c. Unlock the AGI and return to step 1 if there are unexamined AGs in the
-+      filesystem.
++Using a Temporary File
++``````````````````````
 +
-+   d. If there are no more AGs to examine, set both cursors to the end of the
-+      inumber keyspace.
-+      The scan is now complete.
++Online repair code should use the ``xrep_tempfile_create`` function to create a
++temporary file inside the filesystem.
++This allocates an inode, marks the in-core inode private, and attaches it to
++the scrub context.
++These files are hidden from userspace, may not be added to the directory tree,
++and must be kept private.
 +
-+4. Otherwise, there is at least one more inode to scan in this AG:
++Temporary files only use two inode locks: the IOLOCK and the ILOCK.
++The MMAPLOCK is not needed here, because there must not be page faults from
++userspace for data fork blocks.
++The usage patterns of these two locks are the same as for any other XFS file --
++access to file data are controlled via the IOLOCK, and access to file metadata
++are controlled via the ILOCK.
++Locking helpers are provided so that the temporary file and its lock state can
++be cleaned up by the scrub context.
++To comply with the nested locking strategy laid out in the :ref:`inode
++locking<ilocking>` section, it is recommended that scrub functions use the
++xrep_tempfile_ilock*_nowait lock helpers.
 +
-+   a. Move the examination cursor ahead to the next inode marked as allocated
-+      by the inode btree.
++Data can be written to a temporary file by two means:
 +
-+   b. Adjust the visited inode cursor to point to the inode just prior to where
-+      the examination cursor is now.
-+      Because the scanner holds the AGI buffer lock, no inodes could have been
-+      created in the part of the inode keyspace that the visited inode cursor
-+      just advanced.
++1. ``xrep_tempfile_copyin_xfile`` can be used to set the contents of a regular
++   temporary file from an xfile.
 +
-+5. Get the incore inode for the inumber of the examination cursor.
-+   By maintaining the AGI buffer lock until this point, the scanner knows that
-+   it was safe to advance the examination cursor across the entire keyspace,
-+   and that it has stabilized this next inode so that it cannot disappear from
-+   the filesystem until the scan releases the incore inode.
++2. The regular directory, symbolic link, and extended attribute functions can
++   be used to write to the temporary file.
 +
-+6. Drop the AGI lock and return the incore inode to the caller.
++Once a good copy of a data file has been constructed in a temporary file, it
++must be conveyed to the file being repaired, which is the topic of the next
++section.
 +
-+Online fsck functions scan all files in the filesystem as follows:
-+
-+1. Start a scan by calling ``xchk_iscan_start``.
-+
-+2. Advance the scan cursor (``xchk_iscan_iter``) to get the next inode.
-+   If one is provided:
-+
-+   a. Lock the inode to prevent updates during the scan.
-+
-+   b. Scan the inode.
-+
-+   c. While still holding the inode lock, adjust the visited inode cursor
-+      (``xchk_iscan_mark_visited``) to point to this inode.
-+
-+   d. Unlock and release the inode.
-+
-+8. Call ``xchk_iscan_finish`` to complete the scan.
-+
-+There are subtleties with the inode cache that complicate grabbing the incore
-+inode for the caller.
-+Obviously, it is an absolute requirement that the inode metadata be consistent
-+enough to load it into the inode cache.
-+Second, if the incore inode is stuck in some intermediate state, the scan
-+coordinator must release the AGI and push the main filesystem to get the inode
-+back into a loadable state.
-+
-+The proposed patches are the
-+`inode scanner
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-iscan>`_
++The proposed patches are in the
++`realtime summary repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-rtsummary>`_
 +series.
 +
-+Inode Management
-+````````````````
++Atomic Extent Swapping
++----------------------
 +
-+In regular filesystem code, references to allocated XFS incore inodes are
-+always obtained (``xfs_iget``) outside of transaction context because the
-+creation of the incore context for ane xisting file does not require metadata
-+updates.
-+However, it is important to note that references to incore inodes obtained as
-+part of file creation must be performed in transaction context because the
-+filesystem must ensure the atomicity of the ondisk inode btree index updates
-+and the initialization of the actual ondisk inode.
++Once repair builds a temporary file with a new data structure written into
++it, it must commit the new changes into the existing file.
++It is not possible to swap the inumbers of two files, so instead the new
++metadata must replace the old.
++This suggests the need for the ability to swap extents, but the existing extent
++swapping code used by the file defragmenting tool ``xfs_fsr`` is not sufficient
++for online repair because:
 +
-+References to incore inodes are always released (``xfs_irele``) outside of
-+transaction context because there are a handful of activities that might
-+require ondisk updates:
++a. When the reverse-mapping btree is enabled, the swap code must keep the
++   reverse mapping information up to date with every exchange of mappings.
++   Therefore, it can only exchange one mapping per transaction, and each
++   transaction is independent.
 +
-+- The VFS may decide to kick off writeback as part of a ``DONTCACHE`` inode
-+  release.
++b. Reverse-mapping is critical for the operation of online fsck, so the old
++   defragmentation code (which swapped entire extent forks in a single
++   operation) is not useful here.
 +
-+- Speculative preallocations need to be unreserved.
++c. Defragmentation is assumed to occur between two files with identical
++   contents.
++   For this use case, an incomplete exchange will not result in a user-visible
++   change in file contents, even if the operation is interrupted.
 +
-+- An unlinked file may have lost its last reference, in which case the entire
-+  file must be inactivated, which involves releasing all of its resources in
-+  the ondisk metadata and freeing the inode.
++d. Online repair needs to swap the contents of two files that are by definition
++   *not* identical.
++   For directory and xattr repairs, the user-visible contents might be the
++   same, but the contents of individual blocks may be very different.
 +
-+These activities are collectively called inode inactivation.
-+Inactivation has two parts -- the VFS part, which initiates writeback on all
-+dirty file pages, and the XFS part, which cleans up XFS-specific information
-+and frees the inode if it was unlinked.
-+If the inode is unlinked (or unconnected after a file handle operation), the
-+kernel drops the inode into the inactivation machinery immediately.
++e. Old blocks in the file may be cross-linked with another structure and must
++   not reappear if the system goes down mid-repair.
 +
-+During normal operation, resource acquisition for an update follows this order
-+to avoid deadlocks:
-+
-+1. Inode reference (``iget``).
-+
-+2. Filesystem freeze protection, if repairing (``mnt_want_write_file``).
-+
-+3. Inode ``IOLOCK`` (VFS ``i_rwsem``) lock to control file IO.
-+
-+4. Inode ``MMAPLOCK`` (page cache ``invalidate_lock``) lock for operations that
-+   can update page cache mappings.
-+
-+5. Log feature enablement.
-+
-+6. Transaction log space grant.
-+
-+7. Space on the data and realtime devices for the transaction.
-+
-+8. Incore dquot references, if a file is being repaired.
-+   Note that they are not locked, merely acquired.
-+
-+9. Inode ``ILOCK`` for file metadata updates.
-+
-+10. AG header buffer locks / Realtime metadata inode ILOCK.
-+
-+11. Realtime metadata buffer locks, if applicable.
-+
-+12. Extent mapping btree blocks, if applicable.
-+
-+Resources are often released in the reverse order, though this is not required.
-+However, online fsck differs from regular XFS operations because it may examine
-+an object that normally is acquired in a later stage of the locking order, and
-+then decide to cross-reference the object with an object that is acquired
-+earlier in the order.
-+The next few sections detail the specific ways in which online fsck takes care
-+to avoid deadlocks.
-+
-+iget and irele During a Scrub
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+An inode scan performed on behalf of a scrub operation runs in transaction
-+context, and possibly with resources already locked and bound to it.
-+This isn't much of a problem for ``iget`` since it can operate in the context
-+of an existing transaction, as long as all of the bound resources are acquired
-+before the inode reference in the regular filesystem.
-+
-+When the VFS ``iput`` function is given a linked inode with no other
-+references, it normally puts the inode on an LRU list in the hope that it can
-+save time if another process re-opens the file before the system runs out
-+of memory and frees it.
-+Filesystem callers can short-circuit the LRU process by setting a ``DONTCACHE``
-+flag on the inode to cause the kernel to try to drop the inode into the
-+inactivation machinery immediately.
-+
-+In the past, inactivation was always done from the process that dropped the
-+inode, which was a problem for scrub because scrub may already hold a
-+transaction, and XFS does not support nesting transactions.
-+On the other hand, if there is no scrub transaction, it is desirable to drop
-+otherwise unused inodes immediately to avoid polluting caches.
-+To capture these nuances, the online fsck code has a separate ``xchk_irele``
-+function to set or clear the ``DONTCACHE`` flag to get the required release
-+behavior.
-+
-+Proposed patchsets include fixing
-+`scrub iget usage
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-iget-fixes>`_ and
-+`dir iget usage
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-dir-iget-fixes>`_.
-+
-+Locking Inodes
-+^^^^^^^^^^^^^^
-+
-+In regular filesystem code, the VFS and XFS will acquire multiple IOLOCK locks
-+in a well-known order: parent → child when updating the directory tree, and
-+``struct inode`` address order otherwise.
-+For regular files, the MMAPLOCK can be acquired after the IOLOCK to stop page
-+faults.
-+If two MMAPLOCKs must be acquired, they are acquired in ``struct
-+address_space`` order.
-+Due to the structure of existing filesystem code, IOLOCKs and MMAPLOCKs must be
-+acquired before transactions are allocated.
-+If two ILOCKs must be acquired, they are acquired in inumber order.
-+
-+Inode lock acquisition must be done carefully during a coordinated inode scan.
-+Online fsck cannot abide these conventions, because for a directory tree
-+scanner, the scrub process holds the IOLOCK of the file being scanned and it
-+needs to take the IOLOCK of the file at the other end of the directory link.
-+If the directory tree is corrupt because it contains a cycle, ``xfs_scrub``
-+cannot use the regular inode locking functions and avoid becoming trapped in an
-+ABBA deadlock.
-+
-+Solving both of these problems is straightforward -- any time online fsck
-+needs to take a second lock of the same class, it uses trylock to avoid an ABBA
-+deadlock.
-+If the trylock fails, scrub drops all inode locks and use trylock loops to
-+(re)acquire all necessary resources.
-+Trylock loops enable scrub to check for pending fatal signals, which is how
-+scrub avoids deadlocking the filesystem or becoming an unresponsive process.
-+However, trylock loops means that online fsck must be prepared to measure the
-+resource being scrubbed before and after the lock cycle to detect changes and
-+react accordingly.
-+
-+.. _dirparent:
-+
-+Case Study: Finding a Directory Parent
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Consider the directory parent pointer repair code as an example.
-+Online fsck must verify that the dotdot dirent of a directory points up to a
-+parent directory, and that the parent directory contains exactly one dirent
-+pointing down to the child directory.
-+Fully validating this relationship (and repairing it if possible) requires a
-+walk of every directory on the filesystem while holding the child locked, and
-+while updates to the directory tree are being made.
-+The coordinated inode scan provides a way to walk the filesystem without the
-+possibility of missing an inode.
-+The child directory is kept locked to prevent updates to the dotdot dirent, but
-+if the scanner fails to lock a parent, it can drop and relock both the child
-+and the prospective parent.
-+If the dotdot entry changes while the directory is unlocked, then a move or
-+rename operation must have changed the child's parentage, and the scan can
-+exit early.
++These problems are overcome by creating a new deferred operation and a new type
++of log intent item to track the progress of an operation to exchange two file
++ranges.
++The new deferred operation type chains together the same transactions used by
++the reverse-mapping extent swap code.
++The new log item records the progress of the exchange to ensure that once an
++exchange begins, it will always run to completion, even there are
++interruptions.
 +
 +The proposed patchset is the
-+`directory repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-dirs>`_
++`atomic extent swap
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates>`_
 +series.
 +
-+.. _fshooks:
++Using Log-Incompatible Feature Flags
++````````````````````````````````````
 +
-+Filesystem Hooks
-+`````````````````
++Starting with XFS v5, the superblock contains a ``sb_features_log_incompat``
++field to indicate that the log contains records that might not readable by all
++kernels that could mount this filesystem.
++In short, log incompat features protect the log contents against kernels that
++will not understand the contents.
++Unlike the other superblock feature bits, log incompat bits are ephemeral
++because an empty (clean) log does not need protection.
++The log cleans itself after its contents have been committed into the
++filesystem, either as part of an unmount or because the system is otherwise
++idle.
++Because upper level code can be working on a transaction at the same time that
++the log cleans itself, it is necessary for upper level code to communicate to
++the log when it is going to use a log incompatible feature.
 +
-+The second piece of support that online fsck functions need during a full
-+filesystem scan is the ability to stay informed about updates being made by
-+other threads in the filesystem, since comparisons against the past are useless
-+in a dynamic environment.
-+Two pieces of Linux kernel infrastructure enable online fsck to monitor regular
-+filesystem operations: filesystem hooks and :ref:`static keys<jump_labels>`.
++The log coordinates access to incompatible features through the use of one
++``struct rw_semaphore`` for each feature.
++The log cleaning code tries to take this rwsem in exclusive mode to clear the
++bit; if the lock attempt fails, the feature bit remains set.
++Filesystem code signals its intention to use a log incompat feature in a
++transaction by calling ``xlog_use_incompat_feat``, which takes the rwsem in
++shared mode.
++The code supporting a log incompat feature should create wrapper functions to
++obtain the log feature and call ``xfs_add_incompat_log_feature`` to set the
++feature bits in the primary superblock.
++The superblock update is performed transactionally, so the wrapper to obtain
++log assistance must be called just prior to the creation of the transaction
++that uses the functionality.
++For a file operation, this step must happen after taking the IOLOCK and the
++MMAPLOCK, but before allocating the transaction.
++When the transaction is complete, the ``xlog_drop_incompat_feat`` function
++is called to release the feature.
++The feature bit will not be cleared from the superblock until the log becomes
++clean.
 +
-+Filesystem hooks convey information about an ongoing filesystem operation to
-+a downstream consumer.
-+In this case, the downstream consumer is always an online fsck function.
-+Because multiple fsck functions can run in parallel, online fsck uses the Linux
-+notifier call chain facility to dispatch updates to any number of interested
-+fsck processes.
-+Call chains are a dynamic list, which means that they can be configured at
-+run time.
-+Because these hooks are private to the XFS module, the information passed along
-+contains exactly what the checking function needs to update its observations.
++Log-assisted extended attribute updates and atomic extent swaps both use log
++incompat features and provide convenience wrappers around the functionality.
 +
-+The current implementation of XFS hooks uses SRCU notifier chains to reduce the
-+impact to highly threaded workloads.
-+Regular blocking notifier chains use a rwsem and seem to have a much lower
-+overhead for single-threaded applications.
-+However, it may turn out that the combination of blocking chains and static
-+keys are a more performant combination; more study is needed here.
++Mechanics of an Atomic Extent Swap
++``````````````````````````````````
 +
-+The following pieces are necessary to hook a certain point in the filesystem:
++Swapping entire file forks is a complex task.
++The goal is to exchange all file fork mappings between two file fork offset
++ranges.
++There are likely to be many extent mappings in each fork, and the edges of
++the mappings aren't necessarily aligned.
++Furthermore, there may be other updates that need to happen after the swap,
++such as exchanging file sizes, inode flags, or conversion of fork data to local
++format.
++This is roughly the format of the new deferred extent swap work item:
 +
-+- A ``struct xfs_hooks`` object must be embedded in a convenient place such as
-+  a well-known incore filesystem object.
++.. code-block:: c
 +
-+- Each hook must define an action code and a structure containing more context
-+  about the action.
++	struct xfs_swapext_intent {
++	    /* Inodes participating in the operation. */
++	    struct xfs_inode    *sxi_ip1;
++	    struct xfs_inode    *sxi_ip2;
 +
-+- Hook providers should provide appropriate wrapper functions and structs
-+  around the ``xfs_hooks`` and ``xfs_hook`` objects to take advantage of type
-+  checking to ensure correct usage.
++	    /* File offset range information. */
++	    xfs_fileoff_t       sxi_startoff1;
++	    xfs_fileoff_t       sxi_startoff2;
++	    xfs_filblks_t       sxi_blockcount;
 +
-+- A callsite in the regular filesystem code must be chosen to call
-+  ``xfs_hooks_call`` with the action code and data structure.
-+  This place should be adjacent to (and not earlier than) the place where
-+  the filesystem update is committed to the transaction.
-+  In general, when the filesystem calls a hook chain, it should be able to
-+  handle sleeping and should not be vulnerable to memory reclaim or locking
-+  recursion.
-+  However, the exact requirements are very dependent on the context of the hook
-+  caller and the callee.
++	    /* Set these file sizes after the operation, unless negative. */
++	    xfs_fsize_t         sxi_isize1;
++	    xfs_fsize_t         sxi_isize2;
 +
-+- The online fsck function should define a structure to hold scan data, a lock
-+  to coordinate access to the scan data, and a ``struct xfs_hook`` object.
-+  The scanner function and the regular filesystem code must acquire resources
-+  in the same order; see the next section for details.
++	    /* XFS_SWAP_EXT_* log operation flags */
++	    uint64_t            sxi_flags;
++	};
 +
-+- The online fsck code must contain a C function to catch the hook action code
-+  and data structure.
-+  If the object being updated has already been visited by the scan, then the
-+  hook information must be applied to the scan data.
++The new log intent item contains enough information to track two logical fork
++offset ranges: ``(inode1, startoff1, blockcount)`` and ``(inode2, startoff2,
++blockcount)``.
++Each step of a swap operation exchanges the largest file range mapping possible
++from one file to the other.
++After each step in the swap operation, the two startoff fields are incremented
++and the blockcount field is decremented to reflect the progress made.
++The flags field captures behavioral parameters such as swapping the attr fork
++instead of the data fork and other work to be done after the extent swap.
++The two isize fields are used to swap the file size at the end of the operation
++if the file data fork is the target of the swap operation.
 +
-+- Prior to unlocking inodes to start the scan, online fsck must call
-+  ``xfs_hooks_setup`` to initialize the ``struct xfs_hook``, and
-+  ``xfs_hooks_add`` to enable the hook.
++When the extent swap is initiated, the sequence of operations is as follows:
 +
-+- Online fsck must call ``xfs_hooks_del`` to disable the hook once the scan is
-+  complete.
++1. Create a deferred work item for the extent swap.
++   At the start, it should contain the entirety of the file ranges to be
++   swapped.
 +
-+The number of hooks should be kept to a minimum to reduce complexity.
-+Static keys are used to reduce the overhead of filesystem hooks to nearly
-+zero when online fsck is not running.
++2. Call ``xfs_defer_finish`` to start processing of the exchange.
++   This will log an extent swap intent item to the transaction for the deferred
++   extent swap work item.
 +
-+.. _liveupdate:
++3. Until ``sxi_blockcount`` of the deferred extent swap work item is zero,
 +
-+Live Updates During a Scan
-+``````````````````````````
++   a. Read the block maps of both file ranges starting at ``sxi_startoff1`` and
++      ``sxi_startoff2``, respectively, and compute the longest extent that can
++      be swapped in a single step.
++      This is the minimum of the two ``br_blockcount`` s in the mappings.
++      Keep advancing through the file forks until at least one of the mappings
++      contains written blocks.
++      Mutual holes, unwritten extents, and extent mappings to the same physical
++      space are not exchanged.
 +
-+The code paths of the online fsck scanning code and the :ref:`hooked<fshooks>`
-+filesystem code look like this::
++      For the next few steps, this document will refer to the mapping that came
++      from file 1 as "map1", and the mapping that came from file 2 as "map2".
 +
-+            other program
-+                  ↓
-+            inode lock ←────────────────────┐
-+                  ↓                         │
-+            AG header lock                  │
-+                  ↓                         │
-+            filesystem function             │
-+                  ↓                         │
-+            notifier call chain             │    same
-+                  ↓                         ├─── inode
-+            scrub hook function             │    lock
-+                  ↓                         │
-+            scan data mutex ←──┐    same    │
-+                  ↓            ├─── scan    │
-+            update scan data   │    lock    │
-+                  ↑            │            │
-+            scan data mutex ←──┘            │
-+                  ↑                         │
-+            inode lock ←────────────────────┘
-+                  ↑
-+            scrub function
-+                  ↑
-+            inode scanner
-+                  ↑
-+            xfs_scrub
++   b. Create a deferred block mapping update to unmap map1 from file 1.
 +
-+These rules must be followed to ensure correct interactions between the
-+checking code and the code making an update to the filesystem:
++   c. Create a deferred block mapping update to unmap map2 from file 2.
 +
-+- Prior to invoking the notifier call chain, the filesystem function being
-+  hooked must acquire the same lock that the scrub scanning function acquires
-+  to scan the inode.
++   d. Create a deferred block mapping update to map map1 into file 2.
 +
-+- The scanning function and the scrub hook function must coordinate access to
-+  the scan data by acquiring a lock on the scan data.
++   e. Create a deferred block mapping update to map map2 into file 1.
 +
-+- Scrub hook function must not add the live update information to the scan
-+  observations unless the inode being updated has already been scanned.
-+  The scan coordinator has a helper predicate (``xchk_iscan_want_live_update``)
-+  for this.
++   f. Log the block, quota, and extent count updates for both files.
 +
-+- Scrub hook functions must not change the caller's state, including the
-+  transaction that it is running.
-+  They must not acquire any resources that might conflict with the filesystem
-+  function being hooked.
++   g. Extend the ondisk size of either file if necessary.
 +
-+- The hook function can abort the inode scan to avoid breaking the other rules.
++   h. Log an extent swap done log item for the extent swap intent log item
++      that was read at the start of step 3.
 +
-+The inode scan APIs are pretty simple:
++   i. Compute the amount of file range that has just been covered.
++      This quantity is ``(map1.br_startoff + map1.br_blockcount -
++      sxi_startoff1)``, because step 3a could have skipped holes.
 +
-+- ``xchk_iscan_start`` starts a scan
++   j. Increase the starting offsets of ``sxi_startoff1`` and ``sxi_startoff2``
++      by the number of blocks computed in the previous step, and decrease
++      ``sxi_blockcount`` by the same quantity.
++      This advances the cursor.
 +
-+- ``xchk_iscan_iter`` grabs a reference to the next inode in the scan or
-+  returns zero if there is nothing left to scan
++   k. Log a new extent swap intent log item reflecting the advanced state of
++      the work item.
 +
-+- ``xchk_iscan_want_live_update`` to decide if an inode has already been
-+  visited in the scan.
-+  This is critical for hook functions to decide if they need to update the
-+  in-memory scan information.
++   l. Return the proper error code (EAGAIN) to the deferred operation manager
++      to inform it that there is more work to be done.
++      The operation manager completes the deferred work in steps 3b-3e before
++      moving back to the start of step 3.
 +
-+- ``xchk_iscan_mark_visited`` to mark an inode as having been visited in the
-+  scan
++4. Perform any post-processing.
++   This will be discussed in more detail in subsequent sections.
 +
-+- ``xchk_iscan_finish`` to finish the scan
++If the filesystem goes down in the middle of an operation, log recovery will
++find the most recent unfinished extent swap log intent item and restart from
++there.
++This is how extent swapping guarantees that an outside observer will either see
++the old broken structure or the new one, and never a mismash of both.
 +
-+The proposed patches are at the start of the
-+`online quotacheck
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-quota>`_
-+series.
++Extent Swapping with Regular User Files
++```````````````````````````````````````
 +
-+.. _quotacheck:
++As mentioned earlier, XFS has long had the ability to swap extents between
++files, which is used almost exclusively by ``xfs_fsr`` to defragment files.
++The earliest form of this was the fork swap mechanism, where the entire
++contents of data forks could be exchanged between two files by exchanging the
++raw bytes in each inode fork's immediate area.
++When XFS v5 came along with self-describing metadata, this old mechanism grew
++some log support to continue rewriting the owner fields of BMBT blocks during
++log recovery.
++When the reverse mapping btree was later added to XFS, the only way to maintain
++the consistency of the fork mappings with the reverse mapping index was to
++develop an iterative mechanism that used deferred bmap and rmap operations to
++swap mappings one at a time.
++This mechanism is identical to steps 2-3 from the procedure above except for
++the new tracking items, because the atomic extent swap mechanism is an
++iteration of an existing mechanism and not something totally novel.
++For the narrow case of file defragmentation, the file contents must be
++identical, so the recovery guarantees are not much of a gain.
 +
-+Case Study: Quota Counter Checking
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++Atomic extent swapping is much more flexible than the existing swapext
++implementations because it can guarantee that the caller never sees a mix of
++old and new contents even after a crash, and it can operate on two arbitrary
++file fork ranges.
++The extra flexibility enables several new use cases:
 +
-+It is useful to compare the mount time quotacheck code to the online repair
-+quotacheck code.
-+Mount time quotacheck does not have to contend with concurrent operations, so
-+it does the following:
++- **Atomic commit of file writes**: A userspace process opens a file that it
++  wants to update.
++  Next, it opens a temporary file and calls the file clone operation to reflink
++  the first file's contents into the temporary file.
++  Writes to the original file should instead be written to the temporary file.
++  Finally, the process calls the atomic extent swap system call
++  (``FIEXCHANGE_RANGE``) to exchange the file contents, thereby committing all
++  of the updates to the original file, or none of them.
 +
-+1. Make sure the ondisk dquots are in good enough shape that all the incore
-+   dquots will actually load, and zero the resource usage counters in the
-+   ondisk buffer.
++- **Transactional file updates**: The same mechanism as above, but the caller
++  only wants the commit to occur if the original file's contents have not
++  changed.
++  To make this happen, the calling process snapshots the file modification and
++  change timestamps of the original file before reflinking its data to the
++  temporary file.
++  When the program is ready to commit the changes, it passes the timestamps
++  into the kernel as arguments to the atomic extent swap system call.
++  The kernel only commits the changes if the provided timestamps match the
++  original file.
 +
-+2. Walk every inode in the filesystem.
-+   Add each file's resource usage to the incore dquot.
++- **Emulation of atomic block device writes**: Export a block device with a
++  logical sector size matching the filesystem block size to force all writes
++  to be aligned to the filesystem block size.
++  Stage all writes to a temporary file, and when that is complete, call the
++  atomic extent swap system call with a flag to indicate that holes in the
++  temporary file should be ignored.
++  This emulates an atomic device write in software, and can support arbitrary
++  scattered writes.
 +
-+3. Walk each incore dquot.
-+   If the incore dquot is not being flushed, add the ondisk buffer backing the
-+   incore dquot to a delayed write (delwri) list.
++Preparation for Extent Swapping
++```````````````````````````````
 +
-+4. Write the buffer list to disk.
++There are a few things that need to be taken care of before initiating an
++atomic extent swap operation.
++First, regular files require the page cache to be flushed to disk before the
++operation begins, and directio writes to be quiesced.
++Like any filesystem operation, extent swapping must determine the maximum
++amount of disk space and quota that can be consumed on behalf of both files in
++the operation, and reserve that quantity of resources to avoid an unrecoverable
++out of space failure once it starts dirtying metadata.
++The preparation step scans the ranges of both files to estimate:
 +
-+Like most online fsck functions, online quotacheck can't write to regular
-+filesystem objects until the newly collected metadata reflect all filesystem
-+state.
-+Therefore, online quotacheck records file resource usage to a shadow dquot
-+index implemented with a sparse ``xfarray``, and only writes to the real dquots
-+once the scan is complete.
-+Handling transactional updates is tricky because quota resource usage updates
-+are handled in phases to minimize contention on dquots:
++- Data device blocks needed to handle the repeated updates to the fork
++  mappings.
++- Change in data and realtime block counts for both files.
++- Increase in quota usage for both files, if the two files do not share the
++  same set of quota ids.
++- The number of extent mappings that will be added to each file.
++- Whether or not there are partially written realtime extents.
++  User programs must never be able to access a realtime file extent that maps
++  to different extents on the realtime volume, which could happen if the
++  operation fails to run to completion.
 +
-+1. The inodes involved are joined and locked to a transaction.
++The need for precise estimation increases the run time of the swap operation,
++but it is very important to maintain correct accounting.
++The filesystem must not run completely out of free space, nor can the extent
++swap ever add more extent mappings to a fork than it can support.
++Regular users are required to abide the quota limits, though metadata repairs
++may exceed quota to resolve inconsistent metadata elsewhere.
 +
-+2. For each dquot attached to the file:
++Special Features for Swapping Metadata File Extents
++```````````````````````````````````````````````````
 +
-+   a. The dquot is locked.
++Extended attributes, symbolic links, and directories can set the fork format to
++"local" and treat the fork as a literal area for data storage.
++Metadata repairs must take extra steps to support these cases:
 +
-+   b. A quota reservation is added to the dquot's resource usage.
-+      The reservation is recorded in the transaction.
++- If both forks are in local format and the fork areas are large enough, the
++  swap is performed by copying the incore fork contents, logging both forks,
++  and committing.
++  The atomic extent swap mechanism is not necessary, since this can be done
++  with a single transaction.
 +
-+   c. The dquot is unlocked.
++- If both forks map blocks, then the regular atomic extent swap is used.
 +
-+3. Changes in actual quota usage are tracked in the transaction.
++- Otherwise, only one fork is in local format.
++  The contents of the local format fork are converted to a block to perform the
++  swap.
++  The conversion to block format must be done in the same transaction that
++  logs the initial extent swap intent log item.
++  The regular atomic extent swap is used to exchange the mappings.
++  Special flags are set on the swap operation so that the transaction can be
++  rolled one more time to convert the second file's fork back to local format
++  if possible.
 +
-+4. At transaction commit time, each dquot is examined again:
++Extended attributes and directories stamp the owning inode into every block,
++but the buffer verifiers do not actually check the inode number!
++Although there is no verification, it is still important to maintain
++referential integrity, so prior to performing the extent swap, online repair
++walks every block in the new data structure to update the owner field and flush
++the buffer to disk.
 +
-+   a. The dquot is locked again.
++After a successful swap operation, the repair operation must reap the old fork
++blocks by processing each fork mapping through the standard :ref:`file extent
++reaping <reaping>` mechanism that is done post-repair.
++If the filesystem should go down during the reap part of the repair, the
++iunlink processing at the end of recovery will free both the temporary file and
++whatever blocks were not reaped.
++However, this iunlink processing omits the cross-link detection of online
++repair, and is not completely foolproof.
 +
-+   b. Quota usage changes are logged and unused reservation is given back to
-+      the dquot.
++Swapping Temporary File Extents
++```````````````````````````````
 +
-+   c. The dquot is unlocked.
++To repair a metadata file, online repair proceeds as follows:
 +
-+For online quotacheck, hooks are placed in steps 2 and 4.
-+The step 2 hook creates a shadow version of the transaction dquot context
-+(``dqtrx``) that operates in a similar manner to the regular code.
-+The step 4 hook commits the shadow ``dqtrx`` changes to the shadow dquots.
-+Notice that both hooks are called with the inode locked, which is how the
-+live update coordinates with the inode scanner.
++1. Create a temporary repair file.
 +
-+The quotacheck scan looks like this:
++2. Use the staging data to write out new contents into the temporary repair
++   file.
++   The same fork must be written to as is being repaired.
 +
-+1. Set up a coordinated inode scan.
++3. Commit the scrub transaction, since the swap estimation step must be
++   completed before transaction reservations are made.
 +
-+2. For each inode returned by the inode scan iterator:
++4. Call ``xrep_tempswap_trans_alloc`` to allocate a new scrub transaction with
++   the appropriate resource reservations, locks, and fill out a ``struct
++   xfs_swapext_req`` with the details of the swap operation.
 +
-+   a. Grab and lock the inode.
++5. Call ``xrep_tempswap_contents`` to swap the contents.
 +
-+   b. Determine that inode's resource usage (data blocks, inode counts,
-+      realtime blocks) and add that to the shadow dquots for the user, group,
-+      and project ids associated with the inode.
++6. Commit the transaction to complete the repair.
 +
-+   c. Unlock and release the inode.
++.. _rtsummary:
 +
-+3. For each dquot in the system:
++Case Study: Repairing the Realtime Summary File
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +
-+   a. Grab and lock the dquot.
++In the "realtime" section of an XFS filesystem, free space is tracked via a
++bitmap, similar to Unix FFS.
++Each bit in the bitmap represents one realtime extent, which is a multiple of
++the filesystem block size between 4KiB and 1GiB in size.
++The realtime summary file indexes the number of free extents of a given size to
++the offset of the block within the realtime free space bitmap where those free
++extents begin.
++In other words, the summary file helps the allocator find free extents by
++length, similar to what the free space by count (cntbt) btree does for the data
++section.
 +
-+   b. Check the dquot against the shadow dquots created by the scan and updated
-+      by the live hooks.
++The summary file itself is a flat file (with no block headers or checksums!)
++partitioned into ``log2(total rt extents)`` sections containing enough 32-bit
++counters to match the number of blocks in the rt bitmap.
++Each counter records the number of free extents that start in that bitmap block
++and can satisfy a power-of-two allocation request.
 +
-+Live updates are key to being able to walk every quota record without
-+needing to hold any locks for a long duration.
-+If repairs are desired, the real and shadow dquots are locked and their
-+resource counts are set to the values in the shadow dquot.
++To check the summary file against the bitmap:
++
++1. Take the ILOCK of both the realtime bitmap and summary files.
++
++2. For each free space extent recorded in the bitmap:
++
++   a. Compute the position in the summary file that contains a counter that
++      represents this free extent.
++
++   b. Read the counter from the xfile.
++
++   c. Increment it, and write it back to the xfile.
++
++3. Compare the contents of the xfile against the ondisk file.
++
++To repair the summary file, write the xfile contents into the temporary file
++and use atomic extent swap to commit the new contents.
++The temporary file is then reaped.
 +
 +The proposed patchset is the
-+`online quotacheck
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-quota>`_
++`realtime summary repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-rtsummary>`_
 +series.
 +
-+.. _nlinks:
++Case Study: Salvaging Extended Attributes
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +
-+Case Study: File Link Count Checking
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++In XFS, extended attributes are implemented as a namespaced name-value store.
++Values are limited in size to 64KiB, but there is no limit in the number of
++names.
++The attribute fork is unpartitioned, which means that the root of the attribute
++structure is always in logical block zero, but attribute leaf blocks, dabtree
++index blocks, and remote value blocks are intermixed.
++Attribute leaf blocks contain variable-sized records that associate
++user-provided names with the user-provided values.
++Values larger than a block are allocated separate extents and written there.
++If the leaf information expands beyond a single block, a directory/attribute
++btree (``dabtree``) is created to map hashes of attribute names to entries
++for fast lookup.
 +
-+File link count checking also uses live update hooks.
-+The coordinated inode scanner is used to visit all directories on the
-+filesystem, and per-file link count records are stored in a sparse ``xfarray``
-+indexed by inumber.
-+During the scanning phase, each entry in a directory generates observation
-+data as follows:
++Salvaging extended attributes is done as follows:
 +
-+1. If the entry is a dotdot (``'..'``) entry of the root directory, the
-+   directory's parent link count is bumped because the root directory's dotdot
-+   entry is self referential.
++1. Walk the attr fork mappings of the file being repaired to find the attribute
++   leaf blocks.
++   When one is found,
 +
-+2. If the entry is a dotdot entry of a subdirectory, the parent's backref
-+   count is bumped.
++   a. Walk the attr leaf block to find candidate keys.
++      When one is found,
 +
-+3. If the entry is neither a dot nor a dotdot entry, the target file's parent
-+   count is bumped.
++      1. Check the name for problems, and ignore the name if there are.
 +
-+4. If the target is a subdirectory, the parent's child link count is bumped.
++      2. Retrieve the value.
++         If that succeeds, add the name and value to the staging xfarray and
++         xfblob.
 +
-+A crucial point to understand about how the link count inode scanner interacts
-+with the live update hooks is that the scan cursor tracks which *parent*
-+directories have been scanned.
-+In other words, the live updates ignore any update about ``A → B`` when A has
-+not been scanned, even if B has been scanned.
-+Furthermore, a subdirectory A with a dotdot entry pointing back to B is
-+accounted as a backref counter in the shadow data for A, since child dotdot
-+entries affect the parent's link count.
-+Live update hooks are carefully placed in all parts of the filesystem that
-+create, change, or remove directory entries, since those operations involve
-+bumplink and droplink.
++2. If the memory usage of the xfarray and xfblob exceed a certain amount of
++   memory or there are no more attr fork blocks to examine, unlock the file and
++   add the staged extended attributes to the temporary file.
 +
-+For any file, the correct link count is the number of parents plus the number
-+of child subdirectories.
-+Non-directories never have children of any kind.
-+The backref information is used to detect inconsistencies in the number of
-+links pointing to child subdirectories and the number of dotdot entries
-+pointing back.
++3. Use atomic extent swapping to exchange the new and old extended attribute
++   structures.
++   The old attribute blocks are now attached to the temporary file.
 +
-+After the scan completes, the link count of each file can be checked by locking
-+both the inode and the shadow data, and comparing the link counts.
-+A second coordinated inode scan cursor is used for comparisons.
-+Live updates are key to being able to walk every inode without needing to hold
-+any locks between inodes.
-+If repairs are desired, the inode's link count is set to the value in the
-+shadow information.
-+If no parents are found, the file must be :ref:`reparented <orphanage>` to the
-+orphanage to prevent the file from being lost forever.
++4. Reap the temporary file.
 +
 +The proposed patchset is the
-+`file link count repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-nlinks>`_
-+series.
-+
-+.. _rmap_repair:
-+
-+Case Study: Rebuilding Reverse Mapping Records
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Most repair functions follow the same pattern: lock filesystem resources,
-+walk the surviving ondisk metadata looking for replacement metadata records,
-+and use an :ref:`in-memory array <xfarray>` to store the gathered observations.
-+The primary advantage of this approach is the simplicity and modularity of the
-+repair code -- code and data are entirely contained within the scrub module,
-+do not require hooks in the main filesystem, and are usually the most efficient
-+in memory use.
-+A secondary advantage of this repair approach is atomicity -- once the kernel
-+decides a structure is corrupt, no other threads can access the metadata until
-+the kernel finishes repairing and revalidating the metadata.
-+
-+For repairs going on within a shard of the filesystem, these advantages
-+outweigh the delays inherent in locking the shard while repairing parts of the
-+shard.
-+Unfortunately, repairs to the reverse mapping btree cannot use the "standard"
-+btree repair strategy because it must scan every space mapping of every fork of
-+every file in the filesystem, and the filesystem cannot stop.
-+Therefore, rmap repair foregoes atomicity between scrub and repair.
-+It combines a :ref:`coordinated inode scanner <iscan>`, :ref:`live update hooks
-+<liveupdate>`, and an :ref:`in-memory rmap btree <xfbtree>` to complete the
-+scan for reverse mapping records.
-+
-+1. Set up an xfbtree to stage rmap records.
-+
-+2. While holding the locks on the AGI and AGF buffers acquired during the
-+   scrub, generate reverse mappings for all AG metadata: inodes, btrees, CoW
-+   staging extents, and the internal log.
-+
-+3. Set up an inode scanner.
-+
-+4. Hook into rmap updates for the AG being repaired so that the live scan data
-+   can receive updates to the rmap btree from the rest of the filesystem during
-+   the file scan.
-+
-+5. For each space mapping found in either fork of each file scanned,
-+   decide if the mapping matches the AG of interest.
-+   If so:
-+
-+   a. Create a btree cursor for the in-memory btree.
-+
-+   b. Use the rmap code to add the record to the in-memory btree.
-+
-+   c. Use the :ref:`special commit function <xfbtree_commit>` to write the
-+      xfbtree changes to the xfile.
-+
-+6. For each live update received via the hook, decide if the owner has already
-+   been scanned.
-+   If so, apply the live update into the scan data:
-+
-+   a. Create a btree cursor for the in-memory btree.
-+
-+   b. Replay the operation into the in-memory btree.
-+
-+   c. Use the :ref:`special commit function <xfbtree_commit>` to write the
-+      xfbtree changes to the xfile.
-+      This is performed with an empty transaction to avoid changing the
-+      caller's state.
-+
-+7. When the inode scan finishes, create a new scrub transaction and relock the
-+   two AG headers.
-+
-+8. Compute the new btree geometry using the number of rmap records in the
-+   shadow btree, like all other btree rebuilding functions.
-+
-+9. Allocate the number of blocks computed in the previous step.
-+
-+10. Perform the usual btree bulk loading and commit to install the new rmap
-+    btree.
-+
-+11. Reap the old rmap btree blocks as discussed in the case study about how
-+    to :ref:`reap after rmap btree repair <rmap_reap>`.
-+
-+12. Free the xfbtree now that it not needed.
-+
-+The proposed patchset is the
-+`rmap repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-rmap-btree>`_
++`extended attribute repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-xattrs>`_
 +series.
 
