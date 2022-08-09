@@ -2,93 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6819B58D8C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Aug 2022 14:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C887F58D95C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Aug 2022 15:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241902AbiHIMaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Aug 2022 08:30:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
+        id S243540AbiHIN1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Aug 2022 09:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241730AbiHIMaV (ORCPT
+        with ESMTP id S243509AbiHIN1d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Aug 2022 08:30:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2E3DC6;
-        Tue,  9 Aug 2022 05:30:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 9 Aug 2022 09:27:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4919611148
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Aug 2022 06:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660051652;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QjtptTO8BIFo1xe8OpF/blve76WhiPdfyXUxMj/rAdY=;
+        b=bXyM3BoZzfOIUHD6kdL1CnH5/NaBD4ph/1PhUU/ZnVYVb+ZuaXumrNltScr8Zaf4UjoReT
+        tHLMuD8G9Vcn5w44iUlQpGO6BO1abMwEvNKg9Uc16wJKp2gyXtwLDEj4QEvGgpcTPfCrhN
+        MBq57w4FwcL6TfRn4QjO8Aio9t8w4qk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-497-sT3UyIsIN9CyC9W9outn-Q-1; Tue, 09 Aug 2022 09:27:27 -0400
+X-MC-Unique: sT3UyIsIN9CyC9W9outn-Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E05CAB80B7F;
-        Tue,  9 Aug 2022 12:30:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F39C433D6;
-        Tue,  9 Aug 2022 12:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660048216;
-        bh=/SnO4BJYRWuajWBkA7JCZ80eUfTk9NyFhp9hieh+2hI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UM44pjqSiczAg922y/efQWAh6UKxnSay/joUxzpOfG+Ly1GuCOFjcjV0bUwNf8ZpI
-         4SyQOMYTRIcK9G3J7/pVpxqPKZw1AgCO40dHVFwhnAxbD4qg4vvF1N8SrVb4+qVycX
-         Mq93iFx4Fx2nC41lMRprROsx3sPGq/khYy2r/bd3nUX/iSqwBDfqfIoILwc0PCNjfO
-         d6+GHAOGlcNRXr6YL5eIH8p46p1NDu8ovVgLWnMvsJsVzTNahEcaaBo8TgAVZmvXDS
-         H5hIjh3JW0asw55kLXU4RfLJKSZB9rzXwRX270Q7N6RGEEyoM7DueDoECL+yVRRAKy
-         DN9PfbqTdDn1Q==
-Date:   Tue, 9 Aug 2022 14:30:11 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] uapi: Remove the inclusion of linux/mount.h from
- uapi/linux/fs.h
-Message-ID: <20220809123011.7lqq27ms7zmcgaia@wittgenstein>
-References: <163410.1659964655@warthog.procyon.org.uk>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BAF2D8041B5;
+        Tue,  9 Aug 2022 13:27:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F20D740CFD0B;
+        Tue,  9 Aug 2022 13:27:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, jlayton@kernel.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <163410.1659964655@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <431241.1660051645.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 09 Aug 2022 14:27:25 +0100
+Message-ID: <431242.1660051645@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 08, 2022 at 02:17:35PM +0100, David Howells wrote:
-> Hi,
-> 
-> We're seeing issues in autofs and xfstests whereby linux/mount.h (the UAPI
-> version) as included indirectly by linux/fs.h is conflicting with
-> sys/mount.h (there's a struct and an enum).
+Hi Linus,
 
-(The linux/mount.h and sys/mount.h is painful for userspace too btw.)
+Can you pull these two patches please?  The first fixes a cookie access re=
+f
+leak if a cookie is invalidated a second time before the first invalidatio=
+n
+is actually processed.  The second adds a tracepoint to log cookie look up
+failure.
 
-> 
-> Would it be possible to just remove the #include from linux/fs.h (as patch
-> below) and rely on those hopefully few things that need mount flags that don't
-> use the glibc header for them working around it by configuration?
-> 
-> David
-> ---
-> uapi: Remove the inclusion of linux/mount.h from uapi/linux/fs.h
->     
-> Remove the inclusion of <linux/mount.h> from uapi/linux/fs.h as it
-> interferes with definitions in sys/mount.h - but linux/fs.h is needed by
-> various things where mount flags and structs are not.
-> 
-> Note that this will likely have the side effect of causing some build
-> failures.
-> 
-> Reported-by: Ian Kent <raven@themaw.net>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Christian Brauner <christian@brauner.io>
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-api@vger.kernel.org
-> ---
+Thanks,
+David
 
-Yeah, I think this is ok.
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Link: https://listman.redhat.com/archives/linux-cachefs/2022-August/007061=
+.html
+Link: https://listman.redhat.com/archives/linux-cachefs/2022-August/007062=
+.html
+---
+The following changes since commit 3d7cb6b04c3f3115719235cc6866b10326de34c=
+d:
+
+  Linux 5.19 (2022-07-31 14:03:01 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/fscache-fixes-20220809
+
+for you to fetch changes up to 1a1e3aca9d4957e282945cdc2b58e7c560b8e0d2:
+
+  fscache: add tracepoint when failing cookie (2022-08-09 14:13:59 +0100)
+
+----------------------------------------------------------------
+fscache fixes
+
+----------------------------------------------------------------
+Jeff Layton (2):
+      fscache: don't leak cookie access refs if invalidation is in progres=
+s or failed
+      fscache: add tracepoint when failing cookie
+
+ fs/fscache/cookie.c            | 9 +++++++--
+ include/trace/events/fscache.h | 2 ++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
