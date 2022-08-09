@@ -2,72 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4DD58DE19
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Aug 2022 20:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 593C058DE39
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Aug 2022 20:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345258AbiHISKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Aug 2022 14:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50486 "EHLO
+        id S1345169AbiHISM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Aug 2022 14:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345201AbiHISJr (ORCPT
+        with ESMTP id S1345643AbiHISL2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Aug 2022 14:09:47 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A485226AE3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Aug 2022 11:03:58 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id e28so1316888qts.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Aug 2022 11:03:58 -0700 (PDT)
+        Tue, 9 Aug 2022 14:11:28 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB182AE02
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Aug 2022 11:04:40 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id mk9so9123856qvb.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Aug 2022 11:04:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=EzoKdjjY+Xp02PuSkTzoqQPaIAVhUJwjov/5pbB5qd0=;
-        b=UdLKEDfFeT15jaOSKaZ0a7YDo6Zth3zWkhwOoqWBnIF/yRYDuLxRU08C++qrcuAWn0
-         lj+6JpnOL8eOFIVnEcw6fYiADmookd1heL3lnE285h+dbAfp9LWzdOhHjG2GcsNyg5E9
-         L0T5FO6n0sHD+6ANwAgnIh8bnJheKurVMNWSS9qrtHt2+k63gP674Ve5oDv42ThfRa4J
-         +a2grbFOxWUDMK0cd3CARD9HzAd3l80WB8gpyHJX6L2TMs04iYFd+gwP3fN8xkv64mJR
-         6t2b7l6Ze3IIo35LTU+wYetk5PRodfl2+3ze1pCfMhMDxdfFsCXdDS6NlitTFVzkuKTV
-         lDIw==
+        bh=AGXlveyh5TLpsrDgf8RwaOkmL4JauFlDvuGk+n+yw40=;
+        b=Bw5aCbEXfvJbtihUxgvA3VyPTiPCtS3n8zgsMDd9uCfu7TNSH5TyVFJLlMCD1+yk8n
+         5e8mcqNs+ATfCB+Nt+MNMvjp6fMpNQMMr+o2g7R0ZsSozhdefGedt8eenTES6RvTlQTp
+         T7++BbXSFQ6spJ9M3g6qez9fv9k2/k4Qh6uDaUtpMQy4PDPOX/WdKMLiTHnryo+o0QYS
+         8oe+svkvRqorNF6hfoSX1xvAFvv4LBG0CvTbTfQnR6UlnIfO2nOwEo0jZ1k5vywST/zi
+         fRpdqir9BRi38kGfnfRyYxEIIWhEv8PbJ9oPfNnirAzmeer8CrR/5YYYRCyiuJTX/pWE
+         irIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=EzoKdjjY+Xp02PuSkTzoqQPaIAVhUJwjov/5pbB5qd0=;
-        b=FSq1UR0FZdg8N30DjoVek25LKpd4CjPGrApaYTI7jYkjEOpvTLfg9gOGJmbu7CaOIJ
-         kEwiZ8PxOE2+g2xSzgxbkCBxxOOS16WaasVRsbw1rRsMeD+1yx6MrZZ4HZzB3DtHmG39
-         cV9W0DxZ16SAquAjoUUGhie27cUADoX81G4CaqhNztL7aJZm6DHP/emMv7wQ/YH/HG1A
-         b0Fo0Z5ZqoQM4Y5xgtgRIMyVYTzXk/Avq8U17DRi7XftDkJn9PyB0UKMIJkMKpq0wokY
-         vaT7Os23CEyjMxmy0Cr1NJOOndrHznAuCm3qfdmeHZ3wf/CUpj7atyvmySc9pwnwinUw
-         a8fw==
-X-Gm-Message-State: ACgBeo1T9uYk6fHU4QKHVZSJMqKCMJv1XL1F1ITnrdCxok5izl3qZ6+S
-        Pv29tAQVSLlYqx9gyABbdlLNuA==
-X-Google-Smtp-Source: AA6agR6v+a50EjeAZQZcHP6m9fw0sg4fAGeRdkDsI+o8plC+3rcBy2aoMX9VNkQOHFP8/lw3WAGxDQ==
-X-Received: by 2002:a05:622a:170c:b0:31e:fd23:fd01 with SMTP id h12-20020a05622a170c00b0031efd23fd01mr20691726qtk.40.1660068236762;
-        Tue, 09 Aug 2022 11:03:56 -0700 (PDT)
+        bh=AGXlveyh5TLpsrDgf8RwaOkmL4JauFlDvuGk+n+yw40=;
+        b=Cf7aUaBOkae29QS5+LlyHH9EtmNtvlmH3YQ/wLImD84ZVT4/d5j/CDVigL8AUv5lbm
+         CbdrngfvUZWFhG3p7oOYPMCpjDlhkkdjayQwomq07NhssGN853FGO9T7qFFl8gLYTSi3
+         98ukew3LdxDZR7qKxbn+kl3XjYnK0//wXQmHJkNgMnO/oLE7M6MA6REKO/WJd+O8hERG
+         SImitWuu3QOaPB/bE2N9/06GeB70ys3mCRW+qqIWucRVuJ6o/5QYPsg07Pj/N+T5sKhZ
+         FhPJZsEJmqLy7qeoGIG8AJCKiR0VahUyp15dpIm7gpyJ5mkasWbtl2rKz5N/tV7Dsnrl
+         O29Q==
+X-Gm-Message-State: ACgBeo3YPO2uPN9vn/xbY1xMnOdVJuU/kiGCm8Vm6+Qm+Ma+cBHVUNrx
+        O2lcwSeYvjXw6h6oueX2FAUBk8nOvq5mtvdA
+X-Google-Smtp-Source: AA6agR6Hz1qYBNR87pLiH9uIpKO/emczZkshOWvGgEmkbFeSNzCHE2/R4I+N+SVf07F3M4mrQaf9og==
+X-Received: by 2002:ad4:5de6:0:b0:47b:2c2c:95a with SMTP id jn6-20020ad45de6000000b0047b2c2c095amr12755282qvb.8.1660068278154;
+        Tue, 09 Aug 2022 11:04:38 -0700 (PDT)
 Received: from smtpclient.apple ([2600:1700:42f0:6600:b19b:cbb5:a678:767c])
-        by smtp.gmail.com with ESMTPSA id u33-20020a05622a19a100b00342e86b3bdasm8905881qtc.12.2022.08.09.11.03.51
+        by smtp.gmail.com with ESMTPSA id u33-20020a05622a19a100b00342e86b3bdasm8905881qtc.12.2022.08.09.11.04.35
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Aug 2022 11:03:53 -0700 (PDT)
+        Tue, 09 Aug 2022 11:04:36 -0700 (PDT)
 Content-Type: text/plain;
         charset=utf-8
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH 3/3] hfs: Replace kmap() with kmap_local_page() in btree.c
+Subject: Re: [PATCH 2/3] hfs: Replace kmap() with kmap_local_page() in bnode.c
 From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <20220809152004.9223-4-fmdefrancesco@gmail.com>
-Date:   Tue, 9 Aug 2022 11:03:49 -0700
+In-Reply-To: <20220809152004.9223-3-fmdefrancesco@gmail.com>
+Date:   Tue, 9 Aug 2022 11:04:34 -0700
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>,
         Jeff Layton <jlayton@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Muchun Song <songmuchun@bytedance.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ira Weiny <ira.weiny@intel.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <0030B523-1D3B-43B4-86E2-B9ED25FD26B7@dubeyko.com>
+Message-Id: <001D72B9-CB6A-4025-99CA-B3C02E1D5E0A@dubeyko.com>
 References: <20220809152004.9223-1-fmdefrancesco@gmail.com>
- <20220809152004.9223-4-fmdefrancesco@gmail.com>
+ <20220809152004.9223-3-fmdefrancesco@gmail.com>
 To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
 X-Mailer: Apple Mail (2.3696.120.41.1.1)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -106,9 +105,9 @@ interrupts).
 the
 > kernel virtual addresses are restored and still valid.
 >=20
-> Since its use in btree.c is safe everywhere, it should be preferred.
+> Since its use in bnode.c is safe everywhere, it should be preferred.
 >=20
-> Therefore, replace kmap() with kmap_local_page() in btree.c. Where
+> Therefore, replace kmap() with kmap_local_page() in bnode.c. Where
 > possible, use the suited standard helpers (memzero_page(), =
 memcpy_page())
 > instead of open coding kmap_local_page() plus memset() or memcpy().
@@ -120,7 +119,6 @@ memcpy_page())
 > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
 > ---
 
-
 Looks good.
 
 Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
@@ -129,138 +127,123 @@ Thanks,
 Slava.
 
 
-> fs/hfs/btree.c | 30 ++++++++++++++++--------------
-> 1 file changed, 16 insertions(+), 14 deletions(-)
+> fs/hfs/bnode.c | 32 ++++++++++++--------------------
+> 1 file changed, 12 insertions(+), 20 deletions(-)
 >=20
-> diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
-> index 56c6782436e9..2fa4b1f8cc7f 100644
-> --- a/fs/hfs/btree.c
-> +++ b/fs/hfs/btree.c
-> @@ -80,7 +80,8 @@ struct hfs_btree *hfs_btree_open(struct super_block =
-*sb, u32 id, btree_keycmp ke
-> 		goto free_inode;
->=20
-> 	/* Load the header */
-> -	head =3D (struct hfs_btree_header_rec *)(kmap(page) + =
-sizeof(struct hfs_bnode_desc));
-> +	head =3D (struct hfs_btree_header_rec *)(kmap_local_page(page) +
-> +					       sizeof(struct =
-hfs_bnode_desc));
-> 	tree->root =3D be32_to_cpu(head->root);
-> 	tree->leaf_count =3D be32_to_cpu(head->leaf_count);
-> 	tree->leaf_head =3D be32_to_cpu(head->leaf_head);
-> @@ -119,12 +120,12 @@ struct hfs_btree *hfs_btree_open(struct =
-super_block *sb, u32 id, btree_keycmp ke
-> 	tree->node_size_shift =3D ffs(size) - 1;
-> 	tree->pages_per_bnode =3D (tree->node_size + PAGE_SIZE - 1) >> =
-PAGE_SHIFT;
->=20
-> -	kunmap(page);
-> +	kunmap_local(head);
-> 	put_page(page);
-> 	return tree;
->=20
-> fail_page:
-> -	kunmap(page);
-> +	kunmap_local(head);
-> 	put_page(page);
-> free_inode:
-> 	tree->inode->i_mapping->a_ops =3D &hfs_aops;
-> @@ -170,7 +171,8 @@ void hfs_btree_write(struct hfs_btree *tree)
-> 		return;
-> 	/* Load the header */
-> 	page =3D node->page[0];
-> -	head =3D (struct hfs_btree_header_rec *)(kmap(page) + =
-sizeof(struct hfs_bnode_desc));
-> +	head =3D (struct hfs_btree_header_rec *)(kmap_local_page(page) +
-> +					       sizeof(struct =
-hfs_bnode_desc));
->=20
-> 	head->root =3D cpu_to_be32(tree->root);
-> 	head->leaf_count =3D cpu_to_be32(tree->leaf_count);
-> @@ -181,7 +183,7 @@ void hfs_btree_write(struct hfs_btree *tree)
-> 	head->attributes =3D cpu_to_be32(tree->attributes);
-> 	head->depth =3D cpu_to_be16(tree->depth);
->=20
-> -	kunmap(page);
-> +	kunmap_local(head);
-> 	set_page_dirty(page);
-> 	hfs_bnode_put(node);
-> }
-> @@ -269,7 +271,7 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree =
-*tree)
+> diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+> index c83fd0e8404d..2015e42e752a 100644
+> --- a/fs/hfs/bnode.c
+> +++ b/fs/hfs/bnode.c
+> @@ -21,7 +21,6 @@ void hfs_bnode_read(struct hfs_bnode *node, void =
+*buf, int off, int len)
+> 	int pagenum;
+> 	int bytes_read;
+> 	int bytes_to_read;
+> -	void *vaddr;
 >=20
 > 	off +=3D node->page_offset;
-> 	pagep =3D node->page + (off >> PAGE_SHIFT);
-> -	data =3D kmap(*pagep);
-> +	data =3D kmap_local_page(*pagep);
-> 	off &=3D ~PAGE_MASK;
-> 	idx =3D 0;
+> 	pagenum =3D off >> PAGE_SHIFT;
+> @@ -33,9 +32,7 @@ void hfs_bnode_read(struct hfs_bnode *node, void =
+*buf, int off, int len)
+> 		page =3D node->page[pagenum];
+> 		bytes_to_read =3D min_t(int, len - bytes_read, PAGE_SIZE =
+- off);
 >=20
-> @@ -282,7 +284,7 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree =
-*tree)
-> 						idx +=3D i;
-> 						data[off] |=3D m;
-> 						set_page_dirty(*pagep);
-> -						kunmap(*pagep);
-> +						kunmap_local(data);
-> 						tree->free_nodes--;
-> 						=
-mark_inode_dirty(tree->inode);
-> 						hfs_bnode_put(node);
-> @@ -291,14 +293,14 @@ struct hfs_bnode *hfs_bmap_alloc(struct =
-hfs_btree *tree)
-> 				}
-> 			}
-> 			if (++off >=3D PAGE_SIZE) {
-> -				kunmap(*pagep);
-> -				data =3D kmap(*++pagep);
-> +				kunmap_local(data);
-> +				data =3D kmap_local_page(*++pagep);
-> 				off =3D 0;
-> 			}
-> 			idx +=3D 8;
-> 			len--;
-> 		}
-> -		kunmap(*pagep);
-> +		kunmap_local(data);
-> 		nidx =3D node->next;
-> 		if (!nidx) {
-> 			printk(KERN_DEBUG "create new bmap node...\n");
-> @@ -314,7 +316,7 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree =
-*tree)
-> 		off =3D off16;
-> 		off +=3D node->page_offset;
-> 		pagep =3D node->page + (off >> PAGE_SHIFT);
-> -		data =3D kmap(*pagep);
-> +		data =3D kmap_local_page(*pagep);
-> 		off &=3D ~PAGE_MASK;
-> 	}
-> }
-> @@ -361,20 +363,20 @@ void hfs_bmap_free(struct hfs_bnode *node)
-> 	}
-> 	off +=3D node->page_offset + nidx / 8;
-> 	page =3D node->page[off >> PAGE_SHIFT];
-> -	data =3D kmap(page);
-> +	data =3D kmap_local_page(page);
-> 	off &=3D ~PAGE_MASK;
-> 	m =3D 1 << (~nidx & 7);
-> 	byte =3D data[off];
-> 	if (!(byte & m)) {
-> 		pr_crit("trying to free free bnode %u(%d)\n",
-> 			node->this, node->type);
-> -		kunmap(page);
-> +		kunmap_local(data);
-> 		hfs_bnode_put(node);
-> 		return;
-> 	}
-> 	data[off] =3D byte & ~m;
-> 	set_page_dirty(page);
+> -		vaddr =3D kmap_atomic(page);
+> -		memcpy(buf + bytes_read, vaddr + off, bytes_to_read);
+> -		kunmap_atomic(vaddr);
+> +		memcpy_from_page(buf + bytes_read, page, off, =
+bytes_to_read);
+>=20
+> 		pagenum++;
+> 		off =3D 0; /* page offset only applies to the first page =
+*/
+> @@ -80,8 +77,7 @@ void hfs_bnode_write(struct hfs_bnode *node, void =
+*buf, int off, int len)
+> 	off +=3D node->page_offset;
+> 	page =3D node->page[0];
+>=20
+> -	memcpy(kmap(page) + off, buf, len);
 > -	kunmap(page);
-> +	kunmap_local(data);
-> 	hfs_bnode_put(node);
-> 	tree->free_nodes++;
-> 	mark_inode_dirty(tree->inode);
+> +	memcpy_to_page(page, off, buf, len);
+> 	set_page_dirty(page);
+> }
+>=20
+> @@ -105,8 +101,7 @@ void hfs_bnode_clear(struct hfs_bnode *node, int =
+off, int len)
+> 	off +=3D node->page_offset;
+> 	page =3D node->page[0];
+>=20
+> -	memset(kmap(page) + off, 0, len);
+> -	kunmap(page);
+> +	memzero_page(page, off, len);
+> 	set_page_dirty(page);
+> }
+>=20
+> @@ -123,9 +118,7 @@ void hfs_bnode_copy(struct hfs_bnode *dst_node, =
+int dst,
+> 	src_page =3D src_node->page[0];
+> 	dst_page =3D dst_node->page[0];
+>=20
+> -	memcpy(kmap(dst_page) + dst, kmap(src_page) + src, len);
+> -	kunmap(src_page);
+> -	kunmap(dst_page);
+> +	memcpy_page(dst_page, dst, src_page, src, len);
+> 	set_page_dirty(dst_page);
+> }
+>=20
+> @@ -140,9 +133,9 @@ void hfs_bnode_move(struct hfs_bnode *node, int =
+dst, int src, int len)
+> 	src +=3D node->page_offset;
+> 	dst +=3D node->page_offset;
+> 	page =3D node->page[0];
+> -	ptr =3D kmap(page);
+> +	ptr =3D kmap_local_page(page);
+> 	memmove(ptr + dst, ptr + src, len);
+> -	kunmap(page);
+> +	kunmap_local(ptr);
+> 	set_page_dirty(page);
+> }
+>=20
+> @@ -346,13 +339,14 @@ struct hfs_bnode *hfs_bnode_find(struct =
+hfs_btree *tree, u32 num)
+> 	if (!test_bit(HFS_BNODE_NEW, &node->flags))
+> 		return node;
+>=20
+> -	desc =3D (struct hfs_bnode_desc *)(kmap(node->page[0]) + =
+node->page_offset);
+> +	desc =3D (struct hfs_bnode_desc =
+*)(kmap_local_page(node->page[0]) +
+> +					 node->page_offset);
+> 	node->prev =3D be32_to_cpu(desc->prev);
+> 	node->next =3D be32_to_cpu(desc->next);
+> 	node->num_recs =3D be16_to_cpu(desc->num_recs);
+> 	node->type =3D desc->type;
+> 	node->height =3D desc->height;
+> -	kunmap(node->page[0]);
+> +	kunmap_local(desc);
+>=20
+> 	switch (node->type) {
+> 	case HFS_NODE_HEADER:
+> @@ -436,14 +430,12 @@ struct hfs_bnode *hfs_bnode_create(struct =
+hfs_btree *tree, u32 num)
+> 	}
+>=20
+> 	pagep =3D node->page;
+> -	memset(kmap(*pagep) + node->page_offset, 0,
+> -	       min((int)PAGE_SIZE, (int)tree->node_size));
+> +	memzero_page(*pagep, node->page_offset,
+> +		     min((int)PAGE_SIZE, (int)tree->node_size));
+> 	set_page_dirty(*pagep);
+> -	kunmap(*pagep);
+> 	for (i =3D 1; i < tree->pages_per_bnode; i++) {
+> -		memset(kmap(*++pagep), 0, PAGE_SIZE);
+> +		memzero_page(*++pagep, 0, PAGE_SIZE);
+> 		set_page_dirty(*pagep);
+> -		kunmap(*pagep);
+> 	}
+> 	clear_bit(HFS_BNODE_NEW, &node->flags);
+> 	wake_up(&node->lock_wq);
 > --=20
 > 2.37.1
 >=20
