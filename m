@@ -2,473 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B978A58E747
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 08:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5479D58E82A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 09:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbiHJGXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 02:23:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58792 "EHLO
+        id S231443AbiHJHuW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 03:50:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbiHJGXD (ORCPT
+        with ESMTP id S230518AbiHJHuV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 02:23:03 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B516D565;
-        Tue,  9 Aug 2022 23:23:02 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id c3so14142657vsc.6;
-        Tue, 09 Aug 2022 23:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=oNiC7YhrEAbKIwyKLm8c/Y9sTLqUK8SsszUBwIfVgM8=;
-        b=MRPCMSAF1FryYoO2fOLapZLWV8Ucrru60/11qZSKspfT9BvN7vpSgrfr76oj8JxKwq
-         d/JIhuUg8wGDWnk3r6Cw3JEmDwkrDd2LUCxGNGhtAFYqYS6fDS3L16ndvo+pgW+7XuUC
-         J0WIKPDkCJJsiWnJiRX5lS0/KwhctB3Wjcuv7VDSsDHrZQ8cSnMBKk64511/wP+RuX1b
-         rN9IN/tP+vQkb085OGitBZq9AYR4IQCbndb9sHGqksZm0R3WgTi7crli6dDBpgXZSy6G
-         gNwnzYfgCjsIRuvH2SJqdClkbciGBA/U2zfaxngGUBXen9+lplf7TO8qql2UBq0Ed1jL
-         AMFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=oNiC7YhrEAbKIwyKLm8c/Y9sTLqUK8SsszUBwIfVgM8=;
-        b=Jo+U3KrbYokWfAzUPV2pU6+hqLF+S5+sa4mSHktD2SAnN5gDVB4rxRHnWAqUbQGyGz
-         8AgBUzrwJiXJlWTsevL/ZtJNQi2HPXDHh0mwVm96cNta0xZ2vSs98UlFVL2vIlnx41iJ
-         v4t8ZaKUwLUqxzXHZRSo/0XmwkWHnRxyYPVbmgxmUfEKoP0tWeIRDEwRYR7FPvDeAfI+
-         Mt+v/BDIrgEwda+vAR60GzpjtDUUuWVW1zVC9DMpEBYFwafGIccTwPqjGkVxuludmK8Q
-         GvxrzUGiD13IpVnoZ+SkETmFhHkJtXSsZGW/vGJK/XzaeDT/J37tPiYEeHF5XZOhvGGU
-         f4VA==
-X-Gm-Message-State: ACgBeo12z9jXj+STY3E9I/UH8uU24SQbrpqmE1TIafrlYwgPZr4jD+LY
-        TkRUgsDf5CeegZNnAcZt1DuUR+f2qNR7ncH3DPQ=
-X-Google-Smtp-Source: AA6agR6b7grznDyI/cGaAw9yZ/j9OSykag+1lJaDT+7hW4UHVEI//Tm29t457HgwkwWI8iMFouh9mI3+hV57eQJx3g8=
-X-Received: by 2002:a05:6102:3ecd:b0:358:57a1:d8a with SMTP id
- n13-20020a0561023ecd00b0035857a10d8amr10897213vsv.2.1660112581268; Tue, 09
- Aug 2022 23:23:01 -0700 (PDT)
+        Wed, 10 Aug 2022 03:50:21 -0400
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-eopbgr50111.outbound.protection.outlook.com [40.107.5.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 387A221255;
+        Wed, 10 Aug 2022 00:50:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=By9aaQq1IPJQCMd+5sdjkT07NkLHoZDOEYLxSZpWTlPz4QnwdIK09eyCJIS6wbt13vSRmme2IztXEHhxwZdpZeNuj6e8Ril1IydEyoRLS/jBjHKuwBAANnT4dbJ2BIV7e6DjArMYUNkBrA1C/IpY+19n52g3lEvjXy6J8RDeH7rwnEhIWDDktuhJJMta87u85hGd6qJdWFG7cCHdu2HcPciyQPcBYKVkKwpNB4pvBERchcMhfA0aw5hFgrxFUhipms8SssVOyEzpbjHjmMxH9XGLhC0t383AvsYu4N/TmkIlh24JzkPCmQfwXRb7syP77P/voJEE//br52EzcviVLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=og0Ga7CN2zmm7lHS6vfelFtnF19oITN01Ty9T1yheVk=;
+ b=SMAJ7blG2sVXjC6rw1tAWArsyyg4iKIiUfM/t0YqSqhqphNP+VKwWHtL2cTkX/PLYs7bB8CIR3EOwiPBtuvIrAcerlEH3xxnWbp1tXMrjl+Ry/tqc4fD5BVDPbMO0f1FQsqkKxuLEAjWLFOpGa0Hx42IE23ptApK7L92aataHcjbg6dsIwDXjvGMDdyrDMMdLWaHkM4DkRZUTcuQrFMcyQX4LksQW2D2xMcx4NeGuq+mmJqLrJS6heRK4ASdIfqWW0bbbIvXnrmfnNxglU7f2BMTdvBd54uatAlmMYStsbhs3YrQjXUg+Rwghofjj6t+2PAxPg9x6KzFPihHhM4VQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=og0Ga7CN2zmm7lHS6vfelFtnF19oITN01Ty9T1yheVk=;
+ b=h0wnO+YFT0PY1KuB6L7BGUV56IJ7h/Axrd5VRmpjv1F/WrY4+5AnsTPTKehrdrn3IU/RJEP2SCeuQXu81m0oHZc6e1asnZ87P/s44v1Yn08fE0CHvaeffCzfj/f0CX6d+XkDH0ayPgFxRc2kQqGoQqk9LaaC2JVaVtofppayg+/AeuBIVTSgbGXSCc5yMPxaVfPPcqOMPtYVVZMHiDfGnZvDmkVsNoZgWSTU+Nc+s8UTfyy0DBqfeA8lsuPaCyEqkTOFK7rH/UJejm9YTPpANjiPyLO5+qFgeryNJajymTxeH0KPlVOG5El7cpiyZFbfokXbu4+S4evIqwVepokGhA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=virtuozzo.com;
+Received: from DBBPR08MB4758.eurprd08.prod.outlook.com (2603:10a6:10:da::16)
+ by DB6PR0802MB2135.eurprd08.prod.outlook.com (2603:10a6:4:82::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.16; Wed, 10 Aug
+ 2022 07:50:16 +0000
+Received: from DBBPR08MB4758.eurprd08.prod.outlook.com
+ ([fe80::3d34:b8c3:1c37:5a6a]) by DBBPR08MB4758.eurprd08.prod.outlook.com
+ ([fe80::3d34:b8c3:1c37:5a6a%4]) with mapi id 15.20.5504.020; Wed, 10 Aug 2022
+ 07:50:15 +0000
+Message-ID: <b43de131-24dc-192c-f5f6-09bacee52a00@virtuozzo.com>
+Date:   Wed, 10 Aug 2022 10:50:10 +0300
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.1.1
+From:   Alexander Atanasov <alexander.atanasov@virtuozzo.com>
+Subject: Re: [PATCH v1 1/2] Enable balloon drivers to report inflated memory
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>, kernel@openvz.org,
+        David Hildenbrand <david@redhat.com>,
+        Wei Liu <wei.liu@kernel.org>, Nadav Amit <namit@vmware.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org
+References: <7bfac48d-2e50-641b-6523-662ea4df0240@virtuozzo.com>
+ <20220809094933.2203087-1-alexander.atanasov@virtuozzo.com>
+ <20220809063111-mutt-send-email-mst@kernel.org>
+ <d8fd3251-898d-89fe-226e-e166606c6983@virtuozzo.com>
+ <20220810020330-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20220810020330-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0103.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:23::18) To DBBPR08MB4758.eurprd08.prod.outlook.com
+ (2603:10a6:10:da::16)
 MIME-Version: 1.0
-References: <cover.1659996830.git.rgb@redhat.com> <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
-In-Reply-To: <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 10 Aug 2022 08:22:49 +0200
-Message-ID: <CAOQ4uxjWCyFNATVmAcgOa8HNk6Upj+PPrJF7DA9V-4LjOGAALA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
- decision context
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2911d5b5-d2da-4f2d-5041-08da7aa4f681
+X-MS-TrafficTypeDiagnostic: DB6PR0802MB2135:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: AHOvWyh+TmSHKTHGKnwb3VvJHg6/ALA66Y24vf4DpdPfyKPG/ookAH1oq5dckb55zaAiN8jv6rCj7Zb8H1g4fNfqzqC5/LdigCtuqZgOhEizGhCZqKBa2N9iHPq25R9UGuZmHIyWXHq+Cuo6AKZPHDNmEfFkWKn6lQN437up3szJc6gNn65vFUyf6pCFkE6geX6nOyMZ1qgcr+n1VOTkCtFrZ1XqzSVHUJlL4slewwtEkTGc0DeBdocm+RWcbezhasucq//KINyl8qRF5jQoGl5UaVaXzpfyOj1shMAA81xpFIqwYInw2m4UoYB9NUjH0r50cp24/jvh+Um/vJxFTY52+THGxNQpUywXATD2T+jhV52dl+j/sBFoa4ynSzxb0NadYzxWIFem7U/UXrUJYQ9GiLJ7hrC7Qlbtf584S4gh3pSQxx7OHKd5pogEDpGEp/FOpKovw/OM/HGMrXB6EdOISmDk/D4+S13QqLlk98BJID/QJMD/aj3glgcjtYNO9fb/r9g/CAdh2qGLfAfwUKsdkLROGMsU6XwrmIf4Ln999NUvccGJoyfpLlDMRSO7m17F0jUB35KVeZ1F/ZnqXYf3JH5spz5zU3wBaAeixYXlJamCaCJgDmjGXl+3YgROeOCSe4P0y0oYAi18ohq8j0BtMVMWwVJSdf65PHU8YfjZwFQp9eFa8y4FdG30SmJJ/zyeZltn94GqqGIewWghO8KCD2kdNT8qWCGlWid+2Q5I3NfqbHzat6uELPNEc9ynUv2mb+8gap5oLrQwLhegV7o7Y9wE/lKi71Ctz3DRYe2007JlGCpvX7u1MU+dIM92/O5ELRfwal3sAOTdbmkbVCN+TLkNWpFmHOUkXeYbefo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4758.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(366004)(346002)(376002)(136003)(39850400004)(5660300002)(8676002)(83380400001)(66476007)(4326008)(66556008)(6916009)(66946007)(316002)(7416002)(44832011)(2906002)(8936002)(38350700002)(38100700002)(86362001)(36756003)(31696002)(478600001)(6486002)(26005)(41300700001)(6506007)(54906003)(6512007)(6666004)(53546011)(2616005)(52116002)(186003)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c3VJNUJaUGRHU25EUE5vZDYzMGx3ejFPd3d5bGJ4UFZaUTdFWStkN0V4WlE0?=
+ =?utf-8?B?cm9JU0VqQU9XaElUdWxPN3prR1o4dTlEbDdSNDVOaXNwdFRZcENXTndPY2RW?=
+ =?utf-8?B?Y1BPQU5Gelg1QkdYRTEwa29WdlRONXZOdERZWVh1UG5xNXJIRHI4b2RlNzJs?=
+ =?utf-8?B?OWJpYUN4UjBkRVNCMXh0UnFKRnRsS3JvKzZZMnpnOVhNbk9lclZaNjE1ZTlZ?=
+ =?utf-8?B?ZEtPU3phMXl2RW1sak1lMEJFSmpZUFdpZjJhaWtjbkVqOGV5YlpQb3NiWTIw?=
+ =?utf-8?B?dlpnVTZ5R0U1SzdXUk9aTFhhNWtmQ2pHcWo0TzR5MDRmMTRqeHM0elFxQ1Bp?=
+ =?utf-8?B?WnJOUWo0MHNVYzBTenlDZmFWUS9xY2sveHU0NjhQMkNyTmljTzE3T0lRQVVC?=
+ =?utf-8?B?dU9qKzFpOVZxRWRMQWtHcnVwQ1JQVFIxQmtmVzA4V1BJMGRhckY0L0JGUzAw?=
+ =?utf-8?B?UlBpWXFPN2h2TTdsV0pOa1Exd3hvdlpzTDlxQXhoMllGVFROVjZYZjdYcFZI?=
+ =?utf-8?B?bHpkZGx5a1VtYWdiZ3lJL0o3Z0RZWGdtcTJQV2NNQU5JNGltREtaMXVJSExw?=
+ =?utf-8?B?Z3RwQjgzRmtnLzZ5VXZZN2ZhNHV0Y21FUWZYZ3lMQzA2VmM3TnN3OGxzaW1B?=
+ =?utf-8?B?KzNRa2dNK2JBMTQxVjNIbmR0VHJzVnNqSm9pcDVKcno5eXFQZ0o0aXpnYmhl?=
+ =?utf-8?B?bVcvc016VVpsb1I1M2gvaTY3RWtLcVRmQVhFZkNEYTByNDl5NSt0N29RaHE0?=
+ =?utf-8?B?MHRCdHNjTWxMd0dqZ1lybEJEYjAyWFBFTFdxc1NKU1pMSzVDZlBRbjlWRUtN?=
+ =?utf-8?B?SlBPbXRjK1prSUwvamQ1SlY3Wk9PeUQ3VjNlTk90MGk5VDBsTC9wYnp6K1p0?=
+ =?utf-8?B?TE8zUi9SbkhyazJmaE0yb3FZTmtnTFJVSnFXeTNDejl6a3FiZjJ0alU2cWtZ?=
+ =?utf-8?B?dVlWOUVBaDB2Z0R6eXR6SlJ1SCtqRGJtZVNCV3YvdXdkRnhaT2R6dm9oRi8x?=
+ =?utf-8?B?QVFtcCtJN2FsSkVmU0VudVFsaVgzcFJuMW03dFhPSndjY2cvcC9rYlN4eHYy?=
+ =?utf-8?B?R0djcHMxbHZyaExQd3BSZVhMTkZQT2lnUERjaFlUYUViRDRDcnQ1QVUwSjdC?=
+ =?utf-8?B?Qkw4UTZLakRFK2VpMHpSNnpjamZ5M1lkMyszVnBMVmdpRHZmUFdYRzl2Z2tj?=
+ =?utf-8?B?SDdYQkIzZDU1SGNUYk1nQzczR0dEc0h0bGNEVzQ0ZC9IeDQ0WjB0aWd5cGRT?=
+ =?utf-8?B?MVZLM2x4Z1licVpJOFlFUXZTdlpnaXVNeXBXbWVjN3dkL1Bzd1VZQnJsdGtG?=
+ =?utf-8?B?WXhQL1ptemRSQ1pheFNOYkwyallIRHFTUExnZk52Y2dibFVKMGVxVUpReHVQ?=
+ =?utf-8?B?STVwZVV5b3BjMEN5czNZa1l3dENORENJUjZnLzhqaExnbDd3cDhNeUVZV1pS?=
+ =?utf-8?B?L255OEUySGVZWFRQV1ZTY1ZsKzF0QVRNb2d5UWZzcE94Ni9sOGU2OU9XdVRM?=
+ =?utf-8?B?bEJDbzNudmVSSGkzeFFwQWErSHExVmpXdHhiUFE3VzJCZnpqUGpPcGt5WFVD?=
+ =?utf-8?B?UCs3SlhINWdYb1lmOXoxOW9Ibm1UZlN3ZGduWVpRM2R3TEE1eWxFQ3hRbXo4?=
+ =?utf-8?B?b2dhREpoWUlSaVVGdXZ3dWIwWlBxSjRSQXI1Q01IOTcvdUtSUkpjNmpBLzY3?=
+ =?utf-8?B?aXBaaXQ3MkQyM3VJNElOTzJMWG5RTFpWMkhBNzRDUit5ME9UUTFndFNnN3Nt?=
+ =?utf-8?B?a29RSkwyVEppMjVXUWE5STlWMXFLWCt6Q252ejZzNEI2QUYrYklPUkI4NHhh?=
+ =?utf-8?B?NFU5TjRPdEhQMjgzc0NUSzRJNGZVbFRLSlpjWG1DaXJnSDBQWkY0NTA2SnU3?=
+ =?utf-8?B?Zk5wZzB5RTRpTkMzMzg1Mkl5YU1oWi9MM0I2cVdMRWdTOEpVazR0THFCeHlI?=
+ =?utf-8?B?V0hiRGdUb2JTWU5RVkluajNxS2k3NlFkQmVCL1BMRGNybHNZWUQxL3plWUx1?=
+ =?utf-8?B?RlF6allpMXAwZ0lHaTNJUEEvY0FFK1FPT2xkcTFCc2FyTEZ6UXRnWnNFSGdR?=
+ =?utf-8?B?N3ZWampTUjNWMWhpQVdsczJDbWt4M1J1WmhlTWVCVWZObDlERHVPS2dacGdI?=
+ =?utf-8?B?UXdFZEg3bVZFNi9PMHcxbVVoTVRpRU9QRzlqYlRHYjdoWW04cjY3K0lFaXBj?=
+ =?utf-8?Q?56erYFejgVAHOo6Wc/6RXS8=3D?=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2911d5b5-d2da-4f2d-5041-08da7aa4f681
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR08MB4758.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2022 07:50:15.6803
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HpFC02PVfGx1yB8JU2OW0ZMTC08QVHdNZdQsJvWdd6KVfbdJlIBEPZKPTZ/KT8T/eNjKWCC4Z9fo1l+V6Z2zFNUyMU/RcF7xeZ2ojEKlUcG8feaABNRamiNrDlPoDUlx
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2135
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+linux-api]
+Hello,
 
-On Tue, Aug 9, 2022 at 7:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> This patch adds a flag, FAN_INFO and an extensible buffer to provide
-> additional information about response decisions.  The buffer contains
-> one or more headers defining the information type and the length of the
-> following information.  The patch defines one additional information
-> type, FAN_RESPONSE_INFO_AUDIT_RULE, an audit rule number.  This will
-> allow for the creation of other information types in the future if other
-> users of the API identify different needs.
->
-> Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
+On 10.08.22 9:05, Michael S. Tsirkin wrote:
+> On Wed, Aug 10, 2022 at 08:54:52AM +0300, Alexander Atanasov wrote:
+>> On 9.08.22 13:32, Michael S. Tsirkin wrote:
+>>> On Tue, Aug 09, 2022 at 12:49:32PM +0300, Alexander Atanasov wrote:
+>>>> @@ -153,6 +156,14 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>>>>    		    global_zone_page_state(NR_FREE_CMA_PAGES));
+>>>>    #endif
+>>>> +#ifdef CONFIG_MEMORY_BALLOON
+>>>> +	inflated_kb = atomic_long_read(&mem_balloon_inflated_kb);
+>>>> +	if (inflated_kb >= 0)
+>>>> +		seq_printf(m,  "Inflated(total): %8ld kB\n", inflated_kb);
+>>>> +	else
+>>>> +		seq_printf(m,  "Inflated(free): %8ld kB\n", -inflated_kb);
+>>>> +#endif
+>>>> +
+>>>>    	hugetlb_report_meminfo(m);
+>>>>    	arch_report_meminfo(m);
+>>>
+>>>
+>>> This seems too baroque for my taste.
+>>> Why not just have two counters for the two pruposes?
+>>
+>> I agree it is not good but it reflects the current situation.
+>> Dirvers account in only one way - either used or total - which i don't like.
+>> So to save space and to avoid the possibility that some driver starts to use
+>> both at the same time. I suggest to be only one value.
+> 
+> I don't see what would be wrong if some driver used both
+> at some point.
 
-Looks mostly fine.
-A few small bugs and style suggestions
-and one UAPI improvement suggestion.
+If you don't see what's wrong with using both, i might as well add
+Cached and Buffers - next hypervisor might want to use them or any other 
+by its discretion leaving the fun to figure it out to the userspace?
 
->  fs/notify/fanotify/fanotify.c      |  10 ++-
->  fs/notify/fanotify/fanotify.h      |   2 +
->  fs/notify/fanotify/fanotify_user.c | 104 +++++++++++++++++++++++------
->  include/linux/fanotify.h           |   5 ++
->  include/uapi/linux/fanotify.h      |  27 +++++++-
->  5 files changed, 123 insertions(+), 25 deletions(-)
->
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 4f897e109547..0f36062521f4 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -262,13 +262,16 @@ static int fanotify_get_response(struct fsnotify_group *group,
->         }
->
->         /* userspace responded, convert to something usable */
-> -       switch (event->response & ~FAN_AUDIT) {
-> +       switch (event->response & FANOTIFY_RESPONSE_ACCESS) {
->         case FAN_ALLOW:
->                 ret = 0;
->                 break;
->         case FAN_DENY:
-> -       default:
->                 ret = -EPERM;
-> +               break;
-> +       default:
-> +               ret = -EINVAL;
-> +               break;
+Single definitive value is much better and clear from user prespective 
+and meminfo is exactly for the users.
 
-This is very odd.
-Why has this changed?
-The return value here is going to the process that
-is trying to access the file.
+If a driver for some wierd reason needs to do both it is a whole new 
+topic that i don't like to go into. Good news is that currently no such 
+driver exists.
 
->         }
->
->         /* Check if the response should be audited */
-> @@ -560,6 +563,8 @@ static struct fanotify_event *fanotify_alloc_perm_event(const struct path *path,
->
->         pevent->fae.type = FANOTIFY_EVENT_TYPE_PATH_PERM;
->         pevent->response = 0;
-> +       pevent->info_len = 0;
-> +       pevent->info_buf = NULL;
->         pevent->state = FAN_EVENT_INIT;
->         pevent->path = *path;
->         path_get(path);
-> @@ -996,6 +1001,7 @@ static void fanotify_free_path_event(struct fanotify_event *event)
->  static void fanotify_free_perm_event(struct fanotify_event *event)
->  {
->         path_put(fanotify_event_path(event));
-> +       kfree(FANOTIFY_PERM(event)->info_buf);
->         kmem_cache_free(fanotify_perm_event_cachep, FANOTIFY_PERM(event));
->  }
->
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index abfa3712c185..14c30e173632 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -428,6 +428,8 @@ struct fanotify_perm_event {
->         u32 response;                   /* userspace answer to the event */
->         unsigned short state;           /* state of the event */
->         int fd;         /* fd we passed to userspace for this event */
-> +       size_t info_len;
-> +       char *info_buf;
->  };
->
->  static inline struct fanotify_perm_event *
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index ff67ca0d25cc..a4ae953f0e62 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -289,13 +289,18 @@ static int create_fd(struct fsnotify_group *group, struct path *path,
->   */
->  static void finish_permission_event(struct fsnotify_group *group,
->                                     struct fanotify_perm_event *event,
-> -                                   u32 response)
-> +                                   struct fanotify_response *response,
-> +                                   size_t info_len, char *info_buf)
->                                     __releases(&group->notification_lock)
->  {
->         bool destroy = false;
->
->         assert_spin_locked(&group->notification_lock);
-> -       event->response = response;
-> +       event->response = response->response & ~FAN_INFO;
-> +       if (response->response & FAN_INFO) {
-> +               event->info_len = info_len;
-> +               event->info_buf = info_buf;
-> +       }
->         if (event->state == FAN_EVENT_CANCELED)
->                 destroy = true;
->         else
-> @@ -306,33 +311,71 @@ static void finish_permission_event(struct fsnotify_group *group,
->  }
->
->  static int process_access_response(struct fsnotify_group *group,
-> -                                  struct fanotify_response *response_struct)
-> +                                  struct fanotify_response *response_struct,
-> +                                  const char __user *buf,
-> +                                  size_t count)
->  {
->         struct fanotify_perm_event *event;
->         int fd = response_struct->fd;
->         u32 response = response_struct->response;
-> +       struct fanotify_response_info_header info_hdr;
-> +       char *info_buf = NULL;
->
-> -       pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
-> -                fd, response);
-> +       pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%lu\n", __func__,
-> +                group, fd, response, info_buf, count);
->         /*
->          * make sure the response is valid, if invalid we do nothing and either
->          * userspace can send a valid response or we will clean it up after the
->          * timeout
->          */
-> -       switch (response & ~FAN_AUDIT) {
-> +       if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
-> +               return -EINVAL;
-> +       switch (response & FANOTIFY_RESPONSE_ACCESS) {
->         case FAN_ALLOW:
->         case FAN_DENY:
->                 break;
->         default:
->                 return -EINVAL;
->         }
-> -
-> -       if (fd < 0)
-> -               return -EINVAL;
-> -
->         if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
->                 return -EINVAL;
-> +       if (fd < 0)
-> +               return -EINVAL;
+> 
+>>
+>>> And is there any value in having this atomic?
+>>> We want a consistent value but just READ_ONCE seems sufficient ...
+>>
+>> I do not see this as only a value that is going to be displayed.
+>> I tried to be defensive here and to avoid premature optimization.
+>> One possible scenario is OOM killer(using the value) vs balloon deflate on
+>> oom will need it. But any other user of that value will likely need it
+>> atomic too. Drivers use spin_locks for calculations they might find a way to
+>> reduce the spin lock usage and use the atomic.
+>> While making it a long could only bring bugs without benefits.
+>> It is not on a fast path too so i prefer to be safe.
+> 
+> Well we do not normally spread atomics around just because we
+> can, it does not magically make the code safe.
+> If this needs atomics we need to document why.
 
-Since you did not accept my suggestion of FAN_TEST [1],
-I am not sure why this check was moved.
+Of course it does not. In one of your comments to my other patches you 
+said you do not like patches that add one line then remove it in the 
+next patch. To avoid that i put an atomic - if at one point it is clear 
+it is not required i would be happy to change it but it is more likely 
+to be need than not. So i will probably have to document it instead.
 
-However, if you move this check past FAN_INFO processing,
-you could change the error value to -ENOENT, same as the return value
-for an fd that is >= 0 but does not correspond to any pending
-permission event.
+At this point the decision if it should be or should not be in the 
+meminfo is more important - if general opinion is positive i will 
+address the technical details.
 
-The idea was that userspace could write a test
-fanotify_response_info_audit_rule payload to fanotify fd with FAN_NOFD
-in the response.fd field.
-On old kernel, this will return EINVAL.
-On new kernel, if the fanotify_response_info_audit_rule payload
-passes all the validations, this will do nothing and return ENOENT.
+-- 
+Regards,
+Alexander Atanasov
 
-[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxi+8HUqyGxQBNMqSong92nreOWLKdy9MCrYg8wgW9Dj4g@mail.gmail.com/
-
-> +       if (response & FAN_INFO) {
-
-Please split this out to helper process_response_info() and
-optionally also helper process_response_info_audit_rule()
-
-> +               size_t c = count;
-> +               const char __user *ib = buf;
->
-> +               if (c <= 0)
-> +                       return -EINVAL;
-
-This was already checked by the caller.
-If you think we need this defence use if (WARN_ON_ONCE())
-
-> +               while (c >= sizeof(info_hdr)) {
-
-This while() is a bit confusing.
-It suggests that the parser may process multiple info records,
-but the code below uses 'count' and assumed single audit rule
-record.
-
-Maybe just change this to:
-  if (WARN_ON_ONCE(c < sizeof(info_hdr))
-     return -EINVAL
-
-Until the code can really handle multiple records.
-
-> +                       if (copy_from_user(&info_hdr, ib, sizeof(info_hdr)))
-> +                               return -EFAULT;
-> +                       if (info_hdr.pad != 0)
-> +                               return -EINVAL;
-> +                       if (c < info_hdr.len)
-> +                               return -EINVAL;
-> +                       switch (info_hdr.type) {
-> +                       case FAN_RESPONSE_INFO_AUDIT_RULE:
-> +                               break;
-> +                       case FAN_RESPONSE_INFO_NONE:
-> +                       default:
-> +                               return -EINVAL;
-> +                       }
-> +                       c -= info_hdr.len;
-> +                       ib += info_hdr.len;
-> +               }
-> +               if (c != 0)
-> +                       return -EINVAL;
-> +               /* Simplistic check for now */
-> +               if (count != sizeof(struct fanotify_response_info_audit_rule))
-> +                       return -EINVAL;
-> +               info_buf = kmalloc(sizeof(struct fanotify_response_info_audit_rule),
-> +                                  GFP_KERNEL);
-> +               if (!info_buf)
-> +                       return -ENOMEM;
-> +               if (copy_from_user(info_buf, buf, count))
-> +                       return -EFAULT;
-
-info_buf allocation is leaked here and also in case 'fd' is not found.
-
-> +       }
->         spin_lock(&group->notification_lock);
->         list_for_each_entry(event, &group->fanotify_data.access_list,
->                             fae.fse.list) {
-> @@ -340,7 +383,9 @@ static int process_access_response(struct fsnotify_group *group,
->                         continue;
->
->                 list_del_init(&event->fae.fse.list);
-> -               finish_permission_event(group, event, response);
-> +               /* finish_permission_event() eats info_buf */
-> +               finish_permission_event(group, event, response_struct,
-> +                                       count, info_buf);
->                 wake_up(&group->fanotify_data.access_waitq);
->                 return 0;
->         }
-> @@ -802,9 +847,14 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->                         fsnotify_destroy_event(group, &event->fse);
->                 } else {
->                         if (ret <= 0) {
-> +                               struct fanotify_response response = {
-> +                                       .fd = FAN_NOFD,
-> +                                       .response = FAN_DENY };
-> +
->                                 spin_lock(&group->notification_lock);
->                                 finish_permission_event(group,
-> -                                       FANOTIFY_PERM(event), FAN_DENY);
-> +                                       FANOTIFY_PERM(event), &response,
-> +                                       0, NULL);
->                                 wake_up(&group->fanotify_data.access_waitq);
->                         } else {
->                                 spin_lock(&group->notification_lock);
-> @@ -827,26 +877,33 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->
->  static ssize_t fanotify_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
->  {
-> -       struct fanotify_response response = { .fd = -1, .response = -1 };
-> +       struct fanotify_response response;
->         struct fsnotify_group *group;
->         int ret;
-> +       const char __user *info_buf = buf + sizeof(struct fanotify_response);
-> +       size_t c;
->
->         if (!IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS))
->                 return -EINVAL;
->
->         group = file->private_data;
->
-> -       if (count < sizeof(response))
-> -               return -EINVAL;
-> -
-> -       count = sizeof(response);
-> -
->         pr_debug("%s: group=%p count=%zu\n", __func__, group, count);
->
-> -       if (copy_from_user(&response, buf, count))
-> +       if (count < sizeof(response))
-> +               return -EINVAL;
-> +       if (copy_from_user(&response, buf, sizeof(response)))
->                 return -EFAULT;
->
-> -       ret = process_access_response(group, &response);
-> +       c = count - sizeof(response);
-> +       if (response.response & FAN_INFO) {
-> +               if (c < sizeof(struct fanotify_response_info_header))
-> +                       return -EINVAL;
-
-Should FAN_INFO require FAN_AUDIT?
-
-> +       } else {
-> +               if (c != 0)
-> +                       return -EINVAL;
-> +       }
-> +       ret = process_access_response(group, &response, info_buf, c);
->         if (ret < 0)
->                 count = ret;
->
-> @@ -857,6 +914,9 @@ static int fanotify_release(struct inode *ignored, struct file *file)
->  {
->         struct fsnotify_group *group = file->private_data;
->         struct fsnotify_event *fsn_event;
-> +       struct fanotify_response response = {
-> +               .fd = FAN_NOFD,
-> +               .response = FAN_ALLOW };
->
->         /*
->          * Stop new events from arriving in the notification queue. since
-> @@ -876,7 +936,7 @@ static int fanotify_release(struct inode *ignored, struct file *file)
->                 event = list_first_entry(&group->fanotify_data.access_list,
->                                 struct fanotify_perm_event, fae.fse.list);
->                 list_del_init(&event->fae.fse.list);
-> -               finish_permission_event(group, event, FAN_ALLOW);
-> +               finish_permission_event(group, event, &response, 0, NULL);
->                 spin_lock(&group->notification_lock);
->         }
->
-> @@ -893,7 +953,7 @@ static int fanotify_release(struct inode *ignored, struct file *file)
->                         fsnotify_destroy_event(group, fsn_event);
->                 } else {
->                         finish_permission_event(group, FANOTIFY_PERM(event),
-> -                                               FAN_ALLOW);
-> +                                               &response, 0, NULL);
->                 }
->                 spin_lock(&group->notification_lock);
->         }
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index edc28555814c..ce9f97eb69f2 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -114,6 +114,11 @@
->  #define ALL_FANOTIFY_EVENT_BITS                (FANOTIFY_OUTGOING_EVENTS | \
->                                          FANOTIFY_EVENT_FLAGS)
->
-> +/* This mask is to check for invalid bits of a user space permission response */
-> +#define FANOTIFY_RESPONSE_ACCESS (FAN_ALLOW | FAN_DENY)
-> +#define FANOTIFY_RESPONSE_FLAGS (FAN_AUDIT | FAN_INFO)
-> +#define FANOTIFY_RESPONSE_VALID_MASK (FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS)
-> +
->  /* Do not use these old uapi constants internally */
->  #undef FAN_ALL_CLASS_BITS
->  #undef FAN_ALL_INIT_FLAGS
-> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> index f1f89132d60e..4d08823a5698 100644
-> --- a/include/uapi/linux/fanotify.h
-> +++ b/include/uapi/linux/fanotify.h
-> @@ -180,15 +180,40 @@ struct fanotify_event_info_error {
->         __u32 error_count;
->  };
->
-> +/*
-> + * User space may need to record additional information about its decision.
-> + * The extra information type records what kind of information is included.
-> + * The default is none. We also define an extra information buffer whose
-> + * size is determined by the extra information type.
-> + *
-> + * If the context type is Rule, then the context following is the rule number
-> + * that triggered the user space decision.
-> + */
-> +
-> +#define FAN_RESPONSE_INFO_NONE         0
-> +#define FAN_RESPONSE_INFO_AUDIT_RULE   1
-> +
->  struct fanotify_response {
->         __s32 fd;
->         __u32 response;
->  };
->
-> +struct fanotify_response_info_header {
-> +       __u8 type;
-> +       __u8 pad;
-> +       __u16 len;
-> +};
-> +
-> +struct fanotify_response_info_audit_rule {
-> +       struct fanotify_response_info_header hdr;
-> +       __u32 audit_rule;
-> +};
-> +
->  /* Legit userspace responses to a _PERM event */
->  #define FAN_ALLOW      0x01
->  #define FAN_DENY       0x02
-> -#define FAN_AUDIT      0x10    /* Bit mask to create audit record for result */
-> +#define FAN_AUDIT      0x10    /* Bitmask to create audit record for result */
-> +#define FAN_INFO       0x20    /* Bitmask to indicate additional information */
->
->  /* No fd set in event */
->  #define FAN_NOFD       -1
-> --
-> 2.27.0
->
