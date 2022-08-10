@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B0A58E9F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 11:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1339758EA00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 11:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232242AbiHJJoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 05:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48248 "EHLO
+        id S231652AbiHJJps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 05:45:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231417AbiHJJn5 (ORCPT
+        with ESMTP id S232260AbiHJJpi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 05:43:57 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CAA15142E;
-        Wed, 10 Aug 2022 02:43:56 -0700 (PDT)
+        Wed, 10 Aug 2022 05:45:38 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D951EAC3;
+        Wed, 10 Aug 2022 02:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660124636; x=1691660636;
+  t=1660124736; x=1691660736;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=+g1tHa8U1L0ibLkauTiBh/SeADRVoqwRkL+l6I4l0TE=;
-  b=KD5tS2QCDwJMQI8UA4rat5QwIhjZFuhAU3fkbBz2Qopqm39IPmlDXEB7
-   kpnEH+pswkbTBg2eWgNhNr6YiMxN3Hp+Qn5rpbdfqH9MMEcci/t6lGxQT
-   xBEaXZ4cYPW9Ix3n6fwjfDzTtBt5AuIsy2VULSwPwadzrJN9L4ktKrDPD
-   vLlT9hRei/ZdO2r5MvenMBohZmEJH/Jb9YhUNlby2H9SBCNtuhQa6IBPp
-   4Q/PUZt5bs+lbyWdpk/MKS33FWmY6c8WmBPO0nsShYhN6LaNW9Dbi/Qbd
-   Gs5zBQQ641dkV1su7JsUxg9Wp/F6lsCDV1m8gmeB4VC3Pz9mTXK4/qJG+
+  bh=sBavDjNKIFmd2M6Jg3bF8kVDIymkWHMnSEIr5WIN7a0=;
+  b=O61/zh9nP1a3NA1MGvroQMtaoN5BFj12Ro1Ly3C9SI+LvvDmhryVaJP2
+   CarjfMhP3S2UW8pzfkIzHQX/EkG31FdTc3R+Z8xx694dCplk3YqpOQW4J
+   4WWBMeqVCVSOCG3IamVhM36kB761utc/Eer6Jp+NQnCZQQgSmJjmdq2tE
+   iGeMt5wqLmDfQmRA9jFKLpQWvtmhDKxRUQ3ccKTlRnEtmlKtecqbp02H0
+   SMKVZ70THXKKgFwj59jC7+QeIllAUc1U5rVeufdEZF4WAN9e2j7WGo8k7
+   T/jngFph2gS8+E4vFHrqNbjcS6s1SxTCjT7ssgLMSPRW1UlzIpUY8TH5n
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10434"; a="289798229"
+X-IronPort-AV: E=McAfee;i="6400,9594,10434"; a="277983040"
 X-IronPort-AV: E=Sophos;i="5.93,227,1654585200"; 
-   d="scan'208";a="289798229"
+   d="scan'208";a="277983040"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2022 02:43:55 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2022 02:45:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,227,1654585200"; 
-   d="scan'208";a="601757538"
+   d="scan'208";a="601757857"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 10 Aug 2022 02:43:45 -0700
-Date:   Wed, 10 Aug 2022 17:38:59 +0800
+  by orsmga007.jf.intel.com with ESMTP; 10 Aug 2022 02:45:24 -0700
+Date:   Wed, 10 Aug 2022 17:40:39 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
@@ -71,49 +71,55 @@ Cc:     David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
 Subject: Re: [PATCH v7 01/14] mm: Add F_SEAL_AUTO_ALLOCATE seal to memfd
-Message-ID: <20220810093859.GF862421@chaop.bj.intel.com>
+Message-ID: <20220810094039.GG862421@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
  <20220706082016.2603916-2-chao.p.peng@linux.intel.com>
  <f39c4f63-a511-4beb-b3a4-66589ddb5475@redhat.com>
  <472207cf-ff71-563b-7b66-0c7bea9ea8ad@redhat.com>
+ <a2b8fa73-4efd-426f-abcd-7975ff9a7101@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <472207cf-ff71-563b-7b66-0c7bea9ea8ad@redhat.com>
+In-Reply-To: <a2b8fa73-4efd-426f-abcd-7975ff9a7101@redhat.com>
 X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 07:55:38PM +0200, Paolo Bonzini wrote:
-> On 7/21/22 11:44, David Hildenbrand wrote:
+On Fri, Aug 05, 2022 at 08:06:03PM +0200, David Hildenbrand wrote:
+> On 05.08.22 19:55, Paolo Bonzini wrote:
+> > On 7/21/22 11:44, David Hildenbrand wrote:
+> >>
+> >> Also, I*think*  you can place pages via userfaultfd into shmem. Not
+> >> sure if that would count "auto alloc", but it would certainly bypass
+> >> fallocate().
 > > 
-> > Also, I*think*  you can place pages via userfaultfd into shmem. Not
-> > sure if that would count "auto alloc", but it would certainly bypass
-> > fallocate().
+> > Yeah, userfaultfd_register would probably have to forbid this for 
+> > F_SEAL_AUTO_ALLOCATE vmas.  Maybe the memfile_node can be reused for 
+> > this, adding a new MEMFILE_F_NO_AUTO_ALLOCATE flags?  Then 
+> > userfault_register would do something like 
+> > memfile_node_get_flags(vma->vm_file) and check the result.
 > 
-> Yeah, userfaultfd_register would probably have to forbid this for
-> F_SEAL_AUTO_ALLOCATE vmas.  Maybe the memfile_node can be reused for this,
-> adding a new MEMFILE_F_NO_AUTO_ALLOCATE flags?  Then userfault_register
-> would do something like memfile_node_get_flags(vma->vm_file) and check the
-> result.
+> An alternative is to simply have the shmem allocation fail in a similar
+> way. Maybe it does already, I haven't checked (don't think so).
 
-Then we need change userfault_register uAPI for a new property flag.
-Userspace should still the decision-maker for this flag.
-
-> 
-> This means moving this patch later, after "mm: Introduce memfile_notifier".
-
-Yes, it makes sense now.
+This sounds a better option. We don't need uAPI changes for
+userfault_register uAPI but I guess we will still need a KVM uAPI,
+either on the memslot or on the whole VM since Roth said this feature
+should be optional because some usages may want to disable it for
+performance reason. For details please see discussion:
+  https://lkml.org/lkml/2022/6/23/1905
 
 Chao
 > 
+> 
+> -- 
 > Thanks,
 > 
-> Paolo
+> David / dhildenb
