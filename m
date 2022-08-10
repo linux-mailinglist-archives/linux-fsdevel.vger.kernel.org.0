@@ -2,102 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C932858F2DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 21:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E178858F2E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 21:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232796AbiHJTOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 15:14:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45706 "EHLO
+        id S232918AbiHJTP3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 15:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232748AbiHJTOS (ORCPT
+        with ESMTP id S232487AbiHJTP2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 15:14:18 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DA525CB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 12:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1660158856; x=1691694856;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gYs2N/Wznfe3hlI62W4thC972nT2hghgh16QaFZ50J8=;
-  b=R37rG6NsZOKUOUmBiBiPdVk9q6O0a0JgXIPfR5xazqL/CcSRYOuKTFrP
-   TWpqd3aZtLX8gnM0Jmcto9MHJLcRnS9EA9QQ5o4FdIUn7FoQyf4C519Xm
-   dZ6dKUYp4LUUr53QqsHfDV5XpTEgwHMjORk8sDsP19iAlrfuZGCVMy1iL
-   N6Fntvl+ebhxLq9fcPifXeyo2/zuJ6jPUXt6i0MuHwFOrWTHtNYpNzRLw
-   dQLkg9xJNnAnG7wcvcJ97NjEeIGcDuU0J64jpRKQYxFSfbxTf+LXov2BF
-   b/ydTKqRN863d+Gr0Bwi1Sh3rksRPrVcJt92K4q9sW4D6kHle9pmVPlNC
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,228,1654531200"; 
-   d="scan'208";a="208372762"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2022 03:14:15 +0800
-IronPort-SDR: u1LIaqZM8UT00FvcCLEw4/YV5QR82n6kIE1rMGEIXe8qNK3Ztd0FThPBEl7FKOAGwiv5mGvYfi
- MfQJ5pOEzvD+QeK+gwtiqckRmSQ3A9BGisroceOG/tulbZ9eEblEiDNZ/Xk7Rlgr7ZknMrq8sj
- weRRiVejerxXrwwqccRGBXqK+uGvCK4ViqkK0smh4z2V5SVBiMkrjIwzNwLePt4kmjh1uLvMDK
- h11rXn4JBRJ+oPEJdap5cpw/pB16zlPuu2SBRB4Wj3Z2wrpfAsoHg0I+Ww6CljBFqGQsylv5pR
- oA/7z5SQSrHzMEAOK4g/jzum
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Aug 2022 11:29:52 -0700
-IronPort-SDR: 0klT9OJnDxLFnTZIPoBSrEIG6oqlpQ1LMatqRRa3tPqA6RXWp/OGQ3VSG1Pao9cNwUxK9TiJmK
- DkJsvZYAiOTCfoAsryyYZajaSa4mWh9vDpDHDxG2oACipeGQzJ10Z76Q6DwrqorHVfLsBFbaqh
- YfSLDVQc+/vgzjes+5ysuiiK10lJyLHgMWoiHXajp7QJFAHenBVG31GYvJppRLw8IDTR4mMfkQ
- fzaKwm7BLj4sHBjmrXjmqPyGFzCugBVWucqlQ5K+er1jM+ENBQqU5UY0HnASRBFdfqORMopLW+
- Uz0=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Aug 2022 12:14:18 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4M303r48bXz1Rwnx
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 12:14:16 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1660158856; x=1662750857; bh=gYs2N/Wznfe3hlI62W4thC972nT2hghgh16
-        QaFZ50J8=; b=d0n8HJFXlKQXqBnNdMkzYIOQWtTycr767wYpgddwIW8Qv1fW36a
-        U8I5u40dIV6O7OIEtikV53q9kuXuKDN1XZsHrJReFsgKzQsG2Ronv/PX8cb39Xwu
-        jwF9nDGfESrkxDlgAnFV4iH8j/T27PS3BEZ1FfKM5WUn7G4OvM5jVR77tM1qtDuJ
-        1qmc1Q7W5Q+ednE3BTdgKhHNLfL6celHqoLHwRGBEuXLtVtmS/ug32ILM5VvIY2Z
-        6Msr12vN0126RkHd56pcCVc881qm/5ZfxB5i1QCPEylNNl+3W6oKwq6nGKpfr0OF
-        U/buWdaTQkRAU6EulPHoHpybNVtgXj9A08A==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SC9nZidhb_mr for <linux-fsdevel@vger.kernel.org>;
-        Wed, 10 Aug 2022 12:14:16 -0700 (PDT)
-Received: from [10.111.68.99] (c02drav6md6t.sdcorp.global.sandisk.com [10.111.68.99])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4M303q5mpcz1RtVk;
-        Wed, 10 Aug 2022 12:14:15 -0700 (PDT)
-Message-ID: <27eed02c-fd92-6f99-b213-1be70193b37d@opensource.wdc.com>
-Date:   Wed, 10 Aug 2022 12:14:15 -0700
+        Wed, 10 Aug 2022 15:15:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7DBE723145
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 12:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660158926;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+U+fB0noEhNX/XcyVg7aDRgXu5FXK+yrGNnVmRva2E0=;
+        b=EvmNAyTNvJqAkVoeikl72oDkxHKNWiQJ3n9v03VLWkTmjx8Usd/a3Nq6jrLRU1Lb1aoYss
+        PbTtL0rva2NZwSAiDn9IUAqREVJahxG4PYAPAlDAzrYHqf2ic4GcNo1n6ZSFKP2jAEllow
+        9K6rrkNYzv32Elmjewm9Q64BiN/udrU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-204-9zlhryASPQOmcMoKimaAkA-1; Wed, 10 Aug 2022 15:15:23 -0400
+X-MC-Unique: 9zlhryASPQOmcMoKimaAkA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E230D2999B52;
+        Wed, 10 Aug 2022 19:15:22 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.33.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 09A6340474E3;
+        Wed, 10 Aug 2022 19:15:21 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 4/4] fanotify,audit: deliver fan_info as a hex-encoded string
+Date:   Wed, 10 Aug 2022 15:15:21 -0400
+Message-ID: <5623945.DvuYhMxLoT@x2>
+Organization: Red Hat
+In-Reply-To: <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
+References: <cover.1659996830.git.rgb@redhat.com> <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.12.0
-Subject: Re: fs/zonefs/./trace.h:22:1: sparse: sparse: cast to restricted
- blk_opf_t
-Content-Language: en-US
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jth@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <202208061533.YBqXyzHm-lkp@intel.com>
- <affa6eee-3b7c-105a-8f4a-35f1ed81f0cd@opensource.wdc.com>
- <b3a6b038-ba0c-2242-3a29-5bcadcaa9d71@acm.org>
- <24b7e027-e098-269b-ccf7-b14deb499c33@opensource.wdc.com>
- <8aa0e7a4-265c-21f4-bdb4-57641d15b7b9@acm.org>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <8aa0e7a4-265c-21f4-bdb4-57641d15b7b9@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -105,45 +66,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/08/10 11:08, Bart Van Assche wrote:
-> On 8/10/22 07:36, Damien Le Moal wrote:
->> On 2022/08/08 8:37, Bart Van Assche wrote:
->>> Thanks for having taken a look. Please help with verifying whether the
->>> following patch is sufficient to fix the reported warning: "[PATCH]
->>> tracing: Suppress sparse warnings triggered by is_signed_type()"
->>> (https://lore.kernel.org/all/20220717151047.19220-1-bvanassche@acm.org/).
->>
->> With the current Linus tree, I do not see this sparse warning. However, applying
->> the above patch, "make M=fs/zonefs C=1" generates a lot of warnings:
+Hell Richard,
+
+On Tuesday, August 9, 2022 1:22:55 PM EDT Richard Guy Briggs wrote:
+> Currently the only type of fanotify info that is defined is an audit
+> rule number, but convert it to hex encoding to future-proof the field.
 > 
-> That doesn't make sense to me. My patch reduces the number of sparse 
-> warnings that are reported.
+> Sample record:
+>   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0
+> fan_info=3F
+
+I compiled a new kernel and run old user space on this. The above event is 
+exactly what I see in my audit logs. Why the fan_info=3F? I really would have 
+expected 0. What if the actual rule number was 63? I think this will work 
+better to leave everything 0 with old user space.
+
+-Steve
+ 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
 > 
->> make -j64 M=fs/zonefs C=1
->>    CC [M]  fs/zonefs/super.o
->>    CC [M]  fs/zonefs/sysfs.o
->>    CHECK   fs/zonefs/sysfs.c
->>    CHECK   fs/zonefs/super.c
->> fs/zonefs/sysfs.c: note: in included file (through include/linux/bitops.h,
->> include/linux/kernel.h, arch/x86/include/asm/percpu.h,
->> arch/x86/include/asm/preempt.h, include/linux/preempt.h,
->> include/linux/spinlock.h, ...):
->> ./arch/x86/include/asm/bitops.h:66:1: warning: unreplaced symbol 'return'
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index f000fec52360..0f747015c577 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2908,22 +2908,36 @@ void __audit_fanotify(u32 response, size_t len,
+> char *buf)
 > 
-> I think that you are hitting a bug in sparse. See also 
-> https://lore.kernel.org/all/e91d351c-3c16-e48d-7e9d-9f096c4acbc9@debian.org/T/. 
-> I also see the above warnings if I use the sparse binary from Debian 
-> testing. I do not see these sparse warnings if I download the sparse 
-> source code and compile that source code myself.
+>  	if (!(len && buf)) {
+>  		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> -			  "resp=%u fan_type=0 fan_info=?", response);
+> +			  "resp=%u fan_type=0 fan_info=3F", response); /* "?" 
+*/
+>  		return;
+>  	}
+>  	while (c >= sizeof(struct fanotify_response_info_header)) {
+> +		struct audit_context *ctx = audit_context();
+> +		struct audit_buffer *ab;
+> +
+>  		friar = (struct fanotify_response_info_audit_rule *)buf;
+>  		switch (friar->hdr.type) {
+>  		case FAN_RESPONSE_INFO_AUDIT_RULE:
+>  			if (friar->hdr.len < sizeof(*friar)) {
+> -				audit_log(audit_context(), GFP_KERNEL, 
+AUDIT_FANOTIFY,
+> -					  "resp=%u fan_type=%u 
+fan_info=(incomplete)",
+> -					  response, friar->hdr.type);
+> +				ab = audit_log_start(ctx, GFP_KERNEL, 
+AUDIT_FANOTIFY);
+> +				if (ab) {
+> +					audit_log_format(ab, "resp=%u fan_type=%u 
+fan_info=",
+> +							 response, friar-
+>hdr.type);
+> +#define INCOMPLETE "(incomplete)"
+> +					audit_log_n_hex(ab, INCOMPLETE, 
+sizeof(INCOMPLETE));
+> +					audit_log_end(ab);
+> +				}
+>  				return;
+>  			}
+> -			audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> -				  "resp=%u fan_type=%u fan_info=%u",
+> -				  response, friar->hdr.type, friar->audit_rule);
+> +			ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
+> +			if (ab) {
+> +				audit_log_format(ab, "resp=%u fan_type=%u 
+fan_info=",
+> +						 response, friar->hdr.type);
+> +				audit_log_n_hex(ab, (char *)&friar->audit_rule,
+> +						sizeof(friar->audit_rule));
+> +				audit_log_end(ab);
+> +
+> +			}
+>  		}
+>  		c -= friar->hdr.len;
+>  		ib += friar->hdr.len;
 
-Good point. I was using Fedora 36 sparse package. Using sparse compiled from
-source, I now see again the warnings without the patch and no warnings with the
-patch applied. So the patch looks good. Are you going to send it as a fix for
-6.0-rc1 ?
-
-Cheers.
 
 
--- 
-Damien Le Moal
-Western Digital Research
+
