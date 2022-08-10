@@ -2,155 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A5758EA37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 12:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 195C758EA81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 12:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231565AbiHJKFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 06:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40274 "EHLO
+        id S231311AbiHJKft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 06:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231574AbiHJKFv (ORCPT
+        with ESMTP id S231286AbiHJKfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 06:05:51 -0400
+        Wed, 10 Aug 2022 06:35:46 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E3BF453D1D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 03:05:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DE9BD4C633
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 03:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660125950;
+        s=mimecast20190719; t=1660127744;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=83RYZm97KNj9NYPWWYz4fzmlCpq267m27613RMfC+Pg=;
-        b=erdjO+qotIQw5lTb7SMXfmAiNQpu8VLhFboKhjORTXdQOs0pzWJyBqwsVwrJ0L6SW0QtGb
-        FeF+mK4nLN5fi44b9GA70g2dhrDTvyo8GpizubejlUTI4Gl54FPUOoiBa+9Lr64EofuUCC
-        0zVpkird0Oe4Hc+KDHe0MASK+kAKD+w=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-290-qJZLkBaCNq6fjBNKPPSODg-1; Wed, 10 Aug 2022 06:05:45 -0400
-X-MC-Unique: qJZLkBaCNq6fjBNKPPSODg-1
-Received: by mail-wm1-f69.google.com with SMTP id a17-20020a05600c349100b003a545125f6eso870786wmq.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 03:05:45 -0700 (PDT)
+        bh=/wW5w6mMxFEPRssRyiA0roiXaNoP3QA09rbvWBkLo18=;
+        b=VUng6XkHuzphD2dV4PpbTeSPx48qLbed0Gal3617WME4NUegMAVMFfopDpPrAN0wp4fCCq
+        EB0+rwzYbmpTyR2Ce4zeERGZTsMuuA/trHRXVSOAJIN7QQpG/c07nCwHuHuOaXmpltoUf/
+        rpfvhJahgrUoTT/8LpqG3cKaSyhzxUg=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-386-FQSQpIDDM2-Ubf7XrlKqzg-1; Wed, 10 Aug 2022 06:35:40 -0400
+X-MC-Unique: FQSQpIDDM2-Ubf7XrlKqzg-1
+Received: by mail-qk1-f197.google.com with SMTP id bm34-20020a05620a19a200b006b5f1d95ceeso12170220qkb.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 03:35:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc;
-        bh=83RYZm97KNj9NYPWWYz4fzmlCpq267m27613RMfC+Pg=;
-        b=L8kzY1j5adr89n6mo6X6RcvLsX//6j+3x+Uh6uWra0XHx5TBW5HV1Wd0VPJeeyeAZ3
-         aNzaDbE3lVGwVKnk09RkDZFI9kHuGEErPdiYKJPhHYW+GIvi7lxB1lJDGpWLMmZuMd1G
-         HTZ2YhNs3bTSJXJivHrpMmTAi5lPP3XoL68abpmyx+j2qs0FTPxY4ENlIPZAmP1SyXY0
-         5Cz19OknIujV2pSnbHrzD1eiqAUHFjzI0+tImTzeFeJjfhT0Lei2Z/dyV6x50EGZjiK1
-         PophEXjgU9RhI6RPXAc/WGbrl2PGNrKawBDuf8/wyBpjhWLYTll+BE39cPh8v8gs+PQg
-         +E3A==
-X-Gm-Message-State: ACgBeo2BINewpH4714HJ9TSA/iCJR72Puhf5W5vzOxC85prvZZ66CRNt
-        /ZffmkaE8BaBAlNcnnpachcs4oTXJuFHF48e0dBtQzKM0hQrKoj4JUr1z/uDNbOqeZg0WYJ0S3g
-        Z0TKgGvFHGunwD2CHj60rhFeT5A==
-X-Received: by 2002:a5d:64ae:0:b0:220:6c4c:5a60 with SMTP id m14-20020a5d64ae000000b002206c4c5a60mr17058823wrp.636.1660125944509;
-        Wed, 10 Aug 2022 03:05:44 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR5i72uisBNMVtDIvVDVfSxV1hzWrZROoCbvcTeBej4J7CIdnSDFuFoSBTJk3opG5+sXP+xgow==
-X-Received: by 2002:a5d:64ae:0:b0:220:6c4c:5a60 with SMTP id m14-20020a5d64ae000000b002206c4c5a60mr17058769wrp.636.1660125944245;
-        Wed, 10 Aug 2022 03:05:44 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:1600:a3ce:b459:ef57:7b93? (p200300cbc7071600a3ceb459ef577b93.dip0.t-ipconnect.de. [2003:cb:c707:1600:a3ce:b459:ef57:7b93])
-        by smtp.gmail.com with ESMTPSA id t188-20020a1c46c5000000b003a327f19bf9sm1793951wma.14.2022.08.10.03.05.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Aug 2022 03:05:43 -0700 (PDT)
-Message-ID: <00f1aa03-bc82-ffce-569b-e2d5c459992c@redhat.com>
-Date:   Wed, 10 Aug 2022 12:05:42 +0200
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc;
+        bh=/wW5w6mMxFEPRssRyiA0roiXaNoP3QA09rbvWBkLo18=;
+        b=aAR2UoNV/vNvQqa+EqZAdQXF5aTeWb3wiYiljBy5hY+jWd4JgvfLZSb+f8BqHbnjbe
+         YUpsn/6IN+1arT30Pw23swRcNhi4ULoOv1SIYUnSR1OvX7J419yv2GKe87s0Ftq1WQu6
+         AH6METVWUSODtHEvrweYeq+N0PC75Nlf6qR/ByAfZ7PmrnUSc+UpZiN4clNrEQdt2IxH
+         03wqyTs2n/QYjg/mESA/GMn7wrI51Jwo+gl9JKpxeTRe08jd+rkmTXDIMoev78pcos7v
+         Ki6losI33GfnZFOmP4p7niNg3ATqVqmVVicEHD42hcTCAtk+R6Bs8xMV9vApNRzSMOIS
+         w1YA==
+X-Gm-Message-State: ACgBeo36qd7lZDH5EuSDloLjVI///8kYz2XL/YA3Urz7NS5OnjPFlR/z
+        LLGYRvVrWyG6BiuNZH1yWYfm0jkJ1vpPE3r1Uk07rLKx+wy1foJIH4KdG4vkU466mXwxPcbYkkw
+        EmYERNfc0CswrEhvTWTpluNvkvw==
+X-Received: by 2002:ac8:5aca:0:b0:342:f363:dc83 with SMTP id d10-20020ac85aca000000b00342f363dc83mr14891989qtd.276.1660127739971;
+        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR672faeSBWjEMIIZTWbRN8z5WtgsBmxV60lXj9OL/+FNIziCZkZnW+g14J0G5IqBz/QmzFDWQ==
+X-Received: by 2002:ac8:5aca:0:b0:342:f363:dc83 with SMTP id d10-20020ac85aca000000b00342f363dc83mr14891967qtd.276.1660127739756;
+        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id ci14-20020a05622a260e00b0031ef0081d77sm11753243qtb.79.2022.08.10.03.35.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
+Message-ID: <a396a94d30132b157860c9e367f9a4354223f7f5.camel@redhat.com>
+Subject: Re: [RFC PATCH 1/4] vfs: report change attribute in statx for
+ IS_I_VERSION inodes
+From:   Jeff Layton <jlayton@redhat.com>
+To:     JunChao Sun <sunjunchao2870@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        lczerner@redhat.com, bxue@redhat.com, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Date:   Wed, 10 Aug 2022 06:35:38 -0400
+In-Reply-To: <CAHB1Nah5ttUCuUUdPZjb9n_1uDTh_-J_N6JaJiwY+oZj7atJeg@mail.gmail.com>
+References: <20220805183543.274352-1-jlayton@kernel.org>
+         <20220805183543.274352-2-jlayton@kernel.org>
+         <CAHB1Nah5ttUCuUUdPZjb9n_1uDTh_-J_N6JaJiwY+oZj7atJeg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-4-chao.p.peng@linux.intel.com>
- <13394075-fca0-6f2b-92a2-f1291fcec9a3@redhat.com>
- <20220810092232.GC862421@chaop.bj.intel.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v7 03/14] mm: Introduce memfile_notifier
-In-Reply-To: <20220810092232.GC862421@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10.08.22 11:22, Chao Peng wrote:
-> On Fri, Aug 05, 2022 at 03:22:58PM +0200, David Hildenbrand wrote:
->> On 06.07.22 10:20, Chao Peng wrote:
->>> This patch introduces memfile_notifier facility so existing memory file
->>> subsystems (e.g. tmpfs/hugetlbfs) can provide memory pages to allow a
->>> third kernel component to make use of memory bookmarked in the memory
->>> file and gets notified when the pages in the memory file become
->>> invalidated.
->>
->> Stupid question, but why is this called "memfile_notifier" and not
->> "memfd_notifier". We're only dealing with memfd's after all ... which
->> are anonymous files essentially. Or what am I missing? Are there any
->> other plans for fs than plain memfd support that I am not aware of?
-> 
-> There were some discussions on this in v3.
->   https://lkml.org/lkml/2021/12/28/484
-> Sean commented it's OK to abstract it from memfd but he also wants the
-> kAPI (name) should not bind to memfd to make room for future non-memfd
-> usages.
+On Wed, 2022-08-10 at 11:00 +0800, JunChao Sun wrote:
+> On Sat, Aug 6, 2022 at 2:37 AM Jeff Layton <jlayton@kernel.org> wrote:
+> >=20
+> > From: Jeff Layton <jlayton@redhat.com>
+> >=20
+> > Claim one of the spare fields in struct statx to hold a 64-bit change
+> > >=20
+> > > attribute. When statx requests this attribute, do an
+> > > inode_query_iversion and fill the result in the field.
+>=20
+> I guess, is it better to update the corresponding part of the man-pages..=
+.?
 
-Sorry, but how is "memfile" any better? memfd abstracted to memfile?! :)
+Yes. If we end up accepting a patch like this, we'll need to update the
+statx(2) manpage. We'll probably also want to add support for it to the
+/bin/stat coreutils command as well.
 
-I understand Sean's suggestion about abstracting, but if the new name
-makes it harder to grasp and there isn't really an alternative to memfd
-in sight, I'm not so sure I enjoy the tried abstraction here.
+At this point, I'm trying to put together some xfstests so we can ensure
+that this feature doesn't regress (if we take it).
 
-Otherwise we'd have to get creative now and discuss something like
-"file_population_notifer" or "mapping_population_notifer" and I am not
-sure that our time is well spent doing so right now.
+> >=20
+> >=20
+> > Also update the test-statx.c program to fetch the change attribute as
+> > well.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/stat.c                 | 7 +++++++
+> >  include/linux/stat.h      | 1 +
+> >  include/uapi/linux/stat.h | 3 ++-
+> >  samples/vfs/test-statx.c  | 4 +++-
+> >  4 files changed, 13 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index 9ced8860e0f3..976e0a59ab23 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/syscalls.h>
+> >  #include <linux/pagemap.h>
+> >  #include <linux/compat.h>
+> > +#include <linux/iversion.h>
+> >=20
+> >  #include <linux/uaccess.h>
+> >  #include <asm/unistd.h>
+> > @@ -118,6 +119,11 @@ int vfs_getattr_nosec(const struct path *path, str=
+uct kstat *stat,
+> >         stat->attributes_mask |=3D (STATX_ATTR_AUTOMOUNT |
+> >                                   STATX_ATTR_DAX);
+> >=20
+> > +       if ((request_mask & STATX_CHGATTR) && IS_I_VERSION(inode)) {
+> > +               stat->result_mask |=3D STATX_CHGATTR;
+> > +               stat->chgattr =3D inode_query_iversion(inode);
+> > +       }
+> > +
+> >         mnt_userns =3D mnt_user_ns(path->mnt);
+> >         if (inode->i_op->getattr)
+> >                 return inode->i_op->getattr(mnt_userns, path, stat,
+> > @@ -611,6 +617,7 @@ cp_statx(const struct kstat *stat, struct statx __u=
+ser *buffer)
+> >         tmp.stx_dev_major =3D MAJOR(stat->dev);
+> >         tmp.stx_dev_minor =3D MINOR(stat->dev);
+> >         tmp.stx_mnt_id =3D stat->mnt_id;
+> > +       tmp.stx_chgattr =3D stat->chgattr;
+> >=20
+> >         return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+> >  }
+> > diff --git a/include/linux/stat.h b/include/linux/stat.h
+> > index 7df06931f25d..4a17887472f6 100644
+> > --- a/include/linux/stat.h
+> > +++ b/include/linux/stat.h
+> > @@ -50,6 +50,7 @@ struct kstat {
+> >         struct timespec64 btime;                        /* File creatio=
+n time */
+> >         u64             blocks;
+> >         u64             mnt_id;
+> > +       u64             chgattr;
+> >  };
+> >=20
+> >  #endif
+> > diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> > index 1500a0f58041..b45243a0fbc5 100644
+> > --- a/include/uapi/linux/stat.h
+> > +++ b/include/uapi/linux/stat.h
+> > @@ -124,7 +124,7 @@ struct statx {
+> >         __u32   stx_dev_minor;
+> >         /* 0x90 */
+> >         __u64   stx_mnt_id;
+> > -       __u64   __spare2;
+> > +       __u64   stx_chgattr;    /* Inode change attribute */
+> >         /* 0xa0 */
+> >         __u64   __spare3[12];   /* Spare space for future expansion */
+> >         /* 0x100 */
+> > @@ -152,6 +152,7 @@ struct statx {
+> >  #define STATX_BASIC_STATS      0x000007ffU     /* The stuff in the nor=
+mal stat struct */
+> >  #define STATX_BTIME            0x00000800U     /* Want/got stx_btime *=
+/
+> >  #define STATX_MNT_ID           0x00001000U     /* Got stx_mnt_id */
+> > +#define STATX_CHGATTR          0x00002000U     /* Want/git stx_chgattr=
+ */
+> >=20
+> >  #define STATX__RESERVED                0x80000000U     /* Reserved for=
+ future struct statx expansion */
+> >=20
+> > diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+> > index 49c7a46cee07..767208d2f564 100644
+> > --- a/samples/vfs/test-statx.c
+> > +++ b/samples/vfs/test-statx.c
+> > @@ -109,6 +109,8 @@ static void dump_statx(struct statx *stx)
+> >                 printf(" Inode: %-11llu", (unsigned long long) stx->stx=
+_ino);
+> >         if (stx->stx_mask & STATX_NLINK)
+> >                 printf(" Links: %-5u", stx->stx_nlink);
+> > +       if (stx->stx_mask & STATX_CHGATTR)
+> > +               printf(" Change Attr: 0x%llx", stx->stx_chgattr);
+> >         if (stx->stx_mask & STATX_TYPE) {
+> >                 switch (stx->stx_mode & S_IFMT) {
+> >                 case S_IFBLK:
+> > @@ -218,7 +220,7 @@ int main(int argc, char **argv)
+> >         struct statx stx;
+> >         int ret, raw =3D 0, atflag =3D AT_SYMLINK_NOFOLLOW;
+> >=20
+> > -       unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME;
+> > +       unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME | STATX_C=
+HGATTR;
+> >=20
+> >         for (argv++; *argv; argv++) {
+> >                 if (strcmp(*argv, "-F") =3D=3D 0) {
+> > --
+> > 2.37.1
+> >=20
+>=20
 
-... as this is kernel-internal, we can always adjust the name as we
-please later, once we *actually* now what the abstraction should be.
-Until then I'd suggest to KIS and soft-glue this to memfd.
-
-Or am I missing something important?
-
--- 
-Thanks,
-
-David / dhildenb
+--=20
+Jeff Layton <jlayton@redhat.com>
 
