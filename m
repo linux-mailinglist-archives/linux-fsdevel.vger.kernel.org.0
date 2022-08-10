@@ -2,57 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8093958F219
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 20:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E621958F221
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Aug 2022 20:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233541AbiHJSFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 14:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44056 "EHLO
+        id S233144AbiHJSIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 14:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231424AbiHJSFN (ORCPT
+        with ESMTP id S231213AbiHJSIQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 14:05:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FC4B1A;
-        Wed, 10 Aug 2022 11:05:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 138CFB81611;
-        Wed, 10 Aug 2022 18:05:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11174C433D6;
-        Wed, 10 Aug 2022 18:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660154708;
-        bh=nhGr02sSN89GKEkq7FccjXFENhz9XIFY79Zk1MeBFDE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=giwdIhQSTRjg1XY592kRRArKEADaCYIFb0IfSAf5vSAAqZPkITd1VNS31sKmvjLHY
-         QZ5zTWD7x1qLyuh8xA3n7RFw4wR4aV4jBH78K2xHiYXQqMtPpepIUoftftH8NkARnz
-         froPTiPS0sbSWrcTJfKFysqmONFj/cExjXFDlcbqP1hTZrLlkVKbG0IlQYZ7h7519j
-         8jkQEU3HBANrmut4RcNOvhGZVr5yQBobhJGMqjYraFsHrpXfdjbgVU+drNYU2ER9Su
-         qD/ARUaZVD70Uc79Am1rehEVjBKYpmXPabLA1gSTrBhfCCwlKEiW+RwKzxvC9KxCcx
-         VFEPcUyWeyo1g==
-Date:   Wed, 10 Aug 2022 12:05:05 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCHv3 0/7] dma mapping optimisations
-Message-ID: <YvPzUSx87VkwSH2C@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220805162444.3985535-1-kbusch@fb.com>
- <20220809064613.GA9040@lst.de>
- <YvKPTGf56v/3iSxg@kbusch-mbp.dhcp.thefacebook.com>
- <20220809184137.GB15107@lst.de>
+        Wed, 10 Aug 2022 14:08:16 -0400
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2296B3AE66;
+        Wed, 10 Aug 2022 11:08:14 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id w14so14904835plp.9;
+        Wed, 10 Aug 2022 11:08:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=WAz9mh0IMcPdbiRN1XIuRByL3cLsDNo1Q7uXhFSH7jI=;
+        b=kycvjobjoL11wFj3wtElhmyJWrZ2B+EF11vjqLiHL5X7z97Ea9AP5xztT3xskAO/7t
+         SxDjw1iVR2ipVYRFF7idyGdkuj71jroXA/lOyvl86ggTjE0Ts6NMzbeQUQ8RzQPfB3WQ
+         Ul1SJUuEjeIfRCPiHrKZIovmwOnSjdNUS0YCHqppzcditcufWvaNYeYcHQYe1QDJzlvd
+         d7IOYYSnRPTSsDgyVH2QP9i9iV+sK7GC/JGvCBqDA9GAkRZeEhxu8AOsW/UJtXoSE0tL
+         MRyxznMA5FOVKIEGm9706quYpHc3/1urwXKfrOVvUu6bI/Ltk3wl5TAPCjqmAaPi1mqp
+         E7Lg==
+X-Gm-Message-State: ACgBeo3sbVefQmjLYpxIggKadMdPkhRTFjqocctUBUFNbyu8N9JFOg8e
+        xrsAVQUgDdGl7RDfw1io/gs=
+X-Google-Smtp-Source: AA6agR5jM/nbSx9z0HeWh1HFzKrkMa4Kzfp81C3UpA7WpcMCn3mLxDqfU0xqc4p9uyEAeY5jej6aDA==
+X-Received: by 2002:a17:903:11c7:b0:171:2818:4cd7 with SMTP id q7-20020a17090311c700b0017128184cd7mr7466175plh.136.1660154893409;
+        Wed, 10 Aug 2022 11:08:13 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:85c9:163f:8564:e41f? ([2620:15c:211:201:85c9:163f:8564:e41f])
+        by smtp.gmail.com with ESMTPSA id n28-20020a056a00213c00b0052b94e757ecsm2283678pfj.213.2022.08.10.11.08.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Aug 2022 11:08:12 -0700 (PDT)
+Message-ID: <8aa0e7a4-265c-21f4-bdb4-57641d15b7b9@acm.org>
+Date:   Wed, 10 Aug 2022 11:08:11 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220809184137.GB15107@lst.de>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: fs/zonefs/./trace.h:22:1: sparse: sparse: cast to restricted
+ blk_opf_t
+Content-Language: en-US
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <202208061533.YBqXyzHm-lkp@intel.com>
+ <affa6eee-3b7c-105a-8f4a-35f1ed81f0cd@opensource.wdc.com>
+ <b3a6b038-ba0c-2242-3a29-5bcadcaa9d71@acm.org>
+ <24b7e027-e098-269b-ccf7-b14deb499c33@opensource.wdc.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <24b7e027-e098-269b-ccf7-b14deb499c33@opensource.wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,36 +70,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 09, 2022 at 08:41:37PM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 09, 2022 at 10:46:04AM -0600, Keith Busch wrote:
+On 8/10/22 07:36, Damien Le Moal wrote:
+> On 2022/08/08 8:37, Bart Van Assche wrote:
+>> Thanks for having taken a look. Please help with verifying whether the
+>> following patch is sufficient to fix the reported warning: "[PATCH]
+>> tracing: Suppress sparse warnings triggered by is_signed_type()"
+>> (https://lore.kernel.org/all/20220717151047.19220-1-bvanassche@acm.org/).
 > 
-> > For swiotlb, though, we can error out the mapping if the requested memory uses
-> > swiotlb with the device: the driver's .dma_map() can return ENOTSUPP if
-> > is_swiotlb_buffer() is true. Would that be more acceptable?
-> 
-> No, is_swiotlb_buffer and similar are not exported APIs.
+> With the current Linus tree, I do not see this sparse warning. However, applying
+> the above patch, "make M=fs/zonefs C=1" generates a lot of warnings:
 
-The functions are implemented under 'include/linux/', indistinguishable from
-exported APIs. I think I understand why they are there, but they look the same
-as exported functions from a driver perspective.
+That doesn't make sense to me. My patch reduces the number of sparse 
+warnings that are reported.
 
-> More importantly with the various secure hypervisor schemes swiotlb is
-> unfortunately actually massively increasing these days.  On those systems all
-> streaming mappings use swiotlb.  And the only way to get any kind of
-> half-decent I/O performance would be the "special" premapped allocator, which
-> is another reason why I'd like to see it.
+> make -j64 M=fs/zonefs C=1
+>    CC [M]  fs/zonefs/super.o
+>    CC [M]  fs/zonefs/sysfs.o
+>    CHECK   fs/zonefs/sysfs.c
+>    CHECK   fs/zonefs/super.c
+> fs/zonefs/sysfs.c: note: in included file (through include/linux/bitops.h,
+> include/linux/kernel.h, arch/x86/include/asm/percpu.h,
+> arch/x86/include/asm/preempt.h, include/linux/preempt.h,
+> include/linux/spinlock.h, ...):
+> ./arch/x86/include/asm/bitops.h:66:1: warning: unreplaced symbol 'return'
 
-Perhaps I'm being daft, but I'm totally missing why I should care if swiotlb
-leverages this feature. If you're using that, you've traded performance for
-security or compatibility already. If this idea can be used to make it perform
-better, then great, but that shouldn't be the reason to hold this up IMO.
+I think that you are hitting a bug in sparse. See also 
+https://lore.kernel.org/all/e91d351c-3c16-e48d-7e9d-9f096c4acbc9@debian.org/T/. 
+I also see the above warnings if I use the sparse binary from Debian 
+testing. I do not see these sparse warnings if I download the sparse 
+source code and compile that source code myself.
 
-This optimization needs to be easy to reach if we expect anyone to use it.
-Working with arbitrary user addresses with minimal additions to the user ABI
-was deliberate. If you want a special allocator, we can always add one later;
-this series doesn't affect that.
-
-If this has potential to starve system resource though, I can constrain it to
-specific users like CAP_SYS_ADMIN, or maybe only memory allocated from
-hugetlbfs. Or perhaps a more complicated scheme of shuffling dma mapping
-resources on demand if that is an improvement over the status quo.
+Bart.
