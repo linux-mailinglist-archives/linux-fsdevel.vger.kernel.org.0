@@ -2,73 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA6F58F767
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 07:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBD258F76E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 08:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234030AbiHKF6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Aug 2022 01:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
+        id S233935AbiHKGCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Aug 2022 02:02:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbiHKF6S (ORCPT
+        with ESMTP id S233681AbiHKGCW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Aug 2022 01:58:18 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 795F879A63;
-        Wed, 10 Aug 2022 22:58:16 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2AF2968AA6; Thu, 11 Aug 2022 07:58:12 +0200 (CEST)
-Date:   Thu, 11 Aug 2022 07:58:11 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Hellwig <hch@lst.de>, Mel Gorman <mgorman@suse.de>,
-        Jan Kara <jack@suse.cz>, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: remove iomap_writepage v2
-Message-ID: <20220811055811.GA12359@lst.de>
-References: <20220719041311.709250-1-hch@lst.de> <20220728111016.uwbaywprzkzne7ib@quack3> <20220729092216.GE3493@suse.de> <20220729141145.GA31605@lst.de> <Yufx5jpyJ+zcSJ4e@cmpxchg.org> <YvQYjpDHH5KckCrw@casper.infradead.org>
+        Thu, 11 Aug 2022 02:02:22 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8296F6BD6B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 23:02:19 -0700 (PDT)
+Received: from fsav117.sakura.ne.jp (fsav117.sakura.ne.jp [27.133.134.244])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 27B61Nmu069124;
+        Thu, 11 Aug 2022 15:01:23 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav117.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp);
+ Thu, 11 Aug 2022 15:01:23 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav117.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 27B61NJB069121
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 11 Aug 2022 15:01:23 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <f00146b5-0a14-ac24-3d7b-3d4deeb96359@I-love.SAKURA.ne.jp>
+Date:   Thu, 11 Aug 2022 15:01:23 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YvQYjpDHH5KckCrw@casper.infradead.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: INFO: task hung in iterate_supers
+Content-Language: en-US
+To:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>
+References: <000000000000da8a9b0570a29c01@google.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+2349f5067b1772c1d8a5@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <000000000000da8a9b0570a29c01@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 10, 2022 at 09:43:58PM +0100, Matthew Wilcox wrote:
-> To avoid duplicating work with you or Christoph ... it seems like the
-> plan is to kill ->writepage entirely soon, so there's no point in me
-> doing a sweep of all the filesystems to convert ->writepage to
-> ->write_folio, correct?
+Hello.
 
-While I won't commit to concrete definition of "soon" I think that is
-the general plan, and I don't think converting ->writepage to
-->write_folio is needed.
+https://syzkaller.appspot.com/text?tag=CrashReport&x=154869fd080000
+suggests that p9_client_rpc() is trapped at infinite retry loop
 
-> I assume the plan for filesystems which have a writepage but don't have
-> a ->writepages (9p, adfs, affs, bfs, ecryptfs, gfs2, hostfs, jfs, minix,
-> nilfs2, ntfs, ocfs2, reiserfs, sysv, ubifs, udf, ufs, vboxsf) is to give
-> them a writepages,
+----------
+again:
+        /* Wait for the response */
+        err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
 
-and  ->migrate_folio if missing, yes.
+        /* Make sure our req is coherent with regard to updates in other
+         * threads - echoes to wmb() in the callback
+         */
+        smp_rmb();
 
-> modelled on iomap_writepages().  Seems that adding
-> a block_writepages() might be a useful thing for me to do?
+        if (err == -ERESTARTSYS && c->status == Connected &&
+            type == P9_TFLUSH) {
+                sigpending = 1;
+                clear_thread_flag(TIF_SIGPENDING);
+                goto again;
+        }
+----------
 
-We have mpage_writepages which basically is the ->writepages counterpart
-to block_write_full_page.  The only caveat is of course that it can
-use multi-block mappings from the get_bock callback, so we need to make
-sure the file systems don't do anything stupid there.
+which I guess that net/9p/trans_fd.c is failing to call p9_client_cb()
+in order to update req->status and wake up req->wq.
+
+But why does p9 think that Flush operation worth retrying forever?
+
+The peer side should be able to detect close of file descriptor on local
+side due to process termination via SIGKILL, and the peer side should be
+able to perform appropriate recovery operation even if local side cannot
+receive response for Flush operation.
+
+Thus, why not to give up upon SIGKILL?
+
+
+On 2018/07/10 19:30, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    d00d6d9a339d Add linux-next specific files for 20180709
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=111179b2400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=94fe2b586beccacd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2349f5067b1772c1d8a5
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=174329b2400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11229044400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+2349f5067b1772c1d8a5@syzkaller.appspotmail.com
+> 
+
