@@ -2,169 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3253A58F5D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 04:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3916358F5DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 04:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233755AbiHKCYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Aug 2022 22:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45068 "EHLO
+        id S233653AbiHKC1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Aug 2022 22:27:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233712AbiHKCX7 (ORCPT
+        with ESMTP id S231424AbiHKC1N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Aug 2022 22:23:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 026CB88DD1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 19:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660184638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BKmemLUUo0rjZIwwGoGKA+UOMDOAhP06FgZjL5gzzjM=;
-        b=YWj7IjynkiKVGE6lzCRBpYx/ajCIbM61GF3h9CQOGUIwHHNGqnjX76iAs+Gm1TQmJTQ0kw
-        P7xm+yHleVnaITmxjFl5d9iSFzFaSW4RzlKJcPTHySpP+kXgVI02xCWbnIqD85nO2UFv89
-        tazvCKqwjTa6EPD3GyRG33+Xojjhtgo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-624-o7Vy4HsZPIGNxeI4VYO2mA-1; Wed, 10 Aug 2022 22:23:54 -0400
-X-MC-Unique: o7Vy4HsZPIGNxeI4VYO2mA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9451918812C5;
-        Thu, 11 Aug 2022 02:23:53 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.48.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CEEBD2166B26;
-        Thu, 11 Aug 2022 02:23:51 +0000 (UTC)
-Date:   Wed, 10 Aug 2022 22:23:49 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 4/4] fanotify,audit: deliver fan_info as a hex-encoded
- string
-Message-ID: <YvRoNSL0snBY87/b@madcap2.tricolour.ca>
-References: <cover.1659996830.git.rgb@redhat.com>
- <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
- <5623945.DvuYhMxLoT@x2>
+        Wed, 10 Aug 2022 22:27:13 -0400
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45576DF93;
+        Wed, 10 Aug 2022 19:27:12 -0700 (PDT)
+Received: by mail-vs1-xe36.google.com with SMTP id 125so17039401vsd.5;
+        Wed, 10 Aug 2022 19:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=VJM36uWLDxfeJQlAFkEV/QezYqkubDOj56Ng+gg+/7E=;
+        b=Ej9pFI8Q7kvV+CFv37XGsy/NEn86Qcpx0Xv7otEUvny412pfSUyQLt6QwEemb6ohKT
+         gEhShEl6cVmN0KBYH5L9xLPajyTkKF74oFnEGOigX3kA/etAbo9mBUUiEp1hVRD8lZfj
+         0LaSFMbj3PZXhK4VwCIEPhqpO2OxATZQ8/2DeqJKRLVjzk/Sdrny8+YJ3EghO6hjAioA
+         NaMGbRwvxcl0Losi2omS9ClpLT8qkEG396YP3d4LXWibELjNgYVU7rBjcwBMvEipJxdo
+         UQOj/BlYI6m2ueYLgQ5c8TGzKoBLlN3jWoYwqZsSHVOLH8PbMl5ySuPXVlB7MUHxvBwL
+         /nqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=VJM36uWLDxfeJQlAFkEV/QezYqkubDOj56Ng+gg+/7E=;
+        b=pg1mGsdgknODg5tKoFt7oYKYVBHtzeO6R+0GgE+HBirZa0kydDWHxsqJGvD44iG+57
+         OjIneC3oVjOc5DosymAa0cNhUVSsPp1Yd9isaS0hm3yRSmaqEhkheTVhN994k3emSFp6
+         ABkTuQ/dLvoCli0JLW9SfSf5xNht4vZagJxLsxALNrf6Q22o+UU3bsObVCz+xNK3Fr3K
+         zIA/h4qaxmbQjUdEeOTqnTFIUOfBzQYj/zk0VsbuaKBfeX8MSFxM6tn2kJjhiNmtqaJP
+         G9Enwxc1zPWJDHXtjRdM/lKqupE/rhg6E2P0lXpF6MDSNN7xJIvxNG4NtXvcutEuHVBL
+         nR6Q==
+X-Gm-Message-State: ACgBeo1XMzSy6T9IMA3bjKlnUGkgmtScn2bAqFWvFecM4nT/VrI94HhA
+        yBqNo9nlqXPk9c62bq4tWiYuVMvxmdZHj7bk1Pg=
+X-Google-Smtp-Source: AA6agR6ydFsGzmNajdFj2oPokfsZ87P0NQSCiy1h2s6ZTRZ6d5WPYinPuMD4H76wcmQfpSvGcKNJwFsM3Pw1+r24Y4s=
+X-Received: by 2002:a67:b24b:0:b0:357:31a6:1767 with SMTP id
+ s11-20020a67b24b000000b0035731a61767mr12620416vsh.29.1660184831703; Wed, 10
+ Aug 2022 19:27:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5623945.DvuYhMxLoT@x2>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <165996923111.209242.10532553567023183407.stgit@warthog.procyon.org.uk>
+ <c4e26f69d38c4294038430487bf10e88fa980e0b.camel@kernel.org>
+In-Reply-To: <c4e26f69d38c4294038430487bf10e88fa980e0b.camel@kernel.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 10 Aug 2022 21:27:00 -0500
+Message-ID: <CAH2r5mubvk83SkDmiw0YUW2W6g0o7-Q3hr1KKtOC1DRRP6yOcQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Remove {cifs,nfs}_fscache_release_page()
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-08-10 15:15, Steve Grubb wrote:
-> Hell Richard,
+merged into cifs-2.6.git for-next
 
-That's quite an introduction!  ;-)
-
-> On Tuesday, August 9, 2022 1:22:55 PM EDT Richard Guy Briggs wrote:
-> > Currently the only type of fanotify info that is defined is an audit
-> > rule number, but convert it to hex encoding to future-proof the field.
-> > 
-> > Sample record:
-> >   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0
-> > fan_info=3F
-> 
-> I compiled a new kernel and run old user space on this. The above event is 
-> exactly what I see in my audit logs. Why the fan_info=3F? I really would have 
-> expected 0. What if the actual rule number was 63? I think this will work 
-> better to leave everything 0 with old user space.
-
-Well, if it is to be consistently hex encoded, that corresponds to "?"
-if it is to be interpreted as a string.  Since the fan_type is 0,
-fan_info would be invalid, so a value of 0 would be entirely reasonable,
-hex encoded to fan_info=00.  It could also be hex encoded to the string
-"(none)".  If you wanted "0" for fan_type=FAN_RESPONSE_INFO_AUDIT_RULE,
-that would be fan_info=30 if it were interpreted as a string, or
-arguably 3F for an integer of rule (decimal) 63.  Ultimately, fan_type
-should determine how fan_info's hex encoded value should be interpreted.
-
-But ultimately, the point of this patch is to hex encode the fan_info
-field value.
-
-> -Steve
->  
-> > Suggested-by: Paul Moore <paul@paul-moore.com>
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Mon, Aug 8, 2022 at 9:51 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Mon, 2022-08-08 at 15:33 +0100, David Howells wrote:
+> > Remove {cifs,nfs}_fscache_release_page() from fs/cifs/fscache.h.  This
+> > functionality got built directly into cifs_release_folio() and will
+> > hopefully be replaced with netfs_release_folio() at some point.
+> >
+> > The "nfs_" version is a copy and paste error and should've been altered to
+> > read "cifs_".  That can also be removed.
+> >
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Jeff Layton <jlayton@redhat.com>
+> > cc: Steve French <smfrench@gmail.com>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: samba-technical@lists.samba.org
+> > cc: linux-fsdevel@vger.kernel.org
 > > ---
-> >  kernel/auditsc.c | 28 +++++++++++++++++++++-------
-> >  1 file changed, 21 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index f000fec52360..0f747015c577 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -2908,22 +2908,36 @@ void __audit_fanotify(u32 response, size_t len,
-> > char *buf)
-> > 
-> >  	if (!(len && buf)) {
-> >  		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -			  "resp=%u fan_type=0 fan_info=?", response);
-> > +			  "resp=%u fan_type=0 fan_info=3F", response); /* "?" */
-> >  		return;
-> >  	}
-> >  	while (c >= sizeof(struct fanotify_response_info_header)) {
-> > +		struct audit_context *ctx = audit_context();
-> > +		struct audit_buffer *ab;
-> > +
-> >  		friar = (struct fanotify_response_info_audit_rule *)buf;
-> >  		switch (friar->hdr.type) {
-> >  		case FAN_RESPONSE_INFO_AUDIT_RULE:
-> >  			if (friar->hdr.len < sizeof(*friar)) {
-> > -				audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -					  "resp=%u fan_type=%u fan_info=(incomplete)",
-> > -					  response, friar->hdr.type);
-> > +				ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> > +				if (ab) {
-> > +					audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> > +							 response, friar-
-> >hdr.type);
-> > +#define INCOMPLETE "(incomplete)"
-> > +					audit_log_n_hex(ab, INCOMPLETE, sizeof(INCOMPLETE));
-> > +					audit_log_end(ab);
-> > +				}
-> >  				return;
-> >  			}
-> > -			audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -				  "resp=%u fan_type=%u fan_info=%u",
-> > -				  response, friar->hdr.type, friar->audit_rule);
-> > +			ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> > +			if (ab) {
-> > +				audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> > +						 response, friar->hdr.type);
-> > +				audit_log_n_hex(ab, (char *)&friar->audit_rule,
-> > +						sizeof(friar->audit_rule));
-> > +				audit_log_end(ab);
-> > +
-> > +			}
-> >  		}
-> >  		c -= friar->hdr.len;
-> >  		ib += friar->hdr.len;
-> 
-> 
-> 
-> 
+> >
+> >  fs/cifs/fscache.h |   16 ----------------
+> >  1 file changed, 16 deletions(-)
+> >
+> > diff --git a/fs/cifs/fscache.h b/fs/cifs/fscache.h
+> > index aa3b941a5555..67b601041f0a 100644
+> > --- a/fs/cifs/fscache.h
+> > +++ b/fs/cifs/fscache.h
+> > @@ -108,17 +108,6 @@ static inline void cifs_readpage_to_fscache(struct inode *inode,
+> >               __cifs_readpage_to_fscache(inode, page);
+> >  }
+> >
+> > -static inline int cifs_fscache_release_page(struct page *page, gfp_t gfp)
+> > -{
+> > -     if (PageFsCache(page)) {
+> > -             if (current_is_kswapd() || !(gfp & __GFP_FS))
+> > -                     return false;
+> > -             wait_on_page_fscache(page);
+> > -             fscache_note_page_release(cifs_inode_cookie(page->mapping->host));
+> > -     }
+> > -     return true;
+> > -}
+> > -
+> >  #else /* CONFIG_CIFS_FSCACHE */
+> >  static inline
+> >  void cifs_fscache_fill_coherency(struct inode *inode,
+> > @@ -154,11 +143,6 @@ cifs_readpage_from_fscache(struct inode *inode, struct page *page)
+> >  static inline
+> >  void cifs_readpage_to_fscache(struct inode *inode, struct page *page) {}
+> >
+> > -static inline int nfs_fscache_release_page(struct page *page, gfp_t gfp)
+> > -{
+> > -     return true; /* May release page */
+> > -}
+> > -
+> >  #endif /* CONFIG_CIFS_FSCACHE */
+> >
+> >  #endif /* _CIFS_FSCACHE_H */
+> >
+> >
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-- RGB
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
 
+-- 
+Thanks,
+
+Steve
