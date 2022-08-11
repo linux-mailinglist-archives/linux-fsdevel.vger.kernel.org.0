@@ -2,48 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1F75904C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 18:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B77915904EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 18:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238936AbiHKQhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Aug 2022 12:37:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
+        id S238892AbiHKQhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Aug 2022 12:37:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239082AbiHKQgT (ORCPT
+        with ESMTP id S239299AbiHKQgv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Aug 2022 12:36:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DC2816BB;
-        Thu, 11 Aug 2022 09:11:40 -0700 (PDT)
+        Thu, 11 Aug 2022 12:36:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D406611A;
+        Thu, 11 Aug 2022 09:12:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 42E22B82164;
-        Thu, 11 Aug 2022 16:11:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F976C433B5;
-        Thu, 11 Aug 2022 16:11:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9145CB82164;
+        Thu, 11 Aug 2022 16:12:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3496C433D6;
+        Thu, 11 Aug 2022 16:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660234298;
-        bh=utghrLW32ISiREkGWf4NjEJsgWU4hb+gpkwwBKIRt1c=;
+        s=k20201202; t=1660234336;
+        bh=G5xEQW7ZVYbHbIfpH3jAQL5Gnijmtlw8o+XaJN28Zwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogN8qujRzQ9XovTzY+lt86EUk+ZVheOUIWJUoZgmxfiKNkC6OYVDb0EsozBQhQiF8
-         c5Y1A3iXr1yXu5+G8DzoNOq2/wQAT/NO/7ErSggXMjNDDqYBSFsWWOomMgyK/TG8UM
-         xD9vUgiyBzmbjfkX6v5kaA427QZS9NU3TotxfqCAo95etfQGrbK6Yj8iPXsKntB4Ho
-         1NyEfewZllss/AogobOY07qqFE21wxqz9C/G9i7mNO0oBjpg5ksCr9O9+3ujc3ctn4
-         MLTg7xnT3bEB6rxqJQ+zOLvJk41sWL7ZgAVGRHJDcKCBb9MnMINHJGbavwjvnkmw9r
-         GWQgSRTHfReKQ==
+        b=mkPB9LUF5O4YG3MS646VNIBB7GEZbO+m4vhGgAxKUcR2UHzMdi/pCULKGWSAAH1XU
+         fT6LeF4sLBan3U34ckjIIdYJh273UiloOwoYPv20dfidDlIB0jolDp4hP/v3ajcGq0
+         M6X9zatv6QFmX8DlaOd9yivAEKnFPuMlPwvPa91jHribR6AZWv7dSVoB4fx5rKt0wI
+         5HwVwSvw02U2mD9km69YFwr3HrK8fwrmr+/OxoD7lYoYD6MNJRE2+0lAtP1jfgddN3
+         yt5fcl1erdfF6OyU7ibKQhf49Mqh6Lz6/rm3MVpal/M9JSIHHNTn8MBJr+VCX0rZx1
+         tUE6lsH3Pncew==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Oleg.Karfich@wago.com, Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/14] fs/dcache: Disable preemption on i_dir_seq write side on PREEMPT_RT
-Date:   Thu, 11 Aug 2022 12:10:43 -0400
-Message-Id: <20220811161050.1543183-14-sashal@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 11/12] d_add_ci(): make sure we don't miss d_lookup_done()
+Date:   Thu, 11 Aug 2022 12:11:37 -0400
+Message-Id: <20220811161144.1543598-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220811161050.1543183-1-sashal@kernel.org>
-References: <20220811161050.1543183-1-sashal@kernel.org>
+In-Reply-To: <20220811161144.1543598-1-sashal@kernel.org>
+References: <20220811161144.1543598-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,69 +56,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit cf634d540a29018e8d69ab1befb7e08182bc6594 ]
+[ Upstream commit 40a3cb0d2314a41975aa385a74643878454f6eac ]
 
-i_dir_seq is a sequence counter with a lock which is represented by the
-lowest bit. The writer atomically updates the counter which ensures that it
-can be modified by only one writer at a time. This requires preemption to
-be disabled across the write side critical section.
+All callers of d_alloc_parallel() must make sure that resulting
+in-lookup dentry (if any) will encounter __d_lookup_done() before
+the final dput().  d_add_ci() might end up creating in-lookup
+dentries; they are fed to d_splice_alias(), which will normally
+make sure they meet __d_lookup_done().  However, it is possible
+to end up with d_splice_alias() failing with ERR_PTR(-ELOOP)
+without having done so.  It takes a corrupted ntfs or case-insensitive
+xfs image, but neither should end up with memory corruption...
 
-On !PREEMPT_RT kernels this is implicit by the caller acquiring
-dentry::lock. On PREEMPT_RT kernels spin_lock() does not disable preemption
-which means that a preempting writer or reader would live lock. It's
-therefore required to disable preemption explicitly.
-
-An alternative solution would be to replace i_dir_seq with a seqlock_t for
-PREEMPT_RT, but that comes with its own set of problems due to arbitrary
-lock nesting. A pure sequence count with an associated spinlock is not
-possible because the locks held by the caller are not necessarily related.
-
-As the critical section is small, disabling preemption is a sensible
-solution.
-
-Reported-by: Oleg.Karfich@wago.com
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/20220613140712.77932-2-bigeasy@linutronix.de
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dcache.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/dcache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index e12246378834..faf6ca33fd51 100644
+index 05bad55352bb..e42c715fc9e9 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -2455,7 +2455,15 @@ EXPORT_SYMBOL(d_rehash);
- 
- static inline unsigned start_dir_add(struct inode *dir)
- {
--
-+	/*
-+	 * The caller holds a spinlock (dentry::d_lock). On !PREEMPT_RT
-+	 * kernels spin_lock() implicitly disables preemption, but not on
-+	 * PREEMPT_RT.  So for RT it has to be done explicitly to protect
-+	 * the sequence count write side critical section against a reader
-+	 * or another writer preempting, which would result in a live lock.
-+	 */
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		preempt_disable();
- 	for (;;) {
- 		unsigned n = dir->i_dir_seq;
- 		if (!(n & 1) && cmpxchg(&dir->i_dir_seq, n, n + 1) == n)
-@@ -2467,6 +2475,8 @@ static inline unsigned start_dir_add(struct inode *dir)
- static inline void end_dir_add(struct inode *dir, unsigned n)
- {
- 	smp_store_release(&dir->i_dir_seq, n + 2);
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		preempt_enable();
- }
- 
- static void d_wait_lookup(struct dentry *dentry)
+@@ -2089,6 +2089,7 @@ struct dentry *d_add_ci(struct dentry *dentry, struct inode *inode,
+ 	}
+ 	res = d_splice_alias(inode, found);
+ 	if (res) {
++		d_lookup_done(found);
+ 		dput(found);
+ 		return res;
+ 	}
 -- 
 2.35.1
 
