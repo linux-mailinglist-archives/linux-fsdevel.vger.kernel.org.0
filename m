@@ -2,183 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E0458F7E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 08:50:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B6C58F7F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Aug 2022 08:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234282AbiHKGuB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Aug 2022 02:50:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57956 "EHLO
+        id S234100AbiHKGxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Aug 2022 02:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234088AbiHKGuA (ORCPT
+        with ESMTP id S234010AbiHKGxl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Aug 2022 02:50:00 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B488B98F;
-        Wed, 10 Aug 2022 23:49:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A2F4BB81ECD;
-        Thu, 11 Aug 2022 06:49:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C60C433D6;
-        Thu, 11 Aug 2022 06:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660200595;
-        bh=nqJm+oBAG4nwtxVy6XW19Cq4t610ItQ+9KHptzLd5cw=;
+        Thu, 11 Aug 2022 02:53:41 -0400
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D144333C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Aug 2022 23:53:39 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 5BFBBC01F; Thu, 11 Aug 2022 08:53:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1660200817; bh=nhBlDGBzdW/ef8TRsMdZP7ZIRUnOqyqodEb3SWZVQ7U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I7fQ4dsGGwFGm4V3/IaCXSsIUhTDDD69apZZPRnQXPCLIhvyBw22aHvQOp/l1+lT3
-         SEGDkDuRFmqJhPL/gWV8jR96mc0wyHmuv7acoT87ilyA2aWbu1m/TnvKAiMdQEz8zn
-         F27GVd6nR5YVkilwqnumtYH/caN+qlgsF/K3NQNTggqiKpWWUYpKv8ZHn8Aw5CXwbb
-         6cRKFfk+dErYwd45E+4TR/3lPtGWTmZTxNPLYHzbnQSYhq5mbER/logkjyOHtcrEHI
-         5OKsY7B0BVEdUjVFHr4QTPXhcFlkFl3Qk6TkIsz2sDX6VUU9DwEDxvCuhyL6PuOvGs
-         68IJ4wzPQeISw==
-Date:   Thu, 11 Aug 2022 09:49:33 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <namit@vmware.com>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] userfaultfd: update documentation to describe
- /dev/userfaultfd
-Message-ID: <YvSmfcO2b8haJhEe@kernel.org>
-References: <20220808175614.3885028-1-axelrasmussen@google.com>
- <20220808175614.3885028-5-axelrasmussen@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220808175614.3885028-5-axelrasmussen@google.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        b=Bay5QxYSivGYW+8i3QnLyWyFkH6AUqS8erDhFkSJhUHNMTpAdFGEaPxYd9bjAYYdT
+         lqgwC2JlwtXpvuzXeSZn78cLnCPQ1T3oT94ZDWbIjdV2J0M2iw677Wnn3tARdurvIZ
+         oUrXXgHH6sbM5RbGfQnXEmfyHbu5h9LAWDCtC3Iuji9h1afI9/qqdgVtlPWT4jdjih
+         LWJTjvtAxLndE5BkHf3SYWZSYD+B5qzT6MuT+KE0GejMecg14waCquWVbAijOq0tNr
+         WpAb7apE2b7KWTTNB3JeUDOSJiF5i/SAMN0883YEspVA+Uc2lnbU9yyxjKuq8J2kJz
+         JaoLZ3H3LufNQ==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 0029EC009;
+        Thu, 11 Aug 2022 08:53:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1660200816; bh=nhBlDGBzdW/ef8TRsMdZP7ZIRUnOqyqodEb3SWZVQ7U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tyWiPXvYZRGOxODrrkkASrryb0OKgCaqlyKaWB/dmHk7G6KWd4FAzvxndQhBCCqFq
+         bpqUMeYP6XCBNw/oczqQ5Bt1qMbZELfY+3tM5U0Jkjaf4Uh4q22dCoSOyM7IUtBoBw
+         BPKEKBa17TW1bWdVCcqeRyJQmBJIGr619f5hlMgEhEpCZodIfn94Hak2RA16dyYffV
+         nU74kKuo7OQ69z6TT5u/CY9lZ+Iim0P/X+An5u7mzP3GrWyucp1nLUPt70a7YNYyOI
+         dfByLVurgikEBuWJDVa2k/4rjsPkZiMRecOZ/ZkGezrYBXmx4VHYmSq+COY+1U4B9P
+         KBFfQwfz3zVQg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id ce3c10db;
+        Thu, 11 Aug 2022 06:53:29 +0000 (UTC)
+Date:   Thu, 11 Aug 2022 15:53:14 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+2349f5067b1772c1d8a5@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>
+Subject: Re: INFO: task hung in iterate_supers
+Message-ID: <YvSnWrfU7kM4Ia9r@codewreck.org>
+References: <000000000000da8a9b0570a29c01@google.com>
+ <f00146b5-0a14-ac24-3d7b-3d4deeb96359@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f00146b5-0a14-ac24-3d7b-3d4deeb96359@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 08, 2022 at 10:56:13AM -0700, Axel Rasmussen wrote:
-> Explain the different ways to create a new userfaultfd, and how access
-> control works for each way.
-> 
-> Acked-by: Peter Xu <peterx@redhat.com>
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> ---
->  Documentation/admin-guide/mm/userfaultfd.rst | 41 ++++++++++++++++++--
->  Documentation/admin-guide/sysctl/vm.rst      |  3 ++
->  2 files changed, 41 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-> index 6528036093e1..a76c9dc1865b 100644
-> --- a/Documentation/admin-guide/mm/userfaultfd.rst
-> +++ b/Documentation/admin-guide/mm/userfaultfd.rst
-> @@ -17,7 +17,10 @@ of the ``PROT_NONE+SIGSEGV`` trick.
->  Design
->  ======
->  
-> -Userfaults are delivered and resolved through the ``userfaultfd`` syscall.
-> +Userspace creates a new userfaultfd, initializes it, and registers one or more
-> +regions of virtual memory with it. Then, any page faults which occur within the
-> +region(s) result in a message being delivered to the userfaultfd, notifying
-> +userspace of the fault.
->  
->  The ``userfaultfd`` (aside from registering and unregistering virtual
->  memory ranges) provides two primary functionalities:
-> @@ -34,12 +37,11 @@ The real advantage of userfaults if compared to regular virtual memory
->  management of mremap/mprotect is that the userfaults in all their
->  operations never involve heavyweight structures like vmas (in fact the
->  ``userfaultfd`` runtime load never takes the mmap_lock for writing).
-> -
->  Vmas are not suitable for page- (or hugepage) granular fault tracking
->  when dealing with virtual address spaces that could span
->  Terabytes. Too many vmas would be needed for that.
->  
-> -The ``userfaultfd`` once opened by invoking the syscall, can also be
-> +The ``userfaultfd``, once created, can also be
->  passed using unix domain sockets to a manager process, so the same
->  manager process could handle the userfaults of a multitude of
->  different processes without them being aware about what is going on
-> @@ -50,6 +52,39 @@ is a corner case that would currently return ``-EBUSY``).
->  API
->  ===
->  
-> +Creating a userfaultfd
-> +----------------------
-> +
-> +There are two ways to create a new userfaultfd, each of which provide ways to
-> +restrict access to this functionality (since historically userfaultfds which
-> +handle kernel page faults have been a useful tool for exploiting the kernel).
-> +
-> +The first way, supported since userfaultfd was introduced, is the
-> +userfaultfd(2) syscall. Access to this is controlled in several ways:
-> +
-> +- Any user can always create a userfaultfd which traps userspace page faults
-> +  only. Such a userfaultfd can be created using the userfaultfd(2) syscall
-> +  with the flag UFFD_USER_MODE_ONLY.
-> +
-> +- In order to also trap kernel page faults for the address space, then either
+Hi,
 
-                                    I think "then" is excessive here ^
+Tetsuo Handa wrote on Thu, Aug 11, 2022 at 03:01:23PM +0900:
+> https://syzkaller.appspot.com/text?tag=CrashReport&x=154869fd080000
+> suggests that p9_client_rpc() is trapped at infinite retry loop
 
-> +  the process needs the CAP_SYS_PTRACE capability, or the system must have
-> +  vm.unprivileged_userfaultfd set to 1. By default, vm.unprivileged_userfaultfd
-> +  is set to 0.
-> +
-> +The second way, added to the kernel more recently, is by opening and issuing a
+Would be far from the first one, Dmitry brought this up years ago...
 
-Maybe:
 
-..., is by opening /dev/userfaultfd and issuing USERFAULTFD_IOC_NEW ioctl
-to it.
+> But why does p9 think that Flush operation worth retrying forever?
 
-> +USERFAULTFD_IOC_NEW ioctl to /dev/userfaultfd. This method yields equivalent
-> +userfaultfds to the userfaultfd(2) syscall.
-> +
-> +Unlike userfaultfd(2), access to /dev/userfaultfd is controlled via normal
-> +filesystem permissions (user/group/mode), which gives fine grained access to
-> +userfaultfd specifically, without also granting other unrelated privileges at
-> +the same time (as e.g. granting CAP_SYS_PTRACE would do). Users who have access
-> +to /dev/userfaultfd can always create userfaultfds that trap kernel page faults;
-> +vm.unprivileged_userfaultfd is not considered.
-> +
-> +Initializing a userfaultfd
-> +--------------------------
-> +
->  When first opened the ``userfaultfd`` must be enabled invoking the
->  ``UFFDIO_API`` ioctl specifying a ``uffdio_api.api`` value set to ``UFFD_API`` (or
->  a later API version) which will specify the ``read/POLLIN`` protocol
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index f74f722ad702..b3e40b42e1b3 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -927,6 +927,9 @@ calls without any restrictions.
->  
->  The default value is 0.
->  
-> +Another way to control permissions for userfaultfd is to use
-> +/dev/userfaultfd instead of userfaultfd(2). See
-> +Documentation/admin-guide/mm/userfaultfd.rst.
->  
->  user_reserve_kbytes
->  ===================
-> -- 
-> 2.37.1.559.g78731f0fdb-goog
-> 
+I can't answer much more than "it's how it was done"; I started
+implementing asynchronous flush back when this was first discussed but
+my implementation introduced a regression somewhere and I never had time
+to debug it; the main "problem" is that we (currently) have no way of
+freeing up resources associated with that request if we leave the
+thread.
+The first step was adding refcounting to requests and this is somewhat
+holding up, so all's left now would be to properly clean things up if we
+leave this call.
+
+You can find inspiration in my old patches[1] if you'd like to give it a
+try:
+[1] https://lore.kernel.org/all/20181217110111.GB17466@nautica/T/
+
+
+Note that there is one point that wasn't discussed back then, but
+according to the 9p man page for flush[2], the request should be
+considered successful if the original request's reply comes before the
+flush reply.
+This might be important e.g. with caching enabled and mkdir, create or
+unlink with caching enabled as the 9p client has no notion of cache
+coherency... So even if the caller itself will be busy dealing with a
+signal at least the cache should be kept coherent, somehow.
+I don't see any way of doing that with the current 9pfs/9pnet layering,
+9pnet cannot call back in the vfs.
+
+[2] https://9fans.github.io/plan9port/man/man9/flush.html
+
+
+> The peer side should be able to detect close of file descriptor on local
+> side due to process termination via SIGKILL, and the peer side should be
+> able to perform appropriate recovery operation even if local side cannot
+> receive response for Flush operation.
+
+The peer side (= server in my vocabulary) has no idea about processes or
+file descriptors, it's the 9p client's job to do any such cleanup.
+
+The vfs takes care of calling the proper close functions that'll end up
+in clunk for fids properly, there was a report of fid leak recently but
+these are rare enough...
+
+The problem isn't open fids though, but really resources associated with
+the request itself; it shouldn't be too hard to do (ignoring any cache
+coherency issue), but...
+
+> Thus, why not to give up upon SIGKILL?
+
+... "Nobody has done it yet".
+
+
+Last year I'd probably have answered that I'm open to funding, but
+franlky don't have the time anyway; I'll be happy to review and lightly
+test anything sent my way in my meager free time though.
+
+(And yes, I agree ignoring sigkill is bad user experience)
 
 -- 
-Sincerely yours,
-Mike.
+Dominique
