@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6F759152E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 20:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BDC591559
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 20:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238997AbiHLSBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Aug 2022 14:01:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
+        id S239126AbiHLSMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Aug 2022 14:12:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238136AbiHLSBl (ORCPT
+        with ESMTP id S238127AbiHLSMa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Aug 2022 14:01:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7F582861;
-        Fri, 12 Aug 2022 11:01:39 -0700 (PDT)
+        Fri, 12 Aug 2022 14:12:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CE5B2D8A;
+        Fri, 12 Aug 2022 11:12:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 94D1FB8252C;
-        Fri, 12 Aug 2022 18:01:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13741C433D7;
-        Fri, 12 Aug 2022 18:01:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 94A54616EA;
+        Fri, 12 Aug 2022 18:12:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35A1C433C1;
+        Fri, 12 Aug 2022 18:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660327297;
-        bh=MJn6b9K2tOrxM+NNckNZKyioTF5k86AdU9ZZ5TUKmGk=;
+        s=k20201202; t=1660327949;
+        bh=Rv6lMtGY5d9H88atrguKPOp8nVJS42od+lW9pBzVVxQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X97sPjmGf9xks/NCjFO0MbvVTowoL0Yr57yqPTst5NNZJGWuznicH20iQIv5VE6eX
-         ZLRzUb1rk/OxAfScBf/dKSa+J/GyCOuJQUxvWIKVJZD37IKqH7C8T3LsW8GXrVxFrZ
-         59QdjyMg6jdpxMa8y3H6tyctyKYna1zZ+3jm9DLiYv1y1JUW5DyTm87xr4jNiO18k8
-         Yn8LCrBzNnN9iIj/M4z2H6+hqkj3LTtPt2vpvNfPDaEHz94bpitYrAgALA5BlUTZS6
-         /iNTkkGumuJowoX0LEOl4Is0NhVlAjIMOZ4sW42Qa86+/FBz9lPPEsZjYWgRCmosZk
-         Da0pajfWAXYiw==
-Date:   Fri, 12 Aug 2022 11:01:35 -0700
+        b=eTJV4KhrHOaSfFxNURrSUMS6gfqTumbLuHtpyk/xawEvrWJ9/TX+wPXUKZpVmx2MM
+         hBjDW3Nf2JBINWDmIevduFbMAncjc5EC3ICCZDJrdkbwn5la44RnV5IKmkn7eM1qQ8
+         KcIqKPzUlFTbuLHbR8p6RNYKgzL2V+Mr6AUvxuboQQ9jZfHV6+/THXkty2iASGS33J
+         OW1vsyvTDWI983hyNLe2kUcZRgUfmNlCKhfPT1JbGcrynnB24WZF1WS6KJ2Pk/DNlH
+         kRyU1DngWKj73oWw6nzlpK/Ck9Xtw+A++TgdtpnJVja+OizP65iKcv5/tbJ4YGEeCN
+         0p/2Qg9YtVbmQ==
+Date:   Fri, 12 Aug 2022 11:12:27 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Lukas Czerner <lczerner@redhat.com>
 Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu, jlayton@kernel.org,
@@ -40,7 +40,7 @@ Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu, jlayton@kernel.org,
         Christoph Hellwig <hch@infradead.org>
 Subject: Re: [PATCH v3 2/3] fs: record I_DIRTY_TIME even if inode already has
  I_DIRTY_INODE
-Message-ID: <YvaVf1Zl/Y2vHMpi@sol.localdomain>
+Message-ID: <YvaYC+LRFqQJT0U9@sol.localdomain>
 References: <20220812123727.46397-1-lczerner@redhat.com>
  <20220812123727.46397-2-lczerner@redhat.com>
 MIME-Version: 1.0
@@ -58,30 +58,21 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, Aug 12, 2022 at 02:37:26PM +0200, Lukas Czerner wrote:
-> Fix it by allowing I_DIRTY_TIME to be set even if the inode already has
-> I_DIRTY_INODE.
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index 6cd6953e175b..5d72b6ba4e63 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -274,6 +274,8 @@ or bottom half).
+>  	This is specifically for the inode itself being marked dirty,
+>  	not its data.  If the update needs to be persisted by fdatasync(),
+>  	then I_DIRTY_DATASYNC will be set in the flags argument.
+> +	If the inode has dirty timestamp and lazytime is enabled
+> +	I_DIRTY_TIME will be set in the flags.
 
-How can this be reconciled with the below code in __mark_inode_dirty(), which
-this patch doesn't touch?
-
-	/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-	flags &= ~I_DIRTY_TIME;
-
-Also inode_is_dirtytime_only(), which I thought I mentioned before:
-
-	/*
-	 * Returns true if the given inode itself only has dirty timestamps (its pages
-	 * may still be dirty) and isn't currently being allocated or freed.
-	 * Filesystems should call this if when writing an inode when lazytime is
-	 * enabled, they want to opportunistically write the timestamps of other inodes
-	 * located very nearby on-disk, e.g. in the same inode block.  This returns true
-	 * if the given inode is in need of such an opportunistic update.  Requires
-	 * i_lock, or at least later re-checking under i_lock.
-	 */
-	static inline bool inode_is_dirtytime_only(struct inode *inode)
-	{
-		return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-					I_FREEING | I_WILL_FREE)) == I_DIRTY_TIME;
-	}
+The new sentence is not always true, since with this patch if
+__mark_inode_dirty(I_DIRTY_INODE) is called twice on an inode that has
+I_DIRTY_TIME, the second call will no longer include I_DIRTY_TIME -- even though
+the inode still has dirty timestamps.  Please be super clear about what the
+flags actually mean -- I'm still struggling to understand this patch...
 
 - Eric
