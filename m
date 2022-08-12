@@ -2,262 +2,496 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D23EF590976
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 02:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DDB59098A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 02:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235221AbiHLALz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Aug 2022 20:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40922 "EHLO
+        id S235083AbiHLAX3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Aug 2022 20:23:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234978AbiHLALv (ORCPT
+        with ESMTP id S232166AbiHLAX2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Aug 2022 20:11:51 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDBA12D0B;
-        Thu, 11 Aug 2022 17:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660263110; x=1691799110;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=5wS6rrV06BCw25YCOy+fEIRI8J6W/lqIIvEQMG6v5eQ=;
-  b=eysnshAuwKfrElzi6Lp0y/Mhc9+DOyBuFCcEiEnx8iLocphq1bJB534R
-   2ZuehWsaUvDx4PcOKOGCewzZlepDwitqDwjKZArO0jSXE4e7fFaxUjaZF
-   s8O3KvVMYM5jsokZuh8Yh9WAmO35uniz3AfY+Kk/R2Xl48YVAnK9Iybiy
-   3aLytLFnCMVFJUDQVELDQ7PszIiXMZvUJxNwxD7dbBT9sAr8p0Z8B4L0S
-   /+c3ZS9DItVyc/bZfXdGvhht5o9tYdcKjJApmpNUYgPcolI0WWhsy6Qq5
-   N5DH8crvzMFY+jyYMrPs/PNnFtURgpJ98vnNYPSpp0V/7VkQfk3NJCHEV
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10436"; a="355493922"
-X-IronPort-AV: E=Sophos;i="5.93,231,1654585200"; 
-   d="scan'208";a="355493922"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2022 17:11:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,231,1654585200"; 
-   d="scan'208";a="556333922"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orsmga003.jf.intel.com with ESMTP; 11 Aug 2022 17:11:49 -0700
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 11 Aug 2022 17:11:49 -0700
-Received: from orsmsx607.amr.corp.intel.com (10.22.229.20) by
- ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 11 Aug 2022 17:11:48 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx607.amr.corp.intel.com (10.22.229.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28 via Frontend Transport; Thu, 11 Aug 2022 17:11:48 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.28; Thu, 11 Aug 2022 17:11:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cBDH5q6WOduiFoCyyLjaWMhQchifUZ/tSGr7Rd7tmqKoi4xzzfQh0nRYoCDydxaSwEi8QVUDdEApkxGm3X3cD8PPNUqcCf+1RJRcnH0HdBrFZFw6Za/RBgEIMcWiC8JHn4v3B3IHYni0UlxZBmbZ+o1klZBT847Q94EaMGXOTpv2v1Nm7WT4e+uqcdgSFVueULXJtcAcWqvPimaNUYzPKwXzwPir1iA3SocJog9RwrPxSvOwlFGxva1XGC/nEJOHi018b86gQUIjyd7ENAPmzQMMKmtrftaBJMSVPqykIxgJ9G6VQJ1ba0bg1TiJhiVsaa52V7/tpfnwv/neZopeZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MBhHUTH+9GNdied5TFUcxqx3/6ELyQz6yXp/rza8D8k=;
- b=EIjCqYmXp14+2qARIqHFux2M1kTxDpFdu8nv2Y6Bjluh3CjCB7BXZRsXxxN+Y86p3/nppMcBioLFz56bACI1gGdxfs+M9qAlKZpElQcj/A+3ednWSjY9U9AXaSSq0NyoZWr2ZtAKzSkig70s3kQY9Hbj2GSOuQ2u2yGJM2uPl8lBOPz105kVJxAXUmuv6fSfHf/fbPJzhtW0mm1ywVA2PNYmkLfL2uNa7AtueqnMuQbuM8QsRSjnMKhs4l+fCR8kDiuD5KtsrAKiDKUwKfm/xQO3GmmIjIS4r8IY9LqBPghKt1UbARv+lSP4JpGHByNV8oAKDwvQV2MQPb17sp1Jmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6311.namprd11.prod.outlook.com (2603:10b6:8:a6::21) by
- BN9PR11MB5452.namprd11.prod.outlook.com (2603:10b6:408:101::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.10; Fri, 12 Aug
- 2022 00:11:26 +0000
-Received: from DM4PR11MB6311.namprd11.prod.outlook.com
- ([fe80::a85f:4978:86e2:8b44]) by DM4PR11MB6311.namprd11.prod.outlook.com
- ([fe80::a85f:4978:86e2:8b44%7]) with mapi id 15.20.5525.011; Fri, 12 Aug 2022
- 00:11:25 +0000
-Date:   Thu, 11 Aug 2022 17:11:22 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Kees Cook <keescook@chromium.org>
-CC:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        <ebiederm@xmission.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-next@vger.kernel.org>, <sfr@canb.auug.org.au>,
-        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+3250d9c8925ef29e975f@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] linux-next boot error: BUG: unable to handle kernel
- paging request in kernel_execve
-Message-ID: <YvWaqhLGsBp9ynIq@iweiny-desk3>
-References: <0000000000008c0ba505e5f22066@google.com>
- <202208110830.8F528D6737@keescook>
- <YvU+0UHrn9Ab4rR8@iweiny-desk3>
- <YvVPtuel8NMmiTKk@iweiny-desk3>
- <202208111356.97951D32@keescook>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <202208111356.97951D32@keescook>
-X-ClientProxiedBy: SJ0PR03CA0023.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::28) To DM4PR11MB6311.namprd11.prod.outlook.com
- (2603:10b6:8:a6::21)
+        Thu, 11 Aug 2022 20:23:28 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C8CA0325
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Aug 2022 17:23:26 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id y1so12679059plb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Aug 2022 17:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=FzChfBtMnvGbn6nHGhL5atomRkfAMS/Tv0evqU2Vi8U=;
+        b=n04JnGRiFV7zbGkfDW3TI4YjySqvBG6U7JvalvDUikX/silOhUOGsbosCih096aVuA
+         nsaAXcwc/Avwvt+sNcdbiqPac0ttp0iXpNS8FxOIsjhjhdbUdbWZcgGtzKzvB3z8QdL8
+         M5EVWoC1Teg3apO9Qs42ZwU6yJ0LxQDIeJECHAOtz0RDHggdrLZIfU8Eh3YKAoPg+DVA
+         P1NRhcVDTXFqICeB34JtXgxqjdjnDwfCLk+GttNicQklkBZ+FtvfKNVdoti/W76LIqpK
+         jxCjVUvrUL/fltvUh/3H3wcebAOH0Ye55RK/NN0ULMRDEx3PHyt71JARxJ7qIs3KPvYl
+         TNDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=FzChfBtMnvGbn6nHGhL5atomRkfAMS/Tv0evqU2Vi8U=;
+        b=7xnIcb91y9rJtCPCTVN3mySE9rZKagKW3HylNp14SrVTKS2CQMb0cjFQYDcl5dfCcy
+         L+o40Ufw0GT5b07FywkEmT2UWFGhFjAK8lDuf9bZnySwiK2ChlqHpeoRjrxDoKq/o5Hc
+         PL9xZdplRlm7NmB4h3IU9xF50KHAluOeCxDpDny6pxUj+ACUKsTgEHJuMkDIB+EXyWwN
+         PO+Dk4FAo6Be1T25kt8hH3uzEcCdk9CSxBagT0ZV9nuvdhqbpS4ENuQOBOuRPDJKdRFJ
+         qZUmLX/BdPJhQQyfuErNuhtKOkLEpgVBiyRh7Om1aU4CfhGI2OLm+4kH/MxnI7lPBkuR
+         LhGw==
+X-Gm-Message-State: ACgBeo0XyliODahntBh0Bxb+2WZpYqWCggIEIPrfbUMx07d/PPGnRnz7
+        eoHiDN61Bw/VhXK/l+fFR6DXsg==
+X-Google-Smtp-Source: AA6agR4xscTOvBtGXn93SMyyhAheRWgiJgqT6YwqJfVWgahy1yGkytyxlnedTONNUYOOymcqnSN9ew==
+X-Received: by 2002:a17:90a:b00f:b0:1f7:67c6:5df5 with SMTP id x15-20020a17090ab00f00b001f767c65df5mr1458944pjq.59.1660263806059;
+        Thu, 11 Aug 2022 17:23:26 -0700 (PDT)
+Received: from google.com ([2401:fa00:9:211:a9dd:2a13:8c0:276])
+        by smtp.gmail.com with ESMTPSA id w11-20020a170902ca0b00b001715954af99sm82842pld.212.2022.08.11.17.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Aug 2022 17:23:25 -0700 (PDT)
+Date:   Fri, 12 Aug 2022 10:23:13 +1000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
+ decision context
+Message-ID: <YvWdcX1Beo9ZbFXh@google.com>
+References: <cover.1659996830.git.rgb@redhat.com>
+ <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 000bb078-9de0-438c-b6b5-08da7bf7324c
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5452:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VzG22P7ajQJC28Knv+d8741SuBzOPc9MXRvpg85uPcaud+UMKuA4d6/b9pbOuSqCkyUQsuvH+3EVVYEvK3Ko8Tlp8PrpFB5mh4ecRK7zB2eVhc3G9Ikm7WVBr2mldqbNrOq4/jQW0xehdpG4nX8t6/tZ+Wpu/XwsfbU95IgsJY6hr5fPOcWMznZ1z85iT5HOCsaSh5M/1GM/+jaEB1wEjAxxNARo4xfRD7sVjq2EuHwj00oqSKZJvBcknKtPNKmYPNNEsdAQJeP6V1qxI1jqENs5eFxS6/LfV8ZOyaUNvrt06a58hafy0ngPpCNl8svrAel/+FGvKTRBGqoZW0z4pXPFkAsQG0Js6P8Zv2EmB7CHB2XdYqAhAL9LnC/hg5q/0STkTaadCgQGghkCNa79EqU1rF4GEEpLEHZfrz32uJPqv0F2J+h5ih4mn0weyrbU52HRSss183kmMSwiqoTTGCBpurXuwrS3iK0l+tuOymIJH62V7YfLU8alYi3vfCAaaxqN0JLkH/64SqEbeoVAMrkm0TtZLYCrPsKqZnVTWZweICAnjmMy1H+IhdR2XMvicDSQ7fSCWwmdBfjnSL9nF/PE/qZeDhiMHuLKHf3Wb0MvJ4xgk4NSv2MwDFNi0Rd2VjoaqnJfyy+kv90Vh73XuAB8iYhQ3y3AxIfUS0cXpcRvYzVG/Z4UTxY76Rl6n0DsbsOBX2JpVFnp2rNyYty58G8w3zwct3uvoJAZYENHzwOWkUFf7znfRlfnczr5a5BvMEXeVVjbM2jyOnSkcQXxOZDuAZE1ecbN9246BhDgzeiCfhn/8BNDz7wg+dNP6dxU50skvi5MDCN6/F7G3RrY2HIEjYJ9CehD7G6xHw+//lI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6311.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(366004)(396003)(39860400002)(136003)(376002)(346002)(186003)(83380400001)(82960400001)(33716001)(38100700002)(478600001)(966005)(6486002)(66556008)(316002)(6666004)(41300700001)(6916009)(7416002)(44832011)(5660300002)(54906003)(6512007)(2906002)(8936002)(26005)(66946007)(8676002)(9686003)(66476007)(4326008)(86362001)(6506007)(99710200001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qrMoW/YS1R1M6aP+D/hrCEkP2HlRwtDAeb4muJnA25Yhdhy+pvXuzgFQjQy5?=
- =?us-ascii?Q?gzC18t+5faUqFtf9aJw0PnWgqm3ORgCZV90yuiewCyb0F5hGYjfQPmJ79VQE?=
- =?us-ascii?Q?EYA75heZoPDQ8xDNSTbA9EqTGib+t5k1fQPVF5P0wH53mRYY/i/AVJzoC2bV?=
- =?us-ascii?Q?S6kgU+Be/395QZ3Ui3enB0YrRWH6zZlY5bwuMmcyufQqq76LvXMEm3OePMmf?=
- =?us-ascii?Q?IZLPOrHLHEK5XrJLwbmvU6W1Yt4uTOjcFrrR6ifhxr7c/DfAUrF4LUJYsj5A?=
- =?us-ascii?Q?QyXsyG7MhFPptbH4KdDr+ZGFHKQd+rAqok7FzhvxPLULoi+slZAIptWZOZ9F?=
- =?us-ascii?Q?EhuHK6cBSlfug+nYtYWPOmpTfuFwwQ9WBVAMExD7HQabXaSS7YHb/tGMFCeU?=
- =?us-ascii?Q?NWdoGpVFjIyc1w7aDwuYZUgJ4Y5nwi7zJm+Ps+AV+Ixg85Moo3LeRLtoi6mk?=
- =?us-ascii?Q?xY/QdbER04QH8dqClhGdPK4AAPxDSRg6axV0iKz0apph0Lpnsmf9iXH8uacQ?=
- =?us-ascii?Q?O/FhVNr0nLPGlWw9nY+nCnFYVVATAt19iyTKRlj0+yyzsgR5uGf+R9fDG9Ni?=
- =?us-ascii?Q?4LBNvI8QjIm+KKRl5sNmRbtFlEesTWq7ckCPlCEBOidWdHnw0wA8a1UcaY40?=
- =?us-ascii?Q?xxzuEMiYrvLL/AFDjvdlmq828Z+7ct9+xM1B+9GNuZmyVLeZ/9f5l5oltAup?=
- =?us-ascii?Q?zFciI2afurmV+MamkG+rfHJL4Vldfbe9xB8Sm3+T6qd4/lS/r0vt7SDkRBP1?=
- =?us-ascii?Q?4dcJaWQ2F5brFQZOcddcw88bnsaGmcPc8mxjOB55e6pAvk/xQ4D7W8CGbFMT?=
- =?us-ascii?Q?Skc702tjeyke5dtEHKZ5g5v3LILn/QGN4jOSxdc+ch8WHYilgn5NTFrG4o03?=
- =?us-ascii?Q?DG5BEVuI4/+wOj5MV1kkD+O4b4FEAXgRWX/VjLeXTBOaFOPfMYN7fIV4sJWz?=
- =?us-ascii?Q?igMDYjN8dDaQxgb0fczZnSR2ZZEZ+83YZg73Suky1GqhWv9KHEqIuy6z6dJb?=
- =?us-ascii?Q?2/or6BL5q93H5g5PXUHnGNKHjgg1AiyEIMpjKowXux09PbNbmVQfHAIgsOol?=
- =?us-ascii?Q?dg01cSlm4bfQ8qiv1V0Ta4Xi828e+tGCmhYW5+Fre1+Tqhjr5AwjMVHcO+7e?=
- =?us-ascii?Q?z94pwNcuGAuvYcAQF4wXYK/plWL5WDtujOnv2xrBw8aBiFQE/uZhp6c3Br0u?=
- =?us-ascii?Q?VMETXUF4Qm9SAFSUXDGBGb6kqwhoq8QAFXM3dg0nrBHyJ7gD0FGMhoUy5FC1?=
- =?us-ascii?Q?+QjX1uz6WLVuPqpYFuAUdeOU8fn93d13j5iliZHhS7gLYZjDXLS7lekNMntJ?=
- =?us-ascii?Q?yvybgbKDmmwDnP0B/EIoJrptp7JfU1T3IZJ2yxiHziBrEdvRaqJzJaTeJqbu?=
- =?us-ascii?Q?vyV9QYUxN34l9CsteYMx+CIFyo3SnwFdKVXIWJP2IhUgpPIXnOl9lz5rIvqv?=
- =?us-ascii?Q?6n4EYpxvuqAchSpnhKF+UG29Z1YcKHc0gB2FV4S4xHCeq5KDRbR+qUuPOibc?=
- =?us-ascii?Q?MoBde6ClhYVVg+Uuj98hZeExVCz1Nb/UJB1YsUPmhrrL/oxv5LQA6RYTR25e?=
- =?us-ascii?Q?C+Qfz2v1vSB4OmVIW64kwwFNyjVCI/oFMu5nRzSs?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 000bb078-9de0-438c-b6b5-08da7bf7324c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6311.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2022 00:11:25.8623
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WKgIsbnwHXc1Nl+BvmxYjUxBpbAcOc27u+GTL/j5TXC527TTHDlBFRQGXEq2I8tKcwUpQCVtBNdudEJher3o1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5452
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
+X-Spam-Status: No, score=-14.5 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,FSL_HELO_FAKE,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 02:00:59PM -0700, Kees Cook wrote:
-> On Thu, Aug 11, 2022 at 11:51:34AM -0700, Ira Weiny wrote:
-> > On Thu, Aug 11, 2022 at 10:39:29AM -0700, Ira wrote:
-> > > On Thu, Aug 11, 2022 at 08:33:16AM -0700, Kees Cook wrote:
-> > > > Hi Fabio,
-> > > > 
-> > > > It seems likely that the kmap change[1] might be causing this crash. Is
-> > > > there a boot-time setup race between kmap being available and early umh
-> > > > usage?
-> > > 
-> > > I don't see how this is a setup problem with the config reported here.
-> > > 
-> > > CONFIG_64BIT=y
-> > > 
-> > > ...and HIGHMEM is not set.
-> > > ...and PREEMPT_RT is not set.
-> > > 
-> > > So the kmap_local_page() call in that stack should be a page_address() only.
-> > > 
-> > > I think the issue must be some sort of race which was being prevented because
-> > > of the preemption and/or pagefault disable built into kmap_atomic().
-> > > 
-> > > Is this reproducable?
-> > > 
-> > > The hunk below will surely fix it but I think the pagefault_disable() is
-> > > the only thing that is required.  It would be nice to test it.
-> > 
-> > Fabio and I discussed this.  And he also mentioned that pagefault_disable() is
-> > all that is required.
+On Tue, Aug 09, 2022 at 01:22:53PM -0400, Richard Guy Briggs wrote:
+> This patch adds a flag, FAN_INFO and an extensible buffer to provide
+> additional information about response decisions.  The buffer contains
+> one or more headers defining the information type and the length of the
+> following information.  The patch defines one additional information
+> type, FAN_RESPONSE_INFO_AUDIT_RULE, an audit rule number.  This will
+> allow for the creation of other information types in the future if other
+> users of the API identify different needs.
 > 
-> Okay, sounds good.
-> 
-> > Do we have a way to test this?
-> 
-> It doesn't look like syzbot has a reproducer yet, so its patch testing
-> system[1] will not work. But if you can send me a patch, I could land it
-> in -next and we could see if the reproduction frequency drops to zero.
-> (Looking at the dashboard, it's seen 2 crashes, most recently 8 hours
-> ago.)
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
 
-Patch sent.
+Just some comments/questions.
 
-https://lore.kernel.org/lkml/20220812000919.408614-1-ira.weiny@intel.com/
+>  fs/notify/fanotify/fanotify.c      |  10 ++-
+>  fs/notify/fanotify/fanotify.h      |   2 +
+>  fs/notify/fanotify/fanotify_user.c | 104 +++++++++++++++++++++++------
+>  include/linux/fanotify.h           |   5 ++
+>  include/uapi/linux/fanotify.h      |  27 +++++++-
+>  5 files changed, 123 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 4f897e109547..0f36062521f4 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -262,13 +262,16 @@ static int fanotify_get_response(struct fsnotify_group *group,
+>  	}
+>  
+>  	/* userspace responded, convert to something usable */
+> -	switch (event->response & ~FAN_AUDIT) {
+> +	switch (event->response & FANOTIFY_RESPONSE_ACCESS) {
+>  	case FAN_ALLOW:
+>  		ret = 0;
+>  		break;
+>  	case FAN_DENY:
+> -	default:
+>  		ret = -EPERM;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
 
-But I'm more confused after looking at this again.
+I'm definitely of the opinion that this shouldn't change as it
+completely misrepresents why the acting process failed to perform
+whatever operation it is intending to perform on the underlying
+file.
 
-Ira
+Also, at this point, will we ever get into a situation where the
+permission event was responded to using an invalid access response
+flag? That is, if the event listener responds to a permission event
+with something other than FAN_{ALLOW, DENY}, then it in turn already
+receives an -EINVAL error. Having said that, I don't see how we'd ever
+get to the point where the access list would contain a queued
+permission event with an invalid response flag. I'm not saying that
+this check should be dropped entirely, but rather returning -EINVAL
+AFAICT to the actor process really doesn't make sense.
 
-> 
-> -Kees
-> 
-> [1] https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
-> 
-> > > > > syzbot found the following issue on:
-> > > > > 
-> > > > > HEAD commit:    bc6c6584ffb2 Add linux-next specific files for 20220810
-> > > > > git tree:       linux-next
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=115034c3080000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5784be4315a4403b
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3250d9c8925ef29e975f
-> > > > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > > > 
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > > Reported-by: syzbot+3250d9c8925ef29e975f@syzkaller.appspotmail.com
-> > > > > 
-> > > > > BUG: unable to handle page fault for address: ffffdc0000000000
-> > > > > #PF: supervisor read access in kernel mode
-> > > > > #PF: error_code(0x0000) - not-present page
-> > > > > PGD 11826067 P4D 11826067 PUD 0 
-> > > > > Oops: 0000 [#1] PREEMPT SMP KASAN
-> > > > > CPU: 0 PID: 1100 Comm: kworker/u4:5 Not tainted 5.19.0-next-20220810-syzkaller #0
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-> > > > > RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
-> > > > > Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
-> > > > > RSP: 0000:ffffc90005c5fe10 EFLAGS: 00010246
-> > > > > RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-> > > > > RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
-> > > > > RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
-> > > > > R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
-> > > > > R13: ffff88814764cc00 R14: ffff000000000000 R15: ffff88814764cc00
-> > > > > FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: ffffdc0000000000 CR3: 000000000bc8e000 CR4: 00000000003506f0
-> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > Call Trace:
-> > > > >  <TASK>
-> > > > >  strnlen include/linux/fortify-string.h:119 [inline]
-> > > > >  copy_string_kernel+0x26/0x250 fs/exec.c:616
-> > > > >  copy_strings_kernel+0xb3/0x190 fs/exec.c:655
-> > > > >  kernel_execve+0x377/0x500 fs/exec.c:1998
-> > > > >  call_usermodehelper_exec_async+0x2e3/0x580 kernel/umh.c:112
-> > > > >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
-> > > > >  </TASK>
-> > [...]
-> > > > > ---
-> > > > > This report is generated by a bot. It may contain errors.
-> > > > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > > > > 
-> > > > > syzbot will keep track of this issue. See:
-> > > > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
+>  	/* Check if the response should be audited */
+> @@ -560,6 +563,8 @@ static struct fanotify_event *fanotify_alloc_perm_event(const struct path *path,
+>  
+>  	pevent->fae.type = FANOTIFY_EVENT_TYPE_PATH_PERM;
+>  	pevent->response = 0;
+> +	pevent->info_len = 0;
+> +	pevent->info_buf = NULL;
+>  	pevent->state = FAN_EVENT_INIT;
+>  	pevent->path = *path;
+>  	path_get(path);
+> @@ -996,6 +1001,7 @@ static void fanotify_free_path_event(struct fanotify_event *event)
+>  static void fanotify_free_perm_event(struct fanotify_event *event)
+>  {
+>  	path_put(fanotify_event_path(event));
+> +	kfree(FANOTIFY_PERM(event)->info_buf);
+>  	kmem_cache_free(fanotify_perm_event_cachep, FANOTIFY_PERM(event));
+>  }
+>  
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index abfa3712c185..14c30e173632 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -428,6 +428,8 @@ struct fanotify_perm_event {
+>  	u32 response;			/* userspace answer to the event */
+>  	unsigned short state;		/* state of the event */
+>  	int fd;		/* fd we passed to userspace for this event */
+> +	size_t info_len;
+> +	char *info_buf;
+>  };
+>  
+>  static inline struct fanotify_perm_event *
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index ff67ca0d25cc..a4ae953f0e62 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -289,13 +289,18 @@ static int create_fd(struct fsnotify_group *group, struct path *path,
+>   */
+>  static void finish_permission_event(struct fsnotify_group *group,
+>  				    struct fanotify_perm_event *event,
+> -				    u32 response)
+> +				    struct fanotify_response *response,
+> +				    size_t info_len, char *info_buf)
+>  				    __releases(&group->notification_lock)
+>  {
+>  	bool destroy = false;
+>  
+>  	assert_spin_locked(&group->notification_lock);
+> -	event->response = response;
+> +	event->response = response->response & ~FAN_INFO;
+> +	if (response->response & FAN_INFO) {
+> +		event->info_len = info_len;
+> +		event->info_buf = info_buf;
+> +	}
+>  	if (event->state == FAN_EVENT_CANCELED)
+>  		destroy = true;
+>  	else
+> @@ -306,33 +311,71 @@ static void finish_permission_event(struct fsnotify_group *group,
+>  }
+>  
+>  static int process_access_response(struct fsnotify_group *group,
+> -				   struct fanotify_response *response_struct)
+> +				   struct fanotify_response *response_struct,
+> +				   const char __user *buf,
+> +				   size_t count)
+>  {
+>  	struct fanotify_perm_event *event;
+>  	int fd = response_struct->fd;
+>  	u32 response = response_struct->response;
+> +	struct fanotify_response_info_header info_hdr;
+
+Why is this scoped at the function level?
+
+> +	char *info_buf = NULL;
+>  
+> -	pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
+> -		 fd, response);
+> +	pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%lu\n", __func__,
+> +		 group, fd, response, info_buf, count);
+
+info_buf is NULL at this point, I think you meant buf,right? Also
+s/size/count in the format string.
+
+>  	/*
+>  	 * make sure the response is valid, if invalid we do nothing and either
+>  	 * userspace can send a valid response or we will clean it up after the
+>  	 * timeout
+>  	 */
+> -	switch (response & ~FAN_AUDIT) {
+> +	if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
+> +		return -EINVAL;
+> +	switch (response & FANOTIFY_RESPONSE_ACCESS) {
+>  	case FAN_ALLOW:
+>  	case FAN_DENY:
+>  		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> -
+> -	if (fd < 0)
+> -		return -EINVAL;
+> -
+>  	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
+>  		return -EINVAL;
+> +	if (fd < 0)
+> +		return -EINVAL;
+> +	if (response & FAN_INFO) {
+> +		size_t c = count;
+> +		const char __user *ib = buf;
+
+Again, can we use variable names that are a little bit more
+meaningful? *ib specifically confuses me as I've already got *info_buf
+from above in my head. Maybe *info would make more sense seeing as
+though this is the FAN_INFO path?
+
+> +		If (c <= 0)
+> +			return -EINVAL;
+
+Is this needed? We already perform checks on the supplied count in
+fanotify_write()?
+
+> +		while (c >= sizeof(info_hdr)) {
+> +			if (copy_from_user(&info_hdr, ib, sizeof(info_hdr)))
+> +		 		return -EFAULT;
+> +			if (info_hdr.pad != 0)
+> +				return -EINVAL;
+> +			if (c < info_hdr.len)
+> +				return -EINVAL;
+> +			switch (info_hdr.type) {
+> +			case FAN_RESPONSE_INFO_AUDIT_RULE:
+> +				break;
+> +			case FAN_RESPONSE_INFO_NONE:
+> +			default:
+> +				return -EINVAL;
+> +			}
+> +			c -= info_hdr.len;
+> +			ib += info_hdr.len;
+> +		}
+> +		if (c != 0)
+> +			return -EINVAL;
+> +		/* Simplistic check for now */
+> +		if (count != sizeof(struct fanotify_response_info_audit_rule))
+> +			return -EINVAL;
+
+I don't get why we perform this check here? If anything, I'd expect
+this to be one of the first things we do when we step into this
+branch. There's no point of pulling the info_hdr if count isn't what
+we expect?
+
+> +		info_buf = kmalloc(sizeof(struct fanotify_response_info_audit_rule),
+> +				   GFP_KERNEL);
+> +		if (!info_buf)
+> +			return -ENOMEM;
+> +		if (copy_from_user(info_buf, buf, count))
+> +			return -EFAULT;
+> +	}
+
+MY. EYES. HURT! This block is rather difficult to read, so feel free
+to add newlines when splitting this up into a helper.
+
+>  	spin_lock(&group->notification_lock);
+>  	list_for_each_entry(event, &group->fanotify_data.access_list,
+>  			    fae.fse.list) {
+> @@ -340,7 +383,9 @@ static int process_access_response(struct fsnotify_group *group,
+>  			continue;
+>  
+>  		list_del_init(&event->fae.fse.list);
+> -		finish_permission_event(group, event, response);
+> +		/* finish_permission_event() eats info_buf */
+
+What is this comment? Get rid of it.
+
+> +		finish_permission_event(group, event, response_struct,
+> +					count, info_buf);
+>  		wake_up(&group->fanotify_data.access_waitq);
+>  		return 0;
+>  	}
+> @@ -802,9 +847,14 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+>  			fsnotify_destroy_event(group, &event->fse);
+>  		} else {
+>  			if (ret <= 0) {
+> +				struct fanotify_response response = {
+> +					.fd = FAN_NOFD,
+> +					.response = FAN_DENY };
+> +
+>  				spin_lock(&group->notification_lock);
+>  				finish_permission_event(group,
+> -					FANOTIFY_PERM(event), FAN_DENY);
+> +					FANOTIFY_PERM(event), &response,
+> +					0, NULL);
+>  				wake_up(&group->fanotify_data.access_waitq);
+>  			} else {
+>  				spin_lock(&group->notification_lock);
+> @@ -827,26 +877,33 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+>  
+>  static ssize_t fanotify_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
+>  {
+> -	struct fanotify_response response = { .fd = -1, .response = -1 };
+> +	struct fanotify_response response;
+>  	struct fsnotify_group *group;
+>  	int ret;
+> +	const char __user *info_buf = buf + sizeof(struct fanotify_response);
+> +	size_t c;
+
+Can we rename this to something like len or info_len instead? I
+dislike single character variable names outside of the scope of things
+like loops.
+
+>  	if (!IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS))
+>  		return -EINVAL;
+>  
+>  	group = file->private_data;
+>  
+> -	if (count < sizeof(response))
+> -		return -EINVAL;
+> -
+> -	count = sizeof(response);
+> -
+>  	pr_debug("%s: group=%p count=%zu\n", __func__, group, count);
+>  
+> -	if (copy_from_user(&response, buf, count))
+> +	if (count < sizeof(response))
+> +		return -EINVAL;
+> +	if (copy_from_user(&response, buf, sizeof(response)))
+>  		return -EFAULT;
+>  
+> -	ret = process_access_response(group, &response);
+> +	c = count - sizeof(response);
+> +	if (response.response & FAN_INFO) {
+> +		if (c < sizeof(struct fanotify_response_info_header))
+> +			return -EINVAL;
+> +	} else {
+> +		if (c != 0)
+> +			return -EINVAL;
+
+Hm, prior to this change we truncated the copy operation to the
+sizeof(struct fanotify_response) and didn't care if there maybe was
+extra data supplied in the buf or count > sizeof(struct
+fanotify_response). This leaves me wondering whether this check is
+needed for cases that are not (FAN_INFO | FAN_AUDIT)? The buf may
+still hold a valid fanotify_response despite buf/count possibly being
+larger than sizeof(struct fanotify_response)... I can see why you'd
+want to enforce this, but I'm wondering if it might break things if
+event listeners are responding to the permission events in an awkward
+way i.e. by calculating and supplying count incorrectly.
+
+Also, if we do decide to keep this check around, then maybe it can be
+simplified into an else if instead?
+
+> +	}
+> +	ret = process_access_response(group, &response, info_buf, c);
+
+Can we add a newline above this call to process_access_response()?
+
+>  	if (ret < 0)
+>  		count = ret;
+>  
+> @@ -857,6 +914,9 @@ static int fanotify_release(struct inode *ignored, struct file *file)
+>  {
+>  	struct fsnotify_group *group = file->private_data;
+>  	struct fsnotify_event *fsn_event;
+> +	struct fanotify_response response = {
+> +		.fd = FAN_NOFD,
+> +		.response = FAN_ALLOW };
+>  
+>  	/*
+>  	 * Stop new events from arriving in the notification queue. since
+> @@ -876,7 +936,7 @@ static int fanotify_release(struct inode *ignored, struct file *file)
+>  		event = list_first_entry(&group->fanotify_data.access_list,
+>  				struct fanotify_perm_event, fae.fse.list);
+>  		list_del_init(&event->fae.fse.list);
+> -		finish_permission_event(group, event, FAN_ALLOW);
+> +		finish_permission_event(group, event, &response, 0, NULL);
+>  		spin_lock(&group->notification_lock);
+>  	}
+>  
+> @@ -893,7 +953,7 @@ static int fanotify_release(struct inode *ignored, struct file *file)
+>  			fsnotify_destroy_event(group, fsn_event);
+>  		} else {
+>  			finish_permission_event(group, FANOTIFY_PERM(event),
+> -						FAN_ALLOW);
+> +						&response, 0, NULL);
+>  		}
+>  		spin_lock(&group->notification_lock);
+>  	}
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index edc28555814c..ce9f97eb69f2 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -114,6 +114,11 @@
+>  #define ALL_FANOTIFY_EVENT_BITS		(FANOTIFY_OUTGOING_EVENTS | \
+>  					 FANOTIFY_EVENT_FLAGS)
+>  
+> +/* This mask is to check for invalid bits of a user space permission response */
+
+These masks are used across checks which involve permission responses.
+
+> +#define FANOTIFY_RESPONSE_ACCESS (FAN_ALLOW | FAN_DENY)
+> +#define FANOTIFY_RESPONSE_FLAGS (FAN_AUDIT | FAN_INFO)
+> +#define FANOTIFY_RESPONSE_VALID_MASK (FANOTIFY_RESPONSE_ACCESS | FANOTIFY_RESPONSE_FLAGS)
+> +
+>  /* Do not use these old uapi constants internally */
+>  #undef FAN_ALL_CLASS_BITS
+>  #undef FAN_ALL_INIT_FLAGS
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index f1f89132d60e..4d08823a5698 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -180,15 +180,40 @@ struct fanotify_event_info_error {
+>  	__u32 error_count;
+>  };
+>  
+> +/*
+> + * User space may need to record additional information about its decision.
+> + * The extra information type records what kind of information is included.
+> + * The default is none. We also define an extra information buffer whose
+> + * size is determined by the extra information type.
+> + *
+> + * If the context type is Rule, then the context following is the rule number
+> + * that triggered the user space decision.
+
+I'm actually confused by this last paragraph. What is "context type"
+and what is "Rule"? Do you mean the struct
+fanotify_response_info_header.type and the audit_rule that follows?
+
+> +#define FAN_RESPONSE_INFO_NONE		0
+> +#define FAN_RESPONSE_INFO_AUDIT_RULE	1
+> +
+>  struct fanotify_response {
+>  	__s32 fd;
+>  	__u32 response;
+>  };
+>  
+> +struct fanotify_response_info_header {
+> +	__u8 type;
+> +	__u8 pad;
+> +	__u16 len;
+> +};
+> +
+> +struct fanotify_response_info_audit_rule {
+> +	struct fanotify_response_info_header hdr;
+> +	__u32 audit_rule;
+> +};
+> +
+>  /* Legit userspace responses to a _PERM event */
+>  #define FAN_ALLOW	0x01
+>  #define FAN_DENY	0x02
+> -#define FAN_AUDIT	0x10	/* Bit mask to create audit record for result */
+> +#define FAN_AUDIT	0x10	/* Bitmask to create audit record for result */
+> +#define FAN_INFO	0x20	/* Bitmask to indicate additional information */
+>  
+>  /* No fd set in event */
+>  #define FAN_NOFD	-1
 > -- 
-> Kees Cook
+> 2.27.0
+> 
+
+/M
