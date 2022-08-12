@@ -2,199 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D0C59119D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 15:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA665591233
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 16:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238980AbiHLNfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Aug 2022 09:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53370 "EHLO
+        id S236894AbiHLObB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Aug 2022 10:31:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238992AbiHLNfA (ORCPT
+        with ESMTP id S235317AbiHLObA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Aug 2022 09:35:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7233D9F1A3;
-        Fri, 12 Aug 2022 06:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jywy8j3qYEWAyUmU1bWi3tz3Ir+TGwQS5ddwDc4ngzs=; b=oGZ1KsEBvbUxlOvmjKj4t3IWeL
-        LM5PZiUQlbPLkkgE+yowbSwWBItf2xPDxLE0VnWnD8jOtom9xfZIWSvman3833fbDEnyc3WUIV9Te
-        VxKpq3lD5osEAk4xrpnc/cMS+LmxktpDb5wzbLAFGNfGFnKYpOZEBjDmsNEUHz7FpCPVhIIP2ZgaG
-        HZjaN34FqJlKTfbJPbFcDRVXI68jPajzSdT2V+5YI/tySGQ7pIuVa/+US0ppTNULKyQ6f7aqkepNt
-        3isB6bIJZH6aQmvSI/Awfm+lEPbB/e7ceLG8SUj98rnf1wESI3B1Bg9VwhC0gxXc682zSOlmGg0xs
-        CGdAPr4Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oMUoP-002BAD-5b; Fri, 12 Aug 2022 13:34:53 +0000
-Date:   Fri, 12 Aug 2022 14:34:53 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+        Fri, 12 Aug 2022 10:31:00 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14D551CB10;
+        Fri, 12 Aug 2022 07:30:59 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 555105C0046;
+        Fri, 12 Aug 2022 10:30:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 12 Aug 2022 10:30:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1660314656; x=1660401056; bh=M3
+        MbplBIwl853hk2/PIOPlXrFz0V9VywUt08s+uBFWc=; b=qDLFPe+gLm+/z45jUp
+        gD1UvOGWYdhSo5E9SwWBLGldN1kUuLTENtVPbHIdv3hf8qvJeBvPfiRf5YclZRX/
+        RLn75eWjWu3W8emeTTnw8aTXUulREPgharGzwtUvg1fNzXZyI0N2nRyynX0q+HeY
+        7U/ZDoyPNff3L86fomnW7vkKEtgQa3Gos4SxdyDEBe48rak8I0xku+rSsC+bOw8M
+        saHAHh04yQquyC+JkWW5yjyREoVpwc3IGAQJ/ScGqcHEAMEVYahRdgEf8hH2vQZ8
+        v94zBjExxClOApEhuxJH6GjhfdMMnL95VEx+wzc3N4SI5jgdAFNORBbHwoGZ2Qi9
+        kU+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1660314656; x=1660401056; bh=M3MbplBIwl853hk2/PIOPlXrFz0V
+        9VywUt08s+uBFWc=; b=cG9MWGAal32lE95MfUxQ/10J6t2iXDTt1UN6kMXynFqU
+        G3Q3nVWNM12MIAF9aM44YEFZB/aCC9R6qapvdo6o3bl9lv35OU527D+1Ry780WQ3
+        cpemd/Bmh29v2uqNr2a5GZjIZGda68AzECthe1fwRxsCfgcQg5KzF1J6zt2guETh
+        cu8WldLbTReoBKK5K5j9SkdO2TEY6oO/59kXpZGV83wc5umqvAOTRd0Vjo2nGPz4
+        pSewfnRC5zv4T3d/oyfurbm8gALCMRUf2KUq58UDChCl9PMF9n4IaUVCxc5h7Ss+
+        2FjVMhXN9yul6fQOiPiXJ9kocjc2UNDD7GqwpU3TWg==
+X-ME-Sender: <xms:IGT2YqRzi_7ixlZKVcu0X8fDH1QvWTQtTGFIyCjJLoohWQKNYeu6gA>
+    <xme:IGT2Yvywa8YTqFIbZ4QSTD3M3nvBqHm9TIrp51mGUtFJNpdgzV_7cQOk_6uedMCKj
+    cW-wyJLVIKD3mIGbyE>
+X-ME-Received: <xmr:IGT2Yn0bjeQ8VLJ4L8nuUomxtUfo4R8m3wLZ4MqwL7RuydMfrMj9b3jM0e4VnjkLVf8DnQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdegiedgjeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
+    dttddttddvnecuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehk
+    ihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhephfeige
+    fhtdefhedtfedthefghedutddvueehtedttdehjeeukeejgeeuiedvkedtnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshh
+    huthgvmhhovhdrnhgrmhgv
+X-ME-Proxy: <xmx:IGT2YmBu5hhEK1NJZYEIKn59laaUQUEQGNAHpNzP6TWaki7-obVoNw>
+    <xmx:IGT2YjgDC94s4-b1cQcPuDB0AKSBs6rc75vWIQvqgrJya6u2y8CFtg>
+    <xmx:IGT2YipLG3gHIjMulanLOm-YnCGHxDRqr5nc5482d69K82Xsi5i7dQ>
+    <xmx:IGT2Yms_TnK5Yw5Bdzv0NYLUVcs_gv-mKNNFrA7whoLyhi0AhUgbYw>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Aug 2022 10:30:55 -0400 (EDT)
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id E33AD104A2F; Fri, 12 Aug 2022 17:33:56 +0300 (+03)
+Date:   Fri, 12 Aug 2022 17:33:56 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: State of the Page (August 2022)
-Message-ID: <YvZW/exP02XceTVl@casper.infradead.org>
+Message-ID: <20220812143356.4kv5cycwbcy2t7ul@box.shutemov.name>
 References: <YvV1KTyzZ+Jrtj9x@casper.infradead.org>
  <20220812101639.ijonnx7zeus7h2hn@box.shutemov.name>
+ <YvZW/exP02XceTVl@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220812101639.ijonnx7zeus7h2hn@box.shutemov.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <YvZW/exP02XceTVl@casper.infradead.org>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 12, 2022 at 01:16:39PM +0300, Kirill A. Shutemov wrote:
-> On Thu, Aug 11, 2022 at 10:31:21PM +0100, Matthew Wilcox wrote:
-> > ==============================
-> > State Of The Page, August 2022
-> > ==============================
+On Fri, Aug 12, 2022 at 02:34:53PM +0100, Matthew Wilcox wrote:
+> On Fri, Aug 12, 2022 at 01:16:39PM +0300, Kirill A. Shutemov wrote:
+> > On Thu, Aug 11, 2022 at 10:31:21PM +0100, Matthew Wilcox wrote:
+> > > ==============================
+> > > State Of The Page, August 2022
+> > > ==============================
+> > > 
+> > > I thought I'd write down where we are with struct page and where
+> > > we're going, just to make sure we're all (still?) pulling in a similar
+> > > direction.
+> > > 
+> > > Destination
+> > > ===========
+> > > 
+> > > For some users, the size of struct page is simply too large.  At 64
+> > > bytes per 4KiB page, memmap occupies 1.6% of memory.  If we can get
+> > > struct page down to an 8 byte tagged pointer, it will be 0.2% of memory,
+> > > which is an acceptable overhead.
 > > 
-> > I thought I'd write down where we are with struct page and where
-> > we're going, just to make sure we're all (still?) pulling in a similar
-> > direction.
-> > 
-> > Destination
-> > ===========
-> > 
-> > For some users, the size of struct page is simply too large.  At 64
-> > bytes per 4KiB page, memmap occupies 1.6% of memory.  If we can get
-> > struct page down to an 8 byte tagged pointer, it will be 0.2% of memory,
-> > which is an acceptable overhead.
+> > Right. This is attractive. But it brings cost of indirection.
 > 
-> Right. This is attractive. But it brings cost of indirection.
+> It does, but it also crams 8 pages into a single cacheline instead of
+> occupying one cacheline per page.
 
-It does, but it also crams 8 pages into a single cacheline instead of
-occupying one cacheline per page.
+If you really need info about these pages and reference their memdesc it
+is likely be 9 cache lines that scattered across memory instead of 8 cache
+lines next to each other in the same page.
 
-> It can be especially painful for physical memory scanning. I guess we can
-> derive some info from memdesc type itself, like if it can be movable. But
-> still looks like an expensive change.
+And it's going to be two cachelines instead of one if we need info about
+one page. I think it is the most common case.
 
-I just don't think of physical memory scanning as something we do
-often, or in a performance-sensitive path.  I'm OK with slowing down
-kcompactd if it makes walking the LRU list faster.
+Initially, I thought we can offset the cost by caching memdescs instead of
+struct page/folio. Like page cache store memdesc, but it would require
+memdesc_to_pfn() which is not possible, unless we want to store pfn
+explicitly in memdesc.
 
-> Do you have any estimation on how much CPU time we will pay to reduce
-> memory (and cache) overhead? RAM size tend to grow faster than IPC.
-> We need to make sure it is the right direction.
+I don't want to be buzzkill, I like the idea a lot, but abstractions are
+often costly. Getting it upstream without noticeable performance
+regressions going to be a challenge.
 
-I don't.  I've heard colourful metaphors from the hyperscale crowd about
-how many more VMs they could sell, usually in terms of putting pallets
-of money in the parking lot and setting them on fire.  But IPC isn't the
-right metric either, CPU performance is all about cache misses these days.
-
-> > That implies 4 bits needed for the tag, so all memdesc allocations
-> > must be 16-byte aligned.  That is not an undue burden.  Memdescs
-> > must also be TYPESAFE_BY_RCU if they are mappable to userspace or
-> > can be stored in a file's address_space.
-> > 
-> > It may be worth distinguishing between vmalloc-mappable and
-> > vmalloc-unmappable to prevent some things being mapped to userspace
-> > inadvertently.
+> > It can be especially painful for physical memory scanning. I guess we can
+> > derive some info from memdesc type itself, like if it can be movable. But
+> > still looks like an expensive change.
 > 
-> Given that memdesc represents Slab too, how do we allocate them?
-
-First, we separate out allocating pages from allocating their memdesc.  ie:
-
-struct folio *folio_alloc(u8 order, gfp_t gfp)
-{
-	struct folio *folio = kmem_cache_alloc(folio_cache, gfp);
-
-	if (!folio)
-		return NULL;
-	if (page_alloc_desc(order, folio, gfp))
-		return folio;
-	kmem_cache_free(folio_cache, folio);
-	return NULL;
-}
-
-That can't work for slab because we might recurse for ever.  So we
-have to do it backwards:
-
-struct slab *slab_alloc(size_t size, u8 order, gfp_t gfp)
-{
-	struct slab *slab;
-	struct page *page = page_alloc(order, gfp);
-
-	if (!page)
-		return NULL;
-	if (sizeof(*slab) == size) {
-		slab = page_address(page);
-		slab_init(slab, 1);
-	} else {
-		slab = kmem_cache_alloc(slab_cache, gfp);
-		if (!slab) {
-			page_free(page, order);
-			return NULL;
-		}
-	}
-	page_set_memdesc(page, order, slab);
-	return slab;
-}
-
-So there is mutual recursion between kmem_cache_alloc() and
-slab_alloc(), but it stops after one round.  (obviously this is
-just a sketch of a solution)
-
-folio_alloc()
-  kmem_cache_alloc(folio)
-    page_alloc(folio)
-      kmem_cache_alloc(slab)
-        page_alloc(slab)
-  page_alloc_desc() 
-
-Slab then has to be taught that a slab with a single object allocated
-(ie itself) is actually free and can be released back to the pool,
-but that seems like a SMOP.
-
-> > Mappable
-> > --------
-> > 
-> > All pages mapped to userspace must have:
-> > 
-> >  - A refcount
-> >  - A mapcount
-> > 
-> > Preferably in the same place in the memdesc so we can handle them without
-> > having separate cases for each type of memdesc.  It would be nice to have
-> > a pincount as well, but that's already an optional feature.
-> > 
-> > I propose:
-> > 
-> >    struct mappable {
-> >        unsigned long flags;	/* contains dirty flag */
-> >        atomic_t _refcount;
-> >        atomic_t _mapcount;
-> >    };
-> > 
-> >    struct folio {
-> >       union {
-> >          unsigned long flags;
-> >          struct mappable m;
-> >       };
-> >       ...
-> >    };
+> I just don't think of physical memory scanning as something we do
+> often, or in a performance-sensitive path.  I'm OK with slowing down
+> kcompactd if it makes walking the LRU list faster.
 > 
-> Hm. How does lockless page cache lookup would look like in this case?
+> > Do you have any estimation on how much CPU time we will pay to reduce
+> > memory (and cache) overhead? RAM size tend to grow faster than IPC.
+> > We need to make sure it is the right direction.
 > 
-> Currently it relies on get_page_unless_zero() and to keep it work there's
-> should be guarantee that nothing else is allocated where mappable memdesc
-> was before. Would it require some RCU tricks on memdesc free?
+> I don't.  I've heard colourful metaphors from the hyperscale crowd about
+> how many more VMs they could sell, usually in terms of putting pallets
+> of money in the parking lot and setting them on fire.  But IPC isn't the
+> right metric either, CPU performance is all about cache misses these days.
 
-An earlier paragraph has:
+As I said above, I don't expect the new scheme to be cache-friendly
+either.
 
-> > That implies 4 bits needed for the tag, so all memdesc allocations
-> > must be 16-byte aligned.  That is not an undue burden.  Memdescs
-> > must also be TYPESAFE_BY_RCU if they are mappable to userspace or
-> > can be stored in a file's address_space.
-
-so yes, I agree, we need this RCU trick to make sure the memdesc remains a
-memdesc of the right type, even if it's no longer attached to the right
-chunk of memory.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
