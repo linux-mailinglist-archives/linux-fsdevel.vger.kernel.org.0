@@ -2,81 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A2A590FC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 12:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB655910D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Aug 2022 14:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237786AbiHLKzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Aug 2022 06:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
+        id S238172AbiHLMhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Aug 2022 08:37:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbiHLKzq (ORCPT
+        with ESMTP id S237927AbiHLMhe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Aug 2022 06:55:46 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B7F97D53
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 03:55:45 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id z187so622598pfb.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 03:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc;
-        bh=447DttLGWlnXVhl3+i4qWwJxEj6tFprhGwRHCuyrWEY=;
-        b=CJ8cmabUBS6s6xxd/K2d4ioKxSyRIqE+ZbMGdtOsB0xEii8PW96QxCDErfQIjC5BLN
-         N2ucmgiycJJWzTi4cqrjfE9/Qd9qFAIMAw3S3lJYynV7FOantBCVlh8p1SpJp0OmBkJd
-         zJ1W862js8LoAcODPIYF/9lavQGzrv9SxLLzKYwZYs+aFDugs4i1SnnikoRnH73/HBzk
-         m18p9qWtHEY7DEvtYfAV2/hTbPa+PdePCQgit6nPZjTo7qoxPOQVMH1Q9ud8T5lQAHsP
-         cKX6gM3XXgZAfM0H0ll1XdJ5ldBa3MmWx9WKcy61QJhphhLbPc4wMweOQcNzCq3zEyrE
-         y24w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version
-         :x-gm-message-state:from:to:cc;
-        bh=447DttLGWlnXVhl3+i4qWwJxEj6tFprhGwRHCuyrWEY=;
-        b=FIv+aFVgXyAEIwYPQ0Q43mNgcpN69LpKRC17Zg68ftZYUe0BCgML+haGbHEN7qnLr2
-         uqWY83wJhEf7bB10ZC+CbT2rwdAOVd8rFr5tidJqoU3FyZXNAZakd5DaU72lkGEA3I0O
-         S6rZ085C/I2k3bki/iAS/PM9pjEaGlNNoSPF7hxdCnQ3F6NPzPBbt2FqRpRxnhcEmpso
-         jZTS2jPYlImbsgdbbKvq7k36QDXTOF5sAdiO1/eFQm6+oKm5kMDPSH2tg/JFL8ZkcTDv
-         h3mhywpVhp7GHqdLyk2G47AHsJSzOQP4hwmGGHXIEYRv+jMXGxmiSdxNmv4A+3p1tBjF
-         Eb4g==
-X-Gm-Message-State: ACgBeo3mQw9EUJ/Z+dKGeV6GHKDWa8ena+03dIi/q2UOoyVQiDFn54ul
-        A2Ru370gHOu4MPIvqscwJE6+7EBsInboWVscPEc=
-X-Google-Smtp-Source: AA6agR5zQzBmW33GmQFIhAp2AFpk7CL7LTn9PCx8JAiUD3jKsaMXzwesI8XRy+JYh8XJgI9UhTgK6vqxdcdpvvJuJ30=
-X-Received: by 2002:a65:688f:0:b0:41d:e38a:e8c4 with SMTP id
- e15-20020a65688f000000b0041de38ae8c4mr2677864pgt.437.1660301744807; Fri, 12
- Aug 2022 03:55:44 -0700 (PDT)
+        Fri, 12 Aug 2022 08:37:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9643CAE9E3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 05:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660307852;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ylpaYidSLtIS5aOXK4M1ZVgF/GC3QayX8jCpJ2bSyu0=;
+        b=jIXBJyWbW68HLbdoEy0fNptWYz4tZKwWz5EtARh/EV5WJ6qrXcIAUgFfWVFqyAWAw/N5Go
+        aGiVV9JUJn/ekwzssq3jtVzmgW562mKnqq4Defqt7v2gMZYUXhzLkon7dicnHRKRnVkNF3
+        oDihTv70ADsVtUg5llgZ099l47baSL0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-54-VLqtkQlFOQq8ta_PztHrGg-1; Fri, 12 Aug 2022 08:37:29 -0400
+X-MC-Unique: VLqtkQlFOQq8ta_PztHrGg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 218EF1C0782A;
+        Fri, 12 Aug 2022 12:37:29 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.40.192.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7A4E2026D64;
+        Fri, 12 Aug 2022 12:37:27 +0000 (UTC)
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     tytso@mit.edu, jlayton@kernel.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, ebiggers@kernel.org,
+        david@fromorbit.com
+Subject: [PATCH v3 1/3] ext4: don't increase iversion counter for ea_inodes
+Date:   Fri, 12 Aug 2022 14:37:25 +0200
+Message-Id: <20220812123727.46397-1-lczerner@redhat.com>
 MIME-Version: 1.0
-Sender: bazarkowanigeria@gmail.com
-Received: by 2002:a17:90a:9f91:0:0:0:0 with HTTP; Fri, 12 Aug 2022 03:55:44
- -0700 (PDT)
-From:   "Mrs. Margaret Christopher" <mrsmargaretchristopher01@gmail.com>
-Date:   Fri, 12 Aug 2022 03:55:44 -0700
-X-Google-Sender-Auth: 9ez0BQ54ybr4-2FSOghKq3nW-Ek
-Message-ID: <CAPgaJa30zdehdauxJA=VaWKLgjKBywWenmnn-VngZ4tZAfQP_Q@mail.gmail.com>
-Subject: Humanitarian Project For Less Privileged.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+ea_inodes are using i_version for storing part of the reference count so
+we really need to leave it alone.
+
+The problem can be reproduced by xfstest ext4/026 when iversion is
+enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
+inodes in ext4_mark_iloc_dirty().
+
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
+v2, v3: no change
+
+ fs/ext4/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 601214453c3a..2a220be34caa 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5731,7 +5731,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
+ 	}
+ 	ext4_fc_track_inode(handle, inode);
+ 
+-	if (IS_I_VERSION(inode))
++	/*
++	 * ea_inodes are using i_version for storing reference count, don't
++	 * mess with it
++	 */
++	if (IS_I_VERSION(inode) &&
++	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
+ 		inode_inc_iversion(inode);
+ 
+ 	/* the do_update_inode consumes one bh->b_count */
 -- 
-Hello Dear
+2.37.1
 
-  Am a dying woman here in the hospital, i was diagnose as a
-Coronavirus patient over 2 months ago. I am A business woman who is
-dealing with Gold Exportation, I Am 59 year old from USA California i
-have a charitable and unfufilling  project that am about to handover
-to you, if you are interested to know more about this project please reply me.
-
- Hope to hear from you
-
-Best Regard
-
-Mrs. Margaret
