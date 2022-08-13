@@ -2,87 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC88591B01
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 16:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33EB591B53
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 17:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239638AbiHMOdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Aug 2022 10:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S239704AbiHMPVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Aug 2022 11:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239622AbiHMOdl (ORCPT
+        with ESMTP id S239504AbiHMPVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Aug 2022 10:33:41 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539252E9E9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Aug 2022 07:33:39 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d10so3000972plr.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Aug 2022 07:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=oGDoPSwTJYgAdoMJ+kZiCfF7XxCQIGieO3gROB11DDE=;
-        b=vJvtbTGJnRgtMQsWTZ6Qbypd0syVkchXxLMs3E+W9PXyfBih2lXOlPnaWXrHLT4IAP
-         dZ5jiwghUqSyif9LIIIQp0nIxGZP+vUrDCrDcJK87PbvEE/sjJUXMtEiRIeDWaK+cX28
-         RBYQdnKYlgHCdgPTxHdQSgBRknQvKQKldI9OM0ZAXGe3Z7r12YnFY6nLQ1HmJMyq2Nf7
-         GCiDJv/z+15ClQutb8rSDc4w4pB1mbyP/pHtMR1g0SgHLyJ/y4xEIDbYDgEzeSZ2aHFv
-         YVMXZcSUvAa5ZE+mCDaa3XfWEFPSC5zOvSAaBMRHJuwX7shWuzO3B5UE2rtm7n4qZ+E3
-         Vntg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=oGDoPSwTJYgAdoMJ+kZiCfF7XxCQIGieO3gROB11DDE=;
-        b=Nw8FyYCPGchLGTcD+mUG49WEqNhjvh3OWdxdjtljx7JEIRn4K584glOepEU/Mi8TLZ
-         ySWwZHoKnGAQFUWMstqh6G3VuDJjbsYH6hH4ohN3pVz29kfT8KK8lUnIS319QRgntAG/
-         qMZyKbgooA42uBbi95vYLG5z1RK+G4QWTP/l/G1LZTilYtGFXWOHLBlWj/03Jy46rw1W
-         WI2+AzyZnKXLpiYX0FOWlmU8ieIHRnQ6RU+w7T/ciIplebUu+kGtCpFpoL613w8KsnGj
-         Mll+eqdRAGbkub26hMXI5G9M43TLyBfP0DpdgLFUcMgbECiK2rSdl4SO9wrJZSSM5A9K
-         dYVw==
-X-Gm-Message-State: ACgBeo00OamnHsCPa3y780eog3RDkmyeHbgovQMURLB83REhgrxMnObI
-        LebBpI5P06t96s6cVHIQZqJxiw==
-X-Google-Smtp-Source: AA6agR4pF+ulVNiCuFvbDcaHxBzt9kni8JCk8vWLmWDXeDM7CFJeSOAwesj0iY8kMuQey+M02srN9A==
-X-Received: by 2002:a17:902:ea03:b0:170:a235:b72b with SMTP id s3-20020a170902ea0300b00170a235b72bmr8833259plg.13.1660401218763;
-        Sat, 13 Aug 2022 07:33:38 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170902e54400b0016dbaf3ff2esm3800879plf.22.2022.08.13.07.33.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Aug 2022 07:33:38 -0700 (PDT)
-Message-ID: <f93b320a-15ed-0673-e91d-b59964106663@kernel.dk>
-Date:   Sat, 13 Aug 2022 08:33:36 -0600
+        Sat, 13 Aug 2022 11:21:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4A414D05;
+        Sat, 13 Aug 2022 08:21:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1836860EA4;
+        Sat, 13 Aug 2022 15:21:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F8AC433D7;
+        Sat, 13 Aug 2022 15:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660404089;
+        bh=1bch3XDANl0k9DvmU6CuDi2zlCPHHGmLfdhnnxKhjyY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LoW9QQfHJ5Rji+RnsochC5SywhKQnC9KGIW5bEMpWKluIF3ZP6lh+MvEZZsGYVUSi
+         aWILW4U0sD30oYcMNWMYP2DAnUf+f9R/jJshgB+eWctcvI7vVsSQo9SSU+8vyP+X/7
+         A4OHIeqPKhHHgsB+AZTcPfD1L32fXhocDggzU0moqFz2MhdPFn50I2oS1x4KcREMt3
+         mA/oWzW9QBET1xINTdDMlZZTvRhlj0hTpd1XXxZDiQfdDxZLkLNiKbzUq1pcaULPH1
+         IYZeZFGf6UaNVgvf91eGAXIruKtRFzxsb/IrK4obOuYaHWuT87Kc8RHYnIAPnb/v8+
+         Zz0ZSxUcza7pg==
+Date:   Sat, 13 Aug 2022 18:21:12 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: State of the Page (August 2022)
+Message-ID: <YvfBaKUlDkeVzIm9@kernel.org>
+References: <YvV1KTyzZ+Jrtj9x@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] fs: don't randomized kiocb fields
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20220812225633.3287847-1-kbusch@fb.com>
- <YvdZ6X4Bf6A1uisS@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YvdZ6X4Bf6A1uisS@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YvV1KTyzZ+Jrtj9x@casper.infradead.org>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/22 1:59 AM, Christoph Hellwig wrote:
-> s/randomized/randomize/
-> 
-> in the subject?
+Hi,
 
-I did notice that one and made the edit yesterday.
+On Thu, Aug 11, 2022 at 10:31:21PM +0100, Matthew Wilcox wrote:
+> ==============================
+> State Of The Page, August 2022
+> ==============================
+> 
+> I thought I'd write down where we are with struct page and where
+> we're going, just to make sure we're all (still?) pulling in a similar
+> direction.
+> 
+> Destination
+> ===========
+> 
+> For some users, the size of struct page is simply too large.  At 64
+> bytes per 4KiB page, memmap occupies 1.6% of memory.  If we can get
+> struct page down to an 8 byte tagged pointer, it will be 0.2% of memory,
+> which is an acceptable overhead.
+> 
+>    struct page {
+>       unsigned long mem_desc;
+>    };
+
+This is 0.2% for a system that does not have any actual memdescs.
+
+Do you have an estimate how much memory will be used by the memdescs, at
+least for some use-cases?
+
+Another thing, we are very strict about keeping struct page at its current
+size. Don't you think it will be much more tempting to grow either of
+memdescs and for some use cases the overhead will be at least as big as
+now?
+ 
+> Types of memdesc
+> ----------------
+> 
+> This is very much subject to change as new users present themselves.
+> Here are the current ones in-plan:
+> 
+>  - Undescribed.  Instead of the rest of the word being a pointer,
+>    there are 2^28 subtypes available:
+>    - Unmappable.  Typically device drivers allocating private memory.
+>    - Reserved.  These pages are not allocatable.
+>    - HWPoison
+>    - Offline (eg balloon)
+>    - Guard (see debug_pagealloc)
+>  - Slab
+>  - Anon Folio
+>  - File Folio
+>  - Buddy (ie free -- also for PCP?)
+>  - Page Table
+>  - Vmalloc
+>  - Net Pool
+>  - Zsmalloc
+>  - Z3Fold
+>  - Mappable.  Typically device drivers mapping memory to userspace
+> 
+> That implies 4 bits needed for the tag, so all memdesc allocations
+> must be 16-byte aligned.  That is not an undue burden.  Memdescs
+> must also be TYPESAFE_BY_RCU if they are mappable to userspace or
+> can be stored in a file's address_space.
+> 
+> It may be worth distinguishing between vmalloc-mappable and
+> vmalloc-unmappable to prevent some things being mapped to userspace
+> inadvertently.
 
 -- 
-Jens Axboe
-
+Sincerely yours,
+Mike.
