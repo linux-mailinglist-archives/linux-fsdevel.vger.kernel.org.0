@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 899B0591967
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 10:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B7AB591AA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 15:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236467AbiHMIVU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Aug 2022 04:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
+        id S239462AbiHMNg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Aug 2022 09:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiHMIVT (ORCPT
+        with ESMTP id S235278AbiHMNg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Aug 2022 04:21:19 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6C933360;
-        Sat, 13 Aug 2022 01:21:16 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id o5-20020a17090a3d4500b001ef76490983so2775364pjf.2;
-        Sat, 13 Aug 2022 01:21:16 -0700 (PDT)
+        Sat, 13 Aug 2022 09:36:58 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1FFB7C1;
+        Sat, 13 Aug 2022 06:36:57 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id z2so4362545edc.1;
+        Sat, 13 Aug 2022 06:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc;
-        bh=8J2yQzwToOaPX464zrF30DjQn1+095iGEYHxU+cVWDs=;
-        b=OX4FXqRRqM8h+6sJ2eEVVjT5JlCSlIQGjkiBH9sSOKKMP8PWj6LrWes0P+kq7HK7LR
-         11Rn33m7Vb929Qq3zkKw0ZejzTbHu6ZLsM+vCqYpOZvbtNEiSITLmBhByiXMTQ/67Ekz
-         7IlVoVumINUUZMUmJB3rt995T6gZ0T1mj5fi+cGMz9o8DYIPINIpxlZ/o+YZFRu83cI7
-         VssKJek8Wb6LZLEtVEP0carPAuR7+pp4vRL3UkL9+VGYs9+VF78/goOrT1ZTZCxFgE3X
-         GWtwgtLhQFiX+Wt1jRAE9ERaBrqpoEPlBi0Ma5YJxMrVMnUSnzcf1k+pqlUUF441CC9q
-         z83w==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=AKVBfO32rmZq1r8Xc6WkO9jk42SoifdEhyas0O7uhTs=;
+        b=UdYffYR5Uny5GwXXCuOgQYee354sCFqcXWa8z7kGVw5IRH/AsBzPh3vXxLy4J9F18F
+         +WT6wBUCx2Vtmirlt3mJ+Q2rMV2lujZ+TcoXk0LVC1fsy/JcHD8V3Yx+WVx1nWJ6cnFf
+         78v+kx7JV0b5Luaz5QjVH7z+PC9tYnreYMHc2flMcZvlHaYGNdv4LOnXZlCvuhM2AUhr
+         Fl4ES1oH9dUPEdbDnf5aGteXKSb+dHbqcbPOkmfDkeTJ/kdccMspkmqU9QMBJmFZNU8W
+         SpxOBWj7oeWuysx7qEvgQsMeolLYfFZjUq5UCJhlOjpngmGLWOHteJSwUvNUZ3lPisw3
+         HclQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=8J2yQzwToOaPX464zrF30DjQn1+095iGEYHxU+cVWDs=;
-        b=hUnrHM/KEwbWSVzSI6WOauoS6qPnuLpUPz5f6jtAIs+YwzPsBUNUawPfz8mNQlu2z4
-         NIurDZzlSIlWvleMalz8Fb7//2zF7azbEMPbIN91Cex337GLpJ9j4VkjGeFcq2DvFBFb
-         08ZE/29fpKoKBJAGp37cPazofxkhEaTojAke1Uj/LzCeyVrXtnAIwInFutr2EaeO9+Sc
-         HoK3WPdta4AhPDPBBCDYGC9a/0Oil9E0qwHIlLyMzQK9AReVesmPEOjYNEHgQxqtxi8P
-         7Hx1YhkTnegPufGW0gkmgSaliWglnr4Pn+c6KMz9a3tj0IMl3V4gHifBKI9XsHnsFaHX
-         Ty/w==
-X-Gm-Message-State: ACgBeo14HQXjFkVvaY+ZBpjkYyB4RsbEcAt+zHvtjS952pWAjZu4ebLo
-        I+dUAUEdLJCOLn2wkX7739I=
-X-Google-Smtp-Source: AA6agR4GB8X04N2F7C9JZIAvHIs5zpN+gvaTfqq4HgCuIxREwmwnry3zz89g7npVAHYfUYYiKl1oZQ==
-X-Received: by 2002:a17:903:22d0:b0:16f:7754:1e99 with SMTP id y16-20020a17090322d000b0016f77541e99mr7360793plg.150.1660378875776;
-        Sat, 13 Aug 2022 01:21:15 -0700 (PDT)
-Received: from autolfshost ([2409:4041:2d12:e5fd:fa7e:5407:87c6:7072])
-        by smtp.gmail.com with ESMTPSA id l8-20020a17090a4d4800b001f4dd3b7d7fsm1080636pjh.9.2022.08.13.01.21.11
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=AKVBfO32rmZq1r8Xc6WkO9jk42SoifdEhyas0O7uhTs=;
+        b=1let7A/Sdl1bAt/8H8MK3vAQNkh0DPJi9kNuSNOcq8fHkOkYsUP1WI4QY0ysi9CtIx
+         z5ECxwUZT/L1W68o+UGS0VA8V6SkTKztw/8GjRR7mVpy6PVQ2BupP9xs2Bu2w0Za5gqK
+         QKguhXF9RCXAAXFHddoQX4mUceKbPTQMtzt/vUhsN1nC4Q/N+jTAzW8uJwFL/UJfML1u
+         52Ea1HWhVDpFnRzFJEaXPMaNEs6ImDCHJv9bwDqQN13Wd3mjiULVP6g/QAP2+KFKUKwi
+         v4arIKe8YTQdUitsDgPCIkHZ5UNR+xpSl9NieN74f0aZfCdN0zurXfQET5Svtzyvv/Tg
+         O0Jg==
+X-Gm-Message-State: ACgBeo3RNc1FabayiOs8QIVbqUs2LMC0aPKz4FcE25vhsdu813xGYQlh
+        GGwzIe6cRhanUN0ddkNvH9o=
+X-Google-Smtp-Source: AA6agR6YHmhuU6n1HU6pRDZIWiUpUQGG2w90iwTEUs1ezspDX/TPu4VgLorkbgMHhQ4p/0u7Tm1uRg==
+X-Received: by 2002:aa7:c9c2:0:b0:440:b458:9403 with SMTP id i2-20020aa7c9c2000000b00440b4589403mr7604816edt.132.1660397816004;
+        Sat, 13 Aug 2022 06:36:56 -0700 (PDT)
+Received: from opensuse.localnet (host-79-53-105-123.retail.telecomitalia.it. [79.53.105.123])
+        by smtp.gmail.com with ESMTPSA id w22-20020a17090633d600b0072b33e91f96sm1875765eja.190.2022.08.13.06.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Aug 2022 01:21:15 -0700 (PDT)
-Date:   Sat, 13 Aug 2022 13:50:48 +0530
-From:   Anup K Parikh <parikhanupk.foss@gmail.com>
-To:     bigeasy@linutronix.de, mcgrof@kernel.org, xiubli@redhat.com,
-        akpm@linux-foundation.org, jlayton@kernel.org,
-        skhan@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] Doc fix for dget_dlock and dget
-Message-ID: <Yvde4NryqBnZesTI@autolfshost>
+        Sat, 13 Aug 2022 06:36:54 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v2] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Sat, 13 Aug 2022 15:36:53 +0200
+Message-ID: <8143586.NyiUUSuA9g@opensuse>
+In-Reply-To: <20220803182856.28246-1-fmdefrancesco@gmail.com>
+References: <20220803182856.28246-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -69,63 +72,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-dcache header:
+On mercoled=C3=AC 3 agosto 2022 20:28:56 CEST Fabio M. De Francesco wrote:
+> The use of kmap() and kmap_atomic() are being deprecated in favor of
+> kmap_local_page().
+>=20
+> There are two main problems with kmap(): (1) It comes with an overhead as
+> mapping space is restricted and protected by a global lock for
+> synchronization and (2) it also requires global TLB invalidation when the
+> kmap=E2=80=99s pool wraps and it might block when the mapping space is fu=
+lly
+> utilized until a slot becomes available.
+>=20
+> With kmap_local_page() the mappings are per thread, CPU local, can take
+> page faults, and can be called from any context (including interrupts).
+> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+> the tasks can be preempted and, when they are scheduled to run again, the
+> kernel virtual addresses are restored and are still valid.
+>=20
+> Since the use of kmap_local_page() in exec.c is safe, it should be
+> preferred everywhere in exec.c.
+>=20
+> As said, since kmap_local_page() can be also called from atomic context,
+> and since remove_arg_zero() doesn't (and shouldn't ever) rely on an
+> implicit preempt_disable(), this function can also safely replace
+> kmap_atomic().
+>=20
+> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+> fs/exec.c.
+>=20
+> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+> with HIGHMEM64GB enabled.
+>=20
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> ---
+>=20
+> v1->v2: Added more information to the commit log to address some
+> objections expressed by Eric W. Biederman[1] in reply to v1. No changes
+> have been made to the code. Forwarded a tag from Ira Weiny (thanks!).
+>=20
+> [1]
+> https://lore.kernel.org/lkml/8735fmqcfz.fsf@email.froward.int.ebiederm.or=
+g/
+>
+>  fs/exec.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
 
-1. Remove a warning for dget_dlock
+Hi Kees,
 
-2. Add a similar comment for dget and
-   mention the difference between dget and dget_dlock
-   as suggested by Mr. Randy Dunlap
-   Link: https://lore.kernel.org/all/29708eb3-ff1e-411e-cf84-7aa9af765603@infradead.org/
+After that thread about the report from Syzbot, and the subsequent discussi=
+on,=20
+I noticed that you didn't yet take this other patch for exec.c.
 
-Signed-off-by: Anup K Parikh <parikhanupk.foss@gmail.com>
----
- include/linux/dcache.h | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+I suppose that the two patches would better go out together. So I'm writing=
+=20
+for sending a gentle ping.
 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 92c78ed02..aa473b6bf 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -299,12 +299,15 @@ extern char *dentry_path(const struct dentry *, char *, int);
- /* Allocation counts.. */
- 
- /**
-- *	dget, dget_dlock -	get a reference to a dentry
-- *	@dentry: dentry to get a reference to
-+ * dget_dlock - get a reference to a dentry
-+ * @dentry: dentry to get a reference to
-  *
-- *	Given a dentry or %NULL pointer increment the reference count
-- *	if appropriate and return the dentry. A dentry will not be 
-- *	destroyed when it has references.
-+ * Given a dentry or %NULL pointer increment the reference count
-+ * if appropriate and return the dentry. A dentry will not be
-+ * destroyed when it has references.
-+ *
-+ * The reference count increment in this function is not atomic.
-+ * Consider dget() if atomicity is required.
-  */
- static inline struct dentry *dget_dlock(struct dentry *dentry)
- {
-@@ -313,6 +316,17 @@ static inline struct dentry *dget_dlock(struct dentry *dentry)
- 	return dentry;
- }
- 
-+/**
-+ * dget - get a reference to a dentry
-+ * @dentry: dentry to get a reference to
-+ *
-+ * Given a dentry or %NULL pointer increment the reference count
-+ * if appropriate and return the dentry. A dentry will not be
-+ * destroyed when it has references.
-+ *
-+ * This function atomically increments the reference count.
-+ * Consider dget_dlock() if atomicity is not required or manually managed.
-+ */
- static inline struct dentry *dget(struct dentry *dentry)
- {
- 	if (dentry)
--- 
-2.35.1
+As I said, no changes have been made to the code with respect to v1 (which =
+I=20
+submitted in June). However, later I thought that adding more information=20
+might have helped reviewers and maintainers to better understand the why of=
+=20
+this patch.
+
+Thanks,
+
+=46abio
+=20
+
+
 
