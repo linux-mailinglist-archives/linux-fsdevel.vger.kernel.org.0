@@ -2,123 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D2159183F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 03:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC9959188B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Aug 2022 06:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234087AbiHMBpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Aug 2022 21:45:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
+        id S232561AbiHMEQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Aug 2022 00:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234475AbiHMBo7 (ORCPT
+        with ESMTP id S229760AbiHMEQy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Aug 2022 21:44:59 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70480AB05B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 18:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=ONldFfWNd/TJWmoaBWDHRWT36vMW5qjteW54FBO7fdI=; b=rFDPxSOrsTJxYml2VUWzhFgC95
-        y3ngrSnAzD8oSb2ThIRH1Lvw/gXmkoQKTnyzKgDZHiRUtr9jwryGmnDDDkPo5oyNWHZ8VUHdyG9+7
-        /OAal6ScTtTqLzXFjkvEfSomOZi77XMVLEoaRqaUOgW0AM2WGtClqNKqh9RQ/G86Gd8210Tmj1Hmp
-        G5cAOc05WUR14YStx99or4q01gSPkCu0xLTn1XHRoPiGsj8XChTqxMp3m3UtlVcZH381YX0R3j0E7
-        zqB0z/ns+/ZmnAvYPXl6CU7NZXEPB3WDw0C5aljMTxd9kqSIRQtJhxpA4HHHiNhbOD/xdkiRJV7zM
-        ThRQRtPw==;
-Received: from [2601:1c0:6280:3f0::a6b3]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oMgCu-002vao-G6; Sat, 13 Aug 2022 01:44:56 +0000
-Message-ID: <db024202-93f1-7a58-970e-3565dc58c760@infradead.org>
-Date:   Fri, 12 Aug 2022 18:44:55 -0700
+        Sat, 13 Aug 2022 00:16:54 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEBD8E017
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 21:16:49 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id z25so3680798lfr.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Aug 2022 21:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvz-org.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=mw5sHT8zBEaCmnT874wuWslLzi6P/iOgebdtI/CFJ4M=;
+        b=vNu4j0puet/jgla5Fq1R08f3/tQ33yq0lLRHa2vIyrJaBPoUlVDYOdhKuH0ofEljGF
+         MqxvszWfIw7JpRNreDA5644oJs/bTcnp/V8lckyjxpxtLJY2To4LxAT+GTFcEHB+L4ok
+         iKSPSYLEPozDummX1/k5RTcDoEbsmpKEpxNeFZ7BpWU30N2yAzRT1wuXQ+moH1Ag1boE
+         3+3MGWzqs/Z6SB1pKp3SHRE4zwKPL/0I0nvRL4+RKCqxlhQECEiXyaND74kqLCNSIAr2
+         y5QoGJlHQtHtw7IVGBBSi0yNaqN6tqDDV53QLxLU3jKidWe3wPGtBOZ8AufwiQ/klPLs
+         Lbqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=mw5sHT8zBEaCmnT874wuWslLzi6P/iOgebdtI/CFJ4M=;
+        b=pwRwMzZ00OVTtpcuSXecKIR/HU7p2pt3scbnv6UqqjY5JjqWQwQ8iKL0NPuy4pZ/Ln
+         u/LwDnjsJUko6RoWqsUnEFBYT+qxgY9U8rE/AQth8kXkK97GDD10CR24VuKuju3ayRoG
+         0PIJx/I17KoRNd4EmTjOlkFelEVYQD8w56bU0JQlZDgFm+knZjjeXaKnvMR2JkB33YB4
+         drRN+9ckE08JUt2Yfyi8WxS3t2jWhhELuKKGTtii0VMuzW20VGLn1VdQOwSdrUG7FPGZ
+         4t/+CBbdy7ATFRD54/ierOgHzARtdfT6WeRNgohqAA53H3C91XnyHYnHIDA4Q65S+COG
+         QpTQ==
+X-Gm-Message-State: ACgBeo0O2sPrLmuOo8gKSC0KH0ApYGgRpb/MOHHOmh9MOB+RKk3yN1ev
+        g89yNJxRHyONhA6Lbf5EOcIkK3twDsL0Hw==
+X-Google-Smtp-Source: AA6agR67cD5SvwB5TNJI0X/mXex2BNpC+OA27bHaflThgdz6K2EbG6PwckTQjR57Mt0gJ3+9XFL+ig==
+X-Received: by 2002:a05:6512:e91:b0:48a:e71a:5193 with SMTP id bi17-20020a0565120e9100b0048ae71a5193mr2455033lfb.511.1660364208022;
+        Fri, 12 Aug 2022 21:16:48 -0700 (PDT)
+Received: from [192.168.1.65] ([46.188.121.143])
+        by smtp.gmail.com with ESMTPSA id k22-20020a2e8896000000b0025e5cd1620fsm602476lji.57.2022.08.12.21.16.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Aug 2022 21:16:47 -0700 (PDT)
+Message-ID: <47112ee6-9686-a272-183e-ec2e6cdeff2e@openvz.org>
+Date:   Sat, 13 Aug 2022 07:16:46 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH] Doc fix for dget_dlock and dget
+Subject: Re: [RFC PATCH] kernfs: enable per-inode limits for all xattr types
 Content-Language: en-US
-To:     Anup K Parikh <parikhanupk.foss@gmail.com>,
-        skhan@linuxfoundation.org
-Cc:     linux-fsdevel@vger.kernel.org
-References: <YvYhuH66yfoi8Zxy@autolfshost>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <YvYhuH66yfoi8Zxy@autolfshost>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, kernel@openvz.org
+References: <b816f58a-ce25-c079-c6b3-a3406df246f9@openvz.org>
+ <8ace5255-ce23-0a05-2d50-1455dd68acb6@openvz.org>
+ <20220812102052.adiqtlsxx273t7wk@wittgenstein>
+From:   Vasily Averin <vvs@openvz.org>
+In-Reply-To: <20220812102052.adiqtlsxx273t7wk@wittgenstein>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi--
-
-On 8/12/22 02:47, Anup K Parikh wrote:
-> 1. Remove a warning for dget_dlock
+On 8/12/22 13:20, Christian Brauner wrote:
+> So iiuc, for tmpfs this is effectively a per-inode limit of 128 xattrs
+> and 128 user xattrs; nr_inodes * 256. I honestly have no idea if there
+> are legimitate use-cases to want more. But there's at least a remote
+> chance that this might break someone.
 > 
-> 2. Add a similar comment for dget and
->    add difference between dget and dget_dlock
->    as suggested by Mr. Randy Dunlap
+> Apart from
 > 
-> Signed-off-by: Anup K Parikh <parikhanupk.foss@gmail.com>
-
-Is Shuah going to merge this patch? I wouldn't expect that,
-so please see Documentation/process/submitting-patches.rst:
-"Select the recipients for your patch" and send the patch to
-the appropriate maintainer(s) as well as the linux-fsdevel
-mailing list.
-
-Thanks.
-
-> ---
->  include/linux/dcache.h | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
+>> Currently it's possible to create a huge number of xattr per inode,
 > 
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index f5bba5148..c7742006a 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -297,12 +297,15 @@ extern char *dentry_path(const struct dentry *, char *, int);
->  /* Allocation counts.. */
->  
->  /**
-> - *	dget, dget_dlock -	get a reference to a dentry
-> - *	@dentry: dentry to get a reference to
-> + * dget_dlock - get a reference to a dentry
-> + * @dentry: dentry to get a reference to
->   *
-> - *	Given a dentry or %NULL pointer increment the reference count
-> - *	if appropriate and return the dentry. A dentry will not be 
-> - *	destroyed when it has references.
-> + * Given a dentry or %NULL pointer increment the reference count
-> + * if appropriate and return the dentry. A dentry will not be
-> + * destroyed when it has references.
-> + *
-> + * The reference count increment in this function is not atomic.
-> + * Consider dget() if atomicity is required.
->   */
->  static inline struct dentry *dget_dlock(struct dentry *dentry)
->  {
-> @@ -311,6 +314,17 @@ static inline struct dentry *dget_dlock(struct dentry *dentry)
->  	return dentry;
->  }
->  
-> +/**
-> + * dget - get a reference to a dentry
-> + * @dentry: dentry to get a reference to
-> + *
-> + * Given a dentry or %NULL pointer increment the reference count
-> + * if appropriate and return the dentry. A dentry will not be
-> + * destroyed when it has references.
-> + *
-> + * This function atomically increments the reference count.
-> + * Consider dget_dlock() if atomicity is not required or manually managed.
-> + */
->  static inline struct dentry *dget(struct dentry *dentry)
->  {
->  	if (dentry)
+> what exactly is this limit protecting against? In other words, the
+> commit message misses the motivation for the patch.
 
--- 
-~Randy
+This should prevent softlockup and hung_task_panic caused by slow search
+in xattrs->list in simple_xattr_set() and _get()
+
+Adding new xattr checks all present entries in the list,
+so execution time linearly depends on the number of such entries.
+
+To avoid this problem I decided to limit somehow the number of entries in the list.
+As an alternative Tejun advises to switch this list to something like rb-tree,
+now I think he is right.
+
+> I'd also prefer to see a summary of what filesystems are affected by
+> this change. Afaict, the patchset doesn't change anything for kernfs
+> users such as cgroup{1,2} so it should only be tmpfs and potential
+> future users of the simple_xattr_* api.
+
+This affect all file systems used  simple_xattr_* API: sysfs and tmpfs.
+
+Now I'll try to follow Tejun's advice and switch the xatrrs list to rb-tree.
+Unfortunately, I doubt that I will have enough time to finish before the merge
+window closes.
+
+Thank you,
+	Vasily Averin
