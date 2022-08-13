@@ -2,76 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 233A5591CE1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 00:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA443591D22
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 01:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240262AbiHMWAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Aug 2022 18:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
+        id S229711AbiHMXXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Aug 2022 19:23:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240250AbiHMWAp (ORCPT
+        with ESMTP id S229643AbiHMXXa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Aug 2022 18:00:45 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2890BF70;
-        Sat, 13 Aug 2022 15:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660428043; x=1691964043;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=J2stkkYmPik2bQMds1PPTKQFWYY4K6w3/+pjsawBn4I=;
-  b=czriY2QSJtsHs+0YJIn5ie4MEylQAeO1kW/kS7jZoyutko3tg5lYKLsh
-   U8uwSotSnGfPl2vJQS7mXtH4oMFazwVlS/Xc7jXjm/W0R2M8xn4DxBnHw
-   kIWTBYyV1rhIi/CUgFr62xfLVN+CqYCowKo4VrUWdTiHHWU6njZrRlHxQ
-   kaTEKulZ63EuSu4qn9pNqf4xP0sdTWK/u2NAugMb9FbtEUSj30NAXgimh
-   5qPunzQISbEjtHhAHANiwq1Jl2HcUvhbN24qdPsixdN+lNMnl7ALLrf3m
-   ZKPstDNZJppuxJNs4K8cjvcKaPPyhu1ezSatsWfsJc/83jLR0F08xO9ot
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10437"; a="293049446"
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="293049446"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2022 15:00:42 -0700
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="635047705"
-Received: from tsaiyinl-mobl1.amr.corp.intel.com (HELO localhost) ([10.209.125.19])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2022 15:00:40 -0700
-From:   ira.weiny@intel.com
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Fabio M . De Francesco" <fmdefrancesco@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, x86@kernel.org,
-        linux-xtensa@linux-xtensa.org, keyrings@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net, iommu@lists.linux.dev,
-        bpf@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH] checkpatch: Add kmap and kmap_atomic to the deprecated list
-Date:   Sat, 13 Aug 2022 15:00:34 -0700
-Message-Id: <20220813220034.806698-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.35.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Sat, 13 Aug 2022 19:23:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416FF883E4;
+        Sat, 13 Aug 2022 16:23:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DCFC4B800E2;
+        Sat, 13 Aug 2022 23:23:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03C87C433D6;
+        Sat, 13 Aug 2022 23:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1660433006;
+        bh=ysFtNkgWmL61tA/vu1l6V4vTgJfiMC+3pvDXK+Y2NCo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=faAZbMVOwLQHfw3hBgJv5a3v56W681DVzOI55UQpHQq+Pac+jtYmOphgd2KVIffEQ
+         G9j0bOGPW2JVcN6E0bQBkOUFnVsTsmkvPpRH/V1OPtr+0pWl+h8Hvlpb62Md6mSFHw
+         1aCs8GRY+7pq7mRyznOvXgRLg67x7O1Z4B+xeLHY=
+Date:   Sat, 13 Aug 2022 16:23:25 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     cgel.zte@gmail.com
+Cc:     bsingharora@gmail.com, iamjoonsoo.kim@lge.com, mingo@redhat.com,
+        bristot@redhat.com, vschneid@redhat.com, willy@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Yang Yang <yang.yang29@zte.com.cn>,
+        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
+        wangyong <wang.yong12@zte.com.cn>
+Subject: Re: [PATCH 1/2] delayacct: support re-entrance detection of
+ thrashing accounting
+Message-Id: <20220813162325.57bb5d703d0063d717dc47e9@linux-foundation.org>
+In-Reply-To: <20220813074108.58196-1-yang.yang29@zte.com.cn>
+References: <20220813074108.58196-1-yang.yang29@zte.com.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,70 +57,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Sat, 13 Aug 2022 07:41:09 +0000 cgel.zte@gmail.com wrote:
 
-kmap() and kmap_atomic() are being deprecated in favor of
-kmap_local_page().
+> From: Yang Yang <yang.yang29@zte.com.cn>
+> 
+> Once upon a time, we only support accounting thrashing of page cache.
+> Then Joonsoo introduced workingset detection for anonymous pages and
+> we gained the ability to account thrashing of them[1].
+> 
+> For page cache thrashing accounting, there is no suitable place to do
+> it in fs level likes swap_readpage(). So we have to do it in
+> folio_wait_bit_common().
+> 
+> Then for anonymous pages thrashing accounting, we have to do it in
+> both swap_readpage() and folio_wait_bit_common(). This likes PSI,
+> so we should let thrashing accounting supports re-entrance detection.
+> 
+> This patch is to prepare complete thrashing accounting, and is based
+> on patch "filemap: make the accounting of thrashing more consistent".
+> 
+> -static inline void delayacct_thrashing_start(void)
+> +static inline void delayacct_thrashing_start(unsigned long *flags)
 
-There are two main problems with kmap(): (1) It comes with an overhead
-as mapping space is restricted and protected by a global lock for
-synchronization and (2) it also requires global TLB invalidation when
-the kmap’s pool wraps and it might block when the mapping space is fully
-utilized until a slot becomes available.
+I don't think that `flags' is a very descriptive name.  It might be
+anything.  
 
-kmap_local_page() is safe from any context and is therefore redundant
-with kmap_atomic() with the exception of any pagefault or preemption
-disable requirements.  However, using kmap_atomic() for these side
-effects makes the code less clear.  So any requirement for pagefault or
-preemption disable should be made explicitly.
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -943,6 +943,10 @@ struct task_struct {
+>  #ifdef	CONFIG_CPU_SUP_INTEL
+>  	unsigned			reported_split_lock:1;
+>  #endif
+> +#ifdef CONFIG_TASK_DELAY_ACCT
+> +	/* delay due to memory thrashing */
+> +	unsigned                        in_thrashing:1;
+> +#endif
 
-With kmap_local_page() the mappings are per thread, CPU local, can take
-page faults, and can be called from any context (including interrupts).
-It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-the tasks can be preempted and, when they are scheduled to run again,
-the kernel virtual addresses are restored.
+OK, saving space in the task_struct is good.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+>  	unsigned long			atomic_flags; /* Flags requiring atomic access. */
+>  
+> diff --git a/kernel/delayacct.c b/kernel/delayacct.c
+> index 164ed9ef77a3..a5916196022f 100644
+> --- a/kernel/delayacct.c
+> +++ b/kernel/delayacct.c
+> @@ -214,13 +214,22 @@ void __delayacct_freepages_end(void)
+>  		      &current->delays->freepages_count);
+>  }
+>  
+> -void __delayacct_thrashing_start(void)
+> +void __delayacct_thrashing_start(unsigned long *flags)
+>  {
+> +	*flags = current->in_thrashing;
+> +	if (*flags)
+> +		return;
 
----
-Suggested by credits.
-	Thomas: Idea to keep from growing more kmap/kmap_atomic calls.
-	Fabio: Stole some of his boiler plate commit message.
+Can't we rename `flags' to `in_thrashing' throughout?
 
-Notes on tree-wide conversions:
+And may as well give it type `bool'.  And convert that bool to/from the
+bitfield when moving it in and out of the task_struct with
 
-I've cc'ed mailing lists for subsystems which currently contains either kmap()
-or kmap_atomic() calls.  As some of you already know Fabio and I have been
-working through converting kmap() calls to kmap_local_page().  But there is a
-lot more work to be done.  Help from the community is always welcome,
-especially with kmap_atomic() conversions.  To keep from stepping on each
-others toes I've created a spreadsheet of the current calls[1].  Please let me
-or Fabio know if you plan on tacking one of the conversions so we can mark it
-off the list.
+	*in_thrashing = !!current->in_thrashing;
 
-[1] https://docs.google.com/spreadsheets/d/1i_ckZ10p90bH_CkxD2bYNi05S2Qz84E2OFPv8zq__0w/edit#gid=1679714357
+	current->in_thrashing = (in_thrashing != 0);
 
----
- scripts/checkpatch.pl | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 79e759aac543..9ff219e0a9d5 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -807,6 +807,8 @@ our %deprecated_apis = (
- 	"rcu_barrier_sched"			=> "rcu_barrier",
- 	"get_state_synchronize_sched"		=> "get_state_synchronize_rcu",
- 	"cond_synchronize_sched"		=> "cond_synchronize_rcu",
-+	"kmap"					=> "kmap_local_page",
-+	"kmap_atomic"				=> "kmap_local_page",
- );
- 
- #Create a search pattern for all these strings to speed up a loop below
-
-base-commit: 4a9350597aff50bbd0f4b80ccf49d2e02d1111f5
--- 
-2.35.3
 
