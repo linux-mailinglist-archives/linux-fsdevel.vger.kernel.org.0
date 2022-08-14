@@ -2,73 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D85E59262A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 21:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6145926B5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 23:51:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbiHNTWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Aug 2022 15:22:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
+        id S229758AbiHNVvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Aug 2022 17:51:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiHNTWu (ORCPT
+        with ESMTP id S229570AbiHNVvu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Aug 2022 15:22:50 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19041EAC2;
-        Sun, 14 Aug 2022 12:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=fIv76NqDast2njAn90O8GRnQzUuvqx0lJYTKZ4uwx94=; b=h0DjMEk50DI5WvkkK9w0eMWEMO
-        WpH+CADq1JqZa7S3HcYrt4iB2piDgNbUAjVX5UzB9wwmJkbjA5JWhjaFjmcJclggAPH1IwLjDyAJ+
-        crz1aEcu4uz9Tw2IaTZY6rmrvzK9YFxf0KhKFLfaSn3LbwJecOlgsp68q7npYXCQSlgu3re3QrI6t
-        FtPgBB3/1SFbT79WwHFlrPBTANomOuhjcb1GuTh30jx4idH+gYkp85B2STfcfBDxy37pJjk6myAUh
-        e7IzttPds+e6L3MElLnPrk5JH4rIwNH1VzVDWykyc9NytQzG0sgnVp/zX1pmAc60AUxh0SkrUoJYE
-        HGInECZg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oNJCB-004KD6-Jy;
-        Sun, 14 Aug 2022 19:22:47 +0000
-Date:   Sun, 14 Aug 2022 20:22:47 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sun, 14 Aug 2022 17:51:50 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64972120A6;
+        Sun, 14 Aug 2022 14:51:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 166E9B80BA3;
+        Sun, 14 Aug 2022 21:51:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B1855C433D6;
+        Sun, 14 Aug 2022 21:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660513907;
+        bh=wBrqcOv2/wyT6IsGtSBX2iuPGkcAX6m8mubdinrFZ5M=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=thr2iE/dpEPobaPaHHvAIjjE6eSkM+O6QuIPYeVIp7Hh98duJga9Db5Dh+KHuK7qj
+         sfijBUSkrGhndsBMeU1wqCx3VmvUVpKi34TrSAJ3ttMcB6cHeWGSrtVzAJU1JAkTTh
+         Js5NQu5DptHxJGZ4J9CdiYkFjkg+Q8cVageRkFAb1WNd6xx3DPCW+J0S0tmCC7Ye7B
+         fiqulCZfoQPnwtWK8B5MD6egTu65nXYzIGgQ24G6YkFQuwfh/aUOKcpybt4BpNl2IZ
+         2SAOF/ZnUEsvHfjhyECvXByEMg5c7Y+cakccd4FhPy6daV5vN7rWbrlFBA63fvR0BH
+         VAfoREvf9q9LQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9F04FC43141;
+        Sun, 14 Aug 2022 21:51:47 +0000 (UTC)
+Subject: Re: [git pull] regression fix in lseek series
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YvlLh8qZnCTmACaf@ZenIV>
+References: <YvlLh8qZnCTmACaf@ZenIV>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YvlLh8qZnCTmACaf@ZenIV>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+X-PR-Tracked-Commit-Id: 3f61631d47f115b83c935d0039f95cb68b0c8ab7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 74cbb480d0efa61efa09e5ebd081a32e1d355bba
+Message-Id: <166051390764.2989.2908450609311058474.pr-tracker-bot@kernel.org>
+Date:   Sun, 14 Aug 2022 21:51:47 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [git pull] regression fix in lseek series
-Message-ID: <YvlLh8qZnCTmACaf@ZenIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 5d6a0f4da9275f6c212de33777778673ba91241a:
+The pull request you sent on Sun, 14 Aug 2022 20:22:47 +0100:
 
-  Merge tag 'for-linus-6.0-rc1b-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip (2022-08-14 09:28:54 -0700)
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/74cbb480d0efa61efa09e5ebd081a32e1d355bba
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+Thank you!
 
-for you to fetch changes up to 3f61631d47f115b83c935d0039f95cb68b0c8ab7:
-
-  take care to handle NULL ->proc_lseek() (2022-08-14 15:16:18 -0400)
-
-----------------------------------------------------------------
-Fix proc_reg_llseek() breakage.  Always had been possible if
-somebody left NULL ->proc_lseek, became a practical issue now.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-----------------------------------------------------------------
-Al Viro (1):
-      take care to handle NULL ->proc_lseek()
-
- fs/proc/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
