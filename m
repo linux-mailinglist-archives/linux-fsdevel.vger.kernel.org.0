@@ -2,45 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1B75925E0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 19:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D85E59262A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Aug 2022 21:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239867AbiHNR5h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Aug 2022 13:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44914 "EHLO
+        id S230223AbiHNTWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Aug 2022 15:22:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiHNR5g (ORCPT
+        with ESMTP id S229469AbiHNTWu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Aug 2022 13:57:36 -0400
+        Sun, 14 Aug 2022 15:22:50 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF13723BD8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Aug 2022 10:57:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19041EAC2;
+        Sun, 14 Aug 2022 12:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XGBBkRgnuvMaFljZfdPXcERGsQEtzrec5H/qoAIVEvM=; b=jhZcLue5RmvPZhmrYYkpxMgJSw
-        BHE6IS2mB89Yt2V8sa205bOBDXVlzpqRXSJ9csYSFqW/xaBb9xshbQM93DqGXepglBfJKxLTZfbpP
-        +FSKt0lhA2Cd/uqvtLstfv9jJpl4slR5qhMajEoE9TgSztXznYzdDad8/LjYdBj5DSRNEyAt51IE/
-        ivLjK/zOZ1a/1haJQi4zYvkzPFAsO3Kxmzph9ot80obfZkqbuItkbV1Gqhdex1rBdgl2RgjTFudvm
-        Lon7tSirHg5s6woIiAwdme8lqXJZ8KhLwUNFHKYMO1NEDktcwfb0suKrNBbxFRSEd8jzJQYgdhY05
-        USI0ejoQ==;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=fIv76NqDast2njAn90O8GRnQzUuvqx0lJYTKZ4uwx94=; b=h0DjMEk50DI5WvkkK9w0eMWEMO
+        WpH+CADq1JqZa7S3HcYrt4iB2piDgNbUAjVX5UzB9wwmJkbjA5JWhjaFjmcJclggAPH1IwLjDyAJ+
+        crz1aEcu4uz9Tw2IaTZY6rmrvzK9YFxf0KhKFLfaSn3LbwJecOlgsp68q7npYXCQSlgu3re3QrI6t
+        FtPgBB3/1SFbT79WwHFlrPBTANomOuhjcb1GuTh30jx4idH+gYkp85B2STfcfBDxy37pJjk6myAUh
+        e7IzttPds+e6L3MElLnPrk5JH4rIwNH1VzVDWykyc9NytQzG0sgnVp/zX1pmAc60AUxh0SkrUoJYE
+        HGInECZg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oNHrY-004JN1-6c;
-        Sun, 14 Aug 2022 17:57:24 +0000
-Date:   Sun, 14 Aug 2022 18:57:24 +0100
+        id 1oNJCB-004KD6-Jy;
+        Sun, 14 Aug 2022 19:22:47 +0000
+Date:   Sun, 14 Aug 2022 20:22:47 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] locks: fix TOCTOU race when granting write lease
-Message-ID: <Yvk3hPpCsX4H2/MR@ZenIV>
-References: <20220814152322.569296-1-amir73il@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [git pull] regression fix in lseek series
+Message-ID: <YvlLh8qZnCTmACaf@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220814152322.569296-1-amir73il@gmail.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -51,37 +48,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 14, 2022 at 06:23:22PM +0300, Amir Goldstein wrote:
-> Thread A trying to acquire a write lease checks the value of i_readcount
-> and i_writecount in check_conflicting_open() to verify that its own fd
-> is the only fd referencing the file.
-> 
-> Thread B trying to open the file for read will call break_lease() in
-> do_dentry_open() before incrementing i_readcount, which leaves a small
-> window where thread A can acquire the write lease and then thread B
-> completes the open of the file for read without breaking the write lease
-> that was acquired by thread A.
-> 
-> Fix this race by incrementing i_readcount before checking for existing
-> leases, same as the case with i_writecount.
-> 
-> Use a helper put_file_access() to decrement i_readcount or i_writecount
-> in do_dentry_open() and __fput().
-> 
-> Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write lease")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+The following changes since commit 5d6a0f4da9275f6c212de33777778673ba91241a:
 
-Looks sane; I'd probably collapsed cleanup_file and cleanup_all while we are
-at it, but then I can do that in a followup as well.
+  Merge tag 'for-linus-6.0-rc1b-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip (2022-08-14 09:28:54 -0700)
 
-> +static inline void put_file_access(struct file *file)
-> +{
-> +	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ) {
-> +		i_readcount_dec(file->f_inode);
-> +	} else if (file->f_mode & FMODE_WRITER) {
-> +		put_write_access(file->f_inode);
-> +		__mnt_drop_write(file->f_path.mnt);
-> +	}
-> +}
+are available in the Git repository at:
 
-What's the point of having it in linux/fs.h instead of internal.h?
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
+
+for you to fetch changes up to 3f61631d47f115b83c935d0039f95cb68b0c8ab7:
+
+  take care to handle NULL ->proc_lseek() (2022-08-14 15:16:18 -0400)
+
+----------------------------------------------------------------
+Fix proc_reg_llseek() breakage.  Always had been possible if
+somebody left NULL ->proc_lseek, became a practical issue now.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (1):
+      take care to handle NULL ->proc_lseek()
+
+ fs/proc/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
