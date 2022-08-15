@@ -2,236 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C3B592E15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 13:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C7C592F67
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 15:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbiHOLVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 07:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
+        id S242626AbiHONJK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 09:09:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242241AbiHOLVr (ORCPT
+        with ESMTP id S229816AbiHONJJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 07:21:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C801A383
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 04:21:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 33CC36115D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 11:21:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28591C433D6;
-        Mon, 15 Aug 2022 11:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660562502;
-        bh=LdLB+zNz3tDQsuKaWXbJSweBsIbxkeT7SglzG7EDYgE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=H7WpZC76LFE57kmE1crmaifeaYwlOBYrpviqtwTHcnq898YOFgZZ9JbeYkV1+MbVD
-         qw5Usl1QrwXEwYRq3duZxMxDb8YcnihUfEwx7UbVX8HQo73hcj4+VEd2357kvUDOAw
-         QJe/wm/BgJHi6qgIa54qp5NBEBhrPwRKWDtPBE7racHJYg2R1txNzQ87rJuiosgMVe
-         nZQMhDwcEmYxwVMvIBfWfId+PeYYZdQE8CkMwB5KNDGnEYv1NhYfQaz8+OAS4PzugG
-         j/dTr1WMIlKbkvjCsyA2gi9hoxAVoJGIVwqEJRx+zy/zu84oI9OWj3+XS+bQ/WUH9Z
-         rOpfarUNianRg==
-Message-ID: <d910e1ef7c8fcf65fbdb0bc438ebba2d7a1d6f83.camel@kernel.org>
-Subject: Re: [PATCH] locks: fix TOCTOU race when granting write lease
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 15 Aug 2022 07:21:40 -0400
-In-Reply-To: <20220814152322.569296-1-amir73il@gmail.com>
-References: <20220814152322.569296-1-amir73il@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Mon, 15 Aug 2022 09:09:09 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57FCE1A050;
+        Mon, 15 Aug 2022 06:09:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1660568948; x=1692104948;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=uC6wcjTIjKWZdEEUC6nc6q/QLuQ42xa9S3mFqSAWmAc=;
+  b=D7z1M7k05lfgk/4oNMiHl6lR0EEZWjiK78uYc0+ltrFjyA/mNld6zARG
+   k7ZgsdkTCNGGjsnJr9RofIHSyuCJkl7M7ioTOZqbHuDVBMdnw8Rx83D58
+   DyB1YNE9SkEX4soApUwcFZLdY4JfrN6g1kl16OIBGm5A3pD+z0ZfpBocw
+   bvXfl/EDl4g45w/YWmRLpPVQFHBTkQXlKcrJ3vNGrmXWiEYXP/YkKNGmT
+   mYMWjiCJJM0rVu5H5VPiCYJfhfK0BsqykWt6WjqS2Gh6NEEAtNb+1KpZz
+   49OTVE0IsSIQYsZgXwN3+vm3VGJwRolVvb4SzGaU7FgsLfpy9/h9mDlWX
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10440"; a="317937105"
+X-IronPort-AV: E=Sophos;i="5.93,238,1654585200"; 
+   d="scan'208";a="317937105"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2022 06:09:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,238,1654585200"; 
+   d="scan'208";a="635470742"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga008.jf.intel.com with ESMTP; 15 Aug 2022 06:08:56 -0700
+Date:   Mon, 15 Aug 2022 21:04:11 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc:     "Gupta, Pankaj" <pankaj.gupta@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, bharata@amd.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220815130411.GA1073443@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <b21f41e5-0322-bbfb-b9c2-db102488592d@amd.com>
+ <9e86daea-5619-a216-fe02-0562cf14c501@amd.com>
+ <9dc91ce8-4cb6-37e6-4c25-27a72dc11dd0@amd.com>
+ <422b9f97-fdf5-54bf-6c56-3c45eff5e174@amd.com>
+ <1407c70c-0c0b-6955-10bb-d44c5928f2d9@amd.com>
+ <1136925c-2e37-6af4-acac-be8bed9f6ed5@amd.com>
+ <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2022-08-14 at 18:23 +0300, Amir Goldstein wrote:
-> Thread A trying to acquire a write lease checks the value of i_readcount
-> and i_writecount in check_conflicting_open() to verify that its own fd
-> is the only fd referencing the file.
->=20
-> Thread B trying to open the file for read will call break_lease() in
-> do_dentry_open() before incrementing i_readcount, which leaves a small
-> window where thread A can acquire the write lease and then thread B
-> completes the open of the file for read without breaking the write lease
-> that was acquired by thread A.
->=20
-> Fix this race by incrementing i_readcount before checking for existing
-> leases, same as the case with i_writecount.
->=20
+On Fri, Aug 12, 2022 at 02:18:43PM +0530, Nikunj A. Dadhania wrote:
+> 
+> 
+> On 12/08/22 12:48, Gupta, Pankaj wrote:
+> > 
+> >>>>>>
+> >>>>>> However, fallocate() preallocates full guest memory before starting the guest.
+> >>>>>> With this behaviour guest memory is *not* demand pinned. Is there a way to
+> >>>>>> prevent fallocate() from reserving full guest memory?
+> >>>>>
+> >>>>> Isn't the pinning being handled by the corresponding host memory backend with mmu > notifier and architecture support while doing the memory operations e.g page> migration and swapping/reclaim (not supported currently AFAIU). But yes, we need> to allocate entire guest memory with the new flags MEMFILE_F_{UNMOVABLE, UNRECLAIMABLE etc}.
+> >>>>
+> >>>> That is correct, but the question is when does the memory allocated, as these flags are set,
+> >>>> memory is neither moved nor reclaimed. In current scenario, if I start a 32GB guest, all 32GB is
+> >>>> allocated.
+> >>>
+> >>> I guess so if guest memory is private by default.
+> >>>
+> >>> Other option would be to allocate memory as shared by default and
+> >>> handle on demand allocation and RMPUPDATE with page state change event. But still that would be done at guest boot time, IIUC.
+> >>
+> >> Sorry! Don't want to hijack the other thread so replying here.
+> >>
+> >> I thought the question is for SEV SNP. For SEV, maybe the hypercall with the page state information can be used to allocate memory as we use it or something like quota based memory allocation (just thinking).
+> > 
+> > But all this would have considerable performance overhead (if by default memory is shared) and used mostly at boot time. 
+> 
+> > So, preallocating memory (default memory private) seems better approach for both SEV & SEV SNP with later page management (pinning, reclaim) taken care by host memory backend & architecture together.
+> 
+> I am not sure how will pre-allocating memory help, even if guest would not use full memory it will be pre-allocated. Which if I understand correctly is not expected.
 
-Nice catch.
+Actually the current version allows you to delay the allocation to a
+later time (e.g. page fault time) if you don't call fallocate() on the
+private fd. fallocate() is necessary in previous versions because we
+treat the existense in the fd as 'private' but in this version we track
+private/shared info in KVM so we don't rely on that fact from memory
+backstores.
 
-> Use a helper put_file_access() to decrement i_readcount or i_writecount
-> in do_dentry_open() and __fput().
->=20
-> Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write=
- lease")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->=20
-> Hi Jeff,
->=20
-> This fixes a race I found during code audit - I do not have a reproducer
-> for it.
->=20
-> I ran the fstests I found for locks and leases:
-> generic/131 generic/478 generic/504 generic/571
-> and the LTP fcntl tests.
->=20
-> Encountered this warning with generic/131, but I also see it on
-> current master:
->=20
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->  WARNING: suspicious RCU usage
->  5.19.0-xfstests-14277-gbd6ab3ef4e93 #966 Not tainted
->  -----------------------------
->  include/net/sock.h:592 suspicious rcu_dereference_check() usage!
->=20
->  other info that might help us debug this:
->=20
->=20
->  rcu_scheduler_active =3D 2, debug_locks =3D 1
->  5 locks held by locktest/3996:
->   #0: ffff88800be1d7a0 (&sb->s_type->i_mutex_key#8){+.+.}-{3:3}, at: __so=
-ck_release+0x25/0x97
->   #1: ffff88800909ce00 (sk_lock-AF_INET){+.+.}-{0:0}, at: tcp_close+0x14/=
-0x60
->   #2: ffff888006847cc8 (&h->lhash2[i].lock){+.+.}-{2:2}, at: inet_unhash+=
-0x3a/0xcf
->   #3: ffffffff82a8ac18 (reuseport_lock){+...}-{2:2}, at: reuseport_detach=
-_sock+0x17/0xb8
->   #4: ffff88800909d0b0 (clock-AF_INET){++..}-{2:2}, at: bpf_sk_reuseport_=
-detach+0x1b/0x85
->=20
->  stack backtrace:
->  CPU: 1 PID: 3996 Comm: locktest Not tainted 5.19.0-xfstests-14277-gbd6ab=
-3ef4e93 #966
->  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubun=
-tu1.1 04/01/2014
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0x45/0x5d
->   bpf_sk_reuseport_detach+0x5c/0x85
->   reuseport_detach_sock+0x65/0xb8
->   inet_unhash+0x55/0xcf
->   tcp_set_state+0xb3/0x10d
->   ? mark_lock.part.0+0x30/0x101
->   __tcp_close+0x26/0x32d
->   tcp_close+0x20/0x60
->   inet_release+0x50/0x64
->   __sock_release+0x32/0x97
->   sock_close+0x14/0x1b
->   __fput+0x118/0x1eb
->=20
->=20
-> Let me know what you think.
->=20
-> Thanks,
-> Amir.
->=20
->  fs/file_table.c    |  7 +------
->  fs/open.c          | 11 ++++-------
->  include/linux/fs.h | 10 ++++++++++
->  3 files changed, 15 insertions(+), 13 deletions(-)
->=20
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 99c6796c9f28..dd88701e54a9 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -324,12 +324,7 @@ static void __fput(struct file *file)
->  	}
->  	fops_put(file->f_op);
->  	put_pid(file->f_owner.pid);
-> -	if ((mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ)
-> -		i_readcount_dec(inode);
-> -	if (mode & FMODE_WRITER) {
-> -		put_write_access(inode);
-> -		__mnt_drop_write(mnt);
-> -	}
-> +	put_file_access(file);
->  	dput(dentry);
->  	if (unlikely(mode & FMODE_NEED_UNMOUNT))
->  		dissolve_on_fput(mnt);
-> diff --git a/fs/open.c b/fs/open.c
-> index 8a813fa5ca56..a98572585815 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -840,7 +840,9 @@ static int do_dentry_open(struct file *f,
->  		return 0;
->  	}
-> =20
-> -	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
-> +	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ) {
-> +		i_readcount_inc(inode);
-> +	} else if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
->  		error =3D get_write_access(inode);
->  		if (unlikely(error))
->  			goto cleanup_file;
-> @@ -880,8 +882,6 @@ static int do_dentry_open(struct file *f,
->  			goto cleanup_all;
->  	}
->  	f->f_mode |=3D FMODE_OPENED;
-> -	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ)
-> -		i_readcount_inc(inode);
->  	if ((f->f_mode & FMODE_READ) &&
->  	     likely(f->f_op->read || f->f_op->read_iter))
->  		f->f_mode |=3D FMODE_CAN_READ;
-> @@ -935,10 +935,7 @@ static int do_dentry_open(struct file *f,
->  	if (WARN_ON_ONCE(error > 0))
->  		error =3D -EINVAL;
->  	fops_put(f->f_op);
-> -	if (f->f_mode & FMODE_WRITER) {
-> -		put_write_access(inode);
-> -		__mnt_drop_write(f->f_path.mnt);
-> -	}
-> +	put_file_access(f);
->  cleanup_file:
->  	path_put(&f->f_path);
->  	f->f_path.mnt =3D NULL;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 9eced4cc286e..8bc04852c3da 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3000,6 +3000,16 @@ static inline void i_readcount_inc(struct inode *i=
-node)
->  	return;
->  }
->  #endif
-> +static inline void put_file_access(struct file *file)
-> +{
-> +	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ) {
-> +		i_readcount_dec(file->f_inode);
-> +	} else if (file->f_mode & FMODE_WRITER) {
-> +		put_write_access(file->f_inode);
-> +		__mnt_drop_write(file->f_path.mnt);
-> +	}
-> +}
-> +
->  extern int do_pipe_flags(int *, int);
-> =20
->  extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
+Definitely the page will still be pinned once it's allocated, there is
+no way to swap it out for example just with the current code. That kind
+of support, if desirable, can be extended through MOVABLE flag and some
+other callbacks to let feature-specific code to involve.
 
-Looks good to me. I like the new helper.
-
-In addition to Al's comment about which header this should go in, it
-might also be good to put a kerneldoc comment over it.
-
-Al, did you want to take this via your tree or do you want me to take it
-via the filelocks tree?
-
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+Chao
+> 
+> Regards
+> Nikunj
