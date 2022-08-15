@@ -2,145 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 207F159347E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 20:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 596EE593479
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 20:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232888AbiHOSHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 14:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
+        id S232367AbiHOSHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 14:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbiHOSHb (ORCPT
+        with ESMTP id S229731AbiHOSHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 14:07:31 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 252AD29C9B;
-        Mon, 15 Aug 2022 11:07:30 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id u10so5875616qvp.12;
-        Mon, 15 Aug 2022 11:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc;
-        bh=9eCh53aWhcLm1zn6y2/xpmwmbmdBrAigrdEFMkqm/i8=;
-        b=bX7ZQWccon6xE+igS7cG7yXqU5wwrFlJG3IHLS3WGCNEiGLxof9ki5oNzNHJcD1PUb
-         WP8hd3b9eY22K14NkCp28FpJKnltuaaZ1S/l/DVUMRBHLJLFzIggZ04XQTGBaqcYEQMA
-         sV3SoCCNBIey6VejyFZ+tgLcTV2mwwCgaHh4SHNY481jaUO97ksjE/ItNPN+alp6oyl4
-         ck0XXA8zz/74E49mvpXkw7g3K3EhHmqlhZkOeWjLCd9KiOWyAakRArdNcZdzZkdzA0nG
-         mvpXECiWCpF1UCxXtKFzNWCHmZZD5bHsxqF1keSQi1Dl1yXm/BHBEMafJplvWUutr/9A
-         BSdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc;
-        bh=9eCh53aWhcLm1zn6y2/xpmwmbmdBrAigrdEFMkqm/i8=;
-        b=wiyJdEZL5V8t4VDVPZMrNfhinyQo0905DPdWf3B95fkWGfnSvRKD3RUBNWG+05qxQ2
-         gr2f2oNkZAfFx+tWLWYHG2zG/KL78LebrUpMbmcHfWOvKDb4cEagIc8+rzaBvdPaB5/n
-         VrgmCU3jW1ZPNDFG+xKGcACQTq4GWBVLBuECeqhYw2VET7M989H+XeeJ2W7/yyRzGgzs
-         7tbmgv1MIA/zv09piV1/QkPi0MfOVbvxXcjrZ5Uqj+IouqsH1NWZY/WnNwiapu5MmtHM
-         GBKL1yfEoSS2lxxm8KTxr2AiUXxoxPdReE96yX7ft0c7gH6EKeMJqxrQE1PfaddvYXSi
-         /39g==
-X-Gm-Message-State: ACgBeo0H4075g9Qxw/kdEF5ItGYnVlWW3XF7C/GxTTaYVN31pGHMOtYQ
-        AT4aptCODDbNkvo6+MLCtbZIkJkMzsQ=
-X-Google-Smtp-Source: AA6agR6CeWoXzXfCtZQReGsR/nNBDmFHpV0WToEf+GcJiPay5c99NUazSCtwFXS7a/LtYQTtO2odNg==
-X-Received: by 2002:a05:6a00:b44:b0:52e:d959:c05b with SMTP id p4-20020a056a000b4400b0052ed959c05bmr16953839pfo.22.1660586838204;
-        Mon, 15 Aug 2022 11:07:18 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f6-20020aa79686000000b0052e23a5ab74sm6856531pfk.59.2022.08.15.11.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 11:07:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Mon, 15 Aug 2022 11:07:15 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     syzbot <syzbot+24df94a8d05d5a3e68f0@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] upstream boot error: BUG: corrupted list in new_inode
-Message-ID: <20220815180715.GA3106610@roeck-us.net>
-References: <00000000000041678b05e64b68c6@google.com>
+        Mon, 15 Aug 2022 14:07:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D35229C8F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 11:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660586823;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ujM9hbtiDvaKcMcqtlXWweFBU3njnJfsdTVS+tJ21g4=;
+        b=c7FrVsKr8kN7gcAEaOeYuNoYMFOUMZjX5jloI/YGOjSeQno5Qw84KLlyjJFrfwjcDhWYNO
+        sqhg+MhDwF6SH+pDuOMptNxPJO1Y2Bv9942wEikrYBxxapdob5CPnAHZv4joamHYq3UI1v
+        H1553L0PFDVmbAsnktXynYEfLIgxGwk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-14-GftWwSlKO-2_q73CFcKJDg-1; Mon, 15 Aug 2022 14:07:00 -0400
+X-MC-Unique: GftWwSlKO-2_q73CFcKJDg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 895A818A6522;
+        Mon, 15 Aug 2022 18:06:59 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42117C15BA8;
+        Mon, 15 Aug 2022 18:06:59 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     bcrl@kvack.org, viro@zeniv.linux.org.uk, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] aio: Save a few cycles in 'lookup_ioctx()'
+References: <0c3fcdaec33bb12b2367860dfab7ed4224ea000c.1635974999.git.christophe.jaillet@wanadoo.fr>
+        <a8666743-4dc5-79b8-56c7-23c05fc88d66@wanadoo.fr>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 15 Aug 2022 14:10:49 -0400
+In-Reply-To: <a8666743-4dc5-79b8-56c7-23c05fc88d66@wanadoo.fr> (Christophe
+        JAILLET's message of "Fri, 12 Aug 2022 06:54:09 +0200")
+Message-ID: <x49czd1xtqu.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000041678b05e64b68c6@google.com>
-X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git  fc4d146e8d7d25ef88d409bea1f2e9aff7f30635
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-On Mon, Aug 15, 2022 at 11:00:29AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    5d6a0f4da927 Merge tag 'for-linus-6.0-rc1b-tag' of git://g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1399b2f3080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f6bcb425ba129b87
-> dashboard link: https://syzkaller.appspot.com/bug?extid=24df94a8d05d5a3e68f0
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+24df94a8d05d5a3e68f0@syzkaller.appspotmail.com
-> 
-> list_add corruption. next->prev should be prev (ffff8881401c0a00), but was ffff000000000000. (next=ffff88801fb50308).
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:27!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 24 Comm: kdevtmpfs Not tainted 5.19.0-syzkaller-14374-g5d6a0f4da927 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-> RIP: 0010:__list_add_valid.cold+0xf/0x58 lib/list_debug.c:27
-> Code: 48 c7 c6 00 ec 48 8a 48 89 ef 49 c7 c7 ea ff ff ff e8 5b 63 05 00 e9 c2 7d b6 fa 4c 89 e1 48 c7 c7 a0 f2 48 8a e8 95 f2 f0 ff <0f> 0b 48 c7 c7 40 f2 48 8a e8 87 f2 f0 ff 0f 0b 48 c7 c7 a0 f1 48
-> RSP: 0018:ffffc900001efc10 EFLAGS: 00010286
-> RAX: 0000000000000075 RBX: ffff8881401c0000 RCX: 0000000000000000
-> RDX: ffff888012620000 RSI: ffffffff8161f148 RDI: fffff5200003df74
-> RBP: ffff88801db8b588 R08: 0000000000000075 R09: 0000000000000000
-> R10: 0000000080000001 R11: 0000000000000000 R12: ffff88801fb50308
-> R13: ffff88801fb50308 R14: ffff8881401c0000 R15: ffff88801db8b588
-> FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88823ffff000 CR3: 000000000bc8e000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  __list_add include/linux/list.h:69 [inline]
->  list_add include/linux/list.h:88 [inline]
->  inode_sb_list_add fs/inode.c:495 [inline]
->  new_inode+0x114/0x270 fs/inode.c:1049
->  shmem_get_inode+0x19b/0xe00 mm/shmem.c:2306
->  shmem_mknod+0x5a/0x1f0 mm/shmem.c:2873
->  vfs_mknod+0x4d2/0x7e0 fs/namei.c:3892
->  handle_create+0x340/0x4b3 drivers/base/devtmpfs.c:226
->  handle drivers/base/devtmpfs.c:391 [inline]
->  devtmpfs_work_loop drivers/base/devtmpfs.c:406 [inline]
->  devtmpfsd+0x1a4/0x2a3 drivers/base/devtmpfs.c:448
->  kthread+0x2e4/0x3a0 kernel/kthread.c:376
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__list_add_valid.cold+0xf/0x58 lib/list_debug.c:27
-> Code: 48 c7 c6 00 ec 48 8a 48 89 ef 49 c7 c7 ea ff ff ff e8 5b 63 05 00 e9 c2 7d b6 fa 4c 89 e1 48 c7 c7 a0 f2 48 8a e8 95 f2 f0 ff <0f> 0b 48 c7 c7 40 f2 48 8a e8 87 f2 f0 ff 0f 0b 48 c7 c7 a0 f1 48
-> RSP: 0018:ffffc900001efc10 EFLAGS: 00010286
-> RAX: 0000000000000075 RBX: ffff8881401c0000 RCX: 0000000000000000
-> RDX: ffff888012620000 RSI: ffffffff8161f148 RDI: fffff5200003df74
-> RBP: ffff88801db8b588 R08: 0000000000000075 R09: 0000000000000000
-> R10: 0000000080000001 R11: 0000000000000000 R12: ffff88801fb50308
-> R13: ffff88801fb50308 R14: ffff8881401c0000 R15: ffff88801db8b588
-> FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88823ffff000 CR3: 000000000bc8e000 CR4: 0000000000350ef0
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Le 03/11/2021 =C3=A0 22:31, Christophe JAILLET a =C3=A9crit=C2=A0:
+>> Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()'=
+ to
+>> save a few cycles when it is known that the rcu lock is already
+>> taken/released.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   fs/aio.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/aio.c b/fs/aio.c
+>> index 9c81cf611d65..d189ea13e10a 100644
+>> --- a/fs/aio.c
+>> +++ b/fs/aio.c
+>> @@ -1062,7 +1062,7 @@ static struct kioctx *lookup_ioctx(unsigned long c=
+tx_id)
+>>   	id =3D array_index_nospec(id, table->nr);
+>>   	ctx =3D rcu_dereference(table->table[id]);
+>>   	if (ctx && ctx->user_id =3D=3D ctx_id) {
+>> -		if (percpu_ref_tryget_live(&ctx->users))
+>> +		if (percpu_ref_tryget_live_rcu(&ctx->users))
+>>   			ret =3D ctx;
+>>   	}
+>>   out:
+>
+>
+> Hi,
+> gentle reminder.
+>
+> Is this patch useful?
+> When I first posted it, percpu_ref_tryget_live_rcu() was really new.
+> Now it is part of linux since 5.16.
+>
+> Saving a few cycles in a function with "lookup" in its name looks
+> always good to me.
+
+The patch looks fine to me.
+
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+
