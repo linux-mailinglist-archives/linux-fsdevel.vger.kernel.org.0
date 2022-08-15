@@ -2,47 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88584594A29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 02:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9365594DB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 03:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354723AbiHOXzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 19:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54686 "EHLO
+        id S233893AbiHPB0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 21:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355731AbiHOXwy (ORCPT
+        with ESMTP id S244686AbiHPB01 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 19:52:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721791593D5;
-        Mon, 15 Aug 2022 13:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HkdesMUoZ61tMBtJNUxc0TT34BYc4cdbeRZcIwePCUI=; b=Gc1ER7H2A6KFPOBzMzB0DAXCiO
-        gtDR0SURShm2pT7GJzeB0PGkGb1o//myUl91rYDicg47L+TIsiPpH2h9Ck5ZrwQnZ7DD7nXLk4y9c
-        BfCINCjdWhJxWz9Sg8GU1zl2PGcWJRInRXMCwQhumyreUkbq5sdcJD7CY0GPIaJGDGyUhpDzFeyuJ
-        nijbOOwH0IS+r5G9YFs4U1WTjmoJpdXWiHoEe1n0UpiweIwhkXxDbWfEY4TOFh6SYNkjgSKrllX6f
-        IlKBf7bIjHRcYArc9DwNosV1TRtvhlGsGnNvpzDFXOZn958KvyKiyLnUYKCTvoja5mNx5iJkqwhY4
-        Adt9aplw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oNgWZ-0063or-EA; Mon, 15 Aug 2022 20:17:23 +0000
-Date:   Mon, 15 Aug 2022 21:17:23 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Convert to filemap_get_folios_contig()
-Message-ID: <Yvqp05w5HOVQ9qLj@casper.infradead.org>
-References: <20220815185452.37447-1-vishal.moola@gmail.com>
+        Mon, 15 Aug 2022 21:26:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2C281CDE5D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 14:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660598159;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SjOJ2ej9e5ff+yIWDnHyj8tdGUgmaChLo0SiD6yuEcY=;
+        b=WvzCTugPtnL2TtynknfWhjnLLTpNhTVS//uzw1KuSZU2Cy41UD6BKFH0ZEyAfqsi9/P6SC
+        lm32GLeApgzz2IjxerLEdqe4uSeyLkaSneoq/MCEXYDy/q2Ne/DZAHUAsqPglrdfwbtjSs
+        x6FqBC/IEi+aPOzgrpTZ1oKEq+hduP4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-187-v-_WRz6XP0eM7eFaWMY6qg-1; Mon, 15 Aug 2022 17:15:56 -0400
+X-MC-Unique: v-_WRz6XP0eM7eFaWMY6qg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0180C101A54E;
+        Mon, 15 Aug 2022 21:15:56 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.34.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 61F4E492C3B;
+        Mon, 15 Aug 2022 21:15:55 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 4/4] fanotify,audit: deliver fan_info as a hex-encoded string
+Date:   Mon, 15 Aug 2022 17:15:54 -0400
+Message-ID: <4748539.GXAFRqVoOG@x2>
+Organization: Red Hat
+In-Reply-To: <YvRoNSL0snBY87/b@madcap2.tricolour.ca>
+References: <cover.1659996830.git.rgb@redhat.com> <5623945.DvuYhMxLoT@x2> <YvRoNSL0snBY87/b@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220815185452.37447-1-vishal.moola@gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,12 +65,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 15, 2022 at 11:54:45AM -0700, Vishal Moola (Oracle) wrote:
-> This patch series replaces find_get_pages_contig() with
-> filemap_get_folios_contig(). I've run xfstests on btrfs. I've also
-> tested the ramfs changes. I ran some xfstests on nilfs2, and its
-> seemingly fine although more testing may be beneficial.
+Hello Richard,
 
-These all look good to me.  I'd like to see R-b tags from the various
-fs maintainers, but I intend to add this series to the folio tree for
-merging in 6.1.
+On Wednesday, August 10, 2022 10:23:49 PM EDT Richard Guy Briggs wrote:
+> > I compiled a new kernel and run old user space on this. The above event
+> > is
+> > exactly what I see in my audit logs. Why the fan_info=3F? I really would
+> > have expected 0. What if the actual rule number was 63? I think this
+> > will work better to leave everything 0 with old user space.
+> 
+> Well, if it is to be consistently hex encoded, that corresponds to "?"
+
+I suppose this OK.
+
+> if it is to be interpreted as a string.  Since the fan_type is 0,
+> fan_info would be invalid, so a value of 0 would be entirely reasonable,
+> hex encoded to fan_info=00.  It could also be hex encoded to the string
+> "(none)".  If you wanted "0" for fan_type=FAN_RESPONSE_INFO_AUDIT_RULE,
+> that would be fan_info=30 if it were interpreted as a string, or
+> arguably 3F for an integer of rule (decimal) 63.  Ultimately, fan_type
+> should determine how fan_info's hex encoded value should be interpreted.
+> 
+> But ultimately, the point of this patch is to hex encode the fan_info
+> field value.
+
+Just one last update, I have been able to test the patches with the user 
+space application and it appears to be working from the PoV of what is sent 
+is what's in the audit logs. I'm not sure how picky old kernels are wrt the 
+size of what's sent. But an unpatched 5.19 kernel seems to accept the larger 
+size response and do the right thing.
+
+-Steve
+
+
