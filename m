@@ -2,103 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF812592DD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 13:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C3B592E15
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 13:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242372AbiHOLFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 07:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
+        id S231177AbiHOLVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 07:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241838AbiHOLEm (ORCPT
+        with ESMTP id S242241AbiHOLVr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 07:04:42 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC17B25C49;
-        Mon, 15 Aug 2022 04:03:51 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MJWgK-1o3o6U0UWG-00JsTs; Mon, 15 Aug 2022 13:03:38 +0200
-Message-ID: <c08a9f42-e213-fc35-db7b-c95ed6f1fdc8@i2se.com>
-Date:   Mon, 15 Aug 2022 13:03:37 +0200
+        Mon, 15 Aug 2022 07:21:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C801A383
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 04:21:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 33CC36115D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 11:21:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28591C433D6;
+        Mon, 15 Aug 2022 11:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660562502;
+        bh=LdLB+zNz3tDQsuKaWXbJSweBsIbxkeT7SglzG7EDYgE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=H7WpZC76LFE57kmE1crmaifeaYwlOBYrpviqtwTHcnq898YOFgZZ9JbeYkV1+MbVD
+         qw5Usl1QrwXEwYRq3duZxMxDb8YcnihUfEwx7UbVX8HQo73hcj4+VEd2357kvUDOAw
+         QJe/wm/BgJHi6qgIa54qp5NBEBhrPwRKWDtPBE7racHJYg2R1txNzQ87rJuiosgMVe
+         nZQMhDwcEmYxwVMvIBfWfId+PeYYZdQE8CkMwB5KNDGnEYv1NhYfQaz8+OAS4PzugG
+         j/dTr1WMIlKbkvjCsyA2gi9hoxAVoJGIVwqEJRx+zy/zu84oI9OWj3+XS+bQ/WUH9Z
+         rOpfarUNianRg==
+Message-ID: <d910e1ef7c8fcf65fbdb0bc438ebba2d7a1d6f83.camel@kernel.org>
+Subject: Re: [PATCH] locks: fix TOCTOU race when granting write lease
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 15 Aug 2022 07:21:40 -0400
+In-Reply-To: <20220814152322.569296-1-amir73il@gmail.com>
+References: <20220814152322.569296-1-amir73il@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
- <20220728100055.efbvaudwp3ofolpi@quack3>
- <76a9b920-0937-7bef-db55-844f0f5f6c1b@i2se.com>
- <20220815103452.7hjx7ohzx64e5lex@quack3>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220815103452.7hjx7ohzx64e5lex@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:AnzB4HAfkIiycFBgKsxTc+sAFq4EiPpS6CLnj6gUwrwjf3I+LJd
- ZhPWjk35dzscPw/FsLRyNQgQnG46MYvk7yRvgG6p+2qL3rE4hUTJfhyW0UqNw7x1bkO07Ru
- 3LewU2IeVYUEv0wOBZlMGIMFoDAvnlhZRhOsplyOUnujPYtmS98ZskpF2Sp5zwGAyPPDN7o
- y6+uODWanJ380I5550hqw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rLAjXadvhNs=:f8ICrXtGKlHfq2MytpCZ3+
- 4EiuqrCf3YhuboCMieAg+vf1IHlbjGW3tBYyezTHRnPA+XqfYR489wcokB6+qaoT33CbzaEUJ
- nUVc0X6FjPLBi8zNrPEtPHDb2DYQbZIM42U6gCkBh6abO9wqOrMWZeECPpOkk6egRFyOjzaXV
- 8BDaPyE5tMjkst62shrsg/dg2DJTCD/iAOynsBux6cF2+dwvYBCG7uuK+DamYKbExf4irezsQ
- WpSZToosq0Ydz3ZqGSzsCtyQ/Lcj0t8e5bZ7+aH4rde7OQx7LBIFWwkHrDtOyDMTFjrsvVqo9
- wdwPwvQY0FiZSe5Kh7CDaV8x+D8ZmYMpIj48LTar3a37iwWFGcCQ6en5M+/pfvaRLN2xQ3Lwf
- gxTpb1+s/AjsHFPWNTzKyhCG7uFqO3Pln8oY7hpaAQZp1ddNom/EzoIUxffi9cXktf89GiGzC
- noqR0HqSIYIwItWVIz+QOsYtQtphcTqZN52uP/u8eZCNM+oxH4mEKNyomeXQRy9AZ1yh9pnRI
- AILv9CfDbEFLFa2/8RHLaiAcM/vnxKqV/tbJxWsNM5akJ8iuDbZ6JvL2kR3HYFslOQSj2RUXc
- vXzTnq9HxwpReueQ/cgIYijZaNGRGjKhpBssqsXx+pvkTwqPodj96u2CKcSRI8kgBumGp2abf
- fVu75IZS5ejSUXWsm+iU1kmkxEkdxoevLtdcrL1dRw0hNPnTGRZXPHq0Pww0EyQkEgUdRLGFe
- amZj/nZTkIUeUwaIgp04Aw7yj6/pK13kfah/BWt30MN0487U7Z/9EgFs8seeb2WXbt2HUEx4L
- tpXAB+lB0ir/LpgdJglZEdS/kCnkIRPGIlQ6iVNxAjy1vGvmG0=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Sun, 2022-08-14 at 18:23 +0300, Amir Goldstein wrote:
+> Thread A trying to acquire a write lease checks the value of i_readcount
+> and i_writecount in check_conflicting_open() to verify that its own fd
+> is the only fd referencing the file.
+>=20
+> Thread B trying to open the file for read will call break_lease() in
+> do_dentry_open() before incrementing i_readcount, which leaves a small
+> window where thread A can acquire the write lease and then thread B
+> completes the open of the file for read without breaking the write lease
+> that was acquired by thread A.
+>=20
+> Fix this race by incrementing i_readcount before checking for existing
+> leases, same as the case with i_writecount.
+>=20
 
-Am 15.08.22 um 12:34 schrieb Jan Kara:
-> Hi Stefan,
->
-> Back from vacation...
->
-> On Sun 31-07-22 22:42:56, Stefan Wahren wrote:
->> Hi Jan,
->>
->> Am 28.07.22 um 12:00 schrieb Jan Kara:
->>> Also can get filesystem metadata image of your card like:
->>>     e2image -r <fs-device> - | gzip >/tmp/ext4-image.gz
->>>
->>> and put it somewhere for download? The image will contain only fs metadata,
->>> not data so it should be relatively small and we won't have access to your
->>> secrets ;). With the image we'd be able to see how the free space looks
->>> like and whether it perhaps does not trigger some pathological behavior.
->> i've problems with this. If i try store uncompressed the metadata of the
->> second SD card partition (/dev/sdb2 = rootfs) the generated image file is
->> nearly big as the whole partition. In compressed state it's 25 MB. Is this
->> expected?
-> Yes, that is expected. The resulting file is a sparse file that contains
-> only metadata blocks that is the reason why it compresses so well but looks
-> big.
+Nice catch.
 
-i've added here:
+> Use a helper put_file_access() to decrement i_readcount or i_writecount
+> in do_dentry_open() and __fput().
+>=20
+> Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write=
+ lease")
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>=20
+> Hi Jeff,
+>=20
+> This fixes a race I found during code audit - I do not have a reproducer
+> for it.
+>=20
+> I ran the fstests I found for locks and leases:
+> generic/131 generic/478 generic/504 generic/571
+> and the LTP fcntl tests.
+>=20
+> Encountered this warning with generic/131, but I also see it on
+> current master:
+>=20
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>  WARNING: suspicious RCU usage
+>  5.19.0-xfstests-14277-gbd6ab3ef4e93 #966 Not tainted
+>  -----------------------------
+>  include/net/sock.h:592 suspicious rcu_dereference_check() usage!
+>=20
+>  other info that might help us debug this:
+>=20
+>=20
+>  rcu_scheduler_active =3D 2, debug_locks =3D 1
+>  5 locks held by locktest/3996:
+>   #0: ffff88800be1d7a0 (&sb->s_type->i_mutex_key#8){+.+.}-{3:3}, at: __so=
+ck_release+0x25/0x97
+>   #1: ffff88800909ce00 (sk_lock-AF_INET){+.+.}-{0:0}, at: tcp_close+0x14/=
+0x60
+>   #2: ffff888006847cc8 (&h->lhash2[i].lock){+.+.}-{2:2}, at: inet_unhash+=
+0x3a/0xcf
+>   #3: ffffffff82a8ac18 (reuseport_lock){+...}-{2:2}, at: reuseport_detach=
+_sock+0x17/0xb8
+>   #4: ffff88800909d0b0 (clock-AF_INET){++..}-{2:2}, at: bpf_sk_reuseport_=
+detach+0x1b/0x85
+>=20
+>  stack backtrace:
+>  CPU: 1 PID: 3996 Comm: locktest Not tainted 5.19.0-xfstests-14277-gbd6ab=
+3ef4e93 #966
+>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubun=
+tu1.1 04/01/2014
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x45/0x5d
+>   bpf_sk_reuseport_detach+0x5c/0x85
+>   reuseport_detach_sock+0x65/0xb8
+>   inet_unhash+0x55/0xcf
+>   tcp_set_state+0xb3/0x10d
+>   ? mark_lock.part.0+0x30/0x101
+>   __tcp_close+0x26/0x32d
+>   tcp_close+0x20/0x60
+>   inet_release+0x50/0x64
+>   __sock_release+0x32/0x97
+>   sock_close+0x14/0x1b
+>   __fput+0x118/0x1eb
+>=20
+>=20
+> Let me know what you think.
+>=20
+> Thanks,
+> Amir.
+>=20
+>  fs/file_table.c    |  7 +------
+>  fs/open.c          | 11 ++++-------
+>  include/linux/fs.h | 10 ++++++++++
+>  3 files changed, 15 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 99c6796c9f28..dd88701e54a9 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -324,12 +324,7 @@ static void __fput(struct file *file)
+>  	}
+>  	fops_put(file->f_op);
+>  	put_pid(file->f_owner.pid);
+> -	if ((mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ)
+> -		i_readcount_dec(inode);
+> -	if (mode & FMODE_WRITER) {
+> -		put_write_access(inode);
+> -		__mnt_drop_write(mnt);
+> -	}
+> +	put_file_access(file);
+>  	dput(dentry);
+>  	if (unlikely(mode & FMODE_NEED_UNMOUNT))
+>  		dissolve_on_fput(mnt);
+> diff --git a/fs/open.c b/fs/open.c
+> index 8a813fa5ca56..a98572585815 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -840,7 +840,9 @@ static int do_dentry_open(struct file *f,
+>  		return 0;
+>  	}
+> =20
+> -	if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
+> +	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ) {
+> +		i_readcount_inc(inode);
+> +	} else if (f->f_mode & FMODE_WRITE && !special_file(inode->i_mode)) {
+>  		error =3D get_write_access(inode);
+>  		if (unlikely(error))
+>  			goto cleanup_file;
+> @@ -880,8 +882,6 @@ static int do_dentry_open(struct file *f,
+>  			goto cleanup_all;
+>  	}
+>  	f->f_mode |=3D FMODE_OPENED;
+> -	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ)
+> -		i_readcount_inc(inode);
+>  	if ((f->f_mode & FMODE_READ) &&
+>  	     likely(f->f_op->read || f->f_op->read_iter))
+>  		f->f_mode |=3D FMODE_CAN_READ;
+> @@ -935,10 +935,7 @@ static int do_dentry_open(struct file *f,
+>  	if (WARN_ON_ONCE(error > 0))
+>  		error =3D -EINVAL;
+>  	fops_put(f->f_op);
+> -	if (f->f_mode & FMODE_WRITER) {
+> -		put_write_access(inode);
+> -		__mnt_drop_write(f->f_path.mnt);
+> -	}
+> +	put_file_access(f);
+>  cleanup_file:
+>  	path_put(&f->f_path);
+>  	f->f_path.mnt =3D NULL;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 9eced4cc286e..8bc04852c3da 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3000,6 +3000,16 @@ static inline void i_readcount_inc(struct inode *i=
+node)
+>  	return;
+>  }
+>  #endif
+> +static inline void put_file_access(struct file *file)
+> +{
+> +	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_READ) {
+> +		i_readcount_dec(file->f_inode);
+> +	} else if (file->f_mode & FMODE_WRITER) {
+> +		put_write_access(file->f_inode);
+> +		__mnt_drop_write(file->f_path.mnt);
+> +	}
+> +}
+> +
+>  extern int do_pipe_flags(int *, int);
+> =20
+>  extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
 
-https://github.com/lategoodbye/mb_optimize_scan_regress/blob/main/Kingston_SDCIT_rootfs_metadata.gz
+Looks good to me. I like the new helper.
 
->
-> 								Honza
->
+In addition to Al's comment about which header this should go in, it
+might also be good to put a kerneldoc comment over it.
+
+Al, did you want to take this via your tree or do you want me to take it
+via the filelocks tree?
+
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
