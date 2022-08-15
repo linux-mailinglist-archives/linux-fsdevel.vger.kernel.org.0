@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF542593B71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 22:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BBEB593B33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Aug 2022 22:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243553AbiHOUNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 16:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52414 "EHLO
+        id S243419AbiHOUNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 16:13:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232356AbiHOUJ2 (ORCPT
+        with ESMTP id S233632AbiHOUJc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 16:09:28 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13AA83F1C;
-        Mon, 15 Aug 2022 11:56:01 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id x10so7125110plb.3;
-        Mon, 15 Aug 2022 11:56:01 -0700 (PDT)
+        Mon, 15 Aug 2022 16:09:32 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBA183F24;
+        Mon, 15 Aug 2022 11:56:02 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id ha11so7689066pjb.2;
+        Mon, 15 Aug 2022 11:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=/3WdeuCJ7GOu9Di/kxGE5ZGCTP43O1pORgSps3IpIM0=;
-        b=pzhH71/RORsENTBh74vzN5tqqZUKFr4QVYLeRWr9RocyL7OZKiodwsp21TGAG95MnP
-         dsuAJ49JcqdqnfiQ/krxHAJW/NtnLndMog8nxsvyC2oA20RPu4/6P6mDM4v7uuHosvVH
-         pT5ae4HmStn9CqdvdQtc2KGE6WbjIPCG3FCvuooEIPPs6GLaeOdlD3rRWGmVbQl6FVff
-         Nzqo8PGtzrW7EDcHQrvUe2tpoWaUa6xYETFR7d9fAzFnv7Bbq3TYbrJwUFNVcLqbYKyj
-         NC6RjlEpmZ5pJ/nLcPtKXXEhsDM9I9HkAYhAFnuJgZuL9w1mjMSt+T8E7NreD5qk8oS0
-         AZrQ==
+        bh=+TETRuQREbWQMsK22eWvupq1sOQwbs1H5QXxZ2DEAgU=;
+        b=f3E/ojiaz0NM63zgkJ6u7+tDQzLKIRRocWMkYaGqPGppzv5A2CRcZ4klgHcqLpTBNO
+         UngXV4EWEHYrgvCn+TOgh3V4yIN6sgOaH9C/2fJz3k8+uUYVbNPlrkVIIFQfMIJMKIOg
+         Zx+3dLSWUqr0a7/Y+/TzyPM78llRWrbfD1OHttkjC8QErSmtqZAWVFzrxI6dRuUcxfZ9
+         McsQaV5CDmB3AXS4JCgfoDnPbukLWfrjty6MFRUZTI0z/GMVNZHiomZxIDdgiAh3o0lm
+         dAaIbaqHz2liQhdZWWPXXok0hv8bdHGpgBBAGWHIz5lNBWv1Eioqe3n7Vu92977ImC7r
+         0b5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=/3WdeuCJ7GOu9Di/kxGE5ZGCTP43O1pORgSps3IpIM0=;
-        b=O4mricfSToXg5JHnWXFPOBLqboRzKdSD2tkaaZV+JXZVVkT/30JGfT3FcfrBMLiJzo
-         wpX6Z354eb+0/HKgeF6Onz7oKgCYP7ZrgbvL3KeksPmhWgieTnk/gR6T+YvkVrTDDkSy
-         97W0tVHzGqSZViOJUALXBHp8SYrFqxoGsvhKbvlTJp6CbIaeHCJ5qB1yYZH+vOLZuuMQ
-         vSTI8bBpOlNEn7RD1UoQYxOAhR8QXPvCJZJbzASdt0Mw7tkarWBJnTLE6qAih79AdEO/
-         i1mip+g7c8gnZ/Ni+e8ygYEEWqVMemyTQkdlZt9R3FZ6LJQQsM7UMmKEeUsgUXPchFfs
-         WkzA==
-X-Gm-Message-State: ACgBeo3z2t3xDEs4BaxM1AMqkLju6sttxptHBnO0o+jxstEiSzk0hrxd
-        J5ExLXqUiDSnEW1YpSrZusD8UwgGhMUNChIb
-X-Google-Smtp-Source: AA6agR4ivgKsW1nGK+NgnkoWRxp99CaZs3EHTMf/igrghYYz2Hbi4Z0NHcfQ+u7S31hvnU6vrpxPBQ==
-X-Received: by 2002:a17:90b:1bcf:b0:1f5:53cf:c01d with SMTP id oa15-20020a17090b1bcf00b001f553cfc01dmr30056226pjb.37.1660589760532;
-        Mon, 15 Aug 2022 11:56:00 -0700 (PDT)
+        bh=+TETRuQREbWQMsK22eWvupq1sOQwbs1H5QXxZ2DEAgU=;
+        b=QRJgZuTVUBW13FCsTgkT7cPOvG9X9a6VU7PWideJaHlmy0/DMfzf+0XpdGCQP9Nctj
+         ERFpqG5xfY3Bo/Y4Kpq3UrRjHx5wOxcK9DkxJ1FuXbUaJtHlwnOWyGwxpHGVdFdL0fxb
+         oVdXxQICS4m9YSJfAoPgyymIR0/SbkBPp9hSPc2/WF5NY0qrFYnHB+Q/xUKaNzxTq5xj
+         E2UX7uHNIffifgpNZJiz0TGSJNpWa5yUgdpktsLgde6iVQqju4d5xB1ymmWOGy+pHI0L
+         isZuPwKJ33nlYgvbihxt48OF1czcSvb/+/XJ3RqV8Jmy6vwq1NFOPOi7hOcl0gbgGp8Q
+         Fhaw==
+X-Gm-Message-State: ACgBeo0HEzyAQWZyi6rqTcJnS/nIh/WaHT3Fs4A/MBSVNFgXItlHnp9n
+        dC8DLmmDG0eXyJCdVAdaLTP+Kg9gtHwyiMCr
+X-Google-Smtp-Source: AA6agR7CudSG0LqZx+wKC4C1PIGfjK9cuqlus0vYtBkYoxZbg+jdJMDMCTln1TB5lc5Wk4KfUxJMvQ==
+X-Received: by 2002:a17:90a:317:b0:1f3:8ad:52aa with SMTP id 23-20020a17090a031700b001f308ad52aamr20072887pje.106.1660589761635;
+        Mon, 15 Aug 2022 11:56:01 -0700 (PDT)
 Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
-        by smtp.googlemail.com with ESMTPSA id x190-20020a6231c7000000b0052def2e20dasm6858174pfx.167.2022.08.15.11.55.59
+        by smtp.googlemail.com with ESMTPSA id x190-20020a6231c7000000b0052def2e20dasm6858174pfx.167.2022.08.15.11.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 11:56:00 -0700 (PDT)
+        Mon, 15 Aug 2022 11:56:01 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-btrfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 3/7] btrfs: Convert end_compressed_writeback() to use filemap_get_folios()
-Date:   Mon, 15 Aug 2022 11:54:48 -0700
-Message-Id: <20220815185452.37447-4-vishal.moola@gmail.com>
+Subject: [PATCH 4/7] btrfs: Convert process_page_range() to use filemap_get_folios_contig()
+Date:   Mon, 15 Aug 2022 11:54:49 -0700
+Message-Id: <20220815185452.37447-5-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220815185452.37447-1-vishal.moola@gmail.com>
 References: <20220815185452.37447-1-vishal.moola@gmail.com>
@@ -78,71 +78,94 @@ Since we may receive more than nr_pages pages, nr_pages may underflow.
 Since nr_pages > 0 is equivalent to index <= end_index, we replaced it
 with this check instead.
 
-Also this function does not care about the pages being contiguous so we
-can just use filemap_get_folios() to be more efficient.
+Also minor comment renaming for consistency in subpage.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- fs/btrfs/compression.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ fs/btrfs/subpage.c               |  2 +-
+ fs/btrfs/tests/extent-io-tests.c | 31 ++++++++++++++++---------------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index e84d22c5c6a8..d4ebef60b3ce 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -8,6 +8,7 @@
- #include <linux/file.h>
- #include <linux/fs.h>
+diff --git a/fs/btrfs/subpage.c b/fs/btrfs/subpage.c
+index 6fc2b77ae5c3..9a176af847d7 100644
+--- a/fs/btrfs/subpage.c
++++ b/fs/btrfs/subpage.c
+@@ -337,7 +337,7 @@ bool btrfs_subpage_end_and_test_writer(const struct btrfs_fs_info *fs_info,
+  *
+  * Even with 0 returned, the page still need extra check to make sure
+  * it's really the correct page, as the caller is using
+- * find_get_pages_contig(), which can race with page invalidating.
++ * filemap_get_folios_contig(), which can race with page invalidating.
+  */
+ int btrfs_page_start_writer_lock(const struct btrfs_fs_info *fs_info,
+ 		struct page *page, u64 start, u32 len)
+diff --git a/fs/btrfs/tests/extent-io-tests.c b/fs/btrfs/tests/extent-io-tests.c
+index a232b15b8021..530073868916 100644
+--- a/fs/btrfs/tests/extent-io-tests.c
++++ b/fs/btrfs/tests/extent-io-tests.c
+@@ -4,6 +4,7 @@
+  */
+ 
  #include <linux/pagemap.h>
 +#include <linux/pagevec.h>
- #include <linux/highmem.h>
- #include <linux/kthread.h>
- #include <linux/time.h>
-@@ -222,8 +223,7 @@ static noinline void end_compressed_writeback(struct inode *inode,
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	unsigned long index = cb->start >> PAGE_SHIFT;
- 	unsigned long end_index = (cb->start + cb->len - 1) >> PAGE_SHIFT;
--	struct page *pages[16];
--	unsigned long nr_pages = end_index - index + 1;
-+	struct folio_batch fbatch;
- 	const int errno = blk_status_to_errno(cb->status);
- 	int i;
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/sizes.h>
+@@ -20,39 +21,39 @@ static noinline int process_page_range(struct inode *inode, u64 start, u64 end,
+ 				       unsigned long flags)
+ {
  	int ret;
-@@ -231,24 +231,22 @@ static noinline void end_compressed_writeback(struct inode *inode,
- 	if (errno)
- 		mapping_set_error(inode->i_mapping, errno);
+-	struct page *pages[16];
++	struct folio_batch fbatch;
+ 	unsigned long index = start >> PAGE_SHIFT;
+ 	unsigned long end_index = end >> PAGE_SHIFT;
+-	unsigned long nr_pages = end_index - index + 1;
+ 	int i;
+ 	int count = 0;
+ 	int loops = 0;
  
 -	while (nr_pages > 0) {
 -		ret = find_get_pages_contig(inode->i_mapping, index,
--				     min_t(unsigned long,
--				     nr_pages, ARRAY_SIZE(pages)), pages);
+-				     min_t(unsigned long, nr_pages,
+-				     ARRAY_SIZE(pages)), pages);
 +	folio_batch_init(&fbatch);
-+	while (index <= end_index) {
-+		ret = filemap_get_folios(inode->i_mapping, &index, end_index,
-+				&fbatch);
 +
- 		if (ret == 0) {
--			nr_pages -= 1;
--			index += 1;
--			continue;
-+			return;
- 		}
++	while (index <= end_index) {
++		ret = filemap_get_folios_contig(inode->i_mapping, &index,
++				end_index, &fbatch);
  		for (i = 0; i < ret; i++) {
 +			struct folio *folio = fbatch.folios[i];
- 			if (errno)
--				SetPageError(pages[i]);
--			btrfs_page_clamp_clear_writeback(fs_info, pages[i],
-+				folio_set_error(folio);
-+			btrfs_page_clamp_clear_writeback(fs_info, &folio->page,
- 							 cb->start, cb->len);
+ 			if (flags & PROCESS_TEST_LOCKED &&
+-			    !PageLocked(pages[i]))
++			    !folio_test_locked(folio))
+ 				count++;
+-			if (flags & PROCESS_UNLOCK && PageLocked(pages[i]))
+-				unlock_page(pages[i]);
 -			put_page(pages[i]);
++			if (flags & PROCESS_UNLOCK && folio_test_locked(folio))
++				folio_unlock(folio);
+ 			if (flags & PROCESS_RELEASE)
+-				put_page(pages[i]);
++				folio_put(folio);
  		}
 -		nr_pages -= ret;
 -		index += ret;
 +		folio_batch_release(&fbatch);
+ 		cond_resched();
+ 		loops++;
+ 		if (loops > 100000) {
+ 			printk(KERN_ERR
+-		"stuck in a loop, start %llu, end %llu, nr_pages %lu, ret %d\n",
+-				start, end, nr_pages, ret);
++		"stuck in a loop, start %llu, end %llu, ret %d\n",
++				start, end, ret);
+ 			break;
+ 		}
  	}
- 	/* the inode may be gone now */
++
+ 	return count;
  }
+ 
 -- 
 2.36.1
 
