@@ -2,128 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B505962E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 21:11:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 131DD5962EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 21:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236900AbiHPTLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 15:11:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33112 "EHLO
+        id S236623AbiHPTNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 15:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236873AbiHPTLo (ORCPT
+        with ESMTP id S236148AbiHPTNT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 15:11:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E442E7C773;
-        Tue, 16 Aug 2022 12:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=j3XcZj58ibAYo7JZ+DBGHbio8/+pmx+vaIAoYTPhszo=; b=C3ggZZuTRiGe+co72VGz5WtuLJ
-        dEtZCyVzUM/eFKokG1H5+2fq5HnCQW1/XI3EnYPaBS8QQO9lxUZ1VUrcCmag9//Qh8vNBLfpz1mMI
-        wPIz1JuLFLurE6ZIBrsfqaJgC46BC+tsi/iCNppteb7Iq1x5WwTqSgflaHVjt80Oo7N5zxT3TE7ME
-        D47v+hXMewesjsDdRS0l90YMCI+ctr26b2bcQMrDuMV6Ik31zqsKLqtPZE7xiBkUAxOrYhr8aM+3U
-        v9TQa3ty7tM2bpDblyqo+kJk2VdOjZI+nsGlYX6risKRNaTbeuVXpiySdoN5yJ2RptQrlEc7NFx1l
-        ZR3SyIng==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oO1yO-007GSa-01; Tue, 16 Aug 2022 19:11:32 +0000
-Date:   Tue, 16 Aug 2022 20:11:31 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Switching to iterate_shared
-Message-ID: <Yvvr447B+mqbZAoe@casper.infradead.org>
-References: <YvvBs+7YUcrzwV1a@ZenIV>
- <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
+        Tue, 16 Aug 2022 15:13:19 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC519474DE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 12:13:18 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id w14so10047227plp.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 12:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=Wjb5AIGvJ0V/NRfbnr8gg1CmISm7LqELqnVgTQyStiY=;
+        b=kcRvnsyQxQFHsWdfWXFnfndrEg9iTlHZ6mWrwbnit1nAo6eG6dy+jF7fzmrAOX0D6w
+         PV/SPPDR/yqFq61RQA3XA2PArX4zhNJBJ6T15oJzHiKglGulaShDpvWscxkNM5zm1jLX
+         x/1NLGqoybEaNuaplQ5naYBLROAf3CXKFVEqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=Wjb5AIGvJ0V/NRfbnr8gg1CmISm7LqELqnVgTQyStiY=;
+        b=WtW7xy7gttL7TM5QKDFJ6kWwZEKeS0e0a9tpZC9Xm/NWcus04LuqfRZ4wDeT4Z4vSU
+         tw/EDibn4IsMtLmn5hZMYbbv9R68GWaBNWHts0Gzr4i1BKGbMmkKzIIcEniBHKUIswCq
+         bPL3us+B3u7qMI0LvygHSDKvAvxE5mAbpYn1VqzMLlqt7oCtK+mB9/igkoEFrHZfoQ/H
+         28fxVKdTYooGH4OjjVwUB+xz22klJnFCXLe//0SF4zKgK33WiGAZGcBdE78apCwpuDQ/
+         lS571nazjLsX+GCnx/33qrBKIceSSs9x1AfkKqAkpcfYTNtcYbuH7gKGSjWnYBQLUYDu
+         wkvQ==
+X-Gm-Message-State: ACgBeo24/mUrWpnLJ1pA0EBRI5gOLKBdwo+8Lfmvie1uU3B3u0ZEsp9l
+        DucghuUgfw25HuSgOrejPpBd5g==
+X-Google-Smtp-Source: AA6agR5RH5ulJC813IEBEmxie0ssFd9t03UEuh1L8tR0gUeIP734M/uNntfcALDO/3NmVB5msDGQ1g==
+X-Received: by 2002:a17:902:f083:b0:172:9128:c70d with SMTP id p3-20020a170902f08300b001729128c70dmr2154759pla.145.1660677198128;
+        Tue, 16 Aug 2022 12:13:18 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l6-20020a170903120600b0017272667a56sm3734063plh.196.2022.08.16.12.13.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Aug 2022 12:13:17 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        fmdefrancesco@gmail.com, linux-fsdevel@vger.kernel.org,
+        ebiederm@xmission.com, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Kees Cook <keescook@chromium.org>, ira.weiny@intel.com
+Subject: Re: [PATCH v2] fs: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Tue, 16 Aug 2022 12:13:08 -0700
+Message-Id: <166067718637.5584.14452180962626793627.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220803182856.28246-1-fmdefrancesco@gmail.com>
+References: <20220803182856.28246-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 11:58:36AM -0700, Linus Torvalds wrote:
-> That said, our filldir code is still confusing as hell. And I would
-> really like to see that "shared vs non-shared" iterator thing go away,
-> with everybody using the shared one - and filesystems that can't deal
-> with it using their own lock.
+On Wed, 3 Aug 2022 20:28:56 +0200, Fabio M. De Francesco wrote:
+> The use of kmap() and kmap_atomic() are being deprecated in favor of
+> kmap_local_page().
 > 
-> But that's a completely independent wart in our complicated filldir saga.
+> There are two main problems with kmap(): (1) It comes with an overhead as
+> mapping space is restricted and protected by a global lock for
+> synchronization and (2) it also requires global TLB invalidation when the
+> kmap’s pool wraps and it might block when the mapping space is fully
+> utilized until a slot becomes available.
 > 
-> But if somebody were to look at that iterate-vs-iterate_shared, that
-> would be lovely. A quick grep shows that we don't have *that* many of
-> the non-shared cases left:
-> 
->       git grep '\.iterate\>.*='
-> 
-> seems to imply that converting them to a "use my own load" wouldn't be
-> _too_ bad.
-> 
-> And some of them might actually be perfectly ok with the shared
-> semantics (ie inode->i_rwsem held just for reading) and they just were
-> never converted originally.
+> [...]
 
-What's depressing is that some of these are newly added.  It'd be
-great if we could attach something _like_ __deprecated to things
-that checkpatch could pick up on.
+Applied to for-next/execve, thanks!
 
-fs/adfs/dir_f.c:        .iterate        = adfs_f_iterate,
-fs/adfs/dir_fplus.c:    .iterate        = adfs_fplus_iterate,
+[1/1] fs: Replace kmap{,_atomic}() with kmap_local_page()
+      https://git.kernel.org/kees/c/3a608cfee97e
 
-ADFS is read-only, so must be safe?
+-- 
+Kees Cook
 
-fs/ceph/dir.c:  .iterate = ceph_readdir,
-fs/ceph/dir.c:  .iterate = ceph_readdir,
-
-At least CEPH has active maintainers, cc'd
-
-fs/coda/dir.c:  .iterate        = coda_readdir,
-
-Would anyone notice if we broke CODA?  Maintainers cc'd anyway.
-
-fs/exfat/dir.c: .iterate        = exfat_iterate,
-
-Exfat is a new addition, but has active maintainers.
-
-fs/jfs/namei.c: .iterate        = jfs_readdir,
-
-Maintainer cc'd
-
-fs/ntfs/dir.c:  .iterate        = ntfs_readdir,         /* Read directory contents. */
-
-Maybe we can get rid of ntfs soon.
-
-fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-
-maintainers cc'd
-
-fs/orangefs/dir.c:      .iterate = orangefs_dir_iterate,
-
-New; maintainer cc'd
-
-fs/overlayfs/readdir.c: .iterate        = ovl_iterate,
-
-Active maintainer, cc'd
-
-fs/proc/base.c: .iterate        = proc_##LSM##_attr_dir_iterate, \
-
-Hmm.  We need both SMACK and Apparmor to agree to this ... cc's added.
-
-fs/vboxsf/dir.c:        .iterate = vboxsf_dir_iterate,
-
-Also newly added.  Maintainer cc'd.
