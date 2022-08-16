@@ -2,187 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF034594EE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 05:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9420E594F33
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 05:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233430AbiHPDB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Aug 2022 23:01:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
+        id S229654AbiHPDz7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Aug 2022 23:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbiHPDAO (ORCPT
+        with ESMTP id S229567AbiHPDz2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Aug 2022 23:00:14 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4790E2DD5ED;
-        Mon, 15 Aug 2022 16:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660606485; x=1692142485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EU3WVIPEiTVCLq3r1ATnkbH8mOj++2Yt6SGbSryJ5r0=;
-  b=MdhohSoUqeuVP1wJ3W+x3DA0fk22RTfQ/qOlaj/cd/d724w8nmAhteeA
-   lrVwtVkytJOyPqGYMipBWefLIt/aGEPOSzcf+7C2Ad5XCyvN6UbipU39j
-   wFd6Dey8rB1F0pRilan1H3HyeX6wLsAMWLV6tsJusgOhkkfuA73kaa96h
-   7WcANTc0ClGwB7iU/xK9FPeLDXtzgEo7NOurOOwZOalTTSXaKMx69b3z5
-   v2FWgbps1ClXKxeRvIAWMtt3PdMUPz1cuYu8/aScTb868xa+EYZkWoVs4
-   B7ycmxJGf1alvk1RTp8rPiO2y94dt04a9a/aVLGmEGKwBhn8QBiA8C35c
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10440"; a="289650012"
-X-IronPort-AV: E=Sophos;i="5.93,239,1654585200"; 
-   d="scan'208";a="289650012"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2022 16:34:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,239,1654585200"; 
-   d="scan'208";a="583073534"
-Received: from lkp-server02.sh.intel.com (HELO 3d2a4d02a2a9) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 15 Aug 2022 16:34:41 -0700
-Received: from kbuild by 3d2a4d02a2a9 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oNjbU-0001Gv-1b;
-        Mon, 15 Aug 2022 23:34:40 +0000
-Date:   Tue, 16 Aug 2022 07:34:12 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: Re: [PATCH 5/7] nilfs2: Convert nilfs_find_uncommited_extent() to
- use filemap_get_folios_contig()
-Message-ID: <202208160738.yErltyXd-lkp@intel.com>
-References: <20220815185452.37447-6-vishal.moola@gmail.com>
+        Mon, 15 Aug 2022 23:55:28 -0400
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4ED733DC6D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 17:22:15 -0700 (PDT)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-f2a4c51c45so9989796fac.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Aug 2022 17:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=Ajnf35L9FmE9vnp7SP1zj7Jbq2jKHjuvig7dYRcDFug=;
+        b=RtgF+ge0o/5apZ+XTX/XqckJ2zulTrx3nLcGGV1o7Y9ezUhj+RUp09IW4vWuclfe7o
+         bPfWbqL+8JGi1WAGWFPNSTjnMJUH4jyITqYSCntaw0G7/0K6u/NsprX9RSTZY5l6RGKe
+         PMtR4tOg0/SD9ZYa22965atYkl13KwRExZizkR57kf1ejHg+TBf86fKIuMblY37VQbIO
+         DZsm5flBSF+YS7J28rYgLFCWmtZc+pixqNsDOckgNr596pCNKvm7GETxNi+Ds2KFXSJr
+         DIcrQNyeDHN/28Dp3URc1jbKgtGoAlg7QDeUkBnS3E4EbjXtn/AwhJyO8b9S3iDApl5o
+         cbjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=Ajnf35L9FmE9vnp7SP1zj7Jbq2jKHjuvig7dYRcDFug=;
+        b=dwAIhr0r88oNWgn0wWzs332MZX0Im2Vl6BFekK6EYPutMuuUTPhQsPTv2ZvUipWhsC
+         7r2B4uRRAXnLeXu6Anm0QiG/BPIvhEKsFnr79vRJEXvAeUDz8F2I2PtIXUX68jKSPZHD
+         79d2eWvXrv59AmuvvquhXSsgQcG7pMAX0EJadLysmH4W9PWdzMucUBzuMqAhoCLWiLXm
+         b4uOQhgFIAQc1V1MYebDxAZpkeGuqhBs4VN+pV4GTEyb57ndDCDg3WGgEOEEYRt4JO15
+         AqUu+/oXwp3VkePD1zvz5jt3+SlT902FZTBLcORCvgyvOcwx9GD2wGZxMb+/PJ1YrtxF
+         rgmA==
+X-Gm-Message-State: ACgBeo0w7q4BZ1qI0rlY1L57p7ecNRXAfzCIEGRnilvpbh/wQdeOE3CC
+        v2arZU452ya5n3EtsK1lcPbGRZT93uA/pR77ScW5
+X-Google-Smtp-Source: AA6agR494gFsTH38En/qOYfSBSoNpSOSllUGl/TC4Qoem+2cwsv5M5P4upj4iL807PrVXTRzgQu4W9liyw6b2vu+YxE=
+X-Received: by 2002:a05:6870:9588:b0:101:c003:bfe6 with SMTP id
+ k8-20020a056870958800b00101c003bfe6mr12233196oao.41.1660609334831; Mon, 15
+ Aug 2022 17:22:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220815185452.37447-6-vishal.moola@gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <cover.1659996830.git.rgb@redhat.com> <c4ae9b882c07ea9cac64094294da5edc0756bb50.1659996830.git.rgb@redhat.com>
+In-Reply-To: <c4ae9b882c07ea9cac64094294da5edc0756bb50.1659996830.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 15 Aug 2022 20:22:04 -0400
+Message-ID: <CAHC9VhT0D=qtaYR-Ve1hRTtQXspuC09qQZyFdESj-tQstyvMFg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full
+ permission event response
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi "Vishal,
+On Tue, Aug 9, 2022 at 1:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> This patch passes the full value so that the audit function can use all
+> of it. The audit function was updated to log the additional information in
+> the AUDIT_FANOTIFY record. The following is an example of the new record
+> format:
+>
+> type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=17
+>
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> Link: https://lore.kernel.org/r/3075502.aeNJFYEL58@x2
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/notify/fanotify/fanotify.c |  3 ++-
+>  include/linux/audit.h         |  9 +++++----
+>  kernel/auditsc.c              | 31 ++++++++++++++++++++++++++++---
+>  3 files changed, 35 insertions(+), 8 deletions(-)
 
-Thank you for the patch! Perhaps something to improve:
+You've hopefully already seen the kernel test robot build warning, so
+I won't bring that up again, but a few comments below ...
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.0-rc1 next-20220815]
-[cannot apply to kdave/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 0f36062521f4..36c3ed1af085 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -276,7 +276,8 @@ static int fanotify_get_response(struct fsnotify_group *group,
+>
+>         /* Check if the response should be audited */
+>         if (event->response & FAN_AUDIT)
+> -               audit_fanotify(event->response & ~FAN_AUDIT);
+> +               audit_fanotify(event->response & ~FAN_AUDIT,
+> +                              event->info_len, event->info_buf);
+>
+>         pr_debug("%s: group=%p event=%p about to return ret=%d\n", __func__,
+>                  group, event, ret);
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 3ea198a2cd59..c69efdba12ca 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/audit_arch.h>
+>  #include <uapi/linux/audit.h>
+>  #include <uapi/linux/netfilter/nf_tables.h>
+> +#include <uapi/linux/fanotify.h>
+>
+>  #define AUDIT_INO_UNSET ((unsigned long)-1)
+>  #define AUDIT_DEV_UNSET ((dev_t)-1)
+> @@ -417,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
+>  extern void __audit_mmap_fd(int fd, int flags);
+>  extern void __audit_openat2_how(struct open_how *how);
+>  extern void __audit_log_kern_module(char *name);
+> -extern void __audit_fanotify(u32 response);
+> +extern void __audit_fanotify(u32 response, size_t len, char *buf);
+>  extern void __audit_tk_injoffset(struct timespec64 offset);
+>  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+>  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
+> @@ -524,10 +525,10 @@ static inline void audit_log_kern_module(char *name)
+>                 __audit_log_kern_module(name);
+>  }
+>
+> -static inline void audit_fanotify(u32 response)
+> +static inline void audit_fanotify(u32 response, size_t len, char *buf)
+>  {
+>         if (!audit_dummy_context())
+> -               __audit_fanotify(response);
+> +               __audit_fanotify(response, len, buf);
+>  }
+>
+>  static inline void audit_tk_injoffset(struct timespec64 offset)
+> @@ -684,7 +685,7 @@ static inline void audit_log_kern_module(char *name)
+>  {
+>  }
+>
+> -static inline void audit_fanotify(u32 response)
+> +static inline void audit_fanotify(u32 response, size_t len, char *buf)
+>  { }
+>
+>  static inline void audit_tk_injoffset(struct timespec64 offset)
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 433418d73584..f000fec52360 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -64,6 +64,7 @@
+>  #include <uapi/linux/limits.h>
+>  #include <uapi/linux/netfilter/nf_tables.h>
+>  #include <uapi/linux/openat2.h> // struct open_how
+> +#include <uapi/linux/fanotify.h>
+>
+>  #include "audit.h"
+>
+> @@ -2899,10 +2900,34 @@ void __audit_log_kern_module(char *name)
+>         context->type = AUDIT_KERN_MODULE;
+>  }
+>
+> -void __audit_fanotify(u32 response)
+> +void __audit_fanotify(u32 response, size_t len, char *buf)
+>  {
+> -       audit_log(audit_context(), GFP_KERNEL,
+> -               AUDIT_FANOTIFY, "resp=%u", response);
+> +       struct fanotify_response_info_audit_rule *friar;
+> +       size_t c = len;
+> +       char *ib = buf;
+> +
+> +       if (!(len && buf)) {
+> +               audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> +                         "resp=%u fan_type=0 fan_info=?", response);
+> +               return;
+> +       }
+> +       while (c >= sizeof(struct fanotify_response_info_header)) {
+> +               friar = (struct fanotify_response_info_audit_rule *)buf;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vishal-Moola-Oracle/Convert-to-filemap_get_folios_contig/20220816-025830
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20220816/202208160738.yErltyXd-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-5) 11.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/ce1966344933bbe10010035cd25f23ec7dd76914
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Vishal-Moola-Oracle/Convert-to-filemap_get_folios_contig/20220816-025830
-        git checkout ce1966344933bbe10010035cd25f23ec7dd76914
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/nilfs2/
+Since the only use of this at the moment is the
+fanotify_response_info_rule, why not pass the
+fanotify_response_info_rule struct directly into this function?  We
+can always change it if we need to in the future without affecting
+userspace, and it would simplify the code.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   fs/nilfs2/page.c: In function 'nilfs_find_uncommitted_extent':
->> fs/nilfs2/page.c:542:1: warning: label 'out' defined but not used [-Wunused-label]
-     542 | out:
-         | ^~~
-
-
-vim +/out +542 fs/nilfs2/page.c
-
-622daaff0a8975 Ryusuke Konishi       2010-12-26  466  
-622daaff0a8975 Ryusuke Konishi       2010-12-26  467  /**
-622daaff0a8975 Ryusuke Konishi       2010-12-26  468   * nilfs_find_uncommitted_extent - find extent of uncommitted data
-622daaff0a8975 Ryusuke Konishi       2010-12-26  469   * @inode: inode
-622daaff0a8975 Ryusuke Konishi       2010-12-26  470   * @start_blk: start block offset (in)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  471   * @blkoff: start offset of the found extent (out)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  472   *
-622daaff0a8975 Ryusuke Konishi       2010-12-26  473   * This function searches an extent of buffers marked "delayed" which
-622daaff0a8975 Ryusuke Konishi       2010-12-26  474   * starts from a block offset equal to or larger than @start_blk.  If
-622daaff0a8975 Ryusuke Konishi       2010-12-26  475   * such an extent was found, this will store the start offset in
-622daaff0a8975 Ryusuke Konishi       2010-12-26  476   * @blkoff and return its length in blocks.  Otherwise, zero is
-622daaff0a8975 Ryusuke Konishi       2010-12-26  477   * returned.
-622daaff0a8975 Ryusuke Konishi       2010-12-26  478   */
-622daaff0a8975 Ryusuke Konishi       2010-12-26  479  unsigned long nilfs_find_uncommitted_extent(struct inode *inode,
-622daaff0a8975 Ryusuke Konishi       2010-12-26  480  					    sector_t start_blk,
-622daaff0a8975 Ryusuke Konishi       2010-12-26  481  					    sector_t *blkoff)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  482  {
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  483) 	unsigned int i, nr;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  484  	pgoff_t index;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  485  	unsigned int nblocks_in_page;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  486  	unsigned long length = 0;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  487  	sector_t b;
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  488) 	struct folio_batch fbatch;
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  489) 	struct folio *folio;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  490  
-622daaff0a8975 Ryusuke Konishi       2010-12-26  491  	if (inode->i_mapping->nrpages == 0)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  492  		return 0;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  493  
-09cbfeaf1a5a67 Kirill A. Shutemov    2016-04-01  494  	index = start_blk >> (PAGE_SHIFT - inode->i_blkbits);
-09cbfeaf1a5a67 Kirill A. Shutemov    2016-04-01  495  	nblocks_in_page = 1U << (PAGE_SHIFT - inode->i_blkbits);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  496  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  497) 	folio_batch_init(&fbatch);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  498  
-622daaff0a8975 Ryusuke Konishi       2010-12-26  499  repeat:
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  500) 	nr = filemap_get_folios_contig(inode->i_mapping, &index, ULONG_MAX,
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  501) 			&fbatch);
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  502) 	if (nr == 0)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  503  		return length;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  504  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  505) 	b = fbatch.folios[0]->index << (PAGE_SHIFT - inode->i_blkbits);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  506  	i = 0;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  507  	do {
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  508) 		folio = fbatch.folios[i];
-622daaff0a8975 Ryusuke Konishi       2010-12-26  509  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  510) 		folio_lock(folio);
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  511) 		if (folio_buffers(folio)) {
-622daaff0a8975 Ryusuke Konishi       2010-12-26  512  			struct buffer_head *bh, *head;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  513  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  514) 			bh = head = folio_buffers(folio);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  515  			do {
-622daaff0a8975 Ryusuke Konishi       2010-12-26  516  				if (b < start_blk)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  517  					continue;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  518  				if (buffer_delay(bh)) {
-622daaff0a8975 Ryusuke Konishi       2010-12-26  519  					if (length == 0)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  520  						*blkoff = b;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  521  					length++;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  522  				} else if (length > 0) {
-622daaff0a8975 Ryusuke Konishi       2010-12-26  523  					goto out_locked;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  524  				}
-622daaff0a8975 Ryusuke Konishi       2010-12-26  525  			} while (++b, bh = bh->b_this_page, bh != head);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  526  		} else {
-622daaff0a8975 Ryusuke Konishi       2010-12-26  527  			if (length > 0)
-622daaff0a8975 Ryusuke Konishi       2010-12-26  528  				goto out_locked;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  529  
-622daaff0a8975 Ryusuke Konishi       2010-12-26  530  			b += nblocks_in_page;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  531  		}
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  532) 		folio_unlock(folio);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  533  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  534) 	} while (++i < nr);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  535  
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  536) 	folio_batch_release(&fbatch);
-622daaff0a8975 Ryusuke Konishi       2010-12-26  537  	cond_resched();
-622daaff0a8975 Ryusuke Konishi       2010-12-26  538  	goto repeat;
-622daaff0a8975 Ryusuke Konishi       2010-12-26  539  
-622daaff0a8975 Ryusuke Konishi       2010-12-26  540  out_locked:
-ce1966344933bb Vishal Moola (Oracle  2022-08-15  541) 	folio_unlock(folio);
-622daaff0a8975 Ryusuke Konishi       2010-12-26 @542  out:
+> +               switch (friar->hdr.type) {
+> +               case FAN_RESPONSE_INFO_AUDIT_RULE:
+> +                       if (friar->hdr.len < sizeof(*friar)) {
+> +                               audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> +                                         "resp=%u fan_type=%u fan_info=(incomplete)",
+> +                                         response, friar->hdr.type);
+> +                               return;
+> +                       }
+> +                       audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> +                                 "resp=%u fan_type=%u fan_info=%u",
+> +                                 response, friar->hdr.type, friar->audit_rule);
+> +               }
+> +               c -= friar->hdr.len;
+> +               ib += friar->hdr.len;
+> +       }
+>  }
+>
+>  void __audit_tk_injoffset(struct timespec64 offset)
+> --
+> 2.27.0
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+paul-moore.com
