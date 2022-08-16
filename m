@@ -2,127 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D88596491
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 23:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E91259653E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 00:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237455AbiHPVXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 17:23:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
+        id S237603AbiHPWMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 18:12:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237323AbiHPVXa (ORCPT
+        with ESMTP id S237430AbiHPWMO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 17:23:30 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B9F4DB77
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 14:23:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D+RWvoQoXAs7Vezj1g03g+NFGAeijeEL1zrMR6z1ZXml5qL1TuUQKzUAfAP7s5KFZz+G/P2h4655Ypbf551T3Mmdrq1aEmRk/IwRp7b703UfRUyUG1QCwfvbyG+gDDCR1SBIA0opFlCKUBcfLfxk6ftoL81OP4s9HdO0z44vyZkNBnxGzyU6uXx4uVYMXWfatJ2tXDryc/TGY10w3TkzBZnRLwsjAoXkQghQfzhWDOe2IJXcT7EJbZQV6EtdHjf4Z78Gocs6PxJ/V/y07tzWrO7FqJBniCQM9zHExA1bUmP2jcvLpBXxem7BHmzlC/7V9dlHdyF7BoxXEuYHnoRq2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QAusdqqvQ2458L49m8JiZxRrajlNR2n3cThVbH6xdK8=;
- b=anoF8TWJP9MQLFd2ZlrLmKAKfa6Vw/4HzqBhGgvGs6oeo96USmirhE5JR22F+cz4oSrBHMLmIte/5p2uDYaLO+cMxW2F0JoHAYPWnh9stjzKU53RSxbVY5ZZIkf86EdSPnu0p6XxertsYaqkhTYA0GoqvW0y634N4J16Jmq1yFuYtPKTnDX9YgQOVwXzgxTJBPjCeHd1BZ9kjkkdsddYZMNqcGiIXLxiYi3iKxeGw8lHoKS7uyQZmXwIHlb4Q35VgKL00qniH09cLWLHGXofxq6GDXKsvB1tsHXT8QbA5aO5prakX1EM83ggkQJHzn86HVDDoQliZWKKXOUGfF2m7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QAusdqqvQ2458L49m8JiZxRrajlNR2n3cThVbH6xdK8=;
- b=ln1VHs7aDgrDTld+r8qQSUl1Y63gvdsGPMGg4pYGbsf4NL+D9E3m7zoEytQTxX2iplJNEJ9RoeUN/XfeNFhSS4UKoYBDwe9hA3LrF0apa2eXe4itu5vKWAauZLdwlOGN57xEHKEJYW9SBqlxGdEa8TQeGS2yD+zjM0Blu6AkaJyjeO6I8AJ8DvGyQH0cdUXP/t+1RQhdMVKA27/YoiPC06XW375tOQjVhB1vtIpKYanb14IyJAsKEPC799UGVLug69+1a2YFt5ZNNas+4jybiU7zqn4dk7thd16ZLoPNCfji4uOO7KN8OodObsHoFefAHCGeaYU6mtN/LoTs4mhHrQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by DM6PR12MB3692.namprd12.prod.outlook.com (2603:10b6:5:14a::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Tue, 16 Aug
- 2022 21:23:23 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::508d:221c:9c9e:e1a5]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::508d:221c:9c9e:e1a5%9]) with mapi id 15.20.5525.011; Tue, 16 Aug 2022
- 21:23:23 +0000
-Message-ID: <cba64760-9cc0-d194-f42d-869ea777250d@nvidia.com>
-Date:   Tue, 16 Aug 2022 14:23:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: folio_map
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <YvvdFrtiW33UOkGr@casper.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <YvvdFrtiW33UOkGr@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0202.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::27) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+        Tue, 16 Aug 2022 18:12:14 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4215C8FD5A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 15:12:13 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-10cf9f5b500so13225421fac.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 15:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=bknMuEzY2g2ODMFx0pPstR6QEhnsKog5Pl0iH/Ldgz4=;
+        b=sL5dB1VPJNsbf7G8+raTZ4CNHBvpk7wuUoHen4F/fRTlul2K/o6MnEL0QELNEgsXV5
+         8uwAQx9hINB2uTWQ0G+WTB+PukHYNee/MzAqYyyV44+Yri8pGj61r+lHfamUK8p8w4X7
+         QRKqDPOPL9df5lxT34qEXLNreDeG9SXoOiwcQAPOeFr88+qXNgL64ohaZHIVEk+mgB5R
+         wnGXnCFP58BNzbyVX8OjR1IGJbgoEjD+wT7pAjEFqxbJu1di5xE14EIVzTnYMG1XM9Y9
+         6uf1djrUsKmdWrPsGSGSoKlADOPuJiThHSoMfwFLvak3qmxWc7ku1U1IrL0Q701vNeVo
+         jU+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=bknMuEzY2g2ODMFx0pPstR6QEhnsKog5Pl0iH/Ldgz4=;
+        b=Zqkw3jtCNdNpXQ0phwzDhoc+hhOy6RbkZPgJzGUm+3u94iX5ohu+0yFFJ+mXJm8iIH
+         WJfH06FVW4Q/YwGR3pXax0NE9+t0Hp3cpQaJseyqo2s99LcMYX28HZsrjTYIHp6yLSVJ
+         Vu6DTwMaOcUzT4OYYc0hktgV+RI8W/jxksDSbwO4QmNCy7LjL24Wdr3TAMfBde5t9wHA
+         Fp5u4XLOY9RbHbDyDAvAWBpiva2lBr2s3G/qa4Jm1v++leetyXAgfeSfTtkxKJC/OSD+
+         jZF/wJZSANgIJfq10rQF6CF+XZqihAtFX2a5Z94pcJzdF3gJ1rR6r/aLVpaGZe6CcX74
+         pBYg==
+X-Gm-Message-State: ACgBeo0aE8PCsjpQ1NXpQR4V4JzPGJhPnLj+I3MOBy70y0RLSWVfNOLI
+        2Z1BhbkKOSAnd9iZvx4yF7sn31Vq0v1Mos2audZ+mO5B0MtB
+X-Google-Smtp-Source: AA6agR4Kj8XNYB9B3lGnewDxsdQnXfT+Fb5iBt539vCMF1wUyb8ZJN1qBsC0HMD5LPLcd7Vjw7gmG8QhiI7dUCI9BGQ=
+X-Received: by 2002:a05:6870:a78d:b0:11c:437b:ec70 with SMTP id
+ x13-20020a056870a78d00b0011c437bec70mr320272oao.136.1660687932528; Tue, 16
+ Aug 2022 15:12:12 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 165157be-8999-46b2-2a4b-08da7fcd8c79
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3692:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YcTG+TxUee+Bi0xWJT9WX06hq3ea3Zu8l53xD9miiqJ1sjxV78GqutEFDIjlgkJO2nqiioK1PlUhcKx8vvUUiZon2VG6n5ff9CVM6W02USo83QPta8596ADlDFL6tpL1DhCvQl6ImjtQcW4RMC4EJv6VD3B6Uxxl+1Q6mkvE4XbflkADt9FdMVCWI0oM7nGqvbGBXc3AuNAtIDY0uTRg3ZZn7XV4ugYVcacI5igxue1JV4bK0aXK191Qas+2L/zmqOZTI7Y1ZnyX2FZX75eySQ9LqP8EW9W0bIc8HL4IlRyUvKNibw6iC/IB0A51+toDlOH5JquFkHip2bq2UCPQA5Dgo6d9sTTCmEVS0T+SvPManp5ik6MeWD1mUzJi9b60mJY4ivKVB8GNRoreUuJV9rKq1Y/FPlTvyClfz2lU9XheTqyie66P2a+z3tm3uWXk8m2TndReWVj72lRGR8BPG+kNh72ye7oRW7vB8hiBGGXoOe1KJvREF+GJ0kEyMAnOU3l6IsWz4QoIeG/ysC96cUwSHFqTu+fRuPuZTdnVq95gHkKdBi7lp5DqHX6IOH83hm/OrCPdIMgpkQhhxdbdAFK39AsJZy2nR0VfTx7g6ceGVfO5D3FCCIoZyHLs/zmknN09bSlbqRiUIhTxc8HXhSzzMckQPm84n67sabnE3CxAPgEFMA13mEXsEEFsEKTApXeVUWlI7utbOK6cR1YdXvvKUxXW9El5kz49d91NEUEICTe0wh+Tcn7KtvY2fAKmzbBQQ1fmlLcHTHbSmYh6t0SXRyRvf6hu0tF/Bkbl/ec3xOjgELLAb2evkzit/zATzlAMwxA6kZiyaHFmrF0ISw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(366004)(346002)(376002)(39860400002)(136003)(2906002)(8676002)(66476007)(7116003)(110136005)(66946007)(316002)(66556008)(6636002)(8936002)(38100700002)(5660300002)(478600001)(31696002)(86362001)(41300700001)(53546011)(6506007)(36756003)(26005)(83380400001)(6486002)(6512007)(2616005)(186003)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NTlNUHltSzJvUGZwWVFjRGJaZmZQRWZSL1c3MU1LZ3FYWE90SW9QQ1VCNnJ5?=
- =?utf-8?B?UzF6MGNsNzVtcHBRd3hGR1NJMk9jMGlwNUc0ei8wUy9zYVgrV1hhK0NSWmwr?=
- =?utf-8?B?dnJMcCtWVVZpM2tGVjZyZitYZXZPa1lhOU5DdHZDbzZpelJFdzhHdzlabUd6?=
- =?utf-8?B?d3d1YW43Y0RBS0Y0ZjhTSzVqWlVvcmVZUHlET25tMVh6a0sxWnZPczNKb044?=
- =?utf-8?B?eGlwWEg3SlQwcVlwOFpESXAzcEs1dmVCa2RKVVNja01ZU0F4aGNuVGs0bzhs?=
- =?utf-8?B?UTA2VWNjejhwUlJabjE2ZWNjUjhJWU8wbGV1cU5GaiszdE4yZGJrWXJpWnVF?=
- =?utf-8?B?OFhZZ3RUVjhvQUFKazZLbDZ4d3NXWml1ZVBIS1hURTR2SFIxZ0paRjlOQXNG?=
- =?utf-8?B?SFhPTFBxMUFITEdWeWxUaDlLblVITDNENXVmR0xHemsrU2FNWTc2cU9UaDNL?=
- =?utf-8?B?c3ZrNnhwd2ZWWlA5U3AwY3h1elhvOU9jdlhLWHZya29RNjNGbGxxUHd5dWox?=
- =?utf-8?B?Um5xeHUvQzMrVHJsKy9jUytiamN6eWZDbktUZSsyWnlSclp2UklDWmRDN1Nq?=
- =?utf-8?B?Z0tpb2ovYmdXWlJNbnl1bS9INm02NFpGdTJ4SXJ3R0lTQ1dHUG8yRVRBQVZM?=
- =?utf-8?B?ekZhdzJhRmcvNGIrMkxFeVZBczZkT3lhNlFGZXhsUDBabTJ2U0laMC9XYnMz?=
- =?utf-8?B?ckdKY2hhZ3pFWWJNMGkwaVh2UXdKaE5vd2x5S1NVcDBacVVuYTh4bDNmc21D?=
- =?utf-8?B?WUVmM2E5djkwQ25sazl5blZ5UWdFdzVoQ0lqT21BODBrVEZ3MFBzVndzL2l2?=
- =?utf-8?B?SUZ0MWI5NGhQWXRFTnU2Zy9DUXhuV3ZIY3dTMkdqSWRDSmJLMGplMm5zQ0hD?=
- =?utf-8?B?MkpxeG9aMjVhdzl1dy9PT0hCTEgrMm9tckZvK2NGRGZqb0N2emZKNldtNitW?=
- =?utf-8?B?L05pMGJEVGlTV3NoTjVLbG5xMWxWbVZRaUdqN1JDREdKZ0lGZE9ZckR3RlJy?=
- =?utf-8?B?SDVYZW1IOC8ybmg1OHNRMVRodHZzMUMwNWlFYklsdDU2M3ZpU0p1TWtLaG8v?=
- =?utf-8?B?M085WjlaaGMwNWpGZnVUZFp4YTczYlV0azRaY1NnNmVoR2FubXkvM1Z2emRO?=
- =?utf-8?B?eHluN204Sk9WcjF4amg5Y1hVUS9qTHEvKzVCUVhMcUFsMzdWUUdPK0grZzA5?=
- =?utf-8?B?aktNaUxobW5yMEVub3JZRGFFWm41WXB1VG9Xb1NGemtnSWJ6bnd0UXdJMnRl?=
- =?utf-8?B?NjZlY0Frck9Ra0lBQWdWTTlLUkZybWtNbG9Jb1lRYkxvSm5ldGJ3M3NqWUx6?=
- =?utf-8?B?ckJYN0w2dWJZV04yRy92cTFCaXBKTEpDSWhDRjdWRVlVMGcydTNmOFBIeWJD?=
- =?utf-8?B?UC8xeGZTamIzaTF4SlZjS2VxTndzYks0M2pyZUJwc3o0TDJwcHRzTXJKalM3?=
- =?utf-8?B?UW1CSzhBSEdvVW5weVA2NXFGS0tXelVlaEZRNFhsbUcrUDVHa3hUUjBpbWhH?=
- =?utf-8?B?NGlndWZNZTA1Y0M2TzkvUmRYOXpYcWMxSVpzNytjdzFHUUZFTFdsWVduQTdJ?=
- =?utf-8?B?OW1KMTRjYmVTakVSbU9ZNlpBeDBkNmFUelZyY1pNeFE1YWJmRUZkVjJSV2gr?=
- =?utf-8?B?emVqTThHNWZtdkxLM01QZm5DMEtEblVKZk9GVWdEYVpXVXpnMG5uRHdyZFhO?=
- =?utf-8?B?djJQcDJueElnT1NLL2VRd2pPVHlOTUN1bm04cjZhNXdrMEs1MnVEK1JpcEhr?=
- =?utf-8?B?eU9RalZJSUlUdU9LdTBnWWpjdVFKa1FudXRVTTdDams5TWg0UWh1bit6aVUz?=
- =?utf-8?B?YW5BMzRGbWdhM29uTDlPcUdYMW9rc1NlQThUVXpKbTZRZmdFaXNoY09oejIz?=
- =?utf-8?B?bzZURWp4dHFmTEpvbHZEbC9kK2QzVS8yVWZYM0lUSzd2VGVFZnBtZ1JrUUdi?=
- =?utf-8?B?WC9xTitkRnFFa1JOZUc1dlptdlpxcTdCd1NCd085M0twL1dJQTJVSFNXQVRq?=
- =?utf-8?B?aUl5MnMwc2dYcUt6RlMxckl5WHVrQUpCa3paSitrWHlJQTRNZy9HSnlHbFFp?=
- =?utf-8?B?ZEl0NC9BZXQwK0lDRDB4d2UwUnNZejFabFdGTlRDOEw2bkRLcGYrd09JNW9F?=
- =?utf-8?Q?IY1O1LU2JT0XTAWZRIUOwasqF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 165157be-8999-46b2-2a4b-08da7fcd8c79
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2022 21:23:22.9526
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PCgGYpl1wAcvuDKby8EUqNEbCfX2oroa/AABsyZvU/rco8aKS0OyyxB+BAP9UQgM1EKj1cXBDdjtK9yqjLaY7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3692
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+References: <20220708093451.472870-1-omosnace@redhat.com>
+In-Reply-To: <20220708093451.472870-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 16 Aug 2022 18:12:01 -0400
+Message-ID: <CAHC9VhSFUJ6J4_wt1SKAoLourNGVkxu0Tbd9NPDbYqjjrs-qoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Robert O'Callahan" <roc@ocallahan.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -130,75 +74,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/16/22 11:08, Matthew Wilcox wrote:
-> Some of you will already know all this, but I'll go into a certain amount
-> of detail for the peanut gallery.
-> 
-> One of the problems that people want to solve with multi-page folios
-> is supporting filesystem block sizes > PAGE_SIZE.  Such filesystems
-> already exist; you can happily create a 64kB block size filesystem on
-> a PPC/ARM/... today, then fail to mount it on an x86 machine.
-> 
-> kmap_local_folio() only lets you map a single page from a folio.
-> This works for the majority of cases (eg ->write_begin() works on a
-> per-page basis *anyway*, so we can just map a single page from the folio).
-> But this is somewhat hampering for ext2_get_page(), used for directory
-> handling.  A directory record may cross a page boundary (because it
-> wasn't a page boundary on the machine which created the filesystem),
-> and juggling two pages being mapped at once is tricky with the stack
-> model for kmap_local.
-> 
-> I don't particularly want to invest heavily in optimising for HIGHMEM.
-> The number of machines which will use multi-page folios and HIGHMEM is
-> not going to be large, one hopes, as 64-bit kernels are far more common.
-> I'm happy for 32-bit to be slow, as long as it works.
+On Fri, Jul 8, 2022 at 5:35 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Since userfaultfd doesn't implement a write operation, it is more
+> appropriate to open it read-only.
+>
+> When userfaultfds are opened read-write like it is now, and such fd is
+> passed from one process to another, SELinux will check both read and
+> write permissions for the target process, even though it can't actually
+> do any write operation on the fd later.
+>
+> Inspired by the following bug report, which has hit the SELinux scenario
+> described above:
+> https://bugzilla.redhat.com/show_bug.cgi?id=1974559
+>
+> Reported-by: Robert O'Callahan <roc@ocallahan.org>
+> Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>
+> Resending as the last submission was ignored for over a year...
+>
+> https://lore.kernel.org/lkml/20210624152515.1844133-1-omosnace@redhat.com/T/
+>
+> I marked this as RFC, because I'm not sure if this has any unwanted side
+> effects. I only ran this patch through selinux-testsuite, which has a
+> simple userfaultfd subtest, and a reproducer from the Bugzilla report.
+>
+> Please tell me whether this makes sense and/or if it passes any
+> userfaultfd tests you guys might have.
+>
+>  fs/userfaultfd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Some of our kernel driver teams recently expressed precisely the same set
-of requirements. And at first, I pointed them to folio_map_local(),
-and then they schooled me by noting that, today, it only does a single
-page. :)
+VFS folks, any objection to this patch?  It seems reasonable to me and
+I'd really prefer this to go in via the vfs tree, but I'm not above
+merging this via the lsm/next tree to get someone in vfs land to pay
+attention to this ...
 
-> 
-> For these reasons, I proposing the logical equivalent to this:
-> 
-> +void *folio_map_local(struct folio *folio)
-> +{
-> +       if (!IS_ENABLED(CONFIG_HIGHMEM))
-> +               return folio_address(folio);
-> +       if (!folio_test_large(folio))
-> +               return kmap_local_page(&folio->page);
-> +       return vmap_folio(folio);
-> +}
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index e943370107d0..8ccf00be63e1 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+>         int fd;
+>
+>         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
+> -                       O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+> +                       O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+>         if (fd < 0)
+>                 return fd;
+>
+> @@ -2090,7 +2090,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>         mmgrab(ctx->mm);
+>
+>         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
+> -                       O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+> +                       O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+>         if (fd < 0) {
+>                 mmdrop(ctx->mm);
+>                 kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+> --
+> 2.36.1
 
-...which led to a desire for code very much like the above: kmap(),
-with a fallback to vmap(). Always better to have such things in the
-kernel, rather than a zillion copies in drivers.
-
-Adding Mark Hairgrove in case I've missed any fine points?
-
-> +
-> +void folio_unmap_local(const void *addr)
-> +{
-> +       if (!IS_ENABLED(CONFIG_HIGHMEM))
-> +               return;
-> +       if (is_vmalloc_addr(addr))
-> +               vunmap(addr);
-> +	else
-> +       	kunmap_local(addr);
-> +}
-> 
-> (where vmap_folio() is a new function that works a lot like vmap(),
-> chunks of this get moved out-of-line, etc, etc., but this concept)
-> 
-> Does anyone have any better ideas?  If it'd be easy to map N pages
-> locally, for example ... looks like we only support up to 16 pages
-> mapped per CPU at any time, so mapping all of a 64kB folio would
-> almost always fail, and even mapping a 32kB folio would be unlikely
-> to succeed.
-> 
-> 
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+paul-moore.com
