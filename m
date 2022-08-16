@@ -2,129 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FB56595BA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 14:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5546F595BB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 14:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235020AbiHPMT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 08:19:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46876 "EHLO
+        id S231182AbiHPMWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 08:22:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235519AbiHPMTD (ORCPT
+        with ESMTP id S230007AbiHPMWF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 08:19:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71452ED55;
-        Tue, 16 Aug 2022 05:18:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0A9EDB8188B;
-        Tue, 16 Aug 2022 12:18:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182F5C433D6;
-        Tue, 16 Aug 2022 12:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660652311;
-        bh=lVuHZlXCysWvSyziVBnQ0xLbK0P/XDoMU71MHD6jX/4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=B3aamhQEXyGx2bLPjOgSJu00//ZPXVIhuvJKNpFjccTzbtcG1TL9/+NESLXyryJvA
-         HyxnRPVn0dhKi36T6NyoFW3UJM6Q+N+vD74pJvXXYIqRnsT/U05SzyNugVvKe62kmb
-         gZ+acnTkiguVbawp2B6h8zbyD6hR3/yT7m37IpuA1nYXGoY4RcQBZmFA1UquOW4wvu
-         WjCIQV07kgTj3/EUqdS2ibdNFMDgbw1GZJzMoMewaiXBSu6WveGeQKMvXufDDLkgZy
-         WULAWf3s1Z+0d8YsQzHrQGZn0RXBeHSMAM4/4ykB3MQBaVHIkncaizDIMVRvhONGFx
-         64gKhzwsc3u0w==
-Message-ID: <45b34bba8bd32df382f76261e783b7f4b173b682.camel@kernel.org>
-Subject: Re: [PATCH v3 1/3] ext4: don't increase iversion counter for
- ea_inodes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Lukas Czerner <lczerner@redhat.com>, linux-ext4@vger.kernel.org,
-        tytso@mit.edu, linux-fsdevel@vger.kernel.org, ebiggers@kernel.org,
-        david@fromorbit.com
-Date:   Tue, 16 Aug 2022 08:18:29 -0400
-In-Reply-To: <20220816115248.2xj25pcays7dkrpp@quack3>
-References: <20220812123727.46397-1-lczerner@redhat.com>
-         <b2e18765bc22ea851c2293c15a8aa4c3cec0fde5.camel@kernel.org>
-         <20220816115248.2xj25pcays7dkrpp@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Tue, 16 Aug 2022 08:22:05 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B4CA25C68;
+        Tue, 16 Aug 2022 05:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1660652525; x=1692188525;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=B3uUd/yG6wpuTb/aR5iTfAme30Qm6tQlD5VU32Fh/CI=;
+  b=Tifp/ISUfjpNRaPP/CY94u94leOZ91YRfJkuv3BDszBornbMs5Q6XRQ7
+   Ixcw0xfxSGlJ1Jg0hiYU0p5uFCXRilB6YP1Oef6lmkw0edqQbDB88Z1Zk
+   92hPzlG/ufTn1JT3E+1Bor79jl97sbJHqhdZcxEGuqk0Z1IAVbJxaAgBF
+   8TkLB0HHACBU+bOr/uWseGqjadJawZfkVjkgEF0OV/8Hm9kAqrgBq7FeF
+   TucuT2O8paNDEBJxQExyYRDVCGdFPd1jsimk54wcpS0qKHTZDzhCHAQ47
+   lhhOfV7Q2m5H6OH4cSsSeil9POTww0F/BnV3p9UUmF5ySbm27HvydlkBK
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10440"; a="289773234"
+X-IronPort-AV: E=Sophos;i="5.93,241,1654585200"; 
+   d="scan'208";a="289773234"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2022 05:22:03 -0700
+X-IronPort-AV: E=Sophos;i="5.93,241,1654585200"; 
+   d="scan'208";a="675194031"
+Received: from damianos-mobl.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.40.45])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2022 05:21:54 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 4FB31104A4E; Tue, 16 Aug 2022 15:24:57 +0300 (+03)
+Date:   Tue, 16 Aug 2022 15:24:57 +0300
+From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
+        "Nikunj A. Dadhania" <nikunj@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, bharata@amd.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220816122457.2fjyd4uz5hp5cani@box.shutemov.name>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <b21f41e5-0322-bbfb-b9c2-db102488592d@amd.com>
+ <9e86daea-5619-a216-fe02-0562cf14c501@amd.com>
+ <9dc91ce8-4cb6-37e6-4c25-27a72dc11dd0@amd.com>
+ <422b9f97-fdf5-54bf-6c56-3c45eff5e174@amd.com>
+ <1407c70c-0c0b-6955-10bb-d44c5928f2d9@amd.com>
+ <1136925c-2e37-6af4-acac-be8bed9f6ed5@amd.com>
+ <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
+ <20220815130411.GA1073443@chaop.bj.intel.com>
+ <f0094f31-9669-47b5-eb52-6754a13ce757@amd.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0094f31-9669-47b5-eb52-6754a13ce757@amd.com>
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-08-16 at 13:52 +0200, Jan Kara wrote:
-> On Fri 12-08-22 14:42:36, Jeff Layton wrote:
-> > On Fri, 2022-08-12 at 14:37 +0200, Lukas Czerner wrote:
-> > > ea_inodes are using i_version for storing part of the reference count=
- so
-> > > we really need to leave it alone.
-> > >=20
-> > > The problem can be reproduced by xfstest ext4/026 when iversion is
-> > > enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE=
-_FL
-> > > inodes in ext4_mark_iloc_dirty().
-> > >=20
-> > > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > > v2, v3: no change
-> > >=20
-> > >  fs/ext4/inode.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > > index 601214453c3a..2a220be34caa 100644
-> > > --- a/fs/ext4/inode.c
-> > > +++ b/fs/ext4/inode.c
-> > > @@ -5731,7 +5731,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
-> > >  	}
-> > >  	ext4_fc_track_inode(handle, inode);
-> > > =20
-> > > -	if (IS_I_VERSION(inode))
-> > > +	/*
-> > > +	 * ea_inodes are using i_version for storing reference count, don't
-> > > +	 * mess with it
-> > > +	 */
-> > > +	if (IS_I_VERSION(inode) &&
-> > > +	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
-> > >  		inode_inc_iversion(inode)
-> > > =20
-> > >  	/* the do_update_inode consumes one bh->b_count */
-> >=20
-> >=20
-> > I've spent some time writing tests for the i_version counter (still
-> > quite rough right now), and what I've found is that this particular
-> > inode_inc_iversion results in the counter being bumped on _reads_ as
-> > well as writes, due to the atime changing. This call to
-> > inode_inc_iversion seems to make no sense, as we aren't bumping the
-> > mtime here.
-> >=20
-> > I'm still working on and testing this, but I think we'll probably just
-> > want to remove this inode_inc_iversion entirely, and leave the i_versio=
-n
-> > bumping for normal files to happen when the timestamps are updated. So
-> > far, my testing seems to indicate that that does the right thing.
->=20
-> I agree that inode_inc_iversion() may be overly agressive here but where
-> else does get iversion updated for things like inode owner update or
-> permission changes?
->=20
-> 								Honza
+On Tue, Aug 16, 2022 at 01:33:00PM +0200, Gupta, Pankaj wrote:
+> Hi Chao,
+> 
+> > 
+> > Actually the current version allows you to delay the allocation to a
+> > later time (e.g. page fault time) if you don't call fallocate() on the
+> > private fd. fallocate() is necessary in previous versions because we
+> > treat the existense in the fd as 'private' but in this version we track
+> > private/shared info in KVM so we don't rely on that fact from memory
+> > backstores.
+> 
+> Does this also mean reservation of guest physical memory with secure
+> processor (both for SEV-SNP & TDX) will also happen at page fault time?
+> 
+> Do we plan to keep it this way?
 
-If we remove it here, then both the setattr and setxattr codepaths will
-need to explicitly bump the iversion counter. Note that we update the
-ctime in those paths too, so that gives us a guidepost as to when we
-should update i_version. xfs will need similar changes, but btrfs turns
-out to already do the right thing.
+If you are talking about accepting memory by the guest, it is initiated by
+the guest and has nothing to do with page fault time vs fallocate()
+allocation of host memory. I mean acceptance happens after host memory
+allocation but they are not in lockstep, acceptance can happen much later.
 
-I'm planning to post my latest patches in just a bit.
---=20
-Jeff Layton <jlayton@kernel.org>
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
