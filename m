@@ -2,118 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE0F5965E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 01:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6798F596614
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 01:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237407AbiHPXKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 19:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48972 "EHLO
+        id S233582AbiHPXhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 19:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbiHPXKB (ORCPT
+        with ESMTP id S230378AbiHPXhf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 19:10:01 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD1E91D3D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 16:10:00 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id f22so15373105edc.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 16:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=AMn3B3jYdCVxak8yksa8T7jS8rFLGuSxkkP5+8axw1A=;
-        b=Vm9rZhcUXu8DUu2U13LfpsCp0dP7Fg/9rAJeZp9YtlQ9Rq7Y9VtHRIc4gUGBrf6ABe
-         +ZW0OMEq5BRJFyJbSJSx/y9p2lZo+15ohYnjJN9vM+Oe2v51uKNkPu3wDgexSVnVScq8
-         +r2XB8pHGFS6YRv4syJ3wdNKjMUHxv1d12zww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=AMn3B3jYdCVxak8yksa8T7jS8rFLGuSxkkP5+8axw1A=;
-        b=Fxh/cRbAC1K0tzGZ9ktS4GIMu9H5bjJf1kWPVPrI7LL4GWBaKi69qIjlV3D8hdQ4Qt
-         WA98ND8KyFLs8bn5qXatfieC4QmsA6B1hOEuAUpN9Y9NZkc5ouBrUMhRgXBbf2/vACoC
-         WAODFZ2We0zau7zYrdkOY3+8IDejXBNfsI+z/KxB+ikMFIX8kInzjHSTW+4aMLVV1e3n
-         w0hHmNzQBm/CMZU0c0/QCqCXy1Sojk6yvlibtsCRstqGhXNHBJN7xOCtahzyIw245ASp
-         Q4XUc9PDk4IWplrUkAaevk0ArIhRGXz20Vz7iX1/SdgOzlWfydEiC5Ik4GdBiccvyTY+
-         FYjA==
-X-Gm-Message-State: ACgBeo3NQZLxJQf6bzqhTIEu3XWbxBE530OMM0gDiiHJsATe61/8KGpU
-        YuTHvYbn4UT2nxqxv39Q4BJgooGwAZ0ttT/GwaM=
-X-Google-Smtp-Source: AA6agR6UR3fFXEiXP9JzWiDOVn9nMKmfsymkrwr23dkHchG6b5xw04GwbLgrw68C3RzwjfV/SgxVVA==
-X-Received: by 2002:a05:6402:51d4:b0:43d:9c8e:2617 with SMTP id r20-20020a05640251d400b0043d9c8e2617mr21493069edd.146.1660691399548;
-        Tue, 16 Aug 2022 16:09:59 -0700 (PDT)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id gt20-20020a170906f21400b0072abb95c9f4sm5799178ejb.193.2022.08.16.16.09.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Aug 2022 16:09:59 -0700 (PDT)
-Received: by mail-wm1-f50.google.com with SMTP id r83-20020a1c4456000000b003a5cb389944so144900wma.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 16:09:58 -0700 (PDT)
-X-Received: by 2002:a05:600c:2195:b0:3a6:b3c:c100 with SMTP id
- e21-20020a05600c219500b003a60b3cc100mr383338wme.8.1660691398572; Tue, 16 Aug
- 2022 16:09:58 -0700 (PDT)
+        Tue, 16 Aug 2022 19:37:35 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 94AF690C65;
+        Tue, 16 Aug 2022 16:37:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-52-176.pa.nsw.optusnet.com.au [49.181.52.176])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5A2DB62D445;
+        Wed, 17 Aug 2022 09:37:30 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oO67l-00Dz05-PZ; Wed, 17 Aug 2022 09:37:29 +1000
+Date:   Wed, 17 Aug 2022 09:37:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     David Wysochanski <dwysocha@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, djwong@kernel.org,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH] xfs: fix i_version handling in xfs
+Message-ID: <20220816233729.GX3600936@dread.disaster.area>
+References: <20220816131736.42615-1-jlayton@kernel.org>
+ <CALF+zO=OrT5tBvyL1ERD+YDSXkSAFvqQu-cQkSgWvQN8z+E_rA@mail.gmail.com>
 MIME-Version: 1.0
-References: <YvvBs+7YUcrzwV1a@ZenIV> <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
- <Yvvr447B+mqbZAoe@casper.infradead.org> <b05cf115-e329-3c4f-dee5-e0d4f61b4cd5@schaufler-ca.com>
-In-Reply-To: <b05cf115-e329-3c4f-dee5-e0d4f61b4cd5@schaufler-ca.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 16 Aug 2022 16:09:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiRs8k0pKy36cXYnBFVCJDP5DQMf6JM7FnRJz5tF4cMBA@mail.gmail.com>
-Message-ID: <CAHk-=wiRs8k0pKy36cXYnBFVCJDP5DQMf6JM7FnRJz5tF4cMBA@mail.gmail.com>
-Subject: Re: Switching to iterate_shared
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALF+zO=OrT5tBvyL1ERD+YDSXkSAFvqQu-cQkSgWvQN8z+E_rA@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62fc2a3b
+        a=O3n/kZ8kT9QBBO3sWHYIyw==:117 a=O3n/kZ8kT9QBBO3sWHYIyw==:17
+        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+        a=7-415B0cAAAA:8 a=Npwcd5ILmfyqQYfcuhoA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 3:30 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> Smack passes all tests and seems perfectly content with the change.
-> I can't say that the tests stress this interface.
+On Tue, Aug 16, 2022 at 01:14:55PM -0400, David Wysochanski wrote:
+> On Tue, Aug 16, 2022 at 9:19 AM Jeff Layton <jlayton@kernel.org> wrote:
+> >
+> > The i_version in xfs_trans_log_inode is bumped for any inode update,
+> > including atime-only updates due to reads. We don't want to record those
+> > in the i_version, as they don't represent "real" changes. Remove that
+> > callsite.
+> >
+> > In xfs_vn_update_time, if S_VERSION is flagged, then attempt to bump the
+> > i_version and turn on XFS_ILOG_CORE if it happens. In
+> > xfs_trans_ichgtime, update the i_version if the mtime or ctime are being
+> > updated.
+> >
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/xfs/libxfs/xfs_trans_inode.c | 17 +++--------------
+> >  fs/xfs/xfs_iops.c               |  4 ++++
+> >  2 files changed, 7 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+> > index 8b5547073379..78bf7f491462 100644
+> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > @@ -71,6 +71,8 @@ xfs_trans_ichgtime(
+> >                 inode->i_ctime = tv;
+> >         if (flags & XFS_ICHGTIME_CREATE)
+> >                 ip->i_crtime = tv;
+> > +       if (flags & (XFS_ICHGTIME_MOD|XFS_ICHGTIME_CHG))
+> > +               inode_inc_iversion(inode);
+> >  }
+> >
+> >  /*
+> > @@ -116,20 +118,7 @@ xfs_trans_log_inode(
+> >                 spin_unlock(&inode->i_lock);
+> >         }
+> >
+> > -       /*
+> > -        * First time we log the inode in a transaction, bump the inode change
+> > -        * counter if it is configured for this to occur. While we have the
+> > -        * inode locked exclusively for metadata modification, we can usually
+> > -        * avoid setting XFS_ILOG_CORE if no one has queried the value since
+> > -        * the last time it was incremented. If we have XFS_ILOG_CORE already
+> > -        * set however, then go ahead and bump the i_version counter
+> > -        * unconditionally.
+> > -        */
+> > -       if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
+> > -               if (IS_I_VERSION(inode) &&
+> > -                   inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
+> > -                       iversion_flags = XFS_ILOG_CORE;
+> > -       }
+> > +       set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags);
+> >
+> >         /*
+> >          * If we're updating the inode core or the timestamps and it's possible
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 45518b8c613c..162e044c7f56 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -718,6 +718,7 @@ xfs_setattr_nonsize(
+> >         }
+> >
+> >         setattr_copy(mnt_userns, inode, iattr);
+> > +       inode_inc_iversion(inode);
+> >         xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+> >
+> >         XFS_STATS_INC(mp, xs_ig_attrchg);
+> > @@ -943,6 +944,7 @@ xfs_setattr_size(
+> >
+> >         ASSERT(!(iattr->ia_valid & (ATTR_UID | ATTR_GID)));
+> >         setattr_copy(mnt_userns, inode, iattr);
+> > +       inode_inc_iversion(inode);
+> >         xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+> >
+> >         XFS_STATS_INC(mp, xs_ig_attrchg);
+> > @@ -1047,6 +1049,8 @@ xfs_vn_update_time(
+> >                 inode->i_mtime = *now;
+> >         if (flags & S_ATIME)
+> >                 inode->i_atime = *now;
+> > +       if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+> > +               log_flags |= XFS_ILOG_CORE;
+> >
+> >         xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
+> >         xfs_trans_log_inode(tp, ip, log_flags);
+> > --
+> > 2.37.2
+> >
+> 
+> I have a test (details below) that shows an open issue with NFSv4.x +
+> fscache where an xfs exported filesystem would trigger unnecessary
+> over the wire READs after a umount/mount cycle of the NFS mount.  I
+> previously tracked this down to atime updates, but never followed
+> through on any patch.  Now that Jeff worked it out and this patch is
+> under review, I built 5.19 vanilla, retested, then built 5.19 + this
+> patch and verified the problem is fixed.
 
-All the security filesystems really seem to boil down to just calling
-that 'proc_pident_readdir()' function with different sets of 'const
-struct pid_entry' arrays.
+And so the question that needs to be answered is "why isn't relatime
+working for this workload to avoid unnecessary atime updates"?
 
-And all that does is to make sure the pidents are filled in by that
-proc_fill_cache(), which basically does a filename lookup.
+Which then makes me ask "what's changing atime on the server between
+client side reads"?
 
-And a filename lookup *already* has to be able to handle being called
-in parallel, because that's how filename lookup works:
+Which then makes me wonder "what's actually changing iversion on the
+server?" because I don't think atime is the issue here.
 
-  [.. miss in dcache ..]
-  lookup_slow ->
-      inode_lock_shared(dir);
-      __lookup_slow -> does the
-      inode_unlock_shared(dir);
+I suspect that Jeff's patch is affecting this test case by removing
+iversion updates when the data is written back on the server. i.e.
+delayed allocation and unwritten extent conversion will no longer
+bump iversion when they log the inode metadata changes associated
+with extent allocation to store the data being written.  There may
+be other places where Jeff's patch removes implicit iversion
+updates, too, so it may not be writeback that is the issue here.
 
-so as long as the proc_fill_cache() handles the d_in_lookup()
-situation correctly (where we serialize on one single _name_ in the
-directory), that should all be good.
+How that impacts on the observed behaviour is dependent on things I
+don't know, like what cachefiles is doing in the background,
+especially across NFS client unmount/mount cycles. However, this all
+makes me think the "atime is updated" behaviour is an observed
+symptom of something else changing iversion and/or cmtime between
+reads from the server...
 
-And proc_fill_cache() does indeed seem to handle it right - and if it
-didn't, it would be fundamentally racy with regular lookups - so I
-think all those security layer proc_##LSM##_attr_dir_iterate cases can
-be moved over to iterate_shared with no code change.
+Cheers,
 
-But again, maybe there's something really subtle I'm overlooking. Or
-maybe not something subtle at all, and I'm just missing a big honking
-issue.
-
-            Linus
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
