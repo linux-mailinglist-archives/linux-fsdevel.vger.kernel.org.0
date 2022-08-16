@@ -2,107 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128015958C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 12:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 045DB595965
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235056AbiHPKpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 06:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59666 "EHLO
+        id S235276AbiHPLFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 07:05:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234804AbiHPKo6 (ORCPT
+        with ESMTP id S230096AbiHPLEr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 06:44:58 -0400
-Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AA43AE44;
-        Tue, 16 Aug 2022 02:54:44 -0700 (PDT)
-Received: from dev011.ch-qa.sw.ru ([172.29.1.16])
-        by relay.virtuozzo.com with esmtp (Exim 4.95)
-        (envelope-from <alexander.atanasov@virtuozzo.com>)
-        id 1oNt3q-00FxfB-Qg;
-        Tue, 16 Aug 2022 11:41:45 +0200
-From:   Alexander Atanasov <alexander.atanasov@virtuozzo.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     kernel@openvz.org,
-        Alexander Atanasov <alexander.atanasov@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH v2 3/4] Display inflated memory to users
-Date:   Tue, 16 Aug 2022 12:41:16 +0300
-Message-Id: <20220816094117.3144881-4-alexander.atanasov@virtuozzo.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220816094117.3144881-1-alexander.atanasov@virtuozzo.com>
-References: <20220816094117.3144881-1-alexander.atanasov@virtuozzo.com>
+        Tue, 16 Aug 2022 07:04:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1678B9BD;
+        Tue, 16 Aug 2022 03:30:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E95A60693;
+        Tue, 16 Aug 2022 10:30:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D473C433C1;
+        Tue, 16 Aug 2022 10:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660645845;
+        bh=blPhcC0pgTkrB9jGvICGYlhhM6GmXD3Tvwm3zPr4qZI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sh2vymdjBrlgaS4VfqRxqiifkmcyk9X5K1mM4jSnUka9oNnYgQUrp+kxxyJfn5SsU
+         uB8oKiKdAHK4nfaNfuJWVEfU8JyUqG/eqsJtNhrc3psL/VdmOFaKR7BqMa6nSJbwdD
+         TPktetHrsDRvXwHPBGyx9f3OsSwfg3WmhpjcoWo8Pxo5PfXdG13dWgHzsmsehpdcU5
+         VOCnLr8nG/kiVVr28LYYAACPEIu1J8kMbWvhYc/7rmnUEdTcreXo17fOXDu7mfLcmR
+         chFJ9Gp//keE0kbaCM03wsIpENJach1Xv6kvMJhegVEpn/uyDUvr4viOXRyUNiG6eI
+         DKSnblbj+NljA==
+Date:   Tue, 16 Aug 2022 12:30:40 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Su Yue <glass@fydeos.io>
+Cc:     linux-fsdevel@vger.kernel.org, fstests@vger.kernel.org,
+        l@damenly.su, Seth Forshee <sforshee@digitalocean.com>
+Subject: Re: [PATCH] attr: validate kuid first in chown_common
+Message-ID: <20220816103040.gtgg2w75tzpejas5@wittgenstein>
+References: <20220816092538.84252-1-glass@fydeos.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220816092538.84252-1-glass@fydeos.io>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add InflatedTotal and InflatedFree to /proc/meminfo
+On Tue, Aug 16, 2022 at 05:25:38PM +0800, Su Yue wrote:
+> Since the commit b27c82e12965 ("attr: port attribute changes to new
+> types"), chown_common stores vfs{g,u}id which converted from kuid into
+> iattr::vfs{g,u}id without check of the corresponding fs mapping ids.
+> 
+> When fchownat(2) is called with unmapped {g,u}id, now chown_common
+> fails later by vfsuid_has_fsmapping in notify_change. Then it returns
+> EOVERFLOW instead of EINVAL to the caller.
+> 
+> Fix it by validating k{u,g}id whether has valid fs mapping ids in
+> chown_common so it can return EINVAL early and make fchownat(2)
+> behave consistently.
+> 
+> This commit fixes fstests/generic/656.
+> 
+> Cc: Christian Brauner (Microsoft) <brauner@kernel.org>
+> Cc: Seth Forshee <sforshee@digitalocean.com>
+> Fixes: b27c82e12965 ("attr: port attribute changes to new types")
+> Signed-off-by: Su Yue <glass@fydeos.io>
+> ---
 
-Signed-off-by: Alexander Atanasov <alexander.atanasov@virtuozzo.com>
----
- Documentation/filesystems/proc.rst |  6 ++++++
- fs/proc/meminfo.c                  | 10 ++++++++++
- 2 files changed, 16 insertions(+)
+Thanks for the patch, Su!
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index e7aafc82be99..690e1b90ffee 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -991,6 +991,8 @@ Example output. You may not have all of these fields.
-     VmallocUsed:       40444 kB
-     VmallocChunk:          0 kB
-     Percpu:            29312 kB
-+    InflatedTotal:   2097152 kB
-+    InflatedFree:          0 kB
-     HardwareCorrupted:     0 kB
-     AnonHugePages:   4149248 kB
-     ShmemHugePages:        0 kB
-@@ -1138,6 +1140,10 @@ VmallocChunk
- Percpu
-               Memory allocated to the percpu allocator used to back percpu
-               allocations. This stat excludes the cost of metadata.
-+InflatedTotal and InflatedFree
-+               Amount of memory that is inflated by the balloon driver.
-+               Due to differences among the drivers inflated memory
-+               is subtracted from TotalRam or from MemFree.
- HardwareCorrupted
-               The amount of RAM/memory in KB, the kernel identifies as
-               corrupted.
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 6e89f0e2fd20..f72af204151a 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -16,6 +16,9 @@
- #ifdef CONFIG_CMA
- #include <linux/cma.h>
- #endif
-+#ifdef CONFIG_MEMORY_BALLOON
-+#include <linux/balloon_common.h>
-+#endif
- #include <asm/page.h>
- #include "internal.h"
- 
-@@ -153,6 +156,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 		    global_zone_page_state(NR_FREE_CMA_PAGES));
- #endif
- 
-+#ifdef CONFIG_MEMORY_BALLOON
-+	seq_printf(m,  "InflatedTotal:  %8ld kB\n",
-+		atomic_long_read(&mem_balloon_inflated_total_kb));
-+	seq_printf(m,  "InflatedFree:   %8ld kB\n",
-+		atomic_long_read(&mem_balloon_inflated_free_kb));
-+#endif
-+
- 	hugetlb_report_meminfo(m);
- 
- 	arch_report_meminfo(m);
--- 
-2.31.1
+I'm aware of this change in behavior and it is intentional. The
+regression risk outside of fstests is very low. So I would prefer if we
+fix the test in fstests first to check for EINVAL or EOVERFLOW.
 
+The reason is that reporting EOVERFLOW for this case is the correct
+behavior imho:
+
+- EINVAL should only be reported because the target {g,u}id_t has no
+  mapping in the caller's idmapping, i.e. doesn't yield a valid k{g,u}id_t.
+- EOVERFLOW should be reported because the target k{g,u}id_t doesn't
+  have a mapping in the filesystem idmapping or mount idmapping. IOW,
+  the filesystem cannot represent the intended value. The mount's
+  idmapping is on a par with the filesystem idmapping and thus a failure
+  to represent a vfs{g,u}id_t in the filesystem should yield EOVERFLOW.
+
+Would you care to send something like the following:
+
+diff --git a/src/vfs/idmapped-mounts.c b/src/vfs/idmapped-mounts.c
+index 63297d5f..ee41110f 100644
+--- a/src/vfs/idmapped-mounts.c
++++ b/src/vfs/idmapped-mounts.c
+@@ -7367,7 +7367,7 @@ static int setattr_fix_968219708108(const struct vfstest_info *info)
+                 */
+                if (!fchownat(open_tree_fd, FILE1, 0, 0, AT_SYMLINK_NOFOLLOW))
+                        die("failure: change ownership");
+-               if (errno != EINVAL)
++               if (errno != EINVAL && errno != EOVERFLOW)
+                        die("failure: errno");
+
+                /*
+@@ -7457,7 +7457,7 @@ static int setattr_fix_968219708108(const struct vfstest_info *info)
+                 */
+                if (!fchownat(open_tree_fd, FILE1, 0, 0, AT_SYMLINK_NOFOLLOW))
+                        die("failure: change ownership");
+-               if (errno != EINVAL)
++               if (errno != EINVAL && errno != EOVERFLOW)
+                        die("failure: errno");
+
+                /*
+
+to fstests upstream?
