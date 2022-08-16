@@ -2,187 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92529595AE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20612595AFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:57:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233186AbiHPLzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 07:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54254 "EHLO
+        id S235039AbiHPL4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 07:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235219AbiHPLyr (ORCPT
+        with ESMTP id S234969AbiHPL4T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 07:54:47 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A275A83F;
-        Tue, 16 Aug 2022 04:33:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BCXA7gzoMB3Hpo2wOQDjBVYwJgNp6CRHZGZORWz373hiYfkNFWfZ7Jvq/6VmAza/qpgDz45USUUqpZ/pPMjU5oo7VmB6fcbdK0t7eEYMpkBopIFbq1oOFATLuvYhQuWUpIeIY3KuPGZrw3Bm4ufo+Q1zg8lixanckKsAxH3717nfcqx3pcWl4XP5s59gAeOcZYR46R9WvgZy13UZlp3mFT98i4xp0+c3JwfxnywGlpGo1pw99o9E6VfCa4DdOnKcPScsCGoVr0hNKcS3xoU3f1VEecS4T2quVdwCI0bdLoU0V0SJ98gftsbJ51tew09cYZOtt/krSDp5+vgfqKpy6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3pUlho0++U/VTbejrAjIJ3HXfrbClNezApHohX8InyM=;
- b=KZDh25dlZ27XsPjx9FS9pGwaTWa5H96dRyOJvtGANA8JF9FPOZwzpaSwa1q+4aDt61icwFZZLQE3pUoGUbCOeBg/LJIXfIYLFrXEuiXvOZxcaWYA7RM9AZW4f9t24Lk0ODxYW0ZRkeLD7RflqV718/LayzoGNuHpicy7B89irw6bPrsvYQ0f4iQ/6qtrJQTXJ1ZBnmwv2ZRP6ZbZS3E7MGoaqkSs7BxdfrjXHB71bQmVxOLbZiiP/wP2Yyf+bFgf2YRuq8LVW7iI6MqlTLIX+Wmt9wKIhpu8+lR1Rv7W7YgO1VKBlizAJObNjQVydy4aoeNGZneQFeeebdbO4w+ELg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3pUlho0++U/VTbejrAjIJ3HXfrbClNezApHohX8InyM=;
- b=sT3TTB+XW5ba7NbfkGDeOxMkHZ1k8nBIZmj6nrnN0nhjm7WbTbhCdT1i1/bl2v1L9kon9d1QoU2k2eQI5pUnakxUXzFhcotSroPSF91fPMiFjWkGhyka8D8sCft71i8W68O4aEARq5vZgMMj6ie27YpPDKCx1+6OM5YdEjSmZQ0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
- (2603:10b6:910:1f::11) by CY4PR12MB1270.namprd12.prod.outlook.com
- (2603:10b6:903:43::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.15; Tue, 16 Aug
- 2022 11:33:19 +0000
-Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
- ([fe80::1001:3c79:9504:8d6a]) by CY4PR1201MB0181.namprd12.prod.outlook.com
- ([fe80::1001:3c79:9504:8d6a%10]) with mapi id 15.20.5504.025; Tue, 16 Aug
- 2022 11:33:16 +0000
-Message-ID: <f0094f31-9669-47b5-eb52-6754a13ce757@amd.com>
-Date:   Tue, 16 Aug 2022 13:33:00 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From:   "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     "Nikunj A. Dadhania" <nikunj@amd.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, bharata@amd.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-fsdevel@vger.kernel.org
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <b21f41e5-0322-bbfb-b9c2-db102488592d@amd.com>
- <9e86daea-5619-a216-fe02-0562cf14c501@amd.com>
- <9dc91ce8-4cb6-37e6-4c25-27a72dc11dd0@amd.com>
- <422b9f97-fdf5-54bf-6c56-3c45eff5e174@amd.com>
- <1407c70c-0c0b-6955-10bb-d44c5928f2d9@amd.com>
- <1136925c-2e37-6af4-acac-be8bed9f6ed5@amd.com>
- <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
- <20220815130411.GA1073443@chaop.bj.intel.com>
-Content-Language: en-US
-In-Reply-To: <20220815130411.GA1073443@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS8PR04CA0006.eurprd04.prod.outlook.com
- (2603:10a6:20b:310::11) To CY4PR1201MB0181.namprd12.prod.outlook.com
- (2603:10b6:910:1f::11)
+        Tue, 16 Aug 2022 07:56:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1987268A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 04:35:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D937611FE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 11:35:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C98C433C1;
+        Tue, 16 Aug 2022 11:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660649726;
+        bh=18iH9zVDGXfpWegkwX2jDKkU/+Xbxd4dZIN6MAMFG+o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Fq1ASFikDXGjloYdVsgC4Dk48Dl4hTnnxNQUcSF9vNMoLGjfWF45ipfDsCpq9/wdR
+         IrbTnh86tbUaqGKP6UxIGEvWeD+kvWz7ejvAShBmEa5e4aeMZL8kWdmKioD4RTV8OZ
+         CdlUCgmAZqsQ4mQ2573hls6fxe8Tx1IVi6l+pH2qw50fu+udBXsGO/2UpHxJTEikdK
+         eTzEHcr8wNolK0ApNCBUawKy0GWrO+1r5a2aiKozZ20Ly2LTRbxCX5w4TwOEIUqUh/
+         vSv6o9o3fQ/IOrvgvIz+xiqkl9SXP1vhIyGeTPy32qZWXfqaaxYDAsB/GQ6LA4hTgq
+         t3I6aQskKXl8Q==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Seth Forshee <sforshee@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Seth Forshee <sforshee@digitalocean.com>
+Subject: [PATCH 1/2] acl: handle idmapped mounts for idmapped filesystems
+Date:   Tue, 16 Aug 2022 13:35:13 +0200
+Message-Id: <20220816113514.43304-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: aa13b2e2-72e3-497f-ab30-08da7f7b1c62
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1270:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GWhWuK1IdLG43K4/P4Uy4qgONs2r9+nyGGCC+NEG9g0jJcdP4E+B5AEPCi3TKEKWfnTS0HW1RoUTo2Rod1P+FA4oGA4m89LbH+O54toGOB2rkNGDNQosEi/Aa1jZkDXFc3/39OgRsi9zzMNFUXTV0srjayFe6bJzhhywKBpK6fIwicgwP5ES3n7a7LH8/Pt0JlkYqRMtTsDD1R9bBfvk8MBXkttSrho6IHF/WtMC/JBTOke5q9P5etm7SIFXdYv0jWe4A5pR6jAbi3TpcpDKSXNLkHmErjcW8bw4FjjnCRYZ4e0A6V5MBYOykOeGmHNAe3GzBbZHMGTpRGcjz8PF979UlX0TfOAx2M+8z9K+gn+Nqc4DILGLPUr1VevdfsbDTl6MAohUky8SSCP0k91XLHqFniaoUUF39fMPhKuiTNzunSXFlaWhnsUL34dUB8qRI1HXBheUoqwBB5feomlhV+hQyLcKFrowYYaTtfO99pghRMbU9q482n1QIH/jVeZeu8Tfir21F1DihicKEf8S159r9/jHZqWouB27/KZ4ruO2dmgmgJ950YXJyg8Rv3QNdeEqausKuRXN68pL47FeMAYw0l+6P09I+rrP3PkVsHniv/cdpReQbtM9USesjoBVdDN6E8mQiclgty9lBkjHLQ26IsHRPbAvqjoV0zBDk9ZaETpsj7/q7grj9QIKPJV3k3P/FxThWWPLR/D4L+69c2Yelc/yG2sLFd+iYNBnM2LO8G5XiF4RluojvIqT0wh4N/O+O9o46UIwqRU2shjM23PD7ALshqHQ7xblV+YzaPSLtPebVRBfwPftsZJt0oTKJai3HQGEcbvwJGrvmqHXtA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1201MB0181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(26005)(5660300002)(6512007)(36756003)(186003)(86362001)(31686004)(4326008)(6666004)(2616005)(2906002)(41300700001)(316002)(6916009)(66556008)(38100700002)(66476007)(31696002)(54906003)(7416002)(478600001)(7406005)(6506007)(8936002)(4744005)(8676002)(6486002)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VTZPbUZsNEtzb1dITGVsM01OdnE1WFh3QlgwTjJhWGExakUrekViMGkwYWJz?=
- =?utf-8?B?NXM4R3NzUjlWaG5yZmt2TlhFVzhmSzNOSXZPS0lNVVFoTm1GNG5VL2habW9J?=
- =?utf-8?B?WFA1VjVJU3dQYnRrV0pRMnU2SlNsMDNxV1pINmhxcGozM3JYekppdndyaXZT?=
- =?utf-8?B?aXVWWUtqM0JiTXJHVVNEU3pjVXFEZ1A4Wm1CbXBXQUhmU0ZwZEVCNFAvbnda?=
- =?utf-8?B?UFFNV2NWOFU4eldDRmtBVkFkRlFYWnpoUXUzeGxnMlR1VUR4Q3ZQcmt6UTVI?=
- =?utf-8?B?YlZjRGJLWEJiejBNLzJYUWJWUHN2OWFHWmVhNDZPQXdvZ1h0em1aWlZvVGdI?=
- =?utf-8?B?TFRNcTVieERuY0oxNjVxbzVWTzltbUVLWWVEV0UzYkFwZ1FPN2dYWWJPMmp2?=
- =?utf-8?B?WnlQR2VHc0U3QmxXVnNqU3hmOW5Zc2JrUlpWUlZiWW95RjN1MWQvODgxVG0w?=
- =?utf-8?B?R056ODNKdkdXN2JBU0gzMno1R2RGMGUwUkUwaWlXZFNhbTdpM0dJb2RTVkhN?=
- =?utf-8?B?ZW1JSnJjSlV0TU1pUy9HRmV1a0RVT3RRRlhidVV5OUc1bDFXaGtwMnhtMDY3?=
- =?utf-8?B?WlBIQUVrQW9pOHJSNHRKWkM3eEhXUWxVQXBwc1VxVm0ybFB2ME8wQUVrMXkx?=
- =?utf-8?B?bUZWeXJYbmZjSjlpeFJ4Q2VSTU5NYm9qOEtTL1YyTXZEbU04SElwL0lEVHNm?=
- =?utf-8?B?ZjlCZnNKam44M3I5Q1Q3YUhMVjZMSzNzM21uOFVTTlRYSU5NQzhzMXBIMFhr?=
- =?utf-8?B?bVNDakloTStxSHZVNzRNNjlocUM0c2ZIamxjMXBSTnM3MTgyOThzenNYd3dI?=
- =?utf-8?B?SWJOTnp4YmVWKzkwQWRNY2paY0VxcWpPanFqV3U0VEhlWGZ6Rk1TbWs3L1g0?=
- =?utf-8?B?Vll4RkdqQnBUTDJyYWhveDFtd2Y2c3NHd1N2UHY0dE1aTkM5d3lKWGEwc1A0?=
- =?utf-8?B?ODVQYWZqYnMrYUtrMHppTk84TjhsaCtHSTU1dkNHOHhIbTFCa09EWDdrMko1?=
- =?utf-8?B?ek5kRkwzQ1hvaEoyVSt3RTI5dEJOWDMrR3E0RThxbnpKb2xNMUUxbk5GQ2V6?=
- =?utf-8?B?eXFXRXBTMjNrWmFNNTYxQytoa055V3lUKzRuR28xR3JKS2k0YUxkMFZNekgw?=
- =?utf-8?B?Zmp4VGcxUGxIWktyM3IwTFlyRDBnV1d0UWJzTTZ1dUFNb2VVazQyTVNLeVZ5?=
- =?utf-8?B?eWhseWVUSGMyUldwYXhaSTdCc09BWVMxTVFGdDVINHNRNFFkV3hFbjJWeXRp?=
- =?utf-8?B?Uis2Q0tRbjJFOUF2Z052WDhXSzV1cy8xS2p6aWViTFBEQTRKNUhrRmo1aWpL?=
- =?utf-8?B?OGdLZTZxNmpoajBHTVNEa3VSTGJFUitTdGc5YUswQVhHcFRsTkN0OHZhZUxV?=
- =?utf-8?B?Z3IxRWJySlRpbkZEbDBQVFRFNFR1am5KOHZYa00rTHVuMjlZck53YTY2V0dX?=
- =?utf-8?B?d1VqYVJjanJJYkVIVlVRS2tIQ3B2d2dZdURna0Y3V1ZzK2xBTVd0L0ZmRVR4?=
- =?utf-8?B?RXRRODV1bXpXZDM3dG05N0IxTERLUHc0anJCL1laSS9sNFBzRXJwcnFvQ1Vv?=
- =?utf-8?B?MXJ0RzZ1djU4NThRV2xYdjlhRVpoc3lWYzh4OTBQUGJMYkc4T0l0WUEzUGVt?=
- =?utf-8?B?MzNZbTZJNWVjeGdGUjkrTGZqeTVYYmozMFJ0amVWQnRsSDRwNWVrOVUzckpv?=
- =?utf-8?B?QldVV3VxTXJQRC83SGJlZzNkYTJOQXNoYTRQVW1GZVpvVWNZdVpORnBJczRj?=
- =?utf-8?B?YUlVSEVDekxJRko0ZmFjaU15MzladStyQzlzek95L0ZJWWo1ckNWZ0xjRjJI?=
- =?utf-8?B?TUtURDFiZWgrT0x3SWk1SFQxYnFYWk9QL2kwUG1jR29jdVJkbExhOFB4MlRJ?=
- =?utf-8?B?c3FmMExyajg4UWw5b25NRXp5eWs2eUg0blZiSGU3dzZEYW51R2xvd25aek54?=
- =?utf-8?B?UFRubVRrWU1rbHZuR1pNVkhyWTQzT1lEUUpsemd5ZnUxbFBLczBxRGJNK1ht?=
- =?utf-8?B?NlVPUTdsZ00zQVNQWWV6N1RGNy9NTjg0RkVOWk5FdENtS3JUenZxYmVOMWJH?=
- =?utf-8?B?d2tQYnl2YUplNkttMGo1eUZGTHZSTFBOMjJUZjI2a284Wi9WV0c3UlJ5d3Bl?=
- =?utf-8?Q?NTHmx/4bwOg33YZYd6A0VkEKo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa13b2e2-72e3-497f-ab30-08da7f7b1c62
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR1201MB0181.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2022 11:33:16.3092
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CGAwZmatWUwtifIQkNIEAMLUkhM8Cd5EyRuw7Qyccdr3yCBjoGJOWfHLU0ETOGOzqFB6Q1O580qHrXjE4Wb8MA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1270
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chao,
+Ensure that POSIX ACLs checking, getting, and setting works correctly
+for filesystems mountable with a filesystem idmapping ("fs_idmapping")
+that want to support idmapped mounts ("mnt_idmapping").
 
-> 
-> Actually the current version allows you to delay the allocation to a
-> later time (e.g. page fault time) if you don't call fallocate() on the
-> private fd. fallocate() is necessary in previous versions because we
-> treat the existense in the fd as 'private' but in this version we track
-> private/shared info in KVM so we don't rely on that fact from memory
-> backstores.
+Note that no filesystems mountable with an fs_idmapping do yet support
+idmapped mounts. This is required infrastructure work to unblock this.
 
-Does this also mean reservation of guest physical memory with secure 
-processor (both for SEV-SNP & TDX) will also happen at page fault time?
+As we explained in detail in [1] the fs_idmapping is irrelevant for
+getxattr() and setxattr() when mapping the ACL_{GROUP,USER} {g,u}ids
+stored in the uapi struct posix_acl_xattr_entry in
+posix_acl_fix_xattr_{from,to}_user().
 
-Do we plan to keep it this way?
+But for acl_permission_check() and posix_acl_{g,s}etxattr_idmapped_mnt()
+the fs_idmapping matters.
 
-Thanks,
-Pankaj
-> 
-> Definitely the page will still be pinned once it's allocated, there is
-> no way to swap it out for example just with the current code. That kind
-> of support, if desirable, can be extended through MOVABLE flag and some
-> other callbacks to let feature-specific code to involve.
+acl_permission_check():
+  During lookup POSIX ACLs are retrieved directly via i_op->get_acl() and
+  are returned via the kernel internal struct posix_acl which contains
+  e_{g,u}id members of type k{g,u}id_t that already take the
+  fs_idmapping into acccount.
+
+  For example, a POSIX ACL stored with u4 on the backing store is mapped
+  to k10000004 in the fs_idmapping. The mnt_idmapping remaps the POSIX ACL
+  to k20000004. In order to do that the fs_idmapping needs to be taken
+  into account but that doesn't happen yet (Again, this is a
+  counterfactual currently as fuse doesn't support idmapped mounts
+  currently. It's just used as a convenient example.):
+
+  fs_idmapping:  u0:k10000000:r65536
+  mnt_idmapping: u0:v20000000:r65536
+  ACL_USER:      k10000004
+
+  acl_permission_check()
+  -> check_acl()
+     -> get_acl()
+        -> i_op->get_acl() == fuse_get_acl()
+           -> posix_acl_from_xattr(u0:k10000000:r65536 /* fs_idmapping */, ...)
+              {
+                      k10000004 = make_kuid(u0:k10000000:r65536 /* fs_idmapping */,
+                                            u4 /* ACL_USER */);
+              }
+     -> posix_acl_permission()
+        {
+                -1 = make_vfsuid(u0:v20000000:r65536 /* mnt_idmapping */,
+                                 &init_user_ns,
+                                 k10000004);
+                vfsuid_eq_kuid(-1, k10000004 /* caller_fsuid */)
+        }
+
+  In order to correctly map from the fs_idmapping into mnt_idmapping we
+  require the relevant fs_idmaping to be passed:
+
+  acl_permission_check()
+  -> check_acl()
+     -> get_acl()
+        -> i_op->get_acl() == fuse_get_acl()
+           -> posix_acl_from_xattr(u0:k10000000:r65536 /* fs_idmapping */, ...)
+              {
+                      k10000004 = make_kuid(u0:k10000000:r65536 /* fs_idmapping */,
+                                            u4 /* ACL_USER */);
+              }
+     -> posix_acl_permission()
+        {
+                v20000004 = make_vfsuid(u0:v20000000:r65536 /* mnt_idmapping */,
+                                        u0:k10000000:r65536 /* fs_idmapping */,
+                                        k10000004);
+                vfsuid_eq_kuid(v20000004, k10000004 /* caller_fsuid */)
+        }
+
+  The initial_idmapping is only correct for the current situation because
+  all filesystems that currently support idmapped mounts do not support
+  being mounted with an fs_idmapping.
+
+  Note that ovl_get_acl() is used to retrieve the POSIX ACLs from the
+  relevant lower layer and the lower layer's mnt_idmapping needs to be
+  taken into account and so does the fs_idmapping. See 0c5fd887d2bb ("acl:
+  move idmapped mount fixup into vfs_{g,s}etxattr()") for more details.
+
+For posix_acl_{g,s}etxattr_idmapped_mnt() it is not as obvious why the
+fs_idmapping matters as it is for acl_permission_check(). Especially
+because it doesn't matter for posix_acl_fix_xattr_{from,to}_user() (See
+[1] for more context.).
+
+Because posix_acl_{g,s}etxattr_idmapped_mnt() operate on the uapi
+struct posix_acl_xattr_entry which contains {g,u}id_t values and thus
+give the impression that the fs_idmapping is irrelevant as at this point
+appropriate {g,u}id_t values have seemlingly been generated.
+
+As we've stated multiple times this assumption is wrong and in fact the
+uapi struct posix_acl_xattr_entry is taking idmappings into account
+depending at what place it is operated on.
+
+posix_acl_getxattr_idmapped_mnt()
+  When posix_acl_getxattr_idmapped_mnt() is called the values stored in
+  the uapi struct posix_acl_xattr_entry are mapped according to the
+  fs_idmapping. This happened when they were read from the backing store
+  and then translated from struct posix_acl into the uapi
+  struct posix_acl_xattr_entry during posix_acl_to_xattr().
+
+  In other words, the fs_idmapping matters as the values stored as
+  {g,u}id_t in the uapi struct posix_acl_xattr_entry have been generated
+  by it.
+
+  So we need to take the fs_idmapping into account during make_vfsuid()
+  in posix_acl_getxattr_idmapped_mnt().
+
+posix_acl_setxattr_idmapped_mnt()
+  When posix_acl_setxattr_idmapped_mnt() is called the values stored as
+  {g,u}id_t in uapi struct posix_acl_xattr_entry are intended to be the
+  values that ultimately get turned back into a k{g,u}id_t in
+  posix_acl_from_xattr() (which turns the uapi
+  struct posix_acl_xattr_entry into the kernel internal struct posix_acl).
+
+  In other words, the fs_idmapping matters as the values stored as
+  {g,u}id_t in the uapi struct posix_acl_xattr_entry are intended to be
+  the values that will be undone in the fs_idmapping when writing to the
+  backing store.
+
+  So we need to take the fs_idmapping into account during from_vfsuid()
+  in posix_acl_setxattr_idmapped_mnt().
+
+Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+Fixes: 0c5fd887d2bb ("acl: move idmapped mount fixup into vfs_{g,s}etxattr()")
+Cc: Seth Forshee <sforshee@digitalocean.com>
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ fs/overlayfs/inode.c | 11 +++++++----
+ fs/posix_acl.c       | 15 +++++++++------
+ 2 files changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index b45fea69fff3..0fbcb590af84 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -460,9 +460,12 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+  * of the POSIX ACLs retrieved from the lower layer to this function to not
+  * alter the POSIX ACLs for the underlying filesystem.
+  */
+-static void ovl_idmap_posix_acl(struct user_namespace *mnt_userns,
++static void ovl_idmap_posix_acl(struct inode *realinode,
++				struct user_namespace *mnt_userns,
+ 				struct posix_acl *acl)
+ {
++	struct user_namespace *fs_userns = i_user_ns(realinode);
++
+ 	for (unsigned int i = 0; i < acl->a_count; i++) {
+ 		vfsuid_t vfsuid;
+ 		vfsgid_t vfsgid;
+@@ -470,11 +473,11 @@ static void ovl_idmap_posix_acl(struct user_namespace *mnt_userns,
+ 		struct posix_acl_entry *e = &acl->a_entries[i];
+ 		switch (e->e_tag) {
+ 		case ACL_USER:
+-			vfsuid = make_vfsuid(mnt_userns, &init_user_ns, e->e_uid);
++			vfsuid = make_vfsuid(mnt_userns, fs_userns, e->e_uid);
+ 			e->e_uid = vfsuid_into_kuid(vfsuid);
+ 			break;
+ 		case ACL_GROUP:
+-			vfsgid = make_vfsgid(mnt_userns, &init_user_ns, e->e_gid);
++			vfsgid = make_vfsgid(mnt_userns, fs_userns, e->e_gid);
+ 			e->e_gid = vfsgid_into_kgid(vfsgid);
+ 			break;
+ 		}
+@@ -536,7 +539,7 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
+ 	if (!clone)
+ 		clone = ERR_PTR(-ENOMEM);
+ 	else
+-		ovl_idmap_posix_acl(mnt_user_ns(realpath.mnt), clone);
++		ovl_idmap_posix_acl(realinode, mnt_user_ns(realpath.mnt), clone);
+ 	/*
+ 	 * Since we're not in RCU path walk we always need to release the
+ 	 * original ACLs.
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 1d17d7b13dcd..5af33800743e 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -361,6 +361,7 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 		     const struct posix_acl *acl, int want)
+ {
+ 	const struct posix_acl_entry *pa, *pe, *mask_obj;
++	struct user_namespace *fs_userns = i_user_ns(inode);
+ 	int found = 0;
+ 	vfsuid_t vfsuid;
+ 	vfsgid_t vfsgid;
+@@ -376,7 +377,7 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
+                                         goto check_perm;
+                                 break;
+                         case ACL_USER:
+-				vfsuid = make_vfsuid(mnt_userns, &init_user_ns,
++				vfsuid = make_vfsuid(mnt_userns, fs_userns,
+ 						     pa->e_uid);
+ 				if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
+                                         goto mask;
+@@ -390,7 +391,7 @@ posix_acl_permission(struct user_namespace *mnt_userns, struct inode *inode,
+                                 }
+ 				break;
+                         case ACL_GROUP:
+-				vfsgid = make_vfsgid(mnt_userns, &init_user_ns,
++				vfsgid = make_vfsgid(mnt_userns, fs_userns,
+ 						     pa->e_gid);
+ 				if (vfsgid_in_group_p(vfsgid)) {
+ 					found = 1;
+@@ -736,6 +737,7 @@ void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+ {
+ 	struct posix_acl_xattr_header *header = value;
+ 	struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
++	struct user_namespace *fs_userns = i_user_ns(inode);
+ 	int count;
+ 	vfsuid_t vfsuid;
+ 	vfsgid_t vfsgid;
+@@ -753,13 +755,13 @@ void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+ 		switch (le16_to_cpu(entry->e_tag)) {
+ 		case ACL_USER:
+ 			uid = make_kuid(&init_user_ns, le32_to_cpu(entry->e_id));
+-			vfsuid = make_vfsuid(mnt_userns, &init_user_ns, uid);
++			vfsuid = make_vfsuid(mnt_userns, fs_userns, uid);
+ 			entry->e_id = cpu_to_le32(from_kuid(&init_user_ns,
+ 						vfsuid_into_kuid(vfsuid)));
+ 			break;
+ 		case ACL_GROUP:
+ 			gid = make_kgid(&init_user_ns, le32_to_cpu(entry->e_id));
+-			vfsgid = make_vfsgid(mnt_userns, &init_user_ns, gid);
++			vfsgid = make_vfsgid(mnt_userns, fs_userns, gid);
+ 			entry->e_id = cpu_to_le32(from_kgid(&init_user_ns,
+ 						vfsgid_into_kgid(vfsgid)));
+ 			break;
+@@ -775,6 +777,7 @@ void posix_acl_setxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+ {
+ 	struct posix_acl_xattr_header *header = value;
+ 	struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
++	struct user_namespace *fs_userns = i_user_ns(inode);
+ 	int count;
+ 	vfsuid_t vfsuid;
+ 	vfsgid_t vfsgid;
+@@ -793,13 +796,13 @@ void posix_acl_setxattr_idmapped_mnt(struct user_namespace *mnt_userns,
+ 		case ACL_USER:
+ 			uid = make_kuid(&init_user_ns, le32_to_cpu(entry->e_id));
+ 			vfsuid = VFSUIDT_INIT(uid);
+-			uid = from_vfsuid(mnt_userns, &init_user_ns, vfsuid);
++			uid = from_vfsuid(mnt_userns, fs_userns, vfsuid);
+ 			entry->e_id = cpu_to_le32(from_kuid(&init_user_ns, uid));
+ 			break;
+ 		case ACL_GROUP:
+ 			gid = make_kgid(&init_user_ns, le32_to_cpu(entry->e_id));
+ 			vfsgid = VFSGIDT_INIT(gid);
+-			gid = from_vfsgid(mnt_userns, &init_user_ns, vfsgid);
++			gid = from_vfsgid(mnt_userns, fs_userns, vfsgid);
+ 			entry->e_id = cpu_to_le32(from_kgid(&init_user_ns, gid));
+ 			break;
+ 		default:
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+-- 
+2.34.1
 
