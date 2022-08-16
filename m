@@ -2,125 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB8F595848
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 12:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A3F595804
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 12:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234642AbiHPK3i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 06:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51474 "EHLO
+        id S233919AbiHPKVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 06:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234402AbiHPK3A (ORCPT
+        with ESMTP id S234075AbiHPKU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 06:29:00 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D01D65E309;
-        Tue, 16 Aug 2022 02:03:14 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-52-176.pa.nsw.optusnet.com.au [49.181.52.176])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7B45B62D403;
-        Tue, 16 Aug 2022 19:03:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oNsTg-00Dk22-Ca; Tue, 16 Aug 2022 19:03:12 +1000
-Date:   Tue, 16 Aug 2022 19:03:12 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
-Message-ID: <20220816090312.GU3600936@dread.disaster.area>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <20220722071228.146690-7-ebiggers@kernel.org>
- <YtyoF89iOg8gs7hj@google.com>
- <Yt7dCcG0ns85QqJe@sol.localdomain>
- <YuXyKh8Zvr56rR4R@google.com>
- <YvrrEcw4E+rpDLwM@sol.localdomain>
+        Tue, 16 Aug 2022 06:20:56 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D562052097;
+        Tue, 16 Aug 2022 02:36:08 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 4A308346EC;
+        Tue, 16 Aug 2022 09:34:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1660642463; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iEdYfa1M4GgGzZG+RuOCPAb/W8L0e/bqVBO0WbncbEE=;
+        b=pBpO8XTXlRzfr9XHY2EY5XFEQIVO6s1UiN7LVjuYTNaMxZ1PC+GyuKrmKnORBcGFydH69W
+        CnwM9Nb68o57IONPf+0uX7J958FobhMNbGv/VNAWtKCxykUsWfcMZPwYgZZKLSDI6+2qzn
+        RfQVriyqAxiodJYgcae2V5FcNO57/cQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1660642463;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iEdYfa1M4GgGzZG+RuOCPAb/W8L0e/bqVBO0WbncbEE=;
+        b=34FB+9QK0NXSIgtZkv3faxX4+8s2JgaMoRYkRu/il6P0qmVqGJ2OQE0yPWlt+IeVyDZPd1
+        p2RTyT8AIQphYQDQ==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 221792C143;
+        Tue, 16 Aug 2022 09:34:23 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id CC041A066C; Tue, 16 Aug 2022 11:34:21 +0200 (CEST)
+Date:   Tue, 16 Aug 2022 11:34:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
+ Raspberry Pi
+Message-ID: <20220816093421.ok26tcyvf6bm3ngy@quack3>
+References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+ <20220728100055.efbvaudwp3ofolpi@quack3>
+ <64b7899f-d84d-93de-f9c5-49538bd080d0@i2se.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YvrrEcw4E+rpDLwM@sol.localdomain>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62fb5d51
-        a=O3n/kZ8kT9QBBO3sWHYIyw==:117 a=O3n/kZ8kT9QBBO3sWHYIyw==:17
-        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=1XWaLZrsAAAA:8 a=7-415B0cAAAA:8
-        a=0f_GdJSvYQN_4D2ffm4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64b7899f-d84d-93de-f9c5-49538bd080d0@i2se.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 15, 2022 at 05:55:45PM -0700, Eric Biggers wrote:
-> On Sat, Jul 30, 2022 at 08:08:26PM -0700, Jaegeuk Kim wrote:
-> > On 07/25, Eric Biggers wrote:
-> > > On Sat, Jul 23, 2022 at 07:01:59PM -0700, Jaegeuk Kim wrote:
-> > > > On 07/22, Eric Biggers wrote:
-> > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > 
-> > > > > Currently, if an f2fs filesystem is mounted with the mode=lfs and
-> > > > > io_bits mount options, DIO reads are allowed but DIO writes are not.
-> > > > > Allowing DIO reads but not DIO writes is an unusual restriction, which
-> > > > > is likely to be surprising to applications, namely any application that
-> > > > > both reads and writes from a file (using O_DIRECT).  This behavior is
-> > > > > also incompatible with the proposed STATX_DIOALIGN extension to statx.
-> > > > > Given this, let's drop the support for DIO reads in this configuration.
-> > > > 
-> > > > IIRC, we allowed DIO reads since applications complained a lower performance.
-> > > > So, I'm afraid this change will make another confusion to users. Could
-> > > > you please apply the new bahavior only for STATX_DIOALIGN?
-> > > > 
-> > > 
-> > > Well, the issue is that the proposed STATX_DIOALIGN fields cannot represent this
-> > > weird case where DIO reads are allowed but not DIO writes.  So the question is
-> > > whether this case actually matters, in which case we should make STATX_DIOALIGN
-> > > distinguish between DIO reads and DIO writes, or whether it's some odd edge case
-> > > that doesn't really matter, in which case we could just fix it or make
-> > > STATX_DIOALIGN report that DIO is unsupported.  I was hoping that you had some
-> > > insight here.  What sort of applications want DIO reads but not DIO writes?
-> > > Is this common at all?
+Hi Stefan!
+
+On Sat 06-08-22 11:50:28, Stefan Wahren wrote:
+> Am 28.07.22 um 12:00 schrieb Jan Kara:
+> > Hello!
 > > 
-> > I think there's no specific application to use the LFS mode at this
-> > moment, but I'd like to allow DIO read for zoned device which will be
-> > used for Android devices.
+> > On Mon 18-07-22 15:29:47, Stefan Wahren wrote:
+> > > i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
+> > > unable to run "rpi-update" without massive performance regression on my
+> > > Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
+> > > tool successfully downloads the latest firmware (> 100 MB) on my development
+> > > micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
+> > > min. The same scenario on Linux 5.18 shows the following symptoms:
+> > Thanks for report and the bisection!
+> > > - download takes endlessly much time and leads to an abort by userspace in
+> > > most cases because of the poor performance
+> > > - massive system load during download even after download has been aborted
+> > > (heartbeat LED goes wild)
+> > OK, is it that the CPU is busy or are we waiting on the storage card?
+> > Observing top(1) for a while should be enough to get the idea.  (sorry, I'm
+> > not very familiar with RPi so I'm not sure what heartbeat LED shows).
+> 
+> My description wasn't precise. I mean the green ACT LED, which uses the LED
+> heartbeat trigger:
+> 
+> "This allows LEDs to be controlled by a CPU load average. The flash
+> frequency is a hyperbolic function of the 1-minute load average."
+> 
+> I'm not sure if it's CPU or IO driven load, here the top output in bad case:
+> 
+> top - 08:44:17 up 43 min,  2 users,  load average: 5,02, 5,45, 5,17
+> Tasks: 142 total,   1 running, 141 sleeping,   0 stopped,   0 zombie
+> %Cpu(s):  0,4 us,  0,4 sy,  0,0 ni, 49,0 id, 50,2 wa,  0,0 hi, 0,0 si,  0,0
+> st
+> MiB Mem :   7941,7 total,   4563,1 free,    312,7 used,   3066,0 buff/cache
+> MiB Swap:    100,0 total,    100,0 free,      0,0 used.   7359,6 avail Mem
+
+OK, there's plenty of memory available, CPUs are mostly idle, the load is
+likely created by tasks waiting for IO (which also contribute to load
+despite not consuming CPU). Not much surprising here.
+
+> > Can you run "iostat -x 1" while the download is running so that we can see
+> > roughly how the IO pattern looks?
 > > 
+> Here the output during download:
 > 
-> So if the zoned device feature becomes widely adopted, then STATX_DIOALIGN will
-> be useless on all Android devices?  That sounds undesirable.  Are you sure that
-> supporting DIO reads but not DIO writes actually works?  Does it not cause
-> problems for existing applications?
-
-What purpose does DIO in only one direction actually serve? All it
-means is that we're forcibly mixing buffered and direct IO to the
-same file and that simply never ends well from a data coherency POV.
-
-Hence I'd suggest that mixing DIO reads and buffered writes like
-this ends up exposing uses to the worst of both worlds - all of the
-problems with none of the benefits...
-
-> What we need to do is make a decision about whether this means we should build
-> in a stx_dio_direction field (indicating no support / readonly support /
-> writeonly support / readwrite support) into the API from the beginning.  If we
-> don't do that, then I don't think we could simply add such a field later, as the
-> statx_dio_*_align fields will have already been assigned their meaning.  I think
-> we'd instead have to "duplicate" the API, with STATX_DIOROALIGN and
-> statx_dio_ro_*_align fields.  That seems uglier than building a directional
-> indicator into the API from the beginning.  On the other hand, requiring all
-> programs to check stx_dio_direction would add complexity to using the API.
+> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm 
+> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
+> mmcblk1          0,00    2,00      0,00     36,00     0,00 0,00   0,00  
+> 0,00    0,00 23189,50  46,38     0,00    18,00 500,00 100,00
 > 
-> Any thoughts on this?
+> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+>            0,25    0,00    0,00   49,62    0,00   50,13
+> 
+> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm 
+> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
+> mmcblk1          0,00    2,00      0,00     76,00     0,00 0,00   0,00  
+> 0,00    0,00 46208,50  92,42     0,00    38,00 500,00 100,00
+> 
+> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+>            0,25    0,00    0,00   49,62    0,00   50,13
+> 
+> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm 
+> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
+> mmcblk1          0,00    3,00      0,00     76,00     0,00 0,00   0,00  
+> 0,00    0,00 48521,67 145,56     0,00    25,33 333,33 100,00
+> 
+> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+>            0,25    0,00    0,00   49,62    0,00   50,13
 
-Decide whether partial, single direction DIO serves a useful purpose
-before trying to work out what is needed in the API to indicate that
-this sort of crazy will be supported....
+So this is interesting. We can see the card is 100% busy. The IO submitted
+to the card is formed by small requests - 18-38 KB per request - and each
+request takes 0.3-0.5s to complete. So the resulting throughput is horrible
+- only tens of KB/s. Also we can see there are many IOs queued for the
+device in parallel (aqu-sz columnt). This does not look like load I would
+expect to be generated by download of a large file from the web.
 
-Cheers,
+You have mentioned in previous emails that with dd(1) you can do couple
+MB/s writing to this card which is far more than these tens of KB/s. So the
+file download must be doing something which really destroys the IO pattern
+(and with mb_optimize_scan=0 ext4 happened to be better dealing with it and
+generating better IO pattern). Can you perhaps strace the process doing the
+download (or perhaps strace -f the whole rpi-update process) so that we can
+see how does the load generated on the filesystem look like? Thanks!
 
-Dave.
+								Honza
 -- 
-Dave Chinner
-david@fromorbit.com
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
