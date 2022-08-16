@@ -2,73 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B3B596393
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 22:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A185963EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 22:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237392AbiHPUOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 16:14:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
+        id S237230AbiHPUqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 16:46:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237387AbiHPUOn (ORCPT
+        with ESMTP id S229524AbiHPUqH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 16:14:43 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7952880508
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 13:14:42 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id f14so9016475qkm.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 13:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.cmu.edu; s=google-2021;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc;
-        bh=tCZS1gSrzfsH3ZNBY6cc5+eBl7G2zR+ip9sLiYFEeP0=;
-        b=hqELqfCgwUA0QqtPaP/SG6cfWW9baBp4BuE9YUW8cvO5mlpj5NP10O6zmzUXWJky+C
-         PxVv2RORc25WfYqozglT0xU5GG2P/sj38cEEh96d1beKksQvR+E7TLg7E2ZI21W1e9pG
-         w5pqsPxWR0XpSj011qRKfREgckruLLrmvIoheTiLEOxsH3tMch+mNE+9iWAgLeA3PqeD
-         76AiHV9l2ArlX9IeSwIMvY/27gaoEFIPnCJQUNRaFxm3GkHlsb0upMreCstSXtMSlc4c
-         1jqxRs+2iUALYmzkueRcqcOkVxY7yBTOGtW5gpLM5wwXRl2OoUJBBY3J+okIH8r7Bg11
-         SdIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=tCZS1gSrzfsH3ZNBY6cc5+eBl7G2zR+ip9sLiYFEeP0=;
-        b=QrMnG+0Sq/TNIKz+nq6n3s7Vv5DslFpfpqpz8/3vqMB4dfKnatruhDd4uiwJnz3CmI
-         muOCT5sAJREPiXmrivZqSzp92ok/4O89npqxMr4W2KRoJ+fsjabgf9ip1du+B6vx5llN
-         f1gDt/lz9baXUvo8UGspa4snFlV4/FLfEsVJi4qtyH5dacfjpgQL17UHXmyuTAsZH1DZ
-         Txy2ofkE3FhBzjGc052Uutdgy18yCg5X8Unn+Xq9hgq2k2p2798AimfGjy3to+euN5Lx
-         RkgX29qq2aC1tVccI1IabbSzX92OzRp7Vv5SuOafaxRG42mgxrJoLOBLtw8DyJAKsC0b
-         vLyg==
-X-Gm-Message-State: ACgBeo3bkwMK9BcgZdS/HUDP19fiz0HE90mNsuYNgoWJVcoYKwhEfHU8
-        UZp2wTLMO0x7sq/nziGGVOsu2g==
-X-Google-Smtp-Source: AA6agR4AXidIxbOb8GAVYnk6vENLdsLtAwLAbLVMilD+vFwOAIt8tf4YxcuDsefVP/+g3zcQuALwdQ==
-X-Received: by 2002:a05:620a:2844:b0:6b8:8cc3:9387 with SMTP id h4-20020a05620a284400b006b88cc39387mr16102781qkp.615.1660680881483;
-        Tue, 16 Aug 2022 13:14:41 -0700 (PDT)
-Received: from cs.cmu.edu (tunnel29655-pt.tunnel.tserv13.ash1.ipv6.he.net. [2001:470:7:582::2])
-        by smtp.gmail.com with ESMTPSA id bs30-20020a05620a471e00b006b910e588a4sm12519681qkb.129.2022.08.16.13.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 13:14:40 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 16:14:38 -0400
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Switching to iterate_shared
-Message-ID: <20220816201438.66v4ilot5gvnhdwj@cs.cmu.edu>
-Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-References: <YvvBs+7YUcrzwV1a@ZenIV>
- <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
- <Yvvr447B+mqbZAoe@casper.infradead.org>
+        Tue, 16 Aug 2022 16:46:07 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D3A88DEE;
+        Tue, 16 Aug 2022 13:46:04 -0700 (PDT)
+Received: from [192.168.1.138] ([37.4.248.80]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MO9r5-1o0Dxc2Fk9-00OTr7; Tue, 16 Aug 2022 22:45:49 +0200
+Message-ID: <b8a5e43a-4d1e-aede-e0f7-f731fd8acf1d@i2se.com>
+Date:   Tue, 16 Aug 2022 22:45:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yvvr447B+mqbZAoe@casper.infradead.org>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
+ Raspberry Pi
+Content-Language: en-US
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
+        Florian Fainelli <f.fainelli@gmail.com>
+References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
+ <20220728100055.efbvaudwp3ofolpi@quack3>
+ <64b7899f-d84d-93de-f9c5-49538bd080d0@i2se.com>
+ <20220816093421.ok26tcyvf6bm3ngy@quack3>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220816093421.ok26tcyvf6bm3ngy@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:QATVIxUIzO4XNP67B+8HP4QQNAu7SDUyzpY148ZnYDJfs7tnRBJ
+ P4nHE8TnbMh+WgAS4rs/lgc7XTshocNV1OpZ44YQvy18WcgxRaLBk+kobb43uc74GoOFyUp
+ gR19howWA1OqDL8Aq7YNa5EhexZE8b5NFYrK0PM4hMG49wBDM/sICkgNrOWNn1soXhDp+O8
+ TqJAbNdm7pr3HJsnooNqA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Dra9fYDHkDA=:LvzOC2xL//tX1hAXYwU6nP
+ Xf8alCLDOQOQVZ1lFlSGB67f41WkgrfgssPP1f4+UaS3E3TG4cGF0tsXcRWiFUN4G9iS0FMah
+ PfPmyvrCtS0hTE2PxsxyoA1jZttLzTnGWoDD72bDtMalXNh1BJFx5BL/JHLMMg3C9T2xCgBO+
+ EaeBMnfhvgUCiVIuJC+xJJ19ULU0VIr/x+NclzX0Awh8QgGj0ImzqqW6lPtkTOwcjplQGXpXV
+ qJFD/Nyy9NrT9TcSNnL2urdRZh0Sdt79CcFlGiqyLGHsEPHQly2MOS1R980Pfwz9dk/vwgBx3
+ 8PM0SILNrkSW57E/ebKxgzhzoWcg9e+4CP4PT8gKy0z+owfBgbry7NQLrni4dLDgiRa+/KCGJ
+ S4k8aA9an1czUvCWKOvTghF0ItEE65m3HK7p+9LZn4gYRCzdRwjtlnnfJl/NjzV5dilVZHEip
+ vuNDwZr+qi3FJdRwvayJafSpWBulsOcNVXpxnmQmQFWcYKGue2BSPk6bVefWqWYKTqSQrmybU
+ LSzgd0IRYtVKNnYn7HvQ91MwBCDATC4NMyvdboc0p6smOgcwuixLPz23NBibReFoPTuMfvES0
+ qELwYqY1vOAGwZshxk9S4yHJsC5digby73z7VshICqFAvOEoUuI8C0631KS+oQ8yIKJ69a3ye
+ 8euDAUwAqvZMis6VzjlfpFpuQvvd3DrYyUIV/0ACn9+XcaOSx3E1okAxgw7RrGIVEFDXi+f+x
+ zuITU/bdK06q5H2UVfcfhxbuIaXn960VSqOyEgTHQQwhHBfaLtvHmZZdZoc=
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,16 +68,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 03:35:46PM -0400, Matthew Wilcox wrote:
-> fs/coda/dir.c:  .iterate        = coda_readdir,
-> 
-> Would anyone notice if we broke CODA?  Maintainers cc'd anyway.
+Hi Jan,
 
-Ha, yes I think I would notice, but probably not until after the changes
-got released and trickled down to the distributions ;)
+Am 16.08.22 um 11:34 schrieb Jan Kara:
+> Hi Stefan!
+> So this is interesting. We can see the card is 100% busy. The IO submitted
+> to the card is formed by small requests - 18-38 KB per request - and each
+> request takes 0.3-0.5s to complete. So the resulting throughput is horrible
+> - only tens of KB/s. Also we can see there are many IOs queued for the
+> device in parallel (aqu-sz columnt). This does not look like load I would
+> expect to be generated by download of a large file from the web.
+>
+> You have mentioned in previous emails that with dd(1) you can do couple
+> MB/s writing to this card which is far more than these tens of KB/s. So the
+> file download must be doing something which really destroys the IO pattern
+> (and with mb_optimize_scan=0 ext4 happened to be better dealing with it and
+> generating better IO pattern). Can you perhaps strace the process doing the
+> download (or perhaps strace -f the whole rpi-update process) so that we can
+> see how does the load generated on the filesystem look like? Thanks!
 
-So good to know in advance a change like this is coming. I'll have to
-educate myself on this shared vs non-shared filldir.
+i didn't create the strace yet, but i looked at the source of 
+rpi-update. At the end the download phase is a curl call to download a 
+tar archive and pipe it directly to tar.
 
-Jan
+You can find the content list of the tar file here:
 
+https://raw.githubusercontent.com/lategoodbye/mb_optimize_scan_regress/main/rpi-firmware-tar-content-list.txt
+
+Best regards
+
+>
+> 								Honza
