@@ -2,113 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F70B595F14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0E0595F3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235066AbiHPPc3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 11:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48844 "EHLO
+        id S235832AbiHPPiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 11:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234793AbiHPPc2 (ORCPT
+        with ESMTP id S235741AbiHPPhx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 11:32:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E16B2E9D0;
-        Tue, 16 Aug 2022 08:32:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ECDCC611CD;
-        Tue, 16 Aug 2022 15:32:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA5EC433C1;
-        Tue, 16 Aug 2022 15:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660663946;
-        bh=E681lvYqctY/XBN4hr4Xk2egcoITFoQ28F444btzAgc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=N4E61JQMQPzsnHcXXe1PpK1kduWkzL/J2iEYEyxlwW86dfPfXOxAEwgqlbiDPVRDD
-         hyDyibz0T+FlWWAX29UpeVWDIt0qz/h0rsJdH6nB6X7urJIUlif+YhD+V0nlwwWHXF
-         R0EXggcdcAmN/K9JOS1RZk3fsn0+EXaY4r1oGyDopSApodERVBRPNe0UYCXGkz/LgJ
-         O8hLapGbX9PTdFnMVYIJOZQRqRNFjj7LIN5i6bkgE4BK/lWZpFrQGRMzhaVR35tW4v
-         IaQ9JLn/klhYz+oulf3JrKkvQSG9IgcrpyFbTJmTuUgyHlVrF6EbS8PtvLUm+ZtE5y
-         Q90ASOoQzSx9g==
-Message-ID: <83d07cc4f7fe2ca9976d3f418e5137f354e933a4.camel@kernel.org>
-Subject: Re: [PATCH 1/4] vfs: report change attribute in statx for
- IS_I_VERSION inodes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org
-Date:   Tue, 16 Aug 2022 11:32:24 -0400
-In-Reply-To: <12637.1660662903@warthog.procyon.org.uk>
-References: <ef692314ada01fd2117b730ef0afae50102974f5.camel@kernel.org>
-         <20220816134419.xra4krb3jwlm4npk@wittgenstein>
-         <20220816132759.43248-1-jlayton@kernel.org>
-         <20220816132759.43248-2-jlayton@kernel.org>
-         <4066396.1660658141@warthog.procyon.org.uk>
-         <12637.1660662903@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Tue, 16 Aug 2022 11:37:53 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84077C306
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 08:36:26 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id r141so4954149iod.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 08:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=A2T63ecIhOZRaUoHkPN/c7Sd7bQf6JInvIiB4+NzaPo=;
+        b=B8GYEcsvZMsCvAaQaKYOijpFHPobYqmproJSYHE/fAp11PFZFMdwo/u4Z3P+nfJ8H3
+         L/a1UVZb2XsgkKxGF8n070QZmsyfSx91a42oUVxmN3578HYDwA4AciIzd6vxjp3TfVri
+         3Ugqw+A8eY2K/BvMmck1LtqZEzddgOP3aSS1cWNalYTAbAQtfsbrjm4Lvdx/ckDWHEeR
+         vhxjFxMhPliax4/IaBaMQhisT/v7TXJdslncuLg7CPNKrQCUeJUQL/cS+f2aEMQvrIqn
+         mPudQM165pZ6f74GJ8JAMVR+ewL3httcQXFJdpSeEMm2tsD1jHQGes2zDggy7IsHh6n/
+         dPLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=A2T63ecIhOZRaUoHkPN/c7Sd7bQf6JInvIiB4+NzaPo=;
+        b=PEvHWxafKtc98Yudf8Q0pQn2RvXNVrNeAR98srQVuofqwqHLt6/aqApQC3BlIvaxtC
+         10VkFOUzpkOeNXV/EN+QUbppNqawJM32nG13q1HK16UwtUTHGNpIqCQPV97Jzio2OdfL
+         lX8NbW6rpGmsvB8Xo1XXrAdgDw4n2aAk9n16K6n75UohqAyKlgF86q7zlffSCCfLTmnd
+         nl9Rs/fNXeWn1LUareBh4mvOp0LJBz7xRBuDCfXcl1xuxK++Y6fvok3kIUyd2PO28a+D
+         zh++ECHlDRpu2kM3pHapZ8G9eaOZp+OyKgScDYas6rdUCkh/TLyJPTyC1E54MPwwXQj5
+         hSmA==
+X-Gm-Message-State: ACgBeo1giLCJujHoQP2hRC7vpDEybzMUM9qfYi51bGj5QQCbreNGHkCT
+        1nxRuIgpxx9vb3p/pY0QAlixKlCuIH4viA==
+X-Google-Smtp-Source: AA6agR41x/68cX38ArAJ0rEhjOSMgiY1+QRB4EbKLV/saA4GtyR6X304GDeJfhvhVNbmqIodZ9XEhg==
+X-Received: by 2002:a02:a144:0:b0:343:5da5:f424 with SMTP id m4-20020a02a144000000b003435da5f424mr9569944jah.150.1660664186088;
+        Tue, 16 Aug 2022 08:36:26 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id a21-20020a027355000000b00343514a6be7sm4526398jae.63.2022.08.16.08.36.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Aug 2022 08:36:25 -0700 (PDT)
+Message-ID: <85196548-7479-54a4-cf7b-1012166a100b@kernel.dk>
+Date:   Tue, 16 Aug 2022 09:36:23 -0600
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.1
+Subject: Re: [PATCH v1] fs: __file_remove_privs(): restore call to
+ inode_has_no_xattr()
+Content-Language: en-US
+To:     Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com
+Cc:     jack@suse.cz, hch@lst.de, djwong@kernel.org, brauner@kernel.org
+References: <20220816153158.1925040-1-shr@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220816153158.1925040-1-shr@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-08-16 at 16:15 +0100, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> > I think we'll just have to ensure that before we expose this for any
-> > filesystem that it conforms to some minimum standards. i.e.: it must
-> > change if there are data or metadata changes to the inode, modulo atime
-> > changes due to reads on regular files or readdir on dirs.
-> >=20
-> > The local filesystems, ceph and NFS should all be fine. I guess that
-> > just leaves AFS. If it can't guarantee that, then we might want to avoi=
-d
-> > exposing the counter for it.
->=20
-> AFS monotonically increments the counter on data changes; doesn't make an=
-y
-> change for metadata changes (other than the file size).
->=20
-> But you can't assume NFS works as per your suggestion as you don't know w=
-hat's
-> backing it (it could be AFS, for example - there's a converter for that).
->=20
+On 8/16/22 9:31 AM, Stefan Roesch wrote:
+> This restores the call to inode_has_no_xattr() in the function
+> __file_remove_privs(). In case the dentry_meeds_remove_privs() returned
+> 0, the function inode_has_no_xattr() was not called.
 
-In that case, the NFS server must synthesize a proper change attr. The
-NFS spec mandates that it change on most metadata changes.
+Should add a:
 
-> Further, for ordinary disk filesystems, two data changes may get elided a=
-nd
-> only increment the counter once.
->=20
+Fixes: faf99b563558 ("fs: add __remove_file_privs() with flags parameter")
 
-Not a problem as long as nothing queried the counter in between the
-changes.
+to this commit message.
 
-> And then there's mmap...
->=20
+-- 
+Jens Axboe
 
-Not sure how that matters here.
 
-> It might be better to reduce the scope of your definition and just say th=
-at it
-> must change if there's a data change and may also be changed if there's a
-> metadata change.
->=20
-
-I'd prefer that we mandate that it change on metadata changes as well.
-That's what most of the in-kernel users want, and what most of the
-existing filesystems provide. If AFS can't give that guarantee then we
-can just omit exposing i_version on it.
---=20
-Jeff Layton <jlayton@kernel.org>
