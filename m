@@ -2,54 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C87F595728
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 11:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4DE9595734
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 11:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233100AbiHPJyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 05:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49584 "EHLO
+        id S233277AbiHPJzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 05:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233868AbiHPJx1 (ORCPT
+        with ESMTP id S233401AbiHPJyd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 05:53:27 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C64AD9E92
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 01:37:22 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id g22-20020a056602249600b0067caba4f24bso5606855ioe.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 01:37:22 -0700 (PDT)
+        Tue, 16 Aug 2022 05:54:33 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2903A4B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 02:25:46 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id bh13so8752120pgb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 02:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fydeos.io; s=fydeos;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=6zlstte6oL6Xkd4b+ayvuWp40bPvPk7lHS372DHRY0I=;
+        b=MgNxxjrcomfdBiCYspQ0RGk/AiwZW7h7k/lkMX1+VcLC/XWKPqPiwwFHVADolTn4iI
+         wJIIq0kdC99rQ4hleDQeGarHbJ1AuMEOdK17BB46Rr0vvGTKVJCUEOp8pq/uaivg552a
+         Tob4sd2Qat7et2Bly+AwLjVe7dMxzpvTCu6l+DGgb2XVcafDOLGJrcaappeWFZI4AQtF
+         38QGhN9eWcNKgvDnKQuxIG8nHu83tmsa53LpDV3luRvFitbuolC7UJCFteYEe4oySwMj
+         7gfMjFMhurtDY+sZDxINePc9A5Y5YzERB0m+0DXRfzxzHK4jXzeUei/Lqbmuv89Tqe/q
+         6vAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=tboL+2t//XefaCLnDTGrPfl5RupstyNFWcrS7xB6m6M=;
-        b=aCYPPM3onYqiIMunN3AWNXLdM5haXOFWKRCsicpJliZMlezJ3xnRiEr7jzp3c1Ah2I
-         TCoDN0glslnQbBXew9HhuTR058xsXnrPad4uJa1PNjvHnIJUlRqBAPxb1V1tKTb3mM1w
-         yS4oRJVflXSn/Kfqw8C8SLJ6C81iW0nZ5H/kTY1AxTxryeDKrKqBRkGK+MWZP0YgfM6W
-         0+/qZNXnZAOztE1paGJG2RgWVktOH1YnhWj6V5x6AM4TQoRf9Cvn2CVdri1eklUSIauA
-         /DEwmF3HrWBQJp1U/9YKCWjVWFdVf4dVwKuI7A38Buhh7c/0/lDAiJWKLkI27fswhvG9
-         iwZQ==
-X-Gm-Message-State: ACgBeo1z9iS4FWOVFxCP2gbJtj6YbZpaAS4uzOR8CRraOv57LEjdXVKn
-        SkAK8pE19SUZ7C94K0do4T5oobCjHSGrDVZTf8rJ6CDE1X/E
-X-Google-Smtp-Source: AA6agR6ZKNJFQX5tQWG1kAZNBBCRHLeIaljZ1MoFMwN6D+pe7+ukZAfhecPoUbOlta0Q3Ne1cPTDg8+nzd/eIyCp7cUGF3JT2c+6
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=6zlstte6oL6Xkd4b+ayvuWp40bPvPk7lHS372DHRY0I=;
+        b=tvQxlIEs6FlXpfd3W7k6okJT9/NkdSQd+OiotvnZhgW50SOb7Ul8XDJ5A3Vnxa3ycZ
+         ZuSqMZG1FCXDM1otLyOP/pOVU+2Ui5Tn7jTl4BDi7U9If1M+zb17EYNIqTyezIe9SmfU
+         PFJHS+zuoU4uPinsDI+QN+LY+HjcVAJfw1jrhCom7CwKrKm8iZcfpYKp6TjVE3ZmfO50
+         c3ZXIfV/T4GAcq5ffRMbCykn2jtMrKhejagJAI34RRvUaLhys/FdS7Onj9hPyZr2H5p6
+         2C7dWcVsljT+NQgTeu35vPWuCgNM1TcQL/uvnhALBQhyTn5DyJ8tAPBc/absqLOLy1x8
+         p60A==
+X-Gm-Message-State: ACgBeo0ottEg6TdfR60DzoRy6sayGB+fPNAbN1EC82kW3A/IaH4t77qU
+        zxLxHtaZ3oK4TuYtjwKDIdJbj/18GoHJwhYB
+X-Google-Smtp-Source: AA6agR4WLr2XjWTUVVhoOmao75KXr3CHxE/aXfDTSjjO1wPkHlfUw1tyymeHBywDk185OWCzT25FNA==
+X-Received: by 2002:a63:5a61:0:b0:41b:b021:f916 with SMTP id k33-20020a635a61000000b0041bb021f916mr16683240pgm.387.1660641945954;
+        Tue, 16 Aug 2022 02:25:45 -0700 (PDT)
+Received: from damenlys-MBP.lan ([103.117.102.23])
+        by smtp.gmail.com with ESMTPSA id n68-20020a634047000000b0041b29fd0626sm7210395pga.88.2022.08.16.02.25.43
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 16 Aug 2022 02:25:45 -0700 (PDT)
+From:   Su Yue <glass@fydeos.io>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     fstests@vger.kernel.org, l@damenly.su, Su Yue <glass@fydeos.io>,
+        Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@digitalocean.com>
+Subject: [PATCH] attr: validate kuid first in chown_common
+Date:   Tue, 16 Aug 2022 17:25:38 +0800
+Message-Id: <20220816092538.84252-1-glass@fydeos.io>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22c8:b0:343:34af:32ff with SMTP id
- j8-20020a05663822c800b0034334af32ffmr9225175jat.238.1660639042238; Tue, 16
- Aug 2022 01:37:22 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 01:37:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000367cfb05e657a8ac@google.com>
-Subject: [syzbot] upstream boot error: BUG: unable to handle kernel paging
- request in kernel_execve
-From:   syzbot <syzbot+c50cf81fb2c17ffb6e6b@syzkaller.appspotmail.com>
-To:     ebiederm@xmission.com, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,92 +69,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Since the commit b27c82e12965 ("attr: port attribute changes to new
+types"), chown_common stores vfs{g,u}id which converted from kuid into
+iattr::vfs{g,u}id without check of the corresponding fs mapping ids.
 
-syzbot found the following issue on:
+When fchownat(2) is called with unmapped {g,u}id, now chown_common
+fails later by vfsuid_has_fsmapping in notify_change. Then it returns
+EOVERFLOW instead of EINVAL to the caller.
 
-HEAD commit:    568035b01cfb Linux 6.0-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1131e5e3080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b9175e0879a7749
-dashboard link: https://syzkaller.appspot.com/bug?extid=c50cf81fb2c17ffb6e6b
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+Fix it by validating k{u,g}id whether has valid fs mapping ids in
+chown_common so it can return EINVAL early and make fchownat(2)
+behave consistently.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c50cf81fb2c17ffb6e6b@syzkaller.appspotmail.com
+This commit fixes fstests/generic/656.
 
-BUG: unable to handle page fault for address: ffffdc0000000000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 11826067 P4D 11826067 PUD 0 
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 1105 Comm: kworker/u4:4 Not tainted 6.0.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
-Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
-RSP: 0018:ffffc90004cc7e10 EFLAGS: 00010246
-RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
-RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
-R13: ffff88801f859c00 R14: ffff000000000000 R15: ffff88801f859c00
-FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffdc0000000000 CR3: 000000000bc8e000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- strnlen include/linux/fortify-string.h:119 [inline]
- copy_string_kernel+0x26/0x250 fs/exec.c:616
- copy_strings_kernel+0xb3/0x190 fs/exec.c:655
- kernel_execve+0x377/0x500 fs/exec.c:2001
- call_usermodehelper_exec_async+0x2e3/0x580 kernel/umh.c:112
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
- </TASK>
-Modules linked in:
-CR2: ffffdc0000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
-Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
-RSP: 0018:ffffc90004cc7e10 EFLAGS: 00010246
-RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
-RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
-R13: ffff88801f859c00 R14: ffff000000000000 R15: ffff88801f859c00
-FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffdc0000000000 CR3: 000000000bc8e000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	74 3c                	je     0x3e
-   2:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
-   9:	fc ff df
-   c:	49 89 fc             	mov    %rdi,%r12
-   f:	48 89 f8             	mov    %rdi,%rax
-  12:	eb 09                	jmp    0x1d
-  14:	48 83 c0 01          	add    $0x1,%rax
-  18:	48 39 e8             	cmp    %rbp,%rax
-  1b:	74 1e                	je     0x3b
-  1d:	48 89 c2             	mov    %rax,%rdx
-  20:	48 89 c1             	mov    %rax,%rcx
-  23:	48 c1 ea 03          	shr    $0x3,%rdx
-  27:	83 e1 07             	and    $0x7,%ecx
-* 2a:	0f b6 14 1a          	movzbl (%rdx,%rbx,1),%edx <-- trapping instruction
-  2e:	38 ca                	cmp    %cl,%dl
-  30:	7f 04                	jg     0x36
-  32:	84 d2                	test   %dl,%dl
-  34:	75 11                	jne    0x47
-  36:	80 38 00             	cmpb   $0x0,(%rax)
-  39:	75 d9                	jne    0x14
-  3b:	4c 29 e0             	sub    %r12,%rax
-  3e:	48                   	rex.W
-  3f:	83                   	.byte 0x83
-
-
+Cc: Christian Brauner (Microsoft) <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@digitalocean.com>
+Fixes: b27c82e12965 ("attr: port attribute changes to new types")
+Signed-off-by: Su Yue <glass@fydeos.io>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/open.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/open.c b/fs/open.c
+index 8a813fa5ca56..967c7aac5aba 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -715,6 +715,13 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	mnt_userns = mnt_user_ns(path->mnt);
+ 	fs_userns = i_user_ns(inode);
+ 
++	if ((user != (uid_t)-1) &&
++	     !vfsuid_has_fsmapping(mnt_userns, fs_userns, VFSUIDT_INIT(uid)))
++		return -EINVAL;
++	if ((group != (gid_t)-1) &&
++	    !vfsgid_has_fsmapping(mnt_userns, fs_userns, VFSGIDT_INIT(gid)))
++		return -EINVAL;
++
+ retry_deleg:
+ 	newattrs.ia_valid =  ATTR_CTIME;
+ 	if ((user != (uid_t)-1) && !setattr_vfsuid(&newattrs, uid))
+-- 
+2.37.1
+
