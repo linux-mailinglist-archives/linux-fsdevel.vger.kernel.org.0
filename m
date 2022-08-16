@@ -2,114 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25FF8595A8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB28595A95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbiHPLrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 07:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
+        id S233504AbiHPLtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 07:49:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232817AbiHPLre (ORCPT
+        with ESMTP id S233422AbiHPLtC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 07:47:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBE0CB5FD;
-        Tue, 16 Aug 2022 04:21:28 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4F164371AE;
-        Tue, 16 Aug 2022 11:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1660648887; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jzhGbva5hBefaLpjvEShS1ChaQcEbODk+AyWbDL94nk=;
-        b=ODBpoxKehExsyanPD4hEWq7HBqIK3GbfzB8Acha+rRf8eXb4DEgWQDhmMIz5ns3QcfOTdm
-        DpxQHe6X7ftByvdzVGj2GMs5Uvj9cBx2iug0yVIUPFP4FAQjFP8vFtHzzXY6lk3cyre927
-        gHbQ9eAI9wQY+Gjb0qoBvwIi5PpHY7I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1660648887;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jzhGbva5hBefaLpjvEShS1ChaQcEbODk+AyWbDL94nk=;
-        b=Ag4yuhOVTCeyd6nXs4Ig2CF20+PiyZSPqwumsu+pUMl+sLsp28dmDkKJ5LVHkc4YbckAFX
-        al/Um3EWKBtnPLBA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 2DA6E2C14E;
-        Tue, 16 Aug 2022 11:21:27 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 5C254A066C; Tue, 16 Aug 2022 13:21:24 +0200 (CEST)
-Date:   Tue, 16 Aug 2022 13:21:24 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Lukas Czerner <lczerner@redhat.com>, linux-ext4@vger.kernel.org,
-        tytso@mit.edu, jlayton@kernel.org, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 2/3] fs: record I_DIRTY_TIME even if inode already has
- I_DIRTY_INODE
-Message-ID: <20220816112124.taqvli527475gwv4@quack3>
-References: <20220812123727.46397-1-lczerner@redhat.com>
- <20220812123727.46397-2-lczerner@redhat.com>
- <YvaYC+LRFqQJT0U9@sol.localdomain>
+        Tue, 16 Aug 2022 07:49:02 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A72219
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 04:23:31 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id c2so555617plo.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 04:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc;
+        bh=eng/60HOJm3cMZBAfSieZjPR5rs1cyF92HglfPz2FRA=;
+        b=E9XKdrntiAlXHPN4uEUNhNGeF7wrtzyo+MAv2Fkqq1NPpLZAy++bP8DyiWgpnxqIUW
+         8GVCbTWL64dtIpjcJRGu7IDYhNqe+ViKfnovfOLBuq27OJjLZ9qLfyXkftJgRjFJ7JMS
+         7OKF/k1bofVSx4CIHrECfzeqY/IoMNCPCqwhCXDWCFtT+PXuS/gqI9DLsgVhIgp/4Jhm
+         QNXRFy+37mY9j/x/rUua5jj1/zqfU0RcG7nCJqly+zlxyQMNp59s7mB+XP2jBI5ozBNs
+         T3qFZ1shTeHsgoKR+TyQhMTPmUHKAGUbAPBO6OMI39Xel+MVd8zGDWnn9DRGZIRw1dAR
+         1M3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc;
+        bh=eng/60HOJm3cMZBAfSieZjPR5rs1cyF92HglfPz2FRA=;
+        b=DLPpoCV3tYHKJ/+DfwAyYFCFsKYkJu9K1RQdJLe0NAUVEz6tMNjL9Cgwlm/BAfU+ep
+         /dB0LK65TMIOZiz11ZX8RtjkKG3KsrkolPCZsV2t9lBIXVsHcesRrd49STNDBI+Bm1OH
+         88tQqfGIXPACmBkGgyGM59NK14dMnKzzzbDU9hIkDAQBsKtqqyH9jteXRD3kH+cS/arz
+         eH7HsrZxxa3S8cZcE6Ok/tHrjDrUz/+nfXVQX5oJhip6VMF4BltkhvyRccYaFpDS/MuM
+         fcJXlJs3sX+1G1VfAHf6d9gZKDzZ5rjieiECyVcsEaFcZixVH9ZcoZyf6q2/elkhEGsd
+         fHaA==
+X-Gm-Message-State: ACgBeo1VmSv5Z60QcznCk7vhBahdjgXN0tfAoTLarf8vtKlGYj69tYKJ
+        UYXvUXUruQwn+FumG1mUlvtNGjH/sCPK1D7k6B8=
+X-Google-Smtp-Source: AA6agR4kiLvI1gV0HpchFlPXjdqDK4HCNN42pdECQvG50QA65o9yMleCnctbAhpq1XYuCrMYSJTr3Bt5bgLZ4o4Gk3Q=
+X-Received: by 2002:a17:902:e748:b0:16f:953e:2770 with SMTP id
+ p8-20020a170902e74800b0016f953e2770mr21243490plf.156.1660649009608; Tue, 16
+ Aug 2022 04:23:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YvaYC+LRFqQJT0U9@sol.localdomain>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Received: by 2002:a05:6a20:a823:b0:8d:b87e:6cd8 with HTTP; Tue, 16 Aug 2022
+ 04:23:28 -0700 (PDT)
+Reply-To: olgabohuslav@gmail.com
+From:   Olga Bohuslav <drkenhas1@gmail.com>
+Date:   Tue, 16 Aug 2022 13:23:28 +0200
+Message-ID: <CAEMrevpaif1GwbE86K5XWPUt5zsXhaa1wEdA_1SWEJUAv4N+dA@mail.gmail.com>
+Subject: Letter of Intent
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 12-08-22 11:12:27, Eric Biggers wrote:
-> On Fri, Aug 12, 2022 at 02:37:26PM +0200, Lukas Czerner wrote:
-> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> > index 6cd6953e175b..5d72b6ba4e63 100644
-> > --- a/Documentation/filesystems/vfs.rst
-> > +++ b/Documentation/filesystems/vfs.rst
-> > @@ -274,6 +274,8 @@ or bottom half).
-> >  	This is specifically for the inode itself being marked dirty,
-> >  	not its data.  If the update needs to be persisted by fdatasync(),
-> >  	then I_DIRTY_DATASYNC will be set in the flags argument.
-> > +	If the inode has dirty timestamp and lazytime is enabled
-> > +	I_DIRTY_TIME will be set in the flags.
-> 
-> The new sentence is not always true, since with this patch if
-> __mark_inode_dirty(I_DIRTY_INODE) is called twice on an inode that has
-> I_DIRTY_TIME, the second call will no longer include I_DIRTY_TIME -- even though
-> the inode still has dirty timestamps.  Please be super clear about what the
-> flags actually mean -- I'm still struggling to understand this patch...
+A  CRY FROM UKRAINE & PLEASE READ!
 
-Let me chime in here because I was the one who suggested the solution to
-Lukas. There are two different things (which is why this is confusing I
-guess):
 
-1) I_DIRTY_TIME in the inode->i_state should mean: struct inode has times
-updated after we last called ->dirty_inode() callback. Hence
-inode_is_dirtytime_only() as well as the chunk:
-                /* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-                flags &= ~I_DIRTY_TIME;
-you mention in the previous email are compatible with this meaning AFAICT.
+I am writing to you because I need you to help me secure the remaining
+of my family's life savings kept by my late husband outside Ukraine
+for charity work.
 
-2) I_DIRTY_TIME flag passed to ->dirty_inode() callback. This is admittedly
-bit of a hack. Currently XFS relies on the fact that the only time its
-->dirty_inode() callback needs to do anything is when VFS decides it is
-time to writeback timestamps and XFS detects this situation by checking for
-I_DIRTY_TIME in inode->i_state. Now to fix the race, we need to first clear
-I_DIRTY_TIME in inode->i_state and only then call the ->dirty_inode()
-callback (otherwise timestamp update can get lost). So the solution I've
-suggested was to propagate the information "timestamp update needed" to XFS
-through I_DIRTY_TIME in flags passed to ->dirty_inode().
+As you know, our country has been in an endless war with Russia for
+months now. I lost my husband, children and sisters to this war. All I
+have left is my family's life savings kept by my late husband  outside
+Ukraine which I am pleading to you in order for you to use it to
+establish charity work in any country of your choice.
 
-I hope things are clearer now.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I have also lost all money and properties my husband and I acquired
+over the years, except the money I mentioned above. As I am old and
+weak, I want you to help me receive this savings and use 60% of it to
+establish charity work while you keep 40% for your self.
+
+I am weak and old and presently in an hospital, I am diagnosed with
+Traumatic Brain Injury (TBI) as a result of gun shot and I have
+contracted COVID-19..
+
+I really need your help to establish charity work as the hospital
+management has confirmed to me that I have limited time to spend here
+on earth and as such, I have decided to give back to the society,
+service to humanity which is the best work of life.
+
+In your Interest, get back to me in order for me to direct you to the
+bank where my family's funds are deposited.
+
+Please pray that almighty God will accept my soul in peace whenever I
+depart this sorrowful world.
+
+May God guide and protect Ukraine and bless us all!
+
+Kind regards,
+Olga Bohuslav.
