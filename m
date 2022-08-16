@@ -2,145 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DACF595F76
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C20595F87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236317AbiHPPjV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 11:39:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
+        id S236216AbiHPPqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 11:46:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236192AbiHPPi0 (ORCPT
+        with ESMTP id S236588AbiHPPp5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 11:38:26 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16501356CC
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 08:38:13 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id c24so9547611pgg.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 08:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=6LpLI14G6coqJFruGZ3VYJdlLWVZL7InToOUXv07gLQ=;
-        b=V3kYfawNPteaJkUnHbTXnRrS5N35HXy6iGSEoRvrRPR7lf/QPGG3xDy01PDbV3CNJU
-         rYN3Q+NG+MI7miMCPrKRr9QMWbJNUvipQt7nZBzy91mXjgUP1bhKDg6Pv8PLccjK328e
-         QHgPWN2TVwVDgsm0DNCSKHVDZJyXPC0S2jmlNvJNeN/YEUOYVYC0ArRAq7x4AOWHAAvX
-         U8kkfqX2SlO0Wx9GoH6WDXhHME6I42+EOUK5vgZdNMDY/qSlMxKyT1KEekpwoGvFgNHf
-         kgo444qsZ2z0tgTbJp5duXgBZVSHUHP1vb6nzpsrWEMHaATSgyPonGA239evs+ZXtTji
-         kdPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=6LpLI14G6coqJFruGZ3VYJdlLWVZL7InToOUXv07gLQ=;
-        b=DC/1/WrTmdu5aO4pVOb2rTDholndWaEFGNMuXSj/ZxbFu2IIgRRrc4BFVNFZicE9Ev
-         91ML31Jbm5pUY+Gcg4EOabl4K+1C6aEGBtZuCg0l6LKfxqvvITEwA2kaL+l/4JuFRZ0r
-         xmP6dEpd11x/YJktx811BlQU0F2UVPBmrJ0ZDJ5dF3FJfBy6+UYFX2TCyWoEO1ICg2fm
-         1CdPgGHkC+ng77bst/rWfyOEfXBYoACNnkAUsqvIsiPAl7e4OQwhaRHmx8kHcUXHDW4G
-         hsjsr3GTvCbChNmAQwEyXX6Ll2EWbxEqCedqu/guXGb+VTXKqtHa2TVPPPa3X9gOs11F
-         qBfw==
-X-Gm-Message-State: ACgBeo0c7w2uFIYjnQGdSH8Zdv/sSxImygmzQcfQAbIIBxYnI90jgnry
-        Gn/SBdKR8/qsQOSkH79WpZR6eA==
-X-Google-Smtp-Source: AA6agR4vWikDhLEVIg5nAiL4NEUcgXEMkiaD3WHaihv4ACQ9BBnFu3QXd85Rfr1lttpC/Y68iivbPA==
-X-Received: by 2002:a63:81c7:0:b0:429:a566:e536 with SMTP id t190-20020a6381c7000000b00429a566e536mr2846519pgd.22.1660664292890;
-        Tue, 16 Aug 2022 08:38:12 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id l9-20020a170903120900b0016cf3f124e5sm9281691plh.131.2022.08.16.08.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 08:38:12 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 15:38:08 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Nikunj A. Dadhania" <nikunj@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, bharata@amd.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <Yvu54I7Y+/ybVyec@google.com>
-References: <9e86daea-5619-a216-fe02-0562cf14c501@amd.com>
- <9dc91ce8-4cb6-37e6-4c25-27a72dc11dd0@amd.com>
- <422b9f97-fdf5-54bf-6c56-3c45eff5e174@amd.com>
- <1407c70c-0c0b-6955-10bb-d44c5928f2d9@amd.com>
- <1136925c-2e37-6af4-acac-be8bed9f6ed5@amd.com>
- <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
- <20220815130411.GA1073443@chaop.bj.intel.com>
- <f0094f31-9669-47b5-eb52-6754a13ce757@amd.com>
- <20220816122457.2fjyd4uz5hp5cani@box.shutemov.name>
- <f95f35af-4824-2a2a-7cd0-71d1fda6867a@amd.com>
+        Tue, 16 Aug 2022 11:45:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3892856BA0;
+        Tue, 16 Aug 2022 08:43:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 398C4B819FD;
+        Tue, 16 Aug 2022 15:43:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84DEC433D6;
+        Tue, 16 Aug 2022 15:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660664588;
+        bh=M3oLnJo1qmEGcHvhKv48Lhf5XwYiKJUkic7K4U2f4t4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j6rpiN8O9urVKjfieHeD48UO+RMAXF/2X+y+Qr/aYB82aJnWM2CeZSIkjQL4HM2CL
+         9Ta9peS4IazlR4t+ohNfv6Qu7RKWV69F18VKn8YWzkFm1FzcaXIITJ8hwOpP1CtM85
+         +zdRa8WSLsCaGFlq89blyG6Ws0GyJ+GWTZsZjcNCTFi1z/pPc0SYA0GscBOGf0v5LP
+         II6g/PUHKh827ZGhNLg7yhcmREZCZj+QXDLWwP0anVpFzu+UjTKySDNZhf8Uyesatp
+         i5KNFcnL3KxuKxmywvIK6rnh+V55GlDTw0GGqcYMSompDD6ex+dbY1aE8rKtjPwiu4
+         FeLWJCnLNwAjQ==
+Date:   Tue, 16 Aug 2022 08:43:08 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH] xfs: fix i_version handling in xfs
+Message-ID: <Yvu7DHDWl4g1KsI5@magnolia>
+References: <20220816131736.42615-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f95f35af-4824-2a2a-7cd0-71d1fda6867a@amd.com>
-X-Spam-Status: No, score=-14.4 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,FSL_HELO_FAKE,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220816131736.42615-1-jlayton@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022, Gupta, Pankaj wrote:
+On Tue, Aug 16, 2022 at 09:17:36AM -0400, Jeff Layton wrote:
+> The i_version in xfs_trans_log_inode is bumped for any inode update,
+> including atime-only updates due to reads. We don't want to record those
+> in the i_version, as they don't represent "real" changes. Remove that
+> callsite.
 > 
-> > > > Actually the current version allows you to delay the allocation to a
-> > > > later time (e.g. page fault time) if you don't call fallocate() on the
-> > > > private fd. fallocate() is necessary in previous versions because we
-> > > > treat the existense in the fd as 'private' but in this version we track
-> > > > private/shared info in KVM so we don't rely on that fact from memory
-> > > > backstores.
-> > > 
-> > > Does this also mean reservation of guest physical memory with secure
-> > > processor (both for SEV-SNP & TDX) will also happen at page fault time?
-> > > 
-> > > Do we plan to keep it this way?
-> > 
-> > If you are talking about accepting memory by the guest, it is initiated by
-> > the guest and has nothing to do with page fault time vs fallocate()
-> > allocation of host memory. I mean acceptance happens after host memory
-> > allocation but they are not in lockstep, acceptance can happen much later.
+> In xfs_vn_update_time, if S_VERSION is flagged, then attempt to bump the
+> i_version and turn on XFS_ILOG_CORE if it happens. In
+> xfs_trans_ichgtime, update the i_version if the mtime or ctime are being
+> updated.
+
+What about operations that don't touch the mtime but change the file
+metadata anyway?  There are a few of those, like the blockgc garbage
+collector, deduperange, and the defrag tool.
+
+Zooming out a bit -- what does i_version signal, concretely?  I thought
+it was used by nfs (and maybe ceph?) to signal to clients that the file
+on the server has moved on, and the client needs to invalidate its
+caches.  I thought afs had a similar generation counter, though it's
+only used to cache file data, not metadata?  Does an i_version change
+cause all of them to invalidate caches, or is there more behavior I
+don't know about?
+
+Does that mean that we should bump i_version for any file data or
+attribute that could be queried or observed by userspace?  In which case
+I suppose this change is still correct, even if it relaxes i_version
+updates from "any change to the inode whatsoever" to "any change that
+would bump mtime".  Unless FIEMAP is part of "attributes observed by
+userspace".
+
+(The other downside I can see is that now we have to remember to bump
+timestamps for every new file operation we add, unlike the current code
+which is centrally located in xfs_trans_log_inode.)
+
+--D
+
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/xfs/libxfs/xfs_trans_inode.c | 17 +++--------------
+>  fs/xfs/xfs_iops.c               |  4 ++++
+>  2 files changed, 7 insertions(+), 14 deletions(-)
 > 
-> No, I meant reserving guest physical memory range from hypervisor e.g with
-> RMPUpdate for SEV-SNP or equivalent at TDX side (PAMTs?).
-
-As proposed, RMP/PAMT updates will occur in the fault path, i.e. there is no way
-for userspace to pre-map guest memory.
-
-I think the best approach is to turn KVM_TDX_INIT_MEM_REGION into a generic
-vCPU-scoped ioctl() that allows userspace to pre-map guest memory.  Supporting
-initializing guest private memory with a source page can be implemented via a
-flag.  That also gives KVM line of sight to in-place "conversion", e.g. another
-flag could be added to say that the dest is also the source.
-
-The TDX and SNP restrictions would then become addition restrictions on when
-initializing with a source is allowed (and VMs that don't have guest private
-memory wouldn't allow the flag at all).
+> diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+> index 8b5547073379..78bf7f491462 100644
+> --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> @@ -71,6 +71,8 @@ xfs_trans_ichgtime(
+>  		inode->i_ctime = tv;
+>  	if (flags & XFS_ICHGTIME_CREATE)
+>  		ip->i_crtime = tv;
+> +	if (flags & (XFS_ICHGTIME_MOD|XFS_ICHGTIME_CHG))
+> +		inode_inc_iversion(inode);
+>  }
+>  
+>  /*
+> @@ -116,20 +118,7 @@ xfs_trans_log_inode(
+>  		spin_unlock(&inode->i_lock);
+>  	}
+>  
+> -	/*
+> -	 * First time we log the inode in a transaction, bump the inode change
+> -	 * counter if it is configured for this to occur. While we have the
+> -	 * inode locked exclusively for metadata modification, we can usually
+> -	 * avoid setting XFS_ILOG_CORE if no one has queried the value since
+> -	 * the last time it was incremented. If we have XFS_ILOG_CORE already
+> -	 * set however, then go ahead and bump the i_version counter
+> -	 * unconditionally.
+> -	 */
+> -	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
+> -		if (IS_I_VERSION(inode) &&
+> -		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
+> -			iversion_flags = XFS_ILOG_CORE;
+> -	}
+> +	set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags);
+>  
+>  	/*
+>  	 * If we're updating the inode core or the timestamps and it's possible
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 45518b8c613c..162e044c7f56 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -718,6 +718,7 @@ xfs_setattr_nonsize(
+>  	}
+>  
+>  	setattr_copy(mnt_userns, inode, iattr);
+> +	inode_inc_iversion(inode);
+>  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+>  
+>  	XFS_STATS_INC(mp, xs_ig_attrchg);
+> @@ -943,6 +944,7 @@ xfs_setattr_size(
+>  
+>  	ASSERT(!(iattr->ia_valid & (ATTR_UID | ATTR_GID)));
+>  	setattr_copy(mnt_userns, inode, iattr);
+> +	inode_inc_iversion(inode);
+>  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+>  
+>  	XFS_STATS_INC(mp, xs_ig_attrchg);
+> @@ -1047,6 +1049,8 @@ xfs_vn_update_time(
+>  		inode->i_mtime = *now;
+>  	if (flags & S_ATIME)
+>  		inode->i_atime = *now;
+> +	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+> +		log_flags |= XFS_ILOG_CORE;
+>  
+>  	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
+>  	xfs_trans_log_inode(tp, ip, log_flags);
+> -- 
+> 2.37.2
+> 
