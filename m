@@ -2,49 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C20595F87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A39595FB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 17:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236216AbiHPPqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 11:46:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40656 "EHLO
+        id S229875AbiHPPzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 11:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236588AbiHPPp5 (ORCPT
+        with ESMTP id S236051AbiHPPyt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 11:45:57 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3892856BA0;
-        Tue, 16 Aug 2022 08:43:11 -0700 (PDT)
+        Tue, 16 Aug 2022 11:54:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8A12ED58;
+        Tue, 16 Aug 2022 08:51:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 398C4B819FD;
-        Tue, 16 Aug 2022 15:43:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84DEC433D6;
-        Tue, 16 Aug 2022 15:43:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 33FE661138;
+        Tue, 16 Aug 2022 15:51:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD68C433D6;
+        Tue, 16 Aug 2022 15:51:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660664588;
-        bh=M3oLnJo1qmEGcHvhKv48Lhf5XwYiKJUkic7K4U2f4t4=;
+        s=k20201202; t=1660665118;
+        bh=YTxB1qQDthA0Qji7+SWwCk9ZE7GAlPwG4Zy7shc1zkI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j6rpiN8O9urVKjfieHeD48UO+RMAXF/2X+y+Qr/aYB82aJnWM2CeZSIkjQL4HM2CL
-         9Ta9peS4IazlR4t+ohNfv6Qu7RKWV69F18VKn8YWzkFm1FzcaXIITJ8hwOpP1CtM85
-         +zdRa8WSLsCaGFlq89blyG6Ws0GyJ+GWTZsZjcNCTFi1z/pPc0SYA0GscBOGf0v5LP
-         II6g/PUHKh827ZGhNLg7yhcmREZCZj+QXDLWwP0anVpFzu+UjTKySDNZhf8Uyesatp
-         i5KNFcnL3KxuKxmywvIK6rnh+V55GlDTw0GGqcYMSompDD6ex+dbY1aE8rKtjPwiu4
-         FeLWJCnLNwAjQ==
-Date:   Tue, 16 Aug 2022 08:43:08 -0700
+        b=U3YXgr5ozgiuShZM4c6NW+lf9bPSdarJdrYyMiGnr9MQD2R1VJeSx6GrRmDEThWE+
+         rRoR3Od9F6NdexJ/V0UAKm0nLpSj2bMLSWng61OZNocG53jcwzhZeHcn6yi+CgllDH
+         pPqbajiyrmhKgSN48AuyBDvgLgLnvuW1Bh5kxf6ry34hm9WnFoN4ziUjqNTj8SN/8A
+         TR1gwTbfvgDFhELMEkrFG2pgr7ayH+5wOGt3/qdXHRZb99KjXu6HJqJZj0Au08IE4U
+         yBd6QLSKQfw+7myMBzinhXnTFnVgeVxpuJQidHFsLdP240DUobPvgzz2KcmsNFXtNz
+         1TgpHgzFUKSXg==
+Date:   Tue, 16 Aug 2022 08:51:58 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH] xfs: fix i_version handling in xfs
-Message-ID: <Yvu7DHDWl4g1KsI5@magnolia>
-References: <20220816131736.42615-1-jlayton@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        viro@zeniv.linux.org.uk, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 1/4] vfs: report change attribute in statx for
+ IS_I_VERSION inodes
+Message-ID: <Yvu9HsCgzwpEYhPc@magnolia>
+References: <ef692314ada01fd2117b730ef0afae50102974f5.camel@kernel.org>
+ <20220816134419.xra4krb3jwlm4npk@wittgenstein>
+ <20220816132759.43248-1-jlayton@kernel.org>
+ <20220816132759.43248-2-jlayton@kernel.org>
+ <4066396.1660658141@warthog.procyon.org.uk>
+ <12637.1660662903@warthog.procyon.org.uk>
+ <83d07cc4f7fe2ca9976d3f418e5137f354e933a4.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220816131736.42615-1-jlayton@kernel.org>
+In-Reply-To: <83d07cc4f7fe2ca9976d3f418e5137f354e933a4.camel@kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -55,114 +64,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 09:17:36AM -0400, Jeff Layton wrote:
-> The i_version in xfs_trans_log_inode is bumped for any inode update,
-> including atime-only updates due to reads. We don't want to record those
-> in the i_version, as they don't represent "real" changes. Remove that
-> callsite.
+On Tue, Aug 16, 2022 at 11:32:24AM -0400, Jeff Layton wrote:
+> On Tue, 2022-08-16 at 16:15 +0100, David Howells wrote:
+> > Jeff Layton <jlayton@kernel.org> wrote:
+> > 
+> > > I think we'll just have to ensure that before we expose this for any
+> > > filesystem that it conforms to some minimum standards. i.e.: it must
+> > > change if there are data or metadata changes to the inode, modulo atime
+> > > changes due to reads on regular files or readdir on dirs.
+> > > 
+> > > The local filesystems, ceph and NFS should all be fine. I guess that
+> > > just leaves AFS. If it can't guarantee that, then we might want to avoid
+> > > exposing the counter for it.
+> > 
+> > AFS monotonically increments the counter on data changes; doesn't make any
+> > change for metadata changes (other than the file size).
+> > 
+> > But you can't assume NFS works as per your suggestion as you don't know what's
+> > backing it (it could be AFS, for example - there's a converter for that).
+> > 
 > 
-> In xfs_vn_update_time, if S_VERSION is flagged, then attempt to bump the
-> i_version and turn on XFS_ILOG_CORE if it happens. In
-> xfs_trans_ichgtime, update the i_version if the mtime or ctime are being
-> updated.
+> In that case, the NFS server must synthesize a proper change attr. The
+> NFS spec mandates that it change on most metadata changes.
+> 
+> > Further, for ordinary disk filesystems, two data changes may get elided and
+> > only increment the counter once.
+> > 
+> 
+> Not a problem as long as nothing queried the counter in between the
+> changes.
+> 
+> > And then there's mmap...
+> > 
+> 
+> Not sure how that matters here.
+> 
+> > It might be better to reduce the scope of your definition and just say that it
+> > must change if there's a data change and may also be changed if there's a
+> > metadata change.
+> > 
+> 
+> I'd prefer that we mandate that it change on metadata changes as well.
 
-What about operations that don't touch the mtime but change the file
-metadata anyway?  There are a few of those, like the blockgc garbage
-collector, deduperange, and the defrag tool.
-
-Zooming out a bit -- what does i_version signal, concretely?  I thought
-it was used by nfs (and maybe ceph?) to signal to clients that the file
-on the server has moved on, and the client needs to invalidate its
-caches.  I thought afs had a similar generation counter, though it's
-only used to cache file data, not metadata?  Does an i_version change
-cause all of them to invalidate caches, or is there more behavior I
-don't know about?
-
-Does that mean that we should bump i_version for any file data or
-attribute that could be queried or observed by userspace?  In which case
-I suppose this change is still correct, even if it relaxes i_version
-updates from "any change to the inode whatsoever" to "any change that
-would bump mtime".  Unless FIEMAP is part of "attributes observed by
-userspace".
-
-(The other downside I can see is that now we have to remember to bump
-timestamps for every new file operation we add, unlike the current code
-which is centrally located in xfs_trans_log_inode.)
+...in that case, why not leave the i_version bump in
+xfs_trans_log_inode?  That will capture all changes to file data,
+attribues, and metadata. ;)
 
 --D
 
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_trans_inode.c | 17 +++--------------
->  fs/xfs/xfs_iops.c               |  4 ++++
->  2 files changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-> index 8b5547073379..78bf7f491462 100644
-> --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> @@ -71,6 +71,8 @@ xfs_trans_ichgtime(
->  		inode->i_ctime = tv;
->  	if (flags & XFS_ICHGTIME_CREATE)
->  		ip->i_crtime = tv;
-> +	if (flags & (XFS_ICHGTIME_MOD|XFS_ICHGTIME_CHG))
-> +		inode_inc_iversion(inode);
->  }
->  
->  /*
-> @@ -116,20 +118,7 @@ xfs_trans_log_inode(
->  		spin_unlock(&inode->i_lock);
->  	}
->  
-> -	/*
-> -	 * First time we log the inode in a transaction, bump the inode change
-> -	 * counter if it is configured for this to occur. While we have the
-> -	 * inode locked exclusively for metadata modification, we can usually
-> -	 * avoid setting XFS_ILOG_CORE if no one has queried the value since
-> -	 * the last time it was incremented. If we have XFS_ILOG_CORE already
-> -	 * set however, then go ahead and bump the i_version counter
-> -	 * unconditionally.
-> -	 */
-> -	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
-> -		if (IS_I_VERSION(inode) &&
-> -		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
-> -			iversion_flags = XFS_ILOG_CORE;
-> -	}
-> +	set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags);
->  
->  	/*
->  	 * If we're updating the inode core or the timestamps and it's possible
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 45518b8c613c..162e044c7f56 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -718,6 +718,7 @@ xfs_setattr_nonsize(
->  	}
->  
->  	setattr_copy(mnt_userns, inode, iattr);
-> +	inode_inc_iversion(inode);
->  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
->  
->  	XFS_STATS_INC(mp, xs_ig_attrchg);
-> @@ -943,6 +944,7 @@ xfs_setattr_size(
->  
->  	ASSERT(!(iattr->ia_valid & (ATTR_UID | ATTR_GID)));
->  	setattr_copy(mnt_userns, inode, iattr);
-> +	inode_inc_iversion(inode);
->  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
->  
->  	XFS_STATS_INC(mp, xs_ig_attrchg);
-> @@ -1047,6 +1049,8 @@ xfs_vn_update_time(
->  		inode->i_mtime = *now;
->  	if (flags & S_ATIME)
->  		inode->i_atime = *now;
-> +	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
-> +		log_flags |= XFS_ILOG_CORE;
->  
->  	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
->  	xfs_trans_log_inode(tp, ip, log_flags);
+> That's what most of the in-kernel users want, and what most of the
+> existing filesystems provide. If AFS can't give that guarantee then we
+> can just omit exposing i_version on it.
 > -- 
-> 2.37.2
-> 
+> Jeff Layton <jlayton@kernel.org>
