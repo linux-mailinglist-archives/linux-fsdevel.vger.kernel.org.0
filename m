@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D308595326
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 08:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D00AB595349
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 09:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbiHPG5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 02:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44618 "EHLO
+        id S231575AbiHPHDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 03:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbiHPG4t (ORCPT
+        with ESMTP id S231147AbiHPHDW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 02:56:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E890570E56;
-        Mon, 15 Aug 2022 19:18:25 -0700 (PDT)
+        Tue, 16 Aug 2022 03:03:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C187C515;
+        Mon, 15 Aug 2022 19:30:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 851B460BD8;
-        Tue, 16 Aug 2022 02:18:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF819C433D6;
-        Tue, 16 Aug 2022 02:18:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C8805B8112C;
+        Tue, 16 Aug 2022 02:30:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A7CC433C1;
+        Tue, 16 Aug 2022 02:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660616304;
-        bh=WOl5KGSNQ3BSr9I7Gt0VEntd0vS3+xM4qeCdvz0OwGE=;
+        s=k20201202; t=1660617016;
+        bh=o/dgEp6rbBAETLpl5LAQ0rTHgbw6cR0xQc7hWgSeR0M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R3G2EKltD1n2xmg02F0mL7yOJNFMgoHsmOOoQ2rQ99V8z42kqAgsWz/4OdibxEjCw
-         xOWGkoqG9xC90EtS5J7hDbWQpIBccyN8VvRe99N90BTOvVhqT1hZkWyr8ydVOyIelg
-         +tvOJMFRVRomcd0FgGAhMRf4TNl27AI1iAOykAhnouLnaD77wcOmXjOaNm0OlFrHQQ
-         GdPvhmX07Zc3AQQWMDUJCDgz+dtjcPh8Y/75oxVGhe8dq2vZ4MxBkH445vt35OhExg
-         u+NRqHgkBEPXDwxUA7JQxmnceaSGqGngxPPuMu/qZEXiZztvEsoriXk/hQ/KnzBAnu
-         QDusB5awPz8Lw==
-Date:   Mon, 15 Aug 2022 19:18:24 -0700
+        b=nzkDzXVjLQzwkMTz2NRz0r6sMz/rmuYTsWeALg2eUxGdxmNI/jlqHdiwtwhRAvI/p
+         KS3YD8U2RDNvHpqBlwg9a/oG60eq3ZIQx0MPQH9k7te6jP+zBhBQzI5Sd9dzwtlybV
+         YeUA9a4g61ezHpqCEACFG42Z5z7W3MjEYSI81ohbdNHv1VbNqUqBF0zsF6ib+TQ5mj
+         aO4pEre6JCg7LMAgZiehQPVj0IhIjumWBunsnV9drfoxKmAF2JUGsVKOvOC76yQ+Gf
+         72Hf7f1FzPHdyHUx5wgNmHPNeWJPp+p3+GkXmcKhm3NfahPPejF5v39x/tpeRpzuhX
+         Vtfk9Qx28rllw==
+Date:   Mon, 15 Aug 2022 19:30:15 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com
-Subject: Re: [PATCH 03/14] xfs: document the testing plan for online fsck
-Message-ID: <Yvr+cDtKcl3O8OC/@magnolia>
+Subject: Re: [PATCH 04/14] xfs: document the user interface for online fsck
+Message-ID: <YvsBNxpwTYw2SpJt@magnolia>
 References: <165989700514.2495930.13997256907290563223.stgit@magnolia>
- <165989702236.2495930.5556030223682318775.stgit@magnolia>
- <20220811000945.GN3600936@dread.disaster.area>
+ <165989702796.2495930.11103527352292676325.stgit@magnolia>
+ <20220811002012.GO3600936@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220811000945.GN3600936@dread.disaster.area>
+In-Reply-To: <20220811002012.GO3600936@dread.disaster.area>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,59 +58,150 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 10:09:45AM +1000, Dave Chinner wrote:
-> On Sun, Aug 07, 2022 at 11:30:22AM -0700, Darrick J. Wong wrote:
+On Thu, Aug 11, 2022 at 10:20:12AM +1000, Dave Chinner wrote:
+> On Sun, Aug 07, 2022 at 11:30:28AM -0700, Darrick J. Wong wrote:
 > > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Start the third chapter of the online fsck design documentation.  This
-> > covers the testing plan to make sure that both online and offline fsck
-> > can detect arbitrary problems and correct them without making things
-> > worse.
+> > Start the fourth chapter of the online fsck design documentation, which
+> > discusses the user interface and the background scrubbing service.
 > > 
 > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > > ---
-> >  .../filesystems/xfs-online-fsck-design.rst         |  187 ++++++++++++++++++++
-> >  1 file changed, 187 insertions(+)
-> 
-> 
-> ....
-> > +Stress Testing
-> > +--------------
+> >  .../filesystems/xfs-online-fsck-design.rst         |  114 ++++++++++++++++++++
+> >  1 file changed, 114 insertions(+)
+> > 
+> > 
+> > diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
+> > index d630b6bdbe4a..42e82971e036 100644
+> > --- a/Documentation/filesystems/xfs-online-fsck-design.rst
+> > +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
+> > @@ -750,3 +750,117 @@ Proposed patchsets include `general stress testing
+> >  <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=race-scrub-and-mount-state-changes>`_
+> >  and the `evolution of existing per-function stress testing
+> >  <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=refactor-scrub-stress>`_.
 > > +
-> > +A unique requirement to online fsck is the ability to operate on a filesystem
-> > +concurrently with regular workloads.
-> > +Although it is of course impossible to run ``xfs_scrub`` with *zero* observable
-> > +impact on the running system, the online repair code should never introduce
-> > +inconsistencies into the filesystem metadata, and regular workloads should
-> > +never notice resource starvation.
-> > +To verify that these conditions are being met, fstests has been enhanced in
-> > +the following ways:
+> > +4. User Interface
+> > +=================
 > > +
-> > +* For each scrub item type, create a test to exercise checking that item type
-> > +  while running ``fsstress``.
-> > +* For each scrub item type, create a test to exercise repairing that item type
-> > +  while running ``fsstress``.
-> > +* Race ``fsstress`` and ``xfs_scrub -n`` to ensure that checking the whole
-> > +  filesystem doesn't cause problems.
-> > +* Race ``fsstress`` and ``xfs_scrub`` in force-rebuild mode to ensure that
-> > +  force-repairing the whole filesystem doesn't cause problems.
-> > +* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
-> > +  freezing and thawing the filesystem.
-> > +* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
-> > +  remounting the filesystem read-only and read-write.
-> > +* The same, but running ``fsx`` instead of ``fsstress``.  (Not done yet?)
+> > +The primary user of online fsck is the system administrator, just like offline
+> > +repair.
+> > +Online fsck presents two modes of operation to administrators:
+> > +A foreground CLI process for online fsck on demand, and a background service
+> > +that performs autonomous checking and repair.
+> > +
+> > +Checking on Demand
+> > +------------------
+> > +
+> > +For administrators who want the absolute freshest information about the
+> > +metadata in a filesystem, ``xfs_scrub`` can be run as a foreground process on
+> > +a command line.
+> > +The program checks every piece of metadata in the filesystem while the
+> > +administrator waits for the results to be reported, just like the existing
+> > +``xfs_repair`` tool.
+> > +Both tools share a ``-n`` option to perform a read-only scan, and a ``-v``
+> > +option to increase the verbosity of the information reported.
+> > +
+> > +A new feature of ``xfs_scrub`` is the ``-x`` option, which employs the error
+> > +correction capabilities of the hardware to check data file contents.
+> > +The media scan is not enabled by default because it may dramatically increase
+> > +program runtime and consume a lot of bandwidth on older storage hardware.
 > 
-> I had a thought when reading this that we want to ensure that online
-> repair handles concurrent grow/shrink operations so that doesn't
-> cause problems, as well as dealing with concurrent attempts to run
-> independent online repair processes.
-> 
-> Not sure that comes under stress testing, but it was the "test while
-> freeze/thaw" that triggered me to think of this, so that's where I'm
-> commenting about it. :)
+> So '-x' runs a media scrub command? What does that do with software
+> RAID?
 
-Hmm.  I hadn't really given that much thought.  Let me go add that to
-the test suite and see how many daemons come pouring out...
+Nothing special unless the RAID controller itself does parity checking
+of reads -- the kernel doesn't have any API calls (that I know of) to do
+that.  I think md-raid5 will check the parity, but afaict nothing else
+(raid1) does that.
+
+> Does that trigger parity checks of the RAID volume, or pass
+> through to the underlying hardware to do physical media scrub?
+
+Chaitanya proposed a userspace api so that xfs_scrub could actually ask
+the hardware to perform a media verification[1], but willy pointed out
+that it none of the device protocols have a means for the device to
+prove that it did anything, so it stalled.
+
+[1] https://lore.kernel.org/linux-fsdevel/20220713072019.5885-1-kch@nvidia.com/
+
+> Or maybe both?
+
+I wish. :)
+
+> Rewriting the paragraph to be focussed around the functionality
+> being provided (i.e "media scrubbing is a new feature of xfs_scrub.
+> It provides .....")
+
+Er.. you're doing that, or asking me to do it?
+
+> > +The output of a foreground invocation is captured in the system log.
+> 
+> At what log level?
+
+That depends on the message, but right now it only uses
+LOG_{ERR,WARNING,INFO}.
+
+Errors, corruptions, and unfixable problems are LOG_ERR.
+
+Warnings are LOG_WARNING.
+
+Notices of infomration, repairs completed, and optimizations made are
+all recorded with LOG_INFO.
+
+> > +The ``xfs_scrub_all`` program walks the list of mounted filesystems and
+> > +initiates ``xfs_scrub`` for each of them in parallel.
+> > +It serializes scans for any filesystems that resolve to the same top level
+> > +kernel block device to prevent resource overconsumption.
+> 
+> Is this serialisation necessary for non-HDD devices?
+
+That ultimately depends on the preferences of the sysadmins, but for the
+initial push I'd rather err on the side of using fewer iops on a running
+system.
+
+> > +Background Service
+> > +------------------
+> > +
+> > +To reduce the workload of system administrators, the ``xfs_scrub`` package
+> > +provides a suite of `systemd <https://systemd.io/>`_ timers and services that
+> > +run online fsck automatically on weekends.
+> 
+> Weekends change depending on where you are in the world, right? So
+> maybe this should be more explicit?
+
+Sunday at 3:10am, whenever that is in the local time zone.
+
+> [....]
+> 
+> > +**Question**: Should the health reporting integrate with the new inotify fs
+> > +error notification system?
+> 
+> Can the new inotify fs error notification system report complex
+> health information structures?
+
+In theory, yes, said the authors.
+
+> How much pain is involved in making
+> it do what we want, considering we already have a health reporting
+> ioctl that can be polled?
+
+I haven't tried this myself, but I think it involves defining a new type
+code and message length within the inotify system.  The last time I
+looked at the netlink protocol, I /think/ I saw that it's the case that
+the consuming programs will read the header, see that there's a type
+code and a buffer length, and decide to use it or skip it.
+
+That said, there were some size and GFP_ limits on what could be sent,
+so I don't know how difficult it would be to make this part actually
+work in practice.  Gabriel said it wouldn't be too difficult once I was
+ready.
+
+> > +**Question**: Would it be helpful for sysadmins to have a daemon to listen for
+> > +corruption notifications and initiate a repair?
+> 
+> Seems like an obvious extension to the online repair capability.
+
+...too bad there are dragons thataways.
 
 --D
 
