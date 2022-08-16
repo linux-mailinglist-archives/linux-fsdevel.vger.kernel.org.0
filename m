@@ -2,63 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC0E595DC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 15:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D981595D96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 15:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbiHPNxS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 09:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55242 "EHLO
+        id S235841AbiHPNn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 09:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232633AbiHPNxO (ORCPT
+        with ESMTP id S234951AbiHPNnX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 09:53:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12BC5244F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Aug 2022 06:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660657991;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0cwLvE+7vvjB6+1NFKWOguckRF1rIfV2XIjoBVtm20Q=;
-        b=KpRPAZ8dSPl4Faoufu9XZl9xAyWuuN9bUMLFSg+LglVgPy4436KRhozeSGAGWJK75/THLM
-        SF/3sdftpXTcji6RwR61qnB2ybP2jePXvbuM/9IX0SAV7l//bpUJCTJY9FeJuLBSsV8ixR
-        DjcooOIFkwQ/GaWojpwx1EAbNQMON4A=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-298-A8STg0lePdyrL44FwBnY9g-1; Tue, 16 Aug 2022 09:53:07 -0400
-X-MC-Unique: A8STg0lePdyrL44FwBnY9g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 16 Aug 2022 09:43:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD26B2F39C;
+        Tue, 16 Aug 2022 06:43:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 57D931035351;
-        Tue, 16 Aug 2022 13:53:07 +0000 (UTC)
-Received: from x2.localnet (unknown [10.22.9.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B1C92026D4C;
-        Tue, 16 Aug 2022 13:53:06 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 4/4] fanotify,audit: deliver fan_info as a hex-encoded string
-Date:   Tue, 16 Aug 2022 09:37:09 -0400
-Message-ID: <4767361.31r3eYUQgx@x2>
-Organization: Red Hat
-In-Reply-To: <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
-References: <cover.1659996830.git.rgb@redhat.com> <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B84B260B82;
+        Tue, 16 Aug 2022 13:43:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8D6C433C1;
+        Tue, 16 Aug 2022 13:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660657398;
+        bh=QIPlexrcPxp8haxZEg3yRa1ZyJXIsUHjDdZO4hjWJrc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OeEhbnj1A0851OoNaseJnzt/IVxXEVKgwkqjOOShD7v+62B1LAYvuuKz1jLrHiPyO
+         W6BhJSAWCU4ps0oHxB39b0IHiAzlMDho/OrALMzjtF5Lvko+1+Rk3+fuszvj81l12p
+         F042CypOlWQY8W3B8cNVBxceVmGTtRABK2qm/1qXRc6lTwR/FYsGfqLpJAZsJLGFOO
+         V17Of2ZPCWvmzLLNzG42B0VRX16OYwcA6nWA0w30ID5YgaLW8xYuqHZDrTPnzkcfPD
+         PpTMcClrjRhlFr4kZKXoYM2Gm0eZXooMjnHbssH4CpAkaHndH3/IyJbFZoGD0S94aY
+         P7pJT7zIjdymg==
+Message-ID: <46ecd0f938ecdc508505456f76e767e0ffcc7137.camel@kernel.org>
+Subject: Re: [PATCH] ext4: fix i_version handling in ext4
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>
+Date:   Tue, 16 Aug 2022 09:43:16 -0400
+In-Reply-To: <20220816133340.mtaa7mxmgvhzffoh@wittgenstein>
+References: <20220816131522.42467-1-jlayton@kernel.org>
+         <20220816133340.mtaa7mxmgvhzffoh@wittgenstein>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,89 +57,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Richard,
+On Tue, 2022-08-16 at 15:33 +0200, Christian Brauner wrote:
+> On Tue, Aug 16, 2022 at 09:15:22AM -0400, Jeff Layton wrote:
+> > ext4 currently updates the i_version counter when the atime is updated
+> > during a read. This is less than ideal as it can cause unnecessary cach=
+e
+> > invalidations with NFSv4. The increment in ext4_mark_iloc_dirty is also
+> > problematic since it can also corrupt the i_version counter for
+> > ea_inodes.
+> >=20
+> > We aren't bumping the file times in ext4_mark_iloc_dirty, so changing
+> > the i_version there seems wrong, and is the cause of both problems.
+> > Remove that callsite and add increments to the setattr and setxattr
+> > codepaths (at the same time that we update the ctime). The i_version
+> > bump that already happens during timestamp updates should take care of
+> > the rest.
+> >=20
+> > Cc: Lukas Czerner <lczerner@redhat.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+>=20
+> Seems good to me. But it seems that the xfs patch you sent does have
+> inode_inc_version() right after setattr_copy() as well. So I wonder if
+> we couldn't just try and move inode_inc_version() into setattr_copy()
+> itself.
+>=20
 
-Although I have it working, I have some comments below that might improve
-things.
+We probably could, but setattr_copy has a lot of callers and most
+filesystems don't need this.  Also, there are some cases where we don't
+want to update the i_version after a setattr.
 
-On Tuesday, August 9, 2022 1:22:55 PM EDT Richard Guy Briggs wrote:
-> Currently the only type of fanotify info that is defined is an audit
-> rule number, but convert it to hex encoding to future-proof the field.
-> 
-> Sample record:
->   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0
-> fan_info=3F
-> 
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/auditsc.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index f000fec52360..0f747015c577 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2908,22 +2908,36 @@ void __audit_fanotify(u32 response, size_t len,
-> char *buf)
-> 
->  	if (!(len && buf)) {
->  		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> -			  "resp=%u fan_type=0 fan_info=?", response);
-> +			  "resp=%u fan_type=0 fan_info=3F", response); /* "?" */
->  		return;
->  	}
->  	while (c >= sizeof(struct fanotify_response_info_header)) {
-> +		struct audit_context *ctx = audit_context();
-> +		struct audit_buffer *ab;
-> +
->  		friar = (struct fanotify_response_info_audit_rule *)buf;
->  		switch (friar->hdr.type) {
->  		case FAN_RESPONSE_INFO_AUDIT_RULE:
->  			if (friar->hdr.len < sizeof(*friar)) {
-> -				audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> -					  "resp=%u fan_type=%u fan_info=(incomplete)",
-> -					  response, friar->hdr.type);
-> +				ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> +				if (ab) {
-> +					audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> +							 response, friar->hdr.type);
-> +#define INCOMPLETE "(incomplete)"
-> +					audit_log_n_hex(ab, INCOMPLETE, sizeof(INCOMPLETE));
-> +					audit_log_end(ab);
-> +				}
->  				return;
->  			}
-> -			audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> -				  "resp=%u fan_type=%u fan_info=%u",
-> -				  response, friar->hdr.type, friar->audit_rule);
-> +			ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> +			if (ab) {
-> +				audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> +						 response, friar->hdr.type);
-> +				audit_log_n_hex(ab, (char *)&friar->audit_rule,
-> +						sizeof(friar->audit_rule));
-
-One thing to point out, the structure has a member audit_rule. It is
-probably better to call it rule_number. This is because it has nothing to
-do with any actual audit rule. It is a rule number meant to be recorded by
-the audit system.
-
-Also, that member is a __u32 type. Hex encoding that directly gives back a
-__u32 when decoded - which is a bit unexpected since everything else is
-strings. It would be better to convert the u32 to a base 10 string and then
-hex encode that. A buffer of 12 bytes should be sufficient.
-
-Thanks,
--Steve
-
-> +				audit_log_end(ab);
-> +
-> +			}
->  		}
->  		c -= friar->hdr.len;
->  		ib += friar->hdr.len;
+In particular, if you do a truncate and the size doesn't change, then
+you really don't want to update the timestamps (and therefore the
+i_version shouldn't change either).
 
 
+> >  fs/ext4/inode.c | 10 +++++-----
+> >  fs/ext4/xattr.c |  2 ++
+> >  2 files changed, 7 insertions(+), 5 deletions(-)
+> >=20
+> > I think this patch should probably supersede Lukas' patch entitled:
+> >=20
+> >     ext4: don't increase iversion counter for ea_inodes
+> >=20
+> > This will also mean that we'll need to respin the patch to turn on the
+> > i_version counter unconditionally in ext4 (though that should be
+> > trivial).
+> >=20
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index 601214453c3a..a70921df89a5 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -5342,6 +5342,7 @@ int ext4_setattr(struct user_namespace *mnt_usern=
+s, struct dentry *dentry,
+> >  	int error, rc =3D 0;
+> >  	int orphan =3D 0;
+> >  	const unsigned int ia_valid =3D attr->ia_valid;
+> > +	bool inc_ivers =3D IS_IVERSION(inode);
+> > =20
+> >  	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+> >  		return -EIO;
+> > @@ -5425,8 +5426,8 @@ int ext4_setattr(struct user_namespace *mnt_usern=
+s, struct dentry *dentry,
+> >  			return -EINVAL;
+> >  		}
+> > =20
+> > -		if (IS_I_VERSION(inode) && attr->ia_size !=3D inode->i_size)
+> > -			inode_inc_iversion(inode);
+> > +		if (attr->ia_size =3D=3D inode->i_size)
+> > +			inc_ivers =3D false;
+> > =20
+> >  		if (shrink) {
+> >  			if (ext4_should_order_data(inode)) {
+> > @@ -5528,6 +5529,8 @@ int ext4_setattr(struct user_namespace *mnt_usern=
+s, struct dentry *dentry,
+> >  	}
+> > =20
+> >  	if (!error) {
+> > +		if (inc_ivers)
+> > +			inode_inc_iversion(inode);
+> >  		setattr_copy(mnt_userns, inode, attr);
+> >  		mark_inode_dirty(inode);
+> >  	}
+> > @@ -5731,9 +5734,6 @@ int ext4_mark_iloc_dirty(handle_t *handle,
+> >  	}
+> >  	ext4_fc_track_inode(handle, inode);
+> > =20
+> > -	if (IS_I_VERSION(inode))
+> > -		inode_inc_iversion(inode);
+> > -
+> >  	/* the do_update_inode consumes one bh->b_count */
+> >  	get_bh(iloc->bh);
+> > =20
+> > diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> > index 533216e80fa2..4d84919d1c9c 100644
+> > --- a/fs/ext4/xattr.c
+> > +++ b/fs/ext4/xattr.c
+> > @@ -2412,6 +2412,8 @@ ext4_xattr_set_handle(handle_t *handle, struct in=
+ode *inode, int name_index,
+> >  	if (!error) {
+> >  		ext4_xattr_update_super_block(handle, inode->i_sb);
+> >  		inode->i_ctime =3D current_time(inode);
+> > +		if (IS_IVERSION(inode))
+> > +			inode_inc_iversion(inode);
+> >  		if (!value)
+> >  			no_expand =3D 0;
+> >  		error =3D ext4_mark_iloc_dirty(handle, inode, &is.iloc);
+> > --=20
+> > 2.37.2
+> >=20
 
-
+--=20
+Jeff Layton <jlayton@kernel.org>
