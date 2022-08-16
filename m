@@ -2,160 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4DE595AC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92529595AE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Aug 2022 13:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234997AbiHPLvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Aug 2022 07:51:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46706 "EHLO
+        id S233186AbiHPLzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Aug 2022 07:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235103AbiHPLu1 (ORCPT
+        with ESMTP id S235219AbiHPLyr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Aug 2022 07:50:27 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF05C22B1;
-        Tue, 16 Aug 2022 04:25:50 -0700 (PDT)
-Received: from [192.168.1.138] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MPGJh-1o0RUz23cj-00Phll; Tue, 16 Aug 2022 13:25:36 +0200
-Message-ID: <4fcc28c9-c191-1d47-7d3d-c7dd82697ae0@i2se.com>
-Date:   Tue, 16 Aug 2022 13:25:35 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [Regression] ext4: changes to mb_optimize_scan cause issues on
- Raspberry Pi
+        Tue, 16 Aug 2022 07:54:47 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A275A83F;
+        Tue, 16 Aug 2022 04:33:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BCXA7gzoMB3Hpo2wOQDjBVYwJgNp6CRHZGZORWz373hiYfkNFWfZ7Jvq/6VmAza/qpgDz45USUUqpZ/pPMjU5oo7VmB6fcbdK0t7eEYMpkBopIFbq1oOFATLuvYhQuWUpIeIY3KuPGZrw3Bm4ufo+Q1zg8lixanckKsAxH3717nfcqx3pcWl4XP5s59gAeOcZYR46R9WvgZy13UZlp3mFT98i4xp0+c3JwfxnywGlpGo1pw99o9E6VfCa4DdOnKcPScsCGoVr0hNKcS3xoU3f1VEecS4T2quVdwCI0bdLoU0V0SJ98gftsbJ51tew09cYZOtt/krSDp5+vgfqKpy6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3pUlho0++U/VTbejrAjIJ3HXfrbClNezApHohX8InyM=;
+ b=KZDh25dlZ27XsPjx9FS9pGwaTWa5H96dRyOJvtGANA8JF9FPOZwzpaSwa1q+4aDt61icwFZZLQE3pUoGUbCOeBg/LJIXfIYLFrXEuiXvOZxcaWYA7RM9AZW4f9t24Lk0ODxYW0ZRkeLD7RflqV718/LayzoGNuHpicy7B89irw6bPrsvYQ0f4iQ/6qtrJQTXJ1ZBnmwv2ZRP6ZbZS3E7MGoaqkSs7BxdfrjXHB71bQmVxOLbZiiP/wP2Yyf+bFgf2YRuq8LVW7iI6MqlTLIX+Wmt9wKIhpu8+lR1Rv7W7YgO1VKBlizAJObNjQVydy4aoeNGZneQFeeebdbO4w+ELg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3pUlho0++U/VTbejrAjIJ3HXfrbClNezApHohX8InyM=;
+ b=sT3TTB+XW5ba7NbfkGDeOxMkHZ1k8nBIZmj6nrnN0nhjm7WbTbhCdT1i1/bl2v1L9kon9d1QoU2k2eQI5pUnakxUXzFhcotSroPSF91fPMiFjWkGhyka8D8sCft71i8W68O4aEARq5vZgMMj6ie27YpPDKCx1+6OM5YdEjSmZQ0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
+ (2603:10b6:910:1f::11) by CY4PR12MB1270.namprd12.prod.outlook.com
+ (2603:10b6:903:43::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.15; Tue, 16 Aug
+ 2022 11:33:19 +0000
+Received: from CY4PR1201MB0181.namprd12.prod.outlook.com
+ ([fe80::1001:3c79:9504:8d6a]) by CY4PR1201MB0181.namprd12.prod.outlook.com
+ ([fe80::1001:3c79:9504:8d6a%10]) with mapi id 15.20.5504.025; Tue, 16 Aug
+ 2022 11:33:16 +0000
+Message-ID: <f0094f31-9669-47b5-eb52-6754a13ce757@amd.com>
+Date:   Tue, 16 Aug 2022 13:33:00 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+From:   "Gupta, Pankaj" <pankaj.gupta@amd.com>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     "Nikunj A. Dadhania" <nikunj@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, bharata@amd.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-fsdevel@vger.kernel.org
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <b21f41e5-0322-bbfb-b9c2-db102488592d@amd.com>
+ <9e86daea-5619-a216-fe02-0562cf14c501@amd.com>
+ <9dc91ce8-4cb6-37e6-4c25-27a72dc11dd0@amd.com>
+ <422b9f97-fdf5-54bf-6c56-3c45eff5e174@amd.com>
+ <1407c70c-0c0b-6955-10bb-d44c5928f2d9@amd.com>
+ <1136925c-2e37-6af4-acac-be8bed9f6ed5@amd.com>
+ <1b02db9d-f2f1-94dd-6f37-59481525abff@amd.com>
+ <20220815130411.GA1073443@chaop.bj.intel.com>
 Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geetika.Moolchandani1@ibm.com, regressions@lists.linux.dev,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <0d81a7c2-46b7-6010-62a4-3e6cfc1628d6@i2se.com>
- <20220728100055.efbvaudwp3ofolpi@quack3>
- <64b7899f-d84d-93de-f9c5-49538bd080d0@i2se.com>
- <20220816093421.ok26tcyvf6bm3ngy@quack3>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220816093421.ok26tcyvf6bm3ngy@quack3>
+In-Reply-To: <20220815130411.GA1073443@chaop.bj.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Y3lubtrwtAjrQWjayneCxm2eMtafdCdLXzO0UmjgYWb7e0tMGkJ
- DJpwP42ujAa8ys2OrGLXqx+Kt2f7vCSW4zb/NwvqJMQCcKXHywK+FE8520NUCJcZQ2EgDfd
- 2bOwdf1cSwonAix3BvfmBXRKFnH4J+OFdfe097qnIwwtmmPLUG6eWgqeyflMaKWVYSQUCYd
- ABCgkRl4x10Uj+VErbBxg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wAMneOEZsME=:GegkZPNuuoVrGG67WI9CHm
- o79l0NLkCZBhiIPFGQgV+G41KdM/sudpLBX2TLW4HAlf0zbscsQpETtL13lo9J8UXtQ1cOC6F
- oZExFFlEhaoSgXhOAwyjCOjNbF/weTgcQsB8bvYHgVh1OdX7j+8gOmpdYLPfv6oe9THcqD4iT
- uj2prhkxUb8XjWS36HDcCfx/4gu2tV0ducc1DnacOEDYlUWDAP39Nh7QKv1B0ytt05Q+EkSeJ
- 3lteK4PTt829XQXroK2LwvTs6l+asWcQ4axs7fzHEu7NIhgz3aHWZajDqiElxvu1h60gPlYb4
- d6OUy33k3Ec8XyuhrdSpJGcAANxy7cIGRAGTprDHJ0A8qRzAI1Z5u1A4GnpZ3Jm4dXiAh7y39
- JLrQY/j2/4oQgSdUCckEdTodYPBT9byYUfNBswuJgN1p1vWztIuBN4uqdzNdUQCQ+rvMfUK8I
- aiBj83jT1SEHZv+2HgFRRKEObR2TN0zmJXddG1Fctqn5mGGgi8EZvk9W/w+nEErVsWYQc3uJr
- LiFqPcHH3OgrFjnXLHGNvlI5kmVo/ZlRvtKwGy4S2Pb++SX7tITJAHqp2pfBvKe1g3dZCK9+P
- xKI2IjKYRJSt3sofOy3ECYtP+pTx6XOqZnITzDyKRZMoTC6gYo3JZVQFg+p1RlizB/Sh3kkiv
- vqE8f5BCaYdC4d58ZItbNix0h384mOVnjq/5ApjdGv8lGTDfRm+ecnK7FhE/ScjQzhbPy05jx
- qYG+ZC5Yp/Um+ahNLjDlLMe2tyAgp/D+iMWeg7/lfEdue1siIsIx3WGYtdk=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS8PR04CA0006.eurprd04.prod.outlook.com
+ (2603:10a6:20b:310::11) To CY4PR1201MB0181.namprd12.prod.outlook.com
+ (2603:10b6:910:1f::11)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: aa13b2e2-72e3-497f-ab30-08da7f7b1c62
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1270:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GWhWuK1IdLG43K4/P4Uy4qgONs2r9+nyGGCC+NEG9g0jJcdP4E+B5AEPCi3TKEKWfnTS0HW1RoUTo2Rod1P+FA4oGA4m89LbH+O54toGOB2rkNGDNQosEi/Aa1jZkDXFc3/39OgRsi9zzMNFUXTV0srjayFe6bJzhhywKBpK6fIwicgwP5ES3n7a7LH8/Pt0JlkYqRMtTsDD1R9bBfvk8MBXkttSrho6IHF/WtMC/JBTOke5q9P5etm7SIFXdYv0jWe4A5pR6jAbi3TpcpDKSXNLkHmErjcW8bw4FjjnCRYZ4e0A6V5MBYOykOeGmHNAe3GzBbZHMGTpRGcjz8PF979UlX0TfOAx2M+8z9K+gn+Nqc4DILGLPUr1VevdfsbDTl6MAohUky8SSCP0k91XLHqFniaoUUF39fMPhKuiTNzunSXFlaWhnsUL34dUB8qRI1HXBheUoqwBB5feomlhV+hQyLcKFrowYYaTtfO99pghRMbU9q482n1QIH/jVeZeu8Tfir21F1DihicKEf8S159r9/jHZqWouB27/KZ4ruO2dmgmgJ950YXJyg8Rv3QNdeEqausKuRXN68pL47FeMAYw0l+6P09I+rrP3PkVsHniv/cdpReQbtM9USesjoBVdDN6E8mQiclgty9lBkjHLQ26IsHRPbAvqjoV0zBDk9ZaETpsj7/q7grj9QIKPJV3k3P/FxThWWPLR/D4L+69c2Yelc/yG2sLFd+iYNBnM2LO8G5XiF4RluojvIqT0wh4N/O+O9o46UIwqRU2shjM23PD7ALshqHQ7xblV+YzaPSLtPebVRBfwPftsZJt0oTKJai3HQGEcbvwJGrvmqHXtA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1201MB0181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(26005)(5660300002)(6512007)(36756003)(186003)(86362001)(31686004)(4326008)(6666004)(2616005)(2906002)(41300700001)(316002)(6916009)(66556008)(38100700002)(66476007)(31696002)(54906003)(7416002)(478600001)(7406005)(6506007)(8936002)(4744005)(8676002)(6486002)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VTZPbUZsNEtzb1dITGVsM01OdnE1WFh3QlgwTjJhWGExakUrekViMGkwYWJz?=
+ =?utf-8?B?NXM4R3NzUjlWaG5yZmt2TlhFVzhmSzNOSXZPS0lNVVFoTm1GNG5VL2habW9J?=
+ =?utf-8?B?WFA1VjVJU3dQYnRrV0pRMnU2SlNsMDNxV1pINmhxcGozM3JYekppdndyaXZT?=
+ =?utf-8?B?aXVWWUtqM0JiTXJHVVNEU3pjVXFEZ1A4Wm1CbXBXQUhmU0ZwZEVCNFAvbnda?=
+ =?utf-8?B?UFFNV2NWOFU4eldDRmtBVkFkRlFYWnpoUXUzeGxnMlR1VUR4Q3ZQcmt6UTVI?=
+ =?utf-8?B?YlZjRGJLWEJiejBNLzJYUWJWUHN2OWFHWmVhNDZPQXdvZ1h0em1aWlZvVGdI?=
+ =?utf-8?B?TFRNcTVieERuY0oxNjVxbzVWTzltbUVLWWVEV0UzYkFwZ1FPN2dYWWJPMmp2?=
+ =?utf-8?B?WnlQR2VHc0U3QmxXVnNqU3hmOW5Zc2JrUlpWUlZiWW95RjN1MWQvODgxVG0w?=
+ =?utf-8?B?R056ODNKdkdXN2JBU0gzMno1R2RGMGUwUkUwaWlXZFNhbTdpM0dJb2RTVkhN?=
+ =?utf-8?B?ZW1JSnJjSlV0TU1pUy9HRmV1a0RVT3RRRlhidVV5OUc1bDFXaGtwMnhtMDY3?=
+ =?utf-8?B?WlBIQUVrQW9pOHJSNHRKWkM3eEhXUWxVQXBwc1VxVm0ybFB2ME8wQUVrMXkx?=
+ =?utf-8?B?bUZWeXJYbmZjSjlpeFJ4Q2VSTU5NYm9qOEtTL1YyTXZEbU04SElwL0lEVHNm?=
+ =?utf-8?B?ZjlCZnNKam44M3I5Q1Q3YUhMVjZMSzNzM21uOFVTTlRYSU5NQzhzMXBIMFhr?=
+ =?utf-8?B?bVNDakloTStxSHZVNzRNNjlocUM0c2ZIamxjMXBSTnM3MTgyOThzenNYd3dI?=
+ =?utf-8?B?SWJOTnp4YmVWKzkwQWRNY2paY0VxcWpPanFqV3U0VEhlWGZ6Rk1TbWs3L1g0?=
+ =?utf-8?B?Vll4RkdqQnBUTDJyYWhveDFtd2Y2c3NHd1N2UHY0dE1aTkM5d3lKWGEwc1A0?=
+ =?utf-8?B?ODVQYWZqYnMrYUtrMHppTk84TjhsaCtHSTU1dkNHOHhIbTFCa09EWDdrMko1?=
+ =?utf-8?B?ek5kRkwzQ1hvaEoyVSt3RTI5dEJOWDMrR3E0RThxbnpKb2xNMUUxbk5GQ2V6?=
+ =?utf-8?B?eXFXRXBTMjNrWmFNNTYxQytoa055V3lUKzRuR28xR3JKS2k0YUxkMFZNekgw?=
+ =?utf-8?B?Zmp4VGcxUGxIWktyM3IwTFlyRDBnV1d0UWJzTTZ1dUFNb2VVazQyTVNLeVZ5?=
+ =?utf-8?B?eWhseWVUSGMyUldwYXhaSTdCc09BWVMxTVFGdDVINHNRNFFkV3hFbjJWeXRp?=
+ =?utf-8?B?Uis2Q0tRbjJFOUF2Z052WDhXSzV1cy8xS2p6aWViTFBEQTRKNUhrRmo1aWpL?=
+ =?utf-8?B?OGdLZTZxNmpoajBHTVNEa3VSTGJFUitTdGc5YUswQVhHcFRsTkN0OHZhZUxV?=
+ =?utf-8?B?Z3IxRWJySlRpbkZEbDBQVFRFNFR1am5KOHZYa00rTHVuMjlZck53YTY2V0dX?=
+ =?utf-8?B?d1VqYVJjanJJYkVIVlVRS2tIQ3B2d2dZdURna0Y3V1ZzK2xBTVd0L0ZmRVR4?=
+ =?utf-8?B?RXRRODV1bXpXZDM3dG05N0IxTERLUHc0anJCL1laSS9sNFBzRXJwcnFvQ1Vv?=
+ =?utf-8?B?MXJ0RzZ1djU4NThRV2xYdjlhRVpoc3lWYzh4OTBQUGJMYkc4T0l0WUEzUGVt?=
+ =?utf-8?B?MzNZbTZJNWVjeGdGUjkrTGZqeTVYYmozMFJ0amVWQnRsSDRwNWVrOVUzckpv?=
+ =?utf-8?B?QldVV3VxTXJQRC83SGJlZzNkYTJOQXNoYTRQVW1GZVpvVWNZdVpORnBJczRj?=
+ =?utf-8?B?YUlVSEVDekxJRko0ZmFjaU15MzladStyQzlzek95L0ZJWWo1ckNWZ0xjRjJI?=
+ =?utf-8?B?TUtURDFiZWgrT0x3SWk1SFQxYnFYWk9QL2kwUG1jR29jdVJkbExhOFB4MlRJ?=
+ =?utf-8?B?c3FmMExyajg4UWw5b25NRXp5eWs2eUg0blZiSGU3dzZEYW51R2xvd25aek54?=
+ =?utf-8?B?UFRubVRrWU1rbHZuR1pNVkhyWTQzT1lEUUpsemd5ZnUxbFBLczBxRGJNK1ht?=
+ =?utf-8?B?NlVPUTdsZ00zQVNQWWV6N1RGNy9NTjg0RkVOWk5FdENtS3JUenZxYmVOMWJH?=
+ =?utf-8?B?d2tQYnl2YUplNkttMGo1eUZGTHZSTFBOMjJUZjI2a284Wi9WV0c3UlJ5d3Bl?=
+ =?utf-8?Q?NTHmx/4bwOg33YZYd6A0VkEKo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa13b2e2-72e3-497f-ab30-08da7f7b1c62
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1201MB0181.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2022 11:33:16.3092
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CGAwZmatWUwtifIQkNIEAMLUkhM8Cd5EyRuw7Qyccdr3yCBjoGJOWfHLU0ETOGOzqFB6Q1O580qHrXjE4Wb8MA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1270
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+Hi Chao,
 
-Am 16.08.22 um 11:34 schrieb Jan Kara:
-> Hi Stefan!
->
-> On Sat 06-08-22 11:50:28, Stefan Wahren wrote:
->> Am 28.07.22 um 12:00 schrieb Jan Kara:
->>> Hello!
->>>
->>> On Mon 18-07-22 15:29:47, Stefan Wahren wrote:
->>>> i noticed that since Linux 5.18 (Linux 5.19-rc6 is still affected) i'm
->>>> unable to run "rpi-update" without massive performance regression on my
->>>> Raspberry Pi 4 (multi_v7_defconfig + CONFIG_ARM_LPAE). Using Linux 5.17 this
->>>> tool successfully downloads the latest firmware (> 100 MB) on my development
->>>> micro SD card (Kingston 16 GB Industrial) with a ext4 filesystem within ~ 1
->>>> min. The same scenario on Linux 5.18 shows the following symptoms:
->>> Thanks for report and the bisection!
->>>> - download takes endlessly much time and leads to an abort by userspace in
->>>> most cases because of the poor performance
->>>> - massive system load during download even after download has been aborted
->>>> (heartbeat LED goes wild)
->>> OK, is it that the CPU is busy or are we waiting on the storage card?
->>> Observing top(1) for a while should be enough to get the idea.  (sorry, I'm
->>> not very familiar with RPi so I'm not sure what heartbeat LED shows).
->> My description wasn't precise. I mean the green ACT LED, which uses the LED
->> heartbeat trigger:
->>
->> "This allows LEDs to be controlled by a CPU load average. The flash
->> frequency is a hyperbolic function of the 1-minute load average."
->>
->> I'm not sure if it's CPU or IO driven load, here the top output in bad case:
->>
->> top - 08:44:17 up 43 min,  2 users,  load average: 5,02, 5,45, 5,17
->> Tasks: 142 total,   1 running, 141 sleeping,   0 stopped,   0 zombie
->> %Cpu(s):  0,4 us,  0,4 sy,  0,0 ni, 49,0 id, 50,2 wa,  0,0 hi, 0,0 si,  0,0
->> st
->> MiB Mem :   7941,7 total,   4563,1 free,    312,7 used,   3066,0 buff/cache
->> MiB Swap:    100,0 total,    100,0 free,      0,0 used.   7359,6 avail Mem
-> OK, there's plenty of memory available, CPUs are mostly idle, the load is
-> likely created by tasks waiting for IO (which also contribute to load
-> despite not consuming CPU). Not much surprising here.
->
->>> Can you run "iostat -x 1" while the download is running so that we can see
->>> roughly how the IO pattern looks?
->>>
->> Here the output during download:
->>
->> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm
->> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
->> mmcblk1          0,00    2,00      0,00     36,00     0,00 0,00   0,00
->> 0,00    0,00 23189,50  46,38     0,00    18,00 500,00 100,00
->>
->> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
->>             0,25    0,00    0,00   49,62    0,00   50,13
->>
->> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm
->> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
->> mmcblk1          0,00    2,00      0,00     76,00     0,00 0,00   0,00
->> 0,00    0,00 46208,50  92,42     0,00    38,00 500,00 100,00
->>
->> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
->>             0,25    0,00    0,00   49,62    0,00   50,13
->>
->> Device            r/s     w/s     rkB/s     wkB/s   rrqm/s wrqm/s  %rrqm
->> %wrqm r_await w_await aqu-sz rareq-sz wareq-sz svctm  %util
->> mmcblk1          0,00    3,00      0,00     76,00     0,00 0,00   0,00
->> 0,00    0,00 48521,67 145,56     0,00    25,33 333,33 100,00
->>
->> avg-cpu:  %user   %nice %system %iowait  %steal   %idle
->>             0,25    0,00    0,00   49,62    0,00   50,13
-> So this is interesting. We can see the card is 100% busy. The IO submitted
-> to the card is formed by small requests - 18-38 KB per request - and each
-> request takes 0.3-0.5s to complete. So the resulting throughput is horrible
-> - only tens of KB/s. Also we can see there are many IOs queued for the
-> device in parallel (aqu-sz columnt). This does not look like load I would
-> expect to be generated by download of a large file from the web.
->
-> You have mentioned in previous emails that with dd(1) you can do couple
-> MB/s writing to this card which is far more than these tens of KB/s. So the
-> file download must be doing something which really destroys the IO pattern
-> (and with mb_optimize_scan=0 ext4 happened to be better dealing with it and
-> generating better IO pattern). Can you perhaps strace the process doing the
-> download (or perhaps strace -f the whole rpi-update process) so that we can
-> see how does the load generated on the filesystem look like? Thanks!
+> 
+> Actually the current version allows you to delay the allocation to a
+> later time (e.g. page fault time) if you don't call fallocate() on the
+> private fd. fallocate() is necessary in previous versions because we
+> treat the existense in the fd as 'private' but in this version we track
+> private/shared info in KVM so we don't rely on that fact from memory
+> backstores.
 
-i can do that. But may be the sources of rpi-update is more helpful?
+Does this also mean reservation of guest physical memory with secure 
+processor (both for SEV-SNP & TDX) will also happen at page fault time?
 
-https://github.com/raspberrypi/rpi-update/blob/master/rpi-update
+Do we plan to keep it this way?
 
->
-> 								Honza
+Thanks,
+Pankaj
+> 
+> Definitely the page will still be pinned once it's allocated, there is
+> no way to swap it out for example just with the current code. That kind
+> of support, if desirable, can be extended through MOVABLE flag and some
+> other callbacks to let feature-specific code to involve.
+
