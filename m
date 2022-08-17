@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47D8D5977AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 22:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CC85977A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 22:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238004AbiHQUMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 16:12:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
+        id S241540AbiHQUMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 16:12:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234365AbiHQUMC (ORCPT
+        with ESMTP id S241485AbiHQUMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 16:12:02 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A8560534
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 13:12:01 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id m2so12916924pls.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 13:12:01 -0700 (PDT)
+        Wed, 17 Aug 2022 16:12:41 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AD9A61DF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 13:12:40 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id a22so12382002pfg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 13:12:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=HfC3dMpEngb7r9gnYszZZUkGHTRJbCSwAF6hsjZawl8=;
-        b=VgN2NI+Ezj1YnwZA75qkUzO3odm7nQ/YsFK2soo32JnPYdtR6gEuOdUGqLBg8c5ktf
-         fCo70wM3ALHe+y+fUNIROShP5H6+3xzGZPkl98pJmQZYK+HzHeTl7B8BF44BfwOOv+ir
-         h+sT7VUYnSBUCMIx81qQvnB+TETrbRV0froDc=
+        bh=+WRGNlWofKlOiDjgaSTNb/H9kbNSywL6IxTX7zzIueA=;
+        b=fMRhV1gD0LiWPslIdJd3Oay33CI1Qjzc9fxrxo1rMAcTxyGfF+9i+S4mdI5O7WkvEZ
+         pi/Ze5jSG8mJRZ5c9znxeN8yUWNpDYVrR9pyvY6pVf4TLt8fffmT0CMXEqCcyLCBGZzT
+         feSoTwBjHSuD+PY2QeZCOih3yziojt2d2o8bE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=HfC3dMpEngb7r9gnYszZZUkGHTRJbCSwAF6hsjZawl8=;
-        b=n2sc2yYcPR3KKRCe8YajXMd72bIn/5scDdGGZpMBKStvHOPzKKk5AbLASCwKViqqcj
-         rHu1PxWV3wcrKlqjY+EWVMhzhEtShgd+pePVyHeLtKx9gV77JOmQ4HoHthA5MUbOkdW3
-         szTVAQODQQNbTA9UBs1/Xzi/DOIGGV7BM3LV3ewFJvme1TgtukiQfHotrAUNfhmu/fKx
-         YqegH5ocn75aUvDbLakoe8a0Of4RuNqszyDOgle5GrJEqPTBLOE2IdfJEkquaqEcFOJZ
-         tm2MLz9lBPQgeafKvKyHvfd4lz9IDnCKptK++w2vdgFtvLAtk7hNnQ42QQ9kULTI9SYi
-         ckig==
-X-Gm-Message-State: ACgBeo1wCpHfxzNHjCQiR+5q/63bBr5HW+lBVdHxI9GXb+tvIfrt4wkl
-        lp17LtTbWZmMR9QzYuhjs+t6uQ==
-X-Google-Smtp-Source: AA6agR5O8XGj1uDOVttCpuLlRr7eJO5srWmKa+1LSIBXqFLAGYz3aii6rcP0HxPmAHhk8CX5FB3voQ==
-X-Received: by 2002:a17:903:1246:b0:171:5033:85c with SMTP id u6-20020a170903124600b001715033085cmr27932780plh.146.1660767120719;
-        Wed, 17 Aug 2022 13:12:00 -0700 (PDT)
+        bh=+WRGNlWofKlOiDjgaSTNb/H9kbNSywL6IxTX7zzIueA=;
+        b=Ta81Sx41ks7df1eM5BWDAB9LUp60eoJ2DbMB+UGqM+sxLwZ4iGJrw8sPO0dGyZDUdd
+         m5NQ0AtoQS6Xldcd+0kzRP2wfFhrUwaZ02cib2GwWaXWXXh53ZPBJTo+GyQ3REdsNeEu
+         V8wggPIKrftoav5Sb4btQ1BzXGX75ZzvxHlhXCxIXeXzmKpgXJQA3o+8CQ5aGxEP4Adn
+         dievooX62/rsN2VDbxAMZpk3pQ8nkOOivZErM5NcISyyYmWLTRfmSHjzrFZ/7PiM9fZ+
+         w1Bbx+UazvEUrAStTC8ilxE75/1UisAGiX5BkjAMOOdDrE/yBZaStjxJX+gVe/WqMpJN
+         pp3A==
+X-Gm-Message-State: ACgBeo0mN0+JT0DVfO0deqtjJNGVg29iSDt+ntaJovyLklA/0ZjGK29V
+        p+LgXT5BtqsiZCQwNPLu2UBjVDR6SJaKIQ==
+X-Google-Smtp-Source: AA6agR6zH+/TwyGgpZzTC8h5baBczzUM6S76Zm6Lt7mPjCgTSRD1ONJNatmSLrsIE45J9d/eErae6g==
+X-Received: by 2002:a63:1841:0:b0:429:8268:1fc with SMTP id 1-20020a631841000000b00429826801fcmr10651647pgy.78.1660767160381;
+        Wed, 17 Aug 2022 13:12:40 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j15-20020a170903024f00b0015e8d4eb1d7sm346970plh.33.2022.08.17.13.11.59
+        by smtp.gmail.com with ESMTPSA id h18-20020aa796d2000000b0052d4afc4302sm11215205pfq.175.2022.08.17.13.12.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 13:11:59 -0700 (PDT)
-Date:   Wed, 17 Aug 2022 13:11:58 -0700
+        Wed, 17 Aug 2022 13:12:39 -0700 (PDT)
+Date:   Wed, 17 Aug 2022 13:12:38 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -55,16 +55,19 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@google.com>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>
-Subject: Re: [PATCH v9 13/27] rust: export generated symbols
-Message-ID: <202208171311.73A2CAAA6@keescook>
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH v9 16/27] scripts: checkpatch: enable
+ language-independent checks for Rust
+Message-ID: <202208171312.1CB3606F0C@keescook>
 References: <20220805154231.31257-1-ojeda@kernel.org>
- <20220805154231.31257-14-ojeda@kernel.org>
+ <20220805154231.31257-17-ojeda@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220805154231.31257-14-ojeda@kernel.org>
+In-Reply-To: <20220805154231.31257-17-ojeda@kernel.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
@@ -75,21 +78,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 05:41:58PM +0200, Miguel Ojeda wrote:
-> All symbols are reexported reusing the `EXPORT_SYMBOL_GPL` macro
-> from C. The lists of symbols are generated on the fly.
+On Fri, Aug 05, 2022 at 05:42:01PM +0200, Miguel Ojeda wrote:
+> Include Rust in the "source code files" category, so that
+> the language-independent tests are checked for Rust too,
+> and teach `checkpatch` about the comment style for Rust files.
 > 
-> There are three main sets of symbols to distinguish:
-> 
->   - The ones from the `core` and `alloc` crates (from the Rust
->     standard library). The code is licensed as Apache/MIT.
-> 
->   - The ones from our abstractions in the `kernel` crate.
-> 
->   - The helpers (already exported since they are not generated).
-> 
-> We export everything as GPL. This ensures we do not mistakenly
-> expose GPL kernel symbols/features as non-GPL, even indirectly.
+> This enables the malformed SPDX check, the misplaced SPDX license
+> tag check, the long line checks, the lines without a newline check
+> and the embedded filename check.
 > 
 > Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
 > Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
