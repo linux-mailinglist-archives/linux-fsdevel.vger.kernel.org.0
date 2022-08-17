@@ -2,164 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7104D5978FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 23:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C757F59792B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 23:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241223AbiHQVeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 17:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57180 "EHLO
+        id S241443AbiHQVpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 17:45:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233927AbiHQVeV (ORCPT
+        with ESMTP id S232315AbiHQVpF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 17:34:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936915A2E6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 14:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=EayHNGi0pRhHNgL/20r+RzO2uKpWZWhIdgjKyNhLt2k=; b=VpbvrLD0GQjIVsBjr1O/QP8kGT
-        DDvkWGB+qGDAEabUmHNC1uMHaAq/0MyZMPzCoOqtvVaq+amVLuY70F2AQ6xN0BZ8EBdJYAPWPNix+
-        E2YH7ANtF0pW0M4wbv2jE3XiZ1OHLP1Vzu34bhT4tnKlYf1CJJwWkBBrmwUpzVneFkutqoDtWSMI2
-        SmwH0sa1KDgcEJ2mpu1qghFcdl3sYSHTwSkSJNErNS52+mcoFX8mJ3a7T7AhIrNTPenZKOJ86mg2m
-        6bcYKs1A1oYCHqi/3owozlKsigXECtZFRcAWS1jjwsu5f7pthA/7lc7rmNFO8UGzoW1W0rmDpUj8B
-        9ouR/usQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oOQft-008kla-5u; Wed, 17 Aug 2022 21:34:05 +0000
-Date:   Wed, 17 Aug 2022 22:34:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: folio_map
-Message-ID: <Yv1ezcVV62w0O87V@casper.infradead.org>
-References: <YvvdFrtiW33UOkGr@casper.infradead.org>
- <20220817102935.cqcqpmuu3vanfb63@box.shutemov.name>
- <Yv1DzKKzkDjwVuKV@casper.infradead.org>
- <Yv1OTWPVooKJivsL@iweiny-desk3>
- <Yv1VETRRT95mV2d3@iweiny-desk3>
+        Wed, 17 Aug 2022 17:45:05 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03392BE9;
+        Wed, 17 Aug 2022 14:45:05 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id b15so1543663ilq.10;
+        Wed, 17 Aug 2022 14:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=hqPY2bWNSe1h3tWbXlYngNPrG0p/kfGLsCdfVK78MFI=;
+        b=cGqW6rVasObtQsUV/c8llXl8xfXdgIHgRbk7MNRkRT8n9qvUBbsfy4TX9iSWzcLy1S
+         m405YSVexBQ1hZJokK9RFBTjm4PdSpGeeqgElviaVDL61mgH8XfgnQnhfS0y5YX887ER
+         xwLJ/2prnfwUOO7qCIXpmGM9DHhwYNr9b83/hfNiejVZuWrL/KZv0+Lm3tFBalqThEIx
+         x0+klab/reQmAgFujuTX7RE0wLeZl8aHRPNgHfBIQTshWakYBLl4o7CetX/dgWw69MlG
+         pIKRsqSIxOIx+/5/jTA/dN/TJBYU1FWYVCCOkWAJXjaV58c1RVGewpXTymCTK7rf3mBp
+         PjHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=hqPY2bWNSe1h3tWbXlYngNPrG0p/kfGLsCdfVK78MFI=;
+        b=pbw5NBmKxj6k1eOhS8DnSSUsjPQZoqtHEiNcHSkfazkarijdF6aNOZ14QYzSiceD54
+         ay71KV3fv5yJaFTke6hzRVmn66E2mkWwtoudJTs4F9MlXxre3AEtkm6f0HZZvJOSewi0
+         fDk+PTY+sfuIp99ZPfqAcBLwM4R7fGVZ2mHZkBZxFpRrnlCHt9iHpMPepbsBLqnlNiTO
+         rMd7oxp0Ib6EYgx10/oEa/1/8v3X0Z4yF1MF+nMazhNMnXqpzPkrsALhdplbtACjrW83
+         q5I0UtITARgV+DSUPezPS6lJ2LHVsVX7o13URXySwdgn7++lydDZ2k14BekRYjmzRG09
+         OP7w==
+X-Gm-Message-State: ACgBeo2rs8LHVpKl+MGedFLH2waLn2N7XCGNOPcggMIkb/tYDHpFvRKT
+        G7Q0z2p86I20ga6RNnqmU5bQ5PZI9dVQ9S5kNrI=
+X-Google-Smtp-Source: AA6agR4XEXjy1xaMB0ItJfvW2/aWI6G4ET12/EM3Wr/bjN5BL+UqmTKR50jgK9cAknp8bCs96oNZz1olMLXEHdRWNlU=
+X-Received: by 2002:a05:6e02:1c26:b0:2e0:d8eb:22d6 with SMTP id
+ m6-20020a056e021c2600b002e0d8eb22d6mr56869ilh.151.1660772704425; Wed, 17 Aug
+ 2022 14:45:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yv1VETRRT95mV2d3@iweiny-desk3>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-7-ojeda@kernel.org>
+ <202208171240.8B10053B9D@keescook> <CANiq72nR2eAeKrY6v=hnjUjvwfecMsSC6eXTwaei6ecnHjia8g@mail.gmail.com>
+ <202208171331.FAACB5AD8@keescook>
+In-Reply-To: <202208171331.FAACB5AD8@keescook>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 17 Aug 2022 23:44:53 +0200
+Message-ID: <CANiq72=6nzbMR1e=7HUAotPk-L00h0YO3-oYrtKy2BLcHVDTEw@mail.gmail.com>
+Subject: Re: [PATCH v9 06/27] rust: add C helpers
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 01:52:33PM -0700, Ira Weiny wrote:
-> On Wed, Aug 17, 2022 at 01:23:41PM -0700, Ira wrote:
-> > On Wed, Aug 17, 2022 at 08:38:52PM +0100, Matthew Wilcox wrote:
-> > > On Wed, Aug 17, 2022 at 01:29:35PM +0300, Kirill A. Shutemov wrote:
-> > > > On Tue, Aug 16, 2022 at 07:08:22PM +0100, Matthew Wilcox wrote:
-> > > > > Some of you will already know all this, but I'll go into a certain amount
-> > > > > of detail for the peanut gallery.
-> > > > > 
-> > > > > One of the problems that people want to solve with multi-page folios
-> > > > > is supporting filesystem block sizes > PAGE_SIZE.  Such filesystems
-> > > > > already exist; you can happily create a 64kB block size filesystem on
-> > > > > a PPC/ARM/... today, then fail to mount it on an x86 machine.
-> > > > > 
-> > > > > kmap_local_folio() only lets you map a single page from a folio.
-> > > > > This works for the majority of cases (eg ->write_begin() works on a
-> > > > > per-page basis *anyway*, so we can just map a single page from the folio).
-> > > > > But this is somewhat hampering for ext2_get_page(), used for directory
-> > > > > handling.  A directory record may cross a page boundary (because it
-> > > > > wasn't a page boundary on the machine which created the filesystem),
-> > > > > and juggling two pages being mapped at once is tricky with the stack
-> > > > > model for kmap_local.
-> > > > > 
-> > > > > I don't particularly want to invest heavily in optimising for HIGHMEM.
-> > > > > The number of machines which will use multi-page folios and HIGHMEM is
-> > > > > not going to be large, one hopes, as 64-bit kernels are far more common.
-> > > > > I'm happy for 32-bit to be slow, as long as it works.
-> > > > > 
-> > > > > For these reasons, I proposing the logical equivalent to this:
-> > > > > 
-> > > > > +void *folio_map_local(struct folio *folio)
-> > > > > +{
-> > > > > +       if (!IS_ENABLED(CONFIG_HIGHMEM))
-> > > > > +               return folio_address(folio);
-> > > > > +       if (!folio_test_large(folio))
-> > > > > +               return kmap_local_page(&folio->page);
-> > > > > +       return vmap_folio(folio);
-> > > > > +}
-> > > > > +
-> > > > > +void folio_unmap_local(const void *addr)
-> > > > > +{
-> > > > > +       if (!IS_ENABLED(CONFIG_HIGHMEM))
-> > > > > +               return;
-> > > > > +       if (is_vmalloc_addr(addr))
-> > > > > +               vunmap(addr);
-> > > > > +	else
-> > > > > +       	kunmap_local(addr);
-> > > > > +}
-> > > > > 
-> > > > > (where vmap_folio() is a new function that works a lot like vmap(),
-> > > > > chunks of this get moved out-of-line, etc, etc., but this concept)
-> > > > 
-> > > > So it aims at replacing kmap_local_page(), but for folios, right?
-> > > > kmap_local_page() interface can be used from any context, but vmap helpers
-> > > > might_sleep(). How do we rectify this?
-> > > 
-> > > I'm not proposing getting rid of kmap_local_folio().  That should still
-> > > exist and work for users who need to use it in atomic context.  Indeed,
-> > > I'm intending to put a note in the doc for folio_map_local() suggesting
-> > > that users may prefer to use kmap_local_folio().  Good idea to put a
-> > > might_sleep() in folio_map_local() though.
-> > 
-> > There is also a semantic miss-match WRT the unmapping order.  But I think
-> > Kirill brings up a bigger issue.
+On Wed, Aug 17, 2022 at 10:34 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> Gotcha -- it's for the implicit situations (e.g. -C overflow-checks=on),
 
-I don't see the semantic mismatch?
+Yeah, exactly.
 
-> > How many folios do you think will need to be mapped at a time?  And is there
-> > any practical limit on their size?  Are 64k blocks a reasonable upper bound
-> > until highmem can be deprecated completely?
-> > 
-> > I say this because I'm not sure that mapping a 64k block would always fail.
-> > These mappings are transitory.  How often will a filesystem be mapping more
-> > than 2 folios at once?
-> 
-> I did the math wrong but I think my idea can still work.
+> nothing is expected to explicitly call the Rust panic handler?
 
-The thing is that kmap_local_page() can be called from interrupt context
-(how often is it?  no idea).  So you map two 64kB folios (at 16 entries
-each) and that consumes 32 entries for this CPU, now you take an interrupt
-and that's 33.  I don't know how deep that goes; can we have some mapped
-in userspace, some mapped in softirq and then another interrupt causes
-more to be mapped in hardirq?  I don't really want to find out, so I'd
-rather always punt to vmap() for multipage folios.
+If by explicitly you mean calling `panic!()`, then in the `kernel`
+crate in the v9 patches there is none.
 
-Is there a reason you want to make folio_map_local() more efficient
-on HIGHMEM systems?
+Though we may want to call it in the future (we have 4 instances in
+the full code not submitted here, e.g. for mismatching an independent
+lock guard with its owner). They can be avoided depending on how we
+want the design to be and, I guess, what the "Rust panic" policy will
+finally be (i.e. `BUG()` or something softer).
 
-> > 
-> > In our conversions most of the time 2 pages are mapped at once,
-> > source/destination.
-> > 
-> > That said, to help ensure that a full folio map never fails we could increase
-> > the number of pages supported by kmap_local_page().  At first, I was not a fan
-> > but that would only be a penalty for HIGHMEM systems.  And as we are not
-> > optimizing for such systems I'm not sure I see a downside to increasing the
-> > limit to 32 or even 64.  I'm also inclined to believe that HIGHMEM systems are
-> > smaller core counts.  So I don't think this is likely to multiply the space
-> > wasted much.
-> > 
-> > Would doubling the support within kmap_local_page() be enough?
-> > 
-> > A final idea would be to hide the increase behind a 'support large block size
-> > filesystems' config option under HIGHMEM systems.  But I'm really not sure that
-> > is even needed.
-> > 
-> > Ira
-> > 
+Outside the `kernel` crate, there are also instances in proc macros
+and Rust hostprogs/scripts (compilation-time in the host), in the
+`alloc` crate (compiled-out) and in the `compiler_builtins` crate (for
+e.g. `u128` support that eventually we would like to not see
+compiled-in).
+
+Cheers,
+Miguel
