@@ -2,98 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C3BA5979B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 00:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2A25979F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 01:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238519AbiHQWcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 18:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
+        id S239244AbiHQXCa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 19:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239084AbiHQWc2 (ORCPT
+        with ESMTP id S238445AbiHQXC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 18:32:28 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCFB0AB4D1;
-        Wed, 17 Aug 2022 15:32:27 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id s11so19250586edd.13;
-        Wed, 17 Aug 2022 15:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=Gv4gm91440ebvebATmvsp5+QkrmOMcql3PcMRw1CSds=;
-        b=Pvn+0+y8ZjVKefEP96ynW4izTjZEWhveap9rRu2sMuArVPQxUYXbhX16n434AWb3Ry
-         iUMT12EJWUUEMXMdiirv+sfUGlU9w22kYu7U9XqcmA2WFdnJWWTjXeBC+HI7weslobUp
-         lVDV/lhZrNu6mPhyN66b54TxCR0e87DlIbrxzhv0PdGEr+iVIgxB3Fp9hFomq/KXPqH5
-         FszUTqCZIJpdekYG2GV63h1zBm723beLmgUwkgt+w64GfmHCNVNEa1IJkNQHh5WZcWvq
-         XCI9gJbwkr002m/CQ+DZznhVj2t/geIexeauSIQrjimZrgB2khKRT+VvRyOegPlp/v07
-         nWGw==
+        Wed, 17 Aug 2022 19:02:28 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE745AB4C6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 16:02:27 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id c7-20020a056e020bc700b002e59be6ce85so46927ilu.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 16:02:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=Gv4gm91440ebvebATmvsp5+QkrmOMcql3PcMRw1CSds=;
-        b=erEfGLprC7hz65aHufd5U2V2ssuaI/PcCHW9udamRjCFjO/3VcB4yVesEF/weEYwgI
-         jZKL1jLv1cJEngcxIxuGc00Z84FZF4Cvt9KXDic7B2DGe+LSGGZH5gSKKeurgy/7VFRb
-         RzMlC103xGA8t569YMuNv/Mrsj4djYb2Y71gQOk6LSjPOLrmnX5GBHmKgM6sKRfvB5Sc
-         Bd2cyREBENKgo1mrp5Ay2KdaEZlD36uJAg5+Esl9HNm7wEhqvpB7iSxoDebPTtbKyDG3
-         B3tU7choN/32W2t4v7uAh9VHlaHZIvn/YEDmYIMMndn5oQSX0unttPGGth94VPRSpQdD
-         fFig==
-X-Gm-Message-State: ACgBeo0CctVGifackoykyTPSRqhoFfzqj+1woIo9Pk+mzmiOA4IniBxA
-        U83F+lFNMqESy64wa2jBkDzYSfpnswWiHl1a/g2W6Wow
-X-Google-Smtp-Source: AA6agR7lc2bIlRempqenBeZsBXIRGrXTaNgK1Co1ojN1WwxbTiz9z3Kx+sVdNq/z8frPwspuPuge9JmobZSBPGDPX2Q=
-X-Received: by 2002:a05:6402:40c2:b0:440:4ecd:f75f with SMTP id
- z2-20020a05640240c200b004404ecdf75fmr134536edb.405.1660775546111; Wed, 17 Aug
- 2022 15:32:26 -0700 (PDT)
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=c/rQLSmXLwRKxJTLqW1KzsFCcUKlOv5n8qILVlbyfVg=;
+        b=ZWz2CdwZN0fIjSmyGQiRo212xYToCKaFAWYgX8f54MTMVZk1znzFwI8hzW+WOz2bgb
+         VfRBKwxebI9rFUZJq+r5SH14fK96uQHvsMe0SW5myNPjyYeZm0x/UFkx3Kqet/pPBmsG
+         XbAdu0EbLRElOb+ozRSQ72GvDfB3AG6W00gpnOkVEO6hBmRU/IUaqXwXwLgXY2Exn+Xk
+         /RF+rhc8eZY7HA6bvMtDH3wb3aZpjYUn71l9atpWY8auK9BqTe4pisg9nS0pTqo2G3WC
+         cKyfJ3FNYImgWFkNJ0ui7yuL29KmjbVIz8novNlHeFHpZUFL8ynZ+Glad7LaudCx4vyk
+         m3Vg==
+X-Gm-Message-State: ACgBeo2MmsAlDqciWwG+wljG4ozW/TkbFv/1LQI2vYPvKeEQLSkmwW4Y
+        M8fHL5YBUgJTmTDWJ9wX+xn8LtKYYKzyX+/rFYwkwboKtiam
+X-Google-Smtp-Source: AA6agR5iI2f9Ufx/WobvSwWnDRuUxAfNpxSjHbC2yunNdq7MP8Dy2WrZ+eDs3x31Qas+d6XryP9vkzYcVbvR8CifII9S78th+LZx
 MIME-Version: 1.0
-References: <Yv1jwsHVWI+lguAT@ZenIV>
-In-Reply-To: <Yv1jwsHVWI+lguAT@ZenIV>
-From:   Olga Kornievskaia <aglo@umich.edu>
-Date:   Wed, 17 Aug 2022 18:32:15 -0400
-Message-ID: <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
-Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1522:b0:2e5:9e3c:a7c8 with SMTP id
+ i2-20020a056e02152200b002e59e3ca7c8mr177092ilu.237.1660777347272; Wed, 17 Aug
+ 2022 16:02:27 -0700 (PDT)
+Date:   Wed, 17 Aug 2022 16:02:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d5d86405e677dbd2@google.com>
+Subject: [syzbot] KASAN: vmalloc-out-of-bounds Write in find_lock_entries
+From:   syzbot <syzbot+e498ebacfd2fd78cf7b2@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, hverkuil-cisco@xs4all.nl,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mchehab@kernel.org, ming.qian@nxp.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 6:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         My apologies for having missed that back when the SSC
-> patchset had been done (and missing the problems after it got
-> merged, actually).
->
-> 1) if this
->         r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, fattr);
-> in __nfs42_ssc_open() yields a directory inode, we are screwed
-> as soon as it's passed to alloc_file_pseudo() - a *lot* of places
-> in dcache handling would break if we do that.  It's not too
-> nice for a regular file from non-cooperating filesystem, but for
-> directory ones it's deadly.
+Hello,
 
-This inode is created to make an appearance of an opened file to do
-(an NFS) read, it's never a directory.
+syzbot found the following issue on:
 
-> 2) if alloc_file_pseudo() fails there, we get an inode leak.  It
-> needs an iput() for that case.  As in
->         if (IS_ERR(filep)) {
->                 res = ERR_CAST(filep);
->                 iput(r_ino);
->                 goto out_free_name;
->         }
->
-> But I'd like to point out that alloc_file_pseudo() is not inteded for
-> use on normal filesystem's inodes - the use here *mostly* works
-> (directories aside), but...  Use it on filesystem with non-trivial
-> default dentry_operations and things will get interesting, etc.
+HEAD commit:    6c8f479764eb Add linux-next specific files for 20220809
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b5b2f3080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a5ae8cfa8d7075d1
+dashboard link: https://syzkaller.appspot.com/bug?extid=e498ebacfd2fd78cf7b2
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127f650d080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1290f485080000
+
+The issue was bisected to:
+
+commit 39ad84e911c5c0e1593f3652325d279692817188
+Author: Ming Qian <ming.qian@nxp.com>
+Date:   Wed Apr 27 09:25:58 2022 +0000
+
+    media: imx-jpeg: Don't fill the description field in struct v4l2_fmtdesc
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e8bd97080000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16e8bd97080000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e8bd97080000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e498ebacfd2fd78cf7b2@syzkaller.appspotmail.com
+Fixes: 39ad84e911c5 ("media: imx-jpeg: Don't fill the description field in struct v4l2_fmtdesc")
+
+ntfs3: loop0: RAW NTFS volume: Filesystem size 0.00 Gb > volume size 0.00 Gb. Mount in read-only
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in find_lock_entries+0xb75/0xc50 mm/filemap.c:2114
+Write of size 8 at addr ffffc9000acd0160 by task syz-executor364/6015
+
+CPU: 0 PID: 6015 Comm: syz-executor364 Not tainted 5.19.0-next-20220809-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:317 [inline]
+ print_report.cold+0x59/0x719 mm/kasan/report.c:433
+ kasan_report+0xb1/0x1e0 mm/kasan/report.c:495
+ find_lock_entries+0xb75/0xc50 mm/filemap.c:2114
+ truncate_inode_pages_range+0x185/0x1510 mm/truncate.c:364
+ ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1741
+ evict+0x2ed/0x6b0 fs/inode.c:665
+ iput_final fs/inode.c:1748 [inline]
+ iput.part.0+0x55d/0x810 fs/inode.c:1774
+ iput+0x58/0x70 fs/inode.c:1764
+ ntfs_fill_super+0x2309/0x37f0 fs/ntfs3/super.c:1278
+ get_tree_bdev+0x440/0x760 fs/super.c:1323
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1530
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1326/0x1e20 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fa8608bbffa
+Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 a8 00 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2b8551a8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc2b855200 RCX: 00007fa8608bbffa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffc2b8551c0
+RBP: 00007ffc2b8551c0 R08: 00007ffc2b855200 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000020000e78
+R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000085
+ </TASK>
+
+The buggy address belongs to the virtual mapping at
+ [ffffc9000acc8000, ffffc9000acd1000) created by:
+ kernel_clone+0xe7/0xab0 kernel/fork.c:2675
+
+Memory state around the buggy address:
+ ffffc9000acd0000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc9000acd0080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+>ffffc9000acd0100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                                                       ^
+ ffffc9000acd0180: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc9000acd0200: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
