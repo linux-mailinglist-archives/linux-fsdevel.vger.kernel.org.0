@@ -2,155 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0EB596A56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 09:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78320596BF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 11:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232109AbiHQHZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 03:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55912 "EHLO
+        id S234080AbiHQJQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 05:16:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230149AbiHQHZo (ORCPT
+        with ESMTP id S230359AbiHQJQj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 03:25:44 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141476BCD5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 00:25:43 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id cd25so4866388uab.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 00:25:43 -0700 (PDT)
+        Wed, 17 Aug 2022 05:16:39 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87DB65240
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 02:16:37 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id l10so12976471lje.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 02:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=wMo5ThSWX4nrkeGLZHvXNCCrrkUrzA7pO4ev7AJ5ntw=;
-        b=SJcqxU5wCywK9jX4+U5PQaxnR8/cj+dG02Z3G01RUdLMVGf0Q2cuWjXw4lA83D60GY
-         rFFmvASvGdGVFsCXPnmVLM549+wrWIHsfem51lxB/cfQnjKSSzO09Wloe8jRwKqiEY8Y
-         voKQKtn1yZYE7RW2XeaDadrHmUz7bcMi3Ujktl6Nm2h01hGcUibMOBJQEz8tiZSOhLrU
-         KWXCwP7zdXMsNI/oWTcUb7LvN3gM2KkI/CgoKgkFBNbI1sXOm3Dnb27ehkyEnXMF88cu
-         TmP/j2tsoiXeIRMr1qH1UmFuihe5F3FdDy1waEwdTTGpmHL/SF6xpX04vSP5c0kTh1MO
-         MCUQ==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc;
+        bh=3DB+dezKTs2JCAGBzguUfyZl/DLCkUWxqZtpuqdZ1Ig=;
+        b=a+CMjTU1Hfs/YKqv3Jgo88bgN+frz1oiLfUtYEHtuULCQkGZ7vfDnPT7XzUMyrzGqn
+         O4Z9CUBCo9yWVYI4Bjixu0GmQ0SwNcbP7CHwl4YHA6bgzY7utjpY7CgJS3Fud6sxLlzC
+         2tYbAloUTDHRecOMyIhUbeF//jOaEaJCCSqnG6shzEC9yjs2hoTtRDwPZigwaqNv7crA
+         hWLqJkM6ycpEJQJaDoutQMuxT8Af7evgvYUb5t1Fs+N/+Dk74PEZx67erSdm1ITaFeCK
+         9RokDUCXKpMufKfdwcKw7huBb0APoeeUX3uYNaeNcwwsR+xpNvE3SHppVjbsDFe12pP6
+         PDdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=wMo5ThSWX4nrkeGLZHvXNCCrrkUrzA7pO4ev7AJ5ntw=;
-        b=UEQhRAp9AlwPBPYyYx1Okh9HMQKXsplOZZaltgl+xtOS/5GZr0t1hBpJoeKjtlS9Ea
-         fhExfUPZybRKs00ZaQBfoWJ5dqTA+/ERysCbHXBfUnaYWBc09RDcHiv/pHo3Q0/lySyW
-         oqzWaiaVbq9T3jBrYB5cYzfTtu0bsCEDJQTYtIvxBfJcaBwm2tp/zEMeOMHaIRBUCor9
-         /lTekHj5FfR1yGvfOfWRgSBqSTgXNBtL4yPqsGciUyxfij3MMSP34YXRbI775/uuFahQ
-         FMWjFw6OP4ZgDedPQ16pIlrSuKFhMsnjgP5XnsvZntO5yn9DBW29ixryfC7QdFgJWwOR
-         /I/g==
-X-Gm-Message-State: ACgBeo3WIiOyUL6ehgL7b2zMRqZ96qOYkg3YiyrC7WWSfjIxejmNZisv
-        x8b7OOuBSlhuE2HsjvMCmuu8JaLRGIw4BP48DjQ=
-X-Google-Smtp-Source: AA6agR4uKGpRKFyNkqsXsJaPMXbHMA/CZVH2p7ijaqt28c/f+QmxFmIw5vBIkwnaZ3HzVbbMAN5w0utYGbAY65ch5Dc=
-X-Received: by 2002:a9f:2067:0:b0:387:984d:4a8e with SMTP id
- 94-20020a9f2067000000b00387984d4a8emr10257663uam.60.1660721142120; Wed, 17
- Aug 2022 00:25:42 -0700 (PDT)
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc;
+        bh=3DB+dezKTs2JCAGBzguUfyZl/DLCkUWxqZtpuqdZ1Ig=;
+        b=fdWMr7YKhtOjN18qN7gmxv5tf65I1oEtAWcoXnGdZcaYwkOFN5ZdY2gmXABG2Dbygf
+         ERzBf4iHnJF/JafLLDK9NkoNWf7qpoArORcrGObMMmB43O0OYIK40R/ANPRRUlGIg10J
+         /NRvxQSdw//9E3Xd3UhYZqWtyJxq23cRx/l3ilQob/xCnWALPCPpsfW/jkZTKKYjt4Ns
+         ly8bqaE5H7Tj7wxiK3mNQr587wT3oCbtotc064xjObTiJJYX56reSnn3t2YNlwoC4t6Y
+         hZZZvH4Ja0uJaFwnvLJq9UGiZirDbTq6eDSPT/KsOzYd+FDBoOc2GT5AFLpCcCxM2TFW
+         6NcA==
+X-Gm-Message-State: ACgBeo0eFBH/+HX3wRm8i82RPCm1ZpVc6BHmvjslBXYj5Tm4WUpvilwo
+        M0t+wZNBAKb8zFJ2SgHrNrNbAxLX89w1NmQ9M7qS2g==
+X-Google-Smtp-Source: AA6agR69SoivTyNvZmZ8AtneNCxMvWh/r0/M/Zc73nYj7O/drQ8x3YGn6lycqk+TJCknMGEudSX4lwzY0NWVE2T30jk=
+X-Received: by 2002:a05:651c:179c:b0:261:8fbe:b729 with SMTP id
+ bn28-20020a05651c179c00b002618fbeb729mr3499949ljb.114.1660727796282; Wed, 17
+ Aug 2022 02:16:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <YvvBs+7YUcrzwV1a@ZenIV> <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
- <Yvvr447B+mqbZAoe@casper.infradead.org> <20220816201438.66v4ilot5gvnhdwj@cs.cmu.edu>
- <CAHk-=wghBfgOkH2jjr4OrQ7d+CLdspq1xaQK3L8x6BuDPv0eiw@mail.gmail.com>
-In-Reply-To: <CAHk-=wghBfgOkH2jjr4OrQ7d+CLdspq1xaQK3L8x6BuDPv0eiw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 17 Aug 2022 10:25:30 +0300
-Message-ID: <CAOQ4uxhoAAjKOe4w+z2_NCO9PF5KD=6oKuqQQ8xcMUe=buh89A@mail.gmail.com>
-Subject: Re: Switching to iterate_shared
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
+References: <20220817065200.11543-1-yinxin.x@bytedance.com> <YvyVOfzkITlvgtQ6@B-P7TQMD6M-0146.local>
+In-Reply-To: <YvyVOfzkITlvgtQ6@B-P7TQMD6M-0146.local>
+From:   Xin Yin <yinxin.x@bytedance.com>
+Date:   Wed, 17 Aug 2022 17:16:25 +0800
+Message-ID: <CAK896s71E8a_iAYwEtzp7XKopQnVT5-YnkuC3yTewOfdmvf2VQ@mail.gmail.com>
+Subject: Re: [External] Re: [Linux-cachefs] [PATCH] cachefiles: make on-demand
+ request distribution fairer
+To:     Xin Yin <yinxin.x@bytedance.com>, dhowells@redhat.com,
+        xiang@kernel.org, jefflexu@linux.alibaba.com,
+        linux-fsdevel@vger.kernel.org, zhujia.zj@bytedance.com,
+        linux-cachefs@redhat.com, Yongqing Li <liyongqing@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 2:02 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, Aug 17, 2022 at 3:14 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
 >
-> On Tue, Aug 16, 2022 at 1:14 PM Jan Harkes <jaharkes@cs.cmu.edu> wrote:
+> Hi Yin,
+>
+> On Wed, Aug 17, 2022 at 02:52:00PM +0800, Xin Yin wrote:
+> > For now, enqueuing and dequeuing on-demand requests all start from
+> > idx 0, this makes request distribution unfair. In the weighty
+> > concurrent I/O scenario, the request stored in higher idx will starve.
 > >
-> > So good to know in advance a change like this is coming. I'll have to
-> > educate myself on this shared vs non-shared filldir.
+> > Searching requests cyclically in cachefiles_ondemand_daemon_read,
+> > makes distribution fairer.
 >
-> Well, that change isn't necessarily "coming" - we've had this horrid
-> duality for years. "iterate_shared" goes back to 2016, and has been
-> marked "recommended" since then.
+> Yeah, thanks for the catch.  The previous approach could cause somewhat
+> unfairness and make some requests starving... But we don't need strict
+> FIFO here.
 >
-> But the plain old "iterate" does continue to work, and having both is
-> only an ugly wart - I can't honestly claim that it's a big and
-> pressing problem.
+> >
+> > Reported-by: Yongqing Li <liyongqing@bytedance.com>
+> > Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
+> > ---
+> >  fs/cachefiles/internal.h |  1 +
+> >  fs/cachefiles/ondemand.c | 12 +++++++++---
+> >  2 files changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> > index 6cba2c6de2f9..2ad58c465208 100644
+> > --- a/fs/cachefiles/internal.h
+> > +++ b/fs/cachefiles/internal.h
+> > @@ -111,6 +111,7 @@ struct cachefiles_cache {
+> >       char                            *tag;           /* cache binding tag */
+> >       refcount_t                      unbind_pincount;/* refcount to do daemon unbind */
+> >       struct xarray                   reqs;           /* xarray of pending on-demand requests */
+> > +     unsigned long                   req_id_next;
 >
+>         unsigned long                   ondemand_req_id_next; ?
+Hi Xiang,
 
-All the "complexity" is really very tidy and neat inside iterate_dir()
-I honestly don't see what the big fuss is about.
-
-If filesystems do need to synchronize creates/deletes with readdir
-they would need to add a new internal lock and take it for every
-dir operation - it seems like a big hustle for little good reason.
-
-Perhaps it would have been more elegant to replace the
-iterate_shared/iterate duality with an fs_type flag.
-And it would be very simple to make that change.
-
-> But it would be *really* nice if filesystems did switch to it. For
-> most filesystems, it is probably trivial. The only real difference is
-> that the "iterate_shared" directory walker is called with the
-> directory inode->i_rwsem held for reading, rather than for writing.
->
-> End result: there can be multiple concurrent "readdir" iterators
-> running on the same directory at the same time. But there's still
-> exclusion wrt things like file creation, so a filesystem doesn't have
-> to worry about that.
->
-> Also, the concurrency is only between different 'struct file'
-> entities. The file position lock still serializes all getdents() calls
-> on any individual open directory 'struct file'.
->
-
-Hmm, I wonder. Can gentents() proceed without f_pos_lock on
-single f_count and then a cloned fd created and another gentents()
-races with the first one?
-
-A very niche corner case, but perhaps we can close this hole
-for filesystems that opt-in with fs_type flag, because... (see below)
-
-> End result: most filesystems probably can move to the 'iterate_shared'
-> version with no real issues.
->
-> Looking at coda in particular, I don't see any reason to not just
-> switch over to 'iterate_shared' with no code modifications at all.
-> Nothing in there seems to have any "I rely on the directory inode
-> being exclusively locked".
->
-> In fact, for coda in particular, it would be really nice if we could
-> just get rid of the old "iterate" function for the host filesystem
-> entirely. Which honestly I'd expect you could _also_ do, because
-> almost all serious local filesystems have long since been converted.
->
-> So coda looks like it could trivially move over. But I might be
-> missing something.
->
-> I suspect the same is true of most other filesystems, but it requires
-> people go check and go think about it.
->
-
-I tried to look at ovl_iterate(). The subtlety is regarding the internal
-readdir cache.
-
-Compared to fuse_readdir(), which is already "iterate_shared"
-and also implements internal readdir cache, fuse adds an internal
-mutex (quote) "against (crazy) parallel readdir on same open file".
-
-Considering this protection is already provided by f_pos_lock
-99% of the time, perhaps an opt-in flag to waiver the single
-f_count optimization would be enough to be able to make
-also ovl_iterate() shared?
+Thanks for the detailed review , whether "ondemand_req_id_next" is a
+little long ? struct cachefiles_cache only holds on-demand requests ,
+so I think "req_id_next" will not cause ambiguity. Does this make
+sense?
 
 Thanks,
-Amir.
+Xin Yin
+>
+> Otherwise it looks good to me,
+>
+> Thanks,
+> Gao Xiang
+>
+> >       struct xarray                   ondemand_ids;   /* xarray for ondemand_id allocation */
+> >       u32                             ondemand_id_next;
+> >  };
+> > diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> > index 1fee702d5529..247961d65369 100644
+> > --- a/fs/cachefiles/ondemand.c
+> > +++ b/fs/cachefiles/ondemand.c
+> > @@ -238,14 +238,19 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+> >       unsigned long id = 0;
+> >       size_t n;
+> >       int ret = 0;
+> > -     XA_STATE(xas, &cache->reqs, 0);
+> > +     XA_STATE(xas, &cache->reqs, cache->req_id_next);
+> >
+> >       /*
+> > -      * Search for a request that has not ever been processed, to prevent
+> > -      * requests from being processed repeatedly.
+> > +      * Cyclically search for a request that has not ever been processed,
+> > +      * to prevent requests from being processed repeatedly, and make
+> > +      * request distribution fair.
+> >        */
+> >       xa_lock(&cache->reqs);
+> >       req = xas_find_marked(&xas, UINT_MAX, CACHEFILES_REQ_NEW);
+> > +     if (!req && cache->req_id_next > 0) {
+> > +             xas_set(&xas, 0);
+> > +             req = xas_find_marked(&xas, cache->req_id_next - 1, CACHEFILES_REQ_NEW);
+> > +     }
+> >       if (!req) {
+> >               xa_unlock(&cache->reqs);
+> >               return 0;
+> > @@ -260,6 +265,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+> >       }
+> >
+> >       xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
+> > +     cache->req_id_next = xas.xa_index + 1;
+> >       xa_unlock(&cache->reqs);
+> >
+> >       id = xas.xa_index;
+> > --
+> > 2.25.1
+> >
+> > --
+> > Linux-cachefs mailing list
+> > Linux-cachefs@redhat.com
+> > https://listman.redhat.com/mailman/listinfo/linux-cachefs
