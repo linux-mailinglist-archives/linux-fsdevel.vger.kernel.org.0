@@ -2,87 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C74CB59762A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 21:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F815976B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 21:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241333AbiHQTBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 15:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54544 "EHLO
+        id S238631AbiHQTgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 15:36:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbiHQTAz (ORCPT
+        with ESMTP id S241497AbiHQTgk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 15:00:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0043265271
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 12:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660762854;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JBiW69nYfb0RDezsv64U04DtNtYj2TKxdgfkfUJl7Qw=;
-        b=B7MrxY0RQY8FZr8SkasND8dqLZB7KJbJB+zEzoBLoqq/ITorW0V3Oc4G+HGFRih/hia+bP
-        N6Y5sgA6rS7VAYuHwT3LzbWRQ5EIquMnyOzqhf7Ug9cJ+bpecG8+5V7d70o44IyzB8WVnc
-        Q/xHtTcWJhnzvpj4sGiKfO1STesL8No=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-260-8DMa6IATPiKdWcVExtn0HA-1; Wed, 17 Aug 2022 15:00:50 -0400
-X-MC-Unique: 8DMa6IATPiKdWcVExtn0HA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4845310B959E;
-        Wed, 17 Aug 2022 19:00:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B659C15BBA;
-        Wed, 17 Aug 2022 19:00:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <166076168742.3677624.2936950729624462101.stgit@warthog.procyon.org.uk>
-References: <166076168742.3677624.2936950729624462101.stgit@warthog.procyon.org.uk>
-To:     jlayton@kernel.org
-Cc:     dhowells@redhat.com, Kuniyuki Iwashima <kuniyu@amazon.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] locks: Fix dropped call to ->fl_release_private()
+        Wed, 17 Aug 2022 15:36:40 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6857D70E6D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 12:36:36 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id d71so12780913pgc.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 12:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=DwQ4nsxbFKRBGX51s8IXcm7jc9sOynsnepHYnZvK+q8=;
+        b=dDflZWLDwgLNEUqS2QSEf+EU9QySzBzklxHNtjMI6KEmn6Qm4yhXCaw+IjQWz0+EwN
+         8dhgPlIueNI1tSl2rnGUbdr64cP3OayomPrD6oFw+uYC11PPeERBIAp8IzdvOOJ+cf6/
+         /duC6UT3tzWyZkS281siFpZEZ4LqAen6po3cs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=DwQ4nsxbFKRBGX51s8IXcm7jc9sOynsnepHYnZvK+q8=;
+        b=RuQZONlRUiT7flhLhwATfpj+eDN+KwvpMD05Dn+B/4q8Topee43NiBaUpn+oTQzOxv
+         PU+g/J6tjFJJIAwJXKDpwbYaoaZe57BvxPda/sy/pymTvW75q9962q1fAbNGlYO9Z6vH
+         d43vLqx6OfdQNvwK9Oj+Lm79fVQr3wsRJmU2XV2P1sxsP710q3qidFje/FAqena73O4s
+         gmVTAOlDndLVhZAuWpO8IumCcsJNk8LsGAWvekQX63JxU0GhEbiuelDjIQMCWlsvL93C
+         s0NNNHHMRbNH9/GKctWIjv4JYOFmdvj7aDUVXDQllJ5FEf0u/8yG0v+f8dPi21794shS
+         TqPA==
+X-Gm-Message-State: ACgBeo1cyAnacHKpaRdwJd1PfEPagVRtnWO3vT3Z8/Ppo9E5aBsvcZEi
+        /ELYaKhGhTA6XRIYZlXWTuwwBw==
+X-Google-Smtp-Source: AA6agR45Grj5WNJlJ+fDipgaBkC5y4R4JfAofjvtsISis6BMpiiepj37XY/6B9DM7K6AjAsyVP/0IA==
+X-Received: by 2002:a63:8b44:0:b0:41c:df4c:7275 with SMTP id j65-20020a638b44000000b0041cdf4c7275mr23312562pge.434.1660764995806;
+        Wed, 17 Aug 2022 12:36:35 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k8-20020a17090a658800b001f55dda84b3sm1917520pjj.22.2022.08.17.12.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Aug 2022 12:36:34 -0700 (PDT)
+Date:   Wed, 17 Aug 2022 12:36:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Konstantin Shelekhin <k.shelekhin@yadro.com>
+Cc:     ojeda@kernel.org, boqun.feng@gmail.com, gregkh@linuxfoundation.org,
+        jarkko@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH v9 01/27] kallsyms: use `sizeof` instead of hardcoded size
+Message-ID: <202208171235.52D14C2A@keescook>
+References: <20220805154231.31257-2-ojeda@kernel.org>
+ <Yu2cYShT1h8gquW8@yadro.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3718462.1660762837.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 17 Aug 2022 20:00:37 +0100
-Message-ID: <3718464.1660762837@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yu2cYShT1h8gquW8@yadro.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Sat, Aug 06, 2022 at 01:40:33AM +0300, Konstantin Shelekhin wrote:
+> > diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> > index f18e6dfc68c5..52f5488c61bc 100644
+> > --- a/scripts/kallsyms.c
+> > +++ b/scripts/kallsyms.c
+> > @@ -206,7 +206,7 @@ static struct sym_entry *read_symbol(FILE *in)
+> >  
+> >  	rc = fscanf(in, "%llx %c %499s\n", &addr, &type, name);
+> >  	if (rc != 3) {
+> > -		if (rc != EOF && fgets(name, 500, in) == NULL)
+> > +		if (rc != EOF && fgets(name, sizeof(name), in) == NULL)
+> >  			fprintf(stderr, "Read error or end of file.\n");
+> >  		return NULL;
+> >  	}
+> 
+> Might be another nit, but IMO it's better to use ARRAY_SIZE() here.
 
-> Fixes: 4149be7bda7e ("fs/lock: Don't allocate file_lock in flock_make_lo=
-ck().")
-> cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> cc: Chuck Lever <chuck.lever@oracle.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/r/166075758809.3532462.1330793558877758753=
-6.stgit@warthog.procyon.org.uk/ # v1
+I'm not sure I see a benefit for char arrays. It'll produce the same
+result, and the tradition for string functions is to use sizeof().
+*shrug*
 
-I forgot:
+Either way:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
+-- 
+Kees Cook
