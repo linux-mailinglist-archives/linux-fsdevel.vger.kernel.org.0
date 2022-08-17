@@ -2,76 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 208EE597704
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 21:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15C3597714
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Aug 2022 21:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbiHQTor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 15:44:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46988 "EHLO
+        id S241459AbiHQTvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 15:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231724AbiHQTop (ORCPT
+        with ESMTP id S229572AbiHQTvN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 15:44:45 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125E91C8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 12:44:43 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id g18so4422800pju.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 12:44:43 -0700 (PDT)
+        Wed, 17 Aug 2022 15:51:13 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD3A33372;
+        Wed, 17 Aug 2022 12:51:13 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id g16so8967116qkl.11;
+        Wed, 17 Aug 2022 12:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=+OZ/5bQF40s37Fa6tM5DQdE3Vk1tx4PHZdxoOH4WI2I=;
-        b=FDoXJkM5SdlAJajohu2gaEzhtWxFgu8Q7Nv1cHzZ+vOqsIHhWLkPPn0Ofsc59VnPix
-         HvocUpM6HGbN5Ne6yODd5JTPnUQDkWXIN4q+eW+XzTsZbTcvlOQlSQzbd4j5wjTnPZA2
-         C0aJ5bBbjypplDmJ9mXe3hZn7vnuX3KqXaPpw=
+         :subject:cc:to:from:date:feedback-id:from:to:cc;
+        bh=v60uqYnukgjgZARXe5JJGms8uUUgUv8wpc53hUaJ67A=;
+        b=JpefC9piThWn37ij83JUtU+fue08Tl6ykry7XnZ14DBKoDxePAQOK80AdrWAJ279px
+         kcgkEXwRKcLiaoyNzJ+EI8n/tRYjvAaM9OA7ppJ7pFSusEicOlrDJYE3QaNMH8MqGMvR
+         CWn5MzWzsDJ2Dxxk7lgkhTfQgInX9V3QLa6O79NTCAJjFXUFZQ0sMrsDc7E4fMJXjUDq
+         WlAoyYbgC0IwfQBba7Lm7EukhyIjpr69eObpAhLbBvLWU1D5n6EBBus9KJmVX+aUmzFc
+         +cP1U8QaRpaFqJEb4LRC7qIqK8SklFDGaEWG0AtZ2Jo3D7A18NK3Go4b1h7/xMs89cKr
+         o/tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=+OZ/5bQF40s37Fa6tM5DQdE3Vk1tx4PHZdxoOH4WI2I=;
-        b=JCY0z8+9hkhCEb00+F97kA4AU2Ji1MLYTE42Z0xBTba9yJ5Srl06dMhYHW2EiIcp/c
-         EXpda6+LQH7zpFIhB7wbcQPncyzhmTNsJCjOweyVw0OraEInyWsL56LESV2kadaIe0jN
-         FtXTl4x/HRAq9bNSazGNlhrGbEQ6M+xsrg+Sm1WJXWfBz426DxCs9TfxAJ3M8wVuhhEw
-         LweRNKReu4eoaVftE+WFwzpNWr2MFjbJPXvIbntfcLx9WANFT/HKQYPsDXaMtQaC8Nr4
-         jcICNNfxcW1BtBalyPVNYvnu/FwZj5uJ5261511UjTtTaf4PY837yoxMxh+IKANwGBhn
-         lpmA==
-X-Gm-Message-State: ACgBeo3lQwa1EFGcQlBirenIS810WvilqHtuQXUhO4BPBkchckA89kVS
-        xYk+IIQl7yRaQ+j5PK5WgkfECA==
-X-Google-Smtp-Source: AA6agR7eUrlWKcz3P98uwKH5BeSncJ3YjJrFQ5ojIIhW3Rd59bOmpIlH9h5doqqHgc0MBF6T7yRNzQ==
-X-Received: by 2002:a17:902:f7cf:b0:172:9ca3:3052 with SMTP id h15-20020a170902f7cf00b001729ca33052mr3759074plw.77.1660765483175;
-        Wed, 17 Aug 2022 12:44:43 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t7-20020a634607000000b0041b5b929664sm9670814pga.24.2022.08.17.12.44.41
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc;
+        bh=v60uqYnukgjgZARXe5JJGms8uUUgUv8wpc53hUaJ67A=;
+        b=ISpvETzHxxVIsLoeHRMBpoxAYlmNAJzmXZ5TrxrZBFGt9/ahtgbcb6nVjP9Jgfr2fn
+         9ed65MmJl8eiHnWOsc1h55uz5RN4+pL4vi8OffOTUxqKM68TsmL54do4m4L5E/CtiWJV
+         6ZZfQT2aIKfN2p7LbG1BFuWYoz/ooqbnyzDhiTrbqIQW69FZDxWLHqwHDa4S70cevP+M
+         9VKt48UDZVYkbKTQHXFdvGIlB9MhSVm8+WHnNEosgkFlGWAFf1ZuqnJ8uvo0KzCDmHKh
+         FkGRSPYY40A6Htk4R9gzPC5ZPE6uTJ61UckmmJGcu8in1JWyaZn9PrAgqdnzfdPmMjQV
+         YRFQ==
+X-Gm-Message-State: ACgBeo325+r1gvaKoCg7gN91V6mrtNc+77f9L17E/UEb0MvZRu2pAIaQ
+        j3SPzykYwesj0qSLCUIIFCo=
+X-Google-Smtp-Source: AA6agR4wb0hTyertW8x0U44XlUWC9UESZJzGxucrMzv60iW2eQI+SjAZa4eaPq87PCkVEUq6UypKmw==
+X-Received: by 2002:a05:620a:1a9a:b0:69c:4a99:ea50 with SMTP id bl26-20020a05620a1a9a00b0069c4a99ea50mr20031342qkb.632.1660765871901;
+        Wed, 17 Aug 2022 12:51:11 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id b8-20020ae9eb08000000b006b8f4ade2c9sm13759099qkg.19.2022.08.17.12.51.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 12:44:42 -0700 (PDT)
-Date:   Wed, 17 Aug 2022 12:44:41 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Wed, 17 Aug 2022 12:51:11 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 9E9A927C0054;
+        Wed, 17 Aug 2022 15:51:10 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 17 Aug 2022 15:51:10 -0400
+X-ME-Sender: <xms:rUb9YsjrhBwDWi1UcrlAJOSkZoFWbWs6Wdyq53p-l3svLt4Dz3MJOg>
+    <xme:rUb9YlAwxKSMQtAbCkoqL17OQVtDsxn4hUE3TCkIIXBk51zOdJqH6vyLX7CB_i9bj
+    qs7DmA59stT6eK2IA>
+X-ME-Received: <xmr:rUb9YkHKEExDeF-dyv87VUyFyglJNclBfoaZqBtFoE7LzDhOVbXTkXzS7qRGgg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehiedgudegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:rUb9YtTvq4_U7rRBDZGD4vov0GhVMjm2hdDkcfaE3JuV_ojE4i1hbw>
+    <xmx:rUb9YpxZYdET6Anm_xf7p8yk0S_-KxS3CQS2Ouu871PFBPYVw-csxw>
+    <xmx:rUb9Yr7rqwGEm3ttZTIYuBBl_eIwK6JjFF_lJ4X-FpeKbm1GWzwghw>
+    <xmx:rkb9YgnF-q5Xcc8LmyDfUczZkU66iqh3omlThgZCPB8wDNsRqegbzA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 17 Aug 2022 15:51:09 -0400 (EDT)
+Date:   Wed, 17 Aug 2022 12:50:50 -0700
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v9 06/27] rust: add C helpers
-Message-ID: <202208171240.8B10053B9D@keescook>
+        Jarkko Sakkinen <jarkko@kernel.org>
+Subject: Re: [PATCH v9 03/27] kallsyms: add static relationship between
+ `KSYM_NAME_LEN{,_BUFFER}`
+Message-ID: <Yv1GmvZlpMopwZTi@boqun-archlinux>
 References: <20220805154231.31257-1-ojeda@kernel.org>
- <20220805154231.31257-7-ojeda@kernel.org>
+ <20220805154231.31257-4-ojeda@kernel.org>
+ <202208171238.80053F8C@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220805154231.31257-7-ojeda@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+In-Reply-To: <202208171238.80053F8C@keescook>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,103 +103,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 05:41:51PM +0200, Miguel Ojeda wrote:
-> This source file contains forwarders to C macros and inlined
-> functions.
-
-Perhaps:
-
-"Introduce the source file that will contain forwarders to common C
-macros as inlined Rust functions. Initially this only contains type
-size asserts, but will gain more helpers in subsequent patches."
-
+On Wed, Aug 17, 2022 at 12:39:48PM -0700, Kees Cook wrote:
+> On Fri, Aug 05, 2022 at 05:41:48PM +0200, Miguel Ojeda wrote:
+> > This adds a static assert to ensure `KSYM_NAME_LEN_BUFFER`
+> > gets updated when `KSYM_NAME_LEN` changes.
+> > 
+> > The relationship used is one that keeps the new size (512+1)
+> > close to the original buffer size (500).
+> > 
+> > Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> > ---
+> >  scripts/kallsyms.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> > index f3c5a2623f71..f543b1c4f99f 100644
+> > --- a/scripts/kallsyms.c
+> > +++ b/scripts/kallsyms.c
+> > @@ -33,7 +33,11 @@
+> >  #define KSYM_NAME_LEN		128
+> >  
+> >  /* A substantially bigger size than the current maximum. */
+> > -#define KSYM_NAME_LEN_BUFFER	499
+> > +#define KSYM_NAME_LEN_BUFFER	512
+> > +_Static_assert(
+> > +	KSYM_NAME_LEN_BUFFER == KSYM_NAME_LEN * 4,
+> > +	"Please keep KSYM_NAME_LEN_BUFFER in sync with KSYM_NAME_LEN"
+> > +);
 > 
-> Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Co-developed-by: Geoffrey Thomas <geofft@ldpreload.com>
-> Signed-off-by: Geoffrey Thomas <geofft@ldpreload.com>
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Co-developed-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Signed-off-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Co-developed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
-> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Co-developed-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Co-developed-by: Wei Liu <wei.liu@kernel.org>
-> Signed-off-by: Wei Liu <wei.liu@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/helpers.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 rust/helpers.c
+> Why not just make this define:
 > 
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> new file mode 100644
-> index 000000000000..b4f15eee2ffd
-> --- /dev/null
-> +++ b/rust/helpers.c
-> @@ -0,0 +1,51 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Non-trivial C macros cannot be used in Rust. Similarly, inlined C functions
-> + * cannot be called either. This file explicitly creates functions ("helpers")
-> + * that wrap those so that they can be called from Rust.
-> + *
-> + * Even though Rust kernel modules should never use directly the bindings, some
-> + * of these helpers need to be exported because Rust generics and inlined
-> + * functions may not get their code generated in the crate where they are
-> + * defined. Other helpers, called from non-inline functions, may not be
-> + * exported, in principle. However, in general, the Rust compiler does not
-> + * guarantee codegen will be performed for a non-inline function either.
-> + * Therefore, this file exports all the helpers. In the future, this may be
-> + * revisited to reduce the number of exports after the compiler is informed
-> + * about the places codegen is required.
-> + *
-> + * All symbols are exported as GPL-only to guarantee no GPL-only feature is
-> + * accidentally exposed.
-> + */
-> +
-> +#include <linux/bug.h>
-> +#include <linux/build_bug.h>
-> +
-> +__noreturn void rust_helper_BUG(void)
-> +{
-> +	BUG();
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_BUG);
+> #define KSYM_NAME_LEN_BUFFER (KSYM_NAME_LEN * 4)
+> 
+> ? If there's a good reason not it, please put it in the commit log.
+> 
 
-Given the distaste for ever using BUG()[1], why does this helper exist?
+Because KSYM_NAME_LEN_BUFFER is used as a string by stringify() in
+fscanf(), defining it as (KSYM_NAME_LEN * 4) will produce a string
 
-> +
-> +/*
-> + * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` type
-> + * as the Rust `usize` type, so we can use it in contexts where Rust
-> + * expects a `usize` like slice (array) indices. `usize` is defined to be
-> + * the same as C's `uintptr_t` type (can hold any pointer) but not
-> + * necessarily the same as `size_t` (can hold the size of any single
-> + * object). Most modern platforms use the same concrete integer type for
-> + * both of them, but in case we find ourselves on a platform where
-> + * that's not true, fail early instead of risking ABI or
-> + * integer-overflow issues.
-> + *
-> + * If your platform fails this assertion, it means that you are in
-> + * danger of integer-overflow bugs (even if you attempt to remove
-> + * `--size_t-is-usize`). It may be easiest to change the kernel ABI on
-> + * your platform such that `size_t` matches `uintptr_t` (i.e., to increase
-> + * `size_t`, because `uintptr_t` has to be at least as big as `size_t`).
-> + */
-> +static_assert(
-> +	sizeof(size_t) == sizeof(uintptr_t) &&
-> +	__alignof__(size_t) == __alignof__(uintptr_t),
-> +	"Rust code expects C `size_t` to match Rust `usize`"
-> +);
+	"128 * 4"
 
--Kees
+after stringify() and that doesn't work with fscanf().
 
-[1] https://docs.kernel.org/process/deprecated.html#bug-and-bug-on
+Miguel, maybe we can add something below in the commit log?
 
--- 
-Kees Cook
+`KSYM_NAME_LEN_BUFFER` cannot be defined as an expression, because it
+gets stringified in the fscanf() format. Therefore a _Static_assert() is
+needed.
+
+Thoughts?
+
+Regards,
+Boqun
+
+> -Kees
+> 
+> -- 
+> Kees Cook
