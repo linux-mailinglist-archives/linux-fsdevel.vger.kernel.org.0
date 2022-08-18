@@ -2,67 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E17B597DD7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 07:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3675597DFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 07:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243276AbiHRFFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 01:05:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        id S241334AbiHRFUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 01:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243497AbiHRFFY (ORCPT
+        with ESMTP id S239419AbiHRFUI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 01:05:24 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12924A1A70;
-        Wed, 17 Aug 2022 22:05:19 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id 2so632970pll.0;
-        Wed, 17 Aug 2022 22:05:19 -0700 (PDT)
+        Thu, 18 Aug 2022 01:20:08 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CDA74DE4;
+        Wed, 17 Aug 2022 22:20:06 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id k2so464650vsk.8;
+        Wed, 17 Aug 2022 22:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=7o9q6zRE/LnQajbGEZFofVIBdR8mGxbes8De4o3wgBI=;
-        b=lTSZFbH1W3gB1hd+vKpaQ4maRyY+LejWXlwd8H4J5CGwKw8gYcZMMrVXDDIAM6R42K
-         HVugf2myQsympLMaiRGNSFJx2pj77DEPcrMKzjwO+0ZoMcVddx0C/RyNW2MSAiF4EM2O
-         rF6dcc1iWppY9YZosFq/E/bNI0sDOeaTKnk7Ih5QhIwkjWWIzKgPp6XDXR2S1ajSl5iZ
-         iUfCitWt9NyHUvD5qLVTjDp8kg8/6PGSH1B6ZtNK2z2lWUc8CyKES6uH+tNTfXsYJGsl
-         gJev7Z/45P7Of2cRD8FjFTYu72lHzesHE8I42VEnUqFKkxDe6KZcuRfzIzmpun1Pn9JV
-         l/dg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=5u39g6enjL3TnhMx1SP5kr0OpbGZJ2krVZeHPYNVV2g=;
+        b=bcGhUZfCKUpACpTP3USFIBUCGNtRGJgas//fOWlAq6d7WgJlvtYC0VxdZt0g00/RJ4
+         ZEXua8tkx/bIZNkeVnnxHWhCM3U4k5S/lDG9dpYv61EepruAlQVF1Ami8Y238RlTXArR
+         EPY9cFDfko9TZnfaCv37LeckaD2GjxeL7LV9i6B7SmiOkzTG8TRx3igH7SjqlhN0iIkh
+         yAYfRxswYM7+A3bQYsdIe/qyguMxjxDEcrK0/paiI6XvAhQCfkRAxsgBAQTJLCWzzSsX
+         xFDujOXZvgQXBOF0aeGL5WAHRXOF6oQbrIreOcyldnieUxsr1U5DTvRQCTmpAsvprcOX
+         vPYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=7o9q6zRE/LnQajbGEZFofVIBdR8mGxbes8De4o3wgBI=;
-        b=kyxBhgIEwc2nQxGOhFsJQdASz3IRL5+YSy1qTlLnj6eODaOsa9oBNkYjGmPleeOWaN
-         JrSrifD6Zz7LD6Ku7kvzj0+AETVWYtJgRMHgE65+aIyT3Couo7E83gMI2pwP1YzX7PW1
-         ZJlHKoSaPH45fcWsdxzoOIx2FfidDS3f7eBWn4AOl0XvTG4NeHUH+5Xziz3GvpmJmOUF
-         n7kCMuIBUjyECmC9+0k7SoHx11JyfAYGogsyGmmI9I8D2UU1wWwp5w+v7f3DA85KXKd4
-         EvA9DC8rAdsptRD8t1+ukRoMP+7Uy2YZ2wGhCjDI+yzxo1ffh/duyExPAUTwWfrUhc9f
-         8H+Q==
-X-Gm-Message-State: ACgBeo2osWgjxW8WOfYfglAqGXLamnHfDLOm1sKGK16kLs6GA456IHQ6
-        NOyMOb4TdsHoLRby1eXdaZ9IFkxtegA=
-X-Google-Smtp-Source: AA6agR7zRkfBlCwk+TxT4r9iiOceSAqhD0U8vSEdSqityZUqM089DSmox1f0QHE5lfMVykKYq9sWWQ==
-X-Received: by 2002:a17:902:ea0d:b0:170:cabd:b28 with SMTP id s13-20020a170902ea0d00b00170cabd0b28mr1146909plg.115.1660799119348;
-        Wed, 17 Aug 2022 22:05:19 -0700 (PDT)
-Received: from localhost ([2406:7400:63:e947:599c:6cd1:507f:801e])
-        by smtp.gmail.com with ESMTPSA id h17-20020a170902f55100b0016e808dbe55sm350841plf.96.2022.08.17.22.05.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 22:05:18 -0700 (PDT)
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Jan Kara <jack@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCHv3 4/4] fs/buffer: Make submit_bh & submit_bh_wbc return type as void
-Date:   Thu, 18 Aug 2022 10:34:40 +0530
-Message-Id: <cb66ef823374cdd94d2d03083ce13de844fffd41.1660788334.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1660788334.git.ritesh.list@gmail.com>
-References: <cover.1660788334.git.ritesh.list@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=5u39g6enjL3TnhMx1SP5kr0OpbGZJ2krVZeHPYNVV2g=;
+        b=p/IFMP4ReTGhlJZXDR/gDMBDK526Dqi6KE4hmH8KFbUHOQLMY8Hv77s+xY3DbnR9L9
+         dSMStn/WhBgRwUvlqjLr0DbWMos1GYKdcUI0z1UbRMGt0+2+DKjASnAl+XLW0OH/mhox
+         heGXLtpJtqtOj1PvuJDBIQdc8iDpVCBeAdAQqH4qu4k1XzNNzAMDqo/je48iLHyzdmT7
+         Rcj21UxUlN+owDcWIdTRuX5xgUMmESnUemGjAS8SHtM+T6qZGC5B0pvMVtYgdhR3tTog
+         5TYi7U/2sFbpqAjBI3as8wNGI0+3kMD3bhCVKNu4q06RIn2usO4Ue2VHtSbJT7j4GRg1
+         f3eQ==
+X-Gm-Message-State: ACgBeo0O61BCv2dzV02GPsOFah/3skbkEPYkKGo7i/kQiea5Tm22IV5w
+        hsWGTUOgGV05S9oBZNptIRYqK3yuzg1aKWSRg7s=
+X-Google-Smtp-Source: AA6agR6BhSrv9VHjUNG2L+DsTl3V2UVGb/bUIhtHawKstOSbcUAHR1+DqJGiFfmXQWeZNN685pcFYOgZx0+Js1zereI=
+X-Received: by 2002:a67:a246:0:b0:38c:9563:d2d8 with SMTP id
+ t6-20020a67a246000000b0038c9563d2d8mr580410vsh.2.1660800005916; Wed, 17 Aug
+ 2022 22:20:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Yv1jwsHVWI+lguAT@ZenIV> <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
+ <Yv2BVKuzZdMDY2Td@ZenIV> <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
+In-Reply-To: <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 18 Aug 2022 08:19:54 +0300
+Message-ID: <CAOQ4uxgA8jD6KnbuHDevNLsjD-LbEs_y1W6uYMEY6EG_es0o+Q@mail.gmail.com>
+Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
+To:     Olga Kornievskaia <aglo@umich.edu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -73,77 +69,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-submit_bh/submit_bh_wbc are non-blocking functions which just submit
-the bio and return. The caller of submit_bh/submit_bh_wbc needs to wait
-on buffer till I/O completion and then check buffer head's b_state field
-to know if there was any I/O error.
+On Thu, Aug 18, 2022 at 3:23 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+>
+> On Wed, Aug 17, 2022 at 8:01 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Wed, Aug 17, 2022 at 06:32:15PM -0400, Olga Kornievskaia wrote:
+> > > On Wed, Aug 17, 2022 at 6:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > >         My apologies for having missed that back when the SSC
+> > > > patchset had been done (and missing the problems after it got
+> > > > merged, actually).
+> > > >
+> > > > 1) if this
+> > > >         r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, fattr);
+> > > > in __nfs42_ssc_open() yields a directory inode, we are screwed
+> > > > as soon as it's passed to alloc_file_pseudo() - a *lot* of places
+> > > > in dcache handling would break if we do that.  It's not too
+> > > > nice for a regular file from non-cooperating filesystem, but for
+> > > > directory ones it's deadly.
+> > >
+> > > This inode is created to make an appearance of an opened file to do
+> > > (an NFS) read, it's never a directory.
+> >
+> > Er...  Where does the fhandle come from?  From my reading it's a client-sent
+> > data; I don't know what trust model do you assume, but the price of
+> > getting multiple dentries over the same directory inode is high.
+> > Bogus or compromised client should not be able to cause severe corruption
+> > of kernel data structures...
+>
+> This is an NFS spec specified operation. The (source file's)
+> filehandle comes from the COPY operation compound that the destination
+> server gets and then uses -- creates an inode from using the code you
+> are looking at now -- to access from the source server. Security is
+> all described in the spec. The uniqueness of the filehandle is
+> provided by the source server that created it.
 
-Hence there is no need for these functions to have any return type.
-Even now they always returns 0. Hence drop the return value and make
-their return type as void to avoid any confusion.
+Olga,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- fs/buffer.c                 | 13 ++++++-------
- include/linux/buffer_head.h |  2 +-
- 2 files changed, 7 insertions(+), 8 deletions(-)
+NFS spec does not guarantee the safety of the server.
+It's like saying that the Law makes Crime impossible.
+The law needs to be enforced, so if server gets a request
+to COPY from/to an fhandle that resolves as a non-regular file
+(from a rogue or buggy NFS client) the server should return an
+error and not continue to alloc_file_pseudo().
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index c21b72c06eb0..0a7ba84c1905 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -52,8 +52,8 @@
- #include "internal.h"
- 
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
--static int submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
--			 struct writeback_control *wbc);
-+static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-+			  struct writeback_control *wbc);
- 
- #define BH_ENTRY(list) list_entry((list), struct buffer_head, b_assoc_buffers)
- 
-@@ -2673,8 +2673,8 @@ static void end_bio_bh_io_sync(struct bio *bio)
- 	bio_put(bio);
- }
- 
--static int submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
--			 struct writeback_control *wbc)
-+static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-+			  struct writeback_control *wbc)
- {
- 	const enum req_op op = opf & REQ_OP_MASK;
- 	struct bio *bio;
-@@ -2717,12 +2717,11 @@ static int submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 	}
- 
- 	submit_bio(bio);
--	return 0;
- }
- 
--int submit_bh(blk_opf_t opf, struct buffer_head *bh)
-+void submit_bh(blk_opf_t opf, struct buffer_head *bh)
- {
--	return submit_bh_wbc(opf, bh, NULL);
-+	submit_bh_wbc(opf, bh, NULL);
- }
- EXPORT_SYMBOL(submit_bh);
- 
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index def8b8d30ccc..b1373844c43d 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -229,7 +229,7 @@ void ll_rw_block(blk_opf_t, int, struct buffer_head * bh[]);
- int sync_dirty_buffer(struct buffer_head *bh);
- int __sync_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
- void write_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
--int submit_bh(blk_opf_t, struct buffer_head *);
-+void submit_bh(blk_opf_t, struct buffer_head *);
- void write_boundary_block(struct block_device *bdev,
- 			sector_t bblock, unsigned blocksize);
- int bh_uptodate_or_lock(struct buffer_head *bh);
--- 
-2.35.3
-
+Thanks,
+Amir.
