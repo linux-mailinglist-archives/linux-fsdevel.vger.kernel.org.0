@@ -2,52 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B374C597A79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 02:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E08597A86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 02:14:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242284AbiHRAFC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 20:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
+        id S242399AbiHRAMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 20:12:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234311AbiHRAFB (ORCPT
+        with ESMTP id S242046AbiHRAMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 20:05:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E01D090C56;
-        Wed, 17 Aug 2022 17:04:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7590A6135F;
-        Thu, 18 Aug 2022 00:04:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D45C433D6;
-        Thu, 18 Aug 2022 00:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660781098;
-        bh=qcZsvpEmhW2ANyH2exw1+yii4wiyCGM8J+EJmzbWQ8w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZZBGz6wKspJhZry6qteIXfWbgVqUUU2FslZhUNI42LfiUhO6lriJbFR3or6sgmqg2
-         d2VfmraQsrCH+jnqffs11xiD7Cb3/qOxTi3TEzS2IWyXC4Sg3yr4JJmElFcBDc7631
-         yGgVKsddzJ9Fj0ddt7zGE/0CHxt0M1C+QjlEO8jfZdvOUWXEGNjeWOV8yuCpyuOLdY
-         wh9GWJoHIyNIxRQkB6nAvNK/y5b0nNSQlVDITt/UslorWQ85ZA21TFfvHNm+rZ/njE
-         teWmSR+CPdxFOFvfRNQ/SCsATKoqEjLC0i5z0TAlxCUUFdI9HzWvKkZ4QescTkK1vE
-         7AqN5VeWiqtfg==
-Date:   Wed, 17 Aug 2022 17:04:58 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     david@fromorbit.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] xfs: don't bump the i_version on an atime update in
- xfs_vn_update_time
-Message-ID: <Yv2CKmNC+893l2GG@magnolia>
-References: <20220817130002.93592-1-jlayton@kernel.org>
+        Wed, 17 Aug 2022 20:12:41 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E687A3472;
+        Wed, 17 Aug 2022 17:12:40 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id kb8so385254ejc.4;
+        Wed, 17 Aug 2022 17:12:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=7/4BkSK2ivlMN+yfgyzhpWGDTfbhKFUZmzTnrYzYM9k=;
+        b=F2cw+C/YT9FxyzpQFbxjpfEIH9bNn1dtT574gfnjGdftoV5vou9A5W090Ut3hLGOGz
+         5690o5bQTfz5fbXSyvGmS3iHfNB+FcBSkykWT/KUMgzG/k66tBKzIu2OwrCMa7uRpv3H
+         ah/rxnR4TyA2V3OqrHq0IL9iRt6yevG38bOz2Jxkre12nodacSEjVAxe/LgstE7f36mM
+         /GAJ5c3xKBrtHSE3ugBqaqRAyqa//aI91KW3Bl+khkLUzpN0QoRc3t2LimNOJ0Ajr19B
+         tH9sj/Oyk5nsT+yPBBhLTBatK4z58Gb09pK7mlzR5iDXtllDAwTMi4EY2XwhwhQJiSNs
+         zyYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=7/4BkSK2ivlMN+yfgyzhpWGDTfbhKFUZmzTnrYzYM9k=;
+        b=EnfwmnEPz03yMQJ/db877pfc2J3t55RkTmjZhP6XQg/gueh/Dad6RNs5kXN+xt39/f
+         BessE+iXKs75C1qI1W5q7p1dvhq66/FlnYg6WJFBhlI8s+aNXYOJEsgGLuvMyprxCgn5
+         /Jr++DVhqSEZ1TWAUMVb6ReKdgf09wUc13Nt/Wb2JZy0HnYyZr6IXHhLCdRilBew7WUR
+         H58f8AWIfWOyX4WIhm+u7dKOkItnZWWDW28+GFtTn6KtFFZ7t85Hm1RMSF/lKuQoBCqd
+         VM6s6K3Sx3EIYM+0v5We2iylpUMsgmBDc7zLrk5izkUB3jPvDAThVWlhKwpl147XPQpW
+         wyrw==
+X-Gm-Message-State: ACgBeo2n2+Jj2IcHrLcDmhT/mi//ykITAP7IvuPrl+BSJN3oK4ziMFOq
+        Fceorj8wx1MMOpAiyGLNMYvOlihPHAtJVbdkRlU=
+X-Google-Smtp-Source: AA6agR532kA+p5kNF2ebq2kRlZaERgnt87755to9TXMMNfH15pmv7Z9Uw4g7e5z/M3c5z7xZzRO9DC3rtAzBGUxNTUE=
+X-Received: by 2002:a17:907:1c93:b0:730:c9c3:f6f8 with SMTP id
+ nb19-20020a1709071c9300b00730c9c3f6f8mr296657ejc.17.1660781558495; Wed, 17
+ Aug 2022 17:12:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220817130002.93592-1-jlayton@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+References: <Yv1jwsHVWI+lguAT@ZenIV> <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
+ <Yv2BVKuzZdMDY2Td@ZenIV>
+In-Reply-To: <Yv2BVKuzZdMDY2Td@ZenIV>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Wed, 17 Aug 2022 20:12:27 -0400
+Message-ID: <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
+Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,90 +69,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 09:00:02AM -0400, Jeff Layton wrote:
-> xfs will update the i_version when updating only the atime value, which
-> is not desirable for any of the current consumers of i_version. Doing so
-> leads to unnecessary cache invalidations on NFS and extra measurement
-> activity in IMA.
-> 
-> Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
-> transaction should not update the i_version. Set that value in
-> xfs_vn_update_time if we're only updating the atime.
+On Wed, Aug 17, 2022 at 8:01 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Aug 17, 2022 at 06:32:15PM -0400, Olga Kornievskaia wrote:
+> > On Wed, Aug 17, 2022 at 6:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > >         My apologies for having missed that back when the SSC
+> > > patchset had been done (and missing the problems after it got
+> > > merged, actually).
+> > >
+> > > 1) if this
+> > >         r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, fattr);
+> > > in __nfs42_ssc_open() yields a directory inode, we are screwed
+> > > as soon as it's passed to alloc_file_pseudo() - a *lot* of places
+> > > in dcache handling would break if we do that.  It's not too
+> > > nice for a regular file from non-cooperating filesystem, but for
+> > > directory ones it's deadly.
+> >
+> > This inode is created to make an appearance of an opened file to do
+> > (an NFS) read, it's never a directory.
+>
+> Er...  Where does the fhandle come from?  From my reading it's a client-sent
+> data; I don't know what trust model do you assume, but the price of
+> getting multiple dentries over the same directory inode is high.
+> Bogus or compromised client should not be able to cause severe corruption
+> of kernel data structures...
 
-I suppose that would work, since explicit atime updates from futimens()
-go through notify_change/setattr and not ->update_time.
-
---D
-
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_log_format.h  |  2 +-
->  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
->  fs/xfs/xfs_iops.c               | 10 +++++++---
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> Dave,
-> 
-> How about this for an alternate approach? This just explicitly ensures
-> that we don't bump the i_version on an atime-only update, and seems to
-> fix the testcase I have.
-> 
-> diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
-> index b351b9dc6561..866a4c5cf70c 100644
-> --- a/fs/xfs/libxfs/xfs_log_format.h
-> +++ b/fs/xfs/libxfs/xfs_log_format.h
-> @@ -323,7 +323,7 @@ struct xfs_inode_log_format_32 {
->  #define	XFS_ILOG_ABROOT	0x100	/* log i_af.i_broot */
->  #define XFS_ILOG_DOWNER	0x200	/* change the data fork owner on replay */
->  #define XFS_ILOG_AOWNER	0x400	/* change the attr fork owner on replay */
-> -
-> +#define XFS_ILOG_NOIVER	0x800	/* don't bump i_version */
->  
->  /*
->   * The timestamps are dirty, but not necessarily anything else in the inode
-> diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-> index 8b5547073379..ffe6d296e7f9 100644
-> --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> @@ -126,7 +126,7 @@ xfs_trans_log_inode(
->  	 * unconditionally.
->  	 */
->  	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
-> -		if (IS_I_VERSION(inode) &&
-> +		if (!(flags & XFS_ILOG_NOIVER) && IS_I_VERSION(inode) &&
->  		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
->  			iversion_flags = XFS_ILOG_CORE;
->  	}
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 45518b8c613c..54db85a43dfb 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1021,7 +1021,7 @@ xfs_vn_update_time(
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> -	int			log_flags = XFS_ILOG_TIMESTAMP;
-> +	int			log_flags = XFS_ILOG_TIMESTAMP|XFS_ILOG_NOIVER;
->  	struct xfs_trans	*tp;
->  	int			error;
->  
-> @@ -1041,10 +1041,14 @@ xfs_vn_update_time(
->  		return error;
->  
->  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> -	if (flags & S_CTIME)
-> +	if (flags & S_CTIME) {
->  		inode->i_ctime = *now;
-> -	if (flags & S_MTIME)
-> +		log_flags &= ~XFS_ILOG_NOIVER;
-> +	}
-> +	if (flags & S_MTIME) {
->  		inode->i_mtime = *now;
-> +		log_flags &= ~XFS_ILOG_NOIVER;
-> +	}
->  	if (flags & S_ATIME)
->  		inode->i_atime = *now;
->  
-> -- 
-> 2.37.2
-> 
+This is an NFS spec specified operation. The (source file's)
+filehandle comes from the COPY operation compound that the destination
+server gets and then uses -- creates an inode from using the code you
+are looking at now -- to access from the source server. Security is
+all described in the spec. The uniqueness of the filehandle is
+provided by the source server that created it.
