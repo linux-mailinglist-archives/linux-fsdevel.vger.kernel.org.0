@@ -2,62 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB1B597DDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 07:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A254597DD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 07:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242969AbiHRFFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 01:05:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60660 "EHLO
+        id S243118AbiHRFFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 01:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242769AbiHRFFE (ORCPT
+        with ESMTP id S242769AbiHRFFG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 01:05:04 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 423F79F19A;
-        Wed, 17 Aug 2022 22:04:59 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id 81so534784pfz.10;
-        Wed, 17 Aug 2022 22:04:59 -0700 (PDT)
+        Thu, 18 Aug 2022 01:05:06 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D869F1B6;
+        Wed, 17 Aug 2022 22:05:04 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id jm11so579839plb.13;
+        Wed, 17 Aug 2022 22:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=zqyIaGt/ExqtQmslvy9xLCDQR0MrGNhaTrbDsaW27oI=;
-        b=RzmzR3eAdxOXzboQinMz32niTOdFBYn3Mf29kgMNnSAW2rzWPcMPm8/p/44uxJ8nCS
-         fsdzbWE18EYaI/JJQlHF2BcVWX8GX4+YT7q3X0HkDhEddW9Jd69nzXF1RT88Qo8Ur82h
-         RBTxVzHXkhO99IB+oxNeXeV4CyAemFfqZYFIS9BGU8GgWl2XRKBgyEbRfTK6Fb8H2fzC
-         peC9WSv1u0QegTkBdeAy+zf+P8DTuMlqSwy0cDmDEQp8DdKPaKVFsPfxCZcb0umHOLDW
-         Lyvst7Fx/A9qPxt6cjRKQe7rfgHmMPkrStk+mzR8Y+tw68vkPkMSymEyu/W7yHgzB77T
-         URhw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=CIXPojNt+yIDbPYg2qBN1uuNsthwKBFWVWuxVjGTqgo=;
+        b=TRzMhtMr+7LC87xERlKGV5G6CxzQx5xbGT9HbWz+Gnh28ZyzkvcbsRPRjazJEIfiPk
+         OchvFk0j2y8dQA88uW4rT4kDzx19T1pUsNZTk0MmswMmjf+7h4D+dWq1lTTjhjcPJ5wB
+         nEzMroSn59Bcyv5lVTp17tbHffMFvptE4IG9vpy2Vc5NH43IpTuAGu8UoS4ZY5OOAs4C
+         52QKxhNOeeYFJ+RfiJa44rn6QxL3GzYy7YfHwhkr/vobUhRYio1ywP8+xrhQ4H1WEIlo
+         Z8Sv4XRhLzksyrD29r08JtoRZkrFEjnasi7Dp4jqFmClN8/q9FN6OfT0vEs35q+EyXVq
+         Tb7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=zqyIaGt/ExqtQmslvy9xLCDQR0MrGNhaTrbDsaW27oI=;
-        b=yXVd4iYY/JcrHtXD08Drrg9EOIFcUAsedQpYbAMnt8dpWHeIQSne3/bRgGDngFT3ck
-         6vAGbEjY3RpYIuQYE/xymGwpgRKUi7cCO72aXf2S2n5wpmRr0PqxWhDPpny0xbd4dl0/
-         y10snXPW8XBLgPdccqsGEfpSiuLmr2Fhi0Ov+EhZLEc4rIEj+vjIUTRaY2NFsjHJMdhq
-         9RavBmkqgZX1JLemCuou6F4faAai3U44Hh8hmQPCZdtGupLwCKm9/N300ZCFN0p+8cCx
-         T4qwvfdVIgwKY5iC9q088RShlb5TQ31KGDfoIjhYPaE+5iZY5GLwgRxtmgJ3860fvdMz
-         yNAg==
-X-Gm-Message-State: ACgBeo0p9PJ8sGCqJKtEWgjZkVDmIJ1ZaK2h3/Msy8e1C5XDNoCpF7hR
-        pvKC9BIESVhf98q7cflPYcG9p4KxiWE=
-X-Google-Smtp-Source: AA6agR71ckaXfe+LO01tzSzvuueKremnthqSkRj6McdiTjcD/DeXMRpwfxI4QvKm8R2stgNS7YCv7w==
-X-Received: by 2002:a63:1b55:0:b0:41e:2cc8:4296 with SMTP id b21-20020a631b55000000b0041e2cc84296mr1225831pgm.510.1660799098528;
-        Wed, 17 Aug 2022 22:04:58 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=CIXPojNt+yIDbPYg2qBN1uuNsthwKBFWVWuxVjGTqgo=;
+        b=tbOF1zF/n/MrSHnrkGKyHdBvKPF1ki9O6k80cpqASgYqbiiB101RN7OX4U4kuOeq2w
+         hu1xH0tjHCScL2QbVEBa7W3EHipaLJZNMesnDRFjq7mHiykuCN+qErp0d7fZMTm7M1bx
+         yQ8KlW3c0fFsViNR2by4opeYxZoQnZqu9SWsT/fYNeBy1itld4WkBzN7Lat/WJ3sFxR6
+         QAT1eVlCwJgf5k5bfnDc/ZMjPKkHm894gIvYaZkuYtqqRN7tIqKJPINTdVr+BMIJ0CZ1
+         ZpEWaOtxBpNAuS4uUXT6uDINau4PwHn0D2obHr9mlMtpUKhrntJEJ9kYFt7ZZnSLaly/
+         9oaQ==
+X-Gm-Message-State: ACgBeo1chpgMQF16Zcmt+VbvOXmWIGy0avf+DEwZBHJNsVS0DfLetyIW
+        m7sSLFtZFTBP+1Sf9zo2ts+wGk/5CNw=
+X-Google-Smtp-Source: AA6agR6AL0hNqRWZBg/FFHYRTLG1VbwkZ8VSQJ/nomhHtQdOhWavTe/L/Dc9wFHjH4XDt5Vf6166vg==
+X-Received: by 2002:a17:902:dac9:b0:172:af95:2db4 with SMTP id q9-20020a170902dac900b00172af952db4mr1414037plx.70.1660799103779;
+        Wed, 17 Aug 2022 22:05:03 -0700 (PDT)
 Received: from localhost ([2406:7400:63:e947:599c:6cd1:507f:801e])
-        by smtp.gmail.com with ESMTPSA id k5-20020a17090a404500b001faaed06ce2sm425762pjg.28.2022.08.17.22.04.57
+        by smtp.gmail.com with ESMTPSA id j8-20020a170902da8800b0016edff78844sm330530plx.277.2022.08.17.22.05.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 22:04:58 -0700 (PDT)
+        Wed, 17 Aug 2022 22:05:03 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Jan Kara <jack@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>,
         linux-ntfs-dev@lists.sourceforge.net,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCHv3 0/4] submit_bh: Drop unnecessary return value
-Date:   Thu, 18 Aug 2022 10:34:36 +0530
-Message-Id: <cover.1660788334.git.ritesh.list@gmail.com>
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCHv3 1/4] jbd2: Drop useless return value of submit_bh
+Date:   Thu, 18 Aug 2022 10:34:37 +0530
+Message-Id: <e069c0539be0aec61abcdc6f6141982ec85d489d.1660788334.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <cover.1660788334.git.ritesh.list@gmail.com>
+References: <cover.1660788334.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -70,41 +73,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-submit_bh/submit_bh_wbc are non-blocking functions which just submits
-the bio and returns. The caller of submit_bh/submit_bh_wbc needs to wait
-on buffer till I/O completion and then check buffer head's b_state field
-to know if there was any I/O error.
+submit_bh always returns 0. This patch cleans up 2 of it's caller
+in jbd2 to drop submit_bh's useless return value.
+Once all submit_bh callers are cleaned up, we can make it's return
+type as void.
 
-Hence there is no need for these functions to have any return type.
-Even now they always returns 0. Hence drop the return value and make
-their return type as void to avoid any confusion.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ fs/jbd2/commit.c  | 10 ++++------
+ fs/jbd2/journal.c |  9 ++++-----
+ 2 files changed, 8 insertions(+), 11 deletions(-)
 
-PATCHv2 -> PATCHv3
-===================
-1. Rebased on top of the latest 6.0-rc1 release.
-   Recently REQ_OP_** req operations and REQ_** flags were combined as one
-   parameter (blk_opf_t type) to submit_bh() API.
-2. Since the patch series remains trivial on rebase, I have retained the
-   reviewed-by from Jan and Christoph.
-
-RFC -> PATCHv2
-===============
-1. Added Patch-2 to fix ntfs_submit_bh_for_read() caller.
-2. Added Reviewed-by from Christoph.
-
-Ritesh Harjani (IBM) (4):
-  jbd2: Drop useless return value of submit_bh
-  fs/ntfs: Drop useless return value of submit_bh from ntfs_submit_bh_for_read
-  fs/buffer: Drop useless return value of submit_bh
-  fs/buffer: Make submit_bh & submit_bh_wbc return type as void
-
- fs/buffer.c                 | 23 ++++++++++-------------
- fs/jbd2/commit.c            | 10 ++++------
- fs/jbd2/journal.c           |  9 ++++-----
- fs/ntfs/file.c              |  4 ++--
- include/linux/buffer_head.h |  2 +-
- 5 files changed, 21 insertions(+), 27 deletions(-)
-
---
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index b2b2bc9b88d9..6b51d2dc56e2 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -122,8 +122,8 @@ static int journal_submit_commit_record(journal_t *journal,
+ {
+ 	struct commit_header *tmp;
+ 	struct buffer_head *bh;
+-	int ret;
+ 	struct timespec64 now;
++	blk_opf_t write_flags = REQ_OP_WRITE | REQ_SYNC;
+ 
+ 	*cbh = NULL;
+ 
+@@ -155,13 +155,11 @@ static int journal_submit_commit_record(journal_t *journal,
+ 
+ 	if (journal->j_flags & JBD2_BARRIER &&
+ 	    !jbd2_has_feature_async_commit(journal))
+-		ret = submit_bh(REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH |
+-				REQ_FUA, bh);
+-	else
+-		ret = submit_bh(REQ_OP_WRITE | REQ_SYNC, bh);
++		write_flags |= REQ_PREFLUSH | REQ_FUA;
+ 
++	submit_bh(write_flags, bh);
+ 	*cbh = bh;
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 6350d3857c89..f669ae1ff7a2 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1606,7 +1606,7 @@ static int jbd2_write_superblock(journal_t *journal, blk_opf_t write_flags)
+ {
+ 	struct buffer_head *bh = journal->j_sb_buffer;
+ 	journal_superblock_t *sb = journal->j_superblock;
+-	int ret;
++	int ret = 0;
+ 
+ 	/* Buffer got discarded which means block device got invalidated */
+ 	if (!buffer_mapped(bh)) {
+@@ -1636,7 +1636,7 @@ static int jbd2_write_superblock(journal_t *journal, blk_opf_t write_flags)
+ 		sb->s_checksum = jbd2_superblock_csum(journal, sb);
+ 	get_bh(bh);
+ 	bh->b_end_io = end_buffer_write_sync;
+-	ret = submit_bh(REQ_OP_WRITE | write_flags, bh);
++	submit_bh(REQ_OP_WRITE | write_flags, bh);
+ 	wait_on_buffer(bh);
+ 	if (buffer_write_io_error(bh)) {
+ 		clear_buffer_write_io_error(bh);
+@@ -1644,9 +1644,8 @@ static int jbd2_write_superblock(journal_t *journal, blk_opf_t write_flags)
+ 		ret = -EIO;
+ 	}
+ 	if (ret) {
+-		printk(KERN_ERR "JBD2: Error %d detected when updating "
+-		       "journal superblock for %s.\n", ret,
+-		       journal->j_devname);
++		printk(KERN_ERR "JBD2: I/O error when updating journal superblock for %s.\n",
++				journal->j_devname);
+ 		if (!is_journal_aborted(journal))
+ 			jbd2_journal_abort(journal, ret);
+ 	}
+-- 
 2.35.3
 
