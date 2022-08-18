@@ -2,279 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE15597AD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 03:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17353597ADB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 03:14:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242417AbiHRBHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 21:07:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43644 "EHLO
+        id S242529AbiHRBLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 21:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239618AbiHRBHd (ORCPT
+        with ESMTP id S240011AbiHRBLQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 21:07:33 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1F4D371BF2;
-        Wed, 17 Aug 2022 18:07:31 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-52-176.pa.nsw.optusnet.com.au [49.181.52.176])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A4E3D62D843;
-        Thu, 18 Aug 2022 11:07:29 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oOU0N-00EP2F-67; Thu, 18 Aug 2022 11:07:27 +1000
-Date:   Thu, 18 Aug 2022 11:07:27 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
+        Wed, 17 Aug 2022 21:11:16 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2137.outbound.protection.outlook.com [40.107.244.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E888910A1;
+        Wed, 17 Aug 2022 18:11:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lqF59fyzGSuKSfYFVymhmuwg2o6DuUtkWScwc6okrfPYSKGLQgEsZL006KUq9bzu44KgNoT5j5t0Lo0VCZgoa010ChdrRMqL4QQjT0IPHn5tc1bA5rRNIBwLY9N+zLf2fA29KK/xvi9uW2j/PsDQZAImS8RRVNalVAEPKUO5CVS6LEHGS1bFUCdgOVk0UaD2CNPLVY0EQcTJJ32m6HIgeqJJiHESIGsaY1wzKZOzXRBUnkaaNOe/yTeb0IZtOCcwW/2YKVDuT7D2PXNiC3hPxoIXpdIofBOpJF2WoIa160SKPMfv52b9KPrb9+ZZ3W4VOAY0lj4p9oaj8F8deO90aA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ou4TCwG1aPb5kP4GygVMzIFl+mnEI6xwNWaeY9a0s+w=;
+ b=Z4LVo05eKSrNbc0dKIsVumZq6831ghIWW3phgl2xNZ7grF57QewbaUlWipkrcTPWi3vN8XJac3XI/jD43+gd967mwZH5key/9fR1+TDrHmFtAcAUqqzATgD+2NIxIpqIqKufEmXdiIr/UbY/0tcOoNNMZMnH7XzoHC7K07bTU6JiNOF45h88GuwYa6Z1mVk03JN9TUrJo8YRPq/KXeSNxIUBY7BN1aWDoGcntTAUcZ0AUY3rH+USHCfAwSwy/yn22v7byElA74k8WowB3SACtbhOvM3QyE/JtBzObmX1kSBYtOlAf+zMY7eusc+bp9hBAY/CUv6MgZrSP5KqxEm1lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ou4TCwG1aPb5kP4GygVMzIFl+mnEI6xwNWaeY9a0s+w=;
+ b=gXchDY1//BY352esbGPiphnjRszqdcKVjrqdnANm1YOXWsgG6CkQ0BhxU5leu57l1NfxsZXoFvsrYFOcJvUWS9BBkwCFFRThTRpIjnAkXBc0qVI79L/q4WlsH7bmL/XRl/dENpriHwqwxqEC5+wrl0NkC9T8MSLcSNMckOXgBZw=
+Received: from DM8PR13MB5079.namprd13.prod.outlook.com (2603:10b6:8:22::9) by
+ BYAPR13MB2680.namprd13.prod.outlook.com (2603:10b6:a03:fd::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5546.14; Thu, 18 Aug 2022 01:11:10 +0000
+Received: from DM8PR13MB5079.namprd13.prod.outlook.com
+ ([fe80::2c2d:ad57:1de2:b42d]) by DM8PR13MB5079.namprd13.prod.outlook.com
+ ([fe80::2c2d:ad57:1de2:b42d%4]) with mapi id 15.20.5566.004; Thu, 18 Aug 2022
+ 01:11:09 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "david@fromorbit.com" <david@fromorbit.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+CC:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
 Subject: Re: [PATCH] xfs: fix i_version handling in xfs
-Message-ID: <20220818010727.GB3600936@dread.disaster.area>
+Thread-Topic: [PATCH] xfs: fix i_version handling in xfs
+Thread-Index: AQHYsXLXiDzQGb6SwE6W212lBryYZK2xqt0AgAAELwCAAHEdgIABu7uA
+Date:   Thu, 18 Aug 2022 01:11:09 +0000
+Message-ID: <c61568de755fc9cd70c80c23d63c457918ab4643.camel@hammerspace.com>
 References: <20220816131736.42615-1-jlayton@kernel.org>
- <Yvu7DHDWl4g1KsI5@magnolia>
- <e77fd4d19815fd661dbdb04ab27e687ff7e727eb.camel@kernel.org>
- <20220816224257.GV3600936@dread.disaster.area>
- <b237ae4462b26c88358d4a3aab044f12c86771fb.camel@kernel.org>
+         <Yvu7DHDWl4g1KsI5@magnolia>
+         <e77fd4d19815fd661dbdb04ab27e687ff7e727eb.camel@kernel.org>
+         <20220816224257.GV3600936@dread.disaster.area>
+In-Reply-To: <20220816224257.GV3600936@dread.disaster.area>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1f4b12cf-66c7-44d9-1e55-08da80b688f3
+x-ms-traffictypediagnostic: BYAPR13MB2680:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 28x0aU62eIpfKWh1gVIpISiE1v+/f0xxuvH9U9FzJpS9ladH7Qe5oFY3lQOaiEP16EKChWich4dBGZ5clSJ6j9igWoxbGtTMZfD9XVL1QdZOipk9p9jPSCvLzatBQ/41mvECO0MR8QdIPWkZelfdR9B7skJj6O9swmRw/xaWw3U1azwMKXDhCAFwpg5gHubTFn8FLOigmQFxBj4EwEJEHuE/SFIJ/45BOR/pQ2FEUJoWehxrQWpkPjiOHteh7EVO6EBJbp8aswNUv2DWsfgYgaX7vI5QTyNwkqky6qYbopJKQTibuMFuSw8RCzfiX487tfd9hY8t0M4rdv5uXUNTkSM+EWEi0n29KBjtpceK0NVJlYgqYA12gNHXHBvHsfIubw23DePq9lyQxkUuZUbvIyvTqhQcBW1T1tTqXkSlgx6M6HY0ejicCT3eq36IQSy2fiCVRth0MjnMTUpVAiQksRS025FvLbhTgO8z1LUbFAefVaThmFMduStorEJXeHhch3vivCzdgRI3xAh7SbjHwFfxguMFIyQg0dad+DN7UunaSDTPQA2JS7Ty0UnoiE8CjxEGsPToPKKOmlbcSzuecbmBl3JkikzVMRvD/v4mhhzrRbadaYjrKHB5Y8KIE/aGuxz4snWlpvFbwqD+2DOD786QhfCGpIv+fWH7U8yiIjm3zoloJ3wcocQ706Oh414zh6nulIeRKEM3qcUMfFRn/Ru3SKMOAjGcOYkzngwSXZ0aiCsULgwdItakPi9JXrzr
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5079.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(136003)(346002)(396003)(366004)(376002)(39840400004)(71200400001)(38100700002)(83380400001)(66476007)(91956017)(36756003)(4326008)(316002)(6486002)(66946007)(66556008)(66446008)(54906003)(76116006)(110136005)(64756008)(8676002)(6506007)(26005)(2616005)(6512007)(8936002)(186003)(478600001)(86362001)(38070700005)(5660300002)(41300700001)(122000001)(2906002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RWJJaFNYVm5uV3NjczJPWE5WenV0VVdDMEl4ZEdBajZGOFNyVVFXTjlaMUhF?=
+ =?utf-8?B?bmxkNjYwZlFTM2l6R1h3bUZ6QUMyemtqWHNtcU9ZR1J3YktGNnFIajA3VkFK?=
+ =?utf-8?B?NVZvNit4emx6Q2M1K1ZXTnV6cFRoMHhRR0NtdjdaN3JwQVBybTFYTjNUbnNN?=
+ =?utf-8?B?bXRQM1VHdlliUThqbTIyNjB5M0ZwTjEzYmx2Yk5mdE4xMFN3M0tvOUNBand0?=
+ =?utf-8?B?T0w5R0tKMVVFbkRSM252azFNdHpmanhwZ0FRdzltaytkYVlEYXFtWjBrbGNm?=
+ =?utf-8?B?Ulg5YkluN0ZlNHhlMmx0Z0tvTjJGampsVWtPTnJoNnZOKy9jSWdacWRTNito?=
+ =?utf-8?B?dGVobUp3eHBOeUhwSndqS2FuRDFqSTdoNUtRN0NmcXMvaFphNmg5VnlSMXhY?=
+ =?utf-8?B?b014eUF4MVlzV3BqN3c0S09KeTlJN0V0QlVNWUlEY1ZnUUdEUkIvblN3LzY1?=
+ =?utf-8?B?TXVlN09VbFNROGNteGhvNEN2Ulp6bVpxMEwrTVJ2TlJ3aW1zTzJkWjBjajNu?=
+ =?utf-8?B?VFpTTmpkL0pLeCtFSXNpUElDbExBV2I5Z2h6Sm1RY1BHWGY3TjRIbGJBUUxa?=
+ =?utf-8?B?Tisxa3pncmJ4SVh1bXoxaHloQWdXRTk2OGFLaTVnMm0vanhJQnNwY0JGVnNN?=
+ =?utf-8?B?T0UxMnVqOVZVMnluZVhVY0ozTzlzeUVoNjdsRnI3b0dMN2NxLzFrS3daMVIx?=
+ =?utf-8?B?ZjJKWE5WY3VyZXFrWlZ6V3MrcE4xaXd5Y1F1Tkpjb1BlQlFNNXQ0THIrTGY0?=
+ =?utf-8?B?YzJQa3liUFYzajdKWEhPL1RBczhQTjFGaUZvQ1JzNFlwdy9uUXg1cUlsaEZl?=
+ =?utf-8?B?MmEzQzc0UkpWVVNhTExSc0QyazZXcDR4YjUrNDFRWitMK0lCTVA1OGtRTVB5?=
+ =?utf-8?B?YTM5Y0xYS21oVkF2RTh1a0F5MithcU1ucGN6NHVZdG9GK1JKTUZEYWp5K2Zv?=
+ =?utf-8?B?VG1aQVQxMWo0c1J4b0JSK3Zsc0V0NTBnMmFha2tuOHlvYzNPUjZOTGJOTExQ?=
+ =?utf-8?B?OXNOdVRYLzYrVTZxRDk0Uk81K3FaM3hYT1c0K0NuNG5BcG5Yd215R3NnNDhL?=
+ =?utf-8?B?TXlaSjNiZ0JVSm40ZHNzL3RWZC9CdTl2em1zb3A5a0szb0hGb3lRRTVRc0ZG?=
+ =?utf-8?B?SHdjd1B3WWtsb0MvdEFFL2NzYStTVVFCdzAyV1VnUlZ3SUdCN1NiT1JlREFR?=
+ =?utf-8?B?M0U4QVFoU2tXNVdHdXFLSTRiNXF4djc3Mk9kaXo4ZktXRGVCcTF3VEZaNlZl?=
+ =?utf-8?B?SDhhRHkvVkpkKy9yTDkzaGVyVmRUZlZ3a1dyWi9Hdi9hbFJTRmw5MG5MUFNj?=
+ =?utf-8?B?KzRTYUN5YWRZK3krb0pxbFhJdlQ2b3lVc2VkY3pUU2RiM2IvNnB4cFNuU3hw?=
+ =?utf-8?B?Z2VtaE5NSTdETHB3ZU1GVDdicEJPN2ZkYms3eTlOeUFiZGxmSlZqdTExSnYv?=
+ =?utf-8?B?Qm5oeFF2Y3JDa2NDWktpUkpubW1QUGkyUEN6SGhWZ28yOFN1dklHWVNSMjBI?=
+ =?utf-8?B?UjdHaCsyenJvQXJYeXJNQ1o2cHJWb0pibXBuQ25VVmFHTEQwQlFxTWM0Vzln?=
+ =?utf-8?B?RGtyamdsSmo2d3VMOXV2L3BZVTZzeW5wTnNDVXJDdnR1Ymt3MWc3SU5hOXh5?=
+ =?utf-8?B?SjFwUzYyd3ZjaXcrRHNucENjQyt1RUtWYlYrMFgrWVYrVzhRVHY4UGovUnVm?=
+ =?utf-8?B?UUpETlNqUG0vTHZST1RQUTJRREhhSENlUVFYSExVSnFFWHgwU0N6WjdwRHJ2?=
+ =?utf-8?B?MWVGUTdCQTl0VGNlOTZMNnBoemFtYVRNSGFneUJ3VVZnR2JIQVFoa0FNUlIy?=
+ =?utf-8?B?elh3SndyQXJJY05iSzZmaWxMZ05TN3B3dkhHL0NKVC8vQnFodVh3RjBueWxn?=
+ =?utf-8?B?d0trRWgrT2RaaE84Uy9sZlowR002UHZDMXVJU0Qremw4NVp1WWxoWmVDM1cv?=
+ =?utf-8?B?elZ2aUlaaUI4c00xczZQWGdWdXhDZVNrNnNzcFR5ZWlaQnlHanVsZG9ITXNo?=
+ =?utf-8?B?S0Qrb1ZGaW5saXZJeHRPSFVYZnJRZUQ4bTVSeGpBR0x5TFNneUNTbE5zSXhD?=
+ =?utf-8?B?Mm5vNHBWbWhmUnNPWUJ6VWRPelhHNEk1OXYzL214MW8rN2gwK0wvYU9EVm44?=
+ =?utf-8?B?WTZEd25WZ2xUbjk5QVA1TjhCa2U1OVJXYkVrcTN1OXBHdHVxWmRMZWlTMHpj?=
+ =?utf-8?B?NFE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6E023DE15875E14AADFD3B76E8F33E05@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b237ae4462b26c88358d4a3aab044f12c86771fb.camel@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62fd90d2
-        a=O3n/kZ8kT9QBBO3sWHYIyw==:117 a=O3n/kZ8kT9QBBO3sWHYIyw==:17
-        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=7-415B0cAAAA:8
-        a=WtEykgsZ6xC5nPhNo5IA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5079.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4b12cf-66c7-44d9-1e55-08da80b688f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2022 01:11:09.5759
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 18HQTnl1Fdzn1maCfHDx3dVEcor5Cv5krudcdG3UaM+xt5k9DTkqhInsOlb3Vfy2Pic1zTiu2811tiMZ3VUViQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR13MB2680
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 08:02:23AM -0400, Jeff Layton wrote:
-> On Wed, 2022-08-17 at 08:42 +1000, Dave Chinner wrote:
-> > On Tue, Aug 16, 2022 at 11:58:06AM -0400, Jeff Layton wrote:
-> > > On Tue, 2022-08-16 at 08:43 -0700, Darrick J. Wong wrote:
-> > > > On Tue, Aug 16, 2022 at 09:17:36AM -0400, Jeff Layton wrote:
-> > > > > The i_version in xfs_trans_log_inode is bumped for any inode update,
-> > > > > including atime-only updates due to reads. We don't want to record those
-> > > > > in the i_version, as they don't represent "real" changes. Remove that
-> > > > > callsite.
-> > > > > 
-> > > > > In xfs_vn_update_time, if S_VERSION is flagged, then attempt to bump the
-> > > > > i_version and turn on XFS_ILOG_CORE if it happens. In
-> > > > > xfs_trans_ichgtime, update the i_version if the mtime or ctime are being
-> > > > > updated.
-> > > > 
-> > > > What about operations that don't touch the mtime but change the file
-> > > > metadata anyway?  There are a few of those, like the blockgc garbage
-> > > > collector, deduperange, and the defrag tool.
-> > > > 
-> > > 
-> > > Do those change the c/mtime at all?
-> > > 
-> > > It's possible we're missing some places that should change the i_version
-> > > as well. We may need some more call sites.
-> > > 
-> > > > Zooming out a bit -- what does i_version signal, concretely?  I thought
-> > > > it was used by nfs (and maybe ceph?) to signal to clients that the file
-> > > > on the server has moved on, and the client needs to invalidate its
-> > > > caches.  I thought afs had a similar generation counter, though it's
-> > > > only used to cache file data, not metadata?  Does an i_version change
-> > > > cause all of them to invalidate caches, or is there more behavior I
-> > > > don't know about?
-> > > > 
-> > > 
-> > > For NFS, it indicates a change to the change attribute indicates that
-> > > there has been a change to the data or metadata for the file. atime
-> > > changes due to reads are specifically exempted from this, but we do bump
-> > > the i_version if someone (e.g.) changes the atime via utimes(). 
-> > 
-> > We have relatime behaviour to optimise away unnecessary atime
-> > updates on reads.  Trying to explicitly exclude i_version from atime
-> > updates in one filesystem just because NFS doesn't need that
-> > information seems ....  misguided.  The -on disk- i_version
-> > field behaviour is defined by the filesystem implementation, not the
-> > NFS requirements.
-> 
-> -o relatime does not fix this.
-
-So why not fix -o relatime to handle this? That way the fix works
-for all filesystems and doesn't require hacking around what the VFS
-has told us to do in every filesystem.
-
-i.e. the VFS told us to update atime, we updated atime and that is a
-persistent metadata change to the inode. Hence a filesystem with a
-persistent change counter has to bump the change counter because
-we've been asked by the VFS to make a persistent metadata change.
-
-If you want atime updates to not make persistent changes to on disk
-metadata, then change the relatime implementation so that it doesn't
-ask the filesystem to update the on-disk atime.
-
-Essentially, what I'm hearing is that NFS wants atime updates to
-behave like lazytime, not like relatime. With lazytime, atime always
-gets updated in memory, but it is not written back to the filesystem
-until a timeout or some other modification is made to the inode or
-file data. THe filesystem doesn't bump iversion until the timestamp
-gets written back in the lazytime case.
-
-IOWs, we already have a mechanism in the kernel for making atime
-updates behave exactly as NFS wants: -o lazytime.
-
-> > > The NFS client will generally invalidate its caches for the inode when
-> > > it notices a change attribute change.
-> > > 
-> > > FWIW, AFS may not meet this standard since it doesn't generally
-> > > increment the counter on metadata changes. It may turn out that we don't
-> > > want to expose this to the AFS client due to that (or maybe come up with
-> > > some way to indicate this difference).
-> > 
-> > In XFS, we've defined the on-disk i_version field to mean
-> > "increments with any persistent inode data or metadata change",
-> > regardless of what the high level applications that use i_version
-> > might actually require.
-> > 
-> > That some network filesystem might only need a subset of the
-> > metadata to be covered by i_version is largely irrelevant - if we
-> > don't cover every persistent inode metadata change with i_version,
-> > then applications that *need* stuff like atime change notification
-> > can't be supported.
-> > 
-> > > > Does that mean that we should bump i_version for any file data or
-> > > > attribute that could be queried or observed by userspace?  In which case
-> > > > I suppose this change is still correct, even if it relaxes i_version
-> > > > updates from "any change to the inode whatsoever" to "any change that
-> > > > would bump mtime".  Unless FIEMAP is part of "attributes observed by
-> > > > userspace".
-> > > > 
-> > > > (The other downside I can see is that now we have to remember to bump
-> > > > timestamps for every new file operation we add, unlike the current code
-> > > > which is centrally located in xfs_trans_log_inode.)
-> > > > 
-> > > 
-> > > The main reason for the change attribute in NFS was that NFSv3 is
-> > > plagued with cache-coherency problems due to coarse-grained timestamp
-> > > granularity. It was conceived as a way to indicate that the inode had
-> > > changed without relying on timestamps.
-> > 
-> > Yes, and the most important design consideration for a filesystem is
-> > that it -must be persistent-. The constraints on i_version are much
-> > stricter than timestamps, and they are directly related to how the
-> > filesystem persists metadata changes, not how metadata is changed or
-> > accessed in memory.
-> > 
-> > > In practice, we want to bump the i_version counter whenever the ctime or
-> > > mtime would be changed.
-> > 
-> > What about O_NOCMTIME modifications? What about lazytime
-> > filesystems? These explicilty avoid or delay persisten c/mtime
-> > updates, and that means bumping i_version only based on c/mtime
-> > updates cannot be relied on. i_version is supposed to track user
-> > visible data and metadata changes, *not timestamp updates*.
-> 
-> I was speaking more about the sorts of activity that should result in
-> the i_version being changed, not about tracking timestamp updates. IOW,
-> if some activity would cause the mtime or ctime to change, then we want
-> to also bump the i_version.
-> 
-> Specifically, for NOCMTIME, I think we'd still want the i_version to
-> change since that option is about timestamps and not i_version.
-
-Exactly my point: this is what XFS currently does. It is also what
-your proposed changes break by tying i_version updates to c/mtime
-updates.
-
-> > Hence, I don't think that trying to modify how filesystems persist
-> > and maintain i_version coherency because NFS "doesn't need i_version
-> > to cover atime updates" is the wrong approach. On-disk i_version
-> > coherency has to work for more than just one NFS implementation
-> > (especially now i_version will be exported to userspace!). 
-> > Persistent atime updates are already optimised away by relatime, and
-> > so I think that any further atime filtering is largely a NFS
-> > application layer problem and not something that should be solved by
-> > changing the on-disk definition of back end filesystem structure
-> > persistence.
-> > 
-> 
-> Fair enough. xfs is not really in my wheelhouse so take this as a patch
-> that helps illustrate the problem, rather than a serious submission.
-> 
-> There are two consumers of the i_version counter today: the kernel NFS
-> server and IMA. Having the i_version reflect atime updates due to reads
-> harms both of those use-cases with unneeded cache invalidations on NFS
-> and extra measurements on IMA. It would also be problematic for userland
-> NFS servers such as ganesha if we end up exposing this to userland.
-
-So you're wanting define an exact behaviour for atime vs I_VERSION
-where atime doesn't bump iversion.
-
-However, the definition we baked into the XFS on-disk format is that
-the on-disk iversion filed changes for every persistent change made
-to the inode. That includes atime updates. We did this for two
-reasons - the first is so that we could support any application that
-needed change detection, and the second was that knowing how many
-changes have occurred to an inode is extremely useful for forensic
-purposes (especially given the ability to use O_NOCMTIME to modify
-file data).
-
-> atime updates are really a special case when it comes to metadata (and I
-> maintain that they are one of the worst ideas in POSIX). The way you're
-> choosing to define i_version doesn't really work properly for any
-> current or projected use case. I'd like to see that changed.
-
-We chose to do that a decade ago, knowing that it is the
-responsibility of the VFS to avoid unnecessary atime updates, not
-the responsibility of the filesystem. That was the whole point of
-introducing the relatime functionality: fix the problem at the VFS,
-not have to work around generic atime behaviour in every filesystem.
-
-> If the concern is fragility of the code going forward, then maybe we can
-> go with a different approach. Would it be possible to just have
-> xfs_trans_log_inode skip bumping the i_version when the log transaction
-> is _only_ for an atime update due to reads? Maybe we could add a new
-> XFS_ILOG_ATIME_UPDATE flag or something and set it the appropriate
-> codepaths?
-
-No, I don't think this is something we should be hacking around in
-individual filesystems. If the VFS tells us we should be updating
-atime, we should be updating it and bumping persistent change
-counters because *that's what the VFS asked us to do*.
-
-IOWs, if NFS wants atime to be considered "in memory only" as per
-the lazytime behaviour, then that behaviour needs to be
-supported/changed at the VFS, not at the individual fileystem level.
-
-You could add a subset of SB_LAZYTIME functionality just for atime
-updates, handle that entirely within the existing lazytime
-infrastructure. THis means the VFS supports non-persistent,
-best-effort, non-persistent atime updates directly. The VFS will not
-ack filesystems to persist atime updates the moment they are made,
-it will tell the filesystem via ->dirty_inode() that it needs to
-persist the in-memory timestamps.
-
-This gives all the filesystems the same atime behaviour. If the VFS
-is going to expose the persistent change counter to userspace, we
-need to have consistent, VFS enforced rules on what is coverred by
-the change counter. If atime is not covered by the ipersistent
-change counter, then the VFS must not ask the filesystems to persist
-atime changes every time atime changes.
-
-Then all filesystems will avoid on-disk atime updates as much as
-possible, whilst still gathering them correctly when other
-modifications are made.
-
-Until we've got a definition of what this persistent change counter
-actually describes and guarantees for userspace, changing filesystem
-implementations is premature. And if it is decided that atime is not
-going to be considered a "persistent change" by itself, then that
-behaviour needs to be encoded at the VFS, not in individual
-filesystems....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+T24gV2VkLCAyMDIyLTA4LTE3IGF0IDA4OjQyICsxMDAwLCBEYXZlIENoaW5uZXIgd3JvdGU6DQo+
+IA0KPiBJbiBYRlMsIHdlJ3ZlIGRlZmluZWQgdGhlIG9uLWRpc2sgaV92ZXJzaW9uIGZpZWxkIHRv
+IG1lYW4NCj4gImluY3JlbWVudHMgd2l0aCBhbnkgcGVyc2lzdGVudCBpbm9kZSBkYXRhIG9yIG1l
+dGFkYXRhIGNoYW5nZSIsDQo+IHJlZ2FyZGxlc3Mgb2Ygd2hhdCB0aGUgaGlnaCBsZXZlbCBhcHBs
+aWNhdGlvbnMgdGhhdCB1c2UgaV92ZXJzaW9uDQo+IG1pZ2h0IGFjdHVhbGx5IHJlcXVpcmUuDQo+
+IA0KPiBUaGF0IHNvbWUgbmV0d29yayBmaWxlc3lzdGVtIG1pZ2h0IG9ubHkgbmVlZCBhIHN1YnNl
+dCBvZiB0aGUNCj4gbWV0YWRhdGEgdG8gYmUgY292ZXJlZCBieSBpX3ZlcnNpb24gaXMgbGFyZ2Vs
+eSBpcnJlbGV2YW50IC0gaWYgd2UNCj4gZG9uJ3QgY292ZXIgZXZlcnkgcGVyc2lzdGVudCBpbm9k
+ZSBtZXRhZGF0YSBjaGFuZ2Ugd2l0aCBpX3ZlcnNpb24sDQo+IHRoZW4gYXBwbGljYXRpb25zIHRo
+YXQgKm5lZWQqIHN0dWZmIGxpa2UgYXRpbWUgY2hhbmdlIG5vdGlmaWNhdGlvbg0KPiBjYW4ndCBi
+ZSBzdXBwb3J0ZWQuDQoNCk9LLCBJJ2xsIGJpdGUuLi4NCg0KV2hhdCByZWFsIHdvcmxkIGFwcGxp
+Y2F0aW9uIGFyZSB3ZSB0YWxraW5nIGFib3V0IGhlcmUsIGFuZCB3aHkgY2FuJ3QgaXQNCmp1c3Qg
+cmVhZCBib3RoIHRoZSBhdGltZSArIGlfdmVyc2lvbiBpZiBpdCBjYXJlcz8NCg0KVGhlIHZhbHVl
+IG9mIHRoZSBjaGFuZ2UgYXR0cmlidXRlIGxpZXMgaW4gdGhlIGZhY3QgdGhhdCBpdCBnaXZlcyB5
+b3UNCmN0aW1lIHNlbWFudGljcyB3aXRob3V0IHRoZSB0aW1lIHJlc29sdXRpb24gbGltaXRhdGlv
+bi4NCmkuZS4gaWYgdGhlIGNoYW5nZSBhdHRyaWJ1dGUgaGFzIGNoYW5nZWQsIHRoZW4geW91IGtu
+b3cgdGhhdCBzb21lb25lDQpoYXMgZXhwbGljaXRseSBtb2RpZmllZCBlaXRoZXIgdGhlIGZpbGUg
+ZGF0YSBvciB0aGUgZmlsZSBtZXRhZGF0YSAod2l0aA0KdGhlIGVtcGhhc2lzIGJlaW5nIG9uIHRo
+ZSB3b3JkICJleHBsaWNpdGx5IikuDQpJbXBsaWNpdCBjaGFuZ2VzIHN1Y2ggYXMgdGhlIG10aW1l
+IGNoYW5nZSBkdWUgdG8gYSB3cml0ZSBhcmUgcmVmbGVjdGVkDQpvbmx5IGJlY2F1c2UgdGhleSBh
+cmUgbmVjZXNzYXJpbHkgYWxzbyBhY2NvbXBhbmllZCBieSBhbiBleHBsaWNpdA0KY2hhbmdlIHRv
+IHRoZSBkYXRhIGNvbnRlbnRzIG9mIHRoZSBmaWxlLg0KSW1wbGljaXQgY2hhbmdlcywgc3VjaCBh
+cyB0aGUgYXRpbWUgY2hhbmdlcyBkdWUgdG8gYSByZWFkIGFyZSBub3QNCnJlZmxlY3RlZCBpbiB0
+aGUgY2hhbmdlIGF0dHJpYnV0ZSBiZWNhdXNlIHRoZXJlIGlzIG5vIGV4cGxpY2l0IGNoYW5nZQ0K
+YmVpbmcgbWFkZSBieSBhbiBhcHBsaWNhdGlvbi4NCg0KQW55IGltcGxpY2l0IGNoYW5nZSBpbiB0
+aGUgbWV0YWRhdGEgY2FuIGJlIGRlcml2ZWQgYnkganVzdCByZWFkaW5nIHRoZQ0KYXR0cmlidXRl
+IGluIHF1ZXN0aW9uOiB0aGVyZSBpcyBvbmx5IDEgKGF0aW1lKSBhbmQgaXQgaXMgc3VwcG9zZWQg
+dG8gYmUNCm1vbm90b25pY2FsbHkgaW5jcmVhc2luZywgaGVuY2UgaXMgZGVhZCBzaW1wbGUgdG8g
+ZGV0ZWN0Lg0KDQoNCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFp
+bnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20NCg0K
+DQo=
