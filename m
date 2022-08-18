@@ -2,83 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4CB598909
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D108598955
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343794AbiHRQhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 12:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
+        id S1345074AbiHRQuo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 12:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244557AbiHRQhQ (ORCPT
+        with ESMTP id S1345188AbiHRQue (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 12:37:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D78BE4D0;
-        Thu, 18 Aug 2022 09:37:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DD21615BC;
-        Thu, 18 Aug 2022 16:37:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA40C433D6;
-        Thu, 18 Aug 2022 16:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660840634;
-        bh=QN6pzB7ts62QG1T5xnZB3fjWg90F6T1cD+qyxYHqBb8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JVfBeI4zpmSnChBDL1T16z+k6i5GDlJ7gtj3IEUnnXh0RtwNtGG6F21fFYxJgAuwq
-         7GAJ2aBQ7kOzn5/OEk7jhOVldc7H058DmauGaYY8piDhB6iXomLTPEqHLjVelLAyDh
-         UChQbn6EUCUAHH7vQB/e7YncD3pos+u7+rdApe62brDyEh2GiZN1s2bMLFMS4/uRf6
-         4SV9yL/R2pUP5Y7sAT5VHdnLJAg9b99YXf3b3YnBBYWB666pM7ekQTUA7P7wbsZcx8
-         JscaN30AOX0GtJ7I1+zAe+l9In2GPNPs68H7Yb3iC5WD7qpOP31VkR+UKNzccWH+0A
-         8hSTagrhTwnGw==
-Date:   Thu, 18 Aug 2022 09:37:14 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     fstests <fstests@vger.kernel.org>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        axboe@kernel.dk, willy@infradead.org, Stefan Roesch <shr@fb.com>
-Subject: generic/471 regression with async buffered writes?
-Message-ID: <Yv5quvRMZXlDXED/@magnolia>
+        Thu, 18 Aug 2022 12:50:34 -0400
+Received: from hop.stappers.nl (hop.stappers.nl [IPv6:2a02:2308:0:14e::686f:7030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25342DFC8;
+        Thu, 18 Aug 2022 09:50:29 -0700 (PDT)
+Received: from gpm.stappers.nl (gpm.stappers.nl [IPv6:2a02:a46d:659e:1::696e:626f])
+        by hop.stappers.nl (Postfix) with ESMTP id 0F5DB200C8;
+        Thu, 18 Aug 2022 16:50:27 +0000 (UTC)
+Received: by gpm.stappers.nl (Postfix, from userid 1000)
+        id B118C304049; Thu, 18 Aug 2022 18:50:26 +0200 (CEST)
+Date:   Thu, 18 Aug 2022 18:50:26 +0200
+From:   Geert Stappers <stappers@stappers.nl>
+To:     Kees Cook <keescook@chromium.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH v9 02/27] kallsyms: avoid hardcoding buffer size
+Message-ID: <20220818165025.ighwic3zqe2xh6be@gpm.stappers.nl>
+References: <20220805154231.31257-1-ojeda@kernel.org>
+ <20220805154231.31257-3-ojeda@kernel.org>
+ <202208171236.9CA3B9D579@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <202208171236.9CA3B9D579@keescook>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi everyone,
+On Wed, Aug 17, 2022 at 12:37:40PM -0700, Kees Cook wrote:
+> On Fri, Aug 05, 2022 at 05:41:47PM +0200, Miguel Ojeda wrote:
+> > From: Boqun Feng <boqun.feng@gmail.com>
+> > 
+> > This introduces `KSYM_NAME_LEN_BUFFER` in place of the previously
+> > hardcoded size of the input buffer.
+> > 
+> > It will also make it easier to update the size in a single place
+> > in a later patch.
+> > 
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> Does someone want to commit to taking these "prereq" patches? These
+> clean-ups are nice even without adding Rust.
 
-I noticed the following fstest failure on XFS on 6.0-rc1 that wasn't
-there in 5.19:
+Qouting Message-ID: <CANiq72mXDne_WkUCo2oRe+sip7nQWESnouOJrcCYzyJMkG8F6A@mail.gmail.com>
+https://lore.kernel.org/lkml/CANiq72mXDne_WkUCo2oRe+sip7nQWESnouOJrcCYzyJMkG8F6A@mail.gmail.com/
+Miguel Ojeda, 2022-08-05: 
+| > And I think that this patch and all other "rust" kallsyms patches
+| > allready should have been accepted in the v3 or v5 series.
+| 
+| Yeah, it could be a good idea to get the prerequisites in first.
+| Let's see if the patches get some Reviewed-bys
 
---- generic/471.out
-+++ generic/471.out.bad
-@@ -2,12 +2,10 @@
- pwrite: Resource temporarily unavailable
- wrote 8388608/8388608 bytes at offset 0
- XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
--RWF_NOWAIT time is within limits.
-+pwrite: Resource temporarily unavailable
-+(standard_in) 1: syntax error
-+RWF_NOWAIT took  seconds
- 00000000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
- *
--00200000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
--*
--00300000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
--*
- read 8388608/8388608 bytes at offset 0
- XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+Now that there is a 'Reviewed-by: Kees Cook <keescook@chromium.org>'
 
-Is this related to the async buffered write changes, or should I keep
-looking?  AFAICT nobody else has mentioned problems with 471...
 
---D
+Regards
+Geert Stappers
+In an attempt to help making Rust for Linux happen.
+-- 
+Silence is hard to parse
