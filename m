@@ -2,103 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD0B59821A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 13:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E745981DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 13:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244374AbiHRLQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 07:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
+        id S243617AbiHRLBG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 07:01:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237435AbiHRLQy (ORCPT
+        with ESMTP id S240270AbiHRLBF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 07:16:54 -0400
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 892A8AE228
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 04:16:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1660820437; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=BTMANjpPQ649xN1Ilw1xe5PDp07xqQayiOObxnMnehCh0whAnkBvvKzF96CLAtFZp4YQ8ODaEjbyfxO+8O3f/gIsCrn3d6QS0J7Ec5vbrkdOL7AdTYuhDWEn0Ytbzy53JRClJKXWGM2IHiZXzEaVpHOx4vYLVjY+pkiYXP8DU0I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1660820437; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=w3q3/luKQmtc+VjV/Gf2sz+X/or73ffditweh+vTyCw=; 
-        b=RmUvCSOkclpZwMa6RoA6xFuaJBY/zqVsEm+96Q2v/o3+19cq7Jj+Cy1SOxYqBYt1p7y89zQmwA8ZtL63NN/GcveCbgYuiP+CjjbGq4SzrNz3Eff23eS6+YvUPTXaFpKSL3LcUceRTPAPCWioyQMgL5PvnmFoIk9DH7SRFqhNRho=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1660820437;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-        bh=w3q3/luKQmtc+VjV/Gf2sz+X/or73ffditweh+vTyCw=;
-        b=IPmmJF2k6/1SqT02GUNG6cNF9PRrVOBVauI7Gxr3vl6IzUfgHFmetHP6xEJSEs+f
-        UTnuUpVVI0CfxUgWtgfQkowITG0Lu07mgkTl5c/ddZaVDBGWcELlHyYMeBgo7rIUoqi
-        U2aUCQNU7weOGb/EPhCeuYwTPXiR65CFg0+dX/NQ=
-Received: from localhost.localdomain (103.86.19.2 [103.86.19.2]) by mx.zoho.in
-        with SMTPS id 1660820435766507.18754371954867; Thu, 18 Aug 2022 16:30:35 +0530 (IST)
-From:   Siddh Raman Pant <code@siddh.me>
-To:     david@fromorbit.com
-Cc:     djwong@kernel.org, fgheet255t@gmail.com, hch@infradead.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        riteshh@linux.ibm.com,
-        syzbot+a8e049cd3abd342936b6@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-Message-ID: <20220818110031.89467-1-code@siddh.me>
-Subject: Re: [syzbot] WARNING in iomap_iter
-Date:   Thu, 18 Aug 2022 16:30:31 +0530
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220214025849.GP59729@dread.disaster.area>
-References: <20220214025849.GP59729@dread.disaster.area>
-MIME-Version: 1.0
+        Thu, 18 Aug 2022 07:01:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B2CF97D64;
+        Thu, 18 Aug 2022 04:01:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 28632B8214A;
+        Thu, 18 Aug 2022 11:01:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD3DC433C1;
+        Thu, 18 Aug 2022 11:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660820458;
+        bh=BJ9jTJMSUZzXkT+DShf3+Vd6Whwr/ZEx748U0LZgPQ8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qy3yjV6lCpwWA0WKIPLxfSe7qgVUn95t+nHcrj6OEr4CFtmS2MkHcRgEe54X3eG+x
+         3cr6G6Hd+NweXZ43gxA4KXnn1b8YUdZwuh8BQhN/+aA+m5/fVOaIkqRIseecDd3IyQ
+         yEvAraJktMoqlorBj6QJB1+Q0X4pqNODCqMC2v0AOHUSEVcSJO2uPe6EQVlDV1/eCp
+         xbjxjT0H77Dejz/s1OC/1QDm1JL0EYLpvLQs4R2c4rq+Bqpg3sT5KjOPxevjYdLLLD
+         OUlKuDJ+voQNwqDOUlJVmrYQcdT5tsO2HTcAGYJQia2FH0/oPdqSAbVPCujB/CfoiW
+         szqz0Z3201s9w==
+Message-ID: <ae80e71722385a85bb0949540bb4bd0a796a2e34.camel@kernel.org>
+Subject: Re: [PATCH] xfs: fix i_version handling in xfs
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>, Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Date:   Thu, 18 Aug 2022 07:00:56 -0400
+In-Reply-To: <166078288043.5425.8131814891435481157@noble.neil.brown.name>
+References: <20220816131736.42615-1-jlayton@kernel.org>
+        , <Yvu7DHDWl4g1KsI5@magnolia>
+        , <e77fd4d19815fd661dbdb04ab27e687ff7e727eb.camel@kernel.org>
+        , <20220816224257.GV3600936@dread.disaster.area>
+         <166078288043.5425.8131814891435481157@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is probably due to mismatch in types between userspace API struct
-and the kernel's internal struct, which leads to offset being overflowed
-after getting converted from __u64 (unsigned long long) to loff_t (signed
-long long), resulting in ridiculously negative offset value.
+On Thu, 2022-08-18 at 10:34 +1000, NeilBrown wrote:
+> On Wed, 17 Aug 2022, Dave Chinner wrote:
+> >=20
+> > In XFS, we've defined the on-disk i_version field to mean
+> > "increments with any persistent inode data or metadata change",
+> > regardless of what the high level applications that use i_version
+> > might actually require.
+> >=20
+> > That some network filesystem might only need a subset of the
+> > metadata to be covered by i_version is largely irrelevant - if we
+> > don't cover every persistent inode metadata change with i_version,
+> > then applications that *need* stuff like atime change notification
+> > can't be supported.
+>=20
+> So what you are saying is that the i_version provided by XFS does not
+> match the changeid semantics required by NFSv4.  Fair enough.  I guess
+> we shouldn't use the one to implement the other then.
+>=20
+> Maybe we should just go back to using ctime.  ctime is *exactly* what
+> NFSv4 wants, as long as its granularity is sufficient to catch every
+> single change.  Presumably XFS doesn't try to ensure this.  How hard
+> would it be to get any ctime update to add at least one nanosecond?
+> This would be enabled by a mount option, or possibly be a direct request
+> from nfsd.
+>=20
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
+I think that would be an unfortunate outcome, but if we can't stop xfs
+from bumping the i_version on atime updates, then we may have no choice
+but to do so. I suppose we could add a fetch_iversion for xfs that takes
+it back to using the ctime.
 
----
- include/uapi/linux/loop.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> <rant>NFSv4 changeid is really one of the more horrible parts of the
+> design</rant>
+>=20
 
-diff --git a/include/uapi/linux/loop.h b/include/uapi/linux/loop.h
-index 6f63527dd2ed..33c07c467da4 100644
---- a/include/uapi/linux/loop.h
-+++ b/include/uapi/linux/loop.h
-@@ -53,12 +53,12 @@ struct loop_info64 {
- =09__u64=09=09   lo_device;=09=09=09/* ioctl r/o */
- =09__u64=09=09   lo_inode;=09=09=09/* ioctl r/o */
- =09__u64=09=09   lo_rdevice;=09=09=09/* ioctl r/o */
--=09__u64=09=09   lo_offset;
--=09__u64=09=09   lo_sizelimit;/* bytes, 0 =3D=3D max available */
--=09__u32=09=09   lo_number;=09=09=09/* ioctl r/o */
--=09__u32=09=09   lo_encrypt_type;=09=09/* obsolete, ignored */
--=09__u32=09=09   lo_encrypt_key_size;=09=09/* ioctl w/o */
--=09__u32=09=09   lo_flags;
-+=09__s64=09=09   lo_offset;
-+=09__s64=09=09   lo_sizelimit;=09/* bytes, 0 =3D=3D max available */
-+=09__s32=09=09   lo_number;=09=09=09/* ioctl r/o */
-+=09__s32=09=09   lo_encrypt_type;=09=09/* obsolete, ignored */
-+=09__s32=09=09   lo_encrypt_key_size;=09=09/* ioctl w/o */
-+=09__s32=09=09   lo_flags;
- =09__u8=09=09   lo_file_name[LO_NAME_SIZE];
- =09__u8=09=09   lo_crypt_name[LO_NAME_SIZE];
- =09__u8=09=09   lo_encrypt_key[LO_KEY_SIZE]; /* ioctl w/o */
+Hah! I was telling Tom Talpey yesterday that I thought that the change
+counter was one of the best ideas in NFSv4 and that we should be trying
+to get all filesystems to implement it correctly.
+
+The part that does suck about the design is that the original specs
+weren't specific enough about its behavior. I think that's been somewhat
+remedied in more recent RFCs though.
 --=20
-2.35.1
-
-
+Jeff Layton <jlayton@kernel.org>
