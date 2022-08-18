@@ -2,238 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2571598A1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 19:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF79598A6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 19:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345524AbiHRRNF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 13:13:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35192 "EHLO
+        id S1345354AbiHRRXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 13:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345500AbiHRRMb (ORCPT
+        with ESMTP id S1345137AbiHRRXZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 13:12:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9FACC313;
-        Thu, 18 Aug 2022 10:05:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81F3E61640;
-        Thu, 18 Aug 2022 17:04:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78D4C433D6;
-        Thu, 18 Aug 2022 17:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660842266;
-        bh=BNDOWtug57seF6EHN2UGDG/zfm5ERjtVWsNzqHB+A3Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VlMoiCqoBjKBeg7agGOY2etSxqTbKbmE2sa+ZI5vS/ebkVha7ozb4ew6UbfbLNfrK
-         GLH2ok1jwgt+yaasGPkvm8xXIpG6KU5vCpUrk8TT9cdwcxPJ+odsOSuu/YGE9pjTPo
-         /oexgYSc+gtslyF4BUAngbRNgMOnTs5/Zb4l6lhmYE5psMLJkWF4ux9Qui6kH1wSdo
-         KuAO29wXcrF67hyYwEDDd69ul4qE68Vd+h67XzuM9pQCxoWSjjpOvrSrwq1L4kXRaF
-         igQb0028TxfBgA1nSJtxDALCtSlBfBHaRzCmzqWWxsvT1Nbm5e8pE5sQ0CsM3NCxYi
-         t+28L7S3kljNg==
-Date:   Thu, 18 Aug 2022 10:04:26 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "jane.chu@oracle.com" <jane.chu@oracle.com>
-Subject: Re: [RFC PATCH v6] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Message-ID: <Yv5xGmgcVjn5FR19@magnolia>
-References: <20220410171623.3788004-1-ruansy.fnst@fujitsu.com>
- <20220714103421.1988696-1-ruansy.fnst@fujitsu.com>
- <62d05eb8e663c_1643dc294fa@dwillia2-xfh.jf.intel.com.notmuch>
- <YtXbD4e8mLHqWSwL@magnolia>
- <62d5e515de3a_929192941e@dwillia2-xfh.jf.intel.com.notmuch>
- <ef6fbc40-db59-eca5-e3e1-19f5809ec357@fujitsu.com>
- <Yun6qIonQbeqVvso@magnolia>
- <a638751a-ef0f-fa85-4076-5fff2272a669@fujitsu.com>
+        Thu, 18 Aug 2022 13:23:25 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9823E32EDD
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 10:23:04 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id r141so1591846iod.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 10:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=Bd32rmK/FOJLR3DhtOUdTvKf+a9Teo/sBKjuQ/ElSZg=;
+        b=XlCrOgXemDYs5Gm1ZIOksFTqGZKJJh1hGJ5FiZ/gBNvZlCJoKWIFIhrOP6jcsNcZg8
+         nsUv5cuyppKGA9pojhWsrVbxqQNk9M+rs6BsIhJvbCKfFS7En6R216VnbucNPbV6UqJu
+         gFhqNjW0Z3wyX/v6unNEZXn/nYFuw58v1FdugaIM8korrBWM0ULmCWalgxkcsTvstTYF
+         2dpqn3K+xtvSW+ChNPAlFgqvqaJcQR1TiMmUcWlah6pmdFqo7CJY1Lhcjc2my+dwuDFF
+         He4LDfJIcqaWnuQBMW0MitXidT3AJ0yuvz4ZsinCZ3Oz4svSW745OwxEYBDWuSYgJjBb
+         0gAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=Bd32rmK/FOJLR3DhtOUdTvKf+a9Teo/sBKjuQ/ElSZg=;
+        b=AwgwWJVS9U/7qRgIiLwsBKGNPBttXRVhPsKIB1uShJI/9Ro7baX6Ca9l13NJP1Fj54
+         wmhN9UZIRoCyWuATEWt2g/FJgcczNa1dtG/scCandOiNfug7Pjo5alFrTI6/HPbJL+li
+         NLXAiJZuR+19pL7OYQfOpV7RpIcg6vysJiASOzDH4cfzdTW43RnAOzCtITEe9JyG0x2p
+         HPVQ/9+jHfuk6NbxzGMn1BWxU+xNEquAhwYUrNDrSwrHPQ3OlfBZSPtsseZHxrRRyBar
+         c2Soav5DvAtilTqo1S7HoeBfve5e75JDsC68yp6Pg3FwzSdoCYAYLZGe0apoooSEy5rE
+         EsQQ==
+X-Gm-Message-State: ACgBeo3ILXHiHmQLxk+4oq62OP4VhlgNTit/oBdVgziCAfI+DKqVHtks
+        lVtOJMJkKPG8XwD2Zal6p7mQWbI1vL2dGfV0azWNBQ==
+X-Google-Smtp-Source: AA6agR7BxSEK9TZMmEIhvaOX697zBF3ihw3R6j2eoMtnNit2ewt69TP6LFyP0vkczM3B3jRpPt3WlelDN3UHLFuji6A=
+X-Received: by 2002:a05:6602:2f03:b0:678:9c7c:97a5 with SMTP id
+ q3-20020a0566022f0300b006789c7c97a5mr1830797iow.32.1660843383117; Thu, 18 Aug
+ 2022 10:23:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a638751a-ef0f-fa85-4076-5fff2272a669@fujitsu.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220817214728.489904-1-axelrasmussen@google.com>
+ <20220817214728.489904-3-axelrasmussen@google.com> <Yv3bnouKb7242Ama@kroah.com>
+ <Yv3c9jYkyWfe2zMM@kroah.com>
+In-Reply-To: <Yv3c9jYkyWfe2zMM@kroah.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Thu, 18 Aug 2022 10:22:27 -0700
+Message-ID: <CAJHvVcjSjk15TVRTi9x+CMjrWoNeUJBiZiH1boQvQzwd-pdOtQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/5] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linuxkselftest <linux-kselftest@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-security-module@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 18, 2022 at 07:19:28PM +0800, Shiyang Ruan wrote:
-> 
-> 
-> 在 2022/8/3 12:33, Darrick J. Wong 写道:
-> > On Wed, Aug 03, 2022 at 02:43:20AM +0000, ruansy.fnst@fujitsu.com wrote:
-> > > 
-> > > 在 2022/7/19 6:56, Dan Williams 写道:
-> > > > Darrick J. Wong wrote:
-> > > > > On Thu, Jul 14, 2022 at 11:21:44AM -0700, Dan Williams wrote:
-> > > > > > ruansy.fnst@fujitsu.com wrote:
-> > > > > > > This patch is inspired by Dan's "mm, dax, pmem: Introduce
-> > > > > > > dev_pagemap_failure()"[1].  With the help of dax_holder and
-> > > > > > > ->notify_failure() mechanism, the pmem driver is able to ask filesystem
-> > > > > > > (or mapped device) on it to unmap all files in use and notify processes
-> > > > > > > who are using those files.
-> > > > > > > 
-> > > > > > > Call trace:
-> > > > > > > trigger unbind
-> > > > > > >    -> unbind_store()
-> > > > > > >     -> ... (skip)
-> > > > > > >      -> devres_release_all()   # was pmem driver ->remove() in v1
-> > > > > > >       -> kill_dax()
-> > > > > > >        -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-> > > > > > >         -> xfs_dax_notify_failure()
-> > > > > > > 
-> > > > > > > Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-> > > > > > > event.  So do not shutdown filesystem directly if something not
-> > > > > > > supported, or if failure range includes metadata area.  Make sure all
-> > > > > > > files and processes are handled correctly.
-> > > > > > > 
-> > > > > > > ==
-> > > > > > > Changes since v5:
-> > > > > > >     1. Renamed MF_MEM_REMOVE to MF_MEM_PRE_REMOVE
-> > > > > > >     2. hold s_umount before sync_filesystem()
-> > > > > > >     3. move sync_filesystem() after SB_BORN check
-> > > > > > >     4. Rebased on next-20220714
-> > > > > > > 
-> > > > > > > Changes since v4:
-> > > > > > >     1. sync_filesystem() at the beginning when MF_MEM_REMOVE
-> > > > > > >     2. Rebased on next-20220706
-> > > > > > > 
-> > > > > > > [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-> > > > > > > 
-> > > > > > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > > > > > > ---
-> > > > > > >    drivers/dax/super.c         |  3 ++-
-> > > > > > >    fs/xfs/xfs_notify_failure.c | 15 +++++++++++++++
-> > > > > > >    include/linux/mm.h          |  1 +
-> > > > > > >    3 files changed, 18 insertions(+), 1 deletion(-)
-> > > > > > > 
-> > > > > > > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > > > > > > index 9b5e2a5eb0ae..cf9a64563fbe 100644
-> > > > > > > --- a/drivers/dax/super.c
-> > > > > > > +++ b/drivers/dax/super.c
-> > > > > > > @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
-> > > > > > >    		return;
-> > > > > > >    	if (dax_dev->holder_data != NULL)
-> > > > > > > -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-> > > > > > > +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-> > > > > > > +				MF_MEM_PRE_REMOVE);
-> > > > > > >    	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
-> > > > > > >    	synchronize_srcu(&dax_srcu);
-> > > > > > > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-> > > > > > > index 69d9c83ea4b2..6da6747435eb 100644
-> > > > > > > --- a/fs/xfs/xfs_notify_failure.c
-> > > > > > > +++ b/fs/xfs/xfs_notify_failure.c
-> > > > > > > @@ -76,6 +76,9 @@ xfs_dax_failure_fn(
-> > > > > > >    	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-> > > > > > >    	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> > > > > > > +		/* Do not shutdown so early when device is to be removed */
-> > > > > > > +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-> > > > > > > +			return 0;
-> > > > > > >    		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-> > > > > > >    		return -EFSCORRUPTED;
-> > > > > > >    	}
-> > > > > > > @@ -174,12 +177,22 @@ xfs_dax_notify_failure(
-> > > > > > >    	struct xfs_mount	*mp = dax_holder(dax_dev);
-> > > > > > >    	u64			ddev_start;
-> > > > > > >    	u64			ddev_end;
-> > > > > > > +	int			error;
-> > > > > > >    	if (!(mp->m_sb.sb_flags & SB_BORN)) {
-> > > > > > >    		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
-> > > > > > >    		return -EIO;
-> > > > > > >    	}
-> > > > > > > +	if (mf_flags & MF_MEM_PRE_REMOVE) {
-> > > > > > > +		xfs_info(mp, "device is about to be removed!");
-> > > > > > > +		down_write(&mp->m_super->s_umount);
-> > > > > > > +		error = sync_filesystem(mp->m_super);
-> > > > > > > +		up_write(&mp->m_super->s_umount);
-> > > > > > 
-> > > > > > Are all mappings invalidated after this point?
-> > > > > 
-> > > > > No; all this step does is pushes dirty filesystem [meta]data to pmem
-> > > > > before we lose DAXDEV_ALIVE...
-> > > > > 
-> > > > > > The goal of the removal notification is to invalidate all DAX mappings
-> > > > > > that are no pointing to pfns that do not exist anymore, so just syncing
-> > > > > > does not seem like enough, and the shutdown is skipped above. What am I
-> > > > > > missing?
-> > > > > 
-> > > > > ...however, the shutdown above only applies to filesystem metadata.  In
-> > > > > effect, we avoid the fs shutdown in MF_MEM_PRE_REMOVE mode, which
-> > > > > enables the mf_dax_kill_procs calls to proceed against mapped file data.
-> > > > > I have a nagging suspicion that in non-PREREMOVE mode, we can end up
-> > > > > shutting down the filesytem on an xattr block and the 'return
-> > > > > -EFSCORRUPTED' actually prevents us from reaching all the remaining file
-> > > > > data mappings.
-> > > > > 
-> > > > > IOWs, I think that clause above really ought to have returned zero so
-> > > > > that we keep the filesystem up while we're tearing down mappings, and
-> > > > > only call xfs_force_shutdown() after we've had a chance to let
-> > > > > xfs_dax_notify_ddev_failure() tear down all the mappings.
-> > > > > 
-> > > > > I missed that subtlety in the initial ~30 rounds of review, but I figure
-> > > > > at this point let's just land it in 5.20 and clean up that quirk for
-> > > > > -rc1.
-> > > > 
-> > > > Sure, this is a good baseline to incrementally improve.
-> > > 
-> > > Hi Dan, Darrick
-> > > 
-> > > Do I need to fix somewhere on this patch?  I'm not sure if it is looked good...
-> > 
-> > Eh, wait for me to send the xfs pull request and then I'll clean things
-> > up and send you a patch. :)
-> 
-> Hi, Darrick
-> 
-> How is your patch going on?  Forgive me for being so annoying.  I'm afraid
-> of missing your patch, so I'm asking for confirmation.
+On Wed, Aug 17, 2022 at 11:32 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Aug 18, 2022 at 08:26:38AM +0200, Greg KH wrote:
+> > On Wed, Aug 17, 2022 at 02:47:25PM -0700, Axel Rasmussen wrote:
+> > > +static int userfaultfd_dev_open(struct inode *inode, struct file *file)
+> > > +{
+> > > +   return 0;
+> >
+> > If your open does nothing, no need to list it here at all, right?
+> >
+> > > +}
+> > > +
+> > > +static long userfaultfd_dev_ioctl(struct file *file, unsigned int cmd, unsigned long flags)
+> > > +{
+> > > +   if (cmd != USERFAULTFD_IOC_NEW)
+> > > +           return -EINVAL;
+> > > +
+> > > +   return new_userfaultfd(flags);
+> > > +}
+> > > +
+> > > +static const struct file_operations userfaultfd_dev_fops = {
+> > > +   .open = userfaultfd_dev_open,
+> > > +   .unlocked_ioctl = userfaultfd_dev_ioctl,
+> > > +   .compat_ioctl = userfaultfd_dev_ioctl,
+> >
+> > Why do you need to set compat_ioctl?  Shouldn't it just default to the
+> > existing one?
+> >
+> > And why is this a device node at all?  Shouldn't the syscall handle all
+> > of this (to be honest, I didn't read anything but the misc code, sorry.)
+>
+> Ah, read the documentation now.  Seems you want to make it easier for
+> people to get permissions on a system.  Doesn't seem wise, but hey, it's
+> not my feature...
 
-<nod> I just sent you a patch.  Sorry, it took me a few days to unbusy
-enough to start testing 6.0-rc1.  You're not annoying at all. :)
+Thanks for taking a look Greg!
 
---D
+WIth the syscall, the only way to get access to this feature is to
+have CAP_SYS_PTRACE. Which gives you access to this, *plus* a bunch
+more stuff.
 
-> 
-> --
-> Thanks,
-> Ruan.
-> 
-> > 
-> > --D
-> > 
-> > > 
-> > > --
-> > > Thanks,
-> > > Ruan.
-> > > 
-> > > > 
-> > > > > 
-> > > > > > Notice that kill_dev_dax() does unmap_mapping_range() after invalidating
-> > > > > > the dax device and that ensures that all existing mappings are gone and
-> > > > > > cannot be re-established. As far as I can see a process with an existing
-> > > > > > dax mapping will still be able to use it after this runs, no?
-> > > > > 
-> > > > > I'm not sure where in akpm's tree I find kill_dev_dax()?  I'm cribbing
-> > > > > off of:
-> > > > > 
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/fs/xfs/xfs_notify_failure.c?h=mm-stable
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/tree/drivers/dax/bus.c?h=mm-stable#n381
-> > > > 
-> > > > Where the observation is that when device-dax is told that the device is
-> > > > going away it invalidates all the active mappings to that single
-> > > > character-device-inode. The hope being that in the fsdax case all the
-> > > > dax-mapped filesystem inodes would experience the same irreversible
-> > > > invalidation as the device is exiting.
+My basic goal is to grant access to just this feature by itself, not
+really just to make it easier to access. I think a device node is the
+simplest way to achieve that (see the cover letter for considered
+alternatives).
+
+The other feedback looks like good simplification to me - I'll send
+another version with those changes. I have to admit this is the first
+time I've messed with misc device nodes, so apologies for being overly
+explicit. :)
+
+>
+> thanks,
+>
+> greg k-h
