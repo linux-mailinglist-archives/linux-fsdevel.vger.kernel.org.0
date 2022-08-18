@@ -2,78 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE26598841
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2AAE598840
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:04:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245738AbiHRQDV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 12:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43572 "EHLO
+        id S1344241AbiHRQDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 12:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343597AbiHRQDS (ORCPT
+        with ESMTP id S1343597AbiHRQDZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 12:03:18 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2687A5FF6;
-        Thu, 18 Aug 2022 09:03:16 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id r141so1417848iod.4;
-        Thu, 18 Aug 2022 09:03:16 -0700 (PDT)
+        Thu, 18 Aug 2022 12:03:25 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7385F2713
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 09:03:23 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id v4so1612283pgi.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 09:03:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=THIPiI23EIP3ZHpv9IN+trkncwr+QUSgAlM+FVJ0cpw=;
-        b=gKHDaXjqmxkXczwFZ7vrwwvJ+cQGm7eRd41xNC5AbgGsDmadmgyXn73X5edHqacOsK
-         luOJpLGZMPnfD8r/6fDx2IsHtTqKCs0N9yyeYvBTKoOmDLkydQGCNkinOV/anw27TKC2
-         1tGLCaAF+tSTCIRg3ENHh8t88yUo3ZeGiEKfiViDXKsDYV1G8RDAtaykU3qbmit2uHNO
-         RQLJo2Io14eULOgECYjyoiICl5CQFHKGI9wueZS7rRaZzSygv/JZ0BKMqu3fFkmRl7fQ
-         bfZZr2EXBbr1g4Gy0xBtMLEuQMgWAnS50hpMJeA09Y/U0PP5w+Tu+q39SAsvN6Q+nAUh
-         HeTQ==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=tv5ULlLKxM0cuyQ6J1iQhNfNqwRvi2Mu8C1ughJ0TDs=;
+        b=E8jwzzSWkQZjYK0CTe9AbY7M6bB8NxxJIz7ILJ36UNVCbM0Ka4LYZT8J1DGl3bqPX0
+         QYiBjYNWgQVin49A+zu6WhOjtftpm78q+i3lZxR2f8g79FNVN782BBPffwkFDM5Qhce6
+         Rg/+3iDQr9tXHcDn/L45hCa9B+zu+rRP+330c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=THIPiI23EIP3ZHpv9IN+trkncwr+QUSgAlM+FVJ0cpw=;
-        b=3R5pF12Ebk3fXyKtZuoF9RV3iL6dw+NHhCXb2mzei2OFkykYaR2EbHczViJVXHP7fM
-         novUiO1QMv81e125O4O9eVRz24q9Uju7BAEJK8VDSGH2BijKF9GkGG1WHnPAlX+2LMMs
-         9YKtqqkGaQWTAQHiFsVBXr5THBU2g+Vb2KOXw5q22uA7HKlPVbRCtyRScnxt71q2N4C+
-         r6HJY5kUTcWARz9Ai/qR95y/V3DuCm9K5NtL21j/w9zEpWbKIrWMOMyRVbxqkteWMO+j
-         NPEWdbOloHlUEBOJLOXfXHZqkSuBKf+eGbx/0hcMj4L3lGwX8VJ3LSIMiFf2SgO+i/ji
-         04FQ==
-X-Gm-Message-State: ACgBeo0qxPI37FQBgCFnIoxVtrcuLw3xoCSJnMO8n0gffhukBGvwCxHN
-        DZmzncgiRRFIE1ubkGhKwgpdhu0IgtDKU9z9KRc=
-X-Google-Smtp-Source: AA6agR7EkCIFXFfJRO5hvuXzeculnD2voC+Lmb5zyPoiU/L6jyMuwFqJMQ7GjK3Yz5CgI88bklSaQDCMnTc7VcagAZg=
-X-Received: by 2002:a05:6602:368a:b0:688:3aa5:19ab with SMTP id
- bf10-20020a056602368a00b006883aa519abmr1662728iob.44.1660838595542; Thu, 18
- Aug 2022 09:03:15 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=tv5ULlLKxM0cuyQ6J1iQhNfNqwRvi2Mu8C1ughJ0TDs=;
+        b=Ggmeuno+97QfU75/klTTPHDSr/uAyaZoWSPCzV9PNvQyrulo5otiifsasx4FIV17A4
+         3KyhVsN54wE+vsVVu99znOj5rSkv64UY+vlcfpkP6i+PHLz3d+Q5hMyUHST5H8Fsw6Kq
+         Nl5Zey05DHwEzby5fEFxdQ9dEBTnhNLjHzKjSSLleQh/99pImvvL+BUZFrVHuZt7y5fp
+         bQe8v9E8jVRSpzAvYZDKA/8n4fqW5uROwQDqgMLlgNT1nM1pWTPTDjlMVIa6je7d8fY4
+         FdZ5/jBus4piV0nxgKb59BW4T7Qp+/UsflwKeGxQmaQs9Gl5JaUKu9AyIuTzuUp5MM/e
+         Qx5w==
+X-Gm-Message-State: ACgBeo1UO00Yj9tz2ntNoAG/b9nCkPDRfDTpn958HoMkeNKgXCSqMtlS
+        OzKWhGV5fRqR/jTvjYmVat/zaw==
+X-Google-Smtp-Source: AA6agR6I5By68BlJBuyT8Qm/ntSjcqHInGgvxgMFjK+rM4WhYuZnlmgsqf6IjXF03Hs9zZoNkbKTWw==
+X-Received: by 2002:a63:231a:0:b0:429:fb01:3c5d with SMTP id j26-20020a63231a000000b00429fb013c5dmr2790011pgj.583.1660838602898;
+        Thu, 18 Aug 2022 09:03:22 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l21-20020a17090ac59500b001f1ea1152aasm1630436pjt.57.2022.08.18.09.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Aug 2022 09:03:22 -0700 (PDT)
+Date:   Thu, 18 Aug 2022 09:03:21 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Konstantin Shelekhin <k.shelekhin@yadro.com>
+Cc:     ojeda@kernel.org, boqun.feng@gmail.com, gregkh@linuxfoundation.org,
+        jarkko@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH v9 01/27] kallsyms: use `sizeof` instead of hardcoded size
+Message-ID: <202208180902.48391E94@keescook>
+References: <20220805154231.31257-2-ojeda@kernel.org>
+ <Yu2cYShT1h8gquW8@yadro.com>
+ <202208171235.52D14C2A@keescook>
+ <Yv4AaeUToxSJZK/v@yadro.com>
 MIME-Version: 1.0
-References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-7-ojeda@kernel.org>
- <202208171240.8B10053B9D@keescook> <CANiq72nR2eAeKrY6v=hnjUjvwfecMsSC6eXTwaei6ecnHjia8g@mail.gmail.com>
- <202208171331.FAACB5AD8@keescook> <CANiq72=6nzbMR1e=7HUAotPk-L00h0YO3-oYrtKy2BLcHVDTEw@mail.gmail.com>
- <202208171653.6BAB91F35@keescook>
-In-Reply-To: <202208171653.6BAB91F35@keescook>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 18 Aug 2022 18:03:04 +0200
-Message-ID: <CANiq72mqutW7cDjYQv4qOYOAV6uM8kUWenquQyiG-mEw4DURJA@mail.gmail.com>
-Subject: Re: [PATCH v9 06/27] rust: add C helpers
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yv4AaeUToxSJZK/v@yadro.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,32 +72,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 18, 2022 at 1:56 AM Kees Cook <keescook@chromium.org> wrote:
->
-> Perfect. It may be worth stating this explicitly with the helper. i.e.
-> "This is for handling any panic!() calls in core Rust, but should not
-> ever be used in the 'kernel' create; failures should be handled."
+On Thu, Aug 18, 2022 at 12:03:37PM +0300, Konstantin Shelekhin wrote:
+> On Wed, Aug 17, 2022 at 12:36:33PM -0700, Kees Cook wrote:
+> > On Sat, Aug 06, 2022 at 01:40:33AM +0300, Konstantin Shelekhin wrote:
+> > > > diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> > > > index f18e6dfc68c5..52f5488c61bc 100644
+> > > > --- a/scripts/kallsyms.c
+> > > > +++ b/scripts/kallsyms.c
+> > > > @@ -206,7 +206,7 @@ static struct sym_entry *read_symbol(FILE *in)
+> > > >
+> > > >     rc = fscanf(in, "%llx %c %499s\n", &addr, &type, name);
+> > > >     if (rc != 3) {
+> > > > -           if (rc != EOF && fgets(name, 500, in) == NULL)
+> > > > +           if (rc != EOF && fgets(name, sizeof(name), in) == NULL)
+> > > >                     fprintf(stderr, "Read error or end of file.\n");
+> > > >             return NULL;
+> > > >     }
+> > >
+> > > Might be another nit, but IMO it's better to use ARRAY_SIZE() here.
+> > 
+> > I'm not sure I see a benefit for char arrays. It'll produce the same
+> > result, and the tradition for string functions is to use sizeof().
+> > *shrug*
+> 
+> ARRAY_SIZE() (though not this one) can catch this:
+> 
+>   - char array[16];
+>   + char *array;
+> 
+> Saves me some.
 
-I am not sure we should say "ever", because there are sometimes
-situations where we statically know a situation is impossible. Of
-course, "impossible" in practice is possible -- even if it is due to a
-single-event upset.
+Oh, that's an excellent point; I forgot it'll actually compile-time
+error if the var is a pointer. +1
 
-For the "statically impossible" cases, we could simply trigger UB
-instead of panicking. However, while developing and debugging one
-would like to detect bugs as soon as possible. Moreover, in
-production, people may have use cases where killing the world is
-better as soon as anything "funny" is detected, no matter what.
-
-So we could make it configurable, so that "Rust statically impossible
-panics" can be defined as UB, `make_task_dead()` or a full `BUG()`.
-
-By the way, I should have mentioned the `unwrap()s` too, since they
-are pretty much explicit panics. We don't have any in v9 either, but
-we do have a couple dozens in the full code (in the 97% not submitted)
-in non-test or examples code. Many are of the "statically impossible"
-kind, but any that is not merits some discussion, which we can do as
-we upstream the different pieces.
-
-Cheers,
-Miguel
+-- 
+Kees Cook
