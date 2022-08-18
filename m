@@ -2,71 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A96597E43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 07:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DCEC597E69
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 08:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243062AbiHRFwS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 01:52:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41066 "EHLO
+        id S243527AbiHRGIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 02:08:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240655AbiHRFwQ (ORCPT
+        with ESMTP id S243464AbiHRGIk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 01:52:16 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 450048E463;
-        Wed, 17 Aug 2022 22:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wHd9CWU9QIiZV8Sx+rqONgV8dh72yazoE4zaORY3LdU=; b=B1T/Q2Z+54m1kgVGIb5BGgFn+B
-        IMKPOgMcqPgJ0RGJxT8Iyo3+IoNxGxTBKgn8SIh8Jgq8rO93kYz89b36YfjI0Qwffmmr7cSAuhVDQ
-        1mP+boHgMr99PYvGv8cpHT+6w09JSP83XsEIMqcvdVvR7U3IF7cN1HExxIXyXqpgSl567pkM+OtSE
-        w3fF8a66+wEmO8G0CMqQCzk6VzPXB72HtZjdswobV1A23eo7zwJzhJ6lhG2Chi2MPSRX4lTkPe2vj
-        +T4Z6pzJnnssdUTpNQK76HeXo3O982udeo88SBTbDjfKD2bqZ85e7RPU1zspXku9OEtOxxbEHifTd
-        6jqjbcDg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oOYRv-005csa-Tm;
-        Thu, 18 Aug 2022 05:52:12 +0000
-Date:   Thu, 18 Aug 2022 06:52:11 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Olga Kornievskaia <aglo@umich.edu>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
-Message-ID: <Yv3Ti/niVd5ZVPP+@ZenIV>
-References: <Yv1jwsHVWI+lguAT@ZenIV>
- <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
- <Yv2BVKuzZdMDY2Td@ZenIV>
- <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
- <CAOQ4uxgA8jD6KnbuHDevNLsjD-LbEs_y1W6uYMEY6EG_es0o+Q@mail.gmail.com>
+        Thu, 18 Aug 2022 02:08:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BAEB45077;
+        Wed, 17 Aug 2022 23:08:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D4F8E6124A;
+        Thu, 18 Aug 2022 06:08:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D661C433D6;
+        Thu, 18 Aug 2022 06:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660802918;
+        bh=CRl7JsMqi8BsPMaRF4i1DkotPNeNQzHKAoXFboy6LYY=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=MEQR8w97geB0du4JylVtGu3MrUNfIv/SKfi0ahOwCeuEHnhhopTaJFH/MdS0LokOq
+         ilPZnksm+2eqoQujGxf70jn+eDjIGmZXZw3EawFnlS/kTHEG5BlcZmK4PxDPMJ28Ie
+         yLcEhTbkkh2fTLxMcwNUre5QeZIi9+LFe6JKtCaPknV4JAPpwLBd2AqaTEgI6j3fVD
+         exy8qAkI7HP6baoe6rbgysY50ln+qzHmY0u6rTjAQkYJ+B+2SBUql5AN16UWPcPWJ7
+         Xlu2loyuMe0hH0bClzVns/2F+F/7YKRIVK3TzCsFzL4KUwEyO8HfDTbpG3E3tViH2r
+         M9qqE+Ax2qNAQ==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-11c896b879bso744197fac.3;
+        Wed, 17 Aug 2022 23:08:38 -0700 (PDT)
+X-Gm-Message-State: ACgBeo07iT8PjBw8vnYtPxIkspTbZVeICsgBODdpc8T94rSB2CbGnJ7N
+        +qn9k2holBLnevGeyrNTEoKh9dEouAF9mPKI+Ww=
+X-Google-Smtp-Source: AA6agR7w3gs9PXG8qQMcjajj1oVA3xPSKUmtvrpdRJBLq+TYskNiGYgDD7oIqMLRoDHtCXHEUdbF7xU2wSKtSSaX+Rc=
+X-Received: by 2002:a05:6870:f69d:b0:10d:81ea:3540 with SMTP id
+ el29-20020a056870f69d00b0010d81ea3540mr695380oab.257.1660802917371; Wed, 17
+ Aug 2022 23:08:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgA8jD6KnbuHDevNLsjD-LbEs_y1W6uYMEY6EG_es0o+Q@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6838:27c7:0:0:0:0 with HTTP; Wed, 17 Aug 2022 23:08:36
+ -0700 (PDT)
+In-Reply-To: <Yv2rCqD7M8fAhq5v@ZenIV>
+References: <Yv2qoNQg48rtymGE@ZenIV> <Yv2rCqD7M8fAhq5v@ZenIV>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 18 Aug 2022 15:08:36 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-Xsih1TKTbM0kTGmjQfpkbpp7d3u9E7USuwmiSXLVvBw@mail.gmail.com>
+Message-ID: <CAKYAXd-Xsih1TKTbM0kTGmjQfpkbpp7d3u9E7USuwmiSXLVvBw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ksmbd: don't open-code %pf
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 18, 2022 at 08:19:54AM +0300, Amir Goldstein wrote:
+2022-08-18 11:59 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/ksmbd/vfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+> index 78d01033604c..a0fafba8b5d0 100644
+> --- a/fs/ksmbd/vfs.c
+> +++ b/fs/ksmbd/vfs.c
+> @@ -1743,11 +1743,11 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work
+> *work,
+>  	*total_size_written = 0;
+>
+>  	if (!(src_fp->daccess & (FILE_READ_DATA_LE | FILE_EXECUTE_LE))) {
+> -		pr_err("no right to read(%pd)\n", src_fp->filp->f_path.dentry);
+> +		pr_err("no right to read(%pf)\n", src_fp->filp);
+Isn't this probably %pD?
 
-> NFS spec does not guarantee the safety of the server.
-> It's like saying that the Law makes Crime impossible.
-> The law needs to be enforced, so if server gets a request
-> to COPY from/to an fhandle that resolves as a non-regular file
-> (from a rogue or buggy NFS client) the server should return an
-> error and not continue to alloc_file_pseudo().
-
-FWIW, my preference would be to have alloc_file_pseudo() reject
-directory inodes if it ever gets such.
-
-I'm still not sure that my (and yours, apparently) interpretation
-of what Olga said is correct, though.
+Thanks.
+>  		return -EACCES;
+>  	}
+>  	if (!(dst_fp->daccess & (FILE_WRITE_DATA_LE | FILE_APPEND_DATA_LE))) {
+> -		pr_err("no right to write(%pd)\n", dst_fp->filp->f_path.dentry);
+> +		pr_err("no right to write(%pf)\n", dst_fp->filp);
+>  		return -EACCES;
+>  	}
+>
+> --
+> 2.30.2
+>
+>
