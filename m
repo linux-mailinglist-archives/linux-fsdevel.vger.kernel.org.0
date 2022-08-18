@@ -2,46 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14883597B21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 03:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B73597B35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 03:54:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242602AbiHRBfw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 21:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
+        id S239249AbiHRBwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 21:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238839AbiHRBfv (ORCPT
+        with ESMTP id S234003AbiHRBwW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 21:35:51 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2A4B6A0262;
-        Wed, 17 Aug 2022 18:35:51 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-52-176.pa.nsw.optusnet.com.au [49.181.52.176])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 6B06862D952;
-        Thu, 18 Aug 2022 11:35:50 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oOURo-00EPXL-MQ; Thu, 18 Aug 2022 11:35:48 +1000
-Date:   Thu, 18 Aug 2022 11:35:48 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] xfs: don't bump the i_version on an atime update in
- xfs_vn_update_time
-Message-ID: <20220818013548.GD3600936@dread.disaster.area>
-References: <20220817130002.93592-1-jlayton@kernel.org>
+        Wed, 17 Aug 2022 21:52:22 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BB69C2F2;
+        Wed, 17 Aug 2022 18:52:18 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3FC3B3890A;
+        Thu, 18 Aug 2022 01:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1660787537; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MsCpnIDEIoiyaQnhIzHQLWmymVdVFy3Ho7omdhkjihc=;
+        b=UZofmoijgxYszLPwVMrva7lbPHhGjLjJ2TftGHUJqgEBD9nsBBRQODZdil/+i0A5Mf03ND
+        l/eJkTtmFqV/j4Xt6uu5wCKzzhZ3Aqgggru3QBQHmndvGFs5V52u6kuyT28fOYKT/pMy8e
+        k95B7Pg6d6dIdLf3CxkZ7LZ2//zfVGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1660787537;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MsCpnIDEIoiyaQnhIzHQLWmymVdVFy3Ho7omdhkjihc=;
+        b=1sjxClkHneUeo0L1WTf1wz9otdvBOsDivd/lHqCUPNxfADJ8DrCW2VWI3O6lj9/p1aYZ1u
+        thWQnIvvVdCOnCAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4247B13434;
+        Thu, 18 Aug 2022 01:52:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id dh8RO06b/WLQXwAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 18 Aug 2022 01:52:14 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220817130002.93592-1-jlayton@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62fd9776
-        a=O3n/kZ8kT9QBBO3sWHYIyw==:117 a=O3n/kZ8kT9QBBO3sWHYIyw==:17
-        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=NkgNjqECM6Bzkx66WxwA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dave Chinner" <david@fromorbit.com>
+Cc:     "Jeff Layton" <jlayton@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH] xfs: fix i_version handling in xfs
+In-reply-to: <20220818013251.GC3600936@dread.disaster.area>
+References: <20220816131736.42615-1-jlayton@kernel.org>,
+ <Yvu7DHDWl4g1KsI5@magnolia>,
+ <e77fd4d19815fd661dbdb04ab27e687ff7e727eb.camel@kernel.org>,
+ <20220816224257.GV3600936@dread.disaster.area>,
+ <166078288043.5425.8131814891435481157@noble.neil.brown.name>,
+ <20220818013251.GC3600936@dread.disaster.area>
+Date:   Thu, 18 Aug 2022 11:52:12 +1000
+Message-id: <166078753200.5425.8997202026343224290@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,40 +78,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 09:00:02AM -0400, Jeff Layton wrote:
-> xfs will update the i_version when updating only the atime value, which
-> is not desirable for any of the current consumers of i_version. Doing so
-> leads to unnecessary cache invalidations on NFS and extra measurement
-> activity in IMA.
+On Thu, 18 Aug 2022, Dave Chinner wrote:
 > 
-> Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
-> transaction should not update the i_version. Set that value in
-> xfs_vn_update_time if we're only updating the atime.
+> > Maybe we should just go back to using ctime.  ctime is *exactly* what
+> > NFSv4 wants, as long as its granularity is sufficient to catch every
+> > single change.  Presumably XFS doesn't try to ensure this.  How hard
+> > would it be to get any ctime update to add at least one nanosecond?
+> > This would be enabled by a mount option, or possibly be a direct request
+> > from nfsd.
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_log_format.h  |  2 +-
->  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
->  fs/xfs/xfs_iops.c               | 10 +++++++---
->  3 files changed, 9 insertions(+), 5 deletions(-)
+> We can't rely on ctime to be changed during a modification because
+> O_NOCMTIME exists to enable "user invisible" modifications to be
+> made. On XFS these still bump iversion, so while they are invisible
+> to the user, they are still tracked by the filesystem and anything
+> that wants to know if the inode data/metadata changed.
 > 
-> Dave,
-> 
-> How about this for an alternate approach? This just explicitly ensures
-> that we don't bump the i_version on an atime-only update, and seems to
-> fix the testcase I have.
 
-This just duplicates lazytime functionality, only now users
-can't opt-in or out.
+O_NOCMTIME isn't mentioned in the man page, so it doesn't exist :-(
 
-atime update filtering is a VFS function so behaviour is common
-across all filesystems. Deficiencies in VFS filtering behaviour
-should not be hacked around by individual filesystems, the VFS
-filtering should be fixed.
+If they are "user invisible", should they then also be "NFS invisible"?
+I think so.
+As I understand it, the purpose of O_NOCMTIME is to allow optimisations
+- do a lot of writes, then update the mtime, thus reducing latency.  I
+think it is perfectly reasonable for all of that to be invisible to NFS.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+NeilBrown
