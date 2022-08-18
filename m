@@ -2,172 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B2459898B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 19:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5305989CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 19:12:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345223AbiHRRAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 13:00:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35150 "EHLO
+        id S1345393AbiHRRCw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 13:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345321AbiHRRA2 (ORCPT
+        with ESMTP id S1345440AbiHRRAu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 13:00:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A691C12C0;
-        Thu, 18 Aug 2022 10:00:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EB546163F;
-        Thu, 18 Aug 2022 17:00:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C28C43470;
-        Thu, 18 Aug 2022 17:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660842017;
-        bh=4alT+1kcW0AynTw4CzIKjHnkkcstzi9mfOYgPu9672k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LAdvY8HWNTKDjWAYsDasqK2xyXkUL5AdcRrhffJlzOahe/Nthx9qZv02KrOQhM2F6
-         BKVXCJusocInSjVo0c2x/ExHLwoJIbWAo31cpvumUUcm2yewTjEjKoSyeW5uLyjMn5
-         MWxgjt2y0iQWSVQSxl7rA2tnIOs9sk27Q/DhS2L3YG+eCnnUq/nXxVuK9elVqhal0z
-         lGWPg70nVFUqE742DkI6Z4OjizVs+BLISNz8iLdeHVkX0to/b7ad8qyL1kq3DLXtk8
-         KXSyI0LSHzOzTtnJ7aDzLLTOwPq0l3kNJ7uE6yVCdxXtWyZKGdmguQisnc5feZ3yGw
-         BUngpS41E2yRg==
-Date:   Thu, 18 Aug 2022 10:00:17 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "jane.chu@oracle.com" <jane.chu@oracle.com>
-Subject: [PATCH] xfs: on memory failure, only shut down fs after scanning all
- mappings
-Message-ID: <Yv5wIa2crHioYeRr@magnolia>
+        Thu, 18 Aug 2022 13:00:50 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B3BC9E84
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 10:00:40 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id r141so1543742iod.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 10:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=lYKXgue+zNpIvfPSql7O+R7TEPDE0QJoKDwJiREWf7Y=;
+        b=Yf1ObBTNqWoadaVv8CCeNUYTVV68c76B6bJj+OWtTMqEm6y9RVLZxi8pXcWODx7ozI
+         ysK0w8bPJ3a3/qEWgxWHSf8bNRPyd+gQ7P8S6Vy+EiuTtxmLhLMP9IGRbIxjif5isELg
+         CkB/mjrtD+rDJdFW9t9OnB0z1vy3zsqUsMw+O7MfuvbBQUojyYNprPOTHqsI050/FEBC
+         0AUP1wXNqc+Dc8g1iMp63xR65paoeeLq/qNmRaUBSjL51/fm5ViMoCa1vMcMTpN2Hzka
+         HZEvd1RftSYXrbo47FE9XPrlCNrx7zuzMGz7N92/ip6K6zZM5wea7ywlo58ZwoXdj0Nq
+         rIcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=lYKXgue+zNpIvfPSql7O+R7TEPDE0QJoKDwJiREWf7Y=;
+        b=GuntLJ3uxvvdi58YGUnSH/bajVsQ59YS+YIAnSgpJEGqY/oqGuLp30xroXRKgj20ij
+         k3mu3XdMXoiap0JpJA5Het0V2OqFzM49HCUQRCRWZoIybN011hNKQgdBblvTwLUfEZa1
+         MaP3GHjIzg+su3NUii9YHn/qQxgMySimkDYn9HMtAsk3bkDfgF4gCYtDZaMeSuxX5yWn
+         oVuknV2Z+QVhOV8fo1XRD5AGYv4d8ucSNoUehvwTgv4gtHDItzQPeFNOLLIHDOKTTYeP
+         KVYb0mSLI2igijTNV1qmk/Epl0RgwniWnh+szXJOtohntvkyJBBqVtZ5lQGES80I1Wrb
+         3Pzw==
+X-Gm-Message-State: ACgBeo0ytOXtTgogOwwzSFprTEABPuwnxwP0XW1IhIlss8beq+xBppsI
+        5olZEVu9SQo3EdHJB254d20hpg==
+X-Google-Smtp-Source: AA6agR5Qa8kN5z58ES35WCTjV5f+v9cONWrgP5RrInMX13yzSlj1T9r40gTJhrGdtS/rCxl6RfxTMA==
+X-Received: by 2002:a6b:3b87:0:b0:688:9085:cae8 with SMTP id i129-20020a6b3b87000000b006889085cae8mr1861996ioa.118.1660842039991;
+        Thu, 18 Aug 2022 10:00:39 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id bp17-20020a056638441100b0034366d9ff20sm754283jab.160.2022.08.18.10.00.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Aug 2022 10:00:39 -0700 (PDT)
+Message-ID: <b2865bd6-2346-8f4d-168b-17f06bbedbed@kernel.dk>
+Date:   Thu, 18 Aug 2022 11:00:38 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: generic/471 regression with async buffered writes?
+Content-Language: en-US
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        fstests <fstests@vger.kernel.org>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        willy@infradead.org, Stefan Roesch <shr@fb.com>
+References: <Yv5quvRMZXlDXED/@magnolia>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Yv5quvRMZXlDXED/@magnolia>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+On 8/18/22 10:37 AM, Darrick J. Wong wrote:
+> Hi everyone,
+> 
+> I noticed the following fstest failure on XFS on 6.0-rc1 that wasn't
+> there in 5.19:
+> 
+> --- generic/471.out
+> +++ generic/471.out.bad
+> @@ -2,12 +2,10 @@
+>  pwrite: Resource temporarily unavailable
+>  wrote 8388608/8388608 bytes at offset 0
+>  XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+> -RWF_NOWAIT time is within limits.
+> +pwrite: Resource temporarily unavailable
+> +(standard_in) 1: syntax error
+> +RWF_NOWAIT took  seconds
+>  00000000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+>  *
+> -00200000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+> -*
+> -00300000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+> -*
+>  read 8388608/8388608 bytes at offset 0
+>  XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+> 
+> Is this related to the async buffered write changes, or should I keep
+> looking?  AFAICT nobody else has mentioned problems with 471...
 
-xfs_dax_failure_fn is used to scan the filesystem during a memory
-failure event to look for memory mappings to revoke.  Unfortunately, if
-it encounters an rmap record for filesystem metadata, it will shut down
-the filesystem and the scan immediately.  This means that we don't
-complete the mapping revocation scan and instead leave live mappings to
-failed memory.  Fix the function to defer the shutdown until after we've
-finished culling mappings.
+The test is just broken. It made some odd assumptions on what RWF_NOWAIT
+means with buffered writes. There's been a discussion on it previously,
+I'll see if I can find the links. IIRC, the tldr is that the test
+doesn't really tie RWF_NOWAIT to whether we'll block or not.
 
-While we're at it, add the usual "xfs_" prefix to struct failure_info,
-and actually initialize mf_flags.
-
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/xfs/xfs_notify_failure.c |   26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-index 69d9c83ea4b2..65d5eb20878e 100644
---- a/fs/xfs/xfs_notify_failure.c
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -23,17 +23,18 @@
- #include <linux/mm.h>
- #include <linux/dax.h>
- 
--struct failure_info {
-+struct xfs_failure_info {
- 	xfs_agblock_t		startblock;
- 	xfs_extlen_t		blockcount;
- 	int			mf_flags;
-+	bool			want_shutdown;
- };
- 
- static pgoff_t
- xfs_failure_pgoff(
- 	struct xfs_mount		*mp,
- 	const struct xfs_rmap_irec	*rec,
--	const struct failure_info	*notify)
-+	const struct xfs_failure_info	*notify)
- {
- 	loff_t				pos = XFS_FSB_TO_B(mp, rec->rm_offset);
- 
-@@ -47,7 +48,7 @@ static unsigned long
- xfs_failure_pgcnt(
- 	struct xfs_mount		*mp,
- 	const struct xfs_rmap_irec	*rec,
--	const struct failure_info	*notify)
-+	const struct xfs_failure_info	*notify)
- {
- 	xfs_agblock_t			end_rec;
- 	xfs_agblock_t			end_notify;
-@@ -71,13 +72,13 @@ xfs_dax_failure_fn(
- {
- 	struct xfs_mount		*mp = cur->bc_mp;
- 	struct xfs_inode		*ip;
--	struct failure_info		*notify = data;
-+	struct xfs_failure_info		*notify = data;
- 	int				error = 0;
- 
- 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
- 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
--		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
--		return -EFSCORRUPTED;
-+		notify->want_shutdown = true;
-+		return 0;
- 	}
- 
- 	/* Get files that incore, filter out others that are not in use. */
-@@ -86,8 +87,10 @@ xfs_dax_failure_fn(
- 	/* Continue the rmap query if the inode isn't incore */
- 	if (error == -ENODATA)
- 		return 0;
--	if (error)
--		return error;
-+	if (error) {
-+		notify->want_shutdown = true;
-+		return 0;
-+	}
- 
- 	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
- 				  xfs_failure_pgoff(mp, rec, notify),
-@@ -104,6 +107,7 @@ xfs_dax_notify_ddev_failure(
- 	xfs_daddr_t		bblen,
- 	int			mf_flags)
- {
-+	struct xfs_failure_info	notify = { .mf_flags = mf_flags };
- 	struct xfs_trans	*tp = NULL;
- 	struct xfs_btree_cur	*cur = NULL;
- 	struct xfs_buf		*agf_bp = NULL;
-@@ -120,7 +124,6 @@ xfs_dax_notify_ddev_failure(
- 	for (; agno <= end_agno; agno++) {
- 		struct xfs_rmap_irec	ri_low = { };
- 		struct xfs_rmap_irec	ri_high;
--		struct failure_info	notify;
- 		struct xfs_agf		*agf;
- 		xfs_agblock_t		agend;
- 		struct xfs_perag	*pag;
-@@ -161,6 +164,11 @@ xfs_dax_notify_ddev_failure(
- 	}
- 
- 	xfs_trans_cancel(tp);
-+	if (error || notify.want_shutdown) {
-+		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+		if (!error)
-+			error = -EFSCORRUPTED;
-+	}
- 	return error;
- }
- 
+-- 
+Jens Axboe
