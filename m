@@ -2,147 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 990BC598872
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4CB598909
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 18:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344313AbiHRQOW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 12:14:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
+        id S1343794AbiHRQhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 12:37:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344262AbiHRQOV (ORCPT
+        with ESMTP id S244557AbiHRQhQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 12:14:21 -0400
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D804D4D7;
-        Thu, 18 Aug 2022 09:14:20 -0700 (PDT)
-Received: from [10.0.0.100] (cpe5896308f56e8-cm5896308f56e6.cpe.net.cable.rogers.com [99.255.30.7])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Thu, 18 Aug 2022 12:37:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D78BE4D0;
+        Thu, 18 Aug 2022 09:37:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 104733F127;
-        Thu, 18 Aug 2022 16:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1660839256;
-        bh=YZZSkhT+TTALwtfUjy6aWTR//Rq9MQ2cQ72rzDjTaGo=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=eKZn0EnaLQ3LPA55KId1jrSyN9QJDFoGajfUjb4kCVLZw+GJfPoyEZk5YsBGY9MBs
-         BD5uhH5otcM+iD4WwVifrNr5NL1BUfcSMeQnhx/CHDs9NWQTtQwx1gGwhuoQTCfKMQ
-         uST4xRWXm8MKtsgcqv+2mfMMUaoVq3HafCDVAbqHwknm58OvYYcZd9zEcvuHOCriAW
-         5f5enAoNjxCzorVuGXsIE8HVJabgP9KqXKSRwJtYh0VtfpPArngeXisaJpK+yDOAEe
-         WaTsYv22CXUAmrDXOQbGO1R7EFcMRumQCCw3nOo7oiJ1DQDXooj3VDnRI/oZGvfm7y
-         iW9MAUvGRwJEw==
-Message-ID: <dc966283-d0b9-b411-0792-c8553b948c2e@canonical.com>
-Date:   Thu, 18 Aug 2022 09:14:13 -0700
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DD21615BC;
+        Thu, 18 Aug 2022 16:37:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA40C433D6;
+        Thu, 18 Aug 2022 16:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660840634;
+        bh=QN6pzB7ts62QG1T5xnZB3fjWg90F6T1cD+qyxYHqBb8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JVfBeI4zpmSnChBDL1T16z+k6i5GDlJ7gtj3IEUnnXh0RtwNtGG6F21fFYxJgAuwq
+         7GAJ2aBQ7kOzn5/OEk7jhOVldc7H058DmauGaYY8piDhB6iXomLTPEqHLjVelLAyDh
+         UChQbn6EUCUAHH7vQB/e7YncD3pos+u7+rdApe62brDyEh2GiZN1s2bMLFMS4/uRf6
+         4SV9yL/R2pUP5Y7sAT5VHdnLJAg9b99YXf3b3YnBBYWB666pM7ekQTUA7P7wbsZcx8
+         JscaN30AOX0GtJ7I1+zAe+l9In2GPNPs68H7Yb3iC5WD7qpOP31VkR+UKNzccWH+0A
+         8hSTagrhTwnGw==
+Date:   Thu, 18 Aug 2022 09:37:14 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     fstests <fstests@vger.kernel.org>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
+        axboe@kernel.dk, willy@infradead.org, Stefan Roesch <shr@fb.com>
+Subject: generic/471 regression with async buffered writes?
+Message-ID: <Yv5quvRMZXlDXED/@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [apparmor] Switching to iterate_shared
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     jfs-discussion@lists.sourceforge.net,
-        Hans de Goede <hdegoede@redhat.com>,
-        devel@lists.orangefs.org, apparmor@lists.ubuntu.com,
-        linux-unionfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        coda@cs.cmu.edu, linux-security-module@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Namjae Jeon <linkinjeon@kernel.org>, ocfs2-devel@oss.oracle.com
-References: <YvvBs+7YUcrzwV1a@ZenIV>
- <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
- <Yvvr447B+mqbZAoe@casper.infradead.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <Yvvr447B+mqbZAoe@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/16/22 12:11, Matthew Wilcox wrote:
-> On Tue, Aug 16, 2022 at 11:58:36AM -0700, Linus Torvalds wrote:
->> That said, our filldir code is still confusing as hell. And I would
->> really like to see that "shared vs non-shared" iterator thing go away,
->> with everybody using the shared one - and filesystems that can't deal
->> with it using their own lock.
->>
->> But that's a completely independent wart in our complicated filldir saga.
->>
->> But if somebody were to look at that iterate-vs-iterate_shared, that
->> would be lovely. A quick grep shows that we don't have *that* many of
->> the non-shared cases left:
->>
->>        git grep '\.iterate\>.*='
->>
->> seems to imply that converting them to a "use my own load" wouldn't be
->> _too_ bad.
->>
->> And some of them might actually be perfectly ok with the shared
->> semantics (ie inode->i_rwsem held just for reading) and they just were
->> never converted originally.
-> 
-> What's depressing is that some of these are newly added.  It'd be
-> great if we could attach something _like_ __deprecated to things
-> that checkpatch could pick up on.
-> 
-> fs/adfs/dir_f.c:        .iterate        = adfs_f_iterate,
-> fs/adfs/dir_fplus.c:    .iterate        = adfs_fplus_iterate,
-> 
-> ADFS is read-only, so must be safe?
-> 
-> fs/ceph/dir.c:  .iterate = ceph_readdir,
-> fs/ceph/dir.c:  .iterate = ceph_readdir,
-> 
-> At least CEPH has active maintainers, cc'd
-> 
-> fs/coda/dir.c:  .iterate        = coda_readdir,
-> 
-> Would anyone notice if we broke CODA?  Maintainers cc'd anyway.
-> 
-> fs/exfat/dir.c: .iterate        = exfat_iterate,
-> 
-> Exfat is a new addition, but has active maintainers.
-> 
-> fs/jfs/namei.c: .iterate        = jfs_readdir,
-> 
-> Maintainer cc'd
-> 
-> fs/ntfs/dir.c:  .iterate        = ntfs_readdir,         /* Read directory contents. */
-> 
-> Maybe we can get rid of ntfs soon.
-> 
-> fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-> fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-> 
-> maintainers cc'd
-> 
-> fs/orangefs/dir.c:      .iterate = orangefs_dir_iterate,
-> 
-> New; maintainer cc'd
-> 
-> fs/overlayfs/readdir.c: .iterate        = ovl_iterate,
-> 
-> Active maintainer, cc'd
-> 
-> fs/proc/base.c: .iterate        = proc_##LSM##_attr_dir_iterate, \
-> 
-> Hmm.  We need both SMACK and Apparmor to agree to this ... cc's added.
+Hi everyone,
 
-This is fine for AppArmor
+I noticed the following fstest failure on XFS on 6.0-rc1 that wasn't
+there in 5.19:
 
+--- generic/471.out
++++ generic/471.out.bad
+@@ -2,12 +2,10 @@
+ pwrite: Resource temporarily unavailable
+ wrote 8388608/8388608 bytes at offset 0
+ XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+-RWF_NOWAIT time is within limits.
++pwrite: Resource temporarily unavailable
++(standard_in) 1: syntax error
++RWF_NOWAIT took  seconds
+ 00000000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+ *
+-00200000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+-*
+-00300000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+-*
+ read 8388608/8388608 bytes at offset 0
+ XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
 
-> 
-> fs/vboxsf/dir.c:        .iterate = vboxsf_dir_iterate,
-> 
-> Also newly added.  Maintainer cc'd.
-> 
+Is this related to the async buffered write changes, or should I keep
+looking?  AFAICT nobody else has mentioned problems with 471...
 
+--D
