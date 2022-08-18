@@ -2,174 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AF35981E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 13:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2202F5981FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 13:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243871AbiHRLDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 07:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
+        id S244303AbiHRLMA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 07:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244250AbiHRLDr (ORCPT
+        with ESMTP id S243897AbiHRLL6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 07:03:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1F932D8E;
-        Thu, 18 Aug 2022 04:03:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B96B5614A9;
-        Thu, 18 Aug 2022 11:03:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E66C433D7;
-        Thu, 18 Aug 2022 11:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660820624;
-        bh=o2Ny5UVyamhrQDusoaKLIxn3yy1wtvQZpQSM8GQ/8n4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QZsgOlKXomMKTY7guD6pHV5RzkU65A0+anpcrqcTDb9Q9mQX38LEck7WXo8wNGxb+
-         mXTlC0yiHxiDlHPfeAw8c1XobYvO8uJuJ2AVJtcy/uXQsj3wyHhza7X3hpUHcuQ1Mm
-         PXotXrAh1WJtvkC8gridz8a4weHvZTnkDv+T2DsiFmNeiMNZ/TC8K8Hn39D5dRE64d
-         DEsbaCwVIA2f02amo6AAOHcA5CqIJ99qDPhiFR3k+IeyQHF/KslX5CCirMayzjeDiH
-         R53V5TNcGrXX1BL+Isly3IxhIcKQkz5HZFJJgY2q/2B2q3ArbRoTPt6N5SEdQGUb3p
-         g7VVMH/AXFBCA==
-Message-ID: <b8cf4464cc31dc262a2d38e66265c06bf1e35751.camel@kernel.org>
-Subject: Re: [PATCH] xfs: fix i_version handling in xfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "david@fromorbit.com" <david@fromorbit.com>
-Cc:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Date:   Thu, 18 Aug 2022 07:03:42 -0400
-In-Reply-To: <0e41fb378e57794ab2a8a714b44ef92733598e8e.camel@hammerspace.com>
-References: <20220816131736.42615-1-jlayton@kernel.org>
-         <Yvu7DHDWl4g1KsI5@magnolia>
-         <e77fd4d19815fd661dbdb04ab27e687ff7e727eb.camel@kernel.org>
-         <20220816224257.GV3600936@dread.disaster.area>
-         <c61568de755fc9cd70c80c23d63c457918ab4643.camel@hammerspace.com>
-         <20220818033731.GF3600936@dread.disaster.area>
-         <0e41fb378e57794ab2a8a714b44ef92733598e8e.camel@hammerspace.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Thu, 18 Aug 2022 07:11:58 -0400
+X-Greylist: delayed 628 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 18 Aug 2022 04:11:56 PDT
+Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F723A5C57;
+        Thu, 18 Aug 2022 04:11:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1660821087; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=CK+0SxAcSS6Nr2B+ne/H3MWMkiC1taz5FsR2IymBmR8eHwRqr05o0KleO6clc2g4+a3vA6Zzp0qzSSLFgkTEfOtxwzREBNj3B7ecpPEgkErCgWjW8l8NhIoGI8u8G3xNY70IHPLSIkxHUX2PCZ2OHFm4dLDodpL7wv/5rqLMiSI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1660821087; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=y+G1krJ8CXTDXn6qZTth7DCyPot/zzg8W1f8MXUNSdI=; 
+        b=BXEIBvr6GH4KJjl0jR0jZsY34OPzAV5c1XD2B8yOlA0omfCOGEpZzyZDUV4fwxXBac7gZmZbAJH4qUC0wkmtz5H37DAo+maxpr6oqzKxsIxyw1tZ4qBF3pizqGQCxq6uVpDPJIk8ofrK7+WDa+hMbzvo0Mur7wSzVxSRpq6bJ3g=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1660821087;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+        bh=y+G1krJ8CXTDXn6qZTth7DCyPot/zzg8W1f8MXUNSdI=;
+        b=OdpzWta8ueF1lTahkP72qgf9IErRfIuKV/RyxF+9g476kcZEaCJRCnAHaFlUf4Cc
+        SP3OVYaWI0Ku5SZz+3lTwVgXDYiK5F00aqFFKFqvsBrLRR/d1TdJH/6fh/j/jYucXNz
+        ppnU/TUKtsECR9TfMsnP7stYhGQn7C96AQJ3RjsA=
+Received: from localhost.localdomain (103.86.19.2 [103.86.19.2]) by mx.zoho.in
+        with SMTPS id 166082108572024.568604130410563; Thu, 18 Aug 2022 16:41:25 +0530 (IST)
+From:   Siddh Raman Pant <code@siddh.me>
+To:     code@siddh.me
+Cc:     david@fromorbit.com, djwong@kernel.org, fgheet255t@gmail.com,
+        hch@infradead.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, riteshh@linux.ibm.com,
+        syzbot+a8e049cd3abd342936b6@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+Message-ID: <20220818111117.102681-1-code@siddh.me>
+Subject: Re: [syzbot] WARNING in iomap_iter
+Date:   Thu, 18 Aug 2022 16:41:17 +0530
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220818110031.89467-1-code@siddh.me>
+References: <20220818110031.89467-1-code@siddh.me>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-08-18 at 04:15 +0000, Trond Myklebust wrote:
-> On Thu, 2022-08-18 at 13:37 +1000, Dave Chinner wrote:
-> > On Thu, Aug 18, 2022 at 01:11:09AM +0000, Trond Myklebust wrote:
-> > > On Wed, 2022-08-17 at 08:42 +1000, Dave Chinner wrote:
-> > > >=20
-> > > > In XFS, we've defined the on-disk i_version field to mean
-> > > > "increments with any persistent inode data or metadata change",
-> > > > regardless of what the high level applications that use i_version
-> > > > might actually require.
-> > > >=20
-> > > > That some network filesystem might only need a subset of the
-> > > > metadata to be covered by i_version is largely irrelevant - if we
-> > > > don't cover every persistent inode metadata change with
-> > > > i_version,
-> > > > then applications that *need* stuff like atime change
-> > > > notification
-> > > > can't be supported.
-> > >=20
-> > > OK, I'll bite...
-> > >=20
-> > > What real world application are we talking about here, and why
-> > > can't it
-> > > just read both the atime + i_version if it cares?
-> >=20
-> > The whole point of i_version is that the aplication can skip the
-> > storage and comparison of individual metadata fields to determine if
-> > anythign changed. If you're going to store multiple fields and
-> > compare them all in addition to the change attribute, then what is
-> > the change attribute actually gaining you?
->=20
-> Information that is not contained in the fields themselves. Such as
-> metadata about the fact that they were explicitly changed by an
-> application.
->=20
-> >=20
-> > > The value of the change attribute lies in the fact that it gives
-> > > you
-> > > ctime semantics without the time resolution limitation.
-> > > i.e. if the change attribute has changed, then you know that
-> > > someone
-> > > has explicitly modified either the file data or the file metadata
-> > > (with
-> > > the emphasis being on the word "explicitly").
-> > > Implicit changes such as the mtime change due to a write are
-> > > reflected
-> > > only because they are necessarily also accompanied by an explicit
-> > > change to the data contents of the file.
-> > > Implicit changes, such as the atime changes due to a read are not
-> > > reflected in the change attribute because there is no explicit
-> > > change
-> > > being made by an application.
-> >=20
-> > That's the *NFSv4 requirements*, not what people were asking XFS to
-> > support in a persistent change attribute 10-15 years ago. What NFS
-> > required was just one of the inputs at the time, and what we
-> > implemented has kept NFSv4 happy for the past decade. I've mentioned
-> > other requirements elsewhere in the thread
->=20
-> NFS can work with a change attribute that tells it to invalidate its
-> cache on every read. The only side effect will be that the performance
-> graph will act as if you were filtering it through a cow's digestive
-> system...
->=20
-> > The problem we're talking about here is essentially a relatime
-> > filtering issue; it's triggering an filesystem update because the
-> > first access after a modification triggers an on-disk atime update
-> > rahter than just storing it in memory.
->=20
-> No. It's not... You appear to be discarding valuable information about
-> why the attributes changed. I've been asking you for reasons why, and
-> you're avoiding the question.
->=20
-> > This is not a filesystem issue - the VFS controls when the on-disk
-> > updates occur, and that what NFSv4 appears to need changed.
-> > If NFS doesn't want the filesystem to bump change counters for
-> > on-disk atime updates, then it should be asking the VFS to keep the
-> > atime updates in memory. e.g. use lazytime semantics.
-> >=20
-> > This way, every filesystem will have the same behaviour, regardless
-> > of how they track/store persistent change count metadata.
->=20
-> Right now, the i_version updates are not exported via any common API,
-> so any piss poor performance side-effects of the implementation are
-> pretty much limited to the kernel users (NFS and... ???)
->=20
-> Who do you expect to use this attribute if it were to be exported via
-> statx() as Jeff is proposing, and why is the XFS behaviour appropriate?
-> It already differs from the behaviour of both btrfs and NFS, so the
-> argument that this will magically consolidate behaviour can be ignored.
->=20
+The last test patch accidentally left out less-than-zero checks...
 
-Thanks Trond,
+Is there a way to cancel previously requested tests?
 
-That's been exactly the point I've been trying to make. The _only_
-consumers of i_version at this time are the kernel's NFS server and IMA.
-Both of them will still work with the i_version being updated due to
-atime updates, but their performance suffers.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
 
-The change I'm proposing should bring xfs in line with other providers
-of i_version as well. btrfs already behaves correctly, and I have a
-proposed patch for ext4 which should fix it. The ext4 devs seem amenable
-to it so far.
+---
+ drivers/block/loop.c      |  3 +++
+ include/uapi/linux/loop.h | 12 ++++++------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-Dave, you keep talking about the xfs i_version counter as if there are
-other applications already relying on its behavior, but I don't see how
-that can be. There is no way for userland applications to fetch the
-counter currently.
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index e3c0ba93c1a3..4ca20ce3158d 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -977,6 +977,9 @@ loop_set_status_from_info(struct loop_device *lo,
+ =09=09return -EINVAL;
+ =09}
+=20
++=09if (info->lo_offset < 0 || info->lo_sizelimit < 0)
++=09=09return -EINVAL;
++
+ =09lo->lo_offset =3D info->lo_offset;
+ =09lo->lo_sizelimit =3D info->lo_sizelimit;
+ =09memcpy(lo->lo_file_name, info->lo_file_name, LO_NAME_SIZE);
+diff --git a/include/uapi/linux/loop.h b/include/uapi/linux/loop.h
+index 6f63527dd2ed..973565f38f9d 100644
+--- a/include/uapi/linux/loop.h
++++ b/include/uapi/linux/loop.h
+@@ -53,12 +53,12 @@ struct loop_info64 {
+ =09__u64=09=09   lo_device;=09=09=09/* ioctl r/o */
+ =09__u64=09=09   lo_inode;=09=09=09/* ioctl r/o */
+ =09__u64=09=09   lo_rdevice;=09=09=09/* ioctl r/o */
+-=09__u64=09=09   lo_offset;
+-=09__u64=09=09   lo_sizelimit;/* bytes, 0 =3D=3D max available */
+-=09__u32=09=09   lo_number;=09=09=09/* ioctl r/o */
+-=09__u32=09=09   lo_encrypt_type;=09=09/* obsolete, ignored */
+-=09__u32=09=09   lo_encrypt_key_size;=09=09/* ioctl w/o */
+-=09__u32=09=09   lo_flags;
++=09__s64=09=09   lo_offset;
++=09__s64=09=09   lo_sizelimit;/* bytes, 0 =3D=3D max available */
++=09__s32=09=09   lo_number;=09=09=09/* ioctl r/o */
++=09__s32=09=09   lo_encrypt_type;=09=09/* obsolete, ignored */
++=09__s32=09=09   lo_encrypt_key_size;=09=09/* ioctl w/o */
++=09__s32=09=09   lo_flags;
+ =09__u8=09=09   lo_file_name[LO_NAME_SIZE];
+ =09__u8=09=09   lo_crypt_name[LO_NAME_SIZE];
+ =09__u8=09=09   lo_encrypt_key[LO_KEY_SIZE]; /* ioctl w/o */
 --=20
-Jeff Layton <jlayton@kernel.org>
+2.35.1
+
+
