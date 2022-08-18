@@ -2,91 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF03A597A8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 02:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63557597A9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 02:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238746AbiHRAUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Aug 2022 20:20:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
+        id S234268AbiHRAZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Aug 2022 20:25:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231510AbiHRAUE (ORCPT
+        with ESMTP id S233930AbiHRAZ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Aug 2022 20:20:04 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC589C8EE;
-        Wed, 17 Aug 2022 17:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2MkofC8d460Q9BOo8AHOV9Xfax9fU/PqKTvvaPWF3sE=; b=hedjIECppsjGyE2T/AXucHvO4S
-        pW93gpK0/OREYpGiwjBA/egtvp0QvDl3qwpIuBU++PDWncuxeh0Q4vROEbFtH5VTo4IfaRbo3xcrP
-        r5ZIfMqnlT8Hl3VFsQ77OrEuIFG2THQFfEEhvsUqytvKEMccw7nUZjlphrZQkQ9sMQoROStJOJmcS
-        KEWfWSVAi8iOk0HW9BZDXE/rEOhLSvvqirNW2WngJVbSKB79Eju06qu1iFxCdcOOOvIYjpoxejObZ
-        AFB23Rg+a4fzLl5QZvGr9XdF4LAAm2g36T7v+vucS7ZYSrCBfnO82aJ+Rm0w0TVipVrrslrQv75j4
-        jUwnfrmA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oOTGS-005XLQ-Kz;
-        Thu, 18 Aug 2022 00:20:00 +0000
-Date:   Thu, 18 Aug 2022 01:20:00 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Olga Kornievskaia <aglo@umich.edu>
-Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
-Message-ID: <Yv2FsIu8LEO0dh2B@ZenIV>
-References: <Yv1jwsHVWI+lguAT@ZenIV>
- <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
- <Yv2BVKuzZdMDY2Td@ZenIV>
- <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
+        Wed, 17 Aug 2022 20:25:27 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BE68A61C4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Aug 2022 17:25:26 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-52-176.pa.nsw.optusnet.com.au [49.181.52.176])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0E19010E8AC0;
+        Thu, 18 Aug 2022 10:25:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oOTLd-00EOMC-5N; Thu, 18 Aug 2022 10:25:21 +1000
+Date:   Thu, 18 Aug 2022 10:25:21 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: folio_map
+Message-ID: <20220818002521.GB3144495@dread.disaster.area>
+References: <YvvdFrtiW33UOkGr@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YvvdFrtiW33UOkGr@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62fd86f4
+        a=O3n/kZ8kT9QBBO3sWHYIyw==:117 a=O3n/kZ8kT9QBBO3sWHYIyw==:17
+        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=7-415B0cAAAA:8
+        a=oRO1myKlDp8gOIH6g8oA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 08:12:27PM -0400, Olga Kornievskaia wrote:
-> On Wed, Aug 17, 2022 at 8:01 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Wed, Aug 17, 2022 at 06:32:15PM -0400, Olga Kornievskaia wrote:
-> > > On Wed, Aug 17, 2022 at 6:18 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > >
-> > > >         My apologies for having missed that back when the SSC
-> > > > patchset had been done (and missing the problems after it got
-> > > > merged, actually).
-> > > >
-> > > > 1) if this
-> > > >         r_ino = nfs_fhget(ss_mnt->mnt_sb, src_fh, fattr);
-> > > > in __nfs42_ssc_open() yields a directory inode, we are screwed
-> > > > as soon as it's passed to alloc_file_pseudo() - a *lot* of places
-> > > > in dcache handling would break if we do that.  It's not too
-> > > > nice for a regular file from non-cooperating filesystem, but for
-> > > > directory ones it's deadly.
-> > >
-> > > This inode is created to make an appearance of an opened file to do
-> > > (an NFS) read, it's never a directory.
-> >
-> > Er...  Where does the fhandle come from?  From my reading it's a client-sent
-> > data; I don't know what trust model do you assume, but the price of
-> > getting multiple dentries over the same directory inode is high.
-> > Bogus or compromised client should not be able to cause severe corruption
-> > of kernel data structures...
+On Tue, Aug 16, 2022 at 07:08:22PM +0100, Matthew Wilcox wrote:
+> Some of you will already know all this, but I'll go into a certain amount
+> of detail for the peanut gallery.
 > 
-> This is an NFS spec specified operation. The (source file's)
-> filehandle comes from the COPY operation compound that the destination
-> server gets and then uses -- creates an inode from using the code you
-> are looking at now -- to access from the source server. Security is
-> all described in the spec. The uniqueness of the filehandle is
-> provided by the source server that created it.
+> One of the problems that people want to solve with multi-page folios
+> is supporting filesystem block sizes > PAGE_SIZE.  Such filesystems
+> already exist; you can happily create a 64kB block size filesystem on
+> a PPC/ARM/... today, then fail to mount it on an x86 machine.
 
-Do we assume that compromise of source server is escalatable at least
-to kernel panics on the destination server anyway?  Confused...
+The XFS buffer cache already supports 64kB block sizes on 4kB page
+size machines - we do this with bulk page allocation and
+vm_map_ram()/vm_unmap_ram() of the page arrays that are built.
+
+These mappings are persistent (i.e. cannot be local), but if you
+want to prototype something before the page cache has been
+completely modified to support BS > PS, then the XFS buffer
+cache already does what you need. Just make XFS filesystems with
+"-n size=64k" to use directory block sizes of 64kB and do lots of
+work with directory operations on large directories.
+
+> kmap_local_folio() only lets you map a single page from a folio.
+> This works for the majority of cases (eg ->write_begin() works on a
+> per-page basis *anyway*, so we can just map a single page from the folio).
+> But this is somewhat hampering for ext2_get_page(), used for directory
+> handling.  A directory record may cross a page boundary (because it
+> wasn't a page boundary on the machine which created the filesystem),
+> and juggling two pages being mapped at once is tricky with the stack
+> model for kmap_local.
+
+Yup, that's exactly the problem we avoid by using mapped buffers in
+XFS.
+
+> I don't particularly want to invest heavily in optimising for HIGHMEM.
+> The number of machines which will use multi-page folios and HIGHMEM is
+> not going to be large, one hopes, as 64-bit kernels are far more common.
+> I'm happy for 32-bit to be slow, as long as it works.
+
+Fully agree.
+
+> For these reasons, I proposing the logical equivalent to this:
+> 
+> +void *folio_map_local(struct folio *folio)
+> +{
+> +       if (!IS_ENABLED(CONFIG_HIGHMEM))
+> +               return folio_address(folio);
+> +       if (!folio_test_large(folio))
+> +               return kmap_local_page(&folio->page);
+> +       return vmap_folio(folio);
+> +}
+> +
+> +void folio_unmap_local(const void *addr)
+> +{
+> +       if (!IS_ENABLED(CONFIG_HIGHMEM))
+> +               return;
+> +       if (is_vmalloc_addr(addr))
+> +               vunmap(addr);
+> +	else
+> +       	kunmap_local(addr);
+> +}
+> 
+> (where vmap_folio() is a new function that works a lot like vmap(),
+> chunks of this get moved out-of-line, etc, etc., but this concept)
+
+*nod*
+
+> Does anyone have any better ideas?  If it'd be easy to map N pages
+> locally, for example ... looks like we only support up to 16 pages
+> mapped per CPU at any time, so mapping all of a 64kB folio would
+> almost always fail, and even mapping a 32kB folio would be unlikely
+> to succeed.
+
+FWIW, what I really want for the XFS buffer cache is a large folio
+aware variant of vm_map_ram/vm_unmap_ram(). i.e. something we can
+pass a random assortment of folios into, and it just does the right
+thing to create a persistent contiguous mapping of the folios.
+
+i.e. we have an allocation loop that tries to allocate large folios,
+but then falls back to smaller folios if the large allocation cannot
+be fulfilled without blocking. Then the mapping function works with
+whatever we managed to allocate in the most optimal way....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
