@@ -2,178 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C708A598412
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 15:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23AC95984DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Aug 2022 15:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245063AbiHRNYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Aug 2022 09:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
+        id S245332AbiHRNwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Aug 2022 09:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245047AbiHRNYp (ORCPT
+        with ESMTP id S245023AbiHRNwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Aug 2022 09:24:45 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A00D5722E;
-        Thu, 18 Aug 2022 06:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660829074; x=1692365074;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5TUL0pMN1Ch62fh0N5bHXldv3b4lhkGVjVf4Q20K7N8=;
-  b=af/BoiSPNPjYdKoxzwvWQjR04f450FFqdvSqTtbYlKSF+bXLbM7dBxul
-   8PnI3RY2FleRWHpdaa3hTAJMMBHjSDf7/9peNbvrJGfy4K98ikKV2nqhY
-   W1IXett9S+pL5UysC8cCbVRgd5YTJnUTn9RxH6B1a+GuhB6LPqEZZZDkU
-   +mAA9ZIKN37uYxkTmO0Ckumj2itTgIfFAQGQ5UBlmPVkgJaMypGNwVk14
-   5oWbjszXN5VwxNqm6fiWWLJmEX2pbW+QtfEH0D0+yQLAITSCaTjQmx42E
-   tU8kRPN80gMfuHYVsH/A2TRkgUGO+jS4S4P+Od9qsl7CJDmvhk4oVqqk6
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10442"; a="279720468"
-X-IronPort-AV: E=Sophos;i="5.93,246,1654585200"; 
-   d="scan'208";a="279720468"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2022 06:24:33 -0700
-X-IronPort-AV: E=Sophos;i="5.93,246,1654585200"; 
-   d="scan'208";a="604253471"
-Received: from geigerri-mobl1.ger.corp.intel.com (HELO box.shutemov.name) ([10.251.215.246])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2022 06:24:24 -0700
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 68132104AA0; Thu, 18 Aug 2022 16:24:21 +0300 (+03)
-Date:   Thu, 18 Aug 2022 16:24:21 +0300
-From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <20220818132421.6xmjqduempmxnnu2@box>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
+        Thu, 18 Aug 2022 09:52:49 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5AA85F214
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 06:52:38 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 73so1336716pgb.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Aug 2022 06:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=JIt9Hr3bnXwA/tRzFdUUjJF8ICdMOLH9UGftglFwKs0=;
+        b=rx0D5/86CeH9rfls9cK+ovoX6WXvUqWR5yR9uWVkAKmXOMBXx94XSUUEx7H3dppxqk
+         0XJR0QcosZQsZamTxInDJnivdwpSHeRDS7y+llNNp3dHBXKLlc83/VJ+oArwJUMP+Ur9
+         hIakH/6FLBjhAayfoOwo57F1c+VwhPJPl75FCbrvtgwAsTgdYkGDCuaGwxaREE04BMCc
+         9/3Ec7a5OdzkzyAJmB0OJO55kdOjDp6dWJYnm8UQ57HxpVflXFA9vdb/6+FzlSJG4K3K
+         uFF3mhw+/UR6CUVl+qU+0YH4tGfsv+KRtARIieVUP/aShtVfQotfAsAiNQMPAR2Vmocd
+         ZaXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=JIt9Hr3bnXwA/tRzFdUUjJF8ICdMOLH9UGftglFwKs0=;
+        b=NiskbElLpvtRMeoJjB7zfLopCQVOWLXt72iyhXaZFawAl20qQbrR3fj3tlNBbwrm59
+         H9sDHYnMkycVDYFGTq1L1ATwA7KEQpXw/cur8juwJp+pDIZuHUulj/ZqCGwMVJ6w91SD
+         DPhrZIwZPnJ50xGjnIP7INGC/U9WiToWgnyAlwLcEU7+SNFz6X02NqqOntaotoeS28s2
+         hfL45Do6lNUX3EoQgnlzrcroa1amR5ciy7AuBrkDD2BXsO5U8yezPfU4fYJ+V7Obp2l5
+         zlNUt+zdl8jL8uuOSSdJix85UTNIljbh6KL0F78rR0NqHTt3VXdnDPaMu875bpgqQAXp
+         aa5w==
+X-Gm-Message-State: ACgBeo23GtRLRqgGGoo2f9Poli1b3PGqF9HIu/OBguWDkg3dzpexISXj
+        74b5Gmp4LMu/nHrJpyVq1uqObg==
+X-Google-Smtp-Source: AA6agR7dyQJ+ORPyUmexb/HyRV/vRty6JE9R9UJyqOx4rKaS8Fn0kNA5WBhPQP1h+roc/IdDaQXkGQ==
+X-Received: by 2002:a63:698a:0:b0:41c:8dfa:e622 with SMTP id e132-20020a63698a000000b0041c8dfae622mr2473637pgc.465.1660830758358;
+        Thu, 18 Aug 2022 06:52:38 -0700 (PDT)
+Received: from C02G705SMD6V.bytedance.net ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id k17-20020a170902ce1100b0016db0d877e4sm1385697plg.221.2022.08.18.06.52.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Aug 2022 06:52:37 -0700 (PDT)
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+To:     dhowells@redhat.com, xiang@kernel.org, jefflexu@linux.alibaba.com
+Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, Jia Zhu <zhujia.zj@bytedance.com>
+Subject: [RFC PATCH 0/5] Introduce daemon failover mechanism to recover from crashing
+Date:   Thu, 18 Aug 2022 21:51:59 +0800
+Message-Id: <20220818135204.49878-1-zhujia.zj@bytedance.com>
+X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 17, 2022 at 10:40:12PM -0700, Hugh Dickins wrote:
-> On Wed, 6 Jul 2022, Chao Peng wrote:
-> > This is the v7 of this series which tries to implement the fd-based KVM
-> > guest private memory.
-> 
-> Here at last are my reluctant thoughts on this patchset.
-> 
-> fd-based approach for supporting KVM guest private memory: fine.
-> 
-> Use or abuse of memfd and shmem.c: mistaken.
-> 
-> memfd_create() was an excellent way to put together the initial prototype.
-> 
-> But since then, TDX in particular has forced an effort into preventing
-> (by flags, seals, notifiers) almost everything that makes it shmem/tmpfs.
-> 
-> Are any of the shmem.c mods useful to existing users of shmem.c? No.
-> Is MFD_INACCESSIBLE useful or comprehensible to memfd_create() users? No.
-> 
-> What use do you have for a filesystem here?  Almost none.
-> IIUC, what you want is an fd through which QEMU can allocate kernel
-> memory, selectively free that memory, and communicate fd+offset+length
-> to KVM.  And perhaps an interface to initialize a little of that memory
-> from a template (presumably copied from a real file on disk somewhere).
-> 
-> You don't need shmem.c or a filesystem for that!
-> 
-> If your memory could be swapped, that would be enough of a good reason
-> to make use of shmem.c: but it cannot be swapped; and although there
-> are some references in the mailthreads to it perhaps being swappable
-> in future, I get the impression that will not happen soon if ever.
-> 
-> If your memory could be migrated, that would be some reason to use
-> filesystem page cache (because page migration happens to understand
-> that type of memory): but it cannot be migrated.
+[Background]
+============
+In ondemand read mode, if user daemon closes anonymous fd(e.g. daemon
+crashes), subsequent read and inflight requests based on these fd will
+return -EIO.
+Even if above mentioned case is tolerable for some individual users, but
+when it happenens in real cloud service production environment, such IO
+errors will be passed to cloud service users and impact its working jobs.
+It's terrible for cloud service stability.
 
-Migration support is in pipeline. It is part of TDX 1.5 [1]. And swapping
-theoretically possible, but I'm not aware of any plans as of now.
+[Design]
+========
+This patchset introduce three states for ondemand object:
+CLOSE: Object which just be allocated or closed by user daemon.
+OPEN: Object which related OPEN request has been processed correctly.
+REOPENING: Object which has been closed, and is drived to open by a read
+request.
 
-[1] https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+[Flow Path]
+===========
+[Daemon Crash] 
+0. Daemon use UDS send/receive fd to keep and pass the fd reference of
+   "/dev/cachefiles".
+1. User daemon crashes -> restart and recover dev fd's reference.
+2. User daemon write "restore" to device.
+   2.1 Reset the object's state from CLOSE to OPENING.
+   2.2 Init a work which reinit the object and add it to wq. (daemon can
+       get rid of kernel space and handle that open request).
+3. The user of upper filesystem won't notice that the daemon ever crashed
+   since the inflight IO is restored and handled correctly.
 
-> Some of these impressions may come from earlier iterations of the
-> patchset (v7 looks better in several ways than v5).  I am probably
-> underestimating the extent to which you have taken on board other
-> usages beyond TDX and SEV private memory, and rightly want to serve
-> them all with similar interfaces: perhaps there is enough justification
-> for shmem there, but I don't see it.  There was mention of userfaultfd
-> in one link: does that provide the justification for using shmem?
-> 
-> I'm afraid of the special demands you may make of memory allocation
-> later on - surprised that huge pages are not mentioned already;
-> gigantic contiguous extents? secretmem removed from direct map?
+[Daemon Close fd]
+1. User daemon closes an anonymous fd.
+2. User daemon reads a READ request which the associated anonymous fd was
+   closed and init a work which re-open the object.
+3. User daemon handles above open request normally.
+4. The user of upper filesystem won't notice that the daemon ever closed
+   any fd since the closed object is re-opened and related request was
+   handled correctly.
 
-The design allows for extension to hugetlbfs if needed. Combination of
-MFD_INACCESSIBLE | MFD_HUGETLB should route this way. There should be zero
-implications for shmem. It is going to be separate struct memfile_backing_store.
+[Test]
+======
+There is a testcase for above mentioned scenario.
+A user process read the file by fscache ondemand reading.
+At the same time, we kill the daemon constantly.
+The expected result is that the file read by user is consistent with
+original, and the user doesn't notice that daemon has ever been killed.
 
-I'm not sure secretmem is a fit here as we want to extend MFD_INACCESSIBLE
-to be movable if platform supports it and secretmem is not migratable by
-design (without direct mapping fragmentations).
+https://github.com/userzj/demand-read-cachefilesd/commits/failover-test
 
-> Here's what I would prefer, and imagine much easier for you to maintain;
-> but I'm no system designer, and may be misunderstanding throughout.
-> 
-> QEMU gets fd from opening /dev/kvm_something, uses ioctls (or perhaps
-> the fallocate syscall interface itself) to allocate and free the memory,
-> ioctl for initializing some of it too.  KVM in control of whether that
-> fd can be read or written or mmap'ed or whatever, no need to prevent it
-> in shmem.c, no need for flags, seals, notifications to and fro because
-> KVM is already in control and knows the history.  If shmem actually has
-> value, call into it underneath - somewhat like SysV SHM, and /dev/zero
-> mmap, and i915/gem make use of it underneath.  If shmem has nothing to
-> add, just allocate and free kernel memory directly, recorded in your
-> own xarray.
+[GitWeb]
+========
+https://github.com/userzj/linux/tree/fscache-failover-v1
 
-I guess shim layer on top of shmem *can* work. I don't see immediately why
-it would not. But I'm not sure it is right direction. We risk creating yet
-another parallel VM with own rules/locking/accounting that opaque to
-core-mm.
+Jia Zhu (5):
+  cachefiles: introduce object ondemand state
+  cachefiles: extract ondemand info field from cachefiles_object
+  cachefiles: resend an open request if the read request's object is
+    closed
+  cachefiles: narrow the scope of triggering EPOLLIN events in ondemand
+    mode
+  cachefiles: add restore command to recover inflight ondemand read
+    requests
 
-Note that on machines that run TDX guests such memory would likely be the
-bulk of memory use. Treating it as a fringe case may bite us one day.
+ fs/cachefiles/daemon.c    |  14 +++-
+ fs/cachefiles/interface.c |   6 ++
+ fs/cachefiles/internal.h  |  74 ++++++++++++++++++++-
+ fs/cachefiles/ondemand.c  | 135 ++++++++++++++++++++++++++++----------
+ 4 files changed, 193 insertions(+), 36 deletions(-)
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.20.1
+
