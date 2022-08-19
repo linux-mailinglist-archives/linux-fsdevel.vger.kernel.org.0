@@ -2,60 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A465459A7F8
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6C059A7F6
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 23:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236083AbiHSVnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 17:43:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47384 "EHLO
+        id S238265AbiHSVpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 17:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234109AbiHSVnC (ORCPT
+        with ESMTP id S235003AbiHSVps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 17:43:02 -0400
+        Fri, 19 Aug 2022 17:45:48 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CFB710E7A9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 14:43:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13CB272EE8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 14:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660945380;
+        s=mimecast20190719; t=1660945546;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TF8rNb8UgO6lfW4pRfX+5WK+hLe/xJvdy6+pJrx+mzo=;
-        b=Eg4QeJa2Uinq9RKGhOZGKOIth06jpOYyrsnVqn9eitjqxUbUEPInsHRP2qL8JgWQ4abfeT
-        E2eeylD1AvaAjAmI7K8obWnhN1KeRhpiN6nF3unhPraPYHg2GsBBtqEbcH35KhaICzNM/4
-        oOheyNDujAYc1tEdFq7bZKPq24UhtgM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=oQ+I6qTJcNsmHy7XkSLOm7yyIeLTf0j7ipsErqXY/kI=;
+        b=ezOVcoFQhcVfP5BHsu0XdGRFqFGnBmwlu/evJ8H5S3HQ3QMEMTSewXPtSTu8/0r7zRWOjP
+        qB1rCDx+ejbiPLdhAEkhHHWzP0l3Nz5oa6h6m1HaGfG+vQVgcaDHi9ABLZsLIAit7VbyVP
+        WKvqrfMOsQhSeY2ZM04WUYrPpYVK/7s=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-54-qTr8DUvZPf6knxIM81wOjw-1; Fri, 19 Aug 2022 17:42:57 -0400
-X-MC-Unique: qTr8DUvZPf6knxIM81wOjw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-88-G5HFeQirNgelknX8bvr_jg-1; Fri, 19 Aug 2022 17:45:41 -0400
+X-MC-Unique: G5HFeQirNgelknX8bvr_jg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E307B811E76;
-        Fri, 19 Aug 2022 21:42:56 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B31203C021A1;
+        Fri, 19 Aug 2022 21:45:40 +0000 (UTC)
 Received: from madcap2.tricolour.ca (unknown [10.22.48.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 974FD492C3B;
-        Fri, 19 Aug 2022 21:42:55 +0000 (UTC)
-Date:   Fri, 19 Aug 2022 17:42:53 -0400
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E628040D2827;
+        Fri, 19 Aug 2022 21:45:38 +0000 (UTC)
+Date:   Fri, 19 Aug 2022 17:45:36 -0400
 From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     kernel test robot <lkp@intel.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev,
+        kbuild-all@lists.01.org, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 4/4] fanotify,audit: deliver fan_info as a hex-encoded
- string
-Message-ID: <YwAD3SmDUeKc+5ht@madcap2.tricolour.ca>
-References: <cover.1659996830.git.rgb@redhat.com>
- <2d8159cec4392029dabfc39b55ac5fbd0faa9fbd.1659996830.git.rgb@redhat.com>
- <4767361.31r3eYUQgx@x2>
+Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
+ decision context
+Message-ID: <YwAEgFwOm13JPbaE@madcap2.tricolour.ca>
+References: <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
+ <202208102231.qSUdYAdb-lkp@intel.com>
+ <Yv+5ZkFxhR+JK/Rj@madcap2.tricolour.ca>
+ <CAKwvOdnQiC++rhVCFToE6t-ZO_VgkhtbH0gy=dEg662EfWucBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4767361.31r3eYUQgx@x2>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKwvOdnQiC++rhVCFToE6t-ZO_VgkhtbH0gy=dEg662EfWucBg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -66,94 +72,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-08-16 09:37, Steve Grubb wrote:
-> Hello Richard,
+On 2022-08-19 10:17, Nick Desaulniers wrote:
+> On Fri, Aug 19, 2022 at 9:25 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > On 2022-08-10 22:28, kernel test robot wrote:
+> > > Hi Richard,
+> > >
+> > > Thank you for the patch! Perhaps something to improve:
+> > >
+> > > [auto build test WARNING on jack-fs/fsnotify]
+> > > [also build test WARNING on pcmoore-audit/next linus/master v5.19 next-20220810]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > > And when submitting patch, we suggest to use '--base' as documented in
+> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > >
+> > > url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Guy-Briggs/fanotify-Allow-user-space-to-pass-back-additional-audit-info/20220810-012825
+> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+> > > config: i386-randconfig-a013 (https://download.01.org/0day-ci/archive/20220810/202208102231.qSUdYAdb-lkp@intel.com/config)
+> > > compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 5f1c7e2cc5a3c07cbc2412e851a7283c1841f520)
+> > > reproduce (this is a W=1 build):
+> > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> > >         chmod +x ~/bin/make.cross
+> > >         # https://github.com/intel-lab-lkp/linux/commit/a943676abc023c094f05b45f4d61936c567507a2
+> > >         git remote add linux-review https://github.com/intel-lab-lkp/linux
+> > >         git fetch --no-tags linux-review Richard-Guy-Briggs/fanotify-Allow-user-space-to-pass-back-additional-audit-info/20220810-012825
+> > >         git checkout a943676abc023c094f05b45f4d61936c567507a2
+> > >         # save the config file
+> > >         mkdir build_dir && cp config build_dir/.config
+> > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash fs/notify/fanotify/
+> > >
+> > > If you fix the issue, kindly add following tag where applicable
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > >
+> > > All warnings (new ones prefixed by >>):
+> > >
+> > > >> fs/notify/fanotify/fanotify_user.c:325:35: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
+> >
+> > Interesting.  When I "fix" it, my compiler complains:
+> >
+> >         fs/notify/fanotify/fanotify_user.c:324:11: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 8 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
 > 
-> Although I have it working, I have some comments below that might improve
-> things.
-> 
-> On Tuesday, August 9, 2022 1:22:55 PM EDT Richard Guy Briggs wrote:
-> > Currently the only type of fanotify info that is defined is an audit
-> > rule number, but convert it to hex encoding to future-proof the field.
-> > 
-> > Sample record:
-> >   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0
-> > fan_info=3F
-> > 
-> > Suggested-by: Paul Moore <paul@paul-moore.com>
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/auditsc.c | 28 +++++++++++++++++++++-------
-> >  1 file changed, 21 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index f000fec52360..0f747015c577 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -2908,22 +2908,36 @@ void __audit_fanotify(u32 response, size_t len,
-> > char *buf)
-> > 
-> >  	if (!(len && buf)) {
-> >  		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -			  "resp=%u fan_type=0 fan_info=?", response);
-> > +			  "resp=%u fan_type=0 fan_info=3F", response); /* "?" */
-> >  		return;
-> >  	}
-> >  	while (c >= sizeof(struct fanotify_response_info_header)) {
-> > +		struct audit_context *ctx = audit_context();
-> > +		struct audit_buffer *ab;
-> > +
-> >  		friar = (struct fanotify_response_info_audit_rule *)buf;
-> >  		switch (friar->hdr.type) {
-> >  		case FAN_RESPONSE_INFO_AUDIT_RULE:
-> >  			if (friar->hdr.len < sizeof(*friar)) {
-> > -				audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -					  "resp=%u fan_type=%u fan_info=(incomplete)",
-> > -					  response, friar->hdr.type);
-> > +				ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> > +				if (ab) {
-> > +					audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> > +							 response, friar->hdr.type);
-> > +#define INCOMPLETE "(incomplete)"
-> > +					audit_log_n_hex(ab, INCOMPLETE, sizeof(INCOMPLETE));
-> > +					audit_log_end(ab);
-> > +				}
-> >  				return;
-> >  			}
-> > -			audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > -				  "resp=%u fan_type=%u fan_info=%u",
-> > -				  response, friar->hdr.type, friar->audit_rule);
-> > +			ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> > +			if (ab) {
-> > +				audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> > +						 response, friar->hdr.type);
-> > +				audit_log_n_hex(ab, (char *)&friar->audit_rule,
-> > +						sizeof(friar->audit_rule));
-> 
-> One thing to point out, the structure has a member audit_rule. It is
-> probably better to call it rule_number. This is because it has nothing to
-> do with any actual audit rule. It is a rule number meant to be recorded by
-> the audit system.
-> 
-> Also, that member is a __u32 type. Hex encoding that directly gives back a
-> __u32 when decoded - which is a bit unexpected since everything else is
-> strings. It would be better to convert the u32 to a base 10 string and then
-> hex encode that. A buffer of 12 bytes should be sufficient.
+> The correct format specifier for size_t is %zu.  This avoids issues
+> between ILP32 vs LP64 targets.
 
-Sure, these seem reasonable.
+Perfect, thanks!
 
+> > >                     group, fd, response, info_buf, count);
+> > >                                                    ^~~~~
+> > >    include/linux/printk.h:594:38: note: expanded from macro 'pr_debug'
+> > >            no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+> > >                                        ~~~     ^~~~~~~~~~~
+> > >    include/linux/printk.h:131:17: note: expanded from macro 'no_printk'
+> > >                    printk(fmt, ##__VA_ARGS__);             \
+> > >                           ~~~    ^~~~~~~~~~~
+> > >    include/linux/printk.h:464:60: note: expanded from macro 'printk'
+> > >    #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+> > >                                                        ~~~    ^~~~~~~~~~~
+> > >    include/linux/printk.h:436:19: note: expanded from macro 'printk_index_wrap'
+> > >                    _p_func(_fmt, ##__VA_ARGS__);                           \
+> > >                            ~~~~    ^~~~~~~~~~~
+> > >    1 warning generated.
+> > >
+> > >
+> > > vim +325 fs/notify/fanotify/fanotify_user.c
+> > >
+> > >    312
+> > >    313        static int process_access_response(struct fsnotify_group *group,
+> > >    314                                           struct fanotify_response *response_struct,
+> > >    315                                           const char __user *buf,
+> > >    316                                           size_t count)
+> > >    317        {
+> > >    318                struct fanotify_perm_event *event;
+> > >    319                int fd = response_struct->fd;
+> > >    320                u32 response = response_struct->response;
+> > >    321                struct fanotify_response_info_header info_hdr;
+> > >    322                char *info_buf = NULL;
+> > >    323
+> > >    324                pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%lu\n", __func__,
+> > >  > 325                         group, fd, response, info_buf, count);
+> > >    326                /*
+> > >    327                 * make sure the response is valid, if invalid we do nothing and either
+> > >    328                 * userspace can send a valid response or we will clean it up after the
+> > >    329                 * timeout
+> > >    330                 */
+> > >    331                if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
+> > >    332                        return -EINVAL;
+> > >    333                switch (response & FANOTIFY_RESPONSE_ACCESS) {
+> > >    334                case FAN_ALLOW:
+> > >    335                case FAN_DENY:
+> > >    336                        break;
+> > >    337                default:
+> > >    338                        return -EINVAL;
+> > >    339                }
+> > >    340                if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
+> > >    341                        return -EINVAL;
+> > >    342                if (fd < 0)
+> > >    343                        return -EINVAL;
+> > >    344                if (response & FAN_INFO) {
+> > >    345                        size_t c = count;
+> > >    346                        const char __user *ib = buf;
+> > >    347
+> > >    348                        if (c <= 0)
+> > >    349                                return -EINVAL;
+> > >    350                        while (c >= sizeof(info_hdr)) {
+> > >    351                                if (copy_from_user(&info_hdr, ib, sizeof(info_hdr)))
+> > >    352                                        return -EFAULT;
+> > >    353                                if (info_hdr.pad != 0)
+> > >    354                                        return -EINVAL;
+> > >    355                                if (c < info_hdr.len)
+> > >    356                                        return -EINVAL;
+> > >    357                                switch (info_hdr.type) {
+> > >    358                                case FAN_RESPONSE_INFO_AUDIT_RULE:
+> > >    359                                        break;
+> > >    360                                case FAN_RESPONSE_INFO_NONE:
+> > >    361                                default:
+> > >    362                                        return -EINVAL;
+> > >    363                                }
+> > >    364                                c -= info_hdr.len;
+> > >    365                                ib += info_hdr.len;
+> > >    366                        }
+> > >    367                        if (c != 0)
+> > >    368                                return -EINVAL;
+> > >    369                        /* Simplistic check for now */
+> > >    370                        if (count != sizeof(struct fanotify_response_info_audit_rule))
+> > >    371                                return -EINVAL;
+> > >    372                        info_buf = kmalloc(sizeof(struct fanotify_response_info_audit_rule),
+> > >    373                                           GFP_KERNEL);
+> > >    374                        if (!info_buf)
+> > >    375                                return -ENOMEM;
+> > >    376                        if (copy_from_user(info_buf, buf, count))
+> > >    377                                return -EFAULT;
+> > >    378                }
+> > >    379                spin_lock(&group->notification_lock);
+> > >    380                list_for_each_entry(event, &group->fanotify_data.access_list,
+> > >    381                                    fae.fse.list) {
+> > >    382                        if (event->fd != fd)
+> > >    383                                continue;
+> > >    384
+> > >    385                        list_del_init(&event->fae.fse.list);
+> > >    386                        /* finish_permission_event() eats info_buf */
+> > >    387                        finish_permission_event(group, event, response_struct,
+> > >    388                                                count, info_buf);
+> > >    389                        wake_up(&group->fanotify_data.access_waitq);
+> > >    390                        return 0;
+> > >    391                }
+> > >    392                spin_unlock(&group->notification_lock);
+> > >    393
+> > >    394                return -ENOENT;
+> > >    395        }
+> > >    396
+> > >
+> > > --
+> > > 0-DAY CI Kernel Test Service
+> > > https://01.org/lkp
+> > >
+> >
+> > - RGB
+> >
+> > --
+> > Richard Guy Briggs <rgb@redhat.com>
+> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> > Remote, Ottawa, Red Hat Canada
+> > IRC: rgb, SunRaycer
+> > Voice: +1.647.777.2635, Internal: (81) 32635
+> >
+> >
+> 
+> 
+> -- 
 > Thanks,
-> -Steve
-> 
-> > +				audit_log_end(ab);
-> > +
-> > +			}
-> >  		}
-> >  		c -= friar->hdr.len;
-> >  		ib += friar->hdr.len;
-> 
-> 
-> 
+> ~Nick Desaulniers
 > 
 
 - RGB
