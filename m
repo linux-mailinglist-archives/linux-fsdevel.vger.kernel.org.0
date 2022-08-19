@@ -2,187 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8254599AFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 13:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11673599B2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 13:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348802AbiHSLZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 07:25:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57444 "EHLO
+        id S1348321AbiHSLe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 07:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348819AbiHSLYw (ORCPT
+        with ESMTP id S1347966AbiHSLey (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 07:24:52 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685A7DA3C6;
-        Fri, 19 Aug 2022 04:24:50 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 17E4C34450;
-        Fri, 19 Aug 2022 11:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1660908289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X71bsXQe8X2f7i/wXt+ZaSMOEJy6QPzm6trBFKfJVg4=;
-        b=wSJow9AcSgg3Gh+KlijcBCh0yKDvH2+oVWlKE1M7jaD+ds6m1txscyAlqKbsMJI48k7qvI
-        o05HJChUiE05yWV01tisn5upkQvq+6I2mGPk961MEfQGwHWrqM8I7rikZq9IJLDHvs8nho
-        a9u+9BoEv0NxKoOSuLXSluohOJsYbmQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1660908289;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X71bsXQe8X2f7i/wXt+ZaSMOEJy6QPzm6trBFKfJVg4=;
-        b=aVrT3+KO7RULInVTdRKbngA/gi84S5COyCdI15brX97/QfYBfXrCPYwkqh5YVHCL7n7RKd
-        jf+Q1f7bubrM3bAQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
+        Fri, 19 Aug 2022 07:34:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE905DB047;
+        Fri, 19 Aug 2022 04:34:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E2A862C141;
-        Fri, 19 Aug 2022 11:24:48 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9CD90A0635; Fri, 19 Aug 2022 13:24:48 +0200 (CEST)
-Date:   Fri, 19 Aug 2022 13:24:48 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
- decision context
-Message-ID: <20220819112448.poyke7hqcqrnolg5@quack3>
-References: <cover.1659996830.git.rgb@redhat.com>
- <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
- <CAOQ4uxjWCyFNATVmAcgOa8HNk6Upj+PPrJF7DA9V-4LjOGAALA@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D243617AB;
+        Fri, 19 Aug 2022 11:34:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1015C433C1;
+        Fri, 19 Aug 2022 11:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660908892;
+        bh=V2k0NMVIrgt8WLIyR18szSE2DGtSyfglRqVICktd4EQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gXb2Fj7z4gZg7GmGCleAWuzTrZ6C8k87aaw6G0WZCwj8Gab6EEcHiNcw3h+nJ7BB1
+         rTRJavVtvl8jZ+XNdZTgFN7RvF5kXTo3+rGAm+YeYUckRwV1flm16m27K1QiG8oFeR
+         Zhkj0cu3D4dRiYhTsl9gz2TazexVVRRALu+Jodzr5Xl+snfLn+FUhH23U11rdd7XtZ
+         C7N7ss4rQ/9kxv3yTAWFThMijQWOKHu7PMpVEIg3KO0KMWAdGhTThsC06HTjuUkzJc
+         HqBGKttMVlsD+zMCR6hMQTNMV5AzqA315Zyn4jS3qnFCCDJSn8uqYe6KpC/Acmair5
+         OnBXSlvHs376A==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Darrick J . Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        David Wysochanski <dwysocha@redhat.com>
+Subject: [PATCH] xfs: don't bump the i_version on an atime update in xfs_vn_update_time
+Date:   Fri, 19 Aug 2022 07:34:50 -0400
+Message-Id: <20220819113450.11885-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjWCyFNATVmAcgOa8HNk6Upj+PPrJF7DA9V-4LjOGAALA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 10-08-22 08:22:49, Amir Goldstein wrote:
-> [+linux-api]
-> 
-> On Tue, Aug 9, 2022 at 7:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > This patch adds a flag, FAN_INFO and an extensible buffer to provide
-> > additional information about response decisions.  The buffer contains
-> > one or more headers defining the information type and the length of the
-> > following information.  The patch defines one additional information
-> > type, FAN_RESPONSE_INFO_AUDIT_RULE, an audit rule number.  This will
-> > allow for the creation of other information types in the future if other
-> > users of the API identify different needs.
-> >
-> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
+xfs will update the i_version when updating only the atime value, which
+is not desirable for any of the current consumers of i_version. Doing so
+leads to unnecessary cache invalidations on NFS and extra measurement
+activity in IMA.
 
-...
+Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
+transaction should not update the i_version. Set that value in
+xfs_vn_update_time if we're only updating the atime.
 
-> >  static int process_access_response(struct fsnotify_group *group,
-> > -                                  struct fanotify_response *response_struct)
-> > +                                  struct fanotify_response *response_struct,
-> > +                                  const char __user *buf,
-> > +                                  size_t count)
-> >  {
-> >         struct fanotify_perm_event *event;
-> >         int fd = response_struct->fd;
-> >         u32 response = response_struct->response;
-> > +       struct fanotify_response_info_header info_hdr;
-> > +       char *info_buf = NULL;
-> >
-> > -       pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
-> > -                fd, response);
-> > +       pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%lu\n", __func__,
-> > +                group, fd, response, info_buf, count);
-> >         /*
-> >          * make sure the response is valid, if invalid we do nothing and either
-> >          * userspace can send a valid response or we will clean it up after the
-> >          * timeout
-> >          */
-> > -       switch (response & ~FAN_AUDIT) {
-> > +       if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
-> > +               return -EINVAL;
-> > +       switch (response & FANOTIFY_RESPONSE_ACCESS) {
-> >         case FAN_ALLOW:
-> >         case FAN_DENY:
-> >                 break;
-> >         default:
-> >                 return -EINVAL;
-> >         }
-> > -
-> > -       if (fd < 0)
-> > -               return -EINVAL;
-> > -
-> >         if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
-> >                 return -EINVAL;
-> > +       if (fd < 0)
-> > +               return -EINVAL;
-> 
-> Since you did not accept my suggestion of FAN_TEST [1],
-> I am not sure why this check was moved.
-> 
-> However, if you move this check past FAN_INFO processing,
-> you could change the error value to -ENOENT, same as the return value
-> for an fd that is >= 0 but does not correspond to any pending
-> permission event.
-> 
-> The idea was that userspace could write a test
-> fanotify_response_info_audit_rule payload to fanotify fd with FAN_NOFD
-> in the response.fd field.
-> On old kernel, this will return EINVAL.
-> On new kernel, if the fanotify_response_info_audit_rule payload
-> passes all the validations, this will do nothing and return ENOENT.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxi+8HUqyGxQBNMqSong92nreOWLKdy9MCrYg8wgW9Dj4g@mail.gmail.com/
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: NeilBrown <neilb@suse.de>
+Cc: Trond Myklebust <trondmy@hammerspace.com>
+Cc: David Wysochanski <dwysocha@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/xfs/libxfs/xfs_log_format.h  |  2 +-
+ fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+ fs/xfs/xfs_iops.c               | 10 +++++++---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-Yes. Richard, if you don't like the FAN_TEST proposal from Amir, please
-explain (preferably also with sample code) how you imagine userspace will
-decide whether to use FAN_INFO flag in responses or not. Because if it will
-just blindly set it, that will result in all permission events to finished
-with EPERM for kernels not recognizing FAN_INFO.
-
-> > -       if (count < sizeof(response))
-> > -               return -EINVAL;
-> > -
-> > -       count = sizeof(response);
-> > -
-> >         pr_debug("%s: group=%p count=%zu\n", __func__, group, count);
-> >
-> > -       if (copy_from_user(&response, buf, count))
-> > +       if (count < sizeof(response))
-> > +               return -EINVAL;
-> > +       if (copy_from_user(&response, buf, sizeof(response)))
-> >                 return -EFAULT;
-> >
-> > -       ret = process_access_response(group, &response);
-> > +       c = count - sizeof(response);
-> > +       if (response.response & FAN_INFO) {
-> > +               if (c < sizeof(struct fanotify_response_info_header))
-> > +                       return -EINVAL;
-> 
-> Should FAN_INFO require FAN_AUDIT?
-
-Currently we could but longer term not all additional info needs to be
-related to audit so probably I'd not require that even now (which results
-in info being effectively ignored after it is parsed).
-
-								Honza
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index b351b9dc6561..866a4c5cf70c 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -323,7 +323,7 @@ struct xfs_inode_log_format_32 {
+ #define	XFS_ILOG_ABROOT	0x100	/* log i_af.i_broot */
+ #define XFS_ILOG_DOWNER	0x200	/* change the data fork owner on replay */
+ #define XFS_ILOG_AOWNER	0x400	/* change the attr fork owner on replay */
+-
++#define XFS_ILOG_NOIVER	0x800	/* don't bump i_version */
+ 
+ /*
+  * The timestamps are dirty, but not necessarily anything else in the inode
+diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+index 8b5547073379..ffe6d296e7f9 100644
+--- a/fs/xfs/libxfs/xfs_trans_inode.c
++++ b/fs/xfs/libxfs/xfs_trans_inode.c
+@@ -126,7 +126,7 @@ xfs_trans_log_inode(
+ 	 * unconditionally.
+ 	 */
+ 	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
+-		if (IS_I_VERSION(inode) &&
++		if (!(flags & XFS_ILOG_NOIVER) && IS_I_VERSION(inode) &&
+ 		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
+ 			iversion_flags = XFS_ILOG_CORE;
+ 	}
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 45518b8c613c..54db85a43dfb 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1021,7 +1021,7 @@ xfs_vn_update_time(
+ {
+ 	struct xfs_inode	*ip = XFS_I(inode);
+ 	struct xfs_mount	*mp = ip->i_mount;
+-	int			log_flags = XFS_ILOG_TIMESTAMP;
++	int			log_flags = XFS_ILOG_TIMESTAMP|XFS_ILOG_NOIVER;
+ 	struct xfs_trans	*tp;
+ 	int			error;
+ 
+@@ -1041,10 +1041,14 @@ xfs_vn_update_time(
+ 		return error;
+ 
+ 	xfs_ilock(ip, XFS_ILOCK_EXCL);
+-	if (flags & S_CTIME)
++	if (flags & S_CTIME) {
+ 		inode->i_ctime = *now;
+-	if (flags & S_MTIME)
++		log_flags &= ~XFS_ILOG_NOIVER;
++	}
++	if (flags & S_MTIME) {
+ 		inode->i_mtime = *now;
++		log_flags &= ~XFS_ILOG_NOIVER;
++	}
+ 	if (flags & S_ATIME)
+ 		inode->i_atime = *now;
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.37.2
+
