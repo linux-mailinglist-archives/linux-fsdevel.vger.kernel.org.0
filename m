@@ -2,150 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8224359A5C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 20:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 036DD59A695
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 21:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350064AbiHSSvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 14:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49038 "EHLO
+        id S1351030AbiHSTh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 15:37:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350229AbiHSSvK (ORCPT
+        with ESMTP id S1351077AbiHSTh4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 14:51:10 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8D6D758B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 11:51:09 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id q184so5711943oif.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 11:51:09 -0700 (PDT)
+        Fri, 19 Aug 2022 15:37:56 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C65109A1B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 12:37:54 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id s31-20020a17090a2f2200b001faaf9d92easo8428789pjd.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 12:37:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=7wUgB1dRjU6/+eFjwFHTANQu+ic7Dy7EWy3+cTOIz0Y=;
-        b=YA8lduBFsw7+V7kZTDB3G6gYa9HAlS3UjQdrISezZ02nmKmRjX8o+zRPyTx/PHiYBZ
-         rX95UYX6pa787HSJFyX48N66z5sdS4xAuGadWGodDH9DtcoCZURHsEo/l//aN07ydqa8
-         g+1wDe62RvoZ6Gwv+nSIfZquiGYctEGwl6VfR8d8ZKZSKy+qIQhOqh/QAXHuYHm9xtZA
-         hwJEbVmrnbJhzna0LzhuX2bApaTmhDg6PmYQYpweixbKasPqO4mO64qdsXreZTA7ZHyL
-         yvMBdpBTpssQ3iVv4QJGcm22hssFCi5sh3/N5rOi7ZtgEGsLC2RbPFdKo4HPCQDfa0D4
-         LA6w==
+        bh=k9KpOd9i/ZNi1t1K9tR8np0p9gkpfM3VrD2lfsO25Mo=;
+        b=HC3bATKO80CNvgZPBl3R//G0TK0r3ngVuJktWYhEP8NaHJnXH6/HXfP142vc4oH9Aw
+         oJyeetzADSpgcohe210zCSh8DQfsxcwVcf8c/0gFINaAT23hmdkT8TGnAAdrxDmHlKGf
+         fctMqKyKBGj1alfGcbKBQ2/gLlX44if/PwK0HhdyLICbvLdbiwe2vlRz/1zOJjoePZzP
+         pxHe9IuraDvzqkDJ8J71BHT2b3xfBrXGMv+aVkONLXSJx4ZIfmskklMmsRvcCwUvoOUK
+         TVCUXOcQ5kN8i0t/EAZeKwJMG0HSZvtVvquJlnRoYjq4V1P98OEYU5jvAIbcSHYlInUs
+         Kn4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=7wUgB1dRjU6/+eFjwFHTANQu+ic7Dy7EWy3+cTOIz0Y=;
-        b=GfbcA+gY5PzPumdUbipGoZx1sz1miDZwwK+TPKaxidKOCizDLlgUbX3vYQ1i3Je2a5
-         vLUB4CRKpGFpb8spHdNdV3FCH+tw+R1xwx9Rl5CRTfgFmiunv2n16/+j/cBJKXKgHdLR
-         Z+Ou4BMELYaAs5FzfUWqHjZc4szNYRLYShFMAt09dir91V2V5RaRxAbwCy4BV9Y8ZhzX
-         UTsInEfCWYkxVStGqpNP9Z/htdkw+iu6vFTYoOA0H1mbIq//t7JW6naYM0/ZY128kqu0
-         l+N0yJuxjRvQkBo6GaftG3Qw0m0awEeQ4Rw+oBWOSl9OqxCvI6MhObwMuVXwWaSypjWb
-         nKtg==
-X-Gm-Message-State: ACgBeo2wCcdGlLkIO1Cikcos2HNYBLWH0t+Y0G2nF72TntLajKkefZbj
-        L0ImRwZoveYiFm9aIuUqwgBPIYPeipS9r1bTs+4C
-X-Google-Smtp-Source: AA6agR6AxsfZpdcBXlrKQIpyKWJZdaiNH1nuBz29aeBvGBp77p+jqo+BBEdP58dCAql7NNzw8Zch6kTiW0lJ65Yi4B8=
-X-Received: by 2002:aca:b7d5:0:b0:343:c478:91c6 with SMTP id
- h204-20020acab7d5000000b00343c47891c6mr4062449oif.136.1660935068420; Fri, 19
- Aug 2022 11:51:08 -0700 (PDT)
+        bh=k9KpOd9i/ZNi1t1K9tR8np0p9gkpfM3VrD2lfsO25Mo=;
+        b=EG4s9PbcH658j8PwvM6wKbkZgoksN9GGtg3MB4Jkd1iIYHNdGEbuqk+Wib76AuQUPa
+         IEGDRfFteHbQpL21Ar31D7xVNDLtyniNCdusdhWc8IhARgc88cuDlP2ihkMsOB0ZDS5p
+         DZVNGbJXr31o3+LYpaWuvtyj1I4bMYkO+W1hi72GH9rYeiTBM+UaIZUmmjwPg/CHRp6g
+         zHs5blPlyqlQXVzmYvOboSx1bYdmbGy67RlHP6i6LMkEjtDTnkGZmgCoMotkr9GD7r1G
+         YhF/KawhyU1VpOCku0oy2qDEypRjUIK0gDBMvofjSvchYlsfxIBlR7XG5ayIuAhf3IN/
+         UUow==
+X-Gm-Message-State: ACgBeo0NXE3spGa5xkmJm6f5ACKrXvaiHNGaWhkk8s5vxb5DeiH+55mT
+        az6K4KSjJKUDYJyy2ZB/rApGe1xOLwQU3IgtUEeAdxUkjXnENnsu
+X-Google-Smtp-Source: AA6agR6k/DAzQx9qRqaoRc0DfYUeZpNmDFrlAHfGRBtmhp/IGDr8OXnmdkj2tKhP7ciJU8phJ2DTP7DaAQ0zqKSGHws=
+X-Received: by 2002:a17:90b:4b91:b0:1f4:e116:8f1 with SMTP id
+ lr17-20020a17090b4b9100b001f4e11608f1mr10112497pjb.121.1660937873970; Fri, 19
+ Aug 2022 12:37:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220708093451.472870-1-omosnace@redhat.com> <CAHC9VhSFUJ6J4_wt1SKAoLourNGVkxu0Tbd9NPDbYqjjrs-qoQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSFUJ6J4_wt1SKAoLourNGVkxu0Tbd9NPDbYqjjrs-qoQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 19 Aug 2022 14:50:57 -0400
-Message-ID: <CAHC9VhRtLEg-xR5q33bVNOBi=54uJuix2QCZuCiKX2Qm6CaLzw@mail.gmail.com>
-Subject: Re: [RFC PATCH RESEND] userfaultfd: open userfaultfds with O_RDONLY
-To:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Lokesh Gidra <lokeshgidra@google.com>, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Robert O'Callahan" <roc@ocallahan.org>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com> <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
+From:   Vishal Annapurve <vannapurve@google.com>
+Date:   Fri, 19 Aug 2022 12:37:42 -0700
+Message-ID: <CAGtprH9xyw6bt4=RBWF6-v2CSpabOCpKq5rPz+e-9co7EisoVQ@mail.gmail.com>
+Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
+ memory regions
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 6:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Jul 8, 2022 at 5:35 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > Since userfaultfd doesn't implement a write operation, it is more
-> > appropriate to open it read-only.
-> >
-> > When userfaultfds are opened read-write like it is now, and such fd is
-> > passed from one process to another, SELinux will check both read and
-> > write permissions for the target process, even though it can't actually
-> > do any write operation on the fd later.
-> >
-> > Inspired by the following bug report, which has hit the SELinux scenario
-> > described above:
-> > https://bugzilla.redhat.com/show_bug.cgi?id=1974559
-> >
-> > Reported-by: Robert O'Callahan <roc@ocallahan.org>
-> > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >
-> > Resending as the last submission was ignored for over a year...
-> >
-> > https://lore.kernel.org/lkml/20210624152515.1844133-1-omosnace@redhat.com/T/
-> >
-> > I marked this as RFC, because I'm not sure if this has any unwanted side
-> > effects. I only ran this patch through selinux-testsuite, which has a
-> > simple userfaultfd subtest, and a reproducer from the Bugzilla report.
-> >
-> > Please tell me whether this makes sense and/or if it passes any
-> > userfaultfd tests you guys might have.
-> >
-> >  fs/userfaultfd.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> ...
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 230c8ff9659c..bb714c2a4b06 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -914,6 +914,35 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
 >
-> VFS folks, any objection to this patch?  It seems reasonable to me and
-> I'd really prefer this to go in via the vfs tree, but I'm not above
-> merging this via the lsm/next tree to get someone in vfs land to pay
-> attention to this ...
-
-Okay, final warning, if I don't see any objections to this when I make
-my patch sweep next week I'm going to go ahead and merge this via the
-LSM tree.
-
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index e943370107d0..8ccf00be63e1 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-> >         int fd;
-> >
-> >         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-> > -                       O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
-> > +                       O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
-> >         if (fd < 0)
-> >                 return fd;
-> >
-> > @@ -2090,7 +2090,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
-> >         mmgrab(ctx->mm);
-> >
-> >         fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-> > -                       O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
-> > +                       O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
-> >         if (fd < 0) {
-> >                 mmdrop(ctx->mm);
-> >                 kmem_cache_free(userfaultfd_ctx_cachep, ctx);
-> > --
-> > 2.36.1
+>  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
 >
-> --
-> paul-moore.com
+> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> +#define KVM_MEM_ATTR_PRIVATE   0x0001
+> +static int kvm_vm_ioctl_set_encrypted_region(struct kvm *kvm, unsigned int ioctl,
+> +                                            struct kvm_enc_region *region)
+> +{
+> +       unsigned long start, end;
+> +       void *entry;
+> +       int r;
+> +
+> +       if (region->size == 0 || region->addr + region->size < region->addr)
+> +               return -EINVAL;
+> +       if (region->addr & (PAGE_SIZE - 1) || region->size & (PAGE_SIZE - 1))
+> +               return -EINVAL;
+> +
+> +       start = region->addr >> PAGE_SHIFT;
+> +       end = (region->addr + region->size - 1) >> PAGE_SHIFT;
+> +
+> +       entry = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION ?
+> +                               xa_mk_value(KVM_MEM_ATTR_PRIVATE) : NULL;
+> +
+> +       r = xa_err(xa_store_range(&kvm->mem_attr_array, start, end,
+> +                                       entry, GFP_KERNEL_ACCOUNT));
 
+xa_store_range seems to create multi-index entries by default.
+Subsequent xa_store_range call changes all the entries stored
+previously.
+xa_store needs to be used here instead of xa_store_range to achieve
+the intended behavior.
 
-
--- 
-paul-moore.com
+> +
+> +       kvm_zap_gfn_range(kvm, start, end + 1);
+> +
+> +       return r;
+> +}
+> +#endif /* CONFIG_HAVE_KVM_PRIVATE_MEM */
+> +
+> ...
