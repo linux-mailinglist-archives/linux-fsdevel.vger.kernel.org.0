@@ -2,254 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D6C059A7F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 23:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B69F59A8A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 00:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238265AbiHSVpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 17:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53812 "EHLO
+        id S239717AbiHSWbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 18:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235003AbiHSVps (ORCPT
+        with ESMTP id S229595AbiHSWbh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 17:45:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13CB272EE8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 14:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660945546;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oQ+I6qTJcNsmHy7XkSLOm7yyIeLTf0j7ipsErqXY/kI=;
-        b=ezOVcoFQhcVfP5BHsu0XdGRFqFGnBmwlu/evJ8H5S3HQ3QMEMTSewXPtSTu8/0r7zRWOjP
-        qB1rCDx+ejbiPLdhAEkhHHWzP0l3Nz5oa6h6m1HaGfG+vQVgcaDHi9ABLZsLIAit7VbyVP
-        WKvqrfMOsQhSeY2ZM04WUYrPpYVK/7s=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-88-G5HFeQirNgelknX8bvr_jg-1; Fri, 19 Aug 2022 17:45:41 -0400
-X-MC-Unique: G5HFeQirNgelknX8bvr_jg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B31203C021A1;
-        Fri, 19 Aug 2022 21:45:40 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.48.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E628040D2827;
-        Fri, 19 Aug 2022 21:45:38 +0000 (UTC)
-Date:   Fri, 19 Aug 2022 17:45:36 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev,
-        kbuild-all@lists.01.org, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
- decision context
-Message-ID: <YwAEgFwOm13JPbaE@madcap2.tricolour.ca>
-References: <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
- <202208102231.qSUdYAdb-lkp@intel.com>
- <Yv+5ZkFxhR+JK/Rj@madcap2.tricolour.ca>
- <CAKwvOdnQiC++rhVCFToE6t-ZO_VgkhtbH0gy=dEg662EfWucBg@mail.gmail.com>
+        Fri, 19 Aug 2022 18:31:37 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF566104441;
+        Fri, 19 Aug 2022 15:31:36 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id e21so2377616edc.7;
+        Fri, 19 Aug 2022 15:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=AhRHfO8iehFCCtUowGE0tDVkHBkaER+EpAHuQQt15oc=;
+        b=csqNUCUvJsvxtE4jVAKKtuYnZTdoPzEWZddaKZTbfqriRyKxrQIS3i7Yi/C5OPY7gt
+         /50rUoYRzc0U7Epx0QSQyjIT9enLFPnSqL3lkshcGvgi7jH0pX4OS3kck265cQff3tdu
+         K2jjyk/oy1hqeLqArpRYmMgyBmy3d7ddq+dVmLvOp7Mk+rAMX3wJEX9yUZBug/tfvx08
+         oVRPIT2a/J5iqOrYaG2WxC0uZI2OYDf4vBtn1Ukeg8BBJDPuPYIDz9Jp1UI8TlhOyoVr
+         VWZM+DCTnSNiAgWs8qrC8uSSYcA6W0/sRGuEjTvbjNlX1NgPhxdHlfrDTy4AeNAre8hP
+         6g+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=AhRHfO8iehFCCtUowGE0tDVkHBkaER+EpAHuQQt15oc=;
+        b=Gp+RXpHYif6QzgVBVYq9L+cjYRCxb1SsItPOnyDGlrbf+G6ttxTvQon78Gg77/nY1C
+         BhwPDlY+mr16UzBvr/MG8knDGehK1ps1z/FzpZs0Rwl2JU5AZ69KNsWWW7E0CJbp4P1y
+         F6TGNiN28Ye7uvQISYDr9qshJhlJaGNa3sdxcM4F8e/lUsxHvCTfmasPveFXW4ndxYwz
+         UzlRqLfUOwbZXjo4vdq8r4L5NOWNVsdWr2sSn3T+3YN8UlKvFUiocKqQV25/O2e9EnGP
+         xZkiTqMQn6remcatHJKzjgos5ESv4btomnmATaf440RBVFUSOtTb/dvyuiQrhaOqKAbN
+         oKlQ==
+X-Gm-Message-State: ACgBeo19C+VR6bMNcCpcrjKvjLAKxH1lp1Hk2dXQwv3KK+qRStRfLCTH
+        WuhzHiE2i41jc+oe6jrDXPyaoyTGXr4=
+X-Google-Smtp-Source: AA6agR4m85we7sUC2H6jAFrF9/7vo0AenPmlyIe2typeJ83W140l74mTBGmd9pjlhcmnyC+Aqk4LvA==
+X-Received: by 2002:a05:6402:b90:b0:446:6871:7bfa with SMTP id cf16-20020a0564020b9000b0044668717bfamr1027737edb.143.1660948295350;
+        Fri, 19 Aug 2022 15:31:35 -0700 (PDT)
+Received: from opensuse.localnet (host-87-17-106-94.retail.telecomitalia.it. [87.17.106.94])
+        by smtp.gmail.com with ESMTPSA id 10-20020a170906218a00b0072af2460cd6sm2875378eju.30.2022.08.19.15.31.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Aug 2022 15:31:33 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fscrypt@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] fs-verity: use kmap_local_page() instead of kmap()
+Date:   Sat, 20 Aug 2022 00:31:31 +0200
+Message-ID: <2255194.ElGaqSPkdT@opensuse>
+In-Reply-To: <Yv/Wi/2IH/bY05zG@casper.infradead.org>
+References: <20220818224010.43778-1-ebiggers@kernel.org> <44912540.fMDQidcC6G@opensuse> <Yv/Wi/2IH/bY05zG@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOdnQiC++rhVCFToE6t-ZO_VgkhtbH0gy=dEg662EfWucBg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-08-19 10:17, Nick Desaulniers wrote:
-> On Fri, Aug 19, 2022 at 9:25 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > On 2022-08-10 22:28, kernel test robot wrote:
-> > > Hi Richard,
-> > >
-> > > Thank you for the patch! Perhaps something to improve:
-> > >
-> > > [auto build test WARNING on jack-fs/fsnotify]
-> > > [also build test WARNING on pcmoore-audit/next linus/master v5.19 next-20220810]
-> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > And when submitting patch, we suggest to use '--base' as documented in
-> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > >
-> > > url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Guy-Briggs/fanotify-Allow-user-space-to-pass-back-additional-audit-info/20220810-012825
-> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-> > > config: i386-randconfig-a013 (https://download.01.org/0day-ci/archive/20220810/202208102231.qSUdYAdb-lkp@intel.com/config)
-> > > compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 5f1c7e2cc5a3c07cbc2412e851a7283c1841f520)
-> > > reproduce (this is a W=1 build):
-> > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > >         chmod +x ~/bin/make.cross
-> > >         # https://github.com/intel-lab-lkp/linux/commit/a943676abc023c094f05b45f4d61936c567507a2
-> > >         git remote add linux-review https://github.com/intel-lab-lkp/linux
-> > >         git fetch --no-tags linux-review Richard-Guy-Briggs/fanotify-Allow-user-space-to-pass-back-additional-audit-info/20220810-012825
-> > >         git checkout a943676abc023c094f05b45f4d61936c567507a2
-> > >         # save the config file
-> > >         mkdir build_dir && cp config build_dir/.config
-> > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash fs/notify/fanotify/
-> > >
-> > > If you fix the issue, kindly add following tag where applicable
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > >
-> > > All warnings (new ones prefixed by >>):
-> > >
-> > > >> fs/notify/fanotify/fanotify_user.c:325:35: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-> >
-> > Interesting.  When I "fix" it, my compiler complains:
-> >
-> >         fs/notify/fanotify/fanotify_user.c:324:11: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 8 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
-> 
-> The correct format specifier for size_t is %zu.  This avoids issues
-> between ILP32 vs LP64 targets.
+On venerd=C3=AC 19 agosto 2022 20:29:31 CEST Matthew Wilcox wrote:
+> On Fri, Aug 19, 2022 at 09:50:37AM +0200, Fabio M. De Francesco wrote:
+> > On venerd=C3=AC 19 agosto 2022 00:40:10 CEST Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > >=20
+> > > Convert the use of kmap() to its recommended replacement
+> > > kmap_local_page().  This avoids the overhead of doing a non-local
+> > > mapping, which is unnecessary in this case.
+> > >=20
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > ---
+> > >=20
+> > >  fs/verity/read_metadata.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > It looks good to me...
+> >=20
+> > > -		virt =3D kmap(page);
+> > > +		virt =3D kmap_local_page(page);
+> > >=20
+> > >  		if (copy_to_user(buf, virt + offs_in_page, bytes_to_copy))
+> >=20
+> > {
+> >=20
+> > > -			kunmap(page);
+> > > +			kunmap_local(virt);
+> > >=20
+> > >  			put_page(page);
+> > >  			err =3D -EFAULT;
+> > >  			break;
+> > >  	=09
+> > >  		}
+> > >=20
+> > > -		kunmap(page);
+> > > +		kunmap_local(virt);
+>=20
+> Is this a common pattern?  eg do we want something like:
+>=20
+> static inline int copy_user_page(void __user *dst, struct page *page,
+> 		size_t offset, size_t len)
+> {
+> 	char *src =3D kmap_local_page(page) + offset;
+> 	int err =3D 0;
+>=20
+> 	VM_BUG_ON(offset + len > PAGE_SIZE);
+> 	if (copy_to_user(dst, src, len))
+> 		err =3D -EFAULT;
+>=20
+> 	kunmap_local(src);
+> 	return err;
+> }
+>=20
+> in highmem.h?
 
-Perfect, thanks!
+Not sure that it is much common...
 
-> > >                     group, fd, response, info_buf, count);
-> > >                                                    ^~~~~
-> > >    include/linux/printk.h:594:38: note: expanded from macro 'pr_debug'
-> > >            no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
-> > >                                        ~~~     ^~~~~~~~~~~
-> > >    include/linux/printk.h:131:17: note: expanded from macro 'no_printk'
-> > >                    printk(fmt, ##__VA_ARGS__);             \
-> > >                           ~~~    ^~~~~~~~~~~
-> > >    include/linux/printk.h:464:60: note: expanded from macro 'printk'
-> > >    #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-> > >                                                        ~~~    ^~~~~~~~~~~
-> > >    include/linux/printk.h:436:19: note: expanded from macro 'printk_index_wrap'
-> > >                    _p_func(_fmt, ##__VA_ARGS__);                           \
-> > >                            ~~~~    ^~~~~~~~~~~
-> > >    1 warning generated.
-> > >
-> > >
-> > > vim +325 fs/notify/fanotify/fanotify_user.c
-> > >
-> > >    312
-> > >    313        static int process_access_response(struct fsnotify_group *group,
-> > >    314                                           struct fanotify_response *response_struct,
-> > >    315                                           const char __user *buf,
-> > >    316                                           size_t count)
-> > >    317        {
-> > >    318                struct fanotify_perm_event *event;
-> > >    319                int fd = response_struct->fd;
-> > >    320                u32 response = response_struct->response;
-> > >    321                struct fanotify_response_info_header info_hdr;
-> > >    322                char *info_buf = NULL;
-> > >    323
-> > >    324                pr_debug("%s: group=%p fd=%d response=%u buf=%p size=%lu\n", __func__,
-> > >  > 325                         group, fd, response, info_buf, count);
-> > >    326                /*
-> > >    327                 * make sure the response is valid, if invalid we do nothing and either
-> > >    328                 * userspace can send a valid response or we will clean it up after the
-> > >    329                 * timeout
-> > >    330                 */
-> > >    331                if (response & ~FANOTIFY_RESPONSE_VALID_MASK)
-> > >    332                        return -EINVAL;
-> > >    333                switch (response & FANOTIFY_RESPONSE_ACCESS) {
-> > >    334                case FAN_ALLOW:
-> > >    335                case FAN_DENY:
-> > >    336                        break;
-> > >    337                default:
-> > >    338                        return -EINVAL;
-> > >    339                }
-> > >    340                if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
-> > >    341                        return -EINVAL;
-> > >    342                if (fd < 0)
-> > >    343                        return -EINVAL;
-> > >    344                if (response & FAN_INFO) {
-> > >    345                        size_t c = count;
-> > >    346                        const char __user *ib = buf;
-> > >    347
-> > >    348                        if (c <= 0)
-> > >    349                                return -EINVAL;
-> > >    350                        while (c >= sizeof(info_hdr)) {
-> > >    351                                if (copy_from_user(&info_hdr, ib, sizeof(info_hdr)))
-> > >    352                                        return -EFAULT;
-> > >    353                                if (info_hdr.pad != 0)
-> > >    354                                        return -EINVAL;
-> > >    355                                if (c < info_hdr.len)
-> > >    356                                        return -EINVAL;
-> > >    357                                switch (info_hdr.type) {
-> > >    358                                case FAN_RESPONSE_INFO_AUDIT_RULE:
-> > >    359                                        break;
-> > >    360                                case FAN_RESPONSE_INFO_NONE:
-> > >    361                                default:
-> > >    362                                        return -EINVAL;
-> > >    363                                }
-> > >    364                                c -= info_hdr.len;
-> > >    365                                ib += info_hdr.len;
-> > >    366                        }
-> > >    367                        if (c != 0)
-> > >    368                                return -EINVAL;
-> > >    369                        /* Simplistic check for now */
-> > >    370                        if (count != sizeof(struct fanotify_response_info_audit_rule))
-> > >    371                                return -EINVAL;
-> > >    372                        info_buf = kmalloc(sizeof(struct fanotify_response_info_audit_rule),
-> > >    373                                           GFP_KERNEL);
-> > >    374                        if (!info_buf)
-> > >    375                                return -ENOMEM;
-> > >    376                        if (copy_from_user(info_buf, buf, count))
-> > >    377                                return -EFAULT;
-> > >    378                }
-> > >    379                spin_lock(&group->notification_lock);
-> > >    380                list_for_each_entry(event, &group->fanotify_data.access_list,
-> > >    381                                    fae.fse.list) {
-> > >    382                        if (event->fd != fd)
-> > >    383                                continue;
-> > >    384
-> > >    385                        list_del_init(&event->fae.fse.list);
-> > >    386                        /* finish_permission_event() eats info_buf */
-> > >    387                        finish_permission_event(group, event, response_struct,
-> > >    388                                                count, info_buf);
-> > >    389                        wake_up(&group->fanotify_data.access_waitq);
-> > >    390                        return 0;
-> > >    391                }
-> > >    392                spin_unlock(&group->notification_lock);
-> > >    393
-> > >    394                return -ENOENT;
-> > >    395        }
-> > >    396
-> > >
-> > > --
-> > > 0-DAY CI Kernel Test Service
-> > > https://01.org/lkp
-> > >
-> >
-> > - RGB
-> >
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> >
-> >
-> 
-> 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
-> 
+Can the following command provide any insight?
 
-- RGB
+opensuse:/usr/src/git/kernels/linux> grep -rn copy_to_user -B7 . --exclude-
+dir\=3DDocumentation | grep kmap
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+=2E/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c-2306-         ptr =3D=20
+kmap_local_page(p);
+=2E/drivers/gpu/drm/i915/i915_gem.c-215-  vaddr =3D kmap_local_page(page);
+=2E/drivers/gpu/drm/radeon/radeon_ttm.c-872-                      ptr =3D=20
+kmap(page);
+=2E/drivers/vfio/pci/mlx5/main.c-182-             from_buff =3D=20
+kmap_local_page(page);
+=2E/arch/parisc/kernel/cache.c-580-       kto =3D kmap_local_page(to);
+=2E/mm/memory.c-5474-                     maddr =3D kmap(page);
+=2E/fs/verity/read_metadata.c-56-         virt =3D kmap(page);
+=2E/fs/aio.c-1252-                ev =3D kmap_local_page(page);
+=2E/fs/exec.c-883-                char *src =3D kmap_local_page(bprm->page[=
+index])=20
++ offset;
+
+If this command is good to provide any hint, it suggests that having=20
+copy_to_user() in highmem.h is not probably worth.
+
+Thanks,
+
+=46abio=20
+
+
 
