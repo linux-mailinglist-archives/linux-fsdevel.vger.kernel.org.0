@@ -2,148 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D892D59A364
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 20:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB48959A587
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 20:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349740AbiHSR4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 13:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
+        id S1350553AbiHSSNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 14:13:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352398AbiHSRzp (ORCPT
+        with ESMTP id S1350408AbiHSSNa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 13:55:45 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5107BD4FC;
-        Fri, 19 Aug 2022 10:37:45 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id x21so6498717edd.3;
-        Fri, 19 Aug 2022 10:37:45 -0700 (PDT)
+        Fri, 19 Aug 2022 14:13:30 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D913FFDF;
+        Fri, 19 Aug 2022 11:05:42 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-11ba6e79dd1so6030030fac.12;
+        Fri, 19 Aug 2022 11:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03;
+        d=googlemail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=kc3OXexcLg160QlZiu+v0UTRCRGI9Oo6HVQoGkcLTv4=;
-        b=ObyltFHH8+KwonRV7aekpXmDL7MboFnhrIvq31WMDBatt640xT8ozhUnEtsHpmWelB
-         jjYDSppixzDtrn9T1Xi+utbiV49O/k55trn7A5FD/7Nnq7KFs9/27Pmr1+QJl9wWq3lr
-         Lv4aXii8H/LuP3A8PG8bqUIbeYrLTWPOaQ2kzyuX5k7ph1/p79fNwIfSjPVzFoC0l1Br
-         0dGr93K/h/DR7PBl86YKv6Z1VmUVJN/yEjtbi1EcrCNVsLeQGgwreYT9lT/iot6MmI9O
-         SSsBNUOwVjYboWuQw75Vnw+KigIH/PDvzJy/lGxzirNALGOiKHdKiZQ5CgSegNyoEG6x
-         pn1Q==
+        bh=yu5IZUHI3cBawr1N/5hlYoG5ZXlCmymb1dtlh//8sOs=;
+        b=h+OQqd6rUc/dgACYrYixZnZhbFprpl2aNMzUPu13lEAEqlTbVQM3keegYdBVn7BNuK
+         OcPVyOPSBHMbfHp+qxQPPNxWvUk4SndWsxAyc00XyJxrhrSU9Qz8Jdiam9x4IUDSmHUP
+         BbD4pU1KiGGhmUCYxJv4awxzsX7wPoXJdrjv5GNaIN9Hv8V8qD0NKVC2z7DoMgAvmlTI
+         N6ib4XD6KyRhibvo5AW9qNyYJBTtXUqATiewepX+JKV8ZLgqDDmsEMgT8NBegiAV83kI
+         Bv3MBFOMk535EOg27SI+W8kW0OPG8EqdWlKZl1fZlVXquq00WpnbcSew2FHUZ6Q2fcZU
+         QC1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=kc3OXexcLg160QlZiu+v0UTRCRGI9Oo6HVQoGkcLTv4=;
-        b=uBpE4PtiH4t9/1Y97+mX1DJdjKvlQ6NrKbYC0TnvgWZm6YstmTxAhMGrU3yGQraYCF
-         5XlRmfhPdv7S5wpXtTZTnn4UW9cxsbqu7wUDJETR1LfTkD3yW1CL9DDANu3CY5E02w+8
-         W8NqtqNAth7XnixA7xy28GoCDBBox9Y1SqCoIxLMn0GUDh+uzSjdFrMmfbC8Hr7eZwfd
-         S2+AOZK+ryGcMqeGS5HkOslrU7PeHuUSI2NSx0t19IqvZCbGZMhNxPKnGxUi3aEZTniE
-         HvkyEwwc0YvGrIpAILnUqV5K1QxhdibfjiiBsQmV5b+yLceC0yBSaibdKiwXtu60diuq
-         oNyA==
-X-Gm-Message-State: ACgBeo13EP2zxXuC+H0OetGexlGlUahUN+tHwa9kNm9pr8dvSv9ypgA+
-        4T1trTi3eiUF87Hkrkf0KDDt5pWLCTo/AG+oeVM=
-X-Google-Smtp-Source: AA6agR4fUxhX89XbFo3bNQH2+ZJspjFuNMP7tIoqYe66vsrPDhSy02r29F1Up3ZEmnDDUtifIhqg9V7UX8BQ/XFy8Jo=
-X-Received: by 2002:a05:6402:40c2:b0:440:4ecd:f75f with SMTP id
- z2-20020a05640240c200b004404ecdf75fmr6813062edb.405.1660930664439; Fri, 19
- Aug 2022 10:37:44 -0700 (PDT)
+        bh=yu5IZUHI3cBawr1N/5hlYoG5ZXlCmymb1dtlh//8sOs=;
+        b=E5XS/vOZ4kReEgZiUvnz6XFLnDwkFdvmf2mlHaXlmRki9O6Q12b4a7w86qMovX8hF1
+         4hfuElEg11t6qPxUUqoIB3kcOeab/NWeSDdaQuludvHxBCVrB89iGr9vKXJlbE3zPxWC
+         Ik/RjCLHZAk8VJIyFczFa1gP8V05s3KQvQCKjLXm7SwvPg+CbwBcimn7S6sLoKBGHBKv
+         uIHR8ueBPxXKtLUX4Qx8rMTUOyp0159QjF5rqt3smFiF274owYXcV//Qpo1zuuE3WJum
+         U/wpPZDnX2k/XBBgV03BhI34Ihl91Dihu+1Ar8ojJ/aboCJcBaOudQjIcHFb5r+Igyfs
+         WsUQ==
+X-Gm-Message-State: ACgBeo2wSlme+umpY3Rfi6LJKp7nzaJJWZhLCPcLashtZBtmFpxVH7dg
+        2zxRuGQbkeo1Yi58pupSkcg0WCmjh3XQW95l1+c=
+X-Google-Smtp-Source: AA6agR5cmaKR9BsbXyWWqSlgxm+2/qW3n9sQsGbO+C5C4jK9P6vWwiLaGGzA41ZiUH1qYTuxSnv8o4qTS53eKB6aZCQ=
+X-Received: by 2002:a05:6871:6a1:b0:11c:7c79:6bfb with SMTP id
+ l33-20020a05687106a100b0011c7c796bfbmr4441641oao.205.1660932342149; Fri, 19
+ Aug 2022 11:05:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <Yv1jwsHVWI+lguAT@ZenIV> <CAN-5tyFvV7QOxyAQXu3UM5swQVB2roDpQ5CBRVc64Epp1gj9hg@mail.gmail.com>
- <Yv2BVKuzZdMDY2Td@ZenIV> <CAN-5tyF0ZMX8a6M6Qbbco3EmOzwVnnGZmqak8=t4Cvtzc45g7Q@mail.gmail.com>
- <CAOQ4uxgA8jD6KnbuHDevNLsjD-LbEs_y1W6uYMEY6EG_es0o+Q@mail.gmail.com>
- <Yv3Ti/niVd5ZVPP+@ZenIV> <CAN-5tyHpDHzmo-rSw1X+0oX0xbxR+x13eP57osB0qhFLKbXzVA@mail.gmail.com>
- <b7a77d4f-32de-af24-ed5c-8a3e49947c5a@oracle.com> <CAN-5tyH6=GD_A48PEu0oWZYix4g0=+0FwVgE262Ek0U1qNiwvA@mail.gmail.com>
- <debe59b1-35cc-c3b0-f3ca-76d6a56b826b@oracle.com>
-In-Reply-To: <debe59b1-35cc-c3b0-f3ca-76d6a56b826b@oracle.com>
-From:   Olga Kornievskaia <aglo@umich.edu>
-Date:   Fri, 19 Aug 2022 13:37:33 -0400
-Message-ID: <CAN-5tyHdr_RXPcFpa7fsg=jpOyge0C4pB1waj=BdHHzmeaMdPw@mail.gmail.com>
-Subject: Re: [RFC] problems with alloc_file_pseudo() use in __nfs42_ssc_open()
-To:     Dai Ngo <dai.ngo@oracle.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20220607153139.35588-1-cgzones@googlemail.com>
+ <20220608112728.b4xrdppxqmyqmtwf@wittgenstein> <CAOQ4uxipD6khNUYuZT80WUa0KOMdyyP0ia55uhmeRCLj4NBicg@mail.gmail.com>
+ <20220608124808.uylo5lntzfgxxmns@wittgenstein> <CAOQ4uxjP7kC95ou56wabVhQcc2vkNcD-8usYhLhbLOoJZ-jkOw@mail.gmail.com>
+ <20220618031805.nmgiuapuqeblm3ba@senku> <CAOQ4uxg6QLJ26pX8emXmUvq6jDDEH_Qq=Z4RPUK-jGLsZpHzfg@mail.gmail.com>
+ <20220620060741.3clikqadotq2p5ja@senku> <CAOQ4uxhq8HVoM=6O_H-uowv65m6tLAPUj2a_r3-CWpiX-48MoQ@mail.gmail.com>
+ <20220622025715.upflevvao3ttaekj@senku>
+In-Reply-To: <20220622025715.upflevvao3ttaekj@senku>
+From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date:   Fri, 19 Aug 2022 20:05:31 +0200
+Message-ID: <CAJ2a_DfkMvh7EdOA6k+omxhi18-oVbSXSGzXnpU1tXPD55B2qw@mail.gmail.com>
+Subject: Re: [RFC PATCH] f*xattr: allow O_PATH descriptors
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 11:42 AM <dai.ngo@oracle.com> wrote:
+On Wed, 22 Jun 2022 at 04:57, Aleksa Sarai <cyphar@cyphar.com> wrote:
 >
+> On 2022-06-20, Amir Goldstein <amir73il@gmail.com> wrote:
+> > To be a reasonable reaction to the currently broken API is
+> > to either accept the patch as is or request that setxattrat()
+> > will be added to provide the new functionality.
 >
-> On 8/19/22 7:22 AM, Olga Kornievskaia wrote:
-> > On Thu, Aug 18, 2022 at 10:52 PM <dai.ngo@oracle.com> wrote:
-> >>
-> >> On 8/18/22 6:13 AM, Olga Kornievskaia wrote:
-> >>> On Thu, Aug 18, 2022 at 1:52 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >>>> On Thu, Aug 18, 2022 at 08:19:54AM +0300, Amir Goldstein wrote:
-> >>>>
-> >>>>> NFS spec does not guarantee the safety of the server.
-> >>>>> It's like saying that the Law makes Crime impossible.
-> >>>>> The law needs to be enforced, so if server gets a request
-> >>>>> to COPY from/to an fhandle that resolves as a non-regular file
-> >>>>> (from a rogue or buggy NFS client) the server should return an
-> >>>>> error and not continue to alloc_file_pseudo().
-> >>>> FWIW, my preference would be to have alloc_file_pseudo() reject
-> >>>> directory inodes if it ever gets such.
-> >>>>
-> >>>> I'm still not sure that my (and yours, apparently) interpretation
-> >>>> of what Olga said is correct, though.
-> >>> Would it be appropriate to do the following then:
-> >>>
-> >>> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> >>> index e88f6b18445e..112134b6438d 100644
-> >>> --- a/fs/nfs/nfs4file.c
-> >>> +++ b/fs/nfs/nfs4file.c
-> >>> @@ -340,6 +340,11 @@ static struct file *__nfs42_ssc_open(struct
-> >>> vfsmount *ss_mnt,
-> >>>                   goto out;
-> >>>           }
-> >>>
-> >>> +       if (S_ISDIR(fattr->mode)) {
-> >>> +               res = ERR_PTR(-EBADF);
-> >>> +               goto out;
-> >>> +       }
-> >>> +
-> >> Can we also enhance nfsd4_do_async_copy to check for
-> >> -EBADF and returns nfserr_wrong_type? perhaps adding
-> >> an error mapping function to handle other errors also.
-> > On the server side, if the open fails that's already translated into
-> > the appropriate error -- err_off_load_denied.
+> Since the current functionality cannot be retroactively disabled as it
+> is being used already through /proc/self/fd/$n, adding
+> *xattrat(AT_EMPTY_PATH) doesn't really change what is currently possible
+> by userspace.
 >
-> Currently the server returns nfserr_offload_denied if the open
-> fails for any reasons. I'm wondering whether the server should
-> return more accurate error code such as if the source file handle
-> is a wrong type then the server should return nfserr_wrong_type,
-> instead of nfserr_offload_denied, to match the spec:
+> I would say we should add *xattrat(2) and then we can add an upgrade
+> mask blocking it (and other operations) later.
 >
->     Both SAVED_FH and CURRENT_FH must be regular files.  If either
->     SAVED_FH or CURRENT_FH is not a regular file, the operation MUST fail
->     and return NFS4ERR_WRONG_TYPE.
 
-Ok sure. That's a relevant but a separate patch.
+It seems setxattrat() is the preferred way to continue.
+fsetxattr() would have one advantage though (w.r.t. SELinux):
 
->
-> -Dai
->
-> >
-> >> -Dai
-> >>
-> >>>           res = ERR_PTR(-ENOMEM);
-> >>>           len = strlen(SSC_READ_NAME_BODY) + 16;
-> >>>           read_name = kzalloc(len, GFP_KERNEL);
-> >>> @@ -357,6 +362,7 @@ static struct file *__nfs42_ssc_open(struct
-> >>> vfsmount *ss_mnt,
-> >>>                                        r_ino->i_fop);
-> >>>           if (IS_ERR(filep)) {
-> >>>                   res = ERR_CAST(filep);
-> >>> +               iput(r_ino);
-> >>>                   goto out_free_name;
-> >>>           }
+The steps to label a file are:
+  1. get the type of the file (via stat(2) family)
+  2. lookup the desired label from the label database via selabel_lookup(3)
+  3. assign the retrieved label to the file
+
+The label is sensitive to the file type, e.g.
+
+    $ matchpathcon -m file /etc/shadow
+    /etc/shadow     system_u:object_r:shadow_t:s0
+    $ matchpathcon -m lnk_file /etc/shadow
+    /etc/shadow     system_u:object_r:etc_t:s0
+
+Using the *at() family the file type could change between step 1. and 3.,
+which operating on an O_PATH file descriptor would prevent.
