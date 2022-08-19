@@ -2,225 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E4A599AA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 13:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF452599AA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 13:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348687AbiHSLMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 07:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
+        id S1348463AbiHSLNh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 07:13:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348620AbiHSLMF (ORCPT
+        with ESMTP id S229601AbiHSLNe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 07:12:05 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BEF4FF231
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 04:11:50 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id x21so5245152edd.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 04:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=cgcveKfalu9bGwjWhdphSsPeVH0HyR/9XPCDpoeXKuw=;
-        b=p6SchWPgQxCXLwQjgG57ICVW6yFu7NROZezkyPjTiirjSBTVDVoYBv+20hH+i2uF8L
-         tFVkfOHHdO+Z9Vq2IeDZYPABFyvcaOVMaN3aRDXfhpqkLdR4ljyQkUlXKYQnFX/aWi0Q
-         6s/uFmtViCK34glr7OStVo7q3mBZuRYSY0FGcOdLN5LkQoej2oBrK7mF7VXWYLOd42NY
-         CanKFXuxo2g/+n7MMKStZ9VytQnbeuBBlo5HQ6aS8qeCnMYtUs6Roq81wyDkrWqN/uko
-         dr5F/4kvk5ImzLAvmkVI3t70QOq+eqO29E6DyNga0s1cmVfzfRr8yiGJwdO347XV2Frh
-         B7yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=cgcveKfalu9bGwjWhdphSsPeVH0HyR/9XPCDpoeXKuw=;
-        b=b0mNvLORiw596fqYBhVwi8CPoWXNlZWF6XBoxtct1nHQ+wgHQL6/EMhncI0//KsyYN
-         QoAmxWTcXwM6X5PAnqOuk9bzZm3Ku4EAZfwACzlON6Zxgydk+fMPjiLzQGCGGg9fivJM
-         UareEtpmfz28EXK0tsj29xkc/VWVUrwfoDNstEoM7DYKT6323N4GwUal1Pg53UlUeKtH
-         zaMMgtVlnNsS/Ylo/LtvokN6VE6Veo8xkAvlHzxkvFcztmkxHCE/YK4GUfggv15QZum1
-         2fEiwxb3tGDCLIGynIOhUtdJNfbXtj+Z0vwibGH7qqAIMlmKPAhhTM5nT2vg1i4fExCF
-         XUJw==
-X-Gm-Message-State: ACgBeo0H6odszoxk4yQIdtq9irRgdhZ8NRa7fL/3OXXX9bC9j1psYul+
-        wAUNh8/YctWHLqCK+OC0nhx6A6nwS04=
-X-Google-Smtp-Source: AA6agR6sqNw8K9BDAGKYodlVIVE4ZcURxhL1wDas7RWlI/VD+3/1wZh2ScK1Q0lFI4JUQqOdJThosA==
-X-Received: by 2002:aa7:cc97:0:b0:445:afab:2634 with SMTP id p23-20020aa7cc97000000b00445afab2634mr5852947edt.54.1660907505893;
-        Fri, 19 Aug 2022 04:11:45 -0700 (PDT)
-Received: from localhost.localdomain (host-87-17-106-94.retail.telecomitalia.it. [87.17.106.94])
-        by smtp.gmail.com with ESMTPSA id r5-20020a056402018500b00445f8e0a86esm2869497edv.75.2022.08.19.04.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Aug 2022 04:11:43 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] f2fs: use memcpy_{to,from}_page() where possible
-Date:   Fri, 19 Aug 2022 13:11:41 +0200
-Message-ID: <4743896.GXAFRqVoOG@localhost.localdomain>
-In-Reply-To: <20220818225450.84090-1-ebiggers@kernel.org>
-References: <20220818225450.84090-1-ebiggers@kernel.org>
+        Fri, 19 Aug 2022 07:13:34 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5AF66128;
+        Fri, 19 Aug 2022 04:13:31 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id DB31D2012A;
+        Fri, 19 Aug 2022 11:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1660907609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDiDqL4eZ1S6ynqk3mNLxZ6ZUEZmbiyxsoE9XpxMsmA=;
+        b=pf6mw92r9UxMsHr+gbnPE/wonUtoKd4stGwfPKc/CAz90htMEef1ipxKM7aSzL/giTr7KW
+        VPCocLRJD/BlU1GWaJztpYrSL+KdlgP6HWh8buSZQQ6OzEjvgnYzttQFeXEZzah462uGAY
+        edK5rMNKCfo18sh0HXvPS+nhAaFV8Po=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1660907609;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDiDqL4eZ1S6ynqk3mNLxZ6ZUEZmbiyxsoE9XpxMsmA=;
+        b=e2jfLCPD7kHQP7PsKpLuOJdFNZnKuKfJpcYCEA39438+liET3XSMKWJHE1ZRLSlpa61HDp
+        ydwVYEOJcqATwOCQ==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 761F62C141;
+        Fri, 19 Aug 2022 11:13:29 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id DF38AA0635; Fri, 19 Aug 2022 13:13:28 +0200 (CEST)
+Date:   Fri, 19 Aug 2022 13:13:28 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 2/4] fanotify: define struct members to hold response
+ decision context
+Message-ID: <20220819111328.2j6u53sfmxsj2nyt@quack3>
+References: <cover.1659996830.git.rgb@redhat.com>
+ <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8767f3a0d43d6a994584b86c03eb659a662cc416.1659996830.git.rgb@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday, August 19, 2022 12:54:50 AM CEST Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+Hello Richard!
+
+On Tue 09-08-22 13:22:53, Richard Guy Briggs wrote:
+> This patch adds a flag, FAN_INFO and an extensible buffer to provide
+> additional information about response decisions.  The buffer contains
+> one or more headers defining the information type and the length of the
+> following information.  The patch defines one additional information
+> type, FAN_RESPONSE_INFO_AUDIT_RULE, an audit rule number.  This will
+> allow for the creation of other information types in the future if other
+> users of the API identify different needs.
 > 
-> This is simpler, and as a side effect it replaces several uses of
-> kmap_atomic() with its recommended replacement kmap_local_page().
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  fs/f2fs/inline.c |  7 ++-----
->  fs/f2fs/super.c  | 10 ++--------
->  fs/f2fs/verity.c | 10 ++--------
->  3 files changed, 6 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index bf46a7dfbea2fc..69bfd3b08645af 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -64,7 +64,6 @@ bool f2fs_may_inline_dentry(struct inode *inode)
->  void f2fs_do_read_inline_data(struct page *page, struct page *ipage)
+>  fs/notify/fanotify/fanotify.c      |  10 ++-
+>  fs/notify/fanotify/fanotify.h      |   2 +
+>  fs/notify/fanotify/fanotify_user.c | 104 +++++++++++++++++++++++------
+>  include/linux/fanotify.h           |   5 ++
+>  include/uapi/linux/fanotify.h      |  27 +++++++-
+>  5 files changed, 123 insertions(+), 25 deletions(-)
+
+Amir and Matthew covered most of the comments so let me add just a few I
+have on top:
+
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index abfa3712c185..14c30e173632 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -428,6 +428,8 @@ struct fanotify_perm_event {
+>  	u32 response;			/* userspace answer to the event */
+>  	unsigned short state;		/* state of the event */
+>  	int fd;		/* fd we passed to userspace for this event */
+> +	size_t info_len;
+> +	char *info_buf;
+>  };
+
+Rather than this, I'd expand struct fanotify_perm_event by adding:
+
+	union info {
+		struct fanotify_response_info_header hdr;
+		struct fanotify_response_info_audit_rule audit_rule;
+	}
+
+at the end of the struct. Currently that is more memory efficient, easier
+to code, and more CPU efficient as well. The 'hdr' member of the union can
+be used to look at type of the info and then appropriate union member can
+be used to get the data. If we ever grow additional info that has
+non-trivial size, changing the code to use dynamically allocated buffer as
+you do now is very easy. But until that moment it is just overengineering.
+
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index ff67ca0d25cc..a4ae953f0e62 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -289,13 +289,18 @@ static int create_fd(struct fsnotify_group *group, struct path *path,
+>   */
+>  static void finish_permission_event(struct fsnotify_group *group,
+>  				    struct fanotify_perm_event *event,
+> -				    u32 response)
+> +				    struct fanotify_response *response,
+
+Why do you pass struct fanotify_response here instead of plain u32? I don't
+see you'd use it anywhere and it introduces some unnecessary churn in other
+places.
+
+> +				    size_t info_len, char *info_buf)
+>  				    __releases(&group->notification_lock)
 >  {
->  	struct inode *inode = page->mapping->host;
-> -	void *src_addr, *dst_addr;
+>  	bool destroy = false;
 >  
->  	if (PageUptodate(page))
->  		return;
-> @@ -74,11 +73,9 @@ void f2fs_do_read_inline_data(struct page *page, struct 
-page *ipage)
->  	zero_user_segment(page, MAX_INLINE_DATA(inode), PAGE_SIZE);
->  
->  	/* Copy the whole inline data block */
-> -	src_addr = inline_data_addr(inode, ipage);
-> -	dst_addr = kmap_atomic(page);
-> -	memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
-> +	memcpy_to_page(page, 0, inline_data_addr(inode, ipage),
-> +		       MAX_INLINE_DATA(inode));
->  	flush_dcache_page(page);
+>  	assert_spin_locked(&group->notification_lock);
+> -	event->response = response;
+> +	event->response = response->response & ~FAN_INFO;
 
-flush_dcache_page() is redundant here. memcpy_to_page() takes care to call it.
+Why do you mask out FAN_INFO here? I don't see a good reason for that.
 
-> -	kunmap_atomic(dst_addr);
->  	if (!PageUptodate(page))
->  		SetPageUptodate(page);
->  }
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 2451623c05a7a8..c9f9269a4e88f3 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2465,7 +2465,6 @@ static ssize_t f2fs_quota_read(struct super_block *sb, 
-int type, char *data,
->  	size_t toread;
->  	loff_t i_size = i_size_read(inode);
->  	struct page *page;
-> -	char *kaddr;
->  
->  	if (off > i_size)
->  		return 0;
-> @@ -2498,9 +2497,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, 
-int type, char *data,
->  			return -EIO;
->  		}
->  
-> -		kaddr = kmap_atomic(page);
-> -		memcpy(data, kaddr + offset, tocopy);
-> -		kunmap_atomic(kaddr);
-> +		memcpy_from_page(data, page, offset, tocopy);
->  		f2fs_put_page(page, 1);
->  
->  		offset = 0;
-> @@ -2522,7 +2519,6 @@ static ssize_t f2fs_quota_write(struct super_block 
-*sb, int type,
->  	size_t towrite = len;
->  	struct page *page;
->  	void *fsdata = NULL;
-> -	char *kaddr;
->  	int err = 0;
->  	int tocopy;
->  
-> @@ -2541,9 +2537,7 @@ static ssize_t f2fs_quota_write(struct super_block 
-*sb, int type,
->  			break;
->  		}
->  
-> -		kaddr = kmap_atomic(page);
-> -		memcpy(kaddr + offset, data, tocopy);
-> -		kunmap_atomic(kaddr);
-> +		memcpy_to_page(page, offset, data, tocopy);
->  		flush_dcache_page(page);
+> +	if (response->response & FAN_INFO) {
+> +		event->info_len = info_len;
+> +		event->info_buf = info_buf;
+> +	}
+>  	if (event->state == FAN_EVENT_CANCELED)
+>  		destroy = true;
+>  	else
+...
 
-Same here.
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index f1f89132d60e..4d08823a5698 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -180,15 +180,40 @@ struct fanotify_event_info_error {
+>  	__u32 error_count;
+>  };
+>  
+> +/*
+> + * User space may need to record additional information about its decision.
+> + * The extra information type records what kind of information is included.
+> + * The default is none. We also define an extra information buffer whose
+> + * size is determined by the extra information type.
+> + *
+> + * If the context type is Rule, then the context following is the rule number
+> + * that triggered the user space decision.
+> + */
+> +
+> +#define FAN_RESPONSE_INFO_NONE		0
 
->  
->  		a_ops->write_end(NULL, mapping, off, tocopy, tocopy,
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index 7b8f2b41c29b12..97ec60f39d6960 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -47,16 +47,13 @@ static int pagecache_read(struct inode *inode, void 
-*buf, size_t count,
->  		size_t n = min_t(size_t, count,
->  				 PAGE_SIZE - offset_in_page(pos));
->  		struct page *page;
-> -		void *addr;
->  
->  		page = read_mapping_page(inode->i_mapping, pos >> 
-PAGE_SHIFT,
->  					 NULL);
->  		if (IS_ERR(page))
->  			return PTR_ERR(page);
->  
-> -		addr = kmap_atomic(page);
-> -		memcpy(buf, addr + offset_in_page(pos), n);
-> -		kunmap_atomic(addr);
-> +		memcpy_from_page(buf, page, offset_in_page(pos), n);
->  
->  		put_page(page);
->  
-> @@ -85,16 +82,13 @@ static int pagecache_write(struct inode *inode, const 
-void *buf, size_t count,
->  				 PAGE_SIZE - offset_in_page(pos));
->  		struct page *page;
->  		void *fsdata;
-> -		void *addr;
->  		int res;
->  
->  		res = aops->write_begin(NULL, mapping, pos, n, &page, 
-&fsdata);
->  		if (res)
->  			return res;
->  
-> -		addr = kmap_atomic(page);
-> -		memcpy(addr + offset_in_page(pos), buf, n);
-> -		kunmap_atomic(addr);
-> +		memcpy_to_page(page, offset_in_page(pos), buf, n);
->  
->  		res = aops->write_end(NULL, mapping, pos, n, n, page, 
-fsdata);
->  		if (res < 0)
-> 
-> base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
-> -- 
-> 2.37.1
-> 
-> 
+Why do you define this? I don't see it being used anywhere (in a meaningful
+way). You can as well make FAN_RESPONSE_INFO_AUDIT_RULE be type 0...
 
-It looks like you forgot a conversion from kmap_atomic() in fs/f2fs/inline.c 
-at line 266.
+> +#define FAN_RESPONSE_INFO_AUDIT_RULE	1
+> +
+>  struct fanotify_response {
+>  	__s32 fd;
+>  	__u32 response;
+>  };
+>  
+> +struct fanotify_response_info_header {
+> +	__u8 type;
+> +	__u8 pad;
+> +	__u16 len;
+> +};
+> +
+> +struct fanotify_response_info_audit_rule {
+> +	struct fanotify_response_info_header hdr;
+> +	__u32 audit_rule;
+> +};
+> +
 
-The rest looks good to me.
-
-Thanks,
-
-Fabio
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
