@@ -2,113 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FBA59983A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 11:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A910599834
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 11:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347695AbiHSIzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 04:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44768 "EHLO
+        id S1346935AbiHSJBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 05:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347916AbiHSIzU (ORCPT
+        with ESMTP id S1346456AbiHSJBw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 04:55:20 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9CBD21F1;
-        Fri, 19 Aug 2022 01:55:12 -0700 (PDT)
-Received: from fraeml734-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4M8Fv23xTKz67y8J;
-        Fri, 19 Aug 2022 16:54:54 +0800 (CST)
-Received: from lhrpeml500004.china.huawei.com (7.191.163.9) by
- fraeml734-chm.china.huawei.com (10.206.15.215) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 19 Aug 2022 10:55:10 +0200
-Received: from [10.122.132.241] (10.122.132.241) by
- lhrpeml500004.china.huawei.com (7.191.163.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 19 Aug 2022 09:55:09 +0100
-Message-ID: <a8670f06-83ea-2a72-f13d-ac9f839dd1f8@huawei.com>
-Date:   Fri, 19 Aug 2022 11:55:08 +0300
+        Fri, 19 Aug 2022 05:01:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F49F14EB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 02:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660899711;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CrT3slIrGR+Wi5eJUyxjf9Z5bWJXC3nzxIbxu7wbVnw=;
+        b=FFHrppgyuXWaI3pRrnQVrMRNPRZcQOUZvAeK0oKWzP3d0hpkxnwA0+wjGrafLWOiVdmYFp
+        dbGUaDt/L+RZ02Lspv+lvyQA5t+3ybdPjsPRIVTD4RWtvCcmOhQaLqgLQhYLx1Ss5PHGUp
+        iRvelkactlC6N6GjEkMr1i2sqlTttxI=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-548-aQlMIy9KNxCBOeIcGqyttg-1; Fri, 19 Aug 2022 05:01:47 -0400
+X-MC-Unique: aQlMIy9KNxCBOeIcGqyttg-1
+Received: by mail-ed1-f69.google.com with SMTP id j19-20020a05640211d300b0043ddce5c23aso2487325edw.14
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 02:01:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=CrT3slIrGR+Wi5eJUyxjf9Z5bWJXC3nzxIbxu7wbVnw=;
+        b=iJ3NghKON8tWxK3WpNKP8Z6O7Os171HVSupJzp6qST9KY1pLBcC1dALeMSHSXvsfZz
+         e9XBwPgUaI/M420AV2M0CYcS1WR53nrkoT35DVXc1IdT+MOG1T34g4pjXOp2jeBH7YeS
+         2C3ihzFhwLGZiBYP1+X4447Cnvg03fZPQwP8hfvAIQy9mIYaxRU+Tk2wNZiCf2k+Y4bg
+         Ozq/RMXESfQ2U8UQSFwofaihYaUrEE8nP6M1x9QMIcifUmuWjjeisVBL61seEc0M4AAd
+         J308znUGcSADHdfS8yrBXV4phpq7/F2kz/NW7Ay4hoCuCkqfro0uuoBmdlLPfOuzGCV3
+         ELtQ==
+X-Gm-Message-State: ACgBeo1TftrpTTLAsSw3274ai2tarD27he+LHbLa9DcGvqWw/dGCCI2B
+        HCT3kkAkif1dY0u64RCLwOKIDxkKr2zAf39UCXFTnYSYlWURhQMPMwlfQzh3m/SAO7tuo/5hPl8
+        1Z178G1uCHDXMeKdAqyb4ZtGeDg==
+X-Received: by 2002:a17:907:9710:b0:731:67b1:dc3b with SMTP id jg16-20020a170907971000b0073167b1dc3bmr4297290ejc.709.1660899706340;
+        Fri, 19 Aug 2022 02:01:46 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR6CKxALS09Z3BsqpKyFa/xJwSbl1/25PfL3hUiAA8X/A0+o+81dmJop4GIVtogOnofX76HMKg==
+X-Received: by 2002:a17:907:9710:b0:731:67b1:dc3b with SMTP id jg16-20020a170907971000b0073167b1dc3bmr4297279ejc.709.1660899706110;
+        Fri, 19 Aug 2022 02:01:46 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id ss28-20020a170907c01c00b00730a18a8b68sm2014654ejc.130.2022.08.19.02.01.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Aug 2022 02:01:45 -0700 (PDT)
+Message-ID: <0d44fb03-0481-2f0d-eeb5-63cbddeffc62@redhat.com>
+Date:   Fri, 19 Aug 2022 11:01:44 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v5 2/4] selftests/landlock: Selftests for file truncation
- support
-Content-Language: ru
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        <linux-fsdevel@vger.kernel.org>,
-        anton Sirazetdinov <anton.sirazetdinov@huawei.com>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <20220817203006.21769-3-gnoack3000@gmail.com>
- <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net> <Yv8elmJ4qfk8/Mw7@nuc>
- <86b013ed-b809-f533-5764-60b22272dce9@digikod.net>
- <2e7afd64-d36f-f81d-2ae4-1a99769e173c@digikod.net>
-From:   "Konstantin Meskhidze (A)" <konstantin.meskhidze@huawei.com>
-In-Reply-To: <2e7afd64-d36f-f81d-2ae4-1a99769e173c@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.122.132.241]
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500004.china.huawei.com (7.191.163.9)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 01/14] vboxsf: move from strlcpy with unused retval to
+ strscpy
+Content-Language: en-US
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20220818210123.7637-1-wsa+renesas@sang-engineering.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220818210123.7637-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
+
+On 8/18/22 23:01, Wolfram Sang wrote:
+> Follow the advice of the below link and prefer 'strscpy' in this
+> subsystem. Conversion is 1:1 because the return value is not used.
+> Generated by a coccinelle script.
+> 
+> Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Note you send this one twice. Since I'm not sure which one
+will end up getting merged, I'm going to just reply to both...
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
-8/19/2022 11:36 AM, Mickaël Salaün пишет:
-> FYI, my -next branch is here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+> ---
+>  fs/vboxsf/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Günther, let me know if everything is OK.
-> 
-> Konstantin, please rebase your work on it. It should mainly conflict
-> with changes related to the Landlock ABI version.
+> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+> index d2f6df69f611..1fb8f4df60cb 100644
+> --- a/fs/vboxsf/super.c
+> +++ b/fs/vboxsf/super.c
+> @@ -176,7 +176,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	}
+>  	folder_name->size = size;
+>  	folder_name->length = size - 1;
+> -	strlcpy(folder_name->string.utf8, fc->source, size);
+> +	strscpy(folder_name->string.utf8, fc->source, size);
+>  	err = vboxsf_map_folder(folder_name, &sbi->root);
+>  	kfree(folder_name);
+>  	if (err) {
 
-   Ok. I will rebase. Thnaks. Do I need to keep my next versions on your 
--next branch?
-> 
-> 
-> On 19/08/2022 10:15, Mickaël Salaün wrote:
->> Ok, it should be in -next soon. Thanks for your contribution!
->> 
->> Would you like to write a syzkaller test to cover this new access right?
->> You only need to update the landlock_fs_accesses file with a call to
->> truncate() returning EACCES and check that it covers
->> hook_path_truncate(). You can take inspiration from this PR:
->> https://github.com/google/syzkaller/pull/3133
->> Please CC me, I can help.
->> 
->> Regards,
->>    Mickaël
->> 
->> 
->> On 19/08/2022 07:24, Günther Noack wrote:
->>> On Thu, Aug 18, 2022 at 10:39:27PM +0200, Mickaël Salaün wrote:
->>>> On 17/08/2022 22:30, Günther Noack wrote:
->>>>> +/*
->>>>> + * Invokes creat(2) and returns its errno or 0.
->>>>> + * Closes the opened file descriptor on success.
->>>>> + */
->>>>> +static int test_creat(const char *const path, mode_t mode)
->>>>
->>>> This "mode" argument is always 0600. If it's OK with you, I hard code this
->>>> mode and push this series to -next with some small cosmetic fixes.
->>>
->>> Yes, absolutely. Please do these fixes and push it to -next. :)
->>>
->>> Thanks,
->>> —Günther
->>>
->>> --
-> .
