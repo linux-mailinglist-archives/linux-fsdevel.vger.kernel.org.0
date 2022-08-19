@@ -2,98 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD58599488
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 07:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C595995D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Aug 2022 09:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346116AbiHSFYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 01:24:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40554 "EHLO
+        id S1344867AbiHSHSR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 03:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346025AbiHSFYn (ORCPT
+        with ESMTP id S242189AbiHSHSQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 01:24:43 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3337D598E;
-        Thu, 18 Aug 2022 22:24:42 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id x21so4369750edd.3;
-        Thu, 18 Aug 2022 22:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc;
-        bh=xR2elTYWv0Zzv2c1Y+xBuQNNDUv6x050YIaLAIcv7mk=;
-        b=kDIyznJTIUMQDpgkng65TVs3ysH2Ap8U62FxMrOAtMy6fx8DEwEqtKpbq0d18/HpM5
-         RKNzEwqY8rkYzTinNPQZ1EprTtNQaNvBrpljxyT7pc00Fk9FT9fw4cwDZMFFcY68nCTp
-         XToD9c8W9iq60+PbQerdoVYGURhM+wA0lsFukqx6WfIbGy4dxwJZD29oxuNMPV4u48MZ
-         NGuJPtgM+Fh7fCwBjL528xwy7b2HnfxGJFv7F6mxjvIJDKWB2OvJIwd0bw4hxkwTR/Ki
-         6nIxA2bqKfQfobL0se5tRlhJvqAN22+saxk5dyiSED2AX93z8tJ8Ip9QZhXLeLhjhfsU
-         7F7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc;
-        bh=xR2elTYWv0Zzv2c1Y+xBuQNNDUv6x050YIaLAIcv7mk=;
-        b=GiggHnRkETru5GtbItKrweV69UPbge+gCjZX3nG+KYwujd1Kazxkv2lWTiLBnpPkxM
-         zm78g0A1v2g+0fUXNcLHe3GeYLCcEKtX6+UNwMvo7RE6U1kMvrcXH8x3of6iy0OKI+VN
-         qvZSaG0mQf4eTxXqgfQiT/BWGPCliIzTyGg0o1KYEGE2aMHOHvQ9SFZou0s1bnyyaUrL
-         bOYlKvDiPD9Jx4eFSayTJgWYFvCprPFR81oojMgP6hZkhbImWyL6puVcTuXK443wGtqS
-         hZc9QD4W40YNtk9z45wUeK7m4lzLXU9GZfZ2utRYxFlze924gNr+aZOLpWCXl6qZThkp
-         wzNg==
-X-Gm-Message-State: ACgBeo0eANtWWMlJXM2KBOGuifPIA/a+4GR6VA0U+G6XE8y2ZDnc5JTv
-        NfkbBEZ/Q1nUiaPGx6fMz0Y=
-X-Google-Smtp-Source: AA6agR67UVTNCb4Y0rPq1rIbu/3wWl3E10Npve36SEF0suEvj2HEBIG9lFUvIOxKHKrdpZD3ATAeug==
-X-Received: by 2002:aa7:cb87:0:b0:43b:e650:6036 with SMTP id r7-20020aa7cb87000000b0043be6506036mr4785812edt.350.1660886681133;
-        Thu, 18 Aug 2022 22:24:41 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id ev6-20020a17090729c600b007389c5a45f0sm1768514ejc.148.2022.08.18.22.24.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Aug 2022 22:24:40 -0700 (PDT)
-Date:   Fri, 19 Aug 2022 07:24:38 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v5 2/4] selftests/landlock: Selftests for file truncation
- support
-Message-ID: <Yv8elmJ4qfk8/Mw7@nuc>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <20220817203006.21769-3-gnoack3000@gmail.com>
- <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net>
+        Fri, 19 Aug 2022 03:18:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB0EE51;
+        Fri, 19 Aug 2022 00:18:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CE0CEB824F4;
+        Fri, 19 Aug 2022 07:18:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A9EC433C1;
+        Fri, 19 Aug 2022 07:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660893490;
+        bh=urBqd6sIRU3x6OGrBbvlSl/MLtqpjSnSa5yBG6LG85U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EzTgxveXKG6RaPuiWCg5OL1nA6+W37vbIimNvAC3Mb3YdTdUMG7GirW7dF3s8YHGw
+         7o2yhmFGYeuJPsb/xi8MA+QezhLDSy+m3VVxblZ813u3QfeWCh4OFiZnSqxcANQ6bi
+         63pBjUwT4SMVj2xq4i5HpmhbZm4eSgjbRL0ka3B6kvbE8wUdyb12CHrxFVzQ14doVZ
+         ZGoT13lAoImOFb45KcpBRN+HHzL2t/YhIsaaIl8bLYOE3VBIlWmZavxCATAMmwAHbi
+         hG507ZrXL6BfEm03BNMLq3HrNE9X3GjxEs4FZvqaB9kqGh0M/F2Gd58fxURFZROJ6B
+         0OcOmQDnPTHjQ==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 0/2] fscrypt: rework filesystem-level keyring
+Date:   Fri, 19 Aug 2022 00:15:30 -0700
+Message-Id: <20220819071532.221026-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e90aaa5d-d6c8-838a-db29-868a30fd8e37@digikod.net>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 18, 2022 at 10:39:27PM +0200, Mickaël Salaün wrote:
-> On 17/08/2022 22:30, Günther Noack wrote:
-> > +/*
-> > + * Invokes creat(2) and returns its errno or 0.
-> > + * Closes the opened file descriptor on success.
-> > + */
-> > +static int test_creat(const char *const path, mode_t mode)
->
-> This "mode" argument is always 0600. If it's OK with you, I hard code this
-> mode and push this series to -next with some small cosmetic fixes.
+This series reworks the filesystem-level keyring to not use the keyrings
+subsystem as part of its internal implementation (except for ->mk_users,
+which remains unchanged for now).  This fixes several issues, described
+in the first patch.  This is also a prerequisite for removing the direct
+use of struct request_queue from filesystem code, as discussed at
+https://lore.kernel.org/linux-fscrypt/20220721125929.1866403-1-hch@lst.de/T/#u
 
-Yes, absolutely. Please do these fixes and push it to -next. :)
+Eric Biggers (2):
+  fscrypt: stop using keyrings subsystem for fscrypt_master_key
+  fscrypt: stop holding extra request_queue references
 
-Thanks,
-—Günther
+ fs/crypto/fscrypt_private.h |  74 ++++--
+ fs/crypto/hooks.c           |  10 +-
+ fs/crypto/inline_crypt.c    |  83 +++----
+ fs/crypto/keyring.c         | 476 +++++++++++++++++++-----------------
+ fs/crypto/keysetup.c        |  89 +++----
+ fs/crypto/keysetup_v1.c     |   4 +-
+ fs/crypto/policy.c          |   8 +-
+ fs/super.c                  |   2 +-
+ include/linux/fs.h          |   2 +-
+ include/linux/fscrypt.h     |   4 +-
+ 10 files changed, 387 insertions(+), 365 deletions(-)
 
---
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+-- 
+2.37.1
+
