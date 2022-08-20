@@ -2,109 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5B959A918
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 01:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB9659A9D4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 02:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243492AbiHSXJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 19:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
+        id S244316AbiHTAGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 20:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236190AbiHSXJy (ORCPT
+        with ESMTP id S244099AbiHTAGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 19:09:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D554F6B2;
-        Fri, 19 Aug 2022 16:09:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4AA04B8280F;
-        Fri, 19 Aug 2022 23:09:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BD3C433C1;
-        Fri, 19 Aug 2022 23:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660950591;
-        bh=jyQMlfDyLfQswfrcmubQj7ukvdgCEoTA8LhJP39mZNY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QuOfKLcTLqSxarEIMozH41HlKKSXIw1Ha5z+iGobBTp0XC/190sxrbX4xymxeQZFF
-         3WudYVrb63Ic60WpCeWYRRbbMC6sNiKGVAznV8UysIUN6uVjyi5NDY0XFhaprIuD8A
-         pF59daiDM0+L9HkOjVyll+2uPITOtrvjzgrPS16r1XJmBV5ma+KvcLc+BHhqr03upy
-         fMsLt1xcBM7/2jnJiXFv+FJPXeiiS+0sz7tw4jOhLuKIjQw+8yi7bYCZL/cqb3a2bJ
-         OHxlSv4rJUDd6AvnKU3c4q61YHoNXW9ZdFJr7Qw7jTpstVUaoUe5id8DJL1pk0juet
-         AgN1uJU3z9Rkg==
-Date:   Fri, 19 Aug 2022 16:09:48 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        xfs <linux-xfs@vger.kernel.org>, linux-api@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
-Message-ID: <YwAYPFxW7VV4M9D1@sol.localdomain>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <20220722071228.146690-7-ebiggers@kernel.org>
- <YtyoF89iOg8gs7hj@google.com>
- <Yt7dCcG0ns85QqJe@sol.localdomain>
- <YuXyKh8Zvr56rR4R@google.com>
- <YvrrEcw4E+rpDLwM@sol.localdomain>
- <20220816090312.GU3600936@dread.disaster.area>
- <D1CDACE3-EC7E-43E4-8F49-EEA2B6E71A41@dilger.ca>
+        Fri, 19 Aug 2022 20:06:02 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CCAC57B6;
+        Fri, 19 Aug 2022 17:06:01 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id r14-20020a17090a4dce00b001faa76931beso8927594pjl.1;
+        Fri, 19 Aug 2022 17:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc;
+        bh=yC00KE65j+Axy9FPULOY4KYbcVa1VjZuo+YDP6XI95c=;
+        b=RMMBtA5Fx7V8blcknadGehzfeRW+h+ppNKjgIpKLfxTU/cZ1zlbKFM9VPw9VNZkEpG
+         H1iehANPbjI3U5YxKzRq1K0nldERCwzoZywEThoJv5j9Js0MljA/umBi9uimEG0ThlOk
+         3Qh2gaeXVmDpuASGHyNtPDd+udonwXvnxxSjgnpRxwNk4KDl3WXI9LznxzPUh9ZKRAqp
+         eYQbmSTai3LlBTfUxzW2/ZXOOBMuSFyJ/32q4fqPK8JJeTdSGu4KKqi/JCmtm7cI9EAE
+         2HH/1jZEmbFhf3mWtRIOOQHcSiLyFs8HH03vzOfumDGrngSjl250GpH84puPCU6XJXmQ
+         WjCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc;
+        bh=yC00KE65j+Axy9FPULOY4KYbcVa1VjZuo+YDP6XI95c=;
+        b=rxRPPGXg/sw0nYkKyyeNVgiXODHUoCpEaD0imTui4knMQOtjy/DhmBbK12l+XJ81R0
+         81wrbKFXDefS2Y8tdudPWuXU8jNyRrzfGNWNhHvAB5OM9Bz8DmrtmCLAPWbXiB71NQ55
+         o/Wm6tHMj6Wk+UETFta4LwcI5m9iHccsaVpnCrO0qi91UF909nMjlANOaxBe0jCAcPpp
+         bMZAA8RF2HBp7oiMyyo5TRTHUhU1PD7Wvhaa91Lg9HoBcT5SXZIFV5siOQ+MyQoIfPf2
+         PE7zx9jJf2N4f8JITwc7A5aTmI7xIm+BYNJuhOiKOLBefesBP6FCzvMmxpsnZdjbETA6
+         8NMA==
+X-Gm-Message-State: ACgBeo2jNUGfjTHectf5Q2+X2/g+uh/oPohXEbL5ZDKKUd890GWtMtsc
+        cmUSuXiWb+hEhZKVeV8vbGA=
+X-Google-Smtp-Source: AA6agR6uDi3t5sGu/sHmEspJdx7iqNOlWZ5ekNYrNy+qurpUU1ONjj6Q3BdIaqMCdIqsHj4RrHlpBQ==
+X-Received: by 2002:a17:902:d492:b0:16f:8583:9473 with SMTP id c18-20020a170902d49200b0016f85839473mr10037458plg.103.1660953961038;
+        Fri, 19 Aug 2022 17:06:01 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:a2f5])
+        by smtp.gmail.com with ESMTPSA id y23-20020a17090264d700b0016b81679c1fsm3676888pli.216.2022.08.19.17.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Aug 2022 17:06:00 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+From:   Tejun Heo <tj@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chengming Zhou <zhouchengming@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Imran Khan <imran.f.khan@oracle.com>, kernel-team@fb.com
+Subject: [PATCHSET for-6.1] kernfs, cgroup: implement kernfs_deactivate() and cgroup_file_show()
+Date:   Fri, 19 Aug 2022 14:05:44 -1000
+Message-Id: <20220820000550.367085-1-tj@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1CDACE3-EC7E-43E4-8F49-EEA2B6E71A41@dilger.ca>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 10:42:29AM -0600, Andreas Dilger wrote:
-> 
-> IMHO, this whole discussion is putting the cart before the horse.
-> Changing existing (and useful) IO behavior to accommodate an API that
-> nobody has ever used, and is unlikely to even be widely used, doesn't
-> make sense to me.  Most applications won't check or care about the new
-> DIO size fields, since they've lived this long without statx() returning
-> this info, and will just pick a "large enough" size (4KB, 1MB, whatever)
-> that gives them the performance they need.  They *WILL* care if the app
-> is suddenly unable to read data from a file in ways that have worked for
-> a long time.
-> 
-> Even if apps are modified to check these new DIO size fields, and then
-> try to DIO write to a file in f2fs that doesn't allow it, then f2fs will
-> return an error, which is what it would have done without the statx()
-> changes, so no harm done AFAICS.
-> 
-> Even with a more-complex DIO status return that handles a "direction"
-> field (which IMHO is needlessly complex), there is always the potential
-> for a TOCTOU race where a file changes between checking and access, so
-> the userspace code would need to handle this.
-> 
+Hello,
 
-I'm having trouble making sense of your argument here; you seem to be saying
-that STATX_DIOALIGN isn't useful, so it doesn't matter if we design it
-correctly?  That line of reasoning is concerning, as it's certainly intended to
-be useful, and if it's not useful there's no point in adding it.
+Currently, deactivated kernfs nodes are used for two purposes - during
+removal to kill and drain nodes and during creation to make multiple
+kernfs_nodes creations to succeed or fail as a group.
 
-Are there any specific concerns that you have, besides TOCTOU races and the lack
-of support for read-only DIO?
+This patchset make kernfs [de]activation generic so that it can be used
+anytime to deactivate (hide and drain) and activate (show) kernfs nodes,
+and, on top, implement cgroup_file_show() which allows toggling cgroup file
+visiblity.
 
-I don't think that TOCTOU races are a real concern here.  Generally DIO
-constraints would only change if the application doing DIO intentionally does
-something to the file, or if there are changes that involve the filesystem being
-taken offline, e.g. the filesystem being mounted with significantly different
-options or being moved to a different block device.  And, well, everything else
-in stat()/statx() is subject to TOCTOU as well, but is still used...
+This is for the following pending patchset to allow disabling PSI on
+per-cgroup basis:
 
-- Eric
+ https://lore.kernel.org/all/20220808110341.15799-1-zhouchengming@bytedance.com/t/#u
+
+which requires hiding the corresponding cgroup interface files while
+disabled.
+
+This patchset contains the following seven patches.
+
+ 0001-kernfs-Simply-by-replacing-kernfs_deref_open_node-wi.patch
+ 0002-kernfs-Drop-unnecessary-mutex-local-variable-initial.patch
+ 0003-kernfs-Refactor-kernfs_get_open_node.patch
+ 0004-kernfs-Skip-kernfs_drain_open_files-more-aggressivel.patch
+ 0005-kernfs-Make-kernfs_drain-skip-draining-more-aggressi.patch
+ 0006-kernfs-Allow-kernfs-nodes-to-be-deactivated-and-re-a.patch
+ 0007-cgroup-Implement-cgroup_file_show.patch
+
+0001-0003 are misc prep patches. 0004-0006 implement kernsf_deactivate().
+0008 implements cgroup_file_show() on top. The patches are also available in
+the following git branch:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git kernfs-deactivate
+
+diffstat follows. Thanks.
+
+ fs/kernfs/dir.c             |  120 +++++++++++++++++++++++++++++++++++++++++-------------------
+ fs/kernfs/file.c            |  139 +++++++++++++++++++++++++++++++---------------------------------------
+ fs/kernfs/kernfs-internal.h |    1
+ include/linux/cgroup.h      |    1
+ include/linux/kernfs.h      |    2 +
+ kernel/cgroup/cgroup.c      |   23 +++++++++++
+ 6 files changed, 172 insertions(+), 114 deletions(-)
+
+--
+tejun
+
+
