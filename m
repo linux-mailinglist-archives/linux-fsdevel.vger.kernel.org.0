@@ -2,181 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1AF259AD54
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 12:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC3659AEDF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 17:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345306AbiHTKyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Aug 2022 06:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34760 "EHLO
+        id S1345674AbiHTPdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Aug 2022 11:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344492AbiHTKy0 (ORCPT
+        with ESMTP id S229605AbiHTPdf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Aug 2022 06:54:26 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88EFF92F64;
-        Sat, 20 Aug 2022 03:54:24 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4M8wPW6pLhzXdcp;
-        Sat, 20 Aug 2022 18:50:07 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 20 Aug 2022 18:54:22 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600013.china.huawei.com
- (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 20 Aug
- 2022 18:54:21 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <jack@suse.com>, <tytso@mit.edu>, <brauner@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chengzhihao1@huawei.com>,
-        <yukuai3@huawei.com>
-Subject: [PATCH 3/3] quota: Add more checking after reading from quota file
-Date:   Sat, 20 Aug 2022 19:05:14 +0800
-Message-ID: <20220820110514.881373-4-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220820110514.881373-1-chengzhihao1@huawei.com>
-References: <20220820110514.881373-1-chengzhihao1@huawei.com>
+        Sat, 20 Aug 2022 11:33:35 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCE01209E;
+        Sat, 20 Aug 2022 08:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5sAr4rzx6SCv44UYAl1KMLXHp2wkDi6knE6w66LUH/Q=; b=aaf03K0StTdCGsUh+GWGmzlgJl
+        JKrPSsYEa6v5bWe3xzk01borQuEI+zplNIyVoz0BCek7ZHDCy/o9/IYypRkUS8E4g+BW6Ee4Qd6RN
+        +/WsjNTd1y6KsNSU5gYliZRqkWJTDppJvz0l/LzAktRV7J/o/vJwOPIg9AILhuOwuZxCG50OODHp9
+        3ZJDTjzFOx2KQZTUaMTZdXEH4nJJ+SgBh9siP9iQS93aNEqp0WI84GZk2LBKDOrgbtXPyJcJv4gI0
+        ENLU3xoVFCIxrhq7PTnmKBCDC6vuQSJZb62pxEM7MpY9sozDh3Fw05RwGDcL4spOQbs6W5b5msflF
+        elMNOfyg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oPQTb-006Pjx-AI;
+        Sat, 20 Aug 2022 15:33:31 +0000
+Date:   Sat, 20 Aug 2022 16:33:31 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Namjae Jeon <linkinjeon@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Subject: Re: [PATCH 4/5] ksmbd: don't open-code %pf
+Message-ID: <YwD+y2cXpcenIHlW@ZenIV>
+References: <Yv2qoNQg48rtymGE@ZenIV>
+ <Yv2rCqD7M8fAhq5v@ZenIV>
+ <CAKYAXd-Xsih1TKTbM0kTGmjQfpkbpp7d3u9E7USuwmiSXLVvBw@mail.gmail.com>
+ <Yv6igFDtDa0vmq6H@ZenIV>
+ <CAKYAXd-6fT5qG2VmVG6Q51Z8-_79cjKhERHDatR_z62w19+p1Q@mail.gmail.com>
+ <YwBZPCy0RBc9hwIk@ZenIV>
+ <CAKYAXd9DGgLJ=-hcdADXVZUqp2aYRkGr2YKpfUND6S_GuaWgWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKYAXd9DGgLJ=-hcdADXVZUqp2aYRkGr2YKpfUND6S_GuaWgWQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It would be better to do more sanity checking (eg. dqdh_entries,
-block no.) for the content read from quota file, which can prevent
-corrupting the quota file.
+On Sat, Aug 20, 2022 at 02:44:29PM +0900, Namjae Jeon wrote:
+> > OK...  FWIW, I've another ksmbd patch hanging around and it might be
+> > less PITA if I put it + those two patches into never-rebased branch
+> > (for-ksmbd) for ksmbd folks to pull from.  Fewer pointless conflicts
+> > that way...
+> Okay, Thanks for this. I'm trying to resend "ksmbd: fix racy issue
+> from using ->d_parent and ->d_name" patch to you, but It conflict with
+> these patches:)
+> We will pull them from that branch if you create it.
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- fs/quota/quota_tree.c | 43 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 10 deletions(-)
+OK, pull request follows:
 
-diff --git a/fs/quota/quota_tree.c b/fs/quota/quota_tree.c
-index efbdef9fbcf3..bca71640d0ae 100644
---- a/fs/quota/quota_tree.c
-+++ b/fs/quota/quota_tree.c
-@@ -71,12 +71,12 @@ static ssize_t write_blk(struct qtree_mem_dqinfo *info, uint blk, char *buf)
- 	return ret;
- }
- 
--static inline int do_check_range(struct super_block *sb, uint val,
--				 uint min_val, uint max_val)
-+static inline int do_check_range(struct super_block *sb, const char *val_name,
-+				 uint val, uint min_val, uint max_val)
- {
- 	if (val < min_val || val >= max_val) {
--		quota_error(sb, "Getting block %u out of range %u-%u",
--			    val, min_val, max_val);
-+		quota_error(sb, "Getting %s %u out of range %u-%u",
-+			    val_name, val, min_val, max_val);
- 		return -EUCLEAN;
- 	}
- 
-@@ -90,11 +90,13 @@ static int check_free_block(struct qtree_mem_dqinfo *info,
- 	uint nextblk, prevblk;
- 
- 	nextblk = le32_to_cpu(dh->dqdh_next_free);
--	err = do_check_range(info->dqi_sb, nextblk, 0, info->dqi_blocks);
-+	err = do_check_range(info->dqi_sb, "dqdh_next_free", nextblk, 0,
-+			     info->dqi_blocks);
- 	if (err)
- 		return err;
- 	prevblk = le32_to_cpu(dh->dqdh_prev_free);
--	err = do_check_range(info->dqi_sb, prevblk, 0, info->dqi_blocks);
-+	err = do_check_range(info->dqi_sb, "dqdh_prev_free", prevblk, 0,
-+			     info->dqi_blocks);
- 	if (err)
- 		return err;
- 
-@@ -268,6 +270,11 @@ static uint find_free_dqentry(struct qtree_mem_dqinfo *info,
- 		*err = check_free_block(info, dh);
- 		if (*err)
- 			goto out_buf;
-+		*err = do_check_range(info->dqi_sb, "dqdh_entries",
-+				      le16_to_cpu(dh->dqdh_entries), 0,
-+				      qtree_dqstr_in_blk(info));
-+		if (*err)
-+			goto out_buf;
- 	} else {
- 		blk = get_free_dqblk(info);
- 		if ((int)blk < 0) {
-@@ -349,6 +356,10 @@ static int do_insert_tree(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 	}
- 	ref = (__le32 *)buf;
- 	newblk = le32_to_cpu(ref[get_index(info, dquot->dq_id, depth)]);
-+	ret = do_check_range(dquot->dq_sb, "block", newblk, 0,
-+			     info->dqi_blocks);
-+	if (ret)
-+		goto out_buf;
- 	if (!newblk)
- 		newson = 1;
- 	if (depth == info->dqi_qtree_depth - 1) {
-@@ -461,6 +472,11 @@ static int free_dqentry(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 	}
- 	dh = (struct qt_disk_dqdbheader *)buf;
- 	ret = check_free_block(info, dh);
-+	if (ret)
-+		goto out_buf;
-+	ret = do_check_range(info->dqi_sb, "dqdh_entries",
-+			     le16_to_cpu(dh->dqdh_entries), 1,
-+			     qtree_dqstr_in_blk(info) + 1);
- 	if (ret)
- 		goto out_buf;
- 	le16_add_cpu(&dh->dqdh_entries, -1);
-@@ -519,7 +535,7 @@ static int remove_tree(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 		goto out_buf;
- 	}
- 	newblk = le32_to_cpu(ref[get_index(info, dquot->dq_id, depth)]);
--	ret = do_check_range(dquot->dq_sb, newblk, QT_TREEOFF,
-+	ret = do_check_range(dquot->dq_sb, "block", newblk, QT_TREEOFF,
- 			     info->dqi_blocks);
- 	if (ret)
- 		goto out_buf;
-@@ -623,7 +639,8 @@ static loff_t find_tree_dqentry(struct qtree_mem_dqinfo *info,
- 	blk = le32_to_cpu(ref[get_index(info, dquot->dq_id, depth)]);
- 	if (!blk)	/* No reference? */
- 		goto out_buf;
--	ret = do_check_range(dquot->dq_sb, blk, QT_TREEOFF, info->dqi_blocks);
-+	ret = do_check_range(dquot->dq_sb, "block", blk, QT_TREEOFF,
-+			     info->dqi_blocks);
- 	if (ret)
- 		goto out_buf;
- 
-@@ -739,7 +756,13 @@ static int find_next_id(struct qtree_mem_dqinfo *info, qid_t *id,
- 		goto out_buf;
- 	}
- 	for (i = __get_index(info, *id, depth); i < epb; i++) {
--		if (ref[i] == cpu_to_le32(0)) {
-+		uint blk_no = le32_to_cpu(ref[i]);
-+
-+		ret = do_check_range(info->dqi_sb, "block", blk_no, 0,
-+				     info->dqi_blocks);
-+		if (ret)
-+			goto out_buf;
-+		if (blk_no == 0) {
- 			*id += level_inc;
- 			continue;
- 		}
-@@ -747,7 +770,7 @@ static int find_next_id(struct qtree_mem_dqinfo *info, qid_t *id,
- 			ret = 0;
- 			goto out_buf;
- 		}
--		ret = find_next_id(info, id, le32_to_cpu(ref[i]), depth + 1);
-+		ret = find_next_id(info, id, blk_no, depth + 1);
- 		if (ret != -ENOENT)
- 			break;
- 	}
--- 
-2.31.1
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
+  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-ksmbd
+
+for you to fetch changes up to f2ea6d96500dd8947467f774d70700c1ba3ed8ef:
+
+  ksmbd: constify struct path (2022-08-20 10:54:48 -0400)
+
+----------------------------------------------------------------
+assorted ksmbd cleanups
+
+Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (3):
+      ksmbd: don't open-code file_path()
+      ksmbd: don't open-code %pD
+      ksmbd: constify struct path
+
+ fs/ksmbd/misc.c    |  2 +-
+ fs/ksmbd/misc.h    |  2 +-
+ fs/ksmbd/smb2pdu.c | 33 ++++++++++++++++-----------------
+ fs/ksmbd/smbacl.c  |  6 +++---
+ fs/ksmbd/smbacl.h  |  6 +++---
+ fs/ksmbd/vfs.c     | 18 ++++++++----------
+ fs/ksmbd/vfs.h     |  2 +-
+ 7 files changed, 33 insertions(+), 36 deletions(-)
