@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE9559A9E7
+	by mail.lfdr.de (Postfix) with ESMTP id 4A4A259A9E5
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 02:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244529AbiHTAGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 20:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59124 "EHLO
+        id S244558AbiHTAGR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 20:06:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244364AbiHTAGL (ORCPT
+        with ESMTP id S244401AbiHTAGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 20:06:11 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A7B0CE4A8;
-        Fri, 19 Aug 2022 17:06:10 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id w29so51201pfj.3;
-        Fri, 19 Aug 2022 17:06:10 -0700 (PDT)
+        Fri, 19 Aug 2022 20:06:13 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE47C59E4;
+        Fri, 19 Aug 2022 17:06:12 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id 20so5343736plo.10;
+        Fri, 19 Aug 2022 17:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc;
-        bh=pwu75EvHca3VZc4E4my+47PYvKCdwgwwkawHwqsLMUw=;
-        b=E3S9ekC1ltLzioHmVWptBNnM60tb5cABtcyn4UW+0EVGNrLYBz/llI/lNM0WTHOunx
-         G6843qB+Q/slcwMbMnq23CwRH4+6PFwC6alMxqp5OwWaL6MO+cutThjmid6YQSpPoMo2
-         9nSnSmzRyWSiMvE/G+VnOnAhtn8oKzW3yRvmdUo3dMgJYr3kDL6AL2lvZcRDcVHQlg5L
-         2GnyAxppsV23R+RxuT7/R7T7pr+wEettep+UpikfYFxjPnYuKRPdmt5kcdD+b3J0io2e
-         5TPK41xhq5VGeV68ihSGm8y8PIIEMFEIVgjudVPm4vhLP1RwwT6S71O4CAGMBV2sD+eb
-         +kag==
+        bh=mALUVzvQkNStgXaHgA3odIsd31YxLLGk1d2u95EoEbw=;
+        b=oVeJjDc3RH46Mfe5B8tkD6PdFxEdVoazg8nbQW8oMsw3JPk3gclva8LRuwooFi+Yhh
+         UfACsm70DPl4YknurmVAfkFyLXAamAb97UiskrCdJtVzSTyr8X2urqsw9ATZ2dvKEKFF
+         7Fz69+byXmQoQrPx2UWpf3cumRScIwLF5Vtwa9JKlCHlU+JBAO/ZkDjjvNoYGFDiQtEv
+         hxs4xUDLt6wXUlvj/SN2j2NNZwMxBEh15P4WTc5cwcQHkQlX8U+FJC3zUiV1YwZLLQwK
+         aUiTaqwJis86CwvPFaBCY7LfO0Ntl1V1B9r7AJOtEn56f/Wj9Isj3Vp7eOJYUf/BtIJQ
+         KBfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc;
-        bh=pwu75EvHca3VZc4E4my+47PYvKCdwgwwkawHwqsLMUw=;
-        b=GwDYFQzgfjajeXz8VLS8PwsdtGDT6ff7inRT6YfmKtII1dVg1kuS6ORuvOfh53e+tM
-         e+7UML/zhchXfQz79f/KPvfiyAny0EJ9lnt8Gia+Oi0FXKTtHTuDZRC2WlyIOHznFTtd
-         n6EL1VSPDPYD022kZV8uY5ff9dhvmw/D6oNM+bqMBFrceL28/qb8xK3gl9JORhGIRkx4
-         GKuhDTLJVDivEzNJiWLtvMH8P7Mdokw+JQy1BXaPrHGH6v2UM0wuVW93eKEr23Qv0daX
-         S/fif/oa4m70PFbC3IdvTyNo+CeW7FkTDyr/xF+xRnP4itltPZagDDOic83Ok7bGXYYO
-         DH3Q==
-X-Gm-Message-State: ACgBeo2c1bg9dxXItKEZK0Qa+58H2vau+/SsfyumgMlXkZ3sZ40AUqRX
-        CzL+bZyq6eO7IjbMRsj8U6s=
-X-Google-Smtp-Source: AA6agR7VpyKN7jgP4RTp4sXFQmqgTILVUNX3CJvgdniBXjIQUhK61QhJ2a8u4YLvM11hYlGjTFmgVg==
-X-Received: by 2002:a63:2b02:0:b0:41d:9b5e:7d69 with SMTP id r2-20020a632b02000000b0041d9b5e7d69mr8008112pgr.165.1660953969540;
-        Fri, 19 Aug 2022 17:06:09 -0700 (PDT)
+        bh=mALUVzvQkNStgXaHgA3odIsd31YxLLGk1d2u95EoEbw=;
+        b=QePyw8PQZ5o159b1GG5rh6yiB6nWkzOmqKHOXE1o9HTjlgq1maO/kC3ba5HNzqmq6k
+         Ii7W3hm12hhEI6v28LqFIyzdXEXJjsnH6dM0+CKfAXmbawvZwEWXH0RJAim66kio26gP
+         kN9m4gEtjfjPQSfB/rI20X2Hw1OrV5g7cFD9xNNX84i9dGwM95lnYyJtDzYFcU/C7Wh4
+         nmpQt5Ig+s7Y/oOyk8mrxZaks9x2tnLiECY4Y3ZHJtgfFPt2yb1hNs5x1YIVwECGU698
+         x7AJPYCxeBnUaSq2Ak0+z6XLDuQ/rbE9swF4X2ZILkNJGw61vRF/RWNl06hh296YpExF
+         LUXg==
+X-Gm-Message-State: ACgBeo08t+ZcFvES3PUjJ3rPuZQDD0KaPOwiKuRs6jSdhQBq9mqsBhRO
+        /LmymIAHjUN7dwsfihva+7MqcqZy4gI=
+X-Google-Smtp-Source: AA6agR5CM7J59rSZzXsxpmaVSmGNSqOdihNEvMdBamjMVcEi3uhG6gbUPPwADBu38U+aO5iWNfMhdw==
+X-Received: by 2002:a17:902:c411:b0:170:91ff:884b with SMTP id k17-20020a170902c41100b0017091ff884bmr9656022plk.58.1660953971444;
+        Fri, 19 Aug 2022 17:06:11 -0700 (PDT)
 Received: from localhost ([2620:10d:c090:400::5:a2f5])
-        by smtp.gmail.com with ESMTPSA id u64-20020a627943000000b0052c7ff2ac74sm4090819pfc.17.2022.08.19.17.06.08
+        by smtp.gmail.com with ESMTPSA id f7-20020a170902684700b0016d93c84049sm3702023pln.54.2022.08.19.17.06.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Aug 2022 17:06:09 -0700 (PDT)
+        Fri, 19 Aug 2022 17:06:11 -0700 (PDT)
 Sender: Tejun Heo <htejun@gmail.com>
 From:   Tejun Heo <tj@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -57,9 +57,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Johannes Weiner <hannes@cmpxchg.org>,
         Imran Khan <imran.f.khan@oracle.com>, kernel-team@fb.com,
         Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4/7] kernfs: Skip kernfs_drain_open_files() more aggressively
-Date:   Fri, 19 Aug 2022 14:05:48 -1000
-Message-Id: <20220820000550.367085-5-tj@kernel.org>
+Subject: [PATCH 5/7] kernfs: Make kernfs_drain() skip draining more aggressively
+Date:   Fri, 19 Aug 2022 14:05:49 -1000
+Message-Id: <20220820000550.367085-6-tj@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220820000550.367085-1-tj@kernel.org>
 References: <20220820000550.367085-1-tj@kernel.org>
@@ -76,164 +76,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Track the number of mmapped files and files that need to be released and
-skip kernfs_drain_open_file() if both are zero, which are the precise
-conditions which require draining open_files. The early exit test is
-factored into kernfs_should_drain_open_files() which is now tested by
-kernfs_drain_open_files()'s caller - kernfs_drain().
+kernfs_drain() is updated to handle whether draining is necessary or not
+rather than its caller. __kernfs_remove() now always calls kernfs_drain()
+instead of filtering based on KERNFS_ACTIVATED.
 
-This isn't a meaningful optimization on its own but will enable future
-stand-alone kernfs_deactivate() implementation.
+kernfs_drain() now tests kn->active and kernfs_should_drain_open_files() to
+determine whether draining is necessary at all. If not, it returns %false
+without doing anything. Otherwise, it unlocks kernfs_rwsem and drains as
+before and returns %true. The return value isn't used yet.
+
+Using the precise conditions allows skipping more aggressively. This isn't a
+meaningful optimization on its own but will enable future stand-alone
+kernfs_deactivate() implementation.
+
+While at it, make minor comment updates.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- fs/kernfs/dir.c             |  3 ++-
- fs/kernfs/file.c            | 51 +++++++++++++++++++++++++------------
- fs/kernfs/kernfs-internal.h |  1 +
- 3 files changed, 38 insertions(+), 17 deletions(-)
+ fs/kernfs/dir.c | 34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
 diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 1cc88ba6de90..8ae44db920d4 100644
+index 8ae44db920d4..f857731598cd 100644
 --- a/fs/kernfs/dir.c
 +++ b/fs/kernfs/dir.c
-@@ -489,7 +489,8 @@ static void kernfs_drain(struct kernfs_node *kn)
- 		rwsem_release(&kn->dep_map, _RET_IP_);
+@@ -460,10 +460,14 @@ void kernfs_put_active(struct kernfs_node *kn)
+  * @kn: kernfs_node to drain
+  *
+  * Drain existing usages and nuke all existing mmaps of @kn.  Mutiple
+- * removers may invoke this function concurrently on @kn and all will
++ * callers may invoke this function concurrently on @kn and all will
+  * return after draining is complete.
++ *
++ * RETURNS:
++ * %false if nothing needed to be drained; otherwise, %true. On %true return,
++ * kernfs_rwsem has been released and re-acquired.
+  */
+-static void kernfs_drain(struct kernfs_node *kn)
++static bool kernfs_drain(struct kernfs_node *kn)
+ 	__releases(&kernfs_root(kn)->kernfs_rwsem)
+ 	__acquires(&kernfs_root(kn)->kernfs_rwsem)
+ {
+@@ -472,6 +476,16 @@ static void kernfs_drain(struct kernfs_node *kn)
+ 	lockdep_assert_held_write(&root->kernfs_rwsem);
+ 	WARN_ON_ONCE(kernfs_active(kn));
+ 
++	/*
++	 * Skip draining if already fully drained. This avoids draining and its
++	 * lockdep annotations for nodes which have never been activated
++	 * allowing embedding kernfs_remove() in create error paths without
++	 * worrying about draining.
++	 */
++	if (atomic_read(&kn->active) == KN_DEACTIVATED_BIAS &&
++	    kernfs_should_drain_open_files(kn))
++		return false;
++
+ 	up_write(&root->kernfs_rwsem);
+ 
+ 	if (kernfs_lockdep(kn)) {
+@@ -480,7 +494,6 @@ static void kernfs_drain(struct kernfs_node *kn)
+ 			lock_contended(&kn->dep_map, _RET_IP_);
  	}
  
--	kernfs_drain_open_files(kn);
-+	if (kernfs_should_drain_open_files(kn))
-+		kernfs_drain_open_files(kn);
+-	/* but everyone should wait for draining */
+ 	wait_event(root->deactivate_waitq,
+ 		   atomic_read(&kn->active) == KN_DEACTIVATED_BIAS);
+ 
+@@ -493,6 +506,8 @@ static void kernfs_drain(struct kernfs_node *kn)
+ 		kernfs_drain_open_files(kn);
  
  	down_write(&root->kernfs_rwsem);
++
++	return true;
  }
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index 7060a2a714b8..b510589af427 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -23,6 +23,8 @@ struct kernfs_open_node {
- 	atomic_t		event;
- 	wait_queue_head_t	poll;
- 	struct list_head	files; /* goes through kernfs_open_file.list */
-+	unsigned int		nr_mmapped;
-+	unsigned int		nr_to_release;
- };
  
- /*
-@@ -527,6 +529,7 @@ static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
+ /**
+@@ -1370,23 +1385,14 @@ static void __kernfs_remove(struct kernfs_node *kn)
+ 		pos = kernfs_leftmost_descendant(kn);
  
- 	rc = 0;
- 	of->mmapped = true;
-+	of_on(of)->nr_mmapped++;
- 	of->vm_ops = vma->vm_ops;
- 	vma->vm_ops = &kernfs_vm_ops;
- out_put:
-@@ -574,6 +577,8 @@ static int kernfs_get_open_node(struct kernfs_node *kn,
- 	}
- 
- 	list_add_tail(&of->list, &on->files);
-+	if (kn->flags & KERNFS_HAS_RELEASE)
-+		on->nr_to_release++;
- 
- 	mutex_unlock(mutex);
- 	return 0;
-@@ -606,8 +611,12 @@ static void kernfs_unlink_open_file(struct kernfs_node *kn,
- 		return;
- 	}
- 
--	if (of)
-+	if (of) {
-+		WARN_ON_ONCE((kn->flags & KERNFS_HAS_RELEASE) && !of->released);
-+		if (of->mmapped)
-+			on->nr_mmapped--;
- 		list_del(&of->list);
-+	}
- 
- 	if (list_empty(&on->files)) {
- 		rcu_assign_pointer(kn->attr.open, NULL);
-@@ -766,6 +775,7 @@ static void kernfs_release_file(struct kernfs_node *kn,
+ 		/*
+-		 * kernfs_drain() drops kernfs_rwsem temporarily and @pos's
++		 * kernfs_drain() may drop kernfs_rwsem temporarily and @pos's
+ 		 * base ref could have been put by someone else by the time
+ 		 * the function returns.  Make sure it doesn't go away
+ 		 * underneath us.
  		 */
- 		kn->attr.ops->release(of);
- 		of->released = true;
-+		of_on(of)->nr_to_release--;
- 	}
- }
+ 		kernfs_get(pos);
  
-@@ -790,25 +800,30 @@ static int kernfs_fop_release(struct inode *inode, struct file *filp)
- 	return 0;
- }
+-		/*
+-		 * Drain iff @kn was activated.  This avoids draining and
+-		 * its lockdep annotations for nodes which have never been
+-		 * activated and allows embedding kernfs_remove() in create
+-		 * error paths without worrying about draining.
+-		 */
+-		if (kn->flags & KERNFS_ACTIVATED)
+-			kernfs_drain(pos);
+-		else
+-			WARN_ON_ONCE(atomic_read(&kn->active) != KN_DEACTIVATED_BIAS);
++		kernfs_drain(pos);
  
--void kernfs_drain_open_files(struct kernfs_node *kn)
-+bool kernfs_should_drain_open_files(struct kernfs_node *kn)
- {
- 	struct kernfs_open_node *on;
--	struct kernfs_open_file *of;
--	struct mutex *mutex;
--
--	if (!(kn->flags & (KERNFS_HAS_MMAP | KERNFS_HAS_RELEASE)))
--		return;
-+	bool ret;
- 
- 	/*
--	 * lockless opportunistic check is safe below because no one is adding to
--	 * ->attr.open at this point of time. This check allows early bail out
--	 * if ->attr.open is already NULL. kernfs_unlink_open_file makes
--	 * ->attr.open NULL only while holding kernfs_open_file_mutex so below
--	 * check under kernfs_open_file_mutex_ptr(kn) will ensure bailing out if
--	 * ->attr.open became NULL while waiting for the mutex.
-+	 * @kn being deactivated guarantees that @kn->attr.open can't change
-+	 * beneath us making the lockless test below safe.
- 	 */
--	if (!rcu_access_pointer(kn->attr.open))
--		return;
-+	WARN_ON_ONCE(atomic_read(&kn->active) != KN_DEACTIVATED_BIAS);
-+
-+	rcu_read_lock();
-+	on = rcu_dereference(kn->attr.open);
-+	ret = on && (on->nr_mmapped || on->nr_to_release);
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
-+void kernfs_drain_open_files(struct kernfs_node *kn)
-+{
-+	struct kernfs_open_node *on;
-+	struct kernfs_open_file *of;
-+	struct mutex *mutex;
- 
- 	mutex = kernfs_open_file_mutex_lock(kn);
- 	on = kernfs_deref_open_node_locked(kn);
-@@ -820,13 +835,17 @@ void kernfs_drain_open_files(struct kernfs_node *kn)
- 	list_for_each_entry(of, &on->files, list) {
- 		struct inode *inode = file_inode(of->file);
- 
--		if (kn->flags & KERNFS_HAS_MMAP)
-+		if (of->mmapped) {
- 			unmap_mapping_range(inode->i_mapping, 0, 0, 1);
-+			of->mmapped = false;
-+			on->nr_mmapped--;
-+		}
- 
- 		if (kn->flags & KERNFS_HAS_RELEASE)
- 			kernfs_release_file(kn, of);
- 	}
- 
-+	WARN_ON_ONCE(on->nr_mmapped || on->nr_to_release);
- 	mutex_unlock(mutex);
- }
- 
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 3ae214d02d44..fc5821effd97 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -157,6 +157,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
-  */
- extern const struct file_operations kernfs_file_fops;
- 
-+bool kernfs_should_drain_open_files(struct kernfs_node *kn);
- void kernfs_drain_open_files(struct kernfs_node *kn);
- 
- /*
+ 		/*
+ 		 * kernfs_unlink_sibling() succeeds once per node.  Use it
 -- 
 2.37.2
 
