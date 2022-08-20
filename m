@@ -2,140 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F37A459AA10
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 02:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E865259AAA3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 04:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245402AbiHTAeN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Aug 2022 20:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39026 "EHLO
+        id S237518AbiHTCIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Aug 2022 22:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245489AbiHTAd4 (ORCPT
+        with ESMTP id S229672AbiHTCI2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Aug 2022 20:33:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8ED13E33;
-        Fri, 19 Aug 2022 17:33:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CD9E61900;
-        Sat, 20 Aug 2022 00:33:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A39C433D7;
-        Sat, 20 Aug 2022 00:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660955618;
-        bh=2UioO3jIqUCggDOliY/3dPwIKxowKS7N1pNMvwgRRJY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p7YXCiqntWaRVlaJVs0qsv0/0okcSkkBv5tX156c0hQa69FiHuFAOuyU2H14/uhPh
-         qkFkQqxM4QZW8Uk24/T8GgmF1hsH9T7n23yOG11yBTTC78vlPfWfsuoSmR6p/47Zwd
-         S7rQFXLxLwXMyC84969EnRkhQDcVdOTnKURgs1tJrEqikdWe3N0un1XrVFCRdz704n
-         Ievfd5LYGzKFanXasRnR0PNi5+gnbYVmn2sZlUsswTIJIYEs4ag4Vyn/LqgZa4kkcK
-         eAom2kY4OTnmNb9mf0PNZqubwgxSrHGt6gCL1UeiAtkbhFzyiP5LLMH88dZk/owdi9
-         YbUQ3xISxHF3Q==
-Date:   Fri, 19 Aug 2022 17:33:36 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
-Message-ID: <YwAr4MKgnjljdXiA@sol.localdomain>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <20220722071228.146690-7-ebiggers@kernel.org>
- <YtyoF89iOg8gs7hj@google.com>
- <Yt7dCcG0ns85QqJe@sol.localdomain>
- <YuXyKh8Zvr56rR4R@google.com>
- <YvrrEcw4E+rpDLwM@sol.localdomain>
- <YwAlbsorBsshkxfU@google.com>
+        Fri, 19 Aug 2022 22:08:28 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193501277D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 19:08:25 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id tl27so11853182ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Aug 2022 19:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=S5HX3yQxHZsdBOSDLucjhTh9DK0BKP1yB69LdNKCN/8=;
+        b=IOUC4tPa0CY67LIUu8g6TGtR9bQztFvfU4xeiSNigSjCUoNvxd/6dDt2OOgJGxcv2u
+         JCQT8Tb8zcwpQBi//KAmiyDw0NaCD84pV+ctbfwnIhq/q02WthnVysWs9elgPBqdQO3Z
+         HLu3zlr6yqWxDbCB62BXm7HDtbClrirP3O+K35ItwLSzRRVZHQRikiD6Mfm6IBDhx/Tf
+         Ir9hGOLcOf4ss0d7ncuUuDf2HVNjZN3y64s6VM0+HiC6+3YW0J90GpGZ2bkc9sV/sVi2
+         p6j7zXVzWDUEUuZ1oJIzzM+L5wC8jE1dOeE8kJA0lWzK2ty2Gb8w5ur4hOVibOnRIxzi
+         PkCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=S5HX3yQxHZsdBOSDLucjhTh9DK0BKP1yB69LdNKCN/8=;
+        b=G+PD7PgssbObfBEVlRrSSDy9jRis5iX9e41S/ODolQGqjoE70YOMjKG2P1kJH1HfBU
+         Hbn+5du7sb3AtzHT8FPXFqPtGe2I1EVnnF08JfO+o489kjaiO9YHv26sMDoqjZoiYg83
+         /RiuDFubrU8qN/SOEIzbcFOuIg0is9QrqHjZv/6WZRrcLTS30MgAPcVbsY18JXMcD7xQ
+         4YpOMvctAlBF9L7OO6crMN2AcdVTkGFTlMHEx9l8AwGWAFLZofNoQdFv5fx/n9DNjcKU
+         qOROPgz7eZLwD7U7guvytb2TWlBofx0jIEMjI2Pufg06XyJ2vlec1bc7TXWgnd/RceEp
+         hsbw==
+X-Gm-Message-State: ACgBeo29P3XY63tlENOscqxJY1h8dgrKLMcbe7dsAlsUlQ0f0OJqiX/N
+        LiyB6n8xbjc1t9EvOxmkx5U5+70X2kA=
+X-Google-Smtp-Source: AA6agR5d4eTzJdLWWCiu455rus1vo4fBpTkfAGLlz0WFRgspFqMvdB4VlwTZWyV5ZCjlQbQ+Xcyl4A==
+X-Received: by 2002:a17:906:9749:b0:730:c005:5d59 with SMTP id o9-20020a170906974900b00730c0055d59mr6459790ejy.419.1660961303489;
+        Fri, 19 Aug 2022 19:08:23 -0700 (PDT)
+Received: from opensuse.localnet (host-87-17-106-94.retail.telecomitalia.it. [87.17.106.94])
+        by smtp.gmail.com with ESMTPSA id y14-20020a1709063a8e00b0073a644ef803sm3011448ejd.101.2022.08.19.19.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Aug 2022 19:08:22 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] f2fs: use memcpy_{to,from}_page() where possible
+Date:   Sat, 20 Aug 2022 04:08:19 +0200
+Message-ID: <4750218.GXAFRqVoOG@opensuse>
+In-Reply-To: <20220819223300.9128-1-ebiggers@kernel.org>
+References: <20220819223300.9128-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YwAlbsorBsshkxfU@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 05:06:06PM -0700, Jaegeuk Kim wrote:
-> On 08/15, Eric Biggers wrote:
-> > On Sat, Jul 30, 2022 at 08:08:26PM -0700, Jaegeuk Kim wrote:
-> > > On 07/25, Eric Biggers wrote:
-> > > > On Sat, Jul 23, 2022 at 07:01:59PM -0700, Jaegeuk Kim wrote:
-> > > > > On 07/22, Eric Biggers wrote:
-> > > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > > 
-> > > > > > Currently, if an f2fs filesystem is mounted with the mode=lfs and
-> > > > > > io_bits mount options, DIO reads are allowed but DIO writes are not.
-> > > > > > Allowing DIO reads but not DIO writes is an unusual restriction, which
-> > > > > > is likely to be surprising to applications, namely any application that
-> > > > > > both reads and writes from a file (using O_DIRECT).  This behavior is
-> > > > > > also incompatible with the proposed STATX_DIOALIGN extension to statx.
-> > > > > > Given this, let's drop the support for DIO reads in this configuration.
-> > > > > 
-> > > > > IIRC, we allowed DIO reads since applications complained a lower performance.
-> > > > > So, I'm afraid this change will make another confusion to users. Could
-> > > > > you please apply the new bahavior only for STATX_DIOALIGN?
-> > > > > 
-> > > > 
-> > > > Well, the issue is that the proposed STATX_DIOALIGN fields cannot represent this
-> > > > weird case where DIO reads are allowed but not DIO writes.  So the question is
-> > > > whether this case actually matters, in which case we should make STATX_DIOALIGN
-> > > > distinguish between DIO reads and DIO writes, or whether it's some odd edge case
-> > > > that doesn't really matter, in which case we could just fix it or make
-> > > > STATX_DIOALIGN report that DIO is unsupported.  I was hoping that you had some
-> > > > insight here.  What sort of applications want DIO reads but not DIO writes?
-> > > > Is this common at all?
-> > > 
-> > > I think there's no specific application to use the LFS mode at this
-> > > moment, but I'd like to allow DIO read for zoned device which will be
-> > > used for Android devices.
-> > > 
-> > 
-> > So if the zoned device feature becomes widely adopted, then STATX_DIOALIGN will
-> > be useless on all Android devices?  That sounds undesirable. 
+On sabato 20 agosto 2022 00:33:00 CEST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Do you have a plan to adopt STATX_DIOALIGN in android?
-
-Nothing specific, but statx() is among the system calls that are supported by
-Android's libc and that apps are allowed to use.  So STATX_DIOALIGN would become
-available as well.  I'd prefer if it actually worked properly if apps, or
-Android system components, do actually try to use it (or need to use it)...
-
-> > What we need to do is make a decision about whether this means we should build
-> > in a stx_dio_direction field (indicating no support / readonly support /
-> > writeonly support / readwrite support) into the API from the beginning.  If we
-> > don't do that, then I don't think we could simply add such a field later, as the
-> > statx_dio_*_align fields will have already been assigned their meaning.  I think
-> > we'd instead have to "duplicate" the API, with STATX_DIOROALIGN and
-> > statx_dio_ro_*_align fields.  That seems uglier than building a directional
-> > indicator into the API from the beginning.  On the other hand, requiring all
-> > programs to check stx_dio_direction would add complexity to using the API.
-> > 
-> > Any thoughts on this?
+> This is simpler, and as a side effect it replaces several uses of
+> kmap_atomic() with its recommended replacement kmap_local_page().
 > 
-> I haven't seen the details of the implementation tho, why not supporting it
-> only if filesystem has the same DIO RW policy?
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v2: remove unneeded calls to flush_dcache_page(),
+>     and convert the kmap_atomic() in f2fs_write_inline_data().
+> 
+>  fs/f2fs/inline.c | 15 ++++-----------
+>  fs/f2fs/super.c  | 11 ++---------
+>  fs/f2fs/verity.c | 10 ++--------
+>  3 files changed, 8 insertions(+), 28 deletions(-)
 
-As I've mentioned, we could of course make STATX_DIOALIGN report that DIO is
-unsupported when the DIO support is read-only.
+It looks good to me...
 
-The thing that confuses me based on the responses so far is that there seem to
-be two camps of people: (1) people who really want STATX_DIOALIGN, and who don't
-think that read-only DIO support should exist so they don't want STATX_DIOALIGN
-to support it; and (2) people who feel that read-only DIO support is perfectly
-reasonable and useful, and who don't care whether STATX_DIOALIGN supports it
-because they don't care about STATX_DIOALIGN in the first place.
+Reviewed-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
 
-While both camps seem to agree that STATX_DIOALIGN shouldn't support read-only
-DIO, it is for totally contradictory reasons, so it's not very convincing.  We
-should ensure that we have rock-solid reasoning before committing to a new UAPI
-that will have to be permanently supported...
+Thanks,
 
-- Eric
+Fabio
+
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index bf46a7dfbea2fc..73da9331803696 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -64,7 +64,6 @@ bool f2fs_may_inline_dentry(struct inode *inode)
+>  void f2fs_do_read_inline_data(struct page *page, struct page *ipage)
+>  {
+>  	struct inode *inode = page->mapping->host;
+> -	void *src_addr, *dst_addr;
+> 
+>  	if (PageUptodate(page))
+>  		return;
+> @@ -74,11 +73,8 @@ void f2fs_do_read_inline_data(struct page *page, struct
+> page *ipage) zero_user_segment(page, MAX_INLINE_DATA(inode), PAGE_SIZE);
+> 
+>  	/* Copy the whole inline data block */
+> -	src_addr = inline_data_addr(inode, ipage);
+> -	dst_addr = kmap_atomic(page);
+> -	memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
+> -	flush_dcache_page(page);
+> -	kunmap_atomic(dst_addr);
+> +	memcpy_to_page(page, 0, inline_data_addr(inode, ipage),
+> +		       MAX_INLINE_DATA(inode));
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
+>  }
+> @@ -246,7 +242,6 @@ int f2fs_convert_inline_inode(struct inode *inode)
+> 
+>  int f2fs_write_inline_data(struct inode *inode, struct page *page)
+>  {
+> -	void *src_addr, *dst_addr;
+>  	struct dnode_of_data dn;
+>  	int err;
+> 
+> @@ -263,10 +258,8 @@ int f2fs_write_inline_data(struct inode *inode, struct
+> page *page) f2fs_bug_on(F2FS_I_SB(inode), page->index);
+> 
+>  	f2fs_wait_on_page_writeback(dn.inode_page, NODE, true, true);
+> -	src_addr = kmap_atomic(page);
+> -	dst_addr = inline_data_addr(inode, dn.inode_page);
+> -	memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
+> -	kunmap_atomic(src_addr);
+> +	memcpy_from_page(inline_data_addr(inode, dn.inode_page),
+> +			 page, 0, MAX_INLINE_DATA(inode));
+>  	set_page_dirty(dn.inode_page);
+> 
+>  	f2fs_clear_page_cache_dirty_tag(page);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 2451623c05a7a8..3e5743b2538240 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2465,7 +2465,6 @@ static ssize_t f2fs_quota_read(struct super_block *sb,
+> int type, char *data, size_t toread;
+>  	loff_t i_size = i_size_read(inode);
+>  	struct page *page;
+> -	char *kaddr;
+> 
+>  	if (off > i_size)
+>  		return 0;
+> @@ -2498,9 +2497,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb,
+> int type, char *data, return -EIO;
+>  		}
+> 
+> -		kaddr = kmap_atomic(page);
+> -		memcpy(data, kaddr + offset, tocopy);
+> -		kunmap_atomic(kaddr);
+> +		memcpy_from_page(data, page, offset, tocopy);
+>  		f2fs_put_page(page, 1);
+> 
+>  		offset = 0;
+> @@ -2522,7 +2519,6 @@ static ssize_t f2fs_quota_write(struct super_block 
+*sb,
+> int type, size_t towrite = len;
+>  	struct page *page;
+>  	void *fsdata = NULL;
+> -	char *kaddr;
+>  	int err = 0;
+>  	int tocopy;
+> 
+> @@ -2541,10 +2537,7 @@ static ssize_t f2fs_quota_write(struct super_block 
+*sb,
+> int type, break;
+>  		}
+> 
+> -		kaddr = kmap_atomic(page);
+> -		memcpy(kaddr + offset, data, tocopy);
+> -		kunmap_atomic(kaddr);
+> -		flush_dcache_page(page);
+> +		memcpy_to_page(page, offset, data, tocopy);
+> 
+>  		a_ops->write_end(NULL, mapping, off, tocopy, tocopy,
+>  						page, fsdata);
+> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+> index 7b8f2b41c29b12..97ec60f39d6960 100644
+> --- a/fs/f2fs/verity.c
+> +++ b/fs/f2fs/verity.c
+> @@ -47,16 +47,13 @@ static int pagecache_read(struct inode *inode, void 
+*buf,
+> size_t count, size_t n = min_t(size_t, count,
+>  				 PAGE_SIZE - offset_in_page(pos));
+>  		struct page *page;
+> -		void *addr;
+> 
+>  		page = read_mapping_page(inode->i_mapping, pos >> 
+PAGE_SHIFT,
+>  					 NULL);
+>  		if (IS_ERR(page))
+>  			return PTR_ERR(page);
+> 
+> -		addr = kmap_atomic(page);
+> -		memcpy(buf, addr + offset_in_page(pos), n);
+> -		kunmap_atomic(addr);
+> +		memcpy_from_page(buf, page, offset_in_page(pos), n);
+> 
+>  		put_page(page);
+> 
+> @@ -85,16 +82,13 @@ static int pagecache_write(struct inode *inode, const 
+void
+> *buf, size_t count, PAGE_SIZE - offset_in_page(pos));
+>  		struct page *page;
+>  		void *fsdata;
+> -		void *addr;
+>  		int res;
+> 
+>  		res = aops->write_begin(NULL, mapping, pos, n, &page, 
+&fsdata);
+>  		if (res)
+>  			return res;
+> 
+> -		addr = kmap_atomic(page);
+> -		memcpy(addr + offset_in_page(pos), buf, n);
+> -		kunmap_atomic(addr);
+> +		memcpy_to_page(page, offset_in_page(pos), buf, n);
+> 
+>  		res = aops->write_end(NULL, mapping, pos, n, n, page, 
+fsdata);
+>  		if (res < 0)
+> 
+> base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+> --
+> 2.37.1
+
+
+
+
