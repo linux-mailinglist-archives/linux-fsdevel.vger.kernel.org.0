@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 381F659B053
+	by mail.lfdr.de (Postfix) with ESMTP id 0011959B055
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 22:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbiHTUOQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Aug 2022 16:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
+        id S233625AbiHTUPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Aug 2022 16:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiHTUOP (ORCPT
+        with ESMTP id S229512AbiHTUPA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Aug 2022 16:14:15 -0400
+        Sat, 20 Aug 2022 16:15:00 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82722AE29
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Aug 2022 13:14:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002F02F65C
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Aug 2022 13:14:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Jij4gGIu/9MC3WTRmKg7/qEVttspVOOd9biZwQejFIk=; b=EMAS06HzyVOJPTLH699fcgZ4xA
-        zREapKzrQbXxpuRgo6+TwGqWUgHB/tlE6yg6N36HYhydjmfWqO6NSDnyroqMb397pj783hJi9TTSv
-        3WHd1GtMMvx3Hbw8byMknGXPkx9wIDPWd2Zv8NlRhA23bRezRAUTIvV5F9AF0WwA3qIt67FAXNBVS
-        z7jk/dWtq4KKY66bX5C2M378KfDCWIXZ7kj4Idhql6Pop1ls+Q08Ab5MVuB8W7OytubBZKg9g7WiK
-        bsTOZX28DtxEzI8+8IF5s+ECxety1zWMv79tQskP9Kg30vr+jOdL1uYC+gqUodV5SE8JgjxrnM4WK
-        +2Oqj5GA==;
+        bh=eczBb+dnAseXIDwvlTbbXDeY6daD9Fm1d0jKak5GadE=; b=IYMO1TFsBJBUDzJ8bzeFIjSTsi
+        XSzoTPari7vdoaFMH4rDttOahikJnBiF/uxVNIBmCsAyQeUApg4CZUv+AVqzjnT97LXRsDApNkDC4
+        yF3WBeUoqkvpg+X6lx/ZpDIOFw0JKRNk7mBAp9PsHD1Crq13JfxrgWWmrIKse/ixje0SMIeYJu5CF
+        w5KvuQlrUJODre22ubgesKgZx0WC17ehF9nXDWF7x2VW0rF0WGotONCme+XqqbS1OBw6so0CEpdd0
+        D7WoDnvf2chGiFQdaYN1I63zqOX8IjddaT9RQay15g2WpdFjH0vBVH86MSSsXiB2jqL+w6/xSCUfV
+        hw+Y9MUQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oPUrF-006T6w-8n;
-        Sat, 20 Aug 2022 20:14:13 +0000
-Date:   Sat, 20 Aug 2022 21:14:13 +0100
+        id 1oPUrx-006T7j-HP;
+        Sat, 20 Aug 2022 20:14:57 +0000
+Date:   Sat, 20 Aug 2022 21:14:57 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     Brad Warrum <bwarrum@linux.ibm.com>
-Subject: [PATCH 1/8] ibmvmc: don't open-code file_inode()
-Message-ID: <YwFAlWnn2M8j2kSd@ZenIV>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>
+Subject: [PATCH 2/8] exfat_iterate(): don't open-code file_inode(file)
+Message-ID: <YwFAwZDjXN9ZQrfP@ZenIV>
 References: <YwFANLruaQpqmPKv@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,37 +49,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-badly, at that...
+and it's file, not filp...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/misc/ibmvmc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/exfat/dir.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
-index c0fe3295c330..cbaf6d35e854 100644
---- a/drivers/misc/ibmvmc.c
-+++ b/drivers/misc/ibmvmc.c
-@@ -1039,6 +1039,7 @@ static unsigned int ibmvmc_poll(struct file *file, poll_table *wait)
- static ssize_t ibmvmc_write(struct file *file, const char *buffer,
- 			    size_t count, loff_t *ppos)
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index a27b55ec060a..0fc08fdcba73 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -212,9 +212,9 @@ static void exfat_free_namebuf(struct exfat_dentry_namebuf *nb)
+ 
+ /* skip iterating emit_dots when dir is empty */
+ #define ITER_POS_FILLED_DOTS    (2)
+-static int exfat_iterate(struct file *filp, struct dir_context *ctx)
++static int exfat_iterate(struct file *file, struct dir_context *ctx)
  {
-+	struct inode *inode;
- 	struct ibmvmc_buffer *vmc_buffer;
- 	struct ibmvmc_file_session *session;
- 	struct crq_server_adapter *adapter;
-@@ -1122,8 +1123,9 @@ static ssize_t ibmvmc_write(struct file *file, const char *buffer,
- 	if (p == buffer)
- 		goto out;
+-	struct inode *inode = filp->f_path.dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	struct super_block *sb = inode->i_sb;
+ 	struct inode *tmp;
+ 	struct exfat_dir_entry de;
+@@ -228,7 +228,7 @@ static int exfat_iterate(struct file *filp, struct dir_context *ctx)
+ 	mutex_lock(&EXFAT_SB(sb)->s_lock);
  
--	file->f_path.dentry->d_inode->i_mtime = current_time(file_inode(file));
--	mark_inode_dirty(file->f_path.dentry->d_inode);
-+	inode = file_inode(file);
-+	inode->i_mtime = current_time(inode);
-+	mark_inode_dirty(inode);
+ 	cpos = ctx->pos;
+-	if (!dir_emit_dots(filp, ctx))
++	if (!dir_emit_dots(file, ctx))
+ 		goto unlock;
  
- 	dev_dbg(adapter->dev, "write: file = 0x%lx, count = 0x%lx\n",
- 		(unsigned long)file, (unsigned long)count);
+ 	if (ctx->pos == ITER_POS_FILLED_DOTS) {
 -- 
 2.30.2
 
