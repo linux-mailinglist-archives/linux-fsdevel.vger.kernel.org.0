@@ -2,49 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 960F259AC87
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 10:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0633959ACD6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Aug 2022 11:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344265AbiHTISW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 Aug 2022 04:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
+        id S1343781AbiHTJW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 Aug 2022 05:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344076AbiHTISU (ORCPT
+        with ESMTP id S244085AbiHTJW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 Aug 2022 04:18:20 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529AD2A7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Aug 2022 01:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=H3iQuGpulYLrPVXcWItrYymNuR20
-        LcEh8kLqsygp7Xs=; b=2RoZqc4c/b40/C2JsuYl5sTjER1je4ipZivAOAmcDNRW
-        i9W3/wm2hZ/1/mYc0vGRlJNiEybQ7grRrl2Ny+6BF6t/FoN13wp6nVmV31q+pKcN
-        Kldmw5dtPagyVk/0XngBwJ+veqMvCwQD0WDgcYzZVkqrgllbVpOvhdV6UxWpslo=
-Received: (qmail 403734 invoked from network); 20 Aug 2022 10:18:08 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Aug 2022 10:18:08 +0200
-X-UD-Smtp-Session: l3s3148p1@MxzD2qfmTt0gAwDNfy09AOVJm2UNvjsf
-Date:   Sat, 20 Aug 2022 10:18:07 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/14] vboxsf: move from strlcpy with unused retval to
- strscpy
-Message-ID: <YwCYv9esPb200L3k@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20220818210123.7637-1-wsa+renesas@sang-engineering.com>
- <0d44fb03-0481-2f0d-eeb5-63cbddeffc62@redhat.com>
+        Sat, 20 Aug 2022 05:22:26 -0400
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7D1B69C7;
+        Sat, 20 Aug 2022 02:22:23 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VMj1MZi_1660987338;
+Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VMj1MZi_1660987338)
+          by smtp.aliyun-inc.com;
+          Sat, 20 Aug 2022 17:22:19 +0800
+Message-ID: <da9573d7-cc79-1a75-da52-480c9aac827e@linux.alibaba.com>
+Date:   Sat, 20 Aug 2022 17:22:19 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qppcLu0zUe02zHv3"
-Content-Disposition: inline
-In-Reply-To: <0d44fb03-0481-2f0d-eeb5-63cbddeffc62@redhat.com>
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.12.0
+Subject: Re: [PATCH v3] cachefiles: fix error return code in
+ cachefiles_ondemand_copen()
+Content-Language: en-US
+To:     Sun Ke <sunke32@huawei.com>, dhowells@redhat.com
+Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220818125038.2247720-1-sunke32@huawei.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20220818125038.2247720-1-sunke32@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -52,36 +46,42 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---qppcLu0zUe02zHv3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
+On 8/18/22 8:50 PM, Sun Ke wrote:
+> The cache_size field of copen is specified by the user daemon.
+> If cache_size < 0, then the OPEN request is expected to fail,
+> while copen itself shall succeed. However, returning 0 is indeed
+> unexpected when cache_size is an invalid error code.
+> 
+> Fix this by returning error when cache_size is an invalid error code.
+> 
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-> Note you send this one twice. Since I'm not sure which one
-> will end up getting merged, I'm going to just reply to both...
+LGTM.
 
-Ouch, yes, I sent out all subfolders in fs/ twice. Will fix my scripts,
-I am sorry for the noise!
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
+> ---
+> v3: update the commit log suggested by Jingbo.
+> 
+>  fs/cachefiles/ondemand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 1fee702d5529..ea8a1e8317d9 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -159,7 +159,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	/* fail OPEN request if daemon reports an error */
+>  	if (size < 0) {
+>  		if (!IS_ERR_VALUE(size))
+> -			size = -EINVAL;
+> +			ret = size = -EINVAL;
+>  		req->error = size;
+>  		goto out;
+>  	}
 
---qppcLu0zUe02zHv3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMAmLsACgkQFA3kzBSg
-KbaBCg//eSai8OmScogCqSq/DQzg+DHk2k4TUDMYCLtbN98DK/RMYf0uSJQNzO5m
-SfeyioGtgLONKXMmZOTRZCbiGVodSvUKQS1pPVB9pJbOniSUHJk7CHz8C6ov3WOx
-i36pUn41i/zG4lZ+NQTi3FVmR9AFYX9Frdy6egwGrC9Y/DvaE/8pimV5s1YXM+84
-nqxNLjhWgdZpENOixYPuCTX19gRw6M+u5hyYCZYe0iq1uapVI/p/fO4D2vfxCYxD
-PBEPJzKmtXBqiP2ydRnAiNNK6QfMgs7q8prgYMHW/6bde3GY1Rt/mIhMl2kIH1sE
-0Apbpl8iSeAkpNB066vUE5ML6QCgArg2eqeu3OtopdY9E8yftOhukJIK9kVthFiz
-7f9tRr2nSG0N12aNijgtYFOV3t+i+cm1VeXW/ghBYpxiaJTSXmdrbzNzfLxPgB4a
-kzVnQe+Y5CF2Fl8z4AuQaQ3+HO9NPvaRL49FErCYO0139nGUXt3ZDfzQx1RBOhYz
-N1CKTAOyeesLWOLI+FjejoL0jmmT7hTrEa46Xg7kyxvUgjFSN8Wu9MuC9AnvnjIs
-HLnclxDLnrriYWZkAreXvpPzV8XjnjJCSwWKRTPNtVLKKdBPpfEtPD904D15WqIg
-HiIVv8bVriTuwPvLPg6NcKE0Mq9EyfwQe+u1pAdh7N4UK+Ivoec=
-=I1oR
------END PGP SIGNATURE-----
-
---qppcLu0zUe02zHv3--
+-- 
+Thanks,
+Jingbo
