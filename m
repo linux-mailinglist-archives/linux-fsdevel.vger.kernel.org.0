@@ -2,96 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1648659B396
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Aug 2022 13:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4013459B3AE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Aug 2022 14:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbiHULs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Aug 2022 07:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38836 "EHLO
+        id S229603AbiHUMLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Aug 2022 08:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiHULsz (ORCPT
+        with ESMTP id S229436AbiHUMLo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Aug 2022 07:48:55 -0400
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F44A19026;
-        Sun, 21 Aug 2022 04:48:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1661082501; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=a6mvjVOBl8ChnzBxpui+qVndI/h3HGnpx16bhUNbBlOrv6Z8sMO+jghYzTS1p5ryAQe2KvZXtJ3rfnyzCzgha2ANxtZS79E85N9mCWfU2hjcySHoy7h3OEAzHXzK8BXyKGIfzsnehOqyf6OIHS+4yQ8GX3JAeit36DljlV8h9bM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1661082501; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=AwgN4RsZJTA9+iQk7/8UqzCd1O7MqN7cM+CxvUfw26E=; 
-        b=C71iFaUNYsWoivWc9//6C7fKwUDTKxhw+sTJ1b6ww3UIrsuL5gSaMN/F+Opogy10uhzCdSuLJ3wVlk2e2Os6gXffeY5GeNnnKqLma5bCBuJd4wOfvF/w6mVegPmTJG7VywRSiPdE8pHvrog/XehsbjwQGwh1mDDaCweZnt+Vz8I=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1661082501;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-        bh=AwgN4RsZJTA9+iQk7/8UqzCd1O7MqN7cM+CxvUfw26E=;
-        b=aRlO49NTaAJWJhgr67LQPL3GjwcBhrLc7M/r0WoO5Ds+sKDfKnpfwopBXNyVHvhX
-        K1MY1nhYnlMpWNe6LZv9kemOcsz7NARqLH21hGZFH/qucpaFaAvGwJ+VlZGOc0QRWGb
-        khp0PoWz7Ns7RYHNUcVaYnlpwjHq+nIoO6YHN5K0=
-Received: from localhost.localdomain (43.250.157.244 [43.250.157.244]) by mx.zoho.in
-        with SMTPS id 1661082500389589.0087066634392; Sun, 21 Aug 2022 17:18:20 +0530 (IST)
-From:   Siddh Raman Pant <code@siddh.me>
-To:     code@siddh.me
-Cc:     david@fromorbit.com, djwong@kernel.org, fgheet255t@gmail.com,
-        hch@infradead.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, riteshh@linux.ibm.com,
-        syzbot+a8e049cd3abd342936b6@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Message-ID: <20220821114816.24193-1-code@siddh.me>
-Subject: Re: [syzbot] WARNING in iomap_iter
-Date:   Sun, 21 Aug 2022 17:18:16 +0530
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <182c028abf0.2dc6f7c973088.2963173753499991828@siddh.me>
-References: <182c028abf0.2dc6f7c973088.2963173753499991828@siddh.me>
+        Sun, 21 Aug 2022 08:11:44 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1151F2DA;
+        Sun, 21 Aug 2022 05:11:43 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id g18so8529386pju.0;
+        Sun, 21 Aug 2022 05:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=cgzLCp3a55Ep+0cEyKvv7krA21NYDyPYbH2CBGQzucg=;
+        b=poXDkZKa0JzQnuD+BhY6e3Qpe4nDrJkPgdPTBRYH/OlRSm6eZmzE2txYKd5dKC+HBw
+         DUmgcJYiQ0EZsxDNfyEKWV08OCsb882SCL7aFwQWpsotT9lwnQ5lwBu9UVBP4NiRNdDA
+         Xb0HRelNBBr1KPlvYmPANAncDMlD+fmI4txdHDw/Idhg/gPI4VkQ76Bu9cVYjGvAm2Xa
+         M1JRyU39Ppwq5Aowd7VMC6y3cAF+URXviAXKRbpasvcpPznqQPLu3fb+gvmQ4tRTv59r
+         50yrjR//InHFuuwQlfZ5sRlEibsHohmhZxLVw5W5AMy6XjOnW70YbOnT+/n2AEbbs4L8
+         wx4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=cgzLCp3a55Ep+0cEyKvv7krA21NYDyPYbH2CBGQzucg=;
+        b=g8qAnPLMPhBP9M9hPPi/Ucz4RF45W/CMNN4YocMgo53jOyc//i5W3NFDmz3Gxhgg8z
+         6B/qLCc8Ri4rYbGgOuV/DfoojdlmezWIiDijFa/CjmiQlG9U9/3solh46YV9a/TZF+1h
+         RCw5W+uCW8FKelRqQMDKnZIS2XIhPJ4CzlCErR710KtSGzuPxeqg5xy7v7aQgQy0+r8y
+         7SdJmkPD1LE1aXCAVGmPfR+SqFoVPVFtMV6ecH8ks/yr8Di8TgR5QqXC4mSfA2pIdImC
+         XJ65/uTDmDU6WXHm9V+UfB1fiZtVskML58l3j7ouM6l5kb2LyWmi06Hefj9gNgbQ21+2
+         0TFw==
+X-Gm-Message-State: ACgBeo2Q+sJZjdbm5J6/O4y/EjUfNBUwCDiy8ETdO2U275y/IeS4zq+U
+        i+soH0qul8FUcHFdehjlBzM=
+X-Google-Smtp-Source: AA6agR7pAMSWL1n/638qdO1lxqloqjisDk1HkpPCyJeZIn35O3Uvx1FjH0BRNAugQBk352snoSZZ1Q==
+X-Received: by 2002:a17:902:8d95:b0:172:e11e:65da with SMTP id v21-20020a1709028d9500b00172e11e65damr2698288plo.4.1661083903320;
+        Sun, 21 Aug 2022 05:11:43 -0700 (PDT)
+Received: from localhost ([36.112.204.208])
+        by smtp.gmail.com with ESMTPSA id g2-20020a632002000000b0042988a04bfdsm5602411pgg.9.2022.08.21.05.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Aug 2022 05:11:42 -0700 (PDT)
+From:   Hawkins Jiawei <yin31149@gmail.com>
+To:     dvyukov@google.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        paskripkin@gmail.com, skhan@linuxfoundation.org,
+        18801353760@163.com, Hawkins Jiawei <yin31149@gmail.com>
+Subject: [PATCH] fs: fix WARNING in mark_buffer_dirty (4)
+Date:   Sun, 21 Aug 2022 20:10:39 +0800
+Message-Id: <20220821121038.3527-1-yin31149@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CACT4Y+bUtBuhD7_BAN+NavEfhBNOavqF0CJkrZ+Gc4pYeLiy+g@mail.gmail.com>
+References: <CACT4Y+bUtBuhD7_BAN+NavEfhBNOavqF0CJkrZ+Gc4pYeLiy+g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_RED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
+Syzkaller reports bug as follows:
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 3684 at fs/buffer.c:1081 mark_buffer_dirty+0x59d/0xa20 fs/buffer.c:1081
+[...]
+Call Trace:
+ <TASK>
+ minix_put_super+0x199/0x500 fs/minix/inode.c:49
+ generic_shutdown_super+0x14c/0x400 fs/super.c:462
+ kill_block_super+0x97/0xf0 fs/super.c:1394
+ deactivate_locked_super+0x94/0x160 fs/super.c:332
+ deactivate_super+0xad/0xd0 fs/super.c:363
+ cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:177
+ ptrace_notify+0x114/0x140 kernel/signal.c:2353
+ ptrace_report_syscall include/linux/ptrace.h:420 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:482 [inline]
+ syscall_exit_work kernel/entry/common.c:249 [inline]
+ syscall_exit_to_user_mode_prepare+0x129/0x280 kernel/entry/common.c:276
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:281 [inline]
+ syscall_exit_to_user_mode+0x9/0x50 kernel/entry/common.c:294
+ do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+ [...]
+ </TASK>
+------------------------------------
 
+During VFS releasing the minix's superblock, kernel will calls
+sync_filesystem() to write out and wait upon all dirty data
+associated with this superblock.
+
+Yet the problem is that this write may fail, then kernel will
+clear BH_Uptodate flag in superblock's struct buffer_head
+in end_buffer_async_write(). When kernel returns from
+sync_filesystem() and calls sop->put_super()
+(which is minix_put_super()), it will triggers the warning
+for struct buffer_head is not uptodate in mark_buffer_dirty().
+
+This patch solves it by handling sync_filesystem() write error
+in minix_put_super(), before calling mark_buffer_dirty()
+
+Reported-and-tested-by: syzbot+2af3bc9585be7f23f290@syzkaller.appspotmail.com
+Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
 ---
- drivers/block/loop.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/minix/inode.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index e3c0ba93c1a3..a3d9af0a2077 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -979,9 +979,15 @@ loop_set_status_from_info(struct loop_device *lo,
-=20
- =09lo->lo_offset =3D info->lo_offset;
- =09lo->lo_sizelimit =3D info->lo_sizelimit;
-+=09lo->lo_flags =3D info->lo_flags;
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index da8bdd1712a7..8e9a8057dcfe 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -42,17 +42,27 @@ static void minix_put_super(struct super_block *sb)
+ {
+ 	int i;
+ 	struct minix_sb_info *sbi = minix_sb(sb);
++	struct buffer_head *sbh = sbi->s_sbh;
+ 
+ 	if (!sb_rdonly(sb)) {
+ 		if (sbi->s_version != MINIX_V3)	 /* s_state is now out from V3 sb */
+ 			sbi->s_ms->s_state = sbi->s_mount_state;
+-		mark_buffer_dirty(sbi->s_sbh);
 +
-+=09/* loff_t/int vars are assigned __u64/__u32 vars (respectively) */
-+=09if (lo->lo_offset < 0 || lo->lo_sizelimit < 0 || lo->lo_flags < 0)
-+=09=09return -EOVERFLOW;
-+
- =09memcpy(lo->lo_file_name, info->lo_file_name, LO_NAME_SIZE);
- =09lo->lo_file_name[LO_NAME_SIZE-1] =3D 0;
--=09lo->lo_flags =3D info->lo_flags;
-+
- =09return 0;
- }
-=20
---=20
-2.35.1
-
++		lock_buffer(sbh);
++		if (buffer_write_io_error(sbh)) {
++			clear_buffer_write_io_error(sbh);
++			set_buffer_uptodate(sbh);
++			printk("MINIX-fs warning: superblock detected "
++			       "previous I/O error\n");
++		}
++		mark_buffer_dirty(sbh);
++		unlock_buffer(sbh);
+ 	}
+ 	for (i = 0; i < sbi->s_imap_blocks; i++)
+ 		brelse(sbi->s_imap[i]);
+ 	for (i = 0; i < sbi->s_zmap_blocks; i++)
+ 		brelse(sbi->s_zmap[i]);
+-	brelse (sbi->s_sbh);
++	brelse (sbh);
+ 	kfree(sbi->s_imap);
+ 	sb->s_fs_info = NULL;
+ 	kfree(sbi);
+-- 
+2.25.1
 
