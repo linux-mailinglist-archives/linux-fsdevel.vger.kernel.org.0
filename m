@@ -2,75 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC1AB59C94F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 21:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A38F659C9A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 22:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233729AbiHVTy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 15:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44506 "EHLO
+        id S232432AbiHVUJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 16:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231326AbiHVTyZ (ORCPT
+        with ESMTP id S232343AbiHVUJQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 15:54:25 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39864402FD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 12:54:24 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id a16so8467130lfs.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 12:54:24 -0700 (PDT)
+        Mon, 22 Aug 2022 16:09:16 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75D04F1B6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 13:09:14 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id u24so6077795lji.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 13:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc;
-        bh=mJYkjoFM1MNYDjxafvXKEPUbvJhzVrTSHnNsQsuncUA=;
-        b=AsCF/DmtHu2Jmnl9CHMjfwMS+IXEr7nmauJCOI8GcgiO7HgXBdj+UWyVv11d5fVSs6
-         LDPpik1XpQcnxNI5k/evDP8Kb9U3Te5Qjplyi8TAS2F4H57aZRz/3oKx7Iv8ezdzImyZ
-         oytbi1mUJ76xXIBiWcTM7EmbGckM8K5mj5+F9BtK7sqrWZ4z/eM1Wg4l/V9iuDSAaqRN
-         FDi4uJ0rOrQrVshXWq5YExAMlKOk13pNorYc0qn78gM8cJwx8WBnEvIpeaZ4IUIxBdY7
-         inaJsAZ9fhFf7bWULI/1R2cWSS5wxOwgb5w51gD9Dh5NvrD78ZjQ0Z8tumtMVoiGf5/3
-         PetA==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=rNzR9QGqS5j6oh3cxSooKBs5Da2aEIBjVibuQ7PJyY4=;
+        b=G/6rnW2WngFu3z8GJAnZAfCOkh68V/JUVcL67bXj8QU16wKXhMja1mBmCXbTmoik81
+         fdRO9yziSI1qyn3ZnU+Tk/b2sF7XsdQ1NnwKRVBovYFK8jKlmTE25Tnqpl1OShRVgFuO
+         55GLEFueyqTzyirsTbo9dhWM7XcEyTrXvQVeN7iSuin+N1GEYFmw/DH+NkSO6W3GV6HO
+         R/542Kyg5z5z+fF28YqBPucnTKR8rFd39QVkbJ7+94RLIRv3/IdPNOPUYxR2rtFLJJo/
+         akYDrVLMQ3gXaiXiwyvOoGY3I0ZKHhZmxqg1es9/wRFbkicvNSHP3X7Q6cUSaREYuQyd
+         HxqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc;
-        bh=mJYkjoFM1MNYDjxafvXKEPUbvJhzVrTSHnNsQsuncUA=;
-        b=6cVCwm8jTxzDwYL7yeOncXpiVynJTiDf3iFOcpsT5HCburAYH58j+16j2yOOQosBKP
-         o+IXGqUs3ZXA3qNoC39YfSilAowgRF7u5hQBcn/oBlHcKiV3B6pueKp+AG0qAlhdkXkw
-         UgRNZfCq+nnQB4a30O4bwFnqFivRsk8QoJn3ueY4XEuN6PCSolGZ35f96KWqHn+8OBNt
-         ahDpvsqpsx8gvCasVpr4opHgfP0PJdPSJgrjwtX3qUrLUwRvYI8ERCBrezpIXY/PgHyn
-         /hnPAyXK1FnnpOnY2tRuPGjGF7KTpMLIPklmW5v8X07MRYORqz7i0Fos7ea2RQIkNSCR
-         5Nvw==
-X-Gm-Message-State: ACgBeo3qQ189JVLmS5aIMRfqf9NnamKQBxttiiLVqTUXv0boa2+uvvdu
-        DbIT7wUaYPxRSnJAoa02BEk=
-X-Google-Smtp-Source: AA6agR4gMsy8l1NhQm/H2kJ/k9mi/lPb1q9eNX5xzbOH/YfWEJirzsqfcrr4tJ2FzPRiVne+Rm4agw==
-X-Received: by 2002:a05:6512:acd:b0:492:b8e0:2ef4 with SMTP id n13-20020a0565120acd00b00492b8e02ef4mr6981068lfu.360.1661198062396;
-        Mon, 22 Aug 2022 12:54:22 -0700 (PDT)
-Received: from pc636 ([155.137.26.201])
-        by smtp.gmail.com with ESMTPSA id p5-20020a05651238c500b0048a83336343sm2075680lft.252.2022.08.22.12.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 12:54:21 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 22 Aug 2022 21:54:17 +0200
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC] vmap_folio()
-Message-ID: <YwPe6TOJWu3q2VYe@pc636>
-References: <YvvdFrtiW33UOkGr@casper.infradead.org>
- <Yv6qtlSGsHpg02cT@casper.infradead.org>
- <Yv9rrDY2qukhvzs5@pc636>
- <Yv+wAS9JXbYvufaW@casper.infradead.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=rNzR9QGqS5j6oh3cxSooKBs5Da2aEIBjVibuQ7PJyY4=;
+        b=xdI6HnQo+a/bsOMIPwA5QBxGo8p7B0t875peg+S9OBnixxsv6XGRBXl+RSiQhCHHiD
+         982tzBPm6N0JwJBVoWwQTfw+XnVw2wTE2mNBEiy3dmcD/qoudEgBQlcdAfTN1ikDLzFr
+         TPnJ1yzN8BOPveUaIVU5hF2EAbegDmMPjv10TS+xe21JJXAh4a5drudoV3AavYVELrne
+         fapL7e9/ZH+RBiyq9gGA8TwTVAiRnkhBHTzkiNWdBWqUgeRjzerQuUpgyO77g6Hyxhk0
+         u3IhT0qWk8HoaBb8eyQuJSkMbYYSHVChyU/WxkGdr+v5RFf/lo62mr+dVg3m5z9f/Jlq
+         dpHA==
+X-Gm-Message-State: ACgBeo3cCVzgQWl0CbMT9cYdj8mcAcLEdpw0Wz8eb0n9faQF3hjAtFcw
+        P0aXEJ+33HQcZYmzv+EDpYLI3Edc/4ykDSkKONaGQQ==
+X-Google-Smtp-Source: AA6agR59okDv54Jbyi23A1nS9MzE8+afV+r+Jcam4JHKwd+90O+ezON9z+HSSTGcj+W/yIAHzcTIOm3wlGcNWGs75oc=
+X-Received: by 2002:a05:651c:4d4:b0:261:cbe7:e62f with SMTP id
+ e20-20020a05651c04d400b00261cbe7e62fmr2347049lji.295.1661198952956; Mon, 22
+ Aug 2022 13:09:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yv+wAS9JXbYvufaW@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-21-ojeda@kernel.org>
+In-Reply-To: <20220805154231.31257-21-ojeda@kernel.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 22 Aug 2022 13:09:00 -0700
+Message-ID: <CAKwvOdndYxQ+KgVhC8F3vWnHDT8pD3px8cKjinu-khn25_FSYw@mail.gmail.com>
+Subject: Re: [PATCH v9 20/27] scripts: add `rust_is_available.sh`
+To:     Miguel Ojeda <ojeda@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Finn Behrens <me@kloenk.de>, Miguel Cano <macanroj@gmail.com>,
+        Tiago Lam <tiagolam@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,32 +76,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 04:45:05PM +0100, Matthew Wilcox wrote:
-> On Fri, Aug 19, 2022 at 12:53:32PM +0200, Uladzislau Rezki wrote:
-> > Looks pretty straightforward. One thing though, if we can combine it
-> > together with vmap(), since it is a copy paste in some sense, say to
-> > have something __vmap() to reuse it in the vmap_folio() and vmap().
-> > 
-> > But that is just a thought.
-> 
-> Thanks for looking it over!
-> 
-You are welcome.
-
+On Fri, Aug 5, 2022 at 8:46 AM Miguel Ojeda <ojeda@kernel.org> wrote:
 >
-> Combining it with vmap() or vm_map_ram() is tricky.  Today, we assume
-> that each struct page pointer refers to exactly PAGE_SIZE bytes, so if
-> somebody calls alloc_pages(GFP_COMPOUND, 4) and then passes the head
-> page to vmap(), only that one page gets mapped.  I don't know whether
-> any current callers depend on that behaviour.
-> 
-> Now that I look at the future customers of this, I think I erred in basing
-> this on vmap(), it looks like vm_map_ram() is preferred.  So I'll redo
-> based on vm_map_ram().
-> 
-Indeed, the vmap code has no knowledge about comound pages. You can add
-me to CC, so i can have a look on it to help out with it if there will
-be a need.
+> This script tests whether the Rust toolchain requirements are in place
+> to enable Rust support.
 
---
-Uladzislau Rezki
+With this, I get:
+
+$ make LLVM=1 rustavailable
+***
+*** libclang (used by the Rust bindings generator 'bindgen')
+*** version does not match Clang's. This may be a problem.
+***   libclang version: 15.0.0
+***   Clang version:    16.0.0
+***
+Rust is available!
+
+because I'm using clang built from source from ToT.  Is this supposed
+to mean that I can't use clang-16, clang-14, clang-13, clang-12, or
+clang-11 (in the kernel we support clang-11+) in order to use rust?
+I'm guessing that's going to hinder adoption.  Is there a way to
+specify which libclang version bindgen should be using?
+
+I have libclang built in my clang sources,
+llvm-project/llvm/build/lib/libclang.so.  I also tried:
+
+$ CLANG_PATH=/android0/llvm-project/llvm/build/lib/libclang.so.15 make
+LLVM=1 -j72 rustavailable
+$ CLANG_PATH=/android0/llvm-project/llvm/build/lib/libclang.so make
+LLVM=1 -j72 rustavailable
+
+-- 
+Thanks,
+~Nick Desaulniers
