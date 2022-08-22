@@ -2,55 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5DB59CB36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 23:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF51659CB69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 00:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237898AbiHVV6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 17:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52224 "EHLO
+        id S237976AbiHVW2C convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 18:28:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237613AbiHVV6p (ORCPT
+        with ESMTP id S232461AbiHVW2B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 17:58:45 -0400
-X-Greylist: delayed 165 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 22 Aug 2022 14:58:44 PDT
-Received: from p3plwbeout16-06.prod.phx3.secureserver.net (p3plsmtp16-06-2.prod.phx3.secureserver.net [173.201.193.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A2D17E3C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 14:58:43 -0700 (PDT)
-Received: from mailex.mailcore.me ([94.136.40.144])
-        by :WBEOUT: with ESMTP
-        id QFOloDwIMMXmVQFOloILK8; Mon, 22 Aug 2022 14:55:56 -0700
-X-CMAE-Analysis: v=2.4 cv=EYgN/NqC c=1 sm=1 tr=0 ts=6303fb6d
- a=wXHyRMViKMYRd//SnbHIqA==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=ggZhUymU-5wA:10 a=biHskzXt2R4A:10 a=lZFbU4aQAAAA:8 a=FXvPX3liAAAA:8
- a=gbRoYUdNN1fX-E31I0kA:9 a=yKZbCDypxrTF-tGext6c:22 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
-X-SID:  QFOloDwIMMXmV
-Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=phoenix.fritz.box)
-        by smtp02.mailcore.me with esmtpa (Exim 4.94.2)
-        (envelope-from <phillip@squashfs.org.uk>)
-        id 1oQFOk-000Clp-BD; Mon, 22 Aug 2022 22:55:54 +0100
-From:   Phillip Lougher <phillip@squashfs.org.uk>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Chris Murphy <lists@colorremedies.com>
-Subject: [PATCH] Squashfs: don't call kmalloc in decompressors
-Date:   Mon, 22 Aug 2022 22:54:30 +0100
-Message-Id: <20220822215430.15933-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.35.1
+        Mon, 22 Aug 2022 18:28:01 -0400
+X-Greylist: delayed 4256 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 22 Aug 2022 15:27:59 PDT
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693D1491F2;
+        Mon, 22 Aug 2022 15:27:59 -0700 (PDT)
+Received: from [45.44.224.220] (port=49006 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <olivier@trillion01.com>)
+        id 1oQEn7-0007uE-5u;
+        Mon, 22 Aug 2022 17:17:01 -0400
+Message-ID: <61abfb5a517e0ee253b0dc7ba9cd32ebd558bcb0.camel@trillion01.com>
+Subject: Re: [PATCH 2/2] coredump: Allow coredumps to pipes to work with
+ io_uring
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 22 Aug 2022 17:16:59 -0400
+In-Reply-To: <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+         <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+         <87h7i694ij.fsf_-_@disp2133>
+         <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
+         <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+         <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
+         <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
+         <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
+         <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
+         <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
+         <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
+         <87y1wnrap0.fsf_-_@email.froward.int.ebiederm.org>
+         <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.3 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailcore-Auth: 439999529
-X-Mailcore-Domain: 1394945
-X-123-reg-Authenticated:  phillip@squashfs.org.uk  
-X-Originating-IP: 82.69.79.175
-X-CMAE-Envelope: MS4xfMRATBo/usai2DMDrUc9NVuRYTs+FFi3XKWOVn8r9gUPMPN5qf4mXY3WN22x1jhvAeo795SsByAcPzp5YGNA5LK6fjx7vrcju0IYOFHlC+r2C6WDvASM
- XXPXczRVuVkCgTvfRgOTTP5p3ISplnMhnY1QDt9HGME0JjpBzyN/8CyonBlbbYKAiPg5uyqNgXY6H/yS3ZM0V6Y5oenWYZxbEWU0JmX9rxDsTUONY9kJZfem
- 9jY/vkpThTDI97f9HH/wXw==
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,147 +73,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The decompressors may be called while in an atomic section.
-So move the kmalloc() out of this path, and into the "page actor"
-init function.
+On Wed, 2022-07-20 at 11:51 -0500, Eric W. Biederman wrote:
+> 
+> Now that io_uring like everything else stops for coredumps in
+> get_signal the code can once again allow any interruptible
+> condition after coredump_wait to interrupt the coredump.
+> 
+> Clear TIF_NOTIFY_SIGNAL after coredump_wait, to guarantee that
+> anything that sets TIF_NOTIFY_SIGNAL before coredump_wait completed
+> won't cause the coredumps to interrupted.
+> 
+> With all of the other threads in the process stopped io_uring doesn't
+> call task_work_add on the thread running do_coredump.  Combined with
+> the clearing of TIF_NOTIFY_SIGNAL this allows processes that use
+> io_uring to coredump through pipes.
+> 
+> Restore dump_interrupted to be a simple call to signal_pending
+> effectively reverting commit 06af8679449d ("coredump: Limit what can
+> interrupt coredumps").  At this point only SIGKILL delivered to the
+> coredumping thread should be able to cause signal_pending to return
+> true.
+> 
+> A nice followup would be to find a reliable race free way to modify
+> task_work_add and probably set_notify_signal to skip setting
+> TIF_NOTIFY_SIGNAL once it is clear a task will no longer process
+> signals and other interruptible conditions.  That would allow
+> TIF_NOTIFY_SIGNAL to be cleared where TIF_SIGPENDING is cleared in
+> coredump_zap_process.
+> 
+> To be as certain as possible that this works, I tested this with
+> commit 1d5f5ea7cb7d ("io-wq: remove worker to owner tw dependency")
+> reverted.  Which means that not only is TIF_NOTIFY_SIGNAL prevented
+> from stopping coredumps to pipes, the sequence of stopping threads to
+> participate in the coredump avoids deadlocks that were possible
+> previously.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+Hi Eric,
 
-This fixes a regression introduced by commit
-f268eedddf35 ("squashfs: extend "page actor" to handle missing pages")
+What is stopping the task calling do_coredump() to be interrupted and
+call task_work_add() from the interrupt context?
 
-Reported-by: Chris Murphy <lists@colorremedies.com>
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
----
- fs/squashfs/file.c        |  2 +-
- fs/squashfs/file_direct.c |  2 +-
- fs/squashfs/page_actor.c  | 34 +++++++++++++++-------------------
- fs/squashfs/page_actor.h  |  5 +++++
- 4 files changed, 22 insertions(+), 21 deletions(-)
+This is precisely what I was experiencing last summer when I did work
+on this issue.
 
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 98e64fec75b7..e56510964b22 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -593,7 +593,7 @@ static void squashfs_readahead(struct readahead_control *ractl)
- 
- 		res = squashfs_read_data(inode->i_sb, block, bsize, NULL, actor);
- 
--		kfree(actor);
-+		squashfs_page_actor_free(actor);
- 
- 		if (res == expected) {
- 			int bytes;
-diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-index be4b12d31e0c..f1ccad519e28 100644
---- a/fs/squashfs/file_direct.c
-+++ b/fs/squashfs/file_direct.c
-@@ -74,7 +74,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	/* Decompress directly into the page cache buffers */
- 	res = squashfs_read_data(inode->i_sb, block, bsize, NULL, actor);
- 
--	kfree(actor);
-+	squashfs_page_actor_free(actor);
- 
- 	if (res < 0)
- 		goto mark_errored;
-diff --git a/fs/squashfs/page_actor.c b/fs/squashfs/page_actor.c
-index b23b780d8f42..54b93bf4a25c 100644
---- a/fs/squashfs/page_actor.c
-+++ b/fs/squashfs/page_actor.c
-@@ -52,6 +52,7 @@ struct squashfs_page_actor *squashfs_page_actor_init(void **buffer,
- 	actor->buffer = buffer;
- 	actor->pages = pages;
- 	actor->next_page = 0;
-+	actor->tmp_buffer = NULL;
- 	actor->squashfs_first_page = cache_first_page;
- 	actor->squashfs_next_page = cache_next_page;
- 	actor->squashfs_finish_page = cache_finish_page;
-@@ -68,20 +69,9 @@ static void *handle_next_page(struct squashfs_page_actor *actor)
- 
- 	if ((actor->next_page == actor->pages) ||
- 			(actor->next_index != actor->page[actor->next_page]->index)) {
--		if (actor->alloc_buffer) {
--			void *tmp_buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+My understanding of how async I/O works with io_uring is that the task
+is added to a wait queue without being put to sleep and when the
+io_uring callback is called from the interrupt context, task_work_add()
+is called so that the next time io_uring syscall is invoked, pending
+work is processed to complete the I/O.
+
+So if:
+
+1. io_uring request is initiated AND the task is in a wait queue
+2. do_coredump() is called before the I/O is completed
+
+IMHO, this is how you end up having task_work_add() called while the
+coredump is generated.
+
+So far, the only way that I have found making sure that this was not
+happening was to cancel every pending io_uring requests before writing
+the coredump by calling io_uring_task_cancel():
+
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -43,7 +43,7 @@
+ #include <linux/timekeeping.h>
+ #include <linux/sysctl.h>
+ #include <linux/elf.h>
 -
--			if (tmp_buffer) {
--				actor->tmp_buffer = tmp_buffer;
--				actor->next_index++;
--				actor->returned_pages++;
--				return tmp_buffer;
--			}
--		}
--
- 		actor->next_index++;
- 		actor->returned_pages++;
--		return ERR_PTR(-ENOMEM);
-+		return actor->alloc_buffer ? actor->tmp_buffer : ERR_PTR(-ENOMEM);
++#include <linux/io_uring.h>
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+ #include <asm/tlb.h>
+@@ -561,6 +561,8 @@
+ 		need_suid_safe = true;
  	}
  
- 	actor->next_index++;
-@@ -96,11 +86,10 @@ static void *direct_first_page(struct squashfs_page_actor *actor)
- 
- static void *direct_next_page(struct squashfs_page_actor *actor)
- {
--	if (actor->pageaddr)
-+	if (actor->pageaddr) {
- 		kunmap_local(actor->pageaddr);
--
--	kfree(actor->tmp_buffer);
--	actor->pageaddr = actor->tmp_buffer = NULL;
-+		actor->pageaddr = NULL;
-+	}
- 
- 	return handle_next_page(actor);
- }
-@@ -109,8 +98,6 @@ static void direct_finish_page(struct squashfs_page_actor *actor)
- {
- 	if (actor->pageaddr)
- 		kunmap_local(actor->pageaddr);
--
--	kfree(actor->tmp_buffer);
- }
- 
- struct squashfs_page_actor *squashfs_page_actor_init_special(struct squashfs_sb_info *msblk,
-@@ -121,6 +108,16 @@ struct squashfs_page_actor *squashfs_page_actor_init_special(struct squashfs_sb_
- 	if (actor == NULL)
- 		return NULL;
- 
-+	if (msblk->decompressor->alloc_buffer) {
-+		actor->tmp_buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	io_uring_task_cancel();
 +
-+		if (actor->tmp_buffer == NULL) {
-+			kfree(actor);
-+			return NULL;
-+		}
-+	} else
-+		actor->tmp_buffer = NULL;
-+
- 	actor->length = length ? : pages * PAGE_SIZE;
- 	actor->page = page;
- 	actor->pages = pages;
-@@ -128,7 +125,6 @@ struct squashfs_page_actor *squashfs_page_actor_init_special(struct squashfs_sb_
- 	actor->returned_pages = 0;
- 	actor->next_index = page[0]->index & ~((1 << (msblk->block_log - PAGE_SHIFT)) - 1);
- 	actor->pageaddr = NULL;
--	actor->tmp_buffer = NULL;
- 	actor->alloc_buffer = msblk->decompressor->alloc_buffer;
- 	actor->squashfs_first_page = direct_first_page;
- 	actor->squashfs_next_page = direct_next_page;
-diff --git a/fs/squashfs/page_actor.h b/fs/squashfs/page_actor.h
-index 24841d28bc0f..95ffbb543d91 100644
---- a/fs/squashfs/page_actor.h
-+++ b/fs/squashfs/page_actor.h
-@@ -29,6 +29,11 @@ extern struct squashfs_page_actor *squashfs_page_actor_init(void **buffer,
- extern struct squashfs_page_actor *squashfs_page_actor_init_special(
- 				struct squashfs_sb_info *msblk,
- 				struct page **page, int pages, int length);
-+static inline void squashfs_page_actor_free(struct squashfs_page_actor *actor)
-+{
-+	kfree(actor->tmp_buffer);
-+	kfree(actor);
-+}
- static inline void *squashfs_first_page(struct squashfs_page_actor *actor)
- {
- 	return actor->squashfs_first_page(actor);
--- 
-2.35.1
+ 	retval = coredump_wait(siginfo->si_signo, &core_state);
+ 	if (retval < 0)
+ 		goto fail_creds;
+
+
+Greetings,
 
