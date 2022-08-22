@@ -2,51 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F1D459C0A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 15:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA3659C0B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 15:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235127AbiHVNdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 09:33:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45792 "EHLO
+        id S235219AbiHVNhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 09:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234147AbiHVNdQ (ORCPT
+        with ESMTP id S235176AbiHVNhF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 09:33:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D223A1A3;
-        Mon, 22 Aug 2022 06:33:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 70D9661190;
-        Mon, 22 Aug 2022 13:33:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA37C433C1;
-        Mon, 22 Aug 2022 13:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661175191;
-        bh=XXoXVTwv4p663PKv29Ug+s5+Q9mMsY4SeFyX9qyLO3k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Y69UKGM3eqjCqXyVWILpXzm3HHnUVFNxp9O49y6Uz020SjbEOnQ4/P8B2pM+W1hs2
-         /GM9JeR3zf2RcUC5Ny249iiba1/ICi2MjjuTVaRHGVkExESDkP9gH6T/cDI8v8d/Fk
-         izGGAvfChPCWKEU0EQmHFmplhUevqkTRzzkd/XuCZCmhGfVE5bPj/DY4w9ND61FK5D
-         ShR8eN1uSEWbYWFZ81iMXtdFMCZD+rCa6dpozxQe3NGEyYf/9yo/X3tTvR6JPD6Lmu
-         cILu31VAIMpU6t7r4/dfPznXwM5uVfruXtQUYl3T0pankxf7T2VMYHUHKfiBA1i/WH
-         1FFgDiUOli0xA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: [PATCH] iversion: update comments with info about atime updates
-Date:   Mon, 22 Aug 2022 09:33:09 -0400
-Message-Id: <20220822133309.86005-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.2
+        Mon, 22 Aug 2022 09:37:05 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6C22AC40
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 06:37:02 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id h22so10975124ejk.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 06:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=qSePyfd1Y2EMPHsdhyul1LskKjWov4i06MUQ203pP68=;
+        b=rXfb6Wv0vVe5XNutyWI0zL1Gt27lZZTa552I7NsC16bCS0xt/QemqACvU/mRBvDYDn
+         YOfuGEia3a0snUoALWl2vsh2soh/6QOoZfZnFBDCHRJWQtEY0tUU5HraNzpXVD8F0b5u
+         5LLs/OEe2oBnEZtbFCKONnqtN6UBtdGmCLbJs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=qSePyfd1Y2EMPHsdhyul1LskKjWov4i06MUQ203pP68=;
+        b=TQU1gjvkuj/nKWCcrsA0d3BMYRQCIJx9QPq6isxwzrijgXa4tMj9UB3/IRjk3FX6jD
+         elj/1TpwKg0R8RCJlPpoE4tXphIwmm8U2ZTK3IqHoUL7k3lQfXHwakSjBXRYHXYA9DOM
+         XHmx3wrjsarT74QHQ8XMnPEvfvaepwHmspSJmtCkwMLTEqmviyxvxY2YDRKMLcscFxgc
+         OzXBH66GtltJc2S1I7jC2My7Zje8GoRavPXjtE6+kwz0S53FFhM+WTdVRAWkWMNzgw/t
+         Gpxk31R2bk9Tre9uTnckBhutHI22jz6QSAI8IMDWk2R3+beS6bW3NQcJCHtz5QA7ia6G
+         bqrA==
+X-Gm-Message-State: ACgBeo01HeZSyPZCtUqgXMqPBVclcNnHh3n/P3r3ZM+cf5x3aK0uTK2k
+        96lowK6meSUHfmeWU0fiuxihQIVPvcUodkfRODE8IA==
+X-Google-Smtp-Source: AA6agR6AmsdE16NKnZr2QV1mHbBEHrXLB8beuGIO5+LXsbMWTNonfVC7p6DO1grU7Zc+VyNrEWMaSRjgZS4QviZDPXM=
+X-Received: by 2002:a17:907:7396:b0:738:7bcd:d7b5 with SMTP id
+ er22-20020a170907739600b007387bcdd7b5mr12518114ejc.691.1661175421530; Mon, 22
+ Aug 2022 06:37:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+References: <20200728234513.1956039-1-ytht.net@gmail.com>
+In-Reply-To: <20200728234513.1956039-1-ytht.net@gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 22 Aug 2022 15:36:50 +0200
+Message-ID: <CAJfpegv=8gc1W80e0=33dEcdQb4OgVWKBVXi3jNDKVWV1fWetA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Add filesystem attribute in sysfs control dir.
+To:     Lepton Wu <ytht.net@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -55,48 +62,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an explicit paragraph codifying that atime updates due to reads
-should not be counted against the i_version counter. None of the
-existing subsystems that use the i_version want those counted, and
-there is an easy workaround for those that do.
+On Wed, 29 Jul 2020 at 01:45, Lepton Wu <ytht.net@gmail.com> wrote:
+>
+> With this, user space can have more control to just abort some kind of
+> fuse connections. Currently, in Android, it will write to abort file
+> to abort all fuse connections while in some cases, we'd like to keep
+> some fuse connections. This can help that.
 
-Cc: NeilBrown <neilb@suse.de>
-Cc: Trond Myklebust <trondmy@hammerspace.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Link: https://lore.kernel.org/linux-xfs/166086932784.5425.17134712694961326033@noble.neil.brown.name/#t
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/iversion.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+You can grep the same info from /proc/self/mountinfo.  Why does that not work?
 
-diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-index 3bfebde5a1a6..da6cc1cc520a 100644
---- a/include/linux/iversion.h
-+++ b/include/linux/iversion.h
-@@ -9,8 +9,8 @@
-  * ---------------------------
-  * The change attribute (i_version) is mandated by NFSv4 and is mostly for
-  * knfsd, but is also used for other purposes (e.g. IMA). The i_version must
-- * appear different to observers if there was a change to the inode's data or
-- * metadata since it was last queried.
-+ * appear different to observers if there was an explicit change to the inode's
-+ * data or metadata since it was last queried.
-  *
-  * Observers see the i_version as a 64-bit number that never decreases. If it
-  * remains the same since it was last checked, then nothing has changed in the
-@@ -18,6 +18,12 @@
-  * anything about the nature or magnitude of the changes from the value, only
-  * that the inode has changed in some fashion.
-  *
-+ * Note that atime updates due to reads or similar activity do _not_ represent
-+ * an explicit change to the inode. If the only change is to the atime and it
-+ * wasn't set via utimes() or a similar mechanism, then i_version should not be
-+ * incremented. If an observer cares about atime updates, it should plan to
-+ * fetch and store them in conjunction with the i_version.
-+ *
-  * Not all filesystems properly implement the i_version counter. Subsystems that
-  * want to use i_version field on an inode should first check whether the
-  * filesystem sets the SB_I_VERSION flag (usually via the IS_I_VERSION macro).
--- 
-2.37.2
-
+Thanks,
+Miklos
