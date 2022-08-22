@@ -2,56 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA35759BD4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 12:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F2159BDB2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 12:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232762AbiHVKEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 06:04:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
+        id S232331AbiHVKkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 06:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232336AbiHVKEg (ORCPT
+        with ESMTP id S233192AbiHVKkW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 06:04:36 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D8526AE3;
-        Mon, 22 Aug 2022 03:04:34 -0700 (PDT)
-Received: from fsav315.sakura.ne.jp (fsav315.sakura.ne.jp [153.120.85.146])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 27MA3hbQ048033;
-        Mon, 22 Aug 2022 19:03:43 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav315.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp);
- Mon, 22 Aug 2022 19:03:43 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 27MA3hAc048029
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 22 Aug 2022 19:03:43 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <07bc89cf-643b-9aa8-5683-a181d049ab85@I-love.SAKURA.ne.jp>
-Date:   Mon, 22 Aug 2022 19:03:41 +0900
+        Mon, 22 Aug 2022 06:40:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6F72E6BF;
+        Mon, 22 Aug 2022 03:40:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 14623B81032;
+        Mon, 22 Aug 2022 10:40:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAC5C433C1;
+        Mon, 22 Aug 2022 10:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661164818;
+        bh=yHtb/QXG0SOmjXqK03h8WGKXY6avHJktJO7EkQ7DU58=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Toyz5EJmLbKH9iqh3AVKjQo69eVx7aTUhE3XlgRi4yhf9+oF5/dyfUHE3rp9OmV+Y
+         Lv0TIoTGQ2/gAW/kNQOsLZ0g3HbgYCucp1TI6p7wGbXcEm0PDauzX/fdpxEf+pfzjZ
+         neR+XO2Uo5sN1nLVrEr+Mt1mBkJ44CsB8M+LblwcZKWsFlLbHkqmcZyT6iL5pNMv9u
+         h9bnSbXo3bLZ6zAJY5rRo+cWbfGS4M+v+GDzUgpqyHXTguDCD+lWxiD64Ldxdfey/1
+         tUg2YOfv4blj+J8elmnmoarawbSFRDZb6Qtn1U/Iu9Xld7AFeB6yulZG/PzoPo5tGb
+         Ng4Eul0Ewcftw==
+Message-ID: <fc87931a003d7a911ba1ab7088e559e6b46f6299.camel@kernel.org>
+Subject: Re: [PATCH] xfs: don't bump the i_version on an atime update in
+ xfs_vn_update_time
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        David Wysochanski <dwysocha@redhat.com>
+Date:   Mon, 22 Aug 2022 06:40:16 -0400
+In-Reply-To: <166112626820.23264.11718948914253988812@noble.neil.brown.name>
+References: <20220819113450.11885-1-jlayton@kernel.org>
+         <166112626820.23264.11718948914253988812@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [syzbot] BUG: sleeping function called from invalid context in
- __access_remote_vm
-Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <0000000000003e678705e6d0ce67@google.com>
-Cc:     syzbot <syzbot+5fb61eb0bea5eab81137@syzkaller.appspotmail.com>,
-        xu.xin16@zte.com.cn, syzkaller-bugs@googlegroups.com,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        chengzhihao1@huawei.com, brauner@kernel.org
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <0000000000003e678705e6d0ce67@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,27 +61,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Caused by commit 38a12ad69d86f801 ("lib/dump_stack: add dump_stack_print_cmdline()
-and wire up in dump_stack_print_info()"). You can't call get_task_cmdline_kernel()
- from dump_stack() due to printk_cpu_sync_get_irqsave(flags) from dump_stack_lvl().
+On Mon, 2022-08-22 at 09:57 +1000, NeilBrown wrote:
+> On Fri, 19 Aug 2022, Jeff Layton wrote:
+> > xfs will update the i_version when updating only the atime value, which
+> > is not desirable for any of the current consumers of i_version. Doing s=
+o
+> > leads to unnecessary cache invalidations on NFS and extra measurement
+> > activity in IMA.
+> >=20
+> > Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
+> > transaction should not update the i_version. Set that value in
+> > xfs_vn_update_time if we're only updating the atime.
+> >=20
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: NeilBrown <neilb@suse.de>
+> > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > Cc: David Wysochanski <dwysocha@redhat.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/xfs/libxfs/xfs_log_format.h  |  2 +-
+> >  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+> >  fs/xfs/xfs_iops.c               | 10 +++++++---
+> >  3 files changed, 9 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_for=
+mat.h
+> > index b351b9dc6561..866a4c5cf70c 100644
+> > --- a/fs/xfs/libxfs/xfs_log_format.h
+> > +++ b/fs/xfs/libxfs/xfs_log_format.h
+> > @@ -323,7 +323,7 @@ struct xfs_inode_log_format_32 {
+> >  #define	XFS_ILOG_ABROOT	0x100	/* log i_af.i_broot */
+> >  #define XFS_ILOG_DOWNER	0x200	/* change the data fork owner on replay =
+*/
+> >  #define XFS_ILOG_AOWNER	0x400	/* change the attr fork owner on replay =
+*/
+> > -
+> > +#define XFS_ILOG_NOIVER	0x800	/* don't bump i_version */
+> > =20
+> >  /*
+> >   * The timestamps are dirty, but not necessarily anything else in the =
+inode
+> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_=
+inode.c
+> > index 8b5547073379..ffe6d296e7f9 100644
+> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > @@ -126,7 +126,7 @@ xfs_trans_log_inode(
+> >  	 * unconditionally.
+> >  	 */
+> >  	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
+> > -		if (IS_I_VERSION(inode) &&
+> > +		if (!(flags & XFS_ILOG_NOIVER) && IS_I_VERSION(inode) &&
+> >  		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
+> >  			iversion_flags =3D XFS_ILOG_CORE;
+> >  	}
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 45518b8c613c..54db85a43dfb 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -1021,7 +1021,7 @@ xfs_vn_update_time(
+> >  {
+> >  	struct xfs_inode	*ip =3D XFS_I(inode);
+> >  	struct xfs_mount	*mp =3D ip->i_mount;
+> > -	int			log_flags =3D XFS_ILOG_TIMESTAMP;
+> > +	int			log_flags =3D XFS_ILOG_TIMESTAMP|XFS_ILOG_NOIVER;
+> >  	struct xfs_trans	*tp;
+> >  	int			error;
+> > =20
+> > @@ -1041,10 +1041,14 @@ xfs_vn_update_time(
+> >  		return error;
+> > =20
+> >  	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> > -	if (flags & S_CTIME)
+> > +	if (flags & S_CTIME) {
+> >  		inode->i_ctime =3D *now;
+> > -	if (flags & S_MTIME)
+> > +		log_flags &=3D ~XFS_ILOG_NOIVER;
+> > +	}
+> > +	if (flags & S_MTIME) {
+> >  		inode->i_mtime =3D *now;
+> > +		log_flags &=3D ~XFS_ILOG_NOIVER;
+> > +	}
+> >  	if (flags & S_ATIME)
+> >  		inode->i_atime =3D *now;
+>=20
+> I think you should also clear XFS_ILOG_NOIVER is S_VERSION is set, but
+> otherwise this looks sane to me.
+>=20
+> Thanks,
+> NeilBrown
 
-Andrew, please drop that patch.
+Good point. I'll spin up a v2.
 
-On 2022/08/22 18:09, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8755ae45a9e8 Add linux-next specific files for 20220819
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c3b6eb080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ead6107a3bbe3c62
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5fb61eb0bea5eab81137
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166bdb3d080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16298e5b080000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5fb61eb0bea5eab81137@syzkaller.appspotmail.com
-> 
-
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
