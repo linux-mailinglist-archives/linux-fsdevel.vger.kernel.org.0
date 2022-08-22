@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A38F659C9A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 22:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF84459CA87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 23:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232432AbiHVUJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 16:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
+        id S237850AbiHVVIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 17:08:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232343AbiHVUJQ (ORCPT
+        with ESMTP id S237626AbiHVVIr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 16:09:16 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75D04F1B6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 13:09:14 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id u24so6077795lji.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 13:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=rNzR9QGqS5j6oh3cxSooKBs5Da2aEIBjVibuQ7PJyY4=;
-        b=G/6rnW2WngFu3z8GJAnZAfCOkh68V/JUVcL67bXj8QU16wKXhMja1mBmCXbTmoik81
-         fdRO9yziSI1qyn3ZnU+Tk/b2sF7XsdQ1NnwKRVBovYFK8jKlmTE25Tnqpl1OShRVgFuO
-         55GLEFueyqTzyirsTbo9dhWM7XcEyTrXvQVeN7iSuin+N1GEYFmw/DH+NkSO6W3GV6HO
-         R/542Kyg5z5z+fF28YqBPucnTKR8rFd39QVkbJ7+94RLIRv3/IdPNOPUYxR2rtFLJJo/
-         akYDrVLMQ3gXaiXiwyvOoGY3I0ZKHhZmxqg1es9/wRFbkicvNSHP3X7Q6cUSaREYuQyd
-         HxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=rNzR9QGqS5j6oh3cxSooKBs5Da2aEIBjVibuQ7PJyY4=;
-        b=xdI6HnQo+a/bsOMIPwA5QBxGo8p7B0t875peg+S9OBnixxsv6XGRBXl+RSiQhCHHiD
-         982tzBPm6N0JwJBVoWwQTfw+XnVw2wTE2mNBEiy3dmcD/qoudEgBQlcdAfTN1ikDLzFr
-         TPnJ1yzN8BOPveUaIVU5hF2EAbegDmMPjv10TS+xe21JJXAh4a5drudoV3AavYVELrne
-         fapL7e9/ZH+RBiyq9gGA8TwTVAiRnkhBHTzkiNWdBWqUgeRjzerQuUpgyO77g6Hyxhk0
-         u3IhT0qWk8HoaBb8eyQuJSkMbYYSHVChyU/WxkGdr+v5RFf/lo62mr+dVg3m5z9f/Jlq
-         dpHA==
-X-Gm-Message-State: ACgBeo3cCVzgQWl0CbMT9cYdj8mcAcLEdpw0Wz8eb0n9faQF3hjAtFcw
-        P0aXEJ+33HQcZYmzv+EDpYLI3Edc/4ykDSkKONaGQQ==
-X-Google-Smtp-Source: AA6agR59okDv54Jbyi23A1nS9MzE8+afV+r+Jcam4JHKwd+90O+ezON9z+HSSTGcj+W/yIAHzcTIOm3wlGcNWGs75oc=
-X-Received: by 2002:a05:651c:4d4:b0:261:cbe7:e62f with SMTP id
- e20-20020a05651c04d400b00261cbe7e62fmr2347049lji.295.1661198952956; Mon, 22
- Aug 2022 13:09:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-21-ojeda@kernel.org>
-In-Reply-To: <20220805154231.31257-21-ojeda@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 22 Aug 2022 13:09:00 -0700
-Message-ID: <CAKwvOdndYxQ+KgVhC8F3vWnHDT8pD3px8cKjinu-khn25_FSYw@mail.gmail.com>
-Subject: Re: [PATCH v9 20/27] scripts: add `rust_is_available.sh`
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Finn Behrens <me@kloenk.de>, Miguel Cano <macanroj@gmail.com>,
-        Tiago Lam <tiagolam@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 22 Aug 2022 17:08:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 684F32F038;
+        Mon, 22 Aug 2022 14:08:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED65261315;
+        Mon, 22 Aug 2022 21:08:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2D3EC433C1;
+        Mon, 22 Aug 2022 21:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1661202525;
+        bh=nKbiyNWYpVKB+Hwt2mf/xNvxcNjbAbIus/sQjP8jnW0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LBb/wjffwju7RJR12v2axipRiMOItkI7iMW6Uh4KYfDKSVtlaTO5RzkJxt24N0eDZ
+         15xjNUw5vEr1u+oswKkWyMfGX6T+VoA7QsdV4KNVpN36Trr3LNf89PEOuCsP0OpmL5
+         lPvd03vcEP0kHIiIVj0eTqjUIVsdxspxaOM80dEE=
+Date:   Mon, 22 Aug 2022 14:08:44 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     xu xin <cgel.zte@gmail.com>
+Cc:     adobriyan@gmail.com, willy@infradead.org, hughd@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, xu xin <xu.xin16@zte.com.cn>,
+        Xiaokai Ran <ran.xiaokai@zte.com.cn>,
+        Yang Yang <yang.yang29@zte.com.cn>
+Subject: Re: [PATCH] ksm: count allocated ksm rmap_items for each process
+Message-Id: <20220822140844.26cfb85dead5e0e5c4de4737@linux-foundation.org>
+In-Reply-To: <20220822053653.204150-1-xu.xin16@zte.com.cn>
+References: <20220822053653.204150-1-xu.xin16@zte.com.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 5, 2022 at 8:46 AM Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> This script tests whether the Rust toolchain requirements are in place
-> to enable Rust support.
+On Mon, 22 Aug 2022 05:36:53 +0000 xu xin <cgel.zte@gmail.com> wrote:
 
-With this, I get:
+> KSM can save memory by merging identical pages, but also can consume
+> additional memory, because it needs to generate rmap_items to save
+> each scanned page's brief rmap information. Some of these pages may
+> be merged, but some may not be abled to be merged after being checked
+> several times, which are unprofitable memory consumed.
+> 
+> The information about whether KSM save memory or consume memory in
+> system-wide range can be determined by the comprehensive calculation
+> of pages_sharing, pages_shared, pages_unshared and pages_volatile.
+> A simple approximate calculation:
+> 
+> 	profit ≈ pages_sharing * sizeof(page) - (all_rmap_items) *
+> 	         sizeof(rmap_item);
+> 
+> where all_rmap_items equals to the sum of pages_sharing, pages_shared,
+> pages_unshared and pages_volatile.
+> 
+> But we cannot calculate this kind of ksm profit inner single-process wide
+> because the information of ksm rmap_item's number of a process is lacked.
+> For user applications, if this kind of information could be obtained,
+> it helps upper users know how beneficial the ksm-policy (like madvise)
+> they are using brings, and then optimize their app code. For example,
+> one application madvise 1000 pages as MERGEABLE, while only a few pages
+> are really merged, then it's not cost-efficient.
+> 
+> So we add a new interface /proc/<pid>/ksm_alloced_items for each
+> process to indicate the total allocated ksm rmap_items of this process.
 
-$ make LLVM=1 rustavailable
-***
-*** libclang (used by the Rust bindings generator 'bindgen')
-*** version does not match Clang's. This may be a problem.
-***   libclang version: 15.0.0
-***   Clang version:    16.0.0
-***
-Rust is available!
+Please add documentation for this profcs item in the appropriate place
+under Documentation/.  And please ensure that the documentation
+provides readers with a decent amount of information about how to use
+this information to improve their system's operation.
 
-because I'm using clang built from source from ToT.  Is this supposed
-to mean that I can't use clang-16, clang-14, clang-13, clang-12, or
-clang-11 (in the kernel we support clang-11+) in order to use rust?
-I'm guessing that's going to hinder adoption.  Is there a way to
-specify which libclang version bindgen should be using?
-
-I have libclang built in my clang sources,
-llvm-project/llvm/build/lib/libclang.so.  I also tried:
-
-$ CLANG_PATH=/android0/llvm-project/llvm/build/lib/libclang.so.15 make
-LLVM=1 -j72 rustavailable
-$ CLANG_PATH=/android0/llvm-project/llvm/build/lib/libclang.so make
-LLVM=1 -j72 rustavailable
-
--- 
-Thanks,
-~Nick Desaulniers
