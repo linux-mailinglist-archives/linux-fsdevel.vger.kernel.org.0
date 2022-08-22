@@ -2,58 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA3659C0B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 15:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6CE59C0BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 15:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235219AbiHVNhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 09:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49690 "EHLO
+        id S235254AbiHVNkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 09:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235176AbiHVNhF (ORCPT
+        with ESMTP id S234115AbiHVNkR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 09:37:05 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6C22AC40
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 06:37:02 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id h22so10975124ejk.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 06:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=qSePyfd1Y2EMPHsdhyul1LskKjWov4i06MUQ203pP68=;
-        b=rXfb6Wv0vVe5XNutyWI0zL1Gt27lZZTa552I7NsC16bCS0xt/QemqACvU/mRBvDYDn
-         YOfuGEia3a0snUoALWl2vsh2soh/6QOoZfZnFBDCHRJWQtEY0tUU5HraNzpXVD8F0b5u
-         5LLs/OEe2oBnEZtbFCKONnqtN6UBtdGmCLbJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=qSePyfd1Y2EMPHsdhyul1LskKjWov4i06MUQ203pP68=;
-        b=TQU1gjvkuj/nKWCcrsA0d3BMYRQCIJx9QPq6isxwzrijgXa4tMj9UB3/IRjk3FX6jD
-         elj/1TpwKg0R8RCJlPpoE4tXphIwmm8U2ZTK3IqHoUL7k3lQfXHwakSjBXRYHXYA9DOM
-         XHmx3wrjsarT74QHQ8XMnPEvfvaepwHmspSJmtCkwMLTEqmviyxvxY2YDRKMLcscFxgc
-         OzXBH66GtltJc2S1I7jC2My7Zje8GoRavPXjtE6+kwz0S53FFhM+WTdVRAWkWMNzgw/t
-         Gpxk31R2bk9Tre9uTnckBhutHI22jz6QSAI8IMDWk2R3+beS6bW3NQcJCHtz5QA7ia6G
-         bqrA==
-X-Gm-Message-State: ACgBeo01HeZSyPZCtUqgXMqPBVclcNnHh3n/P3r3ZM+cf5x3aK0uTK2k
-        96lowK6meSUHfmeWU0fiuxihQIVPvcUodkfRODE8IA==
-X-Google-Smtp-Source: AA6agR6AmsdE16NKnZr2QV1mHbBEHrXLB8beuGIO5+LXsbMWTNonfVC7p6DO1grU7Zc+VyNrEWMaSRjgZS4QviZDPXM=
-X-Received: by 2002:a17:907:7396:b0:738:7bcd:d7b5 with SMTP id
- er22-20020a170907739600b007387bcdd7b5mr12518114ejc.691.1661175421530; Mon, 22
- Aug 2022 06:37:01 -0700 (PDT)
+        Mon, 22 Aug 2022 09:40:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4674213F8E;
+        Mon, 22 Aug 2022 06:40:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 08024B81215;
+        Mon, 22 Aug 2022 13:40:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0989C433D6;
+        Mon, 22 Aug 2022 13:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661175613;
+        bh=8Qc9eRpmV/qtcPvoaYrP/gNt01F55WiPH7SQ9+4cdl8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MUKVa86fDGQ8tghg6Dgm8Rhh2JnuGDeA053lp9t5u4KhQyArZBKJ5HBKk3kOBYEMN
+         nARKvqE6/y2Q5c6ytOfNa84CsKCIc5bOcFmNQD+kawrr7yDkImQoQv85sft0U6iQAL
+         zZcdsRutSf5MQTIgVpw+bMIPwaqNpADfth0CLAx7ME0GMoYBn8pbrxkYA8pXAz0CJz
+         azRHV43dgsCJ93Ku+k2s6XYLGvP8lKpvpzo7hq3SmSMZdKTK0KLOgc+iMbde/4TRha
+         jVbpPmyKbs7oZjLmnIoTU0F2/wqD2IjAbnKLeuALyOvVw9ZYR0swgLUdwXeHTybYob
+         86bd1WBvENDiA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Darrick J . Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        David Wysochanski <dwysocha@redhat.com>
+Subject: [PATCH v2] xfs: don't bump the i_version on an atime update in xfs_vn_update_time
+Date:   Mon, 22 Aug 2022 09:40:11 -0400
+Message-Id: <20220822134011.86558-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-References: <20200728234513.1956039-1-ytht.net@gmail.com>
-In-Reply-To: <20200728234513.1956039-1-ytht.net@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 22 Aug 2022 15:36:50 +0200
-Message-ID: <CAJfpegv=8gc1W80e0=33dEcdQb4OgVWKBVXi3jNDKVWV1fWetA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Add filesystem attribute in sysfs control dir.
-To:     Lepton Wu <ytht.net@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,14 +55,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 29 Jul 2020 at 01:45, Lepton Wu <ytht.net@gmail.com> wrote:
->
-> With this, user space can have more control to just abort some kind of
-> fuse connections. Currently, in Android, it will write to abort file
-> to abort all fuse connections while in some cases, we'd like to keep
-> some fuse connections. This can help that.
+xfs will update the i_version when updating only the atime value, which
+is not desirable for any of the current consumers of i_version. Doing so
+leads to unnecessary cache invalidations on NFS and extra measurement
+activity in IMA.
 
-You can grep the same info from /proc/self/mountinfo.  Why does that not work?
+Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
+transaction should not update the i_version. Set that value in
+xfs_vn_update_time if we're only updating the atime.
 
-Thanks,
-Miklos
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: NeilBrown <neilb@suse.de>
+Cc: Trond Myklebust <trondmy@hammerspace.com>
+Cc: David Wysochanski <dwysocha@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/xfs/libxfs/xfs_log_format.h  |  2 +-
+ fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+ fs/xfs/xfs_iops.c               | 11 +++++++++--
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+v2: don't set the NOIVERS flag if S_VERSION is set
+
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index b351b9dc6561..866a4c5cf70c 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -323,7 +323,7 @@ struct xfs_inode_log_format_32 {
+ #define	XFS_ILOG_ABROOT	0x100	/* log i_af.i_broot */
+ #define XFS_ILOG_DOWNER	0x200	/* change the data fork owner on replay */
+ #define XFS_ILOG_AOWNER	0x400	/* change the attr fork owner on replay */
+-
++#define XFS_ILOG_NOIVER	0x800	/* don't bump i_version */
+ 
+ /*
+  * The timestamps are dirty, but not necessarily anything else in the inode
+diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+index 8b5547073379..ffe6d296e7f9 100644
+--- a/fs/xfs/libxfs/xfs_trans_inode.c
++++ b/fs/xfs/libxfs/xfs_trans_inode.c
+@@ -126,7 +126,7 @@ xfs_trans_log_inode(
+ 	 * unconditionally.
+ 	 */
+ 	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
+-		if (IS_I_VERSION(inode) &&
++		if (!(flags & XFS_ILOG_NOIVER) && IS_I_VERSION(inode) &&
+ 		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
+ 			iversion_flags = XFS_ILOG_CORE;
+ 	}
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 45518b8c613c..94f14d96641b 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1041,10 +1041,17 @@ xfs_vn_update_time(
+ 		return error;
+ 
+ 	xfs_ilock(ip, XFS_ILOCK_EXCL);
+-	if (flags & S_CTIME)
++
++	if (!(flags & S_VERSION))
++		log_flags |= XFS_ILOG_NOIVER;
++	if (flags & S_CTIME) {
+ 		inode->i_ctime = *now;
+-	if (flags & S_MTIME)
++		log_flags &= ~XFS_ILOG_NOIVER;
++	}
++	if (flags & S_MTIME) {
+ 		inode->i_mtime = *now;
++		log_flags &= ~XFS_ILOG_NOIVER;
++	}
+ 	if (flags & S_ATIME)
+ 		inode->i_atime = *now;
+ 
+-- 
+2.37.2
+
