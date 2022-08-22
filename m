@@ -2,158 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5000759CB88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 00:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79A759CBA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 00:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238447AbiHVWfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 18:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51322 "EHLO
+        id S238518AbiHVWm1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 18:42:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238457AbiHVWfX (ORCPT
+        with ESMTP id S237790AbiHVWm0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 18:35:23 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D34491E3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 15:35:20 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id bx38so11924378ljb.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 15:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=/3Qz2I07qNsEqmUXX8sV18RiE73NXZbJtJL/a6pTzOM=;
-        b=oWPtAluKai50SM+qKue2D41Qzws4/k+V5RWd5eefNxz1X9aicH59ZvpfnjRJXMaLQs
-         oqxP/yJYA/pA0XUC3IAQ2pMsUZC5KWJCBsJB87xXEHpXJYh3UsodLH0bSrdVTyW8PqVU
-         fl7bU/ZoUTjyKr6lYqkht34lemnsdk4xtG++3RabmhF1f8ccW1cPhtNqTlSyiEEcsLzu
-         YmlkZJbQ8uLeYszYrnjAf1BiPDqMYPF7w2OYYQuBY8Qlu0DW1tannUkwgTEalQVTDxVO
-         5e5PuucVBSjpt4Fd7T9Y4gljaVUNRJApsbm1Vq6Mzh8cdPFYHKbekz+4ISdZpBbhyJKO
-         Yejw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=/3Qz2I07qNsEqmUXX8sV18RiE73NXZbJtJL/a6pTzOM=;
-        b=LNsdXBv3VNHd0BcRYMNPAKsPZDo9sLvdGdYa9KCB2qp3jYhNX6JqswKB3LwDdzVfc5
-         blTAYDrJ8WtMRCl/aDTK3EXDCqHDD1EwXVQl0eZD1SYw0fkOC6g2VyifNm40ojcypU94
-         5qR6jIV//zHRx1KTrwXNoNQHBy6AWaHx9U51068PIN9lKOuktwa3QwPu6jTvfIRLwZ9v
-         /Sdl+JcLeCWJMGP3OqN0jZ84nuqCuutbfACi9crUKmCAGCDL3xmzA1/EfC4pJa7AkNE3
-         +l43Arooxy4jhQoUN/LE5LeXFE/CusL2RBFxqp4YhMO5DeUUjnKzMzDnwDaGthHfbRKN
-         qcvg==
-X-Gm-Message-State: ACgBeo2br67hmisaVITcHnfvwKOIrikQ17KAVOdL67KtZolH7TMK65Pm
-        IErvGAfE6hj+u4ac8DpBG45+ADTOO+5itwAJ8Q78bw==
-X-Google-Smtp-Source: AA6agR7Tldikzvhh2Bk23FXDw9lViwJukpyd5ZjJCRNzpjlVddMHxOB5z715HFFouGcVhLUk2TreqJEweh3FvxQ/Ygg=
-X-Received: by 2002:a2e:9dc5:0:b0:25e:6fa0:1243 with SMTP id
- x5-20020a2e9dc5000000b0025e6fa01243mr6684227ljj.513.1661207718102; Mon, 22
- Aug 2022 15:35:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-24-ojeda@kernel.org>
-In-Reply-To: <20220805154231.31257-24-ojeda@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 22 Aug 2022 15:35:05 -0700
-Message-ID: <CAKwvOd=y5T9bh4398K+5=82q=vVbkjQQ76KyXLy-qoM2Tph08A@mail.gmail.com>
-Subject: Re: [PATCH v9 23/27] Kbuild: add Rust support
-To:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Finn Behrens <me@kloenk.de>,
-        Adam Bratschi-Kaye <ark.email@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Gary Guo <gary@garyguo.net>,
-        Boris-Chengbiao Zhou <bobo1239@web.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Douglas Su <d0u9.su@outlook.com>,
-        Dariusz Sosnowski <dsosnowski@dsosnowski.pl>,
-        Antonio Terceiro <antonio.terceiro@linaro.org>,
-        Daniel Xu <dxu@dxuuu.xyz>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 22 Aug 2022 18:42:26 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3106150716;
+        Mon, 22 Aug 2022 15:42:24 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3D8FC374F3;
+        Mon, 22 Aug 2022 22:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661208143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L8tdsVzVyDJM4BV8U6INcBMyETt5VDqLfPWrM+9ANZU=;
+        b=Wr3CoLUChRliBIcsKBEP1ARTBdMKIOxqorZDI5PC02cuVv0LuNzxNwZ1mFTqVb+7JBZfoX
+        LL26ihunLovvcTYQcNmjUYPDT4M9P9JN52Z6d716ibtdAE1bnPXlUzvKCWl56tXGcZft6y
+        NhQsHRd9e09zuZfA90lOARNSJ6/HILI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661208143;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L8tdsVzVyDJM4BV8U6INcBMyETt5VDqLfPWrM+9ANZU=;
+        b=qZqaiUA+p1D36amScnShCHJ24rJTyLaa5teureTyNmBQZIY+cXaWtrvpBQYngEYOJIQLbp
+        dy+/koo412I3GbAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7967F1332D;
+        Mon, 22 Aug 2022 22:42:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0pRhDUwGBGPzJAAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 22 Aug 2022 22:42:20 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        "Trond Myklebust" <trondmy@hammerspace.com>,
+        "Dave Chinner" <david@fromorbit.com>
+Subject: Re: [PATCH] iversion: update comments with info about atime updates
+In-reply-to: <20220822133309.86005-1-jlayton@kernel.org>
+References: <20220822133309.86005-1-jlayton@kernel.org>
+Date:   Tue, 23 Aug 2022 08:42:15 +1000
+Message-id: <166120813594.23264.3095357572943917078@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- On Fri, Aug 5, 2022 at 8:44 AM Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> Having most of the new files in place, we now enable Rust support
-> in the build system, including `Kconfig` entries related to Rust,
-> the Rust configuration printer and a few other bits.
+On Mon, 22 Aug 2022, Jeff Layton wrote:
+> Add an explicit paragraph codifying that atime updates due to reads
+> should not be counted against the i_version counter. None of the
+> existing subsystems that use the i_version want those counted, and
+> there is an easy workaround for those that do.
+>=20
+> Cc: NeilBrown <neilb@suse.de>
+> Cc: Trond Myklebust <trondmy@hammerspace.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Link: https://lore.kernel.org/linux-xfs/166086932784.5425.17134712694961326=
+033@noble.neil.brown.name/#t
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/iversion.h | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> index 3bfebde5a1a6..da6cc1cc520a 100644
+> --- a/include/linux/iversion.h
+> +++ b/include/linux/iversion.h
+> @@ -9,8 +9,8 @@
+>   * ---------------------------
+>   * The change attribute (i_version) is mandated by NFSv4 and is mostly for
+>   * knfsd, but is also used for other purposes (e.g. IMA). The i_version mu=
+st
+> - * appear different to observers if there was a change to the inode's data=
+ or
+> - * metadata since it was last queried.
+> + * appear different to observers if there was an explicit change to the in=
+ode's
+> + * data or metadata since it was last queried.
 
-Cool, I'm finally happy with this patch.
+Should rename change the i_version?
+It does not explicitly change data or metadata, though it seems to
+implicitly change the ctime.
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+>   *
+>   * Observers see the i_version as a 64-bit number that never decreases. If=
+ it
+>   * remains the same since it was last checked, then nothing has changed in=
+ the
+> @@ -18,6 +18,12 @@
+>   * anything about the nature or magnitude of the changes from the value, o=
+nly
+>   * that the inode has changed in some fashion.
+>   *
+> + * Note that atime updates due to reads or similar activity do _not_ repre=
+sent
+> + * an explicit change to the inode. If the only change is to the atime and=
+ it
+> + * wasn't set via utimes() or a similar mechanism, then i_version should n=
+ot be
+> + * incremented. If an observer cares about atime updates, it should plan to
+> + * fetch and store them in conjunction with the i_version.
+> + *
 
-I built and boot tested with CONFIG_RUST enabled, played with
-CLIPPY=3D1, and built all of the new make targets for rust.
+If an implicit atime update happened to make the atime go backwards
+(possible, but not common), the updating i_version should be permitted,
+and possibly should be preferred.
 
-Thanks for all of the work that went into these series from all of the
-authors and Miguel for your determination. Keep it up!
+NeilBrown
 
-I've left comments on other patches (and I will leave one on
-rust/compiler_builtins.rs because I still don't like that approach)
-and there may be small cleanups we can do here or there, but I think
-we're in good shape to land something and start iterating on it
-upstream.  I'll file bugs in your issue tracker for small nits I come
-across, but so far, it's been more-so questions.
 
----
-
-LWN recently demonstrated that most fixes are in relatively younger
-code: https://lwn.net/Articles/902854/
-
-An analysis of 0day exploits found in the wild in 2021 showed that for
-Android, researchers are attacking drivers:
-https://googleprojectzero.blogspot.com/2022/04/the-more-you-know-more-you-k=
-now-you.html
-
-Multiple independent reports cite high numbers (70% or more) of memory
-safety issues in native code:
-https://www.memorysafety.org/docs/memory-safety/
-
-I have colleagues that are developing a microkernel (they then use a
-memory unsafe language for their kernel as well :^P ) to move as much
-functionality as possible into lower levels of privilege.  It's
-interesting and I wish them well, but I also prefer more incremental
-approaches to existing solutions, and suspect the way of the monolith
-to still give us the best performance.
-
-I learned an interesting word the other day: Corten Steel
-from the YouTube channel Practical Engineering (it's a great channel
-on Civil Engineering):
-https://www.youtube.com/watch?v=3D2RbiCOFffRs&t=3D523s
-transcript:
-
->> I should also note that there are even steel alloys whose rust is protec=
-tive! Weathering steel (sometimes known by its trade name of Corten Steel) =
-is a group of alloys that are naturally resilient against rust because of p=
-assivation. A special blend of elements, including manganese, nickel, silic=
-on, and chromium don=E2=80=99t keep the steel from rusting, but they allow =
-the layer of rust to stay attached, forming a protective layer that signifi=
-cantly slows corrosion.
-
-My hope is that Rust may provide a layer of Corten Steel to the Linux
-kernel to help us protect newly written driver code from memory safety
-related issues, so that Linux remains the best option for developing
-products for the next 30 years. I also suspect it may bring in a whole
-new generation of hackers to the kernel ecosystem.  That is my
-blessing for Rust in the Linux kernel.
---
-Thanks,
-~Nick Desaulniers
+>   * Not all filesystems properly implement the i_version counter. Subsystem=
+s that
+>   * want to use i_version field on an inode should first check whether the
+>   * filesystem sets the SB_I_VERSION flag (usually via the IS_I_VERSION mac=
+ro).
+> --=20
+> 2.37.2
+>=20
+>=20
