@@ -2,86 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E350559BDD8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 12:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CD0E59BEA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Aug 2022 13:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233688AbiHVKvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 06:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43392 "EHLO
+        id S234504AbiHVLib (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 07:38:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233254AbiHVKvt (ORCPT
+        with ESMTP id S234458AbiHVLi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 06:51:49 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B773F2F659
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 03:51:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2C378CE10B7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 10:51:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA922C433D6;
-        Mon, 22 Aug 2022 10:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661165505;
-        bh=yRJ3QwEwglPb0WOB7B+MxY3myU+aCICps2Fb/JE1tug=;
-        h=Subject:From:To:Cc:Date:From;
-        b=pvcKMjsMxpMWSgowaKB2TEYaQBE5lK386Voub30YO83eCqOpimRqEWBcrxWZ+vVZy
-         WeKR4wYeRYiHqtcc1wfMw8iHdhfhRZ07rjANjfHlGKe8oZ9GgQFReLgeosqIUD8gEE
-         s0WsQmRUlqJ5PdnDno4mEj/zc9x99BiGF7XzLpcc17wS1G+7EJSH+IbzH9qvrZsFi7
-         2d1j7u5sLxiodupJJFlialUIX7O3Vczrd1KRUi6i2Fief87QpdROKWbd3GaTt+8DYo
-         EcxzF2yNAjCvL1Cl9t9cuMCsIRr0aAb4SU2vEzEQmCuv/RRBZv7odxzg9HzlTBrLK1
-         axEmYLfCTEG4Q==
-Message-ID: <c700310868333ab8fc3f8a94f12f910590bc365c.camel@kernel.org>
-Subject: [GIT PULL] fix file locking regression for v6.0
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linuxfoundation.org>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        Kuniyuki Iwashima <kuniyu@amazon.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Marc Dionne <marc.dionne@auristor.com>
-Date:   Mon, 22 Aug 2022 06:51:43 -0400
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Mon, 22 Aug 2022 07:38:29 -0400
+Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE1610FD9;
+        Mon, 22 Aug 2022 04:38:26 -0700 (PDT)
+Received: from dev011.ch-qa.sw.ru ([172.29.1.16])
+        by relay.virtuozzo.com with esmtp (Exim 4.95)
+        (envelope-from <alexander.atanasov@virtuozzo.com>)
+        id 1oQ5ja-00Gyo9-I4;
+        Mon, 22 Aug 2022 13:38:09 +0200
+From:   Alexander Atanasov <alexander.atanasov@virtuozzo.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     kernel@openvz.org,
+        Alexander Atanasov <alexander.atanasov@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v3 3/4] Display inflated memory to users
+Date:   Mon, 22 Aug 2022 14:37:46 +0300
+Message-Id: <20220822113747.3630776-4-alexander.atanasov@virtuozzo.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220822113747.3630776-1-alexander.atanasov@virtuozzo.com>
+References: <20220822113747.3630776-1-alexander.atanasov@virtuozzo.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 274a2eebf80c60246f9edd6ef8e9a095ad121264=
-:
+Add InflatedTotal and InflatedFree to /proc/meminfo
 
-  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ms=
-t/vhost (2022-08-17 08:58:54 -0700)
+Signed-off-by: Alexander Atanasov <alexander.atanasov@virtuozzo.com>
+---
+ Documentation/filesystems/proc.rst |  6 ++++++
+ fs/proc/meminfo.c                  | 10 ++++++++++
+ 2 files changed, 16 insertions(+)
 
-are available in the Git repository at:
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index e7aafc82be99..690e1b90ffee 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -991,6 +991,8 @@ Example output. You may not have all of these fields.
+     VmallocUsed:       40444 kB
+     VmallocChunk:          0 kB
+     Percpu:            29312 kB
++    InflatedTotal:   2097152 kB
++    InflatedFree:          0 kB
+     HardwareCorrupted:     0 kB
+     AnonHugePages:   4149248 kB
+     ShmemHugePages:        0 kB
+@@ -1138,6 +1140,10 @@ VmallocChunk
+ Percpu
+               Memory allocated to the percpu allocator used to back percpu
+               allocations. This stat excludes the cost of metadata.
++InflatedTotal and InflatedFree
++               Amount of memory that is inflated by the balloon driver.
++               Due to differences among the drivers inflated memory
++               is subtracted from TotalRam or from MemFree.
+ HardwareCorrupted
+               The amount of RAM/memory in KB, the kernel identifies as
+               corrupted.
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 6e89f0e2fd20..7182886efdbf 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -16,6 +16,9 @@
+ #ifdef CONFIG_CMA
+ #include <linux/cma.h>
+ #endif
++#ifdef CONFIG_MEMORY_BALLOON
++#include <linux/balloon.h>
++#endif
+ #include <asm/page.h>
+ #include "internal.h"
+ 
+@@ -153,6 +156,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 		    global_zone_page_state(NR_FREE_CMA_PAGES));
+ #endif
+ 
++#ifdef CONFIG_MEMORY_BALLOON
++	seq_printf(m,  "InflatedTotal:  %8ld kB\n",
++		atomic_long_read(&mem_balloon_inflated_total_kb));
++	seq_printf(m,  "InflatedFree:   %8ld kB\n",
++		atomic_long_read(&mem_balloon_inflated_free_kb));
++#endif
++
+ 	hugetlb_report_meminfo(m);
+ 
+ 	arch_report_meminfo(m);
+-- 
+2.31.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/file=
-lock-v6.0-2
-
-for you to fetch changes up to 932c29a10d5d0bba63b9f505a8ec1e3ce8c02542:
-
-  locks: Fix dropped call to ->fl_release_private() (2022-08-17 15:08:58 -0=
-400)
-
-----------------------------------------------------------------
-Hi Linus,
-
-Just a single patch for a bugfix in the flock() codepath, introduced by
-a patch that went in recently.
-----------------------------------------------------------------
-David Howells (1):
-      locks: Fix dropped call to ->fl_release_private()
-
- fs/locks.c | 1 +
- 1 file changed, 1 insertion(+)
-
---=20
-Jeff Layton <jlayton@kernel.org>
