@@ -2,192 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBAC359D1A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 09:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA42559D1B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 09:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240794AbiHWG7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 02:59:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33156 "EHLO
+        id S240291AbiHWHI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Aug 2022 03:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240783AbiHWG73 (ORCPT
+        with ESMTP id S240025AbiHWHI3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 02:59:29 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F61F15A1B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 23:59:28 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id a21-20020a5d9815000000b006882e9be20aso6881052iol.17
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 23:59:28 -0700 (PDT)
+        Tue, 23 Aug 2022 03:08:29 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF36DEB9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 00:08:27 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id j1so9901384qvv.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 00:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=mjr14QGvj0zgShJc8Q/2YTDh1Sn+mGOaUAQRHTzb6Sg=;
+        b=N8aOfzkxN+Zs2voYw5V93qVKCnojDAQeLThcuQ7+dBXFe4246BWbjzQc2lCc9wl1oy
+         uhfU+SmgeHCoOsMJEitSls0CvOUDYUAfCK0aadCqiRxamjGPmQk/VAD4DTSjYebacyDZ
+         UeMx9vA2ltDRO++SNHBCs2jpHk6lx+U0iwFUUx4Va/5P0mOxAZXWZZ9GkHL1zMt8VZ/4
+         9gCTyYGCpxt3IGeibZLhzZyb+JhRVfn1rskLMdZOFfobJkgRrcWNdxGuVGO270YlXxoH
+         PPCkupeBi0IBYzAEpP8c1KpfLWa23edD9SHxKSogf0DD8Ai0/6h0sUeqznelbYQWMUXc
+         /0yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=29V1kxVUW3EwQRaqzTQ6JyEXfaDjKQkAV8eYjg4pbH0=;
-        b=CjboL6VRjzHCRlwLEAtx1HydqObc9vKi9vfRFSWd9WtTfqtLo9Y8Pi9GeDYcmiDqAX
-         sTVI8g8KZLCVAKD3V+8GSaLZruQtDCCoWNQzybAXmpUas4ceJufA7cjbiFTocnkp1vOi
-         y5+PQ2AyCsMA/gd+cHs0jrY6ftAwq6ZcJwDnHYw4rvsZFeMAjbaTN0BO3xq2gzyADbFJ
-         sPYCg0SDu6XdAdqC7XWPJVwehRD3GJyXtFT+9g1Ho52ZHP/WocVgng36I6HWzG7qhw6x
-         svOk2LL57eHGtr785WLUzgq8znKJUDbtUbu3d2I7w2uVher68vvTQAup6be6Ta0wBabS
-         6ufw==
-X-Gm-Message-State: ACgBeo2ZU69pXvj2xcR43fD8stV/XZi8p1uvqXMo+6/Ya8DsEQOTXy0l
-        xwSmL5d5kzHfEmqNYIoTAObISGP2jIcBOmGqozIS5PwD/2eT
-X-Google-Smtp-Source: AA6agR6SSfDZQSDLeDvPmJDFgTvyl5pTtyWjSq9EkDJMEiQjLoF1JUUQ7BRr0sEjXBEZnsBE+e3LHxxY9lSBYaVLmvsD10vvIdsF
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=mjr14QGvj0zgShJc8Q/2YTDh1Sn+mGOaUAQRHTzb6Sg=;
+        b=Kgqbz9lL3NpjJf0bjFlGmiBZ+VQKgyJIhCywL/mVafs9pGqFr8C+o+Ix0bbBO+VVLY
+         T6fjVbdy67rhMB6P5fEKL3S/nNRH9Y6sQawMTilpn7ZsioBVV2lZBoOPXi4m09C8Xbxu
+         +QOItzNrqnMq7BYZ4/iczJIVYgWfxxKe/Asscq7lmjz41MUZOrVX+VLjrwWkmZxE323k
+         08In92Do5GyUy+HMPXAliNysOp8A1cLbqDzwyZ5F2W6X/84yNGaBz0amCjH8oY6EiQKD
+         HWgz2IBuAFQolUdCGvumhVDj9ScbJy5DihTvz0Ks0Nkv2vJNuY102+9HniWG2+Xj31tR
+         D8WA==
+X-Gm-Message-State: ACgBeo2NQnyPWpMP5fIh0tKrNO8/5seIUdmbvOKaICnNn6pFlTi6VgSi
+        N+l2EuKAfp916L3Wb9GWZmJTSoZsjSUSwA==
+X-Google-Smtp-Source: AA6agR4EXNnpvrVIIaR6hxiWRckYmZac4i6IpgomrRpUyQW0MaN7P5Z0r+m0V/rDksm69A4iwxwg1g==
+X-Received: by 2002:ad4:5de7:0:b0:496:d0f8:7000 with SMTP id jn7-20020ad45de7000000b00496d0f87000mr10854631qvb.12.1661238506722;
+        Tue, 23 Aug 2022 00:08:26 -0700 (PDT)
+Received: from google.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
+        by smtp.gmail.com with ESMTPSA id q11-20020a05622a030b00b00342fb07944fsm11216666qtw.82.2022.08.23.00.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 00:08:26 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 07:08:22 +0000
+From:   Matthew Bobrowski <repnop@google.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/11] fs/notify: constify path
+Message-ID: <YwR85o3b5uzf69ee@google.com>
+References: <YwEjnoTgi7K6iijN@ZenIV>
+ <20220820181256.1535714-1-viro@zeniv.linux.org.uk>
+ <20220820181256.1535714-3-viro@zeniv.linux.org.uk>
 MIME-Version: 1.0
-X-Received: by 2002:a02:1d09:0:b0:33b:a8cc:17d3 with SMTP id
- 9-20020a021d09000000b0033ba8cc17d3mr10741726jaj.25.1661237967928; Mon, 22 Aug
- 2022 23:59:27 -0700 (PDT)
-Date:   Mon, 22 Aug 2022 23:59:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f745de05e6e31a3f@google.com>
-Subject: [syzbot] UBSAN: shift-out-of-bounds in __access_remote_vm
-From:   syzbot <syzbot+35b87c668935bb55e666@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        nathan@kernel.org, ndesaulniers@google.com, ntfs3@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220820181256.1535714-3-viro@zeniv.linux.org.uk>
+X-Spam-Status: No, score=-14.5 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,FSL_HELO_FAKE,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat, Aug 20, 2022 at 07:12:49PM +0100, Al Viro wrote:
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-syzbot found the following issue on:
+LGTM. Feel free to add:
 
-HEAD commit:    8755ae45a9e8 Add linux-next specific files for 20220819
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=144f3023080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ead6107a3bbe3c62
-dashboard link: https://syzkaller.appspot.com/bug?extid=35b87c668935bb55e666
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a5c1f3080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e9ce85080000
+Reviewed-by: Matthew Bobrowski <repnop@google.com>
 
-The issue was bisected to:
+> ---
+>  fs/notify/fanotify/fanotify.c      | 2 +-
+>  fs/notify/fanotify/fanotify.h      | 2 +-
+>  fs/notify/fanotify/fanotify_user.c | 6 +++---
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index cd7d09a569ff..a2a15bc4df28 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -18,7 +18,7 @@
+>  
+>  #include "fanotify.h"
+>  
+> -static bool fanotify_path_equal(struct path *p1, struct path *p2)
+> +static bool fanotify_path_equal(const struct path *p1, const struct path *p2)
+>  {
+>  	return p1->mnt == p2->mnt && p1->dentry == p2->dentry;
+>  }
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index 1d9f11255c64..bf6d4d38afa0 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -458,7 +458,7 @@ static inline bool fanotify_event_has_path(struct fanotify_event *event)
+>  		event->type == FANOTIFY_EVENT_TYPE_PATH_PERM;
+>  }
+>  
+> -static inline struct path *fanotify_event_path(struct fanotify_event *event)
+> +static inline const struct path *fanotify_event_path(struct fanotify_event *event)
+>  {
+>  	if (event->type == FANOTIFY_EVENT_TYPE_PATH)
+>  		return &FANOTIFY_PE(event)->path;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index f0e49a406ffa..4546da4a54f9 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -249,7 +249,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
+>  	return event;
+>  }
+>  
+> -static int create_fd(struct fsnotify_group *group, struct path *path,
+> +static int create_fd(struct fsnotify_group *group, const struct path *path,
+>  		     struct file **file)
+>  {
+>  	int client_fd;
+> @@ -619,7 +619,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  				  char __user *buf, size_t count)
+>  {
+>  	struct fanotify_event_metadata metadata;
+> -	struct path *path = fanotify_event_path(event);
+> +	const struct path *path = fanotify_event_path(event);
+>  	struct fanotify_info *info = fanotify_event_info(event);
+>  	unsigned int info_mode = FAN_GROUP_FLAG(group, FANOTIFY_INFO_MODES);
+>  	unsigned int pidfd_mode = info_mode & FAN_REPORT_PIDFD;
+> @@ -1553,7 +1553,7 @@ static int fanotify_test_fid(struct dentry *dentry)
+>  }
+>  
+>  static int fanotify_events_supported(struct fsnotify_group *group,
+> -				     struct path *path, __u64 mask,
+> +				     const struct path *path, __u64 mask,
+>  				     unsigned int flags)
+>  {
+>  	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+> -- 
+> 2.30.2
 
-commit 6e5be40d32fb1907285277c02e74493ed43d77fe
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Aug 13 14:21:30 2021 +0000
-
-    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=112f1867080000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=132f1867080000
-console output: https://syzkaller.appspot.com/x/log.txt?x=152f1867080000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+35b87c668935bb55e666@syzkaller.appspotmail.com
-Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
-
-loop0: detected capacity change from 0 to 64
-================================================================================
-UBSAN: shift-out-of-bounds in fs/ntfs3/super.c:675:13
-shift exponent -247 is negative
-CPU: 0 PID: 3617 Comm: syz-executor807 Not tainted 6.0.0-rc1-next-20220819-syzkaller #0
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1521
-in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 3617, name: syz-executor807
-preempt_count: 0, expected: 0
-RCU nest depth: 0, expected: 0
-1 lock held by syz-executor807/3617:
- #0: ffff888022d380e0 (&type->s_umount_key#41/1){+.+.}-{3:3}, at: alloc_super+0x22e/0xb60 fs/super.c:228
-irq event stamp: 4810
-hardirqs last  enabled at (4809): [<ffffffff816199ce>] __up_console_sem+0xae/0xc0 kernel/printk/printk.c:264
-hardirqs last disabled at (4810): [<ffffffff894c1738>] dump_stack_lvl+0x2e/0x134 lib/dump_stack.c:139
-softirqs last  enabled at (4804): [<ffffffff81491a33>] invoke_softirq kernel/softirq.c:445 [inline]
-softirqs last  enabled at (4804): [<ffffffff81491a33>] __irq_exit_rcu+0x123/0x180 kernel/softirq.c:650
-softirqs last disabled at (4789): [<ffffffff81491a33>] invoke_softirq kernel/softirq.c:445 [inline]
-softirqs last disabled at (4789): [<ffffffff81491a33>] __irq_exit_rcu+0x123/0x180 kernel/softirq.c:650
-CPU: 0 PID: 3617 Comm: syz-executor807 Not tainted 6.0.0-rc1-next-20220819-syzkaller #0
-syz-executor807[3617] cmdline: ./syz-executor807082514
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:122 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:140
- __might_resched.cold+0x222/0x26b kernel/sched/core.c:9896
- down_read_killable+0x75/0x490 kernel/locking/rwsem.c:1521
- mmap_read_lock_killable include/linux/mmap_lock.h:126 [inline]
- __access_remote_vm+0xac/0x6f0 mm/memory.c:5461
- get_mm_cmdline.part.0+0x217/0x620 fs/proc/base.c:299
- get_mm_cmdline fs/proc/base.c:367 [inline]
- get_task_cmdline_kernel+0x1d9/0x220 fs/proc/base.c:367
- dump_stack_print_cmdline.part.0+0x82/0x150 lib/dump_stack.c:61
- dump_stack_print_cmdline lib/dump_stack.c:89 [inline]
- dump_stack_print_info+0x185/0x190 lib/dump_stack.c:97
- __dump_stack lib/dump_stack.c:121 [inline]
- dump_stack_lvl+0xc1/0x134 lib/dump_stack.c:140
- ubsan_epilogue+0xb/0x50 lib/ubsan.c:151
- __ubsan_handle_shift_out_of_bounds.cold+0xb1/0x187 lib/ubsan.c:322
- parse_ntfs_boot_sector fs/ntfs/super.c:915 [inline]
- ntfs_fill_super.cold+0x147/0x56c fs/ntfs/super.c:2792
- get_tree_bdev+0x440/0x760 fs/super.c:1323
- vfs_get_tree+0x89/0x2f0 fs/super.c:1530
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1326/0x1e20 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fcec358610a
-Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd5a5afbf8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd5a5afc50 RCX: 00007fcec358610a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffd5a5afc10
-RBP: 00007ffd5a5afc10 R08: 00007ffd5a5afc50 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000286 R12: 0000000020000230
-R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000002
- </TASK>
-syz-executor807[3617] cmdline: ./syz-executor807082514
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:122 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:140
- ubsan_epilogue+0xb/0x50 lib/ubsan.c:151
- __ubsan_handle_shift_out_of_bounds.cold+0xb1/0x187 lib/ubsan.c:322
- parse_ntfs_boot_sector fs/ntfs/super.c:915 [inline]
- ntfs_fill_super.cold+0x147/0x56c fs/ntfs/super.c:2792
- get_tree_bdev+0x440/0x760 fs/super.c:1323
- vfs_get_tree+0x89/0x2f0 fs/super.c:1530
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1326/0x1e20 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fcec358610a
-Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd5a5afbf8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd5a5afc50 RCX: 00007fcec358610a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffd5a5afc10
-RBP: 00007ffd5a5afc10 R08: 00007ffd5a5afc50 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000286 R12: 0000000020000230
-R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000002
- </TASK>
-================================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+/M
