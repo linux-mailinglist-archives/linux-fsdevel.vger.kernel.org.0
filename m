@@ -2,91 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E6059EC66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 21:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E81C859ED3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 22:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231902AbiHWTeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 15:34:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53802 "EHLO
+        id S230169AbiHWUR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Aug 2022 16:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232375AbiHWTdp (ORCPT
+        with ESMTP id S229491AbiHWUPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 15:33:45 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B65923F8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 11:27:11 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id i77so11569624ioa.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 11:27:11 -0700 (PDT)
+        Tue, 23 Aug 2022 16:15:09 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0D249B41;
+        Tue, 23 Aug 2022 12:37:31 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id z187so14383950pfb.12;
+        Tue, 23 Aug 2022 12:37:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=vvZ+6YfB5+idgplC7NLCltNGeNPQRdHTy8X0/J0b+yc=;
-        b=pHjgdw6272fXR3NG+RiZ95v7+6n04PYMc+MwIn8sgcAYtUAh9zX0lbUZ7iCnhP6L1e
-         qrXvnFMS1OtkD1OYVHm1LD/BS950cgO+xZLMf36t5wIBi1e327llTZxEDAgVwLSACG2N
-         oyzuiUv8jTmjTKFFZjgqZEYMFD7FMlOdrnMs4mBHr5/mACp9eDI3Q8lbn66F1iQSVJgU
-         9YpYyvRpDekh7c9/ZhPbr1GZCcNatdryuo+qYnzHzi2qgtUvgxMXD5qGHWQXXkDxq4Vp
-         iArbFzBsb0nN1kRkBewpkau02EDpR0JwMYjINpoclePIzuAvlTdJlCkrnyDUaLojIK0u
-         6YVA==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc;
+        bh=kxeD7t6AephRFE0VvTfMAllbUT0ZPa2W2zfu9iRzx6o=;
+        b=NNc0g5zX4Rk3hhtpLy68iQ5KjKuhXHl573Sw56xUyXvN3TvClXdEratdWpbNeNl7FA
+         yB7/XCecUngtsYrXCx+Vu/scUmO/OnBJIWtSWbrKEs7Ip/MBR0SCsfUKCtSKkY6uV0b1
+         TwUPZp5u5+8k3X+vD2eZArCdj9X/9IxsEl6LRcCpvSh/aP9LVpOvfOIdrAVt4/Fn+abG
+         7oOWGE7BEF5Dx6SIfBNVe4VmuxyuVxVFEmaMT1wEqa8CvaXi+32I4E4ghdO76fRfdcvW
+         JTWpH94Kr/xC3sCkGHgxxhBk+v6iGP8nXxADAmgDIijEPlPBoE0YaNf0MaANXGnf0aYd
+         n9/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=vvZ+6YfB5+idgplC7NLCltNGeNPQRdHTy8X0/J0b+yc=;
-        b=5gZGlE5iLBVgMbt2yj8YBXZHMyngx450ipcvoV6zwQOXUOA3zvYTaPKEnVrK+FXyFN
-         +fVV6fK22S4snhyaSaKENlvViXyyj5pvn74cE1lN0rbty3Wh+YfsJj6GWNDyTkhYz6sK
-         Uhh9TjdS/Zkc9qZrcKxVwP8DKI+dcYXySsUpc9UBTx8Nftkp16B2zfT7nv5JY4kJfrx3
-         jCFFbpkKr9aBeh3ELzb950Lnwu0kF8bO1XbsTkIn0UzSU97WJqHahJU8ClMPGkL/TQo7
-         rcMhwh7k80Z8geJr9QXfE5aeXBYzKto9M2LBL61xkwiadERaXvhdBV+Z+GgG7rYYFqp8
-         Q61Q==
-X-Gm-Message-State: ACgBeo1TA768656/b41eqvFt01PRcc6RRCDBaRqxhiVlXCuzO6B6fm2w
-        0ScWrtQVwWGjcAHtbQYOoCHsHQ==
-X-Google-Smtp-Source: AA6agR7DhNYSUdgGr9FzRwaAGYMr4Mklx8mLgtzrQtfHwuCPCqcTZF5/fCEZN9V7KRH3whMk6Q3jvA==
-X-Received: by 2002:a05:6638:430d:b0:343:69f4:2016 with SMTP id bt13-20020a056638430d00b0034369f42016mr12779119jab.90.1661279230964;
-        Tue, 23 Aug 2022 11:27:10 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id cn11-20020a0566383a0b00b003482878ec91sm5971640jab.16.2022.08.23.11.27.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Aug 2022 11:27:08 -0700 (PDT)
-Message-ID: <654cb5de-a563-b812-a435-d9b435cee334@kernel.dk>
-Date:   Tue, 23 Aug 2022 12:27:06 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 2/2] coredump: Allow coredumps to pipes to work with
- io_uring
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Olivier Langlois <olivier@trillion01.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc;
+        bh=kxeD7t6AephRFE0VvTfMAllbUT0ZPa2W2zfu9iRzx6o=;
+        b=XamNLtkhVZpVIxdHA4zKvh13ktGDBHHRbvzXV1sWOwZXnDqYWGz+TvNb8SVT7fB/YG
+         Mw0DPfUUogsIh6Zyer896wdhqEAkiOd+vYClEqP47jvkrmYJWFq6BIViHDpDDNPANWbM
+         2oj3PAdfifN9LgdJG2ZCjs+TNnWdCqNZsztKZGbtIDwEJuzCc3Jt5d3DluV+A9AmL+2+
+         KEMO5dBbktqWYwUY9g+p16C+KoF50B3XRrOqocl/WIw9gp58eygDaWhXWZHXGLnNXECh
+         h3q0ttsjzzWA3V511lsYS23WXu/bu54HHlKdw5pCKxKavA7KMSV+m6tEon5Nxqx2IfVP
+         vJkQ==
+X-Gm-Message-State: ACgBeo3GIUg0/VZlVI6JYu05D9xgYW19UlfOI1B8e3JuaglXydEmvlUW
+        xRFE+9fKBe32yA/x5t9O0LY=
+X-Google-Smtp-Source: AA6agR5B2R0kKGDPnXohyBoZRX7quqVG5GU/3TcvmqxcfEH9pEy4AK9DS9MRIS2vFGmHiL9z+RsiAw==
+X-Received: by 2002:a05:6a00:1883:b0:536:e59f:f776 with SMTP id x3-20020a056a00188300b00536e59ff776mr6229940pfh.49.1661283450756;
+        Tue, 23 Aug 2022 12:37:30 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:90fa])
+        by smtp.gmail.com with ESMTPSA id x10-20020a170902a38a00b001708e1a10a3sm10944120pla.94.2022.08.23.12.37.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 12:37:30 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 23 Aug 2022 09:37:28 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Chengming Zhou <zhouchengming@bytedance.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
- <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
- <87h7i694ij.fsf_-_@disp2133> <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
- <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
- <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
- <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
- <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
- <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
- <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
- <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
- <87y1wnrap0.fsf_-_@email.froward.int.ebiederm.org>
- <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
- <61abfb5a517e0ee253b0dc7ba9cd32ebd558bcb0.camel@trillion01.com>
- <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
- <875yiisttu.fsf@email.froward.int.ebiederm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <875yiisttu.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Imran Khan <imran.f.khan@oracle.com>, kernel-team@fb.com
+Subject: Re: [PATCH 4/7] kernfs: Skip kernfs_drain_open_files() more
+ aggressively
+Message-ID: <YwUseD1GBHd2iN+q@slm.duckdns.org>
+References: <20220820000550.367085-1-tj@kernel.org>
+ <20220820000550.367085-5-tj@kernel.org>
+ <e340ccaa-92f2-3870-ed26-70df87ad8c8f@bytedance.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e340ccaa-92f2-3870-ed26-70df87ad8c8f@bytedance.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,61 +77,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/23/22 12:22 PM, Eric W. Biederman wrote:
-> Olivier Langlois <olivier@trillion01.com> writes:
+On Tue, Aug 23, 2022 at 01:27:22PM +0800, Chengming Zhou wrote:
+> > +	if (of) {
+> > +		WARN_ON_ONCE((kn->flags & KERNFS_HAS_RELEASE) && !of->released);
 > 
->> On Mon, 2022-08-22 at 17:16 -0400, Olivier Langlois wrote:
->>>
->>> What is stopping the task calling do_coredump() to be interrupted and
->>> call task_work_add() from the interrupt context?
->>>
->>> This is precisely what I was experiencing last summer when I did work
->>> on this issue.
->>>
->>> My understanding of how async I/O works with io_uring is that the
->>> task
->>> is added to a wait queue without being put to sleep and when the
->>> io_uring callback is called from the interrupt context,
->>> task_work_add()
->>> is called so that the next time io_uring syscall is invoked, pending
->>> work is processed to complete the I/O.
->>>
->>> So if:
->>>
->>> 1. io_uring request is initiated AND the task is in a wait queue
->>> 2. do_coredump() is called before the I/O is completed
->>>
->>> IMHO, this is how you end up having task_work_add() called while the
->>> coredump is generated.
->>>
->> I forgot to add that I have experienced the issue with TCP/IP I/O.
->>
->> I suspect that with a TCP socket, the race condition window is much
->> larger than if it was disk I/O and this might make it easier to
->> reproduce the issue this way...
-> 
-> I was under the apparently mistaken impression that the io_uring
-> task_work_add only comes from the io_uring userspace helper threads.
-> Those are definitely suppressed by my change.
-> 
-> Do you have any idea in the code where io_uring code is being called in
-> an interrupt context?  I would really like to trace that code path so I
-> have a better grasp on what is happening.
-> 
-> If task_work_add is being called from interrupt context then something
-> additional from what I have proposed certainly needs to be done.
+> kernfs_unlink_open_file() is also used in error case "err_put_node" in kernfs_fop_open(),
+> which should also dec the on->nr_to_release?
 
-task_work may come from the helper threads, but generally it does not.
-One example would be doing a read from a socket. There's no data there,
-poll is armed to trigger a retry. When we get the poll notification that
-there's now data to be read, then we kick that off with task_work. Since
-it's from the poll handler, it can trigger from interrupt context. See
-the path from io_uring/poll.c:io_poll_wake() -> __io_poll_execute() ->
-io_req_task_work_add() -> task_work_add().
-
-It can also happen for regular IRQ based reads from regular files, where
-the completion is actually done via task_work added from the potentially
-IRQ based completion path.
+Ah, right you're. Will fix. Thanks for pointing it out.
 
 -- 
-Jens Axboe
+tejun
