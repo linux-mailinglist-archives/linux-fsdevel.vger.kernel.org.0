@@ -2,65 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A0E59EC21
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 21:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 418F359EC54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 21:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbiHWTWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 15:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35102 "EHLO
+        id S232034AbiHWTcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Aug 2022 15:32:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233048AbiHWTVq (ORCPT
+        with ESMTP id S231276AbiHWTby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 15:21:46 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0B5B8F08;
-        Tue, 23 Aug 2022 11:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=F7agJyyQPBoKNSgYn2p8RhiVuoRJhF3uXfjMiiS+Xls=; b=Wkq47664wvidT/E01+KEhjp+FD
-        R/XHD8tSjJ7wbSR/mUYAeZLcN9Qztr4HbAaptjmHf13Xvc/HhezApMdO9elvyO4yJky2geT4qJGiw
-        ETVjqHkgyGMdGpfM/33Fu3FbWJdqyfvE7Gomlu8XUsphUa3UHMz1vW6QuUX6itShiWHOgh4mGnADK
-        YLDxjyt+6hcWU3rUXSjXdG6cQBEL2pNTZFjh++GgJJwfdeTjQ2/EajCeR3hrpA1nrARg48VXIBoRv
-        OY5Z8UvCwBhsFnazcFBsKtMiFMSi83zfhtHu4mnNppp6ZoBJ+FcwKhqsvBLgMFWMPweTwDT8k1nEh
-        EeOcNoqQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oQYDz-00FUl4-TM; Tue, 23 Aug 2022 18:02:03 +0000
-Date:   Tue, 23 Aug 2022 19:02:03 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     dsterba@suse.cz, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Convert to filemap_get_folios_contig()
-Message-ID: <YwUWG73OkS+3Eelr@casper.infradead.org>
-References: <20220816175246.42401-1-vishal.moola@gmail.com>
- <20220823172642.GJ13489@twin.jikos.cz>
+        Tue, 23 Aug 2022 15:31:54 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817F9BF68;
+        Tue, 23 Aug 2022 11:23:23 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:60738)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oQYYb-0041Dr-Vo; Tue, 23 Aug 2022 12:23:22 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:37014 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oQYYa-00GUYx-1U; Tue, 23 Aug 2022 12:23:21 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Olivier Langlois <olivier@trillion01.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+        <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+        <87h7i694ij.fsf_-_@disp2133>
+        <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
+        <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+        <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
+        <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
+        <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
+        <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
+        <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
+        <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
+        <87y1wnrap0.fsf_-_@email.froward.int.ebiederm.org>
+        <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
+        <61abfb5a517e0ee253b0dc7ba9cd32ebd558bcb0.camel@trillion01.com>
+        <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
+Date:   Tue, 23 Aug 2022 13:22:53 -0500
+In-Reply-To: <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
+        (Olivier Langlois's message of "Mon, 22 Aug 2022 23:35:37 -0400")
+Message-ID: <875yiisttu.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220823172642.GJ13489@twin.jikos.cz>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1oQYYa-00GUYx-1U;;;mid=<875yiisttu.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1/GeEI4Y8IQexfRUNq3YWki9SJ3OxiLRg4=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *****;Olivier Langlois <olivier@trillion01.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1387 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (0.8%), b_tie_ro: 10 (0.7%), parse: 0.86
+        (0.1%), extract_message_metadata: 11 (0.8%), get_uri_detail_list: 1.19
+        (0.1%), tests_pri_-1000: 9 (0.6%), tests_pri_-950: 1.18 (0.1%),
+        tests_pri_-900: 0.96 (0.1%), tests_pri_-90: 72 (5.2%), check_bayes: 70
+        (5.1%), b_tokenize: 6 (0.4%), b_tok_get_all: 6 (0.4%), b_comp_prob:
+        2.0 (0.1%), b_tok_touch_all: 53 (3.8%), b_finish: 0.79 (0.1%),
+        tests_pri_0: 1254 (90.4%), check_dkim_signature: 0.50 (0.0%),
+        check_dkim_adsp: 2.7 (0.2%), poll_dns_idle: 0.42 (0.0%), tests_pri_10:
+        2.3 (0.2%), tests_pri_500: 21 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] coredump: Allow coredumps to pipes to work with
+ io_uring
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 07:26:42PM +0200, David Sterba wrote:
-> I've tested the whole branch in my fstest setup, no issues found and
-> did a light review of the code changes, looks ok as well.
+Olivier Langlois <olivier@trillion01.com> writes:
 
-Thanks!
+> On Mon, 2022-08-22 at 17:16 -0400, Olivier Langlois wrote:
+>> 
+>> What is stopping the task calling do_coredump() to be interrupted and
+>> call task_work_add() from the interrupt context?
+>> 
+>> This is precisely what I was experiencing last summer when I did work
+>> on this issue.
+>> 
+>> My understanding of how async I/O works with io_uring is that the
+>> task
+>> is added to a wait queue without being put to sleep and when the
+>> io_uring callback is called from the interrupt context,
+>> task_work_add()
+>> is called so that the next time io_uring syscall is invoked, pending
+>> work is processed to complete the I/O.
+>> 
+>> So if:
+>> 
+>> 1. io_uring request is initiated AND the task is in a wait queue
+>> 2. do_coredump() is called before the I/O is completed
+>> 
+>> IMHO, this is how you end up having task_work_add() called while the
+>> coredump is generated.
+>> 
+> I forgot to add that I have experienced the issue with TCP/IP I/O.
+>
+> I suspect that with a TCP socket, the race condition window is much
+> larger than if it was disk I/O and this might make it easier to
+> reproduce the issue this way...
 
-> How do you want get the patches merged? As it's an API conversion I can
-> ack it and let it go via the mm tree. So far there are no conflicts with
-> our btrfs development patches, I assume it'll be a clean merge in the
-> future too.
+I was under the apparently mistaken impression that the io_uring
+task_work_add only comes from the io_uring userspace helper threads.
+Those are definitely suppressed by my change.
 
-I was planning on taking this patch series through the pagecache tree;
-it's in -next, so any problems will show up as conflicts there.
+Do you have any idea in the code where io_uring code is being called in
+an interrupt context?  I would really like to trace that code path so I
+have a better grasp on what is happening.
+
+If task_work_add is being called from interrupt context then something
+additional from what I have proposed certainly needs to be done.
+
+Eric
