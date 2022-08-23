@@ -2,82 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2701E59CF57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 05:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E727959CF7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 05:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240074AbiHWDWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Aug 2022 23:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48668 "EHLO
+        id S240110AbiHWD1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Aug 2022 23:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240058AbiHWDWT (ORCPT
+        with ESMTP id S239822AbiHWD1B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Aug 2022 23:22:19 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27BC954658
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 20:22:16 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id o14-20020a17090a0a0e00b001fabfd3369cso13313443pjo.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 20:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc;
-        bh=t5TO7xdQGMXaC5TRTQFcqhFSnLRjgf1D8C0Y6A6YDxE=;
-        b=WmzvvmXH5e7wP/UE3SOCEoTxUnalykJ3N3TkckdsZzxqPN6OxAvOMEhsFJIg72/pec
-         dV+HIGE92uLWsaavfgjKM+C+A5n4EiV88XdKFsoxydVAFe5nmQZ3wXK7pbUiZnpPSViH
-         9wcRuFbEeMk6CuUC5TU2Fsvnjo++S7A79RBLzB6Aur+2C1mdRPNWR6V9hkWGd33kuaZ6
-         xcCba0irYI0fzWODf7B+oUYh3cw5uD53qZpQUEbxAvY5/4dbEDBWYTz1DS09LYro3uwm
-         G9+kpUhWzIhcfbKMcEQU1XlfvHYa+Duf15Pq6vyDet2odUshI95kkV9niiVxvoEj4EEl
-         OWIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc;
-        bh=t5TO7xdQGMXaC5TRTQFcqhFSnLRjgf1D8C0Y6A6YDxE=;
-        b=eKPROd7iPKtBuxBkgSZBJXCb6HzrO/VCoUSPK3tnz3CKp5lQJ1lyqDwYPTEBwaHK6t
-         wo1ix47FyrcuRXyP5CYWdGFdnpeJ7yMedfHqU+XRnYtY7MFWm/HTIFBWNzV8p0DlxXhW
-         S3ZKPZoiBBXuNhnl1cR4wTTiNVAS91IiWe6ExJFk+iwaE9OLoHeJWva7jgjT0nHcBXNf
-         fbKg0OtjHBGUjv/wcBPIU5xZfZzraqq6S0wsU+6UK5Z7EGg3Z1Rq1C9/uvws44gLfl0f
-         5EP8a5MJ6+9aDrBnkRfNGes1BQvPjtZ4anWQr+bVb+4rQyBqSxP5raNva9pA+Ogt2k24
-         kvpA==
-X-Gm-Message-State: ACgBeo3wcLX6UekrVjI2/px0EvtuRVQUExq43GXyWtUN7yqwJpfL7/4M
-        wppOKF30lktJKLLhMXgCfpdTEQ==
-X-Google-Smtp-Source: AA6agR6bYAoLnjuq/NI/816MPUccS4/TdIQzRNkgRVQfsY/JSoRbcW6B7pyoAJACabZ0K9rJNxD0pA==
-X-Received: by 2002:a17:903:18b:b0:16e:f09c:919b with SMTP id z11-20020a170903018b00b0016ef09c919bmr23613380plg.135.1661224935485;
-        Mon, 22 Aug 2022 20:22:15 -0700 (PDT)
-Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id b9-20020a1709027e0900b00172d52b7c03sm5372011plm.125.2022.08.22.20.22.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Aug 2022 20:22:14 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <21923F1E-1C54-44FB-AF7C-4CD8B4B35433@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_8E3621BA-8A02-4654-8DC0-856F43CB7C0C";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO writes
-Date:   Mon, 22 Aug 2022 21:22:11 -0600
-In-Reply-To: <YwAYPFxW7VV4M9D1@sol.localdomain>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        xfs <linux-xfs@vger.kernel.org>, linux-api@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Keith Busch <kbusch@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <20220722071228.146690-7-ebiggers@kernel.org> <YtyoF89iOg8gs7hj@google.com>
- <Yt7dCcG0ns85QqJe@sol.localdomain> <YuXyKh8Zvr56rR4R@google.com>
- <YvrrEcw4E+rpDLwM@sol.localdomain>
- <20220816090312.GU3600936@dread.disaster.area>
- <D1CDACE3-EC7E-43E4-8F49-EEA2B6E71A41@dilger.ca>
- <YwAYPFxW7VV4M9D1@sol.localdomain>
-X-Mailer: Apple Mail (2.3273)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        Mon, 22 Aug 2022 23:27:01 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EDE5C9DB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Aug 2022 20:26:55 -0700 (PDT)
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220823032648epoutp01126bb622addf37adf5038ab8e692c7d8~N24ap61sv1360313603epoutp01f
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 03:26:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220823032648epoutp01126bb622addf37adf5038ab8e692c7d8~N24ap61sv1360313603epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1661225209;
+        bh=wu3Cnj8Fp1juOHjYlwRWg41SHZwT1ZvVX893xsYvjpk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=loPdNlyJBzQgOShW1FTWT0EDmOHvt1KTj+UqqvnVy+wzMTPpwE8KOWQOKiKZ5Zj0o
+         hyj4IDK/SdVYfcZ8rf+TEWOP/6EnQaWTlRHybUdff3bfaVF/s40BTnHuYHd6ltdeOX
+         41jFFNfxW3x0Y92WVWW3hOL9PajPMa2gOKIG15bI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20220823032648epcas1p3a531fdeabb31319f6d9c9b444a925f48~N24aYfTzz1314613146epcas1p3Y;
+        Tue, 23 Aug 2022 03:26:48 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.250]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4MBZQc2WX3z4x9Q0; Tue, 23 Aug
+        2022 03:26:48 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E1.51.18616.8F844036; Tue, 23 Aug 2022 12:26:48 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220823032647epcas1p4494b5b8db3c800e3393733a74213a0b7~N24Zq-Rz90558005580epcas1p4o;
+        Tue, 23 Aug 2022 03:26:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220823032647epsmtrp2ac63c6a93b52b20af52fbaf596adc47b~N24ZqaJpC3037730377epsmtrp25;
+        Tue, 23 Aug 2022 03:26:47 +0000 (GMT)
+X-AuditID: b6c32a38-6cfff700000048b8-59-630448f83197
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        21.53.14392.7F844036; Tue, 23 Aug 2022 12:26:47 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220823032647epsmtip165c1a86d97c7868116895cc255f83ffa~N24Zg5SHs2501825018epsmtip1G;
+        Tue, 23 Aug 2022 03:26:47 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Namjae Jeon'" <linkinjeon@kernel.org>
+Cc:     "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel'" <linux-kernel@vger.kernel.org>
+In-Reply-To: <PUZPR04MB63161D3BE9104FF48BD298DE81719@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Subject: RE: [PATCH] exfat: fix overflow for large capacity partition
+Date:   Tue, 23 Aug 2022 12:26:47 +0900
+Message-ID: <55c001d8b6a0$2d1ce2c0$8756a840$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQG6AHnoKzk4PaiInYFNxiio1tIcSQKsUsP/rePcS3A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmnu4PD5ZkgzNt/BYTpy1lttiz9ySL
+        xeVdc9gcmD02repk8/i8SS6AKaqB0SaxKDkjsyxVITUvOT8lMy/dVik0xE3XQkkhI7+4xFYp
+        2tDQSM/QwFzPyMhIz9gy1srIVEkhLzE31VapQheqV0mhKLkAqDa3shhoQE6qHlRcrzg1L8Uh
+        K78U5DC94sTc4tK8dL3k/FwlhbLEnFKgEUr6Cd8YM74uOc1eMJuz4u6O6AbG7exdjJwcEgIm
+        EhOb/rOA2EICOxglmpcmdTFyAdmfGCU23P/NBOF8A0os2sQK0/H33htWiMReRomvjy6wQzgv
+        GSXW//7KBlLFJqAr8eTGT+YuRg4OEQFtifsv0kHCzAIZEhtnfgBbzSkQK/Hi9RqwocICrhLv
+        nu5iBrFZBFQlJq1uAIvzClhKnGk4zg5hC0qcnPmEBWKOvMT2t3OYIQ5SkNj96ShYvYiAlUTb
+        vn9MEDUiErM725hBbpMQuMcusbftCBtEg4vEhJXboWxhiVfHt0DDQkri87u9UPFuRok/53gh
+        micwSrTcOQv1vrHEp8+fGUEeYxbQlFi/Sx8irCix8/dcRghbUOL0tW5miCP4JN597WEFKZcQ
+        4JXoaBOCKFGR+P5hJ8sERuVZSF6bheS1WUhemIWwbAEjyypGsdSC4tz01GLDAhPk6N7ECE6U
+        WhY7GOe+/aB3iJGJg/EQowQHs5IIb/VFhmQh3pTEyqrUovz4otKc1OJDjMnAwJ7ILCWanA9M
+        1Xkl8YYmxgYGRsBUaG5pbkyEsKWBiZmRiYWxpbGZkjivnjZjspBAemJJanZqakFqEcwWJg5O
+        qQam+cc/fQw9UZDKttG4+0r7xPefJ+3nTmezfL6UuYHr1IWUJ2nR105sNpwYw8z5MS/jw7rz
+        7RE1lZVrMlmzj6R2S//KWB3F3LN+ZcRvebeLfA4TeP8KbyhPirGNPdUh6nfxyuc0xi8n04QT
+        9Zz86i9N8v1Ry3fKXulWyKYNxx7qFa7iyn+7+fLWO2FBy0JXihcKHbzq4rPYIe2G8k+dhZwH
+        Jge4i+78kd22JcEm9Py/ydurfpW03ly6xtiwK7e14/CFr9M3Z5/kC9x4XONUptiMDVx7GtZd
+        Tr17h1lIeMv+KbFBYs4ey+5UtM6aojE9vfXOBp+i0+nSrz+/k9hmOr05bPeTd6s9GTacnjr7
+        9LU3d5RYijMSDbWYi4oTAfBCPPVLBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsWy7bCSnO53D5ZkgzdbTSwmTlvKbLFn70kW
+        i8u75rA5MHtsWtXJ5vF5k1wAUxSXTUpqTmZZapG+XQJXxtclp9kLZnNW3N0R3cC4nb2LkZND
+        QsBE4u+9N6wgtpDAbkaJb72KXYwcQHEpiYP7NCFMYYnDh4u7GLmAKp4zSty51MAMUs4moCvx
+        5MZPZpAaEQFtifsv0kHCzAIZErN2bGGDqF/HKPFz30GwVZwCsRIvXq8BWyUs4Crx7ukusDks
+        AqoSk1Y3gMV5BSwlzjQcZ4ewBSVOznzCAjFUW6L3YSsjhC0vsf3tHGaI8xUkdn86CtYrImAl
+        0bbvHxNEjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZwMiyilEytaA4Nz232LDAMC+1XK84Mbe4
+        NC9dLzk/dxMjOAK0NHcwbl/1Qe8QIxMH4yFGCQ5mJRHe6osMyUK8KYmVValF+fFFpTmpxYcY
+        pTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwnT5a82+fy4IbWT/uPjNbl+w5f9G0rUKb
+        ViivXm0R/S9CavrSSBHXZSabq6O6IzYkabP+m/FMOrRQ5NeKyUvclBeZa6r0/qwMOpzaOefJ
+        2ZMSN88eDnqnXHfuU8uhvY7LV9/cv/TzRIUH/acT+74JhwprZr+LtRGbZRXD8PSGg9u1+ZYz
+        nK0clBdz95X2fz5S2SdoxSGRmHfedoOqbKz/Ekv5r6rKj/9tvFH/xHvnmjD9VquY6E//8lb+
+        +Xu0+OznOEYhfUcWNrN6Zr4Isfc8lRffnnU+8ss0TO23wjuLK5mzl0f9CL2z4NbKDfb7Lp01
+        d7l6cA3THGvBwrtLgzXLbh79dtXvjavHrgS9B3lWkkosxRmJhlrMRcWJAMG7oFDvAgAA
+X-CMS-MailID: 20220823032647epcas1p4494b5b8db3c800e3393733a74213a0b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220822022538epcas1p1466d16f6f21532d35b0b2caed3079ef6
+References: <CGME20220822022538epcas1p1466d16f6f21532d35b0b2caed3079ef6@epcas1p1.samsung.com>
+        <PUZPR04MB63161D3BE9104FF48BD298DE81719@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -86,121 +118,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> Using int type for sector index, there will be overflow in a large
+> capacity partition.
+> 
+> For example, if storage with sector size of 512 bytes and partition
+> capacity is larger than 2TB, there will be overflow.
+> 
+> Fixes: 1b6138385499 ("exfat: reduce block requests when zeroing a cluster")
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
 
---Apple-Mail=_8E3621BA-8A02-4654-8DC0-856F43CB7C0C
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Looks good!
+Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-On Aug 19, 2022, at 5:09 PM, Eric Biggers <ebiggers@kernel.org> wrote:
->=20
-> On Tue, Aug 16, 2022 at 10:42:29AM -0600, Andreas Dilger wrote:
->>=20
->> IMHO, this whole discussion is putting the cart before the horse.
->> Changing existing (and useful) IO behavior to accommodate an API that
->> nobody has ever used, and is unlikely to even be widely used, doesn't
->> make sense to me.  Most applications won't check or care about the =
-new
->> DIO size fields, since they've lived this long without statx() =
-returning
->> this info, and will just pick a "large enough" size (4KB, 1MB, =
-whatever)
->> that gives them the performance they need.  They *WILL* care if the =
-app
->> is suddenly unable to read data from a file in ways that have worked =
-for
->> a long time.
->>=20
->> Even if apps are modified to check these new DIO size fields, and =
-then
->> try to DIO write to a file in f2fs that doesn't allow it, then f2fs =
-will
->> return an error, which is what it would have done without the statx()
->> changes, so no harm done AFAICS.
->>=20
->> Even with a more-complex DIO status return that handles a "direction"
->> field (which IMHO is needlessly complex), there is always the =
-potential
->> for a TOCTOU race where a file changes between checking and access, =
-so
->> the userspace code would need to handle this.
->=20
-> I'm having trouble making sense of your argument here; you seem to be =
-saying
-> that STATX_DIOALIGN isn't useful, so it doesn't matter if we design it
-> correctly?  That line of reasoning is concerning, as it's certainly =
-intended
-> to be useful, and if it's not useful there's no point in adding it.
->=20
-> Are there any specific concerns that you have, besides TOCTOU races =
-and the
-> lack of support for read-only DIO?
-
-My main concern is disabling useful functionality that exists today to =
-appease
-the new DIO size API.  Whether STATX_DIOALIGN will become widely used by
-applications or not is hard to say at this point.
-
-If there were separate STATX_DIOREAD and STATX_DIOWRITE flags in the =
-returned
-data, and the alignment is provided as it is today, that would be enough =
-IMHO
-to address the original use case without significant complexity.
-
-> I don't think that TOCTOU races are a real concern here.  Generally =
-DIO
-> constraints would only change if the application doing DIO =
-intentionally does
-> something to the file, or if there are changes that involve the =
-filesystem
-> being taken offline, e.g. the filesystem being mounted with =
-significantly
-> different options or being moved to a different block device.  And, =
-well,
-> everything else in stat()/statx() is subject to TOCTOU as well, but is =
-still
-> used...
-
-I was thinking of background filesystem operations like compression, LVM
-migration to new storage with a different sector size, etc. that may =
-change
-the DIO characteristics of the file even while it is open.  Not that I =
-think
-this will happen frequently, but it is possible, and applications =
-shouldn't
-explode if the DIO parameters change and they get an error.
-
-Cheers, Andreas
+> 
+> ---
+>  fs/exfat/fatent.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c index
+> ee0b7cf51157..41ae4cce1f42 100644
+> --- a/fs/exfat/fatent.c
+> +++ b/fs/exfat/fatent.c
+> @@ -270,8 +270,7 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned
+> int clu)
+>  	struct super_block *sb = dir->i_sb;
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>  	struct buffer_head *bh;
+> -	sector_t blknr, last_blknr;
+> -	int i;
+> +	sector_t blknr, last_blknr, i;
+> 
+>  	blknr = exfat_cluster_to_sector(sbi, clu);
+>  	last_blknr = blknr + sbi->sect_per_clus;
+> --
+> 2.25.1
 
 
-
-
-
-
---Apple-Mail=_8E3621BA-8A02-4654-8DC0-856F43CB7C0C
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmMER+MACgkQcqXauRfM
-H+D5gBAAjf5qhCdnFlyRgIkdcPs1zELiCu4+Jw0PH5rkavcu3tVPwEBTCbHxXVMN
-6ZsFra7ARjxxj58mUSEtN9NDHwpiQreGlgqDoP+uYYb3EwiFZstja2fl0mTAytE5
-lMb8zBxkfCh8xexTnnVk7ULsOrTO+/xYTUbmRIqQvK6PTicVuO6H8FtzYFHjilnn
-/RZ8yRCndDsFmRpZCApwy26cPcP3UyrtUqz8rKk1iy5oBIC1ALvx8baYjY/Wi7Fs
-vMq1ExdKsjPPVQT5dmj1ISPRXpxTGezKhqvxNvbR/IMwKW2PzEMZzClRQnYKuWe5
-GBu6zW0mWe5l+Bg1amzve/WteBX/5i6rrkknoD58zBL8SL4LDh+uQGaM2q7EzegR
-lEc1/IpOtR1WrfmP+tOqEIfdwa4jMikNm4NKHYoQA2OQcxEzmYgtBHeeVbGOFCEq
-PRKVZbxxF2bVFWuBVbsSbAar9o6G6Ucm11LBDHkKEpn8RTqN/UeXBrcslIk9NczK
-2qtnn0jbek1OgtMEpGaajobjeqBqQUIC6/cUkU0S7Ga1LsV7D8eH5TV9EF3rWwLe
-0MJ2IWgAmbMDp7gYNVZYrsJJMrqcjphRO33u2JvwFisboKU1DD4qtfnG1vvF8u1n
-RHpWdRBE/l0VC15dWox4zVKfVgH52rkeKE8ZVkTj83NDSIidz94=
-=WmyJ
------END PGP SIGNATURE-----
-
---Apple-Mail=_8E3621BA-8A02-4654-8DC0-856F43CB7C0C--
