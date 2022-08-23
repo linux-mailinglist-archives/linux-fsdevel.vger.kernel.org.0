@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C9EB59E7AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 18:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5309159E7AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 18:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245167AbiHWQjw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 12:39:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
+        id S245319AbiHWQkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Aug 2022 12:40:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245234AbiHWQjX (ORCPT
+        with ESMTP id S245174AbiHWQjZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 12:39:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 239E069F5F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 06:07:57 -0700 (PDT)
+        Tue, 23 Aug 2022 12:39:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC4B6BCC6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Aug 2022 06:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1661260076;
+        s=mimecast20190719; t=1661260081;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=41srhtC1DtBCiKuNUZse2LJ9UWvjGkyUijYd/UmDvl8=;
-        b=WTAQrnXaCC/zjR5pGjvqPRjFWxooxVOsYtGwGSoEbnGk0QJwxT8wj1oCle+zF2zhz+tfN7
-        xRy9HSz/ZZM9g5oVkij/2EPJgk0WJGGxfZuCUwFU10YhDx+I3xKGWnxl2aWJVrGMTu+b4q
-        zwjbLUzi+vanjN9FxaxyCiI+vqzMXmI=
+        bh=d3i5wVY9ochj5YmCQFYqh+DQ+Bg9CInRp2iKPoE27ps=;
+        b=crCKmuS6jOVit3gyEo1kzTe0QwkYYLuvmzeNld3mlXzO4tdKHdfb79Pt0ieIAgufwrpSuL
+        voEOW4PKnX48t/MqRzlwJnOK9F+7GGM1hYdHfH5PSxPQ9/bK5YgRoQNl7hgVZ+ktfmFtp1
+        XUdYNYRIR1uffYVodrTHagE8vKAHWOc=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-483-Qpmpwwt-O9i9IEC4IzE4_A-1; Tue, 23 Aug 2022 09:07:51 -0400
-X-MC-Unique: Qpmpwwt-O9i9IEC4IzE4_A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-98--U2nptawM7S0xhEt02RCBA-1; Tue, 23 Aug 2022 09:07:57 -0400
+X-MC-Unique: -U2nptawM7S0xhEt02RCBA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 71E7B3C0CD5D;
-        Tue, 23 Aug 2022 13:07:50 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4D1433806650;
+        Tue, 23 Aug 2022 13:07:57 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FEE940CFD0A;
-        Tue, 23 Aug 2022 13:07:49 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2CB52492C3B;
+        Tue, 23 Aug 2022 13:07:56 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/5] smb3: missing inode locks in punch hole
+Subject: [PATCH 5/5] smb3: fix temporary data corruption in insert range
 From:   David Howells <dhowells@redhat.com>
 To:     sfrench@samba.org, linux-cifs@vger.kernel.org
 Cc:     lsahlber@redhat.com, jlayton@kernel.org, dchinner@redhat.com,
         willy@infradead.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, samba-technical@lists.samba.org
-Date:   Tue, 23 Aug 2022 14:07:48 +0100
-Message-ID: <166126006871.548536.9826412629988468617.stgit@warthog.procyon.org.uk>
+Date:   Tue, 23 Aug 2022 14:07:55 +0100
+Message-ID: <166126007561.548536.12315282792952269215.stgit@warthog.procyon.org.uk>
 In-Reply-To: <166126004083.548536.11195647088995116235.stgit@warthog.procyon.org.uk>
 References: <166126004083.548536.11195647088995116235.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -67,58 +67,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-smb3 fallocate punch hole was not grabbing the inode or filemap_invalidate
-locks so could have race with pagemap reinstantiating the page.
+insert range doesn't discard the affected cached region
+so can risk temporarily corrupting file data.
+
+Also includes some minor cleanup (avoiding rereading
+inode size repeatedly unnecessarily) to make it clearer.
 
 Cc: stable@vger.kernel.org
+Fixes: 7fe6fe95b9360 ("cifs: FALLOC_FL_INSERT_RANGE support")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
+cc: Ronnie Sahlberg <lsahlber@redhat.com>
 ---
 
- fs/cifs/smb2ops.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/cifs/smb2ops.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 75fcf6a0df56..5b5ddc1b4638 100644
+index 5b5ddc1b4638..00c8d6a715c7 100644
 --- a/fs/cifs/smb2ops.c
 +++ b/fs/cifs/smb2ops.c
-@@ -3375,7 +3375,7 @@ static long smb3_zero_range(struct file *file, struct cifs_tcon *tcon,
- static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 			    loff_t offset, loff_t len)
- {
--	struct inode *inode;
-+	struct inode *inode = file_inode(file);
+@@ -3722,35 +3722,43 @@ static long smb3_insert_range(struct file *file, struct cifs_tcon *tcon,
  	struct cifsFileInfo *cfile = file->private_data;
- 	struct file_zero_data_information fsctl_buf;
- 	long rc;
-@@ -3384,14 +3384,12 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 	struct inode *inode = file_inode(file);
+ 	__le64 eof;
+-	__u64  count;
++	__u64  count, old_eof;
++
++	inode_lock(inode);
  
  	xid = get_xid();
  
--	inode = d_inode(cfile->dentry);
--
-+	inode_lock(inode);
- 	/* Need to make file sparse, if not already, before freeing range. */
- 	/* Consider adding equivalent for compressed since it could also work */
- 	if (!smb2_set_sparse(xid, tcon, cfile, inode, set_sparse)) {
- 		rc = -EOPNOTSUPP;
--		free_xid(xid);
--		return rc;
-+		goto out;
+-	if (off >= i_size_read(inode)) {
++	old_eof = i_size_read(inode);
++	if (off >= old_eof) {
+ 		rc = -EINVAL;
+ 		goto out;
  	}
  
- 	filemap_invalidate_lock(inode->i_mapping);
-@@ -3411,8 +3409,10 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 			(char *)&fsctl_buf,
- 			sizeof(struct file_zero_data_information),
- 			CIFSMaxBufSize, NULL, NULL);
--	free_xid(xid);
- 	filemap_invalidate_unlock(inode->i_mapping);
-+out:
+-	count = i_size_read(inode) - off;
+-	eof = cpu_to_le64(i_size_read(inode) + len);
++	count = old_eof - off;
++	eof = cpu_to_le64(old_eof + len);
+ 
++	filemap_invalidate_lock(inode->i_mapping);
+ 	filemap_write_and_wait(inode->i_mapping);
++	truncate_pagecache_range(inode, off, old_eof);
+ 
+ 	rc = SMB2_set_eof(xid, tcon, cfile->fid.persistent_fid,
+ 			  cfile->fid.volatile_fid, cfile->pid, &eof);
+ 	if (rc < 0)
+-		goto out;
++		goto out_2;
+ 
+ 	rc = smb2_copychunk_range(xid, cfile, cfile, off, count, off + len);
+ 	if (rc < 0)
+-		goto out;
++		goto out_2;
+ 
+-	rc = smb3_zero_range(file, tcon, off, len, 1);
++	rc = smb3_zero_data(file, tcon, off, len, xid);
+ 	if (rc < 0)
+-		goto out;
++		goto out_2;
+ 
+ 	rc = 0;
++out_2:
++	filemap_invalidate_unlock(inode->i_mapping);
+  out:
 +	inode_unlock(inode);
-+	free_xid(xid);
+ 	free_xid(xid);
  	return rc;
  }
- 
 
 
