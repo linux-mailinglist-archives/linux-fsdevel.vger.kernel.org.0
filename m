@@ -2,166 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 659EB59EDC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 22:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A74259EE7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Aug 2022 23:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbiHWUtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 16:49:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34348 "EHLO
+        id S231686AbiHWVxj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Aug 2022 17:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbiHWUso (ORCPT
+        with ESMTP id S229518AbiHWVxi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 16:48:44 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06D3C0A;
-        Tue, 23 Aug 2022 13:43:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 802F81F890;
-        Tue, 23 Aug 2022 20:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1661287419;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvUii2Ere0iwPAZzLrUqcRoqaN33vJT3Za8FZvP1Oes=;
-        b=nF/SYpX0baEzY/ugyPQ5L8m/l9RISUp24MncZFUB2HeyoHjj5+C1rsnQ0bpvcKftU+/8Ka
-        vefiOQhXMOPer3UAUx1pWkowFjTm6itVCAjFzk+9YArJFRLGrzG6QaqSo/yXVhzE7FK6K6
-        g4pLpbGi7xKbCuH5cUAQeLN71T2YMuQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1661287419;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvUii2Ere0iwPAZzLrUqcRoqaN33vJT3Za8FZvP1Oes=;
-        b=ZXjO/kDKQb8ICoMCdvjHznlofq/jGeDCXHPmbWtoIwgThYUGWCdKVZ6yF0G1TO2ScdvvY2
-        g9jX6JO4KbtX/aDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3B50313A89;
-        Tue, 23 Aug 2022 20:43:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4VZ6Dfs7BWNYCgAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Tue, 23 Aug 2022 20:43:39 +0000
-Date:   Tue, 23 Aug 2022 22:38:25 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] btrfs: Convert process_page_range() to use
- filemap_get_folios_contig()
-Message-ID: <20220823203825.GT13489@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20220816175246.42401-1-vishal.moola@gmail.com>
- <20220816175246.42401-5-vishal.moola@gmail.com>
+        Tue, 23 Aug 2022 17:53:38 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 55FAD21E0E;
+        Tue, 23 Aug 2022 14:53:37 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-4-169.pa.nsw.optusnet.com.au [49.195.4.169])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7AC9962E33A;
+        Wed, 24 Aug 2022 07:53:35 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oQbq1-00GiOV-Pu; Wed, 24 Aug 2022 07:53:33 +1000
+Date:   Wed, 24 Aug 2022 07:53:33 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Jeff Layton <jlayton@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Frank Filz <ffilzlnx@mindspring.com>
+Subject: Re: [PATCH] vfs: report an inode version in statx for IS_I_VERSION
+ inodes
+Message-ID: <20220823215333.GC3144495@dread.disaster.area>
+References: <20220819115641.14744-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220816175246.42401-5-vishal.moola@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: *
+In-Reply-To: <20220819115641.14744-1-jlayton@kernel.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=63054c60
+        a=FOdsZBbW/tHyAhIVFJ0pRA==:117 a=FOdsZBbW/tHyAhIVFJ0pRA==:17
+        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=20KFwNOVAAAA:8 a=84BadPHTAAAA:8
+        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=-sNG4CTRcTQKk6ulFHEA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 10:52:43AM -0700, Vishal Moola (Oracle) wrote:
-> Converted function to use folios throughout. This is in preparation for
-> the removal of find_get_pages_contig(). Now also supports large folios.
+On Fri, Aug 19, 2022 at 07:56:41AM -0400, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
 > 
-> Since we may receive more than nr_pages pages, nr_pages may underflow.
-> Since nr_pages > 0 is equivalent to index <= end_index, we replaced it
-> with this check instead.
+> The NFS server and IMA both rely heavily on the i_version counter, but
+> it's largely invisible to userland, which makes it difficult to test its
+> behavior. This value would also be of use to userland NFS servers, and
+> other applications that want a reliable way to know if there was an
+> explicit change to an inode since they last checked.
 > 
-> Also minor comment renaming for consistency in subpage.
+> Claim one of the spare fields in struct statx to hold a 64-bit inode
+> version attribute. This value must change with any explicit, observeable
+> metadata or data change. Note that atime updates are excluded from this,
+> unless it is due to an explicit change via utimes or similar mechanism.
 > 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> When statx requests this attribute on an IS_I_VERSION inode, do an
+> inode_query_iversion and fill the result in the field. Also, update the
+> test-statx.c program to display the inode version and the mountid.
+> 
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Frank Filz <ffilzlnx@mindspring.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Acked-by: David Sterba <dsterba@suse.com>
+NAK.
 
-> --- a/fs/btrfs/tests/extent-io-tests.c
-> +++ b/fs/btrfs/tests/extent-io-tests.c
-> @@ -4,6 +4,7 @@
->   */
->  
->  #include <linux/pagemap.h>
-> +#include <linux/pagevec.h>
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/sizes.h>
-> @@ -20,39 +21,39 @@ static noinline int process_page_range(struct inode *inode, u64 start, u64 end,
->  				       unsigned long flags)
->  {
->  	int ret;
-> -	struct page *pages[16];
-> +	struct folio_batch fbatch;
->  	unsigned long index = start >> PAGE_SHIFT;
->  	unsigned long end_index = end >> PAGE_SHIFT;
-> -	unsigned long nr_pages = end_index - index + 1;
->  	int i;
->  	int count = 0;
->  	int loops = 0;
->  
-> -	while (nr_pages > 0) {
-> -		ret = find_get_pages_contig(inode->i_mapping, index,
-> -				     min_t(unsigned long, nr_pages,
-> -				     ARRAY_SIZE(pages)), pages);
-> +	folio_batch_init(&fbatch);
-> +
-> +	while (index <= end_index) {
-> +		ret = filemap_get_folios_contig(inode->i_mapping, &index,
-> +				end_index, &fbatch);
->  		for (i = 0; i < ret; i++) {
-> +			struct folio *folio = fbatch.folios[i];
+THere's no definition of what consitutes an "inode change" and this
+exposes internal filesystem implementation details (i.e. on disk
+format behaviour) directly to userspace. That means when the
+internal filesystem behaviour changes, userspace applications will
+see changes in stat->ino_version changes and potentially break them.
 
-Add a newline please
+We *need a documented specification* for the behaviour we are exposing to
+userspace here, and then individual filesystems needs to opt into
+providing this information as they are modified to conform to the
+behaviour we are exposing directly to userspsace.
 
->  			if (flags & PROCESS_TEST_LOCKED &&
-> -			    !PageLocked(pages[i]))
-> +			    !folio_test_locked(folio))
->  				count++;
-> -			if (flags & PROCESS_UNLOCK && PageLocked(pages[i]))
-> -				unlock_page(pages[i]);
-> -			put_page(pages[i]);
-> +			if (flags & PROCESS_UNLOCK && folio_test_locked(folio))
-> +				folio_unlock(folio);
->  			if (flags & PROCESS_RELEASE)
-> -				put_page(pages[i]);
-> +				folio_put(folio);
->  		}
-> -		nr_pages -= ret;
-> -		index += ret;
-> +		folio_batch_release(&fbatch);
->  		cond_resched();
->  		loops++;
->  		if (loops > 100000) {
->  			printk(KERN_ERR
-> -		"stuck in a loop, start %llu, end %llu, nr_pages %lu, ret %d\n",
-> -				start, end, nr_pages, ret);
-> +		"stuck in a loop, start %llu, end %llu, ret %d\n",
-> +				start, end, ret);
->  			break;
->  		}
->  	}
-> +
->  	return count;
->  }
->  
-> -- 
-> 2.36.1
+Jeff - can you please stop posting iversion patches to different
+subsystems as individual, unrelated patchsets and start posting all
+the changes - statx, ext4, xfs, man pages, etc as a single patchset
+so the discussion can be centralised in one place and not spread
+over half a dozen disconnected threads?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
