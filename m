@@ -2,56 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7394B59FF0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55A3B59FF0D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 18:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239169AbiHXQEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Aug 2022 12:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49258 "EHLO
+        id S239190AbiHXQEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 12:04:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239149AbiHXQD7 (ORCPT
+        with ESMTP id S239169AbiHXQD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 24 Aug 2022 12:03:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8FF7D1DE
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 846607D1E4
         for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 09:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1661357037;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=R9TgYxQgeeSQI37o2tMlq+JF9pke5jeBPg+VbisKpTE=;
-        b=O6IGQ0PNp7AKDb+gJ47M/u0x3dVOqgiZfRCUtOY6aP7YboYmZRhIP08syeF1VbdcyaY9hW
-        g4XC4sZmmXboxS93naWBNEhiKFWocXxP+axCiADqI5xRAIeHil0twpbu6hwDAtOGwacozT
-        N4N/uxIIIuqUQLHQHMiSnBH35H5rHy4=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=crooFDsd/t/C+VmO2GlK18gRr5taZHHgJKYwO/+fySQ=;
+        b=YY8RFXXmsJUPQWXWEheLO097OdZEGJzV8ZRIxNkxW/aw2ZHcOYGsjhOoKDo1SRJl0ZjHIf
+        MDrU+ipX0oU/PQjr+LDa+X06Ndye2hpXvqDQGIiYvpJjAQVWWihLcC/o/f3q8LsvrIjP0R
+        2sxsCSTBTieW4W/Apv1H6f8BxUTZmp4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-278-O5e4MvMLOICHGnkk5xfhCg-1; Wed, 24 Aug 2022 12:03:52 -0400
-X-MC-Unique: O5e4MvMLOICHGnkk5xfhCg-1
+ us-mta-151-DDeSvD2YOU2VdvFj000x-w-1; Wed, 24 Aug 2022 12:03:54 -0400
+X-MC-Unique: DDeSvD2YOU2VdvFj000x-w-1
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EC6DC1C13948;
-        Wed, 24 Aug 2022 16:03:51 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 98D1F805B9A;
+        Wed, 24 Aug 2022 16:03:53 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.40.193.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 81581492C3B;
-        Wed, 24 Aug 2022 16:03:50 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3408B492C3B;
+        Wed, 24 Aug 2022 16:03:52 +0000 (UTC)
 From:   Lukas Czerner <lczerner@redhat.com>
 To:     linux-ext4@vger.kernel.org
 Cc:     tytso@mit.edu, jlayton@kernel.org, jack@suse.cz,
         linux-fsdevel@vger.kernel.org, ebiggers@kernel.org,
-        david@fromorbit.com, Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v4 1/3] ext4: don't increase iversion counter for ea_inodes
-Date:   Wed, 24 Aug 2022 18:03:47 +0200
-Message-Id: <20220824160349.39664-1-lczerner@redhat.com>
+        david@fromorbit.com, Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v4 2/3] fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE
+Date:   Wed, 24 Aug 2022 18:03:48 +0200
+Message-Id: <20220824160349.39664-2-lczerner@redhat.com>
+In-Reply-To: <20220824160349.39664-1-lczerner@redhat.com>
+References: <20220824160349.39664-1-lczerner@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,41 +62,187 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ea_inodes are using i_version for storing part of the reference count so
-we really need to leave it alone.
+Currently the I_DIRTY_TIME will never get set if the inode already has
+I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
+true, however ext4 will only update the on-disk inode in
+->dirty_inode(), not on actual writeback. As a result if the inode
+already has I_DIRTY_INODE state by the time we get to
+__mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
+into on-disk inode and will not get updated until the next I_DIRTY_INODE
+update, which might never come if we crash or get a power failure.
 
-The problem can be reproduced by xfstest ext4/026 when iversion is
-enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
-inodes in ext4_mark_iloc_dirty().
+The problem can be reproduced on ext4 by running xfstest generic/622
+with -o iversion mount option.
 
+Fix it by allowing I_DIRTY_TIME to be set even if the inode already has
+I_DIRTY_INODE. Also make sure that the case is properly handled in
+writeback_single_inode() as well. Additionally changes in
+xfs_fs_dirty_inode() was made to accommodate for I_DIRTY_TIME in flag.
+
+Thanks Jan Kara for suggestions on how to make this work properly.
+
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Suggested-by: Jan Kara <jack@suse.cz>
 ---
-v2, v3, v4: no change
+v2: Reworked according to suggestions from Jan
+v3: Update documentation, add comments, change flag to flags in
+    xfs_fs_dirty_inode()
+v4: Update documentation, simplify condition in xfs_fs_dirty_inode()
 
- fs/ext4/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ Documentation/filesystems/vfs.rst |  3 +++
+ fs/fs-writeback.c                 | 34 ++++++++++++++++++++-----------
+ fs/xfs/xfs_super.c                | 10 +++++++--
+ include/linux/fs.h                |  9 ++++----
+ 4 files changed, 38 insertions(+), 18 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 601214453c3a..2a220be34caa 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5731,7 +5731,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
- 	}
- 	ext4_fc_track_inode(handle, inode);
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 6cd6953e175b..b2ef2449aed9 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -274,6 +274,9 @@ or bottom half).
+ 	This is specifically for the inode itself being marked dirty,
+ 	not its data.  If the update needs to be persisted by fdatasync(),
+ 	then I_DIRTY_DATASYNC will be set in the flags argument.
++	I_DIRTY_TIME will be set in the flags in case lazytime is enabled
++	and struct inode has times updated since the last ->dirty_inode
++	call.
  
--	if (IS_I_VERSION(inode))
+ ``write_inode``
+ 	this method is called when the VFS needs to write an inode to
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 05221366a16d..638dbf143727 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1718,9 +1718,14 @@ static int writeback_single_inode(struct inode *inode,
+ 	 */
+ 	if (!(inode->i_state & I_DIRTY_ALL))
+ 		inode_cgwb_move_to_attached(inode, wb);
+-	else if (!(inode->i_state & I_SYNC_QUEUED) &&
+-		 (inode->i_state & I_DIRTY))
+-		redirty_tail_locked(inode, wb);
++	else if (!(inode->i_state & I_SYNC_QUEUED)) {
++		if ((inode->i_state & I_DIRTY))
++			redirty_tail_locked(inode, wb);
++		else if (inode->i_state & I_DIRTY_TIME) {
++			inode->dirtied_when = jiffies;
++			inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
++		}
++	}
+ 
+ 	spin_unlock(&wb->list_lock);
+ 	inode_sync_complete(inode);
+@@ -2369,6 +2374,17 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 	trace_writeback_mark_inode_dirty(inode, flags);
+ 
+ 	if (flags & I_DIRTY_INODE) {
++
++		/* Inode timestamp update will piggback on this dirtying */
++		if (inode->i_state & I_DIRTY_TIME) {
++			spin_lock(&inode->i_lock);
++			if (inode->i_state & I_DIRTY_TIME) {
++				inode->i_state &= ~I_DIRTY_TIME;
++				flags |= I_DIRTY_TIME;
++			}
++			spin_unlock(&inode->i_lock);
++		}
++
+ 		/*
+ 		 * Notify the filesystem about the inode being dirtied, so that
+ 		 * (if needed) it can update on-disk fields and journal the
+@@ -2378,7 +2394,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 		 */
+ 		trace_writeback_dirty_inode_start(inode, flags);
+ 		if (sb->s_op->dirty_inode)
+-			sb->s_op->dirty_inode(inode, flags & I_DIRTY_INODE);
++			sb->s_op->dirty_inode(inode,
++				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
+ 		trace_writeback_dirty_inode(inode, flags);
+ 
+ 		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
+@@ -2399,21 +2416,15 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 	 */
+ 	smp_mb();
+ 
+-	if (((inode->i_state & flags) == flags) ||
+-	    (dirtytime && (inode->i_state & I_DIRTY_INODE)))
++	if ((inode->i_state & flags) == flags)
+ 		return;
+ 
+ 	spin_lock(&inode->i_lock);
+-	if (dirtytime && (inode->i_state & I_DIRTY_INODE))
+-		goto out_unlock_inode;
+ 	if ((inode->i_state & flags) != flags) {
+ 		const int was_dirty = inode->i_state & I_DIRTY;
+ 
+ 		inode_attach_wb(inode, NULL);
+ 
+-		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
+-		if (flags & I_DIRTY_INODE)
+-			inode->i_state &= ~I_DIRTY_TIME;
+ 		inode->i_state |= flags;
+ 
+ 		/*
+@@ -2486,7 +2497,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ out_unlock:
+ 	if (wb)
+ 		spin_unlock(&wb->list_lock);
+-out_unlock_inode:
+ 	spin_unlock(&inode->i_lock);
+ }
+ EXPORT_SYMBOL(__mark_inode_dirty);
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 9ac59814bbb6..f029c6702dda 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -653,7 +653,7 @@ xfs_fs_destroy_inode(
+ static void
+ xfs_fs_dirty_inode(
+ 	struct inode			*inode,
+-	int				flag)
++	int				flags)
+ {
+ 	struct xfs_inode		*ip = XFS_I(inode);
+ 	struct xfs_mount		*mp = ip->i_mount;
+@@ -661,7 +661,13 @@ xfs_fs_dirty_inode(
+ 
+ 	if (!(inode->i_sb->s_flags & SB_LAZYTIME))
+ 		return;
+-	if (flag != I_DIRTY_SYNC || !(inode->i_state & I_DIRTY_TIME))
++
 +	/*
-+	 * ea_inodes are using i_version for storing reference count, don't
-+	 * mess with it
++	 * Only do the timestamp update if the inode is dirty (I_DIRTY_SYNC)
++	 * and has dirty timestamp (I_DIRTY_TIME). I_DIRTY_TIME can be passed
++	 * in flags possibly together with I_DIRTY_SYNC.
 +	 */
-+	if (IS_I_VERSION(inode) &&
-+	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
- 		inode_inc_iversion(inode);
++	if ((flags & ~I_DIRTY_TIME) != I_DIRTY_SYNC || !(flags & I_DIRTY_TIME))
+ 		return;
  
- 	/* the do_update_inode consumes one bh->b_count */
+ 	if (xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp))
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9eced4cc286e..56a4b4b02477 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2371,13 +2371,14 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+  *			don't have to write inode on fdatasync() when only
+  *			e.g. the timestamps have changed.
+  * I_DIRTY_PAGES	Inode has dirty pages.  Inode itself may be clean.
+- * I_DIRTY_TIME		The inode itself only has dirty timestamps, and the
++ * I_DIRTY_TIME		The inode itself has dirty timestamps, and the
+  *			lazytime mount option is enabled.  We keep track of this
+  *			separately from I_DIRTY_SYNC in order to implement
+  *			lazytime.  This gets cleared if I_DIRTY_INODE
+- *			(I_DIRTY_SYNC and/or I_DIRTY_DATASYNC) gets set.  I.e.
+- *			either I_DIRTY_TIME *or* I_DIRTY_INODE can be set in
+- *			i_state, but not both.  I_DIRTY_PAGES may still be set.
++ *			(I_DIRTY_SYNC and/or I_DIRTY_DATASYNC) gets set. But
++ *			I_DIRTY_TIME can still be set if I_DIRTY_SYNC is already
++ *			in place because writeback might already be in progress
++ *			and we don't want to lose the time update
+  * I_NEW		Serves as both a mutex and completion notification.
+  *			New inodes set I_NEW.  If two processes both create
+  *			the same inode, one of them will release its inode and
 -- 
 2.37.1
 
