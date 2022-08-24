@@ -2,64 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72A6A59F232
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 05:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6179159F251
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 06:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234238AbiHXDwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Aug 2022 23:52:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36562 "EHLO
+        id S231855AbiHXEAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 00:00:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbiHXDwf (ORCPT
+        with ESMTP id S229478AbiHXEAo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Aug 2022 23:52:35 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A20E548C96;
-        Tue, 23 Aug 2022 20:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=heuQpO/LsqP/UJ9tZYgQN1UYU4nAKypMbMGzQhkybws=; b=EKywbzjTnQaHsqKrcAZFAKdYVa
-        AnX8eqgD12noTB6D5LGPNK/i8Yr/BkQpnzCpNEXh8x0NT5eHJlTFtW94JoEZkaErt4vEPUWqRbYae
-        1wRThrEYV9B90bE3yDBlFlP0rA6zvHjlKmkNZy6wGLU0PYMGiQwRwjhdDijPGUGKEG4Wo4Og7bOh9
-        glilXETvkevKbdP83FTwVcDLeRmonrkiVksdgatJTJuwZsV4hARviS2o6RUF/txPBMXXRrJQ4p93u
-        rR4o8xBkbya9vq+qte666tAT4pDsLXDh/AKSmDq+hAcU5QDNBOSQE2gHz86NawaOFo035dVcgFy3X
-        rqRRE9qQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oQhRF-00AKSo-JK; Wed, 24 Aug 2022 03:52:21 +0000
-Date:   Tue, 23 Aug 2022 20:52:21 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Steve French <smfrench@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] iov_iter: Add a function to extract an iter's
- buffers to a bvec iter
-Message-ID: <YwWgdekd+f3MqVmu@infradead.org>
-References: <166126392703.708021.14465850073772688008.stgit@warthog.procyon.org.uk>
- <166126393409.708021.16165278011941496946.stgit@warthog.procyon.org.uk>
+        Wed, 24 Aug 2022 00:00:44 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F8348EAF;
+        Tue, 23 Aug 2022 21:00:42 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id r69so13961350pgr.2;
+        Tue, 23 Aug 2022 21:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=y2ItLojeupF+41y/feOT7mcA+lNVl5+uk3WTfRgyZWo=;
+        b=FZm6pjZLVHvTwnOaUhU87KMumo1jutVo6gkEY2lR0Hdgr6FEDGj9E769Iph2zWzXym
+         KWavclQXfvDAd1YXfNIV5to34Rhb0rLlhHp79jh8Vw4qaGXX6bA3DOSGPL5Lf23QtI4o
+         Bh35da9WTrqsSneZmzDGOoKlSqnNEOrD/0nzJQxl58BVFOls0l29WpQyTohHDONqskjq
+         nQsVbQY+lldeJ0tu6rrufGfgF4eJPJSErd5BLtl+Oy4CZDWYx963fP1SBYS7UmHSV5Qb
+         0NiqknwHXI0ttdB+xzqeDipWCIVZ4Ot790jCWhypPMytaxf82CbT0WiOOilm867YabUr
+         brNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=y2ItLojeupF+41y/feOT7mcA+lNVl5+uk3WTfRgyZWo=;
+        b=TkerpBRgxf55o10G5PkfB3Rsv6I3c/grr9zA/bOdxo/n9LSiW3/JFoF7yVD3fFBsCy
+         ZMwtbOhBBfdMfSWNOkbTYytFOxNjd6RA+ALA1Z7zx+EMnbGYaXi8c9iQueBui/bNGQY3
+         tU7TSPrDX2qzf6gzN9KYD2oEWI/tUsehwy3KN6pn3GUWoKvHEONzI5YA2ux7E8sAj5km
+         fyD70NLaIZCmS5dK+Vd9dehGr6rktiWoHTdCT04Q1kbTLxI2/1ftJv8807EzWy956m36
+         Xp8Sqb2ga7XycNSXOtaRn4WlZC/G8GZfp15JqusB9o4AhGIkqcWn+fPIgYY/GRWHY7mH
+         i63Q==
+X-Gm-Message-State: ACgBeo0Vk8iMyqJ3qInSXMnfIKAQG0+VGn8r89X0iI4uBJPOT7dcpNmo
+        Nr0Vy/MDEpX9PguQN9uckrA=
+X-Google-Smtp-Source: AA6agR7BFFtGaiF3KEjPSXTdPFldV3Lk76tXgaS+fwLQVAxrPvgd+9bAmRB0oLczDQazU2nnVmb++w==
+X-Received: by 2002:a62:7b14:0:b0:536:b424:3780 with SMTP id w20-20020a627b14000000b00536b4243780mr11246867pfc.63.1661313642206;
+        Tue, 23 Aug 2022 21:00:42 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id n3-20020aa79843000000b005368341381fsm5883011pfq.106.2022.08.23.21.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 21:00:41 -0700 (PDT)
+From:   xu xin <cgel.zte@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To:     akpm@linux-foundation.org
+Cc:     adobriyan@gmail.com, willy@infradead.org, hughd@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, xu xin <xu.xin16@zte.com.cn>
+Subject: [PATCH v2 0/2] ksm: count allocated rmap_items and update documentation
+Date:   Wed, 24 Aug 2022 04:00:36 +0000
+Message-Id: <20220824040036.215002-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166126393409.708021.16165278011941496946.stgit@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 03:12:14PM +0100, David Howells wrote:
-> Copy cifs's setup_aio_ctx_iter() and to lib/iov_iter.c and generalise it as
-> extract_iter_to_iter().  This allocates and sets up an array of bio_vecs
-> for all the page fragments in an I/O iterator and sets a second supplied
-> iterator to bvec-type pointing to the array.
+KSM can save memory by merging identical pages, but also can consume
+additional memory, because it needs to generate rmap_items to save
+each scanned page's brief rmap information.
 
-Did you read my NACK and comments from last time?
+To determine how beneficial the ksm-policy (like madvise), they are using
+brings, so we add a new interface /proc/<pid>/ksm_alloced_items for each
+process to indicate the total allocated ksm rmap_items of this process.
+
+The detailed description can be seen in the following patches' commit message.
+
+
+*** BLURB HERE ***
+
+xu xin (2):
+  ksm: count allocated ksm rmap_items for each process
+  ksm: add profit monitoring documentation
+
+ Documentation/admin-guide/mm/ksm.rst | 36 ++++++++++++++++++++++++++++
+ fs/proc/base.c                       | 15 ++++++++++++
+ include/linux/mm_types.h             |  5 ++++
+ mm/ksm.c                             |  2 ++
+ 4 files changed, 58 insertions(+)
+
+-- 
+2.25.1
+
