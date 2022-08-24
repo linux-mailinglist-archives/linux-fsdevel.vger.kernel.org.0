@@ -2,89 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF7159F26D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 06:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B4F59F2B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 06:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234576AbiHXELj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Aug 2022 00:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57216 "EHLO
+        id S231929AbiHXElH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 00:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbiHXELi (ORCPT
+        with ESMTP id S230245AbiHXElG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Aug 2022 00:11:38 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51FA87D1F4;
-        Tue, 23 Aug 2022 21:11:36 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id bj12so14132121ejb.13;
-        Tue, 23 Aug 2022 21:11:36 -0700 (PDT)
+        Wed, 24 Aug 2022 00:41:06 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCCB782FAC;
+        Tue, 23 Aug 2022 21:41:05 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id f21so15925057pjt.2;
+        Tue, 23 Aug 2022 21:41:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=1SWmPxwQyH5LYZrwY6U9XBorttydo0GXweh3dw5/QKE=;
-        b=aB5Gk0PGmxav71TxeXANmr1pPDPghLTSfQ29XJ8LQy6WvkEb8HPfBSqN5qkhPDpuUS
-         7RXfKn4IOpvkyiAGIGpUlc8/7FaY0Z2NXa1XkOs9/zXwUfvDusGj+ct52/rKAulJ6Chf
-         lONMykmHKfe4ukqG1F/WMOfl3oqYGykOX1fErzqYsP/7D5TU7VkHGULWyaiGY8oKLumW
-         mliTpyuj5LrIBwrR10LcRQMn2zqdmDjcqi2PVcDmmBgJghBAwztDCODbjgnpxCS4XT19
-         GW9hWN6b5BneomBEXiE7nAjgVSOuT8gq6lIVEeutl71hFIevTTlSS1BwjFdshjZtW/+L
-         dL0A==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=Jt/G83ni7I/FU67eFbWq1WL9BdjfSCuvjzHq4MUmPEs=;
+        b=q1XIf8ztW5mT9Sh2FdsF9dkp7at9wmuUtHs7Av1YAgmiTtmG6WZUs0+SUrfEYPDpQo
+         6oe6YnWx7Sk6v2rJg79rpBc2hQ9108SMJMziJ7P6rzmg4MrA9I220VYwz+6YrC3GSVsE
+         f1MZnUr6IiM22JgngydNpGMo7q6vWG0ZQNT29sEOKTnZqrMEMfRATKwK9dQWf4wwKkrg
+         rOZ4cbprq7pmkkCghzJu5CB+Bwzt9z+H6lpGFJXov6GbtI3cUGwDWcus9hYkmVVX9prB
+         XKtVmeL3guur/Xp+a+XpxgZaGFV4Ykx1D/a37yZqeBprGDQCiK26FGmLlurP9ep6WqDS
+         D8bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=1SWmPxwQyH5LYZrwY6U9XBorttydo0GXweh3dw5/QKE=;
-        b=ytJFg0LMCuvH+8J+Jm28kk/LGmDtJsscm/icAvWBSuIV8sv00XhwWFy2663dF2YzdK
-         7Pz7Hm4+OuuPaSF577dZ2/fJBQ9QwClrgcM70nCQFHT6CGHcNx3FNRa3owFV1gBEmULt
-         FpoV9vAqO262np839v6clNnU3DXXi3ZWlqXOGppqCXjvMEnqpCugMg9iUI5JDHMPzhoe
-         WLkZrYkJPE6+0jTt8vRDz8F7otjU41TwyUkuKvrK2oDfrT0AD51209kAFA9EkR6Eha1r
-         fBcGIGnMlxkezoUBe+C9TZ1YWGPWeDRTTsMAje6Pf5mGpulfMx06IrwfCSyZ2ON5Kkhi
-         FFPg==
-X-Gm-Message-State: ACgBeo17VNELAPiuBV4tlVhtWJdbkog7E4OsGXntP7TiC5J2fPvxmtPK
-        BL3/GWZWrFY55nUfex1emv8fK9Qha5EXtrhHLhOhwSMBbd2Hdw==
-X-Google-Smtp-Source: AA6agR4cufQC1ybMe0UuAZb3MJf2BHeBD6bTNPsU6naKJlaYsRTjLVGNlcd3crGT1O5HhTLM9yRM3D1aUHgdUSPVjaE=
-X-Received: by 2002:a17:907:e9e:b0:73d:69fa:9b1c with SMTP id
- ho30-20020a1709070e9e00b0073d69fa9b1cmr1551540ejc.681.1661314294805; Tue, 23
- Aug 2022 21:11:34 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=Jt/G83ni7I/FU67eFbWq1WL9BdjfSCuvjzHq4MUmPEs=;
+        b=FBIK9m1vQhkXi+CF+JD+tNtFgc3KGzVlZIZZT+GtLdpYKajOKWWncXDmajHL5kuhgU
+         r1/BrCYlp4MNPaBZlaVU+KvMaBgBYX+kK2spmjcxd+oZhYbfsIt9SDjIAQ+MZJNJN7uD
+         Z5GUiEnVOW3+JKNnXfrEe9IaNWiPOBn3TcapiHG9Z0xPQ3Hrvf55it3eLhdRxcXX07Cf
+         Dj+Q3fZ5cwS8Djov3OrkVjyZPCJbijrlJJjxsCt6r+KxoCQbcOECBXfM7RDExbu7MixM
+         +mIXTvEjkX/X35NDD542krR8S4JFqr8q3kLVFQxSVAZvj5/dtMT7BBIMfRi68XXvV4rE
+         jpXA==
+X-Gm-Message-State: ACgBeo1ws3v+6YIOuIPHQUK0n/wYAxFD+SXKO5Dg7K3LR40YlPvdQIWw
+        qMyYBDL/BfacqljdPcWUWoH1GFWQ1Pw=
+X-Google-Smtp-Source: AA6agR4y83+GFBiVnDjmvYo0cbNHn+OGbaSKsWoLdo6c8JA1AqWsywufMRb7rrB6FtrkxBmKBkYVfQ==
+X-Received: by 2002:a17:902:c94a:b0:16f:81c1:255a with SMTP id i10-20020a170902c94a00b0016f81c1255amr26475771pla.35.1661316064937;
+        Tue, 23 Aug 2022 21:41:04 -0700 (PDT)
+Received: from localhost.localdomain ([218.150.75.42])
+        by smtp.gmail.com with ESMTPSA id p7-20020a170902ebc700b00172b27404a2sm7551512plg.120.2022.08.23.21.41.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 21:41:04 -0700 (PDT)
+From:   Juhyung Park <qkrwngud825@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        chrome-platform@lists.linux.dev, len.brown@intel.com,
+        kaleshsingh@google.com, Juhyung Park <qkrwngud825@gmail.com>
+Subject: [PATCH] PM: suspend: select SUSPEND_SKIP_SYNC too if PM_USERSPACE_AUTOSLEEP is selected
+Date:   Wed, 24 Aug 2022 13:40:13 +0900
+Message-Id: <20220824044013.29354-1-qkrwngud825@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-References: <20220824004023.77310-1-vishal.moola@gmail.com> <20220824004023.77310-6-vishal.moola@gmail.com>
-In-Reply-To: <20220824004023.77310-6-vishal.moola@gmail.com>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Wed, 24 Aug 2022 13:11:17 +0900
-Message-ID: <CAKFNMomaxii8r_B3XA4KdkvcD+9Crm=S=0KE-nDa4+qs78E4dQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] nilfs2: Convert nilfs_find_uncommited_extent() to
- use filemap_get_folios_contig()
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,HK_RANDOM_ENVFROM,HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 24, 2022 at 9:43 AM Vishal Moola (Oracle)  wrote:
->
-> Converted function to use folios throughout. This is in preparation for
-> the removal of find_get_pages_contig(). Now also supports large folios.
->
-> Also cleaned up an unnecessary if statement - pvec.pages[0]->index > index
-> will always evaluate to false, and filemap_get_folios_contig() returns 0 if
-> there is no folio found at index.
->
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> ---
->  fs/nilfs2/page.c | 45 ++++++++++++++++++---------------------------
->  1 file changed, 18 insertions(+), 27 deletions(-)
+Commit 2fd77fff4b44 ("PM / suspend: make sync() on suspend-to-RAM build-time
+optional") added an option to skip sync() on suspend entry to avoid heavy
+overhead on platforms with frequent suspends.
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Years later, commit 261e224d6a5c ("pm/sleep: Add PM_USERSPACE_AUTOSLEEP
+Kconfig") added a dedicated config for indicating that the kernel is subject to
+frequent suspends.
 
-Looks good, thank you!
+While SUSPEND_SKIP_SYNC is also available as a knob that the userspace can
+configure, it makes sense to enable this by default if PM_USERSPACE_AUTOSLEEP
+is selected already.
 
+Signed-off-by: Juhyung Park <qkrwngud825@gmail.com>
+---
+ kernel/power/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ryusuke Konishi
+diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+index 60a1d3051cc7..5725df6c573b 100644
+--- a/kernel/power/Kconfig
++++ b/kernel/power/Kconfig
+@@ -23,6 +23,7 @@ config SUSPEND_SKIP_SYNC
+ 	bool "Skip kernel's sys_sync() on suspend to RAM/standby"
+ 	depends on SUSPEND
+ 	depends on EXPERT
++	default PM_USERSPACE_AUTOSLEEP
+ 	help
+ 	  Skip the kernel sys_sync() before freezing user processes.
+ 	  Some systems prefer not to pay this cost on every invocation
+-- 
+2.37.2
+
