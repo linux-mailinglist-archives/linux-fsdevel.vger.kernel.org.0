@@ -2,191 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A854059FED2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 17:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7394B59FF0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Aug 2022 18:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238958AbiHXPvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Aug 2022 11:51:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50490 "EHLO
+        id S239169AbiHXQEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 12:04:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238687AbiHXPvc (ORCPT
+        with ESMTP id S239149AbiHXQD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Aug 2022 11:51:32 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B1271730
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 08:51:28 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id y19so6274993ilq.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 08:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=tYVEJzjcF7qi8BB8OqunFeP+mvMsHMNy/bbwsRqxhK8=;
-        b=0WZZZKUUHYp0Hff75wlY6DiQ6Nz8V7pn3c5GzTZiakvNyU5y8B0uLSqpWDcK/lXosx
-         3n/Vad/22juLWrgu448s5hSbng+cFmUl686UJC+QbxFVEriNOZoDe6Y5Jlohy7LTBeke
-         ktfgJS/nv97nsTLbtSY6vpz/KkUCAgfwAsjGoSwEF5O1b40kHIisOjZT/dmplJ5d6LXy
-         D6I8tlEuYswMST+euUPEe84siO76sHMmOiY2ndlwjHasavIPeiG4rALO8HOSnadQbzKp
-         xeH3RHUw90Qlz/g4rz1jZBT+gd6FZ+Id+u4de4kPOOM2nkTMqlrqAJwCHQHfOS1NWFwB
-         a8rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=tYVEJzjcF7qi8BB8OqunFeP+mvMsHMNy/bbwsRqxhK8=;
-        b=NTb6GD7BuX7hQ5dDrcqpH4ahqoHSV15N/98XZ4mBFj90ItKThKrqvWfTm+0ISt27Dp
-         fSsnLvBj1d3BYh0tZgYvA56To1LG4+1UuyBZZXcBo6Ifw58Bo7efpNaEbJHR9VyD2+nG
-         tvEgF8t0DJl8wjyyqmqCtmb8xAlK3t5UY7oK2IPleP533hNuM5AYVOtFfPLBq6sUZ2ot
-         7GuXLYqtphF8n6SboOJ80ZCgU/2rdhjAr77abFK8EFAxbbcR8j4pjYtYdXrK0XGkaW1p
-         S/nNAUz59Wcbu6JRhmCBs+9HHkfefMpkF1+YqGj3Y3ntd2wC5Ent1CIUc56qwLW1kOVX
-         w7yg==
-X-Gm-Message-State: ACgBeo3j8Mj7CWEuXkIc4c4FxFFZEDBOlx9Dbh14dcKQ1BS07clzYvxT
-        /6svJZfHga3qyWbZeyRmG+qfdZ/b35MfyQ==
-X-Google-Smtp-Source: AA6agR5eTchsp6PUUCcMTTRze4rccUgTrRRZeT/qvq/j8KJ0zhQY/N/wWSH4ut6GkvP9zWVClzbFxw==
-X-Received: by 2002:a05:6e02:1004:b0:2e9:16f5:82b0 with SMTP id n4-20020a056e02100400b002e916f582b0mr2361906ilj.113.1661356287438;
-        Wed, 24 Aug 2022 08:51:27 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a20-20020a924454000000b002dcfbf36438sm1143245ilm.12.2022.08.24.08.51.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Aug 2022 08:51:26 -0700 (PDT)
-Message-ID: <0b5a5360-efd1-2d77-1dbf-b7468386d1a0@kernel.dk>
-Date:   Wed, 24 Aug 2022 09:51:24 -0600
+        Wed, 24 Aug 2022 12:03:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8FF7D1DE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 09:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1661357037;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=R9TgYxQgeeSQI37o2tMlq+JF9pke5jeBPg+VbisKpTE=;
+        b=O6IGQ0PNp7AKDb+gJ47M/u0x3dVOqgiZfRCUtOY6aP7YboYmZRhIP08syeF1VbdcyaY9hW
+        g4XC4sZmmXboxS93naWBNEhiKFWocXxP+axCiADqI5xRAIeHil0twpbu6hwDAtOGwacozT
+        N4N/uxIIIuqUQLHQHMiSnBH35H5rHy4=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-278-O5e4MvMLOICHGnkk5xfhCg-1; Wed, 24 Aug 2022 12:03:52 -0400
+X-MC-Unique: O5e4MvMLOICHGnkk5xfhCg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EC6DC1C13948;
+        Wed, 24 Aug 2022 16:03:51 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.40.193.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81581492C3B;
+        Wed, 24 Aug 2022 16:03:50 +0000 (UTC)
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     tytso@mit.edu, jlayton@kernel.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, ebiggers@kernel.org,
+        david@fromorbit.com, Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v4 1/3] ext4: don't increase iversion counter for ea_inodes
+Date:   Wed, 24 Aug 2022 18:03:47 +0200
+Message-Id: <20220824160349.39664-1-lczerner@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 2/2] coredump: Allow coredumps to pipes to work with
- io_uring
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Olivier Langlois <olivier@trillion01.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
- <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
- <87h7i694ij.fsf_-_@disp2133> <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
- <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
- <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
- <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
- <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
- <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
- <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
- <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
- <87y1wnrap0.fsf_-_@email.froward.int.ebiederm.org>
- <87mtd3rals.fsf_-_@email.froward.int.ebiederm.org>
- <61abfb5a517e0ee253b0dc7ba9cd32ebd558bcb0.camel@trillion01.com>
- <bb423622f97826f483100a1a7f20ce10a9090158.camel@trillion01.com>
- <875yiisttu.fsf@email.froward.int.ebiederm.org>
- <654cb5de-a563-b812-a435-d9b435cee334@kernel.dk>
- <87lerdr810.fsf@email.froward.int.ebiederm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87lerdr810.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/24/22 9:11 AM, Eric W. Biederman wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 8/23/22 12:22 PM, Eric W. Biederman wrote:
->>> Olivier Langlois <olivier@trillion01.com> writes:
->>>
->>>> On Mon, 2022-08-22 at 17:16 -0400, Olivier Langlois wrote:
->>>>>
->>>>> What is stopping the task calling do_coredump() to be interrupted and
->>>>> call task_work_add() from the interrupt context?
->>>>>
->>>>> This is precisely what I was experiencing last summer when I did work
->>>>> on this issue.
->>>>>
->>>>> My understanding of how async I/O works with io_uring is that the
->>>>> task
->>>>> is added to a wait queue without being put to sleep and when the
->>>>> io_uring callback is called from the interrupt context,
->>>>> task_work_add()
->>>>> is called so that the next time io_uring syscall is invoked, pending
->>>>> work is processed to complete the I/O.
->>>>>
->>>>> So if:
->>>>>
->>>>> 1. io_uring request is initiated AND the task is in a wait queue
->>>>> 2. do_coredump() is called before the I/O is completed
->>>>>
->>>>> IMHO, this is how you end up having task_work_add() called while the
->>>>> coredump is generated.
->>>>>
->>>> I forgot to add that I have experienced the issue with TCP/IP I/O.
->>>>
->>>> I suspect that with a TCP socket, the race condition window is much
->>>> larger than if it was disk I/O and this might make it easier to
->>>> reproduce the issue this way...
->>>
->>> I was under the apparently mistaken impression that the io_uring
->>> task_work_add only comes from the io_uring userspace helper threads.
->>> Those are definitely suppressed by my change.
->>>
->>> Do you have any idea in the code where io_uring code is being called in
->>> an interrupt context?  I would really like to trace that code path so I
->>> have a better grasp on what is happening.
->>>
->>> If task_work_add is being called from interrupt context then something
->>> additional from what I have proposed certainly needs to be done.
->>
->> task_work may come from the helper threads, but generally it does not.
->> One example would be doing a read from a socket. There's no data there,
->> poll is armed to trigger a retry. When we get the poll notification that
->> there's now data to be read, then we kick that off with task_work. Since
->> it's from the poll handler, it can trigger from interrupt context. See
->> the path from io_uring/poll.c:io_poll_wake() -> __io_poll_execute() ->
->> io_req_task_work_add() -> task_work_add().
-> 
-> But that is a task_work to the helper thread correct?
+ea_inodes are using i_version for storing part of the reference count so
+we really need to leave it alone.
 
-No, it goes to the task that originally allocated/issued the request.
-Which would be the original task, unless the request was originally
-marked as going straight to a helper (IOSQE_ASYNC). For most cases,
-it'll be the original task, not a helper thread.
+The problem can be reproduced by xfstest ext4/026 when iversion is
+enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
+inodes in ext4_mark_iloc_dirty().
 
->> It can also happen for regular IRQ based reads from regular files, where
->> the completion is actually done via task_work added from the potentially
->> IRQ based completion path.
-> 
-> I can see that.
-> 
-> Which leaves me with the question do these task_work's directly wake up
-> the thread that submitted the I/O request?   Or is there likely to be
-> something for an I/O thread to do before an ordinary program thread is
-> notified.
-> 
-> I am asking because it is only the case of notifying ordinary program
-> threads that is interesting in the case of a coredump.  As I understand
-> it a data to read notification would typically be handled by the I/O
-> uring worker thread to trigger reading the data before letting userspace
-> know everything it asked to be done is complete.
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+v2, v3, v4: no change
 
-By default, it'll go back to the original task. If something is
-pollable, then there's no helper thread doing the request. An issue
-attempt is performed by the original task, there's no data/space there,
-poll is armed to trigger a retry. Retry notification will then queue
-task_work with the original task to retry.
+ fs/ext4/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Generally for io_uring, helper threads are a slow path and aren't used
-unless we have no other options. For example, if someone has a network
-IO backend and there's helper thread activity, then that's generally a
-sign that something is wrong. This isn't super relevant to this
-particular topic, just highlighting that normally you would not expect
-to see much (if any) io-wq activity at all.
-
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 601214453c3a..2a220be34caa 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5731,7 +5731,12 @@ int ext4_mark_iloc_dirty(handle_t *handle,
+ 	}
+ 	ext4_fc_track_inode(handle, inode);
+ 
+-	if (IS_I_VERSION(inode))
++	/*
++	 * ea_inodes are using i_version for storing reference count, don't
++	 * mess with it
++	 */
++	if (IS_I_VERSION(inode) &&
++	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
+ 		inode_inc_iversion(inode);
+ 
+ 	/* the do_update_inode consumes one bh->b_count */
 -- 
-Jens Axboe
+2.37.1
+
