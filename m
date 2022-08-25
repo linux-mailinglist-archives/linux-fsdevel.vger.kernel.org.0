@@ -2,93 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A4A5A0D97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 12:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884485A0E67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 12:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241036AbiHYKMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 06:12:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59068 "EHLO
+        id S241280AbiHYKts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 06:49:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241137AbiHYKMV (ORCPT
+        with ESMTP id S241107AbiHYKtr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 06:12:21 -0400
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C656FA8971
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Aug 2022 03:12:09 -0700 (PDT)
-Received: by mail-oi1-x22b.google.com with SMTP id a133so14851400oif.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Aug 2022 03:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc;
-        bh=NcQgfGWmNtGVcmYOkqhvmNWuEth66CXwSKmPdJfqqgM=;
-        b=WVrT7yqPOntKnWuTcnp6ohm3aNDR6rm+M1fFy6pz7vT/eTpe6Bz04l/hwBHVsmFl9/
-         2gMa3vpPv6kDgqus/73kHxePi2+SFjK7hGwLUQsON5UrXcsH51ZCUHJYKvubA7y0SE3B
-         nV5qZ/GVFVSrCwmaLxcce8/5cieRMojRGpXBLloMsxLt6sFvRP89Qi53C1I2xAcrLzh5
-         aFRAbeUP58g4/sC3jgOuHpHRHfNgaZCeKSZsioIFzCJLwMbU5ZktlSra12ftemzrORH/
-         lpPjWLS6Ze6aGHHFLHdi9eAzh5l/1Fm6I2X27JtV4z6OxqFg6D0pXPkrLO8gSOdnzdN0
-         6W4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc;
-        bh=NcQgfGWmNtGVcmYOkqhvmNWuEth66CXwSKmPdJfqqgM=;
-        b=MQ0/4xejU4o/5cQK6QnZYLiU/62gH50NvPX88hQj1xHWUIuFaZHfP5cENDn3MQl+BD
-         nsGqs+18Dr4y14+jqAh1bagduEoMx5nG43jE3RN6N6Po/DbWzsN84lfJrZJ9Z/F8zp1t
-         pSves16eRqxEmOn5WyTyGtky8JZVqChVR+u35mMkRy/vDjqS6QMePiP1gDjQPhC1cSUR
-         VuKLhWR/Hb1/aodq/aJTsgj+cfZcCu8Jg/ZLBuqvyvDpeUbgihjb8k1mawgB2Y8E/RIz
-         pMzivtADd1mUgC7riNuBJzJIa9Gj1/3hj3le+udw1agbPr4ulkTc/uphD8r401O3FHOo
-         T9tg==
-X-Gm-Message-State: ACgBeo19Uw0Qm6JYOct2xm9t7HAYzRP7XTc/o8oVRd4x2WZD9A7rLZHw
-        75d9anmvWkvSxAL3d+KQBHPXo2L1McmMg9vF2Pk=
-X-Google-Smtp-Source: AA6agR7XaHizPFBcl5BKqSkBv3mcq9L64QPIwA41PYTssY+wl8mbHGGS6kNbkL7S0M9D/teAM3HO1Aiho/BQnQVc/0E=
-X-Received: by 2002:aca:b01:0:b0:345:4295:e9b2 with SMTP id
- 1-20020aca0b01000000b003454295e9b2mr1456901oil.28.1661422329139; Thu, 25 Aug
- 2022 03:12:09 -0700 (PDT)
+        Thu, 25 Aug 2022 06:49:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3BF923F;
+        Thu, 25 Aug 2022 03:49:44 -0700 (PDT)
+Received: from [192.168.10.7] (unknown [39.53.61.43])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 20DB46601E9A;
+        Thu, 25 Aug 2022 11:49:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1661424582;
+        bh=XkXPRTCnn8052jSrei91LRmXIOrhuSsnF8sZf7lA8MA=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=g7ucgvT/HMYyMaHad4z8nxdP4MVUQ3ZO8rDgsIv5Mw17IyGU+TirSXECdNoQsTHA2
+         mJsK2clwfJtrCff27ujqfR3UujxtMW2ltvacmS9U4f8/QMgh3YIHBQGF0ypwPYzgFy
+         V2d/5vJPg/PczJM+VQBFzkxDg8wfSSaMTEKMUSJy4PeUobRnLA8R3xV74SGFkAZ+Sh
+         xehd3876tXBbHz6hRF8Xo1oIPCYdIWC76LdIpHjxh7GFt+3VkZSsKRDd9D1FGCNWPu
+         EN1JmKmJWXxdkzaz6LEcWE8x4yGnRSlrjCr7+ULT7NACyeLTu2LaGQy6glmfVb/0+S
+         9d2ocZKEpAEXg==
+Message-ID: <1bfb71e6-1553-b83d-b151-8c8c5ffc5066@collabora.com>
+Date:   Thu, 25 Aug 2022 15:49:36 +0500
 MIME-Version: 1.0
-Received: by 2002:ac9:5ec3:0:0:0:0:0 with HTTP; Thu, 25 Aug 2022 03:12:08
- -0700 (PDT)
-Reply-To: sgtkaylla202@gmail.com
-From:   kayla manthey <tadjokes@gmail.com>
-Date:   Thu, 25 Aug 2022 10:12:08 +0000
-Message-ID: <CAHi6=KY3-s6LUMt6WvNKm+pTNDSVzdCyjsTepPywmG=n6rT-Mw@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:22b listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4981]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [tadjokes[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [sgtkaylla202[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Cc:     usama.anjum@collabora.com, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kernel@collabora.com
+Subject: Re: [PATCH v2 2/4] fs/proc/task_mmu: Implement IOCTL to get and clear
+ soft dirty PTE bit
+Content-Language: en-US
+To:     Greg KH <gregkh@linuxfoundation.org>
+References: <20220825070926.2922471-1-usama.anjum@collabora.com>
+ <20220825070926.2922471-3-usama.anjum@collabora.com>
+ <YwcjTOgKD22TXwYk@kroah.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <YwcjTOgKD22TXwYk@kroah.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bok draga, mogu li razgovarati s tobom, molim te?
+On 8/25/22 12:22 PM, Greg KH wrote:
+> On Thu, Aug 25, 2022 at 12:09:24PM +0500, Muhammad Usama Anjum wrote:
+>> - The flags can be specified in the flags field. Currently only one
+>>   PAGEMAP_SD_NO_REUSED_REGIONS is supported which can be specified to
+>>   ignore the VMA dirty flags.
+> 
+> You forgot to check that all other bits in that flag are set to 0
+> properly, otherwise you can never add a new bit to the field ever as you
+> can't expect userspace got it right and did not accidentaly set it
+> already.
+> 
+> There is kernel documentation on how to add a new ioctl, you might want
+> to read up on that first before resending this.
+Thank you so much for the review. I'll revisit and resend a v3.
+
+> 
+> thanks,
+> 
+> greg k-h
+
+-- 
+Muhammad Usama Anjum
