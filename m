@@ -2,91 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2344A5A12CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 15:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A298B5A13B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 16:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241389AbiHYN7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 09:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57312 "EHLO
+        id S241771AbiHYOep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 10:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237468AbiHYN67 (ORCPT
+        with ESMTP id S241762AbiHYOen (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 09:58:59 -0400
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47B29DFA5;
-        Thu, 25 Aug 2022 06:58:55 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VNDo9.X_1661435929;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VNDo9.X_1661435929)
-          by smtp.aliyun-inc.com;
-          Thu, 25 Aug 2022 21:58:52 +0800
-Date:   Thu, 25 Aug 2022 21:58:49 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Sun Ke <sunke32@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     JeffleXu <jefflexu@linux.alibaba.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [Linux-cachefs] [PATCH v3] cachefiles: fix error return code in
- cachefiles_ondemand_copen()
-Message-ID: <YweAGTuBw1hWm8PW@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Sun Ke <sunke32@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org
-References: <20220818125038.2247720-1-sunke32@huawei.com>
- <3700079.1661336363@warthog.procyon.org.uk>
- <c6fd70dd-2b0b-ea9f-f0f8-9d727cde2718@linux.alibaba.com>
- <20220825133620.GB2071@kadam>
+        Thu, 25 Aug 2022 10:34:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6ECE9DB7B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Aug 2022 07:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1661438082;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NJbbl+qsedWyVL78f0/Vs2C5+wGfE45Nz9agBFaUNaA=;
+        b=WeY2+ifhoBDZWPugcjLqRZ2xwUWxPEccKVavvUP1KYvNnX6eozg4VPd1Ukqjl+JtkPQ85S
+        YH3E2T/FVCjXY9XS0kZNTV71Yz9fSmer8ZsgZ12srSApjYpmZVoeyVm0KaGG741jYBqFxp
+        kK1XwPR5ceXXEllHgYeRlADH8NaMk2g=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-207-Ss6fJDMtMgaSWLxJJ-N_-Q-1; Thu, 25 Aug 2022 10:34:38 -0400
+X-MC-Unique: Ss6fJDMtMgaSWLxJJ-N_-Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9848E3C138A3;
+        Thu, 25 Aug 2022 14:34:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3529403349;
+        Thu, 25 Aug 2022 14:34:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAK896s4uuU=K5Gau9J79GK_pWQuihyfXUoZCq0iFbWt9fHLudQ@mail.gmail.com>
+References: <CAK896s4uuU=K5Gau9J79GK_pWQuihyfXUoZCq0iFbWt9fHLudQ@mail.gmail.com> <20220817065200.11543-1-yinxin.x@bytedance.com> <3713582.1661336736@warthog.procyon.org.uk>
+To:     Xin Yin <yinxin.x@bytedance.com>
+Cc:     dhowells@redhat.com, xiang@kernel.org, jefflexu@linux.alibaba.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        zhujia.zj@bytedance.com, Yongqing Li <liyongqing@bytedance.com>
+Subject: Re: [External] Re: [PATCH] cachefiles: make on-demand request distribution fairer
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220825133620.GB2071@kadam>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3791692.1661438076.1@warthog.procyon.org.uk>
+Date:   Thu, 25 Aug 2022 15:34:36 +0100
+Message-ID: <3791693.1661438076@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 04:36:20PM +0300, Dan Carpenter wrote:
-> I spent a long time looking at this as well...  It's really inscrutable
-> code.  It would be more readable if we just spelled things out in the
-> most pedantic way possible:
-> 
+Xin Yin <yinxin.x@bytedance.com> wrote:
 
-Yeah, the following code looks much better. Ke, would you mind
-sending a version like below instead?
+> > Can you give me a Fixes: line please?
+> >
+> Sure , I will send a V2 patch and add the Fixes line.
 
-Thanks,
-Gao Xiang
+Just giving me a Fixes line would do.  I can insert it.
 
-> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> index 1fee702d5529..7e1586bd5cf3 100644
-> --- a/fs/cachefiles/ondemand.c
-> +++ b/fs/cachefiles/ondemand.c
-> @@ -158,9 +158,13 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->  
->  	/* fail OPEN request if daemon reports an error */
->  	if (size < 0) {
-> -		if (!IS_ERR_VALUE(size))
-> -			size = -EINVAL;
-> -		req->error = size;
-> +		if (!IS_ERR_VALUE(size)) {
-> +			req->error = -EINVAL;
-> +			ret = -EINVAL;
-> +		} else {
-> +			req->error = size;
-> +			ret = 0;
-> +		}
->  		goto out;
->  	}
->  
-> 
-> --
-> Linux-cachefs mailing list
-> Linux-cachefs@redhat.com
-> https://listman.redhat.com/mailman/listinfo/linux-cachefs
+David
+
