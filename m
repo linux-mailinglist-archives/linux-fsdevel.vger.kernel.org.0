@@ -2,113 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 699785A16DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 18:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30C255A16C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 18:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243080AbiHYQmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 12:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42150 "EHLO
+        id S241661AbiHYQiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 12:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243139AbiHYQmC (ORCPT
+        with ESMTP id S231604AbiHYQit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 12:42:02 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263F7BA161;
-        Thu, 25 Aug 2022 09:41:54 -0700 (PDT)
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1661445700;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1SZrqW9HXmPmjeRTWLOFIPzv0CDV88cfUXj8V+IhumA=;
-        b=3aoPzsiddfr47zJqtlRQLXYAwPLIHSoLxMe/Nk47fEMwS6kj/gcI5cwRJs5BEuqm/bw9JU
-        A7czQVdmEdkZ6JDGlC15B2mcrLEajs6svacjOk/5eYV/l9nHsCVBnlP4Y08VEAk5u7uqoH
-        8remR50kIC3O2l2rsHcpmtRNmM4wvQCz7KcSDXgpoIh+twXN65DR1PKMyPPpOKIolxaNxv
-        mSMIBOmntF1TNdDLCxtdMPV98hVyX73aPqQwqEwZKRvjZD2lTvmMW/dB+IwPZm6nI9XllU
-        yb1XydP2ZE+b5iizS7M3SipG30DcqJ6oIc12WiKG1WCRqMLjGSUn6pKps2M4xA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1661445700;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1SZrqW9HXmPmjeRTWLOFIPzv0CDV88cfUXj8V+IhumA=;
-        b=yPSOGceGxVZ8dRB1hmldox0oTV9Bh5mC4tmfz4S4xReQF2fiuNDuW0qS/tLYNsYe8XCapI
-        VNGfxPWh9Ejs0dDQ==
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 2/8] dentry: Use preempt_[dis|en]able_nested()
-Date:   Thu, 25 Aug 2022 18:41:25 +0200
-Message-Id: <20220825164131.402717-3-bigeasy@linutronix.de>
-In-Reply-To: <20220825164131.402717-1-bigeasy@linutronix.de>
-References: <20220825164131.402717-1-bigeasy@linutronix.de>
+        Thu, 25 Aug 2022 12:38:49 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A35B9F84;
+        Thu, 25 Aug 2022 09:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661445529; x=1692981529;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zAouvVhGGQU1mycPi0W4g/pSkl96QhPOemhs9ryS1uE=;
+  b=hr8oU0Rcs/LXqfs86EyIBdryqxqDT2AUTC7Z5yRNvBRZfkPZqgqiJ5Gs
+   i+7FL+QxY6LIJXb8mQhuZAODIlJ+FMI4Cu8tCoiGNqADyAw7wHnLGDEO3
+   yMvyN3H+nOsZXu1KCnr+qL8oN1EwGWtmKYZLglfJGblU7Te+dcAtEamWd
+   s3jHMPnaYUEDV0z9grWmj/qkC3IKdiCaWXvusge7x7T2UOuVCB+FH8ywC
+   B5OmBavJXlTNqvvJXpJzMU8C5RYyklhdiQZJILQDDHYNvZMFXLQAoVwq5
+   LyaNLczkeNQca1ACjBg3OjfRnx705Oi0lQ4TyVhnwkG2l6e2UkjjVc03i
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10450"; a="293034889"
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="293034889"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2022 09:38:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,263,1654585200"; 
+   d="scan'208";a="671070402"
+Received: from crojewsk-ctrl.igk.intel.com ([10.102.9.28])
+  by fmsmga008.fm.intel.com with ESMTP; 25 Aug 2022 09:38:45 -0700
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+To:     alsa-devel@alsa-project.org, broonie@kernel.org
+Cc:     tiwai@suse.com, perex@perex.cz,
+        amadeuszx.slawinski@linux.intel.com,
+        pierre-louis.bossart@linux.intel.com, hdegoede@redhat.com,
+        lgirdwood@gmail.com, kai.vehmanen@linux.intel.com,
+        peter.ujfalusi@linux.intel.com, ranjani.sridharan@linux.intel.com,
+        yung-chuan.liao@linux.intel.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.shevchenko@gmail.com,
+        Cezary Rojewski <cezary.rojewski@intel.com>
+Subject: [PATCH v2 0/2] libfs: Introduce tokenize_user_input()
+Date:   Thu, 25 Aug 2022 18:48:31 +0200
+Message-Id: <20220825164833.3923454-1-cezary.rojewski@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Continuation of recent upstream discussion [1] regarding user string
+tokenization.
 
-Replace the open coded CONFIG_PREEMPT_RT conditional
-preempt_disable/enable() with the new helper.
+First, tokenize_user_input() is introduced to allow for splitting
+specified user string into a sequence of integers. Makes use of
+get_options() internally so the parsing logic is not duplicated.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- fs/dcache.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+With that done, redundant parts of the sound driver are removed.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index bb0c4d0038dbd..2ee8636016ee9 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2597,15 +2597,7 @@ EXPORT_SYMBOL(d_rehash);
-=20
- static inline unsigned start_dir_add(struct inode *dir)
- {
--	/*
--	 * The caller holds a spinlock (dentry::d_lock). On !PREEMPT_RT
--	 * kernels spin_lock() implicitly disables preemption, but not on
--	 * PREEMPT_RT.  So for RT it has to be done explicitly to protect
--	 * the sequence count write side critical section against a reader
--	 * or another writer preempting, which would result in a live lock.
--	 */
--	if (IS_ENABLED(CONFIG_PREEMPT_RT))
--		preempt_disable();
-+	preempt_disable_nested();
- 	for (;;) {
- 		unsigned n =3D dir->i_dir_seq;
- 		if (!(n & 1) && cmpxchg(&dir->i_dir_seq, n, n + 1) =3D=3D n)
-@@ -2618,8 +2610,7 @@ static inline void end_dir_add(struct inode *dir, uns=
-igned int n,
- 			       wait_queue_head_t *d_wait)
- {
- 	smp_store_release(&dir->i_dir_seq, n + 2);
--	if (IS_ENABLED(CONFIG_PREEMPT_RT))
--		preempt_enable();
-+	preempt_enable_nested();
- 	wake_up_all(d_wait);
- }
-=20
---=20
-2.37.2
+Originally similar functionality was added for the SOF sound driver. As
+more users are on the horizon, it is desirable to update existing fs
+code and provide a unified solution.
+
+
+Changes in v2:
+- reused get_options() so no parsing logic is duplicated
+- simplified __user variant with help of memdup_user_nul()
+  Both suggested by Andy, thanks for thourough review
+
+
+[1]: https://lore.kernel.org/alsa-devel/20220707091301.1282291-1-cezary.rojewski@intel.com/
+
+
+Cezary Rojewski (2):
+  libfs: Introduce tokenize_user_input()
+  ASoC: SOF: Remove strsplit_u32() and tokenize_input()
+
+ fs/libfs.c                        | 45 +++++++++++++++
+ include/linux/fs.h                |  1 +
+ sound/soc/sof/sof-client-probes.c | 92 ++++---------------------------
+ 3 files changed, 57 insertions(+), 81 deletions(-)
+
+-- 
+2.25.1
 
