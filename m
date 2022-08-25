@@ -2,194 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 053205A050A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 02:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 260745A055A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 02:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbiHYARV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Aug 2022 20:17:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
+        id S231365AbiHYAtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 20:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiHYART (ORCPT
+        with ESMTP id S231349AbiHYAtQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Aug 2022 20:17:19 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1DC6D559;
-        Wed, 24 Aug 2022 17:17:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9F0D55C167;
-        Thu, 25 Aug 2022 00:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661386636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
-        b=QJuIpxPKfyh2tlQhlVwToDBZZTeevLVIMa4GUkq0MvKSOAYs3AkmuxXPszKu9s/p1RPRDb
-        TfAJ1+TL3nFnoDE+teRnQtl4ti3H+UECG7S+PyOx6OKmCZDEr1NzLaciqxaw/g6ypyez5g
-        xxgVSbdo4p1PZzICsnsrARPfGAkP+HM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661386636;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
-        b=J+HbTfCHYrnr78czRZrbfy8ON9Uv8NH80LcoLBmC/GUseZqk1slWtu2vfxWC9lti3CYJgW
-        c/vID/+Kx2QfKPBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 71D9D13A47;
-        Thu, 25 Aug 2022 00:17:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id I9TiCom/BmM/TgAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 25 Aug 2022 00:17:13 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 24 Aug 2022 20:49:16 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3B1915EA;
+        Wed, 24 Aug 2022 17:49:15 -0700 (PDT)
+Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MCkn960jfznTfr;
+        Thu, 25 Aug 2022 08:46:53 +0800 (CST)
+Received: from dggpemm500014.china.huawei.com (7.185.36.153) by
+ dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 25 Aug 2022 08:49:13 +0800
+Received: from [10.174.178.120] (10.174.178.120) by
+ dggpemm500014.china.huawei.com (7.185.36.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 25 Aug 2022 08:49:12 +0800
+Message-ID: <eb46de08-405b-8e3c-4d06-86d224f12ce7@huawei.com>
+Date:   Thu, 25 Aug 2022 08:49:12 +0800
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Mimi Zohar" <zohar@linux.ibm.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        "Trond Myklebust" <trondmy@hammerspace.com>
-Subject: Re: [PATCH] iversion: update comments with info about atime updates
-In-reply-to: <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
-References: <20220822133309.86005-1-jlayton@kernel.org>,
- <ceb8f09a4cb2de67f40604d03ee0c475feb3130a.camel@linux.ibm.com>,
- <f17b9d627703bee2a7b531a051461671648a9dbd.camel@kernel.org>,
- <18827b350fbf6719733fda814255ec20d6dcf00f.camel@linux.ibm.com>,
- <4cc84440d954c022d0235bf407a60da66a6ccc39.camel@kernel.org>,
- <20220822233231.GJ3600936@dread.disaster.area>,
- <6cbcb33d33613f50dd5e485ecbf6ce7e305f3d6f.camel@kernel.org>,
- <166125468756.23264.2859374883806269821@noble.neil.brown.name>,
- <df469d936b2e1c1a8c9c947896fa8a160f33b0e8.camel@kernel.org>,
- <166129348704.23264.10381335282721356873@noble.neil.brown.name>,
- <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
-Date:   Thu, 25 Aug 2022 10:17:09 +1000
-Message-id: <166138662999.27490.2273361647379875097@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+CC:     <mawupeng1@huawei.com>, <corbet@lwn.net>, <mcgrof@kernel.org>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <songmuchun@bytedance.com>, <mike.kravetz@oracle.com>,
+        <osalvador@suse.de>, <rppt@kernel.org>, <surenb@google.com>,
+        <jsavitz@redhat.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+Subject: Re: [PATCH v2 1/2] mm: Cap zone movable's min wmark to small value
+Content-Language: en-US
+To:     <david@redhat.com>, <akpm@linux-foundation.org>
+References: <20220819093025.105403-1-mawupeng1@huawei.com>
+ <20220819093025.105403-2-mawupeng1@huawei.com>
+ <96433a14-1d2c-739d-95fb-3e3339200dcf@redhat.com>
+From:   mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <96433a14-1d2c-739d-95fb-3e3339200dcf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.178.120]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500014.china.huawei.com (7.185.36.153)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 24 Aug 2022, Jeff Layton wrote:
-> On Wed, 2022-08-24 at 08:24 +1000, NeilBrown wrote:
-> > On Tue, 23 Aug 2022, Jeff Layton wrote:
-> > > On Tue, 2022-08-23 at 21:38 +1000, NeilBrown wrote:
-> > > > On Tue, 23 Aug 2022, Jeff Layton wrote:
-> > > > > So, we can refer to that and simply say:
-> > > > >=20
-> > > > > "If the function updates the mtime or ctime on the inode, then the
-> > > > > i_version should be incremented. If only the atime is being updated,
-> > > > > then the i_version should not be incremented. The exception to this=
- rule
-> > > > > is explicit atime updates via utimes() or similar mechanism, which
-> > > > > should result in the i_version being incremented."
-> > > >=20
-> > > > Is that exception needed? utimes() updates ctime.
-> > > >=20
-> > > > https://man7.org/linux/man-pages/man2/utimes.2.html
-> > > >=20
-> > > > doesn't say that, but
-> > > >=20
-> > > > https://pubs.opengroup.org/onlinepubs/007904875/functions/utimes.html
-> > > >=20
-> > > > does, as does the code.
-> > > >=20
-> > >=20
-> > > Oh, good point! I think we can leave that out. Even better!
-> >=20
-> > Further, implicit mtime updates (file_update_time()) also update ctime.
-> > So all you need is
-> >  If the function updates the ctime, then i_version should be
-> >  incremented.
-> >=20
-> > and I have to ask - why not just use the ctime? Why have another number
-> > that is parallel?
-> >=20
-> > Timestamps are updated at HZ (ktime_get_course) which is at most every
-> > millisecond.
-> > xfs stores nanosecond resolution, so about 20 bits are currently wasted.
-> > We could put a counter like i_version in there that only increments
-> > after it is viewed, then we can get all the precision we need but with
-> > exactly ctime semantics.
-> >=20
-> > The 64 change-id could comprise
-> >  35 bits of seconds (nearly a millenium)
-> >  16 bits of sub-seconds (just in case a higher precision time was wanted
-> >  one day)
-> >  13 bits of counter. - 8192 changes per tick
->=20
-> We'd need a "seen" flag too, so maybe only 4096 changes per tick...
 
-The "seen" flag does not need to be visible to NFSv4.
-Nor does it need to be appear on storage.
 
-Though it may still be easier to include it with the counter bits.
+On 2022/8/24 16:10, David Hildenbrand wrote:
+> On 19.08.22 11:30, Wupeng Ma wrote:
+>> From: Ma Wupeng <mawupeng1@huawei.com>
+>>
+>> Since min_free_kbytes is based on gfp_zone(GFP_USER) which does not include
+>> zone movable. However zone movable will get its min share in
+>> __setup_per_zone_wmarks() which does not make any sense.
+>>
+>> And like highmem pages, __GFP_HIGH and PF_MEMALLOC allocations usually
+>> don't need movable pages, so there is no need to assign min pages for zone
+>> movable.
+>>
+>> Let's cap pages_min for zone movable to a small value here just link
+>> highmem pages.
+>>
+>> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
+>> ---
+>>  mm/page_alloc.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index e5486d47406e..ff644205370f 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -8638,7 +8638,7 @@ static void __setup_per_zone_wmarks(void)
+>>  
+>>  	/* Calculate total number of !ZONE_HIGHMEM pages */
+>>  	for_each_zone(zone) {
+>> -		if (!is_highmem(zone))
+>> +		if (!is_highmem(zone) && zone_idx(zone) != ZONE_MOVABLE)
+>>  			lowmem_pages += zone_managed_pages(zone);
+>>  	}
+>>  
+>> @@ -8648,7 +8648,7 @@ static void __setup_per_zone_wmarks(void)
+>>  		spin_lock_irqsave(&zone->lock, flags);
+>>  		tmp = (u64)pages_min * zone_managed_pages(zone);
+>>  		do_div(tmp, lowmem_pages);
+>> -		if (is_highmem(zone)) {
+>> +		if (is_highmem(zone) || zone_idx(zone) == ZONE_MOVABLE) {
+>>  			/*
+>>  			 * __GFP_HIGH and PF_MEMALLOC allocations usually don't
+>>  			 * need highmem pages, so cap pages_min to a small
+> 
+> This kind-off makes sense to me, but I'm not completely sure about all
+> implications. We most certainly should update the comment as well.
 
->=20
-> >=20
-> > The value exposed in i_ctime would hide the counter and just show the
-> > timestamp portion of what the filesystem stores. This would ensure we
-> > never get changes on different files that happen in one order leaving
-> > timestamps with the reversed order (the timestamps could be the same,
-> > but that is expected).
-> >=20
-> > This scheme could be made to handle a sustained update rate of 1
-> > increment every 8 nanoseconds (if the counter were allowed to overflow
-> > into unused bits of the sub-second field). This is one ever 24 CPU
-> > cycles. Incrementing a counter and making it visible to all CPUs can
-> > probably be done in 24 cycles. Accessing it and setting the "seen" flag
-> > as well might just fit with faster memory. Getting any other useful
-> > work done while maintaining that rate on a single file seems unlikely.
->=20
-> This is an interesting idea.
->=20
-> So, for NFSv4 you'd just mask off the counter bits (and "seen" flag) to
-> get the ctime, and for the change attribute we'd just mask off the
-> "seen" flag and put it all in there.
+Yes, we should certainly do this.
 
-Obviously it isn't just NFSv4 that needs the ctime, it is also the
-vfs...
+Thanks for reviewing.
 
-I imagine that the counter would be separate in the in-memory inode.  It
-would be split out when read from storage, and merge in when written to
-storage.
-
->=20
->  * Implementing that for all filesystems would be a huge project though.
->    If we were implementing the i_version counter from scratch, I'd
->    probably do something along these lines. Given that we already have
->    an existing i_version counter, would there be any real benefit to
->    pursuing this avenue instead?
-
-i_version is currently only supported by btrfs, ext4, and xfs.  Plus
-cephfs which has its own internal ideas.
-So "all filesystems" isn't needed.  Let's just start with xfs.
-
-All we need is for xfs store in ->i_version a value that meets the
-semantics that we specify for ->i_version.
-So we need to change xfs to use somewhere else to store its internal
-counter that is used for forensics, and then arrange that ->i_version
-stores the ctime combined with a counter that resets whenever the ctime
-changes.
-I think most of this would be done in xfs_vn_update_time(), but probably
-some changes would be needed in iversion.h to provide useful support.
-
-If ext4's current use of i_version provides the semantics that we need,
-there would be no need to change it.  Ditto for btrfs.
-
-NeilBrown
+> 
