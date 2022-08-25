@@ -2,144 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97C605A0515
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 02:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 053205A050A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 02:17:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbiHYAPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Aug 2022 20:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48938 "EHLO
+        id S231460AbiHYARV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Aug 2022 20:17:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232058AbiHYAPe (ORCPT
+        with ESMTP id S229504AbiHYART (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Aug 2022 20:15:34 -0400
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13FFD6C75F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 17:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1661386533; x=1692922533;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NQ6YMt/Gh3taRCiJQmF6o9X3VadrlfeoDwP2+Ym6YvI=;
-  b=dskWFTBkGPuqy6TbRW9GMvVdMafsfiTJ4aOKIAnBeNH9sYGUOQYc2KB0
-   nTbmlIrDm0qGdpf5QGbAOw+b1gjRy552NZYLiE1afomDO4lrs41FpF3lv
-   M83qQTZbR3VxV0U6jXlMCbvsSeq/Sxxs5Fv8HolAsy+bBckDYH1yHDTmP
-   ZhoJByUP02vQZQhnF2/7bgjvXcOn2CbJixLBJTZl7Fz7gBcGUo9mE7OYN
-   vz1oEggCxvo4X6WwGHJ6MtbB76pX4EWt7xOza49DogXQVCkTsV7NTJwQG
-   QOMvYX6Vwl6MnvXAxaslWNw9LL8nrCGZdLHz/8CD0iKC7KuN2abIIP2Jx
-   g==;
-X-IronPort-AV: E=Sophos;i="5.93,261,1654531200"; 
-   d="scan'208";a="214736285"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Aug 2022 08:15:32 +0800
-IronPort-SDR: BcslB5rnnV16Q0Mb/KMxft4BoHnGE0TgVyJZkjBhcEsb8axXIAnUNYCJ2z62D4u/AtYAnoKhU+
- fMvKNg5omMkIIkjzHryn3juT9CM2c4Eu4s2N2D21LbEq7TrmWdxbrS3bnIdMkYH7ImYhOw/D2U
- NhRiO4Yss+qXIzSK/7nqwA74FDEAIAgDfj5gUyqqiZNAA1/8F4ns7jkEov73lD0O+L3kcAcOx9
- du32vc7Y1xuS4u+NQOtw23wZ5Nca6CFi3omg8U+Dhus0F8RLCL4aI8UOqwazT+IksEnOji1ISs
- hAIdr+oxbIKHqBNEgRtXUSdR
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Aug 2022 16:30:48 -0700
-IronPort-SDR: inFzYTyeOebPNE+gMcOJJp2qmP6WNp6aaPr2wArp4OwFF1uyLXX/crkBEeVpCeUtgSAAXSIDFL
- gSHcpBorwCqeeWFeSvcyt8dY0eZG8Xd2VurxoRqoM6WTIHGYRGJH4Z9wmMYdKRPLXAidSxeQTJ
- rJbulcc9tx/JMepNK60KV9+VVMRA+Wp2luyqU2GK582l4Ly8OR48Z4Z8A60Ukq+zg1GqsdtyuC
- JXOykbKqaHevfKCPNcmZ+oge7orm9vW6Jmc2vg2dz+dL4qS0RNJhnQ0Oteg9UEAoMMGZueyil5
- 6q0=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Aug 2022 17:15:32 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4MCk501c0Dz1Rwry
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Aug 2022 17:15:32 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1661386531; x=1663978532; bh=NQ6YMt/Gh3taRCiJQmF6o9X3VadrlfeoDwP
-        2+Ym6YvI=; b=f5MKhf91jeWoqx69eVdOIig+38dZxi+8cPTnEjrYiTHKWYrPk+B
-        a5kmyUfMwt6cEXwxmhQk4QvPfXUcoAUSAWGQloBjtsLUEqN8ktQppXAD8ZtClzdE
-        NE1uwE3jShdZDkNxMS0jTSHBnqYOpDEen6hEuUVxAvdlHgFio2LzxtyYeZLBnwvo
-        irB64osQy9PBKQZ/YmKia3WZ18mfysJO5HX2a/s290hL2x5c1bSWYO+t6n9JDRD1
-        oihFUUTCk+/B6eKFKrb96lGnlP3DXrLv14Qmu8tvqBSHNlJ6HxAyKEd8Nt1lte5Y
-        cWcNGao12pCCDQMmnzINr/JEXDp25pWqshQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IwOomX9S1GGd for <linux-fsdevel@vger.kernel.org>;
-        Wed, 24 Aug 2022 17:15:31 -0700 (PDT)
-Received: from [10.89.82.240] (c02drav6md6t.dhcp.fujisawa.hgst.com [10.89.82.240])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4MCk4x5QNsz1RtVk;
-        Wed, 24 Aug 2022 17:15:29 -0700 (PDT)
-Message-ID: <589cb29e-d2aa-085f-db83-fa718f4fbef2@opensource.wdc.com>
-Date:   Wed, 24 Aug 2022 17:15:28 -0700
+        Wed, 24 Aug 2022 20:17:19 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1DC6D559;
+        Wed, 24 Aug 2022 17:17:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9F0D55C167;
+        Thu, 25 Aug 2022 00:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661386636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
+        b=QJuIpxPKfyh2tlQhlVwToDBZZTeevLVIMa4GUkq0MvKSOAYs3AkmuxXPszKu9s/p1RPRDb
+        TfAJ1+TL3nFnoDE+teRnQtl4ti3H+UECG7S+PyOx6OKmCZDEr1NzLaciqxaw/g6ypyez5g
+        xxgVSbdo4p1PZzICsnsrARPfGAkP+HM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661386636;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
+        b=J+HbTfCHYrnr78czRZrbfy8ON9Uv8NH80LcoLBmC/GUseZqk1slWtu2vfxWC9lti3CYJgW
+        c/vID/+Kx2QfKPBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 71D9D13A47;
+        Thu, 25 Aug 2022 00:17:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id I9TiCom/BmM/TgAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 25 Aug 2022 00:17:13 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.12.0
-Subject: Re: [ANNOUNCE] CFP: Zoned Storage Microconference - Linux Plumbers
- Conference 2022
-Content-Language: en-US
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "hare@suse.de" <hare@suse.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        Matias Bjorling <Matias.Bjorling@wdc.com>
-References: <CGME20220522220139uscas1p1e3426b4457e0753c701e9917fe3ec6d2@uscas1p1.samsung.com>
- <20220522220128.GA347919@bgt-140510-bm01>
- <89b2bb4b-1848-22cc-9814-6cb6726afc18@acm.org>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <89b2bb4b-1848-22cc-9814-6cb6726afc18@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Dave Chinner" <david@fromorbit.com>,
+        "Mimi Zohar" <zohar@linux.ibm.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org,
+        "Trond Myklebust" <trondmy@hammerspace.com>
+Subject: Re: [PATCH] iversion: update comments with info about atime updates
+In-reply-to: <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
+References: <20220822133309.86005-1-jlayton@kernel.org>,
+ <ceb8f09a4cb2de67f40604d03ee0c475feb3130a.camel@linux.ibm.com>,
+ <f17b9d627703bee2a7b531a051461671648a9dbd.camel@kernel.org>,
+ <18827b350fbf6719733fda814255ec20d6dcf00f.camel@linux.ibm.com>,
+ <4cc84440d954c022d0235bf407a60da66a6ccc39.camel@kernel.org>,
+ <20220822233231.GJ3600936@dread.disaster.area>,
+ <6cbcb33d33613f50dd5e485ecbf6ce7e305f3d6f.camel@kernel.org>,
+ <166125468756.23264.2859374883806269821@noble.neil.brown.name>,
+ <df469d936b2e1c1a8c9c947896fa8a160f33b0e8.camel@kernel.org>,
+ <166129348704.23264.10381335282721356873@noble.neil.brown.name>,
+ <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
+Date:   Thu, 25 Aug 2022 10:17:09 +1000
+Message-id: <166138662999.27490.2273361647379875097@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/08/24 16:43, Bart Van Assche wrote:
-> On 5/22/22 15:01, Adam Manzanares wrote:
->> Zoned Storage Devices (SMR HDDs and ZNS SSDs) have demonstrated that they can
->> improve storage capacity, throughput, and latency over conventional storage
->> devices for many workloads. Zoned storage technology is deployed at scale in
->> some of the largest data centers in the world. There's already a
->> well-established set of storage vendors with increasing device availability and
->> a mature software foundation for interacting with zoned storage devices is
->> available. Zoned storage software support is evolving and their is room for
->> increased file-system support and additional userspace applications.
->>
->> The Zoned Storage microconference focuses on evolving the Linux zoned
->> storage ecosystem by improving kernel support, file systems, and applications.
->> In addition, the forum allows us to open the discussion to incorporate and grow
->> the zoned storage community making sure to meet everyone's needs and
->> expectations. Finally, it is an excellent opportunity for anyone interested in
->> zoned storage devices to meet and discuss how we can move the ecosystem forward
->> together.
-> 
-> Hi Adam,
-> 
-> On https://lpc.events/event/16/contributions/1147/ I see four speakers 
-> but no agenda? Will an agenda be added before the microconference starts?
+On Wed, 24 Aug 2022, Jeff Layton wrote:
+> On Wed, 2022-08-24 at 08:24 +1000, NeilBrown wrote:
+> > On Tue, 23 Aug 2022, Jeff Layton wrote:
+> > > On Tue, 2022-08-23 at 21:38 +1000, NeilBrown wrote:
+> > > > On Tue, 23 Aug 2022, Jeff Layton wrote:
+> > > > > So, we can refer to that and simply say:
+> > > > >=20
+> > > > > "If the function updates the mtime or ctime on the inode, then the
+> > > > > i_version should be incremented. If only the atime is being updated,
+> > > > > then the i_version should not be incremented. The exception to this=
+ rule
+> > > > > is explicit atime updates via utimes() or similar mechanism, which
+> > > > > should result in the i_version being incremented."
+> > > >=20
+> > > > Is that exception needed? utimes() updates ctime.
+> > > >=20
+> > > > https://man7.org/linux/man-pages/man2/utimes.2.html
+> > > >=20
+> > > > doesn't say that, but
+> > > >=20
+> > > > https://pubs.opengroup.org/onlinepubs/007904875/functions/utimes.html
+> > > >=20
+> > > > does, as does the code.
+> > > >=20
+> > >=20
+> > > Oh, good point! I think we can leave that out. Even better!
+> >=20
+> > Further, implicit mtime updates (file_update_time()) also update ctime.
+> > So all you need is
+> >  If the function updates the ctime, then i_version should be
+> >  incremented.
+> >=20
+> > and I have to ask - why not just use the ctime? Why have another number
+> > that is parallel?
+> >=20
+> > Timestamps are updated at HZ (ktime_get_course) which is at most every
+> > millisecond.
+> > xfs stores nanosecond resolution, so about 20 bits are currently wasted.
+> > We could put a counter like i_version in there that only increments
+> > after it is viewed, then we can get all the precision we need but with
+> > exactly ctime semantics.
+> >=20
+> > The 64 change-id could comprise
+> >  35 bits of seconds (nearly a millenium)
+> >  16 bits of sub-seconds (just in case a higher precision time was wanted
+> >  one day)
+> >  13 bits of counter. - 8192 changes per tick
+>=20
+> We'd need a "seen" flag too, so maybe only 4096 changes per tick...
 
-And the speaker list is not up-to-date either. I am a speaker too :)
+The "seen" flag does not need to be visible to NFSv4.
+Nor does it need to be appear on storage.
 
-> 
-> Thanks,
-> 
-> Bart.
+Though it may still be easier to include it with the counter bits.
 
+>=20
+> >=20
+> > The value exposed in i_ctime would hide the counter and just show the
+> > timestamp portion of what the filesystem stores. This would ensure we
+> > never get changes on different files that happen in one order leaving
+> > timestamps with the reversed order (the timestamps could be the same,
+> > but that is expected).
+> >=20
+> > This scheme could be made to handle a sustained update rate of 1
+> > increment every 8 nanoseconds (if the counter were allowed to overflow
+> > into unused bits of the sub-second field). This is one ever 24 CPU
+> > cycles. Incrementing a counter and making it visible to all CPUs can
+> > probably be done in 24 cycles. Accessing it and setting the "seen" flag
+> > as well might just fit with faster memory. Getting any other useful
+> > work done while maintaining that rate on a single file seems unlikely.
+>=20
+> This is an interesting idea.
+>=20
+> So, for NFSv4 you'd just mask off the counter bits (and "seen" flag) to
+> get the ctime, and for the change attribute we'd just mask off the
+> "seen" flag and put it all in there.
 
--- 
-Damien Le Moal
-Western Digital Research
+Obviously it isn't just NFSv4 that needs the ctime, it is also the
+vfs...
+
+I imagine that the counter would be separate in the in-memory inode.  It
+would be split out when read from storage, and merge in when written to
+storage.
+
+>=20
+>  * Implementing that for all filesystems would be a huge project though.
+>    If we were implementing the i_version counter from scratch, I'd
+>    probably do something along these lines. Given that we already have
+>    an existing i_version counter, would there be any real benefit to
+>    pursuing this avenue instead?
+
+i_version is currently only supported by btrfs, ext4, and xfs.  Plus
+cephfs which has its own internal ideas.
+So "all filesystems" isn't needed.  Let's just start with xfs.
+
+All we need is for xfs store in ->i_version a value that meets the
+semantics that we specify for ->i_version.
+So we need to change xfs to use somewhere else to store its internal
+counter that is used for forensics, and then arrange that ->i_version
+stores the ctime combined with a counter that resets whenever the ctime
+changes.
+I think most of this would be done in xfs_vn_update_time(), but probably
+some changes would be needed in iversion.h to provide useful support.
+
+If ext4's current use of i_version provides the semantics that we need,
+there would be no need to change it.  Ditto for btrfs.
+
+NeilBrown
