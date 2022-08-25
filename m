@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35A2F5A0A02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 09:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4435A0A0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 09:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237489AbiHYHVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 03:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38200 "EHLO
+        id S236828AbiHYHW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 03:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237341AbiHYHV0 (ORCPT
+        with ESMTP id S233647AbiHYHW6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 03:21:26 -0400
+        Thu, 25 Aug 2022 03:22:58 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B87696DA;
-        Thu, 25 Aug 2022 00:21:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF83A1D31;
+        Thu, 25 Aug 2022 00:22:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BBACB619CC;
-        Thu, 25 Aug 2022 07:21:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4619DC433C1;
-        Thu, 25 Aug 2022 07:21:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E641561901;
+        Thu, 25 Aug 2022 07:22:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3630C433C1;
+        Thu, 25 Aug 2022 07:22:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1661412083;
-        bh=9udJCAgNHvS41DLCf14O6mR9ebvxwpEYWnWLv9uTcMo=;
+        s=korg; t=1661412176;
+        bh=FZL6dNpPI/YKsRnZLNyMo4D7gdJtSXb/mNkH8Nlircs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0KAAhJPpLLzcVvWyCncSp4hb8RkfzPchoc0cSnYqQfE1si7KR47q9CpBG1ZjMM5e7
-         b0mgVHVpi8YqqGufROcBxn5gBlfGnDAVq9y8mpeCaCX/4bweKKt7NGFWYNbpbFXPuK
-         9nKI5kusVJo9xotOEeV+pXeYaITVvS+9GJ1JFUSY=
-Date:   Thu, 25 Aug 2022 09:21:19 +0200
+        b=Ha5zOtk0AvY7x3EA510ExFs2Re0tF/qCrDWbj8ScuZmL1dRJ/pCwzPTJ1HofG6kaL
+         LwrifvXSDr2EJZFsFOq5BYmD3ZPtJhQA9mz12KYgxwET8INYKABD3MDe3a9iWm1oNG
+         U0gz1uULE3YJPQ679T93gSvpNaY1U4yRiXxd6ONs=
+Date:   Thu, 25 Aug 2022 09:22:52 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -44,7 +44,7 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         <linux-kselftest@vger.kernel.org>, kernel@collabora.com
 Subject: Re: [PATCH v2 2/4] fs/proc/task_mmu: Implement IOCTL to get and
  clear soft dirty PTE bit
-Message-ID: <Ywci73JxlWGCMnrK@kroah.com>
+Message-ID: <YwcjTOgKD22TXwYk@kroah.com>
 References: <20220825070926.2922471-1-usama.anjum@collabora.com>
  <20220825070926.2922471-3-usama.anjum@collabora.com>
 MIME-Version: 1.0
@@ -62,26 +62,17 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Aug 25, 2022 at 12:09:24PM +0500, Muhammad Usama Anjum wrote:
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index b7b56871029c..a7e48ba9457b 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -305,4 +305,17 @@ typedef int __bitwise __kernel_rwf_t;
->  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
->  			 RWF_APPEND)
->  
-> +struct pagemap_sd_args {
-> +	void __user *start;
-> +	int len;
+> - The flags can be specified in the flags field. Currently only one
+>   PAGEMAP_SD_NO_REUSED_REGIONS is supported which can be specified to
+>   ignore the VMA dirty flags.
 
-"int" is not a valid type to cross the user/kernel boundry, sorry.
-Please be explicit here (__u64?  __u32?)
+You forgot to check that all other bits in that flag are set to 0
+properly, otherwise you can never add a new bit to the field ever as you
+can't expect userspace got it right and did not accidentaly set it
+already.
 
-> +	loff_t __user *vec;
-> +	int vec_len;
-> +	int flags;
-
-Same with these.
+There is kernel documentation on how to add a new ioctl, you might want
+to read up on that first before resending this.
 
 thanks,
 
