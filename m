@@ -2,256 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 625E05A100F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 14:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E9E5A1270
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Aug 2022 15:37:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241363AbiHYMMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 08:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54892 "EHLO
+        id S240447AbiHYNhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 09:37:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241358AbiHYMMG (ORCPT
+        with ESMTP id S229657AbiHYNhB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 08:12:06 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32208A61EC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Aug 2022 05:12:04 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id x63-20020a17090a6c4500b001fabbf8debfso4720019pjj.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Aug 2022 05:12:04 -0700 (PDT)
+        Thu, 25 Aug 2022 09:37:01 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F0CB2499;
+        Thu, 25 Aug 2022 06:37:00 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27PD9Po5004590;
+        Thu, 25 Aug 2022 13:36:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2022-7-12;
+ bh=tSrn+HliidosAeKxrDT4IN3ULs6iPW7RaGjrBgaIun0=;
+ b=npesD+1qcvlM4sNsaLVHK3lRf4WSIaz8qMHW2h1RpKwZEcHSGn0sjUn4SjlcEXes7pwh
+ 7wShBQOpDa622abGzIC9DYG6xda+P2ToAoiqFOhddx/oemvpzSnC7uEYzO8zwtOMQjXX
+ bgMak9x8Ag1NVIQWPrFaO6PKonWDDc/PrUkkt9n9/fMAFkmPjWhsvlvXMZwRgc6C3zeS
+ aNAf5mBoUhjll52Uf+/AKE1oVPrFTnMIJaLF/D9CAzTRxGaOffa5AAEqwc0XeulGlqMu
+ JSDY/lsiqeicrsi8gRBAvh8cErYNHgYRZ1SmqfWtgNhTVmwHQ6MFLAempwcx4Dz5vbpD 4w== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3j55nycv0v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Aug 2022 13:36:45 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 27PBEBkA021748;
+        Thu, 25 Aug 2022 13:36:44 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2177.outbound.protection.outlook.com [104.47.57.177])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3j5n5pax7x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Aug 2022 13:36:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YTYv4jk6+R8QQpmJ2gLk3ke2usS01+O7WVRngvkpb1m1Q6Se/q3Kfr5mMXIO15WWw6illQqfXrwvLeUe/v06cFf3PUCkCSy69NoL0qyK3KQ+K4hs3x38y8GhMvVgScCYwMGn8RAGOH/FXZQwUzDPdbvzU7LO3rfdqSHHv9H5+zFcjPJzkiUbWOnM4G2Sp4nH6M5CHTsU2mmHtyVTD+82D71LLeutP+NxFqgb6vDgZd3eK3Bu4K+WFiE+E3mP2MVfp9bAQQPksw+kG5h0qozPOKFqG1068CO5noxHSgaaAvj8TqWbLMaeUvH7Hq9erqjWQy8VlwtJ7h1+hznZvGUL+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tSrn+HliidosAeKxrDT4IN3ULs6iPW7RaGjrBgaIun0=;
+ b=cLYZTkobfFgwRPV/IAYi3cZywPk8s2GYnCEu9V4ld+MdsNdH8uuyPlrwNTQ4H3tJj5zAmvfF4s9hIw7+hpCj2bii8S0OZwADUqgiZDzbArduw22YiOOWgVdXtgLmUIHxXa26r+CpsPqVky3ubVCTFKoPkWj9AHx09q0B9+MDAvSNZIjMeMHc9iwna+QIyLkKMsVZMJgAJS5Ok5/0YPLm4hJnfxSuigEt2RfGO3vxX4xN1kAHlwaKjB093ae/IAT0bkXHNs/XyyFSXJPRyYqanLZ4CDYA7YL8SZU7j4yarMZRZ8NVlKvtQn7HObdZc+J73wy3ioxFESVA+/Au/g7OQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=Ru17QDTLZvKnteLwuwlcrhPpoXkw+kU/p+9HVxWpvik=;
-        b=ddXRGumEtI5cvbDqla6xXpQt/f+vJ4upmi9506EMxPBgan3p/dL5rC2hLdofmquSQ7
-         uqFbKf8QYNW8XLU2MD2MC/TYwg5fXQNid8nSQLg6IBLCm/zAXE0TQ8n8l05yAOjRyl55
-         k4AyKQTag/PdpGM6VOVlINWxo8lnOMVoa5qc9XsWVCeeKM3XwNFFRQf5o2jVGYCyo/yH
-         icBETHtiPWyoNGXlaeRC4VjpVJTlOkkILZHVP/jMaxvwnk3X/ngxsMRdSf2EtXtlLOA1
-         iun+FIXvjVwQn5JUBXNhBkdCiKGJFR5/hcToNIhDJn2WzDeXk3daicN7+HsfClbl+E69
-         Ef/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=Ru17QDTLZvKnteLwuwlcrhPpoXkw+kU/p+9HVxWpvik=;
-        b=bURDbFFizXqFOk5HU3yE0jH8o5ltWVYXX0OkXsxqaercd2w0Od3X6cRqlbdcO30U2l
-         U1zzT5hg4Njh7h1fZISvNciILNaWP1milC3NXVv1cmhRJNeCjT4f8UmxbszFnORhtUP2
-         kaQFpACH9Q/D9TctgqskqWcCow5wHbQfPw305rxxCLN+7LzZNFU1p1qBAPpI0MYZyaKA
-         Shos7WnfKHlxHF2dOwAhxti+6UfzZggv0frtz+JteMnfBpauzOO/WEm00tETUx/ZO3yw
-         rpG3W+xvJfnYG6AYJfo9e8R6vL7Urr/LK6OR7owRoA7bkPb1nR2AkPBryYYo0VLBP/0C
-         bqKQ==
-X-Gm-Message-State: ACgBeo0YJGF94OXDzKWfAiHALx9mAjasV3fH33mh66vv3mkegRxzJPbE
-        X2bRsrYVO4xEd9G+2G7dOiUn0g==
-X-Google-Smtp-Source: AA6agR40vL7N5tG6TitaeoauM03j2rAqbHCgyVmBp2OtC3EIGiiNiDlYKH+Vi6GkjfM5KiOqfDx18w==
-X-Received: by 2002:a17:902:dac7:b0:172:e189:f717 with SMTP id q7-20020a170902dac700b00172e189f717mr3803922plx.129.1661429523649;
-        Thu, 25 Aug 2022 05:12:03 -0700 (PDT)
-Received: from [10.254.35.15] ([139.177.225.236])
-        by smtp.gmail.com with ESMTPSA id z17-20020aa79591000000b0052aaff953aesm15137111pfj.115.2022.08.25.05.12.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Aug 2022 05:12:03 -0700 (PDT)
-Message-ID: <42d482dc-be96-a624-2ecf-3d22f5baed1c@bytedance.com>
-Date:   Thu, 25 Aug 2022 20:11:57 +0800
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tSrn+HliidosAeKxrDT4IN3ULs6iPW7RaGjrBgaIun0=;
+ b=wRAKZmZi/vtUlapufSz8aKDGxDZaKV6i6aHzgOkFoSBZ8mYQewm39q9TnrIMSr5sGtQuH5ChWUUp1eqlLgQAJnjxJsJ5QH90/pJrFC+7O1h3vlupsZ0AwNhPdAsLky58GZxA5AIatktdfDTU6H0sx60MCh1qCaqKRpP2qeJT6No=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CY4PR10MB1957.namprd10.prod.outlook.com
+ (2603:10b6:903:127::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14; Thu, 25 Aug
+ 2022 13:36:42 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::209e:de4d:68ea:c026]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::209e:de4d:68ea:c026%3]) with mapi id 15.20.5546.024; Thu, 25 Aug 2022
+ 13:36:42 +0000
+Date:   Thu, 25 Aug 2022 16:36:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     David Howells <dhowells@redhat.com>, Sun Ke <sunke32@huawei.com>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] cachefiles: fix error return code in
+ cachefiles_ondemand_copen()
+Message-ID: <20220825133620.GB2071@kadam>
+References: <20220818125038.2247720-1-sunke32@huawei.com>
+ <3700079.1661336363@warthog.procyon.org.uk>
+ <c6fd70dd-2b0b-ea9f-f0f8-9d727cde2718@linux.alibaba.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6fd70dd-2b0b-ea9f-f0f8-9d727cde2718@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0072.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4f::23)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.1.2
-Subject: Re: [PATCH 4/7] kernfs: Skip kernfs_drain_open_files() more
- aggressively
-Content-Language: en-US
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Imran Khan <imran.f.khan@oracle.com>, kernel-team@fb.com
-References: <20220820000550.367085-1-tj@kernel.org>
- <20220820000550.367085-5-tj@kernel.org>
-From:   Chengming Zhou <zhouchengming@bytedance.com>
-In-Reply-To: <20220820000550.367085-5-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f963b080-6aa8-4897-599c-08da869ed763
+X-MS-TrafficTypeDiagnostic: CY4PR10MB1957:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ESa3BahihUCpZhb0Lpt54ipEmAGtjyoaYuGI47bmJkVzzRBAr+pjTNi1wVbRv3qyJUQP73ggldcjglgSRgRoPyKxPEvmIClGPKEJosBd50wAu6QBQA08txA5cpCS1iNg5JoFVhEC0lEg3zPnxT6bqYnRmKwLrgCuLVxLvCaraoq4ScDF3ZIqMFgQ0/1ssVcgz8ZdVkd4xRx/eesRN0s00vkSU6TD4bwAj7r9ZIy4woDwuRgn9hZMkKF6gTNkK+GXvMydlrbVyZeDCacXv1OAavVA62ZL6EusRHZ01ovGVcebZMXMBh7EyLWp+sb5phpX2LB1tP+HULpje1ywyiDgEbIyLYc/DeIbNmWtlOmYh5V9RN8miq5g37iqJ6JVnNKqs6qhFwDU/b0LaaNaVrDEZ5RfKFoA5L8Xplg5iVCYZfDo8mhHss2oZGRk7JkYahyLJo/RY+3FBYh9l6L3R/cu/D3Yuv2YtxoG2v70vEzCsO1vCeg3JOIhsITy8YrFtzPgOzKUl30158IDU59rlsc4Qdrvqtw+bZmWoi7FyOEx4zWYIvI5UlYUcC1xiS7/kFvqtxpGclS2d+S5pk/Pcs/OrDCWlbkPbqhTDngFA4KvuM4f2emK3zCOsBAXEFHPjYTTN2YU9wd3LolnEiV1HF7IzfeyInNdYXgdZ+DhJztxCD+h2xu6BVXbIIo7FZW0Nh83fpYPeHwrEfGAu+sVzwoIVSAQP2rlv+Hcqsz1kyPMA91bwLFquCgCPvtyikJaXE+RfYs1nte5b9qs8yTM3JwFmA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(396003)(346002)(366004)(39860400002)(136003)(376002)(33656002)(86362001)(38100700002)(6486002)(52116002)(83380400001)(478600001)(6512007)(186003)(41300700001)(9686003)(6666004)(26005)(6506007)(38350700002)(6916009)(33716001)(316002)(8676002)(5660300002)(66476007)(54906003)(1076003)(66556008)(2906002)(66946007)(8936002)(44832011)(4326008)(4744005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xamxPXlmRb05EiOU/LHJl14sDwrMDAUbSFyjZCJ37zFr2YSjT6PLQwyTMeHX?=
+ =?us-ascii?Q?hDK9wWPY1bmQSLECDQo31U7xYe8DPEULgY/Yee+aH89sxtvHpQUCUrE1dOXU?=
+ =?us-ascii?Q?O/SEwtX4LqQppmbBeRlSYajLM9R7yr7mmgy61GkCJLKYWncC2C8odhP3WiF4?=
+ =?us-ascii?Q?VyBMmxwFMI9EhlJbBoSsTlC0VopCgcodj7QTqsdyjSTHCRZe1z0htCqhvYkz?=
+ =?us-ascii?Q?b3JFOohVLHcVlb1MoQt5a9emVe3fetHktl2WmxdJP8rTXqyOFpo31K1Ex57d?=
+ =?us-ascii?Q?LavLFo9Jo6B/C42aiwr2DFMCrv9X7CXVvLn4Q71RbewkHQTgKAvVu9PRT/X4?=
+ =?us-ascii?Q?R0aYq00CRH6DNK99JfEOE1Vh5iZeeleVkjDBQ++mfJtzUIEESgmie7mG1Nm1?=
+ =?us-ascii?Q?36FPh4r6zQHpeZc06hFfQX3EeKtZoelZ5Ug6JUr9qf/BrVcFa3+qyEZi8hNJ?=
+ =?us-ascii?Q?+4JYFHO2oAzLy3OuIwCbQpJrCzOZqN3Kp03PWhMNxefVN10NZ73lj+Ezojlw?=
+ =?us-ascii?Q?6sAUxIKMxkQjqma8sgkmJUFZiSsmK3OwzZKw4LmNIScOfZIyyR4+MteuvR9N?=
+ =?us-ascii?Q?5KUgwMJ8Hihg66s/TvIiMqGgbI0kp6GZ2oU92uuNpUxlja3Ta73TM/wPziuU?=
+ =?us-ascii?Q?nEIgA/wglX1DoNdXg4G0Ia6SXvhWi/jefyr39hD0y7KhNt6lor0s6YqFQS7N?=
+ =?us-ascii?Q?rdvDfQdvdSrcHdZv4axMOsRWPi9kX0miPeIDdccCw3ouZw/pGK1ix2YHSh2W?=
+ =?us-ascii?Q?mrJtPqVtD4nXOeueWbWfiwyozjs/QyYxPASl7uBtWwButHJMS+t7emeh2Jjx?=
+ =?us-ascii?Q?Wvo1CodnissAq6xdSha9Mr5ln0Q4Dj7fxMq2zjbyFYxPHAU6jSgHEonIX2Za?=
+ =?us-ascii?Q?pyuo+Qxdww3mNHucP0kT1iwhlmrbFilMPJIJdalues77QgSV178noSYaX1n2?=
+ =?us-ascii?Q?u80hFtU0tFjutUZhs2ORL+pSAMLW9550bBDztj3Qmr7wQJl+n/+Sd+KHJ59S?=
+ =?us-ascii?Q?QdEeqUh3qFg+S2JrkVazvwsMy34IJIKXo25jjWQqssv+h4X/n8e+xHkao0VP?=
+ =?us-ascii?Q?CnefgWm4rg9Jq7XXNRV4Rs6ffzsKzYZpNWb6QaDhM94C8E1KANkpBrpquZIv?=
+ =?us-ascii?Q?/icWk98uRAsiGRTGM5V3IVW1H0rLStPvGgXRkaOdwYaQ7kSkrY7MrAOazNU3?=
+ =?us-ascii?Q?N+zJNaHw5fFgwgKSINSfKSHWTdYW6eDaVdwdLjHgZ5A+P+8OT0W7ApwK+LQ5?=
+ =?us-ascii?Q?W0K66jvGyMjkT/bm2R16qqOaMDW8qxFwiOzT3jj/1i/kJeVDqnfXSX0NDUFX?=
+ =?us-ascii?Q?/FknZoYlpuMBxg4GahUqOcJqE0LMFfMH1aE/IBMpOcAuwqC8RJc1eOkbLJSx?=
+ =?us-ascii?Q?tcSpqN1DjGd4ItZXwqBZ3U2+F0HpNYr51gxkAZv62qj8FVEWmAvKpOmNObEh?=
+ =?us-ascii?Q?/D3VNVonpwEvu7UkOL0xeKD+s+blg+cxgzcN+jrydDoARhwOj3J4vzvcqyqw?=
+ =?us-ascii?Q?kw8k4zWiPdOeFKRw+yBcU3a7jDXOkUMLc+sispXDrtYDDVLvKOuDXzJDoCHF?=
+ =?us-ascii?Q?dUNuRnQtntiRzNSU3Rnns3hU+QJMBB7kK8EGpOn9JEgXtt4s77Rf0ZfUkWWc?=
+ =?us-ascii?Q?Rg=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f963b080-6aa8-4897-599c-08da869ed763
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2022 13:36:42.4630
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eDEuHUopfsypHcaNFwgG0u+HyrGbwCdeFu05JxdUmFbEVzlOi1nFrJaOnaSALcLh6tcaIb9GspHctJdXLnQiVAGxtcT7HRMgxEsutb4SpCI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1957
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-25_05,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208250051
+X-Proofpoint-ORIG-GUID: tNUt_tbhSYzIjonqQY57M3xJBJ1lxwCg
+X-Proofpoint-GUID: tNUt_tbhSYzIjonqQY57M3xJBJ1lxwCg
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/8/20 08:05, Tejun Heo wrote:
-> Track the number of mmapped files and files that need to be released and
-> skip kernfs_drain_open_file() if both are zero, which are the precise
-> conditions which require draining open_files. The early exit test is
-> factored into kernfs_should_drain_open_files() which is now tested by
-> kernfs_drain_open_files()'s caller - kernfs_drain().
-> 
-> This isn't a meaningful optimization on its own but will enable future
-> stand-alone kernfs_deactivate() implementation.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
->  fs/kernfs/dir.c             |  3 ++-
->  fs/kernfs/file.c            | 51 +++++++++++++++++++++++++------------
->  fs/kernfs/kernfs-internal.h |  1 +
->  3 files changed, 38 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> index 1cc88ba6de90..8ae44db920d4 100644
-> --- a/fs/kernfs/dir.c
-> +++ b/fs/kernfs/dir.c
-> @@ -489,7 +489,8 @@ static void kernfs_drain(struct kernfs_node *kn)
->  		rwsem_release(&kn->dep_map, _RET_IP_);
->  	}
->  
-> -	kernfs_drain_open_files(kn);
-> +	if (kernfs_should_drain_open_files(kn))
-> +		kernfs_drain_open_files(kn);
->  
->  	down_write(&root->kernfs_rwsem);
->  }
-> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-> index 7060a2a714b8..b510589af427 100644
-> --- a/fs/kernfs/file.c
-> +++ b/fs/kernfs/file.c
-> @@ -23,6 +23,8 @@ struct kernfs_open_node {
->  	atomic_t		event;
->  	wait_queue_head_t	poll;
->  	struct list_head	files; /* goes through kernfs_open_file.list */
-> +	unsigned int		nr_mmapped;
-> +	unsigned int		nr_to_release;
->  };
->  
->  /*
-> @@ -527,6 +529,7 @@ static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
->  
->  	rc = 0;
->  	of->mmapped = true;
-> +	of_on(of)->nr_mmapped++;
->  	of->vm_ops = vma->vm_ops;
->  	vma->vm_ops = &kernfs_vm_ops;
->  out_put:
-> @@ -574,6 +577,8 @@ static int kernfs_get_open_node(struct kernfs_node *kn,
->  	}
+I spent a long time looking at this as well...  It's really inscrutable
+code.  It would be more readable if we just spelled things out in the
+most pedantic way possible:
 
-The current code use kmalloc() to alloc kernfs_open_node, leave nr_to_release and
-nr_mmapped uninitialized.
+diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+index 1fee702d5529..7e1586bd5cf3 100644
+--- a/fs/cachefiles/ondemand.c
++++ b/fs/cachefiles/ondemand.c
+@@ -158,9 +158,13 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+ 
+ 	/* fail OPEN request if daemon reports an error */
+ 	if (size < 0) {
+-		if (!IS_ERR_VALUE(size))
+-			size = -EINVAL;
+-		req->error = size;
++		if (!IS_ERR_VALUE(size)) {
++			req->error = -EINVAL;
++			ret = -EINVAL;
++		} else {
++			req->error = size;
++			ret = 0;
++		}
+ 		goto out;
+ 	}
+ 
 
-Found by below stress test:
-
-```
-cd /sys/fs/cgroup
-
-while true; do echo 0 > cgroup.pressure; echo 1 > cgroup.pressure; done
-
-while true; do cat *.pressure; done
-
-```
-
-Thanks.
-
->  
->  	list_add_tail(&of->list, &on->files);
-> +	if (kn->flags & KERNFS_HAS_RELEASE)
-> +		on->nr_to_release++;
->  
->  	mutex_unlock(mutex);
->  	return 0;
-> @@ -606,8 +611,12 @@ static void kernfs_unlink_open_file(struct kernfs_node *kn,
->  		return;
->  	}
->  
-> -	if (of)
-> +	if (of) {
-> +		WARN_ON_ONCE((kn->flags & KERNFS_HAS_RELEASE) && !of->released);
-> +		if (of->mmapped)
-> +			on->nr_mmapped--;
->  		list_del(&of->list);
-> +	}
->  
->  	if (list_empty(&on->files)) {
->  		rcu_assign_pointer(kn->attr.open, NULL);
-> @@ -766,6 +775,7 @@ static void kernfs_release_file(struct kernfs_node *kn,
->  		 */
->  		kn->attr.ops->release(of);
->  		of->released = true;
-> +		of_on(of)->nr_to_release--;
->  	}
->  }
->  
-> @@ -790,25 +800,30 @@ static int kernfs_fop_release(struct inode *inode, struct file *filp)
->  	return 0;
->  }
->  
-> -void kernfs_drain_open_files(struct kernfs_node *kn)
-> +bool kernfs_should_drain_open_files(struct kernfs_node *kn)
->  {
->  	struct kernfs_open_node *on;
-> -	struct kernfs_open_file *of;
-> -	struct mutex *mutex;
-> -
-> -	if (!(kn->flags & (KERNFS_HAS_MMAP | KERNFS_HAS_RELEASE)))
-> -		return;
-> +	bool ret;
->  
->  	/*
-> -	 * lockless opportunistic check is safe below because no one is adding to
-> -	 * ->attr.open at this point of time. This check allows early bail out
-> -	 * if ->attr.open is already NULL. kernfs_unlink_open_file makes
-> -	 * ->attr.open NULL only while holding kernfs_open_file_mutex so below
-> -	 * check under kernfs_open_file_mutex_ptr(kn) will ensure bailing out if
-> -	 * ->attr.open became NULL while waiting for the mutex.
-> +	 * @kn being deactivated guarantees that @kn->attr.open can't change
-> +	 * beneath us making the lockless test below safe.
->  	 */
-> -	if (!rcu_access_pointer(kn->attr.open))
-> -		return;
-> +	WARN_ON_ONCE(atomic_read(&kn->active) != KN_DEACTIVATED_BIAS);
-> +
-> +	rcu_read_lock();
-> +	on = rcu_dereference(kn->attr.open);
-> +	ret = on && (on->nr_mmapped || on->nr_to_release);
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-> +
-> +void kernfs_drain_open_files(struct kernfs_node *kn)
-> +{
-> +	struct kernfs_open_node *on;
-> +	struct kernfs_open_file *of;
-> +	struct mutex *mutex;
->  
->  	mutex = kernfs_open_file_mutex_lock(kn);
->  	on = kernfs_deref_open_node_locked(kn);
-> @@ -820,13 +835,17 @@ void kernfs_drain_open_files(struct kernfs_node *kn)
->  	list_for_each_entry(of, &on->files, list) {
->  		struct inode *inode = file_inode(of->file);
->  
-> -		if (kn->flags & KERNFS_HAS_MMAP)
-> +		if (of->mmapped) {
->  			unmap_mapping_range(inode->i_mapping, 0, 0, 1);
-> +			of->mmapped = false;
-> +			on->nr_mmapped--;
-> +		}
->  
->  		if (kn->flags & KERNFS_HAS_RELEASE)
->  			kernfs_release_file(kn, of);
->  	}
->  
-> +	WARN_ON_ONCE(on->nr_mmapped || on->nr_to_release);
->  	mutex_unlock(mutex);
->  }
->  
-> diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-> index 3ae214d02d44..fc5821effd97 100644
-> --- a/fs/kernfs/kernfs-internal.h
-> +++ b/fs/kernfs/kernfs-internal.h
-> @@ -157,6 +157,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
->   */
->  extern const struct file_operations kernfs_file_fops;
->  
-> +bool kernfs_should_drain_open_files(struct kernfs_node *kn);
->  void kernfs_drain_open_files(struct kernfs_node *kn);
->  
->  /*
