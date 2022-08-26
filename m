@@ -2,215 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 956485A2C10
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 18:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3B35A2CC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 18:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245728AbiHZQLa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 12:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41604 "EHLO
+        id S1343731AbiHZQvQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 12:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245404AbiHZQL2 (ORCPT
+        with ESMTP id S1344919AbiHZQug (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 12:11:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E80BFEAA;
-        Fri, 26 Aug 2022 09:11:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9393F61536;
-        Fri, 26 Aug 2022 16:11:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7A72C433C1;
-        Fri, 26 Aug 2022 16:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661530286;
-        bh=JSeMen8SetgWyHW9e0jV2DvDLj+pOkxKSayMoGi2e7M=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=JAJyeSeQMsj05NnaiNlJEY8zKuT087qXYlEbXu5tbK4FEH+THb50YRtWyV4EkKMiu
-         4qult11Xx0E/ft/MBdhoUGyH4hTbVTOyazrMgE8MmEwpkzgSFlYBw2H9yXS4Qpvf6X
-         czPkD1sieO4aNyuuKNJP8pFDAoR+fAh7SrGsl4BeFNejDjfu8NgTMhC1Yg0hE03KMz
-         sOwDjsHyWLu+iTgXmzjIQzHjd4VfkHpgtXwj4bxB7G2CDbTauPPVNMTT6/IC77OoNt
-         fXFfFJUPwzLRBoul1ZSss82krmcp7mOKlJ1ZDRVXVnHxvbwlv+0rzPw21RPplleKma
-         6aDvciV4eeNdg==
-Message-ID: <e6c92d29cb399ba8cf3cf8b9a3cb532b1287a649.camel@kernel.org>
-Subject: Re: [PATCH v4 3/3] ext4: unconditionally enable the i_version
- counter
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Lukas Czerner <lczerner@redhat.com>, linux-ext4@vger.kernel.org
-Cc:     tytso@mit.edu, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        ebiggers@kernel.org, david@fromorbit.com,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Date:   Fri, 26 Aug 2022 12:11:23 -0400
-In-Reply-To: <20220824160349.39664-3-lczerner@redhat.com>
-References: <20220824160349.39664-1-lczerner@redhat.com>
-         <20220824160349.39664-3-lczerner@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Fri, 26 Aug 2022 12:50:36 -0400
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EABBE1A81;
+        Fri, 26 Aug 2022 09:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1661532534; x=1693068534;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oNPV4BNVK8w46WC89R5F/TMeysI1ei1JoTS87dugVG4=;
+  b=q0ABLHs/D8HGrZSrKfCNSD1SnHllNnJkXGXZrD+UVP/4Iz03V/7GULfI
+   2uUFC8YqHFg1tKqzePmeqE4Fxqq9x6vDQU48ON296g6U8Kmu6A94K1WQe
+   AYWVW67e6CxBggOUQj3ttpyvTzERY4F7asJyc13NmxDGITD5feVQqpry4
+   M=;
+X-IronPort-AV: E=Sophos;i="5.93,265,1654560000"; 
+   d="scan'208";a="253268213"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO email-inbound-relay-iad-1a-e823fbde.us-east-1.amazon.com) ([10.25.36.210])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2022 16:48:20 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1a-e823fbde.us-east-1.amazon.com (Postfix) with ESMTPS id 7D9E3C0292;
+        Fri, 26 Aug 2022 16:48:16 +0000 (UTC)
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.38; Fri, 26 Aug 2022 16:48:13 +0000
+Received: from 88665a182662.ant.amazon.com (10.43.162.158) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.12;
+ Fri, 26 Aug 2022 16:48:10 +0000
+From:   Kuniyuki Iwashima <kuniyu@amazon.com>
+To:     <jlayton@kernel.org>
+CC:     <chuck.lever@oracle.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <keescook@chromium.org>, <kuba@kernel.org>,
+        <kuni1840@gmail.com>, <kuniyu@amazon.com>,
+        <linux-fsdevel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>, <yzaikin@google.com>
+Subject: Re: [PATCH v1 net-next 01/13] fs/lock: Revive LOCK_MAND.
+Date:   Fri, 26 Aug 2022 09:48:02 -0700
+Message-ID: <20220826164802.95813-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <9312834e427a551479e1ad138b5085edaa395cdd.camel@kernel.org>
+References: <9312834e427a551479e1ad138b5085edaa395cdd.camel@kernel.org>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.158]
+X-ClientProxiedBy: EX13D43UWA004.ant.amazon.com (10.43.160.108) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-08-24 at 18:03 +0200, Lukas Czerner wrote:
-> From: Jeff Layton <jlayton@kernel.org>
->=20
-> The original i_version implementation was pretty expensive, requiring a
-> log flush on every change. Because of this, it was gated behind a mount
-> option (implemented via the MS_I_VERSION mountoption flag).
->=20
-> Commit ae5e165d855d (fs: new API for handling inode->i_version) made the
-> i_version flag much less expensive, so there is no longer a performance
-> penalty from enabling it. xfs and btrfs already enable it
-> unconditionally when the on-disk format can support it.
->=20
-> Have ext4 ignore the SB_I_VERSION flag, and just enable it
-> unconditionally. While we're in here, remove the handling of
-> Opt_i_version as well, since we're almost to 5.20 anyway.
->=20
-> Ideally, we'd couple this change with a way to disable the i_version
-> counter (just in case), but the way the iversion mount option was
-> implemented makes that difficult to do. We'd need to add a new mount
-> option altogether or do something with tune2fs. That's probably best
-> left to later patches if it turns out to be needed.
->=20
-> [ Removed leftover bits of i_version from ext4_apply_options() since it
-> now can't ever be set in ctx->mask_s_flags -- lczerner ]
->=20
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Benjamin Coddington <bcodding@redhat.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> ---
-> v3: Removed leftover bits of i_version from ext4_apply_options
-> v4: no change
->=20
->  fs/ext4/inode.c |  5 ++---
->  fs/ext4/super.c | 21 ++++-----------------
->  2 files changed, 6 insertions(+), 20 deletions(-)
->=20
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 2a220be34caa..c77d40f05763 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5425,7 +5425,7 @@ int ext4_setattr(struct user_namespace *mnt_userns,=
- struct dentry *dentry,
->  			return -EINVAL;
->  		}
-> =20
-> -		if (IS_I_VERSION(inode) && attr->ia_size !=3D inode->i_size)
-> +		if (attr->ia_size !=3D inode->i_size)
->  			inode_inc_iversion(inode);
-> =20
->  		if (shrink) {
-> @@ -5735,8 +5735,7 @@ int ext4_mark_iloc_dirty(handle_t *handle,
->  	 * ea_inodes are using i_version for storing reference count, don't
->  	 * mess with it
->  	 */
-> -	if (IS_I_VERSION(inode) &&
-> -	    !(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
-> +	if (!(EXT4_I(inode)->i_flags & EXT4_EA_INODE_FL))
->  		inode_inc_iversion(inode);
-> =20
->  	/* the do_update_inode consumes one bh->b_count */
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 9a66abcca1a8..1c953f6d400e 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1585,7 +1585,7 @@ enum {
->  	Opt_inlinecrypt,
->  	Opt_usrjquota, Opt_grpjquota, Opt_quota,
->  	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
-> -	Opt_usrquota, Opt_grpquota, Opt_prjquota, Opt_i_version,
-> +	Opt_usrquota, Opt_grpquota, Opt_prjquota,
->  	Opt_dax, Opt_dax_always, Opt_dax_inode, Opt_dax_never,
->  	Opt_stripe, Opt_delalloc, Opt_nodelalloc, Opt_warn_on_error,
->  	Opt_nowarn_on_error, Opt_mblk_io_submit, Opt_debug_want_extra_isize,
-> @@ -1694,7 +1694,6 @@ static const struct fs_parameter_spec ext4_param_sp=
-ecs[] =3D {
->  	fsparam_flag	("barrier",		Opt_barrier),
->  	fsparam_u32	("barrier",		Opt_barrier),
->  	fsparam_flag	("nobarrier",		Opt_nobarrier),
-> -	fsparam_flag	("i_version",		Opt_i_version),
->  	fsparam_flag	("dax",			Opt_dax),
->  	fsparam_enum	("dax",			Opt_dax_type, ext4_param_dax),
->  	fsparam_u32	("stripe",		Opt_stripe),
-> @@ -2140,11 +2139,6 @@ static int ext4_parse_param(struct fs_context *fc,=
- struct fs_parameter *param)
->  	case Opt_abort:
->  		ctx_set_mount_flag(ctx, EXT4_MF_FS_ABORTED);
->  		return 0;
-> -	case Opt_i_version:
-> -		ext4_msg(NULL, KERN_WARNING, deprecated_msg, param->key, "5.20");
-> -		ext4_msg(NULL, KERN_WARNING, "Use iversion instead\n");
-> -		ctx_set_flags(ctx, SB_I_VERSION);
-> -		return 0;
->  	case Opt_inlinecrypt:
->  #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
->  		ctx_set_flags(ctx, SB_INLINECRYPT);
-> @@ -2814,14 +2808,6 @@ static void ext4_apply_options(struct fs_context *=
-fc, struct super_block *sb)
->  	sb->s_flags &=3D ~ctx->mask_s_flags;
->  	sb->s_flags |=3D ctx->vals_s_flags;
-> =20
-> -	/*
-> -	 * i_version differs from common mount option iversion so we have
-> -	 * to let vfs know that it was set, otherwise it would get cleared
-> -	 * on remount
-> -	 */
-> -	if (ctx->mask_s_flags & SB_I_VERSION)
-> -		fc->sb_flags |=3D SB_I_VERSION;
-> -
->  #define APPLY(X) ({ if (ctx->spec & EXT4_SPEC_##X) sbi->X =3D ctx->X; })
->  	APPLY(s_commit_interval);
->  	APPLY(s_stripe);
-> @@ -2970,8 +2956,6 @@ static int _ext4_show_options(struct seq_file *seq,=
- struct super_block *sb,
->  		SEQ_OPTS_PRINT("min_batch_time=3D%u", sbi->s_min_batch_time);
->  	if (nodefs || sbi->s_max_batch_time !=3D EXT4_DEF_MAX_BATCH_TIME)
->  		SEQ_OPTS_PRINT("max_batch_time=3D%u", sbi->s_max_batch_time);
-> -	if (sb->s_flags & SB_I_VERSION)
-> -		SEQ_OPTS_PUTS("i_version");
->  	if (nodefs || sbi->s_stripe)
->  		SEQ_OPTS_PRINT("stripe=3D%lu", sbi->s_stripe);
->  	if (nodefs || EXT4_MOUNT_DATA_FLAGS &
-> @@ -4640,6 +4624,9 @@ static int __ext4_fill_super(struct fs_context *fc,=
- struct super_block *sb)
->  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
->  		(test_opt(sb, POSIX_ACL) ? SB_POSIXACL : 0);
-> =20
-> +	/* i_version is always enabled now */
-> +	sb->s_flags |=3D SB_I_VERSION;
-> +
->  	if (le32_to_cpu(es->s_rev_level) =3D=3D EXT4_GOOD_OLD_REV &&
->  	    (ext4_has_compat_features(sb) ||
->  	     ext4_has_ro_compat_features(sb) ||
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Fri, 26 Aug 2022 06:02:44 -0400
+> On Thu, 2022-08-25 at 17:04 -0700, Kuniyuki Iwashima wrote:
+> > The commit 90f7d7a0d0d6 ("locks: remove LOCK_MAND flock lock support")
+> > removed LOCK_MAND support from the kernel because nothing checked the
+> > flag, nor was there no use case.  This patch revives LOCK_MAND to
+> > introduce a mandatory lock for read/write on /proc/sys.  Currently, it's
+> > the only use case, so we added two changes while reverting the commit.
+> > 
+> > First, we used to allow any f_mode for LOCK_MAND, but now we don't get
+> > it back.  Instead, we enforce being FMODE_READ|FMODE_WRITE as LOCK_SH
+> > and LOCK_EX.
+> > 
+> > Second, when f_ops->flock() was called with LOCK_MAND, each function
+> > returned -EOPNOTSUPP.  The following patch does not use f_ops->flock(),
+> > so we put the validation before calling f_ops->flock().
+> > 
+> > Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> > ---
+> >  fs/locks.c                       | 57 ++++++++++++++++++++------------
+> >  include/uapi/asm-generic/fcntl.h |  5 ---
+> >  2 files changed, 35 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index c266cfdc3291..03ff10a3165e 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -421,6 +421,10 @@ static inline int flock_translate_cmd(int cmd) {
+> >  	case LOCK_UN:
+> >  		return F_UNLCK;
+> >  	}
+> > +
+> > +	if (cmd & LOCK_MAND)
+> > +		return cmd & (LOCK_MAND | LOCK_RW);
+> > +
+> >  	return -EINVAL;
+> >  }
+> >  
+> > @@ -879,6 +883,10 @@ static bool flock_locks_conflict(struct file_lock *caller_fl,
+> >  	if (caller_fl->fl_file == sys_fl->fl_file)
+> >  		return false;
+> >  
+> > +	if (caller_fl->fl_type & LOCK_MAND ||
+> > +	    sys_fl->fl_type & LOCK_MAND)
+> > +		return true;
+> > +
+> >  	return locks_conflict(caller_fl, sys_fl);
+> >  }
+> >  
+> > @@ -2077,9 +2085,7 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
+> >   *	- %LOCK_SH -- a shared lock.
+> >   *	- %LOCK_EX -- an exclusive lock.
+> >   *	- %LOCK_UN -- remove an existing lock.
+> > - *	- %LOCK_MAND -- a 'mandatory' flock. (DEPRECATED)
+> > - *
+> > - *	%LOCK_MAND support has been removed from the kernel.
+> > + *	- %LOCK_MAND -- a 'mandatory' flock. (only supported on /proc/sys/)
+> >   */
+> >  SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  {
+> > @@ -2087,19 +2093,6 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  	struct file_lock fl;
+> >  	struct fd f;
+> >  
+> > -	/*
+> > -	 * LOCK_MAND locks were broken for a long time in that they never
+> > -	 * conflicted with one another and didn't prevent any sort of open,
+> > -	 * read or write activity.
+> > -	 *
+> > -	 * Just ignore these requests now, to preserve legacy behavior, but
+> > -	 * throw a warning to let people know that they don't actually work.
+> > -	 */
+> > -	if (cmd & LOCK_MAND) {
+> > -		pr_warn_once("Attempt to set a LOCK_MAND lock via flock(2). This support has been removed and the request ignored.\n");
+> > -		return 0;
+> > -	}
+> > -
+> >  	type = flock_translate_cmd(cmd & ~LOCK_NB);
+> >  	if (type < 0)
+> >  		return type;
+> > @@ -2109,6 +2102,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  	if (!f.file)
+> >  		return error;
+> >  
+> > +	/* LOCK_MAND supports only read/write on proc_sysctl for now */
+> >  	if (type != F_UNLCK && !(f.file->f_mode & (FMODE_READ | FMODE_WRITE)))
+> >  		goto out_putf;
+> >  
+> > @@ -2122,12 +2116,18 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  	if (can_sleep)
+> >  		fl.fl_flags |= FL_SLEEP;
+> >  
+> > -	if (f.file->f_op->flock)
+> > +	if (f.file->f_op->flock) {
+> > +		if (cmd & LOCK_MAND) {
+> > +			error = -EOPNOTSUPP;
+> > +			goto out_putf;
+> > +		}
+> > +
+> >  		error = f.file->f_op->flock(f.file,
+> >  					    (can_sleep) ? F_SETLKW : F_SETLK,
+> >  					    &fl);
+> > -	else
+> > +	} else {
+> >  		error = locks_lock_file_wait(f.file, &fl);
+> > +	}
+> >  
+> >   out_putf:
+> >  	fdput(f);
+> > @@ -2711,7 +2711,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  		seq_printf(f, " %s ",
+> >  			     (inode == NULL) ? "*NOINODE*" : "ADVISORY ");
+> >  	} else if (IS_FLOCK(fl)) {
+> > -		seq_puts(f, "FLOCK  ADVISORY  ");
+> > +		if (fl->fl_type & LOCK_MAND) {
+> > +			seq_puts(f, "FLOCK  MANDATORY ");
+> > +		} else {
+> > +			seq_puts(f, "FLOCK  ADVISORY  ");
+> > +		}
+> >  	} else if (IS_LEASE(fl)) {
+> >  		if (fl->fl_flags & FL_DELEG)
+> >  			seq_puts(f, "DELEG  ");
+> > @@ -2727,10 +2731,19 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  	} else {
+> >  		seq_puts(f, "UNKNOWN UNKNOWN  ");
+> >  	}
+> > -	type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+> >  
+> > -	seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+> > -			     (type == F_RDLCK) ? "READ" : "UNLCK");
+> > +	if (fl->fl_type & LOCK_MAND) {
+> > +		seq_printf(f, "%s ",
+> > +			   (fl->fl_type & LOCK_READ)
+> > +			   ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
+> > +			   : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
+> > +	} else {
+> > +		type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+> > +
+> > +		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+> > +			   (type == F_RDLCK) ? "READ" : "UNLCK");
+> > +	}
+> > +
+> >  	if (inode) {
+> >  		/* userspace relies on this representation of dev_t */
+> >  		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
+> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> > index 1ecdb911add8..94fb8c6fd543 100644
+> > --- a/include/uapi/asm-generic/fcntl.h
+> > +++ b/include/uapi/asm-generic/fcntl.h
+> > @@ -180,11 +180,6 @@ struct f_owner_ex {
+> >  #define LOCK_NB		4	/* or'd with one of the above to prevent
+> >  				   blocking */
+> >  #define LOCK_UN		8	/* remove lock */
+> > -
+> > -/*
+> > - * LOCK_MAND support has been removed from the kernel. We leave the symbols
+> > - * here to not break legacy builds, but these should not be used in new code.
+> > - */
+> >  #define LOCK_MAND	32	/* This is a mandatory flock ... */
+> >  #define LOCK_READ	64	/* which allows concurrent read operations */
+> >  #define LOCK_WRITE	128	/* which allows concurrent write operations */
+> 
+> NACK.
+> 
+> This may break legacy userland code that sets LOCK_MAND on flock calls
+> (e.g. old versions of samba).
+> 
+> If you want to add a new mechanism that does something similar with a
+> new flag, then that may be possible, but please don't overload old flags
+> that could still be used in the field with new meanings.
 
-Hi Lukas,
+Exactly, that makes sense.
+Thanks for feedback!
 
-I know I had originally asked you to shepherd this patch into mainline,
-but I think it may be better to wait on it for now. Since I asked that,
-we've since found out that ext4 is bumping the i_version counter on
-atime updates. It'd be best to get that fixed before we turn this on
-unconditionally, since it could cause a performance regression in some
-cases. I'll plan to pick this back up for my latest i_version series if
-that sounds ok to you.
 
-Sorry for the back and forth, and thanks again!
+> If you do decide to use flock for this functionality (and I'm not sure
+> this is a good idea),
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+Actually, the patch 1-2 were experimental to show all available options
+(flock()'s latency vs unshare()'s memory cost), and I like unshare().
+If both of them were unacceptable, I would have added clone() BPF hook.
+
+But it seems unshare() works at least, I'll drop this part in the next
+spin.
+
+Thank you.
+
+
+> then I'd also like to see a clear description of
+> the semantics this provides.
+> -- 
+> Jeff Layton <jlayton@kernel.org>
