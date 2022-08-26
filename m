@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 731715A1EA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 04:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA805A1EAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 04:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244767AbiHZCRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 22:17:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
+        id S244795AbiHZCRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 22:17:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244746AbiHZCRX (ORCPT
+        with ESMTP id S244753AbiHZCRf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 22:17:23 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8F6CB5DB;
-        Thu, 25 Aug 2022 19:17:21 -0700 (PDT)
+        Thu, 25 Aug 2022 22:17:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9ECCB5C6;
+        Thu, 25 Aug 2022 19:17:34 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A1F1E2298A;
-        Fri, 26 Aug 2022 02:17:19 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8075D37C48;
+        Fri, 26 Aug 2022 02:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661480239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1661480253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5oQjdZ4RU13qv7ERg7wUf7fqXZRo2xGMUxfTKvystxA=;
-        b=K8TMCl0dzuN7diDZUyyOSvTgk3rs7dP3YNTF/SkXDwRx2jhMqqd1XITc+aMCww1u3YCgO2
-        1hX4VSOkpnyo/Q0+Zam4eRai05jEnIZ7ujrI/AQ8CbnMyGgGtpe1/C4qs2hIOgtCQwJn67
-        yUz0RKZwyVHtS4oscsZ4CCz8lFGwCtk=
+        bh=7+8viLpougDqoZ3c2irip0hIncJfW0LZqVa6iHVhTNQ=;
+        b=tE7Ar2PfLeRF49+BfC+zIylyt66pdi+70EsThmDh3Eh9ym4yC1G2qufHiowPkUbLi/ru+1
+        3sQu/zDLA8k9yDwHY3w/UrXWkYUAOiL/ldYI3hR0HWTWzjViFGrerRgd6AVsRa6fWTsm21
+        i22kGXZnn0M0l//G7LkRhTtVJbkzMZE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661480239;
+        s=susede2_ed25519; t=1661480253;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5oQjdZ4RU13qv7ERg7wUf7fqXZRo2xGMUxfTKvystxA=;
-        b=WulEif6gsEbqX0y/kzjG+IfUQfXjh9oKaMAMkjof9HLt6hnuZiAZf05zE06CrWk+oOtwAC
-        EPNS7aEswe1OMWAQ==
+        bh=7+8viLpougDqoZ3c2irip0hIncJfW0LZqVa6iHVhTNQ=;
+        b=TdJUMPaapoWi/O8DM8cNqlIzQ+Zq6g6x3W9NCoKJZScnStTOwJqEi/sTviwRQ3uz8dhs6v
+        Jt7NSgDcyF1WKyBg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 48AD913A65;
-        Fri, 26 Aug 2022 02:17:17 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E289413A65;
+        Fri, 26 Aug 2022 02:17:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Pc1dAi0tCGNwMQAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 02:17:17 +0000
-Subject: [PATCH 03/10] VFS: move want_write checks into lookup_hash_update()
+        id XlaBJjotCGOAMQAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 02:17:30 +0000
+Subject: [PATCH 05/10] VFS: export done_path_update()
 From:   NeilBrown <neilb@suse.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -59,204 +59,121 @@ To:     Al Viro <viro@zeniv.linux.org.uk>,
 Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Date:   Fri, 26 Aug 2022 12:10:43 +1000
-Message-ID: <166147984374.25420.3477094952897986387.stgit@noble.brown>
+Message-ID: <166147984375.25420.10074672773757634204.stgit@noble.brown>
 In-Reply-To: <166147828344.25420.13834885828450967910.stgit@noble.brown>
 References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mnt_want_write() is always called before lookup_hash_update(), so
-we can simplify the code by moving the call into that function.
+This function will be useful to nfsd, so export it.  As most callers
+will want "with_wq" to be true, rename the current done_path_update() to
+__done_path_update() and add a new done_path_update() which sets with_wq
+to true.
 
-If lookup_hash_update() succeeds, it now will have claimed the
-want_write lock.  If it fails, the want_write lock isn't held.
-
-To allow this, lookup_hash_update() now receives a 'struct path *'
-instead of 'struct dentry *'
-
-Note that when creating a name, any error from mnt_want_write() does not
-get reported unless there is no other error.  For unlink/rmdir though,
-an error from mnt_want_write() is immediately fatal - overriding ENOENT
-for example.  This behaviour seems strange, but this patch is careful to
-preserve it.
+done_path_create_wq() is now simple enough to be "static inline"
+rather than an explicit export.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/namei.c |   72 ++++++++++++++++++++++++++----------------------------------
- 1 file changed, 31 insertions(+), 41 deletions(-)
+ fs/namei.c            |   16 +++++-----------
+ include/linux/namei.h |   16 ++++++++++++++--
+ 2 files changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 09c2d007814a..73c3319a1703 100644
+index 8df09c19f2b0..13f8ac9721be 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1632,12 +1632,22 @@ static struct dentry *__lookup_hash(const struct qstr *name,
-  */
- static struct dentry *lookup_hash_update(
- 	const struct qstr *name,
--	struct dentry *base, unsigned int flags,
-+	struct path *path, unsigned int flags,
- 	wait_queue_head_t *wq)
- {
- 	struct dentry *dentry;
-+	struct dentry *base = path->dentry;
- 	struct inode *dir = base->d_inode;
--	int err;
-+	int err, err2;
-+
-+	/* For create, don't fail immediately if it's r/o,
-+	 * at least try to report other errors.
-+	 * For unlink/rmdir where LOOKUP_REVAl is the only
-+	 * flag, fail immediately if r/o.
-+	 */
-+	err2 = mnt_want_write(path->mnt);
-+	if (err2 && (flags & ~LOOKUP_REVAL) == 0)
-+		return ERR_PTR(err2);
- 
- 	if (wq && IS_PAR_UPDATE(dir))
- 		inode_lock_shared_nested(dir, I_MUTEX_PARENT);
-@@ -1677,6 +1687,13 @@ static struct dentry *lookup_hash_update(
- 			goto out_err;
- 		}
- 	}
-+	if (err2) {
-+		err = err2;
-+		d_lookup_done(dentry);
-+		d_unlock_update(dentry);
-+		dput(dentry);
-+		goto out_err;
-+	}
- 	return dentry;
- 
- out_err:
-@@ -1684,6 +1701,8 @@ static struct dentry *lookup_hash_update(
- 		inode_unlock_shared(dir);
- 	else
- 		inode_unlock(dir);
-+	if (!err2)
-+		mnt_drop_write(path->mnt);
- 	return ERR_PTR(err);
- }
- 
-@@ -1700,7 +1719,7 @@ struct dentry *lookup_hash_update_len(const char *name, int nlen,
- 				    path->dentry, nlen, &this);
- 	if (err)
- 		return ERR_PTR(err);
--	return lookup_hash_update(&this, path->dentry, flags, wq);
-+	return lookup_hash_update(&this, path, flags, wq);
+@@ -1723,8 +1723,8 @@ struct dentry *lookup_hash_update_len(const char *name, int nlen,
  }
  EXPORT_SYMBOL(lookup_hash_update_len);
  
-@@ -3891,15 +3910,10 @@ static struct dentry *filename_create_one(struct qstr *last, struct path *path,
- 					  unsigned int lookup_flags,
- 					  wait_queue_head_t *wq)
+-static void done_path_update(struct path *path, struct dentry *dentry,
+-			     bool with_wq)
++void __done_path_update(struct path *path, struct dentry *dentry,
++			bool with_wq)
  {
--	struct dentry *dentry;
- 	bool want_dir = lookup_flags & LOOKUP_DIRECTORY;
- 	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
- 	unsigned int create_flag = LOOKUP_CREATE;
--	int err2;
--	int error;
+ 	struct inode *dir = path->dentry->d_inode;
  
--	/* don't fail immediately if it's r/o, at least try to report other errors */
--	err2 = mnt_want_write(path->mnt);
- 	/*
- 	 * Do the final lookup.  Suppress 'create' if there is a trailing
- 	 * '/', and a directory wasn't requested.
-@@ -3910,24 +3924,9 @@ static struct dentry *filename_create_one(struct qstr *last, struct path *path,
- 		 * or -EEXIST.
- 		 */
- 		create_flag = 0;
--	dentry = lookup_hash_update(last, path->dentry,
--				    reval_flag | create_flag | LOOKUP_EXCL, wq);
--	if (IS_ERR(dentry))
--		goto drop_write;
--
--	if (unlikely(err2)) {
--		error = err2;
--		goto fail;
--	}
--	return dentry;
--fail:
--	done_path_update(path, dentry, !!wq);
--	dput(dentry);
--	dentry = ERR_PTR(error);
--drop_write:
--	if (!err2)
--		mnt_drop_write(path->mnt);
--	return dentry;
-+	return lookup_hash_update(last, path,
-+				  reval_flag | create_flag | LOOKUP_EXCL,
-+				  wq);
+@@ -1737,6 +1737,7 @@ static void done_path_update(struct path *path, struct dentry *dentry,
+ 	dput(dentry);
+ 	mnt_drop_write(path->mnt);
  }
++EXPORT_SYMBOL(__done_path_update);
  
- struct dentry *filename_create_one_len(const char *name, int nlen,
-@@ -4300,23 +4299,18 @@ int do_rmdir(int dfd, struct filename *name)
- 		goto exit2;
- 	}
+ static struct dentry *lookup_fast(struct nameidata *nd)
+ {
+@@ -3987,13 +3988,6 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
+ }
+ EXPORT_SYMBOL(kern_path_create);
  
--	error = mnt_want_write(path.mnt);
--	if (error)
--		goto exit2;
+-void done_path_create_wq(struct path *path, struct dentry *dentry, bool with_wq)
+-{
+-	done_path_update(path, dentry, with_wq);
+-	path_put(path);
+-}
+-EXPORT_SYMBOL(done_path_create_wq);
 -
--	dentry = lookup_hash_update(&last, path.dentry, lookup_flags, &wq);
-+	dentry = lookup_hash_update(&last, &path, lookup_flags, &wq);
- 	error = PTR_ERR(dentry);
- 	if (IS_ERR(dentry))
--		goto exit3;
-+		goto exit2;
- 	error = security_path_rmdir(&path, dentry);
- 	if (error)
--		goto exit4;
-+		goto exit3;
+ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 				       struct path *path, unsigned int lookup_flags)
+ {
+@@ -4309,7 +4303,7 @@ int do_rmdir(int dfd, struct filename *name)
  	mnt_userns = mnt_user_ns(path.mnt);
  	error = vfs_rmdir(mnt_userns, path.dentry->d_inode, dentry);
--exit4:
-+exit3:
- 	done_path_update(&path, dentry, true);
- 	dput(dentry);
--exit3:
- 	mnt_drop_write(path.mnt);
- exit2:
- 	path_put(&path);
-@@ -4433,12 +4427,8 @@ int do_unlinkat(int dfd, struct filename *name)
- 	if (type != LAST_NORM)
- 		goto exit2;
- 
--	error = mnt_want_write(path.mnt);
--	if (error)
--		goto exit2;
--
- retry_deleg:
--	dentry = lookup_hash_update(&last, path.dentry, lookup_flags, &wq);
-+	dentry = lookup_hash_update(&last, &path, lookup_flags, &wq);
- 	error = PTR_ERR(dentry);
- 	if (!IS_ERR(dentry)) {
- 		struct user_namespace *mnt_userns;
-@@ -4457,6 +4447,7 @@ int do_unlinkat(int dfd, struct filename *name)
  exit3:
- 		done_path_update(&path, dentry, true);
- 		dput(dentry);
-+		mnt_drop_write(path.mnt);
- 	}
- 	if (inode)
- 		iput(inode);	/* truncate the inode here */
-@@ -4466,7 +4457,6 @@ int do_unlinkat(int dfd, struct filename *name)
- 		if (!error)
- 			goto retry_deleg;
- 	}
--	mnt_drop_write(path.mnt);
+-	done_path_update(&path, dentry, true);
++	done_path_update(&path, dentry);
  exit2:
  	path_put(&path);
  	if (retry_estale(error, lookup_flags)) {
+@@ -4443,7 +4437,7 @@ int do_unlinkat(int dfd, struct filename *name)
+ 		error = vfs_unlink(mnt_userns, path.dentry->d_inode, dentry,
+ 				   &delegated_inode);
+ exit3:
+-		done_path_update(&path, dentry, true);
++		done_path_update(&path, dentry);
+ 	}
+ 	if (inode)
+ 		iput(inode);	/* truncate the inode here */
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index b7a123b489b1..b1a210a51210 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -64,11 +64,23 @@ extern struct dentry *user_path_create(int, const char __user *, struct path *,
+ extern struct dentry *lookup_hash_update_len(const char *name, int nlen,
+ 					     struct path *path, unsigned int flags,
+ 					     wait_queue_head_t *wq);
+-extern void done_path_create_wq(struct path *, struct dentry *, bool);
++extern void __done_path_update(struct path *, struct dentry *, bool);
++static inline void done_path_update(struct path *path, struct dentry *dentry)
++{
++	__done_path_update(path, dentry, true);
++}
+ static inline void done_path_create(struct path *path, struct dentry *dentry)
+ {
+-	done_path_create_wq(path, dentry, false);
++	__done_path_update(path, dentry, false);
++	path_put(path);
+ }
++static inline void done_path_create_wq(struct path *path, struct dentry *dentry,
++				       bool with_wq)
++{
++	__done_path_update(path, dentry, with_wq);
++	path_put(path);
++}
++
+ extern struct dentry *kern_path_locked(const char *, struct path *);
+ 
+ extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
 
 
