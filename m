@@ -2,54 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD745A2250
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 09:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 682965A228A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 10:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245610AbiHZHwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 03:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
+        id S244686AbiHZIDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 04:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241320AbiHZHwx (ORCPT
+        with ESMTP id S239753AbiHZIDh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 03:52:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3BDD3E7A;
-        Fri, 26 Aug 2022 00:52:53 -0700 (PDT)
+        Fri, 26 Aug 2022 04:03:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B52DD3ECB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 01:03:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B4E82B82F77;
-        Fri, 26 Aug 2022 07:52:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7296CC433C1;
-        Fri, 26 Aug 2022 07:52:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 03926B82F0D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 08:03:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E4FC433C1;
+        Fri, 26 Aug 2022 08:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661500370;
-        bh=AZSQuTUMuhBCSTAYFJauQHwCcy1qF0ZF2OFYaJubPX8=;
+        s=k20201202; t=1661501014;
+        bh=9RsOaxUnAERaGTL9j21WPiwVy7XiBnqsBqgkhVSXzNQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mOaxH6Xbs4xleND4L7NXXvj2gkBXfyj7XXvIJpbBhuye/i/A1xdPd9YfeCUAWZoXp
-         zYHkfIp4xzbPTe0aacaBajz2j+TU2kclI6++QUAiADH03LNAZ6DZvI4gD+wsrzxv2C
-         jYyen8YC2N1IROJHAn9iiSSEtS0uEb+2dohyiYulvUTkaLt1wgZ3M0sdG4AfoYBq1o
-         pvQkLUwsc8YV5LWRAR2E1FJDPSuCtL0jzKYG1dSFsDEqRHkVJka8pHuOfHO+EkdFvi
-         T4vUZCfWFRnvfI63nEo/W4knzOGrffA4eovuffa512HD4h4fTKnPEYa2CmkDbevo9k
-         ELmIFpck3Gl3g==
-Date:   Fri, 26 Aug 2022 09:52:42 +0200
+        b=UsbbOxhMRy0MzdWKa3WhnwBlxItSxy3oYnyOVOKeEiMvfx99UFERNHoV+XniW5RtX
+         dIgJTsYbOOL5cjm39GVL6e/KMebGFV1oC7zSW4/UA1a+Huw8rOrO5YK0p7KvXqcw+Q
+         BsV+kykr+mq6jUTnbmQOksknHFbVbTOm4J/KKCP2HdkOfcomg4PiBg/MJM8Js5C33m
+         KuSIwLYuA2qUTWRq9ggfa/FNq+jd5cDQJB6eVyf0p5GHTaAYiP2za0WjgTrkvt86FG
+         h0fZ6mTE8it2Jfena0kyjcmvc1kH9HMjEMqmmIZ2sOlJg/pfu00L56+fvMMwSqwutz
+         TxHSwNMONO11Q==
+Date:   Fri, 26 Aug 2022 10:03:29 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dentry: Use preempt_[dis|en]able_nested()
-Message-ID: <20220826075242.wrczbyj5742t5r4c@wittgenstein>
-References: <20220825164131.402717-1-bigeasy@linutronix.de>
- <20220825164131.402717-3-bigeasy@linutronix.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHES] file_inode() and ->f_mapping cleanups
+Message-ID: <20220826080329.t7bfiwy2ocrpenu5@wittgenstein>
+References: <YwFANLruaQpqmPKv@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220825164131.402717-3-bigeasy@linutronix.de>
+In-Reply-To: <YwFANLruaQpqmPKv@ZenIV>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,17 +53,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 25, 2022 at 06:41:25PM +0200, Sebastian Andrzej Siewior wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
+On Sat, Aug 20, 2022 at 09:12:36PM +0100, Al Viro wrote:
+> 	Another whack-a-mole pile - open-coding file_inode()
+> and file->f_mapping.  All of them are independent from each
+> other; this stuff sits in vfs.git #work.file_inode, but
+> if maintainers of an affected subsystems would prefer to have
+> some of that in their trees - just say so.
 > 
-> Replace the open coded CONFIG_PREEMPT_RT conditional
-> preempt_disable/enable() with the new helper.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
 
-Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Oh sweet, I wondered whether I should bother with a series like that a
+few weeks ago...
+
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
