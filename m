@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED8965A2128
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 08:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE9C5A2122
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 08:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245174AbiHZGqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 02:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49824 "EHLO
+        id S245168AbiHZGqW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 02:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245108AbiHZGqR (ORCPT
+        with ESMTP id S245114AbiHZGqS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 02:46:17 -0400
+        Fri, 26 Aug 2022 02:46:18 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3A1D1E2D;
-        Thu, 25 Aug 2022 23:46:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF607D21C4;
+        Thu, 25 Aug 2022 23:46:06 -0700 (PDT)
 Received: from lenovo.Home (unknown [39.53.61.43])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CF8946601EC8;
-        Fri, 26 Aug 2022 07:45:58 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 74A016601EC5;
+        Fri, 26 Aug 2022 07:46:02 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1661496362;
-        bh=1jHw5sa9fTu8NOc1dlqFzISRY1ZlcDb3kYV3xpKJeTk=;
+        s=mail; t=1661496365;
+        bh=4yvSwL7fk15687RDM21em8u33dCjiZyepG9X3yowxF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XfGOdhKFwYd0TiLxAexIHGbGSvw0lmUiYdoKcDv2Ecga3r6OM2J0nZ+xn8dRa9o6H
-         /NDzorWLIIy0X8arNr1NM3PIqLhghL14q7iJouwp0AMDvqr6aV8iN8UzX2H+0XvPhx
-         by0zS13MJKFrMhmuelxfwedd56Rf+BNi/AtbYqsJb1cKpeHJJ9LwKhJmRNijjOZM5P
-         3x6LrWPI6EPfnPy4bBuxyCcsJVH17Hg7QHcxB8bPqOYFcdct47ysc0/Euj4pAZ71IU
-         Um744KAE7cSeuGbrftvVPQCAhpvhRv9AqHeHbfQaMHe+RptUAzwMKjr9yOjV/g70Sm
-         2VY2kuxPXtB9w==
+        b=UJ731p7BYeJ6Kai5kB5cooRilHpcsGymeCDygp3UhG784Aj8+XlOuZ0ywcanrGW58
+         KAAItzV1w0jVDmEJ4qkIdkAMLgLpdWgdzeU7z25o52qyr0YtTBXqj1j6Cu5HNqcXJL
+         D9QOHuCaMGRFf/Flp8NDns2y2P5vl+ch+sAN4jl4RusqNKrYPYdChbByghxrdTJZ0y
+         bjIZbUDV/oQoeWGfodRcx+8NyylssXy5ePh9XNoigZ+7mXeZQqZ7ktSjczCSvcRcdW
+         Hwq55NzJn+3OOchn6wGxJ5jIan7t46QeVD8k4DrwBO9LyZYblSaxysW87cRoWYytiW
+         O20FAxj2AzyMw==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -48,9 +48,9 @@ Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         David Hildenbrand <david@redhat.com>,
         Peter Enderborg <peter.enderborg@sony.com>,
         Greg KH <gregkh@linuxfoundation.org>
-Subject: [PATCH v3 2/4] fs/proc/task_mmu: Implement IOCTL to get and clear soft dirty PTE bit
-Date:   Fri, 26 Aug 2022 11:45:33 +0500
-Message-Id: <20220826064535.1941190-3-usama.anjum@collabora.com>
+Subject: [PATCH v3 3/4] selftests: vm: add pagemap ioctl tests
+Date:   Fri, 26 Aug 2022 11:45:34 +0500
+Message-Id: <20220826064535.1941190-4-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220826064535.1941190-1-usama.anjum@collabora.com>
 References: <20220826064535.1941190-1-usama.anjum@collabora.com>
@@ -65,388 +65,758 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This ioctl can be used to watch the process's memory and perform
-atomic operations which aren't possible through procfs. Three
-operations have been implemented:
-
-- PAGEMAP_SD_GET gets the soft dirty pages in a address range.
-- PAGEMAP_SD_CLEAR clears the soft dirty bit from dirty pages in a
-  address range.
-- PAGEMAP_SD_GET_AND_CLEAR gets and clears the soft dirty bit in a
-  address range.
-
-struct pagemap_sd_args is used as the argument of the IOCTL. In this
-struct:
-- The range is specified through start and len.
-- The output buffer and size is specified as vec and vec_len.
-- The flags can be specified in the flags field. Currently only one
-  PAGEMAP_SD_NO_REUSED_REGIONS is supported which can be specified to
-  ignore the VMA dirty flags.
-
-This is based on a patch from Gabriel Krisman Bertazi.
+Add pagemap ioctl tests. Add several different types of tests to judge
+the correction of the interface.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
+TAP version 13
+1..44
+ok 1 sanity_tests no cmd specified
+ok 2 sanity_tests wrong flag specified
+ok 3 sanity_tests reserved field specified specified
+ok 4 sanity_tests wrong cmd specified
+ok 5 sanity_tests mixture of correct and wrong cmds
+ok 6 sanity_tests Clear area with larger vec size 1 22
+ok 7 Page testing: all new pages must be soft dirty
+ok 8 Page testing: all pages must not be soft dirty
+ok 9 Page testing: all pages dirty other than first and the last one
+ok 10 Page testing: only middle page dirty
+ok 11 Page testing: only two middle pages dirty
+ok 12 Page testing: only get 2 dirty pages and clear them as well
+ok 13 Page testing: Range clear only
+ok 14 Large Page testing: all new pages must be soft dirty
+ok 15 Large Page testing: all pages must not be soft dirty
+ok 16 Large Page testing: all pages dirty other than first and the last one
+ok 17 Large Page testing: only middle page dirty
+ok 18 Large Page testing: only two middle pages dirty
+ok 19 Large Page testing: only get 2 dirty pages and clear them as well
+ok 20 Large Page testing: Range clear only
+ok 21 Huge page testing: all new pages must be soft dirty
+ok 22 Huge page testing: all pages must not be soft dirty
+ok 23 Huge page testing: all pages dirty other than first and the last one
+ok 24 Huge page testing: only middle page dirty
+ok 25 Huge page testing: only two middle pages dirty
+ok 26 Huge page testing: only get 2 dirty pages and clear them as well
+ok 27 Huge page testing: Range clear only
+ok 28 Performance Page testing: page isn't dirty
+ok 29 Performance Page testing: all pages must not be soft dirty
+ok 30 Performance Page testing: all pages dirty other than first and the last one
+ok 31 Performance Page testing: only middle page dirty
+ok 32 Performance Page testing: only two middle pages dirty
+ok 33 Performance Page testing: only get 2 dirty pages and clear them as well
+ok 34 Performance Page testing: Range clear only
+ok 35 hpage_unit_tests all new huge page must be dirty
+ok 36 hpage_unit_tests all the huge page must not be dirty
+ok 37 hpage_unit_tests all the huge page must be dirty and clear
+ok 38 hpage_unit_tests only middle page dirty
+ok 39 hpage_unit_tests clear first half of huge page
+ok 40 hpage_unit_tests clear first half of huge page with limited buffer
+ok 41 hpage_unit_tests clear second half huge page
+ok 42 unmapped_region_tests Get dirty pages
+ok 43 unmapped_region_tests Get dirty pages
+ok 44 Test test_simple
+ # Totals: pass:44 fail:0 xfail:0 xpass:0 skip:0 error:0
+
 Changes in v3:
-- Tighten the user-kernel interface by using explicit types and add more
-  error checking
+- Add another test to do sanity of flags
 
 Changes in v2:
-- Convert the interface from syscall to ioctl
-- Remove pidfd support as it doesn't make sense in ioctl
+- Update the tests to use the ioctl interface instead of syscall
 ---
- fs/proc/task_mmu.c            | 260 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/fs.h       |  23 +++
- tools/include/uapi/linux/fs.h |  23 +++
- 3 files changed, 306 insertions(+)
+ tools/testing/selftests/vm/.gitignore      |   1 +
+ tools/testing/selftests/vm/Makefile        |   2 +
+ tools/testing/selftests/vm/pagemap_ioctl.c | 649 +++++++++++++++++++++
+ 3 files changed, 652 insertions(+)
+ create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f66674033207..33d3d5c2ab40 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -19,6 +19,8 @@
- #include <linux/shmem_fs.h>
- #include <linux/uaccess.h>
- #include <linux/pkeys.h>
-+#include <uapi/linux/fs.h>
-+#include <linux/vmalloc.h>
+diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
+index 31e5eea2a9b9..334fde556499 100644
+--- a/tools/testing/selftests/vm/.gitignore
++++ b/tools/testing/selftests/vm/.gitignore
+@@ -16,6 +16,7 @@ mremap_dontunmap
+ mremap_test
+ on-fault-limit
+ transhuge-stress
++pagemap_ioctl
+ protection_keys
+ protection_keys_32
+ protection_keys_64
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index 266e965e724c..4296c3268f64 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -51,6 +51,7 @@ TEST_GEN_FILES += on-fault-limit
+ TEST_GEN_FILES += thuge-gen
+ TEST_GEN_FILES += transhuge-stress
+ TEST_GEN_FILES += userfaultfd
++TEST_GEN_PROGS += pagemap_ioctl
+ TEST_GEN_PROGS += soft-dirty
+ TEST_GEN_PROGS += split_huge_page_test
+ TEST_GEN_FILES += ksm_tests
+@@ -98,6 +99,7 @@ TEST_FILES += va_128TBswitch.sh
+ include ../lib.mk
  
- #include <asm/elf.h>
- #include <asm/tlb.h>
-@@ -1775,11 +1777,269 @@ static int pagemap_release(struct inode *inode, struct file *file)
- 	return 0;
- }
+ $(OUTPUT)/madv_populate: vm_util.c
++$(OUTPUT)/pagemap_ioctl: vm_util.c
+ $(OUTPUT)/soft-dirty: vm_util.c
+ $(OUTPUT)/split_huge_page_test: vm_util.c
  
-+#ifdef CONFIG_MEM_SOFT_DIRTY
-+#define IS_CLEAR_SD_OP(op) (op == PAGEMAP_SD_CLEAR || op == PAGEMAP_SD_GET_AND_CLEAR)
-+#define IS_GET_SD_OP(op) (op == PAGEMAP_SD_GET || op == PAGEMAP_SD_GET_AND_CLEAR)
-+#define PAGEMAP_SD_FLAGS_MASK (PAGEMAP_SD_NO_REUSED_REGIONS)
+diff --git a/tools/testing/selftests/vm/pagemap_ioctl.c b/tools/testing/selftests/vm/pagemap_ioctl.c
+new file mode 100644
+index 000000000000..7775247b9cdc
+--- /dev/null
++++ b/tools/testing/selftests/vm/pagemap_ioctl.c
+@@ -0,0 +1,649 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <stdio.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <errno.h>
++#include <malloc.h>
++#include <asm-generic/unistd.h>
++#include "vm_util.h"
++#include "../kselftest.h"
++#include <linux/types.h>
++#include <linux/fs.h>
++#include <sys/ioctl.h>
 +
-+struct pagemap_sd_private {
-+	unsigned long start;
-+	__u64 *vec;
-+	unsigned long vec_len;
-+	unsigned long index;
-+	unsigned int op;
-+	unsigned int flags;
-+};
++#define TEST_ITERATIONS 10000
++#define PAGEMAP "/proc/self/pagemap"
++int pagemap_fd;
 +
-+static int pagemap_sd_pmd_entry(pmd_t *pmd, unsigned long addr,
-+				unsigned long end, struct mm_walk *walk)
++static long pagemap_ioctl(void *start, int len, unsigned int cmd, loff_t *vec,
++			  int vec_len, int flag)
 +{
-+	struct pagemap_sd_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+	unsigned long start = addr;
-+	spinlock_t *ptl;
-+	pte_t *pte;
-+	int dirty;
-+	bool dirty_vma = (p->flags & PAGEMAP_SD_NO_REUSED_REGIONS) ? 0 :
-+			 (vma->vm_flags & VM_SOFTDIRTY);
-+
-+	end = min(end, walk->vma->vm_end);
-+	ptl = pmd_trans_huge_lock(pmd, vma);
-+	if (ptl) {
-+		if (dirty_vma || check_soft_dirty_pmd(vma, addr, pmd, false)) {
-+			/*
-+			 * Break huge page into small pages if operation needs to be performed is
-+			 * on a portion of the huge page or the return buffer cannot store complete
-+			 * data. Then process this PMD as having normal pages.
-+			 */
-+			if ((IS_CLEAR_SD_OP(p->op) && (end - addr < HPAGE_SIZE)) ||
-+			    (IS_GET_SD_OP(p->op) && (p->index + HPAGE_SIZE/PAGE_SIZE > p->vec_len))) {
-+				spin_unlock(ptl);
-+				split_huge_pmd(vma, pmd, addr);
-+				goto process_smaller_pages;
-+			} else {
-+				dirty = check_soft_dirty_pmd(vma, addr, pmd, IS_CLEAR_SD_OP(p->op));
-+				if (IS_GET_SD_OP(p->op) && (dirty_vma || dirty)) {
-+					for (; addr != end && p->index < p->vec_len;
-+					     addr += PAGE_SIZE)
-+						p->vec[p->index++] = addr - p->start;
-+				}
-+			}
-+		}
-+		spin_unlock(ptl);
-+		return 0;
-+	}
-+
-+process_smaller_pages:
-+	if (pmd_trans_unstable(pmd))
-+		return 0;
-+
-+	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
-+	for (; addr != end; pte++, addr += PAGE_SIZE) {
-+		dirty = check_soft_dirty(vma, addr, pte, IS_CLEAR_SD_OP(p->op));
-+
-+		if (IS_GET_SD_OP(p->op) && (dirty_vma || dirty)) {
-+			p->vec[p->index++] = addr - p->start;
-+			WARN_ON(p->index > p->vec_len);
-+		}
-+	}
-+	pte_unmap_unlock(pte - 1, ptl);
-+	cond_resched();
-+
-+	if (IS_CLEAR_SD_OP(p->op))
-+		flush_tlb_mm_range(vma->vm_mm, start, end, PAGE_SHIFT, false);
-+
-+	return 0;
-+}
-+
-+static int pagemap_sd_pte_hole(unsigned long addr, unsigned long end, int depth,
-+			       struct mm_walk *walk)
-+{
-+	struct pagemap_sd_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+
-+	if (p->flags & PAGEMAP_SD_NO_REUSED_REGIONS)
-+		return 0;
-+
-+	if (vma && (vma->vm_flags & VM_SOFTDIRTY) && IS_GET_SD_OP(p->op)) {
-+		for (; addr != end && p->index < p->vec_len; addr += PAGE_SIZE)
-+			p->vec[p->index++] = addr - p->start;
-+	}
-+
-+	return 0;
-+}
-+
-+static int pagemap_sd_pre_vma(unsigned long start, unsigned long end, struct mm_walk *walk)
-+{
-+	struct pagemap_sd_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+	int ret;
-+	unsigned long end_cut = end;
-+
-+	if (p->flags & PAGEMAP_SD_NO_REUSED_REGIONS)
-+		return 0;
-+
-+	if (IS_CLEAR_SD_OP(p->op) && (vma->vm_flags & VM_SOFTDIRTY)) {
-+		if (vma->vm_start < start) {
-+			ret = split_vma(vma->vm_mm, vma, start, 1);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		if (IS_GET_SD_OP(p->op))
-+			end_cut = min(start + p->vec_len * PAGE_SIZE, end);
-+
-+		if (vma->vm_end > end_cut) {
-+			ret = split_vma(vma->vm_mm, vma, end_cut, 0);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void pagemap_sd_post_vma(struct mm_walk *walk)
-+{
-+	struct pagemap_sd_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+
-+	if (p->flags & PAGEMAP_SD_NO_REUSED_REGIONS)
-+		return;
-+
-+	if (IS_CLEAR_SD_OP(p->op) && (vma->vm_flags & VM_SOFTDIRTY)) {
-+		vma->vm_flags &= ~VM_SOFTDIRTY;
-+		vma_set_page_prot(vma);
-+	}
-+}
-+
-+static int pagemap_sd_pmd_test_walk(unsigned long start, unsigned long end,
-+				    struct mm_walk *walk)
-+{
-+	struct pagemap_sd_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+
-+	if (IS_GET_SD_OP(p->op) && (p->index == p->vec_len))
-+		return -1;
-+
-+	if (vma->vm_flags & VM_PFNMAP)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static const struct mm_walk_ops pagemap_sd_ops = {
-+	.test_walk = pagemap_sd_pmd_test_walk,
-+	.pre_vma = pagemap_sd_pre_vma,
-+	.pmd_entry = pagemap_sd_pmd_entry,
-+	.pte_hole = pagemap_sd_pte_hole,
-+	.post_vma = pagemap_sd_post_vma,
-+};
-+
-+static long do_pagemap_sd_cmd(struct mm_struct *mm, unsigned int cmd, struct pagemap_sd_args *arg)
-+{
-+	struct pagemap_sd_private sd_data;
-+	struct mmu_notifier_range range;
-+	unsigned long start, end;
++	struct pagemap_sd_args arg;
 +	int ret;
 +
-+	start = (unsigned long)untagged_addr(arg->start);
-+	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
-+		return -EINVAL;
++	arg.start = (uintptr_t)start;
++	arg.len = len;
++	arg.vec = (uintptr_t)vec;
++	arg.vec_len = vec_len;
++	arg.flags = flag;
++	arg.__reserved = 0;
 +
-+	if (IS_GET_SD_OP(cmd) &&
-+	    ((arg->vec_len == 0) || (!arg->vec) || (!access_ok((loff_t *)arg->vec, arg->vec_len))))
-+		return -EINVAL;
-+
-+	if ((arg->flags & ~PAGEMAP_SD_FLAGS_MASK) || (arg->__reserved))
-+		return -EINVAL;
-+
-+	end = start + arg->len;
-+	sd_data.start = start;
-+	sd_data.op = cmd;
-+	sd_data.flags = arg->flags;
-+	sd_data.index = 0;
-+	sd_data.vec_len = arg->vec_len;
-+
-+	if (IS_GET_SD_OP(cmd)) {
-+		sd_data.vec = vzalloc(arg->vec_len * sizeof(loff_t));
-+		if (!sd_data.vec)
-+			return -ENOMEM;
-+	}
-+
-+	if (IS_CLEAR_SD_OP(cmd)) {
-+		mmap_write_lock(mm);
-+
-+		mmu_notifier_range_init(&range, MMU_NOTIFY_SOFT_DIRTY, 0, NULL,
-+					mm, start, end);
-+		mmu_notifier_invalidate_range_start(&range);
-+		inc_tlb_flush_pending(mm);
-+	} else {
-+		mmap_read_lock(mm);
-+	}
-+
-+	ret = walk_page_range(mm, start, end, &pagemap_sd_ops, &sd_data);
-+
-+	if (IS_CLEAR_SD_OP(cmd)) {
-+		mmu_notifier_invalidate_range_end(&range);
-+		dec_tlb_flush_pending(mm);
-+
-+		mmap_write_unlock(mm);
-+	} else {
-+		mmap_read_unlock(mm);
-+	}
-+
-+	if (ret < 0)
-+		goto free_sd_data;
-+
-+	if (IS_GET_SD_OP(cmd)) {
-+		ret = copy_to_user((loff_t *)arg->vec, sd_data.vec, sd_data.index * sizeof(loff_t));
-+		if (ret) {
-+			ret = -EIO;
-+			goto free_sd_data;
-+		}
-+		ret = sd_data.index;
-+	} else {
-+		ret = 0;
-+	}
-+
-+free_sd_data:
-+	if (IS_GET_SD_OP(cmd))
-+		vfree(sd_data.vec);
++	ret = ioctl(pagemap_fd, cmd, &arg);
 +
 +	return ret;
 +}
 +
-+static long pagemap_sd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++static long pagemap_ioctl_res(void *start, int len, unsigned int cmd, loff_t *vec,
++			      int vec_len, int flag, int res)
 +{
-+	struct pagemap_sd_args __user *uarg = (struct pagemap_sd_args __user *)arg;
-+	struct mm_struct *mm = file->private_data;
-+	struct pagemap_sd_args arguments;
++	struct pagemap_sd_args arg;
++	int ret;
 +
-+	switch (cmd) {
-+	case PAGEMAP_SD_GET:
-+		fallthrough;
-+	case PAGEMAP_SD_CLEAR:
-+		fallthrough;
-+	case PAGEMAP_SD_GET_AND_CLEAR:
-+		if (copy_from_user(&arguments, uarg, sizeof(struct pagemap_sd_args)))
-+			return -EFAULT;
-+		return do_pagemap_sd_cmd(mm, cmd, &arguments);
-+	default:
-+		return -EINVAL;
-+	}
++	arg.start = (uintptr_t)start;
++	arg.len = len;
++	arg.vec = (uintptr_t)vec;
++	arg.vec_len = vec_len;
++	arg.flags = flag;
++	arg.__reserved = res;
++
++	ret = ioctl(pagemap_fd, cmd, &arg);
++
++	return ret;
 +}
-+#endif /* CONFIG_MEM_SOFT_DIRTY */
 +
- const struct file_operations proc_pagemap_operations = {
- 	.llseek		= mem_lseek, /* borrow this */
- 	.read		= pagemap_read,
- 	.open		= pagemap_open,
- 	.release	= pagemap_release,
-+#ifdef CONFIG_MEM_SOFT_DIRTY
-+	.unlocked_ioctl = pagemap_sd_ioctl,
-+	.compat_ioctl = pagemap_sd_ioctl,
-+#endif /* CONFIG_MEM_SOFT_DIRTY */
- };
- #endif /* CONFIG_PROC_PAGE_MONITOR */
- 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index b7b56871029c..4f6d1c0ae524 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -305,4 +305,27 @@ typedef int __bitwise __kernel_rwf_t;
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
- 			 RWF_APPEND)
- 
-+/**
-+ * struct pagemap_sd_args - Soft-dirty IOCTL argument
-+ * @start:	Starting address
-+ * @len:	Length of the region
-+ * @vec:	Output buffer address
-+ * @vec_len:	Length of the output buffer
-+ * @flags:	Special flags for the IOCTL
-+ * @__reserved:	Reserved member to preserve data alignment. Should be 0.
-+ */
-+struct pagemap_sd_args {
-+	__u64 __user start;
-+	__u64 len;
-+	__u64 __user vec;
-+	__u64 vec_len;
-+	__u32 flags;
-+	__u32 __reserved;
-+};
++int sanity_tests(int page_size)
++{
++	char *mem;
++	int mem_size, vec_size, ret;
++	loff_t *vec;
 +
-+#define PAGEMAP_SD_GET			_IOWR('f', 16, struct pagemap_sd_args)
-+#define PAGEMAP_SD_CLEAR		_IOWR('f', 17, struct pagemap_sd_args)
-+#define PAGEMAP_SD_GET_AND_CLEAR	_IOWR('f', 18, struct pagemap_sd_args)
-+#define PAGEMAP_SD_NO_REUSED_REGIONS	0x1
++	/* 1. wrong operation */
++	vec_size = 100;
++	mem_size = page_size;
 +
- #endif /* _UAPI_LINUX_FS_H */
-diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
-index b7b56871029c..4f6d1c0ae524 100644
---- a/tools/include/uapi/linux/fs.h
-+++ b/tools/include/uapi/linux/fs.h
-@@ -305,4 +305,27 @@ typedef int __bitwise __kernel_rwf_t;
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
- 			 RWF_APPEND)
- 
-+/**
-+ * struct pagemap_sd_args - Soft-dirty IOCTL argument
-+ * @start:	Starting address
-+ * @len:	Length of the region
-+ * @vec:	Output buffer address
-+ * @vec_len:	Length of the output buffer
-+ * @flags:	Special flags for the IOCTL
-+ * @__reserved:	Reserved member to preserve data alignment. Should be 0.
-+ */
-+struct pagemap_sd_args {
-+	__u64 __user start;
-+	__u64 len;
-+	__u64 __user vec;
-+	__u64 vec_len;
-+	__u32 flags;
-+	__u32 __reserved;
-+};
++	vec = malloc(sizeof(loff_t) * vec_size);
++	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
++	if (!mem || !vec)
++		ksft_exit_fail_msg("error nomem\n");
 +
-+#define PAGEMAP_SD_GET			_IOWR('f', 16, struct pagemap_sd_args)
-+#define PAGEMAP_SD_CLEAR		_IOWR('f', 17, struct pagemap_sd_args)
-+#define PAGEMAP_SD_GET_AND_CLEAR	_IOWR('f', 18, struct pagemap_sd_args)
-+#define PAGEMAP_SD_NO_REUSED_REGIONS	0x1
++	ksft_test_result(pagemap_ioctl(mem, mem_size, 0, vec, vec_size, 0) < 0,
++			 "%s no cmd specified\n", __func__);
++	ksft_test_result(pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size, 8)
++			 < 0, "%s wrong flag specified\n", __func__);
++	ksft_test_result(pagemap_ioctl_res(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size, 8, 10)
++			 < 0, "%s reserved field specified specified\n", __func__);
++	ksft_test_result(pagemap_ioctl(mem, mem_size, 0x01000000, vec, vec_size, 0) < 0,
++			 "%s wrong cmd specified\n", __func__);
++	ksft_test_result(pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET | 0xFF,
++			 vec, vec_size, 0) < 0,
++			 "%s mixture of correct and wrong cmds\n", __func__);
 +
- #endif /* _UAPI_LINUX_FS_H */
++	/* 2. Clear area with larger vec size */
++	ret = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR,
++			    vec, vec_size, 0);
++	ksft_test_result(ret >= 0, "%s Clear area with larger vec size %d %d\n", __func__, ret, errno);
++
++	free(vec);
++	munmap(mem, mem_size);
++	return 0;
++}
++
++void *gethugepage(int map_size)
++{
++	int ret;
++	char *map;
++	size_t hpage_len = read_pmd_pagesize();
++
++	map = memalign(hpage_len, map_size);
++	if (!map)
++		ksft_exit_fail_msg("memalign failed %d %s\n", errno, strerror(errno));
++
++	ret = madvise(map, map_size, MADV_HUGEPAGE);
++	if (ret)
++		ksft_exit_fail_msg("madvise failed %d %d %s\n", ret, errno, strerror(errno));
++
++	memset(map, 0, map_size);
++
++	if (check_huge(map))
++		return map;
++
++	free(map);
++	return NULL;
++
++}
++
++int hpage_unit_tests(int page_size)
++{
++	char *map;
++	int i, ret;
++	size_t hpage_len = read_pmd_pagesize();
++	size_t num_pages = 1;
++	int map_size = hpage_len * num_pages;
++	int vec_size = map_size/page_size;
++	loff_t *vec, *vec2;
++
++	vec = malloc(sizeof(loff_t) * vec_size);
++	vec2 = malloc(sizeof(loff_t) * vec_size);
++	if (!vec || !vec2)
++		ksft_exit_fail_msg("malloc failed\n");
++
++	map = gethugepage(map_size);
++	if (map) {
++		// 1. all new huge page must be dirty
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size; i++)
++			if (vec[i] != i * page_size)
++				break;
++
++		ksft_test_result(i == vec_size, "%s all new huge page must be dirty\n", __func__);
++
++		// 2. all the huge page must not be dirty
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		ksft_test_result(ret == 0, "%s all the huge page must not be dirty\n", __func__);
++
++		// 3. all the huge page must be dirty and clear dirty as well
++		memset(map, -1, map_size);
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size; i++)
++			if (vec[i] != i * page_size)
++				break;
++
++		ksft_test_result(ret == vec_size && i == vec_size,
++				 "%s all the huge page must be dirty and clear\n", __func__);
++
++		// 4. only middle page dirty
++		free(map);
++		map = gethugepage(map_size);
++		clear_softdirty();
++		map[vec_size/2 * page_size]++;
++
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size; i++) {
++			if (vec[i] == vec_size/2 * page_size)
++				break;
++		}
++		ksft_test_result(vec[i] == vec_size/2 * page_size,
++				 "%s only middle page dirty\n", __func__);
++
++		free(map);
++	} else {
++		ksft_test_result_skip("all new huge page must be dirty\n");
++		ksft_test_result_skip("all the huge page must not be dirty\n");
++		ksft_test_result_skip("all the huge page must be dirty and clear\n");
++		ksft_test_result_skip("only middle page dirty\n");
++	}
++
++	// 5. clear first half of huge page
++	map = gethugepage(map_size);
++	if (map) {
++		ret = pagemap_ioctl(map, map_size/2, PAGEMAP_SD_CLEAR, NULL, 0, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size/2; i++)
++			if (vec[i] != (i + vec_size/2) * page_size)
++				break;
++
++		ksft_test_result(i == vec_size/2 && ret == vec_size/2,
++				 "%s clear first half of huge page\n", __func__);
++		free(map);
++	} else {
++		ksft_test_result_skip("clear first half of huge page\n");
++	}
++
++	// 6. clear first half of huge page with limited buffer
++	map = gethugepage(map_size);
++	if (map) {
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size/2, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size/2; i++)
++			if (vec[i] != (i + vec_size/2) * page_size)
++				break;
++
++		ksft_test_result(i == vec_size/2 && ret == vec_size/2,
++				 "%s clear first half of huge page with limited buffer\n",
++				 __func__);
++		free(map);
++	} else {
++		ksft_test_result_skip("clear first half of huge page with limited buffer\n");
++	}
++
++	// 7. clear second half of huge page
++	map = gethugepage(map_size);
++	if (map) {
++		memset(map, -1, map_size);
++		ret = pagemap_ioctl(map + map_size/2, map_size/2, PAGEMAP_SD_CLEAR, NULL, 0, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		ret = pagemap_ioctl(map, map_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++		if (ret < 0)
++			ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++		for (i = 0; i < vec_size/2; i++)
++			if (vec[i] != i * page_size)
++				break;
++
++		ksft_test_result(i == vec_size/2, "%s clear second half huge page\n", __func__);
++		free(map);
++	} else {
++		ksft_test_result_skip("clear second half huge page\n");
++	}
++
++	free(vec);
++	free(vec2);
++	return 0;
++}
++
++int base_tests(char *prefix, char *mem, int mem_size, int page_size, int skip)
++{
++	int vec_size, i, j, ret, dirty_pages, dirty_pages2;
++	loff_t *vec, *vec2;
++
++	if (skip) {
++		ksft_test_result_skip("%s all new pages must be soft dirty\n", prefix);
++		ksft_test_result_skip("%s all pages must not be soft dirty\n", prefix);
++		ksft_test_result_skip("%s all pages dirty other than first and the last one\n",
++				      prefix);
++		ksft_test_result_skip("%s only middle page dirty\n", prefix);
++		ksft_test_result_skip("%s only two middle pages dirty\n", prefix);
++		ksft_test_result_skip("%s only get 2 dirty pages and clear them as well\n", prefix);
++		ksft_test_result_skip("%s Range clear only\n", prefix);
++		return 0;
++	}
++
++	vec_size = mem_size/page_size;
++	vec = malloc(sizeof(loff_t) * vec_size);
++	vec2 = malloc(sizeof(loff_t) * vec_size);
++
++	/* 1. all new pages must be soft dirty and clear the range for next test */
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR, vec, vec_size - 2, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	dirty_pages2 = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR, vec2, vec_size, 0);
++	if (dirty_pages2 < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages2, errno, strerror(errno));
++
++	for (i = 0; i < dirty_pages; i++)
++		if (vec[i] != i * page_size)
++			break;
++	for (j = 0; j < dirty_pages2; j++)
++		if (vec2[j] != (j + vec_size - 2) * page_size)
++			break;
++
++	ksft_test_result(dirty_pages == vec_size - 2 && i == dirty_pages &&
++			 dirty_pages2 == 2 && j == dirty_pages2,
++			 "%s all new pages must be soft dirty\n", prefix);
++
++	// 2. all pages must not be soft dirty
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0, "%s all pages must not be soft dirty\n", prefix);
++
++	// 3. all pages dirty other than first and the last one
++	memset(mem + page_size, -1, (mem_size - (2 * page_size)));
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages >= vec_size - 2 && dirty_pages <= vec_size,
++			 "%s all pages dirty other than first and the last one\n", prefix);
++
++	// 4. only middle page dirty
++	clear_softdirty();
++	mem[vec_size/2 * page_size]++;
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	for (i = 0; i < vec_size; i++) {
++		if (vec[i] == vec_size/2 * page_size)
++			break;
++	}
++	ksft_test_result(vec[i] == vec_size/2 * page_size,
++			 "%s only middle page dirty\n", prefix);
++
++	// 5. only two middle pages dirty and walk over only middle pages
++	clear_softdirty();
++	mem[vec_size/2 * page_size]++;
++	mem[(vec_size/2 + 1) * page_size]++;
++
++	dirty_pages = pagemap_ioctl(&mem[vec_size/2 * page_size], 2 * page_size,
++				    PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 2 && vec[0] == 0 && vec[1] == page_size,
++			 "%s only two middle pages dirty\n", prefix);
++
++	/* 6. only get 2 dirty pages and clear them as well */
++	memset(mem, -1, mem_size);
++
++	/* get and clear second and third pages */
++	ret = pagemap_ioctl(mem + page_size, 2 * page_size, PAGEMAP_SD_GET_AND_CLEAR, vec, 2, 0);
++	if (ret < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET, vec2, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	for (i = 0; i < vec_size - 2; i++) {
++		if (i == 0 && (vec[i] != 0 || vec2[i] != 0))
++			break;
++		else if (i == 1 && (vec[i] != page_size || vec2[i] != (i + 2) * page_size))
++			break;
++		else if (i > 1 && (vec2[i] != (i + 2) * page_size))
++			break;
++	}
++
++	ksft_test_result(dirty_pages == vec_size - 2 && i == vec_size - 2,
++			 "%s only get 2 dirty pages and clear them as well\n", prefix);
++	/* 7. Range clear only */
++	memset(mem, -1, mem_size);
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_CLEAR, NULL, 0, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	dirty_pages2 = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages2 < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages2, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0 && dirty_pages2 == 0, "%s Range clear only\n",
++			 prefix);
++
++	free(vec);
++	free(vec2);
++	return 0;
++}
++
++int performance_base_tests(char *prefix, char *mem, int mem_size, int page_size, int skip)
++{
++	int vec_size, i, ret, dirty_pages, dirty_pages2;
++	loff_t *vec, *vec2;
++
++	if (skip) {
++		ksft_test_result_skip("%s all new pages must be soft dirty\n", prefix);
++		ksft_test_result_skip("%s all pages must not be soft dirty\n", prefix);
++		ksft_test_result_skip("%s all pages dirty other than first and the last one\n",
++				      prefix);
++		ksft_test_result_skip("%s only middle page dirty\n", prefix);
++		ksft_test_result_skip("%s only two middle pages dirty\n", prefix);
++		ksft_test_result_skip("%s only get 2 dirty pages and clear them as well\n", prefix);
++		ksft_test_result_skip("%s Range clear only\n", prefix);
++		return 0;
++	}
++
++	vec_size = mem_size/page_size;
++	vec = malloc(sizeof(loff_t) * vec_size);
++	vec2 = malloc(sizeof(loff_t) * vec_size);
++
++	/* 1. all new pages must be soft dirty and clear the range for next test */
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR,
++				    vec, vec_size - 2, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	dirty_pages2 = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET_AND_CLEAR,
++				     vec2, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages2 < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages2, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0 && dirty_pages2 == 0,
++			 "%s page isn't dirty\n", prefix);
++
++	// 2. all pages must not be soft dirty
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET,
++				    vec, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0, "%s all pages must not be soft dirty\n", prefix);
++
++	// 3. all pages dirty other than first and the last one
++	memset(mem + page_size, -1, (mem_size - 2 * page_size));
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET,
++				    vec, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	for (i = 0; i < dirty_pages; i++) {
++		if (vec[i] != (i + 1) * page_size)
++			break;
++	}
++
++	ksft_test_result(dirty_pages == vec_size - 2 && i == vec_size - 2,
++			 "%s all pages dirty other than first and the last one\n", prefix);
++
++	// 4. only middle page dirty
++	clear_softdirty();
++	mem[vec_size/2 * page_size]++;
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET,
++				    vec, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	for (i = 0; i < vec_size; i++) {
++		if (vec[i] == vec_size/2 * page_size)
++			break;
++	}
++	ksft_test_result(vec[i] == vec_size/2 * page_size,
++			 "%s only middle page dirty\n", prefix);
++
++	// 5. only two middle pages dirty and walk over only middle pages
++	clear_softdirty();
++	mem[vec_size/2 * page_size]++;
++	mem[(vec_size/2 + 1) * page_size]++;
++
++	dirty_pages = pagemap_ioctl(&mem[vec_size/2 * page_size], 2 * page_size,
++				    PAGEMAP_SD_GET, vec, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 2 && vec[0] == 0 && vec[1] == page_size,
++			 "%s only two middle pages dirty\n", prefix);
++
++	/* 6. only get 2 dirty pages and clear them as well */
++	memset(mem, -1, mem_size);
++
++	/* get and clear second and third pages */
++	ret = pagemap_ioctl(mem + page_size, 2 * page_size, PAGEMAP_SD_GET_AND_CLEAR,
++			    vec, 2, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (ret < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", ret, errno, strerror(errno));
++
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET,
++				    vec2, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	for (i = 0; i < vec_size - 2; i++) {
++		if (i == 0 && (vec[i] != 0 || vec2[i] != 0))
++			break;
++		else if (i == 1 && (vec[i] != page_size || vec2[i] != (i + 2) * page_size))
++			break;
++		else if (i > 1 && (vec2[i] != (i + 2) * page_size))
++			break;
++	}
++
++	ksft_test_result(dirty_pages == vec_size - 2 && i == vec_size - 2,
++			 "%s only get 2 dirty pages and clear them as well\n", prefix);
++
++	/* 7. Range clear only */
++	memset(mem, -1, mem_size);
++	dirty_pages = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_CLEAR,
++				    NULL, 0, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	dirty_pages2 = pagemap_ioctl(mem, mem_size, PAGEMAP_SD_GET,
++				     vec, vec_size, PAGEMAP_SD_NO_REUSED_REGIONS);
++	if (dirty_pages2 < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages2, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0 && dirty_pages2 == 0, "%s Range clear only\n",
++			 prefix);
++
++	free(vec);
++	free(vec2);
++	return 0;
++}
++
++int unmapped_region_tests(int page_size)
++{
++	void *start = (void *)0x10000000;
++	int dirty_pages, len = 0x00040000;
++	int vec_size = len / page_size;
++	loff_t *vec = malloc(sizeof(loff_t) * vec_size);
++
++	/* 1. Get dirty pages */
++	dirty_pages = pagemap_ioctl(start, len, PAGEMAP_SD_GET, vec, vec_size, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages >= 0, "%s Get dirty pages\n", __func__);
++
++	/* 2. Clear dirty bit of whole address space */
++	dirty_pages = pagemap_ioctl(0, 0x7FFFFFFF, PAGEMAP_SD_CLEAR, NULL, 0, 0);
++	if (dirty_pages < 0)
++		ksft_exit_fail_msg("error %d %d %s\n", dirty_pages, errno, strerror(errno));
++
++	ksft_test_result(dirty_pages == 0, "%s Get dirty pages\n", __func__);
++
++	free(vec);
++	return 0;
++}
++
++static void test_simple(int page_size)
++{
++	int i;
++	char *map;
++	loff_t *vec = NULL;
++
++	map = aligned_alloc(page_size, page_size);
++	if (!map)
++		ksft_exit_fail_msg("mmap failed\n");
++
++	clear_softdirty();
++
++	for (i = 0 ; i < TEST_ITERATIONS; i++) {
++		if (pagemap_ioctl(map, page_size, PAGEMAP_SD_GET, vec, 1, 0) == 1) {
++			ksft_print_msg("dirty bit was 1, but should be 0 (i=%d)\n", i);
++			break;
++		}
++
++		clear_softdirty();
++		// Write something to the page to get the dirty bit enabled on the page
++		map[0]++;
++
++		if (pagemap_ioctl(map, page_size, PAGEMAP_SD_GET, vec, 1, 0) == 0) {
++			ksft_print_msg("dirty bit was 0, but should be 1 (i=%d)\n", i);
++			break;
++		}
++
++		clear_softdirty();
++	}
++	free(map);
++
++	ksft_test_result(i == TEST_ITERATIONS, "Test %s\n", __func__);
++}
++
++int main(int argc, char **argv)
++{
++	int page_size = getpagesize();
++	size_t hpage_len = read_pmd_pagesize();
++	char *mem, *map;
++	int mem_size;
++
++	ksft_print_header();
++	ksft_set_plan(44);
++
++	pagemap_fd = open(PAGEMAP, O_RDWR);
++	if (pagemap_fd < 0)
++		return -EINVAL;
++
++	/* 1. Sanity testing */
++	sanity_tests(page_size);
++
++	/* 2. Normal page testing */
++	mem_size = 10 * page_size;
++	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
++	if (!mem)
++		ksft_exit_fail_msg("error nomem\n");
++
++	base_tests("Page testing:", mem, mem_size, page_size, 0);
++
++	munmap(mem, mem_size);
++
++	/* 3. Large page testing */
++	mem_size = 512 * 10 * page_size;
++	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
++	if (!mem)
++		ksft_exit_fail_msg("error nomem\n");
++
++	base_tests("Large Page testing:", mem, mem_size, page_size, 0);
++
++	munmap(mem, mem_size);
++
++	/* 4. Huge page testing */
++	map = gethugepage(hpage_len);
++	if (check_huge(map))
++		base_tests("Huge page testing:", map, hpage_len, page_size, 0);
++	else
++		base_tests("Huge page testing:", NULL, 0, 0, 1);
++
++	free(map);
++
++	/* 5. Normal page testing */
++	mem_size = 10 * page_size;
++	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
++	if (!mem)
++		ksft_exit_fail_msg("error nomem\n");
++
++	performance_base_tests("Performance Page testing:", mem, mem_size, page_size, 0);
++
++	munmap(mem, mem_size);
++
++	/* 6. Huge page tests */
++	hpage_unit_tests(page_size);
++
++	/* 7. Unmapped address test */
++	unmapped_region_tests(page_size);
++
++	/* 8. Iterative test */
++	test_simple(page_size);
++
++	close(pagemap_fd);
++	return ksft_exit_pass();
++}
 -- 
 2.30.2
 
