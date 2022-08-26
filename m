@@ -2,61 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2785A2560
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 12:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C39175A2626
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 12:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244780AbiHZKEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 06:04:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
+        id S1344004AbiHZKub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 06:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbiHZKES (ORCPT
+        with ESMTP id S1343976AbiHZKu3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 06:04:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 655D1DB072;
-        Fri, 26 Aug 2022 03:02:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CCB566069D;
-        Fri, 26 Aug 2022 10:02:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B41AC433D6;
-        Fri, 26 Aug 2022 10:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661508167;
-        bh=6tZc+HdtC2LGDXx4SBFzI9/NzW3IhS4lGkdA6sNprVM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QN0LKyU3LqJDm3iKn7rxUUlUMBomvmObaOGTPouw07z9oeqiG3Fkfrpz999G/n+s2
-         Sb/NbkXdqDOdG6RJYK7tDv8i6OEvQ5JtWjNQazwIM040uK/li2ffdpPUl8z1RRZ3Ju
-         wbrr5/yRQ5dTyDSvdfVxr9+k0fH8Y4DdONPJUakAJWYTZAxv5Xit05Fu8O7zDqQspM
-         lVAj7YCAp7HW8+QFdu58CdQMVmOjfayRwpVMqpDn8wpFz8q0w4BZ5L4jcSWlaMU5i8
-         /kTCx0FpgikxoA6OgCbIvh4vNFDuixEyTn5taB0eqnJLWUVgK8B+uPViLAf9zDnwiE
-         LotTyIwuj15Ng==
-Message-ID: <9312834e427a551479e1ad138b5085edaa395cdd.camel@kernel.org>
-Subject: Re: [PATCH v1 net-next 01/13] fs/lock: Revive LOCK_MAND.
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Kuniyuki Iwashima <kuniyu@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Cc:     Kuniyuki Iwashima <kuni1840@gmail.com>, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 26 Aug 2022 06:02:44 -0400
-In-Reply-To: <20220826000445.46552-2-kuniyu@amazon.com>
-References: <20220826000445.46552-1-kuniyu@amazon.com>
-         <20220826000445.46552-2-kuniyu@amazon.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Fri, 26 Aug 2022 06:50:29 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264721A805
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 03:50:27 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id k22-20020a6bf716000000b0068898c0b395so712630iog.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 03:50:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=rxQJxaSLkQ64Mai5Sl4u4N0dOQewg9vmDMRgI+WaoW0=;
+        b=Q+GQ1FcAAGiRZ/93gzdecmt+hhQRvOZvW4khdQV+Vd+R2p2xR4IETw49Z2V8zkWPND
+         +O2ZA/ANeysKuoyF3vLICU7HsAfVHy8lZ3a+N+wN7xpKa19ICfRpE05gQ26ja7MNrTAI
+         svCEJxrWfKQ3PdLo8XuyinKxiNGCXWDk7JejHq5Y2Fyd3izmtYHCT9vSWIql27lw97hr
+         zdyZLBp6XsoKmW32IEXFIvcv5Q/Kbu2jXH1NsBMeP5PSnDCn/G7y2GfFjg7ZHLRdjabU
+         5MhX4SyAd+xe6Jmwn/n4iExPHUYUD0R0VZX9p/n20X6mkpxgpKkvjsvelkcz1cw2unNQ
+         35Hw==
+X-Gm-Message-State: ACgBeo12q2xFYf3+2aORTkn+aBAqQLjbCIt7rmz7oXrCZY3ahcls1PJL
+        Ex9O/Fi2Psj2em5q3yAJPUg658/6nKhMhbx2swAD3Ls26kb0
+X-Google-Smtp-Source: AA6agR4r3KTg+bRWozquu8bzK1RTlabr6YyZ/o9noxzw3G49l/uY9Xv1MEbfySE2rITRkpIuR5IA5yGKTpPntO9JejHMuQONR47E
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a05:6638:371f:b0:349:cfb0:89a9 with SMTP id
+ k31-20020a056638371f00b00349cfb089a9mr3765261jav.151.1661511026488; Fri, 26
+ Aug 2022 03:50:26 -0700 (PDT)
+Date:   Fri, 26 Aug 2022 03:50:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000863a7305e722aeeb@google.com>
+Subject: [syzbot] BUG: Dentry still in use in unmount
+From:   syzbot <syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,188 +54,312 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-08-25 at 17:04 -0700, Kuniyuki Iwashima wrote:
-> The commit 90f7d7a0d0d6 ("locks: remove LOCK_MAND flock lock support")
-> removed LOCK_MAND support from the kernel because nothing checked the
-> flag, nor was there no use case.  This patch revives LOCK_MAND to
-> introduce a mandatory lock for read/write on /proc/sys.  Currently, it's
-> the only use case, so we added two changes while reverting the commit.
->=20
-> First, we used to allow any f_mode for LOCK_MAND, but now we don't get
-> it back.  Instead, we enforce being FMODE_READ|FMODE_WRITE as LOCK_SH
-> and LOCK_EX.
->=20
-> Second, when f_ops->flock() was called with LOCK_MAND, each function
-> returned -EOPNOTSUPP.  The following patch does not use f_ops->flock(),
-> so we put the validation before calling f_ops->flock().
->=20
-> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> ---
->  fs/locks.c                       | 57 ++++++++++++++++++++------------
->  include/uapi/asm-generic/fcntl.h |  5 ---
->  2 files changed, 35 insertions(+), 27 deletions(-)
->=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index c266cfdc3291..03ff10a3165e 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -421,6 +421,10 @@ static inline int flock_translate_cmd(int cmd) {
->  	case LOCK_UN:
->  		return F_UNLCK;
->  	}
-> +
-> +	if (cmd & LOCK_MAND)
-> +		return cmd & (LOCK_MAND | LOCK_RW);
-> +
->  	return -EINVAL;
->  }
-> =20
-> @@ -879,6 +883,10 @@ static bool flock_locks_conflict(struct file_lock *c=
-aller_fl,
->  	if (caller_fl->fl_file =3D=3D sys_fl->fl_file)
->  		return false;
-> =20
-> +	if (caller_fl->fl_type & LOCK_MAND ||
-> +	    sys_fl->fl_type & LOCK_MAND)
-> +		return true;
-> +
->  	return locks_conflict(caller_fl, sys_fl);
->  }
-> =20
-> @@ -2077,9 +2085,7 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
->   *	- %LOCK_SH -- a shared lock.
->   *	- %LOCK_EX -- an exclusive lock.
->   *	- %LOCK_UN -- remove an existing lock.
-> - *	- %LOCK_MAND -- a 'mandatory' flock. (DEPRECATED)
-> - *
-> - *	%LOCK_MAND support has been removed from the kernel.
-> + *	- %LOCK_MAND -- a 'mandatory' flock. (only supported on /proc/sys/)
->   */
->  SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
->  {
-> @@ -2087,19 +2093,6 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned =
-int, cmd)
->  	struct file_lock fl;
->  	struct fd f;
-> =20
-> -	/*
-> -	 * LOCK_MAND locks were broken for a long time in that they never
-> -	 * conflicted with one another and didn't prevent any sort of open,
-> -	 * read or write activity.
-> -	 *
-> -	 * Just ignore these requests now, to preserve legacy behavior, but
-> -	 * throw a warning to let people know that they don't actually work.
-> -	 */
-> -	if (cmd & LOCK_MAND) {
-> -		pr_warn_once("Attempt to set a LOCK_MAND lock via flock(2). This suppo=
-rt has been removed and the request ignored.\n");
-> -		return 0;
-> -	}
-> -
->  	type =3D flock_translate_cmd(cmd & ~LOCK_NB);
->  	if (type < 0)
->  		return type;
-> @@ -2109,6 +2102,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned i=
-nt, cmd)
->  	if (!f.file)
->  		return error;
-> =20
-> +	/* LOCK_MAND supports only read/write on proc_sysctl for now */
->  	if (type !=3D F_UNLCK && !(f.file->f_mode & (FMODE_READ | FMODE_WRITE))=
-)
->  		goto out_putf;
-> =20
-> @@ -2122,12 +2116,18 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned=
- int, cmd)
->  	if (can_sleep)
->  		fl.fl_flags |=3D FL_SLEEP;
-> =20
-> -	if (f.file->f_op->flock)
-> +	if (f.file->f_op->flock) {
-> +		if (cmd & LOCK_MAND) {
-> +			error =3D -EOPNOTSUPP;
-> +			goto out_putf;
-> +		}
-> +
->  		error =3D f.file->f_op->flock(f.file,
->  					    (can_sleep) ? F_SETLKW : F_SETLK,
->  					    &fl);
-> -	else
-> +	} else {
->  		error =3D locks_lock_file_wait(f.file, &fl);
-> +	}
-> =20
->   out_putf:
->  	fdput(f);
-> @@ -2711,7 +2711,11 @@ static void lock_get_status(struct seq_file *f, st=
-ruct file_lock *fl,
->  		seq_printf(f, " %s ",
->  			     (inode =3D=3D NULL) ? "*NOINODE*" : "ADVISORY ");
->  	} else if (IS_FLOCK(fl)) {
-> -		seq_puts(f, "FLOCK  ADVISORY  ");
-> +		if (fl->fl_type & LOCK_MAND) {
-> +			seq_puts(f, "FLOCK  MANDATORY ");
-> +		} else {
-> +			seq_puts(f, "FLOCK  ADVISORY  ");
-> +		}
->  	} else if (IS_LEASE(fl)) {
->  		if (fl->fl_flags & FL_DELEG)
->  			seq_puts(f, "DELEG  ");
-> @@ -2727,10 +2731,19 @@ static void lock_get_status(struct seq_file *f, s=
-truct file_lock *fl,
->  	} else {
->  		seq_puts(f, "UNKNOWN UNKNOWN  ");
->  	}
-> -	type =3D IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
-> =20
-> -	seq_printf(f, "%s ", (type =3D=3D F_WRLCK) ? "WRITE" :
-> -			     (type =3D=3D F_RDLCK) ? "READ" : "UNLCK");
-> +	if (fl->fl_type & LOCK_MAND) {
-> +		seq_printf(f, "%s ",
-> +			   (fl->fl_type & LOCK_READ)
-> +			   ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
-> +			   : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
-> +	} else {
-> +		type =3D IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
-> +
-> +		seq_printf(f, "%s ", (type =3D=3D F_WRLCK) ? "WRITE" :
-> +			   (type =3D=3D F_RDLCK) ? "READ" : "UNLCK");
-> +	}
-> +
->  	if (inode) {
->  		/* userspace relies on this representation of dev_t */
->  		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
-> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/=
-fcntl.h
-> index 1ecdb911add8..94fb8c6fd543 100644
-> --- a/include/uapi/asm-generic/fcntl.h
-> +++ b/include/uapi/asm-generic/fcntl.h
-> @@ -180,11 +180,6 @@ struct f_owner_ex {
->  #define LOCK_NB		4	/* or'd with one of the above to prevent
->  				   blocking */
->  #define LOCK_UN		8	/* remove lock */
-> -
-> -/*
-> - * LOCK_MAND support has been removed from the kernel. We leave the symb=
-ols
-> - * here to not break legacy builds, but these should not be used in new =
-code.
-> - */
->  #define LOCK_MAND	32	/* This is a mandatory flock ... */
->  #define LOCK_READ	64	/* which allows concurrent read operations */
->  #define LOCK_WRITE	128	/* which allows concurrent write operations */
+Hello,
 
-NACK.
+syzbot found the following issue on:
 
-This may break legacy userland code that sets LOCK_MAND on flock calls
-(e.g. old versions of samba).
+HEAD commit:    a41a877bc12d Merge branch 'for-next/fixes' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=13901aad080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5cea15779c42821c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8608bb4553edb8c78f41
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d75e95080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15440857080000
 
-If you want to add a new mechanism that does something similar with a
-new flag, then that may be possible, but please don't overload old flags
-that could still be used in the field with new meanings.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com
 
-If you do decide to use flock for this functionality (and I'm not sure
-this is a good idea), then I'd also like to see a clear description of
-the semantics this provides.
---=20
-Jeff Layton <jlayton@kernel.org>
+BUG: Dentry 00000000133f9b6b{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 1 PID: 3045 Comm: syz-executor425 Not tainted 6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000c7bb05f8 x27: ffff80000d4e1e20
+x26: ffff0000c7bb04e0 x25: 0000000000000001 x24: ffff0000c7bb05f8
+x23: ffff0000c7bb0090 x22: ffff0000c7b9d138 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000c7bb0000 x18: 00000000000000c0
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefddcd0 x1 : 0000000100000002 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 168478
+hardirqs last  enabled at (168477): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (168478): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (168132): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (168130): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+BUG: Dentry 00000000133f9b6b{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 1 PID: 3045 Comm: syz-executor425 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000c7bb05f8 x27: ffff80000d4e1e20
+x26: ffff0000c7bb04e0 x25: 0000000000000001 x24: ffff0000c7bb05f8
+x23: ffff0000c7bb0090 x22: ffff0000c7b9d138 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000c7bb0000 x18: 00000000000000c0
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefddcd0 x1 : 0000000100000003 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 168928
+hardirqs last  enabled at (168927): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (168928): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (168922): [<ffff8000080102e4>] _stext+0x2e4/0x37c
+softirqs last disabled at (168635): [<ffff800008104658>] do_softirq_own_stack include/asm-generic/softirq_stack.h:10 [inline]
+softirqs last disabled at (168635): [<ffff800008104658>] invoke_softirq+0x70/0xbc kernel/softirq.c:452
+---[ end trace 0000000000000000 ]---
+VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.  Have a nice day...
+BUG: Dentry 000000005431b8af{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 0 PID: 3045 Comm: syz-executor425 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000c7b98250 x27: ffff80000d4e1e20
+x26: ffff0000c7b98138 x25: 0000000000000001 x24: ffff0000c7b98250
+x23: ffff0000cc849570 x22: ffff0000cc99d750 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000cc8494e0 x18: 0000000000000350
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefbecd0 x1 : 0000000100000002 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 257288
+hardirqs last  enabled at (257287): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (257288): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (256910): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (256908): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.  Have a nice day...
+BUG: Dentry 000000005431b8af{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 1 PID: 3045 Comm: syz-executor425 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000c7b98250 x27: ffff80000d4e1e20
+x26: ffff0000c7b98138 x25: 0000000000000001 x24: ffff0000c7b98250
+x23: ffff0000cc849570 x22: ffff0000cc88d138 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000cc8494e0 x18: 00000000000002ea
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefddcd0 x1 : 0000000100000002 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 283828
+hardirqs last  enabled at (283827): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (283828): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (283438): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (283436): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.  Have a nice day...
+BUG: Dentry 000000005431b8af{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 1 PID: 3045 Comm: syz-executor425 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000c7b98250 x27: ffff80000d4e1e20
+x26: ffff0000c7b98138 x25: 0000000000000001 x24: ffff0000c7b98250
+x23: ffff0000cc849570 x22: ffff0000cc88dc30 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000cc8494e0 x18: 0000000000000109
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefddcd0 x1 : 0000000000000002 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 335826
+hardirqs last  enabled at (335825): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (335826): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (335820): [<ffff8000080102e4>] _stext+0x2e4/0x37c
+softirqs last disabled at (335803): [<ffff800008104658>] do_softirq_own_stack include/asm-generic/softirq_stack.h:10 [inline]
+softirqs last disabled at (335803): [<ffff800008104658>] invoke_softirq+0x70/0xbc kernel/softirq.c:452
+---[ end trace 0000000000000000 ]---
+VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.  Have a nice day...
+ loop0: unable to read partition table
+loop0: partition table beyond EOD, truncated
+BUG: Dentry 00000000cd442007{i=0,n=.reiserfs_priv}  still in use (1) [unmount of squashfs loop0]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3045 at fs/dcache.c:1676 umount_check+0xc0/0xc8 fs/dcache.c:1667
+Modules linked in:
+CPU: 1 PID: 3045 Comm: syz-executor425 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : umount_check+0xc0/0xc8 fs/dcache.c:1667
+lr : umount_check+0xc0/0xc8 fs/dcache.c:1667
+sp : ffff800012ac3bc0
+x29: ffff800012ac3bc0 x28: ffff0000cc88d5f8 x27: ffff80000d4e1e20
+x26: ffff0000cc88d4e0 x25: 0000000000000001 x24: ffff0000cc88d5f8
+x23: ffff0000cc88d438 x22: ffff0000ca0579c0 x21: ffff8000085edd40
+x20: 0000000000000000 x19: ffff0000cc88d3a8 x18: 000000000000009d
+x17: 657375206e69206c x16: ffff80000dbb8658 x15: ffff0000c378cf80
+x14: 0000000000000000 x13: 00000000ffffffff x12: ffff0000c378cf80
+x11: ff808000081c39dc x10: 0000000000000000 x9 : 3f5cf90385ca4900
+x8 : 3f5cf90385ca4900 x7 : ffff800008197c8c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0001fefddcd0 x1 : 0000000100000002 x0 : 0000000000000060
+Call trace:
+ umount_check+0xc0/0xc8 fs/dcache.c:1667
+ d_walk+0x13c/0x55c fs/dcache.c:1386
+ do_one_tree fs/dcache.c:1683 [inline]
+ shrink_dcache_for_umount+0x60/0x140 fs/dcache.c:1699
+ generic_shutdown_super+0x30/0x190 fs/super.c:473
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xd4 fs/super.c:332
+ deactivate_super+0xb8/0xbc fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x208 kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1d0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:625
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
+ el0t_64_sync+0x18c/0x190
+irq event stamp: 366714
+hardirqs last  enabled at (366713): [<ffff8000081c1c48>] __up_console_sem+0xb0/0xfc kernel/printk/printk.c:264
+hardirqs last disabled at (366714): [<ffff80000bffe9cc>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
+softirqs last  enabled at (366346): [<ffff80000801c1f4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (366344): [<ffff80000801c1c0>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.  Have a nice day...
+ loop0: unable to read partition table
+loop0: partition table beyond EOD, truncated
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
