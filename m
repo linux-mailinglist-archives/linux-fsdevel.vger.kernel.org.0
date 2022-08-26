@@ -2,131 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3211A5A3181
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 23:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0F805A325D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 01:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345307AbiHZVt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 17:49:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
+        id S1345190AbiHZXHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 19:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345237AbiHZVtL (ORCPT
+        with ESMTP id S1345469AbiHZXHG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 17:49:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D848E86B0;
-        Fri, 26 Aug 2022 14:47:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 26 Aug 2022 19:07:06 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C950EA15E;
+        Fri, 26 Aug 2022 16:06:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 77380611B8;
-        Fri, 26 Aug 2022 21:47:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0523C433C1;
-        Fri, 26 Aug 2022 21:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661550470;
-        bh=gLz5Ruse5elfcIgvMDWKp/BReownfZtaD32WbbWr76A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FfcrPUI2YtcwItJUli98wIyMhirsFq8i/ojoPLXVo4YVq5CrRAammwmg8IU+jM7nK
-         h3ZWcORGhfZ5E2MPhkdk4hMmEMx67+WTrQpYNf22qqBjkysL7AsDGszadAod937Rbl
-         kMGcojNQDcJaTl5ErtpYRKwsRj8WscbmbfDqROL4CeifPc/+ZerLa3gGarI8KU03o/
-         VT/ujDmyDKADuDo6MH9uECUTCmhpHyBKtyvxWcNWTJzjZYnmdL5BpVvNK6I95LeVgt
-         tA6Eq1HK4BaVHo+SoOMUxdSzH1nKqDzEOuJLX2D0LkzyE2OESJYNM/0pCWOM4/rlkI
-         c+/rmFfC8elyQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        brauner@kernel.org, linux-man@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ceph@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [man-pages PATCH] statx, inode: document the new STATX_INO_VERSION field
-Date:   Fri, 26 Aug 2022 17:47:47 -0400
-Message-Id: <20220826214747.134964-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.2
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7704F1F9AA;
+        Fri, 26 Aug 2022 23:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661555217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z9A0c2a3LCJ9HJ4RB1nSEWfMe03bJHyDrZPgEaaTEYc=;
+        b=INqbeFj3w2PzH1oF+OZJpFIvoUFqm1RVyKKo5LXy/H0mMWfs+cr4E5Kb521FCR6ButT2HE
+        XoxSEZ3kRwmNKABcz3C/2+JUAng99Xo3RjdLJU+w6GNF1NeNcAw7GNGvW7GuON0kkIskNG
+        Y4QJTey76ikAMYV2mZo6Pd5ufPf+MV0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661555217;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z9A0c2a3LCJ9HJ4RB1nSEWfMe03bJHyDrZPgEaaTEYc=;
+        b=Ck47smO+LzO+yoZ5LmCawuaiW47mp3isxzMgPSMeB7m75ceiKfdcX0prCboyj5Vk3A6Xh+
+        iVioxUaSV5z+7kAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F05A013421;
+        Fri, 26 Aug 2022 23:06:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VZZiKg5SCWOhcAAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 23:06:54 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Daire Byrne" <daire@dneg.com>,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Chuck Lever" <chuck.lever@oracle.com>,
+        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "LKML" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
+In-reply-to: <CAHk-=wi_wwTxPTnFXsG8zdaem5YDnSd4OsCeP78yJgueQCb-1g@mail.gmail.com>
+References: <166147828344.25420.13834885828450967910.stgit@noble.brown>,
+ <166147984370.25420.13019217727422217511.stgit@noble.brown>,
+ <CAHk-=wi_wwTxPTnFXsG8zdaem5YDnSd4OsCeP78yJgueQCb-1g@mail.gmail.com>
+Date:   Sat, 27 Aug 2022 09:06:51 +1000
+Message-id: <166155521174.27490.456427475820966571@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We're planning to expose the inode change attribute via statx. Document
-what this value means and what an observer can infer from a change in
-its value.
+On Sat, 27 Aug 2022, Linus Torvalds wrote:
+> On Thu, Aug 25, 2022 at 7:16 PM NeilBrown <neilb@suse.de> wrote:
+> >
+> > If a filesystem supports parallel modification in directories, it sets
+> > FS_PAR_DIR_UPDATE on the file_system_type.  lookup_open() and the new
+> > lookup_hash_update() notice the flag and take a shared lock on the
+> > directory, and rely on a lock-bit in d_flags, much like parallel lookup
+> > relies on DCACHE_PAR_LOOKUP.
+>=20
+> Ugh.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- man2/statx.2 | 13 +++++++++++++
- man7/inode.7 | 10 ++++++++++
- 2 files changed, 23 insertions(+)
+Thanks :-) - no, really - thanks for the high-level review!
 
-diff --git a/man2/statx.2 b/man2/statx.2
-index 0d1b4591f74c..644fb251f114 100644
---- a/man2/statx.2
-+++ b/man2/statx.2
-@@ -62,6 +62,7 @@ struct statx {
-     __u32 stx_dev_major;   /* Major ID */
-     __u32 stx_dev_minor;   /* Minor ID */
-     __u64 stx_mnt_id;      /* Mount ID */
-+    __u64 stx_ino_version; /* Inode change attribute */
- };
- .EE
- .in
-@@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
- STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
- 	It is deprecated and should not be used.
- STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-+STATX_INO_VERSION	Want stx_ino_version (since Linux 6.1)
- .TE
- .in
- .PP
-@@ -411,6 +413,17 @@ and corresponds to the number in the first field in one of the records in
- For further information on the above fields, see
- .BR inode (7).
- .\"
-+.TP
-+.I stx_ino_version
-+The inode version, also known as the inode change attribute. This
-+value is intended to change any time there is an inode status change. Any
-+operation that would cause the stx_ctime to change should also cause
-+stx_ino_version to change, even when there is no apparent change to the
-+stx_ctime due to timestamp granularity.
-+.IP
-+Note that an observer cannot infer anything about the nature or
-+magnitude of the change from the value of this field. A change in this value
-+only indicates that there may have been an explicit change in the inode.
- .SS File attributes
- The
- .I stx_attributes
-diff --git a/man7/inode.7 b/man7/inode.7
-index 9b255a890720..d296bb6df70c 100644
---- a/man7/inode.7
-+++ b/man7/inode.7
-@@ -184,6 +184,16 @@ Last status change timestamp (ctime)
- This is the file's last status change timestamp.
- It is changed by writing or by setting inode information
- (i.e., owner, group, link count, mode, etc.).
-+.TP
-+Inode version (i_version)
-+(not returned in the \fIstat\fP structure); \fIstatx.stx_ino_version\fP
-+.IP
-+This is the inode change attribute. Any operation that would result in a ctime
-+change should also result in a change to this value. The value must change even
-+in the case where the ctime change is not evident due to timestamp granularity.
-+An observer cannot infer anything from the actual value about the nature or
-+magnitude of the change. If it is different from the last time it was checked,
-+then something may have made an explicit change to the inode.
- .PP
- The timestamp fields report time measured with a zero point at the
- .IR Epoch ,
--- 
-2.37.2
+>=20
+> I absolutely believe in the DCACHE_PAR_LOOKUP model, and in "parallel
+> updates" being important, but I *despise* locking code like this
+>=20
+> +       if (wq && IS_PAR_UPDATE(dir))
+> +               inode_lock_shared_nested(dir, I_MUTEX_PARENT);
+> +       else
+> +               inode_lock_nested(dir, I_MUTEX_PARENT);
+>=20
+> and I really really hope there's some better model for this.
+>=20
+> That "wq" test in particular is just absolutely disgusting. So now it
+> doesn't just depend on whether the directory supports parallel
+> updates, now the caller can choose whether to do the parallel thing or
+> not, and that's how "create" is different from "rename".
 
+As you note, by the end of the series "create" is not more different
+from "rename" than it already is.  I only broke up the patches to make
+review more manageable.
+
+The "wq" can be removed.  There are two options.
+One is to change every kern_path_create() or user_path_create() caller
+to passed in a wq.  Then we can assume that a wq is always available.
+There are about a dozen of these calls, so not an enormous change, but
+one that I didn't want to think about just yet.  I could add a patch at
+the front of the series which did this.
+
+Alternate option is to never pass in a wq for create operation, and use
+var_waitqueue() (or something similar) to provide a global shared wait
+queue (which is essentially what I am using to wait for
+DCACHE_PAR_UPDATE to clear).
+The more I think about it, the more I think this is the best way
+forward.   Maybe we'll want to increase WAIT_TABLE_BITS ... I wonder how
+to measure how much contention there is on these shared queues.
+
+>=20
+> And that last difference is, I think, the one that makes me go "No. HELL NO=
+".
+>=20
+> Instead of it being up to the filesystem to say "I can do parallel
+> creates, but I need to serialize renames", this whole thing has been
+> set up to be about the caller making that decision.
+
+I think that is a misunderstanding.  The caller isn't making a decision
+- except the IS_PAR_UPDATE() test which is simply acting on the fs
+request.  What you are seeing is a misguided attempt to leave in place
+some existing interfaces which assumed exclusive locking and didn't
+provide wqs.
+
+>=20
+> That's just feels horribly horribly wrong.
+>=20
+> Yes, I realize that to you that's just a "later patches will do
+> renames", but what if it really is a filesystem issue where the
+> filesystem can easily handle new names, but needs something else for
+> renames because it has various cross-directory issues, perhaps?
+
+Obviously a filesystem can add its own locking - and they will have to,
+though at a finer grain that the VFS can do.
+
+
+>=20
+> So I feel this is fundamentally wrong, and this ugliness is a small
+> effect of that wrongness.
+>=20
+> I think we should strive for
+>=20
+>  (a) make that 'wq' and DCACHE_PAR_LOOKUP bit be unconditional
+
+Agreed (in an earlier version DCACHE_PAR_LOOKUP was optional, but I
+realised that you wouldn't like that :-)
+
+>=20
+>  (b) aim for the inode lock being taken *after* the _lookup_hash(),
+> since the VFS layer side has to be able to handle the concurrency on
+> the dcache side anyway
+
+I think you are suggesting that we change ->lookup call to NOT
+require i_rwsem be held.  That is not a small change.
+I agree that it makes sense in the long term.  Getting there ....  won't
+be a quick as I'd hoped.
+
+>=20
+>  (c) at that point, the serialization really ends up being about the
+> call into the filesystem, and aim to simply move the
+> inode_lock{_shared]_nested() into the filesystem so that there's no
+> need for a flag and related conditional locking at all.
+
+It might be nice to take a shared lock in VFS, and let the FS upgrade it
+to exclusive if needed, but we don't have upgrade_read() ...  maybe it
+would be deadlock-prone.
+
+>=20
+> Because right now I think the main reason we cannot move the lock into
+> the filesystem is literally that we've made the lock cover not just
+> the filesystem part, but the "lookup and create dentry" part too.
+>=20
+> But once you have that "DCACHE_PAR_LOOKUP" bit and the
+> d_alloc_parallel() logic to serialize a _particular_ dentry being
+> created (as opposed to serializing all the sleeping ops to that
+> directly), I really think we should strive to move the locking - that
+> no longer helps the VFS dcache layer - closer to the filesystem call
+> and eventually into it.
+>=20
+> Please? I think these patches are "mostly going in the right
+> direction", but at the same time I feel like there's some serious
+> mis-design going on.
+
+Hmmm....  I'll dig more deeply into ->lookup and see if I can understand
+the locking well enough to feel safe removing i_rwsem from it.
+
+Thanks,
+NeilBrown
