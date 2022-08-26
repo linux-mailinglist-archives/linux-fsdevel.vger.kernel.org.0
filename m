@@ -2,170 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B945A1FEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 06:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F415A2113
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 08:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244711AbiHZEhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 00:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46714 "EHLO
+        id S245086AbiHZGqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 02:46:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236285AbiHZEhp (ORCPT
+        with ESMTP id S245071AbiHZGp6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 00:37:45 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7C9CD7B3;
-        Thu, 25 Aug 2022 21:37:45 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27Q4671e025354;
-        Fri, 26 Aug 2022 04:37:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2022-7-12;
- bh=C/nDiUz9OP5PbqKV0oOUgtO7xIQGX8DWEEEDpBV/It4=;
- b=uKbRpm2BKpVYqt00No+y/p4A+tGooyMg8L5qOgOhefiG+97sJR1xQzxH1BgrUHjO/Ngg
- M4+W4Ih19wCkjtFKzkrJm026m1KJYfSQwd8Wn7cxDRUpr+M/lWpKaFSxsj/H+a1O5lOa
- e5tpL6zs9avNoQBwv/v1e1zhyhSw/z7PkBMh1LL6lzhtRqfxnOjt4fb56zVFEvu42Lzt
- mRQFq/Vt6UFxzXogH83dAFlhVWd8kQmNxrIySaIPY0ZF0fggErJ4kE6Qo+bagaoUP8EV
- vv+DBlNe42yyfVX6kxRNodZV43i7DsRMdkF/5nK4iynsY0Hemt8QIDmuU6LDK04GKn/v 7Q== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3j4w240jbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Aug 2022 04:37:31 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 27Q2ltxn009542;
-        Fri, 26 Aug 2022 04:37:29 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2107.outbound.protection.outlook.com [104.47.70.107])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3j5n6ntt7a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Aug 2022 04:37:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g/+Xnrmn67pUV4QvpoowLuJhYoBS+hjLMYypl49Nv2b5nrBqZB+vQMSL9dDDERcmY+LZ4VQEI9/zxixl5DgQq966qup9j7sjm1ahr17vwj3W9YOpFX+ez7PisfSL8QfgOZBIZJmqCUTdGhP6dT3YXCf5y/p/sBi9PEE+q4XsGItlZXProYMHw15WhfonekrIIoxhFgIB3QYxMbjDTRU3uFXoWi/rI6RXKPq4CEyDnLPFxITOrajPB7uC7olLTNcfup5Rk4rbRpkN/rkME5gn4nfeg4GmeKZ6tJmFtIJalsJ2BhFeeM7rFxbUbQmBQ9VZR7QWu4Fml7kBgLsuw5hV2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C/nDiUz9OP5PbqKV0oOUgtO7xIQGX8DWEEEDpBV/It4=;
- b=BD1rZwZbp0p0OfLSpgvXsDMDUpsMxq5hrjxR2UOaDmeaDSP1BmyRDxYDn98inqCRxVyrnNBCUkL4FK3fxSRzvouga+qWTVdezzpGiZb6pzbkEG8k+FCeJ6lW+u1pdDJtSz8Cg7LzahpXxpmK8/8SUVCLGjguY9fn3o3AXMgZ83dEZAoc1JKtAF2rUoCQ2lugsbXyUNDRDDfE9C3C39SD5pPz8QjEAMko1MQJ+IIRUVBu4OhTnIXaslL9XspV4m3pQ94r2e9GAPHM/ARGg3hYWvjNao5GwJF6M7U9xgVwh58mic/H/cOuoVbKK0jWXxcd6WOelXo0KQqBGG/MSkO/Yg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C/nDiUz9OP5PbqKV0oOUgtO7xIQGX8DWEEEDpBV/It4=;
- b=zSiS4jhPMwyBAQPnpi7JkK0KPYyTdvclD5cSBOv4cAepJAYTu2H1KKVMcm59Dl0XBzte7ZWuZpTh15FTE8VvmiTx28uBF+7/YJbHxWSwq5NO+q2JA+VR2rXYkT4rI6thPmQuPcLnN06qFoNzbXjPQu54EC9nDRAmDjuqfMsyvxc=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CY4PR1001MB2152.namprd10.prod.outlook.com
- (2603:10b6:910:4a::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.21; Fri, 26 Aug
- 2022 04:37:18 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026%3]) with mapi id 15.20.5546.025; Fri, 26 Aug 2022
- 04:37:18 +0000
-Date:   Fri, 26 Aug 2022 07:37:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sun Ke <sunke32@huawei.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com,
-        hsiangkao@linux.alibaba.com
-Subject: Re: [PATCH v4] cachefiles: fix error return code in
- cachefiles_ondemand_copen()
-Message-ID: <20220826043706.GC2071@kadam>
-References: <20220826023515.3437469-1-sunke32@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220826023515.3437469-1-sunke32@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MRXP264CA0038.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:500:14::26) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        Fri, 26 Aug 2022 02:45:58 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE43BB6AC;
+        Thu, 25 Aug 2022 23:45:56 -0700 (PDT)
+Received: from lenovo.Home (unknown [39.53.61.43])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6AEE46601EC5;
+        Fri, 26 Aug 2022 07:45:51 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1661496354;
+        bh=IN7X9l9wVicY4dNzgT/RD/PEIb50SV6fqcw6KEssYKM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T8/ooc3a3tld/c4fwpKspyWrUR2soAQzKuW/L+DKrbYypHWjVrXM+SUdBmh8/fHzI
+         DFa5ZP+jexhPLfQedos91GOw8g+1c6WadRNE+yl3R7Jf6BHW0j6biDvOmzXdO/JX8T
+         smoyd2C9JzIOb3d+bzcztDUC3I3Etl256JgVWbqWL51yoopp/X9xoDqSNQHZGXN4Ou
+         6itnGfHTMPsmKLxMGhgtdC+HbvvEdLI1V71EIIPiB6gkzuEN8u7p30zpDpZ8eUJR93
+         BQXJsR02swvyM3pHHVKw8NERJD4J0Ub5W7zcvGfjpLRmMYOLjPdJHctaZ3acZIUQ+x
+         XTEAdZAh0+a0g==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list),
+        linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM),
+        linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
+Date:   Fri, 26 Aug 2022 11:45:31 +0500
+Message-Id: <20220826064535.1941190-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3e208203-7c90-4f08-4e48-08da871ca8a7
-X-MS-TrafficTypeDiagnostic: CY4PR1001MB2152:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: g2Gxz1Edep06EFKAp7hoergTii62rZ0zn5MWQhJQID3bUBppc59q+GHB87LFlKuANrLPkYnHgbqOvgy0vCv6EoEnruINuyNWR6SdOnVku4nXmJD3FZsbnbNjbkpLD/SQaU7iTpZUOfFEvAQxHUmRnC7b5Nof6HUZa7PdVbhu1rBB+Ndwy3hbLSgB2X8K9qaz3UmqSDuPLectKhxr/o63p76eMsq8biaiXLuyIAHFJKGmCsx60vlHa+XJmr1m1jbhtgm8Kid0UkyS8RYJSJ8wI1nb8XClh4/+guHRPW9FSpPobdIkrSmHzcsPzrckZpArYbdN/sibmPXe+PD7ob1/w22urwurOSKDJVoFZAJXF6bzb3wuSBIFxWwmtyKsSKdMgt2k/Bqbtsm7UyozHRM/azQVmj+//C5FImvPllAXkOLCflXSOFEBxovxMBf7MqfdjOtxwkCVj7Ls8xLey0HughCoDmNPuAa/43322LrPiynCKLPVDk8fU+HdMH5mkUN5Az/FSlQeMW/8XEQno3GJalEZHzpwIo7SR+Gk+Xtg1ornBgDndKEa5YpX9NpF/1Dk6R7UX6mIf3i29SWrHWnGejuhTxVy8AH1+7kMPUUimUGBLzI6+dJ5KctFyErQLCZlhDDe6vOqhXZ2Hhqs9aNSWacEhTRGl8tD66tDEe0+clgaOyoDdULsCGwuFHFbAx60y2wGLR/4l34glyack0sIMUBS8bvU1bYJgdWdZ8eMSXPozmPXYBYcgcy6CBbIMPCbWI9Y2/6d0KEchSksi4rVig==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(396003)(346002)(366004)(376002)(39860400002)(136003)(83380400001)(33716001)(38100700002)(66556008)(38350700002)(66476007)(66946007)(8676002)(4326008)(5660300002)(9686003)(4744005)(44832011)(26005)(8936002)(6486002)(33656002)(316002)(6666004)(478600001)(6916009)(41300700001)(6512007)(186003)(6506007)(1076003)(86362001)(2906002)(52116002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PMdJJOFV79TCNgqP3TOgYODfv9pgvnx2soFuGQ8bsPV6w2TeL1QVkmtmtN2I?=
- =?us-ascii?Q?eih8AM/gcUt+bsbi3WiTM1SGS+zM5bhudLSW/zFP2e7/YDzFGv0Nz2xhBXM2?=
- =?us-ascii?Q?LFI6R3lvWUN30rivVe159C553OlnyuHrbqUuSHNEHQxdKMN9w/jfmwVAiUXt?=
- =?us-ascii?Q?rs7owahbLICrvsx2sM6HeVPyuZg/Zo8sFHpxR5KjGj01PL5GftgL43nwBCe9?=
- =?us-ascii?Q?ufmJjPrEh4AmkUhm4GvIWVEE/GY14yKfHIEZkxhfu3142Y7HKxKjghBfDhgW?=
- =?us-ascii?Q?BmTFYagwgWJjHqIVVSVXC3awswBMjVcnk2PH9+hOoWzCFYlwFLk984J9Jk6O?=
- =?us-ascii?Q?LM9oG44aL85CV9SbgJIoP5KKnUOKJyi23KBLvs7wF2h6JrvPi4N9TICAMSeI?=
- =?us-ascii?Q?sOn1zOx048H4FuEOER9XBx0w39/xNmMiayQPBD1hqvcxxPWCOkExlQOUrg/b?=
- =?us-ascii?Q?WLjcsf8ajrm3zpiuEt4IJ48Su7nozKAsql3PZW8gp+sNBBlzuZx1MD779Lwf?=
- =?us-ascii?Q?bgxSsLMWUjhX3JqXFdBobJYjCildPhKPDJvCJ877giR9pLOcJ+kJHAXBRBjb?=
- =?us-ascii?Q?zPunEQL11L/i5yJnl0n3A1ewCViBeNfTbC20NKifMJkZhduKnSSdIuG3W97p?=
- =?us-ascii?Q?HBsBfES9BeUZucFUpNYEWCycMhQBhoVfOdDYw1h3EosdLOtaKkZWvpzmq1Vu?=
- =?us-ascii?Q?0CqLo3POTbwXCvxE71XrXHCkOHJSPS6OnTxXGHYwC1ZitzX9lQ578LcdJ7J5?=
- =?us-ascii?Q?BlTF+NMMjwp9XPeGfhfqgKUWWnG0yiLPhZOLe+K2SLlpZQu/h9oDVdel70aw?=
- =?us-ascii?Q?kTrSnZtDwSmYpbPy1RzQfBLsK0b26KkyBmTGvbyT7tO19XcDpFuUqk9PoHwU?=
- =?us-ascii?Q?6+IHZsJGZ72rMEEcOyg+/EMVdpcMUzPkPSwrIc8IvPEaYbubiRwOxfQgeAkD?=
- =?us-ascii?Q?dVmS2hgI3PwF7TqSoxQLelF7N6VV55W3M2b2Fg1mxldwzFaIFQHcSgEBgkOB?=
- =?us-ascii?Q?c2fxXc8uVSxnYKm93tSTvStozpRCN+hKaZo5GkBeOvH8fsAu/hDUddR6Uf6p?=
- =?us-ascii?Q?I81qvYL2YMyuA788uJKpf8zLNou4GZHxOo6CTXbfW8OdpaBwbkJXGbsiWXOd?=
- =?us-ascii?Q?8jzx4F3cVP/OoNNSeuufs+kzPcLeUwWy4f5gYV79zpqELbOg1U5NFhD45KX/?=
- =?us-ascii?Q?5mk147QpHrgz2yO4MpefZGv+bEkhlFjXIGuJwE/3SarMCDpVLO1fczQNKYMV?=
- =?us-ascii?Q?cbcFSt/84N7zTOz8OuwvS0+Yqroud2/QP7up5lDCeIe8R5w5Mb1AouGQgd9b?=
- =?us-ascii?Q?mfFRqMcjdCwUK4ee4uTdvs+dQDysVGrPgsIaXhV5o+R/kCLGjbIXEQPv8jDx?=
- =?us-ascii?Q?WJNNwBzEOaguNL4MbdtSvd6nVE3Arm1WX843Qua4pA7U1ddCofQdiqV0jJf1?=
- =?us-ascii?Q?63NSEwpFNKHUVMRAXWdILjlE2QNI9iE1BI/8cnMi7DGZja882b5DO+knZYgQ?=
- =?us-ascii?Q?ZZkZHAWgbjGb82ap3gdgmqnhYWyFKCfzZmhFgi+SxYhgjzXgEGU3evWsCLb+?=
- =?us-ascii?Q?oeOikKGaEWMPtmXfZutSp+FFVx9WCdMCxqKhQdqdZTG7k4f8hmfmefNzedX7?=
- =?us-ascii?Q?rQ=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e208203-7c90-4f08-4e48-08da871ca8a7
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2022 04:37:18.6592
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ITkTYXR7K+7JumsdOL8ilC6WFX17eeSC/PrMKGsTlAYDp7Pj8fAtQc9TdrtnMvEDgWt6Q7EljMVKOkn57IrB5roLURPhWfRbe5lYpWAgP6o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1001MB2152
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-26_02,2022-08-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208260016
-X-Proofpoint-ORIG-GUID: oVsFl1BzbbFnzQ4VOottSCBbyrtiP6Lv
-X-Proofpoint-GUID: oVsFl1BzbbFnzQ4VOottSCBbyrtiP6Lv
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 10:35:15AM +0800, Sun Ke wrote:
-> The cache_size field of copen is specified by the user daemon.
-> If cache_size < 0, then the OPEN request is expected to fail,
-> while copen itself shall succeed. However, returning 0 is indeed
-> unexpected when cache_size is an invalid error code.
-> 
-> Fix this by returning error when cache_size is an invalid error code.
-> 
-> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
-> Suggested-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v4: update the code suggested by Dan
-> v3: update the commit log suggested by Jingbo.
 
-Thanks!
+Hello,
 
-regards,
-dan carpenter
+This patch series implements a new ioctl on the pagemap proc fs file to
+get, clear and perform both get and clear at the same time atomically on
+the specified range of the memory.
+
+Soft-dirty PTE bit of the memory pages can be viewed by using pagemap
+procfs file. The soft-dirty PTE bit for the whole memory range of the
+process can be cleared by writing to the clear_refs file. This series
+adds features that weren't present earlier.
+- There is no atomic get soft-dirty PTE bit status and clear operation
+  present.
+- The soft-dirty PTE bit of only a part of memory cannot be cleared.
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The proc fs interface is enough for that as I think the process
+is frozen. We have the use case where we need to track the soft-dirty
+PTE bit for the running processes. We need this tracking and clear
+mechanism of a region of memory while the process is running to emulate
+the getWriteWatch() syscall of Windows. This syscall is used by games to
+keep track of dirty pages and keep processing only the dirty pages. This
+new ioctl can be used by the CRIU project and other applications which
+require soft-dirty PTE bit information.
+
+As in the current kernel there is no way to clear a part of memory (instead
+of clearing the Soft-Dirty bits for the entire process) and get+clear
+operation cannot be performed atomically, there are other methods to mimic
+this information entirely in userspace with poor performance:
+- The mprotect syscall and SIGSEGV handler for bookkeeping
+- The userfaultfd syscall with the handler for bookkeeping
+Some benchmarks can be seen [1].
+
+This ioctl can be used by the CRIU project and other applications which
+require soft-dirty PTE bit information. The following operations are
+supported in this ioctl:
+- Get the pages that are soft-dirty.
+- Clear the pages which are soft-dirty.
+- The optional flag to ignore the VM_SOFTDIRTY and only track per page
+soft-dirty PTE bit
+
+There are two decisions which have been taken about how to get the output
+from the syscall.
+- Return offsets of the pages from the start in the vec
+- Stop execution when vec is filled with dirty pages
+These two arguments doesn't follow the mincore() philosophy where the
+output array corresponds to the address range in one to one fashion, hence
+the output buffer length isn't passed and only a flag is set if the page
+is present. This makes mincore() easy to use with less control. We are
+passing the size of the output array and putting return data consecutively
+which is offset of dirty pages from the start. The user can convert these
+offsets back into the dirty page addresses easily. Suppose, the user want
+to get first 10 dirty pages from a total memory of 100 pages. He'll
+allocate output buffer of size 10 and the ioctl will abort after finding the
+10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
+behaviour like mincore() can be achieved by passing output buffer of 100
+size. This interface can be used for any desired behaviour.
+
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (4):
+  fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+  fs/proc/task_mmu: Implement IOCTL to get and clear soft dirty PTE bit
+  selftests: vm: add pagemap ioctl tests
+  mm: add documentation of the new ioctl on pagemap
+
+ Documentation/admin-guide/mm/soft-dirty.rst |  42 +-
+ fs/proc/task_mmu.c                          | 342 ++++++++++-
+ include/uapi/linux/fs.h                     |  23 +
+ tools/include/uapi/linux/fs.h               |  23 +
+ tools/testing/selftests/vm/.gitignore       |   1 +
+ tools/testing/selftests/vm/Makefile         |   2 +
+ tools/testing/selftests/vm/pagemap_ioctl.c  | 649 ++++++++++++++++++++
+ 7 files changed, 1050 insertions(+), 32 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
+
+-- 
+2.30.2
 
