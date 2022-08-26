@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD9D5A318A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 23:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5DB5A317D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 23:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345176AbiHZVrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 17:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
+        id S1344338AbiHZVrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 17:47:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345148AbiHZVrZ (ORCPT
+        with ESMTP id S1345149AbiHZVrZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 26 Aug 2022 17:47:25 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB322D0216;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1CBC6CE8;
         Fri, 26 Aug 2022 14:47:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A3D2ECE312B;
-        Fri, 26 Aug 2022 21:47:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB54EC433D6;
-        Fri, 26 Aug 2022 21:47:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D7FB8611B8;
+        Fri, 26 Aug 2022 21:47:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A2A1C433D7;
+        Fri, 26 Aug 2022 21:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661550435;
-        bh=3NonU2GerMrPghH8DGEw5liykSCzElPuDvCptLZ61mI=;
+        s=k20201202; t=1661550438;
+        bh=qU51/2s4Wnrj74rR5jgmWaEwBi6kzzZVvyofzKswcoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P8Ibfp1lGyT4j3SfzJhYeRJ8QjoAXjKXdJDHFjIMuOgGhgHPxmaIZu/QUVjuf/pr4
-         LOA1O7PldD2eC3Av/Ltux4uQRjoJSIHX1Dhdr6ols5ZZpZ6Ih4+Q0XHobc4mH2VoeE
-         fBEGMxNE/3M+SoweiYZYVHCEuD+CGSzC5L68rEwxZO5IrJ3RsxbqIHOSBEx+O9y920
-         AcoBAOhQE3BLY9bNwA2dgZO6tkwmEU44wHDolEGLZyv44VtA+MmM1Zq6O8n4/HZxAA
-         3fMULJvB+hc1HNPpapY+/RBKQwjDtd9jzjzQuK5iKHBih5L9mbmrE9S8x+9WtNJspy
-         gaoOYxIKSFhHg==
+        b=ed02H/yd5tz0QMu2zvI8wmbFy0wRZijcNv6A4d5lNd8BZVdT2jCdA/ZfuDjlg418e
+         Y2UzP1nIRhzFSz4dHILUGvQaiU9OlVBSZlP5uH9zztme3+GKepKlonqICC6lr5l1iL
+         tNe7bGEMO7CTjNDYESKA9FQZs92lPhtCHrTAvPm+jxnh1YVkkPcJFu6mWtXFpX+GFL
+         QLu4mgNRG/HWuAq1oWIkVTR+2y+2AP0TCyZZ0Q7qnlBAjIdo81hc4mLG26lg5F0bki
+         uOeBvNAaiXD/Ao3bXCSd/7V5AT+N2kYT7GOgVheAF4rRuceogibnmF3AsR8E/m8R8D
+         +2ORkTTS77Vyw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
         david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
@@ -42,10 +42,12 @@ Cc:     linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-ceph@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        David Wysochanski <dwysocha@redhat.com>
-Subject: [PATCH v3 4/7] xfs: don't bump the i_version on an atime update in xfs_vn_update_time
-Date:   Fri, 26 Aug 2022 17:47:00 -0400
-Message-Id: <20220826214703.134870-5-jlayton@kernel.org>
+        Jeff Layton <jlayton@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Frank Filz <ffilzlnx@mindspring.com>
+Subject: [PATCH v3 5/7] vfs: report an inode version in statx for IS_I_VERSION inodes
+Date:   Fri, 26 Aug 2022 17:47:01 -0400
+Message-Id: <20220826214703.134870-6-jlayton@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220826214703.134870-1-jlayton@kernel.org>
 References: <20220826214703.134870-1-jlayton@kernel.org>
@@ -61,85 +63,131 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-xfs will update the i_version when updating only the atime value, which
-is not desirable for any of the current consumers of i_version. Doing so
-leads to unnecessary cache invalidations on NFS and extra measurement
-activity in IMA.
+From: Jeff Layton <jlayton@redhat.com>
 
-Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
-transaction should not update the i_version. Set that value in
-xfs_vn_update_time if we're only updating the atime.
+The NFS server and IMA both rely heavily on the i_version counter, but
+it's largely invisible to userland, which makes it difficult to test its
+behavior. This value would also be of use to userland NFS servers, and
+other applications that want a reliable way to know whether there might
+have been an explicit change to an inode since they last checked.
 
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: NeilBrown <neilb@suse.de>
-Cc: Trond Myklebust <trondmy@hammerspace.com>
-Cc: David Wysochanski <dwysocha@redhat.com>
+Claim one of the spare fields in struct statx to hold a 64-bit inode
+version attribute. This value must change with any explicit, observeable
+metadata or data change. Note that atime updates are excluded from this,
+unless it is due to an explicit change via utimes or similar mechanism.
+
+When statx requests this attribute on an IS_I_VERSION inode, do an
+inode_query_iversion and fill the result in the field. Also, update the
+test-statx.c program to display the inode version and the mountid.
+
+Cc: David Howells <dhowells@redhat.com>
+Cc: Frank Filz <ffilzlnx@mindspring.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/xfs/libxfs/xfs_log_format.h  |  2 +-
- fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
- fs/xfs/xfs_iops.c               | 11 +++++++++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ fs/stat.c                 | 7 +++++++
+ include/linux/stat.h      | 1 +
+ include/uapi/linux/stat.h | 3 ++-
+ samples/vfs/test-statx.c  | 8 ++++++--
+ 4 files changed, 16 insertions(+), 3 deletions(-)
 
-Dave has NACK'ed this patch, but I'm sending it as a way to illustrate
-the problem. I still think this approach should at least fix the worst
-problems with atime updates being counted. We can look to carve out
-other "spurious" i_version updates as we identify them.
-
-If however there are offline analysis tools that require atime updates
-to be counted, then we won't be able to do this. If that's the case, how
-can we fix this such that serving xfs via NFSv4 doesn't suck?
-
-diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
-index b351b9dc6561..866a4c5cf70c 100644
---- a/fs/xfs/libxfs/xfs_log_format.h
-+++ b/fs/xfs/libxfs/xfs_log_format.h
-@@ -323,7 +323,7 @@ struct xfs_inode_log_format_32 {
- #define	XFS_ILOG_ABROOT	0x100	/* log i_af.i_broot */
- #define XFS_ILOG_DOWNER	0x200	/* change the data fork owner on replay */
- #define XFS_ILOG_AOWNER	0x400	/* change the attr fork owner on replay */
--
-+#define XFS_ILOG_NOIVER	0x800	/* don't bump i_version */
+diff --git a/fs/stat.c b/fs/stat.c
+index 9ced8860e0f3..d892909836aa 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -17,6 +17,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/pagemap.h>
+ #include <linux/compat.h>
++#include <linux/iversion.h>
  
- /*
-  * The timestamps are dirty, but not necessarily anything else in the inode
-diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-index 8b5547073379..ffe6d296e7f9 100644
---- a/fs/xfs/libxfs/xfs_trans_inode.c
-+++ b/fs/xfs/libxfs/xfs_trans_inode.c
-@@ -126,7 +126,7 @@ xfs_trans_log_inode(
- 	 * unconditionally.
- 	 */
- 	if (!test_and_set_bit(XFS_LI_DIRTY, &iip->ili_item.li_flags)) {
--		if (IS_I_VERSION(inode) &&
-+		if (!(flags & XFS_ILOG_NOIVER) && IS_I_VERSION(inode) &&
- 		    inode_maybe_inc_iversion(inode, flags & XFS_ILOG_CORE))
- 			iversion_flags = XFS_ILOG_CORE;
- 	}
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 45518b8c613c..94f14d96641b 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1041,10 +1041,17 @@ xfs_vn_update_time(
- 		return error;
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
+@@ -118,6 +119,11 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	stat->attributes_mask |= (STATX_ATTR_AUTOMOUNT |
+ 				  STATX_ATTR_DAX);
  
- 	xfs_ilock(ip, XFS_ILOCK_EXCL);
--	if (flags & S_CTIME)
++	if ((request_mask & STATX_INO_VERSION) && IS_I_VERSION(inode)) {
++		stat->result_mask |= STATX_INO_VERSION;
++		stat->ino_version = inode_query_iversion(inode);
++	}
 +
-+	if (!(flags & S_VERSION))
-+		log_flags |= XFS_ILOG_NOIVER;
-+	if (flags & S_CTIME) {
- 		inode->i_ctime = *now;
--	if (flags & S_MTIME)
-+		log_flags &= ~XFS_ILOG_NOIVER;
-+	}
-+	if (flags & S_MTIME) {
- 		inode->i_mtime = *now;
-+		log_flags &= ~XFS_ILOG_NOIVER;
-+	}
- 	if (flags & S_ATIME)
- 		inode->i_atime = *now;
+ 	mnt_userns = mnt_user_ns(path->mnt);
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(mnt_userns, path, stat,
+@@ -611,6 +617,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
+ 	tmp.stx_dev_major = MAJOR(stat->dev);
+ 	tmp.stx_dev_minor = MINOR(stat->dev);
+ 	tmp.stx_mnt_id = stat->mnt_id;
++	tmp.stx_ino_version = stat->ino_version;
  
+ 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+ }
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index 7df06931f25d..9cd77eb7bc1a 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -50,6 +50,7 @@ struct kstat {
+ 	struct timespec64 btime;			/* File creation time */
+ 	u64		blocks;
+ 	u64		mnt_id;
++	u64		ino_version;
+ };
+ 
+ #endif
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 1500a0f58041..48d9307d7f31 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -124,7 +124,7 @@ struct statx {
+ 	__u32	stx_dev_minor;
+ 	/* 0x90 */
+ 	__u64	stx_mnt_id;
+-	__u64	__spare2;
++	__u64	stx_ino_version; /* Inode change attribute */
+ 	/* 0xa0 */
+ 	__u64	__spare3[12];	/* Spare space for future expansion */
+ 	/* 0x100 */
+@@ -152,6 +152,7 @@ struct statx {
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
++#define STATX_INO_VERSION	0x00002000U	/* Want/got stx_change_attr */
+ 
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
+diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+index 49c7a46cee07..23e68036fdfb 100644
+--- a/samples/vfs/test-statx.c
++++ b/samples/vfs/test-statx.c
+@@ -107,6 +107,8 @@ static void dump_statx(struct statx *stx)
+ 	printf("Device: %-15s", buffer);
+ 	if (stx->stx_mask & STATX_INO)
+ 		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
++	if (stx->stx_mask & STATX_MNT_ID)
++		printf(" MountId: %llx", stx->stx_mnt_id);
+ 	if (stx->stx_mask & STATX_NLINK)
+ 		printf(" Links: %-5u", stx->stx_nlink);
+ 	if (stx->stx_mask & STATX_TYPE) {
+@@ -145,7 +147,9 @@ static void dump_statx(struct statx *stx)
+ 	if (stx->stx_mask & STATX_CTIME)
+ 		print_time("Change: ", &stx->stx_ctime);
+ 	if (stx->stx_mask & STATX_BTIME)
+-		print_time(" Birth: ", &stx->stx_btime);
++		print_time("Birth: ", &stx->stx_btime);
++	if (stx->stx_mask & STATX_INO_VERSION)
++		printf("Inode Version: 0x%llx\n", stx->stx_ino_version);
+ 
+ 	if (stx->stx_attributes_mask) {
+ 		unsigned char bits, mbits;
+@@ -218,7 +222,7 @@ int main(int argc, char **argv)
+ 	struct statx stx;
+ 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
+ 
+-	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
++	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME | STATX_MNT_ID | STATX_INO_VERSION;
+ 
+ 	for (argv++; *argv; argv++) {
+ 		if (strcmp(*argv, "-F") == 0) {
 -- 
 2.37.2
 
