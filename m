@@ -2,65 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D9D5A2567
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 12:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7243E5A256A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 12:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245432AbiHZKGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 06:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
+        id S231578AbiHZKGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 06:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245405AbiHZKGS (ORCPT
+        with ESMTP id S245228AbiHZKGL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 06:06:18 -0400
-Received: from smtpout30.security-mail.net (smtpout30.security-mail.net [85.31.212.36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B665CA407F
+        Fri, 26 Aug 2022 06:06:11 -0400
+X-Greylist: delayed 239 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 26 Aug 2022 03:05:10 PDT
+Received: from mxout.security-mail.net (mxout.security-mail.net [85.31.212.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5013052DD7
         for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 03:05:09 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by fx301.security-mail.net (Postfix) with ESMTP id CDC8124BD0FA
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 12:01:08 +0200 (CEST)
+        by fx302.security-mail.net (Postfix) with ESMTP id 75F803D3B167
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 12:01:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalray.eu;
-        s=sec-sig-email; t=1661508068;
-        bh=AuIUPtDG7EP5rSMVhlxZvrX9iTAUSf0vV72kLeZiS2I=;
+        s=sec-sig-email; t=1661508070;
+        bh=8GaQ+BQxQwmLfFAY3UwtrZ/d9W9sEVE4MVV/IE9XSnA=;
         h=From:To:Cc:Subject:Date;
-        b=lPICwcWN7YWeKZtLuGQI3pwdHwDdp8GwJKc6rqGrMUriZDVEOuInO3TmG9AAWxdAV
-         A5HzSrZOhZEhy4gmBIjBLp+lopUhnahGzumJw2Q0cQaQxprTYzhzotMzgg6uGix86B
-         nVnX8KKwJYxfsAEkFAQwVOJSSsgFfP0S6D1t/kr4=
-Received: from fx301 (localhost [127.0.0.1])
-        by fx301.security-mail.net (Postfix) with ESMTP id 181C124BD07B;
-        Fri, 26 Aug 2022 12:01:08 +0200 (CEST)
+        b=LasDV7CTYN7QMKnInMJUanUZfMWgg6phgF/fhU1l8pJkNsduEvUbdDb0MMiL0POfn
+         vE6U99KOeiL/fCkG5hqR5OQ39YqAl1MSDj/GfIovxj0pdXZ0HOPrEqs+5RM7oq1qxh
+         lGrBu4NJgLPzfMgMGa7ibC3e+F9+tUaqryFtX4mI=
+Received: from fx302 (localhost [127.0.0.1])
+        by fx302.security-mail.net (Postfix) with ESMTP id F18983D3B0B8;
+        Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
 X-Virus-Scanned: E-securemail
-Secumail-id: <17d21.630899e3.507b4.0>
+Secumail-id: <1510e.630899e5.72c6a.0>
 Received: from zimbra2.kalray.eu (unknown [217.181.231.53])
-        by fx301.security-mail.net (Postfix) with ESMTPS id 97CE324BD125;
-        Fri, 26 Aug 2022 12:01:07 +0200 (CEST)
+        by fx302.security-mail.net (Postfix) with ESMTPS id 7347F3D3B165;
+        Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
 Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTPS id 3557C27E0396;
-        Fri, 26 Aug 2022 12:01:07 +0200 (CEST)
+        by zimbra2.kalray.eu (Postfix) with ESMTPS id 5A1F127E02FA;
+        Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 1EB1727E0392;
-        Fri, 26 Aug 2022 12:01:07 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 1EB1727E0392
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 439C427E0392;
+        Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 439C427E0392
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1661508067;
-        bh=Myu8SMkijdecTs03PTrW2IgGc9cWDLAdsLPOgTch5Dc=;
+        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1661508069;
+        bh=xq2h1CH6VTuibgIykByVr3mMAa1GYI+GOILmH7S2DtY=;
         h=From:To:Date:Message-Id;
-        b=RAqOonkLYCYKGpzj+Vm7+4eDQPSOlG+ymCge7/xERFwVwKMMW++S4PQgW38+ah/Vy
-         XwxFAh+PYVfPcwcwrTQahkys48kIdDBbpTPVExUoTUWagGbZ1ahZ/8aGOXuTMB6cT6
-         x+dnY8c/QONd2NRIInBNem/7f+wuXbA0QWPTsRmc=
+        b=W60DOFbm7ZFHvA/oTIYXhaFgSAZDaB0Ffvpqc9bwqSBXUQbp0jyqQof5CB+8obqFi
+         9Id+IkysVeDY6N6oUtKGv3+FwmI1jkg+jOZVTGporocg3+XqZOFtZsDKQ4v4yml+zs
+         sOn9OHF0DwyEi9lMQBjBTBGABxZnGS+aV6U7n2lM=
 Received: from zimbra2.kalray.eu ([127.0.0.1])
         by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id vElzBLQjMoGP; Fri, 26 Aug 2022 12:01:07 +0200 (CEST)
+        with ESMTP id Y7IGJxT_wypX; Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
 Received: from tellis.lin.mbt.kalray.eu (unknown [192.168.36.206])
-        by zimbra2.kalray.eu (Postfix) with ESMTPSA id 0441C27E02FA;
-        Fri, 26 Aug 2022 12:01:07 +0200 (CEST)
+        by zimbra2.kalray.eu (Postfix) with ESMTPSA id 2B85A27E02FA;
+        Fri, 26 Aug 2022 12:01:09 +0200 (CEST)
 From:   Jules Maselbas <jmaselbas@kalray.eu>
 To:     linux-kernel@vger.kernel.org
-Cc:     Jules Maselbas <jmaselbas@kalray.eu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: Fix repeated word in comments
-Date:   Fri, 26 Aug 2022 12:00:35 +0200
-Message-Id: <20220826100052.22945-7-jmaselbas@kalray.eu>
+Cc:     Jules Maselbas <jmaselbas@kalray.eu>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs/afs: Fix repeated word in comments
+Date:   Fri, 26 Aug 2022 12:00:36 +0200
+Message-Id: <20220826100052.22945-8-jmaselbas@kalray.eu>
 X-Mailer: git-send-email 2.17.1
 X-Virus-Scanned: by Secumail
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,26 +74,25 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Remove redundant word `the`.
 
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
 CC: linux-fsdevel@vger.kernel.org
 Signed-off-by: Jules Maselbas <jmaselbas@kalray.eu>
 ---
- include/linux/fs.h | 2 +-
+ fs/afs/flock.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9eced4cc286e..6e946ed4c133 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3069,7 +3069,7 @@ extern void evict_inodes(struct super_block *sb);
- void dump_mapping(const struct address_space *);
+diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+index c4210a3964d8..801fe305878f 100644
+--- a/fs/afs/flock.c
++++ b/fs/afs/flock.c
+@@ -152,7 +152,7 @@ static void afs_next_locker(struct afs_vnode *vnode, int error)
+ }
  
  /*
-- * Userspace may rely on the the inode number being non-zero. For example, glibc
-+ * Userspace may rely on the inode number being non-zero. For example, glibc
-  * simply ignores files with zero i_ino in unlink() and other places.
-  *
-  * As an additional complication, if userspace was compiled with
+- * Kill off all waiters in the the pending lock queue due to the vnode being
++ * Kill off all waiters in the pending lock queue due to the vnode being
+  * deleted.
+  */
+ static void afs_kill_lockers_enoent(struct afs_vnode *vnode)
 -- 
 2.17.1
 
