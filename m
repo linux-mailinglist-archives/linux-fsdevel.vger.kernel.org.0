@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E05875A1EBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 04:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8E65A1EB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Aug 2022 04:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243013AbiHZCTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Aug 2022 22:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39256 "EHLO
+        id S244806AbiHZCS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Aug 2022 22:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiHZCTi (ORCPT
+        with ESMTP id S244782AbiHZCSk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Aug 2022 22:19:38 -0400
+        Thu, 25 Aug 2022 22:18:40 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72FEBCC33E;
-        Thu, 25 Aug 2022 19:19:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EAB6CB5FD;
+        Thu, 25 Aug 2022 19:18:39 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BFAAF20684;
-        Fri, 26 Aug 2022 02:19:25 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BE6E720890;
+        Fri, 26 Aug 2022 02:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661480365; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1661480317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5652YvS1xa2Qe9hIcsZbOxfW+QuG+ADDYX81GrYMHlk=;
-        b=X6xQvAOc2qsbJ9MzbPY5xErByR+Hc8rrq8ln5j1eTMSAruTCjtgxaly7c0cdb6S1bwXVt1
-        CGXvoKr3WP/+itGQ6cxMZwG7uWC3Ua9PyiX7V13zlb7ExTwixUfYF+X9HhQl2BvTRf3vwH
-        gJ567FdpvwSb8DHYrMr1rxu2RJf4LZo=
+        bh=Ub7ZQmWhkMwCrPt6XLaYYoLXvYl81gYHBE+E0mqaQY8=;
+        b=akHDCDoZIvpZtrkKD5N2+PdNkzbpNDBUFlhF0ssPNMkkY0g5N6tu9oXIiP/uhonLdETaNE
+        8n1Up45lp7/dW1S/RUkIXdZd0PBKJ90k+5N6OScf/HTaTmeR+hAp9p0sAAsDjtsFvUVXV2
+        Mq/hJJ4Hifx5GeVMPHnEuqoqTDpLzss=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661480365;
+        s=susede2_ed25519; t=1661480317;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5652YvS1xa2Qe9hIcsZbOxfW+QuG+ADDYX81GrYMHlk=;
-        b=LHTjuaxJ4Z7DaUu11xbnGvvoLrpn49/MxSTlK6Km37JbDRklg9K+0IhpIQV+KVyoQIdXRN
-        oN0P/aQGRhkA4DDg==
+        bh=Ub7ZQmWhkMwCrPt6XLaYYoLXvYl81gYHBE+E0mqaQY8=;
+        b=hQowVta/FFtn3ne1nv7wifMpnj+WbEhlmoT1GTmPtYB+QEYNPoq+vF6k0/2hS2hmbwfsJV
+        AXDBSUeZ61NgVEBA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9E18813A65;
-        Fri, 26 Aug 2022 02:19:22 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 59D3413A65;
+        Fri, 26 Aug 2022 02:18:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id /lZSF6otCGP7MQAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 02:19:22 +0000
-Subject: [PATCH 10/10] NFS: support parallel updates in the one directory.
+        id fKxlBnstCGPLMQAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 02:18:35 +0000
+Subject: [PATCH 09/10] VFS: add LOOKUP_SILLY_RENAME
 From:   NeilBrown <neilb@suse.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -59,7 +59,7 @@ To:     Al Viro <viro@zeniv.linux.org.uk>,
 Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Date:   Fri, 26 Aug 2022 12:10:43 +1000
-Message-ID: <166147984378.25420.4023980607067991846.stgit@noble.brown>
+Message-ID: <166147984377.25420.5747334898411663007.stgit@noble.brown>
 In-Reply-To: <166147828344.25420.13834885828450967910.stgit@noble.brown>
 References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
 User-Agent: StGit/1.5
@@ -75,264 +75,232 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NFS can easily support parallel updates as the locking is done on the
-server, so this patch enables parallel updates for NFS.
+When performing a "silly rename" to avoid removing a file that is still
+open, we need to perform a lookup in a directory that is already locked.
 
-Handling of silly-rename - both for unlink and for the rename target -
-requires some care as we need to get an exclusive lock on the chosen
-silly name and for rename we need to keep the original target name
-locked after it has been renamed to the silly name.
+In order to allow common functions to be used for this lookup, introduce
+LOOKUP_SILLY_RENAME which affirms that the directory is already locked
+and that the vfsmnt is already writable.
 
-So nfs_sillyrename() now uses d_exchange() to swap the target and the
-silly name after the silly-rename has happened on the server, and the
-silly dentry - which now has the name of the target - is returned.
-
-For unlink(), this is immediately unlocked and discarded with a call to
-nfs_sillyrename_finish().  For rename it is kept locked until the
-originally requested rename completes.
+When LOOKUP_SILLY_RENAME is set, path->mnt can be NULL.  As
+i_op->rename() doesn't make the vfsmnt available, this is unavoidable.
+So we ensure that a NULL ->mnt isn't fatal.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/dcache.c         |    5 ++++-
- fs/nfs/dir.c        |   28 ++++++++++++++++------------
- fs/nfs/fs_context.c |    6 ++++--
- fs/nfs/internal.h   |    3 ++-
- fs/nfs/unlink.c     |   51 ++++++++++++++++++++++++++++++++++++++-------------
- 5 files changed, 64 insertions(+), 29 deletions(-)
+ fs/dcache.c           |    3 +-
+ fs/namei.c            |   88 +++++++++++++++++++++++++++++--------------------
+ include/linux/namei.h |    9 +++--
+ 3 files changed, 59 insertions(+), 41 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 9bf346a9de52..a5eaab16d39f 100644
+index d6bfa49b143b..9bf346a9de52 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -3056,7 +3056,9 @@ void d_exchange(struct dentry *dentry1, struct dentry *dentry2)
- 	write_seqlock(&rename_lock);
- 
- 	WARN_ON(!dentry1->d_inode);
--	WARN_ON(!dentry2->d_inode);
-+	/* Allow dentry2 to be negative, so we can do a rename
-+	 * but keep both names locked (DCACHE_PAR_UPDATE)
-+	 */
- 	WARN_ON(IS_ROOT(dentry1));
- 	WARN_ON(IS_ROOT(dentry2));
- 
-@@ -3064,6 +3066,7 @@ void d_exchange(struct dentry *dentry1, struct dentry *dentry2)
- 
- 	write_sequnlock(&rename_lock);
- }
-+EXPORT_SYMBOL(d_exchange);
- 
- /**
-  * d_ancestor - search for an ancestor
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 5d6c2ddc7ea6..fbb608fbe6bf 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -1935,8 +1935,12 @@ struct dentry *nfs_lookup(struct inode *dir, struct dentry * dentry, unsigned in
- 	/*
- 	 * If we're doing an exclusive create, optimize away the lookup
- 	 * but don't hash the dentry.
-+	 * A silly_rename is marked exclusive, but we need to do an
-+	 * explicit lookup.
- 	 */
--	if (nfs_is_exclusive_create(dir, flags) || flags & LOOKUP_RENAME_TARGET)
-+	if ((nfs_is_exclusive_create(dir, flags) ||
-+	     flags & LOOKUP_RENAME_TARGET) &&
-+	    !(flags & LOOKUP_SILLY_RENAME))
- 		return NULL;
- 
- 	res = ERR_PTR(-ENOMEM);
-@@ -2472,10 +2476,14 @@ int nfs_unlink(struct inode *dir, struct dentry *dentry)
- 	spin_lock(&dentry->d_lock);
- 	if (d_count(dentry) > 1 && !test_bit(NFS_INO_PRESERVE_UNLINKED,
- 					     &NFS_I(d_inode(dentry))->flags)) {
-+		struct dentry *silly;
-+
- 		spin_unlock(&dentry->d_lock);
- 		/* Start asynchronous writeout of the inode */
- 		write_inode_now(d_inode(dentry), 0);
--		error = nfs_sillyrename(dir, dentry);
-+		silly = nfs_sillyrename(dir, dentry);
-+		error = PTR_ERR_OR_ZERO(silly);
-+		nfs_sillyrename_finish(dir, silly);
- 		goto out;
- 	}
- 	/* We must prevent any concurrent open until the unlink
-@@ -2685,16 +2693,12 @@ int nfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 
- 			spin_unlock(&new_dentry->d_lock);
- 
--			/* copy the target dentry's name */
--			dentry = d_alloc(new_dentry->d_parent,
--					 &new_dentry->d_name);
--			if (!dentry)
--				goto out;
--
- 			/* silly-rename the existing target ... */
--			err = nfs_sillyrename(new_dir, new_dentry);
--			if (err)
-+			dentry = nfs_sillyrename(new_dir, new_dentry);
-+			if (IS_ERR(dentry)) {
-+				err = PTR_ERR(dentry);
- 				goto out;
-+			}
- 
- 			new_dentry = dentry;
- 			new_inode = NULL;
-@@ -2750,9 +2754,9 @@ int nfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	} else if (error == -ENOENT)
- 		nfs_dentry_handle_enoent(old_dentry);
- 
--	/* new dentry created? */
- 	if (dentry)
--		dput(dentry);
-+		nfs_sillyrename_finish(new_dir, dentry);
-+
- 	return error;
- }
- EXPORT_SYMBOL_GPL(nfs_rename);
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 4da701fd1424..7133ca9433d2 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -1577,7 +1577,8 @@ struct file_system_type nfs_fs_type = {
- 	.init_fs_context	= nfs_init_fs_context,
- 	.parameters		= nfs_fs_parameters,
- 	.kill_sb		= nfs_kill_super,
--	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
-+	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA|
-+				  FS_PAR_DIR_UPDATE,
- };
- MODULE_ALIAS_FS("nfs");
- EXPORT_SYMBOL_GPL(nfs_fs_type);
-@@ -1589,7 +1590,8 @@ struct file_system_type nfs4_fs_type = {
- 	.init_fs_context	= nfs_init_fs_context,
- 	.parameters		= nfs_fs_parameters,
- 	.kill_sb		= nfs_kill_super,
--	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
-+	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA|
-+				  FS_PAR_DIR_UPDATE,
- };
- MODULE_ALIAS_FS("nfs4");
- MODULE_ALIAS("nfs4");
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 27c720d71b4e..3a7fd30a8e29 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -611,7 +611,8 @@ extern struct rpc_task *
- nfs_async_rename(struct inode *old_dir, struct inode *new_dir,
- 		 struct dentry *old_dentry, struct dentry *new_dentry,
- 		 void (*complete)(struct rpc_task *, struct nfs_renamedata *));
--extern int nfs_sillyrename(struct inode *dir, struct dentry *dentry);
-+extern struct dentry *nfs_sillyrename(struct inode *dir, struct dentry *dentry);
-+extern void nfs_sillyrename_finish(struct inode *dir, struct dentry *dentry);
- 
- /* direct.c */
- void nfs_init_cinfo_from_dreq(struct nfs_commit_info *cinfo,
-diff --git a/fs/nfs/unlink.c b/fs/nfs/unlink.c
-index 9697cd5d2561..c8a718f09fe6 100644
---- a/fs/nfs/unlink.c
-+++ b/fs/nfs/unlink.c
-@@ -428,6 +428,10 @@ nfs_complete_sillyrename(struct rpc_task *task, struct nfs_renamedata *data)
-  *
-  * The final cleanup is done during dentry_iput.
-  *
-+ * We exchange the original with the new (silly) dentries, and return
-+ * the new dentry which will have the original name.  This ensures that
-+ * the target name remains locked until the rename completes.
-+ *
-  * (Note: NFSv4 is stateful, and has opens, so in theory an NFSv4 server
-  * could take responsibility for keeping open files referenced.  The server
-  * would also need to ensure that opened-but-deleted files were kept over
-@@ -436,7 +440,7 @@ nfs_complete_sillyrename(struct rpc_task *task, struct nfs_renamedata *data)
-  * use to advertise that it does this; some day we may take advantage of
-  * it.))
+@@ -3297,7 +3297,8 @@ EXPORT_SYMBOL(d_tmpfile);
+  * If the parent directory is locked with I_MUTEX_NORMAL, use I_MUTEX_NORMAL.
+  * If the parent is locked with I_MUTEX_PARENT, I_MUTEX_PARENT2 or
+  * I_MUTEX_CHILD, use I_MUTEX_PARENT or, for the second in a rename,
+- * I_MUTEX_PARENT2.
++ * I_MUTEX_PARENT2.  When a third name is needed, as with "silly-rename"
++ * I_MUTEX_CHILD is used.
   */
--int
-+struct dentry *
- nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- {
- 	static unsigned int sillycounter;
-@@ -445,6 +449,8 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- 	struct dentry *sdentry;
- 	struct inode *inode = d_inode(dentry);
- 	struct rpc_task *task;
-+	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-+	struct path path = {};
- 	int            error = -EBUSY;
- 
- 	dfprintk(VFS, "NFS: silly-rename(%pd2, ct=%d)\n",
-@@ -459,10 +465,11 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- 
- 	fileid = NFS_FILEID(d_inode(dentry));
- 
-+	path.dentry = d_find_alias(dir);
- 	sdentry = NULL;
- 	do {
- 		int slen;
--		dput(sdentry);
-+
- 		sillycounter++;
- 		slen = scnprintf(silly, sizeof(silly),
- 				SILLYNAME_PREFIX "%0*llx%0*x",
-@@ -472,14 +479,19 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- 		dfprintk(VFS, "NFS: trying to rename %pd to %s\n",
- 				dentry, silly);
- 
--		sdentry = lookup_one_len(silly, dentry->d_parent, slen);
--		/*
--		 * N.B. Better to return EBUSY here ... it could be
--		 * dangerous to delete the file while it's in use.
--		 */
--		if (IS_ERR(sdentry))
--			goto out;
--	} while (d_inode(sdentry) != NULL); /* need negative lookup */
-+		sdentry = filename_create_one_len(silly, slen,
-+						  &path,
-+						  LOOKUP_CREATE | LOOKUP_EXCL |
-+						  LOOKUP_SILLY_RENAME,
-+						  &wq);
-+	} while (PTR_ERR_OR_ZERO(sdentry) == -EEXIST);
-+	dput(path.dentry);
-+	/*
-+	 * N.B. Better to return EBUSY here ... it could be
-+	 * dangerous to delete the file while it's in use.
-+	 */
-+	if (IS_ERR(sdentry))
-+		goto out;
- 
- 	ihold(inode);
- 
-@@ -513,7 +525,7 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- 						     NFS_INO_INVALID_CTIME |
- 						     NFS_INO_REVAL_FORCED);
- 		spin_unlock(&inode->i_lock);
--		d_move(dentry, sdentry);
-+		d_exchange(dentry, sdentry);
- 		break;
- 	case -ERESTARTSYS:
- 		/* The result of the rename is unknown. Play it safe by
-@@ -524,7 +536,20 @@ nfs_sillyrename(struct inode *dir, struct dentry *dentry)
- 	rpc_put_task(task);
- out_dput:
- 	iput(inode);
--	dput(sdentry);
-+	if (!error)
-+		return sdentry;
-+
-+	d_lookup_done(sdentry);
-+	__done_path_update(&path, sdentry, true, LOOKUP_SILLY_RENAME);
- out:
--	return error;
-+	return ERR_PTR(error);
-+}
-+
-+void nfs_sillyrename_finish(struct inode *dir, struct dentry *dentry)
-+{
-+	struct path path = { .dentry = d_find_alias(dir) };
-+
-+	if (!IS_ERR(dentry))
-+		__done_path_update(&path, dentry, true, LOOKUP_SILLY_RENAME);
-+	dput(path.dentry);
+ bool d_lock_update_nested(struct dentry *dentry,
+ 			  struct dentry *base, const struct qstr *name,
+diff --git a/fs/namei.c b/fs/namei.c
+index ef994239fa7c..c9bbff120bf9 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1650,12 +1650,14 @@ static struct dentry *__lookup_hash(const struct qstr *name,
  }
+ 
+ /*
+- * Parent directory (base) is not locked.  We take either an exclusive
+- * or shared lock depending on the fs preference, then do a lookup,
+- * and then set the DCACHE_PAR_UPDATE bit on the child if a shared lock
+- * was taken on the parent.
++ * Without LOOKUP_SILLY_RENAME parent directory (base) is not locked.
++ * We take either an exclusive or shared lock depending on the fs
++ * preference, then do a lookup, and then set the DCACHE_PAR_UPDATE bit
++ * on the child if a shared lock was taken on the parent.
+  * If LOOKUP_EXCL, name should not already exist, else -EEXIST
+  * If not LOOKUP_CREATE, name should already exist, else -ENOENT
++ * If LOOKUP_SILLY_RENAME, don't require write access.  In this case
++ * path->mnt may be NULL.
+  */
+ static struct dentry *lookup_hash_update(
+ 	const struct qstr *name,
+@@ -1665,21 +1667,26 @@ static struct dentry *lookup_hash_update(
+ 	struct dentry *dentry;
+ 	struct dentry *base = path->dentry;
+ 	struct inode *dir = base->d_inode;
+-	int err, err2;
+-
+-	/* For create, don't fail immediately if it's r/o,
+-	 * at least try to report other errors.
+-	 * For unlink/rmdir where LOOKUP_REVAl is the only
+-	 * flag, fail immediately if r/o.
+-	 */
+-	err2 = mnt_want_write(path->mnt);
+-	if (err2 && (flags & ~LOOKUP_REVAL) == 0)
+-		return ERR_PTR(err2);
++	int err, err2 = 0;
++	int class;
++
++	if (!(flags & LOOKUP_SILLY_RENAME)) {
++		/* For create, don't fail immediately if it's r/o,
++		 * at least try to report other errors.
++		 * For unlink/rmdir where LOOKUP_REVAl is the only
++		 * flag, fail immediately if r/o.
++		 */
++		err2 = mnt_want_write(path->mnt);
++		if (err2 && (flags & ~LOOKUP_REVAL) == 0)
++			return ERR_PTR(err2);
+ 
+-	if (wq && IS_PAR_UPDATE(dir))
+-		inode_lock_shared_nested(dir, I_MUTEX_PARENT);
+-	else
+-		inode_lock_nested(dir, I_MUTEX_PARENT);
++		if (wq && IS_PAR_UPDATE(dir))
++			inode_lock_shared_nested(dir, I_MUTEX_PARENT);
++		else
++			inode_lock_nested(dir, I_MUTEX_PARENT);
++		class = I_MUTEX_PARENT;
++	} else
++		class = I_MUTEX_CHILD;
+ 
+ retry:
+ 	dentry = __lookup_hash(name, base, flags, wq);
+@@ -1687,7 +1694,7 @@ static struct dentry *lookup_hash_update(
+ 		err = PTR_ERR(dentry);
+ 		goto out_err;
+ 	}
+-	if (!d_lock_update_nested(dentry, base, name, I_MUTEX_PARENT)) {
++	if (!d_lock_update_nested(dentry, base, name, class)) {
+ 		/*
+ 		 * Failed to get lock due to race with unlink or rename
+ 		 * - try again
+@@ -1724,12 +1731,14 @@ static struct dentry *lookup_hash_update(
+ 	return dentry;
+ 
+ out_err:
+-	if (wq && IS_PAR_UPDATE(dir))
+-		inode_unlock_shared(dir);
+-	else
+-		inode_unlock(dir);
+-	if (!err2)
+-		mnt_drop_write(path->mnt);
++	if (!(flags & LOOKUP_SILLY_RENAME)) {
++		if (wq && IS_PAR_UPDATE(dir))
++			inode_unlock_shared(dir);
++		else
++			inode_unlock(dir);
++		if (!err2)
++			mnt_drop_write(path->mnt);
++	}
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -1751,18 +1760,22 @@ struct dentry *lookup_hash_update_len(const char *name, int nlen,
+ EXPORT_SYMBOL(lookup_hash_update_len);
+ 
+ void __done_path_update(struct path *path, struct dentry *dentry,
+-			bool with_wq)
++			bool with_wq, unsigned int flags)
+ {
+ 	struct inode *dir = path->dentry->d_inode;
+ 
+ 	d_lookup_done(dentry);
+ 	d_unlock_update(dentry);
+-	if (IS_PAR_UPDATE(dir) && with_wq)
+-		inode_unlock_shared(dir);
+-	else
+-		inode_unlock(dir);
+-	dput(dentry);
+-	mnt_drop_write(path->mnt);
++	if (flags & LOOKUP_SILLY_RENAME) {
++		dput(dentry);
++	} else {
++		if (IS_PAR_UPDATE(dir) && with_wq)
++			inode_unlock_shared(dir);
++		else
++			inode_unlock(dir);
++		dput(dentry);
++		mnt_drop_write(path->mnt);
++	}
+ }
+ EXPORT_SYMBOL(__done_path_update);
+ 
+@@ -4122,7 +4135,8 @@ static struct dentry *filename_create_one(struct qstr *last, struct path *path,
+ 					  wait_queue_head_t *wq)
+ {
+ 	bool want_dir = lookup_flags & LOOKUP_DIRECTORY;
+-	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
++	unsigned int flags = lookup_flags & (LOOKUP_REVAL |
++					     LOOKUP_SILLY_RENAME);
+ 	unsigned int create_flag = LOOKUP_CREATE;
+ 
+ 	/*
+@@ -4136,7 +4150,7 @@ static struct dentry *filename_create_one(struct qstr *last, struct path *path,
+ 		 */
+ 		create_flag = 0;
+ 	return lookup_hash_update(last, path,
+-				  reval_flag | create_flag | LOOKUP_EXCL,
++				  flags | create_flag | LOOKUP_EXCL,
+ 				  wq);
+ }
+ 
+@@ -4146,10 +4160,12 @@ struct dentry *filename_create_one_len(const char *name, int nlen,
+ 				       wait_queue_head_t *wq)
+ {
+ 	struct qstr this;
++	struct user_namespace *uns = &init_user_ns;
+ 	int err;
+ 
+-	err = lookup_one_common(mnt_user_ns(path->mnt), name,
+-				path->dentry, nlen, &this);
++	if (path->mnt)
++		uns = mnt_user_ns(path->mnt);
++	err = lookup_one_common(uns, name, path->dentry, nlen, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 	return filename_create_one(&this, path, lookup_flags, wq);
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 29756921f69b..92a62b04a83d 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -21,6 +21,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ #define LOOKUP_FOLLOW		0x0001	/* follow links at the end */
+ #define LOOKUP_DIRECTORY	0x0002	/* require a directory */
+ #define LOOKUP_AUTOMOUNT	0x0004  /* force terminal automount */
++#define LOOKUP_SILLY_RENAME	0x0008	/* Directory already locked, don't lock again */
+ #define LOOKUP_EMPTY		0x4000	/* accept empty path [user_... only] */
+ #define LOOKUP_DOWN		0x8000	/* follow mounts in the starting point */
+ #define LOOKUP_MOUNTPOINT	0x0080	/* follow mounts in the end */
+@@ -64,20 +65,20 @@ extern struct dentry *user_path_create(int, const char __user *, struct path *,
+ extern struct dentry *lookup_hash_update_len(const char *name, int nlen,
+ 					     struct path *path, unsigned int flags,
+ 					     wait_queue_head_t *wq);
+-extern void __done_path_update(struct path *, struct dentry *, bool);
++extern void __done_path_update(struct path *, struct dentry *, bool, unsigned int);
+ static inline void done_path_update(struct path *path, struct dentry *dentry)
+ {
+-	__done_path_update(path, dentry, true);
++	__done_path_update(path, dentry, true, 0);
+ }
+ static inline void done_path_create(struct path *path, struct dentry *dentry)
+ {
+-	__done_path_update(path, dentry, false);
++	__done_path_update(path, dentry, false, 0);
+ 	path_put(path);
+ }
+ static inline void done_path_create_wq(struct path *path, struct dentry *dentry,
+ 				       bool with_wq)
+ {
+-	__done_path_update(path, dentry, with_wq);
++	__done_path_update(path, dentry, with_wq, 0);
+ 	path_put(path);
+ }
+ 
 
 
