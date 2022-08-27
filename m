@@ -2,113 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B885C5A3A0F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 23:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26DE95A3A3B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Aug 2022 00:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbiH0VOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 17:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
+        id S229736AbiH0W1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 18:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiH0VOX (ORCPT
+        with ESMTP id S229455AbiH0W1t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Aug 2022 17:14:23 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F4C357C5;
-        Sat, 27 Aug 2022 14:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MgTyF9gCctinASTA0Asu4gJ2nSzi2Z6PkJg3q98wFmg=; b=tiNcymmmW/z5PAO42XUOJeFps3
-        d83pw/ecS0BhGZiEEtHyFY2bWOZ8pI92IFnghM5+SoKVeQZNuAIUrg34MEEhcTUf4kXnEOK/WImrN
-        K2OZjXsNMQEHAx0XucipKAkIdmZMmYg3bFeWgzGAor+vjCiN/hT91u1XW6LbGd1+6TvQ9w2hSMF2L
-        7PdKIZ82lqFAi8mSn0bkrv8DiZNnWg6+uLPA+a+RcOhVPkoZc24q+zmSCWQN7LYNoJN2oChJCpTzL
-        ZDjZZFKp1ctz/Kr+YakSzutP+kigYwUOIzuFp9vI6baV+bVewhvlsmmL7CjBh4SGI40ZontNt5P2M
-        o3FTB6hw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oS382-0096hM-Lv;
-        Sat, 27 Aug 2022 21:14:06 +0000
-Date:   Sat, 27 Aug 2022 22:14:06 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     NeilBrown <neilb@suse.de>, Daire Byrne <daire@dneg.com>,
+        Sat, 27 Aug 2022 18:27:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 620B642AEC;
+        Sat, 27 Aug 2022 15:27:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DEB6F60EB5;
+        Sat, 27 Aug 2022 22:27:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CCCAC433D7;
+        Sat, 27 Aug 2022 22:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1661639267;
+        bh=mP4LJW5/Ex8VVFzSK0tQqGy9Pf6M8NRGpWXThg5YJsY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fPCCHHBOCVt1Xlfm2Z5i/Pjl8wfTghEDGD0JFOt4WwDmgOEkru94oGjVnHGqnx/ch
+         gQUe2uK6/r2IS2bj5FoIuojGJWJ0Ygto2fKaREz/DqcTJmhucEE0ruirhkci7F9fps
+         g2F/It6cmXai1gbLalpP+edxEzs+snNPwjjIR5co=
+Date:   Sat, 27 Aug 2022 15:27:45 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
-Message-ID: <YwqJHnomJ+4xCy1n@ZenIV>
-References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
- <166147984370.25420.13019217727422217511.stgit@noble.brown>
- <CAHk-=wi_wwTxPTnFXsG8zdaem5YDnSd4OsCeP78yJgueQCb-1g@mail.gmail.com>
- <166155521174.27490.456427475820966571@noble.neil.brown.name>
- <CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Anna Schumaker <anna@kernel.org>, Jan Kara <jack@suse.cz>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] block: add dio_w_*() wrappers for pin, unpin user
+ pages
+Message-Id: <20220827152745.3dcd05e98b3a4383af650a72@linux-foundation.org>
+In-Reply-To: <20220827083607.2345453-3-jhubbard@nvidia.com>
+References: <20220827083607.2345453-1-jhubbard@nvidia.com>
+        <20220827083607.2345453-3-jhubbard@nvidia.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 05:13:38PM -0700, Linus Torvalds wrote:
-> On Fri, Aug 26, 2022 at 4:07 PM NeilBrown <neilb@suse.de> wrote:
-> >
-> > As you note, by the end of the series "create" is not more different
-> > from "rename" than it already is.  I only broke up the patches to make
-> > review more manageable.
+On Sat, 27 Aug 2022 01:36:03 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
+
+> Background: The Direct IO part of the block infrastructure is being
+> changed to use pin_user_page*() and unpin_user_page*() calls, in place
+> of a mix of get_user_pages_fast(), get_page(), and put_page(). These
+> have to be changed over all at the same time, for block, bio, and all
+> filesystems. However, most filesystems can be changed via iomap and core
+> filesystem routines, so let's get that in place, and then continue on
+> with converting the remaining filesystems (9P, CIFS) and anything else
+> that feeds pages into bio that ultimately get released via
+> bio_release_pages().
 > 
-> Yes, I understand. But I'm saying that maybe a filesystem actually
-> might want to treat them differently.
+> Add a new config parameter, CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO, and
+> dio_w_*() wrapper functions. The dio_w_ prefix was chosen for
+> uniqueness, so as to ease a subsequent kernel-wide rename via
+> search-and-replace. Together, these allow the developer to choose
+> between these sets of routines, for Direct IO code paths:
 > 
-> That said, the really nasty part was that 'wq' thing that meant that
-> different paths had different directory locking not because of
-> low-level filesystem issues, but because of caller issues.
+> a) pin_user_pages_fast()
+>     pin_user_page()
+>     unpin_user_page()
 > 
-> So that's the one I _really_ disliked, and that I don't think should
-> exist even as a partial first step.
+> b) get_user_pages_fast()
+>     get_page()
+>     put_page()
 > 
-> The "tie every operation together with one flag" I can live with, in
-> case it turns out that yes, that one flag is all anybody ever really
-> wants.
+> CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO is a temporary setting, and may
+> be deleted once the conversion is complete. In the meantime, developers
+> can enable this in order to try out each filesystem.
+> 
+> Please remember that these /proc/vmstat items (below) should normally
+> contain the same values as each other, except during the middle of
+> pin/unpin operations. As such, they can be helpful when monitoring test
+> runs:
+> 
+>     nr_foll_pin_acquired
+>     nr_foll_pin_released
+> 
+> ...
+>
+> +static inline void dio_w_unpin_user_pages(struct page **pages,
+> +					  unsigned long npages)
+> +{
+> +	unsigned long i;
+> +
+> +	for (i = 0; i < npages; i++)
+> +		put_page(pages[i]);
+> +}
 
-FWIW, what's really missing is the set of rules describing what the
-methods can expect from their arguments.
+release_pages()?  Might be faster if many of the pages are page_count()==1.
 
-Things like "oh, we can safely use ->d_parent here - we know that
-foo_rmdir(dir, child) is called only with dir held exclusive and
-child that had been observed to be a child of dentry alias of
-dir after dir had been locked, while all places that might change
-child->d_parent will be doing that only with child->d_parent->d_inode
-held at least shared" rely upon the current locking scheme.
-
-Change that 'held exclusive' to 'held shared' and we need something
-different, presumably 'this new bitlock on the child is held by the caller'.
-That's nice, but...  What's to guarantee that we won't be hit by
-__d_unalias()?  It won't care about the bitlock on existing alias,
-would it?  And it only holds the old parent shared, so...
-
-My comments had been along the lines of "doing that would make the
-series easier to reason about"; I don't hate the approach, but
-	* in the current form it's hard to read; there might be
-problems I hadn't even noticed yet
-	* it's much easier to verify that stated assertions are
-guaranteed by the callers and sufficient for safety of callees
-if they *ARE* stated.  Spelling them out is on the patch series
-authors, and IME doing that helps a lot when writing a series
-like that.  At least on the level of internal notes...  Especially
-since NFS is... special (or, as they say in New York, "sophisticated" -
-sorry).  There's a plenty of things that are true for it, but do
-not hold for filesystems in general.  And without an explicitly
-spelled out warranties it's very easy to end up with a mess that
-would be hell to apply to other filesystems.  I really don't want
-to see an explosion of cargo-culted logics that might or might
-not remain valid for NFS by the time it gets copied around...
-
+(release_pages() was almost as simple as the above when I added it a
+million years ago.  But then progress happened).
 
