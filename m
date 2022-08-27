@@ -2,239 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 719285A35EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 10:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D6D5A36FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 12:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbiH0Igd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 04:36:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33644 "EHLO
+        id S233731AbiH0KWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 06:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233928AbiH0IgT (ORCPT
+        with ESMTP id S231819AbiH0KWY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Aug 2022 04:36:19 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D75B2DB2;
-        Sat, 27 Aug 2022 01:36:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XJwnyuIDOEK+ZWlRAqsUfMuse45AwM0Ps2KDl3VXuAmoiiTLFLOHYEEgmiSmpDO8i/vc6n8B2n1/uvTfRjthk4/ghVplVoVBP30sTFBj0qPNU9+cs5roSVpPo5uE2RXaAT76QmvbZkrkfTJyUwuvDmH5bj9cdKjLRxvw3mZG+sHdfVendJavA/OJuXJOuHLB9e2ug1CtsUwLLRZoTrtWQ8hlhcVGGKveXNLAgd5fgsEi0uV0QTpSP3AibVJRDnknEaNf94qwil5YimEmjNysj0v/1aTA+7hUWY4ZXLEvtu1M/ajrf9ybKEL/j9DitVSVam4f8oMBKGsSysnCifWkrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=huPDqMjn3txLV0ohJIHpJLOiJMrfH0byrZT2L7g4oV0=;
- b=CkK3hhzCQy26Q8CeOfUMMfO6rxZCUMDA1vliHysDxn+zOLVqrkpOdxBvI0f+pl1dGQdzbr23vepUoyFcVb3ZTJi6E7pRld7euwB9gvWqAtxZdA3Lk9RCq39yo6S4jUQbN3w21YT6P88QybSkorgaZY0jisnZGRpKwcdk5vHS/6183TwEyMlh5WnqPRuSwwi5TITObED1aKZ/SWPOiV4bCWQgdUFgqe7ILYrl4eslR8ZehbhBQLZPCM9Myr6FE1QMh0oJdkInd78SPcG2CTW/0OGgcyy+bdlPqOegdGC2C88HwJXQKJZ1pDdk/BRxrx46uelZMaJ4K5yqDQlpypA8Bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=huPDqMjn3txLV0ohJIHpJLOiJMrfH0byrZT2L7g4oV0=;
- b=TXqEdwaj+YC0sEWqbU6BBTmrh1IxSfXdjpxGmaiOCqgRhpSqy7IARL0edzcZl0wi/fLkiAYyQRzYHvxlcjFFiBJqY3J+OR7KmsnA2c0VZm3ylNBfXgeAKA20Ql2k5Ai7P7PrKZhrWjFYp/jAXq1woTzYZlkp5yB2E8YeuhdPUdVkpyqRUhA38Dw6rE98JrvueRh7tNDmWhYYUoZ1J/qFS5HgYjLQRZu8lMyq5Spm+m6LM/Yf9dk4lx/I/vrXup8t0D3xf8N+js+jXMIAjOiOR69BS2QZHm0b9zz7KaWPmgKRH9Qj3FDUyu5t/+iLk03SVC28NoCgkZdGaNeEc9Oa9w==
-Received: from MW4PR03CA0106.namprd03.prod.outlook.com (2603:10b6:303:b7::21)
- by BN6PR12MB1380.namprd12.prod.outlook.com (2603:10b6:404:1f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Sat, 27 Aug
- 2022 08:36:15 +0000
-Received: from CO1NAM11FT106.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b7:cafe::3f) by MW4PR03CA0106.outlook.office365.com
- (2603:10b6:303:b7::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.20 via Frontend
- Transport; Sat, 27 Aug 2022 08:36:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT106.mail.protection.outlook.com (10.13.175.44) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5566.15 via Frontend Transport; Sat, 27 Aug 2022 08:36:15 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
- 15.0.1497.38; Sat, 27 Aug 2022 08:36:15 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Sat, 27 Aug 2022 01:36:14 -0700
-Received: from sandstorm.attlocal.net (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Sat, 27 Aug 2022 01:36:14 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>, Jan Kara <jack@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 6/6] fuse: convert direct IO paths to use FOLL_PIN
-Date:   Sat, 27 Aug 2022 01:36:07 -0700
-Message-ID: <20220827083607.2345453-7-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220827083607.2345453-1-jhubbard@nvidia.com>
-References: <20220827083607.2345453-1-jhubbard@nvidia.com>
+        Sat, 27 Aug 2022 06:22:24 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D30914D12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Aug 2022 03:22:23 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id e2-20020a056e020b2200b002e1a5b67e29so2936156ilu.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Aug 2022 03:22:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=Gb7abvGIHoaB/5SBUEpY/fy+KAw1/SvawtzKQ+r85EU=;
+        b=Co/1bILHC0n4qghjYwWCT+4LBtZOxFxz19tEFLaI1ORIFcGPR5PnmhAReTWtbO35jT
+         6ef0kkJOp9cikMQeFgIVxy5UihoAJ/HgSHpa6LTDuvV6Tyyx9VOErV7Q2zclbGZc9Vd5
+         XK49+E09ONgBEtk4ekwPRahTiVFvnRlrQi1Aobdw5cZt1fNOyZaYhOrf6rvblrmbWPdr
+         5ZD4uxnqeZLx3905wWfQ+SVBZp66M9J26nsCGsy9a9y2EdryfLf8KgO9wa67k6vKiXlA
+         ltPPIgX9ipNOD+dx3+6KCI9q9bu7R0CpNhb8EgS4X8oAR2YNvDR8lZr4JfGvw5nvXEIi
+         Dsjw==
+X-Gm-Message-State: ACgBeo3kjmI63IZ8qk5beugGZT56zWe5D0VR0SFHT3Nu8hdl9GJuBWAC
+        ZFFsMd3dG72PagLldtp2VLW6vUGWFEm3WnRS1DJF9Hv0BDai
+X-Google-Smtp-Source: AA6agR5hmEyV7Vp5romEdJsYJsNhDtxKXA9ReYvnliAArlj2k8k8quqeHF3rzrEoFixJvj+jEPhqJlF9ZvZVR57cw+F47QmVc+Co
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2dd39851-16d0-40a3-9b9e-08da880734a0
-X-MS-TrafficTypeDiagnostic: BN6PR12MB1380:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lMKwUJFBqc5KWe8/0tClb0xMLOIU4eMcZKSJLudZXvm2XJtLI+5IhangcMQSaT31z8byiTJwSz/4T1QuHFVnNPpGbPfzzggHE1U1ukJVGC7rrwbMH/PRMlyMOh4br5DFd4oInSVAEuuQ7B13QhdMJR6sZrUCHtBtVw0iQgjXlxZaK7Ql61IF7YDwpnJQhYisZ/fppWPyjCi6Ti4aMfxz1Vhm5bL/xDcz9KKNH0ef/QeR1t9hs9bYLT16pvCFp7b96co9aC7kkt7iazKfiRMwL7m78PNJRF8Pmdd0p5/RllyJPGeqAYVjczeyFLPCvmAomkevbQkLKiy84VhEnjY1u5bKxKzCybpwPiiQqUj342CcG5aLtyXtTEbMtHoERhacL5Di3tly3c1Gw+Dzgj2ZGxDL5UIHJrUFwdKsFvlY22wc5UI6zQ0fMUspwy01vNmTQI3Xd3+UxIBxDy/vbwzJ/iYVmV4JRNswzHCLeP+uZUdMId5ETxEKJA4gaMsMXxLaBUwS5AADGfJQTSb+/+8GfJCJMIHnxQbMRF8LR8WPI6zGpL46AhuKQyKjf+oUA10mbTYzO1TtpKzsJXvsYaHnIebvG8+HAd40JvzP0gZ0MI6W2V370ApdROJunoqZ/Knleh1adkc8doRWo/DWCCRIOAIcUi8Kjp5iDUplx9Nf0Wkutat6X/JqmoanU8jMs08RbI8+RZ0H2Lo1iquqgnZyAjw3C3KD4J+YRy2p1wDcT7TdbIk/kSkHxrL22OQALIN0vynF42tsuIOCTpIGE7ZZRMHbQXctihTYVwk+7UKxo2Q=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(376002)(346002)(136003)(46966006)(36840700001)(40470700004)(478600001)(47076005)(426003)(83380400001)(8676002)(4326008)(70586007)(70206006)(40460700003)(2906002)(5660300002)(8936002)(107886003)(6666004)(7416002)(41300700001)(2616005)(1076003)(86362001)(186003)(336012)(82740400003)(316002)(36756003)(81166007)(54906003)(36860700001)(6916009)(40480700001)(82310400005)(26005)(356005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2022 08:36:15.4186
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2dd39851-16d0-40a3-9b9e-08da880734a0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT106.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1380
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:6a43:0:b0:348:e25e:21ad with SMTP id
+ m3-20020a026a43000000b00348e25e21admr5738465jaf.242.1661595742554; Sat, 27
+ Aug 2022 03:22:22 -0700 (PDT)
+Date:   Sat, 27 Aug 2022 03:22:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fedb3e05e736678c@google.com>
+Subject: [syzbot] usb-testing boot error: BUG: unable to handle kernel paging
+ request in kernel_execve
+From:   syzbot <syzbot+9bf040803765a6ca02c4@syzkaller.appspotmail.com>
+To:     ebiederm@xmission.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert the fuse filesystem to use pin_user_pages_fast() and
-unpin_user_page(), instead of get_user_pages_fast() and put_page().
+Hello,
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+syzbot found the following issue on:
+
+HEAD commit:    4dce3b375179 usb/hcd: Fix dma_map_sg error check
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=1000fa65080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3cb39b084894e9a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=9bf040803765a6ca02c4
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9bf040803765a6ca02c4@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: ffffdc0000000000
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 100026067 P4D 100026067 PUD 0 
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 258 Comm: kworker/u4:1 Not tainted 6.0.0-rc1-syzkaller-00028-g4dce3b375179 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
+Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
+RSP: 0000:ffffc9000181fe08 EFLAGS: 00010246
+RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
+RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
+R13: ffff000000000000 R14: dffffc0000000000 R15: 1ffff11021cd1ab0
+FS:  0000000000000000(0000) GS:ffff8881f6800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffdc0000000000 CR3: 0000000007825000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ strnlen include/linux/fortify-string.h:119 [inline]
+ copy_string_kernel+0x27/0x460 fs/exec.c:616
+ copy_strings_kernel+0xb3/0x190 fs/exec.c:655
+ kernel_execve+0x377/0x500 fs/exec.c:2001
+ call_usermodehelper_exec_async+0x2e3/0x580 kernel/umh.c:112
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
+ </TASK>
+Modules linked in:
+CR2: ffffdc0000000000
+---[ end trace 0000000000000000 ]---
+RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
+Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
+RSP: 0000:ffffc9000181fe08 EFLAGS: 00010246
+RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
+RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
+R13: ffff000000000000 R14: dffffc0000000000 R15: 1ffff11021cd1ab0
+FS:  0000000000000000(0000) GS:ffff8881f6800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffdc0000000000 CR3: 0000000007825000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	74 3c                	je     0x3e
+   2:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
+   9:	fc ff df
+   c:	49 89 fc             	mov    %rdi,%r12
+   f:	48 89 f8             	mov    %rdi,%rax
+  12:	eb 09                	jmp    0x1d
+  14:	48 83 c0 01          	add    $0x1,%rax
+  18:	48 39 e8             	cmp    %rbp,%rax
+  1b:	74 1e                	je     0x3b
+  1d:	48 89 c2             	mov    %rax,%rdx
+  20:	48 89 c1             	mov    %rax,%rcx
+  23:	48 c1 ea 03          	shr    $0x3,%rdx
+  27:	83 e1 07             	and    $0x7,%ecx
+* 2a:	0f b6 14 1a          	movzbl (%rdx,%rbx,1),%edx <-- trapping instruction
+  2e:	38 ca                	cmp    %cl,%dl
+  30:	7f 04                	jg     0x36
+  32:	84 d2                	test   %dl,%dl
+  34:	75 11                	jne    0x47
+  36:	80 38 00             	cmpb   $0x0,(%rax)
+  39:	75 d9                	jne    0x14
+  3b:	4c 29 e0             	sub    %r12,%rax
+  3e:	48                   	rex.W
+  3f:	83                   	.byte 0x83
+
+
 ---
- fs/fuse/dev.c    |  8 ++++++--
- fs/fuse/file.c   | 31 ++++++++++++++++++++-----------
- fs/fuse/fuse_i.h |  1 +
- 3 files changed, 27 insertions(+), 13 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 51897427a534..eb841fc82bb9 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -675,7 +675,10 @@ static void fuse_copy_finish(struct fuse_copy_state *cs)
- 			flush_dcache_page(cs->pg);
- 			set_page_dirty_lock(cs->pg);
- 		}
--		put_page(cs->pg);
-+		if (cs->pipebufs)
-+			put_page(cs->pg);
-+		else
-+			dio_w_unpin_user_page(cs->pg);
- 	}
- 	cs->pg = NULL;
- }
-@@ -730,7 +733,8 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- 		}
- 	} else {
- 		size_t off;
--		err = iov_iter_get_pages2(cs->iter, &page, PAGE_SIZE, 1, &off);
-+		err = dio_w_iov_iter_pin_pages(cs->iter, &page, PAGE_SIZE, 1,
-+					       &off);
- 		if (err < 0)
- 			return err;
- 		BUG_ON(!err);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 1a3afd469e3a..a79aa4fea937 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -625,14 +625,19 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
- }
- 
- static void fuse_release_user_pages(struct fuse_args_pages *ap,
--				    bool should_dirty)
-+				    bool should_dirty, bool is_kvec)
- {
- 	unsigned int i;
- 
--	for (i = 0; i < ap->num_pages; i++) {
--		if (should_dirty)
--			set_page_dirty_lock(ap->pages[i]);
--		put_page(ap->pages[i]);
-+	if (is_kvec) {
-+		for (i = 0; i < ap->num_pages; i++) {
-+			if (should_dirty)
-+				set_page_dirty_lock(ap->pages[i]);
-+			put_page(ap->pages[i]);
-+		}
-+	} else {
-+		dio_w_unpin_user_pages_dirty_lock(ap->pages, ap->num_pages,
-+						  should_dirty);
- 	}
- }
- 
-@@ -733,7 +738,7 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
- 	struct fuse_io_priv *io = ia->io;
- 	ssize_t pos = -1;
- 
--	fuse_release_user_pages(&ia->ap, io->should_dirty);
-+	fuse_release_user_pages(&ia->ap, io->should_dirty, io->is_kvec);
- 
- 	if (err) {
- 		/* Nothing */
-@@ -1414,10 +1419,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
- 	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
- 		unsigned npages;
- 		size_t start;
--		ret = iov_iter_get_pages2(ii, &ap->pages[ap->num_pages],
--					*nbytesp - nbytes,
--					max_pages - ap->num_pages,
--					&start);
-+		ret = dio_w_iov_iter_pin_pages(ii, &ap->pages[ap->num_pages],
-+					       *nbytesp - nbytes,
-+					       max_pages - ap->num_pages,
-+					       &start);
- 		if (ret < 0)
- 			break;
- 
-@@ -1483,6 +1488,9 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 		fl_owner_t owner = current->files;
- 		size_t nbytes = min(count, nmax);
- 
-+		/* For use in fuse_release_user_pages(): */
-+		io->is_kvec = iov_iter_is_kvec(iter);
-+
- 		err = fuse_get_user_pages(&ia->ap, iter, &nbytes, write,
- 					  max_pages);
- 		if (err && !nbytes)
-@@ -1498,7 +1506,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 		}
- 
- 		if (!io->async || nres < 0) {
--			fuse_release_user_pages(&ia->ap, io->should_dirty);
-+			fuse_release_user_pages(&ia->ap, io->should_dirty,
-+						io->is_kvec);
- 			fuse_io_free(ia);
- 		}
- 		ia = NULL;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 488b460e046f..1d927e499395 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -290,6 +290,7 @@ struct fuse_io_priv {
- 	struct kiocb *iocb;
- 	struct completion *done;
- 	bool blocking;
-+	bool is_kvec;
- };
- 
- #define FUSE_IO_PRIV_SYNC(i) \
--- 
-2.37.2
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
