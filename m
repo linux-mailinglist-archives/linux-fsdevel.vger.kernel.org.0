@@ -2,57 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 373B45A3528
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 09:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241875A352A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 09:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbiH0HBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 03:01:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54208 "EHLO
+        id S232893AbiH0HBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 03:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiH0HBe (ORCPT
+        with ESMTP id S230063AbiH0HBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 27 Aug 2022 03:01:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FC998D3F6;
-        Sat, 27 Aug 2022 00:01:31 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B366124F3E;
+        Sat, 27 Aug 2022 00:01:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4882060FF6;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B440B61070;
         Sat, 27 Aug 2022 07:01:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E483C433B5;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFBEC43470;
         Sat, 27 Aug 2022 07:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661583690;
-        bh=999EIC9kZJkekVqVLTcGQG6rSacP6CreHwcuNLapaP0=;
+        s=k20201202; t=1661583691;
+        bh=/jfuS15hStMnpPV1JCJsBTOyuHhx2Au7mlZgnZnCDk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KCIJwHUkmXU6bi1foHzgtpkUzvAeD+VbDPALoi9gBeVxcfN3V16yK8oD1oBm5Q+jt
-         JdTMTpXplEBoRDihN7zdti14JfShTbJilcE0cfZk2eEFGdIbyMzTogc3DkY2j+WnE2
-         f2B1DRSlsPLcw2qB5BBjgKR8r/D127waNhkPbWfBMMUjGEo9SKODe6SHZDT+KgKbLp
-         mWNf68s93CENq//sWiF3ZLaIUmyPDJK8AjjnWfCaQ8wzjxiC7OKXScCFqo5GltwXGI
-         ifXdBP8Qx4obXZ0TFX52ez8Tr0MqsMwBsyDQp31fSbcgZNwdt9Qq2xPBXn/yEFguZ3
-         yu5uMrn+aC9Rw==
+        b=tk8MR2jqxzcI6Z/DtHV20OwpdVkX7XRj2jaKlNofUBIxuGMJGzu97VGo9dwQ/tR7v
+         0Jt/IXU//m55YomHShR07pVXCz9Z2GCkmNxcLtIu6leHOB0DJ284sbZxKhRtPLMOnX
+         PAAhC164epKLu5NPPd/KXRYRqIISSuoO66I69VpEVVATEP9uOp3Tgnb1Q5vqqWcjkr
+         7RcdLWHYGIP4OhaSoy4hyMalRdxYLkK5ZwVo+M80Liz0G/cAxYh/zwx/jSuTtGWiQ/
+         EnqY4St20g4OlKR/z0WAd6AcnpumqrKgzs3MCjiz5RC0/3QI6S8cQi53PMQkX9T/uE
+         NMG+YgymZmAzg==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH v5 1/8] statx: add direct I/O alignment information
-Date:   Fri, 26 Aug 2022 23:58:44 -0700
-Message-Id: <20220827065851.135710-2-ebiggers@kernel.org>
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH v5 2/8] vfs: support STATX_DIOALIGN on block devices
+Date:   Fri, 26 Aug 2022 23:58:45 -0700
+Message-Id: <20220827065851.135710-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220827065851.135710-1-ebiggers@kernel.org>
 References: <20220827065851.135710-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -61,111 +58,116 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Traditionally, the conditions for when DIO (direct I/O) is supported
-were fairly simple.  For both block devices and regular files, DIO had
-to be aligned to the logical block size of the block device.
+Add support for STATX_DIOALIGN to block devices, so that direct I/O
+alignment restrictions are exposed to userspace in a generic way.
 
-However, due to filesystem features that have been added over time (e.g.
-multi-device support, data journalling, inline data, encryption, verity,
-compression, checkpoint disabling, log-structured mode), the conditions
-for when DIO is allowed on a regular file have gotten increasingly
-complex.  Whether a particular regular file supports DIO, and with what
-alignment, can depend on various file attributes and filesystem mount
-options, as well as which block device(s) the file's data is located on.
+Note that this breaks the tradition of stat operating only on the block
+device node, not the block device itself.  However, it was felt that
+doing this is preferable, in order to make the interface useful and
+avoid needing separate interfaces for regular files and block devices.
 
-Moreover, the general rule of DIO needing to be aligned to the block
-device's logical block size was recently relaxed to allow user buffers
-(but not file offsets) aligned to the DMA alignment instead.  See
-commit bf8d08532bc1 ("iomap: add support for dma aligned direct-io").
-
-XFS has an ioctl XFS_IOC_DIOINFO that exposes DIO alignment information.
-Uplifting this to the VFS is one possibility.  However, as discussed
-(https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
-this ioctl is rarely used and not known to be used outside of
-XFS-specific code.  It was also never intended to indicate when a file
-doesn't support DIO at all, nor was it intended for block devices.
-
-Therefore, let's expose this information via statx().  Add the
-STATX_DIOALIGN flag and two new statx fields associated with it:
-
-* stx_dio_mem_align: the alignment (in bytes) required for user memory
-  buffers for DIO, or 0 if DIO is not supported on the file.
-
-* stx_dio_offset_align: the alignment (in bytes) required for file
-  offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
-  on the file.  This will only be nonzero if stx_dio_mem_align is
-  nonzero, and vice versa.
-
-Note that as with other statx() extensions, if STATX_DIOALIGN isn't set
-in the returned statx struct, then these new fields won't be filled in.
-This will happen if the file is neither a regular file nor a block
-device, or if the file is a regular file and the filesystem doesn't
-support STATX_DIOALIGN.  It might also happen if the caller didn't
-include STATX_DIOALIGN in the request mask, since statx() isn't required
-to return unrequested information.
-
-This commit only adds the VFS-level plumbing for STATX_DIOALIGN.  For
-regular files, individual filesystems will still need to add code to
-support it.  For block devices, a separate commit will wire it up too.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/stat.c                 | 2 ++
- include/linux/stat.h      | 2 ++
- include/uapi/linux/stat.h | 4 +++-
- 3 files changed, 7 insertions(+), 1 deletion(-)
+ block/bdev.c           | 23 +++++++++++++++++++++++
+ fs/stat.c              | 12 ++++++++++++
+ include/linux/blkdev.h |  4 ++++
+ 3 files changed, 39 insertions(+)
 
+diff --git a/block/bdev.c b/block/bdev.c
+index ce05175e71cea4..d699ecdb32604e 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -26,6 +26,7 @@
+ #include <linux/namei.h>
+ #include <linux/part_stat.h>
+ #include <linux/uaccess.h>
++#include <linux/stat.h>
+ #include "../fs/internal.h"
+ #include "blk.h"
+ 
+@@ -1069,3 +1070,25 @@ void sync_bdevs(bool wait)
+ 	spin_unlock(&blockdev_superblock->s_inode_list_lock);
+ 	iput(old_inode);
+ }
++
++/*
++ * Handle STATX_DIOALIGN for block devices.
++ *
++ * Note that the inode passed to this is the inode of a block device node file,
++ * not the block device's internal inode.  Therefore it is *not* valid to use
++ * I_BDEV() here; the block device has to be looked up by i_rdev instead.
++ */
++void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
++{
++	struct block_device *bdev;
++
++	bdev = blkdev_get_no_open(inode->i_rdev);
++	if (!bdev)
++		return;
++
++	stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
++	stat->dio_offset_align = bdev_logical_block_size(bdev);
++	stat->result_mask |= STATX_DIOALIGN;
++
++	blkdev_put_no_open(bdev);
++}
 diff --git a/fs/stat.c b/fs/stat.c
-index 9ced8860e0f35d..a7930d74448304 100644
+index a7930d74448304..ef50573c72a269 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
-@@ -611,6 +611,8 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_dev_major = MAJOR(stat->dev);
- 	tmp.stx_dev_minor = MINOR(stat->dev);
- 	tmp.stx_mnt_id = stat->mnt_id;
-+	tmp.stx_dio_mem_align = stat->dio_mem_align;
-+	tmp.stx_dio_offset_align = stat->dio_offset_align;
+@@ -5,6 +5,7 @@
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+  */
  
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
++#include <linux/blkdev.h>
+ #include <linux/export.h>
+ #include <linux/mm.h>
+ #include <linux/errno.h>
+@@ -230,11 +231,22 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ 		goto out;
+ 
+ 	error = vfs_getattr(&path, stat, request_mask, flags);
++
+ 	stat->mnt_id = real_mount(path.mnt)->mnt_id;
+ 	stat->result_mask |= STATX_MNT_ID;
++
+ 	if (path.mnt->mnt_root == path.dentry)
+ 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+ 	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
++
++	/* Handle STATX_DIOALIGN for block devices. */
++	if (request_mask & STATX_DIOALIGN) {
++		struct inode *inode = d_backing_inode(path.dentry);
++
++		if (S_ISBLK(inode->i_mode))
++			bdev_statx_dioalign(inode, stat);
++	}
++
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 84b13fdd34a716..8038c5fbde4099 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1498,6 +1498,7 @@ int sync_blockdev(struct block_device *bdev);
+ int sync_blockdev_range(struct block_device *bdev, loff_t lstart, loff_t lend);
+ int sync_blockdev_nowait(struct block_device *bdev);
+ void sync_bdevs(bool wait);
++void bdev_statx_dioalign(struct inode *inode, struct kstat *stat);
+ void printk_all_partitions(void);
+ #else
+ static inline void invalidate_bdev(struct block_device *bdev)
+@@ -1514,6 +1515,9 @@ static inline int sync_blockdev_nowait(struct block_device *bdev)
+ static inline void sync_bdevs(bool wait)
+ {
  }
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 7df06931f25d85..ff277ced50e9fd 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -50,6 +50,8 @@ struct kstat {
- 	struct timespec64 btime;			/* File creation time */
- 	u64		blocks;
- 	u64		mnt_id;
-+	u32		dio_mem_align;
-+	u32		dio_offset_align;
- };
- 
- #endif
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 1500a0f58041ae..7cab2c65d3d7fc 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -124,7 +124,8 @@ struct statx {
- 	__u32	stx_dev_minor;
- 	/* 0x90 */
- 	__u64	stx_mnt_id;
--	__u64	__spare2;
-+	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
-+	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
- 	/* 0xa0 */
- 	__u64	__spare3[12];	/* Spare space for future expansion */
- 	/* 0x100 */
-@@ -152,6 +153,7 @@ struct statx {
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
- #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
-+#define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
++static inline void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
++{
++}
+ static inline void printk_all_partitions(void)
+ {
+ }
 -- 
 2.37.2
 
