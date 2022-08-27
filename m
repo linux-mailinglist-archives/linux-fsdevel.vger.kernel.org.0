@@ -2,150 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B164A5A356A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 09:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0075A3593
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 09:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbiH0HIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 03:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37754 "EHLO
+        id S232940AbiH0H0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 03:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231469AbiH0HIE (ORCPT
+        with ESMTP id S229639AbiH0H0h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Aug 2022 03:08:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E1986FF6;
-        Sat, 27 Aug 2022 00:08:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A18AF6100A;
-        Sat, 27 Aug 2022 07:08:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B027CC433C1;
-        Sat, 27 Aug 2022 07:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661584082;
-        bh=p0KRSMvvBhsJs0c03pHNWDIW9Qt/EnRrmOnfStK+zqg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uLvlkjUnktj26RRTEJeF29+/+JHbO8XAS/9V4Wiki8lnjsjbLKVT97mLLImiN+62c
-         +EpOM247AJ37EeTTDfES3liBnoAa62LtOVdbsIQCqAZwgFhq/a3G9Q8kzPhPMxXk9m
-         rI9+KpZadUhXkoHHIFuHm87iZR3ytO2piFQYvBFmhjQ2mNF3wkkcgxI7suT8JRZ2A+
-         DVAmVSkYyz4wKEJ+nVPeqplcAYgBznkFuKsC7aSdTh8p6ucLWwQ57+nxuAjSNnTHyK
-         qfHYoDrflvFMbCIYPiKxfJG6x9FoBVXZzhDJ9CEuhsJ3Awv6lodlmAAmAtepC2dyQo
-         AvX8PSILJ/IBA==
-Date:   Sat, 27 Aug 2022 00:07:59 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v4 0/9] make statx() return DIO alignment information
-Message-ID: <YwnCz/4K8lGS91n+@sol.localdomain>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <3543250c8157c3e0e7e410b268121e4d7d3e9bc2.camel@kernel.org>
+        Sat, 27 Aug 2022 03:26:37 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8338DD571C;
+        Sat, 27 Aug 2022 00:26:35 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id d126so3633369vsd.13;
+        Sat, 27 Aug 2022 00:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=cgoz7UyBRMYBFxq8Rv6GdAKPo6AlZqRV0UakCmAojIs=;
+        b=HvBB9UUZzJriK2fLBraBUzKdfk8lxRTgCMkUlr6/APEtCRcKsg6fzgj03fFvQpaRli
+         ycliU/q/xkphqBTePc/5b3fSC/y0FAQqPnWQ47RnsGSoRigaMYomdSuwE4YT/V8MR3Ok
+         nRirE8HbDBkXx0kqe4PqGm7QdlImEN7LDdHLyskmTPnqk74smA0QVYJ70WC4aeA+U7TY
+         X5xMi6OwRvK56Y9lUFuubpfwyYoHU+UCHt6iq2Ndy/iywa0l1Io0FHyHUa1OGImWW6iY
+         eYRM5Ro8OxHvynNYZiGbY1Ts93TvLSTGLKSNLlefD43nSauozwvumflTjuf4NwyFz73X
+         YKkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=cgoz7UyBRMYBFxq8Rv6GdAKPo6AlZqRV0UakCmAojIs=;
+        b=4N6OdnMy3Pm0SV0UxxvvFuUT9mqXpDqg0N0vlkcWnn+SQ6QCB7jLvFcw2OGshMcW5V
+         brANLcyPMy1FWrfv5cIFQ1oPlOYUJxQPVv6GoWOxJU5MgBAFA4r+cRfLD7AFLqIGsFUt
+         2FTLU0woVxV0I4QYejFIPlgXcp2fsV8P2eIcVxxG8NcrVMdUzuA4o2/FRh2Tr5di89wR
+         Ei4N1GhjcChg9DeCwghUWj0ztKcjV4JeWE3aDlEbRsV/CuBmxfw2GMcLzI+oh/BxizFu
+         kbm1glK3TemlzCtBZQUql7rpjvX2PyBx8azWEicbzaJqmx5svY963miumkSM+GPsuHAq
+         87IA==
+X-Gm-Message-State: ACgBeo3h4YPPV+Xj+kTCR7rHDVwRmbFbwKG3FaKMNup1U/A74FX9UYHN
+        IXSCtde3lUX0zi2E3NQlM9nRDIH6wcZfy6tvJaM=
+X-Google-Smtp-Source: AA6agR6ppzBKuL8ze0P7YMSd9CX5ppxdXWzstreFFOCD+uJ+Qt8LROiCpIu3dDfAd2EjN3hh+hIzK0zkkgo7LlY5yPU=
+X-Received: by 2002:a67:b90f:0:b0:390:cb3e:efb8 with SMTP id
+ q15-20020a67b90f000000b00390cb3eefb8mr186171vsn.71.1661585194660; Sat, 27 Aug
+ 2022 00:26:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3543250c8157c3e0e7e410b268121e4d7d3e9bc2.camel@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220826214703.134870-1-jlayton@kernel.org> <20220826214703.134870-5-jlayton@kernel.org>
+In-Reply-To: <20220826214703.134870-5-jlayton@kernel.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 27 Aug 2022 10:26:23 +0300
+Message-ID: <CAOQ4uxjzE_B_EQktLr8z8gXOhFDNm-_YpUTycfZCdaZNp-i0hQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] xfs: don't bump the i_version on an atime update
+ in xfs_vn_update_time
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Neil Brown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>, xiubli@redhat.com,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christian Brauner <brauner@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-ceph@vger.kernel.org, Ext4 <linux-ext4@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        David Wysochanski <dwysocha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 01:19:37PM -0400, Jeff Layton wrote:
-> On Fri, 2022-07-22 at 00:12 -0700, Eric Biggers wrote:
-> > This patchset makes the statx() system call return direct I/O (DIO)
-> > alignment information.  This allows userspace to easily determine
-> > whether a file supports DIO, and if so with what alignment restrictions.
-> > 
-> > Patch 1 adds the basic VFS support for STATX_DIOALIGN.  Patch 2 wires it
-> > up for all block device files.  The remaining patches wire it up for
-> > regular files on ext4, f2fs, and xfs.  Support for regular files on
-> > other filesystems can be added later.
-> > 
-> > I've also written a man-pages patch, which I'm sending separately.
-> > 
-> > Note, f2fs has one corner case where DIO reads are allowed but not DIO
-> > writes.  The proposed statx fields can't represent this.  My proposal
-> > (patch 6) is to just eliminate this case, as it seems much too weird.
-> > But I'd appreciate any feedback on that part.
-> > 
-> > This patchset applies to v5.19-rc7.
-> > 
-> > Changed v3 => v4:
-> >    - Added xfs support.
-> > 
-> >    - Moved the helper function for block devices into block/bdev.c.
-> >    
-> >    - Adjusted the ext4 patch to not introduce a bug where misaligned DIO
-> >      starts being allowed on encrypted files when it gets combined with
-> >      the patch "iomap: add support for dma aligned direct-io" that is
-> >      queued in the block tree for 5.20.
-> > 
-> >    - Made a simplification in fscrypt_dio_supported().
-> > 
-> > Changed v2 => v3:
-> >    - Dropped the stx_offset_align_optimal field, since its purpose
-> >      wasn't clearly distinguished from the existing stx_blksize.
-> > 
-> >    - Renamed STATX_IOALIGN to STATX_DIOALIGN, to reflect the new focus
-> >      on DIO only.
-> > 
-> >    - Similarly, renamed stx_{mem,offset}_align_dio to
-> >      stx_dio_{mem,offset}_align, to reflect the new focus on DIO only.
-> > 
-> >    - Wired up STATX_DIOALIGN on block device files.
-> > 
-> > Changed v1 => v2:
-> >    - No changes.
-> > 
-> > Eric Biggers (9):
-> >   statx: add direct I/O alignment information
-> >   vfs: support STATX_DIOALIGN on block devices
-> >   fscrypt: change fscrypt_dio_supported() to prepare for STATX_DIOALIGN
-> >   ext4: support STATX_DIOALIGN
-> >   f2fs: move f2fs_force_buffered_io() into file.c
-> >   f2fs: don't allow DIO reads but not DIO writes
-> >   f2fs: simplify f2fs_force_buffered_io()
-> >   f2fs: support STATX_DIOALIGN
-> >   xfs: support STATX_DIOALIGN
-> > 
-> >  block/bdev.c              | 25 ++++++++++++++++++++
-> >  fs/crypto/inline_crypt.c  | 49 +++++++++++++++++++--------------------
-> >  fs/ext4/ext4.h            |  1 +
-> >  fs/ext4/file.c            | 37 ++++++++++++++++++++---------
-> >  fs/ext4/inode.c           | 36 ++++++++++++++++++++++++++++
-> >  fs/f2fs/f2fs.h            | 45 -----------------------------------
-> >  fs/f2fs/file.c            | 45 ++++++++++++++++++++++++++++++++++-
-> >  fs/stat.c                 | 14 +++++++++++
-> >  fs/xfs/xfs_iops.c         |  9 +++++++
-> >  include/linux/blkdev.h    |  4 ++++
-> >  include/linux/fscrypt.h   |  7 ++----
-> >  include/linux/stat.h      |  2 ++
-> >  include/uapi/linux/stat.h |  4 +++-
-> >  13 files changed, 190 insertions(+), 88 deletions(-)
-> > 
-> > base-commit: ff6992735ade75aae3e35d16b17da1008d753d28
-> 
-> Hi Eric,
-> 
-> Can I ask what your plans are with this set? I didn't see it in
-> linux-next yet, so I wasn't sure when you were looking to get it merged.
-> I'm working on patches to add a new statx field for the i_version
-> counter as well and I want to make sure that our work doesn't collide.
-> 
+On Sat, Aug 27, 2022 at 12:49 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> xfs will update the i_version when updating only the atime value, which
+> is not desirable for any of the current consumers of i_version. Doing so
+> leads to unnecessary cache invalidations on NFS and extra measurement
+> activity in IMA.
+>
+> Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
+> transaction should not update the i_version. Set that value in
+> xfs_vn_update_time if we're only updating the atime.
+>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: NeilBrown <neilb@suse.de>
+> Cc: Trond Myklebust <trondmy@hammerspace.com>
+> Cc: David Wysochanski <dwysocha@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/xfs/libxfs/xfs_log_format.h  |  2 +-
+>  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+>  fs/xfs/xfs_iops.c               | 11 +++++++++--
+>  3 files changed, 11 insertions(+), 4 deletions(-)
+>
+> Dave has NACK'ed this patch, but I'm sending it as a way to illustrate
+> the problem. I still think this approach should at least fix the worst
+> problems with atime updates being counted. We can look to carve out
+> other "spurious" i_version updates as we identify them.
+>
 
-I've just sent v5.  I guess I'll try to get it merged for 6.1.  We were a bit
-stuck on the read-only DIO issue.  All things considered though, including that
-Christoph thinks it's possible for f2fs to support DIO writes on zoned block
-devices, I'm willing to bet that read-only DIO doesn't really matter enough for
-it to be worth it to add a direction field to STATX_DIOALIGN (which would make
-it harder to use STATX_DIOALIGN, as the field would always have to be checked).
+AFAIK, "spurious" is only inode blocks map changes due to writeback
+of dirty pages. Anybody know about other cases?
 
-- Eric
+Regarding inode blocks map changes, first of all, I don't think that there is
+any practical loss from invalidating NFS client cache on dirty data writeback,
+because NFS server should be serving cold data most of the time.
+If there are a few unneeded cache invalidations they would only be temporary.
+
+One may even consider if NFSv4 server should not flush dirty data of an inode
+before granting a read lease to client.
+After all, if read lease was granted, client cached data and then server crashed
+before persisting the dirty data, then client will have cached a
+"future" version
+of the data and if i_version on the server did not roll back in that situation,
+we are looking at possible data corruptions.
+
+Same goes for IMA. IIUC, IMA data checksum would be stored in xattr?
+Storing in xattr a data checksum for data that is not persistent on disk
+would be an odd choice.
+
+So in my view, I only see benefits to current i_version users in the xfs
+i_version implementations and I don't think that it contradicts the
+i_version definition in the man page patch.
+
+> If however there are offline analysis tools that require atime updates
+> to be counted, then we won't be able to do this. If that's the case, how
+> can we fix this such that serving xfs via NFSv4 doesn't suck?
+>
+
+If I read the arguments correctly, implicit atime updates could be relaxed
+as long as this behavior is clearly documented and coherent on all
+implementations.
+
+Forensics and other applications that care about atime updates can and
+should check atime and don't need i_version to know that it was changed.
+The reliability of atime as an audit tool has dropped considerably since
+the default in relatime.
+If we want to be paranoid, maybe we can leave i_version increment on
+atime updates in case the user opted-in to strict '-o atime' updates, but
+IMO, there is no need for that.
+
+Thanks,
+Amir.
