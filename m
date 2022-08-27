@@ -2,99 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA415A331B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 02:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE4F5A336E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 03:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345074AbiH0A2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 20:28:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52208 "EHLO
+        id S244814AbiH0BVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 21:21:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236442AbiH0A20 (ORCPT
+        with ESMTP id S230416AbiH0BVY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 20:28:26 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1298EA888
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 17:28:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 25E7A1F9B8;
-        Sat, 27 Aug 2022 00:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1661560103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3VOnVivui6wWSOrPauLaMwb0xIePAqDQskwlb3gP3/M=;
-        b=j/YZUNWHX4tEhQFsGAEUaSPs3/RfOUGt+1MLWxCHJGvJ0zhWeYBxMqM8YZzcNn5Mxh1ZBJ
-        YUJ3jjIIpatWgh9jKLabGe23348c4X8tLkSzYoBEaPJ2GU7skgfVjcvd3PqLts9iLcz7vZ
-        sfNP5Z/lFIsGBAuJsvvItH4+Siy8CqA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1661560103;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3VOnVivui6wWSOrPauLaMwb0xIePAqDQskwlb3gP3/M=;
-        b=XAPNo2yNlqebT0T18HN9J+30L+bgx5TJLjUHAvKZJwgbGf200ybuj95fwUrAIixbqT23Fz
-        eHkm7C4taSCfGgAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C871D133A6;
-        Sat, 27 Aug 2022 00:28:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id AIaaLyZlCWNQCgAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Sat, 27 Aug 2022 00:28:22 +0000
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Petr Vorel <pvorel@suse.cz>, Cyril Hrubis <chrubis@suse.cz>,
-        Li Wang <liwang@redhat.com>, Martin Doucha <mdoucha@suse.cz>,
-        Richard Palethorpe <rpalethorpe@suse.com>,
-        Joerg Vehlow <joerg.vehlow@aox-tech.de>,
-        automated-testing@lists.yoctoproject.org,
-        Tim Bird <tim.bird@sony.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6/6] tst_test.sh: Pass used filesystem to tst_device
-Date:   Sat, 27 Aug 2022 02:28:15 +0200
-Message-Id: <20220827002815.19116-7-pvorel@suse.cz>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220827002815.19116-1-pvorel@suse.cz>
-References: <20220827002815.19116-1-pvorel@suse.cz>
+        Fri, 26 Aug 2022 21:21:24 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81931E42F0;
+        Fri, 26 Aug 2022 18:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZASlgiaYVcXmZuWHYLlAifB7Jl2t5z03ci8JKpJlphc=; b=iubq/OY2mnqYT6clYoEo3Vmj/Y
+        /W5hvBJ+gKvXiWyxElb86XOVk+SIEex7KG819Esq8FP+J545g3z1AnDxkc8jiNIECW8lMcD70M6LA
+        TLZxv/WDbu/xClT1GK/9zmGj+AN5XcsfuuJ1gPF8jwOcni1U+JQ8siMXu9uT+bji4pVyCrzOQFvTf
+        QXC7N0lMPbx9tH/htXd6evA1THuJJ2mJgYtEJw1yWe0c4TLNdZv39zZHicJhiycLW7G5OT1WHeaMd
+        8nIqfC3ovsfWmvWr+/52hNl3iyvl8zN4FeI5cRDC5xvEn86NVvv+yOgB60oGSk1ElAaKwqa2OZqj3
+        7mxUtPQw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oRkVc-008q0K-SU;
+        Sat, 27 Aug 2022 01:21:12 +0000
+Date:   Sat, 27 Aug 2022 02:21:12 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daire Byrne <daire@dneg.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] VFS: add LOOKUP_SILLY_RENAME
+Message-ID: <YwlxiCt3TvzdEhUl@ZenIV>
+References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
+ <166147984377.25420.5747334898411663007.stgit@noble.brown>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166147984377.25420.5747334898411663007.stgit@noble.brown>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allow to get smaller minimal required size.
+On Fri, Aug 26, 2022 at 12:10:43PM +1000, NeilBrown wrote:
+> When performing a "silly rename" to avoid removing a file that is still
+> open, we need to perform a lookup in a directory that is already locked.
+> 
+> In order to allow common functions to be used for this lookup, introduce
+> LOOKUP_SILLY_RENAME which affirms that the directory is already locked
+> and that the vfsmnt is already writable.
+> 
+> When LOOKUP_SILLY_RENAME is set, path->mnt can be NULL.  As
+> i_op->rename() doesn't make the vfsmnt available, this is unavoidable.
+> So we ensure that a NULL ->mnt isn't fatal.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- testcases/lib/tst_test.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This one is really disgusting.  Flag-dependent locking is a pretty much
+guaranteed source of PITA and "magical" struct path is, again, asking for
+trouble.
 
-diff --git a/testcases/lib/tst_test.sh b/testcases/lib/tst_test.sh
-index 7aea9ee5f..1eb0ce91c 100644
---- a/testcases/lib/tst_test.sh
-+++ b/testcases/lib/tst_test.sh
-@@ -694,7 +694,7 @@ tst_run()
- 	TST_MNTPOINT="${TST_MNTPOINT:-$PWD/mntpoint}"
- 	if [ "$TST_NEEDS_DEVICE" = 1 ]; then
- 
--		TST_DEVICE=$(tst_device acquire)
-+		TST_DEVICE=$(tst_device -f $TST_FS_TYPE acquire)
- 
- 		if [ ! -b "$TST_DEVICE" -o $? -ne 0 ]; then
- 			unset TST_DEVICE
--- 
-2.37.2
-
+You seem to be trying for simpler call graph and you end up paying with
+control flow that is much harder to reason about.
