@@ -2,54 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D6D5A36FB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 12:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CEF95A37D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 15:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233731AbiH0KWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 06:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36438 "EHLO
+        id S232778AbiH0NOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 09:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231819AbiH0KWY (ORCPT
+        with ESMTP id S229677AbiH0NOg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Aug 2022 06:22:24 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D30914D12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Aug 2022 03:22:23 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id e2-20020a056e020b2200b002e1a5b67e29so2936156ilu.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Aug 2022 03:22:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=Gb7abvGIHoaB/5SBUEpY/fy+KAw1/SvawtzKQ+r85EU=;
-        b=Co/1bILHC0n4qghjYwWCT+4LBtZOxFxz19tEFLaI1ORIFcGPR5PnmhAReTWtbO35jT
-         6ef0kkJOp9cikMQeFgIVxy5UihoAJ/HgSHpa6LTDuvV6Tyyx9VOErV7Q2zclbGZc9Vd5
-         XK49+E09ONgBEtk4ekwPRahTiVFvnRlrQi1Aobdw5cZt1fNOyZaYhOrf6rvblrmbWPdr
-         5ZD4uxnqeZLx3905wWfQ+SVBZp66M9J26nsCGsy9a9y2EdryfLf8KgO9wa67k6vKiXlA
-         ltPPIgX9ipNOD+dx3+6KCI9q9bu7R0CpNhb8EgS4X8oAR2YNvDR8lZr4JfGvw5nvXEIi
-         Dsjw==
-X-Gm-Message-State: ACgBeo3kjmI63IZ8qk5beugGZT56zWe5D0VR0SFHT3Nu8hdl9GJuBWAC
-        ZFFsMd3dG72PagLldtp2VLW6vUGWFEm3WnRS1DJF9Hv0BDai
-X-Google-Smtp-Source: AA6agR5hmEyV7Vp5romEdJsYJsNhDtxKXA9ReYvnliAArlj2k8k8quqeHF3rzrEoFixJvj+jEPhqJlF9ZvZVR57cw+F47QmVc+Co
+        Sat, 27 Aug 2022 09:14:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C056A491;
+        Sat, 27 Aug 2022 06:14:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E72660B8E;
+        Sat, 27 Aug 2022 13:14:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B3CC433C1;
+        Sat, 27 Aug 2022 13:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661606073;
+        bh=YSPKJpSWBKsKygRkLUxjIdELxP2/tFHZT4f0jBecTYU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LShi+8Jsb7PLuFEETHB5R36naYPXL2ycINXavmBZi4Ob52WbS998QrfjGUTmgXsyl
+         ydAl1IXWxbHVHoifQ0VnxLYUXKANKRpP6jvQUtEQz3Kz/SLIV7aK95OGkrhTmlpO1J
+         bHodEfTlxD0r9q+QWVfvkAuObWxW3jY5hc04Jphd5neKuOO5uWQBmKgQx+Ku0bj8NE
+         nZqBytL0ntvm9YzSoKi8P9qlDOtk1muINoUys4WcnISUt1seSd+qHS4zjfnKHuFVFR
+         rw+oVrLb05/oCz7+JoFMKBY6fZzMEdBDTVHDilXExCgahZ+q74XkUzq1+zmuHecvrO
+         YKNlm3nlu4EbQ==
+Message-ID: <35d31d0a5c6c9a20c58f55ef62355ff39a3f18c6.camel@kernel.org>
+Subject: Re: [PATCH v3 4/7] xfs: don't bump the i_version on an atime update
+ in xfs_vn_update_time
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Neil Brown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>, xiubli@redhat.com,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christian Brauner <brauner@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Date:   Sat, 27 Aug 2022 09:14:30 -0400
+In-Reply-To: <CAOQ4uxge86g=+HPnds-wRXkFHg67G=m9rGK7V_T8yS+2=w9tmg@mail.gmail.com>
+References: <20220826214703.134870-1-jlayton@kernel.org>
+         <20220826214703.134870-5-jlayton@kernel.org>
+         <CAOQ4uxjzE_B_EQktLr8z8gXOhFDNm-_YpUTycfZCdaZNp-i0hQ@mail.gmail.com>
+         <CAOQ4uxge86g=+HPnds-wRXkFHg67G=m9rGK7V_T8yS+2=w9tmg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-X-Received: by 2002:a02:6a43:0:b0:348:e25e:21ad with SMTP id
- m3-20020a026a43000000b00348e25e21admr5738465jaf.242.1661595742554; Sat, 27
- Aug 2022 03:22:22 -0700 (PDT)
-Date:   Sat, 27 Aug 2022 03:22:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fedb3e05e736678c@google.com>
-Subject: [syzbot] usb-testing boot error: BUG: unable to handle kernel paging
- request in kernel_execve
-From:   syzbot <syzbot+9bf040803765a6ca02c4@syzkaller.appspotmail.com>
-To:     ebiederm@xmission.com, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,96 +76,131 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sat, 2022-08-27 at 11:01 +0300, Amir Goldstein wrote:
+> On Sat, Aug 27, 2022 at 10:26 AM Amir Goldstein <amir73il@gmail.com> wrot=
+e:
+> >=20
+> > On Sat, Aug 27, 2022 at 12:49 AM Jeff Layton <jlayton@kernel.org> wrote=
+:
+> > >=20
+> > > xfs will update the i_version when updating only the atime value, whi=
+ch
+> > > is not desirable for any of the current consumers of i_version. Doing=
+ so
+> > > leads to unnecessary cache invalidations on NFS and extra measurement
+> > > activity in IMA.
+> > >=20
+> > > Add a new XFS_ILOG_NOIVER flag, and use that to indicate that the
+> > > transaction should not update the i_version. Set that value in
+> > > xfs_vn_update_time if we're only updating the atime.
+> > >=20
+> > > Cc: Dave Chinner <david@fromorbit.com>
+> > > Cc: NeilBrown <neilb@suse.de>
+> > > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > > Cc: David Wysochanski <dwysocha@redhat.com>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/xfs/libxfs/xfs_log_format.h  |  2 +-
+> > >  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+> > >  fs/xfs/xfs_iops.c               | 11 +++++++++--
+> > >  3 files changed, 11 insertions(+), 4 deletions(-)
+> > >=20
+> > > Dave has NACK'ed this patch, but I'm sending it as a way to illustrat=
+e
+> > > the problem. I still think this approach should at least fix the wors=
+t
+> > > problems with atime updates being counted. We can look to carve out
+> > > other "spurious" i_version updates as we identify them.
+> > >=20
+> >=20
+> > AFAIK, "spurious" is only inode blocks map changes due to writeback
+> > of dirty pages. Anybody know about other cases?
+> >=20
+> > Regarding inode blocks map changes, first of all, I don't think that th=
+ere is
+> > any practical loss from invalidating NFS client cache on dirty data wri=
+teback,
+> > because NFS server should be serving cold data most of the time.
+> > If there are a few unneeded cache invalidations they would only be temp=
+orary.
+> >=20
+>=20
+> Unless there is an issue with a writer NFS client that invalidates its
+> own attribute
+> caches on server data writeback?
+>=20
 
-syzbot found the following issue on:
+The client just looks at the file attributes (of which i_version is but
+one), and if certain attributes have changed (mtime, ctime, i_version,
+etc...) then it invalidates its cache.
 
-HEAD commit:    4dce3b375179 usb/hcd: Fix dma_map_sg error check
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=1000fa65080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3cb39b084894e9a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bf040803765a6ca02c4
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+In the case of blocks map changes, could that mean a difference in the
+observable sparse regions of the file? If so, then a READ_PLUS before
+the change and a READ_PLUS after could give different results. Since
+that difference is observable by the client, I'd think we'd want to bump
+i_version for that anyway.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9bf040803765a6ca02c4@syzkaller.appspotmail.com
+> > One may even consider if NFSv4 server should not flush dirty data of an=
+ inode
+> > before granting a read lease to client.
+> > After all, if read lease was granted, client cached data and then serve=
+r crashed
+> > before persisting the dirty data, then client will have cached a
+> > "future" version
+> > of the data and if i_version on the server did not roll back in that si=
+tuation,
+> > we are looking at possible data corruptions.
+> >=20
 
-BUG: unable to handle page fault for address: ffffdc0000000000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 100026067 P4D 100026067 PUD 0 
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 258 Comm: kworker/u4:1 Not tainted 6.0.0-rc1-syzkaller-00028-g4dce3b375179 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
-Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
-RSP: 0000:ffffc9000181fe08 EFLAGS: 00010246
-RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
-RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
-R13: ffff000000000000 R14: dffffc0000000000 R15: 1ffff11021cd1ab0
-FS:  0000000000000000(0000) GS:ffff8881f6800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffdc0000000000 CR3: 0000000007825000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- strnlen include/linux/fortify-string.h:119 [inline]
- copy_string_kernel+0x27/0x460 fs/exec.c:616
- copy_strings_kernel+0xb3/0x190 fs/exec.c:655
- kernel_execve+0x377/0x500 fs/exec.c:2001
- call_usermodehelper_exec_async+0x2e3/0x580 kernel/umh.c:112
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
- </TASK>
-Modules linked in:
-CR2: ffffdc0000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:strnlen+0x3b/0x70 lib/string.c:504
-Code: 74 3c 48 bb 00 00 00 00 00 fc ff df 49 89 fc 48 89 f8 eb 09 48 83 c0 01 48 39 e8 74 1e 48 89 c2 48 89 c1 48 c1 ea 03 83 e1 07 <0f> b6 14 1a 38 ca 7f 04 84 d2 75 11 80 38 00 75 d9 4c 29 e0 48 83
-RSP: 0000:ffffc9000181fe08 EFLAGS: 00010246
-RAX: ffff000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: 1fffe00000000000 RSI: 0000000000020000 RDI: ffff000000000000
-RBP: ffff000000020000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000000 R12: ffff000000000000
-R13: ffff000000000000 R14: dffffc0000000000 R15: 1ffff11021cd1ab0
-FS:  0000000000000000(0000) GS:ffff8881f6800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffdc0000000000 CR3: 0000000007825000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	74 3c                	je     0x3e
-   2:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
-   9:	fc ff df
-   c:	49 89 fc             	mov    %rdi,%r12
-   f:	48 89 f8             	mov    %rdi,%rax
-  12:	eb 09                	jmp    0x1d
-  14:	48 83 c0 01          	add    $0x1,%rax
-  18:	48 39 e8             	cmp    %rbp,%rax
-  1b:	74 1e                	je     0x3b
-  1d:	48 89 c2             	mov    %rax,%rdx
-  20:	48 89 c1             	mov    %rax,%rcx
-  23:	48 c1 ea 03          	shr    $0x3,%rdx
-  27:	83 e1 07             	and    $0x7,%ecx
-* 2a:	0f b6 14 1a          	movzbl (%rdx,%rbx,1),%edx <-- trapping instruction
-  2e:	38 ca                	cmp    %cl,%dl
-  30:	7f 04                	jg     0x36
-  32:	84 d2                	test   %dl,%dl
-  34:	75 11                	jne    0x47
-  36:	80 38 00             	cmpb   $0x0,(%rax)
-  39:	75 d9                	jne    0x14
-  3b:	4c 29 e0             	sub    %r12,%rax
-  3e:	48                   	rex.W
-  3f:	83                   	.byte 0x83
+We don't hand out read leases if there are file descriptions open for
+write. NFS clients usually issue a COMMIT before closing a stateid in
+order to satisfy close-to-open cache coherency.
 
+So in most cases, this is probably not an issue. It might still be
+worthwhile to make sure of it by doing a filemap_write_and_wait before
+we hand out a delegation, but that's likely to be a no-op in most cases
+anyway.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Note too that the client will still revalidate its caches when it
+receives attributes even when it holds a read delegation. In fact, this
+behavior mostly papered over a rather nasty knfsd bug we found recently
+where it was allowing conflicting activity to proceed even when there
+was a read delegation outstanding.
+=20
+> > Same goes for IMA. IIUC, IMA data checksum would be stored in xattr?
+> > Storing in xattr a data checksum for data that is not persistent on dis=
+k
+> > would be an odd choice.
+> >=20
+> > So in my view, I only see benefits to current i_version users in the xf=
+s
+> > i_version implementations and I don't think that it contradicts the
+> > i_version definition in the man page patch.
+> >=20
+> > > If however there are offline analysis tools that require atime update=
+s
+> > > to be counted, then we won't be able to do this. If that's the case, =
+how
+> > > can we fix this such that serving xfs via NFSv4 doesn't suck?
+> > >=20
+> >=20
+> > If I read the arguments correctly, implicit atime updates could be rela=
+xed
+> > as long as this behavior is clearly documented and coherent on all
+> > implementations.
+> >=20
+> > Forensics and other applications that care about atime updates can and
+> > should check atime and don't need i_version to know that it was changed=
+.
+> > The reliability of atime as an audit tool has dropped considerably sinc=
+e
+> > the default in relatime.
+> > If we want to be paranoid, maybe we can leave i_version increment on
+> > atime updates in case the user opted-in to strict '-o atime' updates, b=
+ut
+> > IMO, there is no need for that.
+> >=20
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
