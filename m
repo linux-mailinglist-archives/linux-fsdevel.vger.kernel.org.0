@@ -2,205 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C61B5A32A3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 01:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1304B5A32FA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 02:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232996AbiHZXaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Aug 2022 19:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
+        id S1345116AbiH0AOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Aug 2022 20:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiHZXaY (ORCPT
+        with ESMTP id S232862AbiH0AOA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Aug 2022 19:30:24 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72EF614089;
-        Fri, 26 Aug 2022 16:30:23 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5CB3F1F8A3;
-        Fri, 26 Aug 2022 23:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661556621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=unGSz6GeVrKzu8z4US0hp1I7QAv6QVA+9wpL/58ggnY=;
-        b=0V1L2YmY/SO4Hg6/P1+TCnDKpYTJ3zE/ceDi2KTgXj9i8srU6zzib2FxWAHBTIDwIJJyWk
-        pVHsBDZz+FxMVfjNzStMMzL+h8LmllqfagPM6usVeIIK/UR38FTBFql0aOLiS9BaltRrmD
-        h6mxNDs9mXJcwMx5vxU2xFu1W3+WVg4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661556621;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=unGSz6GeVrKzu8z4US0hp1I7QAv6QVA+9wpL/58ggnY=;
-        b=XhFNEspwKY6y966OH86b9J1438bnvK8CLtDVQbBYzTesi9pVDPbR5ETZFt3T0gIqH7gAAg
-        U5+qhPjhcPakiIDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8332C13421;
-        Fri, 26 Aug 2022 23:30:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id cLUvD4pXCWMtdwAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 26 Aug 2022 23:30:18 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 26 Aug 2022 20:14:00 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C807DE97C0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 17:13:57 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id u9so5891837ejy.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 17:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=8MsyfPvlxXKEg0Jtycdt6Gg2UJ2p22jXnG/vc+XzCe0=;
+        b=dvDc7RyUENalgJYmQDzoJ3qfWWZSzJELcl5kwFmvtTunSI6kDlFmY1f5hw2CJWC81D
+         7HCxkzu0/6Qzh8zreFKnsB0/ETpPGjAYo/2bJGMS+agIeTjoSNtVgSP+hwzS+XXujjLH
+         nlmSUQPC4V9XNtBgZ7KCbIXh09Fy/D4DnwoqQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=8MsyfPvlxXKEg0Jtycdt6Gg2UJ2p22jXnG/vc+XzCe0=;
+        b=BaOT+AylLG31uNpmA0550x//X9SNVpSl+PYOIYBe/Pr38LSGyPM5l5eufXMU5JC1Ro
+         3qG5sO0jWr93lIgpwAg1TPMbo0tRC9BprvlORbHVg6iAOu6/TwPRINHuEZ+4afPTcXbP
+         89B0RZTQsU8O1CyzHUhW3u24qKLosXfs/AjlqyskV0haq62oFRq0KoiGyXzB7Ecpj0H+
+         hbPnBeUwBkgddtYpFYsl4bShwATJ2m9IzXZadYI+Cz/GxaLG/nJRaO873OEwQv0+VnhG
+         QP8HXbOLgX1d7FmC2tfFRKHLE4OBo0BfUR2eFAjLn3CK3x0QrT2Y2mx9tS2zOJ7GvWlp
+         UMjQ==
+X-Gm-Message-State: ACgBeo3oVHlc0clSQ04ImqjU8JbsUUvlsmklQRGERAjDMSQEPiaukMgz
+        bXOx7EzpJaISOLVIu7fgSkvIWTG0KlDh91GS2ME=
+X-Google-Smtp-Source: AA6agR7AfG+TEpFtc5X83oDaFcme5f/AUtjb/IKQZxP8SUD5xXo7cDZwR8Zb6vYqIWNWgbjNYnbCGw==
+X-Received: by 2002:a17:907:5ce:b0:730:bae0:deb with SMTP id wg14-20020a17090705ce00b00730bae00debmr7041352ejb.181.1661559235949;
+        Fri, 26 Aug 2022 17:13:55 -0700 (PDT)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id t23-20020a05640203d700b00440ced0e117sm1965593edw.58.2022.08.26.17.13.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Aug 2022 17:13:55 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id bd26-20020a05600c1f1a00b003a5e82a6474so1581484wmb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Aug 2022 17:13:54 -0700 (PDT)
+X-Received: by 2002:a05:600c:2195:b0:3a6:b3c:c100 with SMTP id
+ e21-20020a05600c219500b003a60b3cc100mr937717wme.8.1661559234478; Fri, 26 Aug
+ 2022 17:13:54 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "John Stoffel" <john@stoffel.org>
-Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Daire Byrne" <daire@dneg.com>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Chuck Lever" <chuck.lever@oracle.com>,
-        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        "LKML" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH/RFC 00/10 v5] Improve scalability of directory operations
-In-reply-to: <25352.56248.283092.213037@quad.stoffel.home>
-References: <166147828344.25420.13834885828450967910.stgit@noble.brown>,
- <25352.56248.283092.213037@quad.stoffel.home>
-Date:   Sat, 27 Aug 2022 09:30:13 +1000
-Message-id: <166155661379.27490.6823575125331418990@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
+ <166147984370.25420.13019217727422217511.stgit@noble.brown>
+ <CAHk-=wi_wwTxPTnFXsG8zdaem5YDnSd4OsCeP78yJgueQCb-1g@mail.gmail.com> <166155521174.27490.456427475820966571@noble.neil.brown.name>
+In-Reply-To: <166155521174.27490.456427475820966571@noble.neil.brown.name>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 26 Aug 2022 17:13:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com>
+Message-ID: <CAHk-=whz69y=98udgGB5ujH6bapYuapwfHS2esWaFrKEoi9-Ow@mail.gmail.com>
+Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
+To:     NeilBrown <neilb@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Daire Byrne <daire@dneg.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 27 Aug 2022, John Stoffel wrote:
-> >>>>> "NeilBrown" =3D=3D NeilBrown  <neilb@suse.de> writes:
->=20
-> NeilBrown> [I made up "v5" - I haven't been counting]
->=20
-> My first comments, but I'm not a serious developer...
->=20
-> NeilBrown> VFS currently holds an exclusive lock on the directory while mak=
-ing
-> NeilBrown> changes: add, remove, rename.
-> NeilBrown> When multiple threads make changes in the one directory, the con=
-tention
-> NeilBrown> can be noticeable.
-> NeilBrown> In the case of NFS with a high latency link, this can easily be
-> NeilBrown> demonstrated.  NFS doesn't really need VFS locking as the server=
- ensures
-> NeilBrown> correctness.
->=20
-> NeilBrown> Lustre uses a single(?) directory for object storage, and has pa=
-tches
-> NeilBrown> for ext4 to support concurrent updates (Lustre accesses ext4 dir=
-ectly,
-> NeilBrown> not via the VFS).
->=20
-> NeilBrown> XFS (it is claimed) doesn't its own locking and doesn't need the=
- VFS to
-> NeilBrown> help at all.
->=20
-> This sentence makes no sense to me... I assume you meant to say "...does
-> it's own locking..."
+On Fri, Aug 26, 2022 at 4:07 PM NeilBrown <neilb@suse.de> wrote:
+>
+> As you note, by the end of the series "create" is not more different
+> from "rename" than it already is.  I only broke up the patches to make
+> review more manageable.
 
-Thanks - you are correct.  "does its own locking".
+Yes, I understand. But I'm saying that maybe a filesystem actually
+might want to treat them differently.
 
->=20
-> NeilBrown> This patch series allows filesystems to request a shared lock on
-> NeilBrown> directories and provides serialisation on just the affected name=
-, not the
-> NeilBrown> whole directory.  It changes both the VFS and NFSD to use shared=
- locks
-> NeilBrown> when appropriate, and changes NFS to request shared locks.
->=20
-> Are there any performance results?  Why wouldn't we just do a shared
-> locked across all VFS based filesystems? =20
+That said, the really nasty part was that 'wq' thing that meant that
+different paths had different directory locking not because of
+low-level filesystem issues, but because of caller issues.
 
-Daire Byrne has done some tests with NFS clients to an NFS server which
-re-exports mounts from another server - so there are a couple of levels
-of locking that can be removed.  At lease one of these levels has
-significant network latency (100ms or so I think) The results are much
-what you would expect.  Many more file creations per second are
-possible.  15 creates-per-second up to 121 crates-per-second in one
-test.
-https://lore.kernel.org/linux-nfs/CAPt2mGNjWXad6e7nSUTu=3D0ez1qU1wBNegrntgHKm=
-5hOeBs5gQA@mail.gmail.com/
+So that's the one I _really_ disliked, and that I don't think should
+exist even as a partial first step.
 
+The "tie every operation together with one flag" I can live with, in
+case it turns out that yes, that one flag is all anybody ever really
+wants.
 
->=20
-> NeilBrown> The central enabling feature is a new dentry flag DCACHE_PAR_UPD=
-ATE
-> NeilBrown> which acts as a bit-lock.  The ->d_lock spinlock is taken to set=
-/clear
-> NeilBrown> it, and wait_var_event() is used for waiting.  This flag is set =
-on all
-> NeilBrown> dentries that are part of a directory update, not just when a sh=
-ared
-> NeilBrown> lock is taken.
->=20
-> NeilBrown> When a shared lock is taken we must use alloc_dentry_parallel() =
-which
-> NeilBrown> needs a wq which must remain until the update is completed.  To =
-make use
-> NeilBrown> of concurrent create, kern_path_create() would need to be passed=
- a wq.
-> NeilBrown> Rather than the churn required for that, we use exclusive lockin=
-g when
-> NeilBrown> no wq is provided.
->=20
-> Is this a per-operation wq or a per-directory wq?  Can there be issues
-> if someone does something silly like having 1,000 directories, all of
-> which have multiple processes making parallel changes? =20
+> Alternate option is to never pass in a wq for create operation, and use
+> var_waitqueue() (or something similar) to provide a global shared wait
+> queue (which is essentially what I am using to wait for
+> DCACHE_PAR_UPDATE to clear).
 
-It is per-operation though I expect to change that to be taken from a
-pool for shared work queues.
+I _think_ this is what I would prefer.
 
-Workqueues can be shared quite cheaply.  There is spin-lock contention
-when multiple threads add/remove waiters to/from the queues.  Having
-more queues in a pool than cores, and randomly selecting queues from the
-pool can keep that under control.
+I say that I _think_ I prefer that, because maybe there are issues
+with it. But since you basically do that DCACHE_PAR_UPDATE thing
+anyway, and it's one of the main users of this var_waitqueue, it feels
+right to me.
 
-If there are dozens of waiter of more, then a wakeup might run more
-slowly (and hold the lock for longer), but in this case wakeup should be
-rare. =20
+But then if it just end sup not working well for some practical
+reason, at that point maybe I'd just say "I was wrong, I thought it
+would work, but it's better to spread it out to be a per-thread
+wait-queue on the stack".
 
-Most filesystem operations are uncontended at the name level. e.g. it is
-rare that two threads will try to create the same name at the same time,
-or one looks up a name that another is unlinking it.  These are the only
-times that wakeups would happen, so sharing a pool among all filesystem
-accesses is unlikely to be a problem.
+IOW, my preference would be to simply just try it, knowing that you
+*can* do the "pass explicit wait-queue down" thing if we need to.
 
->=20
-> Does it degrade gracefully if a wq can't be allocated? =20
+Hmm?
 
-In the current code, the wq is allocated on the stack.  I'm probably
-going to change to a global allocation.  In either case, there is no
-risk of allocation failure during a filesystem operation.
+> > Instead of it being up to the filesystem to say "I can do parallel
+> > creates, but I need to serialize renames", this whole thing has been
+> > set up to be about the caller making that decision.
+>
+> I think that is a misunderstanding.  The caller isn't making a decision
+> - except the IS_PAR_UPDATE() test which is simply acting on the fs
+> request.  What you are seeing is a misguided attempt to leave in place
+> some existing interfaces which assumed exclusive locking and didn't
+> provide wqs.
 
-Thanks for the questions,
-NeilBrown
+Ok. I still would prefer to have unified locking, not that "do this
+for one filesystem, do that for another" conditional one.
 
+> >  (b) aim for the inode lock being taken *after* the _lookup_hash(),
+> > since the VFS layer side has to be able to handle the concurrency on
+> > the dcache side anyway
+>
+> I think you are suggesting that we change ->lookup call to NOT
+> require i_rwsem be held.
 
->=20
-> NeilBrown> One interesting consequence of this is that silly-rename becomes=
- a
-> NeilBrown> little more complex.  As the directory may not be exclusively lo=
-cked,
-> NeilBrown> the new silly-name needs to be locked (DCACHE_PAR_UPDATE) as wel=
-l.
-> NeilBrown> A new LOOKUP_SILLY_RENAME is added which helps implement this us=
-ing
-> NeilBrown> common code.
->=20
-> NeilBrown> While testing I found some odd behaviour that was caused by
-> NeilBrown> d_revalidate() racing with rename().  To resolve this I used
-> NeilBrown> DCACHE_PAR_UPDATE to ensure they cannot race any more.
->=20
-> NeilBrown> Testing, review, or other comments would be most welcome,
->=20
->=20
+Yes and no.
+
+One issue for me is that with your change as-is, then 99% of all
+people who don't happen to use NFS, the inode lock gives all that VFS
+code mutual exclusion.
+
+Take that lookup_hash_update() function as a practical case: all the
+*common* filesystems will be running with that function basically 100%
+serialized per directory, because they'll be doing that
+
+        inode_lock_nested(dir);
+        ...
+        inode_unlock(dir);
+
+around it all.
+
+At the same time, all that code is supposed to work even *without* the
+lock, because once it's a IS_PAR_UPDATE() filesystem, there's
+effectively no locking at all. What exclusive directory locks even
+remain at that point?
+
+IOW, to me it feels like you are trying to make the code go towards a
+future with basically no locking at all as far as the VFS layer is
+concerned (because once all the directory modifications take the inode
+lock as shared, *all* the inode locking is shared, and is basically a
+no-op).
+
+BUT you are doing so while not having most people even *test* that situation.
+
+See what I'm trying to say (but possibly expressing very badly)?
+
+So I feel like if the VFS code cannot rely on locking *anyway* in the
+general case, and should work without it, then we really shouldn't
+have any locking around any of the VFS operations.
+
+The logical conclusion of that would be to push it all down into the
+filesystem (possibly with the help of a coccinelle script).
+
+Now it doesn't have to go that far - at least not initially - but I do
+think we should at least make sure that as much as possible of the
+actual VFS code sees that "new world order" of no directory locking,
+so that that situation gets *tested* as widely as possible.
+
+> That is not a small change.
+
+Now, that I agree with. I guss we won't get there soon (or ever). But
+see above what I dislike about the directory locking model change.
+
+> It might be nice to take a shared lock in VFS, and let the FS upgrade it
+> to exclusive if needed, but we don't have upgrade_read() ...  maybe it
+> would be deadlock-prone.
+
+Yes, upgrading a read lock is fundamentally impossible and will
+deadlock trivially (think just two readers that both want to do the
+upgrade - they'll block each other from doing so).
+
+So it's not actually a possible operation.
+
+                    Linus
