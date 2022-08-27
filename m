@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 965C05A3490
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 06:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DAA25A352D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 09:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243634AbiH0Ehn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 00:37:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
+        id S232969AbiH0HBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 03:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244615AbiH0Ehf (ORCPT
+        with ESMTP id S230499AbiH0HBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Aug 2022 00:37:35 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BDBABD7B;
-        Fri, 26 Aug 2022 21:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7F7KoR+pbWAeq4uRGTd/CTEkLm1sJHbvegiLLMNLvrg=; b=NMafFJ4At9KjtQl77wABCL/Itc
-        CbLmc3DlTJMGgsA7yjMRoK6FOPoarly+OecKKVBA00SSRN1+4c7/4gdBFkJ2Mm2wm7BQ8TB4scQ2v
-        DjWzsIIVUzyag+C9YD3w7dot6FMqkeEKfCST0oDRos84cloypWY+/DRyjNl1fRyoKbSiHb3QA5qmJ
-        pA30cmUbkYgwZc9u4iF9wMPYIsHJFhkwvViWADFYhN6BQtFWf6D8jt9JHfX5a7Duwde/NRYxsT246
-        QLVrGu4lRWpswV/jB0IQvVy3e2VWToJB2g9sLDeGVMp5PXw0L4dfxprtnzIYwlXMMliIPQlVyCMq+
-        bziC4f8w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oRnZT-008sPn-6J;
-        Sat, 27 Aug 2022 04:37:23 +0000
-Date:   Sat, 27 Aug 2022 05:37:23 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daire Byrne <daire@dneg.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/10] NFSD: allow parallel creates from nfsd
-Message-ID: <Ywmfg2vP5tDWdzOY@ZenIV>
-References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
- <166147984376.25420.3784384336816172144.stgit@noble.brown>
+        Sat, 27 Aug 2022 03:01:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C788E9A5;
+        Sat, 27 Aug 2022 00:01:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 78011B80EB0;
+        Sat, 27 Aug 2022 07:01:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEACEC433C1;
+        Sat, 27 Aug 2022 07:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661583690;
+        bh=TD/VF5KHXD4wRG8Pr+H+EfaARgN73usGJgQBXXdf6qM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LWAceR3fhWYIDpnV9qqfOwOsgBjiLxafwZdx0ifwtHygtEzCeOTClFwZD/Q2YfBW7
+         YPwl6lS4PhtvirZ8wp8caBSWY+mMIrSihflRr5bozhXZ5FK/PrU5FrIybPCGIXMjdH
+         NLO2WO7PqCl+GYNxdjD0iXQmDmLF+2mMX0U/9Gz/r5eeXGdC6GxSbYNWyQaePi90hO
+         J/qqblaICEwrvm0aWoDR+ropylNWmjuUSB4cM6fYqQS9BM1W0FRXtkr145+AZIC0uO
+         VGSXaLiZabc1a9wD+g1cJ5gA5UmWKC6cQh9TW50atN2cCEtx/FUHMyWbtRid75dM6H
+         aO8BLnX612WYQ==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH v5 0/8] make statx() return DIO alignment information
+Date:   Fri, 26 Aug 2022 23:58:43 -0700
+Message-Id: <20220827065851.135710-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166147984376.25420.3784384336816172144.stgit@noble.brown>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,32 +54,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 12:10:43PM +1000, NeilBrown wrote:
+This patchset makes the statx() system call return direct I/O (DIO)
+alignment information.  This allows userspace to easily determine
+whether a file supports DIO, and if so with what alignment restrictions.
 
->  	if (is_create_with_attrs(open))
->  		nfsd4_acl_to_attr(NF4REG, open->op_acl, &attrs);
-> +	inode = d_inode(path.dentry);
->  
-> -	inode_lock_nested(inode, I_MUTEX_PARENT);
-> +	child = filename_create_one_len(open->op_fname,
-> +					open->op_fnamelen,
-> +					&path, 0, &wq);
->  
-> -	child = lookup_one_len(open->op_fname, parent, open->op_fnamelen);
-> -	if (IS_ERR(child)) {
-> -		status = nfserrno(PTR_ERR(child));
-> -		goto out;
-> -	}
-> +	if (IS_ERR(child))
-> +		return nfserrno(PTR_ERR(child));
+Patch 1 adds the basic VFS support for STATX_DIOALIGN.  Patch 2 wires it
+up for all block device files.  The remaining patches wire it up for
+regular files on ext4, f2fs, and xfs.  Support for regular files on
+other filesystems can be added later.
 
-Leaks acls, by the look of it?
+I've also written a man-pages patch, which I sent separately:
+https://lore.kernel.org/r/20220722074229.148925-1-ebiggers@kernel.org
 
-> +	if (!IS_PAR_UPDATE(fhp->fh_dentry->d_inode) &&
-> +	    inode_trylock_shared(fhp->fh_dentry->d_inode)) {
-> +		/* only have a shared lock */
-> +		inode_unlock_shared(fhp->fh_dentry->d_inode);
-> +		fhp->fh_no_atomic_attr = true;
-> +		fhp->fh_no_wcc = true;
+Note, f2fs has a corner case where DIO reads are allowed but not DIO
+writes.  The proposed statx fields can't represent this.  The current
+proposal just reports that DIO is unsupported in this case.
 
-Er...  Shouldn't that be IS_PAR_UPDATE() && ... ?
+This patchset applies to v6.0-rc2.
+
+Changed in v5:
+   - Accounted for the DIO changes in 6.0 by setting dio_mem_align to
+     the DMA alignment instead of the logical block size where needed.
+
+   - Dropped the patch "f2fs: don't allow DIO reads but not DIO writes".
+
+   - Added some Reviewed-by and Acked-by tags.
+
+Changed in v4:
+   - Added xfs support.
+
+   - Moved the helper function for block devices into block/bdev.c.
+   
+   - Adjusted the ext4 patch to not introduce a bug where misaligned DIO
+     starts being allowed on encrypted files when it gets combined with
+     the patch "iomap: add support for dma aligned direct-io" that is
+     queued in the block tree for 5.20.
+
+   - Made a simplification in fscrypt_dio_supported().
+
+Changed in v3:
+   - Dropped the stx_offset_align_optimal field, since its purpose
+     wasn't clearly distinguished from the existing stx_blksize.
+
+   - Renamed STATX_IOALIGN to STATX_DIOALIGN, to reflect the new focus
+     on DIO only.
+
+   - Similarly, renamed stx_{mem,offset}_align_dio to
+     stx_dio_{mem,offset}_align, to reflect the new focus on DIO only.
+
+   - Wired up STATX_DIOALIGN on block device files.
+
+Changed in v2:
+   - No changes.
+
+Eric Biggers (8):
+  statx: add direct I/O alignment information
+  vfs: support STATX_DIOALIGN on block devices
+  fscrypt: change fscrypt_dio_supported() to prepare for STATX_DIOALIGN
+  ext4: support STATX_DIOALIGN
+  f2fs: move f2fs_force_buffered_io() into file.c
+  f2fs: simplify f2fs_force_buffered_io()
+  f2fs: support STATX_DIOALIGN
+  xfs: support STATX_DIOALIGN
+
+ block/bdev.c              | 23 ++++++++++++++++++
+ fs/crypto/inline_crypt.c  | 49 +++++++++++++++++++--------------------
+ fs/ext4/ext4.h            |  1 +
+ fs/ext4/file.c            | 37 ++++++++++++++++++++---------
+ fs/ext4/inode.c           | 37 +++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h            | 40 --------------------------------
+ fs/f2fs/file.c            | 43 +++++++++++++++++++++++++++++++++-
+ fs/stat.c                 | 14 +++++++++++
+ fs/xfs/xfs_iops.c         | 10 ++++++++
+ include/linux/blkdev.h    |  4 ++++
+ include/linux/fscrypt.h   |  7 ++----
+ include/linux/stat.h      |  2 ++
+ include/uapi/linux/stat.h |  4 +++-
+ 13 files changed, 188 insertions(+), 83 deletions(-)
+
+
+base-commit: 1c23f9e627a7b412978b4e852793c5e3c3efc555
+-- 
+2.37.2
+
