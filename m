@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D9A5A35FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 10:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C0B5A35E8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Aug 2022 10:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235243AbiH0IgU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Aug 2022 04:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33580 "EHLO
+        id S1345364AbiH0IgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Aug 2022 04:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233015AbiH0IgT (ORCPT
+        with ESMTP id S230149AbiH0IgT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 27 Aug 2022 04:36:19 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 725E9B0887;
-        Sat, 27 Aug 2022 01:36:14 -0700 (PDT)
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2086.outbound.protection.outlook.com [40.107.212.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C270B08BA;
+        Sat, 27 Aug 2022 01:36:15 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AAJdBdWOI3pDpYQqb7bGq8aMPrUPBUqrHObEO7HIuzte9iX+cDJiX6+ChHnthHuWlcZp4c46+YLhvMV3J1kuN1DAnFyDKGhnWqopRleHxdV1vJz3wjrtvkdiFGP4nbC2h/gcjsTQ2xZZYPEdWk/Ci0vBHzKNV0/fTN7IZe+tRTuKU35nAWgkCniz0Q3LzGP90eoV/iO+nckrVT3Xe2x0Gbn9i93reBvTvU+Eq0dNpQ5jym1ZLfrYYZdVoFS8wsYOuwdTvP7hBq/XqHnCge2Y/3Xru1ujwsGuSMOdoiAM/dmpHdX0z5ngeAMbrmtdTMTSXxzT1VvJChAFi8suBDA0UA==
+ b=A0QQz/FkFzjCALlCPcJTEURzDt2s/MLKPOgo0rOP5sZ0N1I5WxldqOIy7HZRaG2OIESxRL35viDpiG0sBg4JA9nRmy05N0c2URY9VFq8Tko3rWsX4a5enxg3+sTpaXTnKnhj1sXmFzwl1mcqDF6TwEHIC1+CEtRRO2deQZVNp72BqpdKiiSdD4l2VVyaq2gcuSkKhcMmLtIajhWw1WWUV4avNiEiyP0QVj/bOJgL+Q3I6IB4oB9rBFLH+irp0G7t3XrUOR83FJDnXyEKe281L4Fc53dDR1IaGp4RG8L7bZQPGi0Aq0zgWdxngGmcgUgPBIQkYxhOdfGmjM7C7bdbdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UO9IhewdmpPOqvg3QpSZ5kTO1SJPtnuFZRi+d4vMGI4=;
- b=O5+JbVTMnM3QYfSOa4LGo5c+9DLOyEg3GkOF5kPSeCogWj2ne0wWZ6LMkQADg3A3RM7IQ7SDxZwTUAVEd5HaKt2pfjo0/bJEC5CIXUsJR4VenzPuKLNTUH+tSjq+aoySaTXfpcw+YUgEIdrpHfBiYyg/NVS4S9w0RLmilc4jtqePcctFPRkqm/MpIlR8lM19e5eQqRFWtKqY9FmQggTVKqcReOMh7cU/TfHzbB617oEX10LzirdE+Iaur67vby1Z4XTuZWYsKQAakcKZD82RFcDT+6xWwPefXULgSc3fuLu1noXN/udzDVmg/BRwAXi1xDghOx+yl/ngCjuzCKq5Sg==
+ bh=m6juzxIN+dbVotM4FaLX0WTWAvPmSGnE+qYMrVKn5mE=;
+ b=WlwNBc0zGqhVFyz3ork5Cha4bhOF6xPbulatdQ3k6FzCk10WMWdFGVk9a96+Kneo1vzYd7H1zya/qt0wgO0+rG0w//OMUiWER8+8FHSjtRcx9oQ+h0pUO3tzIL9C1WN4e3doxGM4nuWSzRCFIAlxTwMFNQUS7sLW4VNIZFZ0GKl/uIVr5WYNNuxFkpgvMbC67aj4/Xo/liSQhmIJx9Dk5GNM66S9UaUgzs43tihKpPGQHz8wHMLIdXwmsi+9uylvh93cURdtQnAmTYkSfwXoSAAyvxC63akzygBYJe2PMLZIFkICLYn6T/ymjxoCJUeOUu1DRvbyCpuUD98hRIZE2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UO9IhewdmpPOqvg3QpSZ5kTO1SJPtnuFZRi+d4vMGI4=;
- b=ePgpzUylfyGRiv8r47Kk55aMbrdcsdCdGrWr0bN2dNtm1rU3HU+WfB/1iKO6h+U1LuHyoKnYvUHPurCp6IXYfJOAVFJdC/yVPFhbLF6VZwgVTphMBAPnCd13MhKBkVKPhiPBSTCTuLZJPEkobcFefhRaDkJZyvvD17kGLd58pBFpyuce3KarbyS6j1+cppmzLHUWGNbUXEBkqBS56YA3WuJeZxgWcqNNC8WnRCMO2WTNQ3v1gXpABhmHrp4nrqlrwtk/asWJphTRIsZSvmhiO7CjTLoLjlO2bYzzPZ2XjpDG0awDTc67Ybp6a17USVR4VS2y/0cxH/Qg81tQFPYjJw==
-Received: from DM5PR07CA0092.namprd07.prod.outlook.com (2603:10b6:4:ae::21) by
- PH8PR12MB7027.namprd12.prod.outlook.com (2603:10b6:510:1be::19) with
+ bh=m6juzxIN+dbVotM4FaLX0WTWAvPmSGnE+qYMrVKn5mE=;
+ b=cGOp7gbrsET+75dtjHxMgRnH08IDxpuQbg5V1tCNMBL/kNwgJc0JYrT3LhhkfI0w2Lo/If9sIVBpyaevu/75IVQH+ZbcikZLB9X3Heoh2xqsFbqiEnbMFmPmSATda7jAJvz68Quk0E8FVPRV+y3TlyRRt8cOUNYvo9kdgzgZ4T802MjYql1wgESW3dyf859jwgiTniv5n4QfUacDNrxy1+HH+9yDIiB5xjy0R9XtuLu+M6G4hiFO1I407/uEn1avJr7NBDKQ95Uey2Y8bBPXH4vI5qIPx8tD00uxyY5h8ezTKtu4YxX5fSlP8nL8MphL4PYYf+QYnlPgcvSdvsKSzA==
+Received: from MW4P222CA0005.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::10)
+ by PH7PR12MB6718.namprd12.prod.outlook.com (2603:10b6:510:1b1::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.16; Sat, 27 Aug
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Sat, 27 Aug
  2022 08:36:12 +0000
-Received: from DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
- (2603:10b6:4:ae:cafe::a9) by DM5PR07CA0092.outlook.office365.com
- (2603:10b6:4:ae::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15 via Frontend
- Transport; Sat, 27 Aug 2022 08:36:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+Received: from CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:114:cafe::c6) by MW4P222CA0005.outlook.office365.com
+ (2603:10b6:303:114::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14 via Frontend
+ Transport; Sat, 27 Aug 2022 08:36:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT047.mail.protection.outlook.com (10.13.172.139) with Microsoft SMTP
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.238) by
+ CO1NAM11FT057.mail.protection.outlook.com (10.13.174.205) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5566.15 via Frontend Transport; Sat, 27 Aug 2022 08:36:11 +0000
+ 15.20.5566.15 via Frontend Transport; Sat, 27 Aug 2022 08:36:12 +0000
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
  15.0.1497.38; Sat, 27 Aug 2022 08:36:11 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
  drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Sat, 27 Aug 2022 01:36:10 -0700
+ 15.2.986.29; Sat, 27 Aug 2022 01:36:11 -0700
 Received: from sandstorm.attlocal.net (10.127.8.9) by mail.nvidia.com
  (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
  Transport; Sat, 27 Aug 2022 01:36:10 -0700
@@ -75,9 +75,9 @@ CC:     Jens Axboe <axboe@kernel.dk>,
         <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
         <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 1/6] mm/gup: introduce pin_user_page()
-Date:   Sat, 27 Aug 2022 01:36:02 -0700
-Message-ID: <20220827083607.2345453-2-jhubbard@nvidia.com>
+Subject: [PATCH 2/6] block: add dio_w_*() wrappers for pin, unpin user pages
+Date:   Sat, 27 Aug 2022 01:36:03 -0700
+Message-ID: <20220827083607.2345453-3-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220827083607.2345453-1-jhubbard@nvidia.com>
 References: <20220827083607.2345453-1-jhubbard@nvidia.com>
@@ -87,23 +87,23 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 64fbdea3-33e1-42f3-e854-08da8807326b
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7027:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c80ba3d-e36b-4be8-f9a6-08da880732bf
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6718:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qnlb2BznKuv8HSR/mOMAdLL3epBJdze+9vbcf+5R1g1XlS+98sCJbl1S4qPk+1WdMa8i82GsCphaSdMgT+43MrcYVLxMY4LmSP6zn2AzLJa28esn7gqkx20aO+nRwTWj4+pD5raxucC0Xp7lIxtFtTiISaeGPnmS2cFK1qoLHqsU6rW5AYY0AWZV9Kqt5zS9ZAFHFjUaumIC99/dcjEyDjI6W3btlj2lbRaUXil/NseqpUgUBAxG7dR4pe0WwCTzfxOSPdeAbQnENJxc6rGj2GLnTKTXx56JZil30dezGUXxOSAJliQgna0OPaEOfkUWm51NlgphKLv1EWd0ODFqIIExYXgIpKmdDcHerJIEJOC1MkVt4P2m25/4viCsQyVAJH6nI9zBEGVeDNVEH4kefpBdLMwyj6AQwSpMC8X1+k8wD/T1sXrm2Z74nbaDqpCmXaxCVZv6CyVQA356qVrHXAGmgnQppWw5hhdnEx/e7R+Q9D5WmD+El0QAOgFEBPIQj9fFjh2V8I25EjSWtURVQBN1NOc9y2mnIZz/2HqXy1G2+qbj7vWUcauZ62RiMoCpCUVHF/iP3LYwvvy6Ho4C0F7s4MmEcvbZAX6Rg59GveOCyJ4CzmTFscuJfagklCSfH3Q9N92d1BvKTNOYg6RKI7Ou9B852gNDQVkDl2HqYgxxS3du9NZJrhHoKe6VJoK79kU5oGqN/Fe3mM1mMAKJ1mHJMqWT9zfUK8LjazyDzHGalG3U9LGMWnrsejcDLDj6KGok4NbLzoZzE/GYdQ8w/y/f795NSfRHBbJZiDhTvF6NZt/95KO7VfQIyGQBNiHm0o/l7zlEYGcDUcje3QI1iPsp2Pz/fh6FgqRYceUmbC4=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(136003)(396003)(39860400002)(46966006)(36840700001)(40470700004)(6666004)(8936002)(81166007)(4326008)(36756003)(7416002)(8676002)(40460700003)(356005)(82740400003)(70586007)(82310400005)(40480700001)(5660300002)(186003)(2906002)(86362001)(70206006)(2616005)(1076003)(47076005)(426003)(336012)(26005)(107886003)(83380400001)(36860700001)(316002)(6916009)(54906003)(41300700001)(478600001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Jx7dtFz53tTiOMq5bP8R6GG/n5j0MAjZq9JQWYUEIo4hKL0vrsAHVI/W10uxpuzSVMMq3Z7uZAc35bDAGua1gfhgvFQ8Q9v+QjXYEkwFYfRmjoVyIKmR6a4ywpw1ZpiRDRrMq+kDAPXmngZE9JS8CUmJTL+Sa/gpa+oK90f59M4PEDunl2Tu5NgIn2ZLSNVCmGtbFWFRt8r9/gKtffUhN3h5bHCA4OF754MWCfof3o28W9HvnV6v1LFDyV3kqE7eYkXVLdVu41m0XRUt8/rfYGkGcc2DpUUDT34+fMiplO554QCBozu8C+/YP/rE0TXPp2F8rD//oEGDV0qtO0XJfQHBeJpV2omUGqeveMfuSL+ImPUO8xnAtncDSI9tVv7/A4Ce6NwrQS41xmRmyOXZ3CZXf6zU6SoTY9rAtOXCoGQ3ochiUnAt+ejiC9FG1jh6xdodDA83C+zfAxWec7CU24n+wYYc1mp6HkGOdq9U3/QjL/6KmMQ8HUFYwbfuL4ed2FkWCoebIRp/uiIXahjBHK1BRF4TrdSvr0ETLlH/kp3zjmjKMWmJIC+mim/jZbOirEKl0Q13GS4Gcq+NH9BZo+rrcfuZtR2AK53ZLEtZ0d4T/ZCuVCQKnFptRX8pubAptyAY8QBS+sHJ7bDb7zXLopTmAC1Ns0BIwOWRFTQPndR1O3Wadg5yWQreaYEXJmK1Y1IxF78Nf6wciZqKKIcQkQlAcEPNNaY5d0zKyfBmRmO0aYcvN6D5C/TNmMhHrEf2MZ1op0ZfAeIi7JEjfLRUzLQaySv+vKp1kF72579POtKxMNtoxG/LSbmYqck3rfN/
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(39860400002)(346002)(396003)(376002)(46966006)(36840700001)(40470700004)(82310400005)(5660300002)(26005)(86362001)(41300700001)(107886003)(6666004)(2616005)(82740400003)(81166007)(356005)(83380400001)(40460700003)(336012)(6916009)(426003)(47076005)(478600001)(40480700001)(36860700001)(2906002)(54906003)(4326008)(8676002)(316002)(70586007)(36756003)(70206006)(186003)(8936002)(7416002)(1076003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2022 08:36:11.7334
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2022 08:36:12.2843
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64fbdea3-33e1-42f3-e854-08da8807326b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c80ba3d-e36b-4be8-f9a6-08da880732bf
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7027
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6718
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -114,76 +114,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pin_user_page() is an externally-usable version of try_grab_page(), but
-with semantics that match get_page(), so that it can act as a drop-in
-replacement for get_page(). Specifically, pin_user_page() has a void
-return type.
+Background: The Direct IO part of the block infrastructure is being
+changed to use pin_user_page*() and unpin_user_page*() calls, in place
+of a mix of get_user_pages_fast(), get_page(), and put_page(). These
+have to be changed over all at the same time, for block, bio, and all
+filesystems. However, most filesystems can be changed via iomap and core
+filesystem routines, so let's get that in place, and then continue on
+with converting the remaining filesystems (9P, CIFS) and anything else
+that feeds pages into bio that ultimately get released via
+bio_release_pages().
 
-pin_user_page() elevates a page's refcount using FOLL_PIN rules. This
-means that the caller must release the page via unpin_user_page().
+Add a new config parameter, CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO, and
+dio_w_*() wrapper functions. The dio_w_ prefix was chosen for
+uniqueness, so as to ease a subsequent kernel-wide rename via
+search-and-replace. Together, these allow the developer to choose
+between these sets of routines, for Direct IO code paths:
+
+a) pin_user_pages_fast()
+    pin_user_page()
+    unpin_user_page()
+
+b) get_user_pages_fast()
+    get_page()
+    put_page()
+
+CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO is a temporary setting, and may
+be deleted once the conversion is complete. In the meantime, developers
+can enable this in order to try out each filesystem.
+
+Please remember that these /proc/vmstat items (below) should normally
+contain the same values as each other, except during the middle of
+pin/unpin operations. As such, they can be helpful when monitoring test
+runs:
+
+    nr_foll_pin_acquired
+    nr_foll_pin_released
 
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/mm.h |  1 +
- mm/gup.c           | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ block/Kconfig        | 24 ++++++++++++++++++++++++
+ include/linux/bvec.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 982f2607180b..85a105157334 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1869,6 +1869,7 @@ long pin_user_pages_remote(struct mm_struct *mm,
- long get_user_pages(unsigned long start, unsigned long nr_pages,
- 			    unsigned int gup_flags, struct page **pages,
- 			    struct vm_area_struct **vmas);
-+void pin_user_page(struct page *page);
- long pin_user_pages(unsigned long start, unsigned long nr_pages,
- 		    unsigned int gup_flags, struct page **pages,
- 		    struct vm_area_struct **vmas);
-diff --git a/mm/gup.c b/mm/gup.c
-index 5abdaf487460..245ccb41ed8c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -3213,6 +3213,39 @@ long pin_user_pages(unsigned long start, unsigned long nr_pages,
- }
- EXPORT_SYMBOL(pin_user_pages);
+diff --git a/block/Kconfig b/block/Kconfig
+index 444c5ab3b67e..d4fdd606d138 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -48,6 +48,30 @@ config BLK_DEV_BSG_COMMON
+ config BLK_ICQ
+ 	bool
  
-+/**
-+ * pin_user_page() - apply a FOLL_PIN reference to a page
-+ *
-+ * @page: the page to be pinned.
-+ *
-+ * This is similar to get_user_pages(), except that the page's refcount is
-+ * elevated using FOLL_PIN, instead of FOLL_GET.
-+ *
-+ * IMPORTANT: The caller must release the page via unpin_user_page().
-+ *
-+ */
-+void pin_user_page(struct page *page)
++config BLK_USE_PIN_USER_PAGES_FOR_DIO
++	bool "DEVELOPERS ONLY: Enable pin_user_pages() for Direct IO" if EXPERT
++	default n
++
++	help
++	  For Direct IO code, retain the pages via calls to
++	  pin_user_pages_fast(), instead of via get_user_pages_fast().
++	  Likewise, use pin_user_page() instead of get_page(). And then
++	  release such pages via unpin_user_page(), instead of
++	  put_page().
++
++	  This is a temporary setting, which will be deleted once the
++	  conversion is completed, reviewed, and tested. In the meantime,
++	  developers can enable this in order to try out each filesystem.
++	  For that, it's best to monitor these /proc/vmstat items:
++
++		nr_foll_pin_acquired
++		nr_foll_pin_released
++
++	  ...to ensure that they remain equal, when "at rest".
++
++	  Say yes here ONLY if are actively developing or testing the
++	  block layer or filesystems with pin_user_pages_fast().
++
+ config BLK_DEV_BSGLIB
+ 	bool "Block layer SG support v4 helper lib"
+ 	select BLK_DEV_BSG_COMMON
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index 35c25dff651a..33fc119da9fc 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -241,4 +241,44 @@ static inline void *bvec_virt(struct bio_vec *bvec)
+ 	return page_address(bvec->bv_page) + bvec->bv_offset;
+ }
+ 
++#ifdef CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO
++#define dio_w_pin_user_pages_fast(s, n, p, f)	pin_user_pages_fast(s, n, p, f)
++#define dio_w_pin_user_page(p)			pin_user_page(p)
++#define dio_w_iov_iter_pin_pages(i, p, m, n, s) iov_iter_pin_pages(i, p, m, n, s)
++#define dio_w_iov_iter_pin_pages_alloc(i, p, m, s) iov_iter_pin_pages_alloc(i, p, m, s)
++#define dio_w_unpin_user_page(p)		unpin_user_page(p)
++#define dio_w_unpin_user_pages(p, n)		unpin_user_pages(p, n)
++#define dio_w_unpin_user_pages_dirty_lock(p, n, d) unpin_user_pages_dirty_lock(p, n, d)
++
++#else
++#define dio_w_pin_user_pages_fast(s, n, p, f)	get_user_pages_fast(s, n, p, f)
++#define dio_w_pin_user_page(p)			get_page(p)
++#define dio_w_iov_iter_pin_pages(i, p, m, n, s) iov_iter_get_pages2(i, p, m, n, s)
++#define dio_w_iov_iter_pin_pages_alloc(i, p, m, s) iov_iter_get_pages_alloc2(i, p, m, s)
++#define dio_w_unpin_user_page(p)		put_page(p)
++
++static inline void dio_w_unpin_user_pages(struct page **pages,
++					  unsigned long npages)
 +{
-+	struct folio *folio = page_folio(page);
++	unsigned long i;
 +
-+	WARN_ON_ONCE(folio_ref_count(folio) <= 0);
-+
-+	/*
-+	 * Similar to try_grab_page(): be sure to *also*
-+	 * increment the normal page refcount field at least once,
-+	 * so that the page really is pinned.
-+	 */
-+	if (folio_test_large(folio)) {
-+		folio_ref_add(folio, 1);
-+		atomic_add(1, folio_pincount_ptr(folio));
-+	} else {
-+		folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
-+	}
-+
-+	node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, 1);
++	for (i = 0; i < npages; i++)
++		put_page(pages[i]);
 +}
-+EXPORT_SYMBOL(pin_user_page);
 +
- /*
-  * pin_user_pages_unlocked() is the FOLL_PIN variant of
-  * get_user_pages_unlocked(). Behavior is the same, except that this one sets
++static inline void dio_w_unpin_user_pages_dirty_lock(struct page **pages,
++						     unsigned long npages,
++						     bool make_dirty)
++{
++	unsigned long i;
++
++	for (i = 0; i < npages; i++) {
++		if (make_dirty)
++			set_page_dirty_lock(pages[i]);
++		put_page(pages[i]);
++	}
++}
++
++#endif
++
+ #endif /* __LINUX_BVEC_H */
 -- 
 2.37.2
 
