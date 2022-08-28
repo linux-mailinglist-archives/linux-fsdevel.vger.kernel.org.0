@@ -2,135 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9015A3BF2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Aug 2022 07:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8ED5A3C4D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Aug 2022 08:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232630AbiH1FFz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Aug 2022 01:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53182 "EHLO
+        id S231991AbiH1Gqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Aug 2022 02:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232302AbiH1FFT (ORCPT
+        with ESMTP id S229527AbiH1Gqj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Aug 2022 01:05:19 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64EA622BD1;
-        Sat, 27 Aug 2022 22:05:08 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id c16-20020a17090aa61000b001fb3286d9f7so10193080pjq.1;
-        Sat, 27 Aug 2022 22:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc;
-        bh=B3vo1ERHcB4zq3BeH92B14/O9uQqF/BKTHSf1xE1Enc=;
-        b=S0EVI4k7ynhZt0aAXiLq873oNhgtJVoqN10Xy5Xuzkv+5c4rA/oqJec9Wy7QmF/EwI
-         S9lHn+FinHDm1Yj3VkeHYetRTMMHo/IuD7/M78sa31sB9C1wjQRuTkdZcLIPNnPH2B7B
-         PSJFSjbUUO0aIWRNuNvILuntXcwlun2hdc7CSKBcLzAQqAcex7WXpZZSU5lvxuiwn4Gp
-         7acVcLbWmZApILuqh5da12jbxz3ySqoNmq/tRl1yx3UWDpiVSmtTtgavTvHMDYrU7hIr
-         m95zxj+JLYOWvt3dEH16WhXP51jkc8Qtr9lMfjhKuP3el4M/rLrcobz7K7x+fKY5IfHk
-         jj5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc;
-        bh=B3vo1ERHcB4zq3BeH92B14/O9uQqF/BKTHSf1xE1Enc=;
-        b=a40X7B7fzr+VM3cAIL3GkzGaL5s2TMOqSuin+nCwpDSWujx+RchTtZOkWMcJjDuy9A
-         TOfpBxdEcVTQTkjyUshmoDrmbVDsxPXZWdyuaslkgHgpl6C/eHDjnXSAybUP2ufQJ4s0
-         o5+7Y4uN93zLFTfh+quXjg8GKCTr8eXFwi2grD2j+a4+jrQId6yDhu3eY+jn99PpQ790
-         PdmCieuTxRcheNGB+cNkSqjn8vJ8zE05ynrc7CYcmSUFIhWx4IE+rNbW0nnvj4avGNNf
-         nJ8aUpoR/pqQXcSc08QhLCY6AkNOj8iixUmibztyR7sD+g5vcR2DklKyz8OkxEmc8Ij3
-         +oaA==
-X-Gm-Message-State: ACgBeo1QNJRHYqVrjvehu5TRoEOxeDzXmxgs4CJz9LP9f0Q/BlQXU9YS
-        Ry6HDrTqoV7KFExA+qXfpSM=
-X-Google-Smtp-Source: AA6agR4b8/MDgCe/zpx0U3Tml7OGFw6R1/0M0oWQd8Y0ejtAM8ACzptlnC2biGnPO+wjP1f3IEZXnQ==
-X-Received: by 2002:a17:902:f711:b0:170:9e3c:1540 with SMTP id h17-20020a170902f71100b001709e3c1540mr10678679plo.22.1661663107603;
-        Sat, 27 Aug 2022 22:05:07 -0700 (PDT)
-Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
-        by smtp.gmail.com with ESMTPSA id mi6-20020a17090b4b4600b001f1acb6c3ebsm4191395pjb.34.2022.08.27.22.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Aug 2022 22:05:07 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-From:   Tejun Heo <tj@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Chengming Zhou <zhouchengming@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Imran Khan <imran.f.khan@oracle.com>, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 9/9] cgroup: Implement cgroup_file_show()
-Date:   Sat, 27 Aug 2022 19:04:40 -1000
-Message-Id: <20220828050440.734579-10-tj@kernel.org>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220828050440.734579-1-tj@kernel.org>
-References: <20220828050440.734579-1-tj@kernel.org>
-MIME-Version: 1.0
+        Sun, 28 Aug 2022 02:46:39 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3801032B83;
+        Sat, 27 Aug 2022 23:46:38 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27S5fvkf014406;
+        Sun, 28 Aug 2022 06:46:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pp1; bh=2M37OVJCRShHZ6YpDwvL7eVJVjl3tuV71Vb9PUaypy8=;
+ b=OiIVdqYZz9M5czeVQiOCkFN1KuQQ+QU1Ki6dkQTQvIVdZKqgFLwhh82qe1wO+SFgwRMD
+ Al5nP2EyGuYh2a4yfGOuMpuEY0BojNXRU8sxHlZAwK+DKHAKXFbRzx6S6CVCmvOpuD4I
+ iCR6+sOPTjEYyj1OPdKFpIfO0JGuDEk65nkLCGX5BI3LacGlwsc85jTyOYoPBvcdDWv7
+ XMxdX+k4EGVkMcDc9Tmc+K3srlrLwix8WmJOtYTWsCx1e6fa7CCSOYRkpPsIZ3510a7o
+ f0BTiWwj0EAIP+HYXPWRlal4VgVEQ6BmEgzBErUCJmRCqYdupzZ7IW/yKPcSlLjYtfvN oA== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3j7waq83sq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 28 Aug 2022 06:46:35 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 27S6Zx4Z010277;
+        Sun, 28 Aug 2022 06:46:33 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma01fra.de.ibm.com with ESMTP id 3j7aw8rqy9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 28 Aug 2022 06:46:33 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 27S6kVAm41681398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 28 Aug 2022 06:46:31 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 16D0D5204E;
+        Sun, 28 Aug 2022 06:46:31 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.118.96])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 211565204F;
+        Sun, 28 Aug 2022 06:46:28 +0000 (GMT)
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Subject: [RFC 0/8] ext4: Convert inode preallocation list to an rbtree
+Date:   Sun, 28 Aug 2022 12:16:13 +0530
+Message-Id: <cover.1661632343.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 78pRD5jmUbqcYIE4znrmrE02Vl0JSfop
+X-Proofpoint-GUID: 78pRD5jmUbqcYIE4znrmrE02Vl0JSfop
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-27_10,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ mlxlogscore=653 adultscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208280025
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add cgroup_file_show() which allows toggling visibility of a cgroup file
-using the new kernfs_show(). This will be used to hide psi interface files
-on cgroups where it's disabled.
+This patch series aim to improve the performance and scalability of
+inode preallocation by changing inode preallocation linked list to an
+rbtree. I've ran xfstests quick on this series and plan to run auto group
+as well to confirm we have no regressions.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Chengming Zhou <zhouchengming@bytedance.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
----
- include/linux/cgroup.h |  1 +
- kernel/cgroup/cgroup.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+** Shortcomings of existing implementation **
 
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index ed53bfe7c46c..f61dd135efbe 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -114,6 +114,7 @@ int cgroup_add_dfl_cftypes(struct cgroup_subsys *ss, struct cftype *cfts);
- int cgroup_add_legacy_cftypes(struct cgroup_subsys *ss, struct cftype *cfts);
- int cgroup_rm_cftypes(struct cftype *cfts);
- void cgroup_file_notify(struct cgroup_file *cfile);
-+void cgroup_file_show(struct cgroup_file *cfile, bool show);
- 
- int task_cgroup_path(struct task_struct *task, char *buf, size_t buflen);
- int cgroupstats_build(struct cgroupstats *stats, struct dentry *dentry);
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index ffaccd6373f1..217469a1ea29 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4339,6 +4339,26 @@ void cgroup_file_notify(struct cgroup_file *cfile)
- 	spin_unlock_irqrestore(&cgroup_file_kn_lock, flags);
- }
- 
-+/**
-+ * cgroup_file_show - show or hide a hidden cgroup file
-+ * @cfile: target cgroup_file obtained by setting cftype->file_offset
-+ * @show: whether to show or hide
-+ */
-+void cgroup_file_show(struct cgroup_file *cfile, bool show)
-+{
-+	struct kernfs_node *kn;
-+
-+	spin_lock_irq(&cgroup_file_kn_lock);
-+	kn = cfile->kn;
-+	kernfs_get(kn);
-+	spin_unlock_irq(&cgroup_file_kn_lock);
-+
-+	if (kn)
-+		kernfs_show(kn, show);
-+
-+	kernfs_put(kn);
-+}
-+
- /**
-  * css_next_child - find the next child of a given css
-  * @pos: the current position (%NULL to initiate traversal)
+Right now, we add all the inode preallocations(PAs) to a per inode linked
+list ei->i_prealloc_list. To prevent the list from growing infinitely
+during heavy sparse workloads, the lenght of this list was capped at 512
+and a trimming logic was added to trim the list whenever it grew over
+this threshold, in patch 27bc446e2. This was discussed in detail in the
+following lore thread [1].
+
+[1] https://lore.kernel.org/all/d7a98178-056b-6db5-6bce-4ead23f4a257@gmail.com/
+
+But from our testing, we noticed that the current implementation still
+had issues with scalability as the performance degraded when the PAs
+stored in the list grew. Most of the degradation was seen in
+ext4_mb_normalize_request() and ext4_mb_use_preallocated() functions as
+they iterated the inode PA list.
+
+** Improvements in this patchset **
+
+To counter the above shortcomings, this patch series modifies the inode
+PA list to an rbtree, which:
+
+- improves the performance of functions discussed above due to the
+  improved lookup speed.
+  
+- improves scalability by changing lookup complexity from O(n) to
+  O(logn). We no longer need the trimming logic as well.
+
+As a result, the RCU implementation was needed to be changed since
+lockless lookups of rbtrees do have some issues like skipping
+subtrees. Hence, RCU was replaced with read write locks for inode
+PAs. More information can be found in Patch 7 (that has the core
+changes).
+
+** Performance Numbers **
+
+Performance numbers were collected with and without these patches, using an
+nvme device. Details of tests/benchmarks used are as follows:
+
+Test 1: 200,000 1KiB sparse writes using (fio)
+Test 2: Fill 5GiB w/ random writes, 1KiB burst size using (fio)
+Test 3: Test 2, but do 4 sequential writes before jumping to random
+        offset (fio)
+Test 4: Fill 8GB FS w/ 2KiB files, 64 threads in parallel (fsmark)
+
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+|          |            nodelalloc             |              delalloc               |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+|          | Unpatched        | Patched        | Unpatched        | Patched          |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+| Test 1   | 11.8 MB/s        | 23.3 MB/s      | 27.2 MB/s        | 63.7 MB/s        |
+| Test 2   | 1617 MB/s        | 1740 MB/s      | 2223 MB/s        | 2208 MB/s        |
+| Test 3   | 1715 MB/s        | 1823 MB/s      | 2346 MB/s        | 2364 MB/s        |
+| Test 4   | 14284 files/sec  | 14347 files/s  | 13762 files/sec  | 13882 files/sec  |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+
+In test 1, we almost see 100 to 200% increase in performance due to the high number
+of sparse writes highlighting the bottleneck in the unpatched kernel. Further, on running
+"perf diff patched.data unpatched.data" for test 1, we see something as follows:
+
+     2.83%    +29.67%  [kernel.vmlinux]          [k] _raw_spin_lock
+												...
+               +3.33%  [ext4]                    [k] ext4_mb_normalize_request.constprop.30
+     0.25%     +2.81%  [ext4]                    [k] ext4_mb_use_preallocated
+
+Here we can see that the biggest different is in the _raw_spin_lock() function
+of unpatched kernel, that is called from `ext4_mb_normalize_request()` as seen
+here:
+
+    32.47%  fio              [kernel.vmlinux]            [k] _raw_spin_lock
+            |
+            ---_raw_spin_lock
+               |          
+                --32.22%--ext4_mb_normalize_request.constprop.30
+
+This is comming from the spin_lock(&pa->pa_lock) that is called for
+each PA that we iterate over, in ext4_mb_normalize_request(). Since in rbtrees,
+we lookup log(n) PAs rather than n PAs, this spin lock is taken less frequently,
+as evident in the perf. 
+
+Furthermore, we see some improvements in other tests however since they don't
+exercise the PA traversal path as much as test 1, the improvements are relatively
+smaller. 
+
+** Summary of patches **
+
+- Patch 1-5: Abstractions/Minor optimizations
+- Patch 6: Split common inode & locality group specific fields to a union
+- Patch 7: Core changes to move inode PA logic from list to rbtree
+- Patch 8: Remove the trim logic as it is not needed
+
+Ojaswin Mujoo (8):
+  ext4: Stop searching if PA doesn't satisfy non-extent file
+  ext4: Refactor code related to freeing PAs
+  ext4: Refactor code in ext4_mb_normalize_request() and
+    ext4_mb_use_preallocated()
+  ext4: Move overlap assert logic into a separate function
+  ext4: Abstract out overlap fix/check logic in
+    ext4_mb_normalize_request()
+  ext4: Convert pa->pa_inode_list and pa->pa_obj_lock into a union
+  ext4: Use rbtrees to manage PAs instead of inode i_prealloc_list
+  ext4: Remove the logic to trim inode PAs
+
+ Documentation/admin-guide/ext4.rst |   3 -
+ fs/ext4/ext4.h                     |   5 +-
+ fs/ext4/mballoc.c                  | 420 ++++++++++++++++++-----------
+ fs/ext4/mballoc.h                  |  17 +-
+ fs/ext4/super.c                    |   4 +-
+ fs/ext4/sysfs.c                    |   2 -
+ 6 files changed, 276 insertions(+), 175 deletions(-)
+
 -- 
-2.37.2
+2.31.1
 
