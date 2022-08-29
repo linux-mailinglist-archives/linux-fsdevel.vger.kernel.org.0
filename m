@@ -2,196 +2,431 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8F35A5074
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 17:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DAB65A5199
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 18:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbiH2PrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 11:47:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48296 "EHLO
+        id S230356AbiH2QXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 12:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiH2PrB (ORCPT
+        with ESMTP id S231164AbiH2QXo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 11:47:01 -0400
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC90876A7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 08:46:59 -0700 (PDT)
-Received: from pps.filterd (m0209326.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27TENqk2004171;
-        Mon, 29 Aug 2022 15:46:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=S1;
- bh=KWq3RUryUDfUWkaO48R+XgTCoOYNWjfQeiLfwea+PG8=;
- b=FoG42Kgzk57Q0kRzVqn6uUZ0fTSa79Y/kJZWaFCOL2wCuWLsoTpqSZYyrlSEyEaCVC0b
- NytYbkNpGC2u7KDUTC6W31vEyIlBHIcJzFl6tA2H6oMeqAYDYZNKRtCCABR6RpIJSYpJ
- wXGex+D4pDlBkNYcHylHm9DIQazUqsoPBwMDNTRCRxRsjsjvwraF919eXdZsmq+3tGue
- PlkTJCnLmmCJpRt0j1PGaMgIX2Sy10Ep/wS3h7YMbqheVHCZWaSLTW76HTlIffVCQvfR
- Vbgh+V/mnPJ9mdNOX9RpW0B1VCRr3hFaCDmh2+5WE+8G9ppyr8N/px5Dx0q18TjoS0WC Zg== 
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2169.outbound.protection.outlook.com [104.47.73.169])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3j79fh1xsh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Aug 2022 15:46:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fc1ZC33t+K2omiM+//gxw1GL1zC7Tn3XzjuBBDBj4K4fxJsxWT1+YD0Cg0q9+pnn47ec9F8urFXS0SxosqcJIOAYHz+VKfNYWBeTACZIZZcxlIU5NsjanhCz9G3DuTqJCanqcayLHWAejyR51AoF8Q0qqPKMnVyD/xs1JGhVjrzcszLpQPr73xA4bp0tqSwGg7EVcRnOp6SfQ4WRam4oXVNpWUESw3a69z8RjODaSpLRZ/k5gHTcdaL0CX6sgr0iP64M3cOB2/8P4kU20MhdPfyg4MU4cw23EzpjcyQBjWdJhK0yNd1ONmnEJ1L2v8j3ElpgCmbXe4wa2pmi7FYtRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KWq3RUryUDfUWkaO48R+XgTCoOYNWjfQeiLfwea+PG8=;
- b=MWoWKlLS1OZwjHjUV2X3kcHp6sut4D3D8oHmtz+DTnu+VHBuTw7JG5sNiXieutqSG2VPnhXeK2wz7RUbFvWFKu8wUTpsBuseatzZY8GlN6vDppe/MPZoN1Xe2cdvtUA23CU3FjD7FHwcGF9ox65R/b6AowofjzW6pUGr3VCeX5e8BRFx34nGp5GfgcAZ5qQyogbkvW+2tID5RC5TKkZ+eeVTyjMthDsIL8i2UWSJjVZZri4VQQbYSbqCutxNq+fesZYnytx4UGFKxUMR9uUVGf2M8BcuWddY63OxJiBxKaDYDx243uUMQ5SMCHidTEMi3gK9Av5kUhg1WC5D6Z35hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from BYAPR13MB2503.namprd13.prod.outlook.com (2603:10b6:a02:cd::33)
- by CY4PR13MB1527.namprd13.prod.outlook.com (2603:10b6:903:12f::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Mon, 29 Aug
- 2022 15:46:37 +0000
-Received: from BYAPR13MB2503.namprd13.prod.outlook.com
- ([fe80::84ef:e0b7:d15e:8095]) by BYAPR13MB2503.namprd13.prod.outlook.com
- ([fe80::84ef:e0b7:d15e:8095%5]) with mapi id 15.20.5588.010; Mon, 29 Aug 2022
- 15:46:37 +0000
-From:   "Bird, Tim" <Tim.Bird@sony.com>
-To:     Petr Vorel <pvorel@suse.cz>,
-        "ltp@lists.linux.it" <ltp@lists.linux.it>
-CC:     Cyril Hrubis <chrubis@suse.cz>, Li Wang <liwang@redhat.com>,
-        Martin Doucha <mdoucha@suse.cz>,
-        Richard Palethorpe <rpalethorpe@suse.com>,
-        Joerg Vehlow <joerg.vehlow@aox-tech.de>,
-        "automated-testing@lists.yoctoproject.org" 
-        <automated-testing@lists.yoctoproject.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 1/6] tst_fs_type: Add nsfs, vfat, squashfs to
- tst_fs_type_name()
-Thread-Topic: [PATCH 1/6] tst_fs_type: Add nsfs, vfat, squashfs to
- tst_fs_type_name()
-Thread-Index: AQHYuavtLluMU2mGO0CYvkTjQ0mLnK3GCX0A
-Date:   Mon, 29 Aug 2022 15:46:37 +0000
-Message-ID: <BYAPR13MB2503569ECEDEAC432FBC577BFD769@BYAPR13MB2503.namprd13.prod.outlook.com>
-References: <20220827002815.19116-1-pvorel@suse.cz>
- <20220827002815.19116-2-pvorel@suse.cz>
-In-Reply-To: <20220827002815.19116-2-pvorel@suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1449c0dc-b519-4ae3-0b05-08da89d5a8be
-x-ms-traffictypediagnostic: CY4PR13MB1527:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: aEbOwfsxScuD/zzXA5oBV2QpshTzdsp3ieXeUZ7u4jKimCWay0yZbvlxWWjFYz1CbCOghBGLVdyRJXfdHx38blNfAEmQHI0Xe3ljGguBiIzBQejf6A5I0VGkAhkhPLPqsiOV08ulpSkWGMXYKjLYuisx93/xmu/XZ3x/tpxXP9/roxKpajW1qUIxnyr8D+Ho4Ic7HBxcZBAzFeXBdoXM87HKkmmAqHLpQWKINADoOnn61US2pnUZNedBfO4pBe3bsOO8RFq1ni+9kq6Etv/O+WBxGtgd31lVCypxvtXVPC0Bhc/Zsb1n28Z6H1vrnL9prQssN3d3i2RPqEe14udTyBjLU6GqEIY1wqPcCvuz4l+G1MZCZ7NEg5qWcA+oxqJgsGMrElJgqhZ85CyRcUAnf1apkDPxdhrDLkjkPmVEUV0NSOM3Tr52cNqeW9R4OLMPWdmeTv6xtcyhgn8iPN667TYPsS/lqNwTIeJndnQRZcH0Oic4qxPUrA1CjwQOKcJrMfE6RgiFECYukCI4o33u0lNdYrrD/cWtBv4L7J2Bki0eVj1fv9AhwE8XZU+Wt6H+gS5dmngkNbfPReenLSK3DfFnwLO0GredT6NmlTnEJinGZx4nMLORKqyXWwebqjSOt10lMsYQiBRzqBe5qh/bdYC68R0ZxXnMS2PRVUCJ+v7Mf5SiS5i0nOuaGatl2F0hM4fcfdL09uMAy/Cf8gW1HOHcIVu7SMF8DpaZBwou+OQO73TpKtxRhxZqI13vZUwVnb8Y99fQRW7RY5VhxL7X+g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR13MB2503.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(136003)(366004)(376002)(396003)(6506007)(7696005)(122000001)(38100700002)(2906002)(83380400001)(55016003)(33656002)(186003)(26005)(9686003)(86362001)(8676002)(4326008)(66946007)(64756008)(66476007)(66556008)(76116006)(66446008)(316002)(71200400001)(54906003)(110136005)(38070700005)(52536014)(82960400001)(41300700001)(8936002)(478600001)(5660300002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CGSGYIdIbVY4YWXJAgeja3q4+5xr/UbJ3z2gAU3rLplp07Ro72p1PPFPQo/l?=
- =?us-ascii?Q?se7kPEsivaAoQYZMkpSRWE+v15Zaakx4aOow3GZ0EpDvqmtWmZeHanp0SPgX?=
- =?us-ascii?Q?qTZi1xJSZUUWO43zMBAvRwVzSlyoKhG/DB6Bu8Ngx8FcPDlEjKqUa0A+n4S1?=
- =?us-ascii?Q?8Z3g1f25akYG7kWFMZIncFcC0mg9W0T+z/mKsHRsApOmZGuvFhGWDnVKvtoA?=
- =?us-ascii?Q?Nrj7ZjkwR04T4BkDpY2nwFVNu5zkNqQS0I2R6oRuWTDIeXSW78ir1QXyVMBZ?=
- =?us-ascii?Q?T9ermyBLrhvbwzN1XZ2Nuzixptb6qddnMRC/ZNuIdpjgDHy3Su7YetKykg8e?=
- =?us-ascii?Q?HLS6zy7oHqT7ik3gTwL0gY8kgSyZLbOMA4pnrKhe15Uf8qQLwBIfFk8oXclw?=
- =?us-ascii?Q?RzZh/Rsik5MvmIlQGb6p0x9HM6W1N+oursKG8D9xv4ddXWFqB5jOEnS7UVHo?=
- =?us-ascii?Q?U940iGMXlVmU2fWLOYGFLTUpPJkpd8hjHDaNfhq4JjQ9YBePaupm0rmBhAfa?=
- =?us-ascii?Q?tc1iy0+PpO0z8owaSQClvVtCGe08JOHNGPQnPYstD7CPj6GFOFLRtkqfvtjk?=
- =?us-ascii?Q?ud/DlaVrq+23v3ycr/23PRPnU+eoXUACGknwvo0Shrw+Ip3/7OJSkywRMRcL?=
- =?us-ascii?Q?1rrnmLWEajiaKBcrDMwV6HjPP58qhqdQB6JAItBGfF2wSSzltxBT+uouMSo5?=
- =?us-ascii?Q?/cbG2NgIBm2f1G1yJXCrfmcSgOn3eMlSavlvFf6mWLS4sms/hLoVnFGN3FvJ?=
- =?us-ascii?Q?GVBLRkLoaRo9CKDG9cN7HoY/OLxi5QjjiZCNYtpvVKXPldMMugYrmIRetCZ9?=
- =?us-ascii?Q?gGXSkAtBAd5uvRuEe5GJdUub/NXvly4c9ejcimsYVzDh+xLK7Mw/+dPeH5og?=
- =?us-ascii?Q?MPMvfKOVhSpsMFIxEKWoiH4j4nbkjX6d65tAAX+5qk0qaTGRTupgC7ksbtz0?=
- =?us-ascii?Q?rq+mR0Ba8xvGdGYwiUBOLVFlFeiUW9MXgVgAqsFRKlwT//DgbHoMBlVljcoa?=
- =?us-ascii?Q?Odk3CxRzX+FLh66PhlK8NxrJQyefNE1M7EhBdoG0FeTa3z9uEMzkb2JM1b3d?=
- =?us-ascii?Q?bn3HQlkTbIETHuuY0Tu0dMmUVKJy4IXwpOZld7K028eNICujYu+b4DHIeN8K?=
- =?us-ascii?Q?uz6o4iFM3ws7Bce4q1bZbJuZVBZdZ8FAilbX5ArvYUggQDcprGuhbLSfxUzw?=
- =?us-ascii?Q?7ThhsdsrEUGWHCs/U/5KCP+hEO/1WuIW7yRkccei/7z8WXTM9rRF9HC1knCP?=
- =?us-ascii?Q?HZl/EnWKvChib4aH1qh1wBkLlhpDsKn5ES864/yS214/kHbbENM1zdNVpTOH?=
- =?us-ascii?Q?Rws/g+YTO9GSyZLYcWY6eUgbvud4QQ+srZwovRkrfw2HhYKXp4S+DJ3Mz+Y1?=
- =?us-ascii?Q?X3oPkQdQsz/cbzEfFuTCKiq0XQSO6h3xjOnwRJ3sEa5NbPYsIMK6qXZP84Zr?=
- =?us-ascii?Q?f9oGrqB5Pzw1bZLvFFBKx+IO5julmD6wbaYD6FBHlgKZ30vkEGYX9TVTfpz3?=
- =?us-ascii?Q?TQw0SS9ygjWQlUViiY6vAMNWbdWLS2JyYVLYVUlNrQZB/avqTgMugeBh4Pox?=
- =?us-ascii?Q?8VgRup0FDnEsyrvMOWnQ2+H6gpEsTK62B129HeF/?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 29 Aug 2022 12:23:44 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4FA99258;
+        Mon, 29 Aug 2022 09:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661790212; x=1693326212;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IDMSQYjaUWGQFtHcvSwbpVAIHEc7zEIpXFkR7YPZWGc=;
+  b=ne9DypSXn3Az2O2Ffs9FIashF9t+VXK9/TyNANUdsTsgd4yJEByp81ok
+   O/TlmjYOFBrDoPtmrkdSC+GDhF4i4YuRmv+w3dFbuTTXFiDdshUtpUrIV
+   r6r1205dsw717n9nOUaxDp3uUdyyFMDHIRTi23robhoSNSDBKgdlVXtiJ
+   w98iYbbXM9GJ4LHCRYK4TA0GNpmZpK2vjXDnKI8YZqufeMwHKdik/9ib5
+   LTMAlTKP47Fb2ixuTbojjJnMETVVjMiy8IyDfD+AFopUaAcSZ80OQkiwU
+   tgSPCAkdAHoDiyuJ9LSzXSMQZqSb8SUNE4XuWxVq85o9xJpcx6AU1+OwI
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10454"; a="321041738"
+X-IronPort-AV: E=Sophos;i="5.93,272,1654585200"; 
+   d="scan'208";a="321041738"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2022 08:22:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,272,1654585200"; 
+   d="scan'208";a="640972446"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga008.jf.intel.com with ESMTP; 29 Aug 2022 08:22:38 -0700
+Date:   Mon, 29 Aug 2022 23:17:56 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220829151756.GB1586678@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <CA+EHjTy6NF=BkCqK0vhXLdtKZMahp55JUMSfxN96-NT3YiMXYQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR13MB2503.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1449c0dc-b519-4ae3-0b05-08da89d5a8be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2022 15:46:37.8256
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KE4zmYLzna2Ee1dLCRjALIsdbHIrPW0meDH7IcxZYlYCiz5H820jocSZyA0PLTTyh3e9WgwNd40sIdcVC64mTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR13MB1527
-X-Proofpoint-ORIG-GUID: fBD5KNeGde7RtkfLOcPT779wo0tG-JWK
-X-Proofpoint-GUID: fBD5KNeGde7RtkfLOcPT779wo0tG-JWK
-X-Sony-Outbound-GUID: fBD5KNeGde7RtkfLOcPT779wo0tG-JWK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-29_07,2022-08-25_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=gb2312
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+EHjTy6NF=BkCqK0vhXLdtKZMahp55JUMSfxN96-NT3YiMXYQ@mail.gmail.com>
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Minor nit, but the subject line has nsfs when I think it means ntfs.
- -- Tim
+On Fri, Aug 26, 2022 at 04:19:25PM +0100, Fuad Tabba wrote:
+> Hi,
+> 
+> On Wed, Jul 6, 2022 at 9:24 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > This is the v7 of this series which tries to implement the fd-based KVM
+> > guest private memory. The patches are based on latest kvm/queue branch
+> > commit:
+> >
+> >   b9b71f43683a (kvm/queue) KVM: x86/mmu: Buffer nested MMU
+> > split_desc_cache only by default capacity
+> >
+> > Introduction
+> > ------------
+> > In general this patch series introduce fd-based memslot which provides
+> > guest memory through memory file descriptor fd[offset,size] instead of
+> > hva/size. The fd can be created from a supported memory filesystem
+> > like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
+> > and the the memory backing store exchange callbacks when such memslot
+> > gets created. At runtime KVM will call into callbacks provided by the
+> > backing store to get the pfn with the fd+offset. Memory backing store
+> > will also call into KVM callbacks when userspace punch hole on the fd
+> > to notify KVM to unmap secondary MMU page table entries.
+> >
+> > Comparing to existing hva-based memslot, this new type of memslot allows
+> > guest memory unmapped from host userspace like QEMU and even the kernel
+> > itself, therefore reduce attack surface and prevent bugs.
+> >
+> > Based on this fd-based memslot, we can build guest private memory that
+> > is going to be used in confidential computing environments such as Intel
+> > TDX and AMD SEV. When supported, the memory backing store can provide
+> > more enforcement on the fd and KVM can use a single memslot to hold both
+> > the private and shared part of the guest memory.
+> >
+> > mm extension
+> > ---------------------
+> > Introduces new MFD_INACCESSIBLE flag for memfd_create(), the file
+> > created with these flags cannot read(), write() or mmap() etc via normal
+> > MMU operations. The file content can only be used with the newly
+> > introduced memfile_notifier extension.
+> >
+> > The memfile_notifier extension provides two sets of callbacks for KVM to
+> > interact with the memory backing store:
+> >   - memfile_notifier_ops: callbacks for memory backing store to notify
+> >     KVM when memory gets invalidated.
+> >   - backing store callbacks: callbacks for KVM to call into memory
+> >     backing store to request memory pages for guest private memory.
+> >
+> > The memfile_notifier extension also provides APIs for memory backing
+> > store to register/unregister itself and to trigger the notifier when the
+> > bookmarked memory gets invalidated.
+> >
+> > The patchset also introduces a new memfd seal F_SEAL_AUTO_ALLOCATE to
+> > prevent double allocation caused by unintentional guest when we only
+> > have a single side of the shared/private memfds effective.
+> >
+> > memslot extension
+> > -----------------
+> > Add the private fd and the fd offset to existing 'shared' memslot so
+> > that both private/shared guest memory can live in one single memslot.
+> > A page in the memslot is either private or shared. Whether a guest page
+> > is private or shared is maintained through reusing existing SEV ioctls
+> > KVM_MEMORY_ENCRYPT_{UN,}REG_REGION.
+> >
+> 
+> I'm on the Android pKVM team at Google, and we've been looking into
+> how this approach fits with what we've been doing with pkvm/arm64.
+> I've had a go at porting your patches, along with some fixes and
+> additions so it would go on top of our latest pkvm patch series [1] to
+> see how well this proposal fits with what we¡¯re doing. You can find
+> the ported code at this link [2].
+> 
+> In general, an fd-based approach fits very well with pKVM for the
+> reasons you mention. It means that we don't necessarily need to map
+> the guest memory, and with the new extensions it allows the host
+> kernel to control whether to restrict migration and swapping.
 
-> -----Original Message-----
-> From: Petr Vorel <pvorel@suse.cz>
->=20
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> ---
->  include/tst_fs.h  | 5 ++++-
->  lib/tst_fs_type.c | 6 ++++++
->  2 files changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/tst_fs.h b/include/tst_fs.h
-> index 8159b99eb..a6f934b0f 100644
-> --- a/include/tst_fs.h
-> +++ b/include/tst_fs.h
-> @@ -5,7 +5,7 @@
->  #ifndef TST_FS_H__
->  #define TST_FS_H__
->=20
-> -/* man 2 statfs or kernel-source/include/linux/magic.h */
-> +/* man 2 statfs or kernel-source/include/uapi/linux/magic.h */
->  #define TST_BTRFS_MAGIC    0x9123683E
->  #define TST_NFS_MAGIC      0x6969
->  #define TST_RAMFS_MAGIC    0x858458f6
-> @@ -32,6 +32,9 @@
->  #define TST_FUSE_MAGIC     0x65735546
->  #define TST_VFAT_MAGIC     0x4d44 /* AKA MSDOS */
->  #define TST_EXFAT_MAGIC    0x2011BAB0UL
-> +#define TST_SQUASHFS_MAGIC 0x73717368
-> +/* kernel-source/fs/ntfs/ntfs.h */
-> +#define TST_NTFS_MAGIC     0x5346544e
->=20
->  enum {
->  	TST_BYTES =3D 1,
-> diff --git a/lib/tst_fs_type.c b/lib/tst_fs_type.c
-> index 9de80224b..de4facef5 100644
-> --- a/lib/tst_fs_type.c
-> +++ b/lib/tst_fs_type.c
-> @@ -88,6 +88,12 @@ const char *tst_fs_type_name(long f_type)
->  		return "fuse";
->  	case TST_EXFAT_MAGIC:
->  		return "exfat";
-> +	case TST_NTFS_MAGIC:
-> +		return "ntfs";
-> +	case TST_SQUASHFS_MAGIC:
-> +		return "squashfs";
-> +	case TST_VFAT_MAGIC:
-> +		return "vfat";
->  	default:
->  		return "unknown";
->  	}
-> --
-> 2.37.2
+Good to hear that.
 
+> 
+> For pKVM, we would also need the guest private memory not to be
+> GUP¡¯able by the kernel so that userspace can¡¯t trick the kernel into
+> accessing guest private memory in a context where it isn¡¯t prepared to
+> handle the fault injected by the hypervisor. We¡¯re looking at whether
+> we could use memfd_secret to achieve this, or maybe whether extending
+> your work might solve the problem.
+
+This is interesting and can be a valuable addition to this series.
+
+> 
+> However, during the porting effort, the main issue we've encountered
+> is that many of the details of this approach seem to be targeted at
+> TDX/SEV and don¡¯t readily align with the design of pKVM. My knowledge
+> on TDX is very rudimentary, so please bear with me if I get things
+> wrong.
+
+No doubt this series is initially designed for confidential computing
+usages, but pKVM can definitely extend it if it finds useful.
+
+> 
+> The idea of the memslot having two references to the backing memory,
+> the (new) private_fd (a file descriptor) as well as the userspace_addr
+> (a memory address), with the meaning changing depending on whether the
+> memory is private or shared. Both can potentially be live at the same
+> time, but only one is used by the guest depending on whether the
+> memory is shared or private. For pKVM, the memory region is the same,
+> and whether the underlying physical page is shared or private is
+> determined by the hypervisor based on the initial configuration of the
+> VM and also in response to hypercalls from the guest.
+
+For confidential computing usages, this is actually the same. The shared
+or private is determined by initial configuration or guest hypercalls.
+
+> So at least from
+> our side, having a private_fd isn't the best fit, but rather just
+> having an fd instead of a userspace_addr.
+
+Let me understand this a bit: pKVM basically wants to maintain the
+shared and private memory in only one fd, and not use userspace_addr at
+all, right? Any blocking for pKVM to use private_fd + userspace_addr
+instead?
+
+> 
+> Moreover, something which was discussed here before [3], is the
+> ability to share in-place. For pKVM/arm64, the conversion between
+> shared and private involves only changes to the stage-2 page tables,
+> which are controlled by the hypervisor. Android supports this in-place
+> conversion already, and I think that the cost of copying for many
+> use-cases that would involve large amounts of data would be big. We
+> will measure the relative costs in due course, but in the meantime
+> we¡¯re nervous about adopting a new user ABI which doesn¡¯t appear to
+> cater for in-place conversion; having just the fd would simplify that
+> somewhat
+
+I understand there is difficulty to achieve that with the current
+private_fd + userspace_addr (they basically in two separate fds), but is
+it possible for pKVM to extend this? Brainstorming for example, pKVM can
+ignore userspace_addr and only use private_fd to cover both shared and
+private memory, or pKVM introduce new KVM memslot flag?
+
+> 
+> In the memfd approach, what is the plan for being able to initialize
+> guest private memory from the host? In my port of this patch series,
+> I've added an fcntl() command that allows setting INACCESSIBLE after
+> the memfd has been created. So the memory can be mapped, initialized,
+> then unmapped. Of course there is no way to enforce that the memory is
+> unmapped from userspace before being used as private memory, but the
+> hypervisor will take care of the stage-2 mapping and so a user access
+> to the private memory would result in a SEGV regardless of the flag
+
+There is discussion on removing MFD_INACCESSIBLE and delaying the
+alignment of the flag to the KVM/backing store binding time
+(https://lkml.kernel.org/lkml/20220824094149.GA1383966@chaop.bj.intel.com/).
+
+Creating new API like what you are playing with fcntl() also works if it
+turns out the MFD_INACCESSIBLE has to be set at the memfd_create time.
+
+> 
+> Now, moving on to implementation-specific issues in this patch series
+> that I have encountered:
+> 
+> - There are a couple of small issues in porting the patches, some of
+> which have been mentioned already by others. I will point out the rest
+> in direct replies to these patches.
+
+Thanks.
+
+> 
+> - MEMFILE_F_UNRECLAIMABLE and MEMFILE_F_UNMOVABLE are never set in
+> this patch series. MFD_INACCESSIBLE only sets
+> MEMFILE_F_USER_INACCESSIBLE. Is this intentional?
+
+It gets set in kvm_private_mem_register() of patch 13, basically those
+flags are expected to be set by architecture code.
+
+> 
+> - Nothing in this patch series enforces that MFD_INACCESSIBLE or that
+> any of the MEMFILE_F_* flags are set for the file descriptor to be
+> used as a private_fd. Is this also intentional?
+
+With KVM_MEM_PRIVATE memslot flag, the MEMFILE_F_* are enforced by the
+architecture code.
+
+> 
+> Most of us working on pKVM will be at KVM forum Dublin in September,
+> so it would be great if we could have a chat (and/or beer!) face to
+> face sometime during the conference to help us figure out an
+> upstreamable solution for Android
+
+I would like to, but currently I have no travel plan due to COVID-19 :(
+We can have more online discussions anyway.
+
+Thanks,
+Chao
+> 
+> Cheers,
+> /fuad
+> 
+> [1] https://lore.kernel.org/all/20220630135747.26983-1-will@kernel.org/
+> [2] https://android-kvm.googlesource.com/linux/+/refs/heads/tabba/fdmem
+> [3] https://lore.kernel.org/all/YkcTTY4YjQs5BRhE@google.com/
+> 
+> 
+> > Test
+> > ----
+> > To test the new functionalities of this patch TDX patchset is needed.
+> > Since TDX patchset has not been merged so I did two kinds of test:
+> >
+> > -  Regresion test on kvm/queue (this patchset)
+> >    Most new code are not covered. Code also in below repo:
+> >    https://github.com/chao-p/linux/tree/privmem-v7
+> >
+> > -  New Funational test on latest TDX code
+> >    The patch is rebased to latest TDX code and tested the new
+> >    funcationalities. See below repos:
+> >    Linux: https://github.com/chao-p/linux/tree/privmem-v7-tdx
+> >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v7
+> >
+> > An example QEMU command line for TDX test:
+> > -object tdx-guest,id=tdx,debug=off,sept-ve-disable=off \
+> > -machine confidential-guest-support=tdx \
+> > -object memory-backend-memfd-private,id=ram1,size=${mem} \
+> > -machine memory-backend=ram1
+> >
+> > Changelog
+> > ----------
+> > v7:
+> >   - Move the private/shared info from backing store to KVM.
+> >   - Introduce F_SEAL_AUTO_ALLOCATE to avoid double allocation.
+> >   - Rework on the sync mechanism between zap/page fault paths.
+> >   - Addressed other comments in v6.
+> > v6:
+> >   - Re-organzied patch for both mm/KVM parts.
+> >   - Added flags for memfile_notifier so its consumers can state their
+> >     features and memory backing store can check against these flags.
+> >   - Put a backing store reference in the memfile_notifier and move pfn_ops
+> >     into backing store.
+> >   - Only support boot time backing store register.
+> >   - Overall KVM part improvement suggested by Sean and some others.
+> > v5:
+> >   - Removed userspace visible F_SEAL_INACCESSIBLE, instead using an
+> >     in-kernel flag (SHM_F_INACCESSIBLE for shmem). Private fd can only
+> >     be created by MFD_INACCESSIBLE.
+> >   - Introduced new APIs for backing store to register itself to
+> >     memfile_notifier instead of direct function call.
+> >   - Added the accounting and restriction for MFD_INACCESSIBLE memory.
+> >   - Added KVM API doc for new memslot extensions and man page for the new
+> >     MFD_INACCESSIBLE flag.
+> >   - Removed the overlap check for mapping the same file+offset into
+> >     multiple gfns due to perf consideration, warned in document.
+> >   - Addressed other comments in v4.
+> > v4:
+> >   - Decoupled the callbacks between KVM/mm from memfd and use new
+> >     name 'memfile_notifier'.
+> >   - Supported register multiple memslots to the same backing store.
+> >   - Added per-memslot pfn_ops instead of per-system.
+> >   - Reworked the invalidation part.
+> >   - Improved new KVM uAPIs (private memslot extension and memory
+> >     error) per Sean's suggestions.
+> >   - Addressed many other minor fixes for comments from v3.
+> > v3:
+> >   - Added locking protection when calling
+> >     invalidate_page_range/fallocate callbacks.
+> >   - Changed memslot structure to keep use useraddr for shared memory.
+> >   - Re-organized F_SEAL_INACCESSIBLE and MEMFD_OPS.
+> >   - Added MFD_INACCESSIBLE flag to force F_SEAL_INACCESSIBLE.
+> >   - Commit message improvement.
+> >   - Many small fixes for comments from the last version.
+> >
+> > Links to previous discussions
+> > -----------------------------
+> > [1] Original design proposal:
+> > https://lkml.kernel.org/kvm/20210824005248.200037-1-seanjc@google.com/
+> > [2] Updated proposal and RFC patch v1:
+> > https://lkml.kernel.org/linux-fsdevel/20211111141352.26311-1-chao.p.peng@linux.intel.com/
+> > [3] Patch v5: https://lkml.org/lkml/2022/5/19/861
+> >
+> > Chao Peng (12):
+> >   mm: Add F_SEAL_AUTO_ALLOCATE seal to memfd
+> >   selftests/memfd: Add tests for F_SEAL_AUTO_ALLOCATE
+> >   mm: Introduce memfile_notifier
+> >   mm/memfd: Introduce MFD_INACCESSIBLE flag
+> >   KVM: Rename KVM_PRIVATE_MEM_SLOTS to KVM_INTERNAL_MEM_SLOTS
+> >   KVM: Use gfn instead of hva for mmu_notifier_retry
+> >   KVM: Rename mmu_notifier_*
+> >   KVM: Extend the memslot to support fd-based private memory
+> >   KVM: Add KVM_EXIT_MEMORY_FAULT exit
+> >   KVM: Register/unregister the guest private memory regions
+> >   KVM: Handle page fault for private memory
+> >   KVM: Enable and expose KVM_MEM_PRIVATE
+> >
+> > Kirill A. Shutemov (1):
+> >   mm/shmem: Support memfile_notifier
+> >
+> >  Documentation/virt/kvm/api.rst             |  77 +++++-
+> >  arch/arm64/kvm/mmu.c                       |   8 +-
+> >  arch/mips/include/asm/kvm_host.h           |   2 +-
+> >  arch/mips/kvm/mmu.c                        |  10 +-
+> >  arch/powerpc/include/asm/kvm_book3s_64.h   |   2 +-
+> >  arch/powerpc/kvm/book3s_64_mmu_host.c      |   4 +-
+> >  arch/powerpc/kvm/book3s_64_mmu_hv.c        |   4 +-
+> >  arch/powerpc/kvm/book3s_64_mmu_radix.c     |   6 +-
+> >  arch/powerpc/kvm/book3s_hv_nested.c        |   2 +-
+> >  arch/powerpc/kvm/book3s_hv_rm_mmu.c        |   8 +-
+> >  arch/powerpc/kvm/e500_mmu_host.c           |   4 +-
+> >  arch/riscv/kvm/mmu.c                       |   4 +-
+> >  arch/x86/include/asm/kvm_host.h            |   3 +-
+> >  arch/x86/kvm/Kconfig                       |   3 +
+> >  arch/x86/kvm/mmu.h                         |   2 -
+> >  arch/x86/kvm/mmu/mmu.c                     |  74 +++++-
+> >  arch/x86/kvm/mmu/mmu_internal.h            |  18 ++
+> >  arch/x86/kvm/mmu/mmutrace.h                |   1 +
+> >  arch/x86/kvm/mmu/paging_tmpl.h             |   4 +-
+> >  arch/x86/kvm/x86.c                         |   2 +-
+> >  include/linux/kvm_host.h                   | 105 +++++---
+> >  include/linux/memfile_notifier.h           |  91 +++++++
+> >  include/linux/shmem_fs.h                   |   2 +
+> >  include/uapi/linux/fcntl.h                 |   1 +
+> >  include/uapi/linux/kvm.h                   |  37 +++
+> >  include/uapi/linux/memfd.h                 |   1 +
+> >  mm/Kconfig                                 |   4 +
+> >  mm/Makefile                                |   1 +
+> >  mm/memfd.c                                 |  18 +-
+> >  mm/memfile_notifier.c                      | 123 ++++++++++
+> >  mm/shmem.c                                 | 125 +++++++++-
+> >  tools/testing/selftests/memfd/memfd_test.c | 166 +++++++++++++
+> >  virt/kvm/Kconfig                           |   3 +
+> >  virt/kvm/kvm_main.c                        | 272 ++++++++++++++++++---
+> >  virt/kvm/pfncache.c                        |  14 +-
+> >  35 files changed, 1074 insertions(+), 127 deletions(-)
+> >  create mode 100644 include/linux/memfile_notifier.h
+> >  create mode 100644 mm/memfile_notifier.c
+> >
+> > --
+> > 2.25.1
+> >
