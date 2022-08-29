@@ -2,52 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 692AF5A4C96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 14:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B7615A4EC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 16:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbiH2M4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 08:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54260 "EHLO
+        id S229873AbiH2OFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 10:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230061AbiH2M4A (ORCPT
+        with ESMTP id S229596AbiH2OFJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 08:56:00 -0400
+        Mon, 29 Aug 2022 10:05:09 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0DF82D19;
-        Mon, 29 Aug 2022 05:46:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A14D12774;
+        Mon, 29 Aug 2022 07:05:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E6F1F611F3;
-        Mon, 29 Aug 2022 12:46:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6686C433C1;
-        Mon, 29 Aug 2022 12:46:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 988FA60EFF;
+        Mon, 29 Aug 2022 14:05:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88248C433D6;
+        Mon, 29 Aug 2022 14:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661777208;
-        bh=J0mcC7UYfMKVxofSYv/hrMFUt+y1yW9b2NCEnvYuWoQ=;
+        s=k20201202; t=1661781905;
+        bh=cwGcbZqZdPxg0smFd+twhvuBiWgn2+zCOBNbQ5ivJG4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TYy2atP3SBIZ2iQhFKKewooxWCWsXAo8D7Nq3ypb63jukUTB9UucmCgFuzcHh8RnC
-         SVxPn79KUzSPFosb0fj6GdFggmXvZeVdblp40sZD6iSpg6tjCROFdM12mb2Qsw6tjw
-         GlOVrXcus5VGMY2lLPJtNaka6mNV3VSrk3+JCbeGsQpv5ifR6zzkSz6BSZK0Pm3nco
-         P7qM/wi93mYiFGdJPd6VIg3l5CngeO1x+xw5bB4zwx79Gj2HZOkD6jVhNVrgcES/eW
-         H8ho/yI9s1rtTsE9iYSYygClzWNQ9eLZ3e46lKOfrkZTzFkaRP05pgJEQEUrvNp39x
-         V8YUlql/kMqYQ==
-Date:   Mon, 29 Aug 2022 14:46:38 +0200
+        b=Z2lGtrVQjiHKIC8t1Pf7QpN0PZXlSRlDSt3cuUJnxG3KwzApk3h7O+J9BUN2bIkFs
+         nBrv4RTv/KY/0fYG8VbRo10l9QeMPYKWLL0cy46ihZyy8k7wz1CqmKLAEqSGYqC2Vo
+         lH45AbZ8qfI+/HiIm58Ydo2rTvpj9gMrbOKk1SlC4QN8N6m3TxqzMOcCC/xxCdkK2b
+         o0a00YkvbdeZpKcV4QxZC7sodEA9K46Rv8dWQxFII0sVDnaEbAPnxBne+Oo2IE805y
+         iuG30VXxw3H+XYisfQt8OOM4XsH6GWUY+Q6tGu5Ht+R/d7GNAaSg9PYsdDyECJd+mR
+         FxyXyGt57F5sA==
+Date:   Mon, 29 Aug 2022 16:05:00 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH 5/6] ovl: use vfs_set_acl_prepare()
-Message-ID: <20220829124638.ur7sv4kectw6xgaz@wittgenstein>
-References: <20220829123843.1146874-1-brauner@kernel.org>
- <20220829123843.1146874-6-brauner@kernel.org>
+To:     Jules Maselbas <jmaselbas@kalray.eu>,
+        David Howells <dhowells@redhat.com>,
+        linux-afs@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/afs: Fix repeated word in comments
+Message-ID: <20220829140500.muhtvecw5e3jwmez@wittgenstein>
+References: <20220826100052.22945-8-jmaselbas@kalray.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220829123843.1146874-6-brauner@kernel.org>
+In-Reply-To: <20220826100052.22945-8-jmaselbas@kalray.eu>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,53 +55,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Sorry, forgot to Cc ovl developers on accident.]
+[Cc afs development list + maintainer]
 
-On Mon, Aug 29, 2022 at 02:38:44PM +0200, Christian Brauner wrote:
-> The posix_acl_from_xattr() helper should mainly be used in
-> i_op->get_acl() handlers. It translates from the uapi struct into the
-> kernel internal POSIX ACL representation and doesn't care about mount
-> idmappings.
+On Fri, Aug 26, 2022 at 12:00:36PM +0200, Jules Maselbas wrote:
+> Remove redundant word `the`.
 > 
-> Use the vfs_set_acl_prepare() helper to generate a kernel internal POSIX
-> ACL representation in struct posix_acl format taking care to map from
-> the mount idmapping into the filesystem's idmapping.
-> 
-> The returned struct posix_acl is in the correct format to be cached by
-> the VFS or passed to the filesystem's i_op->set_acl() method to write to
-> the backing store.
-> 
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> CC: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Jules Maselbas <jmaselbas@kalray.eu>
 > ---
->  fs/overlayfs/super.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  fs/afs/flock.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index ec746d447f1b..5da771b218d1 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1022,7 +1022,20 @@ ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+> diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+> index c4210a3964d8..801fe305878f 100644
+> --- a/fs/afs/flock.c
+> +++ b/fs/afs/flock.c
+> @@ -152,7 +152,7 @@ static void afs_next_locker(struct afs_vnode *vnode, int error)
+>  }
 >  
->  	/* Check that everything is OK before copy-up */
->  	if (value) {
-> -		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> +		/* The above comment can be understood in two ways:
-> +		 *
-> +		 * 1. We just want to check whether the basic POSIX ACL format
-> +		 *    is ok. For example, if the header is correct and the size
-> +		 *    is sane.
-> +		 * 2. We want to know whether the ACL_{GROUP,USER} entries can
-> +		 *    be mapped according to the underlying filesystem.
-> +		 *
-> +		 * Currently, we only check 1. If we wanted to check 2. we
-> +		 * would need to pass the mnt_userns and the fs_userns of the
-> +		 * underlying filesystem. But frankly, I think checking 1. is
-> +		 * enough to start the copy-up.
-> +		 */
-> +		acl = vfs_set_acl_prepare(&init_user_ns, &init_user_ns, value, size);
->  		if (IS_ERR(acl))
->  			return PTR_ERR(acl);
->  	}
+>  /*
+> - * Kill off all waiters in the the pending lock queue due to the vnode being
+> + * Kill off all waiters in the pending lock queue due to the vnode being
+>   * deleted.
+>   */
+>  static void afs_kill_lockers_enoent(struct afs_vnode *vnode)
 > -- 
-> 2.34.1
+> 2.17.1
 > 
