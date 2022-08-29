@@ -2,192 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA235A4215
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 07:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1935A4220
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 07:06:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbiH2E76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 00:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
+        id S229535AbiH2FGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 01:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbiH2E7z (ORCPT
+        with ESMTP id S229453AbiH2FGy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 00:59:55 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B6662F2;
-        Sun, 28 Aug 2022 21:59:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eBLmXDIt7jYFTFUv7VgeMNVqpdCLR+W1XljVczHrAn5CfDCHBOpjg5X6L4m1b0NKyyyATTIWAs1cKQqXf9ARFDNVdDz8ui3Ji40mHVsqLNIKyrLUuQxGG7xAqD3xzPMPhp12dy/lN8PAuEwLDMwArL+hIyiVTTuQloklfKq97l2MYd5Dfje2RwivaRr3+0RJuf1eG60FPeTAwybkmJzvr9vcgIKas5wr6eb41eVb1hUjjRQJphbZp+zikZ6xqFVpuawQOVDQdsyR2I1RL4PmqkImE6Yi92YLpMLvQQTyZjcNPyd8ku4Oq6A9FxOA8NZqfOsG82C8eJwtS45fBnuIAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xwEyybbqjFdfTBWlYtScAPHsVXuNrG80tWndDao7d1Y=;
- b=bI2PcGc3WZRnaRKmDP8mJbN3iosyC41F4C0ZFM/9lCCvYgeRSA4fSc5A5fx16huBTTIxE7WKmVapj2dY7oVlOS6lE/SOslQ8K37jhyeqoyttV5vNkG2Cc6AKBIwHYnF4ybpBsO0EN1femUDBKdojcCi34jkmnuTz84zkue3JRtuALHB6wx4WQdFpPrHWCBIgMzHq96pyowOOERZ6xXP9Ef66EWUbzTlZbuK/m9DiBadywnATJAOSd5ErnO/XMk3zB2wlsHUzx6W2hk0o3W52cArxiFHf/kQu5s6QsthBaqkuXwJ/IXVyRmsDIUcSJ9e+J4TB/Fw18J66C+0dj9UMvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xwEyybbqjFdfTBWlYtScAPHsVXuNrG80tWndDao7d1Y=;
- b=R0zseeKtS/YkFPb1u7P38xG2rh5dzJEAWjeK/Z7nNW3ntUeaoHAS2nW566cvXdJ/h+vdvJQvnpshD1rqMzGvxMh71pURMP/RLzQnjuFvHU4cWQlMbqCqANcv2DTQKqOfjEWrRsWt+aRC+rAUE1b7tCMtCQl09oSi4RFcusHrs9nwKAm8Fw7jX9FTsp57V5RRuvZo5DwZnvgRRy7c+nq9r8NjTbtgZEE5+14EVCOxuSN8wWKIPYlYTfqnCWRWdT7YGHKXIlXWvT565ELGwcF6KxNTgk5Bb/KTuUuylh3XRkfozK8QF2K6gPFS+ZUyjJC3Y5OPQXRZz7iP9aywWyTzTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by BN9PR12MB5289.namprd12.prod.outlook.com (2603:10b6:408:102::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.14; Mon, 29 Aug
- 2022 04:59:51 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::508d:221c:9c9e:e1a5]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::508d:221c:9c9e:e1a5%8]) with mapi id 15.20.5566.021; Mon, 29 Aug 2022
- 04:59:51 +0000
-Message-ID: <217b4a17-1355-06c5-291e-7980c0d3cea6@nvidia.com>
-Date:   Sun, 28 Aug 2022 21:59:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 5/6] NFS: direct-io: convert to FOLL_PIN pages
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>, Jan Kara <jack@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-References: <20220827083607.2345453-1-jhubbard@nvidia.com>
- <20220827083607.2345453-6-jhubbard@nvidia.com> <YwqfWoAE2Awp4YvT@ZenIV>
- <353f18ac-0792-2cb7-6675-868d0bd41d3d@nvidia.com> <Ywq5ILRNxsbWvFQe@ZenIV>
- <Ywq5VrSrY341UVpL@ZenIV>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <Ywq5VrSrY341UVpL@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0P220CA0027.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:41b::18) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+        Mon, 29 Aug 2022 01:06:54 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E9341D28;
+        Sun, 28 Aug 2022 22:06:53 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id l20so940589vka.5;
+        Sun, 28 Aug 2022 22:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=qDOlBO8M3knCdtBqq7VFSNn3zWVTBCbhwMXpQDGbaKs=;
+        b=JhSp8ZCo+u+70xYvY2SqqvQM3/P9g9rt/QRhkPlFs/LoMzTZCynWIQSkKKSukx0vS+
+         GRRbeRKut0oQs3veOJ9ZvYaD2/0z8nHbTMGLsM1spGRgkrGsvEzQMTJm7UbZMbBiC7NO
+         aSlQPpC8YxBzDTxy2ohnWGkVhuXfUgKEmhvBnzuRCgPOhTPG+cKlxuPjTEERIdy2E6xh
+         mWa4VtkkKAQX4YRRvM4uCHHxUYEfELg4OJVh/b4s7Ga9eMhFLpyo+sfzZvf2R+1bkX0k
+         SzYO8KJRiFHz8T1xe8kzKGSXeDQvVgDgpyhswzPB4pVCEq0N00Q5tFBnF9duLRMs0uDg
+         hKBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=qDOlBO8M3knCdtBqq7VFSNn3zWVTBCbhwMXpQDGbaKs=;
+        b=CyvX7SzJ6X86UmlLO7KO4a3qK6mUN/Fh2qtFhN9+LfGoaCQncxK80aW01hiDY8bSaR
+         QpPio7ceKLFiA7jmH2qSoTnHx4hZGJKNVRizoge+Ap63uloHoAUtfn9y3CjmZqVfu7Qr
+         EXCSQUqNhC93TQF8rw23YBkP/2vrf/kTI67bxpKNPccXlDPSsJNWXe1XwJmIme2krjqC
+         XoOaeqVtwFgtj+2D3nbNMvA0pFlu9Hm1HyoE3bobqaMN4IhPnbsC6G2gny90J1y78RTt
+         cxVKGkpi8vQmtypUopGdwQ2nouch49mwlPZrKByfKQ+jLwqYnCwKF4OAhbfseX5GLj9V
+         kahA==
+X-Gm-Message-State: ACgBeo0Ns/YvNN3kPdmnGZFZ7rfkygnVkalrrub46e77vBRphGI+KTj+
+        M/gu5h7kzLH16XSKMaJsDFgh9xD61bMq9IpLV7S+OSW4it2+HQ==
+X-Google-Smtp-Source: AA6agR6bESZQgt0/NGDHgpqg2YlxlXfqv9MlFaFbcYHqbBuUnSse2j2x0UU6+2ThpJ/ZPE4VL1/WDlmd8KxaNM/eqrk=
+X-Received: by 2002:a1f:ab4e:0:b0:394:5af3:c490 with SMTP id
+ u75-20020a1fab4e000000b003945af3c490mr938940vke.24.1661749612187; Sun, 28 Aug
+ 2022 22:06:52 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0bce0aeb-c394-4d9c-b6fb-08da897b4e1e
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5289:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TnCK/vZ637HJMv/dRF7b6HR/ReSLBfXCcKuXkz0aaHLnbd9zfx0aVTgdxitKgVj9px6qIElvK61k1P7WkKVqwEELBJ1sItPPFGIUmXlSwXGo6PV/10wgMztVeL5ndIQZtgx6qVfQ3/pND1EYHQRZ0QUdgz8iNw3E782zGWMJqVjpr9ZXzYdjJ/abaCD/+gPCPx6heEYyVBWuV7B2zjUX+c0VYreXXyqzFD4Cgqce3AHIM/2OgRS6gkVVp1c2IEy83sRNofi/Aoi3Mrej0+0WCp1G5T4B4kBcDZN2vELuJ0IkvroK55VBzRSzkihPPageErvBRGjsXcB8feval3yi6U/UQBMb1qDGncVstYRH7ihAzv27U0Nc2OIDQC/ODiA4OiguRGmoXsXagLM/U5nEYIqFvygOX5KAJBzBMOEXvbm+ofOMY+yZlQqLGKkHPXlKi77CGm7zzSlo/4B0kiKh1eG2H5n+8MTmn83BMEkUf0vlkuPragiurJuKeorezXf1iGLdJQgRODEt0KynKoibWPfw6iuMiydcweaLvaeON1OLDmJDd/FkahV/Ssb2hpIwC6tt3d8XcDn79/cB/A36neoBQiXt+IbbAtlMZ5EGXj/iCVR2xd0rG/1YKjWA4GWiIbCKHWn4W7fBYpvyZ2E1So57Ipm0whQWhLFMceKdSKoj5skT3w+jRn2pIz1Dk6w9f5z/3SCcUL5OPiG9XaA3m09SOByGvnTRdWrl54rUiNmpem2YNg2hf3JF3yJFYOeyHagn7aFMLYgxTGT2oSABNYETikwwqZqEt8payK0asZVP3D/AgXoHHIFzR/u1fWQvnPne7KF9mo+70l2JEuPG//T9oZj8UGteJMdJCf1vWZQhzSg4+JW25K5Be6nS3TH0
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(366004)(396003)(136003)(39860400002)(376002)(8676002)(4326008)(966005)(6486002)(66946007)(5660300002)(66556008)(478600001)(6512007)(26005)(8936002)(66476007)(7416002)(83380400001)(2906002)(6506007)(53546011)(41300700001)(186003)(54906003)(31686004)(31696002)(86362001)(36756003)(316002)(2616005)(6916009)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RU9KQlNEejY5RzNySjdrUmJoU3piS3ZVNVhKR0IzZXJMbEFNSlkwalpBOHQw?=
- =?utf-8?B?OVVENDdrYk9mMllMblRtdXpWSlQzMjdnTU40SllrUVhzbHFQaEFzMkRDencr?=
- =?utf-8?B?U0Jzb0haQTZqY0RzVHN2TndsS1pVeEtwRDJoWkVQa2dYRlBoRWh0VnNrVHlk?=
- =?utf-8?B?T3pxREtCUzJaL1pLc2dwTHZLVW1zeGdxT2gxTCtPbkcraTY0cldwOWtxMndX?=
- =?utf-8?B?bnpNMldBNXpKUGZGS2JLNEx1YVpjRnBDYTBQUWQ2NlRrc3dzLzZzenhrcDFu?=
- =?utf-8?B?dUJtVmdOeFI2SW91L1h5Rm9TSWxPbkhQbnJPOVQ4ZUxjTG03TXpSOTU2UTRL?=
- =?utf-8?B?em5EVFk3NUhQaUZocjZ4TmcvajhXN0Y2U2xhNTBTVUJpN0FZS01KWFkrTmx2?=
- =?utf-8?B?NXlqcnltdUN3SzhxTjhPYUFOaVV6VnVOa0o0Ujd2M2d1Z1hqM0hkVkhvWnl4?=
- =?utf-8?B?VUY1Yjh6T2xkK0N3ZkZmYlhUTW5sc3dxWklaVUZaRng1R0gvcDNpVkFDQkdw?=
- =?utf-8?B?MzN0MUEvc2NYQS95ckticDczM2wyVk5GVEE5bjVaQXNpR1hvZjRMR1VqczJ4?=
- =?utf-8?B?Sm1tR0JBQ2hub2xIQzV3NUN3WTh6MFVDQVR1ME8yZHZST21jcXpqS01iSjA4?=
- =?utf-8?B?QU1rUFJpaGo1WlcvZ0hIOCtVUElKNVdCcGc4YTBvM1l0cWRqVkZwRmpCb2NZ?=
- =?utf-8?B?eWdHNWREWTVMWDd0SW0xbUkwRVlTL2p6RHN3OTJmRC9GLzM4bkp6dDc0eHFE?=
- =?utf-8?B?Vnh4azJzVG51TWdubC9JM1pCeG5wYWVIWFhLZTB0UVFOZThDamFCK2xMTVJX?=
- =?utf-8?B?MEZ2d3VZQ1JUY290Kzc0NzFBRWtMSG9kcUVoY3FMcDA3eGo3MG13cHZFNlJE?=
- =?utf-8?B?SmF4WTVYVEdXa2JjNjdLWCsxTjcxR3NBZ1laVjlpRnE2cHlwSnEybU5aOHpR?=
- =?utf-8?B?WTFDV2dSU3BJNVl6bWlBY3BqdjRjOGU0V253TUoxQ0tzZ0hLOFg4Y29RMUFk?=
- =?utf-8?B?bGNsS2lDOFdvY2lFbDFWUFBTTGsyQ0E5cCs5QkZuYlBBVkZuRXRRRmxTZ0Zn?=
- =?utf-8?B?VVdPSFFmSWRxZ0duQUtkSG56emxXZy8rcHBuRWhxc2txVHZ3dUNJRmJsSmRD?=
- =?utf-8?B?S2lkaWY0U0lUbjBpUlY5N0JQNG16L292ak1mRGEzK2x5TGM5ZkFWeEc4Vkpq?=
- =?utf-8?B?UkpXR2lvdkcvYXQ3a0dybXlkYjBVVlVVd21xVlRVWHBYMVk4WDgrdHV2MXRF?=
- =?utf-8?B?VEhIa1FLWkZiRGsvaGIyRXk1Rm5WZ2dZaTZsMnU0U3JZTTV1ZTZjUWRYWThs?=
- =?utf-8?B?S2lhaHVHWld5NVpqcXpTYTA1ajkzbi9yZ3V3dURkY0s2b1VxaHl3d1BjOUlw?=
- =?utf-8?B?alVvMWFjL0Evdit3SlM4Nmp5YWtTTXp0OGdCbVhtZzJmU29iUTJEVWw0NUJB?=
- =?utf-8?B?Qm1naTk5VXFlcmpXRjhvdklFS2gwcXhHQ3RmQkhKNFNBTlozYnZvek05eCt1?=
- =?utf-8?B?YWZqd2FFbzB0UTkyOTJoSjNGK2NOZXNMOHByTHBWdWdESWR0cGs5SFh4SXBX?=
- =?utf-8?B?MzI4eE9VQ2l0czV3M3lhQ2xsdWRya3dSR00wSWEvWlB4TkdyS2hJNjlyTklz?=
- =?utf-8?B?YnhreUt2djNsdVFHNGtyd2NtVi9PYlRqaEQrWmJzaHBCc1g1R0FmaitCbndK?=
- =?utf-8?B?WUdPc0hnclZQMzBTMFc3MHVXQW95M1lxdjN4OC9peUl5S0pRenloWTFuQnhi?=
- =?utf-8?B?aUNZL21zbjViS1A0RElmUmRJTHlKaU1ONXV2R1Jpb3Jpck9HNHhUeEdDTmpw?=
- =?utf-8?B?aG50bnB2cnVHQ0FqZ1NtRVp0a0JwMHBrSDBXYnVwVkdOK3JDYUQ5N1Z2OVpi?=
- =?utf-8?B?bDZKY0ZRdWc1b3N4SXcwMGNPbkY2dXFIVEo3NEVJQjVWQnA4cWxLTHgxQlll?=
- =?utf-8?B?MHNodi9TMklTTHlVMDY1Vk9FeUh1amc5Uk5QYWh0eks0YzJWU081Y1hxdm9B?=
- =?utf-8?B?VjBSNXN5cFgzSU9pK2NuTTNIRE9MMC9tTTZKRU8vQkUyTWtwYi9LVzBGWTFV?=
- =?utf-8?B?azdNaTMxZGVZM1paOXZ4N01NNjFvWW5NZnBiTlUzYlZsNmsyNkxUTUpZaXJs?=
- =?utf-8?Q?mXBMFVXU5AMCchdqR7et+yHJV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bce0aeb-c394-4d9c-b6fb-08da897b4e1e
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2022 04:59:51.2191
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EnQy0gUtWEXMgZlNDJYSpibI3OTFEVZCQWPZFQ/UqzTOprTKekcobYuZIdurVnB5OlWgnvkm2pqhBtt+kE3VfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5289
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <166126004083.548536.11195647088995116235.stgit@warthog.procyon.org.uk>
+ <166126004796.548536.8555773200873112505.stgit@warthog.procyon.org.uk>
+In-Reply-To: <166126004796.548536.8555773200873112505.stgit@warthog.procyon.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 29 Aug 2022 00:06:41 -0500
+Message-ID: <CAH2r5mt5iXtarkUAY7PSMGOLhkQd5LFcEz-rAnTkayxQMq_ppA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] smb3: Move the flush out of smb2_copychunk_range()
+ into its callers
+To:     David Howells <dhowells@redhat.com>
+Cc:     sfrench@samba.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, jlayton@kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        lsahlber@redhat.com, dchinner@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000573bac05e75a3b91"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/27/22 17:39, Al Viro wrote:
-> On Sun, Aug 28, 2022 at 01:38:57AM +0100, Al Viro wrote:
->> On Sat, Aug 27, 2022 at 04:55:18PM -0700, John Hubbard wrote:
->>> On 8/27/22 15:48, Al Viro wrote:
->>>> On Sat, Aug 27, 2022 at 01:36:06AM -0700, John Hubbard wrote:
->>>>> Convert the NFS Direct IO layer to use pin_user_pages_fast() and
->>>>> unpin_user_page(), instead of get_user_pages_fast() and put_page().
->>>>
->>>> Again, this stuff can be hit with ITER_BVEC iterators
->>>>
->>>>> -		result = iov_iter_get_pages_alloc2(iter, &pagevec,
->>>>> +		result = dio_w_iov_iter_pin_pages_alloc(iter, &pagevec,
->>>>>  						  rsize, &pgbase);
->>>>
->>>> and this will break on those.
->>>
->>> If anyone has an example handy, of a user space program that leads
->>> to this situation (O_DIRECT with ITER_BVEC), it would really help
->>> me reach enlightenment a lot quicker in this area. :)
->>
->> Er...  splice(2) to O_DIRECT-opened file on e.g. ext4?  Or
->> sendfile(2) to the same, for that matter...
-> 
-> s/ext4/nfs/ to hit this particular codepath, obviously.
+--000000000000573bac05e75a3b91
+Content-Type: text/plain; charset="UTF-8"
 
-OK, I have a solution to this that's pretty easy:
+Shouldn't this be using filemap_write_and_wait_range() not
+filemap_write_and_wait as we see in similar code in ext4 (and
+shouldn't it check rc in some of these cases)?   For example for the
+copychunk_range example shouldn't the patch be modified similar to the
+following:
 
-1) Get rid of the user_backed_iter(i) check in
-dio_w_iov_iter_pin_pages() and dio_w_iov_iter_pin_pages_alloc(), and
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index e9fb338b8e7e..51963e83daf7 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1219,8 +1219,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
 
-2) At the call sites, match up the unpin calls appropriately.
+        cifs_dbg(FYI, "copychunk range\n");
 
-...and apply a similar fix for the fuse conversion patch.
+-       filemap_write_and_wait(src_inode->i_mapping);
+-
+        if (!src_file->private_data || !dst_file->private_data) {
+                rc = -EBADF;
+                cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
+@@ -1250,6 +1248,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+        lock_two_nondirectories(target_inode, src_inode);
 
-However, the core block/bio conversion in patch 4 still does depend upon
-a key assumption, which I got from a 2019 email discussion with
-Christoph Hellwig and others here [1], which says:
+        cifs_dbg(FYI, "about to flush pages\n");
++
++       rc = filemap_write_and_wait_range(src_inode->i_mapping, off,
++                                         off + len - 1);
++        if (rc)
++               goto out;
++
+        /* should we flush first and last page first */
+        truncate_inode_pages(&target_inode->i_data, 0);
 
-    "All pages released by bio_release_pages should come from
-     get_get_user_pages...".
+On Tue, Aug 23, 2022 at 8:09 AM David Howells via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> Move the flush out of smb2_copychunk_range() into its callers.  This will
+> allow the pagecache to be invalidated between the flush and the operation
+> in smb3_collapse_range() and smb3_insert_range().
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <stfrench@microsoft.com>
+> cc: Ronnie Sahlberg <lsahlber@redhat.com>
+> ---
+>
+>  fs/cifs/cifsfs.c  |    2 ++
+>  fs/cifs/smb2ops.c |   20 ++++++++------------
+>  2 files changed, 10 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index f54d8bf2732a..e9fb338b8e7e 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1219,6 +1219,8 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+>
+>         cifs_dbg(FYI, "copychunk range\n");
+>
+> +       filemap_write_and_wait(src_inode->i_mapping);
+> +
+>         if (!src_file->private_data || !dst_file->private_data) {
+>                 rc = -EBADF;
+>                 cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index 96f3b0573606..7e3de6a0e1dc 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -1600,17 +1600,8 @@ smb2_copychunk_range(const unsigned int xid,
+>         int chunks_copied = 0;
+>         bool chunk_sizes_updated = false;
+>         ssize_t bytes_written, total_bytes_written = 0;
+> -       struct inode *inode;
+>
+>         pcchunk = kmalloc(sizeof(struct copychunk_ioctl), GFP_KERNEL);
+> -
+> -       /*
+> -        * We need to flush all unwritten data before we can send the
+> -        * copychunk ioctl to the server.
+> -        */
+> -       inode = d_inode(trgtfile->dentry);
+> -       filemap_write_and_wait(inode->i_mapping);
+> -
+>         if (pcchunk == NULL)
+>                 return -ENOMEM;
+>
+> @@ -3689,6 +3680,8 @@ static long smb3_collapse_range(struct file *file, struct cifs_tcon *tcon,
+>                 goto out;
+>         }
+>
+> +       filemap_write_and_wait(inode->i_mapping);
+> +
+>         rc = smb2_copychunk_range(xid, cfile, cfile, off + len,
+>                                   i_size_read(inode) - off - len, off);
+>         if (rc < 0)
+> @@ -3716,18 +3709,21 @@ static long smb3_insert_range(struct file *file, struct cifs_tcon *tcon,
+>         int rc;
+>         unsigned int xid;
+>         struct cifsFileInfo *cfile = file->private_data;
+> +       struct inode *inode = file_inode(file);
+>         __le64 eof;
+>         __u64  count;
+>
+>         xid = get_xid();
+>
+> -       if (off >= i_size_read(file->f_inode)) {
+> +       if (off >= i_size_read(inode)) {
+>                 rc = -EINVAL;
+>                 goto out;
+>         }
+>
+> -       count = i_size_read(file->f_inode) - off;
+> -       eof = cpu_to_le64(i_size_read(file->f_inode) + len);
+> +       count = i_size_read(inode) - off;
+> +       eof = cpu_to_le64(i_size_read(inode) + len);
+> +
+> +       filemap_write_and_wait(inode->i_mapping);
+>
+>         rc = SMB2_set_eof(xid, tcon, cfile->fid.persistent_fid,
+>                           cfile->fid.volatile_fid, cfile->pid, &eof);
+>
+>
+>
 
-I really hope that still holds true. Otherwise this whole thing is in
-trouble.
-
-
-
-[1] https://lore.kernel.org/kvm/20190724053053.GA18330@infradead.org/
-
-thanks,
 
 -- 
-John Hubbard
-NVIDIA
+Thanks,
+
+Steve
+
+--000000000000573bac05e75a3b91
+Content-Type: text/x-patch; charset="US-ASCII"; name="use-filemap_write_and_wait_range.patch"
+Content-Disposition: attachment; 
+	filename="use-filemap_write_and_wait_range.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_l7easojh0>
+X-Attachment-Id: f_l7easojh0
+
+ZGlmZiAtLWdpdCBhL2ZzL2NpZnMvY2lmc2ZzLmMgYi9mcy9jaWZzL2NpZnNmcy5jCmluZGV4IGU5
+ZmIzMzhiOGU3ZS4uNTE5NjNlODNkYWY3IDEwMDY0NAotLS0gYS9mcy9jaWZzL2NpZnNmcy5jCisr
+KyBiL2ZzL2NpZnMvY2lmc2ZzLmMKQEAgLTEyMTksOCArMTIxOSw2IEBAIHNzaXplX3QgY2lmc19m
+aWxlX2NvcHljaHVua19yYW5nZSh1bnNpZ25lZCBpbnQgeGlkLAogCiAJY2lmc19kYmcoRllJLCAi
+Y29weWNodW5rIHJhbmdlXG4iKTsKIAotCWZpbGVtYXBfd3JpdGVfYW5kX3dhaXQoc3JjX2lub2Rl
+LT5pX21hcHBpbmcpOwotCiAJaWYgKCFzcmNfZmlsZS0+cHJpdmF0ZV9kYXRhIHx8ICFkc3RfZmls
+ZS0+cHJpdmF0ZV9kYXRhKSB7CiAJCXJjID0gLUVCQURGOwogCQljaWZzX2RiZyhWRlMsICJtaXNz
+aW5nIGNpZnNGaWxlSW5mbyBvbiBjb3B5IHJhbmdlIHNyYyBmaWxlXG4iKTsKQEAgLTEyNTAsNiAr
+MTI0OCwxMiBAQCBzc2l6ZV90IGNpZnNfZmlsZV9jb3B5Y2h1bmtfcmFuZ2UodW5zaWduZWQgaW50
+IHhpZCwKIAlsb2NrX3R3b19ub25kaXJlY3Rvcmllcyh0YXJnZXRfaW5vZGUsIHNyY19pbm9kZSk7
+CiAKIAljaWZzX2RiZyhGWUksICJhYm91dCB0byBmbHVzaCBwYWdlc1xuIik7CisKKwlyYyA9IGZp
+bGVtYXBfd3JpdGVfYW5kX3dhaXRfcmFuZ2Uoc3JjX2lub2RlLT5pX21hcHBpbmcsIG9mZiwKKwkJ
+CQkJICBvZmYgKyBsZW4gLSAxKTsKKyAgICAgICAgaWYgKHJjKQorCQlnb3RvIG91dDsKKwogCS8q
+IHNob3VsZCB3ZSBmbHVzaCBmaXJzdCBhbmQgbGFzdCBwYWdlIGZpcnN0ICovCiAJdHJ1bmNhdGVf
+aW5vZGVfcGFnZXMoJnRhcmdldF9pbm9kZS0+aV9kYXRhLCAwKTsKIAo=
+--000000000000573bac05e75a3b91--
