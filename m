@@ -2,80 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08ADB5A5794
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 01:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFE45A583C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 01:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbiH2XaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 19:30:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
+        id S229575AbiH2Xyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 19:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiH2XaV (ORCPT
+        with ESMTP id S229565AbiH2Xyg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 19:30:21 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7F858DDC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 16:30:20 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id bh11-20020a056602370b00b00688c8a2b56cso5600590iob.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 16:30:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc;
-        bh=2YEU8MGiYyA7ikKAvgdFuLoxWCy3ALSR6+S8uCZED4Q=;
-        b=bJejZnhNSjPmJujCi2bL41eBHG0MJmr/p1CJBpt5Q8yD76qzqJDwbC906gZnzo5zNb
-         o4oNeCX2wcMa37+E3BYgwsSSuBuoZ+R1V/ZA/dhV27AkRSsOXlNNwlKkjX/Ja2WERhpK
-         uaNb8sVIxCH1ZpFqogNMcj/18sUgfF5PtIoZgyjjgNFlUEauGbAKN0q3ai5e1CtUyGe5
-         J52Fhi9Ls4xHS6q3Hs0hqRZJRsHysUynyALUlhQpxJKdZxjPPbS/TKKJ+eI+ojxmle5J
-         L2oNSgpsSrBxDybLuUmTXU8ErPLItWZK/xcEgTAknhuVVTTRScUc36xVQt6/c+g9E4Np
-         ps2w==
-X-Gm-Message-State: ACgBeo2mmoB5mEJvTkDtKTReZEfBl0h1IXC0DtCJn1tBLbtlAN1WDDfH
-        7qC0Yo86fIaoNP/Kvn3piD2EWD65Vk1CoBRbSC2HO6GFE/tr
-X-Google-Smtp-Source: AA6agR6xVVuoLZ6/rTXKMNjxQX7n3CTsaH4W4fuQFpeteUbda0GnuX//1nO3ExzfAKYk4br6zsttFv8iij72pEhhc3oQfbYm8Ggm
+        Mon, 29 Aug 2022 19:54:36 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24CE275;
+        Mon, 29 Aug 2022 16:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=9jNTVvjMRAW6grFHfLBzo2F+51I1/cIt+X3djvXT2II=; b=T58qP97pKEyA1GKZgxVdQ9glHA
+        MPSrOCjD6FQsyq1DA/MJj+EGg1/rMoM3bKlxfpiR4QsXgR1tTGxyh8g+y/brA4Ae0AYNkkrfGaL53
+        E7bIR/mKnk+FMW1U6/1RVBZk1nORPnbrd9xs7eJkAXfO6kmTZbaCzQcA1FcAm5GMMzfg7wmA4cO8c
+        oFSejiPfXIp4DDOF5SywFtc2LMlpzJZh08RV4SV+POPKIxRWSAlg9HRglc9QXZMQ5yKjuiBquWagV
+        iyVRDuaE5VMr+pGTGlyVxmtvgALJUSmbc/WujflaVOdJNGDGF6Lsx1MgSASyuNEDoVAqQJJ08Lrwx
+        5XjzLG0g==;
+Received: from [2601:1c0:6280:3f0::a6b3] (helo=casper.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oSoaQ-003WLW-OL; Mon, 29 Aug 2022 23:54:35 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-doc@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@kernel.org>
+Subject: [PATCH] Documentation: filesystems: correct possessive "its"
+Date:   Mon, 29 Aug 2022 16:54:29 -0700
+Message-Id: <20220829235429.17902-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:371f:b0:349:cfb0:89a9 with SMTP id
- k31-20020a056638371f00b00349cfb089a9mr11317806jav.151.1661815819682; Mon, 29
- Aug 2022 16:30:19 -0700 (PDT)
-Date:   Mon, 29 Aug 2022 16:30:19 -0700
-In-Reply-To: <0000000000009a318805e6ff48a4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d4ad705e769a5c3@google.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in ni_find_attr
-From:   syzbot <syzbot+69d15cab6309bffae739@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+Change occurrences of "it's" that are possessive to "its"
+so that they don't read as "it is".
 
-commit 6e5be40d32fb1907285277c02e74493ed43d77fe
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Aug 13 14:21:30 2021 +0000
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-xfs@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>
+---
+ Documentation/filesystems/f2fs.rst                       |    2 +-
+ Documentation/filesystems/idmappings.rst                 |    2 +-
+ Documentation/filesystems/qnx6.rst                       |    2 +-
+ Documentation/filesystems/xfs-delayed-logging-design.rst |    6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1458787d080000
-start commit:   8379c0b31fbc Merge tag 'for-6.0-rc3-tag' of git://git.kern..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1658787d080000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1258787d080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=911efaff115942bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=69d15cab6309bffae739
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110d306d080000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17409333080000
-
-Reported-by: syzbot+69d15cab6309bffae739@syzkaller.appspotmail.com
-Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -287,7 +287,7 @@ compress_algorithm=%s:%d Control compres
+ 			 lz4		3 - 16
+ 			 zstd		1 - 22
+ compress_log_size=%u	 Support configuring compress cluster size, the size will
+-			 be 4KB * (1 << %u), 16KB is minimum size, also it's
++			 be 4KB * (1 << %u), 16KB is minimum size, also its
+ 			 default size.
+ compress_extension=%s	 Support adding specified extension, so that f2fs can enable
+ 			 compression on those corresponding files, e.g. if all files
+--- a/Documentation/filesystems/idmappings.rst
++++ b/Documentation/filesystems/idmappings.rst
+@@ -661,7 +661,7 @@ idmappings::
+  mount idmapping:      u0:k10000:r10000
+ 
+ Assume a file owned by ``u1000`` is read from disk. The filesystem maps this id
+-to ``k21000`` according to it's idmapping. This is what is stored in the
++to ``k21000`` according to its idmapping. This is what is stored in the
+ inode's ``i_uid`` and ``i_gid`` fields.
+ 
+ When the caller queries the ownership of this file via ``stat()`` the kernel
+--- a/Documentation/filesystems/qnx6.rst
++++ b/Documentation/filesystems/qnx6.rst
+@@ -176,7 +176,7 @@ Then userspace.
+ The requirement for a static, fixed preallocated system area comes from how
+ qnx6fs deals with writes.
+ 
+-Each superblock got it's own half of the system area. So superblock #1
++Each superblock got its own half of the system area. So superblock #1
+ always uses blocks from the lower half while superblock #2 just writes to
+ blocks represented by the upper half bitmap system area bits.
+ 
+--- a/Documentation/filesystems/xfs-delayed-logging-design.rst
++++ b/Documentation/filesystems/xfs-delayed-logging-design.rst
+@@ -551,14 +551,14 @@ Essentially, this shows that an item tha
+ and relogged, so any tracking must be separate to the AIL infrastructure. As
+ such, we cannot reuse the AIL list pointers for tracking committed items, nor
+ can we store state in any field that is protected by the AIL lock. Hence the
+-committed item tracking needs it's own locks, lists and state fields in the log
++committed item tracking needs its own locks, lists and state fields in the log
+ item.
+ 
+ Similar to the AIL, tracking of committed items is done through a new list
+ called the Committed Item List (CIL).  The list tracks log items that have been
+ committed and have formatted memory buffers attached to them. It tracks objects
+ in transaction commit order, so when an object is relogged it is removed from
+-it's place in the list and re-inserted at the tail. This is entirely arbitrary
++its place in the list and re-inserted at the tail. This is entirely arbitrary
+ and done to make it easy for debugging - the last items in the list are the
+ ones that are most recently modified. Ordering of the CIL is not necessary for
+ transactional integrity (as discussed in the next section) so the ordering is
+@@ -884,7 +884,7 @@ pin the object the first time it is inse
+ the CIL during a transaction commit, then we do not pin it again. Because there
+ can be multiple outstanding checkpoint contexts, we can still see elevated pin
+ counts, but as each checkpoint completes the pin count will retain the correct
+-value according to it's context.
++value according to its context.
+ 
+ Just to make matters more slightly more complex, this checkpoint level context
+ for the pin count means that the pinning of an item must take place under the
