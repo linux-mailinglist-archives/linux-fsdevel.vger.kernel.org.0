@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5095A4C7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 14:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD9A5A4C7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 14:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbiH2MxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 08:53:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
+        id S230315AbiH2MxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 08:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiH2Mwj (ORCPT
+        with ESMTP id S230264AbiH2Mwj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 29 Aug 2022 08:52:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0478E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 05:41:55 -0700 (PDT)
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92930273E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 05:42:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 479866113E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 12:41:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6717AC433C1;
-        Mon, 29 Aug 2022 12:41:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EC5CEB80EB8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 12:41:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFA8C433C1;
+        Mon, 29 Aug 2022 12:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661776914;
-        bh=G+savi+fCveGrrmP6NOBOTHZiY4pI9EhvCI4t8gR6KU=;
+        s=k20201202; t=1661776917;
+        bh=RzYzKcN+rGy7aRRp7/Svsei9IVFqNDNJmKgRrwtnph8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PN3hTlorVtjS3a4t7rE5yiqdhCnrk7VEsX8px0BCi6hCW6yEP73YigqbnPIVwFGha
-         l6sJRBV8XGVSbNiZyba+d4l+oVl/FtYpj+Dm8qvmfnnlGEnVfyyyKq94sRw2Xz5Q6E
-         7dHjZdXyFKlax/D9+vvHLZeg9+vht8SwjZCf8rCK/cGjpiYdI+1XcK5TOw51sLI7JU
-         LXB3ILrIhAd2QdafECeJ27Wi3E/glnz3kvF3Qpq5ferQSMNU/mgaEG9wevlh3JxS1L
-         gPD49OUBXC6pjjC1wsPIgjSf05fLyL3GzCrp+yud0nkrJ5DuusdzVtJvzWK+M6mN17
-         fWTtJKO8znDqg==
+        b=BvFtTkRbW8XtJEahnCBVDOiSu9K3Slydf8IDYuAo25WcNX5DoHZ83l1eBx3R0WeF8
+         aOscTk4Zzn9UJA7e1cSbBrmDZdlx5wvTHbnE9VjxxLXHidc7rTs1DZPreaIpbh/KSG
+         X1qsSPtggycHvwMc2yY2vsvra3E7IfvHKiP2MMpEPr1T46GUjtjepx/xKqnH1jsN2Z
+         FN0OMfSxWewZaQqNlF0jX7sy1ZKz+WDMcdNLjEnWwrg+giTTAxVqnqgK3QjouBXXqk
+         fcY89kP+3iDpd5J9pKGYcveBkjPUDaHpDK0shwoYAcXf10Cl7MFae7HUU2IvnmnqTT
+         1TQ9xAHcIDlxA==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Seth Forshee <sforshee@digitalocean.com>
-Subject: [PATCH 5/6] ovl: use vfs_set_acl_prepare()
-Date:   Mon, 29 Aug 2022 14:38:44 +0200
-Message-Id: <20220829123843.1146874-6-brauner@kernel.org>
+Subject: [PATCH 6/6] xattr: constify value argument in vfs_setxattr()
+Date:   Mon, 29 Aug 2022 14:38:45 +0200
+Message-Id: <20220829123843.1146874-7-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220829123843.1146874-1-brauner@kernel.org>
 References: <20220829123843.1146874-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=brauner@kernel.org; h=from:subject; bh=G+savi+fCveGrrmP6NOBOTHZiY4pI9EhvCI4t8gR6KU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTzbPojzju55UHrrFxPjkKvptJpJt/mb6jQcF+mc3XWTh1r W0/vjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInohjEyPFavuPrzjeSWnLrZx1z+7e 3t9plZwb/0dsUJRc/g4zc/zmNk2LVXL/HPmgc/pQ+J7Xq37Kv5vlzDFCue3yelDW6EOq0wZwMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2552; i=brauner@kernel.org; h=from:subject; bh=RzYzKcN+rGy7aRRp7/Svsei9IVFqNDNJmKgRrwtnph8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTzbPrTXyq0OSjrZ7lA2sEJ/mK/pOYE/2fI2F+f3SrJcOvx HZVTHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5943hv8+Li3Yvv0w1bWSZq3w5Na T3yapHj9u4T3+5+WCi5zXd2hqG/1Eq/t4Tr1ROqfx44u+JhzsKJycEsaxa5ZXisUTzm9Tu32wA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -57,50 +57,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The posix_acl_from_xattr() helper should mainly be used in
-i_op->get_acl() handlers. It translates from the uapi struct into the
-kernel internal POSIX ACL representation and doesn't care about mount
-idmappings.
-
-Use the vfs_set_acl_prepare() helper to generate a kernel internal POSIX
-ACL representation in struct posix_acl format taking care to map from
-the mount idmapping into the filesystem's idmapping.
-
-The returned struct posix_acl is in the correct format to be cached by
-the VFS or passed to the filesystem's i_op->set_acl() method to write to
-the backing store.
+Now that we don't perform translations directly in vfs_setxattr()
+anymore we can constify the @value argument in vfs_setxattr(). This also
+allows us to remove the hack to cast from a const in ovl_do_setxattr().
 
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- fs/overlayfs/super.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/overlayfs/overlayfs.h | 2 +-
+ fs/xattr.c               | 5 ++---
+ include/linux/xattr.h    | 2 +-
+ 3 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index ec746d447f1b..5da771b218d1 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1022,7 +1022,20 @@ ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 87759165d32b..ee93c825b06b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -250,7 +250,7 @@ static inline int ovl_do_setxattr(struct ovl_fs *ofs, struct dentry *dentry,
+ 				  size_t size, int flags)
+ {
+ 	int err = vfs_setxattr(ovl_upper_mnt_userns(ofs), dentry, name,
+-			       (void *)value, size, flags);
++			       value, size, flags);
  
- 	/* Check that everything is OK before copy-up */
- 	if (value) {
--		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-+		/* The above comment can be understood in two ways:
-+		 *
-+		 * 1. We just want to check whether the basic POSIX ACL format
-+		 *    is ok. For example, if the header is correct and the size
-+		 *    is sane.
-+		 * 2. We want to know whether the ACL_{GROUP,USER} entries can
-+		 *    be mapped according to the underlying filesystem.
-+		 *
-+		 * Currently, we only check 1. If we wanted to check 2. we
-+		 * would need to pass the mnt_userns and the fs_userns of the
-+		 * underlying filesystem. But frankly, I think checking 1. is
-+		 * enough to start the copy-up.
-+		 */
-+		acl = vfs_set_acl_prepare(&init_user_ns, &init_user_ns, value, size);
- 		if (IS_ERR(acl))
- 			return PTR_ERR(acl);
- 	}
+ 	pr_debug("setxattr(%pd2, \"%s\", \"%*pE\", %zu, %d) = %i\n",
+ 		 dentry, name, min((int)size, 48), value, size, flags, err);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 3ac68ec0c023..74fc8e021ebc 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -290,7 +290,7 @@ static inline bool is_posix_acl_xattr(const char *name)
+ 
+ int
+ vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+-	     const char *name, void *value, size_t size, int flags)
++	     const char *name, const void *value, size_t size, int flags)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	struct inode *delegated_inode = NULL;
+@@ -298,8 +298,7 @@ vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	int error;
+ 
+ 	if (size && strcmp(name, XATTR_NAME_CAPS) == 0) {
+-		error = cap_convert_nscap(mnt_userns, dentry,
+-					  (const void **)&value, size);
++		error = cap_convert_nscap(mnt_userns, dentry, &value, size);
+ 		if (error < 0)
+ 			return error;
+ 		size = error;
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 979a9d3e5bfb..4c379d23ec6e 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -61,7 +61,7 @@ int __vfs_setxattr_locked(struct user_namespace *, struct dentry *,
+ 			  const char *, const void *, size_t, int,
+ 			  struct inode **);
+ int vfs_setxattr(struct user_namespace *, struct dentry *, const char *,
+-		 void *, size_t, int);
++		 const void *, size_t, int);
+ int __vfs_removexattr(struct user_namespace *, struct dentry *, const char *);
+ int __vfs_removexattr_locked(struct user_namespace *, struct dentry *,
+ 			     const char *, struct inode **);
 -- 
 2.34.1
 
