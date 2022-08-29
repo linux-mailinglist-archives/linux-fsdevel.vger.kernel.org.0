@@ -2,159 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B465A56EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 00:16:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B80D5A5754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 00:58:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbiH2WQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 18:16:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49888 "EHLO
+        id S229659AbiH2W63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 18:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229936AbiH2WQK (ORCPT
+        with ESMTP id S229457AbiH2W62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 18:16:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD25979613;
-        Mon, 29 Aug 2022 15:16:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 29 Aug 2022 18:58:28 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0C68672D;
+        Mon, 29 Aug 2022 15:58:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B5D3F612D7;
-        Mon, 29 Aug 2022 22:16:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3956C433D6;
-        Mon, 29 Aug 2022 22:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661811367;
-        bh=SbZY2Ettf4LTcLHy4RTiGfA66pT4iGgGVNZvttK6X6A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hberr4MnAwZ0BIarQ4lOME0fhde2cfRAc5LiGXmEEuGsD56s2AeRPZhNOStncM8OB
-         WdqdBUj2p05xZqErxqtD4Te6U0Ui/rpLKlhGJiKgTGb+RYTlSX6wF4BhWJz4/r4HWn
-         TTjnZsG6574vq0cqGmtEQ78VsGQvjaCnN994SMGOjwdMcRw4HUc797tf/+c588oGNb
-         HMlTwBeJk2AHKHblLMFQn7vllDj6GftUYdeCvzNUJc7+BIeUoVv73jcAa92ILTPbqC
-         txgN/g/OGCtnLOJKsx0SBT/SONzi0JPY23NQi2chuIA2kkT4XboWm9w0kSqGGfZruh
-         GP56mz5a8OMwg==
-Date:   Mon, 29 Aug 2022 15:16:05 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+775a3440817f74fddb8c@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference
- in set_page_dirty
-Message-ID: <Yw06paMIdn04pM5p@google.com>
-References: <000000000000d5b4fe05e7127662@google.com>
- <20220825183734.0b08ae10a2e9e1bd156a19cd@linux-foundation.org>
- <Ywz8+WUhypEiUfvk@google.com>
- <Ywz/ZLYqoq85Yrhc@casper.infradead.org>
- <Yw0Gpn8D3cWr/U95@google.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6EDE61F91B;
+        Mon, 29 Aug 2022 22:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661813905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9Nh7JLxfon4+atbvUG155Svob5ValkyyKRW6pBz4oyQ=;
+        b=Sz2ZMz3YoSrAWwB4ylH2l7mfPjgXeUsF7Vfliei6AjTVQ1/uOvix13iR97dgDQuDUlyuD5
+        LZHWC3oQccvpl+MxqKAeJs1n1359Xbg8xv8mxY5rF2jydT5mLstdUdpg5QkmmTyfKlApCf
+        +esqUEBjGPYWxHPLzIQI//WfDwZh2sg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661813905;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9Nh7JLxfon4+atbvUG155Svob5ValkyyKRW6pBz4oyQ=;
+        b=LOWfVmxR4+I1gwlrnu5py92Oqj9rRpwaWA8jtFry1OH67I5Baqy5ZvQxTZgpZnUDf9nvHV
+        Q8GV5aXa2PZgOvCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7ABE61352A;
+        Mon, 29 Aug 2022 22:58:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Sv+lDotEDWNcIQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 29 Aug 2022 22:58:19 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yw0Gpn8D3cWr/U95@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Dave Chinner" <david@fromorbit.com>, tytso@mit.edu,
+        adilger.kernel@dilger.ca, djwong@kernel.org,
+        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, jack@suse.cz, brauner@kernel.org,
+        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ceph@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        "Colin Walters" <walters@verbum.org>
+Subject: Re: [PATCH v3 1/7] iversion: update comments with info about atime updates
+In-reply-to: <549776abfaddcc936c6de7800b6d8249d97d9f28.camel@kernel.org>
+References: <20220826214703.134870-1-jlayton@kernel.org>,
+ <20220826214703.134870-2-jlayton@kernel.org>,
+ <20220829075651.GS3600936@dread.disaster.area>,
+ <549776abfaddcc936c6de7800b6d8249d97d9f28.camel@kernel.org>
+Date:   Tue, 30 Aug 2022 08:58:15 +1000
+Message-id: <166181389550.27490.8200873228292034867@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/29, Jaegeuk Kim wrote:
-> On 08/29, Matthew Wilcox wrote:
-> > On Mon, Aug 29, 2022 at 10:52:57AM -0700, Jaegeuk Kim wrote:
-> > > On 08/25, Andrew Morton wrote:
-> > > > (cc fsf2 developers)
-> > > > 
-> > > > On Thu, 25 Aug 2022 08:29:32 -0700 syzbot <syzbot+775a3440817f74fddb8c@syzkaller.appspotmail.com> wrote:
-> > > > 
-> > > > > Hello,
-> > > > > 
-> > > > > syzbot found the following issue on:
-> > > > > 
-> > > > > HEAD commit:    a41a877bc12d Merge branch 'for-next/fixes' into for-kernelci
-> > > > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=175def47080000
-> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5cea15779c42821c
-> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=775a3440817f74fddb8c
-> > > > > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > > > userspace arch: arm64
-> > > > > 
-> > > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > > > 
-> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > > Reported-by: syzbot+775a3440817f74fddb8c@syzkaller.appspotmail.com
-> > > > > 
-> > > > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> > > > > Mem abort info:
-> > > > >   ESR = 0x0000000086000005
-> > > > >   EC = 0x21: IABT (current EL), IL = 32 bits
-> > > > >   SET = 0, FnV = 0
-> > > > >   EA = 0, S1PTW = 0
-> > > > >   FSC = 0x05: level 1 translation fault
-> > > > > user pgtable: 4k pages, 48-bit VAs, pgdp=00000001249cc000
-> > > > > [0000000000000000] pgd=080000012ee65003, p4d=080000012ee65003, pud=0000000000000000
-> > > > > Internal error: Oops: 86000005 [#1] PREEMPT SMP
-> > > > > Modules linked in:
-> > > > > CPU: 0 PID: 3044 Comm: syz-executor.0 Not tainted 6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
-> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/20/2022
-> > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > > > pc : 0x0
-> > > > > lr : folio_mark_dirty+0xbc/0x208 mm/page-writeback.c:2748
-> > > > > sp : ffff800012803830
-> > > > > x29: ffff800012803830 x28: ffff0000d02c8000 x27: 0000000000000009
-> > > > > x26: 0000000000000001 x25: 0000000000000a00 x24: 0000000000000080
-> > > > > x23: 0000000000000000 x22: ffff0000ef276c00 x21: 05ffc00000000007
-> > > > > x20: ffff0000f14b83b8 x19: fffffc00036409c0 x18: fffffffffffffff5
-> > > > > x17: ffff80000dd7a698 x16: ffff80000dbb8658 x15: 0000000000000000
-> > > > > x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> > > > > x11: ff808000083e9814 x10: 0000000000000000 x9 : ffff8000083e9814
-> > > > > x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> > > > > x5 : ffff0000d9028000 x4 : ffff0000d5c31000 x3 : ffff0000d9027f80
-> > > > > x2 : fffffffffffffff0 x1 : fffffc00036409c0 x0 : ffff0000f14b83b8
-> > > > > Call trace:
-> > > > >  0x0
-> > > > >  set_page_dirty+0x38/0xbc mm/folio-compat.c:62
-> > > 
-> > > 2363 void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
-> > > 2364                                         void *src, block_t blk_addr)
-> > > 2365 {       
-> > > 2366         struct page *page = f2fs_grab_meta_page(sbi, blk_addr);
-> > > 
-> > > --> f2fs_grab_meta_page() gives a locked page by grab_cache_page().
-> > > 
-> > > 2367                                                         
-> > > 2368         memcpy(page_address(page), src, PAGE_SIZE);
-> > > 2369         set_page_dirty(page);
-> > > 2370         f2fs_put_page(page, 1);
-> > > 2371 } 
-> > > 
-> > > Is there a change in folio?
-> > 
-> > Not directly, but there was a related change, 0af573780b0b which
-> > requires aops->set_page_dirty to be set; is that perhaps missing?
-> > I don't see one in the f2fs_compress_aops, for example.
-> 
-> Do you mean dirty_folio? I think all aops have it except the compressed one
-> that we don't make it dirty.
-> 
-> > 
-> > The other possibiity is that it's a mapping that is missing an ->a_ops.
-> > Is that something f2fs ever does?
-> 
-> Hmm, no, I haven't seen this before, and we set aops when mounting the
-> file system. Ah, if this happens on the corrupted image, yeah, maybe.. I need
-> to check the error path in f2fs_fill_super.
+On Mon, 29 Aug 2022, Jeff Layton wrote:
+> On Mon, 2022-08-29 at 17:56 +1000, Dave Chinner wrote:
+> > On Fri, Aug 26, 2022 at 05:46:57PM -0400, Jeff Layton wrote:
+> > > The i_version field in the kernel has had different semantics over
+> > > the decades, but we're now proposing to expose it to userland via
+> > > statx. This means that we need a clear, consistent definition of
+> > > what it means and when it should change.
+> > >=20
+> > > Update the comments in iversion.h to describe how a conformant
+> > > i_version implementation is expected to behave. This definition
+> > > suits the current users of i_version (NFSv4 and IMA), but is
+> > > loose enough to allow for a wide range of possible implementations.
+> > >=20
+> > > Cc: Colin Walters <walters@verbum.org>
+> > > Cc: NeilBrown <neilb@suse.de>
+> > > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > > Cc: Dave Chinner <david@fromorbit.com>
+> > > Link: https://lore.kernel.org/linux-xfs/166086932784.5425.1713471269496=
+1326033@noble.neil.brown.name/#t
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  include/linux/iversion.h | 23 +++++++++++++++++++++--
+> > >  1 file changed, 21 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> > > index 3bfebde5a1a6..45e93e1b4edc 100644
+> > > --- a/include/linux/iversion.h
+> > > +++ b/include/linux/iversion.h
+> > > @@ -9,8 +9,19 @@
+> > >   * ---------------------------
+> > >   * The change attribute (i_version) is mandated by NFSv4 and is mostly=
+ for
+> > >   * knfsd, but is also used for other purposes (e.g. IMA). The i_versio=
+n must
+> > > - * appear different to observers if there was a change to the inode's =
+data or
+> > > - * metadata since it was last queried.
+> > > + * appear different to observers if there was an explicit change to th=
+e inode's
+> > > + * data or metadata since it was last queried.
+> > > + *
+> > > + * An explicit change is one that would ordinarily result in a change =
+to the
+> > > + * inode status change time (aka ctime). The version must appear to ch=
+ange, even
+> > > + * if the ctime does not (since the whole point is to avoid missing up=
+dates due
+> > > + * to timestamp granularity). If POSIX mandates that the ctime must ch=
+ange due
+> > > + * to an operation, then the i_version counter must be incremented as =
+well.
+> > > + *
+> > > + * A conformant implementation is allowed to increment the counter in =
+other
+> > > + * cases, but this is not optimal. NFSv4 and IMA both use this value t=
+o determine
+> > > + * whether caches are up to date. Spurious increments can cause false =
+cache
+> > > + * invalidations.
+> >=20
+> > "not optimal", but never-the-less allowed - that's "unspecified
+> > behaviour" if I've ever seen it. How is userspace supposed to
+> > know/deal with this?
+> >=20
+> > Indeed, this loophole clause doesn't exist in the man pages that
+> > define what statx.stx_ino_version means. The man pages explicitly
+> > define that stx_ino_version only ever changes when stx_ctime
+> > changes.
+> >=20
+>=20
+> We can fix the manpage to make this more clear.
+>=20
+> > IOWs, the behaviour userspace developers are going to expect *does
+> > not include* stx_ino_version changing it more often than ctime is
+> > changed. Hence a kernel iversion implementation that bumps the
+> > counter more often than ctime changes *is not conformant with the
+> > statx version counter specification*. IOWs, we can't export such
+> > behaviour to userspace *ever* - it is a non-conformant
+> > implementation.
+> >=20
+>=20
+> Nonsense. The statx version counter specification is *whatever we decide
+> to make it*. If we define it to allow for spurious version bumps, then
+> these implementations would be conformant.
+>=20
+> Given that you can't tell what or how much changed in the inode whenever
+> the value changes, allowing it to be bumped on non-observable changes is
+> ok and the counter is still useful. When you see it change you need to
+> go stat/read/getxattr etc, to see what actually happened anyway.
+>=20
+> Most applications won't be interested in every possible explicit change
+> that can happen to an inode. It's likely these applications would check
+> the parts of the inode they're interested in, and then go back to
+> waiting for the next bump if the change wasn't significant to them.
+>=20
+>=20
+> > Hence I think anything that bumps iversion outside the bounds of the
+> > statx definition should be declared as such:
+> >=20
+> > "Non-conformant iversion implementations:
+> > 	- MUST NOT be exported by statx() to userspace
+> > 	- MUST be -tolerated- by kernel internal applications that
+> > 	  use iversion for their own purposes."
+> >=20
+>=20
+> I think this is more strict than is needed. An implementation that bumps
+> this value more often than is necessary is still useful. It's not
+> _ideal_, but it still meets the needs of NFSv4, IMA and other potential
+> users of it. After all, this is basically the definition of i_version
+> today and it's still useful, even if atime update i_version bumps are
+> currently harmful for performance.
 
-Fixed by https://lore.kernel.org/linux-f2fs-devel/20220829215206.3082124-1-jaegeuk@kernel.org/T/#u
+Why do you want to let it be OK?  Who is hurt by it being "more strict
+than needed"?  There is an obvious cost in not being strict as an
+implementation can be compliant but completely useless (increment every
+nanosecond).  So there needs to be a clear benefit to balance this.  Who
+benefits by not being strict?
 
-> 
-> > 
-> > I only managed to narrow down the crash to the line:
-> >                 return mapping->a_ops->dirty_folio(mapping, folio);
-> > so either mapping->a_ops is NULL or mapping->a_ops->dirty_folio is
-> > NULL.  The reproducer was on ARM and ARM doesn't emit a 'Code:' line,
-> > unlike x86.
+Also: Your spec doesn't say it must increase, only it must be different.
+So would as hash of all data and metadata be allowed (sysfs might be
+able to provide that, but probably wouldn't bother).
+
+Also: if stray updates are still conformant, can occasional repeated
+values be still conformant?  I would like for a high-precision ctime
+timestamp to be acceptable, but as time can go backwards it is currently
+not conformant (even though the xfs iversion which is less useful is
+actually conformant).
+
+NeilBrown
