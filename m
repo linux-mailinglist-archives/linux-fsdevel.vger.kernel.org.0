@@ -2,140 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 874655A4276
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 07:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE615A4293
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 07:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbiH2Fmp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 01:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41322 "EHLO
+        id S229498AbiH2Fs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 01:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiH2Fmn (ORCPT
+        with ESMTP id S229536AbiH2Fs5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 01:42:43 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2054.outbound.protection.outlook.com [40.107.113.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713473DF29;
-        Sun, 28 Aug 2022 22:42:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GKal3toqu/aSf1aWhebiz4yPy9giDJYb/Ixrx3GizD59jVI5tnfwW9Nbxh03rqICFVx8V73Ln00cn5Klb9pT4g+ttAk6PihtTcFf+ehWQXA2B/uR+yDwsXipIqK9mJ0yIFlSomP1fNmhh6uQQQO65L+Rj6zRCHamvOoPpd32bQ/+0hcx/1/nO+W2cnbYja5tejvSUDNYdCNx8dpyqfbyTXYCFxGC9owAiQKTHOvEXh7zdf9+LneVxdULDHDD816Ceom21cQf/CSJDFACVcExN03Jq5afWhr8Kon4fCj53qUD/Pvlv3T1+q2R/gs4v+GOlpQrXsHOpW6imYLnMMx7vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t42xooH/fQ/j4hbsEH+AzPNraTBd5HDDh8I7pdGnSU8=;
- b=iD2hYm4SGlZmZX0jCO64S4giJkovpp4MgWmXu/z9rAwgUwTHDp+8rM5OugIqftK0UK/yGqRwwPZWmINh2eboz5SgdmCxvwH4nqCu/MvBrWtw4ptog5F7bFzIJaF8aIkYWhcC0MiZyB7Of7MV0m6NtZz/MAkUO+Xfg08h301HSSujG3n9zfF6mYOG1H4+ngJ7THMvzKxUUcIjo1mOTqV40+5+ZLs8GMfS0gNlNPB9gdOGgvxsle3G00oHBzPJ/0tjKtXEKeiHGiPyT9CRrgoCor+H5in9lJag/iKVKrZu4oMHOVLFSsTt4pPTw+w4Kkb0Lk9GAEB+eKjk1+5zAILFbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t42xooH/fQ/j4hbsEH+AzPNraTBd5HDDh8I7pdGnSU8=;
- b=A/VbURsCLWflkDvyvEIFfgKTbTjL1MnvlS5BjacQxj0K3ciaKyL2ROvQ16OkB5yweUw42PS/YXD26TN/AAI7f6AkRRr9DXgEcBmOBTfntkeTZH9mXj6+bb9IY0vZYryAaAY970+NbvJhgxGNIIB1VE67i865H7SHqrez1JcHp8Y=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by TY2PR01MB2284.jpnprd01.prod.outlook.com (2603:1096:404:f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Mon, 29 Aug
- 2022 05:42:39 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::442c:db3a:80:287a]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::442c:db3a:80:287a%5]) with mapi id 15.20.5566.021; Mon, 29 Aug 2022
- 05:42:39 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Mon, 29 Aug 2022 01:48:57 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AAC9146214;
+        Sun, 28 Aug 2022 22:48:55 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-4-169.pa.nsw.optusnet.com.au [49.195.4.169])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 43D3562DA32;
+        Mon, 29 Aug 2022 15:48:50 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oSXdg-001DXe-Mw; Mon, 29 Aug 2022 15:48:48 +1000
+Date:   Mon, 29 Aug 2022 15:48:48 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
         "djwong@kernel.org" <djwong@kernel.org>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Jane Chu <jane.chu@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "neilb@suse.de" <neilb@suse.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
         "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] mm/memory-failure: Fall back to vma_address() when
- ->notify_failure() fails
-Thread-Topic: [PATCH 4/4] mm/memory-failure: Fall back to vma_address() when
- ->notify_failure() fails
-Thread-Index: AQHYuW/ehI43Wryl6023IlppSuqkba3FYWsA
-Date:   Mon, 29 Aug 2022 05:42:39 +0000
-Message-ID: <20220829054238.GB1029946@hori.linux.bs1.fc.nec.co.jp>
-References: <166153426798.2758201.15108211981034512993.stgit@dwillia2-xfh.jf.intel.com>
- <166153429427.2758201.14605968329933175594.stgit@dwillia2-xfh.jf.intel.com>
-In-Reply-To: <166153429427.2758201.14605968329933175594.stgit@dwillia2-xfh.jf.intel.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3b062cfc-4531-42d5-023e-08da898148d2
-x-ms-traffictypediagnostic: TY2PR01MB2284:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZC+kn+m/lWGty51YnNEv99Yoemgpk798fN8xby7p6nli6POXmQK7CGXMjNtbij0NrC46Kl4aiNbheXmpSb9y4PXLSYHJjEQ10kfmidpnk/+VfXvW5IQ9AZrATtAVeNpiHdUZUwxepccjmfJuhP1nbxy5svIVGP6DBw8JGV8rBOF/eAjhz6J4HwSOtyPpz1FrlmSrFZ54UY3mP+nAvLgR0TvAnoYQbgB94hGdit1oMyUmK4SmqK99vtSKqFvhn7jQmqHMTUD7Z9X3c/M7bLV55/1V43u2SclvtEHH9W+X/xm63xWhmiKUX5/AUgqSFxHs+tIunY/qrrzCuobKT/7advKakxZEfiNoE39rSyvKKDUvmPbbtyVClftE+FTiAVeq5ZDP1J06/Q0QFhyYPISp8rp2vjAvp/Xp5c1T1KiIHqZVEQYmGjGv1zsXC1/fIc47/ATtgPdHyexZhNwE5sgi9KQzFiJ+zcMDvlXeEzOy4w1t8MQ7vTrer3werLdAYSk3O8fQmnT6sAGNLGzQK2z6mODq3t2fEGvSy/ROm5gq6T80Okg1MNN5tZxTLXvBp1BCgX5UByDsU6/1Sa/tQbLIjNEACZsh9ZIZq8MUylvZC/HqlXINvOJ1Cfxhu3xG4kYhKnHd9vi/kwRX26zjIQqx/Eppq1bTkEEIqecjiAOV188J6VCEOZ7P1zbPJkFVXlnScR+sdZerL0/GqIn0x6ZiKWaNbbIJC9vYBToU8UzJqcMaGR9aCLNKOsSSUA5ipi63Ob+R80J1iQuZ0y048TZm0Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(396003)(376002)(39860400002)(136003)(346002)(1076003)(316002)(6916009)(54906003)(71200400001)(8676002)(4326008)(6486002)(86362001)(66446008)(66946007)(76116006)(66556008)(66476007)(64756008)(5660300002)(478600001)(85182001)(82960400001)(38070700005)(8936002)(41300700001)(7416002)(38100700002)(6506007)(122000001)(2906002)(83380400001)(26005)(6512007)(9686003)(186003)(33656002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZVNGRWNySTBTRVlQZEpublh0SVhtMEt6ZnZmajlXZU1PSDcyeDBaSjQxdkVQ?=
- =?utf-8?B?ak5OcUYyU3RSUGU4N3YzeHhWc3NwQUxZMkR1NEYrejdxQ3VDTmx1YTVqeVU1?=
- =?utf-8?B?YVVKMDA2ZVVEL0hXbkpPeUpURkRsN0Y5eXdPa0FIU3htdFgvTVUyTFIrRDI5?=
- =?utf-8?B?U0xQRG1EcDhQZFJHVzVRMkFXSUZvc0wzckhtK08rYVA3OHo2VkNVbkxaUFlU?=
- =?utf-8?B?UkpjT0FYc0ZyOWFXWDJXRWRkNGdBbldHMVRVTmI4RDduZ0xpL2QvemNIdXFW?=
- =?utf-8?B?VjdldGNRTkRLZzRTUlZkaVJTS2pBTkRCbUlqd3l1SXVKRlNQbG9DbjZRVkFZ?=
- =?utf-8?B?NDVVSGdLRHdjSjJzbzFUcTFMR3FqK0JqbjJINlZVR1JML1ovdlB5dE1Wd3dT?=
- =?utf-8?B?cFpadDB0Y0hUU0YrSWwzOE1vYU90cmVPOHBPYmQ0MWxnWlo1dCtmTWJTeTBQ?=
- =?utf-8?B?T1FVdDNlYVhiNmQ1VUZwYmdVZVpmYVhpZmFRajZzTEJEK05rNjcwZkIyZ0k2?=
- =?utf-8?B?dVNxRC9uV3p5K2dteUtXTGdtaHJWYUlqanJJUDJtSjRqNGI1UVJQb20xUUZM?=
- =?utf-8?B?WS83SHJ1NUtEY3FzWjUwaWJNTit2N3g4bmFabUg4anBjL2RMRU9VS2MzWlAr?=
- =?utf-8?B?NUU3SDA4cjVqcVFueVJQRGJhWnJVb2REbytQVmQ5Q3JyUWFVNmFFVEFHVGRX?=
- =?utf-8?B?SzJia0ZuOFJtM3d4OVMzQkcwOW5XUVNHL2FkSWpDSjh1eDVLNHhKYm82REtj?=
- =?utf-8?B?eSswVkowSUs5Yi90KytXNEV0ZnhxM0dOSnlWeDFIVW9BSmJiRzJ2eXVTem1h?=
- =?utf-8?B?ZmNBaDJvbzdvc1J6K21KaFAzRlFucks1Nm5pU2V5YXUwd2U3NDg0bk9hem9p?=
- =?utf-8?B?bC9ZMzc4TzB4TE1EK3BoZFpGc25ZaFo3S2VvalRydGRJRGRwVkV1T2IrR2Uv?=
- =?utf-8?B?bnlLSFJTdkVUTnZtY2ZTMGRyeXhTaWEzSVF4MERJajdHK3dDbzRBdHJpR1B0?=
- =?utf-8?B?Z3NEbkw2VHJPWXVwRm5jYThndEkyaWxTZEpQUjRZNllrVWhKbk1lb3dJdXl2?=
- =?utf-8?B?RmpGUndVTzJsczJ3N0FMSkFIaHcxRXhsQXhJbEtFYnpUMm1uck1seHZMZ0Rp?=
- =?utf-8?B?RHRjMlhkUi9CSFVMRk80eFBId05JZFdXTDFtVnNCcWtzenBvbEVham1abG00?=
- =?utf-8?B?cm94TmpXcGVyTEt2WHVpUGFydkRSWFZQalNsb3hwZ2hrL3VlWDMzaDJYV2pp?=
- =?utf-8?B?Wjh3YVFtVDErRHdlRnF1ZzRuZ1dFUVB6WXRTZS9RbzNMSit0NUcrM05OUHdV?=
- =?utf-8?B?aTc3TnQwZS85THNqcmF2MnJsRk1lZXpabTFpZFNQUzhyU0JVTFNmOGFFN1FM?=
- =?utf-8?B?Zk1HamkzMEdYVmNDSW8rOFBGS3BuL2x0dXlqeFZMR0NuWi9NdndWWWV1QlJM?=
- =?utf-8?B?cVdsQmVuYTRkeTRrUnVpbXdSUXBpU1ZhTGhYYmlTWHFjVnN0eThwbHlwVUNZ?=
- =?utf-8?B?Vlp0U1AzR2hrMVpOSlhZVHhmd2d4NXd4Rm8wOUQ4QXVHS3gxL01CUmJHcitG?=
- =?utf-8?B?VGs2aGdERm9lVjViSHVVcnA2NXJiTW80N3Y4aHJrOG9yN2RwWlQ5MnZaeVd3?=
- =?utf-8?B?MTZzaE1mVUVyc0dTUGJGbHlXMHNIeVNvano3VTF2bmEvUFJ6Zkp2RWUwR2Nz?=
- =?utf-8?B?TnVlbFhJZ1lUWWU4cGxQNVowMk1SOUhUVndpN0NjUmliS0pqaCtlaTh6ZmFw?=
- =?utf-8?B?RXpTK1VHK0dQTkNDUUEwdTNxTU4zN21WWWhqU2EwOVFoSjJQSHpJQ1JyVFlZ?=
- =?utf-8?B?T0dXNGVtelpMSEM5UEwySnpoNTZQYTE4NS9SMkZZL2orNDczVFlvUjV1cUND?=
- =?utf-8?B?YkFxRnlSaVo4cnR4VVRjb2I2STJaWno3bjB1V3hsdmUxNmozVGE2MzJZU0tU?=
- =?utf-8?B?cFlkM3RTblR1aXBxaHNwWXpoZUtzTGFKZWloc3JoeUhxdmxXenB0N214dkNl?=
- =?utf-8?B?blZML0J6YXhwZk1OOFYwRTRteFBpUEhqb0kwUnpPOUdmZXZiaU5GMW5BT3By?=
- =?utf-8?B?WHc1NWM1azRueERUZEdUL25EVHRmRHdXbHVkRDB1T1pObEFjZHA2TG5aK1Iv?=
- =?utf-8?B?SlczdnkzRUNRTEJSaThrdnprVXJHVzFlR29oMHBpajB3U0U2M1BoYXhubEZ1?=
- =?utf-8?B?dFE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2ABCB1A080C4D342886D9EBE92359DB1@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        "dwysocha@redhat.com" <dwysocha@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/7] xfs: don't bump the i_version on an atime update
+ in xfs_vn_update_time
+Message-ID: <20220829054848.GR3600936@dread.disaster.area>
+References: <20220826214703.134870-1-jlayton@kernel.org>
+ <20220826214703.134870-5-jlayton@kernel.org>
+ <CAOQ4uxjzE_B_EQktLr8z8gXOhFDNm-_YpUTycfZCdaZNp-i0hQ@mail.gmail.com>
+ <CAOQ4uxge86g=+HPnds-wRXkFHg67G=m9rGK7V_T8yS+2=w9tmg@mail.gmail.com>
+ <35d31d0a5c6c9a20c58f55ef62355ff39a3f18c6.camel@kernel.org>
+ <Ywo8cWRcJUpLFMxJ@magnolia>
+ <079df2134120f847e8237675a8cc227d6354a153.camel@hammerspace.com>
+ <b13812a68310e49cc6fb649c2b1c25287712a8af.camel@kernel.org>
+ <CAOQ4uxgThXDEO3mxR_PtPgcPsF7ueqFUxHO3F3KE9sVqi8sLJQ@mail.gmail.com>
+ <732164ffb95468992035a6f597dc26e3ce39316d.camel@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b062cfc-4531-42d5-023e-08da898148d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2022 05:42:39.1543
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vPgSHduDLvajUsOzrG64huZwD5693IYnyJcuJyaw1y29w2898XFr/DcUEBSfSY0V53/q/C/L2yxii08F0hpHPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2284
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <732164ffb95468992035a6f597dc26e3ce39316d.camel@kernel.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=630c5345
+        a=FOdsZBbW/tHyAhIVFJ0pRA==:117 a=FOdsZBbW/tHyAhIVFJ0pRA==:17
+        a=kj9zAlcOel0A:10 a=biHskzXt2R4A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=Emwzr4xTW__1gdtk8LEA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -143,34 +78,112 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gRnJpLCBBdWcgMjYsIDIwMjIgYXQgMTA6MTg6MTRBTSAtMDcwMCwgRGFuIFdpbGxpYW1zIHdy
-b3RlOg0KPiBJbiB0aGUgY2FzZSB3aGVyZSBhIGZpbGVzeXN0ZW0gaXMgcG9sbGVkIHRvIHRha2Ug
-b3ZlciB0aGUgbWVtb3J5IGZhaWx1cmUNCj4gYW5kIHJlY2VpdmVzIC1FT1BOT1RTVVBQIGl0IGlu
-ZGljYXRlcyB0aGF0IHBhZ2UtPmluZGV4IGFuZCBwYWdlLT5tYXBwaW5nDQo+IGFyZSB2YWxpZCBm
-b3IgcmV2ZXJzZSBtYXBwaW5nIHRoZSBmYWlsdXJlIGFkZHJlc3MuIEludHJvZHVjZQ0KPiBGU0RB
-WF9JTlZBTElEX1BHT0ZGIHRvIGRpc3Rpbmd1aXNoIHdoZW4gYWRkX3RvX2tpbGwoKSBpcyBiZWlu
-ZyBjYWxsZWQNCj4gZnJvbSBtZl9kYXhfa2lsbF9wcm9jcygpIGJ5IGEgZmlsZXN5dGVtIHZzIHRo
-ZSB0eXBpY2FsIG1lbW9yeV9mYWlsdXJlKCkNCj4gcGF0aC4NCj4gDQo+IE90aGVyd2lzZSwgdm1h
-X3Bnb2ZmX2FkZHJlc3MoKSBpcyBjYWxsZWQgd2l0aCBhbiBpbnZhbGlkIGZzZGF4X3Bnb2ZmDQo+
-IHdoaWNoIHRoZW4gdHJpcHMgdGhpcyBmYWlsaW5nIHNpZ25hdHVyZToNCj4gDQo+ICBrZXJuZWwg
-QlVHIGF0IG1tL21lbW9yeS1mYWlsdXJlLmM6MzE5IQ0KPiAgaW52YWxpZCBvcGNvZGU6IDAwMDAg
-WyMxXSBQUkVFTVBUIFNNUCBQVEkNCj4gIENQVTogMTMgUElEOiAxMjYyIENvbW06IGRheC1wbWQg
-VGFpbnRlZDogRyAgICAgICAgICAgT0UgICAgTiA2LjAuMC1yYzIrICM2Mg0KPiAgSGFyZHdhcmUg
-bmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoUTM1ICsgSUNIOSwgMjAwOSksIEJJT1MgMC4wLjAgMDIv
-MDYvMjAxNQ0KPiAgUklQOiAwMDEwOmFkZF90b19raWxsLmNvbGQrMHgxOWQvMHgyMDkNCj4gIFsu
-Ll0NCj4gIENhbGwgVHJhY2U6DQo+ICAgPFRBU0s+DQo+ICAgY29sbGVjdF9wcm9jcy5wYXJ0LjAr
-MHgyYzQvMHg0NjANCj4gICBtZW1vcnlfZmFpbHVyZSsweDcxYi8weGJhMA0KPiAgID8gX3ByaW50
-aysweDU4LzB4NzMNCj4gICBkb19tYWR2aXNlLnBhcnQuMC5jb2xkKzB4YWYvMHhjNQ0KPiANCj4g
-Rml4ZXM6IGMzNmUyMDI0OTU3MSAoIm1tOiBpbnRyb2R1Y2UgbWZfZGF4X2tpbGxfcHJvY3MoKSBm
-b3IgZnNkYXggY2FzZSIpDQo+IENjOiBTaGl5YW5nIFJ1YW4gPHJ1YW5zeS5mbnN0QGZ1aml0c3Uu
-Y29tPg0KPiBDYzogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+DQo+IENjOiBEYXJyaWNr
-IEouIFdvbmcgPGRqd29uZ0BrZXJuZWwub3JnPg0KPiBDYzogTmFveWEgSG9yaWd1Y2hpIDxuYW95
-YS5ob3JpZ3VjaGlAbmVjLmNvbT4NCj4gQ2M6IEFsIFZpcm8gPHZpcm9AemVuaXYubGludXgub3Jn
-LnVrPg0KPiBDYzogRGF2ZSBDaGlubmVyIDxkYXZpZEBmcm9tb3JiaXQuY29tPg0KPiBDYzogR29s
-ZHd5biBSb2RyaWd1ZXMgPHJnb2xkd3luQHN1c2UuZGU+DQo+IENjOiBKYW5lIENodSA8amFuZS5j
-aHVAb3JhY2xlLmNvbT4NCj4gQ2M6IE1hdHRoZXcgV2lsY294IDx3aWxseUBpbmZyYWRlYWQub3Jn
-Pg0KPiBDYzogTWlhb2hlIExpbiA8bGlubWlhb2hlQGh1YXdlaS5jb20+DQo+IENjOiBSaXRlc2gg
-SGFyamFuaSA8cml0ZXNoaEBsaW51eC5pYm0uY29tPg0KPiBDYzogQW5kcmV3IE1vcnRvbiA8YWtw
-bUBsaW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogRGFuIFdpbGxpYW1zIDxk
-YW4uai53aWxsaWFtc0BpbnRlbC5jb20+DQoNCkFja2VkLWJ5OiBOYW95YSBIb3JpZ3VjaGkgPG5h
-b3lhLmhvcmlndWNoaUBuZWMuY29tPg==
+On Sun, Aug 28, 2022 at 10:37:37AM -0400, Jeff Layton wrote:
+> On Sun, 2022-08-28 at 16:25 +0300, Amir Goldstein wrote:
+> > On Sat, Aug 27, 2022 at 7:10 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > Yeah, thinking about it some more, simply changing the block allocation
+> > > is not something that should affect the ctime, so we probably don't want
+> > > to bump i_version on it. It's an implicit change, IOW, not an explicit
+> > > one.
+> > > 
+> > > The fact that xfs might do that is unfortunate, but it's not the end of
+> > > the world and it still would conform to the proposed definition for
+> > > i_version. In practice, this sort of allocation change should come soon
+> > > after the file was written, so one would hope that any damage due to the
+> > > false i_version bump would be minimized.
+> > > 
+> > 
+> > That was exactly my point.
+> > 
+> > > It would be nice to teach it not to do that however. Maybe we can insert
+> > > the NOIVER flag at a strategic place to avoid it?
+
+No, absolutely not.
+
+I've already explained this: The XFS *disk format specification*
+says that di_changecount is bumped for every change that is made to
+the inode.
+
+Applications that are written from this specification expect the on
+disk format for a XFS given filesystem feature to remain the same
+until it is either deprecated and removed or we add feature flags to
+indicate it has different behaviour.  We can't just change the
+behaviour at a whim.
+
+And that's ignoring the fact that randomly spewing NOIVER
+into transactions that modify inode metadata is a nasty hack - it
+is not desirable from a design or documentation POV, nor is it
+maintainable.
+
+> > Why would that be nice to avoid?
+> > You did not specify any use case where incrementing i_version
+> > on block mapping change matters in practice.
+> > On the contrary, you said that NFS client writer sends COMMIT on close,
+> > which should stabilize i_version for the next readers.
+> > 
+> > Given that we already have an xfs implementation that does increment
+> > i_version on block mapping changes and it would be a pain to change
+> > that or add a new user options, I don't see the point in discussing it further
+> > unless there is a good incentive for avoiding i_version updates in those cases.
+> > 
+> 
+> Because the change to the block allocation doesn't represent an
+> "explicit" change to the inode. We will have bumped the ctime on the
+> original write (in update_time), but the follow-on changes that occur
+> due to that write needn't be counted as they aren't visible to the
+> client.
+> 
+> It's possible for a client to issue a read between the write and the
+> flush and get the interim value for i_version. Then, once the write
+> happens and the i_version gets bumped again, the client invalidates its
+> cache even though it needn't do so.
+> 
+> The race window ought to be relatively small, and this wouldn't result
+> in incorrect behavior that you'd notice (other than loss of
+> performance), but it's not ideal. We're doing more on-the-wire reads
+> than are necessary in this case.
+> 
+> It would be nice to have it not do that. If we end up taking this patch
+> to make it elide the i_version bumps on atime updates, we may be able to
+> set the the NOIVER flag in other cases as well, and avoid some of these
+> extra bumps.
+
+
+<sigh>
+
+Please don't make me repeat myself for the third time.
+
+Once we have decided on a solid, unchanging definition for the
+*statx user API variable*, we'll implement a new on-disk field that
+provides this information.  We will document it in the on-disk
+specification as "this is how di_iversion behaves" so that it is
+clear to everyone parsing the on-disk format or writing their own
+XFS driver how to implement it and when to expect it to
+change.
+
+Then we can add a filesystem and inode feature flags that say "inode
+has new iversion" and we use that to populate the kernel iversion
+instead of di_changecount. We keep di_changecount exactly the way it
+is now for the applications and use cases we already have for that
+specific behaviour. If the kernel and/or filesystem don't support
+the new di_iversion field, then we'll use di_changecount as it
+currently exists for the kernel iversion code.
+
+Keep in mind that we've been doing dynamic inode format updates in
+XFS for a couple of decades - users don't even have to be aware that
+they need to perform format upgrades because often they just happen
+whenever an inode is accessed. IOWs, just because we have to change
+the on-disk format to support this new iversion definition, it
+doesn't mean users have to reformat filesystems before the new
+feature can be used.
+
+Hence, over time, as distros update kernels, the XFS iversion
+behaviour will change automagically as we update inodes in existing
+filesystems as they are accessed to add and then use the new
+di_iversion field for the VFS change attribute field instead of the
+di_changecount field...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
