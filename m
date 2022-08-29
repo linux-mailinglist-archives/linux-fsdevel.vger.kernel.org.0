@@ -2,68 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D915A525A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 18:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C8B5A52DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 19:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230256AbiH2Q5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 12:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54052 "EHLO
+        id S231530AbiH2RND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 13:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiH2Q5P (ORCPT
+        with ESMTP id S231478AbiH2RMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 12:57:15 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016369A992;
-        Mon, 29 Aug 2022 09:57:10 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id u1so3092689uan.3;
-        Mon, 29 Aug 2022 09:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=tLgtElRVNub4io8HFoy0eVCtLZ4ui1HNWfhlnz/9Oj4=;
-        b=GTlMu3vhB8EnIa6Ny0hhuYlJJ7NK9Tbp9g83oJzbeAv+Ph1yrWVKMk7CR6J+7n0Px6
-         j6j4mXzT+lPMUwqcnxmopKYgKzfzt/zwP83ggnrSJV0nXI8zobgGDtyBCn1lFLLNX1V8
-         DYd1TIlxREIiZnjNsnH3DAznrpZpXoPeH54mclv6cX5yBOkcgclrs3bjUIfEsEzUNDak
-         gPYVVpRDHE5dnQYpAKBXfN84Y5P6JUfzLbEXTwr8bzWl/hIAVUHQBWkGXP0PBdMwp7H0
-         i9QUEzHbQVdKfnev1IzxR/loFim4rEkdoB4ej9VkFw1B7i1Aqn8FDGetF1m9RPwVw1pA
-         f6YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=tLgtElRVNub4io8HFoy0eVCtLZ4ui1HNWfhlnz/9Oj4=;
-        b=oxLoJPkZ85PnzO2g+WoBpCUnh8fcVOfE+E/D7d9zX63kLtSE++qkq5Zvlk2VLP5syu
-         kCT1zqbClp2zXzZo41UJgEcVliN+/A0YHR2Iq3GqwfDImsM7/AePE9pf84ljg9yT/DA5
-         Q1298NVI/QUBeUX/YttYF37mBUSoqjBHYWWRaZpMuUQuE4yXxD4sErVQyGlb4n4y5+GW
-         NwKhjTTen+06wCRfGSlQb/gADUm/flDwIIzxjkzuTSw+9vomgDQRxgQVr/tpRrsN3jZe
-         7W7yUfUsiqwJMaULSl1MJh1j/4crBIX2H34GQ5idypFIlFezyfsxE61YvjQdTqDZSihw
-         7XDg==
-X-Gm-Message-State: ACgBeo2P5W3jyeagbuxPaY8fe1/n5zBIrK98mpFVJ4w0Ss7hZA0oZN6N
-        7uAFZ3jwRjkkC96nd7ta7CN87ltpT874NQFrRvJ96wtBm38=
-X-Google-Smtp-Source: AA6agR7zSxcXS2CfG0cS1OroodRLsExEM9n63ahAtdY3cXQY1VEJhxY/ivX9nKUmqiYviudpqCtJilp3xN7WmGYrMGI=
-X-Received: by 2002:a05:6130:10b:b0:37f:a52:99fd with SMTP id
- h11-20020a056130010b00b0037f0a5299fdmr3608271uag.96.1661792229129; Mon, 29
- Aug 2022 09:57:09 -0700 (PDT)
+        Mon, 29 Aug 2022 13:12:44 -0400
+Received: from GBR01-CWL-obe.outbound.protection.outlook.com (mail-cwlgbr01on2126.outbound.protection.outlook.com [40.107.11.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8208C032;
+        Mon, 29 Aug 2022 10:12:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XFYlbqMdb9P94ANAkI5Dg1qUt3jtQ3UbCp1O0sNphaE9FHUk3LvcW2K4PgjsqYTT96glOxefpUFRx8mVKtGaRgYuF3YRAj2zdLj6hFeiQ22clC+UocP+TE55/i65DaveJwY/vSpj1xSkylTHO3L2fGTmPfW/zc22VkD/NZWUf0HpjPE8aFkmCAuWJeQ/zRXB79Thqbepv732CtcDc54zZsmDOubouFvaBGOQ3M8Ic7vqftPUZYBmvEluss3IU1tIoeNxfpwH0clYHPz30VGQWyWrKb2aPIMpKoFQyCU19woHOXMu++QSYv6a9LTsbkPyn67GCkAlL0RvXGRb2wgosg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ANPd6S9qgRXWvh9rOD3Cfgz6gPRsnp4F+cXcUMjZd+Q=;
+ b=kGXPjVSOGs0LD4iYy5bsvXJgEne5k84tqAeeS6Qkfxl2Vvhavh0dcec0/KVy6XFoiaddcdaSDvS+xlZwapIPwElstgg9x1CrqO+vUYrnBJ6Y3YFd1cZmlMTB5ezGqD5Gg0ddcT3Lp2UmVmVT4GUQpyaw1GkJYg0JlI8i5oho5BRQ2F8BgsbCt+y8h7fOTeKqJyDRUeJkDOr/tmBScQ3ZjMcr2Rzt3qkTrEf8Ju0OJFS/dMHcny8XwkCOR21hb79gUDMJfQgEvfvG/aAnG0dnfwWuB+h/GUIcG/bxm70d1L5Q7eppS8mFLI7J8sHSt+6+5NJJL8RLxAgePVY2DGEDIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ANPd6S9qgRXWvh9rOD3Cfgz6gPRsnp4F+cXcUMjZd+Q=;
+ b=N+50HEG7ieihluNJ/z/DfEZ4P/IodwDZda5XzVeYoeSFMxRr97IxCX7ZiQw0FU2Fc5mAcShRk8ZfzZTDYUZlvViLHmpQAXbUstPRnCkAaSLDKXXBxg/6dvfOS5qpq/n1I86E/GEInTA+c+FIAK7IYJH+swJiTOJulPsjLZYNiYk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO4P265MB6683.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:2f3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Mon, 29 Aug
+ 2022 17:11:36 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::d051:d2a2:4b47:f935]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::d051:d2a2:4b47:f935%5]) with mapi id 15.20.5566.021; Mon, 29 Aug 2022
+ 17:11:36 +0000
+Date:   Mon, 29 Aug 2022 18:11:33 +0100
+From:   Gary Guo <gary@garyguo.net>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v9 09/27] rust: add `compiler_builtins` crate
+Message-ID: <20220829181133.00005f01@garyguo.net>
+In-Reply-To: <CAKwvOdkc0Qhwu=gfe1+H23TnAa6jnO6A3ZCO687dH6mSrATmDA@mail.gmail.com>
+References: <20220805154231.31257-1-ojeda@kernel.org>
+        <20220805154231.31257-10-ojeda@kernel.org>
+        <CAKwvOd=q0uErrBVadCbVVLyTzvXxmgJSdOyRHqahO5at8enN6w@mail.gmail.com>
+        <CAKwvOdkc0Qhwu=gfe1+H23TnAa6jnO6A3ZCO687dH6mSrATmDA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0073.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8::13) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 MIME-Version: 1.0
-References: <166126004083.548536.11195647088995116235.stgit@warthog.procyon.org.uk>
- <166126004796.548536.8555773200873112505.stgit@warthog.procyon.org.uk> <CAH2r5mt5iXtarkUAY7PSMGOLhkQd5LFcEz-rAnTkayxQMq_ppA@mail.gmail.com>
-In-Reply-To: <CAH2r5mt5iXtarkUAY7PSMGOLhkQd5LFcEz-rAnTkayxQMq_ppA@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 29 Aug 2022 11:56:58 -0500
-Message-ID: <CAH2r5msqTBu=wFn_wOaXucTn45WZfyNrAWqwpcGuxMFnpXyubA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] smb3: Move the flush out of smb2_copychunk_range()
- into its callers
-To:     David Howells <dhowells@redhat.com>
-Cc:     sfrench@samba.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, jlayton@kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        lsahlber@redhat.com, dchinner@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000008249a205e76427e5"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: eb047e3e-d8bd-4b01-6f78-08da89e187d1
+X-MS-TrafficTypeDiagnostic: LO4P265MB6683:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tKx8q6da5N3mJIOp0TGecjUIFRHg6IYmUGfFE5kxYw8XEAEzZe1ZAtQyCcVVxC3iQm8BBmeSDsCbEZ6IltlyzeSIPQwmg6pjTl4Dmce2h+i0hYPQEqVMIBnOftG6SPlQ2bJNGcfTLP2Ib+Wi1CzzULcoCQolDbsWuami08dk7q1s+v5yqAijzkwfHOVhz8vIzn9RIHpQIDid7KCNNKgW9ulkBlubVDzXyzL4jJqq8N8gO+0Y5/u/xX9yKjYHeXpzCuO9T//2b+Krae+DYK90IMIRHHKxsfZY073zmPtAafon+vGi5UeP/3w4bOekDEYeAAdygBjWEGm5RM8gCTod7EgflH7JIBoDka6yGlDiEMy8UqmsTSdz1uYMNNRExC6piKhZi3f9lPl423srtD5lG81FyEhOxIwDFzJMgiYCj8TzsFWfv/4l52Tltb/3XbofX1w9mpQJK5/totBpkjAO06XW25cQMmHxeBl6cru8VRH0oXgep7yq2d+B2p7gUmh7W4hyJrJTLWIG2bC8h6svxTeKLdNgwoLm2PJLRWnYEJBqqIodMoxLE+7N79SP20reb7xgdo1OwIVixo4UoxLFEnBgADchArx2dsRo9wpS3pwieoZf6tFl8rQa16V+VYV/AKa5NQJbEGuHPGeV/dpyzETRqdl2Or8CXfOIJd41cNQaBmUMb4Z3iZ+imdbiy4uzVd97Z1ywuT+2qqKfbmfOVy/xd0gKZHtE8oTrVtXt++wtDpiP5yZviPKXLB6G9sjsQlRxVj686jUGsJ91m46OYA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(376002)(346002)(396003)(136003)(39830400003)(366004)(6506007)(38100700002)(52116002)(2906002)(6666004)(2616005)(83380400001)(186003)(6512007)(6486002)(86362001)(4326008)(66946007)(66476007)(66556008)(8676002)(1076003)(54906003)(316002)(966005)(6916009)(36756003)(7416002)(41300700001)(8936002)(478600001)(5660300002)(81973001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aDjCXSSNDL954r/xcJbyCHUcOAn3AwYq0l2vrJhH2YJf+AVNFrA0NedmVD2l?=
+ =?us-ascii?Q?DiImogIbMwaCdcGqqDrJBEjHQYpRhg4LPMy2FqbxDrf7oVtnMNJAtVuOxpyf?=
+ =?us-ascii?Q?ScJL5FxiqVJ8WYcPng6QMQIqnxiQpOAhLP0jAyXd+yWLZxXb5dpwBU/90ezq?=
+ =?us-ascii?Q?3LW7vaf2v2IOYAvSXz5YWhAMUqnM8MP6Ijmfl4VheLNia1oGvUbv4+/WP04j?=
+ =?us-ascii?Q?vKAjjLivO5EvtXs8p6evipvpX7abPo4zy1lAkO/PNCU1TPZaRIMgu3/03GC8?=
+ =?us-ascii?Q?OHkekQWpW3MohgPY7CtEgFzbRhS1kLYN0V5perSP+0Ki3sp25Ifgb9gns81i?=
+ =?us-ascii?Q?nBoGn6GCCVMp/Zm9RvzOjaJuXpXJjY0m1Pm/O6jZ5N/3fJFj1tB875/BYBWw?=
+ =?us-ascii?Q?k8mxLoBmS4h6W8991QFfdwKXyfHvWeqaA6fD3ly3JA+3nm/9lRl0lYrJXIM8?=
+ =?us-ascii?Q?Piz6NkrEH0DQ7cKoMccdOPr4mWdl4e/tXEepImBYgBn9KH7roxTW0k4Dx1HO?=
+ =?us-ascii?Q?Da4Hz4eNC6G0XGigpJewq5aZyXXZOFfI7QV3tsKWmsytaFcxtnut8iwJtUo8?=
+ =?us-ascii?Q?PWNVtxKluL1BNpkN3xVzEr1JkcSN4d4SB9SgLVrfu+41sAopWRxQx4DYc12K?=
+ =?us-ascii?Q?dD8+Xrp+Q/Ri2XsxOqMWF62MrvLjD0WFyQm9eAq3Bc1XlvHJPkiOqPMgdNrE?=
+ =?us-ascii?Q?9dipOwPkK88pbrseBJuALpqDAUWb6NwgwYXR1y4U+ieMVZlX+j8vVnQ+fA0y?=
+ =?us-ascii?Q?krqXiUz562gLyYH1WmbrMJJA6wrueUggBDeUQDwKC1dk/2+0At/QDXtxWzWU?=
+ =?us-ascii?Q?KIJ3Dhs68He5pc9An0HLCgCynMeBO1+hSfPsni4Z+6Hy/87aFEP+YbfnvSAd?=
+ =?us-ascii?Q?OBpbPj7nInu6i3ekaS3iv0tlpZbDLjteXyPuWIToS5NgGNkq7qGhV5MLshC3?=
+ =?us-ascii?Q?WbPzFgbY6LvaOZp+dHsSSaaetP5BdyoUnyYuHiYBXePQDF8cOLY2Z1EP195L?=
+ =?us-ascii?Q?1pXZNRJDE+/RXnjmc9zpmrAcJM6tHBIuUECj+gz020NnkvJq/xiQiQPlQdxa?=
+ =?us-ascii?Q?7ifGAyC8OHtXTb76yO3wUURPojSxcfOJyR/kRv/Oyrat3+3rKXzEP2PlI+Bk?=
+ =?us-ascii?Q?Qtsjzl/srgDGDpnSbbEnKHvy5eteTfOasBS/K0GH/7Jva75tYQK7uQOxdsS9?=
+ =?us-ascii?Q?gQQmpvJGSltROTvDbAvndn11prtPvkIdaYI92a1CpHnsEzaMyE0zLx1quhzn?=
+ =?us-ascii?Q?3KKe2LP8Pu/ipa6teWkXn/qSSgJuVIDoby+2aab6aUEb0xWPjw4Lkb6ntSRt?=
+ =?us-ascii?Q?EuDvEa/Q3X0mhXY4/+/tFHzkg2RUfw4nyfwHPfuU3Hi+8ytaShyP4h8DUINX?=
+ =?us-ascii?Q?z57g0A2Yyw1xDbBuW4MdUCE3VKeQMe+Y4owdRIuMs9tdlgftTGj8oxISEfX5?=
+ =?us-ascii?Q?VZHlXjCvODrzqkxMQl2MF1XK8WyOMi4fy7EG2OyaEAbMxu42O0XqlXughxtI?=
+ =?us-ascii?Q?XeXUuL4xfKDKZ9sDXA7HUCmL0WkSIeOeyj7yWi0dcQeLAEEOylcL5VT5qwo3?=
+ =?us-ascii?Q?LdSAyKJznTETTQE8gv0WQ7pcRAN4lpv1UUqfUhnmTw9Sn7FOqBqR54NYrBTU?=
+ =?us-ascii?Q?SEtBm4ANvrdKoowwBXwiwaceciTnKEEIojClPdQ2tQl/?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb047e3e-d8bd-4b01-6f78-08da89e187d1
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2022 17:11:36.6580
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 44UwLCZdVRShsHp8jfBgQn+0J0IDVP9911qxJRLTHmZaAeq2dsO3OJ3h/tYQszqesH0aFXX5/CJGxCHn2UqyUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB6683
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,195 +129,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000008249a205e76427e5
-Content-Type: text/plain; charset="UTF-8"
+On Wed, 24 Aug 2022 11:38:46 -0700
+Nick Desaulniers <ndesaulniers@google.com> wrote:
 
-e.g. something like the following
-
-
-On Mon, Aug 29, 2022 at 12:06 AM Steve French <smfrench@gmail.com> wrote:
->
-> Shouldn't this be using filemap_write_and_wait_range() not
-> filemap_write_and_wait as we see in similar code in ext4 (and
-> shouldn't it check rc in some of these cases)?   For example for the
-> copychunk_range example shouldn't the patch be modified similar to the
-> following:
->
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index e9fb338b8e7e..51963e83daf7 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -1219,8 +1219,6 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->
->         cifs_dbg(FYI, "copychunk range\n");
->
-> -       filemap_write_and_wait(src_inode->i_mapping);
-> -
->         if (!src_file->private_data || !dst_file->private_data) {
->                 rc = -EBADF;
->                 cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
-> @@ -1250,6 +1248,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->         lock_two_nondirectories(target_inode, src_inode);
->
->         cifs_dbg(FYI, "about to flush pages\n");
-> +
-> +       rc = filemap_write_and_wait_range(src_inode->i_mapping, off,
-> +                                         off + len - 1);
-> +        if (rc)
-> +               goto out;
-> +
->         /* should we flush first and last page first */
->         truncate_inode_pages(&target_inode->i_data, 0);
->
-> On Tue, Aug 23, 2022 at 8:09 AM David Howells via samba-technical
-> <samba-technical@lists.samba.org> wrote:
-> >
-> > Move the flush out of smb2_copychunk_range() into its callers.  This will
-> > allow the pagecache to be invalidated between the flush and the operation
-> > in smb3_collapse_range() and smb3_insert_range().
-> >
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <stfrench@microsoft.com>
-> > cc: Ronnie Sahlberg <lsahlber@redhat.com>
-> > ---
-> >
-> >  fs/cifs/cifsfs.c  |    2 ++
-> >  fs/cifs/smb2ops.c |   20 ++++++++------------
-> >  2 files changed, 10 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> > index f54d8bf2732a..e9fb338b8e7e 100644
-> > --- a/fs/cifs/cifsfs.c
-> > +++ b/fs/cifs/cifsfs.c
-> > @@ -1219,6 +1219,8 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
-> >
-> >         cifs_dbg(FYI, "copychunk range\n");
-> >
-> > +       filemap_write_and_wait(src_inode->i_mapping);
-> > +
-> >         if (!src_file->private_data || !dst_file->private_data) {
-> >                 rc = -EBADF;
-> >                 cifs_dbg(VFS, "missing cifsFileInfo on copy range src file\n");
-> > diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-> > index 96f3b0573606..7e3de6a0e1dc 100644
-> > --- a/fs/cifs/smb2ops.c
-> > +++ b/fs/cifs/smb2ops.c
-> > @@ -1600,17 +1600,8 @@ smb2_copychunk_range(const unsigned int xid,
-> >         int chunks_copied = 0;
-> >         bool chunk_sizes_updated = false;
-> >         ssize_t bytes_written, total_bytes_written = 0;
-> > -       struct inode *inode;
-> >
-> >         pcchunk = kmalloc(sizeof(struct copychunk_ioctl), GFP_KERNEL);
-> > -
-> > -       /*
-> > -        * We need to flush all unwritten data before we can send the
-> > -        * copychunk ioctl to the server.
-> > -        */
-> > -       inode = d_inode(trgtfile->dentry);
-> > -       filemap_write_and_wait(inode->i_mapping);
-> > -
-> >         if (pcchunk == NULL)
-> >                 return -ENOMEM;
-> >
-> > @@ -3689,6 +3680,8 @@ static long smb3_collapse_range(struct file *file, struct cifs_tcon *tcon,
-> >                 goto out;
-> >         }
-> >
-> > +       filemap_write_and_wait(inode->i_mapping);
-> > +
-> >         rc = smb2_copychunk_range(xid, cfile, cfile, off + len,
-> >                                   i_size_read(inode) - off - len, off);
-> >         if (rc < 0)
-> > @@ -3716,18 +3709,21 @@ static long smb3_insert_range(struct file *file, struct cifs_tcon *tcon,
-> >         int rc;
-> >         unsigned int xid;
-> >         struct cifsFileInfo *cfile = file->private_data;
-> > +       struct inode *inode = file_inode(file);
-> >         __le64 eof;
-> >         __u64  count;
-> >
-> >         xid = get_xid();
-> >
-> > -       if (off >= i_size_read(file->f_inode)) {
-> > +       if (off >= i_size_read(inode)) {
-> >                 rc = -EINVAL;
-> >                 goto out;
-> >         }
-> >
-> > -       count = i_size_read(file->f_inode) - off;
-> > -       eof = cpu_to_le64(i_size_read(file->f_inode) + len);
-> > +       count = i_size_read(inode) - off;
-> > +       eof = cpu_to_le64(i_size_read(inode) + len);
-> > +
-> > +       filemap_write_and_wait(inode->i_mapping);
-> >
-> >         rc = SMB2_set_eof(xid, tcon, cfile->fid.persistent_fid,
-> >                           cfile->fid.volatile_fid, cfile->pid, &eof);
-> >
-> >
-> >
->
->
+> Another idea I had, and Ard mentioned to me this morning that efistub
+> does something similar:
+> 
+> I think objcopy can rename symbol references.  So instead of calling
+> foo, I think you can use objcopy to call bar instead.
+> 
+> To avoid the case of Rust core refering to symbols typically provided
+> by the --rtlib={libgcc|compiler-rt}, what if we:
+> 1. build core.o (with reference to the unfavorable symbols)
+> 2. use objcopy to rename references in core.o to the symbols listed in
+> this file; maybe prepend them with `rust_core_` or something.
+> 3. provide this crate with panic'ing definitions, but for the renamed
+> symbols.
+> 
+> That way, enabling CONFIG_RUST=y won't hide the case where C code is
+> triggering such libcalls from the C compiler?
+> 
+> To restate the concern, I don't want CONFIG_RUST=y to hide that fact
+> that someone wrote `float x, y; if (x != y) ...` in C code, where the
+> C compiler will likely lower that to a libcall to __nesf2 since with
+> the current approach in this patch, linkage would proceed. The current
+> behavior is to intentionally fail to link.  I think what I describe
+> above may work to keep this intended behavior of the kernel's build
+> system.
+> 
+> Ah, looks like there's objcopy flags:
+>        --redefine-sym old=new
+>            Change the name of a symbol old, to new.  This can be
+> useful when one is trying link
+>            two things together for which you have no source, and there
+> are name collisions.
+> 
+>        --redefine-syms=filename
+>            Apply --redefine-sym to each symbol pair "old new" listed
+> in the file filename.
+>            filename is simply a flat file, with one symbol pair per
+> line.  Line comments may be
+>            introduced by the hash character.  This option may be given
+> more than once.
+> 
+> So probably could start with my diff from above, but use
+> --redefine-syms=filename instead of --strip-symbols=.
+> 
 > --
 > Thanks,
->
-> Steve
+> ~Nick Desaulniers
 
+This is the approach we are about to take, see
+https://github.com/Rust-for-Linux/linux/pull/779.
 
+It's easy for just one symbol that is known to be not defined, but it
+can be more complex as some of these symbols can be defined on a
+platform but not another, so we would have to generate a dynamic list
+of what symbols to "hijack" depending on the config. Currently we
+avoid this issue by having all symbols in compiler_builtins
+crate weak, but we couldn't weakly redefine a symbol.
 
--- 
-Thanks,
+It's certainly doable, though, but it require some effort. I am
+not quite available recently so hadn't further extend and polish my
+patch.
 
-Steve
-
---0000000000008249a205e76427e5
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-smb3-use-filemap_write_and_wait_range-instead-of-fil.patch"
-Content-Disposition: attachment; 
-	filename="0001-smb3-use-filemap_write_and_wait_range-instead-of-fil.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l7f06g0v0>
-X-Attachment-Id: f_l7f06g0v0
-
-RnJvbSA1YjEyZTdlOWRjZWZlNjgzYzE4Y2NmYTA2NGQyMTZjOGY4MzY3MmQwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
-CkRhdGU6IE1vbiwgMjkgQXVnIDIwMjIgMTE6NTM6NDEgLTA1MDAKU3ViamVjdDogW1BBVENIXSBz
-bWIzOiB1c2UgZmlsZW1hcF93cml0ZV9hbmRfd2FpdF9yYW5nZSBpbnN0ZWFkIG9mCiBmaWxlbWFw
-X3dyaXRlX2FuZF93YWl0CgpXaGVuIGRvaW5nIGluc2VydCByYW5nZSBhbmQgY29sbGFwc2UgcmFu
-Z2Ugd2Ugc2hvdWxkIGJlCndyaXRpbmcgb3V0IHRoZSBjYWNoZWQgcGFnZXMgZm9yIHRoZSByYW5n
-ZXMgYWZmZWN0ZWQgYnV0IG5vdAp0aGUgd2hvbGUgZmlsZS4KClNpZ25lZC1vZmYtYnk6IFN0ZXZl
-IEZyZW5jaCA8c3RmcmVuY2hAbWljcm9zb2Z0LmNvbT4KLS0tCiBmcy9jaWZzL2NpZnNmcy5jICB8
-IDggKysrKysrLS0KIGZzL2NpZnMvc21iMm9wcy5jIHwgMiArKwogMiBmaWxlcyBjaGFuZ2VkLCA4
-IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZz
-ZnMuYyBiL2ZzL2NpZnMvY2lmc2ZzLmMKaW5kZXggZTlmYjMzOGI4ZTdlLi41MTk2M2U4M2RhZjcg
-MTAwNjQ0Ci0tLSBhL2ZzL2NpZnMvY2lmc2ZzLmMKKysrIGIvZnMvY2lmcy9jaWZzZnMuYwpAQCAt
-MTIxOSw4ICsxMjE5LDYgQEAgc3NpemVfdCBjaWZzX2ZpbGVfY29weWNodW5rX3JhbmdlKHVuc2ln
-bmVkIGludCB4aWQsCiAKIAljaWZzX2RiZyhGWUksICJjb3B5Y2h1bmsgcmFuZ2VcbiIpOwogCi0J
-ZmlsZW1hcF93cml0ZV9hbmRfd2FpdChzcmNfaW5vZGUtPmlfbWFwcGluZyk7Ci0KIAlpZiAoIXNy
-Y19maWxlLT5wcml2YXRlX2RhdGEgfHwgIWRzdF9maWxlLT5wcml2YXRlX2RhdGEpIHsKIAkJcmMg
-PSAtRUJBREY7CiAJCWNpZnNfZGJnKFZGUywgIm1pc3NpbmcgY2lmc0ZpbGVJbmZvIG9uIGNvcHkg
-cmFuZ2Ugc3JjIGZpbGVcbiIpOwpAQCAtMTI1MCw2ICsxMjQ4LDEyIEBAIHNzaXplX3QgY2lmc19m
-aWxlX2NvcHljaHVua19yYW5nZSh1bnNpZ25lZCBpbnQgeGlkLAogCWxvY2tfdHdvX25vbmRpcmVj
-dG9yaWVzKHRhcmdldF9pbm9kZSwgc3JjX2lub2RlKTsKIAogCWNpZnNfZGJnKEZZSSwgImFib3V0
-IHRvIGZsdXNoIHBhZ2VzXG4iKTsKKworCXJjID0gZmlsZW1hcF93cml0ZV9hbmRfd2FpdF9yYW5n
-ZShzcmNfaW5vZGUtPmlfbWFwcGluZywgb2ZmLAorCQkJCQkgIG9mZiArIGxlbiAtIDEpOworCWlm
-IChyYykKKwkJZ290byBvdXQ7CisKIAkvKiBzaG91bGQgd2UgZmx1c2ggZmlyc3QgYW5kIGxhc3Qg
-cGFnZSBmaXJzdCAqLwogCXRydW5jYXRlX2lub2RlX3BhZ2VzKCZ0YXJnZXRfaW5vZGUtPmlfZGF0
-YSwgMCk7CiAKZGlmZiAtLWdpdCBhL2ZzL2NpZnMvc21iMm9wcy5jIGIvZnMvY2lmcy9zbWIyb3Bz
-LmMKaW5kZXggN2M5NDFjZTFlN2E5Li4xMjMxOWNlZjQyYTcgMTAwNjQ0Ci0tLSBhL2ZzL2NpZnMv
-c21iMm9wcy5jCisrKyBiL2ZzL2NpZnMvc21iMm9wcy5jCkBAIC0zNjg4LDYgKzM2ODgsNyBAQCBz
-dGF0aWMgbG9uZyBzbWIzX2NvbGxhcHNlX3JhbmdlKHN0cnVjdCBmaWxlICpmaWxlLCBzdHJ1Y3Qg
-Y2lmc190Y29uICp0Y29uLAogCiAJZmlsZW1hcF9pbnZhbGlkYXRlX2xvY2soaW5vZGUtPmlfbWFw
-cGluZyk7CiAJZmlsZW1hcF93cml0ZV9hbmRfd2FpdChpbm9kZS0+aV9tYXBwaW5nKTsKKwlyYyA9
-IGZpbGVtYXBfd3JpdGVfYW5kX3dhaXRfcmFuZ2UoaW5vZGUtPmlfbWFwcGluZywgb2ZmLCBvbGRf
-ZW9mIC0gMSk7CiAJdHJ1bmNhdGVfcGFnZWNhY2hlX3JhbmdlKGlub2RlLCBvZmYsIG9sZF9lb2Yp
-OwogCiAJcmMgPSBzbWIyX2NvcHljaHVua19yYW5nZSh4aWQsIGNmaWxlLCBjZmlsZSwgb2ZmICsg
-bGVuLApAQCAtMzczOSw2ICszNzQwLDcgQEAgc3RhdGljIGxvbmcgc21iM19pbnNlcnRfcmFuZ2Uo
-c3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBjaWZzX3Rjb24gKnRjb24sCiAKIAlmaWxlbWFwX2lu
-dmFsaWRhdGVfbG9jayhpbm9kZS0+aV9tYXBwaW5nKTsKIAlmaWxlbWFwX3dyaXRlX2FuZF93YWl0
-KGlub2RlLT5pX21hcHBpbmcpOworCXJjID0gZmlsZW1hcF93cml0ZV9hbmRfd2FpdF9yYW5nZShp
-bm9kZS0+aV9tYXBwaW5nLCBvZmYsIGVvZiAtIDEpOwogCXRydW5jYXRlX3BhZ2VjYWNoZV9yYW5n
-ZShpbm9kZSwgb2ZmLCBvbGRfZW9mKTsKIAogCXJjID0gU01CMl9zZXRfZW9mKHhpZCwgdGNvbiwg
-Y2ZpbGUtPmZpZC5wZXJzaXN0ZW50X2ZpZCwKLS0gCjIuMzQuMQoK
---0000000000008249a205e76427e5--
+Best,
+Gary
