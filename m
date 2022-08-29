@@ -2,157 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 228D95A5023
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 17:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47C3E5A505A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 17:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbiH2P0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 11:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52306 "EHLO
+        id S229679AbiH2Pk4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 11:40:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbiH2P0A (ORCPT
+        with ESMTP id S229625AbiH2Pky (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 11:26:00 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A225E4057F;
-        Mon, 29 Aug 2022 08:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661786759; x=1693322759;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=xYdvX1PhD3Iug/xG1oZ0ioxeY0YVxwImFkNf9/6SStg=;
-  b=hWdzhzZFwVFA5mNu2jfoAjjGOwCGsK2Gc/vg0/6FixGLwv3ntrqwitCK
-   VE6ndI3r/6otqMBw8JEsVzE5Uvbi/ZSAQykMllBg3Os/pnVAIiKDQ3HlU
-   xY8Mm+ZFTSV9saVBR+6PNPX7tq+VZ9yawCIUBIumHjZdFcPxvgBx/E3Wf
-   JUsBTpRrE9g78IiId9/G7QTrxEnvaGlM/RBE6JeQtJBDW59hyOHCPVh3l
-   fzXbNNS8fkrr/PwYRG00grNSj7LWGVQw2NMn4yVzBs2ZVxNvrULoSRhqH
-   HXjd3AKajILPJoJ8tZPmlIueFtvJCTwUtMVM2nS+Sq6ft3iTb/SW5KvIP
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10454"; a="358886403"
-X-IronPort-AV: E=Sophos;i="5.93,272,1654585200"; 
-   d="scan'208";a="358886403"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2022 08:25:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,272,1654585200"; 
-   d="scan'208";a="640973244"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga008.jf.intel.com with ESMTP; 29 Aug 2022 08:25:49 -0700
-Date:   Mon, 29 Aug 2022 23:21:07 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 11/14] KVM: Register/unregister the guest private
- memory regions
-Message-ID: <20220829152107.GD1586678@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-12-chao.p.peng@linux.intel.com>
- <CA+EHjTzpb2PcGBbN61YqMWdQ5f-55Lt12ALHQ0pdwtGvV8nS8g@mail.gmail.com>
+        Mon, 29 Aug 2022 11:40:54 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D06861FA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 08:40:54 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-340f82c77baso89966137b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Aug 2022 08:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=j1IB7j4OLRcSZ3g4J8PWmoYtAO/kHfADj7RgXZEk7hqFtG3q70Lteze87nvzQDS+R9
+         CL8iucEX5+pUR6GFNM9YhGtkQ/K3YSilHFtT6rgltDxGIvOl9WNWofz15dSno2pvUCu1
+         1Bhescdr0s6ryDzQi+7/8n16+XcM1cHIhWF/zqW4grSQ4jgaNHAQGVva5E5CPm2a9nSv
+         SACaO/HrWt5OCxmWYkpTIDTp7wOora+01Wom3zQ/aQLMJRMxDkExUHndf/LECmRtuQrW
+         XvQR9OR4h0bTOOFoK/XuaduqdLSBZdKhGL15qV2OWEaWokw3wRFRvIVWgLQDBU1NqLPb
+         rpTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=J8VUMn4huFQeCKx4n2k+aoxfAhJS71Q18utK7EuVlaoKDj5S7ImsZ/IImuHZ3+RI8C
+         Beg85/qZmh2ZfjFkIWyi8EQ8jkimpl4I6VcRYTpllUCmxP9FNeEQvZiAifCkbv/hHe8v
+         q+MU3mQgqn3dmX78A4v7uAIbJuvlWBRFN4vl5VPWn/EuM3AwfUD9T7rj66DnJX5bpn4O
+         qx1tC9FXsVvp6wbhBHCXDPHDqcrLV0i9MKvrBVDmMWYrmd20kpkF1qBpkeWlu9iWdisQ
+         0rzVNmgs6v+XmZ6nuBs7/fjIT7Y9HnEM9q/QymcHVNcsKoSr98u7mbaD3gT0MatDxOcB
+         h0eg==
+X-Gm-Message-State: ACgBeo11vRI7hKw0M7wPfng02mADjCD3e+EXqKp/VuLHTaAaUyw42T4C
+        1qNRIfHi3H7N7k/f6V28Aa77Iq+6SrrPCsa+2Mo=
+X-Google-Smtp-Source: AA6agR4NTWVWHdEWupBK3yUp5civ1v9UDwj6Vijbz90HGEQyeGFiqExsePn6LGFrPnhq5fQhvylUEZGvwX6EMEDEgyQ=
+X-Received: by 2002:a05:6902:1501:b0:697:c614:2079 with SMTP id
+ q1-20020a056902150100b00697c6142079mr8689374ybu.389.1661787653000; Mon, 29
+ Aug 2022 08:40:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTzpb2PcGBbN61YqMWdQ5f-55Lt12ALHQ0pdwtGvV8nS8g@mail.gmail.com>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a25:8a85:0:0:0:0:0 with HTTP; Mon, 29 Aug 2022 08:40:52
+ -0700 (PDT)
+Reply-To: izzatibrahim724@gmail.com
+From:   "Ibrahim I . Hassan" <issad6927@gmail.com>
+Date:   Mon, 29 Aug 2022 15:40:52 +0000
+Message-ID: <CAKT4aHUraYFxy1fDiAH2JDxUv==nUdCvk56p+w91c2YJe5MOmA@mail.gmail.com>
+Subject: Thanks
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,TVD_SPACE_RATIO,UNDISC_FREEM
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:1130 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4915]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [issad6927[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [issad6927[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [izzatibrahim724[at]gmail.com]
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.0 TVD_SPACE_RATIO No description available.
+        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 04:19:43PM +0100, Fuad Tabba wrote:
-> > +bool __weak kvm_arch_private_mem_supported(struct kvm *kvm)
-> > +{
-> > +       return false;
-> > +}
-> > +
-> >  static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
-> >  {
-> >         u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> > @@ -4689,6 +4729,22 @@ static long kvm_vm_ioctl(struct file *filp,
-> >                 r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
-> >                 break;
-> >         }
-> > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > +       case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > +       case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > +               struct kvm_enc_region region;
-> > +
-> > +               if (!kvm_arch_private_mem_supported(kvm))
-> > +                       goto arch_vm_ioctl;
-> > +
-> > +               r = -EFAULT;
-> > +               if (copy_from_user(&region, argp, sizeof(region)))
-> > +                       goto out;
-> > +
-> > +               r = kvm_vm_ioctl_set_encrypted_region(kvm, ioctl, &region);
-> > +               break;
-> > +       }
-> > +#endif
-> >         case KVM_GET_DIRTY_LOG: {
-> >                 struct kvm_dirty_log log;
-> >
-> > @@ -4842,6 +4898,7 @@ static long kvm_vm_ioctl(struct file *filp,
-> >                 r = kvm_vm_ioctl_get_stats_fd(kvm);
-> >                 break;
-> >         default:
-> > +arch_vm_ioctl:
-> 
-> It might be good to make this label conditional on
-> CONFIG_HAVE_KVM_PRIVATE_MEM, otherwise you get a warning if
-> CONFIG_HAVE_KVM_PRIVATE_MEM isn't defined.
-> 
-> +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
->  arch_vm_ioctl:
-> +#endif
 
-Right, as the bot already complains.
-
-Chao
-> 
-> Cheers,
-> /fuad
-> 
-> 
-> 
-> 
-> 
-> >                 r = kvm_arch_vm_ioctl(filp, ioctl, arg);
-> >         }
-> >  out:
-> > --
-> > 2.25.1
-> >
