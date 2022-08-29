@@ -2,51 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B67DD5A4EF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 16:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B21995A4F9C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Aug 2022 16:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbiH2OP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Aug 2022 10:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34698 "EHLO
+        id S230158AbiH2OuL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Aug 2022 10:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbiH2OPZ (ORCPT
+        with ESMTP id S229899AbiH2OuI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Aug 2022 10:15:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B7A1A39E;
-        Mon, 29 Aug 2022 07:15:23 -0700 (PDT)
+        Mon, 29 Aug 2022 10:50:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDB114092;
+        Mon, 29 Aug 2022 07:49:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F36E60F5B;
-        Mon, 29 Aug 2022 14:15:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 058FDC433C1;
-        Mon, 29 Aug 2022 14:15:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 91D5D6105C;
+        Mon, 29 Aug 2022 14:49:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E59DFC433C1;
+        Mon, 29 Aug 2022 14:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661782522;
-        bh=+nyYdh/yy5EHKyi0lpYY9d3e+x1/y1ayeGH6tnploAE=;
+        s=k20201202; t=1661784596;
+        bh=1uMmTJeyaDS2FOf4VxouNCYbBnfhrN1z1KkQuy5uQj8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oczrsAAZRB7+HuHkBHmMN1BZNstE3epijQo1SngzYh79jhWGVjXhYhoODnqaZj5rd
-         EMofYuKj0e/AkGWSwnUBefQ+SL9FTIXG5O7Ra/XhtTL272P4t44tPus4lBzW/6Pd55
-         IBtOa+iVodOoAaKqgVW7tFxJpi6ULCiHjlUISiRayaUU9mwuoRzLAbwEsBqnXFnhDc
-         mLjLOGvOfc30vZ50DtGmdmVZumM6y5r9WTQcn1sQwFZnCWhNBKwxQfYvuvgtGfSEU1
-         Jt4Tt1ZyfJUaEyDJaeOSLCSJJg90Xxd6hxx4DVhg4IrWilJsmKf5XLeCxEwRcEq114
-         sXfWLkU9sFcJg==
-Date:   Mon, 29 Aug 2022 16:15:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Rustam Subkhankulov <subkhankulov@ispras.ru>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH] fs/inode.c: change the order of initialization in
- inode_init_always()
-Message-ID: <20220829141517.bcjbdk5zb74mrhgu@wittgenstein>
-References: <1661609366-26144-1-git-send-email-khoroshilov@ispras.ru>
+        b=XJRk6ZYCgSQvvWk8URrx6RJ6oV82AYJwt+/EXnZk3l9CBPJ1Cc2cedvM8lnX84VDB
+         JPlPDOjLBdofy4r6FWjvZLx722neGH/E0/siqa7H3FceqTWWN7D8FI4hRLz4No/Lg7
+         l8khPwDyO2GZCZvZIxG0f7Y7IYPhAR+5whqJKxJMS5hDjDCTn2L6pnlpEGNjSBX0ki
+         9lJMaYfTbyEf/qfFveknlmINrEGiDzXz79bsGnwcBpEyAqoWMQeAnxu/8QsQKnGeiR
+         K0kq4SsC3S6NSrIXu0iUEUkxhRr80OyMR1pJSXmJmXKAtu/w5X4yKHZi3wjw13ANvE
+         V5+ip6haOfpfA==
+Date:   Mon, 29 Aug 2022 07:49:55 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "jane.chu@oracle.com" <jane.chu@oracle.com>
+Subject: Re: [PATCH v7] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+Message-ID: <YwzSE2U8iYLRfyxf@magnolia>
+References: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
+ <63093cbd43f67_259e5b2946d@dwillia2-xfh.jf.intel.com.notmuch>
+ <72fa9657-741a-e099-baf8-4615145d7bd1@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1661609366-26144-1-git-send-email-khoroshilov@ispras.ru>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <72fa9657-741a-e099-baf8-4615145d7bd1@fujitsu.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,48 +64,160 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 27, 2022 at 05:09:26PM +0300, Alexey Khoroshilov wrote:
-> From: Rustam Subkhankulov <subkhankulov@ispras.ru>
+On Mon, Aug 29, 2022 at 06:02:11PM +0800, Shiyang Ruan wrote:
 > 
-> If function 'security_inode_alloc()' returns a nonzero value at
-> [fs/inode.c: 195] due to an error (e.g. fail to allocate memory),
-> then some of the fields, including 'i_private', will not be
-> initialized.
 > 
-> After that, if the fs-specfic free_inode function is called in
-> 'i_callback', the nonzero value of 'i_private' field can be interpreted
-> as initialized. As a result, this can cause dereferencing of random
-> value pointer (e.g. nilfs2).
+> 在 2022/8/27 5:35, Dan Williams 写道:
+> > Shiyang Ruan wrote:
+> > > This patch is inspired by Dan's "mm, dax, pmem: Introduce
+> > > dev_pagemap_failure()"[1].  With the help of dax_holder and
+> > > ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+> > > (or mapped device) on it to unmap all files in use and notify processes
+> > > who are using those files.
+> > > 
+> > > Call trace:
+> > > trigger unbind
+> > >    -> unbind_store()
+> > >     -> ... (skip)
+> > >      -> devres_release_all()
+> > >       -> kill_dax()
+> > >        -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+> > >         -> xfs_dax_notify_failure()
+> > > 
+> > > Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+> > > event.  So do not shutdown filesystem directly if something not
+> > > supported, or if failure range includes metadata area.  Make sure all
+> > > files and processes are handled correctly.
+> > > 
+> > > ==
+> > > Changes since v6:
+> > >     1. Rebase on 6.0-rc2 and Darrick's patch[2].
+> > > 
+> > > Changes since v5:
+> > >     1. Renamed MF_MEM_REMOVE to MF_MEM_PRE_REMOVE
+> > >     2. hold s_umount before sync_filesystem()
+> > >     3. do sync_filesystem() after SB_BORN check
+> > >     4. Rebased on next-20220714
+> > > 
+> > > [1]:
+> > > https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+> > > [2]: https://lore.kernel.org/linux-xfs/Yv5wIa2crHioYeRr@magnolia/
+> > > 
+> > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > ---
+> > >    drivers/dax/super.c         |  3 ++-
+> > >    fs/xfs/xfs_notify_failure.c | 15 +++++++++++++++
+> > >    include/linux/mm.h          |  1 +
+> > >    3 files changed, 18 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> > > index 9b5e2a5eb0ae..cf9a64563fbe 100644
+> > > --- a/drivers/dax/super.c
+> > > +++ b/drivers/dax/super.c
+> > > @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+> > >    		return;
+> > >     	if (dax_dev->holder_data != NULL)
+> > > -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+> > > +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+> > > +				MF_MEM_PRE_REMOVE);
+> > >     	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+> > >    	synchronize_srcu(&dax_srcu);
+> > > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> > > index 65d5eb20878e..a9769f17e998 100644
+> > > --- a/fs/xfs/xfs_notify_failure.c
+> > > +++ b/fs/xfs/xfs_notify_failure.c
+> > > @@ -77,6 +77,9 @@ xfs_dax_failure_fn(
+> > >     	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+> > >    	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> > > +		/* Do not shutdown so early when device is to be removed */
+> > > +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+> > > +			return 0;
+> > >    		notify->want_shutdown = true;
+> > >    		return 0;
+> > >    	}
+> > > @@ -182,12 +185,22 @@ xfs_dax_notify_failure(
+> > >    	struct xfs_mount	*mp = dax_holder(dax_dev);
+> > >    	u64			ddev_start;
+> > >    	u64			ddev_end;
+> > > +	int			error;
+> > >     	if (!(mp->m_sb.sb_flags & SB_BORN)) {
+> > 
+> > How are you testing the SB_BORN interactions? I have a fix for this
+> > pending here:
+> > 
+> > https://lore.kernel.org/nvdimm/166153428094.2758201.7936572520826540019.stgit@dwillia2-xfh.jf.intel.com/
 > 
-> In earlier versions, a similar situation could occur with the 'u' union
-> in 'inode' structure.
+> That was my mistake.  Yes, it should be mp->m_super->s_flags.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with syzkaller.
+> (I remember my testcase did pass in my dev version, but now that seems
+> impossible.  I think something was wrong when I did the test.)
 > 
-> Signed-off-by: Rustam Subkhankulov <subkhankulov@ispras.ru>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> ---
->  fs/inode.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > >    		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
+> > >    		return -EIO;
+> > >    	}
+> > >    +	if (mf_flags & MF_MEM_PRE_REMOVE) {
+> > 
+> > It appears this patch is corrupted here. I confirmed that b4 sees the
+> > same when trying to apply it.
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index bd4da9c5207e..08d093737e8c 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -192,8 +192,6 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
->  	inode->i_wb_frn_history = 0;
->  #endif
->  
-> -	if (security_inode_alloc(inode))
-> -		goto out;
->  	spin_lock_init(&inode->i_lock);
->  	lockdep_set_class(&inode->i_lock, &sb->s_type->i_lock_key);
->  
-> @@ -230,9 +228,10 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
->  	inode->i_flctx = NULL;
->  	this_cpu_inc(nr_inodes);
->  
-> +	if (security_inode_alloc(inode))
-> +		return -ENOMEM;
+> Can't this patch be applied?  It is based on 6.0-rc2 + Darrick's patch. It's
+> also ok to rebase on 6.0-rc3 + Darrick's patch.
+> 
+> > 
+> > > +		xfs_info(mp, "device is about to be removed!");
+> > > +		down_write(&mp->m_super->s_umount);
+> > > +		error = sync_filesystem(mp->m_super);
+> > 
+> > This syncs to make data persistent, but for DAX this also needs to get
+> > invalidate all current DAX mappings. I do not see that in these changes.
+> 
+> I'll add it.
 
-This should probably be before this_cpu_inc(nr_inodes).
+Are you guys going to pick up [1]?
+
+--D
+
+[1] https://lore.kernel.org/linux-xfs/Yv5wIa2crHioYeRr@magnolia/
+
+> 
+> --
+> Thanks,
+> Ruan.
+> 
+> > 
+> > > +		up_write(&mp->m_super->s_umount);
+> > > +		if (error)
+> > > +			return error;
+> > > +	}
+> > > +
+> > >    	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
+> > >    		xfs_warn(mp,
+> > >    			 "notify_failure() not supported on realtime device!");
+> > > @@ -196,6 +209,8 @@ xfs_dax_notify_failure(
+> > >     	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+> > >    	    mp->m_logdev_targp != mp->m_ddev_targp) {
+> > > +		if (mf_flags & MF_MEM_PRE_REMOVE)
+> > > +			return 0;
+> > >    		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+> > >    		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+> > >    		return -EFSCORRUPTED;
+> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > index 982f2607180b..2c7c132e6512 100644
+> > > --- a/include/linux/mm.h
+> > > +++ b/include/linux/mm.h
+> > > @@ -3176,6 +3176,7 @@ enum mf_flags {
+> > >    	MF_UNPOISON = 1 << 4,
+> > >    	MF_SW_SIMULATED = 1 << 5,
+> > >    	MF_NO_RETRY = 1 << 6,
+> > > +	MF_MEM_PRE_REMOVE = 1 << 7,
+> > >    };
+> > >    int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+> > >    		      unsigned long count, int mf_flags);
+> > > -- 
+> > > 2.37.2
+> > > 
+> > > 
+> > 
+> > 
