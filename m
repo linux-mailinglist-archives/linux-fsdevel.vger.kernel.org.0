@@ -2,234 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CEF25A6245
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 13:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C3955A631B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Aug 2022 14:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231270AbiH3LmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Aug 2022 07:42:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
+        id S230241AbiH3MRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Aug 2022 08:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231216AbiH3Llz (ORCPT
+        with ESMTP id S230092AbiH3MRu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Aug 2022 07:41:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 956D55B7B0;
-        Tue, 30 Aug 2022 04:40:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CEC9BB81A5C;
-        Tue, 30 Aug 2022 11:40:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C003C433D6;
-        Tue, 30 Aug 2022 11:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661859605;
-        bh=9U5YNZG5kGGVOkXBz5XYF4bS4GrVUMLFarYkV3ivBmI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=LJGU2MlvihvbWDegzJW9x4zDzYfr4RuHN1avdf2LC/d0uILp5ZxoG8FZFFVC37yiC
-         zZ/k2xcy0WiPAfZhXY1pATPJqmDLFF2rR4+T4LT0HHIaLKuNbQ4o4FY+T2NtLmOAZv
-         DNHu8b6lkZjJU6fe+lHENGmYwS9JjFl6Tvr/A7puLdcTsrBc8w5UxI7qJUTUxVdGIs
-         NsH1AiofF7wbgJapwPcvITxWN2fyStNzOHWp+xq9dfReH1WzIibxnjxXqei4581RCt
-         kvzCCbkUpOXF+iA6klzKuW9BROz+ZHywvmfybrUpmqA2U/lGefISWYhJdJ5FRUAgYi
-         pddIxrdkoReoA==
-Message-ID: <f5c42c0d87dfa45188c2109ccf9baeb7a42aa27e.camel@kernel.org>
-Subject: Re: [PATCH v3 1/7] iversion: update comments with info about atime
- updates
-From:   Jeff Layton <jlayton@kernel.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Dave Chinner <david@fromorbit.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, brauner@kernel.org,
-        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ceph@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Colin Walters <walters@verbum.org>
-Date:   Tue, 30 Aug 2022 07:40:02 -0400
-In-Reply-To: <166181389550.27490.8200873228292034867@noble.neil.brown.name>
-References: <20220826214703.134870-1-jlayton@kernel.org>
-        , <20220826214703.134870-2-jlayton@kernel.org>
-        , <20220829075651.GS3600936@dread.disaster.area>
-        , <549776abfaddcc936c6de7800b6d8249d97d9f28.camel@kernel.org>
-         <166181389550.27490.8200873228292034867@noble.neil.brown.name>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Tue, 30 Aug 2022 08:17:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC56B029E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Aug 2022 05:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1661861868;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wStWHojG+mqSkx5w9odtf8yhDsAk+/Zs+ge/ktP/P14=;
+        b=gUknbzr40ySmQrJTnRyYtFl6KXzqRHlIMia/kSNPkvEUmGrJz6wz/3aek16LVQmUKBSYG8
+        9bMjt4ksHrjp3Hlv1nr3lgrq+zs4YIzC4B6TlcYPkokZUDRnrG3L2FAREKYNpI5HGOgu9i
+        5joC+JnkEWt6mBt38dvX+R1LmeSyoLc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-507-b9vnlNxYP5W0aei5o2rZfg-1; Tue, 30 Aug 2022 08:17:47 -0400
+X-MC-Unique: b9vnlNxYP5W0aei5o2rZfg-1
+Received: by mail-wm1-f70.google.com with SMTP id x16-20020a1c7c10000000b003a5cefa5578so1925505wmc.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Aug 2022 05:17:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc;
+        bh=wStWHojG+mqSkx5w9odtf8yhDsAk+/Zs+ge/ktP/P14=;
+        b=TtKIKelnVN68OsnrOsV3eiGMw1qLx9G5TjpuWB77jmotFSFOyuW+lqhVXTFR6ChB2Y
+         gTY0h3yFuQDQWiflB+yfKFZz86leuFFAA95owIeP6/ygYU+Wdlw6VWftdSe8xpH8yIRf
+         hEYDOyc+vN16b0Q2BxXyNZHi73eRj9fV/sts/xuldSMUch5PP5EC6rufHQQvno9Kgxru
+         0Fa/n1yiGW0zKGjyXx3U1Isi1ltyFnNZHXqlWrQgvT5qOuPITxCjq4n9mgeohuenERrw
+         VBEOt+W57OY9nBFKm4MuKRNGvye4d7kQfVPQQ0Kqa29WQXjl9xhpoZAwj8yRMr6NGn2o
+         Micg==
+X-Gm-Message-State: ACgBeo0lxZx3h6Q3M07ChXJMTICI/cR0qjEwvFIfjS8CLy0P8cZLRHuk
+        Q7yq/Tpu3wAGukHVUFtHgesqDW/K6MM/j3GtrTyHg552eeta+01SjbMrJHf1Goe/gor9xkm/8BZ
+        X8YQPog0Hac0jWGQduYJlgohhKA==
+X-Received: by 2002:adf:ed50:0:b0:225:4c37:5346 with SMTP id u16-20020adfed50000000b002254c375346mr8810773wro.207.1661861866322;
+        Tue, 30 Aug 2022 05:17:46 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR7LbEwWL4kKOvLdx0sOtNkvmwSMVrgmd2sgfE/jJVeFo0Jfzf2IRVyzOcC+QvzNNPwpyxNgIQ==
+X-Received: by 2002:adf:ed50:0:b0:225:4c37:5346 with SMTP id u16-20020adfed50000000b002254c375346mr8810749wro.207.1661861865960;
+        Tue, 30 Aug 2022 05:17:45 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70a:1000:ecb4:919b:e3d3:e20b? (p200300cbc70a1000ecb4919be3d3e20b.dip0.t-ipconnect.de. [2003:cb:c70a:1000:ecb4:919b:e3d3:e20b])
+        by smtp.gmail.com with ESMTPSA id z20-20020a05600c0a1400b003a5e9337967sm12853676wmp.13.2022.08.30.05.17.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Aug 2022 05:17:45 -0700 (PDT)
+Message-ID: <5aa08b4f-251e-a63d-c36c-324a04ba24f4@redhat.com>
+Date:   Tue, 30 Aug 2022 14:17:44 +0200
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Content-Language: en-US
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>, Jan Kara <jack@suse.cz>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20220827083607.2345453-1-jhubbard@nvidia.com>
+ <20220827083607.2345453-2-jhubbard@nvidia.com>
+ <10a9d33a-58a3-10b3-690b-53100d4e5440@redhat.com>
+ <a47eef63-0f29-2185-f044-854ffaefae9c@nvidia.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH 1/6] mm/gup: introduce pin_user_page()
+In-Reply-To: <a47eef63-0f29-2185-f044-854ffaefae9c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-08-30 at 08:58 +1000, NeilBrown wrote:
-> On Mon, 29 Aug 2022, Jeff Layton wrote:
-> > On Mon, 2022-08-29 at 17:56 +1000, Dave Chinner wrote:
-> > > On Fri, Aug 26, 2022 at 05:46:57PM -0400, Jeff Layton wrote:
-> > > > The i_version field in the kernel has had different semantics over
-> > > > the decades, but we're now proposing to expose it to userland via
-> > > > statx. This means that we need a clear, consistent definition of
-> > > > what it means and when it should change.
-> > > >=20
-> > > > Update the comments in iversion.h to describe how a conformant
-> > > > i_version implementation is expected to behave. This definition
-> > > > suits the current users of i_version (NFSv4 and IMA), but is
-> > > > loose enough to allow for a wide range of possible implementations.
-> > > >=20
-> > > > Cc: Colin Walters <walters@verbum.org>
-> > > > Cc: NeilBrown <neilb@suse.de>
-> > > > Cc: Trond Myklebust <trondmy@hammerspace.com>
-> > > > Cc: Dave Chinner <david@fromorbit.com>
-> > > > Link: https://lore.kernel.org/linux-xfs/166086932784.5425.171347126=
-94961326033@noble.neil.brown.name/#t
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  include/linux/iversion.h | 23 +++++++++++++++++++++--
-> > > >  1 file changed, 21 insertions(+), 2 deletions(-)
-> > > >=20
-> > > > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-> > > > index 3bfebde5a1a6..45e93e1b4edc 100644
-> > > > --- a/include/linux/iversion.h
-> > > > +++ b/include/linux/iversion.h
-> > > > @@ -9,8 +9,19 @@
-> > > >   * ---------------------------
-> > > >   * The change attribute (i_version) is mandated by NFSv4 and is mo=
-stly for
-> > > >   * knfsd, but is also used for other purposes (e.g. IMA). The i_ve=
-rsion must
-> > > > - * appear different to observers if there was a change to the inod=
-e's data or
-> > > > - * metadata since it was last queried.
-> > > > + * appear different to observers if there was an explicit change t=
-o the inode's
-> > > > + * data or metadata since it was last queried.
-> > > > + *
-> > > > + * An explicit change is one that would ordinarily result in a cha=
-nge to the
-> > > > + * inode status change time (aka ctime). The version must appear t=
-o change, even
-> > > > + * if the ctime does not (since the whole point is to avoid missin=
-g updates due
-> > > > + * to timestamp granularity). If POSIX mandates that the ctime mus=
-t change due
-> > > > + * to an operation, then the i_version counter must be incremented=
- as well.
-> > > > + *
-> > > > + * A conformant implementation is allowed to increment the counter=
- in other
-> > > > + * cases, but this is not optimal. NFSv4 and IMA both use this val=
-ue to determine
-> > > > + * whether caches are up to date. Spurious increments can cause fa=
-lse cache
-> > > > + * invalidations.
-> > >=20
-> > > "not optimal", but never-the-less allowed - that's "unspecified
-> > > behaviour" if I've ever seen it. How is userspace supposed to
-> > > know/deal with this?
-> > >=20
-> > > Indeed, this loophole clause doesn't exist in the man pages that
-> > > define what statx.stx_ino_version means. The man pages explicitly
-> > > define that stx_ino_version only ever changes when stx_ctime
-> > > changes.
-> > >=20
-> >=20
-> > We can fix the manpage to make this more clear.
-> >=20
-> > > IOWs, the behaviour userspace developers are going to expect *does
-> > > not include* stx_ino_version changing it more often than ctime is
-> > > changed. Hence a kernel iversion implementation that bumps the
-> > > counter more often than ctime changes *is not conformant with the
-> > > statx version counter specification*. IOWs, we can't export such
-> > > behaviour to userspace *ever* - it is a non-conformant
-> > > implementation.
-> > >=20
-> >=20
-> > Nonsense. The statx version counter specification is *whatever we decid=
-e
-> > to make it*. If we define it to allow for spurious version bumps, then
-> > these implementations would be conformant.
-> >=20
-> > Given that you can't tell what or how much changed in the inode wheneve=
-r
-> > the value changes, allowing it to be bumped on non-observable changes i=
-s
-> > ok and the counter is still useful. When you see it change you need to
-> > go stat/read/getxattr etc, to see what actually happened anyway.
-> >=20
-> > Most applications won't be interested in every possible explicit change
-> > that can happen to an inode. It's likely these applications would check
-> > the parts of the inode they're interested in, and then go back to
-> > waiting for the next bump if the change wasn't significant to them.
-> >=20
-> >=20
-> > > Hence I think anything that bumps iversion outside the bounds of the
-> > > statx definition should be declared as such:
-> > >=20
-> > > "Non-conformant iversion implementations:
-> > > 	- MUST NOT be exported by statx() to userspace
-> > > 	- MUST be -tolerated- by kernel internal applications that
-> > > 	  use iversion for their own purposes."
-> > >=20
-> >=20
-> > I think this is more strict than is needed. An implementation that bump=
-s
-> > this value more often than is necessary is still useful. It's not
-> > _ideal_, but it still meets the needs of NFSv4, IMA and other potential
-> > users of it. After all, this is basically the definition of i_version
-> > today and it's still useful, even if atime update i_version bumps are
-> > currently harmful for performance.
->=20
-> Why do you want to let it be OK?  Who is hurt by it being "more strict
-> than needed"?  There is an obvious cost in not being strict as an
-> implementation can be compliant but completely useless (increment every
-> nanosecond).  So there needs to be a clear benefit to balance this.  Who
-> benefits by not being strict?
->=20
+On 29.08.22 21:33, John Hubbard wrote:
+> On 8/29/22 05:07, David Hildenbrand wrote:
+>>> +/**
+>>> + * pin_user_page() - apply a FOLL_PIN reference to a page
+>>> + *
+>>> + * @page: the page to be pinned.
+>>> + *
+>>> + * This is similar to get_user_pages(), except that the page's refcount is
+>>> + * elevated using FOLL_PIN, instead of FOLL_GET.
+> 
+> Actually, my commit log has a more useful documentation of this routine,
+> and given the questions below, I think I'll change to that:
+> 
+>  * pin_user_page() is an externally-usable version of try_grab_page(), but with
+>  * semantics that match get_page(), so that it can act as a drop-in replacement
+>  * for get_page().
+>  *
+>  * pin_user_page() elevates a page's refcount using FOLL_PIN rules. This means
+>  * that the caller must release the page via unpin_user_page().
 
-Other filesystems that may not be able to provide the strict semantics
-required. I don't have any names to name here -- I'm just trying to
-ensure that we don't paint ourselves into a corner with rules that are
-more strict than we really need.
+Some thoughts:
 
-If the consensus is that we should keep the definition strict, then Ican
-live with that. That might narrow the number of filesystems that can
-provide this attribute though.
+a) Can we generalize such that pages with a dedicated pincount
+(multi-page folios) are also covered? Maybe avoiding the refcount
+terminology would be best.
 
-> Also: Your spec doesn't say it must increase, only it must be different.
-> So would as hash of all data and metadata be allowed (sysfs might be
-> able to provide that, but probably wouldn't bother).
->=20
-> Also: if stray updates are still conformant, can occasional repeated
-> values be still conformant?  I would like for a high-precision ctime
-> timestamp to be acceptable, but as time can go backwards it is currently
-> not conformant (even though the xfs iversion which is less useful is
-> actually conformant).
->=20
+b) Should we directly work on folios?
 
-Yes, saying only that it must be different is intentional. What we
-really want is for consumers to treat this as an opaque value for the
-most part [1]. Therefore an implementation based on hashing would
-conform to the spec, I'd think, as long as all of the relevant info is
-part of the hash.
+c) Would it be valid to pass in a tail page right now?
 
-OTOH, hash collisions could be an issue here and I think we need to
-avoid allowing duplicate values. When it comes to watching for changes
-to an inode, false positives are generally ok since that should just
-affect performance but not functionality.
+> 
+>>> + *
+>>> + * IMPORTANT: The caller must release the page via unpin_user_page().
+>>> + *
+>>> + */
+>>> +void pin_user_page(struct page *page)
+>>> +{
+>>> +	struct folio *folio = page_folio(page);
+>>> +
+>>> +	WARN_ON_ONCE(folio_ref_count(folio) <= 0);
+>>> +
+>>
+>> We should warn if the page is anon and !exclusive.
+> 
+> That would be sort of OK, because pin_user_page() is being created
+> specifically for file system (O_DIRECT cases) use, and so the pages
+> should mostly be file-backed, rather than anon. Although I'm a little
+> vague about whether all of these iov_iter cases are really always
+> file-backed pages, especially for cases such as splice(2) to an
+> O_DIRECT-opened file, that Al Viro mentioned [1].
 
-False negatives are a different matter. They can lead to cache coherency
-issues with NFS, or missing remeasurements in IMA. Userland applications
-that use this could be subject to similar issues.
---=20
-Jeff Layton <jlayton@kernel.org>
+If we can, we should document that this interface is not for anonymous
+pages and WARN if pinning an anonymous page via this interface.
+
+The only reasonable way to obtain a pin on an anonymous page is via the
+page table. Here, FOLL_PIN should be used to do the right thing -- for
+example, unshare first (break COW) instead of pinning a shared anonymous
+page.
+
+Nothing would speak against duplicating such a pin using this interface
+(we'd have to sanity check that the page we're pinning may already be
+pinned), but I assume the pages we pin here are *not* necessarily
+obtained via GUP FOLL_PIN.
+
+I would be curious under which scenarios we could end up here with an
+anonymous page and how we obtained that reference (if not via GUP).
+
+> 
+> Can you walk me through the reasoning for why we need to keep out
+> anon shared pages? 
+
+We make sure to only pin anonymous pages that are exclusive and check
+when unpinning -- see sanity_check_pinned_pages(), there is also a
+comment in there -- that pinned anonymous pages are in fact still
+exclusive, otherwise we might have a BUG lurking somewhere that can
+result in memory corruptions or leaking information between processes.
+
+For example, once we'd pinned an anonymous pages that are not marked
+exclusive (!PageAnonExclusive), or we'd be sharing a page that is
+pinned, the next write fault would replace the page in the user page
+table due to breaking COW, and the GUP pin would point at a different
+page than the page table.
+
+Disallowing pinning of anon pages that may be shared in any case
+(FOLL_LONGTERM or not) simplifies GUP handling and allows for such
+sanity checks.
+
+(side note: after recent VM_BUG_ON discussions we might want to convert
+the VM_BUG_ON_PAGE in sanity_check_pinned_pages())
+
+> 
+>>
+>> I assume the intend is to use pin_user_page() only to duplicate pins, right?
+>>
+> 
+> Well, yes or no, depending on your use of the term "pin":
+> 
+> pin_user_page() is used on a page that already has a refcount >= 1 (so
+> no worries about speculative pinning should apply here), but the page
+> does not necessarily have any FOLL_PIN's applied to it yet (so it's not
+> "pinned" in the FOLL_PIN sense).
+
+Okay, then we should really figure out if/how anonymous pages could end
+up here. I assume they can't, really. But let's see :)
 
 
-[1]: which may not be reasonable in the case of write delegations on
-NFSv4, since the client is expected to increment it when it has cached
-local changes.
+-- 
+Thanks,
+
+David / dhildenb
+
