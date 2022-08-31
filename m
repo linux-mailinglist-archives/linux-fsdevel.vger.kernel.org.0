@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28AC35A74DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 06:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28985A74CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 06:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231876AbiHaET6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 00:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
+        id S231773AbiHaETO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 00:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbiHaETa (ORCPT
+        with ESMTP id S231355AbiHaES5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 00:19:30 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB20BB7755;
-        Tue, 30 Aug 2022 21:19:06 -0700 (PDT)
+        Wed, 31 Aug 2022 00:18:57 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A90AB4CE;
+        Tue, 30 Aug 2022 21:18:55 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mMR/rCPldybrX/hf6dkxWwSUImNvNmBTN/w4W2uwkIDNukosK3JrwtynebtJKHzRasQun2nZynyIDfJuhxwgmq5ZTum0X2RM6XTCyvkJhR71Kqo5ZP9Fd/+EqYm85xHoduW+WtZOeiTZ0Od5ZVhSzKXQSJEplHu0TIkj0KuK54+lCgBhqnzIkzsGTtNuJD5MyX1K7fFuwJ03jf7dwVusvUuCo92ZJc8Jp6bSbmOGx4MA6XuxAWOKBI5FBrEG4XxYIyBqzbiQRGnMJaVR3mI6Iu5HPNrcrLgvePDqJOQKBq75r3SlssneilMrG5NbCPFRM3xQptW9G0A6McGvSgPwDw==
+ b=guPiIGM3y8NJTpPXxTQvuVowl4Ke5zWQIP9ryEDot+Ufk6rMGI2xiTK0a1c9Lvzd0AX98QDqRPiBpVJk2Wz2/qfXMgimZ5A7OVjGTMwnpZlQG8XqnMPDf48Ic+dFD/iWIYe3dTxjsT009HN5Rk04xU1RpcQjv8Bf9BCcTSpxbLuzZelOdO5KGZziZQO6cgmuW7Su2ySt3UUOdgqDlA45l/moKJs3/vtEly22bwe+OFD1DMaS88cfIx7ihVTRyo2b9oBFbScc6obNo7oYOKygQjKs6nJE/EUhS53MF6EUbj437HNvoYErE44ng46Oxo/S3F57dbD+J2e0Y5+dH48fiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IAu/h0sUVw6tD3CUItXDkxlRPxdYIPja298n2n76n1w=;
- b=Q1xdos6AyvvvKYlsuaA9q1ovCfA6T83cffpaeH3+yPp9cXZbkybeRiWLiUQ0v6h39tzpUIZaTVawJcWc9E5lG6lm+obMU0Z1dlrVUVkL3U6Rm6wiwooJ8YIhi+2vie5KW3gvNCPhLdols6kbXueuQD8okF/1OyIRcmM5JbQi+dS9uvY8FFQCgQewZX4MAeek+yMKJ9jfN80twCQzmsswz1tv5zRubQgeutZUfc5ksJD9O1kagbpn32cQ8N7YF8FqoFaty8Quc/qH6ixXh6RaSJOEaXFCAlQauYJikV5KyKJ/APfai39cHNnYbz694DRrJAGoglxzQKRFpJWsncwF2g==
+ bh=qxDgq14BPL52n/7cjhue2PT6ARIQiBfUGFJisDO/ekY=;
+ b=cYBLDGTsqvAmCphdRhQqI8d0rYZDvsOtb4rkBN0JSFm/iuDc+JZUy2mTnsaEGlmuDtwzFU3peyRrUJXk/oTCqPi/wUV9EK3GD2Hncq7QGKOowutBheU+zQa97y7chKDelFei7GrcHpMlaKxvb5Ks992D0577l6/Pp2L13u6Re2JZBiVio2KkOrDrwMdsYvpXXeJ6gHYvQovIQRjVe38WPmF3wEm3pTjLl4HnIFnOPbBj1tfI5kMcU7Ez7NQrPrTKey+fESnI4xwTO716Aazn6mAopRwPrOTTcvJ3sij438Xy9Nuz3GPJc9jU3lspMessdL8vJkgnJaCjdhOVjEO2Uw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 12.22.5.236) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IAu/h0sUVw6tD3CUItXDkxlRPxdYIPja298n2n76n1w=;
- b=HRGP9kaHuNmnvEaWIQ/Iz7OmlBEsvKOzirblc+rsILS1krZdCjjqEGRt4TIMUugAzSNG48IMLPmHaogkz/KVO1yVPTuIuNJbEYvj3XOYBMOTw4JzTb1oxtrjoZeenBQDEagbx7kc5Ne8JEBFuoxBBe35ItnwK7oksMOcXCy93KhivUXGbA5oiNKqg1t/r52afLSEwOJQBbX3RTrfmtSPpD6Bl8TjIBWgz+EdqstBpFKGB9Y9iKe0i5C1tUTtFDW/n8CW/aqCYgBCU/LOvXc/oyt7M0KBvGKMksJK8E/QHA5+EfAwm+i+VuFzF/0UWrCvNVyd0BhvUFh1npDxPoPB/A==
-Received: from DM6PR02CA0058.namprd02.prod.outlook.com (2603:10b6:5:177::35)
- by CH2PR12MB4263.namprd12.prod.outlook.com (2603:10b6:610:a6::8) with
+ bh=qxDgq14BPL52n/7cjhue2PT6ARIQiBfUGFJisDO/ekY=;
+ b=lkHgtiGj08Bud1xzpqU8q/+5Lm16BDjjvLUJ87hulnZzJPRpqaraxsihaEgSw/msBR0oTUi4Xv9dqoG8Ws5DvoqLr+5WjZuIeowI4lJ8wk6mcHl/WMtQwA9OWxbDJu1d4WTJBJohD7D7gCUjzIgpSI8xTLRiVIXdmz07pDdBXGFUbq9N9QAzX3qkRymmqNAg1RWSWQaAA2xpb0j5FZ/Ufs85HxMQEni0aDLMOKWMTPlVBsdI/t8Av5jjtklRVUtdOPoKMOkm2jBgVS/VEfHn45SsoeEIX2z5jnUUcqCLqVReFoO6cuRNFNQxotsZJXVVRoBXvMTPXLes5Bjdc+GOQA==
+Received: from MW4P223CA0011.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::16)
+ by PH0PR12MB5402.namprd12.prod.outlook.com (2603:10b6:510:ef::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Wed, 31 Aug
- 2022 04:19:04 +0000
-Received: from DM6NAM11FT090.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:177:cafe::7c) by DM6PR02CA0058.outlook.office365.com
- (2603:10b6:5:177::35) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 04:18:53 +0000
+Received: from CO1NAM11FT082.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:80:cafe::7f) by MW4P223CA0011.outlook.office365.com
+ (2603:10b6:303:80::16) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10 via Frontend
- Transport; Wed, 31 Aug 2022 04:19:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ Transport; Wed, 31 Aug 2022 04:18:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT090.mail.protection.outlook.com (10.13.172.184) with Microsoft SMTP
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT082.mail.protection.outlook.com (10.13.175.224) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5588.10 via Frontend Transport; Wed, 31 Aug 2022 04:19:03 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Wed, 31 Aug
- 2022 04:18:48 +0000
+ 15.20.5588.10 via Frontend Transport; Wed, 31 Aug 2022 04:18:53 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Wed, 31 Aug
+ 2022 04:18:49 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 30 Aug
- 2022 21:18:47 -0700
+ 2022 21:18:48 -0700
 Received: from sandstorm.attlocal.net (10.127.8.14) by mail.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 30 Aug 2022 21:18:46 -0700
+ Transport; Tue, 30 Aug 2022 21:18:47 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 CC:     Jens Axboe <axboe@kernel.dk>,
@@ -76,9 +76,9 @@ CC:     Jens Axboe <axboe@kernel.dk>,
         <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
         <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v2 1/7] mm: change release_pages() to use unsigned long for npages
-Date:   Tue, 30 Aug 2022 21:18:37 -0700
-Message-ID: <20220831041843.973026-2-jhubbard@nvidia.com>
+Subject: [PATCH v2 2/7] mm/gup: introduce pin_user_page()
+Date:   Tue, 30 Aug 2022 21:18:38 -0700
+Message-ID: <20220831041843.973026-3-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220831041843.973026-1-jhubbard@nvidia.com>
 References: <20220831041843.973026-1-jhubbard@nvidia.com>
@@ -88,23 +88,23 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2a88de84-39ce-421e-ac28-08da8b07f049
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4263:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33d05557-4ac9-4362-9877-08da8b07ea09
+X-MS-TrafficTypeDiagnostic: PH0PR12MB5402:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4e2dweLHYfEt2/xQ+xdU1gmcauZKRdyfVBBCaL/l5qLYw8uso0ndfAuJ7DsG5YEJjyDAwNLcdgEbsaksaANMtp+ZxbW8DrK0ApEo9sSwUzsGqtaM4YPrunSgT1EE4G/LorJ/nWCXNFG44xVMSDyYEW7nwQfW9WAsjOcFOSY8ti0XAsFzoskP+Gr8k48uizGNTKkx+IFtj1XJSewlpS3sJ23MdlwOsXX5FuaFmtqJ+iIpGkfXiIwP2BRdKcczn980YiuwCZW4Zo8NEaBzH14Ghu6qEbaV571nzN3CRzwZoRUKUesS27WYwoUzrg3iVNqWZ/5udscFyCYoXe/eTjoi64G/IGFjpNZ6nB1z5tn/J+M7JQXxILtYPZ/fBprXhJALwVbBxTH9SxF9pyW5S6s+fJBnumWhDc/g8EyAg60Ewvt2zURmmp1QAaZpM6+IC5v7Z9Dl9LFzhj38ABeN1PqhbXrJNzDcTLvz4dLp9/mQEl1vfQWWgl3CZdrRrddDA/3Pu4WgJwsgHltpgdlsCTGCPT2xWx8wO7VAzDlRj80hGtNQPujGXFi9/YzzBX6aRQZCqV2Vu3NbODkpc+BfzMZkjwI0yrV7jzan+qM35Ja7ZulxrlIYyxyuNWUiwSIexf4XJWnslXkjpz+u96KgfAQ0eMPTbGDCEZ9RRYivhki9ViAeHpIjdeSWN98Ea4unTDhTuBc2sqLb4/pNes9LSNvBMTykSTGfwAFIVJVGBcM+J8zYZNqPIMi8sYsZunaEBT3BZ9ItDTEajwAjeFQwPOg5WZI9Q2072dWawTEsPp47jOF704q8PwHbB48Asi3BqJc3
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(396003)(136003)(39860400002)(46966006)(36840700001)(40470700004)(70206006)(2616005)(336012)(47076005)(1076003)(186003)(316002)(26005)(426003)(6916009)(86362001)(36756003)(2906002)(6666004)(83380400001)(107886003)(82740400003)(356005)(40460700003)(40480700001)(36860700001)(478600001)(82310400005)(7416002)(41300700001)(8936002)(5660300002)(54906003)(81166007)(8676002)(4326008)(70586007)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: JO9AWp+3mG7wrlLkjtdgvEVEjAPRhnNI96EXlv1zVTmDhbuic6JP2Wf1V7oS4MsW8KbXrJ7Iaxcg8d392ZAKu3UwUpD/Pi/NnHZGM9Ubc66eN9MYROD6GVjMC99Naiba924lWruJc9aMEs3b+C3+WGOtI4JNwsYg5nbGJJ7zzuGguUJJM1D2YRoOtIcZbH9E7lh3d9VUO8DI9LKf1IJ/joMUPvz/tF0yqllLpTm4Yq5tGHAiLHr5O51hmb8Sa0axBL0r4p1Rj0aE74SfZbAezID3wmGbMu6clCTXWfn3tMaXRoYVSKu6UI23Uate+HKUlEW/1sM5QNOJArJvRWX2SvS8msjbHh7Pksd2PLm5YfRvoWC50L36TV/xV6rPi/aQVqSceaz501xNdwsICjyFgR1aEhdGhYn/oobTUh01tsjfy5PxBbTtH9EXa5bzfVlziIPzIrGPbdeGCAEbCvc8ycvBkT6ai+6u0WA3587xRRRujR+Em6Le4P8G+TacrvFG8odnKrW9DD5d1x5UkRlSoM/cQxJw8HR2D2VT9PRCjhc0FdSoJI0xYArQ1+TWUpMzZmXslw04gGdsOiLbV1rFFQlCZy2Ypom2EFrWhrjFiDYU4ZUUf2rb3q06nyMXm/JYcZ8TV9zCszs3ObsUXMEcl622nNFIx7YB/E6jwDwv0SK642xpGkPNkL4a0EIzosaiCt27XYp15g05AaXrGIW9vOFug6TrtS/1hSL5M69Wpe4haSbNlhoQEcImvMYwAMeQoxgkbogOuzxQmWd5Tkz+PehrjogVuuZSRoQTUGzCEu/2hHoTn9Kx8fak9S/W0pWg
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(376002)(396003)(136003)(346002)(46966006)(36840700001)(40470700004)(70206006)(86362001)(82310400005)(6666004)(478600001)(107886003)(41300700001)(81166007)(26005)(336012)(82740400003)(40460700003)(40480700001)(186003)(356005)(83380400001)(47076005)(1076003)(426003)(5660300002)(2616005)(36860700001)(4326008)(8936002)(7416002)(8676002)(54906003)(2906002)(316002)(6916009)(36756003)(70586007)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2022 04:19:03.7176
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2022 04:18:53.2625
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a88de84-39ce-421e-ac28-08da8b07f049
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33d05557-4ac9-4362-9877-08da8b07ea09
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT090.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT082.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4263
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5402
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -115,58 +115,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The various callers of release_pages() are passing in either various
-types (signed or unsigned) and lengths (int or long) of integers, for
-the second argument (number of pages). To make this conversion accurate
-and to avoid having to check for overflow (or deal with type conversion
-warnings), let's just change release_pages() to accept an unsigned long
-for the number of pages.
+pin_user_page() is an externally-usable version of try_grab_page(), but
+with semantics that match get_page(), so that it can act as a drop-in
+replacement for get_page(). Specifically, pin_user_page() has a void
+return type.
 
-Also change the name of the argument, from "nr" to "npages", for
-clarity, as long as that line is being changed anyway.
+pin_user_page() elevates a page's refcount using FOLL_PIN rules. This
+means that the caller must release the page via unpin_user_page().
 
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/mm.h | 2 +-
- mm/swap.c          | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/mm.h |  1 +
+ mm/gup.c           | 50 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 21f8b27bd9fd..61c5dc37370e 100644
+index 61c5dc37370e..c6c98d9c38ba 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1145,7 +1145,7 @@ static inline void folio_put_refs(struct folio *folio, int refs)
- 		__folio_put(folio);
+@@ -1876,6 +1876,7 @@ long pin_user_pages_remote(struct mm_struct *mm,
+ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ 			    unsigned int gup_flags, struct page **pages,
+ 			    struct vm_area_struct **vmas);
++void pin_user_page(struct page *page);
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages,
+ 		    struct vm_area_struct **vmas);
+diff --git a/mm/gup.c b/mm/gup.c
+index 5abdaf487460..2c231dca39dd 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -3213,6 +3213,56 @@ long pin_user_pages(unsigned long start, unsigned long nr_pages,
  }
+ EXPORT_SYMBOL(pin_user_pages);
  
--void release_pages(struct page **pages, int nr);
-+void release_pages(struct page **pages, unsigned long npages);
- 
- /**
-  * folios_put - Decrement the reference count on an array of folios.
-diff --git a/mm/swap.c b/mm/swap.c
-index 9cee7f6a3809..ac6482d86187 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -931,15 +931,15 @@ void lru_cache_disable(void)
-  * Decrement the reference count on all the pages in @pages.  If it
-  * fell to zero, remove the page from the LRU and free it.
-  */
--void release_pages(struct page **pages, int nr)
-+void release_pages(struct page **pages, unsigned long npages)
- {
--	int i;
-+	unsigned long i;
- 	LIST_HEAD(pages_to_free);
- 	struct lruvec *lruvec = NULL;
- 	unsigned long flags = 0;
- 	unsigned int lock_batch;
- 
--	for (i = 0; i < nr; i++) {
-+	for (i = 0; i < npages; i++) {
- 		struct folio *folio = page_folio(pages[i]);
- 
- 		/*
++/**
++ * pin_user_page() - apply a FOLL_PIN reference to a file-backed page that the
++ * caller already owns.
++ *
++ * @page: the page to be pinned.
++ *
++ * pin_user_page() elevates a page's refcount using FOLL_PIN rules. This means
++ * that the caller must release the page via unpin_user_page().
++ *
++ * pin_user_page() is intended as a drop-in replacement for get_page(). This
++ * provides a way for callers to do a subsequent unpin_user_page() on the
++ * affected page. However, it is only intended for use by callers (file systems,
++ * block/bio) that have a file-backed page. Anonymous pages are not expected nor
++ * supported, and will generate a warning.
++ *
++ * pin_user_page() may also be thought of as an externally-usable version of
++ * try_grab_page(), but with semantics that match get_page(), so that it can act
++ * as a drop-in replacement for get_page().
++ *
++ * IMPORTANT: The caller must release the page via unpin_user_page().
++ *
++ */
++void pin_user_page(struct page *page)
++{
++	struct folio *folio = page_folio(page);
++
++	WARN_ON_ONCE(folio_ref_count(folio) <= 0);
++
++	/*
++	 * This function is only intended for file-backed callers, who already
++	 * have a page reference.
++	 */
++	WARN_ON_ONCE(PageAnon(page));
++
++	/*
++	 * Similar to try_grab_page(): be sure to *also*
++	 * increment the normal page refcount field at least once,
++	 * so that the page really is pinned.
++	 */
++	if (folio_test_large(folio)) {
++		folio_ref_add(folio, 1);
++		atomic_add(1, folio_pincount_ptr(folio));
++	} else {
++		folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
++	}
++
++	node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, 1);
++}
++EXPORT_SYMBOL(pin_user_page);
++
+ /*
+  * pin_user_pages_unlocked() is the FOLL_PIN variant of
+  * get_user_pages_unlocked(). Behavior is the same, except that this one sets
 -- 
 2.37.2
 
