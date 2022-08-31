@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 671F75A7BCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 12:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AF05A7BD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 12:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbiHaK6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 06:58:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58288 "EHLO
+        id S231145AbiHaK7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 06:59:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbiHaK6s (ORCPT
+        with ESMTP id S229658AbiHaK7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 06:58:48 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1693CAC8D;
-        Wed, 31 Aug 2022 03:58:46 -0700 (PDT)
+        Wed, 31 Aug 2022 06:59:15 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E44D6CC306;
+        Wed, 31 Aug 2022 03:59:14 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 89F7E221B9;
-        Wed, 31 Aug 2022 10:58:45 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8B368221B9;
+        Wed, 31 Aug 2022 10:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1661943525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1661943553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=HxNI+0U0e7Zv/ZQHFt2fp30OwTNw2GytjeLFyfJkdIU=;
-        b=1Rkdwb83KNKvKUChKM30xnpI9fdc070PjGzSDpFKJ9pFkPivo3n7huQ5Y/108sFshlV/X6
-        zFQjUao1mx5Qt3nEwSLNw0PDPgLJ5OR8RlVkGyMOYxBCGErOztR/lcxLLJbzroBtOHQY2o
-        lrUNBRNdwYPfqFM+YuvV4im5BBN3Fao=
+        bh=7pCrX4rJAh3LXCsMBtJxFA5ygrq1v/RFZEm6VruL38A=;
+        b=L9Mc6XUca7WIz22tD7HN+8QnY5trbdMz7pnoo1qimh9zHXmhLdpVrS+1d+15xDppkIm/jg
+        HZKW8bB7dZPhMT9IM4JtbWEh1mD1HTkg6P4n1wOHU//s1vZs0lsuMHnyT4T4iGTxO/YDhi
+        xAbsrka5InTA++kdfvn58sF5exaiSZQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1661943525;
+        s=susede2_ed25519; t=1661943553;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=HxNI+0U0e7Zv/ZQHFt2fp30OwTNw2GytjeLFyfJkdIU=;
-        b=V7Ur8DkjErbMDQRtHW0w61RoZg4YjQhUNRZuOOsXbxACyBWNaFnCBi4IchRNFWWSX1ZoZf
-        9yj5numh7SEw5EAA==
+        bh=7pCrX4rJAh3LXCsMBtJxFA5ygrq1v/RFZEm6VruL38A=;
+        b=6/tElmIZdAo0spE3ELqBpkQVsZu8tISnju6SykXxSP1E3X8SFlxwnXcITV1hVxWZEnL+7l
+        Nq97MlTgY1UVYcBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7640313A7C;
-        Wed, 31 Aug 2022 10:58:45 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 77A1A13A7C;
+        Wed, 31 Aug 2022 10:59:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 64nUHOU+D2O5cAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 31 Aug 2022 10:58:45 +0000
+        id 8iUvHQE/D2PpcAAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 31 Aug 2022 10:59:13 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0F038A067B; Wed, 31 Aug 2022 12:58:45 +0200 (CEST)
-Date:   Wed, 31 Aug 2022 12:58:45 +0200
+        id 141A0A067B; Wed, 31 Aug 2022 12:59:13 +0200 (CEST)
+Date:   Wed, 31 Aug 2022 12:59:13 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Zhang Yi <yi.zhang@huawei.com>
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -61,30 +61,30 @@ Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         almaz.alexandrovich@paragon-software.com, mark@fasheh.com,
         dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com,
         yukuai3@huawei.com
-Subject: Re: [PATCH 06/14] jbd2: replace ll_rw_block()
-Message-ID: <20220831105845.mwfkh2prb557ajyr@quack3>
+Subject: Re: [PATCH 07/14] ntfs3: replace ll_rw_block()
+Message-ID: <20220831105913.ges3eatp5buz3bkh@quack3>
 References: <20220831072111.3569680-1-yi.zhang@huawei.com>
- <20220831072111.3569680-7-yi.zhang@huawei.com>
+ <20220831072111.3569680-8-yi.zhang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220831072111.3569680-7-yi.zhang@huawei.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220831072111.3569680-8-yi.zhang@huawei.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 31-08-22 15:21:03, Zhang Yi wrote:
+On Wed 31-08-22 15:21:04, Zhang Yi wrote:
 > ll_rw_block() is not safe for the sync read path because it cannot
 > guarantee that submitting read IO if the buffer has been locked. We
 > could get false positive EIO after wait_on_buffer() if the buffer has
 > been locked by others. So stop using ll_rw_block() in
-> journal_get_superblock(). We also switch to new bh_readahead_batch()
-> for the buffer array readahead path.
+> ntfs_get_block_vbo().
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
@@ -95,81 +95,28 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/jbd2/journal.c  |  7 +++----
->  fs/jbd2/recovery.c | 16 ++++++++++------
->  2 files changed, 13 insertions(+), 10 deletions(-)
+>  fs/ntfs3/inode.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 6350d3857c89..5a903aae6aad 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1893,15 +1893,14 @@ static int journal_get_superblock(journal_t *journal)
->  {
->  	struct buffer_head *bh;
->  	journal_superblock_t *sb;
-> -	int err = -EIO;
-> +	int err;
->  
->  	bh = journal->j_sb_buffer;
->  
->  	J_ASSERT(bh != NULL);
->  	if (!buffer_uptodate(bh)) {
-> -		ll_rw_block(REQ_OP_READ, 1, &bh);
-> -		wait_on_buffer(bh);
-> -		if (!buffer_uptodate(bh)) {
-> +		err = bh_read(bh, 0);
-> +		if (err) {
->  			printk(KERN_ERR
->  				"JBD2: IO error reading journal superblock\n");
->  			goto out;
-> diff --git a/fs/jbd2/recovery.c b/fs/jbd2/recovery.c
-> index f548479615c6..ee56a30b71cf 100644
-> --- a/fs/jbd2/recovery.c
-> +++ b/fs/jbd2/recovery.c
-> @@ -100,7 +100,7 @@ static int do_readahead(journal_t *journal, unsigned int start)
->  		if (!buffer_uptodate(bh) && !buffer_locked(bh)) {
->  			bufs[nbufs++] = bh;
->  			if (nbufs == MAXBUF) {
-> -				ll_rw_block(REQ_OP_READ, nbufs, bufs);
-> +				bh_readahead_batch(bufs, nbufs, 0);
->  				journal_brelse_array(bufs, nbufs);
->  				nbufs = 0;
->  			}
-> @@ -109,7 +109,7 @@ static int do_readahead(journal_t *journal, unsigned int start)
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index 51363d4e8636..bbe7d4ea1750 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -630,12 +630,9 @@ static noinline int ntfs_get_block_vbo(struct inode *inode, u64 vbo,
+>  			bh->b_size = block_size;
+>  			off = vbo & (PAGE_SIZE - 1);
+>  			set_bh_page(bh, page, off);
+> -			ll_rw_block(REQ_OP_READ, 1, &bh);
+> -			wait_on_buffer(bh);
+> -			if (!buffer_uptodate(bh)) {
+> -				err = -EIO;
+> +			err = bh_read(bh, 0);
+> +			if (err)
+>  				goto out;
+> -			}
+>  			zero_user_segment(page, off + voff, off + block_size);
+>  		}
 >  	}
->  
->  	if (nbufs)
-> -		ll_rw_block(REQ_OP_READ, nbufs, bufs);
-> +		bh_readahead_batch(bufs, nbufs, 0);
->  	err = 0;
->  
->  failed:
-> @@ -152,9 +152,14 @@ static int jread(struct buffer_head **bhp, journal_t *journal,
->  		return -ENOMEM;
->  
->  	if (!buffer_uptodate(bh)) {
-> -		/* If this is a brand new buffer, start readahead.
-> -                   Otherwise, we assume we are already reading it.  */
-> -		if (!buffer_req(bh))
-> +		/*
-> +		 * If this is a brand new buffer, start readahead.
-> +		 * Otherwise, we assume we are already reading it.
-> +		 */
-> +		bool need_readahead = !buffer_req(bh);
-> +
-> +		bh_read_nowait(bh, 0);
-> +		if (need_readahead)
->  			do_readahead(journal, offset);
->  		wait_on_buffer(bh);
->  	}
-> @@ -687,7 +692,6 @@ static int do_one_pass(journal_t *journal,
->  					mark_buffer_dirty(nbh);
->  					BUFFER_TRACE(nbh, "marking uptodate");
->  					++info->nr_replays;
-> -					/* ll_rw_block(WRITE, 1, &nbh); */
->  					unlock_buffer(nbh);
->  					brelse(obh);
->  					brelse(nbh);
 > -- 
 > 2.31.1
 > 
