@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA835A74D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 06:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F235A74D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 06:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbiHaETN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 00:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41612 "EHLO
+        id S230175AbiHaETQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 00:19:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231300AbiHaES4 (ORCPT
+        with ESMTP id S231620AbiHaES6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 00:18:56 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2877EAB40F;
-        Tue, 30 Aug 2022 21:18:55 -0700 (PDT)
+        Wed, 31 Aug 2022 00:18:58 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20406AB1A1;
+        Tue, 30 Aug 2022 21:18:57 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C2bVPqSWletShz42MXF3jiunLlg2Z/23IhC6QM1o5Va/Nczd37j7IFYyNHZd1Iaz+Eyn9Rz9prWuSTYPhcr70g6UyaJJYZZMaAjwkUhrkC8ewnIZ6sjQZcCEZt12SoM6XizV4yb69gTZKfkFg8Z+rzwnfsrKba+VWXZOn90hP75SELr852MMaSy9VNCatvlgUGpmNpS8G6mo2MzZbQkodbUjYUQlVZmowtafjGZgRtOIdgeR12f3sDX/kM/e3+yUh2dKCdtVhEVw21C7o7bKiUQhA7z1Turmspa7TQ45KNjx9JiCZkl1MU4JBYQKerMp8b1C3S5ikJ/eCX3WDOgQzQ==
+ b=J+j+d3FvY66F0aMEl7B+PQ5BZOul1SJb8BLmRimlYmHt8CmZ0y16zxS0FWAEFUSqoF56bRAeVgVdXmbi6YUQD0kwrrtC774h2IHfhFmuzG+Mpz93q81eX6GrPpino4qSXI+FlyXElKuFabxngqjacZpWYBToEHs6yXApwhe9XQEj06v+wP8tB8haglyxiKri7d3AzZDNQYBBqUvmsJNOylPdp6i9e84nBk/ClkZpdAhoKPpihjNg6+IhO95CZAykoyYMl7AbU77hvjxAH9Mswj63m453JzgZmSVfA0m9HU6MRpys2/HyFBSsZX6lPiRJ8XM14eidbTBb74lPChEuZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zBugDiWZB7x/F4ljUpJEaRgWrMgNVOp/VewbCcAd91I=;
- b=M+WszXdZU/KqCUCHcqGkjAPPXst88H2o0uaCYDJ1IDkCCRE+cejzHXy28iK/o0Umq3BUtlHQCbjkyWoPswmCTNk0NR2jciKq6hOEUhgOHEXFPvECIjWcjjvsImZv7N8wTqG9yhTHuIGzYWXPkX17lqpERmkNY9SpChTQqws1aGgkE58DDbz/Vb8I/Yzta47HJtz4NThL9t6OJd9d7is5vepchz/2+lgSbftf5j01iCTqaNPIZ2K5dgpYn38L7iloeB5GS//mk8q4saTb8S3piBIG/DFZS+anpFZwkTty404rZ/jykrAAMiVdjRfzAP/CBTzKU3ItNNJqj+7bIp2AbQ==
+ bh=gfeJQm0LK+R1tjTZehVFwsPGW1k7GJS7dUu3qTkFBT0=;
+ b=Xt5Dz4oHReAJ+fOFynd15laRtaWyFre2FxCC/ZhmpCWYgXJeZUaXMxgwp7A/pc2isdzbpeJMPThBJstUxz0YxMWL5Js4WjsmyWiH8LWCH54cNSfaRGLC7bcMW02SjQ8sU9aXapn5sWBhgWq7c3DSm07Lx0z7jo89HtaP5paif/ZdD4yojtLv7c8IkQvS5KrXa6nOREJH199JBBDPV4ELQO+sQy3utMEJ84necT53NLF+1NNIALggO4bRDZI5OyYOY4LiNWJB1yDl5ww0/yd0ZLb/IArloWKlvQBb9ZW8mQBJ47wsyA4LlLuUGzzbBFq1mIJYeY2opGquGrQa1F4Vww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zBugDiWZB7x/F4ljUpJEaRgWrMgNVOp/VewbCcAd91I=;
- b=kiMv7OT6sa48i3zWVQLYJZfNYbgJKH+zwo41k7D0FAXCKQIgPOTaozLGyxF5FwtvGe21oYmoNReC3FE0kFIIH/QJp+QF6xU1Gd4SCfPYT6O8UirueYQMJSjv0DepIgsUItos6ZQ5glWBvL6JKisrlvwXitDLu+1fmVIW9DVXrAt6UrEgnuSLD2jQq+U3Yg01cGnheaN1EfcL+tatvItqobWS0fHiLdJA3qT33AA0ZS70i/QHS2LT43xGSAIsFxfzPwIbHHzfjCKH4OZSIKuTcQUn4AMrTK6R7vZS6GyubXxX2muQvFhN9kC3CDOpwLMqjhkxMiCxBd68ca2VlHWjRQ==
-Received: from MW4PR03CA0141.namprd03.prod.outlook.com (2603:10b6:303:8c::26)
- by DM8PR12MB5416.namprd12.prod.outlook.com (2603:10b6:8:28::18) with
+ bh=gfeJQm0LK+R1tjTZehVFwsPGW1k7GJS7dUu3qTkFBT0=;
+ b=sMviMMM5Pfy6gaKGkXpH6Ov7jbKbP5kJdCn5JCyOyPJye0sJfOneZbGBA5GPr0y2RtuXrZlkeRZ0Eb4kpVKHh6U+prAC1xfGgoLQAtmGokzu6XcgBCb0vg34ShDWGyymhsi1tmv89v+cb3UmxaF5TnfBwbiH06OcHZMi7i7E6DyAiNma0vDfTg+hh/SMlRzZuXe5Qse7cGmiejEGSd2JQsuxzmJ3ds65vV3Z+sbD3uVw8X2n+tGTwwzrDezC2c60pH51zFGyuPGFrMDc71nYscO0rK7I+0Wy2XKvmLNWW5drDrdklY7L/twgVj4+V8xOpON7JOjUicTH5JOZ26rODg==
+Received: from MW4PR03CA0156.namprd03.prod.outlook.com (2603:10b6:303:8d::11)
+ by PH7PR12MB7018.namprd12.prod.outlook.com (2603:10b6:510:1b8::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Wed, 31 Aug
- 2022 04:18:53 +0000
-Received: from CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8c:cafe::a5) by MW4PR03CA0141.outlook.office365.com
- (2603:10b6:303:8c::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.16; Wed, 31 Aug
+ 2022 04:18:54 +0000
+Received: from CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8d:cafe::fa) by MW4PR03CA0156.outlook.office365.com
+ (2603:10b6:303:8d::11) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10 via Frontend
- Transport; Wed, 31 Aug 2022 04:18:52 +0000
+ Transport; Wed, 31 Aug 2022 04:18:54 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,19 +48,19 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  12.22.5.238 as permitted sender) receiver=protection.outlook.com;
  client-ip=12.22.5.238; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT003.mail.protection.outlook.com (10.13.175.93) with Microsoft SMTP
+ CO1NAM11FT024.mail.protection.outlook.com (10.13.174.162) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5588.10 via Frontend Transport; Wed, 31 Aug 2022 04:18:52 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL105.nvidia.com
+ 15.20.5588.10 via Frontend Transport; Wed, 31 Aug 2022 04:18:54 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL105.nvidia.com
  (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Wed, 31 Aug
- 2022 04:18:52 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 04:18:53 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 30 Aug
- 2022 21:18:51 -0700
+ 2022 21:18:52 -0700
 Received: from sandstorm.attlocal.net (10.127.8.14) by mail.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Tue, 30 Aug 2022 21:18:50 -0700
+ Transport; Tue, 30 Aug 2022 21:18:51 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 CC:     Jens Axboe <axboe@kernel.dk>,
@@ -76,9 +76,9 @@ CC:     Jens Axboe <axboe@kernel.dk>,
         <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
         <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
-Date:   Tue, 30 Aug 2022 21:18:40 -0700
-Message-ID: <20220831041843.973026-5-jhubbard@nvidia.com>
+Subject: [PATCH v2 5/7] block, bio, fs: convert most filesystems to pin_user_pages_fast()
+Date:   Tue, 30 Aug 2022 21:18:41 -0700
+Message-ID: <20220831041843.973026-6-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220831041843.973026-1-jhubbard@nvidia.com>
 References: <20220831041843.973026-1-jhubbard@nvidia.com>
@@ -88,23 +88,23 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f7e8e07b-7016-4b6f-1204-08da8b07e9af
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5416:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72f01052-aa3f-4585-c39a-08da8b07ea83
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7018:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gQ9eRZ8247NBf6rCDxetAkOxqaO7Ik6fWFvdkRQGZUr7MIIHeGgLahmBmHn1rYQyjCMyxETprh3C/Hccx1FmonNOfcwvZjb+8V8qtwvUsHc7uldq2VRNRrkMW4IqMFtMKvth4peQQ1Ezr2ht8s7I1cHBYocmNj0G6jgUpoM+Cbif/tdh+iKdb6GvGywi1RisEGOU22QZA5eKI4FZLjOPT1BDNs1c47veyL46i02iomjRJ9VDFDZ0OkQaY0jPDUiJUu1BByHVqVfICAhtLyGGRgHJtDo9H+BTso9ffE7mJ+SHVlI4SvrrJ+zbg4PAdpyibEc0G4TZZCpqLhRY+pTcIqSGYMD6xGBksac/yPsBHtx0tECPKq2WNE7WBJFqSxcY0A4G5j6Qt0dUEstcGLpMBD7rz9gjHz5Qwv/krDveyeXx8+ksS5R3ZlfzqOi8796pcF4qhHru2zAfnDbaazGTA00riPoHZ2HCf9qCdKcFCVuLnElFVerNoqMXmD9DAbNwTDeL6GduIdolumiQsJVVdTF2ypw+djWNIMqdLyEuMFTnXY9qSzx17mUuXESpJd8dqaTtsq+diA2FWNVLHkHEh2seUgtFCZrcIUtLkZFZxgsq2LcrjEy97MnCTfGVREmGAHGVMz5pJtZI0UvNh5ZZA8Ab0CIC2a9s/G+7vS2UvkAXhPbRPSoh7Asj6jvJJZfM27+7C0+0rmmBJLahridfppF/JBGOYmfVxGFIG2OUGqWD154ysShE6ckG82Q2yDWrLy1KQ1aIxDrCwj1qi+WrBaVQHsuLITexx/hARbjs9vBK97qx8lxtT8DdJS+2QKIj
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(136003)(376002)(396003)(46966006)(40470700004)(36840700001)(86362001)(36756003)(82740400003)(41300700001)(36860700001)(107886003)(426003)(1076003)(47076005)(26005)(336012)(2616005)(6666004)(186003)(6916009)(54906003)(40480700001)(82310400005)(70586007)(4326008)(83380400001)(8676002)(316002)(478600001)(7416002)(81166007)(70206006)(40460700003)(356005)(2906002)(8936002)(5660300002)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 97zKzFb3Z81LCu3QlMr48Z3zpnlwu6BdgKnKqlo0vY396kq7/YCWh29s9mdSkjgzksQ5g3FLqToxsMHyphHDQh3Q3hvnd0QJqT9Yh47w00r0KnejIJ62OF5EtmK0sDvRUtJGdsxK6iwJfqYHfsZjx7qAfQszauRbmwONF2fpV/jCI59Lw0RbdBvMsdS01/h7LDhuPqfbKR5c4qe+FMJ1OwGFp9syvlji6oCfunqxR97SPvCEJbB+pZ2EojwD2o8aT+FEb4f7cwOsImoknT9sk8Fj0HR86oVfMFB9+pct5z2Ef9KUX684POMOmPbVN9SDNFBk7A56RhLvt8/SvVCqdIFa+X5PkJoWpWlU2t7pgksmFlh5eoypdrN3zvHyarHLM94iPguz68+QklVyXKJOWxTyiik0us28PCq/FbWyRNuKokYyNSgXdnH5zPK89qjrG/r/tK9ZzQUdQhshbTeuw+PKpTd/yJcyU1+/FeVPCFUg0VE9+4JLWXhdND9o2RjOnzsQ483JOmkIIfAHgFSXzmEJpGGIc/XPd8k1SfX6xfLk1qbVML41f5eQvsrZ4aOSF3yzp3RGxapkEViNp+5iUi7n2rKT/RTd9vUXScoYI5CEwV1UX2YOQL1h69FTZq9GEJaBhOaHmV8POOQOEfDONw2Kd7MlI4kfco39vLlqFbFiPn8JEdcIeDkCQxIal0Dm1Oxvw8CdM6sOGwPfz50pYJHY5dnJPLvZx/TSB4ij4mH+S1wtcjlw2eC+D5JtTnWSS9Nza91uhOQ1v4OWsUW+QyBeaYt+FpvoIBmfHMntkmQ=
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(346002)(396003)(39860400002)(40470700004)(36840700001)(46966006)(8936002)(4326008)(6666004)(7416002)(2616005)(36756003)(82740400003)(356005)(70586007)(40460700003)(30864003)(26005)(5660300002)(82310400005)(40480700001)(8676002)(86362001)(2906002)(107886003)(47076005)(186003)(426003)(336012)(81166007)(1076003)(83380400001)(54906003)(36860700001)(70206006)(316002)(6916009)(41300700001)(478600001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2022 04:18:52.6693
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2022 04:18:54.0632
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7e8e07b-7016-4b6f-1204-08da8b07e9af
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72f01052-aa3f-4585-c39a-08da8b07ea83
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5416
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7018
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -115,181 +115,313 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide two new wrapper routines that are intended for user space pages
-only:
+Use dio_w_*() wrapper calls, in place of get_user_pages_fast(),
+get_page() and put_page().
 
-    iov_iter_pin_pages()
-    iov_iter_pin_pages_alloc()
-
-Internally, these routines call pin_user_pages_fast(), instead of
-get_user_pages_fast(), for user_backed_iter(i) and iov_iter_bvec(i)
-cases.
-
-As always, callers must use unpin_user_pages() or a suitable FOLL_PIN
-variant, to release the pages, if they actually were acquired via
-pin_user_pages_fast().
-
-This is a prerequisite to converting bio/block layers over to use
-pin_user_pages_fast().
+This converts the Direct IO parts of most filesystems over to using
+FOLL_PIN (pin_user_page*()) page pinning.
 
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/uio.h |  4 +++
- lib/iov_iter.c      | 86 +++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 84 insertions(+), 6 deletions(-)
+ block/bio.c          | 27 ++++++++++++++-------------
+ block/blk-map.c      |  7 ++++---
+ fs/direct-io.c       | 40 ++++++++++++++++++++--------------------
+ fs/iomap/direct-io.c |  2 +-
+ 4 files changed, 39 insertions(+), 37 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 5896af36199c..e26908e443d1 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -251,6 +251,10 @@ ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
- 			size_t maxsize, unsigned maxpages, size_t *start);
- ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
- 			size_t maxsize, size_t *start);
-+ssize_t iov_iter_pin_pages(struct iov_iter *i, struct page **pages,
-+			size_t maxsize, unsigned int maxpages, size_t *start);
-+ssize_t iov_iter_pin_pages_alloc(struct iov_iter *i, struct page ***pages,
-+			size_t maxsize, size_t *start);
- int iov_iter_npages(const struct iov_iter *i, int maxpages);
- void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state);
+diff --git a/block/bio.c b/block/bio.c
+index 3d3a2678fea2..6c6110f7054e 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1125,7 +1125,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
+ 	bio_for_each_segment_all(bvec, bio, iter_all) {
+ 		if (mark_dirty && !PageCompound(bvec->bv_page))
+ 			set_page_dirty_lock(bvec->bv_page);
+-		put_page(bvec->bv_page);
++		dio_w_unpin_user_page(bvec->bv_page);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(__bio_release_pages);
+@@ -1162,7 +1162,7 @@ static int bio_iov_add_page(struct bio *bio, struct page *page,
+ 	}
  
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 4b7fce72e3e5..c63ce0eadfcb 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1425,9 +1425,31 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
- 	return page;
+ 	if (same_page)
+-		put_page(page);
++		dio_w_unpin_user_page(page);
+ 	return 0;
  }
  
-+enum pages_alloc_internal_flags {
-+	USE_FOLL_GET,
-+	MAYBE_USE_FOLL_PIN
-+};
-+
-+/*
-+ * Pins pages, either via get_page(), or via pin_user_page*(). The caller is
-+ * responsible for tracking which pinning mechanism was used here, and releasing
-+ * pages via the appropriate call: put_page() or unpin_user_page().
-+ *
-+ * The way to figure that out is:
-+ *
-+ *     a) If how_to_pin == FOLL_GET, then this routine will always pin via
-+ *        get_page().
-+ *
-+ *     b) If how_to_pin == MAYBE_USE_FOLL_PIN, then this routine will pin via
-+ *          pin_user_page*() for either user_backed_iter(i) cases, or
-+ *          iov_iter_is_bvec(i) cases. However, for the other cases (pipe,
-+ *          xarray), pages will be pinned via get_page().
-+ */
- static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
--		   unsigned int maxpages, size_t *start)
-+		   unsigned int maxpages, size_t *start,
-+		   enum pages_alloc_internal_flags how_to_pin)
-+
- {
- 	unsigned int n;
+@@ -1176,7 +1176,7 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+ 			queue_max_zone_append_sectors(q), &same_page) != len)
+ 		return -EINVAL;
+ 	if (same_page)
+-		put_page(page);
++		dio_w_unpin_user_page(page);
+ 	return 0;
+ }
  
-@@ -1454,7 +1476,12 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		n = want_pages_array(pages, maxsize, *start, maxpages);
- 		if (!n)
- 			return -ENOMEM;
--		res = get_user_pages_fast(addr, n, gup_flags, *pages);
-+
-+		if (how_to_pin == MAYBE_USE_FOLL_PIN)
-+			res = pin_user_pages_fast(addr, n, gup_flags, *pages);
-+		else
-+			res = get_user_pages_fast(addr, n, gup_flags, *pages);
-+
- 		if (unlikely(res <= 0))
- 			return res;
- 		maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - *start);
-@@ -1470,8 +1497,13 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		if (!n)
- 			return -ENOMEM;
- 		p = *pages;
--		for (int k = 0; k < n; k++)
--			get_page(p[k] = page + k);
-+		for (int k = 0; k < n; k++) {
-+			p[k] = page + k;
-+			if (how_to_pin == MAYBE_USE_FOLL_PIN)
-+				pin_user_page(p[k]);
-+			else
-+				get_page(p[k]);
-+		}
- 		maxsize = min_t(size_t, maxsize, n * PAGE_SIZE - *start);
- 		i->count -= maxsize;
- 		i->iov_offset += maxsize;
-@@ -1497,10 +1529,29 @@ ssize_t iov_iter_get_pages2(struct iov_iter *i,
+@@ -1187,10 +1187,10 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+  * @bio: bio to add pages to
+  * @iter: iov iterator describing the region to be mapped
+  *
+- * Pins pages from *iter and appends them to @bio's bvec array. The
+- * pages will have to be released using put_page() when done.
+- * For multi-segment *iter, this function only adds pages from the
+- * next non-empty segment of the iov iterator.
++ * Pins pages from *iter and appends them to @bio's bvec array. The pages will
++ * have to be released using dio_w_unpin_user_page when done. For multi-segment
++ * *iter, this function only adds pages from the next non-empty segment of the
++ * iov iterator.
+  */
+ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
+@@ -1218,8 +1218,9 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	 * result to ensure the bio's total size is correct. The remainder of
+ 	 * the iov data will be picked up in the next bio iteration.
+ 	 */
+-	size = iov_iter_get_pages2(iter, pages, UINT_MAX - bio->bi_iter.bi_size,
+-				  nr_pages, &offset);
++	size = dio_w_iov_iter_pin_pages(iter, pages,
++					UINT_MAX - bio->bi_iter.bi_size,
++					nr_pages, &offset);
+ 	if (unlikely(size <= 0))
+ 		return size ? size : -EFAULT;
+ 
+@@ -1252,7 +1253,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	iov_iter_revert(iter, left);
+ out:
+ 	while (i < nr_pages)
+-		put_page(pages[i++]);
++		dio_w_unpin_user_page(pages[i++]);
+ 
+ 	return ret;
+ }
+@@ -1444,9 +1445,9 @@ void bio_set_pages_dirty(struct bio *bio)
+  * have been written out during the direct-IO read.  So we take another ref on
+  * the BIO and re-dirty the pages in process context.
+  *
+- * It is expected that bio_check_pages_dirty() will wholly own the BIO from
+- * here on.  It will run one put_page() against each page and will run one
+- * bio_put() against the BIO.
++ * It is expected that bio_check_pages_dirty() will wholly own the BIO from here
++ * on.  It will run one dio_w_unpin_user_page() against each page and will run
++ * one bio_put() against the BIO.
+  */
+ 
+ static void bio_dirty_fn(struct work_struct *work);
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 7196a6b64c80..4e333ad9776d 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -254,7 +254,8 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 		size_t offs, added = 0;
+ 		int npages;
+ 
+-		bytes = iov_iter_get_pages_alloc2(iter, &pages, LONG_MAX, &offs);
++		bytes = dio_w_iov_iter_pin_pages_alloc(iter, &pages, LONG_MAX,
++						       &offs);
+ 		if (unlikely(bytes <= 0)) {
+ 			ret = bytes ? bytes : -EFAULT;
+ 			goto out_unmap;
+@@ -276,7 +277,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
+ 						     max_sectors, &same_page)) {
+ 					if (same_page)
+-						put_page(page);
++						dio_w_unpin_user_page(page);
+ 					break;
+ 				}
+ 
+@@ -289,7 +290,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 		 * release the pages we didn't map into the bio, if any
+ 		 */
+ 		while (j < npages)
+-			put_page(pages[j++]);
++			dio_w_unpin_user_page(pages[j++]);
+ 		kvfree(pages);
+ 		/* couldn't stuff something into bio? */
+ 		if (bytes) {
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index f669163d5860..05c044c55374 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -169,8 +169,8 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 	const enum req_op dio_op = dio->opf & REQ_OP_MASK;
+ 	ssize_t ret;
+ 
+-	ret = iov_iter_get_pages2(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
+-				&sdio->from);
++	ret = dio_w_iov_iter_pin_pages(sdio->iter, dio->pages, LONG_MAX,
++				       DIO_PAGES, &sdio->from);
+ 
+ 	if (ret < 0 && sdio->blocks_available && dio_op == REQ_OP_WRITE) {
+ 		struct page *page = ZERO_PAGE(0);
+@@ -181,7 +181,7 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 		 */
+ 		if (dio->page_errors == 0)
+ 			dio->page_errors = ret;
+-		get_page(page);
++		dio_w_pin_user_page(page);
+ 		dio->pages[0] = page;
+ 		sdio->head = 0;
+ 		sdio->tail = 1;
+@@ -197,7 +197,7 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 		sdio->to = ((ret - 1) & (PAGE_SIZE - 1)) + 1;
  		return 0;
- 	BUG_ON(!pages);
- 
--	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start);
-+	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start,
-+					  USE_FOLL_GET);
+ 	}
+-	return ret;	
++	return ret;
  }
- EXPORT_SYMBOL(iov_iter_get_pages2);
  
-+/*
-+ * A FOLL_PIN variant that calls pin_user_pages_fast() instead of
-+ * get_user_pages_fast().
-+ */
-+ssize_t iov_iter_pin_pages(struct iov_iter *i,
-+		   struct page **pages, size_t maxsize, unsigned int maxpages,
-+		   size_t *start)
-+{
-+	if (!maxpages)
-+		return 0;
-+	if (WARN_ON_ONCE(!pages))
-+		return -EINVAL;
-+
-+	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start,
-+					  MAYBE_USE_FOLL_PIN);
-+}
-+EXPORT_SYMBOL(iov_iter_pin_pages);
-+
- ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
- 		   size_t *start)
-@@ -1509,7 +1560,8 @@ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
+ /*
+@@ -324,7 +324,7 @@ static void dio_aio_complete_work(struct work_struct *work)
+ static blk_status_t dio_bio_complete(struct dio *dio, struct bio *bio);
  
- 	*pages = NULL;
- 
--	len = __iov_iter_get_pages_alloc(i, pages, maxsize, ~0U, start);
-+	len = __iov_iter_get_pages_alloc(i, pages, maxsize, ~0U, start,
-+					 USE_FOLL_GET);
- 	if (len <= 0) {
- 		kvfree(*pages);
- 		*pages = NULL;
-@@ -1518,6 +1570,28 @@ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
- }
- EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
- 
-+/*
-+ * A FOLL_PIN variant that calls pin_user_pages_fast() instead of
-+ * get_user_pages_fast().
-+ */
-+ssize_t iov_iter_pin_pages_alloc(struct iov_iter *i,
-+		   struct page ***pages, size_t maxsize,
-+		   size_t *start)
-+{
-+	ssize_t len;
-+
-+	*pages = NULL;
-+
-+	len = __iov_iter_get_pages_alloc(i, pages, maxsize, ~0U, start,
-+					 MAYBE_USE_FOLL_PIN);
-+	if (len <= 0) {
-+		kvfree(*pages);
-+		*pages = NULL;
-+	}
-+	return len;
-+}
-+EXPORT_SYMBOL(iov_iter_pin_pages_alloc);
-+
- size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
- 			       struct iov_iter *i)
+ /*
+- * Asynchronous IO callback. 
++ * Asynchronous IO callback.
+  */
+ static void dio_bio_end_aio(struct bio *bio)
  {
+@@ -449,7 +449,7 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+ static inline void dio_cleanup(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	while (sdio->head < sdio->tail)
+-		put_page(dio->pages[sdio->head++]);
++		dio_w_unpin_user_page(dio->pages[sdio->head++]);
+ }
+ 
+ /*
+@@ -716,7 +716,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
+ 		 */
+ 		if ((sdio->cur_page_len + sdio->cur_page_offset) == PAGE_SIZE)
+ 			sdio->pages_in_io--;
+-		get_page(sdio->cur_page);
++		dio_w_pin_user_page(sdio->cur_page);
+ 		sdio->final_block_in_bio = sdio->cur_page_block +
+ 			(sdio->cur_page_len >> sdio->blkbits);
+ 		ret = 0;
+@@ -725,7 +725,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
+ 	}
+ 	return ret;
+ }
+-		
++
+ /*
+  * Put cur_page under IO.  The section of cur_page which is described by
+  * cur_page_offset,cur_page_len is put into a BIO.  The section of cur_page
+@@ -787,7 +787,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+  * An autonomous function to put a chunk of a page under deferred IO.
+  *
+  * The caller doesn't actually know (or care) whether this piece of page is in
+- * a BIO, or is under IO or whatever.  We just take care of all possible 
++ * a BIO, or is under IO or whatever.  We just take care of all possible
+  * situations here.  The separation between the logic of do_direct_IO() and
+  * that of submit_page_section() is important for clarity.  Please don't break.
+  *
+@@ -832,13 +832,13 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 	 */
+ 	if (sdio->cur_page) {
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+-		put_page(sdio->cur_page);
++		dio_w_unpin_user_page(sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+-	get_page(page);		/* It is in dio */
++	dio_w_pin_user_page(page); /* It is in dio */
+ 	sdio->cur_page = page;
+ 	sdio->cur_page_offset = offset;
+ 	sdio->cur_page_len = len;
+@@ -853,7 +853,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+ 		if (sdio->bio)
+ 			dio_bio_submit(dio, sdio);
+-		put_page(sdio->cur_page);
++		dio_w_unpin_user_page(sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 	}
+ 	return ret;
+@@ -890,7 +890,7 @@ static inline void dio_zero_block(struct dio *dio, struct dio_submit *sdio,
+ 	 * We need to zero out part of an fs block.  It is either at the
+ 	 * beginning or the end of the fs block.
+ 	 */
+-	if (end) 
++	if (end)
+ 		this_chunk_blocks = dio_blocks_per_fs_block - this_chunk_blocks;
+ 
+ 	this_chunk_bytes = this_chunk_blocks << sdio->blkbits;
+@@ -954,7 +954,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				ret = get_more_blocks(dio, sdio, map_bh);
+ 				if (ret) {
+-					put_page(page);
++					dio_w_unpin_user_page(page);
+ 					goto out;
+ 				}
+ 				if (!buffer_mapped(map_bh))
+@@ -999,7 +999,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				/* AKPM: eargh, -ENOTBLK is a hack */
+ 				if (dio_op == REQ_OP_WRITE) {
+-					put_page(page);
++					dio_w_unpin_user_page(page);
+ 					return -ENOTBLK;
+ 				}
+ 
+@@ -1012,7 +1012,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 				if (sdio->block_in_file >=
+ 						i_size_aligned >> blkbits) {
+ 					/* We hit eof */
+-					put_page(page);
++					dio_w_unpin_user_page(page);
+ 					goto out;
+ 				}
+ 				zero_user(page, from, 1 << blkbits);
+@@ -1052,7 +1052,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 						  sdio->next_block_for_io,
+ 						  map_bh);
+ 			if (ret) {
+-				put_page(page);
++				dio_w_unpin_user_page(page);
+ 				goto out;
+ 			}
+ 			sdio->next_block_for_io += this_chunk_blocks;
+@@ -1067,8 +1067,8 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 				break;
+ 		}
+ 
+-		/* Drop the ref which was taken in get_user_pages() */
+-		put_page(page);
++		/* Drop the ref which was taken in [get|pin]_user_pages() */
++		dio_w_unpin_user_page(page);
+ 	}
+ out:
+ 	return ret;
+@@ -1288,7 +1288,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
+ 		if (retval == 0)
+ 			retval = ret2;
+-		put_page(sdio.cur_page);
++		dio_w_unpin_user_page(sdio.cur_page);
+ 		sdio.cur_page = NULL;
+ 	}
+ 	if (sdio.bio)
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 4eb559a16c9e..fc7763c418d1 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -202,7 +202,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ 	bio->bi_private = dio;
+ 	bio->bi_end_io = iomap_dio_bio_end_io;
+ 
+-	get_page(page);
++	dio_w_pin_user_page(page);
+ 	__bio_add_page(bio, page, len, 0);
+ 	iomap_dio_submit_bio(iter, dio, bio, pos);
+ }
 -- 
 2.37.2
 
