@@ -2,59 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C25335A881E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 23:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F19075A880E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 23:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231955AbiHaV3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 17:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57448 "EHLO
+        id S232316AbiHaVZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 17:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232329AbiHaV3o (ORCPT
+        with ESMTP id S232274AbiHaVZX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 17:29:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FC0BCB4;
-        Wed, 31 Aug 2022 14:19:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 31 Aug 2022 17:25:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92AB654C87
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Aug 2022 14:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1661981120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Bk+OPu/NawbDQQta/l48V8vREhMx8JycdlrQ1DTyT80=;
+        b=fvTrvhRfw+XcjNFEAKWMbWRd7mF8zHvolxJcoDtutgoC0pb5P4MBqK+2CvrNRw+GA1wflM
+        MAzqpQ4tsX0BYOK7Gtu2Dd5xcyOfcdUjH6JT1OCWjjsGgCFMWGtqAGAazjBkX4QxG6+znX
+        /OJpJ3AEvNxG/M4cpmziel7sIpFK7uo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-216-sTGYnmzPOG6-e8ra5mqDsw-1; Wed, 31 Aug 2022 17:25:17 -0400
+X-MC-Unique: sTGYnmzPOG6-e8ra5mqDsw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 73318B82371;
-        Wed, 31 Aug 2022 21:19:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8826FC433D6;
-        Wed, 31 Aug 2022 21:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661980793;
-        bh=EuFVtF27UHzZ95m2iAVZr88pBg2NFFrI0iNLOelRyrg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wljct3mBAodbROj8O/9kcBwlEJPrCw4g2YpmVaVswGofxdOZBYvrIE8+6eh9YfBir
-         klg/v3l7dfsHdTX/SQxogCaudW9U6u7Wz+t1mLOORCl8zws8d83jAwrHCCgFVtw+X0
-         +MIS81RaFP9pSm2aLQVGY1p5T8j/tr8Yu3ob9Tkj5O+2h8lSEX6jzIYeIknePODM2x
-         zXXQak7U22takWnvrBDyCc2LOBM6JxjOEi98IUOj5EBTrxZgddGU0lVtKQwNxHlrzG
-         VZVwDYklnwrT8kqS+2ziWX65x4wuzl5efs6oClsQnV+pbWPGo0XPFuGaJBfCtgiRk5
-         zpw1BC5hLlrAQ==
-Date:   Wed, 31 Aug 2022 15:19:49 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Keith Busch <kbusch@fb.com>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCHv3 0/7] dma mapping optimisations
-Message-ID: <Yw/Qdf+280vZSYU4@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220805162444.3985535-1-kbusch@fb.com>
- <20220809064613.GA9040@lst.de>
- <YvKPTGf56v/3iSxg@kbusch-mbp.dhcp.thefacebook.com>
- <20220809184137.GB15107@lst.de>
- <YvPzUSx87VkwSH2C@kbusch-mbp.dhcp.thefacebook.com>
- <20220811072232.GA13803@lst.de>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C102985A585;
+        Wed, 31 Aug 2022 21:25:16 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.33.226])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A3232026D4C;
+        Wed, 31 Aug 2022 21:25:16 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full permission event response
+Date:   Wed, 31 Aug 2022 17:25:15 -0400
+Message-ID: <12063373.O9o76ZdvQC@x2>
+Organization: Red Hat
+In-Reply-To: <Yw/NjYytoMUdbxuR@madcap2.tricolour.ca>
+References: <cover.1659996830.git.rgb@redhat.com> <CAHC9VhT0D=qtaYR-Ve1hRTtQXspuC09qQZyFdESj-tQstyvMFg@mail.gmail.com> <Yw/NjYytoMUdbxuR@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220811072232.GA13803@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,87 +65,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 09:22:32AM +0200, Christoph Hellwig wrote:
-> On Wed, Aug 10, 2022 at 12:05:05PM -0600, Keith Busch wrote:
-> > The functions are implemented under 'include/linux/', indistinguishable from
-> > exported APIs. I think I understand why they are there, but they look the same
-> > as exported functions from a driver perspective.
+On Wednesday, August 31, 2022 5:07:25 PM EDT Richard Guy Briggs wrote:
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 433418d73584..f000fec52360 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -64,6 +64,7 @@
+> > > #include <uapi/linux/limits.h>
+> > > #include <uapi/linux/netfilter/nf_tables.h>
+> > > #include <uapi/linux/openat2.h> // struct open_how
+> > > +#include <uapi/linux/fanotify.h>
+> > > 
+> > > #include "audit.h"
+> > > 
+> > > @@ -2899,10 +2900,34 @@ void __audit_log_kern_module(char *name)
+> > > context->type = AUDIT_KERN_MODULE;
+> > > }
+> > > 
+> > > -void __audit_fanotify(u32 response)
+> > > +void __audit_fanotify(u32 response, size_t len, char *buf)
+> > > {
+> > > -       audit_log(audit_context(), GFP_KERNEL,
+> > > -               AUDIT_FANOTIFY, "resp=%u", response);
+> > > +       struct fanotify_response_info_audit_rule *friar;
+> > > +       size_t c = len;
+> > > +       char *ib = buf;
+> > > +
+> > > +       if (!(len && buf)) {
+> > > +               audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> > > +                         "resp=%u fan_type=0 fan_info=?", response);
+> > > +               return;
+> > > +       }
+> > > +       while (c >= sizeof(struct fanotify_response_info_header)) {
+> > > +               friar = (struct fanotify_response_info_audit_rule
+> > > *)buf;
+> > 
+> > Since the only use of this at the moment is the
+> > fanotify_response_info_rule, why not pass the
+> > fanotify_response_info_rule struct directly into this function?  We
+> > can always change it if we need to in the future without affecting
+> > userspace, and it would simplify the code.
 > 
-> swiotlb.h is not a driver API.  There's two leftovers used by the drm
-> code I'm trying to get fixed up, but in general the DMA API is the
-> interface and swiotlb is just an implementation detail.
-> 
-> > Perhaps I'm being daft, but I'm totally missing why I should care if swiotlb
-> > leverages this feature. If you're using that, you've traded performance for
-> > security or compatibility already. If this idea can be used to make it perform
-> > better, then great, but that shouldn't be the reason to hold this up IMO.
-> 
-> We firstly need to make sure that everything actually works on swiotlb, or
-> any other implementation that properly implements the DMA API.
-> 
-> And the fact that I/O performance currently sucks and we can fix it on
-> the trusted hypervisor is an important consideration.  At least as
-> importantant as micro-optimizing performance a little more on setups
-> not using them.  So not taking care of both in one go seems rather silly
-> for a feature that is in its current form pretty intrusive and thus needs
-> a really good justification.
+> Steve, would it make any sense for there to be more than one
+> FAN_RESPONSE_INFO_AUDIT_RULE header in a message?  Could there be more
+> than one rule that contributes to a notify reason?  If not, would it be
+> reasonable to return -EINVAL if there is more than one?
 
-Sorry for the delay response; I had some trouble with test setup.
+I don't see a reason for sending more than one header. What is more probable 
+is the need to send additional data in that header. I was thinking of maybe 
+bit mapping it in the rule number. But I'd suggest padding the struct just in 
+case it needs expanding some day.
 
-Okay, I will restart developing this with swiotlb in mind.
+-Steev
 
-In the mean time, I wanted to share some results with this series because I'm
-thinking this might be past the threshold for when we can drop the "micro-"
-prefix on optimisations.
 
-The most significant data points are these:
-
-  * submission latency stays the same regardless of the transfer size or depth
-  * IOPs is always equal or better (usually better) with up to 50% reduced
-    cpu cost
-
-Based on this, I do think this type of optimisation is worth having a something
-like a new bio type. I know this introduces some complications in the io-path,
-but it is pretty minimal and doesn't add any size penalties to common structs
-for drivers that don't use them.
-
-Test details:
-
-  fio with ioengine=io_uring
-    'none': using __user void*
-    'bvec': using buf registered with IORING_REGISTER_BUFFERS
-    'dma': using buf registered with IORING_REGISTER_MAP_BUFFERS (new)
-
-  intel_iommu=on
-
-Results:
-
-(submission latency [slat] in nano-seconds)
-Q-Depth 1:
-
- Size |  Premap  |   IOPs  |  slat  | sys-cpu%
- .....|..........|.........|........|.........
- 4k   |    none  |  41.4k  |  2126  |   16.47%
-      |    bvec  |  43.8k  |  1843  |   15.79%
-      |     dma  |  46.8k  |  1504  |   14.94%
- 16k  |    none  |  33.3k  |  3279  |   17.78%
-      |    bvec  |  33.9k  |  2607  |   14.59%
-      |     dma  |  40.2k  |  1490  |   12.57%
- 64k  |    none  |  18.7k  |  6778  |   18.22%
-      |    bvec  |  20.0k  |  4626  |   13.80%
-      |     dma  |  22.6k  |  1586  |    7.58%
-
-Q-Depth 16:
-
- Size |  Premap  |   IOPs  |  slat  | sys-cpu%
- .....|..........|.........|........|.........
- 4k   |    none  |   207k  |  3657  |   72.81%
-      |    bvec  |   219k  |  3369  |   71.55%
-      |     dma  |   310k  |  2237  |   60.16%
- 16k  |    none  |   164k  |  5024  |   78.38%
-      |    bvec  |   177k  |  4553  |   76.29%
-      |     dma  |   186k  |  1880  |   43.56%
- 64k  |    none  |  46.7k  |  4424  |   30.51%
-      |    bvec  |  46.7k  |  4389  |   29.42%
-      |     dma  |  46.7k  |  1574  |   15.61%
 
