@@ -2,127 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A255A7C30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 13:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 986F55A7D1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Aug 2022 14:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbiHaLbi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 07:31:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
+        id S230386AbiHaMUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 08:20:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiHaLbh (ORCPT
+        with ESMTP id S230434AbiHaMUF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 07:31:37 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9FCA1A60;
-        Wed, 31 Aug 2022 04:31:36 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 584321F893;
-        Wed, 31 Aug 2022 11:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1661945495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XrNkIM9koqnVx0iIIXA2kZMeNNiavp0FWSmtqMYA0AU=;
-        b=j090jyCm7ljBjfs584BrGreYmQ2T034+Z8td5gv5FfrZdYMc/nlY8I/aSz4C3omfWXI7/r
-        ZEOzi6UQXDB/dteLKZnnp6hc6sOMCOwq5e58CzzpQlUY6ftrhpOKAPFxsdKIx1CgNfMFzA
-        Hj4TA31NoNrPyxjPQrg5GzRWQRMIkIk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1661945495;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XrNkIM9koqnVx0iIIXA2kZMeNNiavp0FWSmtqMYA0AU=;
-        b=tPMWSP1a01IN2kwdj3whXjAztjKIlV4ffC1mOQYyySOtBL6HO9DkoW/WjMWwVHqCAYhxCh
-        O+LRuPOxKQsV1wBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 422571332D;
-        Wed, 31 Aug 2022 11:31:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id JKAjEJdGD2NefwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 31 Aug 2022 11:31:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D7D52A067B; Wed, 31 Aug 2022 13:31:34 +0200 (CEST)
-Date:   Wed, 31 Aug 2022 13:31:34 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Zhang Yi <yi.zhang@huawei.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cluster-devel@redhat.com,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        akpm@linux-foundation.org, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com,
-        almaz.alexandrovich@paragon-software.com, mark@fasheh.com,
-        dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com,
-        yukuai3@huawei.com
-Subject: Re: [PATCH 08/14] ocfs2: replace ll_rw_block()
-Message-ID: <20220831113134.fdmklqore4uglz7g@quack3>
-References: <20220831072111.3569680-1-yi.zhang@huawei.com>
- <20220831072111.3569680-9-yi.zhang@huawei.com>
+        Wed, 31 Aug 2022 08:20:05 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA60C25280
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Aug 2022 05:20:00 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id kk26so27943513ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Aug 2022 05:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=YzG/ub7v5MJTpdWDIaEQi2AXlyTWZlqWQjSj82qt80Q=;
+        b=NojXTEeXWNClqr7cgksTNUZePRYwHf22ZWc8y2pBaoa1jWLyQKW+lPc9SPI17G0qJV
+         JTuLqyhV9uslQUOPq/GpmnFvHXx7VbZj8oybER1Y5aXKU3aGJjG6VzNsSvLlskYifc4a
+         UqP0sVp8ViSIJ0xy0rMSh+i9qIx41NF91FMLw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=YzG/ub7v5MJTpdWDIaEQi2AXlyTWZlqWQjSj82qt80Q=;
+        b=7KkEuF/d3EspP9HcqsTFeBKfrcyj6s/qizp+aKNGx+2qsFSk+s4MnxITQoI05+kw55
+         /XRBnxF/RA1inUVXVTFSvc+hxkDfib0h3DxbqBhav5OpHnIfkzf1wACo1w6tEAJ8J7w0
+         EZhx01A5fY7aOatp68aV2KNycKM65O7JEO0HaYlF/aPZCgBftZcVAcYhTKv0x9AU5ECo
+         gEUewepSZ3hA6ekT1cNf3nBnPMKylCzCt8nsp+pSQDgbWV3h5/vOgadkTMOl/u0uYRFf
+         9uyzUhQpXgwtneu5bfwcKx4GueeXkE06LnY8DuyIbmhwRCAGTu5fFGC0kAFRv/j9ZWlW
+         3stQ==
+X-Gm-Message-State: ACgBeo2htpBPd6ITwSOVwpmp+nOSMKJXmdtslKIplYUWwPRmOx1gzxYF
+        4gCZvnXfJj3yS19r3nL7qPRppzfG9i5ODMD//KQ4Aw==
+X-Google-Smtp-Source: AA6agR4M8CGIr1RjWn6LO6XZPU8IB4amsAGK7Pac8sCSW8wIE82GAxB6MtFC/e3xKf7gfls/96Dofg9zwxpVwQfBZtQ=
+X-Received: by 2002:a17:907:9484:b0:73c:37bb:c4d7 with SMTP id
+ dm4-20020a170907948400b0073c37bbc4d7mr20791895ejc.748.1661948399220; Wed, 31
+ Aug 2022 05:19:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220831072111.3569680-9-yi.zhang@huawei.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+References: <CAJfpegvsCQ+rJv2rSk3mUMsX_N26ardW=MYbHxifO5DU7uSYqA@mail.gmail.com>
+ <20220831025704.240962-1-yulilin@google.com>
+In-Reply-To: <20220831025704.240962-1-yulilin@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 31 Aug 2022 14:19:48 +0200
+Message-ID: <CAJfpegvMGxigBe=3tgwBRKuSS0H1ey=0WhOkgOz5di-LqXH-HQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
+To:     Yu-Li Lin <yulilin@google.com>
+Cc:     chirantan@chromium.org, dgreid@chromium.org,
+        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        suleiman@chromium.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 31-08-22 15:21:05, Zhang Yi wrote:
-> ll_rw_block() is not safe for the sync read path because it cannot
-> guarantee that submitting read IO if the buffer has been locked. We
-> could get false positive EIO after wait_on_buffer() if the buffer has
-> been locked by others. So stop using ll_rw_block() in ocfs2.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/ocfs2/aops.c  | 2 +-
->  fs/ocfs2/super.c | 5 +----
->  2 files changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-> index af4157f61927..1d65f6ef00ca 100644
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -636,7 +636,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
->  			   !buffer_new(bh) &&
->  			   ocfs2_should_read_blk(inode, page, block_start) &&
->  			   (block_start < from || block_end > to)) {
-> -			ll_rw_block(REQ_OP_READ, 1, &bh);
-> +			bh_read_nowait(bh, 0);
->  			*wait_bh++=bh;
->  		}
->  
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index e2cc9eec287c..4050f35bbd0c 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -1763,10 +1763,7 @@ static int ocfs2_get_sector(struct super_block *sb,
->  	lock_buffer(*bh);
->  	if (!buffer_dirty(*bh))
->  		clear_buffer_uptodate(*bh);
-> -	unlock_buffer(*bh);
-> -	ll_rw_block(REQ_OP_READ, 1, bh);
-> -	wait_on_buffer(*bh);
-> -	if (!buffer_uptodate(*bh)) {
-> +	if (bh_read_locked(*bh, 0)) {
->  		mlog_errno(-EIO);
->  		brelse(*bh);
->  		*bh = NULL;
+Ref: https://lwn.net/Articles/896153/
 
-I would just use bh_read() here and drop bh_read_locked() altogether...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Wed, 31 Aug 2022 at 04:57, Yu-Li Lin <yulilin@google.com> wrote:
+>
+> On Fri, Nov 13, 2020 at 2:54:46PM +0100, Miklos Szeredi wrote:
+> >
+> > On Fri, Nov 13, 2020 at 1:28 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > On Fri, Nov 13, 2020 at 11:52:09AM +0100, Miklos Szeredi wrote:
+> > >
+> > > > It's the wrong interface, and we'll have to live with it forever if we
+> > > > go this route.
+> > > >
+> > > > Better get the interface right and *then* think about the
+> > > > implementation.  I don't think adding ->atomic_tmpfile() would be that
+> > > > of a big deal, and likely other distributed fs would start using it in
+> > > > the future.
+> > >
+> > > Let me think about it; I'm very unhappy with the amount of surgery it has
+> > > taken to somewhat sanitize the results of ->atomic_open() introduction, so
+> > > I'd prefer to do it reasonably clean or not at all.
+> >
+> > The minimal VFS change for fuse to be able to do tmpfile with one
+> > request would be to pass open_flags to ->tmpfile().  That way the
+> > private data for the open file would need to be temporarily stored in
+> > the inode and ->open() would just pick it up from there without
+> > sending another request.  Not the cleanest, but I really don't care as
+> > long as the public interface is the right one.
+> >
+> > Thanks,
+> > Miklos
+>
+> Resurrecting this old thread. Is there a conclusion on the addition of atomic_tmpfil() or vfs changes?
+>
+> Thanks,
+> Yu-Li Lin
