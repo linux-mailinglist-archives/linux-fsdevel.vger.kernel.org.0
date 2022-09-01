@@ -2,69 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3285A91FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 10:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552F35A926D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 10:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234187AbiIAIV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 04:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58200 "EHLO
+        id S233219AbiIAIzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 04:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234149AbiIAIVQ (ORCPT
+        with ESMTP id S233109AbiIAIzD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 04:21:16 -0400
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383B2AD997;
-        Thu,  1 Sep 2022 01:20:40 -0700 (PDT)
-Received: by mail-vk1-xa2b.google.com with SMTP id i67so7886978vkb.2;
-        Thu, 01 Sep 2022 01:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=LGnLFW6yPESHX+DAC4jzdLUcy7kE4ClWL1XfjHPmqqA=;
-        b=QwHelFVXzfmM4/EysT5tZOAf8LTkUs1vC+WzbOiLSd6cfKqbV1b+Z1iS7P1cqVK4VK
-         05iPjC8ldpsIAHbcek332F4BOebdOxw2s69XHe0H5CoRmAXOUQzVb9KeTI4PH1Yhy33c
-         0D0jcj+ONGknboXbkyvJoMweMqnsvkAQ79Y+TdbYoFMTEWcV4+nty2kb0pdJqBuvdOxr
-         Mn8G68YcW0Jfciw+c2PkCX9MC85FPUUsqQJwWu2qANDpN8qYXZNNb7m/02bmTXCves1r
-         8wM8iOSpDJ2W9hi3vE5EFHE+KWEC5E5eYfFI7F9TMhvVZCM61sLeezagrLIftTifbZLA
-         R4Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=LGnLFW6yPESHX+DAC4jzdLUcy7kE4ClWL1XfjHPmqqA=;
-        b=qOz5fR1Ky1sM+/uUQPKoMZYEWNJomAVV87OL2JSf13IRlL42u1JyBpGTsbpOHfFvTL
-         D/lRqkP04COvU++9e8eLdDS7twB1XDFW7eKvXc5bOw2leKCq74eNcpSekHs8APtrt+5w
-         IOge29JLPNWm5Xk/CNT53NpApVSqy/dL1lZj7O4tpNbxck4vVyyHmEGWMAMFQcmW+Ov8
-         Dqb/ZtgUWkLHdXNLIq4XMvQk8CW9G3RRcrLmU7CHF0hKC879dXzgl4oI5P6zD0waWxde
-         3/lDRrnOlHV9HwMgCI2kLetRqaU9lNWXtmNu0d17IpXVwbUSPxQ/XJMm+A9GxmfVv6YK
-         0qDw==
-X-Gm-Message-State: ACgBeo0YZ4l2ZGFFMxn0qYqY1vi8FE9A+AhcVaH5GZzgTrnAfurUM76w
-        T5zJynu0vPsmDaSXo+OgRcoOEEbpW/XnKnyndVY=
-X-Google-Smtp-Source: AA6agR4FO9JoeFxtHWua0hNC49l8PA/DNsBd9h4keicBNDZCmaRAhWIyDhSpOGnLRQ0GI9as5iQYPtm1sPCxXm7PNMQ=
-X-Received: by 2002:a1f:19cf:0:b0:375:6144:dc41 with SMTP id
- 198-20020a1f19cf000000b003756144dc41mr8092825vkz.3.1662020439493; Thu, 01 Sep
- 2022 01:20:39 -0700 (PDT)
+        Thu, 1 Sep 2022 04:55:03 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5120818E11;
+        Thu,  1 Sep 2022 01:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1662022480;
+        bh=GV/S2fa4BRD9sgfDYFGhgBDWCnIN/LI3VF1N618OQbk=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=ll2pNi/18AlK3/05pm7AP5+KwYb5rBY7U0zAWtORHV1eyPWDiB7fkNJIAeZxxA4nx
+         Puv+9cbPn7cML/qTpbJexC8sdPbsER+dg4YmVxLn/7iwBWRRmd6Y8VnCpkH8CAPuMK
+         v5VYLKwpVd1RNq4XKN0GQiYzMH3JzEAVuqroprDw=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MyKHc-1pJRB52Bum-00yheR; Thu, 01
+ Sep 2022 10:54:40 +0200
+Message-ID: <de16bd58-3f14-01d9-9de5-6a79792c62c7@gmx.com>
+Date:   Thu, 1 Sep 2022 16:54:32 +0800
 MIME-Version: 1.0
-References: <20220830152858.14866-1-cgzones@googlemail.com>
- <20220830152858.14866-2-cgzones@googlemail.com> <Yw/eEufm/QpKg5Pq@ZenIV>
-In-Reply-To: <Yw/eEufm/QpKg5Pq@ZenIV>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 1 Sep 2022 11:20:28 +0300
-Message-ID: <CAOQ4uxgp3_6KKSCvQvwGXq4WmkndcvzsBnk7QqQZvBZGF-6yZQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] fs/xattr: add *at family syscalls
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 01/17] block: export bio_split_rw
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220901074216.1849941-1-hch@lst.de>
+ <20220901074216.1849941-2-hch@lst.de>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <20220901074216.1849941-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+X-Provags-ID: V03:K1:mmM5D6IZ1oaD0qr6/5AZUuLakSmec4LkeDGuyL6NG6UsGRxIShO
+ Ol0y89iD+KBDwpfXMslDF2cXH3+0E+O/2N9byrJSY5eMxnLfODCO6ZqqoFAz0yQ0HBYWzzA
+ WkCO6XXt73F8mc+bv9K6VS54DzpwmsQxutK3VvCdFw5qHGpF39Um15krwrJzCoQnoyab98Z
+ 893bUcKMwft9eUfxb5WqA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:y336Ou2v+Do=:pPFJqieV7LQPq5oYQffwfb
+ mCJyCPk/V6kLOQFqynGbuXg+YAsEq2pYyM+a4J3qvLKMCCWqfCuv0oHBfpVKTZe+FrSMitvY5
+ VE5V4bcFL7n0/7qWwQJvHNilua4fMIjypUrkEL7ZnNz8o8oVQUibHcivaEcaj8qSFv+9g9H30
+ HjEsYWcyxM5CeqPkp8fbE218sVKawmW992ePu6mRFtDOTB+w66QfrRpU6f7Ya0yoIYO6kGUzN
+ joXpv/rxQPW39RUmVk4Nq7DDina/OKL7xGYLB4ZXgiaIQHAQJ4DP+JQ0+KmVQ9yxQaYYVfZJ7
+ j9pGSkIVyrPfLM90S09TZDcdsMsBp4qBDYAR4I/fnA5XHuSjdBmyHqIsyiWuPKqhsyMYcBBu4
+ 2U4rkI1COm7PR5YxH+N0JW59xjlz7no2NkcqlBgY+CFOLGFZsH262FSSAoVsUujIME8ECA37R
+ N/I0m05BzDxR/rW+CjE7jpiKYfbWF32LuIosG9hP23HxW3z60nfKBFE5pdXzrEYDReCedHVbC
+ LMILp2irVwAwceMHrNV0VNpSBPVWo+reYkjb2ZSbrRAvU+ZcG6xuePLiXcIHEpJRL+tMjWuxD
+ Trpa/y53ywfSIcH6MCkND0reqQfZhjUYQ/JWoiYJSii8PvOvwSD3+zzFI/7HM56uv5xAcpUGB
+ /vi0Fr68WAq1TXqVCFJ57pkSU95kOdxqAlS1Jw0T5gv2GG4+2ZzLuLP9oQbJUSEjL5I+0nTlb
+ T9lRPFfkXJ5GYTWm8nEZO0/M4sWb2qSUyDymBK2/Hst3eI7TbLPGAQ9Ve0jBX4b1pWZd3OzWn
+ PKmx6QedHW7/EGLKtZHvG5p2V2ZdpwkRWETyGyfThhS5GXvSsqhtIvK+0+pMdSuqANgfOgcXs
+ fXtcwjUBrZZAVOiKQuNoBa1cCGrzRd9JY1CAq73kPtf+y6uzlOmWW3+G3dgYkkoqpJmqygs3x
+ sUn27DgTVJvKEKd/Lh+sw3UGDXSKs7UBc6pe7xQALpIB5Eg15efbE0OimPpaewtBAzqEvUmyU
+ pSpqvz9Mkw72X6qRQUwgOxsxgFuQ85G5H9Fvawhvb6heFsH6Vfot0V5fQqvs604JAAgCbD4hm
+ fhcG3UtEotilieWUA9FgMgUFiZgSXV5kfzNSgk26rof6XZCZhV688JBYw==
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,63 +79,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 1, 2022 at 2:10 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+
+
+On 2022/9/1 15:42, Christoph Hellwig wrote:
+> bio_split_rw can be used by file systems to split and incoming write
+> bio into multiple bios fitting the hardware limit for use as ZONE_APPEND
+> bios.  Export it for initial use in btrfs.
 >
-> [linux-arch Cc'd for ABI-related stuff]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   block/blk-merge.c   | 3 ++-
+>   include/linux/bio.h | 4 ++++
+>   2 files changed, 6 insertions(+), 1 deletion(-)
 >
-> On Tue, Aug 30, 2022 at 05:28:39PM +0200, Christian G=C3=B6ttsche wrote:
-> > Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
-> > removexattrat() to enable extended attribute operations via file
-> > descriptors.  This can be used from userspace to avoid race conditions,
-> > especially on security related extended attributes, like SELinux labels
-> > ("security.selinux") via setfiles(8).
-> >
-> > Use the do_{name}at() pattern from fs/open.c.
-> > Use a single flag parameter for extended attribute flags (currently
-> > XATTR_CREATE and XATTR_REPLACE) and *at() flags to not exceed six
-> > syscall arguments in setxattrat().
->
->         I've no problems with the patchset aside of the flags part;
-> however, note that XATTR_CREATE and XATTR_REPLACE are actually exposed
-> to the network - the values are passed to nfsd by clients.
-> See nfsd4_decode_setxattr() and
->         BUILD_BUG_ON(XATTR_CREATE !=3D SETXATTR4_CREATE);
->         BUILD_BUG_ON(XATTR_REPLACE !=3D SETXATTR4_REPLACE);
-> in encode_setxattr() on the client side.
->
->         Makes me really nervous about constraints like that.  Sure,
-> AT_... flags you are using are in the second octet and these are in
-> the lowest one, but...
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index ff04e9290715a..e68295462977b 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -267,7 +267,7 @@ static bool bvec_split_segs(struct queue_limits *lim=
+, const struct bio_vec *bv,
+>    * responsible for ensuring that @bs is only destroyed after processin=
+g of the
+>    * split bio has finished.
+>    */
+> -static struct bio *bio_split_rw(struct bio *bio, struct queue_limits *l=
+im,
+> +struct bio *bio_split_rw(struct bio *bio, struct queue_limits *lim,
 
-In this context, I would like to point at
+I found the queue_limits structure pretty scary, while we only have very
+limited members used in this case:
 
-AT_EACCESS
-AT_REMOVEDIR
+- lim->virt_boundary_mask
+   Used in bvec_gap_to_prev()
 
-Which are using the same namespace as the AT_ flags but define
-a flag in a "private section" of that namespace for faccessat() and
-for unlinkat().
-unlinkat() does not technically support any of the generic AT_ flags,
-but the sycall name does suggest that it is the same namespace.
+- lim->max_segments
 
-At the risk of getting shouted at, I propose that we retroactively
-formalize this practice and also define
-AT_XATTR_* and AT_RENAME_* constants
-with the accompanied BUILD_BUG_ON()
-and document above the AT_ definitions that the lowest 10 bits
-are reserved as private namespace for the specific syscall.
+- lim->seg_boundary_mask
+- lim->max_segment_size
+   Used in bvec_split_segs()
 
-There are also the AT_STATX_*SYNC* flags that could fall
-into the category of syscall private namespace, but those flags could
-actually be made more generic as there are other syscalls that may
-benefit from supporting them.
+- lim->logical_block_size
 
-linkat() is one example that comes to mind.
-Similar suggestions have been posted in the past:
-https://lore.kernel.org/linux-fsdevel/20190527172655.9287-1-amir73il@gmail.=
-com/
-https://lore.kernel.org/linux-fsdevel/CAOQ4uxit0KYiShpEXt8b8SvN8bWWp3Ky929b=
-+UWNDozTCUeTxg@mail.gmail.com/
+Not familiar with block layer, thus I'm wondering do btrfs really need a
+full queue_limits structure to call bio_split_rw().
+
+Or can we have a simplified wrapper?
+
+IIRC inside btrfs we only need two cases for bio split:
+
+- Split for stripe boundary
+
+- Split for OE/zoned boundary
 
 Thanks,
-Amir.
+Qu
+
+>   		unsigned *segs, struct bio_set *bs, unsigned max_bytes)
+>   {
+>   	struct bio_vec bv, bvprv, *bvprvp =3D NULL;
+> @@ -317,6 +317,7 @@ static struct bio *bio_split_rw(struct bio *bio, str=
+uct queue_limits *lim,
+>   	bio_clear_polled(bio);
+>   	return bio_split(bio, bytes >> SECTOR_SHIFT, GFP_NOIO, bs);
+>   }
+> +EXPORT_SYMBOL_GPL(bio_split_rw);
+>
+>   /**
+>    * __bio_split_to_limits - split a bio to fit the queue limits
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index ca22b06700a94..46890f8235401 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -12,6 +12,8 @@
+>
+>   #define BIO_MAX_VECS		256U
+>
+> +struct queue_limits;
+> +
+>   static inline unsigned int bio_max_segs(unsigned int nr_segs)
+>   {
+>   	return min(nr_segs, BIO_MAX_VECS);
+> @@ -375,6 +377,8 @@ static inline void bip_set_seed(struct bio_integrity=
+_payload *bip,
+>   void bio_trim(struct bio *bio, sector_t offset, sector_t size);
+>   extern struct bio *bio_split(struct bio *bio, int sectors,
+>   			     gfp_t gfp, struct bio_set *bs);
+> +struct bio *bio_split_rw(struct bio *bio, struct queue_limits *lim,
+> +		unsigned *segs, struct bio_set *bs, unsigned max_bytes);
+>
+>   /**
+>    * bio_next_split - get next @sectors from a bio, splitting if necessa=
+ry
