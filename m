@@ -2,125 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEA95A9CC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 18:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E4C5A9D0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 18:27:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234385AbiIAQMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 12:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47262 "EHLO
+        id S235011AbiIAQ1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 12:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234954AbiIAQMn (ORCPT
+        with ESMTP id S234995AbiIAQ10 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 12:12:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F0A5F11B
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 09:12:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662048762;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UHmYOlxrBiaepineueJ+BA2NniHKUIf3ILRk7FlgVfY=;
-        b=RNGOhtRH/3VpensV9IssdAWKcOStK3ETAmCknBdl6XFhcibLGEThYjIgRWehavWp0ZNFLS
-        paUCmU2HuGOb4O2+XdS2sDydCf2kW8Mt3ksp7liSP0pVI02RW85IzSLtCyTqBdLXjAGz/o
-        W+62DR3vNYMtbP6i+g/gPfzlCkHtoqk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-442-Du0mSLDPMe-xNlqIJu9UJw-1; Thu, 01 Sep 2022 12:12:40 -0400
-X-MC-Unique: Du0mSLDPMe-xNlqIJu9UJw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C8FEF80A0AE;
-        Thu,  1 Sep 2022 16:12:39 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.192.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 301FE40CF8F2;
-        Thu,  1 Sep 2022 16:12:34 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH v2] statx, inode: document the new STATX_INO_VERSION
- field
-References: <20220901121714.20051-1-jlayton@kernel.org>
-Date:   Thu, 01 Sep 2022 18:12:33 +0200
-In-Reply-To: <20220901121714.20051-1-jlayton@kernel.org> (Jeff Layton's
-        message of "Thu, 1 Sep 2022 08:17:14 -0400")
-Message-ID: <874jxrqdji.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        Thu, 1 Sep 2022 12:27:26 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF7B5AA2C;
+        Thu,  1 Sep 2022 09:27:22 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id s11so23250673edd.13;
+        Thu, 01 Sep 2022 09:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=+0L2eClwsYHKJeXwvZYuWRKn+FjwoNn5ZEAvWBll6m0=;
+        b=ACc7zrT169Ua1FVZex6ZCHgP4BuYWGFxhVzF51e4NFzAFmt2vyRARTrtEeaEZ0pmEu
+         ynhMCS4bJgsy2LQ+Kh+JUBy8Rn6DGhz8F8ipUiNavfw/os0ii3yx8/ykRFfwvMlD4Ei6
+         tawh0TF4yoXoHuiuat3LN2yyQ2/6YCaH/vnVznruo40J0RYyLL0NKFIGvS0tvGRlYHRg
+         wgLbyaKPN+oC8ve8Nvlvtqg3R9ufMcOtyO1lPw1izNPvvwCnCyDW6j3TdUpnciLA7CtO
+         d6Dppa6TC2DMAMAZkx7EwxmtEpybqj20UiTiQ0RXXg0qGcJl3LInnVDBRY/xddZPDUI3
+         7cvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=+0L2eClwsYHKJeXwvZYuWRKn+FjwoNn5ZEAvWBll6m0=;
+        b=astnkAgitOPaMMlktWFAoV8aLxrWSB9gLx1xAJQpzlXh2FKY71zbbCjNNRm0eKLEkJ
+         33z0rPxx9kpf3NkhL3RAKfARQPkiQVlqyvWLVthzx6qH8xnbi+Vw/ngy8MzmoQ07xEs6
+         sJiRp/MVq10knbDUz7nwa8t9884Lq5NPyD6E1ag22iS8VJVf4sd0NkxA1gfYpQx97836
+         9bAGrdXa04mH5oAF5Y+MjTV6saxMAvqsNaXe+knBjNWc5q0inSxmOauxDC1qYho9Toi8
+         HyynfNxR5iFfS/52I0ov7i7by359/WTimuPAwJoqD7Z33CEQVmThUbRxWInVrCAWGmUj
+         teRA==
+X-Gm-Message-State: ACgBeo0r4pvxS8bGzhhHYkRLjcQ2UoIruVGa0l33ulci3K/iF2RuYRMH
+        NBggcwiRkTo8yMzc5KwKE+E=
+X-Google-Smtp-Source: AA6agR66W/BK8tzwCWWoLIWVGbBUAC1Wi7eWWthXQBDYDdP23dChnEBehgKjee7rgOzwyyBalzCMfA==
+X-Received: by 2002:a05:6402:401a:b0:448:2ce5:652a with SMTP id d26-20020a056402401a00b004482ce5652amr16907012eda.322.1662049640715;
+        Thu, 01 Sep 2022 09:27:20 -0700 (PDT)
+Received: from localhost.localdomain (host-87-1-103-238.retail.telecomitalia.it. [87.1.103.238])
+        by smtp.gmail.com with ESMTPSA id k19-20020a1709061c1300b00730f0c19108sm8573444ejg.86.2022.09.01.09.27.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Sep 2022 09:27:18 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [RESEND PATCH] aio: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Thu,  1 Sep 2022 18:27:13 +0200
+Message-Id: <20220901162713.27501-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Jeff Layton:
+The use of kmap() and kmap_atomic() are being deprecated in favor of
+kmap_local_page().
 
-> @@ -411,6 +413,21 @@ and corresponds to the number in the first field in one of the records in
->  For further information on the above fields, see
->  .BR inode (7).
->  .\"
-> +.TP
-> +.I stx_ino_version
-> +The inode version, also known as the inode change attribute. This
-> +value must change any time there is an inode status change. Any
-> +operation that would cause the
-> +.I stx_ctime
-> +to change must also cause
-> +.I stx_ino_version
-> +to change, even when there is no apparent change to the
-> +.I stx_ctime
-> +due to coarse timestamp granularity.
-> +.IP
-> +An observer cannot infer anything about the nature or magnitude of the change
-> +from the value of this field. A change in this value only indicates that
-> +there has been an explicit change in the inode.
+There are two main problems with kmap(): (1) It comes with an overhead as
+the mapping space is restricted and protected by a global lock for
+synchronization and (2) it also requires global TLB invalidation when the
+kmap’s pool wraps and it might block when the mapping space is fully
+utilized until a slot becomes available.
 
-What happens if the file system does not support i_version?
+With kmap_local_page() the mappings are per thread, CPU local, can take
+page faults, and can be called from any context (including interrupts).
+It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+the tasks can be preempted and, when they are scheduled to run again, the
+kernel virtual addresses are restored and still valid.
 
-> diff --git a/man7/inode.7 b/man7/inode.7
-> index 9b255a890720..d5e0890a52c0 100644
-> --- a/man7/inode.7
-> +++ b/man7/inode.7
-> @@ -184,6 +184,18 @@ Last status change timestamp (ctime)
->  This is the file's last status change timestamp.
->  It is changed by writing or by setting inode information
->  (i.e., owner, group, link count, mode, etc.).
-> +.TP
-> +Inode version (i_version)
-> +(not returned in the \fIstat\fP structure); \fIstatx.stx_ino_version\fP
-> +.IP
-> +This is the inode change attribute. Any operation that would result in a change
-> +to \fIstatx.stx_ctime\fP must result in a change to this value. The value must
-> +change even in the case where the ctime change is not evident due to coarse
-> +timestamp granularity.
-> +.IP
-> +An observer cannot infer anything from the returned value about the nature or
-> +magnitude of the change. If the returned value is different from the last time
-> +it was checked, then something has made an explicit change to the inode.
+Since its use in fs/aio.c is safe everywhere, it should be preferred.
 
-What is the wraparound behavior for i_version?  Does it use the full
-64-bit range?
+Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+fs/aio.c.
 
-If the system crashes without flushing disks, is it possible to observe
-new file contents without a change of i_version?
+Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+with HIGHMEM64GB enabled.
 
-Thanks,
-Florian
+Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+
+I'm resending this patch because some recipients were missing in the 
+previous submission. In the meantime I'm also adding some more information 
+in the commit message. There are no changes in the code.
+
+ fs/aio.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 606613e9d1f4..83c2c2e3e428 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ctx->user_id = ctx->mmap_base;
+ 	ctx->nr_events = nr_events; /* trusted copy */
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->nr = nr_events;	/* user copy */
+ 	ring->id = ~0U;
+ 	ring->head = ring->tail = 0;
+@@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ring->compat_features = AIO_RING_COMPAT_FEATURES;
+ 	ring->incompat_features = AIO_RING_INCOMPAT_FEATURES;
+ 	ring->header_length = sizeof(struct aio_ring);
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	return 0;
+@@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+ 					 * we are protected from page migration
+ 					 * changes ring_pages by ->ring_lock.
+ 					 */
+-					ring = kmap_atomic(ctx->ring_pages[0]);
++					ring = kmap_local_page(ctx->ring_pages[0]);
+ 					ring->id = ctx->id;
+-					kunmap_atomic(ring);
++					kunmap_local(ring);
+ 					return 0;
+ 				}
+ 
+@@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx *ctx)
+ 		 * against ctx->completed_events below will make sure we do the
+ 		 * safe/right thing.
+ 		 */
+-		ring = kmap_atomic(ctx->ring_pages[0]);
++		ring = kmap_local_page(ctx->ring_pages[0]);
+ 		head = ring->head;
+-		kunmap_atomic(ring);
++		kunmap_local(ring);
+ 
+ 		refill_reqs_available(ctx, head, ctx->tail);
+ 	}
+@@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 	if (++tail >= ctx->nr_events)
+ 		tail = 0;
+ 
+-	ev_page = kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
++	ev_page = kmap_local_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 	event = ev_page + pos % AIO_EVENTS_PER_PAGE;
+ 
+ 	*event = iocb->ki_res;
+ 
+-	kunmap_atomic(ev_page);
++	kunmap_local(ev_page);
+ 	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 
+ 	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+@@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 
+ 	ctx->tail = tail;
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	ring->tail = tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	ctx->completed_events++;
+@@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 	mutex_lock(&ctx->ring_lock);
+ 
+ 	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	tail = ring->tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 
+ 	/*
+ 	 * Ensure that once we've read the current tail pointer, that
+@@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		avail = min(avail, nr - ret);
+ 		avail = min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+ 
+-		ev = kmap(page);
++		ev = kmap_local_page(page);
+ 		copy_ret = copy_to_user(event + ret, ev + pos,
+ 					sizeof(*ev) * avail);
+-		kunmap(page);
++		kunmap_local(ev);
+ 
+ 		if (unlikely(copy_ret)) {
+ 			ret = -EFAULT;
+@@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		head %= ctx->nr_events;
+ 	}
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->head = head;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	pr_debug("%li  h%u t%u\n", ret, head, tail);
+-- 
+2.37.2
 
