@@ -2,57 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B645A99C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 16:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B995A9AE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 16:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234525AbiIAONz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 10:13:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
+        id S233873AbiIAOuh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 10:50:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233348AbiIAONy (ORCPT
+        with ESMTP id S233849AbiIAOuf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 10:13:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AD367451;
-        Thu,  1 Sep 2022 07:13:53 -0700 (PDT)
+        Thu, 1 Sep 2022 10:50:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5298432BAC;
+        Thu,  1 Sep 2022 07:50:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6F3BEB826FD;
-        Thu,  1 Sep 2022 14:13:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1974C433D7;
-        Thu,  1 Sep 2022 14:13:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D5CF061DE5;
+        Thu,  1 Sep 2022 14:50:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753EBC4314A;
+        Thu,  1 Sep 2022 14:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662041631;
-        bh=FjCazFtJD7dIaSrTBS6DK/n2ntd7At/25awsoy6HaF0=;
+        s=k20201202; t=1662043833;
+        bh=Eme6Jpl1dpN6KSO3d/NwtB8aYk/1sMq97j6D1VP3rXU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rOlOfvAGeSZCqFVPL6CMhCm5/U1JJCBb2O/lhA5KUiiRbmOvRX/APz4TYIgZFr5hx
-         GoIzV6tHZ4w/0xBPbHUZSDZ36gqgNHzDiSIJqAm7kUmVfnaYP7Dvz+PwKlAF1UDPPf
-         Mlbg7puC9+8ezg2Qne0cJJAwji3CdoTccuwQ3njQ+/KghEJ26KiGp8awGSigAlltB9
-         kw3s2hDhi/AZg+UlutNkL1pOkE6sSeIZyVybsfqofgj21xlu3K76r9WeqPlgTEgqQd
-         Rb0qSH3T4ubfxZ4tWaIU1Lo2ukfiMoApS9biyh2qXd9YUQmieLd2rW5ghJpI5tRQXL
-         iYpjlrYDKd54w==
-Date:   Thu, 1 Sep 2022 16:13:44 +0200
+        b=LDuqUoZqJmDmnf8DgGXRAR3l5RAEaKbXeIimHUIoM8y2hn5Ps3WAgNJKp87I+1KGQ
+         MRaelA0wd8mIa05A+94C2vs2vG0R1QLLKRKozoNuk9cWV0Avwy5MPJ8kpYUgRaZdd0
+         IbafHfWY64tCPL35xigTonhroAHZ6mRAfeCy8B+vSGxpimwGdxzxXVmKNvSOpsZZSZ
+         h5yelfm84qc2JcKSxSmCAY8EKstAAL4AWsVfDoX9nZYGt35V3PwKUZtt3XzTrmBI3G
+         nHKZJC5l4LnBZfCW2LOfbmZX95QJZ4zWDId/cz69lAX6VWYz7UQHGvlD3T0KDrzrTe
+         ZWudog5ZyEVBw==
+Date:   Thu, 1 Sep 2022 16:50:28 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-Message-ID: <20220901141344.wqnnemixrlb2b74g@wittgenstein>
-References: <217595.1662033775@warthog.procyon.org.uk>
+To:     Seth Jenkins <sethjenkins@google.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Jann Horn <jannh@google.com>,
+        Natalie Silvanovich <natashenka@google.com>
+Subject: Re: fsconfig parsing bugs
+Message-ID: <20220901145028.3lndphzrylsyqx5o@wittgenstein>
+References: <CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <217595.1662033775@warthog.procyon.org.uk>
+In-Reply-To: <CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -63,66 +56,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 01:02:55PM +0100, David Howells wrote:
->     
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
+On Wed, Aug 31, 2022 at 04:12:21PM -0700, Seth Jenkins wrote:
+> The codebase-wide refactor efforts to using the latest fs mounting API
+> (with support for fsopen/fsconfig/fsmount etc.) have introduced some
+> bugs into mount configuration parsing in several parse_param handlers,
+> most notably shmem_parse_one() which can be accessed from a userns.
+> There are several cases where the following code pattern is used:
 > 
-> Fix this by adding a new LSM hook to load fc->security for submount
-> creation when alloc_fs_context() is creating the fs_context for it.
+> ctx->value = <expression>
+> if(ctx->value is invalid)
+>    goto fail;
+> ctx->seen |= SHMEM_SEEN_X;
+> break;
 > 
-> However, this uncovers a further bug: nfs_get_root() initialises the
-> superblock security manually by calling security_sb_set_mnt_opts() or
-> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> complaining.
+> However, this coding pattern does not work in the case where multiple
+> fsconfig calls are made. For example, if I were to call fsconfig with
+> the key "nr_blocks" twice, the first time with a valid value, and the
+> second time with an invalid value, the invalid value will be persisted
+> and used upon creation of the mount for the value of ctx->blocks, and
+> consequently for sbinfo->max_blocks.
 > 
-> Fix that by adding a flag to the fs_context that suppresses the
-> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> when it sets the LSM context on the new superblock.
+> This code pattern is used for Opt_nr_blocks, Opt_nr_inodes, Opt_uid,
+> Opt_gid and Opt_huge. Probably the proper thing to do is to check for
+> validity before assigning the value to the shmem_options struct in the
+> fs_context.
 > 
-> The first bug leads to messages like the following appearing in dmesg:
+> We also see this code pattern replicated throughout other filesystems
+> for uid/gid resolution, including hugetlbfs, FUSE, ntfs3 and ffs.
 > 
->         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> The other outstanding issue I noticed comes from the fact that
+> fsconfig syscalls may occur in a different userns than that which
+> called fsopen. That means that resolving the uid/gid via
+> current_user_ns() can save a kuid that isn't mapped in the associated
+> namespace when the filesystem is finally mounted. This means that it
+> is possible for an unprivileged user to create files owned by any
+> group in a tmpfs mount (since we can set the SUID bit on the tmpfs
+> directory), or a tmpfs that is owned by any user, including the root
+> group/user. This is probably outside the original intention of this
+> code.
 > 
-> Changes
-> =======
-> ver #5)
->  - Removed unused variable.
->  - Only allocate smack_mnt_opts if we're dealing with a submount.
+> The fix for this bug is not quite so simple as the others. The options
+> that I've assessed are:
 > 
-> ver #4)
->  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
->    Smack.
+> - Resolve the kuid/kgid via the fs_context namespace - this does
+> however mean that any task outside the fsopen'ing userns that tries to
+> set the uid/gid of a tmpfs will have to know that the uid/gid will be
+> resolved by a different namespace than that which the current task is
+> in. It also subtly changes the behavior of this specific subsystem in
+> a userland visible way.
+> - Globally disallow fsconfig calls originating from outside the
+> fs_context userns - This is a more robust solution that would prevent
+> any similar bugs, but it may impinge on valid mount use-cases. It's
+> the best from a security standpoint and if it's determined that it was
+> not in the original intention to be juggling user/mount namespaces
+> this way, it's probably the ideal solution.
+> - Throw EINVAL if the kuid specified cannot be mapped in the mounting
+> userns (and/or potentially in the fs_context userns) - This is
+> probably the solution that remains most faithful to all potential
+> use-cases, but it doesn't reduce the potential for variants in the
+> future in other parts of the codebase and it also introduces some
+> slight derivative logic bug risk.
+> - Don't resolve the uid/gid specified in fsconfig at all, and resolve
+> it during mount-time when calling an associated fill_super. This is
+> precedented and used in other parts of the codebase, but specificity
+> is lost in the final error case since an end-user cannot easily
+> attribute a mount failure to an unmappable uid.
 > 
-> ver #3)
->  - Made LSM parameter extraction dependent on fc->purpose ==
->    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> I've also attached a PoC for this bug that demonstrates that an
+> unprivileged user can create files/directories with root uid/gid's.
+> There is no deadline for this issue as we can't see any obvious way to
+> cross a privilege boundary with this.
 > 
-> ver #2)
->  - Added Smack support
->  - Made LSM parameter extraction dependent on reference != NULL.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> Tested-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> cc: Anna Schumaker <anna@kernel.org>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Scott Mayhew <smayhew@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Paul Moore <paul@paul-moore.com>
-> cc: linux-nfs@vger.kernel.org
-> cc: selinux@vger.kernel.org
-> cc: linux-security-module@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> ---
+> Thanks in advance!
 
-Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+I'm involved in 2 large projects that make use of the new mount api LXC
+and CRIU. None of them call fsconfig() outside of the target user
+namespace. util-linux mount(2) does not yet use the new mount api and so
+can't be affected either but will in maybe even the next release.
+Additionally, glibc 2.36 is the first glibc with support for the new
+mount api which just released. So all users before that users would have
+to write their own system call wrappers so I think we have some liberty
+here.
+
+I think this is too much of a restriction to require that fsopen() and
+fsconfig() userns must match in order to set options. It is pretty handy
+to be able to set mount options outside of fc->user_ns. And we'd
+definitely want to make use of this in the future.
+
+So ideally, we just switch all filesystems that are mountable in userns
+over to use fc->user_ns. There's not really a big regression risk here
+because it's not used in userns workloads widely today. Taking a close
+look, the affected filesystems are devpts and tmpfs. Having them rely on
+fc->user_ns aligns them with how fuse does it today.
