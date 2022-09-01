@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D25795AA274
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 00:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1DC5AA248
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 00:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234877AbiIAWGI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 18:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39580 "EHLO
+        id S235072AbiIAWHS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 18:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234694AbiIAWE2 (ORCPT
+        with ESMTP id S234544AbiIAWGH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 18:04:28 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2192694EE3;
-        Thu,  1 Sep 2022 15:03:03 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id mj6so281229pjb.1;
-        Thu, 01 Sep 2022 15:03:03 -0700 (PDT)
+        Thu, 1 Sep 2022 18:06:07 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D940A00ED;
+        Thu,  1 Sep 2022 15:03:29 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id jm11so47336plb.13;
+        Thu, 01 Sep 2022 15:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=hDptbc18eb98tE8iQjyPGn696c4/GhyznW32HiLxniE=;
-        b=gUm8S346I3K4ORq4miRaGKQWrBRZuwaXck/yvUpzoYTdcWhN98CW9jDruatqJgoZRb
-         Qr7AVjxZmulo+5f9KMRw7o9SzO4VVVP0E6R5Fgix1Tba0Tyc9gA4/EjPT0MKD3o3ubc2
-         vB47B4Wkmo9W5esV3vAFQYuGkm6R+OQ7uA08pjBivhfS8LGFryls97UPR15F7iPOmvl2
-         dHyicbyty/5LQkxTuojwAF90zrZpQJynSNJ5hxss6FcgzCzxI5JO1ptQdUHVZCAWmElB
-         t+fwz3It0ogWy5Uf628XzRjlYTQ/0YWnLDjVYm3aDd4wv+omRXtHPDbeL0giXBfgWA+5
-         lhlQ==
+        bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=;
+        b=diBwxyvKEf6JI6u957lZlRjBGUqMPUv/DOTu7USfBuUCPzlXtneLcNkT0wHfsvIjgR
+         RtFF5KdI3PUaclSG4E8jhu3HF/vGooJNXm0wgBU68eptXErnpIrgJIK7grK3lg2BeI6L
+         gnzmKoFOzWTOhjK7j7BejIXQ7JSWJrnbFx0Oc6zaDOnzxuaDir2i3tvuwfF1UzG2jYEP
+         Cytu/wxg4A0FNem7xkUQzwOJicEG0m8Lou+wbr97B040g23ggq7N5kdhn0ywWQ13/Za/
+         fq1WOxoWKPbol+s7gwJKowNnVI90ccXLoGBZIPqrz2b0PYJIIzBsCuxtrhYjXdSRoOEL
+         ZZig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=hDptbc18eb98tE8iQjyPGn696c4/GhyznW32HiLxniE=;
-        b=fdUPOIjX00ia/qkl1DzD/lKyKo4poV5x5CPk1IdjLjO0iUJelGS1JfYycouihyLVxB
-         hLTfajDcP2zoVo4WXYnRv0vCEKhg5jaPO1V+AFlYbcOyLwKKerthX4J0Ww5mTry1gy2G
-         9JjGoxTNnFXy3G82yM07SouEC0Oq2OACpLUiO1HPIZHb8ugJ0WelOhcWiT7GdhyMCnXU
-         q71IG3fdvZaruxfSs8hkE7FcduWV/GoUdnaO1cEd3wI5/LCgex0UNGyxNgEj74SJ7vTs
-         GfJZGts6FQVnvejSwHPI8uIpK+EsZg2fnIQKkrIAGyQLv7u9pNVRQkHB7OcKBoYCQOQP
-         RrmQ==
-X-Gm-Message-State: ACgBeo1M54NjdZRvkd3A5jKSmu4F93ilF+fVyNzE4Ev5o/65jLFBE+r1
-        EAd7C3AZMligxx71yRINgqZoieTAPYBQTg==
-X-Google-Smtp-Source: AA6agR5IeTCiSE25gUAjMIUlyuAb/ATe40085kNlIdR9XrP9KH+/bi+PEVrsNM55mfWzwEZYZhZwXQ==
-X-Received: by 2002:a17:90a:8581:b0:1fd:62e0:67cc with SMTP id m1-20020a17090a858100b001fd62e067ccmr1336794pjn.144.1662069783338;
-        Thu, 01 Sep 2022 15:03:03 -0700 (PDT)
+        bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=;
+        b=DsvqGBWVcpB2i1G+wkdNRpXbGJyHJpxygc9EXubPzZszN2SWt//9Vq4FhNXuVNZrLi
+         z6pkVLI9v/Gxm262TMmQOdEMzEHUnYkgTBVcaGDss/UfnPxhZOzrR8OQ7ufTttJ1cUB9
+         RiuAaovU/A0iUJyhALBynsx6uxo0CxsCH9OWDafTnyOlbAPQsImew41AK0OsSATpONx8
+         xqXpnvANLt+nO89IqsBsxQR1Wt6dSI+cyyl3mIpf7+/57wefpTOgQO3MIJ2bculqdmEF
+         3qPl35tw8JwPtnB37WMqBdwSmcnDnn4AWoULy5xDb/0IK/J8h5gwQohoOZ5aE+MGAbAF
+         SIzw==
+X-Gm-Message-State: ACgBeo1Mm+9UFWSE7VBFDhcsI5QNPGRVf7VgAXUQZhqdZUFEYfTqiFvK
+        KhMMEvLHXbmwyTvQ+3m85Jl/K72VLRgxCw==
+X-Google-Smtp-Source: AA6agR6RjeZe7Y8QnW0cYYPMobD16I7AFu/QpKwQwdSJSAXd1pKggv0iXArcdd34IaNHJIW6grL9/Q==
+X-Received: by 2002:a17:902:ea02:b0:16f:11bf:f018 with SMTP id s2-20020a170902ea0200b0016f11bff018mr32101491plg.150.1662069784735;
+        Thu, 01 Sep 2022 15:03:04 -0700 (PDT)
 Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
-        by smtp.googlemail.com with ESMTPSA id fv4-20020a17090b0e8400b001fb350026f1sm128894pjb.4.2022.09.01.15.03.02
+        by smtp.googlemail.com with ESMTPSA id fv4-20020a17090b0e8400b001fb350026f1sm128894pjb.4.2022.09.01.15.03.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 15:03:03 -0700 (PDT)
+        Thu, 01 Sep 2022 15:03:04 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 20/23] nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use filemap_get_folios_tag()
-Date:   Thu,  1 Sep 2022 15:01:35 -0700
-Message-Id: <20220901220138.182896-21-vishal.moola@gmail.com>
+Subject: [PATCH 21/23] nilfs2: Convert nilfs_copy_dirty_pages() to use filemap_get_folios_tag()
+Date:   Thu,  1 Sep 2022 15:01:36 -0700
+Message-Id: <20220901220138.182896-22-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220901220138.182896-1-vishal.moola@gmail.com>
 References: <20220901220138.182896-1-vishal.moola@gmail.com>
@@ -80,48 +80,76 @@ the removal of find_get_pages_range_tag().
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- fs/nilfs2/btree.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/nilfs2/page.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-index 9f4d9432d38a..1e26f32a4e36 100644
---- a/fs/nilfs2/btree.c
-+++ b/fs/nilfs2/btree.c
-@@ -2143,7 +2143,7 @@ static void nilfs_btree_lookup_dirty_buffers(struct nilfs_bmap *btree,
- 	struct inode *btnc_inode = NILFS_BMAP_I(btree)->i_assoc_inode;
- 	struct address_space *btcache = btnc_inode->i_mapping;
- 	struct list_head lists[NILFS_BTREE_LEVEL_MAX];
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 3267e96c256c..5c96084e829f 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -240,42 +240,43 @@ static void nilfs_copy_page(struct page *dst, struct page *src, int copy_dirty)
+ int nilfs_copy_dirty_pages(struct address_space *dmap,
+ 			   struct address_space *smap)
+ {
 -	struct pagevec pvec;
 +	struct folio_batch fbatch;
- 	struct buffer_head *bh, *head;
+ 	unsigned int i;
  	pgoff_t index = 0;
- 	int level, i;
-@@ -2153,19 +2153,19 @@ static void nilfs_btree_lookup_dirty_buffers(struct nilfs_bmap *btree,
- 	     level++)
- 		INIT_LIST_HEAD(&lists[level]);
+ 	int err = 0;
  
 -	pagevec_init(&pvec);
 +	folio_batch_init(&fbatch);
+ repeat:
+-	if (!pagevec_lookup_tag(&pvec, smap, &index, PAGECACHE_TAG_DIRTY))
++	if (!filemap_get_folios_tag(smap, &index, (pgoff_t)-1,
++				PAGECACHE_TAG_DIRTY, &fbatch))
+ 		return 0;
  
--	while (pagevec_lookup_tag(&pvec, btcache, &index,
--					PAGECACHE_TAG_DIRTY)) {
--		for (i = 0; i < pagevec_count(&pvec); i++) {
--			bh = head = page_buffers(pvec.pages[i]);
-+	while (filemap_get_folios_tag(btcache, &index, (pgoff_t)-1,
-+				PAGECACHE_TAG_DIRTY, &fbatch)) {
-+		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+			bh = head = folio_buffers(fbatch.folios[i]);
- 			do {
- 				if (buffer_dirty(bh))
- 					nilfs_btree_add_dirty_buffer(btree,
- 								     lists, bh);
- 			} while ((bh = bh->b_this_page) != head);
+-	for (i = 0; i < pagevec_count(&pvec); i++) {
+-		struct page *page = pvec.pages[i], *dpage;
++	for (i = 0; i < folio_batch_count(&fbatch); i++) {
++		struct folio *folio = fbatch.folios[i], *dfolio;
+ 
+-		lock_page(page);
+-		if (unlikely(!PageDirty(page)))
+-			NILFS_PAGE_BUG(page, "inconsistent dirty state");
++		folio_lock(folio);
++		if (unlikely(!folio_test_dirty(folio)))
++			NILFS_PAGE_BUG(&folio->page, "inconsistent dirty state");
+ 
+-		dpage = grab_cache_page(dmap, page->index);
+-		if (unlikely(!dpage)) {
++		dfolio = filemap_grab_folio(dmap, folio->index);
++		if (unlikely(!dfolio)) {
+ 			/* No empty page is added to the page cache */
+ 			err = -ENOMEM;
+-			unlock_page(page);
++			folio_unlock(folio);
+ 			break;
  		}
--		pagevec_release(&pvec);
-+		folio_batch_release(&fbatch);
- 		cond_resched();
- 	}
+-		if (unlikely(!page_has_buffers(page)))
+-			NILFS_PAGE_BUG(page,
++		if (unlikely(!folio_buffers(folio)))
++			NILFS_PAGE_BUG(&folio->page,
+ 				       "found empty page in dat page cache");
  
+-		nilfs_copy_page(dpage, page, 1);
+-		__set_page_dirty_nobuffers(dpage);
++		nilfs_copy_page(&dfolio->page, &folio->page, 1);
++		filemap_dirty_folio(folio_mapping(dfolio), dfolio);
+ 
+-		unlock_page(dpage);
+-		put_page(dpage);
+-		unlock_page(page);
++		folio_unlock(dfolio);
++		folio_put(dfolio);
++		folio_unlock(folio);
+ 	}
+-	pagevec_release(&pvec);
++	folio_batch_release(&fbatch);
+ 	cond_resched();
+ 
+ 	if (likely(!err))
 -- 
 2.36.1
 
