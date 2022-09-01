@@ -2,213 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A52F05A9E1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 19:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10D55A9EF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 20:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233178AbiIARfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 13:35:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
+        id S233604AbiIASbP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 14:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233350AbiIARfU (ORCPT
+        with ESMTP id S231281AbiIASbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 13:35:20 -0400
-X-Greylist: delayed 1425 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Sep 2022 10:34:27 PDT
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11409410C
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 10:34:27 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MJSpD2KxYzMqK1f;
-        Thu,  1 Sep 2022 19:34:12 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MJSpC0M5lzlh8TN;
-        Thu,  1 Sep 2022 19:34:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662053652;
-        bh=o/v/WCsruLFuIKPLYfYVi2ZWkfCBoZTi3cgn9QP8x2I=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=lxSMPoQjcyoYGPH2mJTUzxKF7Ho3MUUpp+fWEFqTQ8uzen1kRgFn9QuD+UtiBMvEW
-         ogKQt0Rv1c0+NKP8Lu+L8IxKLcP/2SlmPj7KlIizHPH/6PpMYnoQfEdWjFbXVdCu/s
-         LRxd+4c+cKCcHjUi+4MagOS5S7RdvtzEa3ogkYco=
-Message-ID: <4b69a4ac-28ab-16aa-14b1-04a6f64d5490@digikod.net>
-Date:   Thu, 1 Sep 2022 19:34:10 +0200
+        Thu, 1 Sep 2022 14:31:14 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB67659E7
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 11:31:13 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-11f34610d4aso22859872fac.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Sep 2022 11:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=DWclz0cI2Qzp/WFkCaK+AoAFDfwG7DzVDaialA7WOVA=;
+        b=VQUzR7mE00Iv3vCd3+i0WpUYdn9aP59Pbv4I9ZtntuyG5+07xtyFGsIU9XPMhmJPQr
+         Ue7O44guqoWzlr4kDQi/hLdYLyqJcLni8d4CJ5cyhLLZs7PWSroE+/LZLEeSn3ntnXey
+         Kvg0CseM0umyM7HTJ2dBL9aK5wP1d1u5vBhRJarQfoIYVPX6pSjlSg5w6Po9NrwG8UYg
+         EXN+lx18gHnkJ3659AigDLSmbuPI7SVGfTghpLXw6CZfg9Ij1AYksDyipHc2bH/yZYtV
+         K96X+tdewpVSHI+/WIJjuWa5PBRKhYN16yRtsEv3AihoiAGB6IqqgUUB7etOCOCv8dI/
+         PMlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=DWclz0cI2Qzp/WFkCaK+AoAFDfwG7DzVDaialA7WOVA=;
+        b=LXcE8yKDiSTDxEYYh5m6nMkXLsPtlPQIHO3mEBwWqNbPHPu+ShbqUU1rHjamVvNtZy
+         6ZwoUf3E30egZxNZE6SzhN13Is6QbFC9SVg2MFRxjI5uJnZAHAgu5wkUNmntmkcrBVQ+
+         MvPsgOQoYP/xTL1wMxjdZ01pL6KlP+JCa3wNpXuSiJ+O3gsAVUdjB31rYcSFoPmBKHx8
+         Wm9xrBybR3Nm59X+aHv6v02sQq2TDEizX1+Z47d3n8R8EC0QP59r0hMm3fitnzkTmYLJ
+         vaA9+/v6eyPaQBQYmvuLaQ54TKTmsVyfhy4JcIODZb8O2iaasnICIveH/MLzpaFjPBGo
+         Q1NA==
+X-Gm-Message-State: ACgBeo0bSKU01+0CwYdiGke4bMIydF/twJj15eLzm+E2og4w3u3Aoh5n
+        n6PeyGMhTcTDQ64i9M7OC4Z759m9mRNBzEOqSKAD
+X-Google-Smtp-Source: AA6agR4QcciaJ+V9DEP2dfhKeqL/C3Zg9FMWfYLckt6vpWX3sm1XllSrF7qtjHTDSSSTbXuSk2/ZxnQ2UHLplKdsUxo=
+X-Received: by 2002:a05:6871:796:b0:11e:b92e:731e with SMTP id
+ o22-20020a056871079600b0011eb92e731emr269638oap.41.1662057072424; Thu, 01 Sep
+ 2022 11:31:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
-Content-Language: en-US
-To:     xiujianfeng <xiujianfeng@huawei.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        shuah@kernel.org, corbet@lwn.net,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-References: <20220827111215.131442-1-xiujianfeng@huawei.com>
- <20220827111215.131442-4-xiujianfeng@huawei.com> <Ywpw66EYRDTQIyTx@nuc>
- <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
- <de4620d2-3268-b3cc-71dd-acbbd204435e@digikod.net>
- <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <cover.1659996830.git.rgb@redhat.com> <12063373.O9o76ZdvQC@x2>
+ <Yw/efLafvmimtCDq@madcap2.tricolour.ca> <5600292.DvuYhMxLoT@x2>
+ <CAHC9VhSPS7dRXLU9eV3Ne6Q7q=GPpak+=QRYLa_8Z4i-fESz8w@mail.gmail.com> <20220901075158.jqwaz3pklf3rqc6q@quack3>
+In-Reply-To: <20220901075158.jqwaz3pklf3rqc6q@quack3>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 1 Sep 2022 14:31:01 -0400
+Message-ID: <CAHC9VhStnE9vGu9h5tHnS58eyb8vm8rMN4miXpLAG6fFnidD=w@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full
+ permission event response
+To:     Jan Kara <jack@suse.cz>, Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CCing linux-fsdevel@vger.kernel.org
+On Thu, Sep 1, 2022 at 3:52 AM Jan Kara <jack@suse.cz> wrote:
+> On Wed 31-08-22 21:47:09, Paul Moore wrote:
+> > On Wed, Aug 31, 2022 at 7:55 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > On Wednesday, August 31, 2022 6:19:40 PM EDT Richard Guy Briggs wrote:
+> > > > On 2022-08-31 17:25, Steve Grubb wrote:
+> > > > > On Wednesday, August 31, 2022 5:07:25 PM EDT Richard Guy Briggs wrote:
+> > > > > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > > > > > index 433418d73584..f000fec52360 100644
+> > > > > > > > --- a/kernel/auditsc.c
+> > > > > > > > +++ b/kernel/auditsc.c
+> > > > > > > > @@ -64,6 +64,7 @@
+> > > > > > > > #include <uapi/linux/limits.h>
+> > > > > > > > #include <uapi/linux/netfilter/nf_tables.h>
+> > > > > > > > #include <uapi/linux/openat2.h> // struct open_how
+> > > > > > > > +#include <uapi/linux/fanotify.h>
+> > > > > > > >
+> > > > > > > > #include "audit.h"
+> > > > > > > >
+> > > > > > > > @@ -2899,10 +2900,34 @@ void __audit_log_kern_module(char *name)
+> > > > > > > > context->type = AUDIT_KERN_MODULE;
+> > > > > > > > }
+> > > > > > > >
+> > > > > > > > -void __audit_fanotify(u32 response)
+> > > > > > > > +void __audit_fanotify(u32 response, size_t len, char *buf)
+> > > > > > > > {
+> > > > > > > > -       audit_log(audit_context(), GFP_KERNEL,
+> > > > > > > > -               AUDIT_FANOTIFY, "resp=%u", response);
+> > > > > > > > +       struct fanotify_response_info_audit_rule *friar;
+> > > > > > > > +       size_t c = len;
+> > > > > > > > +       char *ib = buf;
+> > > > > > > > +
+> > > > > > > > +       if (!(len && buf)) {
+> > > > > > > > +               audit_log(audit_context(), GFP_KERNEL,
+> > > > > > > > AUDIT_FANOTIFY,
+> > > > > > > > +                         "resp=%u fan_type=0 fan_info=?",
+> > > > > > > > response);
+> > > > > > > > +               return;
+> > > > > > > > +       }
+> > > > > > > > +       while (c >= sizeof(struct fanotify_response_info_header)) {
+> > > > > > > > +               friar = (struct fanotify_response_info_audit_rule
+> > > > > > > > *)buf;
+> > > > > > >
+> > > > > > > Since the only use of this at the moment is the
+> > > > > > > fanotify_response_info_rule, why not pass the
+> > > > > > > fanotify_response_info_rule struct directly into this function?  We
+> > > > > > > can always change it if we need to in the future without affecting
+> > > > > > > userspace, and it would simplify the code.
+> > > > > >
+> > > > > > Steve, would it make any sense for there to be more than one
+> > > > > > FAN_RESPONSE_INFO_AUDIT_RULE header in a message?  Could there be more
+> > > > > > than one rule that contributes to a notify reason?  If not, would it be
+> > > > > > reasonable to return -EINVAL if there is more than one?
+> > > > >
+> > > > > I don't see a reason for sending more than one header. What is more
+> > > > > probable is the need to send additional data in that header. I was
+> > > > > thinking of maybe bit mapping it in the rule number. But I'd suggest
+> > > > > padding the struct just in case it needs expanding some day.
+> > > >
+> > > > This doesn't exactly answer my question about multiple rules
+> > > > contributing to one decision.
+> > >
+> > > I don't forsee that.
+> > >
+> > > > The need for more as yet undefined information sounds like a good reason
+> > > > to define a new header if that happens.
+> > >
+> > > It's much better to pad the struct so that the size doesn't change.
+> > >
+> > > > At this point, is it reasonable to throw an error if more than one RULE
+> > > > header appears in a message?
+> > >
+> > > It is a write syscall. I'd silently discard everything else and document that
+> > > in the man pages. But the fanotify maintainers should really weigh in on
+> > > this.
+> > >
+> > > > The way I had coded this last patchset was to allow for more than one RULE
+> > > > header and each one would get its own record in the event.
+> > >
+> > > I do not forsee a need for this.
+> > >
+> > > > How many rules total are likely to exist?
+> > >
+> > > Could be a thousand. But I already know some missing information we'd like to
+> > > return to user space in an audit event, so the bit mapping on the rule number
+> > > might happen. I'd suggest padding one u32 for future use.
+> >
+> > A better way to handle an expansion like that would be to have a
+> > length/version field at the top of the struct that could be used to
+> > determine the size and layout of the struct.
+>
+> We already do have the 'type' and 'len' fields in
+> struct fanotify_response_info_header. So if audit needs to pass more
+> information, we can define a new 'type' and either make it replace the
+> current struct fanotify_response_info_audit_rule or make it expand the
+> information in it. At least this is how we handle similar situation when
+> fanotify wants to report some new bits of information to userspace.
 
+Perfect, I didn't know that was an option from the fanotify side; I
+agree that's the right approach.
 
-On 01/09/2022 15:06, xiujianfeng wrote:
-> Hi,
-> 
-> 在 2022/8/30 0:01, Mickaël Salaün 写道:
->>
->> On 29/08/2022 03:17, xiujianfeng wrote:
->>>
->>> Hi,
->>>
->>> 在 2022/8/28 3:30, Günther Noack 写道:
->>>> Hello!
->>>>
->>>> the mapping between Landlock rights to LSM hooks is now as follows in
->>>> your patch set:
->>>>
->>>> * LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
->>>> * LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
->>>>      (this hook can restrict both the chown(2) and chgrp(2) syscalls)
->>>>
->>>> Is this the desired mapping?
->>>>
->>>> The previous discussion I found on the topic was in
->>>>
->>>> [1]
->>>> https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/
->>>>
->>>> [2]
->>>> https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/
->>>>
->>>> [3]
->>>> https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/
->>>>
->>>>
->>>> In my understanding the main arguments were the ones in [2] and [3].
->>>>
->>>> There were no further responses to [3], so I was under the impression
->>>> that we were gravitating towards an approach where the
->>>> file-metadata-modification operations were grouped more coarsely?
->>>>
->>>> For example with the approach suggested in [3], which would be to
->>>> group the operations coarsely into (a) one Landlock right for
->>>> modifying file metadata that is used in security contexts, and (b) one
->>>> Landlock right for modifying metadata that was used in non-security
->>>> contexts. That would mean that there would be:
->>>>
->>>> (a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
->>>> following operations:
->>>>      * chmod(2)-variants through hook_path_chmod,
->>>>      * chown(2)-variants and chgrp(2)-variants through hook_path_chown,
->>>>      * setxattr(2)-variants and removexattr(2)-variants for extended
->>>>        attributes that are not "user extended attributes" as described in
->>>>        xattr(7) through hook_inode_setxattr and hook_inode_removexattr
->>>>
->>>> (b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
->>>> following operations:
->>>>      * utimes(2) and other operations for setting other non-security
->>>>        sensitive attributes, probably through hook_inode_setattr(?)
->>>>      * xattr modifications like above, but for the "user extended
->>>>        attributes", though hook_inode_setxattr and hook_inode_removexattr
->>>>
->>>> In my mind, this would be a sensible grouping, and it would also help
->>>> to decouple the userspace-exposed API from the underlying
->>>> implementation, as Casey suggested to do in [2].
->>>>
->>>> Specifically for this patch set, if you want to use this grouping, you
->>>> would only need to add one new Landlock right
->>>> (LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
->>>> under (a) (and maybe we can find a shorter name for it... :))?
->>>>
->>>> Did I miss any operations here that would be necessary to restrict?
->>>>
->>>> Would that make sense to you? Xiu, what is your opinion on how this
->>>> should be grouped? Do you have use cases in mind where a more
->>>> fine-grained grouping would be required?
->>>
->>> I apologize I may missed that discussion when I prepared v2:(
->>>
->>> Yes, agreed, this grouping is more sensible and resonnable. so in this
->>> patchset only one right will be added, and I suppose the first commit
->>> which expand access_mask_t to u32 can be droped.
->>>
->>>>
->>>> —Günther
->>>>
->>>> P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets called
->>>> on a variety on attribute changes including file ownership, file size
->>>> and file mode, so it might potentially interact with a bunch of other
->>>> existing Landlock rights. Maybe that is not the right approach. In any
->>>> case, it seems like it might require more thinking and it might be
->>>> sensible to do that in a separate patch set IMHO.
->>>
->>> Thanks for you reminder, that seems it's more complicated to support
->>> utimes, so I think we'd better not support it in this patchset.
->>
->> The issue with this approach is that it makes it impossible to properly
->> group such access rights. Indeed, to avoid inconsistencies and much more
->> complexity, we cannot extend a Landlock access right once it is defined.
->>
->> We also need to consider that file ownership and permissions have a
->> default (e.g. umask), which is also a way to set them. How to
->> consistently manage that? What if the application wants to protect its
->> files with chmod 0400?
-> 
-> what do you mean by this? do you mean that we should have a set of
-> default permissions for files created by applications within the
-> sandbox, so that it can update metadata of its own file.
+> That being said if audit wants to have u32 pad in its struct
+> fanotify_response_info_audit_rule for future "optional" expansion I'm not
+> strictly opposed to that but I don't think it is a good idea.
 
-I mean that we need a consistent access control system, and for this we 
-need to consider all the ways an extended attribute can be set.
+Yes, I'm not a fan of padding out this way, especially when we have
+better options.
 
-We can either extend the meaning of current access rights (controlled 
-with a ruleset flag for compatibility reasons), or create new access 
-rights. I think it would be better to add new dedicated rights to make 
-it more explicit and flexible.
+> Ultimately I guess I'll leave it upto audit subsystem what it wants to have
+> in its struct fanotify_response_info_audit_rule because for fanotify
+> subsystem, it is just an opaque blob it is passing.
 
-I'm not sure about the right approach to properly control file 
-permission. We need to think about it. Do you have some ideas?
+In that case, let's stick with leveraging the type/len fields in the
+fanotify_response_info_header struct, that should give us all the
+flexibility we need.
 
-BTW, utimes can be controlled with the inode_setattr() LSM hook. Being 
-able to control arbitrary file time modification could be part of the 
-FS_WRITE_SAFE_METADATA, but modification and access time should always 
-be updated according to the file operation.
+Richard and Steve, it sounds like Steve is already aware of additional
+information that he wants to send via the
+fanotify_response_info_audit_rule struct, please include that in the
+next revision of this patchset.  I don't want to get this merged and
+then soon after have to hack in additional info.
 
-
-> 
->>
->> About the naming, I think we can start with:
->> - LANDLOCK_ACCESS_FS_READ_METADATA (read any file/dir metadata);
->> - LANDLOCK_ACCESS_FS_WRITE_SAFE_METADATA: change file times, user xattr;
-> 
-> do you mean we should have permission controls on metadata level or
-> operation level? e.g. should we allow update on user xattr but deny
-> update on security xattr? or should we disallow update on any xattr?
-> 
->> - LANDLOCK_ACCESS_FS_WRITE_UNSAFE_METADATA: interpreted by the kernel
->> (could change non-Landlock DAC or MAC, which could be considered as a
->> policy bypass; or other various xattr that might be interpreted by
->> filesystems), this should be denied most of the time.
-> 
-> do you mean FS_WRITE_UNSAFE_METADATA is security-related? and
-> FS_WRITE_SAFE_METADATA is non-security-related?
-
-Yes, FS_WRITE_UNSAFE_METADATA would be for security related 
-xattr/chmod/chown, and FS_WRITE_SAFE_METADATA for non-security xattr. 
-Both are mutually exclusive. This would involve the inode_setattr and 
-inode_setxattr LSM hooks. Looking at the calling sites, it seems 
-possible to replace all inode arguments with paths.
+-- 
+paul-moore.com
