@@ -2,107 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AB35A90D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 09:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F21325A9141
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 09:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234226AbiIAHoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 03:44:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34082 "EHLO
+        id S234039AbiIAHxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 03:53:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233898AbiIAHnH (ORCPT
+        with ESMTP id S234151AbiIAHwn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 03:43:07 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC105125BAC;
-        Thu,  1 Sep 2022 00:43:04 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id h188so310531pgc.12;
-        Thu, 01 Sep 2022 00:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=bHV5ouZifV/jcwNOTNxjisEeKz6ACGz2OJcHGOBwl+A=;
-        b=O8My5ZUfglGldxoE5TU9Z4/cLx6KOSf+Zqg3yAsgEZt447wueyM2TNfnvo0y/tQrq5
-         ECbCehiGfKz0Rng39PXFSeD2yz5jRj6w73bCGT3mD800BWpYCPpyhhgmKIvWkx3kPcRF
-         5qcOz8RqSilp3LWMrXMqD/RbbWPOgMwVVjLyQACys95YZmxYLqSkZHNNvhFVSquhTWMK
-         46tb6AOpCGvFAiLpeRwpHT+INxcz7xXAdvXoC9weBWxvia1zouuWiD85ScDtwbItKJAa
-         HoqaM3Twx4ks4SvtmCt+fhCKHxjZMHEbX29N518ovwwuql81xlUEX0oY3rWedEXg7FFo
-         O/WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=bHV5ouZifV/jcwNOTNxjisEeKz6ACGz2OJcHGOBwl+A=;
-        b=giGcVsVowlUhhXr39zlyDOa7gNbqfwNdHtmMGHTI4mTcovRdfDi3TOBdLp0NzRXAAu
-         gpyPGlc7CaGl7Llj5TFK5pcZEU+ofUo0MpJJuAsYOD1P/WBv6dLz1eRoJaMiqMNnfUUs
-         rsrkPBZJ4leXI3DPpd9VYAHgUR/aIfwOpT1h7m2XYHdNCFpRlAon8QX330xRzKWfX3US
-         kplGe9ody7sVz0kYcOeB7eM/zPsDcj0esd9FgxZ71K0pHLlhdc+dQGkLPqHg0HSfIyk0
-         CRko/yC+BiFVb/9/ZGh1FDZtCSr4b42gaTg/i4U0+F58+sEJuxdo5nZZ8aOZT//94Zdd
-         h05w==
-X-Gm-Message-State: ACgBeo1CjhFH2pS2FISXyloLxgHihClM4i/dn12gw35Gf0KwGt8R25pC
-        5HGiI/4f0ibaVkWx+FWTsNr/WwMTTyE=
-X-Google-Smtp-Source: AA6agR7WE2VsK4EzSu4PSFqO/PYkg9RDnbC8duVg/ZZphtIPEZOiQtTFszLHs9JOF2amYqlGlR7GWw==
-X-Received: by 2002:a63:8b4c:0:b0:42c:65f5:29c3 with SMTP id j73-20020a638b4c000000b0042c65f529c3mr12581184pge.397.1662018183584;
-        Thu, 01 Sep 2022 00:43:03 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id a85-20020a621a58000000b00537bdc9c2f2sm13041642pfa.170.2022.09.01.00.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 00:43:03 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: ye.xingchen@zte.com.cn
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH linux-next] fuse: Remove the unneeded result variable
-Date:   Thu,  1 Sep 2022 07:42:59 +0000
-Message-Id: <20220901074259.313062-1-ye.xingchen@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Thu, 1 Sep 2022 03:52:43 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F261267CB9;
+        Thu,  1 Sep 2022 00:52:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 45CF81FB6B;
+        Thu,  1 Sep 2022 07:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1662018722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z91wuXCFrsBOMQUt2qaRkpJ41f+MP9CEbGjWPtUri3E=;
+        b=19qjTaWuK3qc7WFpw99UQF+Td49TCGHEMJWv7+jqjLgoRcmHkoRpSfeY+6LkEEW2XAj2B1
+        OBXflpXnckh2mZ/DeEyfmn0UOsPnbz+21v6DPff7GlLrWb7meQEgbbHMkMj8u/cx6PVAf2
+        vYMaSAWqUCCjyRcLf49L1i02ECMA1HI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1662018722;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z91wuXCFrsBOMQUt2qaRkpJ41f+MP9CEbGjWPtUri3E=;
+        b=n6ZhA9oYQmcsxxgoFj2HNza01CMS9fmw83q9+Dc/7yrrtIsfmjn1+emrfG449blSZB5DCJ
+        UQuga+sJ4I5KDQBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id ED85313A89;
+        Thu,  1 Sep 2022 07:52:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7XhzOaFkEGMQGQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 01 Sep 2022 07:52:01 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7BD91A067C; Thu,  1 Sep 2022 09:51:58 +0200 (CEST)
+Date:   Thu, 1 Sep 2022 09:51:58 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full
+ permission event response
+Message-ID: <20220901075158.jqwaz3pklf3rqc6q@quack3>
+References: <cover.1659996830.git.rgb@redhat.com>
+ <12063373.O9o76ZdvQC@x2>
+ <Yw/efLafvmimtCDq@madcap2.tricolour.ca>
+ <5600292.DvuYhMxLoT@x2>
+ <CAHC9VhSPS7dRXLU9eV3Ne6Q7q=GPpak+=QRYLa_8Z4i-fESz8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSPS7dRXLU9eV3Ne6Q7q=GPpak+=QRYLa_8Z4i-fESz8w@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: ye xingchen <ye.xingchen@zte.com.cn>
+On Wed 31-08-22 21:47:09, Paul Moore wrote:
+> On Wed, Aug 31, 2022 at 7:55 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > On Wednesday, August 31, 2022 6:19:40 PM EDT Richard Guy Briggs wrote:
+> > > On 2022-08-31 17:25, Steve Grubb wrote:
+> > > > On Wednesday, August 31, 2022 5:07:25 PM EDT Richard Guy Briggs wrote:
+> > > > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > > > > index 433418d73584..f000fec52360 100644
+> > > > > > > --- a/kernel/auditsc.c
+> > > > > > > +++ b/kernel/auditsc.c
+> > > > > > > @@ -64,6 +64,7 @@
+> > > > > > > #include <uapi/linux/limits.h>
+> > > > > > > #include <uapi/linux/netfilter/nf_tables.h>
+> > > > > > > #include <uapi/linux/openat2.h> // struct open_how
+> > > > > > > +#include <uapi/linux/fanotify.h>
+> > > > > > >
+> > > > > > > #include "audit.h"
+> > > > > > >
+> > > > > > > @@ -2899,10 +2900,34 @@ void __audit_log_kern_module(char *name)
+> > > > > > > context->type = AUDIT_KERN_MODULE;
+> > > > > > > }
+> > > > > > >
+> > > > > > > -void __audit_fanotify(u32 response)
+> > > > > > > +void __audit_fanotify(u32 response, size_t len, char *buf)
+> > > > > > > {
+> > > > > > > -       audit_log(audit_context(), GFP_KERNEL,
+> > > > > > > -               AUDIT_FANOTIFY, "resp=%u", response);
+> > > > > > > +       struct fanotify_response_info_audit_rule *friar;
+> > > > > > > +       size_t c = len;
+> > > > > > > +       char *ib = buf;
+> > > > > > > +
+> > > > > > > +       if (!(len && buf)) {
+> > > > > > > +               audit_log(audit_context(), GFP_KERNEL,
+> > > > > > > AUDIT_FANOTIFY,
+> > > > > > > +                         "resp=%u fan_type=0 fan_info=?",
+> > > > > > > response);
+> > > > > > > +               return;
+> > > > > > > +       }
+> > > > > > > +       while (c >= sizeof(struct fanotify_response_info_header)) {
+> > > > > > > +               friar = (struct fanotify_response_info_audit_rule
+> > > > > > > *)buf;
+> > > > > >
+> > > > > > Since the only use of this at the moment is the
+> > > > > > fanotify_response_info_rule, why not pass the
+> > > > > > fanotify_response_info_rule struct directly into this function?  We
+> > > > > > can always change it if we need to in the future without affecting
+> > > > > > userspace, and it would simplify the code.
+> > > > >
+> > > > > Steve, would it make any sense for there to be more than one
+> > > > > FAN_RESPONSE_INFO_AUDIT_RULE header in a message?  Could there be more
+> > > > > than one rule that contributes to a notify reason?  If not, would it be
+> > > > > reasonable to return -EINVAL if there is more than one?
+> > > >
+> > > > I don't see a reason for sending more than one header. What is more
+> > > > probable is the need to send additional data in that header. I was
+> > > > thinking of maybe bit mapping it in the rule number. But I'd suggest
+> > > > padding the struct just in case it needs expanding some day.
+> > >
+> > > This doesn't exactly answer my question about multiple rules
+> > > contributing to one decision.
+> >
+> > I don't forsee that.
+> >
+> > > The need for more as yet undefined information sounds like a good reason
+> > > to define a new header if that happens.
+> >
+> > It's much better to pad the struct so that the size doesn't change.
+> >
+> > > At this point, is it reasonable to throw an error if more than one RULE
+> > > header appears in a message?
+> >
+> > It is a write syscall. I'd silently discard everything else and document that
+> > in the man pages. But the fanotify maintainers should really weigh in on
+> > this.
+> >
+> > > The way I had coded this last patchset was to allow for more than one RULE
+> > > header and each one would get its own record in the event.
+> >
+> > I do not forsee a need for this.
+> >
+> > > How many rules total are likely to exist?
+> >
+> > Could be a thousand. But I already know some missing information we'd like to
+> > return to user space in an audit event, so the bit mapping on the rule number
+> > might happen. I'd suggest padding one u32 for future use.
+> 
+> A better way to handle an expansion like that would be to have a
+> length/version field at the top of the struct that could be used to
+> determine the size and layout of the struct.
 
-Return the value fuse_dev_release() directly instead of storing it in
-another redundant variable.
+We already do have the 'type' and 'len' fields in
+struct fanotify_response_info_header. So if audit needs to pass more
+information, we can define a new 'type' and either make it replace the
+current struct fanotify_response_info_audit_rule or make it expand the
+information in it. At least this is how we handle similar situation when
+fanotify wants to report some new bits of information to userspace.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
----
- fs/fuse/cuse.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+That being said if audit wants to have u32 pad in its struct
+fanotify_response_info_audit_rule for future "optional" expansion I'm not
+strictly opposed to that but I don't think it is a good idea. It is tricky
+to safely start using the new field. Audit subsystem can define that the
+kernel currently just ignores the field. And new kernel could start using
+the passed information in the additional field but that is somewhat risky
+because until that moment userspace can be passing random garbage in that
+unused field and thus break when running on new kernel that tries to make
+sense of it. Sure you can say it is broken userspace that does not properly
+initialize the padding field but history has shown us multiple times that
+events like these do happen and the breakage was unpleasant enough for
+users that the kernel just had to revert back to ignoring the field.
 
-diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index c7d882a9fe33..a06fbb1a8a5b 100644
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -545,7 +545,6 @@ static int cuse_channel_release(struct inode *inode, struct file *file)
- {
- 	struct fuse_dev *fud = file->private_data;
- 	struct cuse_conn *cc = fc_to_cc(fud->fc);
--	int rc;
- 
- 	/* remove from the conntbl, no more access from this point on */
- 	mutex_lock(&cuse_lock);
-@@ -560,9 +559,7 @@ static int cuse_channel_release(struct inode *inode, struct file *file)
- 		cdev_del(cc->cdev);
- 	}
- 
--	rc = fuse_dev_release(inode, file);	/* puts the base reference */
--
--	return rc;
-+	return fuse_dev_release(inode, file);
- }
- 
- static struct file_operations cuse_channel_fops; /* initialized during init */
+Alternatively the kernel could bail with error if the new field is non-zero
+but that would block new userspace using that field from running on old
+kernel. But presumably the new userspace could be handling the error and
+writing another response with new field zeroed out. That would be a safe
+option although not very different from defining a new response type.
+
+Ultimately I guess I'll leave it upto audit subsystem what it wants to have
+in its struct fanotify_response_info_audit_rule because for fanotify
+subsystem, it is just an opaque blob it is passing.
+
+								Honza
 -- 
-2.25.1
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
