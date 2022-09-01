@@ -2,52 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 179955A9DCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 19:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A52F05A9E1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 19:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234889AbiIARKx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 13:10:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40224 "EHLO
+        id S233178AbiIARfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 13:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231211AbiIARKs (ORCPT
+        with ESMTP id S233350AbiIARfU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 13:10:48 -0400
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 492FD6B8EB
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 10:10:46 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MJSH45RYVzMrQ3g;
-        Thu,  1 Sep 2022 19:10:40 +0200 (CEST)
+        Thu, 1 Sep 2022 13:35:20 -0400
+X-Greylist: delayed 1425 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Sep 2022 10:34:27 PDT
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11409410C
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 10:34:27 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MJSpD2KxYzMqK1f;
+        Thu,  1 Sep 2022 19:34:12 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MJSH364RpzMpnPk;
-        Thu,  1 Sep 2022 19:10:39 +0200 (CEST)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MJSpC0M5lzlh8TN;
+        Thu,  1 Sep 2022 19:34:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662052240;
-        bh=16QPBRAio1Sz5xnBcDXpWi9zGPNQZQq5M93ZFotOayA=;
+        s=20191114; t=1662053652;
+        bh=o/v/WCsruLFuIKPLYfYVi2ZWkfCBoZTi3cgn9QP8x2I=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gfgA0rwxRoLKD0l71LFQdaH5fWKQIWHZW4oXlFJyUe4dmBpRcD6fAtoVyd18UswqA
-         a0tnT9UXYDMaPhsCMdBiYWfXk174hrtjsR4LLeavCoSE+DubgHwLqTkv239ZjvYcKs
-         DXkocbb7dflpGvnuw3C5IgOf0AyxSayfqLhHgucY=
-Message-ID: <b336dcfc-7d28-dea9-54de-0b8e4b725c1c@digikod.net>
-Date:   Thu, 1 Sep 2022 19:10:38 +0200
+        b=lxSMPoQjcyoYGPH2mJTUzxKF7Ho3MUUpp+fWEFqTQ8uzen1kRgFn9QuD+UtiBMvEW
+         ogKQt0Rv1c0+NKP8Lu+L8IxKLcP/2SlmPj7KlIizHPH/6PpMYnoQfEdWjFbXVdCu/s
+         LRxd+4c+cKCcHjUi+4MagOS5S7RdvtzEa3ogkYco=
+Message-ID: <4b69a4ac-28ab-16aa-14b1-04a6f64d5490@digikod.net>
+Date:   Thu, 1 Sep 2022 19:34:10 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v5 0/4] landlock: truncate support
+Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
+To:     xiujianfeng <xiujianfeng@huawei.com>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        shuah@kernel.org, corbet@lwn.net,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-4-xiujianfeng@huawei.com> <Ywpw66EYRDTQIyTx@nuc>
+ <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
+ <de4620d2-3268-b3cc-71dd-acbbd204435e@digikod.net>
+ <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20220817203006.21769-1-gnoack3000@gmail.com>
+In-Reply-To: <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,153 +62,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hmm, I think there is an issue with this series. Landlock only enforces 
-restrictions at open time or when dealing with user-supplied file paths 
-(relative or absolute). The use of the path_truncate hook in this series 
-doesn't distinguish between file descriptor from before the current 
-sandbox or from after being sandboxed. For instance, if a file 
-descriptor is received through a unix socket, it is assumed that this is 
-legitimate and no Landlock restriction apply on it, which is not the 
-case with this series anymore. It is the same for files opened before 
-the process sandbox itself.
-
-To be able to follow the current semantic, I think we should control the 
-truncate access at open time (or when dealing with a user-supplied path) 
-but not on any file descriptor as it is currently done.
+CCing linux-fsdevel@vger.kernel.org
 
 
-On 17/08/2022 22:30, Günther Noack wrote:
-> The goal of these patches is to work towards a more complete coverage
-> of file system operations that are restrictable with Landlock.
+On 01/09/2022 15:06, xiujianfeng wrote:
+> Hi,
 > 
-> The known set of currently unsupported file system operations in
-> Landlock is described at [1]. Out of the operations listed there,
-> truncate is the only one that modifies file contents, so these patches
-> should make it possible to prevent the direct modification of file
-> contents with Landlock.
+> 在 2022/8/30 0:01, Mickaël Salaün 写道:
+>>
+>> On 29/08/2022 03:17, xiujianfeng wrote:
+>>>
+>>> Hi,
+>>>
+>>> 在 2022/8/28 3:30, Günther Noack 写道:
+>>>> Hello!
+>>>>
+>>>> the mapping between Landlock rights to LSM hooks is now as follows in
+>>>> your patch set:
+>>>>
+>>>> * LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
+>>>> * LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
+>>>>      (this hook can restrict both the chown(2) and chgrp(2) syscalls)
+>>>>
+>>>> Is this the desired mapping?
+>>>>
+>>>> The previous discussion I found on the topic was in
+>>>>
+>>>> [1]
+>>>> https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/
+>>>>
+>>>> [2]
+>>>> https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/
+>>>>
+>>>> [3]
+>>>> https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/
+>>>>
+>>>>
+>>>> In my understanding the main arguments were the ones in [2] and [3].
+>>>>
+>>>> There were no further responses to [3], so I was under the impression
+>>>> that we were gravitating towards an approach where the
+>>>> file-metadata-modification operations were grouped more coarsely?
+>>>>
+>>>> For example with the approach suggested in [3], which would be to
+>>>> group the operations coarsely into (a) one Landlock right for
+>>>> modifying file metadata that is used in security contexts, and (b) one
+>>>> Landlock right for modifying metadata that was used in non-security
+>>>> contexts. That would mean that there would be:
+>>>>
+>>>> (a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
+>>>> following operations:
+>>>>      * chmod(2)-variants through hook_path_chmod,
+>>>>      * chown(2)-variants and chgrp(2)-variants through hook_path_chown,
+>>>>      * setxattr(2)-variants and removexattr(2)-variants for extended
+>>>>        attributes that are not "user extended attributes" as described in
+>>>>        xattr(7) through hook_inode_setxattr and hook_inode_removexattr
+>>>>
+>>>> (b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
+>>>> following operations:
+>>>>      * utimes(2) and other operations for setting other non-security
+>>>>        sensitive attributes, probably through hook_inode_setattr(?)
+>>>>      * xattr modifications like above, but for the "user extended
+>>>>        attributes", though hook_inode_setxattr and hook_inode_removexattr
+>>>>
+>>>> In my mind, this would be a sensible grouping, and it would also help
+>>>> to decouple the userspace-exposed API from the underlying
+>>>> implementation, as Casey suggested to do in [2].
+>>>>
+>>>> Specifically for this patch set, if you want to use this grouping, you
+>>>> would only need to add one new Landlock right
+>>>> (LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
+>>>> under (a) (and maybe we can find a shorter name for it... :))?
+>>>>
+>>>> Did I miss any operations here that would be necessary to restrict?
+>>>>
+>>>> Would that make sense to you? Xiu, what is your opinion on how this
+>>>> should be grouped? Do you have use cases in mind where a more
+>>>> fine-grained grouping would be required?
+>>>
+>>> I apologize I may missed that discussion when I prepared v2:(
+>>>
+>>> Yes, agreed, this grouping is more sensible and resonnable. so in this
+>>> patchset only one right will be added, and I suppose the first commit
+>>> which expand access_mask_t to u32 can be droped.
+>>>
+>>>>
+>>>> —Günther
+>>>>
+>>>> P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets called
+>>>> on a variety on attribute changes including file ownership, file size
+>>>> and file mode, so it might potentially interact with a bunch of other
+>>>> existing Landlock rights. Maybe that is not the right approach. In any
+>>>> case, it seems like it might require more thinking and it might be
+>>>> sensible to do that in a separate patch set IMHO.
+>>>
+>>> Thanks for you reminder, that seems it's more complicated to support
+>>> utimes, so I think we'd better not support it in this patchset.
+>>
+>> The issue with this approach is that it makes it impossible to properly
+>> group such access rights. Indeed, to avoid inconsistencies and much more
+>> complexity, we cannot extend a Landlock access right once it is defined.
+>>
+>> We also need to consider that file ownership and permissions have a
+>> default (e.g. umask), which is also a way to set them. How to
+>> consistently manage that? What if the application wants to protect its
+>> files with chmod 0400?
 > 
-> The patch introduces the truncation restriction feature as an
-> additional bit in the access_mask_t bitmap, in line with the existing
-> supported operations.
+> what do you mean by this? do you mean that we should have a set of
+> default permissions for files created by applications within the
+> sandbox, so that it can update metadata of its own file.
+
+I mean that we need a consistent access control system, and for this we 
+need to consider all the ways an extended attribute can be set.
+
+We can either extend the meaning of current access rights (controlled 
+with a ruleset flag for compatibility reasons), or create new access 
+rights. I think it would be better to add new dedicated rights to make 
+it more explicit and flexible.
+
+I'm not sure about the right approach to properly control file 
+permission. We need to think about it. Do you have some ideas?
+
+BTW, utimes can be controlled with the inode_setattr() LSM hook. Being 
+able to control arbitrary file time modification could be part of the 
+FS_WRITE_SAFE_METADATA, but modification and access time should always 
+be updated according to the file operation.
+
+
 > 
-> The truncation flag covers both the truncate(2) and ftruncate(2)
-> families of syscalls, as well as open(2) with the O_TRUNC flag.
-> This includes usages of creat() in the case where existing regular
-> files are overwritten.
+>>
+>> About the naming, I think we can start with:
+>> - LANDLOCK_ACCESS_FS_READ_METADATA (read any file/dir metadata);
+>> - LANDLOCK_ACCESS_FS_WRITE_SAFE_METADATA: change file times, user xattr;
 > 
-> Apart from Landlock, file truncation can also be restricted using
-> seccomp-bpf, but it is more difficult to use (requires BPF, requires
-> keeping up-to-date syscall lists) and it is not configurable by file
-> hierarchy, as Landlock is. The simplicity and flexibility of the
-> Landlock approach makes it worthwhile adding.
+> do you mean we should have permission controls on metadata level or
+> operation level? e.g. should we allow update on user xattr but deny
+> update on security xattr? or should we disallow update on any xattr?
 > 
-> While it's possible to use the "write file" and "truncate" rights
-> independent of each other, it simplifies the mental model for
-> userspace callers to always use them together.
+>> - LANDLOCK_ACCESS_FS_WRITE_UNSAFE_METADATA: interpreted by the kernel
+>> (could change non-Landlock DAC or MAC, which could be considered as a
+>> policy bypass; or other various xattr that might be interpreted by
+>> filesystems), this should be denied most of the time.
 > 
-> Specifically, the following behaviours might be surprising for users
-> when using these independently:
-> 
->   * The commonly creat() syscall requires the truncate right when
->     overwriting existing files, as it is equivalent to open(2) with
->     O_TRUNC|O_CREAT|O_WRONLY.
->   * The "write file" right is not always required to truncate a file,
->     even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
-> 
-> Nevertheless, keeping the two flags separate is the correct approach
-> to guarantee backwards compatibility for existing Landlock users.
-> 
-> These patches are based on version 6.0-rc1.
-> 
-> Best regards,
-> Günther
-> 
-> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> 
-> Past discussions:
-> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
-> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
-> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
-> 
-> Changelog:
-> 
-> V5:
-> * Documentation
->    * Fix wording in userspace-api headers and in landlock.rst.
->    * Move the truncation limitation section one to the bottom.
->    * Move all .rst changes into the documentation commit.
-> * selftests
->    * Remove _metadata argument from helpers where it became unnecessary.
->    * Open writable file descriptors at the top of both tests, before Landlock
->      is enabled, to exercise ftruncate() independently from open().
->    * Simplify test_ftruncate and decouple it from exercising open().
->    * test_creat(): Return errno on close() failure (it does not conflict).
->    * Fix /* comment style */
->    * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
->    * Add missing |O_TRUNC to a check in one test.
->    * Put the truncate_unhandled test before the other.
-> 
-> V4:
->   * Documentation
->     * Clarify wording and syntax as discussed in review.
->     * Use a less confusing error message in the example.
->   * selftests:
->     * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
->       (This is an intentionally uncommon error code, so that the source
->       of the error is clear and the test can distinguish test setup
->       failures from failures in the actual system call under test.)
->   * samples/Documentation:
->     * Use additional clarifying comments in the kernel backwards
->       compatibility logic.
-> 
-> V3:
->   * selftests:
->     * Explicitly test ftruncate with readonly file descriptors
->       (returns EINVAL).
->     * Extract test_ftruncate, test_truncate, test_creat helpers,
->       which simplified the previously mixed usage of EXPECT/ASSERT.
->     * Test creat() behaviour as part of the big truncation test.
->     * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
->       This simplifies the tests a bit. The kernel implementations are the
->       same as for truncate(2) and ftruncate(2), so there is little benefit
->       from testing them exhaustively. (We aren't testing all open(2)
->       variants either.)
->   * samples/landlock/sandboxer.c:
->     * Use switch() to implement best effort mode.
->   * Documentation:
->     * Give more background on surprising truncation behaviour.
->     * Use switch() in the example too, to stay in-line with the sample tool.
->     * Small fixes in header file to address previous comments.
-> * misc:
->    * Fix some typos and const usages.
-> 
-> V2:
->   * Documentation: Mention the truncation flag where needed.
->   * Documentation: Point out connection between truncation and file writing.
->   * samples: Add file truncation to the landlock/sandboxer.c sample tool.
->   * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
->   * selftests: Exercise truncation syscalls when the truncate right
->     is not handled by Landlock.
-> 
-> Günther Noack (4):
->    landlock: Support file truncation
->    selftests/landlock: Selftests for file truncation support
->    samples/landlock: Extend sample tool to support
->      LANDLOCK_ACCESS_FS_TRUNCATE
->    landlock: Document Landlock's file truncation support
-> 
->   Documentation/userspace-api/landlock.rst     |  52 +++-
->   include/uapi/linux/landlock.h                |  17 +-
->   samples/landlock/sandboxer.c                 |  23 +-
->   security/landlock/fs.c                       |   9 +-
->   security/landlock/limits.h                   |   2 +-
->   security/landlock/syscalls.c                 |   2 +-
->   tools/testing/selftests/landlock/base_test.c |   2 +-
->   tools/testing/selftests/landlock/fs_test.c   | 257 ++++++++++++++++++-
->   8 files changed, 336 insertions(+), 28 deletions(-)
-> 
-> 
-> base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
-> --
-> 2.37.2
+> do you mean FS_WRITE_UNSAFE_METADATA is security-related? and
+> FS_WRITE_SAFE_METADATA is non-security-related?
+
+Yes, FS_WRITE_UNSAFE_METADATA would be for security related 
+xattr/chmod/chown, and FS_WRITE_SAFE_METADATA for non-security xattr. 
+Both are mutually exclusive. This would involve the inode_setattr and 
+inode_setxattr LSM hooks. Looking at the calling sites, it seems 
+possible to replace all inode arguments with paths.
