@@ -2,59 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C5E5AA303
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 00:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1373B5AA3AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 01:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234751AbiIAW3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 18:29:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34984 "EHLO
+        id S233250AbiIAXZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 19:25:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235395AbiIAW2f (ORCPT
+        with ESMTP id S231447AbiIAXZD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 18:28:35 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D7886FFC
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 15:26:35 -0700 (PDT)
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 281MPY1f007699;
-        Fri, 2 Sep 2022 07:25:34 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Fri, 02 Sep 2022 07:25:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 281MPY2R007696
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 2 Sep 2022 07:25:34 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
-Date:   Fri, 2 Sep 2022 07:25:30 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] 9p/trans_fd: perform read/write with TIF_SIGPENDING
- set
-Content-Language: en-US
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     syzbot <syzbot+8b41a1365f1106fd0f33@syzkaller.appspotmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <00000000000039af4d05915a9f56@google.com>
- <345de429-a88b-7097-d177-adecf9fed342@I-love.SAKURA.ne.jp>
- <4293faaf-8279-77e2-8b1a-aff765416980@I-love.SAKURA.ne.jp>
- <69253379.JACLdFHAbQ@silver>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <69253379.JACLdFHAbQ@silver>
-Content-Type: text/plain; charset=UTF-8
+        Thu, 1 Sep 2022 19:25:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB40613F11;
+        Thu,  1 Sep 2022 16:25:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5257162028;
+        Thu,  1 Sep 2022 23:25:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDA6C433D6;
+        Thu,  1 Sep 2022 23:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1662074700;
+        bh=3Ei2pJxNHEj7Ms4tUmMY4vQ3bWZICi1bGNA88E3kO3U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zNHLDPV6huB6ldajXdDKZJKTucg41vNQy1eDgNGzo6nSdipYamio1gvgjT2LJMsIL
+         81HbuA8Ueqo5zDQi71TpbbiUn6wi2SPV5NXXmeo6T6uDk27V0YTO5S+YXmw98mBTsL
+         +70Eq5tndj9TjEClRfrdME66CqB9ha620mnml22c=
+Date:   Thu, 1 Sep 2022 16:24:59 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     syzbot <syzbot+5867885efe39089b339b@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in
+ truncate_inode_pages_range
+Message-Id: <20220901162459.431c49b3925e99ddb448e1b3@linux-foundation.org>
+In-Reply-To: <000000000000117c7505e7927cb4@google.com>
+References: <000000000000117c7505e7927cb4@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,47 +54,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/09/02 0:23, Christian Schoenebeck wrote:
-> So the intention in this alternative approach is to allow user space apps  
-> still being able to perform blocking I/O, while at the same time making the 
-> kernel thread interruptible to fix this hung task issue, correct?
+On Wed, 31 Aug 2022 17:13:36 -0700 syzbot <syzbot+5867885efe39089b339b@syzkaller.appspotmail.com> wrote:
 
-Making the kernel thread "non-blocking" (rather than "interruptible") in order
-not to be blocked on I/O on pipes.
-
-Since kernel threads by default do not receive signals, being "interruptible"
-or "killable" does not help (except for silencing khungtaskd warning). Being
-"non-blocking" like I/O on sockets helps.
-
->> --- a/net/9p/trans_fd.c
->> +++ b/net/9p/trans_fd.c
->> @@ -256,11 +256,13 @@ static int p9_fd_read(struct p9_client *client, void
->> *v, int len) if (!ts)
->>  		return -EREMOTEIO;
->>
->> -	if (!(ts->rd->f_flags & O_NONBLOCK))
->> -		p9_debug(P9_DEBUG_ERROR, "blocking read ...\n");
->> -
->>  	pos = ts->rd->f_pos;
->> +	/* Force non-blocking read() even without O_NONBLOCK. */
->> +	set_thread_flag(TIF_SIGPENDING);
->>  	ret = kernel_read(ts->rd, v, len, &pos);
->> +	spin_lock_irq(&current->sighand->siglock);
->> +	recalc_sigpending();
->> +	spin_unlock_irq(&current->sighand->siglock);
+> Hello,
 > 
-> Is the recalc_sigpending() block here actually needed? The TIF_SIGPENDING flag 
-> is already cleared by net/9p/client.c, no?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    89b749d8552d Merge tag 'fbdev-for-6.0-rc3' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14b9661b080000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=911efaff115942bb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5867885efe39089b339b
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5867885efe39089b339b@syzkaller.appspotmail.com
+> 
+> ntfs3: loop0: Different NTFS' sector size (1024) and media sector size (512)
+> ntfs3: loop0: RAW NTFS volume: Filesystem size 0.00 Gb > volume size 0.00 Gb. Mount in read-only
+> ================================================================================
+> UBSAN: array-index-out-of-bounds in mm/truncate.c:366:18
+> index 254 is out of range for type 'long unsigned int [15]'
 
-This is actually needed.
+That's
 
-The thread which processes this function is a kernel workqueue thread which
-is supposed to process other functions (which might call "interruptible"
-functions even if signals are not received by default).
+		index = indices[folio_batch_count(&fbatch) - 1] + 1;
 
-The thread which currently clearing the TIF_SIGPENDING flag is a user process
-(which are calling "killable" functions from syscall context but effectively
-"uninterruptible" due to clearing the TIF_SIGPENDING flag and retrying).
-By the way, clearing the TIF_SIGPENDING flag before retrying "killable" functions
-(like p9_client_rpc() does) is very bad and needs to be avoided...
+I looked.  I see no way in which fbatch.nr got a value of 255.
+
+
+I must say, the the code looks rather hacky.  Isn't there a more
+type-friendly way of doing this?
+
 
