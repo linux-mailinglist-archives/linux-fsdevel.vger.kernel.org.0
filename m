@@ -2,51 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 972145A98A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 15:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B645A99C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 16:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234524AbiIAN0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 09:26:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33714 "EHLO
+        id S234525AbiIAONz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 10:13:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234385AbiIANYd (ORCPT
+        with ESMTP id S233348AbiIAONy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 09:24:33 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4580813D5B;
-        Thu,  1 Sep 2022 06:24:13 -0700 (PDT)
-Received: from canpemm500005.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MJM9T646DzkWrK;
-        Thu,  1 Sep 2022 21:20:29 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by canpemm500005.china.huawei.com
- (7.192.104.229) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 1 Sep
- 2022 21:24:09 +0800
-From:   Zhang Yi <yi.zhang@huawei.com>
-To:     <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <cluster-devel@redhat.com>,
-        <ntfs3@lists.linux.dev>, <ocfs2-devel@oss.oracle.com>,
-        <reiserfs-devel@vger.kernel.org>, <jack@suse.cz>
-CC:     <tytso@mit.edu>, <akpm@linux-foundation.org>, <axboe@kernel.dk>,
-        <viro@zeniv.linux.org.uk>, <rpeterso@redhat.com>,
-        <agruenba@redhat.com>, <almaz.alexandrovich@paragon-software.com>,
-        <mark@fasheh.com>, <dushistov@mail.ru>, <hch@infradead.org>,
-        <yi.zhang@huawei.com>, <chengzhihao1@huawei.com>,
-        <yukuai3@huawei.com>
-Subject: [PATCH v2 14/14] fs/buffer: remove bh_submit_read() helper
-Date:   Thu, 1 Sep 2022 21:35:05 +0800
-Message-ID: <20220901133505.2510834-15-yi.zhang@huawei.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220901133505.2510834-1-yi.zhang@huawei.com>
-References: <20220901133505.2510834-1-yi.zhang@huawei.com>
+        Thu, 1 Sep 2022 10:13:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AD367451;
+        Thu,  1 Sep 2022 07:13:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6F3BEB826FD;
+        Thu,  1 Sep 2022 14:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1974C433D7;
+        Thu,  1 Sep 2022 14:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662041631;
+        bh=FjCazFtJD7dIaSrTBS6DK/n2ntd7At/25awsoy6HaF0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rOlOfvAGeSZCqFVPL6CMhCm5/U1JJCBb2O/lhA5KUiiRbmOvRX/APz4TYIgZFr5hx
+         GoIzV6tHZ4w/0xBPbHUZSDZ36gqgNHzDiSIJqAm7kUmVfnaYP7Dvz+PwKlAF1UDPPf
+         Mlbg7puC9+8ezg2Qne0cJJAwji3CdoTccuwQ3njQ+/KghEJ26KiGp8awGSigAlltB9
+         kw3s2hDhi/AZg+UlutNkL1pOkE6sSeIZyVybsfqofgj21xlu3K76r9WeqPlgTEgqQd
+         Rb0qSH3T4ubfxZ4tWaIU1Lo2ukfiMoApS9biyh2qXd9YUQmieLd2rW5ghJpI5tRQXL
+         iYpjlrYDKd54w==
+Date:   Thu, 1 Sep 2022 16:13:44 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+Message-ID: <20220901141344.wqnnemixrlb2b74g@wittgenstein>
+References: <217595.1662033775@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500005.china.huawei.com (7.192.104.229)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <217595.1662033775@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -55,63 +63,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-bh_submit_read() has no user anymore, just remove it.
+On Thu, Sep 01, 2022 at 01:02:55PM +0100, David Howells wrote:
+>     
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
+> 
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation when alloc_fs_context() is creating the fs_context for it.
+> 
+> However, this uncovers a further bug: nfs_get_root() initialises the
+> superblock security manually by calling security_sb_set_mnt_opts() or
+> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
+> complaining.
+> 
+> Fix that by adding a flag to the fs_context that suppresses the
+> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
+> when it sets the LSM context on the new superblock.
+> 
+> The first bug leads to messages like the following appearing in dmesg:
+> 
+>         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> 
+> Changes
+> =======
+> ver #5)
+>  - Removed unused variable.
+>  - Only allocate smack_mnt_opts if we're dealing with a submount.
+> 
+> ver #4)
+>  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
+>    Smack.
+> 
+> ver #3)
+>  - Made LSM parameter extraction dependent on fc->purpose ==
+>    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> 
+> ver #2)
+>  - Added Smack support
+>  - Made LSM parameter extraction dependent on reference != NULL.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> Tested-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> cc: Scott Mayhew <smayhew@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Paul Moore <paul@paul-moore.com>
+> cc: linux-nfs@vger.kernel.org
+> cc: selinux@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
+> ---
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/buffer.c                 | 25 -------------------------
- include/linux/buffer_head.h |  1 -
- 2 files changed, 26 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 2cccc7586b99..b4c9fff3ab6c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3025,31 +3025,6 @@ void __bh_read_batch(int nr, struct buffer_head *bhs[],
- }
- EXPORT_SYMBOL(__bh_read_batch);
- 
--/**
-- * bh_submit_read - Submit a locked buffer for reading
-- * @bh: struct buffer_head
-- *
-- * Returns zero on success and -EIO on error.
-- */
--int bh_submit_read(struct buffer_head *bh)
--{
--	BUG_ON(!buffer_locked(bh));
--
--	if (buffer_uptodate(bh)) {
--		unlock_buffer(bh);
--		return 0;
--	}
--
--	get_bh(bh);
--	bh->b_end_io = end_buffer_read_sync;
--	submit_bh(REQ_OP_READ, bh);
--	wait_on_buffer(bh);
--	if (buffer_uptodate(bh))
--		return 0;
--	return -EIO;
--}
--EXPORT_SYMBOL(bh_submit_read);
--
- void __init buffer_init(void)
- {
- 	unsigned long nrpages;
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index b415d8bc2a09..9b6556d3f110 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -230,7 +230,6 @@ int submit_bh(blk_opf_t, struct buffer_head *);
- void write_boundary_block(struct block_device *bdev,
- 			sector_t bblock, unsigned blocksize);
- int bh_uptodate_or_lock(struct buffer_head *bh);
--int bh_submit_read(struct buffer_head *bh);
- int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait);
- void __bh_read_batch(int nr, struct buffer_head *bhs[],
- 		     blk_opf_t op_flags, bool force_lock);
--- 
-2.31.1
-
+Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
