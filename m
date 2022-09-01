@@ -2,47 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6409A5A8BF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 05:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA1A5A8BFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 05:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231589AbiIADcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 Aug 2022 23:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55716 "EHLO
+        id S232124AbiIADoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 Aug 2022 23:44:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiIADb7 (ORCPT
+        with ESMTP id S229572AbiIADow (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 Aug 2022 23:31:59 -0400
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4D012A5E7;
-        Wed, 31 Aug 2022 20:31:57 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VNvAXN-_1662003112;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VNvAXN-_1662003112)
-          by smtp.aliyun-inc.com;
-          Thu, 01 Sep 2022 11:31:54 +0800
-Date:   Thu, 1 Sep 2022 11:31:52 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Jia Zhu <zhujia.zj@bytedance.com>
-Cc:     linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
-        huyue2@coolpad.com
-Subject: Re: [RFC PATCH 1/5] erofs: add 'domain_id' mount option for
- on-demand read sementics
-Message-ID: <YxAnqC8pYf75epr1@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Jia Zhu <zhujia.zj@bytedance.com>,
-        linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
-        huyue2@coolpad.com
-References: <20220831123125.68693-1-zhujia.zj@bytedance.com>
- <20220831123125.68693-2-zhujia.zj@bytedance.com>
+        Wed, 31 Aug 2022 23:44:52 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC19DE6;
+        Wed, 31 Aug 2022 20:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0VksQaHKdS6SzPuFX+0v16y3jeL3gHA/j4NUzfzCUmk=; b=J2RjzPauJNV4IAQ2+ZSqQLrKLT
+        9dHf76Waf0U38NmL8YfXc+FtDGEUD6J34IJQETySw8gs/qKDte9PMD4rsPPZNrSw3mmxcrpRiEECJ
+        nULr+sPA5uxvETo809jKLj6DhZwRj0AfJw1E/sH0gz3NJlsEomQ9L9E/XyPdScbcplIXIH/0srxiw
+        V1NLw+D72qLn6W1cxBUdxhRsqP1mLMgAyTI7qqcK06JvbZS1BF3BR/oxzgVJeu+YjeArDFDzfMq9k
+        8sqEEEnUREs+Bh3XlcsMzxx/zE3BeLOWN0Y+IJF7CxGqAejoq6NS6xu3MUmmZMn7Y4GG5A/4t5mps
+        jLP2q6KQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oTb88-00ApuF-5q;
+        Thu, 01 Sep 2022 03:44:36 +0000
+Date:   Thu, 1 Sep 2022 04:44:36 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daire Byrne <daire@dneg.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
+Message-ID: <YxAqpGgNi4JTxkbT@ZenIV>
+References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
+ <166147984370.25420.13019217727422217511.stgit@noble.brown>
+ <CAHk-=wi_wwTxPTnFXsG8zdaem5YDnSd4OsCeP78yJgueQCb-1g@mail.gmail.com>
+ <YwlifYSJYzovBKGB@ZenIV>
+ <166199227016.17668.15373771428363682061@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220831123125.68693-2-zhujia.zj@bytedance.com>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+In-Reply-To: <166199227016.17668.15373771428363682061@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,114 +58,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 08:31:21PM +0800, Jia Zhu wrote:
-> Introduce 'domain_id' mount option to enable shared domain sementics.
-> In which case, the related cookie is shared if two mountpoints in the
-> same domain have the same data blob. Users could specify the name of
-> domain by this mount option.
-> 
-> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
-> ---
->  fs/erofs/internal.h |  1 +
->  fs/erofs/super.c    | 17 +++++++++++++++++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index cfee49d33b95..fe435d077f1a 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -76,6 +76,7 @@ struct erofs_mount_opts {
->  #endif
->  	unsigned int mount_opt;
->  	char *fsid;
-> +	char *domain_id;
->  };
->  
->  struct erofs_dev_context {
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 3173debeaa5a..fb5a84a07bd5 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -440,6 +440,7 @@ enum {
->  	Opt_dax_enum,
->  	Opt_device,
->  	Opt_fsid,
-> +	Opt_domain_id,
->  	Opt_err
->  };
->  
-> @@ -465,6 +466,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
->  	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
->  	fsparam_string("device",	Opt_device),
->  	fsparam_string("fsid",		Opt_fsid),
-> +	fsparam_string("domain_id",	Opt_domain_id),
->  	{}
->  };
->  
-> @@ -568,6 +570,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
->  			return -ENOMEM;
->  #else
->  		errorfc(fc, "fsid option not supported");
-> +#endif
-> +		break;
-> +	case Opt_domain_id:
-> +		kfree(ctx->opt.domain_id);
-> +		ctx->opt.domain_id = kstrdup(param->string, GFP_KERNEL);
-> +		if (!ctx->opt.domain_id)
-> +			return -ENOMEM;
-> +#ifdef CONFIG_EROFS_FS_ONDEMAND
-> +#else
-> +		errorfc(fc, "domain_id option not supported");
+On Thu, Sep 01, 2022 at 10:31:10AM +1000, NeilBrown wrote:
 
-Just one question, why not write as below?
+> Thanks for this list.
 
-#ifdef CONFIG_EROFS_FS_ONDEMAND
-		kfree(ctx->opt.domain_id);
-		ctx->opt.domain_id = kstrdup(param->string, GFP_KERNEL);
-		if (!ctx->opt.domain_id)
-			return -ENOMEM;
-#else
-		errorfc(fc, "domain_id option not supported");
-#endif
+Keep in mind that this list is just off the top of my head - it's
+nowhere near complete.
 
-Thanks,
-Gao Xiang
+> d_splice_alias() happens at ->lookup time so it is already under a
+> shared lock.  I don't see that it depends on i_rwsem - it uses i_lock
+> for the important locking.
 
->  #endif
->  		break;
->  	default:
-> @@ -695,6 +707,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->  	sb->s_fs_info = sbi;
->  	sbi->opt = ctx->opt;
->  	ctx->opt.fsid = NULL;
-> +	ctx->opt.domain_id = NULL;
->  	sbi->devs = ctx->devs;
->  	ctx->devs = NULL;
->  
-> @@ -838,6 +851,7 @@ static void erofs_fc_free(struct fs_context *fc)
->  
->  	erofs_free_dev_context(ctx->devs);
->  	kfree(ctx->opt.fsid);
-> +	kfree(ctx->opt.domain_id);
->  	kfree(ctx);
->  }
->  
-> @@ -892,6 +906,7 @@ static void erofs_kill_sb(struct super_block *sb)
->  	erofs_fscache_unregister_cookie(&sbi->s_fscache);
->  	erofs_fscache_unregister_fs(sb);
->  	kfree(sbi->opt.fsid);
-> +	kfree(sbi->opt.domain_id);
->  	kfree(sbi);
->  	sb->s_fs_info = NULL;
->  }
-> @@ -1044,6 +1059,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
->  #ifdef CONFIG_EROFS_FS_ONDEMAND
->  	if (opt->fsid)
->  		seq_printf(seq, ",fsid=%s", opt->fsid);
-> +	if (opt->domain_id)
-> +		seq_printf(seq, ",domain_id=%s", opt->domain_id);
->  #endif
->  	return 0;
->  }
-> -- 
-> 2.20.1
+Nope.
+
+Process 1:
+rmdir foo/bar
+	foo found and locked exclusive [*]
+	dentry of bar found
+	->rmdir() instance called
+Process 2:
+stat foo/splat
+	foo found and locked shared [*]
+	dentry of splat does not exist anywhere
+	dentry allocated, marked in-lookup
+	->lookup() instance called
+	inode found and passed to d_splice_alias() ...
+	... which finds that it's a directory inode ...
+	... and foo/bar refers to it.  E.g. it's on NFS and another
+client has just done mv bar splat
+	__d_unalias() is called, to try and move existing alias (foo/bar)
+into the right place.  It sees that no change of parent is involved,
+	so it can just proceed to __d_move().
+Process 1:
+	forms an rmdir request to server, using ->d_name (and possibly
+->d_parent) of dentry of foo/bar.  It knows that ->d_name is stable,
+since the caller holds foo locked exclusive and all callers of __d_move()
+hold the old parent at least shared.
+
+In mainline process 2 will block (or, in case if it deals with different
+parent, try to grab the old parent of the existing alias shared and fail
+and with -ESTALE).  With your changes process 1 will be holding
+foo/ locked shared, so process 2 will succeed and proceed to __d_move(),
+right under the nose of process 1 accessing ->d_name.  If the names involved
+had been longer than 32 characters, it would risk accessing kfreed memory.
+Or fetching the length from old name and pointer from new one, walking
+past the end of kmalloc'ed object, etc.
+
+Sure, assuming that we are talking about NFS, server would have probably
+failed the RMDIR request - if you managed to form that request without
+oopsing, that is.
