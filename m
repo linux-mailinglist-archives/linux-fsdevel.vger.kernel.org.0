@@ -2,160 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5306B5A9D19
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 18:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384825A9D6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 18:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235056AbiIAQab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 12:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51248 "EHLO
+        id S234349AbiIAQqE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 12:46:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235050AbiIAQa1 (ORCPT
+        with ESMTP id S234116AbiIAQqB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 12:30:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288F54054F;
-        Thu,  1 Sep 2022 09:30:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B533C61FA4;
-        Thu,  1 Sep 2022 16:30:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED73BC433C1;
-        Thu,  1 Sep 2022 16:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662049824;
-        bh=IJ0PCR/aHRiRVBBTIlB2iYhCXtiktwtTDXekHNHskb8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ag+0p/y9MHRUC6ul4TWQLjIrJ+7XAHSbClMDLdLD9e/Huey6Weo5MYuoX/3mugA8X
-         0k12yUDgSByRh22zychlAHEV3/q5J+hDBBb+SNSGusbGhr2SoxVqwW3Se1GFECa0Rb
-         /hbHFqRNJsPkNmgZydl/Sa4lCR9tprV6kXjW3f6sE5LrZNyfvrqXjxV/fBrhz2qaq9
-         Yr+MwcBrLcLT5ia5nhq2C2d0km7Mp8ywszbpYXLNMHzSQCm+S48owcryMD6DdWjRE7
-         PQlyGD8bVFJM5NN1qVzOZNbP5miip9A6N3bC8nYHHSovbBhipoRpW7VCC3cWkGMpEn
-         VYaGqsFDmIJmw==
-Message-ID: <81e57e81e4570d1659098f2bbc7c9049a605c5e8.camel@kernel.org>
-Subject: Re: [RFC PATCH v2] statx, inode: document the new STATX_INO_VERSION
- field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Date:   Thu, 01 Sep 2022 12:30:20 -0400
-In-Reply-To: <874jxrqdji.fsf@oldenburg.str.redhat.com>
-References: <20220901121714.20051-1-jlayton@kernel.org>
-         <874jxrqdji.fsf@oldenburg.str.redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Thu, 1 Sep 2022 12:46:01 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A2C74E2A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 09:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662050757; bh=9nHeOjx+oUd5y0MsJP7DNJNKQadTmJll50lk9O3Na9I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=JZ9gg8a6GLDaMpgGyH9Z7Ag2ocklEAHN4JBqo2PPUyKHYpJo9fvvXLaMnau0hOiasTvxeR3n/PUVoipGK3g+4IQUZJeyHHd164pVpeJGhkP62PEOX+xyX+eFPrwNzYRnJ+J8o+Nfau+PtO4KS1ZBQ0hasGZsjFyg4H4Yz6ZrXzpp3bignVuhJF+DGVLlfuEMWVMNWK7OzCj8nDFMN+mfBsuUz480bCMs0AE6FIOQ4YWdzoJWEqTkrmehbxty5h9gqMV3oUkmakzPMzf9qj2Lc9CA2CsxBj6P7iSSNH6O6WCn7buvvkoExOdlQSI2Zx8KRyntE1QDqBw4+SaHfaY8FA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1662050757; bh=/3CobprxR6K2uzLbcm3nw2s8yew+lDyi/NfpgYNRyBH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DhBtPfin884uXXme9XcFbk/SYkP8bovzL6rTsK/9M9WbCAfca8T5PLavQW6k41wdNN+DwP1cF2Untr5pnfbdzV+1BvJEHUyqzqHhLGS89Ng1AvJB2PfxtwgFCN+0UeNiipd2AqL5OBjviTzjurPl0rAMz5YNeH1h274TTuZB/hRek53xZ1Wsc7+uEAV7ZUHVCxMueU6SrNTKVvCjF5J+a+1cbsGW19dNESGBQNdhcnGy98MEWTZ25TK/lyRBRPe0BgIfCMxxJPGtKq1roVPiqU5X3NIrjK+JChBL+1yQGkAyEaR0k0ZH061WZlcFQTPQ58bx1ONtucooNHmJFKSsEw==
+X-YMail-OSG: lgTRNzIVM1kiPmOFxRpQD_pm63nB3UTKqnImFapRXW3mVCD2WiLQqHTwT3qh9Il
+ Y_nOA9WqFX_fL9IwkxETq3CKksuPvBt.o9gzjc.g3X_oGYq5gNtNruRykZtM6Prd1HS54wz_1UoN
+ ZG1ECjTMJZAEzpfZAsPYnt.PR5b76OIEY8hi7lTs9dI4f1XBGEf025vC8vuR.D2Zz2DEtpAtrQo7
+ 7xzIbuUH2YyUgkwqwatiKF5oOG0Kn7UPwttmmHxInXRjmb.PSuZbS928H4JD3tXHy.WUOspTiJjp
+ 7tjSWZQlWNE8wULBpNba5nKlKjhqSnWbduziuN__iwK4VtJ9vGq3mFbb6C7qZyBulZ_BcrUCJEja
+ VC7jA3YT2WP8yicZXd2bKMvpVKzm6Wypv1vi.VaDxCVL2Pmey5m1pdvikv.B3MwEN2deV5FOdjJ2
+ OKiFE_TmGRWMNhsIIA.cH3Z9yWCHpIbBm.FZva8W5ripRn1qTzhs9..nmhDBbgI_a6GlmIwGFDdP
+ 200OKLL3ElMiJkDAIZCPgbPTI84zn2WiR6odYUP0lRQXmFT4Vu69z8E8x.rnoz4cUVD1bZck7b3I
+ aOaP2b3UQU.wK0UxYE5y8r5lcB9NKTtOlqwNHIf.Z_UP5PNu684d7wzSqStqc.2GxkpVHkTdtDDZ
+ QzXlMQQnSejiSYyEkA0KqLAE59TXdjFIis9MvgtSxhuMufSPHw650wojlwA_gUydJ2xBYB5XWpZ7
+ XD9KtKvG8DKXOjO_b0cGL_Y0IrCUIrR0dXVYtPIYuFdMx2_rKjfglR4PL_X9ntZFPFarFHplVRpV
+ TTd4drTL3AmkEWUQX_wLaTMyNPmNyFjUy6Ig8nJK4TtjXbTFh97rkdPzxFl73IuozSfidPH2DPR2
+ 9KmXAqQ5jmSZ6an6iva_2p0.fOK4.m2BWRPeEC5qK2zoDKTA306dM6CxaY.OMXyPWQz_6InhnQkJ
+ ZXiih4OfyVTq22gV3tK.kqGRif602JCfd73zuFfsSc_D7ehfas9mZPK5tcuAbrdQ0uvQWOWJKhFm
+ TlMOyj4ehZaeKJwrX6r2GsR4rBDlJTLXwmQFFifhL7FsbfoqQNhYIa3pbkrgnwwQBCngCd3hLaf8
+ zmri9JG6yys4UgQlb3mrwMSsxhWr_ncnKnErjF7hYGBejWWl57QU8LV19hHcChtM9TNGwjNqFC0Y
+ GKfMUWmun2_oG3R8nBnCPBZSuEpxHE8oRUNldc_oxVEwCcg8bdFwsw_DAnWqRl8xGbesKCCM2pcW
+ iBbxXVeR9LLu5yx9zeT7Kurm5.pb.oKmTKxF9MJ36s0IUny5VtGuEeYiwNLENic43izNVGsmod5K
+ wVQucGqb0Pm15Ng.FBaGmDL.UHYy6YLuLGfnLFwKevc6rr3fiSHHr0AQyGa8r_liRdJvqL3Va8mq
+ CJ2_7TsTAbLO8Am9tKmWzo5.qDZQAQ9hvZXbEDZudZ97h1Ro2dOpqRZAmjODuimROLayIHfGZ9Wg
+ VnuKBPXTl3fXdr5X1xmy.dI.XuTiqvLKmnyW4ba6ny8FnQIBUoWI7fRyoSCOTIVDE.9fdziEV41a
+ QOY9u4qJFa3SWVagJaPtZDOyZammP0KoEPEi0SrWZUceoGH46Rij2dhtelLNdzV6Zbzg56kIm82Q
+ ncn9uqQEYS2tNITf6uqWWmaBSWnM_wjd9Xg6n4WfiVz7ysE8W_sPTR_gfy64flZHR_F1aaZxvWET
+ AuIuL_NjDcB0xaZO3UyxGA.vezoFXbhdlGl.6ZOAdW0yIjWd3EDWQB8aXRVvMOq8sJhhh9c9B_yM
+ u_xhaJV5l615logpm.5SqkhC9zAuK77eh6LCzksQQTIjSoklRUT9DB.fJ5gBDQk4j4Xym1wmmClU
+ B0hYpCcV1_voJC1Wop5OIp43zr5Mm1XosJ1hFg4amZbV0W5t6JJKWBgkCUDfTP8skm8_51QnjXQE
+ 8QCpQpaPddXZc9Hfx8m.Q2.0P8pQO3u91godK_vr.qiMeUI6vOOFqYeRaZOrA95JD_x.rtD0s3k_
+ U9bhsQCX.VTmzIKrKjFVPjpHagPm35StglXeP4vUMxWor_i5bKk0hKX9DMxYt9eTcoMp9NY191I4
+ qO7YchoVzYO0EveRwEy_EiXlBwGVUm0JacfVd0AN.7sbKiIdVyEoPxaYenupG2AMP5OWBL1GwFlD
+ QKlQbRQF_pU.Lm6yfw_EVlJA9UnwBZay9m9Hmi0jRXSi.tx8VkPtsNWOYXrpPSjqW4OGcV5zWnqY
+ ibo2F3s3HdQXix1bjFw4D.3ubhLeT7Nv6pKeZCcPxPJYH
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 1 Sep 2022 16:45:57 +0000
+Received: by hermes--production-ne1-544744cc75-fkh7w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 562a760a3854b598b8eb46b4e9c8ee91;
+          Thu, 01 Sep 2022 16:45:53 +0000 (UTC)
+Message-ID: <d955d8b5-ca2e-c040-9415-772fa5a71bc7@schaufler-ca.com>
+Date:   Thu, 1 Sep 2022 09:45:51 -0700
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [RFC PATCH 1/2] fs/xattr: add *at family syscalls
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        =?UTF-8?Q?Christian_G=c3=b6ttsche?= <cgzones@googlemail.com>
+Cc:     selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+References: <20220830152858.14866-1-cgzones@googlemail.com>
+ <20220830152858.14866-2-cgzones@googlemail.com> <Yw/eEufm/QpKg5Pq@ZenIV>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <Yw/eEufm/QpKg5Pq@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.20595 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-09-01 at 18:12 +0200, Florian Weimer wrote:
-> * Jeff Layton:
->=20
-> > @@ -411,6 +413,21 @@ and corresponds to the number in the first field i=
-n one of the records in
-> >  For further information on the above fields, see
-> >  .BR inode (7).
-> >  .\"
-> > +.TP
-> > +.I stx_ino_version
-> > +The inode version, also known as the inode change attribute. This
-> > +value must change any time there is an inode status change. Any
-> > +operation that would cause the
-> > +.I stx_ctime
-> > +to change must also cause
-> > +.I stx_ino_version
-> > +to change, even when there is no apparent change to the
-> > +.I stx_ctime
-> > +due to coarse timestamp granularity.
-> > +.IP
-> > +An observer cannot infer anything about the nature or magnitude of the=
- change
-> > +from the value of this field. A change in this value only indicates th=
-at
-> > +there has been an explicit change in the inode.
->=20
-> What happens if the file system does not support i_version?
->=20
+On 8/31/2022 3:17 PM, Al Viro wrote:
+> [linux-arch Cc'd for ABI-related stuff]
 
-The STATX_INO_VERSION bit will not be set in stx_mask field of the
-response.
+The LSM list <linux-security-module@vger.kernel.org> should be on
+this thread as SELinux isn't the only security module that uses xattrs
+extensively.
 
-> > diff --git a/man7/inode.7 b/man7/inode.7
-> > index 9b255a890720..d5e0890a52c0 100644
-> > --- a/man7/inode.7
-> > +++ b/man7/inode.7
-> > @@ -184,6 +184,18 @@ Last status change timestamp (ctime)
-> >  This is the file's last status change timestamp.
-> >  It is changed by writing or by setting inode information
-> >  (i.e., owner, group, link count, mode, etc.).
-> > +.TP
-> > +Inode version (i_version)
-> > +(not returned in the \fIstat\fP structure); \fIstatx.stx_ino_version\f=
-P
-> > +.IP
-> > +This is the inode change attribute. Any operation that would result in=
- a change
-> > +to \fIstatx.stx_ctime\fP must result in a change to this value. The va=
-lue must
-> > +change even in the case where the ctime change is not evident due to c=
-oarse
-> > +timestamp granularity.
-> > +.IP
-> > +An observer cannot infer anything from the returned value about the na=
-ture or
-> > +magnitude of the change. If the returned value is different from the l=
-ast time
-> > +it was checked, then something has made an explicit change to the inod=
-e.
->=20
-> What is the wraparound behavior for i_version?  Does it use the full
-> 64-bit range?
->=20
-
-All of the existing implementations use all 64 bits. If you were to
-increment a 64 bit value every nanosecond, it will take >500 years for
-it to wrap. I'm hoping that's good enough. ;)
-
-The implementation that all of the local Linux filesystems use track
-whether the value has been queried using one bit, so there you only get
-63 bits of counter.
-
-My original thinking here was that we should leave the spec "loose" to
-allow for implementations that may not be based on a counter. E.g. could
-some filesystem do this instead by hashing certain metadata?
-
-It's arguable though that the NFSv4 spec requires that this be based on
-a counter, as the client is required to increment it in the case of
-write delegations.
-
-> If the system crashes without flushing disks, is it possible to observe
-> new file contents without a change of i_version?
-
-Yes, I think that's possible given the current implementations.
-
-We don't have a great scheme to combat that at the moment, other than
-looking at this in conjunction with the ctime. As long as the clock
-doesn't jump backward after the crash and it takes more than one jiffy
-to get the host back up, then you can be reasonably sure that
-i_version+ctime should never repeat.
-
-Maybe that's worth adding to the NOTES section of the manpage?
---=20
-Jeff Layton <jlayton@kernel.org>
+>
+> On Tue, Aug 30, 2022 at 05:28:39PM +0200, Christian Göttsche wrote:
+>> Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
+>> removexattrat() to enable extended attribute operations via file
+>> descriptors.  This can be used from userspace to avoid race conditions,
+>> especially on security related extended attributes, like SELinux labels
+>> ("security.selinux") via setfiles(8).
+>>
+>> Use the do_{name}at() pattern from fs/open.c.
+>> Use a single flag parameter for extended attribute flags (currently
+>> XATTR_CREATE and XATTR_REPLACE) and *at() flags to not exceed six
+>> syscall arguments in setxattrat().
+> 	I've no problems with the patchset aside of the flags part;
+> however, note that XATTR_CREATE and XATTR_REPLACE are actually exposed
+> to the network - the values are passed to nfsd by clients.
+> See nfsd4_decode_setxattr() and
+>         BUILD_BUG_ON(XATTR_CREATE != SETXATTR4_CREATE);
+> 	BUILD_BUG_ON(XATTR_REPLACE != SETXATTR4_REPLACE);
+> in encode_setxattr() on the client side.
+>
+> 	Makes me really nervous about constraints like that.  Sure,
+> AT_... flags you are using are in the second octet and these are in
+> the lowest one, but...
