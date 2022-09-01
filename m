@@ -2,210 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C975F5AA093
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Sep 2022 22:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC8F5AA1E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 00:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234372AbiIAUA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 16:00:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55080 "EHLO
+        id S233931AbiIAWCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 18:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233706AbiIAUA5 (ORCPT
+        with ESMTP id S229514AbiIAWCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 16:00:57 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D8589CDD
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 13:00:55 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id b9-20020a92c569000000b002eb7fbf5ca1so25073ilj.20
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Sep 2022 13:00:55 -0700 (PDT)
+        Thu, 1 Sep 2022 18:02:36 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C4C4F671;
+        Thu,  1 Sep 2022 15:02:34 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id 199so132502pfz.2;
+        Thu, 01 Sep 2022 15:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=9AhdqT0NnU3T2Py6z8gOWa0P0fDVhbOVg/CkZAFmw8w=;
+        b=qqKY9adEs9TgtJmoU7MkA9KxJfs/ZTmfIPOpeAs+A4H8hVlDwQBSv2Jq3kNi9lgE6S
+         8sJ+rYnWCFvuUeYVIPMMc2exsm8WDRdpvjl5fwAEJA+hLvjFfZAtjhOJ0rUOJchnBc56
+         yhvalmUSmzK+izTbVuCqRNjA9nDlcTXylDL3VZlcV3KVFQb7Jua/oZo7BYKQbAaqTLSA
+         0nn5TAj8h81O2WRfodLf6sJyeFFan770SoHigA/s/3I6JiZR3jJOqLuh3a2ws+xWJr7A
+         6uzZs0H1SnSL3lrVxw1n/ypvvcF4KXV5Qs7Kr5OM5r1RoP7UiydsApsG1GNd8TC+k7RW
+         PKfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=ENMvGocuUaeIJ7qPvFSun2TU6viauprGMRi4DnkhQXg=;
-        b=3ni+xey39TVr56Z1PlYbYgJRtIJu+XUAlL69IjapZYrTRqpJfaV2YiLX4dT+YN1hPC
-         cqewjlvxWz6+zCeMo+8md44XE7fwLjTeRkNH/Y6PVEv73xH45Y2kNh4R2CsiOOxCKYwl
-         YOIi6Q8Ni/FgtqSAHQFg8gmn/qk72zDsmNqkVTQN2G04TQpmNElPZPOjlM8ecTqBn8OP
-         chsOzpfw37zBxQeogp4oKABWzGmD+uOs1jZ+cHdXsAvn3ZEaN+A3hljV1ML8wHb26jaS
-         1QUiLHXQ/bB+LrUp4GXnYTqY9PuVC7dnbkFiiNcEYcuf2AmSqxCdDyN+H+vO5GKjoSuW
-         nwvQ==
-X-Gm-Message-State: ACgBeo2hh4NDqyFeHe0555QPYGjyxdkr6fc2m+S5OwJfFveDGNwRxq2d
-        UJ9PSjNYGXwbLy0eRQYZW3ZxYlwPdgeiPsSZqL+nq0onIp4R
-X-Google-Smtp-Source: AA6agR7B7rN6SdH1mPU70qD/dSbgZUNL+1a1kETVdqyEqnY4LqP3OKaV/B6eTzLgxXnfFQv8kfTbyuj4oFvWdOD9t5TMMBKC/8Fq
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=9AhdqT0NnU3T2Py6z8gOWa0P0fDVhbOVg/CkZAFmw8w=;
+        b=QF/DzVmKPZNh5CB1h/b8WlvrfHZPacKN9riz39uu/fbixL5LcJq4SsmR52S0DdAbxI
+         OFdUjqYVtRtojVcOH5l9eakJ4ve7o6aPSpOEIGlwgc5ogYyGjjs9cksVY7y7w7LcWXfA
+         3ttwghzazfUK2c1C6nwiXqQ+iHaRLmhAer5Zj0ie0v4UZfY9OdyoN8VLHbl+JsDbfMfF
+         nZ+N9YOTRAX2kvzLf6vpSONBkvybPrZjfZ6fyubjvyN5DJBTAgqhdSMLm65O1Ok/6cf4
+         bEe/rsRt3NUgS/oluk+NgajGxPnzsCeH+sFer3h3tKiM/Vwca53j0lC9FcRFMVLpSTP6
+         NBvg==
+X-Gm-Message-State: ACgBeo1SxaUqbNRRD8clAlUZtgNhqhT53fRkChLv2q/6AD/d9x5ydY7b
+        ZHOyqpNdtZecNkjJOe5zZy/GqbG8qtJ+uw==
+X-Google-Smtp-Source: AA6agR4DbAW2WPj9nw69+I1LEgmTLkTdrd7+Xqwg+w+CQfOQH0TJG5g4HJoQPF72jeEeLW1NipGm9A==
+X-Received: by 2002:a65:6d89:0:b0:421:94bc:cb89 with SMTP id bc9-20020a656d89000000b0042194bccb89mr27551314pgb.129.1662069754081;
+        Thu, 01 Sep 2022 15:02:34 -0700 (PDT)
+Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
+        by smtp.googlemail.com with ESMTPSA id fv4-20020a17090b0e8400b001fb350026f1sm128894pjb.4.2022.09.01.15.02.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Sep 2022 15:02:33 -0700 (PDT)
+From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Subject: [PATCH 00/23] Convert to filemap_get_folios_tag()
+Date:   Thu,  1 Sep 2022 15:01:15 -0700
+Message-Id: <20220901220138.182896-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:3652:0:b0:2df:4133:787 with SMTP id
- d18-20020a923652000000b002df41330787mr17285204ilf.39.1662062455203; Thu, 01
- Sep 2022 13:00:55 -0700 (PDT)
-Date:   Thu, 01 Sep 2022 13:00:55 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003caf5b05e7a312d1@google.com>
-Subject: [syzbot] WARNING: locking bug in iput
-From:   syzbot <syzbot+fa40f8c8c3594994616d@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This patch series replaces find_get_pages_range_tag() with
+filemap_get_folios_tag(). This also allows the removal of multiple
+calls to compound_head() throughout.
+It also makes a good chunk of the straightforward conversions to folios,
+and takes the opportunity to introduce a function that grabs a folio
+from the pagecache.
 
-syzbot found the following issue on:
+F2fs and Ceph have quite alot of work to be done regarding folios, so
+for now those patches only have the changes necessary for the removal of
+find_get_pages_range_tag(), and only support folios of size 1 (which is
+all they use right now anyways).
 
-HEAD commit:    a41a877bc12d Merge branch 'for-next/fixes' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=110469db080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5cea15779c42821c
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa40f8c8c3594994616d
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd2133080000
+I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
+beneficial. The page-writeback and filemap changes implicitly work. Testing
+and review of the other changes (afs, ceph, cifs, gfs2) would be appreciated.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fa40f8c8c3594994616d@syzkaller.appspotmail.com
+Vishal Moola (Oracle) (23):
+  pagemap: Add filemap_grab_folio()
+  filemap: Added filemap_get_folios_tag()
+  filemap: Convert __filemap_fdatawait_range() to use
+    filemap_get_folios_tag()
+  page-writeback: Convert write_cache_pages() to use
+    filemap_get_folios_tag()
+  afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+  btrfs: Convert btree_write_cache_pages() to use
+    filemap_get_folio_tag()
+  btrfs: Convert extent_write_cache_pages() to use
+    filemap_get_folios_tag()
+  ceph: Convert ceph_writepages_start() to use filemap_get_folios_tag()
+  cifs: Convert wdata_alloc_and_fillpages() to use
+    filemap_get_folios_tag()
+  ext4: Convert mpage_prepare_extent_to_map() to use
+    filemap_get_folios_tag()
+  f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_flush_inline_data() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+  f2fs: Convert last_fsync_dnode() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_meta_pages() to use filemap_get_folios_tag()
+  gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_data_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_node_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_copy_dirty_pages() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_clear_dirty_pages() to use
+    filemap_get_folios_tag()
+  filemap: Remove find_get_pages_range_tag()
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 9444 at kernel/locking/lockdep.c:231 check_wait_context kernel/locking/lockdep.c:4727 [inline]
-WARNING: CPU: 0 PID: 9444 at kernel/locking/lockdep.c:231 __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
-Modules linked in:
-CPU: 0 PID: 9444 Comm: syz-executor.2 Not tainted 6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-pc : __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
-lr : hlock_class kernel/locking/lockdep.c:231 [inline]
-lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
-sp : ffff8000144b38c0
-x29: ffff8000144b39a0 x28: 0000000000000001 x27: ffff0000d1919aa8
-x26: ffff0000d08cc117 x25: ffff0000d191a4d8 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff56001244ac6e x18: 0000000000000229
-x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000d1919a80
-x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f960
-x11: ff808000081c39dc x10: ffff80000dd7a698 x9 : 767cda847edbb600
-x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff800008197c8c
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000100000001 x0 : 0000000000000016
-Call trace:
- check_wait_context kernel/locking/lockdep.c:4727 [inline]
- __lock_acquire+0x2b0/0x30a4 kernel/locking/lockdep.c:5003
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x54/0x6c kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:349 [inline]
- _atomic_dec_and_lock+0xb0/0x104 lib/dec_and_lock.c:28
- iput+0x50/0x314 fs/inode.c:1766
- ntfs_fill_super+0x1254/0x14a4 fs/ntfs/super.c:188
- get_tree_bdev+0x1e8/0x2a0 fs/super.c:1323
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1358
- vfs_get_tree+0x40/0x140 fs/super.c:1530
- do_new_mount+0x1dc/0x4e4 fs/namespace.c:3040
- path_mount+0x358/0x914 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x2f8/0x408 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-irq event stamp: 6629
-hardirqs last  enabled at (6629): [<ffff800008163d78>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1367 [inline]
-hardirqs last  enabled at (6629): [<ffff800008163d78>] finish_lock_switch+0x94/0xe8 kernel/sched/core.c:4942
-hardirqs last disabled at (6628): [<ffff80000c009400>] __schedule+0x84/0x570 kernel/sched/core.c:6393
-softirqs last  enabled at (6146): [<ffff800008434d94>] spin_unlock_bh include/linux/spinlock.h:394 [inline]
-softirqs last  enabled at (6146): [<ffff800008434d94>] wb_wakeup_delayed+0x80/0x94 mm/backing-dev.c:266
-softirqs last disabled at (6142): [<ffff800008434d54>] spin_lock_bh include/linux/spinlock.h:354 [inline]
-softirqs last disabled at (6142): [<ffff800008434d54>] wb_wakeup_delayed+0x40/0x94 mm/backing-dev.c:263
----[ end trace 0000000000000000 ]---
-Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b8
-Mem abort info:
-  ESR = 0x0000000096000006
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000006
-  CM = 0, WnR = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=000000010c587000
-[00000000000000b8] pgd=0800000112734003, p4d=0800000112734003, pud=08000001126ae003, pmd=0000000000000000
-Internal error: Oops: 96000006 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 9444 Comm: syz-executor.2 Tainted: G        W          6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-pc : __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
-lr : hlock_class kernel/locking/lockdep.c:231 [inline]
-lr : check_wait_context kernel/locking/lockdep.c:4727 [inline]
-lr : __lock_acquire+0x298/0x30a4 kernel/locking/lockdep.c:5003
-sp : ffff8000144b38c0
-x29: ffff8000144b39a0 x28: 0000000000000001 x27: ffff0000d1919aa8
-x26: ffff0000d08cc117 x25: ffff0000d191a4d8 x24: 0000000000000000
-x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
-x20: 0000000000000000 x19: ffff56001244ac6e x18: 0000000000000229
-x17: 0000000000000000 x16: ffff80000dbb8658 x15: ffff0000d1919a80
-x14: 0000000000000000 x13: 0000000000000012 x12: ffff80000d65f960
-x11: ff808000081c39dc x10: ffff80000dd7a698 x9 : 0000000000040c6e
-x8 : 0000000000000000 x7 : 4e5241575f534b43 x6 : ffff800008197c8c
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000100000001 x0 : 0000000000000016
-Call trace:
- hlock_class kernel/locking/lockdep.c:222 [inline]
- check_wait_context kernel/locking/lockdep.c:4728 [inline]
- __lock_acquire+0x2d0/0x30a4 kernel/locking/lockdep.c:5003
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x54/0x6c kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:349 [inline]
- _atomic_dec_and_lock+0xb0/0x104 lib/dec_and_lock.c:28
- iput+0x50/0x314 fs/inode.c:1766
- ntfs_fill_super+0x1254/0x14a4 fs/ntfs/super.c:188
- get_tree_bdev+0x1e8/0x2a0 fs/super.c:1323
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1358
- vfs_get_tree+0x40/0x140 fs/super.c:1530
- do_new_mount+0x1dc/0x4e4 fs/namespace.c:3040
- path_mount+0x358/0x914 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x2f8/0x408 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x154 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-Code: b002deea 91196210 911a614a b9400329 (3942e114) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	b002deea 	adrp	x10, 0x5bdd000
-   4:	91196210 	add	x16, x16, #0x658
-   8:	911a614a 	add	x10, x10, #0x698
-   c:	b9400329 	ldr	w9, [x25]
-* 10:	3942e114 	ldrb	w20, [x8, #184] <-- trapping instruction
+ fs/afs/write.c          | 114 +++++++++++++++++----------------
+ fs/btrfs/extent_io.c    |  57 +++++++++--------
+ fs/ceph/addr.c          | 138 ++++++++++++++++++++--------------------
+ fs/cifs/file.c          |  33 +++++++++-
+ fs/ext4/inode.c         |  55 ++++++++--------
+ fs/f2fs/checkpoint.c    |  49 +++++++-------
+ fs/f2fs/compress.c      |  13 ++--
+ fs/f2fs/data.c          |  67 ++++++++++---------
+ fs/f2fs/f2fs.h          |   5 +-
+ fs/f2fs/node.c          |  72 +++++++++++----------
+ fs/gfs2/aops.c          |  64 ++++++++++---------
+ fs/nilfs2/btree.c       |  14 ++--
+ fs/nilfs2/page.c        |  59 ++++++++---------
+ fs/nilfs2/segment.c     |  44 +++++++------
+ include/linux/pagemap.h |  32 +++++++---
+ include/linux/pagevec.h |   8 ---
+ mm/filemap.c            |  87 ++++++++++++-------------
+ mm/page-writeback.c     |  44 +++++++------
+ mm/swap.c               |  10 ---
+ 19 files changed, 506 insertions(+), 459 deletions(-)
 
+-- 
+2.36.1
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
