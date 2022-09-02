@@ -2,177 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4C95AA56B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 03:59:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D504E5AA692
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 05:48:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234801AbiIBB7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 21:59:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
+        id S235366AbiIBDsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 23:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiIBB71 (ORCPT
+        with ESMTP id S235356AbiIBDsI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 21:59:27 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC058A98F4
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 18:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1662083966; x=1693619966;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=hmi4fA20yl+crdbD+cyzbGeImsRtqQImsVakk6DVim4=;
-  b=JRCDmp5VyZJDHBPwXoADZ9q0X2bFDvNv8ATr+ARB66BVYsf49MSDn5u4
-   iqkw63swfWbSyseDeuPWffrdRDJok2g2hPgClctgfQHjHV6M57eST5+yM
-   4PCW2lLAp2M7UBlQQAFPZOl8MEF0GaiCusw9VkkkwpJRuEBazvkraUra1
-   i8oVlmn8IMxPalWx81PwMGnK3LcdvB0IIjGS3w6r0Zo5yTcmyeqngosRj
-   DApDWTA+O8wB9wPFGl+TUym6NbJT26u02fNWVxXecXqbp4k3ISevaQuQC
-   gCk1X9EnOTWsCg9HJqyIkPWkGk4XXj8nRVWi5M+DQ1zqFNdmJ1YyxuFhh
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,281,1654531200"; 
-   d="scan'208";a="210284050"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Sep 2022 09:59:25 +0800
-IronPort-SDR: UQ0L16qMIBWIFZqvS3pVd3C/St2AyVz7K4AJ4i1KLUKduect1S+gW6nsBjtisdwCA0bV8dsozt
- qUSUlosvFVVDXAbYV7k6VBUb4Z8aOF47GzMhm6+K2olq2DlplgZU01zBksKQzJpH7+5DAW2l/U
- rgDhq8wNnW7c3Avc+LsJr0gGARObjPPKXtrh/o7E8BWTGRzFS+YoiqgrC214zC9UJ/sYoXSCd7
- YNtTktT/tE37r/99bv4ND6AcEXmLuhGeJZp9jA+FoMh3OOIIyNdKEtkEuCktW7TZh849Ms1qdP
- umKUvkBqXGjxY0+e9xLKh853
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Sep 2022 18:14:31 -0700
-IronPort-SDR: aEFCUccW5whp7FDCiql9k7XU/4IZDgWKnhWMq7D965ZjzVMTvSnXdtLBFFRtQdpypniJTyYuq5
- BJbZoCuVmH7k3FPHWjz/UgUmKCGQ33mkseBBQrta5MKlpdACx+3RST+f6ccvFmVFTnUjmxj+IA
- v13kKX7S8HTW1Dkd5XhtPatoNyty/z2tATlxxAKvy0TTpSJc2Kl378rIsPtmyL/quhK/jWUaPw
- ndCXXJ18wKH1rQtNHkAz43wecmozxu1Q8/9q6GhTxUPPUGLZY5ItbvOUw8jpyznGKB5MR01I7r
- LIg=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Sep 2022 18:59:26 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4MJh19373Zz1Rwtl
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 18:59:25 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:references:to:from:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1662083964; x=1664675965; bh=hmi4fA20yl+crdbD+cyzbGeImsRtqQImsVa
-        kk6DVim4=; b=hKCRXiO7WYClkrRcbzSiijjmciqDBZrrfeKWlekjT63Xng9DCZS
-        fr/3mbddvWMzPYYJaY1zv5F3OX3CQucxffd7GM+E/iByLtT3/6IEKabqg2wPBNM5
-        zOKC9e603bRPhHAFXrLaRiIzR2vrrt6/zLQDUuFLUGjnob5/fpYV/tpW92eLo6sJ
-        sVpbHOj/7rcFZzjcoklnC5kOYRL5OUqaklKmMaPozO+g3pw3uFzEb0LsCv+Yi29Y
-        qnIC54GO+FpV92is+T1Cg7a1eJzlwk5mZvBPGTcyQebPW/ht1dVjfaUL/7jblFd1
-        dl7NLKWCjQlidPAuKQ2Tx5o4qjIjKk5b1OA==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ndR34vUm2IIs for <linux-fsdevel@vger.kernel.org>;
-        Thu,  1 Sep 2022 18:59:24 -0700 (PDT)
-Received: from [10.225.163.56] (unknown [10.225.163.56])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4MJh162Ks6z1RvLy;
-        Thu,  1 Sep 2022 18:59:22 -0700 (PDT)
-Message-ID: <32fea8c5-fcc2-001c-eb10-3138e16b0e74@opensource.wdc.com>
-Date:   Fri, 2 Sep 2022 10:59:21 +0900
+        Thu, 1 Sep 2022 23:48:08 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459BFAA4C9
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 20:48:06 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id 199so723913pfz.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Sep 2022 20:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=hcraQuo3t4d4QrFau8j8qQ9DHHwXRsW4oFyIv4CPr0M=;
+        b=3fno8THLVlG0GX9ntut3pD0E8LZambLAMn6wFPkGNJWKh5C0doM2JyQB8jhj22obB3
+         xvS+IYfwcx/a0omB3oH/Sqi0V3qhUhRfFHJ93TVOMnfxC+1pYMNb21yEIuyioBEgcspB
+         zbniO60dzuP96M2jg9rB1/r7z6D0qM220UAoxMPmvi1/sqYNg+AGlDmtK6wwtzOnsgwY
+         U9uZkCojQnDuM9K5LerbslI9erbS4twa8qknhmdGic7uLFGRyDTBIgmuk7giBrJ/w3HI
+         Oq8vS6LV4UnXToUjBCM9MQbsXXDpPEgJoFgni4imes372r323INEcvorUDRlhjOjxfQb
+         jmHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=hcraQuo3t4d4QrFau8j8qQ9DHHwXRsW4oFyIv4CPr0M=;
+        b=pRXxbKHmxEvxRTQTWz0+ai5LMwir60WWgGtimAYSl5rmBtCV3XQebK5EtNR4Nd1yLt
+         tuI8O1H6GQaNuHn8tBdcvPjJyJhrWnMRoNaKEAJQZzbz7M45sSzD3dGpmEU/hbAN3E9o
+         cf23FVA5qj+ptCJ7ac9JgrPZiwL4t9YvJ2jc/3RNBPEo1uZWmQNvLHX3J8MM/BIlDDV8
+         FWjs0CWE75PlGeiNLY6r+oMkLmk8JMwrNXc9sHjpu74Rl57oOfp6SOgRZdFFkyrjY5s1
+         ob4lqbrvmvJ5Lvp2qEe6SuxK5OayPnLcRthev1+mmgNWQ1KSCCGJZoCyRXImb3RGlPtG
+         1s0Q==
+X-Gm-Message-State: ACgBeo2VVwM5CDK8ZPX2cK/L1UIDe2ruLdUASFMKkD5FFpNDge0QhcHV
+        4neH/GLqLtaeGH+Y13i2NJs26A==
+X-Google-Smtp-Source: AA6agR7dRYABhSvA/oWYU4UmpifJnz+WUVXp4AetGrnCOvoV4+bRVCAIaRJfQYdTVb77CGwYqnng9A==
+X-Received: by 2002:a63:41c5:0:b0:42c:6b7f:6d95 with SMTP id o188-20020a6341c5000000b0042c6b7f6d95mr15717008pga.175.1662090485261;
+        Thu, 01 Sep 2022 20:48:05 -0700 (PDT)
+Received: from C02G705SMD6V.bytedance.net ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id w8-20020a170902e88800b0016c4546fbf9sm376152plg.128.2022.09.01.20.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Sep 2022 20:48:04 -0700 (PDT)
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+To:     linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
+        huyue2@coolpad.com, Jia Zhu <zhujia.zj@bytedance.com>
+Subject: [PATCH V1 0/5] Introduce erofs shared domain
+Date:   Fri,  2 Sep 2022 11:47:43 +0800
+Message-Id: <20220902034748.60868-1-zhujia.zj@bytedance.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 15/17] btrfs: calculate file system wide queue limit for
- zoned mode
-Content-Language: en-US
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20220901074216.1849941-1-hch@lst.de>
- <20220901074216.1849941-16-hch@lst.de>
- <429d26b8-f7d8-6365-a2fa-f4ed892182e4@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <429d26b8-f7d8-6365-a2fa-f4ed892182e4@opensource.wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/2/22 10:56, Damien Le Moal wrote:
-> On 9/1/22 16:42, Christoph Hellwig wrote:
->> To be able to split a write into properly sized zone append commands,
->> we need a queue_limits structure that contains the least common
->> denominator suitable for all devices.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> ---
->>  fs/btrfs/ctree.h |  4 +++-
->>  fs/btrfs/zoned.c | 36 ++++++++++++++++++------------------
->>  fs/btrfs/zoned.h |  1 -
->>  3 files changed, 21 insertions(+), 20 deletions(-)
->>
->> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
->> index 5e57e3c6a1fd6..a37129363e184 100644
->> --- a/fs/btrfs/ctree.h
->> +++ b/fs/btrfs/ctree.h
->> @@ -1071,8 +1071,10 @@ struct btrfs_fs_info {
->>  	 */
->>  	u64 zone_size;
->>  
->> -	/* Max size to emit ZONE_APPEND write command */
->> +	/* Constraints for ZONE_APPEND commands: */
->> +	struct queue_limits limits;
->>  	u64 max_zone_append_size;
-> 
-> Can't we get rid of this one and have the code directly use
-> fs_info->limits.max_zone_append_sectors through a little helper doing a
-> conversion to bytes (a 9 bit shift) ?
+Changes since RFC:
+1. Fix the macro CONFIG_EROFS_FS_ONDEMAND misuse in
+   erofs_fc_parse_param().
+2. Move the code in domain.c to fscache.c
+3. Remove the definition of anon_inode_fs_type and just use erofs
+   filesystem type to init pseudo mnt.
+4. Use mutex lock for erofs_domain_list.
+5. Unregister the cookies before kill_sb() to avoid inode busy when
+   umount erofs.
+6. Remove useless declaration of domain_get/put in internal.h
 
-Note: Only a suggestion, not sure that would be much of a cleanup.
+[Kernel Patchset]
+===============
+Git tree:
+	https://github.com/userzj/linux.git zhujia/shared-domain-v1
+Git web:
+	https://github.com/userzj/linux/tree/zhujia/shared-domain-v1
 
-> 
-> [...]
->>  	/* Count zoned devices */
->>  	list_for_each_entry(device, &fs_devices->devices, dev_list) {
->>  		enum blk_zoned_model model;
->> @@ -685,11 +677,9 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
->>  				ret = -EINVAL;
->>  				goto out;
->>  			}
->> -			if (!max_zone_append_size ||
->> -			    (zone_info->max_zone_append_size &&
->> -			     zone_info->max_zone_append_size < max_zone_append_size))
->> -				max_zone_append_size =
->> -					zone_info->max_zone_append_size;
->> +			blk_stack_limits(lim,
->> +					 &bdev_get_queue(device->bdev)->limits,
->> +					 0);
-> 
-> This does:
-> 
-> 	t->max_zone_append_sectors = min(t->max_zone_append_sectors,
->                                         b->max_zone_append_sectors);
-> 
-> So if we are mixing zoned and non-zoned devices in a multi-dev volume,
-> we'll end up with max_zone_append_sectors being 0. The previous code
-> prevented that.
-> 
-> Note that I am not sure if it is allowed to mix zoned and non-zoned drives
-> in the same volume. Given that we have a fake zone emulation for non-zoned
-> drives with zoned btrfs, I do not see why it would not work. But I may be
-> wrong.
-> 
+[Background]
+============
+In ondemand read mode, we use individual volume to present an erofs
+mountpoint, cookies to present bootstrap and data blobs.
+
+In which case, since cookies can't be shared between fscache volumes,
+even if the data blobs between different mountpoints are exactly same,
+they can't be shared.
+
+[Introduction]
+==============
+Here we introduce erofs shared domain to resolve above mentioned case.
+Several erofs filesystems can belong to one domain, and data blobs can
+be shared among these erofs filesystems of same domain.
+
+[Usage]
+Users could specify 'domain_id' mount option to create or join into a
+domain which reuses the same cookies(blobs).
+
+[Design]
+========
+1. Use pseudo mnt to manage domain's lifecycle.
+2. Use a linked list to maintain & traverse domains.
+3. Use pseudo sb to create anonymous inode for recording cookie's info
+   and manage cookies lifecycle.
+
+[Flow Path]
+===========
+1. User specify a new 'domain_id' in mount option.
+   1.1 Traverse domain list, compare domain_id with existing domain.[Miss]
+   1.2 Create a new domain(volume), add it to domain list.
+   1.3 Traverse pseudo sb's inode list, compare cookie name with
+       existing cookies.[Miss]
+   1.4 Alloc new anonymous inodes and cookies.
+
+2. User specify an existing 'domain_id' in mount option and the data
+   blob is existed in domain.
+   2.1 Traverse domain list, compare domain_id with existing domain.[Hit]
+   2.2 Reuse the domain and increase its refcnt.
+   2.3 Traverse pseudo sb's inode list, compare cookie name with
+   	   existing cookies.[Hit]
+   2.4 Reuse the cookie and increase its refcnt.
+
+[Test]
+======
+Git web:
+	https://github.com/userzj/demand-read-cachefilesd/tree/shared-domain
+More test cases will be added to:
+	https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests-fscache 
+
+RFC: https://lore.kernel.org/all/YxAlO%2FDHDrIAafR2@B-P7TQMD6M-0146.local/
+
+Jia Zhu (5):
+  erofs: add 'domain_id' mount option for on-demand read sementics
+  erofs: introduce fscache-based domain
+  erofs: add 'domain_id' prefix when register sysfs
+  erofs: remove duplicated unregister_cookie
+  erofs: support fscache based shared domain
+
+ fs/erofs/fscache.c  | 169 +++++++++++++++++++++++++++++++++++++++++++-
+ fs/erofs/internal.h |  33 ++++++++-
+ fs/erofs/super.c    |  94 ++++++++++++++++++------
+ fs/erofs/sysfs.c    |  11 ++-
+ 4 files changed, 281 insertions(+), 26 deletions(-)
 
 -- 
-Damien Le Moal
-Western Digital Research
+2.20.1
 
