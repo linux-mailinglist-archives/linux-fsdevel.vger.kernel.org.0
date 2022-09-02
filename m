@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC305AA6A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 05:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 627C05AA698
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 05:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234953AbiIBDtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Sep 2022 23:49:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41960 "EHLO
+        id S235120AbiIBDtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Sep 2022 23:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235370AbiIBDsm (ORCPT
+        with ESMTP id S235409AbiIBDsp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Sep 2022 23:48:42 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3992B4E9F
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 20:48:24 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id 199so724366pfz.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Sep 2022 20:48:24 -0700 (PDT)
+        Thu, 1 Sep 2022 23:48:45 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4422CB4EB3
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Sep 2022 20:48:29 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id n8-20020a17090a73c800b001fd832b54f6so994151pjk.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Sep 2022 20:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=29yigyMnPFGfDuD40Y83IOfvtDsC8VAK42q+yJUeUxw=;
-        b=wdHIrpiSaBhjfQbqOd+Abr+Z7iAWnqTitm0NuSsGbPvaDveHA3TOCmzxpCEaxURIvn
-         c4v4b8cLleHbAaCx7Pp/bxts1GEAxe61h0wmVCp0UPzqOM/w+wQyPhrW0zLkYq9qOBhf
-         Yok1Z6ryVNgeKydsYzrzE2f1+QcKwwUjY0epN8bEV51Gn2fpLpHQ5fimRpaiotKtRmmS
-         FaM2mEHm+hrTaNF9ek8tH40G1HIcPI1MV66GhzrFLYX1/3JVfh0AvFmLGjG/Nj71ugoc
-         m4u9opqkr/kAkUKl65Ljw2aEOhQShGIYtP46EA3cAzRgwQx/ME02xiOMWu6+NuZVKe1l
-         UEYw==
+        bh=sr2Wd6yR3mz5619cIGOwnPXQ5QeGOidAclAniAYTKBQ=;
+        b=xBMouZC6OH2kkJpibOv1tQN8zSxENxxC5h2KVWxPL6H+zCGNOmaLDbOH0jvTSwyQL4
+         7YxXghf2j9Q8nZ9Huczr/yDQh7mq87u2l7kvXp6M/YTK2sDi1sga9WpObRGgaUzBVg7d
+         Abpkz/lBP1r38UWwG9XZ8/901g631Ds0DxRJEhdHzYXt+Ch/cMsNSLxlnnEaVFgn5HWo
+         y6nsGvLTOmHp4bB4zyMbYvcAcomCpVhxQmK/O8Q9NlKWamVsbqCc8GiLqjOiZxHc9l03
+         65nq0v+DC3eKV7MjAg6iA5UC2nE4cj16cFdl8FDdsiZGgd6x3YxdS0sEZp9NjcsmRvRm
+         WOAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=29yigyMnPFGfDuD40Y83IOfvtDsC8VAK42q+yJUeUxw=;
-        b=bPpCDmP34j6HiYBxK44iYGISdm0hYaSpj+7u5qbcxfV++PrM4CW5m6uDFhKYZGjBUK
-         Ko48hrBimTtY3+pBPayFf07AGjXrT7R++RSTmq4bgySUg2SU/zeTw7p8srTfCJQLzIiH
-         vUFctUHqJGHghMscb5GjiwGowm7jTaVeQNDiM2tCTR9AhHUNsUrbJuV6Hr9113RzygRz
-         /HuFuhGupgbehXBb9yvyl0WQeT+RhcF216qz55cFGyZAGceu1KeKrur0UqCi/LWGTvjn
-         TcRnl2nn8+uxxYKgmXU3QElwfnu+wX10PMHBnp7y3ELY8HVzVTNAkOZ5GZ2IPQLdlaW2
-         5ufg==
-X-Gm-Message-State: ACgBeo1mV2AlxzoUCLl8iEXCGvZJ6jgCrT2csg9oR7qDgHoe5rW14YUK
-        6CFYc27RYUpsl0VJZ4M2hY3wDQ==
-X-Google-Smtp-Source: AA6agR6fClfcvJYshTe0TrLdO6pfsgDgdl3xFTGMsK3VFTkr/Loa612tx9QqfoxFg/OHj7mTD7JQeA==
-X-Received: by 2002:a05:6a00:e8f:b0:536:c98e:8307 with SMTP id bo15-20020a056a000e8f00b00536c98e8307mr34362687pfb.73.1662090504153;
-        Thu, 01 Sep 2022 20:48:24 -0700 (PDT)
+        bh=sr2Wd6yR3mz5619cIGOwnPXQ5QeGOidAclAniAYTKBQ=;
+        b=YUl7MDA7Wf6d/8of7UGDvXESGLrMRuTMQtbdQd7IAeINDPdjWIAH50itpHB2wcVldp
+         6wkA0Z6drOME8vEvPGg/3BACkZE/SWEPPulqXm1LZN+KMd78JdKtUg/2/+ivf7JqBGcg
+         pQB7RS6qGnMYbAuZyn6M5L2hnPkvUyXxd7/vQVtK7NuBMSx8ODOHSi50VlvtO9wYx0n2
+         1kOK5WzUhcixIDJVOdrgD26QkE7Hk/AuZoMGLgt6N6Ks1jj5qPt7R0eMwXaktpa0GOib
+         5NY+3KpXaX57/3zyMMFU6AUBjludSi6wqdmF7SpESRReHhUAHi51OR2Pn+4WUP4wL1xR
+         C6Fw==
+X-Gm-Message-State: ACgBeo06aZVsUKt0FwYLRQS783d1zH0SdOjEMVpFxJ98kKnlJL5+FT5R
+        um/ozAIMA2FTsdXhEHV91MsuOA==
+X-Google-Smtp-Source: AA6agR7y/khiEhfD/7DQ3kLKGorQklRk5KRNHXJoxoQsLBObMQE1F4fe4ivJ7i3X+3CAzpY6ZSFh+g==
+X-Received: by 2002:a17:902:ea01:b0:175:458e:65be with SMTP id s1-20020a170902ea0100b00175458e65bemr10290462plg.25.1662090508746;
+        Thu, 01 Sep 2022 20:48:28 -0700 (PDT)
 Received: from C02G705SMD6V.bytedance.net ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id w8-20020a170902e88800b0016c4546fbf9sm376152plg.128.2022.09.01.20.48.19
+        by smtp.gmail.com with ESMTPSA id w8-20020a170902e88800b0016c4546fbf9sm376152plg.128.2022.09.01.20.48.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Sep 2022 20:48:23 -0700 (PDT)
+        Thu, 01 Sep 2022 20:48:28 -0700 (PDT)
 From:   Jia Zhu <zhujia.zj@bytedance.com>
 To:     linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
         huyue2@coolpad.com, Jia Zhu <zhujia.zj@bytedance.com>
-Subject: [PATCH V1 4/5] erofs: remove duplicated unregister_cookie
-Date:   Fri,  2 Sep 2022 11:47:47 +0800
-Message-Id: <20220902034748.60868-5-zhujia.zj@bytedance.com>
+Subject: [PATCH V1 5/5] erofs: support fscache based shared domain
+Date:   Fri,  2 Sep 2022 11:47:48 +0800
+Message-Id: <20220902034748.60868-6-zhujia.zj@bytedance.com>
 X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 In-Reply-To: <20220902034748.60868-1-zhujia.zj@bytedance.com>
 References: <20220902034748.60868-1-zhujia.zj@bytedance.com>
@@ -72,64 +72,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In erofs umount scenario, erofs_fscache_unregister_cookie() is called
-twice in kill_sb() and put_super().
+Several erofs filesystems can belong to one domain, and data blobs can
+be shared among these erofs filesystems of same domain.
 
-It works for original semantics, cause 'ctx' will be set to NULL in
-put_super() and will not be unregister again in kill_sb().
-However, in shared domain scenario, we use refcount to maintain the
-lifecycle of cookie. Unregister the cookie twice will cause it to be
-released early.
-
-For the above reasons, this patch removes duplicate unregister_cookie
-and move fscache_unregister_* before shotdown_super() to prevent busy
-inode(ctx->inode) when umount.
+Users could specify domain_id mount option to create or join into a domain.
 
 Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
 ---
- fs/erofs/super.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/erofs/fscache.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/internal.h | 13 +++++++++
+ fs/erofs/super.c    | 10 +++++--
+ 3 files changed, 88 insertions(+), 2 deletions(-)
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index a3ff87e45f2c..05dc83b25da3 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -920,19 +920,20 @@ static void erofs_kill_sb(struct super_block *sb)
- 		kill_litter_super(sb);
- 		return;
- 	}
--	if (erofs_is_fscache_mode(sb))
--		generic_shutdown_super(sb);
--	else
--		kill_block_super(sb);
--
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
- 		return;
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index bf6c9ecabec1..07e5d71e412b 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -569,6 +569,8 @@ void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
  
-+	if (erofs_is_fscache_mode(sb)) {
-+		erofs_fscache_unregister_cookie(&sbi->s_fscache);
-+		erofs_fscache_unregister_fs(sb);
-+		generic_shutdown_super(sb);
-+	} else {
-+		kill_block_super(sb);
+ 	if (!ctx)
+ 		return;
++	if (ctx->domain && !refcount_dec_and_test(&ctx->ref))
++		return;
+ 
+ 	fscache_unuse_cookie(ctx->cookie, NULL, NULL);
+ 	fscache_relinquish_cookie(ctx->cookie, false);
+@@ -576,7 +578,12 @@ void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+ 
+ 	iput(ctx->inode);
+ 	ctx->inode = NULL;
++	iput(ctx->anon_inode);
++	ctx->anon_inode = NULL;
++	erofs_fscache_domain_put(ctx->domain);
+ 
++	kfree(ctx->name);
++	ctx->name = NULL;
+ 	kfree(ctx);
+ 	*fscache = NULL;
+ }
+@@ -616,3 +623,63 @@ void erofs_fscache_unregister_fs(struct super_block *sb)
+ 	sbi->volume = NULL;
+ 	sbi->domain = NULL;
+ }
++
++static int erofs_fscache_domain_init_cookie(struct super_block *sb,
++		struct erofs_fscache **fscache, char *name, bool need_inode)
++{
++	int ret;
++	struct inode *inode;
++	struct erofs_fscache *ctx;
++	struct erofs_sb_info *sbi = EROFS_SB(sb);
++	struct erofs_domain *domain = sbi->domain;
++
++	ret = erofs_fscache_register_cookie(sb, &ctx, name, need_inode);
++	if (ret)
++		return ret;
++
++	ctx->name = kstrdup(name, GFP_KERNEL);
++	if (!ctx->name)
++		return -ENOMEM;
++
++	inode = new_inode(domain->mnt->mnt_sb);
++	if (!inode) {
++		kfree(ctx->name);
++		return -ENOMEM;
 +	}
 +
- 	erofs_free_dev_context(sbi->devs);
- 	fs_put_dax(sbi->dax_dev, NULL);
--	erofs_fscache_unregister_cookie(&sbi->s_fscache);
--	erofs_fscache_unregister_fs(sb);
- 	kfree(sbi->opt.fsid);
- 	kfree(sbi->opt.domain_id);
- 	kfree(sbi);
-@@ -952,7 +953,6 @@ static void erofs_put_super(struct super_block *sb)
- 	iput(sbi->managed_cache);
- 	sbi->managed_cache = NULL;
- #endif
--	erofs_fscache_unregister_cookie(&sbi->s_fscache);
- }
++	ctx->domain = domain;
++	ctx->anon_inode = inode;
++	inode->i_private = ctx;
++	refcount_set(&ctx->ref, 1);
++	erofs_fscache_domain_get(domain);
++	*fscache = ctx;
++	return 0;
++}
++
++int erofs_domain_register_cookie(struct super_block *sb,
++	struct erofs_fscache **fscache, char *name, bool need_inode)
++{
++	int err;
++	struct inode *inode;
++	struct erofs_fscache *ctx;
++	struct erofs_sb_info *sbi = EROFS_SB(sb);
++	struct erofs_domain *domain = sbi->domain;
++	struct super_block *psb = domain->mnt->mnt_sb;
++
++	mutex_lock(&domain->mutex);
++	list_for_each_entry(inode, &psb->s_inodes, i_sb_list) {
++		ctx = inode->i_private;
++		if (!ctx)
++			continue;
++		if (!strcmp(ctx->name, name)) {
++			*fscache = ctx;
++			refcount_inc(&ctx->ref);
++			mutex_unlock(&domain->mutex);
++			return 0;
++		}
++	}
++	err = erofs_fscache_domain_init_cookie(sb, fscache, name, need_inode);
++	mutex_unlock(&domain->mutex);
++
++	return err;
++}
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 7240a2acaa5c..25e5031ca878 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -109,8 +109,12 @@ struct erofs_domain {
+ };
  
- struct file_system_type erofs_fs_type = {
+ struct erofs_fscache {
++	refcount_t ref;
+ 	struct fscache_cookie *cookie;
+ 	struct inode *inode;
++	struct inode *anon_inode;
++	struct erofs_domain *domain;
++	char *name;
+ };
+ 
+ struct erofs_sb_info {
+@@ -626,6 +630,9 @@ int erofs_fscache_register_domain(struct super_block *sb);
+ int erofs_fscache_register_cookie(struct super_block *sb,
+ 				  struct erofs_fscache **fscache,
+ 				  char *name, bool need_inode);
++int erofs_domain_register_cookie(struct super_block *sb,
++				  struct erofs_fscache **fscache,
++				  char *name, bool need_inode);
+ void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache);
+ 
+ extern const struct address_space_operations erofs_fscache_access_aops;
+@@ -647,6 +654,12 @@ static inline int erofs_fscache_register_cookie(struct super_block *sb,
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int erofs_domain_register_cookie(struct super_block *sb,
++						struct erofs_fscache **fscache,
++						char *name, bool need_inode)
++{
++	return -EOPNOTSUPP;
++}
+ 
+ static inline void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+ {
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 667a78f0ee70..11c5ba84567c 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -245,8 +245,12 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+ 	}
+ 
+ 	if (erofs_is_fscache_mode(sb)) {
+-		ret = erofs_fscache_register_cookie(sb, &dif->fscache,
+-				dif->path, false);
++		if (sbi->opt.domain_id)
++			ret = erofs_domain_register_cookie(sb, &dif->fscache, dif->path,
++					false);
++		else
++			ret = erofs_fscache_register_cookie(sb, &dif->fscache, dif->path,
++					false);
+ 		if (ret)
+ 			return ret;
+ 	} else {
+@@ -726,6 +730,8 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			err = erofs_fscache_register_domain(sb);
+ 			if (err)
+ 				return err;
++			err = erofs_domain_register_cookie(sb, &sbi->s_fscache,
++					sbi->opt.fsid, true);
+ 		} else {
+ 			err = erofs_fscache_register_fs(sb);
+ 			if (err)
 -- 
 2.20.1
 
