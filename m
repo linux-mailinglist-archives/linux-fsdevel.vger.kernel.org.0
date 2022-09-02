@@ -2,94 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC375AB208
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 15:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6FB5AAFAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 14:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236187AbiIBNtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Sep 2022 09:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33416 "EHLO
+        id S237352AbiIBMmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Sep 2022 08:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237838AbiIBNsU (ORCPT
+        with ESMTP id S237278AbiIBMlH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Sep 2022 09:48:20 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4546E166AA5;
-        Fri,  2 Sep 2022 06:23:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D9D2F5BE03;
-        Fri,  2 Sep 2022 12:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1662122070;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZSh2REjiRAk/k5oPQg2yXZGh/unc7sc3tPapfoccmRI=;
-        b=wdEwtN3JZgc/dJfXvHTB2OuHq5iMMkwcvGadpvdtKl82JBp/CVm4q6hNc+Y/iWTf2Xz+aI
-        YGNc8TruF0sa2O/2hm9jHou3PZrcjEVob/160cOGyJ77oxrhQEaONmpuSIM0yX+QUzatCh
-        /RsJEpuKLTyOxrED2kdzlFs5ZvtVXAo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1662122070;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZSh2REjiRAk/k5oPQg2yXZGh/unc7sc3tPapfoccmRI=;
-        b=KENUHNHD48w8jrLxhOstCJQGwUAg1XngO63jvWwXMV9t3VvgwJ8T1JrqwXS/ustyoxYoL+
-        euH2Gj9JTUuJQ1CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9A82A13328;
-        Fri,  2 Sep 2022 12:34:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Wbq4JFb4EWMIaQAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Fri, 02 Sep 2022 12:34:30 +0000
-Date:   Fri, 2 Sep 2022 14:29:10 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 07/23] btrfs: Convert extent_write_cache_pages() to use
- filemap_get_folios_tag()
-Message-ID: <20220902122910.GV13489@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20220901220138.182896-1-vishal.moola@gmail.com>
- <20220901220138.182896-8-vishal.moola@gmail.com>
+        Fri, 2 Sep 2022 08:41:07 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3798E868D;
+        Fri,  2 Sep 2022 05:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662121886; x=1693657886;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fDpXS+mwMN4S7KTgnVwvjs5feZwWXlXraJAIEBzDX2M=;
+  b=X5d4yMTdb9rqtJD/vFsu0rl5cEeihbax9+NUBhn3Tz/9DdE4C77fA9/x
+   GoZxapb2TGuT6GuW9i0/rpEFS202ZVzf43K/cWLgLOHFal5NcV2llukp5
+   hX93eW6BqcrWARumP4aPweBKwUO4zGhuhVSB1mVvFnix2jUoMwJODE0A3
+   IjSrGO3s0+ewxi+P4F9JbmuTxkYsiRVkI6qi7Zqs2115FRKiEpVRzjmmR
+   4CGGTnIPsPPChV5v0UoXcmiamjo+uaDcv5GNc24O8JU0Y1KkhBbb/xVJn
+   RW0T3o4nBWLF0srw1o5c96COprmU6l6nr/Z5RnWNsI2MP8/yLkYTGjHeu
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10457"; a="382268005"
+X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
+   d="scan'208";a="382268005"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 05:30:23 -0700
+X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
+   d="scan'208";a="674338766"
+Received: from azmijews-mobl2.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.45.129])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 05:30:12 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 5AC6D10484B; Fri,  2 Sep 2022 15:30:10 +0300 (+03)
+Date:   Fri, 2 Sep 2022 15:30:10 +0300
+From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        "Gupta, Pankaj" <pankaj.gupta@amd.com>,
+        Elena Reshetova <elena.reshetova@intel.com>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220902123010.zfyv6apmo3v67a2i@box.shutemov.name>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
+ <20220818132421.6xmjqduempmxnnu2@box>
+ <c6ccbb96-5849-2e2f-3b49-4ea711af525d@google.com>
+ <20220820002700.6yflrxklmpsavdzi@box.shutemov.name>
+ <c194262b-b634-4baf-abf0-dc727e8f1d7@google.com>
+ <20220831142439.65q2gi4g2d2z4ofh@box.shutemov.name>
+ <20220902102757.GB1712673@chaop.bj.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220901220138.182896-8-vishal.moola@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220902102757.GB1712673@chaop.bj.intel.com>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 03:01:22PM -0700, Vishal Moola (Oracle) wrote:
-> Converted function to use folios throughout. This is in preparation for
-> the removal of find_get_pages_range_tag(). Now also supports large
-> folios.
+On Fri, Sep 02, 2022 at 06:27:57PM +0800, Chao Peng wrote:
+> > +	if (flags & MFD_INACCESSIBLE) {
+> > +		struct file *inaccessible_file;
+> > +
+> > +		inaccessible_file = memfd_mkinaccessible(file);
+> > +		if (IS_ERR(inaccessible_file)) {
+> > +			error = PTR_ERR(inaccessible_file);
+> > +			goto err_file;
+> > +		}
 > 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> The new file should alse be marked as O_LARGEFILE otherwise setting the
+> initial size greater than 2^31 on the fd will be refused by ftruncate().
+> 
+> +               inaccessible_file->f_flags |= O_LARGEFILE;
+> +
 
-Acked-by: David Sterba <dsterba@suse.com>
+Good catch. Thanks.
+
+I will modify memfd_mkinaccessible() to do this.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
