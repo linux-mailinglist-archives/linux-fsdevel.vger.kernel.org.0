@@ -2,286 +2,285 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F57E5AAA45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 10:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A674F5AABA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 11:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235818AbiIBIlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Sep 2022 04:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55040 "EHLO
+        id S234563AbiIBJlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Sep 2022 05:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235391AbiIBIlG (ORCPT
+        with ESMTP id S233481AbiIBJld (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Sep 2022 04:41:06 -0400
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A4B870BD
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Sep 2022 01:41:00 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MJrwW1mzYzMqtXL;
-        Fri,  2 Sep 2022 10:40:59 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4MJrwV0HQzzMpnPn;
-        Fri,  2 Sep 2022 10:40:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1662108059;
-        bh=cNkUkPIkx7da6+GxYVnbxXhA5LtdmNBuvA+Vz5NbHVs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kaQAKVutask3MzzQjDSuo49bHqS8BCkwT3daCi8SM9W0w69oslWgnfsJ0FyGQIiIM
-         WXUaj1rHALEdHLpNZHe48E/P/n8ByNRVLgx3UrQtLMdM0nUcj907Nf/jNQzvFREq8/
-         yC0PLJon5Wo+bY/2WH7FBVm6E4JGPiUGxrTuYQig=
-Message-ID: <68c65a52-4fa1-d2fb-f571-878f9f4658ba@digikod.net>
-Date:   Fri, 2 Sep 2022 10:40:57 +0200
+        Fri, 2 Sep 2022 05:41:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D2A82E9F2;
+        Fri,  2 Sep 2022 02:41:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ACFA861E36;
+        Fri,  2 Sep 2022 09:41:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A824DC433C1;
+        Fri,  2 Sep 2022 09:41:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662111691;
+        bh=JlfZEPKunXFgiUrPOyu21ml9zgBI6rBnRu5PPuVieRY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rIqWPkvCOvhlXJFByMsyv0QO8bZMo61rs7r9Wbk25ArWcFO2vQt+Xm6xBVrU1FuIC
+         +MHOX2Okv4ySJbC6lE8PIQKo7d5HLfL3eO7Z1YWb7XRuHWzYJfhiN/H5MbRYqsUG5l
+         kWL2vxyT+QwLb8eXbUF1AD40xK7JJZylXmjY61lqrLu7ZgXh3/9hpT8MJSIvf3oT9O
+         gRUuHnbKNMaw8qUXl0TyHeZOgreozZJ1LNO/H9yHDtezUqnmhQJwiZSPLd7NT3GhJK
+         fSdn4m5Pc6lXJqz57N/1naXCBPhRn8XejzYxSnwuwUyn6Qak/BgtArji0WycjuhUvd
+         /Tl2ZaJSF+SyA==
+Message-ID: <5167c66c0a3285d2d3188871250af77df3919635.camel@kernel.org>
+Subject: Re: [xfstests PATCH] generic/693: add basic change attr test
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Murphy Zhou <jencce.kernel@gmail.com>
+Cc:     fstests <fstests@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Fri, 02 Sep 2022 05:41:29 -0400
+In-Reply-To: <CADJHv_ufx=k+HGbL8wChLVXLsv-HOgzdMMfU4eUfnV3dZFMnaQ@mail.gmail.com>
+References: <20220816133413.44298-1-jlayton@kernel.org>
+         <CADJHv_ufx=k+HGbL8wChLVXLsv-HOgzdMMfU4eUfnV3dZFMnaQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v5 0/4] landlock: truncate support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220817203006.21769-1-gnoack3000@gmail.com>
- <b336dcfc-7d28-dea9-54de-0b8e4b725c1c@digikod.net> <YxGVgfcXwEa+5ZYn@nuc>
- <YxGfxo87drkAjWGf@nuc>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <YxGfxo87drkAjWGf@nuc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Thanks for having a look. I should probably have marked this as an RFC
+patch. The infrastructure for this is still being debated on the mailing
+lists. Until that's settled we won't want to merge this.
 
-On 02/09/2022 08:16, Günther Noack wrote:
-> On Fri, Sep 02, 2022 at 07:32:49AM +0200, Günther Noack wrote:
->> On Thu, Sep 01, 2022 at 07:10:38PM +0200, Mickaël Salaün wrote:
->>> Hmm, I think there is an issue with this series. Landlock only enforces
->>> restrictions at open time or when dealing with user-supplied file paths
->>> (relative or absolute).
->>
->> Argh, ok. That sounds like a desirable property, although it would
->> mean reworking the patch set.
->>
->>> The use of the path_truncate hook in this series
->>> doesn't distinguish between file descriptor from before the current sandbox
->>> or from after being sandboxed. For instance, if a file descriptor is
->>> received through a unix socket, it is assumed that this is legitimate and no
->>> Landlock restriction apply on it, which is not the case with this series
->>> anymore. It is the same for files opened before the process sandbox itself.
->>>
->>> To be able to follow the current semantic, I think we should control the
->>> truncate access at open time (or when dealing with a user-supplied path) but
->>> not on any file descriptor as it is currently done.
->>
->> OK - so let me try to make a constructive proposal. We have previously
->> identified a few operations where a truncation happens, and I would
->> propose that the following Landlock rights should be needed for these:
->>
->> * truncate() (operating on char *path): Require LL_ACCESS_FS_TRUNCATE
->> * ftruncate() (operating on fd): No Landlock rights required
->> * open() for reading with O_TRUNC: Require LL_ACCESS_FS_TRUNCATE
->> * open() for writing with O_TRUNC: Require LL_ACCESS_FS_WRITE_FILE
-> 
-> Thinking about it again, another alternative would be to require
-> TRUNCATE as well when opening a file for writing - it would be
-> logical, because the resulting FD can be truncated. It would also
-> require people to provide the truncate right in order to open files
-> for writing, but this may be the logical thing to do.
+Cheers,
+Jeff
 
-Another alternative would be to keep the current semantic but ignore 
-file descriptors from not-sandboxed processes. This could be possible by 
-following the current file->f_mode logic but using the Landlock's 
-file->f_security instead to store if the file descriptor was opened in a 
-context allowing it to be truncated: file opened outside of a landlocked 
-process, or in a sandbox allowing LANDLOCK_ACCESS_FS_TRUNCATE on the 
-related path.
+On Fri, 2022-09-02 at 09:28 +0800, Murphy Zhou wrote:
+> Hi Jeff,
+>=20
+> Thanks for the patch!
+>=20
+> On Tue, Aug 16, 2022 at 9:43 PM Jeff Layton <jlayton@kernel.org> wrote:
+> >=20
+> > Now that we have the ability to query the change attribute in userland,
+> > test that the filesystems implement it correctly. Fetch the change
+> > attribute before and after various operations and validate that it
+> > changes (or doesn't change) as expected.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  common/rc             |  17 ++++++
+> >  tests/generic/693     | 138 ++++++++++++++++++++++++++++++++++++++++++
+> >  tests/generic/693.out |   1 +
+> >  3 files changed, 156 insertions(+)
+> >  create mode 100755 tests/generic/693
+> >  create mode 100644 tests/generic/693.out
+> >=20
+> > Please look and make sure I'm not missing other operations that we
+> > should be testing here!
+> >=20
+> > diff --git a/common/rc b/common/rc
+> > index 197c94157025..b9cb47f99016 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -5052,6 +5052,23 @@ hexdump()
+> >         _fail "Use _hexdump(), please!"
+> >  }
+> >=20
+> > +_require_change_attr ()
+> > +{
+> > +
+> > +       _mask=3D$($XFS_IO_PROG -f -c "statx -m 0x2000 -r" $TEST_DIR/cha=
+nge_attr_test.$$ \
+> > +               | grep "^stat.mask" | cut -d' ' -f 3)
+> > +       rm -f $TEST_DIR/change_attr_test.$$
+> > +       if [ $(( ${_mask}&0x2000 )) -eq 0 ]; then
+> > +               _notrun "$FSTYP does not support inode change attribute=
+"
+> > +       fi
+> > +}
+> > +
+> > +_get_change_attr ()
+> > +{
+> > +       $XFS_IO_PROG -r -c "statx -m 0x2000 -r" $1 | grep '^stat.change=
+_attr' | \
+> > +               cut -d' ' -f3
+> > +}
+> > +
+> >  init_rc
+> >=20
+> >  ######################################################################=
+##########
+> > diff --git a/tests/generic/693 b/tests/generic/693
+> > new file mode 100755
+> > index 000000000000..fa92931d2ac8
+> > --- /dev/null
+> > +++ b/tests/generic/693
+> > @@ -0,0 +1,138 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2021, Jeff Layton <jlayton@redhat.com>
+> > +#
+> > +# FS QA Test No. 693
+> > +#
+> > +# Test the behavior of the inode change attribute
+> > +#
+> > +. ./common/preamble
+> > +_begin_fstest auto quick rw
+> > +
+> > +# Import common functions.
+> > +. ./common/filter
+> > +
+> > +# real QA test starts here
+> > +_supported_fs generic
+> > +_require_test
+> > +_require_change_attr
+> > +
+> > +# from the stat.h header file
+> > +UTIME_OMIT=3D1073741822
+> > +
+> > +testdir=3D"$TEST_DIR/test_iversion_dir.$$"
+> > +testfile=3D"$testdir/test_iversion_file.$$"
+> > +
+> > +mkdir $testdir
+> > +
+> > +# DIRECTORY TESTS
+> > +#################
+> > +# Does dir change attr change on a create?
+> > +old=3D$(_get_change_attr $testdir)
+> > +touch $testfile
+> > +new=3D$(_get_change_attr $testdir)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr of dir did not change after create!"
+> > +fi
+> > +
+> > +# on a hardlink?
+> > +old=3D$new
+> > +ln $testfile $testdir/linky
+>=20
+> We may need to clean up these temporary testing files.
+>=20
+> Other parts look good to me.
+>=20
+> Regards~
+>=20
+> > +new=3D$(_get_change_attr $testdir)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr of dir did not change after hardlink!"
+> > +fi
+> > +
+> > +# on an unlink?
+> > +old=3D$new
+> > +rm -f $testfile
+> > +new=3D$(_get_change_attr $testdir)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr of dir did not change after unlink!"
+> > +fi
+> > +
+> > +# on a rename (within same dir)
+> > +old=3D$new
+> > +mv $testdir/linky $testfile
+> > +new=3D$(_get_change_attr $testdir)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr of dir did not change after rename!"
+> > +fi
+> > +
+> > +# on a mknod
+> > +old=3D$new
+> > +mknod $testdir/pipe p
+> > +new=3D$(_get_change_attr $testdir)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr of dir did not change after mknod!"
+> > +fi
+> > +
+> > +
+> > +# REGULAR FILE TESTS
+> > +####################
+> > +# ensure change_attr changes after a write
+> > +old=3D$(_get_change_attr $testfile)
+> > +$XFS_IO_PROG -c "pwrite -W -q 0 32" $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after write!"
+> > +fi
+> > +
+> > +# ensure it doesn't change after a sync
+> > +old=3D$new
+> > +sync
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old !=3D $new ]; then
+> > +       _fail "Change attr changed after sync!"
+> > +fi
+> > +
+> > +# ensure change_attr does not change after read
+> > +old=3D$new
+> > +cat $testfile > /dev/null
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old !=3D $new ]; then
+> > +       _fail "Change attr changed after read!"
+> > +fi
+> > +
+> > +# ensure it changes after truncate
+> > +old=3D$new
+> > +truncate --size 0 $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after truncate!"
+> > +fi
+> > +
+> > +# ensure it changes after only atime update
+> > +old=3D$new
+> > +$XFS_IO_PROG -c "utimes 1 1 $UTIME_OMIT $UTIME_OMIT" $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after atime update!"
+> > +fi
+> > +
+> > +# ensure it changes after utimes atime/mtime update
+> > +old=3D$new
+> > +$XFS_IO_PROG -c "utimes 1 1 1 1" $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after mtime update!"
+> > +fi
+> > +
+> > +# after setting xattr
+> > +old=3D$new
+> > +setfattr -n user.foo -v bar $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after setxattr!"
+> > +fi
+> > +
+> > +# after removing xattr
+> > +old=3D$new
+> > +setfattr -x user.foo $testfile
+> > +new=3D$(_get_change_attr $testfile)
+> > +if [ $old =3D $new ]; then
+> > +       _fail "Change attr did not change after rmxattr!"
+> > +fi
+> > +
+> > +status=3D0
+> > +exit
+> > diff --git a/tests/generic/693.out b/tests/generic/693.out
+> > new file mode 100644
+> > index 000000000000..89ad553d911c
+> > --- /dev/null
+> > +++ b/tests/generic/693.out
+> > @@ -0,0 +1 @@
+> > +QA output created by 693
+> > --
+> > 2.37.2
+> >=20
 
-
-> 
-> Let me know what you think!
-> 
-> —Günther
-> 
->>
->> The rationale goes as follows:
->>
->> * ftruncate() is already adequately protected by the
->>    LL_ACCESS_FS_WRITE_FILE right. ftruncate is only permitted on fds
->>    that are open for writing.
->> * truncate() is not Landlock-restrictable in Landlock ABI v1,
->>    so needs to be covered by the new truncate right.
->> * open() for reading with O_TRUNC is also not Landlock-restrictable in
->>    Landlock ABI v1, so needs to be covered by the new truncate right.
->> * open() for writing with O_TRUNC is also not Landlock-restrictable in
->>    Landlock ABI v1. BUT: A caller who can open the file for writing
->>    will also be able to ftruncate it - so it doesn't really make sense
->>    to ask for a different Landlock right here.
->>
->> Does that approach make sense to you?
->>
->> I think in terms of changs required for it, it sounds like it would
->> require a change to the path_truncate LSM hook to distinguish the
->> cases above.
-
-Yes, it requires some changes to the path_truncate hook. I think 
-providing a struct file, when available, as a second argument looks good.
-
-Serge, Paul, what do you think about that?
-
-
->>
->> Do you want a new patch on top of the existing one, or should I rather
->> create a new version of the old truncate patch set?
-
-Please create a sixth patch series also including my (slight) changes.
-
-
->>
->> --Günther
->>
->>> On 17/08/2022 22:30, Günther Noack wrote:
->>>> The goal of these patches is to work towards a more complete coverage
->>>> of file system operations that are restrictable with Landlock.
->>>>
->>>> The known set of currently unsupported file system operations in
->>>> Landlock is described at [1]. Out of the operations listed there,
->>>> truncate is the only one that modifies file contents, so these patches
->>>> should make it possible to prevent the direct modification of file
->>>> contents with Landlock.
->>>>
->>>> The patch introduces the truncation restriction feature as an
->>>> additional bit in the access_mask_t bitmap, in line with the existing
->>>> supported operations.
->>>>
->>>> The truncation flag covers both the truncate(2) and ftruncate(2)
->>>> families of syscalls, as well as open(2) with the O_TRUNC flag.
->>>> This includes usages of creat() in the case where existing regular
->>>> files are overwritten.
->>>>
->>>> Apart from Landlock, file truncation can also be restricted using
->>>> seccomp-bpf, but it is more difficult to use (requires BPF, requires
->>>> keeping up-to-date syscall lists) and it is not configurable by file
->>>> hierarchy, as Landlock is. The simplicity and flexibility of the
->>>> Landlock approach makes it worthwhile adding.
->>>>
->>>> While it's possible to use the "write file" and "truncate" rights
->>>> independent of each other, it simplifies the mental model for
->>>> userspace callers to always use them together.
->>>>
->>>> Specifically, the following behaviours might be surprising for users
->>>> when using these independently:
->>>>
->>>>    * The commonly creat() syscall requires the truncate right when
->>>>      overwriting existing files, as it is equivalent to open(2) with
->>>>      O_TRUNC|O_CREAT|O_WRONLY.
->>>>    * The "write file" right is not always required to truncate a file,
->>>>      even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
->>>>
->>>> Nevertheless, keeping the two flags separate is the correct approach
->>>> to guarantee backwards compatibility for existing Landlock users.
->>>>
->>>> These patches are based on version 6.0-rc1.
->>>>
->>>> Best regards,
->>>> Günther
->>>>
->>>> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
->>>>
->>>> Past discussions:
->>>> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
->>>> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
->>>> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
->>>> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
->>>>
->>>> Changelog:
->>>>
->>>> V5:
->>>> * Documentation
->>>>     * Fix wording in userspace-api headers and in landlock.rst.
->>>>     * Move the truncation limitation section one to the bottom.
->>>>     * Move all .rst changes into the documentation commit.
->>>> * selftests
->>>>     * Remove _metadata argument from helpers where it became unnecessary.
->>>>     * Open writable file descriptors at the top of both tests, before Landlock
->>>>       is enabled, to exercise ftruncate() independently from open().
->>>>     * Simplify test_ftruncate and decouple it from exercising open().
->>>>     * test_creat(): Return errno on close() failure (it does not conflict).
->>>>     * Fix /* comment style */
->>>>     * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
->>>>     * Add missing |O_TRUNC to a check in one test.
->>>>     * Put the truncate_unhandled test before the other.
->>>>
->>>> V4:
->>>>    * Documentation
->>>>      * Clarify wording and syntax as discussed in review.
->>>>      * Use a less confusing error message in the example.
->>>>    * selftests:
->>>>      * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
->>>>        (This is an intentionally uncommon error code, so that the source
->>>>        of the error is clear and the test can distinguish test setup
->>>>        failures from failures in the actual system call under test.)
->>>>    * samples/Documentation:
->>>>      * Use additional clarifying comments in the kernel backwards
->>>>        compatibility logic.
->>>>
->>>> V3:
->>>>    * selftests:
->>>>      * Explicitly test ftruncate with readonly file descriptors
->>>>        (returns EINVAL).
->>>>      * Extract test_ftruncate, test_truncate, test_creat helpers,
->>>>        which simplified the previously mixed usage of EXPECT/ASSERT.
->>>>      * Test creat() behaviour as part of the big truncation test.
->>>>      * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
->>>>        This simplifies the tests a bit. The kernel implementations are the
->>>>        same as for truncate(2) and ftruncate(2), so there is little benefit
->>>>        from testing them exhaustively. (We aren't testing all open(2)
->>>>        variants either.)
->>>>    * samples/landlock/sandboxer.c:
->>>>      * Use switch() to implement best effort mode.
->>>>    * Documentation:
->>>>      * Give more background on surprising truncation behaviour.
->>>>      * Use switch() in the example too, to stay in-line with the sample tool.
->>>>      * Small fixes in header file to address previous comments.
->>>> * misc:
->>>>     * Fix some typos and const usages.
->>>>
->>>> V2:
->>>>    * Documentation: Mention the truncation flag where needed.
->>>>    * Documentation: Point out connection between truncation and file writing.
->>>>    * samples: Add file truncation to the landlock/sandboxer.c sample tool.
->>>>    * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
->>>>    * selftests: Exercise truncation syscalls when the truncate right
->>>>      is not handled by Landlock.
->>>>
->>>> Günther Noack (4):
->>>>     landlock: Support file truncation
->>>>     selftests/landlock: Selftests for file truncation support
->>>>     samples/landlock: Extend sample tool to support
->>>>       LANDLOCK_ACCESS_FS_TRUNCATE
->>>>     landlock: Document Landlock's file truncation support
->>>>
->>>>    Documentation/userspace-api/landlock.rst     |  52 +++-
->>>>    include/uapi/linux/landlock.h                |  17 +-
->>>>    samples/landlock/sandboxer.c                 |  23 +-
->>>>    security/landlock/fs.c                       |   9 +-
->>>>    security/landlock/limits.h                   |   2 +-
->>>>    security/landlock/syscalls.c                 |   2 +-
->>>>    tools/testing/selftests/landlock/base_test.c |   2 +-
->>>>    tools/testing/selftests/landlock/fs_test.c   | 257 ++++++++++++++++++-
->>>>    8 files changed, 336 insertions(+), 28 deletions(-)
->>>>
->>>>
->>>> base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
->>>> --
->>>> 2.37.2
->>
->> --
-> 
-> --
+--=20
+Jeff Layton <jlayton@kernel.org>
