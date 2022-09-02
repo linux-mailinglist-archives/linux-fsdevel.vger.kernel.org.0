@@ -2,80 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E0675AAC91
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 12:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A155AAC8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Sep 2022 12:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235752AbiIBKgp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Sep 2022 06:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
+        id S235127AbiIBKgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Sep 2022 06:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235640AbiIBKgj (ORCPT
+        with ESMTP id S234101AbiIBKgd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Sep 2022 06:36:39 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC02BD2AE;
-        Fri,  2 Sep 2022 03:36:37 -0700 (PDT)
+        Fri, 2 Sep 2022 06:36:33 -0400
+Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C04EBC11E;
+        Fri,  2 Sep 2022 03:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1662114996; i=@fujitsu.com;
-        bh=5IDXemfHxETHCWqCLUiIKux1ffJ8/B2RvV4DalAoB1U=;
+        s=170520fj; t=1662114990; i=@fujitsu.com;
+        bh=swdErYyi7Si91FvqA0QbntZe2uXVEMXrPiLsnL32AkU=;
         h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=oXBgAJelAtuWWE+9v0Dulxr9fwsWZ+RComPS5JUXjWDfM65xoQlEbfiyisDR8VpnY
-         37sTl4NhadrCRdjPzdjfkJ1yKLBXcpDmn7gLdjsoKsPAcoE2PxjQQ3Cae8DK8sXZEA
-         7YxcFTHtWqIlTRX3J1+bvwkurUgsdvXddPkw0PpXVUfttpAIw3NS9MQEzOZ+ROZBmc
-         Im9vB3WzfXP5MFBJHou/xKVMygn2cPSsCBq12FYdOrZjPthewikg+A+AqkpQZ5bpjQ
-         M+hWHAvMK8EIT40I94/1H7GVw+XDJm151+UUTypfrmOPGLm44bMhu2q+6PibGmqHT5
-         B+smEyLg4gqGQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRWlGSWpSXmKPExsViZ8ORqLvyjmC
-  ywcWJehbTp15gtNhy7B6jxeUnfBanJyxistj9+iabxZ69J1ksLu+aw2Zxb81/Votdf3awW6z8
-  8YfVgcvj1CIJj80rtDwW73nJ5LFpVSebx6ZPk9g9Xmyeyejx8ektFo/Pm+QCOKJYM/OS8isSW
-  DNOrLAquMBRcW5fTAPjD7YuRi4OIYEtjBJ/urtYIJzlTBJLL5xlgnD2MEp8fd3A2MXIycEmoC
-  NxYcFfVpCEiMAkRoljN24ygySYBcol9m+8wQZiCwt4SrT232UFsVkEVCQWPDvKAmLzCrhI3Pn
-  4HywuIaAgMeXhe7BeTgF7iUXnfzOB2EICdhLfj81jgqgXlDg58wkLxHwJiYMvXgDVcwD1KknM
-  7I6HGFMh0Tj9EBOErSZx9dwm5gmMgrOQdM9C0r2AkWkVo3VSUWZ6RkluYmaOrqGBga6hoamus
-  ZGuoYWlXmKVbqJeaqlueWpxia6RXmJ5sV5qcbFecWVuck6KXl5qySZGYHSlFCvs3cF4eeVPvU
-  OMkhxMSqK8ibcEk4X4kvJTKjMSizPii0pzUosPMcpwcChJ8PKD5ASLUtNTK9Iyc4CRDpOW4OB
-  REuENA0nzFhck5hZnpkOkTjHqcqxtOLCXWYglLz8vVUqc9wVIkQBIUUZpHtwIWNK5xCgrJczL
-  yMDAIMRTkFqUm1mCKv+KUZyDUUmY9xnIFJ7MvBK4Ta+AjmACOmL6TH6QI0oSEVJSDUxhmXF88
-  6IMt6208/x64fYyT+mtJ0TmH4po9fy2aLIyr3bZ9ptn5+/pjqh+mNb1kLXK3uxVq3nC/meXON
-  gOzjKa0BShu33F353cL7lLXYNPtqp9mDzxwflLUxbnVibXpt3VyA7m89zh93tp967f7iu/L/t
-  bpaN51mfxhyObdRzdFx83bOx/X243QeSlyouLbEG7Ly6Y1Se8xCGlylfAjrP4Mfs8r+xTHztZ
-  7nVeb7qQqP6n333DnF8W+yNXKXkujVkV+GChjLby37shwb/azuutunfdv4+9/AK/ocyXMNc9M
-  jP7nmfMctAXtVF9od2xn6eFict05sw5j7Oy++eqantu/PJA3u/4e7/rxefPuUsqsRRnJBpqMR
-  cVJwIAr4PfWrUDAAA=
+        b=AtAyGO1GHcar7f6llATm1xWR4yKuYaCKsE+pIXF/eqSXLaIqu+iG2GOm0sKU7onP5
+         lONHlTUInm9zgi+fm1pdl7M9EAGaUzHbZcEdE90lJ5IlBIVOW/55cixNO2LNNIWgKR
+         nUdmF7r6yLsdvbbK7fJNkXrD+xe2CZhrj8G3I9hPWTFXlqqrs2j5hr6/8JBLmVmb/a
+         X9p9P4eChJSWWiXV/AEHMdg/Dc9Qi7CZVXe9GylFuWUirt5+BwkOJwZkVhLZtJXhlu
+         Oe+2L1jvs0tFXhbA/BVeXorRtA5ARX2yDJj7YypcBN6TtFrRxeK38vHOcioeMXk0aF
+         WHulqFuScwZjA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRWlGSWpSXmKPExsViZ8OxWXftHcF
+  kgznHjC2mT73AaLHl2D1Gi8tP+CxOT1jEZLH79U02iz17T7JYXN41h83i3pr/rBa7/uxgt1j5
+  4w+rA5fHqUUSHptXaHks3vOSyWPTqk42j02fJrF7vNg8k9Hj49NbLB6fN8kFcESxZuYl5Vcks
+  Gb8b7rPUvCAu2LG+m+MDYyPOLsYuTiEBDYwSjTv+cgC4Sxmkuh/0cUE4exhlJh36gprFyMnB5
+  uAjsSFBX9ZQRIiApMYJY7duMkMkmAWKJfYv/EGG4gtLGAvMefDUbA4i4CKxK53V1lAbF4BF4n
+  Gh+/YQWwJAQWJKQ/fg9VwCrhKbO+5DbSNA2hbhcTq7RwQ5YISJ2c+YYEYLyFx8MULZpASCQEl
+  iZnd8RBTKiQapx9igrDVJK6e28Q8gVFwFpLuWUi6FzAyrWK0SirKTM8oyU3MzNE1NDDQNTQ01
+  TXQNTI01Uus0k3USy3VLU8tLtE11EssL9ZLLS7WK67MTc5J0ctLLdnECIyulGKG6zsYJ/b91D
+  vEKMnBpCTKm3hLMFmILyk/pTIjsTgjvqg0J7X4EKMMB4eSBC8/SE6wKDU9tSItMwcY6TBpCQ4
+  eJRHeMJA0b3FBYm5xZjpE6hSjMcfahgN7mTmmzv63n1mIJS8/L1VKnPcFSKkASGlGaR7cIFgC
+  usQoKyXMy8jAwCDEU5BalJtZgir/ilGcg1FJmPcZyBSezLwSuH2vgE5hAjpl+kx+kFNKEhFSU
+  g1M8/QL9V/Zzv54hSP9bGva24XmC6c8Xqe5ouSPn176KxWGueHPWOtCuGbf2axq3PqmJoJrZ5
+  TVgtKdb6fwT4pWs4xfIqBo2Oxn8zwtlXce3zbdsz8vJfJItGoZGsY4LdipxrwgQUrbvelm4i5
+  G8RObxNo1lSz7757QU20IT5Q8/uWN0RytF37zv4lKnWVLvHThcy1/pmGmyQOVgwZdG5zz167R
+  ehW6xCa7JfxyxFHdF4wRystnbRTLkGOSSbg4Z0v4t68/tDhSOGyzfi2ZWcsY+a+ixvxRWNx5C
+  W2Ojf/PVyccmfone8Oqu4LOJR42Ek88i498FPRd/4BtKbNA5BaNyTs619kGbmI5vDj04Bcllu
+  KMREMt5qLiRADWYqdJuwMAAA==
 X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-20.tower-548.messagelabs.com!1662114985!2086!1
-X-Originating-IP: [62.60.8.97]
+X-Msg-Ref: server-6.tower-587.messagelabs.com!1662114989!100401!1
+X-Originating-IP: [62.60.8.179]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.87.3; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 22685 invoked from network); 2 Sep 2022 10:36:25 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-20.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 2 Sep 2022 10:36:25 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 5D1FC1001A1;
-        Fri,  2 Sep 2022 11:36:25 +0100 (BST)
+Received: (qmail 28576 invoked from network); 2 Sep 2022 10:36:29 -0000
+Received: from unknown (HELO n03ukasimr04.n03.fujitsu.local) (62.60.8.179)
+  by server-6.tower-587.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 2 Sep 2022 10:36:29 -0000
+Received: from n03ukasimr04.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTP id 6AA3F7B;
+        Fri,  2 Sep 2022 11:36:29 +0100 (BST)
 Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 4DFA21001A0;
-        Fri,  2 Sep 2022 11:36:25 +0100 (BST)
+        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTPS id 5D4D173;
+        Fri,  2 Sep 2022 11:36:29 +0100 (BST)
 Received: from localhost.localdomain (10.167.225.141) by
  R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Fri, 2 Sep 2022 11:36:21 +0100
+ (TLS) id 15.0.1497.32; Fri, 2 Sep 2022 11:36:25 +0100
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
-Subject: [PATCH v8 0/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Date:   Fri, 2 Sep 2022 10:35:58 +0000
-Message-ID: <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
+Subject: [PATCH 1/3] xfs: fix the calculation of length and end
+Date:   Fri, 2 Sep 2022 10:35:59 +0000
+Message-ID: <1662114961-66-2-git-send-email-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
+In-Reply-To: <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
 References: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
+ <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.167.225.141]
@@ -92,32 +93,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changes since v7:
-  1. Add P1 to fix calculation mistake
-  2. Add P2 to move drop_pagecache_sb() to super.c for xfs to use
-  3. P3: Add invalidate all mappings after sync.
-  4. P3: Set offset&len to be start&length of device when it is to be removed.
-  5. Rebase on 6.0-rc3 + Darrick's patch[1] + Dan's patch[2].
+The end should be start + length - 1.  Also fix the calculation of the
+length when seeking for intersection of notify range and device.
 
-Changes since v6:
-  1. Rebase on 6.0-rc2 and Darrick's patch[1].
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+---
+ fs/xfs/xfs_notify_failure.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[1]: https://lore.kernel.org/linux-xfs/Yv5wIa2crHioYeRr@magnolia/
-[2]: https://lore.kernel.org/linux-xfs/166153426798.2758201.15108211981034512993.stgit@dwillia2-xfh.jf.intel.com/
-
-Shiyang Ruan (3):
-  xfs: fix the calculation of length and end
-  fs: move drop_pagecache_sb() for others to use
-  mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-
- drivers/dax/super.c         |  3 ++-
- fs/drop_caches.c            | 33 ---------------------------------
- fs/super.c                  | 34 ++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_notify_failure.c | 31 +++++++++++++++++++++++++++----
- include/linux/fs.h          |  1 +
- include/linux/mm.h          |  1 +
- 6 files changed, 65 insertions(+), 38 deletions(-)
-
+diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+index c4078d0ec108..3830f908e215 100644
+--- a/fs/xfs/xfs_notify_failure.c
++++ b/fs/xfs/xfs_notify_failure.c
+@@ -114,7 +114,7 @@ xfs_dax_notify_ddev_failure(
+ 	int			error = 0;
+ 	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
+ 	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
+-	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
++	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
+ 	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+ 
+ 	error = xfs_trans_alloc_empty(mp, &tp);
+@@ -210,7 +210,7 @@ xfs_dax_notify_failure(
+ 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+ 
+ 	/* Ignore the range out of filesystem area */
+-	if (offset + len < ddev_start)
++	if (offset + len - 1 < ddev_start)
+ 		return -ENXIO;
+ 	if (offset > ddev_end)
+ 		return -ENXIO;
+@@ -222,8 +222,8 @@ xfs_dax_notify_failure(
+ 		len -= ddev_start - offset;
+ 		offset = 0;
+ 	}
+-	if (offset + len > ddev_end)
+-		len -= ddev_end - offset;
++	if (offset + len - 1 > ddev_end)
++		len -= offset + len - 1 - ddev_end;
+ 
+ 	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
+ 			mf_flags);
 -- 
 2.37.2
 
