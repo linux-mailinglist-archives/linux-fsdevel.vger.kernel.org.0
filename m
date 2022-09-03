@@ -2,108 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 816505ABC3E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Sep 2022 04:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B235ABD7D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Sep 2022 08:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbiICCMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Sep 2022 22:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57594 "EHLO
+        id S232566AbiICGnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 02:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiICCMi (ORCPT
+        with ESMTP id S232257AbiICGni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Sep 2022 22:12:38 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78B5EE42CD;
-        Fri,  2 Sep 2022 19:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+9hT3j8PY8NaJfAXBqOIgtHebUuVNz5evAMl6MQrDZM=; b=ImpVKficYcJZfn/PGfcZIeWwIT
-        i3sOwcqfBBOo9/04H4EvdYmeTXQyqAtQcUUjkDsZnYpJRYNaO4U6dnVOH1iSpI/nGtl1OCacl8I87
-        MdYdlxVyh2qd7jXqWuVtIq6HlPyyG14dBQavaEZpsCkdXQH160E55IuBfXZjOUHzzfmSWEVd0+4KR
-        KhJveS9tkCVcIwA/vUIGGiqf+FPIprO8pMMJR+IQZ/FLihVVJRKbKYr/4VZOw7QdYmk+zSTKUDXrG
-        gPUIP+3F0OZc6xNqaqid6OzICV0qSgi1hHR44HbzoYMA65n9TNsySthic+fDVLrJRs6/H5DqeOTBa
-        kY67tQEQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oUIe2-00BW85-2R;
-        Sat, 03 Sep 2022 02:12:26 +0000
-Date:   Sat, 3 Sep 2022 03:12:26 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daire Byrne <daire@dneg.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
-Message-ID: <YxK4CiVNaQ6egobJ@ZenIV>
-References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
- <166147984370.25420.13019217727422217511.stgit@noble.brown>
- <YwmS63X3Sm4bhlcT@ZenIV>
- <166173834258.27490.151597372187103012@noble.neil.brown.name>
- <YxKaaN9cHD5yzlTr@ZenIV>
- <166216924401.28768.5809376269835339554@noble.neil.brown.name>
+        Sat, 3 Sep 2022 02:43:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5B78FD50
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Sep 2022 23:43:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662187416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zZUo4Yh/oc1vNFvxaSNW3YUhPsCaAqVSFhhyRBZevNo=;
+        b=Kaqh/fvdaJVsYgFXyk1ZTdWQv4vY7rgHEGaVpYCV2cn0jDe50CnUOC1jxUj4JLRpdrCztA
+        YumzwJAHomXyJVva3GZFbkrCMfAVHPJ76kCuD3JjmvIUHlc53YwYY4P2qE1D7OjDPkGfvq
+        2taq2qbc4zr/a9p4BDtOkvBgQ7cv9so=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-435-Sqaui8VDPACHMNd1m7TfYg-1; Sat, 03 Sep 2022 02:43:33 -0400
+X-MC-Unique: Sqaui8VDPACHMNd1m7TfYg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 88DE8805B9A;
+        Sat,  3 Sep 2022 06:43:32 +0000 (UTC)
+Received: from localhost (unknown [10.40.192.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6FAFAC15BBD;
+        Sat,  3 Sep 2022 06:43:31 +0000 (UTC)
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Will Deacon <will@kernel.org>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Stephen Kitt <steve@sk2.org>, Rob Herring <robh@kernel.org>,
+        Joel Savitz <jsavitz@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        =?UTF-8?q?Renaud=20M=C3=A9trich?= <rmetrich@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Grzegorz Halat <ghalat@redhat.com>, Qi Guo <qguo@redhat.com>
+Subject: [PATCH] core_pattern: add CPU specifier
+Date:   Sat,  3 Sep 2022 08:43:30 +0200
+Message-Id: <20220903064330.20772-1-oleksandr@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166216924401.28768.5809376269835339554@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 03, 2022 at 11:40:44AM +1000, NeilBrown wrote:
+Statistically, in a large deployment regular segfaults may indicate a CPU issue.
 
-> I don't think that is a good idea.  Once you call d_lookup_done()
-> (without having first called d_add() or similar) the dentry becomes
-> invisible to normal path lookup, so another might be created.  But the
-> dentry will still be used for the 'create' or 'rename' and may then be
-> added to the dcache - at which point you could have two dentries with the
-> same name.
-> 
-> When ->lookup() returns success without d_add()ing the dentry, that
-> means that something else will complete the d_add() if/when necessary.
-> For NFS, it specifically means that the lookup is effectively being
-> combined with the following CREATE or RENAME.  In this case there is no
-> d_lookup_done() until the full operation is complete.
->
-> For autofs (thanks for pointing me to that) the operation is completed
-> when d_automount() signals the daemon to create the directory or
-> symlink.  In that case there IS a d_lookup_done() call and autofs needs
-> some extra magic (the internal 'active' list) to make sure subsequent
-> ->lookup requests can see that dentry which is still in the process of
-> being set up.
-> 
-> It might be nice if the dentry passed to autofs_lookup() could remain
-> "d_inlookup()" until after d_automount has completed.  Then autofs
-> wouldn't need that active list.  However I haven't yet looked at how
-> disruptive such a change might be.
+Currently, it is not possible to find out what CPU the segfault happened on.
+There are at least two attempts to improve segfault logging with this regard,
+but they do not help in case the logs rotate.
 
-Very much so.  You are starting to invent new rules for ->lookup() that
-just never had been there, basing on nothing better than a couple of
-examples.  They are nowhere near everything there is.
+Hence, lets make sure it is possible to permanently record a CPU
+the task ran on using a new core_pattern specifier.
 
-And you can't rely upon d_add() done by a method, for very obvious
-reasons.  They are out of your control, they might very well decide
-that object creation has failed and drop the damn thing.  Which is
-not allowed for in-lookup dentries without d_lookup_done().
+Suggested-by: Renaud Métrich <rmetrich@redhat.com>
+Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
+---
+ Documentation/admin-guide/sysctl/kernel.rst | 1 +
+ fs/coredump.c                               | 5 +++++
+ include/linux/coredump.h                    | 1 +
+ 3 files changed, 7 insertions(+)
 
-Neil, *IF* you are introducing new rules like that, the absolutely minimal
-requirement is having them in Documentation/filesystems/porting.rst.
-And that includes "such-and-such method might be called with parent
-locked only shared; in that case it's guaranteed such-and-such things
-about its arguments (bitlocks held, etc.)".
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 835c8844bba48..b566fff04946b 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -169,6 +169,7 @@ core_pattern
+ 	%f      	executable filename
+ 	%E		executable path
+ 	%c		maximum size of core file by resource limit RLIMIT_CORE
++	%C		CPU the task ran on
+ 	%<OTHER>	both are dropped
+ 	========	==========================================
+ 
+diff --git a/fs/coredump.c b/fs/coredump.c
+index a8661874ac5b6..166d1f84a9b17 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -325,6 +325,10 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+ 				err = cn_printf(cn, "%lu",
+ 					      rlimit(RLIMIT_CORE));
+ 				break;
++			/* CPU the task ran on */
++			case 'C':
++				err = cn_printf(cn, "%d", cprm->cpu);
++				break;
+ 			default:
+ 				break;
+ 			}
+@@ -535,6 +539,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		 */
+ 		.mm_flags = mm->flags,
+ 		.vma_meta = NULL,
++		.cpu = raw_smp_processor_id(),
+ 	};
+ 
+ 	audit_core_dumps(siginfo->si_signo);
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index 08a1d3e7e46d0..191dcf5af6cb9 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -22,6 +22,7 @@ struct coredump_params {
+ 	struct file *file;
+ 	unsigned long limit;
+ 	unsigned long mm_flags;
++	int cpu;
+ 	loff_t written;
+ 	loff_t pos;
+ 	loff_t to_skip;
+-- 
+2.37.2
 
-One thing we really need to avoid is that thing coming undocumented, with
-"NFS copes, nobody else has it enabled, whoever does it for other
-filesystems will just have to RTFS".  I hope it's obvious that this
-is not an option.  Because I can bloody guarantee that it will be
-cargo-culted over to other filesystems, with nobody (you and me included)
-understanding the resulting code.
