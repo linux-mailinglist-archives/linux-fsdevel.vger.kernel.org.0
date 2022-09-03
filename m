@@ -2,104 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDBD5AC06E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Sep 2022 19:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B38D75AC1BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 01:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbiICRw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Sep 2022 13:52:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50550 "EHLO
+        id S229663AbiICXku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 19:40:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbiICRw1 (ORCPT
+        with ESMTP id S229509AbiICXkt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Sep 2022 13:52:27 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FE7580A7;
-        Sat,  3 Sep 2022 10:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4dwZEjTHso5b/E8ambbqsH4pHZvxi/mrOhOv3FzbXQI=; b=SKuBBVq3qR/tefEtR0X/Himz+P
-        H9EvUpqaCLaUDOYrM98uxMiIfF128W33ZcslR7Qt2HlCTkRbo9UcwAwPvqlzZ3iOsGG26wDsdVHkO
-        OnUDpHh6p6YG/yZlteu3mnGS1b5h+Mr1Oxy/GqpDmU+CSvMxKfKXY3DrmIMZ9h3BB90JUl0hVlQ/9
-        TYu7mu3yvpfOfcfQCGryedNL4xgGFPbITCCKftzNJeTEee81HyCyMuXpGbLCXIgDjXR4+G3+lVRWB
-        57lIL2LpFi3l+71yvcOLlt6TvwVvqdcmNC1owqASAn9SYbhQdRTBnBJKXkdFWocJaZ591WJ1n8cjJ
-        4kFiTuGw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1oUXJY-00Bq1X-KZ;
-        Sat, 03 Sep 2022 17:52:16 +0000
-Date:   Sat, 3 Sep 2022 18:52:16 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daire Byrne <daire@dneg.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] VFS: support parallel updates in the one directory.
-Message-ID: <YxOUUEXAbUdFLVKk@ZenIV>
-References: <166147828344.25420.13834885828450967910.stgit@noble.brown>
- <166147984370.25420.13019217727422217511.stgit@noble.brown>
- <YwmS63X3Sm4bhlcT@ZenIV>
- <166173834258.27490.151597372187103012@noble.neil.brown.name>
- <YxKaaN9cHD5yzlTr@ZenIV>
- <166216924401.28768.5809376269835339554@noble.neil.brown.name>
- <YxK4CiVNaQ6egobJ@ZenIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YxK4CiVNaQ6egobJ@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Sat, 3 Sep 2022 19:40:49 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49BA45006F;
+        Sat,  3 Sep 2022 16:40:22 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 8170FC020; Sun,  4 Sep 2022 01:40:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1662248419; bh=Zb9XsnnNwueUjSy+hlSu1JgZEiThAH1fGuYBaT0Yg/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CXh0DE6iRXCMpLTLHBDxKaMrfPdmAG+fS5+9nYIVpLT8flPEShAoU5yb203+Z/tVC
+         WRD1d4s1Wk11rGi1o076HKX7p7hiyViNa9q4m09W9kYzxRoyw2N49R72TrEpAujh1j
+         tgswKIZuDQrDZMiyYm3hlp0/qNgP5H2qJis9gall2OVAknEZPf4pqHFdliEyev/0ag
+         /TJSCYBGEZgLH3AhOq+zEQLhFV/LXYbV1zTCfhTj5ZKaOusQWwIZC8oCw+MGLEL8tg
+         7lwAhxO2S2XNAezWkvch3H7mzNo9HsNWd3tZXI58U3S39pcEkn3ZOrWmE2e4eMr1Ab
+         /FpOxPdMaMVrQ==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 0A14CC009;
+        Sun,  4 Sep 2022 01:40:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1662248418; bh=Zb9XsnnNwueUjSy+hlSu1JgZEiThAH1fGuYBaT0Yg/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZCUr0GxKn41SI9WAWgnpiq1VN7rfyxo03hjwIlDDBU7jdGotYknViNGESJReHs39O
+         9S9vgUz4s6EizgsvXcbgrUO9bTdg67PRC6moqLk8qk7aRmF0mBmLUY+j37zlZOQOsE
+         BuMl2YQcUnsoB9D/QlkH91dqKI3B741lmIiy48RsJwC1EUSK6Cosp7Ll1gMmyTGAT8
+         d24AbeJpL5cIMGpw4TKCVN22Ur2gC3VVOubJepZH5/aF1V7mZgwWh/6NOKBlxKHtx2
+         KJZIBh5elyLjb24e1UzndgbUs3ycXnHYBhacyUTGWljR5soOzxPDWNKnfAxOtCywmv
+         I/c1BKgadyJ8g==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id f293b310;
+        Sat, 3 Sep 2022 23:40:13 +0000 (UTC)
+Date:   Sun, 4 Sep 2022 08:39:58 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        syzbot <syzbot+8b41a1365f1106fd0f33@syzkaller.appspotmail.com>,
+        v9fs-developer@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2] 9p/trans_fd: perform read/write with TIF_SIGPENDING
+ set
+Message-ID: <YxPlzlJAKObm88p8@codewreck.org>
+References: <00000000000039af4d05915a9f56@google.com>
+ <345de429-a88b-7097-d177-adecf9fed342@I-love.SAKURA.ne.jp>
+ <4293faaf-8279-77e2-8b1a-aff765416980@I-love.SAKURA.ne.jp>
+ <69253379.JACLdFHAbQ@silver>
+ <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 03, 2022 at 03:12:26AM +0100, Al Viro wrote:
+Thanks for the patch and sorry for the slow reply
 
-> Very much so.  You are starting to invent new rules for ->lookup() that
-> just never had been there, basing on nothing better than a couple of
-> examples.  They are nowhere near everything there is.
+v1 vs v2: my take is that I think v1 is easier to understand, and if you
+pass a fd to be used as kernel end for 9p you shouldn't also be messing
+with it so it's fair game to make it O_NONBLOCK -- we're reading and
+writing to these things, the fds shouldn't be used by the caller after
+the mount syscall.
 
-A few examples besides NFS and autofs:
+Is there any reason you spent time working on v2, or is that just
+theorical for not messing with userland fd ?
 
-ext4, f2fs and xfs might bloody well return NULL without hashing - happens
-on negative lookups with 'casefolding' crap.
+unless there's any reason I'll try to find time to test v1 and queue it
+for 6.1
 
-kernfs - treatment of inactive nodes.
+Tetsuo Handa wrote on Fri, Sep 02, 2022 at 07:25:30AM +0900:
+> On 2022/09/02 0:23, Christian Schoenebeck wrote:
+> > So the intention in this alternative approach is to allow user space apps  
+> > still being able to perform blocking I/O, while at the same time making the 
+> > kernel thread interruptible to fix this hung task issue, correct?
+> 
+> Making the kernel thread "non-blocking" (rather than "interruptible") in order
+> not to be blocked on I/O on pipes.
+> 
+> Since kernel threads by default do not receive signals, being "interruptible"
+> or "killable" does not help (except for silencing khungtaskd warning). Being
+> "non-blocking" like I/O on sockets helps.
 
-afs_dynroot_lookup() treatment of @cell... names.
+I'm still not 100% sure I understand the root of the deadlock, but I can
+agree the worker thread shouldn't block.
 
-afs_lookup() treatment of @sys... names.
+We seem to check for EAGAIN where kernel_read/write end up being called
+and there's a poll for scheduling so it -should- work, but I assume this
+hasn't been tested much and might take a bit of time to test.
 
-There might very well be more - both merged into mainline and in
-development trees of various filesystems (including devel branches
-of in-tree ones - I'm not talking about out-of-tree projects).
 
-Note, BTW, that with the current rules it's perfectly possible to
-have this kind of fun:
-	a name that resolves to different files for different processes
-	unlink(2) is allowed and results depend upon the calling process
+> The thread which currently clearing the TIF_SIGPENDING flag is a user process
+> (which are calling "killable" functions from syscall context but effectively
+> "uninterruptible" due to clearing the TIF_SIGPENDING flag and retrying).
+> By the way, clearing the TIF_SIGPENDING flag before retrying "killable" functions
+> (like p9_client_rpc() does) is very bad and needs to be avoided...
 
-All it takes is ->lookup() deliberately *NOT* hashing the sucker and
-->unlink() acting according to dentry it has gotten from the caller.
-unlink(2) from different callers are serialized and none of that
-stuff is ever going to be hashed.  d_alloc_parallel() might pick an
-in-lookup dentry from another caller of e.g. stat(2), but it will
-wait for in-lookup state ending, notice that the sucker is not hashed,
-drop it and retry.  Suboptimal, but it works.
+Yes, I really wish we could make this go away.
+I started work to make the cancel (flush) asynchronous, but it
+introduced a regression I never had (and still don't have) time to
+figure out... If you have motivation to take over, the patches I sent
+are here:
+https://lore.kernel.org/all/20181217110111.GB17466@nautica/T/
+(unfortunately some refactoring happened and they no longer apply, but
+the logic should be mostly sane)
 
-Nothing in the mainline currently does that.  Nothing that I know of,
-that is.  Sure, it could be made work with the changes you seem to
-imply (if I'm not misreading you) - all it takes is lookup
-calling d_lookup_done() on its argument before returning NULL.
-But that's subtle, non-obvious and not documented anywhere...
 
-Another interesting question is the rules for unhashing dentries.
-What is needed for somebody to do temporary unhash, followed by
-rehashing?
+Thanks,
+--
+Dominique
