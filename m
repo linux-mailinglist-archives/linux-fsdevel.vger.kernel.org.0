@@ -2,53 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C91EE5AC207
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0795AC209
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbiIDCQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Sep 2022 22:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60344 "EHLO
+        id S230348AbiIDCQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 22:16:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiIDCQm (ORCPT
+        with ESMTP id S229627AbiIDCQs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Sep 2022 22:16:42 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC0D4E639
-        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:41 -0700 (PDT)
+        Sat, 3 Sep 2022 22:16:48 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD82C4E637
+        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662257801; x=1693793801;
+  t=1662257807; x=1693793807;
   h=subject:from:to:cc:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xVQvjYo1znKhjHAgKaHx9Jqu5HLN8DrX7hpEaKrWHI0=;
-  b=ZUZhLybVCfHKu+D2vwBgFxihVHvLHTdr8DSNIk4/P1VwvIdtq61seYN3
-   ddp0k4+j/7V3kXmKkeQ3y1bS1VPj6q0+hM5zfKBKt8SvIbA8k6L+JBDja
-   2wuCIGinhVIejn5DFbtuAcWWOM3mQ0yQwBSRpuv83LFV8z47gFAp9NMO3
-   uR9iAEndycXBdXO5OrqkNDI4ot4Q8eUipBdHCmCrNB0eEkSRCE6d6ZTyv
-   9aEaaCzR7tEJXuAA3GbCdEIpZE7Fm1912jPuMudJsABSkGEsv4rqshc/1
-   YJjwO8/BQUm8h4zsPJBPdnIdnk28LpVxlpxhcY79qyxehMIu23l2vv0Vd
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="382504078"
+  bh=qfzx5y9B9XHcY/WNGZvpd9adYJw1q+hyjxJ0sZQS8JA=;
+  b=G2lKi/5YVjr0fQQEupyjQ4WoSG2ni7C+16Cc99GAa0Z56b8fQivW2p8O
+   SyPgi5d/1j+5MDUHRE5sHWFLj586hwYV6BQxBA2/X2esX69jBEBe8umgQ
+   0GBvNvFSatc6nWEK6ttplj5/6aLmK7dSYtXrl4jM910Iq09WVpLP2Wh/6
+   zZwP29oHbmF4DGgXBu1DFUCKlNQkQh72ITV2MU5KrQH/SN/v7gsWbQPuK
+   HYxOmRgHk+XoX4nhYWqZQev2QfXFNzjc9RsbT2JgJbF6vgdvREbANSjMt
+   i7x+QFktvRmw/FudT9wSFpqu5EOckqHPiB70ugCzXYgdmXawQJVbePRMb
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="360158780"
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="382504078"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:41 -0700
+   d="scan'208";a="360158780"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:47 -0700
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="643384601"
+   d="scan'208";a="755659485"
 Received: from pg4-mobl3.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.212.132.198])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:41 -0700
-Subject: [PATCH 07/13] fsdax: Manage pgmap references at entry insertion and
- deletion
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:46 -0700
+Subject: [PATCH 08/13] devdax: Minor warning fixups
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
-        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date:   Sat, 03 Sep 2022 19:16:40 -0700
-Message-ID: <166225780079.2351842.2977488896744053462.stgit@dwillia2-xfh.jf.intel.com>
+Cc:     hch@lst.de, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
+Date:   Sat, 03 Sep 2022 19:16:46 -0700
+Message-ID: <166225780636.2351842.2332609175968045796.stgit@dwillia2-xfh.jf.intel.com>
 In-Reply-To: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 References: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 User-Agent: StGit/0.18-3-g996c
@@ -65,175 +60,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The percpu_ref in 'struct dev_pagemap' is used to coordinate active
-mappings of device-memory with the device-removal / unbind path. It
-enables the semantic that initiating device-removal (or
-device-driver-unbind) blocks new mapping and DMA attempts, and waits for
-mapping revocation or inflight DMA to complete.
+Fix a missing prototype warning for dev_dax_probe(), and fix
+dax_holder() comment block format.
 
-Expand the scope of the reference count to pin the DAX device active at
-mapping time and not later at the first gup event. With a device
-reference being held while any page on that device is mapped the need to
-manage pgmap reference counts in the gup code is eliminated. That
-cleanup is saved for a follow-on change.
-
-For now, teach dax_insert_entry() and dax_delete_mapping_entry() to take
-and drop pgmap references respectively.
-
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c                 |   30 ++++++++++++++++++++++++------
- include/linux/memremap.h |   18 ++++++++++++++----
- mm/memremap.c            |   13 ++++++++-----
- 3 files changed, 46 insertions(+), 15 deletions(-)
+ drivers/dax/dax-private.h |    1 +
+ drivers/dax/super.c       |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 65d55c5ecdef..b23222b0dae4 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -370,14 +370,24 @@ static inline void dax_mapping_set_cow(struct page *page)
-  * whether this entry is shared by multiple files.  If so, set the page->mapping
-  * FS_DAX_MAPPING_COW, and use page->index as refcount.
-  */
--static void dax_associate_entry(void *entry, struct address_space *mapping,
--				struct vm_fault *vmf, unsigned long flags)
-+static vm_fault_t dax_associate_entry(void *entry,
-+				      struct address_space *mapping,
-+				      struct vm_fault *vmf, unsigned long flags)
- {
- 	unsigned long size = dax_entry_size(entry), pfn, index;
-+	struct dev_pagemap *pgmap;
- 	int i = 0;
- 
- 	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
--		return;
-+		return 0;
-+
-+	if (!size)
-+		return 0;
-+
-+	pfn = dax_to_pfn(entry);
-+	pgmap = get_dev_pagemap_many(pfn, NULL, PHYS_PFN(size));
-+	if (!pgmap)
-+		return VM_FAULT_SIGBUS;
- 
- 	index = linear_page_index(vmf->vma, ALIGN(vmf->address, size));
- 	for_each_mapped_pfn(entry, pfn) {
-@@ -391,19 +401,27 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
- 			page->index = index + i++;
- 		}
- 	}
-+
-+	return 0;
+diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+index 1c974b7caae6..202cafd836e8 100644
+--- a/drivers/dax/dax-private.h
++++ b/drivers/dax/dax-private.h
+@@ -87,6 +87,7 @@ static inline struct dax_mapping *to_dax_mapping(struct device *dev)
  }
  
- static void dax_disassociate_entry(void *entry, struct address_space *mapping,
- 		bool trunc)
- {
--	unsigned long pfn;
-+	unsigned long size = dax_entry_size(entry), pfn;
-+	struct page *page;
+ phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff, unsigned long size);
++int dev_dax_probe(struct dev_dax *dev_dax);
  
- 	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
- 		return;
- 
--	for_each_mapped_pfn(entry, pfn) {
--		struct page *page = pfn_to_page(pfn);
-+	if (!size)
-+		return;
-+
-+	page = pfn_to_page(dax_to_pfn(entry));
-+	put_dev_pagemap_many(page->pgmap, PHYS_PFN(size));
- 
-+	for_each_mapped_pfn(entry, pfn) {
-+		page = pfn_to_page(pfn);
- 		WARN_ON_ONCE(trunc && page_maybe_dma_pinned(page));
- 		if (dax_mapping_is_cow(page->mapping)) {
- 			/* keep the CoW flag if this page is still shared */
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index c3b4cc84877b..fd57407e7f3d 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -191,8 +191,13 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid);
- void memunmap_pages(struct dev_pagemap *pgmap);
- void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
- void devm_memunmap_pages(struct device *dev, struct dev_pagemap *pgmap);
--struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
--		struct dev_pagemap *pgmap);
-+struct dev_pagemap *get_dev_pagemap_many(unsigned long pfn,
-+					 struct dev_pagemap *pgmap, int refs);
-+static inline struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
-+						  struct dev_pagemap *pgmap)
-+{
-+	return get_dev_pagemap_many(pfn, pgmap, 1);
-+}
- bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
- 
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
-@@ -244,10 +249,15 @@ static inline unsigned long memremap_compat_align(void)
- }
- #endif /* CONFIG_ZONE_DEVICE */
- 
--static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
-+static inline void put_dev_pagemap_many(struct dev_pagemap *pgmap, int refs)
- {
- 	if (pgmap)
--		percpu_ref_put(&pgmap->ref);
-+		percpu_ref_put_many(&pgmap->ref, refs);
-+}
-+
-+static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
-+{
-+	put_dev_pagemap_many(pgmap, 1);
- }
- 
- #endif /* _LINUX_MEMREMAP_H_ */
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 433500e955fb..4debe7b211ae 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -430,15 +430,16 @@ void vmem_altmap_free(struct vmem_altmap *altmap, unsigned long nr_pfns)
- }
- 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ static inline bool dax_align_valid(unsigned long align)
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 9b5e2a5eb0ae..4909ad945a49 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -475,7 +475,7 @@ EXPORT_SYMBOL_GPL(put_dax);
  /**
-- * get_dev_pagemap() - take a new live reference on the dev_pagemap for @pfn
-+ * get_dev_pagemap_many() - take new live references(s) on the dev_pagemap for @pfn
-  * @pfn: page frame number to lookup page_map
-  * @pgmap: optional known pgmap that already has a reference
-+ * @refs: number of references to take
-  *
-  * If @pgmap is non-NULL and covers @pfn it will be returned as-is.  If @pgmap
-  * is non-NULL but does not cover @pfn the reference to it will be released.
+  * dax_holder() - obtain the holder of a dax device
+  * @dax_dev: a dax_device instance
+-
++ *
+  * Return: the holder's data which represents the holder if registered,
+  * otherwize NULL.
   */
--struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
--		struct dev_pagemap *pgmap)
-+struct dev_pagemap *get_dev_pagemap_many(unsigned long pfn,
-+					 struct dev_pagemap *pgmap, int refs)
- {
- 	resource_size_t phys = PFN_PHYS(pfn);
- 
-@@ -454,13 +455,15 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- 	/* fall back to slow path lookup */
- 	rcu_read_lock();
- 	pgmap = xa_load(&pgmap_array, PHYS_PFN(phys));
--	if (pgmap && !percpu_ref_tryget_live(&pgmap->ref))
-+	if (pgmap && !percpu_ref_tryget_live_rcu(&pgmap->ref))
- 		pgmap = NULL;
-+	if (pgmap && refs > 1)
-+		percpu_ref_get_many(&pgmap->ref, refs - 1);
- 	rcu_read_unlock();
- 
- 	return pgmap;
- }
--EXPORT_SYMBOL_GPL(get_dev_pagemap);
-+EXPORT_SYMBOL_GPL(get_dev_pagemap_many);
- 
- void free_zone_device_page(struct page *page)
- {
 
