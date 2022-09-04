@@ -2,61 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E641D5AC1FF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB115AC200
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbiIDCQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Sep 2022 22:16:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
+        id S229708AbiIDCQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 22:16:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiIDCQN (ORCPT
+        with ESMTP id S229478AbiIDCQU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Sep 2022 22:16:13 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC29F481DE
-        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:12 -0700 (PDT)
+        Sat, 3 Sep 2022 22:16:20 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC61D4BA7A
+        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662257772; x=1693793772;
+  t=1662257778; x=1693793778;
   h=subject:from:to:cc:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=XECMJ3rDr2QuKr70k+HRef4UN7pYK04Pd7WfZFPApLY=;
-  b=UTnLRktnw7mCkJHMPNLErcSBZwnpk8mNQmU8xK92MceGxp0nMr3fpx8A
-   J10C3MSuBXie0rWA1rKgOq/FUoHRdPIZpBA3nScXg0i240YBhDUYiYmeH
-   1yFt41O2ZpODipKiDsI6UBEbk1KABeEXGuYSUNBrBpxcVlG4Tu6QYXS2B
-   02vpYSPT1nem27FKxEJv0ETeKZF4mK4TMzWVeEIgDKcqhIClc7oWpVVZ/
-   jUn45inYSMkcPa2w/bfZc9K3ddr5umXHLKKWrMvclNjaWuafjfh2ShCtR
-   hoLgj9g+SwF3aOgkxtVyvjHSTiEgsvNPkEpCIKX1DSSgNpP7n/RDG+Ja3
+  bh=sipDxMIA1gHM4rUMbFjWahw5uArq5Zq1WCPqnel5xNA=;
+  b=eQiLH7gvKpjWC6Ut293xKgEtm1K/8HFpx9Id/cg4nWmFS+3+aIcBFMdm
+   1pCy+Da+7vlkqg0yctsp3RAzM15AzFe08L06dX50Ebcv2AAT/PljhlIxn
+   obre2P/Bw5lmvznjmvNWx/3jYGUVcKEu8lYCkOeJ60BPY0S3KXuAQGQOL
+   9GTZcc+/YvBou7i6eHWUXGs1toiN/sEhHGucz6NeFfaDpTUXyNSBFhrnJ
+   k1pSMfN4DMyt0mZk22tqF6eMzWdL8Bd40exUbrf/LxDXU7bxhwUkyeWzh
+   D/XoEab2TzXsBsDVF2BGgn3Q3/u+gTR69MOgk/XneQOENzMmWH8TlBtC0
    A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="360158682"
+X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="293790443"
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="360158682"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:12 -0700
+   d="scan'208";a="293790443"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:18 -0700
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="646515349"
+   d="scan'208";a="643384493"
 Received: from pg4-mobl3.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.212.132.198])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:12 -0700
-Subject: [PATCH 02/13] fsdax: Use page_maybe_dma_pinned() for DAX vs DMA
- collisions
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:17 -0700
+Subject: [PATCH 03/13] fsdax: Delete put_devmap_managed_page_refs()
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Jason Gunthorpe <jgg@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
         nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date:   Sat, 03 Sep 2022 19:16:12 -0700
-Message-ID: <166225777193.2351842.16365701080007152185.stgit@dwillia2-xfh.jf.intel.com>
+Date:   Sat, 03 Sep 2022 19:16:17 -0700
+Message-ID: <166225777752.2351842.10384480208879805937.stgit@dwillia2-xfh.jf.intel.com>
 In-Reply-To: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 References: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -65,168 +64,123 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pin_user_pages() + page_maybe_dma_pinned() infrastructure is a
-framework for tackling the kernel's struggles with gup+DMA.
+Now that fsdax DMA-idle detection no longer depends on catching
+transitions of page->_refcount to 1, remove
+put_devmap_managed_page_refs() and associated infrastructure.
 
-DAX presents a unique flavor of the gup+DMA problem since pinned pages
-are identical to physical filesystem blocks. Unlike the page-cache case,
-a mapping of a file can not be truncated while DMA is in-flight because
-the DMA must complete before the filesystem block is reclaimed.
-
-DAX has a homegrown solution to this problem based on watching the
-page->_refcount go idle. Beyond being awkward to catch that idle transition
-in put_page(), it is overkill when only the page_maybe_dma_pinned()
-transition needs to be captured.
-
-Move the wakeup of filesystem-DAX truncate paths
-({ext4,xfs,fuse_dax}_break_layouts()) to unpin_user_pages() with a new
-wakeup_fsdax_pin_waiters() helper, and use !page_maybe_dma_pinned() as
-the wake condition.
-
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: John Hubbard <jhubbard@nvidia.com>
-Reported-by: Jason Gunthorpe <jgg@nvidia.com>
-Reported-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c           |    4 ++--
- fs/ext4/inode.c    |    7 +++----
- fs/fuse/dax.c      |    6 +++---
- fs/xfs/xfs_file.c  |    6 +++---
- include/linux/mm.h |   28 ++++++++++++++++++++++++++++
- mm/gup.c           |    6 ++++--
- 6 files changed, 43 insertions(+), 14 deletions(-)
+ include/linux/mm.h |   30 ------------------------------
+ mm/gup.c           |    3 +--
+ mm/memremap.c      |   18 ------------------
+ mm/swap.c          |    2 --
+ 4 files changed, 1 insertion(+), 52 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 0f22f7b46de0..aceb587bc27e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -395,7 +395,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
- 	for_each_mapped_pfn(entry, pfn) {
- 		struct page *page = pfn_to_page(pfn);
- 
--		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
-+		WARN_ON_ONCE(trunc && page_maybe_dma_pinned(page));
- 		if (dax_mapping_is_cow(page->mapping)) {
- 			/* keep the CoW flag if this page is still shared */
- 			if (page->index-- > 0)
-@@ -414,7 +414,7 @@ static struct page *dax_pinned_page(void *entry)
- 	for_each_mapped_pfn(entry, pfn) {
- 		struct page *page = pfn_to_page(pfn);
- 
--		if (page_ref_count(page) > 1)
-+		if (page_maybe_dma_pinned(page))
- 			return page;
- 	}
- 	return NULL;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bf49bf506965..5e68e64f155a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3961,10 +3961,9 @@ int ext4_break_layouts(struct inode *inode)
- 		if (!page)
- 			return 0;
- 
--		error = ___wait_var_event(&page->_refcount,
--				atomic_read(&page->_refcount) == 1,
--				TASK_INTERRUPTIBLE, 0, 0,
--				ext4_wait_dax_page(inode));
-+		error = ___wait_var_event(page, !page_maybe_dma_pinned(page),
-+					  TASK_INTERRUPTIBLE, 0, 0,
-+					  ext4_wait_dax_page(inode));
- 	} while (error == 0);
- 
- 	return error;
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index e0b846f16bc5..6419ca420c42 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -676,9 +676,9 @@ static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
- 		return 0;
- 
- 	*retry = true;
--	return ___wait_var_event(&page->_refcount,
--			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
--			0, 0, fuse_wait_dax_page(inode));
-+	return ___wait_var_event(page, !page_maybe_dma_pinned(page),
-+				 TASK_INTERRUPTIBLE, 0, 0,
-+				 fuse_wait_dax_page(inode));
- }
- 
- /* dmap_end == 0 leads to unmapping of whole file */
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 954bb6e83796..dbffb9481b71 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -827,9 +827,9 @@ xfs_break_dax_layouts(
- 		return 0;
- 
- 	*retry = true;
--	return ___wait_var_event(&page->_refcount,
--			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
--			0, 0, xfs_wait_dax_page(inode));
-+	return ___wait_var_event(page, !page_maybe_dma_pinned(page),
-+				 TASK_INTERRUPTIBLE, 0, 0,
-+				 xfs_wait_dax_page(inode));
- }
- 
- int
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 3bedc449c14d..557d5447ebec 100644
+index 557d5447ebec..24f8682d0cd7 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -1517,6 +1517,34 @@ static inline bool page_maybe_dma_pinned(struct page *page)
- 	return folio_maybe_dma_pinned(page_folio(page));
+@@ -1048,30 +1048,6 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
+  *   back into memory.
+  */
+ 
+-#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
+-DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
+-
+-bool __put_devmap_managed_page_refs(struct page *page, int refs);
+-static inline bool put_devmap_managed_page_refs(struct page *page, int refs)
+-{
+-	if (!static_branch_unlikely(&devmap_managed_key))
+-		return false;
+-	if (!is_zone_device_page(page))
+-		return false;
+-	return __put_devmap_managed_page_refs(page, refs);
+-}
+-#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
+-static inline bool put_devmap_managed_page_refs(struct page *page, int refs)
+-{
+-	return false;
+-}
+-#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
+-
+-static inline bool put_devmap_managed_page(struct page *page)
+-{
+-	return put_devmap_managed_page_refs(page, 1);
+-}
+-
+ /* 127: arbitrary random number, small enough to assemble well */
+ #define folio_ref_zero_or_close_to_overflow(folio) \
+ 	((unsigned int) folio_ref_count(folio) + 127u <= 127u)
+@@ -1168,12 +1144,6 @@ static inline void put_page(struct page *page)
+ {
+ 	struct folio *folio = page_folio(page);
+ 
+-	/*
+-	 * For some devmap managed pages we need to catch refcount transition
+-	 * from 2 to 1:
+-	 */
+-	if (put_devmap_managed_page(&folio->page))
+-		return;
+ 	folio_put(folio);
  }
  
-+#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
-+/*
-+ * Unlike typical file backed pages that support truncating a page from
-+ * a file while it is under active DMA, DAX pages need to hold off
-+ * truncate operations until transient page pins are released.
-+ *
-+ * The filesystem (via dax_layout_pinned_page()) takes steps to make
-+ * sure that any observation of the !page_maybe_dma_pinned() state is
-+ * stable until the truncation completes.
-+ */
-+static inline void wakeup_fsdax_pin_waiters(struct folio *folio)
-+{
-+	struct page *page = &folio->page;
-+
-+	if (!folio_is_zone_device(folio))
-+		return;
-+	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
-+		return;
-+	if (folio_maybe_dma_pinned(folio))
-+		return;
-+	wake_up_var(page);
-+}
-+#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
-+static inline void wakeup_fsdax_pin_waiters(struct folio *folio)
-+{
-+}
-+#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
-+
- /*
-  * This should most likely only be called during fork() to see whether we
-  * should break the cow immediately for an anon page on the src mm.
 diff --git a/mm/gup.c b/mm/gup.c
-index 732825157430..499c46296fda 100644
+index 499c46296fda..67dfffe97917 100644
 --- a/mm/gup.c
 +++ b/mm/gup.c
-@@ -177,8 +177,10 @@ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
- 			refs *= GUP_PIN_COUNTING_BIAS;
+@@ -87,8 +87,7 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
+ 	 * belongs to this folio.
+ 	 */
+ 	if (unlikely(page_folio(page) != folio)) {
+-		if (!put_devmap_managed_page_refs(&folio->page, refs))
+-			folio_put_refs(folio, refs);
++		folio_put_refs(folio, refs);
+ 		goto retry;
  	}
  
--	if (!put_devmap_managed_page_refs(&folio->page, refs))
--		folio_put_refs(folio, refs);
-+	folio_put_refs(folio, refs);
-+
-+	if (flags & FOLL_PIN)
-+		wakeup_fsdax_pin_waiters(folio);
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 58b20c3c300b..433500e955fb 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -507,21 +507,3 @@ void free_zone_device_page(struct page *page)
+ 	 */
+ 	set_page_count(page, 1);
  }
- 
- /**
+-
+-#ifdef CONFIG_FS_DAX
+-bool __put_devmap_managed_page_refs(struct page *page, int refs)
+-{
+-	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
+-		return false;
+-
+-	/*
+-	 * fsdax page refcounts are 1-based, rather than 0-based: if
+-	 * refcount is 1, then the page is free and the refcount is
+-	 * stable because nobody holds a reference on the page.
+-	 */
+-	if (page_ref_sub_return(page, refs) == 1)
+-		wake_up_var(&page->_refcount);
+-	return true;
+-}
+-EXPORT_SYMBOL(__put_devmap_managed_page_refs);
+-#endif /* CONFIG_FS_DAX */
+diff --git a/mm/swap.c b/mm/swap.c
+index 9cee7f6a3809..b346dd24cde8 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -960,8 +960,6 @@ void release_pages(struct page **pages, int nr)
+ 				unlock_page_lruvec_irqrestore(lruvec, flags);
+ 				lruvec = NULL;
+ 			}
+-			if (put_devmap_managed_page(&folio->page))
+-				continue;
+ 			if (folio_put_testzero(folio))
+ 				free_zone_device_page(&folio->page);
+ 			continue;
 
