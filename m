@@ -2,237 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D30CE5AC1FB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E641D5AC1FF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbiIDCQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Sep 2022 22:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59748 "EHLO
+        id S229687AbiIDCQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 22:16:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiIDCQK (ORCPT
+        with ESMTP id S229478AbiIDCQN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Sep 2022 22:16:10 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F189E45F72
-        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:07 -0700 (PDT)
+        Sat, 3 Sep 2022 22:16:13 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC29F481DE
+        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662257767; x=1693793767;
+  t=1662257772; x=1693793772;
   h=subject:from:to:cc:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=GVe4dBjvMQpZmNRdpmLWUnxXhArGe+l3tmmLFYYezBs=;
-  b=D/AvnE8inyBQD37iVm8hix/Uz1vRJpapsj7//iKz+kb49uFLCzEV3lDi
-   fI/+ikA3P19Afp4cdb0ba69UM1RYpXvUBX5x1I7wAHPdrbjwO1aC1/KaF
-   UTCwe8IeJ0ADNCYKEdHPIqk4TDXJ273NKsT2PAtgdtfBf1EFyVLONU0ky
-   AharUtZ/4EyhgX46HB3xKN4G9lMhmu9w5P/UMf22qWxwWWciSgGcck40h
-   igQ7ybcXfAyJbU/L3fu/2O8W1kajde/jdw4ksKyOqTPTk6jMKhIC0gIIC
-   wnyPwTLq7c4ynDbqQu9EvGWThUVD8irB8ZvHgB4DVVgGiXFM8QibYYitw
+  bh=XECMJ3rDr2QuKr70k+HRef4UN7pYK04Pd7WfZFPApLY=;
+  b=UTnLRktnw7mCkJHMPNLErcSBZwnpk8mNQmU8xK92MceGxp0nMr3fpx8A
+   J10C3MSuBXie0rWA1rKgOq/FUoHRdPIZpBA3nScXg0i240YBhDUYiYmeH
+   1yFt41O2ZpODipKiDsI6UBEbk1KABeEXGuYSUNBrBpxcVlG4Tu6QYXS2B
+   02vpYSPT1nem27FKxEJv0ETeKZF4mK4TMzWVeEIgDKcqhIClc7oWpVVZ/
+   jUn45inYSMkcPa2w/bfZc9K3ddr5umXHLKKWrMvclNjaWuafjfh2ShCtR
+   hoLgj9g+SwF3aOgkxtVyvjHSTiEgsvNPkEpCIKX1DSSgNpP7n/RDG+Ja3
    A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="279219083"
+X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="360158682"
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="279219083"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:07 -0700
+   d="scan'208";a="360158682"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:12 -0700
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="702523876"
+   d="scan'208";a="646515349"
 Received: from pg4-mobl3.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.212.132.198])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:06 -0700
-Subject: [PATCH 01/13] fsdax: Rename "busy page" to "pinned page"
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:12 -0700
+Subject: [PATCH 02/13] fsdax: Use page_maybe_dma_pinned() for DAX vs DMA
+ collisions
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+Cc:     Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
         Jason Gunthorpe <jgg@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
         nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date:   Sat, 03 Sep 2022 19:16:05 -0700
-Message-ID: <166225776577.2351842.7326849167823619889.stgit@dwillia2-xfh.jf.intel.com>
+Date:   Sat, 03 Sep 2022 19:16:12 -0700
+Message-ID: <166225777193.2351842.16365701080007152185.stgit@dwillia2-xfh.jf.intel.com>
 In-Reply-To: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 References: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The FSDAX need to hold of truncate is for pages undergoing DMA. Replace
-the DAX specific "busy" terminology with the "pinned" term. This is in
-preparation from moving FSDAX from watching transitions of
-page->_refcount to '1' with observations of page_maybe_dma_pinned()
-returning false.
+The pin_user_pages() + page_maybe_dma_pinned() infrastructure is a
+framework for tackling the kernel's struggles with gup+DMA.
 
-Cc: Matthew Wilcox <willy@infradead.org>
+DAX presents a unique flavor of the gup+DMA problem since pinned pages
+are identical to physical filesystem blocks. Unlike the page-cache case,
+a mapping of a file can not be truncated while DMA is in-flight because
+the DMA must complete before the filesystem block is reclaimed.
+
+DAX has a homegrown solution to this problem based on watching the
+page->_refcount go idle. Beyond being awkward to catch that idle transition
+in put_page(), it is overkill when only the page_maybe_dma_pinned()
+transition needs to be captured.
+
+Move the wakeup of filesystem-DAX truncate paths
+({ext4,xfs,fuse_dax}_break_layouts()) to unpin_user_pages() with a new
+wakeup_fsdax_pin_waiters() helper, and use !page_maybe_dma_pinned() as
+the wake condition.
+
 Cc: Jan Kara <jack@suse.cz>
 Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
 Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Reported-by: Jason Gunthorpe <jgg@nvidia.com>
+Reported-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c            |   16 ++++++++--------
- fs/ext4/inode.c     |    2 +-
- fs/fuse/dax.c       |    4 ++--
- fs/xfs/xfs_file.c   |    2 +-
- fs/xfs/xfs_inode.c  |    2 +-
- include/linux/dax.h |   10 ++++++----
- 6 files changed, 19 insertions(+), 17 deletions(-)
+ fs/dax.c           |    4 ++--
+ fs/ext4/inode.c    |    7 +++----
+ fs/fuse/dax.c      |    6 +++---
+ fs/xfs/xfs_file.c  |    6 +++---
+ include/linux/mm.h |   28 ++++++++++++++++++++++++++++
+ mm/gup.c           |    6 ++++--
+ 6 files changed, 43 insertions(+), 14 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index c440dcef4b1b..0f22f7b46de0 100644
+index 0f22f7b46de0..aceb587bc27e 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -407,7 +407,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+@@ -395,7 +395,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
+-		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
++		WARN_ON_ONCE(trunc && page_maybe_dma_pinned(page));
+ 		if (dax_mapping_is_cow(page->mapping)) {
+ 			/* keep the CoW flag if this page is still shared */
+ 			if (page->index-- > 0)
+@@ -414,7 +414,7 @@ static struct page *dax_pinned_page(void *entry)
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
+-		if (page_ref_count(page) > 1)
++		if (page_maybe_dma_pinned(page))
+ 			return page;
  	}
- }
- 
--static struct page *dax_busy_page(void *entry)
-+static struct page *dax_pinned_page(void *entry)
- {
- 	unsigned long pfn;
- 
-@@ -665,7 +665,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
- }
- 
- /**
-- * dax_layout_busy_page_range - find first pinned page in @mapping
-+ * dax_layout_pinned_page_range - find first pinned page in @mapping
-  * @mapping: address space to scan for a page with ref count > 1
-  * @start: Starting offset. Page containing 'start' is included.
-  * @end: End offset. Page containing 'end' is included. If 'end' is LLONG_MAX,
-@@ -682,7 +682,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
-  * to be able to run unmap_mapping_range() and subsequently not race
-  * mapping_mapped() becoming true.
-  */
--struct page *dax_layout_busy_page_range(struct address_space *mapping,
-+struct page *dax_layout_pinned_page_range(struct address_space *mapping,
- 					loff_t start, loff_t end)
- {
- 	void *entry;
-@@ -727,7 +727,7 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
- 		if (unlikely(dax_is_locked(entry)))
- 			entry = get_unlocked_entry(&xas, 0);
- 		if (entry)
--			page = dax_busy_page(entry);
-+			page = dax_pinned_page(entry);
- 		put_unlocked_entry(&xas, entry, WAKE_NEXT);
- 		if (page)
- 			break;
-@@ -742,13 +742,13 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping,
- 	xas_unlock_irq(&xas);
- 	return page;
- }
--EXPORT_SYMBOL_GPL(dax_layout_busy_page_range);
-+EXPORT_SYMBOL_GPL(dax_layout_pinned_page_range);
- 
--struct page *dax_layout_busy_page(struct address_space *mapping)
-+struct page *dax_layout_pinned_page(struct address_space *mapping)
- {
--	return dax_layout_busy_page_range(mapping, 0, LLONG_MAX);
-+	return dax_layout_pinned_page_range(mapping, 0, LLONG_MAX);
- }
--EXPORT_SYMBOL_GPL(dax_layout_busy_page);
-+EXPORT_SYMBOL_GPL(dax_layout_pinned_page);
- 
- static int __dax_invalidate_entry(struct address_space *mapping,
- 					  pgoff_t index, bool trunc)
+ 	return NULL;
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 601214453c3a..bf49bf506965 100644
+index bf49bf506965..5e68e64f155a 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -3957,7 +3957,7 @@ int ext4_break_layouts(struct inode *inode)
- 		return -EINVAL;
- 
- 	do {
--		page = dax_layout_busy_page(inode->i_mapping);
-+		page = dax_layout_pinned_page(inode->i_mapping);
+@@ -3961,10 +3961,9 @@ int ext4_break_layouts(struct inode *inode)
  		if (!page)
  			return 0;
  
+-		error = ___wait_var_event(&page->_refcount,
+-				atomic_read(&page->_refcount) == 1,
+-				TASK_INTERRUPTIBLE, 0, 0,
+-				ext4_wait_dax_page(inode));
++		error = ___wait_var_event(page, !page_maybe_dma_pinned(page),
++					  TASK_INTERRUPTIBLE, 0, 0,
++					  ext4_wait_dax_page(inode));
+ 	} while (error == 0);
+ 
+ 	return error;
 diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index e23e802a8013..e0b846f16bc5 100644
+index e0b846f16bc5..6419ca420c42 100644
 --- a/fs/fuse/dax.c
 +++ b/fs/fuse/dax.c
-@@ -443,7 +443,7 @@ static int fuse_setup_new_dax_mapping(struct inode *inode, loff_t pos,
- 
- 	/*
- 	 * Can't do inline reclaim in fault path. We call
--	 * dax_layout_busy_page() before we free a range. And
-+	 * dax_layout_pinned_page() before we free a range. And
- 	 * fuse_wait_dax_page() drops mapping->invalidate_lock and requires it.
- 	 * In fault path we enter with mapping->invalidate_lock held and can't
- 	 * drop it. Also in fault path we hold mapping->invalidate_lock shared
-@@ -671,7 +671,7 @@ static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
- {
- 	struct page *page;
- 
--	page = dax_layout_busy_page_range(inode->i_mapping, start, end);
-+	page = dax_layout_pinned_page_range(inode->i_mapping, start, end);
- 	if (!page)
+@@ -676,9 +676,9 @@ static int __fuse_dax_break_layouts(struct inode *inode, bool *retry,
  		return 0;
  
+ 	*retry = true;
+-	return ___wait_var_event(&page->_refcount,
+-			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+-			0, 0, fuse_wait_dax_page(inode));
++	return ___wait_var_event(page, !page_maybe_dma_pinned(page),
++				 TASK_INTERRUPTIBLE, 0, 0,
++				 fuse_wait_dax_page(inode));
+ }
+ 
+ /* dmap_end == 0 leads to unmapping of whole file */
 diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index c6c80265c0b2..954bb6e83796 100644
+index 954bb6e83796..dbffb9481b71 100644
 --- a/fs/xfs/xfs_file.c
 +++ b/fs/xfs/xfs_file.c
-@@ -822,7 +822,7 @@ xfs_break_dax_layouts(
- 
- 	ASSERT(xfs_isilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL));
- 
--	page = dax_layout_busy_page(inode->i_mapping);
-+	page = dax_layout_pinned_page(inode->i_mapping);
- 	if (!page)
+@@ -827,9 +827,9 @@ xfs_break_dax_layouts(
  		return 0;
  
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 28493c8e9bb2..9d0bea03501e 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -3481,7 +3481,7 @@ xfs_mmaplock_two_inodes_and_break_dax_layout(
- 	 * need to unlock & lock the XFS_MMAPLOCK_EXCL which is not suitable
- 	 * for this nested lock case.
- 	 */
--	page = dax_layout_busy_page(VFS_I(ip2)->i_mapping);
-+	page = dax_layout_pinned_page(VFS_I(ip2)->i_mapping);
- 	if (page && page_ref_count(page) != 1) {
- 		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
- 		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index ba985333e26b..54f099166a29 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -157,8 +157,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev, void *holder)
- int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct dax_device *dax_dev, struct writeback_control *wbc);
- 
--struct page *dax_layout_busy_page(struct address_space *mapping);
--struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
-+struct page *dax_layout_pinned_page(struct address_space *mapping);
-+struct page *dax_layout_pinned_page_range(struct address_space *mapping, loff_t start, loff_t end);
- dax_entry_t dax_lock_page(struct page *page);
- void dax_unlock_page(struct page *page, dax_entry_t cookie);
- dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
-@@ -166,12 +166,14 @@ dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
- void dax_unlock_mapping_entry(struct address_space *mapping,
- 		unsigned long index, dax_entry_t cookie);
- #else
--static inline struct page *dax_layout_busy_page(struct address_space *mapping)
-+static inline struct page *dax_layout_pinned_page(struct address_space *mapping)
- {
- 	return NULL;
+ 	*retry = true;
+-	return ___wait_var_event(&page->_refcount,
+-			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+-			0, 0, xfs_wait_dax_page(inode));
++	return ___wait_var_event(page, !page_maybe_dma_pinned(page),
++				 TASK_INTERRUPTIBLE, 0, 0,
++				 xfs_wait_dax_page(inode));
  }
  
--static inline struct page *dax_layout_busy_page_range(struct address_space *mapping, pgoff_t start, pgoff_t nr_pages)
-+static inline struct page *
-+dax_layout_pinned_page_range(struct address_space *mapping, pgoff_t start,
-+			     pgoff_t nr_pages)
- {
- 	return NULL;
+ int
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 3bedc449c14d..557d5447ebec 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1517,6 +1517,34 @@ static inline bool page_maybe_dma_pinned(struct page *page)
+ 	return folio_maybe_dma_pinned(page_folio(page));
  }
+ 
++#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
++/*
++ * Unlike typical file backed pages that support truncating a page from
++ * a file while it is under active DMA, DAX pages need to hold off
++ * truncate operations until transient page pins are released.
++ *
++ * The filesystem (via dax_layout_pinned_page()) takes steps to make
++ * sure that any observation of the !page_maybe_dma_pinned() state is
++ * stable until the truncation completes.
++ */
++static inline void wakeup_fsdax_pin_waiters(struct folio *folio)
++{
++	struct page *page = &folio->page;
++
++	if (!folio_is_zone_device(folio))
++		return;
++	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
++		return;
++	if (folio_maybe_dma_pinned(folio))
++		return;
++	wake_up_var(page);
++}
++#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
++static inline void wakeup_fsdax_pin_waiters(struct folio *folio)
++{
++}
++#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
++
+ /*
+  * This should most likely only be called during fork() to see whether we
+  * should break the cow immediately for an anon page on the src mm.
+diff --git a/mm/gup.c b/mm/gup.c
+index 732825157430..499c46296fda 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -177,8 +177,10 @@ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
+ 			refs *= GUP_PIN_COUNTING_BIAS;
+ 	}
+ 
+-	if (!put_devmap_managed_page_refs(&folio->page, refs))
+-		folio_put_refs(folio, refs);
++	folio_put_refs(folio, refs);
++
++	if (flags & FOLL_PIN)
++		wakeup_fsdax_pin_waiters(folio);
+ }
+ 
+ /**
 
