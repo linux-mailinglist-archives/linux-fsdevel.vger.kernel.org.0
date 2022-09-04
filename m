@@ -2,55 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB765AC49E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 16:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3855AC4CE
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 16:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234014AbiIDOC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Sep 2022 10:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46270 "EHLO
+        id S232793AbiIDOeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Sep 2022 10:34:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbiIDOCz (ORCPT
+        with ESMTP id S229997AbiIDOen (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Sep 2022 10:02:55 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41DB20F61
-        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Sep 2022 07:02:53 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id 190so6590363vsz.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Sep 2022 07:02:53 -0700 (PDT)
+        Sun, 4 Sep 2022 10:34:43 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0533E0E6
+        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Sep 2022 07:34:41 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id n125so6636689vsc.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Sep 2022 07:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=lvXHHqPKJz6gmlkmuCkKVo1yoML+Wo2LIqK6gHt3YiY=;
-        b=e5JNpX9w5fAWaVuKryVV/vR1wp7QI0tp9NBmiAejTTSxdcj45qSXObXiBpXH6s1Iad
-         gVQMwzRxCkY7mPAbbnaa50+P4cCWaV8YrtMN2xhm7KjrPiYy4dgtuUqsyv/daodnWjlx
-         GTsiymHkz8yN0bV+NYoJVNrFIqU4XwQarQcNxCGoPYf3ynIIoYldyPQGjYwxGBStywmf
-         39jAc12u+EQN3f9KnlRLsvE5gBJQz5DU5Wn04caf1EjDdrFslaphpKLaELpZl2L4MJBu
-         l24OoTHkQMAH+EkXxoGNTuwr2YXtIVKlm2rw7J8e3DD93AhbxftNALKJ3jPeXiCFQg8v
-         1WmA==
+        bh=GGurWaCTFN9adyswZhDStpSneD/OUq9VaTY1eDbXKNQ=;
+        b=mTKfMvSNacRc65Ermpn5aMDoKZnvQSr9Eo7bZTkK/OKEqjJs/7TyCYNp+jb/aWFHL/
+         xIqzyRgnJ1SLLOUOYjvfkbE6BgwaV5ujpcAF+t+cDlEwrPbMhm57npJXxCkJ3mpCnTNg
+         ywJhnweGpCkD0jEqKYYwl/EdJRsmAlbNdNngq14dkf9JsZNOn7gunWzkrJbCm6ULe9Pj
+         664xU0XRRV65bOl7k067Qz5x6UwIHqS2Crcw0nZr9gJqyrvujeVKwrIi+sWJ5os4c/ae
+         AcTEQ/n9u3PhTTInEZ+XzjJERnIGUwNms9uCu0f7OESvIl3msbcBuDE0EcdBNYQV2LKL
+         Vx5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=lvXHHqPKJz6gmlkmuCkKVo1yoML+Wo2LIqK6gHt3YiY=;
-        b=zPeqn4GopC50Zgj9HAPTdOm+EhLwlYsZKUOOU2fcD+abfAC6K8mFl0V1GTEBFUg4S9
-         5TKixskGAMg1aFUSFkPzYYUPMIAP2FFxIxYQmTLpQm42gcwvnLMf6pkM9+u5+NI73u8k
-         AUyrOzn9MpuriXR0/3Gztbm+mpJz16ry7ubnE3LOMHBHNwdUtQrogvELY5hBb1wYyDEj
-         HiQeCqBOmM5u5jI5jjfAqUb1Tyu6gvi/ejReYAbidFpkqCIKBmi75XgeNyyErbh7/B6d
-         AGkBncncXmony4R1HF65ybxVxeDU2f8nEuGv34RF4hPQaU+F0Z9FwbL9V35qMG36g244
-         pvjA==
-X-Gm-Message-State: ACgBeo0nvDLkc8J+rs4ISIO4koS74Dx2q2kM6+vI35JwlU55oAXulMpg
-        RNY5os+5zBW0rt8UkwhsEnFYX0UPcSJN6+2Lc1Q=
-X-Google-Smtp-Source: AA6agR4oK+nS9OCcC7Y/Pu13WrulXmSnyr5APq5qCaVEjqGriKKHApl+CoDY/1Bjab4aLPp9qycEl+kt53O8x4gMRNk=
-X-Received: by 2002:a67:b90f:0:b0:390:cb3e:efb8 with SMTP id
- q15-20020a67b90f000000b00390cb3eefb8mr12040442vsn.71.1662300172772; Sun, 04
- Sep 2022 07:02:52 -0700 (PDT)
+        bh=GGurWaCTFN9adyswZhDStpSneD/OUq9VaTY1eDbXKNQ=;
+        b=jaGuPDGU0KXPNG4E+EeIKr/BL+KTX1pACRUY03IzDyabbZareOHyGMOPi9toOb1vk6
+         EcPDmd/E7eVZ763fgD2tN9nemhyg4971Fb572mQDMJbcfvplJo7UORfS59vbE9zUIkcv
+         2dglRBggw07LLgv2u5JQOuAcGCLpW87hG9MQ2Efph7Y/Hr+rZG+REXG60p0JsQRkbvtu
+         +lGfok0WXVmUvHD2wJhExzCXUlb5crQbnxn2lcq7qdb39FIv0+v9MqKfrt+pYBpuCoBd
+         ObAliK3ZgWQpUIBCmMD06mlHucTCoJ4MYFekHK1BkYPQkbm4eQ7FWNKBQfgItSf1BIOL
+         f61A==
+X-Gm-Message-State: ACgBeo0aJNHgVssYEZYoVr1XUEIx/6DfODoJyxo+jkfd29U575MdGeAB
+        jrJVq5wblwmTLjwFtT1oOqV7nzJ5M+IZtyYVUx0=
+X-Google-Smtp-Source: AA6agR7xwA9Uy6d6UwkzladJ1RABSeVuiqqGrvmmdVb2GtjQGwpsNhN3s4X87GMT89EeS2m9apIgfElzw6bKyWik7Ks=
+X-Received: by 2002:a67:c19d:0:b0:390:ecd8:4617 with SMTP id
+ h29-20020a67c19d000000b00390ecd84617mr11097868vsj.36.1662302080933; Sun, 04
+ Sep 2022 07:34:40 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAJ-MHhAw+mgY5MHJ3G-agK0AqxgXZjL5Zr97CeCRzDjjSTHr0w@mail.gmail.com>
-In-Reply-To: <CAJ-MHhAw+mgY5MHJ3G-agK0AqxgXZjL5Zr97CeCRzDjjSTHr0w@mail.gmail.com>
+ <CAOQ4uxieX+oJJV_NZt9cQVn=TTFbZdbpQq9kY0N64iy=JHMn6A@mail.gmail.com> <CAJ-MHhAdDVmOyGo8nu6RXv837yMvdRhfR+jdQJdAMD2sOsQMOw@mail.gmail.com>
+In-Reply-To: <CAJ-MHhAdDVmOyGo8nu6RXv837yMvdRhfR+jdQJdAMD2sOsQMOw@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 4 Sep 2022 17:02:41 +0300
-Message-ID: <CAOQ4uxieX+oJJV_NZt9cQVn=TTFbZdbpQq9kY0N64iy=JHMn6A@mail.gmail.com>
+Date:   Sun, 4 Sep 2022 17:34:29 +0300
+Message-ID: <CAOQ4uxi2ndeMNYO9Oy6YmSX9jeUU5aKek02kwxWsfnb3BJpwGQ@mail.gmail.com>
 Subject: Re: Fanotify events on the same file path
 To:     Gal Rosen <gal.rosen@cybereason.com>
 Cc:     Jan Kara <jack@suse.cz>,
@@ -66,20 +67,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 4, 2022 at 4:26 PM Gal Rosen <gal.rosen@cybereason.com> wrote:
+On Sun, Sep 4, 2022 at 5:10 PM Gal Rosen <gal.rosen@cybereason.com> wrote:
 >
-> Hi,
+> Hi Amir,
 >
-> I am using a single reader thread from an Fanotify file descriptor.
-> The reader thread pushes file events into a queue.
-> There are multiple worker threads which pop from the queue and do some actions on the file path (like file scanning for viruses).
-> We have been told by the third party we are working with for the scanning API that we are scanning the same file path in parallel with 2 different objects.
-> Is it possible to get multiple events on the same file path before response on the first event ?
+> And what about other events like FAN_CLOSE_WRITE ?
+
+Permission events (e.g. FAN_OPEN_PERM) are never merged in the kernel queue.
+FAN_CLOSE_WRITE is an async event, so it MAY be merged with other async
+events (such as FAN_OPEN or another FAN_CLOSE_WRITE) on the same
+path/object, but:
+1. You have no guarantee that the kernel will merge events
+2. Kernel will only merge events if all other info except the event mask
+    is identical.
+
+So for example, the file was opened by two different threads,
+event->pid would be different so the two events would not be
+merged.
+
+>
+> So, if I understand correctly, it is my responsibility to verify for multiplications
+> of file events for the same file path before calling to scan. right ?
 >
 
-Yes, there is nothing preventing that.
-Multiple threads opening the same file will result in multiple
-FAN_OPEN_PERM events, each with a different event->pid.
+Right.
+Since your application has a queue of its own, you are responsible to
+do that anyway, because once you read a FAN_CLOSE_WRITE
+event from the kernel and place it in the application queue, the
+kernel will surely generate another FAN_CLOSE_WRITE event on
+the next file close.
 
 Thanks,
 Amir.
