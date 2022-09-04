@@ -2,42 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB115AC200
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A19D5AC201
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Sep 2022 04:16:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbiIDCQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Sep 2022 22:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60018 "EHLO
+        id S229771AbiIDCQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Sep 2022 22:16:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiIDCQU (ORCPT
+        with ESMTP id S229754AbiIDCQZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Sep 2022 22:16:20 -0400
+        Sat, 3 Sep 2022 22:16:25 -0400
 Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC61D4BA7A
-        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9064E633
+        for <linux-fsdevel@vger.kernel.org>; Sat,  3 Sep 2022 19:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662257778; x=1693793778;
+  t=1662257784; x=1693793784;
   h=subject:from:to:cc:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sipDxMIA1gHM4rUMbFjWahw5uArq5Zq1WCPqnel5xNA=;
-  b=eQiLH7gvKpjWC6Ut293xKgEtm1K/8HFpx9Id/cg4nWmFS+3+aIcBFMdm
-   1pCy+Da+7vlkqg0yctsp3RAzM15AzFe08L06dX50Ebcv2AAT/PljhlIxn
-   obre2P/Bw5lmvznjmvNWx/3jYGUVcKEu8lYCkOeJ60BPY0S3KXuAQGQOL
-   9GTZcc+/YvBou7i6eHWUXGs1toiN/sEhHGucz6NeFfaDpTUXyNSBFhrnJ
-   k1pSMfN4DMyt0mZk22tqF6eMzWdL8Bd40exUbrf/LxDXU7bxhwUkyeWzh
-   D/XoEab2TzXsBsDVF2BGgn3Q3/u+gTR69MOgk/XneQOENzMmWH8TlBtC0
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="293790443"
+  bh=sPcXvDmR3bCtwmu5PpDvm6C3RP1zngXbItUU55SD49w=;
+  b=GgenHIGuNp7A5E1B1OXT3eu1rRgaCKLZXaLAc7zePBD9mU0D7ytzm9Ey
+   JdVZ/+MqSMY2KuGnqQ9l/dnvKhvhsoknKrYDFDDXsuKrL0sF1LHbx17mq
+   buzEhW45wtX6MQHGsPAbFXthTB2dbkeRH5OpivKUdHa2MCmqYSBBKAUgz
+   tZO8gpF1f1fL15tZ6LG05hzU4HhqgG7B/WqXX8/bsLkZrezHXUgO/a6FR
+   5Fye5TdfDW10mZFE7dyqS+BuiYusYkJdff5jv7JwN8RjEczVA0sWUiAn7
+   D1mg9ME8OfX7iR9Sqbm/vqbIwBxYHbSazBAwZpuKnfzU9+VXHFxAlif0Q
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="293790460"
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="293790443"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:18 -0700
+   d="scan'208";a="293790460"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:24 -0700
 X-IronPort-AV: E=Sophos;i="5.93,288,1654585200"; 
-   d="scan'208";a="643384493"
+   d="scan'208";a="702523932"
 Received: from pg4-mobl3.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.212.132.198])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:17 -0700
-Subject: [PATCH 03/13] fsdax: Delete put_devmap_managed_page_refs()
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 19:16:23 -0700
+Subject: [PATCH 04/13] fsdax: Update dax_insert_entry() calling convention
+ to return an error
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
 Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
@@ -46,8 +47,8 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
         nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date:   Sat, 03 Sep 2022 19:16:17 -0700
-Message-ID: <166225777752.2351842.10384480208879805937.stgit@dwillia2-xfh.jf.intel.com>
+Date:   Sat, 03 Sep 2022 19:16:23 -0700
+Message-ID: <166225778308.2351842.10359830461531484766.stgit@dwillia2-xfh.jf.intel.com>
 In-Reply-To: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 References: <166225775968.2351842.11156458342486082012.stgit@dwillia2-xfh.jf.intel.com>
 User-Agent: StGit/0.18-3-g996c
@@ -64,9 +65,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that fsdax DMA-idle detection no longer depends on catching
-transitions of page->_refcount to 1, remove
-put_devmap_managed_page_refs() and associated infrastructure.
+In preparation for teaching dax_insert_entry() to take live @pgmap
+references, enable it to return errors. Given the observation that all
+callers overwrite the passed in entry with the return value, just update
+@entry in place and convert the return code to a vm_fault_t status.
 
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Jan Kara <jack@suse.cz>
@@ -76,111 +78,94 @@ Cc: Christoph Hellwig <hch@lst.de>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- include/linux/mm.h |   30 ------------------------------
- mm/gup.c           |    3 +--
- mm/memremap.c      |   18 ------------------
- mm/swap.c          |    2 --
- 4 files changed, 1 insertion(+), 52 deletions(-)
+ fs/dax.c |   27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 557d5447ebec..24f8682d0cd7 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1048,30 +1048,6 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
-  *   back into memory.
+diff --git a/fs/dax.c b/fs/dax.c
+index aceb587bc27e..d2fb58a7449b 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -853,14 +853,15 @@ static bool dax_fault_is_cow(const struct iomap_iter *iter)
+  * already in the tree, we will skip the insertion and just dirty the PMD as
+  * appropriate.
   */
- 
--#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
--DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
--
--bool __put_devmap_managed_page_refs(struct page *page, int refs);
--static inline bool put_devmap_managed_page_refs(struct page *page, int refs)
--{
--	if (!static_branch_unlikely(&devmap_managed_key))
--		return false;
--	if (!is_zone_device_page(page))
--		return false;
--	return __put_devmap_managed_page_refs(page, refs);
--}
--#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
--static inline bool put_devmap_managed_page_refs(struct page *page, int refs)
--{
--	return false;
--}
--#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
--
--static inline bool put_devmap_managed_page(struct page *page)
--{
--	return put_devmap_managed_page_refs(page, 1);
--}
--
- /* 127: arbitrary random number, small enough to assemble well */
- #define folio_ref_zero_or_close_to_overflow(folio) \
- 	((unsigned int) folio_ref_count(folio) + 127u <= 127u)
-@@ -1168,12 +1144,6 @@ static inline void put_page(struct page *page)
+-static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
+-		const struct iomap_iter *iter, void *entry, pfn_t pfn,
+-		unsigned long flags)
++static vm_fault_t dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
++				   const struct iomap_iter *iter, void **pentry,
++				   pfn_t pfn, unsigned long flags)
  {
- 	struct folio *folio = page_folio(page);
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+ 	void *new_entry = dax_make_entry(pfn, flags);
+ 	bool dirty = !dax_fault_is_synchronous(iter, vmf->vma);
+ 	bool cow = dax_fault_is_cow(iter);
++	void *entry = *pentry;
  
--	/*
--	 * For some devmap managed pages we need to catch refcount transition
--	 * from 2 to 1:
--	 */
--	if (put_devmap_managed_page(&folio->page))
--		return;
- 	folio_put(folio);
+ 	if (dirty)
+ 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+@@ -906,7 +907,8 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
+ 		xas_set_mark(xas, PAGECACHE_TAG_TOWRITE);
+ 
+ 	xas_unlock_irq(xas);
+-	return entry;
++	*pentry = entry;
++	return 0;
  }
  
-diff --git a/mm/gup.c b/mm/gup.c
-index 499c46296fda..67dfffe97917 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -87,8 +87,7 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
- 	 * belongs to this folio.
- 	 */
- 	if (unlikely(page_folio(page) != folio)) {
--		if (!put_devmap_managed_page_refs(&folio->page, refs))
--			folio_put_refs(folio, refs);
-+		folio_put_refs(folio, refs);
- 		goto retry;
- 	}
+ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+@@ -1154,9 +1156,12 @@ static vm_fault_t dax_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+ 	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
+ 	vm_fault_t ret;
  
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 58b20c3c300b..433500e955fb 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -507,21 +507,3 @@ void free_zone_device_page(struct page *page)
- 	 */
- 	set_page_count(page, 1);
+-	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, DAX_ZERO_PAGE);
++	ret = dax_insert_entry(xas, vmf, iter, entry, pfn, DAX_ZERO_PAGE);
++	if (ret)
++		goto out;
+ 
+ 	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
++out:
+ 	trace_dax_load_hole(inode, vmf, ret);
+ 	return ret;
  }
--
--#ifdef CONFIG_FS_DAX
--bool __put_devmap_managed_page_refs(struct page *page, int refs)
--{
--	if (page->pgmap->type != MEMORY_DEVICE_FS_DAX)
--		return false;
--
--	/*
--	 * fsdax page refcounts are 1-based, rather than 0-based: if
--	 * refcount is 1, then the page is free and the refcount is
--	 * stable because nobody holds a reference on the page.
--	 */
--	if (page_ref_sub_return(page, refs) == 1)
--		wake_up_var(&page->_refcount);
--	return true;
--}
--EXPORT_SYMBOL(__put_devmap_managed_page_refs);
--#endif /* CONFIG_FS_DAX */
-diff --git a/mm/swap.c b/mm/swap.c
-index 9cee7f6a3809..b346dd24cde8 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -960,8 +960,6 @@ void release_pages(struct page **pages, int nr)
- 				unlock_page_lruvec_irqrestore(lruvec, flags);
- 				lruvec = NULL;
- 			}
--			if (put_devmap_managed_page(&folio->page))
--				continue;
- 			if (folio_put_testzero(folio))
- 				free_zone_device_page(&folio->page);
- 			continue;
+@@ -1173,6 +1178,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+ 	struct page *zero_page;
+ 	spinlock_t *ptl;
+ 	pmd_t pmd_entry;
++	vm_fault_t ret;
+ 	pfn_t pfn;
+ 
+ 	zero_page = mm_get_huge_zero_page(vmf->vma->vm_mm);
+@@ -1181,8 +1187,10 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+ 		goto fallback;
+ 
+ 	pfn = page_to_pfn_t(zero_page);
+-	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn,
+-				  DAX_PMD | DAX_ZERO_PAGE);
++	ret = dax_insert_entry(xas, vmf, iter, entry, pfn,
++			       DAX_PMD | DAX_ZERO_PAGE);
++	if (ret)
++		return ret;
+ 
+ 	if (arch_needs_pgtable_deposit()) {
+ 		pgtable = pte_alloc_one(vma->vm_mm);
+@@ -1534,6 +1542,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+ 	loff_t pos = (loff_t)xas->xa_index << PAGE_SHIFT;
+ 	bool write = iter->flags & IOMAP_WRITE;
+ 	unsigned long entry_flags = pmd ? DAX_PMD : 0;
++	vm_fault_t ret;
+ 	int err = 0;
+ 	pfn_t pfn;
+ 	void *kaddr;
+@@ -1558,7 +1567,9 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+ 	if (err)
+ 		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
+ 
+-	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, entry_flags);
++	ret = dax_insert_entry(xas, vmf, iter, entry, pfn, entry_flags);
++	if (ret)
++		return ret;
+ 
+ 	if (write &&
+ 	    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
 
