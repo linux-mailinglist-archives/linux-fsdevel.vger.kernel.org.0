@@ -2,163 +2,639 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3138F5AD69F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 17:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 128815AD6E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 17:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239109AbiIEPch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 11:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46348 "EHLO
+        id S236977AbiIEPvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Sep 2022 11:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239060AbiIEPcD (ORCPT
+        with ESMTP id S238671AbiIEPvv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 11:32:03 -0400
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC8FB60;
-        Mon,  5 Sep 2022 08:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1662391857; x=1693927857;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=WkX+OW0VHF6JXu7mSGRTQ5nWnXUoeIM8uzVeBnO7+48=;
-  b=nuqJA+4QbEMLkNhlUVLk0gsgxuOY6tdd915li9+mm8YHJuLx9g+SHBr7
-   sFgKt2Nh0HhbQvJvgx8iRgs2v1AH0ZRn2xIBWScqhur2Hk9hyD5ca3Ogs
-   /TN5twvxz/+hUNKnLe15odcpIJFTRSXipzPWf4yiHwX+iF4hwZi1dVtCo
-   13ka/+aZwY+5wKeBJaiBaG9vCXLlXgzB86c3B52GI0i6z5IbIcYjraQu7
-   AiP8p98xuiB9P8U6hJX0iYeIyY2jLtQDfYiPOcD/rYN1H4s1avNim9EtA
-   kR5wKLTrIGCTbucmma5B7sUy9b/C7ZS76hgyw/3ViwjJgF0tf17tMlfmc
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,291,1654531200"; 
-   d="scan'208";a="314826068"
-Received: from mail-bn7nam10lp2107.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.107])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2022 23:30:55 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Imb67zbOLqX9e6pI7RenWz6512xCnDz+HGOgW/vj+NQmMwgoJLCLMtN/UDsoh/HoNPGEJnNVtcrXrxC4Vp7QxRtQpoZuIQQRYCNs7uhc5QrAdQgQRfN24TR1idgjC5bvhVpj9DTZSKRz5cqMk91doSjqGyzN5H3uaOXLR/xLfRIAk4TcynzZLdj3jCVpDnUEfG4s2iYgk4PWoOky+zoBRUI39SEvcIQb0TvuL/YKPu5UhWbhmdKYyEPhY5Ds5FvG3EwvYBIV86c+TsKITnupKcQvTLPiocZmdK4Lj9PV4cscki51CWPYOTOuwtvAWBQToIhqUG5zAzAOuBG73q/evA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GlYBNfaVVgjxXDxwYE57K7OshX48T5mJAcpg/ZhZeBk=;
- b=XelbzcCYgOy+srETHNgRIhLW0BC2ujvZdSlgY/XZooPq2cYFygONDyGZJYnIihBzr3GJ40L8bhpUAMD7+nDd5fBPc2bfvNxEGGAHS2Pn18I8ijnk5T6/+vcyiABQZlPsGiJNe1njYiA4K4I8jURzmmtRW0k2XHGiUHyR2GNX9VDm5iaoU7FzBYTKScJI+Lcs5oUYnBeiR9lGlkK2lq7/R/OzVvl0NsfWciITwty0ujm+HPFmOuMWpdgrkz2EPgPnZhBxYro07OmA+Lvt3vL/ikSqjQjlH3AAbfxtzhlK3DPC8qxETjWsRFFOWIDRr34nt2s9zEX48BdEYigIEf0Rnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 5 Sep 2022 11:51:51 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F3B5EDE5
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Sep 2022 08:51:48 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id cu2so18009297ejb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Sep 2022 08:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GlYBNfaVVgjxXDxwYE57K7OshX48T5mJAcpg/ZhZeBk=;
- b=ImMmNLxaWCiEAanFDwTkfKqQrjAcrqub0Bdnz5FFV1gueUqqNsoqVuvx0C+hHmowzMuz4byi5vbobA7vHeAe7w0EUhnAdTaBdeDPQGKxuTeFgkD9Ghgtq3yEgIi+nTL5U/bsYSxmZ62a7uE+Jr5zv902xJFBpDIXJmUPEwlcwak=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by CH0PR04MB7956.namprd04.prod.outlook.com (2603:10b6:610:fd::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Mon, 5 Sep
- 2022 15:30:53 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::bc05:f34a:403b:745c]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::bc05:f34a:403b:745c%8]) with mapi id 15.20.5588.018; Mon, 5 Sep 2022
- 15:30:53 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>, Qu Wenruo <wqu@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 16/17] btrfs: split zone append bios in btrfs_submit_bio
-Thread-Topic: [PATCH 16/17] btrfs: split zone append bios in btrfs_submit_bio
-Thread-Index: AQHYvdaJyAEeDCU+DUSQMj+EHyZpYA==
-Date:   Mon, 5 Sep 2022 15:30:53 +0000
-Message-ID: <PH0PR04MB74166E3D3F9CBD8F8E5C16509B7F9@PH0PR04MB7416.namprd04.prod.outlook.com>
-References: <20220901074216.1849941-1-hch@lst.de>
- <20220901074216.1849941-17-hch@lst.de>
- <PH0PR04MB74166908EB6DF6C586B5AC539B7F9@PH0PR04MB7416.namprd04.prod.outlook.com>
- <20220905142543.GA5262@lst.de>
- <PH0PR04MB7416B4597F2F3426A85295A49B7F9@PH0PR04MB7416.namprd04.prod.outlook.com>
- <20220905143951.GA6367@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0c45dc8-497a-46d8-1576-08da8f539ee0
-x-ms-traffictypediagnostic: CH0PR04MB7956:EE_
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fuT9UJWT3nUQl2F2BUGy7309fSCadeGqdoQyv5lDMYR0h8aWNFIAhe+frHN6SbkGS4+z/9m+Qv6A6PHkp8zdgGKSi4Qr+hfOj69miLYb8SlWdBF7KmIozhlw/1/WQfjcN4q4V3thV8fYvAPutg98FRWYv6X4lfqk/oPRmzf+7CQQfYfpIXly307Zg0dGNek1WzDUccgdLXOqGpCSAp3B4mGN+sw/HGp/e8Ajv8Qt9yukDV4eEQG7QyUs3S4wnU3OlZPsfP2e1phLT7IJ6OPXDSJQYMf7vc6O7JhnrBlAHgf8z8Kk3aSizk6GLf7E9uA3R38QNHqb/4lRZOZ6xXZz+RkqRc+U6YcrIpNIOnUaqDmPf+bLHePiE4WHeOviW5pxt3G8hWPiEkntVFqwCttRmO+MRR/wNU3zPjSA8Sy5aUehj4dsLtdVaKW+2aWCkaRvPmNw0ByxQ9W9ffks5kVWbNlzTlssJ0EM9FaOb5Qi4pJ8vVwwZoCjf9e0C3yMFtwpnhrMVXg5lrBscl+FtUvz8mPX9VE8+OPUSNlOQ2J9mJDcbnqwUvZUti+pDiEMecfL1MjLu8uPMmobonVegTRDvJ6AEImLBFG1gMbMRyhxF5TfIPMNaEo1ibH4O4GY640jCOAI1AIIKDzWCOTKfLC0fQlI+gMSnFEBq3C85Fx2zdz+tfqjJ0gzWDdtDqdTqI8f3fbeY0uXUo+2MFBx06pzfUMWbeaIBfY+xswHc3wY2lQU+yL+8DcYnC7Q9I6WLaB6zvgk2ZxnIf/0p78AIgmwTQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(39860400002)(346002)(376002)(366004)(136003)(9686003)(4744005)(186003)(2906002)(7416002)(66946007)(33656002)(5660300002)(53546011)(64756008)(4326008)(76116006)(8936002)(52536014)(316002)(6506007)(71200400001)(86362001)(66556008)(66446008)(38070700005)(66476007)(8676002)(122000001)(91956017)(7696005)(38100700002)(6916009)(82960400001)(41300700001)(54906003)(478600001)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?es7fn5u+S5iNOd5Q/5Kay5DKzX+xmZZsS6q06ST5IhhAHsl86fhJ0x2YB4Es?=
- =?us-ascii?Q?pn3FgOBzh+WfaUQIWQM4lzQfihMSveHdMnw8MtnW5/4SD0oj+HwRnV4c1Y2D?=
- =?us-ascii?Q?og6x3Zpc/NJkdDKvY5CzJc4NS8OzSbFIiPYihajwrtSBM00P40RxZHeB8STo?=
- =?us-ascii?Q?FqHJJcA7peBv9fX3WO+RNd0SsHtt3obR8m3tha9zJp8BnfcO3U59inoRnk5/?=
- =?us-ascii?Q?FYZfbqrMLkbwCCItjPZ6PB53Pk5Awx/RA8gLV4ZMhmQjRpZU2VCX4BLWv1VB?=
- =?us-ascii?Q?vxO2VuB/Nut8xwrx96IYQETJFNroxMG1QSWhE5WEkAwjcetNNLBBlo1n4PKY?=
- =?us-ascii?Q?lBkcZmIl0kf7KhxLyt3D7a5HB/ooFQgzh1qlc6/goyC4cJ4HswTd5/kZxXKG?=
- =?us-ascii?Q?GUaajfNvtaxcdQmu0cAgxNxtU5U73iI9DF8Tj3cge0QDgTRgp9d0lQtFv4/C?=
- =?us-ascii?Q?xSCdRtsk6mxhR6tsueBMYO3vvCkIS1a7yPJ4ZtK/eCIi0vUZowA9Z4m9XEgv?=
- =?us-ascii?Q?RIsj1gDtxJjq9DZOZyFzMuDUxRLQ7zZvvvPR7iEGTh243Xpou6G1YMcUaHd8?=
- =?us-ascii?Q?q/Ioelo//+jb7FOyD5c+hQVG5lGfHuCV3f490Uc28Y8Oner5g3IABARrS/lQ?=
- =?us-ascii?Q?ZIFW/QKvamAsUQ8+EfyyTtbEyephAMFP05XyaFwL5Si28JKNAJ4E+fS+2r3z?=
- =?us-ascii?Q?daECGIN5puNA7rgGpcA2/5wbTHuj+hoJ/APsV76+aBAvonka8h7XwHsmbzHr?=
- =?us-ascii?Q?PC7LDM+tjLNrULDvhA/lY7FQi/446z6/Yt3Z9ucoVVrY7QWrtgeRwENf2LWI?=
- =?us-ascii?Q?WXhSC5RPquhHhIqYR2sSeJmIcI0uMNgIgBpG/BscvRIjmiTRF3sJjfVVaz/S?=
- =?us-ascii?Q?82rchX/BK4BiUhz/cH0pNXUvfYasNZFeHEya1pDX8mBD7u5N3q4IOwNRXtID?=
- =?us-ascii?Q?ZhIhBfAatQcIn6Fxgn+QrFzSGTA+0DA1NQo1P8m5PmN1Hv78WqAs3Yp6iZXw?=
- =?us-ascii?Q?PlcSvS2yu13apl/PtF32vIc0ed9O8CYUu/fuE7QWciI6Gwv+l1J7Rd579yqf?=
- =?us-ascii?Q?fykMxaSr6GV8CUU5NB6GbLy/PbVK9APsNBZ2qhT1a+6joW7IdCD0vKaljSlS?=
- =?us-ascii?Q?sirdFptU6QhxuwBtwE70t8hGKBzGXZAUhQWFO2RbvVuEqI6yCH4lGc8LGdd9?=
- =?us-ascii?Q?+C2IhKhMKd+UVbT+Ho39eNRWdCBESsNYH4S4anlD3LkGQPjgJtmbwj7t6bOG?=
- =?us-ascii?Q?izMB8KnFki/EZrBf5e2YKSFFHiK+eoA5lmG5vCmdqZdpGpiQMN/30vZdf0gI?=
- =?us-ascii?Q?mDf5nWmvfoiFcuXx6ydJSuLMM4SS6lkbjAg8o92wuLS+xajS/nqi7p/JkisR?=
- =?us-ascii?Q?dpTCF6WmGylbQhCi3u8pdJ5jmnSKmwT+LRXvkE8r/+rdubuywV03YhFAX9zR?=
- =?us-ascii?Q?hBOp9+3FuXmvbblSsH0zj3bkPAAuCRj5x+S2xfHz94d5l5eDAX4oEqRnlOay?=
- =?us-ascii?Q?fWdFzhLusEqXiRsHg9QTq93hLdik3FB/8A4kgZAqFFkJADnNqXJy9SXH7btm?=
- =?us-ascii?Q?bHdkmo1DRBHsBpQmw4YKgL1fIt07IMhPNyXnIjojBB0ePBr4Lc9pOyhzogaq?=
- =?us-ascii?Q?P7QJEBWp3Gz9l4En+YvvU5WzVehPw3hwYcBQpRPqFhITigxVPEWKXZISicjZ?=
- =?us-ascii?Q?Isk1r35WA7YkDQwbvszWaSLlkS4=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=szeredi.hu; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=MVVFsjYXZwnWJ9M2SL3mjFTRUB2gaigrIsStlZ6+Hic=;
+        b=okz35UVVePtSCfRWakpzqlz14AMVZ5R/B9DC5SExnTlHbyGU+15PPvJsQz1s0Duq2L
+         oPJfCE5FbgsJoBzcTVfoTQF64lSR3WCHz8j7Hvx2VYxRZcqh8nKXQtX/6v8+rGW+OA7P
+         y5PAkE8e1Cs7Susb6tlKjdu8PFRC+5pKKLiLc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=MVVFsjYXZwnWJ9M2SL3mjFTRUB2gaigrIsStlZ6+Hic=;
+        b=nyDMUcHwrRUpVJSVyjvN+tLMTEgEP1grKssmp/2Z9C7FL5eZOekSc2bpvXajPkP/sQ
+         GbCrOIcYoRYie1TH8EfmqR4xTbIeHAfyLQbKqdaYgSPODNQmkg2biZvDTPtwHVoj2ww9
+         5uxK284APRmLAg3AXA7QgK1OCc7cBJ1rGiioL5sZPVNCdFbeJMUrrfnpOvGkWmBgvX6E
+         0eETSqkzqlrRkIE5/p2b1KXggEXCz8zhwic0mS62ULwYPAl4OQBbcef8bJnZac/2/CGF
+         6nl+iEfe2F1JEjp+RypySXPX7Vs0J9sByedPR9XDEYrvAgIN9Ps6ndbKg8M9vv6BwKVP
+         zmvA==
+X-Gm-Message-State: ACgBeo3Z4769mN/AhHaZ1Ze5PPbAKTd6r8VCU40Nf9OFaffEQGHHMLyD
+        wWEf7Zgl+aiPQ0pP8lXYFRvaZw==
+X-Google-Smtp-Source: AA6agR4lNMo1FwIfkJ52aeMmR6fXWkI8UXBTDMROujXncIE/wly4kGTSVV1LwgFkE8rYcMUyjFQe3w==
+X-Received: by 2002:a17:906:9b90:b0:738:60f9:c7d6 with SMTP id dd16-20020a1709069b9000b0073860f9c7d6mr36279311ejc.198.1662393107124;
+        Mon, 05 Sep 2022 08:51:47 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (91-82-180-189.pool.digikabel.hu. [91.82.180.189])
+        by smtp.gmail.com with ESMTPSA id h6-20020a1709060f4600b0071cbc7487e1sm5221588ejj.69.2022.09.05.08.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Sep 2022 08:51:46 -0700 (PDT)
+Date:   Mon, 5 Sep 2022 17:51:38 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Yu-li Lin <yulilin@google.com>
+Cc:     chirantan@chromium.org, dgreid@chromium.org,
+        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        suleiman@chromium.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
+Message-ID: <YxYbCt4/S4r2JHw2@miu.piliscsaba.redhat.com>
+References: <CAJfpegvsCQ+rJv2rSk3mUMsX_N26ardW=MYbHxifO5DU7uSYqA@mail.gmail.com>
+ <20220831025704.240962-1-yulilin@google.com>
+ <CAJfpegvMGxigBe=3tgwBRKuSS0H1ey=0WhOkgOz5di-LqXH-HQ@mail.gmail.com>
+ <CAMW0D+epkBMTEzzJhkX7HeEepCH=yxJ-rytnA+XWQ8ao=CREqw@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0c45dc8-497a-46d8-1576-08da8f539ee0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2022 15:30:53.6733
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ji1D9f23LeN8xriUg7mYMm4uZ24WEbGH4BAzE8omnVbgnjGmg7gsUcsiRXhSegQwCKC4yHruhlxmYdJdloT3SCgJ7Mu0FyKiaQzQ6pJwLM4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR04MB7956
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMW0D+epkBMTEzzJhkX7HeEepCH=yxJ-rytnA+XWQ8ao=CREqw@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05.09.22 16:40, Christoph Hellwig wrote:=0A=
-> On Mon, Sep 05, 2022 at 02:31:53PM +0000, Johannes Thumshirn wrote:=0A=
->> hmm I got that one triggered with fsx:=0A=
->>=0A=
->> + /home/johannes/src/fstests/ltp/fsx -d /mnt/test/test=0A=
-> =0A=
-> Odd.  Is this a raid stripe tree setup where one copy is using zone=0A=
-> append and another isn't?  Because without that I can't see how=0A=
-> this would happen.  If not cane you send me the reproducer including=0A=
-> the mkfs line?=0A=
-> =0A=
-> =0A=
-=0A=
-OK it seems totally unrelated to your patchset and introduced by my patches=
-.=0A=
-Odd but not your problem, sorry for the noise=0A=
+On Wed, Aug 31, 2022 at 02:30:40PM -0700, Yu-li Lin wrote:
+> Thanks for the reference. IIUC, the consensus is to make it atomic,
+> although there's no agreement on how it should be done. Does that mean
+> we should hold off on
+> this patch until atomic temp files are figured out higher in the stack
+> or do you have thoughts on how the fuse uapi should look like prior to
+> the vfs/refactoring decision?
+
+Here's a patch refactoring the tmpfile kapi to return an open file instead of a
+dentry.
+
+Comments?
+
+Thanks,
+Miklos
+
+---
+ fs/bad_inode.c           |    2 
+ fs/btrfs/inode.c         |   12 +++--
+ fs/cachefiles/namei.c    |    3 -
+ fs/ext2/namei.c          |    6 +-
+ fs/ext4/namei.c          |   15 ++++--
+ fs/f2fs/namei.c          |    9 +++-
+ fs/hugetlbfs/inode.c     |    9 +++-
+ fs/minix/namei.c         |    9 ++--
+ fs/namei.c               |  101 ++++++++++++++++++++++++++---------------------
+ fs/open.c                |    7 +++
+ fs/overlayfs/overlayfs.h |    3 -
+ fs/ramfs/inode.c         |    6 +-
+ fs/ubifs/dir.c           |    5 +-
+ fs/udf/namei.c           |    6 +-
+ fs/xfs/xfs_iops.c        |    9 +++-
+ include/linux/fs.h       |    6 +-
+ mm/shmem.c               |   12 +++--
+ 17 files changed, 138 insertions(+), 82 deletions(-)
+
+--- a/fs/bad_inode.c
++++ b/fs/bad_inode.c
+@@ -147,7 +147,7 @@ static int bad_inode_atomic_open(struct
+ }
+ 
+ static int bad_inode_tmpfile(struct user_namespace *mnt_userns,
+-			     struct inode *inode, struct dentry *dentry,
++			     struct inode *inode, struct file *file,
+ 			     umode_t mode)
+ {
+ 	return -EIO;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -10169,7 +10169,7 @@ static int btrfs_permission(struct user_
+ }
+ 
+ static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(dir->i_sb);
+ 	struct btrfs_trans_handle *trans;
+@@ -10177,7 +10177,7 @@ static int btrfs_tmpfile(struct user_nam
+ 	struct inode *inode;
+ 	struct btrfs_new_inode_args new_inode_args = {
+ 		.dir = dir,
+-		.dentry = dentry,
++		.dentry = file->f_path.dentry,
+ 		.orphan = true,
+ 	};
+ 	unsigned int trans_num_items;
+@@ -10214,7 +10214,7 @@ static int btrfs_tmpfile(struct user_nam
+ 	set_nlink(inode, 1);
+ 
+ 	if (!ret) {
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file->f_path.dentry, inode);
+ 		unlock_new_inode(inode);
+ 		mark_inode_dirty(inode);
+ 	}
+@@ -10224,9 +10224,11 @@ static int btrfs_tmpfile(struct user_nam
+ out_new_inode_args:
+ 	btrfs_new_inode_args_destroy(&new_inode_args);
+ out_inode:
+-	if (ret)
++	if (ret) {
+ 		iput(inode);
+-	return ret;
++		return ret;
++	}
++	return finish_tmpfile(file);
+ }
+ 
+ void btrfs_set_range_writeback(struct btrfs_inode *inode, u64 start, u64 end)
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -459,9 +459,10 @@ struct file *cachefiles_create_tmpfile(s
+ 	cachefiles_begin_secure(cache, &saved_cred);
+ 
+ 	path.mnt = cache->mnt;
++	path.dentry = fan;
+ 	ret = cachefiles_inject_write_error();
+ 	if (ret == 0)
+-		path.dentry = vfs_tmpfile(&init_user_ns, fan, S_IFREG, O_RDWR);
++		path.dentry = vfs_tmpfile(&init_user_ns, &path, S_IFREG, O_RDWR);
+ 	else
+ 		path.dentry = ERR_PTR(ret);
+ 	if (IS_ERR(path.dentry)) {
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -120,7 +120,7 @@ static int ext2_create (struct user_name
+ }
+ 
+ static int ext2_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
+ {
+ 	struct inode *inode = ext2_new_inode(dir, mode, NULL);
+ 	if (IS_ERR(inode))
+@@ -128,9 +128,9 @@ static int ext2_tmpfile(struct user_name
+ 
+ 	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+-	d_tmpfile(dentry, inode);
++	d_tmpfile(file->f_path.dentry, inode);
+ 	unlock_new_inode(inode);
+-	return 0;
++	return finish_tmpfile(file);
+ }
+ 
+ static int ext2_mknod (struct user_namespace * mnt_userns, struct inode * dir,
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2849,7 +2849,7 @@ static int ext4_mknod(struct user_namesp
+ }
+ 
+ static int ext4_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
+ {
+ 	handle_t *handle;
+ 	struct inode *inode;
+@@ -2857,7 +2857,7 @@ static int ext4_tmpfile(struct user_name
+ 
+ 	err = dquot_initialize(dir);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ retry:
+ 	inode = ext4_new_inode_start_handle(mnt_userns, dir, mode,
+@@ -2871,7 +2871,7 @@ static int ext4_tmpfile(struct user_name
+ 		inode->i_op = &ext4_file_inode_operations;
+ 		inode->i_fop = &ext4_file_operations;
+ 		ext4_set_aops(inode);
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file->f_path.dentry, inode);
+ 		err = ext4_orphan_add(handle, inode);
+ 		if (err)
+ 			goto err_unlock_inode;
+@@ -2882,11 +2882,16 @@ static int ext4_tmpfile(struct user_name
+ 		ext4_journal_stop(handle);
+ 	if (err == -ENOSPC && ext4_should_retry_alloc(dir->i_sb, &retries))
+ 		goto retry;
+-	return err;
++out:
++	if (err)
++		return err;
++
++	return finish_tmpfile(file);
++
+ err_unlock_inode:
+ 	ext4_journal_stop(handle);
+ 	unlock_new_inode(inode);
+-	return err;
++	goto out;
+ }
+ 
+ struct ext4_dir_entry_2 *ext4_init_dot_dotdot(struct inode *inode,
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -915,16 +915,21 @@ static int __f2fs_tmpfile(struct user_na
+ }
+ 
+ static int f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++	int err;
+ 
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+ 	if (!f2fs_is_checkpoint_ready(sbi))
+ 		return -ENOSPC;
+ 
+-	return __f2fs_tmpfile(mnt_userns, dir, dentry, mode, false, NULL);
++	err = __f2fs_tmpfile(mnt_userns, dir, file->f_path.dentry, mode, false, NULL);
++	if (err)
++		return err;
++
++	return finish_tmpfile(file);
+ }
+ 
+ static int f2fs_create_whiteout(struct user_namespace *mnt_userns,
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -932,10 +932,15 @@ static int hugetlbfs_create(struct user_
+ }
+ 
+ static int hugetlbfs_tmpfile(struct user_namespace *mnt_userns,
+-			     struct inode *dir, struct dentry *dentry,
++			     struct inode *dir, struct file *file,
+ 			     umode_t mode)
+ {
+-	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
++	int err = do_hugetlbfs_mknod(dir, file->f_path.dentry, mode | S_IFREG, 0, true);
++
++	if (err)
++		return err;
++
++	return finish_tmpfile(file);
+ }
+ 
+ static int hugetlbfs_symlink(struct user_namespace *mnt_userns,
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -53,16 +53,19 @@ static int minix_mknod(struct user_names
+ }
+ 
+ static int minix_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
+ 	int error;
+ 	struct inode *inode = minix_new_inode(dir, mode, &error);
+ 	if (inode) {
+ 		minix_set_inode(inode, 0);
+ 		mark_inode_dirty(inode);
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file->f_path.dentry, inode);
+ 	}
+-	return error;
++	if (error)
++		return error;
++
++	return finish_tmpfile(file);
+ }
+ 
+ static int minix_create(struct user_namespace *mnt_userns, struct inode *dir,
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3568,59 +3568,78 @@ static int do_open(struct nameidata *nd,
+ 	return error;
+ }
+ 
+-/**
+- * vfs_tmpfile - create tmpfile
+- * @mnt_userns:	user namespace of the mount the inode was found from
+- * @dentry:	pointer to dentry of the base directory
+- * @mode:	mode of the new tmpfile
+- * @open_flag:	flags
+- *
+- * Create a temporary file.
+- *
+- * If the inode has been found through an idmapped mount the user namespace of
+- * the vfsmount must be passed through @mnt_userns. This function will then take
+- * care to map the inode according to @mnt_userns before checking permissions.
+- * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs init_user_ns.
+- */
+-struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+-			   struct dentry *dentry, umode_t mode, int open_flag)
++static int vfs_tmpfile_new(struct user_namespace *mnt_userns,
++			   const struct path *parent_path,
++			   struct file *file, umode_t mode)
+ {
+-	struct dentry *child = NULL;
+-	struct inode *dir = dentry->d_inode;
+-	struct inode *inode;
++	struct inode *inode, *dir = d_inode(parent_path->dentry);
++	struct dentry *child;
+ 	int error;
+ 
+ 	/* we want directory to be writable */
+ 	error = inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
+ 	if (error)
+-		goto out_err;
++		goto out;
+ 	error = -EOPNOTSUPP;
+ 	if (!dir->i_op->tmpfile)
+-		goto out_err;
++		goto out;
+ 	error = -ENOMEM;
+-	child = d_alloc(dentry, &slash_name);
++	child = d_alloc(parent_path->dentry, &slash_name);
+ 	if (unlikely(!child))
+-		goto out_err;
++		goto out;
++	file->f_path.mnt = parent_path->mnt;
++	file->f_path.dentry = child;
+ 	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
+-	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
++	error = dir->i_op->tmpfile(mnt_userns, dir, file, mode);
+ 	if (error)
+-		goto out_err;
++		goto out_dput;
+ 	error = -ENOENT;
+ 	inode = child->d_inode;
+ 	if (unlikely(!inode))
+-		goto out_err;
+-	if (!(open_flag & O_EXCL)) {
++		goto out_dput;
++	if (!(file->f_flags & O_EXCL)) {
+ 		spin_lock(&inode->i_lock);
+ 		inode->i_state |= I_LINKABLE;
+ 		spin_unlock(&inode->i_lock);
+ 	}
+ 	ima_post_create_tmpfile(mnt_userns, inode);
+-	return child;
+-
+-out_err:
++	error = 0;
++out_dput:
+ 	dput(child);
+-	return ERR_PTR(error);
++out:
++	return error;
++}
++
++/**
++ * vfs_tmpfile - create tmpfile
++ * @mnt_userns:	user namespace of the mount the inode was found from
++ * @dentry:	pointer to dentry of the base directory
++ * @mode:	mode of the new tmpfile
++ * @open_flag:	flags
++ *
++ * Create a temporary file.
++ *
++ * If the inode has been found through an idmapped mount the user namespace of
++ * the vfsmount must be passed through @mnt_userns. This function will then take
++ * care to map the inode according to @mnt_userns before checking permissions.
++ * On non-idmapped mounts or if permission checking is to be performed on the
++ * raw inode simply passs init_user_ns.
++ */
++struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
++			   const struct path *path, umode_t mode, int open_flag)
++{
++	struct dentry *child;
++	struct file *file;
++	int error;
++
++	file = alloc_empty_file(open_flag, current_cred());
++	child = ERR_CAST(file);
++	if (!IS_ERR(file)) {
++		error = vfs_tmpfile_new(mnt_userns, path, file, mode);
++		child = error ? ERR_PTR(error) : dget(file->f_path.dentry);
++		fput(file);
++	}
++	return child;
+ }
+ EXPORT_SYMBOL(vfs_tmpfile);
+ 
+@@ -3629,26 +3648,22 @@ static int do_tmpfile(struct nameidata *
+ 		struct file *file)
+ {
+ 	struct user_namespace *mnt_userns;
+-	struct dentry *child;
+ 	struct path path;
+-	int error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
++	int error;
++
++	error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
+ 	if (unlikely(error))
+ 		return error;
+ 	error = mnt_want_write(path.mnt);
+ 	if (unlikely(error))
+ 		goto out;
+ 	mnt_userns = mnt_user_ns(path.mnt);
+-	child = vfs_tmpfile(mnt_userns, path.dentry, op->mode, op->open_flag);
+-	error = PTR_ERR(child);
+-	if (IS_ERR(child))
++	error = vfs_tmpfile_new(mnt_userns, &path, file, op->mode);
++	if (error)
+ 		goto out2;
+-	dput(path.dentry);
+-	path.dentry = child;
+-	audit_inode(nd->name, child, 0);
++	audit_inode(nd->name, file->f_path.dentry, 0);
+ 	/* Don't check for other permissions, the inode was just created */
+-	error = may_open(mnt_userns, &path, 0, op->open_flag);
+-	if (!error)
+-		error = vfs_open(&path, file);
++	error = may_open(mnt_userns, &file->f_path, 0, op->open_flag);
+ out2:
+ 	mnt_drop_write(path.mnt);
+ out:
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -975,6 +975,13 @@ int finish_open(struct file *file, struc
+ }
+ EXPORT_SYMBOL(finish_open);
+ 
++int finish_tmpfile(struct file *file)
++{
++	BUG_ON(file->f_mode & FMODE_OPENED);
++	return do_dentry_open(file, d_inode(file->f_path.dentry), NULL);
++}
++
++
+ /**
+  * finish_no_open - finish ->atomic_open() without opening the file
+  *
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -313,7 +313,8 @@ static inline int ovl_do_whiteout(struct
+ static inline struct dentry *ovl_do_tmpfile(struct ovl_fs *ofs,
+ 					    struct dentry *dentry, umode_t mode)
+ {
+-	struct dentry *ret = vfs_tmpfile(ovl_upper_mnt_userns(ofs), dentry, mode, 0);
++	struct path path = { .dentry = dentry, .mnt = ovl_upper_mnt(ofs) };
++	struct dentry *ret = vfs_tmpfile(ovl_upper_mnt_userns(ofs), &path, mode, 0);
+ 	int err = PTR_ERR_OR_ZERO(ret);
+ 
+ 	pr_debug("tmpfile(%pd2, 0%o) = %i\n", dentry, mode, err);
+--- a/fs/ramfs/inode.c
++++ b/fs/ramfs/inode.c
+@@ -146,15 +146,15 @@ static int ramfs_symlink(struct user_nam
+ }
+ 
+ static int ramfs_tmpfile(struct user_namespace *mnt_userns,
+-			 struct inode *dir, struct dentry *dentry, umode_t mode)
++			 struct inode *dir, struct file *file, umode_t mode)
+ {
+ 	struct inode *inode;
+ 
+ 	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
+ 	if (!inode)
+ 		return -ENOSPC;
+-	d_tmpfile(dentry, inode);
+-	return 0;
++	d_tmpfile(file->f_path.dentry, inode);
++	return finish_tmpfile(file);
+ }
+ 
+ static const struct inode_operations ramfs_dir_inode_operations = {
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -424,8 +424,9 @@ static void unlock_2_inodes(struct inode
+ }
+ 
+ static int ubifs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
++	struct dentry *dentry = file->f_path.dentry;
+ 	struct inode *inode;
+ 	struct ubifs_info *c = dir->i_sb->s_fs_info;
+ 	struct ubifs_budget_req req = { .new_ino = 1, .new_dent = 1,
+@@ -489,7 +490,7 @@ static int ubifs_tmpfile(struct user_nam
+ 
+ 	ubifs_release_budget(c, &req);
+ 
+-	return 0;
++	return finish_tmpfile(file);
+ 
+ out_cancel:
+ 	unlock_2_inodes(dir, inode);
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -626,7 +626,7 @@ static int udf_create(struct user_namesp
+ }
+ 
+ static int udf_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode)
++		       struct file *file, umode_t mode)
+ {
+ 	struct inode *inode = udf_new_inode(dir, mode);
+ 
+@@ -640,9 +640,9 @@ static int udf_tmpfile(struct user_names
+ 	inode->i_op = &udf_file_inode_operations;
+ 	inode->i_fop = &udf_file_operations;
+ 	mark_inode_dirty(inode);
+-	d_tmpfile(dentry, inode);
++	d_tmpfile(file->f_path.dentry, inode);
+ 	unlock_new_inode(inode);
+-	return 0;
++	return finish_tmpfile(file);
+ }
+ 
+ static int udf_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1080,10 +1080,15 @@ STATIC int
+ xfs_vn_tmpfile(
+ 	struct user_namespace	*mnt_userns,
+ 	struct inode		*dir,
+-	struct dentry		*dentry,
++	struct file		*file,
+ 	umode_t			mode)
+ {
+-	return xfs_generic_create(mnt_userns, dir, dentry, mode, 0, true);
++	int err = xfs_generic_create(mnt_userns, dir, file->f_path.dentry, mode, 0, true);
++
++	if (err)
++		return err;
++
++	return finish_tmpfile(file);
+ }
+ 
+ static const struct inode_operations xfs_inode_operations = {
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2005,7 +2005,8 @@ static inline int vfs_whiteout(struct us
+ }
+ 
+ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+-			   struct dentry *dentry, umode_t mode, int open_flag);
++			   const struct path *path,
++			   umode_t mode, int open_flag);
+ 
+ int vfs_mkobj(struct dentry *, umode_t,
+ 		int (*f)(struct dentry *, umode_t, void *),
+@@ -2167,7 +2168,7 @@ struct inode_operations {
+ 			   struct file *, unsigned open_flag,
+ 			   umode_t create_mode);
+ 	int (*tmpfile) (struct user_namespace *, struct inode *,
+-			struct dentry *, umode_t);
++			struct file *, umode_t);
+ 	int (*set_acl)(struct user_namespace *, struct inode *,
+ 		       struct posix_acl *, int);
+ 	int (*fileattr_set)(struct user_namespace *mnt_userns,
+@@ -2777,6 +2778,7 @@ extern void putname(struct filename *nam
+ 
+ extern int finish_open(struct file *file, struct dentry *dentry,
+ 			int (*open)(struct inode *, struct file *));
++extern int finish_tmpfile(struct file *file);
+ extern int finish_no_open(struct file *file, struct dentry *dentry);
+ 
+ /* fs/dcache.c */
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2912,7 +2912,7 @@ shmem_mknod(struct user_namespace *mnt_u
+ 
+ static int
+ shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-	      struct dentry *dentry, umode_t mode)
++	      struct file *file, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	int error = -ENOSPC;
+@@ -2927,12 +2927,16 @@ shmem_tmpfile(struct user_namespace *mnt
+ 		error = simple_acl_create(dir, inode);
+ 		if (error)
+ 			goto out_iput;
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file->f_path.dentry, inode);
+ 	}
+-	return error;
++out:
++	if (error)
++		return error;
++
++	return finish_tmpfile(file);
+ out_iput:
+ 	iput(inode);
+-	return error;
++	goto out;
+ }
+ 
+ static int shmem_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
