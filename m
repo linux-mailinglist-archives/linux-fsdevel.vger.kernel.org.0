@@ -2,78 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2208A5ACDBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 10:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298165ACE6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 11:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237615AbiIEIYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 04:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45442 "EHLO
+        id S238016AbiIEI73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Sep 2022 04:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237550AbiIEIYp (ORCPT
+        with ESMTP id S238000AbiIEI7Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 04:24:45 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A8CD7;
-        Mon,  5 Sep 2022 01:24:20 -0700 (PDT)
-Received: from letrec.thunk.org (guestnat-104-133-160-99.corp.google.com [104.133.160.99] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2858NOnQ025716
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 5 Sep 2022 04:23:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1662366211; bh=Opykd4NroLOvUVAS6DC0mH5AVipCgMT0W9fOrq2cA5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=kQY2cNMKCxqeSaFySEG9If6ZtQ8BhheeiKQJIw2xRYU0mwh5KEc4n5fb1xfvPk4CZ
-         mBNdt31pMRPo3WHANZ5/Ldd6KIRnX21xck+7Bwn1Fcrsc5FcAOy78knWuHYTLXAl4g
-         DxocwCUAw/g0qM3+vyInmt7rzH9XEt3Rw96cWfFdL1E5K22280Elx75++itsnVc6Gr
-         BQtWa317FaLTf8L+CdQ4p6Ae6qIlTOrneZoG/Z4wofU62NxWKd3WMtYF7anpMD6LxL
-         vXTuclZkTdheNbZQoIMugvCv3ZQ/q2LRDpdTb2u/xsaul3tZnLnf3enunBF8CgAtMV
-         Liep1iIsFATVw==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id 344298C2B5D; Mon,  5 Sep 2022 04:23:24 -0400 (EDT)
-Date:   Mon, 5 Sep 2022 04:23:24 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Zhang Yi <yi.zhang@huawei.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cluster-devel@redhat.com,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org, jack@suse.cz,
-        akpm@linux-foundation.org, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, rpeterso@redhat.com, agruenba@redhat.com,
-        almaz.alexandrovich@paragon-software.com, mark@fasheh.com,
-        dushistov@mail.ru, hch@infradead.org, chengzhihao1@huawei.com,
-        yukuai3@huawei.com
-Subject: Re: [PATCH v2 06/14] jbd2: replace ll_rw_block()
-Message-ID: <YxWx/E0TIhBMhaq6@mit.edu>
-References: <20220901133505.2510834-1-yi.zhang@huawei.com>
- <20220901133505.2510834-7-yi.zhang@huawei.com>
+        Mon, 5 Sep 2022 04:59:25 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646B7E2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Sep 2022 01:59:20 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id m1so10427899edb.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Sep 2022 01:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date;
+        bh=gDmrQkGmxRWS5lY+fk1/SpL26v085aatdi3bE/bGnp4=;
+        b=npDrubyaGyGK3AC8Nlpm0KA9Z4zOqDr3w8JV3B0A/LgDNbaZBaxAS2LE/tkECiqalq
+         9xfn2sZopyJ2a8pEvSkmj5L8NUwL50yT9kGJWxcxVAiTtIWDVwKp2/5XKk1tHopCf2xN
+         Aibu9Kb4vPK3k2cDDI99XrvSCw4GNL6ZuwW4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=gDmrQkGmxRWS5lY+fk1/SpL26v085aatdi3bE/bGnp4=;
+        b=R4P3Jd4uj11ouSrul2pb83iLt6eP4ouX2CEvslqkOxERZs2/aJiIRBs2cdV+2VbgNE
+         mAWxqw9sTQI1YwHWa/zSAwl2wDA9+POndALmwZ4xcjKfhc9jgq1atsY6JWthImSk3KAU
+         guFh4HXY2yrZ8GDzBjguA8/ff1a8Oquk7DWbAYSIbN9Dzqy4GHY2txRp97d341jpXwAT
+         NlctS59QJuSdoeTtHE/D+4hNZJrKVt4/LGVuaTkghcB21fs2LzPn+jfTJbsZu5EPA8no
+         RC7cLKacM3VAHqLF5ddT8w1ROh09GfF2VWQKuyZaqTks0S58L5WuGco/XwyIpOy6ltjx
+         ztiw==
+X-Gm-Message-State: ACgBeo0T5O47vtNL4l8aEIhHAMSPv1bDFufo6XMwMyP50vMNVLeGI4LF
+        DQsdWFOJe7+WV3de2YBiX6dbhhrQv5TvwU5U0a1vPQdEY6g=
+X-Google-Smtp-Source: AA6agR7svWTVVzA8BYPiTIt1eXKGtRQ79oJVl4zqNxJoUHhoWCefb3roxc5YAeh7oLX5Qi07bBbw/zKz+OFPipFxFvE=
+X-Received: by 2002:a05:6402:4517:b0:443:7fe1:2d60 with SMTP id
+ ez23-20020a056402451700b004437fe12d60mr42841979edb.133.1662368359015; Mon, 05
+ Sep 2022 01:59:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220901133505.2510834-7-yi.zhang@huawei.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 5 Sep 2022 10:59:07 +0200
+Message-ID: <CAJfpegsF1Oohyq942pF0jBxuiybGuP8xab-kvsDU4rbyDRb7xA@mail.gmail.com>
+Subject: switching from FAN_MARK_MOUNT to FAN_MARK_FILESYSTEM
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 09:34:57PM +0800, Zhang Yi wrote:
-> ll_rw_block() is not safe for the sync read path because it cannot
-> guarantee that submitting read IO if the buffer has been locked. We
-> could get false positive EIO after wait_on_buffer() if the buffer has
-> been locked by others. So stop using ll_rw_block() in
-> journal_get_superblock(). We also switch to new bh_readahead_batch()
-> for the buffer array readahead path.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Hi,
 
-Thanks, looks good.
+Is there anything that needs special attention when switching from
+FAN_MARK_MOUNT to FAN_MARK_FILESYSTEM?
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
-
-					- Ted
+Thanks,
+Miklos
