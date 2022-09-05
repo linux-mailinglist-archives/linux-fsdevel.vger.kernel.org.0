@@ -2,81 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A28CD5AD24D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 14:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A755AD22F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 14:14:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236959AbiIEMY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 08:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56628 "EHLO
+        id S237142AbiIEMNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Sep 2022 08:13:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236720AbiIEMY6 (ORCPT
+        with ESMTP id S229984AbiIEMNM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 08:24:58 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7D91409A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Sep 2022 05:24:57 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id w2so11224845edc.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Sep 2022 05:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:from:to:cc:subject:date;
-        bh=OlvjqPRSiBeSvYWvxkkgwXNwTlz+P4TEGE9H4nyU60c=;
-        b=OFdRG1dCmIuk5dLZvILMAQ3Eoq75Zn7qMc4JJnMILJZggA+UZhmt9Qlnja5RXVbFwF
-         LeBEAgS6bvrXIRYL9QRigwm+jltCDyX643M7qpP7N0KeBtvVWMqGlUCIHuHkFboYy9F5
-         ccG7vitbL1o/6P46WSAJcXqTw475ulCs+IP2WtJGk4TpvynEuTdO5PJ0d4v9bMxqAIui
-         JNbsRq5cqm0ppXnG+swf+/CLCtOVDlGcGM16Yg9yHRpiBIbF9Gcupz68PwLgZ1UH5C8g
-         dH753UyUsLilUt4K4pG3wiQbfzqrZVDpb/c39atxfa4ps/FNlogOc6Z6ejkaRzC8KvCg
-         FWFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=OlvjqPRSiBeSvYWvxkkgwXNwTlz+P4TEGE9H4nyU60c=;
-        b=U4DEPwba00NO2yyTqdX/lU/Y/+TWWGRdRZzWUWW9o2GsazWdpPtlNU1gl+YMKk+D0R
-         4RzurB6vIpvK43WTVnVaV1hEyIhKlSCq3cvwDOt3aKLN3SErikkft3Tbs/FN2uPK77zQ
-         v1gauzRBXM2o3g+FCWODFskG42rDfhBPufmerKKZN5BtjGD+iaufiB31UckCKXVY6ugl
-         W3fY21SxCetKD0Jc8aSsKnrI+fsW3OHpQV48eYBTnqDweK71sp4uMKxeVgAKLs9cu+F+
-         yfJcdfuK7CGrde65p7m+WET+JJ9J9ckQNHY2FENy+PVKGT9YZz6Xl7abUsdCv+YcIDya
-         cvEg==
-X-Gm-Message-State: ACgBeo1lTzV3em0rLIHiY1EOWWx5ktNa1+nOpX2VzFKXlhvlJfZNf0s2
-        Y4l/dIX3aTmzv0pSeUTQ+Y67GTu9wW0Cn4grPtI=
-X-Google-Smtp-Source: AA6agR6ADhmHV8wP6m8ktvVnqZM5iB1NBKpHrQHe2qsfJsD4LEc9oJZZ3+x5wVjM+tVak/bSJG81+x6JDPfvQ5ZD/OA=
-X-Received: by 2002:a05:6402:2216:b0:448:79d1:bfbb with SMTP id
- cq22-20020a056402221600b0044879d1bfbbmr30268540edb.16.1662380696193; Mon, 05
- Sep 2022 05:24:56 -0700 (PDT)
+        Mon, 5 Sep 2022 08:13:12 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C2E5E569;
+        Mon,  5 Sep 2022 05:13:08 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MLnPX1LlSzkWwB;
+        Mon,  5 Sep 2022 20:09:20 +0800 (CST)
+Received: from dggpemm100009.china.huawei.com (7.185.36.113) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 5 Sep 2022 20:13:06 +0800
+Received: from huawei.com (10.175.113.32) by dggpemm100009.china.huawei.com
+ (7.185.36.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Mon, 5 Sep
+ 2022 20:13:05 +0800
+From:   Liu Shixin <liushixin2@huawei.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        "Liu Shixin" <liushixin2@huawei.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH] sysctl: remove max_extfrag_threshold
+Date:   Mon, 5 Sep 2022 20:47:24 +0800
+Message-ID: <20220905124724.2233267-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a05:640c:2ac9:b0:17f:79e5:8175 with HTTP; Mon, 5 Sep 2022
- 05:24:55 -0700 (PDT)
-Reply-To: golsonfinancial@gmail.com
-From:   OLSON FINANCIAL GROUP <aminabmuhammad844@gmail.com>
-Date:   Mon, 5 Sep 2022 05:24:55 -0700
-Message-ID: <CAPPxx1S_2vya9cmGE-iFgt8f3Lx3FEURWB0A9x537Eh3H05OUw@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.32]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100009.china.huawei.com (7.185.36.113)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-h Gr=C3=BC=C3=9Fe,
-Ben=C3=B6tigen Sie dringend einen Kredit, um ein Haus oder ein Unternehmen
-zu kaufen? oder ben=C3=B6tigen Sie ein Gesch=C3=A4fts- oder Privatdarlehen,=
- um
-zu investieren? ein neues Gesch=C3=A4ft er=C3=B6ffnen, Rechnungen bezahlen?=
- Und
-zahlen Sie uns Installationen zur=C3=BCck? Wir sind ein zertifiziertes
-Finanzunternehmen. Wir bieten Privatpersonen und Unternehmen Kredite
-an. Wir bieten zuverl=C3=A4ssige Kredite zu einem sehr niedrigen Zinssatz
-von 2 %. F=C3=BCr weitere Informationen
-mailen Sie uns an: golsonfinancial@gmail.com......
+Remove max_extfrag_threshold and replace by SYSCTL_ONE_THOUSAND.
+
+No functional change.
+
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+ kernel/sysctl.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index f10a610aa834..48dbe154d939 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -129,11 +129,6 @@ static enum sysctl_writes_mode sysctl_writes_strict = SYSCTL_WRITES_STRICT;
+ int sysctl_legacy_va_layout;
+ #endif
+ 
+-#ifdef CONFIG_COMPACTION
+-/* min_extfrag_threshold is SYSCTL_ZERO */;
+-static const int max_extfrag_threshold = 1000;
+-#endif
+-
+ #endif /* CONFIG_SYSCTL */
+ 
+ /*
+@@ -2224,7 +2219,7 @@ static struct ctl_table vm_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+-		.extra2		= (void *)&max_extfrag_threshold,
++		.extra2		= SYSCTL_ONE_THOUSAND,
+ 	},
+ 	{
+ 		.procname	= "compact_unevictable_allowed",
+-- 
+2.25.1
+
