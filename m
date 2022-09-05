@@ -2,81 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB355ACE94
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 11:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 927B85ACEA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Sep 2022 11:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237692AbiIEJIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 05:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42670 "EHLO
+        id S236811AbiIEJQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Sep 2022 05:16:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234357AbiIEJIS (ORCPT
+        with ESMTP id S235874AbiIEJQW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 05:08:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA88A4F690;
-        Mon,  5 Sep 2022 02:08:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 620016118A;
-        Mon,  5 Sep 2022 09:08:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A450C433D6;
-        Mon,  5 Sep 2022 09:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662368896;
-        bh=S2p2RLiAi4qCOG2G2v8yboDeC5W0c2K+DwY7rJTXPE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oAodLkEOM0uh9XXgMZ1gMB2ypQ+Jr4jGT+WX2Sm6hs4rY6kJ9FlHK42AISP3LPvO7
-         SuxEXRjHelJGM0mGwfPh9vvheHyViVXD7rAXRukwnMA+suY0Au1gHhS0PnNg4QDK5t
-         4/X5aQPCF/D3rZGiNQO7ij28tAFsmMc4lmm9Om1VX8ZDHdVPUzW2WmnfIEcOwUUgwy
-         szAWlZAncDiemkJdYCu44iFFsYlnajlKlZcYbF+c+UjKz/F/W8dZ8044zugYQbowbz
-         +74P5CeiCLJlb1w4bIAs3Ek+Kh+stJQYQmAzXhyPO6ox2YJ+FDxBVkuONtA1Xy1sFv
-         RHXh8nEE0cnSw==
-Date:   Mon, 5 Sep 2022 11:08:11 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Pitt <mpitt@redhat.com>, Vasily Averin <vvs@openvz.org>
-Subject: Re: [PATCH 0/2] fs: fix capable() call in simple_xattr_list()
-Message-ID: <20220905090811.ocnnc53y2bow7m3i@wittgenstein>
-References: <20220901152632.970018-1-omosnace@redhat.com>
+        Mon, 5 Sep 2022 05:16:22 -0400
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17DDA3C17A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Sep 2022 02:16:22 -0700 (PDT)
+Received: by mail-vs1-xe36.google.com with SMTP id k2so8234440vsk.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Sep 2022 02:16:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=VA5GF8Qf6Ya8yZFliYZv62HNNayZ1Hz818zwJmx6RJU=;
+        b=QoiPGyFTLLwqxWnsnv04swqcscJDpzLUu20RfmXyVGprNRInByEJIqt0md8we3/Dmz
+         3H8Rs/EQawCkchDPlCSQn1hDqN7QVrTO9ggAKYCpNx33mOo5hEiLHzcTOQ+C3V/LxsxH
+         cNPOOpzJBpr2j+I2k5qMA1yWyUAlCUvaPveMz49SGtlrEZ9lEMWDX1gX469SnOzUHbVp
+         u1ZJ43sF8aQWV08qhQLVTs+chAHBRkFdMQd3UUDrJUnj+x09kFH17dkLl3UC7iJbntLQ
+         OvjFdWX8NQ2W6+CZl8GR5lwcYhXa0jP3654jfoK2F8rO19PsEfb5nIaGSV3RvT7rFUiS
+         LmvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=VA5GF8Qf6Ya8yZFliYZv62HNNayZ1Hz818zwJmx6RJU=;
+        b=0k/SzALmshRQG2RGJBd44rkY4j/SMyvpTVBl+DGhK6RSYTJWjJwR4k48c5qN1+G+5C
+         ujry/BNlaKa+QKsgOf0i8ufFDnDzdxIysorfV9FRuSQVvOW3uQ9tN1ImEUZKgVPHlMjd
+         RULPiKG9J9iHlebPARn276pj72P0aAqanzpdsBOec5N7po8/cPtfP7U09tcrLuN3WP2o
+         iRkVjFPssn+t6ZDPFi4a03mSrODQRMa63V6xjYDtJFfYn0Ee0KsvIlq9Cj3qyy63k4oD
+         1t6Y/s3PF6gsqGb/SCv7JRmCMtjgw3uswPQeIr+tDrBvqVUgNzOjRXo43ZMRlkp+8nzC
+         ZiCw==
+X-Gm-Message-State: ACgBeo1KC0nw4e5LSbb69eWwshzSdc2IgSBoNG/OJsVQMs88XQngS9Y2
+        DhVcxa3LVv5hWotpKfO247pvnhOMEbb6iTTVHXA=
+X-Google-Smtp-Source: AA6agR6ffYM8helg7Ylff36CsQdH9WyqAW7mF26IpGnCEH5QpF+vQrRyKXO+ub78W5ffqnC9llYhRvhtlAc7UA+1uKI=
+X-Received: by 2002:a67:a246:0:b0:38c:9563:d2d8 with SMTP id
+ t6-20020a67a246000000b0038c9563d2d8mr13326621vsh.2.1662369381104; Mon, 05 Sep
+ 2022 02:16:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220901152632.970018-1-omosnace@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CAJfpegsF1Oohyq942pF0jBxuiybGuP8xab-kvsDU4rbyDRb7xA@mail.gmail.com>
+In-Reply-To: <CAJfpegsF1Oohyq942pF0jBxuiybGuP8xab-kvsDU4rbyDRb7xA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 5 Sep 2022 12:16:09 +0300
+Message-ID: <CAOQ4uxj309jKiGrGBduoOr17rZXUD25JfHk5cQRus_qpSYBaqQ@mail.gmail.com>
+Subject: Re: switching from FAN_MARK_MOUNT to FAN_MARK_FILESYSTEM
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 05:26:30PM +0200, Ondrej Mosnacek wrote:
-> The goal of these patches is to avoid calling capable() unconditionally
-> in simple_xattr_list(), which causes issues under SELinux (see
-> explanation in the second patch).
-> 
-> The first patch tries to make this change safer by converting
-> simple_xattrs to use the RCU mechanism, so that capable() is not called
-> while the xattrs->lock is held. I didn't find evidence that this is an
-> issue in the current code, but it can't hurt to make that change
-> either way (and it was quite straightforward).
+On Mon, Sep 5, 2022 at 11:59 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> Hi,
+>
+> Is there anything that needs special attention when switching from
+> FAN_MARK_MOUNT to FAN_MARK_FILESYSTEM?
+>
 
-Hey Ondrey,
+Well, if you want to get events from all the mounts then
+switching to FAN_MARK_FILESYSTEM makes sense.
+It also allows you to request more event types.
 
-There's another patchset I'd like to see first which switches from a
-linked list to an rbtree to get rid of performance issues in this code
-that can be used to dos tmpfs in containers:
+The only benefit of FAN_MARK_MOUNT that I can think of
+is that it's the only way to implement a subtree watch in the kernel
+(using a mark on bind mount) in case you can control which mount
+users access from (e.g. container) and if you only care about the
+events that are possible on a mount mark.
 
-https://lore.kernel.org/lkml/d73bd478-e373-f759-2acb-2777f6bba06f@openvz.org
-
-I don't think Vasily has time to continue with this so I'll just pick it
-up hopefully this or the week after LPC.
-
-Christian
+Thanks,
+Amir.
