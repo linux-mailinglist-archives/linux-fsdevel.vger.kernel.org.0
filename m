@@ -2,392 +2,421 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F7D5AF019
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 18:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF505AF03B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 18:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233592AbiIFQQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Sep 2022 12:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34112 "EHLO
+        id S237321AbiIFQUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Sep 2022 12:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232538AbiIFQQK (ORCPT
+        with ESMTP id S234966AbiIFQTs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Sep 2022 12:16:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D26C22;
-        Tue,  6 Sep 2022 08:43:53 -0700 (PDT)
+        Tue, 6 Sep 2022 12:19:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03A3876AF;
+        Tue,  6 Sep 2022 08:48:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 03F9B6147A;
-        Tue,  6 Sep 2022 15:43:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4025DC433D6;
-        Tue,  6 Sep 2022 15:43:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6F4A0B81604;
+        Tue,  6 Sep 2022 15:48:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4F3FC433C1;
+        Tue,  6 Sep 2022 15:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662479032;
-        bh=QSmG++p/09QybC7ELM/h7cbufKIxRZCTacsyXuZKpRg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=CaPHHFmzcnb25wT2OQrJepf2WrntVFZslP12RYLCAvNg+RSrL9nmHtbzEMqTnqKAc
-         G5OZ0B/YUQUFv++BY9qYzR2KuDnf343TfKWKiBwzLLAHUGzAR4AfW9B9pHfeNHJYIK
-         qiFQWTnj8g/3XQEx3DiUSpTthmcP6PeXl5k6GlAqA7xtahw2IMB1vJoPpzzn6g68q/
-         wnHi60DwBS4zBN9WxH51xahY/ZOYYr7auX10ytVpNy0Nitrkcs91wChHxu4FlXopAE
-         GyvxaJSvyeEIU+GGT2EX5ul2KOQHKUIYRzsPrvOkHC+vWp1b80CXay7LQv99VUcCZV
-         Pbl3ilhABe+mQ==
-Message-ID: <47a86f09-3e9b-f841-4191-d750feda6642@kernel.org>
-Date:   Tue, 6 Sep 2022 23:43:47 +0800
+        s=k20201202; t=1662479331;
+        bh=QInHP7Lf/jbBaGHdELi7vvubXOMQMR6CK5a/sn6iRa8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rXxyTeMYPNI4tXBmO29efO9PYPSRFOIePh4KxPm+RzQ/fAZYt+z0PvSGmMfpkmJzg
+         0qLh+pz26/YNtkOsPKcxNcTYCfVjN0IaoOAvusynF6wH1I36KESnZSHaWy6xbhuadm
+         kZKg/CqfqgBz6d6UdcudGCQNUXLEflRvOEtXnyku3zCGXgVA61FoVd9VH9fexF20zy
+         Dcw3CwZ0BxXamPSCL/O6eY/gKO5ZhX5wW0JqeGfV8OwTNcb5htp7nslYDhajzZsjyJ
+         QnQW8nsUvFz4OrQu/Boco0l+Y7MZK7P5OWgK8P5ccvtdX+j1Mkc0baJz9Zd7OCodEh
+         wxrCf0CS43OFw==
+Message-ID: <7a154687f8be9d7a2365ae4a93f2b7f734002904.camel@kernel.org>
+Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-nfs@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dwysocha@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 06 Sep 2022 11:48:48 -0400
+In-Reply-To: <217595.1662033775@warthog.procyon.org.uk>
+References: <217595.1662033775@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] fsverity: stop using PG_error to track
- error status
-Content-Language: en-US
-To:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20220815235052.86545-1-ebiggers@kernel.org>
- <20220815235052.86545-3-ebiggers@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20220815235052.86545-3-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/8/16 7:50, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> As a step towards freeing the PG_error flag for other uses, change ext4
-> and f2fs to stop using PG_error to track verity errors.  Instead, if a
-> verity error occurs, just mark the whole bio as failed.  The coarser
-> granularity isn't really a problem since it isn't any worse than what
-> the block layer provides, and errors from a multi-page readahead aren't
-> reported to applications unless a single-page read fails too.
-> 
-> f2fs supports compression, which makes the f2fs changes a bit more
-> complicated than desired, but the basic premise still works.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Thu, 2022-09-01 at 13:02 +0100, David Howells wrote:
+>    =20
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
+>=20
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation when alloc_fs_context() is creating the fs_context for it.
+>=20
+> However, this uncovers a further bug: nfs_get_root() initialises the
+> superblock security manually by calling security_sb_set_mnt_opts() or
+> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
+> complaining.
+>=20
+> Fix that by adding a flag to the fs_context that suppresses the
+> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NF=
+S
+> when it sets the LSM context on the new superblock.
+>=20
+> The first bug leads to messages like the following appearing in dmesg:
+>=20
+>         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,=
+100000,100000,2ee,3a98,1d4c,3a98,1)
+>=20
+> Changes
+> =3D=3D=3D=3D=3D=3D=3D
+> ver #5)
+>  - Removed unused variable.
+>  - Only allocate smack_mnt_opts if we're dealing with a submount.
+>=20
+> ver #4)
+>  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux o=
+r
+>    Smack.
+>=20
+> ver #3)
+>  - Made LSM parameter extraction dependent on fc->purpose =3D=3D
+>    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+>=20
+> ver #2)
+>  - Added Smack support
+>  - Made LSM parameter extraction dependent on reference !=3D NULL.
+>=20
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() =
+to it.")
+> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> Tested-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> cc: Scott Mayhew <smayhew@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Paul Moore <paul@paul-moore.com>
+> cc: linux-nfs@vger.kernel.org
+> cc: selinux@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.=
+stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137=
+.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.=
+stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.=
+stgit@warthog.procyon.org.uk/ # v4
 > ---
->   fs/ext4/readpage.c |  8 ++----
->   fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
->   fs/f2fs/data.c     | 52 ++++++++++++++++++++-----------------
->   fs/verity/verify.c | 12 ++++-----
->   4 files changed, 68 insertions(+), 68 deletions(-)
-> 
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index 5ce4706f68a7c6..e604ea4e102b71 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -75,14 +75,10 @@ static void __read_end_io(struct bio *bio)
->   	bio_for_each_segment_all(bv, bio, iter_all) {
->   		page = bv->bv_page;
->   
-> -		/* PG_error was set if any post_read step failed */
-> -		if (bio->bi_status || PageError(page)) {
-> +		if (bio->bi_status)
->   			ClearPageUptodate(page);
-> -			/* will re-read again later */
-> -			ClearPageError(page);
-> -		} else {
-> +		else
->   			SetPageUptodate(page);
-> -		}
->   		unlock_page(page);
->   	}
->   	if (bio->bi_private)
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 70e97075e535e5..f54fb3bb74197a 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1715,50 +1715,27 @@ static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
->   	}
->   }
->   
-> -/*
-> - * Update and unlock the cluster's pagecache pages, and release the reference to
-> - * the decompress_io_ctx that was being held for I/O completion.
-> - */
-> -static void __f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
-> -				bool in_task)
-> +static void f2fs_verify_cluster(struct work_struct *work)
->   {
-> +	struct decompress_io_ctx *dic =
-> +		container_of(work, struct decompress_io_ctx, verity_work);
->   	int i;
->   
-> +	/* Verify, update, and unlock the decompressed pages. */
->   	for (i = 0; i < dic->cluster_size; i++) {
->   		struct page *rpage = dic->rpages[i];
->   
->   		if (!rpage)
->   			continue;
->   
-> -		/* PG_error was set if verity failed. */
-> -		if (failed || PageError(rpage)) {
-> -			ClearPageUptodate(rpage);
-> -			/* will re-read again later */
-> -			ClearPageError(rpage);
-> -		} else {
-> +		if (fsverity_verify_page(rpage))
->   			SetPageUptodate(rpage);
-> -		}
-> +		else
-> +			ClearPageUptodate(rpage);
->   		unlock_page(rpage);
->   	}
->   
-> -	f2fs_put_dic(dic, in_task);
-> -}
-> -
-> -static void f2fs_verify_cluster(struct work_struct *work)
-> -{
-> -	struct decompress_io_ctx *dic =
-> -		container_of(work, struct decompress_io_ctx, verity_work);
-> -	int i;
-> -
-> -	/* Verify the cluster's decompressed pages with fs-verity. */
-> -	for (i = 0; i < dic->cluster_size; i++) {
-> -		struct page *rpage = dic->rpages[i];
-> -
-> -		if (rpage && !fsverity_verify_page(rpage))
-> -			SetPageError(rpage);
-> -	}
-> -
-> -	__f2fs_decompress_end_io(dic, false, true);
-> +	f2fs_put_dic(dic, true);
->   }
->   
->   /*
-> @@ -1768,6 +1745,8 @@ static void f2fs_verify_cluster(struct work_struct *work)
->   void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
->   				bool in_task)
->   {
-> +	int i;
+>  fs/fs_context.c               |    4 +++
+>  fs/nfs/getroot.c              |    1=20
+>  fs/super.c                    |   10 ++++---
+>  include/linux/fs_context.h    |    1=20
+>  include/linux/lsm_hook_defs.h |    1=20
+>  include/linux/lsm_hooks.h     |    6 +++-
+>  include/linux/security.h      |    6 ++++
+>  security/security.c           |    5 +++
+>  security/selinux/hooks.c      |   25 +++++++++++++++++++
+>  security/smack/smack_lsm.c    |   54 +++++++++++++++++++++++++++++++++++=
++++++++
+>  10 files changed, 108 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 24ce12f0db32..22248b8a88a8 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct fi=
+le_system_type *fs_type,
+>  		break;
+>  	}
+> =20
+> +	ret =3D security_fs_context_init(fc, reference);
+> +	if (ret < 0)
+> +		goto err_fc;
 > +
->   	if (!failed && dic->need_verity) {
->   		/*
->   		 * Note that to avoid deadlocks, the verity work can't be done
-> @@ -1777,9 +1756,28 @@ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
->   		 */
->   		INIT_WORK(&dic->verity_work, f2fs_verify_cluster);
->   		fsverity_enqueue_verify_work(&dic->verity_work);
-> -	} else {
-> -		__f2fs_decompress_end_io(dic, failed, in_task);
-
-Will it be possible to clean up __f2fs_decompress_end_io() and
-f2fs_verify_cluster(), they looks almost similar...
-
-> +		return;
+>  	/* TODO: Make all filesystems support this unconditionally */
+>  	init_fs_context =3D fc->fs_type->init_fs_context;
+>  	if (!init_fs_context)
+> diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
+> index 11ff2b2e060f..651bffb0067e 100644
+> --- a/fs/nfs/getroot.c
+> +++ b/fs/nfs/getroot.c
+> @@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_con=
+text *fc)
+>  	}
+>  	if (error)
+>  		goto error_splat_root;
+> +	fc->lsm_set =3D true;
+>  	if (server->caps & NFS_CAP_SECURITY_LABEL &&
+>  		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
+>  		server->caps &=3D ~NFS_CAP_SECURITY_LABEL;
+> diff --git a/fs/super.c b/fs/super.c
+> index 734ed584a946..94666c0c92a4 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1552,10 +1552,12 @@ int vfs_get_tree(struct fs_context *fc)
+>  	smp_wmb();
+>  	sb->s_flags |=3D SB_BORN;
+> =20
+> -	error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> -	if (unlikely(error)) {
+> -		fc_drop_locked(fc);
+> -		return error;
+> +	if (!(fc->lsm_set)) {
+> +		error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> +		if (unlikely(error)) {
+> +			fc_drop_locked(fc);
+> +			return error;
+> +		}
+>  	}
+> =20
+>  	/*
+> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+> index 13fa6f3df8e4..3876dd96bb20 100644
+> --- a/include/linux/fs_context.h
+> +++ b/include/linux/fs_context.h
+> @@ -110,6 +110,7 @@ struct fs_context {
+>  	bool			need_free:1;	/* Need to call ops->free() */
+>  	bool			global:1;	/* Goes into &init_user_ns */
+>  	bool			oldapi:1;	/* Coming from mount(2) */
+> +	bool			lsm_set:1;	/* security_sb_set/clone_mnt_opts() already done */
+>  };
+> =20
+>  struct fs_context_operations {
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 60fff133c0b1..a0cf11cfce8d 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_bin=
+prm *bprm, struct file *f
+>  LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+>  LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm =
+*bprm)
+>  LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *=
+bprm)
+> +LSM_HOOK(int, 0, fs_context_init, struct fs_context *fc, struct dentry *=
+reference)
+>  LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+>  	 struct fs_context *src_sc)
+>  LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 3aa6030302f5..099528f6a91c 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -87,8 +87,12 @@
+>   * Security hooks for mount using fs_context.
+>   *	[See also Documentation/filesystems/mount_api.rst]
+>   *
+> + * @fs_context_init:
+> + *	Initialise fc->security.  This is initialised to NULL by the caller.
+> + *	@fc indicates the new filesystem context.
+> + *	@dentry indicates a reference for submount/remount
+>   * @fs_context_dup:
+> - *	Allocate and attach a security structure to sc->security.  This point=
+er
+> + *	Allocate and attach a security structure to fc->security.  This point=
+er
+>   *	is initialised to NULL by the caller.
+>   *	@fc indicates the new filesystem context.
+>   *	@src_fc indicates the original filesystem context.
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7bd0c490703d..eb865af42b36 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -291,6 +291,7 @@ int security_bprm_creds_from_file(struct linux_binprm=
+ *bprm, struct file *file);
+>  int security_bprm_check(struct linux_binprm *bprm);
+>  void security_bprm_committing_creds(struct linux_binprm *bprm);
+>  void security_bprm_committed_creds(struct linux_binprm *bprm);
+> +int security_fs_context_init(struct fs_context *fc, struct dentry *refer=
+ence);
+>  int security_fs_context_dup(struct fs_context *fc, struct fs_context *sr=
+c_fc);
+>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_par=
+ameter *param);
+>  int security_sb_alloc(struct super_block *sb);
+> @@ -622,6 +623,11 @@ static inline void security_bprm_committed_creds(str=
+uct linux_binprm *bprm)
+>  {
+>  }
+> =20
+> +static inline int security_fs_context_init(struct fs_context *fc,
+> +					   struct dentry *reference)
+> +{
+> +	return 0;
+> +}
+>  static inline int security_fs_context_dup(struct fs_context *fc,
+>  					  struct fs_context *src_fc)
+>  {
+> diff --git a/security/security.c b/security/security.c
+> index 4b95de24bc8d..d04d01a57ee2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -880,6 +880,11 @@ void security_bprm_committed_creds(struct linux_binp=
+rm *bprm)
+>  	call_void_hook(bprm_committed_creds, bprm);
+>  }
+> =20
+> +int security_fs_context_init(struct fs_context *fc, struct dentry *refer=
+ence)
+> +{
+> +	return call_int_hook(fs_context_init, 0, fc, reference);
+> +}
+> +
+>  int security_fs_context_dup(struct fs_context *fc, struct fs_context *sr=
+c_fc)
+>  {
+>  	return call_int_hook(fs_context_dup, 0, fc, src_fc);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 03bca97c8b29..9b48d15c9eab 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2766,6 +2766,30 @@ static int selinux_umount(struct vfsmount *mnt, in=
+t flags)
+>  				   FILESYSTEM__UNMOUNT, NULL);
+>  }
+> =20
+> +static int selinux_fs_context_init(struct fs_context *fc,
+> +				   struct dentry *reference)
+> +{
+> +	const struct superblock_security_struct *sbsec;
+> +	struct selinux_mnt_opts *opts;
+> +
+> +	if (fc->purpose =3D=3D FS_CONTEXT_FOR_SUBMOUNT) {
+> +		opts =3D kzalloc(sizeof(*opts), GFP_KERNEL);
+> +		if (!opts)
+> +			return -ENOMEM;
+> +
+> +		sbsec =3D selinux_superblock(reference->d_sb);
+> +		if (sbsec->flags & FSCONTEXT_MNT)
+> +			opts->fscontext_sid	=3D sbsec->sid;
+> +		if (sbsec->flags & CONTEXT_MNT)
+> +			opts->context_sid	=3D sbsec->mntpoint_sid;
+> +		if (sbsec->flags & DEFCONTEXT_MNT)
+> +			opts->defcontext_sid	=3D sbsec->def_sid;
+> +		fc->security =3D opts;
 > +	}
 > +
-> +	/* Update and unlock the cluster's pagecache pages. */
-> +	for (i = 0; i < dic->cluster_size; i++) {
-> +		struct page *rpage = dic->rpages[i];
+> +	return 0;
+> +}
 > +
-> +		if (!rpage)
-> +			continue;
-> +
-> +		if (failed)
-> +			ClearPageUptodate(rpage);
-> +		else
-> +			SetPageUptodate(rpage);
-> +		unlock_page(rpage);
->   	}
-> +
-> +	/*
-> +	 * Release the reference to the decompress_io_ctx that was being held
-> +	 * for I/O completion.
-> +	 */
-> +	f2fs_put_dic(dic, in_task);
->   }
->   
->   /*
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 93cc2ec51c2aeb..34af260975a2e6 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -119,34 +119,41 @@ struct bio_post_read_ctx {
->   	block_t fs_blkaddr;
->   };
->   
-> -static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
-> +/*
-> + * Update and unlock a bio's pages, and free the bio.
+>  static int selinux_fs_context_dup(struct fs_context *fc,
+>  				  struct fs_context *src_fc)
+>  {
+> @@ -7260,6 +7284,7 @@ static struct security_hook_list selinux_hooks[] __=
+lsm_ro_after_init =3D {
+>  	/*
+>  	 * PUT "CLONING" (ACCESSING + ALLOCATING) HOOKS HERE
+>  	 */
+> +	LSM_HOOK_INIT(fs_context_init, selinux_fs_context_init),
+>  	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
+>  	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
+>  	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index bffccdc494cb..3396ecebd791 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -613,6 +613,59 @@ static int smack_add_opt(int token, const char *s, v=
+oid **mnt_opts)
+>  	return -EINVAL;
+>  }
+> =20
+> +/**
+> + * smack_fs_context_init - Initialise security data for a filesystem con=
+text
+> + * @fc: The filesystem context.
+> + * @reference: Reference dentry (automount/reconfigure) or NULL
 > + *
-> + * This marks pages up-to-date only if there was no error in the bio (I/O error,
-> + * decryption error, or verity error), as indicated by bio->bi_status.
-> + *
-> + * "Compressed pages" (pagecache pages backed by a compressed cluster on-disk)
-> + * aren't marked up-to-date here, as decompression is done on a per-compression-
-> + * cluster basis rather than a per-bio basis.  Instead, we only must do two
-> + * things for each compressed page here: call f2fs_end_read_compressed_page()
-> + * with failed=true if an error occurred before it would have normally gotten
-> + * called (i.e., I/O error or decryption error, but *not* verity error), and
-> + * release the bio's reference to the decompress_io_ctx of the page's cluster.
+> + * Returns 0 on success or -ENOMEM on error.
 > + */
-> +static void f2fs_finish_read_bio(struct bio *bio, bool in_task,
-> +				 bool fail_compressed)
+> +static int smack_fs_context_init(struct fs_context *fc,
+> +				 struct dentry *reference)
+> +{
+> +	struct superblock_smack *sbsp;
+> +	struct smack_mnt_opts *ctx;
+> +	struct inode_smack *isp;
+> +
+> +	if (fc->purpose =3D=3D FS_CONTEXT_FOR_SUBMOUNT) {
+> +		ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +		if (!ctx)
+> +			return -ENOMEM;
+> +		fc->security =3D ctx;
+> +
+> +		sbsp =3D smack_superblock(reference->d_sb);
+> +		isp =3D smack_inode(reference->d_sb->s_root->d_inode);
+> +
+> +		if (sbsp->smk_default) {
+> +			ctx->fsdefault =3D kstrdup(sbsp->smk_default->smk_known, GFP_KERNEL);
+> +			if (!ctx->fsdefault)
+> +				return -ENOMEM;
 
-Not sure, fail_decompress or fail_decompression may looks more readable?
+If this or the other allocations below fail, do you need to free the
+prior ones here? Or do they automagically get cleaned up somehow?
 
-Thanks,
-
->   {
->   	struct bio_vec *bv;
->   	struct bvec_iter_all iter_all;
->   
-> -	/*
-> -	 * Update and unlock the bio's pagecache pages, and put the
-> -	 * decompression context for any compressed pages.
-> -	 */
->   	bio_for_each_segment_all(bv, bio, iter_all) {
->   		struct page *page = bv->bv_page;
->   
->   		if (f2fs_is_compressed_page(page)) {
-> -			if (bio->bi_status)
-> +			if (fail_compressed)
->   				f2fs_end_read_compressed_page(page, true, 0,
->   							in_task);
->   			f2fs_put_page_dic(page, in_task);
->   			continue;
->   		}
->   
-> -		/* PG_error was set if verity failed. */
-> -		if (bio->bi_status || PageError(page)) {
-> +		if (bio->bi_status)
->   			ClearPageUptodate(page);
-> -			/* will re-read again later */
-> -			ClearPageError(page);
-> -		} else {
-> +		else
->   			SetPageUptodate(page);
-> -		}
->   		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
->   		unlock_page(page);
->   	}
-> @@ -185,14 +192,17 @@ static void f2fs_verify_bio(struct work_struct *work)
->   			struct page *page = bv->bv_page;
->   
->   			if (!f2fs_is_compressed_page(page) &&
-> -			    !fsverity_verify_page(page))
-> -				SetPageError(page);
-> +			    !fsverity_verify_page(page)) {
-> +				bio->bi_status = BLK_STS_IOERR;
-> +				break;
-> +			}
->   		}
->   	} else {
->   		fsverity_verify_bio(bio);
->   	}
->   
-> -	f2fs_finish_read_bio(bio, true);
-> +	f2fs_finish_read_bio(bio, true /* in_task */,
-> +			     false /* fail_compressed */);
->   }
->   
->   /*
-> @@ -212,7 +222,7 @@ static void f2fs_verify_and_finish_bio(struct bio *bio, bool in_task)
->   		INIT_WORK(&ctx->work, f2fs_verify_bio);
->   		fsverity_enqueue_verify_work(&ctx->work);
->   	} else {
-> -		f2fs_finish_read_bio(bio, in_task);
-> +		f2fs_finish_read_bio(bio, in_task, false /* fail_compressed */);
->   	}
->   }
->   
-> @@ -261,7 +271,8 @@ static void f2fs_post_read_work(struct work_struct *work)
->   	struct bio *bio = ctx->bio;
->   
->   	if ((ctx->enabled_steps & STEP_DECRYPT) && !fscrypt_decrypt_bio(bio)) {
-> -		f2fs_finish_read_bio(bio, true);
-> +		f2fs_finish_read_bio(bio, true /* in_task */,
-> +				     true /* fail_compressed */);
->   		return;
->   	}
->   
-> @@ -286,7 +297,7 @@ static void f2fs_read_end_io(struct bio *bio)
->   	}
->   
->   	if (bio->bi_status) {
-> -		f2fs_finish_read_bio(bio, intask);
-> +		f2fs_finish_read_bio(bio, intask, true /* fail_compressed */);
->   		return;
->   	}
->   
-> @@ -1083,7 +1094,6 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
->   		bio_put(bio);
->   		return -EFAULT;
->   	}
-> -	ClearPageError(page);
->   	inc_page_count(sbi, F2FS_RD_DATA);
->   	f2fs_update_iostat(sbi, FS_DATA_READ_IO, F2FS_BLKSIZE);
->   	__submit_bio(sbi, bio, DATA);
-> @@ -2125,7 +2135,6 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->   
->   	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
->   	f2fs_update_iostat(F2FS_I_SB(inode), FS_DATA_READ_IO, F2FS_BLKSIZE);
-> -	ClearPageError(page);
->   	*last_block_in_bio = block_nr;
->   	goto out;
->   out:
-> @@ -2274,7 +2283,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->   		inc_page_count(sbi, F2FS_RD_DATA);
->   		f2fs_update_iostat(sbi, FS_DATA_READ_IO, F2FS_BLKSIZE);
->   		f2fs_update_iostat(sbi, FS_CDATA_READ_IO, F2FS_BLKSIZE);
-> -		ClearPageError(page);
->   		*last_block_in_bio = blkaddr;
->   	}
->   
-> @@ -2291,7 +2299,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->   	for (i = 0; i < cc->cluster_size; i++) {
->   		if (cc->rpages[i]) {
->   			ClearPageUptodate(cc->rpages[i]);
-> -			ClearPageError(cc->rpages[i]);
->   			unlock_page(cc->rpages[i]);
->   		}
->   	}
-> @@ -2388,7 +2395,6 @@ static int f2fs_mpage_readpages(struct inode *inode,
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
->   set_error_page:
->   #endif
-> -			SetPageError(page);
->   			zero_user_segment(page, 0, PAGE_SIZE);
->   			unlock_page(page);
->   		}
-> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-> index 14e2fb49cff561..556dfbd4698dea 100644
-> --- a/fs/verity/verify.c
-> +++ b/fs/verity/verify.c
-> @@ -210,9 +210,8 @@ EXPORT_SYMBOL_GPL(fsverity_verify_page);
->    * @bio: the bio to verify
->    *
->    * Verify a set of pages that have just been read from a verity file.  The pages
-> - * must be pagecache pages that are still locked and not yet uptodate.  Pages
-> - * that fail verification are set to the Error state.  Verification is skipped
-> - * for pages already in the Error state, e.g. due to fscrypt decryption failure.
-> + * must be pagecache pages that are still locked and not yet uptodate.  If a
-> + * page fails verification, then bio->bi_status is set to an error status.
->    *
->    * This is a helper function for use by the ->readahead() method of filesystems
->    * that issue bios to read data directly into the page cache.  Filesystems that
-> @@ -254,9 +253,10 @@ void fsverity_verify_bio(struct bio *bio)
->   		unsigned long level0_ra_pages =
->   			min(max_ra_pages, params->level0_blocks - level0_index);
->   
-> -		if (!PageError(page) &&
-> -		    !verify_page(inode, vi, req, page, level0_ra_pages))
-> -			SetPageError(page);
-> +		if (!verify_page(inode, vi, req, page, level0_ra_pages)) {
-> +			bio->bi_status = BLK_STS_IOERR;
-> +			break;
 > +		}
->   	}
->   
->   	fsverity_free_hash_request(params->hash_alg, req);
+> +
+> +		if (sbsp->smk_floor) {
+> +			ctx->fsfloor =3D kstrdup(sbsp->smk_floor->smk_known, GFP_KERNEL);
+> +			if (!ctx->fsfloor)
+> +				return -ENOMEM;
+> +		}
+> +
+> +		if (sbsp->smk_hat) {
+> +			ctx->fshat =3D kstrdup(sbsp->smk_hat->smk_known, GFP_KERNEL);
+> +			if (!ctx->fshat)
+> +				return -ENOMEM;
+> +		}
+> +
+> +		if (isp->smk_flags & SMK_INODE_TRANSMUTE) {
+> +			if (sbsp->smk_root) {
+> +				ctx->fstransmute =3D kstrdup(sbsp->smk_root->smk_known, GFP_KERNEL);
+> +				if (!ctx->fstransmute)
+> +					return -ENOMEM;
+> +			}
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * smack_fs_context_dup - Duplicate the security data on fs_context dupl=
+ication
+>   * @fc: The new filesystem context.
+> @@ -4779,6 +4832,7 @@ static struct security_hook_list smack_hooks[] __ls=
+m_ro_after_init =3D {
+>  	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+>  	LSM_HOOK_INIT(syslog, smack_syslog),
+> =20
+> +	LSM_HOOK_INIT(fs_context_init, smack_fs_context_init),
+>  	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
+>  	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
+> =20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
