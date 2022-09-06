@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C975ADFE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 08:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F595ADFFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 08:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238454AbiIFGgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Sep 2022 02:36:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
+        id S238560AbiIFGh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Sep 2022 02:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238420AbiIFGgX (ORCPT
+        with ESMTP id S238536AbiIFGh6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Sep 2022 02:36:23 -0400
+        Tue, 6 Sep 2022 02:37:58 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 569494622B;
-        Mon,  5 Sep 2022 23:36:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC99A70E63;
+        Mon,  5 Sep 2022 23:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kFNZmmVwOhX3BjOPJ3tln3iTlg4hrSY3aWoS1Dwfdhg=; b=yGw6sWaI79F1sxKkVQaLBqfkMn
-        ciPMa49hRCEsXC2e6QaC54/IVuW1x7URn7p9FAd8AYvAjhg/l+1gdoUkyxzOIxNQSBREX9xh7Ddi7
-        q2c0xDaqVAW+qvoITRmcqt4ZgncEoEdCsyZ+if/g0K63wSpNDe759gtusSOfiypyV3ckYrrwNjqKy
-        fw+hMWUso0tMaAGn4D5npZ88RTr1mhqS1sde0A6s/XS2WYHo+CKamVL67MufxQdIBBU7Cql8EAIJ8
-        2S3PpJWk6hCoYJk1DgBfZbJROPvkE3hHk70QgGadjMpxViBoTBeQ/LLfjrtGr9lkOg7brY3tIdMCT
-        o3mXVCUA==;
+        bh=yz1groZiQ8kjjeKmvdd6+3CCz4QHr1M3PU+Sq/EGT5I=; b=g0lvSrRuEPdbtKutLHr0dYl28F
+        jHL8qXWrjbzihVvmA3F7HVDsCF22xmQpMxhj8k4OZ1zAAk+8dx9ZXj9uaMBRiWfQifPpH8ho+CW1A
+        O5Oo0EmadRFkzpIJHTDc4jmdcwkt+BvCHL3SBqNGL7IUqpoPNRun0rf+a9oEQ5XtOwI8btB98YOwO
+        YJUhfVBC8HbI3+biJgCBTfuPYoyZ/QqKAaMtTTxPgybbpmsn7FP9uW7Hmeh2w5phQ63/f13P/zRTP
+        8TZi141F5pw+lYCZa8JcV/xMZwXahgQdgQPrdsGpNPGzXZQJqgXFLr/NawXbFx26/5+2gxXZU1DaV
+        A/G17Abw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oVSBm-00AS9k-Lz; Tue, 06 Sep 2022 06:36:02 +0000
-Date:   Mon, 5 Sep 2022 23:36:02 -0700
+        id 1oVSDQ-00AT55-C5; Tue, 06 Sep 2022 06:37:44 +0000
+Date:   Mon, 5 Sep 2022 23:37:44 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -43,13 +43,14 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/7] convert most filesystems to pin_user_pages_fast()
-Message-ID: <YxbqUvDJ/rJsLMPZ@infradead.org>
+Subject: Re: [PATCH v2 2/7] mm/gup: introduce pin_user_page()
+Message-ID: <YxbquGs0QN3BRw4I@infradead.org>
 References: <20220831041843.973026-1-jhubbard@nvidia.com>
+ <20220831041843.973026-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220831041843.973026-1-jhubbard@nvidia.com>
+In-Reply-To: <20220831041843.973026-3-jhubbard@nvidia.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
@@ -61,13 +62,5 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 30, 2022 at 09:18:36PM -0700, John Hubbard wrote:
-> The conversion is temporarily guarded by
-> CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO. In the future (not part of this
-> series), when we are certain that all filesystems have converted their
-> Direct IO paths to FOLL_PIN, then we can do the final step, which is to
-> get rid of CONFIG_BLK_USE_PIN_USER_PAGES_FOR_DIO and search-and-replace
-> the dio_w_*() functions with their final names (see bvec.h changes).
-
-What is the the point of these wrappers?  We should be able to
-convert one caller at a time in an entirely safe way.
+No need to export this, it really is an internal helper for
+the iov_iter code.
