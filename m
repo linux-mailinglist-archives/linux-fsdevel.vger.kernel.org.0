@@ -2,67 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1BC5AF570
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 22:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD1C5AF6A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 23:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbiIFUHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Sep 2022 16:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53112 "EHLO
+        id S230093AbiIFVJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Sep 2022 17:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbiIFUHI (ORCPT
+        with ESMTP id S229673AbiIFVJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Sep 2022 16:07:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE080B959D;
-        Tue,  6 Sep 2022 13:02:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 6 Sep 2022 17:09:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F533AFAFA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Sep 2022 14:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662498557;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=WCO5+s9TYggaCmf9Mqg92lGhKjcPJhftqzaa6O2dwfw=;
+        b=cCj8du2BmaclcPQlHgRXt68tyHkF9ychCv+boO7zgeaTXXwqR03FfsXfaURzwpLoLHYUPH
+        ipf+DByAxaL17S1b4y+CWuaoWbylku/gI5xsbY0R7da2p/xAI0JrI1PJweKEK4L0Wnel2z
+        Y9/h4BY5W7yYko9cuZMf4YpTdVoXDhw=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-393-s_ErBx-ENEGZNspZxiSF7Q-1; Tue, 06 Sep 2022 17:09:14 -0400
+X-MC-Unique: s_ErBx-ENEGZNspZxiSF7Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B8D72616BD;
-        Tue,  6 Sep 2022 19:55:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03CE8C433C1;
-        Tue,  6 Sep 2022 19:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662494115;
-        bh=6i7lr427IxGhPiuy5/6nMg/d/7/AE1l1MM7NVDF5UqY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YG/66iew6yKNxCZmbqO9wPKHaC/GKiFAw6fUHNDCW6B7DrRgsPn8qgmvQUSU8qo/5
-         bAUbpKZHZfW4ktDB94hHO5uo1dxrPiW82iUM2MXU0vpNZGOIbNhJTSfet8L6m7nCb7
-         Z5WGNxaXZmIkeqqVEXIbvsXJ/hvfnhhCPBvhclUGpsPXNoF497bUGKu7CBlPu4QTo0
-         JsV9FwvY9YHEY5B+fD7j1Ylt+LsZHg0jUuq6jLhqfG9h1zQGsjpzWo2ttwk63P1Ntl
-         kAe8/qEbeMhiuSOoLnYRqRDASb8qLiOzmFKmsTryIN67zxqKsgm+xtqn3j4sY7RbJH
-         Rx2qxA0DqucJg==
-Message-ID: <826554795cafa9495f13e08109682f939d71b92d.camel@kernel.org>
-Subject: Re: [RFC PATCH v2] statx, inode: document the new STATX_INO_VERSION
- field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Florian Weimer <fweimer@redhat.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, djwong@kernel.org, david@fromorbit.com,
-        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, brauner@kernel.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Date:   Tue, 06 Sep 2022 15:55:11 -0400
-In-Reply-To: <20220906192937.GE25323@fieldses.org>
-References: <20220901121714.20051-1-jlayton@kernel.org>
-         <874jxrqdji.fsf@oldenburg.str.redhat.com>
-         <81e57e81e4570d1659098f2bbc7c9049a605c5e8.camel@kernel.org>
-         <87ilm066jh.fsf@oldenburg.str.redhat.com>
-         <d1ee62062c3f805460b7bdf2776e759be4dba43f.camel@kernel.org>
-         <b8b0c5adc6598c57fb109447e3bc54492b54c36a.camel@kernel.org>
-         <20220906192937.GE25323@fieldses.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2CF073C1068B;
+        Tue,  6 Sep 2022 21:09:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F83840CF8ED;
+        Tue,  6 Sep 2022 21:09:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
+        jaltman@auristor.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Return -EAGAIN, not -EREMOTEIO, when a file already locked
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <390.1662498551.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 06 Sep 2022 22:09:11 +0100
+Message-ID: <391.1662498551@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,65 +64,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-09-06 at 15:29 -0400, J. Bruce Fields wrote:
-> On Tue, Sep 06, 2022 at 01:04:05PM -0400, Jeff Layton wrote:
-> > On Tue, 2022-09-06 at 12:41 -0400, Jeff Layton wrote:
-> > > On Tue, 2022-09-06 at 14:17 +0200, Florian Weimer wrote:
-> > > > * Jeff Layton:
-> > > >=20
-> > > > > All of the existing implementations use all 64 bits. If you were =
-to
-> > > > > increment a 64 bit value every nanosecond, it will take >500 year=
-s for
-> > > > > it to wrap. I'm hoping that's good enough. ;)
-> > > > >=20
-> > > > > The implementation that all of the local Linux filesystems use tr=
-ack
-> > > > > whether the value has been queried using one bit, so there you on=
-ly get
-> > > > > 63 bits of counter.
-> > > > >=20
-> > > > > My original thinking here was that we should leave the spec "loos=
-e" to
-> > > > > allow for implementations that may not be based on a counter. E.g=
-. could
-> > > > > some filesystem do this instead by hashing certain metadata?
-> > > >=20
-> > > > Hashing might have collisions that could be triggered deliberately,=
- so
-> > > > probably not a good idea.  It's also hard to argue that random
-> > > > collisions are unlikely.
-> > > >=20
-> > >=20
-> > > In principle, if a filesystem could guarantee enough timestamp
-> > > resolution, it's possible collisions could be hard to achieve. It's a=
-lso
-> > > possible you could factor in other metadata that wasn't necessarily
-> > > visible to userland to try and ensure uniqueness in the counter.
-> > >=20
-> > > Still...
->=20
-> I've got one other nagging worry, about the ordering of change attribute
-> updates with respect to their corresponding changes.  I think with
-> current implementations it's possible that the only change attribute
-> update(s) may happen while the old file data is still visible, which
-> means a concurrent reader could cache the old data with the new change
-> attribute, and be left with a stale cache indefinitely.
->=20
+Hi Linus,
 
-Yeah, that's a potential issue. The i_version is updated in
-inode_update_time, which does happen before the write to the pagecache.
+Can you apply this please?
 
-We should probably add a note to the manpage that one should not expect
-any sort of atomicity between the change to the inode and the change in
-the value. I'm not sure we can offer much in the way of mitigation for
-that problem, otherwise.
+Thanks,
+David
+---
+afs: Return -EAGAIN, not -EREMOTEIO, when a file already locked
 
-> For the purposes of close-to-open semantics I think that's not a
-> problem, though.
->=20
-> There may be some previous discussion of this in mailing list archives.
->=20
+When trying to get a file lock on an AFS file, the server may return
+UAEAGAIN to indicate that the lock is already held.  This is currently
+translated by the default path to -EREMOTEIO.  Translate it instead to
+-EAGAIN so that we know we can retry it.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey E Altman <jaltman@auristor.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/166075761334.3533338.2591992675160918098.s=
+tgit@warthog.procyon.org.uk/
+---
+ fs/afs/misc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/afs/misc.c b/fs/afs/misc.c
+index 933e67fcdab1..805328ca5428 100644
+--- a/fs/afs/misc.c
++++ b/fs/afs/misc.c
+@@ -69,6 +69,7 @@ int afs_abort_to_error(u32 abort_code)
+ 		/* Unified AFS error table */
+ 	case UAEPERM:			return -EPERM;
+ 	case UAENOENT:			return -ENOENT;
++	case UAEAGAIN:			return -EAGAIN;
+ 	case UAEACCES:			return -EACCES;
+ 	case UAEBUSY:			return -EBUSY;
+ 	case UAEEXIST:			return -EEXIST;
+
