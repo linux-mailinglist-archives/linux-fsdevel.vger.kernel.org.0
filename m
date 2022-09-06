@@ -2,113 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F975ADC41
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 02:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC9F5ADC5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 02:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbiIFAS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 20:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47876 "EHLO
+        id S232924AbiIFA3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Sep 2022 20:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbiIFAS5 (ORCPT
+        with ESMTP id S229575AbiIFA3V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 20:18:57 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5A085C962
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Sep 2022 17:18:55 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id mj6so9645482pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Sep 2022 17:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=QfYqb6Pfw/hN4JPJ05FBEV50HBSGkGyPNi9iiQG7nRw=;
-        b=ld4zch2mgovaLAdB8N98ih+6dYvI8qBpwLRLtjNUDXeImKkqFWB254xBhy80F0U90A
-         J+yZQRYLuP0Jo0Mk4yML1TKUKTk4jEDPAOUEP0c5+yqaqhTQ7+gOhuufyatvIfqzg0BU
-         d51A5BQHmMl/s8AQIKgv1IR+4ol+H/BXs6JEZtb4Swr9u9DXePXU/BvNKH7l3CIBjpu3
-         /8dasrmmcoD2uYWsFEenjdP0uA9ZA4SxjaxZhym5FeSGQJkADFqbpqEmWC82AjcP9iKc
-         1NfcpSGj9hkQFNFfw2zrIOCfADCzsT/D3pikpqUQo60TyPiILNt9xpxLMpKu3gGjb8Lt
-         Rc5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=QfYqb6Pfw/hN4JPJ05FBEV50HBSGkGyPNi9iiQG7nRw=;
-        b=QGC32eX/gIrd+VGBn4ppKfOKWcKifNRfWZ9DJs0wP3+PUCCRhfbuEKFlgrcpqsvMsR
-         i54jM1/kgoc23nrFdPU8NkZK2aAV06AZe+2Z/mkjsO8tT5+Ir9oZ+IRtPLQBcWO+tS2H
-         UzHaCe+RGPE/0NP8M+ArSiVlLbcKZEfyn5gpcH+hZjcpoZ6Fxa6YJL1YISLm2k0U775x
-         zsAo3LQyB87WHtp735xHtBhtk/OgCznExX7rE7r7AAW7CxUuxfu2PcsOP9j2b/xVRsOI
-         Bd6GapQuDAeZSmLAHJ6FgpAPXjBAgnpjyAaW7Aqk1bUTr4SpoQ3BIf0O0+4jiDXKQi+M
-         ZCaQ==
-X-Gm-Message-State: ACgBeo142v1vY+E0O50a+fGYUFF+KayzbzgbGsql9b419CtyE2dcfE8n
-        8b7EwLRazwNuqcNHWiDCrvSqeQ==
-X-Google-Smtp-Source: AA6agR6jxIENBgUBR97NH/krn8jJvwlo5786QKZ2UpSO6xuS9EB3TrYsrTPQOCKgXQVdaJ7TxrILOA==
-X-Received: by 2002:a17:90a:7e87:b0:1fe:4d96:f6f6 with SMTP id j7-20020a17090a7e8700b001fe4d96f6f6mr21348991pjl.142.1662423535323;
-        Mon, 05 Sep 2022 17:18:55 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170902c24500b0016dc78d0153sm219209plg.296.2022.09.05.17.18.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 17:18:54 -0700 (PDT)
-Message-ID: <55a2d67f-9a12-9fe6-d73b-8c3f5eb36f31@kernel.dk>
-Date:   Mon, 5 Sep 2022 18:18:53 -0600
+        Mon, 5 Sep 2022 20:29:21 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D62A67C97;
+        Mon,  5 Sep 2022 17:29:19 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2860PN84029388;
+        Tue, 6 Sep 2022 00:29:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=uoUrYGZzi+3lSG2HVCqGrSprixecUzyMBFpaMPP/HDI=;
+ b=CdBJFs7Wmbr2Uzueb6exfhqNDJTk+c6uE8PHebVUAbul6nVJ86PHGCt9PtmAjopVwgry
+ 5bDPExXYuzlNHITEaKYUL1+ggpil7VLO0kZSg4JrWNMAY5/1Nnm5OHk/zxEWx/o8R+PK
+ Hb/yyloG2CSwaUWp3m5Xc070gCH1RWFfXaIFEf19xHDeOmIsBWtsLwbeg+B2U7NnTtIr
+ +98fBsQr1Qp3Q4H86yW+jcS81Wi4FzgobVhQICtdhIC4kPGwGZkOxc+T347T9X3Qw7mC
+ l7dFXO4e8aIC+Nzh8dZTTjUFpzDaH9gEPIBUqWJVlS25hfx6IpFvl+xNkYu4hwZpnPQp xQ== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jcgu4uqg0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Sep 2022 00:29:16 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2860TFDt001872
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 6 Sep 2022 00:29:15 GMT
+Received: from [10.232.65.248] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 5 Sep 2022
+ 17:29:14 -0700
+Message-ID: <29577961-be15-3c33-c8db-5a92405a87f8@quicinc.com>
+Date:   Tue, 6 Sep 2022 08:29:11 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: New topic branch for block + gup work?
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.3
+Subject: Re: [PATCH] fuse: fix the deadlock in race of reclaim path with
+ kswapd
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     <linux-fsdevel@vger.kernel.org>, <quic_maow@quicinc.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20220905071744.8350-1-quic_yingangl@quicinc.com>
+ <CAJfpegs6Jbr8eF9ZNycEjfCtJNVQJECjFnOC9-v8WSXHvpWxCg@mail.gmail.com>
 Content-Language: en-US
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <86266dcc-d475-7cd4-77dc-a8ba6f11620b@nvidia.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <86266dcc-d475-7cd4-77dc-a8ba6f11620b@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From:   Kassey Li <quic_yingangl@quicinc.com>
+In-Reply-To: <CAJfpegs6Jbr8eF9ZNycEjfCtJNVQJECjFnOC9-v8WSXHvpWxCg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ojOd_1wwjhAHQb9mvvW03n801jW1Wy_t
+X-Proofpoint-ORIG-GUID: ojOd_1wwjhAHQb9mvvW03n801jW1Wy_t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-05_16,2022-09-05_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 clxscore=1015 mlxlogscore=576
+ adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2209060000
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/5/22 5:16 PM, John Hubbard wrote:
-> Hi Jens,
-> 
-> After you suggested a topic branch [1] as a way to address the recent
-> bio_map_user_iov() conflict in linux-next, I've reviewed a few more
-> patchsets in mm, and am now starting to suspect that a topic branch
-> would be ideal here.
-> 
-> Logan's "Userspace P2PDMA with O_DIRECT NVMe devices" series [2], my
-> "convert most filesystems to pin_user_pages_fast()" series [3], and the
-> block layer change from [1], all conflict in iov_iter*, and in
-> bio_map_user_iov().
-> 
-> Less of an issue but still worth considering, Dan's "Fix the DAX-gup
-> mistake" series [4] conflicts in gup.c, too.
-> 
-> Maybe:
-> 
->     gup_bio
-> 
-> , or something like that, as a topic branch?
-> 
-> Everyone: thoughts, preferences here?
-
-My suggestion would be to branch from for-6.1/block, then we can
-apply the gup patches on top of that. I'd probably just call it
-for-6.1/block-gup.
-
--- 
-Jens Axboe
 
 
+On 9/5/2022 9:28 PM, Miklos Szeredi wrote:
+> On Mon, 5 Sept 2022 at 09:17, Kassey Li <quic_yingangl@quicinc.com> wrote:
+>>
+>> Task A wait for writeback, while writeback Task B send request to fuse.
+>> Task C is expected to serve this request, here it is in direct reclaim
+>> path cause deadlock when system is in low memory.
+>>
+>> without __GFP_FS in Task_C break throttle_direct_reclaim with an
+>> HZ timeout.
+>>
+>> kswpad (Task_A):                    writeback(Task_B):
+>>      __switch_to+0x14c                   schedule+0x70
+>>      __schedule+0xb5c                    __fuse_request_send+0x154
+>>      schedule+0x70                       fuse_simple_request+0x184
+>>      bit_wait+0x18                       fuse_flush_times+0x114
+>>      __wait_on_bit+0x74                  fuse_write_inode+0x60
+>>      inode_wait_for_writeback+0xa4       __writeback_single_inode+0x3d8
+>>      evict+0xa8                          writeback_sb_inodes+0x4c0
+>>      iput+0x248                          __writeback_inodes_wb+0xb0
+>>      dentry_unlink_inode+0xdc            wb_writeback+0x270
+>>      __dentry_kill[jt]+0x110             wb_workfn+0x37c
+>>      shrink_dentry_list+0x17c            process_one_work+0x284
+>>      prune_dcache_sb+0x5c
+>>      super_cache_scan+0x11c
+>>      do_shrink_slab+0x248
+>>      shrink_slab+0x260
+>>      shrink_node+0x678
+>>      kswapd+0x8ec
+>>      kthread+0x140
+>>      ret_from_fork+0x10
+>>
+>> Task_C:
+>>      __switch_to+0x14c
+>>      __schedule+0xb5c
+>>      schedule+0x70
+>>      throttle_direct_reclaim
+>>      try_to_free_pages
+>>      __perform_reclaim
+>>      __alloc_pages_direct_reclaim
+>>      __alloc_pages_slowpath
+>>      __alloc_pages_nodemask
+>>      alloc_pages
+>>      fuse_copy_fill+0x168
+>>      fuse_dev_do_read+0x37c
+>>      fuse_dev_splice_read+0x94
+> 
+> Should already be fixed in v5.16 by commit 5c791fe1e2a4 ("fuse: make
+> sure reclaim doesn't write the inode").
+   thanks for this info.
+> 
+> Thanks,
+> Miklos
