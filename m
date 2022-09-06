@@ -2,98 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5F65ADCC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 03:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C074A5ADE90
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 06:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232900AbiIFBGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Sep 2022 21:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42104 "EHLO
+        id S232597AbiIFEeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Sep 2022 00:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbiIFBGb (ORCPT
+        with ESMTP id S231947AbiIFEeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Sep 2022 21:06:31 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 032C352460;
-        Mon,  5 Sep 2022 18:06:28 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0VOZFNX5_1662426383;
-Received: from 30.221.128.209(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VOZFNX5_1662426383)
-          by smtp.aliyun-inc.com;
-          Tue, 06 Sep 2022 09:06:25 +0800
-Message-ID: <65f66ce6-7695-2884-23a9-378b5c9ca04f@linux.alibaba.com>
-Date:   Tue, 6 Sep 2022 09:06:24 +0800
+        Tue, 6 Sep 2022 00:34:10 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95BA5E564;
+        Mon,  5 Sep 2022 21:34:08 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A35DB68AA6; Tue,  6 Sep 2022 06:34:04 +0200 (CEST)
+Date:   Tue, 6 Sep 2022 06:34:04 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/17] btrfs: handle checksum validation and repair at
+ the storage layer
+Message-ID: <20220906043404.GA32181@lst.de>
+References: <20220901074216.1849941-1-hch@lst.de> <20220901074216.1849941-5-hch@lst.de> <ffd39ae8-a7fb-1a75-a2d5-b601cb802b9c@gmx.com> <20220905064816.GD2092@lst.de> <227328cc-a41c-be15-ab9f-fa81419b7348@gmx.com> <20220905143100.GA5426@lst.de> <7e674801-2f6c-68f6-dcea-527771843587@gmx.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [Ocfs2-devel] [PATCH v2 08/14] ocfs2: replace ll_rw_block()
-Content-Language: en-US
-To:     Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cluster-devel@redhat.com, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
-        jack@suse.cz
-Cc:     axboe@kernel.dk, hch@infradead.org, tytso@mit.edu,
-        agruenba@redhat.com, almaz.alexandrovich@paragon-software.com,
-        viro@zeniv.linux.org.uk, yukuai3@huawei.com, rpeterso@redhat.com,
-        dushistov@mail.ru, chengzhihao1@huawei.com
-References: <20220901133505.2510834-1-yi.zhang@huawei.com>
- <20220901133505.2510834-9-yi.zhang@huawei.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20220901133505.2510834-9-yi.zhang@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.6 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e674801-2f6c-68f6-dcea-527771843587@gmx.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 06, 2022 at 06:34:40AM +0800, Qu Wenruo wrote:
+>> I thought about that.  And I suspect it probably is the right thing
+>> to do.  I'm mostly stayed away from it because it doesn't really
+>> help with the goal in this series, and I also don't have good
+>> code coverage to fail comfortable touching the metadata checksum
+>> handling and repair.  I can offer this sneaky deal:  if someone
+>> help creating good metadata repair coverage in xfstests, I will look
+>> into this next.
+>
+> Then may I take this work since it's mostly independent and you can
+> continue your existing work without being distracted?
 
-
-On 9/1/22 9:34 PM, Zhang Yi via Ocfs2-devel wrote:
-> ll_rw_block() is not safe for the sync read path because it cannot
-> guarantee that submitting read IO if the buffer has been locked. We
-> could get false positive EIO after wait_on_buffer() if the buffer has
-> been locked by others. So stop using ll_rw_block() in ocfs2.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good to me.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-> ---
->  fs/ocfs2/aops.c  | 2 +-
->  fs/ocfs2/super.c | 4 +---
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-> index af4157f61927..1d65f6ef00ca 100644
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -636,7 +636,7 @@ int ocfs2_map_page_blocks(struct page *page, u64 *p_blkno,
->  			   !buffer_new(bh) &&
->  			   ocfs2_should_read_blk(inode, page, block_start) &&
->  			   (block_start < from || block_end > to)) {
-> -			ll_rw_block(REQ_OP_READ, 1, &bh);
-> +			bh_read_nowait(bh, 0);
->  			*wait_bh++=bh;
->  		}
->  
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index e2cc9eec287c..26b4c2bfee49 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -1764,9 +1764,7 @@ static int ocfs2_get_sector(struct super_block *sb,
->  	if (!buffer_dirty(*bh))
->  		clear_buffer_uptodate(*bh);
->  	unlock_buffer(*bh);
-> -	ll_rw_block(REQ_OP_READ, 1, bh);
-> -	wait_on_buffer(*bh);
-> -	if (!buffer_uptodate(*bh)) {
-> +	if (bh_read(*bh, 0) < 0) {
->  		mlog_errno(-EIO);
->  		brelse(*bh);
->  		*bh = NULL;
+Fine with me as well.
