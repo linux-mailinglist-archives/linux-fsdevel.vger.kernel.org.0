@@ -2,56 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA2C05AE995
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 15:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E27A5AE99A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Sep 2022 15:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240421AbiIFN3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Sep 2022 09:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46582 "EHLO
+        id S234148AbiIFNax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Sep 2022 09:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240167AbiIFN3h (ORCPT
+        with ESMTP id S233449AbiIFNav (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Sep 2022 09:29:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35214BC05;
-        Tue,  6 Sep 2022 06:29:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 6 Sep 2022 09:30:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBCF15813
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Sep 2022 06:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662471049;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bCl6uulMyxrVlr2gxACbm/zfYRoeE0Wcxnn2cAdr1a0=;
+        b=Ff+mlRqIJk6gNMi9Hicw8WZODv4/hZFwb5CHa75DS6GMwPlRqErB8sECZYbIZ0y5+V5+Ne
+        GAdE/ee5nwZk+lKesZdyhcV1ZT4hv+5MpjoPyFrhjwvS7LJxIuo4pT80MFYeMWAv5O7Fie
+        vW4frXd4uvv6iIy7BZ5f5QvQMlfyGlI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-25-jATdod-ZPH2s4yFEqEid-Q-1; Tue, 06 Sep 2022 09:30:46 -0400
+X-MC-Unique: jATdod-ZPH2s4yFEqEid-Q-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D44BAB818C2;
-        Tue,  6 Sep 2022 13:29:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791BCC433D6;
-        Tue,  6 Sep 2022 13:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662470972;
-        bh=eT4U+WivGyOotiGD0LRV2zLl7flGTzXZdjdWMcvNt7E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XwovBfCAI5xmw0RPdItCdZLjQ7bhW5v9Eu/vggCoju8MpsiPBXQ9MB2FAMttCv+DJ
-         nNFf4HHdz4g+SXNSMUeZuf3erv08qXCs76NUClj77fMxrGkpexrIX0KiBJSs6U6lea
-         9T5yCH9BS4KEJiwDQv3CKt0Iaxtygw8eFvyYON+QXJ0tmYGToCCggQFH3M6U/QMCdL
-         io2MN9GWbXvJuhHMWUHnhg4WzOz8GYzvsNHs65QkYDYqt+Za12C1yUaIdLNRr/jD5M
-         cS9+EXliVqd5LDrc34V0Nrx1sGR8zzIZtyqalLz/D+OAPa/mnX5D5iR0PCCL/LqEvE
-         BvVSERciktYmA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [man-pages RFC PATCH v3] statx, inode: document the STATX_INO_VERSION field
-Date:   Tue,  6 Sep 2022 09:29:28 -0400
-Message-Id: <20220906132928.106134-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.3
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C750F8039B2;
+        Tue,  6 Sep 2022 13:30:45 +0000 (UTC)
+Received: from localhost (unknown [10.39.193.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 457AE40D296E;
+        Tue,  6 Sep 2022 13:30:45 +0000 (UTC)
+Date:   Tue, 6 Sep 2022 09:30:43 -0400
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Deming Wang <wangdeming@inspur.com>
+Cc:     vgoyal@redhat.com, miklos@szeredi.hu,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtiofs: Drop unnecessary initialization in
+ send_forget_request and virtio_fs_get_tree
+Message-ID: <YxdLg8tI9OtVjbfe@fedora>
+References: <20220906053848.2503-1-wangdeming@inspur.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="S+kjWGQJm00xfWBG"
+Content-Disposition: inline
+In-Reply-To: <20220906053848.2503-1-wangdeming@inspur.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,112 +63,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm proposing to expose the inode change attribute via statx [1]. Document
-what this value means and what an observer can infer from a change in
-its value.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+--S+kjWGQJm00xfWBG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1]: https://lore.kernel.org/linux-nfs/20220826214703.134870-1-jlayton@kernel.org/T/#t
----
- man2/statx.2 |  8 ++++++++
- man7/inode.7 | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+On Tue, Sep 06, 2022 at 01:38:48AM -0400, Deming Wang wrote:
+> The variable is initialized but it is only used after its assignment.
+>=20
+> Signed-off-by: Deming Wang <wangdeming@inspur.com>
+> ---
+>  fs/fuse/virtio_fs.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 4d8d4f16c..bffe74d44 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -414,7 +414,7 @@ static int send_forget_request(struct virtio_fs_vq *f=
+svq,
+>  {
+>  	struct scatterlist sg;
+>  	struct virtqueue *vq;
+> -	int ret =3D 0;
+> +	int ret;
+>  	bool notify;
+>  	struct virtio_fs_forget_req *req =3D &forget->req;
+> =20
 
-v3: Move most verbiage to inode(7)
-    Clarify that this must be monotonically increasing
-    Flesh out usage discussion
-    Mention issues with value moving backward and how to combat them
+That causes an uninitialized access in the source tree I'm looking at
+(c5e4d5e99162ba8025d58a3af7ad103f155d2df7):
 
-diff --git a/man2/statx.2 b/man2/statx.2
-index 0d1b4591f74c..d98d5148a442 100644
---- a/man2/statx.2
-+++ b/man2/statx.2
-@@ -62,6 +62,7 @@ struct statx {
-     __u32 stx_dev_major;   /* Major ID */
-     __u32 stx_dev_minor;   /* Minor ID */
-     __u64 stx_mnt_id;      /* Mount ID */
-+    __u64 stx_ino_version; /* Inode change attribute */
- };
- .EE
- .in
-@@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
- STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
- 	It is deprecated and should not be used.
- STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-+STATX_INO_VERSION	Want stx_ino_version (DRAFT)
- .TE
- .in
- .PP
-@@ -407,10 +409,16 @@ This is the same number reported by
- .BR name_to_handle_at (2)
- and corresponds to the number in the first field in one of the records in
- .IR /proc/self/mountinfo .
-+.TP
-+.I stx_ino_version
-+The inode version, also known as the inode change attribute. See
-+.BR inode (7)
-+for details.
- .PP
- For further information on the above fields, see
- .BR inode (7).
- .\"
-+.TP
- .SS File attributes
- The
- .I stx_attributes
-diff --git a/man7/inode.7 b/man7/inode.7
-index 9b255a890720..80c2ed4acccd 100644
---- a/man7/inode.7
-+++ b/man7/inode.7
-@@ -184,6 +184,12 @@ Last status change timestamp (ctime)
- This is the file's last status change timestamp.
- It is changed by writing or by setting inode information
- (i.e., owner, group, link count, mode, etc.).
-+.TP
-+Inode version (i_version)
-+(not returned in the \fIstat\fP structure); \fIstatx.stx_ino_version\fP
-+.IP
-+This is the inode change counter. See the discussion of
-+\fBthe inode version counter\fP, below.
- .PP
- The timestamp fields report time measured with a zero point at the
- .IR Epoch ,
-@@ -424,6 +430,34 @@ on a directory means that a file
- in that directory can be renamed or deleted only by the owner
- of the file, by the owner of the directory, and by a privileged
- process.
-+.SS The inode version counter
-+.PP
-+The
-+.I statx.stx_ino_version
-+field is the inode change counter. Any operation that would result in a
-+change to \fIstatx.stx_ctime\fP must result in an increase to this value.
-+The value must increase even in the case where the ctime change is not
-+evident due to coarse timestamp granularity.
-+.PP
-+An observer cannot infer anything from amount of increase about the
-+nature or magnitude of the change. If the returned value is different
-+from the last time it was checked, then something has made an explicit
-+data and/or metadata change to the inode.
-+.PP
-+In the event of a system crash, this value can appear to go backward,
-+if it were queried before ever being written to the backing store. If
-+the value were then incremented again after restart, then an observer
-+could miss noticing a change.
-+.PP
-+In order to guard against this, it is recommended to also watch the
-+\fIstatx.stx_ctime\fP for changes when watching this value. As long as the
-+system clock doesn't jump backward during the crash, an observer can be
-+reasonably sure that the i_version and ctime together represent a unique inode
-+state.
-+.PP
-+The i_version is a Linux extension and is not supported by all filesystems.
-+The application must verify that the \fISTATX_INO_VERSION\fP bit is set in the
-+returned \fIstatx.stx_mask\fP before relying on this field.
- .SH STANDARDS
- If you need to obtain the definition of the
- .I blkcnt_t
--- 
-2.37.3
+  static int send_forget_request(struct virtio_fs_vq *fsvq,
+                     struct virtio_fs_forget *forget,
+                     bool in_flight)
+  {
+      struct scatterlist sg;
+      struct virtqueue *vq;
+      int ret =3D 0;
+      ^^^^^^^
+      bool notify;
+      struct virtio_fs_forget_req *req =3D &forget->req;
+ =20
+      spin_lock(&fsvq->lock);
+      if (!fsvq->connected) {
+          if (in_flight)
+              dec_in_flight_req(fsvq);
+          kfree(forget);
+          goto out;
+      ...
+      out:
+      spin_unlock(&fsvq->lock);
+      return ret;
+             ^^^
+  }
+
+What is the purpose of this patch? Is there a compiler warning (if so,
+which compiler and version)? Do you have a static analysis tool that
+reported this (if yes, then maybe it's broken)?
+
+Stefan
+
+--S+kjWGQJm00xfWBG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmMXS4MACgkQnKSrs4Gr
+c8hAnwgAr+QWzw860ulBE175xxGhGz+svhuLqPnyhkkQWyLQ+SsHglf6wgX8wyJo
+3GImaRGa4ntB59O6CORrt1m7YIFLeCAob1b4AooxalOuXeP3st5ryPhMO81RovYL
+L3hVXfFQQeDboa2r7KdH8EyT7sJSrzsOpLQpFfDXOrpDfQrdzZPwSRcU4DHr98QW
+0ErLih20bpg/tptA1VY8+qfrXJMUYfFZkfcFgWo6F8GLFJGieGKKxEbAzOczz9IS
+7mFLUtaRglCb9dDLItuOZwr40Uipgj1jqKx2JweQx2UYdt8hqZ6yRLbbOvxQH3R5
+i+axLSVNdiXXrXNKkTGNKETbFwpEfw==
+=3X2b
+-----END PGP SIGNATURE-----
+
+--S+kjWGQJm00xfWBG--
 
