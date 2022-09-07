@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED445B0ED2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 23:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 541065B0EDE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 23:07:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbiIGVE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 17:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55234 "EHLO
+        id S229837AbiIGVH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 17:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiIGVEy (ORCPT
+        with ESMTP id S230122AbiIGVH0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 17:04:54 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760534455C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 14:04:52 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id j17so11422794qtp.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 14:04:52 -0700 (PDT)
+        Wed, 7 Sep 2022 17:07:26 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D572CC2F94
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 14:07:18 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id c20so11430660qtw.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 14:07:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=tL260q14vnjvd8h6wZ4315+2PR2g4ctqHjhPegXiYHE=;
-        b=7AJXrAO6L9XjLu0ZAAVhRjGQFFH5y9cbsKq8og3y33xvxJ2Fi+HbK9cTTBpIjFIbNW
-         rZnaF+TJZlILIMFOFYdOl6p3xqDngMh+yMtfTYSd2V1tIC2t0Xw/CgU8Ne8E6g7kPbHV
-         GN6ajtqpQUHzAA40lD+7VhJlKzr3hy5gJ5WxFJjvHux50jzUbrD9OT3D4V2ejGjMPxdq
-         jE25a955SK5BL9c3ILmQeapTIuFlyk737tVrX8HFU5GpjPZwyYGuljhhvQ5WGZJZmyKq
-         KS66XlkQ3Xf8bapYa2KaiHTO+vLXhQ1edC90ZeNO02pXy56ZIdGw2nFH5qh6kVG9xWKh
-         ezQQ==
+        bh=5XFSbTu8JLiaqbe/aaB5H3G6q2+uAR8AZMv3BlQCVkw=;
+        b=hAaWh9Hp75G7fMyvoVm+2YeyAMoo/jh/Sj00Sg9ngiZrFj/iyVFFOZZRq3Dl8JCJBg
+         gVjEtOwcXK5pgpv8GgXyUKSq87CXj6tAif+k1fYyZSbX/uZYoYjlsbEbf87UId2CmIRa
+         ArT7QIeeYfRNxvsHxteZ0nNX7sqmM7wwcc0b5grb4+jZ0eRAy3asuPle285XnAEUHyGo
+         fS3aGASz1Pkj0Su5/Yq7FWoLCFLpkaAa2rrLckTpKYzO/lpYX3r5kQJ9Epj5VUgpN6M9
+         pwLjgg3OPF3IYA2LsqWwLIm5frSEa68tgiHu2tYeXmZC4qAsdjgCHxmjgOdvBe8/Ql4n
+         fPEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=tL260q14vnjvd8h6wZ4315+2PR2g4ctqHjhPegXiYHE=;
-        b=h3ZJ1JmyXe2+M9cIZifgOmwG6D6Ix0PWKoUpt9iHhwpyZSZrd7gUr/pM0lhEEr6Ybw
-         hpaWTOn3UIPOojxq/T0jDOXFdEDoJyxMPX/U8y1OEWpc9m5lLCDbJneX4a3iBJIPStL+
-         suDBYUdvsS7Lgs7yIcF8idVWta4ZP4lZUHyLEl4L3WGDCK+aG5+4e9v0IqLuJsV7AfLT
-         Fc5B3l6Mz+5OqLmJEEYa36BHOL1znZnU6vJfIMfd8M0ubBdcKYk/jFGkZkrPx6aqdIAY
-         SRdT582pdRrEdNC6m6RDsm0EOJ90YbUk327bzxpHx/tM8l2BVGIqrBP8SQ0eexFmH64L
-         t74w==
-X-Gm-Message-State: ACgBeo1nan5KTe9WlgI2YuskuS5mkAO6Eor2HmirFKCPOJcYbBg/FUnw
-        U6jciwN+9P2CLBBgQ8hasVkFSX6uqwyLVle7
-X-Google-Smtp-Source: AA6agR5zPI40PG+WDMG3lWYyFuSGLe6nQZTsNFYIvFPzABdVJasmRZ/4y4br8oUWq/CslElHY/NGSQ==
-X-Received: by 2002:a05:622a:52:b0:344:7021:dafa with SMTP id y18-20020a05622a005200b003447021dafamr4945617qtw.52.1662584691377;
-        Wed, 07 Sep 2022 14:04:51 -0700 (PDT)
+        bh=5XFSbTu8JLiaqbe/aaB5H3G6q2+uAR8AZMv3BlQCVkw=;
+        b=k97Qu1A0mSImcYYaUVXSvCRbdtbrNyA/hv8SXnDXR0EejseMvy7F7oX68WcQzwAYN+
+         R/yWRKe8yPgiBY2Pkg+yd5Mn3M+oYMDRJMtOpY/u1SDuf7ODgxQnJbigQZdZ2AsNTW7B
+         +Tp4TaQ3ykRLK/vYV5+Yy08UsjB1U5jggFKVQjxTm3tFVPlU2XSvXDZNspdhnmfKGh6M
+         5jKR3RDMiLQQ9LcDEMv7h5Eh3AmO4wvmBv2UR8+6CZpBDKyKjz3MoPpm5IxTI2T6mnb0
+         zE5ngqw82lJA5GPVoNwt3jGey83ooWmNrRW+tK0zTF0orZuEaiCHLmzDLc3uU9XyD6Bj
+         8Nfg==
+X-Gm-Message-State: ACgBeo1207DVkxKCTJBBEElEQjB7MaMQpgt4oK2EXGoKVogXlFy6DabL
+        V4twpjk2LsBZHwnAND1QmiUFndDpmf/zsJDi
+X-Google-Smtp-Source: AA6agR5Y+ctVk6tTsu8FtmceqQEVqGmzGqiBK6IB5xxE15uCaH8k9MNkzjPeibjNcwOrOLSiOfXN1A==
+X-Received: by 2002:a05:622a:1b9e:b0:344:5627:7afe with SMTP id bp30-20020a05622a1b9e00b0034456277afemr5219357qtb.329.1662584837422;
+        Wed, 07 Sep 2022 14:07:17 -0700 (PDT)
 Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id he22-20020a05622a601600b00304fe5247bfsm12740691qtb.36.2022.09.07.14.04.50
+        by smtp.gmail.com with ESMTPSA id u4-20020a05620a0c4400b006bc1512986esm16634752qki.97.2022.09.07.14.07.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 14:04:50 -0700 (PDT)
-Date:   Wed, 7 Sep 2022 17:04:49 -0400
+        Wed, 07 Sep 2022 14:07:16 -0700 (PDT)
+Date:   Wed, 7 Sep 2022 17:07:15 -0400
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
@@ -58,34 +58,35 @@ Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/17] btrfs: remove stripe boundary calculation for
- buffered I/O
-Message-ID: <YxkHcQI7+EqNhsOv@localhost.localdomain>
+Subject: Re: [PATCH 10/17] btrfs: remove stripe boundary calculation for
+ compressed I/O
+Message-ID: <YxkIA8vVgL2jy11c@localhost.localdomain>
 References: <20220901074216.1849941-1-hch@lst.de>
- <20220901074216.1849941-10-hch@lst.de>
+ <20220901074216.1849941-11-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220901074216.1849941-10-hch@lst.de>
+In-Reply-To: <20220901074216.1849941-11-hch@lst.de>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 10:42:08AM +0300, Christoph Hellwig wrote:
+On Thu, Sep 01, 2022 at 10:42:09AM +0300, Christoph Hellwig wrote:
 > From: Qu Wenruo <wqu@suse.com>
 > 
-> Remove btrfs_bio_ctrl::len_to_stripe_boundary, so that buffer
-> I/O will no longer limit its bio size according to stripe length
-> now that btrfs_submit_bio can split bios at stripe boundaries.
+> Stop looking at the stripe boundary in alloc_compressed_bio() now that
+> that btrfs_submit_bio can split bios, open code the now trivial code
+> from alloc_compressed_bio() in btrfs_submit_compressed_read and stop
+> maintaining the pending_ios count for reads as there is always just
+> a single bio now.
 > 
 > Signed-off-by: Qu Wenruo <wqu@suse.com>
-> [hch: simplify calc_bio_boundaries a little more]
+> [hch: remove more cruft in btrfs_submit_compressed_read]
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
