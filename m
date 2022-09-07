@@ -2,207 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7295B0829
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 17:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B14B55B0937
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 17:50:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbiIGPML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 11:12:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45828 "EHLO
+        id S230156AbiIGPuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 11:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230381AbiIGPMG (ORCPT
+        with ESMTP id S229943AbiIGPug (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 11:12:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534405C9CD;
-        Wed,  7 Sep 2022 08:12:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 82F586194E;
-        Wed,  7 Sep 2022 15:12:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9783C433B5;
-        Wed,  7 Sep 2022 15:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662563522;
-        bh=pN+S07cr+afMsUnBRSfOQtlwIjBeZFGPJkhC4OrU0J8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=j3zY/8tp+V8KEFLE3LgCfxOAo3c4H1/y7Sja2TPVUclqEPfu2FMa2LmoqsS5qaLbh
-         uW36WprEiievzP8xZVQsDghFat5DLoUN+QVoWB3SRoEg7nlz3cqE08a2RgGNW+BYAD
-         zI4rYr4g3hzeAOEvxnuHurJZKQJwspW55xJ26oEYiaxxylcA9xEJubE440/nG2YTOo
-         hAseDmPr9eE6/iz31FYs/e7hpgSoOqIxIYH4FWXR+Q3EqppdUR3uJDAiPGArDXa8qX
-         IDy8wkUrkOJvBDAtxLjagCCFVwwJiWzMzAqtgy/aC2Qib+3u/bCjg5NNfOOJLXhoZX
-         Vu299nakVFwXw==
-Message-ID: <95b9c85ded369d4a81963b394e12250c1f87974a.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>
-Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "neilb@suse.de" <neilb@suse.de>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Date:   Wed, 07 Sep 2022 11:11:58 -0400
-In-Reply-To: <9ddbc23661ab6527d73860a873391a3536451ee6.camel@hammerspace.com>
-References: <20220907111606.18831-1-jlayton@kernel.org>
-         <166255065346.30452.6121947305075322036@noble.neil.brown.name>
-         <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
-         <20220907125211.GB17729@fieldses.org>
-         <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
-         <8a71986b4fb61cd9b4adc8b4250118cbb19eec58.camel@hammerspace.com>
-         <c22baa64133a23be3aba81df23b4af866df51343.camel@kernel.org>
-         <9ddbc23661ab6527d73860a873391a3536451ee6.camel@hammerspace.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Wed, 7 Sep 2022 11:50:36 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D803F1D2
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 08:50:22 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 56F015C0166;
+        Wed,  7 Sep 2022 11:50:21 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 07 Sep 2022 11:50:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1662565821; x=
+        1662652221; bh=3i/QkCZmuHB1ScMUZZPWUUAJ2jsbjEER/GlelbIHRD0=; b=i
+        oG3+gH/u6bKFoEaFtFuQ6S456pQr4rru2t/zzdyXwzy4Eou9lwJ+sclp0v4HS9om
+        5P7xEmjEaBG+ExsVwg0dlRHMKtAN3QVbsff9VG5ivkgC1vwprQ/vZ/ZjqS3k4y2n
+        Yimqw/Q1YeXGiDx8Wv3P11aaV6s0mjYWBcwsma66cOmpV9Ffsxf6XfRxljVUPrBX
+        FlrPubXyBAThUs50rlaIr3i/7xgvCogLssBfZLTyOo64YJnAlbduklFN54tcbxp0
+        hQ54+1V7PBT+WXM8LGJ9+3sAQL+FKh0B4PErWpMufLWbbw+PBVEOfueEzEQbIoiW
+        paGZwaH3Nm2uoxHzLZSQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1662565821; x=
+        1662652221; bh=3i/QkCZmuHB1ScMUZZPWUUAJ2jsbjEER/GlelbIHRD0=; b=G
+        Q3OjQU6PrURFXjFZ+jn3Q8EQgcRTqxBmBFTHsXzudIRXJLi0JPbERF7Kogmv12Iv
+        sQD/ojnic3HQgdxyveh09Q900o4d35YTHrgZOM2WhBfA+ZkOqqLOoiDD+yL3+9v7
+        AnVCOT7quIgzTvNoBinEAreNC87qXJKbhN3AAYmABaZ1ospLT6HrqbnxdrURsS7Y
+        6gQvEcBqUJGgChw4Ztd/evIoUvvzALsMtXfu/+ud/aHQalNaPQh0c+n9DK1IFbKI
+        xP7LUwwd86zuH0xdNMCqzTglKe5oqI2WwfkirlD0cb4kIeEzHAt8KG1ON8jNzzJJ
+        VeY1t52SMFkrFicpcLJwg==
+X-ME-Sender: <xms:vL0YY_LJfNlfFT29jucWYB4QrzZpFPR0qeXK7iDHtsbzdKRHDOlkaA>
+    <xme:vL0YYzKEnwZKMWWqXtbc-7GyH1BPKGCFjvTWYTXViCEjrp0Lu11ia-suTeUeTg0fB
+    1g6nyE8bpSVGSaO>
+X-ME-Received: <xmr:vL0YY3uNKFQjpL2r7tZocw-E1xvgbux-vsJ6-TAB_JesRSKr-bY5dGM22Mp_22RzPkbGvcSAmXU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedttddgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
+    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrf
+    grthhtvghrnhepudelffdujeeujeelgeejveeufeekiefgkedvffeihfekvedvtdevtdeh
+    leefvdefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpnhgrrhhkihhvvgdrtghomh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpihhk
+    ohhlrghushesrhgrthhhrdhorhhg
+X-ME-Proxy: <xmx:vb0YY4YrqKAurLkpn4UHyC3stfQnsccJXMQRO_hly9ScsTZrZN6vGA>
+    <xmx:vb0YY2awgA5aNyXEywyNBU5psmEbx1bbBUmEELR3SzMW-_5w5Kl5wg>
+    <xmx:vb0YY8BbNV6bkmVC4zh8X3rKySEfL0mjlFpyoKPOPcdxU_MH-ESUKQ>
+    <xmx:vb0YY7OPWB_rDie0Z1MssyQtnd64EJjgRL2PkVI8MnvO7yMJtWznAA>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Sep 2022 11:50:20 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 8B236475;
+        Wed,  7 Sep 2022 15:50:18 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id B779ADC054; Wed,  7 Sep 2022 16:50:17 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     nbd@other.debian.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>, Wouter Verhelst <w@uter.be>
+Subject: Re: Why do NBD requests prevent hibernation, and FUSE requests do not?
+References: <87k06qb5to.fsf@vostro.rath.org>
+        <f7110017-8606-8e50-7d86-fc53324a571d@fastmail.fm>
+Mail-Copies-To: never
+Mail-Followup-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
+        nbd@other.debian.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>, Wouter Verhelst <w@uter.be>
+Date:   Wed, 07 Sep 2022 16:50:17 +0100
+In-Reply-To: <f7110017-8606-8e50-7d86-fc53324a571d@fastmail.fm> (Bernd
+        Schubert's message of "Wed, 31 Aug 2022 01:02:16 +0200")
+Message-ID: <87zgfbqj46.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-09-07 at 15:04 +0000, Trond Myklebust wrote:
-> On Wed, 2022-09-07 at 10:05 -0400, Jeff Layton wrote:
-> > On Wed, 2022-09-07 at 13:55 +0000, Trond Myklebust wrote:
-> > > On Wed, 2022-09-07 at 09:12 -0400, Jeff Layton wrote:
-> > > > On Wed, 2022-09-07 at 08:52 -0400, J. Bruce Fields wrote:
-> > > > > On Wed, Sep 07, 2022 at 08:47:20AM -0400, Jeff Layton wrote:
-> > > > > > On Wed, 2022-09-07 at 21:37 +1000, NeilBrown wrote:
-> > > > > > > On Wed, 07 Sep 2022, Jeff Layton wrote:
-> > > > > > > > +The change to \fIstatx.stx_ino_version\fP is not atomic
-> > > > > > > > with
-> > > > > > > > respect to the
-> > > > > > > > +other changes in the inode. On a write, for instance,
-> > > > > > > > the
-> > > > > > > > i_version it usually
-> > > > > > > > +incremented before the data is copied into the
-> > > > > > > > pagecache.
-> > > > > > > > Therefore it is
-> > > > > > > > +possible to see a new i_version value while a read still
-> > > > > > > > shows the old data.
-> > > > > > >=20
-> > > > > > > Doesn't that make the value useless?
-> > > > > > >=20
-> > > > > >=20
-> > > > > > No, I don't think so. It's only really useful for comparing
-> > > > > > to an
-> > > > > > older
-> > > > > > sample anyway. If you do "statx; read; statx" and the value
-> > > > > > hasn't
-> > > > > > changed, then you know that things are stable.=20
-> > > > >=20
-> > > > > I don't see how that helps.=A0 It's still possible to get:
-> > > > >=20
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0reader=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0writer
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0------=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0------
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0i_version++
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0statx
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0read
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0statx
-> > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0update page cache
-> > > > >=20
-> > > > > right?
-> > > > >=20
-> > > >=20
-> > > > Yeah, I suppose so -- the statx wouldn't necessitate any locking.
-> > > > In
-> > > > that case, maybe this is useless then other than for testing
-> > > > purposes
-> > > > and userland NFS servers.
-> > > >=20
-> > > > Would it be better to not consume a statx field with this if so?
-> > > > What
-> > > > could we use as an alternate interface? ioctl? Some sort of
-> > > > global
-> > > > virtual xattr? It does need to be something per-inode.
-> > >=20
-> > > I don't see how a non-atomic change attribute is remotely useful
-> > > even
-> > > for NFS.
-> > >=20
-> > > The main problem is not so much the above (although NFS clients are
-> > > vulnerable to that too) but the behaviour w.r.t. directory changes.
-> > >=20
-> > > If the server can't guarantee that file/directory/... creation and
-> > > unlink are atomically recorded with change attribute updates, then
-> > > the
-> > > client has to always assume that the server is lying, and that it
-> > > has
-> > > to revalidate all its caches anyway. Cue endless
-> > > readdir/lookup/getattr
-> > > requests after each and every directory modification in order to
-> > > check
-> > > that some other client didn't also sneak in a change of their own.
-> > >=20
-> >=20
-> > We generally hold the parent dir's inode->i_rwsem exclusively over
-> > most
-> > important directory changes, and the times/i_version are also updated
-> > while holding it. What we don't do is serialize reads of this value
-> > vs.
-> > the i_rwsem, so you could see new directory contents alongside an old
-> > i_version. Maybe we should be taking it for read when we query it on
-> > a
-> > directory?
->=20
-> Serialising reads is not the problem. The problem is ensuring that
-> knfsd is able to provide an atomic change_info4 structure when the
-> client modifies the directory.
-> i.e. the requirement is that if the directory changed, then that
-> modification is atomically accompanied by an update of the change
-> attribute that can be retrieved by knfsd and placed in the reply to the
-> client.
->=20
+On Aug 31 2022, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+> On 8/30/22 08:31, Nikolaus Rath wrote:
+>> Hello,
+>> I am comparing the behavior of FUSE and NBD when attempting to hibernate
+>> the system.
+>> FUSE seems to be mostly compatible, I am able to suspend the system even
+>> when there is ongoing I/O on the fuse filesystem.
+>>=20
+>
+> ....
+>
+>> As far as I can tell, the problem is that while an NBD request is
+>> pending, the atsk that waits for the result (in this case *rsync*) is
+>> refusing to freeze. This happens even when setting a 5 minute timeout
+>> for freezing (which is more than enough time for the NBD request to
+>> complete), so I suspect that the NBD server task (in this case nbdkit)
+>> has already been frozen and is thus unable to make progress.
+>> However, I do not understand why the same is not happening for FUSE
+>> (with FUSE requests being stuck because the FUSE daemon is already
+>> frozen). Was I just very lucky in my tests? Or are tasks waiting for
+>> FUSE request in a different kind of state? Or is NBD a red-herring here,
+>> and the real trouble is with ZFS?
+>> It would be great if someone  could shed some light on what's going on.
+>
+> I guess it is a generic issue also affecting fuse, see this patch
+>
+> https://lore.kernel.org/lkml/20220511013057.245827-1-dlunev@chromium.org/
+>
+> A bit down the thread you can find a reference to this ancient patch
+>
+> https://linux-kernel.vger.kernel.narkive.com/UeBWfN1V/patch-fuse-make-fus=
+e-daemon-frozen-along-with-kernel-threads
 
-I think we already do that for directories today via the i_rwsem. We
-hold that exclusively over directory-morphing operations, and the
-i_version is updated while holding that lock.
+Interesting, thank you for the link! So it seems that I just got lucky
+with FUSE.
 
-> > Achieving atomicity with file writes though is another matter
-> > entirely.
-> > I'm not sure that's even doable or how to approach it if so.
-> > Suggestions?
->=20
-> The problem outlined by Bruce above isn't a big deal. Just check the
-> I_VERSION_QUERIED flag after the 'update_page_cache' bit, and bump the
-> i_version if that's the case. The real problem is what happens if you
-> then crash during writeback...
->=20
+Does anyone know in which order the kernel freezes processes by default?
+Could I perhaps work around the problem by calling the FUSE/NBD daemon
+something like "zzzzz_mydaemon"?
 
-It's a uglier than it looks at first glance. As Jan pointed out, thIt's
-possible for the initial file_modified call to succeed and then a second
-one to fail. If the time got an initial update and then the data was
-copied in, should we fail the write at that point?
 
-We may be better served by trying to also do this with the i_rwsem. I'm
-looking at that now, though it's a bit hairy given that
-vfs_getattr_nosec can be called either with or without it held.
+Best,
+-Nikolaus
+
 --=20
-Jeff Layton <jlayton@kernel.org>
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
