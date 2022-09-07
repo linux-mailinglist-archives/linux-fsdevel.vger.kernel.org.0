@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB1105B0EC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 23:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED445B0ED2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 23:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbiIGVAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 17:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49846 "EHLO
+        id S230031AbiIGVE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 17:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbiIGVAk (ORCPT
+        with ESMTP id S230012AbiIGVEy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 17:00:40 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6A29E112
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 14:00:37 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id a15so11454848qko.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 14:00:37 -0700 (PDT)
+        Wed, 7 Sep 2022 17:04:54 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760534455C
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 14:04:52 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id j17so11422794qtp.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 14:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=js7gxeaMZkPigUAoxpkc/AkWfetQpEurT+me6eERS74=;
-        b=HZ6dePp2uUB3a2ltuaZByOW/gWFEqqyEymKacbSD1gtidSR2TfDUbsVqQWMQhcZ3i4
-         8TMJ4BtSBDpOJPvsfB40L0zDHF/CJLgItwEXSywmocSD0O94H3sewvWSqRFghJkhWCnR
-         xFsd0G3oIqJY+YpR7yx7BXMdgEEcIrfPKWSEA8/BwHgXW2ix+FK7ehoVAi8oPiah89v8
-         He/D3Ov1GZax2q4ZBB/FEZX+DVDUUGX4C54jrqqEn6qJpZS6mECNkOxrE58OhJJd/bm0
-         PzrqEE82ILKTKJ1Xeuje+O6SU0zPM7yZ/GOQvE0lNqvZ9xcVDI8aKkIvyIOhFoVMMq7h
-         JeVw==
+        bh=tL260q14vnjvd8h6wZ4315+2PR2g4ctqHjhPegXiYHE=;
+        b=7AJXrAO6L9XjLu0ZAAVhRjGQFFH5y9cbsKq8og3y33xvxJ2Fi+HbK9cTTBpIjFIbNW
+         rZnaF+TJZlILIMFOFYdOl6p3xqDngMh+yMtfTYSd2V1tIC2t0Xw/CgU8Ne8E6g7kPbHV
+         GN6ajtqpQUHzAA40lD+7VhJlKzr3hy5gJ5WxFJjvHux50jzUbrD9OT3D4V2ejGjMPxdq
+         jE25a955SK5BL9c3ILmQeapTIuFlyk737tVrX8HFU5GpjPZwyYGuljhhvQ5WGZJZmyKq
+         KS66XlkQ3Xf8bapYa2KaiHTO+vLXhQ1edC90ZeNO02pXy56ZIdGw2nFH5qh6kVG9xWKh
+         ezQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=js7gxeaMZkPigUAoxpkc/AkWfetQpEurT+me6eERS74=;
-        b=tH4JjoQnoAPZfa9N4V0Jf7Ij7/VGLaHgmFVP9MgnOFby6bgN3aHn9V7arawKFfCxGB
-         B5pPz3CpazhyoyhaMhuVR3MqwNCd+lhewQSnC4jB3INQssa5xGQLqtUY9nFwn8yj5+Qh
-         ALtnne4fBM5tOMkkQBmphB/gc32EAMXTK5GMlaETj/OuLaHLysakuCS1WMKJ6/bCAPxQ
-         b/x/51ELKCJnDA+NoSufNSXb88LrcGz8cIq/sl9rt3HDli7+wgrrsrIIs3V3A7yxm4Ug
-         0HpfZTHVOebmfb1xaKnszo9HW3ewohnRsUrggAoPl+AUxXNAvQBM8cz9KbjSl0jSW3q0
-         jGgA==
-X-Gm-Message-State: ACgBeo3RZQbCpYneFeBKGwimxFrcn3vxoRPaaH7zW8L0hM5Kf88CoeGe
-        U5LGISbo5OesWVsqRmL40MhcQg==
-X-Google-Smtp-Source: AA6agR5aCtwbvr/ffq0h/OBDFjVNVKy6G9BY1nph9kc6vKRFCrPA2Vy0Jhcq/aq3ZRstmGtJoso6vA==
-X-Received: by 2002:a05:620a:1a0c:b0:6bb:a292:bf92 with SMTP id bk12-20020a05620a1a0c00b006bba292bf92mr4281591qkb.90.1662584436756;
-        Wed, 07 Sep 2022 14:00:36 -0700 (PDT)
+        bh=tL260q14vnjvd8h6wZ4315+2PR2g4ctqHjhPegXiYHE=;
+        b=h3ZJ1JmyXe2+M9cIZifgOmwG6D6Ix0PWKoUpt9iHhwpyZSZrd7gUr/pM0lhEEr6Ybw
+         hpaWTOn3UIPOojxq/T0jDOXFdEDoJyxMPX/U8y1OEWpc9m5lLCDbJneX4a3iBJIPStL+
+         suDBYUdvsS7Lgs7yIcF8idVWta4ZP4lZUHyLEl4L3WGDCK+aG5+4e9v0IqLuJsV7AfLT
+         Fc5B3l6Mz+5OqLmJEEYa36BHOL1znZnU6vJfIMfd8M0ubBdcKYk/jFGkZkrPx6aqdIAY
+         SRdT582pdRrEdNC6m6RDsm0EOJ90YbUk327bzxpHx/tM8l2BVGIqrBP8SQ0eexFmH64L
+         t74w==
+X-Gm-Message-State: ACgBeo1nan5KTe9WlgI2YuskuS5mkAO6Eor2HmirFKCPOJcYbBg/FUnw
+        U6jciwN+9P2CLBBgQ8hasVkFSX6uqwyLVle7
+X-Google-Smtp-Source: AA6agR5zPI40PG+WDMG3lWYyFuSGLe6nQZTsNFYIvFPzABdVJasmRZ/4y4br8oUWq/CslElHY/NGSQ==
+X-Received: by 2002:a05:622a:52:b0:344:7021:dafa with SMTP id y18-20020a05622a005200b003447021dafamr4945617qtw.52.1662584691377;
+        Wed, 07 Sep 2022 14:04:51 -0700 (PDT)
 Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id hh9-20020a05622a618900b00344576bcfefsm12788112qtb.70.2022.09.07.14.00.35
+        by smtp.gmail.com with ESMTPSA id he22-20020a05622a601600b00304fe5247bfsm12740691qtb.36.2022.09.07.14.04.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 14:00:36 -0700 (PDT)
-Date:   Wed, 7 Sep 2022 17:00:34 -0400
+        Wed, 07 Sep 2022 14:04:50 -0700 (PDT)
+Date:   Wed, 7 Sep 2022 17:04:49 -0400
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
@@ -58,14 +58,15 @@ Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 08/17] btrfs: pass the iomap bio to btrfs_submit_bio
-Message-ID: <YxkGco1bbiZXZbvh@localhost.localdomain>
+Subject: Re: [PATCH 09/17] btrfs: remove stripe boundary calculation for
+ buffered I/O
+Message-ID: <YxkHcQI7+EqNhsOv@localhost.localdomain>
 References: <20220901074216.1849941-1-hch@lst.de>
- <20220901074216.1849941-9-hch@lst.de>
+ <20220901074216.1849941-10-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220901074216.1849941-9-hch@lst.de>
+In-Reply-To: <20220901074216.1849941-10-hch@lst.de>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
@@ -76,21 +77,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 10:42:07AM +0300, Christoph Hellwig wrote:
-> Now that btrfs_submit_bio splits the bio when crossing stripe boundaries,
-> there is no need for the higher level code to do that manually.
+On Thu, Sep 01, 2022 at 10:42:08AM +0300, Christoph Hellwig wrote:
+> From: Qu Wenruo <wqu@suse.com>
 > 
-> For direct I/O this is really helpful, as btrfs_submit_io can now simply
-> take the bio allocated by iomap and send it on to btrfs_submit_bio
-> instead of allocating clones.
+> Remove btrfs_bio_ctrl::len_to_stripe_boundary, so that buffer
+> I/O will no longer limit its bio size according to stripe length
+> now that btrfs_submit_bio can split bios at stripe boundaries.
 > 
-> For that to work, the bio embedded into struct btrfs_dio_private needs to
-> become a full btrfs_bio as expected by btrfs_submit_bio.
-> 
-> With this change there is a single work item to offload the entire iomap
-> bio so the heuristics to skip async processing for bios that were split
-> isn't needed anymore either.
-> 
+> Signed-off-by: Qu Wenruo <wqu@suse.com>
+> [hch: simplify calc_bio_boundaries a little more]
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
