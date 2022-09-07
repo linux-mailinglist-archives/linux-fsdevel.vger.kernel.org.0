@@ -2,236 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F28555B000B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 11:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEDCF5B00BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 11:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiIGJLl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 05:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
+        id S230356AbiIGJlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 05:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbiIGJLa (ORCPT
+        with ESMTP id S230206AbiIGJkr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 05:11:30 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B88CA6AF0
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 02:11:26 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id c2-20020a6bec02000000b00689b26e92f0so8605220ioh.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 02:11:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=96oduF8kJl33Cv0ZIooHJCpu/gbgxvziNk1Od0BxYOc=;
-        b=b4U5pzwt7LgnIeRIsewoVOof8d41HAHrxzw3TE/R0xh3SXuz6vQMWtiT0xNcvN71L6
-         JSkiYbYYqWb9X37tKBgIrBKvCIgBETDiaOIC3WMFuN3L11CWfIxOOouQQChZ0XXbgm2p
-         oZSAGFqKxZoKFYPh+PN4jiad7iQJE4KQOrRNdnyqtgFsyomAbUFnBuhlTyjIxLQD3OYb
-         QGmp0Yg4Fxg0GRZyVAvZxqw+pmIAqhU0h8Fe51s0LTbO4292pwktyDgFD/GNMilm54I+
-         Gw0FNNXlHVojdh07R1Ci3zEgl3Vph7L+vDauOfzsgeEs3zxPWcPSm2nxqwG++OsYOsGd
-         xFaQ==
-X-Gm-Message-State: ACgBeo0sJoiONfrMk3Pbg3KpxAJ9pQusnXNvyU5r/ekn5Cr8eKlZ/pTw
-        WjgmbJlKsdqUMII2wjzFc8Kn6+rEzCPYdXl9X8tYMn4goSYd
-X-Google-Smtp-Source: AA6agR4fD+IsphVja3NQGMW15j08WLql6AJ7IxkvZIajtzTkSPW21veXQ1GLEdeHKt+4n6fmlJpk8b473eZI/rhT0VN/Ks7/n1Ls
+        Wed, 7 Sep 2022 05:40:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 878EE8C44A;
+        Wed,  7 Sep 2022 02:40:46 -0700 (PDT)
+Received: from [192.168.10.7] (unknown [39.45.34.118])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 86B816601F59;
+        Wed,  7 Sep 2022 10:40:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1662543644;
+        bh=uY9pFagbdbh2lu8qFd2KKrIN4d71jSAT6G/zm0gBKdA=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=bxbY5WxH4rDgMWoliFxR6YZ8Ia1K9Tiw4FBvay0lZQ/wFpp5fJPhe2OZ9kZJvKPtD
+         U4zYvbBUaEPP654ir03KVcclG9hpZxVMhnXw1C0TCvJOoknbNfodO3HdVTP0rqsP5V
+         cDqdEBqviA8BAhb9aFUJomTcw92gNg2Hc5Z7evMXLAy5F6uFtscHy7mlE0i2j+MW70
+         qylf+08rgESV6oVoor2i9EFePOJtK0Hp1zfCyKC9eC9AaQgKvtsCJyU/C0wtB4uOjG
+         2HAPUt63VEawgolQd37NugEEScwTS2kHaUR5gw5odZUkyiyENUQFi78Gr+la3TShER
+         ytgxww5A5tn9A==
+Message-ID: <19df8db9-cff4-848e-905b-525f620848e8@collabora.com>
+Date:   Wed, 7 Sep 2022 14:40:37 +0500
 MIME-Version: 1.0
-X-Received: by 2002:a5e:a70f:0:b0:684:d596:b7e7 with SMTP id
- b15-20020a5ea70f000000b00684d596b7e7mr1236974iod.84.1662541885890; Wed, 07
- Sep 2022 02:11:25 -0700 (PDT)
-Date:   Wed, 07 Sep 2022 02:11:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008866ad05e812b2f5@google.com>
-Subject: [syzbot] KASAN: slab-out-of-bounds Read in fuse_inode_eq (2)
-From:   syzbot <syzbot+938055fcae46a26e5239@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
+Content-Language: en-US
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20220826064535.1941190-1-usama.anjum@collabora.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20220826064535.1941190-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 8/26/22 11:45 AM, Muhammad Usama Anjum wrote:
+> 
+> Hello,
+> 
+> This patch series implements a new ioctl on the pagemap proc fs file to
+> get, clear and perform both get and clear at the same time atomically on
+> the specified range of the memory.
+> 
+> Soft-dirty PTE bit of the memory pages can be viewed by using pagemap
+> procfs file. The soft-dirty PTE bit for the whole memory range of the
+> process can be cleared by writing to the clear_refs file. This series
+> adds features that weren't present earlier.
+> - There is no atomic get soft-dirty PTE bit status and clear operation
+>   present.
+> - The soft-dirty PTE bit of only a part of memory cannot be cleared.
+> 
+> Historically, soft-dirty PTE bit tracking has been used in the CRIU
+> project. The proc fs interface is enough for that as I think the process
+> is frozen. We have the use case where we need to track the soft-dirty
+> PTE bit for the running processes. We need this tracking and clear
+> mechanism of a region of memory while the process is running to emulate
+> the getWriteWatch() syscall of Windows. This syscall is used by games to
+> keep track of dirty pages and keep processing only the dirty pages. This
+> new ioctl can be used by the CRIU project and other applications which
+> require soft-dirty PTE bit information.
+> 
+> As in the current kernel there is no way to clear a part of memory (instead
+> of clearing the Soft-Dirty bits for the entire process) and get+clear
+> operation cannot be performed atomically, there are other methods to mimic
+> this information entirely in userspace with poor performance:
+> - The mprotect syscall and SIGSEGV handler for bookkeeping
+> - The userfaultfd syscall with the handler for bookkeeping
+> Some benchmarks can be seen [1].
+> 
+> This ioctl can be used by the CRIU project and other applications which
+> require soft-dirty PTE bit information. The following operations are
+> supported in this ioctl:
+> - Get the pages that are soft-dirty.
+> - Clear the pages which are soft-dirty.
+> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
+> soft-dirty PTE bit
+Thoughts?
 
-syzbot found the following issue on:
+> 
+> There are two decisions which have been taken about how to get the output
+> from the syscall.
+> - Return offsets of the pages from the start in the vec
+> - Stop execution when vec is filled with dirty pages
+> These two arguments doesn't follow the mincore() philosophy where the
+> output array corresponds to the address range in one to one fashion, hence
+> the output buffer length isn't passed and only a flag is set if the page
+> is present. This makes mincore() easy to use with less control. We are
+> passing the size of the output array and putting return data consecutively
+> which is offset of dirty pages from the start. The user can convert these
+> offsets back into the dirty page addresses easily. Suppose, the user want
+> to get first 10 dirty pages from a total memory of 100 pages. He'll
+> allocate output buffer of size 10 and the ioctl will abort after finding the
+> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
+> behaviour like mincore() can be achieved by passing output buffer of 100
+> size. This interface can be used for any desired behaviour.
+> 
+> [1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+> 
+> Regards,
+> Muhammad Usama Anjum
+> 
+> Muhammad Usama Anjum (4):
+>   fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+>   fs/proc/task_mmu: Implement IOCTL to get and clear soft dirty PTE bit
+>   selftests: vm: add pagemap ioctl tests
+>   mm: add documentation of the new ioctl on pagemap
+> 
+>  Documentation/admin-guide/mm/soft-dirty.rst |  42 +-
+>  fs/proc/task_mmu.c                          | 342 ++++++++++-
+>  include/uapi/linux/fs.h                     |  23 +
+>  tools/include/uapi/linux/fs.h               |  23 +
+>  tools/testing/selftests/vm/.gitignore       |   1 +
+>  tools/testing/selftests/vm/Makefile         |   2 +
+>  tools/testing/selftests/vm/pagemap_ioctl.c  | 649 ++++++++++++++++++++
+>  7 files changed, 1050 insertions(+), 32 deletions(-)
+>  create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
+> 
 
-HEAD commit:    e47eb90a0a9a Add linux-next specific files for 20220901
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=138d5455080000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7933882276523081
-dashboard link: https://syzkaller.appspot.com/bug?extid=938055fcae46a26e5239
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+938055fcae46a26e5239@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in get_node_id fs/fuse/fuse_i.h:887 [inline]
-BUG: KASAN: slab-out-of-bounds in fuse_inode_eq+0x75/0x80 fs/fuse/inode.c:341
-Read of size 8 at addr ffff888051c95930 by task syz-executor.3/10946
-
-CPU: 0 PID: 10946 Comm: syz-executor.3 Not tainted 6.0.0-rc3-next-20220901-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:317 [inline]
- print_report.cold+0x2ba/0x719 mm/kasan/report.c:433
- kasan_report+0xb1/0x1e0 mm/kasan/report.c:495
- get_node_id fs/fuse/fuse_i.h:887 [inline]
- fuse_inode_eq+0x75/0x80 fs/fuse/inode.c:341
- find_inode+0xe4/0x220 fs/inode.c:917
- ilookup5_nowait fs/inode.c:1430 [inline]
- ilookup5 fs/inode.c:1459 [inline]
- iget5_locked+0xb1/0x2c0 fs/inode.c:1240
- fuse_iget+0x1cc/0x6b0 fs/fuse/inode.c:382
- fuse_lookup_name+0x447/0x630 fs/fuse/dir.c:403
- fuse_lookup.part.0+0xdf/0x390 fs/fuse/dir.c:433
- fuse_lookup fs/fuse/dir.c:429 [inline]
- fuse_atomic_open+0x2d5/0x440 fs/fuse/dir.c:662
- atomic_open fs/namei.c:3276 [inline]
- lookup_open.isra.0+0xb8a/0x12a0 fs/namei.c:3384
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x996/0x28f0 fs/namei.c:3688
- do_filp_open+0x1b6/0x400 fs/namei.c:3718
- do_sys_openat2+0x16d/0x4c0 fs/open.c:1308
- do_sys_open fs/open.c:1324 [inline]
- __do_sys_openat fs/open.c:1340 [inline]
- __se_sys_openat fs/open.c:1335 [inline]
- __x64_sys_openat+0x13f/0x1f0 fs/open.c:1335
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f1c79689279
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1c78dff168 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f1c7979c050 RCX: 00007f1c79689279
-RDX: 0000000000000000 RSI: 00000000200020c0 RDI: ffffffffffffff9c
-RBP: 00007f1c796e32e9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc999facef R14: 00007f1c78dff300 R15: 0000000000022000
- </TASK>
-
-Allocated by task 29165:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:45 [inline]
- set_alloc_info mm/kasan/common.c:437 [inline]
- __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:470
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:737 [inline]
- slab_alloc_node mm/slub.c:3317 [inline]
- slab_alloc mm/slub.c:3325 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3332 [inline]
- kmem_cache_alloc_lru+0x255/0x730 mm/slub.c:3348
- alloc_inode_sb include/linux/fs.h:3104 [inline]
- nilfs_alloc_inode+0x24/0x150 fs/nilfs2/super.c:154
- alloc_inode+0x61/0x230 fs/inode.c:261
- iget5_locked fs/inode.c:1243 [inline]
- iget5_locked+0x1cb/0x2c0 fs/inode.c:1236
- nilfs_iget_locked+0xa0/0xd0 fs/nilfs2/inode.c:588
- nilfs_ifile_read+0x2c/0x1a0 fs/nilfs2/ifile.c:187
- nilfs_attach_checkpoint+0x258/0x4b0 fs/nilfs2/super.c:541
- nilfs_fill_super fs/nilfs2/super.c:1064 [inline]
- nilfs_mount+0xb12/0xfb0 fs/nilfs2/super.c:1317
- legacy_get_tree+0x105/0x220 fs/fs_context.c:610
- vfs_get_tree+0x89/0x2f0 fs/super.c:1530
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1326/0x1e20 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff888051c95348
- which belongs to the cache nilfs2_inode_cache of size 1512
-The buggy address is located 0 bytes to the right of
- 1512-byte region [ffff888051c95348, ffff888051c95930)
-
-The buggy address belongs to the physical page:
-page:ffffea0001472400 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888051c90000 pfn:0x51c90
-head:ffffea0001472400 order:3 compound_mapcount:0 compound_pincount:0
-memcg:ffff888078d1b801
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000010200 0000000000000000 dead000000000122 ffff888146e09dc0
-raw: ffff888051c90000 000000008013000c 00000001ffffffff ffff888078d1b801
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 29150, tgid 29149 (syz-executor.3), ts 1182464121975, free_ts 1152885638731
- prep_new_page mm/page_alloc.c:2534 [inline]
- get_page_from_freelist+0x109b/0x2ce0 mm/page_alloc.c:4284
- __alloc_pages+0x1c7/0x510 mm/page_alloc.c:5542
- alloc_pages+0x1a6/0x270 mm/mempolicy.c:2280
- alloc_slab_page mm/slub.c:1721 [inline]
- allocate_slab+0x228/0x370 mm/slub.c:1866
- new_slab mm/slub.c:1919 [inline]
- ___slab_alloc+0xad0/0x1440 mm/slub.c:3100
- __slab_alloc.constprop.0+0x4d/0xa0 mm/slub.c:3198
- slab_alloc_node mm/slub.c:3283 [inline]
- slab_alloc mm/slub.c:3325 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3332 [inline]
- kmem_cache_alloc_lru+0x4aa/0x730 mm/slub.c:3348
- alloc_inode_sb include/linux/fs.h:3104 [inline]
- nilfs_alloc_inode+0x24/0x150 fs/nilfs2/super.c:154
- alloc_inode+0x61/0x230 fs/inode.c:261
- iget5_locked fs/inode.c:1243 [inline]
- iget5_locked+0x1cb/0x2c0 fs/inode.c:1236
- nilfs_iget_locked+0xa0/0xd0 fs/nilfs2/inode.c:588
- nilfs_dat_read+0x84/0x360 fs/nilfs2/dat.c:483
- nilfs_load_super_root fs/nilfs2/the_nilfs.c:120 [inline]
- load_nilfs+0x368/0x1330 fs/nilfs2/the_nilfs.c:269
- nilfs_fill_super fs/nilfs2/super.c:1059 [inline]
- nilfs_mount+0xa9a/0xfb0 fs/nilfs2/super.c:1317
- legacy_get_tree+0x105/0x220 fs/fs_context.c:610
- vfs_get_tree+0x89/0x2f0 fs/super.c:1530
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1451 [inline]
- free_pcp_prepare+0x5e4/0xd20 mm/page_alloc.c:1501
- free_unref_page_prepare mm/page_alloc.c:3382 [inline]
- free_unref_page+0x19/0x4d0 mm/page_alloc.c:3478
- __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2514
- qlink_free mm/kasan/quarantine.c:168 [inline]
- qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
- kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:294
- __kasan_slab_alloc+0xa2/0xc0 mm/kasan/common.c:447
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:737 [inline]
- slab_alloc_node mm/slub.c:3317 [inline]
- slab_alloc mm/slub.c:3325 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3332 [inline]
- kmem_cache_alloc+0x2b7/0x3d0 mm/slub.c:3341
- vm_area_alloc+0x1c/0xf0 kernel/fork.c:458
- mmap_region+0x448/0x1bf0 mm/mmap.c:2604
- do_mmap+0x825/0xf50 mm/mmap.c:1411
- vm_mmap_pgoff+0x1ab/0x270 mm/util.c:520
- ksys_mmap_pgoff+0x79/0x5a0 mm/mmap.c:1457
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Memory state around the buggy address:
- ffff888051c95800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888051c95880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888051c95900: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-                                     ^
- ffff888051c95980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888051c95a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Muhammad Usama Anjum
