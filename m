@@ -2,155 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEDCF5B00BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 11:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 155355B00CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 11:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230356AbiIGJlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 05:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51464 "EHLO
+        id S229634AbiIGJqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 05:46:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbiIGJkr (ORCPT
+        with ESMTP id S229464AbiIGJqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 05:40:47 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 878EE8C44A;
-        Wed,  7 Sep 2022 02:40:46 -0700 (PDT)
-Received: from [192.168.10.7] (unknown [39.45.34.118])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 7 Sep 2022 05:46:15 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECDBAB400;
+        Wed,  7 Sep 2022 02:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1662543971; i=@fujitsu.com;
+        bh=tirKYeQVFZpCtn4kxRPrTN8XmF01/d/HAUe+01mJjBU=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=Ic8tDoGmqPFtJppVsiDegCrz3ODHSmyreE1X2857PemJz0o+Eln7pdFYi1RXtCamv
+         88ndAhzyt0G/gP64QdXtPl+n3kcUnW9loPheZ8uKhwtFVB2VxLdEg2mjUkKCfOVuJN
+         svnrTO+gSsaJ8zirKf5Fk0Jj05tyq1taUnUW4B0bi4zWqQU0U8oGo3MEu5UOM/ebN3
+         oTFfGM73qZQHwNbEvWq/a0FCjrsLfV8cCW94ezovpW788dGx1IWxEEcZguEKS+LxGi
+         KFk0hMWhpySejnuS14oBd24PSmrUuHbbUNB7k1Otdy1zlybcuDUhhTHqGu8ifqPcZ4
+         75jbee10hevIg==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRWlGSWpSXmKPExsViZ8ORqJuUIZF
+  ssP+GtMX0qRcYLbYcu8docfkJn8XpCYuYLHa/vslmsWfvSRaLy7vmsFncW/Of1WLXnx3sFit/
+  /GF14PI4tUjCY/MKLY/Fe14yeWxa1cnmsenTJHaPF5tnMnp8fHqLxePzJrkAjijWzLyk/IoE1
+  ox/myewFGznrHjwfw9zA+NG9i5GTg4hgS2MEsu21HQxcgHZy5kkjq1awAzhbGOUaLj1jQmkil
+  fATuL+pP9sIDaLgIpEw6pvbBBxQYmTM5+wgNiiAskSdw+vB7OFBXwlHt6/BWazCehIXFjwl7W
+  LkYNDRMBYYlpTIsh8ZoFrjBLbnjxjB4kLCVRIrN7OAVLOKeAqsb3nNthaZgELicVvDrJD2PIS
+  zVtnM4OUSwgoSczsjgcJSwB1Nk4/xARhq0lcPbeJeQKj0Cwkx81CMmkWkkkLGJlXMVolFWWmZ
+  5TkJmbm6BoaGOgaGprqGpvrGlrqJVbpJuqlluqWpxaX6BrpJZYX66UWF+sVV+Ym56To5aWWbG
+  IERmJKsarwDsaOlT/1DjFKcjApifLGeUkkC/El5adUZiQWZ8QXleakFh9ilOHgUJLgjQsFygk
+  WpaanVqRl5gCTAkxagoNHSYR3SjJQmre4IDG3ODMdInWKUZdjbcOBvcxCLHn5ealS4ryJ6UBF
+  AiBFGaV5cCNgCeoSo6yUMC8jAwODEE9BalFuZgmq/CtGcQ5GJWHe+jSgKTyZeSVwm14BHcEEd
+  MTWQHGQI0oSEVJSDUxlotMMF/K8mHTq60+rfRLve2fP9QwQv6AoFysyj1vNcFoSy4ynOfaWYS
+  E3o6IZ3l0vfrREwY/9X/OOoID4nFYRnY2bz/3p9IhnfTdLuXnOZVf748f3XI+dJ33p/rejDz+
+  ++L+FMWkj8zWje0WdvREnXgfnpT+0ajxgM91zsyz7B616/ZJurU3+/VabY1LjliousY+O25zz
+  +NOkLcdvnynxm7B9Qu/N2yXdfg+Xrost1Hy5bulyo0yf9OkeezqXvDI0iX+XdHTfoashKZkW+
+  e8/BP2JP1g0lfGY6eq+9Gm/fKWniUWIHhVrbSmy29vdtIR/yoUE4RXXd8YIFgWpPI173SiWWf
+  7AtLWPo/CdXqsSS3FGoqEWc1FxIgAWB9RHywMAAA==
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-4.tower-565.messagelabs.com!1662543970!133438!1
+X-Originating-IP: [62.60.8.97]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.87.3; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 15620 invoked from network); 7 Sep 2022 09:46:10 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-4.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Sep 2022 09:46:10 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 1A961100192;
+        Wed,  7 Sep 2022 10:46:10 +0100 (BST)
+Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 86B816601F59;
-        Wed,  7 Sep 2022 10:40:41 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1662543644;
-        bh=uY9pFagbdbh2lu8qFd2KKrIN4d71jSAT6G/zm0gBKdA=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=bxbY5WxH4rDgMWoliFxR6YZ8Ia1K9Tiw4FBvay0lZQ/wFpp5fJPhe2OZ9kZJvKPtD
-         U4zYvbBUaEPP654ir03KVcclG9hpZxVMhnXw1C0TCvJOoknbNfodO3HdVTP0rqsP5V
-         cDqdEBqviA8BAhb9aFUJomTcw92gNg2Hc5Z7evMXLAy5F6uFtscHy7mlE0i2j+MW70
-         qylf+08rgESV6oVoor2i9EFePOJtK0Hp1zfCyKC9eC9AaQgKvtsCJyU/C0wtB4uOjG
-         2HAPUt63VEawgolQd37NugEEScwTS2kHaUR5gw5odZUkyiyENUQFi78Gr+la3TShER
-         ytgxww5A5tn9A==
-Message-ID: <19df8db9-cff4-848e-905b-525f620848e8@collabora.com>
-Date:   Wed, 7 Sep 2022 14:40:37 +0500
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 0E01D10018D;
+        Wed,  7 Sep 2022 10:46:10 +0100 (BST)
+Received: from [192.168.22.78] (10.167.225.141) by
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Wed, 7 Sep 2022 10:46:06 +0100
+Message-ID: <bf68da75-5b05-5376-c306-24f9d2b92e80@fujitsu.com>
+Date:   Wed, 7 Sep 2022 17:46:00 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Cc:     usama.anjum@collabora.com, kernel@collabora.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
-Content-Language: en-US
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20220826064535.1941190-1-usama.anjum@collabora.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20220826064535.1941190-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v8 0/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <dan.j.williams@intel.com>, <djwong@kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <nvdimm@lists.linux.dev>, <linux-xfs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hch@infradead.org>,
+        <david@fromorbit.com>, <jane.chu@oracle.com>
+References: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
+ <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
+In-Reply-To: <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/26/22 11:45 AM, Muhammad Usama Anjum wrote:
-> 
-> Hello,
-> 
-> This patch series implements a new ioctl on the pagemap proc fs file to
-> get, clear and perform both get and clear at the same time atomically on
-> the specified range of the memory.
-> 
-> Soft-dirty PTE bit of the memory pages can be viewed by using pagemap
-> procfs file. The soft-dirty PTE bit for the whole memory range of the
-> process can be cleared by writing to the clear_refs file. This series
-> adds features that weren't present earlier.
-> - There is no atomic get soft-dirty PTE bit status and clear operation
->   present.
-> - The soft-dirty PTE bit of only a part of memory cannot be cleared.
-> 
-> Historically, soft-dirty PTE bit tracking has been used in the CRIU
-> project. The proc fs interface is enough for that as I think the process
-> is frozen. We have the use case where we need to track the soft-dirty
-> PTE bit for the running processes. We need this tracking and clear
-> mechanism of a region of memory while the process is running to emulate
-> the getWriteWatch() syscall of Windows. This syscall is used by games to
-> keep track of dirty pages and keep processing only the dirty pages. This
-> new ioctl can be used by the CRIU project and other applications which
-> require soft-dirty PTE bit information.
-> 
-> As in the current kernel there is no way to clear a part of memory (instead
-> of clearing the Soft-Dirty bits for the entire process) and get+clear
-> operation cannot be performed atomically, there are other methods to mimic
-> this information entirely in userspace with poor performance:
-> - The mprotect syscall and SIGSEGV handler for bookkeeping
-> - The userfaultfd syscall with the handler for bookkeeping
-> Some benchmarks can be seen [1].
-> 
-> This ioctl can be used by the CRIU project and other applications which
-> require soft-dirty PTE bit information. The following operations are
-> supported in this ioctl:
-> - Get the pages that are soft-dirty.
-> - Clear the pages which are soft-dirty.
-> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
-> soft-dirty PTE bit
-Thoughts?
+ping
 
+在 2022/9/2 18:35, Shiyang Ruan 写道:
+> Changes since v7:
+>    1. Add P1 to fix calculation mistake
+>    2. Add P2 to move drop_pagecache_sb() to super.c for xfs to use
+>    3. P3: Add invalidate all mappings after sync.
+>    4. P3: Set offset&len to be start&length of device when it is to be removed.
+>    5. Rebase on 6.0-rc3 + Darrick's patch[1] + Dan's patch[2].
 > 
-> There are two decisions which have been taken about how to get the output
-> from the syscall.
-> - Return offsets of the pages from the start in the vec
-> - Stop execution when vec is filled with dirty pages
-> These two arguments doesn't follow the mincore() philosophy where the
-> output array corresponds to the address range in one to one fashion, hence
-> the output buffer length isn't passed and only a flag is set if the page
-> is present. This makes mincore() easy to use with less control. We are
-> passing the size of the output array and putting return data consecutively
-> which is offset of dirty pages from the start. The user can convert these
-> offsets back into the dirty page addresses easily. Suppose, the user want
-> to get first 10 dirty pages from a total memory of 100 pages. He'll
-> allocate output buffer of size 10 and the ioctl will abort after finding the
-> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
-> behaviour like mincore() can be achieved by passing output buffer of 100
-> size. This interface can be used for any desired behaviour.
+> Changes since v6:
+>    1. Rebase on 6.0-rc2 and Darrick's patch[1].
 > 
-> [1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+> [1]: https://lore.kernel.org/linux-xfs/Yv5wIa2crHioYeRr@magnolia/
+> [2]: https://lore.kernel.org/linux-xfs/166153426798.2758201.15108211981034512993.stgit@dwillia2-xfh.jf.intel.com/
 > 
-> Regards,
-> Muhammad Usama Anjum
+> Shiyang Ruan (3):
+>    xfs: fix the calculation of length and end
+>    fs: move drop_pagecache_sb() for others to use
+>    mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
 > 
-> Muhammad Usama Anjum (4):
->   fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
->   fs/proc/task_mmu: Implement IOCTL to get and clear soft dirty PTE bit
->   selftests: vm: add pagemap ioctl tests
->   mm: add documentation of the new ioctl on pagemap
+>   drivers/dax/super.c         |  3 ++-
+>   fs/drop_caches.c            | 33 ---------------------------------
+>   fs/super.c                  | 34 ++++++++++++++++++++++++++++++++++
+>   fs/xfs/xfs_notify_failure.c | 31 +++++++++++++++++++++++++++----
+>   include/linux/fs.h          |  1 +
+>   include/linux/mm.h          |  1 +
+>   6 files changed, 65 insertions(+), 38 deletions(-)
 > 
->  Documentation/admin-guide/mm/soft-dirty.rst |  42 +-
->  fs/proc/task_mmu.c                          | 342 ++++++++++-
->  include/uapi/linux/fs.h                     |  23 +
->  tools/include/uapi/linux/fs.h               |  23 +
->  tools/testing/selftests/vm/.gitignore       |   1 +
->  tools/testing/selftests/vm/Makefile         |   2 +
->  tools/testing/selftests/vm/pagemap_ioctl.c  | 649 ++++++++++++++++++++
->  7 files changed, 1050 insertions(+), 32 deletions(-)
->  create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
-> 
-
--- 
-Muhammad Usama Anjum
