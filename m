@@ -2,43 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE975AFF0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 10:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C70545AFF7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Sep 2022 10:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiIGIcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 04:32:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52216 "EHLO
+        id S229824AbiIGIpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 04:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbiIGIcu (ORCPT
+        with ESMTP id S229572AbiIGIpm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 04:32:50 -0400
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0F7B88DEE;
-        Wed,  7 Sep 2022 01:32:48 -0700 (PDT)
-Received: from ([60.208.111.195])
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id CJO00142;
-        Wed, 07 Sep 2022 16:32:42 +0800
-Received: from localhost.localdomain (10.200.104.97) by
- jtjnmail201604.home.langchao.com (10.100.2.4) with Microsoft SMTP Server id
- 15.1.2507.12; Wed, 7 Sep 2022 16:32:43 +0800
-From:   Bo Liu <liubo03@inspur.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bo Liu <liubo03@inspur.com>
-Subject: [PATCH v2 1/1] eventfd: check ida_simple_get() return value
-Date:   Wed, 7 Sep 2022 04:32:42 -0400
-Message-ID: <20220907083242.6911-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+        Wed, 7 Sep 2022 04:45:42 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E3C72EE1;
+        Wed,  7 Sep 2022 01:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EBn6+PekQ9HgWpOyL3HjDLpM5I9iK8a5/LWby5GXm9w=; b=oVetsvWLvH5eTqsi2zWONtOAC3
+        rpZ6+qvDKI37kr2ze2cMlVgkhAfvPg6uiUWsrUYR9ZcUyYQNl4xeK1t6c4whmVHD1E23Mhxgz01wR
+        vXF5bBSal2savl00zL3GewiEwtqdPIW0eH0UH4EbDt3Wi2PxSzFltT2mdaBrlbik3gmpqAjya3jSQ
+        NGIUR67sBaEfsENy+OvVHmXQ7qCuMwLTtqbOKQl1Wv+5Kl/t2anvwTp1DeYUFuU8DAs/eLpqyNY3y
+        FxW4UOxkCgD0Il8Z5AF1hAzQ0cfHvx1nSsH2xsI4w6iHAzjsFq53EgVIyPzPpxzmtV9iZ+vo4btdE
+        qjixFbYg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oVqgY-004SGZ-4V; Wed, 07 Sep 2022 08:45:26 +0000
+Date:   Wed, 7 Sep 2022 01:45:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
+Message-ID: <YxhaJktqtHw3QTSG@infradead.org>
+References: <20220831041843.973026-1-jhubbard@nvidia.com>
+ <20220831041843.973026-5-jhubbard@nvidia.com>
+ <YxbtF1O8+kXhTNaj@infradead.org>
+ <103fe662-3dc8-35cb-1a68-dda8af95c518@nvidia.com>
+ <Yxb7YQWgjHkZet4u@infradead.org>
+ <20220906102106.q23ovgyjyrsnbhkp@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.200.104.97]
-tUid:   20229071632420cc2c9bf8b751fd961f3c31d34ff5a3d
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220906102106.q23ovgyjyrsnbhkp@quack3>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -46,28 +67,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As ida_simple_get() can fail, we should check the return value.
+On Tue, Sep 06, 2022 at 12:21:06PM +0200, Jan Kara wrote:
+> > For FOLL_PIN callers, never pin bvec and kvec pages:  For file systems
+> > not acquiring a reference is obviously safe, and the other callers will
+> > need an audit, but I can't think of why it woul  ever be unsafe.
+> 
+> Are you sure about "For file systems not acquiring a reference is obviously
+> safe"? I can see places e.g. in orangefs, afs, etc. which create bvec iters
+> from pagecache pages. And then we have iter_file_splice_write() which
+> creates bvec from pipe pages (which can also be pagecache pages if
+> vmsplice() is used). So perhaps there are no lifetime issues even without
+> acquiring a reference (but looking at the code I would not say it is
+> obvious) but I definitely don't see how it would be safe to not get a pin
+> to signal to filesystem backing the pagecache page that there is DMA
+> happening to/from the page.
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- fs/eventfd.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index c0ffee99ad23..208474d49ea4 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -428,6 +428,10 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-+	if (ctx->id < 0) {
-+		fd = ctx->id;
-+		goto err;
-+	}
- 
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
--- 
-2.27.0
-
+I mean in the context of iov_iter_get_pages callers, that is direct
+I/O.  Direct callers of iov_iter_bvec which then pass that iov to
+->read_iter / ->write_iter will need to hold references (those are
+the references that the callers of iov_iter_get_pages rely on!).
