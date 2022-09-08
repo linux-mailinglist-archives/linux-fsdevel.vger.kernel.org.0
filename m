@@ -2,185 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5E35B14EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 08:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5DE5B1518
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 08:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbiIHGpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 02:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50792 "EHLO
+        id S231241AbiIHGuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 02:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230470AbiIHGpq (ORCPT
+        with ESMTP id S231168AbiIHGtj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 02:45:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7878CD50B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 23:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662619544;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vUaj/TzGiYURsXpCpPVqXBkUIT39jUWVTBNjFRgF1Ys=;
-        b=TgdS1wbrEpprkao2SZYGlDfsH9tcCu5NWj6Fss6ZnMulJV1L9sqUeTAmIQ5qk2pPRxhLbY
-        GYJYbe8xVVmM494XLdQqdPT6h3E0j4hxIVjDeqquPmPZmR8YzQY14Iisy8wfax0nP4K9hY
-        In4WZTWlt/p1jPN9hl34yHwpGb0/XsQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-120-YMjhlJxPNr2rS05Bn-TN8w-1; Thu, 08 Sep 2022 02:45:41 -0400
-X-MC-Unique: YMjhlJxPNr2rS05Bn-TN8w-1
-Received: by mail-wm1-f71.google.com with SMTP id n1-20020a7bc5c1000000b003a682987306so177041wmk.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 23:45:41 -0700 (PDT)
+        Thu, 8 Sep 2022 02:49:39 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21823D51D9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 23:49:16 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id y127so16977164pfy.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Sep 2022 23:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=iK+jXg5NmojrjrXTvcBk5UVdDJeNZinaYGMOcpZC3/8=;
+        b=oHAp0tnWXJ81IHC5ZFwfbAdD8DIhC2yqLrgizCbBZ8c0lemiyoBBb+dBqgDIZWdQ1J
+         Hsrmo7+GFUfedzBzOj0mHNIYce/b5hC7D+sm5tMFOdLhsl/0epi4YGsBTKxrMIwAWNsf
+         wZhAQCBbqslAZMyjOvDAT+X/XUchHIriMYhKeAMcpgUvjuQn8soULx9pja/b5BK3bIf/
+         3zzlMYNq6SVI4uJfAGsb0DJBCDPUNT6AjCvCMFjk5iF3pwGyGRXALo5yTUVd6a41TJSN
+         6tQqnvxSzQM5IvADL1o4NlowFpS9TWyIVONwic8eV9FSm8tiqs5WBkVCGz1rzyvCUmAM
+         TYIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:subject:from:references:cc:to:content-language
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date;
-        bh=vUaj/TzGiYURsXpCpPVqXBkUIT39jUWVTBNjFRgF1Ys=;
-        b=nYAfIRhTYa5sQqERn4QndrMpybI98zLIm1jnCPtkHWOhoGUgt6DQqpW5C+FJ/SsDAr
-         5GI0kSsQwtzOy52z8un/vdJVn6cfq9sEMuRsM3jEGLpnyRD+CBEoPKVslBztnCEEdflu
-         hK/v+TNM5tBvp8d/SP4GnCS3t55DY2rDcwDtVKKs4j1wo2EkIVWyhu4e7oAL7g685h3L
-         npYvgkRU1vYRdO7C2OUNZqxd07t1zztxJHubGDUVp+WAJkYX2ryr1SBLKMBP4pBQ9P35
-         1653xQvJinzTSL1ttUR2n8r/GZ5BxiG4YG2X50PNcq/Q1sZLr2DqjNGUNpm+J1cUBIg/
-         bBTg==
-X-Gm-Message-State: ACgBeo2bLtDsYMwx/3GDOruY3z9N5bucowMXtNT89RyoPZhCvq/m11rF
-        WTQgSPs2pHu/QrsjXQB6leznowSr1MBOyo+XP21eVYG8WWpu4oLJvts1SmPLXC0fh3IXbMOgGNQ
-        gmmmh/YpaRD7YB/49155xRsRyGQ==
-X-Received: by 2002:a5d:4f8e:0:b0:228:c692:126f with SMTP id d14-20020a5d4f8e000000b00228c692126fmr3962468wru.315.1662619540336;
-        Wed, 07 Sep 2022 23:45:40 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR4QfTzl5V9tPYuu1S4M+nDUBmuqDN+jRgu3jwV2Ic+jSt96UMnSRaQTCgD/djN7A2Vk/vz+3w==
-X-Received: by 2002:a5d:4f8e:0:b0:228:c692:126f with SMTP id d14-20020a5d4f8e000000b00228c692126fmr3962463wru.315.1662619540118;
-        Wed, 07 Sep 2022 23:45:40 -0700 (PDT)
-Received: from [192.168.1.40] (82-64-217-13.subs.proxad.net. [82.64.217.13])
-        by smtp.gmail.com with ESMTPSA id m2-20020a05600c3b0200b003a5ee64cc98sm1605020wms.33.2022.09.07.23.45.39
+        bh=iK+jXg5NmojrjrXTvcBk5UVdDJeNZinaYGMOcpZC3/8=;
+        b=bf5nlxSJsxkWUAGSgpvGrsfA7md07/AaCz2NrQfETwRKuDtQTZAnZxuSh2InL6skAb
+         iqGygVNgP8q9q9ZYjFWGae3qpocpGEdDkvzEA9Ipppx2+ckLvdEit8xXCV6+13LOIuri
+         l74QVt+V+nzAwCsa7kXzTKW3/i+y+0eGLTPMBeWFHP1NQpQ8AteTkXx3hSkHU09InR0M
+         f3HT5mRCoTeVXkq9tbc7nnOORaOJ0ivR+lzXJ85UAs5SgydD3UTGymuttopPHcPyR0IA
+         PLk7FNraCs0mUq92W/sQvTaW/GYY1u7XirC/VJZ9a0pg3d8GI30+QAB/pAqGEHQjl114
+         2odg==
+X-Gm-Message-State: ACgBeo2v2PH2wBbY73czg+MAEHw6fb2Ary3AW5mwN6UkexB+PwwtRFyx
+        HNaNY/TsK0c3GgEWzZgNCIG4Qu3zGsddvQ==
+X-Google-Smtp-Source: AA6agR5g0ssNDJNYCDYXHAlKO7pnWMd0buFZ5w8+Wi+bRA0ye/AK1s9OcGtBXH3K7j4TLTJvluQxtA==
+X-Received: by 2002:a05:6a00:1590:b0:53a:d2fd:9b0f with SMTP id u16-20020a056a00159000b0053ad2fd9b0fmr7867955pfk.80.1662619755862;
+        Wed, 07 Sep 2022 23:49:15 -0700 (PDT)
+Received: from ?IPV6:fdbd:ff1:ce00:427:1cff:3226:873b:1ccd? ([2404:9dc0:cd01::21])
+        by smtp.gmail.com with ESMTPSA id s5-20020a170902a50500b0016f1ef2cd44sm12146072plq.154.2022.09.07.23.49.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Sep 2022 23:45:39 -0700 (PDT)
-Message-ID: <b1673cd8-dd6d-8b50-6c5a-c715f368f12d@redhat.com>
-Date:   Thu, 8 Sep 2022 08:45:38 +0200
+        Wed, 07 Sep 2022 23:49:15 -0700 (PDT)
+Message-ID: <79eccbcc-b18e-80c4-5c8f-89213f047db8@bytedance.com>
+Date:   Thu, 8 Sep 2022 14:49:09 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Content-Language: fr-FR, en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Will Deacon <will@kernel.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Stephen Kitt <steve@sk2.org>, Rob Herring <robh@kernel.org>,
-        Joel Savitz <jsavitz@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Grzegorz Halat <ghalat@redhat.com>, Qi Guo <qguo@redhat.com>
-References: <20220903064330.20772-1-oleksandr@redhat.com>
- <Yxi+dQkuV2zdBzk3@bombadil.infradead.org>
-From:   =?UTF-8?Q?Renaud_M=c3=a9trich?= <rmetrich@redhat.com>
-Subject: Re: [PATCH] core_pattern: add CPU specifier
-In-Reply-To: <Yxi+dQkuV2zdBzk3@bombadil.infradead.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------k8la8Uj55ngffJ2zzB3njW3t"
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH V2 0/5] Introduce erofs shared domain
+To:     linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
+        huyue2@coolpad.com
+References: <20220902105305.79687-1-zhujia.zj@bytedance.com>
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <20220902105305.79687-1-zhujia.zj@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------k8la8Uj55ngffJ2zzB3njW3t
-Content-Type: multipart/mixed; boundary="------------ozI1oNvwj07SgA7LzGWdRxR4";
- protected-headers="v1"
-From: =?UTF-8?Q?Renaud_M=c3=a9trich?= <rmetrich@redhat.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
- Oleksandr Natalenko <oleksandr@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, Huang Ying
- <ying.huang@intel.com>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Will Deacon <will@kernel.org>, "Guilherme G . Piccoli"
- <gpiccoli@igalia.com>, Laurent Dufour <ldufour@linux.ibm.com>,
- Stephen Kitt <steve@sk2.org>, Rob Herring <robh@kernel.org>,
- Joel Savitz <jsavitz@redhat.com>, "Eric W . Biederman"
- <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>,
- Xiaoming Ni <nixiaoming@huawei.com>, Oleg Nesterov <oleg@redhat.com>,
- Grzegorz Halat <ghalat@redhat.com>, Qi Guo <qguo@redhat.com>
-Message-ID: <b1673cd8-dd6d-8b50-6c5a-c715f368f12d@redhat.com>
-Subject: Re: [PATCH] core_pattern: add CPU specifier
-References: <20220903064330.20772-1-oleksandr@redhat.com>
- <Yxi+dQkuV2zdBzk3@bombadil.infradead.org>
-In-Reply-To: <Yxi+dQkuV2zdBzk3@bombadil.infradead.org>
+[E2E Container Demo for Quick Test]
+===================================
+[Issue]
+     https://github.com/containerd/nydus-snapshotter/issues/161
 
---------------ozI1oNvwj07SgA7LzGWdRxR4
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+[Pull Request]
+     https://github.com/containerd/nydus-snapshotter/pull/162
 
-SGVsbG8sDQoNCkkgaGF2ZSBiZWVuIHdvcmtpbmcgY2xvc2VseSB3aXRoIE9sZWtzYW5kciBv
-biBhIGNvdXBsZSBvZiBjYXNlcyB3aGVyZSANCmN1c3RvbWVycyBjb3VsZCBzZWUgc2VnZmF1
-bHRzIGZvciB2YXJpb3VzIHByb2Nlc3NlcywgaW5jbHVkaW5nIGJhc2ljIA0KdG9vbHMgKCJn
-cmVwIiwgImN1dCIsIGV0Yy4pIHRoYXQgdXN1YWxseSBkb24ndCBkaWUuDQoNClRoZSBjb3Jl
-ZHVtcHMgc2hvd2VkIG9mIGNvdXJzZSBub3RoaW5nIGJlY2F1c2UgZnJvbSB1c2VybGFuZCdz
-IA0KcGVyc3BlY3RpdmUgdGhlcmUgd2FzIG5vdGhpbmcgd3JvbmcsIGJ1dCBqdXN0IGEgYmFk
-IHBvaW50ZXIgd2hpY2ggDQpjb3VsZG4ndCBiZSBleHBsYWluZWQuDQoNCk1lbW9yeSB0ZXN0
-aW5nIChlLmcuIE1lbXRlc3Q4NispIGFuZCBDUFUgdGVzdGluZyAodXN1YWxseSBmcm9tIGhh
-cmR3YXJlIA0KdmVuZG9yKSBuZXZlciBzaG93ZWQgYW55IGlzc3VlIHdpdGggdGhlIGhhcmR3
-YXJlIGFzIHdlbGwsIGV2ZW4gdGhvdWdoIA0KdGhlcmUgd2FzLCBwcm9iYWJseSBiZWNhdXNl
-IGl0IHJlcXVpcmVkIHNwZWNpYWwgY29uZGl0aW9ucywgc3VjaCBhcyANCnNwZWNpZmljIGxv
-YWQgYW5kL29yIHRoZXJtYWwgY29uZGl0aW9ucy4NCg0KVGhlIHRyb3VibGVzaG9vdGluZyBv
-ZiBzdWNoIGNhc2VzIHRha2VzIHNldmVyYWwgd2Vla3Mgb3IgZXZlbiBtb250aHMsIA0KdW50
-aWwgd2UgaGF2ZSBlbm91Z2ggZXZpZGVuY2UgaXQncyBub3QgdGhlIE9TIHRoYXQgaXMgZmF1
-bHR5LCBhbmQgaXQncyANCmFsd2F5cyBzdHJ1Z2dsaW5nLg0KDQpVc3VhbGx5IHdoZW4gd2Ug
-c3RhcnQgZ2V0dGluZyBrZXJuZWwgY3Jhc2hlcywgd2UgYXJlIHRoZW4gaGFwcHkgYmVjYXVz
-ZSANCmtlcm5lbCBjcmFzaGVzIGluZGljYXRlIHRoZSBDUFUgdGhlIHRhc2sgd2FzIHJ1bm5p
-bmcgb24sIGFuZCBpdCBzZWVtcyB0byANCmFsd2F5cyBiZSByZWxpYWJsZSBlbm91Z2ggaW5m
-b3JtYXRpb24gdG8gcG9pbnQgdG8gZmF1bHR5IENQVS4gRm9yIG90aGVyIA0KY2FzZXMgd2hl
-cmUgbm8ga2VybmVsIGNyYXNoIGNvdWxkIGJlIG9ic2VydmVkLCB0aGVzZSBhcmUgc29sdmVk
-IGFmdGVyIA0KcmVxdWVzdGluZyB0aGUgY3VzdG9tZXIgdG8gcmVwbGFjZSB0aGUgaGFyZHdh
-cmUgY29tcG9uZW50cywgd2hpY2ggaXMgDQpzb21ldGhpbmcgZGlmZmljdWx0IHRvIGV4cGxh
-aW4gc2luY2UgaXQgdXN1YWxseSBjb3N0cyB0aGUgY3VzdG9tZXIgbW9uZXkgDQphbmQgdGlt
-ZS4NCg0KSSBob3BlIHN1Y2ggZmVhdHVyZSB3aWxsIGJlIGhlbHBmdWwgZm9yIGV2ZXJ5Ym9k
-eSBkb2luZyBMaW51eCBzdXBwb3J0Lg0KDQpSZW5hdWQuDQoNCkxlIDkvNy8yMiDDoCAxNzo1
-MywgTHVpcyBDaGFtYmVybGFpbiBhIMOpY3JpdMKgOg0KPiBPbiBTYXQsIFNlcCAwMywgMjAy
-MiBhdCAwODo0MzozMEFNICswMjAwLCBPbGVrc2FuZHIgTmF0YWxlbmtvIHdyb3RlOg0KPj4g
-U3RhdGlzdGljYWxseSwgaW4gYSBsYXJnZSBkZXBsb3ltZW50IHJlZ3VsYXIgc2VnZmF1bHRz
-IG1heSBpbmRpY2F0ZSBhIENQVSBpc3N1ZS4NCj4gQ2FuIHlvdSBlbGFib3JhdGUgb24gdGhp
-cz8gSG93IGNvbW1vbiBpcyB0aGlzIG9ic2VydmVkIHRvIGJlIHRydWU/IEFyZQ0KPiB0aGVy
-ZSBhbnkgcHVibGljIGZpbmRpbmdzIG9yIGJ1Z3Mgd2hlcmUgaXQgc2hvd2VkIHRoaXM/DQo+
-DQo+ICAgIEx1aXMNCj4NCg==
-
---------------ozI1oNvwj07SgA7LzGWdRxR4--
-
---------------k8la8Uj55ngffJ2zzB3njW3t
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEEDdWGHF0SM+2VX5h9XRKQlPtuQyYFAmMZj5IFAwAAAAAACgkQXRKQlPtuQyaR
-khAAmf9a/W12v18Qz3c/Bl2ZaGGvfFY8ZiTpDH9/yVW+7zych78DMDKACnaYUE9AYseqYQ3Ldgc7
-jX2sn3WCT3s5Fk6TtpPaklmtyegMGgHBQo/m15xx2U6Gb7NevsJ/0sCMcvrRpTaxeuNn1a2yY2v5
-Xo4XSs0T6rUnU8Tg82DgHogURsIcsku/yVhR70H6KjbV7SjUbfAsqqDMFqTnbIStqly1W9Z6jVqH
-xuzQ0d+Z+DYrBl0b8rtQrfWvPqA1Z0q9CtQIek+caUzAFbVQoI+hepiFSqdbB2ZhoWRiGJwiF+Di
-HDFUgn/pvucFcfJXDnklBQQ1RLwF5XSLcAUJ55Scq3hsFpJ9+3dc1oNOfBmuIr3hPuSi84+tQyXu
-QFY6Djph3LLa4acWu7IGeh+7BjQdXKrRfCKFq86NoF1GYHTgREwCA3g3pMm9v+0odlOcUSJY3phe
-UZ9DSV8q+KHvbf4a5XmcY51NpablPMtZxc9EY4z9YZ9tDtJ2IJa+OyVwyl/p52cS2ga9zcsIanif
-AS9x20tM9BW2AFacyXR+UdSYbLWIs0fJyPd7/45A9u4v9UyNkyBpa4rOIKNHF7j6wCGabp4zJvnp
-6MZ9+6DW6FW8S01aPpZedM8JKCaXqJzl2sBRGcOS39QPuzQBKRoy0Zi8BflLdKH2EPjVv/1HXYGn
-QbQ=
-=eLrW
------END PGP SIGNATURE-----
-
---------------k8la8Uj55ngffJ2zzB3njW3t--
-
+在 2022/9/2 18:53, Jia Zhu 写道:
+> Changes since V1:
+> 0. Only initialize one pseudo fs to manage anonymous inodes(cookies).
+> 1. Remove ctx's 'ref' field and replace it with inode's i_count.
+> 2. Add lock in erofs_fscache_unregister_cookie() to avoid race condition
+>     between cookie's get/put/search.
+> 3. Remove useless blank lines.
+> 
+> [Kernel Patchset]
+> ===============
+> Git tree:
+> 	https://github.com/userzj/linux.git zhujia/shared-domain-v2
+> Git web:
+> 	https://github.com/userzj/linux/tree/zhujia/shared-domain-v2
+> 
+> [Background]
+> ============
+> In ondemand read mode, we use individual volume to present an erofs
+> mountpoint, cookies to present bootstrap and data blobs.
+> 
+> In which case, since cookies can't be shared between fscache volumes,
+> even if the data blobs between different mountpoints are exactly same,
+> they can't be shared.
+> 
+> [Introduction]
+> ==============
+> Here we introduce erofs shared domain to resolve above mentioned case.
+> Several erofs filesystems can belong to one domain, and data blobs can
+> be shared among these erofs filesystems of same domain.
+> 
+> [Usage]
+> Users could specify 'domain_id' mount option to create or join into a
+> domain which reuses the same cookies(blobs).
+> 
+> [Design]
+> ========
+> 1. Use pseudo mnt to manage domain's lifecycle.
+> 2. Use a linked list to maintain & traverse domains.
+> 3. Use pseudo sb to create anonymous inode for recording cookie's info
+>     and manage cookies lifecycle.
+> 
+> [Flow Path]
+> ===========
+> 1. User specify a new 'domain_id' in mount option.
+>     1.1 Traverse domain list, compare domain_id with existing domain.[Miss]
+>     1.2 Create a new domain(volume), add it to domain list.
+>     1.3 Traverse pseudo sb's inode list, compare cookie name with
+>         existing cookies.[Miss]
+>     1.4 Alloc new anonymous inodes and cookies.
+> 
+> 2. User specify an existing 'domain_id' in mount option and the data
+>     blob is existed in domain.
+>     2.1 Traverse domain list, compare domain_id with existing domain.[Hit]
+>     2.2 Reuse the domain and increase its refcnt.
+>     2.3 Traverse pseudo sb's inode list, compare cookie name with
+>     	   existing cookies.[Hit]
+>     2.4 Reuse the cookie and increase its refcnt.
+> [Test]
+> ======
+> Git web:
+> 	https://github.com/userzj/demand-read-cachefilesd/tree/shared-domain
+> More test cases will be added to:
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests-fscache
+> 
+> RFC: https://lore.kernel.org/all/YxAlO%2FDHDrIAafR2@B-P7TQMD6M-0146.local/
+> V1: https://lore.kernel.org/all/20220902034748.60868-1-zhujia.zj@bytedance.com/
+> 
+> 
+> Jia Zhu (5):
+>    erofs: add 'domain_id' mount option for on-demand read sementics
+>    erofs: introduce fscache-based domain
+>    erofs: add 'domain_id' prefix when register sysfs
+>    erofs: remove duplicated unregister_cookie
+>    erofs: support fscache based shared domain
+> 
+>   fs/erofs/fscache.c  | 168 +++++++++++++++++++++++++++++++++++++++++++-
+>   fs/erofs/internal.h |  31 +++++++-
+>   fs/erofs/super.c    |  94 +++++++++++++++++++------
+>   fs/erofs/sysfs.c    |  11 ++-
+>   4 files changed, 278 insertions(+), 26 deletions(-)
+> 
