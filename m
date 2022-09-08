@@ -2,113 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CA25B1248
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 04:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CEE5B146C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 08:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbiIHCAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 22:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42916 "EHLO
+        id S230165AbiIHGLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 02:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiIHCAu (ORCPT
+        with ESMTP id S229853AbiIHGLR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 22:00:50 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3097C198;
-        Wed,  7 Sep 2022 19:00:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 8 Sep 2022 02:11:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F1DAC24D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Sep 2022 23:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662617475;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L4sZiKf7Pb+Ro+0hy7kuWa+zv8cmGXs8YS6IIyb9ffg=;
+        b=Du9sKF9PWQ2ggf4koMJcbojFLDbaZl3U+C4Nfu1NtGhidQspJCVrEnD53PqEoFYS9FcvfS
+        UdQHbIHobLlD7LGMHVRniIesHNe/mJsAfgO3x9zNB8M9XHFdytjA4X3+CkT5eOl03KWCiA
+        UBCXRvSxrJKWHYRXSbpgCIp/wVOcCkA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-552-Ww0xld40Pz-8TyeFJln2vA-1; Thu, 08 Sep 2022 02:11:12 -0400
+X-MC-Unique: Ww0xld40Pz-8TyeFJln2vA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BD157B81110;
-        Thu,  8 Sep 2022 02:00:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A9AC433C1;
-        Thu,  8 Sep 2022 02:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662602446;
-        bh=ykIyX1r6EPVTXkRsMWuX4hF98iRFGnijnz7r06qwuS8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=tDFZ5HJHLk/8gBiMczbHy21cqZpnE/ZuQj1aOm0JKkutHIX20imKw18NVAj2C24Bm
-         WzN5CvHvmM8Q+njnoImwIgSm/qM3eHN4hOIpnBx6I25nYu11kM5XAlzAwqgHJbZI8U
-         SR2wSLtwr2NOFQDEcUhMsr2zTV+kL+blOuBsBoRzm6GGteval3a2Kj5U3jQ2kcWoI7
-         ZxHxewD+EmJj1v7QBTLkCHCHuL4ynULWfos/ZezP8O9sz+VgmwZEjbaYew+uLvZl3l
-         d9+LbggXJjORb2dSV+yzh7s7wHXk+5+VeD6GxAaT9LiFt+zXLQXnLX/dymIxvLxLVA
-         YEw06QZBg5f/A==
-Message-ID: <b99b6fb5-c289-dec5-fa15-779e069af3cb@kernel.org>
-Date:   Thu, 8 Sep 2022 10:00:40 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [f2fs-dev] [PATCH v2] Documentation: filesystems: correct
- possessive "its"
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 82919811E80;
+        Thu,  8 Sep 2022 06:11:11 +0000 (UTC)
+Received: from butterfly.localnet (dhcp-10-40-5-89.brq.redhat.com [10.40.5.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDD03492C3B;
+        Thu,  8 Sep 2022 06:11:07 +0000 (UTC)
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20220901002828.25102-1-rdunlap@infradead.org>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20220901002828.25102-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Will Deacon <will@kernel.org>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Stephen Kitt <steve@sk2.org>, Rob Herring <robh@kernel.org>,
+        Joel Savitz <jsavitz@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Renaud =?ISO-8859-1?Q?M=E9trich?= <rmetrich@redhat.com>,
+        Grzegorz Halat <ghalat@redhat.com>, Qi Guo <qguo@redhat.com>
+Subject: Re: [PATCH] core_pattern: add CPU specifier
+Date:   Thu, 08 Sep 2022 08:11:07 +0200
+Message-ID: <12050461.O9o76ZdvQC@redhat.com>
+Organization: Red Hat
+In-Reply-To: <877d2ec0ac.fsf@email.froward.int.ebiederm.org>
+References: <20220903064330.20772-1-oleksandr@redhat.com> <20220907173438.GA15992@redhat.com> <877d2ec0ac.fsf@email.froward.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/9/1 8:28, Randy Dunlap wrote:
-> Change occurrences of "it's" that are possessive to "its"
-> so that they don't read as "it is".
-> 
-> For f2fs.rst, reword one description for better clarity.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Seth Forshee <sforshee@kernel.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> ---
-> v2: Reword the compress_log_size description.
->      Rebase (the xfs file changed).
->      Add Reviewed-by: tags.
-> 
-> Thanks for Al and Ted for suggesting rewording the f2fs.rst description.
-> 
->   Documentation/filesystems/f2fs.rst                       |    5 ++---
->   Documentation/filesystems/idmappings.rst                 |    2 +-
->   Documentation/filesystems/qnx6.rst                       |    2 +-
->   Documentation/filesystems/xfs-delayed-logging-design.rst |    6 +++---
->   4 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -286,9 +286,8 @@ compress_algorithm=%s:%d Control compres
->   			 algorithm	level range
->   			 lz4		3 - 16
->   			 zstd		1 - 22
-> -compress_log_size=%u	 Support configuring compress cluster size, the size will
-> -			 be 4KB * (1 << %u), 16KB is minimum size, also it's
-> -			 default size.
-> +compress_log_size=%u	 Support configuring compress cluster size. The size will
-> +			 be 4KB * (1 << %u). The default and minimum sizes are 16KB.
+Hello.
 
-For f2fs part,
+On =C4=8Dtvrtek 8. z=C3=A1=C5=99=C3=AD 2022 0:00:43 CEST Eric W. Biederman =
+wrote:
+> Oleg Nesterov <oleg@redhat.com> writes:
+>=20
+> > On 09/07, Oleksandr Natalenko wrote:
+> >>
+> >> The advantage of having CPU recorded in the file name is that
+> >> in case of multiple cores one can summarise them with a simple
+> >> ls+grep without invoking a fully-featured debugger to find out
+> >> whether the segfaults happened on the same CPU.
+> >
+> > Besides, if you only need to gather the statistics about the faulting
+> > CPU(s), you do not even need to actually dump the the core. For example,
+> > something like
+> >
+> > 	#!/usr/bin/sh
+> >
+> > 	echo $* >> path/to/coredump-stat.txt
+> >
+> > and
+> > 	echo '| path-to-script-above %C' >/proc/sys/kernel/core_pattern
+> >
+> > can help.
+>=20
+> So I am confused.  I thought someone had modified print_fatal_signal
+> to print this information.  Looking at the code now I don't see it,
+> but perhaps that is in linux-next somewhere.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+That's a different story that gets solved here: [1] [2].
 
-Thanks,
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=
+=3Dx86/cpu&id=3Dc926087eb38520b268515ae1a842db6db62554cc
+[2] https://lore.kernel.org/lkml/20220811024903.178925-1-ira.weiny@intel.co=
+m/
+
+> That would seem to be the really obvious place to put this and much
+> closer to the original fault so we ware more likely to record the
+> cpu on which things actually happened on.
+>=20
+> If we don't care about the core dump just getting the information in
+> syslog where it can be analyzed seems like the thing to do.
+>=20
+> For a developers box putting it in core pattern makes sense, isn't a
+> hinderance to use.  For anyone else's box the information needs to come
+> out in a way that allows automated tools to look for a pattern.
+> Requiring someone to take an extra step to print the information seems
+> a hinderance to automated tools doing the looking.
+>=20
+> Eric
+>=20
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+Principal Software Maintenance Engineer
+
+
