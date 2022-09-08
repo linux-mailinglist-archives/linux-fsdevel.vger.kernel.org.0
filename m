@@ -2,208 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8F15B1F8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 15:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F5E5B2010
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 16:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbiIHNqY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 09:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39786 "EHLO
+        id S232364AbiIHODz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 10:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbiIHNqX (ORCPT
+        with ESMTP id S232331AbiIHODe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 09:46:23 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C3FB5A68;
-        Thu,  8 Sep 2022 06:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1662644776; i=@fujitsu.com;
-        bh=yMCPAIebxWO4vvQFb71MGPuxF6WjMXvRRiRf6mryorw=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=avrZt2VJjTxJirixqR6H/V3e3wSSh0H6k561RdHpHtuheftdEtoCd3HVUIjAtPI/S
-         kt7WK6oIWizI6paJwqi8NFnPgdBmr9S/56r/TF73r5bkxZPfz59PmGS8jugzB8jqwz
-         ZUNVOYrsF5fRBOdB60l2ngHleVhJ0pwkejVn3NIwzkiOb80foyC4H83daGKT+d8ahU
-         +xrYvjdZlPbZwzCT2nXHA5/J1i4m43BAfUyAbXSq0vMPIHGGDlcnuQhjLdaRwwgmOk
-         9+Rz/v9IG47pMYQ5c7Zym95cNdVscrt0Jmpje+whrrLnDdq6QmtLIdfRUvOE2567y0
-         eehsLdqMcJChQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRWlGSWpSXmKPExsViZ8MxSVf9k2S
-  ywatGa4t3n6ssthy7x2hx+QmfxekJi5gs9uw9yWJxedccNotdf3awW6z88YfVgcPj1CIJj80r
-  tDw2repk83ixeSajx/t9V9k8Pm+SC2CLYs3MS8qvSGDNOPZ3EXvBJdmKR+32DYx/xLsYuTiEB
-  LYwSjSunMQO4Sxnkuh49p4RwtkGlHkLkuHk4BWwk/i87i6YzSKgIvHr0GWouKDEyZlPWEBsUY
-  FkibuH14PZwgK+Ems39TF3MXJwiAjYS3ScMgCZySzQzizx79kuqAVnmSRud35hAmlgE9CRuLD
-  gLyuIzSmgIXFq+ywwm1nAQmLxm4PsELa8RPPW2WBDJQSUJGZ2x4OEJQQqJBqnH2KCsNUkrp7b
-  xDyBUWgWkvNmIZk0C8mkBYzMqxitk4oy0zNKchMzc3QNDQx0DQ1NdY2NdA2NzPQSq3QT9VJLd
-  ctTi0t0jfQSy4v1UouL9Yorc5NzUvTyUks2MQKjLKVYoW4H47WVP/UOMUpyMCmJ8u5eKJksxJ
-  eUn1KZkVicEV9UmpNafIhRhoNDSYI3+C1QTrAoNT21Ii0zBxjxMGkJDh4lEd6Pb4DSvMUFibn
-  FmekQqVOMuhznd+7fyyzEkpeflyolzmv4HqhIAKQoozQPbgQs+VxilJUS5mVkYGAQ4ilILcrN
-  LEGVf8UozsGoJMyr8AFoCk9mXgncpldARzABHbE1UBzkiJJEhJRUA5N7H9f5pwdWzeS5ZS8Rt
-  nZH8JYrjdxB3X5Vc77Ev4x3j+L9cnPb7eYzz0L/8Ia2a5psm61ikvfa48n6ma/TnF6HbzmV5X
-  KucuHWG+vv1Qts1WnM6He9YPJq2vFwFUcOWz3u+51FlmJegi4cdvL+51+Iyj1f+ev/qpXNU0p
-  v2qZoMJV5yTW8i8hY3ramN+iW3mVp/RXaFloNzjdYPl/VqlltdvH1Ecmjp2ZuSf82Zz3L5K9n
-  V53boLf5v2PQuk3Z/Y+uvmDg7rKZ9fBrj0Oyw3Ter8ct1pdqfOI16HfPPhdjoqptHuG4eNK6s
-  9+E7vBuYNK3fn+tflbR8h8f246/vz/93Crlj9dTDlbEncyc28asxFKckWioxVxUnAgAiO6r/r
-  kDAAA=
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-6.tower-571.messagelabs.com!1662644775!176728!1
-X-Originating-IP: [62.60.8.146]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.87.3; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 15548 invoked from network); 8 Sep 2022 13:46:15 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-6.tower-571.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 8 Sep 2022 13:46:15 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 995BC1000FB;
-        Thu,  8 Sep 2022 14:46:15 +0100 (BST)
-Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 8B6F5100078;
-        Thu,  8 Sep 2022 14:46:15 +0100 (BST)
-Received: from [192.168.22.78] (10.167.225.141) by
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 8 Sep 2022 14:46:11 +0100
-Message-ID: <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com>
-Date:   Thu, 8 Sep 2022 21:46:04 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
-To:     "Darrick J. Wong" <djwong@kernel.org>, <bfoster@redhat.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        =?UTF-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>
-References: <20220609143435.393724-1-ruansy.fnst@fujitsu.com>
- <Yr5AV5HaleJXMmUm@magnolia>
- <74b0a034-8c77-5136-3fbd-4affb841edcb@fujitsu.com>
- <Ytl7yJJL1fdC006S@magnolia>
- <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
- <YuNn9NkUFofmrXRG@magnolia>
- <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
- <YusYDMXLYxzqMENY@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <YusYDMXLYxzqMENY@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Thu, 8 Sep 2022 10:03:34 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80092.outbound.protection.outlook.com [40.107.8.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2221838B;
+        Thu,  8 Sep 2022 07:03:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hSaHqSsCgNkv9j23PYPNOnq/zPscKKIvpTU0r+Cn31YGsx4rLVlJc+P6/AGofnslEUGwtJprJClZjZxO2RKit3ooyuAmmlaw6pc5oLqGdhKQqTqVeTZ1d9jSxXt4zp6tNrwqgO6twPyS0vn1VU6P4QFJJ+U0a7P0D8BEM5xJm9qUja8H1BDX8gpdBqGgWty1YVKNs55Oe0LmHjqM+HNcnGyEVz/PzaoJPKyZORn32ZwORIcS+had1CXpoqxNrx8344XxZ33GTOZncOJeRkxtiY9f7WG20pB2FY7Hqg/5tBgPkHICa35kdWYq0xsKvl1u26LkVQJl1eRw2NTSlj2lFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EDah6bUSEtLU5j2CBLB2EvDLlFSFZCrHDvlGvHVIXqY=;
+ b=RLVtV6umqN7qlOFGpwySIbdaoswCvmQGkCBYKE6iPmgPJMB52KSfhpBj8bMZnM9R6+Bcz7HNSU4bM8JF7RmZ2cQcUgRAOJLABHBImhh3WSsDFgN2qAM40oOgS2+5kwjY5Mhdw+8pX2cr5QN/uJfUiYLufGdJCp5Hq0lmCclCDzA5cFZNRD4lcMgg+FpePgx9EyCCe1eTSlG+9DXweRX0NcBIhE0PnuUx4Xj/CfWgzIGVKnK2hp46Af5GgSTVmzbZyWQz9utCZF7M0nyf6zvXppTl3SGFEeXV8gsGj2N2MWdnswS4UfwsBRwxi7/uyEWMoeyxbJZVQ0LHnb/OY1wjoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EDah6bUSEtLU5j2CBLB2EvDLlFSFZCrHDvlGvHVIXqY=;
+ b=NFE24JpH2B5Rk61K1eDGn0OoYE3ik7JEKAJ6CLvUUiDFZqcBdkEjwMdtC+K1LVBE6GClq3OReqkG2tjtM4xlZ2CI5ssUcKhE2W7tn5+nCUJJP9qyABEHkamrjNREjH8Vb+Oec5rwAVVkV8RO6ZXwqMx0KQbAqY+pBDsBQpx84sSCo+HLO95f3njKUpl9Vs1PG2NW9zwbeqhQ/IZG+l/wL0h08df41SFpH3C8zDkINdiegKPJRrDFwhak5EoMsqPNxPQ3qI+GUhfaFWWOgtO08rf+CGIRHk2/xuZU+A7njBRSpGReONVW5ajIzIJvnREVsP8v7B6Umbhwe8zrcHCWgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=virtuozzo.com;
+Received: from VE1PR08MB4989.eurprd08.prod.outlook.com (2603:10a6:803:114::19)
+ by AS8PR08MB6168.eurprd08.prod.outlook.com (2603:10a6:20b:294::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.12; Thu, 8 Sep
+ 2022 14:03:25 +0000
+Received: from VE1PR08MB4989.eurprd08.prod.outlook.com
+ ([fe80::f536:84f7:c861:ccc1]) by VE1PR08MB4989.eurprd08.prod.outlook.com
+ ([fe80::f536:84f7:c861:ccc1%4]) with mapi id 15.20.5612.016; Thu, 8 Sep 2022
+ 14:03:25 +0000
+From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+To:     Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrei Vagin <avagin@google.com>, linux-kernel@vger.kernel.org
+Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-ia64@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, kernel@openvz.org
+Subject: [PATCH v3 0/2] Introduce CABA helper process tree
+Date:   Thu,  8 Sep 2022 17:03:11 +0300
+Message-Id: <20220908140313.313020-1-ptikhomirov@virtuozzo.com>
+X-Mailer: git-send-email 2.37.1
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0143.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:96::17) To VE1PR08MB4989.eurprd08.prod.outlook.com
+ (2603:10a6:803:114::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1PR08MB4989:EE_|AS8PR08MB6168:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ab4ca98-3cb5-4756-c8ed-08da91a2e599
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0691gsT5ld7VOzffepxDDgRE8gJ5qQe4jeuT7TpqbgGz2Wgwo60vMxq6Uf8n+SwNFFnrAHpPM1KfhwWfuoEYUAyK7UAv+BmObPls38hxG+W+5PbDb7VtwhLASRAN/PJUaR19XSFT2RO/8/rR5wjsljKVGeQBwLOFyw7mVuf5EXLS6/lyC6WfUl73TsMGDrYYs2lfwgEt5cwCWb4Se6CQ/BdqoCGV5wyxeuqtjRj2SIQlvj6d+xpW/1uxUmmXX8+4nEJQyTTNISXWZT4BJuZQQ5jTrDvXqHqXNSHTb0dKqYPTrLoOj2OoASsO87Z1Gqp6tsGEJe+mKlYwe7knziLdc0dXoUjF7Tz/sI3ENOYAkLGybK8LhC0tdMHe9PDi3ypIl4xrDis83+gSapOwtcDB0wEykh4Zw06ES/lAPubbwWfh8tCqBhKZ/i6gTANRzwVRLZCAJFAbdMxqdNgN22bF5AMOwi8EMBI8mNplDRE25dvpWAGC76toY0iMreL0VPj9UrAa8SxGhuLmG2e52OOrZMzopmjjFJz+wjrk3KqdRgI2tPFq4kByoJ0SB+E1A2WjlO5f29k+H96bnvc6t9ZWPBkJuEPagvDAvVJv/I6QycgCncUg7nUYClMnuhEPbp1h0hhHRJ7t/iObafKfDprTGkTkLFr2sNYyxsSZ3mL78y4/c0a7QNyqOFWVtEnuz8m93UN73MqCTnRbQlufG8KCZuRqLWj1B2bcp+2Bs4YRjvnNX4tdVpN/A2xOo6VrYkPxFRQbsOhqL8nPXiR+J85HfYF8w8yIsah/Ga4JpccPzaM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(39850400004)(346002)(396003)(376002)(366004)(54906003)(110136005)(316002)(4326008)(66476007)(5660300002)(8676002)(66556008)(2906002)(8936002)(66946007)(7416002)(36756003)(966005)(478600001)(6486002)(6512007)(41300700001)(186003)(6506007)(2616005)(1076003)(86362001)(107886003)(83380400001)(26005)(52116002)(6666004)(38350700002)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e1OCNj7MUKBWOoXxfsYzzQpLQN+wuYOKewP8RFM99LENET74hXnKm1QmjH2E?=
+ =?us-ascii?Q?dc1z2HG8Kqk/qnYNqlP2PUM4ETYqe4wPqNb1eQbs9Kb9VO4fv5J4ifvNAiYK?=
+ =?us-ascii?Q?08UuQ3UqpNC6dRvLnjsYAyYaw9pBxYOYUfGsra+1GtG739GAwo0RE/BxkM42?=
+ =?us-ascii?Q?KO5UwK/Rr8Q5BP5NF7c2DDCgIVKigi68BMdSPWx30EjDaVtICVMeSrm6NdcX?=
+ =?us-ascii?Q?1AeVoMPLB6aV7ka9jDAXmJEW5suD4w3wugtUVIh1Dv1II5g8shRrg+MYGiI3?=
+ =?us-ascii?Q?3z+RkAdBs8BuPSbsfzd3JmoRbPJg1YhanrO2qJ0qfRCReJ/UTuLHxh614655?=
+ =?us-ascii?Q?8uWk56Oz9B19MUUbRo5z3j2nkU2YMVCQyiuxW+MQyhwPXlNqtg51y7sFszyD?=
+ =?us-ascii?Q?JiV8NZqjdIYBuQSPg20xwRN0EbmchdWamAexQNNLtzHzWFneokM7o5RKfbGl?=
+ =?us-ascii?Q?InAbx4Ry8Mk0Bm50u+FDIwAGJ6mBLbd8N3YC9KKrPFE+yuHu9e58INlPdEmM?=
+ =?us-ascii?Q?PB+cz7pV5f9lYYQN76vbFX4IoXFRIB8/r++0rhaHTiqHpixG7jI0Zo+ym6Zu?=
+ =?us-ascii?Q?5kNBdgmsRxebYizMgMPZjoJvV2mBy+1/E2QIUMniPTSFqY7lSN7Q30Dx4LnU?=
+ =?us-ascii?Q?KQS6nWic4qIYNx/RmDPTKR20fDjum6r1JUJ7LkCNZ9orpspHl/HZZ706F+zA?=
+ =?us-ascii?Q?lEkUj+mDOjgItmeu9HzI3Lm9vj4+KRf4yK0dSy3p/ZaNPB/LbrtzBJDVyKXO?=
+ =?us-ascii?Q?wJgUtcCBd/Z8Jv/prc3vpHmSCURDo3eVJ2BCaZojF/2MfbLgl/9Wgjy8oQqE?=
+ =?us-ascii?Q?UzA1jpYO8yFuLDPhWck1N9a8L6UQpHxn8vPrLqiKmml9o42kEig0390U4Vu0?=
+ =?us-ascii?Q?hhhuMi+1T0U6hHwUHuqatvcqKxHaWmlWW08J9Au6P9l97+FSzaiDb8byrsuP?=
+ =?us-ascii?Q?8QV0EEeEelz0jp66LNc9fBaoMlr8n25+/9qoeLKQofvGSfuPUZd8p3nJAZpg?=
+ =?us-ascii?Q?QcwKPFK3j3gNUYVC+erqeAWO0rATbTzcvAJ5MYRh6RDcI4wfcZy3rZPNS1t3?=
+ =?us-ascii?Q?KfNHRcAJrdjxIDuHXdEZg3VU6x79obcJ+395NNlaOz5iYdjzmV/Ve8ON/RtD?=
+ =?us-ascii?Q?+vSWkBnCF87aDDzcwJSdhEsetNL5StsvXh2S1H3Yv+B0FlN5gI6XxiByAnLj?=
+ =?us-ascii?Q?PVJNwfrZAgaSYpPSi5lSp6k1YTx8zgTa7FoM0xnErwr9RvlIv61ZLVmIYiIG?=
+ =?us-ascii?Q?9rnol0iPhS1+TWaXzKcHdfaGY9lCKNH50bHIY8R15CdjXC/JY2xI4ruYARXU?=
+ =?us-ascii?Q?uSPzGKm8s3NAP2XnT4wWNZrXqorlmjcllmFoiqMKVBXPzuspfKSocio58FdR?=
+ =?us-ascii?Q?6VKlhVAz1nNq2rT0R/U9YARbHwsfZDrPWxyZ7EkUE+SONLCvY6IVdCx3pwXk?=
+ =?us-ascii?Q?CYA2vFGNP4CV+n5shMJTzgM29c4jaIf0jUwfShqyBLQ/qwlypurLGVqnkg0o?=
+ =?us-ascii?Q?UQWkEOga6LCCworQ2kM0Am+ppyD/MVooV9E9OZetlXsnrqbN0do3nul7/FN6?=
+ =?us-ascii?Q?p28jdrJui5mY4nv6Z+qBAmq2KNxPi69vvfyfn3Y5/Pms23muX9kOQmGmxv8b?=
+ =?us-ascii?Q?KA=3D=3D?=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ab4ca98-3cb5-4756-c8ed-08da91a2e599
+X-MS-Exchange-CrossTenant-AuthSource: VE1PR08MB4989.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2022 14:03:25.2105
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r2UqQLgKWLmow9x2ClCYvAGhceUMKP3+p+PFlCkRh0Q++moS8yR5fnYPsPNEr7BdDMqiHQ4ZlWEMzmzWRpuudhcMfxV0eykUBo4VpYB0fW4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6168
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+CABA = Closest Alive Born Ancestor
 
+In Linux process tree we reparent children of a dying process to the
+reaper, thus loosing information in which subtree the child was
+originally born. This information can be useful to CRIU to restore
+process trees right.
 
-在 2022/8/4 8:51, Darrick J. Wong 写道:
-> On Wed, Aug 03, 2022 at 06:47:24AM +0000, ruansy.fnst@fujitsu.com wrote:
+The idea of CABA tree is to keep reference to the closest "born"
+ancestor in the process tree. In simple case if our "born" parent dies
+(completely unhashed) CABA would then point to its "born" parent - our
+"born" grand-parent. So CABA is always referencing closest "born"
+(grand-)*parent in available processes.
 
-...
+Please see "Add CABA tree to task_struct" for deeper explanation, and
+"tests: Add CABA selftest" for a small test and an actual example for
+which we might need CABA.
 
->>>>>>
->>>>>> BTW, since these patches (dax&reflink&rmap + THIS + pmem-unbind) are
->>>>>> waiting to be merged, is it time to think about "removing the
->>>>>> experimental tag" again?  :)
->>>>>
->>>>> It's probably time to take up that question again.
->>>>>
->>>>> Yesterday I tried running generic/470 (aka the MAP_SYNC test) and it
->>>>> didn't succeed because it sets up dmlogwrites atop dmthinp atop pmem,
->>>>> and at least one of those dm layers no longer allows fsdax pass-through,
->>>>> so XFS silently turned mount -o dax into -o dax=never. :(
->>>>
->>>> Hi Darrick,
->>>>
->>>> I tried generic/470 but it didn't run:
->>>>      [not run] Cannot use thin-pool devices on DAX capable block devices.
->>>>
->>>> Did you modify the _require_dm_target() in common/rc?  I added thin-pool
->>>> to not to check dax capability:
->>>>
->>>>            case $target in
->>>>            stripe|linear|log-writes|thin-pool)  # add thin-pool here
->>>>                    ;;
->>>>
->>>> then the case finally ran and it silently turned off dax as you said.
->>>>
->>>> Are the steps for reproduction correct? If so, I will continue to
->>>> investigate this problem.
->>>
->>> Ah, yes, I did add thin-pool to that case statement.  Sorry I forgot to
->>> mention that.  I suspect that the removal of dm support for pmem is
->>> going to force us to completely redesign this test.  I can't really
->>> think of how, though, since there's no good way that I know of to gain a
->>> point-in-time snapshot of a pmem device.
->>
->> Hi Darrick,
->>
->>   > removal of dm support for pmem
->> I think here we are saying about xfstest who removed the support, not
->> kernel?
->>
->> I found some xfstests commits:
->> fc7b3903894a6213c765d64df91847f4460336a2  # common/rc: add the restriction.
->> fc5870da485aec0f9196a0f2bed32f73f6b2c664  # generic/470: use thin-pool
->>
->> So, this case was never able to run since the second commit?  (I didn't
->> notice the not run case.  I thought it was expected to be not run.)
->>
->> And according to the first commit, the restriction was added because
->> some of dm devices don't support dax.  So my understanding is: we should
->> redesign the case to make the it work, and firstly, we should add dax
->> support for dm devices in kernel.
-> 
-> dm devices used to have fsdax support; I think Christoph is actively
-> removing (or already has removed) all that support.
-> 
->> In addition, is there any other testcase has the same problem?  so that
->> we can deal with them together.
-> 
-> The last I checked, there aren't any that require MAP_SYNC or pmem aside
-> from g/470 and the three poison notification tests that you sent a few
-> days ago.
-> 
-> --D
-> 
+Probably the original problem of restoring process tree with complex
+sessions can be resolved by allowing sessions copying, like we do for
+process group, but I'm not sure if that would be too secure to do it,
+and if there would not be another similar resource in future. So I
+prefere CABA.
 
-Hi Darrick, Brian
+Also we can use CABA not only for CRIU for restoring processes, but in
+normal life when processes detach CABA will help to understand from
+which place in process tree they were originally started from sshd/crond
+or something else.
 
-I made a little investigation on generic/470.
+Hope my idea is not completely insane =)
 
-This case was able to run before introducing thin-pool[1], but since 
-that, it became 'Failed'/'Not Run' because thin-pool does not support 
-DAX.  I have checked the log of thin-pool, it never supports DAX.  And, 
-it's not someone has removed the fsdax support.  So, I think it's not 
-correct to bypass the requirement conditions by adding 'thin-pool' to 
-_require_dm_target().
+I plan to have a talk on LPC 2022 about it https://lpc.events/event/16/contributions/1241/
 
-As far as I known, to prevent out-of-order replay of dm-log-write, 
-thin-pool was introduced (to provide discard zeroing).  Should we solve 
-the 'out-of-order replay' issue instead of avoiding it by thin-pool? @Brian
+CC: Eric Biederman <ebiederm@xmission.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Juri Lelli <juri.lelli@redhat.com>
+CC: Vincent Guittot <vincent.guittot@linaro.org>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Ben Segall <bsegall@google.com>
+CC: Mel Gorman <mgorman@suse.de>
+CC: Daniel Bristot de Oliveira <bristot@redhat.com>
+CC: Valentin Schneider <vschneid@redhat.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: linux-ia64@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-mm@kvack.org
+CC: linux-fsdevel@vger.kernel.org
+CC: kernel@openvz.org
 
-Besides, since it's not a fsdax problem, I think there is nothing need 
-to be fixed in fsdax.  I'd like to help it solved, but I'm still 
-wondering if we could back to the original topic("Remove Experimental 
-Tag") firstly? :)
+Pavel Tikhomirov (2):
+  Add CABA tree to task_struct
+  tests: Add CABA selftest
 
+ arch/ia64/kernel/mca.c                   |   3 +
+ fs/exec.c                                |   1 +
+ fs/proc/array.c                          |  20 +
+ include/linux/sched.h                    |   7 +
+ init/init_task.c                         |   3 +
+ kernel/exit.c                            |  21 +
+ kernel/fork.c                            |   4 +
+ tools/testing/selftests/Makefile         |   1 +
+ tools/testing/selftests/caba/.gitignore  |   1 +
+ tools/testing/selftests/caba/Makefile    |   7 +
+ tools/testing/selftests/caba/caba_test.c | 509 +++++++++++++++++++++++
+ tools/testing/selftests/caba/config      |   1 +
+ 12 files changed, 578 insertions(+)
+ create mode 100644 tools/testing/selftests/caba/.gitignore
+ create mode 100644 tools/testing/selftests/caba/Makefile
+ create mode 100644 tools/testing/selftests/caba/caba_test.c
+ create mode 100644 tools/testing/selftests/caba/config
 
-[1] fc5870da485aec0f9196a0f2bed32f73f6b2c664 generic/470: use thin 
-volume for dmlogwrites target device
-
-
---
-Thanks,
-Ruan.
-
+-- 
+2.37.1
 
