@@ -2,177 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7CF5B2504
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 19:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF335B2589
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 20:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbiIHRm1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 13:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35200 "EHLO
+        id S231828AbiIHSWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 14:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232376AbiIHRmI (ORCPT
+        with ESMTP id S231251AbiIHSWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 13:42:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDC6F22E3;
-        Thu,  8 Sep 2022 10:40:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 315E8B8219F;
-        Thu,  8 Sep 2022 17:40:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF787C433D6;
-        Thu,  8 Sep 2022 17:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662658815;
-        bh=lOOhDMJqAJ4IWViD/vMxAvwDHCCQ4KSk3LDLvJPm2b8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jOjgqtB8wXqzhfDI4J+C/903aXH0rQaTb7qR5v89q/oUZzCQQO6ekfmeefPsnCQk4
-         RnO7TCnkT3eE/qMb7GnFEjmQHCCy70T2gWRHLb1+qsgKWLOB1zNiI9LqA0O9M/LHTb
-         TotEhE768MXAJqYpU5jYDz1lCKtOnuKq+tzKSlzlW0gouCHWcrpLCC4I7vZNM26k6y
-         5IZqUpWB6q2nfS6ZoK31qn8JMnEqiXBC+Bk7AgzcifSL4lr2QlltiMcQxWifvj7Iaw
-         LZx96/KNZs18aoGi3MMb8wSgWM5WtSggbiLe1/rkhJb4Qioq6nCWk9qjCYRVfrmxqG
-         okXyb82PbMNyQ==
-Message-ID: <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
-        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
-        fweimer@redhat.com, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Thu, 08 Sep 2022 13:40:11 -0400
-In-Reply-To: <20220908155605.GD8951@fieldses.org>
-References: <20220907111606.18831-1-jlayton@kernel.org>
-         <166255065346.30452.6121947305075322036@noble.neil.brown.name>
-         <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
-         <20220907125211.GB17729@fieldses.org>
-         <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
-         <20220907135153.qvgibskeuz427abw@quack3>
-         <166259786233.30452.5417306132987966849@noble.neil.brown.name>
-         <20220908083326.3xsanzk7hy3ff4qs@quack3> <YxoIjV50xXKiLdL9@mit.edu>
-         <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
-         <20220908155605.GD8951@fieldses.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Thu, 8 Sep 2022 14:22:00 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC4EEB855;
+        Thu,  8 Sep 2022 11:21:59 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id t14so20271096wrx.8;
+        Thu, 08 Sep 2022 11:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date;
+        bh=0qMQLVEVJZBmgN+4OndfYCHKMuf7l9KBNcONt34CdKc=;
+        b=GcZoTl2bCRlFzOoz5mrR7kWHp6+udvfQfj1QwcUqbtCRz/DA8W+t8Al/tF2lbjU4JW
+         YqG6M9K63oE09s+sPMnVBIWAHX4ldXqlmA9f6TyzzTW8yYK8lX5LXE8EtxFin8xYiaLA
+         Q+cxyy89dgx7Zapzjgub6gTZWG1DqCqOZ8bBxzZepzOv1GJ+PqEJQAKkcTFJs3t/cQkz
+         jo0l0wFSXXZLMb8Pr/WJ8XEz/esYSRt1VQWZLLCOmjK/UkoptIN+MAXtAYbfHbK1TmcD
+         g5Lx8cGpVvd/nQOkNmAUawBsbRxre3OxOUKsEq9EZG5pXpwkxDOilKIAJ4x3BbmdvRaL
+         /Vsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=0qMQLVEVJZBmgN+4OndfYCHKMuf7l9KBNcONt34CdKc=;
+        b=VZmMNUCf2K8447qdDaqYvGOg++oAdNOP72cDEnBI1X3Ob9Qa7rH9yV8Sy6fTBH8hYj
+         w7QZALzoyyCIytLxldVFl2usfYnZrqPVIB0hJBD9ownJiNsKUITYfHYdjT5nvOwcR8UX
+         ydj0QeyVnt/bjWAmGYUSKGwACLjVpjMJdTGU/Urm6t3zwDCFKWeAUeEaH02gmcluulQw
+         WDTT++S+7a3cve11JhGlx3dYEfjNCK1NLu8Id5FAn1e90evU26CBBMmDuPaTUbhPdwaQ
+         kR6Tj5971NO1Bxwjr7FzT/Qiz8wMH1Xu8yczmrvgZLoMJWW6y22I9pqJtyYQjwx8HJtS
+         fNUw==
+X-Gm-Message-State: ACgBeo0WJC03BfIahgHRlHe1df5PpsA0zf8/As/P0dECpk//iPc1J3sM
+        vQfPwpz8XdKv9Up5TdxknPLy58NzfA==
+X-Google-Smtp-Source: AA6agR7aWX/HRycU6uw0R9yfi5EVkde2QgjMxCzhbJcJD71dTGHhItjYI9gpQcmJ1mrsBHaNOt8Vmw==
+X-Received: by 2002:a05:6000:1706:b0:22a:2c1d:f578 with SMTP id n6-20020a056000170600b0022a2c1df578mr3230336wrc.236.1662661317193;
+        Thu, 08 Sep 2022 11:21:57 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.251.11])
+        by smtp.gmail.com with ESMTPSA id m29-20020a05600c3b1d00b003a845fa1edfsm10465228wms.3.2022.09.08.11.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Sep 2022 11:21:56 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 21:21:54 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: give /proc/cmdline size
+Message-ID: <YxoywlbM73JJN3r+@localhost.localdomain>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-09-08 at 11:56 -0400, J. Bruce Fields wrote:
-> On Thu, Sep 08, 2022 at 11:44:33AM -0400, Jeff Layton wrote:
-> > On Thu, 2022-09-08 at 11:21 -0400, Theodore Ts'o wrote:
-> > > On Thu, Sep 08, 2022 at 10:33:26AM +0200, Jan Kara wrote:
-> > > > It boils down to the fact that we don't want to call mark_inode_dir=
-ty()
-> > > > from IOCB_NOWAIT path because for lots of filesystems that means jo=
-urnal
-> > > > operation and there are high chances that may block.
-> > > >=20
-> > > > Presumably we could treat inode dirtying after i_version change sim=
-ilarly
-> > > > to how we handle timestamp updates with lazytime mount option (i.e.=
-, not
-> > > > dirty the inode immediately but only with a delay) but then the tim=
-e window
-> > > > for i_version inconsistencies due to a crash would be much larger.
-> > >=20
-> > > Perhaps this is a radical suggestion, but there seems to be a lot of
-> > > the problems which are due to the concern "what if the file system
-> > > crashes" (and so we need to worry about making sure that any
-> > > increments to i_version MUST be persisted after it is incremented).
-> > >=20
-> > > Well, if we assume that unclean shutdowns are rare, then perhaps we
-> > > shouldn't be optimizing for that case.  So.... what if a file system
-> > > had a counter which got incremented each time its journal is replayed
-> > > representing an unclean shutdown.  That shouldn't happen often, but i=
-f
-> > > it does, there might be any number of i_version updates that may have
-> > > gotten lost.  So in that case, the NFS client should invalidate all o=
-f
-> > > its caches.
-> > >=20
-> > > If the i_version field was large enough, we could just prefix the
-> > > "unclean shutdown counter" with the existing i_version number when it
-> > > is sent over the NFS protocol to the client.  But if that field is to=
-o
-> > > small, and if (as I understand things) NFS just needs to know when
-> > > i_version is different, we could just simply hash the "unclean
-> > > shtudown counter" with the inode's "i_version counter", and let that
-> > > be the version which is sent from the NFS client to the server.
-> > >=20
-> > > If we could do that, then it doesn't become critical that every singl=
-e
-> > > i_version bump has to be persisted to disk, and we could treat it lik=
-e
-> > > a lazytime update; it's guaranteed to updated when we do an clean
-> > > unmount of the file system (and when the file system is frozen), but
-> > > on a crash, there is no guaranteee that all i_version bumps will be
-> > > persisted, but we do have this "unclean shutdown" counter to deal wit=
-h
-> > > that case.
-> > >=20
-> > > Would this make life easier for folks?
-> > >=20
-> > > 						- Ted
-> >=20
-> > Thanks for chiming in, Ted. That's part of the problem, but we're
-> > actually not too worried about that case:
-> >=20
-> > nfsd mixes the ctime in with i_version, so you'd have to crash+clock
-> > jump backward by juuuust enough to allow you to get the i_version and
-> > ctime into a state it was before the crash, but with different data.
-> > We're assuming that that is difficult to achieve in practice.
->=20
-> But a change in the clock could still cause our returned change
-> attribute to go backwards (even without a crash).  Not sure how to
-> evaluate the risk, but it was enough that Trond hasn't been comfortable
-> with nfsd advertising NFS4_CHANGE_TYPE_IS_MONOTONIC.
->=20
-> Ted's idea would be sufficient to allow us to turn that flag on, which I
-> think allows some client-side optimizations.
->=20
+Most /proc files don't have length (in fstat sense). This leads
+to inefficiencies when reading such files with APIs commonly found in
+modern programming languages. They open file, then fstat descriptor,
+get st_size == 0 and either assume file is empty or start reading
+without knowing target size.
 
-Good point.
+cat(1) does OK because it uses large enough buffer by default.
+But naive programs copy-pasted from SO aren't:
 
-> > The issue with a reboot counter (or similar) is that on an unclean cras=
-h
-> > the NFS client would end up invalidating every inode in the cache, as
-> > all of the i_versions would change. That's probably excessive.
->=20
-> But if we use the crash counter on write instead of read, we don't
-> invalidate caches unnecessarily.  And I think the monotonicity would
-> still be close enough for our purposes?
->=20
-> > The bigger issue (at the moment) is atomicity: when we fetch an
-> > i_version, the natural inclination is to associate that with the state
-> > of the inode at some point in time, so we need this to be updated
-> > atomically with certain other attributes of the inode. That's the part
-> > I'm trying to sort through at the moment.
->=20
-> That may be, but I still suspect the crash counter would help.
->=20
+	let mut f = std::fs::File::open("/proc/cmdline").unwrap();
+	let mut buf: Vec<u8> = Vec::new();
+	f.read_to_end(&mut buf).unwrap();
 
-Yeah, ok. That does make some sense. So we would mix this into the
-i_version instead of the ctime when it was available. Preferably, we'd
-mix that in when we store the i_version rather than adding it afterward.
+will result in
 
-Ted, how would we access this? Maybe we could just add a new (generic)
-super_block field for this that ext4 (and other filesystems) could
-populate at mount time?
---=20
-Jeff Layton <jlayton@kernel.org>
+	openat(AT_FDCWD, "/proc/cmdline", O_RDONLY|O_CLOEXEC) = 3
+	statx(0, NULL, AT_STATX_SYNC_AS_STAT, STATX_ALL, NULL) = -1 EFAULT (Bad address)
+	statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0444, stx_size=0, ...}) = 0
+	lseek(3, 0, SEEK_CUR)                   = 0
+	read(3, "BOOT_IMAGE=(hd3,gpt2)/vmlinuz-5.", 32) = 32
+	read(3, "19.6-100.fc35.x86_64 root=/dev/m", 32) = 32
+	read(3, "apper/fedora_localhost--live-roo"..., 64) = 64
+	read(3, "ocalhost--live-swap rd.lvm.lv=fe"..., 128) = 116
+	read(3, "", 12)
+
+open/stat is OK, lseek looks silly but there are 3 unnecessary reads
+because Rust starts with 32 bytes per Vec<u8> and grows from there.
+
+In case of /proc/cmdline, the length is known precisely.
+
+Make variables readonly while I'm at it.
+
+P.S.: I tried to scp /proc/cpuinfo today and got empty file
+	but this is separate story.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ fs/proc/cmdline.c    |    6 +++++-
+ include/linux/init.h |    1 +
+ init/main.c          |    7 +++++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
+--- a/fs/proc/cmdline.c
++++ b/fs/proc/cmdline.c
+@@ -3,6 +3,7 @@
+ #include <linux/init.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include "internal.h"
+ 
+ static int cmdline_proc_show(struct seq_file *m, void *v)
+ {
+@@ -13,7 +14,10 @@ static int cmdline_proc_show(struct seq_file *m, void *v)
+ 
+ static int __init proc_cmdline_init(void)
+ {
+-	proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
++	struct proc_dir_entry *pde;
++
++	pde = proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
++	pde->size = saved_command_line_len + 1;
+ 	return 0;
+ }
+ fs_initcall(proc_cmdline_init);
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -143,6 +143,7 @@ struct file_system_type;
+ extern int do_one_initcall(initcall_t fn);
+ extern char __initdata boot_command_line[];
+ extern char *saved_command_line;
++extern unsigned int saved_command_line_len;
+ extern unsigned int reset_devices;
+ 
+ /* used by init/main.c */
+--- a/init/main.c
++++ b/init/main.c
+@@ -143,7 +143,8 @@ void (*__initdata late_time_init)(void);
+ /* Untouched command line saved by arch-specific code. */
+ char __initdata boot_command_line[COMMAND_LINE_SIZE];
+ /* Untouched saved command line (eg. for /proc) */
+-char *saved_command_line;
++char *saved_command_line __ro_after_init;
++unsigned int saved_command_line_len __ro_after_init;
+ /* Command line for parameter parsing */
+ static char *static_command_line;
+ /* Untouched extra command line */
+@@ -665,6 +666,8 @@ static void __init setup_command_line(char *command_line)
+ 			strcpy(saved_command_line + len, extra_init_args);
+ 		}
+ 	}
++
++	saved_command_line_len = strlen(saved_command_line);
+ }
+ 
+ /*
+@@ -1372,7 +1375,7 @@ static void __init do_initcall_level(int level, char *command_line)
+ static void __init do_initcalls(void)
+ {
+ 	int level;
+-	size_t len = strlen(saved_command_line) + 1;
++	size_t len = saved_command_line_len + 1;
+ 	char *command_line;
+ 
+ 	command_line = kzalloc(len, GFP_KERNEL);
