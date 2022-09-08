@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA765B200C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 16:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 660455B200E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 16:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232215AbiIHODu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 10:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48956 "EHLO
+        id S232244AbiIHODx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 10:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232383AbiIHODf (ORCPT
+        with ESMTP id S232464AbiIHODh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 10:03:35 -0400
+        Thu, 8 Sep 2022 10:03:37 -0400
 Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70130.outbound.protection.outlook.com [40.107.7.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEBC857F5;
-        Thu,  8 Sep 2022 07:03:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C69C1838B;
+        Thu,  8 Sep 2022 07:03:35 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JVYBNmw4x0wRgHNBMesDhoqqXQlbu3FQmsvLo8sCukRQwDtu7q3jFk/2yZ+ifb0+l7D8okGBxBgMMF/Qe7qTmEvHpYw0gdwTFIQleakxpkWV5BtkMRcZUORGfzK4QnrCHYx+jygjs9ODnO6xD+sfP0jFETy6q1TuSDsS3oCP3c5wep8Akug+5JKSOp0V68rBdH6GwzI7crwmAa1CYY0URiJvSuJp/bCXdNqRzhFp8ZYSSvQvgYfC8AAIdJ3MOITL6fQJtg2EE7TF2fSiQ4I8ayVyvv8JwhP5xrUvH0+WKFVV4xNY/ys+ZbnssXyq+r2Nq3VBZlKSZBIbFV5zNfYkfA==
+ b=JXizeeacKzMqRRwVQ9cMLyZeAVGMLp8M6EW7B+UFRWfhU1ojdqfPELtCvr8PNRayxIcn/KBj0mBs2v89/Hfq0QE7ilSlOR4kDhGCMWSAlwOlk7KiPn0wVmVexH0TP5RXb1pfG9ly9V9CtbYveCErA7owW+/i99oNLPVwvj0FS0ELMmGOgk6TQwQrYcXr+O8vAXGHpabDpTZQjoAkbpy4dVNujge3CBVge/tpq7Vz2GjKryI9SP+jhi0rET5yW+ehdnnZ4GhN/u8in2w3LCHb3rRS8sRK92psVM+OWT1GVpdS9Xn/ZJRFz0tp8Iywty09PciwU9njsFKFM6fs3Fb3AQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qHNKEX9SO15w1stMY26I5m5MROfOLUK7FxlQ3SMfqlA=;
- b=Ml/jNVo3x/FM84zbkGfgmku507h/yCne3hbXcw1kX8hR+rVZS0yvHNlCZldQsThubKfOfrmxzFppqPVO1lMR+6y3kKxmr+2yGUsMOtjKNM8Jl+6ibzhR7bjUXGyCzW0Qq4OQLwlMXykNkp6PqBn3VPszQrCShLfC+cA61Jhxr4fJaACthDI838PZtQBxwYqGzO+v26KRtpOWrGS00ui7A/batTAknvqTDIVvgzecccHDMp1/k7FKVd+tgVkTnVQurJyvQTov6A/V9kPvAMw4egDOiAkGIXYzMKBLDVS2y3D43qa6E6BzcWjiTNI0GadogBv//cyrsG6Md7jcGFJa6g==
+ bh=Ls4sv4Fg00Pa8eAMf9HiGFGSty3qr/uNAdsjO6HViNE=;
+ b=LwvZQJODY8L4G8kYYVNkmSAcEqEjmvrssiC8CVNRNW7Z+GHEYvpghvTlQJWyr9dKQHSTI98wW2VC6S251f3pAQUj2Qo185kUoH0x9UcGnvsgu8RDyl0aMcnb3slBBHKK6YfyxVQtUlduepOd9ouFfoIE2UvyEmIACgBDBO/SQLshhjh42no1wA+FilZG7VaIfkfKv1Fon+DhCVdhUq8f72IsF5AY3h4JnocpY2YJ8sap7+DP0KgQorcxafl1gdDB6xYInrx+9WQNJ/T/muAVbw3QjTqXy4xmReYJWJjHUwJPQbYEf3qIQzAe4cOlMuV5Ry9McYUjU85JbK74ABlkfw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
  header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qHNKEX9SO15w1stMY26I5m5MROfOLUK7FxlQ3SMfqlA=;
- b=bPZM3guxB61T7G82/IvI613g8KEzNRK35era89wBLhlkE0XOrArT9FQqTfyFvULQuuYr0eVZ9oGeKU4VnHsjn+2mK8bEjMdZ2XG947vhVtDeXAWu6Yl+XXQMVuAZZhLM/G+UEUV5zC4peLoKoESSIUogqLT647Brr37cWX3iC+DNvWr4MIFDMxTLgH9BgYxMF240QBxerPdJzyZ5IxdWzpNrO6jsixPW458pTgoqNZR8H+kgT/GBnGQK0wHj1qWK6FdcLWSYkm39fgyLYu+oHyTvmdWOjh53hxNOmrT7UBNeuc38hrEiQDgz6abSlh6ApASLVgeRfgDlZ3LQY4LhPw==
+ bh=Ls4sv4Fg00Pa8eAMf9HiGFGSty3qr/uNAdsjO6HViNE=;
+ b=RzOnHfu3TZRaCltZq4GLjYUF9zqFpspDJzKbuMa/9WRt2m/ytkpahBu+h1xvRNE6tNvyzHc7aNeTgJEmRC9mIrQse3fEvdAGwTS1DpjX6EpqdWDbshneDX0ziD5JqTKCY4wZGKKkSsUE4P1WRzsenO8+kQa380sLEKovw5GGmufwt8By+aVU/TgZVHSKnbXIneQW18ofuUZbHY0sUdfLmxHlfCjF+EurMXahFl1ryuKkQYzfef1Z95sly1Rt62e455PgEUnmZOmTZIDeQa+sccrUH45UK4JanggpJ5iLQJsCOtUqKfBtaFqQ00oRQ1atk7iFqBqJ4CcElIhBOYl34Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=virtuozzo.com;
 Received: from VE1PR08MB4989.eurprd08.prod.outlook.com (2603:10a6:803:114::19)
  by PAXPR08MB7671.eurprd08.prod.outlook.com (2603:10a6:102:245::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.14; Thu, 8 Sep
- 2022 14:03:27 +0000
+ 2022 14:03:29 +0000
 Received: from VE1PR08MB4989.eurprd08.prod.outlook.com
  ([fe80::f536:84f7:c861:ccc1]) by VE1PR08MB4989.eurprd08.prod.outlook.com
  ([fe80::f536:84f7:c861:ccc1%4]) with mapi id 15.20.5612.016; Thu, 8 Sep 2022
- 14:03:27 +0000
+ 14:03:29 +0000
 From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 To:     Eric Biederman <ebiederm@xmission.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -60,9 +60,9 @@ Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-ia64@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, kernel@openvz.org
-Subject: [PATCH v3 1/2] Add CABA tree to task_struct
-Date:   Thu,  8 Sep 2022 17:03:12 +0300
-Message-Id: <20220908140313.313020-2-ptikhomirov@virtuozzo.com>
+Subject: [PATCH v3 2/2] tests: Add CABA selftest
+Date:   Thu,  8 Sep 2022 17:03:13 +0300
+Message-Id: <20220908140313.313020-3-ptikhomirov@virtuozzo.com>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20220908140313.313020-1-ptikhomirov@virtuozzo.com>
 References: <20220908140313.313020-1-ptikhomirov@virtuozzo.com>
@@ -74,51 +74,51 @@ X-ClientProxiedBy: FR0P281CA0143.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: VE1PR08MB4989:EE_|PAXPR08MB7671:EE_
-X-MS-Office365-Filtering-Correlation-Id: 292a19b7-76c9-4c6d-b4e6-08da91a2e6cf
+X-MS-Office365-Filtering-Correlation-Id: 6a98ae78-a9a5-4158-dc2e-08da91a2e800
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PUEpBsSmPmN+6ZKes41lruI6Xcwu7wEsD9aBHNRD4MLAEe/EXaaQmN2LylgvE0chcOnOhWno2iM2tGOY/Tg2zOvog1bmiPOVGLuHV48ogTh+up116dG6XPee7YnweqXo5dLtRZ62pvxLEZHndihsGrAI2DFtrT/fnOsv7Q8Ve4Wf4JsQVf6f6Pa+UhvvgH6eE1Ahmk3quDfiV2qqVrUrrLH/1y15hOMEer81Sx8e5IwRpozO9dpiKkiZFLYe5vtpzu1WpFbf+aSwd4hYk08sPgoKvpK1LYcS32dsHS/Vv+ro5Ru1HIRDzAvvql19cVZRafW/QGapxufxysALqGOGXYT4SmPxO9L0fy/wzVl+9ssoVZdoKTJ+w0chnmwTBgJt2esJsLofssVQW7l54FkczJk/H+UZFBHlfL4+2PImlqX0fUOvqwvBjB5ax3mS2v0LcGS5CRRklKlhPZoShvWWzAGN7u3qHmUTffthpcCmW/6yaxBLpHVQN6WjXYecixDe8yo4xiMwmNGlCqHdrxYpX0QYLOkvZSgQQ4fEKG+9GYE1F6+a01n7fwLT6u8eEosogVURdEpUFtXmxOA41jsXu9t7vvM0OSaH6WQdjH4jAsClU4oAB4andqgXUOyipLQRqv/juMezNfFg1os3t3FPT1sPN0ID3uGW7Y8tjbdFaj1EupE6Fm8tBw4e25Tt+DsRorrJmQ9uJQNBHDWKBoX15oKBy9y4YduxyumIVBdFSQs4t0RuVuH0HPaeIX6uKrSn/WimPmhYCNLFTY3ZeklnqA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(396003)(39850400004)(136003)(346002)(376002)(83380400001)(38100700002)(38350700002)(86362001)(54906003)(66476007)(4326008)(66556008)(316002)(8676002)(2906002)(66946007)(52116002)(110136005)(26005)(7416002)(8936002)(5660300002)(478600001)(6512007)(2616005)(186003)(1076003)(6666004)(6486002)(107886003)(41300700001)(6506007)(36756003);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: 1itmPSF5cVOAK1UHBseyD59MjKSJhQ0Jj21PvjkbznVjiBy9AnmTG9kuHB7sP6OWuI8pGGb3kKjlZOmq6VgOCa35IWmkcZrgoQP1OM79Neh8VekRmVEYjw6KW00jJWj0DaSo1oFK8CJNT7lU8LdbGiIGx+E9yQ7GBLMjDmBD8BiU93UxDT7dHCwy//t/7rJwLCforv4GkNj/mlyeI7Ph2PwsZLDEt5quQ3t7ZY15dIlOIMgJY9BpCCPC5U/tKYiJmXZjWoBUeO3J8KmB77aFxF6JhHjYuVhL2sB1PPu/2WvQrkwktZ90v2PMuzU9NW1IRpB17CeBd/LLfLkZ4TYwNDYKppn9Ms3P3uhMw5opH2Ebrg4buDJP4LWlq8qwDraLERFfp38qCfjWBMT7eL9q9xDMczMFU2c6mlNGVnlJwaR6QuveKWDjr3Vy7jcYMssfau+aiw2Pmbdd+7lID8LIZEjM50e2TyV5RV3rWT6+TL4PBZv+Rh5+X3Cv1a0Ys1kbQh/GgYw+FCZ6nATjc4FqRf57/KnoNaky2YaJY+VdR2KoLmnP31C8DicgtdLEWK2De1zXrP8Zur2uNQYG/u4qa7tHd8OZVT2iHGsU2htOc1YdIEC0lDkti78Q7X6P3YLtNFOtMDHTlPQZ8c0FP+Q1bAIXCZ74/5JVo13rsuqCBXEmhzgT3DrzKUqY6lqEhWRCbgbT3IK8KNxT3tH2YmirUuktCYxiWeOBl8ijh7GLufPU6rnGmuYwRJiYAKw7WOYjYkUyK2jPTnYkKlMXy0wgoA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR08MB4989.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(396003)(39850400004)(136003)(346002)(376002)(83380400001)(38100700002)(38350700002)(86362001)(54906003)(66476007)(30864003)(4326008)(66556008)(316002)(8676002)(2906002)(66946007)(52116002)(110136005)(26005)(7416002)(8936002)(5660300002)(478600001)(6512007)(2616005)(186003)(1076003)(6666004)(6486002)(107886003)(41300700001)(6506007)(36756003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Mb1oPO2MpmpTG0HMBkDUFAw24DgqFYRTtDf1AJYkZ5XpkiueMxHQuD+hxFk+?=
- =?us-ascii?Q?7zHPdv+XEyXBxvyITv07WCwR03nQbJFjC10usqjHrhpI1u0me1ACjWMbpe+Z?=
- =?us-ascii?Q?L8KgOj9SWje/gh1M/wSIx4aZ0q+E8HSeTuSfM5rIfYC1ALdiVzV59LG1UPNd?=
- =?us-ascii?Q?gXfmvh3nAnxGAf2va4FIhaIPYziKgHNR1QdfMRArUy7HoeGG9ogJcxXRi9XX?=
- =?us-ascii?Q?FSKIo+5H0nwZPYpNnvGUS8Tm+QwmGwTr7gpUvtILdWu48NPmD2Wpd7dgG0Fe?=
- =?us-ascii?Q?Doq9lUVIc3TsFY4PIuR4fEaEaxGMO+XrIAGiV8D5EGQu+zOiCVvCZ+v0uypf?=
- =?us-ascii?Q?iGJgdaS7higLhBilOqJj/+syglpQ2DyNR2naYYuCjJlh+RWSup0jWC+3DJoa?=
- =?us-ascii?Q?omI8i+0TJA3TCIOwElx5GRoqcsOXGLp5GAqhBZPdHIUWMWNw28ccDSJDOy2h?=
- =?us-ascii?Q?CZikP7L4SiE4wv2GzEWQt1h5IxulLHIqg3K/dBf1cPR//cSpBr6fWZ8pYdg/?=
- =?us-ascii?Q?RfwSG3vxWYoMYOcz9w/88nvNmBcMGVdnFhGOV0pERmr5+fFBfgbngiRWERsE?=
- =?us-ascii?Q?AquB+r8wrARFYgCHHUUM06tSMB51GeJIayhGeSiT9RoPAPG/1/S0eowfTIEY?=
- =?us-ascii?Q?15KvnTpXykD4y2CkBW9zWWLxskqmih0KiouBS2jeIwk0y1+b2eseRqbB10aS?=
- =?us-ascii?Q?74C+Nce68sOUM5mFOX3QVllDge6xosqSaZEjGzghsNzN6UP+hOQyDYACWIqD?=
- =?us-ascii?Q?UyvHTlsTrjNTJlPwE0nCgL4wZvU+5rGXAAtcxw8Iws5XkJLB3xUubijsyebz?=
- =?us-ascii?Q?v8IYT4Offq9y2yFkoZCdFNJXKtzoTcHTGyhzgbtG7wpR92G6+DN44W9fOKt8?=
- =?us-ascii?Q?pLfzRhsjZaYqeOR2OLeqySXdnICSpftwZyszIPat7lw4gLz1OZ6K35XEoJZs?=
- =?us-ascii?Q?SfvlrfJSLaJCW1tNAssMssNbgVer+DfuOMV8Q5iHOe2E2E879Kq38h9iQZGN?=
- =?us-ascii?Q?6QHyeYEDjfdSNDgUgvP5QlHYGF85asS8iw7R8Hvw44kquYgEduLiI4nuGz8X?=
- =?us-ascii?Q?Y4uv8mCMjo4M/InykKASoSnMXfE7xoMxTCfqs94TLV+mlowgHySiOvVU5kB1?=
- =?us-ascii?Q?WDPglnvq6gJUrhrvoKoCay4IgtCfl4Ia+eiQAkSOKpRZSU5BK5hBn2ydhLqU?=
- =?us-ascii?Q?OCo4mokVmNZY0pf3NEOQxRu4qyPA4F3M8Q6WPFHek6Ok3SK9ZWz29d9/15Tt?=
- =?us-ascii?Q?4Ql/2OspeD7AF5rhNDjkpfAsmefnl6mksAudRMx3kaY4+HzyohpVG3Et76CA?=
- =?us-ascii?Q?Ian0x5wK9PKPsCxLZm4Q5JtwVLRuFje6mt6sH2fZsntUvxs4y/u5aCT5tbwm?=
- =?us-ascii?Q?jCIg3y3BRMTz0y3LIV7DbpROnvE0qW13jHApdHVWUKGLq9OYjdS70BtqfJVm?=
- =?us-ascii?Q?s3lsizKawt0AQAf7O0YZQm3HQPqOonvFBv/K8gDr5SGvxPcRgPKEeAJjLSvd?=
- =?us-ascii?Q?WQcf7EYmVJOz5y/3niYlSzBniVQDg9Jfrlolt1+fLSbDdSuBYc06yflZ7use?=
- =?us-ascii?Q?JRB27uTOLhBGWDcEzk1E2y+lXpW3NaJeCI1puZ3FA90QS8+puXbO/PzhYFbN?=
- =?us-ascii?Q?OA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XhkXT5PS3cpAMOstPnee7/2dETFfKunrl++KO86/C0Sel8vhcj7G1erFJcrt?=
+ =?us-ascii?Q?Uq7ovgirB9m8BfgQlZGap3PZ9TsP5FVmTPrsLw6i84N63b+2FzvsvTJyi11X?=
+ =?us-ascii?Q?o/Kyd8XrJJPavnZNPzyqb3Pskqv+CM+ftdhsDrYLFlmqHMr69NHYvHbz3NxS?=
+ =?us-ascii?Q?m6p3dFK4CmRfr1tfnO/4CT1OS85y3QZD+f4dWpYdxKPKgEoLT5SrF29RzagC?=
+ =?us-ascii?Q?EIGXrDHwE4QyggyEuNiUnOUwyp2TBZhoJ3GxBffoBMn0Hgoi20dsd/amkvhg?=
+ =?us-ascii?Q?Iou4UG9R1I+2MTSCLvivBoX6x2LOl2aPDIQu/4JPY4B0uBn3LPTriHe54VCP?=
+ =?us-ascii?Q?t7u5ZoVVRUf9PZLhfmuhYL0Mgj2kE1mWaEoIEqp/FdTImYEuPOeV3HCw4pHb?=
+ =?us-ascii?Q?6NDqKp2bY40b3mSVmyHv/DWmgoid9DNHMAP2FwEQEkzU9vccIJDei/uGVg6L?=
+ =?us-ascii?Q?WdMwIgWK7e+PnegqRu/Y34DJ1A/4MGB0GMzd83ySiIm6xU1TokmS+LdyEQd2?=
+ =?us-ascii?Q?B0jWGpAtttPv8TFv4oZxqXbT5ocIp+P0M2u5XguUHIra6EgUdtZ+Quzr8Mes?=
+ =?us-ascii?Q?kiF+QiAQLO4ev3jQpGFKCtvmP0OqRyKUnf4bpqtLdJoh2VgLPgtep5tsECv2?=
+ =?us-ascii?Q?mOYNqpprR8542JQskBBFgwQH9RpzwxuBpluyj6O0x2Pe9yeEKfP0CLyxvVe/?=
+ =?us-ascii?Q?vvzhpdOo+ll71ItTKkToSsKur/Iiq4T+VEHTnSYj/uY4drwKuXY7g04V9WJh?=
+ =?us-ascii?Q?I4x95/xqbnN/0p8uPReprMsV+6ir0W98CxdRKJTvyxAuQSkeYqpfwlQTcdd4?=
+ =?us-ascii?Q?w4Xpx1eQprsuKMFsAUHkUsO+VmRouSOyeb1C2La+g9YQOA4CLDJ4g3lL9y1W?=
+ =?us-ascii?Q?ZiCOTIQItqnRHrs0sNyPMXh7BlOEEWy35ryeyTfz1XVJFErUPZjwv1a2NZG1?=
+ =?us-ascii?Q?W892y5qGOoY8nR5eNod7+2P44LKM4BF7jfHcD6rO8Fd6R/+zbK+hksTggJFN?=
+ =?us-ascii?Q?c2qSIzTcQRxRNfht/foDXoWpzugFkPzaPETFEbMdnaz9UsTkClVejIXND1fk?=
+ =?us-ascii?Q?NThkfs6BKgcrTmhuf5X70UMr+i4WftnkSBONi3o2eqhpH9ht9HHOWz/ZxUnH?=
+ =?us-ascii?Q?EW4ftDXMKj8PDIKdTIvTB0p8GMpOMoxjc56pBDBUeAB5Z5EqeyOwO+bvo9su?=
+ =?us-ascii?Q?FTNaDfsT+n5zhDA1AOOnD1tYYpH4mOMhvxmZSLDybhnUJdnC8LiyQzKmp1cM?=
+ =?us-ascii?Q?D4pvsgWofFs8S8G9XQeJtOP1QdQaINF8/Ez7xW4XwG8p42uUzxYiJVcWX3K6?=
+ =?us-ascii?Q?OGKoXSnynrjqPdYXeAu4Dgs77PMKIW7CC8+kJLa7SIar0vH0EKk81O7RZywY?=
+ =?us-ascii?Q?ogUA4bClFG9PXlAGWbYqiEmNzfHuW+uRa3RCE61ieihXoUYUomXQlecCc1Jt?=
+ =?us-ascii?Q?A+tjCC2HOTtWPOKh6PzN8+OhkGTx+VbMhgZuwayK3H4HMUqDFxBxKBn+/1DM?=
+ =?us-ascii?Q?lypWIzrj4etVcNle/rup2zw+rai4kPsFMiH8qZJi6Cqrk3sfd8RI/jQ/zfUK?=
+ =?us-ascii?Q?hnuKf7PBQpm+Th/b6vCJ35xujwezTUf4rsbWCYjoxCAbj6z6ImKT5S09dQjQ?=
+ =?us-ascii?Q?cA=3D=3D?=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 292a19b7-76c9-4c6d-b4e6-08da91a2e6cf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a98ae78-a9a5-4158-dc2e-08da91a2e800
 X-MS-Exchange-CrossTenant-AuthSource: VE1PR08MB4989.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2022 14:03:27.1791
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2022 14:03:29.1477
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7cWJb83IXCR0UVL4fVPmpqv3SiXFD01TOjdbxc8M7hHH5vMN4+PXaa3pWcKdEnxgzB+zHyY82gkAE2Gd1AzM8EljiHjX81vRpTTcf/vv9PA=
+X-MS-Exchange-CrossTenant-UserPrincipalName: swRu2j5eod+T/31fH9D0WJFw5L9yQlpDz6NtRSyqt6P8pEoPQxAn/tlfzXckkr4SXYUqCU5ty1M/XVvWljUdEex8hPL4K2wou7q4THTuqok=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB7671
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
@@ -130,43 +130,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In linux after parent (father) process dies, children processes are
-moved (reparented) to a reaper process. Roughly speaking:
+This test creates a "tricky" example process tree where session leaders
+of two sessions are children of pid namespace init, also they have their
+own children, leader of session A has child with session B and leader
+from session B has child with session A.
 
-1) If father has other yet alive thread, this thread would be a reaper.
-
-2) Else if there is father's ancestor (with no pidns level change in the
-middle), which has PR_SET_CHILD_SUBREAPER set, this ancestor would be a
-reaper.
-
-3) Else father's pidns init would be a reaper for fathers children.
-
-The problem with this for CRIU is that when CRIU comes to dump processes
-it does not know the order in which processes and their resources were
-created. And processes can have resources which a) can only be inherited
-when we clone processes, b) can only be created by specific processes
-and c) are shared between several processes (the example of such a
-resource is process session). For such resources CRIU restore would need
-to re-invent such order of process creation which at the same time
-creates the desired process tree topology and allows to inherit all
-resources right.
-
-When process reparenting involves child-sub-reapers one can drastically
-mix processes in process tree so that it is not obvious how to restore
-everything right.
-
-So this is what we came up with to help CRIU to overcome this problem:
-
-CABA = Closest Alive Born Ancestor
-CABD = Closest Alive Born Descendant
-
-We want to put processes in one more tree - CABA tree. This tree is not
-affecting reparenting or process creation in any way except for
-providing a new information to CRIU so that we can understand from where
-the reparented child had reparented, though original father is already
-dead and probably a fathers father too, we can still have information
-about the process which is still alive and was originally a parent of
-process sequence (of already dead processes) which lead to us - CABA.
+We check that Closest Alive Born Ancestor tree is right for this case.
+This case illustrates how CABA tree helps to understand order of
+creation between sessions.
 
 CC: Eric Biederman <ebiederm@xmission.com>
 CC: Kees Cook <keescook@chromium.org>
@@ -191,193 +162,573 @@ CC: kernel@openvz.org
 Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
 --
-v2: fix unused variables reported-by: kernel test robot <lkp@intel.com>
-v3: - on fork set caba to current, so that caba is always a process
-      which had initiated our creation, even for CLONE_PARENT case
-    - move caba update to a later stage (to __unhash_process), so that
-      zombies can be somebodies caba until fully released
+v3: fix codding style
 ---
- arch/ia64/kernel/mca.c |  3 +++
- fs/exec.c              |  1 +
- fs/proc/array.c        | 20 ++++++++++++++++++++
- include/linux/sched.h  |  7 +++++++
- init/init_task.c       |  3 +++
- kernel/exit.c          | 21 +++++++++++++++++++++
- kernel/fork.c          |  4 ++++
- 7 files changed, 59 insertions(+)
+ tools/testing/selftests/Makefile         |   1 +
+ tools/testing/selftests/caba/.gitignore  |   1 +
+ tools/testing/selftests/caba/Makefile    |   7 +
+ tools/testing/selftests/caba/caba_test.c | 509 +++++++++++++++++++++++
+ tools/testing/selftests/caba/config      |   1 +
+ 5 files changed, 519 insertions(+)
+ create mode 100644 tools/testing/selftests/caba/.gitignore
+ create mode 100644 tools/testing/selftests/caba/Makefile
+ create mode 100644 tools/testing/selftests/caba/caba_test.c
+ create mode 100644 tools/testing/selftests/caba/config
 
-diff --git a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
-index c62a66710ad6..5e561994cff7 100644
---- a/arch/ia64/kernel/mca.c
-+++ b/arch/ia64/kernel/mca.c
-@@ -1793,6 +1793,9 @@ format_mca_init_stack(void *mca_data, unsigned long offset,
- 	p->parent = p->real_parent = p->group_leader = p;
- 	INIT_LIST_HEAD(&p->children);
- 	INIT_LIST_HEAD(&p->sibling);
-+	p->caba = p;
-+	INIT_LIST_HEAD(&p->cabds);
-+	INIT_LIST_HEAD(&p->cabd);
- 	strncpy(p->comm, type, sizeof(p->comm)-1);
- }
- 
-diff --git a/fs/exec.c b/fs/exec.c
-index 9a5ca7b82bfc..8caaa03739ab 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1139,6 +1139,7 @@ static int de_thread(struct task_struct *tsk)
- 
- 		list_replace_rcu(&leader->tasks, &tsk->tasks);
- 		list_replace_init(&leader->sibling, &tsk->sibling);
-+		list_replace_init(&leader->cabd, &tsk->cabd);
- 
- 		tsk->group_leader = tsk;
- 		leader->group_leader = tsk;
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 99fcbfda8e25..5fd70aebd52d 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -154,11 +154,28 @@ static inline void task_state(struct seq_file *m, struct pid_namespace *ns,
- 	const struct cred *cred;
- 	pid_t ppid, tpid = 0, tgid, ngid;
- 	unsigned int max_fds = 0;
-+#ifdef CONFIG_PID_NS
-+	struct task_struct *caba;
-+	struct pid *caba_pid;
-+	int caba_level = 0;
-+	pid_t caba_pids[MAX_PID_NS_LEVEL] = {};
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index c2064a35688b..d545bd9e3637 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -3,6 +3,7 @@ TARGETS += alsa
+ TARGETS += arm64
+ TARGETS += bpf
+ TARGETS += breakpoints
++TARGETS += caba
+ TARGETS += capabilities
+ TARGETS += cgroup
+ TARGETS += clone3
+diff --git a/tools/testing/selftests/caba/.gitignore b/tools/testing/selftests/caba/.gitignore
+new file mode 100644
+index 000000000000..aa2c55b774e2
+--- /dev/null
++++ b/tools/testing/selftests/caba/.gitignore
+@@ -0,0 +1 @@
++caba_test
+diff --git a/tools/testing/selftests/caba/Makefile b/tools/testing/selftests/caba/Makefile
+new file mode 100644
+index 000000000000..4260145c3747
+--- /dev/null
++++ b/tools/testing/selftests/caba/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for caba selftests.
++CFLAGS = -g -I../../../../usr/include/ -Wall -O2
++
++TEST_GEN_FILES += caba_test
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/caba/caba_test.c b/tools/testing/selftests/caba/caba_test.c
+new file mode 100644
+index 000000000000..a89c4b96393b
+--- /dev/null
++++ b/tools/testing/selftests/caba/caba_test.c
+@@ -0,0 +1,509 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sched.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <sys/mman.h>
++#include <sys/wait.h>
++#include <sys/prctl.h>
++#include <sys/socket.h>
++#include <sys/mount.h>
++#include <sys/user.h>
++
++#include "../kselftest_harness.h"
++
++#ifndef CLONE_NEWPID
++#define CLONE_NEWPID 0x20000000	/* New pid namespace */
 +#endif
- 
- 	rcu_read_lock();
- 	ppid = pid_alive(p) ?
- 		task_tgid_nr_ns(rcu_dereference(p->real_parent), ns) : 0;
- 
-+#ifdef CONFIG_PID_NS
-+	caba = rcu_dereference(p->caba);
-+	caba_pid = get_task_pid(caba, PIDTYPE_PID);
-+	if (caba_pid) {
-+		caba_level = caba_pid->level;
-+		for (g = ns->level; g <= caba_level; g++)
-+			caba_pids[g] = task_pid_nr_ns(caba, caba_pid->numbers[g].ns);
-+		put_pid(caba_pid);
-+	}
++
++/* Attempt to de-conflict with the selftests tree. */
++#ifndef SKIP
++#define SKIP(s, ...)	XFAIL(s, ##__VA_ARGS__)
 +#endif
 +
- 	tracer = ptrace_parent(p);
- 	if (tracer)
- 		tpid = task_pid_nr_ns(tracer, ns);
-@@ -217,6 +234,9 @@ static inline void task_state(struct seq_file *m, struct pid_namespace *ns,
- 	seq_puts(m, "\nNSsid:");
- 	for (g = ns->level; g <= pid->level; g++)
- 		seq_put_decimal_ull(m, "\t", task_session_nr_ns(p, pid->numbers[g].ns));
-+	seq_puts(m, "\nNScaba:");
-+	for (g = ns->level; g <= caba_level; g++)
-+		seq_put_decimal_ull(m, "\t", caba_pids[g]);
- #endif
- 	seq_putc(m, '\n');
- }
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index e7b2f8a5c711..b30a2ccf1180 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -975,6 +975,13 @@ struct task_struct {
- 	struct list_head		sibling;
- 	struct task_struct		*group_leader;
- 
-+	/* Closest Alive Born Ancestor process: */
-+	struct task_struct __rcu	*caba;
++struct process {
++	pid_t pid;
++	pid_t real;
++	pid_t caba;
++	int sks[2];
++	int dead;
++};
 +
-+	/* Closest Alive Born Descendants list: */
-+	struct list_head		cabds;
-+	struct list_head		cabd;
++struct process *processes;
++int nr_processes = 8;
++int current;
 +
- 	/*
- 	 * 'ptraced' is the list of tasks this task is using ptrace() on.
- 	 *
-diff --git a/init/init_task.c b/init/init_task.c
-index ff6c4b9bfe6b..439da3b04dde 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -109,6 +109,9 @@ struct task_struct init_task
- 	.children	= LIST_HEAD_INIT(init_task.children),
- 	.sibling	= LIST_HEAD_INIT(init_task.sibling),
- 	.group_leader	= &init_task,
-+	.caba		= &init_task,
-+	.cabds		= LIST_HEAD_INIT(init_task.cabds),
-+	.cabd		= LIST_HEAD_INIT(init_task.cabd),
- 	RCU_POINTER_INITIALIZER(real_cred, &init_cred),
- 	RCU_POINTER_INITIALIZER(cred, &init_cred),
- 	.comm		= INIT_TASK_COMM,
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 84021b24f79e..32e4a380861d 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -71,9 +71,29 @@
- #include <asm/unistd.h>
- #include <asm/mmu_context.h>
- 
-+static void forget_caba(struct task_struct *caba)
++static void cleanup(void)
 +{
-+	struct task_struct *p, *t, *new_caba;
-+
-+	if (list_empty(&caba->cabds))
-+		return;
-+
-+	if (!thread_group_leader(caba))
-+		new_caba = caba->group_leader;
-+	else
-+		new_caba = caba->caba;
-+
-+	list_for_each_entry(p, &caba->cabds, cabd) {
-+		for_each_thread(p, t)
-+			RCU_INIT_POINTER(t->caba, new_caba);
-+	}
-+	list_splice_tail_init(&caba->cabds, &new_caba->cabds);
++	kill(processes[0].pid, SIGKILL);
++	/* It's enough to kill pidns init for others to die */
++	kill(processes[1].pid, SIGKILL);
 +}
 +
- static void __unhash_process(struct task_struct *p, bool group_dead)
- {
- 	nr_threads--;
-+	forget_caba(p);
- 	detach_pid(p, PIDTYPE_PID);
- 	if (group_dead) {
- 		detach_pid(p, PIDTYPE_TGID);
-@@ -82,6 +102,7 @@ static void __unhash_process(struct task_struct *p, bool group_dead)
- 
- 		list_del_rcu(&p->tasks);
- 		list_del_init(&p->sibling);
-+		list_del_init(&p->cabd);
- 		__this_cpu_dec(process_counts);
- 	}
- 	list_del_rcu(&p->thread_group);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 90c85b17bf69..a14ee9f1acb1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2139,6 +2139,8 @@ static __latent_entropy struct task_struct *copy_process(
- 	p->flags |= PF_FORKNOEXEC;
- 	INIT_LIST_HEAD(&p->children);
- 	INIT_LIST_HEAD(&p->sibling);
-+	INIT_LIST_HEAD(&p->cabds);
-+	INIT_LIST_HEAD(&p->cabd);
- 	rcu_copy_process(p);
- 	p->vfork_done = NULL;
- 	spin_lock_init(&p->alloc_lock);
-@@ -2402,6 +2404,7 @@ static __latent_entropy struct task_struct *copy_process(
- 		p->parent_exec_id = current->self_exec_id;
- 		p->exit_signal = args->exit_signal;
- 	}
-+	p->caba = current;
- 
- 	klp_copy_process(p);
- 
-@@ -2455,6 +2458,7 @@ static __latent_entropy struct task_struct *copy_process(
- 			p->signal->has_child_subreaper = p->real_parent->signal->has_child_subreaper ||
- 							 p->real_parent->signal->is_child_subreaper;
- 			list_add_tail(&p->sibling, &p->real_parent->children);
-+			list_add_tail(&p->cabd, &p->caba->cabds);
- 			list_add_tail_rcu(&p->tasks, &init_task.tasks);
- 			attach_pid(p, PIDTYPE_TGID);
- 			attach_pid(p, PIDTYPE_PGID);
++enum commands {
++	TEST_FORK,
++	TEST_WAIT,
++	TEST_SUBREAPER,
++	TEST_SETSID,
++	TEST_DIE,
++	/* unused */
++	TEST_GETSID,
++	TEST_SETNS,
++	TEST_SETPGID,
++	TEST_GETPGID,
++	TEST_GETPPID,
++};
++
++struct command {
++	enum commands	cmd;
++	int		arg1;
++	int		arg2;
++};
++
++static void handle_command(void);
++
++static void mainloop(void)
++{
++	while (1)
++		handle_command();
++}
++
++#define CLONE_STACK_SIZE 4096
++#define __stack_aligned__ __attribute__((aligned(16)))
++/* All arguments should be above stack, because it grows down */
++struct clone_args {
++	char stack[CLONE_STACK_SIZE] __stack_aligned__;
++	char stack_ptr[0];
++	int id;
++};
++
++static int get_real_pid(void)
++{
++	char buf[11];
++	int ret;
++
++	ret = readlink("/proc/self", buf, sizeof(buf)-1);
++	if (ret <= 0) {
++		fprintf(stderr, "%d: readlink /proc/self :%m", current);
++		return -1;
++	}
++	buf[ret] = '\0';
++
++	processes[current].real = atoi(buf);
++	return 0;
++}
++
++static int clone_func(void *_arg)
++{
++	struct clone_args *args = (struct clone_args *) _arg;
++
++	current = args->id;
++
++	if (get_real_pid())
++		exit(1);
++
++	printf("%3d: Hello. My pid is %d\n", args->id, getpid());
++	mainloop();
++	exit(0);
++}
++
++static int make_child(int id, int flags)
++{
++	struct clone_args args;
++	pid_t cid;
++
++	args.id = id;
++
++	cid = clone(clone_func, args.stack_ptr,
++			flags | SIGCHLD, &args);
++
++	if (cid < 0)
++		fprintf(stderr, "clone(%d, %d) :%m", id, flags);
++
++	processes[id].pid = cid;
++
++	return cid;
++}
++
++static int open_proc(void)
++{
++	int fd;
++	char proc_mountpoint[] = "/tmp/.caba_test.proc.XXXXXX";
++
++	if (mkdtemp(proc_mountpoint) == NULL) {
++		fprintf(stderr, "mkdtemp failed %s :%m\n", proc_mountpoint);
++		return -1;
++	}
++
++	if (mount("proc", proc_mountpoint, "proc",
++		  MS_MGC_VAL | MS_NOSUID | MS_NOEXEC | MS_NODEV, NULL)) {
++		fprintf(stderr, "mount proc failed :%m\n");
++		rmdir(proc_mountpoint);
++		return -1;
++	}
++
++	fd = open(proc_mountpoint, O_RDONLY | O_DIRECTORY, 0);
++	if (fd < 0)
++		fprintf(stderr, "can't open proc :%m\n");
++
++	if (umount2(proc_mountpoint, MNT_DETACH)) {
++		fprintf(stderr, "can't umount proc :%m\n");
++		goto err_close;
++	}
++
++	if (rmdir(proc_mountpoint)) {
++		fprintf(stderr, "can't remove tmp dir :%m\n");
++		goto err_close;
++	}
++
++	return fd;
++err_close:
++	if (fd >= 0)
++		close(fd);
++	return -1;
++}
++
++static int open_pidns(int pid)
++{
++	int proc, fd;
++	char pidns_path[PATH_MAX];
++
++	proc = open_proc();
++	if (proc < 0) {
++		fprintf(stderr, "open proc\n");
++		return -1;
++	}
++
++	sprintf(pidns_path, "%d/ns/pid", pid);
++	fd = openat(proc, pidns_path, O_RDONLY);
++	if (fd == -1)
++		fprintf(stderr, "open pidns fd\n");
++
++	close(proc);
++	return fd;
++}
++
++static int setns_pid(int pid, int nstype)
++{
++	int pidns, ret;
++
++	pidns = open_pidns(pid);
++	if (pidns < 0)
++		return -1;
++
++	ret = setns(pidns, nstype);
++	if (ret == -1)
++		fprintf(stderr, "setns :%m\n");
++
++	close(pidns);
++	return ret;
++}
++
++static void handle_command(void)
++{
++	int sk = processes[current].sks[0], ret, status = 0;
++	struct command cmd;
++
++	ret = read(sk, &cmd, sizeof(cmd));
++	if (ret != sizeof(cmd)) {
++		fprintf(stderr, "Unable to get command :%m\n");
++		goto err;
++	}
++
++	switch (cmd.cmd) {
++	case TEST_FORK:
++		{
++			pid_t pid;
++
++			pid = make_child(cmd.arg1, cmd.arg2);
++			if (pid == -1) {
++				status = -1;
++				goto err;
++			}
++
++			printf("%3d: fork(%d, %x) = %d\n",
++					current, cmd.arg1, cmd.arg2, pid);
++			processes[cmd.arg1].pid = pid;
++		}
++		break;
++	case TEST_WAIT:
++		printf("%3d: wait(%d) = %d\n", current,
++				cmd.arg1, processes[cmd.arg1].pid);
++
++		if (waitpid(processes[cmd.arg1].pid, NULL, 0) == -1) {
++			fprintf(stderr, "waitpid(%d) :%m\n", processes[cmd.arg1].pid);
++			status = -1;
++		}
++		break;
++	case TEST_SUBREAPER:
++		printf("%3d: subreaper(%d)\n", current, cmd.arg1);
++		if (prctl(PR_SET_CHILD_SUBREAPER, cmd.arg1, 0, 0, 0) == -1) {
++			fprintf(stderr, "PR_SET_CHILD_SUBREAPER :%m\n");
++			status = -1;
++		}
++		break;
++	case TEST_SETSID:
++		printf("%3d: setsid()\n", current);
++		if (setsid() == -1) {
++			fprintf(stderr, "setsid :%m\n");
++			status = -1;
++		}
++		break;
++	case TEST_GETSID:
++		printf("%3d: getsid()\n", current);
++		status = getsid(getpid());
++		if (status == -1)
++			fprintf(stderr, "getsid :%m\n");
++		break;
++	case TEST_SETPGID:
++		printf("%3d: setpgid(%d, %d)\n", current, cmd.arg1, cmd.arg2);
++		if (setpgid(processes[cmd.arg1].pid, processes[cmd.arg2].pid) == -1) {
++			fprintf(stderr, "setpgid :%m\n");
++			status = -1;
++		}
++		break;
++	case TEST_GETPGID:
++		printf("%3d: getpgid()\n", current);
++		status = getpgid(0);
++		if (status == -1)
++			fprintf(stderr, "getpgid :%m\n");
++		break;
++	case TEST_GETPPID:
++		printf("%3d: getppid()\n", current);
++		status = getppid();
++		if (status == -1)
++			fprintf(stderr, "getppid :%m\n");
++		break;
++	case TEST_SETNS:
++		printf("%3d: setns(%d, %d) = %d\n", current,
++				cmd.arg1, cmd.arg2, processes[cmd.arg1].pid);
++		setns_pid(processes[cmd.arg1].pid, cmd.arg2);
++
++		break;
++	case TEST_DIE:
++		printf("%3d: die()\n", current);
++		processes[current].dead = 1;
++		shutdown(sk, SHUT_RDWR);
++		exit(0);
++	}
++
++	ret = write(sk, &status, sizeof(status));
++	if (ret != sizeof(status)) {
++		fprintf(stderr, "Unable to answer :%m\n");
++		goto err;
++	}
++
++	if (status < 0)
++		goto err;
++
++	return;
++err:
++	shutdown(sk, SHUT_RDWR);
++	exit(1);
++}
++
++static int send_command(int id, enum commands op, int arg1, int arg2)
++{
++	int sk = processes[id].sks[1], ret, status;
++	struct command cmd = {op, arg1, arg2};
++
++	if (op == TEST_FORK) {
++		if (processes[arg1].pid) {
++			fprintf(stderr, "%d is busy :%m\n", arg1);
++			return -1;
++		}
++	}
++
++	ret = write(sk, &cmd, sizeof(cmd));
++	if (ret != sizeof(cmd)) {
++		fprintf(stderr, "Unable to send command :%m\n");
++		goto err;
++	}
++
++	status = 0;
++	ret = read(sk, &status, sizeof(status));
++	if (ret != sizeof(status) && !(status == 0 && op == TEST_DIE)) {
++		fprintf(stderr, "Unable to get answer :%m\n");
++		goto err;
++	}
++
++	if (status != -1 && (op == TEST_GETSID || op == TEST_GETPGID || op == TEST_GETPPID))
++		return status;
++
++	if (status) {
++		fprintf(stderr, "The command(%d, %d, %d) failed :%m\n", op, arg1, arg2);
++		goto err;
++	}
++
++	return 0;
++err:
++	cleanup();
++	exit(1);
++}
++
++static int get_caba(int pid, int *caba)
++{
++	char buf[64], *str;
++	FILE *fp;
++	size_t n;
++
++	if (!pid)
++		snprintf(buf, sizeof(buf), "/proc/self/status");
++	else
++		snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
++
++	fp = fopen(buf, "r");
++	if (!fp) {
++		perror("fopen");
++		return -1;
++	}
++
++	str = NULL;
++	while (getline(&str, &n, fp) != -1) {
++		if (strncmp(str, "NScaba:", 7) == 0) {
++			if (str[7] == '\0') {
++				*caba = 0;
++			} else {
++				if (sscanf(str+7, "%d", caba) != 1) {
++					perror("sscanf");
++					goto err;
++				}
++			}
++
++			fclose(fp);
++			free(str);
++			return 0;
++		}
++	}
++err:
++	free(str);
++	fclose(fp);
++	return -1;
++}
++
++static bool caba_supported(void)
++{
++	int caba;
++
++	return !get_caba(0, &caba);
++}
++
++FIXTURE(caba) {
++};
++
++FIXTURE_SETUP(caba)
++{
++	bool ret;
++
++	ret = caba_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "CABA is not supported");
++}
++
++FIXTURE_TEARDOWN(caba)
++{
++	bool ret;
++
++	ret = caba_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "CABA is not supported");
++
++	cleanup();
++}
++
++TEST_F(caba, complex_sessions)
++{
++	int ret, i, pid, caba;
++
++	ret = caba_supported();
++	ASSERT_GE(ret, 0);
++	if (!ret)
++		SKIP(return, "CABA is not supported");
++
++	processes = mmap(NULL, PAGE_SIZE,
++			 PROT_WRITE | PROT_READ, MAP_SHARED | MAP_ANONYMOUS,
++			 0, 0);
++	ASSERT_NE(processes, MAP_FAILED);
++	for (i = 0; i < nr_processes; i++) {
++		ret = socketpair(PF_UNIX, SOCK_STREAM, 0, processes[i].sks);
++		ASSERT_EQ(ret, 0);
++	}
++
++	/*
++	 * Create init:
++	 * (pid, sid)
++	 * (1, 1)
++	 */
++	pid = make_child(0, 0); ASSERT_GT(pid, 0);
++	ret = send_command(0, TEST_FORK,	  1, CLONE_NEWPID);
++	ASSERT_EQ(ret, 0);
++	ret = send_command(1, TEST_SETSID,	  0, 0);
++	ASSERT_EQ(ret, 0);
++
++	/*
++	 * Create sequence of processes from one session:
++	 * (pid, sid)
++	 * (1, 1)---(2, 2)---(3, 2)---(4, 2)---(5, 2)
++	 */
++	ret = send_command(1, TEST_FORK,	  2, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(2, TEST_SETSID,	  0, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(2, TEST_FORK,	  3, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(3, TEST_FORK,	  4, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(4, TEST_FORK,	  5, 0); ASSERT_EQ(ret, 0);
++	/*
++	 * Create another session in the middle of first one:
++	 * (pid, sid)
++	 * (1, 1)---(2, 2)---(3, 2)---(4, 4)-+-(5, 2)
++	 *                                   `-(6, 4)---(7, 4)
++	 */
++	ret = send_command(4, TEST_SETSID,	  0, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(4, TEST_FORK,	  6, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(6, TEST_FORK,	  7, 0); ASSERT_EQ(ret, 0);
++
++	/*
++	 * Kill 6 while having 2 as child-sub-reaper:
++	 * (pid, sid)
++	 * (1, 1)---(2, 2)---(3, 2)---(4, 4)-+-(5, 2)
++	 *                 `-(7, 4)
++	 */
++	ret = send_command(2, TEST_SUBREAPER, 1, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(6, TEST_DIE,	  0, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(4, TEST_WAIT,	  6, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(2, TEST_SUBREAPER, 0, 0); ASSERT_EQ(ret, 0);
++
++	/*
++	 * Kill 3:
++	 * (pid, sid)
++	 * (1, 1)-+-(2, 2)---(7, 4)
++	 *        `-(4, 4)---(5, 2)
++	 * note: This is a "tricky" session tree example where it's not obvious
++	 * whether sid 2 was created first or sid 4 when creating the tree.
++	 */
++	ret = send_command(3, TEST_DIE,	  0, 0); ASSERT_EQ(ret, 0);
++	ret = send_command(2, TEST_WAIT,	  3, 0); ASSERT_EQ(ret, 0);
++
++	/*
++	 * CABA tree for this would be:
++	 * (pid, sid)
++	 * (1, 1)---(2, 2)---(4, 4)-+-(5, 2)
++	 *                          `-(7, 4)
++	 * note: CABA allows us to understand that session 2 was created first.
++	 */
++	ret = get_caba(processes[2].real, &caba);
++	ASSERT_EQ(ret, 0); ASSERT_EQ(caba, processes[1].real);
++	ret = get_caba(processes[4].real, &caba);
++	ASSERT_EQ(ret, 0); ASSERT_EQ(caba, processes[2].real);
++	ret = get_caba(processes[5].real, &caba);
++	ASSERT_EQ(ret, 0); ASSERT_EQ(caba, processes[4].real);
++	ret = get_caba(processes[7].real, &caba);
++	ASSERT_EQ(ret, 0); ASSERT_EQ(caba, processes[4].real);
++}
++
++TEST_HARNESS_MAIN
+diff --git a/tools/testing/selftests/caba/config b/tools/testing/selftests/caba/config
+new file mode 100644
+index 000000000000..eae7bdaa3790
+--- /dev/null
++++ b/tools/testing/selftests/caba/config
+@@ -0,0 +1 @@
++CONFIG_PID_NS=y
 -- 
 2.37.1
 
