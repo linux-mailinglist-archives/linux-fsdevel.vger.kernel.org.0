@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 334DA5B247D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 19:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DFF5B2482
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 19:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbiIHRZc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 13:25:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
+        id S232086AbiIHRZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 13:25:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbiIHRZJ (ORCPT
+        with ESMTP id S231782AbiIHRZK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 13:25:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B33EEE09;
+        Thu, 8 Sep 2022 13:25:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BABEBEE0A;
         Thu,  8 Sep 2022 10:25:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CFC7FB821DB;
-        Thu,  8 Sep 2022 17:25:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FFFFC433D7;
-        Thu,  8 Sep 2022 17:25:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5325C61C61;
+        Thu,  8 Sep 2022 17:25:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC65CC433C1;
+        Thu,  8 Sep 2022 17:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662657903;
-        bh=/YNPcN4rxFONundBtrDqmkeT83g0yGiQLxW6cbtCzZs=;
+        s=k20201202; t=1662657905;
+        bh=vWkxrq3+6QZGR7RqrSOelQqMIu/ocn/ySt9Y7jOOYsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PoXh84IJy2h+PNMrM5x9Knf84XPB0xhoBe5WwW1p0waOAbkwhaFzWLuk+tV8dFiKq
-         /mHeSchZSF+vFafsXNnXHc64od8sRT1goGnykUFJPq+lshswdYAqzSwyxvAhhwUjCl
-         avqBhRiL908xOsnuPDU5cXkFMZM4niUktu1g37OtvrTJPYXsmQ9IbDfD00XZCXCN2S
-         mgHxHvJT3mA3+gbtwRFfhf6hnhnsdOmuX9nK1SnS+xRFKe/RgWDK2UBhuJAHQO3AAf
-         gzkYcaSkRlckHLWt+ahQAj7l1jq62SyeQmQbjpUvLfDPyt29PBj3IPAlVmI7GSglg6
-         B8DOBxLBiHlAQ==
+        b=bmfyY12qPbAMHTjCjjyIlg6NNgg6kJJfuXMKEzViAxgUtK0I80ihSCFRs7wYzTe8k
+         nYbd0Pepp7CYrF88rvCj6igW0B3icNenGy2iY7qARPpwdzWmo01FK6yT2VrBDXgIml
+         dFGbK6+aBUmlBtEeucT82ooxPwW1TgsS89fb5430VGaq+ucDSlp3Yoe2ksG0ygyqd3
+         u+tS/RZ/9M45/EGXBRQ2ORAoPbQdsQIRMNwg0fvLWcACf3pcPFwg8tNjNe5KpZw8wQ
+         gqb928Vrw8eSmf9LRr18KytshfvDPdn7QrIo8r7w2sQ6uWLXljfwpX4pydzkzd18aA
+         D6XVMWAYBgelg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
         david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
@@ -42,9 +42,9 @@ Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-xfs@vger.kernel.org
-Subject: [PATCH v5 5/8] nfs: report the inode version in getattr if requested
-Date:   Thu,  8 Sep 2022 13:24:45 -0400
-Message-Id: <20220908172448.208585-6-jlayton@kernel.org>
+Subject: [PATCH v5 6/8] ceph: report the inode version in getattr if requested
+Date:   Thu,  8 Sep 2022 13:24:46 -0400
+Message-Id: <20220908172448.208585-7-jlayton@kernel.org>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220908172448.208585-1-jlayton@kernel.org>
 References: <20220908172448.208585-1-jlayton@kernel.org>
@@ -60,54 +60,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow NFS to report the i_version in getattr requests. Since the cost to
-fetch it is relatively cheap, do it unconditionally and just set the
-flag if it looks like it's valid.
+When getattr requests the STX_INO_VERSION, request the full gamut of
+caps (similarly to how ctime is handled). When the change attribute
+seems to be valid, return it in the ino_version field and set the flag
+in the reply mask.
 
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/inode.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/ceph/inode.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index bea7c005119c..88c732a5c821 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -830,6 +830,8 @@ static u32 nfs_get_valid_attrmask(struct inode *inode)
- 		reply_mask |= STATX_UID | STATX_GID;
- 	if (!(cache_validity & NFS_INO_INVALID_BLOCKS))
- 		reply_mask |= STATX_BLOCKS;
-+	if (!(cache_validity & NFS_INO_INVALID_CHANGE))
-+		reply_mask |= STATX_INO_VERSION;
- 	return reply_mask;
- }
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 42351d7a0dd6..ccc926a7dcb0 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2415,10 +2415,10 @@ static int statx_to_caps(u32 want, umode_t mode)
+ {
+ 	int mask = 0;
  
-@@ -848,7 +850,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+-	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
++	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME|STATX_INO_VERSION))
+ 		mask |= CEPH_CAP_AUTH_SHARED;
  
- 	request_mask &= STATX_TYPE | STATX_MODE | STATX_NLINK | STATX_UID |
- 			STATX_GID | STATX_ATIME | STATX_MTIME | STATX_CTIME |
--			STATX_INO | STATX_SIZE | STATX_BLOCKS;
-+			STATX_INO | STATX_SIZE | STATX_BLOCKS | STATX_INO_VERSION;
+-	if (want & (STATX_NLINK|STATX_CTIME)) {
++	if (want & (STATX_NLINK|STATX_CTIME|STATX_INO_VERSION)) {
+ 		/*
+ 		 * The link count for directories depends on inode->i_subdirs,
+ 		 * and that is only updated when Fs caps are held.
+@@ -2429,11 +2429,10 @@ static int statx_to_caps(u32 want, umode_t mode)
+ 			mask |= CEPH_CAP_LINK_SHARED;
+ 	}
  
- 	if ((query_flags & AT_STATX_DONT_SYNC) && !force_sync) {
- 		if (readdirplus_enabled)
-@@ -877,7 +879,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 	/* Is the user requesting attributes that might need revalidation? */
- 	if (!(request_mask & (STATX_MODE|STATX_NLINK|STATX_ATIME|STATX_CTIME|
- 					STATX_MTIME|STATX_UID|STATX_GID|
--					STATX_SIZE|STATX_BLOCKS)))
-+					STATX_SIZE|STATX_BLOCKS|STATX_INO_VERSION)))
- 		goto out_no_revalidate;
+-	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
+-		    STATX_BLOCKS))
++	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|STATX_BLOCKS|STATX_INO_VERSION))
+ 		mask |= CEPH_CAP_FILE_SHARED;
  
- 	/* Check whether the cached attributes are stale */
-@@ -915,6 +917,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+-	if (want & (STATX_CTIME))
++	if (want & (STATX_CTIME|STATX_INO_VERSION))
+ 		mask |= CEPH_CAP_XATTR_SHARED;
  
- 	generic_fillattr(&init_user_ns, inode, stat);
- 	stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
-+	stat->ino_version = inode_peek_iversion_raw(inode);
- 	if (S_ISDIR(inode->i_mode))
- 		stat->blksize = NFS_SERVER(inode)->dtsize;
- out:
+ 	return mask;
+@@ -2475,6 +2474,11 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		valid_mask |= STATX_BTIME;
+ 	}
+ 
++	if (request_mask & STATX_INO_VERSION) {
++		stat->ino_version = inode_peek_iversion_raw(inode);
++		valid_mask |= STATX_INO_VERSION;
++	}
++
+ 	if (ceph_snap(inode) == CEPH_NOSNAP)
+ 		stat->dev = inode->i_sb->s_dev;
+ 	else
 -- 
 2.37.3
 
