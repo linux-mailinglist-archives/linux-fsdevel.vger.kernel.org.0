@@ -2,155 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37F755B171B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 10:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEDE15B18E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 11:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbiIHIdg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 04:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
+        id S230370AbiIHJje (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 05:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbiIHId3 (ORCPT
+        with ESMTP id S230269AbiIHJj3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 04:33:29 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4450E1A96;
-        Thu,  8 Sep 2022 01:33:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7CA5F22486;
-        Thu,  8 Sep 2022 08:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1662626007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8sjzYxBjz9/JeFT8Y7oHbqmg7W+DAyx1ya6iI90ZaMQ=;
-        b=G99I5obrt4hV3c27dz2o4YfAIhoIVrbbH3dfLPAMW0LzbBqu0EvtmmhrUcACOb2o9ed70/
-        cNXhGP9N/+SW8xSfPOoGS+uL+IcwKESwEcFuRCZSQaJZZy4oj7W1K/mG+gn7S20YmAbsz1
-        rqsKa2EzYzVRz173gUhOyD7GM3th61E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1662626007;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8sjzYxBjz9/JeFT8Y7oHbqmg7W+DAyx1ya6iI90ZaMQ=;
-        b=+whd4o3JKfEbh5M21ThDe8yY7TUw+sX0ZNwz+FFg91wQqsJpbtfAwaWS5pMeJQ6pxu12Mo
-        I/KruOUqr3Z7G+Bg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 68BFC1322C;
-        Thu,  8 Sep 2022 08:33:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 95yKGdeoGWNILwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 08 Sep 2022 08:33:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EE081A067E; Thu,  8 Sep 2022 10:33:26 +0200 (CEST)
-Date:   Thu, 8 Sep 2022 10:33:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, djwong@kernel.org, david@fromorbit.com,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220908083326.3xsanzk7hy3ff4qs@quack3>
-References: <20220907111606.18831-1-jlayton@kernel.org>
- <166255065346.30452.6121947305075322036@noble.neil.brown.name>
- <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
- <20220907125211.GB17729@fieldses.org>
- <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
- <20220907135153.qvgibskeuz427abw@quack3>
- <166259786233.30452.5417306132987966849@noble.neil.brown.name>
+        Thu, 8 Sep 2022 05:39:29 -0400
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044FBBC;
+        Thu,  8 Sep 2022 02:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1662629965;
+  x=1694165965;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GYN6K1XEtbZIYFOF497nm3dEoRDRacw5iqjWmI9bicw=;
+  b=bTnXta5bUEvS3Uf/3Rbdyta8/G8B3RbCDNnLKAkRsfh3+2ZCTy0bC4TX
+   XJ/PcxzcWcQ+4qIkuWKu8EPvw1u2L49a5RUOewa+b5BiREY/lBFV4pZix
+   7kz/43IH313mImItz0FfV0kuf/HW9A11nnBMHa+F80DX+MYfLh/J1Atwj
+   zLQQYk14zKQ3pKcAfHqTopxSdDUjnROo1i+NS58M8QKnaeI0olQZWqudW
+   39GbeW3uMeVXJWy71aqDf1YkqrgPVrMbvm1ZjWT8Z42Hj8zKg8Wk+2Dwc
+   iRgXN8e50fiWD6VYhvLMwPmpM+bNoE6XFg04yyrMgmi/7i1w4aLlk6byb
+   g==;
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     <akpm@linux-foundation.org>
+CC:     <kernel@axis.com>, <adobriyan@gmail.com>, <vbabka@suse.cz>,
+        <dancol@google.com>, <linux-mm@kvack.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] proc: Enable smaps_rollup without ptrace rights
+Date:   Thu, 8 Sep 2022 11:39:19 +0200
+Message-ID: <20220908093919.843346-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166259786233.30452.5417306132987966849@noble.neil.brown.name>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-09-22 10:44:22, NeilBrown wrote:
-> On Wed, 07 Sep 2022, Jan Kara wrote:
-> > On Wed 07-09-22 09:12:34, Jeff Layton wrote:
-> > > On Wed, 2022-09-07 at 08:52 -0400, J. Bruce Fields wrote:
-> > > > On Wed, Sep 07, 2022 at 08:47:20AM -0400, Jeff Layton wrote:
-> > > > > On Wed, 2022-09-07 at 21:37 +1000, NeilBrown wrote:
-> > > > > > On Wed, 07 Sep 2022, Jeff Layton wrote:
-> > > > > > > +The change to \fIstatx.stx_ino_version\fP is not atomic with respect to the
-> > > > > > > +other changes in the inode. On a write, for instance, the i_version it usually
-> > > > > > > +incremented before the data is copied into the pagecache. Therefore it is
-> > > > > > > +possible to see a new i_version value while a read still shows the old data.
-> > > > > > 
-> > > > > > Doesn't that make the value useless?
-> > > > > > 
-> > > > > 
-> > > > > No, I don't think so. It's only really useful for comparing to an older
-> > > > > sample anyway. If you do "statx; read; statx" and the value hasn't
-> > > > > changed, then you know that things are stable. 
-> > > > 
-> > > > I don't see how that helps.  It's still possible to get:
-> > > > 
-> > > > 		reader		writer
-> > > > 		------		------
-> > > > 				i_version++
-> > > > 		statx
-> > > > 		read
-> > > > 		statx
-> > > > 				update page cache
-> > > > 
-> > > > right?
-> > > > 
-> > > 
-> > > Yeah, I suppose so -- the statx wouldn't necessitate any locking. In
-> > > that case, maybe this is useless then other than for testing purposes
-> > > and userland NFS servers.
-> > > 
-> > > Would it be better to not consume a statx field with this if so? What
-> > > could we use as an alternate interface? ioctl? Some sort of global
-> > > virtual xattr? It does need to be something per-inode.
-> > 
-> > I was thinking how hard would it be to increment i_version after updating
-> > data but it will be rather hairy. In particular because of stuff like
-> > IOCB_NOWAIT support which needs to bail if i_version update is needed. So
-> > yeah, I don't think there's an easy way how to provide useful i_version for
-> > general purpose use.
-> > 
-> 
-> Why cannot IOCB_NOWAIT update i_version?  Do we not want to wait on the
-> cmp_xchg loop in inode_maybe_inc_iversion(), or do we not want to
-> trigger an inode update?
-> 
-> The first seems unlikely, but the second seems unreasonable.  We already
-> acknowledge that after a crash iversion might go backwards and/or miss
-> changes.
+smaps_rollup is currently only allowed on processes which the user has
+ptrace permissions for, since it uses a common proc open function used
+by other files like mem and smaps.
 
-It boils down to the fact that we don't want to call mark_inode_dirty()
-from IOCB_NOWAIT path because for lots of filesystems that means journal
-operation and there are high chances that may block.
+However, while smaps provides detailed, individual information about
+each memory map in the process (justifying its ptrace rights
+requirement), smaps_rollup only provides a summary of the memory usage,
+which is not unlike the information available from other places like the
+status and statm files, which do not need ptrace permissions.
 
-Presumably we could treat inode dirtying after i_version change similarly
-to how we handle timestamp updates with lazytime mount option (i.e., not
-dirty the inode immediately but only with a delay) but then the time window
-for i_version inconsistencies due to a crash would be much larger.
+The first line of smaps_rollup could however be sensitive, since it
+exposes the randomized start and end of the process' address space.
+This information however does not seem essential to smap_rollup's
+purpose and could be replaced with placeholder values to preserve the
+format without leaking information.  (I could not find any user space in
+Debian or Android which uses the information in the first line.)
 
-								Honza
+Replace the start with 0 and end with ~0 and allow smaps_rollup to be
+opened and read regardless of ptrace permissions.
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ fs/proc/base.c     | 18 +++++++++++++++---
+ fs/proc/internal.h |  1 +
+ fs/proc/task_mmu.c |  5 ++---
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 93f7e3d971e4..9482eb3954de 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -792,14 +792,16 @@ static const struct file_operations proc_single_file_operations = {
+ 	.release	= single_release,
+ };
+ 
+-
+-struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
++static struct mm_struct *__proc_mem_open(struct inode *inode, unsigned int mode, bool creds)
+ {
+ 	struct task_struct *task = get_proc_task(inode);
+ 	struct mm_struct *mm = ERR_PTR(-ESRCH);
+ 
+ 	if (task) {
+-		mm = mm_access(task, mode | PTRACE_MODE_FSCREDS);
++		if (creds)
++			mm = mm_access(task, mode | PTRACE_MODE_FSCREDS);
++		else
++			mm = get_task_mm(task);
+ 		put_task_struct(task);
+ 
+ 		if (!IS_ERR_OR_NULL(mm)) {
+@@ -813,6 +815,16 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ 	return mm;
+ }
+ 
++struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
++{
++	return __proc_mem_open(inode, mode, true);
++}
++
++struct mm_struct *proc_mem_open_nocreds(struct inode *inode)
++{
++	return __proc_mem_open(inode, 0, false);
++}
++
+ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ {
+ 	struct mm_struct *mm = proc_mem_open(inode, mode);
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 06a80f78433d..5c906661b018 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -293,6 +293,7 @@ struct proc_maps_private {
+ } __randomize_layout;
+ 
+ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode);
++struct mm_struct *proc_mem_open_nocreds(struct inode *inode);
+ 
+ extern const struct file_operations proc_pid_maps_operations;
+ extern const struct file_operations proc_pid_numa_maps_operations;
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 4e0023643f8b..13f910b51dce 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -969,8 +969,7 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
+ 		vma = vma->vm_next;
+ 	}
+ 
+-	show_vma_header_prefix(m, priv->mm->mmap->vm_start,
+-			       last_vma_end, 0, 0, 0, 0);
++	show_vma_header_prefix(m, 0, ~0lu, 0, 0, 0, 0);
+ 	seq_pad(m, ' ');
+ 	seq_puts(m, "[rollup]\n");
+ 
+@@ -1015,7 +1014,7 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
+ 		goto out_free;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open_nocreds(inode);
+ 	if (IS_ERR(priv->mm)) {
+ 		ret = PTR_ERR(priv->mm);
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
