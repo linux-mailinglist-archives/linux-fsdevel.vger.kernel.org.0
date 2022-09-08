@@ -2,163 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DBF55B27E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 22:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7293B5B2813
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 23:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbiIHUub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 16:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49216 "EHLO
+        id S229771AbiIHVDG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 17:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiIHUua (ORCPT
+        with ESMTP id S229514AbiIHVDF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 16:50:30 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CF0B0B18;
-        Thu,  8 Sep 2022 13:50:28 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id l14so17397247eja.7;
-        Thu, 08 Sep 2022 13:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=nhuHvzNlc2TwxMhhsYaDQXiPo9fazG9+H8G6SCSTy2k=;
-        b=LxQC+BbtpvQJM7kNytDxCv2d5woStEJnTZMz+oCVZmcjtuHNoYqUlZUO5aetkRXU0N
-         P2ZVEiJz3lA47q7AqGI+OvqzALao8yYwrSM5lGBRmrykyopVQv1WPW5ZDqMfPSJUrKYJ
-         O9yPYoRlB4utNIWWOrUDuquHCBTMdSTo7MXWe5KjxsqxgBd/8i085arQkDo77d8/GD4X
-         ehL4efFLOspcwDccu7+ITmCszDo3DZP0XZ3M038c0FO7wmWbxfKCQQCXmhyBL7WgvrBU
-         EI43o3I11ciR6hEzXWNdmfFom0redx97Aq3UZitNSWtSenIu0bYqjTLKtL2qcUTAB/+7
-         IiwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=nhuHvzNlc2TwxMhhsYaDQXiPo9fazG9+H8G6SCSTy2k=;
-        b=koi+UHz+Cu0NgZQC2GhmWYUCgcjyp3s4PF3a/mf+SgSp+sZd7lErSFMVKFwOzaIoLR
-         g8jDaLYd4SzZDKgmGoQs4K4+EwC4f5TG6hU8HC2S54jRD9mZhaT9Xdjk4/Ks4oBf5bjG
-         ExvkqddGiP520zO0d470/pGggT0hubC6VpApv5/1UMHIUJ0mel3+2qkAa0fuVVE7mb4v
-         aoOUXA2o0soWQp5KfMKumqpWPXOngHZZwQJDQsSlB+Wd0sekxgZJWDWpI2CTPwG6Pymm
-         L1A+6/WipOPIHyXbd9JpXEcbgvh0KvKGexN/GHiJbkVkh+SnqkiCxlV+vkOdMHQ9YRe0
-         /oMg==
-X-Gm-Message-State: ACgBeo3XRW3EOMKWf6rLKg5aYdPieZhzpgxLlx5iOX/e/s7Kl10Bt1o+
-        ght1hg7TlJIYieNs8m5Vwek=
-X-Google-Smtp-Source: AA6agR6DFz/WhqhwtdRUQkU7icsDIcxNT2P0FmKy0c3aSwpuOFJBLzbwPbnQclONzX+s+tQk+1tw4g==
-X-Received: by 2002:a17:907:72cf:b0:741:48db:d304 with SMTP id du15-20020a17090772cf00b0074148dbd304mr7296016ejc.391.1662670227254;
-        Thu, 08 Sep 2022 13:50:27 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id e9-20020a170906314900b0072f4f4dc038sm1670685eje.42.2022.09.08.13.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 13:50:26 -0700 (PDT)
-Date:   Thu, 8 Sep 2022 22:50:24 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH v6 1/5] security: create file_truncate hook from
- path_truncate hook
-Message-ID: <YxpVkKqrZhjh5Pn8@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-2-gnoack3000@gmail.com>
- <CAHC9VhSmjF1sYoP-Z8vj+O4=NPQMdw+L4=iFZtDbHzJg7ey6vA@mail.gmail.com>
+        Thu, 8 Sep 2022 17:03:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E10CE3D6C;
+        Thu,  8 Sep 2022 14:03:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C496261E14;
+        Thu,  8 Sep 2022 21:03:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90029C433D7;
+        Thu,  8 Sep 2022 21:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662670983;
+        bh=7YBYgg7/TJrR66/a7iaQ2eaR35nFX2co0CfBFOEQmS0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hwP04eoLTnHQDfB81mv4MOJrK7StjHLWM4e3dwS5s0WkXoWQe63A14lJMkyv1I2QS
+         vuEBxbyQWYSOQ8LR+9yIJmbf/5wuudqlYEzCWaKWZNPqsrdEXXz8W9jZ2hBx3kGgCn
+         0eAqijJ3CRyKdHApze13EeKXOWLEOFZ2dpXsQWLv0obaeGh9ExXrVJgOfasTmMlRJn
+         hgq0jp1xl/3PH0q9Y6Ie6tE2vPYIZ1n4KLvDJ8hGC+fLu2FiGeer8dJvcny41obGuX
+         2PXk6eaABVbJO1WVS3ld7PtgxykPSqXTsVlJ03SpwTig+pDFsTe9CwQXX5Zk2SolxJ
+         hL08HGAr39dwg==
+Message-ID: <2b75d8b1b259f5d8db19edba4b8bbd8111be54f4.camel@kernel.org>
+Subject: Re: Does NFS support Linux Capabilities
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Chuck Lever III <chuck.lever@oracle.com>,
+        battery dude <jyf007@gmail.com>
+Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Date:   Thu, 08 Sep 2022 17:03:01 -0400
+In-Reply-To: <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
+References: <CAMBbDaF2Ni0gMRKNeFTQwgAOPPYy7RLXYwDJyZ1edq=tfATFzw@mail.gmail.com>
+         <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSmjF1sYoP-Z8vj+O4=NPQMdw+L4=iFZtDbHzJg7ey6vA@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 08, 2022 at 04:09:06PM -0400, Paul Moore wrote:
-> On Thu, Sep 8, 2022 at 3:58 PM Günther Noack <gnoack3000@gmail.com> wrote:
-> >
-> > Like path_truncate, the file_truncate hook also restricts file
-> > truncation, but is called in the cases where truncation is attempted
-> > on an already-opened file.
-> >
-> > This is required in a subsequent commit to handle ftruncate()
-> > operations differently to truncate() operations.
-> >
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > ---
-> >  fs/namei.c                    |  6 +++---
-> >  fs/open.c                     |  4 ++--
-> >  include/linux/lsm_hook_defs.h |  1 +
-> >  include/linux/security.h      |  6 ++++++
-> >  security/apparmor/lsm.c       |  6 ++++++
-> >  security/security.c           |  5 +++++
-> >  security/tomoyo/tomoyo.c      | 13 +++++++++++++
-> >  7 files changed, 36 insertions(+), 5 deletions(-)
->
-> We need to get John and Tetsuo's ACKs on this patch, but in addition
-> to that I have two small comments (below).
+On Thu, 2022-09-08 at 20:24 +0000, Chuck Lever III wrote:
+> [ This question comes up on occasion, so I've added a few interested
+>   parties to the Cc: list ]
+>=20
+> > On Sep 8, 2022, at 8:27 AM, battery dude <jyf007@gmail.com> wrote:
+> >=20
+> > According to https://access.redhat.com/solutions/2117321 this article,
+> > I want to ask, how to make NFS support the penetration of Linux
+> > Capabilities
+>=20
+> That link is access-limited, so I was able to view only the top
+> few paragraphs of it. Not very open, Red Hat.
+>=20
+> TL;DR: I looked into this while trying to figure out how to enable
+> IMA on NFS files. It's difficult for many reasons.
+>=20
+>=20
+> A few of these reasons include:
+>=20
+> The NFS protocol is a standard, and is implemented on a wide variety
+> of OS platforms. Each OS implements its own flavor of capabilities.
+> There's no way to translate amongst the variations to ensure
+> interoperation. On Linux, capabilities(7) says:
+>=20
+> > No standards govern capabilities, but the Linux capability implementati=
+on is based on the withdrawn POSIX.1e draft standard; see =E2=9F=A8https://=
+archive.org/details/posix_1003.1e-990310=E2=9F=A9.
+>=20
+> I'm not sure how closely other implementations come to implementing
+> POSIX.1e, but there are enough differences that interoperability
+> could be a nightmare. Anything Linux has done differently than
+> POSIX.1e would be encumbered by GPL, making it nearly impossible to
+> standardize those differences. (Let alone the possible problems
+> trying to cite a withdrawn POSIX standard in an Internet RFC!)
+>=20
+> The NFSv4 WG could invent our own capabilities scheme, just as was
+> done with NFSv4 ACLs. I'm not sure everyone would agree that effort
+> was 100% successful.
+>=20
+>=20
+> Currently, an NFS server bases its access control choices on the
+> RPC user that makes each request. We'd have to figure out a way to
+> enable NFS clients and servers to communicate more than just user
+> identity to enable access control via capabilities.
+>=20
+> When sending an NFS request, a client would have to provide a set
+> of capabilities to the server so the server can make appropriate
+> access control choices for that request.
+>=20
+> The server would have to report the updated capset when a client
+> accesses and executes a file with capabilities, and the server
+> would have to trust that its clients all respect those capsets
+> correctly.
+>=20
+>=20
+> Because capabilities are security-related, setting and retrieving
+> capabilities should be done only over networks that ensure
+> integrity of communication. So, protection via RPC-with-TLS or
+> RPCSEC GSS with an integrity service ought to be a requirement
+> both for setting and updating capabilities and for transmitting
+> any protected file content. We have implementations, but there
+> is always an option of not deploying this kind of protection
+> when NFS is actually in use, making capabilities just a bit of
+> security theater in those cases.
+>=20
+>=20
+> Given these enormous challenges, who would be willing to pay for
+> standardization and implementation? I'm not saying it can't or
+> shouldn't be done, just that it would be a mighty heavy lift.
+> But maybe other folks on the Cc: list have ideas that could
+> make this easier than I believe it to be.
+>=20
+>=20
 
-+CC: John Johansen and Tetsuo Handa -- this change is splitting up the
-path_truncate LSM hook into a path_truncate and file_truncate variant,
-one operating on the path as before, and one operating on a struct
-file*. As a result, AppArmor and TOMOYO need to implement the
-file-based hook as well and treat it the same as before by looking at
-the file's ->f_path. Does this change seem reasonable to you?
-
-
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 53b4bc094db2..52105873d1f8 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -53,8 +53,8 @@
-> >   * The new code replaces the old recursive symlink resolution with
-> >   * an iterative one (in case of non-nested symlink chains).  It does
-> >   * this with calls to <fs>_follow_link().
-> > - * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > - * replaced with a single function lookup_dentry() that can handle all
-> > + * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > + * replaced with a single function lookup_dentry() that can handle all
->
-> Since this patch(set) is likely to go in via the Landlock tree, it is
-> very important to keep changes outside of security/landlock to a bare
-> minimum of what is required both to reduce merge conflicts and
-> highlight the significant changes.  This change doesn't appear
-> necessary ... and I'm having a hard time spotting the difference in
-> the lines.
-
-Thanks for pointing this out, I fully agree!
-
-Both edits that you flagged were unintentional, I should have double
-checked this patch better. I'll address them in the next version.
-
-(You can't see the difference here because my editor trimmed trailing
-whitespace on save (*facepalm*) - I turned this off now.)
-
-
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 8a813fa5ca56..0831433e493a 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -1271,7 +1271,7 @@ struct file *filp_open(const char *filename, int flags, umode_t mode)
-> >  {
-> >         struct filename *name = getname_kernel(filename);
-> >         struct file *file = ERR_CAST(name);
-> > -
-> > +
->
-> See my comment above about unnecessary changes.
-
-Same here, I'm fixing that for the next version.
-
-Thanks for the review,
-Günther
-
---
+I'm not disputing anything you wrote above, and I clearly haven't
+thought through the security implications, but I wonder if we could
+piggyback this info onto security label support somehow? That already
+requires a (semi-opaque) per-inode attribute, which is mostly what's
+required for file capabilities.
+--=20
+Jeff Layton <jlayton@kernel.org>
