@@ -2,125 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C505B0FA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 00:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0AD5B1144
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Sep 2022 02:31:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiIGWBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Sep 2022 18:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
+        id S230213AbiIHAbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Sep 2022 20:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiIGWBS (ORCPT
+        with ESMTP id S230272AbiIHAba (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Sep 2022 18:01:18 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C8F895DE;
-        Wed,  7 Sep 2022 15:01:17 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:32958)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oW36e-0064Jr-Ba; Wed, 07 Sep 2022 16:01:12 -0600
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:53706 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oW36d-0092tB-7e; Wed, 07 Sep 2022 16:01:11 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Will Deacon <will@kernel.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Stephen Kitt <steve@sk2.org>, Rob Herring <robh@kernel.org>,
-        Joel Savitz <jsavitz@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Renaud =?utf-8?Q?M=C3=A9trich?= <rmetrich@redhat.com>,
-        Grzegorz Halat <ghalat@redhat.com>, Qi Guo <qguo@redhat.com>
-References: <20220903064330.20772-1-oleksandr@redhat.com>
-        <87r10ob0st.fsf@email.froward.int.ebiederm.org>
-        <5599808.DvuYhMxLoT@redhat.com> <20220907173438.GA15992@redhat.com>
-Date:   Wed, 07 Sep 2022 17:00:43 -0500
-In-Reply-To: <20220907173438.GA15992@redhat.com> (Oleg Nesterov's message of
-        "Wed, 7 Sep 2022 19:34:40 +0200")
-Message-ID: <877d2ec0ac.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Wed, 7 Sep 2022 20:31:30 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98145D0773;
+        Wed,  7 Sep 2022 17:31:21 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1848620A08;
+        Thu,  8 Sep 2022 00:31:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662597080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jZL4IIR5pfW+dB6M5aYU+c6C39aV8z8lPkflRrG+URU=;
+        b=xhWsmma/D1pNOJcXcAyNNudzKTd5IWeA/c3+FbDta8nGJ9qkuCHDG9GQnSG9PdnN7/Skva
+        HsIr1gy0WdeX8JatYzy3I+CQoAKtNUuQbd3xK9c1D/uq4a2OrhuBOXUELws2TMEbsDzqiJ
+        tVQZ0rCVKHwC5Y+ZngpvHcwx+/Vu5Vc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662597080;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jZL4IIR5pfW+dB6M5aYU+c6C39aV8z8lPkflRrG+URU=;
+        b=2EZ00t47e/GkOmNlEyHEtudCQMs17PgOGXfuHHWD2eWfRmG6ZTcBs00W3KzPNFGPfmK2ne
+        xklLIOrqfjDbRwAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8B3DE1322C;
+        Thu,  8 Sep 2022 00:31:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id odUxENA3GWPrBgAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 08 Sep 2022 00:31:12 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oW36d-0092tB-7e;;;mid=<877d2ec0ac.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX1/MTX45R8okRsDE3mI928lifjqE1i+i1fQ=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Trond Myklebust" <trondmy@hammerspace.com>
+Cc:     "bfields@fieldses.org" <bfields@fieldses.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+In-reply-to: <8a71986b4fb61cd9b4adc8b4250118cbb19eec58.camel@hammerspace.com>
+References: <20220907111606.18831-1-jlayton@kernel.org>,
+ <166255065346.30452.6121947305075322036@noble.neil.brown.name>,
+ <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>,
+ <20220907125211.GB17729@fieldses.org>,
+ <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>,
+ <8a71986b4fb61cd9b4adc8b4250118cbb19eec58.camel@hammerspace.com>
+Date:   Thu, 08 Sep 2022 10:31:08 +1000
+Message-id: <166259706887.30452.6749778447732126953@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 548 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (2.1%), b_tie_ro: 10 (1.8%), parse: 1.47
-        (0.3%), extract_message_metadata: 4.3 (0.8%), get_uri_detail_list:
-        1.70 (0.3%), tests_pri_-1000: 7 (1.3%), tests_pri_-950: 1.74 (0.3%),
-        tests_pri_-900: 1.48 (0.3%), tests_pri_-90: 143 (26.1%), check_bayes:
-        141 (25.7%), b_tokenize: 13 (2.4%), b_tok_get_all: 9 (1.7%),
-        b_comp_prob: 3.9 (0.7%), b_tok_touch_all: 110 (20.1%), b_finish: 0.96
-        (0.2%), tests_pri_0: 354 (64.6%), check_dkim_signature: 0.49 (0.1%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.97 (0.2%), tests_pri_10:
-        2.2 (0.4%), tests_pri_500: 9 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] core_pattern: add CPU specifier
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+On Wed, 07 Sep 2022, Trond Myklebust wrote:
+> On Wed, 2022-09-07 at 09:12 -0400, Jeff Layton wrote:
+> > On Wed, 2022-09-07 at 08:52 -0400, J. Bruce Fields wrote:
+> > > On Wed, Sep 07, 2022 at 08:47:20AM -0400, Jeff Layton wrote:
+> > > > On Wed, 2022-09-07 at 21:37 +1000, NeilBrown wrote:
+> > > > > On Wed, 07 Sep 2022, Jeff Layton wrote:
+> > > > > > +The change to \fIstatx.stx_ino_version\fP is not atomic with
+> > > > > > respect to the
+> > > > > > +other changes in the inode. On a write, for instance, the
+> > > > > > i_version it usually
+> > > > > > +incremented before the data is copied into the pagecache.
+> > > > > > Therefore it is
+> > > > > > +possible to see a new i_version value while a read still
+> > > > > > shows the old data.
+> > > > >=20
+> > > > > Doesn't that make the value useless?
+> > > > >=20
+> > > >=20
+> > > > No, I don't think so. It's only really useful for comparing to an
+> > > > older
+> > > > sample anyway. If you do "statx; read; statx" and the value
+> > > > hasn't
+> > > > changed, then you know that things are stable.=20
+> > >=20
+> > > I don't see how that helps.=C2=A0 It's still possible to get:
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0reader=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0writer
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0------=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0------
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0i_version++
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0statx
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0read
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0statx
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0update page cache
+> > >=20
+> > > right?
+> > >=20
+> >=20
+> > Yeah, I suppose so -- the statx wouldn't necessitate any locking. In
+> > that case, maybe this is useless then other than for testing purposes
+> > and userland NFS servers.
+> >=20
+> > Would it be better to not consume a statx field with this if so? What
+> > could we use as an alternate interface? ioctl? Some sort of global
+> > virtual xattr? It does need to be something per-inode.
+>=20
+> I don't see how a non-atomic change attribute is remotely useful even
+> for NFS.
+>=20
+> The main problem is not so much the above (although NFS clients are
+> vulnerable to that too) but the behaviour w.r.t. directory changes.
+>=20
+> If the server can't guarantee that file/directory/... creation and
+> unlink are atomically recorded with change attribute updates, then the
+> client has to always assume that the server is lying, and that it has
+> to revalidate all its caches anyway. Cue endless readdir/lookup/getattr
+> requests after each and every directory modification in order to check
+> that some other client didn't also sneak in a change of their own.
 
-> On 09/07, Oleksandr Natalenko wrote:
->>
->> The advantage of having CPU recorded in the file name is that
->> in case of multiple cores one can summarise them with a simple
->> ls+grep without invoking a fully-featured debugger to find out
->> whether the segfaults happened on the same CPU.
->
-> Besides, if you only need to gather the statistics about the faulting
-> CPU(s), you do not even need to actually dump the the core. For example,
-> something like
->
-> 	#!/usr/bin/sh
->
-> 	echo $* >> path/to/coredump-stat.txt
->
-> and
-> 	echo '| path-to-script-above %C' >/proc/sys/kernel/core_pattern
->
-> can help.
+NFS re-export doesn't support atomic change attributes on directories.
+Do we see the endless revalidate requests after directory modification
+in that situation?  Just curious.
 
-So I am confused.  I thought someone had modified print_fatal_signal
-to print this information.  Looking at the code now I don't see it,
-but perhaps that is in linux-next somewhere.
-
-That would seem to be the really obvious place to put this and much
-closer to the original fault so we ware more likely to record the
-cpu on which things actually happened on.
-
-If we don't care about the core dump just getting the information in
-syslog where it can be analyzed seems like the thing to do.
-
-For a developers box putting it in core pattern makes sense, isn't a
-hinderance to use.  For anyone else's box the information needs to come
-out in a way that allows automated tools to look for a pattern.
-Requiring someone to take an extra step to print the information seems
-a hinderance to automated tools doing the looking.
-
-Eric
-
+Thanks,
+NeilBrown
