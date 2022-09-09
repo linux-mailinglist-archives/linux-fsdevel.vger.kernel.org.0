@@ -2,114 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE545B3766
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 14:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF7D5B37BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 14:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbiIIMOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 08:14:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
+        id S231193AbiIIM0Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 08:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbiIIMOW (ORCPT
+        with ESMTP id S230154AbiIIM0P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 08:14:22 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEA213FA7F;
-        Fri,  9 Sep 2022 05:12:11 -0700 (PDT)
-Received: from letrec.thunk.org (guestnat-104-133-160-102.corp.google.com [104.133.160.102] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 289CB71n002170
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 9 Sep 2022 08:11:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1662725472; bh=rkVib4zKXNES9ZZ4tMSEKXn2YQ6HSV5vUTDr92XDkhU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=GUfSWT2qQ/AJie7hxQCJZt8BAL8wLB2wXXt3lpNzwVcJDfxeA3n4X9UaHMr+LKaji
-         zb8pN4awcYOraVhbePEtz4sCuIcEMxDO2V92UeCIRI87pI75/6Euq2NTZWvCPaRsmz
-         DlR2DlvtPX7EziCMExCNHJHLF80Kja7xArncG3AABgQbBA7F8u2okXCFadky2FAyPZ
-         ZEVZ5zWSVzlIFf8gSeITjbPkBF1rXnXYwy3TAT0rzEQUsrD4xD5MFcwTetP4Z+bsqn
-         5hn1WHr+o8drixmoUTatgnnzVOC8xFKnKtCU1Rq9PX4TQiWPhk9jx/EanCDjjweVSe
-         56cLzlKnr1a1Q==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id CD6C38C2B49; Fri,  9 Sep 2022 08:11:06 -0400 (EDT)
-Date:   Fri, 9 Sep 2022 08:11:06 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
-        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
-        fweimer@redhat.com, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <YxstWiu34TfJ6muW@mit.edu>
-References: <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
- <20220907125211.GB17729@fieldses.org>
- <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
- <20220907135153.qvgibskeuz427abw@quack3>
- <166259786233.30452.5417306132987966849@noble.neil.brown.name>
- <20220908083326.3xsanzk7hy3ff4qs@quack3>
- <YxoIjV50xXKiLdL9@mit.edu>
- <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
- <20220908155605.GD8951@fieldses.org>
- <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 9 Sep 2022 08:26:15 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898F912B2B1;
+        Fri,  9 Sep 2022 05:26:14 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id k17so1263079wmr.2;
+        Fri, 09 Sep 2022 05:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
+        b=PBBru7o/5THp7coacVMSU2IXxEHhQPQSLMbTe95cwo2/6QseDKxW3H0nZUUeLEZMOS
+         2ZtlKFQ5T4lFVSZpt/Sva5e7PF65xUT8Lu6RDSYxX2OEhlBNgX6g5/kg1qUM/jZaFLFx
+         bYjHSkvgoAKjwsOpmKRw7abjdmWvs/mfkS2fcaVZLBnVC2GBMbwfU1DW/XgY9QjT9KiQ
+         RU29ZWtEQKkZWv1IMj/WE8J2+J8SqnWgCA9mwH1n1uRwzyDf4y2lt3UPr/6CksCopZO3
+         f9uwe1kZst/1R3NjYh+crcUYxV25WU0vrlszt+1XuyEEETubbKaXWQ0emZQYQQT76HMi
+         9Zkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
+        b=UCkYQdk6YZDT6oIzUVvbtJLd3yYA3KLdcFJFDht6Nn/RSDnGQe8XCYxufkUqzOp9Mg
+         9T1ay9YkMgeR2X1ecRQIrMG9m5MwqXPBBZ5pahf6gut+AcZZCHCRoUSxImKTqU/wopnJ
+         ZVOhkx7+OzXN8cv2+puSqi1jPEb5//gbXw98pVc7WdLcpPKR2X4Ecn+NqCBwccIB05RO
+         U1YR6lWRFakG6pVtEk++UrcqBxwJ4G3azK2EZEzoTGcYlYfCN46mo33oI0oGMXo2fHed
+         erpExTR37G2YO/m9bYwiLzINt+7s268oh2yahiobmSqheerVEYdQWVR2nEp/wc05yqCd
+         2lWQ==
+X-Gm-Message-State: ACgBeo3/CXEUIzn3d45MXr+/wEcsRqQT3mgJx60kGyr6ccrV/3NFXCDX
+        MaVlkIrqKnV/xFCPDtEqVBw=
+X-Google-Smtp-Source: AA6agR5iFgxtS8kVRXgk1GWHrX0zg9ydSrrNmS/4X2uBJnOf3gOpS4jb3x0wNIuZmPnf2YfPA9Ferg==
+X-Received: by 2002:a05:600c:3d11:b0:3a5:cd9b:eb08 with SMTP id bh17-20020a05600c3d1100b003a5cd9beb08mr5465692wmb.82.1662726372865;
+        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
+Received: from felia.fritz.box (200116b8261bf1004cd87416af9987ea.dip.versatel-1u1.de. [2001:16b8:261b:f100:4cd8:7416:af99:87ea])
+        by smtp.gmail.com with ESMTPSA id iv11-20020a05600c548b00b003a84375d0d1sm544282wmb.44.2022.09.09.05.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] proc: make config PROC_CHILDREN depend on PROC_FS
+Date:   Fri,  9 Sep 2022 14:25:29 +0200
+Message-Id: <20220909122529.1941-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 08, 2022 at 01:40:11PM -0400, Jeff Layton wrote:
-> 
-> Ted, how would we access this? Maybe we could just add a new (generic)
-> super_block field for this that ext4 (and other filesystems) could
-> populate at mount time?
+Commit 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN") introduces
+the config PROC_CHILDREN to configure kernels to provide the
+/proc/<pid>/task/<tid>/children file.
 
-Yeah, I was thinking about just adding it to struct super, with some
-value (perhaps 0 or ~0) meaning that the file system didn't support
-it.  If people were concerned about struct super bloat, we could also
-add some new function to struct super_ops that would return one or
-more values that are used rarely by most of the kernel code, and so
-doesn't need to be in the struct super data structure.  I don't have
-strong feelings one way or another.
+When one deselects PROC_FS for kernel builds without /proc/, the config
+PROC_CHILDREN has no effect anymore, but is still visible in menuconfig.
 
-On another note, my personal opinion is that at least as far as ext4
-is concerned, i_version on disk's only use is for NFS's convenience,
-and so I have absolutely no problem with changing how and when
-i_version gets updated modulo concerns about impacting performance.
-That's one of the reasons why being able to update i_version only
-lazily, so that if we had, say, some workload that was doing O_DIRECT
-writes followed by fdatasync(), there wouldn't be any obligation to
-flush the inode out to disk just because we had bumped i_version
-appeals to me.
+Add the dependency on PROC_FS to make the PROC_CHILDREN option disappear
+for kernel builds without /proc/.
 
-But aside from that, I don't consider when i_version gets updated on
-disk, especially what the semantics are after a crash, and if we need
-to change things so that NFS can be more performant, I'm happy to
-accomodate.  One of the reasons why we implemented the ext4 fast
-commit feature was to improve performance for NFS workloads.
+Fixes: 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ fs/proc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I know some XFS developers have some concerns here, but I just wanted
-to make it be explicit that (a) I'm not aware of any users who are
-depending on the i_version on-disk semantics, and (b) if they are
-depending on something which as far as I'm concerned in an internal
-implementation detail, we've made no promises to them, and they can
-get to keep both pieces.  :-)  This is especially since up until now,
-there is no supported, portable userspace interface to make i_version
-available to userspace.
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index c930001056f9..32b1116ae137 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -92,6 +92,7 @@ config PROC_PAGE_MONITOR
+ 
+ config PROC_CHILDREN
+ 	bool "Include /proc/<pid>/task/<tid>/children file"
++	depends on PROC_FS
+ 	default n
+ 	help
+ 	  Provides a fast way to retrieve first level children pids of a task. See
+-- 
+2.17.1
 
-Cheers,
-
-					- Ted
