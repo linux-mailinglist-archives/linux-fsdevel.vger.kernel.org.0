@@ -2,148 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0CE95B3ABD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 16:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D7C45B3ACF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 16:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbiIIOdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 10:33:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        id S231875AbiIIOiz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 10:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbiIIOdO (ORCPT
+        with ESMTP id S231555AbiIIOiy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 10:33:14 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3743FEB2D0;
-        Fri,  9 Sep 2022 07:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662733993; x=1694269993;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gVTNsSyIBrhcPs2gtAOglD6dY69wve4jHFwcbsEjqEg=;
-  b=YCNEJkUgYMvWX8Ca4SiKVEusdseonO3G0U4IIfFgagOuXhrp5ATI+xoL
-   clsCmxL2VpJTPd8Jf0S73lg35hTTeVQYfs0DE1DC4/9o3RdFew1Bb8Cfi
-   r5Q1b8+O2G0OGmf1wDRoO123R9/AQAOzdjs8u8pQERZUwTZKIqEMBBN/N
-   3TLwrT++bDZY5bamSYL1XJhPdx028iyckiaOCjp/a+A1NPHa32X7gnLaM
-   pBj0zjJPdsbItTxwtdxJ1wE0fd8JqPDsYqnrXwcaGZdFjui792kJezeH8
-   A5x2o6EI425Iui/OnAFkyq57g5wWuWugeHhU3LEeSUxbhUsJDqEu54izA
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10465"; a="295068205"
-X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
-   d="scan'208";a="295068205"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 07:32:48 -0700
-X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
-   d="scan'208";a="757619409"
-Received: from sumitdes-mobl3.gar.corp.intel.com (HELO box.shutemov.name) ([10.249.45.93])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 07:32:39 -0700
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id ED94B1037A2; Fri,  9 Sep 2022 17:32:36 +0300 (+03)
-Date:   Fri, 9 Sep 2022 17:32:36 +0300
-From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, jun.nakajima@intel.com,
-        dave.hansen@intel.com, ak@linux.intel.com, david@redhat.com,
-        aarcange@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <20220909143236.sznwzkpedldrlnn5@box.shutemov.name>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
- <20220818132421.6xmjqduempmxnnu2@box>
- <c6ccbb96-5849-2e2f-3b49-4ea711af525d@google.com>
- <20220820002700.6yflrxklmpsavdzi@box.shutemov.name>
- <95bd287b-d17f-fda8-58c9-20700b1e0c72@kernel.org>
+        Fri, 9 Sep 2022 10:38:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C5E131BDA
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 07:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662734331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mEJa3J3UUdr9GRdpFl4qp3eJcR5AB7YwgYozMAVokFs=;
+        b=UtdJVwIfZy4dgpbr66aWh9hEqVGChU5MWltnkeFcytse+A/k2S0PB+a8wOOFCCaF7acbLq
+        xH7TUWdXASEawdrAmzspj/rLRkG5SCUmm2sr3JD1pyQvEmrDqqvqpmEoMC5Y08b6ZQlaV6
+        qh0BHZNToLEIimRDCpnEtCr9Hl5C23U=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-307-41-L-xL8OTiqnTy3ibOo-A-1; Fri, 09 Sep 2022 10:38:50 -0400
+X-MC-Unique: 41-L-xL8OTiqnTy3ibOo-A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0C46F1C05EAA;
+        Fri,  9 Sep 2022 14:38:50 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.22.48.5])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA42C4C819;
+        Fri,  9 Sep 2022 14:38:48 +0000 (UTC)
+Date:   Fri, 9 Sep 2022 10:38:46 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full
+ permission event response
+Message-ID: <YxtP9kttFi5TxtcJ@madcap2.tricolour.ca>
+References: <cover.1659996830.git.rgb@redhat.com>
+ <2254543.ElGaqSPkdT@x2>
+ <20220909110944.yfnuqhsiyw3ekkcn@quack3>
+ <4748798.GXAFRqVoOG@x2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95bd287b-d17f-fda8-58c9-20700b1e0c72@kernel.org>
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <4748798.GXAFRqVoOG@x2>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 08, 2022 at 09:48:35PM -0700, Andy Lutomirski wrote:
-> On 8/19/22 17:27, Kirill A. Shutemov wrote:
-> > On Thu, Aug 18, 2022 at 08:00:41PM -0700, Hugh Dickins wrote:
-> > > On Thu, 18 Aug 2022, Kirill A . Shutemov wrote:
-> > > > On Wed, Aug 17, 2022 at 10:40:12PM -0700, Hugh Dickins wrote:
-> > > > > 
-> > > > > If your memory could be swapped, that would be enough of a good reason
-> > > > > to make use of shmem.c: but it cannot be swapped; and although there
-> > > > > are some references in the mailthreads to it perhaps being swappable
-> > > > > in future, I get the impression that will not happen soon if ever.
-> > > > > 
-> > > > > If your memory could be migrated, that would be some reason to use
-> > > > > filesystem page cache (because page migration happens to understand
-> > > > > that type of memory): but it cannot be migrated.
+On 2022-09-09 10:22, Steve Grubb wrote:
+> On Friday, September 9, 2022 7:09:44 AM EDT Jan Kara wrote:
+> > Hello Steve!
+> > 
+> > On Fri 09-09-22 00:03:53, Steve Grubb wrote:
+> > > On Thursday, September 8, 2022 10:41:44 PM EDT Richard Guy Briggs wrote:
+> > > > > I'm trying to abide by what was suggested by the fs-devel folks. I
+> > > > > can
+> > > > > live with it. But if you want to make something non-generic for all
+> > > > > users of fanotify, call the new field "trusted". This would decern
+> > > > > when
+> > > > > a decision was made because the file was untrusted or access denied
+> > > > > for
+> > > > > another reason.
 > > > > 
-> > > > Migration support is in pipeline. It is part of TDX 1.5 [1]. And swapping
-> > > > theoretically possible, but I'm not aware of any plans as of now.
-> > > > 
-> > > > [1] https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+> > > > So, "u32 trusted;" ?  How would you like that formatted?
+> > > > "fan_trust={0|1}"
 > > > 
-> > > I always forget, migration means different things to different audiences.
-> > > As an mm person, I was meaning page migration, whereas a virtualization
-> > > person thinks VM live migration (which that reference appears to be about),
-> > > a scheduler person task migration, an ornithologist bird migration, etc.
-> > > 
-> > > But you're an mm person too: you may have cited that reference in the
-> > > knowledge that TDX 1.5 Live Migration will entail page migration of the
-> > > kind I'm thinking of.  (Anyway, it's not important to clarify that here.)
+> > > So how does this play out if there is another user? Do they want a num=
+> > > and trust=  if not, then the AUDIT_FANOTIFY record will have multiple
+> > > formats which is not good. I'd rather suggest something generic that can
+> > > be interpreted based on who's attached to fanotify. IOW we have a
+> > > fan_type=0 and then followed by info0= info1=  the interpretation of
+> > > those solely depend on fan_type. If the fan_type does not need both,
+> > > then any interpretation skips what it doesn't need. If fan_type=1, then
+> > > it follows what arg0= and arg1= is for that format. But make this pivot
+> > > on fan_type and not actual names.
+> > So I think there is some misunderstanding so let me maybe spell out in
+> > detail how I see things so that we can get on the same page:
 > > 
-> > TDX 1.5 brings both.
+> > It was a requirement from me (and probably Amir) that there is a generic
+> > way to attach additional info to a response to fanotify permission event.
+> > This is achieved by defining:
 > > 
-> > In TDX speak, mm migration called relocation. See TDH.MEM.PAGE.RELOCATE.
+> > struct fanotify_response_info_header {
+> >        __u8 type;
+> >        __u8 pad;
+> >        __u16 len;
+> > };
 > > 
+> > which is a generic header and kernel can based on 'len' field decide how
+> > large the response structure is (to safely copy it from userspace) and
+> > based on 'type' field it can decide who should be the recipient of this
+> > extra information (or generally what to do with it). So any additional
+> > info needs to start with this header.
+> > 
+> > Then there is:
+> > 
+> > struct fanotify_response_info_audit_rule {
+> >        struct fanotify_response_info_header hdr;
+> >        __u32 audit_rule;
+> > };
+> > 
+> > which properly starts with the header and hdr.type is expected to be
+> > FAN_RESPONSE_INFO_AUDIT_RULE. What happens after the header with type
+> > FAN_RESPONSE_INFO_AUDIT_RULE until length hdr.len is fully within *audit*
+> > subsystem's responsibility. Fanotify code will just pass this as an opaque
+> > blob to the audit subsystem.
+> > 
+> > So if you know audit subsystem will also need some other field together
+> > with 'audit_rule' now is a good time to add it and it doesn't have to be
+> > useful for anybody else besides audit. If someone else will need other
+> > information passed along with the response, he will append structure with
+> > another header with different 'type' field. In principle, there can be
+> > multiple structures appended to fanotify response like
+> > 
+> > <hdr> <data> <hdr> <data> ...
+> > 
+> > and fanotify subsystem will just pass them to different receivers based
+> > on the type in 'hdr' field.
+> > 
+> > Also if audit needs to pass even more information along with the respose,
+> > we can define a new 'type' for it. But the 'type' space is not infinite so
+> > I'd prefer this does not happen too often...
+> > 
+> > I hope this clears out things a bit.
 > 
-> This seems to be a pretty bad fit for the way that the core mm migrates
-> pages.  The core mm unmaps the page, then moves (in software) the contents
-> to a new address, then faults it in.  TDH.MEM.PAGE.RELOCATE doesn't fit into
-> that workflow very well.  I'm not saying it can't be done, but it won't just
-> work.
+> Yes. Thank you.
+> 
+> Richard,  add subj_trust and obj_trust. These can be 0|1|2 for no, yes, 
+> unknown.
 
-Hm. From what I see we have all necessary infrastructure in place.
+type?  bitfield?  My gut would say that "0" should be "unset"/"unknown",
+but that is counterintuitive to the values represented.
 
-Unmaping is NOP for inaccessible pages as it is never mapped and we have
-mapping->a_ops->migrate_folio() callback that allows to replace software
-copying with whatever is needed, like TDH.MEM.PAGE.RELOCATE.
+Or "trust" with sub-fields "subj" and "obj"?
 
-What do I miss?
+> -Steve
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
