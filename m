@@ -2,132 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D83FD5B33E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 11:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3FDE5B3406
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 11:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231137AbiIIJ27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 05:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56350 "EHLO
+        id S232153AbiIIJdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 05:33:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbiIIJ2R (ORCPT
+        with ESMTP id S230120AbiIIJcq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:28:17 -0400
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C4ADF29;
-        Fri,  9 Sep 2022 02:26:59 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VP9-qIZ_1662715615;
-Received: from 30.221.130.74(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VP9-qIZ_1662715615)
-          by smtp.aliyun-inc.com;
-          Fri, 09 Sep 2022 17:26:56 +0800
-Message-ID: <fc63c7ed-bffe-4127-7622-a7ce0c4b4378@linux.alibaba.com>
-Date:   Fri, 9 Sep 2022 17:26:55 +0800
+        Fri, 9 Sep 2022 05:32:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB7B138E6A
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 02:30:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4927661F69
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 09:30:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E15A9C433C1;
+        Fri,  9 Sep 2022 09:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662715828;
+        bh=gcfvieFJ4FbVMv/FIlf1ZgSJ0fh0S3aPODkU15adhVg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OmelVOW15ekRM4nIuOMxkux03nt9Z+fxc+jLntXfmvlqThBaop5JBaTdr5sOW6YxA
+         GDz+WYLJ6cDM5dUSdTJSB2X++TJnxGSNz533sFrVjve2AWskIEUmdmUgrElDdtMOzY
+         LQOGmJZmit/JCLPLZtvYbYgWPJ9EF+8S3s/F2U52b1T/NkEukV+XiIBCt+0uYkHcFT
+         CIgu1//Y4vqE/WTAtm1oSFrpa5xolAiPuNtaaaqw3Eqo++cfkuw4jLtVD1RkfZSOxM
+         exujYTmL3ePQoqRB0/FE3pQhJ6OmezhheFIDHfdseuxMX7yxT5rQO4AZ25n/bH0HyI
+         JjdQiZR3fbFhQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fat: port to vfs{g,u}id_t and associated helpers
+Date:   Fri,  9 Sep 2022 11:30:19 +0200
+Message-Id: <20220909093019.936863-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [PATCH V2 3/5] erofs: add 'domain_id' prefix when register sysfs
-Content-Language: en-US
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     Jia Zhu <zhujia.zj@bytedance.com>, linux-erofs@lists.ozlabs.org,
-        xiang@kernel.org, chao@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, huyue2@coolpad.com,
-        linux-kernel@vger.kernel.org, yinxin.x@bytedance.com
-References: <20220902105305.79687-1-zhujia.zj@bytedance.com>
- <20220902105305.79687-4-zhujia.zj@bytedance.com>
- <539dcc26-a250-5bf4-0f3c-a3f7cdc2ce48@linux.alibaba.com>
-In-Reply-To: <539dcc26-a250-5bf4-0f3c-a3f7cdc2ce48@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-12.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1352; i=brauner@kernel.org; h=from:subject; bh=gcfvieFJ4FbVMv/FIlf1ZgSJ0fh0S3aPODkU15adhVg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRLs69Y/l5iyZUfYj+2MuccuLpu4YzLi+TfPqtZd8Xub09c wvWblzpKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmsiCI4Q93ooHn9bLPE/5KsdyU/b PH+0ih+MIQqfdbpq+ZcbIrf60oI8MymfS517OV10f/kl1a2705forLRL7g7of9Kkd4T7A/X88NAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+A while ago we introduced a dedicated vfs{g,u}id_t type in commit
+1e5267cd0895 ("mnt_idmapping: add vfs{g,u}id_t"). We already switched
+over a good part of the VFS. Ultimately we will remove all legacy
+idmapped mount helpers that operate only on k{g,u}id_t in favor of the
+new type safe helpers that operate on vfs{g,u}id_t.
 
+Cc: Seth Forshee (Digital Ocean) <sforshee@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ fs/fat/file.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On 9/9/22 5:23 PM, JeffleXu wrote:
-> 
-> 
-> On 9/2/22 6:53 PM, Jia Zhu wrote:
->> In shared domain mount procedure, add 'domain_id' prefix to register
->> sysfs entry. Thus we could distinguish mounts that don't use shared
->> domain.
->>
->> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
->> ---
->>  fs/erofs/sysfs.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
->> index c1383e508bbe..c0031d7bd817 100644
->> --- a/fs/erofs/sysfs.c
->> +++ b/fs/erofs/sysfs.c
->> @@ -201,12 +201,21 @@ static struct kobject erofs_feat = {
->>  int erofs_register_sysfs(struct super_block *sb)
->>  {
->>  	struct erofs_sb_info *sbi = EROFS_SB(sb);
->> +	char *name = NULL;
->>  	int err;
->>  
->> +	if (erofs_is_fscache_mode(sb)) {
->> +		name = kasprintf(GFP_KERNEL, "%s%s%s", sbi->opt.domain_id ?
->> +				sbi->opt.domain_id : "", sbi->opt.domain_id ? "," : "",
->> +				sbi->opt.fsid);
->> +		if (!name)
->> +			return -ENOMEM;
->> +	}
-> 
-> 
-> How about:
-> 
-> name = erofs_is_fscache_mode(sb) ? sbi->opt.fsid : sb->s_id;
-> if (sbi->opt.domain_id) {
-> 	str = kasprintf(GFP_KERNEL, "%s,%s", sbi->opt.domain_id, sbi->opt.fsid);
-> 	name = str;
-> }
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 3e4eb3467cb4..8a6b493b5b5f 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -461,8 +461,9 @@ static int fat_allow_set_time(struct user_namespace *mnt_userns,
+ {
+ 	umode_t allow_utime = sbi->options.allow_utime;
+ 
+-	if (!uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
+-		if (in_group_p(i_gid_into_mnt(mnt_userns, inode)))
++	if (!vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, inode),
++			    current_fsuid())) {
++		if (vfsgid_in_group_p(i_gid_into_vfsgid(mnt_userns, inode)))
+ 			allow_utime >>= 3;
+ 		if (allow_utime & MAY_WRITE)
+ 			return 1;
 
-Another choice:
-
-if (erofs_is_fscache_mode(sb)) {
-	if (sbi->opt.domain_id) {
-		str = kasprintf(GFP_KERNEL, "%s,%s", sbi->opt.domain_id, sbi->opt.fsid);
-		name = str;
-	} else {
-		name = sbi->opt.fsid;
-	}
-} else {
-	name = sb->s_id;
-}
-
-
-
-
-> 
-> 
->>  	sbi->s_kobj.kset = &erofs_root;
->>  	init_completion(&sbi->s_kobj_unregister);
->>  	err = kobject_init_and_add(&sbi->s_kobj, &erofs_sb_ktype, NULL, "%s",
->> -			erofs_is_fscache_mode(sb) ? sbi->opt.fsid : sb->s_id);
->> +			name ? name : sb->s_id);
-> 
-> 	kobject_init_and_add(..., "%s", name);
-> 	kfree(str);
-> 
-> though it's still not such straightforward...
-> 
-> Any better idea?
-> 
-> 
->> +	kfree(name);
->>  	if (err)
->>  		goto put_sb_kobj;
->>  	return 0;
-> 
-
+base-commit: 7e18e42e4b280c85b76967a9106a13ca61c16179
 -- 
-Thanks,
-Jingbo
+2.34.1
+
