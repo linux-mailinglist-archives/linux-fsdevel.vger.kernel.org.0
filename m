@@ -2,51 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B57405B38B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 15:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B8C5B39BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 15:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbiIINN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 09:13:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33888 "EHLO
+        id S231918AbiIINtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 09:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbiIINN5 (ORCPT
+        with ESMTP id S232022AbiIINsw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 09:13:57 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C5A3719E;
-        Fri,  9 Sep 2022 06:13:56 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 130792045; Fri,  9 Sep 2022 09:13:56 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 130792045
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1662729236;
-        bh=rJg8KreJCBLlbOSbA81HfdmeNkeHmTjwnB8MS5F2HS8=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=Napy9rfH0y46dso4O3L1OjcbWruSJc1fI+BPvZBW2P6SCYKi49faWIXUmnvZWENBc
-         n/u3lq/6R1MnQxJLEJQeNe6riBIdiMYkWu4j4qSHm7nsFQkgKD7YKmdLMRPv2ETv5f
-         wPNsJb82RZV6gHlkBnKtD8kAEXVaY5gDbjAqzjdI=
-Date:   Fri, 9 Sep 2022 09:13:55 -0400
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        battery dude <jyf007@gmail.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: Does NFS support Linux Capabilities
-Message-ID: <20220909131355.GA5674@fieldses.org>
-References: <CAMBbDaF2Ni0gMRKNeFTQwgAOPPYy7RLXYwDJyZ1edq=tfATFzw@mail.gmail.com>
- <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
- <YxsGIoFlKkpQdSDY@mit.edu>
+        Fri, 9 Sep 2022 09:48:52 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD5E1440B1;
+        Fri,  9 Sep 2022 06:48:41 -0700 (PDT)
+Received: from letrec.thunk.org (guestnat-104-133-160-102.corp.google.com [104.133.160.102] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 289DmD4S023395
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 9 Sep 2022 09:48:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1662731299; bh=O5sAtHVRdkSq6fYIsc381bORr53qSj8BKwqEoyxQ59Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=PmbwItvn9P3WqbgD5xUd+ssUjKyMScw+Pr6EgsRKO9wCSCDDPWa+jc92EnUQTGb5I
+         JTs6ZJDJLL1zNDfS/OL+dy9pZ/XjEZoEOOcQETfbLaSdWLs+zlJbJizGH0+89J+bkk
+         zvIz7o8V9KeYYD8irYItIozZ/3p3dEXptOMt68Ky3/EGg1rmTSGChq4Kdv1AcozORP
+         jCSoZ2JO95UmLiyYwKUz1Iij2oyigPv0/SAdG+4VChwK1yIO2U7PkMv6DYXVeT6/7w
+         Sbw2kiE3sE9AT8ZvP5uB96BevaqxBbbKtvmQDTKdzt5qvjfZv/l5C3MDkjy9nthcsA
+         7oN/BE/T/tIBg==
+Received: by letrec.thunk.org (Postfix, from userid 15806)
+        id DD0598C2B49; Fri,  9 Sep 2022 09:48:12 -0400 (EDT)
+Date:   Fri, 9 Sep 2022 09:48:12 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>, Jan Kara <jack@suse.cz>,
+        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
+        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
+        fweimer@redhat.com, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+Message-ID: <YxtEHIkfX0nQQC0n@mit.edu>
+References: <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
+ <20220907135153.qvgibskeuz427abw@quack3>
+ <166259786233.30452.5417306132987966849@noble.neil.brown.name>
+ <20220908083326.3xsanzk7hy3ff4qs@quack3>
+ <YxoIjV50xXKiLdL9@mit.edu>
+ <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
+ <20220908155605.GD8951@fieldses.org>
+ <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
+ <YxstWiu34TfJ6muW@mit.edu>
+ <6173b33e43ac8b0e4377b5d65fec7231608f71f7.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YxsGIoFlKkpQdSDY@mit.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+In-Reply-To: <6173b33e43ac8b0e4377b5d65fec7231608f71f7.camel@kernel.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,36 +71,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 05:23:46AM -0400, Theodore Ts'o wrote:
-> On Thu, Sep 08, 2022 at 08:24:02PM +0000, Chuck Lever III wrote:
-> > Given these enormous challenges, who would be willing to pay for
-> > standardization and implementation? I'm not saying it can't or
-> > shouldn't be done, just that it would be a mighty heavy lift.
-> > But maybe other folks on the Cc: list have ideas that could
-> > make this easier than I believe it to be.
+On Fri, Sep 09, 2022 at 08:47:17AM -0400, Jeff Layton wrote:
 > 
-> ... and this is why the C2 by '92 initiative was doomed to failure,
-> and why Posix.1e never completed the standardization process.  :-)
+> i_version only changes now if someone has queried it since it was last
+> changed. That makes a huge difference in performance. We can try to
+> optimize it further, but it probably wouldn't move the needle much under
+> real workloads.
+
+Good point.  And to be clear, from NFS's perspective, you only need to
+have i_version bumped if there is a user-visible change to the
+file. --- with an explicit exception here of the FIEMAP system call,
+since in the case of a delayed allocation, FIEMAP might change from
+reporting:
+
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:          0..         0:      0:             last,unknown_loc,delalloc,eof
+
+to this:
+
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:  190087172.. 190087172:      1:             last,eof
+
+after a sync(2) or fsync(2) call, or after time passes.
+
+> Great! That's what I was hoping for with ext4. Would you be willing to
+> pick up these two patches for v6.1?
 > 
-> Honestly, capabilities are super coarse-grained, and I'm not sure they
-> are all that useful if we were create blank slate requirements for a
-> modern high-security system.  So I'm not convinced the costs are
-> sufficient to balance the benefits.
+> https://lore.kernel.org/linux-ext4/20220908172448.208585-3-jlayton@kernel.org/T/#u
+> https://lore.kernel.org/linux-ext4/20220908172448.208585-4-jlayton@kernel.org/T/#u
 
-I seem to recall the immediate practical problem people have hit is that
-some rpms will fail if it can't set file capabilities.  So in practice
-NFS may not work any more for root filesystems.  Maybe there's some
-workaround.
+I think you mean:
 
-Taking a quick look at my laptop, there's not as many as I expected:
+https://lore.kernel.org/linux-ext4/20220908172448.208585-2-jlayton@kernel.org/T/#u
+https://lore.kernel.org/linux-ext4/20220908172448.208585-3-jlayton@kernel.org/T/#u
 
-[root@parkour bfields]# getcap -r /usr
-/usr/bin/arping cap_net_raw=p
-/usr/bin/clockdiff cap_net_raw=p
-/usr/bin/dumpcap cap_net_admin,cap_net_raw=ep
-/usr/bin/newgidmap cap_setgid=ep
-/usr/bin/newuidmap cap_setuid=ep
-/usr/sbin/mtr-packet cap_net_raw=ep
-/usr/sbin/suexec cap_setgid,cap_setuid=ep
+Right?
 
---b.
+BTW, sorry for not responding to these patches earlier; between
+preparing for the various Linux conferences in Dublin next week, and
+being in Zurich and meeting with colleagues at $WORK all of this week,
+I'm a bit behind on my patch reviews.
+
+Cheers,
+
+					- Ted
