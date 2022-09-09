@@ -2,93 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 292615B2C13
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 04:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D83C95B2C0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 04:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230108AbiIICU5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Sep 2022 22:20:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56128 "EHLO
+        id S230131AbiIICUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Sep 2022 22:20:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbiIICUx (ORCPT
+        with ESMTP id S229549AbiIICUX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Sep 2022 22:20:53 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E4989752E;
-        Thu,  8 Sep 2022 19:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662690053; x=1694226053;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OdMYeu3KhOhU/zz3RvTa7hJVA+wlquSZxYlXBYDUS10=;
-  b=kjeKbpI54HuU/jj1atJpmKDp8iGZd2zlFRcsW9JfvLzGhHZetuRWPq1L
-   ZglXSsF7kG5hYc7jLFj0lZtUSR/hsmrx6BDgyAsi/B/ct3Jw0PgZSdjg0
-   Bb8OxQEYdBI5hFEjpwjxMIFDulYhM3+Bd3u2KDZINd1X6EIrN2OtKQ0H0
-   TCB+W3fTc+OUj3+Ml042RA/WViiuTCYkj25+pFRpj8bBq6M5d45c3BtJM
-   w14tACbaZiEAFPENdimBx/Bt1IPliz3gzVpFZT8gfkxJw1sbZv2EsV7Ib
-   JWVfmh3vrDWy2uoe6KV3GSQCuKGP0FiC3B0cqcEyEwPCmokpkVwd6a2e7
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10464"; a="323579285"
-X-IronPort-AV: E=Sophos;i="5.93,300,1654585200"; 
-   d="scan'208";a="323579285"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2022 19:20:52 -0700
-X-IronPort-AV: E=Sophos;i="5.93,300,1654585200"; 
-   d="scan'208";a="676968127"
-Received: from zhichao2-mobl1.ccr.corp.intel.com (HELO jiezho4x-mobl1.ccr.corp.intel.com) ([10.255.31.140])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2022 19:20:50 -0700
-From:   Jie2x Zhou <jie2x.zhou@intel.com>
-To:     jie2x.zhou@intel.com, shuah@kernel.org, adobriyan@gmail.com,
-        guozhengkui@vivo.com
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Philip Li <philip.li@intel.com>
-Subject: make run_tests -C proc: proc-pid-vm assertion failed.
-Date:   Fri,  9 Sep 2022 10:19:16 +0800
-Message-Id: <20220909021916.43293-1-jie2x.zhou@intel.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 8 Sep 2022 22:20:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5BD93232
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Sep 2022 19:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662690021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i8oCJIQ+FpBtHf/IlhXTh4IHCwTHuXi80ZP7njx9WBg=;
+        b=TSR3HQjSlKAYXv3iwap8qxJWC5bLtFHw2AtzTCDqLckqOJFQiLI3cJnA7nSayUQoQyzqo8
+        jtdOvTwrckzMwClgDeEUdnv41SDk7s+yZ8lmFUKnIzWACA19mYzM62v+gs1levVwLpC38h
+        D2/8olcQN9dFtNnQn5/TftorNbq3j08=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-142-jguoCVc2O62VkV6PbOfZhA-1; Thu, 08 Sep 2022 22:20:16 -0400
+X-MC-Unique: jguoCVc2O62VkV6PbOfZhA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C995085A585;
+        Fri,  9 Sep 2022 02:20:15 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.8.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 41C59909FF;
+        Fri,  9 Sep 2022 02:20:15 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full permission event response
+Date:   Thu, 08 Sep 2022 22:20:14 -0400
+Message-ID: <2254258.ElGaqSPkdT@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhRKHXzEwNRwPU_+BtrYb+7sYL+r8GBk60zurzi9wz4HTg@mail.gmail.com>
+References: <cover.1659996830.git.rgb@redhat.com> <2603742.X9hSmTKtgW@x2> <CAHC9VhRKHXzEwNRwPU_+BtrYb+7sYL+r8GBk60zurzi9wz4HTg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hi,
+On Thursday, September 8, 2022 5:22:15 PM EDT Paul Moore wrote:
+> On Thu, Sep 8, 2022 at 5:14 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > On Wednesday, September 7, 2022 4:23:49 PM EDT Paul Moore wrote:
+> > > On Wed, Sep 7, 2022 at 4:11 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > > On Wednesday, September 7, 2022 2:43:54 PM EDT Richard Guy Briggs 
+wrote:
+> > > > > > > Ultimately I guess I'll leave it upto audit subsystem what it
+> > > > > > > wants
+> > > > > > > to
+> > > > > > > have in its struct fanotify_response_info_audit_rule because
+> > > > > > > for
+> > > > > > > fanotify subsystem, it is just an opaque blob it is passing.
+> > > > > > 
+> > > > > > In that case, let's stick with leveraging the type/len fields in
+> > > > > > the
+> > > > > > fanotify_response_info_header struct, that should give us all the
+> > > > > > flexibility we need.
+> > > > > > 
+> > > > > > Richard and Steve, it sounds like Steve is already aware of
+> > > > > > additional
+> > > > > > information that he wants to send via the
+> > > > > > fanotify_response_info_audit_rule struct, please include that in
+> > > > > > the
+> > > > > > next revision of this patchset.  I don't want to get this merged
+> > > > > > and
+> > > > > > then soon after have to hack in additional info.
+> > > > > 
+> > > > > Steve, please define the type and name of this additional field.
+> > > > 
+> > > > Maybe extra_data, app_data, or extra_info. Something generic that can
+> > > > be
+> > > > reused by any application. Default to 0 if not present.
+> > > 
+> > > I think the point is being missed ... The idea is to not speculate on
+> > > additional fields, as discussed we have ways to handle that, the issue
+> > > was that Steve implied that he already had ideas for "things" he
+> > > wanted to add.  If there are "things" that need to be added, let's do
+> > > that now, however if there is just speculation that maybe someday we
+> > > might need to add something else we can leave that until later.
+> > 
+> > This is not speculation. I know what I want to put there. I know you want
+> > to pin it down to exactly what it is. However, when this started a
+> > couple years back, one of the concerns was that we're building something
+> > specific to 1 user of fanotify. And that it would be better for all
+> > future users to have a generic facility that everyone could use if they
+> > wanted to. That's why I'm suggesting something generic, its so this is
+> > not special purpose that doesn't fit any other use case.
+> 
+> Well, we are talking specifically about fanotify in this thread and
+> dealing with data structures that are specific to fanotify.  I can
+> understand wanting to future proof things, but based on what we've
+> seen in this thread I think we are all set in this regard.
 
-The test error is caused by g_vsyscall set failed.
+I'm trying to abide by what was suggested by the fs-devel folks. I can live 
+with it. But if you want to make something non-generic for all users of 
+fanotify, call the new field "trusted". This would decern when a decision was 
+made because the file was untrusted or access denied for another reason.
 
-Error output:
- selftests: proc: proc-pid-vm
- proc-pid-vm: proc-pid-vm.c:389: main: Assertion `rv == len' failed.
- Aborted
+> You mention that you know what you want to put in the struct, why not
+> share the details with all of us so we are all on the same page and
+> can have a proper discussion.
 
-g_vsyscall is set to 0.
-In proc-pid-vm.c:
-/*
- * 0: vsyscall VMA doesn't exist        vsyscall=none
- * 1: vsyscall VMA is r-xp              vsyscall=emulate
- * 2: vsyscall VMA is --xp              vsyscall=xonly
- */
-static int g_vsyscall;
-static const char *str_vsyscall;
+Because I want to abide by the original agreement and not impose opinionated 
+requirements that serve no one else. I'd rather have something anyone can 
+use. I want to play nice.
 
-static const char str_vsyscall_0[] = "";
-static const char str_vsyscall_1[] =
-"ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]\n";
-static const char str_vsyscall_2[] =
-"ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]\n";
+-Steve
 
-The /proc/%u/maps output is:
-buf=100000000-100001000 r-xp 00000000 00:2d 2                                /tmp/#2 (deleted)
-ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
 
-So the g_vsyscall should be 2 according to commentary(2: vsyscall VMA is --xp).
-Is it a bug?
 
-best regards,
