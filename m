@@ -2,90 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4EFF5B2DD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 06:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A01B5B2DF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 07:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbiIIEzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 00:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56086 "EHLO
+        id S230162AbiIIFH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 01:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbiIIEzf (ORCPT
+        with ESMTP id S229926AbiIIFHZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 00:55:35 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E3F780B57;
-        Thu,  8 Sep 2022 21:55:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 4BC54CE2072;
-        Fri,  9 Sep 2022 04:55:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DD9C433C1;
-        Fri,  9 Sep 2022 04:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662699330;
-        bh=msAn2untxTbG9lve9YPiSW6u+1kfRzel1BmeAbbTzVk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IKpdWrtStwoZtZ8Zp9KpRJe1T01ctzX66EYNB7h2x8B4rtGdZP9oYfts2NOHcp1Kh
-         E1cA58qajYyLtbh77dc2M+/EoeARTgA9xWAWZ4e9XN/mL8rv8RfSZlJP8LXwLggjmY
-         YpRluduZsf7cTrFjP4TfVLVCoO0ysDpWAqC+fgIuJ0YrwP/sS0O+AXsXLFqy83uAvb
-         XvSwOe03Uha8ElXacHenw22uJDKmJ4cL4fTSkDreOUCeYZMs6kr0YHWmtdGDqUj9bE
-         ogaegpX9MZ8RpBZW/2ATqKUOaVyI4yqiiItNREGu3ok+kqbbK6NSi9juXf/vUiVBT0
-         U2x+iNrNJgM/g==
-Message-ID: <8f2fdba8-ce19-0dff-5934-5d51cde94915@kernel.org>
-Date:   Thu, 8 Sep 2022 21:55:27 -0700
+        Fri, 9 Sep 2022 01:07:25 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95BFA125180;
+        Thu,  8 Sep 2022 22:07:24 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id n12so816005wru.6;
+        Thu, 08 Sep 2022 22:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=8A0btdNNYUW+hceFW6H28UUkKsXmFXdS4OKZqXjLEa8=;
+        b=Flubryf2i1EyS+COfyKsK9W7pRUAOhj64bJBxfQ/2SgkP66wfRk+tge5wOlTSvFLO1
+         PXzo/eDWz45qE9DlsGuIIWFyoiOEG1IW1eZd/9OzvnhMTN/xPLtqeBZa8UBSul0tJ89J
+         wFrR6rVAfCveL7ehLtUX3mpA86kKQq9ru7RxWUio2yzi7rPat0Op1mvxU0mldu8f2D1q
+         nZcfWVMgIlxJu39xtvyr4fiXjpcdO2PlocUy2Wi5nsFDf2wo1szQPvipCtk7oShYVe5I
+         wzxQ2mMI7heW7nT3BqzYIhklk1G3TEpoiYtBaWnZzCD8bqPE2SsZsmE4Nao0ZeYT3t4g
+         BnfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=8A0btdNNYUW+hceFW6H28UUkKsXmFXdS4OKZqXjLEa8=;
+        b=sGCEKa8Ch0oekqfRgiEV7+UfvqbimyXrY4NwXS2XSG0jzGurRqUTpiabSi5YkjkEe/
+         spSuXFrNwnLv4YoVUDhvG2ypvP49jScLJaUt8WfJiRmqoC4UNxKG0mAOrA66v9f/+mlR
+         Y/e70mVBmHScjxZquVNxw9CC9WeTI24/BE48eHrB6Op6vlLiswDlUymduv0ck09PP5g2
+         XXZ8IaGRzJsbhiYAcvmz2jVSevm6OGV/a7+Ovl8llDgp6LhFzUo71w9Nzw7qAc6MVlGB
+         5LEJI6yH2Y3IXpC63oMl0gwX+IRDjVIpMBLCgK5bJhlT4eYbYQ9QG5V0TX1dAy4R3E3h
+         EfhA==
+X-Gm-Message-State: ACgBeo35XjmwutBeUkmmHUUewrmHXCXhIRfdNu8sU4Yq/JrvfIs+EIgf
+        GtDTs/tSeB2YWMz0GyiiIA==
+X-Google-Smtp-Source: AA6agR4Lcmd6mQdIn1hBxBZCBlsZrhwg1ubPjxyVI2T9VgII07hSG67zLA5Q7rLqyl9iOEeGntkDUQ==
+X-Received: by 2002:adf:dc8d:0:b0:228:6e44:9861 with SMTP id r13-20020adfdc8d000000b002286e449861mr7135787wrj.452.1662700042977;
+        Thu, 08 Sep 2022 22:07:22 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.254.190])
+        by smtp.gmail.com with ESMTPSA id i10-20020adfb64a000000b0021efc75914esm909189wre.79.2022.09.08.22.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Sep 2022 22:07:22 -0700 (PDT)
+Date:   Fri, 9 Sep 2022 08:07:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] proc: give /proc/cmdline size
+Message-ID: <YxrKCLXE7k16j9xu@localhost.localdomain>
+References: <YxoywlbM73JJN3r+@localhost.localdomain>
+ <20220908134546.6054f611243da37b4f067938@linux-foundation.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, jun.nakajima@intel.com,
-        dave.hansen@intel.com, ak@linux.intel.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
- <20220818132421.6xmjqduempmxnnu2@box> <Yv7XTON3MwuC1Q3U@google.com>
- <226ab26d-9aa8-dce2-c7f0-9e3f5b65b63@google.com>
- <b2743a3a-a1b4-2d2e-98be-87b58ad387cf@redhat.com>
- <YwT6x2g9jcMH60LI@google.com> <20220824094149.GA1383966@chaop.bj.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-In-Reply-To: <20220824094149.GA1383966@chaop.bj.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220908134546.6054f611243da37b4f067938@linux-foundation.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -93,71 +70,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/24/22 02:41, Chao Peng wrote:
-> On Tue, Aug 23, 2022 at 04:05:27PM +0000, Sean Christopherson wrote:
->> On Tue, Aug 23, 2022, David Hildenbrand wrote:
->>> On 19.08.22 05:38, Hugh Dickins wrote:
->>>> On Fri, 19 Aug 2022, Sean Christopherson wrote:
->>>>> On Thu, Aug 18, 2022, Kirill A . Shutemov wrote:
->>>>>> On Wed, Aug 17, 2022 at 10:40:12PM -0700, Hugh Dickins wrote:
->>>>>>> On Wed, 6 Jul 2022, Chao Peng wrote:
->>>>>>> But since then, TDX in particular has forced an effort into preventing
->>>>>>> (by flags, seals, notifiers) almost everything that makes it shmem/tmpfs.
->>>>>>>
->>>>>>> Are any of the shmem.c mods useful to existing users of shmem.c? No.
->>>>>>> Is MFD_INACCESSIBLE useful or comprehensible to memfd_create() users? No.
->>>>>
->>>>> But QEMU and other VMMs are users of shmem and memfd.  The new features certainly
->>>>> aren't useful for _all_ existing users, but I don't think it's fair to say that
->>>>> they're not useful for _any_ existing users.
->>>>
->>>> Okay, I stand corrected: there exist some users of memfd_create()
->>>> who will also have use for "INACCESSIBLE" memory.
->>>
->>> As raised in reply to the relevant patch, I'm not sure if we really have
->>> to/want to expose MFD_INACCESSIBLE to user space. I feel like this is a
->>> requirement of specific memfd_notifer (memfile_notifier) implementations
->>> -- such as TDX that will convert the memory and MCE-kill the machine on
->>> ordinary write access. We might be able to set/enforce this when
->>> registering a notifier internally instead, and fail notifier
->>> registration if a condition isn't met (e.g., existing mmap).
->>>
->>> So I'd be curious, which other users of shmem/memfd would benefit from
->>> (MMU)-"INACCESSIBLE" memory obtained via memfd_create()?
->>
->> I agree that there's no need to expose the inaccessible behavior via uAPI.  Making
->> it a kernel-internal thing that's negotiated/resolved when KVM binds to the fd
->> would align INACCESSIBLE with the UNMOVABLE and UNRECLAIMABLE flags (and any other
->> flags that get added in the future).
->>
->> AFAICT, the user-visible flag is a holdover from the early RFCs and doesn't provide
->> any unique functionality.
+On Thu, Sep 08, 2022 at 01:45:46PM -0700, Andrew Morton wrote:
+> On Thu, 8 Sep 2022 21:21:54 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 > 
-> That's also what I'm thinking. And I don't see problem immediately if
-> user has populated the fd at the binding time. Actually that looks an
-> advantage for previously discussed guest payload pre-loading.
+> > Most /proc files don't have length (in fstat sense). This leads
+> > to inefficiencies when reading such files with APIs commonly found in
+> > modern programming languages. They open file, then fstat descriptor,
+> > get st_size == 0 and either assume file is empty or start reading
+> > without knowing target size.
+> > 
+> > cat(1) does OK because it uses large enough buffer by default.
+> > But naive programs copy-pasted from SO aren't:
+> 
+> What is "SO"?
 
-I think this gets awkward. Trying to define sensible semantics for what 
-happens if a shmem or similar fd gets used as secret guest memory and 
-that fd isn't utterly and completely empty can get quite nasty.  For 
-example:
+StackOverflow, the source of all best programs in the world!
 
-If there are already mmaps, then TDX (much more so than SEV) really 
-doesn't want to also use it as guest memory.
+> > 	let mut f = std::fs::File::open("/proc/cmdline").unwrap();
+> > 	let mut buf: Vec<u8> = Vec::new();
+> > 	f.read_to_end(&mut buf).unwrap();
+> > 
+> > will result in
+> > 
+> > 	openat(AT_FDCWD, "/proc/cmdline", O_RDONLY|O_CLOEXEC) = 3
+> > 	statx(0, NULL, AT_STATX_SYNC_AS_STAT, STATX_ALL, NULL) = -1 EFAULT (Bad address)
+> > 	statx(3, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_ALL, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=0, stx_mode=S_IFREG|0444, stx_size=0, ...}) = 0
+> > 	lseek(3, 0, SEEK_CUR)                   = 0
+> > 	read(3, "BOOT_IMAGE=(hd3,gpt2)/vmlinuz-5.", 32) = 32
+> > 	read(3, "19.6-100.fc35.x86_64 root=/dev/m", 32) = 32
+> > 	read(3, "apper/fedora_localhost--live-roo"..., 64) = 64
+> > 	read(3, "ocalhost--live-swap rd.lvm.lv=fe"..., 128) = 116
+> > 	read(3, "", 12)
+> > 
+> > open/stat is OK, lseek looks silly but there are 3 unnecessary reads
+> > because Rust starts with 32 bytes per Vec<u8> and grows from there.
+> > 
+> > In case of /proc/cmdline, the length is known precisely.
+> > 
+> > Make variables readonly while I'm at it.
+> 
+> It seems arbitrary.  Why does /proc/cmdline in particular get this
+> treatment?
 
-If there is already data in the fd, then maybe some technologies can use 
-this for pre-population, but TDX needs explicit instructions in order to 
-get the guest's hash right.
-
-
-In general, it seems like it will be much more likely to actually work 
-well if the user (uAPI) is required to declare to the kernel exactly 
-what the fd is for (e.g. TDX secret memory, software-only secret memory, 
-etc) before doing anything at all with it other than binding it to KVM.
-
-INACCESSIBLE is a way to achieve this.  Maybe it's not the prettiest in 
-the world -- I personally would rather see an explicit request for, say, 
-TDX or SEV memory or maybe the memory that works for a particular KVM 
-instance instead of something generic like INACCESSIBLE, but this is a 
-pretty weak preference.  But I think that just starting with a plain 
-memfd is a can of worms.
+We can calculate its length precisely and show to userspace so why not
+do it. Other /proc files are trickier.
