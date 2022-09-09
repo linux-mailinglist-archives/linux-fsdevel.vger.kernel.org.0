@@ -2,52 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADC05B417E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 23:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0AD5B4187
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 23:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbiIIVeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 17:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
+        id S231368AbiIIVix (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 17:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbiIIVee (ORCPT
+        with ESMTP id S231183AbiIIViw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 17:34:34 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE2865B6
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 14:34:28 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id q63so2726497pga.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Sep 2022 14:34:28 -0700 (PDT)
+        Fri, 9 Sep 2022 17:38:52 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11E345061
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 14:38:50 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id bd26-20020a05600c1f1a00b003a5e82a6474so2473287wmb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Sep 2022 14:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=32RKuQk21ut6+KAUx33F1+gsJh+klfpdgDVand8UaUY=;
-        b=J6IxD7L7SZ4AKh9XtSi8eh8Jx+8cegZUiSYmvebzo/SCXpDkI4leU+G088tW5UxyH2
-         TOgZilOPz8NSHWBm5sC2bZBL90HQ/f0MUxSvD0c4d+RiD1OzERYWYJM+BA5FsHysAoL/
-         gE5wODosEq+1Aq6kpfxRdvOttRfFVTQbdE2mc=
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=2Y+NLNuQyKNaFU6mPTgzkQeYfosTVSCZJmxTb/6tykg=;
+        b=S9fvTRoZDs1adI4sC3PL20INBwJC7nCemJe/AWoDTwEcfdlhgkbeQ39SsyPpbuMjDN
+         rVj+mRn1WT6L0Ojlq1kZzN8OWl+nNhMwBrR7+vfwU/D3QXYA3+ZwnOzrQf6mYAFLjSKs
+         J/P+mrf/AGE3uU4oRTx3+dWzPl+UQfnW/BHvCnvvziTLm5OaWP+0Ha+d2oFsW4chiekM
+         ZxcMhqfKh2Osx3CpVUUXCMb0Px0hkDa/gRrE/MccqDaNC2X00pNm/+7B4E0wK+lzmC8M
+         /5eZN3sut+pyn9MKpdI2ajTtNp9TZeFLfKo6oA0DTH6ccWmsOXF9fMqs4BS8nsUdg1/k
+         ID3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=32RKuQk21ut6+KAUx33F1+gsJh+klfpdgDVand8UaUY=;
-        b=mNwDWCIZ4T5VKDuKwDleCtEy5jKRhtfoKgjL999mEOVgo1ImEJvgWoQaGq/hx1I952
-         kBr+3CWr2gP1J7405ovo7qSdtIL3HaRZt+VtCpAYrnX3mLY+aQRFENrE+AfPJJFSSWlZ
-         Pi2GgMPAQffJQt7UlX2ADjDhNa42g9Ru8tC+d8zYb0j98+LTdrVJPTcnIzlqufw2J6Sg
-         g9p3BSz+/8uR+sT6ya26OFGm1/cWoG6YDgJVOEB830VnzTJY+0BejSl9rxTKVVEvCgel
-         kmaipjubOC7/+trMhzdTK51UT9C5fHv7Z1xq4StolxhgLMQmBsM17iRaUjiQ3mgpf/k6
-         DMEQ==
-X-Gm-Message-State: ACgBeo1nZ+Ok8OCUPbIMJTTjCyg39PuqRf/wuQ4G+cwMxicooYPySwxx
-        NMxlg5c23VymLOMHUeTmCqpoZg==
-X-Google-Smtp-Source: AA6agR4MrzUXBLxlI8FMdz+81a18JRGoiLJstTSYWOLWPZB6bw3JAP0uUwjrMYvdUZm9UO87zhTJgQ==
-X-Received: by 2002:a65:60c5:0:b0:434:e149:6745 with SMTP id r5-20020a6560c5000000b00434e1496745mr14253221pgv.30.1662759268324;
-        Fri, 09 Sep 2022 14:34:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f196-20020a6238cd000000b00540de61c967sm182116pfa.201.2022.09.09.14.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 14:34:27 -0700 (PDT)
-Date:   Fri, 9 Sep 2022 14:34:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Florian Mayer <fmayer@google.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=2Y+NLNuQyKNaFU6mPTgzkQeYfosTVSCZJmxTb/6tykg=;
+        b=qQmLujndE/PfYMx0xTR5cNp7BZMad8E/IRrwFtLRPV/Sv8n/+6BywHxsfVEINdnanB
+         0zk5eiepwjn8hUfQM1g4Z+ssqoh8rB6vi6ASILe7Chqh09w7zHndC4zhCLrjOhYMRyVE
+         eNS7sC5buU81pNovP6cpJK670bOjKvwLeo+3m5kjtX9MObHYgOEO2wNGFeakp0JX+cf4
+         mxRhOjPfx/g0Vk9FJMRJAfKEESgIM91fwHefxw8nhHcWwwj2eANWq+90BhmJXjXsPVOP
+         KpRNNC/xajhCsFCQCbA1W8kqp8fFnBsLOsWqejtUy5ErGkCI3gQji5ZmYCwRq224eduh
+         oVUg==
+X-Gm-Message-State: ACgBeo199BM6XfTRt4rPJaV4puSrhh2uazbuyHNUNPFZ2aw16NKmToDS
+        lF+/bCvplCFsN9Q/2ATgJBZ2tnaeJDli+YCvzROdwQ==
+X-Google-Smtp-Source: AA6agR55Ji109n89/PIZXx7w8Zwy/UxdI6HoxoE5W3L937PCHDl99glgs5wvCTO9sZZ0mnsie1BGFRbQMfSmWlHgRwg=
+X-Received: by 2002:a7b:c416:0:b0:3ab:73e4:c44a with SMTP id
+ k22-20020a7bc416000000b003ab73e4c44amr6512861wmi.147.1662759529003; Fri, 09
+ Sep 2022 14:38:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220909180617.374238-1-fmayer@google.com> <202209091432.5FEEE461F7@keescook>
+In-Reply-To: <202209091432.5FEEE461F7@keescook>
+From:   Florian Mayer <fmayer@google.com>
+Date:   Fri, 9 Sep 2022 14:38:37 -0700
+Message-ID: <CAJAyTCBuETy0oY-2tjvKxDDmQCsBdL2d4UU7Fv-ySKZw_S4DNA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] Add sicode to /proc/<PID>/stat.
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -57,33 +62,23 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Evgenii Stepanov <eugenis@google.com>,
         Peter Collingbourne <pcc@google.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RESEND] Add sicode to /proc/<PID>/stat.
-Message-ID: <202209091432.5FEEE461F7@keescook>
-References: <20220909180617.374238-1-fmayer@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220909180617.374238-1-fmayer@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 11:06:17AM -0700, Florian Mayer wrote:
-> In order to enable additional debugging features, Android init needs a
-> way to distinguish MTE-related SEGVs (with si_code of SEGV_MTEAERR)
-> from other SEGVs. This is not possible with current APIs, neither by
-> the existing information in /proc/<pid>/stat, nor via waitpid.
+On Fri, 9 Sept 2022 at 14:34, Kees Cook <keescook@chromium.org> wrote:
+>
+> Normally no changes are made to "stat" any more. New additions are made
+> to "status" instead. Could it live there instead?
 
-Normally no changes are made to "stat" any more. New additions are made
-to "status" instead. Could it live there instead?
-
--Kees
-
--- 
-Kees Cook
+Yes, that would also work.
+I put it in stat for consistency because the exit_code is also there
+(and not in status).
