@@ -2,64 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D7C45B3ACF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 16:38:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF2C5B3AEB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 16:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231875AbiIIOiz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 10:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58706 "EHLO
+        id S232115AbiIIOnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 10:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231555AbiIIOiy (ORCPT
+        with ESMTP id S232093AbiIIOng (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 10:38:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C5E131BDA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Sep 2022 07:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662734331;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mEJa3J3UUdr9GRdpFl4qp3eJcR5AB7YwgYozMAVokFs=;
-        b=UtdJVwIfZy4dgpbr66aWh9hEqVGChU5MWltnkeFcytse+A/k2S0PB+a8wOOFCCaF7acbLq
-        xH7TUWdXASEawdrAmzspj/rLRkG5SCUmm2sr3JD1pyQvEmrDqqvqpmEoMC5Y08b6ZQlaV6
-        qh0BHZNToLEIimRDCpnEtCr9Hl5C23U=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-307-41-L-xL8OTiqnTy3ibOo-A-1; Fri, 09 Sep 2022 10:38:50 -0400
-X-MC-Unique: 41-L-xL8OTiqnTy3ibOo-A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 9 Sep 2022 10:43:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FEB11778F;
+        Fri,  9 Sep 2022 07:43:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0C46F1C05EAA;
-        Fri,  9 Sep 2022 14:38:50 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.48.5])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA42C4C819;
-        Fri,  9 Sep 2022 14:38:48 +0000 (UTC)
-Date:   Fri, 9 Sep 2022 10:38:46 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full
- permission event response
-Message-ID: <YxtP9kttFi5TxtcJ@madcap2.tricolour.ca>
-References: <cover.1659996830.git.rgb@redhat.com>
- <2254543.ElGaqSPkdT@x2>
- <20220909110944.yfnuqhsiyw3ekkcn@quack3>
- <4748798.GXAFRqVoOG@x2>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 363A462007;
+        Fri,  9 Sep 2022 14:43:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 632D3C433D6;
+        Fri,  9 Sep 2022 14:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662734614;
+        bh=jXc+YOCMq9/xoEX+tOTlV/SGQTrctfHXTzVY7GoW6yk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pKuSQ0WXtewALbm9bIXUwgShYUzZZMekwIFtT4+gNj6B05+lcXkzpq14+Z9vS8bVb
+         orpamrV1hkAfBdiskqjjn6BFBh2cRJ9yo7gYVwIRXk1prXydRTGRhDVTMaZ0lN7LSW
+         6ecPmO7JBma7FXKXz1rA0nIPZy3kcE0311QzuB/Qxk3gL7srP6cZF/hA0pPsdrVjak
+         8pH4mu2zIEqtK8pTAEYqV6BLqmYnpHxyufyORlaTGoYHDoRpahAv52GnEzcgHBT+mP
+         UQ+qf8rkZVNGDzMU2INyxkvrI1DefJ0Xzr+tul0HsZ22/cMdXrgI/lftE8ogTLllp2
+         RCqqdZPlrSPfA==
+Message-ID: <8b556c2dadb717a25ab47f02f70cfaaa6c6074c7.camel@kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>, Jan Kara <jack@suse.cz>,
+        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
+        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
+        fweimer@redhat.com, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Fri, 09 Sep 2022 10:43:30 -0400
+In-Reply-To: <YxtEHIkfX0nQQC0n@mit.edu>
+References: <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
+         <20220907135153.qvgibskeuz427abw@quack3>
+         <166259786233.30452.5417306132987966849@noble.neil.brown.name>
+         <20220908083326.3xsanzk7hy3ff4qs@quack3> <YxoIjV50xXKiLdL9@mit.edu>
+         <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
+         <20220908155605.GD8951@fieldses.org>
+         <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
+         <YxstWiu34TfJ6muW@mit.edu>
+         <6173b33e43ac8b0e4377b5d65fec7231608f71f7.camel@kernel.org>
+         <YxtEHIkfX0nQQC0n@mit.edu>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4748798.GXAFRqVoOG@x2>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,101 +73,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-09-09 10:22, Steve Grubb wrote:
-> On Friday, September 9, 2022 7:09:44 AM EDT Jan Kara wrote:
-> > Hello Steve!
-> > 
-> > On Fri 09-09-22 00:03:53, Steve Grubb wrote:
-> > > On Thursday, September 8, 2022 10:41:44 PM EDT Richard Guy Briggs wrote:
-> > > > > I'm trying to abide by what was suggested by the fs-devel folks. I
-> > > > > can
-> > > > > live with it. But if you want to make something non-generic for all
-> > > > > users of fanotify, call the new field "trusted". This would decern
-> > > > > when
-> > > > > a decision was made because the file was untrusted or access denied
-> > > > > for
-> > > > > another reason.
-> > > > 
-> > > > So, "u32 trusted;" ?  How would you like that formatted?
-> > > > "fan_trust={0|1}"
-> > > 
-> > > So how does this play out if there is another user? Do they want a num=
-> > > and trust=  if not, then the AUDIT_FANOTIFY record will have multiple
-> > > formats which is not good. I'd rather suggest something generic that can
-> > > be interpreted based on who's attached to fanotify. IOW we have a
-> > > fan_type=0 and then followed by info0= info1=  the interpretation of
-> > > those solely depend on fan_type. If the fan_type does not need both,
-> > > then any interpretation skips what it doesn't need. If fan_type=1, then
-> > > it follows what arg0= and arg1= is for that format. But make this pivot
-> > > on fan_type and not actual names.
-> > So I think there is some misunderstanding so let me maybe spell out in
-> > detail how I see things so that we can get on the same page:
-> > 
-> > It was a requirement from me (and probably Amir) that there is a generic
-> > way to attach additional info to a response to fanotify permission event.
-> > This is achieved by defining:
-> > 
-> > struct fanotify_response_info_header {
-> >        __u8 type;
-> >        __u8 pad;
-> >        __u16 len;
-> > };
-> > 
-> > which is a generic header and kernel can based on 'len' field decide how
-> > large the response structure is (to safely copy it from userspace) and
-> > based on 'type' field it can decide who should be the recipient of this
-> > extra information (or generally what to do with it). So any additional
-> > info needs to start with this header.
-> > 
-> > Then there is:
-> > 
-> > struct fanotify_response_info_audit_rule {
-> >        struct fanotify_response_info_header hdr;
-> >        __u32 audit_rule;
-> > };
-> > 
-> > which properly starts with the header and hdr.type is expected to be
-> > FAN_RESPONSE_INFO_AUDIT_RULE. What happens after the header with type
-> > FAN_RESPONSE_INFO_AUDIT_RULE until length hdr.len is fully within *audit*
-> > subsystem's responsibility. Fanotify code will just pass this as an opaque
-> > blob to the audit subsystem.
-> > 
-> > So if you know audit subsystem will also need some other field together
-> > with 'audit_rule' now is a good time to add it and it doesn't have to be
-> > useful for anybody else besides audit. If someone else will need other
-> > information passed along with the response, he will append structure with
-> > another header with different 'type' field. In principle, there can be
-> > multiple structures appended to fanotify response like
-> > 
-> > <hdr> <data> <hdr> <data> ...
-> > 
-> > and fanotify subsystem will just pass them to different receivers based
-> > on the type in 'hdr' field.
-> > 
-> > Also if audit needs to pass even more information along with the respose,
-> > we can define a new 'type' for it. But the 'type' space is not infinite so
-> > I'd prefer this does not happen too often...
-> > 
-> > I hope this clears out things a bit.
-> 
-> Yes. Thank you.
-> 
-> Richard,  add subj_trust and obj_trust. These can be 0|1|2 for no, yes, 
-> unknown.
+On Fri, 2022-09-09 at 09:48 -0400, Theodore Ts'o wrote:
+> On Fri, Sep 09, 2022 at 08:47:17AM -0400, Jeff Layton wrote:
+> >=20
+> > i_version only changes now if someone has queried it since it was last
+> > changed. That makes a huge difference in performance. We can try to
+> > optimize it further, but it probably wouldn't move the needle much unde=
+r
+> > real workloads.
+>=20
+> Good point.  And to be clear, from NFS's perspective, you only need to
+> have i_version bumped if there is a user-visible change to the
+> file. --- with an explicit exception here of the FIEMAP system call,
+> since in the case of a delayed allocation, FIEMAP might change from
+> reporting:
+>=20
+>  ext:     logical_offset:        physical_offset: length:   expected: fla=
+gs:
+>    0:        0..       0:          0..         0:      0:             las=
+t,unknown_loc,delalloc,eof
+>=20
+> to this:
+>=20
+>  ext:     logical_offset:        physical_offset: length:   expected: fla=
+gs:
+>    0:        0..       0:  190087172.. 190087172:      1:             las=
+t,eof
+>=20
+> after a sync(2) or fsync(2) call, or after time passes.
+>=20
 
-type?  bitfield?  My gut would say that "0" should be "unset"/"unknown",
-but that is counterintuitive to the values represented.
+In general, we want to bump i_version if the ctime changes. I'm guessing
+that we don't change ctime on a delalloc? If it's not visible to NFS,
+then NFS won't care about it.  We can't project FIEMAP info across the
+wire at this time, so we'd probably like to avoid seeing an i_version
+bump in due to delalloc.
 
-Or "trust" with sub-fields "subj" and "obj"?
+> > Great! That's what I was hoping for with ext4. Would you be willing to
+> > pick up these two patches for v6.1?
+> >=20
+> > https://lore.kernel.org/linux-ext4/20220908172448.208585-3-jlayton@kern=
+el.org/T/#u
+> > https://lore.kernel.org/linux-ext4/20220908172448.208585-4-jlayton@kern=
+el.org/T/#u
+>=20
+> I think you mean:
+>=20
+> https://lore.kernel.org/linux-ext4/20220908172448.208585-2-jlayton@kernel=
+.org/T/#u
+> https://lore.kernel.org/linux-ext4/20220908172448.208585-3-jlayton@kernel=
+.org/T/#u
+>=20
+> Right?
+>=20
+> BTW, sorry for not responding to these patches earlier; between
+> preparing for the various Linux conferences in Dublin next week, and
+> being in Zurich and meeting with colleagues at $WORK all of this week,
+> I'm a bit behind on my patch reviews.
+>=20
 
-> -Steve
+No worries. As long as they're on your radar, that's fine.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+Thanks!
+--=20
+Jeff Layton <jlayton@kernel.org>
