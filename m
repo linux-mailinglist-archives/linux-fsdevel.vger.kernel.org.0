@@ -2,67 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E28405B381D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 14:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C202D5B3868
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 15:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbiIIMrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 08:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59948 "EHLO
+        id S231131AbiIINAl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 09:00:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiIIMra (ORCPT
+        with ESMTP id S230167AbiIINAi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 08:47:30 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 788BA11B74E;
-        Fri,  9 Sep 2022 05:47:28 -0700 (PDT)
+        Fri, 9 Sep 2022 09:00:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749D87F13A;
+        Fri,  9 Sep 2022 06:00:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 00256CE227E;
-        Fri,  9 Sep 2022 12:47:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8FFC433D7;
-        Fri,  9 Sep 2022 12:47:18 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D10DBB824EF;
+        Fri,  9 Sep 2022 13:00:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7632C433D7;
+        Fri,  9 Sep 2022 13:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662727640;
-        bh=Cnva1y3A2cFoN7nzWVOTcIQDrf4GVJQh0JlB2O4x0L4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Vazc2NJvHKWpQlw/xzaTE9ki7SJKkAQpE7aw4OKk+JypV+srf+XROfTDsFvGj4CZB
-         0dnv6h6KYQpC/D5aA2R8dpNkvIPO1koTLhqN4h8tcrncHJYtYY/z+r2ox7Mq4gMyYo
-         tXSUOYe0CKXrfH83VEjqZpduf/iztjfVyVTSFEG2brJNBIBBQxMPAbiGdBLdUSoDtE
-         UXj/LIWCIwviFS09QPrL0NhmKZBC1qWoN+ApYdGzCkN4QE15IjHaOyzlensQHyudU9
-         i95Tam2CbDi5LLkj5gwiKCbjul2KYg3ZNA+pmE557xnEfohpWhKevSgqfqfmTvbeV/
-         Qakwp0ErRnzxw==
-Message-ID: <6173b33e43ac8b0e4377b5d65fec7231608f71f7.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
+        s=k20201202; t=1662728433;
+        bh=TEWPiApm1m17MjS+y0T4ct2AJ4Ym+z+ovyYjPm3aSB4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=en/ao+AbVLosPNC01LLk//D/wY9IZlT9yzu6E6mlIM0l2gp6BJP18zCvpxsyBtEmO
+         0QWT46F+x5t3wkF86QW7a0BsBJeYFcwRotOo+TFRyO1DSDuXyNmhh8W4CTVpnaS7w6
+         FjWtZM44NaVHMoaUyS7aCwAryusJb21F/ePWZuDehJvmTmv1zoDI8YWIutsB1jtKF6
+         i/krX9reHIfUaePNPsubCJhbS8vCC8dwgGs/CYoeOyb3vDZFfz10VYgsbukMo4A/1l
+         P0r3G2b5wKTW/8PfM3Y0h2fibmQIQu4OeK/D2nic4jeqxXFd+BnFxMElGDyMffmjYJ
+         F9oRmerLWZ5cw==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
-        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
-        fweimer@redhat.com, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
+To:     hughd@google.com
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Fri, 09 Sep 2022 08:47:17 -0400
-In-Reply-To: <YxstWiu34TfJ6muW@mit.edu>
-References: <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
-         <20220907125211.GB17729@fieldses.org>
-         <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
-         <20220907135153.qvgibskeuz427abw@quack3>
-         <166259786233.30452.5417306132987966849@noble.neil.brown.name>
-         <20220908083326.3xsanzk7hy3ff4qs@quack3> <YxoIjV50xXKiLdL9@mit.edu>
-         <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
-         <20220908155605.GD8951@fieldses.org>
-         <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-         <YxstWiu34TfJ6muW@mit.edu>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH] tmpfs: add support for an i_version counter
+Date:   Fri,  9 Sep 2022 09:00:31 -0400
+Message-Id: <20220909130031.15477-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -73,70 +54,174 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-09-09 at 08:11 -0400, Theodore Ts'o wrote:
-> On Thu, Sep 08, 2022 at 01:40:11PM -0400, Jeff Layton wrote:
-> >=20
-> > Ted, how would we access this? Maybe we could just add a new (generic)
-> > super_block field for this that ext4 (and other filesystems) could
-> > populate at mount time?
->=20
-> Yeah, I was thinking about just adding it to struct super, with some
-> value (perhaps 0 or ~0) meaning that the file system didn't support
-> it.  If people were concerned about struct super bloat, we could also
-> add some new function to struct super_ops that would return one or
-> more values that are used rarely by most of the kernel code, and so
-> doesn't need to be in the struct super data structure.  I don't have
-> strong feelings one way or another.
->=20
+NFSv4 mandates a change attribute to avoid problems with timestamp
+granularity, which Linux implements using the i_version counter. This is
+particularly important when the underlying filesystem is fast.
 
-Either would be fine, I think.
+Give tmpfs an i_version counter. Since it doesn't have to be persistent,
+we can just turn on SB_I_VERSION and sprinkle some inode_inc_iversion
+calls in the right places.
 
-> On another note, my personal opinion is that at least as far as ext4
-> is concerned, i_version on disk's only use is for NFS's convenience,
+Also, while there is no formal spec for xattrs, most implementations
+update the ctime on setxattr. Fix shmem_xattr_handler_set to update the
+ctime and bump the i_version appropriately.
 
-Technically, IMA uses it too, but it needs the same behavior as NFSv4.
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/posix_acl.c |  3 +++
+ mm/shmem.c     | 31 ++++++++++++++++++++++++++++---
+ 2 files changed, 31 insertions(+), 3 deletions(-)
 
-> and so I have absolutely no problem with changing how and when
-> i_version gets updated modulo concerns about impacting performance.
-> That's one of the reasons why being able to update i_version only
-> lazily, so that if we had, say, some workload that was doing O_DIRECT
-> writes followed by fdatasync(), there wouldn't be any obligation to
-> flush the inode out to disk just because we had bumped i_version
-> appeals to me.
->=20
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 5af33800743e..efb88a5e59f9 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -24,6 +24,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/namei.h>
+ #include <linux/mnt_idmapping.h>
++#include <linux/iversion.h>
+ 
+ static struct posix_acl **acl_by_type(struct inode *inode, int type)
+ {
+@@ -1073,6 +1074,8 @@ int simple_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+ 	}
+ 
+ 	inode->i_ctime = current_time(inode);
++	if (IS_I_VERSION(inode))
++		inode_inc_iversion(inode);
+ 	set_cached_acl(inode, type, acl);
+ 	return 0;
+ }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 42e5888bf84d..84c1b7bf47ec 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -38,6 +38,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/fs_parser.h>
+ #include <linux/swapfile.h>
++#include <linux/iversion.h>
+ #include "swap.h"
+ 
+ static struct vfsmount *shm_mnt;
+@@ -1043,6 +1044,7 @@ void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
+ {
+ 	shmem_undo_range(inode, lstart, lend, false);
+ 	inode->i_ctime = inode->i_mtime = current_time(inode);
++	inode_inc_iversion(inode);
+ }
+ EXPORT_SYMBOL_GPL(shmem_truncate_range);
+ 
+@@ -1087,6 +1089,8 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 	struct inode *inode = d_inode(dentry);
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	int error;
++	bool update_mtime = false;
++	bool update_ctime = true;
+ 
+ 	error = setattr_prepare(&init_user_ns, dentry, attr);
+ 	if (error)
+@@ -1107,7 +1111,9 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 			if (error)
+ 				return error;
+ 			i_size_write(inode, newsize);
+-			inode->i_ctime = inode->i_mtime = current_time(inode);
++			update_mtime = true;
++		} else {
++			update_ctime = false;
+ 		}
+ 		if (newsize <= oldsize) {
+ 			loff_t holebegin = round_up(newsize, PAGE_SIZE);
+@@ -1127,6 +1133,12 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 	setattr_copy(&init_user_ns, inode, attr);
+ 	if (attr->ia_valid & ATTR_MODE)
+ 		error = posix_acl_chmod(&init_user_ns, inode, inode->i_mode);
++	if (!error && update_ctime) {
++		inode->i_ctime = current_time(inode);
++		if (update_mtime)
++			inode->i_mtime = inode->i_ctime;
++		inode_inc_iversion(inode);
++	}
+ 	return error;
+ }
+ 
+@@ -2901,6 +2913,7 @@ shmem_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 		error = 0;
+ 		dir->i_size += BOGO_DIRENT_SIZE;
+ 		dir->i_ctime = dir->i_mtime = current_time(dir);
++		inode_inc_iversion(dir);
+ 		d_instantiate(dentry, inode);
+ 		dget(dentry); /* Extra count - pin the dentry in core */
+ 	}
+@@ -2976,6 +2989,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
+ 
+ 	dir->i_size += BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
++	inode_inc_iversion(dir);
+ 	inc_nlink(inode);
+ 	ihold(inode);	/* New dentry reference */
+ 	dget(dentry);		/* Extra pinning count for the created dentry */
+@@ -2993,6 +3007,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	dir->i_size -= BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
++	inode_inc_iversion(dir);
+ 	drop_nlink(inode);
+ 	dput(dentry);	/* Undo the count from "create" - this does all the work */
+ 	return 0;
+@@ -3082,6 +3097,8 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
+ 	old_dir->i_ctime = old_dir->i_mtime =
+ 	new_dir->i_ctime = new_dir->i_mtime =
+ 	inode->i_ctime = current_time(old_dir);
++	inode_inc_iversion(old_dir);
++	inode_inc_iversion(new_dir);
+ 	return 0;
+ }
+ 
+@@ -3134,6 +3151,7 @@ static int shmem_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 	}
+ 	dir->i_size += BOGO_DIRENT_SIZE;
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
++	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+ 	dget(dentry);
+ 	return 0;
+@@ -3204,6 +3222,7 @@ static int shmem_fileattr_set(struct user_namespace *mnt_userns,
+ 
+ 	shmem_set_inode_flags(inode, info->fsflags);
+ 	inode->i_ctime = current_time(inode);
++	inode_inc_iversion(inode);
+ 	return 0;
+ }
+ 
+@@ -3267,9 +3286,15 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
+ 				   size_t size, int flags)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
++	int err;
+ 
+ 	name = xattr_full_name(handler, name);
+-	return simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
++	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
++	if (!err) {
++		inode->i_ctime = current_time(inode);
++		inode_inc_iversion(inode);
++	}
++	return err;
+ }
+ 
+ static const struct xattr_handler shmem_security_xattr_handler = {
+@@ -3732,7 +3757,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		sb->s_flags |= SB_NOUSER;
+ 	}
+ 	sb->s_export_op = &shmem_export_ops;
+-	sb->s_flags |= SB_NOSEC;
++	sb->s_flags |= SB_NOSEC | SB_I_VERSION;
+ #else
+ 	sb->s_flags |= SB_NOUSER;
+ #endif
+-- 
+2.37.3
 
-i_version only changes now if someone has queried it since it was last
-changed. That makes a huge difference in performance. We can try to
-optimize it further, but it probably wouldn't move the needle much under
-real workloads.
-
-> But aside from that, I don't consider when i_version gets updated on
-> disk, especially what the semantics are after a crash, and if we need
-> to change things so that NFS can be more performant, I'm happy to
-> accomodate.  One of the reasons why we implemented the ext4 fast
-> commit feature was to improve performance for NFS workloads.
->=20
-> I know some XFS developers have some concerns here, but I just wanted
-> to make it be explicit that (a) I'm not aware of any users who are
-> depending on the i_version on-disk semantics, and (b) if they are
-> depending on something which as far as I'm concerned in an internal
-> implementation detail, we've made no promises to them, and they can
-> get to keep both pieces.  :-)  This is especially since up until now,
-> there is no supported, portable userspace interface to make i_version
-> available to userspace.
->=20
-
-Great! That's what I was hoping for with ext4. Would you be willing to
-pick up these two patches for v6.1?
-
-https://lore.kernel.org/linux-ext4/20220908172448.208585-3-jlayton@kernel.o=
-rg/T/#u
-https://lore.kernel.org/linux-ext4/20220908172448.208585-4-jlayton@kernel.o=
-rg/T/#u
-
-They should be able to go in independently of the rest of the series and
-I don't forsee any big changes to them.
-
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
