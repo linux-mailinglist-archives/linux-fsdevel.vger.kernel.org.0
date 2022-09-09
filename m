@@ -2,102 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E745B2D39
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 06:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 945E55B2DA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Sep 2022 06:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbiIIEED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Sep 2022 00:04:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
+        id S229721AbiIIEox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Sep 2022 00:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiIIEEB (ORCPT
+        with ESMTP id S229685AbiIIEou (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Sep 2022 00:04:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37988D076D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Sep 2022 21:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662696238;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=slFM8Vfq1w8ltNdHtnQPBjam8+h5JdYTs6yxTf4F8W8=;
-        b=hL35hO1UhrEh6y616ZsH5PF8fv+WZyeUxPsS5GaRtC779M5UY5oPAaMYfPxXcApjIx91kl
-        xuu3jahHmCk9/WaAuApL+6DGE2857SSWDBkwmNz6mTt0Ul8javamd3S0ecAcRPho2FSUcm
-        2W22EdcUnRboXY46uZ4FeThL5rTAlno=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-241-oYY8UzDONviIPnSY1II-wQ-1; Fri, 09 Sep 2022 00:03:54 -0400
-X-MC-Unique: oYY8UzDONviIPnSY1II-wQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 9 Sep 2022 00:44:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFCF37FAB;
+        Thu,  8 Sep 2022 21:44:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 53DD8811E80;
-        Fri,  9 Sep 2022 04:03:54 +0000 (UTC)
-Received: from x2.localnet (unknown [10.22.32.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E1E3D2026D4C;
-        Fri,  9 Sep 2022 04:03:53 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Jan Kara <jack@suse.cz>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 3/4] fanotify,audit: Allow audit to use the full permission event response
-Date:   Fri, 09 Sep 2022 00:03:53 -0400
-Message-ID: <2254543.ElGaqSPkdT@x2>
-Organization: Red Hat
-In-Reply-To: <Yxqn6NVQr0jTQHiu@madcap2.tricolour.ca>
-References: <cover.1659996830.git.rgb@redhat.com> <2254258.ElGaqSPkdT@x2> <Yxqn6NVQr0jTQHiu@madcap2.tricolour.ca>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 424D360E73;
+        Fri,  9 Sep 2022 04:44:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E45CC433C1;
+        Fri,  9 Sep 2022 04:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662698687;
+        bh=enEwLIV4OwLmN/RgbTuEUX2L54sFfCWJPwewzGbYInE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cLrhFtKHGXINYvsGREelVRIrtsdDSdhyssoSgqKj1qRrv8lKr0eHelXtdnDQr85sC
+         vUhwAfnsNzkQoKexpnXMoJMT2YKwm5XKP5lz/55VUhKJAfkOYJlwEC7BQKT5XWACfI
+         1k3vOOYkyrSJreY+nrZBkF7nlWbJdvuk7q1CKzdUycNfapzFNnsGW/qGhV4hFmnntR
+         OfJ8zVRoAu1qi5JA6EiUBZ7jakY55X0EANPYhumQNRuDzDBGpuIpiLT6sCkdfGVwZE
+         3o0LkAEWoAGTiudx3mSdHcf7Y878UhbbaZuVzxJ+2HSUPNQIqSpy8GPq8284tGcG6p
+         KiZxc67uW85HQ==
+Message-ID: <48f7d192-993d-1df1-db0a-f985e61669b6@kernel.org>
+Date:   Thu, 8 Sep 2022 21:44:44 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Content-Language: en-US
+To:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, jun.nakajima@intel.com,
+        dave.hansen@intel.com, ak@linux.intel.com, david@redhat.com,
+        aarcange@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        "Gupta, Pankaj" <pankaj.gupta@amd.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
+ <20220818132421.6xmjqduempmxnnu2@box>
+From:   Andy Lutomirski <luto@kernel.org>
+In-Reply-To: <20220818132421.6xmjqduempmxnnu2@box>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-10.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday, September 8, 2022 10:41:44 PM EDT Richard Guy Briggs wrote:
-> > I'm trying to abide by what was suggested by the fs-devel folks. I can
-> > live with it. But if you want to make something non-generic for all
-> > users of fanotify, call the new field "trusted". This would decern when
-> > a decision was made because the file was untrusted or access denied for
-> > another reason.
->
-> So, "u32 trusted;" ?  How would you like that formatted?
-> "fan_trust={0|1}"
-
-So how does this play out if there is another user? Do they want a num= and 
-trust=  if not, then the AUDIT_FANOTIFY record will have multiple formats 
-which is not good. I'd rather suggest something generic that can be 
-interpreted based on who's attached to fanotify. IOW we have a fan_type=0 and 
-then followed by info0= info1=  the interpretation of those solely depend on 
-fan_type. If the fan_type does not need both, then any interpretation skips 
-what it doesn't need. If fan_type=1, then it follows what arg0= and arg1= is 
-for that format. But make this pivot on fan_type and not actual names.
- 
-> > > You mention that you know what you want to put in the struct, why not
-> > > share the details with all of us so we are all on the same page and
-> > > can have a proper discussion.
-> > 
-> > Because I want to abide by the original agreement and not impose
-> > opinionated requirements that serve no one else. I'd rather have
-> > something anyone can use. I want to play nice.
+On 8/18/22 06:24, Kirill A . Shutemov wrote:
+> On Wed, Aug 17, 2022 at 10:40:12PM -0700, Hugh Dickins wrote:
+>> On Wed, 6 Jul 2022, Chao Peng wrote:
+>>> This is the v7 of this series which tries to implement the fd-based KVM
+>>> guest private memory.
+>>
+>> Here at last are my reluctant thoughts on this patchset.
+>>
+>> fd-based approach for supporting KVM guest private memory: fine.
+>>
+>> Use or abuse of memfd and shmem.c: mistaken.
+>>
+>> memfd_create() was an excellent way to put together the initial prototype.
+>>
+>> But since then, TDX in particular has forced an effort into preventing
+>> (by flags, seals, notifiers) almost everything that makes it shmem/tmpfs.
+>>
+>> Are any of the shmem.c mods useful to existing users of shmem.c? No.
+>> Is MFD_INACCESSIBLE useful or comprehensible to memfd_create() users? No.
+>>
+>> What use do you have for a filesystem here?  Almost none.
+>> IIUC, what you want is an fd through which QEMU can allocate kernel
+>> memory, selectively free that memory, and communicate fd+offset+length
+>> to KVM.  And perhaps an interface to initialize a little of that memory
+>> from a template (presumably copied from a real file on disk somewhere).
+>>
+>> You don't need shmem.c or a filesystem for that!
+>>
+>> If your memory could be swapped, that would be enough of a good reason
+>> to make use of shmem.c: but it cannot be swapped; and although there
+>> are some references in the mailthreads to it perhaps being swappable
+>> in future, I get the impression that will not happen soon if ever.
+>>
+>> If your memory could be migrated, that would be some reason to use
+>> filesystem page cache (because page migration happens to understand
+>> that type of memory): but it cannot be migrated.
 > 
-> If someone else wants to use something, why not give them a type of
-> their own other than FAN_RESPONSE_INFO_AUDIT_RULE that they can shape
-> however they like?
+> Migration support is in pipeline. It is part of TDX 1.5 [1]. And swapping
+> theoretically possible, but I'm not aware of any plans as of now.
+> 
+> [1] https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+> 
 
-Please, let's keep AUDIT_FANOTIFY normalized but pivot on fan_type.
+This thing?
 
--Steve
+https://cdrdv2.intel.com/v1/dl/getContent/733578
 
-
+That looks like migration between computers, not between NUMA nodes.  Or 
+am I missing something?
