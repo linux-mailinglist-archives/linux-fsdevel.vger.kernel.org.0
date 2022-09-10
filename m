@@ -2,277 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3E95B4639
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Sep 2022 14:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 361BA5B4672
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Sep 2022 15:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbiIJMjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Sep 2022 08:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
+        id S229456AbiIJNDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Sep 2022 09:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbiIJMjN (ORCPT
+        with ESMTP id S229492AbiIJNDu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Sep 2022 08:39:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED5050733;
-        Sat, 10 Sep 2022 05:39:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6DE86B8015A;
-        Sat, 10 Sep 2022 12:39:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F262CC433C1;
-        Sat, 10 Sep 2022 12:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662813549;
-        bh=YEIyo7RacOHHBv5MZ/Zxo+peFx28TliU4poZd6BIhFw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OURJ3wvvhgmeJoQrcI7pZXVVcl8CFcVGSjg1lTrXevGd51Q4niTWjzEVQef7pwvrZ
-         495e/ViX+gkvMLYNvZ/WCRZKxCD9/Vyg7mzuKam82hHXXqk8w15agsJmN8Lj7Jrydt
-         pdMI+NttabnrETc2QH+DGeSCKbUBNRQIcQy1IGB6nyT8ols7VOPv+x7AyJsRIfL2ir
-         sCsk1ls1jalCKHUnEB0nqr5Rhfl9hXWwKOILNQr+e4fv2R76WrmXbaeZ6SHWyEB8gf
-         /yPmA40rLjEl6qRKlaQvRg01G1k04HI0qq2xj2g8NdnuLkstPVaKIDSlzBb/F8y1O7
-         CZJMOvB1INsxg==
-Message-ID: <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Date:   Sat, 10 Sep 2022 08:39:05 -0400
-In-Reply-To: <166270570118.30452.16939807179630112340@noble.neil.brown.name>
-References: <20220907111606.18831-1-jlayton@kernel.org>
-         , <166255065346.30452.6121947305075322036@noble.neil.brown.name>
-         , <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>
-         , <20220907125211.GB17729@fieldses.org>
-         , <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>
-         , <20220907135153.qvgibskeuz427abw@quack3>
-         , <166259786233.30452.5417306132987966849@noble.neil.brown.name>
-         , <20220908083326.3xsanzk7hy3ff4qs@quack3>, <YxoIjV50xXKiLdL9@mit.edu>
-         , <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
-         , <166267775728.30452.17640919701924887771@noble.neil.brown.name>
-         , <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>
-         , <166268467103.30452.1687952324107257676@noble.neil.brown.name>
-         , <166268566751.30452.13562507405746100242@noble.neil.brown.name>
-         , <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>
-         , <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>
-         <166270570118.30452.16939807179630112340@noble.neil.brown.name>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Sat, 10 Sep 2022 09:03:50 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7207C558CB
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Sep 2022 06:03:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LalaW3y47Aw/gNlDDFH5RZxYQUEKJctOzFzkJnkygXN84fo2oNAam/aSZYViF6HwlhLkFwNTDlUnYVeK4j1N0T7DMhRchcUJMEaEwJLHp3DLpdicaKrJfYNh9CJQ4gZCtXc1ChJdagcagTE+A/vyDkoGJVr0jHKWSleUZSG0bkShYPJh09li71Ez/i6aCAvZu7M1vHE/lBcRmHTnXUEzQxOW+HElRGuWPpxO7EBr3TR+ASZKnSiK/+JcfgK/X4JzYrXbKKoszUoL3BWWVl+fRio5qRogjIDisu2h/1KEox6jI62gvC0pKp8v1Wu3lowNmVcSYIXMDOF4Mlar0MJh7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+eh1pKeIxV03dcNuVirnOFD4gdrZOVgb7KepsPOc5SI=;
+ b=b3SKuwTQANxRg20InQv/8kdsT9U9V2kUWRqrrudY7JAZcBM+4qU9fjcDlbr+X5HuNUSG1v694YbAgyR5uZ5zjVCyZe8hmZOuCq8/qgHarhbgdtfa6AqmBCKj2QMKSso0sixDDt/Ty1QZ9sghOCfrDLpzhrHkNPTV8THFVYoxs6AeHQyqfpgf3jVWpPOV5J7wVElXa2tprD7oMfWbEEp9dLVehnZ51/13lwHMgJbZuZCxI8TLdLXulDsoUIjH9tQmBojZQBADjdtzVLzXOZZnp3XrH4PfXMW9uCGDBmdNV/ALx0GpY7Z9petdl+EzPdNlMLp1CABCRPmneLDbdLQ5cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+eh1pKeIxV03dcNuVirnOFD4gdrZOVgb7KepsPOc5SI=;
+ b=P1bJhAGJvVhrXTQDbGjpwGx3fqIP8camDV8AfJntKch2OpEwuE4YepbaaIrtyd4lAEHuiR06XKrkdhOxAf1/OPhFcv7/CdrkoVNVmQ5qqrihHRdlI6u+lhJ3IQBh8XDLKYbhRqoxXIrf0vPDGsdFlW/ZHPKl+GF5K+Ft1gqOyFY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by DM6PR19MB4183.namprd19.prod.outlook.com (2603:10b6:5:2bf::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.22; Sat, 10 Sep
+ 2022 13:03:47 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::317e:e5b2:ce73:26c6]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::317e:e5b2:ce73:26c6%6]) with mapi id 15.20.5612.022; Sat, 10 Sep 2022
+ 13:03:46 +0000
+Message-ID: <4a08f1e5-8a8e-b8bd-6c67-2579e07cab4a@ddn.com>
+Date:   Sat, 10 Sep 2022 15:03:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for
+ passthrough
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20210125153057.3623715-1-balsini@android.com>
+ <20210125153057.3623715-4-balsini@android.com>
+ <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
+ <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
+ <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
+ <YD0evc676pdANlHQ@google.com>
+ <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
+ <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
+ <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
+Content-Language: de-CH
+From:   Bernd Schubert <bschubert@ddn.com>
+In-Reply-To: <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0046.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:34a::11) To DM5PR1901MB2037.namprd19.prod.outlook.com
+ (2603:10b6:4:aa::29)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM5PR1901MB2037:EE_|DM6PR19MB4183:EE_
+X-MS-Office365-Filtering-Correlation-Id: e921f85c-efd7-4d98-9f2e-08da932ce57a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MruQumJVvPZQLkek3WX/ZLvyxTuaHmIGQGNJpyVSLq4J8AwRxNCRpfrgOqttuuZUh/522vnXWv79ICZXrUW3kWnXu5RFkPanmT7+wF/p+XpLZSySFexlZohq6z59WziqnL5Rf5hGjkTjbRGI2WEjFpNYf1GgHxPVVyhCH4KXFbRuvPNUWEDCBNquDoH/n6HUDGy5RdQIML/kVPXmdNKtW1mKAUfLwdtPJl3cOI94PmF4OrBFvJIoiQU+qMdKAje5+3yJP2thaFqwo8H4dpUTwYM5RWygnv7OXa9B/gt8LzyMer9fJbQI95srFWCrh8HvJQ1u0Ae4ovFA9gZB5g2CHSTwwRwBBj96dCAqf3zX81CeIYmutGzRVwdLw2SFshQiWPUF8AtAl9EV1ClYtCELUx3G442bOds7wk76YZqe3QhqQkrOdj+IYbvdTEQJ86bcWTBdPr9kn0AyEzPLqxRU2cw43r3/V9HRS4w2IUN4qUiYFnxw7DRJd+BqO0XvVru2Xm/p1PKfC61NJfizrl8cWQ0+rZbPEGdY+ecHkkG3chWsNZk9mxINk0x5k2HEKm35ppSb5cYfIHqNJKSIn5yK6C1lJxhragW0rH4zY7DMQZWQ9aMJ9eioS7oxosNAogqx5Gg5wnuh8GwJYbegjy5qVcXmvaSp0zEgU4hBSts1J9ilRzfWGnLYzezOh4yLSh67PBtfpDO4vZrOlkceLFGQOq2lL4DJ+rAbk2dyX3gAIsSN97FLkmZH3vjLeaTuTtDE/IMiUPl++oCeKnvtv7el96zP6iG3/GPfkLCnvpI/7/0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39850400004)(396003)(366004)(346002)(376002)(136003)(86362001)(31696002)(38100700002)(66476007)(66556008)(66946007)(4326008)(8676002)(6666004)(5660300002)(7416002)(41300700001)(8936002)(110136005)(54906003)(6486002)(478600001)(316002)(4744005)(6512007)(2906002)(6506007)(186003)(2616005)(31686004)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dzZvVWJOd0NrQ0djSGNIZ1RPRVo5ZG41YWwyQmNQSTM1Y1YyWjNjNFlCNkRn?=
+ =?utf-8?B?MVA5TXlBbDUyenYwUlJmVnZ4RnhXY1dCMnBzZzVSV2g2a1NwMkp5elpoZHll?=
+ =?utf-8?B?M3RJRGJKS0JpMUlpQkYwT3ExemZEN2hUNEhrNjdaMVU1RkVDdjFuODhzSGNS?=
+ =?utf-8?B?NURkYm9ZeHE1eUllNzMxdnpId1JNaUMvNkZoMlR2WkozdnpjdXozNkJYMlI2?=
+ =?utf-8?B?OFVRaGRwTWtqNmNKcXFPaDBabndjUE1YVk04c091ZHJBYTF2YTBuMzgzN3F1?=
+ =?utf-8?B?TkdMdkF6V1dCY29ka2ZkeTBQelZac2lZZnd6TnVuNkhpNEhHV3VFenpwU2k2?=
+ =?utf-8?B?N1RCcU16c3huWUhoTllKQklXcjhNQXJid256VWw1eXlGbjlQVW55bUcxQXJq?=
+ =?utf-8?B?L20waDhLYVc1dlVNSUFsNXk5cWdRcnMyTVlPaEhpYzhUdUg4dUNUQ1p4QVBM?=
+ =?utf-8?B?L1lMQTBhanpaamNwblV0Syt1cGM1c1JBRDNObnVxU1JjcWlobmE1MHE4eDB1?=
+ =?utf-8?B?MWZEVmF1WUpvVHhiQW9XMTFQeTVReEVNNk5BL2c0cUpyMnF1Z1pnQzR3SVpn?=
+ =?utf-8?B?RmxPRW1HU1YxSTlpZnU2ODdmTmRwRjZUdXVCQVF4ZjhvdzhhVFFIbzhQK0pY?=
+ =?utf-8?B?b1RCK2ZhZ0Y1TStKWEl4L2VvYlJwUVpweWRxQkF2dm01Unp3VTRhU3U5QjJp?=
+ =?utf-8?B?Z2drT2lnbzB2aXFRYXNNS0toK0xyaXpSQzBOM1ZoSW9ueDROMm81TituQWtz?=
+ =?utf-8?B?aDYvYzM4aUN1R2RlUVY4VURtc2NOMFZrSWo4VWdvUGtNZzdVZnE0VlZhaWdW?=
+ =?utf-8?B?bEJrMzdDbDI3dlVkODFkTUxBY1pKWmJXUFRxS2Rxem4vcmhPblJPb3lSOXJ5?=
+ =?utf-8?B?NjlNdFl2OEFyYmRtcDFibkE1Yy9qUHlmZ25heUZISEdsSkdocTc4YUdXdVBz?=
+ =?utf-8?B?dVU1aytQUnJTa1Q1TFIyRmMxNFJ1N0plZDhHRHF4cUQwdGovSEtNKzVCSnFH?=
+ =?utf-8?B?b3BKWHhCN3ZzSzhHN0pBNEk4VXFGNTd2UmsyWmtBNThzQVo0LzMrQnJZcWRV?=
+ =?utf-8?B?NFpXdlRaVTJHUnpCbFB3dGlITEFiMnNXZVRoaU9TNlJ4aGtMaHg3bGFSU2s1?=
+ =?utf-8?B?Y3NnQTYwa2pnQUdVMUN4QUJWaVpOVHN6N1RjbjhLMTNvMWh3U2h1Q0RwZ0l5?=
+ =?utf-8?B?NU1ld0d0QmVWT3ZnTER4SGZ5UWV3VXNkRjhnVFd5VHgwMlB0YUtIS1FsQS9Z?=
+ =?utf-8?B?VWVUL21EcDd6UkZHcS9LT1VGV2UzKytjTDkvMnVxeWtkTnBmTG5lbWppNlg4?=
+ =?utf-8?B?VlFMQVQzbFVqdzFBMmZGYllvVzRmTnZBb2J4RWJwZEhZZVQ1ZW4vSU51RkJn?=
+ =?utf-8?B?b1lEaWpycGx1ekR4QWJrSzNlZ0lGSlZzSkU2V3Zqb1V3eDdFSzdUaE82U29E?=
+ =?utf-8?B?K1NDd1ZXUitnSFNPS2IxQTRzZUpVWE1RbTAyU1FrQmJ4M2EvWEU1L2tmZUtC?=
+ =?utf-8?B?SFJUbnAvdngvTFZyRThnbnVoSkM0Z21kQkpyVDQ1eU9hREZOR0pOaitYV1RD?=
+ =?utf-8?B?bW01WEFrUDVDM2wwcFc2TDJGRnpiMU44dWtJNTRoZmd3alVVb2NIR0xVVzd4?=
+ =?utf-8?B?Zm4zcStvdURPMk12NWVhRzBEMkFRbXRhL2o3UDNBYytLbXAweFlUQ0kzalYw?=
+ =?utf-8?B?aWNmTW1PQndQeFJRN1dkL3o5NmdRT2M2bmhVU25rWHh2R2ZES1p3cFBPb1dw?=
+ =?utf-8?B?c3hqNjAwZjJhMDUwV1BwQSs5dW1CMTlZeFVGQmJlUkxPOG5hUmhleUJmS1J4?=
+ =?utf-8?B?cHNraUE5MldOc3pQVXB3MFdDKzdnQnUydUx6S1JodWxweCt0S2FCUXRDMkJw?=
+ =?utf-8?B?TGR1RnIyeFVEY0toVENHd3llUmJaT0dmRnc5ZFNlcW9BSDlhdDVZaXlJZXhX?=
+ =?utf-8?B?KzN5M0EzWGtqQ3dHZnJXNTFsQ1pZUjRmV3dSR3ZIcjFtazlwbHZRTzVZT1VX?=
+ =?utf-8?B?eFc5Q296OUphdTdCUWN0c3JRZ0JxYm9SMVVGa0hWYkFqYTFSVEdtZ3gwQ1Zv?=
+ =?utf-8?B?TzExZ1RWVFJlb01ZZGJRVkFFamYvVEJnK0V4Ykt1UElnSzlmNUw4ai9MRERI?=
+ =?utf-8?B?czE2NTNWb2RZZVlKZXFUK1JZN3Q2MFRXNE9id3l3YXMwUlJhMDUxTFpvRjQy?=
+ =?utf-8?Q?ctwzHaEtdMrVfstiBWj/ihEjuS1DBTDjagYUVHLDTKLO?=
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e921f85c-efd7-4d98-9f2e-08da932ce57a
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2022 13:03:46.6865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WEtbhwhR7iJKkEng7iDw495RX5avjj/7KgqHAFJ4FS9dhzJTxsk0R3I8+YzIx+e4nYMfyEti5lqenUSpZ24MZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4183
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-09-09 at 16:41 +1000, NeilBrown wrote:
-> > On Fri, 09 Sep 2022, Trond Myklebust wrote:
-> > > > On Fri, 2022-09-09 at 01:10 +0000, Trond Myklebust wrote:
-> > > > > > On Fri, 2022-09-09 at 11:07 +1000, NeilBrown wrote:
-> > > > > > > > On Fri, 09 Sep 2022, NeilBrown wrote:
-> > > > > > > > > > On Fri, 09 Sep 2022, Trond Myklebust wrote:
-> > > > > > > > > >=20
-> > > > > > > > > > > >=20
-> > > > > > > > > > > > IOW: the minimal condition needs to be that for all=
- cases
-> > > > > > > > > > > > below,
-> > > > > > > > > > > > the
-> > > > > > > > > > > > application reads 'state B' as having occurred if a=
-ny data was
-> > > > > > > > > > > > committed to disk before the crash.
-> > > > > > > > > > > >=20
-> > > > > > > > > > > > Application=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0Filesystem
-> > > > > > > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> > > > > > > > > > > > read change attr <- 'state A'
-> > > > > > > > > > > > read data <- 'state A'
-> > > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0write =
-data -> 'state B'
-> > > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0<crash=
->+<reboot>
-> > > > > > > > > > > > read change attr <- 'state B'
-> > > > > > > > > >=20
-> > > > > > > > > > The important thing here is to not see 'state A'.=A0 Se=
-eing 'state
-> > > > > > > > > > C'
-> > > > > > > > > > should be acceptable.=A0 Worst case we could merge in w=
-all-clock
-> > > > > > > > > > time
-> > > > > > > > > > of
-> > > > > > > > > > system boot, but the filesystem should be able to be mo=
-re helpful
-> > > > > > > > > > than
-> > > > > > > > > > that.
-> > > > > > > > > >=20
-> > > > > > > >=20
-> > > > > > > > Actually, without the crash+reboot it would still be accept=
-able to
-> > > > > > > > see
-> > > > > > > > "state A" at the end there - but preferably not for long.
-> > > > > > > > From the NFS perspective, the changeid needs to update by t=
-he time
-> > > > > > > > of
-> > > > > > > > a
-> > > > > > > > close or unlock (so it is visible to open or lock), but bef=
-ore that
-> > > > > > > > it
-> > > > > > > > is just best-effort.
-> > > > > >=20
-> > > > > > Nope. That will inevitably lead to data corruption, since the
-> > > > > > application might decide to use the data from state A instead o=
-f
-> > > > > > revalidating it.
-> > > > > >=20
-> > > >=20
-> > > > The point is, NFS is not the only potential use case for change
-> > > > attributes. We wouldn't be bothering to discuss statx() if it was.
-> >=20
-> > My understanding is that it was primarily a desire to add fstests to
-> > exercise the i_version which motivated the statx extension.
-> > Obviously we should prepare for other uses though.
-> >=20
 
-Mainly. Also, userland nfs servers might also like this for obvious
-reasons. For now though, in the v5 set, I've backed off on trying to
-expose this to userland in favor of trying to just clean up the internal
-implementation.
 
-I'd still like to expose this via statx if possible, but I don't want to
-get too bogged down in interface design just now as we have Real Bugs to
-fix. That patchset should make it simple to expose it later though.
+> 
+> BTW, I see that the Android team is presenting eBPF-FUSE on LPC
+> coming Tuesday [1].
+> 
+> There are affordable and free options to attend virtually [2].
+> 
+> I wonder when patches will be available ;)
 
-> > > >=20
-> > > > I could be using O_DIRECT, and all the tricks in order to ensure
-> > > > that
-> > > > my stock broker application (to choose one example) has access
-> > > > to the
-> > > > absolute very latest prices when I'm trying to execute a trade.
-> > > > When the filesystem then says 'the prices haven't changed since
-> > > > your
-> > > > last read because the change attribute on the database file is
-> > > > the
-> > > > same' in response to a statx() request with the
-> > > > AT_STATX_FORCE_SYNC
-> > > > flag set, then why shouldn't my application be able to assume it
-> > > > can
-> > > > serve those prices right out of memory instead of having to go
-> > > > to disk?
-> >=20
-> > I would think that such an application would be using inotify rather
-> > than having to poll.  But certainly we should have a clear statement
-> > of
-> > quality-of-service parameters in the documentation.
-> > If we agree that perfect atomicity is what we want to promise, and
-> > that
-> > the cost to the filesystem and the statx call is acceptable, then so
-> > be it.
-> >=20
-> > My point wasn't to say that atomicity is bad.  It was that:
-> > =A0- if the i_version change is visible before the change itself is
-> > =A0=A0=A0visible, then that is a correctness problem.
-> > =A0- if the i_version change is only visible some time after the
-> > change
-> > =A0=A0=A0itself is visible, then that is a quality-of-service issue.
-> > I cannot see any room for debating the first.  I do see some room to
-> > debate the second.
-> >=20
-> > Cached writes, directory ops, and attribute changes are, I think,
-> > easy
-> > enough to provide truly atomic i_version updates with the change
-> > being
-> > visible.
-> >=20
-> > Changes to a shared memory-mapped files is probably the hardest to
-> > provide timely i_version updates for.  We might want to document an
-> > explicit exception for those.  Alternately each request for
-> > i_version
-> > would need to find all pages that are writable, remap them read-only
-> > to
-> > catch future writes, then update i_version if any were writable
-> > (i.e.
-> > ->mkwrite had been called).  That is the only way I can think of to
-> > provide atomicity.
-> >=20
+Oh interesting. Btw, I'm currently working on uring communication, 
+similar to what ublk is doing, I hope to have a very first version by 
+next week.
 
-I don't think we really want to make i_version bumps that expensive.
-Documenting that you can't expect perfect consistency vs. mmap with NFS
-seems like the best thing to do. We do our best, but that sort of
-synchronization requires real locking.
-
-> > O_DIRECT writes are a little easier than mmapped files.  I suspect we
-> > should update the i_version once the device reports that the write is
-> > complete, but a parallel reader could have seem some of the write befor=
-e
-> > that moment.  True atomicity could only be provided by taking some
-> > exclusive lock that blocked all O_DIRECT writes.  Jeff seems to be
-> > suggesting this, but I doubt the stock broker application would be
-> > willing to make the call in that case.  I don't think I would either.
-
-Well, only blocked for long enough to run the getattr. Granted, with a
-slow underlying filesystem that can take a while.
-
-To summarize, there are two main uses for the change attr in NFSv4:
-
-1/ to provide change_info4 for directory morphing operations (CREATE,
-LINK, OPEN, REMOVE, and RENAME). It turns out that this is already
-atomic in the current nfsd code (AFAICT) by virtue of the fact that we
-hold the i_rwsem exclusively over these operations. The change attr is
-also queried pre and post while the lock is held, so that should ensure
-that we get true atomicity for this.
-
-2/ as an adjunct for the ctime when fetching attributes to validate
-caches. We don't expect perfect consistency between read (and readlike)
-operations and GETATTR, even when they're in the same compound.
-
-IOW, a READ+GETATTR compound can legally give you a short (or zero-
-length) read, and then the getattr indicates a size that is larger than
-where the READ data stops, due to a write or truncate racing in after
-the read.
-
-Ideally, the attributes in the GETATTR reply should be consistent
-between themselves though. IOW, all of the attrs should accurately
-represent the state of the file at a single point in time.
-change+size+times+etc. should all be consistent with one another.
-
-I think we get all of this by taking the inode_lock around the
-vfs_getattr call in nfsd4_encode_fattr. It may not be the most elegant
-solution, but it should give us the atomicity we need, and it doesn't
-require adding extra operations or locking to the write codepaths.
-
-We could also consider less invasive ways to achieve this (maybe some
-sort of seqretry loop around the vfs_getattr call?), but I'd rather not
-do extra work in the write codepaths if we can get away with it.
---=20
-Jeff Layton <jlayton@kernel.org>
-
+Bernd
