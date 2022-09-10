@@ -2,165 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF7F5B44CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Sep 2022 08:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7BC5B44DA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Sep 2022 09:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230311AbiIJGvh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Sep 2022 02:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53932 "EHLO
+        id S230336AbiIJHGa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Sep 2022 03:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiIJGva (ORCPT
+        with ESMTP id S230250AbiIJHG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Sep 2022 02:51:30 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC06D760FA;
-        Fri,  9 Sep 2022 23:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Bj6Wxth2LNlOrb9ptrXcpFWJGYrnuyA2Icp7ZXfeW/o=; b=K2RnBhW7QUIkDosGrl4GPsn3WL
-        puVVLQPIHR+oiYIc0dCiAWg+BoaPF8fvXmI4e2zGOB0616LPS5EAr/7le5HmA7pYGWsCs5nftgX/M
-        2hkMrWbjbXBoEZ479tAk2Vo+2eP6ql/aFbRT/g5HHwiGsclbr/+8TZzCo2c78a9DVQWiXf62EGI/c
-        achcb3IFQdWr2jdFOKpg/Yi7UDa3pHtmwSLvTJmAsfwkCPyr5BdhV7dmrIvtZL4aEQHUAVVIVRAS2
-        bYBTfNySyorNvWtavgLy5TTGayzG7SaZUQo1VrHGyISynz0lpOmzunL//qKfUZN3qe1lO5DVavmbc
-        5CYi4Y4g==;
-Received: from [2001:4bb8:198:38af:e8dc:dbbd:a9d:5c54] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oWuKl-006pbo-MI; Sat, 10 Sep 2022 06:51:20 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-mm@kvack.org
-Subject: [PATCH 5/5] block: remove PSI accounting from the bio layer
-Date:   Sat, 10 Sep 2022 08:50:58 +0200
-Message-Id: <20220910065058.3303831-6-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220910065058.3303831-1-hch@lst.de>
-References: <20220910065058.3303831-1-hch@lst.de>
+        Sat, 10 Sep 2022 03:06:28 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B968A50E2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Sep 2022 00:06:27 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id h9-20020a056e021b8900b002f19c2a1836so2847362ili.23
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Sep 2022 00:06:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=XP1LI8NcKR+9TVUxI4qqPfuHZdM2tMsbF2kgKFjeSss=;
+        b=UWTLTRoRw4it2H0O4bCrLFrLrjYP3klSlg21LhhhYqFOBSNsyBbXJ8V2qhdeIPfxAz
+         EF+KobUXQwQsp7w++ZVdv1i1tyAkZxKLs3RE+cMkpbSa7DUzRSjvUmW429SlUz0LxiGi
+         aYrzkD1M1acukxv4T+1kgntaDwg9xOcIKlNA1GQZsgKcsCzktivfrXclc9hWq+Q4j9E8
+         P4isqMXuALI3vhGXprrYH3NbLehnR1UZDJ6XdEwZ35xoki5sVPtjOup+D0G1AHIS6W+v
+         xvNWhlH3wirInUvaEFZlKiinyMCCbRmvXHrB2Is97RiHlI67359OuAUGJipUC45kUF+u
+         Prcw==
+X-Gm-Message-State: ACgBeo1Prgqg1mUrgeTbVXpLUYDTA5JfwQnR8yPyqZwfbhdr7Pb+NRo+
+        NcqNXBDm+GHcIbhKc88BfLdjx7R9mMgGnBRROYMwKd4aiIMy
+X-Google-Smtp-Source: AA6agR67gVP7MlrDhVaHS9c4FIkpzJwKgUpUNVTNDZdE0CQtoKI+V5pi0hvdqXsvcVXHYTh8cegg//vFgM8fXPsV5xMG8Bx2fsb4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:1493:b0:34c:d98:e49c with SMTP id
+ j19-20020a056638149300b0034c0d98e49cmr8963836jak.86.1662793586979; Sat, 10
+ Sep 2022 00:06:26 -0700 (PDT)
+Date:   Sat, 10 Sep 2022 00:06:26 -0700
+In-Reply-To: <0000000000002709ae05e5b6474c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001639b405e84d4d31@google.com>
+Subject: Re: [syzbot] INFO: task hung in __filemap_get_folio
+From:   syzbot <syzbot+0e9dc403e57033a74b1d@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PSI accounting is now done by the VM code, where it should have been
-since the beginning.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/bio.c               |  8 --------
- block/blk-core.c          | 17 -----------------
- fs/direct-io.c            |  2 --
- include/linux/blk_types.h |  1 -
- 4 files changed, 28 deletions(-)
+HEAD commit:    e47eb90a0a9a Add linux-next specific files for 20220901
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e05825080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7933882276523081
+dashboard link: https://syzkaller.appspot.com/bug?extid=0e9dc403e57033a74b1d
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116a3953080000
 
-diff --git a/block/bio.c b/block/bio.c
-index 3d3a2678fea25..d10c4e888cdcf 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1065,9 +1065,6 @@ void __bio_add_page(struct bio *bio, struct page *page,
- 
- 	bio->bi_iter.bi_size += len;
- 	bio->bi_vcnt++;
--
--	if (!bio_flagged(bio, BIO_WORKINGSET) && unlikely(PageWorkingset(page)))
--		bio_set_flag(bio, BIO_WORKINGSET);
- }
- EXPORT_SYMBOL_GPL(__bio_add_page);
- 
-@@ -1276,9 +1273,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-  * fit into the bio, or are requested in @iter, whatever is smaller. If
-  * MM encounters an error pinning the requested pages, it stops. Error
-  * is returned only if 0 pages could be pinned.
-- *
-- * It's intended for direct IO, so doesn't do PSI tracking, the caller is
-- * responsible for setting BIO_WORKINGSET if necessary.
-  */
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
-@@ -1294,8 +1288,6 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 		ret = __bio_iov_iter_get_pages(bio, iter);
- 	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
- 
--	/* don't account direct I/O as memory stall */
--	bio_clear_flag(bio, BIO_WORKINGSET);
- 	return bio->bi_vcnt ? 0 : ret;
- }
- EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
-diff --git a/block/blk-core.c b/block/blk-core.c
-index a0d1104c5590c..9e19195af6f5b 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -37,7 +37,6 @@
- #include <linux/t10-pi.h>
- #include <linux/debugfs.h>
- #include <linux/bpf.h>
--#include <linux/psi.h>
- #include <linux/part_stat.h>
- #include <linux/sched/sysctl.h>
- #include <linux/blk-crypto.h>
-@@ -829,22 +828,6 @@ void submit_bio(struct bio *bio)
- 		count_vm_events(PGPGOUT, bio_sectors(bio));
- 	}
- 
--	/*
--	 * If we're reading data that is part of the userspace workingset, count
--	 * submission time as memory stall.  When the device is congested, or
--	 * the submitting cgroup IO-throttled, submission can be a significant
--	 * part of overall IO time.
--	 */
--	if (unlikely(bio_op(bio) == REQ_OP_READ &&
--	    bio_flagged(bio, BIO_WORKINGSET))) {
--		unsigned long pflags;
--
--		psi_memstall_enter(&pflags);
--		submit_bio_noacct(bio);
--		psi_memstall_leave(&pflags);
--		return;
--	}
--
- 	submit_bio_noacct(bio);
- }
- EXPORT_SYMBOL(submit_bio);
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index f669163d5860f..03d381377ae10 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -421,8 +421,6 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
- 	unsigned long flags;
- 
- 	bio->bi_private = dio;
--	/* don't account direct I/O as memory stall */
--	bio_clear_flag(bio, BIO_WORKINGSET);
- 
- 	spin_lock_irqsave(&dio->bio_lock, flags);
- 	dio->refcount++;
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 1ef99790f6ed3..8b1858df21752 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -321,7 +321,6 @@ enum {
- 	BIO_NO_PAGE_REF,	/* don't put release vec pages */
- 	BIO_CLONED,		/* doesn't own data */
- 	BIO_BOUNCED,		/* bio is a bounce bio */
--	BIO_WORKINGSET,		/* contains userspace workingset pages */
- 	BIO_QUIET,		/* Make BIO Quiet */
- 	BIO_CHAIN,		/* chained bio, ->bi_remaining in effect */
- 	BIO_REFFED,		/* bio has elevated ->bi_cnt */
--- 
-2.30.2
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0e9dc403e57033a74b1d@syzkaller.appspotmail.com
+
+INFO: task syz-executor.3:5563 blocked for more than 143 seconds.
+      Not tainted 6.0.0-rc3-next-20220901-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.3  state:D
+ stack:26944 pid:5563  ppid:3713   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5197 [inline]
+ __schedule+0xae5/0x52c0 kernel/sched/core.c:6509
+ schedule+0xda/0x1b0 kernel/sched/core.c:6585
+ io_schedule+0xba/0x130 kernel/sched/core.c:8729
+ folio_wait_bit_common+0x49f/0xa20 mm/filemap.c:1295
+ __folio_lock mm/filemap.c:1658 [inline]
+ folio_lock include/linux/pagemap.h:939 [inline]
+ folio_lock include/linux/pagemap.h:935 [inline]
+ __filemap_get_folio+0xc6d/0xed0 mm/filemap.c:1930
+ truncate_inode_pages_range+0x37c/0x1510 mm/truncate.c:378
+ ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1741
+ evict+0x2ed/0x6b0 fs/inode.c:666
+ iput_final fs/inode.c:1749 [inline]
+ iput.part.0+0x55d/0x810 fs/inode.c:1775
+ iput+0x58/0x70 fs/inode.c:1765
+ ntfs_fill_super+0x2309/0x37f0 fs/ntfs3/super.c:1278
+ get_tree_bdev+0x440/0x760 fs/super.c:1323
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1530
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1326/0x1e20 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f62c488a8fa
+RSP: 002b:00007fff05d56558 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f62c488a8fa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff05d565b0
+RBP: 00007fff05d565f0 R08: 00007fff05d565f0 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000000
+R13: 0000000020000100 R14: 00007fff05d565b0 R15: 000000002007aa80
+ </TASK>
+NMI backtrace for cpu 1
+CPU: 1 PID: 28 Comm: khungtaskd Not tainted 6.0.0-rc3-next-20220901-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ nmi_cpu_backtrace.cold+0x46/0x14f lib/nmi_backtrace.c:111
+ nmi_trigger_cpumask_backtrace+0x206/0x250 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:148 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:227 [inline]
+ watchdog+0xcf7/0xfd0 kernel/hung_task.c:384
+ kthread+0x2e4/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 2973 Comm: udevd Not tainted 6.0.0-rc3-next-20220901-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
+RIP: 0033:0x7f2aff58ebf8
+Code: f8 c5 fa 7e 0f c5 fa 7e 16 c5 e9 74 d1 c5 f9 d7 c2 2d ff ff 00 00 0f 85 06 ff ff ff c3 0f 1f 44 00 00 c5 fa 6f 16 c5 e9 74 17 <c5> f9 d7 c2 2d ff ff 00 00 0f 85 e9 fe ff ff 48 8d 7c 17 f0 48 8d
+RSP: 002b:00007fff5dda79e8 EFLAGS: 00000206
+RAX: 0000000000000007 RBX: 000055e68d0e4a70 RCX: 0000000000000000
+RDX: 000000000000001c RSI: 000055e68d0e44b4 RDI: 000055e68cdc2e44
+RBP: 000055e68cdc3380 R08: 000000000000001c R09: 000000000000001c
+R10: 0000000000000002 R11: 0000000000000020 R12: 0000000000003a94
+R13: 0000000000000703 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f2aff8ae840 GS:  0000000000000000
 
