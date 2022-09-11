@@ -2,110 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 718035B4F8A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Sep 2022 16:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735B95B4F5C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Sep 2022 16:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiIKO7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Sep 2022 10:59:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34576 "EHLO
+        id S230324AbiIKOGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Sep 2022 10:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiIKO7g (ORCPT
+        with ESMTP id S231183AbiIKOGZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Sep 2022 10:59:36 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BE02DC2;
-        Sun, 11 Sep 2022 07:59:35 -0700 (PDT)
-Received: from letrec.thunk.org ([185.122.133.20])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 28BExOjt020167
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 11 Sep 2022 10:59:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1662908368; bh=hJPv6652ahb8MzC7fon360LOpHJzm2WnHUULBpAhCsc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=ThyXbfr1ATcEaJinbd0Uqg13ruenlZfVebuM/ldJZzA44E2aHRatcfrYgqFfu4vSv
-         px5j5djDgx4wf6WevzLHpeqPret3cjWwhQmYwfvDKbF760CuzvQyFVKf51TR3TlAVr
-         GzKvpQlgSF+xGl7b9m/QyK+oc9nXsmMPYrp6RraTRWNhBSOfhx54YOLGLNEskwdv3H
-         ZlL5KLgdO/YnZtHdDxVRpyaHTh/F7XUN9fGrqsQD0ZjvaJ9/MD9FMvrBET76IYq+sG
-         10UpHnWdXMRtoDP6yC93KXs3qItAHtc6N4FSu0UrMs7pV1V8cGKWeeThfJOg0JTDb0
-         NLnpmE9QuQSXQ==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id 64D338C0D1A; Sun, 11 Sep 2022 06:00:41 -0400 (EDT)
-Date:   Sun, 11 Sep 2022 06:00:41 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        battery dude <jyf007@gmail.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: Does NFS support Linux Capabilities
-Message-ID: <Yx2xyW5n0ECZX9bJ@mit.edu>
-References: <CAMBbDaF2Ni0gMRKNeFTQwgAOPPYy7RLXYwDJyZ1edq=tfATFzw@mail.gmail.com>
- <1D8F1768-D42A-4775-9B0E-B507D5F9E51E@oracle.com>
- <YxsGIoFlKkpQdSDY@mit.edu>
- <8865e109-3ec6-f848-8014-9fe58e3876f4@schaufler-ca.com>
+        Sun, 11 Sep 2022 10:06:25 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F0D3718D;
+        Sun, 11 Sep 2022 07:05:20 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id bz13so11360069wrb.2;
+        Sun, 11 Sep 2022 07:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date;
+        bh=xy3jsuuJ4zCilYhU/W2SjNwM7uHu+A5Gny+CvFwYDsg=;
+        b=Wr88NjqVdeLxNuJK2qDGSr5jxWXMLViXiciXRO0sBOX6KppOCOoRD72kKQP3HnYJXB
+         V9HRjTKZQgysqG+dw5yqP13iZxNNpzmuDLjVZw4qUW9SH8EXZR9qfhJqotqlBwxBUhNL
+         +SD+1JTD7Tnou9aBRX/FBc418NIWpUXEeD0sjH+wA34w2GxZIlqZ8CLL95x9I5re2S+r
+         J9+vJeUZrJaDF36svxEpIDpTzTJioPHx7ee59uWIPEqAaTE1I4bscmq3o4lOO/PpvLjf
+         RamzIiR0KHPCrYxqmrsiGdSlZs4RWFC7wt5eKZEjSKB9fhQ7Xqou8/WLW/b6QH5TA74u
+         RneA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=xy3jsuuJ4zCilYhU/W2SjNwM7uHu+A5Gny+CvFwYDsg=;
+        b=32xT7MmAI0IPmy5wklttv4J9u9k/GWKwkPBmFxKWEgFfPjHneQEgvaZ/Cyc2TDChFD
+         JQo1xTNvd+gkB+T8Lpohw3xVj52LnJKxJeMiM3bSjHxS7pXq9FMRJpFDNUzAqonP3lDi
+         kceQy4wKCm3FvgtoPF1ugZa6HADVndaRXOWuxXXbgTJhQ2ITtyYq7tzdDXMFCN7DvDVa
+         LXzVHGuEl7dVHwKdlOjIjTPgJFrIrc3uec/m1TkQ4cL2vIm9ZhhvDxWfhpq6JVeu7++r
+         Vl9W66aLUltVkX7pLLMx3jtTcLlM8I4v6YizUlCiJblsaUj/fZ2MaAUTrN4xvzbN6fJ7
+         Nz8A==
+X-Gm-Message-State: ACgBeo3GoQHjDTx/AWX64puyme/nORiW5wqOY62v9YV61k93KvAOZhYN
+        21BtU741wSGuMPs3m7IplxxBO6PY2g==
+X-Google-Smtp-Source: AA6agR63qcc4iXO1scAzZ86HQ62Pk96zE2n/4eJyjWw0bZklQp7Ud1n/HnzBrqsKizfq+PTWMgrRTg==
+X-Received: by 2002:a5d:4ec5:0:b0:228:6707:8472 with SMTP id s5-20020a5d4ec5000000b0022867078472mr13234861wrv.12.1662905118237;
+        Sun, 11 Sep 2022 07:05:18 -0700 (PDT)
+Received: from playground (host-92-29-143-165.as13285.net. [92.29.143.165])
+        by smtp.gmail.com with ESMTPSA id cl2-20020a5d5f02000000b0022a9246c853sm59955wrb.41.2022.09.11.07.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Sep 2022 07:05:17 -0700 (PDT)
+Date:   Sun, 11 Sep 2022 15:05:07 +0100
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: Add missing annotation for iput_final()
+Message-ID: <Yx3rE3zkN7p8/Znz@playground>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8865e109-3ec6-f848-8014-9fe58e3876f4@schaufler-ca.com>
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-        DKIM_INVALID,DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 08:59:41AM -0700, Casey Schaufler wrote:
-> 
-> Data General's UNIX system supported in excess of 330 capabilities.
-> Linux is currently using 40. Linux has deviated substantially from
-> the Withdrawn Draft, especially in the handling of effective capabilities.
-> I believe that you could support POSIX capabilities or Linux capabilities,
-> but an attempt to support both is impractical.
+Sparse reports a warning at iput_final()
 
-Yeah, good point, I had forgotten about how we (Linux) ended up
-diverging from POSIX 1.e when we changed how effective capabilities
-were calculated.
+warning: context imbalance in iput_final - unexpected unlock
 
-> Supporting any given UNIX implementation is possible, but once you
-> get past the POSIX defined capabilities into the vendor specific
-> ones interoperability ain't gonna happen.
+The root cause is the missing annotation at iput_final()
 
-And from an NFS perspective, if we had (for example) a Trusted Solaris
-trying to emulate Linux binaries over NFS with capabilities masks, I
-suspect trying to map Linux's Capabilities onto Trusted Solaris's
-implementation of POSIX 1.e would be the least of Oracle's technical
-challenges.  :-)
+Add the missing __releases(&inode->i_lock) annotation
 
-> > .. and this is why the C2 by '92 initiative was doomed to failure,
-> > and why Posix.1e never completed the standardization process.  :-)
-> 
-> The POSIX.1e effort wasn't completed because vendors lost interest
-> in the standards process and because they lost interest in the
-> evaluated security process.
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ fs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It was my sense was that the reason why they lost interested in the
-evaluated security process was simply that the business case didn't
-make any sense.  That is, the $$$ they might get from US Government
-sales was probability not worth the opportunity cost of the engineers
-tasked to work on Trusted {AIX,DG,HPUX,Solaris}.  Heck, I'm not sure
-the revenue would balance out the _costs_, let alone the opportunity
-costs...
+diff --git a/fs/inode.c b/fs/inode.c
+index ba1de23c13c1..a1dd9a976add 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1706,6 +1706,7 @@ EXPORT_SYMBOL(generic_delete_inode);
+  * shutting down.
+  */
+ static void iput_final(struct inode *inode)
++	__releases(&inode->i_lock)
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 	const struct super_operations *op = inode->i_sb->s_op;
+-- 
+2.35.1
 
-> Granularity was always a bone of contention in the working group.
-> What's sad is that granularity wasn't the driving force behind capabilities.
-> The important point was to separate privilege from UID 0. In the end
-> I think we'd have been better off with one capability, CAP_PRIVILEGED,
-> defined in the specification and a note saying that beyond that you were
-> on your own.
-
-Well, hey, we almost have that already, sort of --- CAP_SYS_ADMIN ==
-"root", for almost all intents and purposes.  :-)
-
-						- Ted
