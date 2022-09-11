@@ -2,124 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 344515B507C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Sep 2022 20:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3757C5B50DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Sep 2022 21:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbiIKSMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Sep 2022 14:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
+        id S229636AbiIKT2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Sep 2022 15:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiIKSMT (ORCPT
+        with ESMTP id S229498AbiIKT2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Sep 2022 14:12:19 -0400
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9B022BE8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Sep 2022 11:12:18 -0700 (PDT)
-Received: by mail-vs1-xe30.google.com with SMTP id 129so6850876vsi.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Sep 2022 11:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date;
-        bh=MdACtTIYM/2097Ho5W+lbIMb7ExDthICSGcM+t0t6PY=;
-        b=UCHfYNMXiGi5u8r7iIAJnpWeEXKrqLzz5eoBy0yVj8RWFU0mf1g1fLn9j9wp36/6nl
-         wwSHnKPQnzVdQ6IxrryzUKLCQrqvVrt2hN/FZVQhIqz1XzEhXbmLa4ylpoKYIAT4SkSw
-         K+ZWVTlJ1LCPOvobzbAShGxaM87c8LbV0oGuDJr3RUHz1NSWLpfzV9xg7xsWTWRXeUBu
-         PPjpwnoM04LLutYUFCuFDAevrju6V/5qzK4USCfGV3Idzay3bOXuyQUvqnVg5Z7btZ+M
-         CqqSweQXb6mggN/wf17AMowBKxBrj6A3E7loLcxmqtwcElLBjwi5mjbIB93lm8uINTtM
-         68TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=MdACtTIYM/2097Ho5W+lbIMb7ExDthICSGcM+t0t6PY=;
-        b=ur0Qt6gIlaojQ3FdZR2FLvmusXx/4GvSlHEZLWpEezq+Lc/lyl9ciBEMSXMR4EWBT6
-         6MxRBC7FHfSZd+e9e6avdU26pJ0Rh+SirAMD5Mg0cBHDKxYNBk95nRmn9mfl4CKMROVN
-         H1OHyFWaTtst0pzj0meX2RkCxFrqclZ5LiaGFyYxrQNhQG00LPke4ZkoBjmPUmNibGX6
-         EL8Kt73zmgIB6RrQNud8ulKMwLEEb5qnEW1H8ASvPzAfpZWf/LVKgrL289iW/s9VYNHk
-         ha/xuCvVMn7wyUCtUHkC/OSoQ/3dinBeBs1WboGz7yoCjh/nQ0wmNcewrBV6svQ2geFR
-         XWyA==
-X-Gm-Message-State: ACgBeo0O6Ji2hF2q9E/PY1kwjHp7c8D34wGstUwZ2jouwUA+luZWD1o6
-        G8pDB2aoypzMU/qYCX1dZVgv6idoPuPomw7Gb60KLfQoINU=
-X-Google-Smtp-Source: AA6agR4AtY/ZDVp3Z9juNY3B8HObOAQbWbZ0Ez5GRnePHJmZgkFN4ldtvQ7MI84u9AQKJXnEmfOgjgH4e7pQeedB/IM=
-X-Received: by 2002:a05:6102:14b:b0:398:2e7c:4780 with SMTP id
- a11-20020a056102014b00b003982e7c4780mr5726489vsr.72.1662919937846; Sun, 11
- Sep 2022 11:12:17 -0700 (PDT)
+        Sun, 11 Sep 2022 15:28:16 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA002409B;
+        Sun, 11 Sep 2022 12:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662924495; x=1694460495;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s4EuC07vAwIDjbOA589p6Ip1/+sYbFGuGKpwv4CLn/I=;
+  b=APe6SVxUjmDJSeZm2gCzn13ETF2ODZ7UqnEczuZe+omSblpG9V2vLk6h
+   HOj2TunIf900HL/GyOzw9p4wGgUO3lHux9u78thntqq6MZlqyJfMxVN8q
+   kGokH3QdTUC3tCKr93zMoPdwzxuncoEykY3THUWONNrpgKyGNya//isph
+   FJKp38Or6ac7JbVo+a5t39eJElfjY+XXF/f5ZH6CiKGGwRuIYfuDFq857
+   xgnulWFiTPKSTaAVCcBV+wRZUGCT3Sf09PK/3Kv4LwfWAYt2WpByi0GEa
+   dtPpljy3/rx0D3k8N2RUqLKd5KKUZwae06/1Bly/YCaxF1eUH0FlhOaXh
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10467"; a="384042899"
+X-IronPort-AV: E=Sophos;i="5.93,307,1654585200"; 
+   d="scan'208";a="384042899"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2022 12:28:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,307,1654585200"; 
+   d="scan'208";a="860940810"
+Received: from lkp-server02.sh.intel.com (HELO 4011df4f4fd3) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Sep 2022 12:28:10 -0700
+Received: from kbuild by 4011df4f4fd3 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oXSce-0001ix-1o;
+        Sun, 11 Sep 2022 19:28:04 +0000
+Date:   Mon, 12 Sep 2022 03:27:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrei Vagin <avagin@google.com>, linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-ia64@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel@openvz.org
+Subject: Re: [PATCH v3 1/2] Add CABA tree to task_struct
+Message-ID: <202209120356.YizhqUik-lkp@intel.com>
+References: <20220908140313.313020-2-ptikhomirov@virtuozzo.com>
 MIME-Version: 1.0
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 11 Sep 2022 21:12:06 +0300
-Message-ID: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
-Subject: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220908140313.313020-2-ptikhomirov@virtuozzo.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+Hi Pavel,
 
-I wanted to consult with you about preliminary design thoughts
-for implementing a hierarchical storage manager (HSM)
-with fanotify.
+Thank you for the patch! Perhaps something to improve:
 
-I have been in contact with some developers in the past
-who were interested in using fanotify to implement HSM
-(to replace old DMAPI implementation).
+[auto build test WARNING on shuah-kselftest/next]
+[also build test WARNING on kees/for-next/execve tip/sched/core linus/master v6.0-rc4 next-20220909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
-should be enough to implement a basic HSM, but it is not
-sufficient for implementing more advanced HSM features.
+url:    https://github.com/intel-lab-lkp/linux/commits/Pavel-Tikhomirov/Introduce-CABA-helper-process-tree/20220908-220639
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+config: ia64-randconfig-s041-20220911 (https://download.01.org/0day-ci/archive/20220912/202209120356.YizhqUik-lkp@intel.com/config)
+compiler: ia64-linux-gcc (GCC) 12.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-39-gce1a6720-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/17a897a33137d4f49f99c8be8d619f6f711fccdb
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Pavel-Tikhomirov/Introduce-CABA-helper-process-tree/20220908-220639
+        git checkout 17a897a33137d4f49f99c8be8d619f6f711fccdb
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=ia64 SHELL=/bin/bash arch/ia64/kernel/
 
-Some of the HSM feature that I would like are:
-- blocking hook before access to file range and fill that range
-- blocking hook before lookup of child and optionally create child
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
 
-My thoughts on the UAPI were:
-- Allow new combination of FAN_CLASS_PRE_CONTENT
-  and FAN_REPORT_FID/DFID_NAME
-- This combination does not allow any of the existing events
-  in mask
-- It Allows only new events such as FAN_PRE_ACCESS
-  FAN_PRE_MODIFY and FAN_PRE_LOOKUP
-- FAN_PRE_ACCESS and FAN_PRE_MODIFY can have
-  optional file range info
-- All the FAN_PRE_ events are called outside vfs locks and
-  specifically before sb_writers lock as in my fsnotify_pre_modify [1]
-  POC
+sparse warnings: (new ones prefixed by >>)
+   arch/ia64/kernel/mca.c:504:1: sparse: sparse: symbol 'search_mca_table' was not declared. Should it be static?
+   arch/ia64/kernel/mca.c:607:1: sparse: sparse: symbol 'ia64_mca_register_cpev' was not declared. Should it be static?
+   arch/ia64/kernel/mca.c:831:5: sparse: sparse: symbol 'ia64_mca_ucmc_extension' was not declared. Should it be static?
+   arch/ia64/kernel/mca.c:1793:36: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct [noderef] __rcu *real_parent @@     got struct task_struct *group_leader @@
+   arch/ia64/kernel/mca.c:1793:36: sparse:     expected struct task_struct [noderef] __rcu *real_parent
+   arch/ia64/kernel/mca.c:1793:36: sparse:     got struct task_struct *group_leader
+>> arch/ia64/kernel/mca.c:1796:17: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct [noderef] __rcu *caba @@     got struct task_struct *p @@
+   arch/ia64/kernel/mca.c:1796:17: sparse:     expected struct task_struct [noderef] __rcu *caba
+   arch/ia64/kernel/mca.c:1796:17: sparse:     got struct task_struct *p
+   arch/ia64/kernel/mca.c:2106:43: sparse: sparse: Using plain integer as NULL pointer
 
-That last part is important because the HSM daemon will
-need to make modifications to the accessed file/directory
-before allowing the operation to proceed.
+vim +1796 arch/ia64/kernel/mca.c
 
-Naturally that opens the possibility for new userspace
-deadlocks. Nothing that is not already possible with permission
-event, but maybe deadlocks that are more inviting to trip over.
+  1770	
+  1771	/* Minimal format of the MCA/INIT stacks.  The pseudo processes that run on
+  1772	 * these stacks can never sleep, they cannot return from the kernel to user
+  1773	 * space, they do not appear in a normal ps listing.  So there is no need to
+  1774	 * format most of the fields.
+  1775	 */
+  1776	
+  1777	static void
+  1778	format_mca_init_stack(void *mca_data, unsigned long offset,
+  1779			const char *type, int cpu)
+  1780	{
+  1781		struct task_struct *p = (struct task_struct *)((char *)mca_data + offset);
+  1782		struct thread_info *ti;
+  1783		memset(p, 0, KERNEL_STACK_SIZE);
+  1784		ti = task_thread_info(p);
+  1785		ti->flags = _TIF_MCA_INIT;
+  1786		ti->preempt_count = 1;
+  1787		ti->task = p;
+  1788		ti->cpu = cpu;
+  1789		p->stack = ti;
+  1790		p->__state = TASK_UNINTERRUPTIBLE;
+  1791		cpumask_set_cpu(cpu, &p->cpus_mask);
+  1792		INIT_LIST_HEAD(&p->tasks);
+  1793		p->parent = p->real_parent = p->group_leader = p;
+  1794		INIT_LIST_HEAD(&p->children);
+  1795		INIT_LIST_HEAD(&p->sibling);
+> 1796		p->caba = p;
+  1797		INIT_LIST_HEAD(&p->cabds);
+  1798		INIT_LIST_HEAD(&p->cabd);
+  1799		strncpy(p->comm, type, sizeof(p->comm)-1);
+  1800	}
+  1801	
 
-I am not sure if we need to do anything about this, but we
-could make it easier to ignore events from the HSM daemon
-itself if we want to, to make the userspace implementation easier.
-
-Another thing that might be good to do is provide an administrative
-interface to iterate and abort pending fanotify permission/pre-content
-events.
-
-You must have noticed the overlap between my old persistent
-change tracking journal and this design. The referenced branch
-is from that old POC.
-
-I do believe that the use cases somewhat overlap and that the
-same building blocks could be used to implement a persistent
-change journal in userspace as you suggested back then.
-
-Thoughts?
-
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/fsnotify_pre_modify
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
