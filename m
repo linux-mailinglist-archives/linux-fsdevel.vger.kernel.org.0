@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A293D5B603C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 20:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE795B6076
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 20:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230194AbiILSZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 14:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
+        id S230336AbiILSZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 14:25:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbiILSZZ (ORCPT
+        with ESMTP id S230153AbiILSZ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 14:25:25 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837D613DD2;
-        Mon, 12 Sep 2022 11:25:24 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id b21so9382299plz.7;
-        Mon, 12 Sep 2022 11:25:24 -0700 (PDT)
+        Mon, 12 Sep 2022 14:25:27 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B1E13F1C;
+        Mon, 12 Sep 2022 11:25:26 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id i15-20020a17090a4b8f00b0020073b4ac27so8994280pjh.3;
+        Mon, 12 Sep 2022 11:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=CVjZRQRXjU7sjBLr6rHvAQKfUIl2rAWam+cMUVwdi8E=;
-        b=C8tTc8TnMRmq8rC87xPSSFuWkjT3xmHJ0btLP2zj1KPi/mYfzMf8Rr4ArHYir2v9F0
-         aDLj56lDM+iFTWk/zg8V9FMLydED1mER+7ZW+HSacA1Ej5sNBEeth+9uec6b+pru0Fpv
-         3sKnfJN/oUk6XdHc8r+TXXl+xNqynm1rWDRyJu95M1GlHq2pvxvtoyD/Kya0tcn4ND8L
-         v1Lj8AH8zQNtOiQyHh0+tz0ZCnJc5SPGGoRYBgWwYy1Ws7ceTUrmQfwfqPJzc7zkKdfX
-         2VvNkqm5gSbU5GD8ydRTGzlx8S2HOxhhfdTfh+LhphtedIuii+OhWYM3mjKtn9npS+TQ
-         RINw==
+        bh=e1eM0qi5kNEXaBuV4o8U+3ZrhdfXdzoi+l/ai4waThY=;
+        b=bJasmGzScqLl47mHAWwYGTy+xHPYSMA3r6e6Akj5zuOYYE82oqGqbZsvm2DYlgJuvM
+         iMps4WdWA/QA3EYsQGLltl7y9qz0xDAUmovpGz/HkxZ89ew7eFpvFmRqYJVv7dqD5ulf
+         O3KrsagjFemGifY5Xe3d4kElJJFdWKCaCRzjuKP3qYmtenXf+GCQCzwhX8BLae3TsCNe
+         mQnRqfF5JPwzHAfEaLYTS4VYD6a3sPQ3JkmhsX/Lm3jI5vqF/fMahGq5iyrtOp2cN2cG
+         R6kSD85cMsKy+cpKldNx0Vv+PNdZZ/f30Tb1CLNqNwOcacBTqwIJsUVjwLtjGr4ofX20
+         VA2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=CVjZRQRXjU7sjBLr6rHvAQKfUIl2rAWam+cMUVwdi8E=;
-        b=L+9rz7EVq5uT0TY5SEWFuDMeqdm5VbdIzoJKXgRl2FwFdnUe8jm995KsWyKsJoYeqE
-         7OpJLXZnY0beZmkZntShyFF0UrT+s9Un36jUsla332lWNEf9h7gJplQ+IYcKmjTN2wGS
-         E3xBgS6JKeAB9LZ704DJtrfd+MVL30NyjZdddXN2peiOykGJFWcjYPS/rVHxZW/83Pe8
-         8nmPSf8RthwhocVCsdsYiSJ2AaxhEFP2RAnu/CxTARWgeELgD/sfyvwRNjTOtWs9QBt8
-         On8yDtf3lxoB1MY9i7JsiSiY8RUrlEIJoB0cGBcY1D/hXQqVbDq34EMg8U/EkE3wGeWh
-         E0Pg==
-X-Gm-Message-State: ACgBeo1bDDF6PLYZ3k66TAYOQAET6+aeOTqO3KUs8c4nfrV70WQOn66M
-        vWezRKwJX+Ff2wxWx/lkykeia+XT7j0Eeg==
-X-Google-Smtp-Source: AA6agR40OpkZ83mFEur41Nd8yYH6gBhsxOKDPQNbIwZqQIbEwWceV824CZSdb5ygWwDeOXZ24XfwnA==
-X-Received: by 2002:a17:90b:4c46:b0:202:b9c5:2f24 with SMTP id np6-20020a17090b4c4600b00202b9c52f24mr10473866pjb.180.1663007123740;
-        Mon, 12 Sep 2022 11:25:23 -0700 (PDT)
+        bh=e1eM0qi5kNEXaBuV4o8U+3ZrhdfXdzoi+l/ai4waThY=;
+        b=cN/qAl4WQEkw7gX3qCPnwTlDlZKopGAcEv9GdU9yBtcdZCJxgGdk0nKL3OGWuQpgUK
+         ZZeNXoNmn4BMcCgqgilgSaYGIIyQEHZdY055+ucjMQ6t3PaidRwtLkGNdKCJo7h1xi9S
+         SCCQOx74DYAOI6hGa2yb9eQrdxkY/UHRtmNOTDTEAAZ3OFB3TcjxEuuQTeA1+aFvyEVP
+         6L53YabmP7DVcnLEp9E4HHXxzO0APRHZ9PXw5Oq0NiH5axPV1NKRoECb7Br2gtgH0Pm8
+         l0lpN+Z5yDwID8JCRuOMlDQiJW8AAmM5kMgSq+7EMzmjKojpL0gsBosT9ls+PMscz4Gl
+         reDA==
+X-Gm-Message-State: ACgBeo2kwadscNiraicyKWFbkSn9xsraMAa2JG0L6sE+fjv6FNXfEO+p
+        ngNz5H4bxYbplou1DQB4ASKIOLRF17Azng==
+X-Google-Smtp-Source: AA6agR6Y4DfcP5EX78I9eZCNuPVyyubF6zT3/n42aVyY81UwFMODBRBESkclktOaJJF0wkk5/QE/xA==
+X-Received: by 2002:a17:902:ced2:b0:178:3ad0:2672 with SMTP id d18-20020a170902ced200b001783ad02672mr3705806plg.155.1663007125786;
+        Mon, 12 Sep 2022 11:25:25 -0700 (PDT)
 Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
-        by smtp.googlemail.com with ESMTPSA id x127-20020a626385000000b0053b2681b0e0sm5916894pfb.39.2022.09.12.11.25.22
+        by smtp.googlemail.com with ESMTPSA id x127-20020a626385000000b0053b2681b0e0sm5916894pfb.39.2022.09.12.11.25.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Sep 2022 11:25:23 -0700 (PDT)
+        Mon, 12 Sep 2022 11:25:25 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v2 02/23] filemap: Added filemap_get_folios_tag()
-Date:   Mon, 12 Sep 2022 11:22:03 -0700
-Message-Id: <20220912182224.514561-3-vishal.moola@gmail.com>
+Subject: [PATCH v2 03/23] filemap: Convert __filemap_fdatawait_range() to use filemap_get_folios_tag()
+Date:   Mon, 12 Sep 2022 11:22:04 -0700
+Message-Id: <20220912182224.514561-4-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220912182224.514561-1-vishal.moola@gmail.com>
 References: <20220912182224.514561-1-vishal.moola@gmail.com>
@@ -75,99 +75,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the equivalent of find_get_pages_range_tag(), except for folios
-instead of pages.
-
-One noteable difference is filemap_get_folios_tag() does not take in a
-maximum pages argument. It instead tries to fill a folio batch and stops
-either once full (15 folios) or reaching the end of the search range.
-
-The new function supports large folios, the initial function did not
-since all callers don't use large folios.
+Converted function to use folios. This is in preparation for the removal
+of find_get_pages_range_tag().
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 53 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ mm/filemap.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 4d3092d6b2c0..85cc96c82c2c 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -740,6 +740,8 @@ unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, struct folio_batch *fbatch);
- unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t start,
- 			       unsigned int nr_pages, struct page **pages);
-+unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
-+		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
- 			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
- 			struct page **pages);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 15800334147b..3ded72a65668 100644
+index 3ded72a65668..435fc53b3f2f 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2254,6 +2254,59 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- }
- EXPORT_SYMBOL(find_get_pages_contig);
+@@ -503,28 +503,30 @@ static void __filemap_fdatawait_range(struct address_space *mapping,
+ {
+ 	pgoff_t index = start_byte >> PAGE_SHIFT;
+ 	pgoff_t end = end_byte >> PAGE_SHIFT;
+-	struct pagevec pvec;
+-	int nr_pages;
++	struct folio_batch fbatch;
++	unsigned nr_folios;
  
-+/**
-+ * filemap_get_folios_tag - Get a batch of folios matching @tag.
-+ * @mapping:    The address_space to search
-+ * @start:      The starting page index
-+ * @end:        The final page index (inclusive)
-+ * @tag:        The tag index
-+ * @fbatch:     The batch to fill
-+ *
-+ * Same as filemap_get_folios, but only returning folios tagged with @tag
-+ *
-+ * Return: The number of folios found
-+ * Also update @start to index the next folio for traversal
-+ */
-+unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
-+			pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch)
-+{
-+	XA_STATE(xas, &mapping->i_pages, *start);
-+	struct folio *folio;
+ 	if (end_byte < start_byte)
+ 		return;
+ 
+-	pagevec_init(&pvec);
++	folio_batch_init(&fbatch);
 +
-+	rcu_read_lock();
-+	while ((folio = find_get_entry(&xas, end, tag)) != NULL) {
-+		/* Shadow entries should never be tagged, but this iteration
-+		 * is lockless so there is a window for page reclaim to evict
-+		 * a page we saw tagged. Skip over it.
-+		 */
-+		if (xa_is_value(folio))
-+			continue;
-+		if (!folio_batch_add(fbatch, folio)) {
-+			unsigned long nr = folio_nr_pages(folio);
+ 	while (index <= end) {
+ 		unsigned i;
+ 
+-		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index,
+-				end, PAGECACHE_TAG_WRITEBACK);
+-		if (!nr_pages)
++		nr_folios = filemap_get_folios_tag(mapping, &index, end,
++				PAGECACHE_TAG_WRITEBACK, &fbatch);
 +
-+			if (folio_test_hugetlb(folio))
-+				nr = 1;
-+			*start = folio->index + nr;
-+			goto out;
-+		}
-+	}
-+	/*
-+	 * We come here when there is no page beyond @end. We take care to not
-+	 * overflow the index @start as it confuses some of the callers. This
-+	 * breaks the iteration when there is a page at index -1 but that is
-+	 * already broke anyway.
-+	 */
-+	if (end == (pgoff_t)-1)
-+		*start = (pgoff_t)-1;
-+	else
-+		*start = end + 1;
-+out:
-+	rcu_read_unlock();
-+
-+	return folio_batch_count(fbatch);
-+}
-+EXPORT_SYMBOL(filemap_get_folios_tag);
-+
- /**
-  * find_get_pages_range_tag - Find and return head pages matching @tag.
-  * @mapping:	the address_space to search
++		if (!nr_folios)
+ 			break;
+ 
+-		for (i = 0; i < nr_pages; i++) {
+-			struct page *page = pvec.pages[i];
++		for (i = 0; i < nr_folios; i++) {
++			struct folio *folio = fbatch.folios[i];
+ 
+-			wait_on_page_writeback(page);
+-			ClearPageError(page);
++			folio_wait_writeback(folio);
++			folio_clear_error(folio);
+ 		}
+-		pagevec_release(&pvec);
++		folio_batch_release(&fbatch);
+ 		cond_resched();
+ 	}
+ }
 -- 
 2.36.1
 
