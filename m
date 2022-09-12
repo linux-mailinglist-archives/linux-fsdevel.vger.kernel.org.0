@@ -2,82 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 026C65B5C22
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 16:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C88B05B5C4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 16:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230114AbiILOWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 10:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55544 "EHLO
+        id S230014AbiILOfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 10:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbiILOWu (ORCPT
+        with ESMTP id S229787AbiILOfl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 10:22:50 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E198326F6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 07:22:49 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 29so13033613edv.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 07:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=ZBY/o0YcpTx04NBKo0QawbSu7Ty2gtwY7h0KFr/g/xo=;
-        b=bSlyuqgM53SPxchHlQvQYfBCKBeGkNRd6GZOxBh77fJDGcTsvPhFRgXi8m5ykcLSEs
-         dVorz1M8siDPDuoz8SeGsRIP3OcSmkFjQ9wnKNt/Rhp/WgmxxJkQ8Wlu4uqfNH/JQBCj
-         +NQlh2Tr2JSofOj7FLfDYU2E8/KKPDg2WgbbU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=ZBY/o0YcpTx04NBKo0QawbSu7Ty2gtwY7h0KFr/g/xo=;
-        b=X+jXPK4YSl2BGAsYFcbJ9WzxCm1IKGU90j9WMCqBwrVkVBF6fdJs4dyZklWLKDs5YU
-         IYmgWchtiBHp0L7OGQo803Bmg4sPHaE7KtJTAaDSGgEdPUK/MxNIXm/xOm6bnnkdo0hD
-         HhtGFBCoXZQFo7frQuI7onbZJ6R6YAA7pbYS+Fit/T6cM7OZX/m+2xbjbST32+b8G34I
-         JmA6yiFVcwWojuE9VVHXGuPJ3Ys8T0Ib2aifX+uIdWK2CJ0F5uNn8uEW2zDviNb3brJj
-         cSbbLWG80tZGpdLDK1IKCwDQnMwZksN0tL67oSUllcVLazNS2Lis0sM4SS+x/WVUkHsv
-         32Bg==
-X-Gm-Message-State: ACgBeo2Tcc3uHhwpWrIQCDqyQD2HaZIheM51rMg9WdZj1o63pxvNcQlf
-        y/FXX40zBSaoWuAz7cvBVLHyAtNdSKguVpT/CizXWv1geLFp7A==
-X-Google-Smtp-Source: AA6agR6xOt32m/158PrGZY5BOXWuyxBZvHImrb95Q8W9FhS4FvmPvRw+ds+CfEkP9hf3xv98sQpwH2zvKkTlmZdE290=
-X-Received: by 2002:a05:6402:2289:b0:44e:f490:319a with SMTP id
- cw9-20020a056402228900b0044ef490319amr22699795edb.28.1662992567810; Mon, 12
- Sep 2022 07:22:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
- <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com> <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 12 Sep 2022 16:22:36 +0200
-Message-ID: <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for passthrough
+        Mon, 12 Sep 2022 10:35:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 405562F019
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 07:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662993339;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yxBrb62A1CiBnIX1UMvfEzop9eEkwJ1FcPBxjds5oeQ=;
+        b=h4GJTa8eVshhBajUHJzVHChYF0jDRk7wvbFRp2qZDpJu6TupmhydvtQXZNyoYTGvj+eUKW
+        oCUGEGhCf8XWkq5yYLetp8/HKpyu9hjP5HILC64fkBp1mw27dNK0pbqDPWA7IndrLKlx7t
+        SQ/5YwSt9GdCr2qvQ0zjxJ3JPk4pXXU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-451-cQ_uu3dDM-C6QVcBXRX4vw-1; Mon, 12 Sep 2022 10:35:37 -0400
+X-MC-Unique: cQ_uu3dDM-C6QVcBXRX4vw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 28DFE185A7A4;
+        Mon, 12 Sep 2022 14:35:37 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.32.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11CFE2166B29;
+        Mon, 12 Sep 2022 14:35:37 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C13DD2209F9; Mon, 12 Sep 2022 10:35:36 -0400 (EDT)
+Date:   Mon, 12 Sep 2022 10:35:36 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
 To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Akilesh Kailash <akailash@google.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Hanna Reitz <hreitz@redhat.com>
+Subject: Re: Persistent FUSE file handles (Was: virtiofs uuid and file
+ handles)
+Message-ID: <Yx9DuJwWN3l5T4jL@redhat.com>
+References: <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com>
+ <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
+ <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com>
+ <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com>
+ <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+ <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
+ <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com>
+ <Yx8xEhxrF5eFCwJR@redhat.com>
+ <CAOQ4uxikeG5Ys4Hm2nr7CuJ7cDpNmOP-PRKjezi-DTwDUP42kw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxikeG5Ys4Hm2nr7CuJ7cDpNmOP-PRKjezi-DTwDUP42kw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,28 +73,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 12 Sept 2022 at 15:26, Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, Sep 12, 2022 at 04:38:48PM +0300, Amir Goldstein wrote:
+> On Mon, Sep 12, 2022 at 4:16 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Sun, Sep 11, 2022 at 01:14:49PM +0300, Amir Goldstein wrote:
+> > > On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > >
+> > > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
+> > > > LOOKUP except it takes a {variable length handle, name} as input and
+> > > > returns a variable length handle *and* a u64 node_id that can be used
+> > > > normally for all other operations.
+> > > >
+> > > > The advantage of such a scheme for virtio-fs (and possibly other fuse
+> > > > based fs) would be that userspace need not keep a refcounted object
+> > > > around until the kernel sends a FORGET, but can prune its node ID
+> > > > based cache at any time.   If that happens and a request from the
+> > > > client (kernel) comes in with a stale node ID, the server will return
+> > > > -ESTALE and the client can ask for a new node ID with a special
+> > > > lookup_handle(fh, NULL).
+> > > >
+> > > > Disadvantages being:
+> > > >
+> > > >  - cost of generating a file handle on all lookups
+> > > >  - cost of storing file handle in kernel icache
+> > > >
+> > > > I don't think either of those are problematic in the virtiofs case.
+> > > > The cost of having to keep fds open while the client has them in its
+> > > > cache is much higher.
+> > > >
+> > >
+> > > I was thinking of taking a stab at LOOKUP_HANDLE for a generic
+> > > implementation of persistent file handles for FUSE.
+> >
+> > Hi Amir,
+> >
+> > I was going throug the proposal above for LOOKUP_HANDLE and I was
+> > wondering how nodeid reuse is handled.
+> 
+> LOOKUP_HANDLE extends the 64bit node id to be variable size id.
 
-> FWIW duplicate page cache exists in passthough FUSE whether
-> passthrough is in kernel or in userspace, but going through yet another
-> "switch" fs would make things even worse.
+Ok. So this variable size id is basically file handle returned by
+host?
 
-I imagine the "switch" layer for a HSM would be simple enough:
+So this looks little different from what Miklos had suggested. IIUC,
+he wanted LOOKUP_HANDLE to return both file handle as well as *node id*.
 
-a) if file exists on fastest layer (upper) then take that
-b) if not then fall back to fuse layer (lower) .
+*********************************
+One proposal was to add  LOOKUP_HANDLE operation that is similar to
+LOOKUP except it takes a {variable length handle, name} as input and
+returns a variable length handle *and* a u64 node_id that can be used
+normally for all other operations.
+***************************************
 
-It's almost like a read-only overlayfs (no copy up) except it would be
-read-write and copy-up/down would be performed by the server as
-needed. No page cache duplication for upper, and AFAICS no corner
-cases that overlayfs has, since all layers are consistent (the fuse
-layer would reference the upper if that is currently the up-to-date
-one).
+> A server that declares support for LOOKUP_HANDLE must never
+> reuse a handle.
+> 
+> That's the basic idea. Just as a filesystem that declares to support
+> exportfs must never reuse a file handle.
 
-readdir would go to the layer which has the complete directory (which
-I guess the lower one must always have, but the upper could also).
+> 
+> > IOW, if server decides to drop
+> > nodeid from its cache and reuse it for some other file, how will we
+> > differentiate between two. Some sort of generation id encoded in
+> > nodeid?
+> >
+> 
+> That's usually the way that file handles are implemented in
+> local fs. The inode number is the internal lookup index and the
+> generation part is advanced on reuse.
+> 
+> But for passthrough fs like virtiofsd, the LOOKUP_HANDLE will
+> just use the native fs file handles, so virtiofsd can evict the inodes
+> entry from its cache completely, not only close the open fds.
 
-I'm probably missing lots of details, though...
+Ok, got it. Will be interesting to see how kernel fuse changes look
+to accomodate this variable sized nodeid.
 
-Thanks,
-Miklos
+> 
+> That is what my libfuse_passthough POC does.
+
+Where have you hosted corresponding kernel changes?
+
+Thanks
+Vivek
+
