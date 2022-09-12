@@ -2,128 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61FB05B5B04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 15:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6C95B5B1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 15:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbiILNVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 09:21:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35966 "EHLO
+        id S229781AbiILN0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 09:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbiILNU7 (ORCPT
+        with ESMTP id S229652AbiILN0r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 09:20:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06783220E7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 06:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1662988858;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QcJ4hYnOykjT5bKhT2L+jboPTMLweg9s7FN9sWH8lgs=;
-        b=QmnG0huODhbYx2QvPv3nl2Et0bZ1beO11qK4k9XLnlDwnMcz6w8Jxh4G+NbDV8FOxOwpAb
-        KXd7VZ6wvp4IBXXwVTt+FgsZhKAEPz5H82Xl8bE2+xWuUpITWCCZeWC8rSVDFBGaNPJdm/
-        EOaGlxn1PYGjV2xDOuDKpV38McGSXtg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-668-L4qFUPMqPwu7x2MEi03oxQ-1; Mon, 12 Sep 2022 09:20:54 -0400
-X-MC-Unique: L4qFUPMqPwu7x2MEi03oxQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 62D7529ABA1F;
-        Mon, 12 Sep 2022 13:20:53 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.193.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BE4249BB60;
-        Mon, 12 Sep 2022 13:20:48 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        NeilBrown <neilb@suse.de>, adilger.kernel@dilger.ca,
-        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-References: <166259786233.30452.5417306132987966849@noble.neil.brown.name>
-        <20220908083326.3xsanzk7hy3ff4qs@quack3> <YxoIjV50xXKiLdL9@mit.edu>
-        <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
-        <20220908155605.GD8951@fieldses.org>
-        <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-        <20220908182252.GA18939@fieldses.org>
-        <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
-        <20220909154506.GB5674@fieldses.org>
-        <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>
-        <20220910145600.GA347@fieldses.org>
-        <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>
-        <87a67423la.fsf@oldenburg.str.redhat.com>
-        <7c71050e139a479e08ab7cf95e9e47da19a30687.camel@kernel.org>
-Date:   Mon, 12 Sep 2022 15:20:46 +0200
-In-Reply-To: <7c71050e139a479e08ab7cf95e9e47da19a30687.camel@kernel.org> (Jeff
-        Layton's message of "Mon, 12 Sep 2022 08:55:04 -0400")
-Message-ID: <875yhs20gh.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        Mon, 12 Sep 2022 09:26:47 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173202F385
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 06:26:45 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id j7so3575912vsr.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 06:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=2K4qNeGlECmc0A5eAc5NwijHTd9Qquk2WwbzlWJgtm0=;
+        b=aTFX2sgkmn9r9sTdhCEX6vfBqS+e8cOD+tl6+moMK9A8bf4Ygr8CeEcvJ0v+1ZV2aU
+         T7g7z+RD/9Lb3m72hQJeR6326Z/2l01VErJSjq4ZEVl6TOI5CR6Q3tAuc30V9Yy/MkK/
+         q/8nClLBhG9Pe/VSyg7bbDlWZG6lpCQeXO3f1sCff0C0G0/Sw6Sk7xk/BMC7p/IZ2U+V
+         Z9RCqnfqGi6hkKPYwaEkbOSSWt84/zR0KHuKHBzTcYyI4wu/A3u6hxhadsQw1kNGpHuy
+         SXkmrQPtqj5tvQ9TU9w52WsYZnwnQqzclAQ/bzxCvCF70tpqOAoyHMNcNTNfKLv0kf/u
+         KKlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=2K4qNeGlECmc0A5eAc5NwijHTd9Qquk2WwbzlWJgtm0=;
+        b=EGWZ/L57pWAGmH8djKxozFCCBWcQdb2j0vtOdPo2D1r10y9I+Ir/CChvzwKxNH41eb
+         He0S6eViV1B14VPv5hKQvfrS2uX4JxxwYKkBoBmIF+SUGCRFv509CkG321Wldw12Oh+9
+         t0968FOGghCfJLXv+TgIu5P3OpzlK5JCoYod+fNsoZPT3qriP4n4jeaUrtF1LdLeFKMb
+         I8AxiW+bdtgNW5rA8abgQUW8hrZQEkoGwkMPZNSmi9L3e/FZlXr1TN9zmOfAhehbIxq5
+         M0podg6c+NaS5GRJX1uiE+ZycVxPhm5Il/k9K5hPi3snOcaRZ+24BR8rqOKJ8NxeGCDP
+         nAjg==
+X-Gm-Message-State: ACgBeo0E8ueJTlSyVgbwQz+acBQuEgWzppJVi07X5lAsNGEO1ULX+SCP
+        N9xAsxqhUbr7I/2FRmHcUaK+rR6EvpHzUrERRu8=
+X-Google-Smtp-Source: AA6agR4zhH8vrOrZTQpuqOliaL2UML2Iu6xcLRxWGRsog0Ps7OfumXzFu0IZL1WFsoxUUUKWefdjcughQ27Dm9KO9fU=
+X-Received: by 2002:a05:6102:14b:b0:398:2e7c:4780 with SMTP id
+ a11-20020a056102014b00b003982e7c4780mr6624642vsr.72.1662989204188; Mon, 12
+ Sep 2022 06:26:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
+ <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
+ <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
+ <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
+ <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
+ <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
+ <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
+ <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
+ <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com> <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
+In-Reply-To: <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 12 Sep 2022 16:26:32 +0300
+Message-ID: <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
+Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for passthrough
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Peng Tao <bergwolf@gmail.com>,
+        Akilesh Kailash <akailash@google.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Jeff Layton:
-
-> On Mon, 2022-09-12 at 14:13 +0200, Florian Weimer wrote:
->> * Jeff Layton:
->>=20
->> > To do this we'd need 2 64-bit fields in the on-disk and in-memory=20
->> > superblocks for ext4, xfs and btrfs. On the first mount after a crash,
->> > the filesystem would need to bump s_version_max by the significant
->> > increment (2^40 bits or whatever). On a "clean" mount, it wouldn't need
->> > to do that.
->> >=20
->> > Would there be a way to ensure that the new s_version_max value has ma=
-de
->> > it to disk? Bumping it by a large value and hoping for the best might =
-be
->> > ok for most cases, but there are always outliers, so it might be
->> > worthwhile to make an i_version increment wait on that if necessary.=20
->>=20
->> How common are unclean shutdowns in practice?  Do ex64/XFS/btrfs keep
->> counters in the superblocks for journal replays that can be read easily?
->>=20
->> Several useful i_version applications could be negatively impacted by
->> frequent i_version invalidation.
->>=20
+On Mon, Sep 12, 2022 at 4:03 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> One would hope "not very often", but Oopses _are_ something that happens
-> occasionally, even in very stable environments, and it would be best if
-> what we're building can cope with them.
+> On Mon, 12 Sept 2022 at 14:29, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Mon, Sep 12, 2022 at 12:29 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Sat, 10 Sept 2022 at 10:52, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > > > BTW, I see that the Android team is presenting eBPF-FUSE on LPC
+> > > > coming Tuesday [1].
+> > >
+> > > At first glance it looks like a filtered kernel-only passthrough +
+> > > fuse fallback, where filtering is provided by eBPF scripts and only
+> > > falls back to userspace access on more complex cases.  Maybe it's a
+> > > good direction, we'll see.
+> >
+> > Yeh, we'll see.
+> >
+> > > Apparently the passthrough case is
+> > > important enough for various use cases.
+> > >
+> >
+> > Indeed.
+> > My use case is HSM and I think that using FUSE for HSM is becoming
+> > more and more common these days.
+>
+> HSM?
+>
 
-I was wondering if such unclean shutdown events are associated with SSD
-=E2=80=9Cunsafe shutdowns=E2=80=9D, as identified by the SMART counter.  I =
-think those
-aren't necessarily restricted to oopses or various forms of powerless
-(maybe depending on file system/devicemapper configuration)?
+Sorry, Hierarchical Storage Management.
+such as the product described at:
+https://github.com/github/libprojfs/blob/master/docs/design.md#vfsforgit-on-windows
 
-I admit it's possible that the file system is shut down cleanly before
-the kernel requests the power-off state from the firmware, but the
-underlying SSD is not.
+> >
+> > One of the things that bothers me is that both this FUSE_PASSTHROUGH
+> > patch set and any future eBPF-FUSE passthrough implementation is
+> > bound to duplicate a lot of code and know how from overlayfs
+> > (along with the bugs).
+> >
+> > We could try to factor out some common bits to a kernel fs passthough
+> > library.
+>
+> Yeah, although fuse/passthrough might not want all the complexity.
+> Getting rid of the context switch latency is the easy part.  Getting
+> rid of  page cache duplication is the hard one, though it seems that the
+> current level of hacks in overlayfs seems sufficient and nobody much
+> cares for the corner cases (or works around them).
+>
+
+FWIW duplicate page cache exists in passthough FUSE whether
+passthrough is in kernel or in userspace, but going through yet another
+"switch" fs would make things even worse.
+
+I have another completely different solution that I am considering
+for HSM that is a little less flexible than FUSE, but does not have many of
+the passthrough challenges:
+
+https://lore.kernel.org/linux-fsdevel/CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com/
+
+> >
+> > Anotehr options to consider is not to add any passthrough logic
+> > to FUSE at all.
+> >
+> > Instead, implement a "switch" fs to choose between passthrough
+> > to one of several underlying fs "branches", where one of the branches
+> > could be local fs and another a FUSE fs (i.e. for the complex cases).
+>
+> st_dev/st_ino management might become a headache (as it is in overlayfs).
+>
+
+Yeh. It's interesting how passthough of readdir and lookup/create in
+eBPF-FUSE is going to handle those things...
 
 Thanks,
-Florian
-
+Amir.
