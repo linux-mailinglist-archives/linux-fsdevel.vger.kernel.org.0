@@ -2,108 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9D25B5E07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 18:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484025B5E5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 18:37:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbiILQS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 12:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
+        id S229584AbiILQhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 12:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiILQSz (ORCPT
+        with ESMTP id S229748AbiILQhe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 12:18:55 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4FA63868A;
-        Mon, 12 Sep 2022 09:18:54 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id m16so4805076ilg.3;
-        Mon, 12 Sep 2022 09:18:54 -0700 (PDT)
+        Mon, 12 Sep 2022 12:37:34 -0400
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E83421827;
+        Mon, 12 Sep 2022 09:37:33 -0700 (PDT)
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id CA7951D28;
+        Mon, 12 Sep 2022 16:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=dKtqFa8Lj7sKVbipP1evfO/jZ1JEKgMyQWZPo5L2svY=;
-        b=LYJrUWkBI5r0+ftj5RafEIHZV3TKIYV+GtfpLp5bklqBn7NVcwrDDRIvV40oAViNnw
-         PAYijJ1aNQ4wlDinX3lV3rhtEr6tMQHvjF4Qpem/VsESXWSpyHspJurr8+MBPgRUnyS1
-         JSyYvDet2ykXQxZD7W0xJQ/PbXRNVY8laRRXUVrXu8sLgFQQEl/CQnZve/OUnnSCjOC9
-         SWBwhTCcO23qhLn2kVpDFhkjIR4NmaqXoDjc0wRMDxkqLUhcCuzscCc2alA3Bl4rAfUt
-         b5JxVOVq1YMz+KhSjV168EA76QkBJyrj/895rj3CdO4d8Ut7a/C9fvaelZoVGDGCEllR
-         K/2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=dKtqFa8Lj7sKVbipP1evfO/jZ1JEKgMyQWZPo5L2svY=;
-        b=Z8HIHWjrHTTpQL4YWbVNpS5pVfa/1Ij5usrAUhmaIsTWwK6CUKPPFaJ5Pugg8zWZdS
-         pn6PAv+rWCt3i03UJMvUAggMs4LiOoW0cG92h7RF3dCDbtm9hpIyKVCRoAWNXrRXwXeE
-         tRytTY477Fd30MY+9SnHS/zDOZJEr5eymwiepSokmTYnwTuxWNFld6rtmghNcLbFsjC2
-         +50U+msnwdaigM/hA6edJvKvBPARXxK9YM7Ko+ZLKwzzKv5A+vG03AAD0tG6m48//uA4
-         aB4wbF9nk0xSyIlPdl45NcMaUkeW/6xR2NibHJ0UMFgYS2rjFo2ZzDcYmKXYIHI/drcG
-         iD5Q==
-X-Gm-Message-State: ACgBeo2wlpfoxvcydeojEc8KT/jBxnMNc2q+rByxP4e5tiyoYeNeCZxQ
-        qbuIcOjoR/kvZqT26Xh9PmkMk8auYidpUCr3qWw=
-X-Google-Smtp-Source: AA6agR6MemFAoJLParyi3ed9uKb3AZKl39DwttCreIuRBOy0bqj7TVF1woYsiMJbd8RxkweMyI0pKSKSOrXHyq4gx6o=
-X-Received: by 2002:a05:6e02:1aac:b0:2f1:94e3:1805 with SMTP id
- l12-20020a056e021aac00b002f194e31805mr10813730ilv.72.1662999534105; Mon, 12
- Sep 2022 09:18:54 -0700 (PDT)
+        d=paragon-software.com; s=mail; t=1663000531;
+        bh=Ui8pdc+SYrf0NKbT80RGG/JWRJM3TTpCzms4S0GlvCY=;
+        h=Date:To:CC:From:Subject;
+        b=VydmfSURxkuljDKiJ5j/+eDuwBM25EAwZiPVZj3VnuM40xZ8UEnSwt9dzMzg+WX5a
+         dLzfJpobDSXIYmjFdJgkQwdBaX2JBdbrjhazL9eSz5UAh76OMxgp+SIJPXWDsazoIO
+         Mz7zQz8Z5xB2DdHc6Ti1pxnElqOlRLCN8VZQMsjM=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Mon, 12 Sep 2022 19:37:31 +0300
+Message-ID: <59960918-0adb-6d53-2d77-8172e666bf40@paragon-software.com>
+Date:   Mon, 12 Sep 2022 19:37:30 +0300
 MIME-Version: 1.0
-References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-24-ojeda@kernel.org>
- <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
-In-Reply-To: <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 12 Sep 2022 17:18:43 +0100
-Message-ID: <CANiq72kZEqAwr_m14mAFjHsFJTLjj7i4He0qyrprubpmBfOFdw@mail.gmail.com>
-Subject: Re: [PATCH v9 23/27] Kbuild: add Rust support
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        patches@lists.linux.dev, Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Finn Behrens <me@kloenk.de>,
-        Adam Bratschi-Kaye <ark.email@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Gary Guo <gary@garyguo.net>,
-        Boris-Chengbiao Zhou <bobo1239@web.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Douglas Su <d0u9.su@outlook.com>,
-        Dariusz Sosnowski <dsosnowski@dsosnowski.pl>,
-        Antonio Terceiro <antonio.terceiro@linaro.org>,
-        Daniel Xu <dxu@dxuuu.xyz>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 0/3] fs/ntfs3: Refactoring and hidedotfiles option
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Masahiro,
+Added some info about CONFIG_NTFS3_64BIT_CLUSTER and
+hidedotfiles option
 
-On Mon, Sep 12, 2022 at 5:08 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> I have not figured out where this difference comes from.
+Konstantin Komarov (3):
+   fs/ntfs3: Add comments about cluster size
+   fs/ntfs3: Add hidedotfiles option
+   fs/ntfs3: Change destroy_inode to free_inode
 
-It is the `RUSTC_BOOTSTRAP` environment variable: it allows to use
-unstable featuers in the stable compiler.
+  fs/ntfs3/frecord.c |  2 +-
+  fs/ntfs3/inode.c   |  4 ++++
+  fs/ntfs3/ntfs_fs.h |  1 +
+  fs/ntfs3/record.c  |  4 ++++
+  fs/ntfs3/super.c   | 52 ++++++++++++++++++++++++++++++++--------------
+  5 files changed, 46 insertions(+), 17 deletions(-)
 
-We currently set it in the global `Makefile`, but we could be more
-explicit and do it on each command if you think that would be better.
+-- 
+2.37.0
 
-If you want that we keep using the global export, then we can add a
-comment explaining this to clarify.
-
-Cheers,
-Miguel
