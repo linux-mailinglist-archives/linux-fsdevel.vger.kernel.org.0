@@ -2,193 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B79515B61F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 21:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA4C5B630B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 23:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiILT4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 15:56:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52766 "EHLO
+        id S230014AbiILVt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 17:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbiILT4x (ORCPT
+        with ESMTP id S229539AbiILVtz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 15:56:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FE323BEF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 12:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1663012611;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GuidJFb1HwC9tE/OAbLPUCFLcMK5isg+6W3HvVUdDBg=;
-        b=UJXvcHZclPUBnhimhWEV8fDNvtsZMxbH8aIgJhgINdpgvfZ8ItZGyYRD7DIakU0zWDysNk
-        t5O2n3TkZPIXr7JeKUJq4DwifPyimGf1/O3aKcl1xc8DeBGZNURgEb+Eb5nJbgOidDUPSX
-        D9UtMPQdM1q4m9F5sM5rbxnBABJ1uyA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-137-ONV3ads8P1eSbhXfYS9oAg-1; Mon, 12 Sep 2022 15:56:48 -0400
-X-MC-Unique: ONV3ads8P1eSbhXfYS9oAg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 12 Sep 2022 17:49:55 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D6FB7CF;
+        Mon, 12 Sep 2022 14:49:53 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4567C1C1BD25;
-        Mon, 12 Sep 2022 19:56:48 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.32.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 311C91121314;
-        Mon, 12 Sep 2022 19:56:48 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E1FFC2209F9; Mon, 12 Sep 2022 15:56:47 -0400 (EDT)
-Date:   Mon, 12 Sep 2022 15:56:47 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Hanna Reitz <hreitz@redhat.com>
-Subject: Re: Persistent FUSE file handles (Was: virtiofs uuid and file
- handles)
-Message-ID: <Yx+O/0gVFso5YNxG@redhat.com>
-References: <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com>
- <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
- <20200922210445.GG57620@redhat.com>
- <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
- <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
- <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com>
- <Yx8xEhxrF5eFCwJR@redhat.com>
- <CAOQ4uxikeG5Ys4Hm2nr7CuJ7cDpNmOP-PRKjezi-DTwDUP42kw@mail.gmail.com>
- <Yx9DuJwWN3l5T4jL@redhat.com>
- <CAOQ4uxhTksMqScNuRbRNNtXvs+JhTbcggPQpXfzqHJtYmTKuRA@mail.gmail.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MRKy22vMMz4xFt;
+        Tue, 13 Sep 2022 07:49:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1663019388;
+        bh=CHb/HFS/YBUK6LYyCv0Ig6t6CoCQ9NnN9We46PpcpMM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gcuL+UE4DAC44wpK3nXAbvF2+K8mwss7m6RSNWaj8Mh8awM2Wt/FiEQf2vI9qPrnY
+         h/5aGQBKy+bfc0BS8MEjgJAHhu/shzbvce0n2hpOsptgWcxJTQNKx0F2N2FV/FLIX6
+         SpOIdzVbwdR2CAbCf35ZlU9hH8uoI9CBJiK1auFJZ1qFAmdHTLKQFFVg89Kc6/niwL
+         IlOLw8YTX9/eppj7U8UoqKtkLMot+bqQ6uYXyp+oVE9NWmlAIfgPhpcJ83VDjIpTS2
+         AUlCCsqj86uQnYPR07+4K1Fi+TPku0C2oWOxWOynty4hjlmoB9cqwzwOQjpkVRGxpz
+         C0++lys4Fdl6w==
+Date:   Tue, 13 Sep 2022 06:30:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v5 0/8] make statx() return DIO alignment information
+Message-ID: <20220913063025.4815466c@canb.auug.org.au>
+In-Reply-To: <Yx6DNIorJ86IWk5q@quark>
+References: <20220827065851.135710-1-ebiggers@kernel.org>
+        <YxfE8zjqkT6Zn+Vn@quark>
+        <Yx6DNIorJ86IWk5q@quark>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhTksMqScNuRbRNNtXvs+JhTbcggPQpXfzqHJtYmTKuRA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; boundary="Sig_/ySqoajbBqbhy0s/Yyi/jEcM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 12, 2022 at 06:07:42PM +0300, Amir Goldstein wrote:
-> On Mon, Sep 12, 2022 at 5:35 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Mon, Sep 12, 2022 at 04:38:48PM +0300, Amir Goldstein wrote:
-> > > On Mon, Sep 12, 2022 at 4:16 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Sun, Sep 11, 2022 at 01:14:49PM +0300, Amir Goldstein wrote:
-> > > > > On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > > >
-> > > > > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > > > > > LOOKUP except it takes a {variable length handle, name} as input and
-> > > > > > returns a variable length handle *and* a u64 node_id that can be used
-> > > > > > normally for all other operations.
-> > > > > >
-> > > > > > The advantage of such a scheme for virtio-fs (and possibly other fuse
-> > > > > > based fs) would be that userspace need not keep a refcounted object
-> > > > > > around until the kernel sends a FORGET, but can prune its node ID
-> > > > > > based cache at any time.   If that happens and a request from the
-> > > > > > client (kernel) comes in with a stale node ID, the server will return
-> > > > > > -ESTALE and the client can ask for a new node ID with a special
-> > > > > > lookup_handle(fh, NULL).
-> > > > > >
-> > > > > > Disadvantages being:
-> > > > > >
-> > > > > >  - cost of generating a file handle on all lookups
-> > > > > >  - cost of storing file handle in kernel icache
-> > > > > >
-> > > > > > I don't think either of those are problematic in the virtiofs case.
-> > > > > > The cost of having to keep fds open while the client has them in its
-> > > > > > cache is much higher.
-> > > > > >
-> > > > >
-> > > > > I was thinking of taking a stab at LOOKUP_HANDLE for a generic
-> > > > > implementation of persistent file handles for FUSE.
-> > > >
-> > > > Hi Amir,
-> > > >
-> > > > I was going throug the proposal above for LOOKUP_HANDLE and I was
-> > > > wondering how nodeid reuse is handled.
-> > >
-> > > LOOKUP_HANDLE extends the 64bit node id to be variable size id.
-> >
-> > Ok. So this variable size id is basically file handle returned by
-> > host?
-> >
-> > So this looks little different from what Miklos had suggested. IIUC,
-> > he wanted LOOKUP_HANDLE to return both file handle as well as *node id*.
-> >
-> > *********************************
-> > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > LOOKUP except it takes a {variable length handle, name} as input and
-> > returns a variable length handle *and* a u64 node_id that can be used
-> > normally for all other operations.
-> > ***************************************
-> >
-> 
-> Ha! Thanks for reminding me about that.
-> It's been a while since I looked at what actually needs to be done.
-> That means that evicting server inodes from cache may not be as
-> easy as I had imagined.
-> 
-> > > A server that declares support for LOOKUP_HANDLE must never
-> > > reuse a handle.
-> > >
-> > > That's the basic idea. Just as a filesystem that declares to support
-> > > exportfs must never reuse a file handle.
-> >
-> > >
-> > > > IOW, if server decides to drop
-> > > > nodeid from its cache and reuse it for some other file, how will we
-> > > > differentiate between two. Some sort of generation id encoded in
-> > > > nodeid?
-> > > >
-> > >
-> > > That's usually the way that file handles are implemented in
-> > > local fs. The inode number is the internal lookup index and the
-> > > generation part is advanced on reuse.
-> > >
-> > > But for passthrough fs like virtiofsd, the LOOKUP_HANDLE will
-> > > just use the native fs file handles, so virtiofsd can evict the inodes
-> > > entry from its cache completely, not only close the open fds.
-> >
-> > Ok, got it. Will be interesting to see how kernel fuse changes look
-> > to accomodate this variable sized nodeid.
-> >
-> 
-> It may make sense to have a FUSE protocol dialect where nodeid
-> is variable size for all commands, but it probably won't be part of
-> the initial LOOKUP_HANDLE work.
-> 
-> > >
-> > > That is what my libfuse_passthough POC does.
-> >
-> > Where have you hosted corresponding kernel changes?
-> >
-> 
-> There are no kernel changes.
-> 
-> For xfs and ext4 I know how to implement open_by_ino()
-> and I know how to parse the opaque fs file handle to extract
-> ino+generation from it and return them in FUSE_LOOKUP
-> response.
+--Sig_/ySqoajbBqbhy0s/Yyi/jEcM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Aha, interesting. So is this filesystem specific. Works on xfs/ext4 but
-not necessarily on other filesystems like nfs. (Because they have their
-own way of encoding things in file handle).
+Hi Eric,
 
-> 
-> So I could manage to implement persistent NFS file handles
-> over the existing FUSE protocol with 64bit node id.
+On Sun, 11 Sep 2022 19:54:12 -0500 Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Tue, Sep 06, 2022 at 03:08:51PM -0700, Eric Biggers wrote:
+> > On Fri, Aug 26, 2022 at 11:58:43PM -0700, Eric Biggers wrote: =20
+> > > This patchset makes the statx() system call return direct I/O (DIO)
+> > > alignment information.  This allows userspace to easily determine
+> > > whether a file supports DIO, and if so with what alignment restrictio=
+ns. =20
+> >=20
+> > Al, any thoughts on this patchset, and do you plan to apply it for 6.1?=
+  Ideally
+> > this would go through the VFS tree.  If not, I suppose I'll need to hav=
+e it
+> > added to linux-next and send the pull request myself.
+> >=20
+> > - Eric =20
+>=20
+> Seems that it's up to me, then.
+>=20
+> Stephen, can you add my git branch for this patchset to linux-next?
+>=20
+> URL: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+> Branch: statx-dioalign
+>=20
+> This is targeting the 6.1 merge window with a pull request to Linus.
 
-And that explains that why you did not have to make kernel changes. But
-this does not allow sever to close the fd associate with nodeid? Or there
-is a way for server to generate file handle and then call
-open_by_handle_at().
+Added from today.
 
-Thanks
-Vivek
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/ySqoajbBqbhy0s/Yyi/jEcM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmMfluEACgkQAVBC80lX
+0GzrXAf9ESId1RmQujmRO/suIb7p60bPOkr5l/1EmdjlqHgMfXoP0bDKsbHNd3Do
+ZOf+Qj8BPc1KuPXgGEqZ8bWxEMOu5NtVl82bbhQwaMZbaObcE+CW34aaenRKRBCq
+kPAHrUAe3SGkuyVjQJFX0I0PdGe7WYoar4MhO3ULl1USnIEF0p6GCXXe1DvR2LRA
+6ZMdZbx+g9cPc2ya5lzpHLIkTaDSjjjE/blGA0UFuUYAyRUVEw0rGig1iPnQA+EP
+dr+aQ+9vZ1OICIy2tSpsplEl2Otk4rTA0EAB/BVYTDOBgMQQ6CLZN9o+1tHnmsuK
+/BZ7ql3uk0XzQR2n0awIeOjS13b5Sg==
+=u95+
+-----END PGP SIGNATURE-----
+
+--Sig_/ySqoajbBqbhy0s/Yyi/jEcM--
