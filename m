@@ -2,84 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC9F5B63F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 01:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD5FB5B6420
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 01:30:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbiILXOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 19:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44662 "EHLO
+        id S230102AbiILXaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 19:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiILXOu (ORCPT
+        with ESMTP id S229616AbiILXaD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 19:14:50 -0400
+        Mon, 12 Sep 2022 19:30:03 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248B6B1E5;
-        Mon, 12 Sep 2022 16:14:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2934BBC97;
+        Mon, 12 Sep 2022 16:30:02 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2B3A620D7E;
-        Mon, 12 Sep 2022 23:14:46 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A13F7208C3;
+        Mon, 12 Sep 2022 23:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663024486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663025400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FGsc36i9kOD73ZWzNaxwNDQZ5w1zThYCY/lFJv6Qf/o=;
-        b=PTCTiFZz1AwFvPPwx0WlVz/1//EZ3TIV2Dj4idg4LCuDxZz0bpV3P9TAUg5nUe32Lj5+0q
-        7uWwHCgCY0hwB/hyiztHv+FUxC2QuC1zwaCElq51YqU3o+1c4NAxsuBOSknhO2j13zWxrY
-        Q9hWCjvyjCOZDBT9zCC3eSmsuwxLDWI=
+        bh=chwUdvs9l/Qn9313sU3WPPTkKnQkm+BRMdGTZfPVfFw=;
+        b=gIodfHH5tfFut4vP+C5qhTCEgaIeDU2NmjGyYENVDMO6DM0eeeQVOU2AvIREIuxqm/nV7f
+        I8dC33xVpDaD3/t9/RwFObPisPxRODGbH/kNg0ckXFlFbmKpUbQ7F+5cyXtGoMdhZ/cxWi
+        AIPtIZmYwLICNYyA4DeLzj3resYbv14=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663024486;
+        s=susede2_ed25519; t=1663025400;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FGsc36i9kOD73ZWzNaxwNDQZ5w1zThYCY/lFJv6Qf/o=;
-        b=JpZoJo3akYzygJZ23V3z21LRW4JeUQhac6dvAmMBbG/80HmXiag7Agdu6gOaFmPBZJXg4j
-        OQW606Vwm/ahV7AA==
+        bh=chwUdvs9l/Qn9313sU3WPPTkKnQkm+BRMdGTZfPVfFw=;
+        b=lF6U9ojxc1rLQ0VwjZPCj7b36QCi9kk294/oZNli1+v4WO0UcJ7mgVVGcenB6USxcZiON+
+        PD0eZ/oqWT33voCA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C48A4139C8;
-        Mon, 12 Sep 2022 23:14:37 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 81CFB139C8;
+        Mon, 12 Sep 2022 23:29:53 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4UiSHl29H2NAbgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 12 Sep 2022 23:14:37 +0000
+        id PLAaDvHAH2M6cgAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 12 Sep 2022 23:29:53 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     "Jeff Layton" <jlayton@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, "Jan Kara" <jack@suse.cz>,
-        adilger.kernel@dilger.ca, djwong@kernel.org, david@fromorbit.com,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Trond Myklebust" <trondmy@hammerspace.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
 Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
  STATX_INO_VERSION field
-In-reply-to: <20220912134208.GB9304@fieldses.org>
-References: <20220907135153.qvgibskeuz427abw@quack3>,
+In-reply-to: <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>
+References: <20220907111606.18831-1-jlayton@kernel.org>,
+ <166255065346.30452.6121947305075322036@noble.neil.brown.name>,
+ <79aaf122743a295ddab9525d9847ac767a3942aa.camel@kernel.org>,
+ <20220907125211.GB17729@fieldses.org>,
+ <771650a814ab1ff4dc5473d679936b747d9b6cf5.camel@kernel.org>,
+ <20220907135153.qvgibskeuz427abw@quack3>,
  <166259786233.30452.5417306132987966849@noble.neil.brown.name>,
  <20220908083326.3xsanzk7hy3ff4qs@quack3>, <YxoIjV50xXKiLdL9@mit.edu>,
  <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>,
- <20220908155605.GD8951@fieldses.org>,
- <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>,
- <20220908182252.GA18939@fieldses.org>,
- <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>,
- <166284799157.30452.4308111193560234334@noble.neil.brown.name>,
- <20220912134208.GB9304@fieldses.org>
-Date:   Tue, 13 Sep 2022 09:14:32 +1000
-Message-id: <166302447257.30452.6751169887085269140@noble.neil.brown.name>
+ <166267775728.30452.17640919701924887771@noble.neil.brown.name>,
+ <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
+ <166268467103.30452.1687952324107257676@noble.neil.brown.name>,
+ <166268566751.30452.13562507405746100242@noble.neil.brown.name>,
+ <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>,
+ <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>,
+ <166270570118.30452.16939807179630112340@noble.neil.brown.name>,
+ <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>,
+ <166285038617.30452.11636397081493278357@noble.neil.brown.name>,
+ <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>
+Date:   Tue, 13 Sep 2022 09:29:48 +1000
+Message-id: <166302538820.30452.7783524836504548113@noble.neil.brown.name>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -90,62 +111,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 12 Sep 2022, J. Bruce Fields wrote:
-> On Sun, Sep 11, 2022 at 08:13:11AM +1000, NeilBrown wrote:
-> > On Fri, 09 Sep 2022, Jeff Layton wrote:
+On Mon, 12 Sep 2022, Jeff Layton wrote:
+> On Sun, 2022-09-11 at 08:53 +1000, NeilBrown wrote:
+> > This could be expensive.
+> > 
+> > There is not currently any locking around O_DIRECT writes.  You cannot
+> > synchronise with them.
+> > 
+> 
+> AFAICT, DIO write() implementations in btrfs, ext4, and xfs all hold
+> inode_lock_shared across the I/O. That was why patch #8 takes the
+> inode_lock (exclusive) across the getattr.
+
+Looking at ext4_dio_write_iter() it certain does take
+inode_lock_shared() before starting the write and in some cases it
+requests, using IOMAP_DIO_FORCE_WAIT, that imap_dio_rw() should wait for
+the write to complete.  But not in all cases.
+So I don't think it always holds the shared lock across all direct IO.
+
+> 
+> > The best you can do is update the i_version immediately after all the
+> > O_DIRECT writes in a single request complete.
+> > 
 > > > 
-> > > The machine crashes and comes back up, and we get a query for i_version
-> > > and it comes back as X. Fine, it's an old version. Now there is a write.
-> > > What do we do to ensure that the new value doesn't collide with X+1? 
+> > > To summarize, there are two main uses for the change attr in NFSv4:
+> > > 
+> > > 1/ to provide change_info4 for directory morphing operations (CREATE,
+> > > LINK, OPEN, REMOVE, and RENAME). It turns out that this is already
+> > > atomic in the current nfsd code (AFAICT) by virtue of the fact that we
+> > > hold the i_rwsem exclusively over these operations. The change attr is
+> > > also queried pre and post while the lock is held, so that should ensure
+> > > that we get true atomicity for this.
 > > 
-> > (I missed this bit in my earlier reply..)
+> > Yes, directory ops are relatively easy.
 > > 
-> > How is it "Fine" to see an old version?
-> > The file could have changed without the version changing.
-> > And I thought one of the goals of the crash-count was to be able to
-> > provide a monotonic change id.
+> > > 
+> > > 2/ as an adjunct for the ctime when fetching attributes to validate
+> > > caches. We don't expect perfect consistency between read (and readlike)
+> > > operations and GETATTR, even when they're in the same compound.
+> > > 
+> > > IOW, a READ+GETATTR compound can legally give you a short (or zero-
+> > > length) read, and then the getattr indicates a size that is larger than
+> > > where the READ data stops, due to a write or truncate racing in after
+> > > the read.
+> > 
+> > I agree that atomicity is neither necessary nor practical.  Ordering is
+> > important though.  I don't think a truncate(0) racing with a READ can
+> > credibly result in a non-zero size AFTER a zero-length read.  A truncate
+> > that extends the size could have that effect though.
+> > 
+> > > 
+> > > Ideally, the attributes in the GETATTR reply should be consistent
+> > > between themselves though. IOW, all of the attrs should accurately
+> > > represent the state of the file at a single point in time.
+> > > change+size+times+etc. should all be consistent with one another.
+> > > 
+> > > I think we get all of this by taking the inode_lock around the
+> > > vfs_getattr call in nfsd4_encode_fattr. It may not be the most elegant
+> > > solution, but it should give us the atomicity we need, and it doesn't
+> > > require adding extra operations or locking to the write codepaths.
+> > 
+> > Explicit attribute changes (chown/chmod/utimes/truncate etc) are always
+> > done under the inode lock.  Implicit changes via inode_update_time() are
+> > not (though xfs does take the lock, ext4 doesn't, haven't checked
+> > others).  So taking the inode lock won't ensure those are internally
+> > consistent.
+> > 
+> > I think using inode_lock_shared() is acceptable.  It doesn't promise
+> > perfect atomicity, but it is probably good enough.
+> > 
+> > We'd need a good reason to want perfect atomicity to go further, and I
+> > cannot think of one.
+> > 
+> > 
 > 
-> I was still mainly thinking about how to provide reliable close-to-open
-> semantics between NFS clients.  In the case the writer was an NFS
-> client, it wasn't done writing (or it would have COMMITted), so those
-> writes will come in and bump the change attribute soon, and as long as
-> we avoid the small chance of reusing an old change attribute, we're OK,
-> and I think it'd even still be OK to advertise
-> CHANGE_TYPE_IS_MONOTONIC_INCR.
+> Taking inode_lock_shared is sufficient to block out buffered and DAX
+> writes. DIO writes sometimes only take the shared lock (e.g. when the
+> data is already properly aligned). If we want to ensure the getattr
+> doesn't run while _any_ writes are running, we'd need the exclusive
+> lock.
 
-You seem to be assuming that the client doesn't crash at the same time
-as the server (maybe they are both VMs on a host that lost power...)
-
-If client A reads and caches, client B writes, the server crashes after
-writing some data (to already allocated space so no inode update needed)
-but before writing the new i_version, then client B crashes.
-When server comes back the i_version will be unchanged but the data has
-changed.  Client A will cache old data indefinitely...
-
-
+But the exclusive lock is bad for scalability.
 
 > 
-> If we're trying to do better than that, I'm just not sure what's right.
+> Maybe that's overkill, though it seems like we could have a race like
+> this without taking inode_lock across the getattr:
+> 
+> reader				writer
+> -----------------------------------------------------------------
+> 				i_version++
+> getattr
+> read
+> 				DIO write to backing store
+> 
 
-I think we need to require the filesystem to ensure that the i_version
-is seen to increase shortly after any change becomes visible in the
-file, and no later than the moment when the request that initiated the
-change is acknowledged as being complete.  In the case of an unclean
-restart, any file that is not known to have been unchanged immediately
-before the crash must have i_version increased.
+This is why I keep saying that the i_version increment must be after the
+write, not before it.
 
-The simplest implementation is to have an unclean-restart counter and to
-always included this multiplied by some constant X in the reported
-i_version.  The filesystem guarantees to record (e.g.  to journal
-at least) the i_version if it comes close to X more than the previous
-record.  The filesystem gets to choose X.
+> 
+> Given that we can't fully exclude mmap writes, maybe we can just
+> document that mixing DIO or mmap writes on the server + NFS may not be
+> fully cache coherent.
 
-A more complex solution would be to record (similar to the way orphans
-are recorded) any file which is open for write, and to add X to the
-i_version for any "dirty" file still recorded during an unclean restart.
-This would avoid bumping the i_version for read-only files.
-
-There may be other solutions, but we should leave that up to the
-filesystem.  Each filesystem might choose something different.
+"fully cache coherent" is really more than anyone needs.
+The i_version must be seen to change no earlier than the related change
+becomes visible, and no later than the request which initiated that
+change is acknowledged as complete.
 
 NeilBrown
