@@ -2,54 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C515B5DE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 18:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9D25B5E07
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 18:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbiILQKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 12:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
+        id S229869AbiILQS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 12:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbiILQKB (ORCPT
+        with ESMTP id S229560AbiILQSz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 12:10:01 -0400
-Received: from condef-02.nifty.com (condef-02.nifty.com [202.248.20.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55390B1D7;
-        Mon, 12 Sep 2022 09:09:57 -0700 (PDT)
-Received: from conssluserg-03.nifty.com ([10.126.8.82])by condef-02.nifty.com with ESMTP id 28CG8dqx012454;
-        Tue, 13 Sep 2022 01:08:39 +0900
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 28CG87Iq006993;
-        Tue, 13 Sep 2022 01:08:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 28CG87Iq006993
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1662998888;
-        bh=IfNmxP6k1oqV2drLrO4bvEnKkISFBkkx4i6qssF6TQY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZI82hvA4n4nRGjLPAwZYrHzUZHkMEczkgAXKkuc0ZMULdK5670uBlnbYKQK25KHXG
-         U+1oVmcnpwtfjIs+kEl3BrnyMELYNlDPuUj6+HN3SbIePRkOT+8Wo5FkxRS/LhxhBo
-         6J/3VCHDmAlbIEgjl0FLF99HIqH4LY4QIrVQDOHLFqHerxO0IhUnCpDzA2ACs0dia8
-         LEmNAqveIS8ng47Cjn2Zv16rSdPohwdL2CUyTlNDDxIFr9m83Bg9ffl391200BVptr
-         AE0g7CHbENsYqMD2CX816t0AiSc6eMT0vEYwfXlbQExCfhxyODNf8KB4BOL3APPde6
-         lHNloJlgB8hFw==
-X-Nifty-SrcIP: [209.85.160.50]
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-1274ec87ad5so24727860fac.0;
-        Mon, 12 Sep 2022 09:08:07 -0700 (PDT)
-X-Gm-Message-State: ACgBeo2ZGkHdZwxN/7eJYUwsJ7W+mQyR3gBgiCEmhFaDfW4dxUFgdcPF
-        oOI9MYFZl5RIvqwxX4wcOiX05tfwbRhFaS4+rdw=
-X-Google-Smtp-Source: AA6agR7gBVHo+KvJjAu4Yr81Xj56NCGfGowjIM+55nLaZ9HKtuVtohFkXX2hZqwbf5LJi9W/QtaxvPPk+HJCL2HB1xw=
-X-Received: by 2002:a54:400c:0:b0:34f:9913:262 with SMTP id
- x12-20020a54400c000000b0034f99130262mr3116730oie.287.1662998886400; Mon, 12
- Sep 2022 09:08:06 -0700 (PDT)
+        Mon, 12 Sep 2022 12:18:55 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4FA63868A;
+        Mon, 12 Sep 2022 09:18:54 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id m16so4805076ilg.3;
+        Mon, 12 Sep 2022 09:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=dKtqFa8Lj7sKVbipP1evfO/jZ1JEKgMyQWZPo5L2svY=;
+        b=LYJrUWkBI5r0+ftj5RafEIHZV3TKIYV+GtfpLp5bklqBn7NVcwrDDRIvV40oAViNnw
+         PAYijJ1aNQ4wlDinX3lV3rhtEr6tMQHvjF4Qpem/VsESXWSpyHspJurr8+MBPgRUnyS1
+         JSyYvDet2ykXQxZD7W0xJQ/PbXRNVY8laRRXUVrXu8sLgFQQEl/CQnZve/OUnnSCjOC9
+         SWBwhTCcO23qhLn2kVpDFhkjIR4NmaqXoDjc0wRMDxkqLUhcCuzscCc2alA3Bl4rAfUt
+         b5JxVOVq1YMz+KhSjV168EA76QkBJyrj/895rj3CdO4d8Ut7a/C9fvaelZoVGDGCEllR
+         K/2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=dKtqFa8Lj7sKVbipP1evfO/jZ1JEKgMyQWZPo5L2svY=;
+        b=Z8HIHWjrHTTpQL4YWbVNpS5pVfa/1Ij5usrAUhmaIsTWwK6CUKPPFaJ5Pugg8zWZdS
+         pn6PAv+rWCt3i03UJMvUAggMs4LiOoW0cG92h7RF3dCDbtm9hpIyKVCRoAWNXrRXwXeE
+         tRytTY477Fd30MY+9SnHS/zDOZJEr5eymwiepSokmTYnwTuxWNFld6rtmghNcLbFsjC2
+         +50U+msnwdaigM/hA6edJvKvBPARXxK9YM7Ko+ZLKwzzKv5A+vG03AAD0tG6m48//uA4
+         aB4wbF9nk0xSyIlPdl45NcMaUkeW/6xR2NibHJ0UMFgYS2rjFo2ZzDcYmKXYIHI/drcG
+         iD5Q==
+X-Gm-Message-State: ACgBeo2wlpfoxvcydeojEc8KT/jBxnMNc2q+rByxP4e5tiyoYeNeCZxQ
+        qbuIcOjoR/kvZqT26Xh9PmkMk8auYidpUCr3qWw=
+X-Google-Smtp-Source: AA6agR6MemFAoJLParyi3ed9uKb3AZKl39DwttCreIuRBOy0bqj7TVF1woYsiMJbd8RxkweMyI0pKSKSOrXHyq4gx6o=
+X-Received: by 2002:a05:6e02:1aac:b0:2f1:94e3:1805 with SMTP id
+ l12-20020a056e021aac00b002f194e31805mr10813730ilv.72.1662999534105; Mon, 12
+ Sep 2022 09:18:54 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-24-ojeda@kernel.org>
-In-Reply-To: <20220805154231.31257-24-ojeda@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 13 Sep 2022 01:07:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
-Message-ID: <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
+ <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Mon, 12 Sep 2022 17:18:43 +0100
+Message-ID: <CANiq72kZEqAwr_m14mAFjHsFJTLjj7i4He0qyrprubpmBfOFdw@mail.gmail.com>
 Subject: Re: [PATCH v9 23/27] Kbuild: add Rust support
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         rust-for-linux@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -74,202 +80,30 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 6, 2022 at 12:44 AM Miguel Ojeda <ojeda@kernel.org> wrote:
+Hi Masahiro,
+
+On Mon, Sep 12, 2022 at 5:08 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
 >
-> Having most of the new files in place, we now enable Rust support
-> in the build system, including `Kconfig` entries related to Rust,
-> the Rust configuration printer and a few other bits.
->
-> Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Co-developed-by: Finn Behrens <me@kloenk.de>
-> Signed-off-by: Finn Behrens <me@kloenk.de>
-> Co-developed-by: Adam Bratschi-Kaye <ark.email@gmail.com>
-> Signed-off-by: Adam Bratschi-Kaye <ark.email@gmail.com>
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Co-developed-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Co-developed-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Signed-off-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Co-developed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
-> Co-developed-by: Boris-Chengbiao Zhou <bobo1239@web.de>
-> Signed-off-by: Boris-Chengbiao Zhou <bobo1239@web.de>
-> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Co-developed-by: Douglas Su <d0u9.su@outlook.com>
-> Signed-off-by: Douglas Su <d0u9.su@outlook.com>
-> Co-developed-by: Dariusz Sosnowski <dsosnowski@dsosnowski.pl>
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@dsosnowski.pl>
-> Co-developed-by: Antonio Terceiro <antonio.terceiro@linaro.org>
-> Signed-off-by: Antonio Terceiro <antonio.terceiro@linaro.org>
-> Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> Co-developed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
-> Signed-off-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
-> Co-developed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Signed-off-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  .gitignore                     |   2 +
->  Makefile                       | 172 ++++++++++++++-
->  arch/Kconfig                   |   6 +
->  include/linux/compiler_types.h |   6 +-
->  init/Kconfig                   |  46 +++-
->  kernel/configs/rust.config     |   1 +
->  lib/Kconfig.debug              |  34 +++
->  rust/.gitignore                |   8 +
->  rust/Makefile                  | 381 +++++++++++++++++++++++++++++++++
->  rust/bindgen_parameters        |  21 ++
->  scripts/Kconfig.include        |   6 +-
->  scripts/Makefile               |   3 +
->  scripts/Makefile.build         |  60 ++++++
->  scripts/Makefile.debug         |  10 +
->  scripts/Makefile.host          |  34 ++-
->  scripts/Makefile.lib           |  12 ++
->  scripts/Makefile.modfinal      |   8 +-
->  scripts/cc-version.sh          |  12 +-
->  scripts/kconfig/confdata.c     |  75 +++++++
->  scripts/min-tool-version.sh    |   6 +
->  20 files changed, 877 insertions(+), 26 deletions(-)
->  create mode 100644 kernel/configs/rust.config
->  create mode 100644 rust/.gitignore
->  create mode 100644 rust/Makefile
->  create mode 100644 rust/bindgen_parameters
->
-> diff --git a/.gitignore b/.gitignore
-> index 97e085d613a2..5da004814678 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -37,6 +37,8 @@
->  *.o
->  *.o.*
->  *.patch
-> +*.rmeta
-> +*.rsi
->  *.s
->  *.so
->  *.so.dbg
-> diff --git a/Makefile b/Makefile
-> index df92892325ae..a105cb893b4c 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -120,6 +120,15 @@ endif
->
->  export KBUILD_CHECKSRC
->
-> +# Enable "clippy" (a linter) as part of the Rust compilation.
-> +#
-> +# Use 'make CLIPPY=3D1' to enable it.
-> +ifeq ("$(origin CLIPPY)", "command line")
-> +  KBUILD_CLIPPY :=3D $(CLIPPY)
-> +endif
-> +
-> +export KBUILD_CLIPPY
-> +
->  # Use make M=3Ddir or set the environment variable KBUILD_EXTMOD to spec=
-ify the
->  # directory of external module to build. Setting M=3D takes precedence.
->  ifeq ("$(origin M)", "command line")
-> @@ -267,14 +276,14 @@ no-dot-config-targets :=3D $(clean-targets) \
->                          cscope gtags TAGS tags help% %docs check% coccic=
-heck \
->                          $(version_h) headers headers_% archheaders archs=
-cripts \
->                          %asm-generic kernelversion %src-pkg dt_binding_c=
-heck \
-> -                        outputmakefile
-> +                        outputmakefile rustavailable rustfmt rustfmtchec=
-k
->  # Installation targets should not require compiler. Unfortunately, vdso_=
-install
->  # is an exception where build artifacts may be updated. This must be fix=
-ed.
->  no-compiler-targets :=3D $(no-dot-config-targets) install dtbs_install \
->                         headers_install modules_install kernelrelease ima=
-ge_name
->  no-sync-config-targets :=3D $(no-dot-config-targets) %install kernelrele=
-ase \
->                           image_name
-> -single-targets :=3D %.a %.i %.ko %.lds %.ll %.lst %.mod %.o %.s %.symtyp=
-es %/
-> +single-targets :=3D %.a %.i %.rsi %.ko %.lds %.ll %.lst %.mod %.o %.s %.=
-symtypes %/
->
->  config-build   :=3D
->  mixed-build    :=3D
-> @@ -436,6 +445,7 @@ else
->  HOSTCC =3D gcc
->  HOSTCXX        =3D g++
->  endif
-> +HOSTRUSTC =3D rustc
->  HOSTPKG_CONFIG =3D pkg-config
->
->  KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-prototypes -Wstrict-prototype=
-s \
-> @@ -444,8 +454,26 @@ KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-prototype=
-s -Wstrict-prototypes \
->  KBUILD_USERCFLAGS  :=3D $(KBUILD_USERHOSTCFLAGS) $(USERCFLAGS)
->  KBUILD_USERLDFLAGS :=3D $(USERLDFLAGS)
->
-> +# These flags apply to all Rust code in the tree, including the kernel a=
-nd
-> +# host programs.
-> +export rust_common_flags :=3D --edition=3D2021 \
-> +                           -Zbinary_dep_depinfo=3Dy \
+> I have not figured out where this difference comes from.
 
+It is the `RUSTC_BOOTSTRAP` environment variable: it allows to use
+unstable featuers in the stable compiler.
 
+We currently set it in the global `Makefile`, but we could be more
+explicit and do it on each command if you think that would be better.
 
+If you want that we keep using the global export, then we can add a
+comment explaining this to clarify.
 
-Let me ask a question about the host_rust rule.
-
-
-
-If I directly run the build command from the command line,
-I get an error, like follows:
-
-
-$ rustc --edition=3D2021 -Zbinary_dep_depinfo=3Dy -Dunsafe_op_in_unsafe_fn
--Drust_2018_idioms -Dunreachable_pub -Dnon_ascii_idents -Wmissing_docs
--Drustdoc::missing_crate_level_docs -Dclippy::correctness
--Dclippy::style -Dclippy::suspicious -Dclippy::complexity
--Dclippy::perf -Dclippy::let_unit_value -Dclippy::mut_mut
--Dclippy::needless_bitwise_bool -Dclippy::needless_continue
--Wclippy::dbg_macro -O -Cstrip=3Ddebuginfo -Zallow-features=3D
---emit=3Ddep-info,link --out-dir=3Dscripts/
-../scripts/generate_rust_target.rs
-error: the option `Z` is only accepted on the nightly compiler
-
-
-
-This is the same command recorded as in
-scripts/.generate_rust_target.cmd
-
-
-
-Why no error when it is invoked from Makefile?
-
-
-I have not figured out where this difference comes from.
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Cheers,
+Miguel
