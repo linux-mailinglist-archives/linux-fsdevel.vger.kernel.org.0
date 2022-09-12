@@ -2,182 +2,325 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 597375B6102
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 20:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DDA5B6127
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 20:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbiILSey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 14:34:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38876 "EHLO
+        id S231249AbiILSjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 14:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbiILSd1 (ORCPT
+        with ESMTP id S230322AbiILSiw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 14:33:27 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3CE17E00
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 11:30:04 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id i129so4679334vke.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 11:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=jK7zQuVnyH6VKxB/HHGTOEjHjydvwE7ogHgu6RMg6hM=;
-        b=UdYhCRrEwWOFDluk5xAl8PEDIeWwLvT+WLkajE3xKw6lY+DI6yU2AzZsRHTk9o+wud
-         8PbDVsiowGsg/zBLRq3IISrgo0xKkYqKYBgVdx2tfetxSch8K0tyVQQ3EWlmuZtWUF2o
-         KJ0B3amtQMgdLpRsIrxse4yD+B8RHMVo4ClBuwhPu9fn0w2z2coKMu/FMJ70wz25e9b5
-         Rf/ViaEl1kANqcaWYmS8HBv3MOJapCb6yPTmjgcEys+wr6GcjG2ulX2TgHoQtfGFJJ6p
-         zCiV65ETu/oOPivfxSGoDyXGfPVrmayRjtUVmTROWwgosJc96Lm07Vla3+xAZ5LW7/2J
-         WiIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=jK7zQuVnyH6VKxB/HHGTOEjHjydvwE7ogHgu6RMg6hM=;
-        b=Nqh7TloJLy86AxaX3a3Duqy0M0XrsZz/LiDfGM52Kx613VnSR7kuWQTSp99AQLT+Bk
-         tBkqqPvfJYbi3ij2LImbr3N9VYDChfMzXDRHjZgahj6U+3M13OKwbLQrkvUtKru22wyx
-         /x2I4ya0UCg6CR3N53jMpsUMdF96CvTImOTBOE4fpnCHZcs462FhR6cUJereROEmsll2
-         FprohU6RqpdLDTTFqfUM0oPSvVgQd0KM3VNAx/Efe/CGgPcXE0t8tfj28mTV4Y6kWMGm
-         aDcV8YsZumiGGkTNh0nHovp02zydQnrHw0sgLYzMfnYzx5B4dPcWT9EXfOfSbCTUrRYW
-         7zjA==
-X-Gm-Message-State: ACgBeo2QIJlyFllJr3pU2qqynpBQVqZMijpr2L+g3GA6hq1n3EgL5Jlt
-        +wU5m6TaJEbk3oHOCkiE2GkyfjYRorxGmxhm217v3l4L
-X-Google-Smtp-Source: AA6agR6dPkCdl3HQZJPw3N+qmInPLW9DQ9Peqz6I3OfGHrSI3fDZRYDnBpKo05fwS0Vl8rHK5kEQy7cjXCpNEYvweAk=
-X-Received: by 2002:a1f:a004:0:b0:398:3e25:d2a7 with SMTP id
- j4-20020a1fa004000000b003983e25d2a7mr8942277vke.36.1663007335269; Mon, 12 Sep
- 2022 11:28:55 -0700 (PDT)
+        Mon, 12 Sep 2022 14:38:52 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92F91474E8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 11:37:12 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRFgp3yCDzMqgPX;
+        Mon, 12 Sep 2022 20:37:10 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRFgn4Hw7z3Y;
+        Mon, 12 Sep 2022 20:37:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1663007830;
+        bh=ky1nClPljWIM6vArVhth4/gMKoMFtE47EE1MTmDa5Gw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=0GUePxShnRXVWzjyPE9nSl0GVn8XlmXhdwRHHb7UQzMLxRF+GTu/3Uz6SnhPb+lW/
+         egiWVJjraCBNVDXOI7eYyRINkKbiuM3rJUXsKCrdhPhce2td9PfTy9Lc/QIAqEXrQW
+         CGPdotlu95J3PqVjvsCuJGcG0NGXbnzmyL7SPC5k=
+Message-ID: <bce9b221-e379-7731-31c3-38df5cda6152@digikod.net>
+Date:   Mon, 12 Sep 2022 20:37:09 +0200
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
- <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
- <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
- <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
- <CAOQ4uxjjPOtH9+r=oSV4iVAUvW6s3RBjA9qC73bQN1LhUqjRYQ@mail.gmail.com> <CA+khW7hviAT6DbNORYKcatOV1cigGyrd_1mH-oMwehafobVXVg@mail.gmail.com>
-In-Reply-To: <CA+khW7hviAT6DbNORYKcatOV1cigGyrd_1mH-oMwehafobVXVg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 12 Sep 2022 21:28:43 +0300
-Message-ID: <CAOQ4uxjUbwKmLAO-jTE3y6EnH2PNw0+V=oXNqNyD+H9U+nX49g@mail.gmail.com>
-Subject: Re: Overlayfs with writable lower layer
-To:     Hao Luo <haoluo@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-3-gnoack3000@gmail.com>
+ <b5984fd3-6310-9803-8b33-99715beeccfb@digikod.net> <Yx9QMbOA3i2i12ve@nuc>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <Yx9QMbOA3i2i12ve@nuc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Changing subject, reduce CC list and add move to overlayfs list]
 
-On Mon, Sep 12, 2022 at 8:43 PM Hao Luo <haoluo@google.com> wrote:
->
-> Sorry, resend, my response was bounced back by mail system due to not
-> using plain text.
->
-> On Mon, Sep 12, 2022 at 8:40 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Mon, Sep 12, 2022 at 5:22 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > I imagine the "switch" layer for a HSM would be simple enough:
-> > >
-> > > a) if file exists on fastest layer (upper) then take that
-> > > b) if not then fall back to fuse layer (lower) .
-> > >
-> > > It's almost like a read-only overlayfs (no copy up) except it would be
-> > > read-write and copy-up/down would be performed by the server as
-> > > needed. No page cache duplication for upper, and AFAICS no corner
-> > > cases that overlayfs has, since all layers are consistent (the fuse
-> > > layer would reference the upper if that is currently the up-to-date
-> > > one).
-> >
-> > On recent LSF/MM/BPF, BPF developers asked me about using overlayfs
-> > for something that looks like the above - merging of non overlapping layers
-> > without any copy-up/down, but with write to lower.
-> >
-> > I gave them the same solution (overlayfs without copy-up)
-> > but I said I didn't know what you would think about this overlayfs mode
-> > and I also pointed them to the eBPF-FUSE developers as another
-> > possible solution to their use case.
-> >
->
-> Thanks Amir for adding me in the thread. This idea is very useful for
-> BPF use cases.
 
-Hi Hao,
+On 12/09/2022 17:28, Günther Noack wrote:
+> On Fri, Sep 09, 2022 at 03:51:16PM +0200, Mickaël Salaün wrote:
+>>
+>> On 08/09/2022 21:58, Günther Noack wrote:
+>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+>>>
+>>> This flag hooks into the path_truncate LSM hook and covers file
+>>> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
+>>> well as creat().
+>>>
+>>> This change also increments the Landlock ABI version, updates
+>>> corresponding selftests, and updates code documentation to document
+>>> the flag.
+>>>
+>>> The following operations are restricted:
+>>>
+>>> open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
+>>> implicitly truncated as part of the open() (e.g. using O_TRUNC).
+>>>
+>>> Notable special cases:
+>>> * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
+>>> * open() with O_TRUNC does *not* need the TRUNCATE right when it
+>>>     creates a new file.
+>>>
+>>> truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
+>>> right.
+>>>
+>>> ftruncate() (on a file): requires that the file had the TRUNCATE right
+>>> when it was previously opened.
+>>>
+>>> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+>>> ---
+>>>    include/uapi/linux/landlock.h                | 18 ++--
+>>>    security/landlock/fs.c                       | 88 +++++++++++++++++++-
+>>>    security/landlock/fs.h                       | 18 ++++
+>>>    security/landlock/limits.h                   |  2 +-
+>>>    security/landlock/setup.c                    |  1 +
+>>>    security/landlock/syscalls.c                 |  2 +-
+>>>    tools/testing/selftests/landlock/base_test.c |  2 +-
+>>>    tools/testing/selftests/landlock/fs_test.c   |  7 +-
+>>>    8 files changed, 124 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+>>> index 23df4e0e8ace..8c0124c5cbe6 100644
+>>> --- a/include/uapi/linux/landlock.h
+>>> +++ b/include/uapi/linux/landlock.h
+>>> + * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>>> + *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+>>> + *   `O_TRUNC`. The right to truncate a file gets carried along with an opened
+>>> + *   file descriptor for the purpose of :manpage:`ftruncate(2)`.
+>>
+>> You can add a bit to explain that it is the same behavior as for
+>> LANDLOCK_ACCESS_FS_{READ,WRITE}_FILE .
+> 
+> Done.
+> 
+>>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>>> index a9dbd99d9ee7..1b546edf69a6 100644
+>>> --- a/security/landlock/fs.c
+>>> +++ b/security/landlock/fs.c
+>>> +static inline access_mask_t
+>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
+>>> +		       const struct path *const path,
+>>> +		       access_mask_t access_request)
+>>> +{
+>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>>> +	unsigned long access_bit;
+>>> +	unsigned long access_req;
+>>
+>> unsigned long access_bit, long access_req;
+> 
+> Done. Made it unsigned long access_bit, access_req;
+> 
+>>> +	init_layer_masks(domain, access_request, &layer_masks);
+>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
+>>> +				    NULL, 0, NULL, NULL)) {
+>>> +		/*
+>>> +		 * Return immediately for successful accesses and for cases
+>>
+>> Returns
+> 
+> Done.
+> 
+>>> +		 * where everything is permitted because the path belongs to an
+>>> +		 * internal filesystem.
+>>> +		 */
+>>> +		return access_request;
+>>> +	}
+>>> +
+>>> +	access_req = access_request;
+>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
+>>> +		if (layer_masks[access_bit]) {
+>>> +			/* If any layer vetoed the access right, remove it. */
+>>> +			access_request &= ~BIT_ULL(access_bit);
+>>> +		}
+>>> +	}
+>>> +	return access_request;
+>>> +}
+>>> +
+>>>    /**
+>>>     * current_check_refer_path - Check if a rename or link action is allowed
+>>>     *
+>>> @@ -1142,6 +1184,11 @@ static int hook_path_rmdir(const struct path *const dir,
+>>>    	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
+>>>    }
+>>> +static int hook_path_truncate(const struct path *const path)
+>>> +{
+>>> +	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+>>> +}
+>>> +
+>>>    /* File hooks */
+>>>    static inline access_mask_t get_file_access(const struct file *const file)
+>>> @@ -1159,22 +1206,55 @@ static inline access_mask_t get_file_access(const struct file *const file)
+>>>    	/* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
+>>>    	if (file->f_flags & __FMODE_EXEC)
+>>>    		access |= LANDLOCK_ACCESS_FS_EXECUTE;
+>>> +
+>>
+>> Not needed.
+> 
+> Done.
+> 
+>>>    	return access;
+>>>    }
+>>>    static int hook_file_open(struct file *const file)
+>>>    {
+>>> +	access_mask_t access_req, access_rights;
+>>> +	const access_mask_t optional_rights = LANDLOCK_ACCESS_FS_TRUNCATE;
+>>>    	const struct landlock_ruleset *const dom =
+>>>    		landlock_get_current_domain();
+>>> -	if (!dom)
+>>> +	if (!dom) {
+>>> +		/* Grant all rights. */
+>>
+>> Something like:
+>> Grants all rights, even if most of them are not checked here, it is more
+>> consistent.
+> 
+> Done.
+> 
+>>> +		landlock_file(file)->rights = LANDLOCK_MASK_ACCESS_FS;
+>>>    		return 0;
+>>> +	}
+>>> +
+>>>    	/*
+>>>    	 * Because a file may be opened with O_PATH, get_file_access() may
+>>>    	 * return 0.  This case will be handled with a future Landlock
+>>>    	 * evolution.
+>>>    	 */
+>>> -	return check_access_path(dom, &file->f_path, get_file_access(file));
+>>> +	access_req = get_file_access(file);
+>>> +	access_rights = get_path_access_rights(dom, &file->f_path,
+>>> +					       access_req | optional_rights);
+>>> +	if (access_req & ~access_rights)
+>>> +		return -EACCES;
+>>> +
+>>> +	/*
+>>> +	 * For operations on already opened files (i.e. ftruncate()), it is the
+>>> +	 * access rights at the time of open() which decide whether the
+>>> +	 * operation is permitted. Therefore, we record the relevant subset of
+>>> +	 * file access rights in the opened struct file.
+>>> +	 */
+>>> +	landlock_file(file)->rights = access_rights;
+>>> +
+>>
+>> Style preferences, but why do you use a new line here? I try to group code
+>> blocks until the return.
+> 
+> Thanks, done. I just do this habitually and overlooked that I was at
+> odds with the surrounding style. I don't have a strong preference.
+> 
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int hook_file_truncate(struct file *const file)
+>>> +{
+>>> +	/*
+>>> +	 * We permit truncation if the truncation right was available at the
+>>
+>> Allows truncation if the related right was…
+>>
+>>
+>>> +	 * time of opening the file.
+>>
+>> …to get a consistent access check as for read, write and execute operations.
+> 
+> Done.
+> 
+> I'm also adding this note here:
+> 
+>    Note: For checks done based on the file's Landlock rights, we enforce
+>    them independently of whether the current thread is in a Landlock
+>    domain, so that open files passed between independent processes
+>    retain their behaviour.
+> 
+> to explain that this is why we don't check for "if (!dom)" as we do in
+> other cases.
+> 
+> 
+>> This kind of explanation could be used to complete the documentation as
+>> well. The idea being to mimic the file mode check.
+> 
+> Added it to the documentation.
+> 
+>>
+>>
+>>> +	 */
+>>> +	if (!(landlock_file(file)->rights & LANDLOCK_ACCESS_FS_TRUNCATE))
+>>
+>> I prefer to invert the "if" logic and return -EACCES by default.
+> 
+> Done. Thanks for pointing it out.
+> 
+>>> +		return -EACCES;
+>>> +
+>>> +	return 0;
+>>>    }
+> 
+> 
+>>> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+>>> index 8db7acf9109b..275ba5375839 100644
+>>> --- a/security/landlock/fs.h
+>>> +++ b/security/landlock/fs.h
+>>> @@ -36,6 +36,18 @@ struct landlock_inode_security {
+>>>    	struct landlock_object __rcu *object;
+>>>    };
+>>> +/**
+>>> + * struct landlock_file_security - File security blob
+>>> + *
+>>> + * This information is populated when opening a file in hook_file_open, and
+>>> + * tracks the relevant Landlock access rights that were available at the time
+>>> + * of opening the file. Other LSM hooks use these rights in order to authorize
+>>> + * operations on already opened files.
+>>> + */
+>>> +struct landlock_file_security {
+>>> +	access_mask_t rights;
+>>
+>> I think it would make it more consistent to name it "access" to be in line
+>> with struct landlock_layer and other types.
+> 
+> Done.
 
-Thanks for chiming in.
-This thread has long diverged from the FUSE_PASSTHROUGH
-patch review so I started a new thread to discuss the overlayfs
-option.
+Hmm, actually, "allowed_access" is more explicit. We could use other 
+access-related fields for other purposes (e.g. cache).
 
-Am I to understand that the eBPF-FUSE option currently
-does not fit your needs (maybe because it is not ready yet)?
 
->
-> A bit more context here: we were thinking of overlaying two
-> filesystems together to create a view that extends the filesystem at
-> the lower layer. In our design, the lower layer is a pseudo
-> filesystem, which one can _not_ create/delete files, but make
-> directories _indirectly_, via creating a kernel object; the upper is
-> bpf filesystem, from which, one can create files. The file's purpose
-> is to describe the directory in the lower layer, that is, to describe
-> the kernel object that directory corresponds to.
->
-> With the flexibility brought by BPF, it can be a quite flexible
-> solution to query kernel objects' states.
->
+> 
+> I also added a brief documentation for the access field, to point out
+> that this is not the *full* set of rights which was available at
+> open() time, but it's just the subset of rights that is needed to
+> authorize later operations on the file:
+> 
+>    @access: Access rights that were available at the time of opening the
+>    file. This is not necessarily the full set of access rights available
+>    at that time, but it's the necessary subset as needed to authorize
+>    later operations on the open file.
 
-Can't say I was able to understand the description, but let me
-try to write the requirement in overlayfs terminology.
-Please correct me if I am wrong.
+Good!
 
-1. The "lower" fs (cgroupfs?) is a "remote" fs where directories
-    may appear or disappear due to "remote" events
-
-I think there were similar requirements to support changes
-to lower fs which in a network fs in the past.
-As long as those directories are strictly lower that should be
-possible.
-
-Does upper fs have directories of the same name that need to
-be merged with those lower dirs?
-
-2. You did not mention this but IIRC, the lower fs has (pseudo)
-    files that you want to be able to write to, and those files never
-    exist in the upper fs
-
-That translates to allowing write to lower fs without triggering copy-up
-
-3. The upper fs files are all "pure" - that means those file paths
-    do not exist in lower fs
-
-Creating files in the upper fs is normal in overlayfs, so not a problem.
-
-4. Merging upper and lower directory content is usually not needed??
-
-It must be needed for the root dir at least but where else?
-In which directories are the upper files created?
-Which directories are "pure" (containing either lower or upper files)
-and which directories are "merge" of upper and lower children?
-
-If the answer is that some directories exist both in upper and in lower
-and that those directories should be merged for the unified view then
-this is standard overlayfs behavior.
-
-Once I get the requirement in order I will try to write coherent
-semantics for this mode and see if it can meet the needs of other
-projects, such as HSM with FUSE as lower fs.
-
-Thanks,
-Amir.
+> 
+> Thanks for the review! Fixes will be in the next version.
+> 
+> -Günther
+> 
