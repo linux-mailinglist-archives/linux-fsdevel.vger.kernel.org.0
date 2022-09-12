@@ -2,136 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D41145B5D66
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 17:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 505FC5B5D96
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 17:46:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229951AbiILPkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 11:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41426 "EHLO
+        id S229597AbiILPqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 11:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiILPkE (ORCPT
+        with ESMTP id S229577AbiILPqv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 11:40:04 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0FCDFF9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 08:40:02 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id c3so9430713vsc.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 08:40:02 -0700 (PDT)
+        Mon, 12 Sep 2022 11:46:51 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5D02ED63;
+        Mon, 12 Sep 2022 08:46:50 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id d12-20020a05600c34cc00b003a83d20812fso7492975wmq.1;
+        Mon, 12 Sep 2022 08:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=XlzqLyLXUe6mHbWvc3FabcX1MIX0Mp4skHKCaRFezyI=;
-        b=o7x4MiynjEH8Nc926x64yzZTJ03EIJ1KZxrqDwS5CMM8Js4EEYnWvDcmcPZ6azU3oL
-         /wESVOFM57ROEYu6AP6Hyasx0T2H+qV4oi+1ggGVgQ9m1OlbNth/iS8GAWKBw5ZbRGYz
-         zaaMR5GbYLZwbDuWVN+vUSKx4NBSiYv/leWhtXxyRMVq6QTP1jycYvWKHk7sKybvRpnG
-         MP1Fmvbd6Mpqj2P9dq29R3ATjZClmQafyh14OUEqeUCrf66mwAS7BRYxj47ZrJei3zBP
-         v0CTwc+S29zKP9BxmihFade9i2nEwywzdDRMpHTKVpRx/DbaXUm31NRvk5QQoFjSAJOQ
-         IjjQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=tlHc5SL6klavmLXNHsuFObOY4qTxwFirbaKea93oDWw=;
+        b=MoiSIX1/vhHewmEUqi4c8R0aNvsg4lyRmE75DsF58eRwkpE2rgs3ChmOhTcygbBZsI
+         bcSnjTQRGYQx4wW52vN/L8UUY76J6qNpNvvLiE8fWmJV7BmqfGthgN/2c1N0XKhJDWhr
+         NHBxQWzpC9nS/lX/+FpHOJjvAxbEnmnxCO3Q3Lng072XLVHFjaNB1029X9PqPC6dtL+3
+         XRZW89xHS/dK87u5RUESDp4wyIj94l+BAamXZnY44zbDRCxDwRVy88qXh42sxN1eKuAm
+         f8EaxZF0nWvgIs6qUlP9s5TCDcIay7+zcJQ6FIZIHS6l3PEcIgvcGdhfRdr/Y5RlXZxa
+         UReA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=XlzqLyLXUe6mHbWvc3FabcX1MIX0Mp4skHKCaRFezyI=;
-        b=Dp8M6m7l2HKCqzzhpX+M5Y5BtWRbct0DiWMtBRq9f2dFuEZnCzorOPZ5UAUxWmrM6V
-         ApkKfkNZx4+55kmweFM9alM3qfiYO4knKoqUOmJKhVYvduer3Iaqg7td+rK/+PiNwNz2
-         NhLvIrHya+MfWkyGTbBvG3QpMhYG2QGmq16msDsi3gYsPZvIWyCfIcqyDR1KC5tdaZPf
-         ijRM+Yxdnmu1bX7ObCkw5K+n7/HGy1RHxwFpH6QC5v5EsiIkcAl2Yiirc8wLE0tM457t
-         v9P3t0uC1a3G3Jt+HtE8cajaPXCRA8kk5Uh/rQOf4KTMAJ1A8pCcgkvtFQWQCTg4ZvSB
-         QWpg==
-X-Gm-Message-State: ACgBeo1GANJHuPuKJE7DYwfF5GN1C3Kd8tuFzUqhejyuHg7JoPXJjpBC
-        iErbF5Q7ZwLEvToadIwxrP5Af7E+cVxSj6g8vRc=
-X-Google-Smtp-Source: AA6agR4Mnz3dzdmic3+LlJfP2mfUo7uApizZpKPf8ADtP2ktNbvD3IY7iuVtS6JG/Vlu2M9cooQat36cKoSH2L48G/8=
-X-Received: by 2002:a67:a649:0:b0:390:88c5:6a91 with SMTP id
- r9-20020a67a649000000b0039088c56a91mr8995107vsh.3.1662997201802; Mon, 12 Sep
- 2022 08:40:01 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=tlHc5SL6klavmLXNHsuFObOY4qTxwFirbaKea93oDWw=;
+        b=ohZH6e8vrWnGFGfAKZnHWrUwm2StD6Ex6+b3ID7MKcqI068FV1frwo50FLwA3bbmOa
+         iJIeoNn5dpQc2WipfANPROsu0X03TnSkuB0bMmD3FrtndUGPk06eerxFYb5Qt8VdNTTH
+         uawJ/YZdn2O4bDQed95S4bR/HamjsPlfMlBSfxNa3PP/8pnW9Ra6/QKtQ7/N5OUjvhKQ
+         p5QYUMGb1xatvOsQDnIwBzCQz7W17IMAGnR8vSJr3M6hoLryY2U8hRAtrYXOM3UJD6x2
+         tX4FDZ/w6DwsXoT1xy/Oi2XMnVbgwtapCv/clCYJhJg9fsocVwoeKOwjDpsgIx2Qiytd
+         bd4A==
+X-Gm-Message-State: ACgBeo1tw9xzN/iuuahn1hnvX89AbDlD/x3pbSyOdCdBWyei9m8sGhvk
+        g90/xUWCKoCjoiIYvWmOA48=
+X-Google-Smtp-Source: AA6agR5xLFlQ15JR02wbgn/L378ErKcZnZ6tUkhahRHeIFlZxB1OUR55agNcE1ZKywYhHXxOStH1HQ==
+X-Received: by 2002:a7b:c848:0:b0:3b4:73f4:2320 with SMTP id c8-20020a7bc848000000b003b473f42320mr7285695wml.124.1662997608918;
+        Mon, 12 Sep 2022 08:46:48 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id c8-20020a05600c0a4800b003a62052053csm13644407wmq.18.2022.09.12.08.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Sep 2022 08:46:48 -0700 (PDT)
+Date:   Mon, 12 Sep 2022 17:46:46 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v6 5/5] landlock: Document Landlock's file truncation
+ support
+Message-ID: <Yx9UZocFXQ9TbZnO@nuc>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-6-gnoack3000@gmail.com>
+ <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net>
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
- <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
- <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com> <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
-In-Reply-To: <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 12 Sep 2022 18:39:50 +0300
-Message-ID: <CAOQ4uxjjPOtH9+r=oSV4iVAUvW6s3RBjA9qC73bQN1LhUqjRYQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for passthrough
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Akilesh Kailash <akailash@google.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Hao Luo <haoluo@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 12, 2022 at 5:22 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, 12 Sept 2022 at 15:26, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > FWIW duplicate page cache exists in passthough FUSE whether
-> > passthrough is in kernel or in userspace, but going through yet another
-> > "switch" fs would make things even worse.
->
-> I imagine the "switch" layer for a HSM would be simple enough:
->
-> a) if file exists on fastest layer (upper) then take that
-> b) if not then fall back to fuse layer (lower) .
->
-> It's almost like a read-only overlayfs (no copy up) except it would be
-> read-write and copy-up/down would be performed by the server as
-> needed. No page cache duplication for upper, and AFAICS no corner
-> cases that overlayfs has, since all layers are consistent (the fuse
-> layer would reference the upper if that is currently the up-to-date
-> one).
+On Fri, Sep 09, 2022 at 03:51:35PM +0200, Mickaël Salaün wrote:
+> 
+> On 08/09/2022 21:58, Günther Noack wrote:
+> > Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+> > 
+> > Adapt the backwards compatibility example and discussion to remove the
+> > truncation flag where needed.
+> > 
+> > Point out potential surprising behaviour related to truncate.
+> > 
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >   Documentation/userspace-api/landlock.rst | 62 +++++++++++++++++++++---
+> >   1 file changed, 54 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index b8ea59493964..57802fd1e09b 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -8,7 +8,7 @@ Landlock: unprivileged access control
+> >   =====================================
+> >   :Author: Mickaël Salaün
+> > -:Date: May 2022
+> > +:Date: September 2022
+> >   The goal of Landlock is to enable to restrict ambient rights (e.g. global
+> >   filesystem access) for a set of processes.  Because Landlock is a stackable
+> > @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
+> >               LANDLOCK_ACCESS_FS_MAKE_FIFO |
+> >               LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+> >               LANDLOCK_ACCESS_FS_MAKE_SYM |
+> > -            LANDLOCK_ACCESS_FS_REFER,
+> > +            LANDLOCK_ACCESS_FS_REFER |
+> > +            LANDLOCK_ACCESS_FS_TRUNCATE,
+> >       };
+> >   Because we may not know on which kernel version an application will be
+> > @@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
+> >   using.  To avoid binary enforcement (i.e. either all security features or
+> >   none), we can leverage a dedicated Landlock command to get the current version
+> >   of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+> > -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
+> > -starting with the second version of the ABI.
+> > +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
+> > +rights, which are only supported starting with the second and third version of
+> > +the ABI.
+> >   .. code-block:: c
+> >       int abi;
+> >       abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+> > -    if (abi < 2) {
+> > -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
+> > +    switch (abi) {
+> > +    case -1:
+> > +            perror("The running kernel does not enable to use Landlock");
+> > +            return 1;
+> > +    case 1:
+> > +            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
+> > +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
+> > +            __attribute__((fallthrough));
+> > +    case 2:
+> > +            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
+> > +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+> >       }
+> >   This enables to create an inclusive ruleset that will contain our rules.
+> > @@ -127,8 +138,8 @@ descriptor.
+> >   It may also be required to create rules following the same logic as explained
+> >   for the ruleset creation, by filtering access rights according to the Landlock
+> > -ABI version.  In this example, this is not required because
+> > -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
+> > +ABI version.  In this example, this is not required because all of the requested
+> > +``allowed_access`` rights are already available in ABI 1.
+> 
+> This fix is correct, but it should not be part of this series. FYI, I have a
+> patch almost ready to fix some documentation style issues. Please remove
+> this hunk for the next series. I'll deal with the merge conflicts if any.
 
-On recent LSF/MM/BPF, BPF developers asked me about using overlayfs
-for something that looks like the above - merging of non overlapping layers
-without any copy-up/down, but with write to lower.
+Can you please clarify what part of it should not be part of this
+series?
 
-I gave them the same solution (overlayfs without copy-up)
-but I said I didn't know what you would think about this overlayfs mode
-and I also pointed them to the eBPF-FUSE developers as another
-possible solution to their use case.
+In this hunk, I've started using double backquote, but I've also
+changed the meaning of the sentence slightly so that it is still
+correct when the truncate right is introduced.
 
->
-> readdir would go to the layer which has the complete directory (which
-> I guess the lower one must always have, but the upper could also).
->
-> I'm probably missing lots of details, though...
->
+It is still correct that the backwards compatibility check is not
+required because LANDLOCK_ACCESS_FS_REFER is not allowed by any rule.
+But with the new truncate flag, LANDLOCK_ACCESS_FS_TRUNCATE may also
+not be allowed by any rule so that we can skip this check.
 
-That's what I said too :)
+Should I remove this hunk entirely?
 
-Does that mean that you are open to seeing patches for
-an overlayfs mode that does not copy-up on write to lower?
-I can come up with some semantics for readdir that will
-make sense.
+Or maybe rather phrase it like
 
-Thanks,
-Amir.
+  It may also be required to create rules following the same logic as
+  explained for the ruleset creation, by filtering access rights
+  according to the Landlock ABI version. In this example, this is not
+  required because `LANDLOCK_ACCESS_FS_REFER` and
+  `LANDLOCK_ACCESS_FS_TRUNCATE` are not allowed by any rule.
+ 
+?
+
+> >   We now have a ruleset with one rule allowing read access to ``/usr`` while
+> >   denying all other handled accesses for the filesystem.  The next step is to
+> > @@ -251,6 +262,32 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
+> >   process, a sandboxed process should have a subset of the target process rules,
+> >   which means the tracee must be in a sub-domain of the tracer.
+> > +Truncating files
+> > +----------------
+> > +
+> > +The operations covered by `LANDLOCK_ACCESS_FS_WRITE_FILE` and
+> 
+> I investigated and in fact we should use double backquotes almost everywhere
+> because it render the same as when using "%" in header files. Please change
+> this for the next series. I'll do the same on the patch I just talk about.
+
+Done. I'm changing double backquote style only in the hunks I touched
+so that it'll be easier to merge.
+
+> 
+> 
+> > +`LANDLOCK_ACCESS_FS_TRUNCATE` both change the contents of a file and sometimes
+> > +overlap in non-intuitive ways.  It is recommended to always specify both of
+> > +these together.
+> > +
+> > +A particularly surprising example is :manpage:`creat(2)`.  The name suggests
+> > +that this system call requires the rights to create and write files.  However,
+> > +it also requires the truncate right if an existing file under the same name is
+> > +already present.
+> > +
+> > +It should also be noted that truncating files does not require the
+> > +`LANDLOCK_ACCESS_FS_WRITE_FILE` right.  Apart from the :manpage:`truncate(2)`
+> > +system call, this can also be done through :manpage:`open(2)` with the flags
+> > +`O_RDONLY | O_TRUNC`.
+> > +
+> > +When opening a file, the availability of the `LANDLOCK_ACCESS_FS_TRUNCATE` right
+> > +is associated with the newly created file descriptor and will be used for
+> > +subsequent truncation attempts using :manpage:`ftruncate(2)`.  It is possible to
+> > +have multiple open file descriptors for the same file, where one grants the
+> > +right to truncate the file and the other does not.  It is also possible to pass
+> > +such file descriptors between processes, keeping their Landlock properties, even
+> > +when these processes don't have an enforced Landlock ruleset.
+> 
+> Good addition. Please do not use contractions ("don't").
+
+Done, thanks.
+
+> 
+> 
+> > +
+> >   Compatibility
+> >   =============
+> > @@ -397,6 +434,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
+> >   control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
+> >   access right.
+> > +File truncation (ABI < 3)
+> > +-------------------------
+> > +
+> > +File truncation could not be denied before the third Landlock ABI, so it is
+> > +always allowed when using a kernel that only supports the first or second ABI.
+> > +
+> > +Starting with the Landlock ABI version 3, it is now possible to securely control
+> > +truncation thanks to the new `LANDLOCK_ACCESS_FS_TRUNCATE` access right.
+
+Changed backquote style here as well.
+
+Thanks for the review!
+
+—Günther
+
+-- 
