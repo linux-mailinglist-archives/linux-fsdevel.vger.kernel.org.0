@@ -2,168 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FDEE5B5F81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 19:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7D85B6031
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Sep 2022 20:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbiILRrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 13:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
+        id S230121AbiILSZY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 14:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiILRrS (ORCPT
+        with ESMTP id S229801AbiILSZW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 13:47:18 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 234D91D320
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 10:47:17 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MRDZ94qd7zMqphv;
-        Mon, 12 Sep 2022 19:47:13 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MRDZ82VTyz3d;
-        Mon, 12 Sep 2022 19:47:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1663004833;
-        bh=QE7XU4x2GAWq8J4XtCiqJ5pj1Z1e485TxnAQzT2woLQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZfWGpZ5OYti6R2fz4lvz0ehzj7nPfp8o6/XR8dlhnKSz2l8QGaIcCO06057y5fDDn
-         Cmlw4RAqv4y1205Zc2L3WfF0rtG8nyMJ2uZ1urtV6h6CwK9ls2TPcWakXhqw3q0jwU
-         v7rmmX7XiZKYnoDU+mnETcOEpGd3UFLQhW12ky94=
-Message-ID: <b0bdf697-1789-d579-6b6b-a6aca73d4b11@digikod.net>
-Date:   Mon, 12 Sep 2022 19:47:11 +0200
+        Mon, 12 Sep 2022 14:25:22 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B0A1276E;
+        Mon, 12 Sep 2022 11:25:21 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id q9-20020a17090a178900b0020265d92ae3so13181603pja.5;
+        Mon, 12 Sep 2022 11:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=jinrTf2dRXCM8P7beDGhcdymXhWilSgCNRAiFQeNJHI=;
+        b=mLMtjbzG1Kl+0NHJzKAxbllsuBufduMNF2LO9iIaeSIwdabQAHzY6k1ExlrHjBbQ3b
+         5Ek8x+gOY9qsai4wca5CayyELpfftgvEGk6LfP6oka3EzZll/EmV533QU3P7IFXouFCf
+         cJeJKlEzBYjyYGcPOEHfG0y3Jv1EYtZx06IidZtpY/PqdJm61eR+KtWvr0pNEQezNvEu
+         pFzkoOMvpUyHjk+sBH0Tjhr2kErcS9rXwIAF4/QuotmYMkJOC+XpiPqyqRRB177xZq4d
+         caSw8M6mKHirkEV6wHnYvUKeI8Qc2RnoK7f9RHWvkM+Feqcfmz5JThhG20mxA0JX18zd
+         681Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=jinrTf2dRXCM8P7beDGhcdymXhWilSgCNRAiFQeNJHI=;
+        b=A4v3HuxOD3Z+JXbTX2pG4oWFlR/L2rYFmU1tpfhA96/DQCi+inUGnLEI2uBSM5QaWV
+         G2wnNv8C87mh8bYgtR6+3tHgidTAMZrW9tA1HNWKFp+sHZWRPCLO/Sc38J+marm4dKAF
+         3COF/32LflCEX+YDi+o0y+SygMa3nA23JlW5qhLHVP9IojeJhANfSm67YAdwT3E+LOWd
+         5D6Vnpsxyud1/noej1n5mx8vYvh7/FyIyCSO1BEPxbmmV1mKq8AwbWj31A5X+mE452mq
+         gXQ7KlAlpPqKeQie/cfCjAzXvpKsILBi2nG/8lS3LuH9zsKIT+9QtaJEj5jrlsVMn3fk
+         EcKA==
+X-Gm-Message-State: ACgBeo2a69zEp+6r3Ju6NMk1Qr7VfBXbNHTAv1NIoK8S8MoiMsgOwRQe
+        5M8W6ZoV+Qk8amDsxqBtURpWK2AJLSlyvg==
+X-Google-Smtp-Source: AA6agR7TErEeniLb8NygdX/YotrQEVmapgtPdEtpEWF/iOvuOSsfvdyhlVfrcnUmKBhBkPJIGioMFA==
+X-Received: by 2002:a17:90b:180e:b0:202:a0c3:6da with SMTP id lw14-20020a17090b180e00b00202a0c306damr14093608pjb.94.1663007120382;
+        Mon, 12 Sep 2022 11:25:20 -0700 (PDT)
+Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
+        by smtp.googlemail.com with ESMTPSA id x127-20020a626385000000b0053b2681b0e0sm5916894pfb.39.2022.09.12.11.25.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Sep 2022 11:25:19 -0700 (PDT)
+From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Subject: [PATCH v2 00/23] Convert to filemap_get_folios_tag()
+Date:   Mon, 12 Sep 2022 11:22:01 -0700
+Message-Id: <20220912182224.514561-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v6 5/5] landlock: Document Landlock's file truncation
- support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-6-gnoack3000@gmail.com>
- <2f9c6131-3140-9c47-cf95-f7fa3cf759ee@digikod.net> <Yx9UZocFXQ9TbZnO@nuc>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <Yx9UZocFXQ9TbZnO@nuc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patch series replaces find_get_pages_range_tag() with
+filemap_get_folios_tag(). This also allows the removal of multiple
+calls to compound_head() throughout.
+It also makes a good chunk of the straightforward conversions to folios,
+and takes the opportunity to introduce a function that grabs a folio
+from the pagecache.
 
-On 12/09/2022 17:46, Günther Noack wrote:
-> On Fri, Sep 09, 2022 at 03:51:35PM +0200, Mickaël Salaün wrote:
->>
->> On 08/09/2022 21:58, Günther Noack wrote:
->>> Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
->>>
->>> Adapt the backwards compatibility example and discussion to remove the
->>> truncation flag where needed.
->>>
->>> Point out potential surprising behaviour related to truncate.
->>>
->>> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
->>> ---
->>>    Documentation/userspace-api/landlock.rst | 62 +++++++++++++++++++++---
->>>    1 file changed, 54 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
->>> index b8ea59493964..57802fd1e09b 100644
->>> --- a/Documentation/userspace-api/landlock.rst
->>> +++ b/Documentation/userspace-api/landlock.rst
->>> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->>>    =====================================
->>>    :Author: Mickaël Salaün
->>> -:Date: May 2022
->>> +:Date: September 2022
->>>    The goal of Landlock is to enable to restrict ambient rights (e.g. global
->>>    filesystem access) for a set of processes.  Because Landlock is a stackable
->>> @@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
->>>                LANDLOCK_ACCESS_FS_MAKE_FIFO |
->>>                LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->>>                LANDLOCK_ACCESS_FS_MAKE_SYM |
->>> -            LANDLOCK_ACCESS_FS_REFER,
->>> +            LANDLOCK_ACCESS_FS_REFER |
->>> +            LANDLOCK_ACCESS_FS_TRUNCATE,
->>>        };
->>>    Because we may not know on which kernel version an application will be
->>> @@ -69,16 +70,26 @@ should try to protect users as much as possible whatever the kernel they are
->>>    using.  To avoid binary enforcement (i.e. either all security features or
->>>    none), we can leverage a dedicated Landlock command to get the current version
->>>    of the Landlock ABI and adapt the handled accesses.  Let's check if we should
->>> -remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
->>> -starting with the second version of the ABI.
->>> +remove the `LANDLOCK_ACCESS_FS_REFER` or `LANDLOCK_ACCESS_FS_TRUNCATE` access
->>> +rights, which are only supported starting with the second and third version of
->>> +the ABI.
->>>    .. code-block:: c
->>>        int abi;
->>>        abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
->>> -    if (abi < 2) {
->>> -        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->>> +    switch (abi) {
->>> +    case -1:
->>> +            perror("The running kernel does not enable to use Landlock");
->>> +            return 1;
->>> +    case 1:
->>> +            /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
->>> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
->>> +            __attribute__((fallthrough));
->>> +    case 2:
->>> +            /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->>> +            ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
->>>        }
->>>    This enables to create an inclusive ruleset that will contain our rules.
->>> @@ -127,8 +138,8 @@ descriptor.
->>>    It may also be required to create rules following the same logic as explained
->>>    for the ruleset creation, by filtering access rights according to the Landlock
->>> -ABI version.  In this example, this is not required because
->>> -`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
->>> +ABI version.  In this example, this is not required because all of the requested
->>> +``allowed_access`` rights are already available in ABI 1.
->>
->> This fix is correct, but it should not be part of this series. FYI, I have a
->> patch almost ready to fix some documentation style issues. Please remove
->> this hunk for the next series. I'll deal with the merge conflicts if any.
-> 
-> Can you please clarify what part of it should not be part of this
-> series?
+F2fs and Ceph have quite alot of work to be done regarding folios, so
+for now those patches only have the changes necessary for the removal of
+find_get_pages_range_tag(), and only support folios of size 1 (which is
+all they use right now anyways).
 
-My mistake, I guess I was reviewing something else… I was thinking about 
-style changes, but it is not the case here. Using "``" is correct.
+I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
+beneficial. The page-writeback and filemap changes implicitly work. Testing
+and review of the other changes (afs, ceph, cifs, gfs2) would be appreciated.
+---
+v2:
+  Got Acked-By tags for nilfs and btrfs changes
+  Fixed an error arising in f2fs
+  - Reported-by: kernel test robot <lkp@intel.com>
+   
+Vishal Moola (Oracle) (23):
+  pagemap: Add filemap_grab_folio()
+  filemap: Added filemap_get_folios_tag()
+  filemap: Convert __filemap_fdatawait_range() to use
+    filemap_get_folios_tag()
+  page-writeback: Convert write_cache_pages() to use
+    filemap_get_folios_tag()
+  afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+  btrfs: Convert btree_write_cache_pages() to use
+    filemap_get_folio_tag()
+  btrfs: Convert extent_write_cache_pages() to use
+    filemap_get_folios_tag()
+  ceph: Convert ceph_writepages_start() to use filemap_get_folios_tag()
+  cifs: Convert wdata_alloc_and_fillpages() to use
+    filemap_get_folios_tag()
+  ext4: Convert mpage_prepare_extent_to_map() to use
+    filemap_get_folios_tag()
+  f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_flush_inline_data() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+  f2fs: Convert last_fsync_dnode() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_meta_pages() to use filemap_get_folios_tag()
+  gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_data_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_node_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_copy_dirty_pages() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_clear_dirty_pages() to use
+    filemap_get_folios_tag()
+  filemap: Remove find_get_pages_range_tag()
 
+ fs/afs/write.c          | 114 +++++++++++++++++----------------
+ fs/btrfs/extent_io.c    |  57 +++++++++--------
+ fs/ceph/addr.c          | 138 ++++++++++++++++++++--------------------
+ fs/cifs/file.c          |  33 +++++++++-
+ fs/ext4/inode.c         |  55 ++++++++--------
+ fs/f2fs/checkpoint.c    |  49 +++++++-------
+ fs/f2fs/compress.c      |  13 ++--
+ fs/f2fs/data.c          |  69 ++++++++++----------
+ fs/f2fs/f2fs.h          |   5 +-
+ fs/f2fs/node.c          |  72 +++++++++++----------
+ fs/gfs2/aops.c          |  64 ++++++++++---------
+ fs/nilfs2/btree.c       |  14 ++--
+ fs/nilfs2/page.c        |  59 ++++++++---------
+ fs/nilfs2/segment.c     |  44 +++++++------
+ include/linux/pagemap.h |  32 +++++++---
+ include/linux/pagevec.h |   8 ---
+ mm/filemap.c            |  87 ++++++++++++-------------
+ mm/page-writeback.c     |  44 +++++++------
+ mm/swap.c               |  10 ---
+ 19 files changed, 507 insertions(+), 460 deletions(-)
 
-> 
-> In this hunk, I've started using double backquote, but I've also
-> changed the meaning of the sentence slightly so that it is still
-> correct when the truncate right is introduced.
-> 
-> It is still correct that the backwards compatibility check is not
-> required because LANDLOCK_ACCESS_FS_REFER is not allowed by any rule.
-> But with the new truncate flag, LANDLOCK_ACCESS_FS_TRUNCATE may also
-> not be allowed by any rule so that we can skip this check.
-> 
-> Should I remove this hunk entirely?
+-- 
+2.36.1
 
-Keep your changes, it's better like this.
-
-
-> 
-> Or maybe rather phrase it like
-> 
->    It may also be required to create rules following the same logic as
->    explained for the ruleset creation, by filtering access rights
->    according to the Landlock ABI version. In this example, this is not
->    required because `LANDLOCK_ACCESS_FS_REFER` and
->    `LANDLOCK_ACCESS_FS_TRUNCATE` are not allowed by any rule.
->   
-> ?
