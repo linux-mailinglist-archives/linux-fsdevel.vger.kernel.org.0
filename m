@@ -2,212 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9075B7A62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 21:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5601B5B7A6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 21:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbiIMTA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 15:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55106 "EHLO
+        id S233140AbiIMTDM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 15:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233076AbiIMS7v (ORCPT
+        with ESMTP id S232545AbiIMTCw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 14:59:51 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D987F766F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 11:54:42 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id p17so4686219uao.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 11:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=Co+d+J1tEoeDNOz0j/nYkP/v4ocQj3W1GGQZD1NDNBg=;
-        b=i7cMQbx1RdciQS03Aigw1V9ryzSqgDDS22mcTj80grbjSPM7WznsBJr0sZCl/4pZzG
-         Kx/I6qVTXMOmkMfGrK7BbOn5dEhn4dm+35ctKDRRIijr58Mj9OGKNEHOVF3pSLQQI1GT
-         IxrjVHTY6737bdNdDsFAnwFBRNQIySEaX++G9yB/IMHldOfQj6ucLOYOw5UlR9XIg5Zd
-         1NyTFIn1zRjfVwAhDvb8ojIldfrcj7F4ApCfm3CJ0eeqAHxOOLgQZ/V2QXLNFK/BZvwX
-         +U9/2wJhMwA6A8MoJVc39XMkqEpaUGlt2hm24qdPD/E2cELUAN5j0w94OjCNUp5dva2S
-         z1gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Co+d+J1tEoeDNOz0j/nYkP/v4ocQj3W1GGQZD1NDNBg=;
-        b=2HXyOZifS3vBh/sCRREG3CdhEK8dRwO8ahOJKgZlX0B0KdcFfOM+rXK1w/oeyeT7Gm
-         zqOzmPK7CBkTfhrA4jvpZMIfMAWDiLC/jqqY23AXIcW5QToUm7mKg9o6LUZf8DoF2J5y
-         CK+U9ZwEDe16zBiI52vcsjLlxo3I9mBh3QZWGyeav+tahfmsk8UxDIhaFdUALtuLSbcC
-         sGatYAEnMMQH/TuswuWZyTiONNy4nu7OQtCBd4dSI4kSieafynakbT3/JsMuy2GsyXQ+
-         FejW1NqB0j1pl4ATVb2096DEy9RBDS4PQyAv78Jbtictx6vcPlL/AB6PH9VUEMBnbGVm
-         hdKA==
-X-Gm-Message-State: ACgBeo3d/C3CMKoU7jM6jwYnmmztZKOJwnPCJMF1Bw1k3ez3xiKbW460
-        7HVVpA61K0QzMAB8fWDVe4r8WIJhR58O8KeidhCGfht6
-X-Google-Smtp-Source: AA6agR6E2avCBnj7WP1H+GImFsVz2soR7jhyAxxrgaFUihc1N8j/JIbxkQfeg/K0DIWGjbrNZXF6CLPgykX1jXTfsAM=
-X-Received: by 2002:a9f:38c2:0:b0:3af:4101:374f with SMTP id
- w2-20020a9f38c2000000b003af4101374fmr10759866uaf.80.1663095281627; Tue, 13
- Sep 2022 11:54:41 -0700 (PDT)
+        Tue, 13 Sep 2022 15:02:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF7FC14;
+        Tue, 13 Sep 2022 12:01:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8C2C9B80E42;
+        Tue, 13 Sep 2022 19:01:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AB1C433D7;
+        Tue, 13 Sep 2022 19:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663095714;
+        bh=9RF+0QcN+/pFpwRf+wXoUfwGV4Go/AvHmZuDiCUBtos=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jwNv0SFF66fyyctsd1g0W7h20TEcG82c6vvY8Ouen4mrnjIpHOAxVlmN20hbS/6Sz
+         Dh8zRrmmgBnfbwRXOwU6TYAx6d3YK2fb0bSTmixanvDQuVXis4t36z65l1ZeQ5QaQu
+         JU4tf6dxt7MTV3dk2UYmJUtlgAlEc0j9aJ9FLq4j3+Pd2nindU/IIQ98faH5JmgmtK
+         MRqDEhUshRzj4xZjoN2im0finwnosO9W+9m8lTgLeFmpR+Bg4bym25ZyGxqXbUWJly
+         7jhMtKYtgKX71HUUiCjyFGzF2te1PC19K+O7zncdXoG8I+lfn0S4AqAtO2fjx7S82N
+         IrMLYxA0GvRag==
+Message-ID: <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Date:   Tue, 13 Sep 2022 15:01:50 -0400
+In-Reply-To: <20220913011518.GE3600936@dread.disaster.area>
+References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>
+         <166268467103.30452.1687952324107257676@noble.neil.brown.name>
+         <166268566751.30452.13562507405746100242@noble.neil.brown.name>
+         <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>
+         <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>
+         <166270570118.30452.16939807179630112340@noble.neil.brown.name>
+         <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>
+         <166285038617.30452.11636397081493278357@noble.neil.brown.name>
+         <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>
+         <166302538820.30452.7783524836504548113@noble.neil.brown.name>
+         <20220913011518.GE3600936@dread.disaster.area>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
- <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
- <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
- <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
- <CAOQ4uxjjPOtH9+r=oSV4iVAUvW6s3RBjA9qC73bQN1LhUqjRYQ@mail.gmail.com>
- <CA+khW7hviAT6DbNORYKcatOV1cigGyrd_1mH-oMwehafobVXVg@mail.gmail.com>
- <CAOQ4uxjUbwKmLAO-jTE3y6EnH2PNw0+V=oXNqNyD+H9U+nX49g@mail.gmail.com> <CA+khW7jQ6fZbEgzxCafsaaTyv7ze58bd9hQ0HBH4R+dQyRaqog@mail.gmail.com>
-In-Reply-To: <CA+khW7jQ6fZbEgzxCafsaaTyv7ze58bd9hQ0HBH4R+dQyRaqog@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 13 Sep 2022 21:54:29 +0300
-Message-ID: <CAOQ4uxjP0qeuUrdjT6hXCb5zO0AoY+LKM6uza2cL9UCGMo8KsQ@mail.gmail.com>
-Subject: Re: Overlayfs with writable lower layer
-To:     Hao Luo <haoluo@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 9:26 PM Hao Luo <haoluo@google.com> wrote:
->
-> On Mon, Sep 12, 2022 at 11:28 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Mon, Sep 12, 2022 at 8:43 PM Hao Luo <haoluo@google.com> wrote:
-> > >
-> > > On Mon, Sep 12, 2022 at 8:40 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > On Mon, Sep 12, 2022 at 5:22 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > >
-> > > > > I imagine the "switch" layer for a HSM would be simple enough:
-> > > > >
-> > > > > a) if file exists on fastest layer (upper) then take that
-> > > > > b) if not then fall back to fuse layer (lower) .
-> > > > >
-> > > > > It's almost like a read-only overlayfs (no copy up) except it would be
-> > > > > read-write and copy-up/down would be performed by the server as
-> > > > > needed. No page cache duplication for upper, and AFAICS no corner
-> > > > > cases that overlayfs has, since all layers are consistent (the fuse
-> > > > > layer would reference the upper if that is currently the up-to-date
-> > > > > one).
-> > > >
-> > > > On recent LSF/MM/BPF, BPF developers asked me about using overlayfs
-> > > > for something that looks like the above - merging of non overlapping layers
-> > > > without any copy-up/down, but with write to lower.
-> > > >
-> > > > I gave them the same solution (overlayfs without copy-up)
-> > > > but I said I didn't know what you would think about this overlayfs mode
-> > > > and I also pointed them to the eBPF-FUSE developers as another
-> > > > possible solution to their use case.
-> > > >
-> > >
-> > > Thanks Amir for adding me in the thread. This idea is very useful for
-> > > BPF use cases.
-> >
-> [...]
-> >
-> > Am I to understand that the eBPF-FUSE option currently
-> > does not fit your needs (maybe because it is not ready yet)?
-> >
->
-> Yeah, mostly because eBPF-FUSE is not ready. I talked to Alessio and
-> his colleague after LSF/MM/BPF. They were distracted from eBPF-FUSE
-> development at that time and I didn't follow up, working on other BPF
-> stuff.
->
-> > >
-> [...]
-> > Can't say I was able to understand the description, but let me
-> > try to write the requirement in overlayfs terminology.
-> > Please correct me if I am wrong.
-> >
-> > 1. The "lower" fs (cgroupfs?) is a "remote" fs where directories
-> >     may appear or disappear due to "remote" events
-> >
->
-> Right. Seems we are aligned on this.
->
-> > I think there were similar requirements to support changes
-> > to lower fs which in a network fs in the past.
-> > As long as those directories are strictly lower that should be
-> > possible.
-> >
-> > Does upper fs have directories of the same name that need to
-> > be merged with those lower dirs?
-> >
->
-> No, I don't think so. Upper fs should only have files in my use case.
->
-> > 2. You did not mention this but IIRC, the lower fs has (pseudo)
-> >     files that you want to be able to write to, and those files never
-> >     exist in the upper fs
-> >
-> > That translates to allowing write to lower fs without triggering copy-up
-> >
->
-> Writing to lower is not needed right now.
->
-> > 3. The upper fs files are all "pure" - that means those file paths
-> >     do not exist in lower fs
-> >
-> > Creating files in the upper fs is normal in overlayfs, so not a problem.
-> >
->
-> Yes. If used in an expected way, the lower fs won't have file paths
-> that also exist in the upper.
->
-> > 4. Merging upper and lower directory content is usually not needed??
-> >
-> > It must be needed for the root dir at least but where else?
-> > In which directories are the upper files created?
-> > Which directories are "pure" (containing either lower or upper files)
-> > and which directories are "merge" of upper and lower children?
-> >
->
-> In my use case, if that's doable, all the directories are "pure",
-> except the root dir, and they are in the lower. The files are either
-> from upper or from lower, so no merge. This should be sufficient for
-> the BPF use case.
->
-> > If the answer is that some directories exist both in upper and in lower
-> > and that those directories should be merged for the unified view then
-> > this is standard overlayfs behavior.
-> >
-> > Once I get the requirement in order I will try to write coherent
-> > semantics for this mode and see if it can meet the needs of other
-> > projects, such as HSM with FUSE as lower fs.
->
-> Thanks Amir. I want to clarify that with my very very limited
-> knowledge on FS, I can't say what I am thinking right now is
-> absolutely correct. Please take my request for features with a grain
-> of salt and feel free to pick the semantics that you see make most
-> sense.
->
+On Tue, 2022-09-13 at 11:15 +1000, Dave Chinner wrote:
+> On Tue, Sep 13, 2022 at 09:29:48AM +1000, NeilBrown wrote:
+> > On Mon, 12 Sep 2022, Jeff Layton wrote:
+> > > On Sun, 2022-09-11 at 08:53 +1000, NeilBrown wrote:
+> > > > This could be expensive.
+> > > >=20
+> > > > There is not currently any locking around O_DIRECT writes.  You can=
+not
+> > > > synchronise with them.
+> > > >=20
+> > >=20
+> > > AFAICT, DIO write() implementations in btrfs, ext4, and xfs all hold
+> > > inode_lock_shared across the I/O. That was why patch #8 takes the
+> > > inode_lock (exclusive) across the getattr.
+> >=20
+> > Looking at ext4_dio_write_iter() it certain does take
+> > inode_lock_shared() before starting the write and in some cases it
+> > requests, using IOMAP_DIO_FORCE_WAIT, that imap_dio_rw() should wait fo=
+r
+> > the write to complete.  But not in all cases.
+> > So I don't think it always holds the shared lock across all direct IO.
+>=20
+> To serialise against dio writes, one must:
+>=20
+> 	// Lock the inode exclusively to block new DIO submissions
+> 	inode_lock(inode);
+>=20
+> 	// Wait for all in flight DIO reads and writes to complete
+> 	inode_dio_wait(inode);
+>=20
+> This is how truncate, fallocate, etc serialise against AIO+DIO which
+> do not hold the inode lock across the entire IO. These have to
+> serialise aginst DIO reads, too, because we can't have IO in
+> progress over a range of the file that we are about to free....
+>=20
 
-OK. IIUC, you have upper fs files only in the root dir?
-And the lower root dir has only subdirs?
+Thanks, that clarifies a bit.
 
-If that is all then it sounds pretty simple.
-It could be described something like this:
-1. merged directories cannot appear/disappear
-2. lower pure directories can appear/disappear
-3. upper files/dirs can be created inside merge dirs and pure upper dirs
+> > > Taking inode_lock_shared is sufficient to block out buffered and DAX
+> > > writes. DIO writes sometimes only take the shared lock (e.g. when the
+> > > data is already properly aligned). If we want to ensure the getattr
+> > > doesn't run while _any_ writes are running, we'd need the exclusive
+> > > lock.
+> >=20
+> > But the exclusive lock is bad for scalability.
+>=20
+> Serilisation against DIO is -expensive- and -slow-. It's not a
+> solution for what is supposed to be a fast unlocked read-only
+> operation like statx().
+>=20
 
-I think I have some patches that could help with #2.
+Fair enough. I labeled that patch with RFC as I suspected that it would
+be too expensive. I don't think we can guarantee perfect consistency vs.
+mmap either, so carving out DIO is not a stretch (at least not for
+NFSv4).
 
-Can you give a small example of an upper a lower and their
-union trees just for the sake of discussion?
+> > > Maybe that's overkill, though it seems like we could have a race like
+> > > this without taking inode_lock across the getattr:
+> > >=20
+> > > reader				writer
+> > > -----------------------------------------------------------------
+> > > 				i_version++
+> > > getattr
+> > > read
+> > > 				DIO write to backing store
+> > >=20
+> >=20
+> > This is why I keep saying that the i_version increment must be after th=
+e
+> > write, not before it.
+>=20
+> Sure, but that ignores the reason why we actually need to bump
+> i_version *before* we submit a DIO write. DIO write invalidates the
+> page cache over the range of the write, so any racing read will
+> re-populate the page cache during the DIO write.
+>=20
+> Hence buffered reads can return before the DIO write has completed,
+> and the contents of the read can contain, none, some or all of the
+> contents of the DIO write. Hence i_version has to be incremented
+> before the DIO write is submitted so that racing getattrs will
+> indicate that the local caches have been invalidated and that data
+> needs to be refetched.
+>=20
 
-Thanks,
-Amir.
+Bumping the change attribute after the write is done would be sufficient
+for serving NFSv4. The clients just invalidate their caches if they see
+the value change. Bumping it before and after would be fine too. We
+might get some spurious cache invalidations but they'd be infrequent.
+
+FWIW, we've never guaranteed any real atomicity with NFS readers vs.
+writers. Clients may see the intermediate stages of a write from a
+different client if their reads race in at the right time. If you need
+real atomicity, then you really should be using locking. What we _do_
+try to ensure is timely pagecache invalidation when this occurs.
+
+If we want to expose this to userland via statx in the future, then we
+may need a stronger guarantee because we can't as easily predict how
+people will want to use this.
+
+At that point, bumping i_version both before and after makes a bit more
+sense, since it better ensures that a change will be noticed, whether
+the related read op comes before or after the statx.
+
+> But, yes, to actually be safe here, we *also* should be bumping
+> i_version on DIO write on DIO write completion so that racing
+> i_version and data reads that occur *after* the initial i_version
+> bump are invalidated immediately.
+>=20
+> IOWs, to avoid getattr/read races missing stale data invalidations
+> during DIO writes, we really need to bump i_version both _before and
+> after_ DIO write submission.
+>=20
+> It's corner cases like this where "i_version should only be bumped
+> when ctime changes" fails completely. i.e. there are concurrent IO
+> situations which can only really be handled correctly by bumping
+> i_version whenever either in-memory and/or on-disk persistent data/
+> metadata state changes occur.....
+
+I think we have two choices (so far) when it comes to closing the race
+window between the i_version bump and the write. Either should be fine
+for serving NFSv4.
+
+1/ take the inode_lock in some form across the getattr call for filling
+out GETATTR/READDIR/NVERIFY info. This is what the RFC patch in my
+latest set does. That's obviously too expensive though. We could take
+inode_lock_shared, which wouldn't exclude DIO, but would cover the
+buffered and DAX codepaths. This is somewhat ugly though, particularly
+with slow backend network filesystems (like NFS). That getattr could
+take a while, and meanwhile all writes are stuck...
+
+...or...
+
+2/ start bumping the i_version after a write completes. Bumping it twice
+(before and after) would be fine too. In most cases the second one will
+be a no-op anyway. We might get the occasional false cache invalidations
+there with NFS, but they should be pretty rare and that's preferable to
+holding on to invalid cached data (which I think is a danger today).
+
+To do #2, I guess we'd need to add an inode_maybe_inc_iversion call at
+the end of the relevant ->write_iter ops, and then dirty the inode if
+that comes back true? That should be pretty rare.
+
+We do also still need some way to mitigate potential repeated versions
+due to crashes, but that's orthogonal to the above issue (and being
+discussed in a different branch of this thread).
+--=20
+Jeff Layton <jlayton@kernel.org>
