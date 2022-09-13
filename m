@@ -2,159 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CE35B65C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 04:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2755B6622
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 05:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbiIMCmL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 22:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
+        id S230022AbiIMDb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 23:31:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbiIMCmE (ORCPT
+        with ESMTP id S230124AbiIMDbN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 22:42:04 -0400
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD70652FC4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 19:42:02 -0700 (PDT)
-Received: by mail-vk1-xa2b.google.com with SMTP id 134so5152313vkz.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 19:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=xSq83h+oDn6GLZfLolK8+zCQq6x4Cikcqm6qM9lFCds=;
-        b=bqu634K4us69ieyOqZ4p0bZpA/R9IQep3uibHolgYyNxuaqePA8BPZisTYdt7r1hLc
-         V+7lg615ubMJl9e0YvflmdgbB2dis9MAuB9xt94kAWKzrV1f/de/DD4Jk/PE03MCQOi7
-         CJo55SCEg8bNLTz/x+0bLbtHhsd5XpyuR+TSz0C6o4ELogAIgSWEqIObofOfd6dV+NTC
-         hn3LEjs3MAGu408BXSDtiCOTk8TBdewM0vRVXSe+l5k96w83YzYocB5Ux/XNlOyXiFP+
-         TIp6d6aOLLUfmk9ybNqTKWkHuQtPn6mI6lENfXvSXxlfWEWZ0ni8zNtwy3SWU801JRNg
-         xlCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=xSq83h+oDn6GLZfLolK8+zCQq6x4Cikcqm6qM9lFCds=;
-        b=4UoAFmkryYmIIJ5G6GhFUsA9HSmWrUbAI0NjsV6ne5losE8IrHYHgpMrlXjL/I5y18
-         k+zz7t7xdD755qwWpnmOI8BZEfpKXaBRjNr38GFIxT4mmei0mgE2uSl1qiF0mNqjZals
-         RLc2k4Na04ooXHemNbkPewXxT9opbVF7W5//COP9ffj2OpePCaoMmw0bYcu2etqrz8Nj
-         +r9GQJdVXcrWi9QRGvywVmrhMpsbPAfaQkcc8bIoPBmIzgmzN5DBiuJxKq7Zu2DcCnPk
-         L3hrSRU9hssR5Sdlkr87wIp71XYnjZsw7z/wO6umLycMSjanNDw7qyxtDvV5h25y6AF4
-         gklQ==
-X-Gm-Message-State: ACgBeo1qdfJAPt0fUW1qXKDsS56bQPm2xq+u2tx6QOSLaABlPxVT9b5J
-        juyZWkvkCuPlzkL2FkwyErjknqDU3wgzQtOU+qbKA9CBJls=
-X-Google-Smtp-Source: AA6agR7Qjxon/5JxgEE9Ow10Cb6DZlzgu0n61bVQZR4UGq+PwG4IRgs/aUzxgHYjSSoCaiSZsQHk2OtWpEqgVofyWcs=
-X-Received: by 2002:a1f:19cf:0:b0:375:6144:dc41 with SMTP id
- 198-20020a1f19cf000000b003756144dc41mr9601976vkz.3.1663036921837; Mon, 12 Sep
- 2022 19:42:01 -0700 (PDT)
+        Mon, 12 Sep 2022 23:31:13 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4509D2FFF5;
+        Mon, 12 Sep 2022 20:31:12 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B133920F49;
+        Tue, 13 Sep 2022 03:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1663039870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ndgrk0VyINRbdMDLbO7l+2EY0nnzKQILkdX+lROM4VA=;
+        b=D5hQtSVB84872NWPUpgtY00czjq4HsvsBIr9rk8RSxBRplc2NpkS+Hu6+gZUqMDyzVnKik
+        LwMboydU+7qPo2tpYbBb9O8GMLzcyPJnC7dWI02jwBBYc99W/PAYQMWWBYZSx0cnuH9jqi
+        O2/Ebe7v1cJsj1xELWoQ8i411CizawE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1663039870;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ndgrk0VyINRbdMDLbO7l+2EY0nnzKQILkdX+lROM4VA=;
+        b=N0gs0x3S8B8VEKQKEbSS/O8mzZ4fMxgFLeyBC06RZkXhl9gC6dsEmRE0DjDXS/MiQS8tHs
+        OsFNtGuvgyAoUdDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8358A13A86;
+        Tue, 13 Sep 2022 03:31:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 8tDhDXb5H2OFNQAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 13 Sep 2022 03:31:02 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
- <20220912125734.wpcw3udsqri4juuh@quack3> <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <BY5PR07MB652953061D3A2243F66F0798A3449@BY5PR07MB6529.namprd07.prod.outlook.com>
-In-Reply-To: <BY5PR07MB652953061D3A2243F66F0798A3449@BY5PR07MB6529.namprd07.prod.outlook.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 13 Sep 2022 05:41:50 +0300
-Message-ID: <CAOQ4uxhZzqZgq8exYYQmTQUxXC_6K2Et19t6ksJPy8+pdw2JFQ@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     "Plaster, Robert" <rplaster@deepspacestorage.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dave Chinner" <david@fromorbit.com>
+Cc:     "Jeff Layton" <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, "Jan Kara" <jack@suse.cz>,
+        adilger.kernel@dilger.ca, djwong@kernel.org,
+        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+In-reply-to: <20220913024109.GF3600936@dread.disaster.area>
+References: <20220908155605.GD8951@fieldses.org>,
+ <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>,
+ <20220908182252.GA18939@fieldses.org>,
+ <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>,
+ <20220909154506.GB5674@fieldses.org>,
+ <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>,
+ <20220910145600.GA347@fieldses.org>,
+ <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>,
+ <20220913004146.GD3600936@dread.disaster.area>,
+ <166303374350.30452.17386582960615006566@noble.neil.brown.name>,
+ <20220913024109.GF3600936@dread.disaster.area>
+Date:   Tue, 13 Sep 2022 13:30:58 +1000
+Message-id: <166303985824.30452.7333958999671590160@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Amir Goldstein <amir73il@gmail.com>
-> Date: Monday, September 12, 2022 at 9:38 AM
-> To: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos=
-@szeredi.hu>
-> Subject: Re: thoughts about fanotify and HSM
->
-> On Mon, Sep 12, 2022 at 3:57 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > Hi Amir!
-> >
-> > On Sun 11-09-22 21:12:06, Amir Goldstein wrote:
-> > > I wanted to consult with you about preliminary design thoughts
-> > > for implementing a hierarchical storage manager (HSM)
-> > > with fanotify.
-> > >
-> > > I have been in contact with some developers in the past
-> > > who were interested in using fanotify to implement HSM
-> > > (to replace old DMAPI implementation).
-> >
-> > Ah, DMAPI. Shiver. Bad memories of carrying that hacky code in SUSE ker=
-nels
-> > ;)
-> >
-> > So how serious are these guys about HSM and investing into it? Because
->
-> Let's put it this way.
-> They had to find a replacement for DMAPI so that they could stop
-> carrying DMAPI patches, so pretty serious.
-> They had to do it one way or the other.
->
-> They approached me around the time that FAN_MARK_FILESYSTEM
-> was merged, so I explained them how to implement HSM using
-> FAN_MARK_FILESYSTEM+FAN_OPEN_PERM
-> Whether they ended up using it or not - I don't know.
->
+On Tue, 13 Sep 2022, Dave Chinner wrote:
+> 
+> Indeed, we know there are many systems out there that mount a
+> filesystem, preallocate and map the blocks that are allocated to a
+> large file, unmount the filesysetm, mmap the ranges of the block
+> device and pass them to RDMA hardware, then have sensor arrays rdma
+> data directly into the block device. Then when the measurement
+> application is done they walk the ondisk metadata to remove the
+> unwritten flags on the extents, mount the filesystem again and
+> export the file data to a HPC cluster for post-processing.....
 
+And this tool doesn't update the i_version?  Sounds like a bug.
 
-On Tue, Sep 13, 2022 at 2:01 AM Plaster, Robert
-<rplaster@deepspacestorage.com> wrote:
->
-> Hi Amir =E2=80=93 Dan got back to me. He said (fyi - SMS referenced below=
- is our HSM app):
->
+> 
+> So how does the filesystem know whether data the storage contains
+> for it's files has been modified while it is unmounted and so needs
+> to change the salt?
 
-Hi Rob,
+How does it know that no data is modified while it *is* mounted?  Some
+assumptions have to be made.
 
-I will add that from what I read on your website [1], your entire
-product is open source,
-code is available on your web servers as rpms and will be put up on GitHub =
-soon.
-That's very good news, because it means I will be able to demo my proposed
-fanotify interface improvements on your code base :)
+> 
+> The short answer is that it can't, and so we cannot make assumptions
+> that a unmount/mount cycle has not changed the filesystem in any
+> way....
 
-[1] https://deepspacestorage.com/resources/#downloads
-
->
->
-> =E2=80=9CAmir talks about specific fanotify events used for an HSM.  He s=
-ays FAN_MARK_FILESYSTEM+FAN_OPEN_PERM should be enough for a basic HSM.  As=
- it is currently implemented, SMS uses FAN_MARK_ADD+FAN_OPEN_PERM to detect=
- purged files and FAN_MARK_ADD+FAN_CLOSE_WRITE events to determine when a f=
-ile has been potentially modified.  There are other FANOTIFY events that wo=
-uld be useful, but we're currently limited by the older Linux kernels in th=
-e RHEL releases we're supporting.
->
->
->
-> If I understand what Amil is proposing, it appears to be some new FANOTIF=
-Y FAN_PRE_* events.  Some of it looks like something we would be interested=
- in but as long as we continue to support older RHEL kernels, we're very li=
-mited to what we have to work with.=E2=80=9D
->
-
-My goal is to design the interfaces for the use of future more
-advanced HSM clients.
-The experience that you can bring to the table from customers using your
-current HSM client is very important for making design choices for future
-HSM clients - i.e. understand and address the pain points with current
-fanotify interface.
-
-So as long as this is "something that you would be interested in" I know I =
-am
-in the right direction ;-)
+If a mount-count is the best that XFS can do, then that is certainly
+what it should use.
 
 Thanks,
-Amir.
+NeilBrown
