@@ -2,71 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85BC75B6562
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 04:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0AF95B65C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 04:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbiIMCHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 22:07:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43284 "EHLO
+        id S230049AbiIMClQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 22:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiIMCHp (ORCPT
+        with ESMTP id S229601AbiIMClO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 22:07:45 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F145246C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 19:07:44 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id i1so10903378vsc.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 19:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=5VmgfOdiLA6pH7L5mhmpnNIs4IMof9JNaAhni5vx2LY=;
-        b=At3JUi7Lwi6B6JLdr4VfdNVyvPt0SOWOmwu2JBDUKXzfFbe7QWWy36TQ9glZY15g96
-         r7Njle3a3YCcpEBbuW8mZSMvQi+4T/wCjF80F2KXJJCBlwD7E2oMbBcqndpbjiyLe7K7
-         61WO3R1A3WhB3/2MGLDQ0o2AUJ06gr/f9y8iINOzmVdQaDf6adcq0ustZcvDMH8hKdCC
-         vjkIE2rHEBLAGR5x4tdyCcszYtsYee2sPgLRkSr79JDmvilz5gYBFFmLmoCIs3PtbXg5
-         Osst9VOTL8v184sR6PtQCUfefZl4IIBXhANWn/sc5BoGr1lhmDr22++POGukCee7rmrR
-         Ef3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=5VmgfOdiLA6pH7L5mhmpnNIs4IMof9JNaAhni5vx2LY=;
-        b=MeDwZwAhVpRN+o5RvFOUqFgSZFtCTjdFUZ0jzsK84//n9ZA1Wl+59pMnTvowgZxS/q
-         AqRfSMzsyAQTsuTmOvbNmsz/UcmvCMxpY5oSl1XVzZKVWy4FJX4122zw5NJmpcZVMLcX
-         2p8XSOAxYcpuSOqLOxvUfg58hb0jcckqF5CuSjvZV7HfT1H6yRSWLOooKGeIoS4BHq4Q
-         s/afJagWh0aGaqJGNOWXCw2C0zbJQBLWmlieN8Ue4uOuyTAmUAac5RnCsdrN+LE7FL4k
-         nDO6h0VHymMfxjHQCM26NQE2olRbbWoTH4MLy7Vu3pw4B+QuKYaEQAwd26XbeMz2fRaa
-         EMhQ==
-X-Gm-Message-State: ACgBeo1YCjqchL7JzQZWEVBxINIBFMMC957XkeVsX1WLpbO51tT5DGtC
-        v+DalKlQyrguHeGHc+A8DncMzsf+4MHFMwxUMC2cy0Zzx3U=
-X-Google-Smtp-Source: AA6agR4GdiO5BdVxJxRqeWLv0sLYVRNT9FQp4XLMZft8MslGtHTXugBcIN/aCU7UID8e8hz2fpoEBz71qKyLTlnsSgo=
-X-Received: by 2002:a67:a243:0:b0:398:a30e:1566 with SMTP id
- t3-20020a67a243000000b00398a30e1566mr1403708vsh.2.1663034862996; Mon, 12 Sep
- 2022 19:07:42 -0700 (PDT)
+        Mon, 12 Sep 2022 22:41:14 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4EA2C52811;
+        Mon, 12 Sep 2022 19:41:13 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-149-49.pa.vic.optusnet.com.au [49.186.149.49])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E5F2562DEA1;
+        Tue, 13 Sep 2022 12:41:10 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oXvrJ-007559-Lq; Tue, 13 Sep 2022 12:41:09 +1000
+Date:   Tue, 13 Sep 2022 12:41:09 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        adilger.kernel@dilger.ca, djwong@kernel.org,
+        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+Message-ID: <20220913024109.GF3600936@dread.disaster.area>
+References: <20220908155605.GD8951@fieldses.org>
+ <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
+ <20220908182252.GA18939@fieldses.org>
+ <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
+ <20220909154506.GB5674@fieldses.org>
+ <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>
+ <20220910145600.GA347@fieldses.org>
+ <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>
+ <20220913004146.GD3600936@dread.disaster.area>
+ <166303374350.30452.17386582960615006566@noble.neil.brown.name>
 MIME-Version: 1.0
-References: <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com>
- <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
- <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
- <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
- <CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEhoMfG=3CSKucvoJbj6JSg@mail.gmail.com>
- <Yx8xEhxrF5eFCwJR@redhat.com> <CAOQ4uxikeG5Ys4Hm2nr7CuJ7cDpNmOP-PRKjezi-DTwDUP42kw@mail.gmail.com>
- <Yx9DuJwWN3l5T4jL@redhat.com> <CAOQ4uxhTksMqScNuRbRNNtXvs+JhTbcggPQpXfzqHJtYmTKuRA@mail.gmail.com>
- <Yx+O/0gVFso5YNxG@redhat.com>
-In-Reply-To: <Yx+O/0gVFso5YNxG@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 13 Sep 2022 05:07:32 +0300
-Message-ID: <CAOQ4uxg8iChHexh_rP=uoV2M3H113sVgPxV6TpTWnwzN3ygsdg@mail.gmail.com>
-Subject: Re: Persistent FUSE file handles (Was: virtiofs uuid and file handles)
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Hanna Reitz <hreitz@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166303374350.30452.17386582960615006566@noble.neil.brown.name>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=631fedc8
+        a=XTRC1Ovx3SkpaCW1YxGVGA==:117 a=XTRC1Ovx3SkpaCW1YxGVGA==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
+        a=jPh7UWzK4Is-Rv15NK8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,134 +67,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 12, 2022 at 10:56 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Mon, Sep 12, 2022 at 06:07:42PM +0300, Amir Goldstein wrote:
-> > On Mon, Sep 12, 2022 at 5:35 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Mon, Sep 12, 2022 at 04:38:48PM +0300, Amir Goldstein wrote:
-> > > > On Mon, Sep 12, 2022 at 4:16 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > >
-> > > > > On Sun, Sep 11, 2022 at 01:14:49PM +0300, Amir Goldstein wrote:
-> > > > > > On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > > > >
-> > > > > > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > > > > > > LOOKUP except it takes a {variable length handle, name} as input and
-> > > > > > > returns a variable length handle *and* a u64 node_id that can be used
-> > > > > > > normally for all other operations.
-> > > > > > >
-> > > > > > > The advantage of such a scheme for virtio-fs (and possibly other fuse
-> > > > > > > based fs) would be that userspace need not keep a refcounted object
-> > > > > > > around until the kernel sends a FORGET, but can prune its node ID
-> > > > > > > based cache at any time.   If that happens and a request from the
-> > > > > > > client (kernel) comes in with a stale node ID, the server will return
-> > > > > > > -ESTALE and the client can ask for a new node ID with a special
-> > > > > > > lookup_handle(fh, NULL).
-> > > > > > >
-> > > > > > > Disadvantages being:
-> > > > > > >
-> > > > > > >  - cost of generating a file handle on all lookups
-> > > > > > >  - cost of storing file handle in kernel icache
-> > > > > > >
-> > > > > > > I don't think either of those are problematic in the virtiofs case.
-> > > > > > > The cost of having to keep fds open while the client has them in its
-> > > > > > > cache is much higher.
-> > > > > > >
-> > > > > >
-> > > > > > I was thinking of taking a stab at LOOKUP_HANDLE for a generic
-> > > > > > implementation of persistent file handles for FUSE.
-> > > > >
-> > > > > Hi Amir,
-> > > > >
-> > > > > I was going throug the proposal above for LOOKUP_HANDLE and I was
-> > > > > wondering how nodeid reuse is handled.
-> > > >
-> > > > LOOKUP_HANDLE extends the 64bit node id to be variable size id.
-> > >
-> > > Ok. So this variable size id is basically file handle returned by
-> > > host?
-> > >
-> > > So this looks little different from what Miklos had suggested. IIUC,
-> > > he wanted LOOKUP_HANDLE to return both file handle as well as *node id*.
-> > >
-> > > *********************************
-> > > One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> > > LOOKUP except it takes a {variable length handle, name} as input and
-> > > returns a variable length handle *and* a u64 node_id that can be used
-> > > normally for all other operations.
-> > > ***************************************
-> > >
-> >
-> > Ha! Thanks for reminding me about that.
-> > It's been a while since I looked at what actually needs to be done.
-> > That means that evicting server inodes from cache may not be as
-> > easy as I had imagined.
-> >
-> > > > A server that declares support for LOOKUP_HANDLE must never
-> > > > reuse a handle.
-> > > >
-> > > > That's the basic idea. Just as a filesystem that declares to support
-> > > > exportfs must never reuse a file handle.
-> > >
-> > > >
-> > > > > IOW, if server decides to drop
-> > > > > nodeid from its cache and reuse it for some other file, how will we
-> > > > > differentiate between two. Some sort of generation id encoded in
-> > > > > nodeid?
-> > > > >
-> > > >
-> > > > That's usually the way that file handles are implemented in
-> > > > local fs. The inode number is the internal lookup index and the
-> > > > generation part is advanced on reuse.
-> > > >
-> > > > But for passthrough fs like virtiofsd, the LOOKUP_HANDLE will
-> > > > just use the native fs file handles, so virtiofsd can evict the inodes
-> > > > entry from its cache completely, not only close the open fds.
-> > >
-> > > Ok, got it. Will be interesting to see how kernel fuse changes look
-> > > to accomodate this variable sized nodeid.
-> > >
-> >
-> > It may make sense to have a FUSE protocol dialect where nodeid
-> > is variable size for all commands, but it probably won't be part of
-> > the initial LOOKUP_HANDLE work.
-> >
-> > > >
-> > > > That is what my libfuse_passthough POC does.
-> > >
-> > > Where have you hosted corresponding kernel changes?
-> > >
-> >
-> > There are no kernel changes.
-> >
-> > For xfs and ext4 I know how to implement open_by_ino()
-> > and I know how to parse the opaque fs file handle to extract
-> > ino+generation from it and return them in FUSE_LOOKUP
-> > response.
->
-> Aha, interesting. So is this filesystem specific. Works on xfs/ext4 but
-> not necessarily on other filesystems like nfs. (Because they have their
-> own way of encoding things in file handle).
+On Tue, Sep 13, 2022 at 11:49:03AM +1000, NeilBrown wrote:
+> On Tue, 13 Sep 2022, Dave Chinner wrote:
+> > On Mon, Sep 12, 2022 at 07:42:16AM -0400, Jeff Layton wrote:
+> > > On Sat, 2022-09-10 at 10:56 -0400, J. Bruce Fields wrote:
+> > > > On Fri, Sep 09, 2022 at 12:36:29PM -0400, Jeff Layton wrote:
+> > > > Our goal is to ensure that after a crash, any *new* i_versions that we
+> > > > give out or write to disk are larger than any that have previously been
+> > > > given out.  We can do that by ensuring that they're equal to at least
+> > > > that old maximum.
+> > > > 
+> > > > So think of the 64-bit value we're storing in the superblock as a
+> > > > ceiling on i_version values across all the filesystem's inodes.  Call it
+> > > > s_version_max or something.  We also need to know what the maximum was
+> > > > before the most recent crash.  Call that s_version_max_old.
+> > > > 
+> > > > Then we could get correct behavior if we generated i_versions with
+> > > > something like:
+> > > > 
+> > > > 	i_version++;
+> > > > 	if (i_version < s_version_max_old)
+> > > > 		i_version = s_version_max_old;
+> > > > 	if (i_version > s_version_max)
+> > > > 		s_version_max = i_version + 1;
+> > > > 
+> > > > But that last step makes this ludicrously expensive, because for this to
+> > > > be safe across crashes we need to update that value on disk as well, and
+> > > > we need to do that frequently.
+> > > > 
+> > > > Fortunately, s_version_max doesn't have to be a tight bound at all.  We
+> > > > can easily just initialize it to, say, 2^40, and only bump it by 2^40 at
+> > > > a time.  And recognize when we're running up against it way ahead of
+> > > > time, so we only need to say "here's an updated value, could you please
+> > > > make sure it gets to disk sometime in the next twenty minutes"?
+> > > > (Numbers made up.)
+> > > > 
+> > > > Sorry, that was way too many words.  But I think something like that
+> > > > could work, and make it very difficult to hit any hard limits, and
+> > > > actually not be too complicated??  Unless I missed something.
+> > > > 
+> > > 
+> > > That's not too many words -- I appreciate a good "for dummies"
+> > > explanation!
+> > > 
+> > > A scheme like that could work. It might be hard to do it without a
+> > > spinlock or something, but maybe that's ok. Thinking more about how we'd
+> > > implement this in the underlying filesystems:
+> > > 
+> > > To do this we'd need 2 64-bit fields in the on-disk and in-memory 
+> > > superblocks for ext4, xfs and btrfs. On the first mount after a crash,
+> > > the filesystem would need to bump s_version_max by the significant
+> > > increment (2^40 bits or whatever). On a "clean" mount, it wouldn't need
+> > > to do that.
+> > 
+> > Why only increment on crash? If the filesystem has been unmounted,
+> > then any cached data is -stale- and must be discarded. e.g. unmount,
+> > run fsck which cleans up corrupt files but does not modify
+> > i_version, then mount. Remote caches are now invalid, but i_version
+> > may not have changed, so we still need the clean unmount-mount cycle
+> > to invalidate caches.
+> 
+> I disagree.  We do need fsck to cause caches to be invalidated IF IT
+> FOUND SOMETHING TO REPAIR, but not if the filesystem was truely clean.
 
-Correct.
-If it is not xfs/ext4, the passthrough implementation uses open fds.
-In the non xfs/ext4 case, an NFS client may get ESTALE errors after
-server restart and worse - get the content of the wrong object
-if server has reused nodeid+genration after restart.
+<sigh>
 
->
-> >
-> > So I could manage to implement persistent NFS file handles
-> > over the existing FUSE protocol with 64bit node id.
->
-> And that explains that why you did not have to make kernel changes. But
-> this does not allow sever to close the fd associate with nodeid? Or there
-> is a way for server to generate file handle and then call
-> open_by_handle_at().
->
+Neil, why the fuck are you shouting at me for making the obvious
+observation that data in cleanly unmount filesystems can be modified
+when they are off line?
 
-Yes, that's what the server does in case of ext4/xfs:
-https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/fuse_passthrough.cpp#L912
+Indeed, we know there are many systems out there that mount a
+filesystem, preallocate and map the blocks that are allocated to a
+large file, unmount the filesysetm, mmap the ranges of the block
+device and pass them to RDMA hardware, then have sensor arrays rdma
+data directly into the block device. Then when the measurement
+application is done they walk the ondisk metadata to remove the
+unwritten flags on the extents, mount the filesystem again and
+export the file data to a HPC cluster for post-processing.....
 
-Thanks,
-Amir.
+So how does the filesystem know whether data the storage contains
+for it's files has been modified while it is unmounted and so needs
+to change the salt?
+
+The short answer is that it can't, and so we cannot make assumptions
+that a unmount/mount cycle has not changed the filesystem in any
+way....
+
+> > IOWs, what we want is a salted i_version value, with the filesystem
+> > providing the unique per-mount salt that gets added to the
+> > externally visible i_version values.
+> 
+> I agree this is a simple approach.  Possible the best.
+> 
+> > 
+> > If that's the case, the salt doesn't need to be restricted to just
+> > modifying the upper bits - as long as the salt increments
+> > substantially and independently to the on-disk inode i_version then
+> > we just don't care what bits of the superblock salt change from
+> > mount to mount.
+> > 
+> > For XFS we already have a unique 64 bit salt we could use for every
+> > mount - clean or unclean - and guarantee it is larger for every
+> > mount. It also gets substantially bumped by fsck, too. It's called a
+> > Log Sequence Number and we use them to track and strictly order
+> > every modification we write into the log. This is exactly what is
+> > needed for a i_version salt, and it's already guaranteed to be
+> > persistent.
+> 
+> Invalidating the client cache on EVERY unmount/mount could impose
+> unnecessary cost.  Imagine a client that caches a lot of data (several
+> large files) from a server which is expected to fail-over from one
+> cluster node to another from time to time.  Adding extra delays to a
+> fail-over is not likely to be well received.
+
+HA fail-over is something that happens rarely, and isn't something
+we should be trying to optimise i_version for.  Indeed, HA failover
+is usually a result of an active server crash/failure, in which case
+server side filesystem recovery is required before the new node can
+export the filesystem again. That's exactly the case you are talking
+about needing to have the salt change to invalidate potentially
+stale client side i_version values....
+
+If the HA system needs to control the salt for co-ordinated, cache
+coherent hand-over then -add an option for the HA server to control
+the salt value itself-. HA orchestration has to handle so much state
+hand-over between server nodes already that handling a salt value
+for the mount is no big deal. This really is not something that
+individual local filesystems need to care about, ever.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
