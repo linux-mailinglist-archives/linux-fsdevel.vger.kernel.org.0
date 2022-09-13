@@ -2,68 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE005B64ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 03:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B5D5B64FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 03:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbiIMBJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 21:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42964 "EHLO
+        id S229830AbiIMBP3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 21:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbiIMBJ2 (ORCPT
+        with ESMTP id S229585AbiIMBP0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 21:09:28 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6DD1EE;
-        Mon, 12 Sep 2022 18:09:26 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id j17so3418575vsp.5;
-        Mon, 12 Sep 2022 18:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=/XsoyqrT3QB1JAOnynnNk+cD1xAIdvUlxSJ4ed6XIdU=;
-        b=LCh/26aAbGHkKGewKjn73gLlX++zCf8OLBwVxFWLa64tYPDq/i2er1PmrVmMkGAwOI
-         L2JRUzDqv2lK9NaVniFYm7FpYuNBfqGBIhKFyEiUvFh3AU/Pe1+xUEezdDuC7oEtVTzK
-         z4RnpgRLFEs/kpx/XTpDhcz1YZja3m4TBuvwqk20rCqQfNxg0OTn6cKh89klQ8JdP/d5
-         mnV6dtRYDuEjIzD+gV8Sy+Z00atObjJcdT1rQhqSoQ9ZBHA1slMzLmqb42wvp3Fbbjrj
-         PcbYe5zgwlygD5zetriqBhKy83A9Y3Tj1nqXRBKeJ829uuOZ6L5Y1UNj+nuZ18uhaFr1
-         0FCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=/XsoyqrT3QB1JAOnynnNk+cD1xAIdvUlxSJ4ed6XIdU=;
-        b=smhry8Ohh3CAsDJCIuHX+g+kEYZDpKnGLPG5ueYx2dpA4FDu/7n8YoCNXJJi+9Cslh
-         sW64GTrh+lr/Pg0w23sgSAsF2RF8P0b3SAi9SV+8olqk4wPGru6G9gnfylRX5flnxfDo
-         R35kq0wsskD6fD9qkwaikUBV79617SETWliJMP9T+BiYJjqukD17LazLeUI4q90An0IS
-         ha9UkUclefFpZF07ZgzpguRfCfypVgRLQZqQDjmqO9iQAfiXHbgmcrplzUrf53JgrLAc
-         EFerFmJ31Pn+oK6ksIW3KmvFxM0RNsjWI7z0gZUfba3Is8YPLXtP9FnnyNv+mlLeySxY
-         0wNg==
-X-Gm-Message-State: ACgBeo0DVuYcr56hjzjG/0oHzgklLQJKgLhtdQCp/8pA8r8wbwP8e4T8
-        esqBGmFONurv/6HOrZZKfVTof0YHkb5LEsMTIGJhCL0DnPnQyw==
-X-Google-Smtp-Source: AA6agR4EqnqQ8u4MAgskdLzYc7FBqMGiJOS2HCVnpmnuXUvK+QJK2TMCY2lWLmDeQ8q/znqGKGcFd82tz2HFf86kF7E=
-X-Received: by 2002:a05:6102:5709:b0:390:e360:88e8 with SMTP id
- dg9-20020a056102570900b00390e36088e8mr9131856vsb.22.1663031365543; Mon, 12
- Sep 2022 18:09:25 -0700 (PDT)
+        Mon, 12 Sep 2022 21:15:26 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A643C1658D;
+        Mon, 12 Sep 2022 18:15:24 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-149-49.pa.vic.optusnet.com.au [49.186.149.49])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 912241100506;
+        Tue, 13 Sep 2022 11:15:20 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oXuWE-0073aR-ME; Tue, 13 Sep 2022 11:15:18 +1000
+Date:   Tue, 13 Sep 2022 11:15:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+Message-ID: <20220913011518.GE3600936@dread.disaster.area>
+References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>
+ <166268467103.30452.1687952324107257676@noble.neil.brown.name>
+ <166268566751.30452.13562507405746100242@noble.neil.brown.name>
+ <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>
+ <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>
+ <166270570118.30452.16939807179630112340@noble.neil.brown.name>
+ <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>
+ <166285038617.30452.11636397081493278357@noble.neil.brown.name>
+ <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>
+ <166302538820.30452.7783524836504548113@noble.neil.brown.name>
 MIME-Version: 1.0
-References: <20220912182224.514561-1-vishal.moola@gmail.com> <20220912182224.514561-19-vishal.moola@gmail.com>
-In-Reply-To: <20220912182224.514561-19-vishal.moola@gmail.com>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Tue, 13 Sep 2022 10:09:08 +0900
-Message-ID: <CAKFNMokZ02Ax9J3Ns_Q2PO8oeg+G7kgqQS7kMJMxSiX92_Vwzg@mail.gmail.com>
-Subject: Re: [PATCH v2 18/23] nilfs2: Convert nilfs_lookup_dirty_data_buffers()
- to use filemap_get_folios_tag()
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166302538820.30452.7783524836504548113@noble.neil.brown.name>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=631fd9aa
+        a=XTRC1Ovx3SkpaCW1YxGVGA==:117 a=XTRC1Ovx3SkpaCW1YxGVGA==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
+        a=l1P_Ky_A2ZjqpwNTm_4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,18 +78,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 3:30 AM Vishal Moola (Oracle) wrote:
->
-> Convert function to use folios throughout. This is in preparation for
-> the removal of find_get_pages_range_tag().
->
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> ---
->  fs/nilfs2/segment.c | 29 ++++++++++++++++-------------
->  1 file changed, 16 insertions(+), 13 deletions(-)
+On Tue, Sep 13, 2022 at 09:29:48AM +1000, NeilBrown wrote:
+> On Mon, 12 Sep 2022, Jeff Layton wrote:
+> > On Sun, 2022-09-11 at 08:53 +1000, NeilBrown wrote:
+> > > This could be expensive.
+> > > 
+> > > There is not currently any locking around O_DIRECT writes.  You cannot
+> > > synchronise with them.
+> > > 
+> > 
+> > AFAICT, DIO write() implementations in btrfs, ext4, and xfs all hold
+> > inode_lock_shared across the I/O. That was why patch #8 takes the
+> > inode_lock (exclusive) across the getattr.
+> 
+> Looking at ext4_dio_write_iter() it certain does take
+> inode_lock_shared() before starting the write and in some cases it
+> requests, using IOMAP_DIO_FORCE_WAIT, that imap_dio_rw() should wait for
+> the write to complete.  But not in all cases.
+> So I don't think it always holds the shared lock across all direct IO.
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To serialise against dio writes, one must:
 
-Looks good.   Thank you for reflecting the previous comment.
+	// Lock the inode exclusively to block new DIO submissions
+	inode_lock(inode);
 
-Ryusuke Konishi
+	// Wait for all in flight DIO reads and writes to complete
+	inode_dio_wait(inode);
+
+This is how truncate, fallocate, etc serialise against AIO+DIO which
+do not hold the inode lock across the entire IO. These have to
+serialise aginst DIO reads, too, because we can't have IO in
+progress over a range of the file that we are about to free....
+
+> > Taking inode_lock_shared is sufficient to block out buffered and DAX
+> > writes. DIO writes sometimes only take the shared lock (e.g. when the
+> > data is already properly aligned). If we want to ensure the getattr
+> > doesn't run while _any_ writes are running, we'd need the exclusive
+> > lock.
+> 
+> But the exclusive lock is bad for scalability.
+
+Serilisation against DIO is -expensive- and -slow-. It's not a
+solution for what is supposed to be a fast unlocked read-only
+operation like statx().
+
+> > Maybe that's overkill, though it seems like we could have a race like
+> > this without taking inode_lock across the getattr:
+> > 
+> > reader				writer
+> > -----------------------------------------------------------------
+> > 				i_version++
+> > getattr
+> > read
+> > 				DIO write to backing store
+> > 
+> 
+> This is why I keep saying that the i_version increment must be after the
+> write, not before it.
+
+Sure, but that ignores the reason why we actually need to bump
+i_version *before* we submit a DIO write. DIO write invalidates the
+page cache over the range of the write, so any racing read will
+re-populate the page cache during the DIO write.
+
+Hence buffered reads can return before the DIO write has completed,
+and the contents of the read can contain, none, some or all of the
+contents of the DIO write. Hence i_version has to be incremented
+before the DIO write is submitted so that racing getattrs will
+indicate that the local caches have been invalidated and that data
+needs to be refetched.
+
+But, yes, to actually be safe here, we *also* should be bumping
+i_version on DIO write on DIO write completion so that racing
+i_version and data reads that occur *after* the initial i_version
+bump are invalidated immediately.
+
+IOWs, to avoid getattr/read races missing stale data invalidations
+during DIO writes, we really need to bump i_version both _before and
+after_ DIO write submission.
+
+It's corner cases like this where "i_version should only be bumped
+when ctime changes" fails completely. i.e. there are concurrent IO
+situations which can only really be handled correctly by bumping
+i_version whenever either in-memory and/or on-disk persistent data/
+metadata state changes occur.....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
