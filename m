@@ -2,121 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E986E5B7CB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 23:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 502F75B7CD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 00:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbiIMV2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 17:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
+        id S229683AbiIMWDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 18:03:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiIMV2C (ORCPT
+        with ESMTP id S229692AbiIMWDm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 17:28:02 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DED7165578;
-        Tue, 13 Sep 2022 14:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wscn5dkggvZiZ0wJ3zxOaRBw0qG01+CWesayzXtuhxc=; b=uiiEEkRan/uKyzQz8RRjZ6qsTd
-        Skdm5pIGzk82MJ7HYjaNnsLEnY6Clx6DqMnArzsqYvBMHjkucg5HPDfhf/aQchMAAZ0RX1w1Yl36H
-        k/peloic/wBt6QsuQa6xB39x2rGetD4azkJJEfGtX+QCd7DI4gPbvX02a3jliBrYDKpmvipcIy/47
-        jAIkserencOEgqU8Srlsiqy/SO8hjfvOUh5T5E19tXhjpgNUnGQjw0yD63B4+xTH/XqMm8/VIAN7v
-        kO7ugREAhPhUfFs74cx2fwDz7V9C/kVSTRtcsJzHcANGI1EAOQFGncXhB0CVqywMneSXAZzXp4cqq
-        xP+B7rRw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oYDRm-00Fy5C-2O;
-        Tue, 13 Sep 2022 21:27:58 +0000
-Date:   Tue, 13 Sep 2022 22:27:58 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+29dc75ed37be943c610e@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference
- in __d_instantiate
-Message-ID: <YyD13iRuhPDJypz8@ZenIV>
-References: <0000000000005c2d1f05e8945724@google.com>
+        Tue, 13 Sep 2022 18:03:42 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172F074364
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 15:03:41 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id w20so1136883ply.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 15:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=NYBaVLRrXbe6H9m02gqcPbG6Tfzo/qSbO9657IGVEGU=;
+        b=KuISZK38k47UtmNXtHsh4Po1U2TsA0Mq68x0dGj6QlRcjnGjQLfIMVVq5qDWJyXQw8
+         WMJholrGNEk4kauKtc3e/KRRBfmQUhO7Ut2oI1J5/tlZh8/c7k61DUishzbTcQ/pIFNR
+         PQ8v21RMBDyFDfqYoXGSelP7mhC+hP/KrYq4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=NYBaVLRrXbe6H9m02gqcPbG6Tfzo/qSbO9657IGVEGU=;
+        b=Hz48fuxj6Mw5KnDJO2wX20trrXNjhySEE0dzi/IWuuBJ3yYSoHJWhwjkcoifnmlfYl
+         dzperACyZHCGyIIRTdtkvgAuuzzipbYs7do0Kgt82fPXURCBVeP0rKfrKXHmbxPiid0v
+         N5LdY+GYl9iYzetCWZI28w8JwX5ueFQgEcGxNgHfGZ4mHFWbnvYs1iRK7RmbeU8vOja+
+         i1gkqVrKCH/assTUWyi8wggLnJudccblFrAWFhwrqGHEOhKZz6Dfvw1hnGj+wL7H6cxR
+         zd94Yncg3fmcYRcNx8ilu04Ckn2UJz5OhzcKpjzE3w6fo5bjb9u4kNQOYsXK8Qo2Mysx
+         /E5w==
+X-Gm-Message-State: ACgBeo2TluPetFeFisIRy9QjuvtZ26suiVOo4hYmdaGXzf+OKZVVN4C6
+        SgjtYIIyJLTLX2hDN95Ix1RkHA==
+X-Google-Smtp-Source: AA6agR6CNtB1UOHoxi9MrDvudnFn/NsbUZVavc+t+Q3VtrPU/A7zGmxMPrGoIyGLcWGhzziD+9R4VA==
+X-Received: by 2002:a17:902:e750:b0:176:b0fb:9683 with SMTP id p16-20020a170902e75000b00176b0fb9683mr34012585plf.71.1663106620537;
+        Tue, 13 Sep 2022 15:03:40 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e13-20020a17090301cd00b00177f4ef7970sm9124775plh.11.2022.09.13.15.03.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Sep 2022 15:03:39 -0700 (PDT)
+Date:   Tue, 13 Sep 2022 15:03:38 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jorge Merlino <jorge.merlino@canonical.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
+Message-ID: <202209131456.76A13BC5E4@keescook>
+References: <20220910211215.140270-1-jorge.merlino@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000005c2d1f05e8945724@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220910211215.140270-1-jorge.merlino@canonical.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 12:51:42PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a6b443748715 Merge branch 'for-next/core', remote-tracking..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16271d4f080000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e79d82586727c5df
-> dashboard link: https://syzkaller.appspot.com/bug?extid=29dc75ed37be943c610e
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162474a7080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119b6b78880000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/1436897f0dc0/disk-a6b44374.raw.xz
-> vmlinux: https://storage.googleapis.com/68c4de151fbb/vmlinux-a6b44374.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+29dc75ed37be943c610e@syzkaller.appspotmail.com
-> 
-> ntfs3: loop0: Different NTFS' sector size (1024) and media sector size (512)
-> ntfs3: loop0: RAW NTFS volume: Filesystem size 0.00 Gb > volume size 0.00 Gb. Mount in read-only
-> ntfs3: loop0: Failed to load $Extend.
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000008
+On Sat, Sep 10, 2022 at 06:12:14PM -0300, Jorge Merlino wrote:
+> This patch fixes a race condition in check_unsafe_exec when a heavily
+> threaded program tries to exec a setuid file. check_unsafe_exec counts the
+> number of threads sharing the same fs_struct and compares it to the total
+> number of users of the fs_struct by looking at its users counter. If there
+> are more users than process threads using it the setuid exec fails with
+> LSM_UNSAFE_SHARE. The problem is that, during the kernel_clone code
+> execution, the fs_struct users counter is incremented before the new thread
+> is added to the thread_group list. So there is a race when the counter has
+> been incremented but the thread is not visible to the while_each_tread loop
+> in check_unsafe_exec.
 
-> Call trace:
->  d_flags_for_inode fs/dcache.c:1980 [inline]
->  __d_instantiate+0x2a0/0x2e4 fs/dcache.c:1998
->  d_instantiate fs/dcache.c:2036 [inline]
->  d_make_root+0x64/0xa8 fs/dcache.c:2071
->  ntfs_fill_super+0x1420/0x14a4 fs/ntfs/super.c:180
->  get_tree_bdev+0x1e8/0x2a0 fs/super.c:1323
->  ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1358
->  vfs_get_tree+0x40/0x140 fs/super.c:1530
->  do_new_mount+0x1dc/0x4e4 fs/namespace.c:3040
->  path_mount+0x358/0x914 fs/namespace.c:3370
->  do_mount fs/namespace.c:3383 [inline]
->  __do_sys_mount fs/namespace.c:3591 [inline]
->  __se_sys_mount fs/namespace.c:3568 [inline]
->  __arm64_sys_mount+0x2f8/0x408 fs/namespace.c:3568
->  __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
->  invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
->  el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
->  do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
->  el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
->  el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
->  el0t_64_sync+0x18c/0x190
-> Code: 79000688 52a00417 17ffff83 f9401288 (f9400508) 
-> ---[ end trace 0000000000000000 ]---
-> ----------------
-> Code disassembly (best guess):
->    0:	79000688 	strh	w8, [x20, #2]
->    4:	52a00417 	mov	w23, #0x200000              	// #2097152
->    8:	17ffff83 	b	0xfffffffffffffe14
->    c:	f9401288 	ldr	x8, [x20, #32]
-> * 10:	f9400508 	ldr	x8, [x8, #8] <-- trapping instruction
+Thanks for reporting this and for having a reproducer!
 
-at a guess - bollocksed inode; NULL ->i_op (should never happen; it takes actively
-assigning NULL to it, but apparently ntfs_read_mft() is that dumb), combined with
-candidate root inode somehow having S_IFLNK in ->i_mode.
+It looks like this is "failing safe", in the sense that the bug causes
+an exec of a setuid binary to not actually change the euid. Is that an
+accurate understanding here?
 
-At the very least,
-        inode->i_op = NULL;
-should *NEVER* be done; there is no legitimate reason to do that, no matter
-what.  ->i_op initially points to empty method table; it should never
-point to anything that is not an object of type struct inode_operations.
-In particular, it should never become NULL.
+> This patch sort of fixes this by setting a process flag to the parent
+> process during the time this race is possible. Thus, if a process is
+> forking, it counts an extra user fo the fs_struct as the counter might be
+> incremented before the thread is visible. But this is not great as this
+> could generate the opposite problem as there may be an external process
+> sharing the fs_struct that is masked by some thread that is being counted
+> twice. I submit this patch just as an idea but mainly I want to introduce
+> this issue and see if someone comes up with a better solution.
+
+I'll want to spend some more time studying this race, but yes, it looks
+like it should get fixed. I'm curious, though, how did you find this
+problem? It seems quite unusual to have a high-load heavily threaded
+process decide to exec.
+
+-Kees
+
+-- 
+Kees Cook
