@@ -2,223 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F4245B6533
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 03:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 563A05B653B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 03:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbiIMBtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Sep 2022 21:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
+        id S229696AbiIMBvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Sep 2022 21:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiIMBtQ (ORCPT
+        with ESMTP id S229610AbiIMBvb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Sep 2022 21:49:16 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94704F67F;
-        Mon, 12 Sep 2022 18:49:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7DF9134486;
-        Tue, 13 Sep 2022 01:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663033754; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XymQaOtV2yV+xCDaTdfh048Uz6sbE2/X7+E4QQCcVdo=;
-        b=RJxgi3J1bX3N95U7SNYQj6XFLkLiRRJMmXP5Dcw1rxxL7Pk3SWRoQK1arYpZSZDmyWuLX9
-        IkrHNjN7zOhBdypFQOeR0/YlkKLseT6jpWor8TftOvGZ4mOo+dwvQwgeWTi2DbT6PwN0aB
-        mepCSbH00VBbO54aU5FzE/mp5XUb7tc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663033754;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XymQaOtV2yV+xCDaTdfh048Uz6sbE2/X7+E4QQCcVdo=;
-        b=nrTqRPioiBIrZ75RcYjeFJfhOVcHGnLXCxYbUvR+CI0TEqBuMDUU2+UZdE0vOmTpYNXUkL
-        ChjPBearKW3Oy0Aw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E8A02139B3;
-        Tue, 13 Sep 2022 01:49:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id dHZ5J5LhH2OyGQAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 13 Sep 2022 01:49:06 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Sep 2022 21:51:31 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A776B4F6A5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Sep 2022 18:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FSsJC2i+ECVQwuPKAM0y/3FEn/+K9aO/VlkPkNDnN2w=; b=XwQaliiXzXeRgYVPOb8wR9wU9K
+        QahcK0OvNclBjwlYU3XiPsQNPXAjL1FEutm5S7yivVc446YYh2/Jze3AvwYlMmZWiYWydHaKJityk
+        5KDei9fTlPoVcK50xoIckNvtf636GJzeeg9d3hPa1rPsyJ67cwaOt3JSVrngwv4Oi73XdP0laZTjm
+        zCO6kjVXVhOwc916xETdb2GM+UTU/m1tw2AQRi6n8qdxmK/yHxsMBdMj0XrcUXUGzC5uAYe7pUUtM
+        3CBus9ZId2B/j40vkJTRBAmM3UPsFTXokIkbV//jhKP6LW+3wzyAe3PR3wOPA1I5OX9M1hty/K+Qn
+        WsrubkPQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1oXv57-00Fgv4-2o;
+        Tue, 13 Sep 2022 01:51:21 +0000
+Date:   Tue, 13 Sep 2022 02:51:21 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Yu-li Lin <yulilin@google.com>, chirantan@chromium.org,
+        dgreid@chromium.org, fuse-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, suleiman@chromium.org
+Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
+Message-ID: <Yx/iGX+xGdqlnH73@ZenIV>
+References: <CAJfpegvsCQ+rJv2rSk3mUMsX_N26ardW=MYbHxifO5DU7uSYqA@mail.gmail.com>
+ <20220831025704.240962-1-yulilin@google.com>
+ <CAJfpegvMGxigBe=3tgwBRKuSS0H1ey=0WhOkgOz5di-LqXH-HQ@mail.gmail.com>
+ <CAMW0D+epkBMTEzzJhkX7HeEepCH=yxJ-rytnA+XWQ8ao=CREqw@mail.gmail.com>
+ <YxYbCt4/S4r2JHw2@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Dave Chinner" <david@fromorbit.com>
-Cc:     "Jeff Layton" <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, "Jan Kara" <jack@suse.cz>,
-        adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-In-reply-to: <20220913004146.GD3600936@dread.disaster.area>
-References: <YxoIjV50xXKiLdL9@mit.edu>,
- <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>,
- <20220908155605.GD8951@fieldses.org>,
- <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>,
- <20220908182252.GA18939@fieldses.org>,
- <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>,
- <20220909154506.GB5674@fieldses.org>,
- <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>,
- <20220910145600.GA347@fieldses.org>,
- <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>,
- <20220913004146.GD3600936@dread.disaster.area>
-Date:   Tue, 13 Sep 2022 11:49:03 +1000
-Message-id: <166303374350.30452.17386582960615006566@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YxYbCt4/S4r2JHw2@miu.piliscsaba.redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 13 Sep 2022, Dave Chinner wrote:
-> On Mon, Sep 12, 2022 at 07:42:16AM -0400, Jeff Layton wrote:
-> > On Sat, 2022-09-10 at 10:56 -0400, J. Bruce Fields wrote:
-> > > On Fri, Sep 09, 2022 at 12:36:29PM -0400, Jeff Layton wrote:
-> > > Our goal is to ensure that after a crash, any *new* i_versions that we
-> > > give out or write to disk are larger than any that have previously been
-> > > given out.  We can do that by ensuring that they're equal to at least
-> > > that old maximum.
-> > > 
-> > > So think of the 64-bit value we're storing in the superblock as a
-> > > ceiling on i_version values across all the filesystem's inodes.  Call it
-> > > s_version_max or something.  We also need to know what the maximum was
-> > > before the most recent crash.  Call that s_version_max_old.
-> > > 
-> > > Then we could get correct behavior if we generated i_versions with
-> > > something like:
-> > > 
-> > > 	i_version++;
-> > > 	if (i_version < s_version_max_old)
-> > > 		i_version = s_version_max_old;
-> > > 	if (i_version > s_version_max)
-> > > 		s_version_max = i_version + 1;
-> > > 
-> > > But that last step makes this ludicrously expensive, because for this to
-> > > be safe across crashes we need to update that value on disk as well, and
-> > > we need to do that frequently.
-> > > 
-> > > Fortunately, s_version_max doesn't have to be a tight bound at all.  We
-> > > can easily just initialize it to, say, 2^40, and only bump it by 2^40 at
-> > > a time.  And recognize when we're running up against it way ahead of
-> > > time, so we only need to say "here's an updated value, could you please
-> > > make sure it gets to disk sometime in the next twenty minutes"?
-> > > (Numbers made up.)
-> > > 
-> > > Sorry, that was way too many words.  But I think something like that
-> > > could work, and make it very difficult to hit any hard limits, and
-> > > actually not be too complicated??  Unless I missed something.
-> > > 
-> > 
-> > That's not too many words -- I appreciate a good "for dummies"
-> > explanation!
-> > 
-> > A scheme like that could work. It might be hard to do it without a
-> > spinlock or something, but maybe that's ok. Thinking more about how we'd
-> > implement this in the underlying filesystems:
-> > 
-> > To do this we'd need 2 64-bit fields in the on-disk and in-memory 
-> > superblocks for ext4, xfs and btrfs. On the first mount after a crash,
-> > the filesystem would need to bump s_version_max by the significant
-> > increment (2^40 bits or whatever). On a "clean" mount, it wouldn't need
-> > to do that.
+On Mon, Sep 05, 2022 at 05:51:38PM +0200, Miklos Szeredi wrote:
+> On Wed, Aug 31, 2022 at 02:30:40PM -0700, Yu-li Lin wrote:
+> > Thanks for the reference. IIUC, the consensus is to make it atomic,
+> > although there's no agreement on how it should be done. Does that mean
+> > we should hold off on
+> > this patch until atomic temp files are figured out higher in the stack
+> > or do you have thoughts on how the fuse uapi should look like prior to
+> > the vfs/refactoring decision?
 > 
-> Why only increment on crash? If the filesystem has been unmounted,
-> then any cached data is -stale- and must be discarded. e.g. unmount,
-> run fsck which cleans up corrupt files but does not modify
-> i_version, then mount. Remote caches are now invalid, but i_version
-> may not have changed, so we still need the clean unmount-mount cycle
-> to invalidate caches.
-
-I disagree.  We do need fsck to cause caches to be invalidated IF IT
-FOUND SOMETHING TO REPAIR, but not if the filesystem was truely clean.
-
+> Here's a patch refactoring the tmpfile kapi to return an open file instead of a
+> dentry.
 > 
-> IOWs, what we want is a salted i_version value, with the filesystem
-> providing the unique per-mount salt that gets added to the
-> externally visible i_version values.
+> Comments?
 
-I agree this is a simple approach.  Possible the best.
+First and foremost: how many operations the interested filesystems (cifs,
+for one) are capable of for such beasts?  I can believe that FUSE can handle
+that, but can something like cifs do it?  Their protocol is pathname-based, IIRC;
+can they really handle that kind of files without something like sillyrename?
+Because if sillyrename and its analogues are in the game, we have seriously
+changed rules re directory locking, and we'd better figure that out first.
 
-> 
-> If that's the case, the salt doesn't need to be restricted to just
-> modifying the upper bits - as long as the salt increments
-> substantially and independently to the on-disk inode i_version then
-> we just don't care what bits of the superblock salt change from
-> mount to mount.
-> 
-> For XFS we already have a unique 64 bit salt we could use for every
-> mount - clean or unclean - and guarantee it is larger for every
-> mount. It also gets substantially bumped by fsck, too. It's called a
-> Log Sequence Number and we use them to track and strictly order
-> every modification we write into the log. This is exactly what is
-> needed for a i_version salt, and it's already guaranteed to be
-> persistent.
+IOW, I would really like to see proposed instances for FUSE and CIFS - the shape
+of the series seriously depends upon that.  Before we commit to calling conventions
+changes.
 
-Invalidating the client cache on EVERY unmount/mount could impose
-unnecessary cost.  Imagine a client that caches a lot of data (several
-large files) from a server which is expected to fail-over from one
-cluster node to another from time to time.  Adding extra delays to a
-fail-over is not likely to be well received.
+That aside, some notes on the patch:
 
-I don't *know* this cost would be unacceptable, and I *would* like to
-leave it to the filesystem to decide how to manage its own i_version
-values.  So maybe XFS can use the LSN for a salt.  If people notice the
-extra cost, they can complain.
-
-Thanks,
-NeilBrown
+* file->f_path.dentry all over the place is ugly and wrong.  If nothing else,
+d_tmpfile() could be converted to taking struct file * - nothing outside of
+->tmpfile() instances is using it.
+* finish_tmpfile() parts would be less noisy if it was finish_tmpfile(file, errror),
+starting with if (error) return error;
+* a bit of weirdness in ext4:
+>  	err = dquot_initialize(dir);
+>  	if (err)
+> -		return err;
+> +		goto out;
+Huh?  Your out: starts with if (err) return err;  Sure, compiler
+will figure it out, but what have human readers done to you?
+* similar in shmem:
+> +out:
+> +	if (error)
+> +		return error;
+> +
+> +	return finish_tmpfile(file);
+>  out_iput:
+>  	iput(inode);
+> -	return error;
+> +	goto out;
+How the hell would it ever get to out_iput: with error == 0?
+* in your vfs_tmpfile() wrapper
+> +	child = ERR_CAST(file);
+> +	if (!IS_ERR(file)) {
+> +		error = vfs_tmpfile_new(mnt_userns, path, file, mode);
+> +		child = error ? ERR_PTR(error) : dget(file->f_path.dentry);
+> +		fput(file);
+> +	}
+> +	return child;
+This really ought to be
+	if (IS_ERR(file))
+		return ERR_CAST(file);
+	...
+IS_ERR() comes with implicit unlikely()...
 
 
-> 
-> > Would there be a way to ensure that the new s_version_max value has made
-> > it to disk?
-> 
-> Yes, but that's not really relevant to the definition of the salt:
-> we don't need to design the filesystem implementation of a
-> persistent per-mount salt value. All we need is to define the
-> behaviour of the salt (e.g. must always increase across a
-> umount/mount cycle) and then you can let the filesystem developers
-> worry about how to provide the required salt behaviour and it's
-> persistence.
-> 
-> In the mean time, you can implement the salting and testing it by
-> using the system time to seed the superblock salt - that's good
-> enough for proof of concept, and as a fallback for filesystems that
-> cannot provide the required per-mount salt persistence....
-> 
-> > Bumping it by a large value and hoping for the best might be
-> > ok for most cases, but there are always outliers, so it might be
-> > worthwhile to make an i_version increment wait on that if necessary. 
-> 
-> Nothing should be able to query i_version until the filesystem is
-> fully recovered, mounted and the salt has been set. Hence no
-> application (kernel or userspace) should ever see an unsalted
-> i_version value....
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+Next, there are users outside of do_o_tmpfile().  The one in cachefiles
+is a prime candidate for combining with open - the stuff done between
+vfs_tmpfile() and opening the sucker consists of
+	* cachefiles_ondemand_init_object() - takes no cleanup on
+later failure exits, doesn't know anything about dentry created.  Might
+as well be done before vfs_tmpfile().
+	* cachefiles_mark_inode_in_use() - which really can't fail there,
+and the only thing being done is marking the sucker with S_KERNEL_FILE.
+Could be done after opening just as well.
+	* vfs_truncate() used to expand to required size.  Trivially done
+after opening, and we probably want struct file there - there's a reason
+why ftruncate(2) sets ATTR_FILE/ia_file...  We are unlikely to use
+anything like FUSE for cachefiles, but leaving traps like that is a bad
+idea.
+IOW, cachefiles probably wants a preliminary patch series that would
+massage it to the "tmpfile right next to open, the use struct file"
+form.
+
+
+Another user is overlayfs, and that's going to get painful.  It checks for
+->tmpfile() working and if it does work, we use it for copyup.  The trouble
+is, will e.g. FUSE be ready to handle things like setxattr on such dentries?
+It's not just a matter of copying the data - there we would be quite fine
+with opened file; it's somewhat clumsy since copyup is done for FIFOs, etc.,
+but that could be dealt with.  But things like setting metadata are done
+by dentry there.  And with your patch the file will have been closed by
+the time we get to that part.  Can e.g. FUSE deal with that?
