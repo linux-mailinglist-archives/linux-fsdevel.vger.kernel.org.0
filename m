@@ -2,128 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58ADA5B6803
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 08:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0835B5B6926
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 10:02:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230433AbiIMGi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 02:38:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56968 "EHLO
+        id S230517AbiIMICl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 04:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbiIMGi0 (ORCPT
+        with ESMTP id S230254AbiIMICk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 02:38:26 -0400
-X-Greylist: delayed 52187 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 12 Sep 2022 23:38:24 PDT
-Received: from conssluserg-05.nifty.com (conssluserg-05.nifty.com [210.131.2.90])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B09A4F183;
-        Mon, 12 Sep 2022 23:38:24 -0700 (PDT)
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 28D6c01e019386;
-        Tue, 13 Sep 2022 15:38:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 28D6c01e019386
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1663051081;
-        bh=tV9nEuhwkJ7n1kuPj+d/5yMKIVBWOfelLB6nLnhI3Mk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nm7qyo/ZC8X5f+9Ia6Hy/XzQk6ncm8qP33zbXv9UtHpUJqgVPmyYTyw7o7AuLActU
-         5krhadDZtEg101BvUQFJNd1U/RdwtulP5zGgTYqYqDFNeHECFrtCWOuPiSLIDpPUFK
-         KFMXczU460o4Nvr+PVrQHFsRkhQVf5EH6lUjhczfQEfdYrc0pt/UAgEj9lYT1qVQTj
-         6OZ3+oMpCx+uxWqLzDQ/DDmyF1hh+O2+JGBZ38ANs4Leadxx4DkWXquNBPMqiI0SSS
-         7wMzK7FsiuYTTJLuK/vWGzpDX3xVQXPb+UM2YPGCPXpKYczsWn/nYkHbVWwAL/Gc6k
-         OLKmroaCMPRtg==
-X-Nifty-SrcIP: [209.85.210.52]
-Received: by mail-ot1-f52.google.com with SMTP id ck2-20020a056830648200b0065603aef276so1995683otb.12;
-        Mon, 12 Sep 2022 23:38:00 -0700 (PDT)
-X-Gm-Message-State: ACgBeo1sRIqBoChayjWSBZpZfaeb8cxVeiFDzbbA/aza6viJgoso2UFC
-        JBdO3BwumHd1PttITVtGwUudAlTwiBfKjLNGF1M=
-X-Google-Smtp-Source: AA6agR4ojz4kLyVwdg7KfNkE5DVjkROUMO6/BtwnXe2vVwLJN+exmsnfjgUzLo1y5NNjY/Xb+Bo/6iEHpf8JX1AtcYE=
-X-Received: by 2002:a05:6830:658b:b0:63b:3501:7167 with SMTP id
- cn11-20020a056830658b00b0063b35017167mr12198963otb.343.1663051079814; Mon, 12
- Sep 2022 23:37:59 -0700 (PDT)
+        Tue, 13 Sep 2022 04:02:40 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975B756BB4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 01:02:39 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id u189so11538054vsb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 01:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=ZtUx3gTA4W26Pyi/05G45HPqU4EbPoGP8vEbOgz06Z0=;
+        b=UWSTjTpwFEYecs+tEgjmZJl4Q17g2lJ0aWFcUVeObHrposQwpHDXPD/CYt6/UD0Eks
+         Nwhh4n1mKQNunePBzqqMmSCbt2BfFvtHyCwyLqFDYHM5bxj7VNkgTORp/74hHllO24PU
+         AQKB8Ldqww+nsBEmCMmkvIqD7yaw2UIXlZnahc+4HSadgYbr4J5k0NnRcvVSOY7RtrCk
+         2UOuywfdoOs56b2BlL45CB9OrWdLOyFJ247BTQH6eRxrq2scETcM2UXp/tWrL6f5cRFD
+         yHtDzw4qq4FxmK+8FgcV0g4Mtic3qdpi0jbUV02Yg8KHcNbiotY5dsYyau5R9uUqEMh5
+         YdcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=ZtUx3gTA4W26Pyi/05G45HPqU4EbPoGP8vEbOgz06Z0=;
+        b=5kDJT6Ln3KCv8PNa4VODtdjDQ70SrEzBZ4UuI7UV36590c0YrZQOYFYezBFgl2Yu+a
+         UMnDJqN6YafMo/ieD78I96COQ+5k0SIQ6r4uWoUfHTpDF0Jpye/in6bpXxy+mxmJMOBN
+         ZFoSnkp8lrVt5wU5eLe15EOAe2V1JN6UJKrC8Rb/7A+XdQ5MWs+zXBXtwh3sKGLhB0OD
+         HAFmLUKowTMN+u3KYwRZDfmOtv0dltg4JyWehGvBSo70Axr15JdhjDPy0VrUtCs2IGwE
+         QyYWGHmI3rue9vRIo85AWMzCUqpORNcqGdVCPcgxjGwMlwhi7tPOTg5eGb9/8E+nV0Kl
+         fFoA==
+X-Gm-Message-State: ACgBeo10PZUaW3uhOVHyRc9KyS4srTD/cGjg6rCBgAUnFuxqc/1/zi1w
+        FBFNi9Vg3zm+1AZ3imdkyyT7Vh58hI1aSzw/AY7f5W7upY8=
+X-Google-Smtp-Source: AA6agR5HR4z+PDL+n3HXfvByrf7jbsSoq8phGrToLU8oO2jgT/1LQQmS7rmMkn/9jZZqU4ejaQcPxtMP992dcQ+khJY=
+X-Received: by 2002:a05:6102:14b:b0:398:2e7c:4780 with SMTP id
+ a11-20020a056102014b00b003982e7c4780mr7868479vsr.72.1663056158625; Tue, 13
+ Sep 2022 01:02:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220805154231.31257-1-ojeda@kernel.org> <20220805154231.31257-24-ojeda@kernel.org>
- <CAK7LNAQ=JfmrnGAUNXm_4RTz0fOhzfYC=htZ-VuEx=HAJPNtmw@mail.gmail.com> <CANiq72kZEqAwr_m14mAFjHsFJTLjj7i4He0qyrprubpmBfOFdw@mail.gmail.com>
-In-Reply-To: <CANiq72kZEqAwr_m14mAFjHsFJTLjj7i4He0qyrprubpmBfOFdw@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 13 Sep 2022 15:37:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASzund0a=t6gz3Mfex3j6jMfjYW--nqv9x_wY=RzSR-=g@mail.gmail.com>
-Message-ID: <CAK7LNASzund0a=t6gz3Mfex3j6jMfjYW--nqv9x_wY=RzSR-=g@mail.gmail.com>
-Subject: Re: [PATCH v9 23/27] Kbuild: add Rust support
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        patches@lists.linux.dev, Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Finn Behrens <me@kloenk.de>,
-        Adam Bratschi-Kaye <ark.email@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Gary Guo <gary@garyguo.net>,
-        Boris-Chengbiao Zhou <bobo1239@web.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Douglas Su <d0u9.su@outlook.com>,
-        Dariusz Sosnowski <dsosnowski@dsosnowski.pl>,
-        Antonio Terceiro <antonio.terceiro@linaro.org>,
-        Daniel Xu <dxu@dxuuu.xyz>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <20220221082002.508392-1-mszeredi@redhat.com> <Yx/lIWoLCWHwM6DO@ZenIV>
+ <YyAHDsGiaA/0ksX8@ZenIV>
+In-Reply-To: <YyAHDsGiaA/0ksX8@ZenIV>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 13 Sep 2022 11:02:27 +0300
+Message-ID: <CAOQ4uxiz32Srdg=c7g_49TFnxT9VN-j_V9u2ZHsxU10gCDXWVA@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: fix link vs. rename race
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Xavier Roche <xavier.roche@algolia.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 1:18 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Tue, Sep 13, 2022 at 7:38 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> Hi Masahiro,
->
-> On Mon, Sep 12, 2022 at 5:08 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> On Tue, Sep 13, 2022 at 03:04:17AM +0100, Al Viro wrote:
+> > On Mon, Feb 21, 2022 at 09:20:02AM +0100, Miklos Szeredi wrote:
 > >
-> > I have not figured out where this difference comes from.
+> > [digging through the old piles of mail]
+> >
+> > Eyes-watering control flow in do_linkat() aside (it's bound to rot; too
+> > much of it won't get any regression testing and it's convoluted enough
+> > to break easily), the main problem I have with that is the DoS potential.
+> >
+> > You have a system-wide lock, and if it's stuck you'll get every damn
+> > rename(2) stuck as well.  Sure, having it taken only upon the race
+> > with rename() (or unlink(), for that matter) make it harder to get
+> > stuck with lock held, but that'll make the problem harder to reproduce
+> > and debug...
 >
-> It is the `RUSTC_BOOTSTRAP` environment variable: it allows to use
-> unstable featuers in the stable compiler.
-
-
-Thanks, I learned a new thing.
-
-
+> FWIW, how much trouble would we have if link(2) would do the following?
 >
-> We currently set it in the global `Makefile`, but we could be more
-> explicit and do it on each command if you think that would be better.
+>         find the parent of source
 
+Well, only if source is not AT_EMPTY_PATH
 
-I checked "make compile_commands.json", but it collects build commands
-only for C.
+>         lock it
+>         look the child up
+>         verify it's a non-directory
+>         bump child's i_nlink
+>                 all failure exits past that point decrement child's i_nlink
 
+No need to bump i_nlink.
+Sufficient to set I_LINKABLE.
+and clean it up on failure if i_nlink > 0.
 
-I did not see any bad scenario with the current approach.
+Or we can move cleanup of I_LINKABLE to drop_nlink()/clean_nlink()
 
-
-
-
-
-
-
-
+>         unlock the parent
+>         find the parent of destination
+>         lock it
+>         look the destination up
+>         call vfs_link
+>         decrement child's i_nlink - vfs_link has bumped it
+>         unlock the parent of destination
 >
-> If you want that we keep using the global export, then we can add a
-> comment explaining this to clarify.
->
-> Cheers,
-> Miguel
---
-Best Regards
-Masahiro Yamada
+> I do realize it can lead to leaked link count on a crash, obviously...
+
+No such problem with I_LINKABLE.
+
+Thanks,
+Amir.
