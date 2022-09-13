@@ -2,121 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 905845B7D7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 01:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D695B7DAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 01:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbiIMXYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 19:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
+        id S229634AbiIMXwq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 19:52:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiIMXYR (ORCPT
+        with ESMTP id S229560AbiIMXwp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 19:24:17 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9778227DE6;
-        Tue, 13 Sep 2022 16:24:16 -0700 (PDT)
+        Tue, 13 Sep 2022 19:52:45 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273E55AA34
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 16:52:44 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 111195C81A;
-        Tue, 13 Sep 2022 23:24:15 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8BD053445A;
+        Tue, 13 Sep 2022 23:52:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663111455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663113162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lCZbTt8MqzDxXBhNECVaeYq92wrfjuXQyXb1QCL9L08=;
-        b=xlbgGCcX1vaqfVo0T7/7HHkGJClHbYwVmCkEjYU+yukwvWlmi/KV4I9oCfaEa4wMX0rAE+
-        SEsmeldoOIOeCxP5qYRC+CdkHQdKTtaC4+4AbfA5fyhqvZZp3SIKD2vcprwsRNYTCxFz9M
-        JLUB3aTflnqVKCKYq+IrL7uyVXYqhBc=
+        bh=gAg9P1baUpWzyAM6ZRT7r1NDYeLha8V1E6EyQekHdT0=;
+        b=PGuxkUkhbF/XdgosVks2f5eF3JFFahgkwPRAXuIiTybi85jOAVpqPjDRbE2xGi3gEUUM6Y
+        BtY2ZBjYhBXp4G3+l5jjcnjTxcVTZAfhCahIACa6emYBo0VpVPi/HZHruZKJYv8qPizE6k
+        QgTVTjKv2gmNXHRD+UxtR6nTcFGLzr0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663111455;
+        s=susede2_ed25519; t=1663113162;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lCZbTt8MqzDxXBhNECVaeYq92wrfjuXQyXb1QCL9L08=;
-        b=f3V4jz9cjD4/+YabArl2nlr3TvCKBf+HRA2DIYhIcYM7hGDyhFP9+9JyddEfjRtGauQ9MS
-        eeY+o8dgRHryQzBQ==
+        bh=gAg9P1baUpWzyAM6ZRT7r1NDYeLha8V1E6EyQekHdT0=;
+        b=Wbn9CHQ4bfjnoqGdGEWB0YRKGUIygpM5H91a+fMYxUpbhpI85WNERe1gZlS7TVDd2PgAaE
+        QKvXBp4IVo7EGKCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A5AC313AB5;
-        Tue, 13 Sep 2022 23:24:06 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F3E5913AB5;
+        Tue, 13 Sep 2022 23:52:40 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id DEmgFxYRIWMlZgAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 13 Sep 2022 23:24:06 +0000
+        id SjM1KcgXIWNvbQAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 13 Sep 2022 23:52:40 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Trond Myklebust" <trondmy@hammerspace.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-In-reply-to: <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>
-References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
- <166268467103.30452.1687952324107257676@noble.neil.brown.name>,
- <166268566751.30452.13562507405746100242@noble.neil.brown.name>,
- <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>,
- <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>,
- <166270570118.30452.16939807179630112340@noble.neil.brown.name>,
- <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>,
- <166285038617.30452.11636397081493278357@noble.neil.brown.name>,
- <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>,
- <166302538820.30452.7783524836504548113@noble.neil.brown.name>,
- <20220913011518.GE3600936@dread.disaster.area>,
- <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>
-Date:   Wed, 14 Sep 2022 09:24:02 +1000
-Message-id: <166311144203.20483.1888757883086697314@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+To:     "Al Viro" <viro@zeniv.linux.org.uk>
+Cc:     "Miklos Szeredi" <mszeredi@redhat.com>,
+        "Xavier Roche" <xavier.roche@algolia.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: fix link vs. rename race
+In-reply-to: <YyATCgxi9Ovi8mYv@ZenIV>
+References: <20220221082002.508392-1-mszeredi@redhat.com>,
+ <166304411168.30452.12018495245762529070@noble.neil.brown.name>,
+ <YyATCgxi9Ovi8mYv@ZenIV>
+Date:   Wed, 14 Sep 2022 09:52:37 +1000
+Message-id: <166311315747.20483.5039023553379547679@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 14 Sep 2022, Jeff Layton wrote:
->
-> At that point, bumping i_version both before and after makes a bit more
-> sense, since it better ensures that a change will be noticed, whether
-> the related read op comes before or after the statx.
+On Tue, 13 Sep 2022, Al Viro wrote:
+> On Tue, Sep 13, 2022 at 02:41:51PM +1000, NeilBrown wrote:
+> > On Mon, 21 Feb 2022, Miklos Szeredi wrote:
+> > > There has been a longstanding race condition between rename(2) and link=
+(2),
+> > > when those operations are done in parallel:
+> > >=20
+> > > 1. Moving a file to an existing target file (eg. mv file target)
+> > > 2. Creating a link from the target file to a third file (eg. ln target
+> > >    link)
+> > >=20
+> > > By the time vfs_link() locks the target inode, it might already be unli=
+nked
+> > > by rename.  This results in vfs_link() returning -ENOENT in order to
+> > > prevent linking to already unlinked files.  This check was introduced in
+> > > v2.6.39 by commit aae8a97d3ec3 ("fs: Don't allow to create hardlink for
+> > > deleted file").
+> > >=20
+> > > This breaks apparent atomicity of rename(2), which is described in
+> > > standards and the man page:
+> > >=20
+> > >     "If newpath already exists, it will be atomically replaced, so that
+> > >      there is no point at which another process attempting to access
+> > >      newpath will find it missing."
+> > >=20
+> > > The simplest fix is to exclude renames for the complete link operation.
+> >=20
+> > Alternately, lock the "from" directory as well as the "to" directory.
+> > That would mean using lock_rename() and generally copying the structure
+> > of do_renameat2() into do_linkat()
+>=20
+> Ever done cp -al?  Cross-directory renames are relatively rare; cross-direc=
+tory
+> links can be fairly heavy on some payloads, and you'll get ->s_vfs_rename_m=
+utex
+> held a _lot_.
 
-How does bumping it before make any sense at all?  Maybe it wouldn't
-hurt much, but how does it help anyone at all?
+As long as the approach is correct, it might be a good starting point
+for optimisation.
 
-  i_version must appear to change no sooner than the change it reflects
-  becomes visible and no later than the request which initiated that
-  change is acknowledged as complete.
+We only need s_vfs_rename_mutex for link() so that we can reliably
+determine any parent/child relationship to get correct lock ordering to
+avoid deadlocks.  So if we use trylock on the second lock and succeed
+then we don't need the mutex at all.
+e.g.
+ - lookup the parents of both paths.
+ - lock the "to" directory.
+ - if the "from" directory is the same, or if a trylock of the from
+   directory succeeds, then we have the locks and can perform the
+   last component lookup and perform the link without racing with
+   rename.=20
+ - if the trylock fails, we drop the lock on "to" and use lock_rename().
+   We drop the s_vfs_rename_mutex immediately after lock_rename()
+   so after the vfs_link() we just unlock both parent directories.
 
-Why would that definition ever not be satisfactory?
+That should avoid the mutex is most cases including "cp -al"
+
+Holding the "from" parent locked means that NFS could safely access the
+parent and basename, and send the lookup to the server to reduce the
+risk of a rename on one client racing with a link on another client.
+NFS doesn't guarantee that would still work (ops in a compound are not
+atomic) but it could still help.  And the NFS server is *prevented* from
+making the lookup and link atomic.
 
 NeilBrown
