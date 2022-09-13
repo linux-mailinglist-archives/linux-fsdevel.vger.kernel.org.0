@@ -2,208 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7535B7533
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 17:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FB65B761B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Sep 2022 18:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236611AbiIMPgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 11:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
+        id S230194AbiIMQIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 12:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236602AbiIMPfm (ORCPT
+        with ESMTP id S232694AbiIMQIX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 11:35:42 -0400
-Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B136DAD7;
-        Tue, 13 Sep 2022 07:42:29 -0700 (PDT)
-Received: by mail-vk1-xa34.google.com with SMTP id b15so647722vkp.2;
-        Tue, 13 Sep 2022 07:42:29 -0700 (PDT)
+        Tue, 13 Sep 2022 12:08:23 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44CC9BF4F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 08:04:38 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id q15-20020a17090a304f00b002002ac83485so11639349pjl.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 08:04:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=K7KjRIWjzqMJSjhaduzlqmc7TqNxRNfMLMabWOPsiVc=;
-        b=YnLtUmJsRXzoZ1exun3qi27RFD+seXf5wBb6+ThuMECxxWS6A1hCtLFgfAqzjiRtQy
-         wcJ5ax/3jMAPGa5peCzEw54VnhwQmdTj5GOc20gN8CwszgF1tPyQJS7h+9q/3YIK2F7S
-         uOYxuMAsK1Nqeiss71J+QLX1C9DX45/NjHPTHPaZXPcivW9GuVjEJGMxN6pIjVj2c4S3
-         b3U7IcDfojAaFPb6TU2oreS/uMEwuOeZWMyZYJDzY+/LuIKm4bOQKKJOepmdpfKQh0Oe
-         5wt50nIq7cO4q0s1HHubJ/jwLHfeIxGirBmoIlcNV5627yDQtX4HcpQOW1oTbVoW3iND
-         Ck7w==
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=OJAIEjey9dL/oOlyHKJUty+rvUtRfrNcjV74l588HbE=;
+        b=nipjUGyopyRbnweevoI2Oq+FbDhrGlaD7wKP+k5xapkMVsoGweAQ6K2hQ8AZ+n3N71
+         J85U0qDe2D5AD8d1gpjf++nTpiIkyTFzNlFk+YTPVFtJCYSH/SE9jP8KJtPu7wQ0hfi5
+         wYDpgxyUrRwd1sYa/NGSuu4VudYk3GqiPthKN+bOi/ckST3RiIggvPeGp3bhm5p8ypVT
+         3f+MwrbGT4h/7a0VEnXrxvfZQW0KEOYcQaivu+1/UqQdLAEGFiH+0RbJHMUiEdIZPPCt
+         MhVMuPS1IGUUE+HBMjXHJM9fAUIO8mG1oaSP0/UpGjTZuC/UI7ZeIyP4hCCX4seU5+Tv
+         A0Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=K7KjRIWjzqMJSjhaduzlqmc7TqNxRNfMLMabWOPsiVc=;
-        b=ZKKsZ/xb2WB28FIPIrZCX7OnvwiK7tLCJum9prT8qeImj9PMoYjnkN9PtJ4CUXPLqy
-         y0x5FOv0jON2dlub1DAOH4Jpph5ffcJDkuK7vKONodnOvhDtGeJQ1vO/msNCM8GZ+O5k
-         w2UFqm+PwxmOgSYxjBbuZw7WUlSLwjpk/UpmSRlT/XDcstvGWXBDSkMz9JOsoZyC0fRv
-         vb6vAYBWbpdzxyqLohD98LrNV0SMvD/gQSeQvOjaY6A2mhYqvM7f6bQRlxXFxy2prGTi
-         Z6FuoDBXvarIzbaTgF+rp/+sFIxOL5ze2g/Tps3ziVUOS+ilZAPohdJli79ClL0frOrl
-         abIw==
-X-Gm-Message-State: ACgBeo247zMLlBanV9LkzzJ9eDzDC98InjRDMqo1BvWPHcm2MnC7L34X
-        j6IzoVja41H3utDLpiRj5KcqICu5/13HTQjaSaGIXnPDdpI=
-X-Google-Smtp-Source: AA6agR4i0WNdFAC4VjtpEzrj0g8/AU/MgmESabg5bKlsUrTjWIzcIw3g2/QnyuPL26OeL09N/tD6PPLTxf7i/l7/okc=
-X-Received: by 2002:a1f:a004:0:b0:398:3e25:d2a7 with SMTP id
- j4-20020a1fa004000000b003983e25d2a7mr10355825vke.36.1663080058612; Tue, 13
- Sep 2022 07:40:58 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=OJAIEjey9dL/oOlyHKJUty+rvUtRfrNcjV74l588HbE=;
+        b=tL4UGoEwtioWDeRIVuM/T4WufZrMhUb7Pbk80SftKe4QXcPXkxnd7d2koFeWYbUaWk
+         ny4Sc99+5HCJY2Z1T9WT4y7uUBjo6JySqXaknXKkT5RWdt+lDRD26ABp1ExgITTqqUpr
+         DOvZ+UrT/JCd7Fji9DZ+QSGqblmN1pcZ5TpzjtrUhKVDezwtBZDHESBqKhBBWkMFc5VK
+         PZ2eY1kqKpK0XYLTmcRMFPHkAPNeyNbHp5st33jkn5Jp7SAmNktNN8YN4mfOz01MIzkO
+         l99RqtQpLCNWrq1+TARxl4mn+NYAQxahU1WxtJa6Mw6ZL0kHeVEDU7YPqkFxcKF+Y48u
+         c63Q==
+X-Gm-Message-State: ACgBeo0BVus53b+phTlQ8/lwS4Whq7tZlnLX4s3rrnr17om27ZlbhwTi
+        sIJfu1L48FTN6bbcr+itUhp3wUHN/OSVww==
+X-Google-Smtp-Source: AA6agR4hCeLSjZthMuJfgYlKUGutRaZadKKJTFOH4uT+lOP/oa9jwO7wbAgJCVwL7oqP3EbrVwcGew==
+X-Received: by 2002:a17:902:c7cc:b0:176:9fdd:ddb7 with SMTP id r12-20020a170902c7cc00b001769fddddb7mr32324812pla.150.1663080810301;
+        Tue, 13 Sep 2022 07:53:30 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id k5-20020aa79985000000b00535d3caa66fsm7855085pfh.197.2022.09.13.07.53.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Sep 2022 07:53:29 -0700 (PDT)
+Date:   Tue, 13 Sep 2022 14:53:25 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        "Gupta, Pankaj" <pankaj.gupta@amd.com>,
+        Elena Reshetova <elena.reshetova@intel.com>
+Subject: Re: [PATCH v7 00/14] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YyCZZSyCrwXLLCD9@google.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <ff5c5b97-acdf-9745-ebe5-c6609dd6322e@google.com>
+ <20220818132421.6xmjqduempmxnnu2@box>
+ <c6ccbb96-5849-2e2f-3b49-4ea711af525d@google.com>
+ <20220820002700.6yflrxklmpsavdzi@box.shutemov.name>
+ <c194262b-b634-4baf-abf0-dc727e8f1d7@google.com>
+ <20220831142439.65q2gi4g2d2z4ofh@box.shutemov.name>
+ <20220908011037.ez2cdorthqxkerwk@box.shutemov.name>
+ <YyBQ+wzPtGwwRB/U@google.com>
+ <20220913132821.3ch5cv3rgdxqgz3i@box.shutemov.name>
 MIME-Version: 1.0
-References: <20190407232728.GF26298@dastard> <CAOQ4uxgD4ErSUtbu0xqb5dSm_tM4J92qt6=hGH8GRc5KNGqP9A@mail.gmail.com>
- <20190408141114.GC15023@quack2.suse.cz> <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
- <20190409082605.GA8107@quack2.suse.cz> <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
- <20220617151135.yc6vytge6hjabsuz@quack3> <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
- <20220620091136.4uosazpwkmt65a5d@quack3.lan> <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
- <20220621085956.y5wyopfgzmqkaeiw@quack3.lan> <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 13 Sep 2022 17:40:46 +0300
-Message-ID: <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com>
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw workload
-To:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220913132821.3ch5cv3rgdxqgz3i@box.shutemov.name>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 21, 2022 at 3:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Jun 21, 2022 at 11:59 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 21-06-22 10:49:48, Amir Goldstein wrote:
-> > > > How exactly do you imagine the synchronization of buffered read against
-> > > > buffered write would work? Lock all pages for the read range in the page
-> > > > cache? You'd need to be careful to not bring the machine OOM when someone
-> > > > asks to read a huge range...
-> > >
-> > > I imagine that the atomic r/w synchronisation will remain *exactly* as it is
-> > > today by taking XFS_IOLOCK_SHARED around generic_file_read_iter(),
-> > > when reading data into user buffer, but before that, I would like to issue
-> > > and wait for read of the pages in the range to reduce the probability
-> > > of doing the read I/O under XFS_IOLOCK_SHARED.
-> > >
-> > > The pre-warm of page cache does not need to abide to the atomic read
-> > > semantics and it is also tolerable if some pages are evicted in between
-> > > pre-warn and read to user buffer - in the worst case this will result in
-> > > I/O amplification, but for the common case, it will be a big win for the
-> > > mixed random r/w performance on xfs.
-> > >
-> > > To reduce risk of page cache thrashing we can limit this optimization
-> > > to a maximum number of page cache pre-warm.
-> > >
-> > > The questions are:
-> > > 1. Does this plan sound reasonable?
-> >
-> > Ah, I see now. So essentially the idea is to pull the readahead (which is
-> > currently happening from filemap_read() -> filemap_get_pages()) out from under
-> > the i_rwsem. It looks like a fine idea to me.
->
+On Tue, Sep 13, 2022, Kirill A. Shutemov wrote:
+> On Tue, Sep 13, 2022 at 09:44:27AM +0000, Sean Christopherson wrote:
+> > On Thu, Sep 08, 2022, Kirill A. Shutemov wrote:
+> > > On Wed, Aug 31, 2022 at 05:24:39PM +0300, Kirill A . Shutemov wrote:
+> > > > On Sat, Aug 20, 2022 at 10:15:32PM -0700, Hugh Dickins wrote:
+> > > > > > I will try next week to rework it as shim to top of shmem. Does it work
+> > > > > > for you?
+> > > > > 
+> > > > > Yes, please do, thanks.  It's a compromise between us: the initial TDX
+> > > > > case has no justification to use shmem at all, but doing it that way
+> > > > > will help you with some of the infrastructure, and will probably be
+> > > > > easiest for KVM to extend to other more relaxed fd cases later.
+> > > > 
+> > > > Okay, below is my take on the shim approach.
+> > > > 
+> > > > I don't hate how it turned out. It is easier to understand without
+> > > > callback exchange thing.
+> > > > 
+> > > > The only caveat is I had to introduce external lock to protect against
+> > > > race between lookup and truncate.
+> > 
+> > As before, I think this lock is unnecessary.  Or at least it's unnessary to hold
+> > the lock across get/put.  The ->invalidate() call will ensure that the pfn is
+> > never actually used if get() races with truncation.
+> 
+> The updated version you replying to does not use the lock to protect
+> against truncation anymore. The lock protect notifier list.
 
-Although I was able to demonstrate performance improvement
-with page cache pre-warming on low latency disks, when testing
-on a common standard system [*], page cache pre-warming did not
-yield any improvement to the mixed rw workload.
+Gah, grabbed the patch when applying.
 
-[*] I ran the following fio workload on e2-standard-8 GCE machine:
+> > Switching topics, what actually prevents mmapp() on the shim?  I tried to follow,
+> > but I don't know these areas well enough.
+> 
+> It has no f_op->mmap, so mmap() will fail with -ENODEV. See do_mmap().
+> (I did not read the switch statement correctly at first. Note there are
+> two 'fallthrough' there.)
 
-[global]
-filename=/mnt/xfs/testfile.fio
-norandommap
-randrepeat=0
-size=5G
-bs=8K
-ioengine=psync
-numjobs=8
-group_reporting=1
-direct=0
-fallocate=1
-end_fsync=0
-runtime=60
+Ah, validate_mmap_request().  Thought not implementing ->mmap() was the key, but
+couldn't find the actual check.
 
-[xfs-read]
-readwrite=randread
-
-[xfs-write]
-readwrite=randwrite
-
-The difference between ext4 and xfs with this machine/workload was
-two orders of magnitude:
-
-root@xfstests:~# fio ./ext4.fio
-...
-Run status group 0 (all jobs):
-   READ: bw=826MiB/s (866MB/s), 826MiB/s-826MiB/s (866MB/s-866MB/s),
-io=40.0GiB (42.9GB), run=49585-49585msec
-  WRITE: bw=309MiB/s (324MB/s), 309MiB/s-309MiB/s (324MB/s-324MB/s),
-io=18.1GiB (19.5GB), run=60003-60003msec
-
-root@xfstests:~# fio ./xfs.fio
-...
-Run status group 0 (all jobs):
-   READ: bw=7053KiB/s (7223kB/s), 7053KiB/s-7053KiB/s
-(7223kB/s-7223kB/s), io=413MiB (433MB), run=60007-60007msec
-  WRITE: bw=155MiB/s (163MB/s), 155MiB/s-155MiB/s (163MB/s-163MB/s),
-io=9324MiB (9777MB), run=60006-60006msec
-
-I verified that without XFS_IOLOCK_SHARED xfs fio results are on par
-with ext4 results for this workload.
-
->
-> > just cannot comment on whether calling this without i_rwsem does not break
-> > some internal XFS expectations for stuff like reflink etc.
->
-> relink is done under xfs_ilock2_io_mmap => filemap_invalidate_lock_two
-> so it should not be a problem.
->
-> pNFS leases I need to look into.
->
-
-I wonder if xfs_fs_map_blocks() and xfs_fs_commit_blocks()
-should not be taking the invalidate lock before calling
-invalidate_inode_pages2() like the xfs callers of
-truncate_pagecache_range() do?
-
-If we do that, then I don't see a problem with buffered read
-without XFS_IOLOCK_SHARED w.r.t. correctness of layout leases.
-
-Dave, Christoph,
-
-I know that you said that changing the atomic buffered read semantics
-is out of the question and that you also objected to a mount option
-(which nobody will know how to use) and I accept that.
-
-Given that a performant range locks implementation is not something
-trivial to accomplish (Dave please correct me if I am wrong),
-and given the massive performance impact of XFS_IOLOCK_SHARED
-on this workload,
-what do you think about POSIX_FADV_TORN_RW that a specific
-application can use to opt-out of atomic buffer read semantics?
-
-The specific application that I want to modify to use this hint is Samba.
-Samba uses IO threads by default to issue pread/pwrite on the server
-for IO requested by the SMB client. The IO size is normally larger than
-xfs block size and the range may not be block aligned.
-
-The SMB protocol has explicit byte range locks and the server implements
-them, so it is pretty safe to assume that a client that did not request
-range locks does not need xfs to do the implicit range locking for it.
-
-For this reason and because of the huge performance win,
-I would like to implement POSIX_FADV_TORN_RW in xfs and
-have Samba try to set this hint when supported.
-
-It is very much possible that NFSv4 servers (user and kennel)
-would also want to set this hint for very similar reasons.
-
-Thoughts?
-
-Thanks,
-Amir.
+Thanks much!
