@@ -2,225 +2,250 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 486C05B863A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 12:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20BF25B8661
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 12:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbiINKXD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 06:23:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        id S229757AbiINKaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 06:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbiINKWw (ORCPT
+        with ESMTP id S229692AbiINKaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 06:22:52 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB5D7A749
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 03:22:48 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220914102244epoutp03330988f28723cf500b4f36d0fd2807ed~Usv2akFBh2684426844epoutp03K
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 10:22:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220914102244epoutp03330988f28723cf500b4f36d0fd2807ed~Usv2akFBh2684426844epoutp03K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1663150964;
-        bh=3XsgNhx/oEAbk//ISB15e+OTI46PpfVBX4MSK1qwYYk=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Rw7Ydyo3tRUc2xkK9r7L8ICTn9Hww2qsJ8/nI5fqoVZD4MGU2fdwdAjXAxo5hIqgZ
-         aJPj0uwMqFUJs6Ikwt15DccJcp7EJOtrfz2DbE2epY9xE+G4y8XTaKwzAReWMXfQSZ
-         wsVCGQw6DHFfK3JwXlc8MEIvGdWiJkHA2JVz/4c8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220914102244epcas1p46ddb7d06cb5077aa7d37f5053bf5b88a~Usv2LKy0s2766327663epcas1p4O;
-        Wed, 14 Sep 2022 10:22:44 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.242]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4MSGcN0QYPz4x9Pr; Wed, 14 Sep
-        2022 10:22:44 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        22.00.18616.37BA1236; Wed, 14 Sep 2022 19:22:43 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220914102243epcas1p12cd7638935cddc8a2c81069b41724d0c~Usv1hxWEz3113331133epcas1p1a;
-        Wed, 14 Sep 2022 10:22:43 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220914102243epsmtrp2a154ce60d0c83b139c76cc1b476c836b~Usv1hDkUo0251902519epsmtrp2V;
-        Wed, 14 Sep 2022 10:22:43 +0000 (GMT)
-X-AuditID: b6c32a38-6cfff700000048b8-a8-6321ab73c501
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BA.51.14392.37BA1236; Wed, 14 Sep 2022 19:22:43 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220914102243epsmtip10b696ac82c72f40ea09f04d7da05eb96~Usv1Udrsg1683016830epsmtip1F;
-        Wed, 14 Sep 2022 10:22:43 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Rover'" <739817562@qq.com>,
-        "'linkinjeon'" <linkinjeon@kernel.org>
-Cc:     "'linux-kernel'" <linux-kernel@vger.kernel.org>,
-        "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <tencent_52978C540CBFA2747B715C811F0D99530E07@qq.com>
-Subject: RE: RE: [PATCH v1] exfat: remove the code that sets FileAttributes
- when renaming
-Date:   Wed, 14 Sep 2022 19:22:43 +0900
-Message-ID: <08bb01d8c823$ed1e0dd0$c75a2970$@samsung.com>
+        Wed, 14 Sep 2022 06:30:10 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BB23BC5A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 03:30:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1BA721F88E;
+        Wed, 14 Sep 2022 10:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1663151407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cKS1qAlRZDm+nKY5tVyiWUcNixRdMbXVkeB5z/uKXKA=;
+        b=iQZgVYTp4d/VLwHyHvmYP4H3m4hvuan4aHM9ONc8fVxSVVBOwQ0tblgAezLpukaNdVn/d0
+        wHekYVxxLGQtVQgy7xdjvvfzybldO/FwdkEkcAj18s9sIpJcgo2INSroQIMQBrv2GkhgSb
+        dALBAWOt1weM5kplQbCOlmRGf4KWxxU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1663151407;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cKS1qAlRZDm+nKY5tVyiWUcNixRdMbXVkeB5z/uKXKA=;
+        b=sU3nlZkGUfBrq6IMtLQgmi6vif+tspFD5IgU+ezSD0pIvIehCxeXng3fvNsCLvJXhhhhB3
+        nVije1dDVNBa5CCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0B1A1134B3;
+        Wed, 14 Sep 2022 10:30:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id o8avAi+tIWPDSQAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 14 Sep 2022 10:30:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 0FC4BA0680; Wed, 14 Sep 2022 12:30:06 +0200 (CEST)
+Date:   Wed, 14 Sep 2022 12:30:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        "Plaster, Robert" <rplaster@deepspacestorage.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: thoughts about fanotify and HSM
+Message-ID: <20220914103006.daa6nkqzehxppdf5@quack3>
+References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
+ <20220912125734.wpcw3udsqri4juuh@quack3>
+ <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
+ <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQLiLS1ckQU2fx+m2qoL2gnRLP1zpQJkLg6Wq7jCpzA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPJsWRmVeSWpSXmKPExsWy7bCmvm7xasVkg+V7bCxaXu5gtZg4bSmz
-        xZ69J1ksLu+aw2ax5d8RVgdWj02rOtk8bj1by+rRt2UVo8fnTXIBLFENjDaJRckZmWWpCql5
-        yfkpmXnptkqhIW66FkoKGfnFJbZK0YaGRnqGBuZ6RkZGesaWsVZGpkoKeYm5qbZKFbpQvUoK
-        RckFQLW5lcVAA3JS9aDiesWpeSkOWfmlIMfqFSfmFpfmpesl5+cqKZQl5pQCjVDST/jGmDH/
-        2Uz2gsNKFY8u7mZpYHwq08XIySEhYCJx5tVDxi5GLg4hgR2MErdWrYJyPjFK/Fndww7hfGOU
-        OHPwAzNMy8sd+9kgEnsZJZ5P3wfV8pJR4sjJfhaQKjYBXYknN36CdYgIeEi8f9vCAlLELNDE
-        KHH19wmmLkYODk4BJ4kPa51BaoQFoiVWfZvDBmKzCKhKzPz2A8zmFbCUWDjnG5QtKHFy5hOw
-        +cwC8hLb386BukhBYveno6wQu6wk7mxYxg5RIyIxu7ONGWSvhEArh8Sq3W/ZIBpcJB7O28IE
-        YQtLvDq+hR3ClpL4/G4vVE03MADO8UI0T2CUaLlzlhUiYSzx6fNnRpAHmAU0Jdbv0ocIK0rs
-        /D2XEcIWlDh9rZsZ4gg+iXdfe1hByiUEeCU62oQgSlQkvn/YyTKBUXkWktdmIXltFpIXZiEs
-        W8DIsopRLLWgODc9tdiwwAQ5xjcxgtOqlsUOxrlvP+gdYmTiYDzEKMHBrCTC2xeikCzEm5JY
-        WZValB9fVJqTWnyIMRkY2BOZpUST84GJPa8k3tDE2MDACJgQzS3NjYkQtjQwMTMysTC2NDZT
-        EufV02ZMFhJITyxJzU5NLUgtgtnCxMEp1cA0aeURy0vdTPoxDgyfV/wOX+L+0F5lAq9Ng8tq
-        1RvzbYKzpX5dOrLmjvoCYf+9MxROtWjPe2cw1aRbaYtz6LeFho0btvZdeJWiEZ20Oq9Uv1bo
-        IheDafFW3f1xC7p5mddUFOzqfmCnumha2oZ12yK52y0Oam37selN9qPyBXWpCybpaXdFL7ii
-        pye1ob4rp3VB0s+621y66zY/uS3wrjqiQXLJev7XnMI/+P7qSF/R2LT4+70VausjL5+anMh4
-        vED+tZpdwKH0YCXXEEVPwWuc1rESQttfLPCr2STqf2zuuRXOLrb8E5r+dh08r24t/t6gJd3A
-        Kq9p6XUDJTuxl/JNb32OejvP6Oq/dbxHwlCJpTgj0VCLuag4EQBWbUrtYgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWy7bCSnG7xasVkg6W9qhYtL3ewWkyctpTZ
-        Ys/ekywWl3fNYbPY8u8IqwOrx6ZVnWwet56tZfXo27KK0ePzJrkAligum5TUnMyy1CJ9uwSu
-        jPnPZrIXHFaqeHRxN0sD41OZLkZODgkBE4mXO/azdTFycQgJ7GaU2DNlMmMXIwdQQkri4D5N
-        CFNY4vDhYoiS54wSfe8aWUB62QR0JZ7c+MkMUiMi4CWx4n8JSA2zQAujxKzGZ1AzJzNKnLhw
-        mAWkiFPASeLDWmeQXmGBSImGhudMIDaLgKrEzG8/2EBsXgFLiYVzvkHZghInZz4Ba2UW0JNo
-        28gIEmYWkJfY/nYOM8T5ChK7Px1lBbFFBKwk7mxYxg5RIyIxu7ONeQKj8Cwkk2YhTJqFZNIs
-        JB0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIER4qW5g7G7as+6B1iZOJgPMQo
-        wcGsJMLbF6KQLMSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwen
-        VAPTvDvhnXe+bJZ4IHR38qmdTX7Olm6F1hXxN1Zkb1Yzb5afkBl1ukipb+G2mJ0L/ZPPbS+c
-        tvPwk1sJ7apa2tbPp4vV32TeeDovM1Jhj/9cY5MFbGufyho88y35f6nQI9lGjeFx/C391B+l
-        VzbIOovJT5onViH758zKHW8uH1j/ddYbJpvMmhuqRo8XF/NZPJvS//hFtkMpz2KG6xKtqwzf
-        tHndqYpacMhzRdCylckd/3eevff+4hOt1RcKtQLqwmTXNyx1MNO7Xu1z2CZ6SVMU3z+W9asO
-        l33IyG1dt/ZExQ53wRfTPkf61v5ynfD/a7Dx4aKaUrUzPVFFThZaDm9c3zAUMe0umvJsQ9Fu
-        B44JSizFGYmGWsxFxYkAi1EXXgMDAAA=
-X-CMS-MailID: 20220914102243epcas1p12cd7638935cddc8a2c81069b41724d0c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-ArchiveUser: EV
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220914092543epcas1p1526e62ff4587f70d09bcefab3a97cbe2
-References: <CGME20220914092543epcas1p1526e62ff4587f70d09bcefab3a97cbe2@epcas1p1.samsung.com>
-        <tencent_52978C540CBFA2747B715C811F0D99530E07@qq.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Hi Sungjong,
+On Wed 14-09-22 10:27:48, Amir Goldstein wrote:
+> On Mon, Sep 12, 2022 at 7:38 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > I have been in contact with some developers in the past
+> > > > who were interested in using fanotify to implement HSM
+> > > > (to replace old DMAPI implementation).
+> > >
+> > > Ah, DMAPI. Shiver. Bad memories of carrying that hacky code in SUSE kernels
+> > > ;)
 > 
-> This patch is to remove the duplicate setting ATTR_ARCHIVE when renaming.
-> 
-> We know that a file will not become a directory after being renamed, and a
-> directory will not become a file after being renamed.
+> For the record, DMAPI is still partly supported on some proprietary
+> filesystems, but even if a full implementation existed, this old API
+> which was used for tape devices mostly is not a good fit for modern
+> day cloud storage use cases.
 
-Sure, rename-op does not change any types of files.
+Interesting, I didn't know DMAPI still lives :)
 
-> &gt;&gt;
-> &gt;&gt; 		*epnew = *epold;
-> So ATTR_ARCHIVE is already set here if rename file.
+> > > So how serious are these guys about HSM and investing into it?
+> >
+> > Let's put it this way.
+> > They had to find a replacement for DMAPI so that they could stop
+> > carrying DMAPI patches, so pretty serious.
+> > They had to do it one way or the other.
+> >
+> 
+> As mentioned earlier, this is an open source HSM project [1]
+> with a release coming soon that is using FAN_OPEN_PERM
+> to migrate data from the slower tier.
+> 
+> As you can imagine, FAN_OPEN_PERM can only get you as far
+> as DMAPI but not beyond and it leaves the problem of setting the
+> marks on all punched files on bringup.
 
-Do you think ATTR_ARCHIVE represents the file type? If so, you probably
-are misunderstanding ATTR_ARCHIVE. It's just like a flag indicating that
-there was a change. For example, in case of rename, it's just like a flag
-indicating that its name has been changed.
+Sure I can see that FAN_OPEN_PERM works for basic usage but it certainly
+leaves room for improvement :)
 
-The current linux exfat implementation does not yet provide an IOCTL
-to control this attribute, but keep in mind that the ATTR_ARCHIVE may
-be removed even if it is a file via another exfat driver.
+<snip nice summary of FUSE options>
 
-B.R.
-Sungjong Seo
+> > > So I'd prefer to avoid the major API
+> > > extension unless there are serious users out there - perhaps we will even
+> > > need to develop the kernel API in cooperation with the userspace part to
+> > > verify the result is actually usable and useful.
+> 
+> Yap. It should be trivial to implement a "mirror" HSM backend.
+> For example, the libprojfs [5] projects implements a MirrorProvider
+> backend for the Microsoft ProjFS [6] HSM API.
 
+Well, validating that things work using some simple backend is one thing
+but we are probably also interested in whether the result is practical to
+use - i.e., whether the performance meets the needs, whether the API is not
+cumbersome for what HSM solutions need to do, whether the more advanced
+features like range-support are useful the way they are implemented etc.
+We can verify some of these things with simple mirror HSM backend but I'm
+afraid some of the problems may become apparent only once someone actually
+uses the result in practice and for that we need a userspace counterpart
+that does actually something useful so that people have motivation to use
+it :).
+ 
+> > > > Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
+> > > > should be enough to implement a basic HSM, but it is not
+> > > > sufficient for implementing more advanced HSM features.
+> > > >
+> [...]
+> > > My main worry here would be that with FAN_FILESYSTEM marks, there will be
+> > > far to many events (especially for the lookup & access cases) to reasonably
+> > > process. And since the events will be blocking, the impact on performance
+> > > will be large.
+> > >
+> >
+> > Right. That problem needs to be addressed.
+> >
+> > > I think that a reasonably efficient HSM will have to stay in the kernel
+> > > (without generating work for userspace) for the "nothing to do" case. And
+> > > only in case something needs to be migrated, event is generated and
+> > > userspace gets involved. But it isn't obvious to me how to do this with
+> > > fanotify (I could imagine it with say overlayfs which is kind of HSM
+> > > solution already ;)).
+> > >
 > 
-> &gt;&gt; -		if (exfat_get_entry_type(epnew) == TYPE_FILE) {
-> &gt;&gt; -			epnew-&gt;dentry.file.attr |=
-> cpu_to_le16(ATTR_ARCHIVE);
-> No need to set again here.
+> It's true, overlayfs is kind of HSM, but:
+> - Without swap out to slower tier
+> - Without user control over method of swap in from slower tier
 > 
-> &gt;&gt; -			ei-&gt;attr |= ATTR_ARCHIVE;
-> ei-&gt;attr doesn't change and already set ATTR_ARCHIVE in
-> exfat_fill_inode()
+> On another thread regarding FUSE-BPF, Miklos also mentioned
+> the option to add those features to overlayfs [7] to make it useful
+> as an HSM kernel driver.
 > 
-> &gt;&gt; -		}
+> So we have at least three options for an HSM kernel driver (FUSE,
+> fanotify, overlayfs), but none of them is still fully equipped to drive
+> a modern HSM implementation.
 > 
-> Best regards,
-> Rover
+> What is clear is that:
+> 1. The fast path must not context switch to userspace
+> 2. The slow path needs an API for calling into user to migrate files/dirs
 > 
-> ------------------ Original ------------------
-> From: "Sungjong Seo" <sj1557.seo@samsung.com>;
-> Date: Wed, Sep 14, 2022 04:48 PM
-> To: "Rover"&lt;739817562@qq.com&gt;;"'linkinjeon'"<linkinjeon@kernel.org>;
-> Cc: "'linux-kernel'"<linux-kernel@vger.kernel.org>;"'linux-
-> fsdevel'"<linux-
-> fsdevel@vger.kernel.org>;"sj1557.seo"<sj1557.seo@samsung.com>;
-> Subject: RE: [PATCH v1] exfat: remove the code that sets FileAttributes
-> when renaming
-> 
-> 
-> Hi, Rover,
-> 
-> This patch seems to violate the exFAT specification below.
-> Please refer to the description for ATTR_ARCHIVE in FAT32 Spec.
-> 
-> * Archive
-> This field is mandatory and conforms to the MS-DOS definition.
-> 
-> * ATTR_ARCHIVE
-> This attribute supports backup utilities. This bit is set by the FAT file
-> system driver when a file is created, renamed, or written to. Backup
-> utilities may use this attribute to indicate which files on the volume
-> have been modified since the last time that a backup was performed.
-> 
-> Thanks.
-> B.R.
-> 
-> Sungjong Seo
-> 
-> &gt; When renaming, FileAttributes remain unchanged, do not need to be
-&gt;
-> set, so the code that sets FileAttributes is unneeded, remove it.
-> &gt;
-> &gt; Signed-off-by: rover &amp;lt;739817562@qq.com&amp;gt; &gt; ---
-> &gt;&nbsp; fs/exfat/namei.c | 12 ------------ &gt;&nbsp; 1 file changed,
-> 12 deletions(-) &gt; &gt; diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-> &gt; index b617bebc3d0f..5ffaf553155e 100644 &gt; --- a/fs/exfat/namei.c
-> &gt; +++ b/fs/exfat/namei.c &gt; @@ -1031,10 +1031,6 @@ static int
-> exfat_rename_file(struct inode *inode, &gt; struct exfat_chain *p_dir,
-> &gt;&nbsp;return -EIO; &gt; &gt;&nbsp; *epnew = *epold; &gt; -if
-> (exfat_get_entry_type(epnew) == TYPE_FILE) { &gt; - epnew-
-> &amp;gt;dentry.file.attr |= &gt; cpu_to_le16(ATTR_ARCHIVE); &gt; - ei-
-> &amp;gt;attr |= ATTR_ARCHIVE; &gt; -} &gt;&nbsp; exfat_update_bh(new_bh,
-> sync); &gt;&nbsp; brelse(old_bh); &gt;&nbsp; brelse(new_bh); &gt; @@ -
-> 1063,10 +1059,6 @@ static int exfat_rename_file(struct inode *inode, &gt;
-> struct exfat_chain *p_dir, &gt;&nbsp; ei-&amp;gt;dir = *p_dir; &gt;&nbsp;
-> ei-&amp;gt;entry = newentry; &gt;&nbsp;} else { &gt; -if
-> (exfat_get_entry_type(epold) == TYPE_FILE) { &gt; - epold-
-> &amp;gt;dentry.file.attr |= &gt; cpu_to_le16(ATTR_ARCHIVE); &gt; - ei-
-> &amp;gt;attr |= ATTR_ARCHIVE; &gt; -} &gt;&nbsp; exfat_update_bh(old_bh,
-> sync); &gt;&nbsp; brelse(old_bh); &gt;&nbsp; ret =
-> exfat_init_ext_entry(inode, p_dir, oldentry, &gt; @@ -1112,10 +1104,6 @@
-> static int exfat_move_file(struct inode *inode, &gt; struct exfat_chain
-> *p_olddir, &gt;&nbsp; return -EIO; &gt; &gt;&nbsp;*epnew = *epmov; &gt; -
-> if (exfat_get_entry_type(epnew) == TYPE_FILE) { &gt; -epnew-
-> &amp;gt;dentry.file.attr |= cpu_to_le16(ATTR_ARCHIVE); &gt; -ei-
-> &amp;gt;attr |= ATTR_ARCHIVE; &gt; - } &gt;&nbsp;exfat_update_bh(new_bh,
-> IS_DIRSYNC(inode)); &gt;&nbsp;brelse(mov_bh); &gt;&nbsp;brelse(new_bh);
-> &gt; -- &gt; 2.25.1</sj1557.seo@samsung.com></linux-
-> fsdevel@vger.kernel.org></linux-
-> kernel@vger.kernel.org></linkinjeon@kernel.org></sj1557.seo@samsung.com>
+> What is not clear is:
+> 1. The method to persistently mark files/dirs for fast/slow path
+> 2. The API to call into userspace
 
+Agreed.
+
+> Overlayfs provides a method to mark files for slow path
+> ('trusted.overlay.metacopy' xattr), meaning file that has metadata
+> but not the data, but overlayfs does not provide the API to perform
+> "user controlled migration" of the data.
+> 
+> Instead of inventing a new API for that, I'd rather extend the
+> known fanotify protocol and allow the new FAN_XXX_PRE events
+> only on filesystems that have the concept of a file without its content
+> (a.k.a. metacopy).
+> 
+> We could say that filesystems that support fscache can also support
+> FAN_XXX_PRE events, and perhaps cachefilesd could make use of
+> hooks to implement user modules that populate the fscache objects
+> out of band.
+
+One possible approach is that we would make these events explicitely
+targetted to HSM and generated directly by the filesystem which wants to
+support HSM. So basically when the filesystem finds out it needs the data
+filled in, it will call something like:
+
+  fsnotify(inode, FAN_PRE_GIVE_ME_DATA, perhaps_some_details_here)
+
+Something like what we currently do for filesystem error events but in this
+case the event will work like a permission event. Userspace can be watching
+the filesystem with superblock mark to receive these events. The persistent
+marking of files is completely left upto the filesystem in this case - it
+has to decide when the FAN_PRE_GIVE_ME_DATA event needs to be generated for
+an inode.
+
+> There is the naive approach to interpret a "punched hole" in a file as
+> "no content" as DMAPI did, to support FAN_XXX_PRE events on
+> standard local filesystem (fscache does that internally).
+> That would be an opt-in via fanotify_init() flag and could be useful for
+> old DMAPI HSM implementations that are converted to use the new API.
+
+I'd prefer to leave these details upto the filesystem wanting to support
+HSM and not clutter fanotify API with details about file layout. 
+
+> Practically, the filesystems that allow FAN_XXX_PRE events
+> on punched files would need to advertise this support and maintain
+> an inode flag (i.e. I_NODATA) to avoid a performance penalty
+> on every file access. If we take that route, though, it might be better
+> off to let the HSM daemon set this flag explicitly (e.g. chattr +X)
+> when punching holes in files and removing the flag explicitly
+> when filling the holes.
+
+Again, in what I propose this would be left upto the filesystem - e.g. it
+can have inode flag or xattr or something else to carry the information
+that this file is under HSM and call fsnotify() when the file is accessed.
+It might be challenging to fulfill your desire to generate the event
+outside of any filesystem locks with this design though.
+
+> And there is the most flexible option of attaching a BFP filter to
+> a filesystem mark, but I am afraid that this program will be limited
+> to using information already in the path/dentry/inode struct.
+> At least HSM could use an existing arbitrary inode flag
+> (e.g. chattr+i) as "persistent marks".
+> 
+> So many options! I don't know which to choose :)
+> 
+> If this plan sounds reasonable, I can start with a POC of
+> "user controlled copy up/down" for overlayfs, using fanotify
+> as the user notification protocol and see where it goes from there.
+
+Yeah, that might be interesting to see as an example. Another example of
+"kind-of-hsm" that we already have in the kernel is autofs. So we can think
+whether that could be implemented using the scheme we design as an
+excercise.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
