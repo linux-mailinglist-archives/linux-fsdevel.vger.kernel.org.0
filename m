@@ -2,196 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7030F5B8EC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 20:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 483145B8F3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 21:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbiINSQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 14:16:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S229449AbiINTXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 15:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiINSQs (ORCPT
+        with ESMTP id S229473AbiINTXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 14:16:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217235721D;
-        Wed, 14 Sep 2022 11:16:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A9ACC61E8E;
-        Wed, 14 Sep 2022 18:16:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D133C433C1;
-        Wed, 14 Sep 2022 18:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663179406;
-        bh=jXFOz1XVK5eWZZw6y6L5fljt3zc2+fxNH9PxNP+WsS8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hrv/a+EKivgV16U2LUPUSjAKCu880fbgBNkF74k9+hMyrgav6ctMMJgVUlbzAUXUj
-         V7v7mTGVo7+m8K4lmHi3aHXtjPSs20Y+v7ybhwm8pmZ5k0oZQ0qgcV0iGn4cMdjgJa
-         wcZ7TGgUm6d06N1HnkXTsvNky79zKZc1Ba13HcNGUS0x2wpmmvFlFPE7/NRKYPYZEb
-         W9xQI901oNKZXw+Xxlhtz9kHblgylfJd0bU+fAXbdBNxmQxc2LKnCQhoT5FXds7zJT
-         VxAdToZdETZr1yKkUg0aak3BFdx/c4SgYKEyCdaP1jmu2O0TgUdPHh7uFphzogA/k+
-         GApvPvvtZYfaA==
-Date:   Wed, 14 Sep 2022 11:16:45 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com
-Subject: Re: [PATCH 2/3] fs: move drop_pagecache_sb() for others to use
-Message-ID: <YyIajcWz/h1k3kvq@magnolia>
-References: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
- <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1662114961-66-3-git-send-email-ruansy.fnst@fujitsu.com>
+        Wed, 14 Sep 2022 15:23:41 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAE28305E;
+        Wed, 14 Sep 2022 12:23:37 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id c3so16983857vsc.6;
+        Wed, 14 Sep 2022 12:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=Do8J8B6j7pJxw+o5QJieN1AwRGRATf5znOcYalBz9E0=;
+        b=cRUZshCOeqq53CgEEQQZ90ee69cDPFAL6sqXDDO5ox71/ifR6Rii+qVikOBszd6Ucl
+         6xGHgGCXIs9+Oeji/aI/lTQUMtMt4EleBKuU5W3/UXMF4dryKPgqYPhFkT4XYsVglsrb
+         vOWkxs7Sis+a3xpGa6IBDaSbSEmGq43ZX9iXjcdYv3LqeLV92HX1rumqo0SwMQ5s96Xa
+         N7Anhej/Dsicj+PmrZhimdeOiekLgBcGZNIcLyQZ8ejCh1UXU2R0MdARwIZX58OMAysl
+         oOifPPvgQkVpFqVCGTeLCcHqAZ0aKX2O9r7y9gUsxra6NP2zqT7DwoG8vsxx8FSGix5a
+         orNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=Do8J8B6j7pJxw+o5QJieN1AwRGRATf5znOcYalBz9E0=;
+        b=qblRu7uwU4JtS4oDH2uERIx0LekFOYlZWd9ktGsn7wFoivsHJxqG0BqaJveU8NdPWL
+         H9Dhpgj+OXGw2ehk9PKp8fSiXNU0AeGcT5raSNkmP4qwb+ouQUL4iuBQ3ca5YA2cwCKE
+         l9inwg0/AXqd/OskmWq6MEOe5Lt8IxUJunycx+CyzNn4+UG6Xtu18/baabpJoNK5OwHl
+         dA3A0y57+QPvfBmJGiNasXHIrUKLIH9YGbZHdV6V3xHDqyYu2bseFZSuQ8D7a5xjmH5U
+         jFn6iFbIT2l0SzAArdbNgku7C19P3bl6HPC7Pg9SyFZX/mnQEy7o5ycJq6p7AxLjhyzQ
+         5DCg==
+X-Gm-Message-State: ACgBeo3t4BH8VPXDU74HZxJH+DJfJ7o0xZMV9tCK8GbV1lMbG1LQG7wT
+        FPoHbGhqCXziDPBq+FDBMmcIoup0biS3/Ks48hm5+fqZ
+X-Google-Smtp-Source: AA6agR4nzxMuiDOAaafy6cwaMysE1QnyGPAnFZmDsTiMDiOsx3gGDbxXvviVSxMouY9kpZG//5iF9TA7CNOMbVNiCZM=
+X-Received: by 2002:a05:6102:d3:b0:398:6f6a:8850 with SMTP id
+ u19-20020a05610200d300b003986f6a8850mr6818110vsp.71.1663183416335; Wed, 14
+ Sep 2022 12:23:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1662114961-66-3-git-send-email-ruansy.fnst@fujitsu.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
+ <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
+ <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
+ <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
+ <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
+ <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
+ <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
+ <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
+ <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
+ <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
+ <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
+ <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
+ <CAOQ4uxjjPOtH9+r=oSV4iVAUvW6s3RBjA9qC73bQN1LhUqjRYQ@mail.gmail.com>
+ <CA+khW7hviAT6DbNORYKcatOV1cigGyrd_1mH-oMwehafobVXVg@mail.gmail.com>
+ <CAOQ4uxjUbwKmLAO-jTE3y6EnH2PNw0+V=oXNqNyD+H9U+nX49g@mail.gmail.com>
+ <CA+khW7jQ6fZbEgzxCafsaaTyv7ze58bd9hQ0HBH4R+dQyRaqog@mail.gmail.com>
+ <CAOQ4uxjP0qeuUrdjT6hXCb5zO0AoY+LKM6uza2cL9UCGMo8KsQ@mail.gmail.com>
+ <CA+khW7h907VDeD1mR2wH4pOWxPBG18C2enkZKSZgyWYrFP7Vnw@mail.gmail.com>
+ <CAOQ4uxh9_7wRoDuzLkYCQVWWihuOFz5WmQemCskKg+U6FqR8wg@mail.gmail.com> <CA+khW7hwnX3d9=TA9W+-t-2nqAS+wV8JFC42B_aB9VDT-fEG9Q@mail.gmail.com>
+In-Reply-To: <CA+khW7hwnX3d9=TA9W+-t-2nqAS+wV8JFC42B_aB9VDT-fEG9Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 14 Sep 2022 22:23:24 +0300
+Message-ID: <CAOQ4uxi7hFL0rWBRbkHuJFJoyu1h0wU6ug_pXS_vYoGaqYGL9g@mail.gmail.com>
+Subject: Re: Overlayfs with writable lower layer
+To:     Hao Luo <haoluo@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 02, 2022 at 10:36:00AM +0000, Shiyang Ruan wrote:
-> xfs_notify_failure requires a method to invalidate all mappings.
-> drop_pagecache_sb() can do this but it is a static function and only
-> build with CONFIG_SYSCTL.  Now, move it to super.c and make it available
-> for others.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/drop_caches.c   | 33 ---------------------------------
->  fs/super.c         | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  1 +
->  3 files changed, 35 insertions(+), 33 deletions(-)
-> 
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index e619c31b6bd9..5c8406076f9b 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -3,7 +3,6 @@
->   * Implement the manual drop-all-pagecache function
->   */
->  
-> -#include <linux/pagemap.h>
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
->  #include <linux/fs.h>
-> @@ -15,38 +14,6 @@
->  /* A global variable is a bit ugly, but it keeps the code simple */
->  int sysctl_drop_caches;
->  
-> -static void drop_pagecache_sb(struct super_block *sb, void *unused)
-> -{
-> -	struct inode *inode, *toput_inode = NULL;
-> -
-> -	spin_lock(&sb->s_inode_list_lock);
-> -	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> -		spin_lock(&inode->i_lock);
-> -		/*
-> -		 * We must skip inodes in unusual state. We may also skip
-> -		 * inodes without pages but we deliberately won't in case
-> -		 * we need to reschedule to avoid softlockups.
-> -		 */
-> -		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-> -		    (mapping_empty(inode->i_mapping) && !need_resched())) {
-> -			spin_unlock(&inode->i_lock);
-> -			continue;
-> -		}
-> -		__iget(inode);
-> -		spin_unlock(&inode->i_lock);
-> -		spin_unlock(&sb->s_inode_list_lock);
-> -
-> -		invalidate_mapping_pages(inode->i_mapping, 0, -1);
-> -		iput(toput_inode);
-> -		toput_inode = inode;
-> -
-> -		cond_resched();
-> -		spin_lock(&sb->s_inode_list_lock);
-> -	}
-> -	spin_unlock(&sb->s_inode_list_lock);
-> -	iput(toput_inode);
-> -}
-> -
->  int drop_caches_sysctl_handler(struct ctl_table *table, int write,
->  		void *buffer, size_t *length, loff_t *ppos)
->  {
-> diff --git a/fs/super.c b/fs/super.c
-> index 734ed584a946..bdf53dbe834c 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -36,6 +36,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/user_namespace.h>
->  #include <linux/fs_context.h>
-> +#include <linux/pagemap.h>
->  #include <uapi/linux/mount.h>
->  #include "internal.h"
->  
-> @@ -677,6 +678,39 @@ void drop_super_exclusive(struct super_block *sb)
->  }
->  EXPORT_SYMBOL(drop_super_exclusive);
->  
-> +void drop_pagecache_sb(struct super_block *sb, void *unused)
-> +{
-> +	struct inode *inode, *toput_inode = NULL;
-> +
-> +	spin_lock(&sb->s_inode_list_lock);
-> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> +		spin_lock(&inode->i_lock);
-> +		/*
-> +		 * We must skip inodes in unusual state. We may also skip
-> +		 * inodes without pages but we deliberately won't in case
-> +		 * we need to reschedule to avoid softlockups.
-> +		 */
-> +		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-> +		    (mapping_empty(inode->i_mapping) && !need_resched())) {
-> +			spin_unlock(&inode->i_lock);
-> +			continue;
-> +		}
-> +		__iget(inode);
-> +		spin_unlock(&inode->i_lock);
-> +		spin_unlock(&sb->s_inode_list_lock);
-> +
-> +		invalidate_mapping_pages(inode->i_mapping, 0, -1);
-> +		iput(toput_inode);
-> +		toput_inode = inode;
-> +
-> +		cond_resched();
-> +		spin_lock(&sb->s_inode_list_lock);
-> +	}
-> +	spin_unlock(&sb->s_inode_list_lock);
-> +	iput(toput_inode);
-> +}
-> +EXPORT_SYMBOL(drop_pagecache_sb);
+On Wed, Sep 14, 2022 at 9:00 PM Hao Luo <haoluo@google.com> wrote:
+>
+> On Tue, Sep 13, 2022 at 8:46 PM Amir Goldstein <amir73il@gmail.com> wrote=
+:
+> >
+> > On Tue, Sep 13, 2022 at 11:33 PM Hao Luo <haoluo@google.com> wrote:
+> > >
+> > > On Tue, Sep 13, 2022 at 11:54 AM Amir Goldstein <amir73il@gmail.com> =
+wrote:
+> > > > OK. IIUC, you have upper fs files only in the root dir?
+> > >
+> > > Sorry, no, the upper fs files need to be in subdir.
+> > >
+> > > > And the lower root dir has only subdirs?
+> > >
+> > > There could be files.
+> > >
+> >
+> > And assuming that those files are cgroupfs files, why
+> > did you say there is no need to write to those files?
+> >
+> > I seem to recall that was an important distinction from
+> > standard overlayfs when you described the problem in LSFMM.
+>
+> In my last reply, I was assuming all the writes to the cgroupfs files
+> happen from remote, not from the union. One can read files from union,
+> or create files that exist in the upper.
+>
+> The idea is, I can provide two copies of lower to users. One is the
+> original lower, writable, so any update happens there. And the other
+> is a union of the lower and the upper, it's a read-only view of the
+> lower, but extended by the upper.
+>
+> I actually don't know whether supporting writes to the lower from the
+> union is better. It probably is, because then I can combine the two
+> copies into one.
+>
 
-You might want to rename this "super_drop_pagecache" to fit with the
-other functions that all have "super" in the name somewhere.
+Understood.
 
---D
+> >
+> >
+> > > > Can you give a small example of an upper a lower and their
+> > > > union trees just for the sake of discussion?
+> > > >
+> > >
+> > > For example, assume lower has the following layout:
+> > > $ tree lower
+> > > .
+> > > =E2=94=94=E2=94=80=E2=94=80 A
+> > >     =E2=94=9C=E2=94=80=E2=94=80 B
+> > >     =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 lower
+> > >     =E2=94=94=E2=94=80=E2=94=80 lower
+> > >
+> > > I can't create files in the fs in the lower.
+> > > $ touch A/B/file
+> > > touch: cannot touch 'A/B/file': Permission denied
+> > >
+> > > The upper is initially empty.
+> > >
+> > > I would like to overlay a writable fs on top of lower, so the union
+> > > tree looks like
+> > > $ tree union
+> > > .
+> > > =E2=94=94=E2=94=80=E2=94=80 A
+> > >     =E2=94=9C=E2=94=80=E2=94=80 B
+> > >     =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 lower
+> > >     =E2=94=94=E2=94=80=E2=94=80 lower
+> > > $ touch A/B/file
+> > > $ tree union
+> > > .
+> > > =E2=94=94=E2=94=80=E2=94=80 A
+> > >     =E2=94=9C=E2=94=80=E2=94=80 B
+> > >     =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 file
+> > >     =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 lower2
+> > >     =E2=94=94=E2=94=80=E2=94=80 lower1
+> > >
+> > > Here, 'file' exists in the upper.
+> > >
+> >
+> > So B is now called a "merged" dir - it is not a "pure" dir
+> > anymore because it contains both upper and lower files.
+> >
+> > Normally in overlayfs before creating 'file' in upper,
+> > the hierarchy A/B/ needs to be created in upper fs
+> > to contain the file.
+> >
+> > Unless your upper fs automagically has the same
+> > dirs hierarchy as the lower fs?
+> >
+> > You should know that overlayfs does more than just
+> > mkdir("A");mkdir("A/B")
+> > it created tmp dirs, sets xattrs and attrs on them and moves
+> > them into place.
+> > I am not sure if you planned to support all those operations
+> > in your upper fs?
+> >
+>
+> Yeah. I can add support for tmp dirs, tmp files in my upper fs, that
+> is, bpffs. I played it a bit back in May, that is totally doable. I
+> remembered I successfully made bpffs accepted as overlayfs's upper
+> without xattrs and attrs back then. Maybe I missed something.
+>
 
-> +
->  static void __iterate_supers(void (*f)(struct super_block *))
->  {
->  	struct super_block *sb, *p = NULL;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 9eced4cc286e..5ded28c0d2c9 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3292,6 +3292,7 @@ extern struct super_block *get_super(struct block_device *);
->  extern struct super_block *get_active_super(struct block_device *bdev);
->  extern void drop_super(struct super_block *sb);
->  extern void drop_super_exclusive(struct super_block *sb);
-> +void drop_pagecache_sb(struct super_block *sb, void *unused);
->  extern void iterate_supers(void (*)(struct super_block *, void *), void *);
->  extern void iterate_supers_type(struct file_system_type *,
->  			        void (*)(struct super_block *, void *), void *);
-> -- 
-> 2.37.2
-> 
+sounds reasonable.
+xattr is not a hard requirement but some things (that you do not need)
+cannot work without xattr like merged directory rename and rmdir.
+
+> > There are probably some other limitations at the moment
+> > related to pseudo filesystems that prevent them from being
+> > used as upper and/or lower fs in overlayfs.
+> >
+> > We will need to check what those limitations are and whether
+> > those limitations could be lifted for your specific use case.
+> >
+>
+> How can we approach this? Maybe I can send my patch that adds tmp dir,
+> tmp files and xattr, attr to upstream as RFC, so you can take a look?
+>
+
+I don't think I need your fs to test.
+The only thing special in this setup as far as I can tell is the dynamic
+cgroupfs (or cgroup2?) lower dirs.
+
+IIUC, everything worked for you except for oddities related to
+lower directories not appearing and not disappearing from the union.
+Is that correct? is that the only thing that you need a fix for?
+
+> > > Further, directory B could disappear from lower. When that happens, I
+> > > think there are two possible behaviors:
+> > >  - make 'file' disappear from union as well;
+> > >  - make 'file' and its directory accessible as well.
+> > >
+> > > In behavior 1, it will look like
+> > > $ tree union
+> > > .
+> > > =E2=94=94=E2=94=80=E2=94=80 A
+> > >     =E2=94=94=E2=94=80=E2=94=80 lower1
+> > >
+> > > In behavior 2, it will look like
+> > > $ tree union
+> > > .
+> > > =E2=94=94=E2=94=80=E2=94=80 A
+> > >     =E2=94=9C=E2=94=80=E2=94=80 B
+> > >     =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 file
+> > >     =E2=94=94=E2=94=80=E2=94=80 lower1
+> > >
+> > > IMHO, behavior 1 works better in my use case. But if the FS experts
+> > > think behavior 2 makes more sense, I can work around.
+> > >
+> >
+> > Something that I always wanted to try is to get rid of the duplicated
+> > upper fs hierarchy.
+> >
+> > It's a bit complicated to explain the details, but if your use case
+> > does not involve any directory renames(?), then the upper path
+> > for the merge directories can be index based and not hierarchical.
+> >
+>
+> Yeah, I don't expect directory renaming. But I can't say if there is
+> anyone trying to do that by accident, or by bad intention.
+>
+
+Your fs will return an error for rename if you did not implement it.
+
+Anyway, if you can accept behavior 2, it is much more simple.
+This other idea is very vague and not simple, so better not risk it.
+
+If you confirm that you only need to get uptodate view of
+lower dirs in union, then I will look for the patches that I have
+and see if they can help you.
+
+Thanks,
+Amir.
