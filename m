@@ -2,128 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C73915B7DC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 02:08:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1415B7DD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 02:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229659AbiINAIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 20:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59586 "EHLO
+        id S229751AbiINANh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Sep 2022 20:13:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbiINAIu (ORCPT
+        with ESMTP id S229743AbiINANg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 20:08:50 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA4262A95;
-        Tue, 13 Sep 2022 17:08:49 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 74A4EBCE; Tue, 13 Sep 2022 20:08:48 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 74A4EBCE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1663114128;
-        bh=E9WEzEar/6VJErlxq0icil2vqwzUNkdFMHHx75MNPGk=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=gbzbUdAw9tQbApBKPqCcLDaprymqGt1ZMnsxKY2ZvOplS6yqAodJy/iaWkqufRExJ
-         fCKIdC9SJKsHpIw5KnLOhMQm2UVX/RKMaTclCJzV7X4HnaBhdJ0wbD9HhMcPI07tFG
-         GAxZc03ETKVHcTcXtNtSGu96B8Jx5HwFmjs1fk3Q=
-Date:   Tue, 13 Sep 2022 20:08:48 -0400
+        Tue, 13 Sep 2022 20:13:36 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB996582B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Sep 2022 17:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ePRJD+GRCIjzNdVBvudiZW56zYALjFnf5D8t0H57VjE=; b=QQmMn7fnN4xkpv55pdGCHEJWaR
+        yyssQsEfanRnt6u0FcrPb/ApNUJ7gXIDtgnLYZS7vCp73BpQ+WxqodZJgPAm2CAv5fNU+ZAEjqp1m
+        Zvr//zuiiWBAxWqeIRpqKBn8tvun90bSPVZMN5f1mievBW9z9ipvMNIJmu3Rk6tIz0IBe1ejU2V1x
+        K/9bKzm1eXQu+eweA1/fNzR8sk3dr36OVU07xTbnE5Cm8jUrvrnZiQimAluSBV2wVLdEFpy7wJx2s
+        L41qmUDlWLjaSqMaXlVET45gRgLUjsBUFvobrZAdbvrQ7hSK25ltQiIBODSs4NAIGdoqgPZWwd7WX
+        c+nYzaDw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1oYG1z-00G0EY-1s;
+        Wed, 14 Sep 2022 00:13:31 +0000
+Date:   Wed, 14 Sep 2022 01:13:31 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     NeilBrown <neilb@suse.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220914000848.GB11958@fieldses.org>
-References: <20220908182252.GA18939@fieldses.org>
- <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
- <20220909154506.GB5674@fieldses.org>
- <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>
- <20220910145600.GA347@fieldses.org>
- <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>
- <20220913004146.GD3600936@dread.disaster.area>
- <166303374350.30452.17386582960615006566@noble.neil.brown.name>
- <20220913190226.GA11958@fieldses.org>
- <166311116291.20483.960025733349761945@noble.neil.brown.name>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Xavier Roche <xavier.roche@algolia.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: fix link vs. rename race
+Message-ID: <YyEcqxthoso9SGI2@ZenIV>
+References: <20220221082002.508392-1-mszeredi@redhat.com>
+ <166304411168.30452.12018495245762529070@noble.neil.brown.name>
+ <YyATCgxi9Ovi8mYv@ZenIV>
+ <166311315747.20483.5039023553379547679@noble.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <166311116291.20483.960025733349761945@noble.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <166311315747.20483.5039023553379547679@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 09:19:22AM +1000, NeilBrown wrote:
-> On Wed, 14 Sep 2022, J. Bruce Fields wrote:
-> > On Tue, Sep 13, 2022 at 11:49:03AM +1000, NeilBrown wrote:
-> > > Invalidating the client cache on EVERY unmount/mount could impose
-> > > unnecessary cost.  Imagine a client that caches a lot of data (several
-> > > large files) from a server which is expected to fail-over from one
-> > > cluster node to another from time to time.  Adding extra delays to a
-> > > fail-over is not likely to be well received.
-> > > 
-> > > I don't *know* this cost would be unacceptable, and I *would* like to
-> > > leave it to the filesystem to decide how to manage its own i_version
-> > > values.  So maybe XFS can use the LSN for a salt.  If people notice the
-> > > extra cost, they can complain.
-> > 
-> > I'd expect complaints.
-> > 
-> > NFS is actually even worse than this: it allows clients to reacquire
-> > file locks across server restart and unmount/remount, even though
-> > obviously the kernel will do nothing to prevent someone else from
-> > locking (or modifying) the file in between.
-> 
-> I don't understand this comment.  You seem to be implying that changing
-> the i_version during a server restart would stop a client from
-> reclaiming locks.  Is that correct?
+On Wed, Sep 14, 2022 at 09:52:37AM +1000, NeilBrown wrote:
+>  - lookup the parents of both paths.
+>  - lock the "to" directory.
+>  - if the "from" directory is the same, or if a trylock of the from
+>    directory succeeds, then we have the locks and can perform the
+>    last component lookup and perform the link without racing with
+>    rename. 
+>  - if the trylock fails, we drop the lock on "to" and use lock_rename().
+>    We drop the s_vfs_rename_mutex immediately after lock_rename()
+>    so after the vfs_link() we just unlock both parent directories.
 
-No, sorry, I'm probably being confusing.
+Umm...  Care to put together an update of deadlock avoidance proof?
+The one in D/f/directory-locking.rst, that is.  I'm not saying it's
+not a usable approach - it might very well work...
 
-I was just saying: we've always depended in a lot of ways on the
-assumption that filesystems aren't messed with while nfsd's not running.
-You can produce all sorts of incorrect behavior by violating that
-assumption.  That tools might fool with unmounted filesystems is just
-another such example, and fixing that wouldn't be very high on my list
-of priorities.
-
-??
-
---b.
-
-> I would have thought that the client would largely ignore i_version
-> while it has a lock or open or delegation, as these tend to imply some
-> degree of exclusive access ("open" being least exclusive).
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
-> > 
-> > Administrators are just supposed to know not to allow other applications
-> > access to the filesystem until nfsd's started.  It's always been this
-> > way.
-> > 
-> > You can imagine all sorts of measures to prevent that, and if anyone
-> > wants to work on ways to prevent people from shooting themselves in the
-> > foot here, great.
-> > 
-> > Just taking away the ability to cache or lock across reboots wouldn't
-> > make people happy, though....
-> > 
-> > --b.
-> > 
+BTW, one testcase worth profiling would be something like
+for i in `seq 100`; do
+	cp -al linux.git linux.git-$i &
+done
