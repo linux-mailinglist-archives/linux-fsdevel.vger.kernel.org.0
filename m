@@ -2,62 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D205B8C5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 18:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7CD5B8D0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 18:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbiINQBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 12:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
+        id S230132AbiINQaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 12:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiINQB1 (ORCPT
+        with ESMTP id S230080AbiINQ3x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 12:01:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6914606A0;
-        Wed, 14 Sep 2022 09:01:26 -0700 (PDT)
+        Wed, 14 Sep 2022 12:29:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87B5844F4;
+        Wed, 14 Sep 2022 09:28:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EA8A6164C;
-        Wed, 14 Sep 2022 16:01:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91BEFC433C1;
-        Wed, 14 Sep 2022 16:01:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 75343B8171B;
+        Wed, 14 Sep 2022 16:28:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE64C433D7;
+        Wed, 14 Sep 2022 16:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663171285;
-        bh=BM4D7AH4yvHm0GxHXDSvKWfndiTEgl9zsYRJs6mes08=;
+        s=k20201202; t=1663172913;
+        bh=gDxM+S092LlNnnNChSxCoMsXY2G5IgcT89F8QnyFbu4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q8oWU5KCkE573b2yHUL7CFsszVUhGg9QlenZS5BXfZJdNgGwvC+7KMfXhPJhNgzLG
-         uJz3W9k4TaYa4ML++I2JEHU+yGjHBZ3GNovNSqFtTPDtG6SRE4i1hfB94kmQk83rxN
-         mEtIxwufhUto8N0lr5XTnvOwH9efKPpx8VMJdz+n5/+kw9F4ECykPdeie6q8xOuZBO
-         ODjGGtS2WVi4qpDBvIWapmhKESBLwbdjyKheZEEnZ08VN3pbnE4hxP56la/gejm78Z
-         ZQss3wYIsHQ9kGP+49WfYaoonnOlp0FttZ6AjODzujtwS3qRCyYgDwpzqeGO3yj6En
-         Oie7bYVKWRg4w==
-Date:   Wed, 14 Sep 2022 09:01:25 -0700
+        b=urDFRWS+xAAvRnRIuH6YprPix4N88yxNN1jBRkcwXf/AYlrDNpfKuDvX7QjnnfSdI
+         3/p77+Vc5Uf8GC8KyCyOu2mRjLKwYBmoJy/Ud2nEFJPu2EHEU/oT1gh/KlaqUbW1qO
+         fPk6gNKiE5vqpgbTXKqHfFULqK4riGnlLlREVZf7jxAxYAXyqO+Hup90dVv6jfaF6Y
+         goc+24pqcUO4geb+EVUXAGZKri/ShdPT3kX0uHQig4xjTFeee7A3XdSaBF1puAeK/8
+         63D6iBRfXPg1tPbNHvmE5v3g8Jfk3DHCBWQjHgk9VU8H5gMIWFxGPt0C7MHkgSF7Qx
+         HOxi4rpZ5w+WA==
+Date:   Wed, 14 Sep 2022 09:28:32 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw
- workload
-Message-ID: <YyH61deSiW1TnY//@magnolia>
-References: <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
- <20190409082605.GA8107@quack2.suse.cz>
- <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
- <20220617151135.yc6vytge6hjabsuz@quack3>
- <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
- <20220620091136.4uosazpwkmt65a5d@quack3.lan>
- <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
- <20220621085956.y5wyopfgzmqkaeiw@quack3.lan>
- <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
- <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     =?utf-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>,
+        =?utf-8?B?UnVhbiwgU2hpeWFuZy/pmK4g5LiW6Ziz?= 
+        <ruansy.fnst@fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>
+Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
+Message-ID: <YyIBMJzmbZsUBHpy@magnolia>
+References: <Ytl7yJJL1fdC006S@magnolia>
+ <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
+ <YuNn9NkUFofmrXRG@magnolia>
+ <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
+ <YusYDMXLYxzqMENY@magnolia>
+ <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com>
+ <Yxs5Jb7Yt2c6R6eW@bfoster>
+ <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
+ <76ea04b4-bad7-8cb3-d2c6-4ad49def4e05@fujitsu.com>
+ <YyHKUhOgHdTKPQXL@bfoster>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YyHKUhOgHdTKPQXL@bfoster>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -68,143 +71,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 05:40:46PM +0300, Amir Goldstein wrote:
-> On Tue, Jun 21, 2022 at 3:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Jun 21, 2022 at 11:59 AM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Tue 21-06-22 10:49:48, Amir Goldstein wrote:
-> > > > > How exactly do you imagine the synchronization of buffered read against
-> > > > > buffered write would work? Lock all pages for the read range in the page
-> > > > > cache? You'd need to be careful to not bring the machine OOM when someone
-> > > > > asks to read a huge range...
-> > > >
-> > > > I imagine that the atomic r/w synchronisation will remain *exactly* as it is
-> > > > today by taking XFS_IOLOCK_SHARED around generic_file_read_iter(),
-> > > > when reading data into user buffer, but before that, I would like to issue
-> > > > and wait for read of the pages in the range to reduce the probability
-> > > > of doing the read I/O under XFS_IOLOCK_SHARED.
-> > > >
-> > > > The pre-warm of page cache does not need to abide to the atomic read
-> > > > semantics and it is also tolerable if some pages are evicted in between
-> > > > pre-warn and read to user buffer - in the worst case this will result in
-> > > > I/O amplification, but for the common case, it will be a big win for the
-> > > > mixed random r/w performance on xfs.
-> > > >
-> > > > To reduce risk of page cache thrashing we can limit this optimization
-> > > > to a maximum number of page cache pre-warm.
-> > > >
-> > > > The questions are:
-> > > > 1. Does this plan sound reasonable?
-> > >
-> > > Ah, I see now. So essentially the idea is to pull the readahead (which is
-> > > currently happening from filemap_read() -> filemap_get_pages()) out from under
-> > > the i_rwsem. It looks like a fine idea to me.
-> >
+On Wed, Sep 14, 2022 at 08:34:26AM -0400, Brian Foster wrote:
+> On Wed, Sep 14, 2022 at 05:38:02PM +0800, Yang, Xiao/杨 晓 wrote:
+> > On 2022/9/14 14:44, Yang, Xiao/杨 晓 wrote:
+> > > On 2022/9/9 21:01, Brian Foster wrote:
+> > > > Yes.. I don't recall all the internals of the tools and test, but IIRC
+> > > > it relied on discard to perform zeroing between checkpoints or some such
+> > > > and avoid spurious failures. The purpose of running on dm-thin was
+> > > > merely to provide reliable discard zeroing behavior on the target device
+> > > > and thus to allow the test to run reliably.
+> > > Hi Brian,
+> > > 
+> > > As far as I know, generic/470 was original designed to verify
+> > > mmap(MAP_SYNC) on the dm-log-writes device enabling DAX. Due to the
+> > > reason, we need to ensure that all underlying devices under
+> > > dm-log-writes device support DAX. However dm-thin device never supports
+> > > DAX so
+> > > running generic/470 with dm-thin device always returns "not run".
+> > > 
+> > > Please see the difference between old and new logic:
+> > > 
+> > >            old logic                          new logic
+> > > ---------------------------------------------------------------
+> > > log-writes device(DAX)                 log-writes device(DAX)
+> > >              |                                       |
+> > > PMEM0(DAX) + PMEM1(DAX)       Thin device(non-DAX) + PMEM1(DAX)
+> > >                                            |
+> > >                                          PMEM0(DAX)
+> > > ---------------------------------------------------------------
+> > > 
+> > > We think dm-thin device is not a good solution for generic/470, is there
+> > > any other solution to support both discard zero and DAX?
+> > 
+> > Hi Brian,
+> > 
+> > I have sent a patch[1] to revert your fix because I think it's not good for
+> > generic/470 to use thin volume as my revert patch[1] describes:
+> > [1] https://lore.kernel.org/fstests/20220914090625.32207-1-yangx.jy@fujitsu.com/T/#u
+> > 
 > 
-> Although I was able to demonstrate performance improvement
-> with page cache pre-warming on low latency disks, when testing
-> on a common standard system [*], page cache pre-warming did not
-> yield any improvement to the mixed rw workload.
-> 
-> [*] I ran the following fio workload on e2-standard-8 GCE machine:
-> 
-> [global]
-> filename=/mnt/xfs/testfile.fio
-> norandommap
-> randrepeat=0
-> size=5G
-> bs=8K
-> ioengine=psync
-> numjobs=8
-> group_reporting=1
-> direct=0
-> fallocate=1
-> end_fsync=0
-> runtime=60
-> 
-> [xfs-read]
-> readwrite=randread
-> 
-> [xfs-write]
-> readwrite=randwrite
-> 
-> The difference between ext4 and xfs with this machine/workload was
-> two orders of magnitude:
-> 
-> root@xfstests:~# fio ./ext4.fio
-> ...
-> Run status group 0 (all jobs):
->    READ: bw=826MiB/s (866MB/s), 826MiB/s-826MiB/s (866MB/s-866MB/s),
-> io=40.0GiB (42.9GB), run=49585-49585msec
->   WRITE: bw=309MiB/s (324MB/s), 309MiB/s-309MiB/s (324MB/s-324MB/s),
-> io=18.1GiB (19.5GB), run=60003-60003msec
-> 
-> root@xfstests:~# fio ./xfs.fio
-> ...
-> Run status group 0 (all jobs):
->    READ: bw=7053KiB/s (7223kB/s), 7053KiB/s-7053KiB/s
-> (7223kB/s-7223kB/s), io=413MiB (433MB), run=60007-60007msec
->   WRITE: bw=155MiB/s (163MB/s), 155MiB/s-155MiB/s (163MB/s-163MB/s),
-> io=9324MiB (9777MB), run=60006-60006msec
-> 
-> I verified that without XFS_IOLOCK_SHARED xfs fio results are on par
-> with ext4 results for this workload.
-> 
-> >
-> > > just cannot comment on whether calling this without i_rwsem does not break
-> > > some internal XFS expectations for stuff like reflink etc.
-> >
-> > relink is done under xfs_ilock2_io_mmap => filemap_invalidate_lock_two
-> > so it should not be a problem.
-> >
-> > pNFS leases I need to look into.
-> >
-> 
-> I wonder if xfs_fs_map_blocks() and xfs_fs_commit_blocks()
-> should not be taking the invalidate lock before calling
-> invalidate_inode_pages2() like the xfs callers of
-> truncate_pagecache_range() do?
-> 
-> If we do that, then I don't see a problem with buffered read
-> without XFS_IOLOCK_SHARED w.r.t. correctness of layout leases.
-> 
-> Dave, Christoph,
-> 
-> I know that you said that changing the atomic buffered read semantics
-> is out of the question and that you also objected to a mount option
-> (which nobody will know how to use) and I accept that.
-> 
-> Given that a performant range locks implementation is not something
-> trivial to accomplish (Dave please correct me if I am wrong),
-> and given the massive performance impact of XFS_IOLOCK_SHARED
-> on this workload,
-> what do you think about POSIX_FADV_TORN_RW that a specific
-> application can use to opt-out of atomic buffer read semantics?
-> 
-> The specific application that I want to modify to use this hint is Samba.
-> Samba uses IO threads by default to issue pread/pwrite on the server
-> for IO requested by the SMB client. The IO size is normally larger than
-> xfs block size and the range may not be block aligned.
-> 
-> The SMB protocol has explicit byte range locks and the server implements
-> them, so it is pretty safe to assume that a client that did not request
-> range locks does not need xfs to do the implicit range locking for it.
-> 
-> For this reason and because of the huge performance win,
-> I would like to implement POSIX_FADV_TORN_RW in xfs and
-> have Samba try to set this hint when supported.
-> 
-> It is very much possible that NFSv4 servers (user and kennel)
-> would also want to set this hint for very similar reasons.
-> 
-> Thoughts?
+> I think the history here is that generic/482 was changed over first in
+> commit 65cc9a235919 ("generic/482: use thin volume as data device"), and
+> then sometime later we realized generic/455,457,470 had the same general
+> flaw and were switched over. The dm/dax compatibility thing was probably
+> just an oversight, but I am a little curious about that because it should
 
-How about range locks for i_rwsem and invalidate_lock?  That could
-reduce contention on VM farms, though I can only assume that, given that
-I don't have a reference implementation to play with...
+It's not an oversight -- it used to work (albeit with EXPERIMENTAL
+tags), and now we've broken it on fsdax as the pmem/blockdev divorce
+progresses.
+
+> have been obvious that the change caused the test to no longer run. Did
+> something change after that to trigger that change in behavior?
+> 
+> > With the revert, generic/470 can always run successfully on my environment
+> > so I wonder how to reproduce the out-of-order replay issue on XFS v5
+> > filesystem?
+> > 
+> 
+> I don't quite recall the characteristics of the failures beyond that we
+> were seeing spurious test failures with generic/482 that were due to
+> essentially putting the fs/log back in time in a way that wasn't quite
+> accurate due to the clearing by the logwrites tool not taking place. If
+> you wanted to reproduce in order to revisit that, perhaps start with
+> generic/482 and let it run in a loop for a while and see if it
+> eventually triggers a failure/corruption..?
+> 
+> > PS: I want to reproduce the issue and try to find a better solution to fix
+> > it.
+> > 
+> 
+> It's been a while since I looked at any of this tooling to semi-grok how
+> it works.
+
+I /think/ this was the crux of the problem, back in 2019?
+https://lore.kernel.org/fstests/20190227061529.GF16436@dastard/
+
+> Perhaps it could learn to rely on something more explicit like
+> zero range (instead of discard?) or fall back to manual zeroing?
+
+AFAICT src/log-writes/ actually /can/ do zeroing, but (a) it probably
+ought to be adapted to call BLKZEROOUT and (b) in the worst case it
+writes zeroes to the entire device, which is/can be slow.
+
+For a (crass) example, one of my cloudy test VMs uses 34GB partitions,
+and for cost optimization purposes we're only "paying" for the cheapest
+tier.  Weirdly that maps to an upper limit of 6500 write iops and
+48MB/s(!) but that would take about 20 minutes to zero the entire
+device if the dm-thin hack wasn't in place.  Frustratingly, it doesn't
+support discard or write-zeroes.
+
+> If the
+> eventual solution is simple and low enough overhead, it might make some
+> sense to replace the dmthin hack across the set of tests mentioned
+> above.
+
+That said, for a *pmem* test you'd expect it to be faster than that...
 
 --D
 
-> Thanks,
-> Amir.
+> Brian
+> 
+> > Best Regards,
+> > Xiao Yang
+> > 
+> > > 
+> > > BTW, only log-writes, stripe and linear support DAX for now.
+> > 
+> 
