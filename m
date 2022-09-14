@@ -2,106 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 837775B8AC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 16:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBFCF5B8B0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 16:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbiINOh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 10:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37230 "EHLO
+        id S229886AbiINOwi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 10:52:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbiINOhQ (ORCPT
+        with ESMTP id S229520AbiINOwh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 10:37:16 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1172610FE0;
-        Wed, 14 Sep 2022 07:37:14 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1278624b7c4so41530357fac.5;
-        Wed, 14 Sep 2022 07:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=LVKzlmP/G0PqWNO0u32O0oQ6Jt6/5xnFA05eO88+5ww=;
-        b=IODi9yixigDEJYjVdRQovl05Uf/txqrG+I5FQgUJ3TaOT++NZ4GbWlT4wjArCK9osI
-         2pyS+C11gnYhftlFitPtmpj3iUQsQbVakh1J7hcmq4ccEAuju/D5oj7nEfWzW/4QZAET
-         3AqjyUGIsy7hMSbfc5eR7uh2BNFaqHRZxulDAzql9PnQtv++8dkp8uvfOefbzxP9N7az
-         jnYH26AAsstkI5I0UvfQvOveNmgV7tribbLqeeVI56wSnasZ1wvUs0TXkPo3l+ajTXLm
-         9oc/abf8MVdiU9w/uw/F1ONAq7uZYBfxdEVSZ4V3BBELBZhVDOm6oWIL9q2M5Pr0Y/Ua
-         2EHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=LVKzlmP/G0PqWNO0u32O0oQ6Jt6/5xnFA05eO88+5ww=;
-        b=uzHSurKvP4WGGPY4C1zV4ynrB1FTV/H7csNl3Db7iPH0yN9dpCJ0ORMDCywa8C06+3
-         NWMb8VnUI4BJi+TiucxWPwOXwBbRGykPo7VaFgbtQTVVumQuEgnyVAKmxe2nc3vx6wj0
-         toUVUH1fgyyecjvZmFakyXe1BDgdDM2IkAfjNtVCUTGUKk/IRt7tbSORnoVmtNUUxN9S
-         beWVjngdAsZ0TyWCnHIBKVFtTzf3+aIQqjjN8oRkvTogRCS8hdZO0QmXZlh2xxnmhDFR
-         WIFzdRjvA69gogMq2uHT1TiBhtl5h6foTsa5G8O8mdzws+JYi5SLELETvZxe89MUb2oe
-         m/AA==
-X-Gm-Message-State: ACgBeo0i9Y79tIPgrSYMqqRvnqGikYg3rByj42w9ahuSCvTA89CUjBdt
-        aEPh2oE6hDkvMiyPfmG38QTAm+4dB0P1AOTc2yXILIyA8bw=
-X-Google-Smtp-Source: AA6agR7l6g2d3kTOdIT2TZkfgBpJLU1P6Cx6S5aS+ouejkp31RIFhj0iLLOVZQcoklzYf9Q1cHhKq/E5/ax901LN2s8=
-X-Received: by 2002:a05:6870:d1c5:b0:127:4089:929d with SMTP id
- b5-20020a056870d1c500b001274089929dmr2551809oac.203.1663166234235; Wed, 14
- Sep 2022 07:37:14 -0700 (PDT)
+        Wed, 14 Sep 2022 10:52:37 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739C51A83D;
+        Wed, 14 Sep 2022 07:52:35 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BAC0A339CE;
+        Wed, 14 Sep 2022 14:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1663167153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wCNnJsTvzDL0Ox0oJoto7Z0gWCmReDnFFpxhGEpv45M=;
+        b=lK0OJflOFaTVBDNJGHIUSBQa3bUT+rqVNAOzb42o4ScXiVv1vJMQE0dPHLHRbiDHdkVX+G
+        ilzuajvlwOM16QdSohRsh+XSCBQylRQrUx0g9xl98uhPJsdjw2Ldg1BHMs/m3TIcc1fk2J
+        LV7soPZ1H7wl7Yj+sCJSmuokSlTfFg8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1663167153;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wCNnJsTvzDL0Ox0oJoto7Z0gWCmReDnFFpxhGEpv45M=;
+        b=HDEaQIgQZQFxnGUVEGHKXrWl+9KmSpSPW44OQxNkxlot3B2fvH+wLLh/l5Cqrf2pJkcL8Y
+        zx1SOSVooD/X0tAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A8895134B3;
+        Wed, 14 Sep 2022 14:52:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id n84lKbHqIWMbQAAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 14 Sep 2022 14:52:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 38F74A0680; Wed, 14 Sep 2022 16:52:33 +0200 (CEST)
+Date:   Wed, 14 Sep 2022 16:52:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
+Message-ID: <20220914145233.cyeljaku4egeu4x2@quack3>
+References: <20220831041843.973026-1-jhubbard@nvidia.com>
+ <20220831041843.973026-5-jhubbard@nvidia.com>
+ <YxbtF1O8+kXhTNaj@infradead.org>
+ <103fe662-3dc8-35cb-1a68-dda8af95c518@nvidia.com>
+ <Yxb7YQWgjHkZet4u@infradead.org>
+ <20220906102106.q23ovgyjyrsnbhkp@quack3>
+ <YxhaJktqtHw3QTSG@infradead.org>
+ <YyFPtTtxYozCuXvu@ZenIV>
 MIME-Version: 1.0
-References: <20220815071134.74551-1-yang.yang29@zte.com.cn>
-In-Reply-To: <20220815071134.74551-1-yang.yang29@zte.com.cn>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Wed, 14 Sep 2022 23:37:02 +0900
-Message-ID: <CAAmzW4O53eW9n=N0F31tG4im=+uiA_gGq5RA0u8UGos12hRvvA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] delayacct: support re-entrance detection of
- thrashing accounting
-To:     cgel.zte@gmail.com
-Cc:     bsingharora@gmail.com, akpm@linux-foundation.org,
-        iamjoonsoo.kim@lge.com, mingo@redhat.com, bristot@redhat.com,
-        vschneid@redhat.com, willy@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        wangyong <wang.yong12@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YyFPtTtxYozCuXvu@ZenIV>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022=EB=85=84 8=EC=9B=94 15=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 4:14, <=
-cgel.zte@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> From: Yang Yang <yang.yang29@zte.com.cn>
->
-> Once upon a time, we only support accounting thrashing of page cache.
-> Then Joonsoo introduced workingset detection for anonymous pages and
-> we gained the ability to account thrashing of them[1].
->
-> For page cache thrashing accounting, there is no suitable place to do
-> it in fs level likes swap_readpage(). So we have to do it in
-> folio_wait_bit_common().
->
-> Then for anonymous pages thrashing accounting, we have to do it in
-> both swap_readpage() and folio_wait_bit_common(). This likes PSI,
-> so we should let thrashing accounting supports re-entrance detection.
->
-> This patch is to prepare complete thrashing accounting, and is based
-> on patch "filemap: make the accounting of thrashing more consistent".
->
-> [1] commit aae466b0052e ("mm/swap: implement workingset detection for ano=
-nymous LRU")
->
-> Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-> Signed-off-by: CGEL ZTE <cgel.zte@gmail.com>
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-> Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> Reviewed-by: wangyong <wang.yong12@zte.com.cn>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+On Wed 14-09-22 04:51:17, Al Viro wrote:
+> On Wed, Sep 07, 2022 at 01:45:26AM -0700, Christoph Hellwig wrote:
+> > On Tue, Sep 06, 2022 at 12:21:06PM +0200, Jan Kara wrote:
+> > > > For FOLL_PIN callers, never pin bvec and kvec pages:  For file systems
+> > > > not acquiring a reference is obviously safe, and the other callers will
+> > > > need an audit, but I can't think of why it woul  ever be unsafe.
+> > > 
+> > > Are you sure about "For file systems not acquiring a reference is obviously
+> > > safe"? I can see places e.g. in orangefs, afs, etc. which create bvec iters
+> > > from pagecache pages. And then we have iter_file_splice_write() which
+> > > creates bvec from pipe pages (which can also be pagecache pages if
+> > > vmsplice() is used). So perhaps there are no lifetime issues even without
+> > > acquiring a reference (but looking at the code I would not say it is
+> > > obvious) but I definitely don't see how it would be safe to not get a pin
+> > > to signal to filesystem backing the pagecache page that there is DMA
+> > > happening to/from the page.
+> > 
+> > I mean in the context of iov_iter_get_pages callers, that is direct
+> > I/O.  Direct callers of iov_iter_bvec which then pass that iov to
+> > ->read_iter / ->write_iter will need to hold references (those are
+> > the references that the callers of iov_iter_get_pages rely on!).
+> 
+> Unless I'm misreading Jan, the question is whether they should get or
+> pin.  AFAICS, anyone who passes the sucker to ->read_iter() (or ->recvmsg(),
+> or does direct copy_to_iter()/zero_iter(), etc.) is falling under
+> =================================================================================
+> CASE 5: Pinning in order to write to the data within the page
+> -------------------------------------------------------------
+> Even though neither DMA nor Direct IO is involved, just a simple case of "pin,
+> write to a page's data, unpin" can cause a problem. Case 5 may be considered a
+> superset of Case 1, plus Case 2, plus anything that invokes that pattern. In
+> other words, if the code is neither Case 1 nor Case 2, it may still require
+> FOLL_PIN, for patterns like this:
+> 
+> Correct (uses FOLL_PIN calls):
+>     pin_user_pages()
+>     write to the data within the pages
+>     unpin_user_pages()
+> 
+> INCORRECT (uses FOLL_GET calls):
+>     get_user_pages()
+>     write to the data within the pages
+>     put_page()
+> =================================================================================
 
-Acked-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Yes, that was my point.
+
+> Regarding iter_file_splice_write() case, do we need to pin pages
+> when we are not going to modify the data in those?
+
+Strictly speaking not. So far we are pinning pages even if they serve as
+data source because it is simpler not to bother about data access direction
+but I'm not really aware of anything that would mandate that.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
