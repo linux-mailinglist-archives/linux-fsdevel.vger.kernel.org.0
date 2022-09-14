@@ -2,179 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA7CD5B8D0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 18:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5722E5B8D11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 18:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230132AbiINQaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 12:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
+        id S230111AbiINQbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 12:31:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbiINQ3x (ORCPT
+        with ESMTP id S230080AbiINQat (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 12:29:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87B5844F4;
-        Wed, 14 Sep 2022 09:28:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 75343B8171B;
-        Wed, 14 Sep 2022 16:28:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE64C433D7;
-        Wed, 14 Sep 2022 16:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663172913;
-        bh=gDxM+S092LlNnnNChSxCoMsXY2G5IgcT89F8QnyFbu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=urDFRWS+xAAvRnRIuH6YprPix4N88yxNN1jBRkcwXf/AYlrDNpfKuDvX7QjnnfSdI
-         3/p77+Vc5Uf8GC8KyCyOu2mRjLKwYBmoJy/Ud2nEFJPu2EHEU/oT1gh/KlaqUbW1qO
-         fPk6gNKiE5vqpgbTXKqHfFULqK4riGnlLlREVZf7jxAxYAXyqO+Hup90dVv6jfaF6Y
-         goc+24pqcUO4geb+EVUXAGZKri/ShdPT3kX0uHQig4xjTFeee7A3XdSaBF1puAeK/8
-         63D6iBRfXPg1tPbNHvmE5v3g8Jfk3DHCBWQjHgk9VU8H5gMIWFxGPt0C7MHkgSF7Qx
-         HOxi4rpZ5w+WA==
-Date:   Wed, 14 Sep 2022 09:28:32 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     =?utf-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>,
-        =?utf-8?B?UnVhbiwgU2hpeWFuZy/pmK4g5LiW6Ziz?= 
-        <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
-Message-ID: <YyIBMJzmbZsUBHpy@magnolia>
-References: <Ytl7yJJL1fdC006S@magnolia>
- <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
- <YuNn9NkUFofmrXRG@magnolia>
- <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
- <YusYDMXLYxzqMENY@magnolia>
- <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com>
- <Yxs5Jb7Yt2c6R6eW@bfoster>
- <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
- <76ea04b4-bad7-8cb3-d2c6-4ad49def4e05@fujitsu.com>
- <YyHKUhOgHdTKPQXL@bfoster>
+        Wed, 14 Sep 2022 12:30:49 -0400
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6EE1D87;
+        Wed, 14 Sep 2022 09:29:28 -0700 (PDT)
+Received: by mail-vs1-xe36.google.com with SMTP id j17so9067188vsp.5;
+        Wed, 14 Sep 2022 09:29:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=a3dst0aSf2zayTlO/YB7FAv0EeIEaJQ9bTaWo3LOZD0=;
+        b=Q46TWpeHpm3O8AV6cy/41MaIU4mILJKzGYvmwpMVTC2cWO2EIcAjk9sDvtxDX2+UW5
+         uXdDf07csx+MytlIA6RUsWPgJCbUEbOmJ/P/cp1AOHa7qcNik0xurGNXJisjFS971Lz/
+         n4j7ul6dus5OltUXeFnIEM0q3s+2fbUtmQMJJGsF1lnUoeX6ruVuc5AV//mdC1yps2O2
+         Im4NelpDLpVqvhUlq28KiKTLf8W0O6ri21wxaRSkiGBjxNkrJ/naqBxRMIiXXqOUjSm5
+         dFINuSenJbWSAHKmNPXYp8EMpYwO+A7FT+Vs+iVH10NZruoG6e1UjsQLt3DtQHyPC9hX
+         9wdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=a3dst0aSf2zayTlO/YB7FAv0EeIEaJQ9bTaWo3LOZD0=;
+        b=WvFo/YeIci1s7KfMY4wlnn9JXSVkhomnu3xhoEdWtOnjKibeq4dVDhRjP+q5S2RKWg
+         LnqokRdeHJnZC6GUu0DJ9qCUeyf5PwlaG9GelumY9lIv2n/neSH40dv7ezIxRxOV9eax
+         ANcb/F+SQQvwXbcnnVu9dt1fs54dWftnADe/jAuIm/HHKO+jytmlXQN6XfCJrnyNJXmz
+         1XF0u4Fs7UJf9uo+zDssZlB8ocLZrkKxwKvQ2qy5UUrJMHvVqp2uu9NGHS7Xb1qQasr3
+         IOvnaYEkJLVhJZQyTMfZfD79yoCfU9ALhYVXpXn2XE4IfyiPqcV7FT33Mcr6nZdd90u5
+         MunQ==
+X-Gm-Message-State: ACgBeo0VKfXLtEt6bbozkI4y0dXe5BhmtuU0QtqyWXZ/HDCDMYviOmZZ
+        AzVVGqmmBsv1eJdi74hGds5/NqQ91TEXDSAonYY=
+X-Google-Smtp-Source: AA6agR5+ImxaL4AeQP9SfBAnuGBXvLDNf9jUU3kPq0qe/zzqhTj536JyL3hbnqlLloq/uT7lgfdxr7WObpcVT18/kng=
+X-Received: by 2002:a67:a243:0:b0:398:a30e:1566 with SMTP id
+ t3-20020a67a243000000b00398a30e1566mr4430524vsh.2.1663172967364; Wed, 14 Sep
+ 2022 09:29:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YyHKUhOgHdTKPQXL@bfoster>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CAOQ4uxhxgYASST1k-UaqfbLL9ERquHaKL2jtydB2+iF9aT8SRQ@mail.gmail.com>
+ <20190409082605.GA8107@quack2.suse.cz> <CAOQ4uxgu4uKJp5t+RoumMneR6bw_k0CRhGhU-SLAky4VHSg9MQ@mail.gmail.com>
+ <20220617151135.yc6vytge6hjabsuz@quack3> <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
+ <20220620091136.4uosazpwkmt65a5d@quack3.lan> <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
+ <20220621085956.y5wyopfgzmqkaeiw@quack3.lan> <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
+ <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com> <YyH61deSiW1TnY//@magnolia>
+In-Reply-To: <YyH61deSiW1TnY//@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 14 Sep 2022 19:29:15 +0300
+Message-ID: <CAOQ4uxhFJWW-ykyzomHCUWfWvbJNEmetw0G5mUYjFGoYJBb7NA@mail.gmail.com>
+Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw workload
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 08:34:26AM -0400, Brian Foster wrote:
-> On Wed, Sep 14, 2022 at 05:38:02PM +0800, Yang, Xiao/杨 晓 wrote:
-> > On 2022/9/14 14:44, Yang, Xiao/杨 晓 wrote:
-> > > On 2022/9/9 21:01, Brian Foster wrote:
-> > > > Yes.. I don't recall all the internals of the tools and test, but IIRC
-> > > > it relied on discard to perform zeroing between checkpoints or some such
-> > > > and avoid spurious failures. The purpose of running on dm-thin was
-> > > > merely to provide reliable discard zeroing behavior on the target device
-> > > > and thus to allow the test to run reliably.
-> > > Hi Brian,
-> > > 
-> > > As far as I know, generic/470 was original designed to verify
-> > > mmap(MAP_SYNC) on the dm-log-writes device enabling DAX. Due to the
-> > > reason, we need to ensure that all underlying devices under
-> > > dm-log-writes device support DAX. However dm-thin device never supports
-> > > DAX so
-> > > running generic/470 with dm-thin device always returns "not run".
-> > > 
-> > > Please see the difference between old and new logic:
-> > > 
-> > >            old logic                          new logic
-> > > ---------------------------------------------------------------
-> > > log-writes device(DAX)                 log-writes device(DAX)
-> > >              |                                       |
-> > > PMEM0(DAX) + PMEM1(DAX)       Thin device(non-DAX) + PMEM1(DAX)
-> > >                                            |
-> > >                                          PMEM0(DAX)
-> > > ---------------------------------------------------------------
-> > > 
-> > > We think dm-thin device is not a good solution for generic/470, is there
-> > > any other solution to support both discard zero and DAX?
-> > 
-> > Hi Brian,
-> > 
-> > I have sent a patch[1] to revert your fix because I think it's not good for
-> > generic/470 to use thin volume as my revert patch[1] describes:
-> > [1] https://lore.kernel.org/fstests/20220914090625.32207-1-yangx.jy@fujitsu.com/T/#u
-> > 
-> 
-> I think the history here is that generic/482 was changed over first in
-> commit 65cc9a235919 ("generic/482: use thin volume as data device"), and
-> then sometime later we realized generic/455,457,470 had the same general
-> flaw and were switched over. The dm/dax compatibility thing was probably
-> just an oversight, but I am a little curious about that because it should
+> > Dave, Christoph,
+> >
+> > I know that you said that changing the atomic buffered read semantics
+> > is out of the question and that you also objected to a mount option
+> > (which nobody will know how to use) and I accept that.
+> >
+> > Given that a performant range locks implementation is not something
+> > trivial to accomplish (Dave please correct me if I am wrong),
+> > and given the massive performance impact of XFS_IOLOCK_SHARED
+> > on this workload,
+> > what do you think about POSIX_FADV_TORN_RW that a specific
+> > application can use to opt-out of atomic buffer read semantics?
+> >
+> > The specific application that I want to modify to use this hint is Samba.
+> > Samba uses IO threads by default to issue pread/pwrite on the server
+> > for IO requested by the SMB client. The IO size is normally larger than
+> > xfs block size and the range may not be block aligned.
+> >
+> > The SMB protocol has explicit byte range locks and the server implements
+> > them, so it is pretty safe to assume that a client that did not request
+> > range locks does not need xfs to do the implicit range locking for it.
+> >
+> > For this reason and because of the huge performance win,
+> > I would like to implement POSIX_FADV_TORN_RW in xfs and
+> > have Samba try to set this hint when supported.
+> >
+> > It is very much possible that NFSv4 servers (user and kennel)
+> > would also want to set this hint for very similar reasons.
+> >
+> > Thoughts?
+>
+> How about range locks for i_rwsem and invalidate_lock?  That could
+> reduce contention on VM farms, though I can only assume that, given that
+> I don't have a reference implementation to play with...
+>
 
-It's not an oversight -- it used to work (albeit with EXPERIMENTAL
-tags), and now we've broken it on fsdax as the pmem/blockdev divorce
-progresses.
+If you are asking if I have the bandwidth to work on range lock
+then the answer is that I do not.
 
-> have been obvious that the change caused the test to no longer run. Did
-> something change after that to trigger that change in behavior?
-> 
-> > With the revert, generic/470 can always run successfully on my environment
-> > so I wonder how to reproduce the out-of-order replay issue on XFS v5
-> > filesystem?
-> > 
-> 
-> I don't quite recall the characteristics of the failures beyond that we
-> were seeing spurious test failures with generic/482 that were due to
-> essentially putting the fs/log back in time in a way that wasn't quite
-> accurate due to the clearing by the logwrites tool not taking place. If
-> you wanted to reproduce in order to revisit that, perhaps start with
-> generic/482 and let it run in a loop for a while and see if it
-> eventually triggers a failure/corruption..?
-> 
-> > PS: I want to reproduce the issue and try to find a better solution to fix
-> > it.
-> > 
-> 
-> It's been a while since I looked at any of this tooling to semi-grok how
-> it works.
+IIRC, Dave had a WIP and ran some benchmarks with range locks,
+but I do not know at which state that work is.
 
-I /think/ this was the crux of the problem, back in 2019?
-https://lore.kernel.org/fstests/20190227061529.GF16436@dastard/
+The question is, if application developers know (or believe)
+that their application does not care about torn reads, are we
+insisting not to allow them to opt out of atomic buffered reads
+(which they do not need) because noone has the time to
+work on range locks?
 
-> Perhaps it could learn to rely on something more explicit like
-> zero range (instead of discard?) or fall back to manual zeroing?
+If that is the final decision then if customers come to me to
+complain about this workload, my response will be:
 
-AFAICT src/log-writes/ actually /can/ do zeroing, but (a) it probably
-ought to be adapted to call BLKZEROOUT and (b) in the worst case it
-writes zeroes to the entire device, which is/can be slow.
+If this workload is important for your application, either
+- contribute developer resource to work on range locks
+- carry a patch in your kernel
+or
+- switch to another filesystem for this workload
 
-For a (crass) example, one of my cloudy test VMs uses 34GB partitions,
-and for cost optimization purposes we're only "paying" for the cheapest
-tier.  Weirdly that maps to an upper limit of 6500 write iops and
-48MB/s(!) but that would take about 20 minutes to zero the entire
-device if the dm-thin hack wasn't in place.  Frustratingly, it doesn't
-support discard or write-zeroes.
-
-> If the
-> eventual solution is simple and low enough overhead, it might make some
-> sense to replace the dmthin hack across the set of tests mentioned
-> above.
-
-That said, for a *pmem* test you'd expect it to be faster than that...
-
---D
-
-> Brian
-> 
-> > Best Regards,
-> > Xiao Yang
-> > 
-> > > 
-> > > BTW, only log-writes, stripe and linear support DAX for now.
-> > 
-> 
+Thanks,
+Amir.
