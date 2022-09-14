@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F715B908E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 00:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A238D5B90B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 01:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbiINWpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 18:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54954 "EHLO
+        id S229773AbiINXDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 19:03:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiINWpg (ORCPT
+        with ESMTP id S229701AbiINXDH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 18:45:36 -0400
+        Wed, 14 Sep 2022 19:03:07 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B6D422CC;
-        Wed, 14 Sep 2022 15:45:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7FC86C0D;
+        Wed, 14 Sep 2022 16:03:06 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3BA5033D6B;
-        Wed, 14 Sep 2022 22:45:32 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4809E2254E;
+        Wed, 14 Sep 2022 23:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663195532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663196585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WrYI2akpyFGc973gFDZLeSpSTKSsio96AxzmoFqBEZc=;
-        b=O4JEJvUSBG/iz0aqWIc3jFihEuQnr5iNTcRbnWIfrOZ2B7JD+59PwdOnrKWR3y0adHORkD
-        +xPfhuJYotoG8E+PP1gDgPKDRFYBARV3myr4Kkj/GPoJFnxTmLSgAc5Edq6268ChL1I6GN
-        yA399nNlO1Gh118LF2tGqQW0A2AoY/0=
+        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
+        b=vUOyhbIqIdhUfwjGMcVp0bFWqzSxjg18Byf0Fw6V5BWUlJXfduvZU8AsGTsDkTCUQVX1DI
+        3ee//m67w0d3/IaK9foaigRlwNhudHM73ukohor5+efg5TY3is7z+cqHRkrfRs95WC7ga4
+        cSOwko1/rNviD4ShdiPw7JiSg1R8Z00=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663195532;
+        s=susede2_ed25519; t=1663196585;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WrYI2akpyFGc973gFDZLeSpSTKSsio96AxzmoFqBEZc=;
-        b=R8LAajefsyTNx6If59Zi3oC+dC8ttmgAtr+3Cz+rfzpWzFyHg90I8T8jhfP/QBj5D46wP+
-        ltJnBA1wSEEi12Dw==
+        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
+        b=EUm8SOBHxcTunrnYlf/7AJ8WMe7OgCxbHb23+u0pbKckxSbiSnW5PX762kvLVY0BH2prcl
+        iOFuzg7VO/j6ODDg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 27DF613494;
-        Wed, 14 Sep 2022 22:45:24 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4E124134B3;
+        Wed, 14 Sep 2022 23:02:57 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id xOSiNIRZImOSTQAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 14 Sep 2022 22:45:24 +0000
+        id ssTxAKFdImMOUgAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 14 Sep 2022 23:02:57 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
 To:     "Jeff Layton" <jlayton@kernel.org>
@@ -79,7 +79,7 @@ Cc:     "Dave Chinner" <david@fromorbit.com>,
         "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
 Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
  STATX_INO_VERSION field
-In-reply-to: <f8a41b55efd1c59bc63950e8c1b734626d970a90.camel@kernel.org>
+In-reply-to: <166319552167.15759.17894784385240679495@noble.neil.brown.name>
 References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
  <166268467103.30452.1687952324107257676@noble.neil.brown.name>,
  <166268566751.30452.13562507405746100242@noble.neil.brown.name>,
@@ -93,9 +93,10 @@ References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
  <20220913011518.GE3600936@dread.disaster.area>,
  <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>,
  <166311144203.20483.1888757883086697314@noble.neil.brown.name>,
- <f8a41b55efd1c59bc63950e8c1b734626d970a90.camel@kernel.org>
-Date:   Thu, 15 Sep 2022 08:45:21 +1000
-Message-id: <166319552167.15759.17894784385240679495@noble.neil.brown.name>
+ <f8a41b55efd1c59bc63950e8c1b734626d970a90.camel@kernel.org>,
+ <166319552167.15759.17894784385240679495@noble.neil.brown.name>
+Date:   Thu, 15 Sep 2022 09:02:53 +1000
+Message-id: <166319657348.15759.14602484394176375178@noble.neil.brown.name>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -105,36 +106,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 14 Sep 2022, Jeff Layton wrote:
-> On Wed, 2022-09-14 at 09:24 +1000, NeilBrown wrote:
-> > On Wed, 14 Sep 2022, Jeff Layton wrote:
-> > > 
-> > > At that point, bumping i_version both before and after makes a bit more
-> > > sense, since it better ensures that a change will be noticed, whether
-> > > the related read op comes before or after the statx.
-> > 
-> > How does bumping it before make any sense at all?  Maybe it wouldn't
-> > hurt much, but how does it help anyone at all?
-> > 
-> 
-> My assumption (maybe wrong) was that timestamp updates were done before
-> the actual write by design. Does doing it before the write make increase
-> the chances that the inode metadata writeout will get done in the same
-> physical I/O as the data write? IDK, just speculating here.
+On Thu, 15 Sep 2022, NeilBrown wrote:
+>=20
+> When the code was written, the inode semaphore (before mutexes) was held
+> over the whole thing, and timestamp resolution was 1 second.  So
+> ordering didn't really matter.  Since then locking has bee reduced and
+> precision increased but no-one saw any need to fix the ordering.  I
+> think that is fine for timestamps.
 
-When the code was written, the inode semaphore (before mutexes) was held
-over the whole thing, and timestamp resolution was 1 second.  So
-ordering didn't really matter.  Since then locking has bee reduced and
-precision increased but no-one saw any need to fix the ordering.  I
-think that is fine for timestamps.
+Actually it is much more complex than that, though the principle is
+still the same
 
-But i_version is about absolute precision, so we need to think carefully
-about what meets our needs.
+https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?i=
+d=3D636b38438001a00b25f23e38747a91cb8428af29
 
-> 
-> If there's no benefit to doing it before then we should just move it
-> afterward.
+shows i_mtime updates being moved from *after* a call to
+generic_file_write() in each filesystem to *early* in the body of
+generic_file_write().  Probably because that was just a convenient place
+to put it.
 
-Great!
-Thanks,
 NeilBrown
+
