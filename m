@@ -2,63 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 453D35B7FC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 05:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 160145B8193
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 08:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbiINDvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Sep 2022 23:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
+        id S230087AbiINGoX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 02:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiINDvl (ORCPT
+        with ESMTP id S230062AbiINGoW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Sep 2022 23:51:41 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430606F26F;
-        Tue, 13 Sep 2022 20:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TsvPRmshdxnvSY7tVAecRy6+/ce+5hAWcS0J6w4JVyE=; b=utEF1SOCThG3gcFxitxIjq3WGs
-        IHfq+Z1KW6tA+eL0Sb+cwipStWaYLjhRhDVZ8GZwNeZmjvBd05BRjtyauZaHH7ZZsrmJ5jQ9m7NYH
-        t5YnppvGuDY68g9HYjVC2w5Z2W2ZRP72TY/rLYf5gK5zcB6xl2TQzc8waMQW+L4/KmLbLr+tX1SHf
-        wva/bWAZqkuKFcKia9aZdCn5gJ0/PD4X1KzRVwCHXE2T9wrl7lomyCDzaAAQRhl9Ob3eHi4ibY6gS
-        2A/E8y+stzUFsaCfnKU1fUsoMPrEmJ9V+q/Xc7gYpbpZ/qBuLSMLG/JKoH2axtiXJ3qbsfdU1SaT+
-        ODK9JccA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oYJQj-00G2aP-2o;
-        Wed, 14 Sep 2022 03:51:17 +0000
-Date:   Wed, 14 Sep 2022 04:51:17 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
-Message-ID: <YyFPtTtxYozCuXvu@ZenIV>
-References: <20220831041843.973026-1-jhubbard@nvidia.com>
- <20220831041843.973026-5-jhubbard@nvidia.com>
- <YxbtF1O8+kXhTNaj@infradead.org>
- <103fe662-3dc8-35cb-1a68-dda8af95c518@nvidia.com>
- <Yxb7YQWgjHkZet4u@infradead.org>
- <20220906102106.q23ovgyjyrsnbhkp@quack3>
- <YxhaJktqtHw3QTSG@infradead.org>
+        Wed, 14 Sep 2022 02:44:22 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FB64D26F;
+        Tue, 13 Sep 2022 23:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1663137859; i=@fujitsu.com;
+        bh=efVAjPYse3rF9WCV59EbTeWjJLleTTblkfqti2c1zJ4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=Ga0zCV01hbaJdTiiC6tj4M/Q+T+SEw271GrlewpO7CtfJvgFDX7VeGy4pRve0dy9a
+         rxwVO+H8AL/T+JcLzB4NDM8Q6ddev0eFWN4C8TUZT/zE7+Bva57pxdJg4S2SwLGXj0
+         df7g33KTrVHFGk+O2rbauhLcyNjAdz+ZdwZ/iipqr3i42IGUkgcxrT+LZYdgLSPtBY
+         790XxoOo4xa5042Gf6240gnHD+TpMh1quZZObX996ZODOITPCB+G5xDufA+P4zUeHE
+         eG54coK7DXchcKwP/bRjV8BOTtSppJR3VNrOscnGvACr/MtuXBKYrx2p6MpQ+HBqVO
+         JYZkgdOnaougQ==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRWlGSWpSXmKPExsViZ8ORpOtUoZh
+  s0Ldcz+Ld5yqLLcfuMVpcfsJncXrCIiaLPXtPslhc3jWHzWLXnx3sFit//GF14PA4tUjCY/MK
+  LY9NqzrZPF5snsno8X7fVTaPz5vkAtiiWDPzkvIrElgz9mxsZCnYwl2x7dl15gbG9RxdjFwcQ
+  gIbGSXWTVvIAuEsYZLo6utjhXC2MUqsf/SSrYuRk4NXwE5iws4HrCA2i4CqxPP3d9gh4oISJ2
+  c+YQGxRQWSJK5uuAtWIyzgK7F2Ux8ziC0CZK/oXc4EMpRZ4AOTRM/f30wQG+YwSxxumQJWxSb
+  gKDFv1kawbZwC6hL9J36BTWUWsJBY/OYgO4QtL7H97RywegkBRYm2Jf/YIewKicbph5ggbDWJ
+  q+c2MU9gFJqF5MBZSEbNQjJqASPzKkarpKLM9IyS3MTMHF1DAwNdQ0NTXWMjXUMTvcQq3US91
+  FLd8tTiEl0jvcTyYr3U4mK94src5JwUvbzUkk2MwEhLKVbg28HYvOqn3iFGSQ4mJVHeD18Vko
+  X4kvJTKjMSizPii0pzUosPMcpwcChJ8D4vVUwWEixKTU+tSMvMAUY9TFqCg0dJhHdSPlCat7g
+  gMbc4Mx0idYpRl+P8zv17mYVY8vLzUqXEeaeUAxUJgBRllObBjYAloEuMslLCvIwMDAxCPAWp
+  RbmZJajyrxjFORiVhHmrQabwZOaVwG16BXQEE9ARRtbyIEeUJCKkpBqYlD6/XaKS82W7wZQFv
+  wsap60V15T/qbVpya8TYqlr3jXsKc5avHRT1uGcL3H28SZR0dva9V+U3pp1borL6YU71Y79ef
+  JCY92Ogq5Ta85FurM5CXxs89QtmXd5/dSkyXGffM7lXpScknlio0B75tugCGBi4F7F8Jdlid4
+  znZI/9gyTVC/fL+lVmlQ/hSdsZm1FdnZyoEdn1zvRv+uYJqvNuTVfN6a+74TV3hP7vjfu7kxk
+  uDz7zcurM6OMzBqCjff3Bx79p1Ka5z2j49v9lI1vVooo76rKCxc2sf1qesjtxKxZn3bcnnPls
+  WbwgXPOwdMWLlLibvx8e+fRKbvPThHc0h9dqf5ZyWP16bNPeT5skFViKc5INNRiLipOBACaOs
+  WkuwMAAA==
+X-Env-Sender: yangx.jy@fujitsu.com
+X-Msg-Ref: server-6.tower-565.messagelabs.com!1663137858!333528!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.87.3; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 4763 invoked from network); 14 Sep 2022 06:44:18 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-6.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Sep 2022 06:44:18 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id 65D121AF;
+        Wed, 14 Sep 2022 07:44:18 +0100 (BST)
+Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id 5A13E1AC;
+        Wed, 14 Sep 2022 07:44:18 +0100 (BST)
+Received: from [10.167.215.54] (10.167.215.54) by
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Wed, 14 Sep 2022 07:44:14 +0100
+Message-ID: <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
+Date:   Wed, 14 Sep 2022 14:44:08 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YxhaJktqtHw3QTSG@infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
+To:     Brian Foster <bfoster@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>
+CC:     "Darrick J. Wong" <djwong@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>
+References: <20220609143435.393724-1-ruansy.fnst@fujitsu.com>
+ <Yr5AV5HaleJXMmUm@magnolia>
+ <74b0a034-8c77-5136-3fbd-4affb841edcb@fujitsu.com>
+ <Ytl7yJJL1fdC006S@magnolia>
+ <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
+ <YuNn9NkUFofmrXRG@magnolia>
+ <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
+ <YusYDMXLYxzqMENY@magnolia>
+ <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com> <Yxs5Jb7Yt2c6R6eW@bfoster>
+From:   =?UTF-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>
+In-Reply-To: <Yxs5Jb7Yt2c6R6eW@bfoster>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.215.54]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,71 +106,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 01:45:26AM -0700, Christoph Hellwig wrote:
-> On Tue, Sep 06, 2022 at 12:21:06PM +0200, Jan Kara wrote:
-> > > For FOLL_PIN callers, never pin bvec and kvec pages:  For file systems
-> > > not acquiring a reference is obviously safe, and the other callers will
-> > > need an audit, but I can't think of why it woul  ever be unsafe.
-> > 
-> > Are you sure about "For file systems not acquiring a reference is obviously
-> > safe"? I can see places e.g. in orangefs, afs, etc. which create bvec iters
-> > from pagecache pages. And then we have iter_file_splice_write() which
-> > creates bvec from pipe pages (which can also be pagecache pages if
-> > vmsplice() is used). So perhaps there are no lifetime issues even without
-> > acquiring a reference (but looking at the code I would not say it is
-> > obvious) but I definitely don't see how it would be safe to not get a pin
-> > to signal to filesystem backing the pagecache page that there is DMA
-> > happening to/from the page.
-> 
-> I mean in the context of iov_iter_get_pages callers, that is direct
-> I/O.  Direct callers of iov_iter_bvec which then pass that iov to
-> ->read_iter / ->write_iter will need to hold references (those are
-> the references that the callers of iov_iter_get_pages rely on!).
+On 2022/9/9 21:01, Brian Foster wrote:
+> Yes.. I don't recall all the internals of the tools and test, but IIRC
+> it relied on discard to perform zeroing between checkpoints or some such
+> and avoid spurious failures. The purpose of running on dm-thin was
+> merely to provide reliable discard zeroing behavior on the target device
+> and thus to allow the test to run reliably.
 
-Unless I'm misreading Jan, the question is whether they should get or
-pin.  AFAICS, anyone who passes the sucker to ->read_iter() (or ->recvmsg(),
-or does direct copy_to_iter()/zero_iter(), etc.) is falling under
-=================================================================================
-CASE 5: Pinning in order to write to the data within the page
--------------------------------------------------------------
-Even though neither DMA nor Direct IO is involved, just a simple case of "pin,
-write to a page's data, unpin" can cause a problem. Case 5 may be considered a
-superset of Case 1, plus Case 2, plus anything that invokes that pattern. In
-other words, if the code is neither Case 1 nor Case 2, it may still require
-FOLL_PIN, for patterns like this:
+Hi Brian,
 
-Correct (uses FOLL_PIN calls):
-    pin_user_pages()
-    write to the data within the pages
-    unpin_user_pages()
+As far as I know, generic/470 was original designed to verify 
+mmap(MAP_SYNC) on the dm-log-writes device enabling DAX. Due to the 
+reason, we need to ensure that all underlying devices under 
+dm-log-writes device support DAX. However dm-thin device never supports 
+DAX so
+running generic/470 with dm-thin device always returns "not run".
 
-INCORRECT (uses FOLL_GET calls):
-    get_user_pages()
-    write to the data within the pages
-    put_page()
-=================================================================================
+Please see the difference between old and new logic:
 
-Regarding iter_file_splice_write() case, do we need to pin pages
-when we are not going to modify the data in those?
+          old logic                          new logic
+---------------------------------------------------------------
+log-writes device(DAX)                 log-writes device(DAX)
+            |                                       |
+PMEM0(DAX) + PMEM1(DAX)       Thin device(non-DAX) + PMEM1(DAX)
+                                          |
+                                        PMEM0(DAX)
+---------------------------------------------------------------
 
-The same goes for afs, AFAICS; I started to type "... and everything that passes
-WRITE to iov_iter_bvec()", but...
-drivers/vhost/vringh.c:1165:            iov_iter_bvec(&iter, READ, iov, ret, translated);
-drivers/vhost/vringh.c:1198:            iov_iter_bvec(&iter, WRITE, iov, ret, translated);
-is backwards - READ is for data destinations, comes with copy_to_iter(); WRITE is
-for data sources and it comes with copy_from_iter()...
-I'm really tempted to slap
-	if (WARN_ON(i->data_source))
-		return 0;
-into copy_to_iter() et.al., along with its opposite for copy_from_iter().
-And see who comes screaming...  Things like
-        if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
-                WARN_ON(1);
-                return 0;
-        }
-in e.g. csum_and_copy_from_iter() would be replaced by that, and become
-easier to understand...
-These two are also getting it wrong, BTW:
-drivers/target/target_core_file.c:340:  iov_iter_bvec(&iter, READ, bvec, sgl_nents, len);
-drivers/target/target_core_file.c:476:  iov_iter_bvec(&iter, READ, bvec, nolb, len);
+We think dm-thin device is not a good solution for generic/470, is there 
+any other solution to support both discard zero and DAX?
 
+BTW, only log-writes, stripe and linear support DAX for now.
+
+Best Regards,
+Xiao Yang
