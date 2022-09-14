@@ -2,132 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 062A55B850D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 11:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514495B8530
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 11:39:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230423AbiINJe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 05:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43458 "EHLO
+        id S230063AbiINJjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 05:39:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiINJeg (ORCPT
+        with ESMTP id S231623AbiINJih (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 05:34:36 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B4001EC7D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 02:29:51 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Wed, 14 Sep 2022 05:38:37 -0400
+Received: from mail3.bemta32.messagelabs.com (mail3.bemta32.messagelabs.com [195.245.230.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5061D30D;
+        Wed, 14 Sep 2022 02:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1663148294; i=@fujitsu.com;
+        bh=innjE3mvg9WVMWJzn0D35+35BLJpTlYCkV//jqcaPTo=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=eWRfEpTdDCcjBYExPlWkki9pEX4dQ84IDqVrLIhElUaMXjQXqS/Xu1KLHEbpiswOZ
+         WQqtQho3toovWzXIe02pKYbXt7iPQK2H2gq4v5I7f26uNQc8krUGr1hq3cQG2FB8AC
+         QFo6WcoAcLbE/GEDQnI8GsZofQ9Ugflh3i6owAYCCEfGnXmsHuWiuSdtnfKDxDB0T3
+         Xe72ZatvfhmeiylaNfGNaJmXyCIBvAC2I6x1mYs8DfeRc4DkywUYpHqBgBG+g5a7/w
+         hHEikKkwbO8qaOLu+r8DeQfs2ZrhJJe3rLNuVOgtVmzITT5NqS7irFAchd//4WR0l7
+         MQn6mRMAHZMYA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRWlGSWpSXmKPExsViZ8MxSZd1oWK
+  ywctGZYt3n6ssthy7x2hx+QmfxekJi5gs9uw9yWJxedccNotdf3awW6z88YfVgcPj1CIJj80r
+  tDw2repk83ixeSajx/t9V9k8Pm+SC2CLYs3MS8qvSGDNeHl2I2vBd/6KjT2LWRoYm3i6GLk4h
+  AS2MEocnveRHcJZziTReuw6I4SzjVFiz7oDzF2MHBy8AnYSh3uSuhg5OVgEVCUWbTjEBGLzCg
+  hKnJz5hAXEFhVIkri64S4riC0s4CuxdlMfM4jNJuAoMW/WRjaQMSICeRLTFiuBjGcW+MAk0fP
+  3NxPErgvMEnf33AZr5hSwl1g25xVYM7OAhcTiNwfZIWx5ieats8HiEgKKEm1L/rFD2BUSjdMh
+  DpIQUJO4em4T8wRGoVlI7puFZNQsJKMWMDKvYrRKKspMzyjJTczM0TU0MNA1NDTVNdE1MrbUS
+  6zSTdRLLdUtTy0u0TXUSywv1kstLtYrrsxNzknRy0st2cQIjLKUYpb3Oxib+n7qHWKU5GBSEu
+  X98FUhWYgvKT+lMiOxOCO+qDQntfgQowwHh5IE7/65islCgkWp6akVaZk5wIiHSUtw8CiJ8Or
+  NAUrzFhck5hZnpkOkTjEac5zfuX8vM8e82f/2Mwux5OXnpUqJ866cD1QqAFKaUZoHNwiWiC4x
+  ykoJ8zIyMDAI8RSkFuVmlqDKv2IU52BUEub9OA9oCk9mXgncvldApzABnWJkLQ9ySkkiQkqqg
+  UlM6q6KVGtzXo7vbLXDB/2mv1XRFLEuTpnhvN6v/v7cDYrmWyPTKndkl0kucZWoM7tfJXPdSU
+  RIqHjyI+m9Pw0f7y95Nyt1dpmAQM4N77pnP389W1+m7Fxb6tVq8fWATMOjvIby4O8Z3w2nHWq
+  qXDf91JrdVRnRc+Zs4NV73u7Q/jrolVFS+613shdlFHLVBY/z7+lW1i9ctnLzHZbW+gkfuRjs
+  H/3gzup4LJ+hkn2k7/+PQGPJH4+Ka3tOSPeoy7JOfT37M++p7Rx69wrsC1pYO7qXX9ggnBK5w
+  nZWlDOzyD3Tl8E2MaWOX7/mPjvCOzVX9qTE1e+XJpZcl8/6594Qa8fjduybN+sDxt/xSizFGY
+  mGWsxFxYkAcPuL/L8DAAA=
+X-Env-Sender: yangx.jy@fujitsu.com
+X-Msg-Ref: server-10.tower-585.messagelabs.com!1663148293!213906!1
+X-Originating-IP: [62.60.8.146]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.87.3; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 25920 invoked from network); 14 Sep 2022 09:38:13 -0000
+Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
+  by server-10.tower-585.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Sep 2022 09:38:13 -0000
+Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 27CF01000CC;
+        Wed, 14 Sep 2022 10:38:13 +0100 (BST)
+Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 78F6D5CB89;
-        Wed, 14 Sep 2022 09:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663147790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yAK55y7aHmshakV3iOOWKERMO4P6AWzXO9nmdfJvK/A=;
-        b=NCBsIa5q67c7uKcJwFIvDC1asJ9WJ3dXtsBS8/SWwhY1TPMqyhW7SnmSo6aLa2+08auh7X
-        q/EtDrf5u/luiY6i0EjkLPEST0/Xek3f6F4mp2Bdk7pODVSxNeQEJzHlhy2LiluocjTkkv
-        jgmZ0tNPOeKXyGAjKs2QbZiID5K+4Es=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663147790;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yAK55y7aHmshakV3iOOWKERMO4P6AWzXO9nmdfJvK/A=;
-        b=HQ3CS/DFShB0OhonR29hxWgxoLDUIbgeOcM5Mu/zVUqvPU061FXi25UG1on4i0fa6fZEDx
-        EI9v8uqsZWTXtOBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6ACA4134B3;
-        Wed, 14 Sep 2022 09:29:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id u/gHGg6fIWMAKwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 14 Sep 2022 09:29:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 08AE4A0680; Wed, 14 Sep 2022 11:29:50 +0200 (CEST)
-Date:   Wed, 14 Sep 2022 11:29:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Plaster, Robert" <rplaster@deepspacestorage.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: thoughts about fanotify and HSM
-Message-ID: <20220914092949.yypllzsaup7vusxj@quack3>
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
- <20220912125734.wpcw3udsqri4juuh@quack3>
- <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <BY5PR07MB6529795F49FB4E923AFCB062A3449@BY5PR07MB6529.namprd07.prod.outlook.com>
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 1AAEB100078;
+        Wed, 14 Sep 2022 10:38:13 +0100 (BST)
+Received: from [10.167.215.54] (10.167.215.54) by
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Wed, 14 Sep 2022 10:38:09 +0100
+Message-ID: <76ea04b4-bad7-8cb3-d2c6-4ad49def4e05@fujitsu.com>
+Date:   Wed, 14 Sep 2022 17:38:02 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
+From:   =?UTF-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>
+To:     Brian Foster <bfoster@redhat.com>,
+        =?UTF-8?B?UnVhbiwgU2hpeWFuZy/pmK4g5LiW6Ziz?= 
+        <ruansy.fnst@fujitsu.com>
+CC:     "Darrick J. Wong" <djwong@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@infradead.org" <hch@infradead.org>
+References: <20220609143435.393724-1-ruansy.fnst@fujitsu.com>
+ <Yr5AV5HaleJXMmUm@magnolia>
+ <74b0a034-8c77-5136-3fbd-4affb841edcb@fujitsu.com>
+ <Ytl7yJJL1fdC006S@magnolia>
+ <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
+ <YuNn9NkUFofmrXRG@magnolia>
+ <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
+ <YusYDMXLYxzqMENY@magnolia>
+ <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com> <Yxs5Jb7Yt2c6R6eW@bfoster>
+ <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
+In-Reply-To: <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <BY5PR07MB6529795F49FB4E923AFCB062A3449@BY5PR07MB6529.namprd07.prod.outlook.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Originating-IP: [10.167.215.54]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Robert!
-
-On Mon 12-09-22 21:10:24, Plaster, Robert wrote:
-> HI Jan – Our team has been using fanotify for HSM as a DMAPI replacement
-> for a while now. We came from StorageTek/Sun/Oracle HSM product line
-> development teams. We have been working on this for about 5 years and
-> just this month are supporting end-users. DMAPI was a huge stumbling
-> block for us. We figured out what minimum set of api calls were needed to
-> make it work.
+On 2022/9/14 14:44, Yang, Xiao/杨 晓 wrote:
+> On 2022/9/9 21:01, Brian Foster wrote:
+>> Yes.. I don't recall all the internals of the tools and test, but IIRC
+>> it relied on discard to perform zeroing between checkpoints or some such
+>> and avoid spurious failures. The purpose of running on dm-thin was
+>> merely to provide reliable discard zeroing behavior on the target device
+>> and thus to allow the test to run reliably.
+> Hi Brian,
 > 
-> Our experience with fanotify has been fantastic. Not much overhead CPU
-> load but for boot volumes we do filter out events for swap and other
-> (there are so many) OS temp files that are really of no concern to HSM.
-> We can create as many files as the file system on NVMe can without any
-> back-pressure and the HSM process will go as fast as the target media
-> supports.
-
-I'm glad to hear fanotify is useful for you.
-
-> We have tested close to 600M files per HSM client and we keep adding
-> client files as time permits, we have no coded limits for the number of
-> HSM clients or max number of files in the repository. Also, the
-> repository for HSM clients is heterogenous so it allows us to push files
-> from one client type to another without any transcoding. I asked the guys
-> doing the actual fanotify part to comment but they said it would be a
-> couple days as they are heads down on a fix for a customer.
+> As far as I know, generic/470 was original designed to verify
+> mmap(MAP_SYNC) on the dm-log-writes device enabling DAX. Due to the
+> reason, we need to ensure that all underlying devices under
+> dm-log-writes device support DAX. However dm-thin device never supports
+> DAX so
+> running generic/470 with dm-thin device always returns "not run".
 > 
-> Currently we have HSM and punch-hole running on xfs and tested it on zfs
-> (works but client isn’t finalized) and we have Lustre and SpectrumScale
-> on our to-do list. Basically any FS with extended attributes should work
-> for HSM and some (not all) will work with punch-hole capabilities.
+> Please see the difference between old and new logic:
 > 
-> We have developed a HSM target for certain object stores (Ceph librados
-> and we have our own in-house object store) that support stream-IO and of
-> course any tape technology. We have a replication tool for making an S3
-> target look like the source FS but its just replication, not HSM. Until
-> we get a S3 io-streaming we can’t use it for HSM. Our implementation only
-> works with our open-source catalog, archive platform. We tried to
-> announce this capability to the ceph community but we could never get
-> past their gatekeepers so only people we actually talk to know about it.
+>            old logic                          new logic
+> ---------------------------------------------------------------
+> log-writes device(DAX)                 log-writes device(DAX)
+>              |                                       |
+> PMEM0(DAX) + PMEM1(DAX)       Thin device(non-DAX) + PMEM1(DAX)
+>                                            |
+>                                          PMEM0(DAX)
+> ---------------------------------------------------------------
 > 
-> Check out our site (kinda sucks and a little markety) but it’s a good
-> primer. In it are links to the code and manuals we have done. We have not
-> put out on github yet but will very soon. We are getting ready to post
-> some big updates to really simplify installation and configuration and
-> some bug fixes for some weird edge-cases.
+> We think dm-thin device is not a good solution for generic/470, is there
+> any other solution to support both discard zero and DAX?
 
-Thanks for info and the links! It is interesting to learn something about
-how users are actually using our code :).
+Hi Brian,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I have sent a patch[1] to revert your fix because I think it's not good 
+for generic/470 to use thin volume as my revert patch[1] describes:
+[1] 
+https://lore.kernel.org/fstests/20220914090625.32207-1-yangx.jy@fujitsu.com/T/#u
+
+With the revert, generic/470 can always run successfully on my 
+environment so I wonder how to reproduce the out-of-order replay issue 
+on XFS v5 filesystem?
+
+PS: I want to reproduce the issue and try to find a better solution to 
+fix it.
+
+Best Regards,
+Xiao Yang
+
+> 
+> BTW, only log-writes, stripe and linear support DAX for now.
