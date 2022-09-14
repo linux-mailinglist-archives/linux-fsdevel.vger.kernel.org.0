@@ -2,250 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20BF25B8661
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 12:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C80B5B869C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Sep 2022 12:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbiINKaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 06:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
+        id S229893AbiINKuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 06:50:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiINKaK (ORCPT
+        with ESMTP id S229723AbiINKuw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 06:30:10 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BB23BC5A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 03:30:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1BA721F88E;
-        Wed, 14 Sep 2022 10:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663151407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cKS1qAlRZDm+nKY5tVyiWUcNixRdMbXVkeB5z/uKXKA=;
-        b=iQZgVYTp4d/VLwHyHvmYP4H3m4hvuan4aHM9ONc8fVxSVVBOwQ0tblgAezLpukaNdVn/d0
-        wHekYVxxLGQtVQgy7xdjvvfzybldO/FwdkEkcAj18s9sIpJcgo2INSroQIMQBrv2GkhgSb
-        dALBAWOt1weM5kplQbCOlmRGf4KWxxU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663151407;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cKS1qAlRZDm+nKY5tVyiWUcNixRdMbXVkeB5z/uKXKA=;
-        b=sU3nlZkGUfBrq6IMtLQgmi6vif+tspFD5IgU+ezSD0pIvIehCxeXng3fvNsCLvJXhhhhB3
-        nVije1dDVNBa5CCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0B1A1134B3;
-        Wed, 14 Sep 2022 10:30:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id o8avAi+tIWPDSQAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 14 Sep 2022 10:30:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0FC4BA0680; Wed, 14 Sep 2022 12:30:06 +0200 (CEST)
-Date:   Wed, 14 Sep 2022 12:30:06 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        "Plaster, Robert" <rplaster@deepspacestorage.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: thoughts about fanotify and HSM
-Message-ID: <20220914103006.daa6nkqzehxppdf5@quack3>
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
- <20220912125734.wpcw3udsqri4juuh@quack3>
- <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
+        Wed, 14 Sep 2022 06:50:52 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3F06068F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 03:50:50 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id i19so10689148pgi.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 03:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=LYcxOKu2hY3Ck4lzUI/59K93yUcPpPY2I3tWA+VQB5o=;
+        b=aadbHEusxVFO24XXVWyu75Q05FIobqxakoxHouAFdwoxQ+FHrZDSlGzoPP0O4swNXH
+         04lGwh4QXhef8MKGYrdZ8AtqRbgoNctImTGvoEZdf1O00zeRfAArnsStWoo9K7I6GnrH
+         MOznkgq6WTje0gwqZDfuuD5QsOFQ433jThDTTN1iRE1RXbT979RqvEAUrzp5UHTRsw2f
+         U7D6J4yycRG2/MYQJF66KzvrBAf/TkY6dvq504JO39VYTM3eLfTzULSLruFngwzB9uUA
+         zvPeN7P9E7KgIUtW0G8oUAP7W3ZDezCw6F48XWb9lnNHDdVhF8dIK2hiBfywJNSwH85/
+         p3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=LYcxOKu2hY3Ck4lzUI/59K93yUcPpPY2I3tWA+VQB5o=;
+        b=xQqUGh2B+R1osAbJ74Plw9B/ulBQexjI41ov/LtO6zkCTDdQpFDEJ8qgMslgh0HXff
+         l3mvs2rrOvTljbThlqLZrRV0K5+u+K+lLLE/OtDs0C1dXVQVmAsaJ6xSJ0QwISxzskPM
+         luxk1FFC46sdY5QXQey7PlI3LTZ+n6K+iSpsm/IUiNa4lEasY+K/aiKgsDKYiRW0g4xV
+         2yOWc/AdkNuYmiv/5UoDciSjF/+BThgVnBjb9m1/jQwFJ6SQbEki+e5K4VxIfY8K50kp
+         mVsBlRpB+cEogaEu9t/C4RPuNHp6N+EKcSM5VtQPEBE+zBY6LNurLVE7LEDrg2kh9zLs
+         FZDQ==
+X-Gm-Message-State: ACgBeo3uQpJjHNJVY7TaTRQb6H5Tn+4FUuJ8fgwhqCk6RG+aQMzLvWGP
+        T4+k/41BXv/Ow53wplpPEntKvQ==
+X-Google-Smtp-Source: AA6agR5UmOf8xiYOHDqG2HuC3BnGe7b3tZudyHKgr1zTMddExE1WruGJK+GWTYLKlTmiP1Nvqkaxfg==
+X-Received: by 2002:a05:6a00:f86:b0:547:6910:4ae0 with SMTP id ct6-20020a056a000f8600b0054769104ae0mr3316718pfb.5.1663152650260;
+        Wed, 14 Sep 2022 03:50:50 -0700 (PDT)
+Received: from C02G705SMD6V.bytedance.net ([2400:8800:1f02:83:4000:0:1:2])
+        by smtp.gmail.com with ESMTPSA id x13-20020a170902ec8d00b0016dc2366722sm10537042plg.77.2022.09.14.03.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Sep 2022 03:50:49 -0700 (PDT)
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+To:     linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
+        huyue2@coolpad.com, Jia Zhu <zhujia.zj@bytedance.com>
+Subject: [PATCH V3 0/6] Introduce erofs shared domain
+Date:   Wed, 14 Sep 2022 18:50:35 +0800
+Message-Id: <20220914105041.42970-1-zhujia.zj@bytedance.com>
+X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 14-09-22 10:27:48, Amir Goldstein wrote:
-> On Mon, Sep 12, 2022 at 7:38 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > I have been in contact with some developers in the past
-> > > > who were interested in using fanotify to implement HSM
-> > > > (to replace old DMAPI implementation).
-> > >
-> > > Ah, DMAPI. Shiver. Bad memories of carrying that hacky code in SUSE kernels
-> > > ;)
-> 
-> For the record, DMAPI is still partly supported on some proprietary
-> filesystems, but even if a full implementation existed, this old API
-> which was used for tape devices mostly is not a good fit for modern
-> day cloud storage use cases.
+Changes since V2:
+1. Some code cleanups:
+   1.1 Optimize the input parameters and return values of some functions.
+   1.2 Only reserve a pair of function declarations for fscache related codes.
+   1.3 Remove useless null check.
+   1.4 Replace some ternary operators to make the code more intuitive.
+2. Increase the granularity of @domain->mutex to a global lock.
+3. Adjust patchset structure and order.
 
-Interesting, I didn't know DMAPI still lives :)
+[Kernel Patchset]
+===============
+Git tree:
+	https://github.com/userzj/linux.git zhujia/shared-domain-v3
+Git web:
+	https://github.com/userzj/linux/tree/zhujia/shared-domain-v3
 
-> > > So how serious are these guys about HSM and investing into it?
-> >
-> > Let's put it this way.
-> > They had to find a replacement for DMAPI so that they could stop
-> > carrying DMAPI patches, so pretty serious.
-> > They had to do it one way or the other.
-> >
-> 
-> As mentioned earlier, this is an open source HSM project [1]
-> with a release coming soon that is using FAN_OPEN_PERM
-> to migrate data from the slower tier.
-> 
-> As you can imagine, FAN_OPEN_PERM can only get you as far
-> as DMAPI but not beyond and it leaves the problem of setting the
-> marks on all punched files on bringup.
+[User Daemon for Quick Test]
+============================
+Git web:
+	https://github.com/userzj/demand-read-cachefilesd/tree/shared-domain
+More test cases will be added to:
+	https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests-fscache 
 
-Sure I can see that FAN_OPEN_PERM works for basic usage but it certainly
-leaves room for improvement :)
+[E2E Container Demo for Quick Test]
+===================================
+[Issue]
+	https://github.com/containerd/nydus-snapshotter/issues/161
+[PR]
+	https://github.com/containerd/nydus-snapshotter/pull/162
 
-<snip nice summary of FUSE options>
+[Background]
+============
+In ondemand read mode, we use individual volume to present an erofs
+mountpoint, cookies to present bootstrap and data blobs.
 
-> > > So I'd prefer to avoid the major API
-> > > extension unless there are serious users out there - perhaps we will even
-> > > need to develop the kernel API in cooperation with the userspace part to
-> > > verify the result is actually usable and useful.
-> 
-> Yap. It should be trivial to implement a "mirror" HSM backend.
-> For example, the libprojfs [5] projects implements a MirrorProvider
-> backend for the Microsoft ProjFS [6] HSM API.
+In which case, since cookies can't be shared between fscache volumes,
+even if the data blobs between different mountpoints are exactly same,
+they can't be shared.
 
-Well, validating that things work using some simple backend is one thing
-but we are probably also interested in whether the result is practical to
-use - i.e., whether the performance meets the needs, whether the API is not
-cumbersome for what HSM solutions need to do, whether the more advanced
-features like range-support are useful the way they are implemented etc.
-We can verify some of these things with simple mirror HSM backend but I'm
-afraid some of the problems may become apparent only once someone actually
-uses the result in practice and for that we need a userspace counterpart
-that does actually something useful so that people have motivation to use
-it :).
- 
-> > > > Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
-> > > > should be enough to implement a basic HSM, but it is not
-> > > > sufficient for implementing more advanced HSM features.
-> > > >
-> [...]
-> > > My main worry here would be that with FAN_FILESYSTEM marks, there will be
-> > > far to many events (especially for the lookup & access cases) to reasonably
-> > > process. And since the events will be blocking, the impact on performance
-> > > will be large.
-> > >
-> >
-> > Right. That problem needs to be addressed.
-> >
-> > > I think that a reasonably efficient HSM will have to stay in the kernel
-> > > (without generating work for userspace) for the "nothing to do" case. And
-> > > only in case something needs to be migrated, event is generated and
-> > > userspace gets involved. But it isn't obvious to me how to do this with
-> > > fanotify (I could imagine it with say overlayfs which is kind of HSM
-> > > solution already ;)).
-> > >
-> 
-> It's true, overlayfs is kind of HSM, but:
-> - Without swap out to slower tier
-> - Without user control over method of swap in from slower tier
-> 
-> On another thread regarding FUSE-BPF, Miklos also mentioned
-> the option to add those features to overlayfs [7] to make it useful
-> as an HSM kernel driver.
-> 
-> So we have at least three options for an HSM kernel driver (FUSE,
-> fanotify, overlayfs), but none of them is still fully equipped to drive
-> a modern HSM implementation.
-> 
-> What is clear is that:
-> 1. The fast path must not context switch to userspace
-> 2. The slow path needs an API for calling into user to migrate files/dirs
-> 
-> What is not clear is:
-> 1. The method to persistently mark files/dirs for fast/slow path
-> 2. The API to call into userspace
+[Introduction]
+==============
+Here we introduce erofs shared domain to resolve above mentioned case.
+Several erofs filesystems can belong to one domain, and data blobs can
+be shared among these erofs filesystems of same domain.
 
-Agreed.
+[Usage]
+Users could specify 'domain_id' mount option to create or join into a
+domain which reuses the same cookies(blobs).
 
-> Overlayfs provides a method to mark files for slow path
-> ('trusted.overlay.metacopy' xattr), meaning file that has metadata
-> but not the data, but overlayfs does not provide the API to perform
-> "user controlled migration" of the data.
-> 
-> Instead of inventing a new API for that, I'd rather extend the
-> known fanotify protocol and allow the new FAN_XXX_PRE events
-> only on filesystems that have the concept of a file without its content
-> (a.k.a. metacopy).
-> 
-> We could say that filesystems that support fscache can also support
-> FAN_XXX_PRE events, and perhaps cachefilesd could make use of
-> hooks to implement user modules that populate the fscache objects
-> out of band.
+[Design]
+========
+1. Use pseudo mnt to manage domain's lifecycle.
+2. Use a linked list to maintain & traverse domains.
+3. Use pseudo sb to create anonymous inode for recording cookie's info
+   and manage cookies lifecycle.
 
-One possible approach is that we would make these events explicitely
-targetted to HSM and generated directly by the filesystem which wants to
-support HSM. So basically when the filesystem finds out it needs the data
-filled in, it will call something like:
+[Flow Path]
+===========
+1. User specify a new 'domain_id' in mount option.
+   1.1 Traverse domain list, compare domain_id with existing domain.[Miss]
+   1.2 Create a new domain(volume), add it to domain list.
+   1.3 Traverse pseudo sb's inode list, compare cookie name with
+       existing cookies.[Miss]
+   1.4 Alloc new anonymous inodes and cookies.
 
-  fsnotify(inode, FAN_PRE_GIVE_ME_DATA, perhaps_some_details_here)
+2. User specify an existing 'domain_id' in mount option and the data
+   blob is existed in domain.
+   2.1 Traverse domain list, compare domain_id with existing domain.[Hit]
+   2.2 Reuse the domain and increase its refcnt.
+   2.3 Traverse pseudo sb's inode list, compare cookie name with
+   	   existing cookies.[Hit]
+   2.4 Reuse the cookie and increase its refcnt.
 
-Something like what we currently do for filesystem error events but in this
-case the event will work like a permission event. Userspace can be watching
-the filesystem with superblock mark to receive these events. The persistent
-marking of files is completely left upto the filesystem in this case - it
-has to decide when the FAN_PRE_GIVE_ME_DATA event needs to be generated for
-an inode.
+RFC: https://lore.kernel.org/all/YxAlO%2FDHDrIAafR2@B-P7TQMD6M-0146.local/
+V1: https://lore.kernel.org/all/20220902034748.60868-1-zhujia.zj@bytedance.com/
+V2: https://lore.kernel.org/all/20220902105305.79687-1-zhujia.zj@bytedance.com/
 
-> There is the naive approach to interpret a "punched hole" in a file as
-> "no content" as DMAPI did, to support FAN_XXX_PRE events on
-> standard local filesystem (fscache does that internally).
-> That would be an opt-in via fanotify_init() flag and could be useful for
-> old DMAPI HSM implementations that are converted to use the new API.
+Jia Zhu (6):
+  erofs: use kill_anon_super() to kill super in fscache mode
+  erofs: code clean up for fscache
+  erofs: introduce 'domain_id' mount option
+  erofs: introduce fscache-based domain
+  erofs: introduce a pseudo mnt to manage shared cookies
+  erofs: Support sharing cookies in the same domain
 
-I'd prefer to leave these details upto the filesystem wanting to support
-HSM and not clutter fanotify API with details about file layout. 
+ fs/erofs/fscache.c  | 252 +++++++++++++++++++++++++++++++++++++++-----
+ fs/erofs/internal.h |  30 ++++--
+ fs/erofs/super.c    |  72 ++++++++++---
+ fs/erofs/sysfs.c    |  19 +++-
+ 4 files changed, 321 insertions(+), 52 deletions(-)
 
-> Practically, the filesystems that allow FAN_XXX_PRE events
-> on punched files would need to advertise this support and maintain
-> an inode flag (i.e. I_NODATA) to avoid a performance penalty
-> on every file access. If we take that route, though, it might be better
-> off to let the HSM daemon set this flag explicitly (e.g. chattr +X)
-> when punching holes in files and removing the flag explicitly
-> when filling the holes.
-
-Again, in what I propose this would be left upto the filesystem - e.g. it
-can have inode flag or xattr or something else to carry the information
-that this file is under HSM and call fsnotify() when the file is accessed.
-It might be challenging to fulfill your desire to generate the event
-outside of any filesystem locks with this design though.
-
-> And there is the most flexible option of attaching a BFP filter to
-> a filesystem mark, but I am afraid that this program will be limited
-> to using information already in the path/dentry/inode struct.
-> At least HSM could use an existing arbitrary inode flag
-> (e.g. chattr+i) as "persistent marks".
-> 
-> So many options! I don't know which to choose :)
-> 
-> If this plan sounds reasonable, I can start with a POC of
-> "user controlled copy up/down" for overlayfs, using fanotify
-> as the user notification protocol and see where it goes from there.
-
-Yeah, that might be interesting to see as an example. Another example of
-"kind-of-hsm" that we already have in the kernel is autofs. So we can think
-whether that could be implemented using the scheme we design as an
-excercise.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
