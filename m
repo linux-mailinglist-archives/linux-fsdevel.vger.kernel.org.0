@@ -2,86 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8DA5B96A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 10:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A173A5B96CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 11:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbiIOIun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 04:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43196 "EHLO
+        id S230026AbiIOJAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 05:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbiIOIuk (ORCPT
+        with ESMTP id S229912AbiIOJAB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 04:50:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A29A58DD8;
-        Thu, 15 Sep 2022 01:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KSEO7grr1p/8DaZzm61xRKuesIZdIt0bL/jRmRVRgkc=; b=eWfNCTgy4m5xfBnkmORobqoHKt
-        sFJ6c69laoIcGWhFYCSHxNjZUb+0eC7j6x+mmTaJFyE+MKvFrR7QsQEVXAW4KyPQgXe+XXEQimLhU
-        Y5Zwbogw7k9JbmeB/1mojdNG2sHLQ2wcu3JvJFCBfxhHMrKekY8CN9BIUmBd6PEvj5+bm0/2ocnBV
-        Qenn+6RcPTKt0pLFW/RfTGbYLhecpztpv7IbWLR12+Dq7OfZaMdC7+Bh1oVwO7I+WN+958sg0EBJA
-        rP/r//3zdykpw7yKoMve0utqkXgMBahbgyWfLj6vf3eyhOivM6bweBMIAmKNn0kCz1eKGlCsYTXrf
-        awa3nFTA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oYkZb-000wGY-Qo; Thu, 15 Sep 2022 08:50:15 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 69FC530029C;
-        Thu, 15 Sep 2022 10:50:12 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4EB85201ABB97; Thu, 15 Sep 2022 10:50:12 +0200 (CEST)
-Date:   Thu, 15 Sep 2022 10:50:12 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Joe Damato <jdamato@fastly.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 1/1] mm: Add per-task struct tlb counters
-Message-ID: <YyLnRC/Bd2kzhJ/t@hirez.programming.kicks-ass.net>
-References: <1663120270-2673-1-git-send-email-jdamato@fastly.com>
- <1663120270-2673-2-git-send-email-jdamato@fastly.com>
- <e0067441-19e2-2ae6-df47-2018672426be@intel.com>
- <20220914141507.GA4422@fastly.com>
+        Thu, 15 Sep 2022 05:00:01 -0400
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CA62B634;
+        Thu, 15 Sep 2022 01:59:54 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 78so16690781pgb.13;
+        Thu, 15 Sep 2022 01:59:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=LgyjDSHm06cPee7hqq0YhgTi9iCJukSRg0rhaRDNcHk=;
+        b=QEh3Wa7oETLzEJVYfPdZq+coHi82ecqj0dGk9ICEMhD/J/t6WAjPzFBRV8qbi5gebe
+         VF+H1k2Rz6h3h9JiJtYksmqAAnHleI+uxnyq0LM8E73J6u53FFc6SKJBaS2bZNJwH7lF
+         I3AZ3J2+iOldDE/HtlMtEEvaW6Bwl4ORxwrkQYrdQibgJwXix1Q7YobpDL9UAQeq1BHd
+         /CovHybA/DBORCeflx18aP0Nopj6cCbjVNCpX0Lx5lZPV6HUAoq5GKrRVmAG6x6cOb8l
+         kqXSj/FE4LYYJbHoTO4R+bCMhM6VFLh5Q/zkOMLhNHlEneyJdxbTzRMxkMWW4C2+lr8A
+         9nDQ==
+X-Gm-Message-State: ACgBeo0bdk6AIAExC9AkGiUxbIuiCmpcCzmwZy7NxwYxpgJQffKV1wFJ
+        ogBHru7BIcnpD+k77Fg4W3EGNDi7QAywKN4w
+X-Google-Smtp-Source: AA6agR4WU7ZFHbHVFtlrqh6Z/nov+94pXR2gXasc4E3LWh/IVzcVIhhv4YrnTj6lp0euM6VzNvlMaw==
+X-Received: by 2002:a63:ff59:0:b0:439:db5:5da9 with SMTP id s25-20020a63ff59000000b004390db55da9mr15350857pgk.88.1663232393120;
+        Thu, 15 Sep 2022 01:59:53 -0700 (PDT)
+Received: from [192.168.123.231] (144.34.241.68.16clouds.com. [144.34.241.68])
+        by smtp.gmail.com with ESMTPSA id a23-20020aa79717000000b0053e3112e84bsm11908800pfg.50.2022.09.15.01.59.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Sep 2022 01:59:52 -0700 (PDT)
+Message-ID: <1a2ac6fb-1a02-de99-1b4e-18360bd34d55@kylinos.cn>
+Date:   Thu, 15 Sep 2022 16:59:46 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220914141507.GA4422@fastly.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] mm/filemap: Make folio_put_wait_locked static
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, k2ci <kernel-bot@kylinos.cn>,
+        linux-fsdevel@vger.kernel.org
+References: <20220914015836.3193197-1-sunke@kylinos.cn>
+ <44af62e3-8f51-bf0a-509e-4a5fdbf62b29@kylinos.cn>
+ <YyLUlQbQi3O0ntwY@casper.infradead.org>
+From:   Ke Sun <sunke@kylinos.cn>
+In-Reply-To: <YyLUlQbQi3O0ntwY@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 07:15:08AM -0700, Joe Damato wrote:
 
-> I could patch count_vm_tlb... to account on a per-task basis. That seems
-> reasonable to me... assuming you and others are convinced that it's a
-> better approach than tracepoints ;)
-
-Well, we *could* do a lot of things, but we can all spend out cycles
-only once. Doing endless variations of statistics contributes to
-death-by-a-thoudsand-cuts.
-
-If you really think you need this, write yourself an eBPF program and
-attach it to these tracepoints. Then you get less cycles for useful
-work, but the rest of us isn't bothered by that.
+On 2022/9/15 15:30, Matthew Wilcox wrote:
+> On Thu, Sep 15, 2022 at 08:45:33AM +0800, Ke Sun wrote:
+>> Ping.
+> Don't be rude.  I'm at a conference this week and on holiday next week.
+> This is hardly an urgent patch.
+So sorry to bother you. Some duplicate emails were sent due to issues 
+with mailbox app settings.
+>> On 2022/9/14 09:58, Ke Sun wrote:
+>>> It's only used in mm/filemap.c, since commit <ffa65753c431>
+>>> ("mm/migrate.c: rework migration_entry_wait() to not take a pageref").
+>>>
+>>> Make it static.
+>>>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: linux-mm@kvack.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Reported-by: k2ci <kernel-bot@kylinos.cn>
+>>> Signed-off-by: Ke Sun <sunke@kylinos.cn>
+>>> ---
+>>> include/linux/pagemap.h | 1 -
+>>> mm/filemap.c | 2 +-
+>>> 2 files changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+>>> index 0178b2040ea3..82880993dd1a 100644
+>>> --- a/include/linux/pagemap.h
+>>> +++ b/include/linux/pagemap.h
+>>> @@ -1042,7 +1042,6 @@ static inline int
+>>> wait_on_page_locked_killable(struct page *page)
+>>> return folio_wait_locked_killable(page_folio(page));
+>>> }
+>>> -int folio_put_wait_locked(struct folio *folio, int state);
+>>> void wait_on_page_writeback(struct page *page);
+>>> void folio_wait_writeback(struct folio *folio);
+>>> int folio_wait_writeback_killable(struct folio *folio);
+>>> diff --git a/mm/filemap.c b/mm/filemap.c
+>>> index 15800334147b..ade9b7bfe7fc 100644
+>>> --- a/mm/filemap.c
+>>> +++ b/mm/filemap.c
+>>> @@ -1467,7 +1467,7 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
+>>> *
+>>> * Return: 0 if the folio was unlocked or -EINTR if interrupted by a
+>>> signal.
+>>> */
+>>> -int folio_put_wait_locked(struct folio *folio, int state)
+>>> +static int folio_put_wait_locked(struct folio *folio, int state)
+>>> {
+>>> return folio_wait_bit_common(folio, PG_locked, state, DROP);
+>>> }
