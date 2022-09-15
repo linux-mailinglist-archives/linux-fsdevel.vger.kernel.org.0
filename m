@@ -2,205 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2A35BA14E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 21:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 477735BA255
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 23:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbiIOTdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 15:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36446 "EHLO
+        id S229606AbiIOVdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 17:33:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiIOTdS (ORCPT
+        with ESMTP id S229483AbiIOVdn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 15:33:18 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B859D13D;
-        Thu, 15 Sep 2022 12:33:09 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FJVFb8001212;
-        Thu, 15 Sep 2022 19:32:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=4WyQ/ZL524QAngfXmtC12dttd7WkDXMegYh+1r0hMIw=;
- b=fKhsGseW75V3FUgkeZCyPYFhrWpFCK7DZMyLDHNvd8ihsgpnKxYWZUvMuqpewUQOkXms
- nIDJYzKO+D574pZAsFRhfXk10vP0dFE4YVqBUhg4Afoakzyz46Ioj0YuHMt2wak7WYiN
- jLpSi5kx59nlWYj+o+zr4V4y52EMm6lnFFQJWp9AHSc0wEH+NsY/uY6UEnNiigo4bHgO
- uDeJFQfFAiotC6fdxWRvRfguYIzoUlhaVHJX3+nv9Gomdbp65BtWJGWOKwVaiL+kllUd
- 5Qts0mHwf6KH9TjKl1G83n1D8R3NmSo++2yzO2QxX9cjwskkcrNjcw8YOeePu3/vs5u4 TA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg279-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:40 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28FJVxV6009804;
-        Thu, 15 Sep 2022 19:32:39 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg254-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:39 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28FJJirH014193;
-        Thu, 15 Sep 2022 19:32:37 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma01wdc.us.ibm.com with ESMTP id 3jm91m0d7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 19:32:37 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28FJWaRs4653626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Sep 2022 19:32:36 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE67BAE063;
-        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9180DAE062;
-        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
-        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
-        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
-        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
-        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
-        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Denis Semakin <denis.semakin@huawei.com>
-Subject: [PATCH v14 11/26] ima: Define mac_admin_ns_capable() as a wrapper for ns_capable()
-Date:   Thu, 15 Sep 2022 15:32:06 -0400
-Message-Id: <20220915193221.1728029-12-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
-References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: r7kruqUoMrzyczrf1pNl6CM-l5Zx6fZh
-X-Proofpoint-ORIG-GUID: lRXdhi_gdUUjUAWXVsBSgZjs-_hCFNMm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-15_10,2022-09-14_04,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- suspectscore=0 clxscore=1011 priorityscore=1501 adultscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209150119
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 15 Sep 2022 17:33:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0BF753A4;
+        Thu, 15 Sep 2022 14:33:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 690F1626AA;
+        Thu, 15 Sep 2022 21:33:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEEDC433B5;
+        Thu, 15 Sep 2022 21:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1663277621;
+        bh=s40+g/crwq1I2vJ8w7LiVAh9DCAgzPt0b4Ee7q8s0r8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rRxulAlbxdOqg4gW7VA89ev50Pa7VTg3cXQVIvArvDCL9yEFO+TdDE4lzmqkIzPu/
+         wRPVvo81ns86PPXZkjuiuN0tds9qcQpypkrjP5yCpDxDVoDfDrnZDltOlC9fnDnvU5
+         w5GLqbBSKBwYJjGymIrpQmQGoztjwvi4XeNkoH0g=
+Date:   Thu, 15 Sep 2022 14:33:40 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Eliav Farber <farbere@amazon.com>
+Cc:     <viro@zeniv.linux.org.uk>, <yangyicong@hisilicon.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <andriy.shevchenko@intel.com>, <hhhawa@amazon.com>,
+        <jonnyc@amazon.com>
+Subject: Re: [PATCH] libfs: fix error format in simple_attr_write()
+Message-Id: <20220915143340.eeb3a8ca0bf50df1cd6359f9@linux-foundation.org>
+In-Reply-To: <20220915091544.42767-1-farbere@amazon.com>
+References: <20220915091544.42767-1-farbere@amazon.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Define mac_admin_ns_capable() as a wrapper for the combined ns_capable()
-checks on CAP_MAC_ADMIN and CAP_SYS_ADMIN in a user namespace. Return
-true on the check if either capability or both are available.
+On Thu, 15 Sep 2022 09:15:44 +0000 Eliav Farber <farbere@amazon.com> wrote:
 
-Use mac_admin_ns_capable() in place of capable(SYS_ADMIN). This will allow
-an IMA namespace to read the policy with only CAP_MAC_ADMIN, which has
-less privileges than CAP_SYS_ADMIN.
+> In commit 488dac0c9237 ("libfs: fix error cast of negative value in
+> simple_attr_write()"), simple_attr_write() was changed to use kstrtoull()
+> instead of simple_strtoll() to convert a string got from a user.
+> A user trying to set a negative value will get an error.
+> 
+> This is wrong since it breaks all the places that use
+> DEFINE_DEBUGFS_ATTRIBUTE() with format of a signed integer.
+> 
+> For the record there are 43 current users of signed integer which are
+> likely to be effected by this:
+> 
+> $ git grep -n -A1 -w DEFINE_DEBUGFS_ATTRIBUTE | grep ');' |
+> sed 's,.*\(".*%.*"\).*,\1,' | sort | uniq -c
+>   1 "%08llx\n"
+>   5 "0x%016llx\n"
+>   5 "0x%02llx\n"
+>   5 "0x%04llx\n"
+>  13 "0x%08llx\n"
+>   1 "0x%4.4llx\n"
+>   3 "0x%.4llx\n"
+>   4 "0x%llx\n"
+>   1 "%1lld\n"
+>  40 "%lld\n"
+>   2 "%lli\n"
+> 129 "%llu\n"
+>   1 "%#llx\n"
+>   2 "%llx\n"
+> 
+> u64 is not an issue for negative numbers.
+> The %lld and %llu in any case are for 64-bit value, representing it as
+> unsigned simplifies the generic code, but it doesn't mean we can't keep
+> their signed value if we know that.
+> 
+> This change uses sscanf() to fix the problem since it does the conversion
+> based on the supplied format string.
+> 
+> Fixes: 488dac0c9237 ("libfs: fix error cast of negative value in simple_attr_write()")
 
-Since CAP_MAC_ADMIN is an additional capability added to an existing gate
-avoid auditing in case it is not set.
+488dac0c9237 was two years ago, so I'm assuming that this error isn't
+causing a lot of trouble out there.
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+In which I may be totally wrong.  Do you see a reason for backporting
+this fix into earlier kernels?  If so, what is it?
 
----
-v13:
-  - implemented file_sb_user_ns(const struct file *); const is needed so it
-    can be called with seq_file's 'const struct file *file'
+Thanks.
 
-v11:
-  - use ns_capable_noaudit for CAP_MAC_ADMIN to avoid auditing in this case
----
- include/linux/capability.h      | 6 ++++++
- include/linux/fs.h              | 5 +++++
- security/integrity/ima/ima.h    | 6 ++++++
- security/integrity/ima/ima_fs.c | 5 ++++-
- 4 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 65efb74c3585..dc3e1230b365 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -270,6 +270,12 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
- 		ns_capable(ns, CAP_SYS_ADMIN);
- }
- 
-+static inline bool mac_admin_ns_capable(struct user_namespace *ns)
-+{
-+	return ns_capable_noaudit(ns, CAP_MAC_ADMIN) ||
-+		ns_capable(ns, CAP_SYS_ADMIN);
-+}
-+
- /* audit system wants to get cap info from files as well */
- int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 			   const struct dentry *dentry,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9eced4cc286e..ec24368b669e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2727,6 +2727,11 @@ static inline struct user_namespace *file_mnt_user_ns(struct file *file)
- 	return mnt_user_ns(file->f_path.mnt);
- }
- 
-+static inline struct user_namespace *file_sb_user_ns(const struct file *file)
-+{
-+	return i_user_ns(file_inode(file));
-+}
-+
- /**
-  * is_idmapped_mnt - check whether a mount is mapped
-  * @mnt: the mount to check
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 5bf7f080c2be..28a9842c566f 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -491,4 +491,10 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
- #define	POLICY_FILE_FLAGS	S_IWUSR
- #endif /* CONFIG_IMA_READ_POLICY */
- 
-+static inline
-+struct user_namespace *ima_user_ns_from_file(const struct file *filp)
-+{
-+	return file_sb_user_ns(filp);
-+}
-+
- #endif /* __LINUX_IMA_H */
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 89d3113ceda1..c41aa61b7393 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -377,6 +377,9 @@ static const struct seq_operations ima_policy_seqops = {
-  */
- static int ima_open_policy(struct inode *inode, struct file *filp)
- {
-+#ifdef CONFIG_IMA_READ_POLICY
-+	struct user_namespace *user_ns = ima_user_ns_from_file(filp);
-+#endif
- 	struct ima_namespace *ns = &init_ima_ns;
- 
- 	if (!(filp->f_flags & O_WRONLY)) {
-@@ -385,7 +388,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
- #else
- 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
- 			return -EACCES;
--		if (!capable(CAP_SYS_ADMIN))
-+		if (!mac_admin_ns_capable(user_ns))
- 			return -EPERM;
- 		return seq_open(filp, &ima_policy_seqops);
- #endif
--- 
-2.36.1
 
