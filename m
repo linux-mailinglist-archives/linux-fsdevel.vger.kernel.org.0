@@ -2,46 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BECF5B93FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 07:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE79E5B9418
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 08:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbiIOFnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 01:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39794 "EHLO
+        id S229572AbiIOGIA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 02:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiIOFnt (ORCPT
+        with ESMTP id S229497AbiIOGH6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 01:43:49 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0327CB4D;
-        Wed, 14 Sep 2022 22:43:45 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VPrVL78_1663220621;
-Received: from 30.221.129.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VPrVL78_1663220621)
-          by smtp.aliyun-inc.com;
-          Thu, 15 Sep 2022 13:43:42 +0800
-Message-ID: <c566e53c-a27a-9c5a-0b19-c55f6cf45d78@linux.alibaba.com>
-Date:   Thu, 15 Sep 2022 13:43:41 +0800
+        Thu, 15 Sep 2022 02:07:58 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC3786B57
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 23:07:56 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id b75so11803311pfb.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Sep 2022 23:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=VQwNXHpMcNzMWvwc/Da6V70id6z3bbhtKYXslcr+kJo=;
+        b=ibO/wc2BrsXme6DE9SPHSIz2siu6/IST8u9oC8WZEquf/PZPbSZhvpQXmnHJvCRxY6
+         P3P650X4Z6WQWqQoseR9qY9nnLo2AX/7WsCZeowWK7NL/MKoQUumTE1nOIeRMnp5zKJU
+         smkb/ahHd7vLyMjcyF5Y3e3uyg/PPasvZb3VP2kbqY6flS59cC38dMMbusPYVuZb+bk5
+         no4MQLvhxUIAOZ9XCgipS5DQkvNKO/ku8eGAZV07XkW0stvUSLsIX3le+noyLTfEi1b1
+         8C293LGqPosYXxLNH7Ul8uZtcnn9FooQxc429gR5PnN650ZUBD6On+R+icpBcU2wzHJ+
+         DEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=VQwNXHpMcNzMWvwc/Da6V70id6z3bbhtKYXslcr+kJo=;
+        b=Ic8aXRiS8lYrIUwqGrNmrmdNFXuVseGPsCgen/XvQic/d1O8SApIi4ku2fSaMoSvJI
+         yNWPrsMP5sYMIqUiKbcCIb4lZbv8mtXziEBJKpSHvTe9o5WIxzGYtE9TvtEUvQa51nC8
+         l7uZx01QiCCgz3ewMXgA8RhzgyJESaInXvg5ICarqx00KYjTMcgb/mXA6TU/N079luoO
+         Emd8456y9/oLidauezrWLRgjGNe52M7EQd1daBh5pwekMlfZQItaOwssGDaf0W0DIgp8
+         MGW+yjfF2+8mrYGM8I2GYAdGFNBywMgOeF5r82oOo/jNtD9kU14blxP6AX4Nq+lSzpFc
+         l3wg==
+X-Gm-Message-State: ACgBeo3fFj6jfNc7kPCyjgddm7pMV8SkvL6Sj8qAttJ4tlV98R7e+HbQ
+        HR21k6bfFL+9baHpN2LnYXUpxOkyTdR0Fk9o
+X-Google-Smtp-Source: AA6agR5KvTTWQBLOtQc+SAEQY+Ih2ccYRNJQUpPrsBPvLtYvYnw1Qsqe03kAV4U82cJFEsw36KS0/A==
+X-Received: by 2002:a63:1e11:0:b0:41c:d233:31f8 with SMTP id e17-20020a631e11000000b0041cd23331f8mr34969128pge.228.1663222075779;
+        Wed, 14 Sep 2022 23:07:55 -0700 (PDT)
+Received: from [10.76.37.214] ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id u197-20020a6279ce000000b00540e1117c98sm11247458pfc.122.2022.09.14.23.07.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Sep 2022 23:07:55 -0700 (PDT)
+Message-ID: <6da8b963-610c-9692-192f-aa611e64ac82@bytedance.com>
+Date:   Thu, 15 Sep 2022 14:07:49 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [PATCH V3 5/6] erofs: introduce a pseudo mnt to manage shared
- cookies
-Content-Language: en-US
-To:     Jia Zhu <zhujia.zj@bytedance.com>, linux-erofs@lists.ozlabs.org,
-        xiang@kernel.org, chao@kernel.org
+Subject: Re: [External] Re: [PATCH V3 1/6] erofs: use kill_anon_super() to
+ kill super in fscache mode
+To:     JeffleXu <jefflexu@linux.alibaba.com>,
+        linux-erofs@lists.ozlabs.org, xiang@kernel.org, chao@kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         yinxin.x@bytedance.com, huyue2@coolpad.com
 References: <20220914105041.42970-1-zhujia.zj@bytedance.com>
- <20220914105041.42970-6-zhujia.zj@bytedance.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20220914105041.42970-6-zhujia.zj@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.5 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+ <20220914105041.42970-2-zhujia.zj@bytedance.com>
+ <b8d9aaac-6e91-f760-c9bc-ac270eecefa6@linux.alibaba.com>
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <b8d9aaac-6e91-f760-c9bc-ac270eecefa6@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -50,146 +78,38 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 9/14/22 6:50 PM, Jia Zhu wrote:
-> Use a pseudo mnt to manage shared cookies.
+在 2022/9/15 10:28, JeffleXu 写道:
 > 
-> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
-> ---
->  fs/erofs/fscache.c  | 13 +++++++++++++
->  fs/erofs/internal.h |  1 +
->  fs/erofs/super.c    | 31 +++++++++++++++++++++++++++++--
->  3 files changed, 43 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-> index b2100dc67cde..4e0a441afb7d 100644
-> --- a/fs/erofs/fscache.c
-> +++ b/fs/erofs/fscache.c
-> @@ -8,6 +8,7 @@
->  
->  static DEFINE_MUTEX(erofs_domain_list_lock);
->  static LIST_HEAD(erofs_domain_list);
-> +static struct vfsmount *erofs_pseudo_mnt;
->  
->  static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
->  					     loff_t start, size_t len)
-> @@ -436,6 +437,10 @@ static void erofs_fscache_domain_put(struct erofs_domain *domain)
->  		fscache_relinquish_volume(domain->volume, NULL, false);
->  		mutex_lock(&erofs_domain_list_lock);
->  		list_del(&domain->list);
-> +		if (list_empty(&erofs_domain_list)) {
-> +			kern_unmount(erofs_pseudo_mnt);
-> +			erofs_pseudo_mnt = NULL;
-> +		}
->  		mutex_unlock(&erofs_domain_list_lock);
->  		kfree(domain->domain_id);
->  		kfree(domain);
-> @@ -489,6 +494,14 @@ static int erofs_fscache_init_domain(struct super_block *sb)
->  	if (err)
->  		goto out;
->  
-> +	if (!erofs_pseudo_mnt) {
-> +		erofs_pseudo_mnt = kern_mount(&erofs_fs_type);
-> +		if (IS_ERR(erofs_pseudo_mnt)) {
-> +			err = PTR_ERR(erofs_pseudo_mnt);
-> +			goto out;
-
-Comment like "sbi->volume will be cleaned up in .kill_sb() in the error
-path" is needed here. But personally I prefer the function is
-self-maintained, i.e. the error path is handled locally, which is more
-intuitive. The same with the error path handling I had pointed in patch 2.
-
-> +		}
-> +	}
-> +
->  	domain->volume = sbi->volume;
->  	refcount_set(&domain->ref, 1);
->  	mutex_init(&domain->mutex);
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 5ce6889d6f1d..4dd0b545755a 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -403,6 +403,7 @@ struct page *erofs_grab_cache_page_nowait(struct address_space *mapping,
->  }
->  
->  extern const struct super_operations erofs_sops;
-> +extern struct file_system_type erofs_fs_type;
->  
->  extern const struct address_space_operations erofs_raw_access_aops;
->  extern const struct address_space_operations z_erofs_aops;
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 856758ee4869..ced1d2fd6e4b 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -688,6 +688,13 @@ static const struct export_operations erofs_export_ops = {
->  	.get_parent = erofs_get_parent,
->  };
->  
-> +static int erofs_fc_fill_pseudo_super(struct super_block *sb, struct fs_context *fc)
-> +{
-> +	static const struct tree_descr empty_descr = {""};
-> +
-> +	return simple_fill_super(sb, EROFS_SUPER_MAGIC, &empty_descr);
-> +}
-> +
->  static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->  	struct inode *inode;
-> @@ -789,6 +796,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->  	return 0;
->  }
->  
-> +static int erofs_fc_anon_get_tree(struct fs_context *fc)
-> +{
-> +	return get_tree_nodev(fc, erofs_fc_fill_pseudo_super);
-> +}
-> +
->  static int erofs_fc_get_tree(struct fs_context *fc)
->  {
->  	struct erofs_fs_context *ctx = fc->fs_private;
-> @@ -858,10 +870,20 @@ static const struct fs_context_operations erofs_context_ops = {
->  	.free		= erofs_fc_free,
->  };
->  
-> +static const struct fs_context_operations erofs_anon_context_ops = {
-> +	.get_tree       = erofs_fc_anon_get_tree,
-> +};
-> +
->  static int erofs_init_fs_context(struct fs_context *fc)
->  {
-> -	struct erofs_fs_context *ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	struct erofs_fs_context *ctx;
-> +
-> +	if (fc->sb_flags & SB_KERNMOUNT) {
-> +		fc->ops = &erofs_anon_context_ops;
-> +		return 0;
-> +	}
->  
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
->  	if (!ctx)
->  		return -ENOMEM;
->  	ctx->devs = kzalloc(sizeof(struct erofs_dev_context), GFP_KERNEL);
-> @@ -888,6 +910,11 @@ static void erofs_kill_sb(struct super_block *sb)
->  
->  	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
->  
-> +	if (sb->s_flags & SB_KERNMOUNT) {
-> +		kill_litter_super(sb);
-> +		return;
-> +	}
-> +
->  	if (erofs_is_fscache_mode(sb))
->  		kill_anon_super(sb);
->  	else
-> @@ -923,7 +950,7 @@ static void erofs_put_super(struct super_block *sb)
->  	sbi->s_fscache = NULL;
->  }
->  
-> -static struct file_system_type erofs_fs_type = {
-> +struct file_system_type erofs_fs_type = {
->  	.owner          = THIS_MODULE,
->  	.name           = "erofs",
->  	.init_fs_context = erofs_init_fs_context,
-
--- 
-Thanks,
-Jingbo
+> On 9/14/22 6:50 PM, Jia Zhu wrote:
+>> Use kill_anon_super() instead of generic_shutdown_super() since the
+>> mount() in erofs fscache mode uses get_tree_nodev() and associated
+>> anon bdev needs to be freed.
+>>
+>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> 
+> Thanks. You're welcome to use "Suggested-by" in this case. The same with
+> patch 2.
+> 
+OK, thanks for your suggestion and review.
+>> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
+>> ---
+>>   fs/erofs/super.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+>> index 3173debeaa5a..9716d355a63e 100644
+>> --- a/fs/erofs/super.c
+>> +++ b/fs/erofs/super.c
+>> @@ -879,7 +879,7 @@ static void erofs_kill_sb(struct super_block *sb)
+>>   	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
+>>   
+>>   	if (erofs_is_fscache_mode(sb))
+>> -		generic_shutdown_super(sb);
+>> +		kill_anon_super(sb);
+>>   	else
+>>   		kill_block_super(sb);
+>>   
+> 
+> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> 
