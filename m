@@ -2,128 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A238D5B90B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 01:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8AA5B91D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 02:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiINXDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 19:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
+        id S230163AbiIOAlD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 20:41:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbiINXDH (ORCPT
+        with ESMTP id S230111AbiIOAlA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 19:03:07 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7FC86C0D;
-        Wed, 14 Sep 2022 16:03:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4809E2254E;
-        Wed, 14 Sep 2022 23:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663196585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
-        b=vUOyhbIqIdhUfwjGMcVp0bFWqzSxjg18Byf0Fw6V5BWUlJXfduvZU8AsGTsDkTCUQVX1DI
-        3ee//m67w0d3/IaK9foaigRlwNhudHM73ukohor5+efg5TY3is7z+cqHRkrfRs95WC7ga4
-        cSOwko1/rNviD4ShdiPw7JiSg1R8Z00=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663196585;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
-        b=EUm8SOBHxcTunrnYlf/7AJ8WMe7OgCxbHb23+u0pbKckxSbiSnW5PX762kvLVY0BH2prcl
-        iOFuzg7VO/j6ODDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4E124134B3;
-        Wed, 14 Sep 2022 23:02:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ssTxAKFdImMOUgAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 14 Sep 2022 23:02:57 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 14 Sep 2022 20:41:00 -0400
+Received: from mailgw.kylinos.cn (unknown [124.126.103.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4225D7F130;
+        Wed, 14 Sep 2022 17:40:52 -0700 (PDT)
+X-UUID: 2505da2ba7af4b02a38ec67ca03e61bd-20220915
+X-CPASD-INFO: ac03eae5191241108bbf27eaa03f2769@qrNqU5KTk2VdWXN-g3R8aliTkpZiY4W
+        wo2pTlmBnYlmVhH5xTV5uYFV9fWtVYV9dYVR6eGxQYmBgZFJ4i3-XblBgXoZgUZB3sKVqU5WPlQ==
+X-CLOUD-ID: ac03eae5191241108bbf27eaa03f2769
+X-CPASD-SUMMARY: SIP:-1,APTIP:-2.0,KEY:0.0,FROMBLOCK:1,OB:0.0,URL:-5,TVAL:168.
+        0,ESV:0.0,ECOM:-5.0,ML:0.0,FD:0.0,CUTS:170.0,IP:-2.0,MAL:-5.0,PHF:-5.0,PHC:-5
+        .0,SPF:4.0,EDMS:-5,IPLABEL:-2.0,FROMTO:0,AD:0,FFOB:0.0,CFOB:0.0,SPC:0,SIG:-5,
+        AUF:1,DUF:4775,ACD:80,DCD:80,SL:0,EISP:0,AG:0,CFC:0.855,CFSR:0.036,UAT:0,RAF:
+        2,IMG:-5.0,DFA:0,DTA:0,IBL:-2.0,ADI:-5,SBL:0,REDM:0,REIP:0,ESB:0,ATTNUM:0,EAF
+        :0,CID:-5.0,VERSION:2.3.17
+X-CPASD-ID: 2505da2ba7af4b02a38ec67ca03e61bd-20220915
+X-CPASD-BLOCK: 1000
+X-CPASD-STAGE: 1
+X-UUID: 2505da2ba7af4b02a38ec67ca03e61bd-20220915
+X-User: sunke@kylinos.cn
+Received: from [10.8.0.3] [(118.250.49.117)] by mailgw
+        (envelope-from <sunke@kylinos.cn>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES128-GCM-SHA256 128/128)
+        with ESMTP id 378164889; Thu, 15 Sep 2022 08:41:23 +0800
+Message-ID: <1b9c2f74-c16d-8e19-17fa-615ff51f27f1@kylinos.cn>
+Date:   Thu, 15 Sep 2022 08:40:46 +0800
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Trond Myklebust" <trondmy@hammerspace.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-In-reply-to: <166319552167.15759.17894784385240679495@noble.neil.brown.name>
-References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
- <166268467103.30452.1687952324107257676@noble.neil.brown.name>,
- <166268566751.30452.13562507405746100242@noble.neil.brown.name>,
- <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>,
- <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>,
- <166270570118.30452.16939807179630112340@noble.neil.brown.name>,
- <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>,
- <166285038617.30452.11636397081493278357@noble.neil.brown.name>,
- <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>,
- <166302538820.30452.7783524836504548113@noble.neil.brown.name>,
- <20220913011518.GE3600936@dread.disaster.area>,
- <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>,
- <166311144203.20483.1888757883086697314@noble.neil.brown.name>,
- <f8a41b55efd1c59bc63950e8c1b734626d970a90.camel@kernel.org>,
- <166319552167.15759.17894784385240679495@noble.neil.brown.name>
-Date:   Thu, 15 Sep 2022 09:02:53 +1000
-Message-id: <166319657348.15759.14602484394176375178@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] mm/filemap: Make folio_put_wait_locked static
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        k2ci <kernel-bot@kylinos.cn>, linux-fsdevel@vger.kernel.org
+References: <20220914015836.3193197-1-sunke@kylinos.cn>
+From:   Ke Sun <sunke@kylinos.cn>
+In-Reply-To: <20220914015836.3193197-1-sunke@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        NICE_REPLY_A,RDNS_DYNAMIC,SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE,
+        T_SPF_PERMERROR autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 15 Sep 2022, NeilBrown wrote:
->=20
-> When the code was written, the inode semaphore (before mutexes) was held
-> over the whole thing, and timestamp resolution was 1 second.  So
-> ordering didn't really matter.  Since then locking has bee reduced and
-> precision increased but no-one saw any need to fix the ordering.  I
-> think that is fine for timestamps.
+Ping.
 
-Actually it is much more complex than that, though the principle is
-still the same
-
-https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?i=
-d=3D636b38438001a00b25f23e38747a91cb8428af29
-
-shows i_mtime updates being moved from *after* a call to
-generic_file_write() in each filesystem to *early* in the body of
-generic_file_write().  Probably because that was just a convenient place
-to put it.
-
-NeilBrown
-
+On 2022/9/14 09:58, Ke Sun wrote:
+> It's only used in mm/filemap.c, since commit <ffa65753c431>
+> ("mm/migrate.c: rework migration_entry_wait() to not take a pageref").
+>
+> Make it static.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Reported-by: k2ci <kernel-bot@kylinos.cn>
+> Signed-off-by: Ke Sun <sunke@kylinos.cn>
+> ---
+>   include/linux/pagemap.h | 1 -
+>   mm/filemap.c            | 2 +-
+>   2 files changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 0178b2040ea3..82880993dd1a 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -1042,7 +1042,6 @@ static inline int wait_on_page_locked_killable(struct page *page)
+>   	return folio_wait_locked_killable(page_folio(page));
+>   }
+>   
+> -int folio_put_wait_locked(struct folio *folio, int state);
+>   void wait_on_page_writeback(struct page *page);
+>   void folio_wait_writeback(struct folio *folio);
+>   int folio_wait_writeback_killable(struct folio *folio);
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 15800334147b..ade9b7bfe7fc 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1467,7 +1467,7 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
+>    *
+>    * Return: 0 if the folio was unlocked or -EINTR if interrupted by a signal.
+>    */
+> -int folio_put_wait_locked(struct folio *folio, int state)
+> +static int folio_put_wait_locked(struct folio *folio, int state)
+>   {
+>   	return folio_wait_bit_common(folio, PG_locked, state, DROP);
+>   }
