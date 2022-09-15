@@ -2,147 +2,326 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8CC95B9C8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 16:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 512085B9D45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 16:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbiIOOGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 10:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35034 "EHLO
+        id S230262AbiIOOfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 10:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiIOOGs (ORCPT
+        with ESMTP id S230143AbiIOOen (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 10:06:48 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D839C1C1;
-        Thu, 15 Sep 2022 07:06:45 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 3E7CDA99; Thu, 15 Sep 2022 10:06:44 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 3E7CDA99
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1663250804;
-        bh=LLHFRFO6j0hm3HnFxTTsR3ywh1o3veH7ecKfWKoG5Bo=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=RnQubsCmjhVbXQbFVtfPj0KCK6Bhc5FRhEHFKQaBiiMurk1EI292SjWwOpq43nZ+L
-         xM44/v5REErLDFQM7dKmb6dCp/MuBDq+XiH+0+dbhCAYW9AogNPMQ5kr7kiy1DdAWF
-         j7po02iv95tP0IF/xX4z8h+ZSZEb1S66DWrfY01A=
-Date:   Thu, 15 Sep 2022 10:06:44 -0400
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, adilger.kernel@dilger.ca,
-        djwong@kernel.org, david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, brauner@kernel.org,
-        fweimer@redhat.com, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220915140644.GA15754@fieldses.org>
-References: <20220908083326.3xsanzk7hy3ff4qs@quack3>
- <YxoIjV50xXKiLdL9@mit.edu>
- <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
- <20220908155605.GD8951@fieldses.org>
- <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
- <20220908182252.GA18939@fieldses.org>
- <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
- <166284799157.30452.4308111193560234334@noble.neil.brown.name>
- <20220912134208.GB9304@fieldses.org>
- <166302447257.30452.6751169887085269140@noble.neil.brown.name>
+        Thu, 15 Sep 2022 10:34:43 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE30FFD;
+        Thu, 15 Sep 2022 07:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663252466; x=1694788466;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ki7gTNXhfVnHCe1rkeDjQttXYp0nJgWH1gx/Z4CHDjQ=;
+  b=GXmNn3RT3+We2A/ezm6DRntz7gUpPsOjMwxxdsWK8CKSsCj6vcZRP+dk
+   YyoLIfPt/arxXLsvAsryYYzLB4TQvRz0QPaqvUlaUixtvxiQbleKE7a85
+   pqdpL7SLekpe30vCbI8ksAFWimszHq2i9gQFMkQ4tYsIO3MrDmPfFJwKV
+   vnaeUgvuecPlJHJfQ5qXtBpDiaNQBdrEo/3TVutwTKWG9oKBtDPAEdqnJ
+   eoBF4vVEJrgW+z5CsHtQ3BnemSBNZxTPcAY98EnXekS8Z9pO+fI5MLESZ
+   SPuN9nBXbtvag6A1XuFIsVm0x24pEdU4gTmOvgAjtcUo9cSFMRQ9+Npxd
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10470"; a="278458275"
+X-IronPort-AV: E=Sophos;i="5.93,318,1654585200"; 
+   d="scan'208";a="278458275"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 07:34:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,318,1654585200"; 
+   d="scan'208";a="945976865"
+Received: from chaop.bj.intel.com ([10.240.193.75])
+  by fmsmga005.fm.intel.com with ESMTP; 15 Sep 2022 07:33:52 -0700
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: [PATCH v8 0/8] KVM: mm: fd-based approach for supporting KVM
+Date:   Thu, 15 Sep 2022 22:29:05 +0800
+Message-Id: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166302447257.30452.6751169887085269140@noble.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 09:14:32AM +1000, NeilBrown wrote:
-> On Mon, 12 Sep 2022, J. Bruce Fields wrote:
-> > On Sun, Sep 11, 2022 at 08:13:11AM +1000, NeilBrown wrote:
-> > > On Fri, 09 Sep 2022, Jeff Layton wrote:
-> > > > 
-> > > > The machine crashes and comes back up, and we get a query for i_version
-> > > > and it comes back as X. Fine, it's an old version. Now there is a write.
-> > > > What do we do to ensure that the new value doesn't collide with X+1? 
-> > > 
-> > > (I missed this bit in my earlier reply..)
-> > > 
-> > > How is it "Fine" to see an old version?
-> > > The file could have changed without the version changing.
-> > > And I thought one of the goals of the crash-count was to be able to
-> > > provide a monotonic change id.
-> > 
-> > I was still mainly thinking about how to provide reliable close-to-open
-> > semantics between NFS clients.  In the case the writer was an NFS
-> > client, it wasn't done writing (or it would have COMMITted), so those
-> > writes will come in and bump the change attribute soon, and as long as
-> > we avoid the small chance of reusing an old change attribute, we're OK,
-> > and I think it'd even still be OK to advertise
-> > CHANGE_TYPE_IS_MONOTONIC_INCR.
-> 
-> You seem to be assuming that the client doesn't crash at the same time
-> as the server (maybe they are both VMs on a host that lost power...)
-> 
-> If client A reads and caches, client B writes, the server crashes after
-> writing some data (to already allocated space so no inode update needed)
-> but before writing the new i_version, then client B crashes.
-> When server comes back the i_version will be unchanged but the data has
-> changed.  Client A will cache old data indefinitely...
+This patch series implements KVM guest private memory for confidential
+computing scenarios like Intel TDX[1]. If a TDX host accesses
+TDX-protected guest memory, machine check can happen which can further
+crash the running host system, this is terrible for multi-tenant
+configurations. The host accesses include those from KVM userspace like
+QEMU. This series addresses KVM userspace induced crash by introducing
+new mm and KVM interfaces so KVM userspace can still manage guest memory
+via a fd-based approach, but it can never access the guest memory
+content.
 
-I guess I assume that if all we're promising is close-to-open, then a
-client isn't allowed to trust its cache in that situation.  Maybe that's
-an overly draconian interpretation of close-to-open.
+The patch series touches both core mm and KVM code. I appreciate
+Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+reviews are always welcome.
+  - 01: mm change, target for mm tree
+  - 02-08: KVM change, target for KVM tree
 
-Also, I'm trying to think about how to improve things incrementally.
-Incorporating something like a crash count into the on-disk i_version
-fixes some cases without introducing any new ones or regressing
-performance after a crash.
+Given KVM is the only current user for the mm part, I have chatted with
+Paolo and he is OK to merge the mm change through KVM tree, but
+reviewed-by/acked-by is still expected from the mm people.
 
-If we subsequently wanted to close those remaining holes, I think we'd
-need the change attribute increment to be seen as atomic with respect to
-its associated change, both to clients and (separately) on disk.  (That
-would still allow the change attribute to go backwards after a crash, to
-the value it held as of the on-disk state of the file.  I think clients
-should be able to deal with that case.)
+The patches have been verified in Intel TDX environment, but Vishal has
+done an excellent work on the selftests[4] which are dedicated for this
+series, making it possible to test this series without innovative
+hardware and fancy steps of building a VM environment. See Test section
+below for more info.
 
-But, I don't know, maybe a bigger hammer would be OK:
+Comparing to previous version, this version redesigned mm part code and
+excluded F_SEAL_AUTO_ALLOCATE and man page changes from this series. See
+Changelog section below for more info.
 
-> I think we need to require the filesystem to ensure that the i_version
-> is seen to increase shortly after any change becomes visible in the
-> file, and no later than the moment when the request that initiated the
-> change is acknowledged as being complete.  In the case of an unclean
-> restart, any file that is not known to have been unchanged immediately
-> before the crash must have i_version increased.
-> 
-> The simplest implementation is to have an unclean-restart counter and to
-> always included this multiplied by some constant X in the reported
-> i_version.  The filesystem guarantees to record (e.g.  to journal
-> at least) the i_version if it comes close to X more than the previous
-> record.  The filesystem gets to choose X.
 
-So the question is whether people can live with invalidating all client
-caches after a cache.  I don't know.
+Introduction
+============
+KVM userspace being able to crash the host is horrible. Under current
+KVM architecture, all guest memory is inherently accessible from KVM
+userspace and is exposed to the mentioned crash issue. The goal of this
+series is to provide a solution to align mm and KVM, on a userspace
+inaccessible approach of exposing guest memory. 
 
-> A more complex solution would be to record (similar to the way orphans
-> are recorded) any file which is open for write, and to add X to the
-> i_version for any "dirty" file still recorded during an unclean
-> restart.  This would avoid bumping the i_version for read-only files.
+Normally, KVM populates secondary page table (e.g. EPT) by using a host
+virtual address (hva) from core mm page table (e.g. x86 userspace page
+table). This requires guest memory being mmaped into KVM userspace, but
+this is also the source where the mentioned crash issue can happen. In
+theory, apart from those 'shared' memory for device emulation etc, guest
+memory doesn't have to be mmaped into KVM userspace.
 
-Is that practical?  Working out the performance tradeoffs sounds like a
-project.
+This series introduces fd-based guest memory which will not be mmaped
+into KVM userspace. KVM populates secondary page table by using a
+fd/offset pair backed by a memory file system. The fd can be created
+from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
+directly interact with them with newly introduced in-kernel interface,
+therefore remove the KVM userspace from the path of accessing/mmaping
+the guest memory. 
 
-> There may be other solutions, but we should leave that up to the
-> filesystem.  Each filesystem might choose something different.
+Kirill had a patch [2] to address the same issue in a different way. It
+tracks guest encrypted memory at the 'struct page' level and relies on
+HWPOISON to reject the userspace access. The patch has been discussed in
+several online and offline threads and resulted in a design document [3]
+which is also the original proposal for this series. Later this patch
+series evolved as more comments received in community but the major
+concepts in [3] still hold true so recommend reading.
 
-Sure.
+The patch series may also be useful for other usages, for example, pure
+software approach may use it to harden itself against unintentional
+access to guest memory. This series is designed with these usages in
+mind but doesn't have code directly support them and extension might be
+needed.
 
---b.
+
+mm change
+=========
+Introduces a new userspace MFD_INACCESSIBLE flag for memfd_create() so
+that the memory fd created with this flag cannot read(), write() or
+mmap() etc via normal MMU operations and the only way to use it is
+passing it to a third kernel module like KVM and relying on it to
+access the fd through the newly added inaccessible_memfd kernel
+interface. The inaccessible_memfd interface bridges the memory file
+subsystems (e.g.tmpfs/hugetlbfs) and their users (KVM in this case) and
+provides bi-directional communication between them. 
+
+
+KVM change
+==========
+Extends the KVM memslot to provide guest private (encrypted) memory from
+a fd. With this extension, a single memslot can maintain both private
+memory through private fd (private_fd/private_offset) and shared
+(unencrypted) memory through userspace mmaped host virtual address
+(userspace_addr). For a particular guest page, the corresponding page in
+KVM memslot can be only either private or shared and only one of the
+shared/private parts of the memslot is visible to guest.
+
+Introduces new KVM_EXIT_MEMORY_FAULT exit to allow userspace to get the
+chance on decision-making for shared <-> private memory conversion. The
+exit can be an implicit conversion in KVM page fault handler or an
+explicit conversion from guest OS.
+
+Extends existing SEV ioctls KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to
+convert a guest page between private <-> shared. The data saved in these
+ioctls tells the truth whether a guest page is private or shared and
+this information will be used in KVM page fault handler to decide
+whether the private or the shared part of the memslot is visible to
+guest.
+
+
+Test
+====
+Ran two kinds of tests:
+  - Selftests [4] from Vishal and VM boot tests in non-TDX environment
+    Code also in below repo: https://github.com/chao-p/linux/tree/privmem-v8
+
+  - Functional tests in TDX capable environment
+    Tested the new functionalities in TDX environment. Code repos:
+    Linux: https://github.com/chao-p/linux/tree/privmem-v8-tdx
+    QEMU: https://github.com/chao-p/qemu/tree/privmem-v8
+
+    An example QEMU command line for TDX test:
+    -object tdx-guest,id=tdx,debug=off,sept-ve-disable=off \
+    -machine confidential-guest-support=tdx \
+    -object memory-backend-memfd-private,id=ram1,size=${mem} \
+    -machine memory-backend=ram1
+
+
+TODO
+====
+  - Page accounting and limiting for encrypted memory
+  - hugetlbfs support
+
+
+Changelog
+=========
+v8:
+  - mm: redesign mm part by introducing a shim layer(inaccessible_memfd)
+    in memfd to avoid touch the memory file systems directly.
+  - mm: exclude F_SEAL_AUTO_ALLOCATE as it is for shared memory and
+    cause confusion in this series, will send out separately.
+  - doc: exclude the man page change, it's not kernel patch and will
+    send out separately.
+  - KVM: adapt to use the new mm inaccessible_memfd interface.
+  - KVM: update lpage_info when setting mem_attr_array to support
+    large page.
+  - KVM: change from xa_store_range to xa_store for mem_attr_array due
+    to xa_store_range overrides all entries which is not intended
+    behavior for us.
+  - KVM: refine the mmu_invalidate_retry_gfn mechanism for private page.
+  - KVM: reorganize KVM_MEMORY_ENCRYPT_{UN,}REG_REGION and private page
+    handling code suggested by Sean.
+v7:
+  - mm: introduce F_SEAL_AUTO_ALLOCATE to avoid double allocation.
+  - KVM: use KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to record
+    private/shared info.
+  - KVM: use similar sync mechanism between zap/page fault paths as
+    mmu_notifier for memfile_notifier based invalidation.
+v6:
+  - mm: introduce MEMFILE_F_* flags into memfile_node to allow checking
+    feature consistence among all memfile_notifier users and get rid of
+    internal flags like SHM_F_INACCESSIBLE.
+  - mm: make pfn_ops callbacks being members of memfile_backing_store
+    and then refer to it directly in memfile_notifier.
+  - mm: remove backing store unregister.
+  - mm: remove RLIMIT_MEMLOCK based memory accounting and limiting.
+  - KVM: reorganize patch sequence for page fault handling and private
+    memory enabling.
+v5:
+  - Add man page for MFD_INACCESSIBLE flag and improve KVM API do for
+    the new memslot extensions.
+  - mm: introduce memfile_{un}register_backing_store to allow memory
+    backing store to register/unregister it from memfile_notifier.
+  - mm: remove F_SEAL_INACCESSIBLE, use in-kernel flag
+    (SHM_F_INACCESSIBLE for shmem) instead. 
+  - mm: add memory accounting and limiting (RLIMIT_MEMLOCK based) for
+    MFD_INACCESSIBLE memory.
+  - KVM: remove the overlap check for mapping the same file+offset into
+    multiple gfns due to perf consideration, warned in document.
+v4:
+  - mm: rename memfd_ops to memfile_notifier and separate it from
+    memfd.c to standalone memfile-notifier.c.
+  - KVM: move pfn_ops to per-memslot scope from per-vm scope and allow
+    registering multiple memslots to the same memory backing store.
+  - KVM: add a 'kvm' reference in memslot so that we can recover kvm in
+    memfile_notifier handlers.
+  - KVM: add 'private_' prefix for the new fields in memslot.
+  - KVM: reshape the 'type' to 'flag' for kvm_memory_exit
+v3:
+  - Remove 'RFC' prefix.
+  - Fix race condition between memfile_notifier handlers and kvm destroy.
+  - mm: introduce MFD_INACCESSIBLE flag for memfd_create() to force
+    setting F_SEAL_INACCESSIBLE when the fd is created.
+  - KVM: add the shared part of the memslot back to make private/shared
+    pages live in one memslot.
+
+Reference
+=========
+[1] Intel TDX:
+https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+[2] Kirill's implementation:
+https://lore.kernel.org/all/20210416154106.23721-1-kirill.shutemov@linux.intel.com/T/ 
+[3] Original design proposal:
+https://lore.kernel.org/all/20210824005248.200037-1-seanjc@google.com/  
+[4] Selftest:
+https://lore.kernel.org/all/20220819174659.2427983-1-vannapurve@google.com/ 
+
+
+Chao Peng (7):
+  KVM: Extend the memslot to support fd-based private memory
+  KVM: Add KVM_EXIT_MEMORY_FAULT exit
+  KVM: Use gfn instead of hva for mmu_notifier_retry
+  KVM: Register/unregister the guest private memory regions
+  KVM: Update lpage info when private/shared memory are mixed
+  KVM: Handle page fault for private memory
+  KVM: Enable and expose KVM_MEM_PRIVATE
+
+Kirill A. Shutemov (1):
+  mm/memfd: Introduce userspace inaccessible memfd
+
+ Documentation/virt/kvm/api.rst  |  78 +++++++--
+ arch/x86/include/asm/kvm_host.h |   9 +
+ arch/x86/kvm/Kconfig            |   1 +
+ arch/x86/kvm/mmu.h              |   2 -
+ arch/x86/kvm/mmu/mmu.c          | 175 +++++++++++++++++++-
+ arch/x86/kvm/mmu/mmu_internal.h |  18 ++
+ arch/x86/kvm/mmu/mmutrace.h     |   1 +
+ arch/x86/kvm/x86.c              |   4 +-
+ include/linux/kvm_host.h        |  86 ++++++++--
+ include/linux/memfd.h           |  24 +++
+ include/uapi/linux/kvm.h        |  37 +++++
+ include/uapi/linux/magic.h      |   1 +
+ include/uapi/linux/memfd.h      |   1 +
+ mm/Makefile                     |   2 +-
+ mm/memfd.c                      |  25 ++-
+ mm/memfd_inaccessible.c         | 219 +++++++++++++++++++++++++
+ virt/kvm/Kconfig                |   3 +
+ virt/kvm/kvm_main.c             | 282 +++++++++++++++++++++++++++++---
+ 18 files changed, 912 insertions(+), 56 deletions(-)
+ create mode 100644 mm/memfd_inaccessible.c
+
+base-commit: 372d07084593dc7a399bf9bee815711b1fb1bcf2
+-- 
+2.25.1
+
