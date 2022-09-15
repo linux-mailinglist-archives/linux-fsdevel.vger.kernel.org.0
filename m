@@ -2,190 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 334085B9B35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 14:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E43805B9B92
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 15:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbiIOMno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 08:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38656 "EHLO
+        id S229676AbiIONHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 09:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbiIOMnA (ORCPT
+        with ESMTP id S229521AbiIONHK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 08:43:00 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365269C530
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Sep 2022 05:42:53 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id s14-20020a17090a6e4e00b0020057c70943so22252199pjm.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Sep 2022 05:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=dBZRlmedpxhbheR4+YN0HocAk5E9pqe8yTyKp+a8Jvo=;
-        b=wGL+P0AnD/GNLjjT24uVsLIZwCjtnS68EAO2WcfTxZFkhvVT/imehV4PqGdD9u11lo
-         mHxyBtFq9duyXZIiKcqegXgI67PQGZyv1FARnxfLtJPl//LGhPBirrHxsHZMHRB9DLAz
-         Wb7SJ6apxY7SF8Pc2g4Gg9+1s6+QI4I1vJhNBvhqpUPnYW8DdTU5YdGxp5D1QKIZck9/
-         L6U90aBZFVaRvvbGZrdF+ClZ5VxK0ZlwgZF9Wnhn6CBxbM6PAoQhJS5v/pkDOz2mIlAa
-         Su3CDhC0H6wTECs2IS+AbHhCLSS2SpIfTFUYeIOdDAxrJ+UmNxGT+M5DuFAWmGzDqJWT
-         +yqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=dBZRlmedpxhbheR4+YN0HocAk5E9pqe8yTyKp+a8Jvo=;
-        b=XfjjRvcyi8ipdRPrceE7Swg1aWJVZxQaFZ1oHOiJGFCrRK5dwmScQfVPNximSQbi2a
-         yx5qJNmO5pbI/cHX+Tge7XDOeo95aT3VVUZACSwHJyRDpIUnFq+l+jFfE0h6Oex+w2mp
-         zclJUMUfewft/DR9YF/JeAcfh6euzo/Z0l4QtirMe2pZ6Xn0IVZ9cSlT1CVtxXKgoa1P
-         MhkmTSwwKNTDADuUrWIdRPTaonpYka4aRdU37hpIoD9jPCpDhLVfzWPw3cT/gBFtjSKu
-         ZHj8sBQzo7TIWm/Y1sIWdVqqb4MuuABB90EWMpTDInlC6QC2vXWXxjN2T0968bsREqYl
-         ulQg==
-X-Gm-Message-State: ACrzQf1MLlqEwHv0TrjugW6mCNp3ZlaOeCEVpgpVkPf15EATfbM5loL0
-        jdLLbeuo5aE4mZffsvyPsfkW76TNJr4d5w==
-X-Google-Smtp-Source: AMsMyM7YeUekbjwUyKbeSAZ971uM0weIsXJ7+N2Y2Xx6JX3tiNRAUFd1xpMZLNwBX63dFYLT7STQeg==
-X-Received: by 2002:a17:903:22c9:b0:178:18a1:d170 with SMTP id y9-20020a17090322c900b0017818a1d170mr4343590plg.2.1663245772723;
-        Thu, 15 Sep 2022 05:42:52 -0700 (PDT)
-Received: from C02G705SMD6V.bytedance.net ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id p8-20020a170902780800b001637529493esm12721906pll.66.2022.09.15.05.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 05:42:52 -0700 (PDT)
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-To:     linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
-        Jia Zhu <zhujia.zj@bytedance.com>
-Subject: [PATCH V4 6/6] erofs: introduce 'domain_id' mount option
-Date:   Thu, 15 Sep 2022 20:42:13 +0800
-Message-Id: <20220915124213.25767-7-zhujia.zj@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
-In-Reply-To: <20220915124213.25767-1-zhujia.zj@bytedance.com>
-References: <20220915124213.25767-1-zhujia.zj@bytedance.com>
+        Thu, 15 Sep 2022 09:07:10 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B51A54C82;
+        Thu, 15 Sep 2022 06:07:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8A2531F45B;
+        Thu, 15 Sep 2022 13:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1663247226;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ycv+ku412KioNw8zG2WTAV+1+K9VQcWQoBnH2pQy/tU=;
+        b=LYLosnVXn+mkR1lFpUhvTxd3pj5TNdvpLX+rZbvbqzCnWGadUEfniNuiAocOm3p6hTIOKM
+        Fd9QQ0h/jFXcXQTPaukqVZl6wmYy58Yw04039KG2r95VAktc9YWOz6HV1CIpzrkmVwI909
+        4uQnFA5THolqXYyT1IYO+tUnmwwDI5c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1663247226;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ycv+ku412KioNw8zG2WTAV+1+K9VQcWQoBnH2pQy/tU=;
+        b=3FnjNRMLa9Ki7A2hz950UiczLBh36lkLHofQ3/8oZ3tYxbyte1n7jdf/FCd1a6XUty6MoC
+        b2eq+zJpfoW61bBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 32FFA13A49;
+        Thu, 15 Sep 2022 13:07:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id H2Z/C3ojI2OwVQAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Thu, 15 Sep 2022 13:07:06 +0000
+Date:   Thu, 15 Sep 2022 15:01:38 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-mm@kvack.org
+Subject: Re: improve pagecache PSI annotations v2
+Message-ID: <20220915130138.GO32411@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20220915094200.139713-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220915094200.139713-1-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce 'domain_id' mount option to enable shared domain sementics.
-In which case, the related cookie is shared if two mountpoints in the
-same domain have the same data blob. Users could specify the name of
-domain by this mount option.
+On Thu, Sep 15, 2022 at 10:41:55AM +0100, Christoph Hellwig wrote:
+> 
+>  - spell a comment in the weird way preferred by btrfs maintainers
 
-Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
----
- fs/erofs/super.c | 17 +++++++++++++++++
- fs/erofs/sysfs.c | 19 +++++++++++++++++--
- 2 files changed, 34 insertions(+), 2 deletions(-)
-
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 24bac58285e8..5e55c4fe6220 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -440,6 +440,7 @@ enum {
- 	Opt_dax_enum,
- 	Opt_device,
- 	Opt_fsid,
-+	Opt_domain_id,
- 	Opt_err
- };
- 
-@@ -465,6 +466,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
- 	fsparam_string("device",	Opt_device),
- 	fsparam_string("fsid",		Opt_fsid),
-+	fsparam_string("domain_id",	Opt_domain_id),
- 	{}
- };
- 
-@@ -568,6 +570,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 			return -ENOMEM;
- #else
- 		errorfc(fc, "fsid option not supported");
-+#endif
-+		break;
-+	case Opt_domain_id:
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+		kfree(ctx->opt.domain_id);
-+		ctx->opt.domain_id = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->opt.domain_id)
-+			return -ENOMEM;
-+#else
-+		errorfc(fc, "domain_id option not supported");
- #endif
- 		break;
- 	default:
-@@ -702,6 +714,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_fs_info = sbi;
- 	sbi->opt = ctx->opt;
- 	ctx->opt.fsid = NULL;
-+	ctx->opt.domain_id = NULL;
- 	sbi->devs = ctx->devs;
- 	ctx->devs = NULL;
- 
-@@ -846,6 +859,7 @@ static void erofs_fc_free(struct fs_context *fc)
- 
- 	erofs_free_dev_context(ctx->devs);
- 	kfree(ctx->opt.fsid);
-+	kfree(ctx->opt.domain_id);
- 	kfree(ctx);
- }
- 
-@@ -914,6 +928,7 @@ static void erofs_kill_sb(struct super_block *sb)
- 	fs_put_dax(sbi->dax_dev, NULL);
- 	erofs_fscache_unregister_fs(sb);
- 	kfree(sbi->opt.fsid);
-+	kfree(sbi->opt.domain_id);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -1067,6 +1082,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- #ifdef CONFIG_EROFS_FS_ONDEMAND
- 	if (opt->fsid)
- 		seq_printf(seq, ",fsid=%s", opt->fsid);
-+	if (opt->domain_id)
-+		seq_printf(seq, ",domain_id=%s", opt->domain_id);
- #endif
- 	return 0;
- }
-diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-index c1383e508bbe..341fb43ad587 100644
---- a/fs/erofs/sysfs.c
-+++ b/fs/erofs/sysfs.c
-@@ -201,12 +201,27 @@ static struct kobject erofs_feat = {
- int erofs_register_sysfs(struct super_block *sb)
- {
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
-+	char *name;
-+	char *str = NULL;
- 	int err;
- 
-+	if (erofs_is_fscache_mode(sb)) {
-+		if (sbi->opt.domain_id) {
-+			str = kasprintf(GFP_KERNEL, "%s,%s", sbi->opt.domain_id,
-+					sbi->opt.fsid);
-+			if (!str)
-+				return -ENOMEM;
-+			name = str;
-+		} else {
-+			name = sbi->opt.fsid;
-+		}
-+	} else {
-+		name = sb->s_id;
-+	}
- 	sbi->s_kobj.kset = &erofs_root;
- 	init_completion(&sbi->s_kobj_unregister);
--	err = kobject_init_and_add(&sbi->s_kobj, &erofs_sb_ktype, NULL, "%s",
--			erofs_is_fscache_mode(sb) ? sbi->opt.fsid : sb->s_id);
-+	err = kobject_init_and_add(&sbi->s_kobj, &erofs_sb_ktype, NULL, "%s", name);
-+	kfree(str);
- 	if (err)
- 		goto put_sb_kobj;
- 	return 0;
--- 
-2.20.1
-
+What? A comment is a standalone sentence or a full paragraph, so it's
+formatted as such. I hope it's not weird to expect literacy either in
+the language of comments or the programming language. The same style can
+be found in many other kernel parts so please stop the nags at btrfs.
