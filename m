@@ -2,104 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A6D5B9899
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 12:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D51195B9930
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 12:54:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiIOKOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 06:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
+        id S229538AbiIOKyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 06:54:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbiIOKOw (ORCPT
+        with ESMTP id S229460AbiIOKyt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 06:14:52 -0400
-Received: from mail1.bemta37.messagelabs.com (mail1.bemta37.messagelabs.com [85.158.142.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743ED2AC4A;
-        Thu, 15 Sep 2022 03:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1663236887; i=@fujitsu.com;
-        bh=5rA+LtPldd34XfUCE03AbLaVBytQ4Y6/eJyolwCDIJY=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=b484MohMz8TISWPQrZxHnaYLRSxUPK0M7fFX23RsU9Xu4OAy9Qpfl1YD64S7Efup9
-         HSkzMBtIFe2sSmRnFnZ5yFrbTHL+alA6H+MvoyYbfrJj9ukxAiDDflf40SXKG1ngN9
-         rIxVmZ6VoDOYi1wo9mgMf+uYVYAv9re9EO5bGs/+IMS5olI5gDat7v9qb6Fwadwm4/
-         AysndWxnMywmWoYYizdFyn0e2wxLcp4B2fjwyU9raKZwj7Bu5upDsIHCHMdqeut6wb
-         3wOAsWV3k/dToIr6NE0dF1oLQtRbzhWZFpio9mSEQRnS+95vtMXwI9rV3508Gp5Coc
-         aZ0SeoJWRITmw==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRWlGSWpSXmKPExsViZ8ORqCv2Wyn
-  Z4N4OU4t3n6ssthy7x2hx+QmfxekJi5gs9uw9yWJxedccNotdf3awW6z88YfVgcPj1CIJj80r
-  tDw2repk83ixeSajx/t9V9k8Pm+SC2CLYs3MS8qvSGDNWLz5LGNBi0bFq3lLGBsYP8t3MXJyC
-  AlsYZRY1ejVxcgFZC9nkjj85BMjhLONUWLC76+sIFW8AnYS0/ffZQexWQRUJfquNUHFBSVOzn
-  zCAmKLCiRJXN1wFywuLOArsXZTHzOILSLgI9FwZDsryFBmgUnMEqvnLGeB2LCDWeJZ9xmwDjY
-  BR4l5szaygdicAhoSTa+uMYLYzAIWEovfHGSHsOUlmrfOBpsqIaAo0bbkHzuEXSHROP0QE4St
-  JnH13CbmCYxCs5AcOAvJqFlIRi1gZF7FaJtUlJmeUZKbmJmja2hgoGtoaAqkjXQNTY31Eqt0E
-  /VSS3Xz8otKMnQN9RLLi/VSi4v1iitzk3NS9PJSSzYxAqMtpTht5g7GLft+6R1ilORgUhLlvX
-  pUKVmILyk/pTIjsTgjvqg0J7X4EKMMB4eSBC/fV6CcYFFqempFWmYOMPJh0hIcPEoivJVvgNK
-  8xQWJucWZ6RCpU4zGHOd37t/LzDFv9r/9zEIsefl5qVLivIt+AJUKgJRmlObBDYIlpEuMslLC
-  vIwMDAxCPAWpRbmZJajyrxjFORiVhHl7vgNN4cnMK4Hb9wroFCagU4ys5UFOKUlESEk1MJ37I
-  jfh8WKW/Dkpk+6vOxBZus7IS2ZLTcOt/yvmzXS/NpupaF69+ZbvUau8PrwKczuw77BwlX+b5f
-  93VTG1/79F8Fy/bPbrQ71J7RPZtdZFH7mySx39vlW84xG9d2ZqLOvslRl+W+Vqnd793e5Uwv5
-  k6g+ZOOvzR1Y5CamKd3+OUTXwvjJnhknJzcvtK90LD7BeOVt58cWhjcv37mjoXbuwOJxh9ouy
-  l6/UM6dve2Rru/hc35ypRWerd7fJyh2J1+ETX9W3S/2OWduSxNZdmVVdJXM+3JvkuFFS3HP/M
-  97nR5V/2UY2fvXOqTj7PHN1d+mxHkd53Q8Zhzh+P9W87SN1lJ/h834WCY4XebnhprVKLMUZiY
-  ZazEXFiQBFIIukwwMAAA==
-X-Env-Sender: yangx.jy@fujitsu.com
-X-Msg-Ref: server-10.tower-732.messagelabs.com!1663236886!10008!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.87.3; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 31016 invoked from network); 15 Sep 2022 10:14:46 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-10.tower-732.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 15 Sep 2022 10:14:46 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 3BC87100194;
-        Thu, 15 Sep 2022 11:14:46 +0100 (BST)
-Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 2F3B1100191;
-        Thu, 15 Sep 2022 11:14:46 +0100 (BST)
-Received: from [10.167.215.54] (10.167.215.54) by
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 15 Sep 2022 11:14:39 +0100
-Message-ID: <a6e7f4eb-0664-bbe8-98d2-f8386b226113@fujitsu.com>
-Date:   Thu, 15 Sep 2022 18:14:26 +0800
+        Thu, 15 Sep 2022 06:54:49 -0400
+Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD742A714;
+        Thu, 15 Sep 2022 03:54:47 -0700 (PDT)
+Received: by mail-vk1-xa2c.google.com with SMTP id b81so8881706vkf.1;
+        Thu, 15 Sep 2022 03:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=jBCqjZQhM/o2kgiH3fd30TwImm9d1zPB2UICxDX7kuw=;
+        b=eX0SVo0mJOT6sZsdCTar5X4xX1Imt+8Fdf5CZIStddXm3Jj9p5Y1zIK9kVdmQo09Pw
+         R30TK/rY5h5mdEMpCl+Tzz6takJbhu6IrXfmwQaqvErHmAoXR0zAQTmDsvHZeS0eJlA8
+         F56uAo3bBlG+qvEraOiubRzeUXHIQ/Q5zPKnTcbxu4eAdV9+eIqaVtGwgeuu+fAghDKs
+         7iiHPAh3KhcNCgYXiwr1a6grbTswIdNJ0AI+WvypiDp2oVid+aUEUD5gx7NPZ5iPy3M0
+         XqkFtkStUW5f4t8z11gYSIQ6O3sLldCExRP37cf6qEr0vNe5cjLK7wWCcqJ3yABmGtnD
+         JBWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=jBCqjZQhM/o2kgiH3fd30TwImm9d1zPB2UICxDX7kuw=;
+        b=BFxPp4HNKZ3K0fypXcRoZsNccWOZaLZ02amzjrV2yVjit8hUqrXYai3VdfFlyMD8N4
+         XKZsZN9ugTG6r1IKrCRzXKwlta+1a1fXoAVodIiPIGxmtYVmsaAPICxEyWvjT9oR8R+9
+         4F9q+CY5+uqBBcPIR65rDu1cg47CPF5vrigYz1APHdOihET4obKKiHlvbPRKvnsVj9Qx
+         DKm6qJOxnku/A/7BYeFpdo1ViPXDQjSFH3/mo60mzLf9YVPKuhzggqg8MvadL2iBsmq4
+         IG5rc/axYKqu8CwdjCXZFy3e4ZqpLvcsq+2jKRIe88ISyoOINV88eDOvg1qyd/RlKlGj
+         CQUg==
+X-Gm-Message-State: ACgBeo2EHwqCwt8WaSZizW5acvBe1ubfjDdrt7VJhK0iRq6KgdzMnCNQ
+        hrlvPi6QL4/AkMMld5F9eoPgHvSI77JyVX+/9DEtYxrBYmQ=
+X-Google-Smtp-Source: AA6agR6ZRLI8jHOQFCmTaZZfufLGTWj+3ylpH6ucliF96GDm2GSlayNXwHg5yX2Me1Q8irmGIoFRkDnvRpnEwNG0T6M=
+X-Received: by 2002:a1f:5c16:0:b0:39e:c313:cb5b with SMTP id
+ q22-20020a1f5c16000000b0039ec313cb5bmr12874283vkb.25.1663239286171; Thu, 15
+ Sep 2022 03:54:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Brian Foster <bfoster@redhat.com>
-CC:     =?UTF-8?B?UnVhbiwgU2hpeWFuZy/pmK4g5LiW6Ziz?= 
-        <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
+ <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
+ <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
+ <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
+ <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
+ <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
+ <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
+ <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
+ <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
+ <CAJfpegtTHhjM5f3R4PVegCoyARA0B2VTdbwbwDva2GhBoX9NsA@mail.gmail.com>
+ <CAOQ4uxh2OZ_AMp6XRcMy0ZtjkQnBfBZFhH0t-+Pd298uPuSEVw@mail.gmail.com>
+ <CAJfpegt4N2nmCQGmLSBB--NzuSSsO6Z0sue27biQd4aiSwvNFw@mail.gmail.com>
+ <CAOQ4uxjjPOtH9+r=oSV4iVAUvW6s3RBjA9qC73bQN1LhUqjRYQ@mail.gmail.com>
+ <CA+khW7hviAT6DbNORYKcatOV1cigGyrd_1mH-oMwehafobVXVg@mail.gmail.com>
+ <CAOQ4uxjUbwKmLAO-jTE3y6EnH2PNw0+V=oXNqNyD+H9U+nX49g@mail.gmail.com>
+ <CA+khW7jQ6fZbEgzxCafsaaTyv7ze58bd9hQ0HBH4R+dQyRaqog@mail.gmail.com>
+ <CAOQ4uxjP0qeuUrdjT6hXCb5zO0AoY+LKM6uza2cL9UCGMo8KsQ@mail.gmail.com>
+ <CA+khW7h907VDeD1mR2wH4pOWxPBG18C2enkZKSZgyWYrFP7Vnw@mail.gmail.com>
+ <CAOQ4uxh9_7wRoDuzLkYCQVWWihuOFz5WmQemCskKg+U6FqR8wg@mail.gmail.com>
+ <CA+khW7hwnX3d9=TA9W+-t-2nqAS+wV8JFC42B_aB9VDT-fEG9Q@mail.gmail.com>
+ <CAOQ4uxi7hFL0rWBRbkHuJFJoyu1h0wU6ug_pXS_vYoGaqYGL9g@mail.gmail.com> <CA+khW7gS+=D6F3x9k+=8juknzooxjZyqwAMDrEY0NrR2kYAjMQ@mail.gmail.com>
+In-Reply-To: <CA+khW7gS+=D6F3x9k+=8juknzooxjZyqwAMDrEY0NrR2kYAjMQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 15 Sep 2022 13:54:34 +0300
+Message-ID: <CAOQ4uxi3muNRfKtvt6U8gQRiVCfGghKdxsGhLjbhL7GPrrs+ZA@mail.gmail.com>
+Subject: Re: Overlayfs with writable lower layer
+To:     Hao Luo <haoluo@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>
-References: <Ytl7yJJL1fdC006S@magnolia>
- <7fde89dc-2e8f-967b-d342-eb334e80255c@fujitsu.com>
- <YuNn9NkUFofmrXRG@magnolia>
- <0ea1cbe1-79d7-c22b-58bf-5860a961b680@fujitsu.com>
- <YusYDMXLYxzqMENY@magnolia>
- <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com> <Yxs5Jb7Yt2c6R6eW@bfoster>
- <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
- <76ea04b4-bad7-8cb3-d2c6-4ad49def4e05@fujitsu.com> <YyHKUhOgHdTKPQXL@bfoster>
- <YyIBMJzmbZsUBHpy@magnolia>
-From:   =?UTF-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>
-In-Reply-To: <YyIBMJzmbZsUBHpy@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.215.54]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -107,126 +91,188 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/9/15 0:28, Darrick J. Wong wrote:
-> On Wed, Sep 14, 2022 at 08:34:26AM -0400, Brian Foster wrote:
->> On Wed, Sep 14, 2022 at 05:38:02PM +0800, Yang, Xiao/杨 晓 wrote:
->>> On 2022/9/14 14:44, Yang, Xiao/杨 晓 wrote:
->>>> On 2022/9/9 21:01, Brian Foster wrote:
->>>>> Yes.. I don't recall all the internals of the tools and test, but IIRC
->>>>> it relied on discard to perform zeroing between checkpoints or some such
->>>>> and avoid spurious failures. The purpose of running on dm-thin was
->>>>> merely to provide reliable discard zeroing behavior on the target device
->>>>> and thus to allow the test to run reliably.
->>>> Hi Brian,
->>>>
->>>> As far as I know, generic/470 was original designed to verify
->>>> mmap(MAP_SYNC) on the dm-log-writes device enabling DAX. Due to the
->>>> reason, we need to ensure that all underlying devices under
->>>> dm-log-writes device support DAX. However dm-thin device never supports
->>>> DAX so
->>>> running generic/470 with dm-thin device always returns "not run".
->>>>
->>>> Please see the difference between old and new logic:
->>>>
->>>>             old logic                          new logic
->>>> ---------------------------------------------------------------
->>>> log-writes device(DAX)                 log-writes device(DAX)
->>>>               |                                       |
->>>> PMEM0(DAX) + PMEM1(DAX)       Thin device(non-DAX) + PMEM1(DAX)
->>>>                                             |
->>>>                                           PMEM0(DAX)
->>>> ---------------------------------------------------------------
->>>>
->>>> We think dm-thin device is not a good solution for generic/470, is there
->>>> any other solution to support both discard zero and DAX?
->>>
->>> Hi Brian,
->>>
->>> I have sent a patch[1] to revert your fix because I think it's not good for
->>> generic/470 to use thin volume as my revert patch[1] describes:
->>> [1] https://lore.kernel.org/fstests/20220914090625.32207-1-yangx.jy@fujitsu.com/T/#u
->>>
->>
->> I think the history here is that generic/482 was changed over first in
->> commit 65cc9a235919 ("generic/482: use thin volume as data device"), and
->> then sometime later we realized generic/455,457,470 had the same general
->> flaw and were switched over. The dm/dax compatibility thing was probably
->> just an oversight, but I am a little curious about that because it should
-> 
-> It's not an oversight -- it used to work (albeit with EXPERIMENTAL
-> tags), and now we've broken it on fsdax as the pmem/blockdev divorce
-> progresses.
-Hi
+On Wed, Sep 14, 2022 at 10:33 PM Hao Luo <haoluo@google.com> wrote:
+>
+> On Wed, Sep 14, 2022 at 12:23 PM Amir Goldstein <amir73il@gmail.com> wrot=
+e:
+> >
+> > On Wed, Sep 14, 2022 at 9:00 PM Hao Luo <haoluo@google.com> wrote:
+> > >
+> > > On Tue, Sep 13, 2022 at 8:46 PM Amir Goldstein <amir73il@gmail.com> w=
+rote:
+> > > >
+> > > > On Tue, Sep 13, 2022 at 11:33 PM Hao Luo <haoluo@google.com> wrote:
+> > > > >
+> > > > > On Tue, Sep 13, 2022 at 11:54 AM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> [...]
+> > > > There are probably some other limitations at the moment
+> > > > related to pseudo filesystems that prevent them from being
+> > > > used as upper and/or lower fs in overlayfs.
+> > > >
+> > > > We will need to check what those limitations are and whether
+> > > > those limitations could be lifted for your specific use case.
+> > > >
+> > >
+> > > How can we approach this? Maybe I can send my patch that adds tmp dir=
+,
+> > > tmp files and xattr, attr to upstream as RFC, so you can take a look?
+> > >
+> >
+> > I don't think I need your fs to test.
+> > The only thing special in this setup as far as I can tell is the dynami=
+c
+> > cgroupfs (or cgroup2?) lower dirs.
+> >
+> > IIUC, everything worked for you except for oddities related to
+> > lower directories not appearing and not disappearing from the union.
+> > Is that correct? is that the only thing that you need a fix for?
+> >
+>
+> Yes, that's correct.
+>
+> > > > > Further, directory B could disappear from lower. When that happen=
+s, I
+> > > > > think there are two possible behaviors:
+> > > > >  - make 'file' disappear from union as well;
+> > > > >  - make 'file' and its directory accessible as well.
+> > > > >
+> > > > > In behavior 1, it will look like
+> > > > > $ tree union
+> > > > > .
+> > > > > =E2=94=94=E2=94=80=E2=94=80 A
+> > > > >     =E2=94=94=E2=94=80=E2=94=80 lower1
+> > > > >
+> > > > > In behavior 2, it will look like
+> > > > > $ tree union
+> > > > > .
+> > > > > =E2=94=94=E2=94=80=E2=94=80 A
+> > > > >     =E2=94=9C=E2=94=80=E2=94=80 B
+> > > > >     =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 file
+> > > > >     =E2=94=94=E2=94=80=E2=94=80 lower1
+> > > > >
+> > > > > IMHO, behavior 1 works better in my use case. But if the FS exper=
+ts
+> > > > > think behavior 2 makes more sense, I can work around.
+> > > > >
+> > > >
+> > > > Something that I always wanted to try is to get rid of the duplicat=
+ed
+> > > > upper fs hierarchy.
+> > > >
+> > > > It's a bit complicated to explain the details, but if your use case
+> > > > does not involve any directory renames(?), then the upper path
+> > > > for the merge directories can be index based and not hierarchical.
+> > > >
+> > >
+> > > Yeah, I don't expect directory renaming. But I can't say if there is
+> > > anyone trying to do that by accident, or by bad intention.
+> > >
+> >
+> > Your fs will return an error for rename if you did not implement it.
+> >
+> > Anyway, if you can accept behavior 2, it is much more simple.
+> > This other idea is very vague and not simple, so better not risk it.
+> >
+> > If you confirm that you only need to get uptodate view of
+> > lower dirs in union, then I will look for the patches that I have
+> > and see if they can help you.
+> >
+>
+> Yes, I acknowledge that behavior 2 works for me.
 
-Do you mean that the following patch set changed the test result of 
-generic/470 with thin-volume? (pass => not run/failure)
-https://lore.kernel.org/linux-xfs/20211129102203.2243509-1-hch@lst.de/
+OK. I took a closer look and there are some challenges.
+Nothing that cannot be fixed if you are willing to do the work.
+I will try to explain the challenges and possible solutions.
 
-> 
->> have been obvious that the change caused the test to no longer run. Did
->> something change after that to trigger that change in behavior?
->>
->>> With the revert, generic/470 can always run successfully on my environment
->>> so I wonder how to reproduce the out-of-order replay issue on XFS v5
->>> filesystem?
->>>
->>
->> I don't quite recall the characteristics of the failures beyond that we
->> were seeing spurious test failures with generic/482 that were due to
->> essentially putting the fs/log back in time in a way that wasn't quite
->> accurate due to the clearing by the logwrites tool not taking place. If
->> you wanted to reproduce in order to revisit that, perhaps start with
->> generic/482 and let it run in a loop for a while and see if it
->> eventually triggers a failure/corruption..?
->>
->>> PS: I want to reproduce the issue and try to find a better solution to fix
->>> it.
->>>
->>
->> It's been a while since I looked at any of this tooling to semi-grok how
->> it works.
-> 
-> I /think/ this was the crux of the problem, back in 2019?
-> https://lore.kernel.org/fstests/20190227061529.GF16436@dastard/
+Current overlayfs code assumes in many places that the
+lower fs is not being changed at all while overlayfs is mounted.
+As overlayfs.rst says:
 
-Agreed.
+"Changes to the underlying filesystems while part of a mounted overlay
+filesystem are not allowed.  If the underlying filesystem is changed,
+the behavior of the overlay is undefined, though it will not result in
+a crash or deadlock."
 
-> 
->> Perhaps it could learn to rely on something more explicit like
->> zero range (instead of discard?) or fall back to manual zeroing?
-> 
-> AFAICT src/log-writes/ actually /can/ do zeroing, but (a) it probably
-> ought to be adapted to call BLKZEROOUT and (b) in the worst case it
-> writes zeroes to the entire device, which is/can be slow.
-> 
-> For a (crass) example, one of my cloudy test VMs uses 34GB partitions,
-> and for cost optimization purposes we're only "paying" for the cheapest
-> tier.  Weirdly that maps to an upper limit of 6500 write iops and
-> 48MB/s(!) but that would take about 20 minutes to zero the entire
-> device if the dm-thin hack wasn't in place.  Frustratingly, it doesn't
-> support discard or write-zeroes.
+One of the most visible impacts of changes to lower later
+is that the merge dir cache is not invalidated, which is the
+immediate reason that you are seeing the ghost lower dir A/B
+in the union even if you did not create file A/B/file.
 
-Do you mean that discard zero(BLKDISCARD) is faster than both fill 
-zero(BLKZEROOUT) and write zero on user space?
+You can check if this hack fixes your first order problem:
 
-Best Regards,
-Xiao Yang
-> 
->> If the
->> eventual solution is simple and low enough overhead, it might make some
->> sense to replace the dmthin hack across the set of tests mentioned
->> above.
-> 
-> That said, for a *pmem* test you'd expect it to be faster than that...
-> 
-> --D
-> 
->> Brian
->>
->>> Best Regards,
->>> Xiao Yang
->>>
->>>>
->>>> BTW, only log-writes, stripe and linear support DAX for now.
->>>
->>
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 78f62cc1797b..4eb6fcf341de 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -326,7 +326,7 @@ static void ovl_dir_reset(struct file *file)
+        struct dentry *dentry =3D file->f_path.dentry;
+        bool is_real;
+
+-       if (cache && ovl_dentry_version_get(dentry) !=3D cache->version) {
++       if (cache /*&& ovl_dentry_version_get(dentry) !=3D cache->version*/=
+) {
+                ovl_cache_put(od, dentry);
+                od->cache =3D NULL;
+                od->cursor =3D NULL;
+---
+
+If it does, it may be acceptable to add that behavior as a mount option.
+
+But it doesn't end here, there is also lookup cache and possibly other
+issues as well related to merge dirs with ghosted lower.
+
+If you did create file A/B/file then trying to list A/B after A/B
+has gone from lower fs,  may depend on the lower fs behavior.
+Some of the issues are not related to overlayfs but to cgroupfs.
+
+For "standard" Linux fs, if you keep an open fd to a directory,
+that directory can be removed and then if you try to readdir from
+the open fd, or use the fd in one of the XXXat() syscalls,
+you will get ENOENT, because of the IS_DEADDIR(dir) checks
+in the vfs.
+
+Do you get this behavior with an open fd on a cgroupfs dir
+that has disappeared? Please check.
+
+I think that ovl_iterate() can be made more tolerant to
+ENOENT when iterating a merge dir with ghosted lower dir.
+If you run into this error when trying to list A/B, find out
+the place in the code that returns the error and I'll see
+if that error may be relaxed.
+
+The patches that I have are doing something different.
+The idea is that overlayfs can watch for lower fs changes using
+fsnotify() callbacks and do "something" proactive when they happen.
+
+My Overlayfs watch [1] patches do "something" else - they
+record the changes to lower fs when they happen, but they
+demonstrate the basic concept of watching changes in lower fs.
+
+[1] https://github.com/amir73il/overlayfs/wiki/Overlayfs-watch
+
+The "something" that overlayfs could do when a lower dir
+is removed is to invalidate the caches of the union dir and
+everything under it.
+
+There is one other small problem with this method w.r.t
+lower cgroupfs - cgroupfs does not call any fsnotify callbacks when
+directories disappear...
+
+cgroupfs is an instance of kernfs.
+kenfs is calling the fsnotify_modify() hook when kernel changes
+the content of a file:
+
+d911d9874801 kernfs: make kernfs_notify() trigger inotify events too
+
+but it does not call fsnotify_rmdir/mkdir/delete/create() like other pseudo
+fs do (debugfs, configfs, tracefs, ...) when directories appear/disappear -
+at least I don't think that it does.
+
+Please run inotifywatch on cgroupfs and find out for yourself.
+
+Hope that some of the info here can help you move forward.
+Most of it you can probably ignore.
+
+Thanks,
+Amir.
