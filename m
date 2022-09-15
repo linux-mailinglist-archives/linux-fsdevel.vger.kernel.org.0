@@ -2,94 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43BE15B925A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 03:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3739C5B92A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 04:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbiIOBts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 21:49:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38362 "EHLO
+        id S230217AbiIOC0n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 22:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbiIOBtq (ORCPT
+        with ESMTP id S230205AbiIOC0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 21:49:46 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE622186CA;
-        Wed, 14 Sep 2022 18:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1663206582; i=@fujitsu.com;
-        bh=rBcRdkltDnvoxKepJMU0xIuM7p8Qal0AgclNKzc3qas=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=ui6MUcF+UlH1/eAfKLJR7LCQlPX+3nv8qMWI2EEd22X6Xot61egARz4F3k3nMiOJ0
-         SeexaM2gaQ0mcLeWOF13rkdY9x+QBOs7W//tnZZgK3xE0rEmgq7VDwnRz9gdnOvWex
-         jbKf1OL5VxHuwn15pd+9l4DeyNW/lnh15ibTQg4UTil0by5ARECg+0mJ799c/CBA8U
-         1GFWhkxesQiTM9i89rbLRxxW8nC2egkG10KDvpbL7j6LSCNSUsiwXsQceA0zB5aRF4
-         /vV0JfMRho33AjNh0IlInpn1bi8twIalO01P9WLf8HHqVAfDL6cXfdcnwyBEABGnku
-         byrqLgGn+6/Kw==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRWlGSWpSXmKPExsViZ8ORqLulRSn
-  ZYHanrsX0qRcYLbYcu8docfkJn8XpCYuYLHa/vslmsWfvSRaLy7vmsFncW/Of1WLXnx3sFit/
-  /GF14PI4tUjCY/MKLY/Fe14yeWxa1cnmsenTJHaPF5tnMnp8fHqLxePzJrkAjijWzLyk/IoE1
-  oyL6xcyF/xRq2i5PYetgfGifBcjF4eQwBZGib9di1ghnOVMEls+tTBDONsZJc6evMXSxcjJwS
-  tgJ3Fm9g1GEJtFQFXi/tcGVoi4oMTJmU/AakQFkiXuHl4PZgsLeEns3/GICcQWEdCUOPLtGhP
-  IUGaBT4wSM47/YYPYcJ5RovXoHnaQKjYBHYkLC/6CTeUU0JC43N4Mto1ZwEJi8ZuD7BC2vETz
-  1tlA53FwSAgoSczsjgcJSwhUSDROP8QEYatJXD23iXkCo9AsJPfNQjJpFpJJCxiZVzFaJRVlp
-  meU5CZm5ugaGhjoGhqa6hpb6loY6SVW6SbqpZbqlqcWl+gCueXFeqnFxXrFlbnJOSl6eaklmx
-  iBEZlSrB60g/Hbip96hxglOZiURHmZ5JSShfiS8lMqMxKLM+KLSnNSiw8xynBwKEnwPq8Hygk
-  WpaanVqRl5gCTA0xagoNHSYT3E0iat7ggMbc4Mx0idYrRmGNtw4G9zBxTZ//bzyzEkpeflyol
-  zuvVBFQqAFKaUZoHNwiWtC4xykoJ8zIyMDAI8RSkFuVmlqDKv2IU52BUEuaNbgSawpOZVwK37
-  xXQKUxApxhZy4OcUpKIkJJqYHLYFNHWuCl4c/yfchGtZEH2RbrGorXGGzVDNK63//tirubEPq
-  sqVb93SXeJ3L8Vsn/lee6d3mwe/kJYY8b3jlrjMIbc2w3TtDnCz7mrL+s8wr59KddkxpcMB/0
-  Wv8uOKn6h8fyhp9C8q9dvPl5W+zG1K2jjqm2+D9c0Wpj18CrJZT40OGPylXf3Mvst7exbRVNy
-  DLfeurbz2brHZxL+6/6/MOl9+asm432lmmdfr+NarXb3qc29H8Ea1xTvJ93QFHRcaOx/+Iily
-  C3RCQ++X4/rvNzs9E/n9411bEsSghuj17xTnpabfKxm7krL0uM27YfZGGZJGQnOdzsg+I/hqk
-  WA/YosFf9Tkf8cTr/UXqnEUpyRaKjFXFScCAAm/o6j1QMAAA==
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-2.tower-548.messagelabs.com!1663206580!18747!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.87.3; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 9520 invoked from network); 15 Sep 2022 01:49:40 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-2.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 15 Sep 2022 01:49:40 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 60F7210018D;
-        Thu, 15 Sep 2022 02:49:40 +0100 (BST)
-Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 5442A100043;
-        Thu, 15 Sep 2022 02:49:40 +0100 (BST)
-Received: from [192.168.22.78] (10.167.225.141) by
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 15 Sep 2022 02:49:36 +0100
-Message-ID: <048b5294-b60d-cbb7-76b7-8f0c69dba23b@fujitsu.com>
-Date:   Thu, 15 Sep 2022 09:49:30 +0800
+        Wed, 14 Sep 2022 22:26:41 -0400
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1574C61C;
+        Wed, 14 Sep 2022 19:26:39 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VPqk4AT_1663208795;
+Received: from 30.221.129.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VPqk4AT_1663208795)
+          by smtp.aliyun-inc.com;
+          Thu, 15 Sep 2022 10:26:36 +0800
+Message-ID: <6606b1d2-7612-2e9c-19f3-8790257219d3@linux.alibaba.com>
+Date:   Thu, 15 Sep 2022 10:26:35 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 3/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-To:     "Darrick J. Wong" <djwong@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
-References: <9e9521a4-6e07-e226-2814-b78a2451656b@fujitsu.com>
- <1662114961-66-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1662114961-66-4-git-send-email-ruansy.fnst@fujitsu.com>
- <YyIaP4EFNaYhqKkQ@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <YyIaP4EFNaYhqKkQ@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH V3 2/6] erofs: code clean up for fscache
+Content-Language: en-US
+To:     Jia Zhu <zhujia.zj@bytedance.com>, linux-erofs@lists.ozlabs.org,
+        xiang@kernel.org, chao@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, huyue2@coolpad.com
+References: <20220914105041.42970-1-zhujia.zj@bytedance.com>
+ <20220914105041.42970-3-zhujia.zj@bytedance.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20220914105041.42970-3-zhujia.zj@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-11.5 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -99,147 +48,230 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-在 2022/9/15 2:15, Darrick J. Wong 写道:
-> On Fri, Sep 02, 2022 at 10:36:01AM +0000, Shiyang Ruan wrote:
->> This patch is inspired by Dan's "mm, dax, pmem: Introduce
->> dev_pagemap_failure()"[1].  With the help of dax_holder and
->> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
->> (or mapped device) on it to unmap all files in use and notify processes
->> who are using those files.
->>
->> Call trace:
->> trigger unbind
->>   -> unbind_store()
->>    -> ... (skip)
->>     -> devres_release_all()   # was pmem driver ->remove() in v1
->>      -> kill_dax()
->>       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
->>        -> xfs_dax_notify_failure()
->>
->> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
->> event.  So do not shutdown filesystem directly if something not
->> supported, or if failure range includes metadata area.  Make sure all
->> files and processes are handled correctly.
->>
->> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
->>
->> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
->> ---
->>   drivers/dax/super.c         |  3 ++-
->>   fs/xfs/xfs_notify_failure.c | 23 +++++++++++++++++++++++
->>   include/linux/mm.h          |  1 +
->>   3 files changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
->> index 9b5e2a5eb0ae..cf9a64563fbe 100644
->> --- a/drivers/dax/super.c
->> +++ b/drivers/dax/super.c
->> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
->>   		return;
->>   
->>   	if (dax_dev->holder_data != NULL)
->> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
->> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
->> +				MF_MEM_PRE_REMOVE);
->>   
->>   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
->>   	synchronize_srcu(&dax_srcu);
->> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
->> index 3830f908e215..5e04ba7fa403 100644
->> --- a/fs/xfs/xfs_notify_failure.c
->> +++ b/fs/xfs/xfs_notify_failure.c
->> @@ -22,6 +22,7 @@
->>   
->>   #include <linux/mm.h>
->>   #include <linux/dax.h>
->> +#include <linux/fs.h>
->>   
->>   struct xfs_failure_info {
->>   	xfs_agblock_t		startblock;
->> @@ -77,6 +78,9 @@ xfs_dax_failure_fn(
->>   
->>   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
->>   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
->> +		/* The device is about to be removed.  Not a really failure. */
->> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
->> +			return 0;
->>   		notify->want_shutdown = true;
->>   		return 0;
->>   	}
->> @@ -182,12 +186,23 @@ xfs_dax_notify_failure(
->>   	struct xfs_mount	*mp = dax_holder(dax_dev);
->>   	u64			ddev_start;
->>   	u64			ddev_end;
->> +	int			error;
->>   
->>   	if (!(mp->m_super->s_flags & SB_BORN)) {
->>   		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
->>   		return -EIO;
->>   	}
->>   
->> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
->> +		xfs_info(mp, "device is about to be removed!");
->> +		down_write(&mp->m_super->s_umount);
->> +		error = sync_filesystem(mp->m_super);
->> +		drop_pagecache_sb(mp->m_super, NULL);
->> +		up_write(&mp->m_super->s_umount);
->> +		if (error)
->> +			return error;
->> +	}
->> +
->>   	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
->>   		xfs_debug(mp,
->>   			 "notify_failure() not supported on realtime device!");
->> @@ -196,6 +211,8 @@ xfs_dax_notify_failure(
->>   
->>   	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
->>   	    mp->m_logdev_targp != mp->m_ddev_targp) {
->> +		if (mf_flags & MF_MEM_PRE_REMOVE)
->> +			return 0;
->>   		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
->>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->>   		return -EFSCORRUPTED;
->> @@ -209,6 +226,12 @@ xfs_dax_notify_failure(
->>   	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
->>   	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
->>   
->> +	/* Notify failure on the whole device */
->> +	if (offset == 0 && len == U64_MAX) {
->> +		offset = ddev_start;
->> +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
->> +	}
+On 9/14/22 6:50 PM, Jia Zhu wrote:
+> Some cleanups. No logic changes.
 > 
-> I wonder, won't the trimming code below take care of this?
+> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
+> ---
+>  fs/erofs/fscache.c  | 26 +++++++++++++++-----------
+>  fs/erofs/internal.h | 17 ++++++++---------
+>  fs/erofs/super.c    | 22 +++++++++-------------
+>  3 files changed, 32 insertions(+), 33 deletions(-)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index 8e01d89c3319..4159cf781924 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -417,9 +417,8 @@ const struct address_space_operations erofs_fscache_access_aops = {
+>  	.readahead = erofs_fscache_readahead,
+>  };
+>  
+> -int erofs_fscache_register_cookie(struct super_block *sb,
+> -				  struct erofs_fscache **fscache,
+> -				  char *name, bool need_inode)
+> +struct erofs_fscache *erofs_fscache_register_cookie(struct super_block *sb,
+> +						     char *name, bool need_inode)
+>  {
+>  	struct fscache_volume *volume = EROFS_SB(sb)->volume;
+>  	struct erofs_fscache *ctx;
+> @@ -428,7 +427,7 @@ int erofs_fscache_register_cookie(struct super_block *sb,
+>  
+>  	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	cookie = fscache_acquire_cookie(volume, FSCACHE_ADV_WANT_CACHE_SIZE,
+>  					name, strlen(name), NULL, 0, 0);
+> @@ -458,8 +457,7 @@ int erofs_fscache_register_cookie(struct super_block *sb,
+>  		ctx->inode = inode;
+>  	}
+>  
+> -	*fscache = ctx;
+> -	return 0;
+> +	return ctx;
+>  
+>  err_cookie:
+>  	fscache_unuse_cookie(ctx->cookie, NULL, NULL);
+> @@ -467,13 +465,11 @@ int erofs_fscache_register_cookie(struct super_block *sb,
+>  	ctx->cookie = NULL;
+>  err:
+>  	kfree(ctx);
+> -	return ret;
+> +	return ERR_PTR(ret);
+>  }
+>  
+> -void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+> +void erofs_fscache_unregister_cookie(struct erofs_fscache *ctx)
+>  {
+> -	struct erofs_fscache *ctx = *fscache;
+> -
+>  	if (!ctx)
+>  		return;
+>  
+> @@ -485,13 +481,13 @@ void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+>  	ctx->inode = NULL;
+>  
+>  	kfree(ctx);
+> -	*fscache = NULL;
+>  }
+>  
+>  int erofs_fscache_register_fs(struct super_block *sb)
+>  {
+>  	struct erofs_sb_info *sbi = EROFS_SB(sb);
+>  	struct fscache_volume *volume;
+> +	struct erofs_fscache *fscache;
+>  	char *name;
+>  	int ret = 0;
+>  
+> @@ -508,6 +504,12 @@ int erofs_fscache_register_fs(struct super_block *sb)
+>  
+>  	sbi->volume = volume;
+>  	kfree(name);
 
-The len is U64_MAX, so 'offset + len - 1' will overflow.  That can't be 
-handled correctly by the trimming code below.
+If the above fscache_acquire_volume() fails, we'd better return directly
+without going on registering cookie.
+
+> +
+> +	fscache = erofs_fscache_register_cookie(sb, sbi->opt.fsid, true);
+> +	if (IS_ERR(fscache))
+> +		return PTR_ERR(fscache);
+
+We'd better add some comment like "the registered volume will be cleaned
+up in .kill_sb() in error case".
 
 
---
+> +
+> +	sbi->s_fscache = fscache;
+>  	return ret;
+>  }
+>  
+> @@ -515,6 +517,8 @@ void erofs_fscache_unregister_fs(struct super_block *sb)
+>  {
+>  	struct erofs_sb_info *sbi = EROFS_SB(sb);
+>  
+> +	erofs_fscache_unregister_cookie(sbi->s_fscache);
+>  	fscache_relinquish_volume(sbi->volume, NULL, false);
+> +	sbi->s_fscache = NULL;
+>  	sbi->volume = NULL;
+>  }
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index cfee49d33b95..aa71eb65e965 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -610,27 +610,26 @@ static inline int z_erofs_load_lzma_config(struct super_block *sb,
+>  int erofs_fscache_register_fs(struct super_block *sb);
+>  void erofs_fscache_unregister_fs(struct super_block *sb);
+>  
+> -int erofs_fscache_register_cookie(struct super_block *sb,
+> -				  struct erofs_fscache **fscache,
+> -				  char *name, bool need_inode);
+> -void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache);
+> +struct erofs_fscache *erofs_fscache_register_cookie(struct super_block *sb,
+> +						     char *name, bool need_inode);
+> +void erofs_fscache_unregister_cookie(struct erofs_fscache *fscache);
+>  
+>  extern const struct address_space_operations erofs_fscache_access_aops;
+>  #else
+>  static inline int erofs_fscache_register_fs(struct super_block *sb)
+>  {
+> -	return 0;
+> +	return -EOPNOTSUPP;
+>  }
+>  static inline void erofs_fscache_unregister_fs(struct super_block *sb) {}
+>  
+> -static inline int erofs_fscache_register_cookie(struct super_block *sb,
+> -						struct erofs_fscache **fscache,
+> -						char *name, bool need_inode)
+> +static inline
+> +struct erofs_fscache *erofs_fscache_register_cookie(struct super_block *sb,
+> +						     char *name, bool need_inode)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+> +static inline void erofs_fscache_unregister_cookie(struct erofs_fscache *fscache)
+>  {
+>  }
+>  #endif
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index 9716d355a63e..7aa57dcebf31 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -224,10 +224,10 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+>  			     struct erofs_device_info *dif, erofs_off_t *pos)
+>  {
+>  	struct erofs_sb_info *sbi = EROFS_SB(sb);
+> +	struct erofs_fscache *fscache;
+>  	struct erofs_deviceslot *dis;
+>  	struct block_device *bdev;
+>  	void *ptr;
+> -	int ret;
+>  
+>  	ptr = erofs_read_metabuf(buf, sb, erofs_blknr(*pos), EROFS_KMAP);
+>  	if (IS_ERR(ptr))
+> @@ -245,10 +245,10 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
+>  	}
+>  
+>  	if (erofs_is_fscache_mode(sb)) {
+> -		ret = erofs_fscache_register_cookie(sb, &dif->fscache,
+> -				dif->path, false);
+> -		if (ret)
+> -			return ret;
+> +		fscache = erofs_fscache_register_cookie(sb, dif->path, false);
+> +		if (IS_ERR(fscache))
+> +			return PTR_ERR(fscache);
+> +		dif->fscache = fscache;
+>  	} else {
+>  		bdev = blkdev_get_by_path(dif->path, FMODE_READ | FMODE_EXCL,
+>  					  sb->s_type);
+> @@ -706,11 +706,6 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		if (err)
+>  			return err;
+>  
+> -		err = erofs_fscache_register_cookie(sb, &sbi->s_fscache,
+> -						    sbi->opt.fsid, true);
+> -		if (err)
+> -			return err;
+> -
+>  		err = super_setup_bdi(sb);
+>  		if (err)
+>  			return err;
+> @@ -817,7 +812,8 @@ static int erofs_release_device_info(int id, void *ptr, void *data)
+>  	fs_put_dax(dif->dax_dev, NULL);
+>  	if (dif->bdev)
+>  		blkdev_put(dif->bdev, FMODE_READ | FMODE_EXCL);
+> -	erofs_fscache_unregister_cookie(&dif->fscache);
+> +	erofs_fscache_unregister_cookie(dif->fscache);
+> +	dif->fscache = NULL;
+>  	kfree(dif->path);
+>  	kfree(dif);
+>  	return 0;
+> @@ -889,7 +885,6 @@ static void erofs_kill_sb(struct super_block *sb)
+>  
+>  	erofs_free_dev_context(sbi->devs);
+>  	fs_put_dax(sbi->dax_dev, NULL);
+> -	erofs_fscache_unregister_cookie(&sbi->s_fscache);
+>  	erofs_fscache_unregister_fs(sb);
+>  	kfree(sbi->opt.fsid);
+>  	kfree(sbi);
+> @@ -909,7 +904,8 @@ static void erofs_put_super(struct super_block *sb)
+>  	iput(sbi->managed_cache);
+>  	sbi->managed_cache = NULL;
+>  #endif
+> -	erofs_fscache_unregister_cookie(&sbi->s_fscache);
+> +	erofs_fscache_unregister_cookie(sbi->s_fscache);
+> +	sbi->s_fscache = NULL;
+
+How about calling erofs_fscache_unregister_fs() here? It shall be okay
+to also unregister volume here.
+
+>  }
+>  
+>  static struct file_system_type erofs_fs_type = {
+
+-- 
 Thanks,
-Ruan.
-
-> 
-> The rest of the patch looks ok to me.
-> 
-> --D
-> 
->> +
->>   	/* Ignore the range out of filesystem area */
->>   	if (offset + len - 1 < ddev_start)
->>   		return -ENXIO;
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 21f8b27bd9fd..9122a1c57dd2 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -3183,6 +3183,7 @@ enum mf_flags {
->>   	MF_UNPOISON = 1 << 4,
->>   	MF_SW_SIMULATED = 1 << 5,
->>   	MF_NO_RETRY = 1 << 6,
->> +	MF_MEM_PRE_REMOVE = 1 << 7,
->>   };
->>   int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->>   		      unsigned long count, int mf_flags);
->> -- 
->> 2.37.2
->>
+Jingbo
