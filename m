@@ -2,117 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A173A5B96CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 11:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFBBF5B9748
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 11:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbiIOJAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 05:00:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56100 "EHLO
+        id S229647AbiIOJRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 05:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbiIOJAB (ORCPT
+        with ESMTP id S229510AbiIOJRv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 05:00:01 -0400
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CA62B634;
-        Thu, 15 Sep 2022 01:59:54 -0700 (PDT)
-Received: by mail-pg1-f180.google.com with SMTP id 78so16690781pgb.13;
-        Thu, 15 Sep 2022 01:59:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=LgyjDSHm06cPee7hqq0YhgTi9iCJukSRg0rhaRDNcHk=;
-        b=QEh3Wa7oETLzEJVYfPdZq+coHi82ecqj0dGk9ICEMhD/J/t6WAjPzFBRV8qbi5gebe
-         VF+H1k2Rz6h3h9JiJtYksmqAAnHleI+uxnyq0LM8E73J6u53FFc6SKJBaS2bZNJwH7lF
-         I3AZ3J2+iOldDE/HtlMtEEvaW6Bwl4ORxwrkQYrdQibgJwXix1Q7YobpDL9UAQeq1BHd
-         /CovHybA/DBORCeflx18aP0Nopj6cCbjVNCpX0Lx5lZPV6HUAoq5GKrRVmAG6x6cOb8l
-         kqXSj/FE4LYYJbHoTO4R+bCMhM6VFLh5Q/zkOMLhNHlEneyJdxbTzRMxkMWW4C2+lr8A
-         9nDQ==
-X-Gm-Message-State: ACgBeo0bdk6AIAExC9AkGiUxbIuiCmpcCzmwZy7NxwYxpgJQffKV1wFJ
-        ogBHru7BIcnpD+k77Fg4W3EGNDi7QAywKN4w
-X-Google-Smtp-Source: AA6agR4WU7ZFHbHVFtlrqh6Z/nov+94pXR2gXasc4E3LWh/IVzcVIhhv4YrnTj6lp0euM6VzNvlMaw==
-X-Received: by 2002:a63:ff59:0:b0:439:db5:5da9 with SMTP id s25-20020a63ff59000000b004390db55da9mr15350857pgk.88.1663232393120;
-        Thu, 15 Sep 2022 01:59:53 -0700 (PDT)
-Received: from [192.168.123.231] (144.34.241.68.16clouds.com. [144.34.241.68])
-        by smtp.gmail.com with ESMTPSA id a23-20020aa79717000000b0053e3112e84bsm11908800pfg.50.2022.09.15.01.59.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Sep 2022 01:59:52 -0700 (PDT)
-Message-ID: <1a2ac6fb-1a02-de99-1b4e-18360bd34d55@kylinos.cn>
-Date:   Thu, 15 Sep 2022 16:59:46 +0800
+        Thu, 15 Sep 2022 05:17:51 -0400
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC2FB41;
+        Thu, 15 Sep 2022 02:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1663233471; x=1694769471;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pQo+/JNgUJ+QgvySKCUdfpookNqLFHbWcJ3oz/oxzAw=;
+  b=Vpt+uNUl6XbUsskrTsXKGfeJHFed250n63nIb/cvJLrSlzot7O1RAmzy
+   EZ+0rdcAekKxP//bnty9RtNcm8cBc9JIhcmc5Iybwk6wbfVl8ZM/KszIU
+   DXSynYwoyPzzPNNZ2LYefrZagKn/Dj+k/XqA3zhLXQkVKUsFovg9oEYjU
+   M=;
+X-IronPort-AV: E=Sophos;i="5.93,317,1654560000"; 
+   d="scan'208";a="130381582"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1d-8bf71a74.us-east-1.amazon.com) ([10.25.36.214])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 09:15:48 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1d-8bf71a74.us-east-1.amazon.com (Postfix) with ESMTPS id DDED9C17A6;
+        Thu, 15 Sep 2022 09:15:46 +0000 (UTC)
+Received: from EX19D013UWB002.ant.amazon.com (10.13.138.21) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.38; Thu, 15 Sep 2022 09:15:46 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX19D013UWB002.ant.amazon.com (10.13.138.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.12;
+ Thu, 15 Sep 2022 09:15:46 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP
+ Server id 15.0.1497.38 via Frontend Transport; Thu, 15 Sep 2022 09:15:45
+ +0000
+Received: by dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com (Postfix, from userid 14301484)
+        id 173E34B3C; Thu, 15 Sep 2022 09:15:44 +0000 (UTC)
+From:   Eliav Farber <farbere@amazon.com>
+To:     <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
+        <yangyicong@hisilicon.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <andriy.shevchenko@intel.com>, <farbere@amazon.com>,
+        <hhhawa@amazon.com>, <jonnyc@amazon.com>
+Subject: [PATCH] libfs: fix error format in simple_attr_write()
+Date:   Thu, 15 Sep 2022 09:15:44 +0000
+Message-ID: <20220915091544.42767-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] mm/filemap: Make folio_put_wait_locked static
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, k2ci <kernel-bot@kylinos.cn>,
-        linux-fsdevel@vger.kernel.org
-References: <20220914015836.3193197-1-sunke@kylinos.cn>
- <44af62e3-8f51-bf0a-509e-4a5fdbf62b29@kylinos.cn>
- <YyLUlQbQi3O0ntwY@casper.infradead.org>
-From:   Ke Sun <sunke@kylinos.cn>
-In-Reply-To: <YyLUlQbQi3O0ntwY@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Status: No, score=-11.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+In commit 488dac0c9237 ("libfs: fix error cast of negative value in
+simple_attr_write()"), simple_attr_write() was changed to use kstrtoull()
+instead of simple_strtoll() to convert a string got from a user.
+A user trying to set a negative value will get an error.
 
-On 2022/9/15 15:30, Matthew Wilcox wrote:
-> On Thu, Sep 15, 2022 at 08:45:33AM +0800, Ke Sun wrote:
->> Ping.
-> Don't be rude.  I'm at a conference this week and on holiday next week.
-> This is hardly an urgent patch.
-So sorry to bother you. Some duplicate emails were sent due to issues 
-with mailbox app settings.
->> On 2022/9/14 09:58, Ke Sun wrote:
->>> It's only used in mm/filemap.c, since commit <ffa65753c431>
->>> ("mm/migrate.c: rework migration_entry_wait() to not take a pageref").
->>>
->>> Make it static.
->>>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: linux-mm@kvack.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Reported-by: k2ci <kernel-bot@kylinos.cn>
->>> Signed-off-by: Ke Sun <sunke@kylinos.cn>
->>> ---
->>> include/linux/pagemap.h | 1 -
->>> mm/filemap.c | 2 +-
->>> 2 files changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->>> index 0178b2040ea3..82880993dd1a 100644
->>> --- a/include/linux/pagemap.h
->>> +++ b/include/linux/pagemap.h
->>> @@ -1042,7 +1042,6 @@ static inline int
->>> wait_on_page_locked_killable(struct page *page)
->>> return folio_wait_locked_killable(page_folio(page));
->>> }
->>> -int folio_put_wait_locked(struct folio *folio, int state);
->>> void wait_on_page_writeback(struct page *page);
->>> void folio_wait_writeback(struct folio *folio);
->>> int folio_wait_writeback_killable(struct folio *folio);
->>> diff --git a/mm/filemap.c b/mm/filemap.c
->>> index 15800334147b..ade9b7bfe7fc 100644
->>> --- a/mm/filemap.c
->>> +++ b/mm/filemap.c
->>> @@ -1467,7 +1467,7 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
->>> *
->>> * Return: 0 if the folio was unlocked or -EINTR if interrupted by a
->>> signal.
->>> */
->>> -int folio_put_wait_locked(struct folio *folio, int state)
->>> +static int folio_put_wait_locked(struct folio *folio, int state)
->>> {
->>> return folio_wait_bit_common(folio, PG_locked, state, DROP);
->>> }
+This is wrong since it breaks all the places that use
+DEFINE_DEBUGFS_ATTRIBUTE() with format of a signed integer.
+
+For the record there are 43 current users of signed integer which are
+likely to be effected by this:
+
+$ git grep -n -A1 -w DEFINE_DEBUGFS_ATTRIBUTE | grep ');' |
+sed 's,.*\(".*%.*"\).*,\1,' | sort | uniq -c
+  1 "%08llx\n"
+  5 "0x%016llx\n"
+  5 "0x%02llx\n"
+  5 "0x%04llx\n"
+ 13 "0x%08llx\n"
+  1 "0x%4.4llx\n"
+  3 "0x%.4llx\n"
+  4 "0x%llx\n"
+  1 "%1lld\n"
+ 40 "%lld\n"
+  2 "%lli\n"
+129 "%llu\n"
+  1 "%#llx\n"
+  2 "%llx\n"
+
+u64 is not an issue for negative numbers.
+The %lld and %llu in any case are for 64-bit value, representing it as
+unsigned simplifies the generic code, but it doesn't mean we can't keep
+their signed value if we know that.
+
+This change uses sscanf() to fix the problem since it does the conversion
+based on the supplied format string.
+
+Fixes: 488dac0c9237 ("libfs: fix error cast of negative value in simple_attr_write()")
+Signed-off-by: Eliav Farber <farbere@amazon.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+---
+ fs/libfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 31b0ddf01c31..4815c6b4fa02 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1016,9 +1016,12 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 
+ 	attr->set_buf[size] = '\0';
+-	ret = kstrtoull(attr->set_buf, 0, &val);
+-	if (ret)
++	ret = sscanf(attr->set_buf, attr->fmt, &val);
++	if (ret != 1) {
++		ret = -EINVAL;
+ 		goto out;
++	}
++
+ 	ret = attr->set(attr->data, val);
+ 	if (ret == 0)
+ 		ret = len; /* on success, claim we got the whole input */
+-- 
+2.37.1
+
