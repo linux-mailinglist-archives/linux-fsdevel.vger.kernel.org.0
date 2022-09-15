@@ -2,108 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9525B93B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 06:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BECF5B93FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 07:43:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbiIOEiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 00:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58928 "EHLO
+        id S229722AbiIOFnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 01:43:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiIOEiN (ORCPT
+        with ESMTP id S229523AbiIOFnt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 00:38:13 -0400
-Received: from conssluserg-01.nifty.com (conssluserg-01.nifty.com [210.131.2.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 400129082A;
-        Wed, 14 Sep 2022 21:38:12 -0700 (PDT)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 28F4bdIQ010245;
-        Thu, 15 Sep 2022 13:37:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 28F4bdIQ010245
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1663216660;
-        bh=DTM4YhijXyqcWbuvEdtEKpJz/qh9PvPxWAryO5oWxio=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ON3vNImgG/4YQMlg4PnTOgCrUDwC19e8KSxLihceviJOQd7o4BE4dML/KgP3ThV5o
-         CkvL6z97u0Dmyt+uBXA8hAJwSif4vh/SY8Yaqe6L0PsQRtFEKtgex9cnp/GIbdYxU6
-         dBpLVB4jnfvh3Xu7N4KMQ1d3HvJnPIqEwxLw+Sl9F1UpJon1OsrkNwPhwW/U87nb3C
-         54vjRH8N33825QGNH0fVlunDMyFic2b/HgPMPBTJH64EyEyTe4bhWXFWmw/K7PeDCs
-         gvHOU/oJe/1tnp843XFUltfU+0iWr6W2xNcEwM2LuS4l25xpDtGpaJXJWXKNwOzM7s
-         KH5nmcrw/AZAw==
-X-Nifty-SrcIP: [209.85.160.49]
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-127d10b4f19so45771848fac.9;
-        Wed, 14 Sep 2022 21:37:39 -0700 (PDT)
-X-Gm-Message-State: ACgBeo3979GuUQQEwjnV3pUUbAPDAWQmsPGUc41OPgClGs/Rjq7YCPba
-        a5BX7AC0dTTUIC9zyiU5Pd99pTDd2vFantrC+Tc=
-X-Google-Smtp-Source: AA6agR7b9TaS7ATuSBZ6wotnPypejf9sn5hN1J5SWKFwwD+u8ZLZcO5EGyIde2NLPjFovv7glVrxVbUZ7xcWaPi8Uh8=
-X-Received: by 2002:a05:6870:c58b:b0:10b:d21d:ad5e with SMTP id
- ba11-20020a056870c58b00b0010bd21dad5emr4235164oab.287.1663216658927; Wed, 14
- Sep 2022 21:37:38 -0700 (PDT)
+        Thu, 15 Sep 2022 01:43:49 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0327CB4D;
+        Wed, 14 Sep 2022 22:43:45 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VPrVL78_1663220621;
+Received: from 30.221.129.91(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VPrVL78_1663220621)
+          by smtp.aliyun-inc.com;
+          Thu, 15 Sep 2022 13:43:42 +0800
+Message-ID: <c566e53c-a27a-9c5a-0b19-c55f6cf45d78@linux.alibaba.com>
+Date:   Thu, 15 Sep 2022 13:43:41 +0800
 MIME-Version: 1.0
-References: <20220908113449.259942-1-fe@dev.tdt.de> <CAK7LNAT3cyv07p7AZ54D=HOZRZ7-zLgMM+YPNLzcPidpDvXZgA@mail.gmail.com>
- <c8577c14a1663cbdea70534c086c247c@dev.tdt.de>
-In-Reply-To: <c8577c14a1663cbdea70534c086c247c@dev.tdt.de>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Thu, 15 Sep 2022 13:37:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARfQodG3tSYBs7ZAzsbkdwDS0=g=e8qJStfBi3BGut7Fw@mail.gmail.com>
-Message-ID: <CAK7LNARfQodG3tSYBs7ZAzsbkdwDS0=g=e8qJStfBi3BGut7Fw@mail.gmail.com>
-Subject: Re: [PATCH] fs/proc: add compile time info
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Eckert.Florian@googlemail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH V3 5/6] erofs: introduce a pseudo mnt to manage shared
+ cookies
+Content-Language: en-US
+To:     Jia Zhu <zhujia.zj@bytedance.com>, linux-erofs@lists.ozlabs.org,
+        xiang@kernel.org, chao@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, huyue2@coolpad.com
+References: <20220914105041.42970-1-zhujia.zj@bytedance.com>
+ <20220914105041.42970-6-zhujia.zj@bytedance.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20220914105041.42970-6-zhujia.zj@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-11.5 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 12, 2022 at 6:42 PM Florian Eckert <fe@dev.tdt.de> wrote:
->
-> Hello Masahiro,
->
-> thanks for your feedback.
->
-> > https://patchwork.kernel.org/project/linux-kbuild/patch/20220828024003.28873-6-masahiroy@kernel.org/
-> > lands, nobody cannot reference KBUILD_BUILD_TIMESTAMP,
-> > then this whack-a-mole game will end.
->
-> I was not aware of that problem. Thanks for the link.
->
-> I understood that this is a bad idea to create the timestamp for proc
-> like this!
-> But how does it look in principle to offer the build timestamp in proc
-> for reading?
-> You have only made your point about creating the timestamp but not about
-> reading it out via the proc directory.
->
-> So far the timestamp is only readable as a string via dmesg.
 
 
-init/version.c is the only file that can depend on the output of
-the 'date' command.
+On 9/14/22 6:50 PM, Jia Zhu wrote:
+> Use a pseudo mnt to manage shared cookies.
+> 
+> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
+> ---
+>  fs/erofs/fscache.c  | 13 +++++++++++++
+>  fs/erofs/internal.h |  1 +
+>  fs/erofs/super.c    | 31 +++++++++++++++++++++++++++++--
+>  3 files changed, 43 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index b2100dc67cde..4e0a441afb7d 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -8,6 +8,7 @@
+>  
+>  static DEFINE_MUTEX(erofs_domain_list_lock);
+>  static LIST_HEAD(erofs_domain_list);
+> +static struct vfsmount *erofs_pseudo_mnt;
+>  
+>  static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
+>  					     loff_t start, size_t len)
+> @@ -436,6 +437,10 @@ static void erofs_fscache_domain_put(struct erofs_domain *domain)
+>  		fscache_relinquish_volume(domain->volume, NULL, false);
+>  		mutex_lock(&erofs_domain_list_lock);
+>  		list_del(&domain->list);
+> +		if (list_empty(&erofs_domain_list)) {
+> +			kern_unmount(erofs_pseudo_mnt);
+> +			erofs_pseudo_mnt = NULL;
+> +		}
+>  		mutex_unlock(&erofs_domain_list_lock);
+>  		kfree(domain->domain_id);
+>  		kfree(domain);
+> @@ -489,6 +494,14 @@ static int erofs_fscache_init_domain(struct super_block *sb)
+>  	if (err)
+>  		goto out;
+>  
+> +	if (!erofs_pseudo_mnt) {
+> +		erofs_pseudo_mnt = kern_mount(&erofs_fs_type);
+> +		if (IS_ERR(erofs_pseudo_mnt)) {
+> +			err = PTR_ERR(erofs_pseudo_mnt);
+> +			goto out;
 
+Comment like "sbi->volume will be cleaned up in .kill_sb() in the error
+path" is needed here. But personally I prefer the function is
+self-maintained, i.e. the error path is handled locally, which is more
+intuitive. The same with the error path handling I had pointed in patch 2.
 
-You can follow what 'linux_proc_banner' does.
-
-Define it in init/version.c, and declare it somewhere in a header file.
-
-
-
-
-
-> Best regards
->
-> Florian
-
-
+> +		}
+> +	}
+> +
+>  	domain->volume = sbi->volume;
+>  	refcount_set(&domain->ref, 1);
+>  	mutex_init(&domain->mutex);
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 5ce6889d6f1d..4dd0b545755a 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -403,6 +403,7 @@ struct page *erofs_grab_cache_page_nowait(struct address_space *mapping,
+>  }
+>  
+>  extern const struct super_operations erofs_sops;
+> +extern struct file_system_type erofs_fs_type;
+>  
+>  extern const struct address_space_operations erofs_raw_access_aops;
+>  extern const struct address_space_operations z_erofs_aops;
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index 856758ee4869..ced1d2fd6e4b 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -688,6 +688,13 @@ static const struct export_operations erofs_export_ops = {
+>  	.get_parent = erofs_get_parent,
+>  };
+>  
+> +static int erofs_fc_fill_pseudo_super(struct super_block *sb, struct fs_context *fc)
+> +{
+> +	static const struct tree_descr empty_descr = {""};
+> +
+> +	return simple_fill_super(sb, EROFS_SUPER_MAGIC, &empty_descr);
+> +}
+> +
+>  static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	struct inode *inode;
+> @@ -789,6 +796,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	return 0;
+>  }
+>  
+> +static int erofs_fc_anon_get_tree(struct fs_context *fc)
+> +{
+> +	return get_tree_nodev(fc, erofs_fc_fill_pseudo_super);
+> +}
+> +
+>  static int erofs_fc_get_tree(struct fs_context *fc)
+>  {
+>  	struct erofs_fs_context *ctx = fc->fs_private;
+> @@ -858,10 +870,20 @@ static const struct fs_context_operations erofs_context_ops = {
+>  	.free		= erofs_fc_free,
+>  };
+>  
+> +static const struct fs_context_operations erofs_anon_context_ops = {
+> +	.get_tree       = erofs_fc_anon_get_tree,
+> +};
+> +
+>  static int erofs_init_fs_context(struct fs_context *fc)
+>  {
+> -	struct erofs_fs_context *ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	struct erofs_fs_context *ctx;
+> +
+> +	if (fc->sb_flags & SB_KERNMOUNT) {
+> +		fc->ops = &erofs_anon_context_ops;
+> +		return 0;
+> +	}
+>  
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+>  		return -ENOMEM;
+>  	ctx->devs = kzalloc(sizeof(struct erofs_dev_context), GFP_KERNEL);
+> @@ -888,6 +910,11 @@ static void erofs_kill_sb(struct super_block *sb)
+>  
+>  	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
+>  
+> +	if (sb->s_flags & SB_KERNMOUNT) {
+> +		kill_litter_super(sb);
+> +		return;
+> +	}
+> +
+>  	if (erofs_is_fscache_mode(sb))
+>  		kill_anon_super(sb);
+>  	else
+> @@ -923,7 +950,7 @@ static void erofs_put_super(struct super_block *sb)
+>  	sbi->s_fscache = NULL;
+>  }
+>  
+> -static struct file_system_type erofs_fs_type = {
+> +struct file_system_type erofs_fs_type = {
+>  	.owner          = THIS_MODULE,
+>  	.name           = "erofs",
+>  	.init_fs_context = erofs_init_fs_context,
 
 -- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Jingbo
