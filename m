@@ -2,308 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 677025BA12C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 21:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2A35BA14E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 21:33:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiIOTZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 15:25:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
+        id S229844AbiIOTdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 15:33:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiIOTZl (ORCPT
+        with ESMTP id S229515AbiIOTdS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 15:25:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6083B33428;
-        Thu, 15 Sep 2022 12:25:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 691E1B8220F;
-        Thu, 15 Sep 2022 19:25:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7A8C433D6;
-        Thu, 15 Sep 2022 19:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663269935;
-        bh=ucJVaZmo1gTYksTNgKQ8uLGOBZ5G8yH/7/rnhJXgz9Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=e4h9ievjP86DQhsNojGC+0Pvg8Xch4cpPv+JT9G1V0ZSfDheexL5+CbDaGY1aFTJC
-         NHKDPzrFd2gVP2ig1M4GOQ2l3o3XtP4aaLj4t5JCqhJ2u9zyXrJMUps5479bombbPI
-         u+t/D/MpLRYAQjXjY+M9aj1BGCEPWxG0IuwmHVMsz+LqUBRXywlH5GW0oLXVBFfZCJ
-         UBJmf0juPF9c09XObXor+Q+JfUtDOVNrlCbPTKOeIe96i/Db2wpPeE07gXbhAD1X48
-         MDWyR+YA/k1ZmaUSMnDXPoraS50gdb2KCADml+GEomw1oQoJ7X0FAR4w/2MpaXv/EE
-         bHwX1+v9YSdzw==
-Message-ID: <e8922bc821a40f5a3f0a1301583288ed19b6891b.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "neilb@suse.de" <neilb@suse.de>
-Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Date:   Thu, 15 Sep 2022 15:25:32 -0400
-In-Reply-To: <871f9c5153ddfe760854ca31ee36b84655959b83.camel@hammerspace.com>
-References: <20220908083326.3xsanzk7hy3ff4qs@quack3>
-         <YxoIjV50xXKiLdL9@mit.edu>
-         <02928a8c5718590bea5739b13d6b6ebe66cac577.camel@kernel.org>
-         <20220908155605.GD8951@fieldses.org>
-         <9e06c506fd6b3e3118da0ec24276e85ea3ee45a1.camel@kernel.org>
-         <20220908182252.GA18939@fieldses.org>
-         <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
-         <166284799157.30452.4308111193560234334@noble.neil.brown.name>
-         <20220912134208.GB9304@fieldses.org>
-         <166302447257.30452.6751169887085269140@noble.neil.brown.name>
-         <20220915140644.GA15754@fieldses.org>
-         <577b6d8a7243aeee37eaa4bbb00c90799586bc48.camel@hammerspace.com>
-         <1a968b8e87f054e360877c9ab8cdfc4cfdfc8740.camel@kernel.org>
-         <0646410b6d2a5d19d3315f339b2928dfa9f2d922.camel@hammerspace.com>
-         <34e91540c92ad6980256f6b44115cf993695d5e1.camel@kernel.org>
-         <871f9c5153ddfe760854ca31ee36b84655959b83.camel@hammerspace.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Thu, 15 Sep 2022 15:33:18 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B859D13D;
+        Thu, 15 Sep 2022 12:33:09 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FJVFb8001212;
+        Thu, 15 Sep 2022 19:32:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=4WyQ/ZL524QAngfXmtC12dttd7WkDXMegYh+1r0hMIw=;
+ b=fKhsGseW75V3FUgkeZCyPYFhrWpFCK7DZMyLDHNvd8ihsgpnKxYWZUvMuqpewUQOkXms
+ nIDJYzKO+D574pZAsFRhfXk10vP0dFE4YVqBUhg4Afoakzyz46Ioj0YuHMt2wak7WYiN
+ jLpSi5kx59nlWYj+o+zr4V4y52EMm6lnFFQJWp9AHSc0wEH+NsY/uY6UEnNiigo4bHgO
+ uDeJFQfFAiotC6fdxWRvRfguYIzoUlhaVHJX3+nv9Gomdbp65BtWJGWOKwVaiL+kllUd
+ 5Qts0mHwf6KH9TjKl1G83n1D8R3NmSo++2yzO2QxX9cjwskkcrNjcw8YOeePu3/vs5u4 TA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg279-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:40 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28FJVxV6009804;
+        Thu, 15 Sep 2022 19:32:39 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jma9eg254-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:39 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28FJJirH014193;
+        Thu, 15 Sep 2022 19:32:37 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 3jm91m0d7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Sep 2022 19:32:37 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28FJWaRs4653626
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Sep 2022 19:32:36 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE67BAE063;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9180DAE062;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 15 Sep 2022 19:32:36 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Denis Semakin <denis.semakin@huawei.com>
+Subject: [PATCH v14 11/26] ima: Define mac_admin_ns_capable() as a wrapper for ns_capable()
+Date:   Thu, 15 Sep 2022 15:32:06 -0400
+Message-Id: <20220915193221.1728029-12-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: r7kruqUoMrzyczrf1pNl6CM-l5Zx6fZh
+X-Proofpoint-ORIG-GUID: lRXdhi_gdUUjUAWXVsBSgZjs-_hCFNMm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-15_10,2022-09-14_04,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 clxscore=1011 priorityscore=1501 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209150119
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-09-15 at 19:03 +0000, Trond Myklebust wrote:
-> On Thu, 2022-09-15 at 14:11 -0400, Jeff Layton wrote:
-> > On Thu, 2022-09-15 at 17:49 +0000, Trond Myklebust wrote:
-> > > On Thu, 2022-09-15 at 12:45 -0400, Jeff Layton wrote:
-> > > > On Thu, 2022-09-15 at 15:08 +0000, Trond Myklebust wrote:
-> > > > > On Thu, 2022-09-15 at 10:06 -0400, J. Bruce Fields wrote:
-> > > > > > On Tue, Sep 13, 2022 at 09:14:32AM +1000, NeilBrown wrote:
-> > > > > > > On Mon, 12 Sep 2022, J. Bruce Fields wrote:
-> > > > > > > > On Sun, Sep 11, 2022 at 08:13:11AM +1000, NeilBrown
-> > > > > > > > wrote:
-> > > > > > > > > On Fri, 09 Sep 2022, Jeff Layton wrote:
-> > > > > > > > > >=20
-> > > > > > > > > > The machine crashes and comes back up, and we get a
-> > > > > > > > > > query
-> > > > > > > > > > for
-> > > > > > > > > > i_version
-> > > > > > > > > > and it comes back as X. Fine, it's an old version.
-> > > > > > > > > > Now
-> > > > > > > > > > there
-> > > > > > > > > > is a write.
-> > > > > > > > > > What do we do to ensure that the new value doesn't
-> > > > > > > > > > collide
-> > > > > > > > > > with X+1?=20
-> > > > > > > > >=20
-> > > > > > > > > (I missed this bit in my earlier reply..)
-> > > > > > > > >=20
-> > > > > > > > > How is it "Fine" to see an old version?
-> > > > > > > > > The file could have changed without the version
-> > > > > > > > > changing.
-> > > > > > > > > And I thought one of the goals of the crash-count was
-> > > > > > > > > to be
-> > > > > > > > > able to
-> > > > > > > > > provide a monotonic change id.
-> > > > > > > >=20
-> > > > > > > > I was still mainly thinking about how to provide reliable
-> > > > > > > > close-
-> > > > > > > > to-open
-> > > > > > > > semantics between NFS clients.=A0 In the case the writer
-> > > > > > > > was an
-> > > > > > > > NFS
-> > > > > > > > client, it wasn't done writing (or it would have
-> > > > > > > > COMMITted),
-> > > > > > > > so
-> > > > > > > > those
-> > > > > > > > writes will come in and bump the change attribute soon,
-> > > > > > > > and
-> > > > > > > > as
-> > > > > > > > long as
-> > > > > > > > we avoid the small chance of reusing an old change
-> > > > > > > > attribute,
-> > > > > > > > we're OK,
-> > > > > > > > and I think it'd even still be OK to advertise
-> > > > > > > > CHANGE_TYPE_IS_MONOTONIC_INCR.
-> > > > > > >=20
-> > > > > > > You seem to be assuming that the client doesn't crash at
-> > > > > > > the
-> > > > > > > same
-> > > > > > > time
-> > > > > > > as the server (maybe they are both VMs on a host that lost
-> > > > > > > power...)
-> > > > > > >=20
-> > > > > > > If client A reads and caches, client B writes, the server
-> > > > > > > crashes
-> > > > > > > after
-> > > > > > > writing some data (to already allocated space so no inode
-> > > > > > > update
-> > > > > > > needed)
-> > > > > > > but before writing the new i_version, then client B
-> > > > > > > crashes.
-> > > > > > > When server comes back the i_version will be unchanged but
-> > > > > > > the
-> > > > > > > data
-> > > > > > > has
-> > > > > > > changed.=A0 Client A will cache old data indefinitely...
-> > > > > >=20
-> > > > > > I guess I assume that if all we're promising is close-to-
-> > > > > > open,
-> > > > > > then a
-> > > > > > client isn't allowed to trust its cache in that situation.=A0
-> > > > > > Maybe
-> > > > > > that's
-> > > > > > an overly draconian interpretation of close-to-open.
-> > > > > >=20
-> > > > > > Also, I'm trying to think about how to improve things
-> > > > > > incrementally.
-> > > > > > Incorporating something like a crash count into the on-disk
-> > > > > > i_version
-> > > > > > fixes some cases without introducing any new ones or
-> > > > > > regressing
-> > > > > > performance after a crash.
-> > > > > >=20
-> > > > > > If we subsequently wanted to close those remaining holes, I
-> > > > > > think
-> > > > > > we'd
-> > > > > > need the change attribute increment to be seen as atomic with
-> > > > > > respect
-> > > > > > to
-> > > > > > its associated change, both to clients and (separately) on
-> > > > > > disk.=A0
-> > > > > > (That
-> > > > > > would still allow the change attribute to go backwards after
-> > > > > > a
-> > > > > > crash,
-> > > > > > to
-> > > > > > the value it held as of the on-disk state of the file.=A0 I
-> > > > > > think
-> > > > > > clients
-> > > > > > should be able to deal with that case.)
-> > > > > >=20
-> > > > > > But, I don't know, maybe a bigger hammer would be OK:
-> > > > > >=20
-> > > > >=20
-> > > > > If you're not going to meet the minimum bar of data integrity,
-> > > > > then
-> > > > > this whole exercise is just a massive waste of everyone's time.
-> > > > > The
-> > > > > answer then going forward is just to recommend never using
-> > > > > Linux as
-> > > > > an
-> > > > > NFS server. Makes my life much easier, because I no longer have
-> > > > > to
-> > > > > debug any of the issues.
-> > > > >=20
-> > > > >=20
-> > > >=20
-> > > > To be clear, you believe any scheme that would allow the client
-> > > > to
-> > > > see
-> > > > an old change attr after a crash is insufficient?
-> > > >=20
-> > >=20
-> > > Correct. If a NFSv4 client or userspace application cannot trust
-> > > that
-> > > it will always see a change to the change attribute value when the
-> > > file
-> > > data changes, then you will eventually see data corruption due to
-> > > the
-> > > cached data no longer matching the stored data.
-> > >=20
-> > > A false positive update of the change attribute (i.e. a case where
-> > > the
-> > > change attribute changes despite the data/metadata staying the
-> > > same) is
-> > > not desirable because it causes performance issues, but false
-> > > negatives
-> > > are far worse because they mean your data backup, cache, etc... are
-> > > not
-> > > consistent. Applications that have strong consistency requirements
-> > > will
-> > > have no option but to revalidate by always reading the entire file
-> > > data
-> > > + metadata.
-> > >=20
-> > > > The only way I can see to fix that (at least with only a crash
-> > > > counter)
-> > > > would be to factor it in at presentation time like Neil
-> > > > suggested.
-> > > > Basically we'd just mask off the top 16 bits and plop the crash
-> > > > counter
-> > > > in there before presenting it.
-> > > >=20
-> > > > In principle, I suppose we could do that at the nfsd level as
-> > > > well
-> > > > (and
-> > > > that might be the simplest way to fix this). We probably wouldn't
-> > > > be
-> > > > able to advertise a change attr type of MONOTONIC with this
-> > > > scheme
-> > > > though.
-> > >=20
-> > > Why would you want to limit the crash counter to 16 bits?
-> > >=20
-> >=20
-> > To leave more room for the "real" counter. Otherwise, an inode that
-> > gets
-> > frequent writes after a long period of no crashes could experience
-> > the
-> > counter wrap.
-> >=20
-> > IOW, we have 63 bits to play with. Whatever part we dedicate to the
-> > crash counter will not be available for the actual version counter.
-> >=20
-> > I'm proposing a 16+47+1 split, but I'm happy to hear arguments for a
-> > different one.
->=20
->=20
-> What is the expectation when you have an unclean shutdown or crash? Do
-> all change attribute values get updated to reflect the new crash
-> counter value, or only some?
->=20
-> If the answer is that 'all values change', then why store the crash
-> counter in the inode at all? Why not just add it as an offset when
-> you're generating the user-visible change attribute?
->=20
-> i.e. statx.change_attr =3D inode->i_version + (crash counter * offset)
->=20
-> (where offset is chosen to be larger than the max number of inode-
-> > i_version updates that could get lost by an inode in a crash).
->=20
-> Presumably that offset could be significantly smaller than 2^63...
->=20
+Define mac_admin_ns_capable() as a wrapper for the combined ns_capable()
+checks on CAP_MAC_ADMIN and CAP_SYS_ADMIN in a user namespace. Return
+true on the check if either capability or both are available.
 
+Use mac_admin_ns_capable() in place of capable(SYS_ADMIN). This will allow
+an IMA namespace to read the policy with only CAP_MAC_ADMIN, which has
+less privileges than CAP_SYS_ADMIN.
 
-Yes, if we plan to ensure that all the change attrs change after a
-crash, we can do that.
+Since CAP_MAC_ADMIN is an additional capability added to an existing gate
+avoid auditing in case it is not set.
 
-So what would make sense for an offset? Maybe 2**12? One would hope that
-there wouldn't be more than 4k increments before one of them made it to
-disk. OTOH, maybe that can happen with teeny-tiny writes.
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Denis Semakin <denis.semakin@huawei.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-If we want to leave this up to the filesystem, I guess we could just add
-a new struct super_block.s_version_offset field and let the filesystem
-precompute that value and set it at mount time. Then we can just add
-that in after querying i_version.
---=20
-Jeff Layton <jlayton@kernel.org>
+---
+v13:
+  - implemented file_sb_user_ns(const struct file *); const is needed so it
+    can be called with seq_file's 'const struct file *file'
+
+v11:
+  - use ns_capable_noaudit for CAP_MAC_ADMIN to avoid auditing in this case
+---
+ include/linux/capability.h      | 6 ++++++
+ include/linux/fs.h              | 5 +++++
+ security/integrity/ima/ima.h    | 6 ++++++
+ security/integrity/ima/ima_fs.c | 5 ++++-
+ 4 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 65efb74c3585..dc3e1230b365 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -270,6 +270,12 @@ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+ 		ns_capable(ns, CAP_SYS_ADMIN);
+ }
+ 
++static inline bool mac_admin_ns_capable(struct user_namespace *ns)
++{
++	return ns_capable_noaudit(ns, CAP_MAC_ADMIN) ||
++		ns_capable(ns, CAP_SYS_ADMIN);
++}
++
+ /* audit system wants to get cap info from files as well */
+ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 			   const struct dentry *dentry,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9eced4cc286e..ec24368b669e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2727,6 +2727,11 @@ static inline struct user_namespace *file_mnt_user_ns(struct file *file)
+ 	return mnt_user_ns(file->f_path.mnt);
+ }
+ 
++static inline struct user_namespace *file_sb_user_ns(const struct file *file)
++{
++	return i_user_ns(file_inode(file));
++}
++
+ /**
+  * is_idmapped_mnt - check whether a mount is mapped
+  * @mnt: the mount to check
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 5bf7f080c2be..28a9842c566f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -491,4 +491,10 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+ #define	POLICY_FILE_FLAGS	S_IWUSR
+ #endif /* CONFIG_IMA_READ_POLICY */
+ 
++static inline
++struct user_namespace *ima_user_ns_from_file(const struct file *filp)
++{
++	return file_sb_user_ns(filp);
++}
++
+ #endif /* __LINUX_IMA_H */
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 89d3113ceda1..c41aa61b7393 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -377,6 +377,9 @@ static const struct seq_operations ima_policy_seqops = {
+  */
+ static int ima_open_policy(struct inode *inode, struct file *filp)
+ {
++#ifdef CONFIG_IMA_READ_POLICY
++	struct user_namespace *user_ns = ima_user_ns_from_file(filp);
++#endif
+ 	struct ima_namespace *ns = &init_ima_ns;
+ 
+ 	if (!(filp->f_flags & O_WRONLY)) {
+@@ -385,7 +388,7 @@ static int ima_open_policy(struct inode *inode, struct file *filp)
+ #else
+ 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+ 			return -EACCES;
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!mac_admin_ns_capable(user_ns))
+ 			return -EPERM;
+ 		return seq_open(filp, &ima_policy_seqops);
+ #endif
+-- 
+2.36.1
+
