@@ -2,110 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABACF5B91E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 02:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11375B9252
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Sep 2022 03:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230210AbiIOApu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Sep 2022 20:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
+        id S230023AbiIOBss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Sep 2022 21:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbiIOAps (ORCPT
+        with ESMTP id S229844AbiIOBsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Sep 2022 20:45:48 -0400
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3009356C0;
-        Wed, 14 Sep 2022 17:45:47 -0700 (PDT)
-Received: by mail-pg1-f180.google.com with SMTP id bh13so15860519pgb.4;
-        Wed, 14 Sep 2022 17:45:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=n05HjcTTlTQT7owpfGLGmfiA73hG6sYlZ2pnjGc9I30=;
-        b=lZcbZe+MT0nu4mgrEfOK3CnqVTprLZCEADfd+Yi10o+U33xJ8hd/VDSF6Cz+hRZn1P
-         2bJbPOjVxey0hBO21ERXFHr33plHIBlxqM4RSJslr7sRfWp+z23xI9snWp8Tuv1jEbRE
-         +NRXehpYnc/qzatQ5w5/AdZF3C9JzR3jqJmeHtbh9y+EdmFdtfvhx1maBZq/vs9osZpY
-         poYVQ9GKXXUZVocawb2GP2RsEwDLRzZHWeoEF7SH8zi5vligwa17fEZEoLIZT4qgXg0B
-         4xaIO91ZWfeM2bc5jgrAkh7yOSNHG8eeOdr5r70ndgCyGmwPmXC03rAXbp4dFcjKbHjm
-         bYlA==
-X-Gm-Message-State: ACgBeo3P75INW4+D+ygcaFBknw2M/JOvVeuS4kvCxId1P14U6W0kf2ki
-        F4asE3c3NQd5PbZyOhY857E=
-X-Google-Smtp-Source: AA6agR7OUk1btd2IJ6tSFOA3HxLtLLbIojIYWD6zfrKjJ4mcN0cqytEeSz5/Ar49RMNHPPoLUXbJRg==
-X-Received: by 2002:a65:638d:0:b0:420:849f:77ed with SMTP id h13-20020a65638d000000b00420849f77edmr34202536pgv.523.1663202747475;
-        Wed, 14 Sep 2022 17:45:47 -0700 (PDT)
-Received: from [10.8.0.3] (144.34.241.68.16clouds.com. [144.34.241.68])
-        by smtp.gmail.com with ESMTPSA id k29-20020aa7999d000000b00537b6bfab7fsm11144548pfh.177.2022.09.14.17.45.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Sep 2022 17:45:46 -0700 (PDT)
-Message-ID: <44af62e3-8f51-bf0a-509e-4a5fdbf62b29@kylinos.cn>
-Date:   Thu, 15 Sep 2022 08:45:33 +0800
+        Wed, 14 Sep 2022 21:48:46 -0400
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6A58E4C4;
+        Wed, 14 Sep 2022 18:48:44 -0700 (PDT)
+Received: from ([60.208.111.195])
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id JAL00038;
+        Thu, 15 Sep 2022 09:48:38 +0800
+Received: from localhost.localdomain (10.200.104.82) by
+ jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
+ 15.1.2507.12; Thu, 15 Sep 2022 09:48:38 +0800
+From:   Deming Wang <wangdeming@inspur.com>
+To:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Deming Wang <wangdeming@inspur.com>
+Subject: [PATCH] acl: fix the comments of posix_acl_xattr_set
+Date:   Wed, 14 Sep 2022 21:48:30 -0400
+Message-ID: <20220915014830.1671-1-wangdeming@inspur.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-From:   Ke Sun <sunke@kylinos.cn>
-Subject: Re: [PATCH] mm/filemap: Make folio_put_wait_locked static
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        k2ci <kernel-bot@kylinos.cn>, linux-fsdevel@vger.kernel.org
-References: <20220914015836.3193197-1-sunke@kylinos.cn>
-Content-Language: en-US
-In-Reply-To: <20220914015836.3193197-1-sunke@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.200.104.82]
+tUid:   202291509483862b65ce9929ae927b401b4472fcad13c
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping.
+remove the double world of 'in'.
 
-On 2022/9/14 09:58, Ke Sun wrote:
-> It's only used in mm/filemap.c, since commit <ffa65753c431>
-> ("mm/migrate.c: rework migration_entry_wait() to not take a pageref").
->
-> Make it static.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Reported-by: k2ci <kernel-bot@kylinos.cn>
-> Signed-off-by: Ke Sun <sunke@kylinos.cn>
-> ---
-> include/linux/pagemap.h | 1 -
-> mm/filemap.c | 2 +-
-> 2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 0178b2040ea3..82880993dd1a 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -1042,7 +1042,6 @@ static inline int 
-> wait_on_page_locked_killable(struct page *page)
-> return folio_wait_locked_killable(page_folio(page));
-> }
-> -int folio_put_wait_locked(struct folio *folio, int state);
-> void wait_on_page_writeback(struct page *page);
-> void folio_wait_writeback(struct folio *folio);
-> int folio_wait_writeback_killable(struct folio *folio);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 15800334147b..ade9b7bfe7fc 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1467,7 +1467,7 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
-> *
-> * Return: 0 if the folio was unlocked or -EINTR if interrupted by a 
-> signal.
-> */
-> -int folio_put_wait_locked(struct folio *folio, int state)
-> +static int folio_put_wait_locked(struct folio *folio, int state)
-> {
-> return folio_wait_bit_common(folio, PG_locked, state, DROP);
-> }
+Signed-off-by: Deming Wang <wangdeming@inspur.com>
+---
+ fs/posix_acl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 4e69cce6bd2a..74dc0f571dc9 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -1177,7 +1177,7 @@ posix_acl_xattr_set(const struct xattr_handler *handler,
+ 		 * ACL_{GROUP,USER} have already been mapped according to the
+ 		 * caller's idmapping. The vfs_set_acl_prepare() helper will
+ 		 * recover them and take idmapped mounts into account. The
+-		 * filesystem will receive the POSIX ACLs in in the correct
++		 * filesystem will receive the POSIX ACLs in the correct
+ 		 * format ready to be cached or written to the backing store
+ 		 * taking the filesystem idmapping into account.
+ 		 */
+-- 
+2.27.0
+
