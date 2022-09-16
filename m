@@ -2,185 +2,433 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B5C5BB104
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 18:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEFFE5BB170
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 19:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230084AbiIPQRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 12:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        id S229872AbiIPRFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 13:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbiIPQRc (ORCPT
+        with ESMTP id S229765AbiIPRFv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 12:17:32 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6465B6545
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 09:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663345049; x=1694881049;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bxllxoygucAl2yNpl6HtHmgmmcbCHNwY2JG1YK8a+rg=;
-  b=g/xW9E5bYCffJx2ofhBN1uxekWIpAbjfyYBapTnA7xavPQeOyL5X4+2Y
-   fkfAQD1e6DuSBbBOgMkeXRQsl/Yf+YZm9UwjG0puwb91qvb8yvFr8FjZv
-   3K2LXTKeIUcaqGiRbNzADgNZMU9ttVAbLeZ7dIULSaPcENaRlxuLsQO7m
-   UGoGJwzYLC93cbTkkINbs7rQqHr4RJa0rTT1AgUx7e06CQeQPvgBsMfvV
-   ffgGLfmQGzvKCxea+IxOoGb0N5nfhkPmPPT0NTcSGpO1nztWaHqg/XUfN
-   kL/2aI5ups0BAVslePQfR8sR+W7ssqWe8SQDIIo7BAW8KIFnHrNVhQPXE
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10472"; a="282052436"
-X-IronPort-AV: E=Sophos;i="5.93,320,1654585200"; 
-   d="scan'208";a="282052436"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2022 09:17:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,320,1654585200"; 
-   d="scan'208";a="613302503"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orsmga007.jf.intel.com with ESMTP; 16 Sep 2022 09:17:22 -0700
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 16 Sep 2022 09:17:22 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 16 Sep 2022 09:17:21 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Fri, 16 Sep 2022 09:17:21 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.109)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Fri, 16 Sep 2022 09:17:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jk/fG7sOG9qyumNAbZN7/d/VVJCarCXClLINJj8KECxvZqE2CaEMvyMHMUb2aSO0FrX0z6auzaSFT9/lWpgAVzpRtod4YG5vVB27PjF+aOM1cNNUEyJT40hJVUB97dQLbIaDLd3ZvAEmtllCVcj0MLUCGYLGKPCAb3wUp6gqACMW9EELIyjs49svW6pX7v3yPDA+ZRWt50iTcWgs1c1Qiwyp3UI1fZQwg9bBcQ5p9V/1OCm5d/Y/qseFkRWJ3y3KX4xbrOb7uFYlJjrpEuySyC6k9iESURgHdQB9bOGMgoPczShMhqUwk+J4TL37qWItTDV+HYoNfHtekyKsYzPR7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bxllxoygucAl2yNpl6HtHmgmmcbCHNwY2JG1YK8a+rg=;
- b=c3SVSJVOJL/SvuTEx9x2G2XN4vLYuNcR3RNRCi03UV7N2PvNvXTY9SEPsTc7fdPDZ3WOz7CHuxbpHt8YsagSrxUUGzubEoKC5TuN3SDdTHUYBhHXz3lRWAV2U32eUkMhTv5ymvtV2Z97co7aFG1tEO2Sh0zV3TcKqOIHOqOxmDTLv9QPeJIjNTCSGcmqLkkmA7mCCjiBHb3Xq118SJQtKIOaZzLCo5imsywJ6a8bX0g5inbDXOcpw1zKWshf2ieaLLd5hhVZ0txwDMgGpR/Z9km3d8vcigPFY5rF0eVZ3m9jlFvHHBk2+D/loD5bv5tHDmszAEPbkZdMi6uJOqTWvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by PH0PR11MB4902.namprd11.prod.outlook.com (2603:10b6:510:37::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.16; Fri, 16 Sep
- 2022 16:17:19 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::10a6:b76c:4fb1:2d60]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::10a6:b76c:4fb1:2d60%5]) with mapi id 15.20.5612.022; Fri, 16 Sep 2022
- 16:17:19 +0000
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     "chu, jane" <jane.chu@oracle.com>, Borislav Petkov <bp@alien8.de>,
-        "djwong@kernel.org" <djwong@kernel.org>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: Is it possible to corrupt disk when writeback page with
- undetected UE?
-Thread-Topic: Is it possible to corrupt disk when writeback page with
- undetected UE?
-Thread-Index: AQHYyVOZuHnP7uLChkm+T/SiMC7uC63hFndwgAAc0YCAAQeswA==
-Date:   Fri, 16 Sep 2022 16:17:19 +0000
-Message-ID: <SJ1PR11MB6083C1CBA41CB53183600B0FFC489@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <44fe39d7-ac92-0abc-220b-5f5875faf3a9@oracle.com>
- <SJ1PR11MB6083C1EC4FB338F25315B723FC499@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <cec5cd9a-a1de-fbfa-65f9-07336755b6b4@oracle.com>
-In-Reply-To: <cec5cd9a-a1de-fbfa-65f9-07336755b6b4@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.500.17
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|PH0PR11MB4902:EE_
-x-ms-office365-filtering-correlation-id: 10b62ba2-2969-45b5-c7af-08da97feee1a
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: BTHJmt4BT+R7LHm9tWvDv8vkM4gt4EhWaNBY444fFp/ct3K8qFrfxF6CcB3N7XH6yRjDlFtB++2iMtxg1wr76mG0QDVCChBlko5Egw05W5NaOGAP0UOJm9OR6EDEzGCJDz9ubQSMx5wp+G64xypv42/WzdwfmfRCWRSkajhAjtqDlOjcLos2d32vRDMNHl2KUYx+c/0eIJNZF4L4ufwmMiJVVpyX2Di/rk7xCou5LhV0ECQqgrC55uBLb4AZMVn6Wpv4X7i41Ak2cEK/VnSw+KpwOJdgscHmwkfO319bHcW5B4eqlWHdXZUwkr+FyMj33ynk5snaWBN9QXPNE2gX/5jPVpcMV+Bx+M9t3s1tHuuUmRtwVPLDLTbMHyh6QdwSNEhqM+ofz/PQEN/3yuqpNVB7q5cIXqVckILLFFPOcwhg/2Or8sdoX6z1tdald7X0Nw92Z6sUK8+BUPjPuMLJqjyowkj+d282zNQ3sl9H9H6kurxgoxwqqdKwNSmVVip/hCav2IqoYIuCi+deI2lja9chXrsIggnDWNgTnBzgPPs4qCwISzMTFEVoKLAxsiH19ybd+5V/45NNHJp9pkg1Eh7Epdsuu2fWofBSr82Dl/fYBGcEgT+nHXkhowsTNnzG63Sr+RLiUbZ+ngCHsjOzznE3QL5sKjrT545Hg4zBaJnZ1ij8PGqLh1HyEl1sBA6OhInmmuue0GORq/A1AxO58JTKCQu5A8UdMiVCqxplfw4fL+RCRQJY+iQCE71mHf5N4Zcy4udRDre3aiH4QN2eUQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(396003)(136003)(376002)(39860400002)(346002)(451199015)(76116006)(82960400001)(122000001)(38100700002)(33656002)(86362001)(38070700005)(52536014)(4744005)(8936002)(41300700001)(7696005)(55016003)(478600001)(6506007)(54906003)(2906002)(26005)(9686003)(71200400001)(8676002)(316002)(110136005)(4326008)(186003)(64756008)(66556008)(66476007)(66946007)(66446008)(83380400001)(5660300002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MFY3Nk5mZUhBNW81Uy9WSEhidXJkVkZ0SzMxV2ErNFV5RlBJZ0xsVVhCMHJP?=
- =?utf-8?B?Y3Bqd1REbmtrTFlneGp5VHh3NDF6UWtkWDQ1RmIxN0Z4RncreEduWHNNcjhY?=
- =?utf-8?B?YjY2bVZ5WStCczNFOVNoNXRyUVpZWVZ4bHdXVktxRmpzUStFOGFjdGxtdVVn?=
- =?utf-8?B?TlFuSjhrYlpzeTAxdXBsRG1IdFZxYTJ1VEhrMHB4d1FJVlJTWm9zMXh0UHQ4?=
- =?utf-8?B?bWNqU0xxbkxxWUY2MTNqcFR5TVhUUWRwMHFpK3FFWkJaWlNqWEpFb2QveXpO?=
- =?utf-8?B?MDM1TmQybkE1NU5CcnZZM1RSVzZlMzZPaStDOHNMdzlnbk1jTk9yT1c1akpU?=
- =?utf-8?B?em9QUkNDSDFRdExnYTBNUFJtZ3MwRVdkUWZDMlU5RzhqOHBDVyttNWxWL1VJ?=
- =?utf-8?B?a0dkbFplVm5KYlJqSzBRM0dmNmE4NmhnVUNITk9IUU5aRHJJRWEvaGlDVWlG?=
- =?utf-8?B?UWx4SVp2c2dEVS9abGhWZlJPQ3dFL2tqNHFjeGdzRHd6V0dQSWd0NVZOWmky?=
- =?utf-8?B?UFhZZXB2TFJDK3JFTzNpNUF3dXhzZlNyV0NPK21FK1VQTEJZd2Y4Q05GT0tC?=
- =?utf-8?B?LzFCN2RjU0lzN3h6bUNpckdCWmZnWGt2em1IRXFYa2xCZ3hGL1FtVUdUSWZH?=
- =?utf-8?B?RjNmSEN0bVBJSXhNbElmbEVGNm1xR3Nsajl1dFhnRERPbkJNajNSUmVNYjd5?=
- =?utf-8?B?RnJKUm90ZkZRUkFEL2VicVQ0ektyVXhXWkI5LzlicVJqays4UHpaRG5MMVdM?=
- =?utf-8?B?SFhONm5CNzF3K24rUVBRTmZBN2JRS2VFY1U4V09mTlBDaU9sclBnWkZlZllp?=
- =?utf-8?B?UERHWHlUWk5sOUFSdTRQWUI3eHJ6cjZSTGVPdUdEcDNrb2lJS1Q3MEY1dGZq?=
- =?utf-8?B?TGNTUGkvVk4xMWRxbGJ1Y0hWZ2hsZ3ZUNVNkQ1MxMHBYLzRNcUF0Q3lOYzNa?=
- =?utf-8?B?MHlZMDkvdWZPQ1FuZXNTUUJaRWRncmkzLzRzSWI1TWo3amVUUndIcHpSUkpQ?=
- =?utf-8?B?aHJEcTZSR1k2b0sxTG81d1VpMllKYXZOai8xa0VBb01vaFE0Zll2QTlUWitY?=
- =?utf-8?B?a1JEdHhwZk1DMXIwMVBDNUNoRFF1WTZmSmNabHRvTlI4UzFxZzZzRFRCYjlZ?=
- =?utf-8?B?azJKa3oyRy9ybGh3N0NzdEpSbWptWmUwcXp3NElZVEgvdkpNcGp3NUFFNG43?=
- =?utf-8?B?NW9BVXpZWE1WUjJpRjRlWUE0cWtPNDJvVlp4YnRjR2xGTXl1Rm1HaFB6VWlJ?=
- =?utf-8?B?Rzl0SVZkd3l0MHA2bXdZQmNIUEFaUHdQYzh2ajhuWC9aU1J5cW54ajhjZW1s?=
- =?utf-8?B?MTNJV0M4Z2FSRWdPdUVtNFJ0V3Fqd0IyeUpUN0oyTTA3YWRJaFJwbkJxRDk0?=
- =?utf-8?B?MnR1N0FVVlhvM1hTSzNiR1dCSTlKU05JRUUxNGhNUDVWc1NnTjNGaDlGSXAv?=
- =?utf-8?B?S28yYzhoZTVpa0FZMllPU0lnUkxUOUhZaC8vcW1VQ1RVSmtwZTBmU0t6Mnc1?=
- =?utf-8?B?bUxtRG1zMlBzeTNNUjdtVWxPa0FMaU53cGlpMC9vNndPc2Z6UEMycHBuMXJp?=
- =?utf-8?B?S0RaTXVVT0hSSjVWVWZneWU2a2MyUklxZXZraWZVWStYZW51R3FjUDhpMVlm?=
- =?utf-8?B?ODZMVk5vaW9XdVQyM05TZDh0RDhLLzN0eTV6WVFTTUhmV2l3amtSTldHbUF0?=
- =?utf-8?B?aWwyRkdCWnE1WFFqSksvTGRZNS9Dc1FlbmEvOFBRemF6Mm5sZFNTbXEvbDBz?=
- =?utf-8?B?cXhvbUVoZTRLNGplalZYaFZ2bGdZc0JXejRxbjRXaytpVWVOVjRMZHh2cGF3?=
- =?utf-8?B?NXlxbUhjV2VvZHpodkRqb1dZazlFYjAxVWdpaE9Gb1BaWGZRSVpEYWNjakN5?=
- =?utf-8?B?QVdsYnBzMXdoWVVKZ052OFg0NVJrc01GemFrZDIzWFI5OW42SVQ2SU42ck9D?=
- =?utf-8?B?enpwTEU2c0dJaUlCSkpSTDB1Y09PcWFaZDlHV2VqYW1rZ2VPeWpSWXZvNGQ3?=
- =?utf-8?B?SGZxODhWdktKNVNPTHpRWWp1RTVGa0RvU2JpRE1haGhoMy9iaEdzZWpWOWJr?=
- =?utf-8?B?OVJhSUZiR2FINkRMcW1qTy9la2xpeUJhdXVBQ2txMmU1LzlVOVppalRybkxP?=
- =?utf-8?Q?CRfMi9W6k1psza0n9e4bC9f/W?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 16 Sep 2022 13:05:51 -0400
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07272AC58
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 10:05:48 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MTgSV4MfVzMqk2Q;
+        Fri, 16 Sep 2022 19:05:46 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MTgST49NYzMpnPl;
+        Fri, 16 Sep 2022 19:05:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1663347946;
+        bh=+g0WDxlRJBZqGQK4ZL+TW4WEBNF/nErdboJ3nvBELGY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=m44kfvGmE3IpvKSHpkAIMcc2nangJCH6DfQ68vokAkL0W4HN1uD1soZMmWGJIskON
+         rFgQmx9flRniJExTWLyD0EpS8cO4AIl1ZMaIgtmE+EaesJtcCWXfKnbC7xMSpaK9Jo
+         I0642VCJklQbzwFMXl2S1WuQ3llExL3UwnQGO374=
+Message-ID: <3f3b7798-c3e1-e257-5094-0033e7605062@digikod.net>
+Date:   Fri, 16 Sep 2022 19:05:44 +0200
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10b62ba2-2969-45b5-c7af-08da97feee1a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2022 16:17:19.8097
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Kc9VwLWoPBTe+bFQTt7uxDKVeX9snGRKJtLwUOun6owCT7npw8hLMSM14XCDHyjfDErMkH7e9sPLq9pjlZ9zwg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4902
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: 
+Subject: Re: [PATCH v6 3/5] selftests/landlock: Selftests for file truncation
+ support
+Content-Language: en-US
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220908195805.128252-1-gnoack3000@gmail.com>
+ <20220908195805.128252-4-gnoack3000@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20220908195805.128252-4-gnoack3000@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBXZXJlIHlvdSB1c2luZyBtYWR2aXNlIHRvIGluamVjdCBhbiBlcnJvciB0byBhIG1tYXAnZWQg
-YWRkcmVzcz8NCj4gb3IgYSBkaWZmZXJlbnQgdG9vbD8gIERvIHlvdSBzdGlsbCBoYXZlIHRoZSB0
-ZXN0IGRvY3VtZW50ZWQNCj4gc29tZXdoZXJlPw0KDQpJIHdhcyBpbmplY3Rpbmcgd2l0aCBBQ1BJ
-L0VJTkogKHNvIHR3ZWFraW5nIHNvbWUgRUNDIGJpdHMgaW4gbWVtb3J5IHRvIGNyZWF0ZQ0KYSBy
-ZWFsIHVuY29ycmVjdGFibGUgZXJyb3IpLiBUaGlzIHdhcyBhIGxvbmcgdGltZSBiYWNrIHdoZW4g
-SSB3YXMganVzdCB0cnlpbmcgdG8NCmdldCBiYXNpYyByZWNvdmVyeSBmcm9tIHVzZXJtb2RlIGFj
-Y2VzcyB0byBwb2lzb24gd29ya2luZyByZWxpYWJseS4gU28gSSBqdXN0DQpub3RlZCB0aGUgd29y
-a2Fyb3VuZCAoIm1ha2U7IHN5bmM7IHJ1bl90ZXN0IikgdG8ga2VlcCBtYWtpbmcgcHJvZ3Jlc3Mu
-DQoNCkhhbmRsaW5nIHBvaXNvbiBpbiB0aGUgcGFnZSBjYWNoZSBoYXMgYmVlbiBvbiBteSBUT0RP
-IGxpc3QgZm9yIGEgbG9uZyB0aW1lLg0KU29tZWRheSBpdCB3aWxsIG1ha2UgaXQgdG8gdGhlIHRv
-cC4NCg0KPiBBbmQsIGFzaWRlIGZyb20gdmVyaWZ5aW5nIGV2ZXJ5IHdyaXRlIHdpdGggYSByZWFk
-IHByaW9yIHRvIHN5bmMsDQo+IGFueSBzdWdnZXN0aW9uIHRvIG1pbmltaXplIHRoZSB3aW5kb3cg
-b2Ygc3VjaCBjb3JydXB0aW9uPw0KDQpUaGVyZSdzIG5vIGNoZWFwIHNvbHV0aW9uLiBBcyB5b3Ug
-cG9pbnQgb3V0IHRoZSBiZXN0IHRoYXQgY2FuIGJlIGRvbmUNCmlzIHRvIHJlZHVjZSB0aGUgd2lu
-ZG93IChzaW5jZSBiaXRzIG1heSBnZXQgZmxpcHBlZCBhZnRlciB5b3UgcGVyZm9ybQ0KeW91ciBj
-aGVjayBidXQgYmVmb3JlIERNUyB0byBzdG9yYWdlKS4NCg0KLVRvbnkNCg0K
+I'd like to have tests similar to base_test.c:ruleset_fd_transfer to 
+check ftruncate with different kind of file descriptors and 
+not-sandboxed processes. That would require some code refactoring to 
+reuse the FD passing code.
+
+
+On 08/09/2022 21:58, Günther Noack wrote:
+> These tests exercise the following truncation operations:
+> 
+> * truncate() (truncate by path)
+> * ftruncate() (truncate by file descriptor)
+> * open with the O_TRUNC flag
+> * special case: creat(), which is open with O_CREAT|O_WRONLY|O_TRUNC.
+> 
+> in the following scenarios:
+> 
+> * Files with read, write and truncate rights.
+> * Files with read and truncate rights.
+> * Files with the truncate right.
+> * Files without the truncate right.
+> 
+> In particular, the following scenarios are enforced with the test:
+> 
+> * open() with O_TRUNC requires the truncate right, if it truncates a file.
+>    open() already checks security_path_truncate() in this case,
+>    and it required no additional check in the Landlock LSM's file_open hook.
+> * creat() requires the truncate right
+>    when called with an existing filename.
+> * creat() does *not* require the truncate right
+>    when it's creating a new file.
+> * ftruncate() requires that the file was opened by a thread that had
+>    the truncate right for the file at the time of open(). (The rights
+>    are carried along with the opened file.)
+> 
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>   tools/testing/selftests/landlock/fs_test.c | 280 +++++++++++++++++++++
+>   1 file changed, 280 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 87b28d14a1aa..ddc8c7e57e86 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -58,6 +58,7 @@ static const char file1_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f1";
+>   static const char file2_s2d3[] = TMP_DIR "/s2d1/s2d2/s2d3/f2";
+>   
+>   static const char dir_s3d1[] = TMP_DIR "/s3d1";
+> +static const char file1_s3d1[] = TMP_DIR "/s3d1/f1";
+>   /* dir_s3d2 is a mount point. */
+>   static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+>   static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+> @@ -83,6 +84,7 @@ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
+>    * │           ├── f1
+>    * │           └── f2
+>    * └── s3d1
+> + *     ├── f1
+>    *     └── s3d2
+>    *         └── s3d3
+>    */
+> @@ -208,6 +210,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+>   	create_file(_metadata, file1_s2d3);
+>   	create_file(_metadata, file2_s2d3);
+>   
+> +	create_file(_metadata, file1_s3d1);
+>   	create_directory(_metadata, dir_s3d2);
+>   	set_cap(_metadata, CAP_SYS_ADMIN);
+>   	ASSERT_EQ(0, mount("tmp", dir_s3d2, "tmpfs", 0, "size=4m,mode=700"));
+> @@ -230,6 +233,7 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+>   	EXPECT_EQ(0, remove_path(file1_s2d2));
+>   	EXPECT_EQ(0, remove_path(file1_s2d1));
+>   
+> +	EXPECT_EQ(0, remove_path(file1_s3d1));
+>   	EXPECT_EQ(0, remove_path(dir_s3d3));
+>   	set_cap(_metadata, CAP_SYS_ADMIN);
+>   	umount(dir_s3d2);
+> @@ -3158,6 +3162,282 @@ TEST_F_FORK(layout1, proc_pipe)
+>   	ASSERT_EQ(0, close(pipe_fds[1]));
+>   }
+>   
+> +/* Invokes truncate(2) and returns its errno or 0. */
+> +static int test_truncate(const char *const path)
+> +{
+> +	if (truncate(path, 10) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Invokes creat(2) and returns its errno or 0.
+> + * Closes the opened file descriptor on success.
+> + */
+> +static int test_creat(const char *const path)
+> +{
+> +	int fd = creat(path, 0600);
+> +
+> +	if (fd < 0)
+> +		return errno;
+> +
+> +	/*
+> +	 * Mixing error codes from close(2) and creat(2) should not lead to any
+> +	 * (access type) confusion for this test.
+> +	 */
+> +	if (close(fd) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Exercises file truncation when it's not restricted,
+> + * as it was the case before LANDLOCK_ACCESS_FS_TRUNCATE existed.
+> + */
+> +TEST_F_FORK(layout1, truncate_unhandled)
+> +{
+> +	const char *const file_r = file1_s1d1;
+> +	const char *const file_w = file2_s1d1;
+> +	const char *const file_none = file1_s1d2;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = file_r,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{
+> +			.path = file_w,
+> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		/* Implicitly: No rights for file_none. */
+> +		{},
+> +	};
+> +
+> +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +			      LANDLOCK_ACCESS_FS_WRITE_FILE;
+> +	int ruleset_fd;
+> +
+> +	/* Enable Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, handled, rules);
+> +
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/*
+> +	 * Checks read right: truncate and open with O_TRUNC work, unless the
+> +	 * file is attempted to be opened for writing.
+> +	 */
+> +	EXPECT_EQ(0, test_truncate(file_r));
+> +	EXPECT_EQ(0, test_open(file_r, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_r, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_creat(file_r));
+> +
+> +	/*
+> +	 * Checks write right: truncate and open with O_TRUNC work, unless the
+> +	 * file is attempted to be opened for reading.
+> +	 */
+> +	EXPECT_EQ(0, test_truncate(file_w));
+> +	EXPECT_EQ(EACCES, test_open(file_w, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_open(file_w, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_creat(file_w));
+> +
+> +	/*
+> +	 * Checks "no rights" case: truncate works but all open attempts fail,
+> +	 * including creat.
+> +	 */
+> +	EXPECT_EQ(0, test_truncate(file_none));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_creat(file_none));
+> +}
+> +
+> +TEST_F_FORK(layout1, truncate)
+> +{
+> +	const char *const file_rwt = file1_s1d1;
+> +	const char *const file_rw = file2_s1d1;
+> +	const char *const file_rt = file1_s1d2;
+> +	const char *const file_t = file2_s1d2;
+> +	const char *const file_none = file1_s1d3;
+> +	const char *const dir_t = dir_s2d1;
+> +	const char *const file_in_dir_t = file1_s2d1;
+> +	const char *const dir_w = dir_s3d1;
+> +	const char *const file_in_dir_w = file1_s3d1;
+> +	int file_rwt_fd, file_rw_fd;
+
+These variables are unused now.
+
+
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = file_rwt,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_WRITE_FILE |
+> +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = file_rw,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		{
+> +			.path = file_rt,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE |
+> +				  LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = file_t,
+> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		/* Implicitly: No access rights for file_none. */
+> +		{
+> +			.path = dir_t,
+> +			.access = LANDLOCK_ACCESS_FS_TRUNCATE,
+> +		},
+> +		{
+> +			.path = dir_w,
+> +			.access = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +		},
+> +		{},
+> +	};
+> +	const __u64 handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +			      LANDLOCK_ACCESS_FS_WRITE_FILE |
+> +			      LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	int ruleset_fd;
+> +
+> +	/* Enable Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, handled, rules);
+> +
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/* Checks read, write and truncate rights: truncation works. */
+> +	EXPECT_EQ(0, test_truncate(file_rwt));
+> +	EXPECT_EQ(0, test_open(file_rwt, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(0, test_open(file_rwt, O_WRONLY | O_TRUNC));
+> +
+> +	/* Checks read and write rights: no truncate variant works. */
+> +	EXPECT_EQ(EACCES, test_truncate(file_rw));
+> +	EXPECT_EQ(EACCES, test_open(file_rw, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_rw, O_WRONLY | O_TRUNC));
+> +
+> +	/*
+> +	 * Checks read and truncate rights: truncation works.
+> +	 *
+> +	 * Note: Files can get truncated using open() even with O_RDONLY.
+> +	 */
+> +	EXPECT_EQ(0, test_truncate(file_rt));
+> +	EXPECT_EQ(0, test_open(file_rt, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_rt, O_WRONLY | O_TRUNC));
+> +
+> +	/* Checks truncate right: truncate works, but can't open file. */
+> +	EXPECT_EQ(0, test_truncate(file_t));
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_t, O_WRONLY | O_TRUNC));
+> +
+> +	/* Checks "no rights" case: No form of truncation works. */
+> +	EXPECT_EQ(EACCES, test_truncate(file_none));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_none, O_WRONLY | O_TRUNC));
+> +
+> +	/*
+> +	 * Checks truncate right on directory: truncate works on contained
+> +	 * files.
+> +	 */
+> +	EXPECT_EQ(0, test_truncate(file_in_dir_t));
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_RDONLY | O_TRUNC));
+> +	EXPECT_EQ(EACCES, test_open(file_in_dir_t, O_WRONLY | O_TRUNC));
+> +
+> +	/*
+> +	 * Checks creat in dir_w: This requires the truncate right when
+> +	 * overwriting an existing file, but does not require it when the file
+> +	 * is new.
+> +	 */
+> +	EXPECT_EQ(EACCES, test_creat(file_in_dir_w));
+> +
+> +	ASSERT_EQ(0, unlink(file_in_dir_w));
+> +	EXPECT_EQ(0, test_creat(file_in_dir_w));
+> +}
+> +
+> +static void landlock_single_path(struct __test_metadata *const _metadata,
+> +				 const char *const path, __u64 handled,
+> +				 __u64 permitted)
+> +{
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = path,
+> +			.access = permitted,
+> +		},
+> +		{},
+> +	};
+> +	int ruleset_fd = create_ruleset(_metadata, handled, rules);
+> +
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +}
+> +
+> +/* Invokes ftruncate(2) and returns its errno or 0. */
+> +static int test_ftruncate(int fd)
+> +{
+> +	if (ftruncate(fd, 10) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +TEST_F_FORK(layout1, ftruncate)
+
+Great!
+
+> +{
+> +	/*
+> +	 * This test opens a new file descriptor at different stages of
+> +	 * Landlock restriction:
+> +	 *
+> +	 * without restriction:                    ftruncate works
+> +	 * something else but truncate restricted: ftruncate works
+> +	 * truncate restricted and permitted:      ftruncate works
+> +	 * truncate restricted and not permitted:  ftruncate fails
+> +	 *
+> +	 * Whether this works or not is expected to depend on the time when the
+> +	 * FD was opened, not to depend on the time when ftruncate() was
+> +	 * called.
+> +	 */
+> +	const char *const path = file1_s1d1;
+> +	int fd0, fd1, fd2, fd3;
+
+You can rename them fd_layer0, fd_layer1…
+
+
+> +
+> +	fd0 = open(path, O_WRONLY);
+> +	EXPECT_EQ(0, test_ftruncate(fd0));
+> +
+> +	landlock_single_path(_metadata, path,
+> +			     LANDLOCK_ACCESS_FS_READ_FILE |
+> +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
+
+I'd prefer to follow the current way to write rule layers: write all 
+struct rule at first and then call each enforcement steps. It is a bit 
+more verbose but easier to understand errors. The list of test_ftruncate 
+checks are straightforward to follow.
+
+
+> +
+> +	fd1 = open(path, O_WRONLY);
+> +	EXPECT_EQ(0, test_ftruncate(fd0));
+> +	EXPECT_EQ(0, test_ftruncate(fd1));
+> +
+> +	landlock_single_path(_metadata, path, LANDLOCK_ACCESS_FS_TRUNCATE,
+> +			     LANDLOCK_ACCESS_FS_TRUNCATE);
+> +
+> +	fd2 = open(path, O_WRONLY);
+> +	EXPECT_EQ(0, test_ftruncate(fd0));
+> +	EXPECT_EQ(0, test_ftruncate(fd1));
+> +	EXPECT_EQ(0, test_ftruncate(fd2));
+> +
+> +	landlock_single_path(_metadata, path,
+> +			     LANDLOCK_ACCESS_FS_TRUNCATE |
+> +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
+> +
+> +	fd3 = open(path, O_WRONLY);
+> +	EXPECT_EQ(0, test_ftruncate(fd0));
+> +	EXPECT_EQ(0, test_ftruncate(fd1));
+> +	EXPECT_EQ(0, test_ftruncate(fd2));
+> +	EXPECT_EQ(EACCES, test_ftruncate(fd3));
+> +
+> +	ASSERT_EQ(0, close(fd0));
+> +	ASSERT_EQ(0, close(fd1));
+> +	ASSERT_EQ(0, close(fd2));
+> +	ASSERT_EQ(0, close(fd3));
+> +}
+> +
+>   /* clang-format off */
+>   FIXTURE(layout1_bind) {};
+>   /* clang-format on */
