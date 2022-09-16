@@ -2,133 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B7E5BB351
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 22:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 154BA5BB353
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 22:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbiIPUN4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 16:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
+        id S229997AbiIPUOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 16:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbiIPUNu (ORCPT
+        with ESMTP id S230039AbiIPUOF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 16:13:50 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED3AADCE2;
-        Fri, 16 Sep 2022 13:13:48 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id A135B5C01B5;
-        Fri, 16 Sep 2022 16:13:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 16 Sep 2022 16:13:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1663359227; x=
-        1663445627; bh=r+kD9N586GmRcVTBI3Qz83v5UZ83CiKVka4YsRwf+Pc=; b=C
-        3C34kyluypUBPPHY40ETkTOv49+P5NaG4TsQU5eTCq6n3uTHbdfYFCdyZIkiGnev
-        ehwfDpZWAHCZASU/2Zl60c2sleMyeRcEN1sFEWQJ5xUzRb2qwXqyu/cqm8zbDYUU
-        LoQosoHtJD5HbRHX010t3R2woGV9dBRMh/Q/tQ6Rk41CsOxSWK5UWM5jlmXhcna7
-        KMoJgwuYuTSKaDlKxJgQLBNSFeg2ezP2zHlor9tHqOf5qSN6xxrnV3Vi9hI64eWg
-        /jFKzvWBOFLrpyb3bRbcR49pfI54nc4ESQX9jLHo/D5GWLNJZsESgFIcsbJUBzFN
-        lHY7IwCFTRPtzaidicZvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1663359227; x=1663445627; bh=r+kD9N586GmRcVTBI3Qz83v5UZ83
-        CiKVka4YsRwf+Pc=; b=GRLhN7RjfqEPyUibtCXy5bjRhgGF7/KGr2tB4vbIJu6l
-        0Q78akX+qq9ecbhnDwr8f0+gjQjuas9+JJK3whbCHpNpTDMXxIve9Fuk2frDZAbv
-        Y1KmDSEqE9N7V2xYD3CyavT7udaUQgEavJ8BUpi9Annh73bg+GIzHEH/LnQs8IzX
-        z2VpKBtFnjaE/WWxQWmWM1slQayH9tdy/fDM4xfc6pIpa6lItmqeX8zQ1dAk/7/O
-        HtfRhvrZlvFGjzhDEV4cw/SD11ntkekq4XUaIPYIhlBDNbn8/tKHobHLGfK35qoj
-        OGmkxUP4vqQbBeq9HLnpqRQ2ZKUrCRuiYjMuruOfpA==
-X-ME-Sender: <xms:-9gkY_rquxM-aletTujXZUBHbMj428CxwPzUNAwxHGQYuWcuz_4b_A>
-    <xme:-9gkY5rEje5DsFI04LLqB0xK1T-RmtrgErdxTPrmIvmGu5tbsSeEZIzQooh6e7L2I
-    lzP3NTx41ts0EuVZUk>
-X-ME-Received: <xmr:-9gkY8NpV7KQukG2z1B-UcKrXdnaZ-Dsd65zOKbtok0lCu5RumDO0mYU8w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvtddgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeflohhs
-    hhcuvfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqne
-    cuggftrfgrthhtvghrnhepudeigeehieejuedvtedufeevtdejfeegueefgffhkefgleef
-    teetledvtdfftefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgh
-X-ME-Proxy: <xmx:-9gkYy6m5Fbywx5Oae5nIUYV_2kUrYzbJk35XznsIXkiw6390WMM3w>
-    <xmx:-9gkY-7ZU78k_b31q3vlL2H42DVHcEMrn-_QbEesDah79hYN1fTN3g>
-    <xmx:-9gkY6g6zphFiDn-6aKcu8WAHg5j_3blx2KylgJqUGjFf7j_D5MBxA>
-    <xmx:-9gkY50dVMvlpppradK0zparBJqvkTxPgwX1z3l5_isJ6FmLaSjGjA>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 16 Sep 2022 16:13:46 -0400 (EDT)
-Date:   Fri, 16 Sep 2022 21:13:44 +0100
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
- before allocating mm
-Message-ID: <YyTY+OaClK+JHCOw@localhost>
-References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
- <202209160727.5FC78B735@keescook>
+        Fri, 16 Sep 2022 16:14:05 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79FFBA162;
+        Fri, 16 Sep 2022 13:14:04 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id a14so8266434uat.13;
+        Fri, 16 Sep 2022 13:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date;
+        bh=L20SW832eC5U2q21l/Ay51d1N3TIrsvB3pYeReCImLo=;
+        b=hW28qMWulwQV/AuxYVS715lnVfy+KVpnf67Ieat5CoJcDtUA2d6n4tZReMn8z0lcqU
+         QIUL7TPVjAlz1wi942lGdT2xgvNmxMyJssU23U8PPCAiGsQ7YSpPKtyh+jnv8q7Lm5YT
+         ryvgM22Mhhxid8Cj90lGJBNORKebezm4W6eiXf2BR9EtCJ+x0wPYTz/cUodZ3dmq+C60
+         RmqscDvCusqWbdEMCSCjZZBK6UIVqU3+o++m9pEK9mwOy0rMMcxsTRWgoIW8lSC4t1wh
+         larElLzdnYhCHqVMBlFt3F4WrLDD+qTcANBhjKtuZGsv5Jxm2nMIZrkBbm8foniLuOco
+         r/kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=L20SW832eC5U2q21l/Ay51d1N3TIrsvB3pYeReCImLo=;
+        b=cQH7CG5RuRpyc+u8/Xcoi5D7/T3LLYTqqRNcqcdMPOQ10ujFekyuohOuw6Yk2vqjeV
+         3MC8xv3dFp13opbIpsP41vMK9hR1VSr7ABYGBlrPrDRQw0yccUoWbD6yy2XISiW6v0f8
+         m6qDm9jAWMXUYYl945afzbwZeYAYYFt67oN7QtkYmjC++dZOXhH4+yv/X/Clm7OZT/p+
+         cGA5AzjJxfrBKaiu6tTYX0uB5UIGRvRIy6UyeJrYCNY8fUHIwBK8AdlSMG+peugGajDj
+         C78ynzi8WXalt/6tzZVEcLHPsfkylyn5RLiC5cS3DyFvRGK5mnE0SUeFc5CxP40foy0t
+         FNfA==
+X-Gm-Message-State: ACrzQf1RHK0j8BAr8CVmY2dL6Ftt0Ff6hj2UPMgNMDQ6rv1tq+8jl/DC
+        4VqpaP+SdC2NpVhUXbLP8R+1dWaTfvuQ0YE+844dXBJh
+X-Google-Smtp-Source: AMsMyM6Ua2HAU1If14iZkSTbK3/6DsBySIw5nMlTroUrW+/9/9hd4vsPFEKosik4+LMbecf68Ugze55/xr1r3gCUw0A=
+X-Received: by 2002:ab0:3f0c:0:b0:383:f357:9c02 with SMTP id
+ bt12-20020ab03f0c000000b00383f3579c02mr2876371uab.19.1663359243306; Fri, 16
+ Sep 2022 13:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202209160727.5FC78B735@keescook>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 16 Sep 2022 15:13:52 -0500
+Message-ID: <CAH2r5mve4HKpPOwFuE5+r26xJ7f--M5+wC=kY0km9-T2WGak2A@mail.gmail.com>
+Subject: debugging rmmod failures
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 07:38:37AM -0700, Kees Cook wrote:
-> On Fri, Sep 16, 2022 at 02:41:30PM +0100, Josh Triplett wrote:
-> > Currently, execve allocates an mm and parses argv and envp before
-> > checking if the path exists. However, the common case of a $PATH search
-> > may have several failed calls to exec before a single success. Do a
-> > filename lookup for the purposes of returning ENOENT before doing more
-> > expensive operations.
-> 
-> At first I didn't understand how you were seeing this, since I'm so used
-> to watching shell scripts under tracing, which correctly use stat():
-> 
-> $ strace bash -c foo
-> stat("/home/keescook/bin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
-> stat("/usr/local/sbin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
-> stat("/usr/local/bin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
-> stat("/usr/sbin/foo", 0x7ffe1f9ddea0)   = -1 ENOENT (No such file or directory)
-> stat("/usr/bin/foo", 0x7ffe1f9ddea0)    = -1 ENOENT (No such file or directory)
-> stat("/sbin/foo", 0x7ffe1f9ddea0)       = -1 ENOENT (No such file or directory)
-> stat("/bin/foo", 0x7ffe1f9ddea0)        = -1 ENOENT (No such file or directory)
-> 
-> But I see, yes, glibc tries to actually call execve(), which, as you
-> say, is extremely heavy:
-> 
-> $ strace ./execvpe
-> ...
-> execve("/home/kees/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/usr/local/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/usr/local/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/usr/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/usr/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> execve("/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
-> 
-> This really seems much more like a glibc bug. The shell does it correctly...
+Any suggestions on how to debug why rmmod fails with EBUSY?
 
-musl does the same thing, as do python and perl (likely via execvp or
-posix_spawnp). As does gcc when it executes `as`. And I've seen more
-than a few programs hand-implement a PATH search the same way. Seems
-worth optimizing for.
+I was trying to debug a problem where rmmod fails during an xfstest
+run but couldn't find useful information on how to get ideas 'why'
+rmmod is failing (in this case with EBUSY) and I could only find two
+places where EBUSY would plausibly be returned but don't see the
+pr_debug message in the log (e.g. "already dying") that I would expect
+to get in those cases.
 
-And with io_uring_spawn, it'll be the substantially easier approach,
-since it'll just require one pass (series of execs) rather than two
-(stats then exec).
+It also fails in this test scenario (which takes a while to reproduce
+so isn't trivial to repro) with EBUSY when doing "rmmod --verbose
+--force"  and the --verbose didn't display any additional info.
 
-- Josh Triplett
+I also tried "trace-cmd record -e *module*" which showed it (one call)
+returning 0xFFFFFFF0 but nothing useful that I could see.
+
+Any ideas on how to debug *why* an rmmod fails?
+-- 
+Thanks,
+
+Steve
