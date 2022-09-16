@@ -2,42 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF725BA563
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 05:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D793A5BA56A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 05:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiIPDgs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Sep 2022 23:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57880 "EHLO
+        id S230043AbiIPDhR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Sep 2022 23:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbiIPDg2 (ORCPT
+        with ESMTP id S229852AbiIPDgd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Sep 2022 23:36:28 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1139D126;
-        Thu, 15 Sep 2022 20:36:26 -0700 (PDT)
+        Thu, 15 Sep 2022 23:36:33 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746A19C8FA;
+        Thu, 15 Sep 2022 20:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663299386; x=1694835386;
+  t=1663299392; x=1694835392;
   h=subject:from:to:cc:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ajaFzvrRPG16T180cU73eT4NP/l2RlRiUDdGWZj7wgU=;
-  b=M7BW1+EzIhNgpVsBTrNRSxKsaN2T/mazZoEBrJxq+h5Oxk59wtKgHC4V
-   uV7mKLkszUHF9dPikfeweM2+81CAq/yWd2GwEzHvLADFuKqvasA325CVf
-   nFt6s1kv1MmREQpFwhQ4WK0wGXZ/Yckb9k9C7AtyOz22p3nMcEZTb6FWr
-   AM2JZ89R/kREtAqLd8lis0oSzI7tBZkN/0KPlXaq9CzN5MWuZKrrDkCsu
-   4k4hqj4FnMgKpNVx7BrIXDwV6dWmT/VsS+PygiUsdUYOmlHdLx5RFeHfM
-   Gyeym6sGIpV86x1AtnngNrmb+V10+q7pqGoFXlwNLq4Bwb1KYV0JhqLZw
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10471"; a="325170450"
+  bh=r/wpsgIfHbDzQJNWJ9HD7Sb+85QkD9aLuJZ8FLqHRVk=;
+  b=g53wPSeVkvdSF6Cs1+SbG6Lb3K55J4CV3euWiOe+LGlxvPMHRioSiiXl
+   6FDei0xret8EXyc/VCyzgJahC2eCftQsTs911COEQOyZ5PGiq+Eu3/ha3
+   FLUS2IwBX52WxKsFLF+dKUgzwL9REOZ5t5zwVmjrpPqekTvE/yRmN1oKT
+   yDngm8tKMcJ6cVdlCZdLHUWGKov4N9anQTuE2n+nDhfXBBZh9w3qaSNYs
+   7MozGc2cTkMsSa6I/wqEq4LbIWu3NcYN3VWaH/vva74h234EMhLfm9l+P
+   e6q/JXaDupx/YhJonFcbQbBsEGdE4RvXvmHbPXm4YASBFZHObKid1GT9J
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10471"; a="279284002"
 X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="325170450"
+   d="scan'208";a="279284002"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 20:36:26 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 20:36:32 -0700
 X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="679809498"
+   d="scan'208";a="679809542"
 Received: from colinlix-mobl.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.209.29.52])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 20:36:25 -0700
-Subject: [PATCH v2 13/18] dax: Prep mapping helpers for compound pages
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 20:36:31 -0700
+Subject: [PATCH v2 14/18] devdax: add PUD support to the DAX mapping
+ infrastructure
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
 Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
@@ -48,32 +49,33 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         linux-ext4@vger.kernel.org
-Date:   Thu, 15 Sep 2022 20:36:25 -0700
-Message-ID: <166329938508.2786261.5544204703263725154.stgit@dwillia2-xfh.jf.intel.com>
+Date:   Thu, 15 Sep 2022 20:36:31 -0700
+Message-ID: <166329939123.2786261.4488002998591622104.stgit@dwillia2-xfh.jf.intel.com>
 In-Reply-To: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
 References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
 User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In preparation for device-dax to use the same mapping machinery as
-fsdax, add support for device-dax compound pages.
+In preparation for using the DAX mapping infrastructure for device-dax,
+update the helpers to handle PUD entries.
 
-Presently this is handled by dax_set_mapping() which is careful to only
-update page->mapping for head pages. However, it does that by looking at
-properties in the 'struct dev_dax' instance associated with the page.
-Switch to just checking PageHead() directly in the functions that
-iterate over pages in a large mapping.
+In practice the code related to @size_downgrade will go unused for PUD
+entries since only devdax creates DAX PUD entries and devdax enforces
+aligned mappings. The conversion is included for completeness.
+
+The addition of PUD support to dax_insert_pfn_mkwrite() requires a new
+stub for vmf_insert_pfn_pud() in the
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=n case.
 
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Jan Kara <jack@suse.cz>
@@ -83,80 +85,239 @@ Cc: Christoph Hellwig <hch@lst.de>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/Kconfig   |    1 +
- drivers/dax/mapping.c |   16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ drivers/dax/mapping.c   |   50 ++++++++++++++++++++++++++++++++++++-----------
+ include/linux/dax.h     |   32 ++++++++++++++++++++----------
+ include/linux/huge_mm.h |   11 ++++++++--
+ 3 files changed, 68 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-index 205e9dda8928..2eddd32c51f4 100644
---- a/drivers/dax/Kconfig
-+++ b/drivers/dax/Kconfig
-@@ -9,6 +9,7 @@ if DAX
- config DEV_DAX
- 	tristate "Device DAX: direct access mapping device"
- 	depends on TRANSPARENT_HUGEPAGE
-+	depends on !FS_DAX_LIMITED
- 	help
- 	  Support raw access to differentiated (persistence, bandwidth,
- 	  latency...) memory via an mmap(2) capable character
 diff --git a/drivers/dax/mapping.c b/drivers/dax/mapping.c
-index 70576aa02148..5d4b9601f183 100644
+index 5d4b9601f183..b5a5196f8831 100644
 --- a/drivers/dax/mapping.c
 +++ b/drivers/dax/mapping.c
-@@ -345,6 +345,8 @@ static vm_fault_t dax_associate_entry(void *entry,
- 	for_each_mapped_pfn(entry, pfn) {
- 		struct page *page = pfn_to_page(pfn);
+@@ -13,6 +13,7 @@
+ #include <linux/pfn_t.h>
+ #include <linux/sizes.h>
+ #include <linux/pagemap.h>
++#include <linux/huge_mm.h>
  
-+		page = compound_head(page);
-+
- 		if (flags & DAX_COW) {
- 			dax_mapping_set_cow(page);
- 		} else {
-@@ -353,6 +355,9 @@ static vm_fault_t dax_associate_entry(void *entry,
- 			page->index = index + i++;
- 			page_ref_inc(page);
- 		}
-+
-+		if (PageHead(page))
-+			break;
- 	}
+ #include "dax-private.h"
  
+@@ -56,6 +57,8 @@ static bool dax_is_zapped(void *entry)
+ 
+ static unsigned int dax_entry_order(void *entry)
+ {
++	if (xa_to_value(entry) & DAX_PUD)
++		return PUD_ORDER;
+ 	if (xa_to_value(entry) & DAX_PMD)
+ 		return PMD_ORDER;
  	return 0;
-@@ -372,6 +377,9 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+@@ -66,9 +69,14 @@ static unsigned long dax_is_pmd_entry(void *entry)
+ 	return xa_to_value(entry) & DAX_PMD;
+ }
  
- 	for_each_mapped_pfn(entry, pfn) {
- 		page = pfn_to_page(pfn);
++static unsigned long dax_is_pud_entry(void *entry)
++{
++	return xa_to_value(entry) & DAX_PUD;
++}
 +
-+		page = compound_head(page);
-+
- 		if (dax_mapping_is_cow(page->mapping)) {
- 			/* keep the CoW flag if this page is still shared */
- 			if (page->index-- > 0)
-@@ -383,6 +391,9 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+ static bool dax_is_pte_entry(void *entry)
+ {
+-	return !(xa_to_value(entry) & DAX_PMD);
++	return !(xa_to_value(entry) & (DAX_PMD|DAX_PUD));
+ }
+ 
+ static int dax_is_zero_entry(void *entry)
+@@ -277,6 +285,8 @@ static unsigned long dax_entry_size(void *entry)
+ 		return 0;
+ 	else if (dax_is_pmd_entry(entry))
+ 		return PMD_SIZE;
++	else if (dax_is_pud_entry(entry))
++		return PUD_SIZE;
+ 	else
+ 		return PAGE_SIZE;
+ }
+@@ -564,11 +574,11 @@ void *dax_grab_mapping_entry(struct xa_state *xas,
+ 			     struct address_space *mapping, unsigned int order)
+ {
+ 	unsigned long index = xas->xa_index;
+-	bool pmd_downgrade; /* splitting PMD entry into PTE entries? */
++	bool size_downgrade; /* splitting entry into PTE entries? */
+ 	void *entry;
+ 
+ retry:
+-	pmd_downgrade = false;
++	size_downgrade = false;
+ 	xas_lock_irq(xas);
+ 	entry = get_unlocked_entry(xas, order);
+ 
+@@ -581,15 +591,25 @@ void *dax_grab_mapping_entry(struct xa_state *xas,
  		}
- 		page->mapping = NULL;
- 		page->index = 0;
-+
-+		if (PageHead(page))
-+			break;
+ 
+ 		if (order == 0) {
+-			if (dax_is_pmd_entry(entry) &&
++			if (!dax_is_pte_entry(entry) &&
+ 			    (dax_is_zero_entry(entry) ||
+ 			     dax_is_empty_entry(entry))) {
+-				pmd_downgrade = true;
++				size_downgrade = true;
+ 			}
+ 		}
  	}
  
- 	if (trunc && !dax_mapping_is_cow(page->mapping)) {
-@@ -660,11 +671,16 @@ static struct page *dax_zap_pages(struct xa_state *xas, void *entry)
- 	for_each_mapped_pfn(entry, pfn) {
- 		struct page *page = pfn_to_page(pfn);
- 
-+		page = compound_head(page);
+-	if (pmd_downgrade) {
++	if (size_downgrade) {
++		unsigned long colour, nr;
 +
- 		if (zap)
- 			page_ref_dec(page);
- 
- 		if (!ret && !dax_page_idle(page))
- 			ret = page;
++		if (dax_is_pmd_entry(entry)) {
++			colour = PG_PMD_COLOUR;
++			nr = PG_PMD_NR;
++		} else {
++			colour = PG_PUD_COLOUR;
++			nr = PG_PUD_NR;
++		}
 +
-+		if (PageHead(page))
-+			break;
+ 		/*
+ 		 * Make sure 'entry' remains valid while we drop
+ 		 * the i_pages lock.
+@@ -603,9 +623,8 @@ void *dax_grab_mapping_entry(struct xa_state *xas,
+ 		 */
+ 		if (dax_is_zero_entry(entry)) {
+ 			xas_unlock_irq(xas);
+-			unmap_mapping_pages(mapping,
+-					    xas->xa_index & ~PG_PMD_COLOUR,
+-					    PG_PMD_NR, false);
++			unmap_mapping_pages(mapping, xas->xa_index & ~colour,
++					    nr, false);
+ 			xas_reset(xas);
+ 			xas_lock_irq(xas);
+ 		}
+@@ -613,7 +632,7 @@ void *dax_grab_mapping_entry(struct xa_state *xas,
+ 		dax_disassociate_entry(entry, mapping, false);
+ 		xas_store(xas, NULL); /* undo the PMD join */
+ 		dax_wake_entry(xas, entry, WAKE_ALL);
+-		mapping->nrpages -= PG_PMD_NR;
++		mapping->nrpages -= nr;
+ 		entry = NULL;
+ 		xas_set(xas, index);
  	}
+@@ -623,7 +642,9 @@ void *dax_grab_mapping_entry(struct xa_state *xas,
+ 	} else {
+ 		unsigned long flags = DAX_EMPTY;
  
- 	if (zap)
+-		if (order > 0)
++		if (order == PUD_SHIFT - PAGE_SHIFT)
++			flags |= DAX_PUD;
++		else if (order == PMD_SHIFT - PAGE_SHIFT)
+ 			flags |= DAX_PMD;
+ 		entry = dax_make_entry(pfn_to_pfn_t(0), flags);
+ 		dax_lock_entry(xas, entry);
+@@ -846,7 +867,10 @@ vm_fault_t dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
+ 	if (cow || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
+ 		unsigned long index = xas->xa_index;
+ 		/* we are replacing a zero page with block mapping */
+-		if (dax_is_pmd_entry(entry))
++		if (dax_is_pud_entry(entry))
++			unmap_mapping_pages(mapping, index & ~PG_PUD_COLOUR,
++					    PG_PUD_NR, false);
++		else if (dax_is_pmd_entry(entry))
+ 			unmap_mapping_pages(mapping, index & ~PG_PMD_COLOUR,
+ 					    PG_PMD_NR, false);
+ 		else /* pte entry */
+@@ -1018,6 +1042,8 @@ vm_fault_t dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn,
+ 	else if (order == PMD_ORDER)
+ 		ret = vmf_insert_pfn_pmd(vmf, pfn, FAULT_FLAG_WRITE);
+ #endif
++	else if (order == PUD_ORDER)
++		ret = vmf_insert_pfn_pud(vmf, pfn, FAULT_FLAG_WRITE);
+ 	else
+ 		ret = VM_FAULT_FALLBACK;
+ 	dax_unlock_entry(&xas, entry);
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index de60a34088bb..3a27fecf072a 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -278,22 +278,25 @@ static inline bool dax_mapping(struct address_space *mapping)
+ }
+ 
+ /*
+- * DAX pagecache entries use XArray value entries so they can't be mistaken
+- * for pages.  We use one bit for locking, one bit for the entry size (PMD)
+- * and two more to tell us if the entry is a zero page or an empty entry that
+- * is just used for locking.  In total four special bits.
++ * DAX pagecache entries use XArray value entries so they can't be
++ * mistaken for pages.  We use one bit for locking, two bits for the
++ * entry size (PMD, PUD) and two more to tell us if the entry is a zero
++ * page or an empty entry that is just used for locking.  In total 5
++ * special bits which limits the max pfn that can be stored as:
++ * (1UL << 57 - PAGE_SHIFT). 63 - DAX_SHIFT - 1 (for xa_mk_value()).
+  *
+- * If the PMD bit isn't set the entry has size PAGE_SIZE, and if the ZERO_PAGE
+- * and EMPTY bits aren't set the entry is a normal DAX entry with a filesystem
+- * block allocation.
++ * If the P{M,U}D bits are not set the entry has size PAGE_SIZE, and if
++ * the ZERO_PAGE and EMPTY bits aren't set the entry is a normal DAX
++ * entry with a filesystem block allocation.
+  */
+-#define DAX_SHIFT	(5)
++#define DAX_SHIFT	(6)
+ #define DAX_MASK	((1UL << DAX_SHIFT) - 1)
+ #define DAX_LOCKED	(1UL << 0)
+ #define DAX_PMD		(1UL << 1)
+-#define DAX_ZERO_PAGE	(1UL << 2)
+-#define DAX_EMPTY	(1UL << 3)
+-#define DAX_ZAP		(1UL << 4)
++#define DAX_PUD		(1UL << 2)
++#define DAX_ZERO_PAGE	(1UL << 3)
++#define DAX_EMPTY	(1UL << 4)
++#define DAX_ZAP		(1UL << 5)
+ 
+ /*
+  * These flags are not conveyed in Xarray value entries, they are just
+@@ -316,6 +319,13 @@ int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ /* The order of a PMD entry */
+ #define PMD_ORDER (PMD_SHIFT - PAGE_SHIFT)
+ 
++/* The 'colour' (ie low bits) within a PUD of a page offset.  */
++#define PG_PUD_COLOUR ((PUD_SIZE >> PAGE_SHIFT) - 1)
++#define PG_PUD_NR (PUD_SIZE >> PAGE_SHIFT)
++
++/* The order of a PUD entry */
++#define PUD_ORDER (PUD_SHIFT - PAGE_SHIFT)
++
+ static inline unsigned int pe_order(enum page_entry_size pe_size)
+ {
+ 	if (pe_size == PE_SIZE_PTE)
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 768e5261fdae..de73f5a16252 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -18,10 +18,19 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+ 
+ #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+ void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud);
++vm_fault_t vmf_insert_pfn_pud_prot(struct vm_fault *vmf, pfn_t pfn,
++				   pgprot_t pgprot, bool write);
+ #else
+ static inline void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud)
+ {
+ }
++
++static inline vm_fault_t vmf_insert_pfn_pud_prot(struct vm_fault *vmf,
++						 pfn_t pfn, pgprot_t pgprot,
++						 bool write)
++{
++	return VM_FAULT_SIGBUS;
++}
+ #endif
+ 
+ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf);
+@@ -58,8 +67,6 @@ static inline vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn,
+ {
+ 	return vmf_insert_pfn_pmd_prot(vmf, pfn, vmf->vma->vm_page_prot, write);
+ }
+-vm_fault_t vmf_insert_pfn_pud_prot(struct vm_fault *vmf, pfn_t pfn,
+-				   pgprot_t pgprot, bool write);
+ 
+ /**
+  * vmf_insert_pfn_pud - insert a pud size pfn
 
