@@ -2,226 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B4C5BA7C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 10:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129E55BA8E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 11:02:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbiIPIH0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 04:07:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44982 "EHLO
+        id S230476AbiIPI76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 04:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230353AbiIPIGj (ORCPT
+        with ESMTP id S230405AbiIPI7z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 04:06:39 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477E5D125
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 01:05:28 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 58B0E3200B15;
-        Fri, 16 Sep 2022 04:05:25 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 16 Sep 2022 04:05:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1663315524; x=
-        1663401924; bh=DpGEM9lfiq2Xus0TNrTxUqZ9DBjKf+k0dABgR0oK4Bo=; b=D
-        XUYvDTfjOmT68tVPfiuHwoInrv1XTyY4xOX85VtdlgnFZ7xWpThzp/uM6/n65MNh
-        DB3y8gv8W+aj7plg4kEvdXyxfIiOTqgAV8IV8LtAuC3IXh7wG1fMBPNaj/qToQ4I
-        IVHjIxSqan/ROGr1dHoPbPFrtKJvkvnkNz2gRzv8WnTepfb9HFKfXUh/PWFBNtEl
-        6R8ckItQcVrRhNVZjHegETiPRE9pORkN8RmZAW9IbqKDrKddY61qhQFHE2a1H7AD
-        ApP76fUoOs4l4SBhn0X7J1oIw+wvrGvmB0J4T8k1LJjYuKLT100H9PgL26ofeYnW
-        p8XHOb2aCgbsh91NI/+rA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1663315524; x=
-        1663401924; bh=DpGEM9lfiq2Xus0TNrTxUqZ9DBjKf+k0dABgR0oK4Bo=; b=v
-        PQy9rwvKYM9fSw8AQdUP+wPFhKGIHKZb/BhBMkiHQ3cFa7p+NAnTlti+HZDVEEbn
-        BxoE/Ykex8Bsru5Ha0INxSWY2CnHEBP9I0LszJOz+58/xiK72vGBEqXywLLSgcRf
-        xueLum9FdzjotJatvkiszNsKY4lwoAnRcPhgANe72dxin6cNRaNqJb8yDr+F59lw
-        UyCNxZxEnAf4jArnH7881Oj5CdERyvU3otw2cDhlhBYlHcA17ztMCoeT4RFNzE4R
-        4xQmeecY0MQHvZbAmDQXh1ieyrRkgZbz17PyCTmT0657Xdcfy3rdg0ho7jtu5SPf
-        Y4mw8I/XSm9NnPU+Qn9DQ==
-X-ME-Sender: <xms:RC4kY8eJhfBiWTmvur1isQj1d30l9I-g9kRMcvKk4llTMlI2Djf8Iw>
-    <xme:RC4kY-OPDkCc9gCuVSldx0dP7vOtW0qSSkT-JQsRjfcFYKKbdcYAiMAu_PlM833jt
-    C5x4TUsZ82J2cLx>
-X-ME-Received: <xmr:RC4kY9iNHdKedBpbhXfAQhtnDEsB6uu5MjKw6780UsN1tLridnPh_KiIIjY29JrSe5eKlmXkelI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvtddgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
-    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvedtgeegtdduveffgeegueegleekkeeghfdttefhleevhfekfeduvdfh
-    udegueegnecuffhomhgrihhnpehfohhsuggvmhdrohhrghdpuggvsghirghnrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheppfhikhho
-    lhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:RC4kYx_hCFyZljq2kJ4dZB_h9bxpbA-cCRv5tlCEMapc6RuBCB6HWw>
-    <xmx:RC4kY4t44dB3soSP6l0egk6xV7IxOOJdTV9LvsXMeEbgGag-Qcxvaw>
-    <xmx:RC4kY4HRV62uSNosbmEYoTH_k3qKDDE0Iw8-r9DAvX8623n_eWQcqw>
-    <xmx:RC4kYyW4-9QVrZGRnlBC-o7vknUmQmw9q7vc60QqnJxYt1WeYUtOrQ>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 16 Sep 2022 04:05:24 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id D4E85BD0;
-        Fri, 16 Sep 2022 08:05:22 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 45F47D82AF; Fri, 16 Sep 2022 09:05:22 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Wouter Verhelst <w@uter.be>
-Cc:     nbd@other.debian.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        miklos <mszeredi@redhat.com>
-Subject: Re: Why do NBD requests prevent hibernation, and FUSE requests do not?
-References: <87k06qb5to.fsf@vostro.rath.org>
-        <YxH79CbXDUEa+r/2@pc220518.home.grep.be>
-Mail-Copies-To: never
-Mail-Followup-To: Wouter Verhelst <w@uter.be>, nbd@other.debian.org, Linux FS
-        Devel <linux-fsdevel@vger.kernel.org>, miklos <mszeredi@redhat.com>
-Date:   Fri, 16 Sep 2022 09:05:22 +0100
-In-Reply-To: <YxH79CbXDUEa+r/2@pc220518.home.grep.be> (Wouter Verhelst's
-        message of "Fri, 2 Sep 2022 14:49:56 +0200")
-Message-ID: <87mtazrbgd.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 16 Sep 2022 04:59:55 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80E7254
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 01:59:51 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id v1so20822322plo.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 01:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=bpay7ieFN7L2BD1r82YunERmYrsWOu8zYKex4r+0oWE=;
+        b=PFppksqTikwmeE7hjwS3gKaMSubi4w8nin/s0f8Y78blL3QN/srJIxl00OgBygNxxA
+         uLI5mknRGe/QUsBXg9PkfQmXDGapb6+kTcRr+Lb70NU6v8BtWyZLb8TTMHvAowT+nd7O
+         4s1QoXILXUqDbnyvPzYatuaq56I/HklY5hg+QOQzm9ekqYJuWl/W71mIL2i+26LwII1C
+         Rmmar2t20U21mDlS/JXBLr8i/QN6tKr6tuPVPq8iXGj6k+eeVoayxnV+udj7Gfxz4an/
+         1sNkvPSKFMgw4Z6VnDjtxmEJuLafHwNNkn23SdnjgMqomPPmkCyIsE35YTK9jOPJvEMb
+         l2Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=bpay7ieFN7L2BD1r82YunERmYrsWOu8zYKex4r+0oWE=;
+        b=x6JKKnJcDK724GlxQaokUw0z2v8kIlFD2C3qtyHa4QOqC+3AIWP8qMEDElqDEXxiQ2
+         oTQzzVUq04RrkKVi3PpyNUNJJtmKUZ7uuvNAx4rPbuCTXtzG2SS8IwD3ZEUiWWGdZeoc
+         Px0tB38ONbWVL91zCK61gh71l9HJjbL8IBOoUnytL/+ASN1unJ9AWbbhydigrkT/X35v
+         Eg4mWDqXCmPu1UmLzBBEUKTwE3xKXYAhyyuXvZPnbI0n0CxX0CR2m2HBGnwnuo6J52rS
+         dznRBe8iVIp94I9E4dRZQXZaNjISUJmxxnkmNVJLiLND+kEeD5Hb5E0l9otlE+JNz/KH
+         Hy6A==
+X-Gm-Message-State: ACrzQf03Dw1qcUuu65u+JblGd3hJfSaJCqC2oV81o764k0/rIBtqPd4z
+        b6SCeZhtW2/7NUofTKygVt2HDA==
+X-Google-Smtp-Source: AMsMyM4Z/PgW19wtEWnOkFA0a40RWMyMBzggOVW5eKXzaASNM8IvaNms0QWc9EI4dLnEcyvXoOv14A==
+X-Received: by 2002:a17:902:e212:b0:178:5c:8248 with SMTP id u18-20020a170902e21200b00178005c8248mr3884974plb.102.1663318790508;
+        Fri, 16 Sep 2022 01:59:50 -0700 (PDT)
+Received: from C02G705SMD6V.bytedance.net ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id u11-20020a17090a450b00b001fd7fe7d369sm970578pjg.54.2022.09.16.01.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Sep 2022 01:59:49 -0700 (PDT)
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, jefflexu@linux.alibaba.com,
+        Jia Zhu <zhujia.zj@bytedance.com>
+Subject: [PATCH V5 0/6] Introduce erofs shared domain
+Date:   Fri, 16 Sep 2022 16:59:34 +0800
+Message-Id: <20220916085940.89392-1-zhujia.zj@bytedance.com>
+X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Wouter,
+Changes since V4:
+0. Relinquish the volume after mutex unlock in erofs_fscache_domain_put().
+1. Use kill_anon_super() instead of kill_litter_super() to umount pseudo mnt.
+2. Extract erofs_fscache_relinquish_cookie() to reduce lines.
+3. Add code comments.
+4. Remove useless local variable initialization.
+5. Add "Fixes" line to patch 1.
+6. Add Reviewed-by lines from Jingbo Xu.
 
-Following up on this: should the NBD server perhaps set
-PR_SET_IO_FLUSHER, and the kernel freeze tasks with this flag last?
+[Kernel Patchset]
+===============
+Git tree:
+	https://github.com/userzj/linux.git zhujia/shared-domain-v5
+Git web:
+	https://github.com/userzj/linux/tree/zhujia/shared-domain-v5
 
-Best,
--Nikolaus
+[User Daemon for Quick Test]
+============================
+Git web:
+	https://github.com/userzj/demand-read-cachefilesd/tree/shared-domain
+More test cases will be added to:
+	https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/log/?h=experimental-tests-fscache 
 
-On Sep 02 2022, Wouter Verhelst <w@uter.be> wrote:
-> Hi Nikolaus,
->
-> I do not know how FUSE works, so can't comment on that.
->
-> NBD, however, is a message-passing protocol: the client sends a message
-> to request something over a network socket, which causes the server to
-> do some processing, and then to send a message back. As far as the
-> kernel is concerned (at least outside nbd.ko), there is no connection
-> between the request message and the reply message.
->
-> As such, when the kernel suspends the nbd server, it has no way of
-> knowing that the in-kernel client is still waiting on a reply for a
-> message that was sent earlier.
->
-> I'm guessing that for FUSE, there is such a link?
->
-> On Tue, Aug 30, 2022 at 07:31:31AM +0100, Nikolaus Rath wrote:
->> Hello,
->>=20
->> I am comparing the behavior of FUSE and NBD when attempting to hibernate
->> the system.
->>=20
->> FUSE seems to be mostly compatible, I am able to suspend the system even
->> when there is ongoing I/O on the fuse filesystem.
->>=20
->> With NBD, on the other hand, most I/O seems to prevent hibernation the
->> system. Example hibernation error:
->>=20
->>   kernel: Freezing user space processes ...=20
->>   kernel: Freezing of tasks failed after 20.003 seconds (1 tasks refusin=
-g to freeze, wq_busy=3D0):
->>   kernel: task:rsync           state:D stack:    0 pid:348105 ppid:34810=
-4 flags:0x00004004
->>   kernel: Call Trace:
->>   kernel:  <TASK>
->>   kernel:  __schedule+0x308/0x9e0
->>   kernel:  schedule+0x4e/0xb0
->>   kernel:  schedule_timeout+0x88/0x150
->>   kernel:  ? __bpf_trace_tick_stop+0x10/0x10
->>   kernel:  io_schedule_timeout+0x4c/0x80
->>   kernel:  __cv_timedwait_common+0x129/0x160 [spl]
->>   kernel:  ? dequeue_task_stop+0x70/0x70
->>   kernel:  __cv_timedwait_io+0x15/0x20 [spl]
->>   kernel:  zio_wait+0x129/0x2b0 [zfs]
->>   kernel:  dmu_buf_hold+0x5b/0x90 [zfs]
->>   kernel:  zap_lockdir+0x4e/0xb0 [zfs]
->>   kernel:  zap_cursor_retrieve+0x1ae/0x320 [zfs]
->>   kernel:  ? dbuf_prefetch+0xf/0x20 [zfs]
->>   kernel:  ? dmu_prefetch+0xc8/0x200 [zfs]
->>   kernel:  zfs_readdir+0x12a/0x440 [zfs]
->>   kernel:  ? preempt_count_add+0x68/0xa0
->>   kernel:  ? preempt_count_add+0x68/0xa0
->>   kernel:  ? aa_file_perm+0x120/0x4c0
->>   kernel:  ? rrw_exit+0x65/0x150 [zfs]
->>   kernel:  ? _copy_to_user+0x21/0x30
->>   kernel:  ? cp_new_stat+0x150/0x180
->>   kernel:  zpl_iterate+0x4c/0x70 [zfs]
->>   kernel:  iterate_dir+0x171/0x1c0
->>   kernel:  __x64_sys_getdents64+0x78/0x110
->>   kernel:  ? __ia32_sys_getdents64+0x110/0x110
->>   kernel:  do_syscall_64+0x38/0xc0
->>   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xae
->>   kernel: RIP: 0033:0x7f03c897a9c7
->>   kernel: RSP: 002b:00007ffd41e3c518 EFLAGS: 00000293 ORIG_RAX: 00000000=
-000000d9
->>   kernel: RAX: ffffffffffffffda RBX: 0000561eff64dd40 RCX: 00007f03c897a=
-9c7
->>   kernel: RDX: 0000000000008000 RSI: 0000561eff64dd70 RDI: 0000000000000=
-000
->>   kernel: RBP: 0000561eff64dd70 R08: 0000000000000030 R09: 00007f03c8a72=
-be0
->>   kernel: R10: 0000000000020000 R11: 0000000000000293 R12: fffffffffffff=
-f80
->>   kernel: R13: 0000561eff64dd44 R14: 0000000000000000 R15: 0000000000000=
-001
->>   kernel:  </TASK>
->>=20
->> (this is with ZFS on top of the NBD device).
->>=20
->>=20
->> As far as I can tell, the problem is that while an NBD request is
->> pending, the atsk that waits for the result (in this case *rsync*) is
->> refusing to freeze. This happens even when setting a 5 minute timeout
->> for freezing (which is more than enough time for the NBD request to
->> complete), so I suspect that the NBD server task (in this case nbdkit)
->> has already been frozen and is thus unable to make progress.
->>=20
->> However, I do not understand why the same is not happening for FUSE
->> (with FUSE requests being stuck because the FUSE daemon is already
->> frozen). Was I just very lucky in my tests? Or are tasks waiting for
->> FUSE request in a different kind of state? Or is NBD a red-herring here,
->> and the real trouble is with ZFS?
->>=20
->> It would be great if someone  could shed some light on what's going on.
->>=20
->>=20
->> Best,
->> -Nikolaus
->>=20
->> --=20
->> GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
->>=20
->>              =C2=BBTime flies like an arrow, fruit flies like a Banana.=
-=C2=AB
->>=20
->>=20
->
-> --=20
->      w@uter.{be,co.za}
-> wouter@{grep.be,fosdem.org,debian.org}
->
-> I will have a Tin-Actinium-Potassium mixture, thanks.
+[E2E Container Demo for Quick Test]
+===================================
+[Issue]
+	https://github.com/containerd/nydus-snapshotter/issues/161
+[PR]
+	https://github.com/containerd/nydus-snapshotter/pull/162
 
+[Background]
+============
+In ondemand read mode, we use individual volume to present an erofs
+mountpoint, cookies to present bootstrap and data blobs.
 
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+In which case, since cookies can't be shared between fscache volumes,
+even if the data blobs between different mountpoints are exactly same,
+they can't be shared.
 
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+[Introduction]
+==============
+Here we introduce erofs shared domain to resolve above mentioned case.
+Several erofs filesystems can belong to one domain, and data blobs can
+be shared among these erofs filesystems of same domain.
+
+[Usage]
+Users could specify 'domain_id' mount option to create or join into a
+domain which reuses the same cookies(blobs).
+
+[Design]
+========
+1. Use pseudo mnt to manage domain's lifecycle.
+2. Use a linked list to maintain & traverse domains.
+3. Use pseudo sb to create anonymous inode for recording cookie's info
+   and manage cookies lifecycle.
+
+[Flow Path]
+===========
+1. User specify a new 'domain_id' in mount option.
+   1.1 Traverse domain list, compare domain_id with existing domain.[Miss]
+   1.2 Create a new domain(volume), add it to domain list.
+   1.3 Traverse pseudo sb's inode list, compare cookie name with
+       existing cookies.[Miss]
+   1.4 Alloc new anonymous inodes and cookies.
+
+2. User specify an existing 'domain_id' in mount option and the data
+   blob is existed in domain.
+   2.1 Traverse domain list, compare domain_id with existing domain.[Hit]
+   2.2 Reuse the domain and increase its refcnt.
+   2.3 Traverse pseudo sb's inode list, compare cookie name with
+   	   existing cookies.[Hit]
+   2.4 Reuse the cookie and increase its refcnt.
+
+RFC: https://lore.kernel.org/all/YxAlO%2FDHDrIAafR2@B-P7TQMD6M-0146.local/
+V1: https://lore.kernel.org/all/20220902034748.60868-1-zhujia.zj@bytedance.com/
+V2: https://lore.kernel.org/all/20220902105305.79687-1-zhujia.zj@bytedance.com/
+V3: https://lore.kernel.org/all/20220914105041.42970-1-zhujia.zj@bytedance.com/
+V4: https://lore.kernel.org/all/20220915124213.25767-1-zhujia.zj@bytedance.com/
+
+Jia Zhu (6):
+  erofs: use kill_anon_super() to kill super in fscache mode
+  erofs: code clean up for fscache
+  erofs: introduce fscache-based domain
+  erofs: introduce a pseudo mnt to manage shared cookies
+  erofs: Support sharing cookies in the same domain
+  erofs: introduce 'domain_id' mount option
+
+ fs/erofs/fscache.c  | 264 ++++++++++++++++++++++++++++++++++++++------
+ fs/erofs/internal.h |  32 ++++--
+ fs/erofs/super.c    |  73 +++++++++---
+ fs/erofs/sysfs.c    |  19 +++-
+ 4 files changed, 325 insertions(+), 63 deletions(-)
+
+-- 
+2.20.1
+
