@@ -2,207 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A31955BB2FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 21:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B7E5BB351
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Sep 2022 22:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbiIPTos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 15:44:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
+        id S230200AbiIPUN4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 16:13:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbiIPToc (ORCPT
+        with ESMTP id S230054AbiIPUNu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 15:44:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2972726
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 12:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1663357467;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wGsSwi5yFIWxEALJ9auZ58Wh8GXaKXFvqfjaGSnnGHs=;
-        b=HD7KR6+sxxBe7YuSrx5YnWX6Fh7WUze0jOyqukw05LPyWPzN+1zVGlco9yEoQ37CkpTSd5
-        DA6bqw4i6D/Pp8qv1FFfkHqdjXHsnN3fT7pqxYiiOmC1xee4NbHS3LEYgtcTfOohsp9gCi
-        VIWOKw8WLAwBpeuOKSxnErGYU2zyWi8=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-673-bfvVcPazMXeBiIVEe3BWkw-1; Fri, 16 Sep 2022 15:44:26 -0400
-X-MC-Unique: bfvVcPazMXeBiIVEe3BWkw-1
-Received: by mail-ed1-f70.google.com with SMTP id b16-20020a056402279000b0044f1102e6e2so16017967ede.20
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 12:44:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=wGsSwi5yFIWxEALJ9auZ58Wh8GXaKXFvqfjaGSnnGHs=;
-        b=VT4gmuVzkqrVbnOPDj1mXV2nQFu5sfwogQm/sW4dLEUxU1uWqIDP2toHwTTip2OGqQ
-         HwxgLUWl49UFJEbkT08Ng1yzmy/B+SO4GB5O3znK+9MagY+Hgc/hOyDI69q35HQg1QQZ
-         Kb2oL5kENSUoIPnBMjTvgkbyspH8xIpLVGvQ0AplDTKjveYWNu3/i8Zou2oPrAfB/XNj
-         wdU3EqnKBcQMsQWBoh7J5la6vTHNm3rREtJ5IEkeCi1XBR6W3P62I4s0bUMWg/EfHQeE
-         23DrYip3fxj8IDvtDUw1CwEZ7KsV63tXpJj2CJr5xclEn3Jcu4wQ97t0zHDnQ+zQqOQ0
-         jvdA==
-X-Gm-Message-State: ACrzQf0vx4FSbKx1hu5N1L5bYN5GIpK7X8FOugLFQDcOKwQ2zGVrPedx
-        AAZVg3+yEx3ykRqZmR00SCbQJIBeIMUr8lAqO1G5faWGafKN6cITQTPoFbMqydiLSFMXk7mNd6n
-        IIusI4uW8aYILUgA5lW15V06C0s3N2vIlZj6PjfoNfnOE6ppArWj0+XHIaKMVftZByepKxYdgHs
-        nGEQ==
-X-Received: by 2002:a17:907:a05:b0:77b:b538:6476 with SMTP id bb5-20020a1709070a0500b0077bb5386476mr4727469ejc.324.1663357464726;
-        Fri, 16 Sep 2022 12:44:24 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6706RdDg8hjkySYUg8qtiFYAIOJ+3XqjS2406aPkJa6bnCHLmDVB/6hsk97L7uGZ2y4JFkkg==
-X-Received: by 2002:a17:907:a05:b0:77b:b538:6476 with SMTP id bb5-20020a1709070a0500b0077bb5386476mr4727456ejc.324.1663357464505;
-        Fri, 16 Sep 2022 12:44:24 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (193-226-212-116.pool.digikabel.hu. [193.226.212.116])
-        by smtp.gmail.com with ESMTPSA id r17-20020a17090609d100b0077ce503bd77sm8348592eje.129.2022.09.16.12.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Sep 2022 12:44:24 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Yu-li Lin <yulilin@google.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH 8/8] fuse: implement ->tmpfile()
-Date:   Fri, 16 Sep 2022 21:44:16 +0200
-Message-Id: <20220916194416.1657716-8-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220916194416.1657716-1-mszeredi@redhat.com>
-References: <20220916194416.1657716-1-mszeredi@redhat.com>
+        Fri, 16 Sep 2022 16:13:50 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED3AADCE2;
+        Fri, 16 Sep 2022 13:13:48 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id A135B5C01B5;
+        Fri, 16 Sep 2022 16:13:47 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 16 Sep 2022 16:13:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        joshtriplett.org; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1663359227; x=
+        1663445627; bh=r+kD9N586GmRcVTBI3Qz83v5UZ83CiKVka4YsRwf+Pc=; b=C
+        3C34kyluypUBPPHY40ETkTOv49+P5NaG4TsQU5eTCq6n3uTHbdfYFCdyZIkiGnev
+        ehwfDpZWAHCZASU/2Zl60c2sleMyeRcEN1sFEWQJ5xUzRb2qwXqyu/cqm8zbDYUU
+        LoQosoHtJD5HbRHX010t3R2woGV9dBRMh/Q/tQ6Rk41CsOxSWK5UWM5jlmXhcna7
+        KMoJgwuYuTSKaDlKxJgQLBNSFeg2ezP2zHlor9tHqOf5qSN6xxrnV3Vi9hI64eWg
+        /jFKzvWBOFLrpyb3bRbcR49pfI54nc4ESQX9jLHo/D5GWLNJZsESgFIcsbJUBzFN
+        lHY7IwCFTRPtzaidicZvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1663359227; x=1663445627; bh=r+kD9N586GmRcVTBI3Qz83v5UZ83
+        CiKVka4YsRwf+Pc=; b=GRLhN7RjfqEPyUibtCXy5bjRhgGF7/KGr2tB4vbIJu6l
+        0Q78akX+qq9ecbhnDwr8f0+gjQjuas9+JJK3whbCHpNpTDMXxIve9Fuk2frDZAbv
+        Y1KmDSEqE9N7V2xYD3CyavT7udaUQgEavJ8BUpi9Annh73bg+GIzHEH/LnQs8IzX
+        z2VpKBtFnjaE/WWxQWmWM1slQayH9tdy/fDM4xfc6pIpa6lItmqeX8zQ1dAk/7/O
+        HtfRhvrZlvFGjzhDEV4cw/SD11ntkekq4XUaIPYIhlBDNbn8/tKHobHLGfK35qoj
+        OGmkxUP4vqQbBeq9HLnpqRQ2ZKUrCRuiYjMuruOfpA==
+X-ME-Sender: <xms:-9gkY_rquxM-aletTujXZUBHbMj428CxwPzUNAwxHGQYuWcuz_4b_A>
+    <xme:-9gkY5rEje5DsFI04LLqB0xK1T-RmtrgErdxTPrmIvmGu5tbsSeEZIzQooh6e7L2I
+    lzP3NTx41ts0EuVZUk>
+X-ME-Received: <xmr:-9gkY8NpV7KQukG2z1B-UcKrXdnaZ-Dsd65zOKbtok0lCu5RumDO0mYU8w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvtddgudehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeflohhs
+    hhcuvfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqne
+    cuggftrfgrthhtvghrnhepudeigeehieejuedvtedufeevtdejfeegueefgffhkefgleef
+    teetledvtdfftefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepjhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgh
+X-ME-Proxy: <xmx:-9gkYy6m5Fbywx5Oae5nIUYV_2kUrYzbJk35XznsIXkiw6390WMM3w>
+    <xmx:-9gkY-7ZU78k_b31q3vlL2H42DVHcEMrn-_QbEesDah79hYN1fTN3g>
+    <xmx:-9gkY6g6zphFiDn-6aKcu8WAHg5j_3blx2KylgJqUGjFf7j_D5MBxA>
+    <xmx:-9gkY50dVMvlpppradK0zparBJqvkTxPgwX1z3l5_isJ6FmLaSjGjA>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 16 Sep 2022 16:13:46 -0400 (EDT)
+Date:   Fri, 16 Sep 2022 21:13:44 +0100
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
+ before allocating mm
+Message-ID: <YyTY+OaClK+JHCOw@localhost>
+References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
+ <202209160727.5FC78B735@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202209160727.5FC78B735@keescook>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is basically equivalent to the FUSE_CREATE operation which creates and
-opens a regular file.
+On Fri, Sep 16, 2022 at 07:38:37AM -0700, Kees Cook wrote:
+> On Fri, Sep 16, 2022 at 02:41:30PM +0100, Josh Triplett wrote:
+> > Currently, execve allocates an mm and parses argv and envp before
+> > checking if the path exists. However, the common case of a $PATH search
+> > may have several failed calls to exec before a single success. Do a
+> > filename lookup for the purposes of returning ENOENT before doing more
+> > expensive operations.
+> 
+> At first I didn't understand how you were seeing this, since I'm so used
+> to watching shell scripts under tracing, which correctly use stat():
+> 
+> $ strace bash -c foo
+> stat("/home/keescook/bin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
+> stat("/usr/local/sbin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
+> stat("/usr/local/bin/foo", 0x7ffe1f9ddea0) = -1 ENOENT (No such file or directory)
+> stat("/usr/sbin/foo", 0x7ffe1f9ddea0)   = -1 ENOENT (No such file or directory)
+> stat("/usr/bin/foo", 0x7ffe1f9ddea0)    = -1 ENOENT (No such file or directory)
+> stat("/sbin/foo", 0x7ffe1f9ddea0)       = -1 ENOENT (No such file or directory)
+> stat("/bin/foo", 0x7ffe1f9ddea0)        = -1 ENOENT (No such file or directory)
+> 
+> But I see, yes, glibc tries to actually call execve(), which, as you
+> say, is extremely heavy:
+> 
+> $ strace ./execvpe
+> ...
+> execve("/home/kees/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/usr/local/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/usr/local/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/usr/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/usr/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/sbin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> execve("/bin/foo", ["./execvpe"], 0x7ffc542bff38 /* 33 vars */) = -1 ENOENT (No such file or directory)
+> 
+> This really seems much more like a glibc bug. The shell does it correctly...
 
-Add a new FUSE_TMPFILE operation, otherwise just reuse the protocol and the
-code for FUSE_CREATE.
+musl does the same thing, as do python and perl (likely via execvp or
+posix_spawnp). As does gcc when it executes `as`. And I've seen more
+than a few programs hand-implement a PATH search the same way. Seems
+worth optimizing for.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/dir.c             | 25 ++++++++++++++++++++++---
- fs/fuse/fuse_i.h          |  3 +++
- include/uapi/linux/fuse.h |  6 +++++-
- 3 files changed, 30 insertions(+), 4 deletions(-)
+And with io_uring_spawn, it'll be the substantially easier approach,
+since it'll just require one pass (series of execs) rather than two
+(stats then exec).
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index b585b04e815e..01b2d5c5a64a 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -529,7 +529,7 @@ static int get_security_context(struct dentry *entry, umode_t mode,
-  */
- static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 			    struct file *file, unsigned int flags,
--			    umode_t mode)
-+			    umode_t mode, u32 opcode)
- {
- 	int err;
- 	struct inode *inode;
-@@ -573,7 +573,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
- 	}
- 
--	args.opcode = FUSE_CREATE;
-+	args.opcode = opcode;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 2;
- 	args.in_args[0].size = sizeof(inarg);
-@@ -676,7 +676,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	if (fc->no_create)
- 		goto mknod;
- 
--	err = fuse_create_open(dir, entry, file, flags, mode);
-+	err = fuse_create_open(dir, entry, file, flags, mode, FUSE_CREATE);
- 	if (err == -ENOSYS) {
- 		fc->no_create = 1;
- 		goto mknod;
-@@ -802,6 +802,24 @@ static int fuse_create(struct user_namespace *mnt_userns, struct inode *dir,
- 	return fuse_mknod(&init_user_ns, dir, entry, mode, 0);
- }
- 
-+static int fuse_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+			struct file *file, umode_t mode)
-+{
-+	struct fuse_conn *fc = get_fuse_conn(dir);
-+	int err;
-+
-+	if (fc->no_tmpfile)
-+		goto no_tmpfile;
-+
-+	err = fuse_create_open(dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
-+	if (err == -ENOSYS) {
-+		fc->no_tmpfile = 1;
-+no_tmpfile:
-+		err = -EOPNOTSUPP;
-+	}
-+	return err;
-+}
-+
- static int fuse_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 		      struct dentry *entry, umode_t mode)
- {
-@@ -1913,6 +1931,7 @@ static const struct inode_operations fuse_dir_inode_operations = {
- 	.setattr	= fuse_setattr,
- 	.create		= fuse_create,
- 	.atomic_open	= fuse_atomic_open,
-+	.tmpfile	= fuse_tmpfile,
- 	.mknod		= fuse_mknod,
- 	.permission	= fuse_permission,
- 	.getattr	= fuse_getattr,
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 488b460e046f..98a9cf531873 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -784,6 +784,9 @@ struct fuse_conn {
- 	/* Does the filesystem support per inode DAX? */
- 	unsigned int inode_dax:1;
- 
-+	/* Is tmpfile not implemented by fs? */
-+	unsigned int no_tmpfile:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d6ccee961891..76ee8f9e024a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -194,6 +194,9 @@
-  *  - add FUSE_SECURITY_CTX init flag
-  *  - add security context to create, mkdir, symlink, and mknod requests
-  *  - add FUSE_HAS_INODE_DAX, FUSE_ATTR_DAX
-+ *
-+ *  7.37
-+ *  - add FUSE_TMPFILE
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -229,7 +232,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 36
-+#define FUSE_KERNEL_MINOR_VERSION 37
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -537,6 +540,7 @@ enum fuse_opcode {
- 	FUSE_SETUPMAPPING	= 48,
- 	FUSE_REMOVEMAPPING	= 49,
- 	FUSE_SYNCFS		= 50,
-+	FUSE_TMPFILE		= 51,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
--- 
-2.37.3
-
+- Josh Triplett
