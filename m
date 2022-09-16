@@ -2,231 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 862D55BB440
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 00:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA225BB4A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 01:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbiIPWEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 18:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
+        id S229815AbiIPXJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 19:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbiIPWEp (ORCPT
+        with ESMTP id S229727AbiIPXJC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 18:04:45 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29A91E3D2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 15:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663365883; x=1694901883;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pliEC0VA84fxEVZK/u5ab2EfL18m+bAaQ7a6VJ99zgI=;
-  b=RmTuRGhK/e0ka7RrQxv3diZ5tfRU0PuPCepBUpaBnwYzTBB7miyaxFkp
-   YRTGFysA4Vsh3wetZkdTGrXu7XM/JdJBLChQnJ1r6pP9syWiXH7e/AEnr
-   qjnhBEIsV7h/+Efm7CAFP8SOwRhtVQ0kndxvJSuPLqWT2ge5wVmvzJLvZ
-   tNbZMjj4Qsc0k3kPA4bLuwfdY+s2JnuPWI2xsIGUdNIdHWFE9XDd0EWvO
-   H4ZXCAr/F7eMdW6d9Bx6rs4Ew7dfW8IFh0ZHwzvOGYIAYV5eFmwzZvb5j
-   /M1jsAyslo9L4ROyboH1RENjBnW/zs2EV57AaXo8Fxvo6RC/st53iLwVZ
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10472"; a="299910851"
-X-IronPort-AV: E=Sophos;i="5.93,321,1654585200"; 
-   d="scan'208";a="299910851"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2022 15:04:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,321,1654585200"; 
-   d="scan'208";a="862877480"
-Received: from lkp-server02.sh.intel.com (HELO 41300c7200ea) ([10.239.97.151])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2022 15:04:40 -0700
-Received: from kbuild by 41300c7200ea with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oZJRv-0002BI-3D;
-        Fri, 16 Sep 2022 22:04:39 +0000
-Date:   Sat, 17 Sep 2022 06:04:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Yu-li Lin <yulilin@google.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: [PATCH 7/8] vfs: open inside ->tmpfile()
-Message-ID: <202209170555.zV70MRNl-lkp@intel.com>
-References: <20220916194416.1657716-7-mszeredi@redhat.com>
+        Fri, 16 Sep 2022 19:09:02 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52B7BC826
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 16:09:01 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id q9so12538874pgq.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 16:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=xlhox9+SEzNhQzMlhegEPCRl8J0fqWhrXgeJnYiFe+8=;
+        b=o/b2A6naP5/o4QFAkkM/ZRNU5cIyWLe+avbZKbUNb9LTqPzlyHvsge4dYWjV41/ywF
+         7lNFoiGSfaxZY8D9Wqaecs4ESxRgGZhZ06+7MUEJuPntXRIDJ50hFOQJR4phajKInWTG
+         NVT3paJPw+WzBVt5u5C1Gy2101r9r0iRaCDeU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=xlhox9+SEzNhQzMlhegEPCRl8J0fqWhrXgeJnYiFe+8=;
+        b=PchdCnX+VWJ2mH4/oBlMH+f/PrKf9C1GPrbfI/2wx9J+Sf7i7S7LHEGTFdVoThXSHk
+         uriUbY4+9unJOJ76tFUcOrwHQrMbMK+Pt5tFMm/5hE94/o0C65hjsAXkX+PD7oeMjOju
+         EnajSr7uVSS8aa8gJuW/g0MKTdieD61qwuzvJe8iJUHPCTGDyAQMA+UOAxtjD3b7v70A
+         veR+tY+Hz6R4h2LWmbty8zhivS2+ATPLPWdIG0Jjc7fy2iZplpfYqUdr3h4TQEl1+LDB
+         efmZzUHRlkTh1vTc9mxaF4b0SwkJ1DaBT+Akp5DgT8y/VOXYjX5Y+EPcGIdklsxih5Er
+         MpOA==
+X-Gm-Message-State: ACrzQf2FOEScy6JXi8gn2no8yPjC4O79cEUNWcMXJdpluqNj96Sbu16D
+        vnYAmKl4We5dKkmCGHYboAEBiagK2yyI2w==
+X-Google-Smtp-Source: AMsMyM4RWRF7kSSnGREOR9De6Oqnyt4Gatv/oS6BUgl9INhAP2wuoctscRTAfQtH+LCrfVWxVNP6cg==
+X-Received: by 2002:a63:8048:0:b0:438:8349:7c6c with SMTP id j69-20020a638048000000b0043883497c6cmr6415340pgd.172.1663369741001;
+        Fri, 16 Sep 2022 16:09:01 -0700 (PDT)
+Received: from localhost ([2601:644:200:2b2:d0a7:3a0b:548e:9cf4])
+        by smtp.gmail.com with ESMTPSA id q5-20020a63e205000000b00434760ee36asm13789463pgh.16.2022.09.16.16.09.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Sep 2022 16:09:00 -0700 (PDT)
+From:   Ivan Babrou <ivan@cloudflare.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+        Ivan Babrou <ivan@cloudflare.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: [RFC] proc: report open files as size in stat() for /proc/pid/fd
+Date:   Fri, 16 Sep 2022 16:08:52 -0700
+Message-Id: <20220916230853.49056-1-ivan@cloudflare.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220916194416.1657716-7-mszeredi@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos,
+Many monitoring tools include open file count as a metric. Currently
+the only way to get this number is to enumerate the files in /proc/pid/fd.
 
-I love your patch! Perhaps something to improve:
+The problem with the current approach is that it does many things people
+generally don't care about when they need one number for a metric.
+In our tests for cadvisor, which reports open file counts per cgroup,
+we observed that reading the number of open files is slow. Out of 35.23%
+of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
+`proc_fill_cache`, which is responsible for filling dentry info.
+Some of this extra time is spinlock contention, but it's a contention
+for the lock we don't want to take to begin with.
 
-[auto build test WARNING on kdave/for-next]
-[also build test WARNING on jaegeuk-f2fs/dev-test linus/master v6.0-rc5]
-[cannot apply to viro-vfs/for-next next-20220916]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+We considered putting the number of open files in /proc/pid/stat.
+Unfortunately, counting the number of fds involves iterating the fdtable,
+which means that it might slow down /proc/pid/stat for processes
+with many open files. Instead we opted to put this info in /proc/pid/fd
+as a size member of the stat syscall result. Previously the reported
+number was zero, so there's very little risk of breaking anything,
+while still providing a somewhat logical way to count the open files.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Miklos-Szeredi/cachefiles-tmpfile-error-handling-cleanup/20220917-034700
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20220917/202209170555.zV70MRNl-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/87f47d099f22ea898e5d05215f9b2c4647012001
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Miklos-Szeredi/cachefiles-tmpfile-error-handling-cleanup/20220917-034700
-        git checkout 87f47d099f22ea898e5d05215f9b2c4647012001
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash fs/ext4/ fs/f2fs/ fs/minix/ fs/ramfs/ fs/ubifs/ fs/udf/ mm/
+Previously:
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+```
+$ sudo stat /proc/1/fd | head -n2
+  File: /proc/1/fd
+  Size: 0         	Blocks: 0          IO Block: 1024   directory
+```
 
-All warnings (new ones prefixed by >>):
+With this patch:
 
-   In file included from include/linux/fs.h:8,
-                    from include/linux/dax.h:5,
-                    from mm/filemap.c:15:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
---
-   In file included from include/linux/fs.h:8,
-                    from mm/shmem.c:24:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   mm/shmem.c: In function 'shmem_tmpfile':
-   mm/shmem.c:2930:27: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    2930 |                 d_tmpfile(file, inode);
-         |                           ^~~~
-         |                           |
-         |                           struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/ext4/namei.c:28:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/ext4/namei.c: In function 'ext4_tmpfile':
-   fs/ext4/namei.c:2874:27: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    2874 |                 d_tmpfile(file, inode);
-         |                           ^~~~
-         |                           |
-         |                           struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/f2fs/namei.c:8:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/f2fs/namei.c: In function '__f2fs_tmpfile':
-   fs/f2fs/namei.c:896:35: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     896 |                         d_tmpfile(file, inode);
-         |                                   ^~~~
-         |                                   |
-         |                                   struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/minix/minix.h:5,
-                    from fs/minix/namei.c:8:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/minix/namei.c: In function 'minix_tmpfile':
-   fs/minix/namei.c:63:27: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-      63 |                 d_tmpfile(file, inode);
-         |                           ^~~~
-         |                           |
-         |                           struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/ramfs/inode.c:26:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/ramfs/inode.c: In function 'ramfs_tmpfile':
-   fs/ramfs/inode.c:156:19: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     156 |         d_tmpfile(file, inode);
-         |                   ^~~~
-         |                   |
-         |                   struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/ubifs/ubifs.h:16,
-                    from fs/ubifs/dir.c:31:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/ubifs/dir.c: In function 'ubifs_tmpfile':
-   fs/ubifs/dir.c:479:19: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     479 |         d_tmpfile(file, inode);
-         |                   ^~~~
-         |                   |
-         |                   struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/fs.h:8,
-                    from fs/udf/udfdecl.h:10,
-                    from fs/udf/namei.c:22:
->> include/linux/dcache.h:253:30: warning: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                              ^~~~
-   fs/udf/namei.c: In function 'udf_tmpfile':
-   fs/udf/namei.c:643:19: error: passing argument 1 of 'd_tmpfile' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     643 |         d_tmpfile(file, inode);
-         |                   ^~~~
-         |                   |
-         |                   struct file *
-   include/linux/dcache.h:253:23: note: expected 'struct file *' but argument is of type 'struct file *'
-     253 | extern void d_tmpfile(struct file *, struct inode *);
-         |                       ^~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+```
+$ sudo stat /proc/1/fd | head -n2
+  File: /proc/1/fd
+  Size: 65        	Blocks: 0          IO Block: 1024   directory
+```
 
+Correctness check:
 
-vim +253 include/linux/dcache.h
+```
+$ sudo ls /proc/1/fd | wc -l
+65
+```
 
-   252	
- > 253	extern void d_tmpfile(struct file *, struct inode *);
-   254	
+There are two alternatives to this approach that I can see:
 
+* Expose /proc/pid/fd_count with a count there
+* Make fd count acces O(1) and expose it in /proc/pid/status
+
+I can probably figure out how to do the former, but the latter
+will require somebody with more experience in file code than myself.
+
+Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+---
+ fs/proc/fd.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 913bef0d2a36..c7ac142500a8 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -279,6 +279,29 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 	return 0;
+ }
+ 
++static int proc_readfd_count(struct inode *inode)
++{
++	struct task_struct *p = get_proc_task(inode);
++	unsigned int fd = 0, count = 0;
++
++	if (!p)
++		return -ENOENT;
++
++	rcu_read_lock();
++	while (task_lookup_next_fd_rcu(p, &fd)) {
++		rcu_read_unlock();
++
++		count++;
++		fd++;
++
++		cond_resched();
++		rcu_read_lock();
++	}
++	rcu_read_unlock();
++	put_task_struct(p);
++	return count;
++}
++
+ static int proc_readfd(struct file *file, struct dir_context *ctx)
+ {
+ 	return proc_readfd_common(file, ctx, proc_fd_instantiate);
+@@ -319,9 +342,33 @@ int proc_fd_permission(struct user_namespace *mnt_userns,
+ 	return rv;
+ }
+ 
++int proc_fd_getattr(struct user_namespace *mnt_userns,
++			const struct path *path, struct kstat *stat,
++			u32 request_mask, unsigned int query_flags)
++{
++	struct inode *inode = d_inode(path->dentry);
++	struct proc_dir_entry *de = PDE(inode);
++
++	if (de) {
++		nlink_t nlink = READ_ONCE(de->nlink);
++
++		if (nlink > 0)
++			set_nlink(inode, nlink);
++	}
++
++	generic_fillattr(&init_user_ns, inode, stat);
++
++	/* If it's a directory, put the number of open fds there */
++	if (S_ISDIR(inode->i_mode))
++		stat->size = proc_readfd_count(inode);
++
++	return 0;
++}
++
+ const struct inode_operations proc_fd_inode_operations = {
+ 	.lookup		= proc_lookupfd,
+ 	.permission	= proc_fd_permission,
++	.getattr	= proc_fd_getattr,
+ 	.setattr	= proc_setattr,
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.37.2
+
