@@ -2,101 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B25A5BB500
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 02:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF1A95BB512
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 02:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbiIQA3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Sep 2022 20:29:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51808 "EHLO
+        id S229606AbiIQAuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Sep 2022 20:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiIQA3I (ORCPT
+        with ESMTP id S229471AbiIQAub (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Sep 2022 20:29:08 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CAABB6A9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 17:29:07 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id s14so2037280ybe.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Sep 2022 17:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=+HxepImlUydRiKuaywPNMKwGNoxJ1/ntVZdpC/RkL38=;
-        b=QapHkMhS91QlqU3YEoqsunZ2Qx1Fo7W9geL3/D1pUEoEd3mVs0sqhBn9CMinDkocAH
-         MDqqbNAh7G0+sZy+N5HlrZ5JX1pCdg4+i+g5fnkUJOUP13AMsdItIG45YBuOWPUdPliK
-         1ZL9COqOCGn/AJXxCvI8Jl9XXIeqUuusbByGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=+HxepImlUydRiKuaywPNMKwGNoxJ1/ntVZdpC/RkL38=;
-        b=2LD78Xq4+C/X7oToSow9zjz5fB5AwSjm5eis9+aw15ivBMbFr2oUtWNxdJ7NJehEct
-         EtObMfA+su3xYPCiVJTFTSHyU0IiELQfHJDzMm3Psu22x20t6K64dzNAL6+iWQp9yoZu
-         LQWk/yIuXibL10oU8Db9bDdB60FjsIH4HTs4pS+33UmR25HBFeetB9sJcc8FhX4Efwf1
-         L2B+R6S2fmHMwY+JHuJGftVYFSFUMe3RXQZH1UJ9OjiG3lChlOcnS3CHlDNx5J7jBySe
-         zKHVAc6iPewAqGHbHfdRu4Eyr3H8pH4+XezhKILfXCz9G1P1z0MoPXfkGlNlZdKpY3rX
-         nywg==
-X-Gm-Message-State: ACrzQf1+9OE0W/skbFyOxfT/jhxAY2yWOhmt94a5RV9x0dPwJbnlWMw1
-        i+oAEr6P4T3Q+68LKLEYCT19eut/9i+0J2orldrD8Q==
-X-Google-Smtp-Source: AMsMyM7R4xl3/sm1opae870FiGQ2n7amMJehgFy3haRpr9GGguwVxzuB7DEx/HSpRFXd6RTjUm81+ggn1lRODY5IPnk=
-X-Received: by 2002:a25:f504:0:b0:683:2272:6c42 with SMTP id
- a4-20020a25f504000000b0068322726c42mr6610179ybe.558.1663374546947; Fri, 16
- Sep 2022 17:29:06 -0700 (PDT)
+        Fri, 16 Sep 2022 20:50:31 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5AD44507F;
+        Fri, 16 Sep 2022 17:50:29 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id E3CB35C00F8;
+        Fri, 16 Sep 2022 20:50:26 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Fri, 16 Sep 2022 20:50:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        joshtriplett.org; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1663375826; x=
+        1663462226; bh=QpwiR/HPla4yRVWmvy9AanjoLTeQN+vOn52WdshHMig=; b=P
+        ixBUgCnAMwolyRVXKwBB4zbPbTrz/h3pbuZyyvhCeauiGAA66WbgQei4BM1Nr/wi
+        HT5qZHY380eEsCQe77lYj7jlHXuowctnbQzw0bSGaU+uEOClLP3PnBlnhkhLTBHd
+        D6UE1r5izj8MF3sPGYdeavaKhJnDxCULlDE7r29V7ysLizMj2vR+HIaDOHWupphq
+        Ggsb3559y0d0193XoaAWPkvr6Is+4qiFgYfmWI0V6ZmRFwKXgzGSFPAwOPCXd5x8
+        78YMGI5FxVdZ/rtUpFEWbC8GVt5bRAVFwaVYJGKX7bdwZ+e75vhMTknGBv/mVdoR
+        yytWftIcGn8o7Pkbb6kdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1663375826; x=1663462226; bh=QpwiR/HPla4yRVWmvy9AanjoLTeQ
+        N+vOn52WdshHMig=; b=gA5jJ+nGAE/Ks3+dLiIcEQ02hCcdYjnh1E1QjLTAHsX0
+        7JKR/vFf3wYcNOC8H1T2VEStMOzkxW09TFPg7tTshIdbQ9pu8V1XjiViCVUrnG5A
+        bM6/Xpg3hLy2Y46iNEe1mpVNFTjmtzl6qTD7EDhnWbjxyLzCzHQeY85jRj4KzazI
+        NN+urUrnA02TUTbppZducvQcLLXscs34Njpp5a0g4D6FEG0qTOw5dgv+WINNs/Px
+        73mxXeY3Y6MsC5iv5/UTJEX53hlXtdQW9FjEK//MzTWaiCfeaz3mtJFqqOY/k97y
+        9pHX32R/by+MbGk6UmZBhxQi+KHk2oPU0crstxDklA==
+X-ME-Sender: <xms:0hklY9STY7CaR4QF6pD6U_KNkC0v3nTezyVer8BHsTzrdWMvoe7yFQ>
+    <xme:0hklY2yFnPjH-FUKNC2w5wUrFz8VLJdWhufYM-dRdtzsnUh9UA6oSNsm59ZtQwlLX
+    xQCxplXE6-kwxBp-r0>
+X-ME-Received: <xmr:0hklYy0vdBneegCFwEspb7YUfW13-k3DqeZK-J8-XGEzaDr_Q86pefom1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvuddgfeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheplfhoshhh
+    ucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeduieegheeijeeuvdetudefvedtjeefgeeufefghfekgfelfeet
+    teelvddtffetgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+X-ME-Proxy: <xmx:0hklY1DwOQF6W-CLXTmMozV6b8bfBow5q1leLKYDxxSjVbEQvxz2cg>
+    <xmx:0hklY2j2lrnmlaSkhvw7c0PwGfn5-9Dm3-cH2Kxt6gAsO7wHkIYBDA>
+    <xmx:0hklY5r2bn8idP1SjGy_0Qh1VU8zVtnv4CVEUkkwWLRZSVQ85qqOZg>
+    <xmx:0hklY4Zwb1ogk9mN8kfThurHmSF4lSiy4elzfq775lDJ-7VZtfcn4w>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 16 Sep 2022 20:50:25 -0400 (EDT)
+Date:   Sat, 17 Sep 2022 01:50:24 +0100
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
+ before allocating mm
+Message-ID: <YyUZ0NHfFF+eVe24@localhost>
+References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
+ <202209160727.5FC78B735@keescook>
+ <YyTY+OaClK+JHCOw@localhost>
+ <202209161637.9EDAF6B18@keescook>
 MIME-Version: 1.0
-References: <20220916230853.49056-1-ivan@cloudflare.com> <20220916170115.35932cba34e2cc2d923b03b5@linux-foundation.org>
-In-Reply-To: <20220916170115.35932cba34e2cc2d923b03b5@linux-foundation.org>
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Fri, 16 Sep 2022 17:28:56 -0700
-Message-ID: <CABWYdi19enVm2VAjrGE75DU3C3w7OSs_s9CzOLdJh=DRO0K6Kg@mail.gmail.com>
-Subject: Re: [RFC] proc: report open files as size in stat() for /proc/pid/fd
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202209161637.9EDAF6B18@keescook>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 5:01 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> (cc's added)
->
-> On Fri, 16 Sep 2022 16:08:52 -0700 Ivan Babrou <ivan@cloudflare.com> wrote:
->
-> > Many monitoring tools include open file count as a metric. Currently
-> > the only way to get this number is to enumerate the files in /proc/pid/fd.
-> >
-> > The problem with the current approach is that it does many things people
-> > generally don't care about when they need one number for a metric.
-> > In our tests for cadvisor, which reports open file counts per cgroup,
-> > we observed that reading the number of open files is slow. Out of 35.23%
-> > of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
-> > `proc_fill_cache`, which is responsible for filling dentry info.
-> > Some of this extra time is spinlock contention, but it's a contention
-> > for the lock we don't want to take to begin with.
-> >
-> > We considered putting the number of open files in /proc/pid/stat.
-> > Unfortunately, counting the number of fds involves iterating the fdtable,
-> > which means that it might slow down /proc/pid/stat for processes
-> > with many open files. Instead we opted to put this info in /proc/pid/fd
-> > as a size member of the stat syscall result. Previously the reported
-> > number was zero, so there's very little risk of breaking anything,
-> > while still providing a somewhat logical way to count the open files.
->
-> Documentation/filesystems/proc.rst would be an appropriate place to
-> document this ;)
+On Fri, Sep 16, 2022 at 05:11:18PM -0700, Kees Cook wrote:
+> I don't like the idea of penalizing the _succeeding_ case, though, which
+> happens if we do the path walk twice. So, I went and refactoring the setup
+> order, moving the do_open_execat() up into alloc_bprm() instead of where
+> it was in bprm_exec(). The result makes it so it is, as you observed,
+> before the mm creation and generally expensive argument copying. The
+> difference to your patch seems to only be the allocation of the file
+> table entry, but avoids the double lookup, so I'm hoping the result is
+> actually even faster.
 
-I am more than happy to add the docs after there's a confirmation that
-this is an appropriate approach to expose this information. I probably
-should've mentioned this explicitly, that's on me. There are two
-alternative approaches at the bottom of my original email that might
-be considered.
+Thanks for giving this a try; I'd wondered how feasible it would be to
+just do one lookup.
+
+However, on the same test system with the same test setup, with your
+refactor it seems to go slower:
+fork/execvpe: 38087ns
+fork/execve:  33758ns
+
+For comparison, the previous numbers (which I re-confirmed):
+
+Without fast-path:
+fork/execvpe: 49876ns
+fork/execve:  32773ns
+
+With my original separate-lookup fast-path:
+fork/execvpe: 36890ns
+fork/execve:  31551ns
+
+
+I tried several runs of each, and I seem to get reasonably consistent
+results.
+
+My test program just creates a pipe once, then loops on
+clock_gettime/fork/execvpe/read, with the spawned child process doing
+clock_gettime/write/exit (in asm to minimize overhead). The test PATH is
+PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:. with
+the test program in the current directory.
+
+- Josh Triplett
