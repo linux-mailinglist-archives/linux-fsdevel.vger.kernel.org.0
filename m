@@ -2,71 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C82D35BB7E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 12:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C36B05BB917
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Sep 2022 17:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiIQKv3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Sep 2022 06:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51082 "EHLO
+        id S229564AbiIQPbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Sep 2022 11:31:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiIQKv2 (ORCPT
+        with ESMTP id S229487AbiIQPbr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Sep 2022 06:51:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD47326CE
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Sep 2022 03:51:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4853B6135E
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Sep 2022 10:51:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA24C433D6;
-        Sat, 17 Sep 2022 10:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663411886;
-        bh=9GoiCN0J8BWIFcJy4HO+2J77733KaSM1tpBc2+8hcXs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A88UDHASs2c4KXPOnujJHWqpUVPTqFlCeHKr8K7cIqd3G0RrdHw8bTH6umM7oBJzH
-         v0M+QOF/Gn94U3OARsc57P65Iwi6vIe986lD9LXsVkuxQ9syLjHX/tdeCGl1XWvLDK
-         W9CEhGigX4Je074J/D9UxxtPB8iMnmaAEYFcdw7kdZVHqB+Ba5Xvav1VyiWRMtONAp
-         Za29yFdoGijhuf75H1/so4SP4XcWJ/6gIX+2Y6mtaLBc8FwIRb9gA+JBJv1SLHqo+w
-         PBvEbf6raho+sgtW/dG1lMPsaiHEdoqmnOlWU3kNnNqrbrCopgYyzGW7T+NxDip6Cv
-         1DR7su+yOA4Ag==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Deming Wang <wangdeming@inspur.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] acl: fix the comments of posix_acl_xattr_set
-Date:   Sat, 17 Sep 2022 12:50:12 +0200
-Message-Id: <166341168207.1118458.18034194976354545438.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220915014830.1671-1-wangdeming@inspur.com>
-References: <20220915014830.1671-1-wangdeming@inspur.com>
+        Sat, 17 Sep 2022 11:31:47 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771EEB7D9;
+        Sat, 17 Sep 2022 08:31:45 -0700 (PDT)
+Received: from letrec.thunk.org (c-73-142-117-47.hsd1.ma.comcast.net [73.142.117.47])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 28HFVZET013813
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 17 Sep 2022 11:31:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1663428698; bh=P8X7BrdrxW4HqvXTvhAMJnCX+huMjVN2Vx33TFJijmA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=dx2CCf8SULDqFSMxx4Io4Pb2S1UjZqIRtq5xrTqs1ZLZx6xVGAz7lH1SYeUifAxWF
+         gMHTdZzc0rK+2+nihZ9NI0p+hv9NvWHEk3lB5rkISBtmJ8pOozsyI96G2SyoprXXsx
+         TagAFilQi7hJvNGQlCD2r8T1Xvsc7NW8dxjmnRcyLVKSe1haDmMkZthdOlL0MDkvNE
+         7tT4IetagYU98i/2gYgVBHtNK1gra9YfTJI+wKzzN3xQPZ8ADyzsRhBO08D3ZJRu6d
+         2PV5bIq3RS85iF08b6xbNhcGL67slp4S3IdSKrS8nUYjau3vRg1TgunZpt0eclJs2a
+         03LDc+lWe8wbA==
+Received: by letrec.thunk.org (Postfix, from userid 15806)
+        id 5F8468C2C23; Sat, 17 Sep 2022 11:31:35 -0400 (EDT)
+Date:   Sat, 17 Sep 2022 11:31:35 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Ivan Babrou <ivan@cloudflare.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@cloudflare.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [RFC] proc: report open files as size in stat() for /proc/pid/fd
+Message-ID: <YyXoVxS5+FUA+vat@mit.edu>
+References: <20220916230853.49056-1-ivan@cloudflare.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220916230853.49056-1-ivan@cloudflare.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner (Microsoft) <brauner@kernel.org>
+On Fri, Sep 16, 2022 at 04:08:52PM -0700, Ivan Babrou wrote:
+> We considered putting the number of open files in /proc/pid/stat.
+> Unfortunately, counting the number of fds involves iterating the fdtable,
+> which means that it might slow down /proc/pid/stat for processes
+> with many open files. Instead we opted to put this info in /proc/pid/fd
+> as a size member of the stat syscall result. Previously the reported
+> number was zero, so there's very little risk of breaking anything,
+> while still providing a somewhat logical way to count the open files.
 
-On Wed, 14 Sep 2022 21:48:30 -0400, Deming Wang wrote:
-> remove the double world of 'in'.
-> 
-> 
+Instead of using the st_size of /proc/<pid>/fd, why not return that
+value in st_nlink?  /proc/<pid>/fd is a directory, so having st_nlinks
+return number of fd's plus 2 (for . and ..) would be much more natural.
 
-Thanks for the patch. This is on top of the acl changes in my tree and I
-applied the patch there, thanks!
+Cheers,
 
-[1/1] acl: fix the comments of posix_acl_xattr_set
-      commit: 0978c7c41fe2a3735f8776dc27cf1641bd916773
-
-Best regards,
--- 
-Christian Brauner (Microsoft) <brauner@kernel.org>
+					- Ted
