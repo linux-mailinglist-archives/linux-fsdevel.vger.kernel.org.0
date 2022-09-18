@@ -2,125 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0015C5BC00D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Sep 2022 23:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C3E15BC046
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 00:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbiIRV1k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Sep 2022 17:27:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
+        id S229609AbiIRWFA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Sep 2022 18:05:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiIRV1j (ORCPT
+        with ESMTP id S229458AbiIRWE6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Sep 2022 17:27:39 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C1E13E11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 14:27:37 -0700 (PDT)
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DD77A3F473
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 21:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1663536455;
-        bh=VBMgryLG1fCHHFs6o9PjHyuHeF2daTdVHmXIfMnp98o=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=m4mqwRlFZoDK9lylT/5ofrErQ3nz8jmM72pMkHiMBJRxozfKLdNL7oGOjA1GOZBCY
-         hti+BJ1T5L0XEthTwu9FTYbCGvVWTqGE+tcERkUqEHTz/iWjFXphnPPvQSNEPH2evh
-         9K2Jr/HZAZaUfsEzu3bLogGvQF2bv/5bCXtVqFCttCyRkI54gltCZWOJ5kG0ESF+wZ
-         4fk8LQ4bB8R69zzbA8yYylEb5/WD9HskrISr9IK0eiWLc4yqxUulDjjXYrp1hSEHD2
-         xaTx/6bilRuz57A3P68Ckb3aalMTIdKjuZcBuFcekpfJDMALfLsMClzrf9RGWeFO8p
-         X8P/nmaBFwd6Q==
-Received: by mail-qt1-f198.google.com with SMTP id g21-20020ac87d15000000b0035bb6f08778so14684499qtb.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 14:27:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=VBMgryLG1fCHHFs6o9PjHyuHeF2daTdVHmXIfMnp98o=;
-        b=Gq0GWvrE+euNW2xO2qqpR2oRxib70AhH8qNNFdr8n0TLZcexxwCmQRuz9CH46Yhi0N
-         yQlL4YcUTxhyTMv2ftAWmggeKsGP66useWmM1+Cip0yWIbTU/Dmv5iqbR7gjd3s9mSDb
-         aJeZVGpGtBkHr6S505uBltJuyW5Cydwu+YY3K3ZGLkXtLb17BWBJiWTs70/KvbJMFwaY
-         KGMW627IbZHQlWQv7gjl2jjeXYmsKaYvh5raz/PbUnUjSGepjlWBhUVIwYM++79rE3Ez
-         G5N0DTuvm3Fk5NFbxk6WkUXLxaSmQBIdJKSU6RTjGKrzQI3+yM4ZZOyeBl0syy0ptQCR
-         vTRQ==
-X-Gm-Message-State: ACrzQf2no5bYhXcH6oQ2LEG9A/EYvSKAHFcsFvDBcal6lMOey+NG4Mst
-        Z5E1JMPG/ib4QnAI6BBVI+2+vJxr6SPWXJnUpPd40BowQYr+nm9Fe4TbaXxqBjNCNOB0Gyttjm3
-        ITTp/vJ0ZzwV3rGNTS+2oP6KgWxJ9dVgowmk7Qvn+O3g=
-X-Received: by 2002:a05:622a:d4:b0:35c:e40c:7628 with SMTP id p20-20020a05622a00d400b0035ce40c7628mr3206084qtw.428.1663536454729;
-        Sun, 18 Sep 2022 14:27:34 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM7ZWP/HUcZxev2jAyOxgKhUOEApS0yeqyOB7P5V0WSpE41k3bRq3tXcjqskab12IAiiTuoYYQ==
-X-Received: by 2002:a05:622a:d4:b0:35c:e40c:7628 with SMTP id p20-20020a05622a00d400b0035ce40c7628mr3206075qtw.428.1663536454507;
-        Sun, 18 Sep 2022 14:27:34 -0700 (PDT)
-Received: from [172.20.4.66] ([65.206.117.195])
-        by smtp.gmail.com with ESMTPSA id de42-20020a05620a372a00b006b945519488sm11466016qkb.88.2022.09.18.14.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Sep 2022 14:27:34 -0700 (PDT)
-Message-ID: <a9588d9e-56a1-666c-9542-35bd0c8f64af@canonical.com>
-Date:   Sun, 18 Sep 2022 18:27:31 -0300
+        Sun, 18 Sep 2022 18:04:58 -0400
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324BCBF70;
+        Sun, 18 Sep 2022 15:04:57 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:48816)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oa2PI-00H78e-0b; Sun, 18 Sep 2022 16:04:56 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:50464 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oa2PH-000O86-13; Sun, 18 Sep 2022 16:04:55 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Florian Mayer <fmayer@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-api@vger.kernel.org
+References: <20220909180617.374238-1-fmayer@google.com>
+        <87v8pw8bkx.fsf@email.froward.int.ebiederm.org>
+        <CAJAyTCCcecgqeMfs9W8=U4wi-6O+DaRktUsyJuStYy-JgKQCdg@mail.gmail.com>
+Date:   Sun, 18 Sep 2022 17:04:48 -0500
+In-Reply-To: <CAJAyTCCcecgqeMfs9W8=U4wi-6O+DaRktUsyJuStYy-JgKQCdg@mail.gmail.com>
+        (Florian Mayer's message of "Fri, 9 Sep 2022 16:05:34 -0700")
+Message-ID: <875yhk730f.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20220910211215.140270-1-jorge.merlino@canonical.com>
- <202209131456.76A13BC5E4@keescook>
-From:   Jorge Merlino <jorge.merlino@canonical.com>
-In-Reply-To: <202209131456.76A13BC5E4@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1oa2PH-000O86-13;;;mid=<875yhk730f.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1+GH9uiilgu5nUbYPntWwWcfiqEPCTLJ20=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Florian Mayer <fmayer@google.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 441 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 12 (2.7%), b_tie_ro: 10 (2.3%), parse: 1.09
+        (0.2%), extract_message_metadata: 14 (3.1%), get_uri_detail_list: 2.1
+        (0.5%), tests_pri_-1000: 14 (3.1%), tests_pri_-950: 1.22 (0.3%),
+        tests_pri_-900: 1.00 (0.2%), tests_pri_-90: 63 (14.2%), check_bayes:
+        61 (13.8%), b_tokenize: 8 (1.8%), b_tok_get_all: 8 (1.9%),
+        b_comp_prob: 2.8 (0.6%), b_tok_touch_all: 38 (8.7%), b_finish: 1.06
+        (0.2%), tests_pri_0: 323 (73.2%), check_dkim_signature: 0.51 (0.1%),
+        check_dkim_adsp: 4.0 (0.9%), poll_dns_idle: 2.1 (0.5%), tests_pri_10:
+        2.1 (0.5%), tests_pri_500: 8 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH RESEND] Add sicode to /proc/<PID>/stat.
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Florian Mayer <fmayer@google.com> writes:
 
-El 13/9/22 a las 19:03, Kees Cook escribió:
-> Thanks for reporting this and for having a reproducer!
-> 
-> It looks like this is "failing safe", in the sense that the bug causes
-> an exec of a setuid binary to not actually change the euid. Is that an
-> accurate understanding here?
+> On Fri, 9 Sept 2022 at 14:47, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Added linux-api because you are changing the api.
+>
+> Thanks.
+>
+>> Several things.  First you are messing with /proc/<pid>/stat which is
+>> heavily used.  You do add the value to the end of the list which is
+>> good.  You don't talk about how many userspace applications you have
+>> tested to be certain that it is actually safe to add something to this
+>> file, nor do you talk about measuring performance.
+>
+> Makes sense. Given this and Kees comment above, it seems like status
+> instead is a better place. That should deal with the compatibility
+> issue given it's a key-value pair file. Do you have the same
+> performance concerns for that file as well?
 
-Yes, that is correct.
+They are a general concern.  It is worth checking to see if the
+performance of the proc file you modify changes measurably.
 
->> This patch sort of fixes this by setting a process flag to the parent
->> process during the time this race is possible. Thus, if a process is
->> forking, it counts an extra user fo the fs_struct as the counter might be
->> incremented before the thread is visible. But this is not great as this
->> could generate the opposite problem as there may be an external process
->> sharing the fs_struct that is masked by some thread that is being counted
->> twice. I submit this patch just as an idea but mainly I want to introduce
->> this issue and see if someone comes up with a better solution.
-> 
-> I'll want to spend some more time studying this race, but yes, it looks
-> like it should get fixed. I'm curious, though, how did you find this
-> problem? It seems quite unusual to have a high-load heavily threaded
-> process decide to exec.
+>> This implementation seems very fragile.  How long until you need the
+>> full siginfo of the signal that caused the process to exit somewhere?
+>
+> For our use case probably never. I don't know if someone else will
+> eventually need everything.
+>
+>> There are two ways to get this information with existing APIs.
+>> - Catch the signal in the process and give it to someone.
+>
+> This would involve establishing a back-channel from the child process
+> to init, which is not impossible but also not particularly
+> architecturally nice.
+>
+>> - Debug the process and stop in PTRACE_EVENT_EXIT and read
+>>   the signal with PTRACE_PEEKSIGINFO.
+>
+> This will not work with the SELinux rules we want to enforce on Android.
+>
+>> I know people have wanted the full siginfo on exit before, but we have
+>> not gotten there yet.
+>
+> That sounds like a much bigger change. How would that look? A new
+> sys-call to get the siginfo from a zombie? A new wait API?
 
-It was reported to Canonical by a customer. I don't know exactly the 
-circumstances where they see this problem occur in production.
+Another proc file.  It is more that we have gotten requests for that
+in the past.
 
-Thanks
-	Jorge
+I will toss out one more possibility that seems like a good solution
+with existing facilities.  Have the coredump helper (aka the process
+that coredumps are piped to) read the signal state from the coredump.
+At which point the coredump helper can back channel to init or whatever
+needs this information.
+
+I am probably missing something obvious but the consumer of all
+coredumps seems like the right place to add functionality for debugging
+like this as it can tell everything about the dead userspace process.
+
+Eric
