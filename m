@@ -2,108 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 637085BBD83
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Sep 2022 13:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DBF55BBDD6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Sep 2022 14:53:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbiIRLDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Sep 2022 07:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
+        id S229539AbiIRMwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Sep 2022 08:52:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiIRLDK (ORCPT
+        with ESMTP id S229515AbiIRMwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Sep 2022 07:03:10 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CE925E9F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 04:03:09 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id DD7DA5C02CC;
-        Sun, 18 Sep 2022 07:03:06 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 18 Sep 2022 07:03:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:message-id:mime-version:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1663498986; x=1663585386; bh=V3kEsfeDBJ
-        N4CdGXOE4NkgGPA+jJODsqE1SbYEllR3I=; b=oNXvtddFP6PtVB1pKkkYgg4te/
-        sIOO5eNwPbMq/loNy6INkpm9sqW/kcHI95/1mUh8A6aoiqxPa9Lkq2ERYfBIt6qn
-        XXM4riEx2DLvAPA5mQyfMlkYtfbOucp8RSwY0JHaX89d3rnJXgXI2ThlOPYxE0OO
-        RNb54w9Db6bDGbwIDGkwWkZE9L7isTbk3pC5sDl9eZJwXZMxf/49yCIWx/eKcSdN
-        OANpAdyWlNHmXx9PE3sWa3MQnWb3lzdX6c0oLIFNFYRnam+RxS4LsCf9qBWW1+1a
-        CDjQVTHgV6FjcQv2qj162q5uVwxAp8fB2jOrAAD0SJKEk14aKHX2HUZDREbA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:date:feedback-id:feedback-id:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1663498986; x=1663585386; bh=V3kEsfeDBJN4CdGXOE4NkgGPA+jJ
-        ODsqE1SbYEllR3I=; b=wwGAD7c7mptySBOhYxf1Ikl8uEvDcnewhg5tvNrSLU5J
-        7sO25KFSxCO0g/LaEC7DGjJnWxRmV/fWpaX9Ji5edet5zZD624SLc29aCnr6SnsF
-        R2JzktmGT5W9PkS1Ro24nplYLx4DnsMHICJNooY9ILNmvqw7iQY48mdclX27gVNU
-        xWmgw071yogzK6TaAzLbWgYZA3V8t2iAzbUp20DIReUo4B30ImzJNFI8I6mwmR1p
-        w80hFCcF+XrT9dTuv4AqJY2Age5V2SA3LX0rfg4sFe0O25ze9WWDQjzVsCBYI/R1
-        ASfnY2zAcTmEdkeF77TJYxMoJzqS08rdQVNaKwk0Tw==
-X-ME-Sender: <xms:6vomYwjSlbG58JdXq38dBCONaLVOK581jH-tlOooM7Sx795g1JNKNg>
-    <xme:6vomY5C50w58uAYOONwATieXUltV-YaERhyl3_iE-CCubLFMHxpJHK9VbvogIrXci
-    o4UhzECGHT6L7NF>
-X-ME-Received: <xmr:6vomY4G6_XBjgovicsFraH1ZbX5uCYXIem5zWBZ_i7hWUxjfQtbLJI74ymwtsNfAVEHt_NDMfmQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvhedgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhholhgr
-    uhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeeftefhgfejhfelkeduieeludeuffduvedvveefkeevtdevgeevfeejgfdvuedt
-    keenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpih
-    hkohhlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:6vomYxS7ZyN8CzgvLvdm4hJXZvfWAYBGRK_1yklHI6iZVNAr9l0-lQ>
-    <xmx:6vomY9xj8k-ukAnDoH4Z5aYH1m_zeuDVmOjsBxoBNS6A-LiYfTk9uw>
-    <xmx:6vomY_7Ioid9sfAXVk_eKKMH0S5U_4GWJ5wFDNbAVC0_Z9txjHVAnQ>
-    <xmx:6vomY18QMOu4J8Ja5_es_Ik5alSxnrlt_xMo_cQnF0mGQ-Ma_LyMgw>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 18 Sep 2022 07:03:06 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id CAF10670;
-        Sun, 18 Sep 2022 11:03:04 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id 4985AD8013; Sun, 18 Sep 2022 12:03:04 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
+        Sun, 18 Sep 2022 08:52:49 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE7DC23BC9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 05:52:48 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id u14so9541767ual.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Sep 2022 05:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date;
+        bh=fXehQ/rEVKVxdinkgxDnhNCX4O1c03usz9M59Vfhye0=;
+        b=ROMlZ7ZYXk0YOuaHtMbCADZLRVFqxUhfVgRdHGkJxgIuZmieGugOojCXq9ljFTmqaY
+         B8DKz21OvJoyVs8nL9KpBh/ClNL2uWJn6o6f6mDjNBAESbwOdj0CY/npBVjqu37CKduR
+         nTjHD2jHkhhv8v4wvjgRuQo9jK0nPnXEa97UlXsxbTHXQrqnTMisV5/XjnVLZ9eFmTLR
+         Gf+g++DFgM88ft05WwbJAQR7g+83KqG8EQW2fOcSsTK6ESHwvjZaquSyB2b7aWisnE3G
+         qjulbu+D8mJ1tJNSpSW3mc4dYBc6b/ExsSUI4GP59T4kBpHkrnNZtwIhvxeqN0t2ZqGc
+         Ijew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=fXehQ/rEVKVxdinkgxDnhNCX4O1c03usz9M59Vfhye0=;
+        b=RPl/fhZBfKKszssrsFa+HbRpDWW3LC/1HNqBNNCEhRgPXZid1l/ZuoZsSaBAfPEYbW
+         uyLnlY7jz2szg8AyCw8syJ7UlqZzScsqkTRSZjm9rLh/qmpO/LfJlhGwfiTpFDuO+Z2e
+         CTJ4zRDyusZcYOlr6sCmLql5YlTU4L4qBLVLYfDcWtcfWbdnGa8LSvASJO05y6x8HHVL
+         A0IZcBpQv+ncX9K+MGa0gtZ6aaNG0phSeJt9qDL6MwOvIuezHAJy344gW/Ind27u0jds
+         9jGdrTBEF0sT0zZYokPSwpPx/SfpzEz2aHalK6Wj4HprKEq2GYi7Noj6JPooRhJXIVXc
+         qQ/g==
+X-Gm-Message-State: ACrzQf1Ai83g8pczjd0XodrJmTzysOWubynuposCKeFv+FaXYH2lZPpv
+        J14Q8Ap2dKINM/Z9aPZftVtuYO6mbE5ITuaTD5jPMJO3TIs=
+X-Google-Smtp-Source: AMsMyM71vjyrSVkTVHXqwqc2aMI0X4mzyIseUnk1lavEjR5OIVWSL2h3g4/S9R0k8lrQ8iLWd5OOh22TC+910mttZvk=
+X-Received: by 2002:ab0:1c55:0:b0:3b6:3cbe:19ca with SMTP id
+ o21-20020ab01c55000000b003b63cbe19camr4445176uaj.114.1663505567490; Sun, 18
+ Sep 2022 05:52:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <87mtaxt05z.fsf@vostro.rath.org>
+In-Reply-To: <87mtaxt05z.fsf@vostro.rath.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 18 Sep 2022 15:52:36 +0300
+Message-ID: <CAOQ4uxioquNfdLVZ=JV8ARpN5No29fjD-BQcfk48stODTTwrig@mail.gmail.com>
+Subject: Re: Should FUSE set IO_FLUSHER for the userspace process?
 To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         miklos <mszeredi@redhat.com>
-Subject: Should FUSE set IO_FLUSHER for the userspace process?
-Mail-Copies-To: never
-Mail-Followup-To: Linux FS Devel <linux-fsdevel@vger.kernel.org>, miklos
-        <mszeredi@redhat.com>
-Date:   Sun, 18 Sep 2022 12:03:04 +0100
-Message-ID: <87mtaxt05z.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Sun, Sep 18, 2022 at 2:12 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> Hi,
+>
+> Should the FUSE kernel driver perhaps set PR_SET_IO_FLUSHER for the FUSE
+> userspace process daemon when a connection is opened?
+>
 
-Should the FUSE kernel driver perhaps set PR_SET_IO_FLUSHER for the FUSE
-userspace process daemon when a connection is opened?
+This may have implications.
+Not sure it is good to do that unconditionally.
+Do you have a reproducer of deadlock?
 
-If I understand correctly, this is necessary to avoid a deadlocks if the
-kernel needs to reclaim memory that has to be written back through FUSE.
+Note that PR_SET_IO_FLUSHER is set for a thread - not for a process.
 
-I don't think it's possible to do this in userspace, since the process
-may lack the necessary capabilities.
+> If I understand correctly, this is necessary to avoid a deadlocks if the
+> kernel needs to reclaim memory that has to be written back through FUSE.
+>
 
-Best,
--Nikolaus
+I think the deadlock can happen also when kernel does writeback to FUSE
+and then FUSE server ends up trying to do direct reclaim of memory
+(not just through FUSE writeback).
 
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+In any case, I guess the problem is limited for writeback cache enabled.
 
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+> I don't think it's possible to do this in userspace, since the process
+> may lack the necessary capabilities.
+>
+
+Doing something a bit more subtle would be to write the calling thread
+PF_MEMALLOC_NOXX flags in the request and let kernel set the
+flags of the thread reading the request, but in libfuse that is not the
+worker thread is it?
+
+Need to also check if PF_MEMALLOC_NOFS may also deadlock.
+Direct reclaim of inodes can trigger a *lot* of FUSE_FORGET requests
+IIRC those requests are one way, but can they block on the request
+queue size limit?
+
+Of course it is less common for the forget method to require large
+memory allocations, but we cannot assume there is no deadlock
+unless we make sure to prevent it.
+
+Thanks,
+Amir.
