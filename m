@@ -2,405 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A16995BD1ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 18:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86DE5BD26D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 18:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiISQL5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 12:11:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38838 "EHLO
+        id S229988AbiISQtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 12:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbiISQL4 (ORCPT
+        with ESMTP id S229954AbiISQs6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:11:56 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FCF24BD8;
-        Mon, 19 Sep 2022 09:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663603914; x=1695139914;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=VN0E0H5V3LgM+cMDZKfSfUqI54GPl39S5DCoHTJfYUA=;
-  b=cCJvVmvPELlSBjSI9jdm4AcXRH8he7sIYhLpHYOIkk6qbcO7GmSuDiYc
-   CwqqpRFARHWCjb7WoFu+bPwPdTHcXSXynpQVUvOmnlE+NNkKHWQH1IXLz
-   xSpXWkdH5Pqjv77EAdFwzRNojjsUdsxJ1JYnO0bhlpXdeuGP0dHOEyUb+
-   zQBawjtl9UEAL1aZIg9AhPZhDJdzXJqYJ+6bz31DPUmvquRGXII3BJIE7
-   4EycTBqC98+m5z0xkThKmxtwQ6F+1DvA+EN1jjetVHf75i5+hgR63cfQ9
-   n+ixrx2NBR7nMkV4sVqfEVNiyl8koyVHp4LECDSHXUVtvJ/aePIZJpauS
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10475"; a="325735972"
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="325735972"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2022 09:11:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="620908317"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Sep 2022 09:11:54 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 19 Sep 2022 09:11:54 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 19 Sep 2022 09:11:53 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Mon, 19 Sep 2022 09:11:53 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.43) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Mon, 19 Sep 2022 09:11:53 -0700
+        Mon, 19 Sep 2022 12:48:58 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D052E25E84;
+        Mon, 19 Sep 2022 09:48:57 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28JGO4gS002811;
+        Mon, 19 Sep 2022 16:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ from : subject : to : cc : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=q7nsF7Y6j8Adg3zUlyVE7tP8c6rDlijvNUspRrEjF30=;
+ b=0vmdIaIg1j3viVxyX1jmE9Cpjso5i6kClwSjDsL6hxiENLpMYv4VyeCTO+SvpnPV9x3G
+ /MmEa1b5mzDFj6Bg3kbHF3WKtf/o8HlYL7g1bnPZNfpBZUx7wGB3FE2lyaWKLEJ4xU6O
+ QweJM0CVyRg9rkLC6BF8lJyVWo7w9DclsxzYOVcgD3SO7u+7Xzfd0Kz8q/xCM2+okvI4
+ zIRnL8p4hlUrFQL+r4ONBXUZ6Lgs+bbne8YMJtd0PccR8N3N1jsxnraYXFcRHCnvvaRX
+ c3d1KzB6+BON/Cr5zGaeg7KuhLOKNsTJUb5nTdlgVEEvRvCaqTTWB1YYqbinMzfmLeIM +w== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3jn688c9w2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Sep 2022 16:48:56 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 28JEdA6A009197;
+        Mon, 19 Sep 2022 16:48:55 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3jp3c7yea1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Sep 2022 16:48:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BrnQReM7ch1Qp2y8X/GpK3zZ910uFasvTHS7xUyOv1nslWaIluB7T+QPOxFlFZ7pL/59QiVKzc4QG0Xnz7aHSOjD4O6DZCHrLce3Jut8SV2d2sSTHe2MZ/T6ZvWri4KxOZcqiDB+K4KHHPPREUYHxuCyCQIfQiVOtNM4r/nIWHBRQv0JRBOSG2Za0/3fvVmWbZrBUdIRu17bA3cDREkRWJnoNJvD3tsFfH65DwX1SLPMKg9ni+d+ZoI8iG6hQSEFlBhPtJqd9L7FjFeDBMlNoZPaj/SBABoXBisOiX2Pgh0fhJnyeQboPs5zVl7u/LBZa6Opt81nD4nk7IjD26sElQ==
+ b=L83Dg80SCGoAcijkLYJ82EMi1p8I7Auoyw/7q9+jclNqMfT6Dgm4FGMxo9u2BRz4P2PjSdodlG6TtLXEY/4NDBBDxLo/QUy1Aq5qcCbX++MZcstiLWZ9uYYh1Ao+D3YBGKwEA755wp3GgPNTC8indvzyN8+oVqQH6uyrDmlD5/JsqK6FKJb4hTT6nAyFGKcBhWThXOve+VWJ8iQJ8HSjscXfxxLCMO2L5wA+p+8zn+TJMvsq5s11n6eqDQgrOB2sFH+8vWE2Rr/h98Qxc4KEsto766Qkuwq1t0a1p0tbic7z3ujt3haKug8FHdeCx/cMqd+DyC0rYBCqd/hiOhKjiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DPcGIQmAaOH1CraeAEBL8KL2/8nG8ph3hbnGDKlHHMU=;
- b=E/tdjWZ8m8xaB6tmwCoJo/TR4EpjX/iKzAmOVeauxlw3ALstS1m3azzuV1pNQMtuZBQEftb2Q9XcFfOIfAeKcesdmSqrKN3edXFGMcQQgahkwpaAemttWbfkJ1AhcCPkP05vthvCOfFFGNgbnEejev5jrmeReFmd13Vt5aMQyx8jU6Y8e0bMwZUQ703odEoqczsi3j9BMU+GbuZ4cT/ezGub4SwGurkkraTqkOeTiBuKul4v+IkOTDwx92gZWkRuykxdqlVwgZgIfm0xFkoZQnHNFU9DNX4nUy4WE7CYYioBj/M8BYbwT3F3XwOjWHL7g/ENprc2TZOD6g6YfAEwOQ==
+ bh=q7nsF7Y6j8Adg3zUlyVE7tP8c6rDlijvNUspRrEjF30=;
+ b=jvYivlRpTLV1shpQY+KBpxe0xr2lrUB7eDjwNkun7iau3rcCtpgfVZ0FxF0dwTDViOLFtIHVeq27BsY0lyy5CcgJaBFpIH6oMglhHKY16FmcJpvVqITt2r9MbzyqWX3Oofu80NBT1XkUJTR+Lru9RTJqEDDUJ/3G+a7cXLqHLXYYu+vNOcXfT6PJ74/DTVwTFrWXeGSZsxCL2zg//byrXKFjkxawrqABW9gjheWgvYlJUGLOsHleylonZB6y/pPUlQAWFKCua4Ar2prUoWwzKwTQS2Th0mwadjxyzTEUe7cod0kif2HWTF6/CdCh4y6Heq74LPQnkNVfejBNNRA3jg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20) by BN9PR11MB5465.namprd11.prod.outlook.com
- (2603:10b6:408:11e::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21; Mon, 19 Sep
- 2022 16:11:51 +0000
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::9847:345e:4c5b:ca12]) by MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::9847:345e:4c5b:ca12%6]) with mapi id 15.20.5632.021; Mon, 19 Sep 2022
- 16:11:51 +0000
-Date:   Mon, 19 Sep 2022 09:11:48 -0700
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
-        "Jan Kara" <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-ext4@vger.kernel.org>
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
-References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
- <166329933874.2786261.18236541386474985669.stgit@dwillia2-xfh.jf.intel.com>
- <20220918225731.GG3600936@dread.disaster.area>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220918225731.GG3600936@dread.disaster.area>
-X-ClientProxiedBy: SJ0PR03CA0027.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::32) To MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20)
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q7nsF7Y6j8Adg3zUlyVE7tP8c6rDlijvNUspRrEjF30=;
+ b=OltWXIQr2/CU2czA9e4mK8J3qErXWwq4G16VFzdcTLWEgqh0NLT/J77e3ndIG+rlkUOq9qUNTCZGJrdjALN2UlNWtNdeSaCW/rhFw8XMMiOooJAgicVPzBZqQQLzZ2iB7Fcd7isbPwtdiew+kPgdFGd6JxNpEBigqOnAfOYftg4=
+Received: from CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
+ by DS0PR10MB6845.namprd10.prod.outlook.com (2603:10b6:8:13e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.19; Mon, 19 Sep
+ 2022 16:48:52 +0000
+Received: from CH2PR10MB4166.namprd10.prod.outlook.com
+ ([fe80::90bb:12d:954a:c129]) by CH2PR10MB4166.namprd10.prod.outlook.com
+ ([fe80::90bb:12d:954a:c129%7]) with mapi id 15.20.5632.021; Mon, 19 Sep 2022
+ 16:48:50 +0000
+Message-ID: <c2f59560-f925-8f43-f967-a8b33c9abd36@oracle.com>
+Date:   Mon, 19 Sep 2022 09:48:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+Subject: Re: debugging rmmod failures
+To:     Steve French <smfrench@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAH2r5mve4HKpPOwFuE5+r26xJ7f--M5+wC=kY0km9-T2WGak2A@mail.gmail.com>
+X-Mozilla-News-Host: news://nntp.lore.kernel.org
+Content-Language: en-US
+In-Reply-To: <CAH2r5mve4HKpPOwFuE5+r26xJ7f--M5+wC=kY0km9-T2WGak2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0101.namprd13.prod.outlook.com
+ (2603:10b6:806:24::16) To CH2PR10MB4166.namprd10.prod.outlook.com
+ (2603:10b6:610:78::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|BN9PR11MB5465:EE_
-X-MS-Office365-Filtering-Correlation-Id: 915436a7-b58a-4fc5-ab16-08da9a59a989
+X-MS-TrafficTypeDiagnostic: CH2PR10MB4166:EE_|DS0PR10MB6845:EE_
+X-MS-Office365-Filtering-Correlation-Id: b0e52222-bd29-43f0-94f0-08da9a5ed44f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: m7J85kc01GbZYesk64ywtUxCaKywDjU9MMqop+mHGSDiRx+kglENiE3/kM63H4wzC/+vZ7wRZU4qjFOuHkTAthgcAgWIuz+EEmXZXfm/7SqiT7T8zqkvJdnmTq4lMVv6GBVkitPnGDoKvWlIPEs/g/DWju6mH8c2dCd8Y6ZDL+X6O1GVwHaTrDj8WkY2cLwApz19I5cokXrdLhBRqSTzYcHAuL2rHpk/gG9yoGbT4ta6aVLY5uO+vcm310j4/rHuTwGlD5sboVIvL9mrHji2KGJ2ybdkahCcX1YEWfkAjRD3YcRqG505RDBozD+5WD3Su2NM1R0sbMEoc9q7gzAopfEIdUqlMXaChsQk/fiEo74yj0mhsmza/bf+5Rd+NR4TUylR96hlRyzvddlID7IOrR2Ca6GjnQW0M5r/K7/lRsDXaZIY/x9d51n49hPE3VcH+ffsxWS2qVzGniqegXM+VW7MF7r8Q+RuKj/KnP4PiLW32XK0YWtAAGn8czeLyLtKgU5pcnwA5qHzvgGP4QtWttXFobE0Lgxfpov1B1DAazRsyrURGsAao9O4tuCTBnCgI0z+abmd5EwminM0yFAQHveJwdhcwNZpmiQZHtyXLVS7OUajgB3sxxqHQ8IYS3qu0Iq2YOupLKyRJc4sRIjlvPc0tp+fAS8rg+rm4yK4rVxAKu4+2SqAEdwOsobvVIOgGavHsb6r92tJRiTNZffwDQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(346002)(396003)(366004)(136003)(39860400002)(451199015)(6506007)(4326008)(2906002)(86362001)(38100700002)(8936002)(6512007)(9686003)(6486002)(26005)(66476007)(8676002)(66946007)(41300700001)(6666004)(478600001)(82960400001)(110136005)(83380400001)(66556008)(186003)(5660300002)(54906003)(316002)(7416002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: q4UuTk1ve1cR2/+5BptjFMNSnqr/X+BI43LZiv0yqAMbJ0MV59wLZ7ZBrCBrNW4xxhYhhdFH07aDQWx02O+WXdEtxo6/zwObFd9mf1pxDZxHqREIwviPdaLzSs0fSvKuqDa115/Mq+cIQ5Iz0zLuAIJDLyXl3cDI2QGnJFuNTqMyC6T02s+OLNrBta9wU3xjR2y7dCAzIb8q05iGD6vLV5LaL5JzLzu+k6Hvd+Fv8Gm64vIY6/gYJgGBiIqGDgalmn+rpCKf0ZJfDTFQq2dMXoCs/+R2zSbgu/52VpGH4uxUOjBBNs6pIA7mrfIHx9iWG2zj/zkyGVKLYQbGykViTQzY3+1COLRwkZf9THMncbPvNsxlJX5LRl+GxySdHnLMFxiLWW9G7Qv+qWO/1pO5pSaa64IhGPFX8qhaVaap+hF3ruRCEr+rQgVd/866PRGn8p7gJW2KNpFWWIQkil7httvWHaHtUJHM/8iUf6IhsW8KsBQYaPbUKWCJoUHqqlM3+d6VjgtbSfr1spNgYfKy+G+Hmenif+YRbGQvYenUXriJFbIBR6RgPd5q/m9QnIqnu+nxzXlGOAcIekePJ1cgXbDFl7ImZHeFK/a15ZvPUXjps2SBTL4DTVsfPO06ozBRM+ImmDi4k7cypSNIzM4lAEUZENiDofyY8vr+Mj5CVujMh1G2YWtrwvz2lKUmSVO6xXyU44anSIX+NxPBBykBiYc1szod9VItXxm2/+ZsTtxz5VNECkvRK+HJapjm8cajqpTQY00F/dr5HaHWzD8DK6LUe2C8lyxPIjq9gj3NbNA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(376002)(366004)(136003)(39860400002)(346002)(451199015)(2906002)(8676002)(38100700002)(6506007)(6512007)(26005)(478600001)(110136005)(6486002)(316002)(5660300002)(186003)(83380400001)(53546011)(3480700007)(7116003)(66946007)(41300700001)(4326008)(66476007)(66556008)(2616005)(8936002)(31696002)(36756003)(31686004)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WHErHPzxFLpKovVGulo33I3Uj1UqsTYPR9mts+7cAEVm2AJ7Bk5GGt44MsNu?=
- =?us-ascii?Q?CXz3gyx1OQX+CECh48YqX3xlDAiCKKBxxsDuEp6xKqPvS9k0ZRiK5xjVQbxJ?=
- =?us-ascii?Q?XkX8O8hIV+2eEUym5wYM/7cEntbicv2GA2QivBVE6RCnFdbl3dw69t+vOhjM?=
- =?us-ascii?Q?BsD/8hT3/4zmzCWopq0qnRPNJerSrFj6rhYP2tuGJUkf0i6n6SPPljg/9uXj?=
- =?us-ascii?Q?ueTUOOQRGNpef4gup+nJJsSz4IFXAn36dv95sXH1PSkceLR8tvTSPb9zldtQ?=
- =?us-ascii?Q?vqF4bXq1CguRsgcYL7cnn0J5DG1Y0wr9m+o4W3JsE/+sxz2TkEOzAaPJ3acP?=
- =?us-ascii?Q?s2gKd26wy2g50tj7bXx+t6wq2WHg95c0JvFtWocpKyKdXrbXpct9cazkwOO6?=
- =?us-ascii?Q?c03TCS1GwjeH1Q8hivW2TAZk0vLqcegtN58WkeOfg4Xz9l21hiA/D2kAdzls?=
- =?us-ascii?Q?71wEpQOgIqxdlt4+TN0zR5UQzAc8JhtSDxWYduZXkcrJcliRpWuQjBeoC/gB?=
- =?us-ascii?Q?r5gD+Seiy7MnK1P+jlcouZ6ACTiMEUAOuCLYJdaAHj11cplxlkYOtLC9ayoi?=
- =?us-ascii?Q?pwYu9x7wPD73+7ZjCtxqOoRc2g1KYsD+qxpBVC4WVWeEOX1EIvsNObHPMhcI?=
- =?us-ascii?Q?2QtukTP7HiE0aw56X1ytS2qPW/eGirSGTnUZ/V5hXmT2pFHbC05MJ49KdEuM?=
- =?us-ascii?Q?IU5wD/dR+LwC1/72W90QSXj6mM14XBY/0N0qsWOrcltnz2e2jz2w4UfXzBG5?=
- =?us-ascii?Q?uxBEX2Ioem0dGeS+MBu5S3/SmV+jIOpy1QfD9Jr3j8z7IvuAWKz+s4G0PBtm?=
- =?us-ascii?Q?ysYl8DM9U35y9DEauq+Durn8q2M7QjwkmccFmeEgUyZPfCi1/ayLkb7/Dotq?=
- =?us-ascii?Q?5u3P+vQmNRtDytmrQUz4AOKnKOeTKdQAlfFipUCNr3PeslVed81CgEespWxY?=
- =?us-ascii?Q?xQKsERR1kuK0qjK9ScvIC392dmDVS07mKRL5D3GtvrYUDWMXHdMXu1/3I1nW?=
- =?us-ascii?Q?R4b9VOvZbQ5kF+f65GzmSN0jZTHKPNbP3IIle6KRkkouTbmJvQsfYE1IGHch?=
- =?us-ascii?Q?V4svDoJhykAWbIYc07oCQ4rJfk7pqJWKgIcabjKkp6VOUN1G3ZOf29B0SbGW?=
- =?us-ascii?Q?elFms3R5vA4E2PgfnApD3phrlCIVqrhZXGh5AaE9UobLFl40mOA2g8n/TheM?=
- =?us-ascii?Q?CYd6OIJgMnOum/PD9bxUJSN5oKZBklX09qbgagttG6k2uey1y0saSPTIrt0b?=
- =?us-ascii?Q?fwlfpm8DEj0TWmuRORBwRxc6U3mrb+mAXgPRmv2xhPwJeF/W1ZK8ZNYv1yXQ?=
- =?us-ascii?Q?JVMLoeVFNKq+it5SHN6HAgbZTMjbGap9AcGEkzIRaZq6jsXAOmxyuXZE2jZw?=
- =?us-ascii?Q?ItZ1MNB0p3eTymeCOOgJ7e6KIQbquQwDfort66/mtZdZPouV8HF2XRnWMs8c?=
- =?us-ascii?Q?pi9fFmHJj50e0QqwA5Rit5tGTxPfyZjldkveJZCPcA54hQ4cCb4CV6wnwcrQ?=
- =?us-ascii?Q?/rD/hI9OvmxuCvOT6qsu9e3dNcIRix27sP1qXcoa3yyUU8iVfgxurBnV4Hrl?=
- =?us-ascii?Q?Zf5Xy31dT6hMSEa1ahl9tBtNz66R9Pyaw//7cf2GLJglhWvaidgUX9Sy0Wy5?=
- =?us-ascii?Q?ZA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 915436a7-b58a-4fc5-ab16-08da9a59a989
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ck5oZWNkOGpneWN0NjBVTWk2ck8yejJiR0g5SnFBUGhxaXk4UVRvaEJzdHFS?=
+ =?utf-8?B?NWtGOWIwbnRMaCtDRGFsN3BrTCtRUlB4NzBlaExVbnlCZDFraFQ1V1htdlJn?=
+ =?utf-8?B?bTNadFpXaHlqTGVxNFRUTmZXeDFFeHplN2wrMTF0K0tkQXlWVDJTZjNWNG5Y?=
+ =?utf-8?B?d3lTQlhWUUY1bi9DZThTa0dnR3IxREg1dnBSY2N6VUVmODNFL2ppb21EZnJL?=
+ =?utf-8?B?Unh6eTFLQ2NMZERybWxSVHQ1b2FwQSs4bGRGRDMxK2E4ZTVlQ2xOSWcrVjdH?=
+ =?utf-8?B?djR0K1Iwa2lJaFg4NlRzeTZoL0NvTy9ZK1FQOS9ZWVE4QzVvSEp0Y0h0SStB?=
+ =?utf-8?B?RXArcGIyUk1TaVQwdUdLTzFVOXFYMDRnV2ttbVM1Y2FWdGltSHdiNkp3Y2pj?=
+ =?utf-8?B?YUQ5U0hnZ0c0MkZCSnNoOEdQcXg3R1dCaUc5T3Q4ek1YM091ZjhNcFNyNTBq?=
+ =?utf-8?B?eDVUYkJmc0ZVQ3VXSVdZR0pPVFgzWWdJemQ4TmtGSjBMZ0s3RnlObng4bTV4?=
+ =?utf-8?B?MW5weUFRa0lFbkpLcm9icUtDSGtvTGR2cjhIZ1UyTmhLME01T1ZudDJ3eXdh?=
+ =?utf-8?B?YXNLejhCOUFhOCtwbS9GME9YM3lZM3RhTmpWVWI5U21ETkVrUnZSZlZjMStz?=
+ =?utf-8?B?RTRqbTNWU0tNUTgrcTNoeUhOR2ZxTUwwNEFrWVBoRFhLRm1uRlNSRk9qVkta?=
+ =?utf-8?B?aERZSy9vaUZQbjA0Z3MvNHVzODIwNkpiZVpYUFpsWjdrMXVOd3FmVW5KSkVS?=
+ =?utf-8?B?M3N2eFlUVE4vMzRYUjNuV3JUQ3lZQjhKdEN4bHptV0NXSHN3cGRBOU9EakRD?=
+ =?utf-8?B?dzFOaDQ3REVaNUdNQ0dmLzFrdWx2N1ZXWGxQSThVTmFQLzlXM0hMeGdWWWNH?=
+ =?utf-8?B?L0VuRlBOUk1wd1kvbHRTT0l1VGFOVEZPUFVWSGFjZWJad1JseTN6MzJXZE5P?=
+ =?utf-8?B?OGlKN2lpdE5obCtmcTNybkNqb0dVYUdJTlNBTndNMDZaNHBwWHovZUg4YWUv?=
+ =?utf-8?B?MGQ5QTBhOGErVFkxWHhkTVZCNEFieEJBMHZTcW5ycEwvc0ZjaEs0Z3R4akZS?=
+ =?utf-8?B?UlA5L2YvL3AzSzYzTXRLc3ZxOTlEL2lwUGhxYjE1RUF2Z0pmV1QyRFRrOVll?=
+ =?utf-8?B?TGwxNzhNMVJvdXNVbS9QV3pZL09UVEU0REhsdVFINi9MZWo2TzVYTFN2cERD?=
+ =?utf-8?B?bWhMV3NRdjNxdnRHcXNCcXBuVDd4RDZEY0xySG0wRDJUNG1jQi83L2lkbDNX?=
+ =?utf-8?B?cTd1MmVyUUgrR2Fjcll2clUzTjhlQ0lhSUxRWGNHTUZ1WWNWWkhrSGV6Vzh3?=
+ =?utf-8?B?Y20wSEc4eW54MU5kaFdlanh6NGdBZklQdkxZMFY4cE5FVmVpMkE5TmhUM2R6?=
+ =?utf-8?B?K1prWCtPclQ3MTcrTnlOcXB6WGdSeDh5bW9DeFRqRnFqUnlkRWVYM1pLd2dJ?=
+ =?utf-8?B?ZWhMaHV6TWFNbWRBVVNRVThoc3RxQzBJRE5vUEhQZitNVUphMC9sOXhLdmJt?=
+ =?utf-8?B?NVVxaC9VZGc3THVjSGdXTVZidXRvWDlUNk1teTlSU1dGZXMwMWYvaXVGTlpq?=
+ =?utf-8?B?emMwa290QWdENDhNL2JYN3B3VEs4d1hVMHM2Q0hIcFo4UnAySVhJQ1Y3RFIw?=
+ =?utf-8?B?ODR4ZGE1eWxtSU1XQ3ZaK3ZOVVZoWXpBRit2M2psRW92QThUQ1VJaVpSaThX?=
+ =?utf-8?B?T2Y1eitBSm9SSDh3ckxPN20xcHkzL00rLzJJakt2M0NST3lRMUdmWUlLTWw4?=
+ =?utf-8?B?cVlON1REVHhUYWt3eG5qTUErMWUzbmM1ZmRRSEJudWI0NWFaVDhHdlBpQjBp?=
+ =?utf-8?B?cXRqVENmajA0a1oxWWNIMFZDTVhodEFUS1lLTGJ4bmRlMzFONGp1MG5ncDkz?=
+ =?utf-8?B?ckJuMHFucWcrSkkrRW1BbFZtYkE1TE1BS0VqeWErcTQ4aWhvRWxYY0Zwa0t6?=
+ =?utf-8?B?YlJBcitiMTBIUzF2eWxlcE1HNGFXTzBCMlROWG5GUDdQSDdmZXZ6U2Z6SWMr?=
+ =?utf-8?B?cmo4TEQ0dWVlbFdvMkkyNFFJSWsvM0VUODRXNk04YlVEVlBWU2k5TkJlSkVF?=
+ =?utf-8?B?UStvMmFmcUNXV1BBdFk2WXNCTlI1MkEwL21DM0p3VDJleXpOMGRpNHFOMDla?=
+ =?utf-8?B?L0tiSG9mVjlLZ0EwZmY5cHhFanJrM25mNmZpdXNLLzEyOVlwaEtid010Z0hX?=
+ =?utf-8?B?VFE9PQ==?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0e52222-bd29-43f0-94f0-08da9a5ed44f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4166.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 16:11:51.5828
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2022 16:48:50.7653
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JezHI4rgMyDoSGRnr8WK/A1KuAknPtjwfKN4hK+hX+bYSMY4gIqD9izjko0TTliZYOmyLPpAhdRF63uGaqO/tL3QM6MSVr1RLcPY8CE7CUM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5465
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-Exchange-CrossTenant-UserPrincipalName: LeNQHwW8HnfUBWyqoUVUU1ebuItEel8di6mCXWPIs7e2ca6C9qCXkzBibSPJVRoekowGeCXMtMWdjl4jdyORjoHRC5qimOZ1wfooBbWQ+MQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6845
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-19_05,2022-09-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 adultscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2209190113
+X-Proofpoint-GUID: vqnPhXBV4z2V1W6lQ60Qfp5db4B4DBR2
+X-Proofpoint-ORIG-GUID: vqnPhXBV4z2V1W6lQ60Qfp5db4B4DBR2
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dave Chinner wrote:
-> On Thu, Sep 15, 2022 at 08:35:38PM -0700, Dan Williams wrote:
-> > In preparation for moving DAX pages to be 0-based rather than 1-based
-> > for the idle refcount, the fsdax core wants to have all mappings in a
-> > "zapped" state before truncate. For typical pages this happens naturally
-> > via unmap_mapping_range(), for DAX pages some help is needed to record
-> > this state in the 'struct address_space' of the inode(s) where the page
-> > is mapped.
-> > 
-> > That "zapped" state is recorded in DAX entries as a side effect of
-> > xfs_break_layouts(). Arrange for it to be called before all truncation
-> > events which already happens for truncate() and PUNCH_HOLE, but not
-> > truncate_inode_pages_final(). Arrange for xfs_break_layouts() before
-> > truncate_inode_pages_final().
+On 9/16/22 13:13, Steve French wrote:
+> Any suggestions on how to debug why rmmod fails with EBUSY?
 > 
-> Ugh. That's nasty and awful.
+> I was trying to debug a problem where rmmod fails during an xfstest
+> run but couldn't find useful information on how to get ideas 'why'
+> rmmod is failing (in this case with EBUSY) and I could only find two
+> places where EBUSY would plausibly be returned but don't see the
+> pr_debug message in the log (e.g. "already dying") that I would expect
+> to get in those cases.
 > 
+> It also fails in this test scenario (which takes a while to reproduce
+> so isn't trivial to repro) with EBUSY when doing "rmmod --verbose
+> --force"  and the --verbose didn't display any additional info.
 > 
-> 
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: "Darrick J. Wong" <djwong@kernel.org>
-> > Cc: Jason Gunthorpe <jgg@nvidia.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  fs/xfs/xfs_file.c  |   13 +++++++++----
-> >  fs/xfs/xfs_inode.c |    3 ++-
-> >  fs/xfs/xfs_inode.h |    6 ++++--
-> >  fs/xfs/xfs_super.c |   22 ++++++++++++++++++++++
-> >  4 files changed, 37 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > index 556e28d06788..d3ff692d5546 100644
-> > --- a/fs/xfs/xfs_file.c
-> > +++ b/fs/xfs/xfs_file.c
-> > @@ -816,7 +816,8 @@ xfs_wait_dax_page(
-> >  int
-> >  xfs_break_dax_layouts(
-> >  	struct inode		*inode,
-> > -	bool			*retry)
-> > +	bool			*retry,
-> > +	int			state)
-> >  {
-> >  	struct page		*page;
-> >  
-> > @@ -827,8 +828,8 @@ xfs_break_dax_layouts(
-> >  		return 0;
-> >  
-> >  	*retry = true;
-> > -	return ___wait_var_event(page, dax_page_idle(page), TASK_INTERRUPTIBLE,
-> > -				 0, 0, xfs_wait_dax_page(inode));
-> > +	return ___wait_var_event(page, dax_page_idle(page), state, 0, 0,
-> > +				 xfs_wait_dax_page(inode));
-> >  }
-> >  
-> >  int
-> > @@ -839,14 +840,18 @@ xfs_break_layouts(
-> >  {
-> >  	bool			retry;
-> >  	int			error;
-> > +	int			state = TASK_INTERRUPTIBLE;
-> >  
-> >  	ASSERT(xfs_isilocked(XFS_I(inode), XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
-> >  
-> >  	do {
-> >  		retry = false;
-> >  		switch (reason) {
-> > +		case BREAK_UNMAP_FINAL:
-> > +			state = TASK_UNINTERRUPTIBLE;
-> > +			fallthrough;
-> >  		case BREAK_UNMAP:
-> > -			error = xfs_break_dax_layouts(inode, &retry);
-> > +			error = xfs_break_dax_layouts(inode, &retry, state);
-> >  			if (error || retry)
-> >  				break;
-> >  			fallthrough;
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index 28493c8e9bb2..72ce1cb72736 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -3452,6 +3452,7 @@ xfs_mmaplock_two_inodes_and_break_dax_layout(
-> >  	struct xfs_inode	*ip1,
-> >  	struct xfs_inode	*ip2)
-> >  {
-> > +	int			state = TASK_INTERRUPTIBLE;
-> >  	int			error;
-> >  	bool			retry;
-> >  	struct page		*page;
-> > @@ -3463,7 +3464,7 @@ xfs_mmaplock_two_inodes_and_break_dax_layout(
-> >  	retry = false;
-> >  	/* Lock the first inode */
-> >  	xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
-> > -	error = xfs_break_dax_layouts(VFS_I(ip1), &retry);
-> > +	error = xfs_break_dax_layouts(VFS_I(ip1), &retry, state);
-> >  	if (error || retry) {
-> >  		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-> >  		if (error == 0 && retry)
-> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > index fa780f08dc89..e4994eb6e521 100644
-> > --- a/fs/xfs/xfs_inode.h
-> > +++ b/fs/xfs/xfs_inode.h
-> > @@ -454,11 +454,13 @@ static inline bool xfs_inode_has_large_extent_counts(struct xfs_inode *ip)
-> >   * layout-holder has a consistent view of the file's extent map. While
-> >   * BREAK_WRITE breaks can be satisfied by recalling FL_LAYOUT leases,
-> >   * BREAK_UNMAP breaks additionally require waiting for busy dax-pages to
-> > - * go idle.
-> > + * go idle. BREAK_UNMAP_FINAL is an uninterruptible version of
-> > + * BREAK_UNMAP.
-> >   */
-> >  enum layout_break_reason {
-> >          BREAK_WRITE,
-> >          BREAK_UNMAP,
-> > +        BREAK_UNMAP_FINAL,
-> >  };
-> >  
-> >  /*
-> > @@ -531,7 +533,7 @@ xfs_itruncate_extents(
-> >  }
-> >  
-> >  /* from xfs_file.c */
-> > -int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
-> > +int	xfs_break_dax_layouts(struct inode *inode, bool *retry, int state);
-> >  int	xfs_break_layouts(struct inode *inode, uint *iolock,
-> >  		enum layout_break_reason reason);
-> >  
-> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > index 9ac59814bbb6..ebb4a6eba3fc 100644
-> > --- a/fs/xfs/xfs_super.c
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -725,6 +725,27 @@ xfs_fs_drop_inode(
-> >  	return generic_drop_inode(inode);
-> >  }
-> >  
-> > +STATIC void
-> > +xfs_fs_evict_inode(
-> > +	struct inode		*inode)
-> > +{
-> > +	struct xfs_inode	*ip = XFS_I(inode);
-> > +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
-> > +	long			error;
-> > +
-> > +	xfs_ilock(ip, iolock);
-> 
-> I'm guessing you never ran this through lockdep.
+> I also tried "trace-cmd record -e *module*" which showed it (one call)
+> returning 0xFFFFFFF0 but nothing useful that I could see.
 
-I always run with lockdep enabled in my development kernels, but maybe my
-testing was insufficient? Somewhat moot with your concerns below...
+In situations like this I sometimes find it useful to use the ftrace
+function_graph tracer. It can show you every single function call,
+starting from some root function. Of course it's a bit of a footgun, so
+be careful with it :)
 
-> The general rule is that XFS should not take inode locks directly in
-> the inode eviction path because lockdep tends to throw all manner of
-> memory reclaim related false positives when we do this. We most
-> definitely don't want to be doing this for anything other than
-> regular files that are DAX enabled, yes?
+I used it to trace the delete_module system call like so:
 
-Guilty. I sought to satisfy the locking expectations of the
-break_layouts internals rather than drop the unnecessary locking.
+# trace-cmd record -p function_graph -g __x64_sys_delete_module \
+                    -F rmmod $MODULE_TO_REMOVE
+...
+# trace-cmd report
+            rmmod-41656 [007]  5506.963846: funcgraph_entry:                   |  __x64_sys_delete_module() {
+            rmmod-41656 [007]  5506.963846: funcgraph_entry:                   |    capable() {
+            rmmod-41656 [007]  5506.963846: funcgraph_entry:                   |      security_capable() {
+...                                                                                ...
+            rmmod-41656 [007]  5506.965521: funcgraph_entry:                   |    free_module() {
+            rmmod-41656 [007]  5506.965521: funcgraph_entry:                   |      mod_sysfs_teardown() {
+            rmmod-41656 [007]  5506.965522: funcgraph_entry:                   |        mutex_lock() {
+
+
+Of course, my module teardown succeeded, but you should be able to
+cross reference your function calls with the source code to see where
+an error may have occurred.
+
+Regards,
+Stephen
 
 > 
-> We also don't want to arbitrarily block memory reclaim for long
-> periods of time waiting on an inode lock.  People seem to get very
-> upset when we introduce unbound latencies into the memory reclaim
-> path...
-> 
-> Indeed, what are you actually trying to serialise against here?
-> Nothing should have a reference to the inode, nor should anything be
-> able to find and take a new reference to the inode while it is being
-> evicted....
+> Any ideas on how to debug *why* an rmmod fails?
 
-Ok.
-
-> 
-> > +	error = xfs_break_layouts(inode, &iolock, BREAK_UNMAP_FINAL);
-> > +
-> > +	/* The final layout break is uninterruptible */
-> > +	ASSERT_ALWAYS(!error);
-> 
-> We don't do error handling with BUG(). If xfs_break_layouts() truly
-> can't fail (what happens if the fs is shut down and some internal
-> call path now detects that and returns -EFSCORRUPTED?), theni
-> WARN_ON_ONCE() and continuing to tear down the inode so the system
-> is not immediately compromised is the appropriate action here.
-> 
-> > +
-> > +	truncate_inode_pages_final(&inode->i_data);
-> > +	clear_inode(inode);
-> > +
-> > +	xfs_iunlock(ip, iolock);
-> > +}
-> 
-> That all said, this really looks like a bit of a band-aid.
-
-It definitely is since DAX is in this transitory state between doing
-some activities page-less and others with page metadata. If DAX was
-fully committed to behaving like a typical page then
-unmap_mapping_range() would have already satisfied this reference
-counting situation.
-
-> I can't work out why would we we ever have an actual layout lease
-> here that needs breaking given they are file based and active files
-> hold a reference to the inode. If we ever break that, then I suspect
-> this change will cause major problems for anyone using pNFS with XFS
-> as xfs_break_layouts() can end up waiting for NFS delegation
-> revocation. This is something we should never be doing in inode
-> eviction/memory reclaim.
-> 
-> Hence I have to ask why this lease break is being done
-> unconditionally for all inodes, instead of only calling
-> xfs_break_dax_layouts() directly on DAX enabled regular files?  I
-> also wonder what exciting new system deadlocks this will create
-> because BREAK_UNMAP_FINAL can essentially block forever waiting on
-> dax mappings going away. If that DAX mapping reclaim requires memory
-> allocations.....
-
-There should be no memory allocations in the DAX mapping reclaim path.
-Also, the page pins it waits for are precluded from being GUP_LONGTERM.
-
-> 
-> /me looks deeper into the dax_layout_busy_page() stuff and realises
-> that both ext4 and XFS implementations of ext4_break_layouts() and
-> xfs_break_dax_layouts() are actually identical.
-> 
-> That is, filemap_invalidate_unlock() and xfs_iunlock(ip,
-> XFS_MMAPLOCK_EXCL) operate on exactly the same
-> inode->i_mapping->invalidate_lock. Hence the implementations in ext4
-> and XFS are both functionally identical.
-
-I assume you mean for the purposes of this "final" break since
-xfs_file_allocate() holds XFS_IOLOCK_EXCL over xfs_break_layouts().
-
-> Further, when the inode is
-> in the eviction path there is no reason for needing to take that
-> mapping->invalidation_lock to invalidate remaining stale DAX
-> mappings before truncate blasts them away.
-> 
-> IOWs, I don't see why fixing this problem needs to add new code to
-> XFS or ext4 at all. The DAX mapping invalidation and waiting can be
-> done enitrely within truncate_inode_pages_final() (conditional on
-> IS_DAX()) after mapping_set_exiting() has been set with generic code
-> and it should not require locking at all. I also think that
-> ext4_break_layouts() and xfs_break_dax_layouts() should be merged
-> into a generic dax infrastructure function so the filesystems don't
-> need to care about the internal details of DAX mappings at all...
-
-Yes, I think I can make that happen. Thanks Dave.
