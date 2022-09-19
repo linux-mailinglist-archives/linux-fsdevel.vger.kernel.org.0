@@ -2,59 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EADC5BD7D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 01:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0B15BD855
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 01:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbiISXJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 19:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59958 "EHLO
+        id S229877AbiISXkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 19:40:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiISXJz (ORCPT
+        with ESMTP id S229658AbiISXkb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 19:09:55 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DB7A6588;
-        Mon, 19 Sep 2022 16:09:52 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-183-60.pa.nsw.optusnet.com.au [49.180.183.60])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CB9018A9C44;
-        Tue, 20 Sep 2022 09:09:48 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oaPtb-009mXt-At; Tue, 20 Sep 2022 09:09:47 +1000
-Date:   Tue, 20 Sep 2022 09:09:47 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw
- workload
-Message-ID: <20220919230947.GM3600936@dread.disaster.area>
-References: <20220617151135.yc6vytge6hjabsuz@quack3>
- <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
- <20220620091136.4uosazpwkmt65a5d@quack3.lan>
- <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
- <20220621085956.y5wyopfgzmqkaeiw@quack3.lan>
- <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
- <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com>
- <YyH61deSiW1TnY//@magnolia>
- <CAOQ4uxhFJWW-ykyzomHCUWfWvbJNEmetw0G5mUYjFGoYJBb7NA@mail.gmail.com>
- <YyIR4XmDYkYIK2ad@magnolia>
+        Mon, 19 Sep 2022 19:40:31 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC6F3ECCB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 16:40:30 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id l14so2253053eja.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 16:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=NXzXxlM9sVEFzc66soX0I+Z/mq5m2rg9T8SoVpFvUT4=;
+        b=NsywTCeY9sd40b/41h2okvpTgyG2TSi3t/dg5pbH/L3beDvVkydnABPeMyhFxfDIgt
+         4OZkJs8sPvCO28LEtRRl+3W+3YNo6DLVmNhyIyLg+6fJ8XdVP3Pw424Mqr/64OBW8YJx
+         KH623RdzusneU5G9sBz+JF5PMau1u0ftV/Lbg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=NXzXxlM9sVEFzc66soX0I+Z/mq5m2rg9T8SoVpFvUT4=;
+        b=CuYTzLumEWNDsKQ+Wzb9kdp21w8sKSlX/uE9AiG/5f2Gc2ZBHBupBYTic/AVga+lDk
+         +tV4xDoflwhePHTd0GhiwJTKESRMVp7iPNbk5akdbiiIxqh35B4yT4iXnJG5TCS4NLqU
+         SDIWGwGrmDmQu84EgXQhdIAnOfU6Es4YHtcJspFad536tEgx6A21opgK6mfWdyuZo2o2
+         YAg2abbXYu0cY/Xuvax0enQkGDMPQNbiVBKXt7si1AqDteKKtaSjBghWMyFTUKHSkpjm
+         SxZk9wHnI+hm3m/WuHVf05mv4tjQbHfNrlwoAqEEPWciY1mjZ501Q+tgcJ8L/v4PgyhE
+         Balw==
+X-Gm-Message-State: ACrzQf2uV3QwO+dS9XnNsO6y7OHeCK6LVcoxsJIADOKXOo8m+H2VIxiz
+        gGX9nyVUn+hR6/8oS7kxDYpVVvnrh1nhQBbIjt0=
+X-Google-Smtp-Source: AMsMyM5DVpSnKtMfmzLh3ErWiweOhhk9IHWPQbieEkWPNAs9n8+lGr4ij88ZhFG/lKMrIxYBCE+NgA==
+X-Received: by 2002:a17:907:75e7:b0:77a:2378:91bb with SMTP id jz7-20020a17090775e700b0077a237891bbmr14927318ejc.329.1663630827828;
+        Mon, 19 Sep 2022 16:40:27 -0700 (PDT)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id s15-20020a1709067b8f00b00775f6081a87sm3376973ejo.121.2022.09.19.16.40.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Sep 2022 16:40:26 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id t14so1525551wrx.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 16:40:25 -0700 (PDT)
+X-Received: by 2002:a2e:9886:0:b0:26c:57d9:10c6 with SMTP id
+ b6-20020a2e9886000000b0026c57d910c6mr778573ljj.309.1663630813877; Mon, 19 Sep
+ 2022 16:40:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YyIR4XmDYkYIK2ad@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6328f6bd
-        a=mj5ET7k2jFntY++HerHxfg==:117 a=mj5ET7k2jFntY++HerHxfg==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=9EkRCnL_sJbdCUU_ZCUA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+References: <20220805154231.31257-13-ojeda@kernel.org> <Yu5Bex9zU6KJpcEm@yadro.com>
+ <CANiq72=3j2NM2kS8iw14G6MnGirb0=O6XQyCsY9vVgsZ1DfLaQ@mail.gmail.com>
+ <Yu6BXwtPZwYPIDT6@casper.infradead.org> <Yyh3kFUvt2aMh4nq@wedsonaf-dev>
+ <CAHk-=wgaBaVaK2K=N05fwWSSLM6YJx=yLmP4f7j6d6o=nCAtdw@mail.gmail.com>
+ <CAHk-=whTDbFZKB4KJ6=74hoLcerTm3JuN3PV8G6ktcz+Xm1qew@mail.gmail.com>
+ <YyivY6WIl/ahZQqy@wedsonaf-dev> <CAHk-=whm5Ujw-yroDPZWRsHK76XxZWF1E9806jNOicVTcQC6jw@mail.gmail.com>
+ <Yyjut3MHooCwzHRc@wedsonaf-dev>
+In-Reply-To: <Yyjut3MHooCwzHRc@wedsonaf-dev>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 19 Sep 2022 16:39:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wityPWw4YkHeMNU4iGanyiC3UwDRhbOHYCJrhB2paCGwA@mail.gmail.com>
+Message-ID: <CAHk-=wityPWw4YkHeMNU4iGanyiC3UwDRhbOHYCJrhB2paCGwA@mail.gmail.com>
+Subject: Re: [PATCH v9 12/27] rust: add `kernel` crate
+To:     Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Konstantin Shelekhin <k.shelekhin@yadro.com>, ojeda@kernel.org,
+        alex.gaynor@gmail.com, ark.email@gmail.com,
+        bjorn3_gh@protonmail.com, bobo1239@web.de, bonifaido@gmail.com,
+        boqun.feng@gmail.com, davidgow@google.com, dev@niklasmohrin.de,
+        dsosnowski@dsosnowski.pl, foxhlchen@gmail.com, gary@garyguo.net,
+        geofft@ldpreload.com, gregkh@linuxfoundation.org,
+        jarkko@kernel.org, john.m.baublitz@gmail.com,
+        leseulartichaut@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, m.falkowski@samsung.com,
+        me@kloenk.de, milan@mdaverde.com, mjmouse9999@gmail.com,
+        patches@lists.linux.dev, rust-for-linux@vger.kernel.org,
+        thesven73@gmail.com, viktor@v-gar.de,
+        Andreas Hindborg <andreas.hindborg@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,231 +93,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 10:39:45AM -0700, Darrick J. Wong wrote:
-> On Wed, Sep 14, 2022 at 07:29:15PM +0300, Amir Goldstein wrote:
-> > > > Dave, Christoph,
-> > > >
-> > > > I know that you said that changing the atomic buffered read semantics
-> > > > is out of the question and that you also objected to a mount option
-> > > > (which nobody will know how to use) and I accept that.
-> > > >
-> > > > Given that a performant range locks implementation is not something
-> > > > trivial to accomplish (Dave please correct me if I am wrong),
-> > > > and given the massive performance impact of XFS_IOLOCK_SHARED
-> > > > on this workload,
-> > > > what do you think about POSIX_FADV_TORN_RW that a specific
-> > > > application can use to opt-out of atomic buffer read semantics?
-> > > >
-> > > > The specific application that I want to modify to use this hint is Samba.
-> > > > Samba uses IO threads by default to issue pread/pwrite on the server
-> > > > for IO requested by the SMB client. The IO size is normally larger than
-> > > > xfs block size and the range may not be block aligned.
-> > > >
-> > > > The SMB protocol has explicit byte range locks and the server implements
-> > > > them, so it is pretty safe to assume that a client that did not request
-> > > > range locks does not need xfs to do the implicit range locking for it.
-> > > >
-> > > > For this reason and because of the huge performance win,
-> > > > I would like to implement POSIX_FADV_TORN_RW in xfs and
-> > > > have Samba try to set this hint when supported.
-> > > >
-> > > > It is very much possible that NFSv4 servers (user and kennel)
-> > > > would also want to set this hint for very similar reasons.
-> > > >
-> > > > Thoughts?
-> > >
-> > > How about range locks for i_rwsem and invalidate_lock?  That could
-> > > reduce contention on VM farms, though I can only assume that, given that
-> > > I don't have a reference implementation to play with...
-> > >
-> > 
-> > If you are asking if I have the bandwidth to work on range lock
-> > then the answer is that I do not.
-> > 
-> > IIRC, Dave had a WIP and ran some benchmarks with range locks,
-> > but I do not know at which state that work is.
-> 
-> Yeah, that's what I was getting at -- I really wish Dave would post that
-> as an RFC.  The last time I talked to him about it, he was worried that
-> the extra complexity of the range lock structure would lead to more
-> memory traffic and overhead.
+On Mon, Sep 19, 2022 at 3:35 PM Wedson Almeida Filho <wedsonaf@gmail.com> wrote:
+>
+> No one is talking about absolute safety guarantees. I am talking about
+> specific ones that Rust makes: these are well-documented and formally
+> defined.
 
-The reason I haven't posted it is that I don't think range locks can
-ever be made to perform and scale as we need for the IO path.
+If you cannot get over the fact that the kernel may have other
+requirements that trump any language standards, we really can't work
+together.
 
-The problem with range locks is that the structure that tracks the
-locked ranges needs locking itself, and that means taking an IO lock
-is no longer just a single atomic operation - it's at least two
-atomic ops (lock, unlock on a spin lock) and then a bunch of cache
-misses while searching up the structure containing the range locks
-looking for overlaps.
+Those Rust rules may make sense in other environments. But the kernel
+really does have hard requirements that you continue to limp along
+even if some fundamental rule has been violated. Exactly because
+there's often no separate environment outside the kernel that can deal
+with it.
 
-Hence a { range_lock(); range_unlock(); } pair is at minimum twice as
-costly { down_read(); up_read(); } and that shows up dramatically
-with direct IO. My test system (2s, 32p) handles about 3 million
-atomic ops for a single cacheline across many CPUs before it breaks
-down into cacheline contention and goes really slow.
+End result: a compiler - or language infrastructure - that says "my
+rules are so ingrained that I cannot do that" is not one that is valid
+for kernel work.
 
-That means I can run 1.6 million read/write DIO iops to a single
-file on the test machine with shared rwsem locking (~3.2 million
-atomic ops a second) but with range locks (assuming just atomic op
-overhead) that drops to ~800k r/w DIO ops. The hardware IO capacity
-is just over 1.7MIOPS...
+This is not really any different from the whole notion of "allocation
+failures cannot panic" that Rust people seemed to readily understand
+is a major kernel requirement, and that the kernel needed a graceful
+failure return instead of a hard panic.
 
-In reality, this contended cacheline is not the limiting factor for
-range locks - the limiting factor is the time it takes to run the
-critical section inside that lock.  This was found with the mmap_sem
-when it was converted to range locks - the cache misses doing
-rb-tree pointer chasing with the spinlock held meant that the actual
-range lock rate topped out at about 180k lock,unlock pairs per
-second. i.e. an order of magnitude slower than a rwsem on this
-machine.
+Also note that the kernel is perfectly willing to say "I will use
+compiler flags that disable certain guarantees". We do it all the
+time.
 
-Read this thread again:
+For example, the C standard has a lot of "the compiler is allowed to
+make this assumption". And then we disagree with those, and so "kernel
+C" is different.
 
-https://lore.kernel.org/linux-xfs/20190416122240.GN29573@dread.disaster.area/
+For example, the standard says that dereferencing a NULL pointer is
+undefined behavior, so a C compiler can see a dereference of a pointer
+to be a guarantee that said pointer isn't NULL, and remove any
+subsequent NULL pointer tests.
 
-That's really the elephant in the range locking room: a range lock
-with a locked search and update aglorithm can't scale beyond a
-single CPU in it's critical section. It's a hard limit no matter how
-many CPUs you have and how much concurrency the workload has - the
-range lock has a single threaded critical section that results in a
-hard computational limit on range lock operations.
+That turns out to be one of those "obviously true in a perfect world,
+but problematic in a real world with bugs", and we tell the compiler
+to not do that by passing it the '-fno-delete-null-pointer-checks'
+flag, because the compiler _depending_ on undefined behavior and
+changing code generation in the build ends up being a really bad idea
+from a security standpoint.
 
-Hence I was looking at using a novel OLC btree algorithm for storing
-the range locks. The RCU-based OLC btree is largely lockless,
-allowing conconcurrent search, insert and delete operations on range
-based index. I've largely got the OLC btree to work, but that simply
-exposed a further problem that range locks need to handle.
+Now, in C, most of these kinds of things come from the C standard
+being very lax, and having much too many "this is undefined behavior"
+rules. So in almost all cases we end up saying "we want the
+well-defined implementation, not the 'strictly speaking, the language
+specs allows the compiler to do Xyz".
 
-That is, the biggest problem for scaling range lock performance is
-that locking is mostly singleton operation - very few workloads
-actually use concurrent access to a single file and hence need
-multiple range locks held at once. As a result, the typical
-concurrent IO range lock workload results in a single node btree,
-and so all lookups, inserts and remove hammer the seqlocks on a
-single node and we end up contending on a single cache line again.
-Comared to a rwsem, we consume a lot more CPU overhead before we
-detect a change has occurred and we need to go around and try again.
+Rust comes from a different direction than C, and it may well be that
+we very much need some of the rules to be relaxed.
 
-That said, it's better than previous range lock implementations in
-that it gets up to about 400-450k mixed DIO and buffered iops, but
-it is still way, way down on using a shared rwsem or serialising at
-a page granularity via page locks.
+And hey, Rust people do know about "sometimes the rules have to be
+relaxed". When it comes to integer overflows etc, there's a
+"overflow-checks" flag, typically used for debug vs release builds.
 
-Yes, I know there are many advantages to range locking. Because we
-can exclude specific ranges, operations like truncate, fallocate,
-buffered writes, etc can all run concurrently with reads. DIO can
-run perfectly coherently with buffered IO (mmap is still a
-problem!). We can extend files without having to serialise against
-other IO within the existing EOF. We can pass lock contexts with AIO
-so that the inode can be unlocked at completion and we can get rid
-of the nasty inode_dio_wait() stuff we have for synchronisation with
-DIO. And so on.
+The kernel has similar issues where sometimes you might want the
+strict checking (lockdep etc), and sometimes you may end up being less
+strict and miss a few rules (eg "we don't maintain a preempt count for
+this config, so we can't check RCU mode violations").
 
-IOWs, while there are many upsides to range locking the reality is
-that single file IO performance will not scale to storage hardware
-capability any more. I have few thoughts on how range locking could
-be further optimised to avoid such overheads in the cases where
-range locking is not necessary, but I really don't think that the
-scalability of a range lock will ever be sufficient to allow us to
-track every IO we have in flight.
+> But I won't give up on Rust guarantees just yet, I'll try to find
+> ergonomic ways to enforce them at compile time.
 
-> I /know/ there are a lot of cloud vendors that would appreciate the
-> speedup that range locking might provide.  I'm also fairly sure there
-> are also people who want maximum single threaded iops and will /not/
-> like range locks, but I think we ought to let kernel distributors choose
-> which one they want.
+I think that compile-time static checking is wonderful, and as much as
+possible should be done 100% statically so that people cannot write
+incorrect programs.
 
-Speedup for what operations? Not single file DIO, and only for mixed
-buffered read/write. Perhaps for mixed fallocate/DIO workloads might
-benefit, but I reluctantly came to the conclusion that there really
-aren't many workloads that even a highly optimised rangelock would
-actually end up improving performance for...
+But we all know that static checking is limited, and then the amount
+of dynamic checking for violations is often something that will have
+to depend on environment flags, because it may come with an exorbitant
+price in the checking.
 
-> Recently I've been playing around with static keys, because certain
-> parts of xfs online fsck need to hook into libxfs.  The hooks have some
-> overhead, so I'd want to reduce the cost of that to making the
-> instruction prefetcher skip over a nop sled when fsck isn't running.
-> I sorta suspect this is a way out -- the distributor selects a default
-> locking implementation at kbuild time, and we allow a kernel command
-> line parameter to switch (if desired) during early boot.  That only
-> works if the compiler supports asm goto (iirc) but that's not /so/
-> uncommon.
+Exactly like integer overflow checking.
 
-I think it's a lot harder than that. The range lock requires a
-signification on-stack structure to be declared in the context that
-the lock is being taken. i.e.:
-
-+#define RANGE_LOCK_FULL                (LLONG_MAX)
-+
-+struct range_lock {
-+       uint64_t                start;
-+       uint64_t                end;
-+       struct list_head        wait_list;
-+#ifdef __KERNEL__
-+       struct task_struct      *task;
-+#else
-+       pthread_cond_t          task;
-+#endif
-+};
-+
-+#define __RANGE_LOCK_INITIALIZER(__name, __start, __end) {             \
-+               .start = (__start)                                      \
-+               ,.end = (__end)                                         \
-+               ,.wait_list = LIST_HEAD_INIT((__name).wait_list)        \
-+       }
-+
-+#define DEFINE_RANGE_LOCK(name, start, end)                            \
-+       struct range_lock name = __RANGE_LOCK_INITIALIZER((name), (start), (end))
-+
-+#define DEFINE_RANGE_LOCK_FULL(name)                                   \
-+       struct range_lock name = __RANGE_LOCK_INITIALIZER((name), 0, RANGE_LOCK_FULL)
-
-
-And code that uses it looks like:
-
-+static inline void
-+xfs_iolock_range_init(
-+       struct xfs_inode        *ip,
-+       struct range_lock       *rlock,
-+       uint64_t                start,
-+       uint64_t                count)
-+{
-+       int                     rounding;
-+
-+       rounding = max_t(int, i_blocksize(VFS_I(ip)), PAGE_SIZE);
-+       range_lock_init(rlock, round_down(start, rounding),
-+                               round_up(start + count, rounding));
-+}
-+
- STATIC ssize_t
- xfs_file_dio_read(
-        struct kiocb            *iocb,
-        struct iov_iter         *to)
- {
-        struct xfs_inode        *ip = XFS_I(file_inode(iocb->ki_filp));
-+       size_t                  count = iov_iter_count(to);
-        ssize_t                 ret;
-+       struct range_lock       rlock;
-
-        trace_xfs_file_direct_read(iocb, to);
-
--       if (!iov_iter_count(to))
-+       if (!count)
-                return 0; /* skip atime */
-
-        file_accessed(iocb->ki_filp);
-
--       ret = xfs_ilock_iocb(iocb, XFS_VFSLOCK_SHARED);
-+       xfs_iolock_range_init(ip, &rlock, iocb->ki_pos, count);
-+       ret = xfs_ilock_iocb(iocb, &rlock, XFS_VFSLOCK_SHARED);
-
-Hence I don't think this is as simple as using static keys to switch
-code paths as there's a whole lot more information that needs to be
-set up for range locks compared to just using rwsems....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                 Linus
