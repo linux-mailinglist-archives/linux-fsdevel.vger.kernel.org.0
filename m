@@ -2,86 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B87305BD388
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 19:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 247F55BD391
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 19:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230465AbiISRV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 13:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54888 "EHLO
+        id S230487AbiISRYy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 13:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230367AbiISRV1 (ORCPT
+        with ESMTP id S229617AbiISRYv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 13:21:27 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BD93A14B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 10:21:24 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id l14so251443eja.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 10:21:24 -0700 (PDT)
+        Mon, 19 Sep 2022 13:24:51 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F374D12741;
+        Mon, 19 Sep 2022 10:24:50 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d24so5359192pls.4;
+        Mon, 19 Sep 2022 10:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=T9tjs2C6JiXyUusbaKulAdI7lGnBQljvbsg/PdLJCpA=;
-        b=d9OWu4XihWylyVprmVcBC5mpF2dwkINsQkbE45w0j52Xy81466CqXQPMiUn98OKp2I
-         D0OR+cpGgXgnZk/F2jIxYmIK2vfKKSY72iauA7Bdb3NO4Rsn4PtIq5pbAlsF4TH6MKLA
-         dYmf0PmOlJ4YKvN7Iu0BbKVYqGq7ucGD9f4OE=
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=yLXbhdZTFJDz1Eruum+B2eKRMi+oFeTFSm6260p2MLc=;
+        b=CLcyONO1tRPGjoZAaIYtpv+BQUg6p73mrNktcLcwmrzTHqJzD2K7NR1GfWPSCBGPxE
+         Yu2F92jKgBwkknxARDrGTifPH6MQk386kI0Sw7CZHJdP07ZR75qOh2W14DeRRgakdUNR
+         nF3ibbpOsfMGK52NKZ0rwKUS2aAELJihMdlQ89i1XsXj7HqtU5/QYt5ETDqhUqRWVbFq
+         UaDax9f6skaAn+5zG+0Tcq/K/IbZ5LemJiiSqoQxvnP9sAZ8NoZ41jC8Aw1ldsY98lkA
+         Y2sEvfDJAtYboaLm00hKcoCpOi7+rvCaHRpeZmD820MlkgG1eYb5KrMTIbFAU5Rw8Xk2
+         /1Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=T9tjs2C6JiXyUusbaKulAdI7lGnBQljvbsg/PdLJCpA=;
-        b=4h6vjs1X6ECbuXhE/TFW14Sd1UzxjoNEAdK7t7bGgOY1qW2CbtSnb59ugobwkr45Q+
-         SAGaE/qdV2MWPQADeSkLZgW0v1oUpwi9L2lqIv+wGQWz/9qN9mMwHHFhh+bupRIOdF8s
-         CfsBXA3nyRa1rXsXywLFxsamIb9PfLnjPSafuhKoraZIZU3KwnhqTbsDlvhBNLRuC9QO
-         Hn9IzQ2aGJBnh7/jESXKz2v+ViMIuJaTooqWwLo6yHckBfOLxY6jqoWCQPCTQnNUMONV
-         2o2wk7ikKgD1mI75acXLE1gp15mQkFNS/BJqfb32gYs75/Yx7lGvgyTaWLYErjK2GfY3
-         K9eA==
-X-Gm-Message-State: ACrzQf0z/mGLw/paKknSjJCf638IJNoYWSZ9p3m9r6Ytm1NrIgTuY4bo
-        v88CvPqC47kCPEPpJSl0td5iUIzllZIedHLOtWU=
-X-Google-Smtp-Source: AMsMyM4raLOsOH98lqjHA424bQnHL0hO4uWWwQJuo4LUnfe4RE+7oFdQhEewne3Nd6RutPIngF4d2g==
-X-Received: by 2002:a17:907:72c8:b0:77f:e3f1:db2a with SMTP id du8-20020a17090772c800b0077fe3f1db2amr13645171ejc.198.1663608082125;
-        Mon, 19 Sep 2022 10:21:22 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id s15-20020a1709067b8f00b00775f6081a87sm2896493ejo.121.2022.09.19.10.21.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Sep 2022 10:21:21 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id n10so123189wrw.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 10:21:20 -0700 (PDT)
-X-Received: by 2002:a05:6512:3d16:b0:498:f04f:56cf with SMTP id
- d22-20020a0565123d1600b00498f04f56cfmr7388621lfv.612.1663608070133; Mon, 19
- Sep 2022 10:21:10 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=yLXbhdZTFJDz1Eruum+B2eKRMi+oFeTFSm6260p2MLc=;
+        b=eSrt3RXlvXNIjZM/hvTHYdeDE9nYW8Y7OH4NscBZ8wqj9Y6/Bc7PwCsvxPXfMIZb+u
+         huwarC4UJ/4ghjHLUChHwkedTbAEw3hjVubYmY/zjmUl6WHf4+5tMqzLEdR50OLXsMpn
+         RWbJER7e00EROZiDwu3pNgG/a5QcM6JHoVEY+2siIt2GaMwSL2Q3ajKyyrMMA46zkOkO
+         JO0esQaObPbIoOyr0lfL3+fMir7Ul6slubexQAI8T0RZY+RNb4uhwhAGQqRAqqduJNFo
+         cTcjB1G3O9KX6Eq7ixyWLfqY207MXYVDTZv+3vU9XksvhHPdJXSEM4k1vdLTyD6qJop5
+         DR6A==
+X-Gm-Message-State: ACrzQf0+03JA2krE/QWOechyfJyqEfrJGeUMK60eKG6y9cp4bdqKeb0o
+        SQG/wxqk7xhd8EaHGDLwgmuqMIjHXdQ=
+X-Google-Smtp-Source: AMsMyM6VM/BivqDfuJDvVl6ZNbzXY/5NA1f7mD4YYRuIqm7xUhTzEi114h9ynNOaChL++gsvhYqEiw==
+X-Received: by 2002:a17:902:e94f:b0:16d:847b:3343 with SMTP id b15-20020a170902e94f00b0016d847b3343mr774637pll.103.1663608290154;
+        Mon, 19 Sep 2022 10:24:50 -0700 (PDT)
+Received: from localhost.localdomain (KD027092233113.ppp-bb.dion.ne.jp. [27.92.233.113])
+        by smtp.gmail.com with ESMTPSA id h7-20020aa796c7000000b0053f2505318asm21226480pfq.142.2022.09.19.10.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Sep 2022 10:24:49 -0700 (PDT)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+        osalvador@suse.de, shuah@kernel.org,
+        Zhao Gongyi <zhaogongyi@huawei.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        akpm@linux-foundation.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH 0/3] fix error when writing negative value to simple attribute files
+Date:   Tue, 20 Sep 2022 02:24:15 +0900
+Message-Id: <20220919172418.45257-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20220805154231.31257-13-ojeda@kernel.org> <Yu5Bex9zU6KJpcEm@yadro.com>
- <CANiq72=3j2NM2kS8iw14G6MnGirb0=O6XQyCsY9vVgsZ1DfLaQ@mail.gmail.com>
- <Yu6BXwtPZwYPIDT6@casper.infradead.org> <Yyh3kFUvt2aMh4nq@wedsonaf-dev> <CAHk-=wgaBaVaK2K=N05fwWSSLM6YJx=yLmP4f7j6d6o=nCAtdw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgaBaVaK2K=N05fwWSSLM6YJx=yLmP4f7j6d6o=nCAtdw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 19 Sep 2022 10:20:52 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whTDbFZKB4KJ6=74hoLcerTm3JuN3PV8G6ktcz+Xm1qew@mail.gmail.com>
-Message-ID: <CAHk-=whTDbFZKB4KJ6=74hoLcerTm3JuN3PV8G6ktcz+Xm1qew@mail.gmail.com>
-Subject: Re: [PATCH v9 12/27] rust: add `kernel` crate
-To:     Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Konstantin Shelekhin <k.shelekhin@yadro.com>, ojeda@kernel.org,
-        alex.gaynor@gmail.com, ark.email@gmail.com,
-        bjorn3_gh@protonmail.com, bobo1239@web.de, bonifaido@gmail.com,
-        boqun.feng@gmail.com, davidgow@google.com, dev@niklasmohrin.de,
-        dsosnowski@dsosnowski.pl, foxhlchen@gmail.com, gary@garyguo.net,
-        geofft@ldpreload.com, gregkh@linuxfoundation.org,
-        jarkko@kernel.org, john.m.baublitz@gmail.com,
-        leseulartichaut@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, m.falkowski@samsung.com,
-        me@kloenk.de, milan@mdaverde.com, mjmouse9999@gmail.com,
-        patches@lists.linux.dev, rust-for-linux@vger.kernel.org,
-        thesven73@gmail.com, viktor@v-gar.de,
-        Andreas Hindborg <andreas.hindborg@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,72 +77,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 9:09 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> The whole "really know what context this code is running within" is
-> really important. You may want to write very explicit comments about
-> it.
+The simple attribute files do not accept a negative value since the
+commit 488dac0c9237 ("libfs: fix error cast of negative value in
+simple_attr_write()"), but some attribute files want to accept
+a negative value.
 
-Side note: a corollary of this is that people should avoid "dynamic
-context" things like the plague, because it makes for such pain when
-the context isn't statically obvious.
+Akinobu Mita (3):
+  libfs: add DEFINE_SIMPLE_ATTRIBUTE_SIGNED for signed value
+  lib/notifier-error-inject: fix error when writing -errno to debugfs
+    file
+  debugfs: fix error when writing negative value to atomic_t debugfs
+    file
 
-So things like conditional locking should generally be avoided as much
-as humanly possible. Either you take the lock or you don't - don't
-write code where the lock context depends on some argument value or
-flag, for example.
+ .../fault-injection/fault-injection.rst       | 10 +++----
+ fs/debugfs/file.c                             | 28 +++++++++++++++----
+ fs/libfs.c                                    | 22 +++++++++++++--
+ include/linux/debugfs.h                       | 19 +++++++++++--
+ include/linux/fs.h                            | 12 ++++++--
+ lib/notifier-error-inject.c                   |  2 +-
+ 6 files changed, 73 insertions(+), 20 deletions(-)
 
-Code like this is fine:
+-- 
+2.34.1
 
-        if (some_condition) {
-                spin_lock(&mylock);
-                xyz();
-                spin_unlock(&mylock);
-        }
-
-because 'xyz()' is always run in the same context. But avoid patterns like
-
-        if (some_condition)
-                spin_lock(&mylock);
-        xyz();
-        if (same_condition)
-                spin_unlock(&mylock);
-
-where now 'xyz()' sometimes does something with the lock held, and
-sometimes not. That way lies insanity.
-
-Now, obviously, the context for helper functions (like the Rust kernel
-crate is, pretty much by definition) obviously depends on the context
-of the callers of said helpers, so in that sense the above kind of
-"sometimes in locked context, sometimes not" will always be the case.
-
-So those kinds of helper functions will generally need to be either
-insensitive to context and usable in all contexts (best), or
-documented - and verify with debug code like 'might_sleep()' - that
-they only run in certain contexts.
-
-And then in the worst case there's a gfp_flag that says "you can only
-do these kinds of allocations" or whatever, but even then you should
-strive to never have other dynamic behavior (ie please try to avoid
-behavior like having a "already locked" argument and then taking a
-lock depending on that).
-
-Because if you follow those rules, at least you can statically see the
-context from a call chain (so, for example, the stack trace of an oops
-will make the context unambiguous, because there's hopefully no lock
-or interrupt disabling or similar that has some dynamic behavior like
-in that second example of "xyz()".
-
-Do we have places in the kernel that do conditional locking? Yes we
-do. Examples like that second case do exist. It's bad. Sometimes you
-can't avoid it. But you can always *strive* to avoid it, and
-minimizing those kinds of "context depends on other things"
-situations.
-
-And we should strive very hard to make those kinds of contexts very
-clear and explicit and not dynamic exactly because it's so important
-in the kernel, and it has subtle implications wrt other locking, and
-memory allocations.
-
-             Linus
