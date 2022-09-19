@@ -2,95 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE375BC5C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 11:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B41715BCA3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 13:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiISJtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 05:49:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45284 "EHLO
+        id S229936AbiISLGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 07:06:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbiISJtd (ORCPT
+        with ESMTP id S229722AbiISLGF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 05:49:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8215BD5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 02:49:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3785EB818A2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 09:49:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A649EC433C1;
-        Mon, 19 Sep 2022 09:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663580965;
-        bh=jqOw/lhGPxoVYYIIrji6Poc8TGW9Aq5/f8L0fS1L9xI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=T8eCNdeEzrvaYOE6+0M+Cjb7wrZtejvZLrE3T4umwjvmsSPnVJC1VzuLw6P9imFEV
-         Yrq7S4HgUzxn0gWgCUdSjNOIRnNP20NQoymJirTpe9doxqbbeAdqmgkZX9j4kdFLIt
-         ArRIKybhdZMlQYcUnrCgqqSjA0udGVN/+ZlrtA4UvIDyKHhsbD7RYclUcz7pkyQfMu
-         gRoqM2PnpPeUkwVwuzvNeXBIhBvY5cgLUMMLRkdn6/yEgjh7BqwWLruRyb59qTnfOF
-         ZJLNOipqwnG1qtYz3KFX2cjV8+FBxs1Mz1Ap2eaHoAcSlqpAue1bnG1uvSJjMMhFoy
-         XB5Px4Mgx/rqw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] xattr: always us is_posix_acl_xattr() helper
-Date:   Mon, 19 Sep 2022 11:49:14 +0200
-Message-Id: <20220919094914.1174728-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 19 Sep 2022 07:06:05 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BA0B84C;
+        Mon, 19 Sep 2022 04:06:02 -0700 (PDT)
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 28JB5EAU024945;
+        Mon, 19 Sep 2022 20:05:14 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Mon, 19 Sep 2022 20:05:14 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 28JB5ET3024941
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 19 Sep 2022 20:05:14 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <3411f396-a41e-76cb-7836-941fbade81dc@I-love.SAKURA.ne.jp>
+Date:   Mon, 19 Sep 2022 20:05:12 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: [PATCH (urgent)] vfs: fix uninitialized uid/gid in chown_common()
+Content-Language: en-US
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <00000000000008058305e9033f85@google.com>
+Cc:     linux-security-module@vger.kernel.org,
+        syzbot <syzbot+541e21dcc32c4046cba9@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <00000000000008058305e9033f85@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The is_posix_acl_xattr() helper was added in 0c5fd887d2bb ("acl: move
-idmapped mount fixup into vfs_{g,s}etxattr()") to remove the open-coded
-checks for POSIX ACLs. We missed to update two locations. Switch them to
-use the helper.
+syzbot is reporting uninit-value in tomoyo_path_chown() [1], for
+chown_common() is by error passing uninitialized newattrs.ia_vfsuid to
+security_path_chown() via from_vfsuid() when user == -1 is passed.
+We must initialize newattrs.ia_vfs{u,g}id fields in order to make
+from_vfs{u,g}id() work.
 
-Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Link: https://syzkaller.appspot.com/bug?extid=541e21dcc32c4046cba9 [1]
+Reported-by: syzbot <syzbot+541e21dcc32c4046cba9@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- fs/xattr.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/open.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index a1f4998bc6be..01aa45cea83c 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -587,9 +587,7 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
- static void setxattr_convert(struct user_namespace *mnt_userns,
- 			     struct dentry *d, struct xattr_ctx *ctx)
- {
--	if (ctx->size &&
--		((strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
--		(strcmp(ctx->kname->name, XATTR_NAME_POSIX_ACL_DEFAULT) == 0)))
-+	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
- 		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
- }
+diff --git a/fs/open.c b/fs/open.c
+index 8a813fa5ca56..0550efb7b53a 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -709,6 +709,8 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	kuid_t uid;
+ 	kgid_t gid;
  
-@@ -705,8 +703,7 @@ do_getxattr(struct user_namespace *mnt_userns, struct dentry *d,
++	newattrs.ia_vfsuid = VFSUIDT_INIT(KUIDT_INIT(-1));
++	newattrs.ia_vfsgid = VFSGIDT_INIT(KGIDT_INIT(-1));
+ 	uid = make_kuid(current_user_ns(), user);
+ 	gid = make_kgid(current_user_ns(), group);
  
- 	error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
- 	if (error > 0) {
--		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
--		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
-+		if (is_posix_acl_xattr(kname))
- 			posix_acl_fix_xattr_to_user(ctx->kvalue, error);
- 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
- 			error = -EFAULT;
-
-base-commit: b90cb1053190353cc30f0fef0ef1f378ccc063c5
 -- 
 2.34.1
 
