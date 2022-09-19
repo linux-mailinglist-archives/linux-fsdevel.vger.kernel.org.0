@@ -2,191 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AEB5BD613
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 23:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71155BD631
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 23:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbiISVEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 17:04:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38596 "EHLO
+        id S229717AbiISVPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 17:15:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbiISVEm (ORCPT
+        with ESMTP id S229640AbiISVPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 17:04:42 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB58ECE19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 14:04:41 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id v20-20020a6b5b14000000b0069fee36308eso364841ioh.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 14:04:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=xtCSZDzBZ7VocIYU5Oxk/KyGf3p9mg8GSqEMcMiDCb4=;
-        b=SN6RBhUkgJlOTuMhJjUW0XoffodfUc/tRNlSSIsMVnjZmL6XapECtneDJmVRH7fTt7
-         6lUvY0vaPWDbEstdHLbz2al0uRJ8a2vHZUVbXWL8mVd2SkqySC5kcfmrQanrgXZUX3St
-         Ke6Gtk3r7bSo4A58dLefmly1gfJfPqFj1NIKsWZg48se9DZjX1Pk8IplwqZArLyBwyTX
-         +l70J9LSZlD18oqTLS/d/mv47pBeUFZDs2wqsozg2oPQJwiKWNVouUBDeVAxFwTemGVu
-         TiHirMiPjSKxIj9IrC9SKBLucY5B5FWeJwlYZRLXzYj6BVwtmZZkqlnjWaJoyzY5Eu5w
-         LfIw==
-X-Gm-Message-State: ACrzQf3LOQ7Dtj0sbS8uOvfx25C7vtviq8q/uFnH3q5pCbk6sHOzFZHG
-        2p4fh+OB3VQi3/A4/+sdxlelK0FqRE1S5DcvgCXTFdRWUeDX
-X-Google-Smtp-Source: AMsMyM7YRd13bf01gEl7pkehFtMeX4xg1J+dGlw8Lgh7catIVUGB/fR8gtNaFwknAAkGpzvhVg1YKjgvtQXz1l/5AuZNfrjcN/U6
+        Mon, 19 Sep 2022 17:15:43 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BCC3F2B62F;
+        Mon, 19 Sep 2022 14:15:37 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-183-60.pa.nsw.optusnet.com.au [49.180.183.60])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0A63711008E6;
+        Tue, 20 Sep 2022 07:15:35 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oaO73-009kZr-9v; Tue, 20 Sep 2022 07:15:33 +1000
+Date:   Tue, 20 Sep 2022 07:15:33 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+        dan.j.williams@intel.com
+Subject: Re: [RFC PATCH] xfs: drop experimental warning for fsdax
+Message-ID: <20220919211533.GK3600936@dread.disaster.area>
+References: <1663234002-17-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <20220919045003.GJ3600936@dread.disaster.area>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3421:b0:6a1:6b14:895b with SMTP id
- n33-20020a056602342100b006a16b14895bmr7618689ioz.24.1663621480995; Mon, 19
- Sep 2022 14:04:40 -0700 (PDT)
-Date:   Mon, 19 Sep 2022 14:04:40 -0700
-In-Reply-To: <00000000000050d56805e77c4582@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a612305e90e0f79@google.com>
-Subject: Re: [syzbot] WARNING in writeback_single_inode
-From:   syzbot <syzbot+fc721e2fe15a5aac41d1@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220919045003.GJ3600936@dread.disaster.area>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6328dbf8
+        a=mj5ET7k2jFntY++HerHxfg==:117 a=mj5ET7k2jFntY++HerHxfg==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
+        a=P5i7CRKJERA4Ca6FXRMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Sep 19, 2022 at 02:50:03PM +1000, Dave Chinner wrote:
+> On Thu, Sep 15, 2022 at 09:26:42AM +0000, Shiyang Ruan wrote:
+> > Since reflink&fsdax can work together now, the last obstacle has been
+> > resolved.  It's time to remove restrictions and drop this warning.
+> > 
+> > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> 
+> I haven't looked at reflink+DAX for some time, and I haven't tested
+> it for even longer. So I'm currently running a v6.0-rc6 kernel with
+> "-o dax=always" fstests run with reflink enabled and it's not
+> looking very promising.
+> 
+> All of the fsx tests are failing with data corruption, several
+> reflink/clone tests are failing with -EINVAL (e.g. g/16[45]) and
+> *lots* of tests are leaving stack traces from WARN() conditions in
+> DAx operations such as dax_insert_entry(), dax_disassociate_entry(),
+> dax_writeback_mapping_range(), iomap_iter() (called from
+> dax_dedupe_file_range_compare()), and so on.
+> 
+> At thsi point - the tests are still running - I'd guess that there's
+> going to be at least 50 test failures by the time it completes -
+> in comparison using "-o dax=never" results in just a single test
+> failure and a lot more tests actually being run.
 
-HEAD commit:    a6b443748715 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=144f0654880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=14bf9ec0df433b27
-dashboard link: https://syzkaller.appspot.com/bug?extid=fc721e2fe15a5aac41d1
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cb3628880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1778ecb0880000
+The end results with dax+reflink were:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/81b491dd5861/disk-a6b44374.raw.xz
-vmlinux: https://storage.googleapis.com/69c979cdc99a/vmlinux-a6b44374.xz
+SECTION       -- xfs_dax
+=========================
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fc721e2fe15a5aac41d1@syzkaller.appspotmail.com
+Failures: generic/051 generic/068 generic/074 generic/075
+generic/083 generic/091 generic/112 generic/127 generic/164
+generic/165 generic/175 generic/231 generic/232 generic/247
+generic/269 generic/270 generic/327 generic/340 generic/388
+generic/390 generic/413 generic/447 generic/461 generic/471
+generic/476 generic/517 generic/519 generic/560 generic/561
+generic/605 generic/617 generic/619 generic/630 generic/649
+generic/650 generic/656 generic/670 generic/672 xfs/011 xfs/013
+xfs/017 xfs/068 xfs/073 xfs/104 xfs/127 xfs/137 xfs/141 xfs/158
+xfs/168 xfs/179 xfs/243 xfs/297 xfs/305 xfs/328 xfs/440 xfs/442
+xfs/517 xfs/535 xfs/538 xfs/551 xfs/552
+Failed 61 of 1071 tests
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 7715 at fs/fs-writeback.c:1678 writeback_single_inode+0x374/0x388 fs/fs-writeback.c:1678
-Modules linked in:
-CPU: 0 PID: 7715 Comm: syz-executor169 Not tainted 6.0.0-rc4-syzkaller-17255-ga6b443748715 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : writeback_single_inode+0x374/0x388 fs/fs-writeback.c:1678
-lr : writeback_single_inode+0x374/0x388 fs/fs-writeback.c:1678
-sp : ffff800015f0b9c0
-x29: ffff800015f0ba10 x28: ffff0000cf476000 x27: fffffc0003488dc0
-x26: 0000000000000a00 x25: 0000000000000000 x24: 0000000000000001
-x23: 0000000000001000 x22: ffff800015f0ba60 x21: 0000000000000000
-x20: ffff0000ce87824f x19: ffff0000ce8782d8 x18: 0000000000000379
-x17: ffff80000c00d6bc x16: ffff80000db78658 x15: ffff0000cf4c8000
-x14: 00000000000000f0 x13: 00000000ffffffff x12: ffff0000cf4c8000
-x11: ff80800008619b78 x10: 0000000000000000 x9 : ffff800008619b78
-x8 : ffff0000cf4c8000 x7 : ffff800008619848 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- writeback_single_inode+0x374/0x388 fs/fs-writeback.c:1678
- write_inode_now+0xb0/0xdc fs/fs-writeback.c:2723
- iput_final fs/inode.c:1735 [inline]
- iput+0x1e4/0x324 fs/inode.c:1774
- ntfs_fill_super+0xc30/0x14a4 fs/ntfs/super.c:2994
- get_tree_bdev+0x1e8/0x2a0 fs/super.c:1323
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1358
- vfs_get_tree+0x40/0x140 fs/super.c:1530
- do_new_mount+0x1dc/0x4e4 fs/namespace.c:3040
- path_mount+0x358/0x914 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x2f8/0x408 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-irq event stamp: 1754
-hardirqs last  enabled at (1753): [<ffff800008162eec>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1367 [inline]
-hardirqs last  enabled at (1753): [<ffff800008162eec>] finish_lock_switch+0x94/0xe8 kernel/sched/core.c:4942
-hardirqs last disabled at (1754): [<ffff80000bfc5c8c>] el1_dbg+0x24/0x5c arch/arm64/kernel/entry-common.c:395
-softirqs last  enabled at (546): [<ffff8000080102e4>] _stext+0x2e4/0x37c
-softirqs last disabled at (541): [<ffff800008017c48>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:79
----[ end trace 0000000000000000 ]---
-Unable to handle kernel paging request at virtual address 000000ce87847947
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004
-  CM = 0, WnR = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=00000001135a3000
-[000000ce87847947] pgd=0000000000000000, p4d=0000000000000000
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 7715 Comm: syz-executor169 Tainted: G        W          6.0.0-rc4-syzkaller-17255-ga6b443748715 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : xa_marked include/linux/xarray.h:420 [inline]
-pc : mapping_tagged include/linux/fs.h:461 [inline]
-pc : writeback_single_inode+0x228/0x388 fs/fs-writeback.c:1703
-lr : writeback_single_inode+0x218/0x388 fs/fs-writeback.c:1702
-sp : ffff800015f0b9c0
-x29: ffff800015f0ba10 x28: ffff0000cf476000 x27: fffffc0003488dc0
-x26: 0000000000000a00 x25: 0000000000001000 x24: 0000000000000001
-x23: 0000000000000001 x22: ffff800015f0ba60 x21: ffff0000ce878327
-x20: ffff0000ce87824f x19: ffff0000ce8782d8 x18: 0000000000000379
-x17: ffff80000c00d6bc x16: ffff80000db78658 x15: ffff0000cf4c8000
-x14: 00000000000000f0 x13: 00000000ffffffff x12: ffff0000cf4c8000
-x11: ff80800008619a1c x10: 0000000000000000 x9 : ffff0000cf4c8000
-x8 : ff0000ce878478ff x7 : ffff800008619848 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000000
-Call trace:
- xa_marked include/linux/xarray.h:420 [inline]
- mapping_tagged include/linux/fs.h:461 [inline]
- writeback_single_inode+0x228/0x388 fs/fs-writeback.c:1703
- write_inode_now+0xb0/0xdc fs/fs-writeback.c:2723
- iput_final fs/inode.c:1735 [inline]
- iput+0x1e4/0x324 fs/inode.c:1774
- ntfs_fill_super+0xc30/0x14a4 fs/ntfs/super.c:2994
- get_tree_bdev+0x1e8/0x2a0 fs/super.c:1323
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1358
- vfs_get_tree+0x40/0x140 fs/super.c:1530
- do_new_mount+0x1dc/0x4e4 fs/namespace.c:3040
- path_mount+0x358/0x914 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x2f8/0x408 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:624
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:642
- el0t_64_sync+0x18c/0x190
-Code: 710006ff 54000281 f9401a88 2a1f03e0 (b9404917) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	710006ff 	cmp	w23, #0x1
-   4:	54000281 	b.ne	0x54  // b.any
-   8:	f9401a88 	ldr	x8, [x20, #48]
-   c:	2a1f03e0 	mov	w0, wzr
-* 10:	b9404917 	ldr	w23, [x8, #72] <-- trapping instruction
+Ok, so I did a new no-reflink run as a baseline, because it is a
+while since I've tested DAX at all:
 
+SECTION       -- xfs_dax_noreflink
+=========================
+Failures: generic/051 generic/068 generic/074 generic/075
+generic/083 generic/112 generic/231 generic/232 generic/269
+generic/270 generic/340 generic/388 generic/461 generic/471
+generic/476 generic/519 generic/560 generic/561 generic/617
+generic/650 generic/656 xfs/011 xfs/013 xfs/017 xfs/073 xfs/297
+xfs/305 xfs/517 xfs/538
+Failed 29 of 1071 tests
+
+Yeah, there's still lots of warnings from dax_insert_entry() and
+friends like:
+
+[43262.025815] WARNING: CPU: 9 PID: 1309428 at fs/dax.c:380 dax_insert_entry+0x2ab/0x320
+[43262.028355] Modules linked in:
+[43262.029386] CPU: 9 PID: 1309428 Comm: fsstress Tainted: G W          6.0.0-rc6-dgc+ #1543
+[43262.032168] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[43262.034840] RIP: 0010:dax_insert_entry+0x2ab/0x320
+[43262.036358] Code: 08 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 8b 58 20 48 8d 53 01 e9 65 ff ff ff 48 8b 58 20 48 8d 53 01 e9 50 ff ff ff <0f> 0b e9 70 ff ff ff 31 f6 4c 89 e7 e8 84 b1 5a 00 eb a4 48 81 e6
+[43262.042255] RSP: 0018:ffffc9000a0cbb78 EFLAGS: 00010002
+[43262.043946] RAX: ffffea0018cd1fc0 RBX: 0000000000000001 RCX: 0000000000000001
+[43262.046233] RDX: ffffea0000000000 RSI: 0000000000000221 RDI: ffffea0018cd2000
+[43262.048518] RBP: 0000000000000011 R08: 0000000000000000 R09: 0000000000000000
+[43262.050762] R10: ffff888241a6d318 R11: 0000000000000001 R12: ffffc9000a0cbc58
+[43262.053020] R13: ffff888241a6d318 R14: ffffc9000a0cbe20 R15: 0000000000000000
+[43262.055309] FS:  00007f8ce25e2b80(0000) GS:ffff8885fec80000(0000) knlGS:0000000000000000
+[43262.057859] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[43262.059713] CR2: 00007f8ce25e1000 CR3: 0000000152141001 CR4: 0000000000060ee0
+[43262.061993] Call Trace:
+[43262.062836]  <TASK>
+[43262.063557]  dax_fault_iter+0x243/0x600
+[43262.064802]  dax_iomap_pte_fault+0x199/0x360
+[43262.066197]  __xfs_filemap_fault+0x1e3/0x2c0
+[43262.067602]  __do_fault+0x31/0x1d0
+[43262.068719]  __handle_mm_fault+0xd6d/0x1650
+[43262.070083]  ? do_mmap+0x348/0x540
+[43262.071200]  handle_mm_fault+0x7a/0x1d0
+[43262.072449]  ? __kvm_handle_async_pf+0x12/0xb0
+[43262.073908]  exc_page_fault+0x1d9/0x810
+[43262.075123]  asm_exc_page_fault+0x22/0x30
+[43262.076413] RIP: 0033:0x7f8ce268bc23
+
+So it looks to me like DAX is well and truly broken in 6.0-rc6. And,
+yes, I'm running the fixes in mm-hotifxes-stable branch that allow
+xfs/550 to pass.
+
+Who is actually testing this DAX code, and what are they actually
+testing on? These are not random failures - I haven't run DAX
+testing since ~5.18, and none of these failures were present on the
+same DAX test VM running the same configuration back then....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
