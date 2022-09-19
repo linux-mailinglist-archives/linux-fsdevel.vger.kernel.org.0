@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88FAA5BCE1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 16:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0725BCE1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 16:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229972AbiISOKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 10:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59778 "EHLO
+        id S229529AbiISOKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 10:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiISOKm (ORCPT
+        with ESMTP id S229548AbiISOKm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 19 Sep 2022 10:10:42 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 242E83136D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 07:10:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C7015FCB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 07:10:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1663596638;
+        s=mimecast20190719; t=1663596640;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PzsiJLh4qivuvaD01T8k0cktWemsb5i0yo5HxUE+jT4=;
-        b=PPlScce04HFIG6QRSHuTlhZBKBNCQqC0pX5i262shvZ7S7SB3qgPH42jbm2/kgNPFd4DG7
-        HM3s3BrCHNhZ6cPQzyNqFPafmOdsCk5Vv3afUI6zY31zNSgSjzE/vZU9IzVwqcBnlB3ByQ
-        fWsvEU3zmG1ukUO/HeZKzGF9wUoqV5s=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=anOQA/oJUS71LYPqHcQLEIYyutVeIxZG9umMeWdqoZk=;
+        b=V/ZAsfouujEVbTfSOQY8qyxd6254F8E9jcuZVeq+1E9RfFZRcTdrcytK38QkygXKJY3a1M
+        XLHIB4X0zxAlDzvsCQdCTbbIE43eX+FOym+gi09s6iNmC4cLuUsXMex0DTsxhdpC8J9DJ3
+        eVygwIAMbI7My7tsDXsLMylzzDTFPUE=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-670-a8lr2fz7MMiKpTRVFQBN7Q-1; Mon, 19 Sep 2022 10:10:37 -0400
-X-MC-Unique: a8lr2fz7MMiKpTRVFQBN7Q-1
-Received: by mail-ej1-f70.google.com with SMTP id go7-20020a1709070d8700b007793ffa7c44so10660954ejc.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 07:10:36 -0700 (PDT)
+ us-mta-542-SqyZrmtpPxuCe-e0graiiw-1; Mon, 19 Sep 2022 10:10:38 -0400
+X-MC-Unique: SqyZrmtpPxuCe-e0graiiw-1
+Received: by mail-ed1-f69.google.com with SMTP id c6-20020a05640227c600b004521382116dso15417154ede.22
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 07:10:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=PzsiJLh4qivuvaD01T8k0cktWemsb5i0yo5HxUE+jT4=;
-        b=AeD1+52B0pGj5i8FtB1FFy1SjDNI7j1KHnggEH66XAHLsVAOMyJWksSe4iTmnDbQJt
-         5Pn1c11mbr9GI8tJDM8vYM26TMnyorYxC4pKB5VX2o6rDDL+lTdL6Uz2S8RK5L4sHIdg
-         8RykDTqqmuZ0/lpnJlF9smMpHrLmHCskLI/rg/T9KBaSCHUhbhF4Qd4LyW8s38paEtDa
-         X2foX9b7WgBDHt1vfL9Z0I+1NVuk8SFo1vrc0mLuVci9UlP6T9WD1+3pOvo7lXy07X5F
-         LjgoG4gP1zviP2h9d3qz1HS3oLpJFSeTNx+F7x+l+R7YzNjMIVOATBLFGdIHVAG4hZv0
-         I78g==
-X-Gm-Message-State: ACrzQf3bOF0Ouptcdp3ym2igfR25H9CPhhDQMP+tupk3QsgF9esOwgUx
-        2dzhDEaYE3Mz0BRAvdhUdZUUrj977Zw1Q/KL4Rs1Kg3xPy4J8oaYhJI3cFGv48ebZ1HaMOH8Cn6
-        t+Wreu3hRxcAr4cJefZJGuJDhC/4oVkmc8zFCdHO64h8BpsNvY0r0heTdQiOJHPYlpA2sn/gHcS
-        uuzA==
-X-Received: by 2002:a17:906:fe4a:b0:781:3b6:f8b0 with SMTP id wz10-20020a170906fe4a00b0078103b6f8b0mr7144469ejb.183.1663596635583;
-        Mon, 19 Sep 2022 07:10:35 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM49ZD8FDPG7yWlQMbndETaJ5I7VPYZTyruyRnOhRQY5crmhN6aO/+aVrIRE8qrk1uPISeGOtA==
-X-Received: by 2002:a17:906:fe4a:b0:781:3b6:f8b0 with SMTP id wz10-20020a170906fe4a00b0078103b6f8b0mr7144444ejb.183.1663596635380;
-        Mon, 19 Sep 2022 07:10:35 -0700 (PDT)
+        bh=anOQA/oJUS71LYPqHcQLEIYyutVeIxZG9umMeWdqoZk=;
+        b=7iCBzTBARBOO0UdrWySZrne9jUSujBWA1JzH2rANbDfqv2yuIx7DxOQJkI9vInmsW1
+         XhNJDgDS1qser4MPQ5KLn93FTXxqpo2Dt6W2/V8PNlxtAbr4LxT8n7Kcl/5imgkTSpCM
+         xWCV4mpHdSuUUR1zUy+PC93frb17iwKtRXqEcEjJUxHWS6T2JWJTeq3H0VhueBGNBeTT
+         5mD6dYpkDx8Rz6oO8pusZF8o/RUKR4pwVuS+GLM/iNnVfRF1QxAdGBbcSd5nRSpHJHPg
+         ENKu0u8AAAQbqZ6wJkDf8BsepGsgKmM1YTCWuFxMat+OEYkIfihc/CwQ/IPrZ+7lfxZu
+         KFCg==
+X-Gm-Message-State: ACrzQf2osqIrphs+WxKdkz465xHBVfAOUIE4YRAqQr0ivfyIiqSraEey
+        52jaiqExwt1s5W4MaGwFQLL7bLN3tJiaPOQ+g/WsWXjxB7Wcz/AQ71PfNxEfBjsd4mquWzrpK6f
+        DuiNFrF1JiUkiBSktMR5Fj+jPflWrrrSI80yGe1Yr2KauQq1EUozZO9dCjQdU3PSWmDvLe6hUoA
+        eHUQ==
+X-Received: by 2002:a05:6402:34cb:b0:451:61c9:a316 with SMTP id w11-20020a05640234cb00b0045161c9a316mr16334077edc.268.1663596636710;
+        Mon, 19 Sep 2022 07:10:36 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4rMjhU4aBxmJYnr3cEmmYBTFIL1SwBoJDwDS9Vj/QnCalbOWDpSNyrscGJKA2crEGHkA79pg==
+X-Received: by 2002:a05:6402:34cb:b0:451:61c9:a316 with SMTP id w11-20020a05640234cb00b0045161c9a316mr16334049edc.268.1663596636416;
+        Mon, 19 Sep 2022 07:10:36 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (193-226-214-223.pool.digikabel.hu. [193.226.214.223])
-        by smtp.gmail.com with ESMTPSA id lb22-20020a170907785600b0073bdf71995dsm9849951ejc.139.2022.09.19.07.10.33
+        by smtp.gmail.com with ESMTPSA id lb22-20020a170907785600b0073bdf71995dsm9849951ejc.139.2022.09.19.07.10.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 19 Sep 2022 07:10:35 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
@@ -64,9 +64,9 @@ Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         David Howells <dhowells@redhat.com>,
         Yu-li Lin <yulilin@google.com>,
         Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH v2 1/8] cachefiles: tmpfile error handling cleanup
-Date:   Mon, 19 Sep 2022 16:10:24 +0200
-Message-Id: <20220919141031.1834447-2-mszeredi@redhat.com>
+Subject: [PATCH v2 2/8] vfs: add tmpfile_open() helper
+Date:   Mon, 19 Sep 2022 16:10:25 +0200
+Message-Id: <20220919141031.1834447-3-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220919141031.1834447-1-mszeredi@redhat.com>
 References: <20220919141031.1834447-1-mszeredi@redhat.com>
@@ -81,113 +81,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Separate the error labels from the success path and use 'ret' to store the
-error value before jumping to the error label.
+This helper unifies tmpfile creation with opening.
+
+Existing vfs_tmpfile() callers outside of fs/namei.c will be converted to
+using this helper.  There are two such callers: cachefile and overlayfs.
+
+The cachefiles code currently uses the open_with_fake_path() helper to open
+the tmpfile, presumably to disable accounting of the open file.  Overlayfs
+uses tmpfile for copy_up, which means these struct file instances will be
+short lived, hence it doesn't really matter if they are accounted or not.
+Disable accounting in this helper to, which should be okay for both caller.
+
+Add MAY_OPEN permission checking for consistency.  Like for create(2)
+read/write permissions are not checked.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/cachefiles/namei.c | 55 ++++++++++++++++++++-----------------------
- 1 file changed, 26 insertions(+), 29 deletions(-)
+ fs/namei.c         | 41 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  4 ++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index facf2ebe464b..d3a5884fe5c9 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -460,31 +460,27 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
- 
- 	path.mnt = cache->mnt;
- 	ret = cachefiles_inject_write_error();
--	if (ret == 0)
-+	if (ret == 0) {
- 		path.dentry = vfs_tmpfile(&init_user_ns, fan, S_IFREG, O_RDWR);
--	else
--		path.dentry = ERR_PTR(ret);
--	if (IS_ERR(path.dentry)) {
--		trace_cachefiles_vfs_error(object, d_inode(fan), PTR_ERR(path.dentry),
-+		ret = PTR_ERR_OR_ZERO(path.dentry);
-+	}
-+	if (ret) {
-+		trace_cachefiles_vfs_error(object, d_inode(fan), ret,
- 					   cachefiles_trace_tmpfile_error);
--		if (PTR_ERR(path.dentry) == -EIO)
-+		if (ret == -EIO)
- 			cachefiles_io_error_obj(object, "Failed to create tmpfile");
--		file = ERR_CAST(path.dentry);
--		goto out;
-+		goto err;
- 	}
- 
- 	trace_cachefiles_tmpfile(object, d_backing_inode(path.dentry));
- 
--	if (!cachefiles_mark_inode_in_use(object, path.dentry)) {
--		file = ERR_PTR(-EBUSY);
--		goto out_dput;
--	}
-+	ret = -EBUSY;
-+	if (!cachefiles_mark_inode_in_use(object, path.dentry))
-+		goto err_dput;
- 
- 	ret = cachefiles_ondemand_init_object(object);
--	if (ret < 0) {
--		file = ERR_PTR(ret);
--		goto out_unuse;
--	}
-+	if (ret < 0)
-+		goto err_unuse;
- 
- 	ni_size = object->cookie->object_size;
- 	ni_size = round_up(ni_size, CACHEFILES_DIO_BLOCK_SIZE);
-@@ -499,36 +495,37 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
- 			trace_cachefiles_vfs_error(
- 				object, d_backing_inode(path.dentry), ret,
- 				cachefiles_trace_trunc_error);
--			file = ERR_PTR(ret);
--			goto out_unuse;
-+			goto err_unuse;
- 		}
- 	}
- 
- 	file = open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
- 				   d_backing_inode(path.dentry), cache->cache_cred);
-+	ret = PTR_ERR(file);
- 	if (IS_ERR(file)) {
- 		trace_cachefiles_vfs_error(object, d_backing_inode(path.dentry),
--					   PTR_ERR(file),
--					   cachefiles_trace_open_error);
--		goto out_unuse;
-+					   ret, cachefiles_trace_open_error);
-+		goto err_unuse;
- 	}
-+	ret = -EINVAL;
- 	if (unlikely(!file->f_op->read_iter) ||
- 	    unlikely(!file->f_op->write_iter)) {
- 		fput(file);
- 		pr_notice("Cache does not support read_iter and write_iter\n");
--		file = ERR_PTR(-EINVAL);
--		goto out_unuse;
-+		goto err_unuse;
- 	}
--
--	goto out_dput;
--
--out_unuse:
--	cachefiles_do_unmark_inode_in_use(object, path.dentry);
--out_dput:
- 	dput(path.dentry);
- out:
- 	cachefiles_end_secure(cache, saved_cred);
- 	return file;
-+
-+err_unuse:
-+	cachefiles_do_unmark_inode_in_use(object, path.dentry);
-+err_dput:
-+	dput(path.dentry);
-+err:
-+	file = ERR_PTR(ret);
-+	goto out;
+diff --git a/fs/namei.c b/fs/namei.c
+index 53b4bc094db2..5e4a0c59eef6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3624,6 +3624,47 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
  }
+ EXPORT_SYMBOL(vfs_tmpfile);
  
- /*
++/**
++ * tmpfile_open - open a tmpfile for kernel internal use
++ * @mnt_userns:	user namespace of the mount the inode was found from
++ * @parentpath:	path of the base directory
++ * @mode:	mode of the new tmpfile
++ * @open_flag:	flags
++ * @cred:	credentials for open
++ *
++ * Create and open a temporary file.  The file is not accounted in nr_files,
++ * hence this is only for kernel internal use, and must not be installed into
++ * file tables or such.
++ */
++struct file *tmpfile_open(struct user_namespace *mnt_userns,
++			  const struct path *parentpath,
++			  umode_t mode, int open_flag, const struct cred *cred)
++{
++	struct file *file;
++	int error;
++	struct path path = { .mnt = parentpath->mnt };
++
++	path.dentry = vfs_tmpfile(mnt_userns, parentpath->dentry, mode, open_flag);
++	if (IS_ERR(path.dentry))
++		return ERR_CAST(path.dentry);
++
++	error = may_open(mnt_userns, &path, 0, open_flag);
++	file = ERR_PTR(error);
++	if (error)
++		goto out_dput;
++
++	/*
++	 * This relies on the "noaccount" property of fake open, otherwise
++	 * equivalent to dentry_open().
++	 */
++	file = open_with_fake_path(&path, open_flag, d_inode(path.dentry), cred);
++out_dput:
++	dput(path.dentry);
++
++	return file;
++}
++EXPORT_SYMBOL(tmpfile_open);
++
+ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 		const struct open_flags *op,
+ 		struct file *file)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9eced4cc286e..34e7a189565b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2007,6 +2007,10 @@ static inline int vfs_whiteout(struct user_namespace *mnt_userns,
+ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+ 			   struct dentry *dentry, umode_t mode, int open_flag);
+ 
++struct file *tmpfile_open(struct user_namespace *mnt_userns,
++			  const struct path *parentpath,
++			  umode_t mode, int open_flag, const struct cred *cred);
++
+ int vfs_mkobj(struct dentry *, umode_t,
+ 		int (*f)(struct dentry *, umode_t, void *),
+ 		void *);
 -- 
 2.37.3
 
