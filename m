@@ -2,249 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E235BD511
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 21:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4E95BD580
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Sep 2022 22:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbiISTK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 15:10:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41424 "EHLO
+        id S229675AbiISUC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 16:02:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiISTKW (ORCPT
+        with ESMTP id S229609AbiISUCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 15:10:22 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A382C24BD8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 12:10:20 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id s14-20020a17090a6e4e00b0020057c70943so8368320pjm.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 12:10:20 -0700 (PDT)
+        Mon, 19 Sep 2022 16:02:55 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36C748EA7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 13:02:53 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id b75so645139pfb.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 13:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=uHDCmC+fkGgZQ7BzMPp6c7XrTAwkaI5bKq16AmgDePo=;
-        b=FzLZKvxtooNg2nIQsy5+eM5f7fy1lAzBB2VA1wO/c/z5x+mIvht2HeQTpz0+O2GNON
-         qYfCZIIQd7vVS1ydcSUk98uZRncHJ8NJqsBYal/77hLUDVgkbWXOBd+hz5VEBE58svml
-         7veNt7a5mrys0Ba0zXNGukgmilRYcWUK1G5Ld55DCw1aaAWGjuHTYvwOXM55fy1GZCq2
-         /HIYNCCaMOBCvVP4bTRqEX/0Cg2d5v66Gen6iUYVbeQoaRoKlz+CSMn6594FqKI3OBOx
-         CgWqKCHmKyJawz7IbqlOUC2g8zhLuRqDNc0zsCq7DTjXNqPS5WtBOOhuXN/fLqvu7Nx+
-         YhhA==
+        bh=eXOyFyEzKdpniG5U/G+Dwx8iZBCxSfFUM/Yw73mc+so=;
+        b=ZlzZ84XF8ZFDq70FjCYSSmOLDhZeLkHYK4bUuKiFjK50Eo6AZzVjif2v7zvvKVOTOv
+         SuDuMxamu9LbPcESelBkSAjw5LssTVjFXWWZ490uIULYHfDkZPzwnFaHcHhlGO8bVSH/
+         U32wY7Cn4gV/VB/Dqlvcby+ZUv7RPspDGimHM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=uHDCmC+fkGgZQ7BzMPp6c7XrTAwkaI5bKq16AmgDePo=;
-        b=W/UT3NegajyeFzPzdcOzk8srKzY2pKr3PL9tX7O9At4c0MYopW8rNrk93wa950EXpe
-         0V4jjAE+mJeiQzlZl522ICwqhBK93WZwjyURLLH0U6rJ3wN1D21GSnGYZlGpfe/rQp6X
-         Q/lZdLkep6B7SFdGem1ONLAdNWodC4eeXtm81/oPHMpO13pZrlwI2DRR/AARXB51rRis
-         o/bunTv94hRHQ1JlAquUEdsNGndWNLzX6LcaAjfNP2sLEM0HcJT7KL+kaII4Fhdcz/h4
-         M+RFmdSu4xE0X7CtHl8D0xUkEYoQv8lcaxJSMMY+2RQxMg7wawzs7AdyLgqsdjwRexKb
-         pB2A==
-X-Gm-Message-State: ACrzQf33h+8tqbysdhs4Rvo9V4+xkmPLB+3fogB6Kz39rYBrK+dAIF9k
-        9t8rndVCtK8rHcbFpYArjy3Oew==
-X-Google-Smtp-Source: AMsMyM68H82eEsZf9j6+Lgi2bA7LULrsBpCz2pkVmtzhsIZbm7nIKWn17NC3OpQf7t6rW+ZP9MqtOQ==
-X-Received: by 2002:a17:90a:b00b:b0:203:a6de:5b0f with SMTP id x11-20020a17090ab00b00b00203a6de5b0fmr1533338pjq.134.1663614619499;
-        Mon, 19 Sep 2022 12:10:19 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id p187-20020a6229c4000000b00540c24ba181sm20357398pfp.120.2022.09.19.12.10.18
+        bh=eXOyFyEzKdpniG5U/G+Dwx8iZBCxSfFUM/Yw73mc+so=;
+        b=fSdyV0kjJ9RFkG6qyDy+FUTh/XocylSiwWxlwqvzTZGKEp/HT6m7zGddKKlb87vELa
+         rpt+f2z7aokwdQZ3NhtewlFxMadSgJOo0TdoNDkD9qQdyrT6ehtCLIVuEu7UnD9nB1IV
+         hvvqVZqMX7NKHR0BkoRODW9R2ynkJom7NaT+VRtiXiKa1ZN9vZzC0L3lIaS6sU+I9Shf
+         fyCuKDuJsBg1wMxzMNJTKFZVn+jFKhRoi+M49zGbuq83wxonbVctOEs/fd2ieI2WjIFH
+         xseqgsOn0PHANsfFNHk6fSuYlMciQWQTJ/iJHzn0Z/NQ9kJmHbIJDDUCj55X+NpWVZ/k
+         SCOQ==
+X-Gm-Message-State: ACrzQf30Bha7Ik6/RyUTH0z09WtNBKy9Q8QU3hI1UZgj7mlYUkJ1PbyI
+        NlpTgZRgFoRHrXIyz21EeDkHuQ==
+X-Google-Smtp-Source: AMsMyM6U70M8NWqkoA6aAkbcsmk1Br3IMj+BnnvH8aMlRSS4P44R+pMDuyh1o2jpsQuXF9hD0H2Okg==
+X-Received: by 2002:a62:fb18:0:b0:548:9dff:89da with SMTP id x24-20020a62fb18000000b005489dff89damr20518686pfm.23.1663617773359;
+        Mon, 19 Sep 2022 13:02:53 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d11-20020a62f80b000000b0053e85a4a2c9sm9446500pfh.5.2022.09.19.13.02.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 12:10:18 -0700 (PDT)
-Date:   Mon, 19 Sep 2022 19:10:15 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Fuad Tabba <tabba@google.com>
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <Yyi+l3+p9lbBAC4M@google.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
+        Mon, 19 Sep 2022 13:02:52 -0700 (PDT)
+Date:   Mon, 19 Sep 2022 13:02:51 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
+ before allocating mm
+Message-ID: <202209191256.893576D4@keescook>
+References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
+ <202209160727.5FC78B735@keescook>
+ <YyTY+OaClK+JHCOw@localhost>
+ <202209161637.9EDAF6B18@keescook>
+ <YyUZ0NHfFF+eVe24@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YyUZ0NHfFF+eVe24@localhost>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+Will, Marc and Fuad (apologies if I missed other pKVM folks)
-
-On Mon, Sep 19, 2022, David Hildenbrand wrote:
-> On 15.09.22 16:29, Chao Peng wrote:
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > 
-> > KVM can use memfd-provided memory for guest memory. For normal userspace
-> > accessible memory, KVM userspace (e.g. QEMU) mmaps the memfd into its
-> > virtual address space and then tells KVM to use the virtual address to
-> > setup the mapping in the secondary page table (e.g. EPT).
-> > 
-> > With confidential computing technologies like Intel TDX, the
-> > memfd-provided memory may be encrypted with special key for special
-> > software domain (e.g. KVM guest) and is not expected to be directly
-> > accessed by userspace. Precisely, userspace access to such encrypted
-> > memory may lead to host crash so it should be prevented.
+On Sat, Sep 17, 2022 at 01:50:24AM +0100, Josh Triplett wrote:
+> On Fri, Sep 16, 2022 at 05:11:18PM -0700, Kees Cook wrote:
+> > I don't like the idea of penalizing the _succeeding_ case, though, which
+> > happens if we do the path walk twice. So, I went and refactoring the setup
+> > order, moving the do_open_execat() up into alloc_bprm() instead of where
+> > it was in bprm_exec(). The result makes it so it is, as you observed,
+> > before the mm creation and generally expensive argument copying. The
+> > difference to your patch seems to only be the allocation of the file
+> > table entry, but avoids the double lookup, so I'm hoping the result is
+> > actually even faster.
 > 
-> Initially my thaught was that this whole inaccessible thing is TDX specific
-> and there is no need to force that on other mechanisms. That's why I
-> suggested to not expose this to user space but handle the notifier
-> requirements internally.
+> Thanks for giving this a try; I'd wondered how feasible it would be to
+> just do one lookup.
 > 
-> IIUC now, protected KVM has similar demands. Either access (read/write) of
-> guest RAM would result in a fault and possibly crash the hypervisor (at
-> least not the whole machine IIUC).
-
-Yep.  The missing piece for pKVM is the ability to convert from shared to private
-while preserving the contents, e.g. to hand off a large buffer (hundreds of MiB)
-for processing in the protected VM.  Thoughts on this at the bottom.
-
-> > This patch introduces userspace inaccessible memfd (created with
-> > MFD_INACCESSIBLE). Its memory is inaccessible from userspace through
-> > ordinary MMU access (e.g. read/write/mmap) but can be accessed via
-> > in-kernel interface so KVM can directly interact with core-mm without
-> > the need to map the memory into KVM userspace.
+> However, on the same test system with the same test setup, with your
+> refactor it seems to go slower:
+> fork/execvpe: 38087ns
+> fork/execve:  33758ns
 > 
-> With secretmem we decided to not add such "concept switch" flags and instead
-> use a dedicated syscall.
->
+> For comparison, the previous numbers (which I re-confirmed):
+> 
+> Without fast-path:
+> fork/execvpe: 49876ns
+> fork/execve:  32773ns
+> 
+> With my original separate-lookup fast-path:
+> fork/execvpe: 36890ns
+> fork/execve:  31551ns
 
-I have no personal preference whatsoever between a flag and a dedicated syscall,
-but a dedicated syscall does seem like it would give the kernel a bit more
-flexibility.
+Hmm, this shows as slower in the *normal* case, which I find rather
+surprising -- it's the same work, just reordered.
 
-> What about memfd_inaccessible()? Especially, sealing and hugetlb are not
-> even supported and it might take a while to support either.
+Can you post a URL to your tests? I'd like to reproduce this and maybe
+throw perf at it as well.
 
-Don't know about sealing, but hugetlb support for "inaccessible" memory needs to
-come sooner than later.  "inaccessible" in quotes because we might want to choose
-a less binary name, e.g. "restricted"?.
+> I tried several runs of each, and I seem to get reasonably consistent
+> results.
+> 
+> My test program just creates a pipe once, then loops on
+> clock_gettime/fork/execvpe/read, with the spawned child process doing
+> clock_gettime/write/exit (in asm to minimize overhead). The test PATH is
+> PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:. with
+> the test program in the current directory.
 
-Regarding pKVM's use case, with the shim approach I believe this can be done by
-allowing userspace mmap() the "hidden" memfd, but with a ton of restrictions
-piled on top.
+I'm also curious about less synthetic testing. It'd be nice to see real
+workloads with these changes, etc.
 
-My first thought was to make the uAPI a set of KVM ioctls so that KVM could tightly
-tightly control usage without taking on too much complexity in the kernel, but
-working through things, routing the behavior through the shim itself might not be
-all that horrific.
-
-IIRC, we discarded the idea of allowing userspace to map the "private" fd because
-things got too complex, but with the shim it doesn't seem _that_ bad.
-
-E.g. on the memfd side:
-
-  1. The entire memfd must be mapped, and at most one mapping is allowed, i.e.
-     mapping is all or nothing.
-
-  2. Acquiring a reference via get_pfn() is disallowed if there's a mapping for
-     the restricted memfd.
-
-  3. Add notifier hooks to allow downstream users to further restrict things.
-
-  4. Disallow splitting VMAs, e.g. to force userspace to munmap() everything in
-     one shot.
-
-  5. Require that there are no outstanding references at munmap().  Or if this
-     can't be guaranteed by userspace, maybe add some way for userspace to wait
-     until it's ok to convert to private?  E.g. so that get_pfn() doesn't need
-     to do an expensive check every time.
-     
-  static int memfd_restricted_mmap(struct file *file, struct vm_area_struct *vma)
-  {
-	if (vma->vm_pgoff)
-		return -EINVAL;
-
-	if ((vma->vm_end - vma->vm_start) != <file size>)
-		return -EINVAL;
-
-	mutex_lock(&data->lock);
-
-	if (data->has_mapping) {
-		r = -EINVAL;
-		goto err;
-	}
-	list_for_each_entry(notifier, &data->notifiers, list) {
-		r = notifier->ops->mmap_start(notifier, ...);
-		if (r)
-			goto abort;
-	}
-
-	notifier->ops->mmap_end(notifier, ...);
-	mutex_unlock(&data->lock);
-	return 0;
-
-  abort:
-	list_for_each_entry_continue_reverse(notifier &data->notifiers, list)
-		notifier->ops->mmap_abort(notifier, ...);
-  err:
-	mutex_unlock(&data->lock);
-	return r;
-  }
-
-  static void memfd_restricted_close(struct vm_area_struct *vma)
-  {
-	mutex_lock(...);
-
-	/*
-	 * Destroy the memfd and disable all future accesses if there are
-	 * outstanding refcounts (or other unsatisfied restrictions?).
-	 */
-	if (<outstanding references> || ???)
-		memfd_restricted_destroy(...);
-	else
-		data->has_mapping = false;
-
-	mutex_unlock(...);
-  }
-
-  static int memfd_restricted_may_split(struct vm_area_struct *area, unsigned long addr)
-  {
-	return -EINVAL;
-  }
-
-  static int memfd_restricted_mapping_mremap(struct vm_area_struct *new_vma)
-  {
-	return -EINVAL;
-  }
-
-Then on the KVM side, its mmap_start() + mmap_end() sequence would:
-
-  1. Not be supported for TDX or SEV-SNP because they don't allow adding non-zero
-     memory into the guest (after pre-boot phase).
-
-  2. Be mutually exclusive with shared<=>private conversions, and is allowed if
-     and only if the entire gfn range of the associated memslot is shared.
+-- 
+Kees Cook
