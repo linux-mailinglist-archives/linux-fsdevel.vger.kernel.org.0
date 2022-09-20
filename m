@@ -2,56 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E631D5BDEBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 09:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 363A05BDF39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 10:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbiITHsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Sep 2022 03:48:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35784 "EHLO
+        id S231285AbiITIF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Sep 2022 04:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbiITHrC (ORCPT
+        with ESMTP id S230320AbiITIE7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Sep 2022 03:47:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB0D11169;
-        Tue, 20 Sep 2022 00:46:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 79C95B80927;
-        Tue, 20 Sep 2022 07:46:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C477C433C1;
-        Tue, 20 Sep 2022 07:46:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1663660016;
-        bh=31LwDD6/RD3aunahOMD2sHT+ewdy1AuM7USPdp3uXHM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mTqyeUFod7XeG7uJJHYdHXiuP62G+G/F1DTcdjdKysdwt9RAOgW5ll7YWf/scejs6
-         zEpCIB2Dax0KLjpoTMMUb0FUXx+xv+eBdOGN6j/70jM3i3rO8mNhKcf97g9FU9GuPb
-         J2dTXXopZbyl8SN4Y3nm4E4u5v8Vtu32qpOsLZMg=
-Date:   Tue, 20 Sep 2022 09:47:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, corbet@lwn.net, david@redhat.com,
-        osalvador@suse.de, shuah@kernel.org,
-        Zhao Gongyi <zhaogongyi@huawei.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 0/3] fix error when writing negative value to simple
- attribute files
-Message-ID: <YylwDJCQ/xdCU3Nd@kroah.com>
-References: <20220919172418.45257-1-akinobu.mita@gmail.com>
+        Tue, 20 Sep 2022 04:04:59 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941FD481CA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Sep 2022 01:02:44 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id hy2so474244ejc.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Sep 2022 01:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=L8aCBg7ijFOKf8iD02EF5tdyKFb8Ymh8u0B1y5Zoysg=;
+        b=CJXp4JroV9pBbWkBf6/XuJfNysc40cQB3fWKIGqgiVA7hQcV8M0X7annxVyUDBLXMA
+         mru7GsVrSpTsNlLRDSLPcItx9D/0FzrUWeoAIeB9vCp59J8U5UZUJakSIiI46zhi2iQX
+         JCaaBZn9KzEVrpWPSL9itJkhIDDOVM+B44Y8I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=L8aCBg7ijFOKf8iD02EF5tdyKFb8Ymh8u0B1y5Zoysg=;
+        b=3hTemY83tjR/AEd58frHvW4OUpV8byBIcOA6sXRh58Scr2Sc5foE14mjveWe7GlVLo
+         U2ZO3Rq+2E3IWVPTaiSdax7mcujChnYlPcVby+ycgoiOqXdR0/+vP4adEF5iUcIn2Zsx
+         Jfr5L2o3U5jXriy8Q4vXC+g30wIQ92sfXSWDzMTIL5Drf1Hq1P9H9dCd5uKclEo4dZga
+         BN9BLZyrUlBVGYJu5qQVtFSB5VvUFu7ym9j2CTppwEHiLpgf+6Sgzj+cJkUUVS+Ljt+6
+         AlCvEMNfULvoCc7v4VjVtsPD/5mTlaqe+D5bT6ZnZVsZSoT7QcNcMzpYuYY6yS7sADWp
+         EYBQ==
+X-Gm-Message-State: ACrzQf2Ls0c7cDlGA+NqfJLjS+CKHtDlAs+DE0CMuyyJo9MVLizaeEdb
+        3/nMQYd0Jnw4DkB8v1GuFBh0hli3vn2KmC30qDAvNToT3W4=
+X-Google-Smtp-Source: AMsMyM7l5zIz0NmZj6EPtW7tUVakuqc+ClJrfVTFf5aUISiTdFsb42slTARfM3ihjWBTHFpFG+mWz15Hu/EewFS88BI=
+X-Received: by 2002:a17:907:97c2:b0:780:6a13:53 with SMTP id
+ js2-20020a17090797c200b007806a130053mr15959823ejc.187.1663660963215; Tue, 20
+ Sep 2022 01:02:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919172418.45257-1-akinobu.mita@gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+References: <20220919141031.1834447-1-mszeredi@redhat.com> <20220919141031.1834447-5-mszeredi@redhat.com>
+ <YykYWVpNvNm8BzWv@ZenIV>
+In-Reply-To: <YykYWVpNvNm8BzWv@ZenIV>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 20 Sep 2022 10:02:32 +0200
+Message-ID: <CAJfpegtD32rPXYwKVC77qmgd3QFt5P3cTKRhT5pMBoFvAoO=sA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] ovl: use tmpfile_open() helper
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Yu-li Lin <yulilin@google.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,25 +66,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 02:24:15AM +0900, Akinobu Mita wrote:
-> The simple attribute files do not accept a negative value since the
-> commit 488dac0c9237 ("libfs: fix error cast of negative value in
-> simple_attr_write()"), but some attribute files want to accept
-> a negative value.
-> 
-> Akinobu Mita (3):
->   libfs: add DEFINE_SIMPLE_ATTRIBUTE_SIGNED for signed value
->   lib/notifier-error-inject: fix error when writing -errno to debugfs
->     file
->   debugfs: fix error when writing negative value to atomic_t debugfs
->     file
-> 
->  .../fault-injection/fault-injection.rst       | 10 +++----
->  fs/debugfs/file.c                             | 28 +++++++++++++++----
->  fs/libfs.c                                    | 22 +++++++++++++--
->  include/linux/debugfs.h                       | 19 +++++++++++--
->  include/linux/fs.h                            | 12 ++++++--
->  lib/notifier-error-inject.c                   |  2 +-
->  6 files changed, 73 insertions(+), 20 deletions(-)
+On Tue, 20 Sept 2022 at 03:33, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Mon, Sep 19, 2022 at 04:10:27PM +0200, Miklos Szeredi wrote:
+> > If tmpfile is used for copy up, then use this helper to create the tmpfile
+> > and open it at the same time.  This will later allow filesystems such as
+> > fuse to do this operation atomically.
+> >
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/overlayfs/copy_up.c   | 49 ++++++++++++++++++++++------------------
+> >  fs/overlayfs/overlayfs.h | 12 ++++++----
+> >  fs/overlayfs/super.c     | 10 ++++----
+> >  3 files changed, 40 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> > index fdde6c56cc3d..ac087b48b5da 100644
+> > --- a/fs/overlayfs/copy_up.c
+> > +++ b/fs/overlayfs/copy_up.c
+> > @@ -194,16 +194,16 @@ static int ovl_copy_fileattr(struct inode *inode, struct path *old,
+> >  }
+> >
+> >  static int ovl_copy_up_data(struct ovl_fs *ofs, struct path *old,
+> > -                         struct path *new, loff_t len)
+> > +                         struct path *new, struct file *new_file, loff_t len)
+> >  {
+>
+> Ugh...  Lift opening into both callers and get rid of struct path *new,
+> please.  Would be much easier to follow that way...
+>
+> > -     err = ovl_copy_up_inode(c, temp);
+> > +     err = ovl_copy_up_inode(c, temp, NULL);
+>
+> FWIW, I would consider passing a struct file * in all cases, with O_PATH
+> for non-regular ones...
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+OK.
+
+>
+> > -     temp = ovl_do_tmpfile(ofs, ofs->workdir, S_IFREG | 0);
+> > -     ofs->tmpfile = !IS_ERR(temp);
+> > +     tmpfile = ovl_do_tmpfile(ofs, ofs->workdir, S_IFREG | 0);
+> > +     ofs->tmpfile = !IS_ERR(tmpfile);
+> >       if (ofs->tmpfile)
+> > -             dput(temp);
+> > +             fput(tmpfile);
+>
+>         Careful - that part essentially checks if we have a working
+> ->tmpfile(), but we rely upon more than just having it - we want
+> dentry-based setxattr() and friends to work after O_TMPFILE.
+> Are we making that a requirement for ->tmpfile()?
+
+Yes, I think that should be expected of all sane filesystems.   Adding
+tmpfile support to a fuse filesystem will require explicit code, so no
+regression risk there.
+
+Thanks,
+Miklos
