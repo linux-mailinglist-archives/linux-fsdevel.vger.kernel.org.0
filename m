@@ -2,86 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E7F5BED9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 21:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9964B5BEDD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 21:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbiITTYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Sep 2022 15:24:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41766 "EHLO
+        id S230237AbiITTgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Sep 2022 15:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiITTYr (ORCPT
+        with ESMTP id S230294AbiITTgk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Sep 2022 15:24:47 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EDD0B84D;
-        Tue, 20 Sep 2022 12:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TPqwlRNwuUqV78TrpRLaS4sbUecgUF5r7GiXn2a7L1Q=; b=hAMJs5X93SALDRvjC0jFswmUv1
-        mRvdmTGGxOBZ1BvU+7YzDKbGJPK4cMjTqfgfRD8K3kNI3gqh/zmCEdGUDBwhPeup7EjVvWkz5mBt6
-        XTR0WBKlPeyfSb61UoQP5xvjMiOSVnpWAr0Af+bxEkLkPwmEXnqIIx/N6joNhFVKtbIiSdVR5BO9g
-        J2YQTW/3aj8XquulrrmMK+c/CnOrFruUKhb+m7RbBNYwyCSAkZhOyEE7DzN5jDzUH4+lYURALbLzw
-        Y29AVkQ6JwRLJ/AEqc/sRI7Gs4UMmxwnHQB2SXNjT5MeCisAm/oJ8QZIvsAPqhHH5gwdIgwtcilFp
-        5wKj1vEA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oair2-001sIE-1H;
-        Tue, 20 Sep 2022 19:24:24 +0000
-Date:   Tue, 20 Sep 2022 20:24:24 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Ren Zhijie <renzhijie2@huawei.com>
-Cc:     ebiederm@xmission.com, keescook@chromium.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tanghui20@huawei.com
-Subject: Re: [PATCH] exec: Force binary name when argv is empty
-Message-ID: <YyoTaBah0/z+ewWE@ZenIV>
-References: <20220920120812.231417-1-renzhijie2@huawei.com>
+        Tue, 20 Sep 2022 15:36:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99988760E9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Sep 2022 12:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1663702597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9IMzCUbeUYJR4dxFroLd9psezzMiiv8P/5qCsste1/8=;
+        b=KWZbv4WCpI5uzWznoxZSwW2JwCZYE4t7evUH8jvse8mcY+GaBDcpH229PWfCJc8vK8DZ6t
+        Z8fRsphJMn2rYMaeum3PcoA6TelkwVEI5ZvCqdD8xSQ1rPlA3b7Yk8GZXW06Qh6J0qVmHA
+        A2udX+t/rX5WC13i451nhnaU0smWqjw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-118-DCQ-EfKnNNiEgZMeSUD7Kw-1; Tue, 20 Sep 2022 15:36:35 -0400
+X-MC-Unique: DCQ-EfKnNNiEgZMeSUD7Kw-1
+Received: by mail-ej1-f72.google.com with SMTP id sb32-20020a1709076da000b0077faea20701so1950681ejc.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Sep 2022 12:36:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=9IMzCUbeUYJR4dxFroLd9psezzMiiv8P/5qCsste1/8=;
+        b=eGA9u/XORy07i/gT0k8CXWiRK5+DyC989hQLdQHXDtw6PVBM7PMdFm/QoOLx7xCv1L
+         DwxLMRLi+itAI83HP6HhYOIkkabTNOcwfgwYJyxc1rv45VdC6W4kVJBbnHeiY1Gcos+2
+         liNyLhnZwbhX1YxVsBj1MiJu0QM+3lEcHIq4zhlhqElQicTSJzWbQALM7ixZklCXPRng
+         /mplAshErQBlLkDkIiaVOKWhsqR64Oo0G7VclFZa9n6TqgCAL8y+zmFzdpzB80Webjn7
+         f7L16U7nVVSputF4BZ4w9TWyikQYuuCtFeYS81w+x0BIZnhj8nU/4Olyv68mj4vYA/gm
+         zpFQ==
+X-Gm-Message-State: ACrzQf0urMn18mikLo3KR5PXE5+VXKbRea9DveEx+6Pm+xFgA/UwlF6Y
+        wfDL4PO1v/TD3KKMWXHH+h3Fk5f+fSYzZ9D1cFBTyGjFm138li7p5ZlN2AQN8WiDohAzRXNYBX6
+        ebKBl+yZijd9w8oJgN6YT40qCsFAfbeBEQuIPHnw6HrMGM9469HsnaNbB32E5jlpuDIWzOkaO/b
+        D7+g==
+X-Received: by 2002:a05:6402:40d1:b0:44f:e974:f981 with SMTP id z17-20020a05640240d100b0044fe974f981mr22282837edb.222.1663702594076;
+        Tue, 20 Sep 2022 12:36:34 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM5ODSlC8sjRPubnBaSPhFPjshsFsZUdVLOf6hJJK6aWBTFud4pYj4/NkwFiaFXd+1QvpVDKAw==
+X-Received: by 2002:a05:6402:40d1:b0:44f:e974:f981 with SMTP id z17-20020a05640240d100b0044fe974f981mr22282814edb.222.1663702593790;
+        Tue, 20 Sep 2022 12:36:33 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (193-226-214-223.pool.digikabel.hu. [193.226.214.223])
+        by smtp.gmail.com with ESMTPSA id p5-20020aa7d305000000b0045184540cecsm391821edq.36.2022.09.20.12.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Sep 2022 12:36:33 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Yu-li Lin <yulilin@google.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH v3 0/9] fuse tmpfile
+Date:   Tue, 20 Sep 2022 21:36:23 +0200
+Message-Id: <20220920193632.2215598-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220920120812.231417-1-renzhijie2@huawei.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 08:08:12PM +0800, Ren Zhijie wrote:
-> From: Hui Tang <tanghui20@huawei.com>
-> 
-> First run './execv-main execv-child', there is empty in 'COMMAND' column
-> when run 'ps -u'.
-> 
->  USER       PID %CPU %MEM    VSZ   RSS TTY    [...] TIME COMMAND
->  root       368  0.3  0.0   4388   764 ttyS0        0:00 ./execv-main
->  root       369  0.6  0.0   4520   812 ttyS0        0:00
-> 
-> The program 'execv-main' as follows:
-> 
->  int main(int argc, char **argv)
->  {
->    char *execv_argv[] = {NULL};
->    pid_t pid = fork();
-> 
->    if (pid == 0) {
->      execv(argv[1], execv_argv);
->    } else if (pid > 0) {
->      wait(NULL);
->    }
->    return 0;
->  }
-> 
-> So replace empty string ("") added with the name of binary
-> when calling execve with a NULL argv.
-> 
-> Fixes: dcd46d897adb ("exec: Force single empty string when argv is empty")
+Al,
 
-I don't see the point, to be honest...  You've passed BS argv to execve(),
-why would you expect anything pretty from ps(1)?
+This should address your comments.
 
-IOW, where's the bug you are fixing?
+No xfstests regressions on xfs or overlayfs.  Also tested overlayfs on
+fuse.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#fuse-tmpfile-v3
+
+V3:
+ - add bits to Documentation/
+ - add hugetlbfs cleanup
+ - overlayfs copy-up: move opening target file to caller 
+
+V2:
+ - rename finish_tmpfile() to finish_open_simple()
+ - fix warning reported by kernel test robot
+ - patch description improvements
+
+---
+Al Viro (1):
+  hugetlbfs: cleanup mknod and tmpfile
+
+Miklos Szeredi (8):
+  cachefiles: tmpfile error handling cleanup
+  vfs: add tmpfile_open() helper
+  cachefiles: use tmpfile_open() helper
+  ovl: use tmpfile_open() helper
+  vfs: make vfs_tmpfile() static
+  vfs: move open right after ->tmpfile()
+  vfs: open inside ->tmpfile()
+  fuse: implement ->tmpfile()
+
+ Documentation/filesystems/locking.rst |   3 +-
+ Documentation/filesystems/porting.rst |  10 +++
+ Documentation/filesystems/vfs.rst     |   6 +-
+ fs/bad_inode.c                        |   2 +-
+ fs/btrfs/inode.c                      |   8 +-
+ fs/cachefiles/namei.c                 |  67 +++++++---------
+ fs/dcache.c                           |   4 +-
+ fs/ext2/namei.c                       |   6 +-
+ fs/ext4/namei.c                       |   6 +-
+ fs/f2fs/namei.c                       |  13 ++--
+ fs/fuse/dir.c                         |  25 +++++-
+ fs/fuse/fuse_i.h                      |   3 +
+ fs/hugetlbfs/inode.c                  |  42 ++++------
+ fs/minix/namei.c                      |   6 +-
+ fs/namei.c                            |  84 ++++++++++++--------
+ fs/overlayfs/copy_up.c                | 108 ++++++++++++++------------
+ fs/overlayfs/overlayfs.h              |  14 ++--
+ fs/overlayfs/super.c                  |  10 ++-
+ fs/overlayfs/util.c                   |   2 +-
+ fs/ramfs/inode.c                      |   6 +-
+ fs/ubifs/dir.c                        |   7 +-
+ fs/udf/namei.c                        |   6 +-
+ fs/xfs/xfs_iops.c                     |  16 ++--
+ include/linux/dcache.h                |   3 +-
+ include/linux/fs.h                    |  16 +++-
+ include/uapi/linux/fuse.h             |   6 +-
+ mm/shmem.c                            |   6 +-
+ 27 files changed, 279 insertions(+), 206 deletions(-)
+
+-- 
+2.37.3
+
