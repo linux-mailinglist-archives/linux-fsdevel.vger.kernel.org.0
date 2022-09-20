@@ -2,195 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB965BDE50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 09:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E631D5BDEBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 09:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbiITHfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Sep 2022 03:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
+        id S231300AbiITHsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Sep 2022 03:48:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbiITHfG (ORCPT
+        with ESMTP id S230129AbiITHrC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Sep 2022 03:35:06 -0400
-X-Greylist: delayed 516 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 20 Sep 2022 00:35:04 PDT
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [IPv6:2403:5800:3:25::1001])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34663356C8;
-        Tue, 20 Sep 2022 00:35:03 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp01.aussiebb.com.au (Postfix) with ESMTP id 45182100537;
-        Tue, 20 Sep 2022 17:26:30 +1000 (AEST)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-        by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ue6JXijPUc58; Tue, 20 Sep 2022 17:26:30 +1000 (AEST)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-        id 3D54E100578; Tue, 20 Sep 2022 17:26:30 +1000 (AEST)
+        Tue, 20 Sep 2022 03:47:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB0D11169;
+        Tue, 20 Sep 2022 00:46:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 79C95B80927;
+        Tue, 20 Sep 2022 07:46:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C477C433C1;
+        Tue, 20 Sep 2022 07:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1663660016;
+        bh=31LwDD6/RD3aunahOMD2sHT+ewdy1AuM7USPdp3uXHM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mTqyeUFod7XeG7uJJHYdHXiuP62G+G/F1DTcdjdKysdwt9RAOgW5ll7YWf/scejs6
+         zEpCIB2Dax0KLjpoTMMUb0FUXx+xv+eBdOGN6j/70jM3i3rO8mNhKcf97g9FU9GuPb
+         J2dTXXopZbyl8SN4Y3nm4E4u5v8Vtu32qpOsLZMg=
+Date:   Tue, 20 Sep 2022 09:47:24 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+        osalvador@suse.de, shuah@kernel.org,
+        Zhao Gongyi <zhaogongyi@huawei.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH 0/3] fix error when writing negative value to simple
+ attribute files
+Message-ID: <YylwDJCQ/xdCU3Nd@kroah.com>
+References: <20220919172418.45257-1-akinobu.mita@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220919172418.45257-1-akinobu.mita@gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
-Received: from donald.themaw.net (180-150-90-198.b4965a.per.nbn.aussiebb.net [180.150.90.198])
-        by smtp01.aussiebb.com.au (Postfix) with ESMTP id 715931004DE;
-        Tue, 20 Sep 2022 17:26:29 +1000 (AEST)
-Subject: [REPOST PATCH v3 2/2] vfs: parse: deal with zero length string value
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Siddhesh Poyarekar <siddhesh@gotplt.org>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 20 Sep 2022 15:26:29 +0800
-Message-ID: <166365878918.39016.12757946948158123324.stgit@donald.themaw.net>
-In-Reply-To: <166365872189.39016.10771273319597352356.stgit@donald.themaw.net>
-References: <166365872189.39016.10771273319597352356.stgit@donald.themaw.net>
-User-Agent: StGit/1.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Parsing an fs string that has zero length should result in the parameter
-being set to NULL so that downstream processing handles it correctly.
-For example, the proc mount table processing should print "(none)" in
-this case to preserve mount record field count, but if the value points
-to the NULL string this doesn't happen.
+On Tue, Sep 20, 2022 at 02:24:15AM +0900, Akinobu Mita wrote:
+> The simple attribute files do not accept a negative value since the
+> commit 488dac0c9237 ("libfs: fix error cast of negative value in
+> simple_attr_write()"), but some attribute files want to accept
+> a negative value.
+> 
+> Akinobu Mita (3):
+>   libfs: add DEFINE_SIMPLE_ATTRIBUTE_SIGNED for signed value
+>   lib/notifier-error-inject: fix error when writing -errno to debugfs
+>     file
+>   debugfs: fix error when writing negative value to atomic_t debugfs
+>     file
+> 
+>  .../fault-injection/fault-injection.rst       | 10 +++----
+>  fs/debugfs/file.c                             | 28 +++++++++++++++----
+>  fs/libfs.c                                    | 22 +++++++++++++--
+>  include/linux/debugfs.h                       | 19 +++++++++++--
+>  include/linux/fs.h                            | 12 ++++++--
+>  lib/notifier-error-inject.c                   |  2 +-
+>  6 files changed, 73 insertions(+), 20 deletions(-)
 
-Signed-off-by: Ian Kent <raven@themaw.net>
----
- fs/fs_context.c            |   17 ++++++++++++-----
- fs/fs_parser.c             |   16 ++++++++++++++++
- include/linux/fs_context.h |    3 ++-
- 3 files changed, 30 insertions(+), 6 deletions(-)
-
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 24ce12f0db32..df04e5fc6d66 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -96,7 +96,9 @@ int vfs_parse_fs_param_source(struct fs_context *fc, struct fs_parameter *param)
- 	if (strcmp(param->key, "source") != 0)
- 		return -ENOPARAM;
- 
--	if (param->type != fs_value_is_string)
-+	/* source value may be NULL */
-+	if (param->type != fs_value_is_string &&
-+	    param->type != fs_value_is_empty)
- 		return invalf(fc, "Non-string source");
- 
- 	if (fc->source)
-@@ -175,10 +177,15 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
- 	};
- 
- 	if (value) {
--		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
--		if (!param.string)
--			return -ENOMEM;
--		param.type = fs_value_is_string;
-+		if (!v_size) {
-+			param.string = NULL;
-+			param.type = fs_value_is_empty;
-+		} else {
-+			param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-+			if (!param.string)
-+				return -ENOMEM;
-+			param.type = fs_value_is_string;
-+		}
- 	}
- 
- 	ret = vfs_parse_fs_param(fc, &param);
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index ed40ce5742fd..2046f41ab00b 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -197,6 +197,8 @@ int fs_param_is_bool(struct p_log *log, const struct fs_parameter_spec *p,
- 		     struct fs_parameter *param, struct fs_parse_result *result)
- {
- 	int b;
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string)
- 		return fs_param_bad_value(log, param);
- 	if (!*param->string && (p->flags & fs_param_can_be_empty))
-@@ -213,6 +215,8 @@ int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec *p,
- 		    struct fs_parameter *param, struct fs_parse_result *result)
- {
- 	int base = (unsigned long)p->data;
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string)
- 		return fs_param_bad_value(log, param);
- 	if (!*param->string && (p->flags & fs_param_can_be_empty))
-@@ -226,6 +230,8 @@ EXPORT_SYMBOL(fs_param_is_u32);
- int fs_param_is_s32(struct p_log *log, const struct fs_parameter_spec *p,
- 		    struct fs_parameter *param, struct fs_parse_result *result)
- {
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string)
- 		return fs_param_bad_value(log, param);
- 	if (!*param->string && (p->flags & fs_param_can_be_empty))
-@@ -239,6 +245,8 @@ EXPORT_SYMBOL(fs_param_is_s32);
- int fs_param_is_u64(struct p_log *log, const struct fs_parameter_spec *p,
- 		    struct fs_parameter *param, struct fs_parse_result *result)
- {
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string)
- 		return fs_param_bad_value(log, param);
- 	if (!*param->string && (p->flags & fs_param_can_be_empty))
-@@ -253,6 +261,8 @@ int fs_param_is_enum(struct p_log *log, const struct fs_parameter_spec *p,
- 		     struct fs_parameter *param, struct fs_parse_result *result)
- {
- 	const struct constant_table *c;
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string)
- 		return fs_param_bad_value(log, param);
- 	if (!*param->string && (p->flags & fs_param_can_be_empty))
-@@ -268,6 +278,8 @@ EXPORT_SYMBOL(fs_param_is_enum);
- int fs_param_is_string(struct p_log *log, const struct fs_parameter_spec *p,
- 		       struct fs_parameter *param, struct fs_parse_result *result)
- {
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_string ||
- 	    (!*param->string && !(p->flags & fs_param_can_be_empty)))
- 		return fs_param_bad_value(log, param);
-@@ -278,6 +290,8 @@ EXPORT_SYMBOL(fs_param_is_string);
- int fs_param_is_blob(struct p_log *log, const struct fs_parameter_spec *p,
- 		     struct fs_parameter *param, struct fs_parse_result *result)
- {
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	if (param->type != fs_value_is_blob)
- 		return fs_param_bad_value(log, param);
- 	return 0;
-@@ -287,6 +301,8 @@ EXPORT_SYMBOL(fs_param_is_blob);
- int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
- 		  struct fs_parameter *param, struct fs_parse_result *result)
- {
-+	if (param->type == fs_value_is_empty)
-+		return 0;
- 	switch (param->type) {
- 	case fs_value_is_string:
- 		if ((!*param->string && !(p->flags & fs_param_can_be_empty)) ||
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 13fa6f3df8e4..ff1375a16c8c 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -50,7 +50,8 @@ enum fs_context_phase {
-  */
- enum fs_value_type {
- 	fs_value_is_undefined,
--	fs_value_is_flag,		/* Value not given a value */
-+	fs_value_is_flag,		/* Does not take a value */
-+	fs_value_is_empty,		/* Value is not given */
- 	fs_value_is_string,		/* Value is a string */
- 	fs_value_is_blob,		/* Value is a binary blob */
- 	fs_value_is_filename,		/* Value is a filename* + dirfd */
-
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
