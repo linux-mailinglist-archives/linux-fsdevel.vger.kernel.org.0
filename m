@@ -2,160 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF11D5BD967
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 03:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C0C5BD96B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Sep 2022 03:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbiITBdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Sep 2022 21:33:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
+        id S229733AbiITBdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Sep 2022 21:33:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbiITBc7 (ORCPT
+        with ESMTP id S229549AbiITBdR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Sep 2022 21:32:59 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B5CE5141E;
-        Mon, 19 Sep 2022 18:32:56 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-183-60.pa.nsw.optusnet.com.au [49.180.183.60])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D79D51100B90;
-        Tue, 20 Sep 2022 11:32:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oaS85-009p1o-Hg; Tue, 20 Sep 2022 11:32:53 +1000
-Date:   Tue, 20 Sep 2022 11:32:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-        dan.j.williams@intel.com
-Subject: Re: [RFC PATCH] xfs: drop experimental warning for fsdax
-Message-ID: <20220920013253.GO3600936@dread.disaster.area>
-References: <1663234002-17-1-git-send-email-ruansy.fnst@fujitsu.com>
- <20220919045003.GJ3600936@dread.disaster.area>
- <20220919211533.GK3600936@dread.disaster.area>
- <1bc45fd2-f5e2-dd7b-0c9e-e3ab2527d736@fujitsu.com>
+        Mon, 19 Sep 2022 21:33:17 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF7D520B8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Sep 2022 18:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2DV7jDS18yJXQET/q5wqOjDqJ8GrZxF5kDVdZc9a4UA=; b=VUM5n3DgzC0BlrdjM6dg8i6IeK
+        TthKATX6uaMVp5k7xCRLTwCelRzHbT1ddW7LLGWDebOjE+Ccyn9ecur/Y83xze8fX1MMEtsPgZkBC
+        NetAYIpFgVVOAh5HvYQxj3XmFhYXBkDYH50xCVO+ESN2IJVDxN7iGlSKfDwEV8A//VQcgMyaYFHcT
+        Q3F+OTvwPZNjzi45Z9FWbxfGMmlzZkFNO6TM/ZEVOW2LAgIfmKt4+3zbdm8TZZ309fZ8Hzf78jsuk
+        N3Kr4sb6go5SMY0iyvabGpbirmSJ140K9f2ZNCg2OI/h0UP9h47+P98YsUb81gAW0yToGf9mATjap
+        eXjG7DOQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1oaS8P-001R5o-2o;
+        Tue, 20 Sep 2022 01:33:13 +0000
+Date:   Tue, 20 Sep 2022 02:33:13 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Yu-li Lin <yulilin@google.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: [PATCH v2 4/8] ovl: use tmpfile_open() helper
+Message-ID: <YykYWVpNvNm8BzWv@ZenIV>
+References: <20220919141031.1834447-1-mszeredi@redhat.com>
+ <20220919141031.1834447-5-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1bc45fd2-f5e2-dd7b-0c9e-e3ab2527d736@fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=63291847
-        a=mj5ET7k2jFntY++HerHxfg==:117 a=mj5ET7k2jFntY++HerHxfg==:17
-        a=IkcTkHD0fZMA:10 a=xOM3xZuef0cA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
-        a=8IwbCyiyGxmv9gt3Ff4A:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220919141031.1834447-5-mszeredi@redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,URIBL_ABUSE_SURBL
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 09:17:07AM +0800, Shiyang Ruan wrote:
-> Hi Dave,
+On Mon, Sep 19, 2022 at 04:10:27PM +0200, Miklos Szeredi wrote:
+> If tmpfile is used for copy up, then use this helper to create the tmpfile
+> and open it at the same time.  This will later allow filesystems such as
+> fuse to do this operation atomically.
 > 
-> 在 2022/9/20 5:15, Dave Chinner 写道:
-> > On Mon, Sep 19, 2022 at 02:50:03PM +1000, Dave Chinner wrote:
-> > > On Thu, Sep 15, 2022 at 09:26:42AM +0000, Shiyang Ruan wrote:
-> > > > Since reflink&fsdax can work together now, the last obstacle has been
-> > > > resolved.  It's time to remove restrictions and drop this warning.
-> > > > 
-> > > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > > 
-> > > I haven't looked at reflink+DAX for some time, and I haven't tested
-> > > it for even longer. So I'm currently running a v6.0-rc6 kernel with
-> > > "-o dax=always" fstests run with reflink enabled and it's not
-> > > looking very promising.
-> > > 
-> > > All of the fsx tests are failing with data corruption, several
-> > > reflink/clone tests are failing with -EINVAL (e.g. g/16[45]) and
-> > > *lots* of tests are leaving stack traces from WARN() conditions in
-> > > DAx operations such as dax_insert_entry(), dax_disassociate_entry(),
-> > > dax_writeback_mapping_range(), iomap_iter() (called from
-> > > dax_dedupe_file_range_compare()), and so on.
-> > > 
-> > > At thsi point - the tests are still running - I'd guess that there's
-> > > going to be at least 50 test failures by the time it completes -
-> > > in comparison using "-o dax=never" results in just a single test
-> > > failure and a lot more tests actually being run.
-> > 
-> > The end results with dax+reflink were:
-> > 
-> > SECTION       -- xfs_dax
-> > =========================
-> > 
-> > Failures: generic/051 generic/068 generic/074 generic/075
-> > generic/083 generic/091 generic/112 generic/127 generic/164
-> > generic/165 generic/175 generic/231 generic/232 generic/247
-> > generic/269 generic/270 generic/327 generic/340 generic/388
-> > generic/390 generic/413 generic/447 generic/461 generic/471
-> > generic/476 generic/517 generic/519 generic/560 generic/561
-> > generic/605 generic/617 generic/619 generic/630 generic/649
-> > generic/650 generic/656 generic/670 generic/672 xfs/011 xfs/013
-> > xfs/017 xfs/068 xfs/073 xfs/104 xfs/127 xfs/137 xfs/141 xfs/158
-> > xfs/168 xfs/179 xfs/243 xfs/297 xfs/305 xfs/328 xfs/440 xfs/442
-> > xfs/517 xfs/535 xfs/538 xfs/551 xfs/552
-> > Failed 61 of 1071 tests
-> > 
-> > Ok, so I did a new no-reflink run as a baseline, because it is a
-> > while since I've tested DAX at all:
-> > 
-> > SECTION       -- xfs_dax_noreflink
-> > =========================
-> > Failures: generic/051 generic/068 generic/074 generic/075
-> > generic/083 generic/112 generic/231 generic/232 generic/269
-> > generic/270 generic/340 generic/388 generic/461 generic/471
-> > generic/476 generic/519 generic/560 generic/561 generic/617
-> > generic/650 generic/656 xfs/011 xfs/013 xfs/017 xfs/073 xfs/297
-> > xfs/305 xfs/517 xfs/538
-> > Failed 29 of 1071 tests
-> > 
-> > Yeah, there's still lots of warnings from dax_insert_entry() and
-> > friends like:
-> > 
-> > [43262.025815] WARNING: CPU: 9 PID: 1309428 at fs/dax.c:380 dax_insert_entry+0x2ab/0x320
-> > [43262.028355] Modules linked in:
-> > [43262.029386] CPU: 9 PID: 1309428 Comm: fsstress Tainted: G W          6.0.0-rc6-dgc+ #1543
-> > [43262.032168] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> > [43262.034840] RIP: 0010:dax_insert_entry+0x2ab/0x320
-> > [43262.036358] Code: 08 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 8b 58 20 48 8d 53 01 e9 65 ff ff ff 48 8b 58 20 48 8d 53 01 e9 50 ff ff ff <0f> 0b e9 70 ff ff ff 31 f6 4c 89 e7 e8 84 b1 5a 00 eb a4 48 81 e6
-> > [43262.042255] RSP: 0018:ffffc9000a0cbb78 EFLAGS: 00010002
-> > [43262.043946] RAX: ffffea0018cd1fc0 RBX: 0000000000000001 RCX: 0000000000000001
-> > [43262.046233] RDX: ffffea0000000000 RSI: 0000000000000221 RDI: ffffea0018cd2000
-> > [43262.048518] RBP: 0000000000000011 R08: 0000000000000000 R09: 0000000000000000
-> > [43262.050762] R10: ffff888241a6d318 R11: 0000000000000001 R12: ffffc9000a0cbc58
-> > [43262.053020] R13: ffff888241a6d318 R14: ffffc9000a0cbe20 R15: 0000000000000000
-> > [43262.055309] FS:  00007f8ce25e2b80(0000) GS:ffff8885fec80000(0000) knlGS:0000000000000000
-> > [43262.057859] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [43262.059713] CR2: 00007f8ce25e1000 CR3: 0000000152141001 CR4: 0000000000060ee0
-> > [43262.061993] Call Trace:
-> > [43262.062836]  <TASK>
-> > [43262.063557]  dax_fault_iter+0x243/0x600
-> > [43262.064802]  dax_iomap_pte_fault+0x199/0x360
-> > [43262.066197]  __xfs_filemap_fault+0x1e3/0x2c0
-> > [43262.067602]  __do_fault+0x31/0x1d0
-> > [43262.068719]  __handle_mm_fault+0xd6d/0x1650
-> > [43262.070083]  ? do_mmap+0x348/0x540
-> > [43262.071200]  handle_mm_fault+0x7a/0x1d0
-> > [43262.072449]  ? __kvm_handle_async_pf+0x12/0xb0
-> > [43262.073908]  exc_page_fault+0x1d9/0x810
-> > [43262.075123]  asm_exc_page_fault+0x22/0x30
-> > [43262.076413] RIP: 0033:0x7f8ce268bc23
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/copy_up.c   | 49 ++++++++++++++++++++++------------------
+>  fs/overlayfs/overlayfs.h | 12 ++++++----
+>  fs/overlayfs/super.c     | 10 ++++----
+>  3 files changed, 40 insertions(+), 31 deletions(-)
 > 
-> Thanks for testing.  I just ran the xfstests and got these failures too.
-> The failure at dax_insert_entry() appeared during my development but was
-> fixed before I sent the patchset.  Now I am looking for what's wrong with
-> it.
-> 
-> BTW, which groups did you test?  I usually test quick,clone group.
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index fdde6c56cc3d..ac087b48b5da 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -194,16 +194,16 @@ static int ovl_copy_fileattr(struct inode *inode, struct path *old,
+>  }
+>  
+>  static int ovl_copy_up_data(struct ovl_fs *ofs, struct path *old,
+> -			    struct path *new, loff_t len)
+> +			    struct path *new, struct file *new_file, loff_t len)
+>  {
 
-These are auto group runs, as I normally do for testing patches.
+Ugh...  Lift opening into both callers and get rid of struct path *new,
+please.  Would be much easier to follow that way...
 
-Cheers,
+> -	err = ovl_copy_up_inode(c, temp);
+> +	err = ovl_copy_up_inode(c, temp, NULL);
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+FWIW, I would consider passing a struct file * in all cases, with O_PATH
+for non-regular ones...
+
+> -	temp = ovl_do_tmpfile(ofs, ofs->workdir, S_IFREG | 0);
+> -	ofs->tmpfile = !IS_ERR(temp);
+> +	tmpfile = ovl_do_tmpfile(ofs, ofs->workdir, S_IFREG | 0);
+> +	ofs->tmpfile = !IS_ERR(tmpfile);
+>  	if (ofs->tmpfile)
+> -		dput(temp);
+> +		fput(tmpfile);
+
+	Careful - that part essentially checks if we have a working
+->tmpfile(), but we rely upon more than just having it - we want
+dentry-based setxattr() and friends to work after O_TMPFILE.
+Are we making that a requirement for ->tmpfile()?  I.e. that
+after O_TMPFILE open notify_change() et.al. on its dentry
+will work *without* corresponding struct file.  In particular,
+fuse seems to check for ATTR_FILE...
