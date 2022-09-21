@@ -2,237 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B77F55E56B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 01:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC0E5E56D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 01:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbiIUX1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 19:27:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40520 "EHLO
+        id S229815AbiIUXpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 19:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiIUX1e (ORCPT
+        with ESMTP id S229649AbiIUXpc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 19:27:34 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 20020A2229
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 16:27:33 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2AC428AA2FE;
-        Thu, 22 Sep 2022 09:27:32 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ob97p-00AZv9-Tq; Thu, 22 Sep 2022 09:27:29 +1000
-Date:   Thu, 22 Sep 2022 09:27:29 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: thoughts about fanotify and HSM
-Message-ID: <20220921232729.GE3144495@dread.disaster.area>
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 21 Sep 2022 19:45:32 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B159F77F;
+        Wed, 21 Sep 2022 16:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663803931; x=1695339931;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ORMcI/FMK9/bE9uv94dXDrDP+EXd0wTQ1XsR726t/+k=;
+  b=chPhhoDBSqDHyUdiKtm3odoXbgFzwGW2X+eCdqK8PBM/1kEca2RFXCsh
+   bPqJ09vQ0ZHHhT3vXZ4GichY6cnqbdiWfvVsXYUmiNysKRvKhUxNenmFy
+   w0k88xJ+YBNe+04hM0fZ8w9FV3x1mmV/LjBC8AbdaDhpIzc8gOP8fyEqr
+   rRMujSgpjzFCPqJTXGv0E578pmihuL1r2VzWW3vADLP0dzNXMBJxgQ0re
+   GOA9MBwPP93HynkoH0iyl9Ge5+eaTEbbgkZUWANaCjF/qA5x9qQF6xSx9
+   v45l+ntaPezDFKyMWAM4PBDXIB5NB4EsnGnCcFUsfb1KoNCyeFa3LJ+kf
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="297754843"
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="297754843"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2022 16:45:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="745168589"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2022 16:45:30 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 21 Sep 2022 16:45:31 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 21 Sep 2022 16:45:30 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31 via Frontend Transport; Wed, 21 Sep 2022 16:45:30 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.103)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2375.31; Wed, 21 Sep 2022 16:45:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OSSYYDF1+R3SlkCjdeN0L+yh3pDv5XmV6efYaqX3PEopmB1ihVkwiQylk1yoNvIZgLFuYlX2/Uv9S+FppCFQ+FOIwmwrrtGB4kMT0gBi+2Mne5qVj5vmE1o6eNZO63khLASwpDi4nPiRFW3TmsEl4SBuJMYZvEQyXFo7LqkU+1lcf0JeJpa9aNOzeXbR+lVaQuaETUOMedAEaBxja6LM1GyHMWCqrHeu/M4jquvva7f+Fl9Sikhnfg0Vv2uJ+cdoYRZ3vKSGEvdeJucC6HSJp0873wx84OcLZaI5SPV3SlnBSOfm0wUdxQyOKXIlYmOR4yK6cdaoBgludfI1Dp8eJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s8zUTMnRCyJ3pJXuMdUqEYG2T1UykC5ygGGpbeWPsTs=;
+ b=DLZEiUalTrpTOOQK4mgyY/UV50Yvhx1AyYwMfZLed8h2cvOp0t9BLQpAP0OMPrwnr35513JDFDNkq1vxl//BNe5H4sheBBbhn54Y+EjcVOnmXAOl0Scmmwp8FbE2Y9ioAZe0cnoMqQ+Zh8Rk5HwEC1bJ0Eg+lxy7XGBByEPJrVpXpFDU6sX1YDkd8vQQ0sue6crOuKf9XbPRld44RKxQNKn48OXleku3O//acEQBdRNdZyziFX3ph4q5stjDDBr+othCMR3eITNr8QJqpjQetCntI/QcnpSmiJDA79DWEXcYtDpGmdO4YuUcb6rEFiP3DTIsZHnVTXw1v4EtaTegGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20) by SJ1PR11MB6204.namprd11.prod.outlook.com
+ (2603:10b6:a03:459::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Wed, 21 Sep
+ 2022 23:45:25 +0000
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::9847:345e:4c5b:ca12]) by MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::9847:345e:4c5b:ca12%6]) with mapi id 15.20.5654.017; Wed, 21 Sep 2022
+ 23:45:25 +0000
+Date:   Wed, 21 Sep 2022 16:45:22 -0700
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alistair Popple <apopple@nvidia.com>
+CC:     <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
+        "Jan Kara" <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+        "Christoph Hellwig" <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH v2 16/18] mm/memremap_pages: Support initializing pages
+ to a zero reference count
+Message-ID: <632ba212e32bb_349629451@dwillia2-xfh.jf.intel.com.notmuch>
+References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
+ <166329940343.2786261.6047770378829215962.stgit@dwillia2-xfh.jf.intel.com>
+ <YyssywF6HmZrfqhD@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=632b9de4
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=rWvmsOj6DGqUwbSOZ4gA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YyssywF6HmZrfqhD@nvidia.com>
+X-ClientProxiedBy: SJ0PR03CA0352.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::27) To MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|SJ1PR11MB6204:EE_
+X-MS-Office365-Filtering-Correlation-Id: b272ddf2-72b3-4f2b-52f2-08da9c2b5b3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nBg7Z47wEq3VXw+tghMu8/U7SHgGaA3AQhpwdJioPdMGxmhREfDETzUVNWbD+EeQlr94odY+4xLvnqIoSxAU+Yqt/jZxXRB3qrPvbFeGRw8jIsAd3GJ2gWVqCTfGAFal7H2CScGkVr+DWOtnToA28ZmQpIuh5XQ+rcleKbQybDqfv78zc8bc4aYWy9KrSnHC7pQIe33xh9Sgnt6L1W7b9/uGz7FRkjYjvrTtQUwFOEtUvMNPYRqV6tmHXNChqluMy7z90C09WF42gqTiKFJp58oipjgS7N+UA7s+7pPjCzRsvyBZf2eKzvPdFxqZ7yIqX3svVN0AP1CZL6nRowD8LWNMZ1SLQ0KWT/X/chyo5CGw9YzUbAIqQpnQ0gNdHao+IHd5sKWjQigi1WuIeGk9CYPLYBmOY+ttifnaxJb/OzolJL+aGxdP6h4lEfwmkUFLOsWL95WGoA4oxzpxBcDgG7kMWS2DF++jUDyZhZzRXqJ+q5SpsQCWtLhbvPgDB/JVAQYG7ziNe1MbCfZ1hc/A2XDx6W0k9JVw5kDBEbugrjgyplyA0JDkMwVqNLLa7OB5uUpKGAvzuBt/bu8n5cRA92r0Sw9hcWK7tDsqPG86ByjjuaMvzrsoANnRd586XsjK5AZ23xMvX06pyK1zIzPLllQC9iS9aRNTql/uDzbPIwWSETuTLJT3J9pXvptgNoaHSorTXvoC1fuP4Nl9nwfKMA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(136003)(376002)(396003)(39860400002)(346002)(451199015)(8676002)(6486002)(8936002)(82960400001)(38100700002)(186003)(83380400001)(7416002)(6506007)(41300700001)(478600001)(6512007)(110136005)(86362001)(54906003)(316002)(26005)(9686003)(5660300002)(6666004)(66946007)(66556008)(4326008)(66476007)(2906002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+1ufcVv4foL0LBQqu+uGRdxCUrj+tgbXplBOOaCp4BXv1ugrNocgPg+Ho+y0?=
+ =?us-ascii?Q?Y+VQin6Wkz41P5rZ+NoMvmnelN48X51kyaFeW0YvlyKgpdVSGz7Dyf+r3dY/?=
+ =?us-ascii?Q?cr8zgCiiXuGqLj0+KlhEeXUB/IxPUglqcAc5z6Q75MIzjFtdG9vdmV8zantN?=
+ =?us-ascii?Q?cu7IxuyzNquk59SrHURnpsvG0L7PGk66lOhCIHl2vnQexdTkAEOArKRUES6V?=
+ =?us-ascii?Q?moKcuqpwj6K528gEERt+K1GUb15jFJhiiIwekZphc3aiqzmvf0BYfQMO/KUR?=
+ =?us-ascii?Q?5Ir7IwtkzQfMdnhUHOjxZ77gGg7W9Pedexocb0DzhElRZ8f2j+nlUs750cJy?=
+ =?us-ascii?Q?PMVLU0l4ld88gY4R4kpgbGEPiWU8sje6U2KBoEl4usZdd6BP68GUsRlBOO5r?=
+ =?us-ascii?Q?hYiFAC4LFqoLAAVwZHAq0r1ptojHMRhwsns1yoO/jtURhh2EULU6DAGQaTJC?=
+ =?us-ascii?Q?XChnHiu+myH+JXB5taUYdqSwuqaa/65rcEGz3Rm/yd8VH8b+cWn7fyC+5RqX?=
+ =?us-ascii?Q?d96xcWdL7TGL/4Ugc2sswOFZiOXalD3mFdJdG0efpG0aEqpytfLNpVIlTVbP?=
+ =?us-ascii?Q?BoopLuYoWvXjwe3w3N1j0k2nKbaa3RExE9vPvg6G9w1hDeeZ0VIzvIsKJEuv?=
+ =?us-ascii?Q?Jv2jOYkxLtrrqIAsZYW44ukpI7OqC3WYuKo0PnIht1cP5PSBMK5nn4chS1D1?=
+ =?us-ascii?Q?Ff28S4OBsJWLd/NTWJ3DESsa/rJekYOt7xt7rQbc+rAl88+C652JSagfcyV2?=
+ =?us-ascii?Q?+SSKVfMduV3EzUrgCceM2h9RffkxF8q2YReHcfhGT8uuNNRXl0bXEsX3y/04?=
+ =?us-ascii?Q?xg0/JphsEk0XB/NNYltsFmiUaNfF46h8Q/Gdk4LiYeRRuc0YNJGtePvvmbM1?=
+ =?us-ascii?Q?oOXzGSeU40fKWMQWkRUVu618/nDhnlNGIRx65l0xN3ug9XCHvCo0VOxKSZ3s?=
+ =?us-ascii?Q?fzbM/EnTVe9Srn8jOfie68/z91AFRnfTHzAHFs02YucYJclm0MAPfIkU4Pwv?=
+ =?us-ascii?Q?Fc9lhk+CcjIHVw7noKE4IccA7WhzIGG1xYFF99ljlgiyb1BG+azZeIrqbjiA?=
+ =?us-ascii?Q?78a6ZYnZqDt5XynK+XNvZQf1NJkwfQ7MGJU/EZ5GoSX/M8odrSL9X9qIVDg+?=
+ =?us-ascii?Q?YgA7vukHMy+QP2MH27geGB2SR+XSu19BVFx3eJ8f1Ocx97rs71yWm5FbWGMo?=
+ =?us-ascii?Q?y88vyX04+p7D9SGK2H1DfET4hgoIwVuGlylrV+y2iQLsR0Ga4Evm0ucqhDlL?=
+ =?us-ascii?Q?48FEkulswnpJ4fbx8mM5uBhW433A9gvMizUaiVpC66ao734ZdOC7KeQLJV04?=
+ =?us-ascii?Q?VIzIFsy3HsqmD2wFyQiis5ok7KRBHZ0vAXM3Ilty5mcEdRc6hy8BjlPJyzSL?=
+ =?us-ascii?Q?IFnnzYED9SmBAvcpZDdjNu3jmT15aq3XJE4tGYxFV4yx3a5mdjxOQPCbJVz+?=
+ =?us-ascii?Q?VozGeypWO+aN3aCDZrdAyC8ZTVQmF4Zb98iW7s/3IDO6U7ZbQcwi7XdusRpd?=
+ =?us-ascii?Q?ImLBlh5GuReEHWtpKFMMe8fs4jmOufTfNdft0AX/PwbvJjSauDDl2gXkGctR?=
+ =?us-ascii?Q?PsQ9Q7F69j8nenD2iGbjUINW6TI59niHgblx44UNsK6HwRASpz9vFi6tB+jZ?=
+ =?us-ascii?Q?dQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b272ddf2-72b3-4f2b-52f2-08da9c2b5b3c
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2022 23:45:25.6740
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9aVLIipQFRNwafm9jkG2Xzx0sXhewxlBCuyhKufaIWC+bOIpC5uYpNZ18NurL1VxK9Rj6m75W08sRBvwO0cJmd3gFxkPAtsX3eyrS0qx15g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6204
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 11, 2022 at 09:12:06PM +0300, Amir Goldstein wrote:
-> Hi Jan,
+Jason Gunthorpe wrote:
+> On Thu, Sep 15, 2022 at 08:36:43PM -0700, Dan Williams wrote:
+> > The initial memremap_pages() implementation inherited the
+> > __init_single_page() default of pages starting life with an elevated
+> > reference count. This originally allowed for the page->pgmap pointer to
+> > alias with the storage for page->lru since a page was only allowed to be
+> > on an lru list when its reference count was zero.
+> > 
+> > Since then, 'struct page' definition cleanups have arranged for
+> > dedicated space for the ZONE_DEVICE page metadata, and the
+> > MEMORY_DEVICE_{PRIVATE,COHERENT} work has arranged for the 1 -> 0
+> > page->_refcount transition to route the page to free_zone_device_page()
+> > and not the core-mm page-free. With those cleanups in place and with
+> > filesystem-dax and device-dax now converted to take and drop references
+> > at map and truncate time, it is possible to start MEMORY_DEVICE_FS_DAX
+> > and MEMORY_DEVICE_GENERIC reference counts at 0.
+> > 
+> > MEMORY_DEVICE_{PRIVATE,COHERENT} still expect that their ZONE_DEVICE
+> > pages start life at _refcount 1, so make that the default if
+> > pgmap->init_mode is left at zero.
 > 
-> I wanted to consult with you about preliminary design thoughts
-> for implementing a hierarchical storage manager (HSM)
-> with fanotify.
+> I'm shocked to read this - how does it make any sense?
+
+I think what happened is that since memremap_pages() historically
+produced pages with an elevated reference count that GPU drivers skipped
+taking a reference on first allocation and just passed along an elevated
+reference count page to the first user.
+
+So either we keep that assumption or update all users to be prepared for
+idle pages coming out of memremap_pages().
+
+This is all in reaction to the "set_page_count(page, 1);" in
+free_zone_device_page(). Which I am happy to get rid of but need from
+help from MEMORY_DEVICE_{PRIVATE,COHERENT} folks to react to
+memremap_pages() starting all pages at reference count 0.
+
+> dev_pagemap_ops->page_free() is only called on the 1->0 transition, so
+> any driver which implements it must be expecting pages to have a 0
+> refcount.
 > 
-> I have been in contact with some developers in the past
-> who were interested in using fanotify to implement HSM
-> (to replace old DMAPI implementation).
+> Looking around everything but only fsdax_pagemap_ops implements
+> page_free()
+
+Right.
+
+> So, how does it work? Surely the instant the page map is created all
+> the pages must be considered 'free', and after page_free() is called I
+> would also expect the page to be considered free.
+
+The GPU drivers need to increment reference counts when they hand out
+the page rather than reuse the reference count that they get by default.
+
+> How on earth can a free'd page have both a 0 and 1 refcount??
+
+This is residual wonkiness from memremap_pages() handing out pages with
+elevated reference counts at the outset.
+
+> eg look at the simple hmm_test, it threads pages on to the
+> mdevice->free_pages list immediately after memremap_pages and then
+> again inside page_free() - it is completely wrong that they would have
+> different refcounts while on the free_pages list.
+
+I do not see any page_ref_inc() in that test, only put_page() so it is
+assuming non-idle pages at the outset.
+
+> I would expect that after the page is removed from the free_pages list
+> it will have its recount set to 1 to make it non-free then it will go
+> through the migration.
 > 
-> Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
-> should be enough to implement a basic HSM, but it is not
-> sufficient for implementing more advanced HSM features.
-
-Ah, I wondered where the people with that DMAPI application went all
-those years ago after I told them they should look into using
-fanotify to replace the dependency they had on the DMAPI patched
-XFS that SGI maintained for years for SLES kernels...
-
-> Some of the HSM feature that I would like are:
-> - blocking hook before access to file range and fill that range
-> - blocking hook before lookup of child and optionally create child
-
-Ok, so these are to replace the DMAPI hooks that provided a blocking
-userspace upcall to the HSM to allow it fetch data from offline
-teirs that wasn't currently in the filesystem itself. i.e. the inode
-currently has a hole over that range of data, but before the read
-can proceed the HSM needs to retreive the data from the remote
-storage and write it into the local filesystem.
-
-I think that you've missed a bunch of blocking notifications that
-are needed, though. e.g. truncate needs to block while the HSM
-records the file ranges it is storing offline are now freed.
-fallocate() needs to block while it waits for the HSM to tell it the
-ranges of the file that actually contain data and so should need to
-be taken into account. (e.g. ZERO_RANGE needs to wait for offline
-data to be invalidated, COLLAPSE_RANGE needs offline data to be
-recalled just like a read() operation, etc).
-
-IOWs, any operation that manipulates the extent map or the data in
-the file needs a blocking upcall to the HSM so that it can restore
-and invalidate the offline data across the range of the operation
-that is about to be performed....
-
-> My thoughts on the UAPI were:
-> - Allow new combination of FAN_CLASS_PRE_CONTENT
->   and FAN_REPORT_FID/DFID_NAME
-> - This combination does not allow any of the existing events
->   in mask
-> - It Allows only new events such as FAN_PRE_ACCESS
->   FAN_PRE_MODIFY and FAN_PRE_LOOKUP
-> - FAN_PRE_ACCESS and FAN_PRE_MODIFY can have
->   optional file range info
-> - All the FAN_PRE_ events are called outside vfs locks and
->   specifically before sb_writers lock as in my fsnotify_pre_modify [1]
->   POC
+> Alistair how should the refcounting be working here in hmm_test?
 > 
-> That last part is important because the HSM daemon will
-> need to make modifications to the accessed file/directory
-> before allowing the operation to proceed.
+> Jason
 
-Yes, and that was the biggest problem with DMAPI - the locking
-involved. DMAPI operations have to block without holding any locks
-that the IO path, truncate, fallocate, etc might need, but once they
-are unblocked they need to regain those locks to allow the operation
-to proceed. This was by far the ugliest part of the DMAPI patches,
-and ultimately, the reason why it was never merged.
 
-> Naturally that opens the possibility for new userspace
-> deadlocks. Nothing that is not already possible with permission
-> event, but maybe deadlocks that are more inviting to trip over.
-> 
-> I am not sure if we need to do anything about this, but we
-> could make it easier to ignore events from the HSM daemon
-> itself if we want to, to make the userspace implementation easier.
-
-XFS used "invisible IO" as the mechanism for avoiding sending DMAPI
-events for operations that we initiated by the HSM to move data into
-and out of the filesystem.
-
-No doubt you've heard us talk about invisible IO in the past -
-O_NOCMTIME is what that invisible IO has eventually turned into in a
-modern Linux kernel. We still use that for invisible IO - xfs_fsr
-uses it for moving data around during online defragmentation. The
-entire purpose of invisible IO was to provide a path for HSMs and
-userspace bulk data movers (e.g. HSM aware backup tools like
-xfsdump) to do IO without generating unnecessary or recursive DMAPI
-events....
-
-IOWs, if we want a DMAPI replacement, we will need to formalise a
-method of performing syscall based operations that will not trigger
-HSM notification events.
-
-The other thing that XFS had for DMAPI was persistent storage in the
-inode of the event mask that inode should report events for. See
-the di_dmevmask and di_dmstate fields defined in the on-disk inode
-format here:
-
-https://git.kernel.org/pub/scm/fs/xfs/xfs-documentation.git/tree/design/XFS_Filesystem_Structure/ondisk_inode.asciidoc
-
-There's no detail for them, but the event mask indicated what DMAPI
-events the inode should issue notifications for, and the state field
-held information about DMAPI operations in progress.
-
-The event field is the important one here - if the event field was
-empty, access to the inode never generated DMAPI events. When the
-HSM moved data offline, the "READ" event mask bit was set by the HSM
-and that triggered DMAPI events for any operation that needed to
-read data or manipulate the extent map. When the data was brought
-entirely back online, the event masks count be cleared.
-
-However, DMAPI also supports dual state operation, where the
-data in the local filesystem is also duplicated in the offline
-storage (e.g. immediately after a recall operation). This state can
-persist until data or layout is changed in the local filesystem,
-and so there's a "WRITE" event mask as well that allows the
-filesystem to inform the HSM that data it may have in offline
-storage is being changed.
-
-The state field is there to tell the HSM that an operation was in
-progress when the system crashed. As part of recovery, the HSM needs
-to find all the inodes that had DM operations in progress and either
-complete them or revert them to bring everything back to a
-consistent state. THe SGI HSMs used the bulkstat interfaces to scan
-the fs and find inodes that had a non-zero DM state field. This is
-one of the reasons that having bulkstat scale out to scanning
-millions of inodes a second ends up being important - coherency
-checking between the ondisk filesystem state and the userspace
-offline data tracking databases is a very important admin
-operation..
-
-The XFS dmapi event and state mask control APIs are now deprecated.
-The XFS_IOC_FSSETDM ioctl could read and write the values, and the
-the XFS V1 bulkstat ioctl could read them. There were also flags for
-things like extent mapping ioctls (FIEMAP equivalent) that ensured
-looking at the extent map didn't trigger DMAPI events and data
-recall.
-
-I guess what I'm trying to say is that there's a lot more to an
-efficient implementation of a HSM event notification mechanism than
-just implementing a couple of blocking upcalls. IF we want something
-that will replace even simple DMAPI-based HSM use cases, we really
-need to think through how to support all the operations that a
-recall operation might needed for and hence have to block. ANd we
-really should think about how to efficiently filter out unnecessary
-events so that we don't drown the HSM in IO events it just doesn't
-need to know about....
-
-> Another thing that might be good to do is provide an administrative
-> interface to iterate and abort pending fanotify permission/pre-content
-> events.
-
-That was generally something the DMAPI event consumer provided.
-
-> You must have noticed the overlap between my old persistent
-> change tracking journal and this design. The referenced branch
-> is from that old POC.
-> 
-> I do believe that the use cases somewhat overlap and that the
-> same building blocks could be used to implement a persistent
-> change journal in userspace as you suggested back then.
-
-That's a very different use case and set of requirements to a HSM.
-
-A HSM tracks much, much larger amounts of data than a persistent
-change journal. We had [C]XFS-DMAPI based HSMs running SLES in
-production that tracked half a billion inodes and > 10PB of data 15
-years ago. These days I'd expect "exabyte" to be the unit of
-storage that large HSMs are storing.
-
-> Thoughts?
-
-I think that if the goal is to support HSMs with fanotify, we first
-need to think about how we efficiently support all the functionality
-HSMs require rather than just focus on a blocking fanotify read
-operation. We don't need to implement everything, but at least
-having a plan for things like handling the event filtering
-requirements without the HSM having to walk the entire filesystem
-and inject per-inode event filters after every mount would be a real
-good idea....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
