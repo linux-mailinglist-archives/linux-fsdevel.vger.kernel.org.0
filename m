@@ -2,60 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF165E53C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 21:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E5E5E53CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 21:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbiIUT0P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 15:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
+        id S229916AbiIUTaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 15:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiIUT0N (ORCPT
+        with ESMTP id S229968AbiIUTaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 15:26:13 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3C592F44
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 12:26:11 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id z20so8276070ljq.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 12:26:11 -0700 (PDT)
+        Wed, 21 Sep 2022 15:30:19 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B86298A78
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 12:30:18 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id u18so10896473lfo.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 12:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=omnibond-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=SB0ZL3ET5KIRiXLzJBPRplLaECUUBPQ/n6fLwa5hHA8=;
-        b=0A5e59msr8vZ9yyswtDGOENd9aDNdfqvLUSiJXcQicnCVo7nNeHpFu+d6Ow6+qNhTS
-         Y2q5K1hAOfFO8+dpOCigOXgV8M/pbEe3K7y/rzqqGL9LoNChUSrb2pkRahORLufp2uNQ
-         9/oUFyzHqOtmTjXzT2Z7oSDKN1xJNpAa0Jddb+aLcNc3tirgXmbXVuyZxc6e131yIVjQ
-         hQjxxLXeVO80G3jl+jikLL6WUSmyipysOAZvj17vDHGMjtMHuSwGQCGI3PBFtLO1iMbA
-         DCFoh4lvIspc37sZc8KmWtDoE3ohyFq5MLu1QUZTYY3o/XeGP6Hc4ouQGPbnMpjRPjtw
-         jLnw==
+        bh=dUp34wU+rIvE4FOjS5Am/ggzUEg/7JO0XLgISf2jrDw=;
+        b=LGZQUM5uwNtvfEAnEipVUgYMt8A/QPJi5hFGTf7gwQ6wrDOPADB7dHS4qztxecH83g
+         HN3PlnCcmM2S+9Dqtj0e+4k76s3izpY45yp+vTPj8lW+5Mom7CnGmud1TWNxhpcltpO6
+         iFtf5vWOUHTxYoSdIlX6Ak9KxNt8fv7V2e3dDVnJiM0PRIWjNgt308OIYxchyRJc22xa
+         wfsr2ZsmSJ3yLWEMyGQalEMQ94cejM8fZMnVDqI3muwy09C3+DpcLntI/iBAN1nPVKhU
+         OBcnz7eyyomdZ6/bWSyPqffGe/B9xUM7LHpFZ/BgygwY/J42u0tcpHt1xz2lweAogtPN
+         2pYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=SB0ZL3ET5KIRiXLzJBPRplLaECUUBPQ/n6fLwa5hHA8=;
-        b=qY5pAEj3Mh4s3pPS2SUakY8CTLI74+RNKQOvZBxcJRLGyUYnw+Hv4emdidLY1dq1hH
-         r+94oa26oHopK++P7jd3qCAbNWeKNnUvVMZcG8OkUa1N5ZALxcLxAzokydEPXwqnZaYD
-         73cn4RYqGJu6lNWaVZI9+li958KXojwS6/Gjz24KCZCy6zrioqa83QhGcFUaYN4YXnPM
-         nIU3y6Ro5ho76XD2WvbslDIzslwwIs2WdSyg1KsTW+1YRSw6Uc29cbAskC9cJ+Ev6wEQ
-         qYVNK2+6ZGVo07ldH3XdPjiWI2pdC4uI8AsCtKFYRSW8cuzsiYaMfjJ9UkZIf96FJqFb
-         cLow==
-X-Gm-Message-State: ACrzQf3bPzMXhNNFH9sUamI6/lFHhTQ1+Oz53Odo8Pfp751wRk2xU2MW
-        uk8T+7iuh86VUNVk2RoUdSrVpyjSS2rQRmgGTiDGlrqRsBO8+g==
-X-Google-Smtp-Source: AMsMyM5KO0UwDQkeO6ykB9BNj9gI3KAjgKqiJnM2Fz59q7a2ZikJNq5vRGZQQczhPRWAQLxQ28aQDNsI3e9uHsuaO08=
-X-Received: by 2002:a2e:9b89:0:b0:26a:a004:ac3 with SMTP id
- z9-20020a2e9b89000000b0026aa0040ac3mr8832429lji.104.1663788369753; Wed, 21
- Sep 2022 12:26:09 -0700 (PDT)
+        bh=dUp34wU+rIvE4FOjS5Am/ggzUEg/7JO0XLgISf2jrDw=;
+        b=B2EcXwUg95+Ff7PhHqh5wxAr+V8lcnsbvOsdYPtpZweBFW2pT0xG3ffdLaWOx8DBL5
+         4k8Y+AaJddHzV9Vuo4k2EhKqICdDLKHhe+fi3XaEhBjyoCZsp6IDs9r9qo46J93NXA8r
+         dMZlwWu4tPGTVb91etcSiLKSEzQjfO74ohp/8746XjKOGrhKsX5xgiaWiIzYJDuY3kQF
+         bnWeuo6VybGGt5Ad1QKvNzAdrZxaYHVE3paCXlN5c5p/xf2QLmeLxNDj/AV+OrudJNvp
+         uuU0LpkmWv/y+hIkR1eBGZctmSYfLMTP2yRivPUBEPLPTu0tCfSJ2PoUwa5r9bJo591V
+         JgjA==
+X-Gm-Message-State: ACrzQf06/Zefk44zrRTMcfPJ6F+nyfMl4baI8pW4+Ufvp8kgtVfMrb4a
+        3ENEthyZlyu8mGAOP++h7MWYEGodLETcsZArty7mg91HhH0=
+X-Google-Smtp-Source: AMsMyM4UjQA3cdxDZHWf6B8Ig1L9lp1kN2mKmfQIDi7llbNq2QI0D/11Csj2bu9m2IEMtgRC8FBiF9mNgEoT6WvdSzo=
+X-Received: by 2002:a05:6512:12d6:b0:49f:48d4:a1c4 with SMTP id
+ p22-20020a05651212d600b0049f48d4a1c4mr10901513lfg.52.1663788616355; Wed, 21
+ Sep 2022 12:30:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <YvvBs+7YUcrzwV1a@ZenIV> <CAHk-=wgkNwDikLfEkqLxCWR=pLi1rbPZ5eyE8FbfmXP2=r3qcw@mail.gmail.com>
- <Yvvr447B+mqbZAoe@casper.infradead.org> <dc966283-d0b9-b411-0792-c8553b948c2e@canonical.com>
-In-Reply-To: <dc966283-d0b9-b411-0792-c8553b948c2e@canonical.com>
+References: <YwFANLruaQpqmPKv@ZenIV> <YwFCIkDT7sFO1D9N@ZenIV>
+In-Reply-To: <YwFCIkDT7sFO1D9N@ZenIV>
 From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Wed, 21 Sep 2022 15:25:58 -0400
-Message-ID: <CAOg9mSRjo-UZ+3OMVZ4VekwSLzmAe0=+t1kr47K_gFzfp-wUwQ@mail.gmail.com>
-Subject: Re: [apparmor] Switching to iterate_shared
-To:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     devel@lists.orangefs.org
+Date:   Wed, 21 Sep 2022 15:30:05 -0400
+Message-ID: <CAOg9mSQwjKVDJLCHLTpQyAWkCoaAA37U0LkyG6AqvmYdZP_JnA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] orangefs: use ->f_mapping
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Mike Marshall <hubcapsc@gmail.com>, devel@lists.orangefs.org
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -66,103 +65,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> At least CEPH has active maintainers...
+I added this patch to one of the 6.0 rc's that I've been
+running through xfstests, no regressions... so...
 
-Well that's just mean :-) ...
+You can add tested by me if you'd like...
 
-Anywho...
-
->> in many cases, the existing iterate() implementation works just fine as iterate_shared().
->> https://lwn.net/Articles/686943/
-
-I changed the orangefs .iterate to .iterate_shared... ls still works,
-find still works,
-xfstests shows no regressions...
-
-I found and ran my getdents program from back when we were working to
-go upstream...
-it works the same with .iterate as it does with .iterate_shared...
+Thanks!
 
 -Mike
 
-On Thu, Aug 18, 2022 at 12:15 PM John Johansen
-<john.johansen@canonical.com> wrote:
+
+On Sat, Aug 20, 2022 at 4:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On 8/16/22 12:11, Matthew Wilcox wrote:
-> > On Tue, Aug 16, 2022 at 11:58:36AM -0700, Linus Torvalds wrote:
-> >> That said, our filldir code is still confusing as hell. And I would
-> >> really like to see that "shared vs non-shared" iterator thing go away,
-> >> with everybody using the shared one - and filesystems that can't deal
-> >> with it using their own lock.
-> >>
-> >> But that's a completely independent wart in our complicated filldir saga.
-> >>
-> >> But if somebody were to look at that iterate-vs-iterate_shared, that
-> >> would be lovely. A quick grep shows that we don't have *that* many of
-> >> the non-shared cases left:
-> >>
-> >>        git grep '\.iterate\>.*='
-> >>
-> >> seems to imply that converting them to a "use my own load" wouldn't be
-> >> _too_ bad.
-> >>
-> >> And some of them might actually be perfectly ok with the shared
-> >> semantics (ie inode->i_rwsem held just for reading) and they just were
-> >> never converted originally.
-> >
-> > What's depressing is that some of these are newly added.  It'd be
-> > great if we could attach something _like_ __deprecated to things
-> > that checkpatch could pick up on.
-> >
-> > fs/adfs/dir_f.c:        .iterate        = adfs_f_iterate,
-> > fs/adfs/dir_fplus.c:    .iterate        = adfs_fplus_iterate,
-> >
-> > ADFS is read-only, so must be safe?
-> >
-> > fs/ceph/dir.c:  .iterate = ceph_readdir,
-> > fs/ceph/dir.c:  .iterate = ceph_readdir,
-> >
-> > At least CEPH has active maintainers, cc'd
-> >
-> > fs/coda/dir.c:  .iterate        = coda_readdir,
-> >
-> > Would anyone notice if we broke CODA?  Maintainers cc'd anyway.
-> >
-> > fs/exfat/dir.c: .iterate        = exfat_iterate,
-> >
-> > Exfat is a new addition, but has active maintainers.
-> >
-> > fs/jfs/namei.c: .iterate        = jfs_readdir,
-> >
-> > Maintainer cc'd
-> >
-> > fs/ntfs/dir.c:  .iterate        = ntfs_readdir,         /* Read directory contents. */
-> >
-> > Maybe we can get rid of ntfs soon.
-> >
-> > fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-> > fs/ocfs2/file.c:        .iterate        = ocfs2_readdir,
-> >
-> > maintainers cc'd
-> >
-> > fs/orangefs/dir.c:      .iterate = orangefs_dir_iterate,
-> >
-> > New; maintainer cc'd
-> >
-> > fs/overlayfs/readdir.c: .iterate        = ovl_iterate,
-> >
-> > Active maintainer, cc'd
-> >
-> > fs/proc/base.c: .iterate        = proc_##LSM##_attr_dir_iterate, \
-> >
-> > Hmm.  We need both SMACK and Apparmor to agree to this ... cc's added.
+> ... and don't check for impossible conditions - file_inode() is
+> never NULL in anything seen by ->release() and neither is its
+> ->i_mapping.
 >
-> This is fine for AppArmor
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/orangefs/file.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
->
-> >
-> > fs/vboxsf/dir.c:        .iterate = vboxsf_dir_iterate,
-> >
-> > Also newly added.  Maintainer cc'd.
-> >
+> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+> index 86810e5d7914..732661aa2680 100644
+> --- a/fs/orangefs/file.c
+> +++ b/fs/orangefs/file.c
+> @@ -417,9 +417,7 @@ static int orangefs_file_release(struct inode *inode, struct file *file)
+>          * readahead cache (if any); this forces an expensive refresh of
+>          * data for the next caller of mmap (or 'get_block' accesses)
+>          */
+> -       if (file_inode(file) &&
+> -           file_inode(file)->i_mapping &&
+> -           mapping_nrpages(&file_inode(file)->i_data)) {
+> +       if (mapping_nrpages(file->f_mapping)) {
+>                 if (orangefs_features & ORANGEFS_FEATURE_READAHEAD) {
+>                         gossip_debug(GOSSIP_INODE_DEBUG,
+>                             "calling flush_racache on %pU\n",
+> --
+> 2.30.2
 >
