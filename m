@@ -2,121 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04AEA5BF923
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 10:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3041E5BF93F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 10:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbiIUI1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 04:27:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51630 "EHLO
+        id S229835AbiIUIaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 04:30:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbiIUI0j (ORCPT
+        with ESMTP id S229566AbiIUIaJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 04:26:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9FE7B7BF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 01:26:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C5A56626F2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 08:26:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B877C433C1;
-        Wed, 21 Sep 2022 08:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663748778;
-        bh=MbYznOHaflfi2Yxlw/LH7MPbUv63RjoI7eMJ3wYH0FM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s41uyK83rdfgA7Z6gsboNZiOPNu1QidpJCJWcGqmicez9Da5MMe7zwprEEX3cUhzo
-         XE1KoXqTEVs2rkVZmHArGC4kw52j2qBGOoDwXpJ0OZREWGo+H2hhRqQqpGHLMkbrKO
-         8Pg1MhOoy61iGEbBP8AnXMvJcVhUbUDvngd1BqDjd1MSc1qKzPfKorq243ICu8PQg3
-         QZdUSsmqgsoEkDUcyAqqA82grxE4V/IahqfyBWvzoYlTQU+EnY3lulBzzBsT1NySqU
-         ciuuugTetIeVusKU3EW5wlOKTPw3s5ieLOy1Qcr/PswiGOlyT2HwU/aBJHUUAyzGkN
-         wSmY5V0JUIRJg==
-Date:   Wed, 21 Sep 2022 10:26:12 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Yu-li Lin <yulilin@google.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: [PATCH v3 4/9] cachefiles: use tmpfile_open() helper
-Message-ID: <20220921082612.n5z43657f6t3z37s@wittgenstein>
-References: <20220920193632.2215598-1-mszeredi@redhat.com>
- <20220920193632.2215598-5-mszeredi@redhat.com>
+        Wed, 21 Sep 2022 04:30:09 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4273312757;
+        Wed, 21 Sep 2022 01:30:07 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3F5928A9AB5;
+        Wed, 21 Sep 2022 18:30:05 +1000 (AEST)
+Received: from discord.disaster.area ([192.168.253.110])
+        by dread.disaster.area with esmtp (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oav7M-00AKcw-El; Wed, 21 Sep 2022 18:30:04 +1000
+Received: from dave by discord.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1oav7M-005vTU-1H;
+        Wed, 21 Sep 2022 18:30:04 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 0/2] iomap/xfs: fix data corruption due to stale cached iomaps
+Date:   Wed, 21 Sep 2022 18:29:57 +1000
+Message-Id: <20220921082959.1411675-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220920193632.2215598-5-mszeredi@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=632acb8e
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=Xa1MfhOgUTu0s-797qAA:9
+        a=AjGcO6oz07-iQ99wixmX:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 09:36:27PM +0200, Miklos Szeredi wrote:
-> Use the tmpfile_open() helper instead of doing tmpfile creation and opening
-> separately.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/cachefiles/namei.c | 26 ++++++++++----------------
->  1 file changed, 10 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index d3a5884fe5c9..44f575328af4 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -451,18 +451,19 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
->  	const struct cred *saved_cred;
->  	struct dentry *fan = volume->fanout[(u8)object->cookie->key_hash];
->  	struct file *file;
-> -	struct path path;
-> +	struct path path = { .mnt = cache->mnt, .dentry = fan };
->  	uint64_t ni_size;
->  	long ret;
+Hi folks,
 
-Maybe we shouldn't use struct path to first refer to the parent path and
-then to the tmp path to avoid any potential confusion and instead rely
-on a compount initializer for the tmpfile_open() call (__not tested__)?:
+THese patches address the data corruption first described here:
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 44f575328af4..979b2f173ac3 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -451,7 +451,7 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
-        const struct cred *saved_cred;
-        struct dentry *fan = volume->fanout[(u8)object->cookie->key_hash];
-        struct file *file;
--       struct path path = { .mnt = cache->mnt, .dentry = fan };
-+       struct path path;
-        uint64_t ni_size;
-        long ret;
+https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
 
-@@ -460,8 +460,10 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+This data corruption has been seen in high profile production
+systems so there is some urgency to fix it. The underlying flaw is
+essentially a zero-day iomap bug, so whatever fix we come up with
+needs to be back portable to all supported stable kernels (i.e.
+~4.18 onwards).
 
-        ret = cachefiles_inject_write_error();
-        if (ret == 0) {
--               file = tmpfile_open(&init_user_ns, &path, S_IFREG,
--                                   O_RDWR | O_LARGEFILE | O_DIRECT,
-+               file = tmpfile_open(&init_user_ns,
-+                                   &{const struct path} {.mnt = cache->mnt,
-+                                                         .dentry = fan},
-+                                   S_IFREG, O_RDWR | O_LARGEFILE | O_DIRECT,
-                                    cache->cache_cred);
-                ret = PTR_ERR_OR_ZERO(file);
-        }
-@@ -472,7 +474,9 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
-                        cachefiles_io_error_obj(object, "Failed to create tmpfile");
-                goto err;
-        }
--       /* From now path refers to the tmpfile */
-+
-+       /* prepare tmp path */
-+       path.mnt = cache->mnt;
-        path.dentry = file->f_path.dentry;
+A combination of concurrent write()s, writeback IO completion, and
+memory reclaim combine to expose the fact that the cached iomap that
+is held across an iomap_begin/iomap_end iteration can become stale
+without the iomap iterator actor being aware that the underlying
+filesystem extent map has changed.
 
-        trace_cachefiles_tmpfile(object, d_backing_inode(path.dentry));
+Hence actions based on the iomap state (e.g. is unwritten or newly
+allocated) may actually be incorrect as writeback actions may have
+changed the state (unwritten to written, delalloc to unwritten or
+written, etc). This affects partial block/page operations, where we
+may need to read from disk or zero cached pages depending on the
+actual extent state. Memory reclaim plays it's part here in that it
+removes pages containing partial state from the page cache, exposing
+future partial page/block operations to incorrect behaviour.
+
+Really, we should have known that this would be a problem - we have
+exactly the same issue with cached iomaps for writeback, and the
+->map_blocks callback that occurs for every filesystem block we need
+to write back is responsible for validating the cached iomap is
+still valid. The data corruption on the write() side is a result of
+not validating that the iomap is still valid before we initialise
+new pages and prepare them for data to be copied in to them....
+
+I'm not really happy with the solution I have for triggering
+remapping of an iomap when the current one is considered stale.
+Doing the right thing requires both iomap_iter() to handle stale
+iomaps correctly (esp. the "map is invalid before the first actor
+operation" case), and it requires the filesystem
+iomap_begin/iomap_end operations to co-operate and be aware of stale
+iomaps.
+
+There are a bunch of *nasty* issues around handling failed writes in
+XFS taht this has exposed - a failed write() that races with a
+mmap() based write to the same delalloc page will result in the mmap
+writes being silently lost if we punch out the delalloc range we
+allocated but didn't write to. g/344 and g/346 expose this bug
+directly if we punch out delalloc regions allocated by now stale
+mappings.
+
+Then, because we can't punch out the delalloc we allocated region
+safely when we have a stale iomap, we have to ensure when we remap
+it the IOMAP_F_NEW flag is preserved so that the iomap code knows
+that it is uninitialised space that is being written into so it will
+zero sub page/sub block ranges correctly.
+
+As a result, ->iomap_begin() needs to know if the previous iomap was
+IOMAP_F_STALE, and if so, it needs to know if that previous iomap
+was IOMAP_F_NEW so it can propagate it to the remap.
+
+So the fix is awful, messy, and I really, really don't like it. But
+I don't have any better ideas right now, and the changes as
+presented fix the reproducer for the original data corruption and
+pass fstests without and XFS regressions for block size <= page size
+configurations.
+
+Thoughts?
+
+-Dave.
+
+
