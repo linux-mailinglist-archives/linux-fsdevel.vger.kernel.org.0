@@ -2,88 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 872275C0529
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 19:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4225D2C9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 20:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbiIURQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 13:16:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41382 "EHLO
+        id S229640AbiIUSIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 14:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiIURQa (ORCPT
+        with ESMTP id S229789AbiIUSIu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 13:16:30 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CEB79E2C0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 10:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Haap+O/0CbOW0cJcob09rXVStRVDKElPgiNO41CTD6E=; b=aFbnDpXBd0CfJagXk4TRqupnIQ
-        mm15mVNgKbYnBwwa6KtYYgFlUVrjgnlyFGXTfPSMl4foLgfBcibDZqV+Bn/sikkIjs4zm+CA1W5Lu
-        lwffxe3ObOjxe+Zqd4+yI+vZkU8QIKDnV0DgLLqeN7Jqk1g4I1t/IoOyr8rhM1fo9Cn0rcRyrJwNz
-        cQeLv1zRgl8TYfL0GkWIuS/ccT1D/PrZ7NEmVxFqHRXtv7Ta7XDZEjLGORc7puv8jYuQ0Uf3gvHkm
-        J+OQfGljBr2x/o+o/tN19uoYrrertZP7DXGfcq+N2SMVA2zyqSqtU97XTRVFsnKyl/pjXwJBaQE2n
-        OpZK1YGA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ob3Kc-0028e9-1S;
-        Wed, 21 Sep 2022 17:16:18 +0000
-Date:   Wed, 21 Sep 2022 18:16:18 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     willy@infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] filemap: Fix error propagation in do_read_cache_page()
-Message-ID: <YytG4sTn5OF44mXH@ZenIV>
-References: <20220921091010.1309093-1-alexl@redhat.com>
+        Wed, 21 Sep 2022 14:08:50 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4357AC37
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 11:08:48 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id h194so5724083iof.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 11:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=zgcz1Ul6i9PXeI/P/ZQ+OncdDs4YJohaTrFfyIJlyi8=;
+        b=L/CajF85H6Pe/cI6xZHVxuCazlHeSVvBa8AG8BJwImFT1Tn1aTR82LT0SiIB63rS6+
+         qYanS79/LnMDGbFgcT/4tubGjl6RAoflXl+ztralKVSwtWVbJcyK2WOVUi6EqPsvmqv8
+         DEqSEtEbzw8qj+FsGdugIgMq8hWPAYmAWeH7c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=zgcz1Ul6i9PXeI/P/ZQ+OncdDs4YJohaTrFfyIJlyi8=;
+        b=VBylRsE3NQC6AgJBpNvssQNpoNl9ff0liGv1dfGt4EQDBFenTDDRzEdkPQ/RUJz3YE
+         c8xbxKK6Zob/Bz1dx9b+JElEQJdzwt/0U6Hw/p3VEE7IFT8yo7hgv9+O3vzi/n+NiMiw
+         URmzhl3i4ti0JF9QRkcEf9tn2s5fyI668shc6oNb9gnYeIvHO1bNH2WFt9gl4SAuPgau
+         HarsyqXgBh4gAZSjPhU6ZSCIwdMNTj5kIqqYei2x59SXY6pkM/rblIXev075j+BC7BDF
+         iuZK/R47wlOjSz8H4e9GfoB0MccMtBEC+HuIZXW5+L6hAnI7OcXtFeivBNDBOKepjbEW
+         H/kQ==
+X-Gm-Message-State: ACrzQf01rbVbKjVlZyPhBkdeSPukR/n4ekQuPNfvuwRUTkuKdEp2/hea
+        WYi048bcoE7HoGi+P4/yBf72ArOE7zSKfaD5Wacxjw==
+X-Google-Smtp-Source: AMsMyM691nV87AVQASfKNBWi3Ophm3NA6FDzejuedQw6Z9f9ySuzMcOF42M6fueIQaOxEbKvmDe0TiEvzVBd+oAM9Ds=
+X-Received: by 2002:a02:1d08:0:b0:35b:9c9:f8ff with SMTP id
+ 8-20020a021d08000000b0035b09c9f8ffmr3425999jaj.281.1663783728026; Wed, 21 Sep
+ 2022 11:08:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220921091010.1309093-1-alexl@redhat.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220920190617.2539-1-ivan@cloudflare.com> <b6aa0151527a4ee39ae85dfd34e71864@AcuMS.aculab.com>
+In-Reply-To: <b6aa0151527a4ee39ae85dfd34e71864@AcuMS.aculab.com>
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Wed, 21 Sep 2022 11:08:37 -0700
+Message-ID: <CABWYdi2QrsVNngD1ypp+WPg_56DRVk01HuBDjOAKBaav8KJncQ@mail.gmail.com>
+Subject: Re: [PATCH] proc: report open files as size in stat() for /proc/pid/fd
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 11:10:10AM +0200, Alexander Larsson wrote:
-> When do_read_cache_folio() returns an error pointer the code
-> was dereferencing it rather than forwarding the error via
-> ERR_CAST().
-> 
-> Found during code review.
-> 
-> Fixes: 539a3322f208 ("filemap: Add read_cache_folio and read_mapping_folio")
-> Signed-off-by: Alexander Larsson <alexl@redhat.com>
-> ---
->  mm/filemap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 15800334147b..6bc55506f7a8 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3560,7 +3560,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
->  
->  	folio = do_read_cache_folio(mapping, index, filler, file, gfp);
->  	if (IS_ERR(folio))
-> -		return &folio->page;
-> +		return ERR_CAST(folio);
+On Wed, Sep 21, 2022 at 3:21 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: Ivan Babrou
+> > Sent: 20 September 2022 20:06
+> ...
+> >
+> > +static int proc_readfd_count(struct inode *inode)
+> > +{
+> > +     struct task_struct *p = get_proc_task(inode);
+> > +     struct fdtable *fdt;
+> > +     unsigned int i, size, open_fds = 0;
+> > +
+> > +     if (!p)
+> > +             return -ENOENT;
+> > +
+> > +     if (p->files) {
+> > +             fdt = files_fdtable(p->files);
+> > +             size = fdt->max_fds;
+> > +
+> > +             for (i = size / BITS_PER_LONG; i > 0;)
+> > +                     open_fds += hweight64(fdt->open_fds[--i]);
+> > +     }
 
-Where do you see a dereference?  I agree that your variant is cleaner,
-but &folio->page does *NOT* dereference anything - it's an equivalent of
+I'm missing put_task_struct(p) here.
 
-	(struct page *)((unsigned long)folio + offsetof(struct folio, page))
+> > +
+> > +     return open_fds;
+> > +}
+> > +
+>
+> Doesn't that need (at least) rcu protection?
 
-and the reason it happens to work is that page is the first member in
-struct folio, so the offsetof ends up being 0 and we are left with a cast
-from struct folio * to struct page *, i.e. the same thing ERR_CAST()
-variant end up with (it casts to void *, which is converted to struct
-page * since return acts as assignment wrt type conversions).
+Should I enclose the "if" in rcu_read_lock() / rcu_read_unlock()?
 
-It *is* brittle and misguiding, and your patch is a much more clear
-way to spell that thing, no arguments about it; just that your patch
-is not changing behaviour.
+files_fdtable() is this:
+
+* https://elixir.bootlin.com/linux/v6.0-rc6/source/include/linux/fdtable.h#L77
+
+#define files_fdtable(files) \
+    rcu_dereference_check_fdtable((files), (files)->fdt)
+
+And rcu_dereference_check_fdtable() is
+
+#define rcu_dereference_check_fdtable(files, fdtfd) \
+  rcu_dereference_check((fdtfd), lockdep_is_held(&(files)->file_lock))
+
+I definitely need some help with locking here.
+
+> There might also be issues reading p->files twice.
+
+This block for reading twice:
+
+if (p->files) {
+    fdt = files_fdtable(p->files);
+
+Already exists in fs/proc/array.c in task_state():
+
+* https://elixir.bootlin.com/linux/v6.0-rc6/source/fs/proc/array.c#L173
+
+There's task_lock(p) there, so maybe that's why it's allowed.
+
+Should I run files_fdtable(p->files) unconditionally and then check
+the result instead? I'm happy to change it to something else if you
+can tell me what it should be.
+
+If there are kernel options I should enable for testing this, I'd be
+happy to hear them. So far we've tried running with KASAN with no
+issues.
