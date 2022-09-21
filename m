@@ -2,244 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D15BA5BFC66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 12:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A135BFCD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 13:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbiIUKdg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 06:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
+        id S229709AbiIULUX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 07:20:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiIUKde (ORCPT
+        with ESMTP id S229498AbiIULUV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 06:33:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2025F90822;
-        Wed, 21 Sep 2022 03:33:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F70861F48;
-        Wed, 21 Sep 2022 10:33:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD53C433D6;
-        Wed, 21 Sep 2022 10:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663756412;
-        bh=o3HfJ1dfwFPEiioeca+9POwOfG33OdnpIMMLdF2SNXg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=o4RWarLQHwD3AgIDoCdx243jvK53BMwSxiGuWrlraMHFS8gEDQfTIWpRECTQjNNCA
-         IbgpwkHWl/rTTQmTv8TPytRLDSnvm7teGWEiEEE+hyPHTVeUAcxBz1VxOKgCz/BxKc
-         Am0Ym+HTEpxP1D2u2vQK08YvOqreMedpmLNCQzvqfkcSWWxsycWUfOHPD95dXSzZsB
-         Q9AmUVduI1DNK6H8fEGBNPtsFuSRoeP8q/jzCYY09qkjOSTkshgbrEfbZkSgSLs/NC
-         nbiYmuOgJ2RJQaGElU7slr5O3+UYrzdtEVwtoCeIliH/I6uYg4XhlABfoWRef1lZ9Y
-         IzjLY5PB5SSFw==
-Message-ID: <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Date:   Wed, 21 Sep 2022 06:33:28 -0400
-In-Reply-To: <20220921000032.GR3600936@dread.disaster.area>
-References: <871f9c5153ddfe760854ca31ee36b84655959b83.camel@hammerspace.com>
-         <e8922bc821a40f5a3f0a1301583288ed19b6891b.camel@kernel.org>
-         <166328063547.15759.12797959071252871549@noble.neil.brown.name>
-         <YyQdmLpiAMvl5EkU@mit.edu>
-         <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
-         <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
-         <20220918235344.GH3600936@dread.disaster.area>
-         <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
-         <20220920001645.GN3600936@dread.disaster.area>
-         <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
-         <20220921000032.GR3600936@dread.disaster.area>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        Wed, 21 Sep 2022 07:20:21 -0400
+Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B5662A9A;
+        Wed, 21 Sep 2022 04:20:20 -0700 (PDT)
+Received: by mail-vk1-xa2f.google.com with SMTP id g27so2983492vkl.3;
+        Wed, 21 Sep 2022 04:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=anU1i7MF58NuViEAXkHY0FObccWlEMJ/allqA3IY4JU=;
+        b=IUbNlfgnSKAWC3Fhvc11b0WnSQpC0q7oOEbHD9uvEUoeSIcKztG5+0U+NS0x5MpRsE
+         r4hb+tOzwFa3461TcHU1CqIkivtkNqhq0u38Zg0qJ3jYYISg2jk78YHHsUvMPpsCh99W
+         /5yFlvX+zv+FfGhW4qGbpmrK4NIqkb1y+2iz7L+EE3mceCOs9FL2Qn6OKeCtiVKqwb4h
+         KSnm6+cn5C6Zj9+10szVvNxBbKkvKzVvOJ2HqR2EajFzkXiKWHjIlx3YeyS1nTv3EMvv
+         fKvLxE4ywhPvXojpnVEWBOezpnY2eJr+Q/fYtGMOZq24Z5xNUfYJTCkYP1aBIw6sL5qS
+         ZxSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=anU1i7MF58NuViEAXkHY0FObccWlEMJ/allqA3IY4JU=;
+        b=oH25gptimr11nRZc3ZVM4MFv4Y3tDl0MDe3S2hS83q6ENwOenUN89wegdg5QDoxdy0
+         uFVJPn9jzuckmIgzpMyJ66sb16RfhtASomLy0qR49/SMpcZgSaaGJ/9n6uORp97wmY8F
+         vkRYJWobb7nInVS8wLv1/LRA0UqWn63rT/j8AmxYryG8VSk80NJL+tGocuhf6cR/3qGo
+         kPgUhqkXotsiTDAu9nkca7TTXYY+C9kyLENRAHrg9cTkkyTME++ww9gHszwPJgE8CDVJ
+         gi5tSWI1JaAQH5Nj8uVUTbjgqS6DiTVoB+5n9WyCK33FG1X9pAsEKfObsy55jmN+zTAI
+         Ypiw==
+X-Gm-Message-State: ACrzQf2bLdP7Fz7TKksulpyZmXe6PSZ2HYP3zrMZqWPpI1do2DwHXO66
+        QPsAvUn6euulxd/QEs5Wfv/2V5Bgb7PRE3s5HAA=
+X-Google-Smtp-Source: AMsMyM4KSqcuc6B7TOWUec0eZnzNQqxNHwe+OgLBDCok4SOygwE6J+nXWOzEe2YbhujI+z6gYGk/noqCN6J172rhrPI=
+X-Received: by 2002:a1f:a004:0:b0:398:3e25:d2a7 with SMTP id
+ j4-20020a1fa004000000b003983e25d2a7mr10228391vke.36.1663759219145; Wed, 21
+ Sep 2022 04:20:19 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CAOQ4uxjvx33KRSm-HX2AjL=aB5yO=FeWokZ1usDKW7+R4Ednhg@mail.gmail.com>
+ <20220620091136.4uosazpwkmt65a5d@quack3.lan> <CAOQ4uxg+uY5PdcU1=RyDWCxbP4gJB3jH1zkAj=RpfndH9czXbg@mail.gmail.com>
+ <20220621085956.y5wyopfgzmqkaeiw@quack3.lan> <CAOQ4uxheatf+GCHxbUDQ4s4YSQib3qeYVeXZwEicR9fURrEFBA@mail.gmail.com>
+ <CAOQ4uxguwnx4AxXqp_zjg39ZUaTGJEM2wNUPnNdtiqV2Q9woqA@mail.gmail.com>
+ <YyH61deSiW1TnY//@magnolia> <CAOQ4uxhFJWW-ykyzomHCUWfWvbJNEmetw0G5mUYjFGoYJBb7NA@mail.gmail.com>
+ <YyIR4XmDYkYIK2ad@magnolia> <20220919230947.GM3600936@dread.disaster.area>
+ <20220920022439.GP3600936@dread.disaster.area> <CAOQ4uxgNBWpdpoXrqwhtGkMCLr3aAdv2=_oEYtafWK1WrP4-hw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgNBWpdpoXrqwhtGkMCLr3aAdv2=_oEYtafWK1WrP4-hw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 21 Sep 2022 14:20:07 +0300
+Message-ID: <CAOQ4uxj4uCRkqN+L1RYmY9Ey=eu3xp249Y6BYU-JQFjgGrOdQg@mail.gmail.com>
+Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw workload
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-09-21 at 10:00 +1000, Dave Chinner wrote:
-> On Tue, Sep 20, 2022 at 06:26:05AM -0400, Jeff Layton wrote:
-> > On Tue, 2022-09-20 at 10:16 +1000, Dave Chinner wrote:
-> > > IOWs, the NFS server can define it's own on-disk persistent metadata
-> > > using xattrs, and you don't need local filesystems to be modified at
-> > > all. You can add the crash epoch into the change attr that is sent
-> > > to NFS clients without having to change the VFS i_version
-> > > implementation at all.
-> > >=20
-> > > This whole problem is solvable entirely within the NFS server code,
-> > > and we don't need to change local filesystems at all. NFS can
-> > > control the persistence and format of the xattrs it uses, and it
-> > > does not need new custom on-disk format changes from every
-> > > filesystem to support this new application requirement.
-> > >=20
-> > > At this point, NFS server developers don't need to care what the
-> > > underlying filesystem format provides - the xattrs provide the crash
-> > > detection and enumeration the NFS server functionality requires.
-> > >=20
-> >=20
-> > Doesn't the filesystem already detect when it's been mounted after an
-> > unclean shutdown?
->=20
-> Not every filesystem will be able to guarantee unclean shutdown
-> detection at the next mount. That's the whole problem - NFS
-> developers are asking for something that cannot be provided as
-> generic functionality by individual filesystems, so the NFS server
-> application is going to have to work around any filesytem that
-> cannot provide the information it needs.
->=20
-> e.g. ext4 has it journal replayed by the userspace tools prior
-> to mount, so when it then gets mounted by the kernel it's seen as a
-> clean mount.
->=20
-> If we shut an XFS filesystem down due to a filesystem corruption or
-> failed IO to the journal code, the kernel might not be able to
-> replay the journal on mount (i.e. it is corrupt).  We then run
-> xfs_repair, and that fixes the corruption issue and -cleans the
-> log-. When we next mount the filesystem, it results in a _clean
-> mount_, and the kernel filesystem code can not signal to NFS that an
-> unclean mount occurred and so it should bump it's crash counter.
->=20
-> IOWs, this whole "filesystems need to tell NFS about crashes"
-> propagates all the way through *every filesystem tool chain*, not
-> just the kernel mount code. And we most certainly don't control
-> every 3rd party application that walks around in the filesystem on
-> disk format, and so there are -zero- guarantees that the kernel
-> filesystem mount code can give that an unclean shutdown occurred
-> prior to the current mount.
->=20
-> And then for niche NFS server applications (like transparent
-> fail-over between HA NFS servers) there are even more rigid
-> constraints on NFS change attributes. And you're asking local
-> filesystems to know about these application constraints and bake
-> them into their on-disk format again.
->=20
-> This whole discussion has come about because we baked certain
-> behaviour for NFS into the on-disk format many, many years ago, and
-> it's only now that it is considered inadequate for *new* NFS
-> application related functionality (e.g. fscache integration and
-> cache validity across server side mount cycles).
->=20
-> We've learnt a valuable lesson from this: don't bake application
-> specific persistent metadata requirements into the on-disk format
-> because when the application needs to change, it requires every
-> filesystem that supports taht application level functionality
-> to change their on-disk formats...
->=20
-> > I'm not sure what good we'll get out of bolting this
-> > scheme onto the NFS server, when the filesystem could just as easily
-> > give us this info.
->=20
-> The xattr scheme guarantees the correct application behaviour that the NF=
-S
-> server requires, all at the NFS application level without requiring
-> local filesystems to support the NFS requirements in their on-disk
-> format. THe NFS server controls the format and versioning of it's
-> on-disk persistent metadata (i.e. the xattrs it uses) and so any
-> changes to the application level requirements of that functionality
-> are now completely under the control of the application.
->=20
-> i.e. the application gets to manage version control, backwards and
-> forwards compatibility of it's persistent metadata, etc. What you
-> are asking is that every local filesystem takes responsibility for
-> managing the long term persistent metadata that only NFS requires.
-> It's more complex to do this at the filesystem level, and we have to
-> replicate the same work for every filesystem that is going to
-> support this on-disk functionality.
->=20
-> Using xattrs means the functionality is implemented once, it's
-> common across all local filesystems, and no exportable filesystem
-> needs to know anything about it as it's all self-contained in the
-> NFS server code. THe code is smaller, easier to maintain, consistent
-> across all systems, easy to test, etc.
->=20
-> It also can be implemented and rolled out *immediately* to all
-> existing supported NFS server implementations, without having to
-> wait months/years (or never!) for local filesystem on-disk format
-> changes to roll out to production systems.
->=20
-> Asking individual filesystems to implement application specific
-> persistent metadata is a *last resort* and should only be done if
-> correctness or performance cannot be obtained in any other way.
->=20
-> So, yeah, the only sane direction to take here is to use xattrs to
-> store this NFS application level information. It's less work for
-> everyone, and in the long term it means when the NFS application
-> requirements change again, we don't need to modify the on-disk
-> format of multiple local filesystems.
->=20
-> > In any case, the main problem at this point is not so much in detecting
-> > when there has been an unclean shutdown, but rather what to do when
-> > there is one. We need to to advance the presented change attributes
-> > beyond the largest possible one that may have been handed out prior to
-> > the crash.=20
->=20
-> Sure, but you're missing my point: by using xattrs for detection,
-> you don't need to involve anything to do with local filesystems at
-> all.
->=20
-> > How do we determine what that offset should be? Your last email
-> > suggested that there really is no limit to the number of i_version bump=
-s
-> > that can happen in memory before one of them makes it to disk. What can
-> > we do to address that?
->=20
-> <shrug>
->=20
-> I'm just pointing out problems I see when defining this as behaviour
-> for on-disk format purposes. If we define it as part of the on-disk
-> format, then we have to be concerned about how it may be used
-> outside the scope of just the NFS server application.=20
->=20
-> However, If NFS keeps this metadata and functionaly entirely
-> contained at the application level via xattrs, I really don't care
-> what algorithm NFS developers decides to use for their crash
-> sequencing. It's not my concern at this point, and that's precisely
-> why NFS should be using xattrs for this NFS specific functionality.
->=20
+On Tue, Sep 20, 2022 at 6:08 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+[...]
 
-I get it: you'd rather not have to deal with what you see as an NFS
-problem, but I don't get how what you're proposing solves anything. We
-might be able to use that scheme to detect crashes, but that's only part
-of the problem (and it's a relatively simple part of the problem to
-solve, really).
+> > As I just discussed on #xfs with Darrick, there are other options
+> > we can persue here.
+> >
+> > The first question we need to ask ourselves is this: what are we
+> > protecting against with exclusive buffered write behaviour?
+> >
+> > The answer is that we know there are custom enterprise database
+> > applications out there that assume that 8-16kB buffered writes are
+> > atomic. I wish I could say these are legacy applications these days,
+> > but they aren't - they are still in production use, and the
+> > applications build on those custom database engines are still under
+> > active development and use.
+> >
+> > AFAIK, the 8kB atomic write behaviour is historical and came from
+> > applications originally designed for Solaris and hardware that
+> > had an 8kB page size. Hence buffered 8kB writes were assumed to be
+> > the largest atomic write size that concurrent reads would not see
+> > write tearing. These applications are now run on x86-64 boxes with
+> > 4kB page size, but they still assume that 8kB writes are atomic and
+> > can't tear.
+> >
+>
+> Interesting. I did not know which applications needed that behavior.
+> The customer benchmark that started the complaint uses 8k buffered
+> IO size (as do the benchmarks that I posted in this thread), so far as
+> I am concerned, fixing small buffered IO will solve the problem.
+>
+> > So, really, these days the atomic write behaviour of XFS is catering
+> > for these small random read/write IO applications, not to provide
+> > atomic writes for bulk data moving applications writing 2GB of data
+> > per write() syscall. Hence we can fairly safely say that we really
+> > only need "exclusive" buffered write locking for relatively small
+> > multipage IOs, not huge IOs.
+> >
+> > We can do single page shared buffered writes immediately - we
+> > guarantee that while the folio is locked, a buffered read cannot
+> > access the data until the folio is unlocked. So that could be the
+> > first step to relaxing the exclusive locking requirement for
+> > buffered writes.
+> >
+> > Next we need to consider that we now have large folio support in the
+> > page cache, which means we can treat contiguous file ranges larger
+> > than a single page a single atomic unit if they are covered by a
+> > multi-page folio. As such, if we have a single multi-page folio that
+> > spans the entire write() range already in cache, we can run that
+> > write atomically under a shared IO lock the same as we can do with
+> > single page folios.
+> >
+> > However, what happens if the folio is smaller than the range we need
+> > to write? Well, in that case, we have to abort the shared lock write
+> > and upgrade to an exclusive lock before trying again.
+> >
 
-Maybe you can clarify it for me:
+Please correct me if I am wrong, but with current upstream, the only
+way that multi page folios are created for 4K block / 4K page setup are
+during readahead.
 
-Suppose we go with what you're saying and store some information in
-xattrs that allows us to detect crashes in some fashion. The server
-crashes and comes back up and we detect that there was a crash earlier.
+We *could* allocate multi page folios on write to an allocated block range
+that maps inside a single extent, but there is no code for that today.
 
-What does nfsd need to do now to ensure that it doesn't hand out a
-duplicate change attribute?=20
+It seems that without this code, any write to a region of page cache not
+pre-populated using readahead, would get exclusive iolock for 8K buffered
+writes until that single page folio cache entry is evicted.
 
-Until we can answer that question, detecting crashes doesn't matter.
---=20
-Jeff Layton <jlayton@kernel.org>
+Am I reading the iomap code correctly?
+
+> > Of course, we can only determine if the write can go ahead once we
+> > have the folio locked. That means we need a new non-blocking write
+> > condition to be handled by the iomap code. We already have several
+> > of them because of IOCB_NOWAIT semantics that io_uring requires for
+> > buffered writes, so we are already well down the path of needing to
+> > support fully non-blocking writes through iomap.
+> >
+> > Further, the recent concurrent write data corruption that we
+> > uncovered requires a new hook in the iomap write path to allow
+> > writes to be aborted for remapping because the cached iomap has
+> > become stale. This validity check can only be done once the folio
+> > has locked - if the cached iomap is stale once we have the page
+> > locked, then we have to back out and remap the write range and
+> > re-run the write.
+> >
+> > IOWs, we are going to have to add write retries to the iomap write
+> > path for data integrity purposes. These checks must be done only
+> > after the folio has been locked, so we really end up getting the
+> > "can't do atomic write" retry infrastructure for free with the data
+> > corruption fixes...
+> >
+> > With this in place, it becomes trivial to support atomic writes with
+> > shared locking all the way up to PMD sizes (or whatever the maximum
+> > multipage folio size the arch supports is) with a minimal amount of
+> > extra code.
+> >
+> > At this point, we have a buffered write path that tries to do shared
+> > locking first, and only falls back to exclusive locking if the page
+> > cache doesn't contain a folio large enough to soak up the entire
+> > write.
+> >
+> > In future, Darrick suggested we might be able to do a "trygetlock a
+> > bunch of folios" operation that locks a range of folios within the
+> > current iomap in one go, and then we write into all of them in a
+> > batch before unlocking them all. This would give us multi-folio
+> > atomic writes with shared locking - this is much more complex, and
+> > it's unclear that multi-folio write batching will gain us anything
+> > over the single folio check described above...
+> >
+> > Finally, for anything that is concurrently reading and writing lots
+> > of data in chunks larger than PMD sizes, the application should
+> > really be using DIO with AIO or io_uring. So falling back to
+> > exclusive locking for such large single buffered write IOs doesn't
+> > seem like a huge issue right now....
+> >
+> > Thoughts?
+>
+> That sounds like a great plan.
+> I especially liked the "get it for free" part ;)
+> Is there already WIP for the data integrity issue fix?
+>
+
+OK. I see your patch set.
+
+> If there is anything I can do to assist, run the benchmark or anything
+> please let me know.
+>
+> In the meanwhile, I will run the benchmark with XFS_IOLOCK_SHARED
+> on the write() path.
+>
+
+As expected, results without exclusive iolock look very good [*].
+
+Thanks,
+Amir.
+
+[*] I ran the following fio workload on e2-standard-8 GCE machine:
+
+[global]
+filename=/mnt/xfs/testfile.fio
+norandommap
+randrepeat=0
+size=5G
+bs=8K
+ioengine=psync
+numjobs=8
+group_reporting=1
+direct=0
+fallocate=1
+end_fsync=0
+runtime=60
+
+[xfs-read]
+readwrite=randread
+
+[xfs-write]
+readwrite=randwrite
+
+========================= v6.0-rc4 (BAD) =========
+Run #1:
+   READ: bw=7053KiB/s (7223kB/s)
+  WRITE: bw=155MiB/s (163MB/s)
+
+Run #2:
+   READ: bw=4672KiB/s (4784kB/s)
+  WRITE: bw=355MiB/s (372MB/s)
+
+Run #3:
+   READ: bw=5887KiB/s (6028kB/s)
+  WRITE: bw=137MiB/s (144MB/s)
+
+========================= v6.0-rc4 (read no iolock like ext4 - GOOD) =========
+   READ: bw=742MiB/s (778MB/s)
+  WRITE: bw=345MiB/s (361MB/s)
+
+========================= v6.0-rc4 (write shared iolock - BETTER) =========
+Run #1:
+   READ: bw=762MiB/s (799MB/s)
+  WRITE: bw=926MiB/s (971MB/s)
+
+Run #2:
+   READ: bw=170MiB/s (178MB/s)
+  WRITE: bw=982MiB/s (1029MB/s)
+
+Run #3:
+   READ: bw=755MiB/s (792MB/s)
+  WRITE: bw=933MiB/s (978MB/s)
