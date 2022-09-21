@@ -2,221 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E235E5627
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 00:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A11C5E5637
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 00:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbiIUWOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 18:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
+        id S230182AbiIUWXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 18:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231138AbiIUWOW (ORCPT
+        with ESMTP id S229641AbiIUWXS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 18:14:22 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21C81A74FE;
-        Wed, 21 Sep 2022 15:14:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8CFEF11009AD;
-        Thu, 22 Sep 2022 08:14:17 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ob7yy-00AYcI-1G; Thu, 22 Sep 2022 08:14:16 +1000
-Date:   Thu, 22 Sep 2022 08:14:16 +1000
-From:   Dave Chinner <david@fromorbit.com>
+        Wed, 21 Sep 2022 18:23:18 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C7932AB0;
+        Wed, 21 Sep 2022 15:23:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Uz9XHBPFuUnxJL6/DDS7tvwZYo36F6j5BOblFKcGsMDYO5Nus8gdLJbPOtfjtvtJdcsuPbHE58TY5Bx9W9aFSpuTTC/eOG+cde8XgGwHueoFxNB1KyX0jU+SNymeh93qmUY3fgXy/2y8keu5eCBLmT7HunKhWWgKHO1Z4bmS186DZEGhrhzlwDFKCr3hBJ2VlZF9nKu3s7TdMSpyQ21jDj5PzzfiU4nyfUqHUXMrmWigWlCzlRFRJMDEi9KnOVPBgXzal63Q3oQI+WBA1I/kL/absZ8tqVMbwLjAgjgRNgQ5tr81RuHid1gcq/YI/Di6d++OftrVfTuzIGO1i5WQ5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PcC3oTkFp/q5EJzu3CmlxnHq/Cidmvvc7HEyiGD9BEA=;
+ b=VP04BsMqnC5gylNpJmbX/YrA0rZXQtCny3H1Tn9+zQ1vVOCjrxN1C4c1tbFb5V5WQ5AJ7FkyWT2N+r90YO7OW/Gnjweh8txK6AB+K/FXJXa09vm44s0JXE51NbWoWOgLE7YPYcrYOEHVCkxYcwL5J0+KGVRLHr6waC/iKa9/KCmf2D8OCXHMbTbjVB7PeZEmbVQ2V76JtjBJotpk9+rw92uHWNm66mglAaNCYmQPqZm9BfjwYVIgFMANH1JCOfr+nB/3c5clwaAaISW5Imm1AM226p6iu7rntlLuJWUuQeA4PVlM3eDWA0thM9IC6GaE+ljPvBZ3ymqEWN3vjiDvCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcC3oTkFp/q5EJzu3CmlxnHq/Cidmvvc7HEyiGD9BEA=;
+ b=ECQsH0FlNCTa2FoyWiFfsIWTgLLTPUQhMRyJlvKp+un2WnXHmdF8/CRsEG21/ZLfwchI9yjd1k/NIuvBLfL+kAg3cwh4avh1d4QjqB5BXD8ItkDKuk2p0AjNs8eRk2C+Qqs176LH+T/zrga4XrVSIQusgQFSaFxG75WSWFoF5wHwwVqdX31S++pY8i38JpTmj8wmmc0fGZf080hRYKYao6oVQiIdRhuRf2LWmLetWdT5UtHkywBLJOQ+gY7k9/zLZ6PzXI37OGE7cWTAIDxRqPj6OB1pk8nKJXosR64BHKv+kzIcXxRmvr2fhSmYFzPlG/BdRNWfiF+zeeW943vFHw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB4181.namprd12.prod.outlook.com (2603:10b6:610:a8::16)
+ by CY5PR12MB6249.namprd12.prod.outlook.com (2603:10b6:930:23::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.18; Wed, 21 Sep
+ 2022 22:23:15 +0000
+Received: from CH2PR12MB4181.namprd12.prod.outlook.com
+ ([fe80::3d9f:c18a:7310:ae46]) by CH2PR12MB4181.namprd12.prod.outlook.com
+ ([fe80::3d9f:c18a:7310:ae46%8]) with mapi id 15.20.5654.016; Wed, 21 Sep 2022
+ 22:23:14 +0000
+Date:   Wed, 21 Sep 2022 19:23:13 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
 To:     Dan Williams <dan.j.williams@intel.com>
 Cc:     akpm@linux-foundation.org, Matthew Wilcox <willy@infradead.org>,
         Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
         Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org,
         linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <20220921221416.GT3600936@dread.disaster.area>
+Subject: Re: [PATCH v2 15/18] devdax: Use dax_insert_entry() +
+ dax_delete_mapping_entry()
+Message-ID: <YyuO0ZL0HG6zZ9PI@nvidia.com>
 References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
- <166329933874.2786261.18236541386474985669.stgit@dwillia2-xfh.jf.intel.com>
- <20220918225731.GG3600936@dread.disaster.area>
- <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
- <20220919212959.GL3600936@dread.disaster.area>
- <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
-MIME-Version: 1.0
+ <166329939733.2786261.13946962468817639563.stgit@dwillia2-xfh.jf.intel.com>
+ <YysbXPnA3Z6AzWCw@nvidia.com>
+ <632b3246548ff_66d1a29431@dwillia2-xfh.jf.intel.com.notmuch>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=632b8cbc
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
-        a=kcSw2F0C3OlGkMnRgwgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <632b3246548ff_66d1a29431@dwillia2-xfh.jf.intel.com.notmuch>
+X-ClientProxiedBy: MN2PR08CA0027.namprd08.prod.outlook.com
+ (2603:10b6:208:239::32) To CH2PR12MB4181.namprd12.prod.outlook.com
+ (2603:10b6:610:a8::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4181:EE_|CY5PR12MB6249:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb906428-e6a6-404f-9af8-08da9c1fe016
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GqQjbFMrFj5zKFgzHwP5LwlrKZkGpnA6TtKTay1/H4cGigp3Fdal1tcRVIXVAPupqYb4h79B634cBD8LoRnHGli5cRNW8q1m8+5dzqwITMdrvoVzCu+Iwbmujli+FoY3mZIq0yqNyDuRz7MfRLi9vmFXqw/ZR/vVbEjCrTKW1OBYNT2Rg95EVg6aiNp1HQqm3WWP0y8X2w6yI7I6NCVK/ljis65i5LeWzmeW8rj2lQpD1ywQxmz8gb/VJYaNoY0wZ1li9SOAHeD2e5/sCANiJzyTRQNygo6FSuaHoJ0tNThZSk58UTE/NyK2fKWVOYEe1TSOh2eXacMGulOwfXOKhfoCEmq+u4KcLPaAQcw7UuacMaEbcEN5jvM2Ze95b7i5tb9WWFkUEVt6m0LMcfgqse75URj/aZH11qKJfWovHAtPs7bcyq5IIFXnlzvSAWE1PvdA/sRpCHgtXo6SShSyBsom4o8RQL8hxgbn0CUE4ss6JuZybkpYYOBpMQxKOjP00RAmqufoug9lrqTJBTT9zmUuwSzikfrtJ1erOQEVNKov+uj9vePdz1rO61OISblRGy65PtegH6957ELeASGp38EJwrRfuPj7OpPwpV0yf1dAVukB897DgMDVTQvY5ymLWA4YjNIaRHknPaBLJOQBdE7XTg2szyLxnkKlCc6NeF6DEthYGGtkKUW9AdQYVCch8yF2L1OKx9hWwwXIyAMXVg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(39860400002)(136003)(346002)(376002)(451199015)(5660300002)(41300700001)(8936002)(38100700002)(86362001)(66556008)(66946007)(66476007)(7416002)(2906002)(4744005)(4326008)(8676002)(83380400001)(478600001)(26005)(6916009)(36756003)(54906003)(316002)(6512007)(6506007)(6486002)(2616005)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WgAvEZHORIrL4cWTDrhISBhz02wejbs71n0UGz6V9U6yAqk/Oe++U32cJnwI?=
+ =?us-ascii?Q?RlBf7C24/vBwGEzPw1BJ/PUNnSaYUQtcCGy36A6RoaSwEgEC5tz4KMPOtWcg?=
+ =?us-ascii?Q?l/HdzbqK44UxiyLlCLzEf1loE03rmh4XbxQ1Q1e00Mj9HJn3yTjQMDC0+DkZ?=
+ =?us-ascii?Q?3+LloZXRV+9444r98zvvvICVc/0gBoLCrOgMhIUlRC3oAiRgFo/nr0V4tXuO?=
+ =?us-ascii?Q?dRzqjcBLvnTOiVZdsZwFncSsK48C3/doiLOeI8h7AsJqEfKcrFYfRR8O3dKZ?=
+ =?us-ascii?Q?BiCA7iZTb3narNBb+mEK4lpx92kOzMg9OGOheUAGrhiAJgbSSbdG9WBqq6fz?=
+ =?us-ascii?Q?bNQn6Xtq9tZK7usyv20tK7QoOCF8ErMt+NCFly0Xu03x8r6APuKmc3Lsf3W7?=
+ =?us-ascii?Q?nF5FkrHmr54XWd9nO5TxF0jj1kbM+vI6Atcm/tSs7XYTRZmLAZK3I4JNkl2F?=
+ =?us-ascii?Q?eFYspsEDQJU0HD7L06IE08lYGznYQSLIldZPhRRPNykA4ZCzF8ox6Z4s1qzx?=
+ =?us-ascii?Q?/DcSv65oj021Gr9Ecc+2JD4uOwM1Dmurs7RdvP/sm1IHbCxqE7a5tFsT2aWp?=
+ =?us-ascii?Q?wsPWDVBRxnYeK2m8Xj7a7VQQv/+GRyGofuEVMsZDFYnkDlmiexDzMCo3e9af?=
+ =?us-ascii?Q?fxdAqrLU0cZdsKnZrdxxYXTIoQRFcm18sc6QDPKGJhIZXyDrPtLnnqjm21ah?=
+ =?us-ascii?Q?g6xYfUhwF9STlA45KSNUN4qI/n+BHIJgI8qOK7f/uaAWbR7g0z9xE4mZPSkD?=
+ =?us-ascii?Q?NMLpVQBiQ/y06yQL0Wzeot0BtPHrDc5HcGVtQKoAmXCgRiKSAifAZ8KF4c1f?=
+ =?us-ascii?Q?VDechIBAz+QgFMfp1dmyvDr7tE+aDtY7T3DvUw/RFscvVWrTJhSMmJp5hbak?=
+ =?us-ascii?Q?9hxSqGmsSVN2Eiz6ip1DXNBq6eTu7i5WEhxmvJ4OdWPdnHuA8cmE70TAe57g?=
+ =?us-ascii?Q?eNBHPDBP22B0iuQ/hSuftlDapb2yS9VHV9uo36kJpn7+rKWExTSstOPYE1c+?=
+ =?us-ascii?Q?Z2POWlCnz+DnWp/P3NzAISI2saC2F0rhjbxttMC8hf6eJP8rS7TkqtYWxuy4?=
+ =?us-ascii?Q?ITijI963eV2yiFl+KVGuF953qnsdSlZOXcd6OgBW7YavvTGlFxTGBQkyCgm9?=
+ =?us-ascii?Q?pzaixGXgBok+IRMhSZaUWpf1mUlfEOmAWc8PPeqRxQIdm/VxpzXTT+czNekC?=
+ =?us-ascii?Q?BLIv6KgMTqBLtlVWvjTBTtcp2KUytqvBEoEVXC7g8v1xHMab8nt9+n0LlE2R?=
+ =?us-ascii?Q?Ois0pfwV5FsgecWVjTiduhTM20M8/OApw6xsvfCaw0alo9As3bOanjLtQJUZ?=
+ =?us-ascii?Q?voK5tu3HkNnFlBxNwH8O3az7LvA6Vxig/mHDbCra30/ylotFyenCDIlq/E3V?=
+ =?us-ascii?Q?y/DrgWPkDJVG/GhubqwBpqFCNNB4fNr5qJiSU+CgNhIm5x9kI0ZBiUf58EcK?=
+ =?us-ascii?Q?UTaJb8CK2/9La/7cWOp6/xv2CXZFPb8W0GT1tt5H4xZHWaHm1TrAmP9/Gf7T?=
+ =?us-ascii?Q?jTvby6XRSHrEHslYNB/DjGYz0EZbe9z74NDYBRyDAfAqU3JZH2rA9e3IAVND?=
+ =?us-ascii?Q?i2/AqwM3s2QPC97uXHFsKP3H3LaH6q7WdG+aoQC7?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb906428-e6a6-404f-9af8-08da9c1fe016
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4181.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2022 22:23:14.7904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5icy4kyVaV/Ug1SjLrTA57yrcCDJgN9Nv49MLH33xCSkfKx3qk3XTKgo2YV2q1tD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6249
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 09:44:52AM -0700, Dan Williams wrote:
-> Dave Chinner wrote:
-> > On Mon, Sep 19, 2022 at 09:11:48AM -0700, Dan Williams wrote:
-> > > Dave Chinner wrote:
-> > > > That all said, this really looks like a bit of a band-aid.
-> > > 
-> > > It definitely is since DAX is in this transitory state between doing
-> > > some activities page-less and others with page metadata. If DAX was
-> > > fully committed to behaving like a typical page then
-> > > unmap_mapping_range() would have already satisfied this reference
-> > > counting situation.
-> > > 
-> > > > I can't work out why would we we ever have an actual layout lease
-> > > > here that needs breaking given they are file based and active files
-> > > > hold a reference to the inode. If we ever break that, then I suspect
-> > > > this change will cause major problems for anyone using pNFS with XFS
-> > > > as xfs_break_layouts() can end up waiting for NFS delegation
-> > > > revocation. This is something we should never be doing in inode
-> > > > eviction/memory reclaim.
-> > > > 
-> > > > Hence I have to ask why this lease break is being done
-> > > > unconditionally for all inodes, instead of only calling
-> > > > xfs_break_dax_layouts() directly on DAX enabled regular files?  I
-> > > > also wonder what exciting new system deadlocks this will create
-> > > > because BREAK_UNMAP_FINAL can essentially block forever waiting on
-> > > > dax mappings going away. If that DAX mapping reclaim requires memory
-> > > > allocations.....
-> > > 
-> > > There should be no memory allocations in the DAX mapping reclaim path.
-> > > Also, the page pins it waits for are precluded from being GUP_LONGTERM.
-> > 
-> > So if the task that holds the pin needs memory allocation before it
-> > can unpin the page to allow direct inode reclaim to make progress?
-> 
-> No, it couldn't, and I realize now that GUP_LONGTERM has nothing to do
-> with this hang since any GFP_KERNEL in a path that took a DAX page pin
-> path could run afoul of this need to wait.
-> 
-> So, this has me looking at invalidate_inodes() and iput_final(), where I
-> did not see the reclaim entanglement, and thinking DAX has the unique
-> requirement to make sure that no access to a page outlives the hosting
-> inode.
-> 
-> Not that I need to tell you, but to get my own thinking straight,
-> compare that to typical page cache as the pinner can keep a pinned
-> page-cache page as long as it wants even after it has been truncated.
+On Wed, Sep 21, 2022 at 08:48:22AM -0700, Dan Williams wrote:
 
-Right, because the page pin prevents the page from being freed
-after the page references the page cache keeps have been released.
-
-But page cache page != DAX page. The DAX page is a direct reference
-to the storage media, not a generic reference counted kernel page
-that the kernel will keep alive as long as there is a reference to
-it.
-
-Hence for a DAX page, we have to revoke all access to the page
-before the controlling owner context is torn down, otherwise we have
-a use-after-free scenario at the storage media level. For a FSDAX
-file data page, that owner context is the inode...
-
-> DAX needs to make sure that truncate_inode_pages() ceases all access to
-> the page synchronous with the truncate.
-
-Yes, exactly.
-
+> The fsdax core now manages pgmap references when servicing faults that
+> install new mappings, and elevates the page reference until it is
+> zapped. It coordinates with the VFS to make sure that all page
+> references are dropped before the hosting inode goes out of scope
+> (iput_final()).
 >
-> The typical page-cache will
-> ensure that the next mapping of the file will get a new page if the page
-> previously pinned for that offset is still in use, DAX can not offer
-> that as the same page that was previously pinned is always used.
+> In order to delete the unnecessary pgmap reference taking in mm/gup.c
+> devdax needs to move to the same model.
 
-Yes, because the new DAX ipage lookup will return the original page
-in the storage media, not a newly instantiated page cache page.
+I think this patch is more about making devdax and fsdax use the same
+set of functions and logic so that when it gets to patch 16/17 devdax
+doesn't break. That understanding matches the first paragraph, at
+least.
 
-> So I think this means something like this:
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 6462276dfdf0..ab16772b9a8d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -784,6 +784,11 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
->                         continue;
->                 }
->  
-> +               if (dax_inode_busy(inode)) {
-> +                       busy = 1;
-> +                       continue;
-> +               }
+I would delete the remark about gup since it is really patch 17 that
+allows gup to be fixed by making it so that refcount == 0 means not to
+look at the pgmap (instead of refcount == 1 as is now) ?
 
-That this does more than a check (i.e. it runs whatever
-dax_zap_pages() does) means it cannot be run under the inode
-spinlock.
-
-As this is called from the block device code when a bdev is being
-removed (i.e. will only find a superblock and inodes to invalidate
-on hot-unplug), shouldn't this DAX mapping invalidation actually be
-handled by the pmem failure notification infrastructure we've just
-added for reflink?
-
-> +
->                 inode->i_state |= I_FREEING;
->                 inode_lru_list_del(inode);
->                 spin_unlock(&inode->i_lock);
-> @@ -1733,6 +1738,8 @@ static void iput_final(struct inode *inode)
->                 spin_unlock(&inode->i_lock);
->  
->                 write_inode_now(inode, 1);
-> +               if (IS_DAX(inode))
-> +                       dax_break_layouts(inode);
->  
->                 spin_lock(&inode->i_lock);
->                 state = inode->i_state;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 9eced4cc286e..e4a74ab310b5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3028,8 +3028,20 @@ extern struct inode * igrab(struct inode *);
->  extern ino_t iunique(struct super_block *, ino_t);
->  extern int inode_needs_sync(struct inode *inode);
->  extern int generic_delete_inode(struct inode *inode);
-> +
-> +static inline bool dax_inode_busy(struct inode *inode)
-> +{
-> +       if (!IS_DAX(inode))
-> +               return false;
-> +
-> +       return dax_zap_pages(inode) != NULL;
-> +}
-> +
->  static inline int generic_drop_inode(struct inode *inode)
->  {
-> +       if (dax_inode_busy(inode))
-> +               return 0;
-> +
->         return !inode->i_nlink || inode_unhashed(inode);
->  }
-
-I don't think that's valid. This can result in unreferenced unlinked
-inodes that should be torn down immediately being placed in the LRU
-and cached in memory and potentially not processed until there is
-future memory pressure or an unmount....
-
-i.e. dropping the final reference on an unlinked inode needs to
-reclaim the inode immediately and allow the filesystem to free the
-inode, regardless of any other factor. Nothing should have an active
-reference to the inode or inode related data/metadata at this point
-in time.
-
-Honestly, this still seems like a band-aid because it doesn't appear
-to address that something has pinned the storage media without
-having an active reference to the object that arbitrates access to
-that storage media (i.e. the inode and, by proxy, then filesystem).
-Where are these DAX page pins that don't require the pin holder to
-also hold active references to the filesystem objects coming from?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Jason
