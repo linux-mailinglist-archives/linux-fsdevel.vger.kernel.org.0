@@ -2,90 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E708A5C0016
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 16:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 530CC5C0031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Sep 2022 16:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbiIUOk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 10:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
+        id S229987AbiIUOoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 10:44:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiIUOkY (ORCPT
+        with ESMTP id S229962AbiIUOou (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 10:40:24 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097504BD2B;
-        Wed, 21 Sep 2022 07:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663771224; x=1695307224;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pM6yA6AJ9Eh1jPWxSkV7ceab4yFKTnUkuNGbuDJGxaM=;
-  b=lE29qnJZZwdkyDLF276+7dSwmLVTtwBQdCz0FlDLXLGMgsbT0t83h3pW
-   OBXgzMMtIgxK6ZMuFrwShVmHUs4Lehmiqos/iQuJbUBtWM7J03OqSj4+w
-   Q+q0QK+8JsJWftrqev/CKG1bu2g3/UGk02j6bt1eYiQsJWtsYTCS3eVjf
-   adFSW+DbuKyEBLAFJsZF9lNYoz7A4uf9FvjZIw2We6gR6YhdnSPLKFFTc
-   b5jLW+rfBUwmFzlAOZpr1YHBvnP8m3nG/ScVDwF4+YrvC4WBgeRmQVY1R
-   24sqDkipI6P+8LSGuPwwBXaB4M+dcGucTQ5gOQfPSHblSiQJHrWoTE9rc
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="363996364"
-X-IronPort-AV: E=Sophos;i="5.93,333,1654585200"; 
-   d="scan'208";a="363996364"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2022 07:40:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,333,1654585200"; 
-   d="scan'208";a="794696206"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga005.jf.intel.com with ESMTP; 21 Sep 2022 07:40:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1ob0tf-005ark-1n;
-        Wed, 21 Sep 2022 17:40:19 +0300
-Date:   Wed, 21 Sep 2022 17:40:19 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Eliav Farber <farbere@amazon.com>, viro@zeniv.linux.org.uk,
-        yangyicong@hisilicon.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hhhawa@amazon.com, jonnyc@amazon.com,
-        Akinobu Mita <akinobu.mita@gmail.com>
-Subject: Re: [PATCH] libfs: fix negative value support in simple_attr_write()
-Message-ID: <YysiU0shyB2N0kl7@smile.fi.intel.com>
-References: <20220918135036.33595-1-farbere@amazon.com>
- <20220919142413.c294de0777dcac8abe2d2f71@linux-foundation.org>
- <YysiDKaLpiUUlX78@smile.fi.intel.com>
+        Wed, 21 Sep 2022 10:44:50 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E3B11C09
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 07:44:40 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id z97so9011505ede.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 07:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=qGFU/5VhUefW7XBzQV1VrVnJM9+Ut+QbpEPjRFsby2c=;
+        b=mp/jqn3BLYYuTAvbmO13SqtWSps3eeeA7LCmCAo6k7xUkd1X1cxr1cKwSPzkmNR11T
+         t7GNu+hAfBwuhXcwIGtKpBL8E2vYrcvmuwc+lQHB+g7i/VAvuZEsF4m5w5j+wuPwahZq
+         LoMIqw3roldlV+6dywPNvhaBpEVn0JwacMygI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=qGFU/5VhUefW7XBzQV1VrVnJM9+Ut+QbpEPjRFsby2c=;
+        b=6mR1IEoyWTZCz9dfKP7m2oRoqnpKgQ0Fh8H/Kgn0TtWdam24pra2xnB0L+uhvRyDmi
+         1ewkPM5qvEVv8Hvh19FAiA4ezUuIxtMALr+vVOx5V2L9RgG83PVv46AqafQLV1QT3inq
+         3wIegjqmfzknbWSoZb2EXhBN26BSWz97em13u2QelJlo3oxwioMRzDKQoax/lIX++y7w
+         rwjOoCc7JcEEAyes10LX7gbM44j8bEiwWCtLoD7L2uuK5rmJi7p0EfB1Jd0Fu7VSWO2v
+         8qgcHf42oT+117kNs/Kzr8QhTOqDpjmgE3RnyUIEemAc6X/if3/qXtg51yy5CQ8LD6bk
+         NhSQ==
+X-Gm-Message-State: ACrzQf2hbH0dbyj5cI2PvcxmYxM5Q7PaYf2jIBNwTzdx846/9r+CJL6V
+        c+4vgis5x3P2wKZcioeyATwTbIuCz0WbNSiyaGHOBg==
+X-Google-Smtp-Source: AMsMyM6yP8UusPKTggbSJfTHVJAy/Ga3VQKqz9d63IdUNsUkniA+ijTZCgEp/UeQxmz9zF2+G4SB1K/IkylgKYKeyHk=
+X-Received: by 2002:a50:ef03:0:b0:44e:82bf:28e6 with SMTP id
+ m3-20020a50ef03000000b0044e82bf28e6mr24218282eds.270.1663771479243; Wed, 21
+ Sep 2022 07:44:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YysiDKaLpiUUlX78@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220920193632.2215598-1-mszeredi@redhat.com> <20220920193632.2215598-5-mszeredi@redhat.com>
+ <20220921082612.n5z43657f6t3z37s@wittgenstein>
+In-Reply-To: <20220921082612.n5z43657f6t3z37s@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 21 Sep 2022 16:44:28 +0200
+Message-ID: <CAJfpegsAGr4o50dsArzUPuaU1KF7vi3rgAYt4ES1-80QxXqyiw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] cachefiles: use tmpfile_open() helper
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Yu-li Lin <yulilin@google.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 05:39:09PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 19, 2022 at 02:24:13PM -0700, Andrew Morton wrote:
-> > On Sun, 18 Sep 2022 13:50:36 +0000 Eliav Farber <farbere@amazon.com> wrote:
+On Wed, 21 Sept 2022 at 10:27, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Sep 20, 2022 at 09:36:27PM +0200, Miklos Szeredi wrote:
+> > Use the tmpfile_open() helper instead of doing tmpfile creation and opening
+> > separately.
+> >
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/cachefiles/namei.c | 26 ++++++++++----------------
+> >  1 file changed, 10 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> > index d3a5884fe5c9..44f575328af4 100644
+> > --- a/fs/cachefiles/namei.c
+> > +++ b/fs/cachefiles/namei.c
+> > @@ -451,18 +451,19 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+> >       const struct cred *saved_cred;
+> >       struct dentry *fan = volume->fanout[(u8)object->cookie->key_hash];
+> >       struct file *file;
+> > -     struct path path;
+> > +     struct path path = { .mnt = cache->mnt, .dentry = fan };
+> >       uint64_t ni_size;
+> >       long ret;
+>
+> Maybe we shouldn't use struct path to first refer to the parent path and
+> then to the tmp path to avoid any potential confusion and instead rely
+> on a compount initializer for the tmpfile_open() call (__not tested__)?:
+>
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 44f575328af4..979b2f173ac3 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -451,7 +451,7 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+>         const struct cred *saved_cred;
+>         struct dentry *fan = volume->fanout[(u8)object->cookie->key_hash];
+>         struct file *file;
+> -       struct path path = { .mnt = cache->mnt, .dentry = fan };
+> +       struct path path;
+>         uint64_t ni_size;
+>         long ret;
+>
+> @@ -460,8 +460,10 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+>
+>         ret = cachefiles_inject_write_error();
+>         if (ret == 0) {
+> -               file = tmpfile_open(&init_user_ns, &path, S_IFREG,
+> -                                   O_RDWR | O_LARGEFILE | O_DIRECT,
+> +               file = tmpfile_open(&init_user_ns,
+> +                                   &{const struct path} {.mnt = cache->mnt,
+> +                                                         .dentry = fan},
 
-...
+This doesn't look nice.   I fixed it with a separate "parentpath" variable.
 
-> > https://lkml.kernel.org/r/20220919172418.45257-1-akinobu.mita@gmail.com
-
-> > Should the final version of this fix be backported into -stable trees?
-> 
-> But it questioning the formatting string as a parameter. Why do we need that
-> in the first place then?
-
-Sorry if above is the similar to something I have sent earlier, I had had an
-issue with my IMAP and SMTP servers access.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Miklos
