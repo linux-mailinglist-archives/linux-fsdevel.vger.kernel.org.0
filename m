@@ -2,139 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 079265E563E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 00:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B77F55E56B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 01:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbiIUW24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 18:28:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41888 "EHLO
+        id S229503AbiIUX1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 19:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiIUW2z (ORCPT
+        with ESMTP id S229437AbiIUX1e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 18:28:55 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2087.outbound.protection.outlook.com [40.107.244.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBCD3A830F;
-        Wed, 21 Sep 2022 15:28:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jnlkNFjojCnwr68Nh6vGPh+mSyDG+6arlZC6tsieYgf5giZkUCD4pGrL3Lf+hR5PnBeHGqvsbUHeX/PcZZM8s+LxHHcxvmYAyH6oouYUjvMAXD6TlG1yKSRdCbyydU56bzRpsYWC6z92oCocpbm45eNspl8acwWs+a/G2vYrV26fZFaTLoR4KupyQJkV9TUSJ1h4ucysuLD2e3r86GqEcCsoKSekuvtOA/vBx00Zs3v4h8voDGzEFidabKcnJzc2+bR86jFojYvTMl5i11DV1qLeG7bNce0S2wXqMGN18DljbsyC7gBCtONLcS+MmRllbucXRXFOuQP3zEymLn8Nlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YFjoB+VK1S8NMyEPWe4ky9JClSxYa/Fawj6M7M1w+A4=;
- b=QPM6MCuo3UXCnv/urahCIAA1NW/DhljthUAF69BrB2WGaEl+TwIucFsVwhlw1ycPV6+6HJHJRmy4916nvoYAYtD/jDq3GOd/LfzLZfgl/QB/FSR+8yQcbHdl07yWvqvhjqse1tdc4NpkWWunvfQEDxOAgRUomsfVtqtEXdnCBTPtFxnpAyqs0bLz06ovw0ojsGaVQldvtA/DyhBmouDvJwHod++eSxYp8ODY1ULBVxJ9ym3X3xO25T5KAX9wQGa6yvY+0V/zfDj4nhLpPR6Xe8XgOgy4ii0Cd2l0UPb6jAQPFuaMSl9aetWMcDLgU/oby3BocKeagk+1bowNXhXTKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFjoB+VK1S8NMyEPWe4ky9JClSxYa/Fawj6M7M1w+A4=;
- b=O9ZcLagyFhNejd600Di17U88M5tl6gyL5ZFTXtNxn9umR6yo/iGuYjp3sv4X5dHG4IDw8nPDKdY1KqYKtmHCBGikNaLvPiCRrApveS8UJjrkwGSft7yWDYyoc1kQkY6Axm9B/BTu8yioMJDfpi4fYVIqeVEjB8yg7QqLuqa9DRycBk9LkR2MQ7oMCMmGTC6tZ4bvVQ90wshNv6jw4pLL8lf0OhOOpUAZNSPZYWAmvk5VycrewkJC5r4vJNRsRx475hm7GyAV3XZ+UXoM70sKJ1jLeinUBolZizBUcGTopmFjrVVhN1eL38ftWmqCj6OoSTW/OcWry3k6LQzY6rQ9jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB4181.namprd12.prod.outlook.com (2603:10b6:610:a8::16)
- by MW4PR12MB7239.namprd12.prod.outlook.com (2603:10b6:303:228::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.18; Wed, 21 Sep
- 2022 22:28:53 +0000
-Received: from CH2PR12MB4181.namprd12.prod.outlook.com
- ([fe80::3d9f:c18a:7310:ae46]) by CH2PR12MB4181.namprd12.prod.outlook.com
- ([fe80::3d9f:c18a:7310:ae46%8]) with mapi id 15.20.5654.016; Wed, 21 Sep 2022
- 22:28:53 +0000
-Date:   Wed, 21 Sep 2022 19:28:51 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <YyuQI08LManypG6u@nvidia.com>
-References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
- <166329933874.2786261.18236541386474985669.stgit@dwillia2-xfh.jf.intel.com>
- <20220918225731.GG3600936@dread.disaster.area>
- <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
- <20220919212959.GL3600936@dread.disaster.area>
- <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
- <20220921221416.GT3600936@dread.disaster.area>
+        Wed, 21 Sep 2022 19:27:34 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 20020A2229
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 16:27:33 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2AC428AA2FE;
+        Thu, 22 Sep 2022 09:27:32 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ob97p-00AZv9-Tq; Thu, 22 Sep 2022 09:27:29 +1000
+Date:   Thu, 22 Sep 2022 09:27:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: thoughts about fanotify and HSM
+Message-ID: <20220921232729.GE3144495@dread.disaster.area>
+References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220921221416.GT3600936@dread.disaster.area>
-X-ClientProxiedBy: BL1PR13CA0370.namprd13.prod.outlook.com
- (2603:10b6:208:2c0::15) To CH2PR12MB4181.namprd12.prod.outlook.com
- (2603:10b6:610:a8::16)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4181:EE_|MW4PR12MB7239:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2479a70-4924-4aa6-7b01-08da9c20a9d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8OpuMXS7HQ/n4u1n+NJabt///u8/77MuLGUotn8M5a2GSH74+ok7y8CZfVWEEsZDKPg8je42ENT4lekQ54N3oNXrRJNFqeYuZdwhGrbArYVInN79hy+SZ23/r9UbQRKmArAGeTeT11wro2cMhgYSEFJb3DM6fnydaKRlRmeqHR2qyJ6ErbLzm7+53xSSpZQLR/eXtJGSNObUbUzpcGnXuaKslOepIJUwmYqd3AUuI3IzVevujHdBSkQ4stdWiqlP8eOXxFLwwEmlFbCS5uUQZ2ACmT+aPSpio16pnY+9WbFsX9lTYhwC0uAE0vSzTFfKek/JfMFUJqJzw83BIXsyP9Crn98An/BsI++NLdMz24HhrP6zW6iNazoPvK2I7ZxP494IP2ANcOZqnqs/oaUxt/mfj9EF/0AmaZ3hGWwa5hXdrHzFyjE6+xvfhJCqYwwCr9Y4EmCEZlC5s+s9hfqwNkNP0LPVVh0D0tVJGmOe71xtIw/46t+2pmiHnZ9f71V/cl6vo16YS+DXt3NbUT9fZOxzfw2/Yh7D5CtGhilQykCV3FcfY1SsLgFeTbUSKHuesxzDjw+Y/xIfNj9QFNwL/XST0XUkmiljj5xikIt3siAff0nq7/WtoegNtyUsflOUlDeSVPQ/1y2sHjvB1TRxv0/ixBRRwDFS1h7HJFM8YTuh8a2OGs9aK8vXedNgUGxeK5rqwFq/oA5mXAVcg4ttpA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4181.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(136003)(396003)(366004)(376002)(451199015)(86362001)(5660300002)(6916009)(316002)(38100700002)(54906003)(6486002)(478600001)(8936002)(66476007)(4326008)(66946007)(4744005)(2906002)(8676002)(36756003)(41300700001)(66556008)(26005)(6512007)(6506007)(186003)(2616005)(7416002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?P9H6TEH78ej55zo4HjZmL3nW6OSoe6h8thmVVQuz3m7tJ08+8lIXEDHEVJRV?=
- =?us-ascii?Q?JHMFrpT3FCgtwfSUbAkhmU76wLB0I0g7jdtHm6VnOWEB4Y1r+K+YQLoP3hI8?=
- =?us-ascii?Q?K7vUHJJ2vDSDHtTrekycPOe9+aBfi829em7MEOpDYQmBJiiK4yThRnItWKL6?=
- =?us-ascii?Q?ic9kZCDZZ1Nyl7N5k3C3G3kqqHBhAz4XjM9bIToje2WOIpv9NjFn4k4G+Aqe?=
- =?us-ascii?Q?VH9X9YT9mZrHCaZIU7DLk8mUy3Cd/YSf4OF/vRQPTGEMEjWdHGXDoq6XKPbM?=
- =?us-ascii?Q?dCnblzdLYn9KPvz0ennBeFtKQxhNP4a68WtnTkrF6F2hl2unt0xxJpkpRxKi?=
- =?us-ascii?Q?spXTc+lupengTRxu06rcEbitKry+F2TNNktQjado8zKn9XfCmj5/myWES04L?=
- =?us-ascii?Q?FXRWsspDkNGWCLRE+QPEUzgO9gqoz73LOxh78nV37LyQy1gBGUsKqrME0DZh?=
- =?us-ascii?Q?ynM0MtgkLs0HECpeEN2HN6KH0boO9XDoogbjk22eYZOy+IBHRPoBN/iElE0O?=
- =?us-ascii?Q?vwLkWyzpDCbQgQmYaULnIk2IquU70BdlStydQOZpVSZMo28ezfeJ9TlBDF3S?=
- =?us-ascii?Q?89WYSbgdR77pQvToJYts8zDmJ96vhJio40ILXNxPpbJUsuBNuJVnWc7ws+2Y?=
- =?us-ascii?Q?8ZOQh66hb7jc7MpY6H9D3OKi0YrCO1+9PlqHeU5tNueBq3fxmzPfe1Bazdog?=
- =?us-ascii?Q?EtPkSWSHuYdDyStO0hPOKD9s1G77ThaXeS6EMudOunFYobuIeWFjA1IBL1no?=
- =?us-ascii?Q?PscNe1pW7y1wGmMliBpzi4TPK6DL0EGvfmGvcIoWwl2wScK1JZaI6Cn8H0Yo?=
- =?us-ascii?Q?O5BWoCyYJjUVkSCBh0UNOgdB3CtyXmY4cDyVvv+JWq7TkJ41afMZOqsut4G6?=
- =?us-ascii?Q?4ZvCsP4lcYpdvxl5X3vmSqWP0+LbfB+u33rl4XHTbKfSM0+bC6auK5agO4d1?=
- =?us-ascii?Q?OYckzETJRlJfqx+f0mlDWEQLXLhpB4wmCfQZrJ+Ndj61sEHlkmJGh36vfTld?=
- =?us-ascii?Q?H1LbvBQJmLq7sg39GsGTUUXQQMN0WZzlrGjS5RstZ8Q11zHFEZ4lRwfVkxsi?=
- =?us-ascii?Q?h8r5SymoBGGcs+gf1ctU23ZqZJKe6a0fwdMtlUhS8/6uv3pNkME4IOKIs5H9?=
- =?us-ascii?Q?lGHjsuHrUo0o1NUZxCJr/AeEYm85oUtFuCRgNuW0zSb/xYXFcuheB/CviEHI?=
- =?us-ascii?Q?V8ILzE/xlaWL0l2j6E/g1DJTQDVTIqjbv3KEtZSylOrd7loyn+DS7woSTm7r?=
- =?us-ascii?Q?D2t7TRqV9ZtwQbvYOif2vyEOes8kWDS9ye5u0J9LGGTBR9q39uubGTFSwvw5?=
- =?us-ascii?Q?DbIvAghh7CXCjiNo1orChAoDZHqvjXrWHOADhXszzAdMMk4FRDj7uk5lwGiv?=
- =?us-ascii?Q?5zbBiGHMrc2wAoPmIMawjhTMmgMaFRFZD3UpDz5lQCjcfW/cJ/ONPip7zaZV?=
- =?us-ascii?Q?SyIEIsy3vt6wFJRbcD8ToMy/zhTcmtIq0OFHAr8xTqyUeZwPgXOUgDRkDei5?=
- =?us-ascii?Q?u1j0phymTj6k657N3UzBxsdlz5ymEvHD13sJ02y2jnab0Jhkeem5TMhWBJfM?=
- =?us-ascii?Q?2Cg1NgctXVI11HeHTUPGr3fsE+z+gtPwqEpmG+Hk?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2479a70-4924-4aa6-7b01-08da9c20a9d9
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4181.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2022 22:28:53.2597
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 06c/oVcCp8X2vpHVBMaDdb9RFOTFpDs6CaAvrrtw5hMVAuLO955793hUTWBhxiNU
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7239
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=632b9de4
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=rWvmsOj6DGqUwbSOZ4gA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 08:14:16AM +1000, Dave Chinner wrote:
+On Sun, Sep 11, 2022 at 09:12:06PM +0300, Amir Goldstein wrote:
+> Hi Jan,
+> 
+> I wanted to consult with you about preliminary design thoughts
+> for implementing a hierarchical storage manager (HSM)
+> with fanotify.
+> 
+> I have been in contact with some developers in the past
+> who were interested in using fanotify to implement HSM
+> (to replace old DMAPI implementation).
+> 
+> Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
+> should be enough to implement a basic HSM, but it is not
+> sufficient for implementing more advanced HSM features.
 
-> Where are these DAX page pins that don't require the pin holder to
-> also hold active references to the filesystem objects coming from?
+Ah, I wondered where the people with that DMAPI application went all
+those years ago after I told them they should look into using
+fanotify to replace the dependency they had on the DMAPI patched
+XFS that SGI maintained for years for SLES kernels...
 
-O_DIRECT and things like it.
+> Some of the HSM feature that I would like are:
+> - blocking hook before access to file range and fill that range
+> - blocking hook before lookup of child and optionally create child
 
-The concept has been that what you called revoke is just generic code
-to wait until all short term users put back their pins, as short term
-uses must do according to the !FOLL_LONGTERM contract.
+Ok, so these are to replace the DMAPI hooks that provided a blocking
+userspace upcall to the HSM to allow it fetch data from offline
+teirs that wasn't currently in the filesystem itself. i.e. the inode
+currently has a hole over that range of data, but before the read
+can proceed the HSM needs to retreive the data from the remote
+storage and write it into the local filesystem.
 
-Jason
+I think that you've missed a bunch of blocking notifications that
+are needed, though. e.g. truncate needs to block while the HSM
+records the file ranges it is storing offline are now freed.
+fallocate() needs to block while it waits for the HSM to tell it the
+ranges of the file that actually contain data and so should need to
+be taken into account. (e.g. ZERO_RANGE needs to wait for offline
+data to be invalidated, COLLAPSE_RANGE needs offline data to be
+recalled just like a read() operation, etc).
+
+IOWs, any operation that manipulates the extent map or the data in
+the file needs a blocking upcall to the HSM so that it can restore
+and invalidate the offline data across the range of the operation
+that is about to be performed....
+
+> My thoughts on the UAPI were:
+> - Allow new combination of FAN_CLASS_PRE_CONTENT
+>   and FAN_REPORT_FID/DFID_NAME
+> - This combination does not allow any of the existing events
+>   in mask
+> - It Allows only new events such as FAN_PRE_ACCESS
+>   FAN_PRE_MODIFY and FAN_PRE_LOOKUP
+> - FAN_PRE_ACCESS and FAN_PRE_MODIFY can have
+>   optional file range info
+> - All the FAN_PRE_ events are called outside vfs locks and
+>   specifically before sb_writers lock as in my fsnotify_pre_modify [1]
+>   POC
+> 
+> That last part is important because the HSM daemon will
+> need to make modifications to the accessed file/directory
+> before allowing the operation to proceed.
+
+Yes, and that was the biggest problem with DMAPI - the locking
+involved. DMAPI operations have to block without holding any locks
+that the IO path, truncate, fallocate, etc might need, but once they
+are unblocked they need to regain those locks to allow the operation
+to proceed. This was by far the ugliest part of the DMAPI patches,
+and ultimately, the reason why it was never merged.
+
+> Naturally that opens the possibility for new userspace
+> deadlocks. Nothing that is not already possible with permission
+> event, but maybe deadlocks that are more inviting to trip over.
+> 
+> I am not sure if we need to do anything about this, but we
+> could make it easier to ignore events from the HSM daemon
+> itself if we want to, to make the userspace implementation easier.
+
+XFS used "invisible IO" as the mechanism for avoiding sending DMAPI
+events for operations that we initiated by the HSM to move data into
+and out of the filesystem.
+
+No doubt you've heard us talk about invisible IO in the past -
+O_NOCMTIME is what that invisible IO has eventually turned into in a
+modern Linux kernel. We still use that for invisible IO - xfs_fsr
+uses it for moving data around during online defragmentation. The
+entire purpose of invisible IO was to provide a path for HSMs and
+userspace bulk data movers (e.g. HSM aware backup tools like
+xfsdump) to do IO without generating unnecessary or recursive DMAPI
+events....
+
+IOWs, if we want a DMAPI replacement, we will need to formalise a
+method of performing syscall based operations that will not trigger
+HSM notification events.
+
+The other thing that XFS had for DMAPI was persistent storage in the
+inode of the event mask that inode should report events for. See
+the di_dmevmask and di_dmstate fields defined in the on-disk inode
+format here:
+
+https://git.kernel.org/pub/scm/fs/xfs/xfs-documentation.git/tree/design/XFS_Filesystem_Structure/ondisk_inode.asciidoc
+
+There's no detail for them, but the event mask indicated what DMAPI
+events the inode should issue notifications for, and the state field
+held information about DMAPI operations in progress.
+
+The event field is the important one here - if the event field was
+empty, access to the inode never generated DMAPI events. When the
+HSM moved data offline, the "READ" event mask bit was set by the HSM
+and that triggered DMAPI events for any operation that needed to
+read data or manipulate the extent map. When the data was brought
+entirely back online, the event masks count be cleared.
+
+However, DMAPI also supports dual state operation, where the
+data in the local filesystem is also duplicated in the offline
+storage (e.g. immediately after a recall operation). This state can
+persist until data or layout is changed in the local filesystem,
+and so there's a "WRITE" event mask as well that allows the
+filesystem to inform the HSM that data it may have in offline
+storage is being changed.
+
+The state field is there to tell the HSM that an operation was in
+progress when the system crashed. As part of recovery, the HSM needs
+to find all the inodes that had DM operations in progress and either
+complete them or revert them to bring everything back to a
+consistent state. THe SGI HSMs used the bulkstat interfaces to scan
+the fs and find inodes that had a non-zero DM state field. This is
+one of the reasons that having bulkstat scale out to scanning
+millions of inodes a second ends up being important - coherency
+checking between the ondisk filesystem state and the userspace
+offline data tracking databases is a very important admin
+operation..
+
+The XFS dmapi event and state mask control APIs are now deprecated.
+The XFS_IOC_FSSETDM ioctl could read and write the values, and the
+the XFS V1 bulkstat ioctl could read them. There were also flags for
+things like extent mapping ioctls (FIEMAP equivalent) that ensured
+looking at the extent map didn't trigger DMAPI events and data
+recall.
+
+I guess what I'm trying to say is that there's a lot more to an
+efficient implementation of a HSM event notification mechanism than
+just implementing a couple of blocking upcalls. IF we want something
+that will replace even simple DMAPI-based HSM use cases, we really
+need to think through how to support all the operations that a
+recall operation might needed for and hence have to block. ANd we
+really should think about how to efficiently filter out unnecessary
+events so that we don't drown the HSM in IO events it just doesn't
+need to know about....
+
+> Another thing that might be good to do is provide an administrative
+> interface to iterate and abort pending fanotify permission/pre-content
+> events.
+
+That was generally something the DMAPI event consumer provided.
+
+> You must have noticed the overlap between my old persistent
+> change tracking journal and this design. The referenced branch
+> is from that old POC.
+> 
+> I do believe that the use cases somewhat overlap and that the
+> same building blocks could be used to implement a persistent
+> change journal in userspace as you suggested back then.
+
+That's a very different use case and set of requirements to a HSM.
+
+A HSM tracks much, much larger amounts of data than a persistent
+change journal. We had [C]XFS-DMAPI based HSMs running SLES in
+production that tracked half a billion inodes and > 10PB of data 15
+years ago. These days I'd expect "exabyte" to be the unit of
+storage that large HSMs are storing.
+
+> Thoughts?
+
+I think that if the goal is to support HSMs with fanotify, we first
+need to think about how we efficiently support all the functionality
+HSMs require rather than just focus on a blocking fanotify read
+operation. We don't need to implement everything, but at least
+having a plan for things like handling the event filtering
+requirements without the HSM having to walk the entire filesystem
+and inject per-inode event filters after every mount would be a real
+good idea....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
