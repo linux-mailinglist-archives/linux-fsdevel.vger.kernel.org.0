@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C235E5DCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 10:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBFC45E5DC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 10:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbiIVIp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 04:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44262 "EHLO
+        id S230368AbiIVIpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 04:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbiIVIpA (ORCPT
+        with ESMTP id S230365AbiIVIpA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 22 Sep 2022 04:45:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCC1AB4E1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:57 -0700 (PDT)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED01882868
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1663836296;
+        s=mimecast20190719; t=1663836298;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=q2MdUQ+cskiOFqdTJdIqCbmLrGfJwLVlFJJJyVKZST0=;
-        b=hZpOg9vEhhkbF+Ha0X6v40b2VMAvHNhCNPtQkK7jUqzT+JhqnqmZCsY4/y8Sjb3OtwI4mr
-        E7neGS2ehBfjCHwCfOEQ6GuJtxlSSnzxU3A2wfH8jR20U+NyUEBjOFGoI8oqRp3VgjvHOG
-        XkFfDMMxe0JmRFmGroTJRfb5+2VBO1k=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=CTLscTj53fcBRlA0UnhI+TBVRL+Som3XHnKIkQg9opM=;
+        b=JN0JyxR5BqOrxAFjh8cVUIg1aSO9QrKnrRxgfBOt2RJMx40Y7yneGUFp+/IRmvfDrn6hM4
+        0ht9kT/oEPF+lRbn1AYeC06ARhKpBl1rbqILx7Y/7DEI8DSbfWpqeJqz2wUDtvlSQSDb2i
+        BiLDbwx/8uzr1zNTI8ELjRG1sJqr75s=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-260-e52gERjiP4muMjHPc2yPAQ-1; Thu, 22 Sep 2022 04:44:55 -0400
-X-MC-Unique: e52gERjiP4muMjHPc2yPAQ-1
-Received: by mail-ed1-f72.google.com with SMTP id y1-20020a056402358100b00451b144e23eso6139633edc.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:55 -0700 (PDT)
+ us-mta-347-wp4yV7vKPl23BtPsuBucDQ-1; Thu, 22 Sep 2022 04:44:57 -0400
+X-MC-Unique: wp4yV7vKPl23BtPsuBucDQ-1
+Received: by mail-ej1-f71.google.com with SMTP id qb30-20020a1709077e9e00b0077d1271283eso4136441ejc.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=q2MdUQ+cskiOFqdTJdIqCbmLrGfJwLVlFJJJyVKZST0=;
-        b=MNBzO8E/yf9Vb1pM4KDiZrwbMRWyvBaUb6YCFr+kGh2U+/jsvggxO35VrOVQ0irq2f
-         obOzjd8Atv3+obMnadU+9Vi0lSuEICoNe7SBeo+BgBOBfBng4LsVeDQTDaHJT3bl3niv
-         SrGRDYSJzo97/p0CndzjCX+RSlszyOXxoPN1QCtS/IFfUwm1oimoYTPERpfcrGzSG415
-         IO6fBSWC+w5I0GezDR0gGAvJDwQ7Bibvj9dMmBSYTeacFpYKYf33NS+qJD/qTRoJPlgs
-         7R/2L5apkjV0MUMoRjqnfBnHPWHhejTWugwhlugh2j1Vk3CyEmWLo9A6QE93P7lgD0GQ
-         FdKA==
-X-Gm-Message-State: ACrzQf154peDksInun0la7E7RqJNhdeAv7D/8/vmwxEY5XqxBAHlqB+C
-        TCH5VSNuE12HJUsSfVYyBZ8MXZatr5fMfhRs1SKCfzAtL1zoHKc/KpSxsvc18VarddlWrLQcnWc
-        cATb/WOIWEGY2QYXxYP/J8h+xGF8xx38UEjfK+Nu+Y1TbQj5ZOPLLOfSNZKvftuPHWxx2x60f7W
-        nqbA==
-X-Received: by 2002:a17:907:a40c:b0:781:53dd:27fd with SMTP id sg12-20020a170907a40c00b0078153dd27fdmr1846871ejc.261.1663836293810;
-        Thu, 22 Sep 2022 01:44:53 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM5EOsg89DoiZJRR0cGBkgX2BhdVx/pNpXNSIrV8Tyan5OQ91mNaU83SqMVwLrjojl/fTzkeWw==
-X-Received: by 2002:a17:907:a40c:b0:781:53dd:27fd with SMTP id sg12-20020a170907a40c00b0078153dd27fdmr1846854ejc.261.1663836293564;
-        Thu, 22 Sep 2022 01:44:53 -0700 (PDT)
+        bh=CTLscTj53fcBRlA0UnhI+TBVRL+Som3XHnKIkQg9opM=;
+        b=b6Gq0BIINlGidSolmnId1mct1V5wod0Bz+VDRFZeT8GbsPpZBKhG5WdUNmfX8yBKK+
+         qB0xsBJbn7wtD7oWNz0XvILhBhnw1KDTXMx/G+sW3I4UTk0zNIJ89bIBesoaF6ig03ZT
+         lzDl1HZHN1TH/a4sefjlW2qtg/xqsEOtUCK+BHTogzchnKFs4wbq0vxYEg+Y+r9jcaLe
+         4skLtpt1pTss+hw2zFWHJB3c8jnMxsmPWDzwhrsI87pUNai2GhTr8+Hf4YfHS1kfocBb
+         dP+pAcBNjmFxvWHKpi+kztpXMCXEZPy2vjR2kEJybnHspVg3MQIXyrdyRNwCbJBiIz7R
+         q1uA==
+X-Gm-Message-State: ACrzQf3mRfHre6WXksITu5OBJpa7U+o31L5ycWT9ia6rIJbGdzjm81um
+        7CxnXsZDQ3d0140Ej3uEVunGM1NjjnXvhFRmi3ZIKs70RmEKnD7Q+ooodZAblnlsq00sNqm0f/W
+        XofRj/1T4kR2ybPMjvGWqSptSlJxhUTD23dMesHLLt0col7qsbPQL4GWD77HPVE4WYoyPB6yUAl
+        XQKg==
+X-Received: by 2002:a05:6402:1849:b0:453:ba03:9e41 with SMTP id v9-20020a056402184900b00453ba039e41mr2157988edy.202.1663836295257;
+        Thu, 22 Sep 2022 01:44:55 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6oItFeP3+PcQC+2ZlCOUJC5ygCtzYnvpZsY9r9C/ppKMNLJOr5TXqZO82lon1IebrzWjAOmw==
+X-Received: by 2002:a05:6402:1849:b0:453:ba03:9e41 with SMTP id v9-20020a056402184900b00453ba039e41mr2157945edy.202.1663836294678;
+        Thu, 22 Sep 2022 01:44:54 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (193-226-214-223.pool.digikabel.hu. [193.226.214.223])
-        by smtp.gmail.com with ESMTPSA id h15-20020a170906718f00b00730b3bdd8d7sm2297942ejk.179.2022.09.22.01.44.52
+        by smtp.gmail.com with ESMTPSA id h15-20020a170906718f00b00730b3bdd8d7sm2297942ejk.179.2022.09.22.01.44.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 01:44:52 -0700 (PDT)
+        Thu, 22 Sep 2022 01:44:54 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
@@ -65,9 +65,9 @@ Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         David Howells <dhowells@redhat.com>,
         Yu-li Lin <yulilin@google.com>,
         Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH v4 08/10] vfs: move open right after ->tmpfile()
-Date:   Thu, 22 Sep 2022 10:44:40 +0200
-Message-Id: <20220922084442.2401223-9-mszeredi@redhat.com>
+Subject: [PATCH v4 09/10] vfs: open inside ->tmpfile()
+Date:   Thu, 22 Sep 2022 10:44:41 +0200
+Message-Id: <20220922084442.2401223-10-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220922084442.2401223-1-mszeredi@redhat.com>
 References: <20220922084442.2401223-1-mszeredi@redhat.com>
@@ -82,175 +82,534 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Create a helper finish_open_simple() that opens the file with the original
-dentry.  Handle the error case here as well to simplify callers.
+This is in preparation for adding tmpfile support to fuse, which requires
+that the tmpfile creation and opening are done as a single operation.
 
-Call this helper right after ->tmpfile() is called.
+Replace the 'struct dentry *' argument of i_op->tmpfile with
+'struct file *'.
 
-Next patch will change the tmpfile API and move this call into tmpfile
-instances.
+Call finish_open_simple() as the last thing in ->tmpfile() instances (may
+be omitted in the error case).
+
+Change d_tmpfile() argument to 'struct file *' as well to make callers more
+readable.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/namei.c         | 83 ++++++++++++++++++----------------------------
- include/linux/fs.h |  9 +++++
- 2 files changed, 42 insertions(+), 50 deletions(-)
+ Documentation/filesystems/locking.rst |  3 ++-
+ Documentation/filesystems/porting.rst | 10 ++++++++++
+ Documentation/filesystems/vfs.rst     |  6 ++++--
+ fs/bad_inode.c                        |  2 +-
+ fs/btrfs/inode.c                      |  8 ++++----
+ fs/dcache.c                           |  4 +++-
+ fs/ext2/namei.c                       |  6 +++---
+ fs/ext4/namei.c                       |  6 +++---
+ fs/f2fs/namei.c                       | 13 ++++++++-----
+ fs/hugetlbfs/inode.c                  |  6 +++---
+ fs/minix/namei.c                      |  6 +++---
+ fs/namei.c                            |  3 +--
+ fs/ramfs/inode.c                      |  6 +++---
+ fs/ubifs/dir.c                        |  7 ++++---
+ fs/udf/namei.c                        |  6 +++---
+ fs/xfs/xfs_iops.c                     | 16 +++++++++-------
+ include/linux/dcache.h                |  3 ++-
+ include/linux/fs.h                    |  2 +-
+ mm/shmem.c                            |  6 +++---
+ 19 files changed, 70 insertions(+), 49 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 03ad4e55fb26..fea56fe9f306 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3583,44 +3583,44 @@ static int do_open(struct nameidata *nd,
-  * On non-idmapped mounts or if permission checking is to be performed on the
-  * raw inode simply passs init_user_ns.
-  */
--static struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
--			   struct dentry *dentry, umode_t mode, int open_flag)
-+static int vfs_tmpfile(struct user_namespace *mnt_userns,
-+		       const struct path *parentpath,
-+		       struct file *file, umode_t mode)
- {
--	struct dentry *child = NULL;
--	struct inode *dir = dentry->d_inode;
-+	struct dentry *child;
-+	struct inode *dir = d_inode(parentpath->dentry);
- 	struct inode *inode;
- 	int error;
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 4bb2627026ec..8f737e76935c 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -79,7 +79,8 @@ prototypes::
+ 	int (*atomic_open)(struct inode *, struct dentry *,
+ 				struct file *, unsigned open_flag,
+ 				umode_t create_mode);
+-	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
++	int (*tmpfile) (struct user_namespace *, struct inode *,
++			struct file *, umode_t);
+ 	int (*fileattr_set)(struct user_namespace *mnt_userns,
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index aee9aaf9f3df..af138241bb4b 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -922,3 +922,13 @@ is provided - file_open_root_mnt().  In-tree users adjusted.
+ no_llseek is gone; don't set .llseek to that - just leave it NULL instead.
+ Checks for "does that file have llseek(2), or should it fail with ESPIPE"
+ should be done by looking at FMODE_LSEEK in file->f_mode.
++
++---
++
++**mandatory**
++
++Calling conventions for ->tmpfile() have changed.  It now takes a struct
++file pointer instead of struct dentry pointer.  d_tmpfile() is similarly
++changed to simplify callers.  The passed file is in a non-open state and on
++success must be opened before returning (e.g. by calling
++finish_open_simple()).
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 6cd6953e175b..71b0b8114b18 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -439,7 +439,7 @@ As of kernel 2.6.22, the following members are defined:
+ 		void (*update_time)(struct inode *, struct timespec *, int);
+ 		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
+ 				   unsigned open_flag, umode_t create_mode);
+-		int (*tmpfile) (struct user_namespace *, struct inode *, struct dentry *, umode_t);
++		int (*tmpfile) (struct user_namespace *, struct inode *, struct file *, umode_t);
+ 	        int (*set_acl)(struct user_namespace *, struct inode *, struct posix_acl *, int);
+ 		int (*fileattr_set)(struct user_namespace *mnt_userns,
+ 				    struct dentry *dentry, struct fileattr *fa);
+@@ -589,7 +589,9 @@ otherwise noted.
+ ``tmpfile``
+ 	called in the end of O_TMPFILE open().  Optional, equivalent to
+ 	atomically creating, opening and unlinking a file in given
+-	directory.
++	directory.  On success needs to return with the file already
++	open; this can be done by calling finish_open_simple() right at
++	the end.
  
- 	/* we want directory to be writable */
- 	error = inode_permission(mnt_userns, dir, MAY_WRITE | MAY_EXEC);
- 	if (error)
--		goto out_err;
--	error = -EOPNOTSUPP;
-+		return error;
- 	if (!dir->i_op->tmpfile)
--		goto out_err;
--	error = -ENOMEM;
--	child = d_alloc(dentry, &slash_name);
-+		return -EOPNOTSUPP;
-+	child = d_alloc(parentpath->dentry, &slash_name);
- 	if (unlikely(!child))
--		goto out_err;
-+		return -ENOMEM;
-+	file->f_path.mnt = parentpath->mnt;
-+	file->f_path.dentry = child;
- 	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
- 	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
-+	error = finish_open_simple(file, error);
-+	dput(child);
- 	if (error)
--		goto out_err;
--	error = -ENOENT;
--	inode = child->d_inode;
--	if (unlikely(!inode))
--		goto out_err;
--	if (!(open_flag & O_EXCL)) {
-+		return error;
-+	/* Don't check for other permissions, the inode was just created */
-+	error = may_open(mnt_userns, &file->f_path, 0, file->f_flags);
-+	if (error)
-+		return error;
-+	inode = file_inode(file);
-+	if (!(file->f_flags & O_EXCL)) {
- 		spin_lock(&inode->i_lock);
+ ``fileattr_get``
+ 	called on ioctl(FS_IOC_GETFLAGS) and ioctl(FS_IOC_FSGETXATTR) to
+diff --git a/fs/bad_inode.c b/fs/bad_inode.c
+index 12b8fdcc445b..9d1cde8066cf 100644
+--- a/fs/bad_inode.c
++++ b/fs/bad_inode.c
+@@ -147,7 +147,7 @@ static int bad_inode_atomic_open(struct inode *inode, struct dentry *dentry,
+ }
+ 
+ static int bad_inode_tmpfile(struct user_namespace *mnt_userns,
+-			     struct inode *inode, struct dentry *dentry,
++			     struct inode *inode, struct file *file,
+ 			     umode_t mode)
+ {
+ 	return -EIO;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 1372210869b1..416373721085 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -10168,7 +10168,7 @@ static int btrfs_permission(struct user_namespace *mnt_userns,
+ }
+ 
+ static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(dir->i_sb);
+ 	struct btrfs_trans_handle *trans;
+@@ -10176,7 +10176,7 @@ static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 	struct inode *inode;
+ 	struct btrfs_new_inode_args new_inode_args = {
+ 		.dir = dir,
+-		.dentry = dentry,
++		.dentry = file->f_path.dentry,
+ 		.orphan = true,
+ 	};
+ 	unsigned int trans_num_items;
+@@ -10213,7 +10213,7 @@ static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 	set_nlink(inode, 1);
+ 
+ 	if (!ret) {
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file, inode);
+ 		unlock_new_inode(inode);
+ 		mark_inode_dirty(inode);
+ 	}
+@@ -10225,7 +10225,7 @@ static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ out_inode:
+ 	if (ret)
+ 		iput(inode);
+-	return ret;
++	return finish_open_simple(file, ret);
+ }
+ 
+ void btrfs_set_range_writeback(struct btrfs_inode *inode, u64 start, u64 end)
+diff --git a/fs/dcache.c b/fs/dcache.c
+index bb0c4d0038db..89dc61389102 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3258,8 +3258,10 @@ void d_genocide(struct dentry *parent)
+ 
+ EXPORT_SYMBOL(d_genocide);
+ 
+-void d_tmpfile(struct dentry *dentry, struct inode *inode)
++void d_tmpfile(struct file *file, struct inode *inode)
+ {
++	struct dentry *dentry = file->f_path.dentry;
++
+ 	inode_dec_link_count(inode);
+ 	BUG_ON(dentry->d_name.name != dentry->d_iname ||
+ 		!hlist_unhashed(&dentry->d_u.d_alias) ||
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index 5fd9a22d2b70..9125eab85146 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -120,7 +120,7 @@ static int ext2_create (struct user_namespace * mnt_userns,
+ }
+ 
+ static int ext2_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
+ {
+ 	struct inode *inode = ext2_new_inode(dir, mode, NULL);
+ 	if (IS_ERR(inode))
+@@ -128,9 +128,9 @@ static int ext2_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+-	d_tmpfile(dentry, inode);
++	d_tmpfile(file, inode);
+ 	unlock_new_inode(inode);
+-	return 0;
++	return finish_open_simple(file, 0);
+ }
+ 
+ static int ext2_mknod (struct user_namespace * mnt_userns, struct inode * dir,
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 3a31b662f661..9c3fde633a6e 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2849,7 +2849,7 @@ static int ext4_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ 
+ static int ext4_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
+ {
+ 	handle_t *handle;
+ 	struct inode *inode;
+@@ -2871,7 +2871,7 @@ static int ext4_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 		inode->i_op = &ext4_file_inode_operations;
+ 		inode->i_fop = &ext4_file_operations;
+ 		ext4_set_aops(inode);
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file, inode);
+ 		err = ext4_orphan_add(handle, inode);
+ 		if (err)
+ 			goto err_unlock_inode;
+@@ -2882,7 +2882,7 @@ static int ext4_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 		ext4_journal_stop(handle);
+ 	if (err == -ENOSPC && ext4_should_retry_alloc(dir->i_sb, &retries))
+ 		goto retry;
+-	return err;
++	return finish_open_simple(file, err);
+ err_unlock_inode:
+ 	ext4_journal_stop(handle);
+ 	unlock_new_inode(inode);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index bf00d5057abb..d5065a5af1f8 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -845,7 +845,7 @@ static int f2fs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ 
+ static int __f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			  struct dentry *dentry, umode_t mode, bool is_whiteout,
++			  struct file *file, umode_t mode, bool is_whiteout,
+ 			  struct inode **new_inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+@@ -892,8 +892,8 @@ static int __f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
  		inode->i_state |= I_LINKABLE;
  		spin_unlock(&inode->i_lock);
+ 	} else {
+-		if (dentry)
+-			d_tmpfile(dentry, inode);
++		if (file)
++			d_tmpfile(file, inode);
+ 		else
+ 			f2fs_i_links_write(inode, false);
  	}
- 	ima_post_create_tmpfile(mnt_userns, inode);
--	return child;
--
--out_err:
--	dput(child);
--	return ERR_PTR(error);
-+	return 0;
+@@ -915,16 +915,19 @@ static int __f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
  }
  
- /**
-@@ -3641,25 +3641,15 @@ struct file *vfs_tmpfile_open(struct user_namespace *mnt_userns,
+ static int f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			struct dentry *dentry, umode_t mode)
++			struct file *file, umode_t mode)
  {
- 	struct file *file;
- 	int error;
--	struct path path = { .mnt = parentpath->mnt };
--
--	path.dentry = vfs_tmpfile(mnt_userns, parentpath->dentry, mode, open_flag);
--	if (IS_ERR(path.dentry))
--		return ERR_CAST(path.dentry);
--
--	error = may_open(mnt_userns, &path, 0, open_flag);
--	file = ERR_PTR(error);
--	if (error)
--		goto out_dput;
--
--	/*
--	 * This relies on the "noaccount" property of fake open, otherwise
--	 * equivalent to dentry_open().
--	 */
--	file = open_with_fake_path(&path, open_flag, d_inode(path.dentry), cred);
--out_dput:
--	dput(path.dentry);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++	int err;
  
-+	file = alloc_empty_file_noaccount(open_flag, cred);
-+	if (!IS_ERR(file)) {
-+		error = vfs_tmpfile(mnt_userns, parentpath, file, mode);
-+		if (error) {
-+			fput(file);
-+			file = ERR_PTR(error);
-+		}
-+	}
- 	return file;
- }
- EXPORT_SYMBOL(vfs_tmpfile_open);
-@@ -3669,26 +3659,19 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 		struct file *file)
- {
- 	struct user_namespace *mnt_userns;
--	struct dentry *child;
- 	struct path path;
- 	int error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+ 	if (!f2fs_is_checkpoint_ready(sbi))
+ 		return -ENOSPC;
+ 
+-	return __f2fs_tmpfile(mnt_userns, dir, dentry, mode, false, NULL);
++	err = __f2fs_tmpfile(mnt_userns, dir, file, mode, false, NULL);
 +
- 	if (unlikely(error))
++	return finish_open_simple(file, err);
+ }
+ 
+ static int f2fs_create_whiteout(struct user_namespace *mnt_userns,
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 0b458beb318c..026daa8fc221 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -917,7 +917,7 @@ static int hugetlbfs_create(struct user_namespace *mnt_userns,
+ }
+ 
+ static int hugetlbfs_tmpfile(struct user_namespace *mnt_userns,
+-			     struct inode *dir, struct dentry *dentry,
++			     struct inode *dir, struct file *file,
+ 			     umode_t mode)
+ {
+ 	struct inode *inode;
+@@ -926,8 +926,8 @@ static int hugetlbfs_tmpfile(struct user_namespace *mnt_userns,
+ 	if (!inode)
+ 		return -ENOSPC;
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+-	d_tmpfile(dentry, inode);
+-	return 0;
++	d_tmpfile(file, inode);
++	return finish_open_simple(file, 0);
+ }
+ 
+ static int hugetlbfs_symlink(struct user_namespace *mnt_userns,
+diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+index 937fa5fae2b8..8afdc408ca4f 100644
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -53,16 +53,16 @@ static int minix_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ 
+ static int minix_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
+ 	int error;
+ 	struct inode *inode = minix_new_inode(dir, mode, &error);
+ 	if (inode) {
+ 		minix_set_inode(inode, 0);
+ 		mark_inode_dirty(inode);
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file, inode);
+ 	}
+-	return error;
++	return finish_open_simple(file, error);
+ }
+ 
+ static int minix_create(struct user_namespace *mnt_userns, struct inode *dir,
+diff --git a/fs/namei.c b/fs/namei.c
+index fea56fe9f306..c4ca2c3e4c4b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3604,8 +3604,7 @@ static int vfs_tmpfile(struct user_namespace *mnt_userns,
+ 	file->f_path.mnt = parentpath->mnt;
+ 	file->f_path.dentry = child;
+ 	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
+-	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+-	error = finish_open_simple(file, error);
++	error = dir->i_op->tmpfile(mnt_userns, dir, file, mode);
+ 	dput(child);
+ 	if (error)
  		return error;
- 	error = mnt_want_write(path.mnt);
- 	if (unlikely(error))
- 		goto out;
- 	mnt_userns = mnt_user_ns(path.mnt);
--	child = vfs_tmpfile(mnt_userns, path.dentry, op->mode, op->open_flag);
--	error = PTR_ERR(child);
--	if (IS_ERR(child))
-+	error = vfs_tmpfile(mnt_userns, &path, file, op->mode);
-+	if (error)
- 		goto out2;
--	dput(path.dentry);
--	path.dentry = child;
--	audit_inode(nd->name, child, 0);
--	/* Don't check for other permissions, the inode was just created */
--	error = may_open(mnt_userns, &path, 0, op->open_flag);
--	if (!error)
--		error = vfs_open(&path, file);
-+	audit_inode(nd->name, file->f_path.dentry, 0);
- out2:
- 	mnt_drop_write(path.mnt);
- out:
+diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+index bc66d0173e33..b3257e852820 100644
+--- a/fs/ramfs/inode.c
++++ b/fs/ramfs/inode.c
+@@ -146,15 +146,15 @@ static int ramfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ 
+ static int ramfs_tmpfile(struct user_namespace *mnt_userns,
+-			 struct inode *dir, struct dentry *dentry, umode_t mode)
++			 struct inode *dir, struct file *file, umode_t mode)
+ {
+ 	struct inode *inode;
+ 
+ 	inode = ramfs_get_inode(dir->i_sb, dir, mode, 0);
+ 	if (!inode)
+ 		return -ENOSPC;
+-	d_tmpfile(dentry, inode);
+-	return 0;
++	d_tmpfile(file, inode);
++	return finish_open_simple(file, 0);
+ }
+ 
+ static const struct inode_operations ramfs_dir_inode_operations = {
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 86151889548e..f59acd6a3615 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -424,8 +424,9 @@ static void unlock_2_inodes(struct inode *inode1, struct inode *inode2)
+ }
+ 
+ static int ubifs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode)
++			 struct file *file, umode_t mode)
+ {
++	struct dentry *dentry = file->f_path.dentry;
+ 	struct inode *inode;
+ 	struct ubifs_info *c = dir->i_sb->s_fs_info;
+ 	struct ubifs_budget_req req = { .new_ino = 1, .new_dent = 1,
+@@ -475,7 +476,7 @@ static int ubifs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	mutex_lock(&ui->ui_mutex);
+ 	insert_inode_hash(inode);
+-	d_tmpfile(dentry, inode);
++	d_tmpfile(file, inode);
+ 	ubifs_assert(c, ui->dirty);
+ 
+ 	instantiated = 1;
+@@ -489,7 +490,7 @@ static int ubifs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	ubifs_release_budget(c, &req);
+ 
+-	return 0;
++	return finish_open_simple(file, 0);
+ 
+ out_cancel:
+ 	unlock_2_inodes(dir, inode);
+diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+index b3d5f97f16cd..fb4c30e05245 100644
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -626,7 +626,7 @@ static int udf_create(struct user_namespace *mnt_userns, struct inode *dir,
+ }
+ 
+ static int udf_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode)
++		       struct file *file, umode_t mode)
+ {
+ 	struct inode *inode = udf_new_inode(dir, mode);
+ 
+@@ -640,9 +640,9 @@ static int udf_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 	inode->i_op = &udf_file_inode_operations;
+ 	inode->i_fop = &udf_file_operations;
+ 	mark_inode_dirty(inode);
+-	d_tmpfile(dentry, inode);
++	d_tmpfile(file, inode);
+ 	unlock_new_inode(inode);
+-	return 0;
++	return finish_open_simple(file, 0);
+ }
+ 
+ static int udf_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 45518b8c613c..764409c466fd 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -167,7 +167,7 @@ xfs_generic_create(
+ 	struct dentry	*dentry,
+ 	umode_t		mode,
+ 	dev_t		rdev,
+-	bool		tmpfile)	/* unnamed file */
++	struct file	*tmpfile)	/* unnamed file */
+ {
+ 	struct inode	*inode;
+ 	struct xfs_inode *ip = NULL;
+@@ -234,7 +234,7 @@ xfs_generic_create(
+ 		 * d_tmpfile can immediately set it back to zero.
+ 		 */
+ 		set_nlink(inode, 1);
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(tmpfile, inode);
+ 	} else
+ 		d_instantiate(dentry, inode);
+ 
+@@ -261,7 +261,7 @@ xfs_vn_mknod(
+ 	umode_t			mode,
+ 	dev_t			rdev)
+ {
+-	return xfs_generic_create(mnt_userns, dir, dentry, mode, rdev, false);
++	return xfs_generic_create(mnt_userns, dir, dentry, mode, rdev, NULL);
+ }
+ 
+ STATIC int
+@@ -272,7 +272,7 @@ xfs_vn_create(
+ 	umode_t			mode,
+ 	bool			flags)
+ {
+-	return xfs_generic_create(mnt_userns, dir, dentry, mode, 0, false);
++	return xfs_generic_create(mnt_userns, dir, dentry, mode, 0, NULL);
+ }
+ 
+ STATIC int
+@@ -283,7 +283,7 @@ xfs_vn_mkdir(
+ 	umode_t			mode)
+ {
+ 	return xfs_generic_create(mnt_userns, dir, dentry, mode | S_IFDIR, 0,
+-				  false);
++				  NULL);
+ }
+ 
+ STATIC struct dentry *
+@@ -1080,10 +1080,12 @@ STATIC int
+ xfs_vn_tmpfile(
+ 	struct user_namespace	*mnt_userns,
+ 	struct inode		*dir,
+-	struct dentry		*dentry,
++	struct file		*file,
+ 	umode_t			mode)
+ {
+-	return xfs_generic_create(mnt_userns, dir, dentry, mode, 0, true);
++	int err = xfs_generic_create(mnt_userns, dir, file->f_path.dentry, mode, 0, file);
++
++	return finish_open_simple(file, err);
+ }
+ 
+ static const struct inode_operations xfs_inode_operations = {
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 92c78ed02b54..bde9f8ff8869 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -16,6 +16,7 @@
+ #include <linux/wait.h>
+ 
+ struct path;
++struct file;
+ struct vfsmount;
+ 
+ /*
+@@ -250,7 +251,7 @@ extern struct dentry * d_make_root(struct inode *);
+ /* <clickety>-<click> the ramfs-type tree */
+ extern void d_genocide(struct dentry *);
+ 
+-extern void d_tmpfile(struct dentry *, struct inode *);
++extern void d_tmpfile(struct file *, struct inode *);
+ 
+ extern struct dentry *d_find_alias(struct inode *);
+ extern void d_prune_aliases(struct inode *);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 02646542f6bb..a3c50869e79b 100644
+index a3c50869e79b..8218d9964ff8 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2780,6 +2780,15 @@ extern int finish_open(struct file *file, struct dentry *dentry,
- 			int (*open)(struct inode *, struct file *));
- extern int finish_no_open(struct file *file, struct dentry *dentry);
+@@ -2168,7 +2168,7 @@ struct inode_operations {
+ 			   struct file *, unsigned open_flag,
+ 			   umode_t create_mode);
+ 	int (*tmpfile) (struct user_namespace *, struct inode *,
+-			struct dentry *, umode_t);
++			struct file *, umode_t);
+ 	int (*set_acl)(struct user_namespace *, struct inode *,
+ 		       struct posix_acl *, int);
+ 	int (*fileattr_set)(struct user_namespace *mnt_userns,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 42e5888bf84d..f63c51bc373e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2912,7 +2912,7 @@ shmem_mknod(struct user_namespace *mnt_userns, struct inode *dir,
  
-+/* Helper for the simple case when original dentry is used */
-+static inline int finish_open_simple(struct file *file, int error)
-+{
-+	if (error)
-+		return error;
-+
-+	return finish_open(file, file->f_path.dentry, NULL);
-+}
-+
- /* fs/dcache.c */
- extern void __init vfs_caches_init_early(void);
- extern void __init vfs_caches_init(void);
+ static int
+ shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+-	      struct dentry *dentry, umode_t mode)
++	      struct file *file, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	int error = -ENOSPC;
+@@ -2927,9 +2927,9 @@ shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 		error = simple_acl_create(dir, inode);
+ 		if (error)
+ 			goto out_iput;
+-		d_tmpfile(dentry, inode);
++		d_tmpfile(file, inode);
+ 	}
+-	return error;
++	return finish_open_simple(file, error);
+ out_iput:
+ 	iput(inode);
+ 	return error;
 -- 
 2.37.3
 
