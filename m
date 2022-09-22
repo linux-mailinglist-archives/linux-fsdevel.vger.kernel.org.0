@@ -2,83 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E145E6CE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 22:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3645E6D9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 23:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbiIVUSM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 16:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
+        id S230292AbiIVVFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 17:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbiIVUSJ (ORCPT
+        with ESMTP id S229537AbiIVVFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 16:18:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D8B110B0A;
-        Thu, 22 Sep 2022 13:18:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 22 Sep 2022 17:05:50 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2A310CA5F;
+        Thu, 22 Sep 2022 14:05:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18040B83A79;
-        Thu, 22 Sep 2022 20:18:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7C0C433D6;
-        Thu, 22 Sep 2022 20:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663877885;
-        bh=6v4b3j+MIvjHQBr7sFzf0op2Awjf2oGOtqPQJUi0BhE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PBDIKFf0+HT/5WE513751U+D9B8X2TiRIo4ChfKxEhlYfkCZqIXfjGWMA5s8HUPj6
-         /WZCJxTUNZDksXVX0QJtUzdxKyinG3iYf+lAl5Fq1KjA/cxCGwfeQ8rXXzqlPm514l
-         AOd4VqbUMSRxXQN9h7mP9Nsy2/C2mz/FOkUJSiRIioYZeYPKtLcILmKl1o9bTPSAwc
-         PB4bOY9tIG2uCbLWlPVNXoM9wSEkYQuTqlvsLqxhCUoC6l6AYyOsQ1svTudGncvkfQ
-         RWtrRqApPGzZ7bF/EOBqG33kqa7APErg8algJT9WxggMwagA39au085YMRZA55+5EU
-         KJoHeHA5e8KNg==
-Message-ID: <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Date:   Thu, 22 Sep 2022 16:18:02 -0400
-In-Reply-To: <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
-References: <166328063547.15759.12797959071252871549@noble.neil.brown.name>
-         <YyQdmLpiAMvl5EkU@mit.edu>
-         <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
-         <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
-         <20220918235344.GH3600936@dread.disaster.area>
-         <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
-         <20220920001645.GN3600936@dread.disaster.area>
-         <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
-         <20220921000032.GR3600936@dread.disaster.area>
-         <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
-         <20220921214124.GS3600936@dread.disaster.area>
-         <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4788F1F8BD;
+        Thu, 22 Sep 2022 21:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1663880748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XKo+i59z16xYCKZljHHhrwZOK4kULyS2cn+2CLRfUM0=;
+        b=yYZqXMGxzMVH0hLKeYU8DtcEW5z+72E8D8wluVkMB38JNQ6mVtvWYW44sf9Qr+ZQm+We5X
+        ZxoqRMYTP+O1T/rNawICmYwKgqmViLi4WF8AuUeX1BOp9TwGPEwvLg1O9HhwZMa65TkR9W
+        yGHcw9EwWtJmQERB8NRzG2kYdmwST+U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1663880748;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XKo+i59z16xYCKZljHHhrwZOK4kULyS2cn+2CLRfUM0=;
+        b=kaD9JOgsDV+IpQlfyoPslHKu+574Yw//haDJvp79fZBtXqIgPNRCscY2PniCUaAEZMnwWD
+        sPWSH1zmuGYRGABQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B86DF1346B;
+        Thu, 22 Sep 2022 21:05:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id QI4BLCvOLGP2JwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Thu, 22 Sep 2022 21:05:47 +0000
+Message-ID: <cb38655c-2107-bda6-2fa8-f5e1e97eab14@suse.cz>
+Date:   Thu, 22 Sep 2022 23:05:47 +0200
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 00/12] slab: Introduce kmalloc_size_roundup()
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     Pekka Enberg <penberg@kernel.org>, Feng Tang <feng.tang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        dev@openvswitch.org, x86@kernel.org,
+        linux-wireless@vger.kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Feng Tang <feng.tang@intel.com>
+References: <20220922031013.2150682-1-keescook@chromium.org>
+ <673e425d-1692-ef47-052b-0ff2de0d9c1d@amd.com>
+ <202209220845.2F7A050@keescook>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <202209220845.2F7A050@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,129 +101,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-09-22 at 06:18 -0400, Jeff Layton wrote:
-> On Thu, 2022-09-22 at 07:41 +1000, Dave Chinner wrote:
-> > On Wed, Sep 21, 2022 at 06:33:28AM -0400, Jeff Layton wrote:
-> > > On Wed, 2022-09-21 at 10:00 +1000, Dave Chinner wrote:
-> > > > > How do we determine what that offset should be? Your last email
-> > > > > suggested that there really is no limit to the number of i_versio=
-n bumps
-> > > > > that can happen in memory before one of them makes it to disk. Wh=
-at can
-> > > > > we do to address that?
-> > > >=20
-> > > > <shrug>
-> > > >=20
-> > > > I'm just pointing out problems I see when defining this as behaviou=
-r
-> > > > for on-disk format purposes. If we define it as part of the on-disk
-> > > > format, then we have to be concerned about how it may be used
-> > > > outside the scope of just the NFS server application.=20
-> > > >=20
-> > > > However, If NFS keeps this metadata and functionaly entirely
-> > > > contained at the application level via xattrs, I really don't care
-> > > > what algorithm NFS developers decides to use for their crash
-> > > > sequencing. It's not my concern at this point, and that's precisely
-> > > > why NFS should be using xattrs for this NFS specific functionality.
-> > > >=20
-> > >=20
-> > > I get it: you'd rather not have to deal with what you see as an NFS
-> > > problem, but I don't get how what you're proposing solves anything. W=
-e
-> > > might be able to use that scheme to detect crashes, but that's only p=
-art
-> > > of the problem (and it's a relatively simple part of the problem to
-> > > solve, really).
-> > >=20
-> > > Maybe you can clarify it for me:
-> > >=20
-> > > Suppose we go with what you're saying and store some information in
-> > > xattrs that allows us to detect crashes in some fashion. The server
-> > > crashes and comes back up and we detect that there was a crash earlie=
-r.
-> > >=20
-> > > What does nfsd need to do now to ensure that it doesn't hand out a
-> > > duplicate change attribute?=20
-> >=20
-> > As I've already stated, the NFS server can hold the persistent NFS
-> > crash counter value in a second xattr that it bumps whenever it
-> > detects a crash and hence we take the local filesystem completely
-> > out of the equation.  How the crash counter is then used by the nfsd
-> > to fold it into the NFS protocol change attribute is a nfsd problem,
-> > not a local filesystem problem.
-> >=20
->=20
-> Ok, assuming you mean put this in an xattr that lives at the root of the
-> export? We only need this for IS_I_VERSION filesystems (btrfs, xfs, and
-> ext4), and they all support xattrs so this scheme should work.
->=20
+On 9/22/22 17:55, Kees Cook wrote:
+> On Thu, Sep 22, 2022 at 09:10:56AM +0200, Christian König wrote:
+>> Am 22.09.22 um 05:10 schrieb Kees Cook:
+>> > Hi,
+>> > 
+>> > This series fixes up the cases where callers of ksize() use it to
+>> > opportunistically grow their buffer sizes, which can run afoul of the
+>> > __alloc_size hinting that CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE
+>> > use to perform dynamic buffer bounds checking.
+>> 
+>> Good cleanup, but one question: What other use cases we have for ksize()
+>> except the opportunistically growth of buffers?
+> 
+> The remaining cases all seem to be using it as a "do we need to resize
+> yet?" check, where they don't actually track the allocation size
+> themselves and want to just depend on the slab cache to answer it. This
+> is most clearly seen in the igp code:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/intel/igb/igb_main.c?h=v6.0-rc6#n1204
+> 
+> My "solution" there kind of side-steps it, and leaves ksize() as-is:
+> https://lore.kernel.org/linux-hardening/20220922031013.2150682-8-keescook@chromium.org/
+> 
+> The more correct solution would be to add per-v_idx size tracking,
+> similar to the other changes I sent:
+> https://lore.kernel.org/linux-hardening/20220922031013.2150682-11-keescook@chromium.org/
+> 
+> I wonder if perhaps I should just migrate some of this code to using
+> something like struct membuf.
+> 
+>> Off hand I can't see any.
+>> 
+>> So when this patch set is about to clean up this use case it should probably
+>> also take care to remove ksize() or at least limit it so that it won't be
+>> used for this use case in the future.
+> 
+> Yeah, my goal would be to eliminate ksize(), and it seems possible if
+> other cases are satisfied with tracking their allocation sizes directly.
 
-I had a look at this today and it's not as straightforward as it
-sounds.=A0
+I think we could leave ksize() to determine the size without a need for
+external tracking, but from now on forbid callers from using that hint to
+overflow the allocation size they actually requested? Once we remove the
+kasan/kfence hooks in ksize() that make the current kinds of usage possible,
+we should be able to catch any offenders of the new semantics that would appear?
 
-In particular, there is no guarantee that an export will not cross
-filesystem boundaries. Also, nfsd and mountd are very much "demand
-driven". We might not touch an exported filesystem at all if nothing
-asks for it. Ensuring we can do something to every exported filesystem
-after a crash is more difficult than it sounds.
+> -Kees
+> 
 
-So trying to do something with xattrs on the exported filesystems is
-probably not what we want. It's also sort of janky since we do strive to
-leave a "light footprint" on the exported filesystem.
-
-Maybe we don't need that though. Chuck reminded me that nfsdcltrack
-could be used here instead. We can punt this to userland!
-
-nfsdcltrack could keep track of a global crash "salt", and feed that to
-nfsd when it starts up. When starting a grace period, it can=A0set a
-RUNNING flag in the db. If it's set when the server starts, we know
-there was a crash and can bump the crash counter. When nfsd is shutting
-down cleanly, it can call sync() and then clear the flag (this may
-require a new cld upcall cmd). We then mix that value into the change
-attribute for IS_I_VERSION inodes.
-
-That's probably good enough for nfsd, but if we wanted to present this
-to userland via statx, we'd need a different mechanism. For now, I'm
-going to plan to fix this up in nfsd and then we'll see where we are.
-
-> > If you're worried about maximum number of writes outstanding vs
-> > i_version bumps that are held in memory, then *bound the maximum
-> > number of uncommitted i_version changes that the NFS server will
-> > allow to build up in memory*. By moving the crash counter to being a
-> > NFS server only function, the NFS server controls the entire
-> > algorithm and it doesn't have to care about external 3rd party
-> > considerations like local filesystems have to.
-> >=20
->=20
-> Yeah, this is the bigger consideration.
->=20
-> > e.g. The NFS server can track the i_version values when the NFSD
-> > syncs/commits a given inode. The nfsd can sample i_version it when
-> > calls ->commit_metadata or flushed data on the inode, and then when
-> > it peeks at i_version when gathering post-op attrs (or any other
-> > getattr op) it can decide that there is too much in-memory change
-> > (e.g. 10,000 counts since last sync) and sync the inode.
-> >=20
-> > i.e. the NFS server can trivially cap the maximum number of
-> > uncommitted NFS change attr bumps it allows to build up in memory.
-> > At that point, the NFS server has a bound "maximum write count" that
-> > can be used in conjunction with the xattr based crash counter to
-> > determine how the change_attr is bumped by the crash counter.
->=20
-> Well, not "trivially". This is the bit where we have to grow struct
-> inode (or the fs-specific inode), as we'll need to know what the latest
-> on-disk value is for the inode.
->=20
-> I'm leaning toward doing this on the query side. Basically, when nfsd
-> goes to query the i_version, it'll check the delta between the current
-> version and the latest one on disk. If it's bigger than X then we'd just
-> return NFS4ERR_DELAY to the client.
->=20
-> If the delta is >X/2, maybe it can kick off a workqueue job or something
-> that calls write_inode with WB_SYNC_ALL to try to get the thing onto the
-> platter ASAP.
-
-Still looking at this bit too. Probably we can just kick off a
-WB_SYNC_NONE filemap_fdatawrite at that point and hope for the best?
---=20
-Jeff Layton <jlayton@kernel.org>
