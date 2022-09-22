@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A16EE5E6701
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 17:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D5E5E6708
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 17:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbiIVPZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 11:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51924 "EHLO
+        id S232080AbiIVP0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 11:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbiIVPZA (ORCPT
+        with ESMTP id S232026AbiIVP0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 11:25:00 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54A57C30C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 08:24:59 -0700 (PDT)
+        Thu, 22 Sep 2022 11:26:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35977EFA62
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 08:26:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 345B6B8384C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 15:24:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52302C433D6;
-        Thu, 22 Sep 2022 15:24:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C4E7A6360E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 15:26:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 869A3C433C1;
+        Thu, 22 Sep 2022 15:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663860297;
-        bh=CpHuRv5/pq/QxJVRelY/C6tHwUOwjLU7D5LVz/O8gf8=;
+        s=k20201202; t=1663860400;
+        bh=1z4C3cDhuxGjXB0UME6NYaxyTnTBqPKAuFOfp1Tv8Gs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AaGHcByXwzuMWlUjeL6ZPAg8l+zjfbRxjn78GrGkYOngxvN/rvLHGx1jClcGFMrrd
-         /iv5IH8+R0psQC0D9JwLGUkpLEbYrkpptPwTKgxhKcAduj5roAKPQVsIUvujyl0Up7
-         bjUOs1rcWjkCgnWUVyTN/0RjL9+CITu+RKiP/DmzhMBPDRUMk94m2ERyf5Y/s2ffre
-         ZwMg2898fzHulqM0hfDNKdBycBbQZ32/rF4H6tPIvffYKk/7cplTOP15LKnamXkf6p
-         RYzsciK5Acy0xqRdzZIMSIf74qghYxTa45ZvdGb0Eod2kyeap8y+mMnBDB1p0rOUk3
-         /ISPRKpxYwIQg==
-Date:   Thu, 22 Sep 2022 17:24:52 +0200
+        b=UIKPtp7sb9E7s83LyAsYXaJoWQ86lWEODey4lp7akRkjR1tmHSnVLKn195i06BDAi
+         Xpnb+L7lmX18qTozO7iHRtX1Gb8DCIsh/SZXYhqkJm/fDZ9qUP20qELyZVMgs5Togg
+         TICsZBOVs9SBole6a52QyeZAEqCJPes6Bsk7DVYrc4jfQu3+Xj1JSoxG+RTDW5Hpch
+         fvKjbl86wjcgxzXTo4kNq8ElEVqzBeJUwACJnZ+iha0WhqCvHtM4OuzhcT0Zs/09Jy
+         r94Fc8SVKcXJNjve9u+59FOUXswq+6Ajgw3EleFzNWvlpy/EKITrAEGjct3jUZYSRb
+         LZL3slrfraTkQ==
+Date:   Thu, 22 Sep 2022 17:26:35 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Miklos Szeredi <mszeredi@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
@@ -40,15 +40,14 @@ Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         David Howells <dhowells@redhat.com>,
         Yu-li Lin <yulilin@google.com>,
         Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: [PATCH v4 04/10] cachefiles: only pass inode to
- *mark_inode_inuse() helpers
-Message-ID: <20220922152452.zqmei373ia6l5zky@wittgenstein>
+Subject: Re: [PATCH v4 05/10] cachefiles: use vfs_tmpfile_open() helper
+Message-ID: <20220922152635.2we3o4gso7t4pmmu@wittgenstein>
 References: <20220922084442.2401223-1-mszeredi@redhat.com>
- <20220922084442.2401223-5-mszeredi@redhat.com>
+ <20220922084442.2401223-6-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220922084442.2401223-5-mszeredi@redhat.com>
+In-Reply-To: <20220922084442.2401223-6-mszeredi@redhat.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -58,13 +57,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 10:44:36AM +0200, Miklos Szeredi wrote:
-> The only reason to pass dentry was because of a pr_notice() text.  Move
-> that to the two callers where it makes sense and add a WARN_ON() to the
-> third.
+On Thu, Sep 22, 2022 at 10:44:37AM +0200, Miklos Szeredi wrote:
+> Use the vfs_tmpfile_open() helper instead of doing tmpfile creation and
+> opening separately.
+> 
+> The only minor difference is that previously no permission checking was
+> done, while vfs_tmpfile_open() will call may_open() with zero access mask
+> (i.e. no access is checked).  Even if this would make a difference with
+> callers caps (don't see how it could, even in the LSM codepaths) cachfiles
+> raises caps before performing the tmpfile creation, so this extra
+> permission check will not result in any regression.
 > 
 > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
 
-Looks good to me,
+With the may_open() in vfs_tmpfile_open() we hopefully won't cause any
+issues for this but it seems unlikely,
 Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
