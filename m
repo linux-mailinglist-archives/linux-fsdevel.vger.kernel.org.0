@@ -2,240 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 055B25E6FCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 00:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2188F5E7006
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 01:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbiIVWkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 18:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
+        id S229449AbiIVW7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 18:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230087AbiIVWkr (ORCPT
+        with ESMTP id S229759AbiIVW7m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 18:40:47 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2159B4EB5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 15:40:45 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id q35-20020a17090a752600b002038d8a68fbso3957188pjk.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 15:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=jfx8G87uYa6oZzUqHB9YYgcZsGkw/uEDRC4JIVDbrYY=;
-        b=aRedHfST7bJ3gGY5NJANM00AVCRDIcwZ0ZjF3E5kgo9Rbf/t2+uJeq3ZwbeBJEmsjK
-         VWEGvRCjmcW3hNy2JtjOekBG9/npInJBT5ndK78exDA13C2wIdXENSXZgHYfixnC/ITj
-         2U5CTEEf8ekxhOc3FTEJzcFtymZTgWwCM3YNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=jfx8G87uYa6oZzUqHB9YYgcZsGkw/uEDRC4JIVDbrYY=;
-        b=zNN95pxZXb5bvj4Zz1aOhed8pKfEWFqoGh9bP+M2WzxxHawHuRSVPrYbQx2fse1B+j
-         8iDBRwEoKzyoKozQ5bD2kaI8N1HwSB3i7eTxRzaxvUwUMRfv7QKbj9LW4hicfH2s/bvS
-         cXaxzg8NaU6kMv8eU9OOp7/voOBl95mTFFiqJAxmUKiw2y0zgqadaHhRCgJ66SNkAUwn
-         tD0DBhJzCClc/1bOMs30RkTD0AoaIGnYzIwFfGiM8PvGKAeQWBns8/xmWQz6zseGJxfv
-         NO7IDgmRbU8haPwcRoHU5rKGLwm47y/9X5dEyAZrz5UkTznWlL7fG587cD0C7uae84yQ
-         kFrA==
-X-Gm-Message-State: ACrzQf3FES0g+dvUakIhWDQvAxBjJnadrDdi87Lkng8Pb5K+YOPj1uBv
-        LJh/s5Z+/tU4zxpjaxr0usfB6XPb/x+F3XI/
-X-Google-Smtp-Source: AMsMyM4WHTbYcd82qhWHWo1iJ/TfVdzqjtc0pprziCB/tsv+jj5L7+NOHHM2WE66UCahkMwAwgZdLA==
-X-Received: by 2002:a17:903:230e:b0:178:3356:b82a with SMTP id d14-20020a170903230e00b001783356b82amr5362164plh.138.1663886445128;
-        Thu, 22 Sep 2022 15:40:45 -0700 (PDT)
-Received: from localhost ([2601:644:200:2b2:48c:c943:872f:1aae])
-        by smtp.gmail.com with ESMTPSA id x5-20020a626305000000b0053e599d7032sm4903955pfb.54.2022.09.22.15.40.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 15:40:44 -0700 (PDT)
-From:   Ivan Babrou <ivan@cloudflare.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        David Laight <David.Laight@aculab.com>,
-        Ivan Babrou <ivan@cloudflare.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Mike Rapoport <rppt@kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Kalesh Singh <kaleshsingh@google.com>
-Subject: [PATCH v2] proc: report open files as size in stat() for /proc/pid/fd
-Date:   Thu, 22 Sep 2022 15:40:26 -0700
-Message-Id: <20220922224027.59266-1-ivan@cloudflare.com>
-X-Mailer: git-send-email 2.37.2
+        Thu, 22 Sep 2022 18:59:42 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74914240A8;
+        Thu, 22 Sep 2022 15:59:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9D29D8AAE53;
+        Fri, 23 Sep 2022 08:59:36 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1obVAM-00Ay6t-DW; Fri, 23 Sep 2022 08:59:34 +1000
+Date:   Fri, 23 Sep 2022 08:59:34 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] iomap/xfs: fix data corruption due to stale
+ cached iomaps
+Message-ID: <20220922225934.GU3600936@dread.disaster.area>
+References: <20220921082959.1411675-1-david@fromorbit.com>
+ <Yyvjtpi49YSUej+w@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yyvjtpi49YSUej+w@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=632ce8d8
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=2hJliK1U0HaKiL3xgs4A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Many monitoring tools include open file count as a metric. Currently
-the only way to get this number is to enumerate the files in /proc/pid/fd.
+On Wed, Sep 21, 2022 at 09:25:26PM -0700, Darrick J. Wong wrote:
+> On Wed, Sep 21, 2022 at 06:29:57PM +1000, Dave Chinner wrote:
+> > Hi folks,
+> > 
+> > THese patches address the data corruption first described here:
+> > 
+> > https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+> > 
+> > This data corruption has been seen in high profile production
+> > systems so there is some urgency to fix it. The underlying flaw is
+> > essentially a zero-day iomap bug, so whatever fix we come up with
+> > needs to be back portable to all supported stable kernels (i.e.
+> > ~4.18 onwards).
+> > 
+> > A combination of concurrent write()s, writeback IO completion, and
+> > memory reclaim combine to expose the fact that the cached iomap that
+> > is held across an iomap_begin/iomap_end iteration can become stale
+> > without the iomap iterator actor being aware that the underlying
+> > filesystem extent map has changed.
+> > 
+> > Hence actions based on the iomap state (e.g. is unwritten or newly
+> > allocated) may actually be incorrect as writeback actions may have
+> > changed the state (unwritten to written, delalloc to unwritten or
+> > written, etc). This affects partial block/page operations, where we
+> > may need to read from disk or zero cached pages depending on the
+> > actual extent state. Memory reclaim plays it's part here in that it
+> > removes pages containing partial state from the page cache, exposing
+> > future partial page/block operations to incorrect behaviour.
+> > 
+> > Really, we should have known that this would be a problem - we have
+> > exactly the same issue with cached iomaps for writeback, and the
+> > ->map_blocks callback that occurs for every filesystem block we need
+> > to write back is responsible for validating the cached iomap is
+> > still valid. The data corruption on the write() side is a result of
+> > not validating that the iomap is still valid before we initialise
+> > new pages and prepare them for data to be copied in to them....
+> > 
+> > I'm not really happy with the solution I have for triggering
+> > remapping of an iomap when the current one is considered stale.
+> > Doing the right thing requires both iomap_iter() to handle stale
+> > iomaps correctly (esp. the "map is invalid before the first actor
+> > operation" case), and it requires the filesystem
+> > iomap_begin/iomap_end operations to co-operate and be aware of stale
+> > iomaps.
+> > 
+> > There are a bunch of *nasty* issues around handling failed writes in
+> > XFS taht this has exposed - a failed write() that races with a
+> > mmap() based write to the same delalloc page will result in the mmap
+> > writes being silently lost if we punch out the delalloc range we
+> > allocated but didn't write to. g/344 and g/346 expose this bug
+> > directly if we punch out delalloc regions allocated by now stale
+> > mappings.
+> 
+> Yuck.  I'm pretty sure that callers (xfs_buffered_write_iomap_end) is
+> supposed to call truncate_pagecache_range with the invalidatelock (fka
+> MMAPLOCK) held.
 
-The problem with the current approach is that it does many things people
-generally don't care about when they need one number for a metric.
-In our tests for cadvisor, which reports open file counts per cgroup,
-we observed that reading the number of open files is slow. Out of 35.23%
-of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
-`proc_fill_cache`, which is responsible for filling dentry info.
-Some of this extra time is spinlock contention, but it's a contention
-for the lock we don't want to take to begin with.
+Yup, there's multiple problems with this code; apart from
+recognising that it is obviously broken and definitely problematic,
+I haven't dug into it further.
 
-We considered putting the number of open files in /proc/pid/status.
-Unfortunately, counting the number of fds involves iterating the open_files
-bitmap, which has a linear complexity in proportion with the number
-of open files (bitmap slots really, but it's close). We don't want
-to make /proc/pid/status any slower, so instead we put this info
-in /proc/pid/fd as a size member of the stat syscall result.
-Previously the reported number was zero, so there's very little
-risk of breaking anything, while still providing a somewhat logical
-way to count the open files with a fallback if it's zero.
+> > Then, because we can't punch out the delalloc we allocated region
+> > safely when we have a stale iomap, we have to ensure when we remap
+> > it the IOMAP_F_NEW flag is preserved so that the iomap code knows
+> > that it is uninitialised space that is being written into so it will
+> > zero sub page/sub block ranges correctly.
+> 
+> Hm.  IOMAP_F_NEW results in zeroing around, right?  So if the first
+> ->iomap_begin got a delalloc mapping, but by the time we got the folio
+> locked someone else managed to writeback and evict the page, we'd no
+> longer want that zeroing ... right?
 
-RFC for this patch included iterating open fds under RCU. Thanks
-to Frank Hofmann for the suggestion to use the bitmap instead.
+Yes, and that is one of the sources of the data corruption - zeroing
+when we shouldn't.
 
-Previously:
+There are multiple vectors to having a stale iomap here:
 
-```
-$ sudo stat /proc/1/fd | head -n2
-  File: /proc/1/fd
-  Size: 0         	Blocks: 0          IO Block: 1024   directory
-```
+1. we allocate the delalloc range, giving us IOMAP_DELALLOC and
+   IOMAP_F_NEW. Writeback runs, allocating the range as unwritten.
+   Even though the iomap is now stale, there is no data corruption
+   in this case because the range is unwritten and so we still need
+   zeroing.
 
-With this patch:
+2. Same as above, but IO completion converts the range to written.
+   Data corruption occurs in this case because IOMAP_F_NEW causes
+   incorrect page cache zeroing to occur on partial page writes.
 
-```
-$ sudo stat /proc/1/fd | head -n2
-  File: /proc/1/fd
-  Size: 65        	Blocks: 0          IO Block: 1024   directory
-```
+3. We have an unwritten extent (prealloc, writeback in progress,
+   etc) so we have IOMAP_UNWRITTEN. These require zeroing,
+   regardless of whether IOMAP_F_NEW is set or not. Extent is
+   written behind our backs, unwritten conversion occurs, and now we
+   zero partial pages when we shouldn't.
 
-Correctness check:
+Other issues I've found:
 
-```
-$ sudo ls /proc/1/fd | wc -l
-65
-```
+4. page faults can run the buffered write path concurrently with
+   write() because they aren't serialised against each other. Hence
+   we can have overlapping concurrent iomap_iter() operations with
+   different zeroing requirements and it's anyone's guess as to
+   which will win the race to the page lock and do the initial
+   zeroing. This is a potential silent mmap() write data loss
+   vector.
 
-I added the docs for /proc/<pid>/fd while I'm at it.
+5. anything that can modify the extent layout without holding the
+   i_rwsem exclusive can race with iomap iterating the extent list.
+   Holding the i_rwsem shared and modifying the extent list (e.g.
+   direct IO writes) can result in iomaps changing in the middle of,
+   say, buffered reads (e.g. hole->unwritten->written).
 
-Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+IOWs, we must always treat iomaps that are returned by iomap_iter()
+to the actor functions as volatile and potentially invalid. If we
+are using folio locks to ensure only one task is accessing page
+cache data at any given time, then we *always* need to check that
+the iomap is valid once we have the folio locked. If the iomap is
+invalid, then we have to remap the file offset before deciding wht
+to do with the data in the page....
 
----
-v2: Added missing rcu_read_lock() / rcu_read_unlock(),
-    task_lock() / task_unlock() and put_task_struct().
----
- Documentation/filesystems/proc.rst | 17 ++++++++++++
- fs/proc/fd.c                       | 44 ++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+> > As a result, ->iomap_begin() needs to know if the previous iomap was
+> > IOMAP_F_STALE, and if so, it needs to know if that previous iomap
+> > was IOMAP_F_NEW so it can propagate it to the remap.
+> > 
+> > So the fix is awful, messy, and I really, really don't like it. But
+> > I don't have any better ideas right now, and the changes as
+> > presented fix the reproducer for the original data corruption and
+> > pass fstests without and XFS regressions for block size <= page size
+> > configurations.
+> > 
+> > Thoughts?
+> 
+> I have a related question about another potential corruption vector in
+> writeback.  If write_cache_pages selects a folio for writeback, it'll
+> call clear_page_dirty_for_io to clear the PageDirty bit before handing
+> it to iomap_writepage, right?
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index e7aafc82be99..394548d26187 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
-   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
-   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
-   3.12	/proc/<pid>/arch_status - Task architecture specific information
-+  3.13  /proc/<pid>/fd - List of symlinks to open files
- 
-   4	Configuring procfs
-   4.1	Mount options
-@@ -2145,6 +2146,22 @@ AVX512_elapsed_ms
-   the task is unlikely an AVX512 user, but depends on the workload and the
-   scheduling scenario, it also could be a false negative mentioned above.
- 
-+3.13 /proc/<pid>/fd - List of symlinks to open files
-+-------------------------------------------------------
-+This directory contains symbolic links which represent open files
-+the process is maintaining.  Example output::
-+
-+  lr-x------ 1 root root 64 Sep 20 17:53 0 -> /dev/null
-+  l-wx------ 1 root root 64 Sep 20 17:53 1 -> /dev/null
-+  lrwx------ 1 root root 64 Sep 20 17:53 10 -> 'socket:[12539]'
-+  lrwx------ 1 root root 64 Sep 20 17:53 11 -> 'socket:[12540]'
-+  lrwx------ 1 root root 64 Sep 20 17:53 12 -> 'socket:[12542]'
-+
-+The number of open files for the process is stored in 'size' member
-+of stat() output for /proc/<pid>/fd for fast access.
-+-------------------------------------------------------
-+
-+
- Chapter 4: Configuring procfs
- =============================
- 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 913bef0d2a36..ff526dfc5faa 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -279,6 +279,34 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 	return 0;
- }
- 
-+static int proc_readfd_count(struct inode *inode)
-+{
-+	struct task_struct *p = get_proc_task(inode);
-+	struct fdtable *fdt;
-+	unsigned int i, size, open_fds = 0;
-+
-+	if (!p)
-+		return -ENOENT;
-+
-+	task_lock(p);
-+	if (p->files) {
-+		rcu_read_lock();
-+
-+		fdt = files_fdtable(p->files);
-+		size = fdt->max_fds;
-+
-+		for (i = size / BITS_PER_LONG; i > 0;)
-+			open_fds += hweight64(fdt->open_fds[--i]);
-+
-+		rcu_read_unlock();
-+	}
-+	task_unlock(p);
-+
-+	put_task_struct(p);
-+
-+	return open_fds;
-+}
-+
- static int proc_readfd(struct file *file, struct dir_context *ctx)
- {
- 	return proc_readfd_common(file, ctx, proc_fd_instantiate);
-@@ -319,9 +347,25 @@ int proc_fd_permission(struct user_namespace *mnt_userns,
- 	return rv;
- }
- 
-+static int proc_fd_getattr(struct user_namespace *mnt_userns,
-+			const struct path *path, struct kstat *stat,
-+			u32 request_mask, unsigned int query_flags)
-+{
-+	struct inode *inode = d_inode(path->dentry);
-+
-+	generic_fillattr(&init_user_ns, inode, stat);
-+
-+	/* If it's a directory, put the number of open fds there */
-+	if (S_ISDIR(inode->i_mode))
-+		stat->size = proc_readfd_count(inode);
-+
-+	return 0;
-+}
-+
- const struct inode_operations proc_fd_inode_operations = {
- 	.lookup		= proc_lookupfd,
- 	.permission	= proc_fd_permission,
-+	.getattr	= proc_fd_getattr,
- 	.setattr	= proc_setattr,
- };
- 
+Yes all interactions from that point onwards until we mark the folio
+as under writeback are done under the folio lock, so they should be
+atomic from the perspective of the data paths that dirty/clean the
+page.
+
+> What happens if iomap_writepage_map errors out (say because ->map_blocks
+> returns an error) without adding the folio to any ioend?
+
+Without reading further:
+
+1. if we want to retry the write, we folio_redirty_for_writepage(),
+unlock it and return with no error. Essentially we just skip over
+it.
+
+2. If we want to fail the write, we should call set_mapping_error()
+to record the failure for the next syscall to report and, maybe, set
+the error flag/clear the uptodate flag on the folio depending on
+whether we want the data to remain valid in memory or not.
+
+> I think in
+> that case we'll follow the (error && !count) case, in which we unlock
+> the folio and exit without calling folio_redirty_for_writepage, right?
+> The error will get recorded in the mapping for the next fsync, I think,
+> but I also wonder if we *should* redirty because the mapping failed, not
+> the attempt at persistence.
+
+*nod*
+
+I think the question that needs to be answered here is this: in what
+case is an error being returned from ->map_blocks a recoverable
+error that a redirty + future writeback retry will succeed?
+
+AFAICT, all cases from XFS this is a fatal error (e.g. corruption of
+the BMBT), so the failure will persist across all attempts to retry
+the write?
+
+Perhaps online repair will change this (i.e. in the background
+repair fixes the BMBT corruption and so the next attempt to write
+the data will succeed) so I can see that we *might* need to redirty
+the page in this case, but....
+
+> This isn't a problem for XFS because the next buffered write will mark
+> the page dirty again, but I've been trawling through the iomap buffer
+> head code (because right now we have a serious customer escalation on
+> 4.14) and I noticed that we never clear the dirty state on the buffer
+> heads.  gfs2 is the only user of iomap buffer head code, but that stands
+> out as something that doesn't quite smell right.  I /think/ this is a
+> result of XFS dropping buffer heads in 4.19, hoisting the writeback
+> framework to fs/iomap/ in 5.5, and only adding buffer heads back to
+> iomap later.
+
+Seems plausible.
+
+> The reason I even noticed this at all is because of what 4.14 does --
+> back in those days, initiating writeback on a page clears the dirty
+> bit from the attached buffer heads in xfs_start_buffer_writeback.  If
+> xfs_writepage_map fails to initiate any writeback IO at all, then it
+> simply unlocks the page and exits without redirtying the page.  IOWs, it
+> causes the page and buffer head state to become inconsistent, because
+> now the page thinks it is clean but the BHs think they are dirty.
+> 
+> Worse yet, if userspace responds to the EIO by reissuing the write()
+> calls, the write code will see BH_Dirty set on the buffer and doesn't
+> even try to set PageDirty, which means ... that the page never gets
+> written to disk again!
+> 
+> There are three questions in my mind:
+> 
+> A. Upstream iomap writeback code doesn't change (AFAICT) the buffer head
+> dirty state.  I don't know if this is really broken?  Or maybe gfs2 just
+> doesn't notice or care?
+
+You'd need to talk to the GFS2 ppl about that - I haven't paid any
+attention to the iomap bufferhead code and so I have no idea what
+constraints it is operating under or what bufferhead state GFS2 even
+needs...
+
+> B. Should writeback be redirtying any folios that aren't added to an
+> ioend?  I'm not sure that doing so is correct, since writeback to a
+> shutdown filesystem won't clear the dirty pages.
+
+See above - I think the action depends on the error being returned.
+If it's a fatal error that can never succeed in future (e.g.  fs is
+shutdown), then we should not redirty the page and just error it
+out. If it's not a fatal error, then *maybe* we should be redirtying
+the page. Of course, this can lead to dirty pages that can never be
+written.....
+
+> C. Gotta figure out why our 4.14 kernel doesn't initiate writeback.
+> At this point we're pretty sure it's because we're actually hitting the
+> same RCA as commit d9252d526ba6 ("xfs: validate writeback mapping using
+> data fork seq counter").  Given the (stale) data it has, it never
+> manages to get a valid mapping, and just... exits xfs_map_blocks without
+> doing anything.
+
+I haven't looked at any code that old for a long while, so I can't
+really help you there... :/
+
+-Dave.
 -- 
-2.37.2
-
+Dave Chinner
+david@fromorbit.com
