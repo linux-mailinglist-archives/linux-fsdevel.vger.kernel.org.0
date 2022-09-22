@@ -2,252 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 411F65E5898
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 04:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C7935E5915
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 05:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbiIVCeh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 22:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34704 "EHLO
+        id S231208AbiIVDKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 23:10:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiIVCeg (ORCPT
+        with ESMTP id S230341AbiIVDK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 22:34:36 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151DC25DE;
-        Wed, 21 Sep 2022 19:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663814074; x=1695350074;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=3fIG5ydaadME2hNf7MrwHBuy5Bc162NLt6KuvuaOJnk=;
-  b=XTRpQJ4yDwv8up5MoPsE8pm/Kd9/skz3zH9KlOvWv7Vx2TsaJFsZLWKv
-   irbnMIANudhtUV1D5/6Oz4TLsJFc032y7KAGX7TnDkoMA1zlmW4c5d81C
-   uF1pfzPr+lNrJIHTtR6St7gCNY0UaGXLYJBo83gTEbYbCZ987/ULDPmhD
-   7q2kpQsJuWcXbNRjNmoOLJXRusDL+5U3JXWNv8Dy1xiJabsc/b1Yo5Ma+
-   8PnJ/p3GkBDNCURWRKBswSVUjFjKJR/6vuXhau/yIy85A6v8IOv47jsDC
-   WxjtnyIivi0QKsIUdc+SBK4qIJtSAzEbH30etNXGdi1EUYechAfHGClVK
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="301021360"
-X-IronPort-AV: E=Sophos;i="5.93,335,1654585200"; 
-   d="scan'208";a="301021360"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2022 19:34:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,335,1654585200"; 
-   d="scan'208";a="762004338"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Sep 2022 19:34:32 -0700
-Received: from orsmsx609.amr.corp.intel.com (10.22.229.22) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 21 Sep 2022 19:34:33 -0700
-Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
- ORSMSX609.amr.corp.intel.com (10.22.229.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 21 Sep 2022 19:34:33 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Wed, 21 Sep 2022 19:34:33 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Wed, 21 Sep 2022 19:34:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BEhcJNitFtdFddckLM1X4OTIqrQ1jRY0bSbfSZNJLqQBVAafSiOAePopuMA0RMlMb6k1Ge0IzK8RHzYHE8p6ZbsyHwusH8rm5vXDkj9roynq3+W8XK/Mxe+GKq8N8iqQ/hkjDkT/xzhuFLf5e0Cy1zEMO3w370SCu0uJT/voHEUZ2EHor9gEKIFJIQhVs8w40ahLG9yDidOMBjR8rioN0iHzvPsrrjXtZLgf/ZV2ZzOjBkqK9AzlZmWf4ACYLNXzaMtwcvWXEEWys/JVmO+RWX87idYCE0nG0hecpBo6sGYsn6CGToqhRwrD9jEoRlY3Bu1YBUpaYUbOK4YZlxlhEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+A+ui7vRAbklnLzN/47mUtV9QEWE7k3vt4vmvAb24EA=;
- b=DPLUJAHaCzSUrToyLNVxOe08Hv17BP0NuJ1sAOYkWYbKS7uNgBe82J/Aw5ulJ3UeIGOUdbkYpDINv6106RBZ64V7dg4xp75tSSvjBDUuL7ZK5sI5/tKYGfUkX3iQyk10wjYRVRwSTarUgbxjuRI5i+IItTVG3Slw3Y66JwC90/QYUW2S3WI4oaT2Bvuzy5eNtOPWthRdJy5AZ2jbfP1DvJ2NwDwt80jsMOEl7pn67dTWl1kOCQjl4AuLykQzABdWOtLOZUDy0iJv/CDDFVId3J6lyYtrkgLhnyW4oOBXsx54N5MqlvNzBLNhFucTZRlZl2uDS+AuUjmb72VUNv0HAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20) by CH0PR11MB5474.namprd11.prod.outlook.com
- (2603:10b6:610:d5::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.17; Thu, 22 Sep
- 2022 02:34:24 +0000
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::9847:345e:4c5b:ca12]) by MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::9847:345e:4c5b:ca12%6]) with mapi id 15.20.5654.017; Thu, 22 Sep 2022
- 02:34:24 +0000
-Date:   Wed, 21 Sep 2022 19:34:20 -0700
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     Alistair Popple <apopple@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     Jason Gunthorpe <jgg@nvidia.com>, <akpm@linux-foundation.org>,
-        "Matthew Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-ext4@vger.kernel.org>
-Subject: Re: [PATCH v2 16/18] mm/memremap_pages: Support initializing pages
- to a zero reference count
-Message-ID: <632bc9acdbad1_349629435@dwillia2-xfh.jf.intel.com.notmuch>
-References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
- <166329940343.2786261.6047770378829215962.stgit@dwillia2-xfh.jf.intel.com>
- <YyssywF6HmZrfqhD@nvidia.com>
- <632ba212e32bb_349629451@dwillia2-xfh.jf.intel.com.notmuch>
- <Yyuml1tSKPmvLS6P@nvidia.com>
- <632bad8e685d5_349629438@dwillia2-xfh.jf.intel.com.notmuch>
- <87v8pgmbl8.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <87v8pgmbl8.fsf@nvdebian.thelocal>
-X-ClientProxiedBy: BY5PR13CA0028.namprd13.prod.outlook.com
- (2603:10b6:a03:180::41) To MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20)
+        Wed, 21 Sep 2022 23:10:28 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0806DAFC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 20:10:23 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 207so7853996pgc.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 20:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=Vn16rLGrbDDjaKey8W5tBl33Bv/zSWk+J99kOTcbUQE=;
+        b=AE85R2lewHV6WpJoVOU7vYZV1LEmLLSYclgKQnUnY2xKVDNii5Fo/BkTgD3yH2NCT3
+         SVad2gPnMgif6X0cTuEEQWajnZUigllF8Swz/AIt7V/3KOVHG8p4eV2QEjA7+Ig8Tbzm
+         hCWNqHwmKS+0LzUeaR2ah/lhPJclhFqcjfbic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=Vn16rLGrbDDjaKey8W5tBl33Bv/zSWk+J99kOTcbUQE=;
+        b=yC7lwIN/MkMfoXEFuy1PaghUaBMWPmTBJncU2ZL2ji4tPhxd5e5mq46418EeilBsQ5
+         Yc0FI5czqigWxuaVCj7hl3rAh0k9RDCnD9gl7N8K+ShiInF0NVfGRvxqu+YsGX0ftoRy
+         xJK2a6fo8lmSlwBtarj0BjE5eIJiUTZkH02JKcT4wsHU1vkqfTC07TSwbDOHQeDazqYq
+         Sx34oC4QZvozv60pctaw8HcJB2O/Axc58V9nvsfI50lF4iCs2wYbwYtqBCAeisl+V3lW
+         +VXiISqdQAQX/JAY8IUjwcq5LwQGLJDTENW3gwpHgnUMr4DbpWBsRj1Gx1ElEnNT2z+d
+         yhUA==
+X-Gm-Message-State: ACrzQf1MZd+OfoZJ9oUsuvW/xilgbV/uHWgaPEvs8iwxjXbspdG9lKng
+        XsoZyO/HjowBW9lu5hWVM1KJow==
+X-Google-Smtp-Source: AMsMyM5kbtfQXBGy+UgqYmJ89cy++RVO/0JPV5R9E0qA9P5D2h03X/wzrRsUp18SKmZq4kCTVEHctQ==
+X-Received: by 2002:a05:6a00:2314:b0:546:ce91:89a3 with SMTP id h20-20020a056a00231400b00546ce9189a3mr1393996pfh.77.1663816223317;
+        Wed, 21 Sep 2022 20:10:23 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q21-20020a170902bd9500b001785fa792f4sm2713016pls.243.2022.09.21.20.10.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Sep 2022 20:10:22 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Jacob Shin <jacob.shin@amd.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        dev@openvswitch.org, x86@kernel.org,
+        linux-wireless@vger.kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH 00/12] slab: Introduce kmalloc_size_roundup()
+Date:   Wed, 21 Sep 2022 20:10:01 -0700
+Message-Id: <20220922031013.2150682-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|CH0PR11MB5474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0000c22e-cc7d-4296-a137-08da9c42f65a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EKja2iLOdMVyfmlxOz9r9TVMFFnJmAajbMF5UteN8T6CbFfTri8gplHvOi/upVqoUtpI+Ecs7cKpUN84ih/veq5PtagYvtRMx9vsT30qkgLlhtj8CWYaJ34IrjAXyGUteCWv946n709HWWHbe+pjyneKFLaQ2DohDdz7V2OHvH2jTsx4e9Ee13V2noowA+U+tOx/K1C1k/mzfrZJcCkS986gG/dfdy8Q88Wjq3k/ra9XcyOmqEumq2RUYaHB/0zuALYUgL9jpOwwsrN4T0mibuFdH4bjK+HHLbcfsVoVYe3jW8AKB2YQ4UBeG1fQNIG1fgeh7wIEGxJQdQw6esqi8M904ocKIyVPWA4omfSRgX+RINMUR0OMC5mLbNxXtzs75RasApbQuBavErEUQ1/T8DCKknHGqFI74pZJ+L6LjOaDebLTuZCaBj/0UProkAH3ILF96vvfB1f2F9yV8FuP4JDE3P/0CQn1T/1mr7+dRPxqwo3nRikuMUhrk7BhFqGbyDmQP905K/UjWOZzTEOm+o7GqT/k1Rtv4zHpB8tVXPT6fHyIeuBpr7gZ7dgWj1xM/77c6EwaV9UYnlS05612bkwuZZY8KeHL0X1+3pC9kU++NjIkibjYhDfDbI6ZArGivwkDfufzZpCgC6tnO5yYfe3jIymDUhXhEsszWRqz1pnWxk8zqwqblKT2Txf0XeQV4nPqZoZWU75S3VubAOzzWA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(366004)(136003)(346002)(39860400002)(396003)(451199015)(6512007)(6486002)(26005)(9686003)(41300700001)(6666004)(6506007)(316002)(110136005)(54906003)(186003)(8676002)(66556008)(66476007)(5660300002)(83380400001)(2906002)(38100700002)(7416002)(86362001)(66946007)(4326008)(478600001)(8936002)(82960400001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BH93NjxWkvPqNbhUokBrR9G6RmTsWBIae6dVvUKEER1NNk+4ItcUrt9Wb0Wk?=
- =?us-ascii?Q?oDJ97O9rPVR4DfzluBdXXRUvprqb4R0uvhJSZV5xusIyFCAbeI2LEpaCQZvZ?=
- =?us-ascii?Q?xf3PA5XukHs0KLBme4yssBBS/FDb9/iOAXZGg+CidktozMMUVJhccavILg9r?=
- =?us-ascii?Q?7DiFEYy0xKm1aEN++4DvwT6SyZj3o2KCLeN4lEIibLm94nIAZSaJ5tMDpcMB?=
- =?us-ascii?Q?0H+HhfeiswusAFdMmopuYlS1fvd87dCzvKehjwY69EgMabzIkPu9QjcBOrmH?=
- =?us-ascii?Q?Kd1ib+WZnDUC7QV5hHgBTPIFFP/797o9M9StW7yNecPjuiWYt+8EWPuXYT4B?=
- =?us-ascii?Q?Nq2f32Z1ym630N4DAtyUUML4C/EpFEreTRdM4KX9i2oeW5J/6SIJyaopYojS?=
- =?us-ascii?Q?VOTMhkZBs+fVJG8lZd/GLT5Louy1HYbzFoKsEwCEJoodsKIg359BfQn0UgBD?=
- =?us-ascii?Q?05MsscAZpJkG9K2R20eQtkQIveRJWYnYx65h10HcywtgXxohIdg9UkHW7IjL?=
- =?us-ascii?Q?nPLUmak2Jh9Fwlv18EWw9YKVKYtNw72URW808KzBBelZ39laQEBeZys1PW6N?=
- =?us-ascii?Q?YZn/FWDKTWN7jZFT1LcybdsUoszmxFRFvBtuJk3V0kcT89QD7hZ+25labtVp?=
- =?us-ascii?Q?K/F/9YZuH1ugGfqzqielmtxXndnGPfGr8K9D4Bueh9sgLNUt7MLTaryDPmOM?=
- =?us-ascii?Q?GQW5VAEnPANLwuF+haCDydlQRsvpgc79wAWKRDDR4CtpFCjxWknd9yhEeGqs?=
- =?us-ascii?Q?Mn0VRRS5v2U02RlCgLPywz6CMR8EnQpvjRE5X/tAbnB6RxsU5yslPIh2HrqP?=
- =?us-ascii?Q?X8OAtuOrPn+iwp/rNcDdGlP7keSYOaq3Cw9F5LD5QgEBB2bVTG9Y/JZAj3AB?=
- =?us-ascii?Q?mVC+pjdS9gSMqByhYwupIO3DkFQh3xsHzh2GaU26jRVnRvr5Ekzj9SqvUPZI?=
- =?us-ascii?Q?2ug7fgkNp7oFUlGrPgVapfTKGSoDVTQ400NZFCt+QUlx8YgPpTiKhwtfFE6O?=
- =?us-ascii?Q?dHJeDZQ9V8k8m8rS3VAnyAc9IvFCkALJWQF8hu65XkkgaMe16eDfnq7Z1S8c?=
- =?us-ascii?Q?A39/E4AEFKTwueij8ys3mLhcoeBU6wrwW0Kz8A8awvqdZMLg2h0BCUBbOaG0?=
- =?us-ascii?Q?nwSaL7oCgJa+s0twVCEFmNZylCUPs8W8AGuXpxnzUYYGcNQ50SVOo48jL8uX?=
- =?us-ascii?Q?1SB7Rrm5yYAxU75FR9kFqv0a6X8Ezs71saKSECBRGWu7wBai4AA7fspG4eEx?=
- =?us-ascii?Q?iGJAVTpEpN/06O4FOANNna7iEV8Z3xmAwAEfeJkWHbppJSVVAvbufskbxtCk?=
- =?us-ascii?Q?UCwVpx5ASQoLzvUFKbESt4oPXzsEtM+uDAoIGxZhP+3RgTdCLdOgBSmqd33j?=
- =?us-ascii?Q?DsBNZBLu9iU5wraBUbXd4mJvFTsGkf1lx4tjAqfkuuDzBKKBEHomigSsL53d?=
- =?us-ascii?Q?3tWMjBbdrIn20HBfALbT3n4M1n/ErWIpsshLBZaZpfGONwrhl7O/84vfYxTm?=
- =?us-ascii?Q?EaPoDPHXKiDnxd+ggyllsB5ZKStOhDjlQQQ+cOzTj4othNHw/PkJZ5A1Vel3?=
- =?us-ascii?Q?UhFO0LbJSlT2vDNA8G9lAfzrh1d/olS392aG5AR5N+PsAKTY2jz1bl5Ywehm?=
- =?us-ascii?Q?rA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0000c22e-cc7d-4296-a137-08da9c42f65a
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 02:34:24.2349
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BMKQmNL9lj/cCjqX8zI5iRqSWiaCYMr5j4cR1WQedXLkH42eXeEC5BFIvcOl54KcA8p+JomigaHNnHIk/bHfa9G8NMndnSREoGQAn3hcgns=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5474
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4981; h=from:subject; bh=s4SaVhOuX1ncHIDJErOKK4BV4PgBIHpDN/h97+EEvV8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjK9ISNp90ZWOfSod9OsDV3Pgtvy1E13pzv3DCmYbF tf0g8d2JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYyvSEgAKCRCJcvTf3G3AJkzwD/ wIy7miKIK9lOw6XzF5heENIATw2uhYlNzjs0acveP+ZCyoyc5I/WgCfqRAXAmHiXedbujzGw2FDqqT syY2emsesoSNP3gS/GOKo8RJDSOQC9cSQtEjb+mjbPF7Fkzqn/ZGRwMTbs9UaBsTj9Tj2fL7NNiO9p dwoQsa5XdmYV2vD0OlPuGJimN4Jz3oRQSNVQkawd+40awqnlGD9yQqU64uaLr5mwdGgPkIuw3aLLFd 5YiPwZw6bM1vgbnqBIuIHr/Z7XwM9EEapPwfqVdg/9dcOavsB633n1itcgsIqIDBioJGxOM0Ts7T86 4Jlikvby9AVebqTHq4+YuA+QwXaCQlzI8PxvKGF5ANAjeoheIYOhRCZTs4Dpe3aQtWFnO3FqVYLrzT cc2coPLbTlqbCxnMzWO5XK6k+LQJYAS5r5kCiddkkzITSqNSDkHLgAWrVT+WoO8GDM5wBJEy4K4BDX /s7uUaLCb4fXbubShHzmjelGTOPkp/YtKLrJhFLmk8oztScmMVc7cus/HhSCEpn2aXj3zHgtLJzUfw SN01q4wcwhmS6xqLuWl/PHEsTyaH69+g+rznvzhR64VGsg0V8g68wKeLcHDL9rQRALeFd3MBdV5n9s KFNBVsIrnbnnS1eImonqd1xuYH0pPRl+0Ng4aVcGGvP/yynpBokeriuTdCqA==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alistair Popple wrote:
-> 
-> Dan Williams <dan.j.williams@intel.com> writes:
-> 
-> > Jason Gunthorpe wrote:
-> >> On Wed, Sep 21, 2022 at 04:45:22PM -0700, Dan Williams wrote:
-> >> > Jason Gunthorpe wrote:
-> >> > > On Thu, Sep 15, 2022 at 08:36:43PM -0700, Dan Williams wrote:
-> >> > > > The initial memremap_pages() implementation inherited the
-> >> > > > __init_single_page() default of pages starting life with an elevated
-> >> > > > reference count. This originally allowed for the page->pgmap pointer to
-> >> > > > alias with the storage for page->lru since a page was only allowed to be
-> >> > > > on an lru list when its reference count was zero.
-> >> > > >
-> >> > > > Since then, 'struct page' definition cleanups have arranged for
-> >> > > > dedicated space for the ZONE_DEVICE page metadata, and the
-> >> > > > MEMORY_DEVICE_{PRIVATE,COHERENT} work has arranged for the 1 -> 0
-> >> > > > page->_refcount transition to route the page to free_zone_device_page()
-> >> > > > and not the core-mm page-free. With those cleanups in place and with
-> >> > > > filesystem-dax and device-dax now converted to take and drop references
-> >> > > > at map and truncate time, it is possible to start MEMORY_DEVICE_FS_DAX
-> >> > > > and MEMORY_DEVICE_GENERIC reference counts at 0.
-> >> > > >
-> >> > > > MEMORY_DEVICE_{PRIVATE,COHERENT} still expect that their ZONE_DEVICE
-> >> > > > pages start life at _refcount 1, so make that the default if
-> >> > > > pgmap->init_mode is left at zero.
-> >> > >
-> >> > > I'm shocked to read this - how does it make any sense?
-> >> >
-> >> > I think what happened is that since memremap_pages() historically
-> >> > produced pages with an elevated reference count that GPU drivers skipped
-> >> > taking a reference on first allocation and just passed along an elevated
-> >> > reference count page to the first user.
-> >> >
-> >> > So either we keep that assumption or update all users to be prepared for
-> >> > idle pages coming out of memremap_pages().
-> >> >
-> >> > This is all in reaction to the "set_page_count(page, 1);" in
-> >> > free_zone_device_page(). Which I am happy to get rid of but need from
-> >> > help from MEMORY_DEVICE_{PRIVATE,COHERENT} folks to react to
-> >> > memremap_pages() starting all pages at reference count 0.
-> >>
-> >> But, but this is all racy, it can't do this:
-> >>
-> >> +	if (pgmap->ops && pgmap->ops->page_free)
-> >> +		pgmap->ops->page_free(page);
-> >>
-> >>  	/*
-> >> +	 * Reset the page count to the @init_mode value to prepare for
-> >> +	 * handing out the page again.
-> >>  	 */
-> >> +	if (pgmap->init_mode == INIT_PAGEMAP_BUSY)
-> >> +		set_page_count(page, 1);
-> >>
-> >> after the fact! Something like that hmm_test has already threaded the
-> >> "freed" page into the free list via ops->page_free(), it can't have a
-> >> 0 ref count and be on the free list, even temporarily :(
-> >>
-> >> Maybe it nees to be re-ordered?
-> >>
-> >> > > How on earth can a free'd page have both a 0 and 1 refcount??
-> >> >
-> >> > This is residual wonkiness from memremap_pages() handing out pages with
-> >> > elevated reference counts at the outset.
-> >>
-> >> I think the answer to my question is the above troubled code where we
-> >> still set the page refcount back to 1 even in the page_free path, so
-> >> there is some consistency "a freed paged may have a refcount of 1" for
-> >> the driver.
-> >>
-> >> So, I guess this patch makes sense but I would put more noise around
-> >> INIT_PAGEMAP_BUSY (eg annotate every driver that is using it with the
-> >> explicit constant) and alert people that they need to fix their stuff
-> >> to get rid of it.
-> >
-> > Sounds reasonable.
-> >
-> >> We should definately try to fix hmm_test as well so people have a good
-> >> reference code to follow in fixing the other drivers :(
-> >
-> > Oh, that's a good idea. I can probably fix that up and leave it to the
-> > GPU driver folks to catch up with that example so we can kill off
-> > INIT_PAGEMAP_BUSY.
-> 
-> I'm hoping to send my series that fixes up all drivers using device
-> coherent/private later this week or early next. So you could also just
-> wait for that and remove INIT_PAGEMAP_BUSY entirely.
+Hi,
 
-Oh, perfect, thanks!
+This series fixes up the cases where callers of ksize() use it to
+opportunistically grow their buffer sizes, which can run afoul of the
+__alloc_size hinting that CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE
+use to perform dynamic buffer bounds checking. Quoting the first patch:
+
+
+In the effort to help the compiler reason about buffer sizes, the
+__alloc_size attribute was added to allocators. This improves the scope
+of the compiler's ability to apply CONFIG_UBSAN_BOUNDS and (in the near
+future) CONFIG_FORTIFY_SOURCE. For most allocations, this works well,
+as the vast majority of callers are not expecting to use more memory
+than what they asked for.
+
+There is, however, one common exception to this: anticipatory resizing
+of kmalloc allocations. These cases all use ksize() to determine the
+actual bucket size of a given allocation (e.g. 128 when 126 was asked
+for). This comes in two styles in the kernel:
+
+1) An allocation has been determined to be too small, and needs to be
+   resized. Instead of the caller choosing its own next best size, it
+   wants to minimize the number of calls to krealloc(), so it just uses
+   ksize() plus some additional bytes, forcing the realloc into the next
+   bucket size, from which it can learn how large it is now. For example:
+
+	data = krealloc(data, ksize(data) + 1, gfp);
+	data_len = ksize(data);
+
+2) The minimum size of an allocation is calculated, but since it may
+   grow in the future, just use all the space available in the chosen
+   bucket immediately, to avoid needing to reallocate later. A good
+   example of this is skbuff's allocators:
+
+	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
+	...
+	/* kmalloc(size) might give us more room than requested.
+	 * Put skb_shared_info exactly at the end of allocated zone,
+	 * to allow max possible filling before reallocation.
+	 */
+	osize = ksize(data);
+        size = SKB_WITH_OVERHEAD(osize);
+
+In both cases, the "how large is the allocation?" question is answered
+_after_ the allocation, where the compiler hinting is not in an easy place
+to make the association any more. This mismatch between the compiler's
+view of the buffer length and the code's intention about how much it is
+going to actually use has already caused problems[1]. It is possible to
+fix this by reordering the use of the "actual size" information.
+
+We can serve the needs of users of ksize() and still have accurate buffer
+length hinting for the compiler by doing the bucket size calculation
+_before_ the allocation. Code can instead ask "how large an allocation
+would I get for a given size?".
+
+Introduce kmalloc_size_roundup(), to serve this function so we can start
+replacing the "anticipatory resizing" uses of ksize().
+
+[1] https://github.com/ClangBuiltLinux/linux/issues/1599
+    https://github.com/KSPP/linux/issues/183
+-------
+
+And after adding kmalloc_size_roundup(), put it to use with the various
+ksize() callers, restore the previously removed __alloc_size hint,
+and fix the use of __malloc annotations.
+
+I tried to trim the CC list on this series since it got rather long. I
+kept all the suggested mailing lists, though. :)
+
+Thanks!
+
+-Kees
+
+Kees Cook (12):
+  slab: Introduce kmalloc_size_roundup()
+  skbuff: Proactively round up to kmalloc bucket size
+  net: ipa: Proactively round up to kmalloc bucket size
+  btrfs: send: Proactively round up to kmalloc bucket size
+  dma-buf: Proactively round up to kmalloc bucket size
+  coredump: Proactively round up to kmalloc bucket size
+  igb: Proactively round up to kmalloc bucket size
+  openvswitch: Proactively round up to kmalloc bucket size
+  x86/microcode/AMD: Track patch allocation size explicitly
+  iwlwifi: Track scan_cmd allocation size explicitly
+  slab: Remove __malloc attribute from realloc functions
+  slab: Restore __alloc_size attribute to __kmalloc_track_caller
+
+ arch/x86/include/asm/microcode.h              |  1 +
+ arch/x86/kernel/cpu/microcode/amd.c           |  3 +-
+ drivers/dma-buf/dma-resv.c                    |  9 +++-
+ drivers/net/ethernet/intel/igb/igb_main.c     |  1 +
+ drivers/net/ipa/gsi_trans.c                   |  7 ++-
+ drivers/net/wireless/intel/iwlwifi/dvm/dev.h  |  1 +
+ drivers/net/wireless/intel/iwlwifi/dvm/scan.c | 10 +++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mvm.h  |  3 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/ops.c  |  3 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c |  6 +--
+ fs/btrfs/send.c                               | 11 +++--
+ fs/coredump.c                                 |  7 ++-
+ include/linux/compiler_types.h                | 13 ++----
+ include/linux/slab.h                          | 46 ++++++++++++++++---
+ mm/slab_common.c                              | 17 +++++++
+ net/core/skbuff.c                             | 34 +++++++-------
+ net/openvswitch/flow_netlink.c                |  4 +-
+ 17 files changed, 125 insertions(+), 51 deletions(-)
+
+-- 
+2.34.1
+
