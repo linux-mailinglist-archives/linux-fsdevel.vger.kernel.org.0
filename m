@@ -2,265 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9FE5E60A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 13:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D535E6105
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 13:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbiIVLNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 07:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
+        id S231135AbiIVL3r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 07:29:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231486AbiIVLMx (ORCPT
+        with ESMTP id S229973AbiIVL3o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 07:12:53 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CB775CC3;
-        Thu, 22 Sep 2022 04:12:34 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id q15-20020a17090a304f00b002002ac83485so1804462pjl.0;
-        Thu, 22 Sep 2022 04:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=RZ+48UnAa8eecJxdZq6BiMyqwT/Ym9f2NYlp6Dy1smw=;
-        b=G+jaEnK2EsNrSXni7xo2A5prc1siifdzoFue4z79INVmISHoJzmEC9GR9nYFQgsDIb
-         I+dMTg2A+izoX3axTWSo/iYs6MjIzCmcdzB7dXax8chtAJiUZBX99VUNdhdppKGneXWq
-         kYGXC1GYOzs1VjWq4+vqWobAy7LlMsBZFdMkrUYk942Mo7xIHHo97tyiWe9mlgU2Ni4u
-         sX/UfkevtZ8mMh6n5HaMsQp+ivfAaex3bVTBLEN+6BskHMGics2YtdYw6Rq+h1kBbGkY
-         geXieByTrSvc7tahia6awNomWGRXvkXfKN0rMilgYg11CJ2HrHEklB8Oi0KpiF2sgY/f
-         QqoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=RZ+48UnAa8eecJxdZq6BiMyqwT/Ym9f2NYlp6Dy1smw=;
-        b=NylJybG90Qv8xOglTOtx+WPSbBNyCIXbU9gRbjBTPrUmf7AkqGHImkZSe3jryaFhh0
-         Yk7lnODz4uXMNE7xVyDO7ZdvgX7usNZaEjOJcGbceNGQCI28iHdk/Kl6R5ntPb5dGHw7
-         BL2vFkj5bMCv0btE3qtEo10Y5Jg544tYtHtJz96Ok8rOumvS953z/4AuticIGJPyN0RZ
-         WaxJ0DjnrqlzkL/01K8BSlKW69sa7aHarXZI1fN8zDO2u+RmT4dYRDhTF6Z4XwVU/foU
-         N9vr5NZlROodyKingUo+4340frmAuu944QEkW0BmjKM3v5nPUCIDrLHgyetLv8WOzKOU
-         2zLw==
-X-Gm-Message-State: ACrzQf04IIF0dgKFBM9RT7CutuW8K4zPjFkDyI5uv3JS9JePB1j5Ym8G
-        NWGWVZG+NLVwEFZSz+7fL5E=
-X-Google-Smtp-Source: AMsMyM71qTO+0u9YewSNaiOe7OR50cbfyQkUWC6xIKoR/xE2vrqrOeMi/1IfaO5sjL4VCWr3VgDTkw==
-X-Received: by 2002:a17:90a:e513:b0:200:2275:2d27 with SMTP id t19-20020a17090ae51300b0020022752d27mr3211649pjy.162.1663845152925;
-        Thu, 22 Sep 2022 04:12:32 -0700 (PDT)
-Received: from hyeyoo ([114.29.91.56])
-        by smtp.gmail.com with ESMTPSA id p189-20020a62d0c6000000b00541196bd2d9sm4098278pfg.68.2022.09.22.04.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 04:12:32 -0700 (PDT)
-Date:   Thu, 22 Sep 2022 20:12:21 +0900
-From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Pekka Enberg <penberg@kernel.org>,
-        Feng Tang <feng.tang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Alex Elder <elder@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Jacob Shin <jacob.shin@amd.com>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
-        x86@kernel.org, linux-wireless@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 01/12] slab: Introduce kmalloc_size_roundup()
-Message-ID: <YyxDFfKmSNNkHBFi@hyeyoo>
-References: <20220922031013.2150682-1-keescook@chromium.org>
- <20220922031013.2150682-2-keescook@chromium.org>
+        Thu, 22 Sep 2022 07:29:44 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E06513FAF;
+        Thu, 22 Sep 2022 04:29:37 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0781521A54;
+        Thu, 22 Sep 2022 11:29:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1663846176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9k9bX/5slzDdRSkUKBx98w00GOC+8EEXB+oK3HF6E5Q=;
+        b=T2VVCow1zNYZIiy/aEnPrWbsvg0XzllrQTYu6Y9KFZTd6Qbn2qh99JzI0IZqGDnbFWcuhj
+        J4nvfKtyBOvKH3Lcy00HfiMF9eidbuN6wx2razfOyNI02HnacqQLI0yoSEnATKR95hDVWT
+        /ya0yj4pvWs9AhgmIVxLNo5gi5ehsnw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1663846176;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9k9bX/5slzDdRSkUKBx98w00GOC+8EEXB+oK3HF6E5Q=;
+        b=ZNhkQWahbJ8c3/2sKwYjFTJbr4peFr+RuXw/nULl9kpZhK6zN+w8VFJipp673C6Vg0J0Q/
+        xq8pg4titNRGMRDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E5F2013AA5;
+        Thu, 22 Sep 2022 11:29:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id HNohOB9HLGMTOwAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 22 Sep 2022 11:29:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 5B522A0684; Thu, 22 Sep 2022 13:29:35 +0200 (CEST)
+Date:   Thu, 22 Sep 2022 13:29:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
+Message-ID: <20220922112935.pep45vfqfw5766gq@quack3>
+References: <103fe662-3dc8-35cb-1a68-dda8af95c518@nvidia.com>
+ <Yxb7YQWgjHkZet4u@infradead.org>
+ <20220906102106.q23ovgyjyrsnbhkp@quack3>
+ <YxhaJktqtHw3QTSG@infradead.org>
+ <YyFPtTtxYozCuXvu@ZenIV>
+ <20220914145233.cyeljaku4egeu4x2@quack3>
+ <YyIEgD8ksSZTsUdJ@ZenIV>
+ <20220915081625.6a72nza6yq4l5etp@quack3>
+ <YyvG+Oih2A37Grcf@ZenIV>
+ <a6f95605-c2d5-6ec5-b85c-d1f3f8664646@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220922031013.2150682-2-keescook@chromium.org>
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+In-Reply-To: <a6f95605-c2d5-6ec5-b85c-d1f3f8664646@nvidia.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 08:10:02PM -0700, Kees Cook wrote:
-> In the effort to help the compiler reason about buffer sizes, the
-> __alloc_size attribute was added to allocators. This improves the scope
-> of the compiler's ability to apply CONFIG_UBSAN_BOUNDS and (in the near
-> future) CONFIG_FORTIFY_SOURCE. For most allocations, this works well,
-> as the vast majority of callers are not expecting to use more memory
-> than what they asked for.
+On Wed 21-09-22 23:09:06, John Hubbard wrote:
+> On 9/21/22 19:22, Al Viro wrote:
+> > On Thu, Sep 15, 2022 at 10:16:25AM +0200, Jan Kara wrote:
+> > 
+> >>> How would that work?  What protects the area where you want to avoid running
+> >>> into pinned pages from previously acceptable page getting pinned?  If "they
+> >>> must have been successfully unmapped" is a part of what you are planning, we
+> >>> really do have a problem...
+> >>
+> >> But this is a very good question. So far the idea was that we lock the
+> >> page, unmap (or writeprotect) the page, and then check pincount == 0 and
+> >> that is a reliable method for making sure page data is stable (until we
+> >> unlock the page & release other locks blocking page faults and writes). But
+> >> once suddently ordinary page references can be used to create pins this
+> >> does not work anymore. Hrm.
+> >>
+> >> Just brainstorming ideas now: So we'd either need to obtain the pins early
+> >> when we still have the virtual address (but I guess that is often not
+> >> practical but should work e.g. for normal direct IO path) or we need some
+> >> way to "simulate" the page fault when pinning the page, just don't map it
+> >> into page tables in the end. This simulated page fault could be perhaps
+> >> avoided if rmap walk shows that the page is already mapped somewhere with
+> >> suitable permissions.
+> > 
+> > OK.  As far as I can see, the rules are along the lines of
+> > 	* creator of ITER_BVEC/ITER_XARRAY is responsible for pages being safe.
+> > 	  That includes
+> > 		* page known to be locked by caller
+> > 		* page being privately allocated and not visible to anyone else
+> > 		* iterator being data source
+> > 		* page coming from pin_user_pages(), possibly as the result of
+> > 		  iov_iter_pin_pages() on ITER_IOVEC/ITER_UBUF.
+> > 	* ITER_PIPE pages are always safe
+> > 	* pages found in ITER_BVEC/ITER_XARRAY are safe, since the iterator
+> > 	  had been created with such.
+> > My preference would be to have iov_iter_get_pages() and friends pin if and
+> > only if we have data-destination iov_iter that is user-backed.  For
+> > data-source user-backed we only need FOLL_GET, and for all other flavours
+> > (ITER_BVEC, etc.) we only do get_page(), if we need to grab any references
+> > at all.
 > 
-> There is, however, one common exception to this: anticipatory resizing
-> of kmalloc allocations. These cases all use ksize() to determine the
-> actual bucket size of a given allocation (e.g. 128 when 126 was asked
-> for). This comes in two styles in the kernel:
-> 
-> 1) An allocation has been determined to be too small, and needs to be
->    resized. Instead of the caller choosing its own next best size, it
->    wants to minimize the number of calls to krealloc(), so it just uses
->    ksize() plus some additional bytes, forcing the realloc into the next
->    bucket size, from which it can learn how large it is now. For example:
-> 
-> 	data = krealloc(data, ksize(data) + 1, gfp);
-> 	data_len = ksize(data);
-> 
-> 2) The minimum size of an allocation is calculated, but since it may
->    grow in the future, just use all the space available in the chosen
->    bucket immediately, to avoid needing to reallocate later. A good
->    example of this is skbuff's allocators:
-> 
-> 	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
-> 	...
-> 	/* kmalloc(size) might give us more room than requested.
-> 	 * Put skb_shared_info exactly at the end of allocated zone,
-> 	 * to allow max possible filling before reallocation.
-> 	 */
-> 	osize = ksize(data);
->         size = SKB_WITH_OVERHEAD(osize);
-> 
-> In both cases, the "how large is the allocation?" question is answered
-> _after_ the allocation, where the compiler hinting is not in an easy place
-> to make the association any more. This mismatch between the compiler's
-> view of the buffer length and the code's intention about how much it is
-> going to actually use has already caused problems[1]. It is possible to
-> fix this by reordering the use of the "actual size" information.
-> 
-> We can serve the needs of users of ksize() and still have accurate buffer
-> length hinting for the compiler by doing the bucket size calculation
-> _before_ the allocation. Code can instead ask "how large an allocation
-> would I get for a given size?".
-> 
-> Introduce kmalloc_size_roundup(), to serve this function so we can start
-> replacing the "anticipatory resizing" uses of ksize().
->
+> This rule would mostly work, as long as we can relax it in some cases, to
+> allow pinning of both source and dest pages, instead of just destination
+> pages, in some cases. In particular, bio_release_pages() has lost all
+> context about whether it was a read or a write request, as far as I can
+> tell. And bio_release_pages() is the primary place to unpin pages for
+> direct IO.
 
-Cc-ing Feng Tang who may welcome this series ;)
+Well, we already do have BIO_NO_PAGE_REF bio flag that gets checked in
+bio_release_pages(). I think we can easily spare another bio flag to tell
+whether we need to unpin or not. So as long as all the pages in the created
+bio need the same treatment, the situation should be simple.
 
-> [1] https://github.com/ClangBuiltLinux/linux/issues/1599
->     https://github.com/KSPP/linux/issues/183
+> > What I'd like to have is the understanding of the places where we drop
+> > the references acquired by iov_iter_get_pages().  How do we decide
+> > whether to unpin?  E.g. pipe_buffer carries a reference to page and no
+> > way to tell whether it's a pinned one; results of iov_iter_get_pages()
+> > on ITER_IOVEC *can* end up there, but thankfully only from data-source
+> > (== WRITE, aka.  ITER_SOURCE) iov_iter.  So for those we don't care.
+> > Then there's nfs_request; AFAICS, we do need to pin the references in
+> > those if they are coming from nfs_direct_read_schedule_iovec(), but
+> > not if they come from readpage_async_filler().  How do we deal with
+> > coalescence, etc.?  It's been a long time since I really looked at
+> > that code...  Christoph, could you give any comments on that one?
+> > 
+> > Note, BTW, that nfs_request coming from readpage_async_filler() have
+> > pages locked by caller; the ones from nfs_direct_read_schedule_iovec()
+> > do not, and that's where we want them pinned.  Resulting page references
+> > end up (after quite a trip through data structures) stuffed into struct
+> > rpc_rqst ->rc_recv_buf.pages[] and when a response arrives from server,
+> > they get picked by xs_read_bvec() and fed to iov_iter_bvec().  In one
+> > case it's safe since the pages are locked; in another - since they would
+> > come from pin_user_pages().  The call chain at the time they are used
+> > has nothing to do with the originator - sunrpc is looking at the arrived
+> > response to READ that matches an rpc_rqst that had been created by sender
+> > of that request and safety is the sender's responsibility.
 > 
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  include/linux/slab.h | 31 +++++++++++++++++++++++++++++++
->  mm/slab_common.c     | 17 +++++++++++++++++
->  2 files changed, 48 insertions(+)
+> For NFS Direct, is there any reason it can't be as simple as this
+> (conceptually, that is--the implementation of iov_iter_pin_pages_alloc()
+> is not shown here)? Here:
 > 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 0fefdf528e0d..4fc41e4ed4a2 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -188,7 +188,21 @@ void * __must_check krealloc(const void *objp, size_t new_size, gfp_t flags) __a
->  void kfree(const void *objp);
->  void kfree_sensitive(const void *objp);
->  size_t __ksize(const void *objp);
-> +
-> +/**
-> + * ksize - Report actual allocation size of associated object
-> + *
-> + * @objp: Pointer returned from a prior kmalloc()-family allocation.
-> + *
-> + * This should not be used for writing beyond the originally requested
-> + * allocation size. Either use krealloc() or round up the allocation size
-> + * with kmalloc_size_roundup() prior to allocation. If this is used to
-> + * access beyond the originally requested allocation size, UBSAN_BOUNDS
-> + * and/or FORTIFY_SOURCE may trip, since they only know about the
-> + * originally allocated size via the __alloc_size attribute.
-> + */
->  size_t ksize(const void *objp);
-
-When users call ksize(), slab expects that it may access
-beyond the originally requested allocation size.
-
-(i.e. KASAN unpoisons the whole object.)
-Maybe don't let KASAN unpoison to catch such users?
-
-> +
->  #ifdef CONFIG_PRINTK
->  bool kmem_valid_obj(void *object);
->  void kmem_dump_obj(void *object);
-> @@ -779,6 +793,23 @@ extern void kvfree(const void *addr);
->  extern void kvfree_sensitive(const void *addr, size_t len);
->  
->  unsigned int kmem_cache_size(struct kmem_cache *s);
-> +
-> +/**
-> + * kmalloc_size_roundup - Report allocation bucket size for the given size
-> + *
-> + * @size: Number of bytes to round up from.
-> + *
-> + * This returns the number of bytes that would be available in a kmalloc()
-> + * allocation of @size bytes. For example, a 126 byte request would be
-> + * rounded up to the next sized kmalloc bucket, 128 bytes. (This is strictly
-> + * for the general-purpose kmalloc()-based allocations, and is not for the
-> + * pre-sized kmem_cache_alloc()-based allocations.)
-> + *
-> + * Use this to kmalloc() the full bucket size ahead of time instead of using
-> + * ksize() to query the size after an allocation.
-> + */
-> +unsigned int kmalloc_size_roundup(size_t size);
-> +
->  void __init kmem_cache_init_late(void);
->  
->  #if defined(CONFIG_SMP) && defined(CONFIG_SLAB)
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 17996649cfe3..132d91a0f8c7 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -721,6 +721,23 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
->  	return kmalloc_caches[kmalloc_type(flags)][index];
+> 
+> diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+> index 1707f46b1335..7dbc705bab83 100644
+> --- a/fs/nfs/direct.c
+> +++ b/fs/nfs/direct.c
+> @@ -142,13 +142,6 @@ int nfs_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
+>  	return 0;
 >  }
 >  
-> +unsigned int kmalloc_size_roundup(size_t size)
-> +{
-> +	struct kmem_cache *c;
+> -static void nfs_direct_release_pages(struct page **pages, unsigned int npages)
+> -{
+> -	unsigned int i;
+> -	for (i = 0; i < npages; i++)
+> -		put_page(pages[i]);
+> -}
+> -
+>  void nfs_init_cinfo_from_dreq(struct nfs_commit_info *cinfo,
+>  			      struct nfs_direct_req *dreq)
+>  {
+> @@ -332,7 +325,7 @@ static ssize_t nfs_direct_read_schedule_iovec(struct nfs_direct_req *dreq,
+>  		size_t pgbase;
+>  		unsigned npages, i;
+>  
+> -		result = iov_iter_get_pages_alloc2(iter, &pagevec,
+> +		result = iov_iter_pin_pages_alloc(iter, &pagevec,
+>  						  rsize, &pgbase);
+>  		if (result < 0)
+>  			break;
+> @@ -362,7 +355,16 @@ static ssize_t nfs_direct_read_schedule_iovec(struct nfs_direct_req *dreq,
+>  			pos += req_len;
+>  			dreq->bytes_left -= req_len;
+>  		}
+> -		nfs_direct_release_pages(pagevec, npages);
 > +
-> +	/* Short-circuit the 0 size case. */
-> +	if (size == 0)
-> +		return 0;
-> +	/* Above the smaller buckets, size is a multiple of page size. */
-> +	if (size > KMALLOC_MAX_CACHE_SIZE)
-> +		return PAGE_SIZE << get_order(size);
+> +		/*
+> +		 * iov_iter_pin_pages_alloc() calls pin_user_pages_fast() for
+> +		 * the user_backed_iter() case (only).
+> +		 */
+> +		if (user_backed_iter(iter))
+> +			unpin_user_pages(pagevec, npages);
+> +		else
+> +			release_pages(pagevec, npages);
 > +
-> +	/* The flags don't matter since size_index is common to all. */
-> +	c = kmalloc_slab(size, GFP_KERNEL);
-> +	return c ? c->object_size : 0;
-> +}
-> +EXPORT_SYMBOL(kmalloc_size_roundup);
 
-This looks okay.
+I don't think this will work. The pin nfs_direct_read_schedule_iovec()
+obtains needs to be released once the IO is completed. Not once the IO is
+submitted. Notice how nfs_create_request()->__nfs_create_request() gets
+another page reference which is released on completion
+(nfs_direct_read_completion->nfs_release_request->nfs_page_group_destroy->
+nfs_free_request->nfs_clear_request). And we need to stop releasing the
+obtained pin in nfs_direct_read_schedule_iovec() (and acquiring another
+reference in __nfs_create_request()) and instead propagate it to
+nfs_clear_request() where it can get released.
 
-Thanks!
-
-> +
->  #ifdef CONFIG_ZONE_DMA
->  #define KMALLOC_DMA_NAME(sz)	.name[KMALLOC_DMA] = "dma-kmalloc-" #sz,
->  #else
-> -- 
-> 2.34.1
-> 
-> 
-
+								Honza
 -- 
-Thanks,
-Hyeonggon
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
