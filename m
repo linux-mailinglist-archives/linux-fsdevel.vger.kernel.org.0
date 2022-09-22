@@ -2,74 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 656075E614D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 13:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698575E61E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 14:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230289AbiIVLjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 07:39:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39902 "EHLO
+        id S230329AbiIVMCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 08:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbiIVLjF (ORCPT
+        with ESMTP id S229470AbiIVMCL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 07:39:05 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF11E21ED;
-        Thu, 22 Sep 2022 04:39:04 -0700 (PDT)
+        Thu, 22 Sep 2022 08:02:11 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD89B774C;
+        Thu, 22 Sep 2022 05:02:09 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3347A21A2D;
-        Thu, 22 Sep 2022 11:39:03 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 459D81F90A;
+        Thu, 22 Sep 2022 12:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663846743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663848128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ooXBSsSJjkQdEsr6lqePFfsaUH3/uClBOCCzUPkChWE=;
-        b=U8ohY/h08dQUTbWk2o7LhTEsgaDZ0nhDjB+BLdDuzE46aNNXOgoizcWM5ugz6RcgDzg2Nd
-        auA1vJMHZcaYM2dwWpzj2QwUWabAa/xFmYUpf0YT9Y22JWRfCvHlfdoEiVCGUJYzyIQ2VV
-        73FEQ5jdMvRjUfSVKK0wap3J3oAbH6Q=
+        bh=mzraJ08XbFjKvF3H8c6KILYdRR2eaJrzAO7H5AN4OPE=;
+        b=nBWcPFYu+B37fjNNGJyCYovOcI5HXTBNjnyousgO5QBihaaIegJF34HHO/otCHi2IWF6pr
+        TvqyU8N+84nPEqgytFBAdNm1xSOgd2JueqLiveKWanjTpU9NhfhKjY1q9GMI3kfMwPwosc
+        IfYXNqL0u+kQ8ynXPkInhg+2nroRrQk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663846743;
+        s=susede2_ed25519; t=1663848128;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ooXBSsSJjkQdEsr6lqePFfsaUH3/uClBOCCzUPkChWE=;
-        b=3PK2qkOMu8xnpDUis+YJBLftHAW/6N8fac2lpzLQOk1zaD6bdFCGKip7t08ts0kTF2S/dR
-        hF6rzqzG0MGXWCBg==
+        bh=mzraJ08XbFjKvF3H8c6KILYdRR2eaJrzAO7H5AN4OPE=;
+        b=Otyf8rmsFxydujS408TICq0B91m7wiegCNqTMhb4wroUcweQpfoSM0RfgYznpAhLdMa9KA
+        gidmZTAnaWiVgCAg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2145513AA5;
-        Thu, 22 Sep 2022 11:39:03 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 36BA813AA5;
+        Thu, 22 Sep 2022 12:02:08 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id MngZCFdJLGO1PwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 22 Sep 2022 11:39:03 +0000
+        id CIdWDcBOLGPISwAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 22 Sep 2022 12:02:08 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 793DBA0684; Thu, 22 Sep 2022 13:39:02 +0200 (CEST)
-Date:   Thu, 22 Sep 2022 13:39:02 +0200
+        id B0496A0684; Thu, 22 Sep 2022 14:02:07 +0200 (CEST)
+Date:   Thu, 22 Sep 2022 14:02:07 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Zhihao Cheng <chengzhihao1@huawei.com>
-Cc:     Jan Kara <jack@suse.cz>, jack@suse.com, tytso@mit.edu,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com
-Subject: Re: [PATCH 1/3] quota: Check next/prev free block number after
- reading from quota file
-Message-ID: <20220922113902.rhoxfgdzcvdzo3wc@quack3>
-References: <20220820110514.881373-1-chengzhihao1@huawei.com>
- <20220820110514.881373-2-chengzhihao1@huawei.com>
- <20220921133715.7tesk3qylombwmyk@quack3>
- <41578612-d582-79ea-bb8e-89fa19d4406e@huawei.com>
+To:     Boyang Xue <bxue@redhat.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Lukas Czerner <lczerner@redhat.com>
+Subject: Re: [bug report] disk quota exceed after multiple write/delete loops
+Message-ID: <20220922120207.3jeasu24dmx5khlz@quack3>
+References: <CAHLe9YZvOcbimNsaYa=jk27uUR1jgVDtXXztLEa0AVnqveOoyQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41578612-d582-79ea-bb8e-89fa19d4406e@huawei.com>
+In-Reply-To: <CAHLe9YZvOcbimNsaYa=jk27uUR1jgVDtXXztLEa0AVnqveOoyQ@mail.gmail.com>
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
@@ -80,71 +71,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 22-09-22 16:13:59, Zhihao Cheng wrote:
-> 在 2022/9/21 21:37, Jan Kara 写道:
-> > > --- a/fs/quota/quota_tree.c
-> > > +++ b/fs/quota/quota_tree.c
-> > > @@ -71,6 +71,35 @@ static ssize_t write_blk(struct qtree_mem_dqinfo *info, uint blk, char *buf)
-> > >   	return ret;
-> > >   }
-> > > +static inline int do_check_range(struct super_block *sb, uint val, uint max_val)
-> > > +{
-> > > +	if (val >= max_val) {
-> > > +		quota_error(sb, "Getting block too big (%u >= %u)",
-> > > +			    val, max_val);
-> > > +		return -EUCLEAN;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > I'd already provide min_val and the string for the message here as well (as
-> > you do in patch 2). It is less churn in the next patch and free blocks
-> > checking actually needs that as well. See below.
-> > 
-> > > +
-> > > +static int check_free_block(struct qtree_mem_dqinfo *info,
-> > > +			    struct qt_disk_dqdbheader *dh)
-> > > +{
-> > > +	int err = 0;
-> > > +	uint nextblk, prevblk;
-> > > +
-> > > +	nextblk = le32_to_cpu(dh->dqdh_next_free);
-> > > +	err = do_check_range(info->dqi_sb, nextblk, info->dqi_blocks);
-> > > +	if (err)
-> > > +		return err;
-> > > +	prevblk = le32_to_cpu(dh->dqdh_prev_free);
-> > > +	err = do_check_range(info->dqi_sb, prevblk, info->dqi_blocks);
-> > > +	if (err)
-> > > +		return err;
-> > 
-> > The free block should actually be > QT_TREEOFF so I'd add the check to
-> > do_check_range().
-> 
-> 'dh->dqdh_next_free' may be updated when quota entry removed,
-> 'dh->dqdh_next_free' can be used for next new quota entris.
-> Before sending v2, I found 'dh->dqdh_next_free' and 'dh->dqdh_prev_free' can
-> easily be zero in newly allocated blocks when continually creating files
-> onwed by different users:
-> find_free_dqentry
->   get_free_dqblk
->     write_blk(info, info->dqi_blocks, buf)  // zero'd qt_disk_dqdbheader
->     blk = info->dqi_blocks++   // allocate new one block
->   info->dqi_free_entry = blk   // will be used for new quota entries
-> 
-> find_free_dqentry
->   if (info->dqi_free_entry)
->     blk = info->dqi_free_entry
->     read_blk(info, blk, buf)   // dh->dqdh_next_free = dh->dqdh_prev_free =
-> 0
-> 
-> I think it's normal when 'dh->dqdh_next_free' or 'dh->dqdh_prev_free' equals
-> to 0.
+Hello!
 
-Good point! 0 means "not present". So any block number (either in free list
-or pointed from the quota tree) should be either 0 or > QT_TREEOFF.
+On Tue 23-08-22 12:16:46, Boyang Xue wrote:
+> On the latest kernel 6.0.0-0.rc2, I find the user quota limit in an
+> ext4 mount is unstable, that after several successful "write file then
+> delete" loops, it will finally fail with "Disk quota exceeded". This
+> bug can be reproduced on at least kernel-6.0.0-0.rc2 and
+> kernel-5.14.0-*, but can't be reproduced on kernel-4.18.0 based RHEL8
+> kernel.
+
+<snip reproducer> 
+
+> Run log on kernel-6.0.0-0.rc2
+> ```
+> (...skip successful Run#[1-2]...)
+> *** Run#3 ***
+> --- Quota before writing file ---
+> Disk quotas for user quota_test_user1 (uid 1003):
+>      Filesystem  blocks   quota   limit   grace   files   quota   limit   grace
+>      /dev/loop0       0  200000  300000               0    2000    3000
+> --- ---
+> dd: error writing '/mntpt/test_300m': Disk quota exceeded
+> 299997+0 records in
+> 299996+0 records out
+> 307195904 bytes (307 MB, 293 MiB) copied, 1.44836 s, 212 MB/s
+
+So this shows that we have failed allocating the last filesystem block.  I
+suspect this happens because the file gets allocted from several free space
+extens and so one extra indirect tree block needs to be allocated (or
+something like that). To verify that you can check the created file with
+"filefrag -v".
+
+Anyway I don't think it is quite correct to assume the filesystem can fit
+300000 data blocks within 300000 block quota because the metadata overhead
+gets accounted into quota as well and the user has no direct control over
+that. So you should probably give filesystem some slack space in your
+tests for metadata overhead.
+
+> --- Quota after writing file ---
+> Disk quotas for user quota_test_user1 (uid 1003):
+>      Filesystem  blocks   quota   limit   grace   files   quota   limit   grace
+>      /dev/loop0  300000* 200000  300000   7days       1    2000    3000
+> --- ---
+> --- Quota after deleting file ---
+> Disk quotas for user quota_test_user1 (uid 1003):
+>      Filesystem  blocks   quota   limit   grace   files   quota   limit   grace
+>      /dev/loop0       0  200000  300000               0    2000    3000
+> --- ---
+> ```
 
 								Honza
+
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
