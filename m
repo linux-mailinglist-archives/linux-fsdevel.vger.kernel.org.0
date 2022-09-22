@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2188F5E7006
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 01:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B805E7027
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 01:17:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbiIVW7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 18:59:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58248 "EHLO
+        id S230441AbiIVXRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 19:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbiIVW7m (ORCPT
+        with ESMTP id S230246AbiIVXRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 18:59:42 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74914240A8;
-        Thu, 22 Sep 2022 15:59:38 -0700 (PDT)
+        Thu, 22 Sep 2022 19:17:01 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7071310AB03;
+        Thu, 22 Sep 2022 16:16:59 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9D29D8AAE53;
-        Fri, 23 Sep 2022 08:59:36 +1000 (AEST)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CA1B11100C5F;
+        Fri, 23 Sep 2022 09:16:56 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1obVAM-00Ay6t-DW; Fri, 23 Sep 2022 08:59:34 +1000
-Date:   Fri, 23 Sep 2022 08:59:34 +1000
+        id 1obVR9-00AyHW-EI; Fri, 23 Sep 2022 09:16:55 +1000
+Date:   Fri, 23 Sep 2022 09:16:55 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] iomap/xfs: fix data corruption due to stale
- cached iomaps
-Message-ID: <20220922225934.GU3600936@dread.disaster.area>
+Subject: Re: [PATCH 1/2] iomap: write iomap validity checks
+Message-ID: <20220922231655.GV3600936@dread.disaster.area>
 References: <20220921082959.1411675-1-david@fromorbit.com>
- <Yyvjtpi49YSUej+w@magnolia>
+ <20220921082959.1411675-2-david@fromorbit.com>
+ <YyvZLTvayJT0xAPr@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yyvjtpi49YSUej+w@magnolia>
+In-Reply-To: <YyvZLTvayJT0xAPr@magnolia>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=632ce8d8
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=632cece8
         a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=2hJliK1U0HaKiL3xgs4A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
+        a=7-415B0cAAAA:8 a=SdPgHarvsISlgMxqJ-cA:9 a=CjuIK1q_8ugA:10
+        a=DiKeHqHhRZ4A:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -49,237 +49,207 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 09:25:26PM -0700, Darrick J. Wong wrote:
-> On Wed, Sep 21, 2022 at 06:29:57PM +1000, Dave Chinner wrote:
-> > Hi folks,
+On Wed, Sep 21, 2022 at 08:40:29PM -0700, Darrick J. Wong wrote:
+> On Wed, Sep 21, 2022 at 06:29:58PM +1000, Dave Chinner wrote:
+> > From: Dave Chinner <dchinner@redhat.com>
 > > 
-> > THese patches address the data corruption first described here:
+> > A recent multithreaded write data corruption has been uncovered in
+> > the iomap write code. The core of the problem is partial folio
+> > writes can be flushed to disk while a new racing write can map it
+> > and fill the rest of the page:
+> > 
+> > writeback			new write
+> > 
+> > allocate blocks
+> >   blocks are unwritten
+> > submit IO
+> > .....
+> > 				map blocks
+> > 				iomap indicates UNWRITTEN range
+> > 				loop {
+> > 				  lock folio
+> > 				  copyin data
+> > .....
+> > IO completes
+> >   runs unwritten extent conv
+> >     blocks are marked written
+> > 				  <iomap now stale>
+> > 				  get next folio
+> > 				}
+> > 
+> > Now add memory pressure such that memory reclaim evicts the
+> > partially written folio that has already been written to disk.
+> > 
+> > When the new write finally gets to the last partial page of the new
+> > write, it does not find it in cache, so it instantiates a new page,
+> > sees the iomap is unwritten, and zeros the part of the page that
+> > it does not have data from. This overwrites the data on disk that
+> > was originally written.
+> > 
+> > The full description of the corruption mechanism can be found here:
 > > 
 > > https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
 > > 
-> > This data corruption has been seen in high profile production
-> > systems so there is some urgency to fix it. The underlying flaw is
-> > essentially a zero-day iomap bug, so whatever fix we come up with
-> > needs to be back portable to all supported stable kernels (i.e.
-> > ~4.18 onwards).
+> > To solve this problem, we need to check whether the iomap is still
+> > valid after we lock each folio during the write. We have to do it
+> > after we lock the page so that we don't end up with state changes
+> > occurring while we wait for the folio to be locked.
 > > 
-> > A combination of concurrent write()s, writeback IO completion, and
-> > memory reclaim combine to expose the fact that the cached iomap that
-> > is held across an iomap_begin/iomap_end iteration can become stale
-> > without the iomap iterator actor being aware that the underlying
-> > filesystem extent map has changed.
+> > Hence we need a mechanism to be able to check that the cached iomap
+> > is still valid (similar to what we already do in buffered
+> > writeback), and we need a way for ->begin_write to back out and
+> > tell the high level iomap iterator that we need to remap the
+> > remaining write range.
 > > 
-> > Hence actions based on the iomap state (e.g. is unwritten or newly
-> > allocated) may actually be incorrect as writeback actions may have
-> > changed the state (unwritten to written, delalloc to unwritten or
-> > written, etc). This affects partial block/page operations, where we
-> > may need to read from disk or zero cached pages depending on the
-> > actual extent state. Memory reclaim plays it's part here in that it
-> > removes pages containing partial state from the page cache, exposing
-> > future partial page/block operations to incorrect behaviour.
+> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 53 +++++++++++++++++++++++++++++++++---------
+> >  fs/iomap/iter.c        | 33 ++++++++++++++++++++++++--
+> >  include/linux/iomap.h  | 17 ++++++++++++++
+> >  3 files changed, 90 insertions(+), 13 deletions(-)
 > > 
-> > Really, we should have known that this would be a problem - we have
-> > exactly the same issue with cached iomaps for writeback, and the
-> > ->map_blocks callback that occurs for every filesystem block we need
-> > to write back is responsible for validating the cached iomap is
-> > still valid. The data corruption on the write() side is a result of
-> > not validating that the iomap is still valid before we initialise
-> > new pages and prepare them for data to be copied in to them....
-> > 
-> > I'm not really happy with the solution I have for triggering
-> > remapping of an iomap when the current one is considered stale.
-> > Doing the right thing requires both iomap_iter() to handle stale
-> > iomaps correctly (esp. the "map is invalid before the first actor
-> > operation" case), and it requires the filesystem
-> > iomap_begin/iomap_end operations to co-operate and be aware of stale
-> > iomaps.
-> > 
-> > There are a bunch of *nasty* issues around handling failed writes in
-> > XFS taht this has exposed - a failed write() that races with a
-> > mmap() based write to the same delalloc page will result in the mmap
-> > writes being silently lost if we punch out the delalloc range we
-> > allocated but didn't write to. g/344 and g/346 expose this bug
-> > directly if we punch out delalloc regions allocated by now stale
-> > mappings.
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index ca5c62901541..44c806d46be4 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -584,8 +584,9 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
+> >  	return iomap_read_inline_data(iter, folio);
+> >  }
+> >  
+> > -static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+> > -		size_t len, struct folio **foliop)
+> > +static int iomap_write_begin(struct iomap_iter *iter,
+> > +		const struct iomap_ops *ops, loff_t pos, size_t len,
+> > +		struct folio **foliop)
+> >  {
+> >  	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
+> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> > @@ -618,6 +619,27 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+> >  		status = (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
+> >  		goto out_no_page;
+> >  	}
+> > +
+> > +	/*
+> > +	 * Now we have a locked folio, before we do anything with it we need to
+> > +	 * check that the iomap we have cached is not stale. The inode extent
+> > +	 * mapping can change due to concurrent IO in flight (e.g.
+> > +	 * IOMAP_UNWRITTEN state can change and memory reclaim could have
 > 
-> Yuck.  I'm pretty sure that callers (xfs_buffered_write_iomap_end) is
-> supposed to call truncate_pagecache_range with the invalidatelock (fka
-> MMAPLOCK) held.
+> Earlier, we were talking this specific problem involves zeroing folio
+> areas around a folio-unaligned write to a !uptodate folio backed by an
+> unwritten extent.  Is the scope of this corruption still limited to
+> *just* that case?  Or does it affect any write to a new mapping or
+> beyond EOF?  Can it affect a write to an extent that somehow gets
+> switched to unwritten or a hole after the mapping has been sampled?
 
-Yup, there's multiple problems with this code; apart from
-recognising that it is obviously broken and definitely problematic,
-I haven't dug into it further.
+We only hold the IOLOCK while we are iterating the cached mapping.
+Hence anything that can modify the extent tree without holding the
+IOLOCK in a way that would exclude iomap iteration can trigger stale
+mappings.
 
-> > Then, because we can't punch out the delalloc we allocated region
-> > safely when we have a stale iomap, we have to ensure when we remap
-> > it the IOMAP_F_NEW flag is preserved so that the iomap code knows
-> > that it is uninitialised space that is being written into so it will
-> > zero sub page/sub block ranges correctly.
+AFAICT, the ways this can happen right now are:
+
+1. page fault path takes mapping->invalidate_lock, not IOLOCK
+2. writeback allocating delalloc regions as unwritten
+3. IO completion converting unwritten regions to written.
+4. DIO writes doing extent allocation under IOLOCK_SHARED while
+   other iomap iterators are holding IOLOCK_SHARED, too. (i.e. hole
+   -> unwritten).
+
+Note that this affects my recent suggestion about using
+IOLOCK_SHARED for buffered writes, too - that would be case #5,
+similar to #4.
+
+Stuff that takes the IOLOCK_EXCL, such as truncate, fallocate, etc
+for direct extent manipulation cannot trigger stale cached iomaps in
+the IO path because they wait for all IO path operations to drain
+and for dirty data to flush across the range they are operating on.
+
+> > +	 * reclaimed a previously partially written page at this index after IO
+> > +	 * completion before this write reaches this file offset) and hence we
+> > +	 * could do the wrong thing here (zero a page range incorrectly or fail
+> > +	 * to zero) and corrupt data.
+> > +	 */
+> > +	if (ops->iomap_valid) {
+> > +		bool iomap_valid = ops->iomap_valid(iter->inode, &iter->iomap);
 > 
-> Hm.  IOMAP_F_NEW results in zeroing around, right?  So if the first
-> ->iomap_begin got a delalloc mapping, but by the time we got the folio
-> locked someone else managed to writeback and evict the page, we'd no
-> longer want that zeroing ... right?
+> At this point in the (xfs) buffered write cycle, we've taken the IOLOCK
+> and folio lock.  Is it possible for ->iomap_valid to detect that the
+> mapping is no longer valid, trylock the ILOCK, and update the mapping so
+> that we don't have to drop the folio lock and go all the way back to
+> ->iomap_begin?
 
-Yes, and that is one of the sources of the data corruption - zeroing
-when we shouldn't.
+Possibly. But we can fail to get the ILOCK, and that means we still
+have to fall back all to being outside the page lock before we can
+try again.
 
-There are multiple vectors to having a stale iomap here:
+The other issue is that the iomap iter still currently points to the
+offset at the start of the write, so we aren't guaranteed that the
+refetched iomap even covers the range of the page we currently have
+locked. IOWs, we have to advance the iterator before we remap the
+range to guarantee that the new iomap covers the range of the file
+that we are currently operating on....
 
-1. we allocate the delalloc range, giving us IOMAP_DELALLOC and
-   IOMAP_F_NEW. Writeback runs, allocating the range as unwritten.
-   Even though the iomap is now stale, there is no data corruption
-   in this case because the range is unwritten and so we still need
-   zeroing.
+> If we have to pay the cost of an indirect call, we could try to update
+> the mapping if one's available, right?  Obviously, if we don't find a
+> mapping we're probably going to have to drop the folio lock and allocate
+> more space.
 
-2. Same as above, but IO completion converts the range to written.
-   Data corruption occurs in this case because IOMAP_F_NEW causes
-   incorrect page cache zeroing to occur on partial page writes.
+I'd prefer that we get the slow, fall-back-all-the-way path correct
+first. We are always going to need this slow path, so let's focus on
+making it correct and robust rather than trying to prematurely
+optimise it....
 
-3. We have an unwritten extent (prealloc, writeback in progress,
-   etc) so we have IOMAP_UNWRITTEN. These require zeroing,
-   regardless of whether IOMAP_F_NEW is set or not. Extent is
-   written behind our backs, unwritten conversion occurs, and now we
-   zero partial pages when we shouldn't.
-
-Other issues I've found:
-
-4. page faults can run the buffered write path concurrently with
-   write() because they aren't serialised against each other. Hence
-   we can have overlapping concurrent iomap_iter() operations with
-   different zeroing requirements and it's anyone's guess as to
-   which will win the race to the page lock and do the initial
-   zeroing. This is a potential silent mmap() write data loss
-   vector.
-
-5. anything that can modify the extent layout without holding the
-   i_rwsem exclusive can race with iomap iterating the extent list.
-   Holding the i_rwsem shared and modifying the extent list (e.g.
-   direct IO writes) can result in iomaps changing in the middle of,
-   say, buffered reads (e.g. hole->unwritten->written).
-
-IOWs, we must always treat iomaps that are returned by iomap_iter()
-to the actor functions as volatile and potentially invalid. If we
-are using folio locks to ensure only one task is accessing page
-cache data at any given time, then we *always* need to check that
-the iomap is valid once we have the folio locked. If the iomap is
-invalid, then we have to remap the file offset before deciding wht
-to do with the data in the page....
-
-> > As a result, ->iomap_begin() needs to know if the previous iomap was
-> > IOMAP_F_STALE, and if so, it needs to know if that previous iomap
-> > was IOMAP_F_NEW so it can propagate it to the remap.
-> > 
-> > So the fix is awful, messy, and I really, really don't like it. But
-> > I don't have any better ideas right now, and the changes as
-> > presented fix the reproducer for the original data corruption and
-> > pass fstests without and XFS regressions for block size <= page size
-> > configurations.
-> > 
-> > Thoughts?
+> > --- a/fs/iomap/iter.c
+> > +++ b/fs/iomap/iter.c
+> > @@ -7,12 +7,36 @@
+> >  #include <linux/iomap.h>
+> >  #include "trace.h"
+> >  
+> > +/*
+> > + * Advance to the next range we need to map.
+> > + *
+> > + * If the iomap is marked IOMAP_F_STALE, it means the existing map was not fully
+> > + * processed - it was aborted because the extent the iomap spanned may have been
+> > + * changed during the operation. In this case, the iteration behaviour is to
+> > + * remap the unprocessed range of the iter, and that means we may need to remap
+> > + * even when we've made no progress (i.e. iter->processed = 0). Hence the
+> > + * "finished iterating" case needs to distinguish between
+> > + * (processed = 0) meaning we are done and (processed = 0 && stale) meaning we
+> > + * need to remap the entire remaining range.
+> > + *
+> > + * We also need to preserve IOMAP_F_STALE on the iomap so that the next call
+> > + * to iomap_begin() knows that it is reprocessing a stale map. Similarly, we
+> > + * need to preserve IOMAP_F_NEW as the filesystem may not realise that it
+> > + * is remapping a region that it allocated in the previous cycle and we still
+> > + * need to initialise partially filled pages within the remapped range.
 > 
-> I have a related question about another potential corruption vector in
-> writeback.  If write_cache_pages selects a folio for writeback, it'll
-> call clear_page_dirty_for_io to clear the PageDirty bit before handing
-> it to iomap_writepage, right?
+> Must the ->iomap_begin implementation also take care to carry-over the
+> IOMAP_F_NEW to the mapping if IOMAP_F_STALE is set?  Is it responsible
+> for dropping IOMAP_F_STALE, or will iomap_iter* do that?
 
-Yes all interactions from that point onwards until we mark the folio
-as under writeback are done under the folio lock, so they should be
-atomic from the perspective of the data paths that dirty/clean the
-page.
+iomap_iter() carries STALE and NEW over to the the next
+->iomap_begin() call, which is then responsible for clearing STALE
+and propagating NEW if required.
 
-> What happens if iomap_writepage_map errors out (say because ->map_blocks
-> returns an error) without adding the folio to any ioend?
 
-Without reading further:
-
-1. if we want to retry the write, we folio_redirty_for_writepage(),
-unlock it and return with no error. Essentially we just skip over
-it.
-
-2. If we want to fail the write, we should call set_mapping_error()
-to record the failure for the next syscall to report and, maybe, set
-the error flag/clear the uptodate flag on the folio depending on
-whether we want the data to remain valid in memory or not.
-
-> I think in
-> that case we'll follow the (error && !count) case, in which we unlock
-> the folio and exit without calling folio_redirty_for_writepage, right?
-> The error will get recorded in the mapping for the next fsync, I think,
-> but I also wonder if we *should* redirty because the mapping failed, not
-> the attempt at persistence.
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 238a03087e17..308931f0840a 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -62,8 +62,13 @@ struct vm_fault;
+> >   *
+> >   * IOMAP_F_SIZE_CHANGED indicates to the iomap_end method that the file size
+> >   * has changed as the result of this write operation.
+> > + *
+> > + * IOMAP_F_STALE indicates that the iomap is not valid any longer and the file
+> > + * range it covers needs to be remapped by the high level before the operation
+> > + * can proceed.
+> 
+> I think it might be worth mentioning that /any/ iomap_iter caller can
+> set this flag in the loop body and kick things back to ->iomap_begin.
 
 *nod*
-
-I think the question that needs to be answered here is this: in what
-case is an error being returned from ->map_blocks a recoverable
-error that a redirty + future writeback retry will succeed?
-
-AFAICT, all cases from XFS this is a fatal error (e.g. corruption of
-the BMBT), so the failure will persist across all attempts to retry
-the write?
-
-Perhaps online repair will change this (i.e. in the background
-repair fixes the BMBT corruption and so the next attempt to write
-the data will succeed) so I can see that we *might* need to redirty
-the page in this case, but....
-
-> This isn't a problem for XFS because the next buffered write will mark
-> the page dirty again, but I've been trawling through the iomap buffer
-> head code (because right now we have a serious customer escalation on
-> 4.14) and I noticed that we never clear the dirty state on the buffer
-> heads.  gfs2 is the only user of iomap buffer head code, but that stands
-> out as something that doesn't quite smell right.  I /think/ this is a
-> result of XFS dropping buffer heads in 4.19, hoisting the writeback
-> framework to fs/iomap/ in 5.5, and only adding buffer heads back to
-> iomap later.
-
-Seems plausible.
-
-> The reason I even noticed this at all is because of what 4.14 does --
-> back in those days, initiating writeback on a page clears the dirty
-> bit from the attached buffer heads in xfs_start_buffer_writeback.  If
-> xfs_writepage_map fails to initiate any writeback IO at all, then it
-> simply unlocks the page and exits without redirtying the page.  IOWs, it
-> causes the page and buffer head state to become inconsistent, because
-> now the page thinks it is clean but the BHs think they are dirty.
-> 
-> Worse yet, if userspace responds to the EIO by reissuing the write()
-> calls, the write code will see BH_Dirty set on the buffer and doesn't
-> even try to set PageDirty, which means ... that the page never gets
-> written to disk again!
-> 
-> There are three questions in my mind:
-> 
-> A. Upstream iomap writeback code doesn't change (AFAICT) the buffer head
-> dirty state.  I don't know if this is really broken?  Or maybe gfs2 just
-> doesn't notice or care?
-
-You'd need to talk to the GFS2 ppl about that - I haven't paid any
-attention to the iomap bufferhead code and so I have no idea what
-constraints it is operating under or what bufferhead state GFS2 even
-needs...
-
-> B. Should writeback be redirtying any folios that aren't added to an
-> ioend?  I'm not sure that doing so is correct, since writeback to a
-> shutdown filesystem won't clear the dirty pages.
-
-See above - I think the action depends on the error being returned.
-If it's a fatal error that can never succeed in future (e.g.  fs is
-shutdown), then we should not redirty the page and just error it
-out. If it's not a fatal error, then *maybe* we should be redirtying
-the page. Of course, this can lead to dirty pages that can never be
-written.....
-
-> C. Gotta figure out why our 4.14 kernel doesn't initiate writeback.
-> At this point we're pretty sure it's because we're actually hitting the
-> same RCA as commit d9252d526ba6 ("xfs: validate writeback mapping using
-> data fork seq counter").  Given the (stale) data it has, it never
-> manages to get a valid mapping, and just... exits xfs_map_blocks without
-> doing anything.
-
-I haven't looked at any code that old for a long while, so I can't
-really help you there... :/
 
 -Dave.
 -- 
