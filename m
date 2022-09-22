@@ -2,129 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 825775E67EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 18:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF895E6848
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 18:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbiIVQAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 12:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        id S230464AbiIVQUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 12:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230223AbiIVQAb (ORCPT
+        with ESMTP id S230338AbiIVQUh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 12:00:31 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74870A9C16
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:00:29 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d24so9199317pls.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:00:29 -0700 (PDT)
+        Thu, 22 Sep 2022 12:20:37 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EECDCE89
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:20:36 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id t3so9261534ply.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:20:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=e+3VYhs+DuwH7bu+QHtV1rjWq3mJNnHisCvMMFS3bAw=;
-        b=XxhEWZKeaIg8g+YPuHc57mvNIPPhpigg738nM9wsLJjiUYpKwjJNzBKKGjefZOhAzi
-         0KqHQ1P/cHiMmQgsO3z2jt2+D0oCcG8Ck+pj5sopXZOTE33QKhSQ8Lb6DWDYvG77ZJIc
-         GQLx6jVnYAJuMY3HV3uGUN51p3PNgpWkx9A1M=
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date;
+        bh=51pxdnyWuflqH2RvjuEZ6HyDxmt8iSvufcZFq9V0LWo=;
+        b=KrP823m6KG+HwbjLvMLAOy9Tqwq+cBBpDWAYr+PJ/+UE6udblBXcXqeYcv/JRnm6Id
+         EkVND7vPLFqZ5DoyP5hEj4rHmAaXrMGeBCn/tpsWqvDxSd4wo8HqoHT3VJPWpp/KnxWv
+         K2aNK39Y7EB1mUw+q9dyXer9KLxUTKjzwoqfZIdW2lsdC5vtd3Z8oWyY1rGkHrKqB6iO
+         qIaPn8uhlylyZBPBmMfTVcua0VQyWyxrEp1iSZ7eWu21/0n1GZmNOb4H4vV8q8DjiHlb
+         BSS5WGN1PcNGIPvTkT36frsvmfA4P7sBcBzmFL5LNSB5zYZVwQSkvwRR2suhcjMDGTmy
+         AW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=e+3VYhs+DuwH7bu+QHtV1rjWq3mJNnHisCvMMFS3bAw=;
-        b=a6+kIWC61tj9GmWwU4i6i2tnlycVBlaLLwYkK995XZp3LY9gtwmmGWvDagTkeNHcTJ
-         cNeSyGwjQ/GCRMidAwJNMnrpsfqUo5Z0Bnk3v4DcFb9FRUb+UVOC9HLhWbFH95kgXZdX
-         sfCjGPfAoXyAbz4VuM0Zf+tKadL3cVG/YbTMfO1WaXKrfG8j/4uTqQUGA/eQPRC1Pu/9
-         Hxqy8Tuexuw8yDyldXZi7KdTwLD9yZsrEWuCh7sXx/+CdTMgwCEPlq5/f5uYN/lZaBdt
-         NFGch5WK/1WoV0TbD6PrKxg7M2d9wzy5wcf0VsbPldGTLHJZ8vEjpYk4gbUF/NAJXi0g
-         aFCg==
-X-Gm-Message-State: ACrzQf1QINeGvCnfF0j6gJUQwKXS3U523wNmseJ2Cr8+If1xESQzgXtV
-        ziCoLYGzd3KrvlGgvRLxKOK40g==
-X-Google-Smtp-Source: AMsMyM6q4mhFYq39gGoVyx6Hnh47y8QFV1PKitfWXVTUQGpGwPy/JbIncPBlq3WqciXD78b9y3HP3A==
-X-Received: by 2002:a17:90b:164d:b0:202:69b3:1002 with SMTP id il13-20020a17090b164d00b0020269b31002mr4362502pjb.86.1663862428935;
-        Thu, 22 Sep 2022 09:00:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id ms3-20020a17090b234300b002005c3d4d4fsm4007085pjb.19.2022.09.22.09.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 09:00:28 -0700 (PDT)
-Date:   Thu, 22 Sep 2022 09:00:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Feng Tang <feng.tang@intel.com>,
-        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "dev@openvswitch.org" <dev@openvswitch.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        David Rientjes <rientjes@google.com>,
-        Miguel Ojeda <ojeda@kernel.org>, Yonghong Song <yhs@fb.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Marco Elver <elver@google.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH 07/12] igb: Proactively round up to kmalloc bucket size
-Message-ID: <202209220859.DA21F91EAE@keescook>
-References: <20220922031013.2150682-1-keescook@chromium.org>
- <20220922031013.2150682-8-keescook@chromium.org>
- <DM5PR11MB13241226F3AACC81398F7E8EC14E9@DM5PR11MB1324.namprd11.prod.outlook.com>
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=51pxdnyWuflqH2RvjuEZ6HyDxmt8iSvufcZFq9V0LWo=;
+        b=BILyaEB6NN7CMct8rxL0ztPG7VS7uiTBcxoORhw94cPVMo2AfH/RvHJSn0P2dpu0kV
+         6kl/mj7U6+qasZssSrhLR8kfZ3+OrYF2iamZ9G8Uq1GZ17iJALzNAm3okDb9smmiZnBY
+         rpOlACUCb+UMHrUsD5iILZDPtq2lMtcVfD/NQqjYy3hNjWSa7elud09Xorca/Otpr7hA
+         SZzwGRRw1zVccw8nCD5c6CMFdCrzVe3gvtcmCb2Yjf71dvl6nCIBxqdgHvZcRocuFuVo
+         SW2IBwIHb3opNHfgbAn+wGpSy+XxtmP8KVTyik/NYuzJ2Ob3BLXCisd+XmuATQOrZ56g
+         Dgag==
+X-Gm-Message-State: ACrzQf2ind75r1efMgMTvzAB+ejTMgUrt02ToBViv95xYZQqtvPeVQB6
+        82OxHu54w4WYDTiim2dUuyGWJm60XY3Om5y1UVI=
+X-Google-Smtp-Source: AMsMyM7/OSHRH/UEqqjYSYsr9tuz00LeDUhfKuKJpjMWtx3j5Jjnner+CVdbZpwMsU9dH3wy+7irbQJ3AaP1Bg3wAqk=
+X-Received: by 2002:a17:902:e841:b0:177:82b6:e6f7 with SMTP id
+ t1-20020a170902e84100b0017782b6e6f7mr4177936plg.66.1663863635878; Thu, 22 Sep
+ 2022 09:20:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM5PR11MB13241226F3AACC81398F7E8EC14E9@DM5PR11MB1324.namprd11.prod.outlook.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Received: by 2002:a17:90b:4a50:0:0:0:0 with HTTP; Thu, 22 Sep 2022 09:20:35
+ -0700 (PDT)
+From:   Bright Gawayn <gben74325@gmail.com>
+Date:   Thu, 22 Sep 2022 21:50:35 +0530
+Message-ID: <CA+nOVsZk3Jue-FiwOnEJV05mx_CNiE_AsA8wyi1BybAf1Huedw@mail.gmail.com>
+Subject: URGENT FOR A BUSINESS PROPOSITION
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=7.1 required=5.0 tests=ADVANCE_FEE_4_NEW,BAYES_80,
+        DEAR_SOMETHING,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,UNDISC_MONEY,URG_BIZ autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:642 listed in]
+        [list.dnswl.org]
+        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
+        *      [score: 0.8943]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [gben74325[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [gben74325[at]gmail.com]
+        *  2.0 DEAR_SOMETHING BODY: Contains 'Dear (something)'
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  0.6 URG_BIZ Contains urgent matter
+        *  0.0 ADVANCE_FEE_4_NEW Appears to be advance fee fraud (Nigerian
+        *      419)
+        *  2.0 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 03:56:54PM +0000, Ruhl, Michael J wrote:
-> >From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of Kees Cook
-> [...]
-> >diff --git a/drivers/net/ethernet/intel/igb/igb_main.c
-> >b/drivers/net/ethernet/intel/igb/igb_main.c
-> >index 2796e81d2726..4d70ee5b0f79 100644
-> >--- a/drivers/net/ethernet/intel/igb/igb_main.c
-> >+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> >@@ -1196,6 +1196,7 @@ static int igb_alloc_q_vector(struct igb_adapter
-> >*adapter,
-> >
-> > 	ring_count = txr_count + rxr_count;
-> > 	size = struct_size(q_vector, ring, ring_count);
-> >+	size = kmalloc_size_roundup(size);
-> 
-> why not:
-> 
-> 	size = kmalloc_size_roundup(struct_size(q_vector, ring, ring_count));
-> 
-> ?
-
-Sure! I though it might be more readable split up. I will change it. :)
-
 -- 
-Kees Cook
+
+
+Dear Sir Good Day to you.
+My name is Mr Bright Gawayn,
+it's my pleasure to contact you today in
+regards to a very lucrative business proposition.
+
+we use a certain raw material in our
+pharmaceutical firm for the manufacture of animal vaccines and many
+more but my company can no longer import the material from Ukraine due
+to the Russian invasion war to Ukraine.
+
+My intention is to give you the new contact information of the local
+manufacturer of this raw material in India and every details regarding
+how to supply the material to my company if you're interested, my
+company can pay in advance for this material.
+
+Due to some reasons, which I will explain in my next email, I cannot
+procure this material and supply it to my company myself due to the
+fact that i am a staff in the company.
+
+Please get back to me as soon as possible for full detail if you are interested.
+
+Thanks, and regards
+Bright.
