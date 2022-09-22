@@ -2,191 +2,367 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C24C15E5A31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 06:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A5AC5E5A3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 06:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230296AbiIVEZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 00:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45524 "EHLO
+        id S229523AbiIVEf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 00:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbiIVEZ3 (ORCPT
+        with ESMTP id S229635AbiIVEfz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 00:25:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0F997D50;
-        Wed, 21 Sep 2022 21:25:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C81766339B;
-        Thu, 22 Sep 2022 04:25:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28344C433D6;
-        Thu, 22 Sep 2022 04:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663820727;
-        bh=fhxb9Ujouso7mvKXcXZZreR1NM0VJLISASIaPz93N8w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DWtqiZ0YbFW4yNaCEOkZvlHlWyp89VGLQu48e1x1Lrn3VGGdEqhOn/soLInZNDFU6
-         g5XCPETAaaLw46iY7H6Lau/qhxAQy9r+hU/s/ekk4qFWEV4gujt4Jk3+vVnaFVsgvB
-         J5681NXALapd2gfO+aw1Ddq9hAXu/56+8lfDaiP1XyM+viTashCOwA7nr1Ecm4gb6h
-         rBLDll9h4PgREJlpIBlMh/TCZ+M6dgV/uIZAWUBpKxgvHSkKlCqP0IFWyQQAKo7wpi
-         LjU6CpdQy28VHJ9Sc6Ym6+S5dGtI0GsxRM/7HzYq6tpyx19/LItOiYawDaJz9NAkJt
-         sDLT4QRDInPvw==
-Date:   Wed, 21 Sep 2022 21:25:26 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] iomap/xfs: fix data corruption due to stale
- cached iomaps
-Message-ID: <Yyvjtpi49YSUej+w@magnolia>
-References: <20220921082959.1411675-1-david@fromorbit.com>
+        Thu, 22 Sep 2022 00:35:55 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E93857E7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 21:35:53 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id o123so9044147vsc.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Sep 2022 21:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=eZFY8zDJyQ/N0GMmKvR5W6boaIlcLWUvSQMoij4X4ME=;
+        b=JyEtdnCcHngeMRjjA8ww/Qgd6cKW72m2nqS83KV7NQpQ1+Vvt/wDIAvX/lx2A44rZA
+         NlqBOpuGTYUuZN+vtXtHdKmaUjChxPWmcjQ0kI0M9R95Jddv1K9ywx7WuWyJTHyYaMsp
+         e6BmZrdKTl1xxN25gGdr4d86b2WAnTs5zK9gm5Z9zCkVEMPdgu26MtS5Ezg1qeSwdsV/
+         7aovNV/7tOZTwwKvVpyI9JPHxbzPqVP8CU5r2K+8L1/j62Y2qskBAGMPVcWgEPJ8P9Di
+         wBwivvqfLaowrCTmGUsA7wRoyEo+7RpViVg9F9PYhNi2pkZSTUEAJROekunQ6l7SW8OB
+         fNVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=eZFY8zDJyQ/N0GMmKvR5W6boaIlcLWUvSQMoij4X4ME=;
+        b=xd68C7Y/Clc6siwWwU/gPowLjzv4jgfqyaO2W3rQwNKWbEJm2Hv+JdHi/5J8sNiwkE
+         zeguIMLoTcHGaMsCbqDN7/De04/5voE75/fwotHtg6nZOgbPN6mq1u4a2m1JsRneXg/7
+         E+BQZ/C7fIOtunA1kZ7fxdBrH6LAnqjF6B/QuvjD273nqHrpFy1T7vxVzLwsL0n0mNfP
+         UAKNkHrLkUZnu3ctFSrucXTcez88Xo99ynzk1U4L56syef4CbzJ7S4IDHn6yFN1qrYLw
+         0ouuHOk61pq7bykFFkuiXVGC+hSkDv4GomCMT4n/XVvAelNterPPuGMQyMDf8AQNaYSm
+         7dlg==
+X-Gm-Message-State: ACrzQf1IPXGT28cqsnc1MER+anbrXkPMRHE/tmNYJgsYgjdqc0z8dWPE
+        aFq2/Ag7DFjVHB5Tg5wmJ7B6hUjn4mnfSWZprBM=
+X-Google-Smtp-Source: AMsMyM635l9+whFxgUlS2ZtNlyJVGUI+8UmaP31zCm9x9Fe2KZr1TtoJhYMUi70Jra34feP8owwUmJS4m7ijfGo5D5g=
+X-Received: by 2002:a67:a247:0:b0:39a:c318:3484 with SMTP id
+ t7-20020a67a247000000b0039ac3183484mr545560vsh.2.1663821351944; Wed, 21 Sep
+ 2022 21:35:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220921082959.1411675-1-david@fromorbit.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
+ <20220921232729.GE3144495@dread.disaster.area>
+In-Reply-To: <20220921232729.GE3144495@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 22 Sep 2022 07:35:39 +0300
+Message-ID: <CAOQ4uxgip1Hfvtjf=XvXSbGpBoJrN0Zc7JD_z9QqtW5U7mSN5Q@mail.gmail.com>
+Subject: Re: thoughts about fanotify and HSM
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Plaster, Robert" <rplaster@deepspacestorage.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 06:29:57PM +1000, Dave Chinner wrote:
-> Hi folks,
-> 
-> THese patches address the data corruption first described here:
-> 
-> https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-> 
-> This data corruption has been seen in high profile production
-> systems so there is some urgency to fix it. The underlying flaw is
-> essentially a zero-day iomap bug, so whatever fix we come up with
-> needs to be back portable to all supported stable kernels (i.e.
-> ~4.18 onwards).
-> 
-> A combination of concurrent write()s, writeback IO completion, and
-> memory reclaim combine to expose the fact that the cached iomap that
-> is held across an iomap_begin/iomap_end iteration can become stale
-> without the iomap iterator actor being aware that the underlying
-> filesystem extent map has changed.
-> 
-> Hence actions based on the iomap state (e.g. is unwritten or newly
-> allocated) may actually be incorrect as writeback actions may have
-> changed the state (unwritten to written, delalloc to unwritten or
-> written, etc). This affects partial block/page operations, where we
-> may need to read from disk or zero cached pages depending on the
-> actual extent state. Memory reclaim plays it's part here in that it
-> removes pages containing partial state from the page cache, exposing
-> future partial page/block operations to incorrect behaviour.
-> 
-> Really, we should have known that this would be a problem - we have
-> exactly the same issue with cached iomaps for writeback, and the
-> ->map_blocks callback that occurs for every filesystem block we need
-> to write back is responsible for validating the cached iomap is
-> still valid. The data corruption on the write() side is a result of
-> not validating that the iomap is still valid before we initialise
-> new pages and prepare them for data to be copied in to them....
-> 
-> I'm not really happy with the solution I have for triggering
-> remapping of an iomap when the current one is considered stale.
-> Doing the right thing requires both iomap_iter() to handle stale
-> iomaps correctly (esp. the "map is invalid before the first actor
-> operation" case), and it requires the filesystem
-> iomap_begin/iomap_end operations to co-operate and be aware of stale
-> iomaps.
-> 
-> There are a bunch of *nasty* issues around handling failed writes in
-> XFS taht this has exposed - a failed write() that races with a
-> mmap() based write to the same delalloc page will result in the mmap
-> writes being silently lost if we punch out the delalloc range we
-> allocated but didn't write to. g/344 and g/346 expose this bug
-> directly if we punch out delalloc regions allocated by now stale
-> mappings.
+On Thu, Sep 22, 2022 at 2:27 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Sun, Sep 11, 2022 at 09:12:06PM +0300, Amir Goldstein wrote:
+> > Hi Jan,
+> >
+> > I wanted to consult with you about preliminary design thoughts
+> > for implementing a hierarchical storage manager (HSM)
+> > with fanotify.
+> >
+> > I have been in contact with some developers in the past
+> > who were interested in using fanotify to implement HSM
+> > (to replace old DMAPI implementation).
+> >
+> > Basically, FAN_OPEN_PERM + FAN_MARK_FILESYSTEM
+> > should be enough to implement a basic HSM, but it is not
+> > sufficient for implementing more advanced HSM features.
+>
+> Ah, I wondered where the people with that DMAPI application went all
+> those years ago after I told them they should look into using
+> fanotify to replace the dependency they had on the DMAPI patched
+> XFS that SGI maintained for years for SLES kernels...
+>
 
-Yuck.  I'm pretty sure that callers (xfs_buffered_write_iomap_end) is
-supposed to call truncate_pagecache_range with the invalidatelock (fka
-MMAPLOCK) held.
+Indeed. Robert has told that the fanotify HSM code would be uploaded
+to github in the near future:
 
-> Then, because we can't punch out the delalloc we allocated region
-> safely when we have a stale iomap, we have to ensure when we remap
-> it the IOMAP_F_NEW flag is preserved so that the iomap code knows
-> that it is uninitialised space that is being written into so it will
-> zero sub page/sub block ranges correctly.
+https://deepspacestorage.com/resources/#downloads
 
-Hm.  IOMAP_F_NEW results in zeroing around, right?  So if the first
-->iomap_begin got a delalloc mapping, but by the time we got the folio
-locked someone else managed to writeback and evict the page, we'd no
-longer want that zeroing ... right?
+> > Some of the HSM feature that I would like are:
+> > - blocking hook before access to file range and fill that range
+> > - blocking hook before lookup of child and optionally create child
+>
+> Ok, so these are to replace the DMAPI hooks that provided a blocking
+> userspace upcall to the HSM to allow it fetch data from offline
+> teirs that wasn't currently in the filesystem itself. i.e. the inode
+> currently has a hole over that range of data, but before the read
+> can proceed the HSM needs to retreive the data from the remote
+> storage and write it into the local filesystem.
+>
+> I think that you've missed a bunch of blocking notifications that
+> are needed, though. e.g. truncate needs to block while the HSM
+> records the file ranges it is storing offline are now freed.
+> fallocate() needs to block while it waits for the HSM to tell it the
+> ranges of the file that actually contain data and so should need to
+> be taken into account. (e.g. ZERO_RANGE needs to wait for offline
+> data to be invalidated, COLLAPSE_RANGE needs offline data to be
+> recalled just like a read() operation, etc).
+>
+> IOWs, any operation that manipulates the extent map or the data in
+> the file needs a blocking upcall to the HSM so that it can restore
+> and invalidate the offline data across the range of the operation
+> that is about to be performed....
 
-> As a result, ->iomap_begin() needs to know if the previous iomap was
-> IOMAP_F_STALE, and if so, it needs to know if that previous iomap
-> was IOMAP_F_NEW so it can propagate it to the remap.
-> 
-> So the fix is awful, messy, and I really, really don't like it. But
-> I don't have any better ideas right now, and the changes as
-> presented fix the reproducer for the original data corruption and
-> pass fstests without and XFS regressions for block size <= page size
-> configurations.
-> 
-> Thoughts?
+The event FAN_PRE_MODIFY mentioned below is destined to
+take care of those cases.
+It is destined to be called from
+security_file_permission(MAY_WRITE) => fsnotify_perm()
+which covers all the cases that you mentioned.
 
-I have a related question about another potential corruption vector in
-writeback.  If write_cache_pages selects a folio for writeback, it'll
-call clear_page_dirty_for_io to clear the PageDirty bit before handing
-it to iomap_writepage, right?
+>
+> > My thoughts on the UAPI were:
+> > - Allow new combination of FAN_CLASS_PRE_CONTENT
+> >   and FAN_REPORT_FID/DFID_NAME
+> > - This combination does not allow any of the existing events
+> >   in mask
+> > - It Allows only new events such as FAN_PRE_ACCESS
+> >   FAN_PRE_MODIFY and FAN_PRE_LOOKUP
+> > - FAN_PRE_ACCESS and FAN_PRE_MODIFY can have
+> >   optional file range info
+> > - All the FAN_PRE_ events are called outside vfs locks and
+> >   specifically before sb_writers lock as in my fsnotify_pre_modify [1]
+> >   POC
+> >
+> > That last part is important because the HSM daemon will
+> > need to make modifications to the accessed file/directory
+> > before allowing the operation to proceed.
+>
+> Yes, and that was the biggest problem with DMAPI - the locking
+> involved. DMAPI operations have to block without holding any locks
+> that the IO path, truncate, fallocate, etc might need, but once they
+> are unblocked they need to regain those locks to allow the operation
+> to proceed. This was by far the ugliest part of the DMAPI patches,
+> and ultimately, the reason why it was never merged.
+>
 
-What happens if iomap_writepage_map errors out (say because ->map_blocks
-returns an error) without adding the folio to any ioend?  I think in
-that case we'll follow the (error && !count) case, in which we unlock
-the folio and exit without calling folio_redirty_for_writepage, right?
-The error will get recorded in the mapping for the next fsync, I think,
-but I also wonder if we *should* redirty because the mapping failed, not
-the attempt at persistence.
+Part of the problem is that the DMAPI hooks were inside fs code.
+My intention for fanotify blocking hooks to be in vfs before taking any
+locks as much as possible.
 
-This isn't a problem for XFS because the next buffered write will mark
-the page dirty again, but I've been trawling through the iomap buffer
-head code (because right now we have a serious customer escalation on
-4.14) and I noticed that we never clear the dirty state on the buffer
-heads.  gfs2 is the only user of iomap buffer head code, but that stands
-out as something that doesn't quite smell right.  I /think/ this is a
-result of XFS dropping buffer heads in 4.19, hoisting the writeback
-framework to fs/iomap/ in 5.5, and only adding buffer heads back to
-iomap later.
+I already have a poc project that added those pre-modify hooks
+for the change tracking journal thing.
 
-The reason I even noticed this at all is because of what 4.14 does --
-back in those days, initiating writeback on a page clears the dirty
-bit from the attached buffer heads in xfs_start_buffer_writeback.  If
-xfs_writepage_map fails to initiate any writeback IO at all, then it
-simply unlocks the page and exits without redirtying the page.  IOWs, it
-causes the page and buffer head state to become inconsistent, because
-now the page thinks it is clean but the BHs think they are dirty.
+For most of the syscalls, security_file_permission(MAY_WRITE) is
+called before taking vfs locks (sb_writers in particular), except for
+dedupe and clone and that one is my fault - 031a072a0b8a
+("vfs: call vfs_clone_file_range() under freeze protection"), so
+I'll need to deal with it.
 
-Worse yet, if userspace responds to the EIO by reissuing the write()
-calls, the write code will see BH_Dirty set on the buffer and doesn't
-even try to set PageDirty, which means ... that the page never gets
-written to disk again!
+> > Naturally that opens the possibility for new userspace
+> > deadlocks. Nothing that is not already possible with permission
+> > event, but maybe deadlocks that are more inviting to trip over.
+> >
+> > I am not sure if we need to do anything about this, but we
+> > could make it easier to ignore events from the HSM daemon
+> > itself if we want to, to make the userspace implementation easier.
+>
+> XFS used "invisible IO" as the mechanism for avoiding sending DMAPI
+> events for operations that we initiated by the HSM to move data into
+> and out of the filesystem.
+>
+> No doubt you've heard us talk about invisible IO in the past -
+> O_NOCMTIME is what that invisible IO has eventually turned into in a
+> modern Linux kernel. We still use that for invisible IO - xfs_fsr
+> uses it for moving data around during online defragmentation. The
+> entire purpose of invisible IO was to provide a path for HSMs and
+> userspace bulk data movers (e.g. HSM aware backup tools like
+> xfsdump) to do IO without generating unnecessary or recursive DMAPI
+> events....
+>
+> IOWs, if we want a DMAPI replacement, we will need to formalise a
+> method of performing syscall based operations that will not trigger
+> HSM notification events.
+>
 
-There are three questions in my mind:
+This concept already exists in fanotify.
+This is what FMODE_NONOTIFY is for.
+The event->fd handed in FAN_ACCESS_PERM event can be use to
+read the file without triggering a recursive event.
+This is how Anti-Malware products scan files.
 
-A. Upstream iomap writeback code doesn't change (AFAICT) the buffer head
-dirty state.  I don't know if this is really broken?  Or maybe gfs2 just
-doesn't notice or care?
+I have extended that concept in my POC patch to avoid recursive
+FAN_LOOKUP_PERM event when calling Xat() syscall with
+a dirfd with FMODE_NONOTIFY:
 
-B. Should writeback be redirtying any folios that aren't added to an
-ioend?  I'm not sure that doing so is correct, since writeback to a
-shutdown filesystem won't clear the dirty pages.
+https://github.com/amir73il/linux/commits/fanotify_pre_content
 
-C. Gotta figure out why our 4.14 kernel doesn't initiate writeback.
-At this point we're pretty sure it's because we're actually hitting the
-same RCA as commit d9252d526ba6 ("xfs: validate writeback mapping using
-data fork seq counter").  Given the (stale) data it has, it never
-manages to get a valid mapping, and just... exits xfs_map_blocks without
-doing anything.
+> The other thing that XFS had for DMAPI was persistent storage in the
+> inode of the event mask that inode should report events for. See
+> the di_dmevmask and di_dmstate fields defined in the on-disk inode
+> format here:
+>
+> https://git.kernel.org/pub/scm/fs/xfs/xfs-documentation.git/tree/design/XFS_Filesystem_Structure/ondisk_inode.asciidoc
+>
+> There's no detail for them, but the event mask indicated what DMAPI
+> events the inode should issue notifications for, and the state field
+> held information about DMAPI operations in progress.
+>
+> The event field is the important one here - if the event field was
+> empty, access to the inode never generated DMAPI events. When the
+> HSM moved data offline, the "READ" event mask bit was set by the HSM
+> and that triggered DMAPI events for any operation that needed to
+> read data or manipulate the extent map. When the data was brought
+> entirely back online, the event masks count be cleared.
+>
 
---D
+HSM can and should manage this persistent bit, but it does not
+have to be done using a special ioctl.
+We already use xattr and/or fileattr flags in our HSM implementation.
 
-> -Dave.
-> 
-> 
+I've mentioned this in my reply to Jan.
+The way I intend to address this "persistent READ hook" in
+fanotify side is by attaching an HSM specific BFP program to
+an fanotify filesystem mark.
+
+We could standartize a fileattr flag just the same as NODUMP
+was for the use of backup applications (e.g. NODATA), but it
+is not a prerequite, just a standard way for HSM to set the
+persistent READ hook bit.
+
+An HSM product could be configured to reappropriate NODUMP
+for that matter or check for no READ bits in st_mode or xattr.
+
+> However, DMAPI also supports dual state operation, where the
+> data in the local filesystem is also duplicated in the offline
+> storage (e.g. immediately after a recall operation). This state can
+> persist until data or layout is changed in the local filesystem,
+> and so there's a "WRITE" event mask as well that allows the
+> filesystem to inform the HSM that data it may have in offline
+> storage is being changed.
+>
+> The state field is there to tell the HSM that an operation was in
+> progress when the system crashed. As part of recovery, the HSM needs
+> to find all the inodes that had DM operations in progress and either
+> complete them or revert them to bring everything back to a
+> consistent state. THe SGI HSMs used the bulkstat interfaces to scan
+> the fs and find inodes that had a non-zero DM state field. This is
+> one of the reasons that having bulkstat scale out to scanning
+> millions of inodes a second ends up being important - coherency
+> checking between the ondisk filesystem state and the userspace
+> offline data tracking databases is a very important admin
+> operation..
+>
+
+Normally, HSM will be listening on a filesystem mark to async
+FAN_MODIFY and FAN_CLOSE_WRITE events.
+
+To cover the case of crash and missing fanotify events, we use
+the persistent change tracking journal.
+My current prototype is in overlayfs driver using pre-modify
+fsnotify hooks, as we discussed back in LSFMM 2018:
+
+https://github.com/amir73il/overlayfs/wiki/Overlayfs-watch
+
+The idea is to export those pre-modify hooks via fanotify
+and move this implementation from the overlayfs driver to
+userspace HSM daemon.
+
+Note that the name "Change Tracking Journal" may be confusing -
+My implementation does not store a time sequence of events like
+the NTFS Change Journal - it only stores a map of file handles of
+directories containing new/changed/deleted files.
+Iterating this "Changed dirs map" is way faster then itereating
+bulkstat of all inodes and looking for the WRITE bit.
+
+The responsibility of maintaining per file "dirty" state is on HSM
+and it can be done using the change tracking journal and an
+external database. Filesystem provided features such as ctime
+and iversion can be used to optimize the management of "dirty"
+state, but they are not a prerequisite and most of the time the
+change journal is sufficient to be able to scale up, because it
+can give you the answer to the question:
+"In which of the multi million dirs, do I need to look for changes
+ to be synced to secondary storage?".
+
+> The XFS dmapi event and state mask control APIs are now deprecated.
+> The XFS_IOC_FSSETDM ioctl could read and write the values, and the
+> the XFS V1 bulkstat ioctl could read them. There were also flags for
+> things like extent mapping ioctls (FIEMAP equivalent) that ensured
+> looking at the extent map didn't trigger DMAPI events and data
+> recall.
+>
+> I guess what I'm trying to say is that there's a lot more to an
+> efficient implementation of a HSM event notification mechanism than
+> just implementing a couple of blocking upcalls. IF we want something
+> that will replace even simple DMAPI-based HSM use cases, we really
+> need to think through how to support all the operations that a
+> recall operation might needed for and hence have to block. ANd we
+> really should think about how to efficiently filter out unnecessary
+> events so that we don't drown the HSM in IO events it just doesn't
+> need to know about....
+>
+
+Thinking about efficient HSM implementation and testing prototypes is
+what I have been doing for the past 6 years in CTERA.
+
+My thoughts and design for fanotify HSM can be backed up with several
+successful prototypes that have been deployed on large scale
+customer environments where both high performance and reliable
+backups are a very hard requirements.
+
+> > Another thing that might be good to do is provide an administrative
+> > interface to iterate and abort pending fanotify permission/pre-content
+> > events.
+>
+> That was generally something the DMAPI event consumer provided.
+>
+> > You must have noticed the overlap between my old persistent
+> > change tracking journal and this design. The referenced branch
+> > is from that old POC.
+> >
+> > I do believe that the use cases somewhat overlap and that the
+> > same building blocks could be used to implement a persistent
+> > change journal in userspace as you suggested back then.
+>
+> That's a very different use case and set of requirements to a HSM.
+>
+> A HSM tracks much, much larger amounts of data than a persistent
+> change journal. We had [C]XFS-DMAPI based HSMs running SLES in
+> production that tracked half a billion inodes and > 10PB of data 15
+> years ago. These days I'd expect "exabyte" to be the unit of
+> storage that large HSMs are storing.
+>
+> > Thoughts?
+>
+> I think that if the goal is to support HSMs with fanotify, we first
+> need to think about how we efficiently support all the functionality
+> HSMs require rather than just focus on a blocking fanotify read
+> operation. We don't need to implement everything, but at least
+> having a plan for things like handling the event filtering
+> requirements without the HSM having to walk the entire filesystem
+> and inject per-inode event filters after every mount would be a real
+> good idea....
+>
+
+All of the above have been considered and I have mentioned
+the proposed solution in the thread.
+
+I may post some partial RFC patches to hash out some
+implementation details along the way (e.g. for FAN_LOOKUP_PERM),
+but when I send out the final proposal it will include all the fanotify
+extensions required to implement a fully functional and performant HSM.
+
+Given the number and lengths of Q&A in this thread I am probably
+going to summarize this discussion in a wiki to send along with the
+proposal for fanotify HSM API.
+
+Thanks,
+Amir.
