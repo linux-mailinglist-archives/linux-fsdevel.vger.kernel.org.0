@@ -2,88 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D57F85E67D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 17:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825775E67EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 18:00:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231686AbiIVP5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 11:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49836 "EHLO
+        id S231202AbiIVQAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 12:00:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbiIVP5v (ORCPT
+        with ESMTP id S230223AbiIVQAb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 11:57:51 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87193E5FBC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 08:57:49 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id l10so9164808plb.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 08:57:49 -0700 (PDT)
+        Thu, 22 Sep 2022 12:00:31 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74870A9C16
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:00:29 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d24so9199317pls.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 09:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=DFca6W2geua6z8QZaei3L7obYL69ycUV+0eXMSxJFmM=;
-        b=jvl2IXIRx3EhOhhqaTOf5Lt+fk9xx9Irq6xcu/7k7oCaAudZivnlCg4zfyCIBsgQa9
-         qBtVWGjfuRNfAqWNaj6IsSNxrO0lvCUNMMis5T9m3env78npe1AQYwW4n7mGlSRQHwQP
-         cG9vbxRd7c25yIHtYw1xafxyLneU1vdiRP2x0=
+        bh=e+3VYhs+DuwH7bu+QHtV1rjWq3mJNnHisCvMMFS3bAw=;
+        b=XxhEWZKeaIg8g+YPuHc57mvNIPPhpigg738nM9wsLJjiUYpKwjJNzBKKGjefZOhAzi
+         0KqHQ1P/cHiMmQgsO3z2jt2+D0oCcG8Ck+pj5sopXZOTE33QKhSQ8Lb6DWDYvG77ZJIc
+         GQLx6jVnYAJuMY3HV3uGUN51p3PNgpWkx9A1M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=DFca6W2geua6z8QZaei3L7obYL69ycUV+0eXMSxJFmM=;
-        b=cDoAGkaBEfX2jK3afVW+bZLIDkzagp2w34mde993KtDkm8WlZiSp//qpcCvwFoGPGg
-         8+3VfLAowZ5hHT0lyRT8uGZVM9KiSfconn3Z/XSgrRNv/a1PQB1EYyt6Yi+L+alfdp2p
-         QhUibuGdxuWTWwIRVl8VIr1Cb3py4OD0GQ2Ao5rrAPvlqxo8AR9lwG6jgTHMB3Bhvknu
-         yKTVzFqr91JC5LlHccNtYTaICKuWedoMFdw/fgW+xKbPzcDiESy2jBBkRfNmnQFEKcjV
-         qICpzPumqOb1FMrS/gB+35qPhTekA4ef5s28U072Jdr86AhW0SKKhbfiAVlVB1JQJTOt
-         p5Aw==
-X-Gm-Message-State: ACrzQf3iQ9yW5gws+I6q3FdJ0qZdp5zL5rtMS+xAYJvm5oXK3jihofAY
-        nuMtsEkiY2mNKS6Qu8AQ9qC6iQ==
-X-Google-Smtp-Source: AMsMyM4DbOcH8T52s44Y0t4Ur0sebk5QTw9RJNQKJ+FFAkxJV0gLFIOVmBX/n1oFJJpAp4+llFExqQ==
-X-Received: by 2002:a17:902:e848:b0:176:c746:1f69 with SMTP id t8-20020a170902e84800b00176c7461f69mr3892270plg.125.1663862268452;
-        Thu, 22 Sep 2022 08:57:48 -0700 (PDT)
+        bh=e+3VYhs+DuwH7bu+QHtV1rjWq3mJNnHisCvMMFS3bAw=;
+        b=a6+kIWC61tj9GmWwU4i6i2tnlycVBlaLLwYkK995XZp3LY9gtwmmGWvDagTkeNHcTJ
+         cNeSyGwjQ/GCRMidAwJNMnrpsfqUo5Z0Bnk3v4DcFb9FRUb+UVOC9HLhWbFH95kgXZdX
+         sfCjGPfAoXyAbz4VuM0Zf+tKadL3cVG/YbTMfO1WaXKrfG8j/4uTqQUGA/eQPRC1Pu/9
+         Hxqy8Tuexuw8yDyldXZi7KdTwLD9yZsrEWuCh7sXx/+CdTMgwCEPlq5/f5uYN/lZaBdt
+         NFGch5WK/1WoV0TbD6PrKxg7M2d9wzy5wcf0VsbPldGTLHJZ8vEjpYk4gbUF/NAJXi0g
+         aFCg==
+X-Gm-Message-State: ACrzQf1QINeGvCnfF0j6gJUQwKXS3U523wNmseJ2Cr8+If1xESQzgXtV
+        ziCoLYGzd3KrvlGgvRLxKOK40g==
+X-Google-Smtp-Source: AMsMyM6q4mhFYq39gGoVyx6Hnh47y8QFV1PKitfWXVTUQGpGwPy/JbIncPBlq3WqciXD78b9y3HP3A==
+X-Received: by 2002:a17:90b:164d:b0:202:69b3:1002 with SMTP id il13-20020a17090b164d00b0020269b31002mr4362502pjb.86.1663862428935;
+        Thu, 22 Sep 2022 09:00:28 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p63-20020a625b42000000b005367c28fd32sm4575617pfb.185.2022.09.22.08.57.47
+        by smtp.gmail.com with ESMTPSA id ms3-20020a17090b234300b002005c3d4d4fsm4007085pjb.19.2022.09.22.09.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 08:57:47 -0700 (PDT)
-Date:   Thu, 22 Sep 2022 08:57:46 -0700
+        Thu, 22 Sep 2022 09:00:28 -0700 (PDT)
+Date:   Thu, 22 Sep 2022 09:00:26 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Alex Elder <elder@ieee.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Feng Tang <feng.tang@intel.com>,
+        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        Pekka Enberg <penberg@kernel.org>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        "dev@openvswitch.org" <dev@openvswitch.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
         David Rientjes <rientjes@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Marco Elver <elver@google.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        David Sterba <dsterba@suse.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Alex Elder <elder@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pekka Enberg <penberg@kernel.org>,
         Daniel Micay <danielmicay@gmail.com>,
-        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Jacob Shin <jacob.shin@amd.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
-        x86@kernel.org, linux-wireless@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 03/12] net: ipa: Proactively round up to kmalloc bucket
- size
-Message-ID: <202209220857.A6EBCF031E@keescook>
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 07/12] igb: Proactively round up to kmalloc bucket size
+Message-ID: <202209220859.DA21F91EAE@keescook>
 References: <20220922031013.2150682-1-keescook@chromium.org>
- <20220922031013.2150682-4-keescook@chromium.org>
- <4d75a9fd-1b94-7208-9de8-5a0102223e68@ieee.org>
+ <20220922031013.2150682-8-keescook@chromium.org>
+ <DM5PR11MB13241226F3AACC81398F7E8EC14E9@DM5PR11MB1324.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d75a9fd-1b94-7208-9de8-5a0102223e68@ieee.org>
+In-Reply-To: <DM5PR11MB13241226F3AACC81398F7E8EC14E9@DM5PR11MB1324.namprd11.prod.outlook.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
@@ -94,41 +103,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 08:45:19AM -0500, Alex Elder wrote:
-> On 9/21/22 10:10 PM, Kees Cook wrote:
-> > Instead of discovering the kmalloc bucket size _after_ allocation, round
-> > up proactively so the allocation is explicitly made for the full size,
-> > allowing the compiler to correctly reason about the resulting size of
-> > the buffer through the existing __alloc_size() hint.
-> > 
-> > Cc: Alex Elder <elder@kernel.org>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Paolo Abeni <pabeni@redhat.com>
-> > Cc: netdev@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >   drivers/net/ipa/gsi_trans.c | 7 +++++--
-> >   1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ipa/gsi_trans.c b/drivers/net/ipa/gsi_trans.c
-> > index 18e7e8c405be..cec968854dcf 100644
-> > --- a/drivers/net/ipa/gsi_trans.c
-> > +++ b/drivers/net/ipa/gsi_trans.c
-> > @@ -89,6 +89,7 @@ int gsi_trans_pool_init(struct gsi_trans_pool *pool, size_t size, u32 count,
-> >   			u32 max_alloc)
-> >   {
-> >   	void *virt;
-> > +	size_t allocate;
+On Thu, Sep 22, 2022 at 03:56:54PM +0000, Ruhl, Michael J wrote:
+> >From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of Kees Cook
+> [...]
+> >diff --git a/drivers/net/ethernet/intel/igb/igb_main.c
+> >b/drivers/net/ethernet/intel/igb/igb_main.c
+> >index 2796e81d2726..4d70ee5b0f79 100644
+> >--- a/drivers/net/ethernet/intel/igb/igb_main.c
+> >+++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> >@@ -1196,6 +1196,7 @@ static int igb_alloc_q_vector(struct igb_adapter
+> >*adapter,
+> >
+> > 	ring_count = txr_count + rxr_count;
+> > 	size = struct_size(q_vector, ring, ring_count);
+> >+	size = kmalloc_size_roundup(size);
 > 
-> I don't care about this but the reverse Christmas tree
-> convention would put the "allocate" variable definition
-> above "virt".
+> why not:
+> 
+> 	size = kmalloc_size_roundup(struct_size(q_vector, ring, ring_count));
+> 
+> ?
 
-Oops, yes; thank you!
-
--Kees
+Sure! I though it might be more readable split up. I will change it. :)
 
 -- 
 Kees Cook
