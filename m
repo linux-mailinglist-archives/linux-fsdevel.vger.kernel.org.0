@@ -2,169 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 823CB5E5708
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 02:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9AA45E5713
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 02:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiIVANj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Sep 2022 20:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53498 "EHLO
+        id S230011AbiIVAOq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Sep 2022 20:14:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiIVANf (ORCPT
+        with ESMTP id S229968AbiIVAOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Sep 2022 20:13:35 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2074.outbound.protection.outlook.com [40.107.92.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C24A8CF9;
-        Wed, 21 Sep 2022 17:13:34 -0700 (PDT)
+        Wed, 21 Sep 2022 20:14:43 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A23C303E9;
+        Wed, 21 Sep 2022 17:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663805681; x=1695341681;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ZlimsI43qIQFyOX8rX8mkYmfby15VtdsmV+6eFko6/E=;
+  b=miIsZ1a3gWOgw7k1Ru6SKftyo7adWatyhN6ZSTSRYbxwiSjTPrIbkOZA
+   qPbaI7DCedyrVUV3o5NDgDFTo6+24MUiFOqW3RODVwILLbIRirioMGc2u
+   lmxYXCQ1OD+YAugs94zRYMUXvLco8FSwiqFAh+RiPeZ6fb/Vp2EefsPEs
+   LrLkHeF9vSDDcSnsMtKdRhqIOJlnNgn54NQjR8YIwmQjYq+Osx4nrFH05
+   oAg+RaMJBsYTGS6VccfWn0xpvgBXslJBCl7BxER4FWvQ3X0TGbSWweERL
+   7+SMv7VY0oWepZIt5yLCSgnQICjF9RDW440Cadai0WmB+Y8GtQzotk/8E
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="386446651"
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="386446651"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2022 17:14:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="681993154"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Sep 2022 17:14:40 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 21 Sep 2022 17:14:41 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31 via Frontend Transport; Wed, 21 Sep 2022 17:14:41 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2375.31; Wed, 21 Sep 2022 17:14:39 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LWcpOijaAdF2fL6/OJLZQkFstaCUP/0R2zvodOSSucaznz4r8UhGaGDy6SmOZkZabqTEg3uznQbpRGojgyF8nEiXvyu572j/Znl3X+B2LQK2MBkYv67fGOoP9O2ygM9wE4aAd0xFZAYMiURYISe0at8ec2wCdy+IBKOpFgMmlvFfp7tBNP3074fGjcxUXcGuh72YkBjkUPHcuqpzxv7Iax8dxse4FSb8pRU5HgUAIEbvnvqGAYgQDkJuAfwjKldwI9iO7YtqAlznYlJ5f/5I7E+VRW89VNcQy7QxgIK6j/tHIIsIVjKdwOu+Kjv4qIJfwnqjsZ5g2oWDRDRZcpaRaQ==
+ b=i8peQayJY5B3q9H8EA7sdGoWNFw9m7plvQ4rKTrF3jkSjplTk0q6Wzthmlk4AWpI4I9iamaFeyKlFMcup+XXG22WBLyeZJiDiGsUjTtd9UK1Mz7XWOqFSxoAnRQ3RyoPCM95/RloBhARE2VKssJeTRB40XHZCJ9ugltkZoGOFIyYDYND3qvTYKsnepqY8PApdY1M0ts8/VReUUDw0BTrVKAJIutBOs7iMkhS2zXV4WPFSDIfgNt0Z6Bg0TCeayt0GXfMoq/Gjwjhb2pB4BSycx3Vtoj7su/+q32uyndzRFnT+i/DoJhDcMxVXg+Ls/Up3j59Bij+8hkRMXq+7Qm18g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QxbMxmBqT400/z6J+blGHftWBemfIngls5C5GglWG7U=;
- b=lCA2AtffO94uP38zMh1q43cYjHZaTJ34cUYZtx9ToiyLmXDgV6Iyp2cIdM16u7BscbggxCtYz3dbJXFKoHFJeVRFHpHI0I7orIttPSolFxjEPEVd+RREgK+3mI92Go4qVknG3MDRE9ZdlMKPKZd+FImrqw/pSqBpFajgbJT8aMNrFBDi4gYhjYTmeEu8Ax6gbnKRNFUl92/0CqKEA1cZVhJ8CdfaMUXDs6ypZN8zdd0YziLf4j7SghTKwcX9Q/fx9ri1R9+nzDHHZ3RUkKMiLGTaVlb3qg+wgQNE7Lo+LWSYB3P6nkZpNRxgW6zFITMsFSMG49z1MpWBtNOZKNaEsg==
+ bh=jHNYMdHJ7lSIzzhAVpLkkRZgKyhEAslHlfv+YE+Z3bM=;
+ b=SmUF6Zas8XxrM159Ya5arftw1sgzVAVM5j/7xtr87uwcu5FT+OXke7tRGcgLsV11vn+RER3vK08B1rZyXERcP7csSm+ppUEMNDnDlG+8rKSigh+OjNM9uGeo7CZ7FcVYZvu11idarvqw+Ey4d74Lg2h9Ju97oqb0l1xqapeLixF3+8+pjL6kCJDxFo/Ime8wpqHM9DEElSNyLIF1af6iW81NlHYzSnVwtHlGqj+/FlwL/0URMr8xy3QVx1z99u7+J4xbj/fvN0x3sH5UFdp47PdUW6HcP27QftbTkK8Qxw2FLFBabcFc35xa+YDCSUnEC+IxIfVUVTH6mPOFcLEyOQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QxbMxmBqT400/z6J+blGHftWBemfIngls5C5GglWG7U=;
- b=Ec1FCAhxx97aYg5bBBJC0010/y/DByCXLYIOCPRfwtyHUCo5clJaqmJvEKKKGEX69AgG32jvp7/n4dihj4nil8Pe/tB6TEcO1M4FZKOge1q/eimEhFAIK9gaGrvaQQUEkZrSAiZalDdIlyE3pYlqA8QjDUaQsawwJOkFGk+GWYM93lZcr+HeWJVzw/EwqVSzyMVZY5IU8PD+R5SiTEugHi84YuZmON04obaq8b2PWQiSdSsbbz6+oEu4y6HdoowunVQNNEjT5p9jmIFA61pLy9/9sIZ29VEr4oHCY1uepFN/yrrAbCCFIfchOJHhq8EQFpdmnCzZdLv2qaVJt8AOTw==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13)
- by DM8PR12MB5462.namprd12.prod.outlook.com (2603:10b6:8:24::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.17; Thu, 22 Sep
- 2022 00:13:33 +0000
-Received: from DM6PR12MB4140.namprd12.prod.outlook.com
- ([fe80::e0c5:bb15:a743:7ddb]) by DM6PR12MB4140.namprd12.prod.outlook.com
- ([fe80::e0c5:bb15:a743:7ddb%3]) with mapi id 15.20.5654.017; Thu, 22 Sep 2022
- 00:13:32 +0000
-Message-ID: <f562bd43-d9bb-af27-0d44-af7902ee15df@nvidia.com>
-Date:   Wed, 21 Sep 2022 17:13:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 16/18] mm/memremap_pages: Support initializing pages to
- a zero reference count
-Content-Language: en-US
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Alistair Popple <apopple@nvidia.com>
-Cc:     akpm@linux-foundation.org, Matthew Wilcox <willy@infradead.org>,
-        Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-ext4@vger.kernel.org
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20) by CY5PR11MB6365.namprd11.prod.outlook.com
+ (2603:10b6:930:3b::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.21; Thu, 22 Sep
+ 2022 00:14:38 +0000
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::9847:345e:4c5b:ca12]) by MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::9847:345e:4c5b:ca12%6]) with mapi id 15.20.5654.017; Thu, 22 Sep 2022
+ 00:14:38 +0000
+Date:   Wed, 21 Sep 2022 17:14:34 -0700
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>
+CC:     <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
+        "Jan Kara" <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH v2 10/18] fsdax: Manage pgmap references at entry
+ insertion and deletion
+Message-ID: <632ba8eaa5aea_349629422@dwillia2-xfh.jf.intel.com.notmuch>
 References: <166329930818.2786261.6086109734008025807.stgit@dwillia2-xfh.jf.intel.com>
- <166329940343.2786261.6047770378829215962.stgit@dwillia2-xfh.jf.intel.com>
- <YyssywF6HmZrfqhD@nvidia.com>
- <632ba212e32bb_349629451@dwillia2-xfh.jf.intel.com.notmuch>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <632ba212e32bb_349629451@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0037.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::12) To DM6PR12MB4140.namprd12.prod.outlook.com
- (2603:10b6:5:221::13)
+ <166329936739.2786261.14035402420254589047.stgit@dwillia2-xfh.jf.intel.com>
+ <YysZrdF/BSQhjWZs@nvidia.com>
+ <632b2b4edd803_66d1a2941a@dwillia2-xfh.jf.intel.com.notmuch>
+ <632b8470d34a6_34962946d@dwillia2-xfh.jf.intel.com.notmuch>
+ <YyuLLsindwo0prz4@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <YyuLLsindwo0prz4@nvidia.com>
+X-ClientProxiedBy: BY5PR13CA0036.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::49) To MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4140:EE_|DM8PR12MB5462:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31d8de5c-b5dd-4675-9986-08da9c2f48e8
+X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|CY5PR11MB6365:EE_
+X-MS-Office365-Filtering-Correlation-Id: 668e8a77-7104-4f0f-388b-08da9c2f6fdb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CW6D6Ro5IdXs+opNfqNVsuJ6v5gWV8TWAHOaVHVSIFBUxaXFQ64h928a6Vr7CGZuz4dUiOVwRU0s3glvQJipuJoN3bU0N+w3wnooP/+dO4uUXVjeHkhwKSeuRIzxRMHWv5jL6ejjEXwjwjJthq73AahCE5IgiAyCPnOXL1fS5N4piZpk7ewY8xoY8RNkP8WGBSN3MlKm4mHRDYfpCLcokpoWmyAbZDu1gXcBok1CovgbJsOhjXOTYOiU7co6z1KS1j/e1+uZSYz9HekzuJ9HmAbRc5HrRDzNcKIh8s48apk4x4LWcEvB0a51P4exkMYkmZRV06alXSE2/Z1WKEygQlqNVnn+pdzkGr6X7RK+EmZV1w0N7MeGsidaZ2gtGgM4HalKlveHizfOVK7hTvfLmvBvhGPaSqg7i/lXjmVqDdjwFZF5lI74keZ/oSvMVA49+4BJKM+GQWD86mVePf3QxLd+JEwFzSZ6eG+h7CcvYsQlfez6CQaLv2WnSW3u4fSyLkYNGQIxoPN4z9zdR6XGgn9LwWG2Rp5r4We9BKLUg1uHnlOwOISwOcOt2B2QUWJLV7AfqXfrr75QF45y14yxWNlP4MVq6kpBrUiqZfPEdP5HprQ847HjQmDNYLaYemZQVwv4mGkOfu9AryUQvA+lMWYK+mpuGojHhNCbVQ/k7f2tk5E6IvkbK2sDhRoNaSC0ZB8twWQtHWy01B4rit7Y2lO7WrK7ze1QG8Ec10cctU/nwzIvtdAclPkHxmzqtiZVSU8UHFhqr/7++MXeoYCse9w0udDKBVjHpspwsP0xEIo=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(396003)(366004)(376002)(346002)(451199015)(6636002)(6486002)(478600001)(186003)(36756003)(8936002)(83380400001)(2906002)(66946007)(66476007)(66556008)(4326008)(38100700002)(7416002)(5660300002)(41300700001)(110136005)(54906003)(8676002)(86362001)(31696002)(6512007)(26005)(31686004)(6666004)(316002)(53546011)(2616005)(6506007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: D+vPhIOCL5FhsvOPm1sPzFsPe1OYrIFx+M2Pk+xsxqdWX4r2sECdo1vstJ545CcihTHtwLrLSwiisMmUEXDYdEqFOb/NAVsA1jiHKvxDI4zkM8knAemW77UxnzSoaSnaeG01cxUvACDI3y7dyPlk6cEpKCd+9NJsoGi403iYz3Gj8/kiOR2GW5AbVOwZsWpgqfX4zBEM4IBOwSVC2ZZOD8f2z2OLil3NSgJ0EvfjtoL8tzXj6NcI9eZUaJBmMsJ1Gl5Nj+eDvnx2V4Xp8aeNuG/yURUmUfK7HDSRoKU0wLrO8owjO2tV7fiOn3VOpystBZfL3WaNBpCU4f/ZcRapm6YTzs2p3cDvr0Je1Y0pJqVt9YJCeI9bSHwo0XinQstOH576vT5Jv3RlDucdzHmI/5Q+Hv43dnumJTyTFhT/PNCWbNAnY0QJkBT7vwabWLwY0IvDd7YC+P/nkarkXrWq5e9Lx9hb/2305PVFFFPpy6wveAGmnML/LdJi8mBKm7Wd0skpg+UEgMXlsTO9BW6jdy8TXMeY3FrhjTt+WvAuuo9Wo97481cp9TstEqI6LsMkewNJGbrhFqZ9dV1I8CCYonYS7W6m539oDUi9rzao4TJoR0Mr7aBZ7xxOlqbllBp6nHsZsGJ6OScKHluYlBqdm1VkdRZkzzIgF9yvdz/5llLMF7out4FiUhwhCLnKLQ7ny6vDMiZGoMyckiFT6NVn7g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(346002)(396003)(39860400002)(376002)(136003)(451199015)(316002)(54906003)(86362001)(5660300002)(7416002)(83380400001)(6486002)(2906002)(8936002)(41300700001)(9686003)(66556008)(4326008)(66476007)(6506007)(8676002)(82960400001)(38100700002)(110136005)(66946007)(186003)(26005)(6666004)(6512007)(478600001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnBpKzVWeCt1TWJ5N2RseVZjWnkxcTljSnJocU5zSXVUQllvMmY5c25iTjRJ?=
- =?utf-8?B?SG1HR3lLcEk5NUE0ZTk3ZCtvcHR4ZEVvdllvRkZMMU5vN3hpRVJ5dDdqMURu?=
- =?utf-8?B?SzB0MitqUlRnZE1WZFcwNnprc0U4d3p5TnNnTlN2YlE1enZUekxpL2VKTENi?=
- =?utf-8?B?bnZJdG1mcW9PMkFkM2svN0ZLQjUweWYvRW9PQVFOM3VmSDNZTXdJd21JakpD?=
- =?utf-8?B?NlNVUUNEZWJNa0NlaytoY3BIR1EwMFp0Y0RFbWpTV2c2Q0RDNndHSnhySGZC?=
- =?utf-8?B?VEsreGRMSlE0SEg5RU1hOWRYT2NQd05NYWhZSWh6cHdyQWE3WUZ0dWx1alAr?=
- =?utf-8?B?QXZBZTIwVzIxMVBPMlBNS0RMek1rRnZOb0NHUVZOQVVDOVFxL0dlemdiQ0JI?=
- =?utf-8?B?eUNnKzRROUpRMUpWWVdkNVR4azQ3OGRoSFVtMXZsUGVrS0Y3Qk9WSDk4UEZz?=
- =?utf-8?B?YWI2b1JRVEJZSy82Q3VEVjh6TU9VbVQ5djZWYmREeFdFRVUzVnE3WlhGcnZq?=
- =?utf-8?B?VDl5TEwxWEowMU94c2lsRWZDV1dHS1ZLWCtkQkQ5RGlnOUdxQkRiQi9mbmVa?=
- =?utf-8?B?d1k0K3p5YStEOVdHcjNCVllteEJ0dHJWV3JPVkN4TGFUc2twZ3dCZ0RMQndL?=
- =?utf-8?B?Rm5FZXIxQVErK0F3WWpyR1Nqa3dpM0hyTWdRTXhSeVhialA3NVlySlVBR2hP?=
- =?utf-8?B?YjFYSGJGV2l0OE40WEdoWHM1VmlhdTd4MVBhR0luRHh6MXBKVzR6NHlYYzBE?=
- =?utf-8?B?aDhNTGVtN0MveEJyOC91NEowUkRnMHJIemovdFdKbUo2Mys1RUx5TzV0QTcw?=
- =?utf-8?B?eG8vWit5bHpPQzdueUhRdTdFQ2F0OUd6QTdEVW5qWkVXa1kyMkRMU0dtcFI3?=
- =?utf-8?B?OUFqZGFKTml5NlUvSVhpR3lzWWFsc3ZKaENkOEFOOGtUaTRiZWRUWGdIalFm?=
- =?utf-8?B?b2o5YkY3dm1UaW5ncWRxUjkyUWRpZm9FMGE1VlE5amM4SUdVa3A4U3pZWml1?=
- =?utf-8?B?UTBWNm5yYjhFUnppTzhhQ2kwTWRHRU40aVhVZVozV2ozRndoOWltbjVZY3Za?=
- =?utf-8?B?NzFkK1RERUN2T29CbWdTU3FKeW04amFaV2J0UVVxUjdYTCtYS0gxVURkclFD?=
- =?utf-8?B?dG9zS2hTZ0l3VXdSa1NiaC9CN3liY0JQL1IzM0xmUXFsTi9PSk1ZQjFHRU5i?=
- =?utf-8?B?dkNWeHgvVnVPd2FUVktMb2xTVDNMMTdaWEo3NFdFYVJlTks0dkkvR2RQY0lC?=
- =?utf-8?B?bVBYOVFqd0VoWXE3eXVoRlhZQjJteFEvSmQydUVrSnp4MW1vR1BOdEUwSG10?=
- =?utf-8?B?QjlmK2dSaXNDcE13ZzlEUkV2YyszMFlNa2lqR0R3cjN0YVA3QWg5Z0pqSm9R?=
- =?utf-8?B?MktObHFYZzR3WWo4OWlIOU1PNHJzYU5IQkpIKzZYZThlbXV2cjFlWnoyMmIw?=
- =?utf-8?B?Y2x0Myt6MnFJUkwxRzZUZkdnTnAwSW9jT3NtY2t0QmlZeHltYkNYV2NyMXli?=
- =?utf-8?B?SExIQUFoYzZwMUtBL3ZZb3RJSDlmZ3NVQUErWE94L1h5a3hDeW1rR3o2eGZK?=
- =?utf-8?B?NDMreFh1cFRXeTBlVCtheGJVekl3TWlSdUVCZXVtV0xESXlmMXVWU0crS082?=
- =?utf-8?B?NUxrYjZoNm9yN2x0MVREQ011bmNQdFhYMVl6QmlkU25VVVAxNXR5ekpPdzJu?=
- =?utf-8?B?bldCTGlxSG5hbmNrQ25LTXBwb21XT2xUanNMbVJxcmNpR1JLQVpGVFM2RFFK?=
- =?utf-8?B?NnB4RUpIV0Z3VXh3VmVPK3lzYUExK0tObkJSWTU4eEFaTE1sWlZ1MFAzazVa?=
- =?utf-8?B?ZHlKS1dWOURpejZ3OCtTYzRKbGx2cEZZZkJJemh4S1lwdzZpWGlidEtLd2NJ?=
- =?utf-8?B?VnUwV3JPQytERmc2YXp2RUwxOEVMbUx0aXhiQlV1V1pNazIwUlE1NkZvQ2tB?=
- =?utf-8?B?dytFRnc0dG1Ba21QcUJDUDhtL0VvNFBNRCtoRnNXY0RuaWNGaWYzN21jRmdl?=
- =?utf-8?B?c1JuNjJxakFxT3h1VDBYc1IzR29ZekFKeG5qcERmNFFpWGRsTG1hbXNZQUZz?=
- =?utf-8?B?U3RRLzdQckFVSGJjcy9SVTdjcG1JeElMR3FYM1ZUeUNNSkpwdlZmNTdXakpK?=
- =?utf-8?Q?UUtGB3jTvSkNDnakLyP/eXceT?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31d8de5c-b5dd-4675-9986-08da9c2f48e8
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4140.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9dj3OK97812DQpl9yXnlfpT+2oL/GSbHAmQAiWxh+FvMqnrkJHBLVssSzRae?=
+ =?us-ascii?Q?l5WzQpCJ8Tb4DmBAceE9hym9OaI+agw0F/oHp7m/H8SnioTBEK5ZpqZf6Opq?=
+ =?us-ascii?Q?+scTm+PEKVDlyV56UL5U02qSvu09psXNCkjwehFhBj5cdKSabG65zg4Lv8Gf?=
+ =?us-ascii?Q?U4x0tyX1zM5Xi9iz7jCZ+NgOnFWfO6FNbw3Sam3JGlZm3pimPHR0lp7E6IM5?=
+ =?us-ascii?Q?UGKEv9ii/sKo12/rGkYVthS1teu6h2/UpN2h3v7s2YNbFqjD9oE7DvAnP/0+?=
+ =?us-ascii?Q?DjgHshOppl75NlAUMvRQ/BKNnBGK+7X+AsvaoremYdyO5GcWbjSIdO9BhBFs?=
+ =?us-ascii?Q?PRAq3GAKp2SXNtdUELrBmN9UFElFG9MicQ3+U0Gd0jQLBUwlgbIKGGXKL0WU?=
+ =?us-ascii?Q?p8bZvJTBwNBibt6z8H9UmlhNibEAct/sxhiznuCkolU7gnIhlZRukNNbfT6w?=
+ =?us-ascii?Q?KDfotkPSYq/HrbY6Fg31jngLyDyKd5HhGeUgDcqJJSyBs/qzhhqwxG4r/tzk?=
+ =?us-ascii?Q?BOfR2eMarGBVYhiYRb43+cTRAX19dvQUY7nJd0Cm5i6wFm+G14QSAhH1Op1H?=
+ =?us-ascii?Q?OzTVjINuJT8adv4uAJkPpgYkiUF2AiQFDxjHjbfpcoUzS2IObn5xu3ln03wx?=
+ =?us-ascii?Q?NNiiipjMtG9j2p2wBPDPIUK+VtOnUe6jam0EDKTW9NnXexaGAXodond5IITI?=
+ =?us-ascii?Q?qnN3kAw1lNj1DdYNlr0eJJ2YRW/ZvSRDKNvKIc/eTzZfK0UXqUJr/FTIUU30?=
+ =?us-ascii?Q?F7wAefQX36mLMrrwoyYIqvoPu8BsDDkJ8kWdqXy9IM+ZbKw622ga+wJGTu8+?=
+ =?us-ascii?Q?LFqrDWmZa9SiEc7w6RdeiWgVB/Dilmf9e/2sQIKafM2BBRW4mAfNK5qDOma0?=
+ =?us-ascii?Q?hDNv62gzagqB/iFSvkXWy2bAYqDji27lXfFjAs4SsdUx+mp+ymHTjOI24adB?=
+ =?us-ascii?Q?Not5PBTJ+JQw/a0kHYBuB65bYks2K+R8+jooqiTTVHNYspmL3xQ9cfDBpLiz?=
+ =?us-ascii?Q?wzZ4gaicj1aQp6PcHEAmdGTNbAJD8SMTw4nwV67q0MsTpjaMIjljDBFxMtTR?=
+ =?us-ascii?Q?GF7VAVIka/Zl5/lqhS4qb8oWGxGiG+uOld/COYc8xm0T9mDMWxFJSWX0HJFz?=
+ =?us-ascii?Q?7wjxY1Y0s/XE5Yv+vUWBwRihfRDQu7+2yXx9YT+H8WCYR7IXSx8qRu83jvRf?=
+ =?us-ascii?Q?+xlynsLHvki/EEXu8ukr3tOwi4W/b+IHo+x/LMV7/+NnJ7ajB8U8nf7bnszs?=
+ =?us-ascii?Q?FYwFs6oOSHBkcYfYbubH0K9F0nGI+SR+8D1RHQre3k+mneVbU5LMG3dK6fD8?=
+ =?us-ascii?Q?jYxisV8YFxY/cp8QKBIwHxVs2OgJDcOCnDTtoXe5PCK9MD+jBiEQGuqOzeQy?=
+ =?us-ascii?Q?Hiz955bImyq8TyVfAjQ2FKfctV/9qPYPvP5ho2Qw6FGL+hB6f1MSKXrd+uqY?=
+ =?us-ascii?Q?prnJJrcc6FGeKOQToYYrWaDHAU3rpBwqANoRRrb4VhCHD4iKvdekwmpbILeM?=
+ =?us-ascii?Q?mr1LSZWLP97VAMmE5Tji7w1dC86VqqblEdfNfA7B152GzBg6xmuUGssmkzZH?=
+ =?us-ascii?Q?SwLS0Ggb1sgr+Os3dcH0m+WL9kuIUQ4WbnS1JFEBJuCTf/FFXXtjAjYqfUP0?=
+ =?us-ascii?Q?iw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 668e8a77-7104-4f0f-388b-08da9c2f6fdb
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 00:13:32.8195
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 00:14:38.1473
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cvrExU30K/fzYImpq2aDEg/5i6YGbVzTX2fnUaOLpyKYVnN7DVEh2slX+YvgBuiOjrsNj4IzdYr3SYT36dVgWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5462
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9scufQYP3aOyhMw/NnJAkmxmNfpJYhEaqXqfChH6kJNaQhB7GHlMtjsIPiQe3sSVV1SMqAwWIkoGt5eu8BtHzITYsVRgwcamXX9QYyPIunY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6365
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/21/22 16:45, Dan Williams wrote:
->> I'm shocked to read this - how does it make any sense?
+Jason Gunthorpe wrote:
+> On Wed, Sep 21, 2022 at 02:38:56PM -0700, Dan Williams wrote:
+> > Dan Williams wrote:
+> > > Jason Gunthorpe wrote:
+> > > > On Thu, Sep 15, 2022 at 08:36:07PM -0700, Dan Williams wrote:
+> > > > > The percpu_ref in 'struct dev_pagemap' is used to coordinate active
+> > > > > mappings of device-memory with the device-removal / unbind path. It
+> > > > > enables the semantic that initiating device-removal (or
+> > > > > device-driver-unbind) blocks new mapping and DMA attempts, and waits for
+> > > > > mapping revocation or inflight DMA to complete.
+> > > > 
+> > > > This seems strange to me
+> > > > 
+> > > > The pagemap should be ref'd as long as the filesystem is mounted over
+> > > > the dax. The ref should be incrd when the filesystem is mounted and
+> > > > decrd when it is unmounted.
+> > > > 
+> > > > When the filesystem unmounts it should zap all the mappings (actually
+> > > > I don't think you can even unmount a filesystem while mappings are
+> > > > open) and wait for all page references to go to zero, then put the
+> > > > final pagemap back.
+> > > > 
+> > > > The rule is nothing can touch page->pgmap while page->refcount == 0,
+> > > > and if page->refcount != 0 then page->pgmap must be valid, without any
+> > > > refcounting on the page map itself.
+> > > > 
+> > > > So, why do we need pgmap refcounting all over the place? It seems like
+> > > > it only existed before because of the abuse of the page->refcount?
+> > > 
+> > > Recall that this percpu_ref is mirroring the same function as
+> > > blk_queue_enter() whereby every new request is checking to make sure the
+> > > device is still alive, or whether it has started exiting.
+> > > 
+> > > So pgmap 'live' reference taking in fs/dax.c allows the core to start
+> > > failing fault requests once device teardown has started. It is a 'block
+> > > new, and drain old' semantic.
 > 
-> I think what happened is that since memremap_pages() historically
-> produced pages with an elevated reference count that GPU drivers skipped
-> taking a reference on first allocation and just passed along an elevated
-> reference count page to the first user.
+> It is weird this email never arrived for me..
 > 
-> So either we keep that assumption or update all users to be prepared for
-> idle pages coming out of memremap_pages().
+> I think that is all fine, but it would be much more logically
+> expressed as a simple 'is pgmap alive' call before doing a new mapping
+> than mucking with the refcount logic. Such a test could simply
+> READ_ONCE a bool value in the pgmap struct.
 > 
-> This is all in reaction to the "set_page_count(page, 1);" in
-> free_zone_device_page(). Which I am happy to get rid of but need from
-> help from MEMORY_DEVICE_{PRIVATE,COHERENT} folks to react to
-> memremap_pages() starting all pages at reference count 0.
-> 
+> Indeed, you could reasonably put such a liveness test at the moment
+> every driver takes a 0 refcount struct page and turns it into a 1
+> refcount struct page.
 
-Just one tiny thing to contribute to this difficult story: I think that
-we can make this slightly clearer by saying things like this:
-
-"The device driver is the allocator for device pages. And allocators
-keep pages at a refcount == 0, until they hand out the pages in response
-to allocation requests."
-
-To me at least, this makes it easier to see why pages are 0 or > 0 
-refcounts. In case that helps at all.
-
-
-thanks,
-
--- 
-John Hubbard
-NVIDIA
-
+I could do it with a flag, but the reason to have pgmap->ref managed at
+the page->_refcount 0 -> 1 and 1 -> 0 transitions is so at the end of
+time memunmap_pages() can look at the one counter rather than scanning
+and rescanning all the pages to see when they go to final idle.
