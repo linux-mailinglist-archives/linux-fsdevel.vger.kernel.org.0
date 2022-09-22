@@ -2,73 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 613BF5E5DC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 10:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B54AD5E5DC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 10:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiIVIpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 04:45:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44488 "EHLO
+        id S229603AbiIVIpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 04:45:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbiIVIo5 (ORCPT
+        with ESMTP id S230380AbiIVIo6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 04:44:57 -0400
+        Thu, 22 Sep 2022 04:44:58 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E028A0267
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAA29FAAC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1663836290;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=x8lUJ3SpIV4mlVs/JuPNx0a+WWSeeA9bZCgVmcay4M8=;
-        b=YQv7Jf3x792gVe8FyvXFdh8UkWCQ88XyPiAWNK0Isu9uMDyxpsmfJWTer27g+Z/aA3KpJZ
-        vcTwZK7ivFplZcCWYaEwQuKsZys22PO4C6trGCgE+ddqSj1XtF1qL+wE9d4Hx7kiposupQ
-        Bs1wsqe8Ktskp12idYYRAmqfFbZhGeA=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=PzsiJLh4qivuvaD01T8k0cktWemsb5i0yo5HxUE+jT4=;
+        b=RTttvXj8skHrcydFLj4E71LjUkZ3Wh/140H0csHfFZZ2WcZWXcMZUlS0YIL8SjSrZkur32
+        09UjvO57q+8wxrYFdK0JRCzfsn+Txa0QRuxe9q5iEgMjx5lOpDjvPbWjx6t0c/7UeItG7v
+        lmZDq70J33tZFJCRlQFuo2sHxiBpU9k=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-594-m5vb3ALKNPmz1ZVJtRoG0Q-1; Thu, 22 Sep 2022 04:44:48 -0400
-X-MC-Unique: m5vb3ALKNPmz1ZVJtRoG0Q-1
-Received: by mail-ed1-f70.google.com with SMTP id e15-20020a056402190f00b0044f41e776a0so6166205edz.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:48 -0700 (PDT)
+ us-mta-634-uceJsMaHO3GV3WF_K-bfEA-1; Thu, 22 Sep 2022 04:44:49 -0400
+X-MC-Unique: uceJsMaHO3GV3WF_K-bfEA-1
+Received: by mail-ej1-f71.google.com with SMTP id oz30-20020a1709077d9e00b0077239b6a915so4177716ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Sep 2022 01:44:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=x8lUJ3SpIV4mlVs/JuPNx0a+WWSeeA9bZCgVmcay4M8=;
-        b=iniMokm3bvxnnkCsuB3+cXxfOXz/n1ClWFCpG2CohnPTds6No9VMEZXWomog5RD1NC
-         XKzjIr3cb/TqO0zMwLFeG9QqhXrGTUXnFBGq53LT95LHj5REKtOltybvSMfC2O4pARj1
-         qbiAFiT3/7BzZz9S8nHSJWp9oxBP2fN8flHJfhOnZP5QJG8Ao0m64G/GcAp9jnwIVXUw
-         tEXKpR0Hk0RVx/nmV1TPtt1dk61YwCBrpb/HjWapFJTQCNXoArDQAz4vq2PZNjztKKh/
-         8FclWnX1RYAYQV2hib9MtOIeRPbk8hU3fPP/E04lWaMvMeGkvBzUA7F75YB9ezVZM5Bf
-         hiDg==
-X-Gm-Message-State: ACrzQf2eXEgoUP0w3DuIAw2DqN7vjq+ES22RsLsEZZJ2bpKXZjl8rc18
-        kWw/pVmqTJ2/5oIHuWXxVk9sl2MJr/MrlCWNG6X4W3oXZwxUn5CoD8DVrtpiXCT2rFs2GQJTXfT
-        A1Hq02nURfaY09Hs3rYufXDj4sqr7m2yYTCWGDUUh1c0/rMUmQWBOtkJjxwJAoqZsPtgacd4GGa
-        RCFA==
-X-Received: by 2002:aa7:c382:0:b0:454:9591:79fe with SMTP id k2-20020aa7c382000000b00454959179femr2148300edq.253.1663836286904;
-        Thu, 22 Sep 2022 01:44:46 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6eFjvyOJxrjK/S38FYT1FYsFoor5/NPGXCzHHhjnyD6Ze1SbQt0l1+KG0NK5RrnzdaqH43Jw==
-X-Received: by 2002:aa7:c382:0:b0:454:9591:79fe with SMTP id k2-20020aa7c382000000b00454959179femr2148282edq.253.1663836286703;
-        Thu, 22 Sep 2022 01:44:46 -0700 (PDT)
+        bh=PzsiJLh4qivuvaD01T8k0cktWemsb5i0yo5HxUE+jT4=;
+        b=CY9Oek2hAUUv/wRROtBXYvhEUI79uVxi5lxut3aSgfn4L7GzJrqpOgMGRoQfnZDdOz
+         HxC1IIXfIj0I1mCsw/AqPoMgfbEbKHyPyKLarR0As4RAJPREP7d9pL9j7lAg32U01Gvo
+         XYqus66nbri9BhpPAXwCqTzYu5oE6mQleZJOnr3HNjxLhxcM8Ickl+vR9n+dTg4VJoYp
+         YHDp/xfRO067BWhZCPiZ1ZMHyjLUO3LF+UDoRnNuN0kjdCY88owSQeZagBEQjkJKgold
+         7D9NP24s2uts86RWmck3uqraTpbhEnC6jC3Gx3kgrNcy+KuPaAvTL3NDW67jTgpae6Jc
+         5bGw==
+X-Gm-Message-State: ACrzQf1SpVP8WCCiTMeGKeP8XqewB0BjxypKJcPlmBjpS4pkUccOpS3v
+        kciUc4XxVyu3RbvEpSEWxu/FxqfpjOUFoWLDSkt44vghp1JG5nV3qzo27h8piNRxOpSIwMgGS/n
+        Guk+ifhErkBdM9vpV5Hj6jdDGu2WjP+HHJ+gT1iXO+aloxJIfCSue5aBVFmP+hFro6oZJ9xDyqA
+        panA==
+X-Received: by 2002:aa7:c415:0:b0:44d:f432:3e84 with SMTP id j21-20020aa7c415000000b0044df4323e84mr2174426edq.56.1663836288184;
+        Thu, 22 Sep 2022 01:44:48 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM41ddCte/pwWp/k9Dbeb6MyI1l216b+mSVDUBBBrzugCjAykrYvR+z6fgakR2o0uqGdtsc8uA==
+X-Received: by 2002:aa7:c415:0:b0:44d:f432:3e84 with SMTP id j21-20020aa7c415000000b0044df4323e84mr2174404edq.56.1663836287987;
+        Thu, 22 Sep 2022 01:44:47 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (193-226-214-223.pool.digikabel.hu. [193.226.214.223])
-        by smtp.gmail.com with ESMTPSA id h15-20020a170906718f00b00730b3bdd8d7sm2297942ejk.179.2022.09.22.01.44.45
+        by smtp.gmail.com with ESMTPSA id h15-20020a170906718f00b00730b3bdd8d7sm2297942ejk.179.2022.09.22.01.44.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 01:44:46 -0700 (PDT)
+        Thu, 22 Sep 2022 01:44:47 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Amir Goldstein <amir73il@gmail.com>,
         David Howells <dhowells@redhat.com>,
         Yu-li Lin <yulilin@google.com>,
         Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH v4 02/10] hugetlbfs: cleanup mknod and tmpfile
-Date:   Thu, 22 Sep 2022 10:44:34 +0200
-Message-Id: <20220922084442.2401223-3-mszeredi@redhat.com>
+Subject: [PATCH v4 03/10] cachefiles: tmpfile error handling cleanup
+Date:   Thu, 22 Sep 2022 10:44:35 +0200
+Message-Id: <20220922084442.2401223-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220922084442.2401223-1-mszeredi@redhat.com>
 References: <20220922084442.2401223-1-mszeredi@redhat.com>
@@ -83,82 +82,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Separate the error labels from the success path and use 'ret' to store the
+error value before jumping to the error label.
 
-Duplicate the few lines that are shared between hugetlbfs_mknod() and
-hugetlbfs_tmpfile().
-
-This is a prerequisite for sanely changing the signature of ->tmpfile().
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/hugetlbfs/inode.c | 40 ++++++++++++++++------------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
+ fs/cachefiles/namei.c | 55 ++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index f7a5b5124d8a..0b458beb318c 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -885,33 +885,18 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
- /*
-  * File creation. Allocate an inode, and we're done..
-  */
--static int do_hugetlbfs_mknod(struct inode *dir,
--			struct dentry *dentry,
--			umode_t mode,
--			dev_t dev,
--			bool tmpfile)
-+static int hugetlbfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
-+			   struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	struct inode *inode;
--	int error = -ENOSPC;
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index facf2ebe464b..d3a5884fe5c9 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -460,31 +460,27 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
  
- 	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode, dev);
--	if (inode) {
--		dir->i_ctime = dir->i_mtime = current_time(dir);
--		if (tmpfile) {
--			d_tmpfile(dentry, inode);
--		} else {
--			d_instantiate(dentry, inode);
--			dget(dentry);/* Extra count - pin the dentry in core */
--		}
--		error = 0;
+ 	path.mnt = cache->mnt;
+ 	ret = cachefiles_inject_write_error();
+-	if (ret == 0)
++	if (ret == 0) {
+ 		path.dentry = vfs_tmpfile(&init_user_ns, fan, S_IFREG, O_RDWR);
+-	else
+-		path.dentry = ERR_PTR(ret);
+-	if (IS_ERR(path.dentry)) {
+-		trace_cachefiles_vfs_error(object, d_inode(fan), PTR_ERR(path.dentry),
++		ret = PTR_ERR_OR_ZERO(path.dentry);
++	}
++	if (ret) {
++		trace_cachefiles_vfs_error(object, d_inode(fan), ret,
+ 					   cachefiles_trace_tmpfile_error);
+-		if (PTR_ERR(path.dentry) == -EIO)
++		if (ret == -EIO)
+ 			cachefiles_io_error_obj(object, "Failed to create tmpfile");
+-		file = ERR_CAST(path.dentry);
+-		goto out;
++		goto err;
+ 	}
+ 
+ 	trace_cachefiles_tmpfile(object, d_backing_inode(path.dentry));
+ 
+-	if (!cachefiles_mark_inode_in_use(object, path.dentry)) {
+-		file = ERR_PTR(-EBUSY);
+-		goto out_dput;
 -	}
--	return error;
--}
++	ret = -EBUSY;
++	if (!cachefiles_mark_inode_in_use(object, path.dentry))
++		goto err_dput;
+ 
+ 	ret = cachefiles_ondemand_init_object(object);
+-	if (ret < 0) {
+-		file = ERR_PTR(ret);
+-		goto out_unuse;
+-	}
++	if (ret < 0)
++		goto err_unuse;
+ 
+ 	ni_size = object->cookie->object_size;
+ 	ni_size = round_up(ni_size, CACHEFILES_DIO_BLOCK_SIZE);
+@@ -499,36 +495,37 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+ 			trace_cachefiles_vfs_error(
+ 				object, d_backing_inode(path.dentry), ret,
+ 				cachefiles_trace_trunc_error);
+-			file = ERR_PTR(ret);
+-			goto out_unuse;
++			goto err_unuse;
+ 		}
+ 	}
+ 
+ 	file = open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
+ 				   d_backing_inode(path.dentry), cache->cache_cred);
++	ret = PTR_ERR(file);
+ 	if (IS_ERR(file)) {
+ 		trace_cachefiles_vfs_error(object, d_backing_inode(path.dentry),
+-					   PTR_ERR(file),
+-					   cachefiles_trace_open_error);
+-		goto out_unuse;
++					   ret, cachefiles_trace_open_error);
++		goto err_unuse;
+ 	}
++	ret = -EINVAL;
+ 	if (unlikely(!file->f_op->read_iter) ||
+ 	    unlikely(!file->f_op->write_iter)) {
+ 		fput(file);
+ 		pr_notice("Cache does not support read_iter and write_iter\n");
+-		file = ERR_PTR(-EINVAL);
+-		goto out_unuse;
++		goto err_unuse;
+ 	}
 -
--static int hugetlbfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
--			   struct dentry *dentry, umode_t mode, dev_t dev)
--{
--	return do_hugetlbfs_mknod(dir, dentry, mode, dev, false);
-+	if (!inode)
-+		return -ENOSPC;
-+	dir->i_ctime = dir->i_mtime = current_time(dir);
-+	d_instantiate(dentry, inode);
-+	dget(dentry);/* Extra count - pin the dentry in core */
-+	return 0;
- }
- 
- static int hugetlbfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
-@@ -935,7 +920,14 @@ static int hugetlbfs_tmpfile(struct user_namespace *mnt_userns,
- 			     struct inode *dir, struct dentry *dentry,
- 			     umode_t mode)
- {
--	return do_hugetlbfs_mknod(dir, dentry, mode | S_IFREG, 0, true);
-+	struct inode *inode;
+-	goto out_dput;
+-
+-out_unuse:
+-	cachefiles_do_unmark_inode_in_use(object, path.dentry);
+-out_dput:
+ 	dput(path.dentry);
+ out:
+ 	cachefiles_end_secure(cache, saved_cred);
+ 	return file;
 +
-+	inode = hugetlbfs_get_inode(dir->i_sb, dir, mode | S_IFREG, 0);
-+	if (!inode)
-+		return -ENOSPC;
-+	dir->i_ctime = dir->i_mtime = current_time(dir);
-+	d_tmpfile(dentry, inode);
-+	return 0;
++err_unuse:
++	cachefiles_do_unmark_inode_in_use(object, path.dentry);
++err_dput:
++	dput(path.dentry);
++err:
++	file = ERR_PTR(ret);
++	goto out;
  }
  
- static int hugetlbfs_symlink(struct user_namespace *mnt_userns,
+ /*
 -- 
 2.37.3
 
