@@ -2,208 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EA25E5F1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 11:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A21395E5FAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Sep 2022 12:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbiIVJ4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 05:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49282 "EHLO
+        id S231342AbiIVKS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 06:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbiIVJ4V (ORCPT
+        with ESMTP id S230125AbiIVKS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 05:56:21 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051FCD74FB;
-        Thu, 22 Sep 2022 02:55:21 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id c11so14588836wrp.11;
-        Thu, 22 Sep 2022 02:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=3KZuhIbDsTmS90rWhTQ5Pzbw5OkmbaOMfSrIrIm8xy4=;
-        b=ReyEEc6cyNQu9PfbZH6KMcAsTWJaHLFwoUH7J4nSuug2svcotV24dTuvsbkRXHCGnG
-         Cr2k4IB1E3lLATq8zLVo3N2TE6V/bWRmggIIyJGUzV+9//5wkBmdlvnHD34JwyxsIX0U
-         h4OCXgVefr6e3LwAYDKfnqYPnsFNjwoRuWeCfZH8yuVGVq989l5PrX9dNAPoE70sSw1t
-         C/DuJtpWBDwZ1ZmhD+cPJ7Tkpwc9pDvTd3CHd0lWxtxUg+9kIBQOOd3j1BaeYa+VcdDr
-         irQzkv3xWJEqF/aa+UU6A3hyVZGx2s1YJ1K6K8CfK+EOqDu7ukiWiPweTMoOUfaNH9V6
-         mCGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=3KZuhIbDsTmS90rWhTQ5Pzbw5OkmbaOMfSrIrIm8xy4=;
-        b=wKmgZwpoRYysyopUEAad4omexoSB7XKCAOMcK1kMks/ShkOd/o2v181afp79SBFU96
-         +2OszTY+Pxzt2V8r/tTDUVnyFDn5q4yfQFk9rf8kaMupruFwFl1/dlYSy4+5NAi2YXVi
-         feUVA9BPLTrG+AYRw6PTEhxSTPKid3kVxcaoQAsIMe/xHwJYOjnx43N3doCrI6PgKGR3
-         6MowpX+/fVUFwrZNaYjDGgTGkVG9xOVOer84dWGK2c1p0QCDEVcF2Fbm5zbQuQae2wqd
-         prUAVCtOZTgMjwISdctNpcA5Izaw0T3W64tBJ4ZYHYARwCHhTieI4qFizuCf1BT3c6Qw
-         tNug==
-X-Gm-Message-State: ACrzQf1/iG+ri6RrHojl72sEQyNgWadzLDMsTLyDxYewzYxBIfvLt21+
-        5AKMAz8DyF8BcCa1FubczJeFl4HsyiI=
-X-Google-Smtp-Source: AMsMyM6t9YZr1ElRNqIU022/2zzUvuGs7SgaV8WTbISA8nIGuvQffKhrMB8GRUpi3kB5eZlw6avjfA==
-X-Received: by 2002:a05:6000:1447:b0:22a:ea42:29f7 with SMTP id v7-20020a056000144700b0022aea4229f7mr1539727wrx.38.1663840519700;
-        Thu, 22 Sep 2022 02:55:19 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.8.191])
-        by smtp.gmail.com with ESMTPSA id r125-20020a1c2b83000000b003a541d893desm5583233wmr.38.2022.09.22.02.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 02:55:19 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] xfs: take shared inode lock on single page buffered writes
-Date:   Thu, 22 Sep 2022 12:55:14 +0300
-Message-Id: <20220922095514.79607-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 22 Sep 2022 06:18:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70697DC127;
+        Thu, 22 Sep 2022 03:18:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CCA062B00;
+        Thu, 22 Sep 2022 10:18:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CF4C433C1;
+        Thu, 22 Sep 2022 10:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663841905;
+        bh=unHNLjgsxiDp0S08RPmDJfG3btH8Okc+VlSD5IufLJI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M1OQe0cNsUxh7Q+Z8ii8q5aOdDgyIr1XG8dnke5SmJWCwHFnkij36gn/docRxA4yM
+         MuSoMVc/vYqYek/J5ljXykCsW/Yt2ds9nyIixqYhufxTMhY6oJxNVFkoWFncYeK0m3
+         B/nJNnHLSEQTDexJE9j9Vb3wh8FEM9lYjwpjP2gyi9PXGutwpEZWhrE3k508Za1OgR
+         LZ40Tq/pBypLlYOgS1YZq0P5n9qlmjmKTHq0R5Mvvb+Y1DgbfstiLRyhIFCk4NhAXp
+         9g4LRA9fYfU87UeWRmcF5b0izvQ9a6mwlwm75HPt8ZDaOPLnhtBnw+emqSPML4Jk0r
+         GZZonnTYPze8Q==
+Message-ID: <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Date:   Thu, 22 Sep 2022 06:18:21 -0400
+In-Reply-To: <20220921214124.GS3600936@dread.disaster.area>
+References: <166328063547.15759.12797959071252871549@noble.neil.brown.name>
+         <YyQdmLpiAMvl5EkU@mit.edu>
+         <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
+         <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
+         <20220918235344.GH3600936@dread.disaster.area>
+         <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
+         <20220920001645.GN3600936@dread.disaster.area>
+         <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
+         <20220921000032.GR3600936@dread.disaster.area>
+         <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
+         <20220921214124.GS3600936@dread.disaster.area>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Unlike many other Linux filesystems, xfs takes a shared inode lock on
-buffered reads and exclusive inode lock on buffered writes to guarantee
-that buffered writes are atomic w.r.t. buffered reads.
+On Thu, 2022-09-22 at 07:41 +1000, Dave Chinner wrote:
+> On Wed, Sep 21, 2022 at 06:33:28AM -0400, Jeff Layton wrote:
+> > On Wed, 2022-09-21 at 10:00 +1000, Dave Chinner wrote:
+> > > > How do we determine what that offset should be? Your last email
+> > > > suggested that there really is no limit to the number of i_version =
+bumps
+> > > > that can happen in memory before one of them makes it to disk. What=
+ can
+> > > > we do to address that?
+> > >=20
+> > > <shrug>
+> > >=20
+> > > I'm just pointing out problems I see when defining this as behaviour
+> > > for on-disk format purposes. If we define it as part of the on-disk
+> > > format, then we have to be concerned about how it may be used
+> > > outside the scope of just the NFS server application.=20
+> > >=20
+> > > However, If NFS keeps this metadata and functionaly entirely
+> > > contained at the application level via xattrs, I really don't care
+> > > what algorithm NFS developers decides to use for their crash
+> > > sequencing. It's not my concern at this point, and that's precisely
+> > > why NFS should be using xattrs for this NFS specific functionality.
+> > >=20
+> >=20
+> > I get it: you'd rather not have to deal with what you see as an NFS
+> > problem, but I don't get how what you're proposing solves anything. We
+> > might be able to use that scheme to detect crashes, but that's only par=
+t
+> > of the problem (and it's a relatively simple part of the problem to
+> > solve, really).
+> >=20
+> > Maybe you can clarify it for me:
+> >=20
+> > Suppose we go with what you're saying and store some information in
+> > xattrs that allows us to detect crashes in some fashion. The server
+> > crashes and comes back up and we detect that there was a crash earlier.
+> >=20
+> > What does nfsd need to do now to ensure that it doesn't hand out a
+> > duplicate change attribute?=20
+>=20
+> As I've already stated, the NFS server can hold the persistent NFS
+> crash counter value in a second xattr that it bumps whenever it
+> detects a crash and hence we take the local filesystem completely
+> out of the equation.  How the crash counter is then used by the nfsd
+> to fold it into the NFS protocol change attribute is a nfsd problem,
+> not a local filesystem problem.
+>=20
 
-ext4 for example, takes an exclusive inode lock on buffered writes, but
-does not take an inode lock on buffered reads.
+Ok, assuming you mean put this in an xattr that lives at the root of the
+export? We only need this for IS_I_VERSION filesystems (btrfs, xfs, and
+ext4), and they all support xattrs so this scheme should work.
 
-This difference in behavior is attributed to legacy xfs code that pre
-dates Linux.
+> If you're worried about maximum number of writes outstanding vs
+> i_version bumps that are held in memory, then *bound the maximum
+> number of uncommitted i_version changes that the NFS server will
+> allow to build up in memory*. By moving the crash counter to being a
+> NFS server only function, the NFS server controls the entire
+> algorithm and it doesn't have to care about external 3rd party
+> considerations like local filesystems have to.
+>=20
 
-The contention on inode lock in a concurrent mixed randrw workload
-causes severe performance degradation in xfs compared to ext4.
+Yeah, this is the bigger consideration.
 
-When write range is within the bounds of a single page, the page
-lock guarantees that the write is atomic w.r.t buffered reads.
-In that case, take shared inode lock on write to avoid the unneeded
-contention in case of a randrw workload using 4K IO buffer size.
+> e.g. The NFS server can track the i_version values when the NFSD
+> syncs/commits a given inode. The nfsd can sample i_version it when
+> calls ->commit_metadata or flushed data on the inode, and then when
+> it peeks at i_version when gathering post-op attrs (or any other
+> getattr op) it can decide that there is too much in-memory change
+> (e.g. 10,000 counts since last sync) and sync the inode.
+>=20
+> i.e. the NFS server can trivially cap the maximum number of
+> uncommitted NFS change attr bumps it allows to build up in memory.
+> At that point, the NFS server has a bound "maximum write count" that
+> can be used in conjunction with the xattr based crash counter to
+> determine how the change_attr is bumped by the crash counter.
 
-This optimization could be extended to slightly larger IO buffer size
-that falls within the bounds of a single folio, by limiting iomap to map
-a single folio and if that fails, fall back to exclusive inode lock.
+Well, not "trivially". This is the bit where we have to grow struct
+inode (or the fs-specific inode), as we'll need to know what the latest
+on-disk value is for the inode.
 
-The performance improvment was demonstrated by running the following
-fio workload on a e2-standard-8 GCE machine:
+I'm leaning toward doing this on the query side. Basically, when nfsd
+goes to query the i_version, it'll check the delta between the current
+version and the latest one on disk. If it's bigger than X then we'd just
+return NFS4ERR_DELAY to the client.
 
-[global]
-filename=testfile.fio
-norandommap
-randrepeat=0
-size=5G
-bs=4K
-ioengine=psync
-numjobs=8
-group_reporting=1
-direct=0
-fallocate=1
-end_fsync=0
-runtime=60
-[read]
-readwrite=randread
-[write]
-readwrite=randwrite
-
-The numbers in the table below represent the range of results in
-different test runs per tested filesystem.
-Each test was run on a freshly formatted fs with single test file with
-written extents and cold caches.
-
-     FS:   ext4               xfs                  xfs+ (this path)
-   READ:   136MB/s-210MB/s     2.7MB/s-6.3MB/s     747MB/s-771MB/s
-  WRITE:   227MB/s-248MB/s    86.3MB/s-171MB/s     973MB/s-1050MB/s
-
-Needless to say, xfs performance on the same workload with 8K IO buffer
-size is not improved by this patch and are just as bad as 4K IO buffer
-without the patch.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Link: https://lore.kernel.org/linux-xfs/20220920022439.GP3600936@dread.disaster.area/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Hi Dave and Darrick,
-
-Following the discussions on my previous patch [1]
-("xfs: reduce ilock contention on buffered randrw workload")
-
-Here is a patch that optimizes the low hanging case of single page.
-As you can see in the commit message, the optimization fixes the
-performance of 4K IO workload.
-
-I verified no regrerssions with -g quick on default 4K block config and
-started running -g auto on all kdevop configs including 1K block configs.
-
-Regarding the followup higher order folio optimizations, please let
-me know if you intend to work on the large folio mapping iomap write
-code or if you prefer to guide me to do that work.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-xfs/20220920022439.GP3600936@dread.disaster.area/
-
- fs/xfs/xfs_file.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index c6c80265c0b2..3c17f2461ec2 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -703,12 +703,29 @@ xfs_file_buffered_write(
- {
- 	struct inode		*inode = iocb->ki_filp->f_mapping->host;
- 	struct xfs_inode	*ip = XFS_I(inode);
--	ssize_t			ret;
-+	ssize_t			ret = 0;
-+	off_t			end_pos = iocb->ki_pos + iov_iter_count(from);
- 	bool			cleared_space = false;
- 	unsigned int		iolock;
- 
- write_retry:
- 	iolock = XFS_IOLOCK_EXCL;
-+	/*
-+	 * When write range is within the bounds of a single page, the page
-+	 * lock guarantees that the write is atomic w.r.t buffered reads.
-+	 * In that case, take shared iolock to avoid contention on iolock in
-+	 * concurrent mixed read-write workloads.
-+	 *
-+	 * Write retry after space cleanup is not interesting to optimize,
-+	 * so don't bother optimizing this case.
-+	 *
-+	 * TODO: Expand this optimization to write range that may fall within
-+	 * the bounds of a single folio, ask iomap to try to write into a single
-+	 * folio and if that fails, write_retry with exclusive iolock.
-+	 */
-+	if (!ret && iocb->ki_pos >> PAGE_SHIFT == (end_pos - 1) >> PAGE_SHIFT)
-+		iolock = XFS_IOLOCK_SHARED;
-+
- 	ret = xfs_ilock_iocb(iocb, iolock);
- 	if (ret)
- 		return ret;
-@@ -740,6 +757,7 @@ xfs_file_buffered_write(
- 		xfs_iunlock(ip, iolock);
- 		xfs_blockgc_free_quota(ip, XFS_ICWALK_FLAG_SYNC);
- 		cleared_space = true;
-+		ret = -EAGAIN;
- 		goto write_retry;
- 	} else if (ret == -ENOSPC && !cleared_space) {
- 		struct xfs_icwalk	icw = {0};
-@@ -750,6 +768,7 @@ xfs_file_buffered_write(
- 		xfs_iunlock(ip, iolock);
- 		icw.icw_flags = XFS_ICWALK_FLAG_SYNC;
- 		xfs_blockgc_free_space(ip->i_mount, &icw);
-+		ret = -EAGAIN;
- 		goto write_retry;
- 	}
- 
--- 
-2.25.1
-
+If the delta is >X/2, maybe it can kick off a workqueue job or something
+that calls write_inode with WB_SYNC_ALL to try to get the thing onto the
+platter ASAP.
+--=20
+Jeff Layton <jlayton@kernel.org>
