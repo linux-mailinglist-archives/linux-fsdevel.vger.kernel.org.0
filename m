@@ -2,66 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 756385E840F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 22:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF88A5E8403
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 22:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233230AbiIWUew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 16:34:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
+        id S233253AbiIWUfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 16:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232951AbiIWUcr (ORCPT
+        with ESMTP id S231727AbiIWUcr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 23 Sep 2022 16:32:47 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F03814C9D7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id t3so1188889ply.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8873714C05B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:34 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id x1so1175870plv.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=1MqQrxnQnbWg62GSxHH0OEF1q347X/m+4lnjB2flQT0=;
-        b=Sm/M1aPSgGxkRY3LHKu9WT6VO0RigAcBGr0kTvvwRsO2yiPnlyPOycSqBm+Mx8oFi3
-         bspsiUMbtKdtztOA4+TN8PPA5DxAgy5IBcQaq/1bn/CTLSI6xp/mM0sWTL+QnjiHRtQm
-         hkYMCwfmO+zSjZYsUL+mFvQC8TlG50HBWaABQ=
+        bh=PCPU7pjQsz2sISTfhiNbNnCu1P7dpEEV5lOobjZTacw=;
+        b=Iu9IAyDuLzG+6v/Qe/VDx2yB77cAoW4xXxxoWLwcPs2hQ2vdFhoGM7rk54C0JPoyAN
+         AaLg5lQQvhHAFcTmsUdZWlK9hHQlqBPwPeDuvjvIf+b16rmlZZjb/iy/HTS0LU78apjW
+         nLGtaiMCoXEcj1ad5zoxgqn0DT23BivJkRE/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=1MqQrxnQnbWg62GSxHH0OEF1q347X/m+4lnjB2flQT0=;
-        b=YdDyDLHmV1vLHOQ5dbLR8c43iCtj2lMj9p8TT4RNlo1eMy2JiGsVUjfxv5zJwDKVr1
-         KCIdPqWDEtW4JrD1LOnpcNHHS5NLtcTMImPB60fkqDCEpdLNxgKktzPn0xTWcfDqoq/f
-         JrnDwvK9a4sxGxNfBYPTGWcaCQBWsM4ju+UtwAxQN2+LPodi0RO0U6ByKgMmNu+PrEbK
-         9XDPqxBamR6EuDPgAiuoFc38yHgFqG6jns8wUl0jcxBGa6WIgh5veiGhA1pSH1WIjdbj
-         cv7bI0uyLAR59p+x8kRTWDruW1qWLuiJOHumvvgAZVxqHBAocemquS/d1PHI6eHvCXDw
-         B7NA==
-X-Gm-Message-State: ACrzQf3xd2MhH4ul6NDtta4/wKLeQD5vKHVTzFOIY1+ZlCuRkQqsTaVy
-        IbTqTNmfgxj+wCTF8/gsrCKp1A==
-X-Google-Smtp-Source: AMsMyM6DPO4r131p/AkrnBJsIg/pPdpNgGZzqHysb3GkGzz8lYKLY18dMnHntypNM/af/tAornEd+g==
-X-Received: by 2002:a17:90b:3e8d:b0:203:1b6d:2112 with SMTP id rj13-20020a17090b3e8d00b002031b6d2112mr23327438pjb.6.1663964915447;
-        Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
+        bh=PCPU7pjQsz2sISTfhiNbNnCu1P7dpEEV5lOobjZTacw=;
+        b=qj3Ib73FnpyttFZXExY3+Q07RThcIZwmWtRcz5M4P+ylifDX8fm1LcvPzxK4d1ukq9
+         S2NVEw5+hTI+5okAuflRPp72k3zDtgsZI2TccLWLzUTXpRHDfFO/DDzPxH/SRAudGGVr
+         rT4Z4IOEB73SRwff6dWRAkRU8Mx0yLIBZgDwmAn84cxqqBuz+eK+zyo9Cd0GiaoOOmG5
+         op4oGuYYVEwMOslQGEHvJtCMjFBuHUlPCfUEaKL2VZR8W7JxtuO7Lg8VK6PFCGGxWlEw
+         kgy/r7+d+IbIy88qrEdP77d0Ikb+NrHX0+4ay1peD3Z9MwGZVZXkajGoASP62s736ELU
+         ar/g==
+X-Gm-Message-State: ACrzQf2X/dBA42G5t1rl3PPcziVJ9EiynvM8v61MKnOfT53k1ZJP7w/X
+        gneECTpjPpbe+N1qkquQypEZaw==
+X-Google-Smtp-Source: AMsMyM6XUwdmhAaIK2A3UxRxY7Sbzemd3FVYShW5LY9Q79SPPQFgRGi67TrIU8bwe4lKUNw9bOUpJw==
+X-Received: by 2002:a17:90b:4b09:b0:202:ad77:9ee1 with SMTP id lx9-20020a17090b4b0900b00202ad779ee1mr11743471pjb.10.1663964914034;
+        Fri, 23 Sep 2022 13:28:34 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g13-20020aa796ad000000b0053ae018a91esm7005618pfk.173.2022.09.23.13.28.28
+        by smtp.gmail.com with ESMTPSA id p67-20020a622946000000b00528bd940390sm6579869pfp.153.2022.09.23.13.28.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 23 Sep 2022 13:28:32 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
         Hyeonggon Yoo <42.hyeyoo@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Alex Elder <elder@kernel.org>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -72,56 +71,56 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Daniel Micay <danielmicay@gmail.com>,
         Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
         Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        dev@openvswitch.org, x86@kernel.org, llvm@lists.linux.dev,
+        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
+        x86@kernel.org, llvm@lists.linux.dev,
         linux-hardening@vger.kernel.org
-Subject: [PATCH v2 12/16] devres: Use kmalloc_size_roundup() to match ksize() usage
-Date:   Fri, 23 Sep 2022 13:28:18 -0700
-Message-Id: <20220923202822.2667581-13-keescook@chromium.org>
+Subject: [PATCH v2 13/16] mempool: Use kmalloc_size_roundup() to match ksize() usage
+Date:   Fri, 23 Sep 2022 13:28:19 -0700
+Message-Id: <20220923202822.2667581-14-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220923202822.2667581-1-keescook@chromium.org>
 References: <20220923202822.2667581-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=845; h=from:subject; bh=p9b8wNdLQUTcKVpskeYovP9HfQefiLH6cTy/WYiH/34=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjLhblaNBFxJTohammexHC6CbeJ0+h67dRN4PBtvwk 5JonPTWJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYy4W5QAKCRCJcvTf3G3AJv3zD/ 9LAMXluSBHTtqxb1umMTVE5i5sD3JCHrbpRq7+nm/ihvkEJ1pnKlLOmxomGKq8yeaSA69bZA8KfZSc CR5xfaDsFWx4j9MHisTXdoYIizPEmbqQRRqOxkcdkdBTXGB4/9y7dICzF8nG/wZnRE5cg43nOsJxA/ hh08sM/Jc50zsKD8NK3U423EdCAh5Mur1N+IQdBrcIDvnYzrV9ox60ZBhTx1GxtTQH29f1M7tkTsxb CVJH0I7rS5lLvIDvLckMlcpX75U4M6OfFXPwwIxp8zwb/SpdErJg9OQ0Bc5aPbHKg5h0mzeyjxITo4 Z8ePU5LP/HNZ40tbLl/4YQUWf9RwhgxmPxlaMerypnyhhY7RPOqjaEt4QjEp435c3lkzt/jPKVyQ00 /BWZWjk3oYQBVD1YkNvQadr0W7iugWkFBmy0TMQKbpGlH/9UDUI6ZWX0cskd2A9Vm/9DXzxZlWfb5T 46CEGwe6OTc72/fqVunf113g0JP/k16VF9IW4+cBz7fPkxp8MWBVHYsuByyGXMUPaQPem/RWWPBSdo m2SZX1ZgW/fXrsnRcDrhQ1bd8TrDPmojcGJefLK+ix//dr8fGR/Mmu8QlKJ5P4e96wfEoqQZTf9cys itlMdKLXQRmGqut8owpdZR9a0jlrGiYaoK47SOl258qhzKf6gWj/fY7i/IJw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=821; h=from:subject; bh=1Gas3SCsMDWgBChil0VwFgY9Fr6zuZgi/zbZ+v/amZU=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjLhblw9hPBOt2abeHvNz251QmxKrK5qZ9E2npmHln zyeWomSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYy4W5QAKCRCJcvTf3G3AJoKkD/ 0Rw7ftGkpv6Cp14LlheghY8ULuROeYsl+xBHJIECYJxb7Zj7xNiTAKJPkYJG2rfH7dJMP4mnVCyvlE aX9DI2jRbF0DpDm8X4kNTAYLiAnekyLGRBI1uuwyosPWzFt5fthMVPKTGw4skU5eJeoliXwvKRjc7w H2hvKX03v8bjW2hWSueT4lkm2RIg4t4qCd7tAHcfkVFPluuXqkRyHl5jKKj/gvloXfr0a7NEcoK6+B OMr9c7RIevNvATAWl7BVsl1C+sgXBlqnebMSX5UB3sQFDThE2TOU6PM8pwx2uGkviWtrIORGwdnrqF 0BWUxYm3S7RgbB0E08f07OQbs6iZbOosdIECqTf8jwkxFWpqXk+ywZexmptnljyesSCsq4Q45yeVtp CivmXPCHnnW/ltVIwlzqLXkKSA1ANCZugfA9MQMfNYzYLJmYhU2oE75hyFkzyLL6O7DnVutl/lmgOX 3BjHh5o+PuSYbw4gy0xL95tSHEokwlTTS9maudQ7pyB/lQFm8Got/UmZKScGYd6rVWQ+NR3+w3ud3e oz3kjiT0YzaO+sAjrsJDYKalavBaxhajZL8QMmPOZRL6XigFy+8x9O7y3Ji6lN4tryxNvAYJ08zYoV GZZ+QW0vnk/Etuibtx0IyAfth89gRlflFdIp1c7NouB249gCifAsYbMMOFbA==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Round up allocations with kmalloc_size_roundup() so that devres's use
+Round up allocations with kmalloc_size_roundup() so that mempool's use
 of ksize() is always accurate and no special handling of the memory is
 needed by KASAN, UBSAN_BOUNDS, nor FORTIFY_SOURCE.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/base/devres.c | 3 +++
- 1 file changed, 3 insertions(+)
+ mm/mempool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 864d0b3f566e..7db20ce7ea8a 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -101,6 +101,9 @@ static bool check_dr_size(size_t size, size_t *tot_size)
- 					size, tot_size)))
- 		return false;
- 
-+	/* Actually allocate the full kmalloc bucket size. */
-+	*tot_size = kmalloc_size_roundup(*tot_size);
-+
- 	return true;
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 96488b13a1ef..0f3107b28e6b 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -526,7 +526,7 @@ EXPORT_SYMBOL(mempool_free_slab);
+  */
+ void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
+ {
+-	size_t size = (size_t)pool_data;
++	size_t size = kmalloc_size_roundup((size_t)pool_data);
+ 	return kmalloc(size, gfp_mask);
  }
- 
+ EXPORT_SYMBOL(mempool_kmalloc);
 -- 
 2.34.1
 
