@@ -2,118 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B22D45E803D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 18:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C361A5E80CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 19:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbiIWQ7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 12:59:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
+        id S231991AbiIWRfX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 13:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiIWQ7L (ORCPT
+        with ESMTP id S231409AbiIWRfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 12:59:11 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C831497A1;
-        Fri, 23 Sep 2022 09:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663952349; x=1695488349;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CIRBiJPRHh+0D1EeS0RX65F9gDuYu+hhf6z3sGzOoSM=;
-  b=Es6xcQ46ards3kmV+xJB+aj0QiV+afDKisD3xstyIb7hEXKnEtyMKCN7
-   EeWV4NV9Vd/Sfi+FZdz2Rx52iV5U7kDfxFay7zuVcwznhdoA0SXCxIr8W
-   w5r0p3cDVkwe6ODXxYGF9jYTZvCjUWpuBjBanB5Sdmuej/zMF5svv/5mD
-   hRc8Meg1+W1HT0lbYd5KvsgSqI4JVX1M5eDT4JCcaVuZs1Y4Z/x4Otsb6
-   AcvZegd5B0POwbtinqowlAuwklhh0XuEJneRcdbOHH95xzjRFJMpGH8LX
-   Qvp5rsHXGfiMSIDLiEMO3kFH2hIw80pUQg5ALQc9SOT769LAYWk3MQhqs
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10479"; a="362448428"
-X-IronPort-AV: E=Sophos;i="5.93,339,1654585200"; 
-   d="scan'208";a="362448428"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2022 09:59:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,339,1654585200"; 
-   d="scan'208";a="709359851"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Sep 2022 09:59:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1obm12-006ZuO-2Q;
-        Fri, 23 Sep 2022 19:59:04 +0300
-Date:   Fri, 23 Sep 2022 19:59:04 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Eliav Farber <farbere@amazon.com>
-Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        yangyicong@hisilicon.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hhhawa@amazon.com, jonnyc@amazon.com
-Subject: Re: [PATCH] libfs: fix negative value support in simple_attr_write()
-Message-ID: <Yy3l2IIFEjDWGNlF@smile.fi.intel.com>
-References: <20220918135036.33595-1-farbere@amazon.com>
+        Fri, 23 Sep 2022 13:35:21 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0C3DF6A9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 10:35:20 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-11eab59db71so1185004fac.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 10:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=0AevkT37/WKGCdruw5s43CVba51BXF1Pz6fyi3ihIHI=;
+        b=oiSss/iMctFrMaY1tzmj3lWm6se7e3A8tKVZegNbJZ73/VCdICqga8Rpu3n28djpYs
+         ML4Bkw8yL28Mup66Q4wvqV+OM9EkY6OrIIGqvnASd0Hm1pNcKQWXcjHa9UF3WzSlCF1U
+         MS5mA8F6tSMBEeELLHC7mG2/73EsJRYV3zzCJkdW6pNKeXD76TOwsKr7aorqIdGgFuHq
+         t6w2Ypl56kOWrl5NnVO6evSpfYtPyH01bOSZtcXF+e/ZOipvKc9ufXIyXM/WJYHDQHKK
+         AddeYHLZC8LOjCFFITnxzukUmN3xJZmBQRDfIL7ndtuWgcwy2Zh7pVc+2h2SUoLHwU1l
+         Q4jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=0AevkT37/WKGCdruw5s43CVba51BXF1Pz6fyi3ihIHI=;
+        b=iyfQ9jzEVqIm+X9L05i5DaVITL6tUJhxf4WkELatfNZj+nA9qt+L5XY853Ao07eNf7
+         o0sOrjOf51KgKGM87OX1QxUAF280nd/ZbjEmiZXZuhvmazNDZNZjJpTnNLOj5eCCZ+ds
+         7qcm+CPBiG6Xi52Asfx1/2Dl5Q9rTlWfM6v4BUv+DV52QggZjqo46w7VbkvV0LgmEX8J
+         WCZWVQ1fZXCQQHn7ENsmuMl9/DeHOMYblv6NY/Cf1xz3OaeFJX8lRMn9aDqWzAswm7VL
+         fmGZH3E1cVyqL0CXyATlKs/U1YT5Q1TyZX06xUj49fFEPgZkp2o1+WLobUrMTa+CpWWd
+         4fGA==
+X-Gm-Message-State: ACrzQf3Sw6ZCESkB3rkQcJXScGpBtvmIVGo9fOP6p7zeKbXcZ37pDqDA
+        hPwEXj1mTPyccf/9EdNIM7AVSw4rj61eoBuMw1efhb656w==
+X-Google-Smtp-Source: AMsMyM7v80CDou94dOksLbioCL+Ac/R5MPMRH6V7MWbGz2mfDrtvQ6XoZxgz0G4THyESrajI65dzxGhgSEqun8bKnEE=
+X-Received: by 2002:a05:6870:15c9:b0:101:e18b:d12d with SMTP id
+ k9-20020a05687015c900b00101e18bd12dmr12089334oad.51.1663954519817; Fri, 23
+ Sep 2022 10:35:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220918135036.33595-1-farbere@amazon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220922151728.1557914-1-brauner@kernel.org> <20220922151728.1557914-11-brauner@kernel.org>
+ <CAHC9VhS7gEbngqYPMya52EMS5iZYQ_7pPgQiEfRqwPCgzhDbwA@mail.gmail.com>
+ <20220923064707.GD16489@lst.de> <20220923075752.nmloqf2aj5yhoe34@wittgenstein>
+ <CAHC9VhS3NWfMk3uHxZSZMtDay4FqOYzTf9mKCy1=Rb22r-2P4A@mail.gmail.com> <20220923143540.howryhuygxi2hsj3@wittgenstein>
+In-Reply-To: <20220923143540.howryhuygxi2hsj3@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 23 Sep 2022 13:35:08 -0400
+Message-ID: <CAHC9VhRZf+OAzc96=c2s3NqkizNh2tZbLF8OFPHbFFuFXEZ8sA@mail.gmail.com>
+Subject: Re: [PATCH 10/29] selinux: implement set acl hook
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 18, 2022 at 01:50:36PM +0000, Eliav Farber wrote:
-> After commit 488dac0c9237 ("libfs: fix error cast of negative value in
-> simple_attr_write()"), a user trying set a negative value will get a
-> '-EINVAL' error, because simple_attr_write() was modified to use
-> kstrtoull() which can handle only unsigned values, instead of
-> simple_strtoll().
-> 
-> This breaks all the places using DEFINE_DEBUGFS_ATTRIBUTE() with format
-> of a signed integer.
-> 
-> The u64 value which attr->set() receives is not an issue for negative
-> numbers.
-> The %lld and %llu in any case are for 64-bit value. Representing it as
-> unsigned simplifies the generic code, but it doesn't mean we can't keep
-> their signed value if we know that.
-> 
-> This change basically reverts the mentioned commit, but uses kstrtoll()
-> instead of simple_strtoll() which is obsolete.
+On Fri, Sep 23, 2022 at 10:35 AM Christian Brauner <brauner@kernel.org> wrote:
+> On Fri, Sep 23, 2022 at 10:26:35AM -0400, Paul Moore wrote:
+> > On Fri, Sep 23, 2022 at 3:57 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > On Fri, Sep 23, 2022 at 08:47:07AM +0200, Christoph Hellwig wrote:
+> > > > On Thu, Sep 22, 2022 at 01:16:57PM -0400, Paul Moore wrote:
+> > > > > properly review the changes, but one thing immediately jumped out at
+> > > > > me when looking at this: why is the LSM hook
+> > > > > "security_inode_set_acl()" when we are passing a dentry instead of an
+> > > > > inode?  We don't have a lot of them, but there are
+> > > > > `security_dentry_*()` LSM hooks in the existing kernel code.
+> > > >
+> > > > I'm no LSM expert, but isn't the inode vs dentry for if it is
+> > > > related to an inode operation or dentry operation, not about that
+> > > > the first argument is?
+> > >
+> > > Indeed. For example ...
+> >
+> > If the goal is for this LSM hook to operate on an inode and not a
+> > dentry, let's pass it an inode instead.  This should help prevent
+>
+> I would be ok with that but EVM requires a dentry being passed and as
+> evm is called from security_inode_set_acl() exactly like it is from
+> security_inode_setxattr() and similar the hook has to take a dentry.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+If a dentry is truly needed by EVM (a quick look indicates that it may
+just be for the VFS getxattr API, but I haven't traced the full code
+path), then I'm having a hard time reconciling that this isn't a
+dentry operation.  Yes, I get that the ACLs belong to the inode and
+not the dentry, but then why do we need the dentry?  It seems like the
+interfaces are broken slightly, or at least a little odd ... <shrug>
 
-and I prefer this one over spreading more macros with redundant formatting
-parameter.
+> And I want to minimize - ideally get rid of at some point - separate
+> calls to security_*() and evm_*() or ima_() in the vfs. So the evm hook
+> should please stay in there.
 
-> Fixes: 488dac0c9237 ("libfs: fix error cast of negative value in simple_attr_write()")
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
->  fs/libfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 31b0ddf01c31..3bccd75815db 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1016,7 +1016,7 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
->  		goto out;
->  
->  	attr->set_buf[size] = '\0';
-> -	ret = kstrtoull(attr->set_buf, 0, &val);
-> +	ret = kstrtoll(attr->set_buf, 0, &val);
->  	if (ret)
->  		goto out;
->  	ret = attr->set(attr->data, val);
-> -- 
-> 2.37.1
-> 
+For the record, I want to get rid of the IMA and EVM specific hooks in
+the kernel.  They were a necessity back when there could only be one
+LSM active at a given time, but with that no longer the case I see
+little reason why IMA/EVM/etc. remain separate; it makes the code
+worse and complicates a lot of things both at the LSM layer as well as
+the rest of the kernel.  I've mentioned this to a few people,
+including Mimi, and it came up during at talk at LPC this year.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+paul-moore.com
