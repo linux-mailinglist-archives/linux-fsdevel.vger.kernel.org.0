@@ -2,167 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C7145E8280
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 21:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492AF5E83CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 22:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232632AbiIWTXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 15:23:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40680 "EHLO
+        id S233137AbiIWUc5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 16:32:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231547AbiIWTXc (ORCPT
+        with ESMTP id S232966AbiIWUca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 15:23:32 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41BF12CCAC;
-        Fri, 23 Sep 2022 12:23:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gH39KCFqPHQGyx+47OJ28XvIj7B9kqvG/MgEo0fBkYSURfQDxSpVGYRhAVEApBggZZodet0nv9g/0a4s9B2GhZC36tYrsTBiOt1LJeZZOFj252gkE9CUXBi5aR+5ipeAK9IRwS1TRvlaFt/XhUzRM5J3PSNgGLUvCgeksddJwssjVBPMULmglZTM/UwMdhLM4h683GbpLwWDTJSYVxL5nYFjmptkan3eVKxk9EX+GE2lZFMH4KPwiMHnhYZkyUAFWNm3FoM+9IGA/pr8wuZmit0Ff9AmEvePiXQgoLk4CW9F2vtK+0xcTZ9U6jKu50+UePjFBEg7kSH612dWOrGSzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nVK/Z5zRuhte9hNy+yqLj5FhGmtu3n4t2TwOt95DtTY=;
- b=EyVC2UG+BWjx60eIRV75NavEEm4OiW4AoDQ6S8VaU2JK32XeDm+1tYI4cJVXigFHDcUqUwfRVS18Gwc6ErY4UIHgVbDHBzyK5cG/1CJf/mJ/sxJPPYiLl1rMESWFvDR+xjlnXoIqHBN9ymiatB0kfDdHo20BQAgXBr115TG77ugGLLh+1b2l3O3r8sB4kZC7aGqfWtQZldkIufipPSIozDlIyHW3oS5T/bxnFX4qYAijsIgpvaM+DNS+YD56WtVQJCa4+QcRcjdp5DT+/qSlyaUKORt9QKkz6wcrk3yxMs6HVElHQ8n6EDKGXGlHcsAR3ce/SZmxm9oWI65ssUwsCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nVK/Z5zRuhte9hNy+yqLj5FhGmtu3n4t2TwOt95DtTY=;
- b=RopMQvwM8H9t/8QexA9+QPnA1AEnudFMwmL1PBYQ+CiZOV2DIiyzuTfrIPHa4PgGJiLMWNkRjJI67c91521ZqRgiTwdzMLxQh0pYIPF6iZvqBrBzvRf2pK6+tuLv79egP4AoT0TpZSaVsTleY3E8AC+Lxc+lQ4Wf4TvmrBo60BjFADymT6Qzzm+xKbUlVweLPIWVkXJdzRWlt4sYN71MqP6RsM3l0Zek6FmjFjankt322TbzvcGZv2sF0NAfTpc5O+qZSeAeFyReCBpdTJ5YzPiXgiOqmA413jUVs6sIxc8l2eja/iQNmMyiOAxqveqDeM2Kq0Y8sLu61hyts9T6lw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
- by PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.18; Fri, 23 Sep
- 2022 19:23:28 +0000
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5]) by MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5%7]) with mapi id 15.20.5654.020; Fri, 23 Sep 2022
- 19:23:27 +0000
-Date:   Fri, 23 Sep 2022 16:23:26 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Matthew Wilcox <willy@infradead.org>,
-        Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 10/18] fsdax: Manage pgmap references at entry
- insertion and deletion
-Message-ID: <Yy4Hrve6Ncg6YsGd@nvidia.com>
-References: <YyuLLsindwo0prz4@nvidia.com>
- <632ba8eaa5aea_349629422@dwillia2-xfh.jf.intel.com.notmuch>
- <YyurdXnW7SyEndHV@nvidia.com>
- <632bc5c4363e9_349629486@dwillia2-xfh.jf.intel.com.notmuch>
- <YyyhrTxFJZlMGYY6@nvidia.com>
- <632cd9a2a023_3496294da@dwillia2-xfh.jf.intel.com.notmuch>
- <Yy2ziac3GdHrpxuh@nvidia.com>
- <632ddeffd86ff_33d629490@dwillia2-xfh.jf.intel.com.notmuch>
- <Yy3wA7/bkza7NO1J@nvidia.com>
- <632e031958740_33d629428@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <632e031958740_33d629428@dwillia2-xfh.jf.intel.com.notmuch>
-X-ClientProxiedBy: BLAPR03CA0082.namprd03.prod.outlook.com
- (2603:10b6:208:329::27) To MN2PR12MB4192.namprd12.prod.outlook.com
- (2603:10b6:208:1d5::15)
+        Fri, 23 Sep 2022 16:32:30 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AD00149D05
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:27 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id w20so1143698ply.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=WK0bGuD2tAxqqCEo+J+Vcp/Ca26AMBReT0rLu9mHjWo=;
+        b=Bq646OyB58An4Ya0i1tJSWid5B14G8+Igfn3fxCST+TPDeet6KAginBjtHf1G+96pP
+         KMbRLvXh6hUd7mw6RJpRt7mflnBYm9ibc+vu8XY4rLIHczU3FqSb/xj3tEHFFGtr1oRe
+         sICyRsZLX9/FsK6U8cZvA0aX8m/YlImy46ePk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=WK0bGuD2tAxqqCEo+J+Vcp/Ca26AMBReT0rLu9mHjWo=;
+        b=MojE+EJMToEzOpuyM4CpGT2sjBwTUNLztPrKlgVLLT5Hf1Xe37XaozwmsKe8vomBx4
+         8YcxI2dzncNbAE4jUfwV+PC3IuH2v8tpg6qhoTnlU+rCXd2q1CbTmn/VA9jSJGTpzB2e
+         YFOW8DM44Ceg7x7IsUEDpIH/8Sy4JcDPv004zlHQE2TSUzZ9TylJNR2OPyPRIWa9HeTr
+         33VsWy8m/YSnUZoCs/v/PfeSjX63gofE0htX+nKNhTOcsEuwYgDIFbLT37jfN4uydcWU
+         RJnra4VrWGclG64YiKJF59D8i5lvAC2jNnZyxdmQkwt7mskVeGRC9CFEzeJuRrymWPLB
+         ckDA==
+X-Gm-Message-State: ACrzQf1Qkbbgl5EW0QddhGhdQWKE9R2N5I/6w0jI7mS0SL8lMbsnoG1H
+        fxQNSP6iTmHZGvDncL/Nb/Anbg==
+X-Google-Smtp-Source: AMsMyM72+AZrvCjzG0TpHX1QWIyqlT+yIJNjqD6XgzhlX4O0lN7py3H0HnAbWO3N8SQjTT6PAgNtPQ==
+X-Received: by 2002:a17:90b:17cf:b0:202:95a2:e310 with SMTP id me15-20020a17090b17cf00b0020295a2e310mr23778042pjb.76.1663964906615;
+        Fri, 23 Sep 2022 13:28:26 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t2-20020aa79462000000b0053639773ad8sm6832080pfq.119.2022.09.23.13.28.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Sep 2022 13:28:25 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        dev@openvswitch.org, x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH v2 00/16] slab: Introduce kmalloc_size_roundup()
+Date:   Fri, 23 Sep 2022 13:28:06 -0700
+Message-Id: <20220923202822.2667581-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4192:EE_|PH8PR12MB7446:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7892aff8-f4f8-494f-6ede-08da9d991796
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PR0tPDsJWqS/oNPRF8nR7KfY8KV87gWRKEpNZjgrVU71o3o0zKiVBQ2y+WsMq+7QadazgoAg2ItmG4jF1oNIb4ArebxiSTgSJOFEmk4k6g1Yub0sY2kr+MhSS2NZjRpRitLWFYswoQZ+S5QzM1WQUU7HrSqP+W1fGse+h+IGUIO45WAR1tM4Xa0QkYxsMtku+OM1tYxFqr4vBWBRKqjM5V2IF7+W81uRvcST79SZu5U70L6CojB/KlfJjoJk9d9IYooBfiYN1H9o/TukC6eOxDsvN2uQ8QIXsJ3D2ou+MIHEbGSucba5qncHzBADPX9B62sZQshXEeQbRl0ZNUnVfqAOMcCkd8rmxmXanaLV2LaLJr/QQBoL1Z2jwYAz8w5AoGOXmiIPUrB8ruGVD6qoxzSLu9iYmozio9oyYm0DBxfbXZeFe6afZ1YqhT4i/Rji3dga+zo1UwneXxNkbMoaoCbF47MEo06VJXsDOXKyYl/heM9vPIyagSoZ5r6Cd949Nl/kKEmA09F0RlYTzvyP9xX6SD94a61woRBkAHuE/FvxfY+9RGY0kYwdyGJ5BznBrkrCxWA5H2lGityP5LhrRgUhpKJfewn5Nma/aUK6GXYUOVIDAEf72faGF2TGA5/iVi7sH9/Ym7qnXhYFXFWfgxF+rar36sCevrSMnrSV3mNXnjlf4PhD883Kdu3bsx8QmUUvbKYAQ5LLRO3nIa2EYA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(366004)(39860400002)(376002)(136003)(451199015)(316002)(186003)(6486002)(6916009)(54906003)(8936002)(6506007)(36756003)(5660300002)(7416002)(2906002)(86362001)(8676002)(41300700001)(478600001)(6512007)(38100700002)(2616005)(4326008)(26005)(66556008)(66946007)(83380400001)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/z1snNPhOxxWHM9vbrZ7NcbtSWs7AJi7rv8E6mulvsvG/lFPTD7lQnertqSl?=
- =?us-ascii?Q?rmUg+Wu+yTgbnPhojSaFN3xoHWhyhglXG++ajDZz2t+/CB3Qw7gH+OVTIQ1v?=
- =?us-ascii?Q?RUTRzocwJwh8bJQ9cxuFiyPuOnp7oQ5HuIrnN4O45XLwlIToahURE6zjqO/f?=
- =?us-ascii?Q?/jTFOY2+zNZboQBIvzI6faGAyuRrBauW+hA5o0yc308eoXQrrR6qqrNwCWBV?=
- =?us-ascii?Q?Trgw4ZBIamIqvYKp/RAa8cWyf7OXn3WMjDN7kMou5RazDxX7fTrdthnWEeA7?=
- =?us-ascii?Q?AoPo3E1Omho9yQhQzs0za5CO1RzfMcekvumbPqBO9d2opOJU7aLoC5I6nPwa?=
- =?us-ascii?Q?h65moacerFz+cUsqBdeYZSpQd8aUVqkQh0gG07vPm6aCuehrG0lYyIS5ITsl?=
- =?us-ascii?Q?TXfigCZtVkQPbCh80ztPC7aEa5I3j2tzJQzyM7ll20z6upR25MCrML4kb/Tv?=
- =?us-ascii?Q?kXMiyp8A+oQ/fRwic1Hfx/A5uGPqmCVDdJ9EaddDonnxxLTSfWv1sIUF3/MH?=
- =?us-ascii?Q?d5FXexSMwhwPexyTlhj+l4eza2u4+xmKRo2O5mEjKD25EdtH/uqQg/tLT6oH?=
- =?us-ascii?Q?qr/7894OkxZvSTTNob3q3v0gqX2+GVvw5aVLhavQmVavhYmQoRYO4I3Y0yke?=
- =?us-ascii?Q?cwoNkg6O1+YUw8uR8w6WmQURAnIZ9uzzfkuVm8txGBHWgTPaUsgMFcLfpQNS?=
- =?us-ascii?Q?581kO8bIeZErbCZpSsmRD1YlAzgSmCuHb+YlngcWkVaLs4wS/A/1a7BsClYD?=
- =?us-ascii?Q?bV4Pw5+q5H+TuvvFd4NR7eeBQRwn9svRQb2lUra/SwhF2/uh/1xlBYn9Jtg/?=
- =?us-ascii?Q?aAETtyV3THZ856vWlS8+mCtZYfg7bNgeQsgpzEFh84cBZVVzUHg1fsk7q/nU?=
- =?us-ascii?Q?WfOf/XxdB8+TiiapK/fWSFJG2kDUrQZZPpugkUyWsu/QgN5DfMNpuDlFogBm?=
- =?us-ascii?Q?yRFdMXaLu6vcbIWG6Mdq59fiCnRK5XjByVMdF4zWo/ZbgCDlSE7q6pUNKNcF?=
- =?us-ascii?Q?ZNnEEVTF1cg2zch/pZ6Gdqjarhd9CqMD1IlJmPVSC1vZet2I8lCtkUwKZ2yR?=
- =?us-ascii?Q?hEJZGjH2o4GpCcY1rWVmhoZkI5V+bsLqLnKZSVteOsmERdDX6XoVBb7c+iWf?=
- =?us-ascii?Q?D6j0gydHyzpaI0IVKSkUuXofoJTDLUjYMFbQqKvXYts7SbOrQbdUAdCOdiZA?=
- =?us-ascii?Q?zxm520us0PJyB0NVHfNqI5oRtxT1ECVR5TEiA5quivAMYTUX9UsLJLBnE/6C?=
- =?us-ascii?Q?JHwFKg+urysSEtUQBUa4Rcja4QoZ57et4vRSCV9yAw/PEm7s2r9w3vHxSGnk?=
- =?us-ascii?Q?ukG5Hug9U22R2PyuFByBHseeASSdw+erDlaWPrK8QWW/3XQRe4jmDGombTK8?=
- =?us-ascii?Q?fLM9XCo1mXKEvuLZHXaZhjBsnCvK2uEguZJ2vYBLrANfW7jcZx61hrTrSkOT?=
- =?us-ascii?Q?P9uWqbFYNc8KyZg/5I5F7TkiV9MtTNdkHdAQR+gGIAh1Gzg+2QAl/Mt89HQ0?=
- =?us-ascii?Q?KKRuOfIcvoyHk+Lehuuf4ezX4zfIUvid/4+MIMBQ1BbxsXe2wpk6gXVlfSP7?=
- =?us-ascii?Q?2G7quzXGiwtERB5K5ftRKZgHdoQjfOSCkVET+qN8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7892aff8-f4f8-494f-6ede-08da9d991796
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2022 19:23:27.9356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nyVn+69DxCacTCH2F8ofuHhcDHyaQlflJ/a+g9qNpg2K//tbVci2xdWTjMiLRlP7
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7446
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3290; h=from:subject; bh=6t8CTnxnusXxlhLGNxOhRs5l2789SVRbReUcmZgsVm4=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjLhbjKWBYYij171TDp3TdZmoZXSs7dXXkRN1eGod1 9RjCiP+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYy4W4wAKCRCJcvTf3G3AJnMrD/ 9AYEfZWXDOv2krdFVvtjQthCuAcgKZVOWzfaX/ZBtQRlYjuppFlG2ED1IEpuIhD0Ir80c5xPT0sC6o NsiMZw3mMRacDRN1JKTgZIg3s63bBHGPVJzr9Ms7LrhbLULxcInTn8Kmx1m+j/SOpIaVQbOz2eMMkZ hq15TaNyE7pBLM9SdfCtAyTs9eRAtVTuYrwZqvgSDjZ61SXuxi2k37cjMCmPHUTq/sIlGgP+BbmYVU h4TXPtyeel8GsxvMTh+ZJLwcMIm74VL8RdFIlqhUbTT1t2IHy48AtxwQQhaVX0FoQuaeRVIHGZ6W3H G8nJ1wcWlIzz3bYBH022dj7eQTsTkVCk6mdVQzd0tBA9yKVcNDoLBacX1DCakWCtJtW9hB3nI7wGSo dddWD44+KFc7CqbVkUJUBWKf0KFDD+RBxraKtYUvKQrLMx0oq545fsuTe+Wx85iePymCMknPsuIu7T RqpkKnn423yOsp7n6oWGz2jCxpOIGyTubVpWH5O/cuXKNmrDFZz8jsL8Js/2Of2DYZ5nq9YGQsiXeg 2S+DEM7sXnFtd9YfGznNOceTXn0B6askh1+E8cTpDv624NJQscze/0hYjyKnnV10f4gf0FRf/X6SzA azwQEVgyfXgzY00yn92DXcmjocb95A4MMqEAG/m2SLnjQl6aJMp6R561rcig==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 12:03:53PM -0700, Dan Williams wrote:
+Hi,
 
-> Perhaps, I'll take a look. The scenario I am more concerned about is
-> processA sets up a VMA of PAGE_SIZE and races processB to fault in the
-> same filesystem block with a VMA of PMD_SIZE. Right now processA gets a
-> PTE mapping and processB gets a PMD mapping, but the refcounting is all
-> handled in small pages. I need to investigate more what is needed for
-> fsdax to support folio_size() > mapping entry size.
+The main details on this series are in patch #2's commit log. It's long,
+so I won't repeat it again here for the v2. As before, I've tried to
+trim the CC list.
 
-This is fine actually.
+v2:
+- _keep_ ksize(), but remove instrumentation (makes patch series smaller)
+- reorganized skbuff logic to avoid yet more copy/paste code
+- added a WARN to a separate skbuff ksize usage
+- add new refactorings: bpf, openvswitch, devres, mempool, kasan
+- dropped "independent" patches: iwlwifi, x86/microcode/AMD (sent separately)
+v1: https://lore.kernel.org/lkml/20220922031013.2150682-1-keescook@chromium.org
 
-The PMD/PTE can hold a tail page. So the page cache will hold a PMD
-sized folio, procesA will have a PTE pointing to a tail page and
-processB will have a PMD pointing at the head page.
+Notes:
 
-For the immediate instant you can keep accounting for each tail page
-as you do now, just with folio wrappers. Once you have proper folios
-you shift the accounting responsibility to the core code and the core
-will faster with one ref per PMD/PTE.
+Originally when I was going to entirely remove ksize(), there were a
+handful for refactorings that just needed to do ksize -> __ksize. In
+the end, it was cleaner to actually leave ksize() as a real function,
+just without the kasan instrumentation. I wonder, however, if it should
+be converted into a static inline now?
 
-The trick with folios is probably going to be breaking up a folio. THP
-has some nasty stuff for that, but I think a FS would be better to
-just revoke the entire folio, bring the refcount to 0, change the
-underling physical mapping, and then fault will naturally restore a
-properly sized folio to accomodate the new physical layout.
+I dropped Jakub's Ack because I refactored that code a bunch more.
 
-ie you never break up a folio once it is created from the pgmap.
+The 2 patches that didn't need to call kmalloc_size_roundup() don't need
+to be part of this series. (One is already in -next, actually.)
 
-What you want is to have largest possibile folios because it optimizes
-all the handling logic.
+I'd like to land at least the first two patches in the coming v6.1 merge
+window so that the per-subsystem patches can be sent to their various
+subsystems directly. Vlastimil, what you think?
 
-.. and then you are well positioned to do some kind of trick where the
-FS asserts at mount time that it never needs a folio less than order X
-and you can then trigger the devdax optimization of folding struct
-page memory and significantly reducing the wastage for struct page..
+Thanks!
 
-Jason
+-Kees
+
+
+Kees Cook (16):
+  slab: Remove __malloc attribute from realloc functions
+  slab: Introduce kmalloc_size_roundup()
+  skbuff: Proactively round up to kmalloc bucket size
+  skbuff: Phase out ksize() fallback for frag_size
+  net: ipa: Proactively round up to kmalloc bucket size
+  igb: Proactively round up to kmalloc bucket size
+  btrfs: send: Proactively round up to kmalloc bucket size
+  dma-buf: Proactively round up to kmalloc bucket size
+  coredump: Proactively round up to kmalloc bucket size
+  openvswitch: Use kmalloc_size_roundup() to match ksize() usage
+  bpf: Use kmalloc_size_roundup() to match ksize() usage
+  devres: Use kmalloc_size_roundup() to match ksize() usage
+  mempool: Use kmalloc_size_roundup() to match ksize() usage
+  kasan: Remove ksize()-related tests
+  mm: Make ksize() a reporting-only function
+  slab: Restore __alloc_size attribute to __kmalloc_track_caller
+
+ drivers/base/devres.c                     |  3 +
+ drivers/dma-buf/dma-resv.c                |  9 ++-
+ drivers/net/ethernet/intel/igb/igb_main.c |  5 +-
+ drivers/net/ipa/gsi_trans.c               |  7 +-
+ fs/btrfs/send.c                           | 11 +--
+ fs/coredump.c                             |  7 +-
+ include/linux/compiler_types.h            | 13 ++--
+ include/linux/skbuff.h                    |  5 +-
+ include/linux/slab.h                      | 46 +++++++++++--
+ kernel/bpf/verifier.c                     | 49 +++++++++-----
+ lib/test_kasan.c                          | 42 ------------
+ mm/kasan/shadow.c                         |  4 +-
+ mm/mempool.c                              |  2 +-
+ mm/slab.c                                 |  9 ++-
+ mm/slab_common.c                          | 62 ++++++++++-------
+ net/core/skbuff.c                         | 82 ++++++++++++-----------
+ net/openvswitch/flow_netlink.c            |  2 +-
+ 17 files changed, 192 insertions(+), 166 deletions(-)
+
+-- 
+2.34.1
 
