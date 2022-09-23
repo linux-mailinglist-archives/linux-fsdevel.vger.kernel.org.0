@@ -2,262 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 750115E714C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 03:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0775E716D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 03:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbiIWBSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Sep 2022 21:18:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43720 "EHLO
+        id S230190AbiIWBgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Sep 2022 21:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbiIWBSG (ORCPT
+        with ESMTP id S230020AbiIWBgj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Sep 2022 21:18:06 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA402115F61;
-        Thu, 22 Sep 2022 18:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663895885; x=1695431885;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=l3ul+CGCdTk69XKK5rNwUowrnd4TAMKcEnFnfyDpX20=;
-  b=Ix7TsSBuzK2oebsnZliFSfHYvz1FTQrdowcNgbAillsMAbuCSivw+Qth
-   bcvKKF7Gybe3ch+H84LjqKfrNS1VGi1xv9ltrNYi2vlDcvlU0i/+5oayo
-   k9yjPqRz2S6Fs+sTTnL4hxXmWJomZnEKdprvTO73Ksfjvv7iSnhLncv0h
-   q6JEitRO1MsEplv1jk1FBpsxT/hGm63iaZPkuHMJOyNXSkc6i9whpw6Ao
-   m2K89Y/K5lCBk46ibRKoCR8GlH4Y3Ne6mtqqOj3IYFGz/O0qCfb4S8U25
-   j4IXVYwRVwBt+QWANVqHU2106AgoJzLMuM/zAw1iJe2snWW3mkMKbpSqc
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10478"; a="386769917"
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="386769917"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2022 18:18:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,337,1654585200"; 
-   d="scan'208";a="948838379"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga005.fm.intel.com with ESMTP; 22 Sep 2022 18:18:05 -0700
-Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 22 Sep 2022 18:18:04 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 22 Sep 2022 18:18:04 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Thu, 22 Sep 2022 18:18:04 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Thu, 22 Sep 2022 18:18:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c5lL90fKt2YaWaqbNMDaUS2NGVRBSbrug/+DsDcHeSg6lXP1w0tnDpRrXaI7536lvsZA5cI8yLVAIDzUfSqKLOWCer/C1jfdU8HZh7Qdx/QmD2CQt5w2fNzntJbPfasI4So4d91ZRKdwruYc1zuRU8EmC6u9j9B30SmdQqsTn3g6F63OPRU1/6YKDcWu4RAkGIVV5BNbQlaGnXSgF67lNvWjmb1PeUGatg4rz6t6jvyfET0/aBf2zX1hojXF5YvJbK8Rp/swdJE8dQU5Zd8lf9kH1zy7xmMmH1cz6ZkRbRMQMobY4eKn7vxu8UQL+8E9/uK0VKsJXblMwvFOaNEvZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=myMUoiXtOJxDzw88Tt0zpzm75N+ctzDw88hVEii7450=;
- b=Ls5qwhbrAimaFXMW6ByvOKNEQoWA7d2AM9rSofGuGJTOySSdlb038r8ZzGcvMvEVcXEeHSRn4fw9tcKBvabjIdu4/pgto8O4WJp2GExKN8tQA/fe4rPxo+PcOVRh6rP8srMGhuFWuRefokQE1BO4cUA8vT4/ZhUNP+b69qd4lvcoWH141fND/4YfSczaTCZA9k93ucwKFv8TlNHzT+vLCEv26OX5amUZENNOAXbgtRVm+er+yiqNpF/eeZERJhZxbMVmdvOeAJeUAM04RoF0EFlg+GFqRQ/CF3HvpPB7794xBcuBhPNF6kjfbVTzQS5SStjngouljviX4IGBnBeH0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
- by SJ0PR11MB5769.namprd11.prod.outlook.com (2603:10b6:a03:420::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Fri, 23 Sep
- 2022 01:18:02 +0000
-Received: from MN0PR11MB6304.namprd11.prod.outlook.com
- ([fe80::ccec:43dc:464f:4100]) by MN0PR11MB6304.namprd11.prod.outlook.com
- ([fe80::ccec:43dc:464f:4100%5]) with mapi id 15.20.5654.016; Fri, 23 Sep 2022
- 01:18:02 +0000
-Date:   Fri, 23 Sep 2022 09:17:25 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Hyeonggon Yoo <42.hyeyoo@gmail.com>
-CC:     Kees Cook <keescook@chromium.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Alex Elder <elder@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian K??nig <christian.koenig@amd.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Jacob Shin <jacob.shin@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "dev@openvswitch.org" <dev@openvswitch.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH 01/12] slab: Introduce kmalloc_size_roundup()
-Message-ID: <Yy0JJV4c3DffCF+4@feng-clx>
-References: <20220922031013.2150682-1-keescook@chromium.org>
- <20220922031013.2150682-2-keescook@chromium.org>
- <YyxDFfKmSNNkHBFi@hyeyoo>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <YyxDFfKmSNNkHBFi@hyeyoo>
-X-ClientProxiedBy: SG2P153CA0006.APCP153.PROD.OUTLOOK.COM (2603:1096::16) To
- MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
+        Thu, 22 Sep 2022 21:36:39 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A68E9E513C;
+        Thu, 22 Sep 2022 18:36:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E8C368AA501;
+        Fri, 23 Sep 2022 11:36:35 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1obXcI-00B0jP-E9; Fri, 23 Sep 2022 11:36:34 +1000
+Date:   Fri, 23 Sep 2022 11:36:34 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Gunthorpe <jgg@nvidia.com>, akpm@linux-foundation.org,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 10/18] fsdax: Manage pgmap references at entry
+ insertion and deletion
+Message-ID: <20220923013634.GY3600936@dread.disaster.area>
+References: <166329936739.2786261.14035402420254589047.stgit@dwillia2-xfh.jf.intel.com>
+ <YysZrdF/BSQhjWZs@nvidia.com>
+ <632b2b4edd803_66d1a2941a@dwillia2-xfh.jf.intel.com.notmuch>
+ <632b8470d34a6_34962946d@dwillia2-xfh.jf.intel.com.notmuch>
+ <YyuLLsindwo0prz4@nvidia.com>
+ <632ba8eaa5aea_349629422@dwillia2-xfh.jf.intel.com.notmuch>
+ <YyurdXnW7SyEndHV@nvidia.com>
+ <632bc5c4363e9_349629486@dwillia2-xfh.jf.intel.com.notmuch>
+ <YyyhrTxFJZlMGYY6@nvidia.com>
+ <632cd9a2a023_3496294da@dwillia2-xfh.jf.intel.com.notmuch>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|SJ0PR11MB5769:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc0ab040-ae7c-44e6-8509-08da9d01759a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6V8+euZIkJYjQSDnHjWKaHQEB6DTWqX6s0TcA4E4D3pSyH8Lf0c9gH8NKz5y2DR3R5qK7KA5mnOkJYrJdWTV8HdCUlRbeUb5/j6tMWQJ3bkv7wH3gmV5HFxFNvWgmqXNopNxPxp1KVKaoAmSPILkDuEupXMn3UZ7P8qecu2BM5Vtel0K4xRENxCiwKUd6d7L4mbJ93m72VYNw99gn10qlminsPH9RhxIIMYipTBFZ8e9SQrDcmeC8xnBuRa2oaAHDK1A/PS+YwG40h/Kmg86/Y3qcKsMNNrnjZcLYzronuJX7CB2ku+F6lT7rlhzQbTLPRnf8v4gBbuouOGpbgp+uF0iQEme+A8QFd67lJCIl9b3ynN3PiPzJoO/xZCsQ7h6DgEeHtBt7rh/qpWwhoOEx3wX73rmQAvL8F57LgMu8xzwZGeJq8/b3ZeIjQQwT/eIa3CbcCBwMYVknRxZPFmNfNqLk9oOJaiGEZvGEHJf8HBJHO1sQHVGRwpicctAXELMUA9IyOabI+kzAN3dTROKLbut1goOs2Uo9Fs06lK4oyHdtTrrY46vIvdtpaj03kCDskfGVU9oUfBFINcSKeqfEsqypVOdcWgvzpTR+l3xZ0v4wywYnIcOFipcq/TtZOiX8ZxDI8yu207YIr4vADFs0Wx8McaBp1rm8aztd7KOAzE6AFOjfc6wit2Ms4fadepdnnPo7TP9M4Gl5phR9vqykBoONKS9/vEumvcD0AYC74QVsRHuHJNX86EJ6NRfhZ7IfZw61tLrLytqIIOixdWlDGvD76kxGMI7wZzItUBKLX7z077VvA+F1Unn00GU5JCWAiDhjCxG9oKjtAkp9i+7jg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(346002)(366004)(396003)(136003)(376002)(39860400002)(451199015)(8936002)(186003)(66556008)(5660300002)(66946007)(83380400001)(41300700001)(4326008)(6506007)(478600001)(7406005)(26005)(7416002)(9686003)(6916009)(33716001)(6512007)(66476007)(8676002)(2906002)(86362001)(6666004)(38100700002)(54906003)(966005)(44832011)(6486002)(82960400001)(316002)(67856001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?owj8151iRwJDfX+jX1EkBZacYNEQZ+4DrarNXuVKKWvghQTRrAVclv6Qq+l9?=
- =?us-ascii?Q?ygxc68zZCXFHrWRLFuG7lRAPF9ehB3dVcax1mBB8TK9kgeV+EkoyuVks97so?=
- =?us-ascii?Q?8kn2quQV6CVmCOzP6miUSSASQmqps/bHhuVdzp60nWaSBVYibKeBZZjDqPA8?=
- =?us-ascii?Q?RwFsU02OPnjT14XnjxyQ1/EcPaYf+LQ0L6X+wBMeWiofymaMFxH04EkwWSqL?=
- =?us-ascii?Q?PHfb5O4/xOZe+QGGxuBo9HWNtJR5lv4lSM7smiqlvWjIbWvZRx8eUCgwasqE?=
- =?us-ascii?Q?TKcyM2JJKSLLgMr855jqW9Q7kqOfldQtV/iMuPMqeMNMcENRC/MKuYedlRj/?=
- =?us-ascii?Q?8bYgsXT2rXt/ZcDjNiFOWh+so8s/oM/mTii1T8P1CZFwU8g2ad7rknPGPnTy?=
- =?us-ascii?Q?1VmPc9UQpe8quJJnNijgq8F7OJA1eaYfaCP6PdawuSQ6xKlP+yTCjHxNwZ0E?=
- =?us-ascii?Q?Sv9R0M5suOZV3ihcEMQ7ox/l1dRJizFKICCsyHoGjeFXAmNhVBDEyxVCS7iT?=
- =?us-ascii?Q?EP2TMdjDSILcwR3y//i8cJlmejQHzlZSy8CtgmdhLX4B+R8lepxkEX9yhqKH?=
- =?us-ascii?Q?Bi9NSHnZWNxDkgTfT04M500RLu1BwUVxWuyi/mvLCd7gXwXeI8nSVOGMo5Rg?=
- =?us-ascii?Q?dNf/2vnCIRx+NwblKOUlcl7zP7oaT+0/pO2IU+f/54dBjNuTr/W3qCMb3rn1?=
- =?us-ascii?Q?VfkZYgtRH62O7Oggps3WOXAKxMgysRPOEdSAHGELetvgBC+dAIFFwVjyqiYa?=
- =?us-ascii?Q?I/k/qGRLzlnCdAX7mbDErdnM340agdqbT2/wgq8gW6B1lJJ89Sgh5wPLE05S?=
- =?us-ascii?Q?eLXEkfJoQfReO35JE4lCw2BC8yJfr5g3ywfiALbMLY7Phi5rHFBu1pE+jtuO?=
- =?us-ascii?Q?XHOxiXonZy95JkwU790XsyRdR8eScPgz5o5sLUXK1QbFC3dA5NLx+PCLJ6AY?=
- =?us-ascii?Q?2BrtnhLAy25yVGOYIHZ/6Rp/LFUwcP5SxnyyviVqErhG8nlvE/6+IZXa1Z2E?=
- =?us-ascii?Q?w3OJpkqJw5WAVRfzq1OrhWNhiJ6lb8uvNKKeLNguZDVfg5KnIVQI3AhXacva?=
- =?us-ascii?Q?/LDlikCmgzqO+JLH2TMrkviNssITHCRjeh3wT7LO4Jr2j3mfGXS6sSU6aaEA?=
- =?us-ascii?Q?roM1NjQffBMm8CqCNrWQLy4Pq37jLNZ1EZ6CP0cMJro8eY5XTBMvXCmQQb9j?=
- =?us-ascii?Q?zt3VQcZoGRPp7PYFiDUH/oqURkY/reYUQHHGYbXm0dol9AL2QFwS1Iqd95As?=
- =?us-ascii?Q?W4R2HokMDZI0Dh0bnaxZEPso2W+2F9JhlDAiG1KwCnrFiqP78syEkC+DuISg?=
- =?us-ascii?Q?c8q+MQOj1/n0bnWapMAv9pz8cEzksNXJNkhmC/crR3LXR4AI+ook3DXrgw5U?=
- =?us-ascii?Q?zyTs3kWw8xPkCPFSV0JquRpITFTih8xi4FkgF+Ow58TcvQjoUpg6su8DXIQ+?=
- =?us-ascii?Q?i1PP7AQqETUe1Xf43ftPagC3iZjCBgkn7MeSl+covGXs7u4MVtJfsgem3+Tb?=
- =?us-ascii?Q?y+vZqwWss1JRZakS2ZLLwitCMQnRcyip6YyStxXjF+yoVSIdtMFI4ku9V6eH?=
- =?us-ascii?Q?pzHauWk33lkFYTL1ryHK4hfmvz/BxnPEMY4lWlCD?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc0ab040-ae7c-44e6-8509-08da9d01759a
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2022 01:18:02.2591
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: REs2eeqwREID/61A/OqDNwf1VdpYcsGMa+CVnsln0X/rG4ol9P/vOb64oJHStPfdvzzu4p5rb+p2NA1Gk9mJVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5769
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <632cd9a2a023_3496294da@dwillia2-xfh.jf.intel.com.notmuch>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=632d0da5
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
+        a=HMkrczR5A4c5RoH6gtYA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Hyeonggon for looping in me.
-
-On Thu, Sep 22, 2022 at 07:12:21PM +0800, Hyeonggon Yoo wrote:
-> On Wed, Sep 21, 2022 at 08:10:02PM -0700, Kees Cook wrote:
-> > In the effort to help the compiler reason about buffer sizes, the
-> > __alloc_size attribute was added to allocators. This improves the scope
-> > of the compiler's ability to apply CONFIG_UBSAN_BOUNDS and (in the near
-> > future) CONFIG_FORTIFY_SOURCE. For most allocations, this works well,
-> > as the vast majority of callers are not expecting to use more memory
-> > than what they asked for.
+On Thu, Sep 22, 2022 at 02:54:42PM -0700, Dan Williams wrote:
+> Jason Gunthorpe wrote:
+> > On Wed, Sep 21, 2022 at 07:17:40PM -0700, Dan Williams wrote:
+> > > Jason Gunthorpe wrote:
+> > > > On Wed, Sep 21, 2022 at 05:14:34PM -0700, Dan Williams wrote:
+> > > > 
+> > > > > > Indeed, you could reasonably put such a liveness test at the moment
+> > > > > > every driver takes a 0 refcount struct page and turns it into a 1
+> > > > > > refcount struct page.
+> > > > > 
+> > > > > I could do it with a flag, but the reason to have pgmap->ref managed at
+> > > > > the page->_refcount 0 -> 1 and 1 -> 0 transitions is so at the end of
+> > > > > time memunmap_pages() can look at the one counter rather than scanning
+> > > > > and rescanning all the pages to see when they go to final idle.
+> > > > 
+> > > > That makes some sense too, but the logical way to do that is to put some
+> > > > counter along the page_free() path, and establish a 'make a page not
+> > > > free' path that does the other side.
+> > > > 
+> > > > ie it should not be in DAX code, it should be all in common pgmap
+> > > > code. The pgmap should never be freed while any page->refcount != 0
+> > > > and that should be an intrinsic property of pgmap, not relying on
+> > > > external parties.
+> > > 
+> > > I just do not know where to put such intrinsics since there is nothing
+> > > today that requires going through the pgmap object to discover the pfn
+> > > and 'allocate' the page.
 > > 
-> > There is, however, one common exception to this: anticipatory resizing
-> > of kmalloc allocations. These cases all use ksize() to determine the
-> > actual bucket size of a given allocation (e.g. 128 when 126 was asked
-> > for). This comes in two styles in the kernel:
+> > I think that is just a new API that wrappers the set refcount = 1,
+> > percpu refcount and maybe building appropriate compound pages too.
 > > 
-> > 1) An allocation has been determined to be too small, and needs to be
-> >    resized. Instead of the caller choosing its own next best size, it
-> >    wants to minimize the number of calls to krealloc(), so it just uses
-> >    ksize() plus some additional bytes, forcing the realloc into the next
-> >    bucket size, from which it can learn how large it is now. For example:
+> > Eg maybe something like:
 > > 
-> > 	data = krealloc(data, ksize(data) + 1, gfp);
-> > 	data_len = ksize(data);
+> >   struct folio *pgmap_alloc_folios(pgmap, start, length)
 > > 
-> > 2) The minimum size of an allocation is calculated, but since it may
-> >    grow in the future, just use all the space available in the chosen
-> >    bucket immediately, to avoid needing to reallocate later. A good
-> >    example of this is skbuff's allocators:
+> > And you get back maximally sized allocated folios with refcount = 1
+> > that span the requested range.
 > > 
-> > 	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
-> > 	...
-> > 	/* kmalloc(size) might give us more room than requested.
-> > 	 * Put skb_shared_info exactly at the end of allocated zone,
-> > 	 * to allow max possible filling before reallocation.
-> > 	 */
-> > 	osize = ksize(data);
-> >         size = SKB_WITH_OVERHEAD(osize);
+> > > In other words make dax_direct_access() the 'allocation' event that pins
+> > > the pgmap? I might be speaking a foreign language if you're not familiar
+> > > with the relationship of 'struct dax_device' to 'struct dev_pagemap'
+> > > instances. This is not the first time I have considered making them one
+> > > in the same.
 > > 
-> > In both cases, the "how large is the allocation?" question is answered
-> > _after_ the allocation, where the compiler hinting is not in an easy place
-> > to make the association any more. This mismatch between the compiler's
-> > view of the buffer length and the code's intention about how much it is
-> > going to actually use has already caused problems[1]. It is possible to
-> > fix this by reordering the use of the "actual size" information.
+> > I don't know enough about dax, so yes very foreign :)
 > > 
-> > We can serve the needs of users of ksize() and still have accurate buffer
-> > length hinting for the compiler by doing the bucket size calculation
-> > _before_ the allocation. Code can instead ask "how large an allocation
-> > would I get for a given size?".
-> > 
-> > Introduce kmalloc_size_roundup(), to serve this function so we can start
-> > replacing the "anticipatory resizing" uses of ksize().
-> >
+> > I'm thinking broadly about how to make pgmap usable to all the other
+> > drivers in a safe and robust way that makes some kind of logical sense.
 > 
-> Cc-ing Feng Tang who may welcome this series ;)
- 
-Indeed! This will help our work of extending slub redzone check,
-as we also ran into some trouble with ksize() users when extending
-the redzone support to this extra allocated space than requested
-size [1], and have to disable the redzone sanity for all ksize()
-users [2].
+> I think the API should be pgmap_folio_get() because, at least for DAX,
+> the memory is already allocated. The 'allocator' for fsdax is the
+> filesystem block allocator, and pgmap_folio_get() grants access to a
 
-[1]. https://lore.kernel.org/lkml/20220719134503.GA56558@shbuild999.sh.intel.com/
-[2]. https://lore.kernel.org/lkml/20220913065423.520159-5-feng.tang@intel.com/
+No, the "allocator" for fsdax is the inode iomap interface, not the
+filesystem block allocator. The filesystem block allocator is only
+involved in iomapping if we have to allocate a new mapping for a
+given file offset.
 
-Thanks,
-Feng
+A better name for this is "arbiter", not allocator.  To get an
+active mapping of the DAX pages backing a file, we need to ask the
+inode iomap subsystem to *map a file offset* and it will return
+kaddr and/or pfns for the backing store the file offset maps to.
 
-> > [1] https://github.com/ClangBuiltLinux/linux/issues/1599
-> >     https://github.com/KSPP/linux/issues/183
-> > 
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: linux-mm@kvack.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
+IOWs, for FSDAX, access to the backing store (i.e. the physical pages) is
+arbitrated by the *inode*, not the filesystem allocator or the dax
+device. Hence if a subsystem needs to pin the backing store for some
+use, it must first ensure that it holds an inode reference (direct
+or indirect) for that range of the backing store that will spans the
+life of the pin. When the pin is done, it can tear down the mappings
+it was using and then the inode reference can be released.
+
+This ensures that any racing unlink of the inode will not result in
+the backing store being freed from under the application that has a
+pin. It will prevent the inode from being reclaimed and so
+potentially accessing stale or freed in-memory structures. And it
+will prevent the filesytem from being unmounted while the
+application using FSDAX access is still actively using that
+functionality even if it's already closed all it's fds....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
