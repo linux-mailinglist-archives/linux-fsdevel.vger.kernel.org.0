@@ -2,118 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 035B45E79F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 13:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FEED5E7A2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 14:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbiIWLso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 07:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35854 "EHLO
+        id S231732AbiIWMIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 08:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbiIWLsn (ORCPT
+        with ESMTP id S230448AbiIWMGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 07:48:43 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED5613504C;
-        Fri, 23 Sep 2022 04:48:42 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7882B219AB;
-        Fri, 23 Sep 2022 11:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663933721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZPjyD0/xt3seSELxX6T0Z8850lxbllz/WwfFXpyRRVE=;
-        b=3WQsmWHWi98kHArxLDSeXFRquDbDCvwvEXdL6ZY6FGzw01ouFy+Q2ndzX0IeULWfM3ofUs
-        2FGllDhMidI9bcQsNiIx6tA/U4mx3ErUxaSsGhOas05LpogzWPXjQ1QZo8wBiysiviCq5W
-        agahA403zfat5cYoVeB1AskuVYgJoGg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663933721;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZPjyD0/xt3seSELxX6T0Z8850lxbllz/WwfFXpyRRVE=;
-        b=Frwjz0PdM5zF+2ALhLDkWv3CN3NnGMsB4WcYTRwVo0ujr3IMYYqElkjXQoJsWfbZO7uyOh
-        ty5L7ukhHEoMS1Ag==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 69F7013A00;
-        Fri, 23 Sep 2022 11:48:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id zYPUGRmdLWMxYgAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 23 Sep 2022 11:48:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F1472A0685; Fri, 23 Sep 2022 13:48:40 +0200 (CEST)
-Date:   Fri, 23 Sep 2022 13:48:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Zhihao Cheng <chengzhihao1@huawei.com>
-Cc:     jack@suse.com, tytso@mit.edu, brauner@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yukuai3@huawei.com
-Subject: Re: [PATCH v2 2/3] quota: Replace all block number checking with
- helper function
-Message-ID: <20220923114840.npx52cadeofesp5i@quack3>
-References: <20220922130401.1792256-1-chengzhihao1@huawei.com>
- <20220922130401.1792256-3-chengzhihao1@huawei.com>
+        Fri, 23 Sep 2022 08:06:13 -0400
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C383131987;
+        Fri, 23 Sep 2022 05:00:49 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id C96892173;
+        Fri, 23 Sep 2022 11:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1663934318;
+        bh=nWecK01lWlm/+fHoFjSIP0puhvwdtsZ9P4N00vH53BU=;
+        h=Date:To:CC:From:Subject;
+        b=Wi67S3Us29uKLjNU2fF9bStc8sW3/Qg9pbpsfTE3wnDd1MOr6mHX2w5kulR4kZ1pM
+         VgHUxBfRDpcYiMZvk8RC0asedkSgb+7uXH7UFQGAUaYhBoZD6JpfDfuOmAMhL5UHOr
+         XCIFDA11wHKqHIwEKRhzqwRo97SGVEI2Eu0VLuBw=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id B70BFDD;
+        Fri, 23 Sep 2022 12:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1663934447;
+        bh=nWecK01lWlm/+fHoFjSIP0puhvwdtsZ9P4N00vH53BU=;
+        h=Date:To:CC:From:Subject;
+        b=pgOx/Q2CFvwOhsvvpXltsxnXSu6qMKR/+TojPK6s3GyrnoOg2mK8AFrFIMdV0hXco
+         ga/gVYsm3Ie/thLjTNmVPqR9y1UGRe4migiObIqCjMF66KUOR9IeL+F3cGrfJeg0s4
+         Asn1jNuvgr/3tPydXs75cJnhUiRP0RBub+hFH5BI=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 23 Sep 2022 15:00:47 +0300
+Message-ID: <91c21f32-cc6f-2c2e-ebf7-d1d738090aef@paragon-software.com>
+Date:   Fri, 23 Sep 2022 15:00:46 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220922130401.1792256-3-chengzhihao1@huawei.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 0/2] fs/ntfs3: Add option "nocase" and refactoring
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 22-09-22 21:04:00, Zhihao Cheng wrote:
-> Cleanup all block checking places, replace them with helper function
-> do_check_range().
-> 
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> ---
->  fs/quota/quota_tree.c | 28 ++++++++++++----------------
->  1 file changed, 12 insertions(+), 16 deletions(-)
+[PATCH 0/2] fs/ntfs3: Add option "nocase" and refactoring
 
-Thanks for the fix! One comment below:
+Added another option that may be useful to users.
+I've noticed in fslog.c some linebreaks, that can be fixed with
+renaming, so I've done it in second commit.
 
-> diff --git a/fs/quota/quota_tree.c b/fs/quota/quota_tree.c
-> index f89186b6db1d..47711e739ddb 100644
-> --- a/fs/quota/quota_tree.c
-> +++ b/fs/quota/quota_tree.c
-> @@ -71,11 +71,12 @@ static ssize_t write_blk(struct qtree_mem_dqinfo *info, uint blk, char *buf)
->  	return ret;
->  }
->  
-> -static inline int do_check_range(struct super_block *sb, uint val, uint max_val)
-> +static inline int do_check_range(struct super_block *sb, uint val,
-> +				 uint min_val, uint max_val)
->  {
-> -	if (val >= max_val) {
-> -		quota_error(sb, "Getting block too big (%u >= %u)",
-> -			    val, max_val);
-> +	if (val < min_val || val >= max_val) {
-> +		quota_error(sb, "Getting block %u out of range %u-%u",
-> +			    val, min_val, max_val);
->  		return -EUCLEAN;
->  	}
+Konstantin Komarov (2):
+   fs/ntfs3: Add option "nocase"
+   fs/ntfs3: Rename variables and add comment
 
-It is strange that do_check_range() checks min_val() with strict inequality
-and max_val with non-strict one. That's off-by-one problem waiting to
-happen when we forget about this detail. Probably make max_val
-non-inclusive as well (the parameter max_val suggests the passed value is
-the biggest valid one anyway).
-
-								Honza
+  fs/ntfs3/frecord.c |   1 +
+  fs/ntfs3/fslog.c   |  24 ++++----
+  fs/ntfs3/index.c   |   2 +-
+  fs/ntfs3/namei.c   | 139 +++++++++++++++++++++++++++++++++++++++++++++
+  fs/ntfs3/ntfs_fs.h |   4 ++
+  fs/ntfs3/super.c   |   6 ++
+  fs/ntfs3/upcase.c  |  12 ++++
+  7 files changed, 174 insertions(+), 14 deletions(-)
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.37.0
+
+
