@@ -2,82 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 365D95E7760
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 11:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D0F5E77C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 11:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231910AbiIWJkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 05:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
+        id S231994AbiIWJ5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 05:57:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232006AbiIWJir (ORCPT
+        with ESMTP id S231516AbiIWJ45 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 05:38:47 -0400
+        Fri, 23 Sep 2022 05:56:57 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A30FF1873;
-        Fri, 23 Sep 2022 02:38:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A23713073E;
+        Fri, 23 Sep 2022 02:56:55 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id CA09F21A63;
-        Fri, 23 Sep 2022 09:38:03 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0655821A8E;
+        Fri, 23 Sep 2022 09:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663925883; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663927014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=bndYC5R0I4YgJGO4guaGwuqL0KUo/BZ7Mi4kZdQckaE=;
-        b=YUEiD3qlDTE6kfrELEyA6DtKQfZ0Z+lFXfep2GktpftEQDVLbnyfS1R5/SSne35rBzcs3l
-        GoY7lcn3f9+optdT8RUNJrmlCwSXqZ/AklzJklYsKLNIXPhDSGAO0D1dUVoFhOG77ru9JY
-        i8AOqEBC5HoQzGRwksUlYLvNaCJ0ONQ=
+        bh=us+dLjYsj7y69xS3UKuaVga8AZkPesdObHEXPyfea7c=;
+        b=CgxV01WFtYUpA/rNfefeudFxFUhoOnJkG0HnO1V8uPJV6xSkn7z6huZF6R/QyGCFIU4LFW
+        nLaS8GVaFPjeIepZRkh+yYXVCVHc6p3IUk7v/7W2BW+ptoKZAM5vDzldVqFlXMDJhkwMkj
+        xQ+0bvG9JPXm64wVtf0yQcflvm+rYaA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663925883;
+        s=susede2_ed25519; t=1663927014;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=bndYC5R0I4YgJGO4guaGwuqL0KUo/BZ7Mi4kZdQckaE=;
-        b=1cq16cCNLVPsPcsJejQybf10gm0fZ/HKzz/EgMTKikDllXQPpuy4rYG0qwnsQ8tfTxR+w6
-        egBrBNbiBpwcP+DA==
+        bh=us+dLjYsj7y69xS3UKuaVga8AZkPesdObHEXPyfea7c=;
+        b=KXTNeaDMsUrJxPhK3xNAXOp5p3gQfxpAMM25eFV7D53yDuXmK5zyxRULi3uK1YGDGVOS1x
+        vSjXFKMYV27kfYDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B8E3A13A00;
-        Fri, 23 Sep 2022 09:38:03 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E584313A00;
+        Fri, 23 Sep 2022 09:56:53 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id sMoWLXt+LWMvKQAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 23 Sep 2022 09:38:03 +0000
+        id Oh0FOOWCLWNiMQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 23 Sep 2022 09:56:53 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 57D2AA0685; Fri, 23 Sep 2022 11:38:03 +0200 (CEST)
-Date:   Fri, 23 Sep 2022 11:38:03 +0200
+        id 443FDA0685; Fri, 23 Sep 2022 11:56:53 +0200 (CEST)
+Date:   Fri, 23 Sep 2022 11:56:53 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>, akpm@linux-foundation.org,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <20220923093803.nroajmvn7twuptez@quack3>
-References: <166329933874.2786261.18236541386474985669.stgit@dwillia2-xfh.jf.intel.com>
- <20220918225731.GG3600936@dread.disaster.area>
- <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
- <20220919212959.GL3600936@dread.disaster.area>
- <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
- <20220921221416.GT3600936@dread.disaster.area>
- <YyuQI08LManypG6u@nvidia.com>
- <20220923001846.GX3600936@dread.disaster.area>
- <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
- <20220923021012.GZ3600936@dread.disaster.area>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        NeilBrown <neilb@suse.de>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+Message-ID: <20220923095653.5c63i2jgv52j3zqp@quack3>
+References: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
+ <20220918235344.GH3600936@dread.disaster.area>
+ <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
+ <20220920001645.GN3600936@dread.disaster.area>
+ <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
+ <20220921000032.GR3600936@dread.disaster.area>
+ <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
+ <20220921214124.GS3600936@dread.disaster.area>
+ <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
+ <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220923021012.GZ3600936@dread.disaster.area>
+In-Reply-To: <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>
 X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
@@ -88,91 +102,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 23-09-22 12:10:12, Dave Chinner wrote:
-> On Thu, Sep 22, 2022 at 05:41:08PM -0700, Dan Williams wrote:
-> > Dave Chinner wrote:
-> > > On Wed, Sep 21, 2022 at 07:28:51PM -0300, Jason Gunthorpe wrote:
-> > > > On Thu, Sep 22, 2022 at 08:14:16AM +1000, Dave Chinner wrote:
-> > > > 
-> > > > > Where are these DAX page pins that don't require the pin holder to
-> > > > > also hold active references to the filesystem objects coming from?
-> > > > 
-> > > > O_DIRECT and things like it.
+On Thu 22-09-22 16:18:02, Jeff Layton wrote:
+> On Thu, 2022-09-22 at 06:18 -0400, Jeff Layton wrote:
+> > On Thu, 2022-09-22 at 07:41 +1000, Dave Chinner wrote:
+> > > e.g. The NFS server can track the i_version values when the NFSD
+> > > syncs/commits a given inode. The nfsd can sample i_version it when
+> > > calls ->commit_metadata or flushed data on the inode, and then when
+> > > it peeks at i_version when gathering post-op attrs (or any other
+> > > getattr op) it can decide that there is too much in-memory change
+> > > (e.g. 10,000 counts since last sync) and sync the inode.
 > > > 
-> > > O_DIRECT IO to a file holds a reference to a struct file which holds
-> > > an active reference to the struct inode. Hence you can't reclaim an
-> > > inode while an O_DIRECT IO is in progress to it. 
-> > > 
-> > > Similarly, file-backed pages pinned from user vmas have the inode
-> > > pinned by the VMA having a reference to the struct file passed to
-> > > them when they are instantiated. Hence anything using mmap() to pin
-> > > file-backed pages (i.e. applications using FSDAX access from
-> > > userspace) should also have a reference to the inode that prevents
-> > > the inode from being reclaimed.
-> > > 
-> > > So I'm at a loss to understand what "things like it" might actually
-> > > mean. Can you actually describe a situation where we actually permit
-> > > (even temporarily) these use-after-free scenarios?
+> > > i.e. the NFS server can trivially cap the maximum number of
+> > > uncommitted NFS change attr bumps it allows to build up in memory.
+> > > At that point, the NFS server has a bound "maximum write count" that
+> > > can be used in conjunction with the xattr based crash counter to
+> > > determine how the change_attr is bumped by the crash counter.
 > > 
-> > Jason mentioned a scenario here:
+> > Well, not "trivially". This is the bit where we have to grow struct
+> > inode (or the fs-specific inode), as we'll need to know what the latest
+> > on-disk value is for the inode.
 > > 
-> > https://lore.kernel.org/all/YyuoE8BgImRXVkkO@nvidia.com/
+> > I'm leaning toward doing this on the query side. Basically, when nfsd
+> > goes to query the i_version, it'll check the delta between the current
+> > version and the latest one on disk. If it's bigger than X then we'd just
+> > return NFS4ERR_DELAY to the client.
 > > 
-> > Multi-thread process where thread1 does open(O_DIRECT)+mmap()+read() and
-> > thread2 does memunmap()+close() while the read() is inflight.
+> > If the delta is >X/2, maybe it can kick off a workqueue job or something
+> > that calls write_inode with WB_SYNC_ALL to try to get the thing onto the
+> > platter ASAP.
 > 
-> And, ah, what production application does this and expects to be
-> able to process the result of the read() operation without getting a
-> SEGV?
-> 
-> There's a huge difference between an unlikely scenario which we need
-> to work (such as O_DIRECT IO to/from a mmap() buffer at a different
-> offset on the same file) and this sort of scenario where even if we
-> handle it correctly, the application can't do anything with the
-> result and will crash immediately....
+> Still looking at this bit too. Probably we can just kick off a
+> WB_SYNC_NONE filemap_fdatawrite at that point and hope for the best?
 
-I'm not sure I fully follow what we are concerned about here. As you've
-written above direct IO holds reference to the inode until it is completed
-(through kiocb->file->inode chain). So direct IO should be safe?
-
-I'd be more worried about stuff like vmsplice() that can add file pages
-into pipe without holding inode alive in any way and keeping them there for
-arbitrarily long time. Didn't we want to add FOLL_LONGTERM to gup executed
-from vmsplice() to avoid issues like this?
-
-> > Sounds plausible to me, but I have not tried to trigger it with a focus
-> > test.
-> 
-> If there really are applications this .... broken, then it's not the
-> responsibility of the filesystem to paper over the low level page
-> reference tracking issues that cause it.
-> 
-> i.e. The underlying problem here is that memunmap() frees the VMA
-> while there are still active task-based references to the pages in
-> that VMA. IOWs, the VMA should not be torn down until the O_DIRECT
-> read has released all the references to the pages mapped into the
-> task address space.
-> 
-> This just doesn't seem like an issue that we should be trying to fix
-> by adding band-aids to the inode life-cycle management.
-
-I agree that freeing VMA while there are pinned pages is ... inconvenient.
-But that is just how gup works since the beginning - the moment you have
-struct page reference, you completely forget about the mapping you've used
-to get to the page. So anything can happen with the mapping after that
-moment. And in case of pages mapped by multiple processes I can easily see
-that one of the processes decides to unmap the page (and it may well be
-that was the initial process that acquired page references) while others
-still keep accessing the page using page references stored in some internal
-structure (RDMA anyone?). I think it will be rather difficult to come up
-with some scheme keeping VMA alive while there are pages pinned without
-regressing userspace which over the years became very much tailored to the
-peculiar gup behavior.
-
-I can imagine we would keep *inode* referenced while there are its pages
-pinned. That should not be that difficult but at least in naive
-implementation that would put rather heavy stress on inode refcount under
-some loads so I don't think that's useful either.
+"Hope" is not a great assurance regarding data integrity ;) Anyway, it
+depends on how you imagine the "i_version on disk" is going to be
+maintained. It could be maintained by NFSD inside commit_inode_metadata() -
+fetch current i_version value before asking filesystem for the sync and by the
+time commit_metadata() returns we know that value is on disk. If we detect the
+current - on_disk is > X/2, we call commit_inode_metadata() and we are
+done. It is not even *that* expensive because usually filesystems optimize
+away unnecessary IO when the inode didn't change since last time it got
+synced.
 
 								Honza
 -- 
