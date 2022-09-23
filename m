@@ -2,63 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E21845E8417
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 22:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 756385E840F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 22:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233236AbiIWUez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 16:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        id S233230AbiIWUew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 16:34:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbiIWUcq (ORCPT
+        with ESMTP id S232951AbiIWUcr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 16:32:46 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5434E14C047
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:34 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id w20so1143928ply.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:33 -0700 (PDT)
+        Fri, 23 Sep 2022 16:32:47 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F03814C9D7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id t3so1188889ply.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=09XDqhCmbOxMmk4st3n1VevKxFvu8TBGt9LJYr24nIA=;
-        b=C8a8bBwBCPpYqJC0ttlBfkppX2uMw5viHVMSx4NSUdlu6Mk2tJYnIkpj1O3sRUaf2n
-         YvaKYhZaGs/8xWczPFhL4W6+saiCUf5KQGmW47sQE/VjI9iBzvPK3eyEePf3h3djFnDv
-         4Xw5J5dvAI2eSiF2SIboitvBfMPVts9ASzBRc=
+        bh=1MqQrxnQnbWg62GSxHH0OEF1q347X/m+4lnjB2flQT0=;
+        b=Sm/M1aPSgGxkRY3LHKu9WT6VO0RigAcBGr0kTvvwRsO2yiPnlyPOycSqBm+Mx8oFi3
+         bspsiUMbtKdtztOA4+TN8PPA5DxAgy5IBcQaq/1bn/CTLSI6xp/mM0sWTL+QnjiHRtQm
+         hkYMCwfmO+zSjZYsUL+mFvQC8TlG50HBWaABQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=09XDqhCmbOxMmk4st3n1VevKxFvu8TBGt9LJYr24nIA=;
-        b=C50LEgySOqAkWioL5J2+vXBU6s5bscgFlR1lb+bHRCuoCz7supmUtszuFgWdXDrEV3
-         CeAUTLb5iBwlkT4Mi+i4EaK+Bd/rhe/eUkcnPYbFuJ8QaCFcg1AWQz5bzRUJ+ukn5RIP
-         tNEpK/qBMFprb8K2/U+xP8UTc2/BIxfRgWSPPsGymM8wqUTnbGVdYWyLjbXHSKtb99z+
-         vCSuCrb9QKrJK7agcAASu+IficRt1cJpn5jhdd6e0+PIDJvs+pG0v5tlQv912I9dt1U2
-         LWogu8lma4bPrK7Vhvxu4+ulhwrlNRxzMQydjOjDCHPnbjAzUrCpfxCL5JUUNGDOgKu3
-         VHDg==
-X-Gm-Message-State: ACrzQf1kQLL6uQAqmIhTtCm54K5cc0riTedFufzWx8Ir5lxXJXoy+oeX
-        o/0zBfFOinyAglUvSBzsSOGe9w==
-X-Google-Smtp-Source: AMsMyM7DXBOfv6ahzpoYpFJ1XA+uXLlf1m80ImgaNTw1lXpXdBLHWAXCKtzP0wavX+dE1aJb2tOr4Q==
-X-Received: by 2002:a17:903:2015:b0:178:8022:ff1 with SMTP id s21-20020a170903201500b0017880220ff1mr10285638pla.18.1663964913651;
-        Fri, 23 Sep 2022 13:28:33 -0700 (PDT)
+        bh=1MqQrxnQnbWg62GSxHH0OEF1q347X/m+4lnjB2flQT0=;
+        b=YdDyDLHmV1vLHOQ5dbLR8c43iCtj2lMj9p8TT4RNlo1eMy2JiGsVUjfxv5zJwDKVr1
+         KCIdPqWDEtW4JrD1LOnpcNHHS5NLtcTMImPB60fkqDCEpdLNxgKktzPn0xTWcfDqoq/f
+         JrnDwvK9a4sxGxNfBYPTGWcaCQBWsM4ju+UtwAxQN2+LPodi0RO0U6ByKgMmNu+PrEbK
+         9XDPqxBamR6EuDPgAiuoFc38yHgFqG6jns8wUl0jcxBGa6WIgh5veiGhA1pSH1WIjdbj
+         cv7bI0uyLAR59p+x8kRTWDruW1qWLuiJOHumvvgAZVxqHBAocemquS/d1PHI6eHvCXDw
+         B7NA==
+X-Gm-Message-State: ACrzQf3xd2MhH4ul6NDtta4/wKLeQD5vKHVTzFOIY1+ZlCuRkQqsTaVy
+        IbTqTNmfgxj+wCTF8/gsrCKp1A==
+X-Google-Smtp-Source: AMsMyM6DPO4r131p/AkrnBJsIg/pPdpNgGZzqHysb3GkGzz8lYKLY18dMnHntypNM/af/tAornEd+g==
+X-Received: by 2002:a17:90b:3e8d:b0:203:1b6d:2112 with SMTP id rj13-20020a17090b3e8d00b002031b6d2112mr23327438pjb.6.1663964915447;
+        Fri, 23 Sep 2022 13:28:35 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i3-20020aa796e3000000b00535da15a252sm6765031pfq.165.2022.09.23.13.28.28
+        by smtp.gmail.com with ESMTPSA id g13-20020aa796ad000000b0053ae018a91esm7005618pfk.173.2022.09.23.13.28.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 23 Sep 2022 13:28:32 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        bpf@vger.kernel.org, "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
         Hyeonggon Yoo <42.hyeyoo@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
@@ -69,7 +62,6 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Alex Elder <elder@kernel.org>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -78,7 +70,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Jesse Brandeburg <jesse.brandeburg@intel.com>,
         Daniel Micay <danielmicay@gmail.com>,
-        Marco Elver <elver@google.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
         Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, netdev@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
@@ -86,14 +78,14 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
         dev@openvswitch.org, x86@kernel.org, llvm@lists.linux.dev,
         linux-hardening@vger.kernel.org
-Subject: [PATCH v2 11/16] bpf: Use kmalloc_size_roundup() to match ksize() usage
-Date:   Fri, 23 Sep 2022 13:28:17 -0700
-Message-Id: <20220923202822.2667581-12-keescook@chromium.org>
+Subject: [PATCH v2 12/16] devres: Use kmalloc_size_roundup() to match ksize() usage
+Date:   Fri, 23 Sep 2022 13:28:18 -0700
+Message-Id: <20220923202822.2667581-13-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220923202822.2667581-1-keescook@chromium.org>
 References: <20220923202822.2667581-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4987; h=from:subject; bh=+umEDwGyJCv3Ovyx4Pj2CYIL4lHo8xavtPhh0E8bcL8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjLhblZrOjZBzDi2GSWosP6rXkUyCU3IxBEiC+Kuw9 wTqv/j+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYy4W5QAKCRCJcvTf3G3AJjMAEA CfzaZuEjLR7HquBXo8+EM4GS8NWzszH99hX9xWPHebOuW16pmhNIEq+Aju+xJdnrhZANxwQ9Vh+iy8 ymNAeDJdi1cPUvm/XvEjIQdHYJrutoIiSKB2d0AEqLwbsec1LjBhbvhDu0LI7jqNxIfIv2/9Wt0lw+ FLC6qE+PRYixT6MQix4PHQQlKlYq57pj+xWZMmEn7EdqoqjCDsI3K/t90ikcx3WVUqhltKxdMQKBBV x5co1XdfKAeNPVoBf0Q4pGe8YOFn/SbYAQ3SUpg9WyQETPSbnLumwlf27mINUyCKWF27Tg53zEYExy CL2Y77JbZEY8nCSjb5ET/WZ4BJLz8w55BmqKLuG+LHoVxmG9As/KzYhd4wNeF/dVm0OLi7gOh89qzi GEU1kcMn/xDpv1MQ2jDoG8VufwjUDPawkqASsD3lyfggklYm5al7OV0DrKzqFXHwaeBjaWHmM6KLKe 37QfdNfUsWdCuBvcEjoUX7Za+u901T3eO2SKiBvJCpX2sc6vi67INLI4syc1DeZAWI+wioCztNVLto FEw2RcZEC86T5zincgBp5Ofm7ehCRUPa/wet1Ayqkgvsrtnt1X+1xS1o6I1ntxzju/C/TzBCm6nHcb R4gLY+rvdc1IBBznpLWzmV3Cz3ue47gmjjlvg+BX0gGRJVy0rhqVwTrXOpsA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=845; h=from:subject; bh=p9b8wNdLQUTcKVpskeYovP9HfQefiLH6cTy/WYiH/34=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjLhblaNBFxJTohammexHC6CbeJ0+h67dRN4PBtvwk 5JonPTWJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYy4W5QAKCRCJcvTf3G3AJv3zD/ 9LAMXluSBHTtqxb1umMTVE5i5sD3JCHrbpRq7+nm/ihvkEJ1pnKlLOmxomGKq8yeaSA69bZA8KfZSc CR5xfaDsFWx4j9MHisTXdoYIizPEmbqQRRqOxkcdkdBTXGB4/9y7dICzF8nG/wZnRE5cg43nOsJxA/ hh08sM/Jc50zsKD8NK3U423EdCAh5Mur1N+IQdBrcIDvnYzrV9ox60ZBhTx1GxtTQH29f1M7tkTsxb CVJH0I7rS5lLvIDvLckMlcpX75U4M6OfFXPwwIxp8zwb/SpdErJg9OQ0Bc5aPbHKg5h0mzeyjxITo4 Z8ePU5LP/HNZ40tbLl/4YQUWf9RwhgxmPxlaMerypnyhhY7RPOqjaEt4QjEp435c3lkzt/jPKVyQ00 /BWZWjk3oYQBVD1YkNvQadr0W7iugWkFBmy0TMQKbpGlH/9UDUI6ZWX0cskd2A9Vm/9DXzxZlWfb5T 46CEGwe6OTc72/fqVunf113g0JP/k16VF9IW4+cBz7fPkxp8MWBVHYsuByyGXMUPaQPem/RWWPBSdo m2SZX1ZgW/fXrsnRcDrhQ1bd8TrDPmojcGJefLK+ix//dr8fGR/Mmu8QlKJ5P4e96wfEoqQZTf9cys itlMdKLXQRmGqut8owpdZR9a0jlrGiYaoK47SOl258qhzKf6gWj/fY7i/IJw==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -105,143 +97,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Round up allocations with kmalloc_size_roundup() so that the verifier's
-use of ksize() is always accurate and no special handling of the memory
-is needed by KASAN, UBSAN_BOUNDS, nor FORTIFY_SOURCE. Pass the new size
-information back up to callers so they can use the space immediately,
-so array resizing to happen less frequently as well. Explicitly zero
-any trailing bytes in new allocations.
+Round up allocations with kmalloc_size_roundup() so that devres's use
+of ksize() is always accurate and no special handling of the memory is
+needed by KASAN, UBSAN_BOUNDS, nor FORTIFY_SOURCE.
 
-Additionally fix a memory allocation leak: if krealloc() fails, "arr"
-wasn't freed, but NULL was return to the caller of realloc_array() would
-be writing NULL to the lvalue, losing the reference to the original
-memory.
-
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Song Liu <song@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: KP Singh <kpsingh@kernel.org>
-Cc: Stanislav Fomichev <sdf@google.com>
-Cc: Hao Luo <haoluo@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- kernel/bpf/verifier.c | 49 +++++++++++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 18 deletions(-)
+ drivers/base/devres.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 096fdac70165..80531f8f0d36 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -978,42 +978,53 @@ static void print_insn_state(struct bpf_verifier_env *env,
-  */
- static void *copy_array(void *dst, const void *src, size_t n, size_t size, gfp_t flags)
- {
--	size_t bytes;
-+	size_t src_bytes, dst_bytes;
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 864d0b3f566e..7db20ce7ea8a 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -101,6 +101,9 @@ static bool check_dr_size(size_t size, size_t *tot_size)
+ 					size, tot_size)))
+ 		return false;
  
- 	if (ZERO_OR_NULL_PTR(src))
- 		goto out;
- 
--	if (unlikely(check_mul_overflow(n, size, &bytes)))
-+	if (unlikely(check_mul_overflow(n, size, &src_bytes)))
- 		return NULL;
- 
--	if (ksize(dst) < bytes) {
-+	dst_bytes = kmalloc_size_roundup(src_bytes);
-+	if (ksize(dst) < dst_bytes) {
- 		kfree(dst);
--		dst = kmalloc_track_caller(bytes, flags);
-+		dst = kmalloc_track_caller(dst_bytes, flags);
- 		if (!dst)
- 			return NULL;
- 	}
- 
--	memcpy(dst, src, bytes);
-+	memcpy(dst, src, src_bytes);
-+	memset(dst + src_bytes, 0, dst_bytes - src_bytes);
- out:
- 	return dst ? dst : ZERO_SIZE_PTR;
- }
- 
--/* resize an array from old_n items to new_n items. the array is reallocated if it's too
-- * small to hold new_n items. new items are zeroed out if the array grows.
-+/* Resize an array from old_n items to *new_n items. The array is reallocated if it's too
-+ * small to hold *new_n items. New items are zeroed out if the array grows. Allocation
-+ * is rounded up to next kmalloc bucket size to reduce frequency of resizing. *new_n
-+ * contains the new total number of items that will fit.
-  *
-- * Contrary to krealloc_array, does not free arr if new_n is zero.
-+ * Contrary to krealloc, does not free arr if new_n is zero.
-  */
--static void *realloc_array(void *arr, size_t old_n, size_t new_n, size_t size)
-+static void *realloc_array(void *arr, size_t old_n, size_t *new_n, size_t size)
- {
--	if (!new_n || old_n == new_n)
-+	void *old_arr = arr;
-+	size_t alloc_size;
++	/* Actually allocate the full kmalloc bucket size. */
++	*tot_size = kmalloc_size_roundup(*tot_size);
 +
-+	if (!new_n || !*new_n || old_n == *new_n)
- 		goto out;
- 
--	arr = krealloc_array(arr, new_n, size, GFP_KERNEL);
--	if (!arr)
-+	alloc_size = kmalloc_size_roundup(size_mul(*new_n, size));
-+	arr = krealloc(old_arr, alloc_size, GFP_KERNEL);
-+	if (!arr) {
-+		kfree(old_arr);
- 		return NULL;
-+	}
- 
--	if (new_n > old_n)
--		memset(arr + old_n * size, 0, (new_n - old_n) * size);
-+	*new_n = alloc_size / size;
-+	if (*new_n > old_n)
-+		memset(arr + old_n * size, 0, (*new_n - old_n) * size);
- 
- out:
- 	return arr ? arr : ZERO_SIZE_PTR;
-@@ -1045,7 +1056,7 @@ static int copy_stack_state(struct bpf_func_state *dst, const struct bpf_func_st
- 
- static int resize_reference_state(struct bpf_func_state *state, size_t n)
- {
--	state->refs = realloc_array(state->refs, state->acquired_refs, n,
-+	state->refs = realloc_array(state->refs, state->acquired_refs, &n,
- 				    sizeof(struct bpf_reference_state));
- 	if (!state->refs)
- 		return -ENOMEM;
-@@ -1061,11 +1072,11 @@ static int grow_stack_state(struct bpf_func_state *state, int size)
- 	if (old_n >= n)
- 		return 0;
- 
--	state->stack = realloc_array(state->stack, old_n, n, sizeof(struct bpf_stack_state));
-+	state->stack = realloc_array(state->stack, old_n, &n, sizeof(struct bpf_stack_state));
- 	if (!state->stack)
- 		return -ENOMEM;
- 
--	state->allocated_stack = size;
-+	state->allocated_stack = n * BPF_REG_SIZE;
- 	return 0;
+ 	return true;
  }
  
-@@ -2472,9 +2483,11 @@ static int push_jmp_history(struct bpf_verifier_env *env,
- {
- 	u32 cnt = cur->jmp_history_cnt;
- 	struct bpf_idx_pair *p;
-+	size_t size;
- 
- 	cnt++;
--	p = krealloc(cur->jmp_history, cnt * sizeof(*p), GFP_USER);
-+	size = kmalloc_size_roundup(size_mul(cnt, sizeof(*p)));
-+	p = krealloc(cur->jmp_history, size, GFP_USER);
- 	if (!p)
- 		return -ENOMEM;
- 	p[cnt - 1].idx = env->insn_idx;
 -- 
 2.34.1
 
