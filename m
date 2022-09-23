@@ -2,165 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2335E7DD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 17:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242D35E7DD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 17:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbiIWPFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 11:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37454 "EHLO
+        id S232344AbiIWPAU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 11:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiIWPFH (ORCPT
+        with ESMTP id S232250AbiIWPAI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 11:05:07 -0400
-X-Greylist: delayed 327 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 23 Sep 2022 08:05:00 PDT
-Received: from mta-102a.earthlink-vadesecure.net (mta-102a.earthlink-vadesecure.net [51.81.61.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAB452FE3;
-        Fri, 23 Sep 2022 08:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; bh=N+Y2Asvd9JPiLkBH1FxZjhC7Kvt1Am28CEudYX
- K+k9M=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
- date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
- references:list-id:list-help:list-unsubscribe:list-subscribe:list-post:
- list-owner:list-archive; q=dns/txt; s=dk12062016; t=1663945138;
- x=1664549938; b=QzIpgTeRhzk+oXAG0w2wXTk3knt7B6hPDgYBU9ZvjKI0wg8sqPEQWaq
- gYfzosQZ/cIs1/vwH3hunDFSzEloIxot7aQ6GlAMW3axqZdwRDbcZgLWVdJHrFVwc5fXxuU
- Pcsfdc8kPelR3ruy9zezXHbqo+aZEcZpKPDyspB1RJOfBlzMphkoI/s6yyuXpGEZUmN0HQu
- xtqzMM2an+D6o9ulXwtv6R/ro4om2RpGMUnUA33qDOTFfeYCLUxojgy5vz8vrg8My0jkRLx
- xUACYrUDkw91O3ZAOmZbMVrAhRXehF3V0zflpsm1oL41wD5r7q4pCMkHy/qEE4K+tId4gYL
- H1g==
-Received: from FRANKSTHINKPAD ([76.105.143.216])
- by smtp.earthlink-vadesecure.net ESMTP vsel1nmtao02p with ngmta
- id 22c3a592-17178548f48eb86d; Fri, 23 Sep 2022 14:58:57 +0000
-From:   "Frank Filz" <ffilzlnx@mindspring.com>
-To:     "'Jeff Layton'" <jlayton@kernel.org>,
-        "'Trond Myklebust'" <trondmy@hammerspace.com>, <jack@suse.cz>
-Cc:     <zohar@linux.ibm.com>, <djwong@kernel.org>, <brauner@kernel.org>,
-        <linux-xfs@vger.kernel.org>, <bfields@fieldses.org>,
-        <linux-api@vger.kernel.org>, <neilb@suse.de>,
-        <david@fromorbit.com>, <fweimer@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <chuck.lever@oracle.com>,
-        <linux-man@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <linux-ext4@vger.kernel.org>, <tytso@mit.edu>,
-        <viro@zeniv.linux.org.uk>, <xiubli@redhat.com>,
-        <linux-fsdevel@vger.kernel.org>, <adilger.kernel@dilger.ca>,
-        <lczerner@redhat.com>, <ceph-devel@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>
-References: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>         <20220918235344.GH3600936@dread.disaster.area>         <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>         <20220920001645.GN3600936@dread.disaster.area>         <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>         <20220921000032.GR3600936@dread.disaster.area>         <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>         <20220921214124.GS3600936@dread.disaster.area>         <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>         <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>         <20220923095653.5c63i2jgv52j3zqp@quack3>         <2d41c08e1fd96d55c794c3b4cd43a51a0494bfcf.camel@hammerspace.com> <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
-In-Reply-To: <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
-Subject: RE: [man-pages RFC PATCH v4] statx, inode: document the new STATX_INO_VERSION field
-Date:   Fri, 23 Sep 2022 07:58:55 -0700
-Message-ID: <01ae01d8cf5d$023474d0$069d5e70$@mindspring.com>
+        Fri, 23 Sep 2022 11:00:08 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5AA72A957
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 07:59:55 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id y3so1312613ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 07:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=mQ2SPM0vQtguYDeNuedTCVLMxjUh7J4gP69et6Pl3Q0=;
+        b=hcR754jQ1MowjeiaNS3sauPoo5maN8sn5LAT2ctZMP8jOR0IyWTLj+qhIcC4V+M/+t
+         0SALhYW0NYHmkKN/dSTlXHKZlgCFEUAsIHC6qduv++StlYuIZj0maStTlQPhqcS1jbW2
+         52ZlSlXHfCE9idAyHDe4/VszRdXReKQJX/340=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=mQ2SPM0vQtguYDeNuedTCVLMxjUh7J4gP69et6Pl3Q0=;
+        b=k8+m/c8TU4+FQ2+TvgoyTnqCpvetugjjesswLDhromN/MYT5stONjvFxwkOcNy0T7c
+         GEu2X8qOyGP26PPmWtlZLZjyh05MRaeHLpV2LM0hTwY5DbkpXT2xlDutUFFEE2ET7SYP
+         qNLvZ8ymyC8n+LEviaj31hfXrLqvSlzPvpI/aRyLNZx8BWbMjBft7zJbeszmVh3tW+m6
+         28EP/bDYxLbaB4yigrEbByQPn9zerhdCpBr7Hl31zHqcTBybdZr4NXfxR9ysEE6s0sFQ
+         yu1HAm/Nis1QKn4fH3bbsEW3mUJV8rBsJLNl7vSBk4SxwPTqlTX9lhZaFnHRsmbgxaGZ
+         up+g==
+X-Gm-Message-State: ACrzQf2wxmXfrGm3Hczfomi0ksy/CFGWDA0Iwz57d2RrCmV61dvPFbCU
+        w8FM/PxFGbT2aYpT9yicZlC3ENWTGGtdUMO8b4n7Yg==
+X-Google-Smtp-Source: AMsMyM4RiLftSkJXu68h8CtUe+3nEWg3TS7pyNY1i3NDGSCCuB2UmBaDbDk++ONzGyROid7xQ6zjgl4foXH2q0U2p8c=
+X-Received: by 2002:a17:907:62a1:b0:781:b320:90c0 with SMTP id
+ nd33-20020a17090762a100b00781b32090c0mr7081371ejc.255.1663945193889; Fri, 23
+ Sep 2022 07:59:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQFW5LMVvccUT9xKG5h5MPweA5KIXgISgRYwAs1S4t4CKHGUMgGdhacVAWuMxX0CYnVaogHQtV08AvqrgvECS3OfOAJ2umjmAsymCyIDAUdIdq4SdV6g
-Content-Language: en-us
-Authentication-Results: earthlink-vadesecure.net;
- auth=pass smtp.auth=ffilzlnx@mindspring.com smtp.mailfrom=ffilzlnx@mindspring.com;
-X-Spam-Status: No, score=0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,HK_RANDOM_ENVFROM,HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <20220922151728.1557914-1-brauner@kernel.org> <20220922151728.1557914-22-brauner@kernel.org>
+In-Reply-To: <20220922151728.1557914-22-brauner@kernel.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 23 Sep 2022 16:59:42 +0200
+Message-ID: <CAJfpegu0xgSuvcY9zwEMDsb9PC3_AYPXvvE61fdHYEssVSf-tA@mail.gmail.com>
+Subject: Re: [PATCH 21/29] ovl: implement get acl method
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 22 Sept 2022 at 17:18, Christian Brauner <brauner@kernel.org> wrote:
+>
+> The current way of setting and getting posix acls through the generic
+> xattr interface is error prone and type unsafe. The vfs needs to
+> interpret and fixup posix acls before storing or reporting it to
+> userspace. Various hacks exist to make this work. The code is hard to
+> understand and difficult to maintain in it's current form. Instead of
+> making this work by hacking posix acls through xattr handlers we are
+> building a dedicated posix acl api around the get and set inode
+> operations. This removes a lot of hackiness and makes the codepaths
+> easier to maintain. A lot of background can be found in [1].
+>
+> In order to build a type safe posix api around get and set acl we need
+> all filesystem to implement get and set acl.
+>
+> Now that we have added get and set acl inode operations that allow easy
+> access to the dentry we give overlayfs it's own get and set acl inode
+> operations.
+>
+> Since overlayfs is a stacking filesystem it will use the newly added
+> posix acl api when retrieving posix acls from the relevant layer.
+>
+> Since overlayfs can also be mounted on top of idmapped layers. If
+> idmapped layers are used overlayfs must take the layer's idmapping into
+> account after it retrieved the posix acls from the relevant layer.
+>
+> Note, until the vfs has been switched to the new posix acl api this
+> patch is a non-functional change.
+>
+> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> ---
+>  fs/overlayfs/dir.c       |  3 +-
+>  fs/overlayfs/inode.c     | 63 ++++++++++++++++++++++++++++++++++++----
+>  fs/overlayfs/overlayfs.h | 10 +++++--
+>  3 files changed, 67 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 7bece7010c00..eb49d5d7b56f 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -1311,7 +1311,8 @@ const struct inode_operations ovl_dir_inode_operations = {
+>         .permission     = ovl_permission,
+>         .getattr        = ovl_getattr,
+>         .listxattr      = ovl_listxattr,
+> -       .get_inode_acl  = ovl_get_acl,
+> +       .get_inode_acl  = ovl_get_inode_acl,
+> +       .get_acl        = ovl_get_acl,
+>         .update_time    = ovl_update_time,
+>         .fileattr_get   = ovl_fileattr_get,
+>         .fileattr_set   = ovl_fileattr_set,
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index ecb51c249466..dd11e13cd288 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -14,6 +14,8 @@
+>  #include <linux/fileattr.h>
+>  #include <linux/security.h>
+>  #include <linux/namei.h>
+> +#include <linux/posix_acl.h>
+> +#include <linux/posix_acl_xattr.h>
+>  #include "overlayfs.h"
+>
+>
+> @@ -460,9 +462,9 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+>   * of the POSIX ACLs retrieved from the lower layer to this function to not
+>   * alter the POSIX ACLs for the underlying filesystem.
+>   */
+> -static void ovl_idmap_posix_acl(struct inode *realinode,
+> -                               struct user_namespace *mnt_userns,
+> -                               struct posix_acl *acl)
+> +void ovl_idmap_posix_acl(struct inode *realinode,
+> +                        struct user_namespace *mnt_userns,
+> +                        struct posix_acl *acl)
+>  {
+>         struct user_namespace *fs_userns = i_user_ns(realinode);
+>
+> @@ -495,7 +497,7 @@ static void ovl_idmap_posix_acl(struct inode *realinode,
+>   *
+>   * This is obviously only relevant when idmapped layers are used.
+>   */
+> -struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
+> +struct posix_acl *ovl_get_inode_acl(struct inode *inode, int type, bool rcu)
+>  {
+>         struct inode *realinode = ovl_inode_real(inode);
+>         struct posix_acl *acl, *clone;
+> @@ -547,6 +549,53 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type, bool rcu)
+>         posix_acl_release(acl);
+>         return clone;
+>  }
+> +
+> +static struct posix_acl *ovl_get_acl_path(const struct path *path,
+> +                                         const char *acl_name)
+> +{
+> +       struct posix_acl *real_acl, *clone;
+> +       struct user_namespace *mnt_userns;
+> +
+> +       mnt_userns = mnt_user_ns(path->mnt);
+> +
+> +       real_acl = vfs_get_acl(mnt_userns, path->dentry, acl_name);
+> +       if (IS_ERR(real_acl))
+> +               return real_acl;
+> +       if (!real_acl)
+> +               return NULL;
 
+if (IS_ERR_OR_NULL(real_acl))
+    return real_acl;
 
-> -----Original Message-----
-> From: Jeff Layton [mailto:jlayton@kernel.org]
-> Sent: Friday, September 23, 2022 6:50 AM
-> To: Trond Myklebust <trondmy@hammerspace.com>; jack@suse.cz
-> Cc: zohar@linux.ibm.com; djwong@kernel.org; brauner@kernel.org; linux-
-> xfs@vger.kernel.org; bfields@fieldses.org; linux-api@vger.kernel.org;
-> neilb@suse.de; david@fromorbit.com; fweimer@redhat.com; linux-
-> kernel@vger.kernel.org; chuck.lever@oracle.com; linux-man@vger.kernel.org;
-> linux-nfs@vger.kernel.org; linux-ext4@vger.kernel.org; tytso@mit.edu;
-> viro@zeniv.linux.org.uk; xiubli@redhat.com; linux-fsdevel@vger.kernel.org;
-> adilger.kernel@dilger.ca; lczerner@redhat.com; ceph-devel@vger.kernel.org;
-> linux-btrfs@vger.kernel.org
-> Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
-> STATX_INO_VERSION field
-> 
-> On Fri, 2022-09-23 at 13:44 +0000, Trond Myklebust wrote:
-> > On Fri, 2022-09-23 at 11:56 +0200, Jan Kara wrote:
-> > > On Thu 22-09-22 16:18:02, Jeff Layton wrote:
-> > > > On Thu, 2022-09-22 at 06:18 -0400, Jeff Layton wrote:
-> > > > > On Thu, 2022-09-22 at 07:41 +1000, Dave Chinner wrote:
-> > > > > > e.g. The NFS server can track the i_version values when the
-> > > > > > NFSD syncs/commits a given inode. The nfsd can sample
-> > > > > > i_version it when calls ->commit_metadata or flushed data on
-> > > > > > the inode, and then when it peeks at i_version when gathering
-> > > > > > post-op attrs (or any other getattr op) it can decide that
-> > > > > > there is too much in-memory change (e.g. 10,000 counts since
-> > > > > > last sync) and sync the inode.
-> > > > > >
-> > > > > > i.e. the NFS server can trivially cap the maximum number of
-> > > > > > uncommitted NFS change attr bumps it allows to build up in
-> > > > > > memory.
-> > > > > > At that point, the NFS server has a bound "maximum write count"
-> > > > > > that
-> > > > > > can be used in conjunction with the xattr based crash counter
-> > > > > > to determine how the change_attr is bumped by the crash
-> > > > > > counter.
-> > > > >
-> > > > > Well, not "trivially". This is the bit where we have to grow
-> > > > > struct inode (or the fs-specific inode), as we'll need to know
-> > > > > what the latest on-disk value is for the inode.
-> > > > >
-> > > > > I'm leaning toward doing this on the query side. Basically, when
-> > > > > nfsd goes to query the i_version, it'll check the delta between
-> > > > > the current version and the latest one on disk. If it's bigger
-> > > > > than X then we'd just return NFS4ERR_DELAY to the client.
-> > > > >
-> > > > > If the delta is >X/2, maybe it can kick off a workqueue job or
-> > > > > something that calls write_inode with WB_SYNC_ALL to try to get
-> > > > > the thing onto the platter ASAP.
-> > > >
-> > > > Still looking at this bit too. Probably we can just kick off a
-> > > > WB_SYNC_NONE filemap_fdatawrite at that point and hope for the
-> > > > best?
-> > >
-> > > "Hope" is not a great assurance regarding data integrity ;) Anyway,
-> > > it depends on how you imagine the "i_version on disk" is going to be
-> > > maintained. It could be maintained by NFSD inside
-> > > commit_inode_metadata() -
-> > > fetch current i_version value before asking filesystem for the sync
-> > > and by the time commit_metadata() returns we know that value is on
-> > > disk. If we detect the current - on_disk is > X/2, we call
-> > > commit_inode_metadata() and we are done. It is not even *that*
-> > > expensive because usually filesystems optimize away unnecessary IO
-> > > when the inode didn't change since last time it got synced.
-> > >
-> >
-> > Note that these approaches requiring 3rd party help in order to track
-> > i_version integrity across filesystem crashes all make the idea of
-> > adding i_version to statx() a no-go.
-> >
-> > It is one thing for knfsd to add specialised machinery for integrity
-> > checking, but if all applications need to do so, then they are highly
-> > unlikely to want to adopt this attribute.
-> >
-> >
-> 
-> Absolutely. That is the downside of this approach, but the priority here
-has
-> always been to improve nfsd. If we don't get the ability to present this
-info via
-> statx, then so be it. Later on, I suppose we can move that handling into
-the
-> kernel in some fashion if we decide it's worthwhile.
-> 
-> That said, not having this in statx makes it more difficult to test
-i_version
-> behavior. Maybe we can add a generic ioctl for that in the interim?
+> +
+> +       if (!is_idmapped_mnt(path->mnt))
+> +               return real_acl;
+> +
+> +       /*
+> +        * We cannot alter the ACLs returned from the relevant layer as that
+> +        * would alter the cached values filesystem wide for the lower
+> +        * filesystem. Instead we can clone the ACLs and then apply the
+> +        * relevant idmapping of the layer.
+> +        */
 
-Having i_version in statx would be really nice for nfs-ganesha. I would
-consider doing the extra integrity stuff or we may in some cases be able to
-rely on the filesystem, but in any case, i_version would be an improvement
-over using ctime or mtime for a change attribute.
+Can't vfs_get_acl() return 'const posix_acl *' to enforce that?
 
-Frank
-
+Thanks,
+Miklos
