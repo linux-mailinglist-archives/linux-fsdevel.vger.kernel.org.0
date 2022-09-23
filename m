@@ -2,135 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6E15E7677
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 11:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 365D95E7760
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Sep 2022 11:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231562AbiIWJIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Sep 2022 05:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34276 "EHLO
+        id S231910AbiIWJkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Sep 2022 05:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbiIWJID (ORCPT
+        with ESMTP id S232006AbiIWJir (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Sep 2022 05:08:03 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F4F12BD80;
-        Fri, 23 Sep 2022 02:08:02 -0700 (PDT)
+        Fri, 23 Sep 2022 05:38:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A30FF1873;
+        Fri, 23 Sep 2022 02:38:05 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A0F1B219BA;
-        Fri, 23 Sep 2022 09:08:00 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CA09F21A63;
+        Fri, 23 Sep 2022 09:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1663924080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663925883; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3NmV8dBleohq19FUTGjShv3qNCUcjTHlt1m0s7sWLVk=;
-        b=V6wEuumqUBqjySkow4NVfoPBdDcct+QY2sSnA92ZeyPwH38i0NPhxZ2JBFN/nzoZI0qJDc
-        KkeFL/D96aoTs49QcLygaGlMNADNI8AXG8StgjNUceGaiafR2+x2Vnsi6pDhmZ07qrK3n8
-        Inta8iq5GzYLsx9ExrSXKnUXYR9y3Io=
+        bh=bndYC5R0I4YgJGO4guaGwuqL0KUo/BZ7Mi4kZdQckaE=;
+        b=YUEiD3qlDTE6kfrELEyA6DtKQfZ0Z+lFXfep2GktpftEQDVLbnyfS1R5/SSne35rBzcs3l
+        GoY7lcn3f9+optdT8RUNJrmlCwSXqZ/AklzJklYsKLNIXPhDSGAO0D1dUVoFhOG77ru9JY
+        i8AOqEBC5HoQzGRwksUlYLvNaCJ0ONQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1663924080;
+        s=susede2_ed25519; t=1663925883;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3NmV8dBleohq19FUTGjShv3qNCUcjTHlt1m0s7sWLVk=;
-        b=U7EHAzZMP7bk2R61PfblSG7IYbc4Ddv8PLRV2h2xeqC20gD9ZFpGn6nKi00zf3zaGPeOWS
-        aSCwMvZR9gmTbODQ==
+        bh=bndYC5R0I4YgJGO4guaGwuqL0KUo/BZ7Mi4kZdQckaE=;
+        b=1cq16cCNLVPsPcsJejQybf10gm0fZ/HKzz/EgMTKikDllXQPpuy4rYG0qwnsQ8tfTxR+w6
+        egBrBNbiBpwcP+DA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 19F9B13AA5;
-        Fri, 23 Sep 2022 09:08:00 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B8E3A13A00;
+        Fri, 23 Sep 2022 09:38:03 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id e5i3BXB3LWM6HAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Fri, 23 Sep 2022 09:08:00 +0000
-Message-ID: <6e6a5f86-3080-54ed-82ea-80e57e184fd0@suse.cz>
-Date:   Fri, 23 Sep 2022 11:07:59 +0200
+        id sMoWLXt+LWMvKQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 23 Sep 2022 09:38:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 57D2AA0685; Fri, 23 Sep 2022 11:38:03 +0200 (CEST)
+Date:   Fri, 23 Sep 2022 11:38:03 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>, akpm@linux-foundation.org,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
+ eviction path
+Message-ID: <20220923093803.nroajmvn7twuptez@quack3>
+References: <166329933874.2786261.18236541386474985669.stgit@dwillia2-xfh.jf.intel.com>
+ <20220918225731.GG3600936@dread.disaster.area>
+ <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220919212959.GL3600936@dread.disaster.area>
+ <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220921221416.GT3600936@dread.disaster.area>
+ <YyuQI08LManypG6u@nvidia.com>
+ <20220923001846.GX3600936@dread.disaster.area>
+ <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220923021012.GZ3600936@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 00/12] slab: Introduce kmalloc_size_roundup()
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Feng Tang <feng.tang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Alex Elder <elder@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
-        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        dev@openvswitch.org, x86@kernel.org,
-        linux-wireless@vger.kernel.org, llvm@lists.linux.dev,
-        linux-hardening@vger.kernel.org,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>
-References: <20220922031013.2150682-1-keescook@chromium.org>
- <673e425d-1692-ef47-052b-0ff2de0d9c1d@amd.com>
- <202209220845.2F7A050@keescook>
- <cb38655c-2107-bda6-2fa8-f5e1e97eab14@suse.cz>
- <202209221446.5E90AEED@keescook>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <202209221446.5E90AEED@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220923021012.GZ3600936@dread.disaster.area>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/22/22 23:49, Kees Cook wrote:
-> On Thu, Sep 22, 2022 at 11:05:47PM +0200, Vlastimil Babka wrote:
->> On 9/22/22 17:55, Kees Cook wrote:
->> > On Thu, Sep 22, 2022 at 09:10:56AM +0200, Christian König wrote:
->> > [...]
->> > > So when this patch set is about to clean up this use case it should probably
->> > > also take care to remove ksize() or at least limit it so that it won't be
->> > > used for this use case in the future.
->> > 
->> > Yeah, my goal would be to eliminate ksize(), and it seems possible if
->> > other cases are satisfied with tracking their allocation sizes directly.
->> 
->> I think we could leave ksize() to determine the size without a need for
->> external tracking, but from now on forbid callers from using that hint to
->> overflow the allocation size they actually requested? Once we remove the
->> kasan/kfence hooks in ksize() that make the current kinds of usage possible,
->> we should be able to catch any offenders of the new semantics that would appear?
+On Fri 23-09-22 12:10:12, Dave Chinner wrote:
+> On Thu, Sep 22, 2022 at 05:41:08PM -0700, Dan Williams wrote:
+> > Dave Chinner wrote:
+> > > On Wed, Sep 21, 2022 at 07:28:51PM -0300, Jason Gunthorpe wrote:
+> > > > On Thu, Sep 22, 2022 at 08:14:16AM +1000, Dave Chinner wrote:
+> > > > 
+> > > > > Where are these DAX page pins that don't require the pin holder to
+> > > > > also hold active references to the filesystem objects coming from?
+> > > > 
+> > > > O_DIRECT and things like it.
+> > > 
+> > > O_DIRECT IO to a file holds a reference to a struct file which holds
+> > > an active reference to the struct inode. Hence you can't reclaim an
+> > > inode while an O_DIRECT IO is in progress to it. 
+> > > 
+> > > Similarly, file-backed pages pinned from user vmas have the inode
+> > > pinned by the VMA having a reference to the struct file passed to
+> > > them when they are instantiated. Hence anything using mmap() to pin
+> > > file-backed pages (i.e. applications using FSDAX access from
+> > > userspace) should also have a reference to the inode that prevents
+> > > the inode from being reclaimed.
+> > > 
+> > > So I'm at a loss to understand what "things like it" might actually
+> > > mean. Can you actually describe a situation where we actually permit
+> > > (even temporarily) these use-after-free scenarios?
+> > 
+> > Jason mentioned a scenario here:
+> > 
+> > https://lore.kernel.org/all/YyuoE8BgImRXVkkO@nvidia.com/
+> > 
+> > Multi-thread process where thread1 does open(O_DIRECT)+mmap()+read() and
+> > thread2 does memunmap()+close() while the read() is inflight.
 > 
-> That's correct. I spent the morning working my way through the rest of
-> the ksize() users I didn't clean up yesterday, and in several places I
-> just swapped in __ksize(). But that wouldn't even be needed if we just
-> removed the kasan unpoisoning from ksize(), etc.
+> And, ah, what production application does this and expects to be
+> able to process the result of the read() operation without getting a
+> SEGV?
 > 
-> I am tempted to leave it __ksize(), though, just to reinforce that it's
-> not supposed to be used "normally". What do you think?
+> There's a huge difference between an unlikely scenario which we need
+> to work (such as O_DIRECT IO to/from a mmap() buffer at a different
+> offset on the same file) and this sort of scenario where even if we
+> handle it correctly, the application can't do anything with the
+> result and will crash immediately....
 
-Sounds good. Note in linux-next there's now a series in slab.git planned for
-6.1 that moves __ksize() declaration to mm/slab.h to make it more private.
-But we don't want random users outside mm and related kasan/kfence
-subsystems to include mm/slab.h, so we'll have to expose it again instead of
-ksize().
+I'm not sure I fully follow what we are concerned about here. As you've
+written above direct IO holds reference to the inode until it is completed
+(through kiocb->file->inode chain). So direct IO should be safe?
+
+I'd be more worried about stuff like vmsplice() that can add file pages
+into pipe without holding inode alive in any way and keeping them there for
+arbitrarily long time. Didn't we want to add FOLL_LONGTERM to gup executed
+from vmsplice() to avoid issues like this?
+
+> > Sounds plausible to me, but I have not tried to trigger it with a focus
+> > test.
+> 
+> If there really are applications this .... broken, then it's not the
+> responsibility of the filesystem to paper over the low level page
+> reference tracking issues that cause it.
+> 
+> i.e. The underlying problem here is that memunmap() frees the VMA
+> while there are still active task-based references to the pages in
+> that VMA. IOWs, the VMA should not be torn down until the O_DIRECT
+> read has released all the references to the pages mapped into the
+> task address space.
+> 
+> This just doesn't seem like an issue that we should be trying to fix
+> by adding band-aids to the inode life-cycle management.
+
+I agree that freeing VMA while there are pinned pages is ... inconvenient.
+But that is just how gup works since the beginning - the moment you have
+struct page reference, you completely forget about the mapping you've used
+to get to the page. So anything can happen with the mapping after that
+moment. And in case of pages mapped by multiple processes I can easily see
+that one of the processes decides to unmap the page (and it may well be
+that was the initial process that acquired page references) while others
+still keep accessing the page using page references stored in some internal
+structure (RDMA anyone?). I think it will be rather difficult to come up
+with some scheme keeping VMA alive while there are pages pinned without
+regressing userspace which over the years became very much tailored to the
+peculiar gup behavior.
+
+I can imagine we would keep *inode* referenced while there are its pages
+pinned. That should not be that difficult but at least in naive
+implementation that would put rather heavy stress on inode refcount under
+some loads so I don't think that's useful either.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
