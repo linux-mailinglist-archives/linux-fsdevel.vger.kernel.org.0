@@ -2,205 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EAF5E8A02
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 10:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0F395E8A87
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 11:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233221AbiIXISM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Sep 2022 04:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54156 "EHLO
+        id S233607AbiIXJLi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Sep 2022 05:11:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232947AbiIXIRp (ORCPT
+        with ESMTP id S233600AbiIXJLf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Sep 2022 04:17:45 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FA1CC997C
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 01:15:31 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id a10so2402639ljq.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 01:15:31 -0700 (PDT)
+        Sat, 24 Sep 2022 05:11:35 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0830110CA72
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 02:11:32 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id x1so2143942plv.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 02:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=nQomz4ut+7sjfQrrU1jIFAnyWatFfjECi53D3yczEIE=;
-        b=KI9bvqb1+pvOBd4LUHBVRiy4ZY0slRCTRZZlpbG/wkf5BfzAwgC4tzlqpiFF6oyV8H
-         D7v79qgnbhBTO6d2uDyYHRhhdOOhBfa6EEXzsR1OAGK0jLsPlfD7cA9BCk+dEYTkPA3D
-         wWtwWaAoPO0/uTRDdef7+H6/fPQ584Q/+VF22lUeYetTvqY4NLRzWkfcrMuUKAwvI8Ur
-         HORX0nTGI2VWAa2VLCpjSTjWJtDJGVfm/4NoDwUwRQY3sCzLDgDtibX9udsLmyhZz/Ab
-         UsteBe0vnTvVHno/YLL9xbDupvnLo0yMlhWvaVPU8HJaxwp4Vvg2Oz/Cql9apCVP7xpg
-         yn0g==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=i+DbZ92rhFWH/0UDN/zG8OtvV+E4X59I6BjaPOZbEQQ=;
+        b=E5bOhboA/+6BWRDx1UWFFrMvOXvKoaBtGsWYlDmuj8X7rAkhnZpWRHTQ3LNDz7+mZj
+         DgCRrEBR3MyfN1vHwttkAVt9C+sNXNl8rbk7MHBer0lal296QvNAuoGU6ltJiVjNpwJw
+         ZbeC7n9zGD6mKw33TGHmgsxJslMQNugj0HBL4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=nQomz4ut+7sjfQrrU1jIFAnyWatFfjECi53D3yczEIE=;
-        b=Ws8VW1hq0Z+0YuwINL+iF2GrUyBuNrPErl4fqIXWLWZ/vOD3ewMNaDe478ut+NYKfe
-         D+qVx3e2NG+r8JVbafEt0vmZ7IBzGicYhzwe2DHQWcYTOPoRkwWoQfl2wnglkQcSRDwl
-         aDsRHiGvLrvoHGBfUhN5PdooMOwQfbJwq5CFltU8HWR27igKzO2Ak4wuiPOncL1mWuIi
-         J6n3MeXPKrZSI3b5qMn1cFiNuivGXJMAjRzPLlQRh5Aeqp8xIu1RB1+CS1/Rlk7Jc7K5
-         WmQJWOZuy4jpKIpZvrEioNAUxBBG6CWyzieohV0UEuYZmX+yQP/feGEi9lzX/LFx3keD
-         GC8A==
-X-Gm-Message-State: ACrzQf1u9KY837xkAhQ4maNyiCmfCSQ7IUMAqPNMZSct69h5FCoDqtf7
-        fr/UfKqH2oZkCnOTbaLPgCU/BZHrLHqr//HlGNT0KA==
-X-Google-Smtp-Source: AMsMyM51jSACu0ueivCRHFSALnMRIGDYekDLNBr6hGK18mYNepOD+DBZDwtrPTKiiVk4AIl/66dQQBc8ZJ/gjsu15yk=
-X-Received: by 2002:a2e:be8d:0:b0:26c:f4b:47a0 with SMTP id
- a13-20020a2ebe8d000000b0026c0f4b47a0mr4030821ljr.92.1664007329396; Sat, 24
- Sep 2022 01:15:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220923202822.2667581-1-keescook@chromium.org> <20220923202822.2667581-15-keescook@chromium.org>
-In-Reply-To: <20220923202822.2667581-15-keescook@chromium.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 24 Sep 2022 10:15:18 +0200
-Message-ID: <CACT4Y+bg=j9VdteQwrJTNFF_t4EE5uDTMLj07+uMJ9-NcooXGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 14/16] kasan: Remove ksize()-related tests
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=i+DbZ92rhFWH/0UDN/zG8OtvV+E4X59I6BjaPOZbEQQ=;
+        b=HtGMAb2K/xUvnJ+ahtxpGdcMMXxo0/UTUd1oONBp6XEaCfLG9czX/8/jZZUGSCYBcE
+         zxpZuniUO7aDFAxqG75NZi8m0b6drOUIB8JXUkYLX9smMkW+/vjC/2eUoznwYlns/TMF
+         hBX2DGCjsZZ8cpIT0iSgTrBv14lqBWC+KJE/7wpAK1ve9h7aCV4DuZbNalhyl17rg3Zr
+         5LWvykC5yyItUlBFMmceSza+NptnMtAhFVSAwkuv3PRM0SXnyhKxT6SwAnvwKkVLABOk
+         WWAzEenVp/nlZLYlz22h9Ptps5eiWOPvsbMt5XSYH/GeUNp6UCtEauSBWuMFvAIxzkn3
+         OohA==
+X-Gm-Message-State: ACrzQf11Ir8hE1j++GhjwKrpyQcWFNivbSVC0ZxkToJFqxP6dIjgavjD
+        g2mVY3lYa5CwjglZvkudigHUPA==
+X-Google-Smtp-Source: AMsMyM7r8bq+DxJ2Zg4nmPe+hShYURXJSZpppn8rw6aZz5OkkmasnCi/hTE7Baskd4vD2R6zimHrAA==
+X-Received: by 2002:a17:902:d4c9:b0:178:6d7b:c36f with SMTP id o9-20020a170902d4c900b001786d7bc36fmr12510856plg.19.1664010691458;
+        Sat, 24 Sep 2022 02:11:31 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b13-20020aa7950d000000b005546fe4b127sm5590232pfp.78.2022.09.24.02.11.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Sep 2022 02:11:30 -0700 (PDT)
+Date:   Sat, 24 Sep 2022 02:11:29 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        David Rientjes <rientjes@google.com>,
         "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
         Hyeonggon Yoo <42.hyeyoo@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alex Elder <elder@kernel.org>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Jesse Brandeburg <jesse.brandeburg@intel.com>,
         Daniel Micay <danielmicay@gmail.com>,
         Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
         Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
         linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
         intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
         x86@kernel.org, llvm@lists.linux.dev,
         linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Subject: Re: [PATCH v2 03/16] skbuff: Proactively round up to kmalloc bucket
+ size
+Message-ID: <202209240208.84F847F3B@keescook>
+References: <20220923202822.2667581-1-keescook@chromium.org>
+ <20220923202822.2667581-4-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220923202822.2667581-4-keescook@chromium.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 23 Sept 2022 at 22:28, Kees Cook <keescook@chromium.org> wrote:
->
-> In preparation for no longer unpoisoning in ksize(), remove the behavioral
-> self-tests for ksize().
->
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: kasan-dev@googlegroups.com
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  lib/test_kasan.c  | 42 ------------------------------------------
->  mm/kasan/shadow.c |  4 +---
->  2 files changed, 1 insertion(+), 45 deletions(-)
->
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index 58c1b01ccfe2..bdd0ced8f8d7 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -753,46 +753,6 @@ static void kasan_global_oob_left(struct kunit *test)
->         KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
->  }
->
-> -/* Check that ksize() makes the whole object accessible. */
-> -static void ksize_unpoisons_memory(struct kunit *test)
-> -{
-> -       char *ptr;
-> -       size_t size = 123, real_size;
-> -
-> -       ptr = kmalloc(size, GFP_KERNEL);
-> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> -       real_size = ksize(ptr);
-> -
-> -       OPTIMIZER_HIDE_VAR(ptr);
-> -
-> -       /* This access shouldn't trigger a KASAN report. */
- > -       ptr[size] = 'x';
+On Fri, Sep 23, 2022 at 01:28:09PM -0700, Kees Cook wrote:
+> Instead of discovering the kmalloc bucket size _after_ allocation, round
+> up proactively so the allocation is explicitly made for the full size,
+> allowing the compiler to correctly reason about the resulting size of
+> the buffer through the existing __alloc_size() hint.
+> 
+> This will allow for kernels built with CONFIG_UBSAN_BOUNDS or the
+> coming dynamic bounds checking under CONFIG_FORTIFY_SOURCE to gain
+> back the __alloc_size() hints that were temporarily reverted in commit
+> 93dd04ab0b2b ("slab: remove __alloc_size attribute from __kmalloc_track_caller")
+> 
+> Additionally tries to normalize size variables to u32 from int. Most
+> interfaces are using "int", but notably __alloc_skb uses unsigned int.
+> 
+> Also fix some reverse Christmas tree and comments while touching nearby
+> code.
 
-I would rather keep the tests and update to the new behavior. We had
-bugs in ksize, we need test coverage.
-I assume ptr[size] access must now produce an error even after ksize.
+Something in this patch is breaking things -- I've refactored it again
+to avoid overwriting the incoming size argument, and instead add a
+dedicated outgoing size variable. Here's what will be v3 ...
+
+---
+ net/core/skbuff.c | 41 ++++++++++++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 19 deletions(-)
+
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 974bbbbe7138..9b5a9fb69d9d 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -346,11 +346,12 @@ EXPORT_SYMBOL(napi_build_skb);
+  * memory is free
+  */
+ static void *kmalloc_reserve(size_t size, gfp_t flags, int node,
+-			     bool *pfmemalloc)
++			     bool *pfmemalloc, size_t *alloc_size)
+ {
+ 	void *obj;
+ 	bool ret_pfmemalloc = false;
+ 
++	size = kmalloc_size_roundup(size);
+ 	/*
+ 	 * Try a regular allocation, when that fails and we're not entitled
+ 	 * to the reserves, fail.
+@@ -369,6 +370,7 @@ static void *kmalloc_reserve(size_t size, gfp_t flags, int node,
+ 	if (pfmemalloc)
+ 		*pfmemalloc = ret_pfmemalloc;
+ 
++	*alloc_size = size;
+ 	return obj;
+ }
+ 
+@@ -400,7 +402,7 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
+ {
+ 	struct kmem_cache *cache;
+ 	struct sk_buff *skb;
+-	unsigned int osize;
++	size_t alloc_size;
+ 	bool pfmemalloc;
+ 	u8 *data;
+ 
+@@ -427,15 +429,15 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
+ 	 */
+ 	size = SKB_DATA_ALIGN(size);
+ 	size += SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+-	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
+-	if (unlikely(!data))
+-		goto nodata;
+-	/* kmalloc(size) might give us more room than requested.
++	/* kmalloc(size) might give us more room than requested, so
++	 * allocate the true bucket size up front.
+ 	 * Put skb_shared_info exactly at the end of allocated zone,
+ 	 * to allow max possible filling before reallocation.
+ 	 */
+-	osize = ksize(data);
+-	size = SKB_WITH_OVERHEAD(osize);
++	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc, &alloc_size);
++	if (unlikely(!data))
++		goto nodata;
++	size = SKB_WITH_OVERHEAD(alloc_size);
+ 	prefetchw(data + size);
+ 
+ 	/*
+@@ -444,7 +446,7 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
+ 	 * the tail pointer in struct sk_buff!
+ 	 */
+ 	memset(skb, 0, offsetof(struct sk_buff, tail));
+-	__build_skb_around(skb, data, osize);
++	__build_skb_around(skb, data, alloc_size);
+ 	skb->pfmemalloc = pfmemalloc;
+ 
+ 	if (flags & SKB_ALLOC_FCLONE) {
+@@ -1709,6 +1711,7 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
+ {
+ 	int i, osize = skb_end_offset(skb);
+ 	int size = osize + nhead + ntail;
++	size_t alloc_size;
+ 	long off;
+ 	u8 *data;
+ 
+@@ -1723,10 +1726,10 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
+ 	if (skb_pfmemalloc(skb))
+ 		gfp_mask |= __GFP_MEMALLOC;
+ 	data = kmalloc_reserve(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+-			       gfp_mask, NUMA_NO_NODE, NULL);
++			       gfp_mask, NUMA_NO_NODE, NULL, &alloc_size);
+ 	if (!data)
+ 		goto nodata;
+-	size = SKB_WITH_OVERHEAD(ksize(data));
++	size = SKB_WITH_OVERHEAD(alloc_size);
+ 
+ 	/* Copy only real data... and, alas, header. This should be
+ 	 * optimized for the cases when header is void.
+@@ -6063,19 +6066,19 @@ static int pskb_carve_inside_header(struct sk_buff *skb, const u32 off,
+ 	int i;
+ 	int size = skb_end_offset(skb);
+ 	int new_hlen = headlen - off;
++	size_t alloc_size;
+ 	u8 *data;
+ 
+ 	size = SKB_DATA_ALIGN(size);
+ 
+ 	if (skb_pfmemalloc(skb))
+ 		gfp_mask |= __GFP_MEMALLOC;
+-	data = kmalloc_reserve(size +
+-			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+-			       gfp_mask, NUMA_NO_NODE, NULL);
++	data = kmalloc_reserve(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
++			       gfp_mask, NUMA_NO_NODE, NULL, &alloc_size);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	size = SKB_WITH_OVERHEAD(ksize(data));
++	size = SKB_WITH_OVERHEAD(alloc_size);
+ 
+ 	/* Copy real data, and all frags */
+ 	skb_copy_from_linear_data_offset(skb, off, data, new_hlen);
+@@ -6184,18 +6187,18 @@ static int pskb_carve_inside_nonlinear(struct sk_buff *skb, const u32 off,
+ 	u8 *data;
+ 	const int nfrags = skb_shinfo(skb)->nr_frags;
+ 	struct skb_shared_info *shinfo;
++	size_t alloc_size;
+ 
+ 	size = SKB_DATA_ALIGN(size);
+ 
+ 	if (skb_pfmemalloc(skb))
+ 		gfp_mask |= __GFP_MEMALLOC;
+-	data = kmalloc_reserve(size +
+-			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+-			       gfp_mask, NUMA_NO_NODE, NULL);
++	data = kmalloc_reserve(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
++			       gfp_mask, NUMA_NO_NODE, NULL, &alloc_size);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	size = SKB_WITH_OVERHEAD(ksize(data));
++	size = SKB_WITH_OVERHEAD(alloc_size);
+ 
+ 	memcpy((struct skb_shared_info *)(data + size),
+ 	       skb_shinfo(skb), offsetof(struct skb_shared_info, frags[0]));
+-- 
+2.34.1
 
 
-> -       /* This one must. */
-> -       KUNIT_EXPECT_KASAN_FAIL(test, ((volatile char *)ptr)[real_size]);
-> -
-> -       kfree(ptr);
-> -}
-> -
-> -/*
-> - * Check that a use-after-free is detected by ksize() and via normal accesses
-> - * after it.
-> - */
-> -static void ksize_uaf(struct kunit *test)
-> -{
-> -       char *ptr;
-> -       int size = 128 - KASAN_GRANULE_SIZE;
-> -
-> -       ptr = kmalloc(size, GFP_KERNEL);
-> -       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> -       kfree(ptr);
-> -
-> -       OPTIMIZER_HIDE_VAR(ptr);
-> -       KUNIT_EXPECT_KASAN_FAIL(test, ksize(ptr));
-
-This is still a bug that should be detected, right? Calling ksize on a
-freed pointer is a bug.
-
-> -       KUNIT_EXPECT_KASAN_FAIL(test, ((volatile char *)ptr)[0]);
-> -       KUNIT_EXPECT_KASAN_FAIL(test, ((volatile char *)ptr)[size]);
-> -}
-> -
->  static void kasan_stack_oob(struct kunit *test)
->  {
->         char stack_array[10];
-> @@ -1392,8 +1352,6 @@ static struct kunit_case kasan_kunit_test_cases[] = {
->         KUNIT_CASE(kasan_stack_oob),
->         KUNIT_CASE(kasan_alloca_oob_left),
->         KUNIT_CASE(kasan_alloca_oob_right),
-> -       KUNIT_CASE(ksize_unpoisons_memory),
-> -       KUNIT_CASE(ksize_uaf),
->         KUNIT_CASE(kmem_cache_double_free),
->         KUNIT_CASE(kmem_cache_invalid_free),
->         KUNIT_CASE(kmem_cache_double_destroy),
-> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> index 0e3648b603a6..0895c73e9b69 100644
-> --- a/mm/kasan/shadow.c
-> +++ b/mm/kasan/shadow.c
-> @@ -124,9 +124,7 @@ void kasan_unpoison(const void *addr, size_t size, bool init)
->         addr = kasan_reset_tag(addr);
->
->         /*
-> -        * Skip KFENCE memory if called explicitly outside of sl*b. Also note
-> -        * that calls to ksize(), where size is not a multiple of machine-word
-> -        * size, would otherwise poison the invalid portion of the word.
-> +        * Skip KFENCE memory if called explicitly outside of sl*b.
->          */
->         if (is_kfence_address(addr))
->                 return;
-> --
-> 2.34.1
+-- 
+Kees Cook
