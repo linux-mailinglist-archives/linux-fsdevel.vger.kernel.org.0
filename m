@@ -2,113 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 112A45E88CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 08:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9EE5E89EB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 10:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233121AbiIXGoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Sep 2022 02:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42698 "EHLO
+        id S233484AbiIXIPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Sep 2022 04:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbiIXGoM (ORCPT
+        with ESMTP id S233906AbiIXINV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Sep 2022 02:44:12 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1504811D0D1;
-        Fri, 23 Sep 2022 23:44:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id EDA4DCE0A1D;
-        Sat, 24 Sep 2022 06:44:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B217FC433D6;
-        Sat, 24 Sep 2022 06:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1664001847;
-        bh=XU+g1TD85eu+F7lKIDh9lt03VNI1wjjOGHmpCB5PpDQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DuBuothuIcm+Rf/8d4hwbhg/hA+Gss6N8vAry1R91LV411DY530k21Lse+D8jK9GG
-         RpObjQM3WoK71AFU96BN6LRe54sLdG/uz1FMIPcnkAD74N/BuW+r/s/f/dz+lbhX0r
-         cXIqKeTiJ/jKqhCUt4kEWx27bLxhdSydHSx5SXog=
-Date:   Sat, 24 Sep 2022 08:44:38 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jiri Slaby <jirislaby@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Sven Schnelle <svens@stackframe.org>,
-        John David Anglin <dave.anglin@bell.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        linux-parisc@vger.kernel.org,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH printk 00/18] preparation for threaded/atomic printing
-Message-ID: <Yy6nVpd3+yogT5pJ@kroah.com>
-References: <20220924000454.3319186-1-john.ogness@linutronix.de>
+        Sat, 24 Sep 2022 04:13:21 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE3CD33CD
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 01:10:21 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id j20-20020a6b3114000000b006a3211a0ff0so1208887ioa.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 01:10:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=yvBPMshcz/kWE8Vw7kHmZiN4GCHCWCuh24HP66lZfVM=;
+        b=KKsmCtfJwiW/Rj0xmRc0hPPn87WNnk8b5nBmTe+a7YQTfghCVV9Y9HS09UAMk101im
+         nvD+QEJNG3W5U1K9u981qHOV1EDqhfEh57XvuPWG57pEIe24CmjoMqETVDAPjouceVOQ
+         bA0xqKW2fNTueyN+gFLFoVIV6iEg9QS5VV3MxSvfqOuCz89VA4JcQ2hKcmRnjBqoKMEw
+         i2/qni30/gv/dnJeKXB5Ph1jUDGMmzaB/+l1boemqNB9OGkdPwAO3eYk7W+FuByde1AP
+         xPvAx5IDMYYYAD160Y4qI/vF9wvpWQartTnU3BYXIvNWI32YanIg5TOQRGVHYwcBusDy
+         FDKQ==
+X-Gm-Message-State: ACrzQf1W/BIv43a9gQF7s5y6fVNlHP1y4ttaajnh0yjIE5ftMY6MRtrn
+        6hhiryxJyFzgtnE89CJRjb/pl3fJv99YBEgXDziK7PhZSY9d
+X-Google-Smtp-Source: AMsMyM7CAtqrAy9GVe0W8ayLWn3ZmJUJ4/EJf0NWqoqB1mRuIwWq7418bQ156QC86cfDD/yo+HrUqGT2NeAbNc9h92VNUDzXj64e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220924000454.3319186-1-john.ogness@linutronix.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:94ea:0:b0:35b:25e2:c57d with SMTP id
+ x97-20020a0294ea000000b0035b25e2c57dmr6723905jah.22.1664006918150; Sat, 24
+ Sep 2022 01:08:38 -0700 (PDT)
+Date:   Sat, 24 Sep 2022 01:08:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000042a5d005e967cd34@google.com>
+Subject: [syzbot] invalid opcode in writeback_single_inode
+From:   syzbot <syzbot+15cb24a539075fc4c472@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 24, 2022 at 02:10:36AM +0206, John Ogness wrote:
-> Hi,
-> 
-> This series is essentially the first 18 patches of tglx's RFC series
-> [0] with only minor changes in comments and commit messages. It's
-> purpose is to lay the groundwork for the upcoming threaded/atomic
-> console printing posted as the RFC series and demonstrated at
-> LPC2022 [1].
-> 
-> This series is interesting for mainline because it cleans up various
-> code and documentation quirks discovered while working on the new
-> console printing implementation.
-> 
-> Aside from cleanups, the main features introduced here are:
-> 
-> - Converts the console's DIY linked list implementation to hlist.
-> 
-> - Introduces a console list lock (mutex) so that readers (such as
->   /proc/consoles) can safely iterate the consoles without blocking
->   console printing.
-> 
-> - Adds SRCU support to the console list to prepare for safe console
->   list iterating from any context.
-> 
-> - Refactors buffer handling to prepare for per-console, per-cpu,
->   per-context atomic printing.
-> 
-> The series has the following parts:
-> 
->    Patches  1 - 5:   Cleanups
-> 
->    Patches  6 - 12:  Locking and list conversion
-> 
->    Patches 13 - 18:  Improved output buffer handling to prepare for
->                      code sharing
-> 
+Hello,
 
-These all look great to me, thanks for resending them.
+syzbot found the following issue on:
 
-Do you want them to go through my serial/tty tree, or is there some
-other tree to take them through (printk?)
+HEAD commit:    dc164f4fb00a Merge tag 'for-linus-6.0-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=132e8dd5080000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
+dashboard link: https://syzkaller.appspot.com/bug?extid=15cb24a539075fc4c472
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-If they are to go through someone else's tree, feel free to add:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Downloadable assets:
+disk image: https://storage.googleapis.com/853950e33581/disk-dc164f4f.raw.xz
+vmlinux: https://storage.googleapis.com/1359f09c5a19/vmlinux-dc164f4f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+15cb24a539075fc4c472@syzkaller.appspotmail.com
+
+loop5: detected capacity change from 0 to 8189
+ntfs3: loop5: Different NTFS' sector size (1024) and media sector size (512)
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 11292 Comm: syz-executor.5 Not tainted 6.0.0-rc6-syzkaller-00045-gdc164f4fb00a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/16/2022
+RIP: 0010:spin_lock include/linux/spinlock.h:349 [inline]
+RIP: 0010:writeback_single_inode+0x2e/0x4c0 fs/fs-writeback.c:1676
+Code: 41 55 41 54 49 89 f4 55 48 89 fd 53 4c 8d b5 88 00 00 00 4c 8d ad 08 02 00 00 48 83 ec 08 e8 b9 12 99 ff 4c 89 f7 e8 31 f0 a0 <07> be 04 00 00 00 4c 89 ef e8 94 b3 e4 ff 4c 89 ea 48 b8 00 00 00
+RSP: 0018:ffffc90004dd7a10 EFLAGS: 00010292
+RAX: 0000000000000000 RBX: 1ffff920009baf4b RCX: ffffffff815f1e80
+RDX: 1ffff11006c6606d RSI: 0000000000000004 RDI: ffffc90004dd79a0
+RBP: ffff8880363302d0 R08: 0000000000000001 R09: 0000000000000003
+R10: fffff520009baf34 R11: 0000000000000000 R12: ffffc90004dd7a88
+R13: ffff8880363304d8 R14: ffff888036330358 R15: ffff8880363303a8
+FS:  00007efc6583b700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020075000 CR3: 000000001d8c1000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ write_inode_now+0x16a/0x1e0 fs/fs-writeback.c:2723
+ iput_final fs/inode.c:1735 [inline]
+ iput.part.0+0x45b/0x810 fs/inode.c:1774
+ iput+0x58/0x70 fs/inode.c:1764
+ ntfs_fill_super+0x2e89/0x37f0 fs/ntfs3/super.c:1190
+ get_tree_bdev+0x440/0x760 fs/super.c:1323
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1530
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1326/0x1e20 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7efc6468bb9a
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efc6583af88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007efc6468bb9a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007efc6583afe0
+RBP: 00007efc6583b020 R08: 00007efc6583b020 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
+R13: 0000000020000100 R14: 00007efc6583afe0 R15: 000000002007c6a0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:spin_lock include/linux/spinlock.h:349 [inline]
+RIP: 0010:writeback_single_inode+0x2e/0x4c0 fs/fs-writeback.c:1676
+Code: 41 55 41 54 49 89 f4 55 48 89 fd 53 4c 8d b5 88 00 00 00 4c 8d ad 08 02 00 00 48 83 ec 08 e8 b9 12 99 ff 4c 89 f7 e8 31 f0 a0 <07> be 04 00 00 00 4c 89 ef e8 94 b3 e4 ff 4c 89 ea 48 b8 00 00 00
+RSP: 0018:ffffc90004dd7a10 EFLAGS: 00010292
+RAX: 0000000000000000 RBX: 1ffff920009baf4b RCX: ffffffff815f1e80
+RDX: 1ffff11006c6606d RSI: 0000000000000004 RDI: ffffc90004dd79a0
+RBP: ffff8880363302d0 R08: 0000000000000001 R09: 0000000000000003
+R10: fffff520009baf34 R11: 0000000000000000 R12: ffffc90004dd7a88
+R13: ffff8880363304d8 R14: ffff888036330358 R15: ffff8880363303a8
+FS:  00007efc6583b700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020075000 CR3: 000000001d8c1000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
