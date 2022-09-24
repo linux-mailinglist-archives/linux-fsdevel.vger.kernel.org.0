@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B3D5E8877
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 07:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 112A45E88CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 08:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233308AbiIXFCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Sep 2022 01:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
+        id S233121AbiIXGoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Sep 2022 02:44:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233243AbiIXFCf (ORCPT
+        with ESMTP id S232228AbiIXGoM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Sep 2022 01:02:35 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2EB7E3690
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 22:02:31 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id z13so4377796ejp.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Sep 2022 22:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=lnK9ND6W9VWlRV4K17f6V2rxDL8KPokQcYAEQ4YrGUI=;
-        b=kdqhTuPdJFFYU+BjnkvAJ0miNXg1BVtxKoL/2wgyYDsMBrTfpnCTAIuF6FiATx7WMo
-         8MD8CP9DbGcAcfGXIqxps5uRgn5jNVNEjPqhWFu87NFZTCM3ZqrqEHXJGyZqzXht+HbQ
-         D2IQ+DnKOrp/KsmX3PL/IoDFMToWqr1d9k2a4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=lnK9ND6W9VWlRV4K17f6V2rxDL8KPokQcYAEQ4YrGUI=;
-        b=VDPdN0MXZGmYy/BmJ9i117ANUBQXnmqsoRGuZRSzDBRUiIDm6XtbUXCcxbrc3nD0KX
-         AM6lCU0QfUdmY/9qOLsiHaF1DYznnfHQbqWRMw3MW1sRjhhugQOIzHUtGTFnWzKeMJdv
-         HboFpBd1TIkYjXoFi+wxwC1hJhS0SoZ5jDIciNIsHuzB97WFF91DoOOGV89z76OdEUwl
-         CHJUZNDXds+KRXGtVqEpSChmBTV9VL0BrnlLDhvot+lmCxGcJ/007Gud88/HxmotvIQQ
-         WcqRtibwDGyt3x0BpzOQ+swlCqzSmYQgg5oMNoNjz72YPWhfxl0XxgiET45L5CJTwcBT
-         4ECA==
-X-Gm-Message-State: ACrzQf0+rp9YDqYwE/24PXhqjpkJ/zRphwLjn5vzGGc6i43P99aFkSoA
-        0tW8L6UJfx0UXBfUVYd6kcIXB5pfRnga1pYj5kFkVw==
-X-Google-Smtp-Source: AMsMyM6VhAab3ZNJ9bRncL8zsyH307G7Rn/ooPCJn8naVImRtTEG8eD2AmcUY1t7OK9VWtf/E5XQrKIK8//cF5zkV30=
-X-Received: by 2002:a17:906:4783:b0:780:5be5:c81b with SMTP id
- cw3-20020a170906478300b007805be5c81bmr10039218ejc.76.1663995750525; Fri, 23
- Sep 2022 22:02:30 -0700 (PDT)
+        Sat, 24 Sep 2022 02:44:12 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1504811D0D1;
+        Fri, 23 Sep 2022 23:44:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id EDA4DCE0A1D;
+        Sat, 24 Sep 2022 06:44:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B217FC433D6;
+        Sat, 24 Sep 2022 06:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1664001847;
+        bh=XU+g1TD85eu+F7lKIDh9lt03VNI1wjjOGHmpCB5PpDQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DuBuothuIcm+Rf/8d4hwbhg/hA+Gss6N8vAry1R91LV411DY530k21Lse+D8jK9GG
+         RpObjQM3WoK71AFU96BN6LRe54sLdG/uz1FMIPcnkAD74N/BuW+r/s/f/dz+lbhX0r
+         cXIqKeTiJ/jKqhCUt4kEWx27bLxhdSydHSx5SXog=
+Date:   Sat, 24 Sep 2022 08:44:38 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Sven Schnelle <svens@stackframe.org>,
+        John David Anglin <dave.anglin@bell.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        linux-parisc@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH printk 00/18] preparation for threaded/atomic printing
+Message-ID: <Yy6nVpd3+yogT5pJ@kroah.com>
+References: <20220924000454.3319186-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
-References: <20220922084442.2401223-1-mszeredi@redhat.com> <20220922084442.2401223-5-mszeredi@redhat.com>
- <YyyLyY3TUG6IaU3Y@ZenIV> <CAJfpegsEi8VSZOXJDbFatvHsKMjuXPCm42GApRG_s1EZobdCAg@mail.gmail.com>
- <Yy6OASz8zZIpBRNk@ZenIV>
-In-Reply-To: <Yy6OASz8zZIpBRNk@ZenIV>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Sat, 24 Sep 2022 07:02:19 +0200
-Message-ID: <CAJfpegv39g--QB=ks9oFRajbCveO+q0nwH3caZz1_Sw4TLiNww@mail.gmail.com>
-Subject: Re: [PATCH v4 04/10] cachefiles: only pass inode to
- *mark_inode_inuse() helpers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Yu-li Lin <yulilin@google.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220924000454.3319186-1-john.ogness@linutronix.de>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,31 +67,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 24 Sept 2022 at 06:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Sep 23, 2022 at 05:42:01PM +0200, Miklos Szeredi wrote:
-> > On Thu, 22 Sept 2022 at 18:22, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > > I would rather leave unobfuscating that to a separate patch,
-> > > if not a separate series, but since you are touching
-> > > cachefiles_unmark_inode_in_use() anyway, might as well
-> > > get rid of if (inode) in there - it's equivalent to if (true).
-> >
-> > Okay, pushed updated version (also with
-> > cachefiles_do_unmark_inode_in_use() un-open-coding) to:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#fuse-tmpfile-v5
->
-> OK...  I can live with that.  Could you
-> replace
->         cachefiles_do_unmark_inode_in_use(object, file_inode(file));
-> with
->         cachefiles_do_unmark_inode_in_use(object, inode);
-> in there and repush?  Or I could do cherry-pick and fix it up...
+On Sat, Sep 24, 2022 at 02:10:36AM +0206, John Ogness wrote:
+> Hi,
+> 
+> This series is essentially the first 18 patches of tglx's RFC series
+> [0] with only minor changes in comments and commit messages. It's
+> purpose is to lay the groundwork for the upcoming threaded/atomic
+> console printing posted as the RFC series and demonstrated at
+> LPC2022 [1].
+> 
+> This series is interesting for mainline because it cleans up various
+> code and documentation quirks discovered while working on the new
+> console printing implementation.
+> 
+> Aside from cleanups, the main features introduced here are:
+> 
+> - Converts the console's DIY linked list implementation to hlist.
+> 
+> - Introduces a console list lock (mutex) so that readers (such as
+>   /proc/consoles) can safely iterate the consoles without blocking
+>   console printing.
+> 
+> - Adds SRCU support to the console list to prepare for safe console
+>   list iterating from any context.
+> 
+> - Refactors buffer handling to prepare for per-console, per-cpu,
+>   per-context atomic printing.
+> 
+> The series has the following parts:
+> 
+>    Patches  1 - 5:   Cleanups
+> 
+>    Patches  6 - 12:  Locking and list conversion
+> 
+>    Patches 13 - 18:  Improved output buffer handling to prepare for
+>                      code sharing
+> 
 
-Done.  Head is now:
+These all look great to me, thanks for resending them.
 
-7d37539037c2 ("fuse: implement ->tmpfile()")
+Do you want them to go through my serial/tty tree, or is there some
+other tree to take them through (printk?)
 
-Thanks,
-Miklos
+If they are to go through someone else's tree, feel free to add:
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
