@@ -2,69 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF6C5E8FA2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 22:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08BB95E8FDA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Sep 2022 23:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233734AbiIXU0A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Sep 2022 16:26:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
+        id S230061AbiIXVle convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Sep 2022 17:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbiIXUZ6 (ORCPT
+        with ESMTP id S229458AbiIXVle (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Sep 2022 16:25:58 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF0C73AE7B
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 13:25:57 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id u6-20020a056830118600b006595e8f9f3fso2135428otq.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 13:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
-         :subject:date;
-        bh=m7KtlTRQ/940R7kWNpP3Vz5Bs4+fmR2cZz2mXb6ruwc=;
-        b=o/j6TYB0hLCyOCwHzpUw/Hx4WFeL4LjHBvDhaTRxy9nD5L9Yj5MY6N/S5xXVTz9Ca+
-         qp/aCH97Mro/J3JLa5sAUX7LR3H0y5Acotuh0v1QpM9vpyAa0/9In5kBDrokKy3xmTG8
-         szZSroRthPVEHP0X9LuZ3BLZaEqhwjL3w12FmEY8xgW4OBRutjtOaifcQdn4QIykPu1l
-         JNC5uDB+dPiW4X3vdK8emHl5q/HgAlWHlpfhRrtrOxrMoh+d/83RsCd79+65336W20h+
-         xFDm2i6ZIFdNiREg3eBOxB62f/4TmeTQjzPllYmkg3wFDnl1iQjmjeVerlqMqhYd6Hpu
-         d1yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=m7KtlTRQ/940R7kWNpP3Vz5Bs4+fmR2cZz2mXb6ruwc=;
-        b=7bi7HPFa2msrnPfOtLmQUvzT0hZGpDmEqWzZrr+wmxb0A0fjqLpbVIIXTi4qKUF0Oh
-         UJY7VGQQK0zAIE2XLwkQaAiegmc/IgpwXDPMBm+nsKLZfqSnt+/XbvdNRUBFm6XmcWpA
-         0/DyMfa+DGGY6af3yqbtPpO82oWtTCYLLU50cg8UPhrYMY2mwxLzVoG+MFOZ6QPhCE2S
-         0nC6hkessxdLZ6orteXe/GhlbqudZDCy0pv3MXtuFa8N9InsWrr+kQWfep/ocRy06SlH
-         /9n6NdnyR1Snn+2bbqibUWse5Oa1I8jOGGX52YbZ5Ark6ksI86ZXfKBacz6UGQ02EZ8D
-         1RfQ==
-X-Gm-Message-State: ACrzQf3ot1hnqwAgKdoSI5GF2uYLOqcOMtmPipA77sQz7T7I9NzJu6OT
-        kCGtWHXG/MMxNKJRicwM8xSbEFfd2KBhD/c3v0g=
-X-Google-Smtp-Source: AMsMyM6z51yFXoEklRool/IqRRMiGtlU3wa3BoMhOtLoHawAZv7ySC98Y2CXOkjdMuUTD+uAtdX7/C5OuhlEU68beUc=
-X-Received: by 2002:a9d:7d81:0:b0:655:d419:54f1 with SMTP id
- j1-20020a9d7d81000000b00655d41954f1mr6734330otn.177.1664051156968; Sat, 24
- Sep 2022 13:25:56 -0700 (PDT)
+        Sat, 24 Sep 2022 17:41:34 -0400
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B64F45982;
+        Sat, 24 Sep 2022 14:41:31 -0700 (PDT)
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay01.hostedemail.com (Postfix) with ESMTP id AD6B21C5C3A;
+        Sat, 24 Sep 2022 21:41:29 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id A97AA6000A;
+        Sat, 24 Sep 2022 21:41:27 +0000 (UTC)
+Message-ID: <4501be92173de178fe0a4207bbe9b5794dde2ef4.camel@perches.com>
+Subject: Re: [PATCH] virtio_fs.c: add check kmalloc return
+From:   Joe Perches <joe@perches.com>
+To:     liujing <liujing@cmss.chinamobile.com>, vgoyal@redhat.com
+Cc:     stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 24 Sep 2022 14:41:26 -0700
+In-Reply-To: <20220924141728.3343-1-liujing@cmss.chinamobile.com>
+References: <20220924141728.3343-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Sender: anitaabdallae2017@gmail.com
-Received: by 2002:a05:6820:1620:0:0:0:0 with HTTP; Sat, 24 Sep 2022 13:25:56
- -0700 (PDT)
-From:   Monica Karim <monicakarima38@gmail.com>
-Date:   Sat, 24 Sep 2022 21:25:56 +0100
-X-Google-Sender-Auth: M8R9IfuH1a2dr9wfueHCFNfAvTw
-Message-ID: <CALrj+s9ER815OAHKR8TATZJFKZPk15BNbVkG40UbsBtgKK9M4Q@mail.gmail.com>
-Subject: Hi
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.1 required=5.0 tests=BAYES_40,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Rspamd-Queue-Id: A97AA6000A
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_NONE,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Stat-Signature: i9x4t7rfwx3o3eh7rwdk4hhjbakyp31p
+X-Rspamd-Server: rspamout05
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+OMW+9Os61D9KqHecZ0xpvLQTaOdFP+zw=
+X-HE-Tag: 1664055687-37209
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-How are you? I am Monica a Nurse from Netherlands .What about you?I
-need to discuss very important thing with you.
+On Sat, 2022-09-24 at 10:17 -0400, liujing wrote:
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+
+Generally it's better to have a commit message
+
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+[]
+> @@ -989,6 +989,10 @@ __releases(fiq->lock)
+>  
+>  	/* Allocate a buffer for the request */
+>  	forget = kmalloc(sizeof(*forget), GFP_NOFS | __GFP_NOFAIL);
+> +
+
+A blank line is not typically used here.
+
+> +	if (forget == NULL)
+> +		return -ENOMEM;
+
+And this is unnecessary as __GFP_NOFAIL will do what it says.
+
+include/linux/gfp_types.h:
+
+ * %__GFP_NOFAIL: The VM implementation _must_ retry infinitely: the caller
+ * cannot handle allocation failures. The allocation could block
+ * indefinitely but will never return with failure. Testing for
+ * failure is pointless.
+
