@@ -2,79 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2756E5E9556
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 20:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8F05E96B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 00:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231841AbiIYSKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 14:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39846 "EHLO
+        id S229824AbiIYWxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 18:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233030AbiIYSK0 (ORCPT
+        with ESMTP id S229722AbiIYWxP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 14:10:26 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D387F1C92C;
-        Sun, 25 Sep 2022 11:10:09 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id nb11so9919097ejc.5;
-        Sun, 25 Sep 2022 11:10:09 -0700 (PDT)
+        Sun, 25 Sep 2022 18:53:15 -0400
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49332A712;
+        Sun, 25 Sep 2022 15:53:14 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id 63so5001503vse.2;
+        Sun, 25 Sep 2022 15:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=WL4FcDDRn7CBCsx9iuFDQKIHfIbZOER+6dU8Fb4faT0=;
-        b=Riit7OVBKB4Av+C9OabXAo7a+1d3a99IErAGLHVW1ZlmpL7PAuSbnT/JFfNBg3xbkC
-         z1ebmIcHnIoGRftEeH9N5t6Xo5eBclCP+21x/VrnZgCZgaJeYSVSWdP+kHFCvn/c7vNe
-         AdX5ovMVdZprIyPwKtglCm4D2nSY20IqG6wyA4zXq+hCR3fPhBQm8ktn13Y0FTRDV3fx
-         nT0zZ0rj2+k81AsSiDE+zDvYR1k7A3pbZhOICRJLci0unPOdlfnKdGxmzTQzxdo4YcA0
-         sPC7Lm+OLSmQ5uhMGHmOX3nYzjmvSfej0PSbtI+rde7LNks8EvX1W7q9GDAeoNk8bzsW
-         +xhA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=6pp/I+EL+ZGpawFf74Dn6cDUTXmZe9ODqMPcA6Z+HGI=;
+        b=jPtfisITLAgBXutOTYnPEtR25wWSafODamyAJO4zz+ElcW+rgFb2K3CPLpwAF9vDzH
+         tyHCptr7GDRBHJZ53D3Nosfwmm59aPlC/fx9C5+1PMG9jwk8VvCh6Ih72EdibvANxAFs
+         +W8+oZQyfVG6jV5c4e05YzprFmwmHmG+CyVUZwNttUc7JtBTGcgRB/SAPbIzb5LZtaxu
+         77raljPNTc3p242/p3QUF0keFMrmFVn301DKDqIkxUWYsl53JzjMSMB+Vdk6pR6xUdx9
+         2q4qBHHd9aide3N7yc/p0NmWWorIHOhJsypYkNpF61MUBorx1a/gLe+O5jZcE+sE6Ntz
+         6HKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=WL4FcDDRn7CBCsx9iuFDQKIHfIbZOER+6dU8Fb4faT0=;
-        b=SjwefrKDiVIYF9g53t31tyfB5/fLtBzrM29ftf8KGRvEiWY6Lb/lA0o/n2ROsh9O9I
-         2ikNb4SvFOUnR1tyIjZSETvIc+uhO4omDtfpJUu8QTkkUuvOJ3xjuNJVWLzh21p3sivz
-         nTb234lOTXdxUtEgiV4opTHPtb/ytERNOfb82a/08rI0kUvTrFyamZWBEstwhtmwkeEQ
-         Ki5bSyH0fBRrhKxGKddu8fRiRkduVrWXk9I9labbI7MR+LQD2tphtPcp2DTAvruiW2nI
-         Jw+Rq92VcHsbfDyNi106KIRh6NQS8iyPeX+5tZH8xre1S2lAolG4x+X5aGQY1ce817HN
-         S6tg==
-X-Gm-Message-State: ACrzQf3Mi3/GDCgKD08i7k9FEVWsSGeR34RBcDYntfEzIzSn1n05bZeQ
-        RuXvy5Wcrektq0KyslRgRP4=
-X-Google-Smtp-Source: AMsMyM7iXN8X6v2DK5A6rGAQNV4JdUJ7sL8ZcXEQHA2Clp+Kui7j1BHYpRAKaYrwEE3gE7ccot+8nQ==
-X-Received: by 2002:a17:907:7206:b0:783:1d78:6249 with SMTP id dr6-20020a170907720600b007831d786249mr4920086ejc.9.1664129408261;
-        Sun, 25 Sep 2022 11:10:08 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id u10-20020aa7db8a000000b004571fc9112dsm2179040edt.83.2022.09.25.11.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Sep 2022 11:10:07 -0700 (PDT)
-Date:   Sun, 25 Sep 2022 20:10:06 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v6 3/5] selftests/landlock: Selftests for file truncation
- support
-Message-ID: <YzCZfiwIVOcjCxQo@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-4-gnoack3000@gmail.com>
- <3f3b7798-c3e1-e257-5094-0033e7605062@digikod.net>
- <Yy3x3b3+CrD/rb0J@nuc>
- <5233611f-1dba-3ecb-670f-fff61820e9d6@digikod.net>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=6pp/I+EL+ZGpawFf74Dn6cDUTXmZe9ODqMPcA6Z+HGI=;
+        b=CeZ7sefGFs2lmhv6xRN/mKqiOYReF41lHlmBX7FNDRZQvIgZ2lUUy9y1eVuJ6gqWlo
+         LiUPiscO2Cai+x7mFf6ZLEIi1TqLAQi7eXbtgIh39kJtaPij535KChCeS7RfqVCjcEfC
+         2k9+1qzKkx+6xtkSk2oVqw39xJNDSR+xUUHR5CbYFnJrnV8Oc1dbZyzGMoLvB19ns81+
+         iQCe6U2xuq/jjAggOQdzExkaUWsZ0VRv2GLnHCcLeqTklkLcGdAuCt2wgCRDkoAgBIPO
+         +1juoje2VnEguZXCS4SNYsVhA8Cd7YNMws/B6ouU8LJvCpKPkbJOwztkLg4sbmzLrgfA
+         uwuA==
+X-Gm-Message-State: ACrzQf28GKFNO7JHIOz99CF3jvt8+09ZfOlweBVcdU+rcLovJsZb8KJy
+        qJfMbQw8ND3WzCnVJzPwqxp7xEQIZvQ99P0bO+8=
+X-Google-Smtp-Source: AMsMyM6utbtVMOl6kMkXwYhwuTJ+moSzt6DvbS3TGArQXjGFGPxmDInP/aYGv+Z63tWH7ERx0t7rF2VO28VTQqOvk24=
+X-Received: by 2002:a67:ad15:0:b0:398:6aef:316b with SMTP id
+ t21-20020a67ad15000000b003986aef316bmr7864303vsl.17.1664146393908; Sun, 25
+ Sep 2022 15:53:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5233611f-1dba-3ecb-670f-fff61820e9d6@digikod.net>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20220922151728.1557914-1-brauner@kernel.org> <20220922151728.1557914-5-brauner@kernel.org>
+ <CAH2r5mvkSW1FY2tP87mKGrOMkoN8tbOP9r=xJ4XnVbkcrE9guA@mail.gmail.com> <20220923083810.ff7jfaszl7qhoutd@wittgenstein>
+In-Reply-To: <20220923083810.ff7jfaszl7qhoutd@wittgenstein>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 25 Sep 2022 17:53:03 -0500
+Message-ID: <CAH2r5mt2Em03zN+HgL0=YZ335PLyJoBf5z3H2_Mn7y3rF=xS=A@mail.gmail.com>
+Subject: Re: [PATCH 04/29] cifs: implement get acl method
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        linux-cifs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,117 +74,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 10:54:55PM +0200, Mickaël Salaün wrote:
-> 
-> On 23/09/2022 19:50, Günther Noack wrote:
-> > On Fri, Sep 16, 2022 at 07:05:44PM +0200, Mickaël Salaün wrote:
-> > > I'd like to have tests similar to base_test.c:ruleset_fd_transfer to check
-> > > ftruncate with different kind of file descriptors and not-sandboxed
-> > > processes. That would require some code refactoring to reuse the FD passing
-> > > code.
-> > 
-> > Done. I factored out the FD sending and receiving into helper function in common.h.
-> 
-> Please use a dedicated patch for this refactoring.
+On Fri, Sep 23, 2022 at 3:38 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Thu, Sep 22, 2022 at 10:52:43PM -0500, Steve French wrote:
+> > Looks like the SMB1 Protocol operations for get/set posix ACL were
+> > removed in the companion patch (in SMB3, POSIX ACLs have to be handled
+>
+> Sorry, what companion patch? Is a patch in this series or are you
+> referring to something else?
 
-+1, will do.
+I found it - the patch order was confusing (I saw patches 4 and 27,
+but patch 5 was
+missed).  The functions I was asking about were deleted in patch 27 in
+your series but readded in patch 5 which I had missed.
 
-> > > On 08/09/2022 21:58, Günther Noack wrote:
-> > > > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > > > index 87b28d14a1aa..ddc8c7e57e86 100644
-> > > > --- a/tools/testing/selftests/landlock/fs_test.c
-> > > > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > > > ...
-> > > > +TEST_F_FORK(layout1, truncate)
-> > > > +{
-> > > > +	const char *const file_rwt = file1_s1d1;
-> > > > +	const char *const file_rw = file2_s1d1;
-> > > > +	const char *const file_rt = file1_s1d2;
-> > > > +	const char *const file_t = file2_s1d2;
-> > > > +	const char *const file_none = file1_s1d3;
-> > > > +	const char *const dir_t = dir_s2d1;
-> > > > +	const char *const file_in_dir_t = file1_s2d1;
-> > > > +	const char *const dir_w = dir_s3d1;
-> > > > +	const char *const file_in_dir_w = file1_s3d1;
-> > > > +	int file_rwt_fd, file_rw_fd;
-> > > 
-> > > These variables are unused now.
-> > 
-> > Good catch, done.
-> > 
-> > > > +TEST_F_FORK(layout1, ftruncate)
-> > > 
-> > > Great!
-> > > 
-> > > > +{
-> > > > +	/*
-> > > > +	 * This test opens a new file descriptor at different stages of
-> > > > +	 * Landlock restriction:
-> > > > +	 *
-> > > > +	 * without restriction:                    ftruncate works
-> > > > +	 * something else but truncate restricted: ftruncate works
-> > > > +	 * truncate restricted and permitted:      ftruncate works
-> > > > +	 * truncate restricted and not permitted:  ftruncate fails
-> > > > +	 *
-> > > > +	 * Whether this works or not is expected to depend on the time when the
-> > > > +	 * FD was opened, not to depend on the time when ftruncate() was
-> > > > +	 * called.
-> > > > +	 */
-> > > > +	const char *const path = file1_s1d1;
-> > > > +	int fd0, fd1, fd2, fd3;
-> > > 
-> > > You can rename them fd_layer0, fd_layer1…
-> > 
-> > Done.
-> > 
-> > > > +	fd0 = open(path, O_WRONLY);
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > > > +
-> > > > +	landlock_single_path(_metadata, path,
-> > > > +			     LANDLOCK_ACCESS_FS_READ_FILE |
-> > > > +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > > > +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
-> > > 
-> > > I'd prefer to follow the current way to write rule layers: write all struct
-> > > rule at first and then call each enforcement steps. It is a bit more verbose
-> > > but easier to understand errors. The list of test_ftruncate checks are
-> > > straightforward to follow.
-> > 
-> > Done.
-> > 
-> > 
-> > > > +	fd1 = open(path, O_WRONLY);
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > > > +
-> > > > +	landlock_single_path(_metadata, path, LANDLOCK_ACCESS_FS_TRUNCATE,
-> > > > +			     LANDLOCK_ACCESS_FS_TRUNCATE);
-> > > > +
-> > > > +	fd2 = open(path, O_WRONLY);
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd2));
-> > > > +
-> > > > +	landlock_single_path(_metadata, path,
-> > > > +			     LANDLOCK_ACCESS_FS_TRUNCATE |
-> > > > +				     LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > > > +			     LANDLOCK_ACCESS_FS_WRITE_FILE);
-> > > > +
-> > > > +	fd3 = open(path, O_WRONLY);
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd0));
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd1));
-> > > > +	EXPECT_EQ(0, test_ftruncate(fd2));
-> > > > +	EXPECT_EQ(EACCES, test_ftruncate(fd3));
-> > > > +
-> > > > +	ASSERT_EQ(0, close(fd0));
-> > > > +	ASSERT_EQ(0, close(fd1));
-> > > > +	ASSERT_EQ(0, close(fd2));
-> > > > +	ASSERT_EQ(0, close(fd3));
-> > > > +}
-> > > > +
-> > > >    /* clang-format off */
-> > > >    FIXTURE(layout1_bind) {};
-> > > >    /* clang-format on */
-> > 
+On the more general topic of POSIX ACLs:
+- Note that they are supported for SMB1 (to some servers, including Samba)
+- But ... almost all servers (including modern ones, not just ancient
+SMB1 servers) support "RichACLs" (remember that RichACLs  were
+originally based on SMB/NTFS ACLs and include deny ACEs so cover use
+cases that primitive POSIX ACLs can't handle) but for cifs.ko we have
+to map the local UID to a global unique ID for each ACE (ie id to SID
+translation).  I am interested in the topic for how it is recommended
+to map "POSIX ACLs" to "RichACLs."  I am also interested in making
+sure that cifs.ko supports the recommended mechanism for exposing
+"richacls" - since there are various filesystems that support RichACLs
+(including NFS, cifs.ko, ntfs and presumably others) and there are
+even xfstests that test richacls.
+
+
+> > by mapping from rich acls).  Was this intentional or did I miss
+> > something? I didn't see the functions for sending these over the wire
+> > for SMB1 (which does support POSIX ACLs, not just RichACLs (SMB/NTFS
+> > ACLs))
+>
+> I'm sorry, I don't understand. This is basically a 1:1 port of what you
+> currently have in cifs_xattr_set() and cifs_xattr_get() under the
+> XATTR_ACL_DEFAULT and XATTR_ACL_ACCESS switches. So basically, the
+> patches in this series just add almost 1:1 copies of
+> CIFSSMBSetPosixACL() and CIFSSMBGetPosixACL() just that instead of
+> operating on void * they operate on a proper vfs struct posix acl. So
+> nothing would've changed behavior wise. Ofc, there's always the chance
+> that I missed sm especially bc I'm not a cifs developer. :)
+>
+> >
+> >         pSMB->SubCommand = cpu_to_le16(TRANS2_SET_PATH_INFORMATION);
+> >         pSMB->InformationLevel = cpu_to_le16(SMB_SET_POSIX_ACL);
+
+
 
 -- 
+Thanks,
+
+Steve
