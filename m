@@ -2,48 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B415E9379
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 15:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F915E93EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 17:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbiIYNlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 09:41:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49012 "EHLO
+        id S232707AbiIYPYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 11:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231506AbiIYNlX (ORCPT
+        with ESMTP id S232239AbiIYPXv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 09:41:23 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597F42AE13;
-        Sun, 25 Sep 2022 06:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Dj7nhKh/NArGj0oG4bk8DRORTaIrXKrcLhcogP+lz6Y=; b=mKTRISh+9VUbiTu6AFs6FLolcC
-        /3vzWHEzmuBqdRgSNr4qIMUTn8MPy8XsDcGb/Oc8vnfXhgruqjh9SG8lp+yw+AEaq9IHUt/iPLorf
-        9Oqvq27xlLoRmgLtsqSgAdOSrRGHg1uftXBbmVLe8Vm7Ap2ba4w+n3fXq0Ow8+maapsed4Z9xv6/X
-        OO/bA1/AqNFwaWNq01MleVSm8m1MumatrOFGVfH4B3t/iEyazD4fIDhWn9j/3j6AXxV/g2470Y86M
-        KFvL4eA56ENiMlda+2ajRQ0rqdknkLzuCfQKFTClcoZNFriZ+PUMihrcGkq/eY0NXajjjceVCM4PF
-        RYD6cg5A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ocRsk-003ckC-1i;
-        Sun, 25 Sep 2022 13:41:18 +0000
-Date:   Sun, 25 Sep 2022 14:41:18 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+4353c86db4e58720cd11@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: Re: [syzbot] kernel panic: stack is corrupted in lock_release (3)
-Message-ID: <YzBafjvhv1qfv5A1@ZenIV>
-References: <000000000000ba0dcb05e97e239b@google.com>
+        Sun, 25 Sep 2022 11:23:51 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4702E68A;
+        Sun, 25 Sep 2022 08:23:44 -0700 (PDT)
+From:   John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1664119422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lYuGfRxRRD8ElWe/MX6vcbHsXtJqzWLNDRr3hQbeYms=;
+        b=4o6/Yi8W8TR3wYtjLafNd4nWDKzlEQ5gkc02I+3sxBfpo+9vezn8sQ19N6+TlWDlvcFoeo
+        RFsRvT62TZBgT97wmFthNJKAUVJFU+5Ihq6xusXNWhKXuYjLiOY+vfq8S0q1K3s7Q95lUX
+        J7bvje9GBQyCD1rofPDn9fo5Jlz8JpsSPmb2PjYpgTAp4leKgkth0ix2cBy4gFQWIpnCAc
+        g/ni0Cr0XwYUTLPmDMCLOQyDKr20tfasmCoAkeq8fdWTqwUMU4hUVefInzz2MW6iYhTgCx
+        ZWjQioSQ2Ure1/UJBQvd+vyXD3njCGMVlXy2axBfZ7zb4e3BxjdG+6ZDPlTpnQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1664119422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lYuGfRxRRD8ElWe/MX6vcbHsXtJqzWLNDRr3hQbeYms=;
+        b=H6VsHstNf5MPQfIzMB81iwdLZoKfcg9RiYTwfM9z+i652PjiqjMzynDssmCOuun7W04ekK
+        8/JHdHOKiDhav9CA==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Sven Schnelle <svens@stackframe.org>,
+        John David Anglin <dave.anglin@bell.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        linux-parisc@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH printk 00/18] preparation for threaded/atomic printing
+In-Reply-To: <Yy6nVpd3+yogT5pJ@kroah.com>
+References: <20220924000454.3319186-1-john.ogness@linutronix.de>
+ <Yy6nVpd3+yogT5pJ@kroah.com>
+Date:   Sun, 25 Sep 2022 17:29:41 +0206
+Message-ID: <87czbj7a0y.fsf@jogness.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000ba0dcb05e97e239b@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INVALID_DATE_TZ_ABSURD,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,42 +73,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 25, 2022 at 03:47:38AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    3db61221f4e8 Merge tag 'io_uring-6.0-2022-09-23' of git://..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10135a88880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c221af36f6d1d811
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4353c86db4e58720cd11
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1792e6e4880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1059fcdf080000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4353c86db4e58720cd11@syzkaller.appspotmail.com
+On 2022-09-24, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> These all look great to me, thanks for resending them.
+>
+> Do you want them to go through my serial/tty tree, or is there some
+> other tree to take them through (printk?)
 
-[ntfs_fill_super() failure exits are still buggered]
+Thanks Greg. but I would prefer they go through the printk tree. In
+particular, I want Petr to have the chance to review patches 15-18.
 
-Folks, could syzbot be taught that ntfs involved in testing means that
-ntfs maintainers need to be on Cc?
+> If they are to go through someone else's tree, feel free to add:
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-FWIW,
+Thanks!
 
-1) failing d_make_root() does *NOT* need the caller to drop inode; it consumes
-inode reference itself, precisely to make that failure exits easier.
-
-2) you never set ->i_op to NULL.  Initial value is to an empty method table;
-nothing out of alloc_inode(), let alone iget5_locked() should ever see
-NULL ->i_op there.
-
-3) the same goes for ->i_fop; it should never be NULL.  Initial value points
-to an empty method table; if you don't want any methods, leave it as-is.
-Yes, even for symlinks.
-
-That - from quick eyeballing the code in question.  There might be more (and
-almost certainly is).  The thing is, ntfs3 clearly corrupts memory of failure
-exits in mount, and syzbot reports in that direction really ought to go to ntfs
-folks; Cc to fsdevel is OK, but at least mark those as likely to be ntfs-related.
+John
