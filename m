@@ -2,115 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 425A15E9107
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 06:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB47C5E915F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 09:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbiIYE6k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 00:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49874 "EHLO
+        id S230168AbiIYHRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 03:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbiIYE6i (ORCPT
+        with ESMTP id S230059AbiIYHRw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 00:58:38 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14B738A10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 21:58:37 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id q3-20020a056e0220e300b002f5e648e02eso2999939ilv.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Sep 2022 21:58:37 -0700 (PDT)
+        Sun, 25 Sep 2022 03:17:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCEF32EE8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Sep 2022 00:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664090270;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FnuW0+nquE7jeCs1wGd25t/HgD5sAtMc07QK9kih2sQ=;
+        b=SZBL0yllgncMHQJjYqneGvfhQm2AeybNL8PYw1Bfent43/fRlxWvUxkC/D/nmTltqWC4Ni
+        22qTmVCLexiT0Ag0Ho1YAYPfMzOY+P42y+y33CKftoPcY/OThEMaUdzmmOltw3hbApVM83
+        asdnwLDr1xKa8tvz4sXNyRRhsXEeWiE=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-301-U7KPE1MUOr6GsGP1XA8ocw-1; Sun, 25 Sep 2022 03:17:48 -0400
+X-MC-Unique: U7KPE1MUOr6GsGP1XA8ocw-1
+Received: by mail-qt1-f198.google.com with SMTP id b13-20020ac87fcd000000b0035cbe5d58afso2691103qtk.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Sep 2022 00:17:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date;
-        bh=14/KqwvJjeku5cZoqA2iQtITLkfzH2+C0+Y4K8k2/GM=;
-        b=XX7HAE397XjvNyC6oGWgghteOCz2aiBnvWOlEfrxyJuYNFc8UtXgY66rvaSozpRy3I
-         sIaqjS59VjbZdYgi8603cWWd0eVNBTwvU3TMREwJU8ZWdn1hNZdnPqJYXqtAZXoBK/Ru
-         52i+cCaupzNPQn8y+yR965abksL2CdCtPdtHLTyDso60rbRIW3xu83s1jJQW06w+J2dC
-         QcWGI79g5pagGtKGSXnwnqP54A56JaNzwk0/DO5OMWi7fXbV623WN/2DIfePRrfTPb/r
-         Xoa9xzTF/k6LywcDCSFf3IHW+g4uiKwqNlHjuiRMRZ8tBrHV8A0hQRwW5gFDtPy7SZc9
-         EkrQ==
-X-Gm-Message-State: ACrzQf1kxLCtFP1dG7WzQpk1yHZ9fL2iuzhNvhJcSXskqntaACEnzbZl
-        wJDufzl3dlJTHkJrty/UtG6yyqiiHTzGmnm24gXjZFoXK4oC
-X-Google-Smtp-Source: AMsMyM6y2Vph7DYjMzFUMZo/wOc2FxzKsEqcFdgQBkOlYUt+ObUKCGTHt56wBurbFpTVKQWwfmqDERNdGm8rS56TlpEwdfI+CT0n
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b45:b0:2f5:85da:c388 with SMTP id
- f5-20020a056e020b4500b002f585dac388mr7577436ilu.87.1664081917286; Sat, 24 Sep
- 2022 21:58:37 -0700 (PDT)
-Date:   Sat, 24 Sep 2022 21:58:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008ea2da05e979435f@google.com>
-Subject: [syzbot] kernel panic: stack is corrupted in writeback_single_inode
-From:   syzbot <syzbot+84b7b87a6430a152c1f4@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+        bh=FnuW0+nquE7jeCs1wGd25t/HgD5sAtMc07QK9kih2sQ=;
+        b=b9G3ZHgSHaG2T38/2PQjrMcO/SIxtQ25J5R6SQzLVVqX1OFX8Ol9WUl+F2QqE6Mcdi
+         Se4kG3vRQZ4OpBNYz4IQvJfjw7/776+/kMH4ZYrp6Lh34oZDCEQ2CWJXltoPbfIrSr/4
+         GriaSQ2GkccBGmy2zMUjAjfK6Mlq7ztKRNyVYGEkSzqb1LMZzK5aaSEIoOwC1G2766nw
+         3Rwu7+pwVslcP1QcsL0gM0hXsBtvLvwf8+MVD9kHA0Hj0jt9uwGvlyw5cAsnDkj4i+m3
+         8UHgZziulQZC4Gyv1q7aF9cRynUQw5QJwd4EYOA1ACAO8uXd1vjWnyHdDK0sG2QCMT+t
+         3e7g==
+X-Gm-Message-State: ACrzQf2RV9Oxt608bpQacJl7L45mqxHx5hafXz82HHS0bk5W6Xplm4e0
+        eUK73sK8OUXfVGZrX/uX0n1PQ9QlfvpT/ZzBUaMNhOkONQdSiaipGCXmevwdb8EB8LCd2yl7rd7
+        UgrO1Vtpmvlp0Zbsj3XDe/hLvHg==
+X-Received: by 2002:a05:620a:c8f:b0:6cb:e329:b5b9 with SMTP id q15-20020a05620a0c8f00b006cbe329b5b9mr10667168qki.95.1664090268094;
+        Sun, 25 Sep 2022 00:17:48 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4u6YF4dJIrwAN1QRZGgvTOpwH6qKYsc23O//LxYiiudu83+P6fv+LpA21i63RBBqqlayo//g==
+X-Received: by 2002:a05:620a:c8f:b0:6cb:e329:b5b9 with SMTP id q15-20020a05620a0c8f00b006cbe329b5b9mr10667159qki.95.1664090267816;
+        Sun, 25 Sep 2022 00:17:47 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-97-96.dyn.eolo.it. [146.241.97.96])
+        by smtp.gmail.com with ESMTPSA id bp30-20020a05620a459e00b006c479acd82fsm10375465qkb.7.2022.09.25.00.17.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Sep 2022 00:17:47 -0700 (PDT)
+Message-ID: <e340d993bce8e1b2742fba52ac6383771cfaddae.camel@redhat.com>
+Subject: Re: [PATCH v2 04/16] skbuff: Phase out ksize() fallback for
+ frag_size
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Kees Cook <keescook@chromium.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
+        x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Date:   Sun, 25 Sep 2022 09:17:40 +0200
+In-Reply-To: <20220923202822.2667581-5-keescook@chromium.org>
+References: <20220923202822.2667581-1-keescook@chromium.org>
+         <20220923202822.2667581-5-keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, 2022-09-23 at 13:28 -0700, Kees Cook wrote:
+> All callers of APIs that allowed a 0-sized frag_size appear to be
+> passing actual size information already
 
-syzbot found the following issue on:
+AFAICS, not yet:
 
-HEAD commit:    3db61221f4e8 Merge tag 'io_uring-6.0-2022-09-23' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16953c4c880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c221af36f6d1d811
-dashboard link: https://syzkaller.appspot.com/bug?extid=84b7b87a6430a152c1f4
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+drivers/net/ethernet/qlogic/qed/qed_ll2.c:
+	skb = build_skb(buffer->data, 0); // -> __build_skb(..., 0) 
+		// ->  __build_skb_around()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+drivers/net/ethernet/broadcom/bnx2.c:
+	skb = build_skb(data, 0);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+84b7b87a6430a152c1f4@syzkaller.appspotmail.com
+I guess some more drivers have calls leading to 
 
-loop3: detected capacity change from 0 to 8189
-ntfs3: loop3: Different NTFS' sector size (1024) and media sector size (512)
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: writeback_single_inode+0x8e7/0x8f0
-CPU: 0 PID: 6581 Comm: syz-executor.3 Not tainted 6.0.0-rc6-syzkaller-00291-g3db61221f4e8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/26/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
- panic+0x2d6/0x715 kernel/panic.c:274
- __stack_chk_fail+0x12/0x20 kernel/panic.c:706
- writeback_single_inode+0x8e7/0x8f0
- write_inode_now+0x1cd/0x260 fs/fs-writeback.c:2723
- iput_final fs/inode.c:1735 [inline]
- iput+0x3e6/0x760 fs/inode.c:1774
- ntfs_fill_super+0x3af3/0x42a0 fs/ntfs3/super.c:1190
- get_tree_bdev+0x400/0x620 fs/super.c:1323
- vfs_get_tree+0x88/0x270 fs/super.c:1530
- do_new_mount+0x289/0xad0 fs/namespace.c:3040
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f0bebe8bb9a
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0beadfdf88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f0bebe8bb9a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f0beadfdfe0
-RBP: 00007f0beadfe020 R08: 00007f0beadfe020 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
-R13: 0000000020000100 R14: 00007f0beadfdfe0 R15: 000000002007aa80
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+	__build_skb_around(...,  0)
+
+there are several call path to checks...
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> , so this use of ksize() can
+> be removed. However, just in case there is something still depending
+> on this behavior, issue a WARN and fall back to as before to ksize()
+> which means we'll also potentially get KASAN warnings.
+> 
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  net/core/skbuff.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index 0b30fbdbd0d0..84ca89c781cd 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -195,7 +195,11 @@ static void __build_skb_around(struct sk_buff *skb, void *data,
+>  			       unsigned int frag_size)
+>  {
+>  	struct skb_shared_info *shinfo;
+> -	unsigned int size = frag_size ? : ksize(data);
+> +	unsigned int size = frag_size;
+> +
+> +	/* All callers should be setting frag size now? */
+> +	if (WARN_ON_ONCE(size == 0))
+> +		size = ksize(data);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+At some point in the future, I guess we could even drop this check,
+right?
+
+Thanks!
+
+Paolo
+
