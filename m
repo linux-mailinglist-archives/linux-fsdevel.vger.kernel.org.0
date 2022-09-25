@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 285515E92F0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 14:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3589C5E92FC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Sep 2022 14:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbiIYMGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 08:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60142 "EHLO
+        id S229592AbiIYMMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 08:12:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbiIYMGw (ORCPT
+        with ESMTP id S232004AbiIYMML (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 08:06:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1664D2F3A1;
-        Sun, 25 Sep 2022 05:06:51 -0700 (PDT)
+        Sun, 25 Sep 2022 08:12:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E23AD303D7;
+        Sun, 25 Sep 2022 05:12:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A52F4614FE;
-        Sun, 25 Sep 2022 12:06:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F033C433C1;
-        Sun, 25 Sep 2022 12:06:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6951161223;
+        Sun, 25 Sep 2022 12:12:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AEDCC433C1;
+        Sun, 25 Sep 2022 12:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664107610;
-        bh=BCVRBXCetpvd2YGmBGtkM+UvNAeY+VGeEDAT0/lc8fs=;
+        s=k20201202; t=1664107929;
+        bh=3QpOnBvdxL0+AZ41OUJ8Z8CAtbcfHcNF9j/3kuh7UJk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PU4HPuu6PfX16bgcSLQO2UdKyKi6k7hidu67KPybnHdBqUDMS2nEB0bskWnITbEI1
-         NiISQOj9XmDLK220C1XUdj2ECXol9pSIXpNbkClHluegVM1oYYycVNx99kVXgLukx9
-         EPU/1LXeHiI6+8eZAFXHudHaHWa288mSa9ZlipLUF0IJHUFEeaqsCrVF5rJI2V2ePq
-         k6UEXIz3RPnZLYdgnY9JssVFw+sQY5d4XVdYVey6CXQowDvO4T3RG/rpTDiF6CW6C/
-         ppMcYGtCVWe5d50KxhotzIEYWi4VS/pvfEz2ckZhNP6lcyEirgox4/ytck47LAc95A
-         OEvoEnYdqANEA==
+        b=lz9HACjWXnyFes4+TEG3Arf2V68bAcMUyphkg4Llv+pb+zp36wX9Rz5y7xi5jtDZz
+         Qv9rYHiYGWufdfv65edKRBRMnsHuPrpBUIwalal9lh9I5n9ybpKOtQ1Q8IK8Fxwei/
+         N952N2z2tVxyr5EMlW24Qw7wBYvWhXJsfSAgj9IXe6Zqd4J8MIhWoQeFAKo/jTnlE9
+         Da9uhOaJaV0NU3ZM8S0974OyiRFq6/ZCqQwlF+j9tED7MSsYzhGAuPvWAjBsD1dn3k
+         Xy136JBposGdTKPbBeyGC4Mj43/VJftoEKb2VlqnFUKp0XRcoJi7hNo9go+w78z4Pc
+         KS9xTt0Voa8vQ==
 Received: by pali.im (Postfix)
-        id 6D0D1EE2; Sun, 25 Sep 2022 14:06:46 +0200 (CEST)
-Date:   Sun, 25 Sep 2022 14:06:46 +0200
+        id C06F2EE2; Sun, 25 Sep 2022 14:12:06 +0200 (CEST)
+Date:   Sun, 25 Sep 2022 14:12:06 +0200
 From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
 To:     Viacheslav Dubeyko <slava@dubeyko.com>
 Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
@@ -52,17 +52,17 @@ Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Pavel Machek <pavel@ucw.cz>,
         Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
         Christoph Hellwig <hch@infradead.org>
-Subject: Re: [RFC PATCH 12/20] hfs: Do not use broken utf8 NLS table for
+Subject: Re: [RFC PATCH 13/20] hfsplus: Do not use broken utf8 NLS table for
  iocharset=utf8 mount option
-Message-ID: <20220925120646.dfkofrka74blwrwb@pali>
+Message-ID: <20220925121206.glqeuptele746qsp@pali>
 References: <20210808162453.1653-1-pali@kernel.org>
- <20210808162453.1653-13-pali@kernel.org>
- <4B1987C7-F6D9-4493-ACD0-846B92F86037@dubeyko.com>
+ <20210808162453.1653-14-pali@kernel.org>
+ <4D2445C9-7D4D-438A-964C-5B8F46BC15B5@dubeyko.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4B1987C7-F6D9-4493-ACD0-846B92F86037@dubeyko.com>
+In-Reply-To: <4D2445C9-7D4D-438A-964C-5B8F46BC15B5@dubeyko.com>
 User-Agent: NeoMutt/20180716
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -73,9 +73,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello! Sorry for a longer delay. Below are comments.
+Hello!
 
-On Monday 09 August 2021 10:49:34 Viacheslav Dubeyko wrote:
+On Monday 09 August 2021 10:42:02 Viacheslav Dubeyko wrote:
 > > On Aug 8, 2021, at 9:24 AM, Pali Rohár <pali@kernel.org> wrote:
 > > 
 > > NLS table for utf8 is broken and cannot be fixed.
@@ -84,219 +84,136 @@ On Monday 09 August 2021 10:49:34 Viacheslav Dubeyko wrote:
 > > functions utf8_to_utf32() and utf32_to_utf8() which implements correct
 > > encoding and decoding between Unicode code points and UTF-8 sequence.
 > > 
-> > When iochatset=utf8 is used then set hsb->nls_io to NULL and use it for
+> > Note that this fs driver does not support full Unicode range, specially
+> > UTF-16 surrogate pairs are unsupported. This patch does not change this
+> > limitation and support for UTF-16 surrogate pairs stay unimplemented.
+> > 
+> > When iochatset=utf8 is used then set sbi->nls to NULL and use it for
 > > distinguish between the fact if NLS table or native UTF-8 functions should
 > > be used.
 > > 
 > > Signed-off-by: Pali Rohár <pali@kernel.org>
 > > ---
-> > fs/hfs/super.c | 33 ++++++++++++++++++++++-----------
-> > fs/hfs/trans.c | 24 ++++++++++++++++++++----
-> > 2 files changed, 42 insertions(+), 15 deletions(-)
+> > fs/hfsplus/dir.c            |  6 ++++--
+> > fs/hfsplus/options.c        | 32 ++++++++++++++++++--------------
+> > fs/hfsplus/super.c          |  7 +------
+> > fs/hfsplus/unicode.c        | 31 ++++++++++++++++++++++++++++---
+> > fs/hfsplus/xattr.c          | 14 +++++++++-----
+> > fs/hfsplus/xattr_security.c |  3 ++-
+> > 6 files changed, 62 insertions(+), 31 deletions(-)
 > > 
-> > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-> > index 86bc46746c7f..076308df41cf 100644
-> > --- a/fs/hfs/super.c
-> > +++ b/fs/hfs/super.c
-> > @@ -149,10 +149,13 @@ static int hfs_show_options(struct seq_file *seq, struct dentry *root)
-> > 		seq_printf(seq, ",part=%u", sbi->part);
-> > 	if (sbi->session >= 0)
-> > 		seq_printf(seq, ",session=%u", sbi->session);
-> > -	if (sbi->nls_disk)
-> > +	if (sbi->nls_disk) {
-> > 		seq_printf(seq, ",codepage=%s", sbi->nls_disk->charset);
+> > diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+> > index 84714bbccc12..2caf0cd82221 100644
+> > --- a/fs/hfsplus/dir.c
+> > +++ b/fs/hfsplus/dir.c
+> > @@ -144,7 +144,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
+> > 	err = hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
+> > 	if (err)
+> > 		return err;
+> > -	strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN + 1, GFP_KERNEL);
+> > +	strbuf = kmalloc((HFSPLUS_SB(sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
+> > +			HFSPLUS_MAX_STRLEN + 1, GFP_KERNEL);
 > 
-> Maybe, I am missing something. But where is the closing “}”?
+> Maybe, introduce some variable that will contain the length calculation?
 
-See below...
+Ok! I can introduce variable with calculated length into all places.
 
-> 
-> > -	if (sbi->nls_io)
-> > -		seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
-> > +		if (sbi->nls_io)
-> > +			seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
-> > +		else
-> > +			seq_puts(seq, ",iocharset=utf8");
-> > +	}
-
-        ^
-... Closing "}" is marked above.
-
-> > 	if (sbi->s_quiet)
-> > 		seq_printf(seq, ",quiet");
-> > 	return 0;
-> > @@ -225,6 +228,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+> > 	if (!strbuf) {
+> > 		err = -ENOMEM;
+> > 		goto out;
+> > @@ -203,7 +204,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
+> > 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
+> > 			fd.entrylength);
+> > 		type = be16_to_cpu(entry.type);
+> > -		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
+> > +		len = (HFSPLUS_SB(sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
+> > +		      HFSPLUS_MAX_STRLEN;
+> > 		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
+> > 		if (err)
+> > 			goto out;
+> > diff --git a/fs/hfsplus/options.c b/fs/hfsplus/options.c
+> > index a975548f6b91..16c08cb5c4f8 100644
+> > --- a/fs/hfsplus/options.c
+> > +++ b/fs/hfsplus/options.c
+> > @@ -104,6 +104,9 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
 > > 	char *p;
 > > 	substring_t args[MAX_OPT_ARGS];
 > > 	int tmp, token;
 > > +	int have_iocharset;
-> 
-> What’s about boolean type?
-
-Ok! No problem, I can use "bool" type. Just I was in impression that
-code style of this driver is to use "int" type also for booleans.
-Same for "false" and "true" as you mentioned below.
-
-> > 
-> > 	/* initialize the sb with defaults */
-> > 	hsb->s_uid = current_uid();
-> > @@ -239,6 +243,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
-> > 	if (!options)
-> > 		return 1;
-> > 
+> > +
 > > +	have_iocharset = 0;
 > 
-> What’s about false here?
-> 
-> > +
-> > 	while ((p = strsep(&options, ",")) != NULL) {
-> > 		if (!*p)
-> > 			continue;
-> > @@ -332,18 +338,22 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
-> > 			kfree(p);
-> > 			break;
+> What’s about boolean type and to use true/false?
+
+Ok. I can change type to "bool" and use "true"/"false" values.
+
+> > 
+> > 	if (!input)
+> > 		goto done;
+> > @@ -171,20 +174,24 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
+> > 			pr_warn("option nls= is deprecated, use iocharset=\n");
+> > 			/* fallthrough */
 > > 		case opt_iocharset:
-> > -			if (hsb->nls_io) {
+> > -			if (sbi->nls) {
 > > +			if (have_iocharset) {
-> > 				pr_err("unable to change iocharset\n");
+> > 				pr_err("unable to change nls mapping\n");
 > > 				return 0;
 > > 			}
 > > 			p = match_strdup(&args[0]);
 > > -			if (p)
-> > -				hsb->nls_io = load_nls(p);
-> > -			if (!hsb->nls_io) {
-> > -				pr_err("unable to load iocharset \"%s\"\n", p);
+> > -				sbi->nls = load_nls(p);
+> > -			if (!sbi->nls) {
+> > -				pr_err("unable to load nls mapping \"%s\"\n",
+> > -				       p);
 > > -				kfree(p);
 > > +			if (!p)
 > > 				return 0;
 > > +			if (strcmp(p, "utf8") != 0) {
-> > +				hsb->nls_io = load_nls(p);
-> > +				if (!hsb->nls_io) {
-> > +					pr_err("unable to load iocharset \"%s\"\n", p);
+> > +				sbi->nls = load_nls(p);
+> > +				if (!sbi->nls) {
+> > +					pr_err("unable to load nls mapping "
+> > +						"\"%s\"\n", p);
 > > +					kfree(p);
 > > +					return 0;
 > > +				}
 > > 			}
+> > 			kfree(p);
 > > +			have_iocharset = 1;
 > 
-> What’s about true here?
+> Ditto. What’s about true here?
 > 
-> > 			kfree(p);
 > > 			break;
-> > 		default:
-> > @@ -351,7 +361,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
-> > 		}
-> > 	}
-> > 
-> > -	if (hsb->nls_io && !hsb->nls_disk) {
-> > +	if (have_iocharset && !hsb->nls_disk) {
-> > 		/*
-> > 		 * Previous version of hfs driver did something unexpected:
-> > 		 * When codepage was not defined but iocharset was then
-> > @@ -382,7 +392,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
-> > 			return 0;
-> > 		}
-> > 	}
-> > -	if (hsb->nls_disk && !hsb->nls_io) {
-> > +	if (hsb->nls_disk &&
-> > +	    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") != 0) {
-> 
-> Maybe, introduce the variable to calculate the boolean value here? Then if statement will look much cleaner.
-
-I'm not sure how to do it to make code look cleaner.
-
-Currently there is:
-
-if (hsb->nls_disk &&
-    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") != 0) {
-    hsb->nls_io = load_nls_default();
-    ...
-}
-
-I can replace it e.g. by:
-
-bool need_to_load_nls;
+> > 		case opt_decompose:
+> > 			clear_bit(HFSPLUS_SB_NODECOMPOSE, &sbi->flags);
 ...
-if (hsb->nls_disk &&
-    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") != 0)
-    need_to_load_nls = true;
-else
-    need_to_load_nls = false;
-
-if (need_to_load_nls) {
-    hsb->nls_io = load_nls_default();
-    ...
-}
-
-But it is just longer, condition is still there and it requires one
-additional variable which more me is less readable because it is longer.
-
-> > 		hsb->nls_io = load_nls_default();
-> > 		if (!hsb->nls_io) {
-> > 			pr_err("unable to load default iocharset\n");
-> > diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
-> > index c75682c61b06..bff8e54003ab 100644
-> > --- a/fs/hfs/trans.c
-> > +++ b/fs/hfs/trans.c
-> > @@ -44,7 +44,7 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
-> > 		srclen = HFS_NAMELEN;
-> > 	dst = out;
-> > 	dstlen = HFS_MAX_NAMELEN;
-> > -	if (nls_io) {
-> > +	if (nls_disk) {
-> > 		wchar_t ch;
-> > 
+> > @@ -256,7 +266,22 @@ int hfsplus_uni2asc(struct super_block *sb,
+> > static inline int asc2unichar(struct super_block *sb, const char *astr, int len,
+> > 			      wchar_t *uc)
+> > {
+> > -	int size = HFSPLUS_SB(sb)->nls->char2uni(astr, len, uc);
+> > +	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
+> > +	unicode_t u;
+> > +	int size;
+> > +
+> > +	if (nls)
+> > +		size = nls->char2uni(astr, len, uc);
+> > +	else {
+> > +		size = utf8_to_utf32(astr, len, &u);
+> > +		if (size >= 0) {
+> > +			/* TODO: Add support for UTF-16 surrogate pairs */
 > 
-> I could miss something here. But what’s about the closing “}”?
+> Have you forgot to delete this string? Or do you plan to implement this?
 
-Closing "}" is there on the same location as it was. Before my change on
-"if" line was opening "{" and also with my change there is opening "{".
-So opening "{" and closing "}" are there and matches.
+No. I have not forgot. In current version there is missing support for
+UTF-16 surrogate pairs and this my patch still does not implement it.
 
-> Thanks,
-> Slava.
-> 
-> > 		while (srclen > 0) {
-> > @@ -57,7 +57,12 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
-> > 			srclen -= size;
-> > 			if (ch == '/')
-> > 				ch = ':';
-> > -			size = nls_io->uni2char(ch, dst, dstlen);
-> > +			if (nls_io)
-> > +				size = nls_io->uni2char(ch, dst, dstlen);
-> > +			else if (dstlen > 0)
-> > +				size = utf32_to_utf8(ch, dst, dstlen);
+So this is kind a issue / bug in the driver and at least it should be
+documented. So reader of this code would know it and maybe somebody in
+future will implement it.
+
+> > +			if (u <= MAX_WCHAR_T)
+> > +				*uc = u;
 > > +			else
-> > +				size = -ENAMETOOLONG;
-> > 			if (size < 0) {
-> > 				if (size == -ENAMETOOLONG)
-> > 					goto out;
-> > @@ -101,11 +106,22 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
-> > 	srclen = in->len;
-> > 	dst = out->name;
-> > 	dstlen = HFS_NAMELEN;
-> > -	if (nls_io) {
-> > +	if (nls_disk) {
-> > 		wchar_t ch;
-> > +		unicode_t u;
-> > 
-> > 		while (srclen > 0) {
-> > -			size = nls_io->char2uni(src, srclen, &ch);
-> > +			if (nls_io)
-> > +				size = nls_io->char2uni(src, srclen, &ch);
-> > +			else {
-> > +				size = utf8_to_utf32(str, strlen, &u);
-> > +				if (size >= 0) {
-> > +					if (u <= MAX_WCHAR_T)
-> > +						ch = u;
-> > +					else
-> > +						size = -EINVAL;
-> > +				}
-> > +			}
-> > 			if (size < 0) {
-> > 				ch = '?';
-> > 				size = 1;
-> > -- 
-> > 2.20.1
-> > 
-> 
+> > +				size = -EINVAL;
+> > +		}
+> > +	}
