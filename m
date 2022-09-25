@@ -2,71 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8F05E96B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 00:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA1E5E96FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 01:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbiIYWxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 18:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52702 "EHLO
+        id S232823AbiIYXyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 19:54:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbiIYWxP (ORCPT
+        with ESMTP id S229824AbiIYXyQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 18:53:15 -0400
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49332A712;
-        Sun, 25 Sep 2022 15:53:14 -0700 (PDT)
-Received: by mail-vs1-xe2e.google.com with SMTP id 63so5001503vse.2;
-        Sun, 25 Sep 2022 15:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=6pp/I+EL+ZGpawFf74Dn6cDUTXmZe9ODqMPcA6Z+HGI=;
-        b=jPtfisITLAgBXutOTYnPEtR25wWSafODamyAJO4zz+ElcW+rgFb2K3CPLpwAF9vDzH
-         tyHCptr7GDRBHJZ53D3Nosfwmm59aPlC/fx9C5+1PMG9jwk8VvCh6Ih72EdibvANxAFs
-         +W8+oZQyfVG6jV5c4e05YzprFmwmHmG+CyVUZwNttUc7JtBTGcgRB/SAPbIzb5LZtaxu
-         77raljPNTc3p242/p3QUF0keFMrmFVn301DKDqIkxUWYsl53JzjMSMB+Vdk6pR6xUdx9
-         2q4qBHHd9aide3N7yc/p0NmWWorIHOhJsypYkNpF61MUBorx1a/gLe+O5jZcE+sE6Ntz
-         6HKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=6pp/I+EL+ZGpawFf74Dn6cDUTXmZe9ODqMPcA6Z+HGI=;
-        b=CeZ7sefGFs2lmhv6xRN/mKqiOYReF41lHlmBX7FNDRZQvIgZ2lUUy9y1eVuJ6gqWlo
-         LiUPiscO2Cai+x7mFf6ZLEIi1TqLAQi7eXbtgIh39kJtaPij535KChCeS7RfqVCjcEfC
-         2k9+1qzKkx+6xtkSk2oVqw39xJNDSR+xUUHR5CbYFnJrnV8Oc1dbZyzGMoLvB19ns81+
-         iQCe6U2xuq/jjAggOQdzExkaUWsZ0VRv2GLnHCcLeqTklkLcGdAuCt2wgCRDkoAgBIPO
-         +1juoje2VnEguZXCS4SNYsVhA8Cd7YNMws/B6ouU8LJvCpKPkbJOwztkLg4sbmzLrgfA
-         uwuA==
-X-Gm-Message-State: ACrzQf28GKFNO7JHIOz99CF3jvt8+09ZfOlweBVcdU+rcLovJsZb8KJy
-        qJfMbQw8ND3WzCnVJzPwqxp7xEQIZvQ99P0bO+8=
-X-Google-Smtp-Source: AMsMyM6utbtVMOl6kMkXwYhwuTJ+moSzt6DvbS3TGArQXjGFGPxmDInP/aYGv+Z63tWH7ERx0t7rF2VO28VTQqOvk24=
-X-Received: by 2002:a67:ad15:0:b0:398:6aef:316b with SMTP id
- t21-20020a67ad15000000b003986aef316bmr7864303vsl.17.1664146393908; Sun, 25
- Sep 2022 15:53:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220922151728.1557914-1-brauner@kernel.org> <20220922151728.1557914-5-brauner@kernel.org>
- <CAH2r5mvkSW1FY2tP87mKGrOMkoN8tbOP9r=xJ4XnVbkcrE9guA@mail.gmail.com> <20220923083810.ff7jfaszl7qhoutd@wittgenstein>
-In-Reply-To: <20220923083810.ff7jfaszl7qhoutd@wittgenstein>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sun, 25 Sep 2022 17:53:03 -0500
-Message-ID: <CAH2r5mt2Em03zN+HgL0=YZ335PLyJoBf5z3H2_Mn7y3rF=xS=A@mail.gmail.com>
-Subject: Re: [PATCH 04/29] cifs: implement get acl method
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Sun, 25 Sep 2022 19:54:16 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24A0F23162;
+        Sun, 25 Sep 2022 16:54:15 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B069E1100D90;
+        Mon, 26 Sep 2022 09:54:09 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ocbRn-00CADQ-Ot; Mon, 26 Sep 2022 09:54:07 +1000
+Date:   Mon, 26 Sep 2022 09:54:07 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>, akpm@linux-foundation.org,
+        Matthew Wilcox <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
+ eviction path
+Message-ID: <20220925235407.GA3600936@dread.disaster.area>
+References: <20220918225731.GG3600936@dread.disaster.area>
+ <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220919212959.GL3600936@dread.disaster.area>
+ <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220921221416.GT3600936@dread.disaster.area>
+ <YyuQI08LManypG6u@nvidia.com>
+ <20220923001846.GX3600936@dread.disaster.area>
+ <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
+ <20220923021012.GZ3600936@dread.disaster.area>
+ <20220923093803.nroajmvn7twuptez@quack3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220923093803.nroajmvn7twuptez@quack3>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6330ea24
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=Ikd4Dj_1AAAA:8
+        a=7-415B0cAAAA:8 a=6WIxVItXUT_raNPUQEAA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,56 +65,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 3:38 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Sep 22, 2022 at 10:52:43PM -0500, Steve French wrote:
-> > Looks like the SMB1 Protocol operations for get/set posix ACL were
-> > removed in the companion patch (in SMB3, POSIX ACLs have to be handled
->
-> Sorry, what companion patch? Is a patch in this series or are you
-> referring to something else?
+On Fri, Sep 23, 2022 at 11:38:03AM +0200, Jan Kara wrote:
+> On Fri 23-09-22 12:10:12, Dave Chinner wrote:
+> > On Thu, Sep 22, 2022 at 05:41:08PM -0700, Dan Williams wrote:
+> > > Dave Chinner wrote:
+> > > > On Wed, Sep 21, 2022 at 07:28:51PM -0300, Jason Gunthorpe wrote:
+> > > > > On Thu, Sep 22, 2022 at 08:14:16AM +1000, Dave Chinner wrote:
+> > > > > 
+> > > > > > Where are these DAX page pins that don't require the pin holder to
+> > > > > > also hold active references to the filesystem objects coming from?
+> > > > > 
+> > > > > O_DIRECT and things like it.
+> > > > 
+> > > > O_DIRECT IO to a file holds a reference to a struct file which holds
+> > > > an active reference to the struct inode. Hence you can't reclaim an
+> > > > inode while an O_DIRECT IO is in progress to it. 
+> > > > 
+> > > > Similarly, file-backed pages pinned from user vmas have the inode
+> > > > pinned by the VMA having a reference to the struct file passed to
+> > > > them when they are instantiated. Hence anything using mmap() to pin
+> > > > file-backed pages (i.e. applications using FSDAX access from
+> > > > userspace) should also have a reference to the inode that prevents
+> > > > the inode from being reclaimed.
+> > > > 
+> > > > So I'm at a loss to understand what "things like it" might actually
+> > > > mean. Can you actually describe a situation where we actually permit
+> > > > (even temporarily) these use-after-free scenarios?
+> > > 
+> > > Jason mentioned a scenario here:
+> > > 
+> > > https://lore.kernel.org/all/YyuoE8BgImRXVkkO@nvidia.com/
+> > > 
+> > > Multi-thread process where thread1 does open(O_DIRECT)+mmap()+read() and
+> > > thread2 does memunmap()+close() while the read() is inflight.
+> > 
+> > And, ah, what production application does this and expects to be
+> > able to process the result of the read() operation without getting a
+> > SEGV?
+> > 
+> > There's a huge difference between an unlikely scenario which we need
+> > to work (such as O_DIRECT IO to/from a mmap() buffer at a different
+> > offset on the same file) and this sort of scenario where even if we
+> > handle it correctly, the application can't do anything with the
+> > result and will crash immediately....
+> 
+> I'm not sure I fully follow what we are concerned about here. As you've
+> written above direct IO holds reference to the inode until it is completed
+> (through kiocb->file->inode chain). So direct IO should be safe?
 
-I found it - the patch order was confusing (I saw patches 4 and 27,
-but patch 5 was
-missed).  The functions I was asking about were deleted in patch 27 in
-your series but readded in patch 5 which I had missed.
+AFAICT, it's the user buffer allocated by mmap() that the direct IO
+is DMAing into/out of that is the issue here. i.e. mmap() a file
+that is DAX enabled, pass the mmap region to DIO on a non-dax file,
+GUP in the DIO path takes a page pin on user pages that are DAX
+mapped, the userspace application then unmaps the file pages and
+unlinks the FSDAX file.
 
-On the more general topic of POSIX ACLs:
-- Note that they are supported for SMB1 (to some servers, including Samba)
-- But ... almost all servers (including modern ones, not just ancient
-SMB1 servers) support "RichACLs" (remember that RichACLs  were
-originally based on SMB/NTFS ACLs and include deny ACEs so cover use
-cases that primitive POSIX ACLs can't handle) but for cifs.ko we have
-to map the local UID to a global unique ID for each ACE (ie id to SID
-translation).  I am interested in the topic for how it is recommended
-to map "POSIX ACLs" to "RichACLs."  I am also interested in making
-sure that cifs.ko supports the recommended mechanism for exposing
-"richacls" - since there are various filesystems that support RichACLs
-(including NFS, cifs.ko, ntfs and presumably others) and there are
-even xfstests that test richacls.
+At this point the FSDAX mapped inode has no active references, so
+the filesystem frees the inode and it's allocated storage space, and
+now the DIO or whatever is holding the GUP reference is
+now a moving storage UAF violation. What ever is holding the GUP
+reference doesn't even have a reference to the FSDAX filesystem -
+the DIO fd could point to a file in a different filesystem
+altogether - and so the fsdax filesytem could be unmounted at this
+point whilst the application is still actively using the storage
+underlying the filesystem.
 
+That's just .... broken.
 
-> > by mapping from rich acls).  Was this intentional or did I miss
-> > something? I didn't see the functions for sending these over the wire
-> > for SMB1 (which does support POSIX ACLs, not just RichACLs (SMB/NTFS
-> > ACLs))
->
-> I'm sorry, I don't understand. This is basically a 1:1 port of what you
-> currently have in cifs_xattr_set() and cifs_xattr_get() under the
-> XATTR_ACL_DEFAULT and XATTR_ACL_ACCESS switches. So basically, the
-> patches in this series just add almost 1:1 copies of
-> CIFSSMBSetPosixACL() and CIFSSMBGetPosixACL() just that instead of
-> operating on void * they operate on a proper vfs struct posix acl. So
-> nothing would've changed behavior wise. Ofc, there's always the chance
-> that I missed sm especially bc I'm not a cifs developer. :)
->
-> >
-> >         pSMB->SubCommand = cpu_to_le16(TRANS2_SET_PATH_INFORMATION);
-> >         pSMB->InformationLevel = cpu_to_le16(SMB_SET_POSIX_ACL);
+> I'd be more worried about stuff like vmsplice() that can add file pages
+> into pipe without holding inode alive in any way and keeping them there for
+> arbitrarily long time. Didn't we want to add FOLL_LONGTERM to gup executed
+> from vmsplice() to avoid issues like this?
 
+Yes, ISTR that was part of the plan - use FOLL_LONGTERM to ensure
+FSDAX can't run operations that pin pages but don't take fs
+references. I think that's how we prevented RDMA users from pinning
+FSDAX direct mapped storage media in this way. It does not, however,
+prevent the above "short term" GUP UAF situation from occurring.
 
+> > > Sounds plausible to me, but I have not tried to trigger it with a focus
+> > > test.
+> > 
+> > If there really are applications this .... broken, then it's not the
+> > responsibility of the filesystem to paper over the low level page
+> > reference tracking issues that cause it.
+> > 
+> > i.e. The underlying problem here is that memunmap() frees the VMA
+> > while there are still active task-based references to the pages in
+> > that VMA. IOWs, the VMA should not be torn down until the O_DIRECT
+> > read has released all the references to the pages mapped into the
+> > task address space.
+> > 
+> > This just doesn't seem like an issue that we should be trying to fix
+> > by adding band-aids to the inode life-cycle management.
+> 
+> I agree that freeing VMA while there are pinned pages is ... inconvenient.
+> But that is just how gup works since the beginning - the moment you have
+> struct page reference, you completely forget about the mapping you've used
+> to get to the page. So anything can happen with the mapping after that
+> moment. And in case of pages mapped by multiple processes I can easily see
+> that one of the processes decides to unmap the page (and it may well be
+> that was the initial process that acquired page references) while others
+> still keep accessing the page using page references stored in some internal
+> structure (RDMA anyone?).
+
+Yup, and this is why RDMA on FSDAX using this method of pinning pages
+will end up corrupting data and filesystems, hence FOLL_LONGTERM
+protecting against most of these situations from even arising. But
+that's that workaround, not a long term solution that allows RDMA to
+be run on FSDAX managed storage media.
+
+I said on #xfs a few days ago:
+
+[23/9/22 10:23] * dchinner is getting deja vu over this latest round
+of "dax mappings don't pin the filesystem objects that own the
+storage media being mapped"
+
+And I'm getting that feeling again right now...
+
+> I think it will be rather difficult to come up
+> with some scheme keeping VMA alive while there are pages pinned without
+> regressing userspace which over the years became very much tailored to the
+> peculiar gup behavior.
+
+Perhaps all we should do is add a page flag for fsdax mapped pages
+that says GUP must pin the VMA, so only mapped pages that fall into
+this category take the perf penalty of VMA management.
+
+> I can imagine we would keep *inode* referenced while there are its pages
+> pinned.
+
+We can do that by pinning the VMA, yes?
+
+> That should not be that difficult but at least in naive
+> implementation that would put rather heavy stress on inode refcount under
+> some loads so I don't think that's useful either.
+
+Having the workaround be sub-optimal for high performance workloads
+is a good way of discouraging applications from doing fundamentally
+broken crap without actually breaking anything....
+
+-Dave.
 
 -- 
-Thanks,
-
-Steve
+Dave Chinner
+david@fromorbit.com
