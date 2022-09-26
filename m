@@ -2,104 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6D75EAF46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 20:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41BD5EAFC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 20:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229910AbiIZSKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 14:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48960 "EHLO
+        id S230125AbiIZS02 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 14:26:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiIZSKD (ORCPT
+        with ESMTP id S229711AbiIZS0I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 14:10:03 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9A69E2C1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 10:56:25 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id c9so9397903ybf.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 10:56:25 -0700 (PDT)
+        Mon, 26 Sep 2022 14:26:08 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD3A4A81B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 11:24:40 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id y136so7543948pfb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 11:24:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:from:to:cc:subject:date;
-        bh=C237qwozOvl8aPF+8xhmIlNpmWxUmRobeuzg2CJNr44=;
-        b=ALWQv4LRMAvj0TUX9yAXxSCWFf0XfPGqKN9TaRD6JPDT2G307kUbVDtPPOmhQa1dsx
-         DNwAXJ8fx8OPZU7w7Qhx2Z7AT7t3OY0K+S3MvMDCbrhn9eZm2z2hQfVfp3aB4w1NOFtG
-         IBJQiB0xHTvXhFu+BB6DLRL5unb43b3vj1QglzmorNZlctUE4irassoRTSGZW/nbNb55
-         nXiCPrgdbvB0yk9cO2rNHJn2KPhbEDvMztcoC718FvdTtDKP/ekKSgNhPZo7WFpirb7I
-         C5wbbVHr0p1YBXBq/e55Udq0HBnKrc47FtIz1iyc6imej++SjMqr6guIy3EjppdLGd3m
-         J+RA==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=4OBTQRXHJygCpY/2rBSvNKQlNNozBBa3mtJlOeJ/EyY=;
+        b=cSzvTXKu85TucB7q+g9CQdjC/FdnYJW7ESEBDVMDQZhpqkoHzMT6tB5vmqaaVmtq+c
+         HBo/BI5kdAn7jf+xxq5MiOLWI7cJumnHX29hS+SWLXo9wgZxYqgGZ4IjXwCG6/+UPFiS
+         mSjP6/8kEubWj+KXOsoeUGGJwGHBMRMvzL4Ek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=C237qwozOvl8aPF+8xhmIlNpmWxUmRobeuzg2CJNr44=;
-        b=jCGrG2ffbl54YJEb62nOFWY3/gw6axGKMu+zwx/l6rffr1MdSwXPTdiQNs6EZZFrPE
-         3ODKsYsSunxzxhwRfZuk5O9RpBy9J84drHHOgni2cg0nUzM5f4T+zzszQShf+or/9CCP
-         tSSjViwmU7papBxd+8REIOOTuRofXrQo5jkZiC3BRL5QWEUtxaJ9pSVFySSSJ/VL03GC
-         ax0sHb68kTGCzTA17t6afTFI6oLBvHupbLm78/LHnf6FrJWVKIFcKTVPncnaVj53Xv/G
-         7tOKFrwAfKrBiu06wVaUzAR5bf7sqQJay76krOslr93Ndj4giUojdtft5WuUxy7yvo60
-         exjQ==
-X-Gm-Message-State: ACrzQf37oKEevdKdly98d5tUEwaS/VkPJrMYjvQKYUqiF4F4KNxSTEWJ
-        bI18o8PVvemLbge0f0PthW1xd4xLh5cGBzB0ML0=
-X-Google-Smtp-Source: AMsMyM6ktQE3+d1Vwj4C6MTrT+pyTx/G3m4+0s39VUEEvZU9NMXvDZ7lm4m0RBAaJyS6z4xvnmVrpqzRoIF9unjWYJU=
-X-Received: by 2002:a25:24d5:0:b0:6b4:cd06:dc38 with SMTP id
- k204-20020a2524d5000000b006b4cd06dc38mr21437413ybk.344.1664214983776; Mon, 26
- Sep 2022 10:56:23 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=4OBTQRXHJygCpY/2rBSvNKQlNNozBBa3mtJlOeJ/EyY=;
+        b=uXCiOz2hq3QbCpFExrlWrJQSYFU74sb6IKc+ElyLBCuOoHNantI80SUDDWaaBQulbg
+         bDT+ZAHGtghK3sq4Kkon57Zv+ZNaldoCEQ09jR7dVG+GQaDtOieYPfE+EdcREb0zWtVZ
+         WSXT5wd4FqBLAeLWaFfZVsiqPaHarKrB8aobXJ5k6GZ4dHuQjKLj08TR82r8LFdQpD9M
+         NpEiEXXqRm6uzBbqqWzH2bb9VxcXeacv7mltKk+67UB3wnqfK3KnU2Bdvva4SjAgh4iF
+         A0IoI1GFiJCn/hnnDAqBmUghnI4+SA3f7G7n3YXwmStNdJbeR0HWPRvAMT/5PxShrdR+
+         OpeA==
+X-Gm-Message-State: ACrzQf0aH6GeuO6O3M7Mpq1aaxbxrL2dj4b/etDeJ2TNbY9TI+cKJBuA
+        EfdI9JOBDDudd73RQT5NouFLmA==
+X-Google-Smtp-Source: AMsMyM6gzz3RlLPDBF6eEAacYBSNNxOrYYdXLeQNzcYYWROPiLY1NScn4aUnW3BZuZbnjPt9v5tgLQ==
+X-Received: by 2002:a63:4750:0:b0:43c:dac:9e4b with SMTP id w16-20020a634750000000b0043c0dac9e4bmr21137736pgk.300.1664216679159;
+        Mon, 26 Sep 2022 11:24:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p2-20020a170902c70200b0016f85feae65sm11305644plp.87.2022.09.26.11.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Sep 2022 11:24:38 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 11:24:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
+        x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 13/16] mempool: Use kmalloc_size_roundup() to match
+ ksize() usage
+Message-ID: <202209261123.B2CBAE87E0@keescook>
+References: <20220923202822.2667581-1-keescook@chromium.org>
+ <20220923202822.2667581-14-keescook@chromium.org>
+ <f4fc52c4-7c18-1d76-0c7a-4058ea2486b9@suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a05:7108:7150:0:0:0:0 with HTTP; Mon, 26 Sep 2022 10:56:23
- -0700 (PDT)
-Reply-To: pointerscott009@gmail.com
-From:   Abdulkareem Ademola <adeomoade123g@gmail.com>
-Date:   Mon, 26 Sep 2022 18:56:23 +0100
-Message-ID: <CALzsaxvWOpy-yYruzha0QT3tdg1-n+yBN5P_Qbk5MOh7h8rgew@mail.gmail.com>
-Subject: =?UTF-8?Q?Bussines_offer_Gesch=C3=A4ftsangebot=2E?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=5.7 required=5.0 tests=BAYES_60,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:b34 listed in]
-        [list.dnswl.org]
-        *  1.5 BAYES_60 BODY: Bayes spam probability is 60 to 80%
-        *      [score: 0.6758]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [pointerscott009[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [adeomoade123g[at]gmail.com]
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  3.1 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4fc52c4-7c18-1d76-0c7a-4058ea2486b9@suse.cz>
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
+On Mon, Sep 26, 2022 at 03:50:43PM +0200, Vlastimil Babka wrote:
+> On 9/23/22 22:28, Kees Cook wrote:
+> > Round up allocations with kmalloc_size_roundup() so that mempool's use
+> > of ksize() is always accurate and no special handling of the memory is
+> > needed by KASAN, UBSAN_BOUNDS, nor FORTIFY_SOURCE.
+> > 
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >   mm/mempool.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/mempool.c b/mm/mempool.c
+> > index 96488b13a1ef..0f3107b28e6b 100644
+> > --- a/mm/mempool.c
+> > +++ b/mm/mempool.c
+> > @@ -526,7 +526,7 @@ EXPORT_SYMBOL(mempool_free_slab);
+> >    */
+> >   void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
+> >   {
+> > -	size_t size = (size_t)pool_data;
+> > +	size_t size = kmalloc_size_roundup((size_t)pool_data);
+> 
+> Hm it is kinda wasteful to call into kmalloc_size_roundup for every
+> allocation that has the same input. We could do it just once in
+> mempool_init_node() for adjusting pool->pool_data ?
+> 
+> But looking more closely, I wonder why poison_element() and
+> kasan_unpoison_element() in mm/mempool.c even have to use ksize()/__ksize()
+> and not just operate on the requested size (again, pool->pool_data). If no
+> kmalloc mempool's users use ksize() to write beyond requested size, then we
+> don't have to unpoison/poison that area either?
 
-Hello, Do you have a projects that need urgent loan??
-Granting out loans today in 10,000 / 500 Million to Interested
-Investors, Companies & Private Individuals.
-Revert back if you interested.
+Yeah, I think that's a fair point. I will adjust this.
 
-
-Hallo, haben Sie Projekte, die dringend einen Kredit ben=C3=B6tigen?
-Vergeben Sie heute Kredite in H=C3=B6he von 10.000 / 500 Millionen an
-interessierte Investoren, Unternehmen und Privatpersonen.
-Kommen Sie zur=C3=BCck, wenn Sie interessiert sind.
+-- 
+Kees Cook
