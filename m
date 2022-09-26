@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1AA5EB59B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D06425EB59D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230452AbiIZXVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 19:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36458 "EHLO
+        id S231309AbiIZXV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 19:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231309AbiIZXTx (ORCPT
+        with ESMTP id S229618AbiIZXUQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 19:19:53 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52162F34FE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:26 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id m131-20020a252689000000b006b2bf1dd88cso7071577ybm.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:26 -0700 (PDT)
+        Mon, 26 Sep 2022 19:20:16 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A453EF392B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:29 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-349e6acbac9so75373007b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date;
-        bh=rYjxyvkE9RDezxO9h2K/BZZj12tb0mXu2/j7vaaKhpg=;
-        b=KBNHzGr1TYXdTaAWRXVGAoP48vPDgiAkokPCXh0+rbjbhxLuTAym3RSPua+fBmeDb8
-         bcXCjc7E+xQsZzv48COgWXWTVIfQ79v+CpGFADgfgXsYLUoSwjMsEmHFDnCN2N305yqX
-         QqERox4Ofa1b2bqrY3HRrrQvYRelRHzBaCQchyhCDYvI+THARW2YybXntmvzM0fsERAf
-         oxwzMwD8SMDKO7i8LW82FnsXXxczmYZCu4EuAm+mgLV61VaDlTZIemu1yHDfAntwLnm0
-         rEiBMmojE6D2HgcX+RZg8o8pWdyn+BGNzG7Ht9rx+969662qcPd4vVknyXLntHjLfrWQ
-         OpJA==
+        bh=wQF6G/HA0Y+V1EPjEVB3vfWMwGjE+u8YI2mwSvpQX+A=;
+        b=kSzdpk+0TtLxZlVVK/DVfp1N3TQxI9DGFy/HC2ygJsBTsXc5QTDhng/sqvFU+UQYAU
+         9bB2RGN++XitMQ78eIZcdGWQwypjK4/NPr+bT2Lrhatok8KTTr3MJ1jgD3HD6/gGwAxb
+         0li8DD9vRKm7COgZGkvjNULUA6L7b99O77pPD6Vcqwbq8bMGPUJuuydUKMRoauulBtl5
+         kDRrvC2bGBEpW3R3NlGiL9aWPAXwC8E0OcJBpXymmiVTvpTyPoOFJj9E2suiT2DjaAoF
+         onPaqC0lY5BPbg2KJK0nqhACzpU0oPiVrFfRM29M3PCvjDwvk5HQjLqt8oXI0bFsSZSE
+         aLxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date;
-        bh=rYjxyvkE9RDezxO9h2K/BZZj12tb0mXu2/j7vaaKhpg=;
-        b=a0GKw7dH9mIxzHYcJv+uwNsQR+uc9jIvg7MX12CKyuaEg3qJ4dH/rTMLWuKaWa7Z1I
-         cyOw9liCrLRVN5XEBtCKIr0us3tyqvZNDNV4DebLsdMCqdvR1Ir2vNAGF4c3QPFoNmGi
-         0QmlA24UdCVoDnknWDrqlVclL5BrTBwFhVqenjwSb7ZbmCdAg7rHCi75wJR985GKAF4S
-         3UTmpZ/Nx8l8P+JHQAd3vZLEbOi/t+iRsH0BCth9dWNMrc62ujr3kCbCxqr57FSGKkXP
-         bptjAoWWPiOLbZaWloiaaZ0OJ3G5O9EL37SCwyiGetkSUEpnLgdCh+OTjTCgDobeMeTu
-         9rVg==
-X-Gm-Message-State: ACrzQf2aTreM4by6zPQwd0EY+/rH0F7PA5CPOOw9+Sew6U17pjAQw0dC
-        fvp9mAXqzPxzWlZo4UZed34CBMzZpa4=
-X-Google-Smtp-Source: AMsMyM4UrkAMF8Ec7bD3xpQxejQrZ+7AzTsLm6GcYdPNdTlGzSGUVfMgQP6yWGS9qUaeysQVWLDzLx9CE4c=
+        bh=wQF6G/HA0Y+V1EPjEVB3vfWMwGjE+u8YI2mwSvpQX+A=;
+        b=tjhDVpTFWx/vpEeSN1tFU4ZSwQGTBthKdA3QkgIPzDlUm4dWjlvU3YTp4FWItL+Qiz
+         52ff4XmcTaAlZavD1+lL/2ZznnYiGsZTv4z2kftRLTOkF+Vx+B1C+jS5lOEN17sm/vG9
+         RBIFJVBaaoZtTmIWNgNxqLS1A+ALkDaP9NqdaUWluZbGCNlO1QfycILwdJPwV11H6NLN
+         8d2eN/5OiHzz1QSOkSqFrLaQnzZzuHWTyutqJGo7qLXRmbV3JuxFs8d4SCPEiTkbOsKo
+         Ej8sVOT1wYobcQB9dXqzH8xnwSg9m0/YgHbH8MWyQW6bLVhnvSJU8lp982WaurGr8M8h
+         t4Cg==
+X-Gm-Message-State: ACrzQf1CDQOamBCdnOZPuKiHs0DX/VGIxpv/fIuq7F8AP/DQFJjFwfuH
+        7OceAmx80jOcIF9FogN8015hKQBuHw4=
+X-Google-Smtp-Source: AMsMyM45pPcZ0MK0I2fYYY52zyvKq6iZoagcjyg2ZSR5rYf0mFbYDxV73EIk0/u6BZNq+Tj6XEXL3eP7wp8=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:4643:a68e:2b7:f873])
- (user=drosen job=sendgmr) by 2002:a0d:cf43:0:b0:349:d226:90bb with SMTP id
- r64-20020a0dcf43000000b00349d22690bbmr23797614ywd.136.1664234366038; Mon, 26
- Sep 2022 16:19:26 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 16:18:17 -0700
+ (user=drosen job=sendgmr) by 2002:a25:8b8b:0:b0:6af:93be:c53e with SMTP id
+ j11-20020a258b8b000000b006af93bec53emr23431948ybl.338.1664234368927; Mon, 26
+ Sep 2022 16:19:28 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 16:18:18 -0700
 In-Reply-To: <20220926231822.994383-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20220926231822.994383-1-drosen@google.com>
 X-Mailer: git-send-email 2.37.3.998.g577e59143f-goog
-Message-ID: <20220926231822.994383-22-drosen@google.com>
-Subject: [PATCH 21/26] fuse-bpf: Add xattr support
+Message-ID: <20220926231822.994383-23-drosen@google.com>
+Subject: [PATCH 22/26] fuse-bpf: Add symlink/link support
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -74,7 +74,7 @@ Cc:     Andrii Nakryiko <andrii@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,406 +85,387 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/backing.c | 257 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h  |  55 ++++++++++
- fs/fuse/xattr.c   |  36 +++++++
- 3 files changed, 348 insertions(+)
+ fs/fuse/backing.c | 251 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/dir.c     |  31 ++++++
+ fs/fuse/fuse_i.h  |  33 ++++++
+ 3 files changed, 315 insertions(+)
 
 diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index 8fd5cbfdd4fa..d8c86234f253 100644
+index d8c86234f253..485b6f1e8503 100644
 --- a/fs/fuse/backing.c
 +++ b/fs/fuse/backing.c
-@@ -695,6 +695,263 @@ int fuse_dir_fsync_initialize_out(struct bpf_fuse_args *fa, struct fuse_fsync_in
+@@ -1951,6 +1951,97 @@ int fuse_unlink_finalize(struct bpf_fuse_args *fa, int *out,
  	return 0;
  }
  
-+int fuse_getxattr_initialize_in(struct bpf_fuse_args *fa,
-+				struct fuse_getxattr_io *fgio,
-+				struct dentry *dentry, const char *name, void *value,
-+				size_t size)
++int fuse_link_initialize_in(struct bpf_fuse_args *fa, struct fuse_link_in *fli,
++			    struct dentry *entry, struct inode *dir,
++			    struct dentry *newent)
 +{
-+	*fgio = (struct fuse_getxattr_io) {
-+		.fgi.size = size,
++	struct inode *src_inode = entry->d_inode;
++
++	*fli = (struct fuse_link_in) {
++		.oldnodeid = get_node_id(src_inode),
 +	};
 +
++	fa->opcode = FUSE_LINK;
++	fa->in_numargs = 2;
++	fa->in_args[0].size = sizeof(*fli);
++	fa->in_args[0].value = fli;
++	fa->in_args[1].size = newent->d_name.len + 1;
++	fa->in_args[1].max_size = NAME_MAX + 1;
++	fa->in_args[1].value = (void *) newent->d_name.name;
++	fa->in_args[1].flags = BPF_FUSE_VARIABLE_SIZE | BPF_FUSE_MUST_ALLOCATE;
++
++	return 0;
++}
++
++int fuse_link_initialize_out(struct bpf_fuse_args *fa, struct fuse_link_in *fli,
++			     struct dentry *entry, struct inode *dir,
++			     struct dentry *newent)
++{
++	return 0;
++}
++
++int fuse_link_backing(struct bpf_fuse_args *fa, int *out, struct dentry *entry,
++		      struct inode *dir, struct dentry *newent)
++{
++	struct path backing_old_path;
++	struct path backing_new_path;
++	struct dentry *backing_dir_dentry;
++	struct inode *fuse_new_inode = NULL;
++	struct fuse_inode *fuse_dir_inode = get_fuse_inode(dir);
++	struct inode *backing_dir_inode = fuse_dir_inode->backing_inode;
++
++	*out = 0;
++	get_fuse_backing_path(entry, &backing_old_path);
++	if (!backing_old_path.dentry)
++		return -EBADF;
++
++	get_fuse_backing_path(newent, &backing_new_path);
++	if (!backing_new_path.dentry) {
++		*out = -EBADF;
++		goto err_dst_path;
++	}
++
++	backing_dir_dentry = dget_parent(backing_new_path.dentry);
++	backing_dir_inode = d_inode(backing_dir_dentry);
++
++	inode_lock_nested(backing_dir_inode, I_MUTEX_PARENT);
++	*out = vfs_link(backing_old_path.dentry, &init_user_ns,
++		       backing_dir_inode, backing_new_path.dentry, NULL);
++	inode_unlock(backing_dir_inode);
++	if (*out)
++		goto out;
++
++	if (d_really_is_negative(backing_new_path.dentry) ||
++	    unlikely(d_unhashed(backing_new_path.dentry))) {
++		*out = -EINVAL;
++		/**
++		 * TODO: overlayfs responds to this situation with a
++		 * lookupOneLen. Should we do that too?
++		 */
++		goto out;
++	}
++
++	fuse_new_inode = fuse_iget_backing(dir->i_sb, fuse_dir_inode->nodeid, backing_dir_inode);
++	if (IS_ERR(fuse_new_inode)) {
++		*out = PTR_ERR(fuse_new_inode);
++		goto out;
++	}
++	d_instantiate(newent, fuse_new_inode);
++
++out:
++	dput(backing_dir_dentry);
++	path_put(&backing_new_path);
++err_dst_path:
++	path_put(&backing_old_path);
++	return *out;
++}
++
++int fuse_link_finalize(struct bpf_fuse_args *fa, int *out, struct dentry *entry,
++		       struct inode *dir, struct dentry *newent)
++{
++	return 0;
++}
++
+ int fuse_getattr_initialize_in(struct bpf_fuse_args *fa, struct fuse_getattr_io *fgio,
+ 			       const struct dentry *entry, struct kstat *stat,
+ 			       u32 request_mask, unsigned int flags)
+@@ -2215,6 +2306,166 @@ int fuse_statfs_finalize(struct bpf_fuse_args *fa, int *out,
+ 	return 0;
+ }
+ 
++int fuse_get_link_initialize_in(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++				struct inode *inode, struct dentry *dentry,
++				struct delayed_call *callback)
++{
++	/*
++	 * TODO
++	 * If we want to handle changing these things, we'll need to copy
++	 * the lower fs's data into our own buffer, and provide our own callback
++	 * to free that buffer.
++	 *
++	 * Pre could change the name we're looking at
++	 * postfilter can change the name we return
++	 *
++	 * We ought to only make that buffer if it's been requested, so leaving
++	 * this unimplemented for the moment
++	 */
 +	*fa = (struct bpf_fuse_args) {
-+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
-+		.opcode = FUSE_GETXATTR,
++		.opcode = FUSE_READLINK,
++		.nodeid = get_node_id(inode),
++		.in_numargs = 1,
++		.in_args[0] = (struct bpf_fuse_arg) {
++			.size = dentry->d_name.len + 1,
++			.max_size = NAME_MAX + 1,
++			.flags = BPF_FUSE_VARIABLE_SIZE | BPF_FUSE_MUST_ALLOCATE,
++			.value =  (void *) dentry->d_name.name,
++		},
++		/*
++		 * .out_argvar = 1,
++		 * .out_numargs = 1,
++		 * .out_args[0].size = ,
++		 * .out_args[0].value = ,
++		 */
++	};
++
++	return 0;
++}
++
++int fuse_get_link_initialize_out(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++				 struct inode *inode, struct dentry *dentry,
++				 struct delayed_call *callback)
++{
++	/*
++	 * .out_argvar = 1,
++	 * .out_numargs = 1,
++	 * .out_args[0].size = ,
++	 * .out_args[0].value = ,
++	 */
++
++	return 0;
++}
++
++int fuse_get_link_backing(struct bpf_fuse_args *fa, const char **out,
++			  struct inode *inode, struct dentry *dentry,
++			  struct delayed_call *callback)
++{
++	struct path backing_path;
++
++	if (!dentry) {
++		*out = ERR_PTR(-ECHILD);
++		return PTR_ERR(*out);
++	}
++
++	get_fuse_backing_path(dentry, &backing_path);
++	if (!backing_path.dentry) {
++		*out = ERR_PTR(-ECHILD);
++		return PTR_ERR(*out);
++	}
++
++	/*
++	 * TODO: If we want to do our own thing, copy the data and then call the
++	 * callback
++	 */
++	*out = vfs_get_link(backing_path.dentry, callback);
++
++	path_put(&backing_path);
++	return 0;
++}
++
++int fuse_get_link_finalize(struct bpf_fuse_args *fa, const char **out,
++			     struct inode *inode, struct dentry *dentry,
++			     struct delayed_call *callback)
++{
++	return 0;
++}
++
++int fuse_symlink_initialize_in(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++			       struct inode *dir, struct dentry *entry, const char *link, int len)
++{
++	*fa = (struct bpf_fuse_args) {
++		.nodeid = get_node_id(dir),
++		.opcode = FUSE_SYMLINK,
 +		.in_numargs = 2,
 +		.in_args[0] = (struct bpf_fuse_arg) {
-+			.size = sizeof(fgio->fgi),
-+			.value = &fgio->fgi,
++			.size = entry->d_name.len + 1,
++			.flags = BPF_FUSE_IMMUTABLE,
++			.value =  (void *) entry->d_name.name,
 +		},
 +		.in_args[1] = (struct bpf_fuse_arg) {
-+			.size = strlen(name) + 1,
-+			.max_size = XATTR_NAME_MAX + 1,
-+			.flags = BPF_FUSE_MUST_ALLOCATE | BPF_FUSE_VARIABLE_SIZE,
-+			.value =  (void *) name,
-+		},
-+	};
-+
-+	return 0;
-+}
-+
-+int fuse_getxattr_initialize_out(struct bpf_fuse_args *fa,
-+				 struct fuse_getxattr_io *fgio,
-+				 struct dentry *dentry, const char *name, void *value,
-+				 size_t size)
-+{
-+	fa->flags = size ? FUSE_BPF_OUT_ARGVAR : 0;
-+	fa->out_numargs = 1;
-+	if (size) {
-+		fa->out_args[0].size = size;
-+		fa->out_args[0].max_size = size;
-+		fa->out_args[0].flags = BPF_FUSE_VARIABLE_SIZE;
-+		fa->out_args[0].value = value;
-+	} else {
-+		fa->out_args[0].size = sizeof(fgio->fgo);
-+		fa->out_args[0].value = &fgio->fgo;
-+	}
-+	return 0;
-+}
-+
-+int fuse_getxattr_backing(struct bpf_fuse_args *fa, int *out,
-+			  struct dentry *dentry, const char *name, void *value,
-+			  size_t size)
-+{
-+	ssize_t ret = vfs_getxattr(&init_user_ns,
-+				   get_fuse_dentry(dentry)->backing_path.dentry,
-+				   fa->in_args[1].value, value, size);
-+
-+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
-+		fa->out_args[0].size = ret;
-+	else
-+		((struct fuse_getxattr_out *)fa->out_args[0].value)->size = ret;
-+
-+	return 0;
-+}
-+
-+int fuse_getxattr_finalize(struct bpf_fuse_args *fa, int *out,
-+			   struct dentry *dentry, const char *name, void *value,
-+			   size_t size)
-+{
-+	struct fuse_getxattr_out *fgo;
-+
-+	if (fa->flags & FUSE_BPF_OUT_ARGVAR) {
-+		*out = fa->out_args[0].size;
-+		return 0;
-+	}
-+
-+	fgo = fa->out_args[0].value;
-+
-+	*out = fgo->size;
-+	return 0;
-+}
-+
-+int fuse_listxattr_initialize_in(struct bpf_fuse_args *fa,
-+				 struct fuse_getxattr_io *fgio,
-+				 struct dentry *dentry, char *list, size_t size)
-+{
-+	*fgio = (struct fuse_getxattr_io) {
-+		.fgi.size = size,
-+	};
-+
-+	*fa = (struct bpf_fuse_args) {
-+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
-+		.opcode = FUSE_LISTXATTR,
-+		.in_numargs = 1,
-+		.in_args[0] =
-+			(struct bpf_fuse_arg) {
-+				.size = sizeof(fgio->fgi),
-+				.value = &fgio->fgi,
-+			},
-+	};
-+
-+	return 0;
-+}
-+
-+int fuse_listxattr_initialize_out(struct bpf_fuse_args *fa,
-+				  struct fuse_getxattr_io *fgio,
-+				  struct dentry *dentry, char *list, size_t size)
-+{
-+	fa->out_numargs = 1;
-+
-+	if (size) {
-+		fa->flags = FUSE_BPF_OUT_ARGVAR;
-+		fa->out_args[0].size = size;
-+		fa->out_args[0].max_size = size;
-+		fa->out_args[0].flags = BPF_FUSE_VARIABLE_SIZE;
-+		fa->out_args[0].value = (void *)list;
-+	} else {
-+		fa->out_args[0].size = sizeof(fgio->fgo);
-+		fa->out_args[0].value = &fgio->fgo;
-+	}
-+	return 0;
-+}
-+
-+int fuse_listxattr_backing(struct bpf_fuse_args *fa, ssize_t *out, struct dentry *dentry,
-+			   char *list, size_t size)
-+{
-+	*out = vfs_listxattr(get_fuse_dentry(dentry)->backing_path.dentry, list, size);
-+
-+	if (*out < 0)
-+		return *out;
-+
-+	if (fa->flags & FUSE_BPF_OUT_ARGVAR)
-+		fa->out_args[0].size = *out;
-+	else
-+		((struct fuse_getxattr_out *)fa->out_args[0].value)->size = *out;
-+
-+	return 0;
-+}
-+
-+int fuse_listxattr_finalize(struct bpf_fuse_args *fa, ssize_t *out, struct dentry *dentry,
-+			    char *list, size_t size)
-+{
-+	struct fuse_getxattr_out *fgo;
-+
-+	if (fa->error_in)
-+		return 0;
-+
-+	if (fa->flags & FUSE_BPF_OUT_ARGVAR) {
-+		*out = fa->out_args[0].size;
-+		return 0;
-+	}
-+
-+	fgo = fa->out_args[0].value;
-+	*out = fgo->size;
-+	return 0;
-+}
-+
-+int fuse_setxattr_initialize_in(struct bpf_fuse_args *fa,
-+				struct fuse_setxattr_in *fsxi,
-+				struct dentry *dentry, const char *name,
-+				const void *value, size_t size, int flags)
-+{
-+	*fsxi = (struct fuse_setxattr_in) {
-+		.size = size,
-+		.flags = flags,
-+	};
-+
-+	*fa = (struct bpf_fuse_args) {
-+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
-+		.opcode = FUSE_SETXATTR,
-+		.in_numargs = 3,
-+		.in_args[0] = (struct bpf_fuse_arg) {
-+			.size = sizeof(*fsxi),
-+			.value = fsxi,
-+		},
-+		.in_args[1] = (struct bpf_fuse_arg) {
-+			.size = strlen(name) + 1,
-+			.max_size = XATTR_NAME_MAX + 1,
++			.size = len,
++			.max_size = PATH_MAX,
 +			.flags = BPF_FUSE_VARIABLE_SIZE | BPF_FUSE_MUST_ALLOCATE,
-+			.value =  (void *) name,
-+		},
-+		.in_args[2] = (struct bpf_fuse_arg) {
-+			.size = size,
-+			.max_size = XATTR_SIZE_MAX,
-+			.flags = BPF_FUSE_VARIABLE_SIZE | BPF_FUSE_MUST_ALLOCATE,
-+			.value = (void *) value,
++			.value = (void *) link,
 +		},
 +	};
 +
 +	return 0;
 +}
 +
-+int fuse_setxattr_initialize_out(struct bpf_fuse_args *fa,
-+				 struct fuse_setxattr_in *fsxi,
-+				 struct dentry *dentry, const char *name,
-+				 const void *value, size_t size, int flags)
++int fuse_symlink_initialize_out(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++				struct inode *dir, struct dentry *entry, const char *link, int len)
 +{
 +	return 0;
 +}
 +
-+int fuse_setxattr_backing(struct bpf_fuse_args *fa, int *out, struct dentry *dentry,
-+			  const char *name, const void *value, size_t size,
-+			  int flags)
++int fuse_symlink_backing(struct bpf_fuse_args *fa, int *out,
++			 struct inode *dir, struct dentry *entry, const char *link, int len)
 +{
-+	*out = vfs_setxattr(&init_user_ns,
-+			    get_fuse_dentry(dentry)->backing_path.dentry, name,
-+			    (void *) value, size, flags);
-+	return 0;
++	struct fuse_inode *fuse_inode = get_fuse_inode(dir);
++	struct inode *backing_inode = fuse_inode->backing_inode;
++	struct path backing_path;
++	struct inode *inode = NULL;
++
++	*out = 0;
++	//TODO Actually deal with changing the backing entry in symlink
++	get_fuse_backing_path(entry, &backing_path);
++	if (!backing_path.dentry)
++		return -EBADF;
++
++	inode_lock_nested(backing_inode, I_MUTEX_PARENT);
++	*out = vfs_symlink(&init_user_ns, backing_inode, backing_path.dentry,
++			  link);
++	inode_unlock(backing_inode);
++	if (*out)
++		goto out;
++	if (d_really_is_negative(backing_path.dentry) ||
++	    unlikely(d_unhashed(backing_path.dentry))) {
++		*out = -EINVAL;
++		/**
++		 * TODO: overlayfs responds to this situation with a
++		 * lookupOneLen. Should we do that too?
++		 */
++		goto out;
++	}
++	inode = fuse_iget_backing(dir->i_sb, fuse_inode->nodeid, backing_inode);
++	if (IS_ERR(inode)) {
++		*out = PTR_ERR(inode);
++		goto out;
++	}
++	d_instantiate(entry, inode);
++out:
++	path_put(&backing_path);
++	return *out;
 +}
 +
-+int fuse_setxattr_finalize(struct bpf_fuse_args *fa, int *out, struct dentry *dentry,
-+			   const char *name, const void *value, size_t size,
-+			   int flags)
-+{
-+	return 0;
-+}
-+
-+int fuse_removexattr_initialize_in(struct bpf_fuse_args *fa,
-+				   struct fuse_dummy_io *unused,
-+				   struct dentry *dentry, const char *name)
-+{
-+	*fa = (struct bpf_fuse_args) {
-+		.nodeid = get_fuse_inode(dentry->d_inode)->nodeid,
-+		.opcode = FUSE_REMOVEXATTR,
-+		.in_numargs = 1,
-+		.in_args[0] = (struct bpf_fuse_arg) {
-+			.size = strlen(name) + 1,
-+			.max_size = XATTR_NAME_MAX + 1,
-+			.flags = BPF_FUSE_VARIABLE_SIZE | BPF_FUSE_MUST_ALLOCATE,
-+			.value =  (void *) name,
-+		},
-+	};
-+
-+	return 0;
-+}
-+
-+int fuse_removexattr_initialize_out(struct bpf_fuse_args *fa,
-+				    struct fuse_dummy_io *unused,
-+				    struct dentry *dentry, const char *name)
-+{
-+	return 0;
-+}
-+
-+int fuse_removexattr_backing(struct bpf_fuse_args *fa, int *out,
-+			     struct dentry *dentry, const char *name)
-+{
-+	struct path *backing_path = &get_fuse_dentry(dentry)->backing_path;
-+
-+	/* TODO account for changes of the name by prefilter */
-+	*out = vfs_removexattr(&init_user_ns, backing_path->dentry, name);
-+	return 0;
-+}
-+
-+int fuse_removexattr_finalize(struct bpf_fuse_args *fa, int *out,
-+			      struct dentry *dentry, const char *name)
++int  fuse_symlink_finalize(struct bpf_fuse_args *fa, int *out,
++			   struct inode *dir, struct dentry *entry, const char *link, int len)
 +{
 +	return 0;
 +}
 +
- static inline void fuse_bpf_aio_put(struct fuse_bpf_aio_req *aio_req)
- {
- 	if (refcount_dec_and_test(&aio_req->ref))
+ int fuse_readdir_initialize_in(struct bpf_fuse_args *fa, struct fuse_read_io *frio,
+ 			    struct file *file, struct dir_context *ctx,
+ 			    bool *force_again, bool *allow_force, bool is_continued)
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index af1f715a405d..a4fd1cb018be 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -967,6 +967,16 @@ static int fuse_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 	unsigned len = strlen(link) + 1;
+ 	FUSE_ARGS(args);
+ 
++#ifdef CONFIG_FUSE_BPF
++	int err;
++
++	if (fuse_bpf_backing(dir, struct fuse_dummy_io, err,
++			fuse_symlink_initialize_in, fuse_symlink_initialize_out,
++			fuse_symlink_backing, fuse_symlink_finalize,
++			dir, entry, link, len))
++		return err;
++#endif
++
+ 	args.opcode = FUSE_SYMLINK;
+ 	args.in_numargs = 2;
+ 	args.in_args[0].size = entry->d_name.len + 1;
+@@ -1198,6 +1208,14 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+ 	struct fuse_mount *fm = get_fuse_mount(inode);
+ 	FUSE_ARGS(args);
+ 
++#ifdef CONFIG_FUSE_BPF
++	if (fuse_bpf_backing(inode, struct fuse_link_in, err,
++				fuse_link_initialize_in, fuse_link_initialize_out,
++				fuse_link_backing, fuse_link_finalize, entry,
++				newdir, newent))
++		return err;
++#endif
++
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.oldnodeid = get_node_id(inode);
+ 	args.opcode = FUSE_LINK;
+@@ -1609,6 +1627,19 @@ static const char *fuse_get_link(struct dentry *dentry, struct inode *inode,
+ 	if (fuse_is_bad(inode))
+ 		goto out_err;
+ 
++#ifdef CONFIG_FUSE_BPF
++	{
++		const char *out = NULL;
++
++		if (fuse_bpf_backing(inode, struct fuse_dummy_io, out,
++				       fuse_get_link_initialize_in, fuse_get_link_initialize_out,
++				       fuse_get_link_backing,
++				       fuse_get_link_finalize,
++				       inode, dentry, callback))
++			return out;
++	}
++#endif
++
+ 	if (fc->cache_symlinks)
+ 		return page_get_link(dentry, inode, callback);
+ 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 370fe944387e..b313a45c7774 100644
+index b313a45c7774..cbfd56d669c7 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1578,6 +1578,61 @@ int fuse_dir_fsync_initialize_in(struct bpf_fuse_args *fa, struct fuse_fsync_in
- int fuse_dir_fsync_initialize_out(struct bpf_fuse_args *fa, struct fuse_fsync_in *ffi,
- 				  struct file *file, loff_t start, loff_t end, int datasync);
+@@ -1504,6 +1504,17 @@ int fuse_unlink_backing(struct bpf_fuse_args *fa, int *out,
+ int fuse_unlink_finalize(struct bpf_fuse_args *fa, int *out,
+ 			 struct inode *dir, struct dentry *entry);
  
-+struct fuse_getxattr_io {
-+	struct fuse_getxattr_in fgi;
-+	struct fuse_getxattr_out fgo;
-+};
++int fuse_link_initialize_in(struct bpf_fuse_args *fa, struct fuse_link_in *fli,
++			    struct dentry *entry, struct inode *dir,
++			    struct dentry *newent);
++int fuse_link_initialize_out(struct bpf_fuse_args *fa, struct fuse_link_in *fli,
++			     struct dentry *entry, struct inode *dir,
++			     struct dentry *newent);
++int fuse_link_backing(struct bpf_fuse_args *fa, int *out, struct dentry *entry,
++		      struct inode *dir, struct dentry *newent);
++int fuse_link_finalize(struct bpf_fuse_args *fa, int *out, struct dentry *entry,
++		       struct inode *dir, struct dentry *newent);
 +
-+int fuse_getxattr_initialize_in(struct bpf_fuse_args *fa, struct fuse_getxattr_io *fgio,
-+				struct dentry *dentry, const char *name, void *value,
-+				size_t size);
-+int fuse_getxattr_initialize_out(struct bpf_fuse_args *fa, struct fuse_getxattr_io *fgio,
-+				 struct dentry *dentry, const char *name, void *value,
-+				 size_t size);
-+int fuse_getxattr_backing(struct bpf_fuse_args *fa, int *out,
-+			  struct dentry *dentry, const char *name, void *value,
-+			  size_t size);
-+int fuse_getxattr_finalize(struct bpf_fuse_args *fa, int *out,
-+			   struct dentry *dentry, const char *name, void *value,
-+			   size_t size);
-+
-+int fuse_listxattr_initialize_in(struct bpf_fuse_args *fa,
-+				 struct fuse_getxattr_io *fgio,
-+				 struct dentry *dentry, char *list, size_t size);
-+int fuse_listxattr_initialize_out(struct bpf_fuse_args *fa,
-+				  struct fuse_getxattr_io *fgio,
-+				  struct dentry *dentry, char *list, size_t size);
-+int fuse_listxattr_backing(struct bpf_fuse_args *fa, ssize_t *out, struct dentry *dentry,
-+			   char *list, size_t size);
-+int fuse_listxattr_finalize(struct bpf_fuse_args *fa, ssize_t *out, struct dentry *dentry,
-+			    char *list, size_t size);
-+
-+int fuse_setxattr_initialize_in(struct bpf_fuse_args *fa,
-+				struct fuse_setxattr_in *fsxi,
-+				struct dentry *dentry, const char *name,
-+				const void *value, size_t size, int flags);
-+int fuse_setxattr_initialize_out(struct bpf_fuse_args *fa,
-+				 struct fuse_setxattr_in *fsxi,
-+				 struct dentry *dentry, const char *name,
-+				 const void *value, size_t size, int flags);
-+int fuse_setxattr_backing(struct bpf_fuse_args *fa, int *out, struct dentry *dentry,
-+			  const char *name, const void *value, size_t size,
-+			  int flags);
-+int fuse_setxattr_finalize(struct bpf_fuse_args *fa, int *out, struct dentry *dentry,
-+			   const char *name, const void *value, size_t size,
-+			   int flags);
-+
-+int fuse_removexattr_initialize_in(struct bpf_fuse_args *fa,
-+				   struct fuse_dummy_io *unused,
-+				   struct dentry *dentry, const char *name);
-+int fuse_removexattr_initialize_out(struct bpf_fuse_args *fa,
-+				    struct fuse_dummy_io *unused,
-+				    struct dentry *dentry, const char *name);
-+int fuse_removexattr_backing(struct bpf_fuse_args *fa, int *out,
-+			     struct dentry *dentry, const char *name);
-+int fuse_removexattr_finalize(struct bpf_fuse_args *fa, int *out,
-+			      struct dentry *dentry, const char *name);
-+
- struct fuse_read_iter_out {
- 	uint64_t ret;
- };
-diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-index 0d3e7177fce0..96728bd907ce 100644
---- a/fs/fuse/xattr.c
-+++ b/fs/fuse/xattr.c
-@@ -115,6 +115,14 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
- 	struct fuse_getxattr_out outarg;
- 	ssize_t ret;
+ int fuse_release_initialize_in(struct bpf_fuse_args *fa, struct fuse_release_in *fri,
+ 			       struct inode *inode, struct file *file);
+ int fuse_release_initialize_out(struct bpf_fuse_args *fa, struct fuse_release_in *fri,
+@@ -1742,6 +1753,28 @@ int fuse_statfs_backing(struct bpf_fuse_args *fa, int *out,
+ int fuse_statfs_finalize(struct bpf_fuse_args *fa, int *out,
+ 			 struct dentry *dentry, struct kstatfs *buf);
  
-+#ifdef CONFIG_FUSE_BPF
-+	if (fuse_bpf_backing(inode, struct fuse_getxattr_io, ret,
-+			       fuse_listxattr_initialize_in, fuse_listxattr_initialize_out,
-+			       fuse_listxattr_backing, fuse_listxattr_finalize,
-+			       entry, list, size))
-+		return ret;
-+#endif
++int fuse_get_link_initialize_in(struct bpf_fuse_args *fa, struct fuse_dummy_io *dummy,
++				struct inode *inode, struct dentry *dentry,
++				struct delayed_call *callback);
++int fuse_get_link_initialize_out(struct bpf_fuse_args *fa, struct fuse_dummy_io *dummy,
++				 struct inode *inode, struct dentry *dentry,
++				 struct delayed_call *callback);
++int fuse_get_link_backing(struct bpf_fuse_args *fa, const char **out,
++			  struct inode *inode, struct dentry *dentry,
++			  struct delayed_call *callback);
++int fuse_get_link_finalize(struct bpf_fuse_args *fa, const char **out,
++			   struct inode *inode, struct dentry *dentry,
++			   struct delayed_call *callback);
 +
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
-@@ -182,6 +190,16 @@ static int fuse_xattr_get(const struct xattr_handler *handler,
- 			 struct dentry *dentry, struct inode *inode,
- 			 const char *name, void *value, size_t size)
- {
-+#ifdef CONFIG_FUSE_BPF
-+	int err;
++int fuse_symlink_initialize_in(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++			       struct inode *dir, struct dentry *entry, const char *link, int len);
++int fuse_symlink_initialize_out(struct bpf_fuse_args *fa, struct fuse_dummy_io *unused,
++				struct inode *dir, struct dentry *entry, const char *link, int len);
++int fuse_symlink_backing(struct bpf_fuse_args *fa, int *out,
++			 struct inode *dir, struct dentry *entry, const char *link, int len);
++int fuse_symlink_finalize(struct bpf_fuse_args *fa, int *out,
++			  struct inode *dir, struct dentry *entry, const char *link, int len);
 +
-+	if (fuse_bpf_backing(inode, struct fuse_getxattr_io, err,
-+			       fuse_getxattr_initialize_in, fuse_getxattr_initialize_out,
-+			       fuse_getxattr_backing, fuse_getxattr_finalize,
-+			       dentry, name, value, size))
-+		return err;
-+#endif
-+
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
-@@ -194,6 +212,24 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
- 			  const char *name, const void *value, size_t size,
- 			  int flags)
- {
-+#ifdef CONFIG_FUSE_BPF
-+	int err;
-+	bool handled;
-+
-+	if (value)
-+		handled = fuse_bpf_backing(inode, struct fuse_setxattr_in, err,
-+			       fuse_setxattr_initialize_in, fuse_setxattr_initialize_out,
-+			       fuse_setxattr_backing, fuse_setxattr_finalize,
-+			       dentry, name, value, size, flags);
-+	else
-+		handled = fuse_bpf_backing(inode, struct fuse_dummy_io, err,
-+			       fuse_removexattr_initialize_in, fuse_removexattr_initialize_out,
-+			       fuse_removexattr_backing, fuse_removexattr_finalize,
-+			       dentry, name);
-+	if (handled)
-+		return err;
-+#endif
-+
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
+ struct fuse_read_io {
+ 	struct fuse_read_in fri;
+ 	struct fuse_read_out fro;
 -- 
 2.37.3.998.g577e59143f-goog
 
