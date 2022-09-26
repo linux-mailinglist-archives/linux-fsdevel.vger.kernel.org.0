@@ -2,99 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2DF5EB1B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 21:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2565EB4B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 00:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230280AbiIZTzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 15:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
+        id S229897AbiIZWoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 18:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230216AbiIZTz1 (ORCPT
+        with ESMTP id S229605AbiIZWoJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 15:55:27 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D5A2633;
-        Mon, 26 Sep 2022 12:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BCNxkn1cjjmSTz0F2QcnuWmtFkHDRw/dUVSXShbYPtk=; b=ofdS4CZ7qJGuelZ07G6x4wyeEq
-        o4+hP4T1gJZQnEOjyxGireIZZ1+MEg9aoxeDeG/R2AvDSx4S7qCp8P5aZVOnHfxeOFc8cMCjgbXXk
-        Z07GM4aucnTmj7FnuBlJNT9iTC861d2/5SW4rZtQ98JFH0QB7wuN5CKl7YicCNrwYElAn1ggLn9Ve
-        3hSS4/UMsj31cJRSiaLYOkcjjsgeIhghk7MnSbCwU+QqyAt2lz7kiBvCnwOP1+RtF0dnUSI/UdcwZ
-        jgaZXePZnUP3ebMoUoLAECO5gB01LB4t609jzxdzCKZe6oVVhGyVslpBCj8yWuLLW8GQi5ebLXOS9
-        /ef2RS2g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ocuC1-0048RF-0x;
-        Mon, 26 Sep 2022 19:55:05 +0000
-Date:   Mon, 26 Sep 2022 20:55:05 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/7] iov_iter: new iov_iter_pin_pages*() routines
-Message-ID: <YzIDmUzPh3hikmP3@ZenIV>
-References: <YyFPtTtxYozCuXvu@ZenIV>
- <20220914145233.cyeljaku4egeu4x2@quack3>
- <YyIEgD8ksSZTsUdJ@ZenIV>
- <20220915081625.6a72nza6yq4l5etp@quack3>
- <YyvG+Oih2A37Grcf@ZenIV>
- <YyxzYTlyGhbb2MOu@infradead.org>
- <Yy00eSjyxvUIp7D5@ZenIV>
- <Yy1x8QE9YA4HHzbQ@infradead.org>
- <Yy3bNjaiUoGv/djG@ZenIV>
- <YzHLB4lGa2vktN7W@infradead.org>
+        Mon, 26 Sep 2022 18:44:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A2D9E2E5;
+        Mon, 26 Sep 2022 15:44:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C24DA2199A;
+        Mon, 26 Sep 2022 22:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1664232246; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3wqBvT1Pdp5nBIwk7f69QChWKcic6sFvlcDIXYHLhVw=;
+        b=bp3sjpaKgKxakHrVYbA6MiKdHvmDJOaK7Knl9ZekzxVGGvefEZtlBRay9JdXNdvtsI1FeT
+        BFiGJDTn7+nBrNUAcYcwtC/v/cFeQlQAXMryESS37gkkS89krmeCqqd4ZQnBlnku1Qj9nT
+        bHo5wmUgv+yvxmGT2ireKVPFG/FEpiA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1664232246;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3wqBvT1Pdp5nBIwk7f69QChWKcic6sFvlcDIXYHLhVw=;
+        b=KNEYqmH80A7uU4gjB/CKhQ0gmEKPEUyR2v8DIyep3Ttnd3fg3CE5jdzAdX4shiTSaiECHR
+        w+8QIdUkTfKWlFCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B2E7213486;
+        Mon, 26 Sep 2022 22:43:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id oE9qGi8rMmOyQwAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 26 Sep 2022 22:43:59 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YzHLB4lGa2vktN7W@infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Trond Myklebust" <trondmy@hammerspace.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+In-reply-to: <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
+References: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>,
+ <20220918235344.GH3600936@dread.disaster.area>,
+ <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>,
+ <20220920001645.GN3600936@dread.disaster.area>,
+ <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>,
+ <20220921000032.GR3600936@dread.disaster.area>,
+ <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>,
+ <20220921214124.GS3600936@dread.disaster.area>,
+ <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>,
+ <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>,
+ <20220923095653.5c63i2jgv52j3zqp@quack3>,
+ <2d41c08e1fd96d55c794c3b4cd43a51a0494bfcf.camel@hammerspace.com>,
+ <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
+Date:   Tue, 27 Sep 2022 08:43:56 +1000
+Message-id: <166423223623.17572.7229091435446226718@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 08:53:43AM -0700, Christoph Hellwig wrote:
-> On Fri, Sep 23, 2022 at 05:13:42PM +0100, Al Viro wrote:
-> > You are mixing two issues here - holding references to pages while using
-> > iov_iter instance is obvious; holding them until async IO is complete, even
-> > though struct iov_iter might be long gone by that point is a different
-> > story.
+On Fri, 23 Sep 2022, Jeff Layton wrote:
 > 
-> But someone needs to hold a refernce until the I/O is completed, because
-> the I/O obviously needs the pages.  Yes, we could say the callers holds
-> them and can drop the references right after I/O submission, while
-> the method needs to grab another reference.  But that is more
-> complicated and is more costly than just holding the damn reference.
+> Absolutely. That is the downside of this approach, but the priority here
+> has always been to improve nfsd. If we don't get the ability to present
+> this info via statx, then so be it. Later on, I suppose we can move that
+> handling into the kernel in some fashion if we decide it's worthwhile.
+> 
+> That said, not having this in statx makes it more difficult to test
+> i_version behavior. Maybe we can add a generic ioctl for that in the
+> interim?
 
-Take a look at __nfs_create_request().  And trace the call chains leading
-to nfs_clear_request() where the corresponding put_page() happens.
+I wonder if we are over-thinking this, trying too hard, making "perfect"
+the enemy of "good".
+While we agree that the current implementation of i_version is
+imperfect, it isn't causing major data corruption all around the world.
+I don't think there are even any known bug reports are there?
+So while we do want to fix it as best we can, we don't need to make that
+the first priority.
 
-What I'm afraid of is something similar in the bowels of some RDMA driver.
-With upper layers shoving page references into sglist using iov_iter_get_pages(),
-then passing sglist to some intermediate layer, then *that* getting passed down
-into a driver which grabs references for its own use and releases them from
-destructor of some private structure.  Done via kref_put().  Have that
-delayed by, hell - anything, up to and including debugfs shite somewhere
-in the same driver, iterating through those private structures, grabbing
-a reference to do some pretty-print into kmalloc'ed buffer, then drooping it.
-Voila - we have page refs duplicated from ITER_BVEC and occasionally staying
-around after the ->ki_complete() of async ->write_iter() that got that
-ITER_BVEC.
+I think the first priority should be to document how we want it to work,
+which is what this thread is really all about.  The documentation can
+note that some (all) filesystems do not provide perfect semantics across
+unclean restarts, and can list any other anomalies that we are aware of.
+And on that basis we can export the current i_version to user-space via
+statx and start trying to write some test code.
 
-It's really not a trivial rule change.
+We can then look at moving the i_version/ctime update from *before* the
+write to *after* the write, and any other improvements that can be
+achieved easily in common code.  We can then update the man page to say
+"since Linux 6.42, this list of anomalies is no longer present".
+
+Then we can explore some options for handling unclean restart - in a
+context where we can write tests and maybe even demonstrate a concrete
+problem before we start trying to fix it.
+
+NeilBrown
