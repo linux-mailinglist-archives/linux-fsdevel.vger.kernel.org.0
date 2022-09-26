@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B493D5EB57D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E285EB57F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231307AbiIZXTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 19:19:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36432 "EHLO
+        id S231187AbiIZXTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 19:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbiIZXTB (ORCPT
+        with ESMTP id S231181AbiIZXTG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 19:19:01 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90F5D079B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:53 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id f3-20020a056902038300b00696588a0e87so7065435ybs.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:53 -0700 (PDT)
+        Mon, 26 Sep 2022 19:19:06 -0400
+Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08DD70FB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:56 -0700 (PDT)
+Received: by mail-pj1-x1049.google.com with SMTP id m2-20020a17090a158200b002058e593c2bso3668862pja.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date;
-        bh=yTzbWKA3zPzjeiF937oMd+mrfs7eDa6MeIt8WxC7alo=;
-        b=XxZSKP++rmDEAheWrfuIcNVJDlRhi31eGx0fW/AOn5FDJiyfDd+KgpYtrxZGtTn1pS
-         ZiQc3KZZ/mFoH0nvvq42krCSaNA5K0wB6LWVwQYjuohdPjz3SAKJx8OWbQiHlTLDR4op
-         fTUgoDz3gtxmVWXUwjq5WRsr8D/1BdtErlFd6nhr9WE9yUhKxTpaZ0S0wWMW2NRFw/a8
-         yG1+UPwahz0d+H2fEBJSi1+mITB6N/sKxcDqKrJJOxT9sqiCbt9Wb4XvDmF/ibvKB3Iv
-         l3++DdWpVDYnp7K+b5pilBcFlSteae6kc5L5UjGtRiHa3hXh/a9tRX/EZs6635gDwc8M
-         j4Mg==
+        bh=X+V+rjagupOsGXK+w8MXna7CMidJPhkAi0fk+lgEZBA=;
+        b=qv/E5vXFkhxR5QvPGwvWrChHYpzqYXWbpF5AvuxhD5oW4WHxmmI1OPCK+zVLccyxpQ
+         70P8uKQVe9p+jjCPGgpYYluyB7Bs8yFtj7IiCTWYB8eN+RBfa/8JMPdDzn8RQ/JSWk6h
+         bAFUWLI3gTXLm9A9xnGHDKGD4PXFm6Zabyn0X+K27UzGDN0+OSKnlGj/eEFTadNo3C8K
+         49J1NwErtoUzVemb2sqAwCTQI/2Zwd5Ow4yP8MiEF3KXhFks30uWXD/KrpVQaGcaAxZs
+         pPLLVaggu7osT/b8guwSgxWhd5j2+t2/PVd10x1ED46DEdwTvFngr4k7OGCcZvF3tuDq
+         +JgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date;
-        bh=yTzbWKA3zPzjeiF937oMd+mrfs7eDa6MeIt8WxC7alo=;
-        b=ioZiDE3V8BlWhtysYPL9WNoweyvqovryyZn+q7Lw+Tm/n/pnV0ZXwzsPbIwfzKN3Ns
-         Uc073TfjrXIPN4T8rXLfgJKd5Ta1M+gA97Vi4cjpOtlhlBbmTKeoIAr+gXUn7vPnuPUO
-         T7s/EBdtvu91rHr1i/PfpUQcmwvwsoTHGUgUz6dpVWyGAtHb2duOWmBeGRdd4eneZb1A
-         SY1u/1SOBs/n1Aphc+wQgfqBC5PGu0NyzAKiRmtIaJYWWAB+faajBvPHn7wADBH+Glcd
-         ybyrx/y9mJVSbUWOH1TCK9RRYDUnL/rxxUNxWqdAkJCPpolCSkoykSDDTr33iInc6diF
-         t1qw==
-X-Gm-Message-State: ACrzQf10DsKLLW09Y/jHa1VXkSEvLchz5VGSrsRJiY/ydygynA2o+FGl
-        fE5cRF3o9UM0qN+8Pdu3Gqj3HXXAslE=
-X-Google-Smtp-Source: AMsMyM4moFi5+iumYozT+7qlS1BDI8DN0/blS/CYnmUA6IS+xnhRO4FLKdQ/ipgElvsFL6t89fVCoWxZ3Ew=
+        bh=X+V+rjagupOsGXK+w8MXna7CMidJPhkAi0fk+lgEZBA=;
+        b=J7Pf0e6xAsqMjyke6XK1rWOzeojH/mB/YYlnT8WgPJ7OEMUNmTMQUvo81B3rFsZ/1h
+         maEmLz9Zy6lV0KhL5fPIoZGoVVAS2dXz0abTvr7g3CdIxHc3adrBydxO0/d9mM/s431D
+         3DzKOx6TV4yTdhtpG0Xp+DGYVDZU3iXI1fjBXQDgYRYlVoJTr2jBsCycWeV9HkIuuC3b
+         Bi3jxgdtKqDZ7kGrr4pN4fYTIUtnON5SbVKsHS/C5hHblMlqJkK707up6+ebF7F4K7S+
+         i9TQz+uzg+JJzaZDBna6X9/29RgaYKHwLm8GVS2Zkvun+Dhwslg0d5/WlDmzKyURWV5O
+         H3ag==
+X-Gm-Message-State: ACrzQf01rxNgWZUKuzmoFPZloXRpH4XVKBC3HbiKRtUKJnbc7p5jAL6+
+        aoubWI3H51jTbR+KtEbPpcbkXO3gEBo=
+X-Google-Smtp-Source: AMsMyM7OXl+IFw2HF4iotZxmOMrRMbE3M4zRYrR3Z0qM/C0QTbRpWqi6Mvvu2NO8Sm0yQmskBLjtHPmCpSk=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:4643:a68e:2b7:f873])
- (user=drosen job=sendgmr) by 2002:a25:af13:0:b0:6ae:3166:1aee with SMTP id
- a19-20020a25af13000000b006ae31661aeemr23247290ybh.288.1664234333269; Mon, 26
- Sep 2022 16:18:53 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 16:18:05 -0700
+ (user=drosen job=sendgmr) by 2002:a62:1c8f:0:b0:537:2284:bd00 with SMTP id
+ c137-20020a621c8f000000b005372284bd00mr26113356pfc.78.1664234336158; Mon, 26
+ Sep 2022 16:18:56 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 16:18:06 -0700
 In-Reply-To: <20220926231822.994383-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20220926231822.994383-1-drosen@google.com>
 X-Mailer: git-send-email 2.37.3.998.g577e59143f-goog
-Message-ID: <20220926231822.994383-10-drosen@google.com>
-Subject: [PATCH 09/26] fuse-bpf: Don't support export_operations
+Message-ID: <20220926231822.994383-11-drosen@google.com>
+Subject: [PATCH 10/26] fuse-bpf: Partially add mapping support
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -82,40 +82,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the future, we may choose to support these, but it poses some
-challenges. In order to create a disconnected dentry/inode, we'll need
-to encode the mountpoint and bpf into the file_handle, which means we'd
-need a stable representation of them. This also won't hold up to cases
-where the bpf is not stateless. One possibility is registering bpf
-programs and mounts in a specific order, so they can be assigned
-consistent ids we can use in the file_handle. We can defer to the lower
-filesystem for the lower inode's representation in the file_handle.
+This adds a backing implementation for mapping, but no bpf counterpart
+yet.
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/inode.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/fuse/backing.c | 37 +++++++++++++++++++++++++++++++++++++
+ fs/fuse/file.c    |  6 ++++++
+ fs/fuse/fuse_i.h  |  3 +++
+ 3 files changed, 46 insertions(+)
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index ca65199b38cb..290eae750282 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1122,6 +1122,14 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 	nodeid = get_fuse_inode(inode)->nodeid;
- 	generation = inode->i_generation;
+diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+index 51088701e7ad..fa8805e24061 100644
+--- a/fs/fuse/backing.c
++++ b/fs/fuse/backing.c
+@@ -77,6 +77,43 @@ int parse_fuse_entry_bpf(struct fuse_entry_bpf *feb)
+ 	return err;
+ }
+ 
++ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	int ret;
++	struct fuse_file *ff = file->private_data;
++	struct inode *fuse_inode = file_inode(file);
++	struct file *backing_file = ff->backing_file;
++	struct inode *backing_inode = file_inode(backing_file);
++
++	if (!backing_file->f_op->mmap)
++		return -ENODEV;
++
++	if (WARN_ON(file != vma->vm_file))
++		return -EIO;
++
++	vma->vm_file = get_file(backing_file);
++
++	ret = call_mmap(vma->vm_file, vma);
++
++	if (ret)
++		fput(backing_file);
++	else
++		fput(file);
++
++	if (file->f_flags & O_NOATIME)
++		return ret;
++
++	if ((!timespec64_equal(&fuse_inode->i_mtime, &backing_inode->i_mtime) ||
++	     !timespec64_equal(&fuse_inode->i_ctime,
++			       &backing_inode->i_ctime))) {
++		fuse_inode->i_mtime = backing_inode->i_mtime;
++		fuse_inode->i_ctime = backing_inode->i_ctime;
++	}
++	touch_atime(&file->f_path);
++
++	return ret;
++}
++
+ /*******************************************************************************
+  * Directory operations after here                                             *
+  ******************************************************************************/
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 4fa2ebc068f0..138890eae07c 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2452,6 +2452,12 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (FUSE_IS_DAX(file_inode(file)))
+ 		return fuse_dax_mmap(file, vma);
  
 +#ifdef CONFIG_FUSE_BPF
-+	/* TODO: Does it make sense to support this in some cases? */
-+	if (!nodeid && get_fuse_inode(inode)->backing_inode) {
-+		*max_len = 0;
-+		return FILEID_INVALID;
-+	}
++	/* TODO - this is simply passthrough, not a proper BPF filter */
++	if (ff->backing_file)
++		return fuse_backing_mmap(file, vma);
 +#endif
 +
- 	fh[0] = (u32)(nodeid >> 32);
- 	fh[1] = (u32)(nodeid & 0xffffffff);
- 	fh[2] = generation;
+ 	if (ff->open_flags & FOPEN_DIRECT_IO) {
+ 		/* Can't provide the coherency needed for MAP_SHARED */
+ 		if (vma->vm_flags & VM_MAYSHARE)
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 30ddc298fb27..a9653f71c145 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1404,8 +1404,11 @@ struct fuse_entry_bpf {
+ 	struct bpf_prog *bpf;
+ };
+ 
++
+ int parse_fuse_entry_bpf(struct fuse_entry_bpf *feb);
+ 
++ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma);
++
+ struct fuse_lookup_io {
+ 	struct fuse_entry_out feo;
+ 	struct fuse_entry_bpf feb;
 -- 
 2.37.3.998.g577e59143f-goog
 
