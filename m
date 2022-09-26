@@ -2,213 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1295EAC07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 18:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3345EACC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 18:41:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235881AbiIZQGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 12:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50154 "EHLO
+        id S229759AbiIZQlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 12:41:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233205AbiIZQGB (ORCPT
+        with ESMTP id S229765AbiIZQkh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 12:06:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFAE220FE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 07:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1664204023;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Mon, 26 Sep 2022 12:40:37 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C0B146610
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 08:27:46 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5B93421B5F;
+        Mon, 26 Sep 2022 15:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1664206056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=JiDPhoXeiEYDPNNsZkNx5skNUhZVDc2YhX8tUxT6Z4I=;
-        b=Q9xdlHbtjOU2mAEK6q4yNOww8UP3KqhA2O6Rvo3QJmtSXITTaFbiylB4czH2yLAUy+PCwO
-        bVQ12InAwtONtlfEWDD6gvxlx6a4w2LZrWLYjFq588t0VPE+nTdhDObt/pNraUBP2Ltgp3
-        76O+Fnbr39a47+ndyr4xWegfSHaagfE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-655-Zy342OPzMvetUv9YELUP9g-1; Mon, 26 Sep 2022 10:53:42 -0400
-X-MC-Unique: Zy342OPzMvetUv9YELUP9g-1
-Received: by mail-wr1-f69.google.com with SMTP id d25-20020adf9b99000000b0022adb03aee6so1264688wrc.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 07:53:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date;
-        bh=JiDPhoXeiEYDPNNsZkNx5skNUhZVDc2YhX8tUxT6Z4I=;
-        b=5ByKQ/NOIA20nSHlLa9Gmc8eHNKI7FNZlzsxJr95g+9V+N70+xf3h9g92CWg6ckPIu
-         PPDGhw0mr4oFn+oNaqdm4oOIuyGPALy+U2thcnsi+jQaNVZ+AxcPaZQjuVIMd5L/WpJy
-         PvCTMqImW2PN+MxS5ewh1QCmmteBd6w2Vm4uyyald26OjICDzxGAhbHbV1Oyu0sQGyjC
-         eDDcuZMb4H3+XgrZhhuEoXnUOeZ99zG8KDXBMXisoSFANvLSpcGx8aqMaaBJzmTJpgeR
-         2fxYRpmD2LdmjNDSoWm/f2OEHV+bKJUrbbAIstJZkm/0jzLir3oWVaU6OOh4T5waur+Q
-         tpiA==
-X-Gm-Message-State: ACrzQf3P3oP+S4qi/DaYQHPPKH1h/3WVnYzyXyrm/AR3LpOyii/OvbbH
-        XO3Z6L6H9Se+CQwdcrdyPfVrB/3Nu23+k0Un/eClSDUy6OW6lzvC0gkBsiHBkhZCl9j5Kvlfsj3
-        3XGkLsFPfqi3yDE/drGd3V1ufnQ==
-X-Received: by 2002:a05:600c:a07:b0:3ab:945:77c4 with SMTP id z7-20020a05600c0a0700b003ab094577c4mr22424196wmp.97.1664204020688;
-        Mon, 26 Sep 2022 07:53:40 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4F1aj6dFmsu9oiMooh87XJHOqSDiWx3ICISxNlRpzSCeG1iwk0ewGaZ3Lrv8KXjMX88Z1kZg==
-X-Received: by 2002:a05:600c:a07:b0:3ab:945:77c4 with SMTP id z7-20020a05600c0a0700b003ab094577c4mr22424160wmp.97.1664204020377;
-        Mon, 26 Sep 2022 07:53:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c703:4b00:e090:7fa6:b7d6:d4a7? (p200300cbc7034b00e0907fa6b7d6d4a7.dip0.t-ipconnect.de. [2003:cb:c703:4b00:e090:7fa6:b7d6:d4a7])
-        by smtp.gmail.com with ESMTPSA id r64-20020a1c4443000000b003b4935f04a4sm13954042wma.5.2022.09.26.07.53.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Sep 2022 07:53:39 -0700 (PDT)
-Message-ID: <0a99aa24-599c-cc60-b23b-b77887af3702@redhat.com>
-Date:   Mon, 26 Sep 2022 16:53:37 +0200
+        bh=St3Rveq1F6hH7wkXZJ7IZVPaF1fjB2VcqWhzVZfT/JI=;
+        b=ZPj36r6/cssaWoJ6LIsBsuSHs/qlFO8MXA8fo3MnevdYhZTHsvUjmkf0F3VEEIiP5kaTE5
+        vAQk440cOL3D5XKbU+IsPUTuwu9rLIvv3R6w/+f7PSV5LIzqsFPDj8VOuQ6BU7jvZk3d7M
+        Fem6Lfr2Lp00ZKGM8KDQcsFmlkKpowQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1664206056;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=St3Rveq1F6hH7wkXZJ7IZVPaF1fjB2VcqWhzVZfT/JI=;
+        b=jcPMoe+gVnhSwU89LqT+4oV4hBwGcOyvb7y/8YT/7WTSVQ9IuTxrLvYTnmLGMfkIYCTf1Q
+        f60k3Kwi0hw6RiCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4710413486;
+        Mon, 26 Sep 2022 15:27:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7vdTEejEMWOBJAAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 26 Sep 2022 15:27:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A2191A0685; Mon, 26 Sep 2022 17:27:35 +0200 (CEST)
+Date:   Mon, 26 Sep 2022 17:27:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        "Plaster, Robert" <rplaster@deepspacestorage.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Fufu Fang <fangfufu2003@gmail.com>
+Subject: Re: thoughts about fanotify and HSM
+Message-ID: <20220926152735.fgvx37rppdfhuokz@quack3>
+References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
+ <20220912125734.wpcw3udsqri4juuh@quack3>
+ <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
+ <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
+ <20220914103006.daa6nkqzehxppdf5@quack3>
+ <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
+ <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
+ <20220922104823.z6465rfro7ataw2i@quack3>
+ <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Content-Language: en-US
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        aarcange@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
- <20220923005808.vfltoecttoatgw5o@box.shutemov.name>
- <f703e615-3b75-96a2-fb48-2fefd8a2069b@redhat.com>
- <20220926144854.dyiacztlpx4fkjs5@box.shutemov.name>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20220926144854.dyiacztlpx4fkjs5@box.shutemov.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.09.22 16:48, Kirill A. Shutemov wrote:
-> On Mon, Sep 26, 2022 at 12:35:34PM +0200, David Hildenbrand wrote:
->> On 23.09.22 02:58, Kirill A . Shutemov wrote:
->>> On Mon, Sep 19, 2022 at 11:12:46AM +0200, David Hildenbrand wrote:
->>>>> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
->>>>> index 6325d1d0e90f..9d066be3d7e8 100644
->>>>> --- a/include/uapi/linux/magic.h
->>>>> +++ b/include/uapi/linux/magic.h
->>>>> @@ -101,5 +101,6 @@
->>>>>     #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
->>>>>     #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
->>>>>     #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
->>>>> +#define INACCESSIBLE_MAGIC	0x494e4143	/* "INAC" */
->>>>
->>>>
->>>> [...]
->>>>
->>>>> +
->>>>> +int inaccessible_get_pfn(struct file *file, pgoff_t offset, pfn_t *pfn,
->>>>> +			 int *order)
->>>>> +{
->>>>> +	struct inaccessible_data *data = file->f_mapping->private_data;
->>>>> +	struct file *memfd = data->memfd;
->>>>> +	struct page *page;
->>>>> +	int ret;
->>>>> +
->>>>> +	ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
->>>>> +	if (ret)
->>>>> +		return ret;
->>>>> +
->>>>> +	*pfn = page_to_pfn_t(page);
->>>>> +	*order = thp_order(compound_head(page));
->>>>> +	SetPageUptodate(page);
->>>>> +	unlock_page(page);
->>>>> +
->>>>> +	return 0;
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(inaccessible_get_pfn);
->>>>> +
->>>>> +void inaccessible_put_pfn(struct file *file, pfn_t pfn)
->>>>> +{
->>>>> +	struct page *page = pfn_t_to_page(pfn);
->>>>> +
->>>>> +	if (WARN_ON_ONCE(!page))
->>>>> +		return;
->>>>> +
->>>>> +	put_page(page);
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(inaccessible_put_pfn);
->>>>
->>>> Sorry, I missed your reply regarding get/put interface.
->>>>
->>>> https://lore.kernel.org/linux-mm/20220810092532.GD862421@chaop.bj.intel.com/
->>>>
->>>> "We have a design assumption that somedays this can even support non-page
->>>> based backing stores."
->>>>
->>>> As long as there is no such user in sight (especially how to get the memfd
->>>> from even allocating such memory which will require bigger changes), I
->>>> prefer to keep it simple here and work on pages/folios. No need to
->>>> over-complicate it for now.
->>>
->>> Sean, Paolo , what is your take on this? Do you have conrete use case of
->>> pageless backend for the mechanism in sight? Maybe DAX?
->>
->> The problem I'm having with this is how to actually get such memory into the
->> memory backend (that triggers notifiers) and what the semantics are at all
->> with memory that is not managed by the buddy.
->>
->> memfd with fixed PFNs doesn't make too much sense.
+On Thu 22-09-22 16:03:41, Amir Goldstein wrote:
+> On Thu, Sep 22, 2022 at 1:48 PM Jan Kara <jack@suse.cz> wrote:
+> > On Tue 20-09-22 21:19:25, Amir Goldstein wrote:
+> > > For the next steps of POC, I could do:
+> > > - Report FAN_ACCESS_PERM range info to implement random read
+> > >   patterns (e.g. unzip -l)
+> > > - Introduce FAN_MODIFY_PERM, so file content could be downloaded
+> > >   before modifying a read-write HSM cache
+> > > - Demo conversion of a read-write FUSE HSM implementation
+> > >   (e.g. https://github.com/volga629/davfs2)
+> > > - Demo HSM with filesystem mark [*] and a hardcoded test filter
+> > >
+> > > [*] Note that unlike the case with recursive inotify, this POC HSM
+> > > implementation is not racy, because of the lookup permission events.
+> > > A filesystem mark is still needed to avoid pinning all the unpopulated
+> > > cache tree leaf entries to inode cache, so that this HSM could work on
+> > > a very large scale tree, the same as my original use case for implementing
+> > > filesystem mark.
+> >
+> > Sounds good! Just with your concern about pinning - can't you use evictable
+> > marks added on lookup for files / dirs you want to track? Maybe it isn't
+> > great design for other reasons but it would save you some event
+> > filtering...
+> >
 > 
-> What do you mean by "fixed PFN". It is as fixed as struct page/folio, no?
-> PFN covers more possible backends.
+> With the current POC, there is no trigger to re-establish the evicted mark,
+> because the parent is already populated and has no mark.
 
-For DAX, you usually bypass the buddy and map /dev/mem or a devdax. In 
-contrast to ordinary memfd that allocates memory via the buddy. That's 
-the difference I see -- and I wonder how it could work.
+So my original thinking was that you'd place FAN_LOOKUP_PERM mark on top of
+the directory tree and then you'd add evictable marks to all the subdirs
+that are looked up from the FAN_LOOKUP_PERM event handler. That way I'd
+imagine you can place evictable marks on all directories that are used in a
+race-free manner.
 
+> A hook on instantiate of inode in inode cache could fill that gap.
+> It could still be useful to filter FAN_INSTANTIATE_PERM events in the
+> kernel but it is not a must because instantiate is more rare than (say) lookup
+> and then the fast lookup path (RCU walk) on populated trees suffers almost
+> no overhead when the filesystem is watched.
 > 
->> When using DAX, what happens with the shared <->private conversion? Which
->> "type" is supposed to use dax, which not?
->>
->> In other word, I'm missing too many details on the bigger picture of how
->> this would work at all to see why it makes sense right now to prepare for
->> that.
+> Please think about this and let me know if you think that this is a direction
+> worth pursuing, now, or as a later optimization.
+
+I think an event on instantiate seems to be depending too much on kernel
+internals instead of obvious filesystem operations. Also it might be a bit
+challenging during startup when you don't know what is cached and what not
+so you cannot rely on instantiate events for placing marks. So I'd leave
+this for future optimization.
+
+> > > If what you are looking for is an explanation why fanotify HSM would be better
+> > > than a FUSE HSM implementation then there are several reasons.
+> > > Performance is at the top of the list. There is this famous USENIX paper [3]
+> > > about FUSE passthrough performance.
+> > > It is a bit outdated, but many parts are still relevant - you can ask
+> > > the Android
+> > > developers why they decided to work on FUSE-BFP...
+> > >
+> > > [3] https://www.usenix.org/system/files/conference/fast17/fast17-vangoor.pdf
+> > >
+> > > For me, performance is one of the main concerns, but not the only one,
+> > > so I am not entirely convinced that a full FUSE-BFP implementation would
+> > > solve all my problems.
+> > >
+> > > When scaling to many millions of passthrough inodes, resource usage start
+> > > becoming a limitation of a FUSE passthrough implementation and memory
+> > > reclaim of native fs works a lot better than memory reclaim over FUSE over
+> > > another native fs.
+> > >
+> > > When the workload works on the native filesystem, it is also possible to
+> > > use native fs features (e.g. XFS ioctls).
+> >
+> > OK, understood. Out of curiosity you've mentioned you'd looked into
+> > implementing HSM in overlayfs. What are the issues there? I assume
+> > performance is very close to native one so that is likely not an issue and
+> > resource usage you mention above likely is not that bad either. So I guess
+> > it is that you don't want to invent hooks for userspace for moving (parts
+> > of) files between offline storage and the local cache?
 > 
-> IIUC, KVM doesn't really care about pages or folios. They need PFN to
-> populate SEPT. Returning page/folio would make KVM do additional steps to
-> extract PFN and one more place to have a bug.
+> In a nutshell, when realizing that overlayfs needs userspace hooks
+> to cater HSM, it becomes quite useless to use a stacked fs design.
+> 
+> Performance is not a problem with overlayfs, but like with FUSE,
+> all the inodes/dentries in the system double, memory reclaim
+> of layered fs becomes an awkward dance, which messes with the
+> special logic of xfs shrinkers, and on top of all this, overlayfs does
+> not proxy all the XFS ioctls either.
+> 
+> The fsnotify hooks are a much better design when realizing that
+> the likely() case is to do nothing and incur least overhead and
+> the unlikely() case of user hook is rare.
 
-Fair enough. Smells KVM specific, though.
+OK, understood. Thanks!
 
+> > The remaining concern I have is that we should demonstrate the solution is
+> > able to scale to millions of inodes (and likely more) because AFAIU that
+> > are the sizes current HSM solutions are interested in. I guess this is kind
+> > of covered in your last step of POCs though.
+> >
+> 
+> Well, in $WORK we have performance test setups for those workloads,
+> so part of my plan is to convert the in-house FUSE HSM
+> to fanotify and make sure that all those tests do not regress.
+> But that is not code, nor tests that I can release, I can only report back
+> that the POC works and show the building blocks that I used on
+> some open source code base.
+
+Even this is useful I think.
+
+> I plan to do the open source small scale POC first to show the
+> building blocks so you could imagine the end results and
+> then take the building blocks for a test drive in the real world.
+> 
+> I've put my eye on davfs2 [1] as the code base for read-write HSM
+> POC, but maybe I will find an S3 FUSE fs that could work too
+> I am open to other suggestions.
+> 
+> [1] https://github.com/volga629/davfs2
+> 
+> When DeepSpace Storage releases their product to github,
+> I will be happy to work with them on a POC with their code
+> base and I bet they could arrange a large scale test setup.
+> (hint hint).
+
+:-)
+
+							Honza
 -- 
-Thanks,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
