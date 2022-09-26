@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E285EB57F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 014185EB581
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:19:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbiIZXTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 19:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
+        id S231317AbiIZXT4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 19:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbiIZXTG (ORCPT
+        with ESMTP id S231195AbiIZXTI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 19:19:06 -0400
-Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08DD70FB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:56 -0700 (PDT)
-Received: by mail-pj1-x1049.google.com with SMTP id m2-20020a17090a158200b002058e593c2bso3668862pja.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:56 -0700 (PDT)
+        Mon, 26 Sep 2022 19:19:08 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085E1DCCF0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:59 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 189-20020a2516c6000000b006bbbcc3dd9bso3112264ybw.15
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date;
-        bh=X+V+rjagupOsGXK+w8MXna7CMidJPhkAi0fk+lgEZBA=;
-        b=qv/E5vXFkhxR5QvPGwvWrChHYpzqYXWbpF5AvuxhD5oW4WHxmmI1OPCK+zVLccyxpQ
-         70P8uKQVe9p+jjCPGgpYYluyB7Bs8yFtj7IiCTWYB8eN+RBfa/8JMPdDzn8RQ/JSWk6h
-         bAFUWLI3gTXLm9A9xnGHDKGD4PXFm6Zabyn0X+K27UzGDN0+OSKnlGj/eEFTadNo3C8K
-         49J1NwErtoUzVemb2sqAwCTQI/2Zwd5Ow4yP8MiEF3KXhFks30uWXD/KrpVQaGcaAxZs
-         pPLLVaggu7osT/b8guwSgxWhd5j2+t2/PVd10x1ED46DEdwTvFngr4k7OGCcZvF3tuDq
-         +JgA==
+        bh=XIhmt29MnSHMOUbW5hWxk0PJQl3NxeeWjpzsriw+TZI=;
+        b=o66d+GY2M6xQDpW8c+jjW5mRmO2/zo5TbEA83P3bE8MkORJDWa6zNbP1M+88MIdFNa
+         zO3jdsiPWGt9de4+zcGtH7/P8z0vlOUcLdYgsvT3Oj7xbUuHnJhCp/95cyZ8/vl/6S6t
+         HXl2chUbbyB9efN67IfnwzUSoJ+vnVuEtK9j/9sWbt89KM6Q14wcBacRrYlANMd+hJUj
+         whypPugP0O0WEMAcDkhpy+2ZbiKV2tsMIPGhDOB5S3fdEbhb7aLl3OOCsPBqWamXYi4E
+         mfICZEsdaG/ZMqdp1/oaclJqi+c7zldrdO/pPatkIq7IaQSM2f4hQAHKUKgzmMxwKePf
+         M1OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date;
-        bh=X+V+rjagupOsGXK+w8MXna7CMidJPhkAi0fk+lgEZBA=;
-        b=J7Pf0e6xAsqMjyke6XK1rWOzeojH/mB/YYlnT8WgPJ7OEMUNmTMQUvo81B3rFsZ/1h
-         maEmLz9Zy6lV0KhL5fPIoZGoVVAS2dXz0abTvr7g3CdIxHc3adrBydxO0/d9mM/s431D
-         3DzKOx6TV4yTdhtpG0Xp+DGYVDZU3iXI1fjBXQDgYRYlVoJTr2jBsCycWeV9HkIuuC3b
-         Bi3jxgdtKqDZ7kGrr4pN4fYTIUtnON5SbVKsHS/C5hHblMlqJkK707up6+ebF7F4K7S+
-         i9TQz+uzg+JJzaZDBna6X9/29RgaYKHwLm8GVS2Zkvun+Dhwslg0d5/WlDmzKyURWV5O
-         H3ag==
-X-Gm-Message-State: ACrzQf01rxNgWZUKuzmoFPZloXRpH4XVKBC3HbiKRtUKJnbc7p5jAL6+
-        aoubWI3H51jTbR+KtEbPpcbkXO3gEBo=
-X-Google-Smtp-Source: AMsMyM7OXl+IFw2HF4iotZxmOMrRMbE3M4zRYrR3Z0qM/C0QTbRpWqi6Mvvu2NO8Sm0yQmskBLjtHPmCpSk=
+        bh=XIhmt29MnSHMOUbW5hWxk0PJQl3NxeeWjpzsriw+TZI=;
+        b=Ykzi/+sTy99EJOBuB7Qp9L3m4idPMdYHuepZdLE8tW2XeaoH7AokJjanpb1jBw81dq
+         RhHIDzo8XG2H6VHWbhHLXrSWVIddaabbLFMBA8IjPUuMxpg28AQDc7PyM6okkF9nnUwl
+         s2zoywsmj7rX4bDq0J0+N4tqFD7YlzfTbQosfB2XB0vTVF1Ho/r9MTED4DF4sj9XvJdR
+         IwiCFDHo4Owvsros4YcomVpNwRTvVPZP/0t4o6IYqVqaQFghviyVeoL+N6XIIxdq1qam
+         eVo+uphnQdk4d6magzYeaEeNHXjTNyTkR6ytEciEtU1ovFkeK4FS7VhPyYGOt42VaYS4
+         MbQA==
+X-Gm-Message-State: ACrzQf2gsNDbayt/fXzTDWuDWNudgpRGRoXYOMQR0vGfHLVuKKw7ahKB
+        t3IQVkPh/uvucGBex9MCoqo1shmIYaU=
+X-Google-Smtp-Source: AMsMyM72yYQI5nrA0MNBYDI6J1jX3hc41LxhbrmvGHzt69qbX3A9FfCw8w+KvIQtn1Hc99RXohw4XKiWJZ0=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:4643:a68e:2b7:f873])
- (user=drosen job=sendgmr) by 2002:a62:1c8f:0:b0:537:2284:bd00 with SMTP id
- c137-20020a621c8f000000b005372284bd00mr26113356pfc.78.1664234336158; Mon, 26
- Sep 2022 16:18:56 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 16:18:06 -0700
+ (user=drosen job=sendgmr) by 2002:a25:bb8d:0:b0:696:340c:a672 with SMTP id
+ y13-20020a25bb8d000000b00696340ca672mr24097705ybg.332.1664234338780; Mon, 26
+ Sep 2022 16:18:58 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 16:18:07 -0700
 In-Reply-To: <20220926231822.994383-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20220926231822.994383-1-drosen@google.com>
 X-Mailer: git-send-email 2.37.3.998.g577e59143f-goog
-Message-ID: <20220926231822.994383-11-drosen@google.com>
-Subject: [PATCH 10/26] fuse-bpf: Partially add mapping support
+Message-ID: <20220926231822.994383-12-drosen@google.com>
+Subject: [PATCH 11/26] fuse-bpf: Add lseek support
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -82,98 +82,146 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a backing implementation for mapping, but no bpf counterpart
-yet.
-
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/backing.c | 37 +++++++++++++++++++++++++++++++++++++
- fs/fuse/file.c    |  6 ++++++
- fs/fuse/fuse_i.h  |  3 +++
- 3 files changed, 46 insertions(+)
+ fs/fuse/backing.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/file.c    |  8 +++++
+ fs/fuse/fuse_i.h  | 15 +++++++++-
+ 3 files changed, 96 insertions(+), 1 deletion(-)
 
 diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index 51088701e7ad..fa8805e24061 100644
+index fa8805e24061..97e92c633cfd 100644
 --- a/fs/fuse/backing.c
 +++ b/fs/fuse/backing.c
-@@ -77,6 +77,43 @@ int parse_fuse_entry_bpf(struct fuse_entry_bpf *feb)
+@@ -77,6 +77,80 @@ int parse_fuse_entry_bpf(struct fuse_entry_bpf *feb)
  	return err;
  }
  
-+ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma)
++int fuse_lseek_initialize_in(struct bpf_fuse_args *fa, struct fuse_lseek_io *flio,
++			     struct file *file, loff_t offset, int whence)
 +{
-+	int ret;
-+	struct fuse_file *ff = file->private_data;
-+	struct inode *fuse_inode = file_inode(file);
-+	struct file *backing_file = ff->backing_file;
-+	struct inode *backing_inode = file_inode(backing_file);
++	struct fuse_file *fuse_file = file->private_data;
 +
-+	if (!backing_file->f_op->mmap)
-+		return -ENODEV;
++	flio->fli = (struct fuse_lseek_in) {
++		.fh = fuse_file->fh,
++		.offset = offset,
++		.whence = whence,
++	};
 +
-+	if (WARN_ON(file != vma->vm_file))
-+		return -EIO;
++	*fa = (struct bpf_fuse_args) {
++		.nodeid = get_node_id(file->f_inode),
++		.opcode = FUSE_LSEEK,
++		.in_numargs = 1,
++		.in_args[0].size = sizeof(flio->fli),
++		.in_args[0].value = &flio->fli,
++	};
 +
-+	vma->vm_file = get_file(backing_file);
-+
-+	ret = call_mmap(vma->vm_file, vma);
-+
-+	if (ret)
-+		fput(backing_file);
-+	else
-+		fput(file);
-+
-+	if (file->f_flags & O_NOATIME)
-+		return ret;
-+
-+	if ((!timespec64_equal(&fuse_inode->i_mtime, &backing_inode->i_mtime) ||
-+	     !timespec64_equal(&fuse_inode->i_ctime,
-+			       &backing_inode->i_ctime))) {
-+		fuse_inode->i_mtime = backing_inode->i_mtime;
-+		fuse_inode->i_ctime = backing_inode->i_ctime;
-+	}
-+	touch_atime(&file->f_path);
-+
-+	return ret;
++	return 0;
 +}
 +
- /*******************************************************************************
-  * Directory operations after here                                             *
-  ******************************************************************************/
++int fuse_lseek_initialize_out(struct bpf_fuse_args *fa, struct fuse_lseek_io *flio,
++			      struct file *file, loff_t offset, int whence)
++{
++	fa->out_numargs = 1;
++	fa->out_args[0].size = sizeof(flio->flo);
++	fa->out_args[0].value = &flio->flo;
++
++	return 0;
++}
++
++int fuse_lseek_backing(struct bpf_fuse_args *fa, loff_t *out,
++		       struct file *file, loff_t offset, int whence)
++{
++	const struct fuse_lseek_in *fli = fa->in_args[0].value;
++	struct fuse_lseek_out *flo = fa->out_args[0].value;
++	struct fuse_file *fuse_file = file->private_data;
++	struct file *backing_file = fuse_file->backing_file;
++
++	/* TODO: Handle changing of the file handle */
++	if (offset == 0) {
++		if (whence == SEEK_CUR) {
++			flo->offset = file->f_pos;
++			*out = flo->offset;
++			return 0;
++		}
++
++		if (whence == SEEK_SET) {
++			flo->offset = vfs_setpos(file, 0, 0);
++			*out = flo->offset;
++			return 0;
++		}
++	}
++
++	inode_lock(file->f_inode);
++	backing_file->f_pos = file->f_pos;
++	*out = vfs_llseek(backing_file, fli->offset, fli->whence);
++	flo->offset = *out;
++	inode_unlock(file->f_inode);
++	return 0;
++}
++
++int fuse_lseek_finalize(struct bpf_fuse_args *fa, loff_t *out,
++			struct file *file, loff_t offset, int whence)
++{
++	struct fuse_lseek_out *flo = fa->out_args[0].value;
++
++	if (!fa->error_in)
++		file->f_pos = flo->offset;
++	*out = flo->offset;
++	return 0;
++}
++
+ ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	int ret;
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 4fa2ebc068f0..138890eae07c 100644
+index 138890eae07c..dd4485261cc7 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -2452,6 +2452,12 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (FUSE_IS_DAX(file_inode(file)))
- 		return fuse_dax_mmap(file, vma);
- 
+@@ -2703,6 +2703,14 @@ static loff_t fuse_file_llseek(struct file *file, loff_t offset, int whence)
+ {
+ 	loff_t retval;
+ 	struct inode *inode = file_inode(file);
 +#ifdef CONFIG_FUSE_BPF
-+	/* TODO - this is simply passthrough, not a proper BPF filter */
-+	if (ff->backing_file)
-+		return fuse_backing_mmap(file, vma);
++	if (fuse_bpf_backing(inode, struct fuse_lseek_io, retval,
++			       fuse_lseek_initialize_in, fuse_lseek_initialize_out,
++			       fuse_lseek_backing,
++			       fuse_lseek_finalize,
++			       file, offset, whence))
++		return retval;
 +#endif
-+
- 	if (ff->open_flags & FOPEN_DIRECT_IO) {
- 		/* Can't provide the coherency needed for MAP_SHARED */
- 		if (vma->vm_flags & VM_MAYSHARE)
+ 
+ 	switch (whence) {
+ 	case SEEK_SET:
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 30ddc298fb27..a9653f71c145 100644
+index a9653f71c145..fc3e8adf0422 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1404,8 +1404,11 @@ struct fuse_entry_bpf {
+@@ -1404,9 +1404,22 @@ struct fuse_entry_bpf {
  	struct bpf_prog *bpf;
  };
  
-+
+-
  int parse_fuse_entry_bpf(struct fuse_entry_bpf *feb);
  
-+ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma);
++struct fuse_lseek_io {
++	struct fuse_lseek_in fli;
++	struct fuse_lseek_out flo;
++};
 +
++int fuse_lseek_initialize_in(struct bpf_fuse_args *fa, struct fuse_lseek_io *fli,
++			     struct file *file, loff_t offset, int whence);
++int fuse_lseek_initialize_out(struct bpf_fuse_args *fa, struct fuse_lseek_io *fli,
++			      struct file *file, loff_t offset, int whence);
++int fuse_lseek_backing(struct bpf_fuse_args *fa, loff_t *out, struct file *file,
++		       loff_t offset, int whence);
++int fuse_lseek_finalize(struct bpf_fuse_args *fa, loff_t *out, struct file *file,
++			loff_t offset, int whence);
++
+ ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma);
+ 
  struct fuse_lookup_io {
- 	struct fuse_entry_out feo;
- 	struct fuse_entry_bpf feb;
 -- 
 2.37.3.998.g577e59143f-goog
 
