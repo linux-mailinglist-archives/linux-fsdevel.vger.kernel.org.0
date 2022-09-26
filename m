@@ -2,31 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA1E5E96FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 01:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 873595E976F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 02:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232823AbiIYXyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Sep 2022 19:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39758 "EHLO
+        id S233215AbiIZAhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Sep 2022 20:37:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiIYXyQ (ORCPT
+        with ESMTP id S233245AbiIZAgx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Sep 2022 19:54:16 -0400
+        Sun, 25 Sep 2022 20:36:53 -0400
 Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24A0F23162;
-        Sun, 25 Sep 2022 16:54:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1ABEA2EF07;
+        Sun, 25 Sep 2022 17:35:56 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B069E1100D90;
-        Mon, 26 Sep 2022 09:54:09 +1000 (AEST)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C06F01101031;
+        Mon, 26 Sep 2022 10:34:31 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1ocbRn-00CADQ-Ot; Mon, 26 Sep 2022 09:54:07 +1000
-Date:   Mon, 26 Sep 2022 09:54:07 +1000
+        id 1occ4s-00CB1p-34; Mon, 26 Sep 2022 10:34:30 +1000
+Date:   Mon, 26 Sep 2022 10:34:30 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>, akpm@linux-foundation.org,
-        Matthew Wilcox <willy@infradead.org>,
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>,
@@ -35,7 +34,7 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-ext4@vger.kernel.org
 Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
  eviction path
-Message-ID: <20220925235407.GA3600936@dread.disaster.area>
+Message-ID: <20220926003430.GB3600936@dread.disaster.area>
 References: <20220918225731.GG3600936@dread.disaster.area>
  <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
  <20220919212959.GL3600936@dread.disaster.area>
@@ -45,16 +44,16 @@ References: <20220918225731.GG3600936@dread.disaster.area>
  <20220923001846.GX3600936@dread.disaster.area>
  <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
  <20220923021012.GZ3600936@dread.disaster.area>
- <20220923093803.nroajmvn7twuptez@quack3>
+ <Yy2pC/upZNEkVmc5@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220923093803.nroajmvn7twuptez@quack3>
+In-Reply-To: <Yy2pC/upZNEkVmc5@nvidia.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6330ea24
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6330f398
         a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
         a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=VwQbUJbxAAAA:8 a=Ikd4Dj_1AAAA:8
-        a=7-415B0cAAAA:8 a=6WIxVItXUT_raNPUQEAA:9 a=CjuIK1q_8ugA:10
+        a=7-415B0cAAAA:8 a=KjmkecRBzVTVnQtmf_MA:9 a=CjuIK1q_8ugA:10
         a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
@@ -65,33 +64,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 11:38:03AM +0200, Jan Kara wrote:
-> On Fri 23-09-22 12:10:12, Dave Chinner wrote:
-> > On Thu, Sep 22, 2022 at 05:41:08PM -0700, Dan Williams wrote:
-> > > Dave Chinner wrote:
-> > > > On Wed, Sep 21, 2022 at 07:28:51PM -0300, Jason Gunthorpe wrote:
-> > > > > On Thu, Sep 22, 2022 at 08:14:16AM +1000, Dave Chinner wrote:
-> > > > > 
-> > > > > > Where are these DAX page pins that don't require the pin holder to
-> > > > > > also hold active references to the filesystem objects coming from?
-> > > > > 
-> > > > > O_DIRECT and things like it.
-> > > > 
-> > > > O_DIRECT IO to a file holds a reference to a struct file which holds
-> > > > an active reference to the struct inode. Hence you can't reclaim an
-> > > > inode while an O_DIRECT IO is in progress to it. 
-> > > > 
-> > > > Similarly, file-backed pages pinned from user vmas have the inode
-> > > > pinned by the VMA having a reference to the struct file passed to
-> > > > them when they are instantiated. Hence anything using mmap() to pin
-> > > > file-backed pages (i.e. applications using FSDAX access from
-> > > > userspace) should also have a reference to the inode that prevents
-> > > > the inode from being reclaimed.
-> > > > 
-> > > > So I'm at a loss to understand what "things like it" might actually
-> > > > mean. Can you actually describe a situation where we actually permit
-> > > > (even temporarily) these use-after-free scenarios?
-> > > 
+On Fri, Sep 23, 2022 at 09:39:39AM -0300, Jason Gunthorpe wrote:
+> On Fri, Sep 23, 2022 at 12:10:12PM +1000, Dave Chinner wrote:
+> 
 > > > Jason mentioned a scenario here:
 > > > 
 > > > https://lore.kernel.org/all/YyuoE8BgImRXVkkO@nvidia.com/
@@ -102,111 +77,86 @@ On Fri, Sep 23, 2022 at 11:38:03AM +0200, Jan Kara wrote:
 > > And, ah, what production application does this and expects to be
 > > able to process the result of the read() operation without getting a
 > > SEGV?
-> > 
-> > There's a huge difference between an unlikely scenario which we need
-> > to work (such as O_DIRECT IO to/from a mmap() buffer at a different
-> > offset on the same file) and this sort of scenario where even if we
-> > handle it correctly, the application can't do anything with the
-> > result and will crash immediately....
 > 
-> I'm not sure I fully follow what we are concerned about here. As you've
-> written above direct IO holds reference to the inode until it is completed
-> (through kiocb->file->inode chain). So direct IO should be safe?
+> The read() will do GUP and get a pined page, next the memunmap()/close
+> will release the inode the VMA was holding open. The read() FD is NOT
+> a DAX FD.
+>
+> We are now UAFing the DAX storage. There is no SEGV.
 
-AFAICT, it's the user buffer allocated by mmap() that the direct IO
-is DMAing into/out of that is the issue here. i.e. mmap() a file
-that is DAX enabled, pass the mmap region to DIO on a non-dax file,
-GUP in the DIO path takes a page pin on user pages that are DAX
-mapped, the userspace application then unmaps the file pages and
-unlinks the FSDAX file.
+Yes, but what happens *after* the read().
 
-At this point the FSDAX mapped inode has no active references, so
-the filesystem frees the inode and it's allocated storage space, and
-now the DIO or whatever is holding the GUP reference is
-now a moving storage UAF violation. What ever is holding the GUP
-reference doesn't even have a reference to the FSDAX filesystem -
-the DIO fd could point to a file in a different filesystem
-altogether - and so the fsdax filesytem could be unmounted at this
-point whilst the application is still actively using the storage
-underlying the filesystem.
+The userspace application now tries to access the mmap() region to
+access the data that was read, only to find that it's been unmapped.
+That triggers a SEGV, yes?
 
-That's just .... broken.
+IOWs, there's nothing *useful* a user application can do with a
+pattern like this. All it provides is a vector for UAF of the DAX
+storage. Now replace the read() with write(), and tell me why this
+can't cause data corruption and/or fatal filesystem corruption that
+can take the entire system down.....
 
-> I'd be more worried about stuff like vmsplice() that can add file pages
-> into pipe without holding inode alive in any way and keeping them there for
-> arbitrarily long time. Didn't we want to add FOLL_LONGTERM to gup executed
-> from vmsplice() to avoid issues like this?
+> It is not about sane applications, it is about kernel security against
+> hostile userspace.
 
-Yes, ISTR that was part of the plan - use FOLL_LONGTERM to ensure
-FSDAX can't run operations that pin pages but don't take fs
-references. I think that's how we prevented RDMA users from pinning
-FSDAX direct mapped storage media in this way. It does not, however,
-prevent the above "short term" GUP UAF situation from occurring.
+Turning this into a UAF doesn't provide any security at all. It
+makes this measurable worse from a security POV as it provides a
+channel for data leakage (read() case) or system unstability or
+compromise (the write() case).
 
-> > > Sounds plausible to me, but I have not tried to trigger it with a focus
-> > > test.
-> > 
-> > If there really are applications this .... broken, then it's not the
-> > responsibility of the filesystem to paper over the low level page
-> > reference tracking issues that cause it.
-> > 
 > > i.e. The underlying problem here is that memunmap() frees the VMA
 > > while there are still active task-based references to the pages in
 > > that VMA. IOWs, the VMA should not be torn down until the O_DIRECT
 > > read has released all the references to the pages mapped into the
 > > task address space.
-> > 
-> > This just doesn't seem like an issue that we should be trying to fix
-> > by adding band-aids to the inode life-cycle management.
 > 
-> I agree that freeing VMA while there are pinned pages is ... inconvenient.
-> But that is just how gup works since the beginning - the moment you have
-> struct page reference, you completely forget about the mapping you've used
-> to get to the page. So anything can happen with the mapping after that
-> moment. And in case of pages mapped by multiple processes I can easily see
-> that one of the processes decides to unmap the page (and it may well be
-> that was the initial process that acquired page references) while others
-> still keep accessing the page using page references stored in some internal
-> structure (RDMA anyone?).
+> This is Jan's suggestion, I think we are still far from being able to
+> do that for O_DIRECT paths.
+> 
+> Even if you fix the close() this way, doesn't truncate still have the
+> same problem?
 
-Yup, and this is why RDMA on FSDAX using this method of pinning pages
-will end up corrupting data and filesystems, hence FOLL_LONGTERM
-protecting against most of these situations from even arising. But
-that's that workaround, not a long term solution that allows RDMA to
-be run on FSDAX managed storage media.
+It sure does. Also fallocate().
 
-I said on #xfs a few days ago:
+The deja vu is strong right now.
 
-[23/9/22 10:23] * dchinner is getting deja vu over this latest round
-of "dax mappings don't pin the filesystem objects that own the
-storage media being mapped"
+If something truncate()s a file, the only safe thing for an
+application that is using fsdax to directly access the underying
+storage is to unmap the file and remap it once the layout change
+operation has completed.
 
-And I'm getting that feeling again right now...
+We've been doing this safely with pNFS for remote RDMA-based
+direct access to the storage hardware for years. We have the
+layout lease infrastructure already there for it...
 
-> I think it will be rather difficult to come up
-> with some scheme keeping VMA alive while there are pages pinned without
-> regressing userspace which over the years became very much tailored to the
-> peculiar gup behavior.
+I've pointed this out every time this conversation comes up. We have
+a solution for this problem pretty much ready to go - it just needs
+a UAPI to be defined for it. i.e. nothing has changed in the past 5
+years - we have the same problems, we have the same solutions ready
+to be hooked up and used....
 
-Perhaps all we should do is add a page flag for fsdax mapped pages
-that says GUP must pin the VMA, so only mapped pages that fall into
-this category take the perf penalty of VMA management.
+> At the end of the day the rule is a DAX page must not be re-used until
+> its refcount is 0. At some point the FS should wait for.
 
-> I can imagine we would keep *inode* referenced while there are its pages
-> pinned.
+The page is *not owned by DAX*. How many times do I have to say that
+FSDAX != DAX.
 
-We can do that by pinning the VMA, yes?
+The *storage media* must not be reused until the filesystem says it
+can be reused. And for that to work, nothing is allowed to keep an
+anonymous, non-filesystem reference to the storage media. It has
+nothing to do with struct page reference counts, and everything to
+do with ensuring that filesystem objects are correctly referenced
+while the storage media is in direct use by an application.
 
-> That should not be that difficult but at least in naive
-> implementation that would put rather heavy stress on inode refcount under
-> some loads so I don't think that's useful either.
-
-Having the workaround be sub-optimal for high performance workloads
-is a good way of discouraging applications from doing fundamentally
-broken crap without actually breaking anything....
+I gave up on FSDAX years ago because nobody was listening to me.
+Here we are again, years down the track, with exactly the same
+issues as we had years ago, with exactly the same people repeating
+the same arguments for and against fixing the page reference
+problems. I don't have time to repeat history all over again, so
+I'm going to walk away from this train-wreck again so I can maintain
+some semblence of my remaining sanity....
 
 -Dave.
-
 -- 
 Dave Chinner
 david@fromorbit.com
