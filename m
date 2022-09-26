@@ -2,397 +2,296 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACC05EAD8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 19:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4345EAF33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 20:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbiIZRFd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 13:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58194 "EHLO
+        id S229647AbiIZSHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 14:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230213AbiIZRFI (ORCPT
+        with ESMTP id S231349AbiIZSGh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 13:05:08 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C95CDFCF;
-        Mon, 26 Sep 2022 09:07:52 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id 13so15143165ejn.3;
-        Mon, 26 Sep 2022 09:07:52 -0700 (PDT)
+        Mon, 26 Sep 2022 14:06:37 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37E98285E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 10:50:39 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id j6-20020a17090a694600b00200bba67dadso7627360pjm.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 10:50:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date;
-        bh=OZtKIYpqdftDbCLqBzEndP5heachSKCS26i3XUNEddk=;
-        b=DR1i/HQm0G19jrQ3m+I7qBego0FMbaIkL4vVuC3OnxUj3Ars6Fu3oMNwSlNNqv++UU
-         TpqzS7xahvUHguGYNtlkT02mx7Vw4wvQE7eGLMGuWb72YT/VRkBB/5oTT1yXWoWVx6mE
-         JtUiFNNZaYwS0XzPVNFDBzwOM8AtDkjUUmQKCaMwulfGKNZJzyf4xzNcT4naXzvAxeBn
-         yedVOZxvlCX0UyktkZShwpfinFMzPpFrlR1Xo4z5wfRI5e7QeTIvNVlsPAPYG2R2Aty5
-         sQJDdByb6sVXdswRMgkPfNuN7dNzy3tszs3/JFN6urFY0wN+QUD5wZuTmHzkST2y4cz5
-         Wsow==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=TNDUsCjQ4zB2/5GZ7X+uS9zeoK4Uz9rg4Dmc7gG+Kts=;
+        b=diPFMelUGqg5Olz6I8z2UqQgP/qT0p6U2CTPr1IKXAPPQDlXjIbGiW+Mq8ZW/AJerP
+         YVtmTqGjAus4WfzbTh4Tizc48Roo/vvFh6ncx714UJ4hLWN/DikhBXoZzoyhCy7LE6Y/
+         3OYOMIYymLSLRxuRHD8IaRlLtQ4iFKBE+1Png=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=OZtKIYpqdftDbCLqBzEndP5heachSKCS26i3XUNEddk=;
-        b=Hw+YFes2aTgl2SFxduGV77ER2QVhherCbATTcHqHV0wX7+Tnkizi8C4MXBTT20Xx4L
-         Qm15oIuN0czIorv9f6X+8s3+AXh+GYTFi+PgRMa3JeJn4uNrjwVfIPDC3EUrzH0csRzm
-         QRgyrvTEjccEyptlcVc1MHkcupwrGsTMhNwtHr2kADhohRZ66uA/BPScCVcQ+Pj5buw7
-         ocFG1ZkXhJC0Cjn6Q0eJtdA1T21GoWdl4XfdgqltGlj2adgbpKUj7CP611qxoCknZ5yq
-         tdFcqoc0gEQKgDjTqNo88iIHu6JR3oLl5xhsbY00j7JS3Dj2vVlIb1tYNAw/yq1zVADE
-         hNmw==
-X-Gm-Message-State: ACrzQf1wrvwst+6MQFwxWNt0xixh2XEqthESyMhq2/XXvLhM4peqpsej
-        cRWDgD+4O2COboTlHhi1qF8=
-X-Google-Smtp-Source: AMsMyM4voTKPQWQ4bfXX/XILHzaGcS+sSn5+zy+AqWwPPbkNiuz7/dxC0osyNHMHop5IZH9UR+4FqA==
-X-Received: by 2002:a17:907:6e17:b0:783:7839:ff3f with SMTP id sd23-20020a1709076e1700b007837839ff3fmr5504874ejc.300.1664208470816;
-        Mon, 26 Sep 2022 09:07:50 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id d12-20020aa7ce0c000000b004570ed2da1bsm4803120edv.38.2022.09.26.09.07.49
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=TNDUsCjQ4zB2/5GZ7X+uS9zeoK4Uz9rg4Dmc7gG+Kts=;
+        b=gVwgdUx+GPx7czsmYC8MUnfnRxNaYuF8ekkqtA8x4hfCkwmBTYvdShI70bQXAIrPWX
+         PvTpHIt8td9Hs/k5MPHwYziwI1wjKiNYbv+mrr3b49Xy/9OJf8Dpi7a2rPbiJO/mWCqL
+         FJjc/rr/AYnpd7Kayzd/MiCAaN8zfVnRFbe8zAZSQQHHX/RKV0t49DoSXSsT7MzYukAp
+         0g5mXUZnQDdshCXG7pnmtBULnjUza6/ResDFAqKx0mNOs0q5yUN0k9/Ff8fuUYKgZSUW
+         cnOE6GE18lYI+g03nrXnyK96Mf01yfb9dIwsDy8d8VH8CulkvaHIT8gfmmiefI5o298U
+         dgaQ==
+X-Gm-Message-State: ACrzQf2+zO3XAfi52wDUvOiwCKcp3XeB5sO4X53ZuaDR8ZiGkoZAO0WF
+        UqcQRyf1PuivdEIF9X/7MmweJQ==
+X-Google-Smtp-Source: AMsMyM53HUNBt6kGZBRWVtwFK3cgJAVMJrfeOBQoCVB2uG4qpYwM3FiGKu6g/YmgMRQUrRqqychKmQ==
+X-Received: by 2002:a17:90a:a09:b0:202:ab93:2afb with SMTP id o9-20020a17090a0a0900b00202ab932afbmr37124281pjo.60.1664214639071;
+        Mon, 26 Sep 2022 10:50:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g13-20020aa79f0d000000b00536097dd45bsm12539497pfr.134.2022.09.26.10.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Sep 2022 09:07:50 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 18:07:48 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] security: create file_truncate hook from
- path_truncate hook
-Message-ID: <YzHOVIUX0oxTcV0B@nuc>
-References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-2-gnoack3000@gmail.com>
- <YxpQVTDrcJSig8X2@nuc>
- <962b121b-b299-e024-bf3d-8cc6e12e01f7@digikod.net>
+        Mon, 26 Sep 2022 10:50:37 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 10:50:36 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
+        x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 02/16] slab: Introduce kmalloc_size_roundup()
+Message-ID: <202209261050.560459B@keescook>
+References: <20220923202822.2667581-1-keescook@chromium.org>
+ <20220923202822.2667581-3-keescook@chromium.org>
+ <e0326835-9b0d-af1b-bd22-2aadb178bd25@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <962b121b-b299-e024-bf3d-8cc6e12e01f7@digikod.net>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <e0326835-9b0d-af1b-bd22-2aadb178bd25@suse.cz>
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 07:30:24PM +0200, Mickaël Salaün wrote:
-> We may indeed need to change fs/open.c:vfs_truncate() because of these
-> different call sites. I'm not sure how these subsystems work though.
-
-I thought about this some more, and I'm coming around to the
-conclusion that we should not block the truncate patch set on changes
-in ksmbd and cachefiles.
-
-The reasoning is:
-
-* Landlock does already work for ksmbd and cachefiles. vfs_truncate
-  does call the security_path_truncate() hook in the background.
-
-* ksmbd and cachefiles using vfs_truncate() in kernel space is roughly
-  equivalent to a user space program using truncate(2) in a place
-  where ftruncate(2) is possible. It might not be the most elegant
-  approach, but it's legitimate to do.
-
-* Like with any userspace program that is supposed to run under
-  Landlock, ksmbd and cachefiles both may need to be adapted slightly
-  to work well with Landlock enforcement. It is up to the person
-  adding the Landlock enforcement to double check that the program
-  works correctly under the enforced ruleset. This is true for both
-  programs running in user space and kernel space.
-
-So yes, to run ksmbd and cachefiles under Landlock, we may need to
-extract a fs/open.c:vfs_ftruncate() in addition to vfs_truncate(), but
-I don't think it should be part of this patch set.
-
-So my proposal would be to:
-
-* not do the ksmbd and cachefiles changes now,
-
-* but leave them for later when someone actually tries to run ksmbd or
-  cachefiles under Landlock.
-
-If these components never get executed in a Landlocked context, all
-the better - we can spare ourselves a more complicated refactoring in
-a core part of the kernel.
-
-FWIW, I've played around with it yesterday and found that the change
-to extract a new "vfs_ftruncate()" next to vfs_truncate() is
-reasonably self-contained. But I'm not a file system expert either,
-it's well possible that I'm overlooking something.
-
-Let me know what you think!
-
-> On 08/09/2022 22:28, Günther Noack wrote:
-> > Adding Namjae Jeon and David Howells as authors of the respective
-> > files in fs/ksmbd and fs/cachefiles -- do you happen to know whether
-> > these vfs_truncate() calls are using 'struct file's that are opened by
-> > normal userspace processes, where LSM policies may apply?
+On Mon, Sep 26, 2022 at 03:15:22PM +0200, Vlastimil Babka wrote:
+> On 9/23/22 22:28, Kees Cook wrote:
+> > In the effort to help the compiler reason about buffer sizes, the
+> > __alloc_size attribute was added to allocators. This improves the scope
+> > of the compiler's ability to apply CONFIG_UBSAN_BOUNDS and (in the near
+> > future) CONFIG_FORTIFY_SOURCE. For most allocations, this works well,
+> > as the vast majority of callers are not expecting to use more memory
+> > than what they asked for.
 > > 
-> > P.S. In this patch I have looked for all places where the
-> > security_path_truncate() hook was called, to see which of these should
-> > rather use security_file_truncate() (and I made sure that it does the
-> > same thing for all the LSMs that use it).
+> > There is, however, one common exception to this: anticipatory resizing
+> > of kmalloc allocations. These cases all use ksize() to determine the
+> > actual bucket size of a given allocation (e.g. 128 when 126 was asked
+> > for). This comes in two styles in the kernel:
 > > 
-> > I'm confident that this does the right thing when truncate() or
-> > ftruncate() are called from userspace, but one of the places that
-> > still calls the path-based hook is vfs_truncate(), and this is called
-> > from more places in the kernel than just from userspace:
+> > 1) An allocation has been determined to be too small, and needs to be
+> >     resized. Instead of the caller choosing its own next best size, it
+> >     wants to minimize the number of calls to krealloc(), so it just uses
+> >     ksize() plus some additional bytes, forcing the realloc into the next
+> >     bucket size, from which it can learn how large it is now. For example:
 > > 
-> > init/initramfs.c
-> > 387:				vfs_truncate(&wfile->f_path, body_len);
+> > 	data = krealloc(data, ksize(data) + 1, gfp);
+> > 	data_len = ksize(data);
 > > 
-> > security/keys/big_key.c
-> > 172:		vfs_truncate(&payload->path, 0);
+> > 2) The minimum size of an allocation is calculated, but since it may
+> >     grow in the future, just use all the space available in the chosen
+> >     bucket immediately, to avoid needing to reallocate later. A good
+> >     example of this is skbuff's allocators:
 > > 
-> > fs/cachefiles/interface.c
-> > 242:		ret = vfs_truncate(&file->f_path, dio_size);
+> > 	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
+> > 	...
+> > 	/* kmalloc(size) might give us more room than requested.
+> > 	 * Put skb_shared_info exactly at the end of allocated zone,
+> > 	 * to allow max possible filling before reallocation.
+> > 	 */
+> > 	osize = ksize(data);
+> >          size = SKB_WITH_OVERHEAD(osize);
 > > 
-> > fs/cachefiles/namei.c
-> > 497:			ret = vfs_truncate(&path, ni_size); >
-> > fs/ksmbd/smb2pdu.c
-> > 2350:	int rc = vfs_truncate(path, 0);
+> > In both cases, the "how much was actually allocated?" question is answered
+> > _after_ the allocation, where the compiler hinting is not in an easy place
+> > to make the association any more. This mismatch between the compiler's
+> > view of the buffer length and the code's intention about how much it is
+> > going to actually use has already caused problems[1]. It is possible to
+> > fix this by reordering the use of the "actual size" information.
 > > 
-> > fs/ksmbd/vfs.c
-> > 874:	err = vfs_truncate(&filp->f_path, size);
+> > We can serve the needs of users of ksize() and still have accurate buffer
+> > length hinting for the compiler by doing the bucket size calculation
+> > _before_ the allocation. Code can instead ask "how large an allocation
+> > would I get for a given size?".
 > > 
-> > I suspect that these are benign but am not familiar with all of these
-> > corners of the codebase. -- The question is: Some of these call
-> > vfs_truncate() on the f_path of an existing struct file -- should
-> > these rather be calling the security_file_truncate() than the
-> > security_path_truncate() hook to authorize the truncation?
+> > Introduce kmalloc_size_roundup(), to serve this function so we can start
+> > replacing the "anticipatory resizing" uses of ksize().
 > > 
-> > Specifically, I think:
+> > [1] https://github.com/ClangBuiltLinux/linux/issues/1599
+> >      https://github.com/KSPP/linux/issues/183
 > > 
-> > * initramfs happens at system startup and LSMs should not interfere at
-> >    this point yet
-> > * security/keys does not use an opened struct file, so calling the
-> >    path-based hook through vfs_truncate() is correct
-> > * fs/cachefiles and fs/ksmbd use the file system from the kernel to
-> >    expose it as another file system (in a cached form for cachefiles,
-> >    and over the network for ksmbd). I suspect that these file systems
-> >    are not handling 'struct file's which are opened in contexts where a
-> >    LSM applies? It that a reasonable assumption?
+> > Cc: Vlastimil Babka <vbabka@suse.cz>
+> > Cc: Christoph Lameter <cl@linux.com>
+> > Cc: Pekka Enberg <penberg@kernel.org>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
 > 
-> I think you're right but I have some doubts about the cachefiles subsystem.
-> I don't know how ksmb deals with these file descriptors but changing such
-> call sites (where there is a struct file) could improve API consistency
-> though.
-> Any though?
-
-My conclusion is already summarized above, and I've tried to abstract
-away from the concrete use cases. For completeness, I've also looked
-into ksmbd and cachefiles specifically though so see whether
-security_path_truncate and security_file_truncate would make a
-difference.
-
-For ksmbd, I strongly suspect it does not make a difference (90%
-confidence) -- the files are getting opened by the same request
-handler context which is also truncating the files later on behalf of
-a truncation operation in the SMB protocol. It's anyway unclear to me
-whether the kernel tasks executing this can be put under Landlock
-enforcement at all..?
-
-fs/cachefiles is a more layered system and uses some
-cachefiles-independent caching structures with void* pointers, whose
-values I found difficult to trace. I'm less certain about this one as
-well, but as discussed above, it does not make a difference as long as
-none of the cachefiles code executes in a Landlock context. I'm still
-in favor of decoupling potential ksmbd and cachefiles changes from
-this patch set.
-
-—Günther
-
+> OK, added patch 1+2 to slab.git for-next branch.
+> Had to adjust this one a bit, see below.
 > 
+> > ---
+> >   include/linux/slab.h | 31 +++++++++++++++++++++++++++++++
+> >   mm/slab.c            |  9 ++++++---
+> >   mm/slab_common.c     | 20 ++++++++++++++++++++
+> >   3 files changed, 57 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > index 41bd036e7551..727640173568 100644
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -188,7 +188,21 @@ void * __must_check krealloc(const void *objp, size_t new_size, gfp_t flags) __r
+> >   void kfree(const void *objp);
+> >   void kfree_sensitive(const void *objp);
+> >   size_t __ksize(const void *objp);
+> > +
+> > +/**
+> > + * ksize - Report actual allocation size of associated object
+> > + *
+> > + * @objp: Pointer returned from a prior kmalloc()-family allocation.
+> > + *
+> > + * This should not be used for writing beyond the originally requested
+> > + * allocation size. Either use krealloc() or round up the allocation size
+> > + * with kmalloc_size_roundup() prior to allocation. If this is used to
+> > + * access beyond the originally requested allocation size, UBSAN_BOUNDS
+> > + * and/or FORTIFY_SOURCE may trip, since they only know about the
+> > + * originally allocated size via the __alloc_size attribute.
+> > + */
+> >   size_t ksize(const void *objp);
+> > +
+> >   #ifdef CONFIG_PRINTK
+> >   bool kmem_valid_obj(void *object);
+> >   void kmem_dump_obj(void *object);
+> > @@ -779,6 +793,23 @@ extern void kvfree(const void *addr);
+> >   extern void kvfree_sensitive(const void *addr, size_t len);
+> >   unsigned int kmem_cache_size(struct kmem_cache *s);
+> > +
+> > +/**
+> > + * kmalloc_size_roundup - Report allocation bucket size for the given size
+> > + *
+> > + * @size: Number of bytes to round up from.
+> > + *
+> > + * This returns the number of bytes that would be available in a kmalloc()
+> > + * allocation of @size bytes. For example, a 126 byte request would be
+> > + * rounded up to the next sized kmalloc bucket, 128 bytes. (This is strictly
+> > + * for the general-purpose kmalloc()-based allocations, and is not for the
+> > + * pre-sized kmem_cache_alloc()-based allocations.)
+> > + *
+> > + * Use this to kmalloc() the full bucket size ahead of time instead of using
+> > + * ksize() to query the size after an allocation.
+> > + */
+> > +size_t kmalloc_size_roundup(size_t size);
+> > +
+> >   void __init kmem_cache_init_late(void);
+> >   #if defined(CONFIG_SMP) && defined(CONFIG_SLAB)
+> > diff --git a/mm/slab.c b/mm/slab.c
+> > index 10e96137b44f..2da862bf6226 100644
+> > --- a/mm/slab.c
+> > +++ b/mm/slab.c
+> > @@ -4192,11 +4192,14 @@ void __check_heap_object(const void *ptr, unsigned long n,
+> >   #endif /* CONFIG_HARDENED_USERCOPY */
+> >   /**
+> > - * __ksize -- Uninstrumented ksize.
+> > + * __ksize -- Report full size of underlying allocation
+> >    * @objp: pointer to the object
+> >    *
+> > - * Unlike ksize(), __ksize() is uninstrumented, and does not provide the same
+> > - * safety checks as ksize() with KASAN instrumentation enabled.
+> > + * This should only be used internally to query the true size of allocations.
+> > + * It is not meant to be a way to discover the usable size of an allocation
+> > + * after the fact. Instead, use kmalloc_size_roundup(). Using memory beyond
+> > + * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
+> > + * and/or FORTIFY_SOURCE.
+> >    *
+> >    * Return: size of the actual memory used by @objp in bytes
+> >    */
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index 457671ace7eb..d7420cf649f8 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -721,6 +721,26 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+> >   	return kmalloc_caches[kmalloc_type(flags)][index];
+> >   }
+> > +size_t kmalloc_size_roundup(size_t size)
+> > +{
+> > +	struct kmem_cache *c;
+> > +
+> > +	/* Short-circuit the 0 size case. */
+> > +	if (unlikely(size == 0))
+> > +		return 0;
+> > +	/* Short-circuit saturated "too-large" case. */
+> > +	if (unlikely(size == SIZE_MAX))
+> > +		return SIZE_MAX;
+> > +	/* Above the smaller buckets, size is a multiple of page size. */
+> > +	if (size > KMALLOC_MAX_CACHE_SIZE)
+> > +		return PAGE_SIZE << get_order(size);
+> > +
+> > +	/* The flags don't matter since size_index is common to all. */
+> > +	c = kmalloc_slab(size, GFP_KERNEL);
+> > +	return c ? c->object_size : 0;
+> > +}
+> > +EXPORT_SYMBOL(kmalloc_size_roundup);
 > 
-> > 
-> > Thanks,
-> > Günther
-> > 
-> > On Thu, Sep 08, 2022 at 09:58:01PM +0200, Günther Noack wrote:
-> > > Like path_truncate, the file_truncate hook also restricts file
-> > > truncation, but is called in the cases where truncation is attempted
-> > > on an already-opened file.
-> > > 
-> > > This is required in a subsequent commit to handle ftruncate()
-> > > operations differently to truncate() operations.
-> > > 
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > ---
-> > >   fs/namei.c                    |  6 +++---
-> > >   fs/open.c                     |  4 ++--
-> > >   include/linux/lsm_hook_defs.h |  1 +
-> > >   include/linux/security.h      |  6 ++++++
-> > >   security/apparmor/lsm.c       |  6 ++++++
-> > >   security/security.c           |  5 +++++
-> > >   security/tomoyo/tomoyo.c      | 13 +++++++++++++
-> > >   7 files changed, 36 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 53b4bc094db2..52105873d1f8 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -53,8 +53,8 @@
-> > >    * The new code replaces the old recursive symlink resolution with
-> > >    * an iterative one (in case of non-nested symlink chains).  It does
-> > >    * this with calls to <fs>_follow_link().
-> > > - * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > > - * replaced with a single function lookup_dentry() that can handle all
-> > > + * As a side effect, dir_namei(), _namei() and follow_link() are now
-> > > + * replaced with a single function lookup_dentry() that can handle all
-> > >    * the special cases of the former code.
-> > >    *
-> > >    * With the new dcache, the pathname is stored at each inode, at least as
-> > > @@ -3211,7 +3211,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
-> > >   	if (error)
-> > >   		return error;
-> > > 
-> > > -	error = security_path_truncate(path);
-> > > +	error = security_file_truncate(filp);
-> > >   	if (!error) {
-> > >   		error = do_truncate(mnt_userns, path->dentry, 0,
-> > >   				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
-> > > diff --git a/fs/open.c b/fs/open.c
-> > > index 8a813fa5ca56..0831433e493a 100644
-> > > --- a/fs/open.c
-> > > +++ b/fs/open.c
-> > > @@ -188,7 +188,7 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
-> > >   	if (IS_APPEND(file_inode(f.file)))
-> > >   		goto out_putf;
-> > >   	sb_start_write(inode->i_sb);
-> > > -	error = security_path_truncate(&f.file->f_path);
-> > > +	error = security_file_truncate(f.file);
-> > >   	if (!error)
-> > >   		error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
-> > >   				    ATTR_MTIME | ATTR_CTIME, f.file);
-> > > @@ -1271,7 +1271,7 @@ struct file *filp_open(const char *filename, int flags, umode_t mode)
-> > >   {
-> > >   	struct filename *name = getname_kernel(filename);
-> > >   	struct file *file = ERR_CAST(name);
-> > > -
-> > > +
-> > >   	if (!IS_ERR(name)) {
-> > >   		file = file_open_name(name, flags, mode);
-> > >   		putname(name);
-> > > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > > index 60fff133c0b1..dee35ab253ba 100644
-> > > --- a/include/linux/lsm_hook_defs.h
-> > > +++ b/include/linux/lsm_hook_defs.h
-> > > @@ -177,6 +177,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
-> > >   	 struct fown_struct *fown, int sig)
-> > >   LSM_HOOK(int, 0, file_receive, struct file *file)
-> > >   LSM_HOOK(int, 0, file_open, struct file *file)
-> > > +LSM_HOOK(int, 0, file_truncate, struct file *file)
-> > >   LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
-> > >   	 unsigned long clone_flags)
-> > >   LSM_HOOK(void, LSM_RET_VOID, task_free, struct task_struct *task)
-> > > diff --git a/include/linux/security.h b/include/linux/security.h
-> > > index 7bd0c490703d..f80b23382dd9 100644
-> > > --- a/include/linux/security.h
-> > > +++ b/include/linux/security.h
-> > > @@ -394,6 +394,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
-> > >   				 struct fown_struct *fown, int sig);
-> > >   int security_file_receive(struct file *file);
-> > >   int security_file_open(struct file *file);
-> > > +int security_file_truncate(struct file *file);
-> > >   int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
-> > >   void security_task_free(struct task_struct *task);
-> > >   int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
-> > > @@ -1011,6 +1012,11 @@ static inline int security_file_open(struct file *file)
-> > >   	return 0;
-> > >   }
-> > > 
-> > > +static inline int security_file_truncate(struct file *file)
-> > > +{
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   static inline int security_task_alloc(struct task_struct *task,
-> > >   				      unsigned long clone_flags)
-> > >   {
-> > > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > > index e29cade7b662..98ecb7f221b8 100644
-> > > --- a/security/apparmor/lsm.c
-> > > +++ b/security/apparmor/lsm.c
-> > > @@ -329,6 +329,11 @@ static int apparmor_path_truncate(const struct path *path)
-> > >   	return common_perm_cond(OP_TRUNC, path, MAY_WRITE | AA_MAY_SETATTR);
-> > >   }
-> > > 
-> > > +static int apparmor_file_truncate(struct file *file)
-> > > +{
-> > > +	return apparmor_path_truncate(&file->f_path);
-> > > +}
-> > > +
-> > >   static int apparmor_path_symlink(const struct path *dir, struct dentry *dentry,
-> > >   				 const char *old_name)
-> > >   {
-> > > @@ -1232,6 +1237,7 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
-> > >   	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
-> > >   	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
-> > >   	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
-> > > +	LSM_HOOK_INIT(file_truncate, apparmor_file_truncate),
-> > > 
-> > >   	LSM_HOOK_INIT(getprocattr, apparmor_getprocattr),
-> > >   	LSM_HOOK_INIT(setprocattr, apparmor_setprocattr),
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 4b95de24bc8d..e491120c48ba 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -1210,6 +1210,11 @@ int security_path_truncate(const struct path *path)
-> > >   	return call_int_hook(path_truncate, 0, path);
-> > >   }
-> > > 
-> > > +int security_file_truncate(struct file *file)
-> > > +{
-> > > +	return call_int_hook(file_truncate, 0, file);
-> > > +}
-> > > +
-> > >   int security_path_chmod(const struct path *path, umode_t mode)
-> > >   {
-> > >   	if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
-> > > diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> > > index 71e82d855ebf..af04a7b7eb28 100644
-> > > --- a/security/tomoyo/tomoyo.c
-> > > +++ b/security/tomoyo/tomoyo.c
-> > > @@ -134,6 +134,18 @@ static int tomoyo_path_truncate(const struct path *path)
-> > >   	return tomoyo_path_perm(TOMOYO_TYPE_TRUNCATE, path, NULL);
-> > >   }
-> > > 
-> > > +/**
-> > > + * tomoyo_file_truncate - Target for security_file_truncate().
-> > > + *
-> > > + * @file: Pointer to "struct file".
-> > > + *
-> > > + * Returns 0 on success, negative value otherwise.
-> > > + */
-> > > +static int tomoyo_file_truncate(struct file *file)
-> > > +{
-> > > +	return tomoyo_path_truncate(&file->f_path);
-> > > +}
-> > > +
-> > >   /**
-> > >    * tomoyo_path_unlink - Target for security_path_unlink().
-> > >    *
-> > > @@ -545,6 +557,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
-> > >   	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
-> > >   	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
-> > >   	LSM_HOOK_INIT(file_open, tomoyo_file_open),
-> > > +	LSM_HOOK_INIT(file_truncate, tomoyo_file_truncate),
-> > >   	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
-> > >   	LSM_HOOK_INIT(path_unlink, tomoyo_path_unlink),
-> > >   	LSM_HOOK_INIT(path_mkdir, tomoyo_path_mkdir),
-> > > --
-> > > 2.37.3
-> > > 
-> > 
-> > --
+> We need a SLOB version too as it's not yet removed... I added this:
+> 
+> diff --git a/mm/slob.c b/mm/slob.c
+> index 2bd4f476c340..5dbdf6ad8bcc 100644
+> --- a/mm/slob.c
+> +++ b/mm/slob.c
+> @@ -574,6 +574,20 @@ void kfree(const void *block)
+>  }
+>  EXPORT_SYMBOL(kfree);
+> +size_t kmalloc_size_roundup(size_t size)
+> +{
+> +       /* Short-circuit the 0 size case. */
+> +       if (unlikely(size == 0))
+> +               return 0;
+> +       /* Short-circuit saturated "too-large" case. */
+> +       if (unlikely(size == SIZE_MAX))
+> +               return SIZE_MAX;
+> +
+> +       return ALIGN(size, ARCH_KMALLOC_MINALIGN);
+> +}
+> +
+> +EXPORT_SYMBOL(kmalloc_size_roundup);
+
+Ah, perfect! Thanks for catching that. :)
+
+FWIW:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
+Kees Cook
