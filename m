@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F75F5EB5A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C015EB5A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 01:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbiIZXVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 19:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
+        id S231207AbiIZXVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 19:21:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiIZXUQ (ORCPT
+        with ESMTP id S231201AbiIZXUS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 19:20:16 -0400
+        Mon, 26 Sep 2022 19:20:18 -0400
 Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A77A25FC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:31 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-34d188806a8so75197037b3.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2536168
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:33 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-350b9af86e8so46027167b3.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Sep 2022 16:19:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date;
-        bh=EkmgsFrmuKNilhEIdub2GeeoDl0GoBdC6ajbaQkUtjI=;
-        b=KEktYbeycGKh7r40wdBbT6d8dRJY0CQb+zaU+Mdg1YqyM8M81gjkb7C5bVE6n/wLws
-         TO61VZzp9TXqkZfYafpLI43U8VU5v5VnR+Jz6t23ReVKb3YV9qsN/Dbvo26+2WbcPOMa
-         l36L8WP05w21nXhKCorY5KNvdoUugSTr97QCWTjWOQpU0njc6wJ+/6XeCdhQClqIw6S2
-         QA/8q4Di9zhc2sVc+9AJOe2U+A+07c1jlJANGyrde09AUv8UZU83MUqQj5/qbpD/63WC
-         FwUeFhiQ7LXPO74Ik/bUTN48fua6G5PnCvRYK8t7qX+opmRu0bZO+pqxxu1R48eguoR9
-         cWBA==
+        bh=IbvaNd7xkv6qLbqXS+UwVE+DkcAWaiLiz540c1KNyRs=;
+        b=Z8drp21nnocmfjMVXdPLwqgBmC3rl5N9wLVtRBXkcdTiN9HL3S6/MfQRW9TJe265Vt
+         qIEo6wfrg6T5gPZQAhFk9PRhRrQCCKzwn67IENRgTm5cKoTyPfR4yFIem3b7ML0UqNkh
+         wrn5vUuQNOVMfApnU54UGot+lFj616P9bn0fgmX+I/ybxgVnEtSZvWVMYMmS84QDzAaf
+         iwQoLTHVzAxyl8KQep8J20Wmd1FEDMkTsYS8NmnIWcQJEXKJHpNg9rMSw1BAboKU3Qhe
+         Hxk6yKFEmTOIq4FJhVZijMLOuUHsubi/mdb8wAvhgFsINlZ6IhiuvGWlyI8TbbgSCVYg
+         KNWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date;
-        bh=EkmgsFrmuKNilhEIdub2GeeoDl0GoBdC6ajbaQkUtjI=;
-        b=IbNoBZD6Ju0GPqEPUhbuoFk3inJz/7glARIPuDOcJYjOKtz/9zdydx6bbNxOAd55ep
-         RHqQ62uMXB8pso/KTUl/H+LEPJLHRCJswx1O5F9t0iMxEV5fUDZo4/bltivN0wp8aUwB
-         HoqaV5anZcqQJbVziy0bPYCZ3rZ1mpbB5OMvtI67AQghYKDGzyj7C/JSBk+ldvC5Zkgj
-         6yu3oZyhkibtC4+U8nUHgsOT7soWDCbplvscPCukPjA/n9zGrmFkh1s+1v9ENAM4/6CB
-         VNomyo1mwcCSgxmg1O92JrMOUC+VjQfH8umE/ZtLlgLwCBETiergEtdBfaHFy/CAyPan
-         6QvA==
-X-Gm-Message-State: ACrzQf2xoMgVkkvclqsjEFLZf8Th3mNTBjGO+jN7eP4x7kE5HUmarLxy
-        deJPFQH3e7xh41GC0NZ+57uFwHAdhjs=
-X-Google-Smtp-Source: AMsMyM5xvnnLOZhey5safL3PVrn4bXvFhvEuSniyDikLvG47uC8f6aLwGB+qcSK6mNL0MBcAUauEH7rj9/Y=
+        bh=IbvaNd7xkv6qLbqXS+UwVE+DkcAWaiLiz540c1KNyRs=;
+        b=GGbu4OImBQZIg9Q1eMpCVIF12O765CVP0EP+vj9RMv66rZ8hZVMTyadAnxMnMnuRLR
+         4USf8AR73o6GYpmynOnZa0FT1xp8RiE+QIORf0taxA9NvBYEHSeaD4Wgej+AinoqlXzu
+         xUnYSfmYmXIN2pyyTA4lntS4xoaqAkJF+r8D8G0HNNVn8eT8XkIPZPgR55ZD3EtuaAiJ
+         FwkAxfxzZGxCuRHTYWO+kgdCBDwbAHTZynVoSzPJad7OCKS8TKS4szcIwJkDbv6MJi/M
+         gbi9HP/QULgR/8YIuWxRRuBbqmZFwbyS7Kc8aGEj9a/s+r146ctKupV9nqzLrUOkFZ3d
+         4/zQ==
+X-Gm-Message-State: ACrzQf1Kbl2Lq60ZDReOgKCtjWPTEawTAav/+d0fmdM+mq/Y9LFkFKeq
+        Gpyu+Brw+6Bz9t8wNeNeAYWTBQy8Od8=
+X-Google-Smtp-Source: AMsMyM6vYxoJSrr3KuG3WwQXnjLQZz0oa4O4bxGnmvWSze+nbZAdsph4QDPFsfZxi4J2rflsR1JgdH5WodE=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:4643:a68e:2b7:f873])
- (user=drosen job=sendgmr) by 2002:a25:5f42:0:b0:6af:662c:f48f with SMTP id
- h2-20020a255f42000000b006af662cf48fmr21846903ybm.566.1664234371297; Mon, 26
- Sep 2022 16:19:31 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 16:18:19 -0700
+ (user=drosen job=sendgmr) by 2002:a0d:d345:0:b0:349:f274:a0f with SMTP id
+ v66-20020a0dd345000000b00349f2740a0fmr21914221ywd.13.1664234373645; Mon, 26
+ Sep 2022 16:19:33 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 16:18:20 -0700
 In-Reply-To: <20220926231822.994383-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20220926231822.994383-1-drosen@google.com>
 X-Mailer: git-send-email 2.37.3.998.g577e59143f-goog
-Message-ID: <20220926231822.994383-24-drosen@google.com>
-Subject: [PATCH 23/26] fuse-bpf: allow mounting with no userspace daemon
+Message-ID: <20220926231822.994383-25-drosen@google.com>
+Subject: [PATCH 24/26] fuse-bpf: Call bpf for pre/post filters
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -82,123 +82,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When using fuse-bpf in pure passthrough mode, we don't explicitly need a
-userspace daemon. This allows simple testing of the backing operations.
+This allows altering input or output parameters to fuse calls that will
+be handled directly by the backing filesystems. BPF programs can signal
+whether the entire operation should instead go through regular fuse, or
+if a postfilter call is needed.
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/fuse_i.h |  4 ++++
- fs/fuse/inode.c  | 25 +++++++++++++++++++------
- 2 files changed, 23 insertions(+), 6 deletions(-)
+ fs/fuse/fuse_i.h | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index cbfd56d669c7..6fb5c7a1ff11 100644
+index 6fb5c7a1ff11..07b50be2c6e4 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -571,6 +571,7 @@ struct fuse_fs_context {
- 	bool no_control:1;
- 	bool no_force_umount:1;
- 	bool legacy_opts_show:1;
-+	bool no_daemon:1;
- 	enum fuse_dax_mode dax_mode;
- 	unsigned int max_read;
- 	unsigned int blksize;
-@@ -847,6 +848,9 @@ struct fuse_conn {
- 	/* Does the filesystem support per inode DAX? */
- 	unsigned int inode_dax:1;
+@@ -1936,6 +1936,46 @@ static inline void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatf
+ int __init fuse_bpf_init(void);
+ void __exit fuse_bpf_cleanup(void);
  
-+	/** BPF Only, no Daemon running */
-+	unsigned int no_daemon:1;
++static inline void fuse_bpf_set_in_ends(struct bpf_fuse_args *fa)
++{
++	int i;
 +
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index d178c3eb445f..bc349102ce3b 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -759,6 +759,7 @@ enum {
- 	OPT_BLKSIZE,
- 	OPT_ROOT_BPF,
- 	OPT_ROOT_DIR,
-+	OPT_NO_DAEMON,
- 	OPT_ERR
- };
- 
-@@ -775,6 +776,7 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
- 	fsparam_string	("subtype",		OPT_SUBTYPE),
- 	fsparam_u32	("root_bpf",		OPT_ROOT_BPF),
- 	fsparam_u32	("root_dir",		OPT_ROOT_DIR),
-+	fsparam_flag	("no_daemon",		OPT_NO_DAEMON),
- 	{}
- };
- 
-@@ -873,6 +875,11 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
- 			return invalfc(fsc, "Unable to open root directory");
- 		break;
- 
-+	case OPT_NO_DAEMON:
-+		ctx->no_daemon = true;
-+		ctx->fd_present = true;
-+		break;
++	for (i = 0; i < FUSE_MAX_ARGS_IN; i++)
++		fa->in_args[i].end_offset = (void *)
++			((char *)fa->in_args[i].value
++			+ fa->in_args[i].size);
++}
 +
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1438,7 +1445,7 @@ void fuse_send_init(struct fuse_mount *fm)
- 	ia->args.nocreds = true;
- 	ia->args.end = process_init_reply;
- 
--	if (fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
-+	if (unlikely(fm->fc->no_daemon) || fuse_simple_background(fm, &ia->args, GFP_KERNEL) != 0)
- 		process_init_reply(fm, &ia->args, -ENOTCONN);
- }
- EXPORT_SYMBOL_GPL(fuse_send_init);
-@@ -1720,6 +1727,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 	fc->destroy = ctx->destroy;
- 	fc->no_control = ctx->no_control;
- 	fc->no_force_umount = ctx->no_force_umount;
-+	fc->no_daemon = ctx->no_daemon;
- 
- 	err = -ENOMEM;
- 	root = fuse_get_root_inode(sb, ctx->rootmode, ctx->root_bpf,
-@@ -1767,7 +1775,7 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
- 	struct fuse_fs_context *ctx = fsc->fs_private;
- 	int err;
- 
--	if (!ctx->file || !ctx->rootmode_present ||
-+	if (!!ctx->file == ctx->no_daemon || !ctx->rootmode_present ||
- 	    !ctx->user_id_present || !ctx->group_id_present)
- 		return -EINVAL;
- 
-@@ -1775,10 +1783,12 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
- 	 * Require mount to happen from the same user namespace which
- 	 * opened /dev/fuse to prevent potential attacks.
- 	 */
--	if ((ctx->file->f_op != &fuse_dev_operations) ||
--	    (ctx->file->f_cred->user_ns != sb->s_user_ns))
--		return -EINVAL;
--	ctx->fudptr = &ctx->file->private_data;
-+	if (ctx->file) {
-+		if ((ctx->file->f_op != &fuse_dev_operations) ||
-+		    (ctx->file->f_cred->user_ns != sb->s_user_ns))
-+			return -EINVAL;
-+		ctx->fudptr = &ctx->file->private_data;
-+	}
- 
- 	err = fuse_fill_super_common(sb, ctx);
- 	if (err)
-@@ -1828,6 +1838,9 @@ static int fuse_get_tree(struct fs_context *fsc)
- 
- 	fsc->s_fs_info = fm;
- 
-+	if (ctx->no_daemon)
-+		return get_tree_nodev(fsc, fuse_fill_super);;
++static inline void fuse_bpf_set_in_immutable(struct bpf_fuse_args *fa)
++{
++	int i;
 +
- 	if (ctx->fd_present)
- 		ctx->file = fget(ctx->fd);
- 
++	for (i = 0; i < FUSE_MAX_ARGS_IN; i++)
++		fa->in_args[i].flags |= BPF_FUSE_IMMUTABLE;
++}
++
++static inline void fuse_bpf_set_out_ends(struct bpf_fuse_args *fa)
++{
++	int i;
++
++	for (i = 0; i < FUSE_MAX_ARGS_OUT; i++)
++		fa->out_args[i].end_offset = (void *)
++			((char *)fa->out_args[i].value
++			+ fa->out_args[i].size);
++}
++
++static inline void fuse_bpf_free_alloced(struct bpf_fuse_args *fa)
++{
++	int i;
++
++	for (i = 0; i < FUSE_MAX_ARGS_IN; i++)
++		if (fa->in_args[i].flags & BPF_FUSE_ALLOCATED)
++			kfree(fa->in_args[i].value);
++	for (i = 0; i < FUSE_MAX_ARGS_OUT; i++)
++		if (fa->out_args[i].flags & BPF_FUSE_ALLOCATED)
++			kfree(fa->out_args[i].value);
++}
++
+ /*
+  * expression statement to wrap the backing filter logic
+  * struct inode *inode: inode with bpf and backing inode
+@@ -1958,6 +1998,7 @@ void __exit fuse_bpf_cleanup(void);
+ 	bool initialized = false;					\
+ 	bool handled = false;						\
+ 	ssize_t res;							\
++	int bpf_next;							\
+ 	io feo = { 0 };							\
+ 	int error = 0;							\
+ 									\
+@@ -1969,17 +2010,47 @@ void __exit fuse_bpf_cleanup(void);
+ 		error = initialize_in(&fa, &feo, args);			\
+ 		if (error)						\
+ 			break;						\
++		fuse_bpf_set_in_ends(&fa);				\
++									\
++		fa.opcode |= FUSE_PREFILTER;				\
++		bpf_next = fuse_inode->bpf ?				\
++			bpf_prog_run(fuse_inode->bpf, &fa) :		\
++			BPF_FUSE_CONTINUE;				\
++		if (bpf_next < 0) {					\
++			error = bpf_next;				\
++			break;						\
++		}							\
++									\
++		fuse_bpf_set_in_immutable(&fa);				\
+ 									\
+ 		error = initialize_out(&fa, &feo, args);		\
+ 		if (error)						\
+ 			break;						\
++		fuse_bpf_set_out_ends(&fa);				\
+ 									\
+ 		initialized = true;					\
++		if (bpf_next == BPF_FUSE_USER) {			\
++			handled = false;				\
++			break;						\
++		}							\
++									\
++		fa.opcode &= ~FUSE_PREFILTER;				\
+ 									\
+ 		error = backing(&fa, &out, args);			\
+ 		if (error < 0)						\
+ 			fa.error_in = error;				\
+ 									\
++		if (bpf_next == BPF_FUSE_CONTINUE)			\
++			break;						\
++									\
++		fa.opcode |= FUSE_POSTFILTER;				\
++		if (bpf_next == BPF_FUSE_POSTFILTER)			\
++			bpf_next = bpf_prog_run(fuse_inode->bpf, &fa);	\
++		if (bpf_next < 0) {					\
++			error = bpf_next;				\
++			break;						\
++		}							\
++									\
+ 	} while (false);						\
+ 									\
+ 	if (initialized && handled) {					\
+@@ -1987,6 +2058,7 @@ void __exit fuse_bpf_cleanup(void);
+ 		if (res)						\
+ 			error = res;					\
+ 	}								\
++	fuse_bpf_free_alloced(&fa);					\
+ 									\
+ 	out = error ? _Generic((out),					\
+ 			default :					\
 -- 
 2.37.3.998.g577e59143f-goog
 
