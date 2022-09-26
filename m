@@ -2,186 +2,303 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 884B85EA8C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 16:43:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD435EA8F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Sep 2022 16:49:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235150AbiIZOnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Sep 2022 10:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42924 "EHLO
+        id S234739AbiIZOtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Sep 2022 10:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234532AbiIZOmS (ORCPT
+        with ESMTP id S235417AbiIZOsx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Sep 2022 10:42:18 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2049.outbound.protection.outlook.com [40.107.244.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED395E094;
-        Mon, 26 Sep 2022 06:04:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GoC7HkvJ0exoTiJcXbr2+ElQzVNusEehjar/yhtdelC9JCoqTt+o4O6SsDg5MK2f9tdRm8V4rhs1ViInJz/9Dss6979AIirM8g3QavOiaI6s8CPm9bKcxaeCMhKyZFaSvZs7rhoYayd/p2zWL9MpPTvZ0D7AzTjJwNvZAjZjts+hK3fkWTzU5ORO1S54b/14Yi24ZMur6qgNeRPeRw2Z9OS2jA60sustZyryejYpxd+cqkXQR6h8sAO7tMiVD9xqlHYk872lrEnOha8LhGtc7EoRBt5KviquIxTCvwTLrX4poC8AdECkCHNq/OJvqEjlA+CbDQab9Eh5QmMFH8DXYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jByy82CZvmD3fQwIONP/yYPDjOSS094TCQc9FI6DTkk=;
- b=bysbuFoVKbY/nMpzIvChJvoGTghAM4Sp4bGy4uMyL2sJuQDxw8PEtrvDFc8iwsxyhOpnEyE28WJtn7OtMB+bDL9EgaOfsGZZWX4Etu5O9sKEA1jdjDtxBj32cY+sLpO3m3xUbxl7vPnuZOVYa/Tm+zsVE32AKbLQfyeFdRn9ZKtPcmLP0HPiIkN5q6335kUrsGjgCKp2q82GdsmI7DZza1L4A7CQrVN/5dbF3TkvpAUJC06rX7Gbwq66iJVpSfBauBvuOsZmP2wENHWqYjyBMlG5rf/N7OQSW9kxslJMuLMIe0wNR/Kq4AQhtgNZsD0OBMFkBEamnJLoov8vLs2iOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jByy82CZvmD3fQwIONP/yYPDjOSS094TCQc9FI6DTkk=;
- b=bnrOd1MXrauda92TNBci2VK04NSTM6+HanwMhOypQ+BnnR4+NJx/SUSIu02ykPdbw8ZtdDVdJDgeyUG2cjEqLNC0A5EnTdts6ouGJdxt7GBq6L+kp3xFfGjrWgIxVy6QeJ8wLphapjfk08Ry/PTF+GJJofv5621QXIt18LeY52tQVOUyijR8cA3C+nuKq3nf1KV4oMnaxPBnrtbxqEJQDvwA1/ShJcX/8s7mVvwQhgOj0KCwh2bZPwtXJfcArM8qITxKc6NWh304NnFpcB1DtZkk0P02G5987LQrYeA6YuN90kiendCWKDndbLSAHNuEzhiGpfSOMTUs3IB7tPtQyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
- by CH2PR12MB4908.namprd12.prod.outlook.com (2603:10b6:610:6b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.25; Mon, 26 Sep
- 2022 13:04:35 +0000
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5]) by MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::462:7fe:f04f:d0d5%8]) with mapi id 15.20.5654.025; Mon, 26 Sep 2022
- 13:04:34 +0000
-Date:   Mon, 26 Sep 2022 10:04:33 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <YzGjYZGFBBWBfUbK@nvidia.com>
-References: <632894c4738d8_2a6ded294a@dwillia2-xfh.jf.intel.com.notmuch>
- <20220919212959.GL3600936@dread.disaster.area>
- <6329ee04c9272_2a6ded294bf@dwillia2-xfh.jf.intel.com.notmuch>
- <20220921221416.GT3600936@dread.disaster.area>
- <YyuQI08LManypG6u@nvidia.com>
- <20220923001846.GX3600936@dread.disaster.area>
- <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
- <20220923021012.GZ3600936@dread.disaster.area>
- <Yy2pC/upZNEkVmc5@nvidia.com>
- <20220926003430.GB3600936@dread.disaster.area>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220926003430.GB3600936@dread.disaster.area>
-X-ClientProxiedBy: BL0PR01CA0036.prod.exchangelabs.com (2603:10b6:208:71::49)
- To MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
+        Mon, 26 Sep 2022 10:48:53 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FAF771984;
+        Mon, 26 Sep 2022 06:15:25 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A1F231F9B0;
+        Mon, 26 Sep 2022 13:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1664198123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SUnm6fFN7Cbco4Ciib9Dp4ei7l6IMJGpVSBxC1Y2qbA=;
+        b=GINR8720H7FRt/NwnAThMXKadZ/jHetEfHQabCeHjYvJC0Ay/N/yrY4L2IA45c9LoMhZCZ
+        /uLFla1qp4N9dJxKYjP0KHnNnh00SxZWxr/BsVxiaGxK30LOcRDuqFnj7IDPt4SRjkUrrL
+        EsXkiYJ7NpGujiE2BPJ/t1EnWDNjjQs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1664198123;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SUnm6fFN7Cbco4Ciib9Dp4ei7l6IMJGpVSBxC1Y2qbA=;
+        b=KgFpOhA7zTvFQoSfllErNdLrjLXyakGagE2DCW1UZbzMn8KUX2NJflS9dN3YuGifvDT+Zb
+        Y/3YCIzKAg7vORDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DD79213486;
+        Mon, 26 Sep 2022 13:15:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id d5MSNeqlMWPkZgAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 26 Sep 2022 13:15:22 +0000
+Message-ID: <e0326835-9b0d-af1b-bd22-2aadb178bd25@suse.cz>
+Date:   Mon, 26 Sep 2022 15:15:22 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4192:EE_|CH2PR12MB4908:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8f66eb4-808a-4fc0-41be-08da9fbfa8e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2cPyffG5EPmGUMIbiisGHk79xQ05ur+1RUgaakC9MZ8ZggOVS9+PHQP3K6M8baWvNlxKw8v70NRZOdIUIRSYgLqTGsbLrVXS7xSyRUzSoQ1ArdC1r8oR1Vu8UznnChS+GA8JRUFA+nypxdSfKUZYOMI+hubSAycrcGh2djxoKnARsi+jpWkH6OpVd9qYeV0SLCP8BfAzm7EdLeHvSquU3qzlcqLD3VxKtMYL7d4KShK1qnMI3y/G/HSUb7Mt8oE7yYHg/cTBhjrd5NN/tAHonQbjTLWb/UvBWPPsZWZZU1zNSgYl2CXRipHIvFPuxgczS6JxJsmMeI2+IslQJvVkNr357rCZGIPvF66STwRgzCcUMG59jL2UyWYWmZ6M/coYNWw5QxlQHCpAExZiHzV0LROfOKVdQ6Zg1w5UY/PmM5FfyE0ubxucXmarPoT6Yb6NZSSI4NiWA6BGfNlWBkoukY78SLgBV976EaxsJ6iV9EbdVgIoBucgS7DAA1DmT7rK40DEh4edrTeIrNs74mhm0bD3NafT8NlGhDJm4bZiLOr7xsRrr/hvO1NOeGeyzhOUQwiVJa/woCawMNd2HVzIm5LQENtzWV0VE2ZuHRdgP9Nz/9oTi7vXGU3lKEAA/BtMBvKP/1o53jlWWNWPm7Z/FCDnkfTHyt2IvWisg39YxYGtJZkJvdIvDKrCUoN2YQJa1ZenZPWEji8u90OjMkyYOg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(366004)(136003)(376002)(346002)(39860400002)(451199015)(316002)(6486002)(478600001)(8676002)(4326008)(66946007)(66476007)(66556008)(5660300002)(26005)(6512007)(7416002)(8936002)(6506007)(186003)(2616005)(36756003)(2906002)(41300700001)(38100700002)(54906003)(6916009)(83380400001)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MXde3lf9tv8ekvWqoykQN7bpPVQ2LxQqAnxXU5xCbO6Dw9EDFvxJmumCraZz?=
- =?us-ascii?Q?KyvOGn2R5lnFjI4rDvwHnudUQvUYwmpUBoNbktKqHbnIDQiZSwaJFW3tStT1?=
- =?us-ascii?Q?6LIYX4iDyG6rGVHWMgd1jt/5kaWLd4gnZOTxDNKksu498LSU8R4fcPNwdb3R?=
- =?us-ascii?Q?QjS6cxEk04az0Dn1WSNxjJztie9Gu26Cof9az1Q2WpsvUYvX/zknZfp4MYDk?=
- =?us-ascii?Q?C4rurqSX2ZCdyC77mXAFPckqYGZlvz2wVabBAmiZhhv8S44ccAmW4RDdWAwU?=
- =?us-ascii?Q?X1STIztxLTUsTVgAnFKAr3W1hL5wNlvzHLEJekBjhinUPRluOSO+Rrzjx6t/?=
- =?us-ascii?Q?wVITO1GJ7JfmdobRMb3HVy2k+pxQem0dGTGpo1Sm1e0BD0nvdXQ7wN4c7Zry?=
- =?us-ascii?Q?ghe47YOpG6LmW2vlKsIQVcTCCCrqhX20ZhBe6xHTQujGilwReU+loatCvWzo?=
- =?us-ascii?Q?e8Jl+SsX9olAqGJ5/6cUjIqILP9w0dpaPnoFbvxzj90r/5LhSSj0hoPTZqPM?=
- =?us-ascii?Q?D61CGlvdLzP/fQnBvQ5eZ6nFuEd43pFi5fkVRUsHPtwvolLdv3+rGOm1OUvh?=
- =?us-ascii?Q?ZwMMwCcAT+JvTKuJgsGtkr4yqF3riN3Tmm09H7XdnzQCpMzUhlDXKIM/J4wb?=
- =?us-ascii?Q?N1TQU1QTPYpWCv7D38mUgm8ldKb9wxw8f/g+dF4RZOsgzvy8UzjlKrnekhCw?=
- =?us-ascii?Q?ahPrR8B9SYzh1HeXFaipsjIyX4cU0SYXYgo8jI8QRhtwxyIlITAmC/Bn1wUg?=
- =?us-ascii?Q?gcC7VwjGPqnVG5tJDATsb+6fyuskQa75IrYg4TwArEBqyUwKSQc8tnpVGZnw?=
- =?us-ascii?Q?z6TEtN9tQH2A9NAeObkppL48QeALXPXORBWmPgDdi3vXHOcRwb+JF75r79L6?=
- =?us-ascii?Q?UGRm3wkxqEe19fv3DoCBtrr+IkDxzU9TiwGyqDp1nH0cpOfG7zPfFixi73zG?=
- =?us-ascii?Q?izKWBM+BKWU9RE4FjxpPPXLFwbQAK2n0gRVrjGy7xab9Mwni3Fc1Q9qYNsQw?=
- =?us-ascii?Q?FiVpe0JpeXAWJ5oY8GuPYNVd0EcWx7d5RXplPP4mPoMm3ClEMhlORvM/ClNq?=
- =?us-ascii?Q?4lPDkc43G04+K4/hsH0t8MiQ8e8uRmsGfV3zbaK6YDMhApUrNQPAd5jHPZZg?=
- =?us-ascii?Q?cEBDmXkwuXgvawuy4p4iEEwtTjjYH4sjrvdZddwW8hfF922Am8vgfu3qotMX?=
- =?us-ascii?Q?BdmDCjC5T8U6Bwp5Aewz175b7Xd978x6B2Vmdm5+40fPqbTa4DpqQwkPU96t?=
- =?us-ascii?Q?N5FlJIfVSJAbZiSv8qsWgdy3wLP9TXBl63xg7MgDfzhdQoXIgriOcSgOht18?=
- =?us-ascii?Q?RqtnKe86ONnQ5D3FQWVHOKNzH+t8oFw9t0f0GTsfWlwuXhSyoQdXQ3n2Jhk2?=
- =?us-ascii?Q?fGuhacVagqAu55OHuQiLSXK/hpMb103f1ytRV3Y1XedraKNz4ll0ITDGhbBw?=
- =?us-ascii?Q?eSOJwZnY4zT4lB03Lilo/FTOcczYDnQf/DbzWyfxhcBnVehIG07+0zFjZV9F?=
- =?us-ascii?Q?Q25bFXKq7FSJlKt0+ru0h9C5c6Wvoizl0KPOrDCpPpYL2nd8AxXP9aNTcsDN?=
- =?us-ascii?Q?kzJmoQ8Oe7FWaAuRp+I=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8f66eb4-808a-4fc0-41be-08da9fbfa8e5
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2022 13:04:34.9088
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 81WnVfNDspiAMNnRAPtRNiICqR1zrjAAfrjTXptWgPijdoxfDYoz5w+dipZ2r+aA
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4908
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v2 02/16] slab: Introduce kmalloc_size_roundup()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Marco Elver <elver@google.com>,
+        Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, dev@openvswitch.org,
+        x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+References: <20220923202822.2667581-1-keescook@chromium.org>
+ <20220923202822.2667581-3-keescook@chromium.org>
+Content-Language: en-US
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20220923202822.2667581-3-keescook@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 10:34:30AM +1000, Dave Chinner wrote:
-
-> > It is not about sane applications, it is about kernel security against
-> > hostile userspace.
+On 9/23/22 22:28, Kees Cook wrote:
+> In the effort to help the compiler reason about buffer sizes, the
+> __alloc_size attribute was added to allocators. This improves the scope
+> of the compiler's ability to apply CONFIG_UBSAN_BOUNDS and (in the near
+> future) CONFIG_FORTIFY_SOURCE. For most allocations, this works well,
+> as the vast majority of callers are not expecting to use more memory
+> than what they asked for.
 > 
-> Turning this into a UAF doesn't provide any security at all. It
-> makes this measurable worse from a security POV as it provides a
-> channel for data leakage (read() case) or system unstability or
-> compromise (the write() case).
+> There is, however, one common exception to this: anticipatory resizing
+> of kmalloc allocations. These cases all use ksize() to determine the
+> actual bucket size of a given allocation (e.g. 128 when 126 was asked
+> for). This comes in two styles in the kernel:
+> 
+> 1) An allocation has been determined to be too small, and needs to be
+>     resized. Instead of the caller choosing its own next best size, it
+>     wants to minimize the number of calls to krealloc(), so it just uses
+>     ksize() plus some additional bytes, forcing the realloc into the next
+>     bucket size, from which it can learn how large it is now. For example:
+> 
+> 	data = krealloc(data, ksize(data) + 1, gfp);
+> 	data_len = ksize(data);
+> 
+> 2) The minimum size of an allocation is calculated, but since it may
+>     grow in the future, just use all the space available in the chosen
+>     bucket immediately, to avoid needing to reallocate later. A good
+>     example of this is skbuff's allocators:
+> 
+> 	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
+> 	...
+> 	/* kmalloc(size) might give us more room than requested.
+> 	 * Put skb_shared_info exactly at the end of allocated zone,
+> 	 * to allow max possible filling before reallocation.
+> 	 */
+> 	osize = ksize(data);
+>          size = SKB_WITH_OVERHEAD(osize);
+> 
+> In both cases, the "how much was actually allocated?" question is answered
+> _after_ the allocation, where the compiler hinting is not in an easy place
+> to make the association any more. This mismatch between the compiler's
+> view of the buffer length and the code's intention about how much it is
+> going to actually use has already caused problems[1]. It is possible to
+> fix this by reordering the use of the "actual size" information.
+> 
+> We can serve the needs of users of ksize() and still have accurate buffer
+> length hinting for the compiler by doing the bucket size calculation
+> _before_ the allocation. Code can instead ask "how large an allocation
+> would I get for a given size?".
+> 
+> Introduce kmalloc_size_roundup(), to serve this function so we can start
+> replacing the "anticipatory resizing" uses of ksize().
+> 
+> [1] https://github.com/ClangBuiltLinux/linux/issues/1599
+>      https://github.com/KSPP/linux/issues/183
+> 
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-You asked what the concern is, I think you get it, you explained it to
-Jan in another email.
+OK, added patch 1+2 to slab.git for-next branch.
+Had to adjust this one a bit, see below.
 
-We have this issue where if we are not careful we can create a UAF bug
-through GUP. It is not something a real application will hit, this is
-kernel self-protection against hostile user space trying to trigger a
-UAF. The issue arises from both the FS and the MM having their own
-lifecycle models for the same memory page.
+> ---
+>   include/linux/slab.h | 31 +++++++++++++++++++++++++++++++
+>   mm/slab.c            |  9 ++++++---
+>   mm/slab_common.c     | 20 ++++++++++++++++++++
+>   3 files changed, 57 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 41bd036e7551..727640173568 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -188,7 +188,21 @@ void * __must_check krealloc(const void *objp, size_t new_size, gfp_t flags) __r
+>   void kfree(const void *objp);
+>   void kfree_sensitive(const void *objp);
+>   size_t __ksize(const void *objp);
+> +
+> +/**
+> + * ksize - Report actual allocation size of associated object
+> + *
+> + * @objp: Pointer returned from a prior kmalloc()-family allocation.
+> + *
+> + * This should not be used for writing beyond the originally requested
+> + * allocation size. Either use krealloc() or round up the allocation size
+> + * with kmalloc_size_roundup() prior to allocation. If this is used to
+> + * access beyond the originally requested allocation size, UBSAN_BOUNDS
+> + * and/or FORTIFY_SOURCE may trip, since they only know about the
+> + * originally allocated size via the __alloc_size attribute.
+> + */
+>   size_t ksize(const void *objp);
+> +
+>   #ifdef CONFIG_PRINTK
+>   bool kmem_valid_obj(void *object);
+>   void kmem_dump_obj(void *object);
+> @@ -779,6 +793,23 @@ extern void kvfree(const void *addr);
+>   extern void kvfree_sensitive(const void *addr, size_t len);
+>   
+>   unsigned int kmem_cache_size(struct kmem_cache *s);
+> +
+> +/**
+> + * kmalloc_size_roundup - Report allocation bucket size for the given size
+> + *
+> + * @size: Number of bytes to round up from.
+> + *
+> + * This returns the number of bytes that would be available in a kmalloc()
+> + * allocation of @size bytes. For example, a 126 byte request would be
+> + * rounded up to the next sized kmalloc bucket, 128 bytes. (This is strictly
+> + * for the general-purpose kmalloc()-based allocations, and is not for the
+> + * pre-sized kmem_cache_alloc()-based allocations.)
+> + *
+> + * Use this to kmalloc() the full bucket size ahead of time instead of using
+> + * ksize() to query the size after an allocation.
+> + */
+> +size_t kmalloc_size_roundup(size_t size);
+> +
+>   void __init kmem_cache_init_late(void);
+>   
+>   #if defined(CONFIG_SMP) && defined(CONFIG_SLAB)
+> diff --git a/mm/slab.c b/mm/slab.c
+> index 10e96137b44f..2da862bf6226 100644
+> --- a/mm/slab.c
+> +++ b/mm/slab.c
+> @@ -4192,11 +4192,14 @@ void __check_heap_object(const void *ptr, unsigned long n,
+>   #endif /* CONFIG_HARDENED_USERCOPY */
+>   
+>   /**
+> - * __ksize -- Uninstrumented ksize.
+> + * __ksize -- Report full size of underlying allocation
+>    * @objp: pointer to the object
+>    *
+> - * Unlike ksize(), __ksize() is uninstrumented, and does not provide the same
+> - * safety checks as ksize() with KASAN instrumentation enabled.
+> + * This should only be used internally to query the true size of allocations.
+> + * It is not meant to be a way to discover the usable size of an allocation
+> + * after the fact. Instead, use kmalloc_size_roundup(). Using memory beyond
+> + * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
+> + * and/or FORTIFY_SOURCE.
+>    *
+>    * Return: size of the actual memory used by @objp in bytes
+>    */
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 457671ace7eb..d7420cf649f8 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -721,6 +721,26 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+>   	return kmalloc_caches[kmalloc_type(flags)][index];
+>   }
+>   
+> +size_t kmalloc_size_roundup(size_t size)
+> +{
+> +	struct kmem_cache *c;
+> +
+> +	/* Short-circuit the 0 size case. */
+> +	if (unlikely(size == 0))
+> +		return 0;
+> +	/* Short-circuit saturated "too-large" case. */
+> +	if (unlikely(size == SIZE_MAX))
+> +		return SIZE_MAX;
+> +	/* Above the smaller buckets, size is a multiple of page size. */
+> +	if (size > KMALLOC_MAX_CACHE_SIZE)
+> +		return PAGE_SIZE << get_order(size);
+> +
+> +	/* The flags don't matter since size_index is common to all. */
+> +	c = kmalloc_slab(size, GFP_KERNEL);
+> +	return c ? c->object_size : 0;
+> +}
+> +EXPORT_SYMBOL(kmalloc_size_roundup);
 
-I'm still not clear on exactly what the current state of affairs is,
-Dan?
+We need a SLOB version too as it's not yet removed... I added this:
 
-The DAX/FSDAX stuff currently has a wait on the struct page - does
-that wait protect against these UAFs? It looks to me like that is what
-it is suppposed to do?
+diff --git a/mm/slob.c b/mm/slob.c
+index 2bd4f476c340..5dbdf6ad8bcc 100644
+--- a/mm/slob.c
++++ b/mm/slob.c
+@@ -574,6 +574,20 @@ void kfree(const void *block)
+  }
+  EXPORT_SYMBOL(kfree);
+  
++size_t kmalloc_size_roundup(size_t size)
++{
++       /* Short-circuit the 0 size case. */
++       if (unlikely(size == 0))
++               return 0;
++       /* Short-circuit saturated "too-large" case. */
++       if (unlikely(size == SIZE_MAX))
++               return SIZE_MAX;
++
++       return ALIGN(size, ARCH_KMALLOC_MINALIGN);
++}
++
++EXPORT_SYMBOL(kmalloc_size_roundup);
++
+  /* can't use ksize for kmem_cache_alloc memory, only kmalloc */
+  size_t __ksize(const void *block)
+  {
 
-If so, that wait simply needs to be transformed into a wait for the
-refcount to be 0 when you rework the refcounting. 
 
-This is not the same FOLL_LONGTERM discussion rehashed, all the
-FOLL_LONGTERM discussions were predicated on the idea that GUP
-actually worked and doesn't have UAF bugs.
-
-> The *storage media* must not be reused until the filesystem says it
-> can be reused. And for that to work, nothing is allowed to keep an
-> anonymous, non-filesystem reference to the storage media. It has
-> nothing to do with struct page reference counts, and everything to
-> do with ensuring that filesystem objects are correctly referenced
-> while the storage media is in direct use by an application.
-
-The trouble is we have *two* things that think they own the media -
-the mm through pgmap clearly is the owner of the struct page and has
-its own well defined lifecycle model for it.
-
-And the FS has its model. We have to ensure the two models are tied
-together, a page in the media cannot be considered free until both
-lifecycle models agree it is free.
-
-This is a side effect of using the struct pages in the first place,
-currently the FS can't use struct page but opt out of the mm's
-lifecycle model for struct page!
-
-If we want the FS to own everything exclusively we should purge the
-struct pages completely and give up all the features that come with
-them (like GUP)
-
-Jason
