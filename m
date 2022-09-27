@@ -2,91 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F40575EC578
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FD75EC57D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232712AbiI0OG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 10:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
+        id S232317AbiI0OHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 10:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232183AbiI0OG4 (ORCPT
+        with ESMTP id S230000AbiI0OHS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 10:06:56 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F193D87F88;
-        Tue, 27 Sep 2022 07:06:54 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id a4so5138601ilj.8;
-        Tue, 27 Sep 2022 07:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=08FYPXF8NGV3I7f8HvvukPdlDJ2mobJpfZ4nRRDrtDs=;
-        b=b6TVXxWSSs1wWwgyy76IisEm+bMUWZ/TZVqBW0IiwdaKjq1GvfK4WvX0uioXtu2Hs3
-         jcf/7ASYzYYGjL6N1NOc5gzJbhcbPXgiIpLgwYqW868sFRLRPVM6/+k64STgGvPwJUew
-         W9D1rzvOyRhdq6qvOoo4l+TQhxonD+mm0Tmi89kwo2eBCe1tBmw5oSnGlOZ0+03lwIqh
-         UWG5nRt7SlGk/zMWRiNvqo4hOtRSMoXiKKmuQuQA/I2I6ZhsS1naaE54ERdmVXQLa3Kt
-         LpqxHrraYDNE+qytp1tQoK+LfPJPeUxJG720eFeQevCd3+3SR0yrd/vkxJRqWRuRvrkX
-         XJTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=08FYPXF8NGV3I7f8HvvukPdlDJ2mobJpfZ4nRRDrtDs=;
-        b=z4Akm1n+v6OpRl69uAPD8Id09lo7Xdy67AZgOhiycM6D4OazO9x9peiU3ZOGb3ItvW
-         ZqQySMpj//I6u0wP4HV/ds6osKKQPqj2F/y55rds4GYH37tHz9VsUNl/A6JNcKzRZRRX
-         ML/C9OIVdQrvD5ApyuefQdnhNNA7QDyaoMGKSkXgHmlZvOvnnmna4JukgogV4+Gxyfts
-         /W+g7jRPou3vdhxAItEUmJixayvBQCQoiALmnnNCfTJ+x9WgzdDdkCE8NNOGmEKNmEd6
-         hJtQ3XLPit5k5sR9iusAINW6sDq+moNxaSYFogHvFZ7oDkAZ89cO9Gx3RYeIwy7bXJB1
-         9gvw==
-X-Gm-Message-State: ACrzQf17UTII1EbaQmlIgfS0LdQd9BE+X6pj6NX2SrTIGj2h32zWZqUf
-        PmaCcwe6NQExVQxsMR88t93LSNBYmMN+NQNM8XU=
-X-Google-Smtp-Source: AMsMyM5syx+SHzekoKk5qqoxYITfSS3Xf+tq/gzESB0d3rgzZ2K4BALmcjzwKNLccON5ri7Ug7BCkO3JsxrTkg8RzqI=
-X-Received: by 2002:a05:6e02:188f:b0:2f8:993:e7ba with SMTP id
- o15-20020a056e02188f00b002f80993e7bamr7861514ilu.321.1664287614225; Tue, 27
- Sep 2022 07:06:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-9-ojeda@kernel.org>
- <YzL/9mlOHemaey2n@yadro.com>
-In-Reply-To: <YzL/9mlOHemaey2n@yadro.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 27 Sep 2022 16:06:43 +0200
-Message-ID: <CANiq72kDPMKd0qLAMVrd2A3n9aAWhh2ps5DvKos58L=_V2-XwQ@mail.gmail.com>
-Subject: Re: [PATCH v10 08/27] rust: adapt `alloc` crate to the kernel
-To:     Konstantin Shelekhin <k.shelekhin@yadro.com>
-Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 27 Sep 2022 10:07:18 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3193113940B;
+        Tue, 27 Sep 2022 07:07:14 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 3E35621E8E;
+        Tue, 27 Sep 2022 14:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1664287633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aIU3e8VKH70dw1DweZz2Ipe29gs7JBQEVsw+CaMYFWQ=;
+        b=XI9wUmedMf6E1UyuWc4e3n79LzQubDy33YGPFwjBlfACKRnDjZyR7HEY30BmRQLbaUe0Cd
+        qSD+VJb4hDaNJVohyul9WGMIRkObQhYCRD+u0fnDEFPzn/ND/e4I+3XQeHX6AnN8drkelU
+        dBXjPszwCK2CCOOPC5Jj3VoDX23XI10=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id D9B932C166;
+        Tue, 27 Sep 2022 14:07:12 +0000 (UTC)
+Date:   Tue, 27 Sep 2022 16:07:09 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Gary Guo <gary@garyguo.net>, Matthew Bakhtiari <dev@mtbk.me>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH printk 07/18] printk: Convert console list walks for
+ readers to list lock
+Message-ID: <YzMDjbrPNqK9xJp3@alley>
+References: <20220924000454.3319186-1-john.ogness@linutronix.de>
+ <20220924000454.3319186-8-john.ogness@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220924000454.3319186-8-john.ogness@linutronix.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 3:52 PM Konstantin Shelekhin
-<k.shelekhin@yadro.com> wrote:
+On Sat 2022-09-24 02:10:43, John Ogness wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Facilities which expose console information to sysfs or procfs can use the
+> new list protection to keep the list stable. No need to hold console lock.
 >
-> Not being able to pass GFP flags here kinda limits the scope of Rust in
-> kernel. I think that it must be supported in the final version that gets
-> in.
+>  drivers/tty/tty_io.c   | 6 +++---
+>  fs/proc/consoles.c     | 6 +++---
+>  kernel/printk/printk.c | 8 ++++----
 
-Flags will be supported one way or the other in the future, but I was
-requested to do v10 as a v9 with the last nits resolved.
+As described in the review of the 6th patch, the semantic of
+the list_lock (module_mutex) is not well defined from my POV.
+I would prefer to keep only one global console lock.
 
-Please see the cover letter for details.
+That said, the procf and sysfs interface is read-only. It seems
+to be safe to show the info under the new console_srcu read lock.
 
-Cheers,
-Miguel
+On the other hand, console_device() should see the console
+list in a consistent state. The first console with tty console->driver
+should have the CON_CONSDEV flag set. Alternatively, we could
+manipulate the list and the flag a safe way from the SRCU POV
+but it is not worth it. So, I would keep console_lock()
+in console_device() for now.
+
+Best Regards,
+Petr
