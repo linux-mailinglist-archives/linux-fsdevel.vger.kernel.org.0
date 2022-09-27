@@ -2,128 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 949425ED11F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 01:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 620AC5ED14E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 01:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbiI0XiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 19:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
+        id S231971AbiI0XxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 19:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231787AbiI0XiC (ORCPT
+        with ESMTP id S232593AbiI0Xw7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 19:38:02 -0400
-Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882321D1E1E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Sep 2022 16:38:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664321879; bh=dcoJeyML+0RbcNiEVPffEvxaFIftFIaaNOl8mKiOxH0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=RcChjhewUU/yqn7GWVsj8OZ8sB/qzeclFs49E+iEtpqv6EWP2wwjwKjYOuZktksHKVvANTMu+gB3Mys3cBESqCwOA4eVqV8CyfpQAN1/jNH7hrrDMYyX5pxV+qa8bocQTOD5J+cEHQBtzBMm1XqWnPFw12RODVyQ0/u0YGgFCZw2FiLbpoquJD99C7j/p7v3TuJlQDZY1S3/89qhy6S5GKe++2MiknR6MY0CGJo2UEykoJfAEjuYi1R17JRHaTPF8+C1GZy7no3V3Vgd6SUTD1DNiAGkt0FoQodWaYM2EqMtN/YNcpLErv0LbtRCxjPgpfDormH1VCxc6MfUBVX46Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1664321879; bh=Ik0PYjOuc7lxbFxdO2yAjC6eVPf0i0AdrVbA0qtDBB7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Kiv+wprQoXOI55JIkEzkSiEaFr9gS3j7FKE1Sy91BR96//PoleU09LKMqx0LJ5VKCB625cZOYrXI9PIcau61JcdfSh60STrOjq0qgIMBjC2059yYuhB3jLOLVG1lWADYui1vTOJ8iviVuvN0s2ykHU3bH9ZwGubEJ90i5jL9xdhFed55EqPMtvQaJcJu7wwznFkumugLUvs7En85Ybw/KnHGAG1vP/8FLR2VQvBN7ZngasGFhfuKfPsSI2iN7P1BJZOkwDbuGe9hmjfII8d+eTD6dx8KfvAKcqOrJNnDXhhA+r04sfM28T+HlcG0eNyQZfLFOc/OUR3ejpvH67CdmQ==
-X-YMail-OSG: 9FZcd74VM1nIsnhlS8k4XujrMNRf1tm5BWXhXDB8Y50igsqWYSobkypOn8FrM3q
- _hPfMuom8fVjihzlQCab0E2bPurfrZz_GSBhFUrQv54hTgazW7A9QcEozzE8Bv4VzN2wOJcPorcx
- NQOu4WuLC.XOkH6dSyFeMrxtr49_2b0sHnwQzs602nD9TdFeXhoAw8g_2cq9tSzI9Dtr5TxFqLPv
- N58LBY8zPILuFtTLs_AVwbyc6pkF.I6APGoxJKa59.e563qGsZi0KpQyS.oiZzTI_ut1UcOkjeEq
- GhkBwwI_X80cvyi6mPeHuaHEfhbLvqwe.puoJT1ST.V87NbbgK18R.OEOPzkPjL5IX5KouTDdqS7
- MGQeGNLPFx1tusGUDO1EjRPOZEzUQwjHLW_c.URdmC7xpzOHxMCHle7QEdzQNYiRMsygNWg6qkkf
- 1g_vdmAFk..iwfHJlDj6YggUMr9y.hH1YpthB3FZnnzIWlGDw0ExNakQ0SqH2cXhWKte5CJ8cIFh
- 4B_TqSveZ0wDoRK9gy7En8_9eftyeh3NRI_A4DlM4XaDvY6Qy0JmJ64Ehcip.YtdviOb3GNZcwx_
- edpc0gkdYpAuk7enZ1sncc1pN87Fclcm7irdaaU63XeK3C47t_3pZBfMr3F2G4WbHIq.7h4I68fZ
- pmCGRlzmmSluk9QsqxKyjv5e21JHCckNMq96ULDOdMj1sUN6IE4VPJtO8c6fmVrsx_9F8ZQsjR62
- YBU4cxj5QyuoGO7nuMnxLcR1pvEXm.0c0n5KmkR_smUFwRZr8vTFvyQrNQdNcqcynZ.HALYKfl47
- iFHWXiNh6ddGHhSPWnWhcADNXrWegcxpBTLIJSF98XZlH1ri.teIb0djfeEv7K1l9Vytvy5QrbGt
- RMdZjctj5L0OX10RCBSk3xhB3qY9gsM4pCuDCPrSl3_rlfUj8Ql.R9Aj9v2nzOMGxd_IL4YBa99r
- L6KwnWNJn6FrwbAjsbFgUMO2ql_Sw5IQREHZsTbtQY1X_T7oplSYBibjkVSh8Qypo5Cej4I3i4on
- JfI1DTsGoOtBZA6rqcAigMA8KroFnoDe6pZUPErAiYqFHhxoliRYnMcPJCAgPVqSm5cH0dGgobdD
- Z6glosu.vhnnISjsV7vYuO343DrGG.bCy1xHXsxMQJwZEEDDNFg0XrDYcJIPeIVwHveWJJD82pLD
- yBRqToFG1OyPiCL8CpX1q2fJYuOS39CsAoamXjF7Mp7by71A7nzNF_RJwU5EjSipSmDNkTa_oT0K
- wFprPzbfWdxPmsFlVc75F6DB4It2JEl9xRb0J0Wa9odsJgxtLzj6UKjth.eieUldQgz8g.FJga8A
- aV9bSdift_fqYcsGXbS2SFmOeH3q4NE45WtH5VCa7hbDhPYc8Jxhi3RKAsNpzV2IH7puodtqx2MW
- mPcyybNoje4lnkD6yxwVgzlgNDbh3.0Bi4UzB5qoFkjbkmHvMI7JuakBBCm.yJn.BcXHjz1pdpaj
- zayojCB0VOE.pil0xBT0kwQWRra5mNVuJI7YA5iOCdOrYugcEKLYNdnHOVdNjV.nSnBYfjs4tOPv
- 0.fSK5DjyWm8eK8_hPz6ZFNVf.5BynwY6xgado5tbWWlNc_vJY1m7C_HeFrUhHMjhj9YBg1bmUIR
- .EA6QBQslhUwZXCjuaryQlDhZvbAXvsQ.JTYTjMSQcc3IgTaufqAvREHdANjgGkP3FCPI948YaE_
- MbwkO3E5y3PurbgJNGMOXo4LGVxNb4BWFIVc1w7yAPvx_vEBoPUF2EvvpNBwOTyoFNhdvcbPiSbH
- vkXAqcoNQHOlP5xdhSBcIs2I7rPKZ13oOyGsraJ9ULzapO9NWbHkLTZji84FsvMOW1IeMvq_YrE1
- o9Gh9yZCzirOgWbS1p7nBj.LIooDvTPrmv1vqIL.gRLODOg_3ja9TwL2i_FPXH6EBcFvTf2JZH.J
- c068T8niVYx0O.X17grb95y5PKLbTaeyYW8Nrd2Pmr77oLoa8_njRFcUEaSfQMAA1xrK50eOaMqK
- rB_w9oZL6pBd99T9sX_2QLnBp_dqaepGzNmZ.TwVzMsT51xfvz8WO8u66UFx3XkteK0fARQziNUi
- gPwIxGGisRqbveqtsACwVofSi7abZAU2Y5VPjFd_BUMLPTewNfpUX6AbYVLs9YQWbJs8qQIB9cHk
- O6hfKnnQGNL5X6.wg9lZ78AObU9trTk5xnyDoiFnQin3phl0NaIZHr.W9fQYK6w6BmPVk5MkdRPa
- O94129SQoL18H3Uw4x1E44jqXy3zmJL7Xv0JPIKyU0fVxZdC7MDjXj7FPlQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 27 Sep 2022 23:37:59 +0000
-Received: by hermes--production-bf1-759bcdd488-x5z77 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1ada386b527abdaae554e50e8733736f;
-          Tue, 27 Sep 2022 23:37:55 +0000 (UTC)
-Message-ID: <6dcd0fe7-3fc6-9edc-349c-0133ab1f918a@schaufler-ca.com>
-Date:   Tue, 27 Sep 2022 16:37:51 -0700
+        Tue, 27 Sep 2022 19:52:59 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80BD21E8006;
+        Tue, 27 Sep 2022 16:51:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 1692C110108A;
+        Wed, 28 Sep 2022 09:51:30 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1odKML-00CxJa-Io; Wed, 28 Sep 2022 09:51:29 +1000
+Date:   Wed, 28 Sep 2022 09:51:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com
+Subject: Re: [RFC PATCH] xfs: drop experimental warning for fsdax
+Message-ID: <20220927235129.GC3600936@dread.disaster.area>
+References: <1663234002-17-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <20220919045003.GJ3600936@dread.disaster.area>
+ <20220919211533.GK3600936@dread.disaster.area>
+ <f10de555-370b-f236-1107-e3089258ebbc@fujitsu.com>
+ <YzMeqNg56v0/t/8x@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v2 00/30] acl: add vfs posix acl api
-Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, casey@schaufler-ca.com
-References: <20220926140827.142806-1-brauner@kernel.org>
- <99173046-ab2e-14de-7252-50cac1f05d27@schaufler-ca.com>
- <20220927074101.GA17464@lst.de>
- <a0cf3efb-dea1-9cb0-2365-2bcc2ca1fdba@schaufler-ca.com>
- <CAHC9VhToUZici98r10UJOQhE48j-58hUheT0P8GE9nC38p=ijQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhToUZici98r10UJOQhE48j-58hUheT0P8GE9nC38p=ijQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20702 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YzMeqNg56v0/t/8x@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=63338c84
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=IkcTkHD0fZMA:10 a=xOM3xZuef0cA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
+        a=VHcvpX4-_hD7FttO6b8A:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/27/2022 4:24 PM, Paul Moore wrote:
-> On Tue, Sep 27, 2022 at 10:13 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 9/27/2022 12:41 AM, Christoph Hellwig wrote:
->>> On Mon, Sep 26, 2022 at 05:22:45PM -0700, Casey Schaufler wrote:
->>>> I suggest that you might focus on the acl/evm interface rather than the entire
->>>> LSM interface. Unless there's a serious plan to make ima/evm into a proper LSM
->>>> I don't see how the breadth of this patch set is appropriate.
->>> Umm. The problem is the historically the Linux xattr interface was
->>> intended for unstructured data, while some of it is very much structured
->>> and requires interpretation by the VFS and associated entities.  So
->>> splitting these out and add proper interface is absolutely the right
->>> thing to do and long overdue (also for other thing like capabilities).
->>> It might make things a little more verbose for LSM, but it fixes a very
->>> real problem.
->> Here's the problem I see. All of the LSMs see xattrs, except for their own,
->> as opaque objects. Introducing LSM hooks to address the data interpretation
->> issues between VFS and EVM, which is not an LSM, adds to an already overlarge
->> and interface. And the "real" users of the interface don't need the new hook.
->> I'm not saying that the ACL doesn't have problems. I'm not saying that the
->> solution you've proposed isn't better than what's there now. I am saying that
->> using LSM as a conduit between VFS and EVM at the expense of the rest of the
->> modules is dubious. A lot of change to LSM for no value to LSM.
-> Let's take a step back and look not just at the LSM changes, but the
-> patchset as a whole.  Forgive my paraphrasing, but what Christian is
-> trying to do here is introduce a proper ACL API in the kernel to
-> remove a lot of kludges, special-cases, etc. in the VFS layer,
-> enabling better type checking, code abstractions, and all the nice
-> things you get when you have nice APIs.  This is admirable work, even
-> if it does result in some duplication at the LSM layer (and below).
->
-> It is my opinion that the impact to the LSM, both at the LSM layer,
-> and in the individual affected LSMs is not significant enough to
-> outweigh the other advantages offered by this patchset.
+On Tue, Sep 27, 2022 at 09:02:48AM -0700, Darrick J. Wong wrote:
+> On Tue, Sep 27, 2022 at 02:53:14PM +0800, Shiyang Ruan wrote:
+> > 
+> > 
+> > 在 2022/9/20 5:15, Dave Chinner 写道:
+> > > On Mon, Sep 19, 2022 at 02:50:03PM +1000, Dave Chinner wrote:
+> > > > On Thu, Sep 15, 2022 at 09:26:42AM +0000, Shiyang Ruan wrote:
+> > > > > Since reflink&fsdax can work together now, the last obstacle has been
+> > > > > resolved.  It's time to remove restrictions and drop this warning.
+> > > > > 
+> > > > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> > > > 
+> > > > I haven't looked at reflink+DAX for some time, and I haven't tested
+> > > > it for even longer. So I'm currently running a v6.0-rc6 kernel with
+> > > > "-o dax=always" fstests run with reflink enabled and it's not
+> > > > looking very promising.
+> > > > 
+> > > > All of the fsx tests are failing with data corruption, several
+> > > > reflink/clone tests are failing with -EINVAL (e.g. g/16[45]) and
+> > > > *lots* of tests are leaving stack traces from WARN() conditions in
+> > > > DAx operations such as dax_insert_entry(), dax_disassociate_entry(),
+> > > > dax_writeback_mapping_range(), iomap_iter() (called from
+> > > > dax_dedupe_file_range_compare()), and so on.
+> > > > 
+> > > > At thsi point - the tests are still running - I'd guess that there's
+> > > > going to be at least 50 test failures by the time it completes -
+> > > > in comparison using "-o dax=never" results in just a single test
+> > > > failure and a lot more tests actually being run.
+> > > 
+> > > The end results with dax+reflink were:
+> > > 
+> > > SECTION       -- xfs_dax
+> > > =========================
+> > > 
+> > > Failures: generic/051 generic/068 generic/074 generic/075
+> > > generic/083 generic/091 generic/112 generic/127 generic/164
+> > > generic/165 generic/175 generic/231 generic/232 generic/247
+> > > generic/269 generic/270 generic/327 generic/340 generic/388
+> > > generic/390 generic/413 generic/447 generic/461 generic/471
+> > > generic/476 generic/517 generic/519 generic/560 generic/561
+> > > generic/605 generic/617 generic/619 generic/630 generic/649
+> > > generic/650 generic/656 generic/670 generic/672 xfs/011 xfs/013
+> > > xfs/017 xfs/068 xfs/073 xfs/104 xfs/127 xfs/137 xfs/141 xfs/158
+> > > xfs/168 xfs/179 xfs/243 xfs/297 xfs/305 xfs/328 xfs/440 xfs/442
+> > > xfs/517 xfs/535 xfs/538 xfs/551 xfs/552
+> > > Failed 61 of 1071 tests
+> > > 
+> > > Ok, so I did a new no-reflink run as a baseline, because it is a
+> > > while since I've tested DAX at all:
+> > > 
+> > > SECTION       -- xfs_dax_noreflink
+> > > =========================
+> > > Failures: generic/051 generic/068 generic/074 generic/075
+> > > generic/083 generic/112 generic/231 generic/232 generic/269
+> > > generic/270 generic/340 generic/388 generic/461 generic/471
+> > > generic/476 generic/519 generic/560 generic/561 generic/617
+> > > generic/650 generic/656 xfs/011 xfs/013 xfs/017 xfs/073 xfs/297
+> > > xfs/305 xfs/517 xfs/538
+> > > Failed 29 of 1071 tests
+> > > 
+> > > Yeah, there's still lots of warnings from dax_insert_entry() and
+> > > friends like:
+> > > 
+> > > [43262.025815] WARNING: CPU: 9 PID: 1309428 at fs/dax.c:380 dax_insert_entry+0x2ab/0x320
+> > > [43262.028355] Modules linked in:
+> > > [43262.029386] CPU: 9 PID: 1309428 Comm: fsstress Tainted: G W          6.0.0-rc6-dgc+ #1543
+> > > [43262.032168] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> > > [43262.034840] RIP: 0010:dax_insert_entry+0x2ab/0x320
+> > > [43262.036358] Code: 08 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 8b 58 20 48 8d 53 01 e9 65 ff ff ff 48 8b 58 20 48 8d 53 01 e9 50 ff ff ff <0f> 0b e9 70 ff ff ff 31 f6 4c 89 e7 e8 84 b1 5a 00 eb a4 48 81 e6
+> > > [43262.042255] RSP: 0018:ffffc9000a0cbb78 EFLAGS: 00010002
+> > > [43262.043946] RAX: ffffea0018cd1fc0 RBX: 0000000000000001 RCX: 0000000000000001
+> > > [43262.046233] RDX: ffffea0000000000 RSI: 0000000000000221 RDI: ffffea0018cd2000
+> > > [43262.048518] RBP: 0000000000000011 R08: 0000000000000000 R09: 0000000000000000
+> > > [43262.050762] R10: ffff888241a6d318 R11: 0000000000000001 R12: ffffc9000a0cbc58
+> > > [43262.053020] R13: ffff888241a6d318 R14: ffffc9000a0cbe20 R15: 0000000000000000
+> > > [43262.055309] FS:  00007f8ce25e2b80(0000) GS:ffff8885fec80000(0000) knlGS:0000000000000000
+> > > [43262.057859] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [43262.059713] CR2: 00007f8ce25e1000 CR3: 0000000152141001 CR4: 0000000000060ee0
+> > > [43262.061993] Call Trace:
+> > > [43262.062836]  <TASK>
+> > > [43262.063557]  dax_fault_iter+0x243/0x600
+> > > [43262.064802]  dax_iomap_pte_fault+0x199/0x360
+> > > [43262.066197]  __xfs_filemap_fault+0x1e3/0x2c0
+> > > [43262.067602]  __do_fault+0x31/0x1d0
+> > > [43262.068719]  __handle_mm_fault+0xd6d/0x1650
+> > > [43262.070083]  ? do_mmap+0x348/0x540
+> > > [43262.071200]  handle_mm_fault+0x7a/0x1d0
+> > > [43262.072449]  ? __kvm_handle_async_pf+0x12/0xb0
+> > > [43262.073908]  exc_page_fault+0x1d9/0x810
+> > > [43262.075123]  asm_exc_page_fault+0x22/0x30
+> > > [43262.076413] RIP: 0033:0x7f8ce268bc23
+> > > 
+> > > So it looks to me like DAX is well and truly broken in 6.0-rc6. And,
+> > > yes, I'm running the fixes in mm-hotifxes-stable branch that allow
+> > > xfs/550 to pass.
+> > 
+> > I have tested these two mode for many times:
+> > 
+> > xfs_dax mode did failed so many cases.  (If you tested with this "drop"
+> > patch, some warning around "dax_dedupe_file_range_compare()" won't occur any
+> > more.)  I think warning around "dax_disassociate_entry()" is a problem with
+> > concurrency.  Still looking into it.
+> > 
+> > But xfs_dax_noreflink didn't have so many failure, just 3 in my environment:
+> > Failures: generic/471 generic/519 xfs/148.  I am thinking that did you
+> > forget to reformat the TEST_DEV to be non-reflink before run the test?  If
+> > so it will make sense.
 
-Hey, in the end it's your call. I agree that cleaning up kludgy code
-is inherently good. I'm willing to believe that putting further effort
-into the patch set to make the LSM aspects cleaner isn't cost effective.
-If everyone else thinks this is the right approach, I don't need to
-question it further.
+No, I did not forget to turn off reflink for the test device:
 
+# ./run_check.sh --mkfs-opts "-m reflink=0,rmapbt=1" --run-opts "-s xfs_dax_noreflink -g auto"
+umount: /mnt/test: not mounted.
+umount: /mnt/scratch: not mounted.
+wrote 8589934592/8589934592 bytes at offset 0
+8.000 GiB, 8192 ops; 0:00:03.99 (2.001 GiB/sec and 2049.0850 ops/sec)
+wrote 8589934592/8589934592 bytes at offset 0
+8.000 GiB, 8192 ops; 0:00:04.13 (1.936 GiB/sec and 1982.5453 ops/sec)
+meta-data=/dev/pmem0             isize=512    agcount=4, agsize=524288 blks
+         =                       sectsz=4096  attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=1
+         =                       reflink=0    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=4096   blocks=2097152, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=16384, version=2
+         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+.....
+Running: MOUNT_OPTIONS= ./check -R xunit -b -s xfs_dax_noreflink -g auto
+SECTION       -- xfs_dax_noreflink
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 test3 6.0.0-rc6-dgc+ #1543 SMP PREEMPT_DYNAMIC Mon Sep 19 07:46:37 AEST 2022
+MKFS_OPTIONS  -- -f -m reflink=0,rmapbt=1 /dev/pmem1
+MOUNT_OPTIONS -- -o dax=always -o context=system_u:object_r:root_t:s0 /dev/pmem1 /mnt/scratch
+
+So, yeah, reflink was turned off on both test and scratch devices,
+and dax=always on both the test and scratch devices was used to
+ensure that DAX was always in use.
+
+
+> FWIW I saw dmesg failures in xfs/517 and xfs/013 starting with 6.0-rc5,
+> and I haven't even turned on reflink yet:
+> 
+> run fstests xfs/517 at 2022-09-26 19:53:34
+> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+> XFS (pmem1): Mounting V5 Filesystem
+> XFS (pmem1): Ending clean mount
+> XFS (pmem1): Quotacheck needed: Please wait.
+> XFS (pmem1): Quotacheck: Done.
+> XFS (pmem1): Unmounting Filesystem
+> XFS (pmem0): EXPERIMENTAL online scrub feature in use. Use at your own risk!
+> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+> XFS (pmem1): Mounting V5 Filesystem
+> XFS (pmem1): Ending clean mount
+> XFS (pmem1): Quotacheck needed: Please wait.
+> XFS (pmem1): Quotacheck: Done.
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 415317 at fs/dax.c:380 dax_insert_entry+0x22d/0x320
+> Modules linked in: xfs nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables libcrc32c bfq nfnetlink pvpanic_mmio pvpanic nd_pmem dax_pmem nd_btt sch_fq_codel fuse configfs ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_d
+> 
+> CPU: 1 PID: 415317 Comm: fsstress Tainted: G        W          6.0.0-rc7-xfsx #rc7 727341edbd0773a36b78b09dab448fa1896eb3a5
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:dax_insert_entry+0x22d/0x320
+> Code: e0 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 8b 58 20 48 8d 53 01 e9 62 ff ff ff 48 8b 58 20 48 8d 53 01 e9 4d ff ff ff <0f> 0b e9 6d ff ff ff 31 f6 48 89 ef e8 72 74 12 00 eb a1 83 e0 02
+> RSP: 0000:ffffc90004693b28 EFLAGS: 00010002
+> RAX: ffffea0010a20480 RBX: 0000000000000001 RCX: 0000000000000001
+> RDX: ffffea0000000000 RSI: 0000000000000033 RDI: ffffea0010a204c0
+> RBP: ffffc90004693c08 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffff88800c226228 R11: 0000000000000001 R12: 0000000000000011
+> R13: ffff88800c226228 R14: ffffc90004693e08 R15: 0000000000000000
+> FS:  00007f3aad8db740(0000) GS:ffff88803ed00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f3aad8d1000 CR3: 0000000043104003 CR4: 00000000001706e0
+> Call Trace:
+>  <TASK>
+>  dax_fault_iter+0x26e/0x670
+>  dax_iomap_pte_fault+0x1ab/0x3e0
+>  __xfs_filemap_fault+0x32f/0x5a0 [xfs c617487f99e14abfa5deb24e923415b927df3d4b]
+>  __do_fault+0x30/0x1e0
+>  do_fault+0x316/0x6d0
+>  ? mmap_region+0x2a5/0x620
+>  __handle_mm_fault+0x649/0x1250
+>  handle_mm_fault+0xc1/0x220
+>  do_user_addr_fault+0x1ac/0x610
+>  ? _copy_to_user+0x63/0x80
+>  exc_page_fault+0x63/0x130
+>  asm_exc_page_fault+0x22/0x30
+> RIP: 0033:0x7f3aada7f1ca
+> Code: c5 fe 7f 07 c5 fe 7f 47 20 c5 fe 7f 47 40 c5 fe 7f 47 60 c5 f8 77 c3 66 0f 1f 84 00 00 00 00 00 40 0f b6 c6 48 89 d1 48 89 fa <f3> aa 48 89 d0 c5 f8 77 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90
+> RSP: 002b:00007ffe47afa688 EFLAGS: 00010206
+> RAX: 000000000000002e RBX: 0000000000033000 RCX: 000000000000999c
+> RDX: 00007f3aad8d1000 RSI: 000000000000002e RDI: 00007f3aad8d1000
+> RBP: 0000558851e13240 R08: 0000000000000000 R09: 0000000000033000
+> R10: 0000000000000008 R11: 0000000000000246 R12: 028f5c28f5c28f5c
+> R13: 8f5c28f5c28f5c29 R14: 000000000000999c R15: 0000000000001c81
+>  </TASK>
+> ---[ end trace 0000000000000000 ]---
+> XFS (pmem0): Unmounting Filesystem
+> XFS (pmem1): EXPERIMENTAL online scrub feature in use. Use at your own risk!
+> XFS (pmem1): *** REPAIR SUCCESS ino 0x80 type probe agno 0x0 inum 0x0 gen 0x0 flags 0x80000001 error 0
+> XFS (pmem1): Unmounting Filesystem
+> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+> XFS (pmem1): Mounting V5 Filesystem
+> XFS (pmem1): Ending clean mount
+> XFS (pmem1): Unmounting Filesystem
+
+Yup, that's the same as what I'm seeing.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
