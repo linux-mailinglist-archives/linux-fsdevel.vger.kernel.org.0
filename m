@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D995EC440
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 15:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E56E95EC432
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 15:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232730AbiI0NVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 09:21:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36036 "EHLO
+        id S232644AbiI0NUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 09:20:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232733AbiI0NTa (ORCPT
+        with ESMTP id S232641AbiI0NTO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 09:19:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC8418D0EC;
-        Tue, 27 Sep 2022 06:18:02 -0700 (PDT)
+        Tue, 27 Sep 2022 09:19:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632A614037;
+        Tue, 27 Sep 2022 06:17:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 748DB6198D;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 21589B81BD1;
+        Tue, 27 Sep 2022 13:17:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16B36C433C1;
         Tue, 27 Sep 2022 13:17:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8578DC433D7;
-        Tue, 27 Sep 2022 13:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664284639;
-        bh=2B+PAusyrUY1+RTacruOrdpdxv1/q18B2Zb4T5odmiQ=;
+        s=k20201202; t=1664284644;
+        bh=fOhslmwHAdMi5hr9DCim4vJbofhWgGZ4h9kB3ggMtdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JbnGDAOb8ry6PWnq/H6GXibOCIUQMgu7ueZEUylfniJvnB5gsujj+n+ijOVLAKl/w
-         QgPV1EYYQKoRkGb3+n25pbpQ9CqK3aNYGJMabG03BvEPQ02XmSvR4CvBPOGFwV6KE2
-         geR2Rn1RMBbn0+VseZFid62NQ692QfjKoNWhj8VTEPImFBqh+97uE/od8cOrbcFZoQ
-         +F3xStYMYE3jSvHuaBiPpn7a4mLlQC1Fn6hwaChZs3OhnH4YzWIEtZneUP4bQXpth3
-         NU4MaBOW/DfElcnwsEEAe4lxVZNHisI8nCsbUqq6oODZBe3tgJ8OG2boupnmxfTD/5
-         8w50oEjaey89w==
+        b=EVhmUUqQiKsk6YisfDaINbA/1otkBnOTZNQqgOFtJ1S8th3nRO6ETlsSQJ1WCTBqy
+         hurQWOW/mzdVAmkATKqp6mLWrtL8oea65P/LcySSAEHm7qIVnqToAVOlq8aos7Bdix
+         5dFMsS6+wXhjtYOcTz3pDzD/BTP8r+SJrDsakoIk90DCUyfWp2LJd31p7uOEGds9lP
+         OugzzlWHZxzqa5+Rpkj3NhVlWrPKSh62syUdzRJJxf6OUfZXAJKe9hoCK7U02/7FKv
+         ynDC2xhjkfYsZWSQfOIZUIZ2U8Jy2G1+F/tBkwmR0RmAp1pJbFLojiXTNcjo6XbppU
+         0yM3swRqFA0hQ==
 From:   Miguel Ojeda <ojeda@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -42,12 +42,13 @@ Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@google.com>,
-        David Gow <davidgow@google.com>,
+        Finn Behrens <me@kloenk.de>, Miguel Cano <macanroj@gmail.com>,
+        Tiago Lam <tiagolam@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>
-Subject: [PATCH v10 19/27] scripts: add `generate_rust_target.rs`
-Date:   Tue, 27 Sep 2022 15:14:50 +0200
-Message-Id: <20220927131518.30000-20-ojeda@kernel.org>
+Subject: [PATCH v10 20/27] scripts: add `rust_is_available.sh`
+Date:   Tue, 27 Sep 2022 15:14:51 +0200
+Message-Id: <20220927131518.30000-21-ojeda@kernel.org>
 In-Reply-To: <20220927131518.30000-1-ojeda@kernel.org>
 References: <20220927131518.30000-1-ojeda@kernel.org>
 MIME-Version: 1.0
@@ -61,217 +62,228 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This script takes care of generating the custom target specification
-file for `rustc`, based on the kernel configuration.
+This script tests whether the Rust toolchain requirements are in place
+to enable Rust support. It uses `min-tool-version.sh` to fetch
+the version numbers.
 
-It also serves as an example of a Rust host program.
+The build system will call it to set `CONFIG_RUST_IS_AVAILABLE` in
+a later patch.
 
-A dummy architecture is kept in this patch so that a later patch
-adds x86 support on top with as few changes as possible.
+It also has an option (`-v`) to explain what is missing, which is
+useful to set up the development environment. This is used via
+the `make rustavailable` target added in a later patch.
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
 Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
 Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
 Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-Co-developed-by: David Gow <davidgow@google.com>
-Signed-off-by: David Gow <davidgow@google.com>
+Co-developed-by: Finn Behrens <me@kloenk.de>
+Signed-off-by: Finn Behrens <me@kloenk.de>
+Co-developed-by: Miguel Cano <macanroj@gmail.com>
+Signed-off-by: Miguel Cano <macanroj@gmail.com>
+Co-developed-by: Tiago Lam <tiagolam@gmail.com>
+Signed-off-by: Tiago Lam <tiagolam@gmail.com>
 Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- scripts/.gitignore              |   1 +
- scripts/generate_rust_target.rs | 171 ++++++++++++++++++++++++++++++++
- 2 files changed, 172 insertions(+)
- create mode 100644 scripts/generate_rust_target.rs
+ scripts/min-tool-version.sh                  |   6 +
+ scripts/rust_is_available.sh                 | 160 +++++++++++++++++++
+ scripts/rust_is_available_bindgen_libclang.h |   2 +
+ 3 files changed, 168 insertions(+)
+ create mode 100755 scripts/rust_is_available.sh
+ create mode 100644 scripts/rust_is_available_bindgen_libclang.h
 
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index eed308bef604..b7aec8eb1bd4 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- /asn1_compiler
- /bin2c
-+/generate_rust_target
- /insert-sys-cert
- /kallsyms
- /module.lds
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-new file mode 100644
-index 000000000000..7256c9606cf0
+diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
+index 250925aab101..b6593eac5003 100755
+--- a/scripts/min-tool-version.sh
++++ b/scripts/min-tool-version.sh
+@@ -30,6 +30,12 @@ llvm)
+ 		echo 11.0.0
+ 	fi
+ 	;;
++rustc)
++	echo 1.62.0
++	;;
++bindgen)
++	echo 0.56.0
++	;;
+ *)
+ 	echo "$1: unknown tool" >&2
+ 	exit 1
+diff --git a/scripts/rust_is_available.sh b/scripts/rust_is_available.sh
+new file mode 100755
+index 000000000000..aebbf1913970
 --- /dev/null
-+++ b/scripts/generate_rust_target.rs
-@@ -0,0 +1,171 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/scripts/rust_is_available.sh
+@@ -0,0 +1,160 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++#
++# Tests whether a suitable Rust toolchain is available.
++#
++# Pass `-v` for human output and more checks (as warnings).
 +
-+//! The custom target specification file generator for `rustc`.
-+//!
-+//! To configure a target from scratch, a JSON-encoded file has to be passed
-+//! to `rustc` (introduced in [RFC 131]). These options and the file itself are
-+//! unstable. Eventually, `rustc` should provide a way to do this in a stable
-+//! manner. For instance, via command-line arguments. Therefore, this file
-+//! should avoid using keys which can be set via `-C` or `-Z` options.
-+//!
-+//! [RFC 131]: https://rust-lang.github.io/rfcs/0131-target-specification.html
++set -e
 +
-+use std::{
-+    collections::HashMap,
-+    fmt::{Display, Formatter, Result},
-+    io::BufRead,
-+};
++min_tool_version=$(dirname $0)/min-tool-version.sh
 +
-+enum Value {
-+    Boolean(bool),
-+    Number(i32),
-+    String(String),
-+    Object(Object),
++# Convert the version string x.y.z to a canonical up-to-7-digits form.
++#
++# Note that this function uses one more digit (compared to other
++# instances in other version scripts) to give a bit more space to
++# `rustc` since it will reach 1.100.0 in late 2026.
++get_canonical_version()
++{
++	IFS=.
++	set -- $1
++	echo $((100000 * $1 + 100 * $2 + $3))
 +}
 +
-+type Object = Vec<(String, Value)>;
++# Check that the Rust compiler exists.
++if ! command -v "$RUSTC" >/dev/null; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** Rust compiler '$RUSTC' could not be found."
++		echo >&2 "***"
++	fi
++	exit 1
++fi
 +
-+/// Minimal "almost JSON" generator (e.g. no `null`s, no arrays, no escaping),
-+/// enough for this purpose.
-+impl Display for Value {
-+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-+        match self {
-+            Value::Boolean(boolean) => write!(formatter, "{}", boolean),
-+            Value::Number(number) => write!(formatter, "{}", number),
-+            Value::String(string) => write!(formatter, "\"{}\"", string),
-+            Value::Object(object) => {
-+                formatter.write_str("{")?;
-+                if let [ref rest @ .., ref last] = object[..] {
-+                    for (key, value) in rest {
-+                        write!(formatter, "\"{}\": {},", key, value)?;
-+                    }
-+                    write!(formatter, "\"{}\": {}", last.0, last.1)?;
-+                }
-+                formatter.write_str("}")
-+            }
-+        }
-+    }
-+}
++# Check that the Rust bindings generator exists.
++if ! command -v "$BINDGEN" >/dev/null; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** Rust bindings generator '$BINDGEN' could not be found."
++		echo >&2 "***"
++	fi
++	exit 1
++fi
 +
-+struct TargetSpec(Object);
++# Check that the Rust compiler version is suitable.
++#
++# Non-stable and distributions' versions may have a version suffix, e.g. `-dev`.
++rust_compiler_version=$( \
++	LC_ALL=C "$RUSTC" --version 2>/dev/null \
++		| head -n 1 \
++		| grep -oE '[0-9]+\.[0-9]+\.[0-9]+' \
++)
++rust_compiler_min_version=$($min_tool_version rustc)
++rust_compiler_cversion=$(get_canonical_version $rust_compiler_version)
++rust_compiler_min_cversion=$(get_canonical_version $rust_compiler_min_version)
++if [ "$rust_compiler_cversion" -lt "$rust_compiler_min_cversion" ]; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** Rust compiler '$RUSTC' is too old."
++		echo >&2 "***   Your version:    $rust_compiler_version"
++		echo >&2 "***   Minimum version: $rust_compiler_min_version"
++		echo >&2 "***"
++	fi
++	exit 1
++fi
++if [ "$1" = -v ] && [ "$rust_compiler_cversion" -gt "$rust_compiler_min_cversion" ]; then
++	echo >&2 "***"
++	echo >&2 "*** Rust compiler '$RUSTC' is too new. This may or may not work."
++	echo >&2 "***   Your version:     $rust_compiler_version"
++	echo >&2 "***   Expected version: $rust_compiler_min_version"
++	echo >&2 "***"
++fi
 +
-+impl TargetSpec {
-+    fn new() -> TargetSpec {
-+        TargetSpec(Vec::new())
-+    }
-+}
++# Check that the Rust bindings generator is suitable.
++#
++# Non-stable and distributions' versions may have a version suffix, e.g. `-dev`.
++rust_bindings_generator_version=$( \
++	LC_ALL=C "$BINDGEN" --version 2>/dev/null \
++		| head -n 1 \
++		| grep -oE '[0-9]+\.[0-9]+\.[0-9]+' \
++)
++rust_bindings_generator_min_version=$($min_tool_version bindgen)
++rust_bindings_generator_cversion=$(get_canonical_version $rust_bindings_generator_version)
++rust_bindings_generator_min_cversion=$(get_canonical_version $rust_bindings_generator_min_version)
++if [ "$rust_bindings_generator_cversion" -lt "$rust_bindings_generator_min_cversion" ]; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** Rust bindings generator '$BINDGEN' is too old."
++		echo >&2 "***   Your version:    $rust_bindings_generator_version"
++		echo >&2 "***   Minimum version: $rust_bindings_generator_min_version"
++		echo >&2 "***"
++	fi
++	exit 1
++fi
++if [ "$1" = -v ] && [ "$rust_bindings_generator_cversion" -gt "$rust_bindings_generator_min_cversion" ]; then
++	echo >&2 "***"
++	echo >&2 "*** Rust bindings generator '$BINDGEN' is too new. This may or may not work."
++	echo >&2 "***   Your version:     $rust_bindings_generator_version"
++	echo >&2 "***   Expected version: $rust_bindings_generator_min_version"
++	echo >&2 "***"
++fi
 +
-+trait Push<T> {
-+    fn push(&mut self, key: &str, value: T);
-+}
++# Check that the `libclang` used by the Rust bindings generator is suitable.
++bindgen_libclang_version=$( \
++	LC_ALL=C "$BINDGEN" $(dirname $0)/rust_is_available_bindgen_libclang.h 2>&1 >/dev/null \
++		| grep -F 'clang version ' \
++		| grep -oE '[0-9]+\.[0-9]+\.[0-9]+' \
++		| head -n 1 \
++)
++bindgen_libclang_min_version=$($min_tool_version llvm)
++bindgen_libclang_cversion=$(get_canonical_version $bindgen_libclang_version)
++bindgen_libclang_min_cversion=$(get_canonical_version $bindgen_libclang_min_version)
++if [ "$bindgen_libclang_cversion" -lt "$bindgen_libclang_min_cversion" ]; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** libclang (used by the Rust bindings generator '$BINDGEN') is too old."
++		echo >&2 "***   Your version:    $bindgen_libclang_version"
++		echo >&2 "***   Minimum version: $bindgen_libclang_min_version"
++		echo >&2 "***"
++	fi
++	exit 1
++fi
 +
-+impl Push<bool> for TargetSpec {
-+    fn push(&mut self, key: &str, value: bool) {
-+        self.0.push((key.to_string(), Value::Boolean(value)));
-+    }
-+}
++# If the C compiler is Clang, then we can also check whether its version
++# matches the `libclang` version used by the Rust bindings generator.
++#
++# In the future, we might be able to perform a full version check, see
++# https://github.com/rust-lang/rust-bindgen/issues/2138.
++if [ "$1" = -v ]; then
++	cc_name=$($(dirname $0)/cc-version.sh "$CC" | cut -f1 -d' ')
++	if [ "$cc_name" = Clang ]; then
++		clang_version=$( \
++			LC_ALL=C "$CC" --version 2>/dev/null \
++				| sed -nE '1s:.*version ([0-9]+\.[0-9]+\.[0-9]+).*:\1:p'
++		)
++		if [ "$clang_version" != "$bindgen_libclang_version" ]; then
++			echo >&2 "***"
++			echo >&2 "*** libclang (used by the Rust bindings generator '$BINDGEN')"
++			echo >&2 "*** version does not match Clang's. This may be a problem."
++			echo >&2 "***   libclang version: $bindgen_libclang_version"
++			echo >&2 "***   Clang version:    $clang_version"
++			echo >&2 "***"
++		fi
++	fi
++fi
 +
-+impl Push<i32> for TargetSpec {
-+    fn push(&mut self, key: &str, value: i32) {
-+        self.0.push((key.to_string(), Value::Number(value)));
-+    }
-+}
-+
-+impl Push<String> for TargetSpec {
-+    fn push(&mut self, key: &str, value: String) {
-+        self.0.push((key.to_string(), Value::String(value)));
-+    }
-+}
-+
-+impl Push<&str> for TargetSpec {
-+    fn push(&mut self, key: &str, value: &str) {
-+        self.push(key, value.to_string());
-+    }
-+}
-+
-+impl Push<Object> for TargetSpec {
-+    fn push(&mut self, key: &str, value: Object) {
-+        self.0.push((key.to_string(), Value::Object(value)));
-+    }
-+}
-+
-+impl Display for TargetSpec {
-+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-+        // We add some newlines for clarity.
-+        formatter.write_str("{\n")?;
-+        if let [ref rest @ .., ref last] = self.0[..] {
-+            for (key, value) in rest {
-+                write!(formatter, "    \"{}\": {},\n", key, value)?;
-+            }
-+            write!(formatter, "    \"{}\": {}\n", last.0, last.1)?;
-+        }
-+        formatter.write_str("}")
-+    }
-+}
-+
-+struct KernelConfig(HashMap<String, String>);
-+
-+impl KernelConfig {
-+    /// Parses `include/config/auto.conf` from `stdin`.
-+    fn from_stdin() -> KernelConfig {
-+        let mut result = HashMap::new();
-+
-+        let stdin = std::io::stdin();
-+        let mut handle = stdin.lock();
-+        let mut line = String::new();
-+
-+        loop {
-+            line.clear();
-+
-+            if handle.read_line(&mut line).unwrap() == 0 {
-+                break;
-+            }
-+
-+            if line.starts_with('#') {
-+                continue;
-+            }
-+
-+            let (key, value) = line.split_once('=').expect("Missing `=` in line.");
-+            result.insert(key.to_string(), value.trim_end_matches('\n').to_string());
-+        }
-+
-+        KernelConfig(result)
-+    }
-+
-+    /// Does the option exist in the configuration (any value)?
-+    ///
-+    /// The argument must be passed without the `CONFIG_` prefix.
-+    /// This avoids repetition and it also avoids `fixdep` making us
-+    /// depend on it.
-+    fn has(&self, option: &str) -> bool {
-+        let option = "CONFIG_".to_owned() + option;
-+        self.0.contains_key(&option)
-+    }
-+}
-+
-+fn main() {
-+    let cfg = KernelConfig::from_stdin();
-+    let mut ts = TargetSpec::new();
-+
-+    // `llvm-target`s are taken from `scripts/Makefile.clang`.
-+    if cfg.has("DUMMY_ARCH") {
-+        ts.push("arch", "dummy_arch");
-+    } else {
-+        panic!("Unsupported architecture");
-+    }
-+
-+    ts.push("emit-debug-gdb-scripts", false);
-+    ts.push("frame-pointer", "may-omit");
-+    ts.push(
-+        "stack-probes",
-+        vec![("kind".to_string(), Value::String("none".to_string()))],
-+    );
-+
-+    // Everything else is LE, whether `CPU_LITTLE_ENDIAN` is declared or not
-+    // (e.g. x86). It is also `rustc`'s default.
-+    if cfg.has("CPU_BIG_ENDIAN") {
-+        ts.push("target-endian", "big");
-+    }
-+
-+    println!("{}", ts);
-+}
++# Check that the source code for the `core` standard library exists.
++#
++# `$KRUSTFLAGS` is passed in case the user added `--sysroot`.
++rustc_sysroot=$("$RUSTC" $KRUSTFLAGS --print sysroot)
++rustc_src=${RUST_LIB_SRC:-"$rustc_sysroot/lib/rustlib/src/rust/library"}
++rustc_src_core="$rustc_src/core/src/lib.rs"
++if [ ! -e "$rustc_src_core" ]; then
++	if [ "$1" = -v ]; then
++		echo >&2 "***"
++		echo >&2 "*** Source code for the 'core' standard library could not be found"
++		echo >&2 "*** at '$rustc_src_core'."
++		echo >&2 "***"
++	fi
++	exit 1
++fi
+diff --git a/scripts/rust_is_available_bindgen_libclang.h b/scripts/rust_is_available_bindgen_libclang.h
+new file mode 100644
+index 000000000000..0ef6db10d674
+--- /dev/null
++++ b/scripts/rust_is_available_bindgen_libclang.h
+@@ -0,0 +1,2 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#pragma message("clang version " __clang_version__)
 -- 
 2.37.3
 
