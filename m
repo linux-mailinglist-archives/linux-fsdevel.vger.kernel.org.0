@@ -2,104 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 051135EBE94
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 11:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC435EC0C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 13:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231562AbiI0J25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 05:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46474 "EHLO
+        id S231990AbiI0LPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 07:15:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbiI0J2h (ORCPT
+        with ESMTP id S232016AbiI0LOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 05:28:37 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B887AB410;
-        Tue, 27 Sep 2022 02:28:35 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28R8ss5K008035;
-        Tue, 27 Sep 2022 09:28:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=LqS196DMkWdQStvfa93uqpfwaEiGR7PcBEC5QDFv/K8=;
- b=i0hRdOymMzYQGsSX3kd2Clb5Oytp3eh6xt+U3XAzv8Y9qiAdjhO/FzSP0wFHCVhbd2sb
- ME6hWunsaQ3uoVBjrNhWoKQdhiFrhAOmBliZ2NQWFVMZOWECxULBjy/pS9IT1Ex4shMV
- xMVxmynsvfj9GueiIFtkzstHHNrix56XSTW58IaA2dWkiPLU5TFZMVn2hK7HTobbDHxl
- 7bVT8roG6qDiYmtCfp2bXT7plBIKya7Avn7qkIATBz9syYNUWiqQ2aTQUxQOfdE3P1l3
- vqo7WWscIt6zwUACyNo1p4kZZvvVonwmwdk5q/GPED3hF3n8QnoKi1I3SC32VdibEfPI rA== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3juv5nmrwm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 09:28:28 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28R9LQfX021131;
-        Tue, 27 Sep 2022 09:28:26 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04ams.nl.ibm.com with ESMTP id 3juapuh95d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 09:28:26 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28R9SOah51773768
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Sep 2022 09:28:24 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D0144C044;
-        Tue, 27 Sep 2022 09:28:24 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A6134C040;
-        Tue, 27 Sep 2022 09:28:22 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.61.44])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 27 Sep 2022 09:28:22 +0000 (GMT)
-Date:   Tue, 27 Sep 2022 14:58:14 +0530
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [RFC v2 0/8] ext4: Convert inode preallocation list to an rbtree
-Message-ID: <YzLCLm53jvH5GVNg@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <cover.1664172580.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1664172580.git.ojaswin@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VUy73F13a4decsLORvCMPrnSaImcgVi0
-X-Proofpoint-GUID: VUy73F13a4decsLORvCMPrnSaImcgVi0
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 27 Sep 2022 07:14:43 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB9215FEA;
+        Tue, 27 Sep 2022 04:14:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D152EB81B10;
+        Tue, 27 Sep 2022 11:14:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C55C433D6;
+        Tue, 27 Sep 2022 11:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664277272;
+        bh=5RonbP18IW8Z1fzGmvbzApRwvceRQaHvox4MafxU4WM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jPMifld9Bgt7hQQIZP4NRfbCWgUUNzwL6HS1//AyhPQuhCxgajDcxDDX/IjN3dzp0
+         aRijbdoPQLxecjpIv+XrikW9FVpKmVIt9XrPx83dZDoJRtO4rA2tfDGL5+jPOOGXHE
+         dBCMMpfl3TQY1hcxDVcLgkN3iZVUrmcvpwoT7lvIkWVp28WHlg0DtaD3Cell82dfvc
+         RZJonJLYZbRRBIuz7w8Gy5LPXTUemXiCsxLPbXXIyyVClhIpq7JzhX7+Nu48q9Mgcl
+         Z2oQfGygH6flhHdLwADKaxx8/xQHSoeHKDHRSkCJXRDLwP6zG8b+dzYIaWTQet5NZc
+         7bvm2jVgTJhgQ==
+Message-ID: <32723e738a37806a76b9c346295b9464f45f410b.camel@kernel.org>
+Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
+ STATX_INO_VERSION field
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Date:   Tue, 27 Sep 2022 07:14:28 -0400
+In-Reply-To: <166423223623.17572.7229091435446226718@noble.neil.brown.name>
+References: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
+        , <20220918235344.GH3600936@dread.disaster.area>
+        , <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
+        , <20220920001645.GN3600936@dread.disaster.area>
+        , <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
+        , <20220921000032.GR3600936@dread.disaster.area>
+        , <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
+        , <20220921214124.GS3600936@dread.disaster.area>
+        , <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
+        , <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>
+        , <20220923095653.5c63i2jgv52j3zqp@quack3>
+        , <2d41c08e1fd96d55c794c3b4cd43a51a0494bfcf.camel@hammerspace.com>
+        , <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
+         <166423223623.17572.7229091435446226718@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-27_02,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=538 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209270053
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 12:34:51PM +0530, Ojaswin Mujoo wrote:
-> This patch series aim to improve the performance and scalability of
-> inode preallocation by changing inode preallocation linked list to an
-> rbtree. I've ran xfstests quick on this series and plan to run auto group
-> as well to confirm we have no regressions.
-> 
-Hi,
+On Tue, 2022-09-27 at 08:43 +1000, NeilBrown wrote:
+> On Fri, 23 Sep 2022, Jeff Layton wrote:
+> >=20
+> > Absolutely. That is the downside of this approach, but the priority her=
+e
+> > has always been to improve nfsd. If we don't get the ability to present
+> > this info via statx, then so be it. Later on, I suppose we can move tha=
+t
+> > handling into the kernel in some fashion if we decide it's worthwhile.
+> >=20
+> > That said, not having this in statx makes it more difficult to test
+> > i_version behavior. Maybe we can add a generic ioctl for that in the
+> > interim?
+>=20
+> I wonder if we are over-thinking this, trying too hard, making "perfect"
+> the enemy of "good".
 
-I had missed to redefine a function in rebase. Have sent out a v3 with
-the correct rebase:
-https://lore.kernel.org/all/cover.1664269665.git.ojaswin@linux.ibm.com/
+I tend to think we are.
 
-Regards,
-Ojaswin
-> 
-> -- 
-> 2.31.1
-> 
+> While we agree that the current implementation of i_version is
+> imperfect, it isn't causing major data corruption all around the world.
+> I don't think there are even any known bug reports are there?
+> So while we do want to fix it as best we can, we don't need to make that
+> the first priority.
+>=20
+
+I'm not aware of any bug reports aside from the issue of atime updates
+affecting the change attribute, but the effects of misbehavior here can
+be very subtle.
+
+
+> I think the first priority should be to document how we want it to work,
+> which is what this thread is really all about.  The documentation can
+> note that some (all) filesystems do not provide perfect semantics across
+> unclean restarts, and can list any other anomalies that we are aware of.
+> And on that basis we can export the current i_version to user-space via
+> statx and start trying to write some test code.
+>=20
+> We can then look at moving the i_version/ctime update from *before* the
+> write to *after* the write, and any other improvements that can be
+> achieved easily in common code.  We can then update the man page to say
+> "since Linux 6.42, this list of anomalies is no longer present".
+>=20
+
+I have a patch for this for ext4, and started looking at the same for
+btrfs and xfs.
+
+> Then we can explore some options for handling unclean restart - in a
+> context where we can write tests and maybe even demonstrate a concrete
+> problem before we start trying to fix it.
+>=20
+
+I think too that we need to recognize that there are multiple distinct
+issues around i_version handling:
+
+1/ atime updates affecting i_version in ext4 and xfs, which harms
+performance
+
+2/ ext4 should enable the change attribute by default
+
+3/ we currently mix the ctime into the change attr for directories,
+which is unnecessary.
+
+4/ we'd like to be able to report NFS4_CHANGE_TYPE_IS_MONOTONIC_INCR
+from nfsd, but the change attr on regular files can appear to go
+backward after a crash+clock jump.
+
+5/ testing i_version behavior is very difficult since there is no way to
+query it from userland.
+
+We can work on the first three without having to solve the last two
+right away.
+--=20
+Jeff Layton <jlayton@kernel.org>
