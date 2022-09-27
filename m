@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3245EC40E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 15:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBAA05EC410
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 15:17:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232683AbiI0NRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 09:17:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36034 "EHLO
+        id S232615AbiI0NRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 09:17:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232604AbiI0NQ1 (ORCPT
+        with ESMTP id S232608AbiI0NQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 27 Sep 2022 09:16:27 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46EF51A81C;
-        Tue, 27 Sep 2022 06:16:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDA21E3E4;
+        Tue, 27 Sep 2022 06:16:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D682461991;
-        Tue, 27 Sep 2022 13:16:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77843C433C1;
-        Tue, 27 Sep 2022 13:16:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BF456198D;
+        Tue, 27 Sep 2022 13:16:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 378D0C433D7;
+        Tue, 27 Sep 2022 13:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664284571;
-        bh=7gkr1S6E4dSDSrF/vNimKY/tgp0IGdnQL4HLj5SgpZI=;
+        s=k20201202; t=1664284576;
+        bh=EHb6HHsgIXEzrlOmrEyvqnUYIwHi5+s9QYRqtpeUv3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfXNrduf0s58T1/6o7/9lCy1u5pxgReY/9RcCwxUkdXo/v1KQZBJSQQ1o5V6tgpKm
-         f65cBd2x/QQZEyR7jhyp9hZDmCZJtnUn9mgKtxdqkpY9hIBGWvsMKsjRZje8KWOlXp
-         msgtzBCPzM3wOEwSlIaR9Gy9CKpQYMi3IIHkymcp4/DStnAu8AxLOSCFxOyzxqklsZ
-         gb0pFUyX7cXoXc+MrqhECSHJ6S2GG+gG+89eOz8jeK+MC4tP4BKhp6SNIMHU95CPA/
-         t4oBhED4BS+HhQQpF3DfQeELIGCZ774a2lioiO43/0UT4qVLvDKoXJzW/TiDIkVf59
-         xAyxqI9OCoCzQ==
+        b=rrQDbsHeOnO2szQNPiDbgjuGFtIn92QYZX5NGxABo43qZbBSRU5ndZKpvqCnS1/Ai
+         zbQWDgziSbm1uS3Y+vF0SOO3c0VrCJ7fSq1ukwPBeQjUizBgoMLIQGmLCzdMpabroJ
+         LLTsZXqDcO36IVzTPv15BJOISjNNJSgzRi5k4ep5Lk98KE3yGl2A270dG/BlaaX3Ha
+         J8zW7c4kKrkW+WuMM0/XrOqC92V/y1IPYkafbIXNSNUuwfaPQkjZKmH1t1YCB1+DDb
+         +ozOsPioZ1J0Nfq9ayTT2G4al0WTz47uFQN/7z37l0G+mRgrsYuTy29RH/qxc+FbRF
+         KZIWRGzpw3/8w==
 From:   Miguel Ojeda <ojeda@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -39,26 +39,17 @@ Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Miguel Ojeda <ojeda@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
         Wedson Almeida Filho <wedsonaf@google.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
         Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        live-patching@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: [PATCH v10 05/27] kallsyms: increase maximum kernel symbol length to 512
-Date:   Tue, 27 Sep 2022 15:14:36 +0200
-Message-Id: <20220927131518.30000-6-ojeda@kernel.org>
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>
+Subject: [PATCH v10 06/27] rust: add C helpers
+Date:   Tue, 27 Sep 2022 15:14:37 +0200
+Message-Id: <20220927131518.30000-7-ojeda@kernel.org>
 In-Reply-To: <20220927131518.30000-1-ojeda@kernel.org>
 References: <20220927131518.30000-1-ojeda@kernel.org>
 MIME-Version: 1.0
@@ -72,149 +63,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rust symbols can become quite long due to namespacing introduced
-by modules, types, traits, generics, etc. For instance,
-the following code:
+Introduces the source file that will contain forwarders to C macros
+and inlined functions.
 
-    pub mod my_module {
-        pub struct MyType;
-        pub struct MyGenericType<T>(T);
+Initially this only contains a single helper, but will gain more as
+more functionality is added to the `kernel` crate in the future.
 
-        pub trait MyTrait {
-            fn my_method() -> u32;
-        }
-
-        impl MyTrait for MyGenericType<MyType> {
-            fn my_method() -> u32 {
-                42
-            }
-        }
-    }
-
-generates a symbol of length 96 when using the upcoming v0 mangling scheme:
-
-    _RNvXNtCshGpAVYOtgW1_7example9my_moduleINtB2_13MyGenericTypeNtB2_6MyTypeENtB2_7MyTrait9my_method
-
-At the moment, Rust symbols may reach up to 300 in length.
-Setting 512 as the maximum seems like a reasonable choice to
-keep some headroom.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
 Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
 Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
+Co-developed-by: Geoffrey Thomas <geofft@ldpreload.com>
+Signed-off-by: Geoffrey Thomas <geofft@ldpreload.com>
 Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
 Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
+Co-developed-by: Sven Van Asbroeck <thesven73@gmail.com>
+Signed-off-by: Sven Van Asbroeck <thesven73@gmail.com>
 Co-developed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Gary Guo <gary@garyguo.net>
 Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Co-developed-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Co-developed-by: Wei Liu <wei.liu@kernel.org>
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
 Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- include/linux/kallsyms.h            | 2 +-
- kernel/livepatch/core.c             | 4 ++--
- scripts/kallsyms.c                  | 4 ++--
- tools/include/linux/kallsyms.h      | 2 +-
- tools/lib/perf/include/perf/event.h | 2 +-
- tools/lib/symbol/kallsyms.h         | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+ rust/helpers.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 rust/helpers.c
 
-diff --git a/include/linux/kallsyms.h b/include/linux/kallsyms.h
-index ad39636e0c3f..649faac31ddb 100644
---- a/include/linux/kallsyms.h
-+++ b/include/linux/kallsyms.h
-@@ -15,7 +15,7 @@
- 
- #include <asm/sections.h>
- 
--#define KSYM_NAME_LEN 128
-+#define KSYM_NAME_LEN 512
- #define KSYM_SYMBOL_LEN (sizeof("%s+%#lx/%#lx [%s %s]") + \
- 			(KSYM_NAME_LEN - 1) + \
- 			2*(BITS_PER_LONG*3/10) + (MODULE_NAME_LEN - 1) + \
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index bc475e62279d..ec06ce59d728 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -213,7 +213,7 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
- 	 * we use the smallest/strictest upper bound possible (56, based on
- 	 * the current definition of MODULE_NAME_LEN) to prevent overflows.
- 	 */
--	BUILD_BUG_ON(MODULE_NAME_LEN < 56 || KSYM_NAME_LEN != 128);
-+	BUILD_BUG_ON(MODULE_NAME_LEN < 56 || KSYM_NAME_LEN != 512);
- 
- 	relas = (Elf_Rela *) relasec->sh_addr;
- 	/* For each rela in this klp relocation section */
-@@ -227,7 +227,7 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
- 
- 		/* Format: .klp.sym.sym_objname.sym_name,sympos */
- 		cnt = sscanf(strtab + sym->st_name,
--			     ".klp.sym.%55[^.].%127[^,],%lu",
-+			     ".klp.sym.%55[^.].%511[^,],%lu",
- 			     sym_objname, sym_name, &sympos);
- 		if (cnt != 3) {
- 			pr_err("symbol %s has an incorrectly formatted name\n",
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 6502c4001f01..c4793301a27e 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -30,7 +30,7 @@
- #define _stringify_1(x)	#x
- #define _stringify(x)	_stringify_1(x)
- 
--#define KSYM_NAME_LEN		128
-+#define KSYM_NAME_LEN		512
- 
- /*
-  * A substantially bigger size than the current maximum.
-@@ -39,7 +39,7 @@
-  * for the fscanf() format string. Therefore, a _Static_assert() is
-  * used instead to maintain the relationship with KSYM_NAME_LEN.
-  */
--#define KSYM_NAME_LEN_BUFFER	512
-+#define KSYM_NAME_LEN_BUFFER	2048
- _Static_assert(
- 	KSYM_NAME_LEN_BUFFER == KSYM_NAME_LEN * 4,
- 	"Please keep KSYM_NAME_LEN_BUFFER in sync with KSYM_NAME_LEN"
-diff --git a/tools/include/linux/kallsyms.h b/tools/include/linux/kallsyms.h
-index efb6c3f5f2a9..5a37ccbec54f 100644
---- a/tools/include/linux/kallsyms.h
-+++ b/tools/include/linux/kallsyms.h
-@@ -6,7 +6,7 @@
- #include <stdio.h>
- #include <unistd.h>
- 
--#define KSYM_NAME_LEN 128
-+#define KSYM_NAME_LEN 512
- 
- struct module;
- 
-diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
-index 93bf93a59c99..d8ae4e944467 100644
---- a/tools/lib/perf/include/perf/event.h
-+++ b/tools/lib/perf/include/perf/event.h
-@@ -97,7 +97,7 @@ struct perf_record_throttle {
- };
- 
- #ifndef KSYM_NAME_LEN
--#define KSYM_NAME_LEN 256
-+#define KSYM_NAME_LEN 512
- #endif
- 
- struct perf_record_ksymbol {
-diff --git a/tools/lib/symbol/kallsyms.h b/tools/lib/symbol/kallsyms.h
-index 72ab9870454b..542f9b059c3b 100644
---- a/tools/lib/symbol/kallsyms.h
-+++ b/tools/lib/symbol/kallsyms.h
-@@ -7,7 +7,7 @@
- #include <linux/types.h>
- 
- #ifndef KSYM_NAME_LEN
--#define KSYM_NAME_LEN 256
-+#define KSYM_NAME_LEN 512
- #endif
- 
- static inline u8 kallsyms2elf_binding(char type)
+diff --git a/rust/helpers.c b/rust/helpers.c
+new file mode 100644
+index 000000000000..b4f15eee2ffd
+--- /dev/null
++++ b/rust/helpers.c
+@@ -0,0 +1,51 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Non-trivial C macros cannot be used in Rust. Similarly, inlined C functions
++ * cannot be called either. This file explicitly creates functions ("helpers")
++ * that wrap those so that they can be called from Rust.
++ *
++ * Even though Rust kernel modules should never use directly the bindings, some
++ * of these helpers need to be exported because Rust generics and inlined
++ * functions may not get their code generated in the crate where they are
++ * defined. Other helpers, called from non-inline functions, may not be
++ * exported, in principle. However, in general, the Rust compiler does not
++ * guarantee codegen will be performed for a non-inline function either.
++ * Therefore, this file exports all the helpers. In the future, this may be
++ * revisited to reduce the number of exports after the compiler is informed
++ * about the places codegen is required.
++ *
++ * All symbols are exported as GPL-only to guarantee no GPL-only feature is
++ * accidentally exposed.
++ */
++
++#include <linux/bug.h>
++#include <linux/build_bug.h>
++
++__noreturn void rust_helper_BUG(void)
++{
++	BUG();
++}
++EXPORT_SYMBOL_GPL(rust_helper_BUG);
++
++/*
++ * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` type
++ * as the Rust `usize` type, so we can use it in contexts where Rust
++ * expects a `usize` like slice (array) indices. `usize` is defined to be
++ * the same as C's `uintptr_t` type (can hold any pointer) but not
++ * necessarily the same as `size_t` (can hold the size of any single
++ * object). Most modern platforms use the same concrete integer type for
++ * both of them, but in case we find ourselves on a platform where
++ * that's not true, fail early instead of risking ABI or
++ * integer-overflow issues.
++ *
++ * If your platform fails this assertion, it means that you are in
++ * danger of integer-overflow bugs (even if you attempt to remove
++ * `--size_t-is-usize`). It may be easiest to change the kernel ABI on
++ * your platform such that `size_t` matches `uintptr_t` (i.e., to increase
++ * `size_t`, because `uintptr_t` has to be at least as big as `size_t`).
++ */
++static_assert(
++	sizeof(size_t) == sizeof(uintptr_t) &&
++	__alignof__(size_t) == __alignof__(uintptr_t),
++	"Rust code expects C `size_t` to match Rust `usize`"
++);
 -- 
 2.37.3
 
