@@ -2,89 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEED55EC570
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F40575EC578
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbiI0OFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 10:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50008 "EHLO
+        id S232712AbiI0OG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 10:06:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbiI0OFo (ORCPT
+        with ESMTP id S232183AbiI0OG4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 10:05:44 -0400
-X-Greylist: delayed 357 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 27 Sep 2022 07:05:43 PDT
-Received: from hop.stappers.nl (hop.stappers.nl [IPv6:2a02:2308:0:14e::686f:7030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9259041D10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Sep 2022 07:05:43 -0700 (PDT)
-Received: from gpm.stappers.nl (gpm.stappers.nl [IPv6:2a02:a46d:659e:1::696e:626f])
-        by hop.stappers.nl (Postfix) with ESMTP id 088DA2000F;
-        Tue, 27 Sep 2022 14:05:42 +0000 (UTC)
-Received: by gpm.stappers.nl (Postfix, from userid 1000)
-        id AD319304049; Tue, 27 Sep 2022 16:05:41 +0200 (CEST)
-Date:   Tue, 27 Sep 2022 16:05:41 +0200
-From:   Geert Stappers <stappers@stappers.nl>
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 27 Sep 2022 10:06:56 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F193D87F88;
+        Tue, 27 Sep 2022 07:06:54 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id a4so5138601ilj.8;
+        Tue, 27 Sep 2022 07:06:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=08FYPXF8NGV3I7f8HvvukPdlDJ2mobJpfZ4nRRDrtDs=;
+        b=b6TVXxWSSs1wWwgyy76IisEm+bMUWZ/TZVqBW0IiwdaKjq1GvfK4WvX0uioXtu2Hs3
+         jcf/7ASYzYYGjL6N1NOc5gzJbhcbPXgiIpLgwYqW868sFRLRPVM6/+k64STgGvPwJUew
+         W9D1rzvOyRhdq6qvOoo4l+TQhxonD+mm0Tmi89kwo2eBCe1tBmw5oSnGlOZ0+03lwIqh
+         UWG5nRt7SlGk/zMWRiNvqo4hOtRSMoXiKKmuQuQA/I2I6ZhsS1naaE54ERdmVXQLa3Kt
+         LpqxHrraYDNE+qytp1tQoK+LfPJPeUxJG720eFeQevCd3+3SR0yrd/vkxJRqWRuRvrkX
+         XJTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=08FYPXF8NGV3I7f8HvvukPdlDJ2mobJpfZ4nRRDrtDs=;
+        b=z4Akm1n+v6OpRl69uAPD8Id09lo7Xdy67AZgOhiycM6D4OazO9x9peiU3ZOGb3ItvW
+         ZqQySMpj//I6u0wP4HV/ds6osKKQPqj2F/y55rds4GYH37tHz9VsUNl/A6JNcKzRZRRX
+         ML/C9OIVdQrvD5ApyuefQdnhNNA7QDyaoMGKSkXgHmlZvOvnnmna4JukgogV4+Gxyfts
+         /W+g7jRPou3vdhxAItEUmJixayvBQCQoiALmnnNCfTJ+x9WgzdDdkCE8NNOGmEKNmEd6
+         hJtQ3XLPit5k5sR9iusAINW6sDq+moNxaSYFogHvFZ7oDkAZ89cO9Gx3RYeIwy7bXJB1
+         9gvw==
+X-Gm-Message-State: ACrzQf17UTII1EbaQmlIgfS0LdQd9BE+X6pj6NX2SrTIGj2h32zWZqUf
+        PmaCcwe6NQExVQxsMR88t93LSNBYmMN+NQNM8XU=
+X-Google-Smtp-Source: AMsMyM5syx+SHzekoKk5qqoxYITfSS3Xf+tq/gzESB0d3rgzZ2K4BALmcjzwKNLccON5ri7Ug7BCkO3JsxrTkg8RzqI=
+X-Received: by 2002:a05:6e02:188f:b0:2f8:993:e7ba with SMTP id
+ o15-20020a056e02188f00b002f80993e7bamr7861514ilu.321.1664287614225; Tue, 27
+ Sep 2022 07:06:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-9-ojeda@kernel.org>
+ <YzL/9mlOHemaey2n@yadro.com>
+In-Reply-To: <YzL/9mlOHemaey2n@yadro.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 27 Sep 2022 16:06:43 +0200
+Message-ID: <CANiq72kDPMKd0qLAMVrd2A3n9aAWhh2ps5DvKos58L=_V2-XwQ@mail.gmail.com>
+Subject: Re: [PATCH v10 08/27] rust: adapt `alloc` crate to the kernel
+To:     Konstantin Shelekhin <k.shelekhin@yadro.com>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
         Jarkko Sakkinen <jarkko@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Gary Guo <gary@garyguo.net>, Matthew Bakhtiari <dev@mtbk.me>,
         Boqun Feng <boqun.feng@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v10 01/27] kallsyms: use `ARRAY_SIZE` instead of
- hardcoded size
-Message-ID: <20220927140541.zpb2effrshaxndqi@gpm.stappers.nl>
-References: <20220927131518.30000-1-ojeda@kernel.org>
- <20220927131518.30000-2-ojeda@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220927131518.30000-2-ojeda@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 03:14:32PM +0200, Miguel Ojeda wrote:
-> From: Boqun Feng <boqun.feng@gmail.com>
-> 
-> This removes one place where the `500` constant is hardcoded.
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  scripts/kallsyms.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-> index f18e6dfc68c5..8551513f9311 100644
-> --- a/scripts/kallsyms.c
-> +++ b/scripts/kallsyms.c
-> @@ -206,7 +206,7 @@ static struct sym_entry *read_symbol(FILE *in)
->  
->  	rc = fscanf(in, "%llx %c %499s\n", &addr, &type, name);
->  	if (rc != 3) {
-> -		if (rc != EOF && fgets(name, 500, in) == NULL)
-> +		if (rc != EOF && fgets(name, ARRAY_SIZE(name), in) == NULL)
->  			fprintf(stderr, "Read error or end of file.\n");
->  		return NULL;
->  	}
-> -- 
-> 2.37.3
-> 
+On Tue, Sep 27, 2022 at 3:52 PM Konstantin Shelekhin
+<k.shelekhin@yadro.com> wrote:
+>
+> Not being able to pass GFP flags here kinda limits the scope of Rust in
+> kernel. I think that it must be supported in the final version that gets
+> in.
 
-Reviewed-by: Geert Stappers <stappers@stappers.nl>
- 
+Flags will be supported one way or the other in the future, but I was
+requested to do v10 as a v9 with the last nits resolved.
 
-Regards
-Geert Stappers
-Hopes to see the kallsyms patches getting accepted,
-that they don't show up in v11 of the Rust patch serie.
--- 
-Silence is hard to parse
+Please see the cover letter for details.
+
+Cheers,
+Miguel
