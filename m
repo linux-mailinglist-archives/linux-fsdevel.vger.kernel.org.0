@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 985305EC704
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0F635EC707
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 16:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbiI0O4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 10:56:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40538 "EHLO
+        id S232660AbiI0O5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 10:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232514AbiI0O4T (ORCPT
+        with ESMTP id S231221AbiI0O4q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 10:56:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA7EF979E8;
-        Tue, 27 Sep 2022 07:55:25 -0700 (PDT)
+        Tue, 27 Sep 2022 10:56:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1691F49;
+        Tue, 27 Sep 2022 07:56:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 566E2619E8;
-        Tue, 27 Sep 2022 14:55:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437E1C433C1;
-        Tue, 27 Sep 2022 14:55:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C7FF619FF;
+        Tue, 27 Sep 2022 14:56:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E8DC433D6;
+        Tue, 27 Sep 2022 14:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1664290524;
-        bh=aUKfoGvdKDzMOXhk0hJy8k35gYHkpZkep32NjUanwCs=;
+        s=korg; t=1664290571;
+        bh=Qk0G/WZDcN4dxcPpiCPen6zY2HKM55TAGgtnQZvZuMs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A7t/c8uRme2jhzpK8riOPTNuNrQffCT9WLogKMaylDVTcRw2uwaNe2z7raw11OAbW
-         d3NDCbdprubws4K+N2rONj6jjzvYjhi8c8B27jSsQz9r/eUpn7RZ5jIfMEO2Vm6lbh
-         rFY/zJNfsPkN8mTEMjabMqTyDAH8m3a+U5iZolPU=
-Date:   Tue, 27 Sep 2022 16:55:22 +0200
+        b=kesYukV+JBTN/u2lya1V3baZinP/iQcxgujh4O9bleZt7H6tANJtmTPV2ZZ6B7+l3
+         1QuECVkV8T2qteCdXOmLDkjN5nI7CGOYGV+sAjF6Lw4o/4I9We97/5GGQiCHaMN1xf
+         0wfkAzvUAX4sXPJ5KC2hknKlp9wq1EKj32/Rn5FI=
+Date:   Tue, 27 Sep 2022 16:56:09 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -37,18 +37,31 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
         Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@google.com>,
         Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v10 04/27] kallsyms: support "big" kernel symbols
-Message-ID: <YzMO2jAHKNdSRltf@kroah.com>
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        live-patching@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v10 05/27] kallsyms: increase maximum kernel symbol
+ length to 512
+Message-ID: <YzMPCfjEu6c5bbCv@kroah.com>
 References: <20220927131518.30000-1-ojeda@kernel.org>
- <20220927131518.30000-5-ojeda@kernel.org>
+ <20220927131518.30000-6-ojeda@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220927131518.30000-5-ojeda@kernel.org>
+In-Reply-To: <20220927131518.30000-6-ojeda@kernel.org>
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -58,18 +71,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 03:14:35PM +0200, Miguel Ojeda wrote:
+On Tue, Sep 27, 2022 at 03:14:36PM +0200, Miguel Ojeda wrote:
 > Rust symbols can become quite long due to namespacing introduced
-> by modules, types, traits, generics, etc.
+> by modules, types, traits, generics, etc. For instance,
+> the following code:
 > 
-> Increasing to 255 is not enough in some cases, therefore
-> introduce longer lengths to the symbol table.
+>     pub mod my_module {
+>         pub struct MyType;
+>         pub struct MyGenericType<T>(T);
 > 
-> In order to avoid increasing all lengths to 2 bytes (since most
-> of them are small, including many Rust ones), use ULEB128 to
-> keep smaller symbols in 1 byte, with the rest in 2 bytes.
+>         pub trait MyTrait {
+>             fn my_method() -> u32;
+>         }
+> 
+>         impl MyTrait for MyGenericType<MyType> {
+>             fn my_method() -> u32 {
+>                 42
+>             }
+>         }
+>     }
+> 
+> generates a symbol of length 96 when using the upcoming v0 mangling scheme:
+> 
+>     _RNvXNtCshGpAVYOtgW1_7example9my_moduleINtB2_13MyGenericTypeNtB2_6MyTypeENtB2_7MyTrait9my_method
+> 
+> At the moment, Rust symbols may reach up to 300 in length.
+> Setting 512 as the maximum seems like a reasonable choice to
+> keep some headroom.
 > 
 > Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 > Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
 > Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
 > Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
@@ -78,12 +109,14 @@ On Tue, Sep 27, 2022 at 03:14:35PM +0200, Miguel Ojeda wrote:
 > Signed-off-by: Gary Guo <gary@garyguo.net>
 > Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
 > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Co-developed-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
 > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
->  kernel/kallsyms.c  | 26 ++++++++++++++++++++++----
->  scripts/kallsyms.c | 29 ++++++++++++++++++++++++++---
->  2 files changed, 48 insertions(+), 7 deletions(-)
+>  include/linux/kallsyms.h            | 2 +-
+>  kernel/livepatch/core.c             | 4 ++--
+>  scripts/kallsyms.c                  | 4 ++--
+>  tools/include/linux/kallsyms.h      | 2 +-
+>  tools/lib/perf/include/perf/event.h | 2 +-
+>  tools/lib/symbol/kallsyms.h         | 2 +-
+>  6 files changed, 8 insertions(+), 8 deletions(-)
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
