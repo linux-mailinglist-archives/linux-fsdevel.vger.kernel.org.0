@@ -2,69 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1635EC8D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 18:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4DDA5EC8F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 18:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232019AbiI0QAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 12:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37312 "EHLO
+        id S233129AbiI0QD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 12:03:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231981AbiI0QA3 (ORCPT
+        with ESMTP id S232640AbiI0QDS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 12:00:29 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC95C7CB73;
-        Tue, 27 Sep 2022 09:00:25 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id g1-20020a17090a708100b00203c1c66ae3so10500255pjk.2;
-        Tue, 27 Sep 2022 09:00:25 -0700 (PDT)
+        Tue, 27 Sep 2022 12:03:18 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C691C4320;
+        Tue, 27 Sep 2022 09:02:07 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id b23so8120504iof.2;
+        Tue, 27 Sep 2022 09:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=/4Cya9CjV4N5Sr7mOC5bS8nn29gbgT+L6zRPTFmyUBk=;
-        b=V9EgwFsB9S7m3ODTCzkW2bhniuFar+JJyRuvMoEF3JRZLYR3H39+Muu35G1GoEUi0/
-         dGOKQ4ghBWznXQo93OwWmzDsAC0mIVD6+JY1N70BqQw6OPDcX4HBgaRsoUy0ysejZwys
-         eh3aU0vF0vRJ51Qqplm5BeNrVDW5pC/f/HQFApDr5yAdzs7y1Iv3agMg6jDIM8bbkwkm
-         BxHRuR/f3hPSqN60OD6P2e0Zwmlwx+X6yhQcchZJGTDLt+xRPxz+rbaX++iwZVMqFjcv
-         chEtLoDmMkxyKE+kHfe8c2+HPtXuvGIOTY4VbltEYmtMjVav6hT8tlVb907QppfLto1H
-         QkDQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=ct18v3QfbaOt7CsF6ErcYqFs3nH5VotKpLqZ78HARmQ=;
+        b=no1GeN48oclNXpvXOcJ3XM42s7G74QAfuxJUP2w9C5cuLEt1LA2InXaLu4/g7vE3Ah
+         S/Mc2c6zxeOHl3MQFolYrdx35TehZqB+m2XkqpnZHNqrwi5umGImsOgRLLDhEMmJ6ix5
+         qeuIUdoylQJ7AptS4+1rEN42XUXKncRc/qyo1TFhi6Q0KDwdAtuC5XFm02IRz9f+iAcx
+         sEw/LaTx83SSMgttZk7rB8ivAe4XALo445n5UqTrJu3tSHxpkqdJOl5W6Zc+DO1pRwIo
+         j2fZEMqxdCfiMO3AUliNZDWlSVzAxmAB9lJ4s9GqYvY0EH8pYHJ1JJ0Idmtjb+MQEjmv
+         /mhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=/4Cya9CjV4N5Sr7mOC5bS8nn29gbgT+L6zRPTFmyUBk=;
-        b=C7qDs49B28RrcNRqqEMBVZbSec3Ub8a3DOi0JREVD8/SfnN1trBaMmtwgUXel+Ni2t
-         mX4FPPvdwr46rjXyeU4AgvTo6HYSKJsyn8DmsU+pnVAyHBDm2FS1FSNqn0cBiNSA8hdN
-         VyjRnqFGj94bZxb8QERkwfy/EsNEO2eojPhPbuL3pucR0QIW0v2U31bNb4/Qa3W2YVmD
-         WMXA4LX4mmaF8AElZsY3ILHiUN2GcZHSvBNfAKWpOL6MCWaHhdHl/4QCu3RtGeDHWfiE
-         tVQoW1ilHYexCZrvbvIT8UyF0DW4rfkmcM5EDQYnm9e6DPWOn2MocI1P5A+tFceOP+y5
-         SsMQ==
-X-Gm-Message-State: ACrzQf3VvXXCcj6bW+iZ2x0v3aiEfv00sFCRxw/ceCscYae3bAxq2QiQ
-        YRDsw51YFBQPG3UtZTrKLEyukxwiQ2pEdpP40gLSOmB8iURLvw==
-X-Google-Smtp-Source: AMsMyM6hcpIN7XxM6Qqe1iqgpXg/gQNwNhKhih7O5Q++zwaFY67XdEVUE6/9V3oSVAIQYiAcZ8NqDgZb9t5pMvejsRo=
-X-Received: by 2002:a17:902:cec4:b0:176:be0f:5c79 with SMTP id
- d4-20020a170902cec400b00176be0f5c79mr28456466plg.40.1664294424710; Tue, 27
- Sep 2022 09:00:24 -0700 (PDT)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=ct18v3QfbaOt7CsF6ErcYqFs3nH5VotKpLqZ78HARmQ=;
+        b=z2UIMpPaueuEiTLuA1Ar10i85x2jLdjeMgTFceEvPQ3npAZB8XP3pL97HU9KJEy+yt
+         Xh8OVj72N+wCM46RnJ2whBWPuNdK3uKhMbe3CULbbvP4doP/j4Fmnoa+kKBmGXyf+XEl
+         p0+uiH387tDbLI2t6Sck1pZJvl60ngygq0dn6SLXujt8mNdwutj+d0SYOFjaYSLJgB0G
+         Vs483npUUhwhxjJ78J9L9H4LeiaLvJeKk/KEnSxTELv8NZrm29iGresOlo7J6JBbxXT3
+         TJk1blhFr6JKJFlG+hUWROF+gjwvd+HvINscI0bXxSas/JgwPMiRd12VGolvcG7g2qsA
+         6OLA==
+X-Gm-Message-State: ACrzQf1HUMDV6LMYmReMr0RiDHbPt48RKPAf16dH1NNYcyNB9T/8Z/FW
+        roG8bIMQ4VHYUaBopiXqYxPYSAhRmfLFyQ9iJAo=
+X-Google-Smtp-Source: AMsMyM5odjm/1/sK9Q4u52UeI71zmJgkTDOy0C5e+aZtCOyOTsfGQ3g+oQ5ZaDNDjzLaBsPSyP2gSi2I+7blmm5gF9c=
+X-Received: by 2002:a05:6638:218f:b0:35a:7f20:6a57 with SMTP id
+ s15-20020a056638218f00b0035a7f206a57mr14587401jaj.186.1664294526531; Tue, 27
+ Sep 2022 09:02:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-28-ojeda@kernel.org>
- <20220927141137.iovhhjufqdqcs6qn@gpm.stappers.nl> <202209270818.5BA5AA62@keescook>
-In-Reply-To: <202209270818.5BA5AA62@keescook>
-From:   Wedson Almeida Filho <wedsonaf@gmail.com>
-Date:   Tue, 27 Sep 2022 17:00:13 +0100
-Message-ID: <CANeycqqDNjRjcRNW02cDNsZSiA+ixEXAZzpJSJFgLtTrM6k9Ww@mail.gmail.com>
-Subject: Re: [PATCH v10 27/27] MAINTAINERS: Rust
-To:     Kees Cook <keescook@chromium.org>
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-9-ojeda@kernel.org>
+ <YzL/9mlOHemaey2n@yadro.com> <CANiq72kDPMKd0qLAMVrd2A3n9aAWhh2ps5DvKos58L=_V2-XwQ@mail.gmail.com>
+ <YzMTH1v9yZQcujLa@yadro.com>
+In-Reply-To: <YzMTH1v9yZQcujLa@yadro.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 27 Sep 2022 18:01:55 +0200
+Message-ID: <CANiq72nkiOsAkr4oeBi-ohf12-JjvkQmb67s-G1L87pBS+FEWA@mail.gmail.com>
+Subject: Re: [PATCH v10 08/27] rust: adapt `alloc` crate to the kernel
+To:     Konstantin Shelekhin <k.shelekhin@yadro.com>
 Cc:     Miguel Ojeda <ojeda@kernel.org>,
-        Geert Stappers <stappers@stappers.nl>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        Gary Guo <gary@garyguo.net>, Matthew Bakhtiari <dev@mtbk.me>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -75,71 +77,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Sept 2022 at 16:19, Kees Cook <keescook@chromium.org> wrote:
+On Tue, Sep 27, 2022 at 5:13 PM Konstantin Shelekhin
+<k.shelekhin@yadro.com> wrote:
 >
-> On Tue, Sep 27, 2022 at 04:11:38PM +0200, Geert Stappers wrote:
-> > On Tue, Sep 27, 2022 at 03:14:58PM +0200, Miguel Ojeda wrote:
-> > > Miguel, Alex and Wedson will be maintaining the Rust support.
-> > >
-> > > Boqun, Gary and Bj=C3=B6rn will be reviewers.
-> > >
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-> > > Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-> > > Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-> > > Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> > > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> > > ---
-> > >  MAINTAINERS | 18 ++++++++++++++++++
-> > >  1 file changed, 18 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index f5ca4aefd184..944dc265b64d 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -17758,6 +17758,24 @@ F: include/rv/
-> > >  F: kernel/trace/rv/
-> > >  F: tools/verification/
-> > >
-> > > +RUST
-> > > +M: Miguel Ojeda <ojeda@kernel.org>
-> > > +M: Alex Gaynor <alex.gaynor@gmail.com>
-> > > +M: Wedson Almeida Filho <wedsonaf@google.com>
-> > <screenshot from=3D"response of a reply-to-all that I just did">
-> >   ** Address not found **
-> >
-> >   Your message wasn't delivered to wedsonaf@google.com because the
-> >   address couldn't be found, or is unable to receive mail.
-> >
-> >   Learn more here: https://support.google.com/mail/answer/6596
-> >
-> >   The response was:
-> >
-> >     The email account that you tried to reach does not exist. Please tr=
-y
-> >     double-checking the recipient's email address for typos or unnecess=
-ary
-> >     spaces. Learn more at https://support.google.com/mail/answer/6596
-> > </screenshot>
->
-> Wedson, can you send (or Ack) the following patch? :)
+> Sorry, my bad.
 
-Acked-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+No apologies needed! Thanks for taking a look like in v8 and v9 :)
 
->
-> diff --git a/.mailmap b/.mailmap
-> index d175777af078..3a7fe4ee56fb 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -433,6 +433,7 @@ Vlad Dogaru <ddvlad@gmail.com> <vlad.dogaru@intel.com=
->
->  Vladimir Davydov <vdavydov.dev@gmail.com> <vdavydov@parallels.com>
->  Vladimir Davydov <vdavydov.dev@gmail.com> <vdavydov@virtuozzo.com>
->  WeiXiong Liao <gmpy.liaowx@gmail.com> <liaoweixiong@allwinnertech.com>
-> +Wedson Almeida Filho <wedsonaf@gmail.com> <wedsonaf@google.com>
->  Will Deacon <will@kernel.org> <will.deacon@arm.com>
->  Wolfram Sang <wsa@kernel.org> <w.sang@pengutronix.de>
->  Wolfram Sang <wsa@kernel.org> <wsa@the-dreams.de>
->
-> --
-> Kees Cook
+Cheers,
+Miguel
