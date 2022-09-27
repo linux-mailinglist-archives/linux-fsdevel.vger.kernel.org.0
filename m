@@ -2,93 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2915EC813
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 17:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FB45EC826
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Sep 2022 17:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232413AbiI0Pgs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Sep 2022 11:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
+        id S232591AbiI0Piv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Sep 2022 11:38:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbiI0PgF (ORCPT
+        with ESMTP id S232736AbiI0Pid (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Sep 2022 11:36:05 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD06917581;
-        Tue, 27 Sep 2022 08:35:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B7993CE1952;
-        Tue, 27 Sep 2022 15:35:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F438C433C1;
-        Tue, 27 Sep 2022 15:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1664292927;
-        bh=sFsv2vn2MuycGfKw5zcFhEp9tzgTNZNiYQitk3gLW3c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mRLNLDczWJyVtq2nhSSwUk+2kSk3aJDhURRQN8jmpfX3K/WhFVNNoc0WuOeSWfu0b
-         lSreBZmmsTa7dhVfyEGYWRNm6pNGYnwfyRr75ufUAi+kPUpH7HmONb9ZxecQtI7q9/
-         LNk7tT+QFeIPXe6sBG4qXCQHD07IltGPwHfwavmU=
-Date:   Tue, 27 Sep 2022 17:35:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 27 Sep 2022 11:38:33 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F251CE15E;
+        Tue, 27 Sep 2022 08:37:02 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id m66so10005929vsm.12;
+        Tue, 27 Sep 2022 08:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=TUGMZoFYFoHDZJYWzaIuE6u06usrctQB8r3AoeeFKDk=;
+        b=lYb4nELxXqmlc7EGzml+Eu3QkgdG8gCYbaYfSADphVKjQKUWjdiiBEuNR90lhN/sou
+         VNISjYxkC/VQlbZUkEj32sI0PymuhWR3C5r/r7tNcHc/GDv7zhdtjH+hrgUwTU15bR7s
+         S/wuQiNw2bszt+WguK8q1I73PmRtZpjls1GKHtdE8/yMzTnIBAWRu3TAyig95OC2vx2q
+         Bn4slTdpyOi4lEYSQP3T78YJmrX6+ayRYr5qe1yxdwzFcNBLR0aFlmy2TRBsvZ0tvBrA
+         6Exxs/xPGEmocwv4D2MLnwaOYtuvKgutzCG2gKPCVD/k0Kyt9qUKd2tJemQIoIgy/5fn
+         22LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=TUGMZoFYFoHDZJYWzaIuE6u06usrctQB8r3AoeeFKDk=;
+        b=qZXqdYDGbFFbHJB+2mtzsog9ipbNKE+0V4iWetsO0GxLsTL231GRx/rqUUMYY0wPXu
+         BUXpt5yqgAEnMKiKeKh2xuuAqLxLGn1Vyr0KojnwxP7i9KsftJ6h0WgDm7NgzVvH7/eV
+         g2WZP//qzm1yMU1ykyeBDSYVBEPOn9pQUHpcfB8TcHdWS6KFPspBwKQSQlnCgu3CbthV
+         rJ008rtDbfAgOdmFU+FNAjU1EMlKtx0u5GVBBf6PFoXq4YY7xRF/5lGpOzZ0AhUoktcL
+         iviqAE52XfO5wqQ2m7LIc07c5SXM1q5KiiL6bgak38XoHfo+ucEIGWc6P15XTmBsPk7L
+         8GWQ==
+X-Gm-Message-State: ACrzQf16vRNorxk7cWW86eHhUqpusM6Qov9F77HoU7SAxy6DMElEoT5A
+        TeH6Q8B3oVrajJ7Yq2K/cHANkknDIov7vaQoyKI=
+X-Google-Smtp-Source: AMsMyM4JbqyS7Au1A2OS5ukPgae3HmiQQlrlrFqB/B0i2xbbGYgaJjH0G4opluTkSfFVKEzgewSeceuVaimuAavWrGY=
+X-Received: by 2002:a67:fc44:0:b0:398:30ac:1c95 with SMTP id
+ p4-20020a67fc44000000b0039830ac1c95mr11484950vsq.16.1664292979806; Tue, 27
+ Sep 2022 08:36:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-13-ojeda@kernel.org>
+ <YzMVLkr3ZlbENMcG@kroah.com>
+In-Reply-To: <YzMVLkr3ZlbENMcG@kroah.com>
+From:   Alex Gaynor <alex.gaynor@gmail.com>
+Date:   Tue, 27 Sep 2022 10:36:08 -0500
+Message-ID: <CAFRnB2W2SjmN9Z5XqLncRz-Bs4XbUcw734oLx0u9wso0jZ-YEA@mail.gmail.com>
+Subject: Re: [PATCH v10 12/27] rust: add `kernel` crate
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
         Wedson Almeida Filho <wedsonaf@google.com>,
-        Gary Guo <gary@garyguo.net>, Matthew Bakhtiari <dev@mtbk.me>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Finn Behrens <me@kloenk.de>,
+        Adam Bratschi-Kaye <ark.email@gmail.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Gary Guo <gary@garyguo.net>,
+        Boris-Chengbiao Zhou <bobo1239@web.de>,
         Boqun Feng <boqun.feng@gmail.com>,
-        =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v10 08/27] rust: adapt `alloc` crate to the kernel
-Message-ID: <YzMYPGOQYdrVqjqO@kroah.com>
-References: <20220927131518.30000-1-ojeda@kernel.org>
- <20220927131518.30000-9-ojeda@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220927131518.30000-9-ojeda@kernel.org>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Fox Chen <foxhlchen@gmail.com>,
+        Viktor Garske <viktor@v-gar.de>,
+        Dariusz Sosnowski <dsosnowski@dsosnowski.pl>,
+        =?UTF-8?Q?L=C3=A9o_Lanteri_Thauvin?= <leseulartichaut@gmail.com>,
+        Niklas Mohrin <dev@niklasmohrin.de>,
+        Milan Landaverde <milan@mdaverde.com>,
+        Morgan Bartlett <mjmouse9999@gmail.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        =?UTF-8?B?TsOhbmRvciBJc3R2w6FuIEtyw6Fjc2Vy?= <bonifaido@gmail.com>,
+        David Gow <davidgow@google.com>,
+        John Baublitz <john.m.baublitz@gmail.com>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 03:14:39PM +0200, Miguel Ojeda wrote:
-> This customizes the subset of the Rust standard library `alloc` that
-> was just imported as-is, mainly by:
-> 
->   - Adding SPDX license identifiers.
-> 
->   - Skipping modules (e.g. `rc` and `sync`) via new `cfg`s.
-> 
->   - Adding fallible (`try_*`) versions of existing infallible methods
->     (i.e. returning a `Result` instead of panicking).
-> 
->     Since the standard library requires stable/unstable attributes,
->     these additions are annotated with:
-> 
->         #[stable(feature = "kernel", since = "1.0.0")]
-> 
->     Using "kernel" as the feature allows to have the additions
->     clearly marked. The "1.0.0" version is just a placeholder.
-> 
->     (At the moment, only one is needed, but in the future more
->     fallible methods will be added).
-> 
-> Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Co-developed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
-> Co-developed-by: Matthew Bakhtiari <dev@mtbk.me>
-> Signed-off-by: Matthew Bakhtiari <dev@mtbk.me>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
+On Tue, Sep 27, 2022 at 10:22 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 27, 2022 at 03:14:43PM +0200, Miguel Ojeda wrote:
+> > +unsafe impl GlobalAlloc for KernelAllocator {
+> > +    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+> > +        // `krealloc()` is used instead of `kmalloc()` because the latter is
+> > +        // an inline function and cannot be bound to as a result.
+> > +        unsafe { bindings::krealloc(ptr::null(), layout.size(), bindings::GFP_KERNEL) as *mut u8 }
+>
+> This feels "odd" to me.  Why not just use __kmalloc() instead of
+> krealloc()?  I think that will get you the same kasan tracking, and
+> should be a tiny bit faster (1-2 less function calls).
+>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This may literally be the oldest code in the project :-). To the best
+of my recollection, it's krealloc simply because that seemed like a
+public API that worked. I don't think it even occurred to use to look
+at __kmalloc.
+
+> I guess it probably doesn't matter right now, just curious, and not a
+> big deal at all.
+>
+> Other minor comments:
+>
+>
+> > +/// Contains the C-compatible error codes.
+> > +pub mod code {
+> > +    /// Out of memory.
+> > +    pub const ENOMEM: super::Error = super::Error(-(crate::bindings::ENOMEM as i32));
+> > +}
+>
+> You'll be adding other error values here over time, right?
+>
+
+Yes -- this is the most minimal set that's needed for the initial
+patch set. The full branch has every error constant bound.
+
+>
+> > +/// A [`Result`] with an [`Error`] error type.
+> > +///
+> > +/// To be used as the return type for functions that may fail.
+> > +///
+> > +/// # Error codes in C and Rust
+> > +///
+> > +/// In C, it is common that functions indicate success or failure through
+> > +/// their return value; modifying or returning extra data through non-`const`
+> > +/// pointer parameters. In particular, in the kernel, functions that may fail
+> > +/// typically return an `int` that represents a generic error code. We model
+> > +/// those as [`Error`].
+> > +///
+> > +/// In Rust, it is idiomatic to model functions that may fail as returning
+> > +/// a [`Result`]. Since in the kernel many functions return an error code,
+> > +/// [`Result`] is a type alias for a [`core::result::Result`] that uses
+> > +/// [`Error`] as its error type.
+> > +///
+> > +/// Note that even if a function does not return anything when it succeeds,
+> > +/// it should still be modeled as returning a `Result` rather than
+> > +/// just an [`Error`].
+> > +pub type Result<T = ()> = core::result::Result<T, Error>;
+>
+> What about functions that do have return functions of:
+>         >= 0 number of bytes read/written/consumed/whatever
+>         < 0  error code
+>
+> Would that use Result or Error as a type?  Or is it best just to not try
+> to model that mess in Rust calls? :)
+>
+
+We'd model that as a `Result<usize>`. Negative values would become
+`Err(EWHATEVER)` and non-negative values would be `Ok(n)`. Then at the
+boundaries of Rust/C code we'd convert as appropriate.
+
+> > +macro_rules! pr_info (
+> > +    ($($arg:tt)*) => (
+> > +        $crate::print_macro!($crate::print::format_strings::INFO, $($arg)*)
+> > +    )
+> > +);
+>
+> In the long run, using "raw" print macros like this is usually not the
+> thing to do.  Drivers always have a device to reference the message to,
+> and other things like filesystems and subsystems have a prefix to use as
+> well.
+>
+> Hopefully not many will use these as-is and we can wrap them properly
+> later on.
+>
+> Then there's the whole dynamic debug stuff, but that's a different
+> topic.
+>
+> Anyway, all looks sane to me, sorry for the noise:
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Cheers,
+Alex
+
+-- 
+All that is necessary for evil to succeed is for good people to do nothing.
