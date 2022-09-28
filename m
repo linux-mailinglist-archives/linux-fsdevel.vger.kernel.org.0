@@ -2,349 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FDEE5ED42A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 07:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D14215ED475
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 08:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232112AbiI1FQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 01:16:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        id S232679AbiI1GEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 02:04:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbiI1FQr (ORCPT
+        with ESMTP id S230514AbiI1GEK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 01:16:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11BDE129689;
-        Tue, 27 Sep 2022 22:16:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 28 Sep 2022 02:04:10 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2175F11A68C;
+        Tue, 27 Sep 2022 23:04:08 -0700 (PDT)
+Received: from [192.168.10.9] (unknown [39.45.148.204])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 72514B81F0A;
-        Wed, 28 Sep 2022 05:16:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B44C433D6;
-        Wed, 28 Sep 2022 05:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664342203;
-        bh=TrZdrt98AaL4pp/R0/mug1f7Dkwrizv/QN/dHVReiRM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KdLQfnA4sVDgd/kxFWnam01dbumZn0vP1lltt5BZ04fSCfFwgP+jMqdAp3IXB17wF
-         dTJZFAPJhGMJX+EOMoUsoHqn5526pr9oqmsXJCwj8V+mOpIxL0woVh7355l9QLqvx4
-         VIzKbf3/utpfcRk3FTBf01mmWlZKP1bk7u9fkPAZz2OukBBf6TqW9qPPrb1HWuieN9
-         ECAjw4LkQytxFCrSk+jl1irtxw96LUrWXE+75qPav7tVEjnwtaN1f25msh03jF/152
-         9TLCOBbzguQzK9ZqmU2S5XROFBbXa6YzaSN8IYqbCgyYExsNXrGULQewHIcZ4/BR3+
-         /lrhAVHW4urcQ==
-Date:   Tue, 27 Sep 2022 22:16:42 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] iomap/xfs: fix data corruption due to stale
- cached iomaps
-Message-ID: <YzPYuu7GtzoN4tB+@magnolia>
-References: <20220921082959.1411675-1-david@fromorbit.com>
- <Yyvjtpi49YSUej+w@magnolia>
- <20220922225934.GU3600936@dread.disaster.area>
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BE0B0660221F;
+        Wed, 28 Sep 2022 07:04:02 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664345045;
+        bh=bCIwW7EnoB27URDSRgUhCbHMbob8kMA51uretneCH6Q=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=N3+1KZuO5H04WNxoCOUnyir8XcV1ug7Z1d4L9L8SOJ8okF7JdcbpmOdS1qo7K84TM
+         S8jYu4V3IIxMf7oYORnrWJPqcJGYHpXA4m1d9NV66kS2ESmpwPrpTEdMT2+01ajYna
+         NcQBJAXjNf8o87NA3HY5Id3TTdprvTEQM6rAe07MMPPbre+we4/meeAE3pYKjq/Q5r
+         cmUCvTAkyCynARQChugIhgjgfzjJ7a9gvAQzGXseBfurkAIISOcPiSyRhYUYX/aU8a
+         84A3KfYvhLZ2Q4eaeA7V60Td5yReER5N2f1Wv5QSlCoS41Fnq6ojT91/iHVmk7SUF0
+         7ZnF7rDUz1fvw==
+Message-ID: <26380310-05c6-3e57-d05a-e6e373335232@collabora.com>
+Date:   Wed, 28 Sep 2022 11:03:58 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220922225934.GU3600936@dread.disaster.area>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
+Content-Language: en-US
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20220826064535.1941190-1-usama.anjum@collabora.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20220826064535.1941190-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 08:59:34AM +1000, Dave Chinner wrote:
-> On Wed, Sep 21, 2022 at 09:25:26PM -0700, Darrick J. Wong wrote:
-> > On Wed, Sep 21, 2022 at 06:29:57PM +1000, Dave Chinner wrote:
-> > > Hi folks,
-> > > 
-> > > THese patches address the data corruption first described here:
-> > > 
-> > > https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-> > > 
-> > > This data corruption has been seen in high profile production
-> > > systems so there is some urgency to fix it. The underlying flaw is
-> > > essentially a zero-day iomap bug, so whatever fix we come up with
-> > > needs to be back portable to all supported stable kernels (i.e.
-> > > ~4.18 onwards).
-> > > 
-> > > A combination of concurrent write()s, writeback IO completion, and
-> > > memory reclaim combine to expose the fact that the cached iomap that
-> > > is held across an iomap_begin/iomap_end iteration can become stale
-> > > without the iomap iterator actor being aware that the underlying
-> > > filesystem extent map has changed.
-> > > 
-> > > Hence actions based on the iomap state (e.g. is unwritten or newly
-> > > allocated) may actually be incorrect as writeback actions may have
-> > > changed the state (unwritten to written, delalloc to unwritten or
-> > > written, etc). This affects partial block/page operations, where we
-> > > may need to read from disk or zero cached pages depending on the
-> > > actual extent state. Memory reclaim plays it's part here in that it
-> > > removes pages containing partial state from the page cache, exposing
-> > > future partial page/block operations to incorrect behaviour.
-> > > 
-> > > Really, we should have known that this would be a problem - we have
-> > > exactly the same issue with cached iomaps for writeback, and the
-> > > ->map_blocks callback that occurs for every filesystem block we need
-> > > to write back is responsible for validating the cached iomap is
-> > > still valid. The data corruption on the write() side is a result of
-> > > not validating that the iomap is still valid before we initialise
-> > > new pages and prepare them for data to be copied in to them....
-> > > 
-> > > I'm not really happy with the solution I have for triggering
-> > > remapping of an iomap when the current one is considered stale.
-> > > Doing the right thing requires both iomap_iter() to handle stale
-> > > iomaps correctly (esp. the "map is invalid before the first actor
-> > > operation" case), and it requires the filesystem
-> > > iomap_begin/iomap_end operations to co-operate and be aware of stale
-> > > iomaps.
-> > > 
-> > > There are a bunch of *nasty* issues around handling failed writes in
-> > > XFS taht this has exposed - a failed write() that races with a
-> > > mmap() based write to the same delalloc page will result in the mmap
-> > > writes being silently lost if we punch out the delalloc range we
-> > > allocated but didn't write to. g/344 and g/346 expose this bug
-> > > directly if we punch out delalloc regions allocated by now stale
-> > > mappings.
-> > 
-> > Yuck.  I'm pretty sure that callers (xfs_buffered_write_iomap_end) is
-> > supposed to call truncate_pagecache_range with the invalidatelock (fka
-> > MMAPLOCK) held.
+Any thoughts about it?
+
+On 8/26/22 11:45 AM, Muhammad Usama Anjum wrote:
 > 
-> Yup, there's multiple problems with this code; apart from
-> recognising that it is obviously broken and definitely problematic,
-> I haven't dug into it further.
-
-...and I've been so buried in attending meetings and livedebug sessions
-related to a 4.14 corruption that now I'm starved of time to fully think
-through all the implications of this one. :(
-
-> > > Then, because we can't punch out the delalloc we allocated region
-> > > safely when we have a stale iomap, we have to ensure when we remap
-> > > it the IOMAP_F_NEW flag is preserved so that the iomap code knows
-> > > that it is uninitialised space that is being written into so it will
-> > > zero sub page/sub block ranges correctly.
-> > 
-> > Hm.  IOMAP_F_NEW results in zeroing around, right?  So if the first
-> > ->iomap_begin got a delalloc mapping, but by the time we got the folio
-> > locked someone else managed to writeback and evict the page, we'd no
-> > longer want that zeroing ... right?
+> Hello,
 > 
-> Yes, and that is one of the sources of the data corruption - zeroing
-> when we shouldn't.
+> This patch series implements a new ioctl on the pagemap proc fs file to
+> get, clear and perform both get and clear at the same time atomically on
+> the specified range of the memory.
 > 
-> There are multiple vectors to having a stale iomap here:
+> Soft-dirty PTE bit of the memory pages can be viewed by using pagemap
+> procfs file. The soft-dirty PTE bit for the whole memory range of the
+> process can be cleared by writing to the clear_refs file. This series
+> adds features that weren't present earlier.
+> - There is no atomic get soft-dirty PTE bit status and clear operation
+>   present.
+> - The soft-dirty PTE bit of only a part of memory cannot be cleared.
 > 
-> 1. we allocate the delalloc range, giving us IOMAP_DELALLOC and
->    IOMAP_F_NEW. Writeback runs, allocating the range as unwritten.
->    Even though the iomap is now stale, there is no data corruption
->    in this case because the range is unwritten and so we still need
->    zeroing.
-
-...and I guess this at least happens more often now that writeback does
-delalloc -> unwritten -> write -> unwritten conversion?
-
-> 2. Same as above, but IO completion converts the range to written.
->    Data corruption occurs in this case because IOMAP_F_NEW causes
->    incorrect page cache zeroing to occur on partial page writes.
+> Historically, soft-dirty PTE bit tracking has been used in the CRIU
+> project. The proc fs interface is enough for that as I think the process
+> is frozen. We have the use case where we need to track the soft-dirty
+> PTE bit for the running processes. We need this tracking and clear
+> mechanism of a region of memory while the process is running to emulate
+> the getWriteWatch() syscall of Windows. This syscall is used by games to
+> keep track of dirty pages and keep processing only the dirty pages. This
+> new ioctl can be used by the CRIU project and other applications which
+> require soft-dirty PTE bit information.
 > 
-> 3. We have an unwritten extent (prealloc, writeback in progress,
->    etc) so we have IOMAP_UNWRITTEN. These require zeroing,
->    regardless of whether IOMAP_F_NEW is set or not. Extent is
->    written behind our backs, unwritten conversion occurs, and now we
->    zero partial pages when we shouldn't.
-
-Yikes.
-
-> Other issues I've found:
+> As in the current kernel there is no way to clear a part of memory (instead
+> of clearing the Soft-Dirty bits for the entire process) and get+clear
+> operation cannot be performed atomically, there are other methods to mimic
+> this information entirely in userspace with poor performance:
+> - The mprotect syscall and SIGSEGV handler for bookkeeping
+> - The userfaultfd syscall with the handler for bookkeeping
+> Some benchmarks can be seen [1].
 > 
-> 4. page faults can run the buffered write path concurrently with
->    write() because they aren't serialised against each other. Hence
->    we can have overlapping concurrent iomap_iter() operations with
->    different zeroing requirements and it's anyone's guess as to
->    which will win the race to the page lock and do the initial
->    zeroing. This is a potential silent mmap() write data loss
->    vector.
-
-TBH I've long wondered why IOLOCK and MMAPLOCK both seemingly protected
-pagecache operations but the buffered io paths never seemed to take the
-MMAPLOCK, and if there was some subtle way things could go wrong.
-
-> 5. anything that can modify the extent layout without holding the
->    i_rwsem exclusive can race with iomap iterating the extent list.
->    Holding the i_rwsem shared and modifying the extent list (e.g.
->    direct IO writes) can result in iomaps changing in the middle of,
->    say, buffered reads (e.g. hole->unwritten->written).
-
-Yep.  I wonder, can this result in other incorrect write behavior that
-you and I haven't thought of yet?
-
-> IOWs, we must always treat iomaps that are returned by iomap_iter()
-> to the actor functions as volatile and potentially invalid. If we
-> are using folio locks to ensure only one task is accessing page
-> cache data at any given time, then we *always* need to check that
-> the iomap is valid once we have the folio locked. If the iomap is
-> invalid, then we have to remap the file offset before deciding wht
-> to do with the data in the page....
-
-Agreed.
-
-> > > As a result, ->iomap_begin() needs to know if the previous iomap was
-> > > IOMAP_F_STALE, and if so, it needs to know if that previous iomap
-> > > was IOMAP_F_NEW so it can propagate it to the remap.
-> > > 
-> > > So the fix is awful, messy, and I really, really don't like it. But
-> > > I don't have any better ideas right now, and the changes as
-> > > presented fix the reproducer for the original data corruption and
-> > > pass fstests without and XFS regressions for block size <= page size
-> > > configurations.
-> > > 
-> > > Thoughts?
-> > 
-> > I have a related question about another potential corruption vector in
-> > writeback.  If write_cache_pages selects a folio for writeback, it'll
-> > call clear_page_dirty_for_io to clear the PageDirty bit before handing
-> > it to iomap_writepage, right?
+> This ioctl can be used by the CRIU project and other applications which
+> require soft-dirty PTE bit information. The following operations are
+> supported in this ioctl:
+> - Get the pages that are soft-dirty.
+> - Clear the pages which are soft-dirty.
+> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
+> soft-dirty PTE bit
 > 
-> Yes all interactions from that point onwards until we mark the folio
-> as under writeback are done under the folio lock, so they should be
-> atomic from the perspective of the data paths that dirty/clean the
-> page.
-
-<nod>
-
-> > What happens if iomap_writepage_map errors out (say because ->map_blocks
-> > returns an error) without adding the folio to any ioend?
+> There are two decisions which have been taken about how to get the output
+> from the syscall.
+> - Return offsets of the pages from the start in the vec
+> - Stop execution when vec is filled with dirty pages
+> These two arguments doesn't follow the mincore() philosophy where the
+> output array corresponds to the address range in one to one fashion, hence
+> the output buffer length isn't passed and only a flag is set if the page
+> is present. This makes mincore() easy to use with less control. We are
+> passing the size of the output array and putting return data consecutively
+> which is offset of dirty pages from the start. The user can convert these
+> offsets back into the dirty page addresses easily. Suppose, the user want
+> to get first 10 dirty pages from a total memory of 100 pages. He'll
+> allocate output buffer of size 10 and the ioctl will abort after finding the
+> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
+> behaviour like mincore() can be achieved by passing output buffer of 100
+> size. This interface can be used for any desired behaviour.
 > 
-> Without reading further:
+> [1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
 > 
-> 1. if we want to retry the write, we folio_redirty_for_writepage(),
-> unlock it and return with no error. Essentially we just skip over
-> it.
-
-If the fs isn't shut down, I guess we could redirty the page, though I
-guess the problem is that the page is now stuck in dirty state until
-xfs_scrub fixes the problem.  If it fixes the problem.
-
-I think for bufferhead users it's nastier because we might have a
-situation where pagedirty is unset but BH_Dirty is still set.  It
-certainly is a problem on 4.14.
-
-> 2. If we want to fail the write, we should call set_mapping_error()
-> to record the failure for the next syscall to report and, maybe, set
-> the error flag/clear the uptodate flag on the folio depending on
-> whether we want the data to remain valid in memory or not.
-
-<nod> That seems to be happening.  Sort of.
-
-I think there's also a UAF in iomap_writepage_map -- if the folio is
-unlocked and we cleared (or never set) PageWriteback, isn't it possible
-that by the time we get to the mapping_set_error, the folio could have
-been torn out of the page cache and reused somewhere else?
-
-In which case, we're at best walking off a NULL mapping and crashing the
-system, and at worst setting an IO error on the wrong mapping?
-
-> > I think in
-> > that case we'll follow the (error && !count) case, in which we unlock
-> > the folio and exit without calling folio_redirty_for_writepage, right?
-> > The error will get recorded in the mapping for the next fsync, I think,
-> > but I also wonder if we *should* redirty because the mapping failed, not
-> > the attempt at persistence.
+> Regards,
+> Muhammad Usama Anjum
 > 
-> *nod*
+> Muhammad Usama Anjum (4):
+>   fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+>   fs/proc/task_mmu: Implement IOCTL to get and clear soft dirty PTE bit
+>   selftests: vm: add pagemap ioctl tests
+>   mm: add documentation of the new ioctl on pagemap
 > 
-> I think the question that needs to be answered here is this: in what
-> case is an error being returned from ->map_blocks a recoverable
-> error that a redirty + future writeback retry will succeed?
+>  Documentation/admin-guide/mm/soft-dirty.rst |  42 +-
+>  fs/proc/task_mmu.c                          | 342 ++++++++++-
+>  include/uapi/linux/fs.h                     |  23 +
+>  tools/include/uapi/linux/fs.h               |  23 +
+>  tools/testing/selftests/vm/.gitignore       |   1 +
+>  tools/testing/selftests/vm/Makefile         |   2 +
+>  tools/testing/selftests/vm/pagemap_ioctl.c  | 649 ++++++++++++++++++++
+>  7 files changed, 1050 insertions(+), 32 deletions(-)
+>  create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
 > 
-> AFAICT, all cases from XFS this is a fatal error (e.g. corruption of
-> the BMBT), so the failure will persist across all attempts to retry
-> the write?
-> 
-> Perhaps online repair will change this (i.e. in the background
-> repair fixes the BMBT corruption and so the next attempt to write
-> the data will succeed) so I can see that we *might* need to redirty
-> the page in this case, but....
 
-...but I don't know that we can practically wait for repairs to happen
-because the page is now stuck in dirty state indefinitely.
-
-> > This isn't a problem for XFS because the next buffered write will mark
-> > the page dirty again, but I've been trawling through the iomap buffer
-> > head code (because right now we have a serious customer escalation on
-> > 4.14) and I noticed that we never clear the dirty state on the buffer
-> > heads.  gfs2 is the only user of iomap buffer head code, but that stands
-> > out as something that doesn't quite smell right.  I /think/ this is a
-> > result of XFS dropping buffer heads in 4.19, hoisting the writeback
-> > framework to fs/iomap/ in 5.5, and only adding buffer heads back to
-> > iomap later.
-> 
-> Seems plausible.
-
-Though, more awkwardly, iomap has no idea if a given page has
-bufferheads attached to it.  So I guess we could add that call if the
-->map_blocks function sets IOMAP_F_BUFFER_HEAD on wpc->iomap... but gfs2
-doesn't do that.
-
-> > The reason I even noticed this at all is because of what 4.14 does --
-> > back in those days, initiating writeback on a page clears the dirty
-> > bit from the attached buffer heads in xfs_start_buffer_writeback.  If
-> > xfs_writepage_map fails to initiate any writeback IO at all, then it
-> > simply unlocks the page and exits without redirtying the page.  IOWs, it
-> > causes the page and buffer head state to become inconsistent, because
-> > now the page thinks it is clean but the BHs think they are dirty.
-> > 
-> > Worse yet, if userspace responds to the EIO by reissuing the write()
-> > calls, the write code will see BH_Dirty set on the buffer and doesn't
-> > even try to set PageDirty, which means ... that the page never gets
-> > written to disk again!
-> > 
-> > There are three questions in my mind:
-> > 
-> > A. Upstream iomap writeback code doesn't change (AFAICT) the buffer head
-> > dirty state.  I don't know if this is really broken?  Or maybe gfs2 just
-> > doesn't notice or care?
-> 
-> You'd need to talk to the GFS2 ppl about that - I haven't paid any
-> attention to the iomap bufferhead code and so I have no idea what
-> constraints it is operating under or what bufferhead state GFS2 even
-> needs...
-
-Yeah.  gfs2 doesn't always set it, too.  I think it only uses it for
-journalled file data.
-
-> > B. Should writeback be redirtying any folios that aren't added to an
-> > ioend?  I'm not sure that doing so is correct, since writeback to a
-> > shutdown filesystem won't clear the dirty pages.
-> 
-> See above - I think the action depends on the error being returned.
-> If it's a fatal error that can never succeed in future (e.g.  fs is
-> shutdown), then we should not redirty the page and just error it
-> out. If it's not a fatal error, then *maybe* we should be redirtying
-> the page. Of course, this can lead to dirty pages that can never be
-> written.....
-
-<nod>
-
-> > C. Gotta figure out why our 4.14 kernel doesn't initiate writeback.
-> > At this point we're pretty sure it's because we're actually hitting the
-> > same RCA as commit d9252d526ba6 ("xfs: validate writeback mapping using
-> > data fork seq counter").  Given the (stale) data it has, it never
-> > manages to get a valid mapping, and just... exits xfs_map_blocks without
-> > doing anything.
-> 
-> I haven't looked at any code that old for a long while, so I can't
-> really help you there... :/
-
-Well yeah, let's focus on upstream and I'll help our internal teams deal
-with UEK5.
-
---D
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+-- 
+Muhammad Usama Anjum
