@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 222BE5EE176
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 18:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F535EE17C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 18:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234665AbiI1QOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 12:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58506 "EHLO
+        id S234352AbiI1QPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 12:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234610AbiI1QNl (ORCPT
+        with ESMTP id S234629AbiI1QNn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 12:13:41 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F8DB24AD;
-        Wed, 28 Sep 2022 09:13:39 -0700 (PDT)
+        Wed, 28 Sep 2022 12:13:43 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AB3DCEB2;
+        Wed, 28 Sep 2022 09:13:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 6F0CACE1F1A;
-        Wed, 28 Sep 2022 16:13:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1063CC433D7;
-        Wed, 28 Sep 2022 16:13:33 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id F3A9ECE1F1F;
+        Wed, 28 Sep 2022 16:13:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C3BC433D6;
+        Wed, 28 Sep 2022 16:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664381615;
-        bh=EFipwoi0PdU1Hkt2ZRWy1tT5E3LHgN7AeZUQ7yhoBc8=;
+        s=k20201202; t=1664381618;
+        bh=ZJQaZ9+enkXhDWiALhTU5vozOEZKswDtKmVsLbfd05I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MC3AQUg4YlLscki7t5bUGLUeBfQ89ZmFIbjjgePOzWPAKEjOzGCyN7GPGwSSxG4Q6
-         IkeijUjxTr5D6L7X+ou+PER36QC6855SAXgbBVgF2YHxBj4nPy1enhig3TumZOt7u3
-         m/0gTnwCqkNfI3IdCltQBAtZMaRSvT+gYArJ86zqnzk70d3Z8b9M1ISQpPW89AMf9R
-         TKUbrLUY15UzLytjFaA1wB61WRe/NqUvCqPUenmKECEFwZYBE2LX3oY3W8uGrAwKDR
-         Zh6qvNuKXHAdywqDakJW44GJub8R6V/SYKvEj5BsPItkaMMRvqZK2hFaHhMeV/A/Sv
-         viNQf6yjLm6Ew==
+        b=hjhE+g88eES0HD5iZkR4/9vcHzO0vxTikZxiooNIlBcMWjCZ1aSEfLM6A3lDR1zdK
+         UG4UVVsphQBaSsbbRlv7OSOwPzBUYqYXvUUxcuZ0JRA0MiNBnhBUWg8CWUbWr+9qEA
+         j3RF14dw9TKEPXL3ruOcmgzvIjM4RTZ66+gUMVAmrsvF7eVwv/ZYCvZbceO0OXsNUk
+         IePvpXrIhNhDYJxGTFg2sAO+TxsBsx01LwXIjiqyzEgmf3m6CJPAQFmEZX1pPOGae6
+         mScQN6504ZMbTPVLVO6Mz9FXoEqvGuAOaPO7FsVw1DiZH8uaYUQ807TYxYLu5zsGEA
+         kgWHSht6i6TRg==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -40,14 +40,14 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v3 18/29] ecryptfs: implement get acl method
-Date:   Wed, 28 Sep 2022 18:08:32 +0200
-Message-Id: <20220928160843.382601-19-brauner@kernel.org>
+Subject: [PATCH v3 19/29] ecryptfs: implement set acl method
+Date:   Wed, 28 Sep 2022 18:08:33 +0200
+Message-Id: <20220928160843.382601-20-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220928160843.382601-1-brauner@kernel.org>
 References: <20220928160843.382601-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2971; i=brauner@kernel.org; h=from:subject; bh=EFipwoi0PdU1Hkt2ZRWy1tT5E3LHgN7AeZUQ7yhoBc8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSbFNb6LVwr+9eh777DY764t73vVi1fdJJbW0dwhwsrf5n3 JFfRjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImcvM7wPz3qy9uwJAedFa/OnxRe72 A68/yF55VMi7496L7lE9gaOJmRYeFargDG3t+fhbk16+zEpO9ffxIaMIF7UubvSYbMj8yjOAE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2961; i=brauner@kernel.org; h=from:subject; bh=ZJQaZ9+enkXhDWiALhTU5vozOEZKswDtKmVsLbfd05I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSbFNbuezDluW/wxfrE/SYy72UKorVYvu29FfLI/IdEWIlI acenjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInMD2H4K2tzbKrrqlJew2uBh9jfRb N/4FUvcOYxe8YrMWGClNaszYwMv1gm/d57/uTxreZX7b8tMVXqCNl78v2psz2rjdhrVCYIsQAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -92,49 +92,48 @@ Notes:
     /* v3 */
     unchanged
 
- fs/ecryptfs/inode.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/ecryptfs/inode.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 16d50dface59..740312986388 100644
+index 740312986388..c3d1ae688a19 100644
 --- a/fs/ecryptfs/inode.c
 +++ b/fs/ecryptfs/inode.c
-@@ -18,6 +18,8 @@
- #include <linux/fs_stack.h>
- #include <linux/slab.h>
- #include <linux/xattr.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
- #include <linux/fileattr.h>
- #include <asm/unaligned.h>
- #include "ecryptfs_kernel.h"
-@@ -1120,6 +1122,13 @@ static int ecryptfs_fileattr_set(struct user_namespace *mnt_userns,
- 	return rc;
+@@ -1129,6 +1129,21 @@ static struct posix_acl *ecryptfs_get_acl(struct user_namespace *mnt_userns,
+ 			   posix_acl_xattr_name(type));
  }
  
-+static struct posix_acl *ecryptfs_get_acl(struct user_namespace *mnt_userns,
-+					  struct dentry *dentry, int type)
++static int ecryptfs_set_acl(struct user_namespace *mnt_userns,
++			    struct dentry *dentry, struct posix_acl *acl,
++			    int type)
 +{
-+	return vfs_get_acl(mnt_userns, ecryptfs_dentry_to_lower(dentry),
-+			   posix_acl_xattr_name(type));
++	int rc;
++	struct dentry *lower_dentry = ecryptfs_dentry_to_lower(dentry);
++	struct inode *lower_inode = d_inode(lower_dentry);
++
++	rc = vfs_set_acl(&init_user_ns, lower_dentry,
++			 posix_acl_xattr_name(type), acl);
++	if (!rc)
++		fsstack_copy_attr_all(d_inode(dentry), lower_inode);
++	return rc;
 +}
 +
  const struct inode_operations ecryptfs_symlink_iops = {
  	.get_link = ecryptfs_get_link,
  	.permission = ecryptfs_permission,
-@@ -1143,6 +1152,7 @@ const struct inode_operations ecryptfs_dir_iops = {
- 	.listxattr = ecryptfs_listxattr,
+@@ -1153,6 +1168,7 @@ const struct inode_operations ecryptfs_dir_iops = {
  	.fileattr_get = ecryptfs_fileattr_get,
  	.fileattr_set = ecryptfs_fileattr_set,
-+	.get_acl = ecryptfs_get_acl,
+ 	.get_acl = ecryptfs_get_acl,
++	.set_acl = ecryptfs_set_acl,
  };
  
  const struct inode_operations ecryptfs_main_iops = {
-@@ -1152,6 +1162,7 @@ const struct inode_operations ecryptfs_main_iops = {
- 	.listxattr = ecryptfs_listxattr,
+@@ -1163,6 +1179,7 @@ const struct inode_operations ecryptfs_main_iops = {
  	.fileattr_get = ecryptfs_fileattr_get,
  	.fileattr_set = ecryptfs_fileattr_set,
-+	.get_acl = ecryptfs_get_acl,
+ 	.get_acl = ecryptfs_get_acl,
++	.set_acl = ecryptfs_set_acl,
  };
  
  static int ecryptfs_xattr_get(const struct xattr_handler *handler,
