@@ -2,156 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 32C3C5EDCA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 14:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CEF5EDCB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 14:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233791AbiI1M3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 08:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36734 "EHLO
+        id S233784AbiI1Mbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 08:31:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233385AbiI1M31 (ORCPT
+        with ESMTP id S233887AbiI1MbX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 08:29:27 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FC0915E4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:29:26 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id u189so12550463vsb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=GSg++amhscw5Egy/W4NgwNwOMBTHVhfEtTFCV60gt3E=;
-        b=oGml3jepKx2lcKrZfBDkK9g5tSRiR8RlM8kjZU+4Fw0o0Y3wQ/vj6UFJgFKqh6ah4X
-         VpF8x3f9ioN05yV+Lr9WljbamF2DWHEYpinvJHs5EnBv7IyoMOvrOP4nnV7m/uASh8kk
-         vSwChjKfXTErPzaQ9H5SL4snjkN7/CMuyrxZlZf8ttG4x75nY8kV3cAhCk5e1zuKHEiw
-         1X2mouQzyINpcpvzWRH7ArzAtNcuzbFayzf/XpsdHZJPp3rIFWVUKlXM8U8rt2drhGe7
-         gsKXs+O8O4YiN04AtUA0jdzCwspAybBKoVBX8iQ1COU5EAIxUzihlvVGFhxgwDbJmgMY
-         19iA==
+        Wed, 28 Sep 2022 08:31:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EA2A95AC4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664368280;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YUgn5vL7ARQHKQrvPTX+ukLORkYug6WzUmsN3XyxN9s=;
+        b=UhyWJAPpbwrb+/8CkT4jASuRJGl4WWpcU70JA7GCOlZkfaHSb3Fy2np8+MhB14Lr9gWbUP
+        ykRrtiax+3xuUcpBE2WNISGKi6Joevm1ktI95z9+/wyTlvHqhUB+l0WhXuusjSrUkHMyMS
+        Ocgi/yLQzVXtk50rf/gbS6dEnnkr5cc=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-128-PJkcbzPlOCalXegbTs_Rdw-1; Wed, 28 Sep 2022 08:31:18 -0400
+X-MC-Unique: PJkcbzPlOCalXegbTs_Rdw-1
+Received: by mail-qk1-f198.google.com with SMTP id bl17-20020a05620a1a9100b006cdf19243acso9329198qkb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:31:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=GSg++amhscw5Egy/W4NgwNwOMBTHVhfEtTFCV60gt3E=;
-        b=Tqq86x8e2zk1INJFrhD/BET23Xxm2hIELOU889XfXth02LHdkOzb4ctLqWVvoso1ek
-         FtT1Hoz1qAVqV4gHOJMCyTWxwzWwmQUhUvWXS0BYICIVd6T0XNBGz7ha8Htlmx/m+U/E
-         tKyRpFwvsBQTqaXrvMgB7Y2n5BkQHIzU+upENzqJGmudE0d0bFau6dPfJfyM4aOQbpbU
-         yp/F++Aoc5i8sHqvHSrjRQ4Qb/6aw113lWuBHnYSycjbA+NTfSNPznLAHUrtvw7etoUP
-         u1ozsF15kugeTsLo5jbvVbzJ+SvjiP4UkvpNrKbByl3NMB/J8pUALffuNsei3/wY8678
-         vk/w==
-X-Gm-Message-State: ACrzQf3Exoaw7bn0PRFgvAW0BTHLyLi4oyb30/Kf6jNIFhyc9m3GofKb
-        uhhxOEPfFOB4itPJQ+b6/70T7rBuLtyv6oRI0cR2XgvCKxY=
-X-Google-Smtp-Source: AMsMyM6FnIjH2E/UzSwIfdg49K+SXjtNeGXBuOrFYYFa5FAOIXnZsS3r+EshuB6W08I335aFnpKSMrhyTdrQ8Ij153k=
-X-Received: by 2002:a67:c18a:0:b0:398:2f16:3f94 with SMTP id
- h10-20020a67c18a000000b003982f163f94mr14585369vsj.36.1664368165617; Wed, 28
- Sep 2022 05:29:25 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=YUgn5vL7ARQHKQrvPTX+ukLORkYug6WzUmsN3XyxN9s=;
+        b=3z//Ntj4Gptx2lc6dkH5U+nfuzVox8CPcd0Na6280jk8SA+AUEjP2UHhELjL7c42W3
+         7bOTJU8I7jFuw6POGnKPskjZtPCK/OCu1DHEEGdDFkBeM9cfthpqP4UXVb0jVtLVbMOj
+         FOEm/9GKTykAdDkQ0D1AJB6RxRoO7VScq+0R+N+UYEQUmRU46Du41ncEcm5tLpQIG3SY
+         Xm/x+tPfhgEgKfMnOPJ/r6nVnN6LFd6+A2PrPNWfvTnIc3zlK5cEX5Fl/OLFJN5Yis31
+         Z1/8kSe4ozkO4LmNBiJTjC9CbA9xgu+Y0LLpql9QvfO258hztvr8UOguyX5rnd3dxO8+
+         wRTA==
+X-Gm-Message-State: ACrzQf3ja3PRPl6oRwTj9G/7bMqJG3MqsdxVzeEqC4XJfwi4LkCIC6DF
+        /QE3v+h20qC6IMlfh3Ftwgt5FWORTn7/OAuDuPFUBVNfZZS6HRRRicCezNDEtWcOaiRb3YVxbOq
+        I1qG9tgr2U4GZQWjEN42wcRsE+w==
+X-Received: by 2002:a05:6214:5e89:b0:4ad:77be:92d2 with SMTP id mm9-20020a0562145e8900b004ad77be92d2mr25511740qvb.44.1664368278193;
+        Wed, 28 Sep 2022 05:31:18 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4PbQJ+vfyVVc91q7d0EPN4uYeYNDQGfG5xsGwekNg222gOjWfUKFbh7oqTnjs/VG8qTacggA==
+X-Received: by 2002:a05:6214:5e89:b0:4ad:77be:92d2 with SMTP id mm9-20020a0562145e8900b004ad77be92d2mr25511702qvb.44.1664368277917;
+        Wed, 28 Sep 2022 05:31:17 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id a2-20020ac81082000000b0035d1f846b91sm2748482qtj.64.2022.09.28.05.31.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 05:31:16 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 08:31:13 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Martin KaFai Lau <martin.lau@linux.dev>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Alessio Balsini <balsini@google.com>,
+        David Anderson <dvander@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: Re: [PATCH 00/26] FUSE BPF: A Stacked Filesystem Extension for FUSE
+Message-ID: <YzQ+ke3JIx69Plld@bfoster>
+References: <20220926231822.994383-1-drosen@google.com>
+ <1fc38ba0-2bbe-a496-604d-7deeb4e72787@linux.dev>
 MIME-Version: 1.0
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
- <20220912125734.wpcw3udsqri4juuh@quack3> <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
- <20220914103006.daa6nkqzehxppdf5@quack3> <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
- <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
- <20220922104823.z6465rfro7ataw2i@quack3> <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
- <20220926152735.fgvx37rppdfhuokz@quack3>
-In-Reply-To: <20220926152735.fgvx37rppdfhuokz@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 28 Sep 2022 15:29:13 +0300
-Message-ID: <CAOQ4uxgU4q1Pj2-9q7DZGZiw1EPZKXbc_Cp=H_Tu5_sxD6-twA@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Plaster, Robert" <rplaster@deepspacestorage.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Fufu Fang <fangfufu2003@gmail.com>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fc38ba0-2bbe-a496-604d-7deeb4e72787@linux.dev>
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 6:27 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 22-09-22 16:03:41, Amir Goldstein wrote:
-> > On Thu, Sep 22, 2022 at 1:48 PM Jan Kara <jack@suse.cz> wrote:
-> > > On Tue 20-09-22 21:19:25, Amir Goldstein wrote:
-> > > > For the next steps of POC, I could do:
-> > > > - Report FAN_ACCESS_PERM range info to implement random read
-> > > >   patterns (e.g. unzip -l)
-> > > > - Introduce FAN_MODIFY_PERM, so file content could be downloaded
-> > > >   before modifying a read-write HSM cache
-> > > > - Demo conversion of a read-write FUSE HSM implementation
-> > > >   (e.g. https://github.com/volga629/davfs2)
-> > > > - Demo HSM with filesystem mark [*] and a hardcoded test filter
-> > > >
-> > > > [*] Note that unlike the case with recursive inotify, this POC HSM
-> > > > implementation is not racy, because of the lookup permission events.
-> > > > A filesystem mark is still needed to avoid pinning all the unpopulated
-> > > > cache tree leaf entries to inode cache, so that this HSM could work on
-> > > > a very large scale tree, the same as my original use case for implementing
-> > > > filesystem mark.
-> > >
-> > > Sounds good! Just with your concern about pinning - can't you use evictable
-> > > marks added on lookup for files / dirs you want to track? Maybe it isn't
-> > > great design for other reasons but it would save you some event
-> > > filtering...
-> > >
-> >
-> > With the current POC, there is no trigger to re-establish the evicted mark,
-> > because the parent is already populated and has no mark.
->
-> So my original thinking was that you'd place FAN_LOOKUP_PERM mark on top of
-> the directory tree and then you'd add evictable marks to all the subdirs
-> that are looked up from the FAN_LOOKUP_PERM event handler. That way I'd
-> imagine you can place evictable marks on all directories that are used in a
-> race-free manner.
->
+On Tue, Sep 27, 2022 at 11:41:50PM -0700, Martin KaFai Lau wrote:
+> On 9/26/22 4:17 PM, Daniel Rosenberg wrote:
+> > These patches extend FUSE to be able to act as a stacked filesystem. This
+> > allows pure passthrough, where the fuse file system simply reflects the lower
+> > filesystem, and also allows optional pre and post filtering in BPF and/or the
+> > userspace daemon as needed. This can dramatically reduce or even eliminate
+> > transitions to and from userspace.
+> > 
+> > Currently, we either set the backing file/bpf at mount time at the root level,
+> > or at lookup time, via an optional block added at the end of the lookup return
+> > call. The added lookup block contains an fd for the backing file/folder and bpf
+> > if necessary, or a signal to clear or inherit the parent values. We're looking
+> > into two options for extending this to mkdir/mknod/etc, as we currently only
+> > support setting the backing to a pre-existing file, although naturally you can
+> > create new ones. When we're doing a lookup for create, we could pass an
+> > fd for the parent dir and the name of the backing file we're creating. This has
+> > the benefit of avoiding an additional call to userspace, but requires hanging
+> > on to some data in a negative dentry where there is no elegant place to store it.
+> > Another option is adding the same block we added to lookup to the create type
+> > op codes. This keeps that code more uniform, but means userspace must implement
+> > that logic in more areas.
+> > 
+> > As is, the patches definitely need some work before they're ready. We still
+> > need to go through and ensure we respect changed filter values/disallow changes
+> > that don't make sense. We aren't currently calling mnt_want_write for the lower
+> > calls where appropriate, and we don't have an override_creds layer either. We
+> > also plan to add to our read/write iter filters to allow for more interesting
+> > use cases. There are also probably some node id inconsistencies. For nodes that
+> > will be completely passthrough, we give an id of 0.
+> > 
+> > For the BPF verification side, we have currently set things set up in the old
+> > style, with a new bpf program type and helper functions. From LPC, my
+> > understanding is that newer bpf additions are done in a new style, so I imagine
+> > much of that will need to be redone as well, but hopefully these patches get
+> > across what our needs there are.
+> > 
+> > For testing, we've provided the selftest code we have been using. We also have
+> > a mode to run with no userspace daemon in a pure passthrough mode that I have
+> > been running xfstests over to get some coverage on the backing operation code.
+> > I had to modify mounts/unmounts to get that running, along with some other
+> > small touch ups. The most notable failure I currently see there is in
+> > generic/126, which I suspect is likely related to override_creds.
+> > 
+> 
+> Interesting idea.
+> 
+> Some comments on review logistics:
+> - The set is too long and some of the individual patches are way too long
+> for one single patch to review.  Keep in mind that not all of us here are
+> experts in both fuse and bpf.  Making it easier to review first will help at
+> the beginning.  Some ideas:
+> 
+>   - Only implement a few ops in the initial revision. From quickly browsing
+> the set, it is implementing the 'struct file_operations
+> fuse_file_operations'? Maybe the first few revisions can start with a few of
+> the ops first.
+> 
 
-Maybe I am missing something.
-I don't see how that can scale up to provide penalty free fast path lookup
-for fully populated subtrees.
+I had a similar thought when poking through this. A related question I
+had is how much of a functional dependency does the core passthrough
+mechanism have on bpf? If bpf is optional for filtering purposes and
+isn't absolutely necessary to set up a basic form of passthrough, I
+think review would be made easier by splitting off those core bits from
+the bpf components so each part is easier to review by people who know
+them best. For example, introduce all the fuse enhancements, hooks and
+cleanups to set up a passthrough to start the series, then plumb in the
+bpf filtering magic on top. Hm?
 
-> > A hook on instantiate of inode in inode cache could fill that gap.
-> > It could still be useful to filter FAN_INSTANTIATE_PERM events in the
-> > kernel but it is not a must because instantiate is more rare than (say) lookup
-> > and then the fast lookup path (RCU walk) on populated trees suffers almost
-> > no overhead when the filesystem is watched.
-> >
-> > Please think about this and let me know if you think that this is a direction
-> > worth pursuing, now, or as a later optimization.
->
-> I think an event on instantiate seems to be depending too much on kernel
-> internals instead of obvious filesystem operations. Also it might be a bit
-> challenging during startup when you don't know what is cached and what not
-> so you cannot rely on instantiate events for placing marks. So I'd leave
-> this for future optimization.
->
+FWIW, if this is an RFC/prototype and you want more efficient review
+cycles, another idea to take that a step further could be to start with
+read-only support (or maybe even just directory walking?).
 
-Perhaps a user FAN_INSTANTIATE_PERM is too much, but I was
-trying to figure out a way to make automatic inode marks work.
-If we can define reasonable use cases for automatic inode marks that
-kernel can implement (e.g. inheriting from parent on dentry instantiate)
-then this could possibly get us something useful.
-Maybe that is what you meant with the suggestion above?
+BTW if the bpf bits are optional, how might one mount a fuse/no
+daemon/passthrough filesystem from userspace? Is that possible with this
+series as is?
 
-The other use case of automatic inode marks I was thinking about,
-which are even more relevant for $SUBJECT is this:
-When instantiating a dentry with an inode that has xattr
-"security.fanotify.mask" (a.k.a. persistent inode mark), an inode
-mark could be auto created and attached to a group with a special sb
-mark (we can limit a single special mark per sb).
-This could be implemented similar to get_acl(), where i_fsnotify_mask
-is always initialized with a special value (i.e. FS_UNINITIALIZED)
-which is set to either 0 or non-zero if "security.fanotify.mask" exists.
+Something more on the fuse side.. it looks like we introduce a pattern
+where bits of generic request completion processing can end up
+duplicated between the shortcut (i.e.  _backing()/_finalize()) handlers
+and the traditional post request code, because the shortcuts basically
+bypass the entire rest of the codepath. For example, something like
+create_new_entry() is currently reused for several inode creation
+operations. With passthrough mode, it looks like some of that code (i.e.
+vfs dentry fixups) is split off from create_new_entry() into each
+individual backing mode handler.
 
-The details of how such an API would look like are very unclear to me,
-so I will try to focus on the recursive auto inode mark idea.
+It looks like much of the lower level request processing code was
+refactored into the fuse_iqueue to support things like virtiofs. Have
+you looked into whether that abstraction can be reused or enhanced to
+support bpf filtering, direct passthrough calls, etc.? Or perhaps
+whether more of the higher level code could be refactored in a similar
+way to encourage more reuse and avoid branching off every fs operation
+into a special passthrough codepath?
 
-Thanks,
-Amir.
+Brian
+
+>   - Please make the patches that can be applied to the bpf-next tree
+> cleanly. For example, in patch 3, where is 18e2ec5bf453 coming from? I
+> cannot find it in bpf-next and linux-next tree.
+>   - Without applying it to an upstream tree cleanly, in a big set like this,
+> I have no idea when bpf_prog_run() is called in patch 24 because the diff
+> context is in fuse_bpf_cleanup and apparently it is not where the bpf prog
+> is run.
+> 
+> Some high level comments on the set:
+> - Instead of adding bpf helpers, you should consider kfunc instead. You can
+> take a look at the recent HID patchset v10 or the recent nf conntrack bpf
+> set.
+> 
+> - Instead of expressing as packet data, using the recent dynptr is a better
+> way to go for handling a mem blob.
+> 
+> - iiuc, the idea is to allow bpf prog to optionally handle the 'struct
+> file_operations' without going back to the user daemon? Have you looked at
+> struct_ops which seems to be a better fit here?  If the bpf prog does not
+> know how to handle an operation (or file?), it can call fuse_file_llseek
+> (for example) as a kfunc to handle the request.
+> 
+> - The test SEC("test_trace") seems mostly a synthetic test for checking
+> correctness.  Does it have a test that shows a more real life use case? or I
+> have missed things in patch 26?
+> 
+> - Please use the skel to load the program.  It is pretty hard to read the
+> loader in patch 26.
+> 
+> - I assume the main objective is for performance by not going back to the
+> user daemon?  Do you have performance number?
+> 
+
