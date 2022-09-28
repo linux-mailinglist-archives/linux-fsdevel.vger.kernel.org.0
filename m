@@ -2,196 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A01D5EDDCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 15:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2575EDDF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 15:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234061AbiI1Ng1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 09:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
+        id S234051AbiI1NmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 09:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233742AbiI1NgY (ORCPT
+        with ESMTP id S231567AbiI1NmI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 09:36:24 -0400
-Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B26A3D4A;
-        Wed, 28 Sep 2022 06:36:15 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3051758057F;
-        Wed, 28 Sep 2022 09:36:12 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 28 Sep 2022 09:36:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1664372172; x=1664379372; bh=tj
-        nmSL00ZZM1oFN2Ay5SF+8t5QvO8oA3qdQmqLG6FSc=; b=pyC2V+ZIEI8hVKL4jk
-        eh1aquPI6x2I81olRmeClPVF5hiKuHbjq+E3Y51i2sBCWzatKsoYOW5khczk6WTM
-        8J6YL2p0nhiHPsJmx3EYgz1OnPMvJkef/MNp0SnduwLZ1ZX6lpVzr9UkDHbY6eYW
-        SluwH3HiuqQUEGPhse5UegddHgqGjwiyQeFgJp003ukUcVs4zntu6M0FWPOP7TFA
-        TI1qrvyQWon8bG9iV39m4PEqzPilDsdhorlFNIzyBM1jcAIdglIV3t0JNzf7DuOC
-        l9MEdQpNb9xkBzQ6JqtJQX3ZDm5dmTKgJYDwUzRPqvXzX5m9Qt2azaQxldzP1pSO
-        v89g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1664372172; x=1664379372; bh=tjnmSL00ZZM1oFN2Ay5SF+8t5QvO
-        8oA3qdQmqLG6FSc=; b=I81/AahetSMdo18CBUdQQn4rwPC0r15wzFvsbpWQ8B4E
-        746jkJMhyoYQKiBRceB2Gp47egha5pvGShnDJFfhL02LgoLPWnvFMmax8G6dAG0q
-        nOowrWfTh38eT9HNrQF46lVjPH8o/pV5CGVhtozHe55WVEbm75M5iXtqRH71uNsA
-        rDVoDbE4uPb4u9TexIb2JhapAbg+MC0aMx379ZD4xrzCxncdOz2grYX4F44ffRto
-        ql24c4H3yyZ5J5r7YQfN2Ql0whcssZyXK5FiGhdcpWeXcUHZ3L6H3SEluW1n/deT
-        NnMVKToWSZCaj+GJfGmYJX0mHnMa+eWkxNShDvaneg==
-X-ME-Sender: <xms:yU00Y3kjTKFsA4mKa-lwOV4QqioQlg16k5bYKWHXGWM31PtA16U6ww>
-    <xme:yU00Y63sy_55IDIvZxOjGFUOEQrlOw3cI29BFYlHinqPpZqravTtk568kQ5hXMLF9
-    QnFQMNC631kQVFFRes>
-X-ME-Received: <xmr:yU00Y9qLU-AErVU-Lm2JAIxeEVCEXTkrIaCyGkEHL8g96v_jTXTReZEvuFElOZSloLMXBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeegkedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
-    ihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnh
-    grmhgvqeenucggtffrrghtthgvrhhnpeelgffhfeetlefhveffleevfffgtefffeelfedu
-    udfhjeduteeggfeiheefteehjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhl
-    sehshhhuthgvmhhovhdrnhgrmhgv
-X-ME-Proxy: <xmx:yU00Y_nTE9FQbvMtkDpXIYFpJprXJRI2pO6aaokPg4j6Pp6bC76pzA>
-    <xmx:yU00Y127smmXEKIn220aLfUL0MekHTvkmatnwtwo4Tx3n16KZSxStw>
-    <xmx:yU00Y-vwEXbGnyuz1YEqODYDj3tQYEnAcF4PVm9Hf1yGm0Oty962Ig>
-    <xmx:zE00Y-RwGOa2beh1OemdZjSQGikerz2RKwrSbfVuTlu93LrEu1bacg>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 Sep 2022 09:36:09 -0400 (EDT)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id C0423104667; Wed, 28 Sep 2022 16:36:05 +0300 (+03)
-Date:   Wed, 28 Sep 2022 16:36:05 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        aarcange@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20220928133605.dy2tkdcpb5pkjejj@box.shutemov.name>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
- <20220923005808.vfltoecttoatgw5o@box.shutemov.name>
- <f703e615-3b75-96a2-fb48-2fefd8a2069b@redhat.com>
- <20220926144854.dyiacztlpx4fkjs5@box.shutemov.name>
- <0a99aa24-599c-cc60-b23b-b77887af3702@redhat.com>
- <YzOF7MT15nfBX0Ma@google.com>
+        Wed, 28 Sep 2022 09:42:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204F16E2F4;
+        Wed, 28 Sep 2022 06:42:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F8F761EB1;
+        Wed, 28 Sep 2022 13:42:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB686C433D6;
+        Wed, 28 Sep 2022 13:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664372524;
+        bh=PDniZhspoAjFGFPMZfaZ8GgB4DLLy5mz44zztNU7B+8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DqtgQ/m//i1BdMXDYXkHNALzJc+Fb2CkxwupnjD5iFoPUOy+RjGzDkBw6u16woact
+         Ek+6D4V044/DHPxZTiHl8kuYrAVeeMg2TUGzyu9mlJpBrkxFJqDxhyeySNUTWPuyDE
+         hkbGAN5/XfCvtPpm39Zv+BugYwMfdEX6eE42uDuYEIIMtghXn56j8tNz+CdNoTpYGY
+         oLA0DJOske77HfN24JeefL9hG37cIs4JMzuBMxszwi1t7W9Jgu94CxlxxpRk9x88qB
+         1bv9fv5W8vrBkEn3A2+rUfg9FkuebF8rP6DNdglXtFDEV9ehvhMRQoF+tvVevKpvLP
+         8XuQDoIktoBXA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-man@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: [man-pages RFC PATCH v6] statx, inode: document the new STATX_VERSION field
+Date:   Wed, 28 Sep 2022 09:42:00 -0400
+Message-Id: <20220928134200.28741-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YzOF7MT15nfBX0Ma@google.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 11:23:24PM +0000, Sean Christopherson wrote:
-> On Mon, Sep 26, 2022, David Hildenbrand wrote:
-> > On 26.09.22 16:48, Kirill A. Shutemov wrote:
-> > > On Mon, Sep 26, 2022 at 12:35:34PM +0200, David Hildenbrand wrote:
-> > > > When using DAX, what happens with the shared <->private conversion? Which
-> > > > "type" is supposed to use dax, which not?
-> > > > 
-> > > > In other word, I'm missing too many details on the bigger picture of how
-> > > > this would work at all to see why it makes sense right now to prepare for
-> > > > that.
-> > > 
-> > > IIUC, KVM doesn't really care about pages or folios. They need PFN to
-> > > populate SEPT. Returning page/folio would make KVM do additional steps to
-> > > extract PFN and one more place to have a bug.
-> > 
-> > Fair enough. Smells KVM specific, though.
-> 
-> TL;DR: I'm good with either approach, though providing a "struct page" might avoid
->        refactoring the API in the nearish future.
-> 
-> Playing devil's advocate for a second, the counter argument is that KVM is the
-> only user for the foreseeable future.
-> 
-> That said, it might make sense to return a "struct page" from the core API and
-> force KVM to do page_to_pfn().  KVM already does that for HVA-based memory, so
-> it's not exactly new code.
+I'm proposing to expose the inode change attribute via statx [1]. Document
+what this value means and what an observer can infer from it changing.
 
-Core MM tries to move away from struct page in favour of struct folio. We
-can make interface return folio.
+NB: this will probably have conflicts with the STATX_DIOALIGN doc
+patches, but we should be able to resolve those before merging anything.
 
-But it would require more work on KVM side.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-folio_pfn(folio) + offset % folio_nr_pages(folio) would give you PFN for
-base-pagesize PFN for given offset. I guess it is not too hard.
+[1]: https://lore.kernel.org/linux-nfs/20220826214703.134870-1-jlayton@kernel.org/T/#t
+---
+ man2/statx.2 | 13 +++++++++++++
+ man7/inode.7 | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-It also gives KVM capability to populate multiple EPT entries for non-zero
-order folio and save few cycles.
+v6: incorporate Neil's suggestions
+    clarify how well-behaved filesystems should order things
 
-Does it work for you?
-
-> More importantly, KVM may actually need/want the "struct page" in the not-too-distant
-> future to support mapping non-refcounted "struct page" memory into the guest.  The
-> ChromeOS folks have a use case involving virtio-gpu blobs where KVM can get handed a
-> "struct page" that _isn't_ refcounted[*].  Once the lack of mmu_notifier integration
-> is fixed, the remaining issue is that KVM doesn't currently have a way to determine
-> whether or not it holds a reference to the page.  Instead, KVM assumes that if the
-> page is "normal", it's refcounted, e.g. see kvm_release_pfn_clean().
-> 
-> KVM's current workaround for this is to refuse to map these pages into the guest,
-> i.e. KVM simply forces its assumption that normal pages are refcounted to be true.
-> To remove that workaround, the likely solution will be to pass around a tuple of
-> page+pfn, where "page" is non-NULL if the pfn is a refcounted "struct page".
-> 
-> At that point, getting handed a "struct page" from the core API would be a good
-> thing as KVM wouldn't need to probe the PFN to determine whether or not it's a
-> refcounted page.
-> 
-> Note, I still want the order to be provided by the API so that KVM doesn't need
-> to run through a bunch of helpers to try and figure out the allowed mapping size.
-> 
-> [*] https://lore.kernel.org/all/CAD=HUj736L5oxkzeL2JoPV8g1S6Rugy_TquW=PRt73YmFzP6Jw@mail.gmail.com
-
-These non-refcounted "struct page" confuses me.
-
-IIUC (probably not), the idea is to share a buffer between host and guest
-and avoid double buffering in page cache on the guest ("guest shadow
-buffer" means page cache, right?). Don't we already have DAX interfaces to
-bypass guest page cache?
-
-And do you think it would need to be handled on inaccessible API lavel or
-is it KVM-only thing that uses inaccessible API for some use-cases?
-
+diff --git a/man2/statx.2 b/man2/statx.2
+index 0d1b4591f74c..ee7005334a2f 100644
+--- a/man2/statx.2
++++ b/man2/statx.2
+@@ -62,6 +62,7 @@ struct statx {
+     __u32 stx_dev_major;   /* Major ID */
+     __u32 stx_dev_minor;   /* Minor ID */
+     __u64 stx_mnt_id;      /* Mount ID */
++    __u64 stx_version;     /* Inode change attribute */
+ };
+ .EE
+ .in
+@@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
+ STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+ 	It is deprecated and should not be used.
+ STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
++STATX_VERSION	Want stx_version (DRAFT)
+ .TE
+ .in
+ .PP
+@@ -407,10 +409,16 @@ This is the same number reported by
+ .BR name_to_handle_at (2)
+ and corresponds to the number in the first field in one of the records in
+ .IR /proc/self/mountinfo .
++.TP
++.I stx_version
++The inode version, also known as the inode change attribute. See
++.BR inode (7)
++for details.
+ .PP
+ For further information on the above fields, see
+ .BR inode (7).
+ .\"
++.TP
+ .SS File attributes
+ The
+ .I stx_attributes
+@@ -489,6 +497,11 @@ without an explicit
+ See
+ .BR mmap (2)
+ for more information.
++.TP
++.BR STATX_ATTR_VERSION_MONOTONIC " (since Linux 6.?)"
++The stx_version value monotonically increases over time and will never appear
++to go backward, even in the event of a crash. This can allow an application to
++make a better determination about ordering when viewing different versions.
+ .SH RETURN VALUE
+ On success, zero is returned.
+ On error, \-1 is returned, and
+diff --git a/man7/inode.7 b/man7/inode.7
+index 9b255a890720..e8adb63b1f6a 100644
+--- a/man7/inode.7
++++ b/man7/inode.7
+@@ -184,6 +184,12 @@ Last status change timestamp (ctime)
+ This is the file's last status change timestamp.
+ It is changed by writing or by setting inode information
+ (i.e., owner, group, link count, mode, etc.).
++.TP
++Inode version (version)
++(not returned in the \fIstat\fP structure); \fIstatx.stx_version\fP
++.IP
++This is the inode change counter. See the discussion of
++\fBthe inode version counter\fP, below.
+ .PP
+ The timestamp fields report time measured with a zero point at the
+ .IR Epoch ,
+@@ -424,6 +430,36 @@ on a directory means that a file
+ in that directory can be renamed or deleted only by the owner
+ of the file, by the owner of the directory, and by a privileged
+ process.
++.SS The inode version counter
++.PP
++The \fIstatx.stx_version\fP field is the inode change counter. Any operation
++that could result in a change to \fIstatx.stx_ctime\fP must result in an
++increase to this value. Soon after a change has been made, an stx_version value
++should appear to be larger than previous readings. This is the case even
++when a ctime change is not evident due to coarse timestamp granularity.
++.PP
++An observer cannot infer anything from amount of increase about the
++nature or magnitude of the change. In fact, a single increment can reflect
++multiple discrete changes if the value was not checked while those changes
++were being processed.
++.PP
++Changes to stx_version are not necessarily atomic with the change itself, but
++well-behaved filesystems should increment stx_version after a change has been
++made visible to observers rather than before. This is especially important for
++read-caching algorithms which could be fooled into associating a newer
++stx_version with an older version of data. Note that this does leave a window
++of time where a change may be visible, but the old stx_version is still being
++reported.
++.PP
++In the event of a system crash, this value can appear to go backward if it was
++queried before ever being written to the backing store. Applications that
++persist stx_version values across a reboot should take care to mitigate this.
++If the filesystem reports \fISTATX_ATTR_VERSION_MONOTONIC\fP in
++\fIstatx.stx_attributes\fP, then it is not subject to this problem.
++.PP
++The stx_version is a Linux extension and is not supported by all filesystems.
++The application must verify that the \fISTATX_VERSION\fP bit is set in the
++returned \fIstatx.stx_mask\fP before relying on this field.
+ .SH STANDARDS
+ If you need to obtain the definition of the
+ .I blkcnt_t
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.37.3
+
