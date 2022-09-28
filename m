@@ -2,174 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5EC5EDDB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 15:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A01D5EDDCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 15:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233686AbiI1Nbs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 09:31:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
+        id S234061AbiI1Ng1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 09:36:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233658AbiI1Nbr (ORCPT
+        with ESMTP id S233742AbiI1NgY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 09:31:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B2CA2233;
-        Wed, 28 Sep 2022 06:31:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 869E761EAB;
-        Wed, 28 Sep 2022 13:31:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA1CC433D6;
-        Wed, 28 Sep 2022 13:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664371903;
-        bh=fv8K7xC6bKS8EccwTZv0pR5iY+09mG3RZycCPUFUFGc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OekWThH4kvbq6ymsyKm2fXQ5hFgBLaGRER/NTKeUNH/5h2nIhKwRs5NpETvolN5DX
-         BZcM1Wk/9uN5n0Jv5JPB95cKxV+0ePMCFQBJXXzn17zoBVToyt+KdBxO8tX2cR75aH
-         8j4ctmn6lN3RSEWbEmK/ykQyTy+3eSE7doYFs7to+sDFjc1fUSsOcEiKGOBPhPQyq4
-         cfGr1LPtu4gYhFMn3XAVcYpDPE5Tyc80fLMQl1u57KcNz2LsazOXy6IvRGtuMMBl/H
-         cL1SfnkkAJIE0YAA7LuJplQ9d5mCirSS9XF9BXVkGCznN7zPo30ZPeGw29aPHoVQiH
-         Y8XNM4vv+Ou3g==
-Date:   Wed, 28 Sep 2022 15:31:39 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 18/30] evm: simplify evm_xattr_acl_change()
-Message-ID: <20220928133139.ectxtqgitfjmioef@wittgenstein>
-References: <20220926140827.142806-1-brauner@kernel.org>
- <20220926140827.142806-19-brauner@kernel.org>
- <CAHC9VhTx-Pkh0E3Awr=BR-Zh31gmoP3d1MKHf-UPVibfV3VxKQ@mail.gmail.com>
+        Wed, 28 Sep 2022 09:36:24 -0400
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B26A3D4A;
+        Wed, 28 Sep 2022 06:36:15 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3051758057F;
+        Wed, 28 Sep 2022 09:36:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 28 Sep 2022 09:36:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1664372172; x=1664379372; bh=tj
+        nmSL00ZZM1oFN2Ay5SF+8t5QvO8oA3qdQmqLG6FSc=; b=pyC2V+ZIEI8hVKL4jk
+        eh1aquPI6x2I81olRmeClPVF5hiKuHbjq+E3Y51i2sBCWzatKsoYOW5khczk6WTM
+        8J6YL2p0nhiHPsJmx3EYgz1OnPMvJkef/MNp0SnduwLZ1ZX6lpVzr9UkDHbY6eYW
+        SluwH3HiuqQUEGPhse5UegddHgqGjwiyQeFgJp003ukUcVs4zntu6M0FWPOP7TFA
+        TI1qrvyQWon8bG9iV39m4PEqzPilDsdhorlFNIzyBM1jcAIdglIV3t0JNzf7DuOC
+        l9MEdQpNb9xkBzQ6JqtJQX3ZDm5dmTKgJYDwUzRPqvXzX5m9Qt2azaQxldzP1pSO
+        v89g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1664372172; x=1664379372; bh=tjnmSL00ZZM1oFN2Ay5SF+8t5QvO
+        8oA3qdQmqLG6FSc=; b=I81/AahetSMdo18CBUdQQn4rwPC0r15wzFvsbpWQ8B4E
+        746jkJMhyoYQKiBRceB2Gp47egha5pvGShnDJFfhL02LgoLPWnvFMmax8G6dAG0q
+        nOowrWfTh38eT9HNrQF46lVjPH8o/pV5CGVhtozHe55WVEbm75M5iXtqRH71uNsA
+        rDVoDbE4uPb4u9TexIb2JhapAbg+MC0aMx379ZD4xrzCxncdOz2grYX4F44ffRto
+        ql24c4H3yyZ5J5r7YQfN2Ql0whcssZyXK5FiGhdcpWeXcUHZ3L6H3SEluW1n/deT
+        NnMVKToWSZCaj+GJfGmYJX0mHnMa+eWkxNShDvaneg==
+X-ME-Sender: <xms:yU00Y3kjTKFsA4mKa-lwOV4QqioQlg16k5bYKWHXGWM31PtA16U6ww>
+    <xme:yU00Y63sy_55IDIvZxOjGFUOEQrlOw3cI29BFYlHinqPpZqravTtk568kQ5hXMLF9
+    QnFQMNC631kQVFFRes>
+X-ME-Received: <xmr:yU00Y9qLU-AErVU-Lm2JAIxeEVCEXTkrIaCyGkEHL8g96v_jTXTReZEvuFElOZSloLMXBw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeegkedgieekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
+    ihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnh
+    grmhgvqeenucggtffrrghtthgvrhhnpeelgffhfeetlefhveffleevfffgtefffeelfedu
+    udfhjeduteeggfeiheefteehjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhl
+    sehshhhuthgvmhhovhdrnhgrmhgv
+X-ME-Proxy: <xmx:yU00Y_nTE9FQbvMtkDpXIYFpJprXJRI2pO6aaokPg4j6Pp6bC76pzA>
+    <xmx:yU00Y127smmXEKIn220aLfUL0MekHTvkmatnwtwo4Tx3n16KZSxStw>
+    <xmx:yU00Y-vwEXbGnyuz1YEqODYDj3tQYEnAcF4PVm9Hf1yGm0Oty962Ig>
+    <xmx:zE00Y-RwGOa2beh1OemdZjSQGikerz2RKwrSbfVuTlu93LrEu1bacg>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 28 Sep 2022 09:36:09 -0400 (EDT)
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id C0423104667; Wed, 28 Sep 2022 16:36:05 +0300 (+03)
+Date:   Wed, 28 Sep 2022 16:36:05 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        aarcange@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+Message-ID: <20220928133605.dy2tkdcpb5pkjejj@box.shutemov.name>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+ <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
+ <20220923005808.vfltoecttoatgw5o@box.shutemov.name>
+ <f703e615-3b75-96a2-fb48-2fefd8a2069b@redhat.com>
+ <20220926144854.dyiacztlpx4fkjs5@box.shutemov.name>
+ <0a99aa24-599c-cc60-b23b-b77887af3702@redhat.com>
+ <YzOF7MT15nfBX0Ma@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTx-Pkh0E3Awr=BR-Zh31gmoP3d1MKHf-UPVibfV3VxKQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YzOF7MT15nfBX0Ma@google.com>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 06:56:44PM -0400, Paul Moore wrote:
-> On Mon, Sep 26, 2022 at 11:24 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > The posix acl api provides a dedicated security and integrity hook for
-> > setting posix acls. This means that
-> >
-> > evm_protect_xattr()
-> > -> evm_xattr_change()
-> >    -> evm_xattr_acl_change()
-> >
-> > is now only hit during vfs_remove_acl() at which point we are guaranteed
-> > that xattr_value and xattr_value_len are NULL and 0. In this case evm
-> > always used to return 1. Simplify this function to do just that.
-> >
-> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > ---
-> >
-> > Notes:
-> >     /* v2 */
-> >     unchanged
-> >
-> >  security/integrity/evm/evm_main.c | 62 +++++++------------------------
-> >  1 file changed, 14 insertions(+), 48 deletions(-)
-> >
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > index 15aa5995fff4..1fbe1b8d0364 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -436,62 +436,29 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
-> >
-> >  /*
-> >   * evm_xattr_acl_change - check if passed ACL changes the inode mode
-> > - * @mnt_userns: user namespace of the idmapped mount
-> > - * @dentry: pointer to the affected dentry
-> >   * @xattr_name: requested xattr
-> >   * @xattr_value: requested xattr value
-> >   * @xattr_value_len: requested xattr value length
-> >   *
-> > - * Check if passed ACL changes the inode mode, which is protected by EVM.
-> > + * This is only hit during xattr removal at which point we always return 1.
-> > + * Splat a warning in case someone managed to pass data to this function. That
-> > + * should never happen.
-> >   *
-> >   * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
-> >   */
-> > -static int evm_xattr_acl_change(struct user_namespace *mnt_userns,
-> > -                               struct dentry *dentry, const char *xattr_name,
-> > -                               const void *xattr_value, size_t xattr_value_len)
-> > +static int evm_xattr_acl_change(const void *xattr_value, size_t xattr_value_len)
-> >  {
-> > -#ifdef CONFIG_FS_POSIX_ACL
-> > -       umode_t mode;
-> > -       struct posix_acl *acl = NULL, *acl_res;
-> > -       struct inode *inode = d_backing_inode(dentry);
-> > -       int rc;
-> > -
-> > -       /*
-> > -        * An earlier comment here mentioned that the idmappings for
-> > -        * ACL_{GROUP,USER} don't matter since EVM is only interested in the
-> > -        * mode stored as part of POSIX ACLs. Nonetheless, if it must translate
-> > -        * from the uapi POSIX ACL representation to the VFS internal POSIX ACL
-> > -        * representation it should do so correctly. There's no guarantee that
-> > -        * we won't change POSIX ACLs in a way that ACL_{GROUP,USER} matters
-> > -        * for the mode at some point and it's difficult to keep track of all
-> > -        * the LSM and integrity modules and what they do to POSIX ACLs.
-> > -        *
-> > -        * Frankly, EVM shouldn't try to interpret the uapi struct for POSIX
-> > -        * ACLs it received. It requires knowledge that only the VFS is
-> > -        * guaranteed to have.
-> > -        */
-> > -       acl = vfs_set_acl_prepare(mnt_userns, i_user_ns(inode),
-> > -                                 xattr_value, xattr_value_len);
-> > -       if (IS_ERR_OR_NULL(acl))
-> > -               return 1;
-> > -
-> > -       acl_res = acl;
-> > -       /*
-> > -        * Passing mnt_userns is necessary to correctly determine the GID in
-> > -        * an idmapped mount, as the GID is used to clear the setgid bit in
-> > -        * the inode mode.
-> > -        */
-> > -       rc = posix_acl_update_mode(mnt_userns, inode, &mode, &acl_res);
-> > -
-> > -       posix_acl_release(acl);
-> > -
-> > -       if (rc)
-> > -               return 1;
-> > +       int rc = 0;
-> >
-> > -       if (inode->i_mode != mode)
-> > -               return 1;
-> > +#ifdef CONFIG_FS_POSIX_ACL
-> > +       WARN_ONCE(xattr_value != NULL,
-> > +                 "Passing xattr value for POSIX ACLs not supported\n");
-> > +       WARN_ONCE(xattr_value_len != 0,
-> > +                 "Passing non-zero length for POSIX ACLs not supported\n");
-> > +       rc = 1;
-> >  #endif
-> > -       return 0;
-> > +
-> > +       return rc;
-> >  }
+On Tue, Sep 27, 2022 at 11:23:24PM +0000, Sean Christopherson wrote:
+> On Mon, Sep 26, 2022, David Hildenbrand wrote:
+> > On 26.09.22 16:48, Kirill A. Shutemov wrote:
+> > > On Mon, Sep 26, 2022 at 12:35:34PM +0200, David Hildenbrand wrote:
+> > > > When using DAX, what happens with the shared <->private conversion? Which
+> > > > "type" is supposed to use dax, which not?
+> > > > 
+> > > > In other word, I'm missing too many details on the bigger picture of how
+> > > > this would work at all to see why it makes sense right now to prepare for
+> > > > that.
+> > > 
+> > > IIUC, KVM doesn't really care about pages or folios. They need PFN to
+> > > populate SEPT. Returning page/folio would make KVM do additional steps to
+> > > extract PFN and one more place to have a bug.
+> > 
+> > Fair enough. Smells KVM specific, though.
 > 
-> This is another case where I'll leave the final say up to Mimi, but
-> why not just get rid of evm_xattr_acl_change() entirely?  Unless I'm
-> missing something, it's only reason for existing now is to check that
-> it is passed the proper (empty) parameters which seems pointless ...
-> no?
+> TL;DR: I'm good with either approach, though providing a "struct page" might avoid
+>        refactoring the API in the nearish future.
+> 
+> Playing devil's advocate for a second, the counter argument is that KVM is the
+> only user for the foreseeable future.
+> 
+> That said, it might make sense to return a "struct page" from the core API and
+> force KVM to do page_to_pfn().  KVM already does that for HVA-based memory, so
+> it's not exactly new code.
 
-Yeah, I think we can remove it. evm_inode_remove_acl() is just
-evm_inode_set_acl(NULL, 0) so if we add evm_inode_remove_acl() as a
-wrapper around it instead of simply abusing the existing
-evm_inode_removexattr() we can delete all that code indeed as it won't
-be reachable from generic xattr code anymore.
+Core MM tries to move away from struct page in favour of struct folio. We
+can make interface return folio.
+
+But it would require more work on KVM side.
+
+folio_pfn(folio) + offset % folio_nr_pages(folio) would give you PFN for
+base-pagesize PFN for given offset. I guess it is not too hard.
+
+It also gives KVM capability to populate multiple EPT entries for non-zero
+order folio and save few cycles.
+
+Does it work for you?
+
+> More importantly, KVM may actually need/want the "struct page" in the not-too-distant
+> future to support mapping non-refcounted "struct page" memory into the guest.  The
+> ChromeOS folks have a use case involving virtio-gpu blobs where KVM can get handed a
+> "struct page" that _isn't_ refcounted[*].  Once the lack of mmu_notifier integration
+> is fixed, the remaining issue is that KVM doesn't currently have a way to determine
+> whether or not it holds a reference to the page.  Instead, KVM assumes that if the
+> page is "normal", it's refcounted, e.g. see kvm_release_pfn_clean().
+> 
+> KVM's current workaround for this is to refuse to map these pages into the guest,
+> i.e. KVM simply forces its assumption that normal pages are refcounted to be true.
+> To remove that workaround, the likely solution will be to pass around a tuple of
+> page+pfn, where "page" is non-NULL if the pfn is a refcounted "struct page".
+> 
+> At that point, getting handed a "struct page" from the core API would be a good
+> thing as KVM wouldn't need to probe the PFN to determine whether or not it's a
+> refcounted page.
+> 
+> Note, I still want the order to be provided by the API so that KVM doesn't need
+> to run through a bunch of helpers to try and figure out the allowed mapping size.
+> 
+> [*] https://lore.kernel.org/all/CAD=HUj736L5oxkzeL2JoPV8g1S6Rugy_TquW=PRt73YmFzP6Jw@mail.gmail.com
+
+These non-refcounted "struct page" confuses me.
+
+IIUC (probably not), the idea is to share a buffer between host and guest
+and avoid double buffering in page cache on the guest ("guest shadow
+buffer" means page cache, right?). Don't we already have DAX interfaces to
+bypass guest page cache?
+
+And do you think it would need to be handled on inaccessible API lavel or
+is it KVM-only thing that uses inaccessible API for some use-cases?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
