@@ -2,76 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 752B15EDC13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 13:57:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8055EDC6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 14:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233645AbiI1L5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 07:57:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
+        id S233332AbiI1MUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 08:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233604AbiI1L5e (ORCPT
+        with ESMTP id S233467AbiI1MUJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 07:57:34 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB2F647D2;
-        Wed, 28 Sep 2022 04:57:33 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id a80so12326705pfa.4;
-        Wed, 28 Sep 2022 04:57:33 -0700 (PDT)
+        Wed, 28 Sep 2022 08:20:09 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8B97F089
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:20:08 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id a29so12380279pfk.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 05:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date;
-        bh=kTt78o8sw7DrI9PLxyN0n+3tUBa/gb1NqpPxWUB4KCg=;
-        b=KLxgcyg2qJUDAGD1546ocHb8zD2jWooEsH9eajCy1V5enFhJ0vDZDVHNomuFEj6HWh
-         IKIa43x1gFDU4UnbGndt1qlNHG5Om3aGTlAlbUtBWWMSukv2G3FCwzU+3uiX1S4Iv1Zi
-         cGyPGpGG7E/Uwvsua9q2jNYlymXI1NC7Rt66i+sODKVtVwiRBpYAIpALaUvGPClPvtqz
-         8bGNEV+YKROfTMty3Mpm4kZjr65dq4/Ufhu55wKYYBbM1y7sJKTEqAnYW8xkJcG/Kv4e
-         34O+WOA1GovKCD2U2VCu9l5eeH53JHhtp2xEnrvhD/S/5LQHOBgnpugNVMaCiZJ6uN0A
-         4DGw==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=XJFmD8H0AdxkjqNWMmBcMwiyS5s3pK6IsOOp8rLRxV8=;
+        b=wWO87O3TOPTuGNrrk3cPfNBWDTedWB7HFdmHbB03wkdZDCvh89oRLv1wJmwTpnTZD2
+         l0PB1bKgBtJ9ijeR0gL+9tZUayJ0OKHfxU8aUfh+cPftUHb5nZnz6ySPAA22Io2X4BIY
+         p1fjsn0H7Tub8MkNupbHF5WBARjlfMqewgUaJdln0ew2sy4Kgx2ej6hUBAGfT+XPlBDZ
+         eyQyMHV6WG+hjPN5muoIqYYwPpa51StJPzdmbw55UzKSpGUeIKoN0uO5x/AJDwA71veN
+         rf9zQ/hmVSjjNWeqOYpStkmJq7wMyeO/eZcGT99niB1XhX6xAZhZPKWfluA0kSn7e/cG
+         eImg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=kTt78o8sw7DrI9PLxyN0n+3tUBa/gb1NqpPxWUB4KCg=;
-        b=I0jC40UTEJodKbWplwr+dgsphetAcb3v7SRR7aqZSdStE5xdQO32O5a9MC1k3/irle
-         15jWV9VsC7aUAMWq67fqwPJ6yo1d/uNyO8LROJ/jFgwLFhtnpDYZ/VT+wZvsi/W7oqcW
-         Of3ZrwIZlKE4fVt5uxihdVzL5xY22qRWxdffCtV9SqpF5yDs18hXfHGUTDU9I1NbsoiF
-         2jN56ZGITLyftgtNQta2Zy19VhtO5l+QjETm6rPtWwhxkSPTpBeJIgiWQuKmbzs8+06e
-         aqaaJ5U2XN29v6BbwDfiTw4rRcMO1/xXPjDaxFKA0xF50YACinBWU/bNpVTSm9Xr0gi6
-         oBnA==
-X-Gm-Message-State: ACrzQf1XTxWUGX5a1DnQ+hCEwNm8WoCppTm7w9PGJEthkqzKiFa7g1GU
-        8X6Y33xPQ5t9TWSjFdAxUaoKloC5jtIbvl/hHkU=
-X-Google-Smtp-Source: AMsMyM4vgLDLNPomf1ilGGAQV/z0snFyjMbp1+L4a1xwnRIAKJuyvJL77nq2QWriD0JZ3CnNSzaD7wRe+e8Jm5At4tc=
-X-Received: by 2002:a05:6a00:3492:b0:540:b30d:8396 with SMTP id
- cp18-20020a056a00349200b00540b30d8396mr34458408pfb.81.1664366252575; Wed, 28
- Sep 2022 04:57:32 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=XJFmD8H0AdxkjqNWMmBcMwiyS5s3pK6IsOOp8rLRxV8=;
+        b=SjlhL25PrIig957DzdF6o2XhOC7Y3Ln/aKh/QhqR7cNqvyWT/WJ1tMJ+H0kkkleq/i
+         mHpBWAliG2v7XdLRplgcXnudhQWkxHdZpwqJh5jZYMJTfRYXL0wIprMzxrZH9NUos1ms
+         tOCXt7ErQEdJ2+4mPhjvg9G7MdUQnhm6Icth3637N3lbE+H/Yt/wpntedRM5zNn1RaCX
+         VBGbxawQT3/7hgPqlzcqgfchxKhzxq6qkYYHUUVvDjucXoQUAbOxqkBylJD5jg3SFySB
+         o3Mhe9ux9flOZJ/E9aUHR037lU6vw1CfxywN45W8t3JGyg42parskz0Du9HT8Jn6TuKL
+         vs3A==
+X-Gm-Message-State: ACrzQf2Hfkj+xOKrBDj+2WSFkSN7IJ+MpSypc7eDVxpgIBQEQjZYe/XS
+        p3B0czT7IBp6q16H0fr+dyNlMth0v9dDqA==
+X-Google-Smtp-Source: AMsMyM5JopGIGKQV+Dwdp5lMP0rpvaD0WoueBqZuh7pYlTz0s68GTj00J9wCuw9rNIAD4e1EiXmBng==
+X-Received: by 2002:a63:510a:0:b0:43c:4558:b47e with SMTP id f10-20020a63510a000000b0043c4558b47emr24494847pgb.464.1664367607670;
+        Wed, 28 Sep 2022 05:20:07 -0700 (PDT)
+Received: from localhost.localdomain ([61.120.150.75])
+        by smtp.gmail.com with ESMTPSA id ij23-20020a170902ab5700b0016f196209c9sm3550235plb.123.2022.09.28.05.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 05:20:07 -0700 (PDT)
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Zhang Tianci <zhangtianci.1997@bytedance.com>
+Subject: [PATCH] fuse: always revalidate rename target dentry
+Date:   Wed, 28 Sep 2022 20:19:34 +0800
+Message-Id: <20220928121934.3564-1-zhangjiachen.jaycee@bytedance.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-28-ojeda@kernel.org>
- <20220927141137.iovhhjufqdqcs6qn@gpm.stappers.nl> <202209270818.5BA5AA62@keescook>
- <YzMX91Kq6FzOL9g/@kroah.com> <CANiq72kyW-8Gzeex4UCMqQPCrYyPQni=8ZrRO1dQsUwDmAPedw@mail.gmail.com>
- <202209271710.6DD4B44C@keescook>
-In-Reply-To: <202209271710.6DD4B44C@keescook>
-From:   Wedson Almeida Filho <wedsonaf@gmail.com>
-Date:   Wed, 28 Sep 2022 12:57:21 +0100
-Message-ID: <CANeycqo3O3yh2ms6vpHkzBLtT7QuCYWeweLq_z9SVygsot43YA@mail.gmail.com>
-Subject: Re: [PATCH v10 27/27] MAINTAINERS: Rust
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Geert Stappers <stappers@stappers.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Maciej Falkowski <maciej.falkowski9@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,46 +68,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 28 Sept 2022 at 01:11, Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Sep 27, 2022 at 05:53:12PM +0200, Miguel Ojeda wrote:
-> > On Tue, Sep 27, 2022 at 5:34 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > How about just fixing up the emails in these patches, which will keep=
- us
-> > > from having bouncing ones for those of us who do not use the .mailmap
-> > > file.
-> >
-> > Sorry about that...
-> >
-> > One question: if somebody wants to keep the Signed-off-bys and/or Git
-> > authorship information using the old email for the patches (except the
-> > `MAINTAINERS` entry), is that OK? (e.g. maybe because they did most of
-> > the work in their previous company).
->
-> IMO, the S-o-b's should stand since they're historical, but fixing
-> MAINTAINERS to be up-to-date makes sense.
+The previous commit df8629af2934 ("fuse: always revalidate if exclusive
+create") ensures that the dentries are revalidated on O_EXCL creates. This
+commit complements it by also performing revalidation for rename target
+dentries. Otherwise, a rename target file that only exists in kernel dentry
+cache but not in the filesystem may result in an EEXIST.
 
-Our intent wasn't to have a known-invalid email in MAINTAINERS, it was
-just my mistake: after leaving Google I updated my email in a lot of
-places but missed this one. Apologies for that.
+Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Signed-off-by: Zhang Tianci <zhangtianci.1997@bytedance.com>
+---
+ fs/fuse/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The patch below fixes this:
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index b585b04e815e..a453fc57ce4f 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -214,7 +214,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ 	if (inode && fuse_is_bad(inode))
+ 		goto invalid;
+ 	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+-		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL))) {
++		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
+ 		struct fuse_entry_out outarg;
+ 		FUSE_ARGS(args);
+ 		struct fuse_forget_link *forget;
+-- 
+2.20.1
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4e31512bab8..e082270dd285 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17913,7 +17913,7 @@ F:      tools/verification/
- RUST
- M:     Miguel Ojeda <ojeda@kernel.org>
- M:     Alex Gaynor <alex.gaynor@gmail.com>
--M:     Wedson Almeida Filho <wedsonaf@google.com>
-+M:     Wedson Almeida Filho <wedsonaf@gmail.com>
- R:     Boqun Feng <boqun.feng@gmail.com>
- R:     Gary Guo <gary@garyguo.net>
- R:     Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
-
-Thanks,
--Wedson
