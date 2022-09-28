@@ -2,108 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 984F55ED9E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 12:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C505EDB91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 13:17:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233039AbiI1KKu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 06:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
+        id S233496AbiI1LQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 07:16:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbiI1KKs (ORCPT
+        with ESMTP id S233468AbiI1LQw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 06:10:48 -0400
-Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FEFCDE0ED;
-        Wed, 28 Sep 2022 03:10:45 -0700 (PDT)
-Received: from theinternet.molgen.mpg.de (theinternet.molgen.mpg.de [141.14.31.7])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: buczek)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 6297461EA1929;
-        Wed, 28 Sep 2022 12:10:43 +0200 (CEST)
-Subject: Re: ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        it+linux@molgen.mpg.de,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <4e83fb26-4d4a-d482-640c-8104973b7ebf@molgen.mpg.de>
- <20220531103834.vhscyk3yzsocorco@quack3.lan>
- <3bfd0ad9-d378-9631-310f-0a1a80d8e482@molgen.mpg.de>
- <YpY2o/GG8HWJHTdo@mit.edu>
-From:   Donald Buczek <buczek@molgen.mpg.de>
-Message-ID: <302f2af1-eee8-95aa-91f5-55fe5cf8727f@molgen.mpg.de>
-Date:   Wed, 28 Sep 2022 12:10:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Wed, 28 Sep 2022 07:16:52 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C688A2604;
+        Wed, 28 Sep 2022 04:16:44 -0700 (PDT)
+Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 28SBG5TC026667;
+        Wed, 28 Sep 2022 20:16:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
+ Wed, 28 Sep 2022 20:16:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 28SBG5DU026662
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 28 Sep 2022 20:16:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <e9d6a8fb-e3bb-19ea-8904-cf21bdc239d7@I-love.SAKURA.ne.jp>
+Date:   Wed, 28 Sep 2022 20:16:04 +0900
 MIME-Version: 1.0
-In-Reply-To: <YpY2o/GG8HWJHTdo@mit.edu>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v2] block: add filemap_invalidate_lock_killable()
 Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        linux-block@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        syzbot+39b75c02b8be0a061bfc@syzkaller.appspotmail.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <ff8f59e5-7699-0ccd-4da3-a34aa934a16b@I-love.SAKURA.ne.jp>
+ <Ylzz0bbN1y3OFABI@infradead.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <Ylzz0bbN1y3OFABI@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/31/22 5:39 PM, Theodore Ts'o wrote:
-> Hmmm..... I think this patch should fix your issues.
-
-Thanks a lot. Unfortunately, it didn't, I still occasionally get
-
-    [368259.560885] EXT4-fs (dm-0): ext4_writepages: jbd2_start: 344 pages, ino 279244; err -5
-
-
-D.
-
-
+On 2022/04/18 14:14, Christoph Hellwig wrote:
+> I'm starting to sound like a broken record as I'm stating it the third
+> time now, but: 
 > 
-> If the journal has been aborted (which happens as part of the
-> shutdown, we will never write out the commit block --- so it should be
-> fine to skip the writeback of any dirty inodes in data=ordered mode.
+> no, this does not in any way fix the problem of holding the invalidate
+> lock over long running I/O.  It just does ease the symptoms in the least
+> important but apparently visible to you caller.
 > 
-> BTW, if you know that the file system is going to get nuked in this
-> way all the time, so you never care about file system after it is shut
-> down, you could mount the file system with the mount option
-> data=writeback.
-> 
->        	      	      	    		- Ted
-> 
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 8ff4c6545a49..2e18211121f6 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -542,7 +542,10 @@ static int ext4_journalled_submit_inode_data_buffers(struct jbd2_inode *jinode)
->  static int ext4_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
->  {
->  	int ret;
-> +	journal_t *journal = EXT4_SB(jinode->i_vfs_inode->i_sb)->s_journal;
->  
-> +	if (!journal || is_journal_aborted(journal))
-> +		return 0;
->  	if (ext4_should_journal_data(jinode->i_vfs_inode))
->  		ret = ext4_journalled_submit_inode_data_buffers(jinode);
->  	else
-> @@ -554,7 +557,10 @@ static int ext4_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
->  static int ext4_journal_finish_inode_data_buffers(struct jbd2_inode *jinode)
->  {
->  	int ret = 0;
-> +	journal_t *journal = EXT4_SB(jinode->i_vfs_inode->i_sb)->s_journal;
->  
-> +	if (!journal || is_journal_aborted(journal))
-> +		return 0;
->  	if (!ext4_should_journal_data(jinode->i_vfs_inode))
->  		ret = jbd2_journal_finish_inode_data_buffers(jinode);
-> 
+> What we need to do is to get the zeroing I/O out from under the
+> invalidate lock, just like how we don't do direct I/O under it.
 
+No action was taken for 11 months since the first hung.
+Christoph, when can you get to this work?
 
--- 
-Donald Buczek
-buczek@molgen.mpg.de
-Tel: +49 30 8413 1433
