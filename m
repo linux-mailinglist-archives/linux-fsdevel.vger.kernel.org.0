@@ -2,56 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B0E5EE46B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 20:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F1AA5EE667
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Sep 2022 22:04:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234174AbiI1ScO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Sep 2022 14:32:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
+        id S233290AbiI1UEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Sep 2022 16:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbiI1ScM (ORCPT
+        with ESMTP id S232439AbiI1UEb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Sep 2022 14:32:12 -0400
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F3C7B2B1;
-        Wed, 28 Sep 2022 11:32:06 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Md4pX1XDxzMqKj6;
-        Wed, 28 Sep 2022 20:32:04 +0200 (CEST)
+        Wed, 28 Sep 2022 16:04:31 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EFDE844CD
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Sep 2022 13:04:27 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Md6s61RHzzMpvnF;
+        Wed, 28 Sep 2022 22:04:26 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Md4pW2xBnzMpnPh;
-        Wed, 28 Sep 2022 20:32:03 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Md6s449bczMpqBK;
+        Wed, 28 Sep 2022 22:04:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664389924;
-        bh=eflJSf6YLiRl3SjoPJuiiOT14gIGxe9VqHb7grpS9H4=;
+        s=20191114; t=1664395466;
+        bh=UnhgVQbc9A75eIhDdDtElwcU498ek2fiou6KItm3hOY=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qwFCm/3kxNfYhCz9plcG3oKiQQwKdhpG0gajN30wlRhgEmebN0CGycqm16+TCv1Z7
-         7RMSoYLAzufUXNw9zrs0I5AILe/27PL1pdqqa+7qQa6HU17HVN8mihNcLIV80paS7h
-         oU8GuSzKnsejXQFEN5QeHRcRfKyn3pD1YTU7Wk4g=
-Message-ID: <e5b0b338-c4e5-8348-1fe0-1d434235dc01@digikod.net>
-Date:   Wed, 28 Sep 2022 20:32:02 +0200
+        b=kc8x3v7NUWZg0jj1IZ735zyHLkBFmetYRamUd4tmOwniLH+nfEZGYKKcmXKqqSkK4
+         CaCtHj/DFkzo19jiNVE5ZRN2SJ8Rk9SrFzn57aMBVWUJwTlFbh1VpQzrmnEUoouovp
+         Is5u78dQ+ERAOHSY4EIM3c4oib0ZW3HVpyYs4azY=
+Message-ID: <75712f0b-7091-f2ee-bfa3-66a0be60ec1e@digikod.net>
+Date:   Wed, 28 Sep 2022 22:04:23 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v6 2/5] landlock: Support file truncation
+Subject: Re: [PATCH v6 1/5] security: create file_truncate hook from
+ path_truncate hook
 Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
         James Morris <jmorris@namei.org>,
         Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-security-module@vger.kernel.org, linux-cifs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
 References: <20220908195805.128252-1-gnoack3000@gmail.com>
- <20220908195805.128252-3-gnoack3000@gmail.com>
- <2c4db214-e425-3e40-adeb-9e406c3ea2f9@digikod.net> <Yy2W14NMQBvfG9Fw@nuc>
- <0dea6e07-dd98-0d3c-4c2b-7f45e06374ed@digikod.net> <YzCZVuP1d9GpQt+k@nuc>
+ <20220908195805.128252-2-gnoack3000@gmail.com> <YxpQVTDrcJSig8X2@nuc>
+ <962b121b-b299-e024-bf3d-8cc6e12e01f7@digikod.net> <YzHOVIUX0oxTcV0B@nuc>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <YzCZVuP1d9GpQt+k@nuc>
+In-Reply-To: <YzHOVIUX0oxTcV0B@nuc>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -59,200 +65,330 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 25/09/2022 20:09, Günther Noack wrote:
-> On Fri, Sep 23, 2022 at 10:53:23PM +0200, Mickaël Salaün wrote:
->> On 23/09/2022 13:21, Günther Noack wrote:
->>> On Mon, Sep 12, 2022 at 09:41:32PM +0200, Mickaël Salaün wrote:
->>>> On 08/09/2022 21:58, Günther Noack wrote:
->>>>> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
->>>>
->>>> [...]
->>>>
->>>>> +/**
->>>>> + * get_path_access_rights - Returns the subset of rights in access_request
->>>>> + * which are permitted for the given path.
->>>>> + *
->>>>> + * @domain: The domain that defines the current restrictions.
->>>>> + * @path: The path to get access rights for.
->>>>> + * @access_request: The rights we are interested in.
->>>>> + *
->>>>> + * Returns: The access mask of the rights that are permitted on the given path,
->>>>> + * which are also a subset of access_request (to save some calculation time).
->>>>> + */
->>>>> +static inline access_mask_t
->>>>> +get_path_access_rights(const struct landlock_ruleset *const domain,
->>>>> +		       const struct path *const path,
->>>>> +		       access_mask_t access_request)
->>>>> +{
->>>>> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
->>>>> +	unsigned long access_bit;
->>>>> +	unsigned long access_req;
->>>>> +
->>>>> +	init_layer_masks(domain, access_request, &layer_masks);
->>>>> +	if (!check_access_path_dual(domain, path, access_request, &layer_masks,
->>>>> +				    NULL, 0, NULL, NULL)) {
->>>>> +		/*
->>>>> +		 * Return immediately for successful accesses and for cases
->>>>> +		 * where everything is permitted because the path belongs to an
->>>>> +		 * internal filesystem.
->>>>> +		 */
->>>>> +		return access_request;
->>>>> +	}
->>>>> +
->>>>> +	access_req = access_request;
->>>>> +	for_each_set_bit(access_bit, &access_req, ARRAY_SIZE(layer_masks)) {
->>>>> +		if (layer_masks[access_bit]) {
->>>>> +			/* If any layer vetoed the access right, remove it. */
->>>>> +			access_request &= ~BIT_ULL(access_bit);
->>>>> +		}
->>>>> +	}
->>>>
->>>> This seems to be redundant with the value returned by init_layer_masks(),
->>>> which should be passed to check_access_path_dual() to avoid useless path
->>>> walk.
->>>
->>> True, I'll use the result of init_layer_masks() to feed it back to
->>> check_access_path_dual() to avoid a bit of computation.
->>>
->>> Like this:
->>>
->>>           effective_access_request =
->>> 		init_layer_masks(domain, access_request, &layer_masks);
->>> 	if (!check_access_path_dual(domain, path, effective_access_request,
->>> 	    &layer_masks, NULL, 0, NULL, NULL)) {
->>> 		// ...
->>> 	}
->>
->> correct
->>
->>>
->>> Overall, the approach here is:
->>>
->>> * Initialize the layer_masks, so that it has a bit set for every
->>>     access right in access_request and layer where that access right is
->>>     handled.
->>>
->>> * check_access_path_dual() with only the first few parameters -- this
->>>     will clear all the bits in layer masks which are actually permitted
->>>     according to the individual rules.
->>>
->>>     As a special case, this *may* return 0 immediately, in which case we
->>>     can (a) save a bit of calculation in the loop below and (b) we might
->>>     be in the case where access is permitted because it's a file from a
->>>     special file system (even though not all bits are cleared). If
->>>     check_access_path_dual() returns 0, we return the full requested
->>>     access_request that we received as input. >
->>> * In the loop below, if there are any bits left in layer_masks, those
->>>     are rights which are not permitted for the given path. We remove
->>>     these from access_request and return the modified access_request.
->>>
->>>
->>>> This function is pretty similar to check_access_path(). Can't you change it
->>>> to use an access_mask_t pointer and get almost the same thing?
->>>
->>> I'm shying away from this approach. Many of the existing different use
->>> cases are already realized by "doing if checks deep down". I think it
->>> would make the code more understandable if we managed to model these
->>> differences between use cases already at the layer of function calls.
->>> (This is particularly true for check_access_path_dual(), where in
->>> order to find out how the "single" case works, you need to disentangle
->>> to a large extent how the much more complicated dual case works.)
->>
->> I agree that check_access_path_dual() is complex, but I couldn't find a
->> better way.
+On 26/09/2022 18:07, Günther Noack wrote:
+> On Fri, Sep 16, 2022 at 07:30:24PM +0200, Mickaël Salaün wrote:
+>> We may indeed need to change fs/open.c:vfs_truncate() because of these
+>> different call sites. I'm not sure how these subsystems work though.
 > 
-> It seems out of the scope of this patch set, but I sometimes find it
-> OK to just duplicate the code and have a set of tests to demonstrate
-> that the two variants do the same thing.
+> I thought about this some more, and I'm coming around to the
+> conclusion that we should not block the truncate patch set on changes
+> in ksmbd and cachefiles.
 > 
-> check_access_path_dual() is mostly complex because of performance
-> reasons, as far as I can tell, and it might be possible to check its
-> results against a parallel implementation of it which runs slower,
-> uses more memory, but is more obviously correct. (I have used one
-> myself to check against when developing the truncate patch set.)
+> The reasoning is:
 > 
->>> If you want to unify these two functions, what do you think of the
->>> approach of just using get_path_access_rights() instead of
->>> check_access_path()?
->>>
->>> Basically, it would turn
->>>
->>> return check_access_path(dom, path, access_request);
->>>
->>> into
->>>
->>> if (get_path_access_rights(dom, path, access_request) == access_request)
->>> 	return 0;
->>> return -EACCES;
->>>
->>> This is slightly more verbose in the places where it's called, but it
->>> would be more orthogonal, and it would also clarify that -EACCES is
->>> the only possible error in the "single" path walk case.
->>>
->>> Let me know what you think.
->>
->> What about adding an additional argument `access_mask_t *const
->> access_allowed` to check_access_path_dual() which returns the set of
->> accesses (i.e. access_masked_parent1 & access_masked_parent2) that could
->> then be stored to landlock_file(file)->allowed_access? If this argument is
->> NULL it should just be ignored. What is left from get_path_access_rights()
->> could then be merged into hook_file_open().
+> * Landlock does already work for ksmbd and cachefiles. vfs_truncate
+>    does call the security_path_truncate() hook in the background.
 > 
-> IMHO, check_access_path_dual() does not seem like the right place to
-> add this. This functionality is not needed in any of the "dual path"
-> cases so far, and I'm not sure what it would mean. The necessary
-> information can also be easily derived from the resulting layer_masks,
-> which is already exposed in the check_access_path_dual() interface,
-> and I also believe that this approach is at least equally fast as
-> updating it on the fly when changing the layer_masks.
+> * ksmbd and cachefiles using vfs_truncate() in kernel space is roughly
+>    equivalent to a user space program using truncate(2) in a place
+>    where ftruncate(2) is possible. It might not be the most elegant
+>    approach, but it's legitimate to do.
 > 
-> I could be convinced to add a `access_mask_t *const access_allowed`
-> argument to check_access_path() if you prefer that, but then again, in
-> that case the returned boolean can be reconstructed from the new
-> access_allowed variable, and we could as well make check_access_path()
-> return the access_allowed result instead of the boolean and let
-> callers check equality with what they expected...? (I admittedly don't
-> have a good setup to test the performance right now, but it looks like
-> a negligible difference to me?)
+> * Like with any userspace program that is supposed to run under
+>    Landlock, ksmbd and cachefiles both may need to be adapted slightly
+>    to work well with Landlock enforcement. It is up to the person
+>    adding the Landlock enforcement to double check that the program
+>    works correctly under the enforced ruleset. This is true for both
+>    programs running in user space and kernel space.
+> 
+> So yes, to run ksmbd and cachefiles under Landlock, we may need to
+> extract a fs/open.c:vfs_ftruncate() in addition to vfs_truncate(), but
+> I don't think it should be part of this patch set.
+> 
+> So my proposal would be to:
+> 
+> * not do the ksmbd and cachefiles changes now,
+> 
+> * but leave them for later when someone actually tries to run ksmbd or
+>    cachefiles under Landlock.
+> 
+> If these components never get executed in a Landlocked context, all
+> the better - we can spare ourselves a more complicated refactoring in
+> a core part of the kernel.
 
-Good idea, let's try to make check_access_path_dual() returns the 
-allowed accesses (according to the request) and rename it to 
-get_access_path_dual(). unmask_layers() could be changed to return the 
-still-denied accesses instead of a boolean, and we could use this values 
-(for potential both parents) to return allowed_parent1 & allowed_parent2 
-(with access_mask_t types). This would also simplify is_eaccess() and 
-its calls could be moved to current_check_refer_path(). This would merge 
-get_path_access_rights() into check_access_path_dual() and make the 
-errno codes more explicit per hook or defined in check_access_path().
+ From my understanding, ksmbd should be treated as a process, but 
+without file descriptors, which excludes it from calling ftruncate-like 
+interfaces. Furthermore, I think ksmbd cannot be sandboxed because it 
+calls prepare_kernel_cred(NULL) which then uses init_cred.
+
+As a side node, using current_user_ns() in this context looks like a 
+bug… I think it should be &init_user_ns instead. Any though Namjae, 
+Steve or Hyunchul?
+
+About cachefiles, I think it should be OK to ignore it, but I'd really 
+like to get some input from file system folks. Any though David or 
+Christian?
 
 
 > 
-> Here are the options we have discussed, in the order that I would
-> prefer them:
+> FWIW, I've played around with it yesterday and found that the change
+> to extract a new "vfs_ftruncate()" next to vfs_truncate() is
+> reasonably self-contained. But I'm not a file system expert either,
+> it's well possible that I'm overlooking something.
 > 
-> * to keep it as a separate function as it already is,
->    slightly duplicating check_access_path(). (I think it's cleaner,
->    because the code path for the rest of the hooks other than
->    security_file_open() stays simpler.)
+> Let me know what you think!
 > 
-> * to make check_access_path() return the access_allowed access mask
->    and make callers check that it covers the access_request that they
->    asked for (see example from my previous mail on this thread). (This
->    is equivalent to discarding the existing check_access_path() and
->    using the get_path_access() function instead.)
+>> On 08/09/2022 22:28, Günther Noack wrote:
+>>> Adding Namjae Jeon and David Howells as authors of the respective
+>>> files in fs/ksmbd and fs/cachefiles -- do you happen to know whether
+>>> these vfs_truncate() calls are using 'struct file's that are opened by
+>>> normal userspace processes, where LSM policies may apply?
+>>>
+>>> P.S. In this patch I have looked for all places where the
+>>> security_path_truncate() hook was called, to see which of these should
+>>> rather use security_file_truncate() (and I made sure that it does the
+>>> same thing for all the LSMs that use it).
+>>>
+>>> I'm confident that this does the right thing when truncate() or
+>>> ftruncate() are called from userspace, but one of the places that
+>>> still calls the path-based hook is vfs_truncate(), and this is called
+>>> from more places in the kernel than just from userspace:
+>>>
+>>> init/initramfs.c
+>>> 387:				vfs_truncate(&wfile->f_path, body_len);
+>>>
+>>> security/keys/big_key.c
+>>> 172:		vfs_truncate(&payload->path, 0);
+>>>
+>>> fs/cachefiles/interface.c
+>>> 242:		ret = vfs_truncate(&file->f_path, dio_size);
+>>>
+>>> fs/cachefiles/namei.c
+>>> 497:			ret = vfs_truncate(&path, ni_size); >
+>>> fs/ksmbd/smb2pdu.c
+>>> 2350:	int rc = vfs_truncate(path, 0);
+>>>
+>>> fs/ksmbd/vfs.c
+>>> 874:	err = vfs_truncate(&filp->f_path, size);
+>>>
+>>> I suspect that these are benign but am not familiar with all of these
+>>> corners of the codebase. -- The question is: Some of these call
+>>> vfs_truncate() on the f_path of an existing struct file -- should
+>>> these rather be calling the security_file_truncate() than the
+>>> security_path_truncate() hook to authorize the truncation?
+>>>
+>>> Specifically, I think:
+>>>
+>>> * initramfs happens at system startup and LSMs should not interfere at
+>>>     this point yet
+>>> * security/keys does not use an opened struct file, so calling the
+>>>     path-based hook through vfs_truncate() is correct
+>>> * fs/cachefiles and fs/ksmbd use the file system from the kernel to
+>>>     expose it as another file system (in a cached form for cachefiles,
+>>>     and over the network for ksmbd). I suspect that these file systems
+>>>     are not handling 'struct file's which are opened in contexts where a
+>>>     LSM applies? It that a reasonable assumption?
+>>
+>> I think you're right but I have some doubts about the cachefiles subsystem.
+>> I don't know how ksmb deals with these file descriptors but changing such
+>> call sites (where there is a struct file) could improve API consistency
+>> though.
+>> Any though?
 > 
-> * to add a `access_mask_t *const access_allowed` argument to
->    check_access_path(), which is calculated if it's non-NULL based on
->    the layer_masks result. It would be used from the security_file_open
->    hook.
+> My conclusion is already summarized above, and I've tried to abstract
+> away from the concrete use cases. For completeness, I've also looked
+> into ksmbd and cachefiles specifically though so see whether
+> security_path_truncate and security_file_truncate would make a
+> difference.
 > 
-> * to add a `access_mask_t *const access_allowed` argument to
->    check_access_path_dual(). This doesn't make much sense, IMHO,
->    because an on-the-fly calculation of this result does not look like
->    a performance benefit to me, and calculating it based on the two
->    resulting layer_masks is already possible now. It's also not clear
->    to me what it would mean to calculate an access_allowed on two paths
->    at once, and what that would be used for.
+> For ksmbd, I strongly suspect it does not make a difference (90%
+> confidence) -- the files are getting opened by the same request
+> handler context which is also truncating the files later on behalf of
+> a truncation operation in the SMB protocol. It's anyway unclear to me
+> whether the kernel tasks executing this can be put under Landlock
+> enforcement at all..?
 > 
-> Let me know which option you prefer. In the end, I don't feel that
-> strongly about it and I'm happy to do this either way.
+> fs/cachefiles is a more layered system and uses some
+> cachefiles-independent caching structures with void* pointers, whose
+> values I found difficult to trace. I'm less certain about this one as
+> well, but as discussed above, it does not make a difference as long as
+> none of the cachefiles code executes in a Landlock context. I'm still
+> in favor of decoupling potential ksmbd and cachefiles changes from
+> this patch set.
+> 
+> —Günther
+> 
+>>
+>>
+>>>
+>>> Thanks,
+>>> Günther
+>>>
+>>> On Thu, Sep 08, 2022 at 09:58:01PM +0200, Günther Noack wrote:
+>>>> Like path_truncate, the file_truncate hook also restricts file
+>>>> truncation, but is called in the cases where truncation is attempted
+>>>> on an already-opened file.
+>>>>
+>>>> This is required in a subsequent commit to handle ftruncate()
+>>>> operations differently to truncate() operations.
+>>>>
+>>>> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+>>>> ---
+>>>>    fs/namei.c                    |  6 +++---
+>>>>    fs/open.c                     |  4 ++--
+>>>>    include/linux/lsm_hook_defs.h |  1 +
+>>>>    include/linux/security.h      |  6 ++++++
+>>>>    security/apparmor/lsm.c       |  6 ++++++
+>>>>    security/security.c           |  5 +++++
+>>>>    security/tomoyo/tomoyo.c      | 13 +++++++++++++
+>>>>    7 files changed, 36 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/fs/namei.c b/fs/namei.c
+>>>> index 53b4bc094db2..52105873d1f8 100644
+>>>> --- a/fs/namei.c
+>>>> +++ b/fs/namei.c
+>>>> @@ -53,8 +53,8 @@
+>>>>     * The new code replaces the old recursive symlink resolution with
+>>>>     * an iterative one (in case of non-nested symlink chains).  It does
+>>>>     * this with calls to <fs>_follow_link().
+>>>> - * As a side effect, dir_namei(), _namei() and follow_link() are now
+>>>> - * replaced with a single function lookup_dentry() that can handle all
+>>>> + * As a side effect, dir_namei(), _namei() and follow_link() are now
+>>>> + * replaced with a single function lookup_dentry() that can handle all
+>>>>     * the special cases of the former code.
+>>>>     *
+>>>>     * With the new dcache, the pathname is stored at each inode, at least as
+>>>> @@ -3211,7 +3211,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
+>>>>    	if (error)
+>>>>    		return error;
+>>>>
+>>>> -	error = security_path_truncate(path);
+>>>> +	error = security_file_truncate(filp);
+>>>>    	if (!error) {
+>>>>    		error = do_truncate(mnt_userns, path->dentry, 0,
+>>>>    				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
+>>>> diff --git a/fs/open.c b/fs/open.c
+>>>> index 8a813fa5ca56..0831433e493a 100644
+>>>> --- a/fs/open.c
+>>>> +++ b/fs/open.c
+>>>> @@ -188,7 +188,7 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+>>>>    	if (IS_APPEND(file_inode(f.file)))
+>>>>    		goto out_putf;
+>>>>    	sb_start_write(inode->i_sb);
+>>>> -	error = security_path_truncate(&f.file->f_path);
+>>>> +	error = security_file_truncate(f.file);
+>>>>    	if (!error)
+>>>>    		error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
+>>>>    				    ATTR_MTIME | ATTR_CTIME, f.file);
+>>>> @@ -1271,7 +1271,7 @@ struct file *filp_open(const char *filename, int flags, umode_t mode)
+>>>>    {
+>>>>    	struct filename *name = getname_kernel(filename);
+>>>>    	struct file *file = ERR_CAST(name);
+>>>> -
+>>>> +
+>>>>    	if (!IS_ERR(name)) {
+>>>>    		file = file_open_name(name, flags, mode);
+>>>>    		putname(name);
+>>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>>>> index 60fff133c0b1..dee35ab253ba 100644
+>>>> --- a/include/linux/lsm_hook_defs.h
+>>>> +++ b/include/linux/lsm_hook_defs.h
+>>>> @@ -177,6 +177,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
+>>>>    	 struct fown_struct *fown, int sig)
+>>>>    LSM_HOOK(int, 0, file_receive, struct file *file)
+>>>>    LSM_HOOK(int, 0, file_open, struct file *file)
+>>>> +LSM_HOOK(int, 0, file_truncate, struct file *file)
+>>>>    LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
+>>>>    	 unsigned long clone_flags)
+>>>>    LSM_HOOK(void, LSM_RET_VOID, task_free, struct task_struct *task)
+>>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>>> index 7bd0c490703d..f80b23382dd9 100644
+>>>> --- a/include/linux/security.h
+>>>> +++ b/include/linux/security.h
+>>>> @@ -394,6 +394,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+>>>>    				 struct fown_struct *fown, int sig);
+>>>>    int security_file_receive(struct file *file);
+>>>>    int security_file_open(struct file *file);
+>>>> +int security_file_truncate(struct file *file);
+>>>>    int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+>>>>    void security_task_free(struct task_struct *task);
+>>>>    int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+>>>> @@ -1011,6 +1012,11 @@ static inline int security_file_open(struct file *file)
+>>>>    	return 0;
+>>>>    }
+>>>>
+>>>> +static inline int security_file_truncate(struct file *file)
+>>>> +{
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>    static inline int security_task_alloc(struct task_struct *task,
+>>>>    				      unsigned long clone_flags)
+>>>>    {
+>>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>>> index e29cade7b662..98ecb7f221b8 100644
+>>>> --- a/security/apparmor/lsm.c
+>>>> +++ b/security/apparmor/lsm.c
+>>>> @@ -329,6 +329,11 @@ static int apparmor_path_truncate(const struct path *path)
+>>>>    	return common_perm_cond(OP_TRUNC, path, MAY_WRITE | AA_MAY_SETATTR);
+>>>>    }
+>>>>
+>>>> +static int apparmor_file_truncate(struct file *file)
+>>>> +{
+>>>> +	return apparmor_path_truncate(&file->f_path);
+>>>> +}
+>>>> +
+>>>>    static int apparmor_path_symlink(const struct path *dir, struct dentry *dentry,
+>>>>    				 const char *old_name)
+>>>>    {
+>>>> @@ -1232,6 +1237,7 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+>>>>    	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
+>>>>    	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
+>>>>    	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
+>>>> +	LSM_HOOK_INIT(file_truncate, apparmor_file_truncate),
+>>>>
+>>>>    	LSM_HOOK_INIT(getprocattr, apparmor_getprocattr),
+>>>>    	LSM_HOOK_INIT(setprocattr, apparmor_setprocattr),
+>>>> diff --git a/security/security.c b/security/security.c
+>>>> index 4b95de24bc8d..e491120c48ba 100644
+>>>> --- a/security/security.c
+>>>> +++ b/security/security.c
+>>>> @@ -1210,6 +1210,11 @@ int security_path_truncate(const struct path *path)
+>>>>    	return call_int_hook(path_truncate, 0, path);
+>>>>    }
+>>>>
+>>>> +int security_file_truncate(struct file *file)
+>>>> +{
+>>>> +	return call_int_hook(file_truncate, 0, file);
+>>>> +}
+>>>> +
+>>>>    int security_path_chmod(const struct path *path, umode_t mode)
+>>>>    {
+>>>>    	if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
+>>>> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+>>>> index 71e82d855ebf..af04a7b7eb28 100644
+>>>> --- a/security/tomoyo/tomoyo.c
+>>>> +++ b/security/tomoyo/tomoyo.c
+>>>> @@ -134,6 +134,18 @@ static int tomoyo_path_truncate(const struct path *path)
+>>>>    	return tomoyo_path_perm(TOMOYO_TYPE_TRUNCATE, path, NULL);
+>>>>    }
+>>>>
+>>>> +/**
+>>>> + * tomoyo_file_truncate - Target for security_file_truncate().
+>>>> + *
+>>>> + * @file: Pointer to "struct file".
+>>>> + *
+>>>> + * Returns 0 on success, negative value otherwise.
+>>>> + */
+>>>> +static int tomoyo_file_truncate(struct file *file)
+>>>> +{
+>>>> +	return tomoyo_path_truncate(&file->f_path);
+>>>> +}
+>>>> +
+>>>>    /**
+>>>>     * tomoyo_path_unlink - Target for security_path_unlink().
+>>>>     *
+>>>> @@ -545,6 +557,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
+>>>>    	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
+>>>>    	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
+>>>>    	LSM_HOOK_INIT(file_open, tomoyo_file_open),
+>>>> +	LSM_HOOK_INIT(file_truncate, tomoyo_file_truncate),
+>>>>    	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
+>>>>    	LSM_HOOK_INIT(path_unlink, tomoyo_path_unlink),
+>>>>    	LSM_HOOK_INIT(path_mkdir, tomoyo_path_mkdir),
+>>>> --
+>>>> 2.37.3
+>>>>
+>>>
+>>> --
+> 
