@@ -2,241 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8FCD5EF465
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 13:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A005EF470
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 13:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235302AbiI2Lge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 07:36:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57244 "EHLO
+        id S235340AbiI2Lhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 07:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbiI2Lgd (ORCPT
+        with ESMTP id S235278AbiI2Lhp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 07:36:33 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCB813C846;
-        Thu, 29 Sep 2022 04:36:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 29 Sep 2022 07:37:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FBFE14F8CD;
+        Thu, 29 Sep 2022 04:37:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3B7F71F388;
-        Thu, 29 Sep 2022 11:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1664451391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xMRJe1MU1ptYwTyQ+JepMZmanBEMC61aFRA+CflrhZU=;
-        b=rAISbCTn0I1rjrXjAraHtB+HRHHuhe3fp6fgjCjCHK6qP2I5fuppESrN5U2bKXOkQmxeed
-        BxqKDYqtb9Vc+EsvriwWuMaU4oZmHKOiq53AToxmve4hrlC5MWvIf0ZVj3K1B6qQ3SYRvq
-        325DWAoKxdSK8ksM0ZFR4FIz9Aou/os=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1664451391;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xMRJe1MU1ptYwTyQ+JepMZmanBEMC61aFRA+CflrhZU=;
-        b=x+MK6pVvnlyjLFCpv7YrIQQUYebfY/BJoIXqBNqZVzM1O3JHSyHJhivYZ6aQ0YwjO5Miqq
-        74JOf0iLBNteSODQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2D2041348E;
-        Thu, 29 Sep 2022 11:36:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id E576Cj+DNWNocgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 29 Sep 2022 11:36:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7DEECA0681; Thu, 29 Sep 2022 13:36:30 +0200 (CEST)
-Date:   Thu, 29 Sep 2022 13:36:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id B9DC6B8245F;
+        Thu, 29 Sep 2022 11:37:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B99C433C1;
+        Thu, 29 Sep 2022 11:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664451461;
+        bh=uRl5cXPSzrgDgZEmBB96Z+bBbGLnVEN9hWoSXJsFsP4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r9VdoM7VBo44GyTZ/Doqk0R4z7lK2DOILIkhkvdDQC8Yg/p0GfPUKcHWiLnbgxTvW
+         AFQNfOyi8+DqJcoMBRrHREKi7r+4hJu27jdvbYeXPNmUC7zoq46TavZ2KvhjG9GXGX
+         TUkUnv9vDZfP5wMNkH9mE9cohPSc8GejiwQv7LyB4SUuISiL4cL41MbCDWY9co9/Qc
+         mQ3q/FuyII3Wqog9tNzaOg8ZaUHMtdTQeXT4Rapf2dB4arlLY4QBgPqAfqB1rtjJok
+         MxANMkKHy7aqUdwNtn1IILfiSy8VX6VCqST26eppRlmNvLNB7rvoqn2ePcXAe5VRmr
+         rstr/By0Jgbng==
+Date:   Thu, 29 Sep 2022 13:37:35 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     Hyunchul Lee <hyc.lee@gmail.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <smfrench@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-cifs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, rookxu <brookxu.cn@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [RFC v3 5/8] ext4: Abstract out overlap fix/check logic in
- ext4_mb_normalize_request()
-Message-ID: <20220929113630.xdergbnbru63q6s7@quack3>
-References: <cover.1664269665.git.ojaswin@linux.ibm.com>
- <f6787e57f6deb1bff2a1d1c070dfe20d281ed5d1.1664269665.git.ojaswin@linux.ibm.com>
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] ksmbd: Fix user namespace mapping
+Message-ID: <20220929113735.7k6fdu75oz4jvsvz@wittgenstein>
+References: <20220929100447.108468-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f6787e57f6deb1bff2a1d1c070dfe20d281ed5d1.1664269665.git.ojaswin@linux.ibm.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220929100447.108468-1-mic@digikod.net>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-09-22 14:46:45, Ojaswin Mujoo wrote:
-> Abstract out the logic of fixing PA overlaps in ext4_mb_normalize_request to
-> improve readability of code. This also makes it easier to make changes
-> to the overlap logic in future.
+On Thu, Sep 29, 2022 at 12:04:47PM +0200, Mickaël Salaün wrote:
+> A kernel daemon should not rely on the current thread, which is unknown
+> and might be malicious.  Before this security fix,
+> ksmbd_override_fsids() didn't correctly override FS UID/GID which means
+> that arbitrary user space threads could trick the kernel to impersonate
+> arbitrary users or groups for file system access checks, leading to
+> file system access bypass.
 > 
-> There are no functional changes in this patch
+> This was found while investigating truncate support for Landlock:
+> https://lore.kernel.org/r/CAKYAXd8fpMJ7guizOjHgxEyyjoUwPsx3jLOPZP=wPYcbhkVXqA@mail.gmail.com
 > 
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+> Cc: Hyunchul Lee <hyc.lee@gmail.com>
+> Cc: Namjae Jeon <linkinjeon@kernel.org>
+> Cc: Steve French <smfrench@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20220929100447.108468-1-mic@digikod.net
 > ---
->  fs/ext4/mballoc.c | 110 +++++++++++++++++++++++++++++-----------------
->  1 file changed, 69 insertions(+), 41 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index d1ce34888dcc..dda9a72c81d9 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -4008,6 +4008,74 @@ ext4_mb_pa_assert_overlap(struct ext4_allocation_context *ac,
->  	rcu_read_unlock();
->  }
->  
-> +/*
-> + * Given an allocation context "ac" and a range "start", "end", check
-> + * and adjust boundaries if the range overlaps with any of the existing
-> + * preallocatoins stored in the corresponding inode of the allocation context.
-> + *
-> + *Parameters:
-> + *	ac			allocation context
-> + *	start			start of the new range
-> + *	end			end of the new range
-> + */
-> +static inline void
-> +ext4_mb_pa_adjust_overlap(struct ext4_allocation_context *ac,
-> +			 ext4_lblk_t *start, ext4_lblk_t *end)
-> +{
-> +	struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
-> +	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
-> +	struct ext4_prealloc_space *tmp_pa;
-> +	ext4_lblk_t new_start, new_end;
-> +	ext4_lblk_t tmp_pa_start, tmp_pa_end;
-> +
-> +	new_start = *start;
-> +	new_end = *end;
-> +
-> +	/* check we don't cross already preallocated blocks */
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_inode_list) {
-> +		if (tmp_pa->pa_deleted)
-> +			continue;
-> +		spin_lock(&tmp_pa->pa_lock);
-> +		if (tmp_pa->pa_deleted) {
-> +			spin_unlock(&tmp_pa->pa_lock);
-> +			continue;
-> +		}
-> +
-> +		tmp_pa_start = tmp_pa->pa_lstart;
-> +		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
-> +
-> +		/* PA must not overlap original request */
-> +		BUG_ON(!(ac->ac_o_ex.fe_logical >= tmp_pa_end ||
-> +			ac->ac_o_ex.fe_logical < tmp_pa_start));
-> +
-> +		/* skip PAs this normalized request doesn't overlap with */
-> +		if (tmp_pa_start >= new_end || tmp_pa_end <= new_start) {
-> +			spin_unlock(&tmp_pa->pa_lock);
-> +			continue;
-> +		}
-> +		BUG_ON(tmp_pa_start <= new_start && tmp_pa_end >= new_end);
-> +
-> +		/* adjust start or end to be adjacent to this pa */
-> +		if (tmp_pa_end <= ac->ac_o_ex.fe_logical) {
-> +			BUG_ON(tmp_pa_end < new_start);
-> +			new_start = tmp_pa_end;
-> +		} else if (tmp_pa_start > ac->ac_o_ex.fe_logical) {
-> +			BUG_ON(tmp_pa_start > new_end);
-> +			new_end = tmp_pa_start;
-> +		}
-> +		spin_unlock(&tmp_pa->pa_lock);
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	/* XXX: extra loop to check we really don't overlap preallocations */
-> +	ext4_mb_pa_assert_overlap(ac, new_start, new_end);
-> +
-> +	*start = new_start;
-> +	*end = new_end;
-> +	return;
-> +}
-> +
->  /*
->   * Normalization means making request better in terms of
->   * size and alignment
-> @@ -4022,9 +4090,6 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
->  	loff_t size, start_off;
->  	loff_t orig_size __maybe_unused;
->  	ext4_lblk_t start;
-> -	struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
-> -	struct ext4_prealloc_space *tmp_pa;
-> -	ext4_lblk_t tmp_pa_start, tmp_pa_end;
->  
->  	/* do normalize only data requests, metadata requests
->  	   do not need preallocation */
-> @@ -4125,47 +4190,10 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
->  
->  	end = start + size;
->  
-> -	/* check we don't cross already preallocated blocks */
-> -	rcu_read_lock();
-> -	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_inode_list) {
-> -		if (tmp_pa->pa_deleted)
-> -			continue;
-> -		spin_lock(&tmp_pa->pa_lock);
-> -		if (tmp_pa->pa_deleted) {
-> -			spin_unlock(&tmp_pa->pa_lock);
-> -			continue;
-> -		}
-> -
-> -		tmp_pa_start = tmp_pa->pa_lstart;
-> -		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
-> -
-> -		/* PA must not overlap original request */
-> -		BUG_ON(!(ac->ac_o_ex.fe_logical >= tmp_pa_end ||
-> -			ac->ac_o_ex.fe_logical < tmp_pa_start));
-> -
-> -		/* skip PAs this normalized request doesn't overlap with */
-> -		if (tmp_pa_start >= end || tmp_pa_end <= start) {
-> -			spin_unlock(&tmp_pa->pa_lock);
-> -			continue;
-> -		}
-> -		BUG_ON(tmp_pa_start <= start && tmp_pa_end >= end);
-> +	ext4_mb_pa_adjust_overlap(ac, &start, &end);
->  
-> -		/* adjust start or end to be adjacent to this pa */
-> -		if (tmp_pa_end <= ac->ac_o_ex.fe_logical) {
-> -			BUG_ON(tmp_pa_end < start);
-> -			start = tmp_pa_end;
-> -		} else if (tmp_pa_start > ac->ac_o_ex.fe_logical) {
-> -			BUG_ON(tmp_pa_start > end);
-> -			end = tmp_pa_start;
-> -		}
-> -		spin_unlock(&tmp_pa->pa_lock);
-> -	}
-> -	rcu_read_unlock();
->  	size = end - start;
->  
-> -	/* XXX: extra loop to check we really don't overlap preallocations */
-> -	ext4_mb_pa_assert_overlap(ac, start, end);
-> -
->  	/*
->  	 * In this function "start" and "size" are normalized for better
->  	 * alignment and length such that we could preallocate more blocks.
-> -- 
-> 2.31.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+I think this is ok. The alternative would probably be to somehow use a
+relevant userns when struct ksmbd_user is created when the session is
+established. But these are deeper ksmbd design questions. The fix
+proposed here itself seems good.
