@@ -2,85 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC9D35EFC18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 19:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A2BE5EFD55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 20:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234940AbiI2Rfx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 13:35:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40138 "EHLO
+        id S234729AbiI2Spq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 14:45:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235852AbiI2Rfv (ORCPT
+        with ESMTP id S235906AbiI2SpN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 13:35:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289C112B4B1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 10:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1664472947;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6QvssFP6fElsinFmtORISS+XoH9LM/qj79vCQgHmORo=;
-        b=NU82S2u3GGINBAwtGDEXxYnqVTUkybJMIn8W7vXEnZrBGx7A5WkgNszGANGMB6bXtKLYWU
-        1TiwNq+OGEo9CkjFIOQjRWj9qOogo0d0D0JVvjZMXfrV6kt6kYYJN4HcZgIpNWcbXbK1+l
-        Sy/N+rXOs/covVy9LLqm3y3uQjtLpTM=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-537-DglMdOhXO2CzAJUyAcw-lQ-1; Thu, 29 Sep 2022 13:35:46 -0400
-X-MC-Unique: DglMdOhXO2CzAJUyAcw-lQ-1
-Received: by mail-ej1-f70.google.com with SMTP id hs31-20020a1709073e9f00b00782b009c505so1023394ejc.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 10:35:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=6QvssFP6fElsinFmtORISS+XoH9LM/qj79vCQgHmORo=;
-        b=7wimFSL6QV18nWSI/UyR+akaY+G38SXJDepj8XELXur77mvwotLs6WKid67LnPFrmV
-         P44dyjJyokv42vpP8D6OYK2fGAwXtSW+mUv/iGd0Rh3FEa10/iPpK40nS1ugBLyhG3u4
-         fc+3DD1+ghuKLguOshxaYwIpGcTbnCZXAUFJDYW7Cs0ao5061BS+2sw8c3niUEx6UUXM
-         zDvJ1IuR8dofxtCL7rpCTtD8qjVZTf0W0uuvsA564/C6GKoX2ltAcROVwFQktZI41V4G
-         bxUhaYwrZTZ40QZvYa95GjqMqIFZB0MWdi0O4n7E6xmgWD7bFA/xnveuKk4tcj0tpaGx
-         KLpg==
-X-Gm-Message-State: ACrzQf201jRe6bTcY88+CCl+C7oXJVJX8nh6Xbd6hDgHPzisQFF0Qrzc
-        pyRyd+0sb72/UEgzskn+enRspDvGE9MJt+z0zTuedJLlxrFJMhbDSmdc9G6qCmA1QRjcmQvvUzX
-        P2mVJosGGEvZoqnD+smjjPH7vew==
-X-Received: by 2002:a05:6402:5110:b0:450:c196:d7b1 with SMTP id m16-20020a056402511000b00450c196d7b1mr4360245edd.117.1664472945480;
-        Thu, 29 Sep 2022 10:35:45 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4A74v/Mt3k+wNZ3JdUTgnnAt+nGzICSWWKg87i5m1tJ9DRruLO3VYyV2zBao0y66SzFcmaDw==
-X-Received: by 2002:a05:6402:5110:b0:450:c196:d7b1 with SMTP id m16-20020a056402511000b00450c196d7b1mr4360230edd.117.1664472945244;
-        Thu, 29 Sep 2022 10:35:45 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:1c09:f536:3de6:228c? ([2001:b07:6468:f312:1c09:f536:3de6:228c])
-        by smtp.googlemail.com with ESMTPSA id l13-20020a056402124d00b00456e98b7b7asm67429edw.56.2022.09.29.10.35.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 10:35:44 -0700 (PDT)
-Message-ID: <32db4f89-a83f-aac4-5d27-0801bdca60bf@redhat.com>
-Date:   Thu, 29 Sep 2022 19:35:43 +0200
+        Thu, 29 Sep 2022 14:45:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFAB46601;
+        Thu, 29 Sep 2022 11:44:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C3FC6214E;
+        Thu, 29 Sep 2022 18:44:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F5FC433D6;
+        Thu, 29 Sep 2022 18:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664477089;
+        bh=0KnwtA9Cwe2++avaO7tjcOi6jtjCLsv4zJ2fFcjZtHU=;
+        h=Date:From:To:Subject:From;
+        b=BjPRO7oYCJniGiw9QqKMWC3xrGskpJ2k5SGBTnzknC6G368AwS2NGTJIseeuyMmeF
+         V4Die4J6SZEdIJy0GazRiuB1xhFtKLMDgUNuSSGTdmOe95YJPQNrdmNIcSbI1sC/0f
+         dHVnoilAglgJ9ibFahrBSsgzoi6XX9b60jdA2fb7uMcr1VSx+hsRwkxOydWBvIAj/l
+         1NIp/k6AcbDaIb0cWuFQof38esOWsxLcM20lDyRgBwu4PVLVjDkgD0zfS2lfDp25eD
+         Wcu1hMfc/9UXHvwBNr3YfrHj5zkqbb1VCJrouAANCfqr0yC8VOn2lTS559+frBzso2
+         p/hpz+iF6XSoA==
+Date:   Thu, 29 Sep 2022 11:44:49 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: [PATCH] iomap: fix memory corruption when recording errors during
+ writeback
+Message-ID: <YzXnoR0UMBVfoaOf@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: Commit 'iomap: add support for dma aligned direct-io' causes
- qemu/KVM boot failures
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Cc:     Maxim Levitsky <mlevitsk@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        kvm@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
-        Michael Roth <mdroth@linux.vnet.ibm.com>
-References: <fb869c88bd48ea9018e1cc349918aa7cdd524931.camel@redhat.com>
- <YzW+Mz12JT1BXoZA@kbusch-mbp.dhcp.thefacebook.com>
- <a2825beac032fd6a76838164d4e2753d30305897.camel@redhat.com>
- <YzXJwmP8pa3WABEG@kbusch-mbp.dhcp.thefacebook.com>
- <20220929163931.GA10232@lst.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20220929163931.GA10232@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HEXHASH_WORD,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,28 +52,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/29/22 18:39, Christoph Hellwig wrote:
-> On Thu, Sep 29, 2022 at 10:37:22AM -0600, Keith Busch wrote:
->>> I am aware, and I've submitted the fix to qemu here:
->>> 
->>>   https://lists.nongnu.org/archive/html/qemu-block/2022-09/msg00398.html
->>
->> I don't think so. Memory alignment and length granularity are two completely
->> different concepts. If anything, the kernel's ABI had been that the length
->> requirement was also required for the memory alignment, not the other way
->> around. That usage will continue working with this kernel patch.
-> 
-> Well, Linus does treat anything that breaks significant userspace
-> as a regression.  Qemu certainly is significant, but that might depend
-> on bit how common configurations hitting this issue are.
+From: Darrick J. Wong <djwong@kernel.org>
 
-Seeing the QEMU patch, I agree that it's a QEMU bug though.  I'm 
-surprised it has ever worked.
+Every now and then I see this crash on arm64:
 
-It requires 4K sectors in the host but not in the guest, and can be 
-worked around (if not migrating) by disabling O_DIRECT.  I think it's 
-not that awful, but we probably should do some extra releases of QEMU 
-stable branches.
+Unable to handle kernel NULL pointer dereference at virtual address 00000000000000f8
+Buffer I/O error on dev dm-0, logical block 8733687, async page read
+Mem abort info:
+  ESR = 0x0000000096000006
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x06: level 2 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000006
+  CM = 0, WnR = 0
+user pgtable: 64k pages, 42-bit VAs, pgdp=0000000139750000
+[00000000000000f8] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000, pmd=0000000000000000
+Internal error: Oops: 96000006 [#1] PREEMPT SMP
+Buffer I/O error on dev dm-0, logical block 8733688, async page read
+Dumping ftrace buffer:
+Buffer I/O error on dev dm-0, logical block 8733689, async page read
+   (ftrace buffer empty)
+XFS (dm-0): log I/O error -5
+Modules linked in: dm_thin_pool dm_persistent_data
+XFS (dm-0): Metadata I/O Error (0x1) detected at xfs_trans_read_buf_map+0x1ec/0x590 [xfs] (fs/xfs/xfs_trans_buf.c:296).
+ dm_bio_prison
+XFS (dm-0): Please unmount the filesystem and rectify the problem(s)
+XFS (dm-0): xfs_imap_lookup: xfs_ialloc_read_agi() returned error -5, agno 0
+ dm_bufio dm_log_writes xfs nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT
+potentially unexpected fatal signal 6.
+ nf_reject_ipv6
+potentially unexpected fatal signal 6.
+ ipt_REJECT nf_reject_ipv4
+CPU: 1 PID: 122166 Comm: fsstress Tainted: G        W          6.0.0-rc5-djwa #rc5 3004c9f1de887ebae86015f2677638ce51ee7
+ rpcsec_gss_krb5 auth_rpcgss xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables
+Hardware name: QEMU KVM Virtual Machine, BIOS 1.5.1 06/16/2021
+pstate: 60001000 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+ ip_tables
+pc : 000003fd6d7df200
+ x_tables
+lr : 000003fd6d7df1ec
+ overlay nfsv4
+CPU: 0 PID: 54031 Comm: u4:3 Tainted: G        W          6.0.0-rc5-djwa #rc5 3004c9f1de887ebae86015f2677638ce51ee7405
+Hardware name: QEMU KVM Virtual Machine, BIOS 1.5.1 06/16/2021
+Workqueue: writeback wb_workfn
+sp : 000003ffd9522fd0
+ (flush-253:0)
+pstate: 60401005 (nZCv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+pc : errseq_set+0x1c/0x100
+x29: 000003ffd9522fd0 x28: 0000000000000023 x27: 000002acefeb6780
+x26: 0000000000000005 x25: 0000000000000001 x24: 0000000000000000
+x23: 00000000ffffffff x22: 0000000000000005
+lr : __filemap_set_wb_err+0x24/0xe0
+ x21: 0000000000000006
+sp : fffffe000f80f760
+x29: fffffe000f80f760 x28: 0000000000000003 x27: fffffe000f80f9f8
+x26: 0000000002523000 x25: 00000000fffffffb x24: fffffe000f80f868
+x23: fffffe000f80fbb0 x22: fffffc0180c26a78 x21: 0000000002530000
+x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
 
-Paolo
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+x14: 0000000000000001 x13: 0000000000470af3 x12: fffffc0058f70000
+x11: 0000000000000040 x10: 0000000000001b20 x9 : fffffe000836b288
+x8 : fffffc00eb9fd480 x7 : 0000000000f83659 x6 : 0000000000000000
+x5 : 0000000000000869 x4 : 0000000000000005 x3 : 00000000000000f8
+x20: 000003fd6d740020 x19: 000000000001dd36 x18: 0000000000000001
+x17: 000003fd6d78704c x16: 0000000000000001 x15: 000002acfac87668
+x2 : 0000000000000ffa x1 : 00000000fffffffb x0 : 00000000000000f8
+Call trace:
+ errseq_set+0x1c/0x100
+ __filemap_set_wb_err+0x24/0xe0
+ iomap_do_writepage+0x5e4/0xd5c
+ write_cache_pages+0x208/0x674
+ iomap_writepages+0x34/0x60
+ xfs_vm_writepages+0x8c/0xcc [xfs 7a861f39c43631f15d3a5884246ba5035d4ca78b]
+x14: 0000000000000000 x13: 2064656e72757465 x12: 0000000000002180
+x11: 000003fd6d8a82d0 x10: 0000000000000000 x9 : 000003fd6d8ae288
+x8 : 0000000000000083 x7 : 00000000ffffffff x6 : 00000000ffffffee
+x5 : 00000000fbad2887 x4 : 000003fd6d9abb58 x3 : 000003fd6d740020
+x2 : 0000000000000006 x1 : 000000000001dd36 x0 : 0000000000000000
+CPU: 1 PID: 122167 Comm: fsstress Tainted: G        W          6.0.0-rc5-djwa #rc5 3004c9f1de887ebae86015f2677638ce51ee7
+ do_writepages+0x90/0x1c4
+ __writeback_single_inode+0x4c/0x4ac
+Hardware name: QEMU KVM Virtual Machine, BIOS 1.5.1 06/16/2021
+ writeback_sb_inodes+0x214/0x4ac
+ wb_writeback+0xf4/0x3b0
+pstate: 60001000 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+ wb_workfn+0xfc/0x580
+ process_one_work+0x1e8/0x480
+pc : 000003fd6d7df200
+ worker_thread+0x78/0x430
 
+This crash is a result of iomap_writepage_map encountering some sort of
+error during writeback and wanting to set that error code in the file
+mapping so that fsync will report it.  Unfortunately, the code
+dereferences folio->mapping after unlocking the folio, which means that
+another thread could have removed the page from the page cache
+(writeback doesn't hold the invalidation lock) and give it to somebody
+else.
+
+At best we crash the system like above; at worst, we corrupt memory or
+set an error on some other unsuspecting file while failing to record the
+problems with *this* file.  Regardless, fix the problem by reporting the
+error to the inode mapping.
+
+NOTE: Commit 598ecfbaa742 lifted the XFS writeback code to iomap, so
+this fix should be backported to XFS in the 4.6-5.4 kernels in addition
+to iomap in the 5.5-5.19 kernels.
+
+Fixes: e735c0079465 ("iomap: Convert iomap_add_to_ioend() to take a folio")
+Probably-Fixes: 598ecfbaa742 ("iomap: lift the xfs writeback code to iomap")
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+---
+ fs/iomap/buffered-io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index ca5c62901541..77d59c159248 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1421,7 +1421,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	if (!count)
+ 		folio_end_writeback(folio);
+ done:
+-	mapping_set_error(folio->mapping, error);
++	mapping_set_error(inode->i_mapping, error);
+ 	return error;
+ }
+ 
