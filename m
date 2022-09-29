@@ -2,184 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECEBF5EF11D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 11:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 892815EF125
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 11:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235545AbiI2JAz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 05:00:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35632 "EHLO
+        id S235310AbiI2JBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 05:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235070AbiI2JAy (ORCPT
+        with ESMTP id S235643AbiI2JBn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 05:00:54 -0400
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A61C126B56;
-        Thu, 29 Sep 2022 02:00:53 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id m130so948069oif.6;
-        Thu, 29 Sep 2022 02:00:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=Ir+IzupNAXvXvPBkZ1yh/qacu5xVXDJ2KC3L3ZMV+D4=;
-        b=EED+KU8eMYhPRbakg8ufk7N7udWD/ajW0taKcnMaub1VgUUEk6pJVhDivnToBjIDFI
-         Ii4QoNk4pYr3EVXDi0seakF39cCNV7UWcpTXbkVpyjE2enfVAMsTmn8Iff3bfBE3q5+G
-         4jYiOEJaPb4iENUuMm+etMhu8E4F05mWl1qUHgE9DIabskklCZuNGzsA8luMoyNv6PPn
-         6Z/AalBN6VZU8RWNIUO6wUP5mAiRuereep444i3efUrI8CVrDXgOYQ/QKFTO2dAzLW5V
-         5KYpQss9DxkuKVysmb+te+tPo4ecJsWw0rHH7Qyh7+TDyDGm+cpu1Y/x10PkExBmweTQ
-         zO3g==
-X-Gm-Message-State: ACrzQf3jeNWP+lf1eYUBdQuOBkGrMyqOPc9rTX4d6jbuwwycQa1EufVP
-        7oJ07yldNkV/XT8X9pEjfKl8QWnroUGLsQ==
-X-Google-Smtp-Source: AMsMyM5vrNCkseckAA8F+Eoio9F3dk/sAQm6yX/uZ2lAkUbFkJg4rOwOGUF0gV17QHA7TmWXxYAzaQ==
-X-Received: by 2002:a05:6808:13c9:b0:350:109d:4916 with SMTP id d9-20020a05680813c900b00350109d4916mr6110929oiw.97.1664442052395;
-        Thu, 29 Sep 2022 02:00:52 -0700 (PDT)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id cm30-20020a056870b61e00b0012c21a64a76sm3622029oab.24.2022.09.29.02.00.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 02:00:52 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id f20-20020a9d7b54000000b006574e21f1b6so500473oto.5;
-        Thu, 29 Sep 2022 02:00:52 -0700 (PDT)
-X-Received: by 2002:a5b:104:0:b0:6b0:429:3fe9 with SMTP id 4-20020a5b0104000000b006b004293fe9mr2016091ybx.543.1664442041163;
- Thu, 29 Sep 2022 02:00:41 -0700 (PDT)
+        Thu, 29 Sep 2022 05:01:43 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D35A8139BED;
+        Thu, 29 Sep 2022 02:01:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 74083B823C7;
+        Thu, 29 Sep 2022 09:01:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EF2C433D6;
+        Thu, 29 Sep 2022 09:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664442098;
+        bh=kq6rXW2klw0ESB/4qUFAE9u6eDjBGnz78vnIkkPqWMc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oAOu5aEq0+XL1zslTVIihn5E4n30rr43tdU8lEzy+cx9CCRqY+RFVkHwOOkjKWGBI
+         Bs3VJzwzMQKkPeDFCFxOeBxvYnk8meW+QVaba9U/JMsJzJilK/OJ7jtewBZtrqJbfw
+         OFjff3nSMN6rR0/RVnSj3BJImw3XTvcmoC5aiD5/YFs2XPGEt80nzaXy4bsHo5QOK8
+         zRr7TFTNVZ8Nqg8oGAgt0DYFBTeKFRFmHa9dEfErQmjZMnfj9e2ZdMohmee9UKtVqr
+         5YHTRelleBn1xrLrIBic4VBkBjLDiWRB9iNnYgReQx9aHpdleNvcHuOnn/iNu4HDqA
+         8ld2LyqS5dqhA==
+Date:   Thu, 29 Sep 2022 11:01:33 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 14/29] acl: add vfs_set_acl()
+Message-ID: <20220929090133.2pfff6ewdjsnbvot@wittgenstein>
+References: <20220928160843.382601-1-brauner@kernel.org>
+ <20220928160843.382601-15-brauner@kernel.org>
+ <20220929081727.GB3699@lst.de>
+ <20220929082554.5rclj4ioo37qg254@wittgenstein>
 MIME-Version: 1.0
-References: <20220923202822.2667581-1-keescook@chromium.org>
- <20220923202822.2667581-2-keescook@chromium.org> <CAMuHMdXK+UN1YVZm9DenuXAM8hZRUZJwp=SXsueP7sWiVU3a9A@mail.gmail.com>
- <202209281011.66DD717D@keescook> <874jwqfuh6.fsf@mpe.ellerman.id.au>
-In-Reply-To: <874jwqfuh6.fsf@mpe.ellerman.id.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 29 Sep 2022 11:00:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVOvs4adSV7G6ucZ8dcr+RxfZOOK=jXeO2tEAaXkv80Xg@mail.gmail.com>
-Message-ID: <CAMuHMdVOvs4adSV7G6ucZ8dcr+RxfZOOK=jXeO2tEAaXkv80Xg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/16] slab: Remove __malloc attribute from realloc functions
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Marco Elver <elver@google.com>, linux-mm@kvack.org,
-        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Alex Elder <elder@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Yonghong Song <yhs@fb.com>, Miguel Ojeda <ojeda@kernel.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        dev@openvswitch.org, x86@kernel.org, llvm@lists.linux.dev,
-        linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220929082554.5rclj4ioo37qg254@wittgenstein>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Michael,
+On Thu, Sep 29, 2022 at 10:25:59AM +0200, Christian Brauner wrote:
+> On Thu, Sep 29, 2022 at 10:17:27AM +0200, Christoph Hellwig wrote:
+> > > +EXPORT_SYMBOL(vfs_set_acl);
+> > 
+> > I think all this stackable file system infrastucture should be
+> > EXPORT_SYMBOL_GPL, like a lot of the other internal stuff.
+> 
+> Ok, sounds good.
+> 
+> > 
+> > > +int xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+> > > +		     const char *name, int mask)
+> > 
+> > Hmm.  The only think ACLs actually need from xattr_permission are
+> > the immutable / append check and the HAS_UNMAPPED_ID one.  I'd rather
+> > open code that, or if you cane come up with a sane name do a smaller
+> > helper rather than doing all the strcmp on the prefixes for now
+> > good reason.
+> 
+> I'll see if a little helper makes more sense than open-coding.
 
-On Thu, Sep 29, 2022 at 10:36 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Kees Cook <keescook@chromium.org> writes:
-> > On Wed, Sep 28, 2022 at 09:26:15AM +0200, Geert Uytterhoeven wrote:
-> >> On Fri, Sep 23, 2022 at 10:35 PM Kees Cook <keescook@chromium.org> wrote:
-> >> > The __malloc attribute should not be applied to "realloc" functions, as
-> >> > the returned pointer may alias the storage of the prior pointer. Instead
-> >> > of splitting __malloc from __alloc_size, which would be a huge amount of
-> >> > churn, just create __realloc_size for the few cases where it is needed.
-> >> >
-> >> > Additionally removes the conditional test for __alloc_size__, which is
-> >> > always defined now.
-> >> >
-> >> > Cc: Christoph Lameter <cl@linux.com>
-> >> > Cc: Pekka Enberg <penberg@kernel.org>
-> >> > Cc: David Rientjes <rientjes@google.com>
-> >> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> >> > Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> >> > Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> >> > Cc: Marco Elver <elver@google.com>
-> >> > Cc: linux-mm@kvack.org
-> >> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> >>
-> >> Thanks for your patch, which is now commit 63caa04ec60583b1 ("slab:
-> >> Remove __malloc attribute from realloc functions") in next-20220927.
-> >>
-> >> Noreply@ellerman.id.au reported all gcc8-based builds to fail
-> >> (e.g. [1], more at [2]):
-> >>
-> >>     In file included from <command-line>:
-> >>     ./include/linux/percpu.h: In function ‘__alloc_reserved_percpu’:
-> >>     ././include/linux/compiler_types.h:279:30: error: expected
-> >> declaration specifiers before ‘__alloc_size__’
-> >>      #define __alloc_size(x, ...) __alloc_size__(x, ## __VA_ARGS__) __malloc
-> >>                                   ^~~~~~~~~~~~~~
-> >>     ./include/linux/percpu.h:120:74: note: in expansion of macro ‘__alloc_size’
-> >>     [...]
-> >>
-> >> It's building fine with e.g. gcc-9 (which is my usual m68k cross-compiler).
-> >> Reverting this commit on next-20220927 fixes the issue.
-> >>
-> >> [1] http://kisskb.ellerman.id.au/kisskb/buildresult/14803908/
-> >> [2] http://kisskb.ellerman.id.au/kisskb/head/1bd8b75fe6adeaa89d02968bdd811ffe708cf839/
-> >
-> > Eek! Thanks for letting me know. I'm confused about this --
-> > __alloc_size__ wasn't optional in compiler_attributes.h -- but obviously
-> > I broke something! I'll go figure this out.
->
-> This fixes it for me.
+So I've added - which is then used in vfs_{set,remove}_acl():
 
-Kees submitted a similar patch 20 minutes before:
-https://lore.kernel.org/all/20220929081642.1932200-1-keescook@chromium.org
+commit 6ae39d028cb6990d69a7ec27386fc1bb7b1f3e3b
+Author:     Christian Brauner <brauner@kernel.org>
+AuthorDate: Thu Sep 29 10:47:36 2022 +0200
+Commit:     Christian Brauner (Microsoft) <brauner@kernel.org>
+CommitDate: Thu Sep 29 10:59:27 2022 +0200
 
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -275,8 +275,13 @@ struct ftrace_likely_data {
->   * be performing a _reallocation_, as that may alias the existing pointer.
->   * For these, use __realloc_size().
->   */
-> -#define __alloc_size(x, ...)   __alloc_size__(x, ## __VA_ARGS__) __malloc
-> -#define __realloc_size(x, ...) __alloc_size__(x, ## __VA_ARGS__)
-> +#ifdef __alloc_size__
-> +# define __alloc_size(x, ...)  __alloc_size__(x, ## __VA_ARGS__) __malloc
-> +# define __realloc_size(x, ...)        __alloc_size__(x, ## __VA_ARGS__)
-> +#else
-> +# define __alloc_size(x, ...)  __malloc
-> +# define __realloc_size(x, ...)
-> +#endif
->
->  #ifndef asm_volatile_goto
->  #define asm_volatile_goto(x...) asm goto(x)
+    internal: add may_write_xattr()
+    
+    Split out the generic checks whether an inode allows writing xattrs. Since
+    security.* and system.* xattrs don't have any restrictions and we're going
+    to split out posix acls into a dedicated api we will use this helper to
+    check whether we can write posix acls.
+    
+    Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
+Notes:
+    To: linux-fsdevel@vger.kernel.org
+    Cc: Seth Forshee <sforshee@kernel.org>
+    Cc: Christoph Hellwig <hch@lst.de>
+    Cc: Al Viro <viro@zeniv.linux.org.uk>
+    Cc: linux-security-module@vger.kernel.org
+    
+    /* v2 */
+    patch not present
+    
+    /* v3 */
+    patch not present
+    
+    /* v4 */
+    Christoph Hellwig <hch@lst.de>:
+    - Split out checks whether an inode can have xattrs written to into a helper.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/fs/internal.h b/fs/internal.h
+index 87e96b9024ce..a95b1500ed65 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -221,3 +221,4 @@ ssize_t do_getxattr(struct user_namespace *mnt_userns,
+ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
+ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx);
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61107b6bbed2..57148c207545 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -80,6 +80,28 @@ xattr_resolve_name(struct inode *inode, const char **name)
+ 	return ERR_PTR(-EOPNOTSUPP);
+ }
+ 
++/**
++ * may_write_xattr - check whether inode allows writing xattr
++ * @mnt_userns:	User namespace of the mount the inode was found from
++ * @inode: the inode on which to set an xattr
++ *
++ * Check whether the inode allows writing xattrs. Specifically, we can never
++ * set or remove an extended attribute on a read-only filesystem  or on an
++ * immutable / append-only inode.
++ *
++ * We also need to ensure that the inode has a mapping in the mount to
++ * not risk writing back invalid i_{g,u}id values.
++ *
++ * Return: On success zero is returned. On error a negative errno is returned.
++ */
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode)
++{
++	if (IS_IMMUTABLE(inode) || IS_APPEND(inode) ||
++	    HAS_UNMAPPED_ID(mnt_userns, inode))
++		return -EPERM;
++	return 0;
++}
++
+ /*
+  * Check permissions for extended attribute access.  This is a bit complicated
+  * because different namespaces have very different rules.
+@@ -88,20 +110,12 @@ static int
+ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 		 const char *name, int mask)
+ {
+-	/*
+-	 * We can never set or remove an extended attribute on a read-only
+-	 * filesystem  or on an immutable / append-only inode.
+-	 */
+ 	if (mask & MAY_WRITE) {
+-		if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
+-			return -EPERM;
+-		/*
+-		 * Updating an xattr will likely cause i_uid and i_gid
+-		 * to be writen back improperly if their true value is
+-		 * unknown to the vfs.
+-		 */
+-		if (HAS_UNMAPPED_ID(mnt_userns, inode))
+-			return -EPERM;
++		int ret;
++
++		ret = may_write_xattr(mnt_userns, inode);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/*
