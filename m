@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 330345EF8E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 074F45EF8E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235970AbiI2PdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 11:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        id S235895AbiI2PdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 11:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235307AbiI2PcL (ORCPT
+        with ESMTP id S235919AbiI2PcM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:32:11 -0400
+        Thu, 29 Sep 2022 11:32:12 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608A91075AC;
-        Thu, 29 Sep 2022 08:31:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F9F1138EE;
+        Thu, 29 Sep 2022 08:31:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1B80CB824F1;
-        Thu, 29 Sep 2022 15:31:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A60C433D7;
-        Thu, 29 Sep 2022 15:31:23 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C955FB824F8;
+        Thu, 29 Sep 2022 15:31:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B898C4347C;
+        Thu, 29 Sep 2022 15:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465485;
-        bh=dbuNJmKc8SFD5vRQjR9cy1aU08qw5nc1IDpkMKNJTgc=;
+        s=k20201202; t=1664465488;
+        bh=PA/C5Bhmd27EHXCpHUNsenq+Sp0N9Nx+ma3BNixH/D8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b7vt1XxZyhujFtgsMjYfo0G3qjYT8qXTpROe2sEFT7MakUt9GPL/NqY0Lj+WW1L6j
-         5jsYQmaROLCVvKthCW3iNCs20TdBRAYuXwq71yUZfv+vG0yeGmbh1TTgbOpVrjdBGc
-         oqzKfxOam+IErtOIH+esjsiZGUHg6DCveuHEgr3GB90sACavUIDpwDcC2B2rn3+C71
-         Q+WyJS0+W2cU8xS7T6WvavxNNgi7qyIe6E4iuq+VqxgKCO5Rj5gXwcPe6yY8m3isq0
-         +6CeDn62jDUvTg1w4+Bxfidl3WEuKAkiTaMfD4u3uKUniiVwcmcZtAstbtWzx6q9n5
-         b8sSW0jY4g+Cg==
+        b=Ye2yjCqkNeY9NzhZukvZ6fOwyFmBq86fcHd1CyjA6YkeSwgmPmKc0pN8KuYbOualI
+         rsEBYIvCsoijEOtArMQNzIXyPohmOoehH/6o24OXQadRCw1ga/UhM0SA0oFpZRUpGo
+         wRLotcZfM9JpJ9ukxUcKBt3LI2MjrWaK1Akfgo7cx+ko/VAPm67rphr1qC91R3WHQF
+         qfX+TzCFp86p0e6bHJ19bPo9fiIE6SKxd5YQyCphn8BWOzCIxLBBQJzHAYFXmG2cee
+         IvA5nm4cp1oysRDB10/8RtRGMKT1DMuOGW/ztyoRcrsKlw331qQuhXbRWfUSZ8sC+X
+         xWL5n53He0d9w==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -40,15 +40,16 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v4 12/30] integrity: implement get and set acl hook
-Date:   Thu, 29 Sep 2022 17:30:22 +0200
-Message-Id: <20220929153041.500115-13-brauner@kernel.org>
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v4 13/30] evm: add post set acl hook
+Date:   Thu, 29 Sep 2022 17:30:23 +0200
+Message-Id: <20220929153041.500115-14-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10896; i=brauner@kernel.org; h=from:subject; bh=dbuNJmKc8SFD5vRQjR9cy1aU08qw5nc1IDpkMKNJTgc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hK58XzuvDWvNkrvdVdf5RF36bKiYWhJ8NF3Gy0m3Pq6 78efqR2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATUV7JyHAxOtMqIkT40k5L0T8CN1 kKHqqfrmzwsTu2frbhzT/h69QZ/ikd/HnzEsNi5U/mc08fmNEgf/bxE8OLb5bN7F1sojql6gEzAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3018; i=brauner@kernel.org; h=from:subject; bh=PA/C5Bhmd27EHXCpHUNsenq+Sp0N9Nx+ma3BNixH/D8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hLh5Zhir5MQnLFYZ53SZmnhpZxVj+yKnoc3lez0OqOu Lt3dUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHZfAz/M2dGP6nZlG9qxbdz17qEGy 3v7r6dHnsjM8a+93xU7yfT84wMDwrXFMb9Etr7zqTepu3Aokl7jbx0JLsf10379/UN4+kIbgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -60,43 +61,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The current way of setting and getting posix acls through the generic
-xattr interface is error prone and type unsafe. The vfs needs to
-interpret and fixup posix acls before storing or reporting it to
-userspace. Various hacks exist to make this work. The code is hard to
-understand and difficult to maintain in it's current form. Instead of
-making this work by hacking posix acls through xattr handlers we are
-building a dedicated posix acl api around the get and set inode
-operations. This removes a lot of hackiness and makes the codepaths
-easier to maintain. A lot of background can be found in [1].
+The security_inode_post_setxattr() hook is used by security modules to
+update their own security.* xattrs. Consequently none of the security
+modules operate on posix acls. So we don't need an additional security
+hook when post setting posix acls.
 
-So far posix acls were passed as a void blob to the security and
-integrity modules. Some of them like evm then proceed to interpret the
-void pointer and convert it into the kernel internal struct posix acl
-representation to perform their integrity checking magic. This is
-obviously pretty problematic as that requires knowledge that only the
-vfs is guaranteed to have and has lead to various bugs. Add a proper
-security hook for setting posix acls and pass down the posix acls in
-their appropriate vfs format instead of hacking it through a void
-pointer stored in the uapi format.
+However, the integrity subsystem wants to be informed about posix acl
+changes and specifically evm to update their hashes when the xattrs
+change. The callchain for evm_inode_post_setxattr() is:
 
-I spent considerate time in the security module and integrity
-infrastructure and audited all codepaths. EVM is the only part that
-really has restrictions based on the actual posix acl values passed
-through it. Before this dedicated hook EVM used to translate from the
-uapi posix acl format sent to it in the form of a void pointer into the
-vfs format. This is not a good thing. Instead of hacking around in the
-uapi struct give EVM the posix acls in the appropriate vfs format and
-perform sane permissions checks that mirror what it used to to in the
-generic xattr hook.
+-> evm_inode_post_setxattr()
+   -> evm_update_evmxattr()
+      -> evm_calc_hmac()
+         -> evm_calc_hmac_or_hash()
 
-IMA doesn't have any restrictions on posix acls. When posix acls are
-changed it just wants to update its appraisal status.
+and evm_cacl_hmac_or_hash() walks the global list of protected xattr
+names evm_config_xattrnames. This global list can be modified via
+/sys/security/integrity/evm/evm_xattrs. The write to "evm_xattrs" is
+restricted to security.* xattrs and the default xattrs in
+evm_config_xattrnames only contains security.* xattrs as well.
 
-The removal of posix acls is equivalent to passing NULL to the posix set
-acl hooks. This is the same as before through the generic xattr api.
+So the actual value for posix acls is currently completely irrelevant
+for evm during evm_inode_post_setxattr() and frankly it should stay that
+way in the future to not cause the vfs any more headaches. But if the
+actual posix acl values matter then evm shouldn't operate on the binary
+void blob and try to hack around in the uapi struct anyway. Instead it
+should then in the future add a dedicated hook which takes a struct
+posix_acl argument passing the posix acls in the proper vfs format.
 
-Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+For now it is sufficient to make evm_inode_post_set_acl() a wrapper
+around evm_inode_post_setxattr() not passing any actual values down.
+This will still cause the hashes to be updated as before.
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
@@ -105,255 +102,45 @@ Notes:
     unchanged
     
     /* v3 */
-    Paul Moore <paul@paul-moore.com>:
-    - Add get, and remove acl hook
+    Reviewed-by: Paul Moore <paul@paul-moore.com>
     
     /* v4 */
     unchanged
 
- include/linux/evm.h                   | 23 +++++++++
- include/linux/ima.h                   | 21 ++++++++
- security/integrity/evm/evm_main.c     | 70 ++++++++++++++++++++++++++-
- security/integrity/ima/ima_appraise.c |  9 ++++
- security/security.c                   | 21 +++++++-
- 5 files changed, 141 insertions(+), 3 deletions(-)
+ include/linux/evm.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/include/linux/evm.h b/include/linux/evm.h
-index aa63e0b3c0a2..86139be48992 100644
+index 86139be48992..117ac01b2432 100644
 --- a/include/linux/evm.h
 +++ b/include/linux/evm.h
-@@ -35,6 +35,15 @@ extern int evm_inode_removexattr(struct user_namespace *mnt_userns,
- 				 struct dentry *dentry, const char *xattr_name);
- extern void evm_inode_post_removexattr(struct dentry *dentry,
- 				       const char *xattr_name);
-+extern int evm_inode_set_acl(struct user_namespace *mnt_userns,
-+			     struct dentry *dentry, const char *acl_name,
-+			     struct posix_acl *kacl);
-+static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
-+				       struct dentry *dentry,
-+				       const char *acl_name)
+@@ -44,6 +44,12 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
+ {
+ 	return evm_inode_set_acl(mnt_userns, dentry, acl_name, NULL);
+ }
++static inline void evm_inode_post_set_acl(struct dentry *dentry,
++					  const char *acl_name,
++					  struct posix_acl *kacl)
 +{
-+	return evm_inode_set_acl(mnt_userns, dentry, acl_name, NULL);
++	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
 +}
  extern int evm_inode_init_security(struct inode *inode,
  				   const struct xattr *xattr_array,
  				   struct xattr *evm);
-@@ -108,6 +117,20 @@ static inline void evm_inode_post_removexattr(struct dentry *dentry,
- 	return;
+@@ -131,6 +137,13 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
+ 	return 0;
  }
  
-+static inline int evm_inode_set_acl(struct user_namespace *mnt_userns,
-+				    struct dentry *dentry, const char *acl_name,
-+				    struct posix_acl *kacl)
++static inline void evm_inode_post_set_acl(struct dentry *dentry,
++					  const char *acl_name,
++					  struct posix_acl *kacl)
 +{
-+	return 0;
-+}
-+
-+static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
-+				       struct dentry *dentry,
-+				       const char *acl_name)
-+{
-+	return 0;
++	return;
 +}
 +
  static inline int evm_inode_init_security(struct inode *inode,
  					  const struct xattr *xattr_array,
  					  struct xattr *evm)
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 81708ca0ebc7..ad4353947cdf 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -187,6 +187,15 @@ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
- 				   struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
-+extern int ima_inode_set_acl(struct user_namespace *mnt_userns,
-+			     struct dentry *dentry, const char *acl_name,
-+			     struct posix_acl *kacl);
-+static inline int ima_inode_remove_acl(struct user_namespace *mnt_userns,
-+				       struct dentry *dentry,
-+				       const char *acl_name)
-+{
-+	return ima_inode_set_acl(mnt_userns, dentry, acl_name, NULL);
-+}
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
- #else
- static inline bool is_ima_appraise_enabled(void)
-@@ -208,11 +217,23 @@ static inline int ima_inode_setxattr(struct dentry *dentry,
- 	return 0;
- }
- 
-+static inline int ima_inode_set_acl(struct user_namespace *mnt_userns,
-+				    struct dentry *dentry, const char *acl_name,
-+				    struct posix_acl *kacl)
-+{
-+}
-+
- static inline int ima_inode_removexattr(struct dentry *dentry,
- 					const char *xattr_name)
- {
- 	return 0;
- }
-+
-+static inline ima_inode_remove_acl(struct user_namespace *mnt_userns,
-+				   struct dentry *dentry, const char *acl_name)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_IMA_APPRAISE */
- 
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 23d484e05e6f..7904786b610f 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -8,7 +8,7 @@
-  *
-  * File: evm_main.c
-  *	implements evm_inode_setxattr, evm_inode_post_setxattr,
-- *	evm_inode_removexattr, and evm_verifyxattr
-+ *	evm_inode_removexattr, evm_verifyxattr, and evm_inode_set_acl.
-  */
- 
- #define pr_fmt(fmt) "EVM: "fmt
-@@ -670,6 +670,74 @@ int evm_inode_removexattr(struct user_namespace *mnt_userns,
- 	return evm_protect_xattr(mnt_userns, dentry, xattr_name, NULL, 0);
- }
- 
-+static int evm_inode_set_acl_change(struct user_namespace *mnt_userns,
-+				    struct dentry *dentry, const char *name,
-+				    struct posix_acl *kacl)
-+{
-+#ifdef CONFIG_FS_POSIX_ACL
-+	int rc;
-+
-+	umode_t mode;
-+	struct inode *inode = d_backing_inode(dentry);
-+
-+	if (!kacl)
-+		return 1;
-+
-+	rc = posix_acl_update_mode(mnt_userns, inode, &mode, &kacl);
-+	if (rc || (inode->i_mode != mode))
-+		return 1;
-+#endif
-+	return 0;
-+}
-+
-+/**
-+ * evm_inode_set_acl - protect the EVM extended attribute for posix acls
-+ * @mnt_userns: user namespace of the idmapped mount
-+ * @dentry: pointer to the affected dentry
-+ * @acl_name: name of the posix acl
-+ * @kacl: pointer to the posix acls
-+ */
-+int evm_inode_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		      const char *acl_name, struct posix_acl *kacl)
-+{
-+	enum integrity_status evm_status;
-+
-+	/* Policy permits modification of the protected xattrs even though
-+	 * there's no HMAC key loaded
-+	 */
-+	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-+		return 0;
-+
-+	evm_status = evm_verify_current_integrity(dentry);
-+	if ((evm_status == INTEGRITY_PASS) ||
-+	    (evm_status == INTEGRITY_NOXATTRS))
-+		return 0;
-+
-+	/* Exception if the HMAC is not going to be calculated. */
-+	if (evm_hmac_disabled() && (evm_status == INTEGRITY_NOLABEL ||
-+	    evm_status == INTEGRITY_UNKNOWN))
-+		return 0;
-+
-+	/*
-+	 * Writing other xattrs is safe for portable signatures, as portable
-+	 * signatures are immutable and can never be updated.
-+	 */
-+	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
-+		return 0;
-+
-+	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
-+	    !evm_inode_set_acl_change(mnt_userns, dentry, acl_name, kacl))
-+		return 0;
-+
-+	if (evm_status != INTEGRITY_PASS &&
-+	    evm_status != INTEGRITY_PASS_IMMUTABLE)
-+		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
-+				    dentry->d_name.name, "appraise_metadata",
-+				    integrity_status_msg[evm_status],
-+				    -EPERM, 0);
-+	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
-+}
-+
- static void evm_reset_status(struct inode *inode)
- {
- 	struct integrity_iint_cache *iint;
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index bde74fcecee3..698a8ae2fe3e 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -770,6 +770,15 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 	return result;
- }
- 
-+int ima_inode_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		      const char *acl_name, struct posix_acl *kacl)
-+{
-+	if (evm_revalidate_status(acl_name))
-+		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-+
-+	return 0;
-+}
-+
- int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
- {
- 	int result;
-diff --git a/security/security.c b/security/security.c
-index 0fc9aff39f63..f28725a06f94 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1374,9 +1374,18 @@ int security_inode_set_acl(struct user_namespace *mnt_userns,
- 			   struct dentry *dentry, const char *acl_name,
- 			   struct posix_acl *kacl)
- {
-+	int ret;
-+
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	return call_int_hook(inode_set_acl, 0, mnt_userns, dentry, acl_name, kacl);
-+	ret = call_int_hook(inode_set_acl, 0, mnt_userns, dentry, acl_name,
-+			    kacl);
-+	if (ret)
-+		return ret;
-+	ret = ima_inode_set_acl(mnt_userns, dentry, acl_name, kacl);
-+	if (ret)
-+		return ret;
-+	return evm_inode_set_acl(mnt_userns, dentry, acl_name, kacl);
- }
- 
- int security_inode_get_acl(struct user_namespace *mnt_userns,
-@@ -1390,9 +1399,17 @@ int security_inode_get_acl(struct user_namespace *mnt_userns,
- int security_inode_remove_acl(struct user_namespace *mnt_userns,
- 			      struct dentry *dentry, const char *acl_name)
- {
-+	int ret;
-+
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	return call_int_hook(inode_remove_acl, 0, mnt_userns, dentry, acl_name);
-+	ret = call_int_hook(inode_remove_acl, 0, mnt_userns, dentry, acl_name);
-+	if (ret)
-+		return ret;
-+	ret = ima_inode_remove_acl(mnt_userns, dentry, acl_name);
-+	if (ret)
-+		return ret;
-+	return evm_inode_remove_acl(mnt_userns, dentry, acl_name);
- }
- 
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
 -- 
 2.34.1
 
