@@ -2,104 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 395B75EF2FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 12:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037315EF3B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 12:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235153AbiI2KFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 06:05:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
+        id S234751AbiI2Kvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 06:51:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234990AbiI2KFE (ORCPT
+        with ESMTP id S229451AbiI2Kvd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 06:05:04 -0400
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213A44A806
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 03:04:58 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MdTVq5WPNzMqdYs;
-        Thu, 29 Sep 2022 12:04:51 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MdTVq2P01zx0;
-        Thu, 29 Sep 2022 12:04:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664445891;
-        bh=fYqQCGtQCa3m0DU5iOI8aAuy8TqxREsNUaE2lVvrtvU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XnxZ9wKnSfinXr5GG5T4qDJcLypqXxk4DzLU2rJ2gkjhcapYMYZeApInqNtdxPUsn
-         as8ZX30HWnMJqP4bb0VdwXCD9CFi5CBlgUsj6Efxk+CLyvDG3AFyZV6JQbkVntbMPG
-         ToyoSbpL3CAnDl39ivVU5Glxkg/b5Soo45D0ZxfA=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Hyunchul Lee <hyc.lee@gmail.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Steve French <smfrench@gmail.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Thu, 29 Sep 2022 06:51:33 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C3AAD9BA;
+        Thu, 29 Sep 2022 03:51:31 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id EAA5568BFE; Thu, 29 Sep 2022 12:51:28 +0200 (CEST)
+Date:   Thu, 29 Sep 2022 12:51:28 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH v1] ksmbd: Fix user namespace mapping
-Date:   Thu, 29 Sep 2022 12:04:47 +0200
-Message-Id: <20220929100447.108468-1-mic@digikod.net>
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 23/29] xattr: use posix acl api
+Message-ID: <20220929105128.GA16410@lst.de>
+References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-24-brauner@kernel.org> <20220929082535.GC3699@lst.de> <20220929091027.ddw6kbdy2s7ywvh4@wittgenstein> <20220929094623.ajw7kauqwwwovd44@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929094623.ajw7kauqwwwovd44@wittgenstein>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A kernel daemon should not rely on the current thread, which is unknown
-and might be malicious.  Before this security fix,
-ksmbd_override_fsids() didn't correctly override FS UID/GID which means
-that arbitrary user space threads could trick the kernel to impersonate
-arbitrary users or groups for file system access checks, leading to
-file system access bypass.
+On Thu, Sep 29, 2022 at 11:46:23AM +0200, Christian Brauner wrote:
+> +int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+> +	       struct xattr_ctx *ctx)
 
-This was found while investigating truncate support for Landlock:
-https://lore.kernel.org/r/CAKYAXd8fpMJ7guizOjHgxEyyjoUwPsx3jLOPZP=wPYcbhkVXqA@mail.gmail.com
+I'd just pass name, value an size instead of this weird context thing,
+same for the read size.  Otherwise this looks fine, though.
 
-Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
-Cc: Hyunchul Lee <hyc.lee@gmail.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Steve French <smfrench@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20220929100447.108468-1-mic@digikod.net
----
- fs/ksmbd/smb_common.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> index 84180afd090b..b766ddfc6bc3 100644
+> --- a/io_uring/xattr.c
+> +++ b/io_uring/xattr.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/io_uring.h>
+>  #include <linux/xattr.h>
+> +#include <linux/posix_acl_xattr.h>
 
-diff --git a/fs/ksmbd/smb_common.c b/fs/ksmbd/smb_common.c
-index 7f8ab14fb8ec..d96da872d70a 100644
---- a/fs/ksmbd/smb_common.c
-+++ b/fs/ksmbd/smb_common.c
-@@ -4,6 +4,8 @@
-  *   Copyright (C) 2018 Namjae Jeon <linkinjeon@kernel.org>
-  */
- 
-+#include <linux/user_namespace.h>
-+
- #include "smb_common.h"
- #include "server.h"
- #include "misc.h"
-@@ -625,8 +627,8 @@ int ksmbd_override_fsids(struct ksmbd_work *work)
- 	if (!cred)
- 		return -ENOMEM;
- 
--	cred->fsuid = make_kuid(current_user_ns(), uid);
--	cred->fsgid = make_kgid(current_user_ns(), gid);
-+	cred->fsuid = make_kuid(&init_user_ns, uid);
-+	cred->fsgid = make_kgid(&init_user_ns, gid);
- 
- 	gi = groups_alloc(0);
- 	if (!gi) {
-
-base-commit: f76349cf41451c5c42a99f18a9163377e4b364ff
--- 
-2.37.2
+This looks spurious.
 
