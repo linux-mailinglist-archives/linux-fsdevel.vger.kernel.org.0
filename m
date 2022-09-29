@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6FAB5EF829
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2845EF827
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 16:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235801AbiI2O66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 10:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51236 "EHLO
+        id S235808AbiI2O7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 10:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235786AbiI2O6u (ORCPT
+        with ESMTP id S235822AbiI2O6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 10:58:50 -0400
+        Thu, 29 Sep 2022 10:58:55 -0400
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E437014A78B;
-        Thu, 29 Sep 2022 07:58:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88AD814A780;
+        Thu, 29 Sep 2022 07:58:54 -0700 (PDT)
 Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
         (authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 28TEwTHU008323
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 28TEwT9A008325
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 29 Sep 2022 10:58:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1664463512; bh=VVHrfOfCUXCAspdln7pBEEbuFl3EEqngl2Yk0rFX28k=;
+        t=1664463515; bh=6Wnh1KxwQC30aGLb7Arpgapp5GBqfRDmGjxLP+HwTKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=amz4/vFZQkm0igsyj+ItYvA/BSQKDV0AwbA/mk5TrlW3FvxONgvVaoK3EwkO+hhDk
-         s9GQrWi6RZCPX0sjlnppwwR3YGR8UOM3SK76BK4GrBS4fmcPMdl5hSecoY1lNIGawV
-         aefg2pVzy3sCnOnMo2kO42O0+hEfqD0cDcc6eOMXhiJlk1/nct7lS/zjrr0JmCfoFR
-         +tCtUkCN2NOAB2QiMUaiuFIrTPvyi+nsIJLmldOqK/+x06+QkRpNnHVnWA0gWc2ejr
-         oHM1ttobw+f9jT63f6HM/S1w8t/ldeJZ48Z2KJgL5KLzc6+lwhSGEgCDpQrkOi9ZXq
-         sr18kLWYqKHHA==
+        b=ZByoBki0g1jf2cVHx8JI6H7N0AbHCTxK0McTtIjWceR8q4Yjz+8mTCBZ1JXrlkVcV
+         MlXv3qzpQWZOQ+kT20tdrJQ1urXC8SovpXMBEXVUFPHUbVR39gmoW6QfuAZDCWsDCy
+         RuqWagZXZtQgiRboMTZ+KCcbu3HnterzwjDrC+EAX7sYOLXiwVVIalQ0cCRM+EWR84
+         9+wiyskM8TH56VF6fhIKugpFmDyP2XwDcjI9W4yjyNjEHeuPdNa7qcEdSVxS4zsE4q
+         PKSr+aFHB9MVUHyvAbXIiPhBV7W+3xCpfl19retV13f7QHAooak1J6g8p2J51/1u8K
+         cDKNTOoNGFv2g==
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 7857B15C343F; Thu, 29 Sep 2022 10:58:29 -0400 (EDT)
+        id 7A1B115C3441; Thu, 29 Sep 2022 10:58:29 -0400 (EDT)
 From:   "Theodore Ts'o" <tytso@mit.edu>
 To:     linux-ext4@vger.kernel.org, lczerner@redhat.com
 Cc:     "Theodore Ts'o" <tytso@mit.edu>, jlayton@kernel.org,
         ebiggers@kernel.org, jack@suse.cz, david@fromorbit.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] ext4: don't increase iversion counter for ea_inodes
-Date:   Thu, 29 Sep 2022 10:58:25 -0400
-Message-Id: <166446350052.149484.6408984845570083100.b4-ty@mit.edu>
+        linux-fsdevel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v5] fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE
+Date:   Thu, 29 Sep 2022 10:58:26 -0400
+Message-Id: <166446350051.149484.15018548252092429742.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220824160349.39664-1-lczerner@redhat.com>
-References: <20220824160349.39664-1-lczerner@redhat.com>
+In-Reply-To: <20220825100657.44217-1-lczerner@redhat.com>
+References: <20220824160349.39664-2-lczerner@redhat.com> <20220825100657.44217-1-lczerner@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -55,24 +55,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 24 Aug 2022 18:03:47 +0200, Lukas Czerner wrote:
-> ea_inodes are using i_version for storing part of the reference count so
-> we really need to leave it alone.
-> 
-> The problem can be reproduced by xfstest ext4/026 when iversion is
-> enabled. Fix it by not calling inode_inc_iversion() for EXT4_EA_INODE_FL
-> inodes in ext4_mark_iloc_dirty().
+On Thu, 25 Aug 2022 12:06:57 +0200, Lukas Czerner wrote:
+> Currently the I_DIRTY_TIME will never get set if the inode already has
+> I_DIRTY_INODE with assumption that it supersedes I_DIRTY_TIME.  That's
+> true, however ext4 will only update the on-disk inode in
+> ->dirty_inode(), not on actual writeback. As a result if the inode
+> already has I_DIRTY_INODE state by the time we get to
+> __mark_inode_dirty() only with I_DIRTY_TIME, the time was already filled
+> into on-disk inode and will not get updated until the next I_DIRTY_INODE
+> update, which might never come if we crash or get a power failure.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] ext4: don't increase iversion counter for ea_inodes
-      commit: 6c7c5ade428cc65b58e4aba1925b5347970f4456
-[2/3] fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE
+[1/1] fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE
       commit: 625e1e67b66245b93ccae868cd4a950d257de003
-[3/3] ext4: unconditionally enable the i_version counter
-      commit: 59772a0cb09a7ec77362653e8be207a464fa04af
 
 Best regards,
 -- 
