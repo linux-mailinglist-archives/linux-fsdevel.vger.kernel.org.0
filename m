@@ -2,357 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA0745EF29B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 11:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C59BB5EF2ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 12:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234998AbiI2Js4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 05:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42836 "EHLO
+        id S235018AbiI2KBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 06:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234956AbiI2JsZ (ORCPT
+        with ESMTP id S234974AbiI2KBt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 05:48:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484CF149D09;
-        Thu, 29 Sep 2022 02:46:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 29 Sep 2022 06:01:49 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CDF1182D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 03:01:47 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E7C2960EA5;
-        Thu, 29 Sep 2022 09:46:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF56C433C1;
-        Thu, 29 Sep 2022 09:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664444788;
-        bh=Rwq3hiekO4F6jvuoY+faDtF7tm+6xI/7ktSr4YHXZ38=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cE1KMYZWbu/u5V+JFFf6ekuVKJxUAzatNZoCQ+bc6E4kA4t0SBkmsPsjhYIIXaLzh
-         R72H7QsO0uZ3Wv53r62QmXbOy6e4QYSGs7Y66a1J6Mrj7AtNhYSz+uc3fz4EmAePde
-         QOhILsdZ2F3u8KTzhoDcYAb3MIgjtG6gncBOt7idIEj8R95hzL0Qh7A1ieQhezPZGA
-         FwlUCFYL1IudWIVmUafCfChH7twGG+e6MFD/Dy5oYDMERGjuZdMi+2ghQm0VIuk86D
-         atlKr8CURR990fEn2s8iUZmAalnJHP8GRIBj7kfYKI8USxVYExltXO+DRBsk4WgLeR
-         PnK24nz31sEpg==
-Date:   Thu, 29 Sep 2022 11:46:23 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 23/29] xattr: use posix acl api
-Message-ID: <20220929094623.ajw7kauqwwwovd44@wittgenstein>
-References: <20220928160843.382601-1-brauner@kernel.org>
- <20220928160843.382601-24-brauner@kernel.org>
- <20220929082535.GC3699@lst.de>
- <20220929091027.ddw6kbdy2s7ywvh4@wittgenstein>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2620221E12;
+        Thu, 29 Sep 2022 10:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1664445706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gI13/DIVt7/qVIsgrGWwpkXLKynGB3x5b9M+XDGmJNw=;
+        b=0UhesytFAXk5c8JkzS5WURb8cfn/+utf0ItHRIxCapxpY+KSG5REmxPGhMCkIdLA5KFd1o
+        TZA9TO4FY4yo52/KRQHd8mHLX3SX6JKnobGIMdIw5oIoZrSyzRRKzypuKR+BYYqhNy+iKr
+        JzpdQGJOkNW4HG7hUEzQbtALksRtJJ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1664445706;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gI13/DIVt7/qVIsgrGWwpkXLKynGB3x5b9M+XDGmJNw=;
+        b=ayf+o+E3CaAFYVbGfxcJ8SxyM2iF1dMrlnr8cRFBC3puLGS4gud6oG8FVLb1Ef26b2cZCF
+        hZjDNgEgHavw2RBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0A37D13A71;
+        Thu, 29 Sep 2022 10:01:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7I/ZAQptNWPBRgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 29 Sep 2022 10:01:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 64011A0681; Thu, 29 Sep 2022 12:01:45 +0200 (CEST)
+Date:   Thu, 29 Sep 2022 12:01:45 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        "Plaster, Robert" <rplaster@deepspacestorage.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Fufu Fang <fangfufu2003@gmail.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: thoughts about fanotify and HSM
+Message-ID: <20220929100145.wruxmbwapjn6dapy@quack3>
+References: <20220912125734.wpcw3udsqri4juuh@quack3>
+ <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
+ <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
+ <20220914103006.daa6nkqzehxppdf5@quack3>
+ <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
+ <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
+ <20220922104823.z6465rfro7ataw2i@quack3>
+ <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
+ <20220926152735.fgvx37rppdfhuokz@quack3>
+ <CAOQ4uxgU4q1Pj2-9q7DZGZiw1EPZKXbc_Cp=H_Tu5_sxD6-twA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220929091027.ddw6kbdy2s7ywvh4@wittgenstein>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxgU4q1Pj2-9q7DZGZiw1EPZKXbc_Cp=H_Tu5_sxD6-twA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 11:10:32AM +0200, Christian Brauner wrote:
-> On Thu, Sep 29, 2022 at 10:25:35AM +0200, Christoph Hellwig wrote:
-> > On Wed, Sep 28, 2022 at 06:08:37PM +0200, Christian Brauner wrote:
-> > > +static int setxattr_convert(struct user_namespace *mnt_userns, struct dentry *d,
-> > > +			    struct xattr_ctx *ctx)
-> > >  {
-> > > -	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
-> > > -		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
-> > > +	struct posix_acl *acl;
-> > > +
-> > > +	if (!ctx->size || !is_posix_acl_xattr(ctx->kname->name))
-> > > +		return 0;
-> > > +
-> > > +	/*
-> > > +	 * Note that posix_acl_from_xattr() uses GFP_NOFS when it probably
-> > > +	 * doesn't need to here.
-> > > +	 */
-> > > +	acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue, ctx->size);
-> > > +	if (IS_ERR(acl))
-> > > +		return PTR_ERR(acl);
-> > > +
-> > > +	ctx->acl = acl;
-> > > +	return 0;
-> > 
-> > why is this called setxattr_convert when it is clearly about ACLs only?
+On Wed 28-09-22 15:29:13, Amir Goldstein wrote:
+> On Mon, Sep 26, 2022 at 6:27 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 22-09-22 16:03:41, Amir Goldstein wrote:
+> > > On Thu, Sep 22, 2022 at 1:48 PM Jan Kara <jack@suse.cz> wrote:
+> > > > On Tue 20-09-22 21:19:25, Amir Goldstein wrote:
+> > > > > For the next steps of POC, I could do:
+> > > > > - Report FAN_ACCESS_PERM range info to implement random read
+> > > > >   patterns (e.g. unzip -l)
+> > > > > - Introduce FAN_MODIFY_PERM, so file content could be downloaded
+> > > > >   before modifying a read-write HSM cache
+> > > > > - Demo conversion of a read-write FUSE HSM implementation
+> > > > >   (e.g. https://github.com/volga629/davfs2)
+> > > > > - Demo HSM with filesystem mark [*] and a hardcoded test filter
+> > > > >
+> > > > > [*] Note that unlike the case with recursive inotify, this POC HSM
+> > > > > implementation is not racy, because of the lookup permission events.
+> > > > > A filesystem mark is still needed to avoid pinning all the unpopulated
+> > > > > cache tree leaf entries to inode cache, so that this HSM could work on
+> > > > > a very large scale tree, the same as my original use case for implementing
+> > > > > filesystem mark.
+> > > >
+> > > > Sounds good! Just with your concern about pinning - can't you use evictable
+> > > > marks added on lookup for files / dirs you want to track? Maybe it isn't
+> > > > great design for other reasons but it would save you some event
+> > > > filtering...
+> > > >
+> > >
+> > > With the current POC, there is no trigger to re-establish the evicted mark,
+> > > because the parent is already populated and has no mark.
+> >
+> > So my original thinking was that you'd place FAN_LOOKUP_PERM mark on top of
+> > the directory tree and then you'd add evictable marks to all the subdirs
+> > that are looked up from the FAN_LOOKUP_PERM event handler. That way I'd
+> > imagine you can place evictable marks on all directories that are used in a
+> > race-free manner.
+> >
 > 
-> I think that's from Stefan's (Roesch) series to add xattr support to io_uring.
+> Maybe I am missing something.
+> I don't see how that can scale up to provide penalty free fast path lookup
+> for fully populated subtrees.
+
+No, you are right that this scheme would have non-trivial overhead in
+processing the lookup events even when the tree is fully populated.
+
+> > > A hook on instantiate of inode in inode cache could fill that gap.
+> > > It could still be useful to filter FAN_INSTANTIATE_PERM events in the
+> > > kernel but it is not a must because instantiate is more rare than (say) lookup
+> > > and then the fast lookup path (RCU walk) on populated trees suffers almost
+> > > no overhead when the filesystem is watched.
+> > >
+> > > Please think about this and let me know if you think that this is a direction
+> > > worth pursuing, now, or as a later optimization.
+> >
+> > I think an event on instantiate seems to be depending too much on kernel
+> > internals instead of obvious filesystem operations. Also it might be a bit
+> > challenging during startup when you don't know what is cached and what not
+> > so you cannot rely on instantiate events for placing marks. So I'd leave
+> > this for future optimization.
+> >
 > 
-> > 
-> > > +
-> > > +	error = setxattr_convert(mnt_userns, dentry, ctx);
-> > > +	if (error)
-> > > +		return error;
-> > > +
-> > > +	if (is_posix_acl_xattr(ctx->kname->name))
-> > > +		return vfs_set_acl(mnt_userns, dentry,
-> > > +				   ctx->kname->name, ctx->acl);
-> > 
-> > Also instead of doing two checks for ACLs why not do just one?  And then
-> > have a comment helper to convert and set which can live in posix_acl.c.
-> > 
-> > No need to store anything in a context with that either.
-> > 
-> > > @@ -610,6 +642,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
-> > >  	error = do_setxattr(mnt_userns, d, &ctx);
-> > >  
-> > >  	kvfree(ctx.kvalue);
-> > > +	posix_acl_release(ctx.acl);
-> > >  	return error;
-> > 
-> > And I don't think there is any good reason to not release the ACL
-> > right after the call to vfs_set_acl.  Which means there is no need to
-> > store anything in the ctx.
-> > 
-> > > +	if (is_posix_acl_xattr(ctx->kname->name)) {
-> > > +		ctx->acl = vfs_get_acl(mnt_userns, d, ctx->kname->name);
-> > > +		if (IS_ERR(ctx->acl))
-> > > +			return PTR_ERR(ctx->acl);
-> > > +
-> > > +		error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(d), ctx->acl,
-> > > +					       ctx->kvalue, ctx->size);
-> > > +		posix_acl_release(ctx->acl);
-> > 
-> > An while this is just a small function body I still think splitting it
-> > into a helper and moving it to posix_acl.c would be a bit cleaner.
+> Perhaps a user FAN_INSTANTIATE_PERM is too much, but I was
+> trying to figure out a way to make automatic inode marks work.
+> If we can define reasonable use cases for automatic inode marks that
+> kernel can implement (e.g. inheriting from parent on dentry instantiate)
+> then this could possibly get us something useful.
+> Maybe that is what you meant with the suggestion above?
+
+Well, my suggestion was pondering if we can implement something like
+automatic inode marks in userspace using FAN_LOOKUP_PERM event. But you are
+right the overhead in the fast path does not make this very attractive. So
+we'll have to look more into the in-kernel solution.
+
+> The other use case of automatic inode marks I was thinking about,
+> which are even more relevant for $SUBJECT is this:
+> When instantiating a dentry with an inode that has xattr
+> "security.fanotify.mask" (a.k.a. persistent inode mark), an inode
+> mark could be auto created and attached to a group with a special sb
+> mark (we can limit a single special mark per sb).
+> This could be implemented similar to get_acl(), where i_fsnotify_mask
+> is always initialized with a special value (i.e. FS_UNINITIALIZED)
+> which is set to either 0 or non-zero if "security.fanotify.mask" exists.
 > 
-> All good points. I'll see how workable this is.
+> The details of how such an API would look like are very unclear to me,
+> so I will try to focus on the recursive auto inode mark idea.
 
-Yeah, I think that looks much nicer:
+Yeah, although initializing fanotify marks based on xattrs does not look
+completely crazy I can see a lot of open questions there so I think
+automatic inode mark idea has more chances for success at this point :).
 
-commit c2e1457520fe2a2c1d99e2ffa80d1db1013eee63
-Author:     Christian Brauner <brauner@kernel.org>
-AuthorDate: Thu Sep 22 17:17:22 2022 +0200
-Commit:     Christian Brauner (Microsoft) <brauner@kernel.org>
-CommitDate: Thu Sep 29 11:42:44 2022 +0200
-
-    xattr: use posix acl api
-    
-    In previous patches we built a new posix api solely around get and set
-    inode operations. Now that we have all the pieces in place we can switch
-    the system calls and the vfs over to only rely on this api when
-    interacting with posix acls. This finally removes all type unsafety and
-    type conversion issues explained in detail in [1] that we aim to get rid
-    of.
-    
-    With the new posix acl api we immediately translate into an appropriate
-    kernel internal struct posix_acl format both when getting and setting
-    posix acls. This is a stark contrast to before were we hacked unsafe raw
-    values into the uapi struct that was stored in a void pointer relying
-    and having filesystems and security modules hack around in the uapi
-    struct as well.
-    
-    Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-    Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-
-Notes:
-    To: linux-fsdevel@vger.kernel.org
-    Cc: Seth Forshee <sforshee@kernel.org>
-    Cc: Christoph Hellwig <hch@lst.de>
-    Cc: Al Viro <viro@zeniv.linux.org.uk>
-    Cc: linux-security-module@vger.kernel.org
-    
-    /* v2 */
-    unchanged
-    
-    /* v3 */
-    unchanged
-    
-    /* v4 */
-    Christoph Hellwig <hch@lst.de>:
-    - Add do_set_acl() and do_get_acl() to fs/posix_acl.c and fs/internal.h that
-      wrap all the conversion and call them from fs/xattr.c. This allows to
-      simplify the whole patch and remove unneeded helpers.
-
-diff --git a/fs/internal.h b/fs/internal.h
-index a95b1500ed65..e88a2272ac58 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -222,3 +222,7 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
- int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		struct xattr_ctx *ctx);
- int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode);
-+int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+	       struct xattr_ctx *ctx);
-+ssize_t do_get_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		   struct xattr_ctx *ctx);
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 01209603afc9..ebc8d9076223 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -1551,3 +1551,41 @@ int vfs_remove_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_remove_acl);
-+
-+int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+	       struct xattr_ctx *ctx)
-+{
-+	int error;
-+	struct posix_acl *acl = NULL;
-+
-+	if (ctx->size) {
-+		/*
-+		 * Note that posix_acl_from_xattr() uses GFP_NOFS when it
-+		 * probably doesn't need to here.
-+		 */
-+		acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue,
-+					   ctx->size);
-+		if (IS_ERR(acl))
-+			return PTR_ERR(acl);
-+	}
-+
-+	error = vfs_set_acl(mnt_userns, dentry, ctx->kname->name, acl);
-+	posix_acl_release(acl);
-+	return error;
-+}
-+
-+ssize_t do_get_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		   struct xattr_ctx *ctx)
-+{
-+	ssize_t error;
-+	struct posix_acl *acl;
-+
-+	acl = vfs_get_acl(mnt_userns, dentry, ctx->kname->name);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+
-+	error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(dentry), acl,
-+				       ctx->kvalue, ctx->size);
-+	posix_acl_release(acl);
-+	return error;
-+}
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 6303f1c62796..1d794172487a 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -186,6 +186,9 @@ __vfs_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- {
- 	const struct xattr_handler *handler;
- 
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -407,6 +410,9 @@ __vfs_getxattr(struct dentry *dentry, struct inode *inode, const char *name,
- {
- 	const struct xattr_handler *handler;
- 
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -479,6 +485,9 @@ __vfs_removexattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	struct inode *inode = d_inode(dentry);
- 	const struct xattr_handler *handler;
- 
-+	if (is_posix_acl_xattr(name))
-+		return -EOPNOTSUPP;
-+
- 	handler = xattr_resolve_name(inode, &name);
- 	if (IS_ERR(handler))
- 		return PTR_ERR(handler);
-@@ -588,17 +597,12 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
- 	return error;
- }
- 
--static void setxattr_convert(struct user_namespace *mnt_userns,
--			     struct dentry *d, struct xattr_ctx *ctx)
--{
--	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
--		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
--}
--
- int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		struct xattr_ctx *ctx)
- {
--	setxattr_convert(mnt_userns, dentry, ctx);
-+	if (is_posix_acl_xattr(ctx->kname->name))
-+		return do_set_acl(mnt_userns, dentry, ctx);
-+
- 	return vfs_setxattr(mnt_userns, dentry, ctx->kname->name,
- 			ctx->kvalue, ctx->size, ctx->flags);
- }
-@@ -705,10 +709,11 @@ do_getxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 			return -ENOMEM;
- 	}
- 
--	error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
-+	if (is_posix_acl_xattr(ctx->kname->name))
-+		error = do_get_acl(mnt_userns, d, ctx);
-+	else
-+		error = vfs_getxattr(mnt_userns, d, kname, ctx->kvalue, ctx->size);
- 	if (error > 0) {
--		if (is_posix_acl_xattr(kname))
--			posix_acl_fix_xattr_to_user(ctx->kvalue, error);
- 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
- 			error = -EFAULT;
- 	} else if (error == -ERANGE && ctx->size >= XATTR_SIZE_MAX) {
-@@ -883,6 +888,9 @@ removexattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	if (error < 0)
- 		return error;
- 
-+	if (is_posix_acl_xattr(kname))
-+		return vfs_remove_acl(mnt_userns, d, kname);
-+
- 	return vfs_removexattr(mnt_userns, d, kname);
- }
- 
-diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
-index 3bd8fac436bc..0294b3489a81 100644
---- a/include/linux/posix_acl_xattr.h
-+++ b/include/linux/posix_acl_xattr.h
-@@ -33,6 +33,8 @@ posix_acl_xattr_count(size_t size)
- }
- 
- #ifdef CONFIG_FS_POSIX_ACL
-+struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
-+				       const void *value, size_t size);
- void posix_acl_fix_xattr_from_user(void *value, size_t size);
- void posix_acl_fix_xattr_to_user(void *value, size_t size);
- void posix_acl_getxattr_idmapped_mnt(struct user_namespace *mnt_userns,
-@@ -42,6 +44,12 @@ ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- 			       struct inode *inode, const struct posix_acl *acl,
- 			       void *buffer, size_t size);
- #else
-+static inline struct posix_acl *
-+posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
-+		     size_t size)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
- static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
- {
- }
-@@ -63,8 +71,6 @@ static inline ssize_t vfs_posix_acl_to_xattr(struct user_namespace *mnt_userns,
- }
- #endif
- 
--struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns, 
--				       const void *value, size_t size);
- int posix_acl_to_xattr(struct user_namespace *user_ns,
- 		       const struct posix_acl *acl, void *buffer, size_t size);
- struct posix_acl *vfs_set_acl_prepare(struct user_namespace *mnt_userns,
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 84180afd090b..b766ddfc6bc3 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -8,6 +8,7 @@
- #include <linux/namei.h>
- #include <linux/io_uring.h>
- #include <linux/xattr.h>
-+#include <linux/posix_acl_xattr.h>
- 
- #include <uapi/linux/io_uring.h>
- 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
