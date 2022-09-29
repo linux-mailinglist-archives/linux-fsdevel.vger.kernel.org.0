@@ -2,101 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A04435EF057
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 10:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8895EF05F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 10:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235375AbiI2IZt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 04:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
+        id S235404AbiI2I0M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 04:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235411AbiI2IZk (ORCPT
+        with ESMTP id S235392AbiI2I0C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 04:25:40 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D04672BE2D;
-        Thu, 29 Sep 2022 01:25:38 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 924F468BFE; Thu, 29 Sep 2022 10:25:35 +0200 (CEST)
-Date:   Thu, 29 Sep 2022 10:25:35 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <brauner@kernel.org>
+        Thu, 29 Sep 2022 04:26:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAF86EF2B;
+        Thu, 29 Sep 2022 01:26:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1875162077;
+        Thu, 29 Sep 2022 08:26:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95EC5C433D6;
+        Thu, 29 Sep 2022 08:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664439959;
+        bh=ZGTcZaZidzwnb+P5lXnjE44J9zl+dgJ+T6Toyp6G8z0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gL2THj/D4HENX7TDZHJ+qgxHg6/hIVyzBE2OhRzp3xQqa7aaE32AvgCsU0pgWrYCx
+         7tiXDDyNtGwrdDqEWVtErsbkh7Sw7dl3Atn/W3hcnbvYOekFAgu0xvBFcGbWfr6SCI
+         7COCme+wtcMuauLi37ZP+fh3usBiyNA9SE86LzOKOW3v8US+KY/17VvVMe9F4tVu0y
+         s+aJglqAlNDLXXap7BeHgWkMOIHQ0cLhxmie0fapJKcd07h9Pfz+K9aarszpTDjDwU
+         VVc47co0SKitcEqyD8YDLrvFU+1dbktT75HVJPacuMNSXn7F9yXZv9b7Q5R0E5cFuG
+         pwjYi2OO2pdJw==
+Date:   Thu, 29 Sep 2022 10:25:54 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
 Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 23/29] xattr: use posix acl api
-Message-ID: <20220929082535.GC3699@lst.de>
-References: <20220928160843.382601-1-brauner@kernel.org> <20220928160843.382601-24-brauner@kernel.org>
+Subject: Re: [PATCH v3 14/29] acl: add vfs_set_acl()
+Message-ID: <20220929082554.5rclj4ioo37qg254@wittgenstein>
+References: <20220928160843.382601-1-brauner@kernel.org>
+ <20220928160843.382601-15-brauner@kernel.org>
+ <20220929081727.GB3699@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220928160843.382601-24-brauner@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220929081727.GB3699@lst.de>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 28, 2022 at 06:08:37PM +0200, Christian Brauner wrote:
-> +static int setxattr_convert(struct user_namespace *mnt_userns, struct dentry *d,
-> +			    struct xattr_ctx *ctx)
->  {
-> -	if (ctx->size && is_posix_acl_xattr(ctx->kname->name))
-> -		posix_acl_fix_xattr_from_user(ctx->kvalue, ctx->size);
-> +	struct posix_acl *acl;
-> +
-> +	if (!ctx->size || !is_posix_acl_xattr(ctx->kname->name))
-> +		return 0;
-> +
-> +	/*
-> +	 * Note that posix_acl_from_xattr() uses GFP_NOFS when it probably
-> +	 * doesn't need to here.
-> +	 */
-> +	acl = posix_acl_from_xattr(current_user_ns(), ctx->kvalue, ctx->size);
-> +	if (IS_ERR(acl))
-> +		return PTR_ERR(acl);
-> +
-> +	ctx->acl = acl;
-> +	return 0;
+On Thu, Sep 29, 2022 at 10:17:27AM +0200, Christoph Hellwig wrote:
+> > +EXPORT_SYMBOL(vfs_set_acl);
+> 
+> I think all this stackable file system infrastucture should be
+> EXPORT_SYMBOL_GPL, like a lot of the other internal stuff.
 
-why is this called setxattr_convert when it is clearly about ACLs only?
+Ok, sounds good.
 
-> +
-> +	error = setxattr_convert(mnt_userns, dentry, ctx);
-> +	if (error)
-> +		return error;
-> +
-> +	if (is_posix_acl_xattr(ctx->kname->name))
-> +		return vfs_set_acl(mnt_userns, dentry,
-> +				   ctx->kname->name, ctx->acl);
+> 
+> > +int xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+> > +		     const char *name, int mask)
+> 
+> Hmm.  The only think ACLs actually need from xattr_permission are
+> the immutable / append check and the HAS_UNMAPPED_ID one.  I'd rather
+> open code that, or if you cane come up with a sane name do a smaller
+> helper rather than doing all the strcmp on the prefixes for now
+> good reason.
 
-Also instead of doing two checks for ACLs why not do just one?  And then
-have a comment helper to convert and set which can live in posix_acl.c.
+I'll see if a little helper makes more sense than open-coding.
 
-No need to store anything in a context with that either.
+> 
+> > +static inline int vfs_set_acl(struct user_namespace *mnt_userns,
+> > +			      struct dentry *dentry, const char *name,
+> > +			      struct posix_acl *acl)
+> > +{
+> > +	return 0;
+> 
+> Should this really return 0 if ACLs are not supported?
 
-> @@ -610,6 +642,7 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
->  	error = do_setxattr(mnt_userns, d, &ctx);
->  
->  	kvfree(ctx.kvalue);
-> +	posix_acl_release(ctx.acl);
->  	return error;
-
-And I don't think there is any good reason to not release the ACL
-right after the call to vfs_set_acl.  Which means there is no need to
-store anything in the ctx.
-
-> +	if (is_posix_acl_xattr(ctx->kname->name)) {
-> +		ctx->acl = vfs_get_acl(mnt_userns, d, ctx->kname->name);
-> +		if (IS_ERR(ctx->acl))
-> +			return PTR_ERR(ctx->acl);
-> +
-> +		error = vfs_posix_acl_to_xattr(mnt_userns, d_inode(d), ctx->acl,
-> +					       ctx->kvalue, ctx->size);
-> +		posix_acl_release(ctx->acl);
-
-An while this is just a small function body I still think splitting it
-into a helper and moving it to posix_acl.c would be a bit cleaner.
+Yeah, we should probably -EOPNOTSUPP for all of:
+vfs_{get,set,remove}_acl() in this case. Good point, thanks!
