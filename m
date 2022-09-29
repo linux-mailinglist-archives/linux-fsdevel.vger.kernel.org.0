@@ -2,217 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 611105EFB61
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 18:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 809ED5EFBFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 19:28:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235889AbiI2QyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 12:54:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
+        id S235688AbiI2R2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 13:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235083AbiI2QyP (ORCPT
+        with ESMTP id S235215AbiI2R2k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 12:54:15 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231251CDB52
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 09:54:12 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id h18so1002008ilh.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 09:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=17i72a+YF0QmIvoa5dXmyWylrfLAdgH3Jl0OS8NotoI=;
-        b=Zw/TDh2RKXoZlSdAe2DwIirm3QH3vBvDhtE5sN15EpwqSD+90Z/Z5CwndYmNGbK4UR
-         BRqyAgKn/IxtKRKRbBzJ+pZMgV5wAkl3/uzAQdcAfJm6JyQMrMKtPW0vDZAGGAUllu4j
-         G7My10L+c2J2GzOz5sUGom2gOpJco+ir4FA79eRdDJSco5rQ78UScxnB8IcdT7HgeTWB
-         RvuqlYbvoiOSeA2Hz2gEdrzZqur8VeDTcFL+hQyMQXNYRuil8+o2aez1RR2BNeN5m9ZW
-         9szAbu2jXsjV2+IM6wtbVzmpE1rqOReuvrh8zy3WqLhRxsOwy86dsq8ItK0UxdDMiH8L
-         fvuQ==
+        Thu, 29 Sep 2022 13:28:40 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC2441EC9A4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 10:28:38 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id r12-20020a92cd8c000000b002f32d0d9fceso1614067ilb.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 10:28:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=17i72a+YF0QmIvoa5dXmyWylrfLAdgH3Jl0OS8NotoI=;
-        b=qfr8pyaRb+/P5EX1VmTTsdjujCU/liFGe1vw+gwN53NvqWtoaVKok80ChNnBs2IVIp
-         ijlvTDo9KHrCLWntUFtjN2ufCYNexrFVcA3r5EaXr0F2WF89rbXmjP9iYkfK284MJ9P+
-         iaKBfQDLqfPc2kng5zJ5H8bvwyaBkeEahngMRKBNqsTvCk1T9miDWeDxPXIbJbkJ5Tyn
-         Jr3aoJImukG8ghxme/LxBfmyuIiy8fq7/ZypuZUZJlvb6yTwKAWH6bMe2p8fNNsFUdje
-         zUI9ZFcr8VAqp0gsNnN4HEyaDsmK01SL8m4v5uTt6c3ve+DqAK5UmY8tUxHhx0SRQKLH
-         R8DQ==
-X-Gm-Message-State: ACrzQf0Uhg9oI1Ws8wtEDSJQs0KGeC4fJEDG57bFMMMvc8aZSCwDp9nU
-        ujA/vToxX2ce9iLnfYfTEqndcw==
-X-Google-Smtp-Source: AMsMyM5eKw23leYHbcb6R8MlnLurdMWO/9Ca4vA3JgEmNWoOg/E6eIk/sdLUztIX2+j+HyTMzG0b1A==
-X-Received: by 2002:a05:6e02:184f:b0:2f6:9356:6cf5 with SMTP id b15-20020a056e02184f00b002f693566cf5mr2111438ilv.112.1664470451301;
-        Thu, 29 Sep 2022 09:54:11 -0700 (PDT)
-Received: from [192.168.1.94] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n29-20020a02a19d000000b00346b4b25252sm3072596jah.13.2022.09.29.09.54.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 09:54:10 -0700 (PDT)
-Message-ID: <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
-Date:   Thu, 29 Sep 2022 10:54:07 -0600
+        bh=Z807byplhOGZeSne3bS7/T5I0SV4CoEzJ41CZMrCPjU=;
+        b=0wMHL9tJcPDOOtPxwqZ6eAf87mhUbkNAn4Ke53TnvW0KX15r0MiOB65kNhkP6zrSGv
+         u5boQMWkEfVCk48we3bhLne75WcVlSbEYf4W0mgply/1n6Lycf7tQQA8DT7yBQqZbX8u
+         6LgxKF6cSxKHZKHDrZzJ5gBPS0drnNZeUe1aAPNYQmyyrymoV6LF9ocicSY5CiS8SkJl
+         0Pn3rEngjIZfmq43DOUTiAN3e6AVSPwUYc8Slsi/hl9abmchOIjtKdg00qnq4MxVb1J3
+         8VtYcbf1QO+++DqfyIBWezJybSeHsF4kRHXv+uuHp28XUY7kb2mRbdILIEE0l9CU42zY
+         AIBQ==
+X-Gm-Message-State: ACrzQf3oziKcFWFG5GPidFUoAR6RK6+vSoa29xDIRf01p+3imxW3eKR3
+        TPZ7/uZnwVc8OJti/tT9h4JZYaC8cyWFR3p1TnHvf+HiTAQb
+X-Google-Smtp-Source: AMsMyM6h+HKCxdz50xpWjeagQWWb6eVYQwOvxxOGx127EMSPRUCrwyGYyT89g9Fiww3+Nt/C1/wQopT36G/UGvY63eexiU9BIxOb
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [syzbot] inconsistent lock state in kmem_cache_alloc
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>
-Cc:     syzbot <syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mhiramat@kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Matthew Bobrowski <repnop@google.com>,
-        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
-References: <00000000000074b50005e997178a@google.com>
- <edef9f69-4b29-4c00-8c1a-67c4b8f36af0@suse.cz>
- <20220929135627.ykivmdks2w5vzrwg@quack3>
- <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
-In-Reply-To: <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:448d:b0:35a:81aa:939d with SMTP id
+ bv13-20020a056638448d00b0035a81aa939dmr2332302jab.312.1664472518262; Thu, 29
+ Sep 2022 10:28:38 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 10:28:38 -0700
+In-Reply-To: <00000000000019db4e05e9712237@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000308e1605e9d4351e@google.com>
+Subject: Re: [syzbot] kernel panic: stack is corrupted in lock_acquire (2)
+From:   syzbot <syzbot+db99576f362a5c1e9f7a@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/29/22 8:07 AM, Jens Axboe wrote:
-> On 9/29/22 7:56 AM, Jan Kara wrote:
->> On Thu 29-09-22 15:24:22, Vlastimil Babka wrote:
->>> On 9/26/22 18:33, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following issue on:
->>>>
->>>> HEAD commit:    105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
->>>> git tree:       upstream
->>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=152bf540880000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=dfcc5f4da15868df7d4d
->>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1020566c880000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104819e4880000
->>>>
->>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>> Reported-by: syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com
->>>
->>> +CC more folks
->>>
->>> I'm not fully sure what this report means but I assume it's because there's
->>> a GFP_KERNEL kmalloc() allocation from softirq context? Should it perhaps
->>> use memalloc_nofs_save() at some well defined point?
->>
->> Thanks for the CC. The problem really is that io_uring is calling into
->> fsnotify_access() from softirq context. That isn't going to work. The
->> allocation is just a tip of the iceberg. Fsnotify simply does not expect to
->> be called from softirq context. All the dcache locks are not IRQ safe, it
->> can even obtain some sleeping locks and call to userspace if there are
->> suitable watches set up.
->>
->> So either io_uring needs to postpone fsnotify calls to a workqueue or we
->> need a way for io_uring code to tell iomap dio code that the completion
->> needs to always happen from a workqueue (as it currently does for writes).
->> Jens?
-> 
-> Something like this should probably work - I'll write a test case and
-> vet it.
+syzbot has found a reproducer for the following issue on:
 
-Ran that with the attached test case, triggers it before but not with
-the patch. Side note - I do wish that the syzbot reproducers were not
-x86 specific, I always have to go and edit them for arm64. For this
-particular one, I just gave up and wrote one myself.
+HEAD commit:    c3e0e1e23c70 Merge tag 'irq_urgent_for_v6.0' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bfb000880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5
+dashboard link: https://syzkaller.appspot.com/bug?extid=db99576f362a5c1e9f7a
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136be2bc880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1595fe98880000
 
-Thanks for the heads-up Jan, I'll queue up this fix and mark for stable
-with the right attributions.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e7f1f925f94e/disk-c3e0e1e2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/830dabeedf0d/vmlinux-c3e0e1e2.xz
 
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/fanotify.h>
-#include <sys/wait.h>
-#include <liburing.h>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+db99576f362a5c1e9f7a@syzkaller.appspotmail.com
 
-int main(int argc, char *argv[])
-{
-	struct io_uring_sqe *sqe;
-	struct io_uring_cqe *cqe;
-	struct io_uring ring;
-	int fan, ret, fd;
-	void *buf;
+loop0: detected capacity change from 0 to 8226
+Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: lock_acquire+0x3b6/0x3c0
+CPU: 0 PID: 9298 Comm: syz-executor656 Not tainted 6.0.0-rc7-syzkaller-00081-gc3e0e1e23c70 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ panic+0x2d6/0x715 kernel/panic.c:274
+ __stack_chk_fail+0x12/0x20 kernel/panic.c:706
+ lock_acquire+0x3b6/0x3c0
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:349 [inline]
+ inode_wait_for_writeback+0x89/0x2c0 fs/fs-writeback.c:1472
+ evict+0x277/0x620 fs/inode.c:662
+ ntfs_fill_super+0x3af3/0x42a0 fs/ntfs3/super.c:1190
+ get_tree_bdev+0x400/0x620 fs/super.c:1323
+ vfs_get_tree+0x88/0x270 fs/super.c:1530
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f1b636bcdda
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 d8 00 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f1b63666078 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f1b636bcdda
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f1b63666090
+RBP: 0000000000000004 R08: 00007f1b636660d0 R09: 00007f1b636666b8
+R10: 0000000000000000 R11: 0000000000000286 R12: 00007f1b636660d0
+R13: 0000000000000015 R14: 00007f1b63666090 R15: 0000000020000db8
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-	fan = fanotify_init(FAN_CLASS_NOTIF|FAN_CLASS_CONTENT, 0);
-	if (fan < 0) {
-		if (errno == ENOSYS)
-			return 0;
-		perror("fanotify_init");
-		return 1;
-	}
-
-	if (argc > 1) {
-		fd = open(argv[1], O_RDONLY | O_DIRECT);
-		if (fd < 0) {
-			perror("open");
-			return 1;
-		}
-	} else {
-		fd = open("file0", O_RDONLY | O_DIRECT);
-		if (fd < 0) {
-			perror("open");
-			return 1;
-		}
-	}
-
-	ret = fanotify_mark(fan, FAN_MARK_ADD, FAN_ACCESS|FAN_MODIFY, fd, NULL);
-	if (ret < 0) {
-		perror("fanotify_mark");
-		return 1;
-	}
-
-	ret = 0;
-	if (fork()) {
-		int wstat;
-
-		io_uring_queue_init(4, &ring, 0);
-		if (posix_memalign(&buf, 4096, 4096))
-			return 0;
-		sqe = io_uring_get_sqe(&ring);
-		io_uring_prep_read(sqe, fd, buf, 4096, 0);
-		io_uring_submit(&ring);
-		ret = io_uring_wait_cqe(&ring, &cqe);
-		if (ret) {
-			fprintf(stderr, "wait_ret=%d\n", ret);
-			return 1;
-		}
-		wait(&wstat);
-		ret = WEXITSTATUS(wstat);
-	} else {
-		struct fanotify_event_metadata m;
-		int fret;
-
-		fret = read(fan, &m, sizeof(m));
-		if (fret < 0)
-			perror("fanotify read");
-		/* fail if mask isn't right or pid indicates non-task context */
-		else if (!(m.mask & 1) || !m.pid)
-			exit(1);
-		exit(0);
-	}
-
-	return ret;
-}
-
--- 
-Jens Axboe
