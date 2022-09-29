@@ -2,54 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 074F45EF8E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE445EF8E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235895AbiI2PdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 11:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
+        id S235971AbiI2PdG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 11:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235919AbiI2PcM (ORCPT
+        with ESMTP id S235869AbiI2PcM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 29 Sep 2022 11:32:12 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F9F1138EE;
-        Thu, 29 Sep 2022 08:31:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256B5128A20;
+        Thu, 29 Sep 2022 08:31:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C955FB824F8;
-        Thu, 29 Sep 2022 15:31:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B898C4347C;
-        Thu, 29 Sep 2022 15:31:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CD202B824FA;
+        Thu, 29 Sep 2022 15:31:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11C7EC43470;
+        Thu, 29 Sep 2022 15:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465488;
-        bh=PA/C5Bhmd27EHXCpHUNsenq+Sp0N9Nx+ma3BNixH/D8=;
+        s=k20201202; t=1664465490;
+        bh=MoGYshfN2ilMbkOYzge1aGNpDz34pK604EVyBwEjG4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ye2yjCqkNeY9NzhZukvZ6fOwyFmBq86fcHd1CyjA6YkeSwgmPmKc0pN8KuYbOualI
-         rsEBYIvCsoijEOtArMQNzIXyPohmOoehH/6o24OXQadRCw1ga/UhM0SA0oFpZRUpGo
-         wRLotcZfM9JpJ9ukxUcKBt3LI2MjrWaK1Akfgo7cx+ko/VAPm67rphr1qC91R3WHQF
-         qfX+TzCFp86p0e6bHJ19bPo9fiIE6SKxd5YQyCphn8BWOzCIxLBBQJzHAYFXmG2cee
-         IvA5nm4cp1oysRDB10/8RtRGMKT1DMuOGW/ztyoRcrsKlw331qQuhXbRWfUSZ8sC+X
-         xWL5n53He0d9w==
+        b=Wxdys+QiFx+i4K21O9tHLaPzYM+3P6MPmga/Yz6N9I8PGag+OuQRoUKJrUX3nWecV
+         zg34xYJSg2e7kzeTkyzyTvxNIcTfOXeYvVJ6ucD4BBvg1tTJ5MnsXhCoFhP9ijXiL6
+         RYR5JJVtZedBto5vVisfTDtGQhrzwoUat/rHOkCojZVDz3Lg6aJjgK837W4LWnhigS
+         L9LV6MjZ5TlNo7ISTcGU6I+LaisWRAjYfUeR63rn3NqINBuR8vfbST5vSBMLx72M9X
+         DS3o8umt21wMh+MT5DgfxnVCyRTOuL/fwIM42Wg4BnZbCjDhN/Tq80H0PX+nL98Kdd
+         tfOmUi1ItjIow==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH v4 13/30] evm: add post set acl hook
-Date:   Thu, 29 Sep 2022 17:30:23 +0200
-Message-Id: <20220929153041.500115-14-brauner@kernel.org>
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v4 14/30] internal: add may_write_xattr()
+Date:   Thu, 29 Sep 2022 17:30:24 +0200
+Message-Id: <20220929153041.500115-15-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3018; i=brauner@kernel.org; h=from:subject; bh=PA/C5Bhmd27EHXCpHUNsenq+Sp0N9Nx+ma3BNixH/D8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hLh5Zhir5MQnLFYZ53SZmnhpZxVj+yKnoc3lez0OqOu Lt3dUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHZfAz/M2dGP6nZlG9qxbdz17qEGy 3v7r6dHnsjM8a+93xU7yfT84wMDwrXFMb9Etr7zqTepu3Aokl7jbx0JLsf10379/UN4+kIbgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3094; i=brauner@kernel.org; h=from:subject; bh=MoGYshfN2ilMbkOYzge1aGNpDz34pK604EVyBwEjG4g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hKZeZ5/3p6te/omh0mvWquZJL1EW2HGM56wVN7YxEvn 8lqzOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyj4vhf+y72Gc65SxazyL+8d06WP js6NGvoStUHpU+28f567lm3FqGf6r/mw0WHFs+YUXezy82KyTvGzMt3T11zeS/IoFP1SoNlbgB
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -61,86 +58,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The security_inode_post_setxattr() hook is used by security modules to
-update their own security.* xattrs. Consequently none of the security
-modules operate on posix acls. So we don't need an additional security
-hook when post setting posix acls.
+Split out the generic checks whether an inode allows writing xattrs. Since
+security.* and system.* xattrs don't have any restrictions and we're going
+to split out posix acls into a dedicated api we will use this helper to
+check whether we can write posix acls.
 
-However, the integrity subsystem wants to be informed about posix acl
-changes and specifically evm to update their hashes when the xattrs
-change. The callchain for evm_inode_post_setxattr() is:
-
--> evm_inode_post_setxattr()
-   -> evm_update_evmxattr()
-      -> evm_calc_hmac()
-         -> evm_calc_hmac_or_hash()
-
-and evm_cacl_hmac_or_hash() walks the global list of protected xattr
-names evm_config_xattrnames. This global list can be modified via
-/sys/security/integrity/evm/evm_xattrs. The write to "evm_xattrs" is
-restricted to security.* xattrs and the default xattrs in
-evm_config_xattrnames only contains security.* xattrs as well.
-
-So the actual value for posix acls is currently completely irrelevant
-for evm during evm_inode_post_setxattr() and frankly it should stay that
-way in the future to not cause the vfs any more headaches. But if the
-actual posix acl values matter then evm shouldn't operate on the binary
-void blob and try to hack around in the uapi struct anyway. Instead it
-should then in the future add a dedicated hook which takes a struct
-posix_acl argument passing the posix acls in the proper vfs format.
-
-For now it is sufficient to make evm_inode_post_set_acl() a wrapper
-around evm_inode_post_setxattr() not passing any actual values down.
-This will still cause the hashes to be updated as before.
-
-Reviewed-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
 Notes:
     /* v2 */
-    unchanged
+    patch not present
     
     /* v3 */
-    Reviewed-by: Paul Moore <paul@paul-moore.com>
+    patch not present
     
     /* v4 */
-    unchanged
+    Christoph Hellwig <hch@lst.de>:
+    - Split out checks whether an inode can have xattrs written to into a helper.
 
- include/linux/evm.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fs/internal.h |  1 +
+ fs/xattr.c    | 40 +++++++++++++++++++++++++++-------------
+ 2 files changed, 28 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 86139be48992..117ac01b2432 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -44,6 +44,12 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
- {
- 	return evm_inode_set_acl(mnt_userns, dentry, acl_name, NULL);
- }
-+static inline void evm_inode_post_set_acl(struct dentry *dentry,
-+					  const char *acl_name,
-+					  struct posix_acl *kacl)
-+{
-+	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
-+}
- extern int evm_inode_init_security(struct inode *inode,
- 				   const struct xattr *xattr_array,
- 				   struct xattr *evm);
-@@ -131,6 +137,13 @@ static inline int evm_inode_remove_acl(struct user_namespace *mnt_userns,
- 	return 0;
+diff --git a/fs/internal.h b/fs/internal.h
+index 87e96b9024ce..a95b1500ed65 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -221,3 +221,4 @@ ssize_t do_getxattr(struct user_namespace *mnt_userns,
+ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
+ int do_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct xattr_ctx *ctx);
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode);
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61107b6bbed2..57148c207545 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -80,6 +80,28 @@ xattr_resolve_name(struct inode *inode, const char **name)
+ 	return ERR_PTR(-EOPNOTSUPP);
  }
  
-+static inline void evm_inode_post_set_acl(struct dentry *dentry,
-+					  const char *acl_name,
-+					  struct posix_acl *kacl)
++/**
++ * may_write_xattr - check whether inode allows writing xattr
++ * @mnt_userns:	User namespace of the mount the inode was found from
++ * @inode: the inode on which to set an xattr
++ *
++ * Check whether the inode allows writing xattrs. Specifically, we can never
++ * set or remove an extended attribute on a read-only filesystem  or on an
++ * immutable / append-only inode.
++ *
++ * We also need to ensure that the inode has a mapping in the mount to
++ * not risk writing back invalid i_{g,u}id values.
++ *
++ * Return: On success zero is returned. On error a negative errno is returned.
++ */
++int may_write_xattr(struct user_namespace *mnt_userns, struct inode *inode)
 +{
-+	return;
++	if (IS_IMMUTABLE(inode) || IS_APPEND(inode) ||
++	    HAS_UNMAPPED_ID(mnt_userns, inode))
++		return -EPERM;
++	return 0;
 +}
 +
- static inline int evm_inode_init_security(struct inode *inode,
- 					  const struct xattr *xattr_array,
- 					  struct xattr *evm)
+ /*
+  * Check permissions for extended attribute access.  This is a bit complicated
+  * because different namespaces have very different rules.
+@@ -88,20 +110,12 @@ static int
+ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 		 const char *name, int mask)
+ {
+-	/*
+-	 * We can never set or remove an extended attribute on a read-only
+-	 * filesystem  or on an immutable / append-only inode.
+-	 */
+ 	if (mask & MAY_WRITE) {
+-		if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
+-			return -EPERM;
+-		/*
+-		 * Updating an xattr will likely cause i_uid and i_gid
+-		 * to be writen back improperly if their true value is
+-		 * unknown to the vfs.
+-		 */
+-		if (HAS_UNMAPPED_ID(mnt_userns, inode))
+-			return -EPERM;
++		int ret;
++
++		ret = may_write_xattr(mnt_userns, inode);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/*
 -- 
 2.34.1
 
