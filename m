@@ -2,225 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 524315EF5BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 14:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F7A5EF612
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 15:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235106AbiI2MxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 08:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39176 "EHLO
+        id S235502AbiI2NI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 09:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbiI2MxO (ORCPT
+        with ESMTP id S234666AbiI2NI5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 08:53:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23051616E3;
-        Thu, 29 Sep 2022 05:53:13 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 29 Sep 2022 09:08:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CEA17D40D;
+        Thu, 29 Sep 2022 06:08:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 86C5B219AF;
-        Thu, 29 Sep 2022 12:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1664455992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fogQYmZZ4SF+4I88Ka/wpuRIld5RErTgLKiCdZOnp5k=;
-        b=c9F3vF6MFBCipNE+PXyAzF6JSFyKejP37pC1zWkTuQiwGL6RA129tk0PUkaSts1wk5XE4Z
-        36phdZr+1/lgsywExDcRqWlAE88g0tl7/+ze8M4Tu5OZeBu+EJvObQlwblf3GEGsMoV9DB
-        LTB5LG3O/2vw2BDT7Q/yKRcwPsdcplo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1664455992;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fogQYmZZ4SF+4I88Ka/wpuRIld5RErTgLKiCdZOnp5k=;
-        b=mk2BV8NT84yKZuCvQnHOWY40Qr7nNQxtDghqiM6p1VU3FQYDSXJEZKNRRO6UdWe3GZWcjv
-        MfxoO4esuRadLCAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7835A13A71;
-        Thu, 29 Sep 2022 12:53:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id IKtMHTiVNWOQFgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 29 Sep 2022 12:53:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0445CA0681; Thu, 29 Sep 2022 14:53:11 +0200 (CEST)
-Date:   Thu, 29 Sep 2022 14:53:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4459FB8247F;
+        Thu, 29 Sep 2022 13:08:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EED9C433C1;
+        Thu, 29 Sep 2022 13:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664456901;
+        bh=riOAsm3lzQkj+cjEbWOHZ+nQBRpg7+2HkYLykZVpJt8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lbpTyBJOwrg3CdQD1AH16Y7w0WKGK2Z3OZOiqpxC9VQQ6sXhVxiJ7qVYqoA9KrqFs
+         LRBFqfHBIs1OJR1rfaPWJaAUJ+tQ7IGH7QOkaw6YdvKC+R4ToawBGf7LBKs0oC2O+G
+         he3hOjdMbemI/iEVfIGPKZwK46vbKavKz+znEFjh8IxLqy6OlY7fMawHWDPu3nwN8e
+         uD645Ghd5Bu5onkVImKZY+VnqUD9bUepB8c8gNiA3O6AWrv6Gr1Y4HDP+UaOsOviGT
+         Jyg92XcjkxCsti7RcJf6Uw845H5extGQEyud20saGH1IKXy/ZYREqcZHJqPdan5aRR
+         DERfbERDsfakw==
+Date:   Thu, 29 Sep 2022 15:08:15 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     Hyunchul Lee <hyc.lee@gmail.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <smfrench@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-cifs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, rookxu <brookxu.cn@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [RFC v3 8/8] ext4: Remove the logic to trim inode PAs
-Message-ID: <20220929125311.bmkta7gp4a2hmcny@quack3>
-References: <cover.1664269665.git.ojaswin@linux.ibm.com>
- <a26fdd12f4f60cf506a42b6a95e8014e5f380b05.1664269665.git.ojaswin@linux.ibm.com>
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] ksmbd: Fix user namespace mapping
+Message-ID: <20220929130815.3l5piy446jyynpwa@wittgenstein>
+References: <20220929100447.108468-1-mic@digikod.net>
+ <20220929113735.7k6fdu75oz4jvsvz@wittgenstein>
+ <75d077ca-4f1d-50c4-10d2-0fb31fcd0c86@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a26fdd12f4f60cf506a42b6a95e8014e5f380b05.1664269665.git.ojaswin@linux.ibm.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <75d077ca-4f1d-50c4-10d2-0fb31fcd0c86@digikod.net>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 27-09-22 14:46:48, Ojaswin Mujoo wrote:
-> Earlier, inode PAs were stored in a linked list. This caused a need to
-> periodically trim the list down inorder to avoid growing it to a very
-> large size, as this would severly affect performance during list
-> iteration.
+On Thu, Sep 29, 2022 at 02:18:43PM +0200, Mickaël Salaün wrote:
 > 
-> Recent patches changed this list to an rbtree, and since the tree scales
-> up much better, we no longer need to have the trim functionality, hence
-> remove it.
+> On 29/09/2022 13:37, Christian Brauner wrote:
+> > On Thu, Sep 29, 2022 at 12:04:47PM +0200, Mickaël Salaün wrote:
+> > > A kernel daemon should not rely on the current thread, which is unknown
+> > > and might be malicious.  Before this security fix,
+> > > ksmbd_override_fsids() didn't correctly override FS UID/GID which means
+> > > that arbitrary user space threads could trick the kernel to impersonate
+> > > arbitrary users or groups for file system access checks, leading to
+> > > file system access bypass.
+> > > 
+> > > This was found while investigating truncate support for Landlock:
+> > > https://lore.kernel.org/r/CAKYAXd8fpMJ7guizOjHgxEyyjoUwPsx3jLOPZP=wPYcbhkVXqA@mail.gmail.com
+> > > 
+> > > Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+> > > Cc: Hyunchul Lee <hyc.lee@gmail.com>
+> > > Cc: Namjae Jeon <linkinjeon@kernel.org>
+> > > Cc: Steve French <smfrench@gmail.com>
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > Link: https://lore.kernel.org/r/20220929100447.108468-1-mic@digikod.net
+> > > ---
+> > 
+> > I think this is ok. The alternative would probably be to somehow use a
+> > relevant userns when struct ksmbd_user is created when the session is
+> > established. But these are deeper ksmbd design questions. The fix
+> > proposed here itself seems good.
 > 
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> That would be better indeed. I guess ksmbd works whenever the netlink peer
+> is not in a user namespace with mapped UID/GID, but it should result in
+> obvious access bugs otherwise (which is already the case anyway). It seems
+> that the netlink peer must be trusted because it is the source of truth for
+> account/user mapping anyway. This change fixes the more critical side of the
+> issue and it should fit well for backports.
 
-I'm kind of wondering: Now there won't be performance issues with much
-more inode PAs but probably we don't want to let them grow completely out
-of control? E.g. I can imagine that if we'd have 1 billion of inode PAs
-attached to an inode, things would get wonky both in terms of memory
-consumption and also in terms of CPU time spent for the cases where we
-still do iterate all of the PAs... Is there anything which keeps inode PAs
-reasonably bounded?
-
-								Honza
-
-> ---
->  Documentation/admin-guide/ext4.rst |  3 ---
->  fs/ext4/ext4.h                     |  1 -
->  fs/ext4/mballoc.c                  | 20 --------------------
->  fs/ext4/mballoc.h                  |  5 -----
->  fs/ext4/sysfs.c                    |  2 --
->  5 files changed, 31 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
-> index 4c559e08d11e..5740d85439ff 100644
-> --- a/Documentation/admin-guide/ext4.rst
-> +++ b/Documentation/admin-guide/ext4.rst
-> @@ -489,9 +489,6 @@ Files in /sys/fs/ext4/<devname>:
->          multiple of this tuning parameter if the stripe size is not set in the
->          ext4 superblock
->  
-> -  mb_max_inode_prealloc
-> -        The maximum length of per-inode ext4_prealloc_space list.
-> -
->    mb_max_to_scan
->          The maximum number of extents the multiblock allocator will search to
->          find the best extent.
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index d54b972f1f0f..bca4b41cc192 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1612,7 +1612,6 @@ struct ext4_sb_info {
->  	unsigned int s_mb_stats;
->  	unsigned int s_mb_order2_reqs;
->  	unsigned int s_mb_group_prealloc;
-> -	unsigned int s_mb_max_inode_prealloc;
->  	unsigned int s_max_dir_size_kb;
->  	/* where last allocation was done - for stream allocation */
->  	unsigned long s_mb_last_group;
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index cd19b9e84767..57e1ec88477a 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -3420,7 +3420,6 @@ int ext4_mb_init(struct super_block *sb)
->  	sbi->s_mb_stats = MB_DEFAULT_STATS;
->  	sbi->s_mb_stream_request = MB_DEFAULT_STREAM_THRESHOLD;
->  	sbi->s_mb_order2_reqs = MB_DEFAULT_ORDER2_REQS;
-> -	sbi->s_mb_max_inode_prealloc = MB_DEFAULT_MAX_INODE_PREALLOC;
->  	/*
->  	 * The default group preallocation is 512, which for 4k block
->  	 * sizes translates to 2 megabytes.  However for bigalloc file
-> @@ -5546,29 +5545,11 @@ static void ext4_mb_add_n_trim(struct ext4_allocation_context *ac)
->  	return ;
->  }
->  
-> -/*
-> - * if per-inode prealloc list is too long, trim some PA
-> - */
-> -static void ext4_mb_trim_inode_pa(struct inode *inode)
-> -{
-> -	struct ext4_inode_info *ei = EXT4_I(inode);
-> -	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> -	int count, delta;
-> -
-> -	count = atomic_read(&ei->i_prealloc_active);
-> -	delta = (sbi->s_mb_max_inode_prealloc >> 2) + 1;
-> -	if (count > sbi->s_mb_max_inode_prealloc + delta) {
-> -		count -= sbi->s_mb_max_inode_prealloc;
-> -		ext4_discard_preallocations(inode, count);
-> -	}
-> -}
-> -
->  /*
->   * release all resource we used in allocation
->   */
->  static int ext4_mb_release_context(struct ext4_allocation_context *ac)
->  {
-> -	struct inode *inode = ac->ac_inode;
->  	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
->  	struct ext4_prealloc_space *pa = ac->ac_pa;
->  	if (pa) {
-> @@ -5604,7 +5585,6 @@ static int ext4_mb_release_context(struct ext4_allocation_context *ac)
->  	if (ac->ac_flags & EXT4_MB_HINT_GROUP_ALLOC)
->  		mutex_unlock(&ac->ac_lg->lg_mutex);
->  	ext4_mb_collect_stats(ac);
-> -	ext4_mb_trim_inode_pa(inode);
->  	return 0;
->  }
->  
-> diff --git a/fs/ext4/mballoc.h b/fs/ext4/mballoc.h
-> index f8e8ee493867..6d85ee8674a6 100644
-> --- a/fs/ext4/mballoc.h
-> +++ b/fs/ext4/mballoc.h
-> @@ -73,11 +73,6 @@
->   */
->  #define MB_DEFAULT_GROUP_PREALLOC	512
->  
-> -/*
-> - * maximum length of inode prealloc list
-> - */
-> -#define MB_DEFAULT_MAX_INODE_PREALLOC	512
-> -
->  /*
->   * Number of groups to search linearly before performing group scanning
->   * optimization.
-> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-> index d233c24ea342..f0d42cf44c71 100644
-> --- a/fs/ext4/sysfs.c
-> +++ b/fs/ext4/sysfs.c
-> @@ -214,7 +214,6 @@ EXT4_RW_ATTR_SBI_UI(mb_min_to_scan, s_mb_min_to_scan);
->  EXT4_RW_ATTR_SBI_UI(mb_order2_req, s_mb_order2_reqs);
->  EXT4_RW_ATTR_SBI_UI(mb_stream_req, s_mb_stream_request);
->  EXT4_RW_ATTR_SBI_UI(mb_group_prealloc, s_mb_group_prealloc);
-> -EXT4_RW_ATTR_SBI_UI(mb_max_inode_prealloc, s_mb_max_inode_prealloc);
->  EXT4_RW_ATTR_SBI_UI(mb_max_linear_groups, s_mb_max_linear_groups);
->  EXT4_RW_ATTR_SBI_UI(extent_max_zeroout_kb, s_extent_max_zeroout_kb);
->  EXT4_ATTR(trigger_fs_error, 0200, trigger_test_error);
-> @@ -264,7 +263,6 @@ static struct attribute *ext4_attrs[] = {
->  	ATTR_LIST(mb_order2_req),
->  	ATTR_LIST(mb_stream_req),
->  	ATTR_LIST(mb_group_prealloc),
-> -	ATTR_LIST(mb_max_inode_prealloc),
->  	ATTR_LIST(mb_max_linear_groups),
->  	ATTR_LIST(max_writeback_mb_bump),
->  	ATTR_LIST(extent_max_zeroout_kb),
-> -- 
-> 2.31.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Sorry, I also forgot,
+Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
