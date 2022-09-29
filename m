@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A72C85EF8DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8980A5EF8DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235941AbiI2Pcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 11:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47742 "EHLO
+        id S235959AbiI2PdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 11:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235659AbiI2Pbx (ORCPT
+        with ESMTP id S235905AbiI2Pby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:31:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F8885A87;
-        Thu, 29 Sep 2022 08:31:21 -0700 (PDT)
+        Thu, 29 Sep 2022 11:31:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA02D7C77B;
+        Thu, 29 Sep 2022 08:31:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 733026124B;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9379DB824F4;
+        Thu, 29 Sep 2022 15:31:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50419C43470;
         Thu, 29 Sep 2022 15:31:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562F7C433D6;
-        Thu, 29 Sep 2022 15:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465480;
-        bh=0eDo1P4VKXTdpoXoJEEVqsBWdGQ1NS0GBYJXrFBupRQ=;
+        s=k20201202; t=1664465483;
+        bh=kObTk4GZ2hIOw1wANlwibq0F/l0o9D6KwqtMlygLMHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNub6+GyO1Qxp/89I9nJTP3q4JIsGCz9zFcPP8tOHHWHmmKZkACTRco5bNbIKvHIT
-         lGxUvQkvf03M1UyPxfNPfZnjU7rzyn0Luj6uYELMWzQ82O36vhT4HZE8URF+8oIWR8
-         AhbdntPIDvrGwdGq8v++0oh6z3jQYU+RPEdEhFu8bLg7yIGGlwrPnexKayCuH8U/C0
-         /A1aPywTEqgUYNoW38xAe0TQI7uO0B0VtnSHoem4LoE3JMbZM+ytvmhmNqLPZJdgPQ
-         a5wOacMDmuz2lxeO7jOa5rYDUl+EA34bAqJfaowMoc3Umy1sPJ00iuTUMw5VZL+SB4
-         bA5nnjKH8IuVQ==
+        b=lZVXHRR/nyuoDEEpn0YSW2vaAfTX/XUGpN4TP9EELwRwH0V1SFNNlY3TAJbwwm6xb
+         wkfXd0/wVsdHchqwwkCqFnPqcOm/mbY8zNszkt1ACxz8DiurNOGhFdbX8k/jveEk7g
+         ozPvM/EPe6I8UQAq28MlcbwSJ8HM7aQ+oX2A6WYEZTjfQb1H/PGiYfcEjJC/j45rdX
+         c1buy/VwP5/wtGHG5WjCwxYVOmRxpICpvL11RcWNqByx1bvUBn3y6yA0iLbx5gO/6X
+         8fv6Rk1sjK0j0cnuLgAgWpKIjz8mfTG6MUDeiuaRpZ9ZQ6T3EVYWDb6Y9cCAxmXUiA
+         n9+bEUBnZD7DA==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v4 10/30] selinux: implement get, set and remove acl hook
-Date:   Thu, 29 Sep 2022 17:30:20 +0200
-Message-Id: <20220929153041.500115-11-brauner@kernel.org>
+Subject: [PATCH v4 11/30] smack: implement get, set and remove acl hook
+Date:   Thu, 29 Sep 2022 17:30:21 +0200
+Message-Id: <20220929153041.500115-12-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3714; i=brauner@kernel.org; h=from:subject; bh=0eDo1P4VKXTdpoXoJEEVqsBWdGQ1NS0GBYJXrFBupRQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hLeKWuZ+aWQrTXvhlDy033/Dfc99deef/SgvPyt6/Kz s7/c6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI7k5Ghm+K0qb7Hpfp31heq+f6// yrooMuB2T5td5EL3nkVPJRXoHhvw9rfI5X9eVpSzc/+vbVo5DXPffi64kP70n4PmqwZp9WwgUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5303; i=brauner@kernel.org; h=from:subject; bh=kObTk4GZ2hIOw1wANlwibq0F/l0o9D6KwqtMlygLMHE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hI+wLTinlKD3vaJMwsXh5XP3ZFh/Tf75ZKu45NZNDdP /uTk3FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARO22Gf/qsYkckZ4s8nWLwn+XLUY EeD2/HE5OrXIRuXrz26f2i0iuMDNMmsxrvNmAN3KeyqyJzu+yymt2TnL9+iEvJrl3CODG1mhkA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -82,12 +81,13 @@ their appropriate vfs format instead of hacking it through a void
 pointer stored in the uapi format.
 
 I spent considerate time in the security module infrastructure and
-audited all codepaths. SELinux has no restrictions based on the posix
+audited all codepaths. Smack has no restrictions based on the posix
 acl values passed through it. The capability hook doesn't need to be
 called either because it only has restrictions on security.* xattrs. So
-these are all fairly simply hooks for SELinux.
+these all becomes very simple hooks for smack.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 
@@ -100,53 +100,98 @@ Notes:
     - Add get, and remove acl hook
     
     /* v4 */
-    unchanged
+    Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
- security/selinux/hooks.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ security/smack/smack_lsm.c | 69 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79573504783b..0e3cd67e5e92 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3239,6 +3239,27 @@ static int selinux_inode_setxattr(struct user_namespace *mnt_userns,
- 			    &ad);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 001831458fa2..8247e8fd43d0 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1393,6 +1393,72 @@ static int smack_inode_removexattr(struct user_namespace *mnt_userns,
+ 	return 0;
  }
  
-+static int selinux_inode_set_acl(struct user_namespace *mnt_userns,
-+				 struct dentry *dentry, const char *acl_name,
-+				 struct posix_acl *kacl)
++/**
++ * smack_inode_set_acl - Smack check for setting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ * @kacl: the posix acls
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_set_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, const char *acl_name,
++			       struct posix_acl *kacl)
 +{
-+	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
++	struct smk_audit_info ad;
++	int rc;
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
++	return rc;
 +}
 +
-+static int selinux_inode_get_acl(struct user_namespace *mnt_userns,
-+				 struct dentry *dentry, const char *acl_name)
++/**
++ * smack_inode_get_acl - Smack check for getting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_get_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, const char *acl_name)
 +{
-+	const struct cred *cred = current_cred();
++	struct smk_audit_info ad;
++	int rc;
 +
-+	return dentry_has_perm(cred, dentry, FILE__GETATTR);
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_READ, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_READ, rc);
++	return rc;
 +}
 +
-+static int selinux_inode_remove_acl(struct user_namespace *mnt_userns,
-+				    struct dentry *dentry, const char *acl_name)
++/**
++ * smack_inode_remove_acl - Smack check for getting posix acls
++ * @mnt_userns: the userns attached to the mnt this request came from
++ * @dentry: the object
++ * @acl_name: name of the posix acl
++ *
++ * Returns 0 if access is permitted, an error code otherwise
++ */
++static int smack_inode_remove_acl(struct user_namespace *mnt_userns,
++				  struct dentry *dentry, const char *acl_name)
 +{
-+	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
++	struct smk_audit_info ad;
++	int rc;
++
++	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
++	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
++	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
++	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
++	return rc;
 +}
 +
- static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
- 					const void *value, size_t size,
- 					int flags)
-@@ -7063,6 +7084,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_getxattr, selinux_inode_getxattr),
- 	LSM_HOOK_INIT(inode_listxattr, selinux_inode_listxattr),
- 	LSM_HOOK_INIT(inode_removexattr, selinux_inode_removexattr),
-+	LSM_HOOK_INIT(inode_set_acl, selinux_inode_set_acl),
-+	LSM_HOOK_INIT(inode_get_acl, selinux_inode_get_acl),
-+	LSM_HOOK_INIT(inode_remove_acl, selinux_inode_remove_acl),
- 	LSM_HOOK_INIT(inode_getsecurity, selinux_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, selinux_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, selinux_inode_listsecurity),
+ /**
+  * smack_inode_getsecurity - get smack xattrs
+  * @mnt_userns: active user namespace
+@@ -4772,6 +4838,9 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
+ 	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
+ 	LSM_HOOK_INIT(inode_removexattr, smack_inode_removexattr),
++	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
++	LSM_HOOK_INIT(inode_get_acl, smack_inode_get_acl),
++	LSM_HOOK_INIT(inode_remove_acl, smack_inode_remove_acl),
+ 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
+ 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
+ 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
 -- 
 2.34.1
 
