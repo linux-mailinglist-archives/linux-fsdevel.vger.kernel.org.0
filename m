@@ -2,78 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A4B5EFEE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 22:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAD25EFF3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 23:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229754AbiI2Uun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 16:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41146 "EHLO
+        id S229839AbiI2V1W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 17:27:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbiI2Uun (ORCPT
+        with ESMTP id S229666AbiI2V1V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 16:50:43 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18FDA1449EC;
-        Thu, 29 Sep 2022 13:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IbHeC0UoLetN8Eh2Saee1yLcn/79FwEYvj2s6jPeAiI=; b=TcghY1nF1nA7Y4RCBZB2R0o+Xt
-        oHKqD6itrUaXTdQzX7cZxAJFBB5oszavCObpiMaaPl13xgOIUGy8uz77hiGP695a1OcmT1YaoPNXB
-        TPDiS2gqvx9OFOYLfOQ1BU2w73yq9jJO5ZEjBuzoKF4xQteTXPVuWx3J5yFLpL25qQfkFaIabEcMt
-        zAs9ZZucSgkgo8aP41CDaZUF+n0vgBlTIlLBmO7m6Q4XEr/NvqPrD5vfNHuyMb1ZoaFtm9NfVqRiE
-        A8XxBohMNHWwfk4Hx/O18D1Aq0p1Ftb2vDO6K9yMfQUGyE3vOrbTCwzmDaljjyIwry6xo9EIidas5
-        o0u8aFTQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oe0US-0055cL-0P;
-        Thu, 29 Sep 2022 20:50:40 +0000
-Date:   Thu, 29 Sep 2022 21:50:40 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+84b7b87a6430a152c1f4@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] kernel panic: stack is corrupted in
- writeback_single_inode
-Message-ID: <YzYFIK/jFiN6WEzT@ZenIV>
-References: <0000000000008ea2da05e979435f@google.com>
- <0000000000000f962805e9d6ae62@google.com>
+        Thu, 29 Sep 2022 17:27:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6716F14328B;
+        Thu, 29 Sep 2022 14:27:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 003796115C;
+        Thu, 29 Sep 2022 21:27:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C4FC433D6;
+        Thu, 29 Sep 2022 21:27:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664486838;
+        bh=7Kf4cZBrQwRHfxU4QnRfVt8FihSv/LmgjgkwL6PBRSA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JV5mYqZU7yA4ixMOufMkZLAQqPpuHYigoBX8sXR6CQb1WUy1c6PqIReeInkKZmACG
+         WLmqLEgLgB7H3LHGoznuBQodgNNrFFIpM7QZa3h4iXWLcRVyQtLmnL3kOlBfzYx3vW
+         VLYzCtOHbvX/SyIYQ598aJDmOAJ/hjPvYyHQLrzGAONBWbg1BD2ahJj6XPiW5ZLto5
+         64w/r3pTuFOteVLWVO+nPBPtZknXDdI2owy0DO6wpIeprnJL+YQT5WGuhAysh16jOV
+         0BxHROU7DGRSavhiHOfhV3b1v1iea7dfphqLaqHF3hgooNMCyebDO7jk3I8333KgHU
+         JT+Sqtp5JPAoA==
+Date:   Thu, 29 Sep 2022 14:27:17 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH] iomap: fix memory corruption when recording errors
+ during writeback
+Message-ID: <YzYNtYgU1ckryg4Q@magnolia>
+References: <YzXnoR0UMBVfoaOf@magnolia>
+ <YzXy8lJGMRUbEdsM@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000000f962805e9d6ae62@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YzXy8lJGMRUbEdsM@casper.infradead.org>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 01:25:36PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On Thu, Sep 29, 2022 at 08:33:06PM +0100, Matthew Wilcox wrote:
+> On Thu, Sep 29, 2022 at 11:44:49AM -0700, Darrick J. Wong wrote:
+> > Fixes: e735c0079465 ("iomap: Convert iomap_add_to_ioend() to take a folio")
+> > Probably-Fixes: 598ecfbaa742 ("iomap: lift the xfs writeback code to iomap")
 > 
-> HEAD commit:    c3e0e1e23c70 Merge tag 'irq_urgent_for_v6.0' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17ab519c880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=84b7b87a6430a152c1f4
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157c2000880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105224b8880000
+> I think this is a misuse of Fixes.  As I understand it, Fixes: is "Here's
+> the commit that introduced the bug", not "This is the most recent change
+> after which this patch will still apply".  e735c0079465 only changed
+> s/page/folio/ in this line of code, so clearly didn't introduce the bug.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e7f1f925f94e/disk-c3e0e1e2.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/830dabeedf0d/vmlinux-c3e0e1e2.xz
+> Any kernel containing 598ecfbaa742 has this same bug, so that should be
+> the Fixes: line.  As you say though, 598ecfbaa742 merely moved the code
+> from xfs_writepage_map().  bfce7d2e2d5e moved it from xfs_do_writepage(),
+> but 150d5be09ce4 introduced it.  Six years ago!  Good find.  So how about:
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+84b7b87a6430a152c1f4@syzkaller.appspotmail.com
+> Fixes: 150d5be09ce4 ("xfs: remove xfs_cancel_ioend")
 
-... and you _still_ have not bothered to Cc ntfs maintainers.
-Once more, with feeling:
-	If you are fuzzing something (ntfs, in this case), the people most
-interested in your report are the maintainers of the code in question.
-You know that from the moment you put the test together.  No matter where
-exactly the oops gets triggered, what it looks like, etc.
+Sounds fine to me, though if I hear complaints from AUTOSEL about how
+the patch does not directly apply to old kernels, I'll forward them to
+you, because that's what I do now to avoid getting even /more/ email.
+
+> Also,
+> 
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+However, thank you for the quick review. :)
+
+--D
+
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  fs/iomap/buffered-io.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index ca5c62901541..77d59c159248 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1421,7 +1421,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >  	if (!count)
+> >  		folio_end_writeback(folio);
+> >  done:
+> > -	mapping_set_error(folio->mapping, error);
+> > +	mapping_set_error(inode->i_mapping, error);
+> >  	return error;
+> >  }
+> >  
