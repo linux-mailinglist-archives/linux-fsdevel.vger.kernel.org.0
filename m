@@ -2,388 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E285EFB55
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 18:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 611105EFB61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 18:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236022AbiI2QwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 12:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
+        id S235889AbiI2QyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 12:54:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235232AbiI2QwM (ORCPT
+        with ESMTP id S235083AbiI2QyP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 12:52:12 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4557F140F0E;
-        Thu, 29 Sep 2022 09:52:10 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id f23so1751949plr.6;
-        Thu, 29 Sep 2022 09:52:10 -0700 (PDT)
+        Thu, 29 Sep 2022 12:54:15 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231251CDB52
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 09:54:12 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id h18so1002008ilh.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 09:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=x9smInTAbexJo9FMfDYVJQZwAv5RTV0u/BRwYhuyUIM=;
-        b=PwjBr2d/k51WljMRLL/MtzEUzt/CV8BMwu9RVh5Qp64ULy6sMBEfD0X0V19DymfIUD
-         thmUX8sJzb/9C05zq+6yW6pJoeUsZ4oBK1z5HZ5tus02z3yu/0eDEWpo+suieXqzpO4y
-         g/fMYriQN9IU911un2COmNuISl00RmkN+KNzAFgzWxzHAw8GDOA3b4hBP7FDqUqgkSBk
-         x4dDRHxZPQ4cAJRh/OBmcol+Zg9vythYVGgIu2g3K1fkJfpesTKQulYk7WgVpxsd79p2
-         EBpRetruvY1JFl2Q68g5TRpODWeocIr50AdShiLZwkkLmH4C5dWh9Zwa9cPFK5EQItUQ
-         ndCA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=17i72a+YF0QmIvoa5dXmyWylrfLAdgH3Jl0OS8NotoI=;
+        b=Zw/TDh2RKXoZlSdAe2DwIirm3QH3vBvDhtE5sN15EpwqSD+90Z/Z5CwndYmNGbK4UR
+         BRqyAgKn/IxtKRKRbBzJ+pZMgV5wAkl3/uzAQdcAfJm6JyQMrMKtPW0vDZAGGAUllu4j
+         G7My10L+c2J2GzOz5sUGom2gOpJco+ir4FA79eRdDJSco5rQ78UScxnB8IcdT7HgeTWB
+         RvuqlYbvoiOSeA2Hz2gEdrzZqur8VeDTcFL+hQyMQXNYRuil8+o2aez1RR2BNeN5m9ZW
+         9szAbu2jXsjV2+IM6wtbVzmpE1rqOReuvrh8zy3WqLhRxsOwy86dsq8ItK0UxdDMiH8L
+         fvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=x9smInTAbexJo9FMfDYVJQZwAv5RTV0u/BRwYhuyUIM=;
-        b=DGN8XszEeMGcxVHTxvj8B3C2Qe06BzdPwlzFnKvCK+Yb0WJiBtLmGrq8dknlw/OQ3d
-         1g82+yvpnrzskDneAGS6Nrfsf0aTxW3xcBoxxksZsBdt1V9fKcwQAsFnvSiah0QK3zfz
-         rbhq+Q1nnRqqPLVa3I1oqqlE4nzG3Gbrw0UXoqualOHjkJnx97sTLmgD3a9qgB2AphyF
-         HHAPRTrE42fa7sS1D3HNwiYCBy2J2TNOJSwxwHjNss2QN9R8MelEuv9RTuK1uGMb5olA
-         /M83HuuzoM5S24i8FuGOB1Ob6RmERQfqzFgps7otrG8twz+Z7IyUoueWT3oWhux0/pE6
-         aCHw==
-X-Gm-Message-State: ACrzQf1WuupvsBu7VugANOjUbhuUlyNquEiG2Ucm4soBbYGja4lTOTor
-        TaTxShoZ/lMQS3jUATJJF8I=
-X-Google-Smtp-Source: AMsMyM6raR6uUEz9DHqlfOrbVWNAKhfnOrks6W/5gYqM980XfqIW8voC8f+sAqt/40JCIMp7SocU0Q==
-X-Received: by 2002:a17:902:b194:b0:17a:ccae:4ceb with SMTP id s20-20020a170902b19400b0017accae4cebmr4359490plr.36.1664470329501;
-        Thu, 29 Sep 2022 09:52:09 -0700 (PDT)
-Received: from localhost ([192.55.54.55])
-        by smtp.gmail.com with ESMTPSA id z16-20020a170902ccd000b00176677a893bsm119123ple.82.2022.09.29.09.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 09:52:08 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 09:52:06 -0700
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        isaku.yamahata@gmail.com
-Subject: Re: [PATCH v8 6/8] KVM: Update lpage info when private/shared memory
- are mixed
-Message-ID: <20220929165206.GA1963093@ls.amr.corp.intel.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-7-chao.p.peng@linux.intel.com>
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=17i72a+YF0QmIvoa5dXmyWylrfLAdgH3Jl0OS8NotoI=;
+        b=qfr8pyaRb+/P5EX1VmTTsdjujCU/liFGe1vw+gwN53NvqWtoaVKok80ChNnBs2IVIp
+         ijlvTDo9KHrCLWntUFtjN2ufCYNexrFVcA3r5EaXr0F2WF89rbXmjP9iYkfK284MJ9P+
+         iaKBfQDLqfPc2kng5zJ5H8bvwyaBkeEahngMRKBNqsTvCk1T9miDWeDxPXIbJbkJ5Tyn
+         Jr3aoJImukG8ghxme/LxBfmyuIiy8fq7/ZypuZUZJlvb6yTwKAWH6bMe2p8fNNsFUdje
+         zUI9ZFcr8VAqp0gsNnN4HEyaDsmK01SL8m4v5uTt6c3ve+DqAK5UmY8tUxHhx0SRQKLH
+         R8DQ==
+X-Gm-Message-State: ACrzQf0Uhg9oI1Ws8wtEDSJQs0KGeC4fJEDG57bFMMMvc8aZSCwDp9nU
+        ujA/vToxX2ce9iLnfYfTEqndcw==
+X-Google-Smtp-Source: AMsMyM5eKw23leYHbcb6R8MlnLurdMWO/9Ca4vA3JgEmNWoOg/E6eIk/sdLUztIX2+j+HyTMzG0b1A==
+X-Received: by 2002:a05:6e02:184f:b0:2f6:9356:6cf5 with SMTP id b15-20020a056e02184f00b002f693566cf5mr2111438ilv.112.1664470451301;
+        Thu, 29 Sep 2022 09:54:11 -0700 (PDT)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id n29-20020a02a19d000000b00346b4b25252sm3072596jah.13.2022.09.29.09.54.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 09:54:10 -0700 (PDT)
+Message-ID: <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
+Date:   Thu, 29 Sep 2022 10:54:07 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220915142913.2213336-7-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [syzbot] inconsistent lock state in kmem_cache_alloc
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>
+Cc:     syzbot <syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mhiramat@kernel.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
+References: <00000000000074b50005e997178a@google.com>
+ <edef9f69-4b29-4c00-8c1a-67c4b8f36af0@suse.cz>
+ <20220929135627.ykivmdks2w5vzrwg@quack3>
+ <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
+In-Reply-To: <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 15, 2022 at 10:29:11PM +0800,
-Chao Peng <chao.p.peng@linux.intel.com> wrote:
+On 9/29/22 8:07 AM, Jens Axboe wrote:
+> On 9/29/22 7:56 AM, Jan Kara wrote:
+>> On Thu 29-09-22 15:24:22, Vlastimil Babka wrote:
+>>> On 9/26/22 18:33, syzbot wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following issue on:
+>>>>
+>>>> HEAD commit:    105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
+>>>> git tree:       upstream
+>>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=152bf540880000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=dfcc5f4da15868df7d4d
+>>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1020566c880000
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104819e4880000
+>>>>
+>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>> Reported-by: syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com
+>>>
+>>> +CC more folks
+>>>
+>>> I'm not fully sure what this report means but I assume it's because there's
+>>> a GFP_KERNEL kmalloc() allocation from softirq context? Should it perhaps
+>>> use memalloc_nofs_save() at some well defined point?
+>>
+>> Thanks for the CC. The problem really is that io_uring is calling into
+>> fsnotify_access() from softirq context. That isn't going to work. The
+>> allocation is just a tip of the iceberg. Fsnotify simply does not expect to
+>> be called from softirq context. All the dcache locks are not IRQ safe, it
+>> can even obtain some sleeping locks and call to userspace if there are
+>> suitable watches set up.
+>>
+>> So either io_uring needs to postpone fsnotify calls to a workqueue or we
+>> need a way for io_uring code to tell iomap dio code that the completion
+>> needs to always happen from a workqueue (as it currently does for writes).
+>> Jens?
+> 
+> Something like this should probably work - I'll write a test case and
+> vet it.
 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 08abad4f3e6f..a0f198cede3d 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-...
-> @@ -6894,3 +6899,115 @@ void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
->  	if (kvm->arch.nx_lpage_recovery_thread)
->  		kthread_stop(kvm->arch.nx_lpage_recovery_thread);
->  }
-> +
-> +static bool mem_attr_is_mixed(struct kvm *kvm, unsigned int attr,
-> +			      gfn_t start, gfn_t end)
-> +{
-> +	XA_STATE(xas, &kvm->mem_attr_array, start);
-> +	gfn_t gfn = start;
-> +	void *entry;
-> +	bool shared, private;
-> +	bool mixed = false;
-> +
-> +	if (attr == KVM_MEM_ATTR_SHARED) {
-> +		shared = true;
-> +		private = false;
-> +	} else {
-> +		shared = false;
-> +		private = true;
-> +	}
+Ran that with the attached test case, triggers it before but not with
+the patch. Side note - I do wish that the syzbot reproducers were not
+x86 specific, I always have to go and edit them for arm64. For this
+particular one, I just gave up and wrote one myself.
 
-We don't have to care the target is shared or private.  We need to check
-only same or not.
+Thanks for the heads-up Jan, I'll queue up this fix and mark for stable
+with the right attributions.
 
-> +
-> +	rcu_read_lock();
-> +	entry = xas_load(&xas);
-> +	while (gfn < end) {
-> +		if (xas_retry(&xas, entry))
-> +			continue;
-> +
-> +		KVM_BUG_ON(gfn != xas.xa_index, kvm);
-> +
-> +		if (entry)
-> +			private = true;
-> +		else
-> +			shared = true;
-> +
-> +		if (private && shared) {
-> +			mixed = true;
-> +			goto out;
-> +		}
-> +
-> +		entry = xas_next(&xas);
-> +		gfn++;
-> +	}
-> +out:
-> +	rcu_read_unlock();
-> +	return mixed;
-> +}
-> +
-> +static inline void update_mixed(struct kvm_lpage_info *linfo, bool mixed)
-> +{
-> +	if (mixed)
-> +		linfo->disallow_lpage |= KVM_LPAGE_PRIVATE_SHARED_MIXED;
-> +	else
-> +		linfo->disallow_lpage &= ~KVM_LPAGE_PRIVATE_SHARED_MIXED;
-> +}
-> +
-> +static void update_mem_lpage_info(struct kvm *kvm,
-> +				  struct kvm_memory_slot *slot,
-> +				  unsigned int attr,
-> +				  gfn_t start, gfn_t end)
-> +{
-> +	unsigned long lpage_start, lpage_end;
-> +	unsigned long gfn, pages, mask;
-> +	int level;
-> +
-> +	for (level = PG_LEVEL_2M; level <= KVM_MAX_HUGEPAGE_LEVEL; level++) {
-> +		pages = KVM_PAGES_PER_HPAGE(level);
-> +		mask = ~(pages - 1);
-> +		lpage_start = start & mask;
-> +		lpage_end = (end - 1) & mask;
-> +
-> +		/*
-> +		 * We only need to scan the head and tail page, for middle pages
-> +		 * we know they are not mixed.
-> +		 */
-> +		update_mixed(lpage_info_slot(lpage_start, slot, level),
-> +			     mem_attr_is_mixed(kvm, attr, lpage_start,
-> +							  lpage_start + pages));
-> +
-> +		if (lpage_start == lpage_end)
-> +			return;
-> +
-> +		for (gfn = lpage_start + pages; gfn < lpage_end; gfn += pages)
-> +			update_mixed(lpage_info_slot(gfn, slot, level), false);
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/fanotify.h>
+#include <sys/wait.h>
+#include <liburing.h>
 
-
-For >2M case, we don't have to check all entry. just check lower level case.
-
-> +
-> +		update_mixed(lpage_info_slot(lpage_end, slot, level),
-> +			     mem_attr_is_mixed(kvm, attr, lpage_end,
-> +							  lpage_end + pages));
-> +	}
-> +}
-> +
-> +void kvm_arch_update_mem_attr(struct kvm *kvm, unsigned int attr,
-> +			      gfn_t start, gfn_t end)
-> +{
-> +	struct kvm_memory_slot *slot;
-> +	struct kvm_memslots *slots;
-> +	struct kvm_memslot_iter iter;
-> +	int i;
-> +
-> +	WARN_ONCE(!(attr & (KVM_MEM_ATTR_PRIVATE | KVM_MEM_ATTR_SHARED)),
-> +			"Unsupported mem attribute.\n");
-> +
-> +	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-> +		slots = __kvm_memslots(kvm, i);
-> +
-> +		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-> +			slot = iter.slot;
-> +			start = max(start, slot->base_gfn);
-> +			end = min(end, slot->base_gfn + slot->npages);
-> +			if (WARN_ON_ONCE(start >= end))
-> +				continue;
-> +
-> +			update_mem_lpage_info(kvm, slot, attr, start, end);
-> +		}
-> +	}
-> +}
-
-
-Here is my updated version.
-
-bool kvm_mem_attr_is_mixed(struct kvm_memory_slot *slot, gfn_t gfn, int level)
+int main(int argc, char *argv[])
 {
-	gfn_t pages = KVM_PAGES_PER_HPAGE(level);
-	gfn_t mask = ~(pages - 1);
-	struct kvm_lpage_info *linfo = lpage_info_slot(gfn & mask, slot, level);
+	struct io_uring_sqe *sqe;
+	struct io_uring_cqe *cqe;
+	struct io_uring ring;
+	int fan, ret, fd;
+	void *buf;
 
-	WARN_ON_ONCE(level == PG_LEVEL_4K);
-	return linfo->disallow_lpage & KVM_LPAGE_PRIVATE_SHARED_MIXED;
-}
-
-#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM_ATTR
-static void update_mixed(struct kvm_lpage_info *linfo, bool mixed)
-{
-	if (mixed)
-		linfo->disallow_lpage |= KVM_LPAGE_PRIVATE_SHARED_MIXED;
-	else
-		linfo->disallow_lpage &= ~KVM_LPAGE_PRIVATE_SHARED_MIXED;
-}
-
-static bool __mem_attr_is_mixed(struct kvm *kvm, gfn_t start, gfn_t end)
-{
-	XA_STATE(xas, &kvm->mem_attr_array, start);
-	bool mixed = false;
-	gfn_t gfn = start;
-	void *s_entry;
-	void *entry;
-
-	rcu_read_lock();
-	s_entry = xas_load(&xas);
-	entry = s_entry;
-	while (gfn < end) {
-		if (xas_retry(&xas, entry))
-			continue;
-
-		KVM_BUG_ON(gfn != xas.xa_index, kvm);
-
-		entry = xas_next(&xas);
-		if (entry != s_entry) {
-			mixed = true;
-			break;
-		}
-		gfn++;
+	fan = fanotify_init(FAN_CLASS_NOTIF|FAN_CLASS_CONTENT, 0);
+	if (fan < 0) {
+		if (errno == ENOSYS)
+			return 0;
+		perror("fanotify_init");
+		return 1;
 	}
-	rcu_read_unlock();
-	return mixed;
-}
 
-static bool mem_attr_is_mixed(struct kvm *kvm,
-			      struct kvm_memory_slot *slot, int level,
-			      gfn_t start, gfn_t end)
-{
-	struct kvm_lpage_info *child_linfo;
-	unsigned long child_pages;
-	bool mixed = false;
-	unsigned long gfn;
-	void *entry;
-
-	if (WARN_ON_ONCE(level == PG_LEVEL_4K))
-		return false;
-
-	if (level == PG_LEVEL_2M)
-		return __mem_attr_is_mixed(kvm, start, end);
-
-	/* This assumes that level - 1 is already updated. */
-	rcu_read_lock();
-	child_pages = KVM_PAGES_PER_HPAGE(level - 1);
-	entry = xa_load(&kvm->mem_attr_array, start);
-	for (gfn = start; gfn < end; gfn += child_pages) {
-		child_linfo = lpage_info_slot(gfn, slot, level - 1);
-		if (child_linfo->disallow_lpage & KVM_LPAGE_PRIVATE_SHARED_MIXED) {
-			mixed = true;
-			break;
+	if (argc > 1) {
+		fd = open(argv[1], O_RDONLY | O_DIRECT);
+		if (fd < 0) {
+			perror("open");
+			return 1;
 		}
-		if (xa_load(&kvm->mem_attr_array, gfn) != entry) {
-			mixed = true;
-			break;
+	} else {
+		fd = open("file0", O_RDONLY | O_DIRECT);
+		if (fd < 0) {
+			perror("open");
+			return 1;
 		}
 	}
-	rcu_read_unlock();
-	return mixed;
-}
 
-static void update_mem_lpage_info(struct kvm *kvm,
-				  struct kvm_memory_slot *slot,
-				  unsigned int attr,
-				  gfn_t start, gfn_t end)
-{
-	unsigned long lpage_start, lpage_end;
-	unsigned long gfn, pages, mask;
-	int level;
-
-	for (level = PG_LEVEL_2M; level <= KVM_MAX_HUGEPAGE_LEVEL; level++) {
-		pages = KVM_PAGES_PER_HPAGE(level);
-		mask = ~(pages - 1);
-		lpage_start = start & mask;
-		lpage_end = (end - 1) & mask;
-
-		/*
-		 * We only need to scan the head and tail page, for middle pages
-		 * we know they are not mixed.
-		 */
-		update_mixed(lpage_info_slot(lpage_start, slot, level),
-			     mem_attr_is_mixed(kvm, slot, level,
-					       lpage_start, lpage_start + pages));
-
-		if (lpage_start == lpage_end)
-			return;
-
-		for (gfn = lpage_start + pages; gfn < lpage_end; gfn += pages)
-			update_mixed(lpage_info_slot(gfn, slot, level), false);
-
-		update_mixed(lpage_info_slot(lpage_end, slot, level),
-			     mem_attr_is_mixed(kvm, slot, level,
-					       lpage_end, lpage_end + pages));
+	ret = fanotify_mark(fan, FAN_MARK_ADD, FAN_ACCESS|FAN_MODIFY, fd, NULL);
+	if (ret < 0) {
+		perror("fanotify_mark");
+		return 1;
 	}
-}
 
-void kvm_arch_update_mem_attr(struct kvm *kvm, unsigned int attr,
-			      gfn_t start, gfn_t end)
-{
-	struct kvm_memory_slot *slot;
-	struct kvm_memslots *slots;
-	struct kvm_memslot_iter iter;
-	int idx;
-	int i;
+	ret = 0;
+	if (fork()) {
+		int wstat;
 
-	WARN_ONCE(!(attr & (KVM_MEM_ATTR_PRIVATE | KVM_MEM_ATTR_SHARED)),
-		  "Unsupported mem attribute.\n");
-
-	idx = srcu_read_lock(&kvm->srcu);
-	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-		slots = __kvm_memslots(kvm, i);
-
-		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-			slot = iter.slot;
-			start = max(start, slot->base_gfn);
-			end = min(end, slot->base_gfn + slot->npages);
-			if (WARN_ON_ONCE(start >= end))
-				continue;
-
-			update_mem_lpage_info(kvm, slot, attr, start, end);
+		io_uring_queue_init(4, &ring, 0);
+		if (posix_memalign(&buf, 4096, 4096))
+			return 0;
+		sqe = io_uring_get_sqe(&ring);
+		io_uring_prep_read(sqe, fd, buf, 4096, 0);
+		io_uring_submit(&ring);
+		ret = io_uring_wait_cqe(&ring, &cqe);
+		if (ret) {
+			fprintf(stderr, "wait_ret=%d\n", ret);
+			return 1;
 		}
-	}
-	srcu_read_unlock(&kvm->srcu, idx);
-}
-#endif
+		wait(&wstat);
+		ret = WEXITSTATUS(wstat);
+	} else {
+		struct fanotify_event_metadata m;
+		int fret;
 
+		fret = read(fan, &m, sizeof(m));
+		if (fret < 0)
+			perror("fanotify read");
+		/* fail if mask isn't right or pid indicates non-task context */
+		else if (!(m.mask & 1) || !m.pid)
+			exit(1);
+		exit(0);
+	}
+
+	return ret;
+}
 
 -- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+Jens Axboe
