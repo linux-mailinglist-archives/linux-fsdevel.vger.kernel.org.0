@@ -2,56 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1285EF8D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AEEC5EF8D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Sep 2022 17:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235936AbiI2Pc3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 11:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47552 "EHLO
+        id S235658AbiI2Pcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 11:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235201AbiI2Pbr (ORCPT
+        with ESMTP id S235545AbiI2Pbw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:31:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF7A8E459;
-        Thu, 29 Sep 2022 08:31:16 -0700 (PDT)
+        Thu, 29 Sep 2022 11:31:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F959E12B;
+        Thu, 29 Sep 2022 08:31:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79AF061484;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 43908618D7;
+        Thu, 29 Sep 2022 15:31:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B35C43470;
         Thu, 29 Sep 2022 15:31:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B53BC433B5;
-        Thu, 29 Sep 2022 15:31:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465474;
-        bh=U7fsHZPo9dptzXtrDHRMBH0uX1up5x/P7cui953kXI4=;
+        s=k20201202; t=1664465477;
+        bh=3tmqMtDgsN+ovzKO78lMyP3Qqi7CkzX4In4A7ZVKkhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uLslx1JlU0Bbq8GnO/f+G9IOL0mSEay/jQUecmh/TU1Vnk5Yv+NwbJj89TX/ORHEg
-         iPe17bLfdHF7AwyPYqO1zGie6qRlFsZuwQ9W3fJhTUgggxFGXRVCmEFgkDfzHox/s9
-         aFamX/YWq0XIR/w2wj5/iTZFpk1bZonsSGMRuIJKTyAiWvgnlOWCuCgo03mGeaoRkH
-         74jY6audzNP5mnM0a3it3GzrXeM0HA1vh1Fur261UJHOiCM1OQIJNgEWBIAdJwaRXh
-         2XBxOCS/XQjAf7ijtjZ1yKGDCd/x9WVMdjH7TJIZYLMCbc8RsuSPSBUUy8ZDeCZaa0
-         RPFwkNowubpjQ==
+        b=U9crareObMkgOgNwRaR6uId/nv3O4PDbaCRXfRK8k2YWbQFAJNhjPcS2W/n8yLvPw
+         XMcQ2RuCOi06zAIE14uYr7ATFHsqUnDYKv15Ex7LZ74IrW1mhAH4CxSol+HP4cKXFj
+         QyTPDXIp1hNxTvFdFCdMfIfj2gppGYtX4DY82s5w6kAzSPXJ1AJn1DPAVt+ZTYhBy9
+         gcl1TKe7fJoP1PkpA5u5zEJOTKYeXBEYFCfCrH36NaeEO2+6Qrrxm4SM+Z7WB1txAP
+         6TmUu4PKXeMNMLrB3k5DkNUl51BVbTIrhQDm2WOmFPlv5+AuW6CHhBc4cUEXs2HdIp
+         jqvDNLgs+by3Q==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        v9fs-developer@lists.sourceforge.net,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v4 08/30] 9p: implement set acl method
-Date:   Thu, 29 Sep 2022 17:30:18 +0200
-Message-Id: <20220929153041.500115-9-brauner@kernel.org>
+Subject: [PATCH v4 09/30] security: add get, remove and set acl hook
+Date:   Thu, 29 Sep 2022 17:30:19 +0200
+Message-Id: <20220929153041.500115-10-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220929153041.500115-1-brauner@kernel.org>
 References: <20220929153041.500115-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6435; i=brauner@kernel.org; h=from:subject; bh=U7fsHZPo9dptzXtrDHRMBH0uX1up5x/P7cui953kXI4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hLeueu4q5/FaenQtRej2543//5m4214ll3A++rzcr6I N4fnd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk3k6GX0xc/xl1L21Y90FPpNvyqQ BXg1ipXGuf+k+JwI+NpWcfv2f4n+HAuf6IV13Cg7fzm+b5fLjOGT5l8Z7bWvICKx1aj16M5AUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7081; i=brauner@kernel.org; h=from:subject; bh=3tmqMtDgsN+ovzKO78lMyP3Qqi7CkzX4In4A7ZVKkhs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSb7hI2+lZ4y/TMde3Mxe/mVp/V37uAy0pgl6PzFI//BTqy 73+d7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI3A6Gv+LLeGfmLU09FuV6PoDnnE vFXZ7tE86/edtsdH71HikX2TuMDKs3Zdcq3Zx4qt3qVSV3Xqx0nd8ZXu8V6lKvpxfwsnItZgAA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -73,22 +71,18 @@ building a dedicated posix acl api around the get and set inode
 operations. This removes a lot of hackiness and makes the codepaths
 easier to maintain. A lot of background can be found in [1].
 
-In order to build a type safe posix api around get and set acl we need
-all filesystem to implement get and set acl.
+So far posix acls were passed as a void blob to the security and
+integrity modules. Some of them like evm then proceed to interpret the
+void pointer and convert it into the kernel internal struct posix acl
+representation to perform their integrity checking magic. This is
+obviously pretty problematic as that requires knowledge that only the
+vfs is guaranteed to have and has lead to various bugs. Add a proper
+security hook for setting posix acls and pass down the posix acls in
+their appropriate vfs format instead of hacking it through a void
+pointer stored in the uapi format.
 
-So far 9p implemented a ->get_inode_acl() operation that didn't require
-access to the dentry in order to allow (limited) permission checking via
-posix acls in the vfs. Now that we have get and set acl inode operations
-that take a dentry argument we can give 9p get and set acl inode
-operations.
-
-This is mostly a light refactoring of the codepaths currently used in 9p
-posix acl xattr handler. After we have fully implemented the posix acl
-api and switched the vfs over to it, the 9p specific posix acl xattr
-handler and associated code will be removed.
-
-Note, until the vfs has been switched to the new posix acl api this
-patch is a non-functional change.
+In the next patches we implement the hooks for the few security modules
+that do actually have restrictions on posix acls.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
@@ -96,170 +90,144 @@ Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 Notes:
     /* v2 */
-    Al Viro <viro@zeniv.linux.org.uk>:
-    - Fix leak due to early return instead of goto.
-    
-    Christian Brauner (Microsoft) <brauner@kernel.org>:
-    - Fix leak and call kfree() when we skip setting posix acls because acl can be
-      represented by mode bits.
+    unchanged
     
     /* v3 */
-    unchanged
+    Paul Moore <paul@paul-moore.com>:
+    - Add get, and remove acl hook
     
     /* v4 */
     unchanged
 
- fs/9p/acl.c            | 94 ++++++++++++++++++++++++++++++++++++++++++
- fs/9p/acl.h            |  3 ++
- fs/9p/vfs_inode_dotl.c |  2 +
- 3 files changed, 99 insertions(+)
+ include/linux/lsm_hook_defs.h |  6 ++++++
+ include/linux/lsm_hooks.h     | 12 ++++++++++++
+ include/linux/security.h      | 29 +++++++++++++++++++++++++++++
+ security/security.c           | 25 +++++++++++++++++++++++++
+ 4 files changed, 72 insertions(+)
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index 67f8b57c67e0..135b26cee63a 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -151,6 +151,100 @@ struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
- 	return v9fs_get_cached_acl(d_inode(dentry), type);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 806448173033..dd388f968ba2 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -145,6 +145,12 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
+ LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_removexattr, struct user_namespace *mnt_userns,
+ 	 struct dentry *dentry, const char *name)
++LSM_HOOK(int, 0, inode_set_acl, struct user_namespace *mnt_userns,
++	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
++LSM_HOOK(int, 0, inode_get_acl, struct user_namespace *mnt_userns,
++	 struct dentry *dentry, const char *acl_name)
++LSM_HOOK(int, 0, inode_remove_acl, struct user_namespace *mnt_userns,
++	 struct dentry *dentry, const char *acl_name)
+ LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_killpriv, struct user_namespace *mnt_userns,
+ 	 struct dentry *dentry)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 84a0d7e02176..5a1502ee54ea 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -435,6 +435,18 @@
+  *	Check permission before removing the extended attribute
+  *	identified by @name for @dentry.
+  *	Return 0 if permission is granted.
++ * @inode_set_acl:
++ *	Check permission before setting posix acls
++ *	The posix acls in @kacl are identified by @acl_name.
++ *	Return 0 if permission is granted.
++ * @inode_get_acl:
++ *	Check permission before getting osix acls
++ *	The posix acls are identified by @acl_name.
++ *	Return 0 if permission is granted.
++ * @inode_remove_acl:
++ *	Check permission before removing posix acls
++ *	The posix acls are identified by @acl_name.
++ *	Return 0 if permission is granted.
+  * @inode_getsecurity:
+  *	Retrieve a copy of the extended attribute representation of the
+  *	security label associated with @name for @inode via @buffer.  Note that
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 1bc362cb413f..d9a6ae49f349 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -359,6 +359,13 @@ int security_inode_getattr(const struct path *path);
+ int security_inode_setxattr(struct user_namespace *mnt_userns,
+ 			    struct dentry *dentry, const char *name,
+ 			    const void *value, size_t size, int flags);
++int security_inode_set_acl(struct user_namespace *mnt_userns,
++			   struct dentry *dentry, const char *acl_name,
++			   struct posix_acl *kacl);
++int security_inode_get_acl(struct user_namespace *mnt_userns,
++			   struct dentry *dentry, const char *acl_name);
++int security_inode_remove_acl(struct user_namespace *mnt_userns,
++			      struct dentry *dentry, const char *acl_name);
+ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 				  const void *value, size_t size, int flags);
+ int security_inode_getxattr(struct dentry *dentry, const char *name);
+@@ -869,6 +876,28 @@ static inline int security_inode_setxattr(struct user_namespace *mnt_userns,
+ 	return cap_inode_setxattr(dentry, name, value, size, flags);
  }
  
-+int v9fs_iop_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		     struct posix_acl *acl, int type)
++static inline int security_inode_set_acl(struct user_namespace *mnt_userns,
++					 struct dentry *dentry,
++					 const char *acl_name,
++					 struct posix_acl *kacl)
 +{
-+	int retval;
-+	size_t size = 0;
-+	void *value = NULL;
-+	const char *acl_name;
-+	struct v9fs_session_info *v9ses;
-+	struct inode *inode = d_inode(dentry);
-+
-+	if (acl) {
-+		retval = posix_acl_valid(inode->i_sb->s_user_ns, acl);
-+		if (retval)
-+			goto err_out;
-+
-+		size = posix_acl_xattr_size(acl->a_count);
-+
-+		value = kzalloc(size, GFP_NOFS);
-+		if (!value) {
-+			retval = -ENOMEM;
-+			goto err_out;
-+		}
-+
-+		retval = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-+		if (retval < 0)
-+			goto err_out;
-+	}
-+
-+	/*
-+	 * set the attribute on the remote. Without even looking at the
-+	 * xattr value. We leave it to the server to validate
-+	 */
-+	acl_name = posix_acl_xattr_name(type);
-+	v9ses = v9fs_dentry2v9ses(dentry);
-+	if ((v9ses->flags & V9FS_ACCESS_MASK) != V9FS_ACCESS_CLIENT) {
-+		retval = v9fs_xattr_set(dentry, acl_name, value, size, 0);
-+		goto err_out;
-+	}
-+
-+	if (S_ISLNK(inode->i_mode)) {
-+		retval = -EOPNOTSUPP;
-+		goto err_out;
-+	}
-+
-+	if (!inode_owner_or_capable(&init_user_ns, inode)) {
-+		retval = -EPERM;
-+		goto err_out;
-+	}
-+
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		if (acl) {
-+			struct iattr iattr = {};
-+			struct posix_acl *acl_mode = acl;
-+
-+			retval = posix_acl_update_mode(&init_user_ns, inode,
-+						       &iattr.ia_mode,
-+						       &acl_mode);
-+			if (retval)
-+				goto err_out;
-+			if (!acl_mode) {
-+				/*
-+				 * ACL can be represented by the mode bits.
-+				 * So don't update ACL below.
-+				 */
-+				kfree(value);
-+				value = NULL;
-+				size = 0;
-+			}
-+			iattr.ia_valid = ATTR_MODE;
-+			/*
-+			 * FIXME should we update ctime ?
-+			 * What is the following setxattr update the mode ?
-+			 */
-+			v9fs_vfs_setattr_dotl(&init_user_ns, dentry, &iattr);
-+		}
-+		break;
-+	case ACL_TYPE_DEFAULT:
-+		if (!S_ISDIR(inode->i_mode)) {
-+			retval = acl ? -EINVAL : 0;
-+			goto err_out;
-+		}
-+		break;
-+	}
-+
-+	retval = v9fs_xattr_set(dentry, acl_name, value, size, 0);
-+	if (!retval)
-+		set_cached_acl(inode, type, acl);
-+
-+err_out:
-+	kfree(value);
-+	return retval;
++	return 0;
 +}
 +
- static int v9fs_set_acl(struct p9_fid *fid, int type, struct posix_acl *acl)
- {
- 	int retval;
-diff --git a/fs/9p/acl.h b/fs/9p/acl.h
-index 359dab4da900..4c60a2bce5de 100644
---- a/fs/9p/acl.h
-+++ b/fs/9p/acl.h
-@@ -12,6 +12,8 @@ struct posix_acl *v9fs_iop_get_inode_acl(struct inode *inode, int type,
- 				   bool rcu);
- struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
- 					  struct dentry *dentry, int type);
-+int v9fs_iop_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		     struct posix_acl *acl, int type);
- int v9fs_acl_chmod(struct inode *inode, struct p9_fid *fid);
- int v9fs_set_create_acl(struct inode *inode, struct p9_fid *fid,
- 			struct posix_acl *dacl, struct posix_acl *acl);
-@@ -21,6 +23,7 @@ void v9fs_put_acl(struct posix_acl *dacl, struct posix_acl *acl);
- #else
- #define v9fs_iop_get_inode_acl	NULL
- #define v9fs_iop_get_acl NULL
-+#define v9fs_iop_set_acl NULL
- static inline int v9fs_get_acl(struct inode *inode, struct p9_fid *fid)
- {
- 	return 0;
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index a4211fcb9168..03c1743c4aff 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -985,6 +985,7 @@ const struct inode_operations v9fs_dir_inode_operations_dotl = {
- 	.listxattr = v9fs_listxattr,
- 	.get_inode_acl = v9fs_iop_get_inode_acl,
- 	.get_acl = v9fs_iop_get_acl,
-+	.set_acl = v9fs_iop_set_acl,
- };
++static inline int security_inode_get_acl(struct user_namespace *mnt_userns,
++					 struct dentry *dentry,
++					 const char *acl_name)
++{
++	return 0;
++}
++
++static inline int security_inode_remove_acl(struct user_namespace *mnt_userns,
++					    struct dentry *dentry,
++					    const char *acl_name)
++{
++	return 0;
++}
++
+ static inline void security_inode_post_setxattr(struct dentry *dentry,
+ 		const char *name, const void *value, size_t size, int flags)
+ { }
+diff --git a/security/security.c b/security/security.c
+index 14d30fec8a00..0fc9aff39f63 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1370,6 +1370,31 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
+ 	return evm_inode_setxattr(mnt_userns, dentry, name, value, size);
+ }
  
- const struct inode_operations v9fs_file_inode_operations_dotl = {
-@@ -993,6 +994,7 @@ const struct inode_operations v9fs_file_inode_operations_dotl = {
- 	.listxattr = v9fs_listxattr,
- 	.get_inode_acl = v9fs_iop_get_inode_acl,
- 	.get_acl = v9fs_iop_get_acl,
-+	.set_acl = v9fs_iop_set_acl,
- };
- 
- const struct inode_operations v9fs_symlink_inode_operations_dotl = {
++int security_inode_set_acl(struct user_namespace *mnt_userns,
++			   struct dentry *dentry, const char *acl_name,
++			   struct posix_acl *kacl)
++{
++	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++		return 0;
++	return call_int_hook(inode_set_acl, 0, mnt_userns, dentry, acl_name, kacl);
++}
++
++int security_inode_get_acl(struct user_namespace *mnt_userns,
++			   struct dentry *dentry, const char *acl_name)
++{
++	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++		return 0;
++	return call_int_hook(inode_get_acl, 0, mnt_userns, dentry, acl_name);
++}
++
++int security_inode_remove_acl(struct user_namespace *mnt_userns,
++			      struct dentry *dentry, const char *acl_name)
++{
++	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++		return 0;
++	return call_int_hook(inode_remove_acl, 0, mnt_userns, dentry, acl_name);
++}
++
+ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 				  const void *value, size_t size, int flags)
+ {
 -- 
 2.34.1
 
