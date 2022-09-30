@@ -2,125 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C62F55F0B3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 14:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DF75F0BAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 14:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbiI3MDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 08:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58938 "EHLO
+        id S231559AbiI3MY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 08:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbiI3MDc (ORCPT
+        with ESMTP id S231281AbiI3MYu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 08:03:32 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83236177785;
-        Fri, 30 Sep 2022 05:03:29 -0700 (PDT)
-Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1oeEjm-0000JX-R5; Fri, 30 Sep 2022 14:03:26 +0200
-Message-ID: <e4557441-2c23-376a-39bf-cb02e70c6440@leemhuis.info>
-Date:   Fri, 30 Sep 2022 14:03:26 +0200
+        Fri, 30 Sep 2022 08:24:50 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 794B6E70
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 05:24:46 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id rk17so8707939ejb.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 05:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=HUp6tY7BvFiK36PUZyugtk+P/q3Weh4h3BX2ULpDD6Y=;
+        b=be9bYEFgXIONSG2q3vd7TXbJZVwafGFXbeJUj5TQ3ZC0F5JPvFK71a5HVbFuJ+69MX
+         WhLFMkbEVdf/6Qhg0hdk1uyvSMz0QAlCz7bpWIJPMiUZ1hX6oT4hoFyjG+gaOQ7iF7a5
+         B3Xwbj9aeuu87JYrU1N3veon8DjYCbHVLaI60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=HUp6tY7BvFiK36PUZyugtk+P/q3Weh4h3BX2ULpDD6Y=;
+        b=OKNG1bFUZaAC/gRDvH2eGXG8vK7Bpcz7wKZH1LFwpI2dlfIq0rCoRKgBtyjGDLE0ga
+         ZVdcG/ebdNuh+IFZdFlnQiiTyAWC1K+ib8LzzBy3pkMwh6xyvHYm2fHy0eOWVUMw9NUs
+         IsMsiY/oFlnXRhT/ABepoBe0ex8nGRdf7xjYCNtq311Z1JUhIymHVZL1kTMkmc8A+fgW
+         wacMY52PrP69SNfUIpBmcxTu99JfFBeT9eF3r2l7rjrdtghhzsM+GMPLxwSS9j17Nr5J
+         +jqjuJgdXi8wmzHXauvQFIJ6NORBVg0aJrRyrrsycNaebgQd2FrDxqHa14Ez6PF2e15T
+         2/QA==
+X-Gm-Message-State: ACrzQf1bJG4NGV9YPT/LJRzOqc7G4RkKZ0Iube7TyOMI9VchMqj8u47a
+        v4WRBRJ2Q23oW0SW5eoRGds5kJQUmCOQNuOEU9y9/Q==
+X-Google-Smtp-Source: AMsMyM6OvmiM71+JGp+MO6pATIntaRsnLf/VayvxlL7km/w2mkpnHlKCD3XGLHJxbGSXrozN/JWJrdhTJrBtKTjElpU=
+X-Received: by 2002:a17:906:4fd1:b0:787:434f:d755 with SMTP id
+ i17-20020a1709064fd100b00787434fd755mr6119881ejw.356.1664540685052; Fri, 30
+ Sep 2022 05:24:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Content-Language: en-US, de-DE
-To:     linux-kernel@vger.kernel.org, gpiccoli@igalia.com
-Cc:     regressions@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        kernel-dev@igalia.com
-References: <20220929215515.276486-1-gpiccoli@igalia.com>
-From:   Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: [REGRESSION][PATCH] Revert "pstore: migrate to crypto acomp
- interface" #forregzbot
-In-Reply-To: <20220929215515.276486-1-gpiccoli@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1664539409;03c3a444;
-X-HE-SMSGID: 1oeEjm-0000JX-R5
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20220929153041.500115-1-brauner@kernel.org> <20220929153041.500115-5-brauner@kernel.org>
+ <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
+ <20220930090949.cl3ajz7r4ub6jrae@wittgenstein> <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
+ <20220930100557.7hqjrz77s3wcbrxx@wittgenstein>
+In-Reply-To: <20220930100557.7hqjrz77s3wcbrxx@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 30 Sep 2022 14:24:33 +0200
+Message-ID: <CAJfpegvJUSowMaS7s_vLWvznLmfpkEfbvZbb_Vo-H8VewucByA@mail.gmail.com>
+Subject: Re: [PATCH v4 04/30] fs: add new get acl method
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Note: this mail is primarily send for documentation purposes and/or for
-regzbot, my Linux kernel regression tracking bot. That's why I removed
-most or all folks from the list of recipients, but left any that looked
-like a mailing lists. These mails usually contain '#forregzbot' in the
-subject, to make them easy to spot and filter out.]
+On Fri, 30 Sept 2022 at 12:06, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Fri, Sep 30, 2022 at 11:43:07AM +0200, Miklos Szeredi wrote:
+> > On Fri, 30 Sept 2022 at 11:09, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Fri, Sep 30, 2022 at 10:53:05AM +0200, Miklos Szeredi wrote:
+> > > > On Thu, 29 Sept 2022 at 17:31, Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > > This adds a new ->get_acl() inode operations which takes a dentry
+> > > > > argument which filesystems such as 9p, cifs, and overlayfs can implement
+> > > > > to get posix acls.
+> > > >
+> > > > This is confusing.   For example overlayfs ends up with two functions
+> > > > that are similar, but not quite the same:
+> > > >
+> > > >  ovl_get_acl -> ovl_get_acl_path -> vfs_get_acl -> __get_acl(mnt_userns, ...)
+> > > >
+> > > >  ovl_get_inode_acl -> get_inode_acl -> __get_acl(&init_user_ns, ...)
+> > > >
+> > > > So what's the difference and why do we need both?  If one can retrive
+> > > > the acl without dentry, then why do we need the one with the dentry?
+> > >
+> > > The ->get_inode_acl() method is called during generic_permission() and
+> > > inode_permission() both of which are called from various filesystems in
+> > > their ->permission inode operations. There's no dentry available during
+> > > the permission inode operation and there are filesystems like 9p and
+> > > cifs that need a dentry.
+> >
+> > This doesn't answer the question about why we need two for overlayfs
+> > and what's the difference between them.
+>
+> Oh sorry, I misunderstood your questions then. The reason why I didn't
+> consolidate them was simply the different in permission checking.
+> So currently in current mainline overlayfs does acl = get_acl() in it's
+> get acl method and does vfs_getxattr() in ovl_posix_acl_xattr_get().
+>
+> The difference is that vfs_getxattr() goes through regular lsm hooks
+> checking whereas get_acl() does not. So I thought that using get_acl()
+> was done to not call lsm hooks in there. If that's not the case then I
+> can consolidate both into one implementation.
 
-[TLDR: I'm adding this regression report to the list of tracked
-regressions; all text from me you find below is based on a few templates
-paragraphs you might have encountered already already in similar form.]
+So there are two paths to getting an acl: 1) permission checking and
+2) retrieving the value via getxattr(2).
 
-Hi, this is your Linux kernel regression tracker. Thx for the report.
+This is a similar situation as reading a symlink vs. following it.
+When following a symlink overlayfs always reads the link on the
+underlying fs just as if it was a readlink(2) call, calling
+security_inode_readlink() instead of security_inode_follow_link().
+This is logical: we are reading the link from the underlying storage,
+and following it on overlayfs.
 
-On 29.09.22 23:55, Guilherme G. Piccoli wrote:
-> This reverts commit e4f0a7ec586b7644107839f5394fb685cf1aadcc.
-> 
-> When using this new interface, both efi_pstore and ramoops
-> backends are unable to properly decompress dmesg if using
-> zstd, lz4 and lzo algorithms (and maybe more). It does succeed
-> with deflate though.
-> 
-> The message observed in the kernel log is:
-> 
-> [2.328828] pstore: crypto_acomp_decompress failed, ret = -22!
-> 
-> The pstore infrastructure is able to collect the dmesg with
-> both backends tested, but since decompression fails it's
-> unreadable. With this revert everything is back to normal.
-> 
-> Fixes: e4f0a7ec586b ("pstore: migrate to crypto acomp interface")
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> 
-> ---
-> 
-> Hi Ard, Thorsten and pstore maintainers. I've found this yday
-> during pstore development - it was "hidden" since I was using
-> deflate. Tried some fixes (I plan to submit a cast fix for a
-> long-term issue later), but nothing I tried fixed this.
-> 
-> So, I thought in sending this revert - feel free to ignore it if
-> anybody comes with a proper fix for the async compress interface
-> proposed by Ard. The idea of the revert is because the 6.0-rc
-> cycle is nearly over, and would be nice to avoid introducing
-> this regression.
-> 
-> Also, I searched some mailing list discussions / submission of
-> the patch ("pstore: migrate to crypto acomp interface"), but
-> couldn't find it - can any of you point it to me in case it's
-> in some archive?
-> 
-> Thanks in advance, and sorry for reporting this so late in the
-> cycle, I wish I'd found it before.
+Applying the same logic to acl: we do need to call the
+security_inode_getxattr() on the underlying fs, even if just want to
+check permissions on overlay.  This is currently not done, which is an
+inconsistency.
 
-Thanks for the report. To be sure below issue doesn't fall through the
-cracks unnoticed, I'm adding it to regzbot, my Linux kernel regression
-tracking bot:
+Maybe adding the check to ovl_get_acl() is the right way to go, but
+I'm a little afraid of a performance regression.  Will look into that.
 
-#regzbot ^introduced e4f0a7ec586b
-#regzbot title pstore: efi_pstore and ramoops backends are sometimes
-unable to properly decompress dmesg
-#regzbot ignore-activity
+So this patchset nicely reveals how acl retrieval could be done two
+ways, and how overlayfs employed both for different purposes.  But
+what would be even nicer if there was just one way to retrieve the acl
+and overlayfs and cifs be moved over to that.
 
-This isn't a regression? This issue or a fix for it are already
-discussed somewhere else? It was fixed already? You want to clarify when
-the regression started to happen? Or point out I got the title or
-something else totally wrong? Then just reply -- ideally with also
-telling regzbot about it, as explained here:
-https://linux-regtracking.leemhuis.info/tracked-regression/
-
-Reminder for developers: When fixing the issue, add 'Link:' tags
-pointing to the report (the mail this one replies to), as explained for
-in the Linux kernel's documentation; above webpage explains why this is
-important for tracked regressions.
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-
-P.S.: As the Linux kernel's regression tracker I deal with a lot of
-reports and sometimes miss something important when writing mails like
-this. If that's the case here, don't hesitate to tell me in a public
-reply, it's in everyone's interest to set the public record straight.
+Thanks,
+Miklos
