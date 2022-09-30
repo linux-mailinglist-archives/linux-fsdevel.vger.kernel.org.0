@@ -2,141 +2,327 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1321B5F11A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 20:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 234BB5F11A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 20:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231517AbiI3Sbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 14:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S231843AbiI3Scb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 14:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbiI3Sbo (ORCPT
+        with ESMTP id S231668AbiI3Sca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 14:31:44 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C2A220DB;
-        Fri, 30 Sep 2022 11:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Content-Type:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=WXMwv9Kvl0K3kO4pGtFjqTd7NQOAAhDPUPax69liW60=; b=nQSgfJ70Wb7BDCVco+R8DdZkqN
-        aQOdw+uc+dmoanYf5RCpO9Bs2UrdFF+GoNDNCp0JdMiRYend9xVM7A1AeJBxx3pTfgqf9iVKCIkQT
-        kM9S18JqF51Ld8H14H2CdHX+IiSpqaWk7aN0pkAPhny5IeREmL5QnO7QzdAuQoViyhSzPDN3c0sTs
-        Cm6XVaO5LLk02C2s0H/Hg1C0SdVPYppzKoy0toEeLklaJOM/MNMKLGDWhxcJ5bMctOffNPqmFjV1z
-        iSQ3aP0k5VrI7L97Rrn0lX6s8WTPeicN0T1Sm2qVK/6p+fe8qoB8E6489z6Kae1mI+685AZQ8vQdz
-        sfxzbx6w==;
-Received: from [179.232.144.59] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1oeKnM-000uru-On; Fri, 30 Sep 2022 20:31:32 +0200
-Content-Type: multipart/mixed; boundary="------------FU96l4z8aYTBt923Pn9Octgz"
-Message-ID: <101050d9-e3ec-8c21-5fb6-68442f51b39f@igalia.com>
-Date:   Fri, 30 Sep 2022 15:31:17 -0300
+        Fri, 30 Sep 2022 14:32:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9122214E753;
+        Fri, 30 Sep 2022 11:32:28 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id b2so10799019eja.6;
+        Fri, 30 Sep 2022 11:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=dE6obZiIgfKr0o00fT11Cpooh4R4nzb/jAZ1FqF/O4g=;
+        b=bbAyirm0fXi75Lqp0T6cxdK0fTjVxb9UoDECZk4FEGzOsOPPfTHUfk3+bwPfbMEaC9
+         wg6LC7W03/Eoh6nSEAbwd70/YZ8bDTvAPbk4oyfXwt7sCvXINRMNpKZ2yuM9wavcF141
+         5WqCfKlnMAOidlf1ByY2Fi0Vs6QXGAlAFUjl9x8L7d31dZ3Or7Z0ooCfhnpTjOgaA0i2
+         NDnXuFtNap5lagLwG0L8d3i9GFwltqjZ8gH3ju8q/LlX9qoROXsLCZdAngm52re2ua4T
+         pU2Y8RovMDrLK470+g+R6wYgt6cNj2vc9T7px5XYVaho/4II0bp7vrXX4JYEYG/TD2dP
+         RRuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=dE6obZiIgfKr0o00fT11Cpooh4R4nzb/jAZ1FqF/O4g=;
+        b=jDIustHNIG3Zp+FN52pqKEjGxObZ3tXcPXUOgudZ4cWzqa93FSMcmo4mC3WwPTV+tt
+         JBU+eYhH/7uIEUAWOG2EmgbJ3us75wRo7L4u/rdA4Rbs/o66xtAMAC4Xij3I63JRgKds
+         crofooB6F4kwAFZuNnD1bMtT5oG9WQUEUp/2KojLowwj09UgLbdqaF9WbftTYVCo1p4P
+         0I4BTTox/JYHyHSCziUAsM0GA+16r5xlT4f0sWSXMOrnCaBUVUobgDtHF9bSup9173SS
+         qX5nTdG8LTm/CnZH8rCukgn2b0kFMdRXNVb0KD+M8rVAopT3LGaMrEyWqgqu6hhNDTHR
+         yhig==
+X-Gm-Message-State: ACrzQf16zc+5H3VMpRFpYD8l918BNX+dpqvm8RBJUpgaaMCoFiX1chj9
+        SkYPNXL4CXB6qEjyBuheYNbO8l6bbus=
+X-Google-Smtp-Source: AMsMyM43GrRlCSrPxlzmuYESg1LvIYHtaVUeVcds1EugnEIeU7WGTWaDfY0e0PAOAmegd7Cb59I9Cg==
+X-Received: by 2002:a17:907:2c41:b0:77d:8aed:cf7c with SMTP id hf1-20020a1709072c4100b0077d8aedcf7cmr7377335ejc.447.1664562746965;
+        Fri, 30 Sep 2022 11:32:26 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id d10-20020a170906304a00b0073d5948855asm1346999ejd.1.2022.09.30.11.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 11:32:26 -0700 (PDT)
+Date:   Fri, 30 Sep 2022 20:32:24 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v7 5/7] selftests/landlock: Test FD passing from a
+ Landlock-restricted to an unrestricted process
+Message-ID: <Yzc2ONgHFHwGS6y3@nuc>
+References: <20220930160144.141504-1-gnoack3000@gmail.com>
+ <20220930160144.141504-6-gnoack3000@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [REGRESSION][PATCH] Revert "pstore: migrate to crypto acomp
- interface"
-Content-Language: en-US
-To:     Ard Biesheuvel <ardb@kernel.org>, Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
-        kernel@gpiccoli.net, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-References: <20220929215515.276486-1-gpiccoli@igalia.com>
- <202209291951.134BE2409@keescook>
- <56d85c70-80f6-aa73-ab10-20474244c7d7@igalia.com>
- <CAMj1kXFnoqj+cn-0dT8fg0kgLvVx+Q2Ex-4CUjSnA9yRprmC-w@mail.gmail.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <CAMj1kXFnoqj+cn-0dT8fg0kgLvVx+Q2Ex-4CUjSnA9yRprmC-w@mail.gmail.com>
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220930160144.141504-6-gnoack3000@gmail.com>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------FU96l4z8aYTBt923Pn9Octgz
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 30/09/2022 12:51, Ard Biesheuvel wrote:
-> [...]
+On Fri, Sep 30, 2022 at 06:01:42PM +0200, Günther Noack wrote:
+> A file descriptor created in a restricted process carries Landlock
+> restrictions with it which will apply even if the same opened file is
+> used from an unrestricted process.
 > 
-> Does this help?
+> This change extracts suitable FD-passing helpers from base_test.c and
+> moves them to common.h. We use the fixture variants from the ftruncate
+> fixture to exercise the same scenarios as in the open_and_ftruncate
+> test, but doing the Landlock restriction and open() in a different
+> process than the ftruncate() call.
 > 
-> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-> index b2fd3c20e7c2..c0b609d7d04e 100644
-> --- a/fs/pstore/platform.c
-> +++ b/fs/pstore/platform.c
-> @@ -292,7 +292,7 @@ static int pstore_compress(const void *in, void *out,
->                 return ret;
->         }
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  tools/testing/selftests/landlock/base_test.c | 36 +----------
+>  tools/testing/selftests/landlock/common.h    | 67 ++++++++++++++++++++
+>  tools/testing/selftests/landlock/fs_test.c   | 62 ++++++++++++++++++
+>  3 files changed, 132 insertions(+), 33 deletions(-)
 > 
-> -       return outlen;
-> +       return creq->dlen;
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 72cdae277b02..6d1b6eedb432 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -263,23 +263,6 @@ TEST(ruleset_fd_transfer)
+>  		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
+>  	};
+>  	int ruleset_fd_tx, dir_fd;
+> -	union {
+> -		/* Aligned ancillary data buffer. */
+> -		char buf[CMSG_SPACE(sizeof(ruleset_fd_tx))];
+> -		struct cmsghdr _align;
+> -	} cmsg_tx = {};
+> -	char data_tx = '.';
+> -	struct iovec io = {
+> -		.iov_base = &data_tx,
+> -		.iov_len = sizeof(data_tx),
+> -	};
+> -	struct msghdr msg = {
+> -		.msg_iov = &io,
+> -		.msg_iovlen = 1,
+> -		.msg_control = &cmsg_tx.buf,
+> -		.msg_controllen = sizeof(cmsg_tx.buf),
+> -	};
+> -	struct cmsghdr *cmsg;
+>  	int socket_fds[2];
+>  	pid_t child;
+>  	int status;
+> @@ -298,33 +281,20 @@ TEST(ruleset_fd_transfer)
+>  				    &path_beneath_attr, 0));
+>  	ASSERT_EQ(0, close(path_beneath_attr.parent_fd));
+>  
+> -	cmsg = CMSG_FIRSTHDR(&msg);
+> -	ASSERT_NE(NULL, cmsg);
+> -	cmsg->cmsg_len = CMSG_LEN(sizeof(ruleset_fd_tx));
+> -	cmsg->cmsg_level = SOL_SOCKET;
+> -	cmsg->cmsg_type = SCM_RIGHTS;
+> -	memcpy(CMSG_DATA(cmsg), &ruleset_fd_tx, sizeof(ruleset_fd_tx));
+> -
+>  	/* Sends the ruleset FD over a socketpair and then close it. */
+>  	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
+>  				socket_fds));
+> -	ASSERT_EQ(sizeof(data_tx), sendmsg(socket_fds[0], &msg, 0));
+> +	ASSERT_EQ(0, send_fd(socket_fds[0], ruleset_fd_tx));
+>  	ASSERT_EQ(0, close(socket_fds[0]));
+>  	ASSERT_EQ(0, close(ruleset_fd_tx));
+>  
+>  	child = fork();
+>  	ASSERT_LE(0, child);
+>  	if (child == 0) {
+> -		int ruleset_fd_rx;
+> +		int ruleset_fd_rx = recv_fd(socket_fds[1]);
+>  
+> -		*(char *)msg.msg_iov->iov_base = '\0';
+> -		ASSERT_EQ(sizeof(data_tx),
+> -			  recvmsg(socket_fds[1], &msg, MSG_CMSG_CLOEXEC));
+> -		ASSERT_EQ('.', *(char *)msg.msg_iov->iov_base);
+> +		ASSERT_LE(0, ruleset_fd_rx);
+>  		ASSERT_EQ(0, close(socket_fds[1]));
+> -		cmsg = CMSG_FIRSTHDR(&msg);
+> -		ASSERT_EQ(cmsg->cmsg_len, CMSG_LEN(sizeof(ruleset_fd_tx)));
+> -		memcpy(&ruleset_fd_rx, CMSG_DATA(cmsg), sizeof(ruleset_fd_tx));
+>  
+>  		/* Enforces the received ruleset on the child. */
+>  		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
+> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+> index 7ba18eb23783..8ec8971e9580 100644
+> --- a/tools/testing/selftests/landlock/common.h
+> +++ b/tools/testing/selftests/landlock/common.h
+> @@ -10,6 +10,7 @@
+>  #include <errno.h>
+>  #include <linux/landlock.h>
+>  #include <sys/capability.h>
+> +#include <sys/socket.h>
+>  #include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <sys/wait.h>
+> @@ -187,3 +188,69 @@ clear_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
+>  {
+>  	_effective_cap(_metadata, caps, CAP_CLEAR);
 >  }
+> +
+> +/* Receives an FD from a UNIX socket. Returns the received FD, -1 on error. */
+> +__maybe_unused static int recv_fd(int usock)
+
+Ah bummer, the definition of "__maybe_unused" is not visible here
+(last minute change before sending it off...). Will fix it.
+
+> +{
+> +	int fd_rx;
+> +	union {
+> +		/* Aligned ancillary data buffer. */
+> +		char buf[CMSG_SPACE(sizeof(fd_rx))];
+> +		struct cmsghdr _align;
+> +	} cmsg_rx = {};
+> +	char data = '\0';
+> +	struct iovec io = {
+> +		.iov_base = &data,
+> +		.iov_len = sizeof(data),
+> +	};
+> +	struct msghdr msg = {
+> +		.msg_iov = &io,
+> +		.msg_iovlen = 1,
+> +		.msg_control = &cmsg_rx.buf,
+> +		.msg_controllen = sizeof(cmsg_rx.buf),
+> +	};
+> +	struct cmsghdr *cmsg;
+> +	int res;
+> +
+> +	res = recvmsg(usock, &msg, MSG_CMSG_CLOEXEC);
+> +	if (res < 0)
+> +		return -1;
+> +
+> +	cmsg = CMSG_FIRSTHDR(&msg);
+> +	if (cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
+> +		return -1;
+> +
+> +	memcpy(&fd_rx, CMSG_DATA(cmsg), sizeof(fd_rx));
+> +	return fd_rx;
+> +}
+> +
+> +/* Sends an FD on a UNIX socket. Returns 0 on success or -1 on error. */
+> +__maybe_unused static int send_fd(int usock, int fd_tx)
+> +{
+> +	union {
+> +		/* Aligned ancillary data buffer. */
+> +		char buf[CMSG_SPACE(sizeof(fd_tx))];
+> +		struct cmsghdr _align;
+> +	} cmsg_tx = {};
+> +	char data_tx = '.';
+> +	struct iovec io = {
+> +		.iov_base = &data_tx,
+> +		.iov_len = sizeof(data_tx),
+> +	};
+> +	struct msghdr msg = {
+> +		.msg_iov = &io,
+> +		.msg_iovlen = 1,
+> +		.msg_control = &cmsg_tx.buf,
+> +		.msg_controllen = sizeof(cmsg_tx.buf),
+> +	};
+> +	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
+> +
+> +	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
+> +	cmsg->cmsg_level = SOL_SOCKET;
+> +	cmsg->cmsg_type = SCM_RIGHTS;
+> +	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
+> +
+> +	if (sendmsg(usock, &msg, 0) < 0)
+> +		return -1;
+> +	return 0;
+> +}
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 308f6f36e8c0..93ed80a25a74 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -3541,6 +3541,68 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+>  	}
+>  }
+>  
+> +TEST_F_FORK(ftruncate, open_and_ftruncate_in_different_processes)
+> +{
+> +	int child, fd, status;
+> +	int socket_fds[2];
+> +
+> +	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
+> +				socket_fds));
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		/*
+> +		 * Enable Landlock in the child process, open a file descriptor
+> +		 * where truncation is forbidden and send it to the
+> +		 * non-landlocked parent process.
+> +		 */
+> +		const char *const path = file1_s1d1;
+> +		const struct rule rules[] = {
+> +			{
+> +				.path = path,
+> +				.access = variant->permitted,
+> +			},
+> +			{},
+> +		};
+> +		int fd, ruleset_fd;
+> +
+> +		/* Enable Landlock. */
+> +		ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> +		ASSERT_LE(0, ruleset_fd);
+> +		enforce_ruleset(_metadata, ruleset_fd);
+> +		ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +		fd = open(path, O_WRONLY);
+> +		ASSERT_EQ(variant->expected_open_result, (fd < 0 ? errno : 0));
+> +
+> +		if (fd >= 0) {
+> +			ASSERT_EQ(0, send_fd(socket_fds[0], fd));
+> +			ASSERT_EQ(0, close(fd));
+> +		}
+> +
+> +		ASSERT_EQ(0, close(socket_fds[0]));
+> +
+> +		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
+> +	}
+> +
+> +	if (variant->expected_open_result == 0) {
+> +		fd = recv_fd(socket_fds[1]);
+> +		ASSERT_LE(0, fd);
+> +
+> +		EXPECT_EQ(variant->expected_ftruncate_result,
+> +			  test_ftruncate(fd));
+> +		ASSERT_EQ(0, close(fd));
+> +	}
+> +
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	ASSERT_EQ(1, WIFEXITED(status));
+> +	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+> +
+> +	ASSERT_EQ(0, close(socket_fds[0]));
+> +	ASSERT_EQ(0, close(socket_fds[1]));
+> +}
+> +
+>  /* clang-format off */
+>  FIXTURE(layout1_bind) {};
+>  /* clang-format on */
+> -- 
+> 2.37.3
 > 
->  static void allocate_buf_for_compression(void)
-> 
 
-Thanks a lot Ard, this seems to be the fix! Tested with lz4/zstd/deflate
-in both ramoops/efi backends, and all worked fine. It makes sense,
-outlen was modified in the previous API and not in the acomp thing, so
-it was a good catch =)
-
-
->> Heheh you're right! But for something like this (pstore/dmesg
->> compression broke for the most backends), I'd be glad if we could fix it
->> before the release.
-> 
-> Yeah better to revert - this was not a critical change anyway. But I
-> think the tweak above should fix things (it works for me here)
-
-Agreed - in fact seems it was reverted already. More than that, I found
-yet another small issue in the acomp refactor, a memory leak - attached
-is a patch with the fix, feel free to integrate in your acomp refactor
-when re-submitting (I mean, feel free to just integrate the code, don't
-need to send it as a separate patch/fix).
-
-I'm also working some fixes in implicit conversions in pstore that
-aren't great (unsigned -> int in many places), I'll send some stuff next
-week.
-
-Cheers,
-
-
-Guilherme
---------------FU96l4z8aYTBt923Pn9Octgz
-Content-Type: text/x-patch; charset=UTF-8;
- name="pstore-Fix-memory-leak-after-the-recent-compression-.patch"
-Content-Disposition: attachment;
- filename*0="pstore-Fix-memory-leak-after-the-recent-compression-.patch"
-Content-Transfer-Encoding: base64
-
-RnJvbSBjZjA1MTVkZWMxYTMzOWU3YjY0NGNiYWRhZjU4YmZiNTRjOWIyMGRmIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiAiR3VpbGhlcm1lIEcuIFBpY2NvbGkiIDxncGljY29s
-aUBpZ2FsaWEuY29tPgpEYXRlOiBGcmksIDMwIFNlcCAyMDIyIDEzOjQ1OjE4IC0wMzAwClN1
-YmplY3Q6IFtQQVRDSF0gcHN0b3JlOiBGaXggbWVtb3J5IGxlYWsgYWZ0ZXIgdGhlIHJlY2Vu
-dCBjb21wcmVzc2lvbiByZWZhY3RvcgoKRml4ZXM6IGU0ZjBhN2VjNTg2YiAoInBzdG9yZTog
-bWlncmF0ZSB0byBjcnlwdG8gYWNvbXAgaW50ZXJmYWNlIikKQ2M6IEFyZCBCaWVzaGV1dmVs
-IDxhcmRiQGtlcm5lbC5vcmc+ClNpZ25lZC1vZmYtYnk6IEd1aWxoZXJtZSBHLiBQaWNjb2xp
-IDxncGljY29saUBpZ2FsaWEuY29tPgotLS0KIGZzL3BzdG9yZS9wbGF0Zm9ybS5jIHwgMSAr
-CiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9mcy9wc3Rv
-cmUvcGxhdGZvcm0uYyBiL2ZzL3BzdG9yZS9wbGF0Zm9ybS5jCmluZGV4IGQyNDRkYjhjODc5
-ZC4uMTc2NWVhMTU3ZDM3IDEwMDY0NAotLS0gYS9mcy9wc3RvcmUvcGxhdGZvcm0uYworKysg
-Yi9mcy9wc3RvcmUvcGxhdGZvcm0uYwpAQCAtNzQxLDYgKzc0MSw3IEBAIHN0YXRpYyB2b2lk
-IGRlY29tcHJlc3NfcmVjb3JkKHN0cnVjdCBwc3RvcmVfcmVjb3JkICpyZWNvcmQpCiAJcmV0
-ID0gY3J5cHRvX2Fjb21wX2RlY29tcHJlc3MoZHJlcSk7CiAJaWYgKHJldCkgewogCQlwcl9l
-cnIoImNyeXB0b19hY29tcF9kZWNvbXByZXNzIGZhaWxlZCwgcmV0ID0gJWQhXG4iLCByZXQp
-OworCQlhY29tcF9yZXF1ZXN0X2ZyZWUoZHJlcSk7CiAJCWtmcmVlKHdvcmtzcGFjZSk7CiAJ
-CXJldHVybjsKIAl9Ci0tIAoyLjM3LjMKCg==
-
---------------FU96l4z8aYTBt923Pn9Octgz--
+-- 
