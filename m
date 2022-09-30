@@ -2,195 +2,395 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4AC5F0FD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 18:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 172EA5F0FD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 18:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232088AbiI3QYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 12:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44098 "EHLO
+        id S232112AbiI3QZc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 12:25:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232060AbiI3QYo (ORCPT
+        with ESMTP id S232115AbiI3QZ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:24:44 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A5596465;
-        Fri, 30 Sep 2022 09:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1664555077; x=1696091077;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aPat+vyuzHmTIY+ssdYQgbZFBJqiO2JzUm9LnYYjyXo=;
-  b=jvD/5B819uZ/02X3LSBnOJjroRN9MZ+bovZOF9hsKmJE623RniRwTmvc
-   WZfbIAuL5ypaDUhSY3MocTNqdrqc/dBaJyXUsNSdUch8/mayR04Edje3l
-   Uda7ok8CsxW88tlsaHdTUMjwm+biPD7/H2XvoXRKBaFiuG6y0DIFi6wew
-   RR4EjKP2vibfS0ruooS808VnkbYxwJNgt8gZMzE1C+K0lBjtKjQKMMdEP
-   9dct1SWO+RHQ1gh+awmbJllaMG4HQI7VH7Nx9AkjGATJevuTGzzObVOnp
-   yEUlm7wEVpUuwmBn3dvOqc6catdDU9F01KlGlTNxokLOKCc8AoV3hEKAS
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10486"; a="364074345"
-X-IronPort-AV: E=Sophos;i="5.93,358,1654585200"; 
-   d="scan'208";a="364074345"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2022 09:23:14 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10486"; a="748280523"
-X-IronPort-AV: E=Sophos;i="5.93,358,1654585200"; 
-   d="scan'208";a="748280523"
-Received: from herrerop-mobl1.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.38.128])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2022 09:23:04 -0700
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id DF624104BD6; Fri, 30 Sep 2022 19:23:01 +0300 (+03)
-Date:   Fri, 30 Sep 2022 19:23:01 +0300
-From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20220930162301.i226o523teuikygq@box.shutemov.name>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <CA+EHjTyrexb_LX7Jm9-MGwm4DBvfjCrADH4oumFyAvs2_0oSYw@mail.gmail.com>
+        Fri, 30 Sep 2022 12:25:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920187C326;
+        Fri, 30 Sep 2022 09:25:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 97139B82961;
+        Fri, 30 Sep 2022 16:25:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34001C433C1;
+        Fri, 30 Sep 2022 16:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664555118;
+        bh=HfryIVQEi40xvQXwrJl8CfAncvkl+ZvfmZlPGLHKmOU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Ajy82hxgkWKU0fCRPn3LOIG+V5rH+e4Z6H3uknEhh8LJEy4lvQqxSdAIfIlRPaJrX
+         Yf2Z/DegQRUs7ZvVlFfIkSCOEprURa1Hop+5qtvR8OUYsecLi+H8XzdYrFaxyXtWZI
+         6dDx8mKJnzbf7RPEu7N4rHIH6ou7SIHy/V7xRAiCxuDOm9YWip6i0KXXfDLk/cL8Rh
+         psuylMR2Kec/kCUMG1k76eUB/oV9B06OHKlaCfVrM1PFNNL8mincNUwD3AZC6UryBC
+         DMV7+ZKSX30eew9qRXZUQxtreztqRd/7ZHOYDTp9hk9EWNyD9bCJ6gbxu5E6E3mbEI
+         TRd55hCTbqpkQ==
+Message-ID: <35d965bbc3d27e43d6743fc3a5cb042503a1b7bf.camel@kernel.org>
+Subject: Re: [PATCH v2 08/23] ceph: Convert ceph_writepages_start() to use
+ filemap_get_folios_tag()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org
+Date:   Fri, 30 Sep 2022 12:25:15 -0400
+In-Reply-To: <20220912182224.514561-9-vishal.moola@gmail.com>
+References: <20220912182224.514561-1-vishal.moola@gmail.com>
+         <20220912182224.514561-9-vishal.moola@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTyrexb_LX7Jm9-MGwm4DBvfjCrADH4oumFyAvs2_0oSYw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 05:14:00PM +0100, Fuad Tabba wrote:
-> Hi,
-> 
-> <...>
-> 
-> > diff --git a/mm/memfd_inaccessible.c b/mm/memfd_inaccessible.c
-> > new file mode 100644
-> > index 000000000000..2d33cbdd9282
-> > --- /dev/null
-> > +++ b/mm/memfd_inaccessible.c
-> > @@ -0,0 +1,219 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include "linux/sbitmap.h"
-> > +#include <linux/memfd.h>
-> > +#include <linux/pagemap.h>
-> > +#include <linux/pseudo_fs.h>
-> > +#include <linux/shmem_fs.h>
-> > +#include <uapi/linux/falloc.h>
-> > +#include <uapi/linux/magic.h>
-> > +
-> > +struct inaccessible_data {
-> > +       struct mutex lock;
-> > +       struct file *memfd;
-> > +       struct list_head notifiers;
-> > +};
-> > +
-> > +static void inaccessible_notifier_invalidate(struct inaccessible_data *data,
-> > +                                pgoff_t start, pgoff_t end)
-> > +{
-> > +       struct inaccessible_notifier *notifier;
-> > +
-> > +       mutex_lock(&data->lock);
-> > +       list_for_each_entry(notifier, &data->notifiers, list) {
-> > +               notifier->ops->invalidate(notifier, start, end);
-> > +       }
-> > +       mutex_unlock(&data->lock);
-> > +}
-> > +
-> > +static int inaccessible_release(struct inode *inode, struct file *file)
-> > +{
-> > +       struct inaccessible_data *data = inode->i_mapping->private_data;
-> > +
-> > +       fput(data->memfd);
-> > +       kfree(data);
-> > +       return 0;
-> > +}
-> > +
-> > +static long inaccessible_fallocate(struct file *file, int mode,
-> > +                                  loff_t offset, loff_t len)
-> > +{
-> > +       struct inaccessible_data *data = file->f_mapping->private_data;
-> > +       struct file *memfd = data->memfd;
-> > +       int ret;
-> > +
-> > +       if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> > +                       return -EINVAL;
-> > +       }
-> > +
-> > +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> 
-> I think that shmem_file_operations.fallocate is only set if
-> CONFIG_TMPFS is enabled (shmem.c). Should there be a check at
-> initialization that fallocate is set, or maybe a config dependency, or
-> can we count on it always being enabled?
+On Mon, 2022-09-12 at 11:22 -0700, Vishal Moola (Oracle) wrote:
+> Convert function to use folios throughout. This is in preparation for
+> the removal of find_get_pages_range_tag().
+>=20
+> This change does NOT support large folios. This shouldn't be an issue as
+> of now since ceph only utilizes folios of size 1 anyways, and there is a
+> lot of work to be done on ceph conversions to folios for later patches
+> at some point.
+>=20
+> Also some minor renaming for consistency.
+>=20
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  fs/ceph/addr.c | 138 +++++++++++++++++++++++++------------------------
+>  1 file changed, 70 insertions(+), 68 deletions(-)
+>=20
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index dcf701b05cc1..33dbe55b08be 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -792,7 +792,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  	struct ceph_vino vino =3D ceph_vino(inode);
+>  	pgoff_t index, start_index, end =3D -1;
+>  	struct ceph_snap_context *snapc =3D NULL, *last_snapc =3D NULL, *pgsnap=
+c;
+> -	struct pagevec pvec;
+> +	struct folio_batch fbatch;
+>  	int rc =3D 0;
+>  	unsigned int wsize =3D i_blocksize(inode);
+>  	struct ceph_osd_request *req =3D NULL;
+> @@ -821,7 +821,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  	if (fsc->mount_options->wsize < wsize)
+>  		wsize =3D fsc->mount_options->wsize;
+> =20
+> -	pagevec_init(&pvec);
+> +	folio_batch_init(&fbatch);
+> =20
+>  	start_index =3D wbc->range_cyclic ? mapping->writeback_index : 0;
+>  	index =3D start_index;
+> @@ -869,9 +869,9 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+> =20
+>  	while (!done && index <=3D end) {
+>  		int num_ops =3D 0, op_idx;
+> -		unsigned i, pvec_pages, max_pages, locked_pages =3D 0;
+> +		unsigned i, nr_folios, max_pages, locked_pages =3D 0;
+>  		struct page **pages =3D NULL, **data_pages;
+> -		struct page *page;
+> +		struct folio *folio;
+>  		pgoff_t strip_unit_end =3D 0;
+>  		u64 offset =3D 0, len =3D 0;
+>  		bool from_pool =3D false;
+> @@ -879,28 +879,28 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  		max_pages =3D wsize >> PAGE_SHIFT;
+> =20
+>  get_more_pages:
+> -		pvec_pages =3D pagevec_lookup_range_tag(&pvec, mapping, &index,
+> -						end, PAGECACHE_TAG_DIRTY);
+> -		dout("pagevec_lookup_range_tag got %d\n", pvec_pages);
+> -		if (!pvec_pages && !locked_pages)
+> +		nr_folios =3D filemap_get_folios_tag(mapping, &index,
+> +				end, PAGECACHE_TAG_DIRTY, &fbatch);
+> +		dout("filemap_get_folios_tag got %d\n", nr_folios);
+> +		if (!nr_folios && !locked_pages)
+>  			break;
+> -		for (i =3D 0; i < pvec_pages && locked_pages < max_pages; i++) {
+> -			page =3D pvec.pages[i];
+> -			dout("? %p idx %lu\n", page, page->index);
+> +		for (i =3D 0; i < nr_folios && locked_pages < max_pages; i++) {
+> +			folio =3D fbatch.folios[i];
+> +			dout("? %p idx %lu\n", folio, folio->index);
+>  			if (locked_pages =3D=3D 0)
+> -				lock_page(page);  /* first page */
+> -			else if (!trylock_page(page))
+> +				folio_lock(folio); /* first folio */
+> +			else if (!folio_trylock(folio))
+>  				break;
+> =20
+>  			/* only dirty pages, or our accounting breaks */
+> -			if (unlikely(!PageDirty(page)) ||
+> -			    unlikely(page->mapping !=3D mapping)) {
+> -				dout("!dirty or !mapping %p\n", page);
+> -				unlock_page(page);
+> +			if (unlikely(!folio_test_dirty(folio)) ||
+> +			    unlikely(folio->mapping !=3D mapping)) {
+> +				dout("!dirty or !mapping %p\n", folio);
+> +				folio_unlock(folio);
+>  				continue;
+>  			}
+>  			/* only if matching snap context */
+> -			pgsnapc =3D page_snap_context(page);
+> +			pgsnapc =3D page_snap_context(&folio->page);
+>  			if (pgsnapc !=3D snapc) {
+>  				dout("page snapc %p %lld !=3D oldest %p %lld\n",
+>  				     pgsnapc, pgsnapc->seq, snapc, snapc->seq);
+> @@ -908,11 +908,10 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  				    !ceph_wbc.head_snapc &&
+>  				    wbc->sync_mode !=3D WB_SYNC_NONE)
+>  					should_loop =3D true;
+> -				unlock_page(page);
+> +				folio_unlock(folio);
+>  				continue;
+>  			}
+> -			if (page_offset(page) >=3D ceph_wbc.i_size) {
+> -				struct folio *folio =3D page_folio(page);
+> +			if (folio_pos(folio) >=3D ceph_wbc.i_size) {
+> =20
+>  				dout("folio at %lu beyond eof %llu\n",
+>  				     folio->index, ceph_wbc.i_size);
+> @@ -924,25 +923,26 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  				folio_unlock(folio);
+>  				continue;
+>  			}
+> -			if (strip_unit_end && (page->index > strip_unit_end)) {
+> -				dout("end of strip unit %p\n", page);
+> -				unlock_page(page);
+> +			if (strip_unit_end && (folio->index > strip_unit_end)) {
+> +				dout("end of strip unit %p\n", folio);
+> +				folio_unlock(folio);
+>  				break;
+>  			}
+> -			if (PageWriteback(page) || PageFsCache(page)) {
+> +			if (folio_test_writeback(folio) ||
+> +					folio_test_fscache(folio)) {
+>  				if (wbc->sync_mode =3D=3D WB_SYNC_NONE) {
+> -					dout("%p under writeback\n", page);
+> -					unlock_page(page);
+> +					dout("%p under writeback\n", folio);
+> +					folio_unlock(folio);
+>  					continue;
+>  				}
+> -				dout("waiting on writeback %p\n", page);
+> -				wait_on_page_writeback(page);
+> -				wait_on_page_fscache(page);
+> +				dout("waiting on writeback %p\n", folio);
+> +				folio_wait_writeback(folio);
+> +				folio_wait_fscache(folio);
+>  			}
+> =20
+> -			if (!clear_page_dirty_for_io(page)) {
+> -				dout("%p !clear_page_dirty_for_io\n", page);
+> -				unlock_page(page);
+> +			if (!folio_clear_dirty_for_io(folio)) {
+> +				dout("%p !clear_page_dirty_for_io\n", folio);
+> +				folio_unlock(folio);
+>  				continue;
+>  			}
+> =20
+> @@ -958,7 +958,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  				u32 xlen;
+> =20
+>  				/* prepare async write request */
+> -				offset =3D (u64)page_offset(page);
+> +				offset =3D (u64)folio_pos(folio);
+>  				ceph_calc_file_object_mapping(&ci->i_layout,
+>  							      offset, wsize,
+>  							      &objnum, &objoff,
+> @@ -966,7 +966,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  				len =3D xlen;
+> =20
+>  				num_ops =3D 1;
+> -				strip_unit_end =3D page->index +
+> +				strip_unit_end =3D folio->index +
+>  					((len - 1) >> PAGE_SHIFT);
+> =20
+>  				BUG_ON(pages);
+> @@ -981,54 +981,53 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  				}
+> =20
+>  				len =3D 0;
+> -			} else if (page->index !=3D
+> +			} else if (folio->index !=3D
+>  				   (offset + len) >> PAGE_SHIFT) {
+>  				if (num_ops >=3D (from_pool ?  CEPH_OSD_SLAB_OPS :
+>  							     CEPH_OSD_MAX_OPS)) {
+> -					redirty_page_for_writepage(wbc, page);
+> -					unlock_page(page);
+> +					folio_redirty_for_writepage(wbc, folio);
+> +					folio_unlock(folio);
+>  					break;
+>  				}
+> =20
+>  				num_ops++;
+> -				offset =3D (u64)page_offset(page);
+> +				offset =3D (u64)folio_pos(folio);
+>  				len =3D 0;
+>  			}
+> =20
+> -			/* note position of first page in pvec */
+> +			/* note position of first page in fbatch */
+>  			dout("%p will write page %p idx %lu\n",
+> -			     inode, page, page->index);
+> +			     inode, folio, folio->index);
+> =20
+>  			if (atomic_long_inc_return(&fsc->writeback_count) >
+>  			    CONGESTION_ON_THRESH(
+>  				    fsc->mount_options->congestion_kb))
+>  				fsc->write_congested =3D true;
+> =20
+> -			pages[locked_pages++] =3D page;
+> -			pvec.pages[i] =3D NULL;
+> +			pages[locked_pages++] =3D &folio->page;
+> +			fbatch.folios[i] =3D NULL;
+> =20
+> -			len +=3D thp_size(page);
+> +			len +=3D folio_size(folio);
+>  		}
+> =20
+>  		/* did we get anything? */
+>  		if (!locked_pages)
+> -			goto release_pvec_pages;
+> +			goto release_folio_batches;
+>  		if (i) {
+>  			unsigned j, n =3D 0;
+> -			/* shift unused page to beginning of pvec */
+> -			for (j =3D 0; j < pvec_pages; j++) {
+> -				if (!pvec.pages[j])
+> +			/* shift unused folio to the beginning of fbatch */
+> +			for (j =3D 0; j < nr_folios; j++) {
+> +				if (!fbatch.folios[j])
+>  					continue;
+>  				if (n < j)
+> -					pvec.pages[n] =3D pvec.pages[j];
+> +					fbatch.folios[n] =3D fbatch.folios[j];
+>  				n++;
+>  			}
+> -			pvec.nr =3D n;
+> -
+> -			if (pvec_pages && i =3D=3D pvec_pages &&
+> +			fbatch.nr =3D n;
+> +			if (nr_folios && i =3D=3D nr_folios &&
+>  			    locked_pages < max_pages) {
+> -				dout("reached end pvec, trying for more\n");
+> -				pagevec_release(&pvec);
+> +				dout("reached end of fbatch, trying for more\n");
+> +				folio_batch_release(&fbatch);
+>  				goto get_more_pages;
+>  			}
+>  		}
+> @@ -1056,7 +1055,7 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  			BUG_ON(IS_ERR(req));
+>  		}
+>  		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
+> -			     thp_size(page) - offset);
+> +			     folio_size(folio) - offset);
+> =20
+>  		req->r_callback =3D writepages_finish;
+>  		req->r_inode =3D inode;
+> @@ -1098,7 +1097,7 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  			set_page_writeback(pages[i]);
+>  			if (caching)
+>  				ceph_set_page_fscache(pages[i]);
+> -			len +=3D thp_size(page);
+> +			len +=3D folio_size(folio);
+>  		}
+>  		ceph_fscache_write_to_cache(inode, offset, len, caching);
+> =20
+> @@ -1108,7 +1107,7 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  			/* writepages_finish() clears writeback pages
+>  			 * according to the data length, so make sure
+>  			 * data length covers all locked pages */
+> -			u64 min_len =3D len + 1 - thp_size(page);
+> +			u64 min_len =3D len + 1 - folio_size(folio);
+>  			len =3D get_writepages_data_length(inode, pages[i - 1],
+>  							 offset);
+>  			len =3D max(len, min_len);
+> @@ -1164,10 +1163,10 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+>  		if (wbc->nr_to_write <=3D 0 && wbc->sync_mode =3D=3D WB_SYNC_NONE)
+>  			done =3D true;
+> =20
+> -release_pvec_pages:
+> -		dout("pagevec_release on %d pages (%p)\n", (int)pvec.nr,
+> -		     pvec.nr ? pvec.pages[0] : NULL);
+> -		pagevec_release(&pvec);
+> +release_folio_batches:
+> +		dout("folio_batch_release on %d batches (%p)", (int) fbatch.nr,
+> +				fbatch.nr ? fbatch.folios[0] : NULL);
+> +		folio_batch_release(&fbatch);
+>  	}
+> =20
+>  	if (should_loop && !done) {
+> @@ -1180,19 +1179,22 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+>  		if (wbc->sync_mode !=3D WB_SYNC_NONE &&
+>  		    start_index =3D=3D 0 && /* all dirty pages were checked */
+>  		    !ceph_wbc.head_snapc) {
+> -			struct page *page;
+> +			struct folio *folio;
+>  			unsigned i, nr;
+>  			index =3D 0;
+>  			while ((index <=3D end) &&
+> -			       (nr =3D pagevec_lookup_tag(&pvec, mapping, &index,
+> -						PAGECACHE_TAG_WRITEBACK))) {
+> +				(nr =3D filemap_get_folios_tag(mapping, &index,
+> +						(pgoff_t)-1,
+> +						PAGECACHE_TAG_WRITEBACK,
+> +						&fbatch))) {
+>  				for (i =3D 0; i < nr; i++) {
+> -					page =3D pvec.pages[i];
+> -					if (page_snap_context(page) !=3D snapc)
+> +					folio =3D fbatch.folios[i];
+> +					if (page_snap_context(&folio->page) !=3D
+> +							snapc)
+>  						continue;
+> -					wait_on_page_writeback(page);
+> +					folio_wait_writeback(folio);
+>  				}
+> -				pagevec_release(&pvec);
+> +				folio_batch_release(&fbatch);
+>  				cond_resched();
+>  			}
+>  		}
 
-It is already there:
 
-	config MEMFD_CREATE
-		def_bool TMPFS || HUGETLBFS
+We have some work in progress to add write helpers to netfslib. Once we
+get those in place, we plan to convert ceph to use them. At that point
+ceph_writepages just goes away.
 
-And we reject inaccessible memfd_create() for HUGETLBFS.
-
-But if we go with a separate syscall, yes, we need the dependency.
-
-> > +       inaccessible_notifier_invalidate(data, offset, offset + len);
-> > +       return ret;
-> > +}
-> > +
-> 
-> <...>
-> 
-> > +void inaccessible_register_notifier(struct file *file,
-> > +                                   struct inaccessible_notifier *notifier)
-> > +{
-> > +       struct inaccessible_data *data = file->f_mapping->private_data;
-> > +
-> > +       mutex_lock(&data->lock);
-> > +       list_add(&notifier->list, &data->notifiers);
-> > +       mutex_unlock(&data->lock);
-> > +}
-> > +EXPORT_SYMBOL_GPL(inaccessible_register_notifier);
-> 
-> If the memfd wasn't marked as inaccessible, or more generally
-> speaking, if the file isn't a memfd_inaccessible file, this ends up
-> accessing an uninitialized pointer for the notifier list. Should there
-> be a check for that here, and have this function return an error if
-> that's not the case?
-
-I think it is "don't do that" category. inaccessible_register_notifier()
-caller has to know what file it operates on, no?
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I think it'd be best to just wait for that and to just ensure that
+netfslib uses filemap_get_folios_tag and the like where appropriate.
+--=20
+Jeff Layton <jlayton@kernel.org>
