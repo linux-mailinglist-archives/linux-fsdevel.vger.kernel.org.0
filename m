@@ -2,125 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB9E5F034F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 05:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6BF55F0352
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 05:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbiI3D3O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Sep 2022 23:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
+        id S229961AbiI3D3U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Sep 2022 23:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiI3D3L (ORCPT
+        with ESMTP id S229843AbiI3D3P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Sep 2022 23:29:11 -0400
-Received: from mail3.bemta32.messagelabs.com (mail3.bemta32.messagelabs.com [195.245.230.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A21C15935C;
-        Thu, 29 Sep 2022 20:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1664508548; i=@fujitsu.com;
-        bh=mFMDaGi8NAVV6NLt5xFQz6xlRjSXLGOTDoBUXMnlFQw=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=YvI9HHbWtUdy10Gyo9J4dKfPuR9+DsUrs/Fh0ejEisHmRqwAD7fgrm89g/kws2BBy
-         AUQhXF7Yyeo3eVnngcl8WxklfpuL05AR5dDLQr6Imngs59jAxfN2cSGHeoOlEinydQ
-         P1YdzdgWQl9j1IWO5FdlXQ1jSM2lr23SvuYgO1kgy2WmHiKYbI9N+jOXhofIiHd7Fz
-         aeoRKWPNpUBPuyTd0Pc/6WFn+cXeLk7fI5LBCpWSlv4WUVyML+n003McnfbNBCunx+
-         w2CDRfVO9Ty9bJBJ3fssC8/cLl4rZ27ZstcHDtNwl6umgHGev+/31exhJxeL777x2d
-         w8yf8UnUNaQCQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRWlGSWpSXmKPExsViZ8ORqNucZJZ
-  sMK+Z32L61AuMFluO3WO0uPyEz+L0hEVMFnv2nmSxuLxrDpvFvTX/WS12/dnBbrHyxx9WB06P
-  U4skPDav0PJYvOclk8emVZ1sHps+TWL3eLF5JqPH501yAexRrJl5SfkVCawZh360sRU84azY+
-  O4uUwPjNfYuRi4OIYEtjBJbf99lgXCWM0nsaLvCCOFsZ5RYMe0/axcjJwevgJ3E6Tub2UBsFg
-  FViVv9M1gg4oISJ2c+AbNFBZIlvk69yARiCwv4SmzYuwksziagI3FhwV9WkKEiApMYJY7duMk
-  MkmAWSJBo/3INrEFIwEWiZ+9ZMJtTwFVi6ZRVTBA1FhKL3xxkh7DlJZq3zgbq5eCQEFCSmNkd
-  DxKWEKiQmDWrjQnCVpO4em4T8wRGoVlIzpuFZNIsJJMWMDKvYrRKKspMzyjJTczM0TU0MNA1N
-  DTVNdE1MrbUS6zSTdRLLdUtTy0u0TXUSywv1kstLtYrrsxNzknRy0st2cQIjL2UYpb3Oxib+n
-  7qHWKU5GBSEuW9wWeWLMSXlJ9SmZFYnBFfVJqTWnyIUYaDQ0mCVzwRKCdYlJqeWpGWmQNMAzB
-  pCQ4eJRHevZFAad7igsTc4sx0iNQpRl2OtQ0H9jILseTl56VKifNqJAAVCYAUZZTmwY2ApaRL
-  jLJSwryMDAwMQjwFqUW5mSWo8q8YxTkYlYR5heKBpvBk5pXAbXoFdAQT0BEfmYxBjihJREhJN
-  TBF7bTt3bJ6Gs9lrnd3f3F5rQs6fngPv86bQu/J6z4s+Zd3oXixv/6nL3GBKx9rPbrF5t/hpT
-  ht3tL0myxyNsanFid4+2jslGC0KFz9ZnNTyFGmCavWX9VY9EWusYCZjbPHLnP+jvwZL01L9H+
-  sFfnuVzVNpPnxDaUZwa1PIpKSnfqOZXuuu3Pn4h5Ge03uzv/7z0dxhtx5vkWe91bO+tk17PvW
-  +1aL++XJOrXE7zjStUDHpklq3UK7NQ88C+babst0uXVm5yeN3G0RngKflZU4TxybumtO8oE++
-  elTOSXCHV7e3GK7V6qBtdPi72GGZ6W28x+ddnzzeEL/pcJFTMtPnD50dJXMm16p351Kj8u/Kr
-  EUZyQaajEXFScCAF51o43EAwAA
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-6.tower-585.messagelabs.com!1664508546!338429!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.87.3; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 26973 invoked from network); 30 Sep 2022 03:29:07 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-6.tower-585.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 30 Sep 2022 03:29:07 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id C9955100192;
-        Fri, 30 Sep 2022 04:29:06 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (R01UKEXCASM126 [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id BD6FC100191;
-        Fri, 30 Sep 2022 04:29:06 +0100 (BST)
-Received: from [192.168.22.78] (10.167.225.141) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Fri, 30 Sep 2022 04:29:03 +0100
-Message-ID: <ba642a21-8876-0cd0-2627-6fb7e534c950@fujitsu.com>
-Date:   Fri, 30 Sep 2022 11:28:54 +0800
+        Thu, 29 Sep 2022 23:29:15 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C340C15935C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 20:29:14 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d10so3124996pfh.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Sep 2022 20:29:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=0zaardMzdo84BBvC7uLDBzbOjA8ewhAN7uNbK6h7JYY=;
+        b=hak1ujvX5jTWm1bp22t3vvMvyrJfC7KVeR+wnUfTiMT/TkDO2//7l09Hqsrq3dso+U
+         r/+vNueM2Jfq6sqqvs6Q0UUY+2JHVC6SmHAX/Oiml7SwCWEVZq+BJ6sjJ1m+ev0VMIml
+         +FkWG/9yBijRNE1zf8r/C6Uye4TU/KsXFoCnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=0zaardMzdo84BBvC7uLDBzbOjA8ewhAN7uNbK6h7JYY=;
+        b=C4FSB+CuQr0lGu+mfBwJKjgyPzQfzLiSug0+km05vo9s8idXyfaHQMKYl8MfMxtRB3
+         zVy+eOBRlzMfBe+2U0lREsrRGkTe2L3D/w5pnE0arLN9nF/l/TMD7KOzLyV1H30nibVi
+         uNjxGXyWMrO600wutoET1NjgpEH5jZApV9PNOH1BdhkyI4yImKIqP9hdwf3ycOg2wY3N
+         NqSAQjl8gAW2oCEDIOSsD9tsh+UEchSsCyA0lXHRi0CY4lFO4dJ09GKTTE8bged4q65r
+         9XZDW9ygdeZgX2626hbW/JnFWjnwl4yIHuGrtR1SU0mCUuvatCt5yDXNvKAPm2czb7uI
+         sioA==
+X-Gm-Message-State: ACrzQf1hZnCM/BQ3gBFmTP2dyflytIBckbvVgjaV3Xt/YWwDQm2V98Cj
+        u91XBQFyVaewQUXajY8q1scDvQ==
+X-Google-Smtp-Source: AMsMyM4JXfjw5J0pg8BvozxvbT4YFf0amxr8UZn56f9CUF33dNGBam37Az8ZM+1h5fm9QIVf1YKPhQ==
+X-Received: by 2002:a05:6a00:22cf:b0:545:90f3:8b96 with SMTP id f15-20020a056a0022cf00b0054590f38b96mr7040659pfj.58.1664508554280;
+        Thu, 29 Sep 2022 20:29:14 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id nn10-20020a17090b38ca00b0020669c8bd87sm224328pjb.36.2022.09.29.20.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 20:29:13 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 20:29:12 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
+        kernel@gpiccoli.net, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [REGRESSION][PATCH] Revert "pstore: migrate to crypto acomp
+ interface"
+Message-ID: <202209291951.134BE2409@keescook>
+References: <20220929215515.276486-1-gpiccoli@igalia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v9 0/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <djwong@kernel.org>, <david@fromorbit.com>,
-        <dan.j.williams@intel.com>, <hch@infradead.org>
-References: <1664112803-57-1-git-send-email-ruansy.fnst@fujitsu.com>
-In-Reply-To: <1664112803-57-1-git-send-email-ruansy.fnst@fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929215515.276486-1-gpiccoli@igalia.com>
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Sep 29, 2022 at 06:55:15PM -0300, Guilherme G. Piccoli wrote:
+> This reverts commit e4f0a7ec586b7644107839f5394fb685cf1aadcc.
+> 
+> When using this new interface, both efi_pstore and ramoops
+> backends are unable to properly decompress dmesg if using
+> zstd, lz4 and lzo algorithms (and maybe more). It does succeed
+> with deflate though.
 
-Ping
+Hi!
 
-在 2022/9/25 21:33, Shiyang Ruan 写道:
-> Changes since v8:
->    1. P2: rename drop_pagecache_sb() to super_drop_pagecache().
->    2. P2: let super_drop_pagecache() accept invalidate method.
->    3. P3: invalidate all dax mappings by invalidate_inode_pages2().
->    4. P3: shutdown the filesystem when it is to be removed.
->    5. Rebase on 6.0-rc6 + Darrick's patch[1] + Dan's patch[2].
+Thanks for looking at this. I wasn't able to reproduce the problem,
+initially. Booting with pstore.backend=ramoops pstore.compress=zstd and
+writing to /dev/pmsg0, after a reboot I'm able to read it back.
+
+> The message observed in the kernel log is:
 > 
-> [1]: https://lore.kernel.org/linux-xfs/Yv5wIa2crHioYeRr@magnolia/
-> [2]: https://lore.kernel.org/linux-xfs/166153426798.2758201.15108211981034512993.stgit@dwillia2-xfh.jf.intel.com/
+> [2.328828] pstore: crypto_acomp_decompress failed, ret = -22!
+
+Hmm, that's EINVAL.
+
+> The pstore infrastructure is able to collect the dmesg with
+> both backends tested, but since decompression fails it's
+> unreadable. With this revert everything is back to normal.
 > 
-> Shiyang Ruan (3):
->    xfs: fix the calculation of length and end
->    fs: move drop_pagecache_sb() for others to use
->    mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+> Fixes: e4f0a7ec586b ("pstore: migrate to crypto acomp interface")
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+
+A reminder to myself, I keep getting surprised that systemd is
+stealing the pstore filesystem contents and moving them into
+/var/lib/systemd/pstore/
+
+> Hi Ard, Thorsten and pstore maintainers. I've found this yday
+> during pstore development - it was "hidden" since I was using
+> deflate. Tried some fixes (I plan to submit a cast fix for a
+> long-term issue later), but nothing I tried fixed this.
+
+What's your setup for this? I'm using emulated NVDIMM through qemu for
+a ramoops backend. But trying this with the EFI backend (booting
+undef EFI with pstore.backend=efi), I _do_ see the problem. That's
+weird... I suspect there's some back interaction with buffer size
+differences between ramoops and EFI & deflate and zstd.
+
+And I can confirm EFI+zstd with the acomp change reverted fixes it.
+
+Ard, anything jump to mind for you?
+
+> So, I thought in sending this revert - feel free to ignore it if
+> anybody comes with a proper fix for the async compress interface
+> proposed by Ard. The idea of the revert is because the 6.0-rc
+> cycle is nearly over, and would be nice to avoid introducing
+> this regression.
 > 
->   drivers/dax/super.c         |  3 ++-
->   fs/drop_caches.c            | 35 ++----------------------------
->   fs/super.c                  | 43 +++++++++++++++++++++++++++++++++++++
->   fs/xfs/xfs_notify_failure.c | 36 ++++++++++++++++++++++++++-----
->   include/linux/fs.h          |  1 +
->   include/linux/mm.h          |  1 +
->   include/linux/pagemap.h     |  1 +
->   mm/truncate.c               | 20 +++++++++++++++--
->   8 files changed, 99 insertions(+), 41 deletions(-)
-> 
+> Also, I searched some mailing list discussions / submission of
+> the patch ("pstore: migrate to crypto acomp interface"), but
+> couldn't find it - can any of you point it to me in case it's
+> in some archive?
+
+Hm, it's possible this was just sent directly to me? If that's true, I
+apologize for not re-posting it to lkml. I suspect I didn't notice at
+the time that it wasn't CCed to a list.
+
+> Thanks in advance, and sorry for reporting this so late in the
+> cycle, I wish I'd found it before.
+
+No worries! Whatever the case, there's always -stable updates. :)
+
+-Kees
+
+-- 
+Kees Cook
