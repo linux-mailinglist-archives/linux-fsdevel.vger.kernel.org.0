@@ -2,100 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE81F5F0CC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 15:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 288F75F0CC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 15:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbiI3NvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 09:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46284 "EHLO
+        id S231594AbiI3Nvm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 09:51:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbiI3NvN (ORCPT
+        with ESMTP id S230266AbiI3Nvi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 09:51:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7A12FC299;
-        Fri, 30 Sep 2022 06:51:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 30 Sep 2022 09:51:38 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF67112BD99;
+        Fri, 30 Sep 2022 06:51:36 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0896B82779;
-        Fri, 30 Sep 2022 13:51:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA452C433D6;
-        Fri, 30 Sep 2022 13:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664545868;
-        bh=FKGI5Jtkk9yY3yifYXhU4241raI1fXZgZRGMNusaNDk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N1fbLEDZ/DYcyyaTqFeOAp4xWpnZFcizQwaa4j3XJDe7J/I2YpLzgxZynNFkTAzaJ
-         UOxrRyyYqsPzzJ7e8/sbrCkG6Xwss7ZmIeu6fSxUSyQKmZIxTTQsttcyBSWEghyMkV
-         lLk+p5f8YbIrgqDzZoPWSSRiGlk34LSMJKVbvQENcSWQDJbfaTvshw+r6y+08808OZ
-         SWudBfakg6WEcdPaxPHv9Oazl4a8/WztJDWCtlvuCEDBEN3QJIz1tdNGT40e4LfPnU
-         RsCc45TvtxCwCgD3O0sLISvV4Ya3G4QAHOo+WGfFLI+r+FKOr5sduCMeghGW4LtdV+
-         8DRsocvo2ZG1Q==
-Date:   Fri, 30 Sep 2022 15:51:03 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org,
-        Steve French <sfrench@samba.org>
-Subject: Re: [PATCH v4 04/30] fs: add new get acl method
-Message-ID: <20220930135103.p6ab22yxkxl6yd2r@wittgenstein>
-References: <20220929153041.500115-1-brauner@kernel.org>
- <20220929153041.500115-5-brauner@kernel.org>
- <CAJfpegterbOyGGDbHY8LidzR45TTbhHdRG728mQQi_LaNMS3PA@mail.gmail.com>
- <20220930090949.cl3ajz7r4ub6jrae@wittgenstein>
- <CAJfpegsu9r84J-3wN=z8OOzHd+7YRBn9CNFMDWSbftCEm0e27A@mail.gmail.com>
- <20220930100557.7hqjrz77s3wcbrxx@wittgenstein>
- <CAJfpegvJUSowMaS7s_vLWvznLmfpkEfbvZbb_Vo-H8VewucByA@mail.gmail.com>
- <20220930124948.2mhh4bsojrlqbsmu@wittgenstein>
- <CAJfpegtyboFs35Qy67iuKNVEV75924Pdqejh9QZR1R4OB4WkAQ@mail.gmail.com>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 82BB4218E2;
+        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1664545895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
+        b=LKiOAiPNHKE8u6bKwBFJV5F4RnmPPex++wXBAh28wlvaTB7z+Wc9vhcvw7ykgslcTKJIH/
+        ZkrIuMDZHoIbC3pQkOl9OLLn2Fi43fU42U4wxdKydFQH5+lhwM0g8jSYaDiifoYhQ3BrpN
+        p0aXavbJ9UlBEE2W/wCJRtpMYmfxM80=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1664545895;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4GdU9yhf2cWOLwfKEktqz2k86HrzmLHXXLi7u9FGdEc=;
+        b=X7UOV5cPGmi/Nv1sosGTP2P2dZT3VTzpD9DqzGCdAVxPQgU4Cbz46QLtup5sqn45sFa7Bn
+        MyWcB7RnUZKEn0CA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4DFAF13776;
+        Fri, 30 Sep 2022 13:51:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cGf6Emf0NmOcSgAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 30 Sep 2022 13:51:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7852BA0668; Fri, 30 Sep 2022 15:51:34 +0200 (CEST)
+Date:   Fri, 30 Sep 2022 15:51:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        syzbot <syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mhiramat@kernel.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org
+Subject: Re: [syzbot] inconsistent lock state in kmem_cache_alloc
+Message-ID: <20220930135134.6retnj7vqm6i5ypo@quack3>
+References: <00000000000074b50005e997178a@google.com>
+ <edef9f69-4b29-4c00-8c1a-67c4b8f36af0@suse.cz>
+ <20220929135627.ykivmdks2w5vzrwg@quack3>
+ <0f7a2712-5252-260c-3b0f-ec584e1066a3@kernel.dk>
+ <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtyboFs35Qy67iuKNVEV75924Pdqejh9QZR1R4OB4WkAQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <77a66454-8d18-6a92-803b-76273ec998eb@kernel.dk>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 03:01:22PM +0200, Miklos Szeredi wrote:
-> On Fri, 30 Sept 2022 at 14:49, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, Sep 30, 2022 at 02:24:33PM +0200, Miklos Szeredi wrote:
+On Thu 29-09-22 10:54:07, Jens Axboe wrote:
+> On 9/29/22 8:07 AM, Jens Axboe wrote:
+> > On 9/29/22 7:56 AM, Jan Kara wrote:
+> >> On Thu 29-09-22 15:24:22, Vlastimil Babka wrote:
+> >>> On 9/26/22 18:33, syzbot wrote:
+> >>>> Hello,
+> >>>>
+> >>>> syzbot found the following issue on:
+> >>>>
+> >>>> HEAD commit:    105a36f3694e Merge tag 'kbuild-fixes-v6.0-3' of git://git...
+> >>>> git tree:       upstream
+> >>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=152bf540880000
+> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=7db7ad17eb14cb7
+> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=dfcc5f4da15868df7d4d
+> >>>> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> >>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1020566c880000
+> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104819e4880000
+> >>>>
+> >>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >>>> Reported-by: syzbot+dfcc5f4da15868df7d4d@syzkaller.appspotmail.com
+> >>>
+> >>> +CC more folks
+> >>>
+> >>> I'm not fully sure what this report means but I assume it's because there's
+> >>> a GFP_KERNEL kmalloc() allocation from softirq context? Should it perhaps
+> >>> use memalloc_nofs_save() at some well defined point?
+> >>
+> >> Thanks for the CC. The problem really is that io_uring is calling into
+> >> fsnotify_access() from softirq context. That isn't going to work. The
+> >> allocation is just a tip of the iceberg. Fsnotify simply does not expect to
+> >> be called from softirq context. All the dcache locks are not IRQ safe, it
+> >> can even obtain some sleeping locks and call to userspace if there are
+> >> suitable watches set up.
+> >>
+> >> So either io_uring needs to postpone fsnotify calls to a workqueue or we
+> >> need a way for io_uring code to tell iomap dio code that the completion
+> >> needs to always happen from a workqueue (as it currently does for writes).
+> >> Jens?
+> > 
+> > Something like this should probably work - I'll write a test case and
+> > vet it.
 > 
-> > > Maybe adding the check to ovl_get_acl() is the right way to go, but
-> > > I'm a little afraid of a performance regression.  Will look into that.
-> >
-> > Ok, sounds good. I can probably consolidate the two versions but retain
-> > the difference in permission checking or would you prefer I leave them
-> > distinct for now?
+> Ran that with the attached test case, triggers it before but not with
+> the patch. Side note - I do wish that the syzbot reproducers were not
+> x86 specific, I always have to go and edit them for arm64. For this
+> particular one, I just gave up and wrote one myself.
 > 
-> No, please consolidate them.  That's a good first step.
+> Thanks for the heads-up Jan, I'll queue up this fix and mark for stable
+> with the right attributions.
 
-Ok, will do.
+Thanks for fixing this so quickly! The test looks good to me.
 
-> 
-> > > So this patchset nicely reveals how acl retrieval could be done two
-> > > ways, and how overlayfs employed both for different purposes.  But
-> > > what would be even nicer if there was just one way to retrieve the acl
-> > > and overlayfs and cifs be moved over to that.
-> >
-> > I think this is a good long term goal to have. We're certainly not done
-> > with improving things after this work. Sometimes it just takes a little
-> > time to phase out legacy baggage as we all are well aware.
-> 
-> But then which is legacy?  The old .get_acl() or the new .get_acl()?
-> My impression is that it's the new one.   But in that case the big
-> renaming patch doesn't make any sense.
+								Honza
 
-Since "legacy" would mean "the older one" it wasn't the best term here.
-It'll come down to which one we will be able to remove. I'm exploring
-both options. If you want to make the removal of the renaming a hard
-requirement for being ok with this series I can reverse the renaming.
-(Note that Christoph had requested consistent naming for get and set acl.)
+> #define _GNU_SOURCE
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <sys/fanotify.h>
+> #include <sys/wait.h>
+> #include <liburing.h>
+> 
+> int main(int argc, char *argv[])
+> {
+> 	struct io_uring_sqe *sqe;
+> 	struct io_uring_cqe *cqe;
+> 	struct io_uring ring;
+> 	int fan, ret, fd;
+> 	void *buf;
+> 
+> 	fan = fanotify_init(FAN_CLASS_NOTIF|FAN_CLASS_CONTENT, 0);
+> 	if (fan < 0) {
+> 		if (errno == ENOSYS)
+> 			return 0;
+> 		perror("fanotify_init");
+> 		return 1;
+> 	}
+> 
+> 	if (argc > 1) {
+> 		fd = open(argv[1], O_RDONLY | O_DIRECT);
+> 		if (fd < 0) {
+> 			perror("open");
+> 			return 1;
+> 		}
+> 	} else {
+> 		fd = open("file0", O_RDONLY | O_DIRECT);
+> 		if (fd < 0) {
+> 			perror("open");
+> 			return 1;
+> 		}
+> 	}
+> 
+> 	ret = fanotify_mark(fan, FAN_MARK_ADD, FAN_ACCESS|FAN_MODIFY, fd, NULL);
+> 	if (ret < 0) {
+> 		perror("fanotify_mark");
+> 		return 1;
+> 	}
+> 
+> 	ret = 0;
+> 	if (fork()) {
+> 		int wstat;
+> 
+> 		io_uring_queue_init(4, &ring, 0);
+> 		if (posix_memalign(&buf, 4096, 4096))
+> 			return 0;
+> 		sqe = io_uring_get_sqe(&ring);
+> 		io_uring_prep_read(sqe, fd, buf, 4096, 0);
+> 		io_uring_submit(&ring);
+> 		ret = io_uring_wait_cqe(&ring, &cqe);
+> 		if (ret) {
+> 			fprintf(stderr, "wait_ret=%d\n", ret);
+> 			return 1;
+> 		}
+> 		wait(&wstat);
+> 		ret = WEXITSTATUS(wstat);
+> 	} else {
+> 		struct fanotify_event_metadata m;
+> 		int fret;
+> 
+> 		fret = read(fan, &m, sizeof(m));
+> 		if (fret < 0)
+> 			perror("fanotify read");
+> 		/* fail if mask isn't right or pid indicates non-task context */
+> 		else if (!(m.mask & 1) || !m.pid)
+> 			exit(1);
+> 		exit(0);
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> -- 
+> Jens Axboe
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
