@@ -2,100 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7ED15F0DD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 16:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4825F0D1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 16:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiI3Oph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 10:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52576 "EHLO
+        id S231753AbiI3OKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 10:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbiI3Ope (ORCPT
+        with ESMTP id S229679AbiI3OKN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 10:45:34 -0400
-X-Greylist: delayed 13008 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Sep 2022 07:45:31 PDT
-Received: from 6.mo550.mail-out.ovh.net (6.mo550.mail-out.ovh.net [46.105.43.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DDF5E335
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 07:45:30 -0700 (PDT)
-Received: from player157.ha.ovh.net (unknown [10.109.143.249])
-        by mo550.mail-out.ovh.net (Postfix) with ESMTP id C616520DA1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 10:30:30 +0000 (UTC)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player157.ha.ovh.net (Postfix) with ESMTPSA id 369B12F302A5B;
-        Fri, 30 Sep 2022 10:30:25 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-104R0059c517d12-c4be-4b6b-be74-f1dd7bd7a4d1,
-                    C05B2F2BD13FA39C9993548B485976379164E02D) smtp.auth=steve@sk2.org
-X-OVh-ClientIp: 82.65.25.201
-From:   Stephen Kitt <steve@sk2.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 3/5] docs: sysctl/fs: merge the aio sections
-Date:   Fri, 30 Sep 2022 12:29:35 +0200
-Message-Id: <20220930102937.135841-4-steve@sk2.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220930102937.135841-1-steve@sk2.org>
-References: <20220930102937.135841-1-steve@sk2.org>
+        Fri, 30 Sep 2022 10:10:13 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A9FB52E40
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 07:10:10 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 63so5415143ybq.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 07:10:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=DsDpak4hGP9eOQqikyTZRbcLuJcQ1VFkpeBTwP7Tglg=;
+        b=cKTwlKQSMUY6uDctsm5SrLjchJI9rQzQhlcplGxLuO9/jzzixwYQ6iGA+x70gaLIyf
+         D5rV2WTYTrGPXnuWnW4I2k34Lm4Sh9cCrV0ZhlbgpEyrtEzwOf6gjiv4Oi5/LL7xDplN
+         3hWJPN6oxbLBD6uMtJyIq/rxORsZPm4jg8Wpn5s3SeClJyTZGjK9RMTPzKdCEFdsPo5m
+         27hEL/L8rIl0AlmhnGU6rrKzFiZ0YX4rDvdSUgSJhugMAhSb6yhuHntly9zEr0Re3e7u
+         QS+XUFxiWdGaewNbTKc5HvxHc60He+02gCZzpsBn/4Stwr9nShRBaEfT9sb7uyHn4uQR
+         /v7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=DsDpak4hGP9eOQqikyTZRbcLuJcQ1VFkpeBTwP7Tglg=;
+        b=RnUuf8X7xdd6ItG2Y9Wc26PnBHPc7yiIqhTpJx1t7AS2RR8rUSTV1cHqyF3sOsvDpC
+         V8+zf4ffGe87g+T9UXSg6GZYnuCjpWdkpAsQ3laOR7K+9reG5wWrC72aneiI11DG6ku8
+         8Se9v9WHkmMOysPTfLaHy9Ei8SM75ksJN8LrIuWQu9ErK2O7YxlgJ6/pRk8l83HYsyBG
+         IBNNoK1T7ZgPSjaO1qyjYOEoTrlISM63hO21dcngaqR6ms67RDTmZW8gqqAqVBsqRvBC
+         I1YwJdLCp11Ri8EaxLrGmI8m7FGTK8dEsaVqd8mwBeRN1EI7ki3b6nfnfGXERsWEcLcl
+         fi3g==
+X-Gm-Message-State: ACrzQf0IyFVFWO5GRH/dTRMp+PmuVSkbvCkwnrt80Sv3VCBGhjU/aKAP
+        V+2Jz4dTwDCHAhfv/SM61VCZXIESoyGcnESID4pW5Q==
+X-Google-Smtp-Source: AMsMyM4bYGIr/YojNkWActQYGGG+goRSFSZWwk+hqiwEg7gC8d11FKELyxohMTv2TxTqiT1XVRw3LdSzuGw8Fh/Q/7Q=
+X-Received: by 2002:a05:6902:100b:b0:6af:cda:704d with SMTP id
+ w11-20020a056902100b00b006af0cda704dmr8118126ybt.584.1664547009228; Fri, 30
+ Sep 2022 07:10:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 14215049276007745158
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfeehvddgvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecuggftrfgrthhtvghrnhepgefhhfeliefghfetieffleevfefhieduheektdeghfegvdelfffgjefgtdevieegnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrudehjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtd
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <0000000000008ea2da05e979435f@google.com> <0000000000000f962805e9d6ae62@google.com>
+ <YzYFIK/jFiN6WEzT@ZenIV>
+In-Reply-To: <YzYFIK/jFiN6WEzT@ZenIV>
+From:   Marco Elver <elver@google.com>
+Date:   Fri, 30 Sep 2022 16:09:32 +0200
+Message-ID: <CANpmjNPXPoguZAS9L0XPey4=XX1NSTDEB_mA7j7t10FThefuUQ@mail.gmail.com>
+Subject: Re: [syzbot] kernel panic: stack is corrupted in writeback_single_inode
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+84b7b87a6430a152c1f4@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Hrutvik Kanabar <hrutvik@google.com>,
+        Aleksandr Nogikh <nogikh@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are two sections documenting aio-nr and aio-max-nr, merge them.
-I kept the second explanation of aio-nr, which seems clearer to me,
-along with the effects of the values from the first section.
+On Thu, 29 Sept 2022 at 22:50, Al Viro <viro@zeniv.linux.org.uk> wrote:
+[...]
+> ... and you _still_ have not bothered to Cc ntfs maintainers.
+> Once more, with feeling:
+>         If you are fuzzing something (ntfs, in this case), the people most
+> interested in your report are the maintainers of the code in question.
+> You know that from the moment you put the test together.  No matter where
+> exactly the oops gets triggered, what it looks like, etc.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- Documentation/admin-guide/sysctl/fs.rst | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+Apologies - we just updated syzbot to do better, so for bugs like this
+it should now pick appropriate sub-filesystem maintainers.
 
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index 0935acd220dc..a61c6aec5e5e 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -50,11 +50,11 @@ Currently, these files are in /proc/sys/fs:
- aio-nr & aio-max-nr
- -------------------
- 
--aio-nr is the running total of the number of events specified on the
--io_setup system call for all currently active aio contexts.  If aio-nr
--reaches aio-max-nr then io_setup will fail with EAGAIN.  Note that
--raising aio-max-nr does not result in the pre-allocation or re-sizing
--of any kernel data structures.
-+aio-nr shows the current system-wide number of asynchronous io
-+requests.  aio-max-nr allows you to change the maximum value
-+aio-nr can grow to.  If aio-nr reaches aio-nr-max then io_setup will
-+fail with EAGAIN.  Note that raising aio-max-nr does not result in the
-+pre-allocation or re-sizing of any kernel data structures.
- 
- 
- dentry-state
-@@ -287,14 +287,6 @@ mount more filesystems than the current value in super-max
- allows you to.
- 
- 
--aio-nr & aio-max-nr
---------------------
--
--aio-nr shows the current system-wide number of asynchronous io
--requests.  aio-max-nr allows you to change the maximum value
--aio-nr can grow to.
--
--
- mount-max
- ---------
- 
--- 
-2.31.1
-
+Thanks,
+~~ Marco
