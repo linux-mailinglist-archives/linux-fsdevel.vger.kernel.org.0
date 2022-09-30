@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C34AF5F0A48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 13:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF9515F0A67
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 13:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbiI3L1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 07:27:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
+        id S231922AbiI3L1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 07:27:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232178AbiI3L0a (ORCPT
+        with ESMTP id S230365AbiI3L0a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 30 Sep 2022 07:26:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825513ECDB;
-        Fri, 30 Sep 2022 04:18:58 -0700 (PDT)
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA4E33F;
+        Fri, 30 Sep 2022 04:19:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 28C68622D1;
-        Fri, 30 Sep 2022 11:18:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1DCDC433C1;
-        Fri, 30 Sep 2022 11:18:55 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1AC6DB82796;
+        Fri, 30 Sep 2022 11:19:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0497C4347C;
+        Fri, 30 Sep 2022 11:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664536737;
-        bh=K6suG7gA7G0HL4El6Nr54LKmYnHFtn8h7wvH1rQyVEo=;
+        s=k20201202; t=1664536739;
+        bh=St1cCChc0lbaP2GGgoYTfAcwzz9QW4MhOm7A/jIRCQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mye0eefhon6zgf3rEMigQnADi4MYYy1SPa+0E3bOzjJBh0pxZdTjSPFVb60JuKxss
-         mQKT8S9kyCLyqClu25FMnCYLyij4/7GkC8CMc9MW+mW6FFf8g61LhK0CJpZVwFvVRj
-         dTnu//QHLUHOwo0WlvpvugAKjngDyn/pJLDHjwN0Ozc9vfvDQACePpHgto8n4yMQlZ
-         lSAQiIVNJhA04nL2Pupzv9/XEHjOYi8US17R4LqjBNeX4l2HAi7AUsA9Q2P7apnXoe
-         5J68XCW0pVOrvjW46rMtbTXpwQtGC2LQBmjTp1VDU31UwgZ6oHvmx7jBpC1WpvIaf6
-         oUnYUPpQoZ8Uw==
+        b=kMwAocvfHTBKUtRqGroqE07NXObF5mX7jhX8Yb75KJ4sLpO6GlqOMMbKvITUPYfDG
+         VhfFiQdBwCDsLYoWGp0y+JBTZy+X6CxdqsNIuRCyrFFtQE6m6Dd31cQAhlMcTrWUin
+         uCWwnsAOKlIMBSMoOqhAfKjdBmumYru8t29F21uX2gOVDn61SaA/jZieZliVKTQMhh
+         5T5zCYz+IqB3XcLMC2kFSiwNDl43vnl61dWKX8TqFGByzF3u0ZsTTogDC4YAuoJVcS
+         O9LWMRwSxm/DtMXhe3LJPWKnvulaQEsZvuS1TFagOrdQ/WbFuCNC/LAvnRxGdJ7/NV
+         uwyWWsIN1JHtQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
         david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
@@ -41,10 +41,10 @@ To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
 Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH v6 6/9] nfsd: use the getattr operation to fetch i_version
-Date:   Fri, 30 Sep 2022 07:18:37 -0400
-Message-Id: <20220930111840.10695-7-jlayton@kernel.org>
+        linux-xfs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH v6 7/9] vfs: expose STATX_VERSION to userland
+Date:   Fri, 30 Sep 2022 07:18:38 -0400
+Message-Id: <20220930111840.10695-8-jlayton@kernel.org>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220930111840.10695-1-jlayton@kernel.org>
 References: <20220930111840.10695-1-jlayton@kernel.org>
@@ -59,205 +59,143 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that we can call into vfs_getattr to get the i_version field, use
-that facility to fetch it instead of doing it in nfsd4_change_attribute.
+From: Jeff Layton <jlayton@redhat.com>
 
-Neil also pointed out recently that IS_I_VERSION directory operations
-are always logged, and so we only need to mitigate the rollback problem
-on regular files. Also, we don't need to factor in the ctime when
-reexporting NFS or Ceph.
-
-Set the STATX_VERSION (and BTIME) bits in the request when we're dealing
-with a v4 request. Then, instead of looking at IS_I_VERSION when
-generating the change attr, look at the result mask and only use it if
-STATX_VERSION is set. With this change, we can drop the fetch_iversion
-export operation as well.
-
-Move nfsd4_change_attribute into nfsfh.c, and change it to only factor
-in the ctime if it's a regular file and the fs doesn't advertise
+Claim one of the spare fields in struct statx to hold a 64-bit inode
+version attribute. When userland requests STATX_VERSION, copy the
+value from the kstat struct there, and stop masking off
 STATX_ATTR_VERSION_MONOTONIC.
+
+Update the test-statx sample program to output the change attr and
+MountId.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/export.c          |  7 -------
- fs/nfsd/nfs4xdr.c        |  4 +++-
- fs/nfsd/nfsfh.c          | 40 ++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/nfsfh.h          | 29 +----------------------------
- fs/nfsd/vfs.h            |  7 ++++++-
- include/linux/exportfs.h |  1 -
- 6 files changed, 50 insertions(+), 38 deletions(-)
+ fs/stat.c                 | 12 +++---------
+ include/linux/stat.h      |  9 ---------
+ include/uapi/linux/stat.h |  6 ++++--
+ samples/vfs/test-statx.c  |  8 ++++++--
+ 4 files changed, 13 insertions(+), 22 deletions(-)
 
-diff --git a/fs/nfs/export.c b/fs/nfs/export.c
-index 01596f2d0a1e..1a9d5aa51dfb 100644
---- a/fs/nfs/export.c
-+++ b/fs/nfs/export.c
-@@ -145,17 +145,10 @@ nfs_get_parent(struct dentry *dentry)
- 	return parent;
- }
+diff --git a/fs/stat.c b/fs/stat.c
+index e7f8cd4b24e1..8396c372022f 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -593,11 +593,9 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
  
--static u64 nfs_fetch_iversion(struct inode *inode)
--{
--	nfs_revalidate_inode(inode, NFS_INO_INVALID_CHANGE);
--	return inode_peek_iversion_raw(inode);
--}
+ 	memset(&tmp, 0, sizeof(tmp));
+ 
+-	/* STATX_VERSION is kernel-only for now */
+-	tmp.stx_mask = stat->result_mask & ~STATX_VERSION;
++	tmp.stx_mask = stat->result_mask;
+ 	tmp.stx_blksize = stat->blksize;
+-	/* STATX_ATTR_VERSION_MONOTONIC is kernel-only for now */
+-	tmp.stx_attributes = stat->attributes & ~STATX_ATTR_VERSION_MONOTONIC;
++	tmp.stx_attributes = stat->attributes;
+ 	tmp.stx_nlink = stat->nlink;
+ 	tmp.stx_uid = from_kuid_munged(current_user_ns(), stat->uid);
+ 	tmp.stx_gid = from_kgid_munged(current_user_ns(), stat->gid);
+@@ -621,6 +619,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
+ 	tmp.stx_mnt_id = stat->mnt_id;
+ 	tmp.stx_dio_mem_align = stat->dio_mem_align;
+ 	tmp.stx_dio_offset_align = stat->dio_offset_align;
++	tmp.stx_version = stat->version;
+ 
+ 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+ }
+@@ -636,11 +635,6 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
+ 	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
+ 		return -EINVAL;
+ 
+-	/* STATX_VERSION is kernel-only for now. Ignore requests
+-	 * from userland.
+-	 */
+-	mask &= ~STATX_VERSION;
 -
- const struct export_operations nfs_export_ops = {
- 	.encode_fh = nfs_encode_fh,
- 	.fh_to_dentry = nfs_fh_to_dentry,
- 	.get_parent = nfs_get_parent,
--	.fetch_iversion = nfs_fetch_iversion,
- 	.flags = EXPORT_OP_NOWCC|EXPORT_OP_NOSUBTREECHK|
- 		EXPORT_OP_CLOSE_BEFORE_UNLINK|EXPORT_OP_REMOTE_FS|
- 		EXPORT_OP_NOATOMIC_ATTR,
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 1e9690a061ec..779c009314c6 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -2869,7 +2869,9 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
- 			goto out;
- 	}
- 
--	err = vfs_getattr(&path, &stat, STATX_BASIC_STATS, AT_STATX_SYNC_AS_STAT);
-+	err = vfs_getattr(&path, &stat,
-+			  STATX_BASIC_STATS | STATX_BTIME | STATX_VERSION,
-+			  AT_STATX_SYNC_AS_STAT);
- 	if (err)
- 		goto out_nfserr;
- 	if (!(stat.result_mask & STATX_BTIME))
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index a5b71526cee0..9168bc657378 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -634,6 +634,10 @@ void fh_fill_pre_attrs(struct svc_fh *fhp)
- 		stat.mtime = inode->i_mtime;
- 		stat.ctime = inode->i_ctime;
- 		stat.size  = inode->i_size;
-+		if (v4 && IS_I_VERSION(inode)) {
-+			stat.version = inode_query_iversion(inode);
-+			stat.result_mask |= STATX_VERSION;
-+		}
- 	}
- 	if (v4)
- 		fhp->fh_pre_change = nfsd4_change_attribute(&stat, inode);
-@@ -665,6 +669,8 @@ void fh_fill_post_attrs(struct svc_fh *fhp)
- 	if (err) {
- 		fhp->fh_post_saved = false;
- 		fhp->fh_post_attr.ctime = inode->i_ctime;
-+		if (v4 && IS_I_VERSION(inode))
-+			fhp->fh_post_attr.version = inode_query_iversion(inode);
- 	} else
- 		fhp->fh_post_saved = true;
- 	if (v4)
-@@ -754,3 +760,37 @@ enum fsid_source fsid_source(const struct svc_fh *fhp)
- 		return FSIDSOURCE_UUID;
- 	return FSIDSOURCE_DEV;
- }
-+
-+/*
-+ * We could use i_version alone as the change attribute.  However, i_version
-+ * can go backwards on a regular file after an unclean shutdown.  On its own
-+ * that doesn't necessarily cause a problem, but if i_version goes backwards
-+ * and then is incremented again it could reuse a value that was previously
-+ * used before boot, and a client who queried the two values might incorrectly
-+ * assume nothing changed.
-+ *
-+ * By using both ctime and the i_version counter we guarantee that as long as
-+ * time doesn't go backwards we never reuse an old value. If the filesystem
-+ * advertises STATX_ATTR_VERSION_MONOTONIC, then this mitigation is not needed.
-+ *
-+ * We only need to do this for regular files as well. For directories, we
-+ * assume that the new change attr is always logged to stable storage in some
-+ * fashion before the results can be seen.
-+ */
-+u64 nfsd4_change_attribute(struct kstat *stat, struct inode *inode)
-+{
-+	u64 chattr;
-+
-+	if (stat->result_mask & STATX_VERSION) {
-+		chattr = stat->version;
-+
-+		if (S_ISREG(inode->i_mode) &&
-+		    !(stat->attributes & STATX_ATTR_VERSION_MONOTONIC)) {
-+			chattr += (u64)stat->ctime.tv_sec << 30;
-+			chattr += stat->ctime.tv_nsec;
-+		}
-+	} else {
-+		chattr = time_to_chattr(&stat->ctime);
-+	}
-+	return chattr;
-+}
-diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-index c3ae6414fc5c..4c223a7a91d4 100644
---- a/fs/nfsd/nfsfh.h
-+++ b/fs/nfsd/nfsfh.h
-@@ -291,34 +291,7 @@ static inline void fh_clear_pre_post_attrs(struct svc_fh *fhp)
- 	fhp->fh_pre_saved = false;
- }
- 
--/*
-- * We could use i_version alone as the change attribute.  However,
-- * i_version can go backwards after a reboot.  On its own that doesn't
-- * necessarily cause a problem, but if i_version goes backwards and then
-- * is incremented again it could reuse a value that was previously used
-- * before boot, and a client who queried the two values might
-- * incorrectly assume nothing changed.
-- *
-- * By using both ctime and the i_version counter we guarantee that as
-- * long as time doesn't go backwards we never reuse an old value.
-- */
--static inline u64 nfsd4_change_attribute(struct kstat *stat,
--					 struct inode *inode)
--{
--	if (inode->i_sb->s_export_op->fetch_iversion)
--		return inode->i_sb->s_export_op->fetch_iversion(inode);
--	else if (IS_I_VERSION(inode)) {
--		u64 chattr;
+ 	error = vfs_statx(dfd, filename, flags, &stat, mask);
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index 4e9428d86a3a..69c79e4fd1b1 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -54,13 +54,4 @@ struct kstat {
+ 	u32		dio_offset_align;
+ 	u64		version;
+ };
 -
--		chattr =  stat->ctime.tv_sec;
--		chattr <<= 30;
--		chattr += stat->ctime.tv_nsec;
--		chattr += inode_query_iversion(inode);
--		return chattr;
--	} else
--		return time_to_chattr(&stat->ctime);
--}
+-/* These definitions are internal to the kernel for now. Mainly used by nfsd. */
 -
-+u64 nfsd4_change_attribute(struct kstat *stat, struct inode *inode);
- extern void fh_fill_pre_attrs(struct svc_fh *fhp);
- extern void fh_fill_post_attrs(struct svc_fh *fhp);
- extern void fh_fill_both_attrs(struct svc_fh *fhp);
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index c95cd414b4bb..a905f59481ee 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -168,9 +168,14 @@ static inline void fh_drop_write(struct svc_fh *fh)
+-/* mask values */
+-#define STATX_VERSION		0x40000000U	/* Want/got stx_change_attr */
+-
+-/* file attribute values */
+-#define STATX_ATTR_VERSION_MONOTONIC	0x8000000000000000ULL /* version monotonically increases */
+-
+ #endif
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 7cab2c65d3d7..4a0a1f27c059 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -127,7 +127,8 @@ struct statx {
+ 	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
+ 	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
+ 	/* 0xa0 */
+-	__u64	__spare3[12];	/* Spare space for future expansion */
++	__u64	stx_version; /* Inode change attribute */
++	__u64	__spare3[11];	/* Spare space for future expansion */
+ 	/* 0x100 */
+ };
  
- static inline __be32 fh_getattr(const struct svc_fh *fh, struct kstat *stat)
- {
-+	u32 request_mask = STATX_BASIC_STATS;
- 	struct path p = {.mnt = fh->fh_export->ex_path.mnt,
- 			 .dentry = fh->fh_dentry};
--	return nfserrno(vfs_getattr(&p, stat, STATX_BASIC_STATS,
-+
-+	if (fh->fh_maxsize == NFS4_FHSIZE)
-+		request_mask |= (STATX_BTIME | STATX_VERSION);
-+
-+	return nfserrno(vfs_getattr(&p, stat, request_mask,
- 				    AT_STATX_SYNC_AS_STAT));
- }
+@@ -154,6 +155,7 @@ struct statx {
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
+ #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
++#define STATX_VERSION		0x00004000U	/* Want/got stx_version */
  
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index fe848901fcc3..9f4d4bcbf251 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -213,7 +213,6 @@ struct export_operations {
- 			  bool write, u32 *device_generation);
- 	int (*commit_blocks)(struct inode *inode, struct iomap *iomaps,
- 			     int nr_iomaps, struct iattr *iattr);
--	u64 (*fetch_iversion)(struct inode *);
- #define	EXPORT_OP_NOWCC			(0x1) /* don't collect v3 wcc data */
- #define	EXPORT_OP_NOSUBTREECHK		(0x2) /* no subtree checking */
- #define	EXPORT_OP_CLOSE_BEFORE_UNLINK	(0x4) /* close files before unlink */
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
+@@ -189,6 +191,6 @@ struct statx {
+ #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
+ #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
+ #define STATX_ATTR_DAX			0x00200000 /* File is currently in DAX state */
+-
++#define STATX_ATTR_VERSION_MONOTONIC	0x00400000 /* stx_version increases w/ every change */
+ 
+ #endif /* _UAPI_LINUX_STAT_H */
+diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+index 49c7a46cee07..bdbc371c9774 100644
+--- a/samples/vfs/test-statx.c
++++ b/samples/vfs/test-statx.c
+@@ -107,6 +107,8 @@ static void dump_statx(struct statx *stx)
+ 	printf("Device: %-15s", buffer);
+ 	if (stx->stx_mask & STATX_INO)
+ 		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
++	if (stx->stx_mask & STATX_MNT_ID)
++		printf(" MountId: %llx", stx->stx_mnt_id);
+ 	if (stx->stx_mask & STATX_NLINK)
+ 		printf(" Links: %-5u", stx->stx_nlink);
+ 	if (stx->stx_mask & STATX_TYPE) {
+@@ -145,7 +147,9 @@ static void dump_statx(struct statx *stx)
+ 	if (stx->stx_mask & STATX_CTIME)
+ 		print_time("Change: ", &stx->stx_ctime);
+ 	if (stx->stx_mask & STATX_BTIME)
+-		print_time(" Birth: ", &stx->stx_btime);
++		print_time("Birth: ", &stx->stx_btime);
++	if (stx->stx_mask & STATX_VERSION)
++		printf("Inode Version: 0x%llx\n", stx->stx_version);
+ 
+ 	if (stx->stx_attributes_mask) {
+ 		unsigned char bits, mbits;
+@@ -218,7 +222,7 @@ int main(int argc, char **argv)
+ 	struct statx stx;
+ 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
+ 
+-	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
++	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME | STATX_MNT_ID | STATX_VERSION;
+ 
+ 	for (argv++; *argv; argv++) {
+ 		if (strcmp(*argv, "-F") == 0) {
 -- 
 2.37.3
 
