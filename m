@@ -2,84 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D063E5F0CCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 15:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7ED15F0DD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 16:45:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231553AbiI3NyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 09:54:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49594 "EHLO
+        id S230111AbiI3Oph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 10:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbiI3NyD (ORCPT
+        with ESMTP id S229743AbiI3Ope (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 09:54:03 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0B8157FDA
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 06:53:59 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id c30so6087119edn.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 06:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=oZ1cYWbsiZwnlcXnkO22f7DP/bqRfobBGFUYgj3MHIk=;
-        b=cLiRpWsBrvolZZzC5sS5jFy0oenkw7m9pG/JlHYXvnBcqg7270Pv68OYTu4g0jydR8
-         zMfTKER5qfEmqcUbp4nHnIA619FbUDMKfNXN3XfmtxnNSjAHIuLO3DR/uxuz1z3CUNTO
-         tud9WtRz2kNaU3KfFfTunhrCKF7IHy8luMjMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=oZ1cYWbsiZwnlcXnkO22f7DP/bqRfobBGFUYgj3MHIk=;
-        b=kgXI5A1yOqjoCn1/jdIehyEYMqOPs6RomXmoly4cyFROvALhQpNUb91fgIdFRpI+H3
-         /+f5bNnoCHJkdi3OaRgisN4pf99eY5TLHjtip70iW3cLmOHH3jlCGr3p6Ox1ckKS1IDh
-         kYEDxkTlNDl0JujcPC7Itn1z+O0XwoLfqAomXhFiIR5Oti9OT9uAjD0v7JygAWX+3EgA
-         BCj/ukNEwW58Mj699WQc8XWxMoJ+mdBeCgtNYGaNYHJtUOgnyiiiTjoQOMyoGwu/fJTF
-         FnIrZyS5yCkm19ajlO+lEz1tLsd8Hq/jxZaNS4eqLAd+wAg8gJIdS0s5+CCUHkOvvgvg
-         rEtA==
-X-Gm-Message-State: ACrzQf1jO4tG3+f3o3bSlBBOnz/XBWyk+LqxWTMDrtybDOaPvMCC90DJ
-        P0nh41QVlpQDFYftvR3y6/uCVYQLR35yexz5l8Ehzw==
-X-Google-Smtp-Source: AMsMyM4iMVty4++0iEUyvPtgzPySWUYabD0rh87Sf8s/IqeXm7odxbqE0PbEoc9W0Qvshl10oNNd55YnxImIxO257Ug=
-X-Received: by 2002:a50:fc0a:0:b0:458:73c0:7e04 with SMTP id
- i10-20020a50fc0a000000b0045873c07e04mr3704377edr.270.1664546038020; Fri, 30
- Sep 2022 06:53:58 -0700 (PDT)
+        Fri, 30 Sep 2022 10:45:34 -0400
+X-Greylist: delayed 13008 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Sep 2022 07:45:31 PDT
+Received: from 6.mo550.mail-out.ovh.net (6.mo550.mail-out.ovh.net [46.105.43.205])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DDF5E335
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 07:45:30 -0700 (PDT)
+Received: from player157.ha.ovh.net (unknown [10.109.143.249])
+        by mo550.mail-out.ovh.net (Postfix) with ESMTP id C616520DA1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 10:30:30 +0000 (UTC)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player157.ha.ovh.net (Postfix) with ESMTPSA id 369B12F302A5B;
+        Fri, 30 Sep 2022 10:30:25 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-104R0059c517d12-c4be-4b6b-be74-f1dd7bd7a4d1,
+                    C05B2F2BD13FA39C9993548B485976379164E02D) smtp.auth=steve@sk2.org
+X-OVh-ClientIp: 82.65.25.201
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v2 3/5] docs: sysctl/fs: merge the aio sections
+Date:   Fri, 30 Sep 2022 12:29:35 +0200
+Message-Id: <20220930102937.135841-4-steve@sk2.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220930102937.135841-1-steve@sk2.org>
+References: <20220930102937.135841-1-steve@sk2.org>
 MIME-Version: 1.0
-References: <20220922084442.2401223-1-mszeredi@redhat.com> <20220922084442.2401223-6-mszeredi@redhat.com>
- <3533150.1664441085@warthog.procyon.org.uk>
-In-Reply-To: <3533150.1664441085@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 30 Sep 2022 15:53:47 +0200
-Message-ID: <CAJfpegt7OiGnXC8ut9yth8z_OhqDK8v+pN81e3F1tgkZftjMEA@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] cachefiles: use vfs_tmpfile_open() helper
-To:     David Howells <dhowells@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Yu-li Lin <yulilin@google.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 14215049276007745158
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfeehvddgvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecuggftrfgrthhtvghrnhepgefhhfeliefghfetieffleevfefhieduheektdeghfegvdelfffgjefgtdevieegnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrudehjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtd
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 29 Sept 2022 at 10:45, David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <mszeredi@redhat.com> wrote:
->
-> > -             path.dentry = vfs_tmpfile(&init_user_ns, fan, S_IFREG, O_RDWR);
->
-> Is there any point passing S_IFREG in to vfs_tmpfile()?  Can you actually make
-> a tmpfile that isn't a regular file?
+There are two sections documenting aio-nr and aio-max-nr, merge them.
+I kept the second explanation of aio-nr, which seems clearer to me,
+along with the effects of the values from the first section.
 
-No, it can't.  The argument is for the create mode, not the type.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/admin-guide/sysctl/fs.rst | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-Seems like the open(O_TMPFILE) path masks out the type in
-build_open_how(), so passing zero here would make sense.
+diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+index 0935acd220dc..a61c6aec5e5e 100644
+--- a/Documentation/admin-guide/sysctl/fs.rst
++++ b/Documentation/admin-guide/sysctl/fs.rst
+@@ -50,11 +50,11 @@ Currently, these files are in /proc/sys/fs:
+ aio-nr & aio-max-nr
+ -------------------
+ 
+-aio-nr is the running total of the number of events specified on the
+-io_setup system call for all currently active aio contexts.  If aio-nr
+-reaches aio-max-nr then io_setup will fail with EAGAIN.  Note that
+-raising aio-max-nr does not result in the pre-allocation or re-sizing
+-of any kernel data structures.
++aio-nr shows the current system-wide number of asynchronous io
++requests.  aio-max-nr allows you to change the maximum value
++aio-nr can grow to.  If aio-nr reaches aio-nr-max then io_setup will
++fail with EAGAIN.  Note that raising aio-max-nr does not result in the
++pre-allocation or re-sizing of any kernel data structures.
+ 
+ 
+ dentry-state
+@@ -287,14 +287,6 @@ mount more filesystems than the current value in super-max
+ allows you to.
+ 
+ 
+-aio-nr & aio-max-nr
+--------------------
+-
+-aio-nr shows the current system-wide number of asynchronous io
+-requests.  aio-max-nr allows you to change the maximum value
+-aio-nr can grow to.
+-
+-
+ mount-max
+ ---------
+ 
+-- 
+2.31.1
 
-Thanks,
-Miklos
