@@ -2,255 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED7155F055D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 08:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FD15F0641
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 10:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230125AbiI3Gv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 02:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59700 "EHLO
+        id S230227AbiI3ILh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 04:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiI3GvY (ORCPT
+        with ESMTP id S229981AbiI3ILd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 02:51:24 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226C2146F86;
-        Thu, 29 Sep 2022 23:51:23 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id b23so3442808pfp.9;
-        Thu, 29 Sep 2022 23:51:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date;
-        bh=LMDEKRVatEhmPhLDNavek8Wpgc8QEAKXkZK2xGE+vvA=;
-        b=FJTZLhywfSQ2+1K/cFOC4yX8Ue06nyDaygmHm1uGByaLEQZpe13ov2eViY4mRFQd3p
-         fv5UGKSZvE2V4I0fr3lJ5Yb/8TxnL0ZT/IWKF9pvceDK46S+RrdSBoVIxgj+sa6iDEyU
-         GyKD6TiRHTvMWWTFk/7kkVmTW9OPe4CZM+b+JOqGnQSDj2+h5LabD6JfZMY6fO5QptDd
-         rZ4c+DLmD5j0fNc1ySoPor7miY/+onjbUp+t6JlWReH1ZRBTx1o3+GBWexQiUU4BYSI4
-         a8PYVOo6AxNIz6T/GS3ODO0V8jmP2XG9uZtNX+W16a/jWYeqGKZc6/VUO4vGucRPMz7S
-         jkCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=LMDEKRVatEhmPhLDNavek8Wpgc8QEAKXkZK2xGE+vvA=;
-        b=l7g22lGhc0Y3UtjWe1jZxpWS6XTqGQvw8qqg8CrBbS/TVsZypuKrJan5lNof6h8BxF
-         OUN/G/vFTvZxbZpkncmCvR/L8Xx6Fdzk8r+ST55c7bi13al+y8krwb+UF2m0sq7W62bt
-         vH0W2sz+k985PByAxn4TQk8u1BSnY+yIICJynuaEnCvbl723T7AidHUKkF+axI9nhYA7
-         PVwGlOPQ1ioGgZBDe8wog3jSUDnNr4bKFGzVC4dVBI0YSc2BwYlqjnAT+40ujRsN1cRk
-         snESCEBPiK2xgDmqHfQPK/gnIMWDoWMUka7XjMVFgirSx9ea3vNGhpctcNTJTiXjTE57
-         b8Kg==
-X-Gm-Message-State: ACrzQf0pMIzlSRKtIqvpORPOPuDc08DlugyeJ0vGh/hQpjLvKtCCGWd6
-        QrXLry+kAIizM/XpOZodX6Bpp5tHRPxocjtAAg/yx2Yx2g6Yis8c1u0=
-X-Google-Smtp-Source: AMsMyM5ZkmTyIVrq/B1DvrXBCRw1G4qg85UrfUllnknpExHkJKcjlFf9uTtWwiWSeQx17CMzx9IAkE4jOBUIlBZVWxA=
-X-Received: by 2002:a05:6a00:1743:b0:548:8629:ceab with SMTP id
- j3-20020a056a00174300b005488629ceabmr7205740pfc.23.1664520682515; Thu, 29 Sep
- 2022 23:51:22 -0700 (PDT)
+        Fri, 30 Sep 2022 04:11:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2CC1BB6C8;
+        Fri, 30 Sep 2022 01:11:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 19253B8275F;
+        Fri, 30 Sep 2022 08:11:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CC2C433D6;
+        Fri, 30 Sep 2022 08:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664525488;
+        bh=RnAuN7ArCjMiR+Ns0K2qV+ZE4a1puMppCM/ESDvAdqY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XNS9QTOb+k/X3bfWTicAbw6Yglb4mTvfnHuAnDCvTHwYGar6LmarlYTAgmUTtx3ai
+         +UxmG66pUrQv6oWe2xhu7QgL9L7Y1t8fhjNCtXgYkXNeisJIRWGdDbhr8m4dcFaSfl
+         TDQBM2qXIPM51TNWzLt/dEeaMTMKiVU7OutjZSWLWvDkkrLC8rOqbj3J82iDUW20mp
+         KpwSVZ+QrpHIJURH8E7EXJiay59fKvxdPzaBRCvwjeIUm/tVb4dPRzi9YqvMZWH6oy
+         X5AhQ0gBMMToDavvAPM6+FEIj8wIC/OUhntY8ovmnvZal604gmd9+loNXYWHcYf6G2
+         7UHjO/qrVUo2g==
+Date:   Fri, 30 Sep 2022 10:11:23 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 12/30] integrity: implement get and set acl hook
+Message-ID: <20220930081123.dwoijem2fpy6ubpp@wittgenstein>
+References: <20220929153041.500115-1-brauner@kernel.org>
+ <20220929153041.500115-13-brauner@kernel.org>
+ <CAHC9VhSxr-aUj7mqKo05B5Oj=5FWeajx_mNjR_EszzpYR1YozA@mail.gmail.com>
 MIME-Version: 1.0
-From:   "Sabri N. Ferreiro" <snferreiro1@gmail.com>
-Date:   Fri, 30 Sep 2022 14:51:11 +0800
-Message-ID: <CAKG+3NQww6ipPDyaPyXKto8FoU62Rix-XNpzkWtMbJNSyKKCmQ@mail.gmail.com>
-Subject: KASAN: use-after-free Read in filp_close
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSxr-aUj7mqKo05B5Oj=5FWeajx_mNjR_EszzpYR1YozA@mail.gmail.com>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When I used fuzz testing to test Linux kernel 6.0.0-rc6, the kernel
-triggered the following error:
-HEAD commit: 521a547ced6477c54b4b0cc206000406c221b4d6
-git tree: upstream
+On Thu, Sep 29, 2022 at 03:14:42PM -0400, Paul Moore wrote:
+> On Thu, Sep 29, 2022 at 11:33 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > The current way of setting and getting posix acls through the generic
+> > xattr interface is error prone and type unsafe. The vfs needs to
+> > interpret and fixup posix acls before storing or reporting it to
+> > userspace. Various hacks exist to make this work. The code is hard to
+> > understand and difficult to maintain in it's current form. Instead of
+> > making this work by hacking posix acls through xattr handlers we are
+> > building a dedicated posix acl api around the get and set inode
+> > operations. This removes a lot of hackiness and makes the codepaths
+> > easier to maintain. A lot of background can be found in [1].
+> >
+> > So far posix acls were passed as a void blob to the security and
+> > integrity modules. Some of them like evm then proceed to interpret the
+> > void pointer and convert it into the kernel internal struct posix acl
+> > representation to perform their integrity checking magic. This is
+> > obviously pretty problematic as that requires knowledge that only the
+> > vfs is guaranteed to have and has lead to various bugs. Add a proper
+> > security hook for setting posix acls and pass down the posix acls in
+> > their appropriate vfs format instead of hacking it through a void
+> > pointer stored in the uapi format.
+> >
+> > I spent considerate time in the security module and integrity
+> > infrastructure and audited all codepaths. EVM is the only part that
+> > really has restrictions based on the actual posix acl values passed
+> > through it. Before this dedicated hook EVM used to translate from the
+> > uapi posix acl format sent to it in the form of a void pointer into the
+> > vfs format. This is not a good thing. Instead of hacking around in the
+> > uapi struct give EVM the posix acls in the appropriate vfs format and
+> > perform sane permissions checks that mirror what it used to to in the
+> > generic xattr hook.
+> >
+> > IMA doesn't have any restrictions on posix acls. When posix acls are
+> > changed it just wants to update its appraisal status.
+> >
+> > The removal of posix acls is equivalent to passing NULL to the posix set
+> > acl hooks. This is the same as before through the generic xattr api.
+> >
+> > Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> > ---
+> >
+> > Notes:
+> >     /* v2 */
+> >     unchanged
+> >
+> >     /* v3 */
+> >     Paul Moore <paul@paul-moore.com>:
+> >     - Add get, and remove acl hook
+> >
+> >     /* v4 */
+> >     unchanged
+> >
+> >  include/linux/evm.h                   | 23 +++++++++
+> >  include/linux/ima.h                   | 21 ++++++++
+> >  security/integrity/evm/evm_main.c     | 70 ++++++++++++++++++++++++++-
+> >  security/integrity/ima/ima_appraise.c |  9 ++++
+> >  security/security.c                   | 21 +++++++-
+> >  5 files changed, 141 insertions(+), 3 deletions(-)
+> 
+> ...
+> 
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 23d484e05e6f..7904786b610f 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -8,7 +8,7 @@
+> >   *
+> >   * File: evm_main.c
+> >   *     implements evm_inode_setxattr, evm_inode_post_setxattr,
+> > - *     evm_inode_removexattr, and evm_verifyxattr
+> > + *     evm_inode_removexattr, evm_verifyxattr, and evm_inode_set_acl.
+> >   */
+> >
+> >  #define pr_fmt(fmt) "EVM: "fmt
+> > @@ -670,6 +670,74 @@ int evm_inode_removexattr(struct user_namespace *mnt_userns,
+> >         return evm_protect_xattr(mnt_userns, dentry, xattr_name, NULL, 0);
+> >  }
+> >
+> > +static int evm_inode_set_acl_change(struct user_namespace *mnt_userns,
+> > +                                   struct dentry *dentry, const char *name,
+> > +                                   struct posix_acl *kacl)
+> > +{
+> > +#ifdef CONFIG_FS_POSIX_ACL
+> > +       int rc;
+> > +
+> > +       umode_t mode;
+> > +       struct inode *inode = d_backing_inode(dentry);
+> > +
+> > +       if (!kacl)
+> > +               return 1;
+> > +
+> > +       rc = posix_acl_update_mode(mnt_userns, inode, &mode, &kacl);
+> > +       if (rc || (inode->i_mode != mode))
+> > +               return 1;
+> > +#endif
+> > +       return 0;
+> > +}
+> 
+> I'm not too bothered by it either way, but one might consider pulling
+> the #ifdef outside the function definition, for example:
+> 
+> #ifdef CONFIG_FS_POSIX_ACL
+> static int evm_inode_foo(...)
+> {
+>   /* ... stuff ... */
+> }
+> #else
+> static int evm_inode_foo(...)
+> {
+>   return 0;
+> }
+> #endif /* CONFIG_FS_POSIX_ACL */
+> 
+> > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > index bde74fcecee3..698a8ae2fe3e 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -770,6 +770,15 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> >         return result;
+> >  }
+> >
+> > +int ima_inode_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+> > +                     const char *acl_name, struct posix_acl *kacl)
+> > +{
+> > +       if (evm_revalidate_status(acl_name))
+> > +               ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> > +
+> > +       return 0;
+> > +}
+> 
+> While the ima_inode_set_acl() implementation above looks okay for the
+> remove case, I do see that the ima_inode_setxattr() function has a
+> call to validate_hash_algo() before calling
+> ima_reset_appraise_flags().  IANAIE (I Am Not An Ima Expert), but it
+> seems like we would still want that check in the ACL case.
 
-kernel config: https://pastebin.com/raw/hekxU61F
-console log: https://pastebin.com/raw/YmeXN9F0
+Ah, you might've missed this bug...
+The fact that they call validate_hash_algo() on posix acls is a bug in
+ima. It's a type safety bug. IMA uses posix acls passed through the void
+pointer as struct evm_ima_xattr:
 
+ 	const struct evm_ima_xattr_data *xvalue = xattr_value;
 
-It seems that the fuzzer failed to extract any C reproducer, but I
-would so appreciate it if you have any idea how to solve this bug.
+	result = validate_hash_algo(dentry, xvalue, xattr_value_len);
 
-==================================================================
-BUG: KASAN: use-after-free in filp_close+0x13f/0x160 fs/open.c:1420
-Read of size 8 at addr ffff888024d5b078 by task syz-executor.7/12532
+I reported this to them a little while ago and Mimi sent a fix for it
+that's in -next:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=5926586f291b53cb8a0c9631fc19489be1186e2d
 
-CPU: 0 PID: 12532 Comm: syz-executor.7 Not tainted 6.0.0-rc6+ #3
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
-<TASK>
-__dump_stack lib/dump_stack.c:88 [inline]
-dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
-print_address_description mm/kasan/report.c:317 [inline]
-print_report.cold+0xe5/0x66d mm/kasan/report.c:433
-kasan_report+0x8a/0x1b0 mm/kasan/report.c:495
-filp_close+0x13f/0x160 fs/open.c:1420
-close_fd+0x76/0xa0 fs/file.c:664
-__do_sys_close fs/open.c:1440 [inline]
-__se_sys_close fs/open.c:1438 [inline]
-__x64_sys_close+0x2f/0xa0 fs/open.c:1438
-do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f034163f60b
-Code: 03 00 00 00 0f 05 48 3d 00 f0 ff ff 77 41 c3 48 83 ec 18 89 7c
-24 0c e8 63 fc ff ff 8b 7c 24 0c 41 89 c0 b8 03 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 2f 44 89 c7 89 44 24 0c e8 a1 fc ff ff 8b 44
-RSP: 002b:00007ffe3a4724e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 00007f034163f60b
-RDX: 0000001b2e120000 RSI: 0000001b2e128c00 RDI: 0000000000000006
-RBP: 00007f034179dd4c R08: 0000000000000000 R09: 000000003ac8e423
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000699df
-R13: 00007ffe3a472620 R14: 00007f034179c4ec R15: 000000000006981e
-</TASK>
-
-Allocated by task 10844:
-kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
-kasan_set_track mm/kasan/common.c:45 [inline]
-set_alloc_info mm/kasan/common.c:437 [inline]
-____kasan_kmalloc mm/kasan/common.c:516 [inline]
-____kasan_kmalloc mm/kasan/common.c:475 [inline]
-__kasan_kmalloc+0xa9/0xd0 mm/kasan/common.c:525
-kasan_kmalloc include/linux/kasan.h:234 [inline]
-__kmalloc+0x1da/0x3f0 mm/slub.c:4424
-kmalloc include/linux/slab.h:605 [inline]
-kzalloc include/linux/slab.h:733 [inline]
-tomoyo_init_log+0x1254/0x1eb0 security/tomoyo/audit.c:275
-tomoyo_supervisor+0x2e7/0xe30 security/tomoyo/common.c:2088
-tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
-tomoyo_path_permission security/tomoyo/file.c:587 [inline]
-tomoyo_path_permission+0x270/0x3a0 security/tomoyo/file.c:573
-tomoyo_path_perm+0x2fc/0x420 security/tomoyo/file.c:838
-tomoyo_path_unlink+0x8e/0xd0 security/tomoyo/tomoyo.c:149
-security_path_unlink+0xd7/0x150 security/security.c:1173
-do_unlinkat+0x36c/0x660 fs/namei.c:4293
-__do_sys_unlink fs/namei.c:4345 [inline]
-__se_sys_unlink fs/namei.c:4343 [inline]
-__x64_sys_unlink+0x3e/0x50 fs/namei.c:4343
-do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Freed by task 12535:
-kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
-kasan_set_track+0x21/0x30 mm/kasan/common.c:45
-kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
-____kasan_slab_free mm/kasan/common.c:367 [inline]
-____kasan_slab_free mm/kasan/common.c:329 [inline]
-__kasan_slab_free+0x11d/0x1b0 mm/kasan/common.c:375
-kasan_slab_free include/linux/kasan.h:200 [inline]
-slab_free_hook mm/slub.c:1754 [inline]
-slab_free_freelist_hook mm/slub.c:1780 [inline]
-slab_free mm/slub.c:3534 [inline]
-kfree+0xe9/0x650 mm/slub.c:4562
-dvb_free_device drivers/media/dvb-core/dvbdev.c:572 [inline]
-dvb_free_device drivers/media/dvb-core/dvbdev.c:567 [inline]
-dvb_unregister_device+0x3f/0x60 drivers/media/dvb-core/dvbdev.c:581
-dvb_dmxdev_release+0x1c9/0x630 drivers/media/dvb-core/dmxdev.c:1462
-ttusb_disconnect+0x144/0x260
-drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c:1731
-usb_unbind_interface+0x1bd/0x890 drivers/usb/core/driver.c:458
-device_remove drivers/base/dd.c:550 [inline]
-device_remove+0x11f/0x170 drivers/base/dd.c:542
-__device_release_driver drivers/base/dd.c:1249 [inline]
-device_release_driver_internal+0x1a7/0x360 drivers/base/dd.c:1275
-usb_driver_release_interface+0x102/0x180 drivers/usb/core/driver.c:627
-usb_forced_unbind_intf+0x48/0xa0 drivers/usb/core/driver.c:1118
-usb_reset_device+0x439/0xac0 drivers/usb/core/hub.c:6113
-proc_resetdevice drivers/usb/core/devio.c:1514 [inline]
-usbdev_do_ioctl drivers/usb/core/devio.c:2655 [inline]
-usbdev_ioctl+0x1e70/0x3340 drivers/usb/core/devio.c:2807
-vfs_ioctl fs/ioctl.c:51 [inline]
-__do_sys_ioctl fs/ioctl.c:870 [inline]
-__se_sys_ioctl fs/ioctl.c:856 [inline]
-__x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
-do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff888024d5b000
-which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 120 bytes inside of
-512-byte region [ffff888024d5b000, ffff888024d5b200)
-
-The buggy address belongs to the physical page:
-page:ffffea0000935600 refcount:1 mapcount:0 mapping:0000000000000000
-index:0xffff888024d58400 pfn:0x24d58
-head:ffffea0000935600 order:2 compound_mapcount:0 compound_pincount:0
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000010200 ffffea0000789108 ffffea0000787108 ffff888011c42c80
-raw: ffff888024d58400 0000000000100008 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask
-0x1d2a20(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL),
-pid 0, tgid 0 (swapper/0), ts 378270268280, free_ts 371843614843
-set_page_owner include/linux/page_owner.h:31 [inline]
-post_alloc_hook mm/page_alloc.c:2525 [inline]
-prep_new_page+0x2c6/0x350 mm/page_alloc.c:2532
-get_page_from_freelist+0xae9/0x3a80 mm/page_alloc.c:4283
-__alloc_pages+0x321/0x710 mm/page_alloc.c:5515
-alloc_pages+0x117/0x2f0 mm/mempolicy.c:2270
-alloc_slab_page mm/slub.c:1824 [inline]
-allocate_slab mm/slub.c:1969 [inline]
-new_slab+0x246/0x3a0 mm/slub.c:2029
-___slab_alloc+0xa50/0x1060 mm/slub.c:3031
-__slab_alloc.isra.0+0x4d/0xa0 mm/slub.c:3118
-slab_alloc_node mm/slub.c:3209 [inline]
-__kmalloc_node_track_caller+0x2ec/0x370 mm/slub.c:4955
-kmalloc_reserve+0x32/0xd0 net/core/skbuff.c:362
-__alloc_skb+0x11a/0x320 net/core/skbuff.c:434
-alloc_skb include/linux/skbuff.h:1257 [inline]
-ndisc_alloc_skb+0x134/0x330 net/ipv6/ndisc.c:421
-ndisc_send_rs+0x37f/0x6f0 net/ipv6/ndisc.c:702
-addrconf_rs_timer+0x415/0x740 net/ipv6/addrconf.c:3931
-call_timer_fn+0x1a0/0x6b0 kernel/time/timer.c:1474
-expire_timers kernel/time/timer.c:1519 [inline]
-__run_timers.part.0+0x69c/0xad0 kernel/time/timer.c:1790
-__run_timers kernel/time/timer.c:1768 [inline]
-run_timer_softirq+0xb6/0x1d0 kernel/time/timer.c:1803
-page last free stack trace:
-reset_page_owner include/linux/page_owner.h:24 [inline]
-free_pages_prepare mm/page_alloc.c:1449 [inline]
-free_pcp_prepare+0x5ab/0xd00 mm/page_alloc.c:1499
-free_unref_page_prepare mm/page_alloc.c:3380 [inline]
-free_unref_page+0x19/0x410 mm/page_alloc.c:3476
-__stack_depot_save+0x1ef/0x530 lib/stackdepot.c:489
-kasan_save_stack+0x2e/0x40 mm/kasan/common.c:39
-kasan_set_track mm/kasan/common.c:45 [inline]
-set_alloc_info mm/kasan/common.c:437 [inline]
-____kasan_kmalloc mm/kasan/common.c:516 [inline]
-____kasan_kmalloc mm/kasan/common.c:475 [inline]
-__kasan_kmalloc+0xa9/0xd0 mm/kasan/common.c:525
-kasan_kmalloc include/linux/kasan.h:234 [inline]
-kmem_cache_alloc_trace+0x19b/0x380 mm/slub.c:3284
-kmalloc include/linux/slab.h:600 [inline]
-usb_control_msg+0xb9/0x4a0 drivers/usb/core/message.c:143
-get_port_status drivers/usb/core/hub.c:581 [inline]
-hub_ext_port_status+0x125/0x460 drivers/usb/core/hub.c:598
-usb_hub_port_status drivers/usb/core/hub.c:620 [inline]
-hub_port_wait_reset drivers/usb/core/hub.c:2865 [inline]
-hub_port_reset+0x2e0/0x1ac0 drivers/usb/core/hub.c:2986
-hub_port_init+0x186/0x34d0 drivers/usb/core/hub.c:4703
-hub_port_connect drivers/usb/core/hub.c:5282 [inline]
-hub_port_connect_change drivers/usb/core/hub.c:5497 [inline]
-port_event drivers/usb/core/hub.c:5653 [inline]
-hub_event+0x21b6/0x4260 drivers/usb/core/hub.c:5735
-process_one_work+0x9c7/0x1650 kernel/workqueue.c:2289
-worker_thread+0x623/0x1070 kernel/workqueue.c:2436
-kthread+0x2e9/0x3a0 kernel/kthread.c:376
-ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
-
-Memory state around the buggy address:
-ffff888024d5af00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-ffff888024d5af80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888024d5b000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-^
-ffff888024d5b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-ffff888024d5b100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+IOW, what I have here seems correct.
