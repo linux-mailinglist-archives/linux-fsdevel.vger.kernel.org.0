@@ -2,74 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F74B5F0F8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 18:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F11045F0FAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Sep 2022 18:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbiI3QDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Sep 2022 12:03:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35630 "EHLO
+        id S232009AbiI3QPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Sep 2022 12:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbiI3QCT (ORCPT
+        with ESMTP id S231982AbiI3QPF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:02:19 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 268C11B0E31;
-        Fri, 30 Sep 2022 09:02:17 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id nb11so9974419ejc.5;
-        Fri, 30 Sep 2022 09:02:17 -0700 (PDT)
+        Fri, 30 Sep 2022 12:15:05 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5483341A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 09:14:59 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id s10so5301242ljp.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Sep 2022 09:14:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=3yKms8AKRzFfDi33PhwXrFrwuGPdadmIT5ZGKIDnFV8=;
-        b=HUjcbO5qLJL7WhMNzFFYSeT2a5hNyYd+VbCLDZ1E5WE/w7qTCbjxBZKzrz1JE1e/PP
-         LEAxmLnyHCyHEfR1V0sydyzOLCi8/dbxOChArQS3vigArM6l1WFOOVVDkthvJpx0EbJb
-         8N9OssMrfXdCPOZ83LQwdyllDXYN46jsvb8i93lX3RbXQQZ05rnWWiqk2XW63JuBma9U
-         xG9CfQsLuLRvGE830+40tQ0SGvGj98NQozDeyx2fEhprWoa7YJhn72sGtEsfY0KgaM3t
-         1IYww6hGXGXN8Z4iUc/NQsl0/9KVowa5lLSPsi9hxMwk6u1g1SM+BgDpph9rNp6Me8Xn
-         bi0g==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=GtlSJkLXw2SNcPVROAD1SJDnwutfnbZAayHj4onnywk=;
+        b=DOMyGYFKf+TZsvY4xp2ON3TIpgoHPlU49dDhE2e+lblBc8uIrSThwS/2igACfNwrxT
+         B80A327TY7zTQhfHZWcTomLg9RP5BFCafC1G5Xq0tQ7fwoJvvStDoxT0G2gxcG663JP2
+         Fs7G3g4B/VZpF4ch3hxit7Ug+GQ+GOdS/DQOAl43rZESxPq8F6OkxZ3VQDuWTfhZaVv4
+         SIQHFtGYvuP6RLRGuDR8p9bpU8nbzmLRHnOHWxhEywjmhLPHJS0aPcx7Quodth6mnW/e
+         VlopEFYGcfN96ScGyCOubqRcKtcTue5tCsqbI81iqfPNUwyTk6FXx34dym02k3Ilq/RK
+         sZ/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=3yKms8AKRzFfDi33PhwXrFrwuGPdadmIT5ZGKIDnFV8=;
-        b=ShgbkU51mJHaOKSSEod8WJ+9kUSIbxR8j2njqQN+hVrVfDAzls+RnryhhY5X3/xpjI
-         P1SktwXnw2a02jsMSU2dRVCdGcckN/HSl06St90TlznPYlk7Mvz+lZa9Z0ZpKBrgKPxl
-         FabTD1MNRp+jhYMLuIqD07oHIJmpNfhji4WaX1Y1zMT9H8vjrGaRzqMPbGBEtlpzdwP5
-         ustZHzfHGMpeRLX0Fd2nhvW11NPqP4sJ54EyKaaFT7Gi3kVIaWKBY9/tRbv7nGQLfxUM
-         wBZaPS215hkEG8nwHZSCoRSvkjI2sulQk/0CqTNihMrzsr6Nrh7JqfCJo4vwaiYkhm0Q
-         Gyxw==
-X-Gm-Message-State: ACrzQf2DpGIPfP5oJNflhq5QNn+qogwd0A+jaYX1aH2Y/B9IwTiymZ+C
-        pLQzNV0fURIdaca5M02N+bR0v/xnXnc=
-X-Google-Smtp-Source: AMsMyM71Xfnl7pGLFZKvWI7hVFP4JDPanUWCO92/4jNSgbGKb48qeuV1lNCErW1UCKK/z2ODbm9hYQ==
-X-Received: by 2002:a17:906:8a57:b0:781:9705:df89 with SMTP id gx23-20020a1709068a5700b007819705df89mr7067153ejc.266.1664553735400;
-        Fri, 30 Sep 2022 09:02:15 -0700 (PDT)
-Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id f18-20020a05640214d200b004588ef795easm927583edx.34.2022.09.30.09.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 09:02:15 -0700 (PDT)
-From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v7 7/7] landlock: Document Landlock's file truncation support
-Date:   Fri, 30 Sep 2022 18:01:44 +0200
-Message-Id: <20220930160144.141504-8-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20220930160144.141504-1-gnoack3000@gmail.com>
-References: <20220930160144.141504-1-gnoack3000@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=GtlSJkLXw2SNcPVROAD1SJDnwutfnbZAayHj4onnywk=;
+        b=5elQ94HQnOMloT+yHDDsrvia5PZi3gG07ZvLhRGoQj++N4/hFqzUafwurYp8PoOybJ
+         5ieUNg37AWiiv7/CzTX9BXVJ7OoZxGh/UdIHa9iWgIk0b0djI+TA4muCXXevWSIB22fs
+         q/j8iELJeEV5ECn4h+ocT77tPQRXRxcdkcfhfMIOBvuA3+XI2Q9Amtj5mFCkOrOnoThD
+         /mzP8jRKlw5yYCh8C1wu4yOq55kf/SQyz5/1qUrQ4TyLHAJWwLHRT7u8Ag7+ov/5wHXk
+         FpEPY7LSClQhTLU+TreI12fMjTb95E0gageHNAybUp1uU0moNCtSD6uggMNIR5XmGP/F
+         AQ9g==
+X-Gm-Message-State: ACrzQf1RzCtRniQNxgfeCicfblNxYuTPI1DyKDZ4FnNuP4DYQR2yv7Y0
+        HMmxCPUc9WasdTGqV6iUL3CG7dGIwRvXJBKa/0r8SA==
+X-Google-Smtp-Source: AMsMyM7jpq+XBzS300JrKAbZeYDxFloAXMmPfSxwUISYLv3b6zRl+QtVRiHq6i7/nDDb8l/3nFMe7wpgyR1WcsBFjoI=
+X-Received: by 2002:a05:651c:1508:b0:26c:622e:abe1 with SMTP id
+ e8-20020a05651c150800b0026c622eabe1mr3044232ljf.228.1664554497777; Fri, 30
+ Sep 2022 09:14:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com> <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Fri, 30 Sep 2022 17:14:00 +0100
+Message-ID: <CA+EHjTyrexb_LX7Jm9-MGwm4DBvfjCrADH4oumFyAvs2_0oSYw@mail.gmail.com>
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,137 +95,143 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+Hi,
 
-Adapt the backwards compatibility example and discussion to remove the
-truncation flag where needed.
+<...>
 
-Point out potential surprising behaviour related to truncate.
+> diff --git a/mm/memfd_inaccessible.c b/mm/memfd_inaccessible.c
+> new file mode 100644
+> index 000000000000..2d33cbdd9282
+> --- /dev/null
+> +++ b/mm/memfd_inaccessible.c
+> @@ -0,0 +1,219 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "linux/sbitmap.h"
+> +#include <linux/memfd.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/pseudo_fs.h>
+> +#include <linux/shmem_fs.h>
+> +#include <uapi/linux/falloc.h>
+> +#include <uapi/linux/magic.h>
+> +
+> +struct inaccessible_data {
+> +       struct mutex lock;
+> +       struct file *memfd;
+> +       struct list_head notifiers;
+> +};
+> +
+> +static void inaccessible_notifier_invalidate(struct inaccessible_data *data,
+> +                                pgoff_t start, pgoff_t end)
+> +{
+> +       struct inaccessible_notifier *notifier;
+> +
+> +       mutex_lock(&data->lock);
+> +       list_for_each_entry(notifier, &data->notifiers, list) {
+> +               notifier->ops->invalidate(notifier, start, end);
+> +       }
+> +       mutex_unlock(&data->lock);
+> +}
+> +
+> +static int inaccessible_release(struct inode *inode, struct file *file)
+> +{
+> +       struct inaccessible_data *data = inode->i_mapping->private_data;
+> +
+> +       fput(data->memfd);
+> +       kfree(data);
+> +       return 0;
+> +}
+> +
+> +static long inaccessible_fallocate(struct file *file, int mode,
+> +                                  loff_t offset, loff_t len)
+> +{
+> +       struct inaccessible_data *data = file->f_mapping->private_data;
+> +       struct file *memfd = data->memfd;
+> +       int ret;
+> +
+> +       if (mode & FALLOC_FL_PUNCH_HOLE) {
+> +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> +                       return -EINVAL;
+> +       }
+> +
+> +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
 
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 66 +++++++++++++++++++++---
- 1 file changed, 59 insertions(+), 7 deletions(-)
+I think that shmem_file_operations.fallocate is only set if
+CONFIG_TMPFS is enabled (shmem.c). Should there be a check at
+initialization that fallocate is set, or maybe a config dependency, or
+can we count on it always being enabled?
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index b8ea59493964..408029b120bd 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: May 2022
-+:Date: September 2022
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem access) for a set of processes.  Because Landlock is a stackable
-@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_FIFO |
-             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
--            LANDLOCK_ACCESS_FS_REFER,
-+            LANDLOCK_ACCESS_FS_REFER |
-+            LANDLOCK_ACCESS_FS_TRUNCATE,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -69,16 +70,27 @@ should try to protect users as much as possible whatever the kernel they are
- using.  To avoid binary enforcement (i.e. either all security features or
- none), we can leverage a dedicated Landlock command to get the current version
- of the Landlock ABI and adapt the handled accesses.  Let's check if we should
--remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
--starting with the second version of the ABI.
-+remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+access rights, which are only supported starting with the second and third
-+version of the ABI.
- 
- .. code-block:: c
- 
-     int abi;
- 
-     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
--    if (abi < 2) {
-+    if (abi < 0) {
-+        perror("The running kernel does not enable to use Landlock");
-+        return 0;  /* Degrade gracefully if Landlock is not handled. */
-+    }
-+    switch (abi) {
-+    case 1:
-+        /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+        __attribute__((fallthrough));
-+    case 2:
-+        /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -127,8 +139,8 @@ descriptor.
- 
- It may also be required to create rules following the same logic as explained
- for the ruleset creation, by filtering access rights according to the Landlock
--ABI version.  In this example, this is not required because
--`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
-+ABI version.  In this example, this is not required because all of the requested
-+``allowed_access`` rights are already available in ABI 1.
- 
- We now have a ruleset with one rule allowing read access to ``/usr`` while
- denying all other handled accesses for the filesystem.  The next step is to
-@@ -251,6 +263,37 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+Truncating files
-+----------------
-+
-+The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
-+``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
-+overlap in non-intuitive ways.  It is recommended to always specify both of
-+these together.
-+
-+A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-+that this system call requires the rights to create and write files.  However,
-+it also requires the truncate right if an existing file under the same name is
-+already present.
-+
-+It should also be noted that truncating files does not require the
-+``LANDLOCK_ACCESS_FS_WRITE_FILE`` right.  Apart from the :manpage:`truncate(2)`
-+system call, this can also be done through :manpage:`open(2)` with the flags
-+``O_RDONLY | O_TRUNC``.
-+
-+When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-+right is associated with the newly created file descriptor and will be used for
-+subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-+similar to opening a file for reading or writing, where permissions are checked
-+during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-+:manpage:`write(2)` calls.
-+
-+As a consequence, it is possible to have multiple open file descriptors for the
-+same file, where one grants the right to truncate the file and the other does
-+not.  It is also possible to pass such file descriptors between processes,
-+keeping their Landlock properties, even when these processes do not have an
-+enforced Landlock ruleset.
-+
- Compatibility
- =============
- 
-@@ -397,6 +440,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
- control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
- access right.
- 
-+File truncation (ABI < 3)
-+-------------------------
-+
-+File truncation could not be denied before the third Landlock ABI, so it is
-+always allowed when using a kernel that only supports the first or second ABI.
-+
-+Starting with the Landlock ABI version 3, it is now possible to securely control
-+truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.37.3
+> +       inaccessible_notifier_invalidate(data, offset, offset + len);
+> +       return ret;
+> +}
+> +
 
+<...>
+
+> +void inaccessible_register_notifier(struct file *file,
+> +                                   struct inaccessible_notifier *notifier)
+> +{
+> +       struct inaccessible_data *data = file->f_mapping->private_data;
+> +
+> +       mutex_lock(&data->lock);
+> +       list_add(&notifier->list, &data->notifiers);
+> +       mutex_unlock(&data->lock);
+> +}
+> +EXPORT_SYMBOL_GPL(inaccessible_register_notifier);
+
+If the memfd wasn't marked as inaccessible, or more generally
+speaking, if the file isn't a memfd_inaccessible file, this ends up
+accessing an uninitialized pointer for the notifier list. Should there
+be a check for that here, and have this function return an error if
+that's not the case?
+
+Thanks,
+/fuad
+
+
+
+> +
+> +void inaccessible_unregister_notifier(struct file *file,
+> +                                     struct inaccessible_notifier *notifier)
+> +{
+> +       struct inaccessible_data *data = file->f_mapping->private_data;
+> +
+> +       mutex_lock(&data->lock);
+> +       list_del(&notifier->list);
+> +       mutex_unlock(&data->lock);
+> +}
+> +EXPORT_SYMBOL_GPL(inaccessible_unregister_notifier);
+> +
+> +int inaccessible_get_pfn(struct file *file, pgoff_t offset, pfn_t *pfn,
+> +                        int *order)
+> +{
+> +       struct inaccessible_data *data = file->f_mapping->private_data;
+> +       struct file *memfd = data->memfd;
+> +       struct page *page;
+> +       int ret;
+> +
+> +       ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
+> +       if (ret)
+> +               return ret;
+> +
+> +       *pfn = page_to_pfn_t(page);
+> +       *order = thp_order(compound_head(page));
+> +       SetPageUptodate(page);
+> +       unlock_page(page);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(inaccessible_get_pfn);
+> +
+> +void inaccessible_put_pfn(struct file *file, pfn_t pfn)
+> +{
+> +       struct page *page = pfn_t_to_page(pfn);
+> +
+> +       if (WARN_ON_ONCE(!page))
+> +               return;
+> +
+> +       put_page(page);
+> +}
+> +EXPORT_SYMBOL_GPL(inaccessible_put_pfn);
+> --
+> 2.25.1
+>
