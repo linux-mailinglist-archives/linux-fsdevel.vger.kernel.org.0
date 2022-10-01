@@ -1,138 +1,216 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A83865F1D73
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Oct 2022 18:02:08 +0200 (CEST)
+Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id D48415F1D7A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Oct 2022 18:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiJAQCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Oct 2022 12:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52616 "EHLO
+        id S229665AbiJAQKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Oct 2022 12:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiJAQCF (ORCPT
+        with ESMTP id S229445AbiJAQKF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Oct 2022 12:02:05 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577EF4E61B;
-        Sat,  1 Oct 2022 09:02:04 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id D96975C00BD;
-        Sat,  1 Oct 2022 12:02:01 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sat, 01 Oct 2022 12:02:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1664640121; x=
-        1664726521; bh=DWs5cDrTNAg8qg36bgLWEHBWdku/VXbzKnY3VodDLTI=; b=l
-        SiIZVlfC9lL3yBGqyo9kU96XhEpUIsRW6pJoOQTZu5JQb9G9DNlqvUezT+6wkYRC
-        Vbfb+dO/favj+cEXFE8twLoNjmwCY0DzBGVXxDuWP55AwMGR14P2hR3VNcdvlnc8
-        6Ay5aGguX+sAwdQv7wQApRErBe3T5G8N0PBYEwRCE0OT6ImLyupgAefgnPzwqqZ/
-        2r3+CkL0SVfPr2rbXP4H/A51Dj18G15cs9unAKQ2Gew1HomkHGdh0EYOJ5EK98Ij
-        zuKbg6y7BCI5GvjFhIPRWYZCi6Rwu6pUpAd5tM1iiLmLmUEBWhiNsZ3cqSiw4OAN
-        5L8DbG2kDcFe3E9c0YpWQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1664640121; x=1664726521; bh=DWs5cDrTNAg8qg36bgLWEHBWdku/
-        VXbzKnY3VodDLTI=; b=TbfsApETPYKiyvn6EdR9DxIr1p/2li90f1S0I+Qi0rPs
-        BF2INv3c4OmB8icFtgNXOSkdxsB//nSnt4DtSxPq68lBWmBAs89zN0GO3Dgx9Sa6
-        LwC++8f6sSfpbu6MN9nTkqBIWy7+XiDNv5BHU4ZxN5FUsFLG0RVQ1TZl98J7l+gc
-        zbOCvDuW/KutbNFJfxe6K9RV5TIdYId4CwNIriAubHu+bSH81Z78Vsev13jUakei
-        UE8N+n7riQvv9UPmNXKHCXb76Ibw4iPEzuc3bDnLVgpxfWtZtKargjpCSHDzorjF
-        2aspEzgWA2rhcQ9c4ryP2zDvlyIGziPe6H+CXzBsWg==
-X-ME-Sender: <xms:eWQ4Y0w25PKo1RnAG9_ej_EoXiOJpqoa0JA1lH5iygUewQ9xhrVy5A>
-    <xme:eWQ4Y4SC-bFAbFeQvjRVI_XQHu7adz6Lu3UuMowY2kp4lKiTR7rUo52ZCzceENAyL
-    DYmkWL_VS5gblI8kdA>
-X-ME-Received: <xmr:eWQ4Y2WCj7ML2g_NxP6sEXDRGenkWeAWjT3BMK8PxJzQ3Nnz6Jt_rIce27pQPDOE5tN9MBrUO70HGsN5vOQXIXMNDgilgxByU_FJZhLXstppLOTy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeehhedgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheplfhoshhh
-    ucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeegjeduuedtleefuefgvdeghfehuefhtefffeetvdffgeekteeh
-    hfehtddvtdegieenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhoshhhsehjohhshhhtrhhi
-    phhlvghtthdrohhrgh
-X-ME-Proxy: <xmx:eWQ4YyivQHPZg3nyAVA5tc6xbkjvO3Ltw-e4MXj2xO_A978kAB87Fw>
-    <xmx:eWQ4Y2BIDJXBRpGQFXhZR-YuqqRp0YFt4LxAa7wuOsPTf1-BLyDn6w>
-    <xmx:eWQ4YzKtp_iB7-UK59tD18NPexIkWwRlYSgZVO6Qixl7gIiAKuTT9w>
-    <xmx:eWQ4Y953Cai8p6BZKlz1W5ufRvPcko6HEMTVgEWHNyvPTTdgALDSOQ>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 1 Oct 2022 12:01:59 -0400 (EDT)
-Date:   Sat, 1 Oct 2022 17:01:57 +0100
-From:   Josh Triplett <josh@joshtriplett.org>
+        Sat, 1 Oct 2022 12:10:05 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7CF227DD3;
+        Sat,  1 Oct 2022 09:10:00 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d24so6382647pls.4;
+        Sat, 01 Oct 2022 09:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=ZFt50GDqlKIYM4l8mECHUWC3f4w34q3ItwBbk2NFmik=;
+        b=K3if3PVJ5bvcTJ9M0NPajRsS9R22PhUV8mt1DF9aSjhi92xxGX68nw1fQOdsnfeW88
+         RYDbvN3GquD6aYJG58Lch5x17v+7Fbew3pLZMAkWt1+ooRJfi37RQADA2PXlVWpJ0CkC
+         Tph9mkBw10QRI/4GlEXa2GIU/ewaCJw+Q5bhNbWEldyfKXsiimIOVSMffXQx+3tGU4Mj
+         dJvzomia0B+Wj46FPagEpyfhrlYIDzrrtNbXqmnTPZIsHCWjn0Q7IxiKUPw+lNuqO8YW
+         mhgisps0Go9/DKTKISmZAxZzmxBVutsjUNJDrnOyzW3IiQoFEADN8PzV+SFx5mJvo2bv
+         Sq2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=ZFt50GDqlKIYM4l8mECHUWC3f4w34q3ItwBbk2NFmik=;
+        b=c5jAmLeP6Y8YFdsIgQMbsieNEPdAxKsNFmnv/Fsq/rNo0p5J33j8pmrShGaes5/iuz
+         CL0SR7uONTP0nfyaAb5cCLwqrL+kCjd6HPBoKxHTLkI7mqqZ56nxzf8inda3ISoF7Rft
+         fDILH7h8ctoST2en0t8SMOynG1wN/KPzBy8LXYmtS0TyIwl+Eg3wKJPxCFBOnDWoULh0
+         SO9nAukb5PIU4zIcmEwIZg+NcPSBH240bARWs+m8WDCSFnQDZFLWKL8CrEVdmQOmR1zw
+         0L3rIB5PJUPmzTN/qJ4t5bzOSFDtf/FwrVtA666ojgi9z0tBKYjJPCQMetv6N2qMd0DJ
+         7dFQ==
+X-Gm-Message-State: ACrzQf08TtNsiSdzKQnRBbwrKZ98QmhF/PEtnp/JzTgTEbgvJh3L6EGW
+        H6rbPkglhh/G6kezKQvwzTo=
+X-Google-Smtp-Source: AMsMyM4LFEW8r3bJhaCxZm3hZ+BJ6mFgt6vMylhuSPGZuSYFmA+LZrM5m1U3puB9ewICj0JZLSgwTQ==
+X-Received: by 2002:a17:903:246:b0:179:96b5:1ad2 with SMTP id j6-20020a170903024600b0017996b51ad2mr14161925plh.37.1664640600299;
+        Sat, 01 Oct 2022 09:10:00 -0700 (PDT)
+Received: from hyeyoo ([114.29.91.56])
+        by smtp.gmail.com with ESMTPSA id y9-20020a17090a474900b0020a28156e11sm3000108pjg.26.2022.10.01.09.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Oct 2022 09:09:59 -0700 (PDT)
+Date:   Sun, 2 Oct 2022 01:09:47 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
 To:     Kees Cook <keescook@chromium.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
- before allocating mm
-Message-ID: <YzhkdZrb7vpodK6I@localhost>
-References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
- <202209160727.5FC78B735@keescook>
- <YyTY+OaClK+JHCOw@localhost>
- <202209161637.9EDAF6B18@keescook>
- <YyUZ0NHfFF+eVe24@localhost>
- <202209191256.893576D4@keescook>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Marco Elver <elver@google.com>, linux-mm@kvack.org,
+        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Elder <elder@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Yonghong Song <yhs@fb.com>, Miguel Ojeda <ojeda@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        dev@openvswitch.org, x86@kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 01/16] slab: Remove __malloc attribute from realloc
+ functions
+Message-ID: <YzhmSxKFzOXhUZ2Z@hyeyoo>
+References: <20220923202822.2667581-1-keescook@chromium.org>
+ <20220923202822.2667581-2-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202209191256.893576D4@keescook>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220923202822.2667581-2-keescook@chromium.org>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 01:02:51PM -0700, Kees Cook wrote:
-> On Sat, Sep 17, 2022 at 01:50:24AM +0100, Josh Triplett wrote:
-> > On Fri, Sep 16, 2022 at 05:11:18PM -0700, Kees Cook wrote:
-> > > I don't like the idea of penalizing the _succeeding_ case, though, which
-> > > happens if we do the path walk twice. So, I went and refactoring the setup
-> > > order, moving the do_open_execat() up into alloc_bprm() instead of where
-> > > it was in bprm_exec(). The result makes it so it is, as you observed,
-> > > before the mm creation and generally expensive argument copying. The
-> > > difference to your patch seems to only be the allocation of the file
-> > > table entry, but avoids the double lookup, so I'm hoping the result is
-> > > actually even faster.
-> > 
-> > Thanks for giving this a try; I'd wondered how feasible it would be to
-> > just do one lookup.
-> > 
-> > However, on the same test system with the same test setup, with your
-> > refactor it seems to go slower:
-> > fork/execvpe: 38087ns
-> > fork/execve:  33758ns
-> > 
-> > For comparison, the previous numbers (which I re-confirmed):
-> > 
-> > Without fast-path:
-> > fork/execvpe: 49876ns
-> > fork/execve:  32773ns
-> > 
-> > With my original separate-lookup fast-path:
-> > fork/execvpe: 36890ns
-> > fork/execve:  31551ns
+On Fri, Sep 23, 2022 at 01:28:07PM -0700, Kees Cook wrote:
+> The __malloc attribute should not be applied to "realloc" functions, as
+> the returned pointer may alias the storage of the prior pointer. Instead
+> of splitting __malloc from __alloc_size, which would be a huge amount of
+> churn, just create __realloc_size for the few cases where it is needed.
 > 
-> Hmm, this shows as slower in the *normal* case, which I find rather
-> surprising -- it's the same work, just reordered.
+> Additionally removes the conditional test for __alloc_size__, which is
+> always defined now.
 > 
-> Can you post a URL to your tests? I'd like to reproduce this and maybe
-> throw perf at it as well.
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Cc: Marco Elver <elver@google.com>
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  include/linux/compiler_types.h | 13 +++++--------
+>  include/linux/slab.h           | 12 ++++++------
+>  mm/slab_common.c               |  4 ++--
+>  3 files changed, 13 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 4f2a819fd60a..f141a6f6b9f6 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -271,15 +271,12 @@ struct ftrace_likely_data {
+>  
+>  /*
+>   * Any place that could be marked with the "alloc_size" attribute is also
+> - * a place to be marked with the "malloc" attribute. Do this as part of the
+> - * __alloc_size macro to avoid redundant attributes and to avoid missing a
+> - * __malloc marking.
+> + * a place to be marked with the "malloc" attribute, except those that may
+> + * be performing a _reallocation_, as that may alias the existing pointer.
+> + * For these, use __realloc_size().
+>   */
+> -#ifdef __alloc_size__
+> -# define __alloc_size(x, ...)	__alloc_size__(x, ## __VA_ARGS__) __malloc
+> -#else
+> -# define __alloc_size(x, ...)	__malloc
+> -#endif
+> +#define __alloc_size(x, ...)	__alloc_size__(x, ## __VA_ARGS__) __malloc
+> +#define __realloc_size(x, ...)	__alloc_size__(x, ## __VA_ARGS__)
+>  
+>  #ifndef asm_volatile_goto
+>  #define asm_volatile_goto(x...) asm goto(x)
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 0fefdf528e0d..41bd036e7551 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -184,7 +184,7 @@ int kmem_cache_shrink(struct kmem_cache *s);
+>  /*
+>   * Common kmalloc functions provided by all allocators
+>   */
+> -void * __must_check krealloc(const void *objp, size_t new_size, gfp_t flags) __alloc_size(2);
+> +void * __must_check krealloc(const void *objp, size_t new_size, gfp_t flags) __realloc_size(2);
+>  void kfree(const void *objp);
+>  void kfree_sensitive(const void *objp);
+>  size_t __ksize(const void *objp);
+> @@ -647,10 +647,10 @@ static inline __alloc_size(1, 2) void *kmalloc_array(size_t n, size_t size, gfp_
+>   * @new_size: new size of a single member of the array
+>   * @flags: the type of memory to allocate (see kmalloc)
+>   */
+> -static inline __alloc_size(2, 3) void * __must_check krealloc_array(void *p,
+> -								    size_t new_n,
+> -								    size_t new_size,
+> -								    gfp_t flags)
+> +static inline __realloc_size(2, 3) void * __must_check krealloc_array(void *p,
+> +								      size_t new_n,
+> +								      size_t new_size,
+> +								      gfp_t flags)
+>  {
+>  	size_t bytes;
+>  
+> @@ -774,7 +774,7 @@ static inline __alloc_size(1, 2) void *kvcalloc(size_t n, size_t size, gfp_t fla
+>  }
+>  
+>  extern void *kvrealloc(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
+> -		      __alloc_size(3);
+> +		      __realloc_size(3);
+>  extern void kvfree(const void *addr);
+>  extern void kvfree_sensitive(const void *addr, size_t len);
+>  
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 17996649cfe3..457671ace7eb 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1134,8 +1134,8 @@ module_init(slab_proc_init);
+>  
+>  #endif /* CONFIG_SLAB || CONFIG_SLUB_DEBUG */
+>  
+> -static __always_inline void *__do_krealloc(const void *p, size_t new_size,
+> -					   gfp_t flags)
+> +static __always_inline __realloc_size(2) void *
+> +__do_krealloc(const void *p, size_t new_size, gfp_t flags)
+>  {
+>  	void *ret;
+>  	size_t ks;
+> -- 
+> 2.34.1
+> 
 
-Sure. Sorry for the delay, needed to integrate some fixes (such as
-aarch64 support) and factor out the bits that won't build if you don't
-have a patched liburing.
+This is now squashed with later one. (so undefined __alloc_size__ issues are fixed)
+for the latest version of this patch:
 
-https://github.com/joshtriplett/spawnbench
+Looks good to me,
+Acked-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-- Josh Triplett
+-- 
+Thanks,
+Hyeonggon
