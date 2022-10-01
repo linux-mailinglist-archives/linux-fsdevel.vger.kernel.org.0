@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 740045F1D59
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Oct 2022 17:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5FE35F1D5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Oct 2022 17:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiJAPud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Oct 2022 11:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50304 "EHLO
+        id S229685AbiJAPuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Oct 2022 11:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiJAPtu (ORCPT
+        with ESMTP id S229697AbiJAPtv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Oct 2022 11:49:50 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9696EA4;
-        Sat,  1 Oct 2022 08:49:42 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id sd10so14633157ejc.2;
-        Sat, 01 Oct 2022 08:49:42 -0700 (PDT)
+        Sat, 1 Oct 2022 11:49:51 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F6311447;
+        Sat,  1 Oct 2022 08:49:44 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id lc7so14618933ejb.0;
+        Sat, 01 Oct 2022 08:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=C+GyJq5HgV0Z7OWkJYmIbswU12VCmy8zCOP8Qkw/Jxk=;
-        b=JX+QhPsgsYH+4Y5925GaOBrdj9lBxxjGtGsfghXR46TFeSk6Yk73Ebx09carhitfhK
-         3sD+hWonnh8GIDKobAfguFdyEn2nFGQyMttYCv4QNmXVi3PU1DRzdYaoc9yEFxGaiELi
-         zpTNf4K22+pB7GL5oX7YDfispzABA0AeDE4/rf6nydRK4K5g1NpEeoQalW/pxA5Cmzwe
-         MNaxnYSPonmETpB8d/ks3a/FlWKhXcx1OGVUo0x12cwszXeOaWPvvuilFFqU9HaeppBZ
-         hZXGD7OfrrpQbRa5CyzzAfbzXhLdXnhheYU0jgMZ8zrXjSsrmfyKQlxpx9xGLbASlKbe
-         Ww5Q==
+        bh=f+KOAWe0KhtMfqIYi9lmduYl89HXgRqfpeb+3Xps7X0=;
+        b=JCZpl02+JQmwy/XJQKMYNcAoaoIfWYjZpvqR9X+JB6HoFgWbkul+aEo0fKEdLmzck2
+         QGvVjFHtokL4tBwAF+ZCIzKsID6ExoMDxhGbRjOV76Le2u19FzBqBUav6HskZLKqFjvZ
+         +uNVQ/p7nWzCFVtsETinntlJUHZvircrgsbmF52Eyr5Rl2QFkfI8UgFAAzbX+Ed8PBZa
+         dgMYg4NLUpsAZwMajjHIk9oPqmKFUQrf6qfRZJ0esNwn0U+CCRWN+d9PvIwAspJhPANd
+         K1WAgsZ558q2Asnis41Aphsh1yzhJN3PDq0N53oKKmu8MW423qCIVOS6gxz4AT5TeoH9
+         hiVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=C+GyJq5HgV0Z7OWkJYmIbswU12VCmy8zCOP8Qkw/Jxk=;
-        b=36ZhncJH/Y0fKzqxm9iMiPZoSxd0r3PwJjNRSrthbU/QNoQ09oVOcgo+4e5V3TGOc6
-         OEbbtetEMS5kYTClf7mwV9UtkfQW2M+VmxvyiwcH4ML8k9VfYtDqOuzDeTIk01Y+/kBD
-         PvYLwLZBHBbbvJhgpFuSqkNiCSsHrMp4BlJL8IsmvI3fYd99nJttk4m8c+xSQtOZmIzL
-         taud5eyRKPPO00mUYpnfHBurwgP/rTe0U7JkpwFwxNOIE+bZuRsUl6iHtzYJ6Ae+AGlO
-         //QK/yQkLhRjRqcOC3i1EFqZTte4ILgtBZF5M4JRkmV4qhGNeeUwiIenUOYJMpIsEZt6
-         VI0A==
-X-Gm-Message-State: ACrzQf2uP2xR14wc4Wjm4z9SvG2nMhHJ2UgO9bo+9ywWE7Q0KUANzgKg
-        7UTBWSwTbqIjVwWxId5sEqqiI7F5Ljg=
-X-Google-Smtp-Source: AMsMyM682WsbaP7pWXQEJnQk9dUkboey1i8Vo103/2qFv1Had2nQ3ViU/u11AS9TaMpQ59i2C3hmVQ==
-X-Received: by 2002:a17:906:da86:b0:77a:52b3:da48 with SMTP id xh6-20020a170906da8600b0077a52b3da48mr9757858ejb.373.1664639381441;
-        Sat, 01 Oct 2022 08:49:41 -0700 (PDT)
+        bh=f+KOAWe0KhtMfqIYi9lmduYl89HXgRqfpeb+3Xps7X0=;
+        b=fLJylHi6k3hB/HqB9lKlZLvh12QSB399u9c3rN4OubrVBkwy4jVUYfaAJr4Fd/MUj5
+         tkOdMohUNBvQ417NWrGbiTow7b8h16uftGZF1XTm52qNib8OdnXx3faEj36qJX5k4+SE
+         bkc/ax3cbrpGs/zoV533jZEyizJ8M91eS/OhAVcDVn5jPwdonYOZoQcAzUXtzIcEu1no
+         3thsul+1ye+HNlwZW/cNzl71RrEdvkJS5EQvrivzQCG06b1Lh9SlwHzyP+6cWMwXWfBK
+         I4hVZbRp729n5WMwjiMjiIozjlGyoYgPstw6HQQiBZbPog2ABFj8Kk++ip5Y6eKUGtif
+         m0yw==
+X-Gm-Message-State: ACrzQf3nxLWkOsQQ/xwgnU7DOalgSj+SpCvVpzz8154D7Uf2HpccG0Gc
+        38C9pG59BVPppNs4KFrSttrjEFtrH3U=
+X-Google-Smtp-Source: AMsMyM7JjgB5TM0RJ2FVWlXc+NxkH/6IIkNeynX+ipuNTXA2D0Xb8F13w2ZCBTX4TwaY6yPRQ2kstg==
+X-Received: by 2002:a17:906:4fcf:b0:781:cb5a:dfa5 with SMTP id i15-20020a1709064fcf00b00781cb5adfa5mr9705827ejw.213.1664639382909;
+        Sat, 01 Oct 2022 08:49:42 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id d26-20020aa7d69a000000b00458cc5f802asm617151edr.73.2022.10.01.08.49.40
+        by smtp.gmail.com with ESMTPSA id d26-20020aa7d69a000000b00458cc5f802asm617151edr.73.2022.10.01.08.49.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Oct 2022 08:49:41 -0700 (PDT)
+        Sat, 01 Oct 2022 08:49:42 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -58,9 +58,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v8 8/9] samples/landlock: Extend sample tool to support LANDLOCK_ACCESS_FS_TRUNCATE
-Date:   Sat,  1 Oct 2022 17:49:07 +0200
-Message-Id: <20221001154908.49665-9-gnoack3000@gmail.com>
+Subject: [PATCH v8 9/9] landlock: Document Landlock's file truncation support
+Date:   Sat,  1 Oct 2022 17:49:08 +0200
+Message-Id: <20221001154908.49665-10-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221001154908.49665-1-gnoack3000@gmail.com>
 References: <20221001154908.49665-1-gnoack3000@gmail.com>
@@ -77,65 +77,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update the sandboxer sample to restrict truncate actions. This is
-automatically enabled by default if the running kernel supports
-LANDLOCK_ACCESS_FS_TRUNCATE, except for the paths listed in the
-LL_FS_RW environment variable.
+Use the LANDLOCK_ACCESS_FS_TRUNCATE flag in the tutorial.
+
+Adapt the backwards compatibility example and discussion to remove the
+truncation flag where needed.
+
+Point out potential surprising behaviour related to truncate.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- samples/landlock/sandboxer.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ Documentation/userspace-api/landlock.rst | 66 +++++++++++++++++++++---
+ 1 file changed, 59 insertions(+), 7 deletions(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 3e404e51ec64..771b6b10d519 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -76,7 +76,8 @@ static int parse_path(char *env_path, const char ***const path_list)
- #define ACCESS_FILE ( \
- 	LANDLOCK_ACCESS_FS_EXECUTE | \
- 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
--	LANDLOCK_ACCESS_FS_READ_FILE)
-+	LANDLOCK_ACCESS_FS_READ_FILE | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index b8ea59493964..44d6f598b63d 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -8,7 +8,7 @@ Landlock: unprivileged access control
+ =====================================
  
- /* clang-format on */
+ :Author: Mickaël Salaün
+-:Date: May 2022
++:Date: October 2022
  
-@@ -160,10 +161,8 @@ static int populate_ruleset(const char *const env_var, const int ruleset_fd,
- 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
- 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
--	LANDLOCK_ACCESS_FS_REFER)
--
--#define ACCESS_ABI_2 ( \
--	LANDLOCK_ACCESS_FS_REFER)
-+	LANDLOCK_ACCESS_FS_REFER | \
-+	LANDLOCK_ACCESS_FS_TRUNCATE)
+ The goal of Landlock is to enable to restrict ambient rights (e.g. global
+ filesystem access) for a set of processes.  Because Landlock is a stackable
+@@ -60,7 +60,8 @@ the need to be explicit about the denied-by-default access rights.
+             LANDLOCK_ACCESS_FS_MAKE_FIFO |
+             LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+             LANDLOCK_ACCESS_FS_MAKE_SYM |
+-            LANDLOCK_ACCESS_FS_REFER,
++            LANDLOCK_ACCESS_FS_REFER |
++            LANDLOCK_ACCESS_FS_TRUNCATE,
+     };
  
- /* clang-format on */
+ Because we may not know on which kernel version an application will be
+@@ -69,16 +70,27 @@ should try to protect users as much as possible whatever the kernel they are
+ using.  To avoid binary enforcement (i.e. either all security features or
+ none), we can leverage a dedicated Landlock command to get the current version
+ of the Landlock ABI and adapt the handled accesses.  Let's check if we should
+-remove the `LANDLOCK_ACCESS_FS_REFER` access right which is only supported
+-starting with the second version of the ABI.
++remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
++access rights, which are only supported starting with the second and third
++version of the ABI.
  
-@@ -226,11 +225,17 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		return 1;
- 	}
- 	/* Best-effort security. */
--	if (abi < 2) {
--		ruleset_attr.handled_access_fs &= ~ACCESS_ABI_2;
--		access_fs_ro &= ~ACCESS_ABI_2;
--		access_fs_rw &= ~ACCESS_ABI_2;
-+	switch (abi) {
-+	case 1:
-+		/* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
-+		__attribute__((fallthrough));
-+	case 2:
-+		/* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
-+		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
- 	}
-+	access_fs_ro &= ruleset_attr.handled_access_fs;
-+	access_fs_rw &= ruleset_attr.handled_access_fs;
+ .. code-block:: c
  
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+     int abi;
+ 
+     abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+-    if (abi < 2) {
++    if (abi < 0) {
++        perror("The running kernel does not enable to use Landlock");
++        return 0;  /* Degrade gracefully if Landlock is not handled. */
++    }
++    switch (abi) {
++    case 1:
++        /* Removes LANDLOCK_ACCESS_FS_REFER for ABI < 2 */
+         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_REFER;
++        __attribute__((fallthrough));
++    case 2:
++        /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
++        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
+     }
+ 
+ This enables to create an inclusive ruleset that will contain our rules.
+@@ -127,8 +139,8 @@ descriptor.
+ 
+ It may also be required to create rules following the same logic as explained
+ for the ruleset creation, by filtering access rights according to the Landlock
+-ABI version.  In this example, this is not required because
+-`LANDLOCK_ACCESS_FS_REFER` is not allowed by any rule.
++ABI version.  In this example, this is not required because all of the requested
++``allowed_access`` rights are already available in ABI 1.
+ 
+ We now have a ruleset with one rule allowing read access to ``/usr`` while
+ denying all other handled accesses for the filesystem.  The next step is to
+@@ -251,6 +263,37 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
+ process, a sandboxed process should have a subset of the target process rules,
+ which means the tracee must be in a sub-domain of the tracer.
+ 
++Truncating files
++----------------
++
++The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
++``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
++overlap in non-intuitive ways.  It is recommended to always specify both of
++these together.
++
++A particularly surprising example is :manpage:`creat(2)`.  The name suggests
++that this system call requires the rights to create and write files.  However,
++it also requires the truncate right if an existing file under the same name is
++already present.
++
++It should also be noted that truncating files does not require the
++``LANDLOCK_ACCESS_FS_WRITE_FILE`` right.  Apart from the :manpage:`truncate(2)`
++system call, this can also be done through :manpage:`open(2)` with the flags
++``O_RDONLY | O_TRUNC``.
++
++When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
++right is associated with the newly created file descriptor and will be used for
++subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
++similar to opening a file for reading or writing, where permissions are checked
++during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
++:manpage:`write(2)` calls.
++
++As a consequence, it is possible to have multiple open file descriptors for the
++same file, where one grants the right to truncate the file and the other does
++not.  It is also possible to pass such file descriptors between processes,
++keeping their Landlock properties, even when these processes do not have an
++enforced Landlock ruleset.
++
+ Compatibility
+ =============
+ 
+@@ -397,6 +440,15 @@ Starting with the Landlock ABI version 2, it is now possible to securely
+ control renaming and linking thanks to the new `LANDLOCK_ACCESS_FS_REFER`
+ access right.
+ 
++File truncation (ABI < 3)
++-------------------------
++
++File truncation could not be denied before the third Landlock ABI, so it is
++always allowed when using a kernel that only supports the first or second ABI.
++
++Starting with the Landlock ABI version 3, it is now possible to securely control
++truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
++
+ .. _kernel_support:
+ 
+ Kernel support
 -- 
 2.37.3
 
