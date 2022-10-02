@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2A65F2105
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 04:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 433195F2107
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 04:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbiJBCV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Oct 2022 22:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
+        id S229449AbiJBCWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Oct 2022 22:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbiJBCV1 (ORCPT
+        with ESMTP id S229488AbiJBCWL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Oct 2022 22:21:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A778C402DB;
-        Sat,  1 Oct 2022 19:21:26 -0700 (PDT)
+        Sat, 1 Oct 2022 22:22:11 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AB8402EC;
+        Sat,  1 Oct 2022 19:22:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 70D34B80C83;
-        Sun,  2 Oct 2022 02:21:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0321AC433D7;
-        Sun,  2 Oct 2022 02:21:23 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 08E3FCE0934;
+        Sun,  2 Oct 2022 02:22:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2478EC43144;
+        Sun,  2 Oct 2022 02:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664677284;
-        bh=YH0ShThQ4+0N594gN4ajzeEXXyGCGIdiAzO873H+QA8=;
+        s=k20201202; t=1664677327;
+        bh=b51DYrE7TDbzSmHbIA9G35Mls3Smyumbe5DWegWVzZo=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Dh6klk44xR4BYWWWS6o15pJixIJOlYkgGubL/cSt48C71xhduL89Iw79+8ieSICj+
-         WAQEoUgaanfiim0Jbs1w3CrsUgiqI+Mye/BrHo3YY4JbHtNDm95quZut0cPpMbHevk
-         7UofM+mFyABhNGyze5BHKAQzgqA3T5DIAXC1rq4KnxAd84tNPDpyMa9L+M7ymTzGmB
-         ntREPmYnKIeltTQRo07VDaExP5tIhQhERN4AL7xdNU+9xlJMHBzv/ltL9aYllinXDw
-         1sQByeD5nS6i3Gh0Zhb1LIz5mNN7wpI/NC0tYH995dF+pmcsXI9lgh0uWRctuL/CtG
-         ToFqDF4hExoKg==
-Received: by mail-oo1-f43.google.com with SMTP id c22-20020a4a4f16000000b00474a44441c8so4761778oob.7;
-        Sat, 01 Oct 2022 19:21:23 -0700 (PDT)
-X-Gm-Message-State: ACrzQf20aeqgyTLkMxkq8FxPlG2A4UNdeYhqdkaK/T3RG52N8mmlVgy0
-        9acusUUCSnARVKGMdBuEv8EpnLYWxV+OWmNFkVc=
-X-Google-Smtp-Source: AMsMyM7BFsRH8BKKXcnHa8OYkoeqdw8ulx1IQ3sX/yDYdwJSfd536nBXrZdXv6lw7p2pbH7sRoYJ10AOLnmijvbJLvw=
-X-Received: by 2002:a9d:5603:0:b0:639:683b:82c7 with SMTP id
- e3-20020a9d5603000000b00639683b82c7mr5852061oti.187.1664677283112; Sat, 01
- Oct 2022 19:21:23 -0700 (PDT)
+        b=chcW1+urc+hsFPPz3d5nDoBB7Gup+/e/MAmQgZMcBSXxDYXQc5Oxw4KSM1gn72pCj
+         5++POfqGg4P1FeolFuqbbhMLleZ+tp0UrRPNZ7CSVCVg4Ylgz5h0untYvZBe8uyvYk
+         dbTqNeZrktQskBNU3GMQwG/EGXj7dKqaLYe6A56i6dZDz3B4efaLtI/dNdKvDqd9tx
+         zKYxT8+spRkXwDbMzaleb2wbzZr82cI1qvRtoGfHEDvKFCfKiUN7RVFqNbhhfjjTnZ
+         5LmAblZZYDsSndHxwjcRvJjVBD7ao8sdCTjpgooDrpKJhpz8xt9pqrd2tYpPhQDJvd
+         zuUXFizZFKQFg==
+Received: by mail-oi1-f181.google.com with SMTP id o64so8419493oib.12;
+        Sat, 01 Oct 2022 19:22:07 -0700 (PDT)
+X-Gm-Message-State: ACrzQf3jI9HI4h4y1gT2BZhHNV9eDvHtRqULexjBW9LQSY4hfwiOMh7S
+        UXMmKcNCWQA8wjCQHvWoQF/UeDhPlpD3JXEcXeY=
+X-Google-Smtp-Source: AMsMyM5xlPIajRHtfOBge6ZdxJ1WZfkCSYzQKuPxzDFDXdgTetAttIp9+stC4ertCehIPWUatFVB+3jdtTVSAoO7U7I=
+X-Received: by 2002:a05:6808:211d:b0:34f:e0fc:6e6e with SMTP id
+ r29-20020a056808211d00b0034fe0fc6e6emr1948215oiw.8.1664677326338; Sat, 01 Oct
+ 2022 19:22:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6838:27c7:0:0:0:0 with HTTP; Sat, 1 Oct 2022 19:21:22
+Received: by 2002:a05:6838:27c7:0:0:0:0 with HTTP; Sat, 1 Oct 2022 19:22:05
  -0700 (PDT)
-In-Reply-To: <Yzjdxr64MUoCASTH@ZenIV>
-References: <20220920224338.22217-1-linkinjeon@kernel.org> <20220920224338.22217-4-linkinjeon@kernel.org>
- <Yzjdxr64MUoCASTH@ZenIV>
+In-Reply-To: <YzjZgB1VL69eGUfK@ZenIV>
+References: <20220920224338.22217-1-linkinjeon@kernel.org> <20220920224338.22217-3-linkinjeon@kernel.org>
+ <YzjZgB1VL69eGUfK@ZenIV>
 From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sun, 2 Oct 2022 11:21:22 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8iSiot5Dh19kK_7av9Vqc-TpoPMgJzBHvWF9bsgU-9rg@mail.gmail.com>
-Message-ID: <CAKYAXd8iSiot5Dh19kK_7av9Vqc-TpoPMgJzBHvWF9bsgU-9rg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] ksmbd: fix racy issue from using ->d_parent and ->d_name
+Date:   Sun, 2 Oct 2022 11:22:05 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-biC1nEi-KnVbpf3OtMPr0xZKbvgjXm6pYVOpM_psVhQ@mail.gmail.com>
+Message-ID: <CAKYAXd-biC1nEi-KnVbpf3OtMPr0xZKbvgjXm6pYVOpM_psVhQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] fs: introduce lock_rename_child() helper
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
         smfrench@gmail.com, senozhatsky@chromium.org, tom@talpey.com,
@@ -65,57 +65,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-10-02 9:39 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
-> On Wed, Sep 21, 2022 at 07:43:38AM +0900, Namjae Jeon wrote:
+2022-10-02 9:21 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
+> On Wed, Sep 21, 2022 at 07:43:37AM +0900, Namjae Jeon wrote:
 >
 >
->> -int ksmbd_vfs_kern_path(struct ksmbd_work *work, char *name,
->> -			unsigned int flags, struct path *path, bool caseless)
->> +int ksmbd_vfs_kern_path_locked(struct ksmbd_work *work, char *name,
->> +			       unsigned int flags, struct path *path,
->> +			       bool caseless)
->>  {
->>  	struct ksmbd_share_config *share_conf = work->tcon->share_conf;
->>  	int err;
->> +	struct path parent_path;
->>
->> +	err = ksmbd_vfs_path_parent_lookup(share_conf, name, flags,
->> +					   &parent_path);
->>  	flags |= LOOKUP_BENEATH;
->> -	err = vfs_path_lookup(share_conf->vfs_path.dentry,
->> -			      share_conf->vfs_path.mnt,
->> -			      name,
->> -			      flags,
->> -			      path);
->> -	if (!err)
->> -		return 0;
->> +	if (!err) {
->> +		err = vfs_path_lookup(share_conf->vfs_path.dentry,
->> +				      share_conf->vfs_path.mnt,
->> +				      name,
->> +				      flags,
->> +				      path);
->> +		if (!err)
->> +			goto lock_parent;
->> +		path_put(&parent_path);
->
-> This is wrong.  You have already resolved the sucker to parent
-> + last component.  Now you ask vfs_path_lookup() to
-> 	* redo the same thing, hopefully arriving to the same
-> 	  spot.
-> 	* look the last component up in wherever it has arrived.
-> then you
-> 	* lock the place you'd originally arrived at
-> 	* check if the result of last lookup is its child (i.e.
-> it hadn't moved since we looked it up and lookup hopefully
-> arrived to the same spot for parent.
->
-> That's far too convoluted...
-Right. Need to avoid repeat lookup.
-I have called vfs_path_lookup() again to avoid accessing out of share
-and get struct path of child. I may try to change vfs_path_lookup()(or
-create new vfs function) to return struct path of parent as well
-struct path of child... ?
+> FWIW, it probably needs a few comments:
+I will add it on next spin.
 
 Thanks for your review!
+>
+> // c1 and p2 should be on the same fs
+>> +struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
+>> +{
+>> +	if (READ_ONCE(c1->d_parent) == p2) {
+> 		// hopefully won't need to touch ->s_vfs_rename_mutex at all.
+>> +		inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
+> 		// now that p2 is locked, nobody can move in or out of it,
+> 		// so the test below is safe
+>> +		if (likely(c1->d_parent == p2))
+>> +			return NULL;
+>> +
+> 		// c1 got moved out of p2 while we'd been taking locks;
+> 		// unlock and fall back to slow case
+>> +		inode_unlock(p2->d_inode);
+>> +	}
+>> +
+>> +	mutex_lock(&c1->d_sb->s_vfs_rename_mutex);
+> 	// nobody can move out of any directories on this fs
+>> +	if (likely(c1->d_parent != p2))
+>> +		return lock_two_directories(c1->d_parent, p2);
+>> +
+> 	// c1 got moved into p2 while we were taking locks;
+> 	// we need p2 locked and ->s_vfs_rename_mutex unlocked,
+> 	// for consistency with lock_rename().
+>> +	inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
+>> +	mutex_unlock(&c1->d_sb->s_vfs_rename_mutex);
+>> +	return NULL;
+>> +}
+>> +EXPORT_SYMBOL(lock_rename_child);
 >
