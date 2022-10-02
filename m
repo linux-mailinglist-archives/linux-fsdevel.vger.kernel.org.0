@@ -2,144 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26EC85F21AA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 09:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07ACF5F2229
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 11:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiJBHJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Oct 2022 03:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        id S229662AbiJBI76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Oct 2022 04:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiJBHJE (ORCPT
+        with ESMTP id S229623AbiJBI74 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Oct 2022 03:09:04 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B173F337;
-        Sun,  2 Oct 2022 00:09:03 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id d3so2016558uav.7;
-        Sun, 02 Oct 2022 00:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
-        b=Qy5cxZways54nm/9MLDMp7+yWjordQLhW4//q/MyefIXCYOy1h5MQByuVKHMix/oyX
-         h7FHj+ttjYM/fAIPn6+T5SEQqWWRSAwc3zlwOOqY2SOcjrgHQOgwsSBB5UwcCy+weIC6
-         Xa+gdIeodO4XtvTSIhF8TkLHdGRQ8F16yUUZcWnEQZBRm4A0ebUaZkW4lwEGpO4j91B2
-         rA0TYnsxr8rXrpTlO5ow2PiQ7a6brhQGV+SIkVbTPHAP++s5g8pfa6EJIjmsOUT1Wjxg
-         mO6BR6Am82qVA+aCQkWVTPoDkfFnokQBR+ZwfwzLo1fIR5O8W0GsZeqllCQHo4vqLVcr
-         QEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
-        b=d1JHtUrTqtYb7qJ3q7MvlBgLjNu47nU+89+P0+VYk+N5KtT5Dqpe+CiqLVzbMzMNLX
-         Kq+ryVQxBZ3zFom7RJcHBh883E7Q9BBMADK7u/X18m5CupjhMePWFhr+D1DriFPu3tyJ
-         07frTdR+TisO8AlU0HZ3t/6LN6GXWq8sI59CY1gQqOkehYk7N/h/4oKJAPp1SWApzk4H
-         JQB8Xeicp5t7uy/Q0sumsBrIyyq7n2J/THdGzFLjgYr9N3fhoKeSNAKFdkCxrySziNEr
-         9xytp8DybuPp6gO6M2SVgFMxlBb2lyOwTEM6xz61qcRkO8gGZrT+5OGL8JpXs2Lkx9kq
-         wJtQ==
-X-Gm-Message-State: ACrzQf1THfFcyAhO//5QSgvz30judBjegzIVkIC/XRUvPZImdRptP54z
-        WUTMUIvhIo3tseuXnXYFbpFEEWzUQxbtRXQY520=
-X-Google-Smtp-Source: AMsMyM4lxq8AMEBGfxhYSFJxHI6bK6WI16yGisB2NddH2eWCjim+p2nhUlJ9NU/wgxtpH+PtkMxn0OySNuUsyVaDhoI=
-X-Received: by 2002:a9f:3562:0:b0:3d0:ad99:b875 with SMTP id
- o89-20020a9f3562000000b003d0ad99b875mr8123774uao.102.1664694542759; Sun, 02
- Oct 2022 00:09:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220930111840.10695-1-jlayton@kernel.org> <20220930111840.10695-9-jlayton@kernel.org>
-In-Reply-To: <20220930111840.10695-9-jlayton@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 2 Oct 2022 10:08:51 +0300
-Message-ID: <CAOQ4uxgofERYwN7AfYFWqQMpQH5y3LV+6UuGfjU29gZXNf7-vQ@mail.gmail.com>
-Subject: Re: [PATCH v6 8/9] vfs: update times after copying data in __generic_file_write_iter
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
+        Sun, 2 Oct 2022 04:59:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5768C13E08
+        for <linux-fsdevel@vger.kernel.org>; Sun,  2 Oct 2022 01:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664701190;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uUV7VJSlnQzJ38mxDgh5xaYxjeTtv351HITh3SQqr0M=;
+        b=J46bbuSI5IceDu/XUYlcFprpldDrc2at2L3QOgyjjgZ0nrMk6A5QbB/rZPK1zCErmaqPEu
+        8IcM0MqzIDsTt5EWehSnuP8S/TyQZtNr64Pek5+phLy+M5KrR7Xj/PyhxDrH+SDnl8EBHL
+        QNOA9ttI82hclbPucAYNbpd1SMrSlMI=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-614-A5meftXDO-6l48yy-yhurA-1; Sun, 02 Oct 2022 04:59:47 -0400
+X-MC-Unique: A5meftXDO-6l48yy-yhurA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 26727380670A;
+        Sun,  2 Oct 2022 08:59:47 +0000 (UTC)
+Received: from starship (unknown [10.40.192.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD77B40C206B;
+        Sun,  2 Oct 2022 08:59:44 +0000 (UTC)
+Message-ID: <28ce86c01271c1b9b8f96a7783b55a8d458325d2.camel@redhat.com>
+Subject: Re: Commit 'iomap: add support for dma aligned direct-io' causes
+ qemu/KVM boot failures
+From:   Maxim Levitsky <mlevitsk@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, kvm@vger.kernel.org,
+        Kevin Wolf <kwolf@redhat.com>,
+        Michael Roth <mdroth@linux.vnet.ibm.com>
+Date:   Sun, 02 Oct 2022 11:59:42 +0300
+In-Reply-To: <32db4f89-a83f-aac4-5d27-0801bdca60bf@redhat.com>
+References: <fb869c88bd48ea9018e1cc349918aa7cdd524931.camel@redhat.com>
+         <YzW+Mz12JT1BXoZA@kbusch-mbp.dhcp.thefacebook.com>
+         <a2825beac032fd6a76838164d4e2753d30305897.camel@redhat.com>
+         <YzXJwmP8pa3WABEG@kbusch-mbp.dhcp.thefacebook.com>
+         <20220929163931.GA10232@lst.de>
+         <32db4f89-a83f-aac4-5d27-0801bdca60bf@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 2:30 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> The c/mtime and i_version currently get updated before the data is
-> copied (or a DIO write is issued), which is problematic for NFS.
->
-> READ+GETATTR can race with a write (even a local one) in such a way as
-> to make the client associate the state of the file with the wrong change
-> attribute. That association can persist indefinitely if the file sees no
-> further changes.
->
-> Move the setting of times to the bottom of the function in
-> __generic_file_write_iter and only update it if something was
-> successfully written.
->
+On Thu, 2022-09-29 at 19:35 +0200, Paolo Bonzini wrote:
+> On 9/29/22 18:39, Christoph Hellwig wrote:
+> > On Thu, Sep 29, 2022 at 10:37:22AM -0600, Keith Busch wrote:
+> > > > I am aware, and I've submitted the fix to qemu here:
+> > > > 
+> > > >   https://lists.nongnu.org/archive/html/qemu-block/2022-09/msg00398.html
+> > > 
+> > > I don't think so. Memory alignment and length granularity are two completely
+> > > different concepts. If anything, the kernel's ABI had been that the length
+> > > requirement was also required for the memory alignment, not the other way
+> > > around. That usage will continue working with this kernel patch.
 
-This solution is wrong for several reasons:
+Yes, this is how I also understand it - for example for O_DIRECT on a file which
+resides on 4K block device, you have to use page aligned buffers.
 
-1. There is still file_update_time() in ->page_mkwrite() so you haven't
-    solved the problem completely
-2. The other side of the coin is that post crash state is more likely to end
-    up data changes without mtime/ctime change
+But here after the patch, 512 aligned buffer starts working as well - If I
+understand you correctly the ABI didn't guarantee that such usage would fail,
+but rather that it might fail.
 
-If I read the problem description correctly, then a solution that invalidates
-the NFS cache before AND after the write would be acceptable. Right?
-Would an extra i_version bump after the write solve the race?
+> > 
+> > Well, Linus does treat anything that breaks significant userspace
+> > as a regression.  Qemu certainly is significant, but that might depend
+> > on bit how common configurations hitting this issue are.
+> 
+> Seeing the QEMU patch, I agree that it's a QEMU bug though.  I'm 
+> surprised it has ever worked.
+> 
+> It requires 4K sectors in the host but not in the guest, and can be 
+> worked around (if not migrating) by disabling O_DIRECT.  I think it's 
+> not that awful, but we probably should do some extra releases of QEMU 
+> stable branches.
+> 
+> Paolo
+> 
 
-> If the time update fails, log a warning once, but don't fail the write.
-> All of the existing callers use update_time functions that don't fail,
-> so we should never trip this.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  mm/filemap.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 15800334147b..72c0ceb75176 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3812,10 +3812,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->         if (err)
->                 goto out;
->
-> -       err = file_update_time(file);
-> -       if (err)
-> -               goto out;
-> -
->         if (iocb->ki_flags & IOCB_DIRECT) {
->                 loff_t pos, endbyte;
->
-> @@ -3868,6 +3864,19 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->                         iocb->ki_pos += written;
->         }
->  out:
-> +       if (written > 0) {
-> +               err = file_update_time(file);
-> +               /*
-> +                * There isn't much we can do at this point if updating the
-> +                * times fails after a successful write. The times and i_version
-> +                * should still be updated in the inode, and it should still be
-> +                * marked dirty, so hopefully the next inode update will catch it.
-> +                * Log a warning once so we have a record that something untoward
-> +                * has occurred.
-> +                */
-> +               WARN_ONCE(err, "Failed to update m/ctime after write: %ld\n", err);
+I must admit I am out of the loop on the exact requirements of the O_DIRECT.
 
-pr_warn_once() please - this is not a programming assertion.
 
-Thanks,
-Amir.
+If I understand that correctly, after the patch in question, 
+qemu is able to use just 512 bytes aligned buffer to read a single 4K block from the disk,
+which supposed to fail but wasn't guarnteed to fail.
+
+
+
+Later qemu it submits iovec which also reads a 4K block but in two parts,
+and if I understand that correctly, each part (iov) is considered
+to be a separate IO operation,  and thus each has to be in my case 4K in size, 
+and its memory buffer *should* also be 4K aligned.
+
+(but it can work with smaller alignement as well).
+
+
+Assuming that I understand all of this correctly, I agree with Paolo that this is qemu
+bug, but I do fear that it can cause quite some problems for users,
+especially for users that use outdated qemu version.
+
+It might be too much to ask, but maybe add a Kconfig option to keep legacy behavier
+for those that need it?
+
+Best regards,
+	Maxim Levitsky
+
