@@ -2,45 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1465F2497
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 20:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 002E75F24BB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Oct 2022 20:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbiJBSX0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Oct 2022 14:23:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
+        id S230051AbiJBS0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Oct 2022 14:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbiJBSXZ (ORCPT
+        with ESMTP id S230042AbiJBS0f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Oct 2022 14:23:25 -0400
+        Sun, 2 Oct 2022 14:26:35 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0250D25295;
-        Sun,  2 Oct 2022 11:23:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CEC3B964;
+        Sun,  2 Oct 2022 11:26:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 69FD960EFD;
-        Sun,  2 Oct 2022 18:23:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2336C433D6;
-        Sun,  2 Oct 2022 18:23:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B99A660EDE;
+        Sun,  2 Oct 2022 18:26:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FB1C433D6;
+        Sun,  2 Oct 2022 18:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664735002;
-        bh=R5rco/Adg7gtF7f1H6/jhwzvu66VL8b5efPjc60F8JE=;
-        h=Subject:From:To:Cc:Date:From;
-        b=Ob/+xzT+puItAXkn3G1LgEB/mHyeM2CuDLUMw/XWX1r0Nn/yIO3dhH7LfJEaidM7J
-         Mb42PVC1LpqE+vhqPKXg4yYpbdpMAiBqtaZ7QMtp6OTZ9cBoKMzdy1syL3EHq43hhx
-         nyQzyYUKw6PpFGiTloexLSOGV3dYMOTwDbLXcI0StrbW5qXjdAQDY7HVD/zymD7rhm
-         ObFmFZwNs+qzsCTnkJzXT93Xv+9uIFEQUvGignDolefD32ZeTHvAOwKWMZwdwUjZgJ
-         ETMj47uj4rGWFdHGj2a+sHvhOHr216bIaGyLJzK98b3169KXvCnJi5H0gYd+KPrV7D
-         XaQnHtcnMp/Ow==
-Subject: [PATCHSET v23.3 00/14] xfs: design documentation for online fsck
+        s=k20201202; t=1664735193;
+        bh=3TBobX9+9uWQtWiejgnGXs1+CCPY04Ay4wouRdTWzUw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pO4U+L8WtBB3Z3MSO0jolhxo+mD0KSyrCOurxDeR7qdym/eH0VFQ+2KxHq6Vkp6tu
+         CLEX66nsmyerX9RIJtWwqHORos24LPkiwmFF1X+PCTPmXVgELRdrRqoVkvVzvjV5do
+         QP0dnjF5zfg2zzFG/o9kpEA15x3kq9C++TYP2R07YmaGDYR6NeVZbCn5uUTlbjKuev
+         X9rxJYDxTQxP19uDZ56ES+kZbqchHiv32EWD0qWo0V561neNbX8nAyaAAoeHIGv3NN
+         4ADvifJcBBkVX/Vbet66QVG1wpENVaZq1TakGpHFEUIO2dk2LG7n4EwF+2CtYmQaIV
+         vaUU4IDSucxjA==
+Subject: [PATCH 09/14] xfs: document online file metadata repair code
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com, david@fromorbit.com
-Date:   Sun, 02 Oct 2022 11:19:43 -0700
-Message-ID: <166473478338.1082796.8807888906305023929.stgit@magnolia>
+Date:   Sun, 02 Oct 2022 11:19:44 -0700
+Message-ID: <166473478486.1082796.11670617428892270355.stgit@magnolia>
+In-Reply-To: <166473478338.1082796.8807888906305023929.stgit@magnolia>
+References: <166473478338.1082796.8807888906305023929.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,109 +56,174 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Darrick J. Wong <djwong@kernel.org>
 
-After six years of development and a nearly two year hiatus from
-patchbombing, I think it is time to resume the process of merging the
-online fsck feature into XFS.  The full patchset comprises 105 separate
-patchsets that capture 470 patches across the kernel, xfsprogs, and
-fstests projects.
+Add to the fifth chapter of the online fsck design documentation, where
+we discuss the details of the data structures and algorithms used by the
+kernel to repair file metadata.
 
-I would like to merge this feature into upstream in time for the 2023
-LTS kernel.  As of 5.15 (aka last year's LTS), we have merged all
-generally useful infrastructure improvements into the regular
-filesystem.  The only changes to the core filesystem that remain are the
-ones that are only useful to online fsck itself.  In other words, the
-vast majority of the new code in the patchsets comprising the online
-fsck feature are is mostly self contained and can be turned off via
-Kconfig.
-
-Many of you readers might be wondering -- why have I chosen to make one
-large submission with 100+ patchsets comprising ~500 patches?  Why
-didn't I merge small pieces of functionality bit by bit and revise
-common code as necessary?  Well, the simple answer is that in the past
-six years, the fundamental algorithms have been revised repeatedly as
-I've built out the functionality.  In other words, the codebase as it is
-now has the benefit that I now know every piece that's necessary to get
-the job done in a reasonable manner and within the constraints laid out
-by community reviews.  I believe this has reduced code churn in mainline
-and freed up my time so that I can iterate faster.
-
-As a concession to the mail servers, I'm breaking up the submission into
-smaller pieces; I'm only pushing the design document and the revisions
-to the existing scrub code, which is the first 20% of the patches.
-Also, I'm arbitrarily restarting the version numbering by reversioning
-all patchsets from version 22 to epoch 23, version 1.
-
-The big question to everyone reading this is: How might I convince you
-that there is more merit in merging the whole feature and dealing with
-the consequences than continuing to maintain it out of tree?
-
----------
-
-To prepare the XFS community and potential patch reviewers for the
-upstream submission of the online fsck feature, I decided to write a
-document capturing the broader picture behind the online repair
-development effort.  The document begins by defining the problems that
-online fsck aims to solve and outlining specific use cases for the
-functionality.
-
-Using that as a base, the rest of the design document presents the high
-level algorithms that fulfill the goals set out at the start and the
-interactions between the large pieces of the system.  Case studies round
-out the design documentation by adding the details of exactly how
-specific parts of the online fsck code integrate the algorithms with the
-filesystem.
-
-The goal of this effort is to help the XFS community understand how the
-gigantic online repair patchset works.  The questions I submit to the
-community reviewers are:
-
-1. As you read the design doc (and later the code), do you feel that you
-   understand what's going on well enough to try to fix a bug if you
-   found one?
-
-2. What sorts of interactions between systems (or between scrub and the
-   rest of the kernel) am I missing?
-
-3. Do you feel confident enough in the implementation as it is now that
-   the benefits of merging the feature (as EXPERIMENTAL) outweigh any
-   potential disruptions to XFS at large?
-
-4. Are there problematic interactions between subsystems that ought to
-   be cleared up before merging?
-
-I intend to commit this document to the kernel's documentation directory
-when we start merging the patchset, albeit without the links to
-git.kernel.org.  A much more readable version of this is posted at:
-https://djwong.org/docs/xfs-online-fsck-design/
-
-v2: add missing sections about: all the in-kernel data structures and
-    new apis that the scrub and repair functions use; how xattrs and
-    directories are checked; how space btree records are checked; and
-    add more details to the parts where all these bits tie together.
-    Proofread for verb tense inconsistencies and eliminate vague 'we'
-    usage.  Move all the discussion of what we can do with pageable
-    kernel memory into a single source file and section.  Document where
-    log incompat feature locks fit into the locking model.
-
-v3: resync with 6.0, fix a few typos, begin discussion of the merging
-    plan for this megapatchset.
-
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
-
-This is an extraordinary way to destroy everything.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=online-fsck-design
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- Documentation/filesystems/index.rst                |    1 
- .../filesystems/xfs-online-fsck-design.rst         | 4979 ++++++++++++++++++++
- .../filesystems/xfs-self-describing-metadata.rst   |    1 
- 3 files changed, 4981 insertions(+)
- create mode 100644 Documentation/filesystems/xfs-online-fsck-design.rst
+ .../filesystems/xfs-online-fsck-design.rst         |  150 ++++++++++++++++++++
+ 1 file changed, 150 insertions(+)
+
+
+diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
+index c41f089549a0..10709dc74dcb 100644
+--- a/Documentation/filesystems/xfs-online-fsck-design.rst
++++ b/Documentation/filesystems/xfs-online-fsck-design.rst
+@@ -2872,3 +2872,153 @@ The allocation group free block list (AGFL) is repaired as follows:
+ 4. Once the AGFL is full, reap any blocks leftover.
+ 
+ 5. The next operation to fix the freelist will right-size the list.
++
++Inode Record Repairs
++--------------------
++
++Inode records must be handled carefully, because they have both ondisk records
++("dinodes") and an in-memory ("cached") representation.
++There is a very high potential for cache coherency issues if online fsck is not
++careful to access the ondisk metadata *only* when the ondisk metadata is so
++badly damaged that the filesystem cannot load the in-memory representation.
++When online fsck wants to open a damaged file for scrubbing, it must use
++specialized resource acquisition functions that return either the in-memory
++representation *or* a lock on whichever object is necessary to prevent any
++update to the ondisk location.
++
++The only repairs that should be made to the ondisk inode buffers are whatever
++is necessary to get the in-core structure loaded.
++This means fixing whatever is caught by the inode cluster buffer and inode fork
++verifiers, and retrying the ``iget`` operation.
++If the second ``iget`` fails, the repair has failed.
++
++Once the in-memory representation is loaded, repair can lock the inode and can
++subject it to comprehensive checks, repairs, and optimizations.
++Most inode attributes are easy to check and constrain, or are user-controlled
++arbitrary bit patterns; these are both easy to fix.
++Dealing with the data and attr fork extent counts and the file block counts is
++more complicated, because computing the correct value requires traversing the
++forks, or if that fails, leaving the fields invalid and waiting for the fork
++fsck functions to run.
++
++The proposed patchset is the
++`inode
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-inodes>`_
++repair series.
++
++Quota Record Repairs
++--------------------
++
++Similar to inodes, quota records ("dquots") also have both ondisk records and
++an in-memory representation, and hence are subject to the same cache coherency
++issues.
++Somewhat confusingly, both are known as dquots in the XFS codebase.
++
++The only repairs that should be made to the ondisk quota record buffers are
++whatever is necessary to get the in-core structure loaded.
++Once the in-memory representation is loaded, the only attributes needing
++checking are obviously bad limits and timer values.
++
++Quota usage counters are checked, repaired, and discussed separately in the
++section about :ref:`live quotacheck <quotacheck>`.
++
++The proposed patchset is the
++`quota
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-quota>`_
++repair series.
++
++.. _fscounters:
++
++Freezing to Fix Summary Counters
++--------------------------------
++
++Filesystem summary counters track availability of filesystem resources such
++as free blocks, free inodes, and allocated inodes.
++This information could be compiled by walking the free space and inode indexes,
++but this is a slow process, so XFS maintains a copy in the ondisk superblock
++that should reflect the ondisk metadata, at least when the filesystem has been
++unmounted cleanly.
++For performance reasons, XFS also maintains incore copies of those counters,
++which are key to enabling resource reservations for active transactions.
++Writer threads reserve the worst-case quantities of resources from the
++incore counter and give back whatever they don't use at commit time.
++It is therefore only necessary to serialize on the superblock when the
++superblock is being committed to disk.
++
++The lazy superblock counter feature introduced in XFS v5 took this even further
++by training log recovery to recompute the summary counters from the AG headers,
++which eliminated the need for most transactions even to touch the superblock.
++The only time XFS commits the summary counters is at filesystem unmount.
++To reduce contention even further, the incore counter is implemented as a
++percpu counter, which means that each CPU is allocated a batch of blocks from a
++global incore counter and can satisfy small allocations from the local batch.
++
++The high-performance nature of the summary counters makes it difficult for
++online fsck to check them, since there is no way to quiesce a percpu counter
++while the system is running.
++Although online fsck can read the filesystem metadata to compute the correct
++values of the summary counters, there's no way to hold the value of a percpu
++counter stable, so it's quite possible that the counter will be out of date by
++the time the walk is complete.
++Earlier versions of online scrub would return to userspace with an incomplete
++scan flag, but this is not a satisfying outcome for a system administrator.
++For repairs, the in-memory counters must be stabilize while walking the
++filesystem metadata to get an accurate reading and install it in the percpu
++counter.
++
++To satisfy this requirement, online fsck must prevent other programs in the
++system from initiating new writes to the filesystem, it must disable background
++garbage collection threads, and it must wait for existing writer programs to
++exit the kernel.
++Once that has been established, scrub can walk the AG free space indexes, the
++inode btrees, and the realtime bitmap to compute the correct value of all
++four summary counters.
++This is very similar to a filesystem freeze.
++
++The initial implementation used the actual VFS filesystem freeze mechanism to
++quiesce filesystem activity.
++With the filesystem frozen, it is possible to resolve the counter values with
++exact precision, but there are many problems with calling the VFS methods
++directly:
++
++- Other programs can unfreeze the filesystem without our knowledge.
++  This leads to incorrect scan results and incorrect repairs.
++
++- Adding an extra lock to prevent others from thawing the filesystem required
++  the addition of a ``->freeze_super`` function to wrap ``freeze_fs()``.
++  This in turn caused other subtle problems because it turns out that the VFS
++  ``freeze_super`` and ``thaw_super`` functions can drop the last reference to
++  the VFS superblock, and any subsequent access becomes a UAF bug!
++  This can happen if the filesystem is unmounted while the underlying block
++  device has frozen the filesystem.
++  This problem could be solved by grabbing extra references to the superblock,
++  but it felt suboptimal given the other inadequacies of this approach:
++
++- The log need not be quiesced to check the summary counters, but a VFS freeze
++  initiates one anyway.
++  This adds unnecessary runtime to live fscounter fsck operations.
++
++- Quiescing the log means that XFS flushes the (possibly incorrect) counters to
++  disk as part of cleaning the log.
++
++- A bug in the VFS meant that freeze could complete even when sync_filesystem
++  fails to flush the filesystem and returns an error.
++  This bug was fixed in Linux 5.17.
++
++The author established that the only component of online fsck that requires the
++ability to freeze the filesystem is the fscounter scrubber, so the code for
++this could be localized to that source file.
++fscounter freeze behaves the same as the VFS freeze method, except:
++
++- The final freeze state is set one higher than ``SB_FREEZE_COMPLETE`` to
++  prevent other threads from thawing the filesystem.
++
++- It does not quiesce the log.
++
++With this code in place, it is now possible to pause the filesystem for just
++long enough to check and correct the summary counters.
++
++The proposed patchset is the
++`summary counter cleanup
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-fscounters>`_
++series.
 
