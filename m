@@ -2,133 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEBAA5F2F3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5C45F2F79
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbiJCLBo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 07:01:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44452 "EHLO
+        id S229702AbiJCLVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 07:21:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiJCLBl (ORCPT
+        with ESMTP id S229451AbiJCLVO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 07:01:41 -0400
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39D102711;
-        Mon,  3 Oct 2022 04:01:40 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 1427B2B0693A;
-        Mon,  3 Oct 2022 07:01:36 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 03 Oct 2022 07:01:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1664794895; x=1664802095; bh=zW
-        dvG4+iogw6diIyocCUGRkeH6TacYI7IEyT3UtjbNg=; b=XW0tQq+0FScqGFQ+dF
-        EG6F8k62Rsx9LqjjPoMSaTzwILoz+/n7fDSAlh7WYeR96n8T61QlRplQ1RwjHMcl
-        5yeu/5/d9DsmVOkrwscLBOVYwK//hEwVRqSGfyOxvyaN6fDU3U9/Ul0OAyquCK4L
-        zRmP8Y/FYnAIVSX/EEgAEL/OVuR+e1x1q141vTbhzYa4Xr1+1qkB9dSxrZodeJSv
-        47Gsq3Ji5dnuN5ybt15lYTZBO4OY32j0R3nw90tsm7yRM3eI40KVNN4uiQQID7lJ
-        hQ73LO0XlNe44SV2CPb3saKmbWbVBGNI34ILjrBrcE4C2D0m6MgnGajRH8sJJMcx
-        k74Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1664794895; x=1664802095; bh=zWdvG4+iogw6diIyocCUGRkeH6Ta
-        cYI7IEyT3UtjbNg=; b=1sNbOr+reC4ozopaOlqM0nB+iKaIJWlgEvuSnvehqupR
-        +mlBVJgNgylpAZCIvqFPaIK2WPBApah/unlsgtS4kvfqTaq0BXfmuOgDyqL7ZnIQ
-        N4SHAmIclsBSegb6mvH9c6U6qgmglracDnl3H9l2JEzJ06uiMWBbM0OB6YGGTfWD
-        xnzX8C09pcaBkEsrBGKxi6+eppftTXbcrP0y67raFiRetpglM6SEeybTggLt0Jxu
-        nY7ma+CNPCBaDHOqaNh+TyiGfPgg6QbqgPqtYrZHB34i7u4TRk5W/6Bl6YElrJmP
-        flUk+OkuovZLsxzhxLvWeLYpKvAWNhY6chI73rMRtg==
-X-ME-Sender: <xms:DcE6Y6f52k5yy0Jlg1AeQ7dDWJCrmyiSx6kROu3hIkspfTGHK9TTRw>
-    <xme:DcE6Y0Nyco_uRp-K-WwZKELvbqi_T8WM-Zrx3OOkmBhxAu7gSWznB0GrnN29DXbFT
-    2-3FfUfe9_RpTMbUxY>
-X-ME-Received: <xmr:DcE6Y7gwh0050G_SwvT6qpZdBhwZjbBFjdHUuyL-6_rWH_mMo2iv_wfLg4oCQTj36_KCxg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeehledgfeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
-    ihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnh
-    grmhgvqeenucggtffrrghtthgvrhhnpefhieeghfdtfeehtdeftdehgfehuddtvdeuheet
-    tddtheejueekjeegueeivdektdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvg
-X-ME-Proxy: <xmx:DcE6Y3962DbaiPjQuEqjImm6i_1iQb_fS9v9CvfrtqHzYR-gAxDkXQ>
-    <xmx:DcE6Y2sGkiMEPQ8rZ-eMFeI2-zb7XvW71RUslSW8I3M3jgj-wl-pxQ>
-    <xmx:DcE6Y-F5e4wRoyMQiP3Pv56Fi1Qf4Te9r2uZ0-YIquinDsLq-5Ao1w>
-    <xmx:D8E6YzreQvrnUZwE5JTwmdtxSOE-mJJ5MYLVoAkceXUT8tLhySzNUatLQXA>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Oct 2022 07:01:33 -0400 (EDT)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 87A6C104CE4; Mon,  3 Oct 2022 14:01:29 +0300 (+03)
-Date:   Mon, 3 Oct 2022 14:01:29 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20221003110129.bbee7kawhw5ed745@box.shutemov.name>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <CA+EHjTyrexb_LX7Jm9-MGwm4DBvfjCrADH4oumFyAvs2_0oSYw@mail.gmail.com>
- <20220930162301.i226o523teuikygq@box.shutemov.name>
- <CA+EHjTyphrouY1FV2NQOBLDG81JYhiHFGBNKjT1K2j+pVNij+A@mail.gmail.com>
+        Mon, 3 Oct 2022 07:21:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6BD448E8C;
+        Mon,  3 Oct 2022 04:21:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D7687B80DBB;
+        Mon,  3 Oct 2022 11:21:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA68C433D6;
+        Mon,  3 Oct 2022 11:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664796069;
+        bh=jg7MY7RrGH/UWzZ2uF9JTzBj8fchRyPXo6PyTxKETEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WYkC+34SOMkYS5vN8WDH+82NNvMrKZY/eQrSdRJ3NkXCJg/od1vsNMsiczLqJsts0
+         nezSZY3otsNhEzFwfYDqmPjZwIftQTbI7nyZCqJKE+BdNSSIXcH722FIxQwSIE+M7q
+         xgpF5eYl/KxoWvcihFyRf0+vTQbVZgVlFBO3rxbPK9BxRSU9ZuV17FYZWc0URU7E8j
+         WEngTlgXncodegiu3v0OIRcD+f0sj+MNgBwi2xDcBgg4HG1AvejwahZv/Z/wzHT6QY
+         m8jPFeISnWhZt0Hqh1ltSjXKILT8gxWK539NEv0r5SkJLJJKHTVVmK89YCsXoV5cqH
+         f6Qp1IVoe2PcA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] acl updates for v6.1
+Date:   Mon,  3 Oct 2022 13:19:42 +0200
+Message-Id: <20221003111943.743391-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTyphrouY1FV2NQOBLDG81JYhiHFGBNKjT1K2j+pVNij+A@mail.gmail.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4612; i=brauner@kernel.org; h=from:subject; bh=jg7MY7RrGH/UWzZ2uF9JTzBj8fchRyPXo6PyTxKETEY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRbHdW5OGH3D+WK7G0fHnVGvheMV/3rkpdoM/GidN3DxI4/ 12ds7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIjOWMDCfNs/eoT3my6WNexWoGU4 ZdPbemC91+fDH3vvqk684vwhsZ/rvNeLTTOVrd2+79LsGvHi0SjEe2GcUd2py/0GWCwdNGKVYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 03, 2022 at 08:33:13AM +0100, Fuad Tabba wrote:
-> > I think it is "don't do that" category. inaccessible_register_notifier()
-> > caller has to know what file it operates on, no?
-> 
-> The thing is, you could oops the kernel from userspace. For that, all
-> you have to do is a memfd_create without the MFD_INACCESSIBLE,
-> followed by a KVM_SET_USER_MEMORY_REGION using that as the private_fd.
-> I ran into this using my port of this patch series to arm64.
+Hey Linus,
 
-My point is that it has to be handled on a different level. KVM has to
-reject private_fd if it is now inaccessible. It should be trivial by
-checking file->f_inode->i_sb->s_magic.
+/* Summary */
+These are general fixes and preparatory changes related to the ongoing posix
+acl rework. The actual rework where we build a type safe posix acl api wasn't
+ready for this merge window but we're hopeful for the v6.2 merge window.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+General fixes:
+* Some filesystems like 9p and cifs have to implement custom posix acl handlers
+  because they require access to the dentry in order to set and get posix acls
+  while the set and get inode operations currently don't. But the ntfs3
+  filesystem has no such requirement and thus implemented custom posix acl
+  xattr handlers when it really didn't have to. So this pr contains patch that
+  just implements set and get inode operations for ntfs3 and switches it to
+  rely on the generic posix acl xattr handlers. (We would've appreciated
+  reviews from the ntfs3 maintainers but we didn't get any. But hey, if we
+  really broke it we'll fix it. But fstests for ntfs3 said it's fine.)
+* The posix_acl_fix_xattr_common() helper has been adapted so it can be used by
+  a few more callers and avoiding open-coding the same checks over and over.
+
+Other than the two general fixes this series introduces a new helper
+vfs_set_acl_prepare(). The reason for this helper is so that we can mitigate
+one of the source that change {g,u}id values directly in the uapi struct. With
+the vfs_set_acl_prepare() helper we can move the idmapped mount fixup into the
+generic posix acl set handler.
+
+The advantage of this is that it allows us to remove the
+posix_acl_setxattr_idmapped_mnt() helper which so far we had to call in
+vfs_setxattr() to account for idmapped mounts. While semantically correct the
+problem with this approach was that we had to keep the value parameter of the
+generic vfs_setxattr() call as non-const. This is rectified in this series.
+
+Ultimately, we will get rid of all the extreme kludges and type unsafety once
+we have merged the posix api - hopefully during the next merge window - built
+solely around get and set inode operations. Which incidentally will also
+improve handling of posix acls in security and especially in integrity modesl.
+While this will come with temporarily having two inode operation for posix acls
+that is nothing compared to the problems we have right now and so well worth
+it. We'll end up with something that we can actually reason about instead of
+needing to write novels to explain what's going on.
+
+/* Testing */
+clang: Ubuntu clang version 14.0.0-1ubuntu1
+gcc:   gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
+
+All patches are based on v6.0-rc3 and have been sitting in linux-next. No build
+failures or warnings were observed. All old and new tests in fstests,
+selftests, and LTP pass without regressions.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
+
+The following changes since commit b90cb1053190353cc30f0fef0ef1f378ccc063c5:
+
+  Linux 6.0-rc3 (2022-08-28 15:05:29 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.acl.rework.prep.v6.1
+
+for you to fetch changes up to 38e316398e4e6338b80223fb5f74415c0513718f:
+
+  xattr: always us is_posix_acl_xattr() helper (2022-09-21 12:01:29 +0200)
+
+Please consider pulling these changes from the signed fs.acl.rework.prep.v6.1 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+fs.acl.rework.prep.v6.1
+
+----------------------------------------------------------------
+Christian Brauner (7):
+      ntfs3: rework xattr handlers and switch to POSIX ACL VFS helpers
+      acl: return EOPNOTSUPP in posix_acl_fix_xattr_common()
+      acl: add vfs_set_acl_prepare()
+      acl: move idmapping handling into posix_acl_xattr_set()
+      ovl: use vfs_set_acl_prepare()
+      xattr: constify value argument in vfs_setxattr()
+      xattr: always us is_posix_acl_xattr() helper
+
+Deming Wang (1):
+      acl: fix the comments of posix_acl_xattr_set
+
+ fs/ntfs3/inode.c                  |   2 -
+ fs/ntfs3/xattr.c                  | 102 +-------------
+ fs/overlayfs/overlayfs.h          |   2 +-
+ fs/overlayfs/super.c              |  15 +-
+ fs/posix_acl.c                    | 288 +++++++++++++++++++++++++++++---------
+ fs/xattr.c                        |  15 +-
+ include/linux/posix_acl_xattr.h   |  12 +-
+ include/linux/xattr.h             |   2 +-
+ security/integrity/evm/evm_main.c |  17 ++-
+ 9 files changed, 264 insertions(+), 191 deletions(-)
