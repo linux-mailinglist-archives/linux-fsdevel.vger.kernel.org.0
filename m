@@ -2,126 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DADE5F2B9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 10:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 619C65F2CF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 11:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiJCIWL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 04:22:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
+        id S231438AbiJCJKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 05:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiJCIVu (ORCPT
+        with ESMTP id S229480AbiJCJJR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 04:21:50 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6972A7AC15;
-        Mon,  3 Oct 2022 00:56:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 03A3B2199D;
-        Mon,  3 Oct 2022 07:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1664783704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Dwt0M+3sS5jciWoEfZ361h/7J8CUArjkqTvOekaboQM=;
-        b=zkThJ2TFJKFUEK3VylwDrcuP3qR0r+8zOoVjqqSHzXOI6usNom6OffXeZGMpe/GynYzi73
-        sQWnjyKxPucXtNlJ0gwCXCDOSp3Mxit3ZmYug0ZB8d6NdYAHk5apFRG/smhDgljnOMnWl0
-        oXPm/fEAi0u86y4+Bd97IzG2zIrXUoc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1664783704;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Dwt0M+3sS5jciWoEfZ361h/7J8CUArjkqTvOekaboQM=;
-        b=Ka3lq+tWamkJuoOp3to1B+06t8Js1FGSUPVxo2WCOJ4jJRaSTRqb4l+c0nHC3luZKW2MOy
-        L7hngvV2S5HeraCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E61881332F;
-        Mon,  3 Oct 2022 07:55:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 3yUiOFeVOmODUgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 03 Oct 2022 07:55:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7768DA06E6; Mon,  3 Oct 2022 09:55:03 +0200 (CEST)
-Date:   Mon, 3 Oct 2022 09:55:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>, akpm@linux-foundation.org,
-        Matthew Wilcox <willy@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] xfs: Add xfs_break_layouts() to the inode
- eviction path
-Message-ID: <20221003075503.k7h6aqvlnoi5bo52@quack3>
-References: <20220923001846.GX3600936@dread.disaster.area>
- <632d00a491d0d_4a67429488@dwillia2-xfh.jf.intel.com.notmuch>
- <20220923021012.GZ3600936@dread.disaster.area>
- <20220923093803.nroajmvn7twuptez@quack3>
- <20220925235407.GA3600936@dread.disaster.area>
- <20220926141055.sdlm3hkfepa7azf2@quack3>
- <63362b4781294_795a6294f0@dwillia2-xfh.jf.intel.com.notmuch>
- <20220930134144.pd67rbgahzcb62mf@quack3>
- <63372dcbc7f13_739029490@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <YzcwN67+QOqXpvfg@nvidia.com>
+        Mon, 3 Oct 2022 05:09:17 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D6DB18
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Oct 2022 02:07:01 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:d9a7:8e4b:c2c3:1759])
+        by xavier.telenet-ops.be with bizsmtp
+        id TM702800527BRao01M70wa; Mon, 03 Oct 2022 11:07:00 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ofHPf-000Xpv-P1; Mon, 03 Oct 2022 11:06:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ofHPe-008cDu-Ky; Mon, 03 Oct 2022 11:06:58 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] coredump: Move dump_emit_page() to kill unused warning
+Date:   Mon,  3 Oct 2022 11:06:57 +0200
+Message-Id: <20221003090657.2053236-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YzcwN67+QOqXpvfg@nvidia.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 30-09-22 15:06:47, Jason Gunthorpe wrote:
-> On Fri, Sep 30, 2022 at 10:56:27AM -0700, Dan Williams wrote:
-> > Jan Kara wrote:
-> > [..]
-> > > I agree this is doable but there's the nasty sideeffect that inode reclaim
-> > > may block for abitrary time waiting for page pinning. If the application
-> > > that has pinned the page requires __GFP_FS memory allocation to get to a
-> > > point where it releases the page, we even have a deadlock possibility.
-> > > So it's better than the UAF issue but still not ideal.
-> > 
-> > I expect VMA pinning would have similar deadlock exposure if pinning a
-> > VMA keeps the inode allocated. Anything that puts a page-pin release
-> > dependency in the inode freeing path can potentially deadlock a reclaim
-> > event that depends on that inode being freed.
-> 
-> I think the desire would be to go from the VMA to an inode_get and
-> hold the inode reference for the from the pin_user_pages() to the
-> unpin_user_page(), ie prevent it from being freed in the first place.
+If CONFIG_ELF_CORE is not set:
 
-Yes, that was the idea how to avoid UAF problems.
+    fs/coredump.c:835:12: error: ‘dump_emit_page’ defined but not used [-Werror=unused-function]
+      835 | static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+          |            ^~~~~~~~~~~~~~
 
-> It is a fine idea, the trouble is just the high complexity to get
-> there.
-> 
-> However, I wonder if the trucate/hole punch paths have the same
-> deadlock problem?
+Fix this by moving dump_emit_page() inside the existing section
+protected by #ifdef CONFIG_ELF_CORE.
 
-Do you mean someone requiring say truncate(2) to complete on file F in
-order to unpin pages of F? That is certainly a deadlock but it has always
-worked this way for DAX so at least applications knowingly targetted at DAX
-will quickly notice and avoid such unwise dependency ;).
+Fixes: 06bbaa6dc53cb720 ("[coredump] don't use __kernel_write() on kmap_local_page()")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ fs/coredump.c | 48 ++++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-								Honza
-
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 1ab4f5b76a1e7406..79385c49d6172f87 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -832,6 +832,30 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+ 	}
+ }
+ 
++int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
++{
++	if (cprm->to_skip) {
++		if (!__dump_skip(cprm, cprm->to_skip))
++			return 0;
++		cprm->to_skip = 0;
++	}
++	return __dump_emit(cprm, addr, nr);
++}
++EXPORT_SYMBOL(dump_emit);
++
++void dump_skip_to(struct coredump_params *cprm, unsigned long pos)
++{
++	cprm->to_skip = pos - cprm->pos;
++}
++EXPORT_SYMBOL(dump_skip_to);
++
++void dump_skip(struct coredump_params *cprm, size_t nr)
++{
++	cprm->to_skip += nr;
++}
++EXPORT_SYMBOL(dump_skip);
++
++#ifdef CONFIG_ELF_CORE
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ {
+ 	struct bio_vec bvec = {
+@@ -864,30 +888,6 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 	return 1;
+ }
+ 
+-int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+-{
+-	if (cprm->to_skip) {
+-		if (!__dump_skip(cprm, cprm->to_skip))
+-			return 0;
+-		cprm->to_skip = 0;
+-	}
+-	return __dump_emit(cprm, addr, nr);
+-}
+-EXPORT_SYMBOL(dump_emit);
+-
+-void dump_skip_to(struct coredump_params *cprm, unsigned long pos)
+-{
+-	cprm->to_skip = pos - cprm->pos;
+-}
+-EXPORT_SYMBOL(dump_skip_to);
+-
+-void dump_skip(struct coredump_params *cprm, size_t nr)
+-{
+-	cprm->to_skip += nr;
+-}
+-EXPORT_SYMBOL(dump_skip);
+-
+-#ifdef CONFIG_ELF_CORE
+ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+ 		    unsigned long len)
+ {
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
