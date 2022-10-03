@@ -2,89 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C6A5F3971
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 00:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50AD25F3989
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 01:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbiJCW6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 18:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38040 "EHLO
+        id S229876AbiJCXGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 19:06:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiJCW6R (ORCPT
+        with ESMTP id S229602AbiJCXGM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 18:58:17 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CA332EEA;
-        Mon,  3 Oct 2022 15:58:16 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id c3so6601349pfb.12;
-        Mon, 03 Oct 2022 15:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:content-id:mime-version:references:in-reply-to:cc
-         :to:subject:from:from:to:cc:subject:date;
-        bh=h/EH2yCpn2b6STRSxqNywEbQQtPrQkhdBeHGG9IxaAM=;
-        b=ckqyOpc/y1/7vbRRjFwF2lf4hzXWDrFJ8ttxx6c2610jELPSBc/0rUR0DPycRh1nnz
-         bU7oCVzEecKNDyYrnJUlf/77RfVom2gvxQnDwpZrhkCINI216DgEWKc4kSYMJDdwg6tJ
-         B/RiZV37W6gX7BOAQ0XCU3LL8gZbeQijpYFKBb10tkUyxMKQQUprga5q079KudbHPoUz
-         8jUmBx2rC0wZguH0ERDDPTLjgLmIXrpbH5eGJTMil9wNZpbI4EtLFXw4gwPyI2PCw473
-         UEOvcFooJ4NRUkG2A/t86BSmusM1eC+17HLXaaFrL8kIo3C3ynwQzLycI/clOzzPrCcO
-         l/lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:content-id:mime-version:references:in-reply-to:cc
-         :to:subject:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=h/EH2yCpn2b6STRSxqNywEbQQtPrQkhdBeHGG9IxaAM=;
-        b=LdKWmbEahw/ART8s33ZaARn6P2yekFZnZg+zO07hfLMiHJm6clrQY4wrhDbLZV0AU3
-         GkyZn1okhVEzmOklpLxjHEmkb1t9ut/f8o6H7w7owAIYGOZw3XutxmsQYslw92K1GbtX
-         YK8pXWPJMMKkceawApNNyZ7NfxuMFp5ECHyRAcEVnp1TxI17xM6envtKx3fSJd8W+DcT
-         1l2Z/WOlPXyVUM1kRswLto4BfyqpUMBpWTnwu2qUUaIrsxuecV19m8dXUljVP707JJc5
-         eIK7DzIjbCSEx1kIR3irsaNQaXqo5mQ7Tdkml+V7t8DLvg78UF4/exw73Iy3qWtVxIZc
-         9MLw==
-X-Gm-Message-State: ACrzQf2JiReyjrWhDbwWZSYtlfDvCaMp5ceEozZE7WUYyestTXe7OEqA
-        norkhsuTcsAyn8chmqOmA/Q2lcILorU=
-X-Google-Smtp-Source: AMsMyM6vB8SmaZLNSLKdD+t53xTGLXsp3ES3vsa9WFM/QF1mF8JlVgVDAzK/jJroJSqxGA+LNjyvfA==
-X-Received: by 2002:a05:6a00:1342:b0:545:4d30:eecb with SMTP id k2-20020a056a00134200b005454d30eecbmr24206264pfu.69.1664837896404;
-        Mon, 03 Oct 2022 15:58:16 -0700 (PDT)
-Received: from jromail.nowhere (h219-110-108-104.catv02.itscom.jp. [219.110.108.104])
-        by smtp.gmail.com with ESMTPSA id i2-20020a17090332c200b0016f8e8032c4sm7772410plr.129.2022.10.03.15.58.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 15:58:16 -0700 (PDT)
-Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1ofUO6-00012i-Uu ; Tue, 04 Oct 2022 07:58:14 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: [PATCH][CFT] [coredump] don't use __kernel_write() on kmap_local_page()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-In-Reply-To: <YztfvaAFOe2kGvDz@ZenIV>
-References: <YzN+ZYLjK6HI1P1C@ZenIV> <YzSSl1ItVlARDvG3@ZenIV> <YzpcXU2WO8e22Cmi@iweiny-desk3> <7714.1664794108@jrobl> <Yzs4mL3zrrC0/vN+@iweiny-mobl> <YztfvaAFOe2kGvDz@ZenIV>
+        Mon, 3 Oct 2022 19:06:12 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F24240A4;
+        Mon,  3 Oct 2022 16:06:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 88721218B1;
+        Mon,  3 Oct 2022 23:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1664838369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fDGs3Bk2iDM8Sg1N7ysr2TYE6vffr3zLzEKlNym2d6g=;
+        b=mlmAiiBBQBbBVYOh5gea+uvcUPEM0yazoPg1sYcsKc/Z4pPAPwbLD3gdEaFs0bksRg1Auf
+        /pSgfhLbJyiVhdwosRU0m1F+AzihZbODVc1Acdli1DXW18aaRvZ96cucNGyiV7BdYHhJc+
+        445uOun1/0aubSINbuqbOug00c5PSCY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1664838369;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fDGs3Bk2iDM8Sg1N7ysr2TYE6vffr3zLzEKlNym2d6g=;
+        b=WDnQb66RAHB0dwcO5OD+IifbJsp1dpu0MyTzMD3DGromzQwfD/A3LcPWLl2rJR8FXkQQYV
+        d5tjJmT28kUR2lCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 912851332F;
+        Mon,  3 Oct 2022 23:06:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id R5AKFNtqO2P8EQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 03 Oct 2022 23:06:03 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4010.1664837894.1@jrobl>
-Date:   Tue, 04 Oct 2022 07:58:14 +0900
-Message-ID: <4011.1664837894@jrobl>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 1/9] iversion: move inode_query_iversion to libfs.c
+In-reply-to: <20220930111840.10695-2-jlayton@kernel.org>
+References: <20220930111840.10695-1-jlayton@kernel.org>,
+ <20220930111840.10695-2-jlayton@kernel.org>
+Date:   Tue, 04 Oct 2022 10:05:59 +1100
+Message-id: <166483835973.14457.2650225208160842573@noble.neil.brown.name>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro:
-> Argh....  Try this:
->
-> fix coredump breakage caused by badly tested "[coredump] don't use __kernel_write() on kmap_local_page()"
+On Fri, 30 Sep 2022, Jeff Layton wrote:
+> There's no need to have such a large function forcibly inlined.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Thanx, it passed my local test.
+Reviewed-by: NeilBrown <neilb@suse.de>
+
+you could possible make the "I_VERSION_QUERIED already set" case inline
+and the "needs to be set" case out-of-line, but it probably isn't worth
+it.=20
+
+Thanks,
+NeilBrown
 
 
-> * fix for problem that occurs on rather uncommon setups (and hadn't
-> been observed in the wild) sent very late in the cycle.
-
-If the commit was merged in RC versions, I guess someone found the
-problem earlier.
-
-
-J. R. Okajima
+> ---
+>  fs/libfs.c               | 36 ++++++++++++++++++++++++++++++++++++
+>  include/linux/iversion.h | 38 ++------------------------------------
+>  2 files changed, 38 insertions(+), 36 deletions(-)
+>=20
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 682d56345a1c..5ae81466a422 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1566,3 +1566,39 @@ bool inode_maybe_inc_iversion(struct inode *inode, b=
+ool force)
+>  	return true;
+>  }
+>  EXPORT_SYMBOL(inode_maybe_inc_iversion);
+> +
+> +/**
+> + * inode_query_iversion - read i_version for later use
+> + * @inode: inode from which i_version should be read
+> + *
+> + * Read the inode i_version counter. This should be used by callers that w=
+ish
+> + * to store the returned i_version for later comparison. This will guarant=
+ee
+> + * that a later query of the i_version will result in a different value if
+> + * anything has changed.
+> + *
+> + * In this implementation, we fetch the current value, set the QUERIED fla=
+g and
+> + * then try to swap it into place with a cmpxchg, if it wasn't already set=
+. If
+> + * that fails, we try again with the newly fetched value from the cmpxchg.
+> + */
+> +u64 inode_query_iversion(struct inode *inode)
+> +{
+> +	u64 cur, new;
+> +
+> +	cur =3D inode_peek_iversion_raw(inode);
+> +	do {
+> +		/* If flag is already set, then no need to swap */
+> +		if (cur & I_VERSION_QUERIED) {
+> +			/*
+> +			 * This barrier (and the implicit barrier in the
+> +			 * cmpxchg below) pairs with the barrier in
+> +			 * inode_maybe_inc_iversion().
+> +			 */
+> +			smp_mb();
+> +			break;
+> +		}
+> +
+> +		new =3D cur | I_VERSION_QUERIED;
+> +	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+> +	return cur >> I_VERSION_QUERIED_SHIFT;
+> +}
+> +EXPORT_SYMBOL(inode_query_iversion);
+> diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> index e27bd4f55d84..6755d8b4f20b 100644
+> --- a/include/linux/iversion.h
+> +++ b/include/linux/iversion.h
+> @@ -234,42 +234,6 @@ inode_peek_iversion(const struct inode *inode)
+>  	return inode_peek_iversion_raw(inode) >> I_VERSION_QUERIED_SHIFT;
+>  }
+> =20
+> -/**
+> - * inode_query_iversion - read i_version for later use
+> - * @inode: inode from which i_version should be read
+> - *
+> - * Read the inode i_version counter. This should be used by callers that w=
+ish
+> - * to store the returned i_version for later comparison. This will guarant=
+ee
+> - * that a later query of the i_version will result in a different value if
+> - * anything has changed.
+> - *
+> - * In this implementation, we fetch the current value, set the QUERIED fla=
+g and
+> - * then try to swap it into place with a cmpxchg, if it wasn't already set=
+. If
+> - * that fails, we try again with the newly fetched value from the cmpxchg.
+> - */
+> -static inline u64
+> -inode_query_iversion(struct inode *inode)
+> -{
+> -	u64 cur, new;
+> -
+> -	cur =3D inode_peek_iversion_raw(inode);
+> -	do {
+> -		/* If flag is already set, then no need to swap */
+> -		if (cur & I_VERSION_QUERIED) {
+> -			/*
+> -			 * This barrier (and the implicit barrier in the
+> -			 * cmpxchg below) pairs with the barrier in
+> -			 * inode_maybe_inc_iversion().
+> -			 */
+> -			smp_mb();
+> -			break;
+> -		}
+> -
+> -		new =3D cur | I_VERSION_QUERIED;
+> -	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+> -	return cur >> I_VERSION_QUERIED_SHIFT;
+> -}
+> -
+>  /*
+>   * For filesystems without any sort of change attribute, the best we can
+>   * do is fake one up from the ctime:
+> @@ -283,6 +247,8 @@ static inline u64 time_to_chattr(struct timespec64 *t)
+>  	return chattr;
+>  }
+> =20
+> +u64 inode_query_iversion(struct inode *inode);
+> +
+>  /**
+>   * inode_eq_iversion_raw - check whether the raw i_version counter has cha=
+nged
+>   * @inode: inode to check
+> --=20
+> 2.37.3
+>=20
+>=20
