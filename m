@@ -2,126 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 208EA5F2F81
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B70A5F2F86
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbiJCLVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 07:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51388 "EHLO
+        id S229830AbiJCLVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 07:21:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbiJCLVW (ORCPT
+        with ESMTP id S229816AbiJCLVi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 07:21:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF7F4AD77;
-        Mon,  3 Oct 2022 04:21:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 3 Oct 2022 07:21:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749514B4B1;
+        Mon,  3 Oct 2022 04:21:31 -0700 (PDT)
+Received: from [192.168.10.9] (unknown [39.45.148.204])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 42E7CB80E6B;
-        Mon,  3 Oct 2022 11:21:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C38CC433C1;
-        Mon,  3 Oct 2022 11:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664796076;
-        bh=gQ/IoWVnFjhYfdmCEfjDAvI5umV5t802LUyaGs8FJsI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZCzU1vge1Qb7B4nLsGqocrjIYdMacGnbBPy+nhl66m/5IioK973MUUS6a9UhaGYfb
-         ye2USsxw3yc+3nnL8pXTCOx10C3a1HUojxPYm28Of6WGw2smpXO3fle21mj0leuB0J
-         6cYG7uYMMhhZqzsZ0/2xCow9TKlTY3cs5aPUBa0/3nnfaoR72ieL0gnt9SomYc3zQ9
-         MWWHVJxuKDTtRgDR+egysyBbPNjXj6rqUYb2W15k7WPXNgktngunHpmkuSp25a5U6A
-         WvmqOpphzczGnmM3jOEQLaLJJxdKZsVys8VVIOZVufB7bcS1DqGFTFefY+n1q9VA9P
-         +41b5IXd2jldw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfsuid updates for v6.1
-Date:   Mon,  3 Oct 2022 13:19:43 +0200
-Message-Id: <20221003111943.743391-2-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221003111943.743391-1-brauner@kernel.org>
-References: <20221003111943.743391-1-brauner@kernel.org>
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 599CA6601AED;
+        Mon,  3 Oct 2022 12:21:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664796089;
+        bh=QjQysDtg/rfCjFri/iGM14++at29jMbV+/m5tzwz0yg=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=ILSxcT+t83n9BjP6pk9g0NC7uAYX/7KBTjTv2Gr3bt0nxGWDer5H+pITpueEVLU7w
+         jvsLqoN+IxRZ6rlYW3ZfK1AvHC8c3X4nODl6RgybJTQ3AXOm72h6N5vq4w2BmqYSwi
+         GtLWNYjG6ZXEPLaKe6ohalW4zemKyV6+eZynl2q0AFJALzQ18rzHwbLbuhEXzycluA
+         vtj86c+OhGkPJTOss8JWOOzEQTpX5sMWsqJDi+9VlMcxomERGxR+Lw1rhZXnUT/vE4
+         jITAOMOf4wQ/3lSggteA1y+GahekEQC9tpS6lyTlbE0ulUl6lbYHwrAwZHUhiLlw3K
+         G+Y8P7KajIbcQ==
+Message-ID: <2e1c33c8-a201-0f7f-17cf-22fec555c7ff@collabora.com>
+Date:   Mon, 3 Oct 2022 16:21:22 +0500
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3075; i=brauner@kernel.org; h=from:subject; bh=gQ/IoWVnFjhYfdmCEfjDAvI5umV5t802LUyaGs8FJsI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRbHdX9PU/VeuvVaoF3FjYm83g2XV8jYMVoYPrP8kSMw0+7 C5VJHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxNmb4K9zOojs74fUOr1/XdX5U9L zOcOP9rJm1S337hZyjelsFzjMytN38O9XPrd93SdifCL/6cN+Hwefciz9a8WrxLVjwVrKOFQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Cc:     usama.anjum@collabora.com, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
+Content-Language: en-US
+To:     Andrei Vagin <avagin@gmail.com>
+References: <20220826064535.1941190-1-usama.anjum@collabora.com>
+ <YyiDg79flhWoMDZB@gmail.com>
+ <2c8b7116-56e9-3202-c47e-e42078c85793@collabora.com>
+ <CANaxB-xDiTRCuWxBmrSH1u3e_ADbxCoQKmEoSsYfm4yW7k=v4A@mail.gmail.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CANaxB-xDiTRCuWxBmrSH1u3e_ADbxCoQKmEoSsYfm4yW7k=v4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey Linus,
+On 9/28/22 10:24 PM, Andrei Vagin wrote:
+> On Wed, Sep 21, 2022 at 11:26 AM Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> Hi,
+>>
+>> Thank you for reviewing.
+>>
+>> On 9/19/22 7:58 PM, Andrei Vagin wrote:
+>>>> This ioctl can be used by the CRIU project and other applications which
+>>>> require soft-dirty PTE bit information. The following operations are
+>>>> supported in this ioctl:
+>>>> - Get the pages that are soft-dirty.
+>>>
+>>> I think this interface doesn't have to be limited by the soft-dirty
+>>> bits only. For example, CRIU needs to know whether file, present and swap bits
+>>> are set or not.
+>> These operations can be performed by pagemap procfs file. Definitely
+>> performing them through IOCTL will be faster. But I'm trying to add a
+>> simple IOCTL by which some specific PTE bit can be read and cleared
+>> atomically. This IOCTL can be extended to include other bits like file,
+>> present and swap bits by keeping the interface simple. The following
+>> mask advice is nice. But if we add that kind of masking, it'll start to
+>> look like a filter on top of pagemap. My intention is to not duplicate
+>> the functionality already provided by the pagemap. One may ask, then why
+>> am I adding "get the soft-dirty pages" functionality? I'm adding it to
+>> complement the get and clear operation. The "get" and "get and clear"
+>> operations with special flag (PAGEMAP_SD_NO_REUSED_REGIONS) can give
+>> results quicker by not splitting the VMAs.
+> 
+> This simple interface is good only for a limited number of use-cases.
+> The interface
+> that I suggest doesn't duplicate more code than this one, but it is much more
+> universal. It will be a big mess if you add a separate API for each
+> specific use-case.
+>
+>
+>>> I mean we should be able to specify for what pages we need to get info
+>>> for. An ioctl argument can have these four fields:
+>>> * required bits (rmask & mask == mask) - all bits from this mask have to be set.
+>>> * any of these bits (amask & mask != 0) - any of these bits is set.
+>>> * exclude masks (emask & mask == 0) = none of these bits are set.
+>>> * return mask - bits that have to be reported to user.
+The required mask (rmask) makes sense to me. At the moment, I only know
+about the practical use case for the required mask. Can you share how
+can any and exclude masks help for the CRIU?
 
-/* Summary */
-Last cycle we introduced the new vfs{g,u}id_t types that we had agreed on. The
-most important parts of the vfs have been converted but there are a few more
-places we need to switch before we can remove the old helpers completely.
+>>>
+>>>> - Clear the pages which are soft-dirty.
+>>>> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
+>>>> soft-dirty PTE bit
+>>>>
+>>>> There are two decisions which have been taken about how to get the output
+>>>> from the syscall.
+>>>> - Return offsets of the pages from the start in the vec
+>>>
+>>> We can conside to return regions that contains pages with the same set
+>>> of bits.
+>>>
+>>> struct page_region {
+>>>       void *start;
+>>>       long size;
+>>>       u64 bitmap;
+>>> }
+>>>
+>>> And ioctl returns arrays of page_region-s. I believe it will be more
+>>> compact form for many cases.
+>> Thank you for mentioning this. I'd considered this while development.
+>> But I gave up and used the simple array to return the offsets of the
+>> pages as in the problem I'm trying to solve, the dirty pages may be
+>> present amid non-dirty pages. The range may not be useful in that case.
+> 
+> This is a good example. If we expect more than two consequent pages
+> on average, the "region" interface looks more prefered. I don't know your
+> use-case, but in the case of CRIU, this assumption looks reasonable.
+> 
+>> Also we want to return only a specific number of pages of interest. The
+>> following paragraph explains it.
+>>
+>>>
+>>>> - Stop execution when vec is filled with dirty pages
+>>>> These two arguments doesn't follow the mincore() philosophy where the
+>>>> output array corresponds to the address range in one to one fashion, hence
+>>>> the output buffer length isn't passed and only a flag is set if the page
+>>>> is present. This makes mincore() easy to use with less control. We are
+>>>> passing the size of the output array and putting return data consecutively
+>>>> which is offset of dirty pages from the start. The user can convert these
+>>>> offsets back into the dirty page addresses easily. Suppose, the user want
+>>>> to get first 10 dirty pages from a total memory of 100 pages. He'll
+>>>> allocate output buffer of size 10 and the ioctl will abort after finding the
+>>>> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
+>>>> behaviour like mincore() can be achieved by passing output buffer of 100
+>>>> size. This interface can be used for any desired behaviour.
+> 
+> Now, it is more clear where this interface came from. It repeats the interface
+> of Windows' getWriteWatch. I think we have to look wider. The
+> interface that reports
+> regions will be more efficient for many use-cases. As for
+> getWriteWatch, it will require
+> a bit more code in user-space, but this code is trivial.
+> 
+> Thanks,
+> Andrei
 
-This cycle we converted all filesystems that called idmapped mount helpers
-directly. The affected filesystems are f2fs, fat, fuse, ksmbd, overlayfs, and
-xfs. We've sent patches for all of them. Looking at -next f2fs, ksmbd,
-overlayfs, and xfs have all picked up these patches and they should land in
-mainline during the v6.1 merge window.
-
-So all filesystems that have a separate tree should send the vfsuid
-conversion themselves. Onle the fat conversion is going through one of the
-generic fs trees because there is no fat tree.
-
-In order to change time settings on an inode fat checks that the caller either is
-the owner of the inode or the inode's group is in the caller's group list. If
-fat is on an idmapped mount we compare whether the inode mapped into the mount
-is equivalent to the caller's fsuid. If it isn't we compare whether the inode's
-group mapped into the mount is in the caller's group list. We now use the new
-vfsuid based helpers for that.
-
-(Note that I didn't see the fuse conversion patch being picked up in -next.
- This is probably just an oversight. It is a very simple patch so if it doesn't
- show up by the end of the merge window feel free to just pick it up directly
- https://lore.kernel.org/all/20220909094021.940110-1-brauner@kernel.org or let
- use know and we can send it. We can probably also just send it during -rc2.)
-
-/* Testing */
-clang: Ubuntu clang version 14.0.0-1ubuntu1
-gcc:   gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0
-
-All patches are based on v6.0-rc3 and have been sitting in linux-next. No build
-failures or warnings were observed. All old and new tests in fstests,
-selftests, and LTP pass without regressions. (Note, the fat patch got dropped
-from -next on accident as I realized while writing the commit message.)
-
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with current
-mainline.
-
-The following changes since commit b90cb1053190353cc30f0fef0ef1f378ccc063c5:
-
-  Linux 6.0-rc3 (2022-08-28 15:05:29 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.vfsuid.fat.v6.1
-
-for you to fetch changes up to 41d27f518b955ef4b75b02cc67392aef0809a78d:
-
-  fat: port to vfs{g,u}id_t and associated helpers (2022-09-20 11:09:31 +0200)
-
-Please consider pulling these changes from the signed fs.vfsuid.fat.v6.1 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-fs.vfsuid.fat.v6.1
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      fat: port to vfs{g,u}id_t and associated helpers
-
- fs/fat/file.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+-- 
+Muhammad Usama Anjum
